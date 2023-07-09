@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.graph.model.net.NetImpl
 
 /**
  * Extends [NetImpl] to add the following responsibilities:
- * - convert `null`signals to [Bit.False]
+ * - convert `null` signals to [Bit.False]
  * - identify and propagate a design error if this [Net] connects [Port]s with incompatible [BitWidth]
  */
 open class DigitalNet : NetImpl<DigitalSignal>() {
@@ -18,6 +18,8 @@ open class DigitalNet : NetImpl<DigitalSignal>() {
 	companion object {
 		private val LOG by logger(DigitalNet::class)
 	}
+
+	private var bitWidthCompatibilityError: DesignError? = null
 
 	/** ---- [NetImpl] */
 
@@ -35,23 +37,7 @@ open class DigitalNet : NetImpl<DigitalSignal>() {
 	/** ---- [GraphElement] */
 
 	override val designError: DesignError?
-		get() {
-			super.designError?.let { return it }
-
-			val occurringBitWidths = getOccurringBitWidths()
-			if (occurringBitWidths.size <= 1) {
-				return null
-			}
-			val bitWidthNames = occurringBitWidths.map { it.toString() }.toSet()
-			return DesignError(Translations.getString("digitalnet.designError.text", bitWidthNames.joinToString(separator = ",")))
-		}
-
-	override val isError: Boolean get() = super.isError || isDesignError
-
-	private val isDesignError: Boolean get() = getOccurringBitWidths().size > 1
-
-	private fun getOccurringBitWidths(): Set<Int> =
-		ports.map { it as DigitalPort }.filter { !it.isAdaptive }.map { it.bitWidth.width }.toSet()
+		get() = super.designError ?: bitWidthCompatibilityError
 
 	/** ---- [Net] */
 
@@ -91,4 +77,17 @@ open class DigitalNet : NetImpl<DigitalSignal>() {
 			}
 			return ports.map { it as DigitalPort }.first().bitWidth
 		}
+
+	private fun getOccurringBitWidths(): Set<Int> =
+		ports.map { it as DigitalPort }.filter { !it.isAdaptive }.map { it.bitWidth.width }.toSet()
+
+	fun checkBitWidthCompatibility() {
+		val occurringBitWidths = getOccurringBitWidths()
+		bitWidthCompatibilityError = if (occurringBitWidths.size > 1) {
+			val bitWidthNames = occurringBitWidths.map { it.toString() }.toSet()
+			DesignError(Translations.getString("digitalnet.designError.text", bitWidthNames.joinToString(separator = ",")))
+		} else {
+			null
+		}
+	}
 }

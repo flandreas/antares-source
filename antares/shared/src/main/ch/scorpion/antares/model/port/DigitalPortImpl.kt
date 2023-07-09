@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.OutputAnnotation
 import ch.scorpion.antares.model.Trigger
 import ch.scorpion.antares.model.net.DigitalCombinedNetAccess
+import ch.scorpion.antares.model.net.DigitalNet
 import ch.scorpion.antares.model.port.DigitalPort.Companion.PROP_BIT_WIDTH
 import ch.scorpion.antares.model.port.DigitalPort.Companion.PROP_LOGIC
 import ch.scorpion.antares.model.port.DigitalPort.Companion.PROP_OUTPUT_ANNOTATION
@@ -12,10 +13,7 @@ import ch.scorpion.antares.model.port.DigitalPort.Companion.PROP_TRIGGER
 import ch.scorpion.antares.model.signal.*
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.graph.model.OutputPort
-import ch.scorpion.jabbah.graph.model.Port
-import ch.scorpion.jabbah.graph.model.PortType
-import ch.scorpion.jabbah.graph.model.WeakOutputPortBehaviour
+import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.net.CombinedNetAccess
 import ch.scorpion.jabbah.graph.model.port.PortImpl
 
@@ -123,6 +121,7 @@ open class DigitalPortImpl(
 			if (field != value) {
 				val oldValue = field
 				field = value
+				(net as DigitalNet?)?.checkBitWidthCompatibility()
 				changeSupport.fire(PROP_BIT_WIDTH, oldValue, field)
 			}
 		}
@@ -243,5 +242,15 @@ open class DigitalPortImpl(
 			return false
 		}
 		return super.differingInput(signal)
+	}
+
+	override fun connectTo(net: Net<DigitalSignal>) {
+		super.connectTo(net)
+		(net as DigitalNet?)?.checkBitWidthCompatibility()
+	}
+
+	override fun disconnect() {
+		super.disconnect()
+		(net as DigitalNet?)?.checkBitWidthCompatibility()
 	}
 }
