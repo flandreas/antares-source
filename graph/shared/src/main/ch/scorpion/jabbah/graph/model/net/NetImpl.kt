@@ -26,8 +26,6 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 		private const val baseResourceKey = "graph.styleType.edge"
 		private val type = Translations.getString("$baseResourceKey.name")
 		private val typeDesc = null
-
-		private val BROKEN_REF_DESIGN_ERROR = DesignError(Translations.getString("graph.designError.brokenPortRef.text"))
 	}
 
 	/** Internal representation of the [ports] property.*/
@@ -117,6 +115,10 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 		}
 	}
 
+	override fun activateBrokenRefError() {
+		brokenRefDesignError = Net.BROKEN_REF_DESIGN_ERROR
+	}
+
 	/** ---- [Actor] interface */
 
 	override fun executionInitialize(signalHandler: SignalHandler) {
@@ -188,7 +190,7 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 			))
 		}
 		if (reader.hasAttribute("brokenRefDesignError")) {
-			brokenRefDesignError = BROKEN_REF_DESIGN_ERROR
+			brokenRefDesignError = Net.BROKEN_REF_DESIGN_ERROR
 		}
 	}
 
@@ -210,7 +212,7 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 
 			if (vertice == null) {
 				LOG.warn("Couldn't resolve Vertice ${reference.referenceId} to connect to Net")
-				brokenRefDesignError = BROKEN_REF_DESIGN_ERROR
+				brokenRefDesignError = Net.BROKEN_REF_DESIGN_ERROR
 				BaseModule.eventBus.post(SystemMalfunctionEvent("Broken port reference: verticeID=${reference.referenceId}, portId=$portId"))
 				return
 			}
@@ -223,7 +225,7 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 				// and we can't connect this Net that Vertice
 				if (vertice.designError == null) {
 					LOG.warn("Couldn't resolve Port $portId of Vertice ${System.getClassName(vertice)}")
-					brokenRefDesignError = BROKEN_REF_DESIGN_ERROR
+					brokenRefDesignError = Net.BROKEN_REF_DESIGN_ERROR
 					BaseModule.eventBus.post(SystemMalfunctionEvent("Unresolvable port: verticeID=${reference.referenceId}, portId=$portId"))
 				}
 			}

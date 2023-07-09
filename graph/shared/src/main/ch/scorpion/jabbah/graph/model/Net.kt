@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.model
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.execution.SignalHandler
 
@@ -13,6 +14,8 @@ interface Net<T: Any> : GraphElement {
 
 		/** Used in [GraphElementEvent] sent to [GraphElementListener]s, typically views. */
 		const val STATE_CHANGE_SIGNAL = "signal"
+
+		val BROKEN_REF_DESIGN_ERROR = DesignError(Translations.getString("graph.designError.brokenPortRef.text"))
 	}
 
     /** The signal of this [Net] after an execution step has been done.*/
@@ -65,5 +68,10 @@ interface Net<T: Any> : GraphElement {
 	 */
 	fun combine(other: Net<T>)
 
+	/**
+	 * Activate the design error [BROKEN_REF_DESIGN_ERROR] on this [Net].
+	 * Used for hunting the cause of bug #584.
+	 */
+	fun activateBrokenRefError()
 }
 

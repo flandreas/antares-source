@@ -115,6 +115,13 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
 	val isConnectedWithNodeView: Boolean get() =
 		origin?.connectableView is NodeView<*> || destination?.connectableView is NodeView<*>
 
+	/**
+	 * Returns `true` if either [Connection] is connected to a [ConnectableView], but its
+	 * [Port] is NOT connected to this [EdgeView]'s net, which is a data consistency error.
+	 * Used for hunting the cause of bug #584 "Dead components".
+	 */
+	val hasBrokenPortRef: Boolean
+
     /**
      * Returns the [Connection] that corresponds with the specified [Port], which can be either the
      * [origin] or the [destination] [Connection].

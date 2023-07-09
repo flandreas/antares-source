@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.module
 
+import ch.scorpion.jabbah.app.health.SystemHealthChecker
 import ch.scorpion.jabbah.app.module.AppModuleJvm
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.DataLocation
@@ -19,6 +20,7 @@ import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
 import ch.scorpion.jabbah.execution.ExecutionModuleJvm
 import ch.scorpion.jabbah.graph.container.ContainerDrawingLayouter
 import ch.scorpion.jabbah.graph.container.ContainerTreeView
+import ch.scorpion.jabbah.graph.health.GraphViewConsistencyCheck
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.graph.LongGraphParamType
 import ch.scorpion.jabbah.graph.model.graph.StringGraphParamType
@@ -60,6 +62,8 @@ object GraphModuleJvm : AbstractModule() {
 		fillProperties(BaseModule.properties)
 
 		buildPreferencesTree(BaseModuleJvm.preferencesTree)
+
+		SystemHealthChecker.register(GraphViewConsistencyCheck())
 	}
 
 	private fun configurePropertyRenderer(registry: DynamicPropertyRendererRegistry) {

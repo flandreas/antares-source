@@ -6,11 +6,17 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.ui.Toast
 import ch.scorpion.jabbah.draw.view.AbstractViewAction
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.command.SourcingCommandManager
+import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
 import ch.scorpion.jabbah.graph.view.GraphProperties
+import ch.scorpion.jabbah.graph.view.EdgeView
 import org.drjekyll.fontchooser.FontDialog
 import java.awt.Dimension
 import java.awt.Frame
@@ -27,7 +33,7 @@ class TestAction(
 	}
 
 	override fun execute(event: ActionEvent) {
-		showFontChooser()
+		forceBrokenRefError()
 	}
 
 	private fun showToast() {
@@ -76,6 +82,41 @@ class TestAction(
 		dialog.isVisible = true
 		if (!dialog.isCancelSelected) {
 			println("Selected font is: ${dialog.selectedFont}")
+		}
+	}
+
+	/**
+	 * Creates (an otherwise no-op) Command that forces [Net.BROKEN_REF_DESIGN_ERROR]
+	 * on the [Net] of the currently selected [EdgeView]. Only used for testing.
+	 */
+	private fun forceBrokenRefError() {
+		if (editor.view.selectionManager.selectionCount != 1) {
+			return
+		}
+		val component = editor.view.selectionManager.selection.first()
+		if (component !is EdgeView<*>) {
+			return
+		}
+		LOG.debug("Forcing BrokenRefError on EdgeView ${component.id}")
+		editor.commandManager.execute(ForceBrokenRefErrorCommand(component.id, editor.view))
+	}
+
+	private class ForceBrokenRefErrorCommand(
+		private val componentId: Int,
+		private val drawingView: DrawingView<Drawing<Component>>
+	) : AbstractCommand("view.action.test.name") {
+
+		private val edgeView: EdgeView<*> get() = drawingView.drawing.getWithId(componentId) as EdgeView<*>
+
+		override fun execute() {
+			if (edgeView.origin != null && edgeView.origin!!.port != null) {
+				edgeView.net!!.unconnect(edgeView.origin!!.port!!)
+				return
+			}
+			if (edgeView.destination != null && edgeView.destination!!.port != null) {
+				edgeView.net!!.unconnect(edgeView.destination!!.port!!)
+				return
+			}
 		}
 	}
 }

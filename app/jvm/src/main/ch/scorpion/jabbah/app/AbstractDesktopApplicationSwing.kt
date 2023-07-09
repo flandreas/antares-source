@@ -1,12 +1,12 @@
 package ch.scorpion.jabbah.app
 
 import ch.scorpion.jabbah.app.dump.SystemMalfunctionHandler
+import ch.scorpion.jabbah.app.health.SystemHealthChecker
 import ch.scorpion.jabbah.app.module.AppModuleJvm
 import ch.scorpion.jabbah.app.rating.RatingPanel
 import ch.scorpion.jabbah.app.rating.RatingService
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.invocation.BusyHandler
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.preferences.PreferencesDialogPanel
 import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.edit.Component
@@ -30,10 +30,6 @@ abstract class AbstractDesktopApplicationSwing(
 	controller: ApplicationDataViewController,
 	private val ratingService: RatingService = AppModuleJvm.ratingService
 ) : AbstractDesktopApplication(commandLine, controller) {
-
-	companion object {
-		private val LOG by lazy { logger(AbstractDesktopApplicationSwing::class) }
-	}
 
 	protected lateinit var mainFrame: AbstractApplicationFrame
 
@@ -70,7 +66,9 @@ abstract class AbstractDesktopApplicationSwing(
 		super.init()
 
 		registerApplicationUsage()
+
 		SystemMalfunctionHandler.initialize(this)
+		SystemHealthChecker.start(controller)
 
 		ApplicationDataViewSwing(controller, fileExtension, displayName)
 

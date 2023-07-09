@@ -11,7 +11,6 @@ import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.drawable.Movable
 import ch.scorpion.jabbah.draw.drawable.Rotatable
 import ch.scorpion.jabbah.draw.drawable.RotationDirection
-import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.polyline.ArrowHead
 import ch.scorpion.jabbah.draw.polyline.LineTerminator
@@ -20,7 +19,6 @@ import ch.scorpion.jabbah.draw.polyline.PolylineShapeFactory
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.*
-import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
@@ -211,6 +209,21 @@ open class EdgeViewImpl<T : Any>(
 			invalidate()
 			update()
 		}
+
+	override val hasBrokenPortRef: Boolean get() {
+		origin?.let { conn ->
+			if (conn.port != null && !model.isConnectedWith(conn.port)) {
+				return true
+			}
+		}
+		destination?.let { conn ->
+			if (conn.port != null && !model.isConnectedWith(conn.port)) {
+				return true
+			}
+		}
+
+		return false
+	}
 
 	private fun updateBeginLineTerminator() {
 		var lineTerminator: LineTerminator? = null
@@ -692,30 +705,7 @@ open class EdgeViewImpl<T : Any>(
 
 	override fun draw(context: DrawContext) {
 		styling.draw(context)
-		if (EditAuthModule.userHolder.user.isDeveloper) {
-			highlightModelInconsistency(context)
-		}
 	}
-
-	// DEBUG BEGIN
-	// Find cause of Bug #584: EdgeView connected to Port, but Port is not connected with Net
-
-	private fun highlightModelInconsistency(context: DrawContext) {
-		origin?.let { conn ->
-			if (conn.port != null && !model.isConnectedWith(conn.port)) {
-				context.g.color = Color.RED
-				context.g.fillCircle(conn.portConnectionPoint.x, conn.portConnectionPoint.y, 15.0)
-			}
-		}
-		destination?.let { conn ->
-			if (conn.port != null && !model.isConnectedWith(conn.port)) {
-				context.g.color = Color.RED
-				context.g.fillCircle(conn.portConnectionPoint.x, conn.portConnectionPoint.y, 15.0)
-			}
-		}
-	}
-
-	// DEBUG END
 
 	/** ---- [NetViewElement] interface */
 
