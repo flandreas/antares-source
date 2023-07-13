@@ -3,10 +3,7 @@ package ch.scorpion.antares.model.gate
 import ch.scorpion.antares.model.signal.Bit
 import kotlin.test.Test
 
-/**
- * Unit tests for [BufferCalculator].
- */
-class BufferCalculatorTest : AbstractGateCalculatorTest(BufferCalculator()) {
+class BufferCalculatorTest : AbstractGateCalculatorTest(UnaryLogicGateType.Buffer) {
 
 	@Test
 	fun shouldFulfillTruthTable() {

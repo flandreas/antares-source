@@ -1,7 +1,7 @@
 package ch.scorpion.antares.view.gate
 
 import ch.scorpion.antares.model.InputPortNumber
-import ch.scorpion.antares.model.gate.AndGate
+import ch.scorpion.antares.model.gate.NonUnaryLogicGate
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.module.AntaresViewModule
@@ -23,12 +23,11 @@ import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import kotlin.math.min
 
-/** A view of an [AndGate]. */
 class AndGateView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
-	andGate: AndGate = AndGate()
-) : AbstractAndLikeGateView<AndGate>(styleProvider, currentSymbolStyle, "&", andGate) {
+	andGate: NonUnaryLogicGate = NonUnaryLogicGate.andGate()
+) : AbstractAndLikeGateView<NonUnaryLogicGate>(styleProvider, currentSymbolStyle, "&", andGate) {
 
 	companion object {
 
@@ -57,7 +56,7 @@ class AndGateView(
 		modelExchanged(null)
 	}
 
-	override fun modelExchanged(oldModel: AndGate?) {
+	override fun modelExchanged(oldModel: NonUnaryLogicGate?) {
 		super.modelExchanged(oldModel)
 		dataPort = InputPortNumber.withId(min(dataPort.id, model.chosenInputCount.count))
 	}

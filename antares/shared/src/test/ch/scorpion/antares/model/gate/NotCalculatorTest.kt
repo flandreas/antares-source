@@ -3,7 +3,7 @@ package ch.scorpion.antares.model.gate
 import ch.scorpion.antares.model.signal.Bit.*
 import kotlin.test.Test
 
-class NotCalculatorTest : AbstractGateCalculatorTest(NotCalculator()) {
+class NotCalculatorTest : AbstractGateCalculatorTest(UnaryLogicGateType.Not) {
 
 	@Test
 	fun shouldFulfillTruthTable() {

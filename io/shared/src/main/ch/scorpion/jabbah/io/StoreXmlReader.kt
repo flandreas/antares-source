@@ -1,10 +1,8 @@
 package ch.scorpion.jabbah.io
 
-import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
-import kotlin.reflect.KClass
 
 /**
  * An implementation of a [StoreReader] that reads a hierarchical [Storable] object tree from an XML document (DOM).
@@ -199,23 +197,13 @@ class StoreXmlReader(
 	/** ---- [StoreXmlReader] */
 
 	private fun <T: Storable> readStorableImpl(): T {
-		val storable = instantiate(xmlReader.getName())
+		val storable = typeMap.instantiate<Storable>(xmlReader.getName())
 		readGlobalId()?.let { referenceResolver.addStorable(it, storable) }
 		storable.readFromStore(this)
 
 		// Accept a ClassCastException if cast fails
 		@Suppress("UNCHECKED_CAST")
 		return storable as T
-	}
-
-	private fun instantiate(typeName: String): Storable {
-		LOG.trace("instantiate '$typeName'")
-		return instantiate(typeMap.getClass(typeName))
-	}
-
-	private fun instantiate(clazz: KClass<Storable>): Storable {
-		LOG.trace("instantiate '${clazz.simpleName}'")
-		return System.instantiate(clazz)
 	}
 
 	private fun readGlobalId(): Int? {

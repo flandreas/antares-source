@@ -1,6 +1,7 @@
 package ch.scorpion.antares.model.gate
 
 import ch.scorpion.antares.model.PortCount
+import ch.scorpion.antares.model.gate.NonUnaryLogicGateType.Xor
 import ch.scorpion.antares.model.signal.Bit.*
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
@@ -12,7 +13,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /** Unit tests for [XorCalculator]. */
-class XorCalculatorTest : AbstractGateCalculatorTest(XorCalculator()){
+class XorCalculatorTest : AbstractGateCalculatorTest(Xor){
 
 	@Test
 	fun shouldFulfillTruthTable() {
@@ -43,7 +44,7 @@ class XorCalculatorTest : AbstractGateCalculatorTest(XorCalculator()){
 	fun oddNumberOfInputShouldCalculateTrue() {
 		CurrentUndefinedGateInputBehavior.value = UndefinedGateInputBehavior.ReadAs0
 
-		val xor = XorGate(PortCount.THREE)
+		val xor = NonUnaryLogicGate(Xor, PortCount.THREE)
 		xor.getInput<DigitalSignal>(1).setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 		xor.getInput<DigitalSignal>(2).setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 		xor.getInput<DigitalSignal>(3).setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
@@ -55,7 +56,7 @@ class XorCalculatorTest : AbstractGateCalculatorTest(XorCalculator()){
 	fun evenNumberOfInputShouldCalculateFalse() {
 		CurrentUndefinedGateInputBehavior.value = UndefinedGateInputBehavior.ReadAs0
 
-		val xor = XorGate(PortCount.THREE)
+		val xor = NonUnaryLogicGate(Xor, PortCount.THREE)
 		xor.getInput<DigitalSignal>(1).setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 		xor.getInput<DigitalSignal>(2).setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 		xor.getInput<DigitalSignal>(3).setIncomingSignal(DigitalSignalFactory.of(false), signalHandler)
@@ -65,11 +66,11 @@ class XorCalculatorTest : AbstractGateCalculatorTest(XorCalculator()){
 
 	@Test
 	fun shouldCalculateMultiBit() {
-		val xorGate = XorGate(bitWidth = BitWidth.BW_2)
+		val xorGate = NonUnaryLogicGate(Xor, bitWidth = BitWidth.BW_2)
 		xorGate.getInput<DigitalSignal>(1).setIncomingSignal(Word(listOf(True, False)), signalHandler)
 		xorGate.getInput<DigitalSignal>(2).setIncomingSignal(Word(listOf(False, False)), signalHandler)
 
-		val result = calculator.calculateMultiBit(xorGate)
+		val result = gateType.calculator.calculateMultiBit(xorGate)
 
 		assertEquals(Word(listOf(True, False)), result)
 	}

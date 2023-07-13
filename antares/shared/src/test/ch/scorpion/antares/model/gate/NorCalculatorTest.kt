@@ -1,5 +1,6 @@
 package ch.scorpion.antares.model.gate
 
+import ch.scorpion.antares.model.gate.NonUnaryLogicGateType.Nor
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
@@ -9,7 +10,7 @@ import kotlin.test.assertEquals
 
 
 /** Unit tests for [NorCalculator]. */
-class NorCalculatorTest : AbstractGateCalculatorTest(NorCalculator()) {
+class NorCalculatorTest : AbstractGateCalculatorTest(Nor) {
 
 	@Test
 	fun shouldFulfillTruthTable() {
@@ -38,11 +39,11 @@ class NorCalculatorTest : AbstractGateCalculatorTest(NorCalculator()) {
 
 	@Test
 	fun shouldCalculateMultiBit() {
-		val norGate = NorGate(bitWidth = BitWidth.BW_2)
+		val norGate = NonUnaryLogicGate(Nor, bitWidth = BitWidth.BW_2)
 		norGate.getInput<DigitalSignal>(1).setIncomingSignal(Word(listOf(Bit.True, Bit.False)), signalHandler)
 		norGate.getInput<DigitalSignal>(2).setIncomingSignal(Word(listOf(Bit.False, Bit.False)), signalHandler)
 
-		val result = calculator.calculateMultiBit(norGate)
+		val result = gateType.calculator.calculateMultiBit(norGate)
 
 		assertEquals(Word(listOf(Bit.False, Bit.True)), result)
 	}

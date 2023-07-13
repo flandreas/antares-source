@@ -1,16 +1,13 @@
 package ch.scorpion.antares.model.gate
 
-import ch.scorpion.antares.model.PortCount
 import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.graph.model.MultiSignalSource
 
 /**
  * Forwards an input signal unchanged to the output.
  */
-class BufferCalculator : AbstractLogicGateCalculator() {
+object BufferCalculator : AbstractLogicGateCalculator() {
 
 	override fun calculateBit(input: Collection<DigitalSignal>, bitIndex: Int): Bit =
 		calculateOutputBit(input.first().bitAt(bitIndex))
@@ -24,21 +21,4 @@ class BufferCalculator : AbstractLogicGateCalculator() {
 			else -> inputBit
 		}
 }
-
-class BufferGate(
-	bitWidth: BitWidth = BitWidth.BW_1
-) : AbstractLogicGate(CALCULATOR, PortCount.ONE, bitWidth, PortCount.ONE, PortCount.ONE) {
-
-	companion object {
-		private const val BASE_RESOURCE_KEY = "library.element.Buffer"
-		private val TYPE get() = Translations.getString("$BASE_RESOURCE_KEY.name")
-		private val TYPE_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
-
-		val CALCULATOR = BufferCalculator()
-	}
-
-	override val type: String get() = TYPE
-	override val typeDesc: String? get() = TYPE_DESC
-}
-
 

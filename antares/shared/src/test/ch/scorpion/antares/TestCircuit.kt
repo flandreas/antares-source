@@ -1,7 +1,8 @@
 package ch.scorpion.antares
 
 import ch.scorpion.antares.model.PortCount
-import ch.scorpion.antares.model.gate.OrGate
+import ch.scorpion.antares.model.gate.NonUnaryLogicGate
+import ch.scorpion.antares.model.gate.NonUnaryLogicGateType.Or
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.gate.AndGateView
 import ch.scorpion.antares.view.gate.OrGateView
@@ -20,7 +21,7 @@ class TestCircuit {
 
     init {
         andGateView = builder.addVerticeView(AndGateView())
-        orGateView = builder.addVerticeView(OrGateView(orGate = OrGate(PortCount.THREE)))
+        orGateView = builder.addVerticeView(OrGateView(orGate = NonUnaryLogicGate(Or, PortCount.THREE)))
         wire = builder.connect(andGateView, orGateView)
     }
 }

@@ -9,9 +9,7 @@ import ch.scorpion.jabbah.execution.ForwardSignalHandler
 import io.mockk.mockk
 import kotlin.test.assertEquals
 
-abstract class AbstractGateCalculatorTest(
-	protected val calculator: AbstractLogicGateCalculator
-) {
+abstract class AbstractGateCalculatorTest(protected val gateType: LogicGateType) {
 
 	companion object {
 		init {
@@ -19,7 +17,7 @@ abstract class AbstractGateCalculatorTest(
 		}
 	}
 
-	private val gate = TestGate(calculator)
+	private val gate = TestGate(gateType)
 	protected val signalHandler = ForwardSignalHandler(mockk())
 
 	init {

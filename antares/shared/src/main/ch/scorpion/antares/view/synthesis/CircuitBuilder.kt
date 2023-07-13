@@ -2,8 +2,8 @@ package ch.scorpion.antares.view.synthesis
 
 import ch.scorpion.antares.model.PortCount
 import ch.scorpion.antares.model.addressable.LookupTable
-import ch.scorpion.antares.model.gate.AndGate
-import ch.scorpion.antares.model.gate.OrGate
+import ch.scorpion.antares.model.gate.NonUnaryLogicGate
+import ch.scorpion.antares.model.gate.NonUnaryLogicGateType
 import ch.scorpion.antares.model.inout.DigitalCircuitInOutImpl
 import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.net.Concentrator
@@ -63,7 +63,7 @@ class CircuitBuilder(
 		inputCount: PortCount,
 		location: Point2D = Point2D.ZERO,
 		orientation: Direction = Direction.EAST
-	): AndGateView = AndGateView(styleProvider, andGate = AndGate(inputCount)).also {
+	): AndGateView = AndGateView(styleProvider, andGate = NonUnaryLogicGate(NonUnaryLogicGateType.And, inputCount)).also {
 			it.orientation = orientation
 			addVerticeView(it, location)
 		}
@@ -81,7 +81,7 @@ class CircuitBuilder(
 		inputCount: PortCount,
 		location: Point2D = Point2D.ZERO,
 		orientation: Direction = Direction.EAST
-	): OrGateView = OrGateView(styleProvider, orGate = OrGate(inputCount)).also {
+	): OrGateView = OrGateView(styleProvider, orGate = NonUnaryLogicGate(NonUnaryLogicGateType.Or, inputCount)).also {
 		it.orientation = orientation
 		addVerticeView(it, location)
 	}

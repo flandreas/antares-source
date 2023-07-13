@@ -1,9 +1,8 @@
 package ch.scorpion.jabbah.io
 
 import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.math.formatRounded
 
 /**
@@ -40,7 +39,7 @@ class StoreXmlWriter(
 	/** ---- [StoreWriter] */
 
 	override fun writeStorable(storable: Storable) {
-		val type = typeMap.getTypeName(System.getClass(storable))
+		val type = typeMap.getTypeName(storable)
 
 		xmlWriter.addElementAndDescend(type)
 

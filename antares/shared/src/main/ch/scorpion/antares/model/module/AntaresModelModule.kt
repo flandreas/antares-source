@@ -15,6 +15,9 @@ import ch.scorpion.antares.model.expression.BooleanExpressionNotation
 import ch.scorpion.antares.model.expression.BooleanExpressionService
 import ch.scorpion.antares.model.expression.BooleanExpressionStorable
 import ch.scorpion.antares.model.gate.*
+import ch.scorpion.antares.model.gate.NonUnaryLogicGateType.*
+import ch.scorpion.antares.model.gate.UnaryLogicGateType.Buffer
+import ch.scorpion.antares.model.gate.UnaryLogicGateType.Not
 import ch.scorpion.antares.model.inout.DigitalCircuitInOutImpl
 import ch.scorpion.antares.model.input.*
 import ch.scorpion.antares.model.net.*
@@ -89,15 +92,17 @@ object AntaresModelModule : AbstractModule() {
 		typeMap.register("subCircuitPort", SubCircuitPort::class)
 		typeMap.register("digitalNet", DigitalNet::class)
 
-		typeMap.register("notGate", NotGate::class)
-		typeMap.register("andGate", AndGate::class)
-		typeMap.register("nandGate", NandGate::class)
-		typeMap.register("orGate", OrGate::class)
-		typeMap.register("norGate", NorGate::class)
-		typeMap.register("xorGate", XorGate::class)
-		typeMap.register("xnorGate", XnorGate::class)
-		typeMap.register("bufferGate", BufferGate::class)
 		typeMap.register("triStateBufferGate", TriStateBufferGate::class)
+
+		typeMap.register("notGate", { it is UnaryLogicGate && it.gateType == Not }) { UnaryLogicGate.notGate() }
+		typeMap.register("bufferGate", { it is UnaryLogicGate && it.gateType == Buffer }) { UnaryLogicGate.bufferGate() }
+
+		typeMap.register("andGate", { it is NonUnaryLogicGate && it.gateType == And }) { NonUnaryLogicGate.andGate() }
+		typeMap.register("nandGate", { it is NonUnaryLogicGate && it.gateType == Nand }) { NonUnaryLogicGate.nandGate() }
+		typeMap.register("orGate", { it is NonUnaryLogicGate && it.gateType == Or }) { NonUnaryLogicGate.orGate() }
+		typeMap.register("norGate", { it is NonUnaryLogicGate && it.gateType == Nor }) { NonUnaryLogicGate.norGate() }
+		typeMap.register("xorGate", { it is NonUnaryLogicGate && it.gateType == Xor }) { NonUnaryLogicGate.xorGate() }
+		typeMap.register("xnorGate", { it is NonUnaryLogicGate && it.gateType == Xnor }) { NonUnaryLogicGate.xnorGate() }
 
 		typeMap.register("switch", Switch::class)
 		typeMap.register("dipSwitch", DipSwitch::class)

@@ -10,7 +10,7 @@ class AndGateTest {
 
 	@Test
 	fun shouldCalculateTruthTableWithOneInvertedInput() {
-		val andGate = AndGate()
+		val andGate = NonUnaryLogicGate.andGate()
 		(andGate.getInput<DigitalSignal>(1) as DigitalPort).logic = Logic.NEGATIVE
 		val truthTable = andGate.calculateTruthTable()
 
@@ -22,7 +22,7 @@ class AndGateTest {
 
 	@Test
 	fun shouldCalculateTruthTableWithTwoInvertedInput() {
-		val andGate = AndGate()
+		val andGate = NonUnaryLogicGate.andGate()
 		(andGate.getInput<DigitalSignal>(1) as DigitalPort).logic = Logic.NEGATIVE
 		(andGate.getInput<DigitalSignal>(2) as DigitalPort).logic = Logic.NEGATIVE
 		val truthTable = andGate.calculateTruthTable()

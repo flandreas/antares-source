@@ -1,6 +1,7 @@
 package ch.scorpion.antares.model.gate
 
 import ch.scorpion.antares.model.PortCount
+import ch.scorpion.antares.model.gate.NonUnaryLogicGateType.Xnor
 import ch.scorpion.antares.model.signal.Bit.*
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
@@ -12,7 +13,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /** Unit tests for [XnorCalculator]. */
-class XnorCalculatorTest : AbstractGateCalculatorTest(XnorCalculator()){
+class XnorCalculatorTest : AbstractGateCalculatorTest(Xnor){
 
 	@Test
 	fun shouldFulfillTruthTable() {
@@ -43,7 +44,7 @@ class XnorCalculatorTest : AbstractGateCalculatorTest(XnorCalculator()){
 	fun evenNumberOfInputShouldCalculateTrue() {
 		CurrentUndefinedGateInputBehavior.value = UndefinedGateInputBehavior.ReadAs0
 
-		val xnor = XnorGate(PortCount.THREE)
+		val xnor = NonUnaryLogicGate(Xnor, PortCount.THREE)
 		xnor.getInput<DigitalSignal>(1).setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 		xnor.getInput<DigitalSignal>(2).setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 		xnor.getInput<DigitalSignal>(3).setIncomingSignal(DigitalSignalFactory.of(false), signalHandler)
@@ -55,7 +56,7 @@ class XnorCalculatorTest : AbstractGateCalculatorTest(XnorCalculator()){
 	fun oddNumberOfInputShouldCalculateFalse() {
 		CurrentUndefinedGateInputBehavior.value = UndefinedGateInputBehavior.ReadAs0
 
-		val xnor = XnorGate(PortCount.THREE)
+		val xnor = NonUnaryLogicGate(Xnor, PortCount.THREE)
 		xnor.getInput<DigitalSignal>(1).setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 		xnor.getInput<DigitalSignal>(2).setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
 		xnor.getInput<DigitalSignal>(3).setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
@@ -65,11 +66,11 @@ class XnorCalculatorTest : AbstractGateCalculatorTest(XnorCalculator()){
 
 	@Test
 	fun shouldCalculateMultiBit() {
-		val xnorGate = XnorGate(bitWidth = BitWidth.BW_2)
+		val xnorGate = NonUnaryLogicGate(Xnor, bitWidth = BitWidth.BW_2)
 		xnorGate.getInput<DigitalSignal>(1).setIncomingSignal(Word(listOf(True, False)), signalHandler)
 		xnorGate.getInput<DigitalSignal>(2).setIncomingSignal(Word(listOf(False, False)), signalHandler)
 
-		val result = calculator.calculateMultiBit(xnorGate)
+		val result = gateType.calculator.calculateMultiBit(xnorGate)
 
 		assertEquals(Word(listOf(False, True)), result)
 	}

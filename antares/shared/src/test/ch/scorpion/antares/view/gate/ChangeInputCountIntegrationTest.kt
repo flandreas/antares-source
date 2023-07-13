@@ -4,7 +4,8 @@ import ch.scorpion.antares.AbstractCircuitTest
 import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.model.PortCount
 import ch.scorpion.antares.model.gate.AbstractLogicGate
-import ch.scorpion.antares.model.gate.AndGate
+import ch.scorpion.antares.model.gate.NonUnaryLogicGate
+import ch.scorpion.antares.model.gate.NonUnaryLogicGateType.And
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.app.AntaresGraphViewService
 import ch.scorpion.antares.view.input.SwitchView
@@ -43,7 +44,7 @@ class ChangeInputCountIntegrationTest : AbstractCircuitTest() {
 
 		every { drawingView.drawing } answers { getCircuitView() }
 
-		val model = AndGate(PortCount.THREE)
+		val model = NonUnaryLogicGate(And, PortCount.THREE)
 		builder = TestCircuitBuilder("test", styleProvider, eventBus)
 		andGateView = builder.addVerticeView(AndGateView(andGate = model))
 		switchView1 = builder.addVerticeView(SwitchView())
@@ -89,7 +90,7 @@ class ChangeInputCountIntegrationTest : AbstractCircuitTest() {
 
 	@Test
 	fun shouldDecreaseInputCountBy2() {
-		val model = AndGate(PortCount.FOUR)
+		val model = NonUnaryLogicGate(And, PortCount.FOUR)
 		val andGateView2 = AndGateView(andGate = model)
 
 		service.changeInputCount(andGateView2 as AbstractLogicGateView<AbstractLogicGate>, PortCount.TWO, drawingView)

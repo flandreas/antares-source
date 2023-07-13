@@ -94,7 +94,7 @@ object EditModule : AbstractModule() {
         typeMap.register("ellipse", EllipseComponent::class)
         typeMap.register("roundrect", RoundRectangleComponent::class)
         typeMap.register("polyline", PolylineComponent::class)
-        typeMap.register("polylineShape", PolylineShapeImpl::class)
+        //typeMap.register("polylineShape", PolylineShapeImpl::class)
         typeMap.register("label", LabelComponent::class)
         typeMap.register("text", SimpleTextComponent::class)
         typeMap.register("group", GroupComponent::class)

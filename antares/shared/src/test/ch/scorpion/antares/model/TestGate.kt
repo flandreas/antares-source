@@ -1,11 +1,10 @@
 package ch.scorpion.antares.model
 
-import ch.scorpion.antares.model.gate.AbstractLogicGate
-import ch.scorpion.antares.model.gate.AbstractLogicGateCalculator
+import ch.scorpion.antares.model.gate.*
 
 class TestGate(
-	calculator: AbstractLogicGateCalculator
-) : AbstractLogicGate(calculator, PortCount.TWO) {
+	gateType: LogicGateType
+) : AbstractLogicGate(gateType, PortCount.TWO) {
 
 	override val type: String get() = "TestVertice"
 	override val typeDesc: String? get() = null
