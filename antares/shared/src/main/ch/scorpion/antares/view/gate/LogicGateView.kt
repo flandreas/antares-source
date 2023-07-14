@@ -1,41 +1,91 @@
 package ch.scorpion.antares.view.gate
 
+import ch.scorpion.antares.model.InputPortNumber
 import ch.scorpion.antares.model.PortCount
-import ch.scorpion.antares.model.gate.AbstractLogicGate
+import ch.scorpion.antares.model.gate.*
+import ch.scorpion.antares.model.gate.NonUnaryLogicGateType.*
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.view.Look.SCALE
 import ch.scorpion.antares.view.app.AntaresGraphViewService
+import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.symbolstyle.CurrentSymbolStyle
+import ch.scorpion.antares.view.symbolstyle.SymbolStyle.*
 import ch.scorpion.antares.view.truthtable.TruthTableView
+import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.resettableLazy
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.DrawableExplanation
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Font
+import ch.scorpion.jabbah.draw.graphics.Stroke
+import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
+import ch.scorpion.jabbah.io.Storable
+import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.io.StoreWriter
+import kotlin.math.min
 
 /**
- * Base view implementation for [AbstractLogicGate] views.
- *
- * Must be declared public in order to support ComponentPropertyPanel property access.
- * @param T the type of gate model displayed by this view.
+ * Common view class for displaying all kinds of [AbstractLogicGate]s.
  */
-abstract class AbstractLogicGateView<T: AbstractLogicGate>(
-	styleProvider: StyleProvider,
-	protected val currentSymbolStyle: CurrentSymbolStyle,
-	text: String,
-	gate: T
-) : BoxGateView<T>(styleProvider, text, gate), CustomShapeContent {
+class LogicGateView(
+	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+	private val currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
+	gate: AbstractLogicGate
+) : BoxGateView<AbstractLogicGate>(styleProvider, getRenderer(gate.logicGateType).text, gate), CustomShapeContent {
 
 	companion object {
 		const val BASE_KEY_INPUT_PORT_NAME = "element.property.inputPort"
 		const val BASE_KEY_OUTPUT_PORT_NAME = "element.property.outputPort"
 		const val BASE_KEY_NEGATE_INPUT = "element.property.Gate.negateInput"
+		const val BASE_KEY_DATA_PORT = "element.property.AndGate.dataPort"
+
+		/** The name of the [Boolean] property in [Properties] defining whether the data flow feature is enabled.*/
+		const val PROP_DATA_FLOW_ENABLED = "antares.andGate.dataFlow"
+
+		val isDataFlowEnabled: Boolean get() = BaseModule.properties.getBoolean(PROP_DATA_FLOW_ENABLED)
+
+		fun andGateView(): LogicGateView = LogicGateView(gate = NonUnaryLogicGate.andGate())
+		fun nandGateView(): LogicGateView = LogicGateView(gate = NonUnaryLogicGate.nandGate())
+		fun orGateView(): LogicGateView = LogicGateView(gate = NonUnaryLogicGate.orGate())
+		fun norGateView(): LogicGateView = LogicGateView(gate = NonUnaryLogicGate.norGate())
+		fun xorGateView(): LogicGateView = LogicGateView(gate = NonUnaryLogicGate.xorGate())
+		fun xnorGateView(): LogicGateView = LogicGateView(gate = NonUnaryLogicGate.xnorGate())
+
+		fun notGateView(): LogicGateView = LogicGateView(gate = UnaryLogicGate.notGate())
+		fun bufferGateView(): LogicGateView = LogicGateView(gate = UnaryLogicGate.bufferGate())
+
+		private fun getRenderer(type: LogicGateType): LogicGateViewRenderer =
+			when (type) {
+				is NonUnaryLogicGateType -> {
+					when (type) {
+						And -> LogicGateViewRenderers.And
+						Nand -> LogicGateViewRenderers.Nand
+						Or -> LogicGateViewRenderers.Or
+						Nor -> LogicGateViewRenderers.Nor
+						Xor -> LogicGateViewRenderers.Xor
+						Xnor -> LogicGateViewRenderers.Xnor
+					}
+				}
+
+				is UnaryLogicGateType -> {
+					when (type) {
+						UnaryLogicGateType.Not -> LogicGateViewRenderers.Not
+						UnaryLogicGateType.Buffer -> LogicGateViewRenderers.Buffer
+					}
+				}
+
+				else -> {
+					throw IllegalStateException("Unsupported LogicGateType")
+				}
+			}
 	}
 
 	/** Use [AntaresGraphViewService] for changing this value.*/
@@ -59,6 +109,20 @@ abstract class AbstractLogicGateView<T: AbstractLogicGate>(
 				invalidate()
 				validate()
 			}
+		}
+
+	/** Used for views of [NonUnaryLogicGateType.And]. */
+	var dataPort: InputPortNumber = InputPortNumber.NONE
+		set(value) {
+			if (field == value) {
+				return
+			}
+			require(value.id <= model.chosenInputCount.count) { "InputPortNumber must not be larger than InputCount" }
+			invalidate()
+			field = value
+			labelStyle = if (dataPort == InputPortNumber.NONE) LabelStyle.LARGE_CENTERED else LabelStyle.SMALL_UPPER_LEFT
+			invalidate()
+			update()
 		}
 
 	private val explanation = resettableLazy {
@@ -156,16 +220,22 @@ abstract class AbstractLogicGateView<T: AbstractLogicGate>(
 
 	fun getInputPortName(portId: Int): String? = model.getPort<DigitalSignal>(portId).name
 
+	init {
+		modelExchanged(null)
+	}
+
+	override fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+		getRenderer(model.logicGateType).drawShape(this, context, foregroundColor, backgroundColor, stroke)
+	}
+
 	override fun drawCustomShapeContent(context: DrawContext, foregroundColor: Color, backgroundColor: Color) {
-		drawMnemonics(context, foregroundColor, backgroundColor)
+		getRenderer(model.logicGateType).drawMnemonics(this, context, foregroundColor, backgroundColor)
 	}
 
 	override fun getExplanation(x: Double, y: Double): DrawableExplanation<*>? =
 		explanation.value?.also {
 			it.sourceRect = boundingBox
 		}
-
-	protected abstract fun drawMnemonics(context: DrawContext, foregroundColor: Color, backgroundColor: Color)
 
 	override fun handleStateChanged(event: GraphElementEvent) {
 		super.handleStateChanged(event)
@@ -174,9 +244,25 @@ abstract class AbstractLogicGateView<T: AbstractLogicGate>(
 		}
 	}
 
+	/** ---- [Storable] interface */
+
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		if (model.logicGateType == And && dataPort != InputPortNumber.NONE) {
+			writer.writeInt("dataPort", dataPort.id)
+		}
+	}
+
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+		if (reader.hasAttribute("dataPort")) {
+			dataPort = InputPortNumber.withId(reader.readInt("dataPort"))
+		}
+	}
+
 	/** ---- [AbstractVerticeView] */
 
-	override fun modelExchanged(oldModel: T?) {
+	override fun modelExchanged(oldModel: AbstractLogicGate?) {
 		super.modelExchanged(oldModel)
 
 		for (inputPort in model.getInputs()) {
@@ -186,6 +272,8 @@ abstract class AbstractLogicGateView<T: AbstractLogicGate>(
 		addPortView(createOutputPortView(model.getOutput(), portLabelPosition = PortLabelPosition.EXTERNAL))
 
 		updateLayout()
+
+		dataPort = InputPortNumber.withId(min(dataPort.id, model.chosenInputCount.count))
 	}
 
 	fun updateInputBitWidthAnnotations() {
@@ -196,4 +284,39 @@ abstract class AbstractLogicGateView<T: AbstractLogicGate>(
 			}
 		}
 	}
+
+	/** ---- [LogicGateView] */
+
+	override val outsetLeft: Int get() =
+		when (model.logicGateType) {
+			Or, Nor, Xor, Xnor -> {
+				when (currentSymbolStyle.symbolStyle) {
+					AMERICAN -> 2 * SCALE
+					else -> 0
+				}
+			}
+			else -> super.outsetTop
+		}
+
+	override val outsetTop: Int get() =
+		when (model.logicGateType) {
+			And, Nand, Or, Nor, Xor, Xnor -> {
+				when (currentSymbolStyle.symbolStyle) {
+					AMERICAN -> -SCALE
+					else -> 0
+				}
+			}
+			else -> super.outsetTop
+		}
+
+	override val outsetBottom: Int get() =
+		when (model.logicGateType) {
+			And, Nand -> {
+				when (currentSymbolStyle.symbolStyle) {
+					AMERICAN -> -SCALE
+					else -> 0
+				}
+			}
+			else -> super.outsetTop
+		}
 }

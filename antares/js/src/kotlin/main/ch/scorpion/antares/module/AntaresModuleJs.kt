@@ -94,15 +94,8 @@ object AntaresModuleJs : AbstractModule() {
 	}
 
 	private fun registerPropertyPageRenderers(registry: PropertyPageRendererRegistry) {
-		registry.register(AndGateView::class, AndGateViewPropertyPage())
-		registry.register(BufferGateView::class, BufferGateViewPropertyPage())
+		registry.register(LogicGateView::class, LogicGateViewPropertyPage())
 		registry.register(DelayGateView::class, DelayGateViewPropertyPage())
-		registry.register(NandGateView::class, LogicGateViewPropertyPage<NandGateView>())
-		registry.register(NorGateView::class, LogicGateViewPropertyPage<NorGateView>())
-		registry.register(NotGateView::class, NotGateViewPropertyPage())
-		registry.register(OrGateView::class, LogicGateViewPropertyPage<OrGateView>())
-		registry.register(XnorGateView::class, LogicGateViewPropertyPage<XnorGateView>())
-		registry.register(XorGateView::class, LogicGateViewPropertyPage<XorGateView>())
 		registry.register(TriStateBufferGateView::class, TriStateBufferGateViewPropertyPage())
 		registry.register(DigitalCircuitInOutView::class, CircuitInOutViewPropertyPage())
 		registry.register(DigitalEdgeView::class, EdgeViewPropertyPage())

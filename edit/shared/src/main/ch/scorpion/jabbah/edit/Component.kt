@@ -67,7 +67,7 @@ interface Component : Movable, Rotatable, Snappable, Storable, Stylable, Focusab
 	 * Returns the object whose properties are editable when the user edits this [Component].
 	 * Most implementations will just return `this`. Wrapper classes might return the wrapped object.
 	 */
-	val propertyOwner: Any
+	val propertyOwner: Component
 
 	/**
 	 * Returns the preferred strategy of how this [Component] likes to render its selection state.

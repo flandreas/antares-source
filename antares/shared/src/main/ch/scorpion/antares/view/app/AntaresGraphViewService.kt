@@ -1,10 +1,9 @@
 package ch.scorpion.antares.view.app
 
 import ch.scorpion.antares.model.PortCount
-import ch.scorpion.antares.model.gate.AbstractLogicGate
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.DigitalGraphView
-import ch.scorpion.antares.view.gate.AbstractLogicGateView
+import ch.scorpion.antares.view.gate.LogicGateView
 import ch.scorpion.antares.view.net.WireTapView
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.output.LightEmitter
@@ -55,11 +54,11 @@ class AntaresGraphViewService(
 		graphView.defaultLightColor ?: LightColor.getSystemDefault(properties)
 
 	/**
-	 * Changes the [PortCount] of an [AbstractLogicGateView] (undoable), which might involve
+	 * Changes the [PortCount] of an [LogicGateView] (undoable), which might involve
 	 * unconnecting [PortView]s that are being removed.
 	 */
 	fun changeInputCount(
-		gateView: AbstractLogicGateView<AbstractLogicGate>,
+		gateView: LogicGateView,
 		newInputCount: PortCount,
 		drawingView: DrawingView<GraphView>
 	) {
@@ -73,7 +72,7 @@ class AntaresGraphViewService(
 		}
 	}
 
-	private fun increaseInputCount(gateView: AbstractLogicGateView<AbstractLogicGate>, newInputCount: PortCount) {
+	private fun increaseInputCount(gateView: LogicGateView, newInputCount: PortCount) {
 		gateView.model.apply {
 			// Temporarily "hide" Port.id of OutputPort
 			getOutput<DigitalSignal>().portId = -1
@@ -94,7 +93,7 @@ class AntaresGraphViewService(
 		}
 	}
 
-	private fun decreaseInputCount(gateView: AbstractLogicGateView<AbstractLogicGate>, newInputCount: PortCount, drawingView: DrawingView<GraphView>) {
+	private fun decreaseInputCount(gateView: LogicGateView, newInputCount: PortCount, drawingView: DrawingView<GraphView>) {
 		gateView.model.apply {
 			val ports = getInputs().sortedBy { it.portId }.toMutableList()
 			for (i in chosenInputCount.count - 1 downTo newInputCount.count) {

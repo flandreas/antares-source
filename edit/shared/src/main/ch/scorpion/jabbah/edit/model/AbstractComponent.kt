@@ -48,7 +48,7 @@ abstract class AbstractComponent(
 
 	override val snappableY: Array<SnappableY> get() = arrayOf(SnappableYCoordinate(location.y))
 
-	override val propertyOwner: Any get() = this
+	override val propertyOwner: Component get() = this
 
 	/** ---- [Locatable] interface */
 

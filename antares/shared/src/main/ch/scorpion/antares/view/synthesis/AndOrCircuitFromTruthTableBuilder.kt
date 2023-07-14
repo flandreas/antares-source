@@ -1,14 +1,14 @@
 package ch.scorpion.antares.view.synthesis
 
 import ch.scorpion.antares.model.PortCount
+import ch.scorpion.antares.model.gate.NonUnaryLogicGateType
 import ch.scorpion.antares.model.quinemccluskey.DNF
 import ch.scorpion.antares.model.quinemccluskey.DnfToDigitalGateStructure
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.truthtable.TruthTable
 import ch.scorpion.antares.view.Look
-import ch.scorpion.antares.view.gate.AndGateView
-import ch.scorpion.antares.view.gate.OrGateView
+import ch.scorpion.antares.view.gate.LogicGateView
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
@@ -43,7 +43,7 @@ class AndOrCircuitFromTruthTableBuilder(
 		val outputName: String,
 		val andTermViews: MutableList<AndTermView> = mutableListOf(),
 		var yPos: Int = 0,
-		var orView: OrGateView? = null
+		var orView: LogicGateView? = null
 	)
 
 	private var andY = AND_Y
@@ -118,8 +118,8 @@ class AndOrCircuitFromTruthTableBuilder(
 
 	private fun buildAndWires(orTerm: OrTermView) {
 		orTerm.andTermViews.forEach { andTermView ->
-			if (andTermView.verticeView is AndGateView) {
-				// vv is either and AndGateView (for multi-factor terms) or a ConstantView (for constant terms).
+			if (andTermView.verticeView is LogicGateView && (andTermView.verticeView as LogicGateView).model.logicGateType == NonUnaryLogicGateType.And) {
+				// vv is either an AND gate (for multi-factor terms) or a ConstantView (for constant terms).
 				// If vv is empty, andTerm is a single-factor term (no AND gate) that doesn't need wiring
 				// in the "AND stack".
 				andTermView.andTerm.factors.forEachIndexed { factorIndex, factor ->

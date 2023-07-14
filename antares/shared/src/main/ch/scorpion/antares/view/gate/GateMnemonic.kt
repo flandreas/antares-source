@@ -54,7 +54,7 @@ object GateMnemonic {
 		return mode == ApplicationMode.EDIT || systemSpeedCategory >= SystemSpeedCategory.Observe
 	}
 
-	fun drawAnd(gateView: AndGateView, context: DrawContext, foreground: Color, background: Color) {
+	fun drawAnd(gateView: LogicGateView, context: DrawContext, foreground: Color, background: Color) {
 		if (!begin(gateView, context)) {
 			return
 		}
@@ -62,7 +62,7 @@ object GateMnemonic {
 		end(gateView, context)
 	}
 
-	fun drawNand(gateView: NandGateView, context: DrawContext, foreground: Color, background: Color) {
+	fun drawNand(gateView: LogicGateView, context: DrawContext, foreground: Color, background: Color) {
 		if (!begin(gateView, context)) {
 			return
 		}
@@ -70,7 +70,7 @@ object GateMnemonic {
 		end(gateView, context)
 	}
 
-	fun drawOr(gateView: OrGateView, context: DrawContext, foreground: Color, background: Color, inputOffsetX: Int) {
+	fun drawOr(gateView: LogicGateView, context: DrawContext, foreground: Color, background: Color, inputOffsetX: Int) {
 		if (!begin(gateView, context)) {
 			return
 		}
@@ -78,7 +78,7 @@ object GateMnemonic {
 		end(gateView, context)
 	}
 
-	fun drawNor(gateView: NorGateView, context: DrawContext, foreground: Color, background: Color) {
+	fun drawNor(gateView: LogicGateView, context: DrawContext, foreground: Color, background: Color) {
 		if (!begin(gateView, context)) {
 			return
 		}
@@ -86,7 +86,7 @@ object GateMnemonic {
 		end(gateView, context)
 	}
 
-	fun drawXor(gateView: XorGateView, context: DrawContext, foreground: Color, background: Color, inputOffsetX: Int) {
+	fun drawXor(gateView: LogicGateView, context: DrawContext, foreground: Color, background: Color, inputOffsetX: Int) {
 		if (!begin(gateView, context)) {
 			return
 		}
@@ -94,7 +94,7 @@ object GateMnemonic {
 		end(gateView, context)
 	}
 
-	fun drawXnor(gateView: XnorGateView, context: DrawContext, foreground: Color, background: Color, inputOffsetX: Int) {
+	fun drawXnor(gateView: LogicGateView, context: DrawContext, foreground: Color, background: Color, inputOffsetX: Int) {
 		if (!begin(gateView, context)) {
 			return
 		}
@@ -102,7 +102,7 @@ object GateMnemonic {
 		end(gateView, context)
 	}
 
-	fun drawNot(gateView: NotGateView, context: DrawContext, foreground: Color, background: Color) {
+	fun drawNot(gateView: LogicGateView, context: DrawContext, foreground: Color, background: Color) {
 		if (!begin(gateView, context)) {
 			return
 		}
@@ -110,7 +110,7 @@ object GateMnemonic {
 		end(gateView, context)
 	}
 
-	fun drawBuffer(gateView: BufferGateView, context: DrawContext, foreground: Color, background: Color) {
+	fun drawBuffer(gateView: LogicGateView, context: DrawContext, foreground: Color, background: Color) {
 		if (!begin(gateView, context)) {
 			return
 		}
@@ -138,7 +138,7 @@ object GateMnemonic {
 		return effectiveGateInputBit(inputPort.logic.evaluate(inputPort.getIncomingSignal()!!.bitAt(0)))
 	}
 
-	private fun drawSerial(gateView: AbstractLogicGateView<*>, context: DrawContext, foreground: Color, background: Color, invert1: Boolean, invert2: Boolean) {
+	private fun drawSerial(gateView: LogicGateView, context: DrawContext, foreground: Color, background: Color, invert1: Boolean, invert2: Boolean) {
 		val passive = gateView.bitWidth.width > 1
 		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute && !passive
 
@@ -195,7 +195,7 @@ object GateMnemonic {
 		context.g.drawLine(s(3.0) + 1, y2, s(4.0) - 1, y2)
 	}
 
-	private fun drawParallelTwice(gateView: AbstractLogicGateView<*>, context: DrawContext, foreground: Color, background: Color, invert: Boolean, inputOffsetX: Int) {
+	private fun drawParallelTwice(gateView: LogicGateView, context: DrawContext, foreground: Color, background: Color, invert: Boolean, inputOffsetX: Int) {
 		val passive = gateView.bitWidth.width > 1
 		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute && !passive
 
@@ -280,7 +280,7 @@ object GateMnemonic {
 		context.g.drawLine(s(3.0) + 1, y2u, s(4.0) - 1, y2u)
 	}
 
-	private fun drawParallel(gateView: AbstractLogicGateView<*>, context: DrawContext, foreground: Color, background: Color, invert1: Boolean, invert2: Boolean, inputOffsetX: Int) {
+	private fun drawParallel(gateView: LogicGateView, context: DrawContext, foreground: Color, background: Color, invert1: Boolean, invert2: Boolean, inputOffsetX: Int) {
 		val passive = gateView.bitWidth.width > 1
 		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute && !passive
 
@@ -348,7 +348,7 @@ object GateMnemonic {
 		context.g.drawLine(s(2.25) + 1, y2, s(3.25) - 1, y2)
 	}
 
-	private fun drawInverter(gateView: NotGateView, context: DrawContext, foreground: Color, background: Color) {
+	private fun drawInverter(gateView: LogicGateView, context: DrawContext, foreground: Color, background: Color) {
 		val passive = gateView.bitWidth.width > 1
 		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute && !passive
 
@@ -361,7 +361,7 @@ object GateMnemonic {
 		drawInverterInput(gateView, context, foreground, signal, signalOut, isExec, y)
 	}
 
-	private fun drawBufferImpl(gateView: BufferGateView, context: DrawContext, foreground: Color, background: Color) {
+	private fun drawBufferImpl(gateView: LogicGateView, context: DrawContext, foreground: Color, background: Color) {
 		val passive = gateView.bitWidth.width > 1
 		val isExec = context.castedAppContext<GraphApplicationContext>()!!.isExecute && !passive
 
@@ -374,7 +374,7 @@ object GateMnemonic {
 	}
 
 	private fun drawInverterInput(
-		gateView: AbstractLogicGateView<*>,
+		gateView: LogicGateView,
 		context: DrawContext,
 		foreground: Color,
 		signal: Bit,
@@ -397,7 +397,7 @@ object GateMnemonic {
 	}
 
 	private fun drawInverterOutput(
-		gateView: AbstractLogicGateView<*>,
+		gateView: LogicGateView,
 		context: DrawContext,
 		foreground: Color,
 		background: Color,

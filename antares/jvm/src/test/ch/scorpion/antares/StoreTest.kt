@@ -1,7 +1,7 @@
 package ch.scorpion.antares
 
 import ch.scorpion.antares.view.Look
-import ch.scorpion.antares.view.gate.OrGateView
+import ch.scorpion.antares.view.gate.LogicGateView
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.graph.GraphStorable
@@ -46,7 +46,7 @@ class StoreTest {
 
 		val storable = GraphStorable(testCircuit.circuitView)
 		val clone = StorableCloner.clone(storable)
-		val orGateView = clone.graphView.getWithId(2) as OrGateView
+		val orGateView = clone.graphView.getWithId(2) as LogicGateView
 
 		assertEquals(3, orGateView.model.inputCount)
 

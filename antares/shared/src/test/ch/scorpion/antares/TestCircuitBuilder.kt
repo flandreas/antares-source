@@ -6,8 +6,7 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.BitWidthExpression
 import ch.scorpion.antares.model.signal.BitWidthGraphParamType
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.view.gate.AndGateView
-import ch.scorpion.antares.view.gate.NotGateView
+import ch.scorpion.antares.view.gate.LogicGateView
 import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -49,7 +48,7 @@ class TestCircuitBuilder(
      * Builds a [GraphView] that contains a [NotGateView] along with [DigitalCircuitInOutView] for input and output.
      */
     fun buildCustomNot(): GraphView {
-        val not = addVerticeView(NotGateView())
+        val not = addVerticeView(LogicGateView.notGateView())
         connect(addInput(), not)
         connect(not, addOutput())
         return graphView
@@ -60,7 +59,7 @@ class TestCircuitBuilder(
      */
     fun buildCustomNAND(notView: SubGraphVerticeView<*>): GraphView {
         graphView.add(notView)
-        val andView = addVerticeView(AndGateView())
+        val andView = addVerticeView(LogicGateView.andGateView())
 
         connect(addInput(), andView, andView.vertice.getInput(1))
         connect(addInput(), andView, andView.vertice.getInput(2))

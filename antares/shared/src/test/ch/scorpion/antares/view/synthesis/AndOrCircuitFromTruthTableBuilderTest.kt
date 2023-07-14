@@ -2,17 +2,20 @@ package ch.scorpion.antares.view.synthesis
 
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.AntaresGraphTypes
+import ch.scorpion.antares.model.gate.LogicGateType
+import ch.scorpion.antares.model.gate.NonUnaryLogicGateType.And
+import ch.scorpion.antares.model.gate.NonUnaryLogicGateType.Or
+import ch.scorpion.antares.model.gate.UnaryLogicGateType.Not
 import ch.scorpion.antares.model.signal.Bit.*
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.truthtable.TruthTable
 import ch.scorpion.antares.model.truthtable.TruthTableService
-import ch.scorpion.antares.view.gate.AndGateView
-import ch.scorpion.antares.view.gate.NotGateView
-import ch.scorpion.antares.view.gate.OrGateView
+import ch.scorpion.antares.view.gate.LogicGateView
 import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.antares.view.net.ConstantView
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.view.VerticeView
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
@@ -28,6 +31,9 @@ class AndOrCircuitFromTruthTableBuilderTest {
 
 	private val truthTableService = TruthTableService()
 
+	private fun getLogicGateViews(metaGraph: MetaGraph, type: LogicGateType): Collection<VerticeView<*>> =
+		metaGraph.graph.graphView.getVerticeViews().filter { it is LogicGateView && it.model.logicGateType == type }
+
 	@Test
 	fun shouldBuildXorCircuit() {
 		// O = A'B + AB'
@@ -38,9 +44,9 @@ class AndOrCircuitFromTruthTableBuilderTest {
 		AndOrCircuitFromTruthTableBuilder(truthTable, truthTableService.generateDnfs(truthTable), metaGraph.graph).build()
 
 		assertEquals(3, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<DigitalCircuitInOutView>().size)
-		assertEquals(2, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<NotGateView>().size)
-		assertEquals(2, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<AndGateView>().size)
-		assertEquals(1, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<OrGateView>().size)
+		assertEquals(2, getLogicGateViews(metaGraph, Not).size)
+		assertEquals(2, getLogicGateViews(metaGraph, And).size)
+		assertEquals(1, getLogicGateViews(metaGraph, Or).size)
 	}
 
 	@Test
@@ -56,9 +62,9 @@ class AndOrCircuitFromTruthTableBuilderTest {
 
 		assertEquals(4, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<DigitalCircuitInOutView>().size)
 		assertEquals(1, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<ConstantView>().size)
-		assertEquals(2, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<AndGateView>().size)
+		assertEquals(2, getLogicGateViews(metaGraph, And).size)
 		// No OR gate necessary for the Y expression
-		assertEquals(1, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<OrGateView>().size)
+		assertEquals(1, getLogicGateViews(metaGraph, Or).size)
 	}
 
 	@Test
@@ -74,9 +80,9 @@ class AndOrCircuitFromTruthTableBuilderTest {
 
 		assertEquals(4, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<DigitalCircuitInOutView>().size)
 		assertEquals(1, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<ConstantView>().size)
-		assertEquals(2, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<AndGateView>().size)
+		assertEquals(2, getLogicGateViews(metaGraph, And).size)
 		// No OR gate necessary for the Y expression
-		assertEquals(1, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<OrGateView>().size)
+		assertEquals(1, getLogicGateViews(metaGraph, Or).size)
 	}
 
 	@Test
@@ -91,10 +97,10 @@ class AndOrCircuitFromTruthTableBuilderTest {
 		assertEquals(4, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<DigitalCircuitInOutView>().size)
 		assertEquals(0, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<ConstantView>().size)
 		// No AND gate necessary for the single-factor AND term
-		assertEquals(1, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<AndGateView>().size)
-		assertEquals(1, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<OrGateView>().size)
+		assertEquals(1, getLogicGateViews(metaGraph, And).size)
+		assertEquals(1, getLogicGateViews(metaGraph, Or).size)
 
-		assertTrue(metaGraph.graph.graphView.getVerticeViews().filterIsInstance<OrGateView>()
+		assertTrue(getLogicGateViews(metaGraph, Or)
 			.first()
 			.model.getInputs().all { it.isConnected }
 		)
@@ -111,8 +117,8 @@ class AndOrCircuitFromTruthTableBuilderTest {
 
 		assertEquals(3, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<DigitalCircuitInOutView>().size)
 		assertEquals(0, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<ConstantView>().size)
-		assertEquals(0, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<AndGateView>().size)
-		assertEquals(0, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<OrGateView>().size)
+		assertEquals(0, getLogicGateViews(metaGraph, And).size)
+		assertEquals(0, getLogicGateViews(metaGraph, Or).size)
 
 		val inputA = metaGraph.graph.model!!.getGraphInput<DigitalSignal>("A")!!
 		val outputY = metaGraph.graph.model!!.getGraphOutput<DigitalSignal>("Y")!!

@@ -9,6 +9,7 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_1
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.help.HelpId
 
 /**
  * The supported types of [NonUnaryLogicGate] with 2 or more [InputPort]s.
@@ -16,15 +17,16 @@ import ch.scorpion.jabbah.base.Translations
 enum class NonUnaryLogicGateType(
 	override val outputLogic: Logic,
 	override val calculator: AbstractLogicGateCalculator,
+	override val helpId: HelpId,
 	private val baseResourceKey: String,
 	private val moreThanTwoPortBaseResourceKey: String? = null
 ): LogicGateType {
-	And(Logic.POSITIVE, AndCalculator, "library.element.AndGate"),
-	Nand(Logic.NEGATIVE, NandCalculator, "library.element.NandGate"),
-	Or(Logic.POSITIVE, OrCalculator, "library.element.OrGate"),
-	Nor(Logic.NEGATIVE, NorCalculator, "library.element.NorGate"),
-	Xor(Logic.POSITIVE, XorCalculator, "library.element.XorGate", "library.element.OddFunction"),
-	Xnor(Logic.NEGATIVE, XnorCalculator, "library.element.XnorGate", "library.element.EvenFunction");
+	And(Logic.POSITIVE, AndCalculator, HelpId("AndGate"), "library.element.AndGate"),
+	Nand(Logic.NEGATIVE, NandCalculator, HelpId("NandGate"), "library.element.NandGate"),
+	Or(Logic.POSITIVE, OrCalculator, HelpId("OrGate"), "library.element.OrGate"),
+	Nor(Logic.NEGATIVE, NorCalculator, HelpId("NorGate"), "library.element.NorGate"),
+	Xor(Logic.POSITIVE, XorCalculator, HelpId("XorGate"), "library.element.XorGate", "library.element.OddFunction"),
+	Xnor(Logic.NEGATIVE, XnorCalculator, HelpId("XnorGate"), "library.element.XnorGate", "library.element.EvenFunction");
 
 	fun getType(gate: NonUnaryLogicGate): String =
 		if (gate.inputCount > PortCount.TWO.count && moreThanTwoPortBaseResourceKey != null) {

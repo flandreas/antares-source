@@ -5,7 +5,7 @@ import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.model.inout.DigitalCircuitInOutImpl
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.view.gate.OrGateView
+import ch.scorpion.antares.view.gate.LogicGateView
 import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.antares.view.input.SwitchView
 import ch.scorpion.antares.view.output.LEDView
@@ -39,7 +39,7 @@ class AntaresUsecaseExternalFunctionsTest : AbstractCircuitTest() {
 
 	private lateinit var input: DigitalCircuitInOutView
 
-	private lateinit var orGate: OrGateView
+	private lateinit var orGate: LogicGateView
 
 	private lateinit var led: LEDView
 
@@ -56,7 +56,7 @@ class AntaresUsecaseExternalFunctionsTest : AbstractCircuitTest() {
 		val builder = TestCircuitBuilder("bla", styleProvider, eventBus)
 		switch = builder.addVerticeView(SwitchView())
 		input = builder.addVerticeView(DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(portType = PortType.INPUT, name = "I")))
-		orGate = builder.addVerticeView(OrGateView())
+		orGate = builder.addVerticeView(LogicGateView.orGateView())
 		led = builder.addVerticeView(LEDView())
 		output = builder.addVerticeView(DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(portType = PortType.OUTPUT)))
 

@@ -74,7 +74,8 @@ class ComponentPropertyPanelController(
 	override fun getDefinedDescription(description: String): String =
 		if (bean is MultiSelection) {
 			(bean as MultiSelection).let {
-				if (it.commonType === it.selection.first()::class) {
+				// Cannot use commonType, because their might be different types implemented by the same class
+				if (it.selection.all { component -> component.type == it.type }) {
 					Translations.getString("edit.property.bean.multiSelect", description)
 				} else {
 					Translations.getString("edit.property.bean.multiVarious")
@@ -156,7 +157,8 @@ class ComponentPropertyPanelController(
 		}
 
 		// Optimization: Avoid expensive common superclass calculation if all have the same type
-		if (components.map { it.propertyOwner }.all { it::class === components.first()::class }) {
+		// Cannot use clazz comparison, because their might be different types implemented by the same class
+		if (components.map { it.propertyOwner }.all { it.type == components.first().type }) {
 			return MultiSelection(components, components.first().propertyOwner::class)
 		}
 

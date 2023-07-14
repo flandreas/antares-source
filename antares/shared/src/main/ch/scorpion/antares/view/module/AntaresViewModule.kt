@@ -6,6 +6,9 @@ import ch.scorpion.antares.model.AntaresGraphTypes.Digital
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.analog.AnalogCircuitInOut
 import ch.scorpion.antares.model.analog.AnalogGraph
+import ch.scorpion.antares.model.gate.NonUnaryLogicGateType.*
+import ch.scorpion.antares.model.gate.UnaryLogicGateType.Buffer
+import ch.scorpion.antares.model.gate.UnaryLogicGateType.Not
 import ch.scorpion.antares.model.inout.DigitalCircuitInOutImpl
 import ch.scorpion.antares.model.module.AntaresModelModule
 import ch.scorpion.antares.model.net.TransistorType
@@ -30,7 +33,6 @@ import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.antares.view.input.*
 import ch.scorpion.antares.view.metagraph.AntaresMetaGraphService
 import ch.scorpion.antares.view.net.*
-import ch.scorpion.jabbah.graph.view.oscilloscope.AbstractSignalHistoryDrawer
 import ch.scorpion.antares.view.oscilloscope.AntaresOscilloscopeViewFactory
 import ch.scorpion.antares.view.oscilloscope.DigitalOscilloscopeProbeNameStrategy
 import ch.scorpion.antares.view.output.*
@@ -88,6 +90,7 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.DragEdgePointHighlight
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewBelowSelectionModel
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewReplaceSelectionModel
+import ch.scorpion.jabbah.graph.view.oscilloscope.AbstractSignalHistoryDrawer
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.TypeMap
@@ -283,7 +286,7 @@ object AntaresViewModule : AbstractModule() {
 		properties.set(JoystickView.PROP_ICON_PATH, "/img/joystick.png")
 		properties.set(VideoRamView.PROP_ICON_PATH, "/img/videoram.png")
 
-		properties.set(AndGateView.PROP_DATA_FLOW_ENABLED, true)
+		properties.set(LogicGateView.PROP_DATA_FLOW_ENABLED, true)
 		properties.set(AbstractTransistorView.PROP_TRANSISTOR_CIRCLE, true)
 
 		properties.set(LightColor.PROP_DEFAULT_LIGHT_COLOR, LightColor.RED.customName)
@@ -303,14 +306,15 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("digitalPortViewComp", DigitalPortViewComponent::class)
 		typeMap.register("digitalSignalSourceCV", DigitalSignalSourceControlView::class)
 
-		typeMap.register("notGateView", NotGateView::class)
-		typeMap.register("andGateView", AndGateView::class)
-		typeMap.register("nandGateView", NandGateView::class)
-		typeMap.register("orGateView", OrGateView::class)
-		typeMap.register("norGateView", NorGateView::class)
-		typeMap.register("xorGateView", XorGateView::class)
-		typeMap.register("xnorGateView", XnorGateView::class)
-		typeMap.register("bufferGateView", BufferGateView::class)
+		typeMap.register("andGateView", { it is LogicGateView && it.model.logicGateType == And }) { LogicGateView.andGateView() }
+		typeMap.register("nandGateView", { it is LogicGateView && it.model.logicGateType == Nand }) { LogicGateView.nandGateView() }
+		typeMap.register("orGateView", { it is LogicGateView && it.model.logicGateType == Or }) { LogicGateView.orGateView() }
+		typeMap.register("norGateView", { it is LogicGateView && it.model.logicGateType == Nor }) { LogicGateView.norGateView() }
+		typeMap.register("xorGateView", { it is LogicGateView && it.model.logicGateType == Xor }) { LogicGateView.xorGateView() }
+		typeMap.register("xnorGateView", { it is LogicGateView && it.model.logicGateType == Xnor }) { LogicGateView.xnorGateView() }
+		typeMap.register("notGateView", { it is LogicGateView && it.model.logicGateType == Not }) { LogicGateView.notGateView() }
+		typeMap.register("bufferGateView", { it is LogicGateView && it.model.logicGateType == Buffer }) { LogicGateView.bufferGateView() }
+
 		typeMap.register("triStateBufferGateView", TriStateBufferGateView::class)
 
 		typeMap.register("switchView", SwitchView::class)
@@ -395,14 +399,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, WireTapView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, PowerOnResetView::class) { SelectedColorSelectionModel(it) }
 
-		factory.register(SelectionDrawingStrategy.REPLACE, AndGateView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, OrGateView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, NotGateView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, NandGateView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, NorGateView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, XorGateView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, XnorGateView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, BufferGateView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, LogicGateView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, TriStateBufferGateView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, DelayGateView::class) { SelectedColorSelectionModel(it) }
 
@@ -455,15 +452,7 @@ object AntaresViewModule : AbstractModule() {
 
 	private fun configureHighlightModels(factory: SelectionModelFactory) {
 		factory.register(SelectionDrawingStrategy.BELOW, DigitalEdgeView::class) { EdgeViewBelowSelectionModel(component = it as EdgeView<*>, styleType = EditStyleType.HIGHLIGHT) }
-
-		factory.register(SelectionDrawingStrategy.BELOW, AndGateView::class) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
-		factory.register(SelectionDrawingStrategy.BELOW, OrGateView::class) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
-		factory.register(SelectionDrawingStrategy.BELOW, NotGateView::class) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
-		factory.register(SelectionDrawingStrategy.BELOW, NandGateView::class) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
-		factory.register(SelectionDrawingStrategy.BELOW, NorGateView::class) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
-		factory.register(SelectionDrawingStrategy.BELOW, XorGateView::class) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
-		factory.register(SelectionDrawingStrategy.BELOW, XnorGateView::class) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
-		factory.register(SelectionDrawingStrategy.BELOW, BufferGateView::class) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
+		factory.register(SelectionDrawingStrategy.BELOW, LogicGateView::class) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
 		factory.register(SelectionDrawingStrategy.BELOW, TriStateBufferGateView::class) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
 		factory.register(SelectionDrawingStrategy.BELOW, DelayGateView::class) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
 
@@ -510,7 +499,7 @@ object AntaresViewModule : AbstractModule() {
 				SymbolStyle.EUROPEAN to "/img/and-iec.png",
 				SymbolStyle.VERBOSE to "/img/and-iec.png"
 			))::evaluate,
-			AndGateView::class)
+			And.helpId) { LogicGateView.andGateView() }
 		repository.register(OR,
 			"library.element.OrGate",
 			CurrentSymbolStyleToString(mapOf(
@@ -518,7 +507,7 @@ object AntaresViewModule : AbstractModule() {
 				SymbolStyle.EUROPEAN to "/img/or-iec.png",
 				SymbolStyle.VERBOSE to "/img/or-iec.png"
 			))::evaluate,
-			OrGateView::class)
+			Or.helpId) { LogicGateView.orGateView() }
 		repository.register(NOT,
 			"library.element.NotGate",
 			CurrentSymbolStyleToString(mapOf(
@@ -526,7 +515,7 @@ object AntaresViewModule : AbstractModule() {
 				SymbolStyle.EUROPEAN to "/img/not-iec.png",
 				SymbolStyle.VERBOSE to "/img/not-iec.png"
 			))::evaluate,
-			NotGateView::class)
+			Not.helpId) { LogicGateView.notGateView() }
 		repository.register(NAND,
 			"library.element.NandGate",
 			CurrentSymbolStyleToString(mapOf(
@@ -534,7 +523,7 @@ object AntaresViewModule : AbstractModule() {
 				SymbolStyle.EUROPEAN to "/img/nand-iec.png",
 				SymbolStyle.VERBOSE to "/img/nand-iec.png"
 			))::evaluate,
-			NandGateView::class)
+			Nand.helpId) { LogicGateView.nandGateView() }
 		repository.register(NOR,
 			"library.element.NorGate",
 			CurrentSymbolStyleToString(mapOf(
@@ -542,7 +531,7 @@ object AntaresViewModule : AbstractModule() {
 				SymbolStyle.EUROPEAN to "/img/nor-iec.png",
 				SymbolStyle.VERBOSE to "/img/nor-iec.png"
 			))::evaluate,
-			NorGateView::class)
+			Nor.helpId) { LogicGateView.norGateView() }
 		repository.register(XOR,
 			"library.element.XorGate",
 			CurrentSymbolStyleToString(mapOf(
@@ -550,7 +539,7 @@ object AntaresViewModule : AbstractModule() {
 				SymbolStyle.EUROPEAN to "/img/xor-iec.png",
 				SymbolStyle.VERBOSE to "/img/xor-iec.png"
 			))::evaluate,
-			XorGateView::class)
+			Xor.helpId) { LogicGateView.xorGateView() }
 		repository.register(XNOR,
 			"library.element.XnorGate",
 			CurrentSymbolStyleToString(mapOf(
@@ -558,7 +547,7 @@ object AntaresViewModule : AbstractModule() {
 				SymbolStyle.EUROPEAN to "/img/xnor-iec.png",
 				SymbolStyle.VERBOSE to "/img/xnor-iec.png"
 			))::evaluate,
-			XnorGateView::class)
+			Xnor.helpId) { LogicGateView.xnorGateView() }
 		repository.register(BUFFER,
 			"library.element.Buffer",
 			CurrentSymbolStyleToString(mapOf(
@@ -566,7 +555,7 @@ object AntaresViewModule : AbstractModule() {
 				SymbolStyle.EUROPEAN to "/img/buffer-iec.png",
 				SymbolStyle.VERBOSE to "/img/buffer-iec.png"
 			))::evaluate,
-			BufferGateView::class)
+			Buffer.helpId) { LogicGateView.bufferGateView() }
 		repository.register(TRISTATE_BUFFER, "library.element.TriStateBuffer", { "/img/tristate-buffer.png" }, TriStateBufferGateView::class)
 		repository.register(DELAY, "library.element.Delay", { "/img/delay.png" }, DelayGateView::class)
 		repository.register(INPUT, "library.element.GraphInput", { "/img/input.png" }, HelpId(DigitalCircuitInOutView::class.simpleName!!)) {
@@ -758,14 +747,15 @@ object AntaresViewModule : AbstractModule() {
 			register(HelpId(WireTapView::class.simpleName!!), HelpSource("$base/wire-tap"))
 			register(HelpId(PowerOnResetView::class.simpleName!!), HelpSource("$base/powerOn-reset"))
 
-			register(HelpId(AndGateView::class.simpleName!!), HelpSource("$base/and"))
-			register(HelpId(OrGateView::class.simpleName!!), HelpSource("$base/or"))
-			register(HelpId(NotGateView::class.simpleName!!), HelpSource("$base/not"))
-			register(HelpId(NandGateView::class.simpleName!!), HelpSource("$base/nand"))
-			register(HelpId(NorGateView::class.simpleName!!), HelpSource("$base/nor"))
-			register(HelpId(XorGateView::class.simpleName!!), HelpSource("$base/xor"))
-			register(HelpId(XnorGateView::class.simpleName!!), HelpSource("$base/xnor"))
-			register(HelpId(BufferGateView::class.simpleName!!), HelpSource("$base/buffer"))
+			register(And.helpId, HelpSource("$base/and"))
+			register(Nor.helpId, HelpSource("$base/or"))
+			register(Not.helpId, HelpSource("$base/not"))
+			register(Nand.helpId, HelpSource("$base/nand"))
+			register(Nor.helpId, HelpSource("$base/nor"))
+			register(Xor.helpId, HelpSource("$base/xor"))
+			register(Xnor.helpId, HelpSource("$base/xnor"))
+			register(Buffer.helpId, HelpSource("$base/buffer"))
+
 			register(HelpId(TriStateBufferGateView::class.simpleName!!), HelpSource("$base/tristate-buffer"))
 			register(HelpId(DelayGateView::class.simpleName!!), HelpSource("$base/delay"))
 			register(HelpId(DigitalCircuitInOutView::class.simpleName!!), HelpSource("$base/port"))

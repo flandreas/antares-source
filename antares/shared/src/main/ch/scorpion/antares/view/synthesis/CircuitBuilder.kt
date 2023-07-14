@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.PortCount
 import ch.scorpion.antares.model.addressable.LookupTable
 import ch.scorpion.antares.model.gate.NonUnaryLogicGate
 import ch.scorpion.antares.model.gate.NonUnaryLogicGateType
+import ch.scorpion.antares.model.gate.UnaryLogicGate
 import ch.scorpion.antares.model.inout.DigitalCircuitInOutImpl
 import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.net.Concentrator
@@ -12,9 +13,7 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.Handedness
 import ch.scorpion.antares.view.addressable.LookupTableView
-import ch.scorpion.antares.view.gate.AndGateView
-import ch.scorpion.antares.view.gate.NotGateView
-import ch.scorpion.antares.view.gate.OrGateView
+import ch.scorpion.antares.view.gate.LogicGateView
 import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.antares.view.net.ConcentratorView
 import ch.scorpion.antares.view.net.ConstantView
@@ -54,7 +53,7 @@ class CircuitBuilder(
 	fun addNot(
 		location: Point2D = Point2D.ZERO,
 		orientation: Direction = Direction.EAST
-	): NotGateView = NotGateView(styleProvider).also {
+	): LogicGateView = LogicGateView(styleProvider, gate = UnaryLogicGate.notGate()).also {
 			it.orientation = orientation
 			addVerticeView(it, location)
 		}
@@ -63,7 +62,7 @@ class CircuitBuilder(
 		inputCount: PortCount,
 		location: Point2D = Point2D.ZERO,
 		orientation: Direction = Direction.EAST
-	): AndGateView = AndGateView(styleProvider, andGate = NonUnaryLogicGate(NonUnaryLogicGateType.And, inputCount)).also {
+	): LogicGateView = LogicGateView(styleProvider, gate = NonUnaryLogicGate(NonUnaryLogicGateType.And, inputCount)).also {
 			it.orientation = orientation
 			addVerticeView(it, location)
 		}
@@ -81,7 +80,7 @@ class CircuitBuilder(
 		inputCount: PortCount,
 		location: Point2D = Point2D.ZERO,
 		orientation: Direction = Direction.EAST
-	): OrGateView = OrGateView(styleProvider, orGate = NonUnaryLogicGate(NonUnaryLogicGateType.Or, inputCount)).also {
+	): LogicGateView = LogicGateView(styleProvider, gate = NonUnaryLogicGate(NonUnaryLogicGateType.Or, inputCount)).also {
 		it.orientation = orientation
 		addVerticeView(it, location)
 	}

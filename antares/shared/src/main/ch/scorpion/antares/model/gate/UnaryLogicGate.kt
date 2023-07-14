@@ -7,6 +7,7 @@ import ch.scorpion.antares.model.gate.UnaryLogicGateType.Buffer
 import ch.scorpion.antares.model.gate.UnaryLogicGateType.Not
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.help.HelpId
 
 /**
  * The supported types of [UnaryLogicGate]s with only 1 [InputPort].
@@ -14,11 +15,12 @@ import ch.scorpion.jabbah.base.Translations
 enum class UnaryLogicGateType(
 	override val outputLogic: Logic,
 	override val calculator: AbstractLogicGateCalculator,
+	override val helpId: HelpId,
 	private val baseResourceKey: String
 ): LogicGateType {
 
-	Not(Logic.NEGATIVE, NotCalculator, "library.element.NotGate"),
-	Buffer(Logic.POSITIVE, BufferCalculator, "library.element.Buffer");
+	Not(Logic.NEGATIVE, NotCalculator, HelpId("NotGate"), "library.element.NotGate"),
+	Buffer(Logic.POSITIVE, BufferCalculator, HelpId("BufferGate"), "library.element.Buffer");
 
 	fun getType(): String = Translations.getString("$baseResourceKey.name")
 

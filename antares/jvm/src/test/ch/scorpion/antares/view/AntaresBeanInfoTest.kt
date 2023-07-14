@@ -83,12 +83,12 @@ class AntaresBeanInfoTest {
 
 	@Test
 	fun shouldReadWriteAndGateView() {
-		readWrite(AndGateView(), AndGateViewBeanInfo())
+		readWrite(LogicGateView.andGateView(), LogicGateViewBeanInfo())
 	}
 
 	@Test
 	fun shouldReadWriteBufferGateView() {
-		readWrite(BufferGateView(), BufferGateViewBeanInfo())
+		readWrite(LogicGateView.bufferGateView(), LogicGateViewBeanInfo())
 	}
 
 	@Test
@@ -98,22 +98,22 @@ class AntaresBeanInfoTest {
 
 	@Test
 	fun shouldReadWriteNandGateView() {
-		readWrite(NandGateView(), NandGateViewBeanInfo())
+		readWrite(LogicGateView.nandGateView(), LogicGateViewBeanInfo())
 	}
 
 	@Test
 	fun shouldReadWriteNorGateView() {
-		readWrite(NorGateView(), NorGateViewBeanInfo())
+		readWrite(LogicGateView.norGateView(), LogicGateViewBeanInfo())
 	}
 
 	@Test
 	fun shouldReadWriteNotGateView() {
-		readWrite(NotGateView(), NotGateViewBeanInfo())
+		readWrite(LogicGateView.notGateView(), LogicGateViewBeanInfo())
 	}
 
 	@Test
 	fun shouldReadWriteOrGateView() {
-		readWrite(OrGateView(), OrGateViewBeanInfo())
+		readWrite(LogicGateView.orGateView(), LogicGateViewBeanInfo())
 	}
 
 	@Test
@@ -123,12 +123,12 @@ class AntaresBeanInfoTest {
 
 	@Test
 	fun shouldReadWriteXnorGateView() {
-		readWrite(XnorGateView(), XnorGateViewBeanInfo())
+		readWrite(LogicGateView.xnorGateView(), LogicGateViewBeanInfo())
 	}
 
 	@Test
 	fun shouldReadWriteXorGateView() {
-		readWrite(XorGateView(), XorGateViewBeanInfo())
+		readWrite(LogicGateView.xorGateView(), LogicGateViewBeanInfo())
 	}
 
 	// inout

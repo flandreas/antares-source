@@ -11,7 +11,7 @@ import ch.scorpion.antares.view.*
 import ch.scorpion.antares.view.container.DigitalContainerEditor
 import ch.scorpion.antares.view.container.DigitalContainerToolBarBuilder
 import ch.scorpion.antares.view.container.DigitalContainerTreeView
-import ch.scorpion.antares.view.gate.AndGateView
+import ch.scorpion.antares.view.gate.LogicGateView
 import ch.scorpion.antares.view.graph.AnalogMetaGraphIcon
 import ch.scorpion.antares.view.graph.AntaresMetaGraphIcon
 import ch.scorpion.antares.view.module.AntaresViewModule
@@ -336,7 +336,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 			withName = UndefinedGateInputBehavior::withName
 		))
 		root.getGroup(PREF_TREE_CIRCUIT).add(BooleanPreference(
-			id = AndGateView.PROP_DATA_FLOW_ENABLED,
+			id = LogicGateView.PROP_DATA_FLOW_ENABLED,
 			nameKey = "antares.preferences.AndGateDataFlow"
 		))
 

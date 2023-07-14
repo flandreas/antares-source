@@ -3,7 +3,6 @@ package ch.scorpion.antares.view.symbolstyle
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.Look.SCALE
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
-import ch.scorpion.antares.view.gate.AbstractOrLikeGateView
 import ch.scorpion.antares.view.gate.BoxGateView
 import ch.scorpion.antares.view.gate.CustomShapeContent
 import ch.scorpion.antares.view.port.AbstractAntaresPortView

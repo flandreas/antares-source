@@ -23,7 +23,7 @@ import ch.scorpion.jabbah.io.StoreWriter
  * of [InputPort]s can be chosen by the user up to a certain limit.
  */
 abstract class AbstractLogicGate(
-	private val logicGateType: LogicGateType,
+	val logicGateType: LogicGateType,
 	inputCount: PortCount,
 	bitWidth: BitWidth = BitWidth.BW_1,
 	val minInputCount: PortCount = DEF_MIN_INPUT_COUNT,

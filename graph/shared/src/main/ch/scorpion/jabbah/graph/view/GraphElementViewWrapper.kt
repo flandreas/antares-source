@@ -143,7 +143,7 @@ class GraphElementViewWrapper(
 
 	override val selectableComponent: Component get() = _component!!
 
-	override val propertyOwner: Any get() = _component!!.propertyOwner
+	override val propertyOwner: Component get() = _component!!.propertyOwner
 
 	override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
 		get() = _component!!.preferredSelectionDrawingStrategy
