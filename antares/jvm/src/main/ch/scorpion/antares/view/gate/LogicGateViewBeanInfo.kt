@@ -34,7 +34,7 @@ class LogicGateViewBeanInfo  : BoxGateViewBeanInfo<LogicGateView>() {
 		properties.add(bitWidth.bind(editor, beanIdProvider(bean.id)))
 		properties.add(outputPortName.bind(editor, beanIdProvider(bean.id)))
 
-		if (bean.model.logicGateType == NonUnaryLogicGateType.And) {
+		if (bean.model.gateType == NonUnaryLogicGateType.And) {
 			properties.add(dataPort.bind(editor, beanIdProvider(bean.id), filter = { it.id <= bean.chosenInputCount.count }))
 		}
 

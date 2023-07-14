@@ -1,5 +1,6 @@
 package ch.scorpion.antares
 
+import ch.scorpion.antares.ui.AntaresContextMenuProvider
 import ch.scorpion.antares.view.AntaresFrameController
 import ch.scorpion.antares.view.OrientableRectangularVerticeViewDrawer
 import ch.scorpion.antares.view.Look
@@ -298,7 +299,7 @@ class AntaresSwing(
 		val frame = AntaresFrameSwing(graphFrameController, this, viewManager, graphFrameController)
 
 		frame.graphPanel.libraryPanel.libraryPreviewPanel.addDrawableDrawer(OrientableRectangularVerticeViewDrawer())
-		DrawModuleJvm.contextMenuProvider = GraphContextMenuProvider(this)
+		DrawModuleJvm.contextMenuProvider = AntaresContextMenuProvider(this)
 
 		return frame
 	}

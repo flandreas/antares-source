@@ -32,7 +32,7 @@ class AndOrCircuitFromTruthTableBuilderTest {
 	private val truthTableService = TruthTableService()
 
 	private fun getLogicGateViews(metaGraph: MetaGraph, type: LogicGateType): Collection<VerticeView<*>> =
-		metaGraph.graph.graphView.getVerticeViews().filter { it is LogicGateView && it.model.logicGateType == type }
+		metaGraph.graph.graphView.getVerticeViews().filter { it is LogicGateView && it.model.gateType == type }
 
 	@Test
 	fun shouldBuildXorCircuit() {

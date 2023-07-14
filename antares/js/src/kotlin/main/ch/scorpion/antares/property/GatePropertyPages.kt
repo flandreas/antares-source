@@ -35,7 +35,7 @@ open class LogicGateViewPropertyPage : DigitalComponentPropertyPage<LogicGateVie
 		builder.propertyRow(BitWidth.BASE_KEY) {
 			it.jmBitWidthField(editor, { bean.bitWidth }, { _, value -> bean.bitWidth = value!! }, bean.id )
 		}
-		if (bean.model.logicGateType == NonUnaryLogicGateType.And) {
+		if (bean.model.gateType == NonUnaryLogicGateType.And) {
 			builder.propertyRow(LogicGateView.BASE_KEY_DATA_PORT) {
 				it.jmInputPortNumber(editor, { bean.dataPort}, { _, value -> bean.dataPort = value!!}, bean.id) {
 					filter = { inputPortNumber -> inputPortNumber.id <= bean.chosenInputCount.count }

@@ -8,6 +8,7 @@ import ch.scorpion.antares.model.gate.UnaryLogicGateType.Not
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.help.HelpId
+import ch.scorpion.jabbah.graph.model.Vertice
 
 /**
  * The supported types of [UnaryLogicGate]s with only 1 [InputPort].
@@ -16,19 +17,19 @@ enum class UnaryLogicGateType(
 	override val outputLogic: Logic,
 	override val calculator: AbstractLogicGateCalculator,
 	override val helpId: HelpId,
-	private val baseResourceKey: String
+	override val baseResourceKey: String
 ): LogicGateType {
 
 	Not(Logic.NEGATIVE, NotCalculator, HelpId("NotGate"), "library.element.NotGate"),
 	Buffer(Logic.POSITIVE, BufferCalculator, HelpId("BufferGate"), "library.element.Buffer");
 
-	fun getType(): String = Translations.getString("$baseResourceKey.name")
+	override fun getName(gate: Vertice): String = Translations.getString("$baseResourceKey.name")
 
-	fun getTypeDesc(): String? = Translations.getOptionalString("$baseResourceKey.desc")
+	override fun getDescription(gate: Vertice): String? = Translations.getOptionalString("$baseResourceKey.desc")
 }
 
 class UnaryLogicGate(
-	val gateType: UnaryLogicGateType,
+	gateType: UnaryLogicGateType,
 	bitWidth: BitWidth = BitWidth.BW_1
 ): AbstractLogicGate(gateType, PortCount.ONE, bitWidth, PortCount.ONE, PortCount.ONE) {
 
@@ -37,7 +38,7 @@ class UnaryLogicGate(
 		fun bufferGate(): UnaryLogicGate = UnaryLogicGate(Buffer)
 	}
 
-	override val type: String get() = gateType.getType()
+	override val type: String get() = gateType.getName(this)
 
-	override val typeDesc: String? get() = gateType.getTypeDesc()
+	override val typeDesc: String? get() = gateType.getDescription(this)
 }

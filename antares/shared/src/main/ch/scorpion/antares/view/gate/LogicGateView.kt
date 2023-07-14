@@ -14,6 +14,8 @@ import ch.scorpion.antares.view.symbolstyle.CurrentSymbolStyle
 import ch.scorpion.antares.view.symbolstyle.SymbolStyle.*
 import ch.scorpion.antares.view.truthtable.TruthTableView
 import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.help.HelpId
+import ch.scorpion.jabbah.base.help.HelpProvider
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.resettableLazy
 import ch.scorpion.jabbah.draw.DrawContext
@@ -39,7 +41,7 @@ class LogicGateView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	private val currentSymbolStyle: CurrentSymbolStyle = AntaresViewModule.currentSymbolStyle,
 	gate: AbstractLogicGate
-) : BoxGateView<AbstractLogicGate>(styleProvider, getRenderer(gate.logicGateType).text, gate), CustomShapeContent {
+) : BoxGateView<AbstractLogicGate>(styleProvider, getRenderer(gate.gateType).text, gate), CustomShapeContent {
 
 	companion object {
 		const val BASE_KEY_INPUT_PORT_NAME = "element.property.inputPort"
@@ -121,6 +123,15 @@ class LogicGateView(
 			invalidate()
 			field = value
 			labelStyle = if (dataPort == InputPortNumber.NONE) LabelStyle.LARGE_CENTERED else LabelStyle.SMALL_UPPER_LEFT
+			invalidate()
+			update()
+		}
+
+	var logicGateType: LogicGateType
+		get() = model.gateType
+		set(value) {
+			invalidate()
+			model.gateType = value
 			invalidate()
 			update()
 		}
@@ -225,11 +236,11 @@ class LogicGateView(
 	}
 
 	override fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-		getRenderer(model.logicGateType).drawShape(this, context, foregroundColor, backgroundColor, stroke)
+		getRenderer(model.gateType).drawShape(this, context, foregroundColor, backgroundColor, stroke)
 	}
 
 	override fun drawCustomShapeContent(context: DrawContext, foregroundColor: Color, backgroundColor: Color) {
-		getRenderer(model.logicGateType).drawMnemonics(this, context, foregroundColor, backgroundColor)
+		getRenderer(model.gateType).drawMnemonics(this, context, foregroundColor, backgroundColor)
 	}
 
 	override fun getExplanation(x: Double, y: Double): DrawableExplanation<*>? =
@@ -244,11 +255,15 @@ class LogicGateView(
 		}
 	}
 
+	/** ---- [HelpProvider] */
+
+	override val helpId: HelpId get() = logicGateType.helpId
+
 	/** ---- [Storable] interface */
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
-		if (model.logicGateType == And && dataPort != InputPortNumber.NONE) {
+		if (model.gateType == And && dataPort != InputPortNumber.NONE) {
 			writer.writeInt("dataPort", dataPort.id)
 		}
 	}
@@ -288,7 +303,7 @@ class LogicGateView(
 	/** ---- [LogicGateView] */
 
 	override val outsetLeft: Int get() =
-		when (model.logicGateType) {
+		when (model.gateType) {
 			Or, Nor, Xor, Xnor -> {
 				when (currentSymbolStyle.symbolStyle) {
 					AMERICAN -> 2 * SCALE
@@ -299,7 +314,7 @@ class LogicGateView(
 		}
 
 	override val outsetTop: Int get() =
-		when (model.logicGateType) {
+		when (model.gateType) {
 			And, Nand, Or, Nor, Xor, Xnor -> {
 				when (currentSymbolStyle.symbolStyle) {
 					AMERICAN -> -SCALE
@@ -310,7 +325,7 @@ class LogicGateView(
 		}
 
 	override val outsetBottom: Int get() =
-		when (model.logicGateType) {
+		when (model.gateType) {
 			And, Nand -> {
 				when (currentSymbolStyle.symbolStyle) {
 					AMERICAN -> -SCALE

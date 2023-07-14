@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
+import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -23,12 +24,12 @@ import ch.scorpion.jabbah.io.StoreWriter
  * of [InputPort]s can be chosen by the user up to a certain limit.
  */
 abstract class AbstractLogicGate(
-	val logicGateType: LogicGateType,
+	gateType: LogicGateType,
 	inputCount: PortCount,
 	bitWidth: BitWidth = BitWidth.BW_1,
 	val minInputCount: PortCount = DEF_MIN_INPUT_COUNT,
 	val maxInputCount: PortCount = DEF_MAX_INPUT_COUNT
-) : CalculatingVertice(logicGateType.calculator), MultiSignalSource<DigitalSignal> {
+) : CalculatingVertice(gateType.calculator), MultiSignalSource<DigitalSignal> {
 
     companion object {
         val LOG by logger(AbstractLogicGate::class)
@@ -36,6 +37,15 @@ abstract class AbstractLogicGate(
         val DEF_MIN_INPUT_COUNT = PortCount.TWO
         val DEF_MAX_INPUT_COUNT = PortCount.EIGHT
     }
+
+	var gateType: LogicGateType = gateType
+		set(value) {
+			if (field != value) {
+				field = value
+				(getOutput<DigitalSignal>() as DigitalPort).logic = gateType.outputLogic
+				stateChanged()
+			}
+		}
 
 	val chosenInputCount: PortCount get() = PortCount.of(inputCount)
 
@@ -64,6 +74,10 @@ abstract class AbstractLogicGate(
 		}
 		addPort(createOutputPort())
 	}
+
+	/** ---- [CalculatingVertice] */
+
+	override val calculator: VerticeCalculator<*> get() = gateType.calculator
 
 	/** ---- [GraphElement] */
 
@@ -144,7 +158,7 @@ abstract class AbstractLogicGate(
      * which is created by this method.
      */
     protected open fun createOutputPort(): OutputPort<DigitalSignal> =
-		DigitalPortImpl.createOutput(logic = logicGateType.outputLogic, name = null, bitWidth = bitWidth)
+		DigitalPortImpl.createOutput(logic = gateType.outputLogic, name = null, bitWidth = bitWidth)
 
 	fun getNegateInput(portId: Int): Boolean = (getInput<DigitalSignal>(portId) as DigitalPort).logic == Logic.NEGATIVE
 

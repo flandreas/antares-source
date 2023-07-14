@@ -118,7 +118,7 @@ class AndOrCircuitFromTruthTableBuilder(
 
 	private fun buildAndWires(orTerm: OrTermView) {
 		orTerm.andTermViews.forEach { andTermView ->
-			if (andTermView.verticeView is LogicGateView && (andTermView.verticeView as LogicGateView).model.logicGateType == NonUnaryLogicGateType.And) {
+			if (andTermView.verticeView is LogicGateView && (andTermView.verticeView as LogicGateView).model.gateType == NonUnaryLogicGateType.And) {
 				// vv is either an AND gate (for multi-factor terms) or a ConstantView (for constant terms).
 				// If vv is empty, andTerm is a single-factor term (no AND gate) that doesn't need wiring
 				// in the "AND stack".

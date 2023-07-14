@@ -10,6 +10,7 @@ import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_1
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.help.HelpId
+import ch.scorpion.jabbah.graph.model.Vertice
 
 /**
  * The supported types of [NonUnaryLogicGate] with 2 or more [InputPort]s.
@@ -18,7 +19,7 @@ enum class NonUnaryLogicGateType(
 	override val outputLogic: Logic,
 	override val calculator: AbstractLogicGateCalculator,
 	override val helpId: HelpId,
-	private val baseResourceKey: String,
+	override val baseResourceKey: String,
 	private val moreThanTwoPortBaseResourceKey: String? = null
 ): LogicGateType {
 	And(Logic.POSITIVE, AndCalculator, HelpId("AndGate"), "library.element.AndGate"),
@@ -28,15 +29,15 @@ enum class NonUnaryLogicGateType(
 	Xor(Logic.POSITIVE, XorCalculator, HelpId("XorGate"), "library.element.XorGate", "library.element.OddFunction"),
 	Xnor(Logic.NEGATIVE, XnorCalculator, HelpId("XnorGate"), "library.element.XnorGate", "library.element.EvenFunction");
 
-	fun getType(gate: NonUnaryLogicGate): String =
-		if (gate.inputCount > PortCount.TWO.count && moreThanTwoPortBaseResourceKey != null) {
+	override fun getName(gate: Vertice): String =
+		if (gate.inputCount > TWO.count && moreThanTwoPortBaseResourceKey != null) {
 			Translations.getString("$moreThanTwoPortBaseResourceKey.name")
 		} else {
 			Translations.getString("$baseResourceKey.name")
 		}
 
-	fun getTypeDesc(gate: NonUnaryLogicGate): String? =
-		if (gate.inputCount > PortCount.TWO.count && moreThanTwoPortBaseResourceKey != null) {
+	override fun getDescription(gate: Vertice): String? =
+		if (gate.inputCount > TWO.count && moreThanTwoPortBaseResourceKey != null) {
 			Translations.getOptionalString("$moreThanTwoPortBaseResourceKey.desc")
 		} else {
 			Translations.getOptionalString("$baseResourceKey.desc")
@@ -44,7 +45,7 @@ enum class NonUnaryLogicGateType(
 }
 
 class NonUnaryLogicGate(
-	val gateType: NonUnaryLogicGateType,
+	gateType: NonUnaryLogicGateType,
 	inputCount: PortCount = TWO,
 	bitWidth: BitWidth = BW_1
 ): AbstractLogicGate(gateType, inputCount, bitWidth) {
@@ -58,9 +59,9 @@ class NonUnaryLogicGate(
 		fun xnorGate(): NonUnaryLogicGate = NonUnaryLogicGate(Xnor)
 	}
 
-	override val type: String get() = gateType.getType(this)
+	override val type: String get() = gateType.getName(this)
 
-	override val typeDesc: String? get() = gateType.getTypeDesc(this)
+	override val typeDesc: String? get() = gateType.getDescription(this)
 
 	fun calculate(portFilter: (Int) -> Boolean): DigitalSignal = if (bitWidth.width == BW_1.width) {
 		AndCalculator.calculateSingleBit(this, portFilter)

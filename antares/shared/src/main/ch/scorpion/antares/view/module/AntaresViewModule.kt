@@ -306,14 +306,14 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("digitalPortViewComp", DigitalPortViewComponent::class)
 		typeMap.register("digitalSignalSourceCV", DigitalSignalSourceControlView::class)
 
-		typeMap.register("andGateView", { it is LogicGateView && it.model.logicGateType == And }) { LogicGateView.andGateView() }
-		typeMap.register("nandGateView", { it is LogicGateView && it.model.logicGateType == Nand }) { LogicGateView.nandGateView() }
-		typeMap.register("orGateView", { it is LogicGateView && it.model.logicGateType == Or }) { LogicGateView.orGateView() }
-		typeMap.register("norGateView", { it is LogicGateView && it.model.logicGateType == Nor }) { LogicGateView.norGateView() }
-		typeMap.register("xorGateView", { it is LogicGateView && it.model.logicGateType == Xor }) { LogicGateView.xorGateView() }
-		typeMap.register("xnorGateView", { it is LogicGateView && it.model.logicGateType == Xnor }) { LogicGateView.xnorGateView() }
-		typeMap.register("notGateView", { it is LogicGateView && it.model.logicGateType == Not }) { LogicGateView.notGateView() }
-		typeMap.register("bufferGateView", { it is LogicGateView && it.model.logicGateType == Buffer }) { LogicGateView.bufferGateView() }
+		typeMap.register("andGateView", { it is LogicGateView && it.model.gateType == And }) { LogicGateView.andGateView() }
+		typeMap.register("nandGateView", { it is LogicGateView && it.model.gateType == Nand }) { LogicGateView.nandGateView() }
+		typeMap.register("orGateView", { it is LogicGateView && it.model.gateType == Or }) { LogicGateView.orGateView() }
+		typeMap.register("norGateView", { it is LogicGateView && it.model.gateType == Nor }) { LogicGateView.norGateView() }
+		typeMap.register("xorGateView", { it is LogicGateView && it.model.gateType == Xor }) { LogicGateView.xorGateView() }
+		typeMap.register("xnorGateView", { it is LogicGateView && it.model.gateType == Xnor }) { LogicGateView.xnorGateView() }
+		typeMap.register("notGateView", { it is LogicGateView && it.model.gateType == Not }) { LogicGateView.notGateView() }
+		typeMap.register("bufferGateView", { it is LogicGateView && it.model.gateType == Buffer }) { LogicGateView.bufferGateView() }
 
 		typeMap.register("triStateBufferGateView", TriStateBufferGateView::class)
 
@@ -748,12 +748,12 @@ object AntaresViewModule : AbstractModule() {
 			register(HelpId(PowerOnResetView::class.simpleName!!), HelpSource("$base/powerOn-reset"))
 
 			register(And.helpId, HelpSource("$base/and"))
-			register(Nor.helpId, HelpSource("$base/or"))
-			register(Not.helpId, HelpSource("$base/not"))
 			register(Nand.helpId, HelpSource("$base/nand"))
+			register(Or.helpId, HelpSource("$base/or"))
 			register(Nor.helpId, HelpSource("$base/nor"))
 			register(Xor.helpId, HelpSource("$base/xor"))
 			register(Xnor.helpId, HelpSource("$base/xnor"))
+			register(Not.helpId, HelpSource("$base/not"))
 			register(Buffer.helpId, HelpSource("$base/buffer"))
 
 			register(HelpId(TriStateBufferGateView::class.simpleName!!), HelpSource("$base/tristate-buffer"))
