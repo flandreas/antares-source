@@ -80,7 +80,7 @@ class GraphViewCopyPasteServiceImplNodeTest {
 
 	@Test
 	fun shouldPasteNodeViewWithThreeEdgeViews() {
-		val result = service.paste(
+		service.paste(
 			service.copy(builder.graphView.drawables.map { it.id }, builder.graphView),
 			drawingViewBuilder.build()
 		)

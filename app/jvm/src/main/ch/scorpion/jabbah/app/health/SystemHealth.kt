@@ -44,7 +44,7 @@ object SystemHealthChecker {
 		BaseModule.eventBus.unregister(commandListener)
 	}
 
-	fun handle(event: CommandEvent) {
+	fun handle(@Suppress("UNUSED_PARAMETER") event: CommandEvent) {
 		applicationDataHolder.data?.let { data ->
 			checks.firstNotNullOfOrNull { it.execute(data) }?.let {
 				BaseModule.eventBus.post(it)

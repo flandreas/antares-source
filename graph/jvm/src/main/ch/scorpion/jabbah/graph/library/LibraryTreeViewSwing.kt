@@ -186,8 +186,8 @@ class LibraryTreeViewSwing(
 		expandRow(0)
 
 		if (library.expandedImports.staleImportCount > 0) {
-			var title = ""
-			var text = ""
+			var title: String
+			var text: String
 			if (library is Project) {
 				title = Translations.getString("library.open.staleReferenceFromProject.name")
 				text = Translations.getString("library.open.staleReferenceFromProject.msg")

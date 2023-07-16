@@ -78,7 +78,6 @@ class BooleanExpressionParser(
 	private fun assignment(): Assignment {
 		lexer.location.let { location ->
 			val variable = output()
-			val op = currentToken
 			eat(ASSIGN)
 			val right = expr()
 			return Assignment(location, variable, right)

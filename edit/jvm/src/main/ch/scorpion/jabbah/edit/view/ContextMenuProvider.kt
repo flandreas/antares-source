@@ -4,8 +4,6 @@ import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.view.ContextMenuProvider
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.app.*
 import javax.swing.JMenu
 import javax.swing.JPopupMenu
@@ -30,10 +28,10 @@ open class EditContextMenuProvider : ContextMenuProvider {
 	override var applicationName: String = ""
 
 	override fun fillContextMenu(view: View<*>, x: Double, y: Double, menu: JPopupMenu) {
-		fillContextMenu(view, (view as DrawingView<*>).selectionManager.selection, menu)
+		fillContextMenu(view, menu)
 	}
 
-	private fun fillContextMenu(view: View<*>, selection: Collection<Component>, popupMenu: JPopupMenu) {
+	private fun fillContextMenu(view: View<*>, popupMenu: JPopupMenu) {
 		popupMenu.removeAll()
 		addActions(view, popupMenu)
 	}

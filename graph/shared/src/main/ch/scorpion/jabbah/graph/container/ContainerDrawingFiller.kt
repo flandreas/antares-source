@@ -154,9 +154,9 @@ class NarrowContainerDrawingFiller(
 			null
 		}
 
-	override fun calculateWidth(maxInputWidth: Double, maxOutputWidth: Double, label: LabelComponent?): Double =
-		if (label != null) {
-			val labelWidth = label.boundingBox.widthInt
+	override fun calculateWidth(maxInputWidth: Double, maxOutputWidth: Double, labelComponent: LabelComponent?): Double =
+		if (labelComponent != null) {
+			val labelWidth = labelComponent.boundingBox.widthInt
 			max(MIN_WIDTH, 2 * max(maxInputWidth, maxOutputWidth) + labelWidth + 2 * LABEL_INSET_X)
 		} else {
 			calculateWidthWithoutLabel(maxInputWidth, maxOutputWidth)

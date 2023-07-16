@@ -92,7 +92,7 @@ class ChangeInputCountIntegrationTest : AbstractCircuitTest() {
 		val model = NonUnaryLogicGate(And, PortCount.FOUR)
 		val andGateView2 = LogicGateView(gate = model)
 
-		service.changeInputCount(andGateView2 as LogicGateView, PortCount.TWO, drawingView)
+		service.changeInputCount(andGateView2, PortCount.TWO, drawingView)
 
 		assertEquals(2, andGateView2.model.inputCount)
 	}

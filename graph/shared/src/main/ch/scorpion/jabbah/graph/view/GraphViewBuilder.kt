@@ -99,7 +99,7 @@ open class GraphViewBuilder<T : Any>(
 		toPort: InputPort<T> = to.model.getInput(),
 		points: List<Point2D>
 	): EdgeView<T> {
-		val edgeView = edgeViewFactory.createEdgeView<T>(graphView) as EdgeView<T>
+		val edgeView = edgeViewFactory.createEdgeView<T>(graphView)
 		points.forEach { edgeView.addSegmentPoint(it) }
 		edgeView.layout.isAdjusted = true
 		graphView.add(edgeView)

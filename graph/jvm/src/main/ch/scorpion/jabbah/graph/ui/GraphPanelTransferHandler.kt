@@ -105,7 +105,7 @@ class GraphPanelTransferHandler(
 	}
 
 	private fun checkNoGraphCycle(dropVertice: SubGraphVertice, targetUUID: UUID): Boolean {
-		if (repository.graphContainsRecursively(dropVertice!!.graphUUID!!, targetUUID)) {
+		if (repository.graphContainsRecursively(dropVertice.graphUUID!!, targetUUID)) {
 			LOG.trace("Prevent dropping '${dropVertice.name}' in order to prevent Graph cycle")
 			JOptionPane.showMessageDialog(
 				Frame.getFrames()[0],

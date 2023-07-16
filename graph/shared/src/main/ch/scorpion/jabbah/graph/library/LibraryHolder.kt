@@ -24,7 +24,6 @@ class LibraryHolder(
         set(value) {
 	        if (field != value) {
 		        LOG.trace("LibraryHolder: setting current Library to '${value?.name}'")
-		        val oldValue = field
 		        field?.dispose()
 		        field = value
 		        eventBus.post(CurrentLibraryEvent(field))
