@@ -275,8 +275,7 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 			newEdgeViewProvider = NewEdgeViewAtSplitRetrieveProvider(context.editor, edgeView!!.id),
 			newEdgeViewEndpointType = draggedEndpointType,
 			targetConnectableViewId = null,
-			targetPortId = null,
-			joinNetViews = true
+			targetPortId = null
 		))
 	}
 

@@ -150,8 +150,7 @@ open class GraphViewBuilder<T : Any>(
 			EdgeViewEndpointType.ORIGIN.getLocation(newEdgeView),
 			newEdgeView,
 			EdgeViewEndpointType.ORIGIN,
-			dest,
-			joinNetViews = false)
+			dest)
 		if (dest == null) {
 			newEdgeView.addSegmentPoint(location)
 		}

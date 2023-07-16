@@ -430,8 +430,7 @@ abstract class AbstractPortViewStartConnector(
 				newEdgeViewProvider = NewEdgeViewAtSplitCloneProvider(edgeView!!),
 				newEdgeViewEndpointType = draggedEndpointType,
 				targetConnectableViewId = startPortView!!.owner!!.id,
-				targetPortId = startPortView!!.port.portId,
-				joinNetViews = false
+				targetPortId = startPortView!!.port.portId
 			)
 		)
 	}

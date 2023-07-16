@@ -119,6 +119,10 @@ class NetViewImpl<T : Any>(
 		// Combine Nets
 		net.combine(other.net)
 
+		other.getElements().forEach {
+			it.net = net
+		}
+
 		// Combine NetViews
 		for (element in other.getElements().toList()) {
 			other.remove(element)

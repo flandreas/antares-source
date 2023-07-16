@@ -19,7 +19,7 @@ import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.connect.DragEdgeViewDestinationConnector
 import ch.scorpion.jabbah.graph.view.connect.DragEdgeViewOriginConnector
-import ch.scorpion.jabbah.graph.view.connect.EdgeToPortConnector
+import ch.scorpion.jabbah.graph.view.connect.EdgeToPortOrEdgeConnector
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewImpl
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.style.EdgeStyle
@@ -34,13 +34,13 @@ import ch.scorpion.jabbah.graph.view.style.EdgeStyle
  */
 class DigitalEdgeView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	edgeToPortConnectorSupplier: () -> EdgeToPortConnector = DEF_EDGE_TO_PORT_CONNECTOR_SUPPLIER,
+	edgeToPortOrEdgeConnectorSupplier: () -> EdgeToPortOrEdgeConnector = DEF_EDGE_TO_PORT_CONNECTOR_SUPPLIER,
 	origEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector = DEF_ORIG_ENDPOINT_CONNECTOR_SUPPLIER,
 	destEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector = DEF_DEST_ENDPOINT_CONNECTOR_SUPPLIER,
 	net: DigitalNet = DigitalNet()
 ) : EdgeViewImpl<DigitalSignal>(
 	styleProvider,
-	edgeToPortConnectorSupplier,
+	edgeToPortOrEdgeConnectorSupplier,
 	origEndpointConnectorSupplier,
 	destEndpointConnectorSupplier,
 	net

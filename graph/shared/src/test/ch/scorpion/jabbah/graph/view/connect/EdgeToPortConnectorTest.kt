@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.graph.view.connect
 import ch.scorpion.jabbah.base.event.Modifier
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.state.StateMachine
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.edit.module.EditModule
@@ -22,7 +21,7 @@ import io.mockk.verify
 import kotlin.test.*
 
 class EdgeToPortConnectorTest
-	: AbstractInputEventHandlerTest(GraphViewModule.edgeToPortConnector.handler) {
+	: AbstractInputEventHandlerTest(GraphViewModule.edgeToPortOrEdgeConnector.handler) {
 
 	companion object {
 		init {
@@ -123,9 +122,8 @@ class EdgeToPortConnectorTest
 
 	/**
 	 * There are systems (Windows generally?) that generate multiple key pressed events when moving/dragging
-	 * the mouse while the key is being hold. Since [EdgeToPortConnector] is initiated by pressing the ALT key,
-	 * the ALT key is typically still pressed while the StateMachine is already active. Make sure that
-	 * [EdgeToPortConnector]'s [StateMachine]
+	 * the mouse while the key is being hold. Since [EdgeToPortOrEdgeConnector] is initiated by pressing the ALT key,
+	 * the ALT key is typically still pressed while the StateMachine is already active.
 	 */
 	@Test
 	fun shouldConnectWithInterferingKeyPressedEvents() {

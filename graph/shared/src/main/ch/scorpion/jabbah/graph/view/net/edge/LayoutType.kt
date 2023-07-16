@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
-import ch.scorpion.jabbah.graph.view.connect.EdgeToPortConnector
+import ch.scorpion.jabbah.graph.view.connect.EdgeToPortOrEdgeConnector
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 
 /**
@@ -124,9 +124,9 @@ enum class LayoutType(
 			if (edgeView.origin == null && edgeView.originEndpointView.contains(context.x, context.y)) {
 				return edgeView.originEndpointView.getInputEventHandler(context)
 			}
-			if (context.mouseEvent?.hasModifier(EdgeToPortConnector.SPLIT_EDGE_VIEW_MODIFIER) == true) {
-				edgeView.edgeToPortConnectorSupplier.invoke().useFor(edgeView, context as EditInputEventContext)
-				return edgeView.edgeToPortConnectorSupplier.invoke().handler as InputEventHandler<T>
+			if (context.mouseEvent?.hasModifier(EdgeToPortOrEdgeConnector.SPLIT_EDGE_VIEW_MODIFIER) == true) {
+				edgeView.edgeToPortOrEdgeConnectorSupplier.invoke().useFor(edgeView, context as EditInputEventContext)
+				return edgeView.edgeToPortOrEdgeConnectorSupplier.invoke().handler as InputEventHandler<T>
 			}
 		}
 

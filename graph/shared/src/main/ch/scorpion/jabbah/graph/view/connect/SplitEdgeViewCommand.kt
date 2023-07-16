@@ -50,8 +50,7 @@ class SplitEdgeViewCommand(
 	private val newEdgeViewProvider: NewEdgeViewAtSplitProvider,
 	private val newEdgeViewEndpointType: EdgeViewEndpointType,
 	private val targetConnectableViewId: Int?,
-	private val targetPortId: Int?,
-	private val joinNetViews: Boolean
+	private val targetPortId: Int?
 ) : AbstractCommand(baseKey, editor) {
 
 	companion object {
@@ -78,7 +77,6 @@ class SplitEdgeViewCommand(
 			splitLocation,
 			addedNewEdgeView,
 			newEdgeViewEndpointType,
-			targetPortView as PortView<Any>?,
-			joinNetViews = joinNetViews)
+			targetPortView as PortView<Any>?)
 	}
 }

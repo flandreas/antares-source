@@ -125,9 +125,6 @@ interface GraphViewConnectService {
 	 *
 	 * @param newEdgeViewEndpointType the [EdgeViewEndpointType] to connect [newEdgeView] with the created [NodeView]
 	 * @param otherNewEdgeViewPortView the [PortView] to connect the end of [newEdgeView] that is not connected to the [NodeView]
-	 * @param joinNetViews if `true`, the [NetView] of [newEdgeView] is joined into the [NetView] of [splitEdgeView].
-	 * Provide `false` if [newEdgeView] is a solitary object not being part of any complex [NetView], e.g. if [newEdgeView]
-	 * has just been created to connect a [PortView] with an existing [EdgeView].
 	 */
 	fun <T : Any> split(
 		graphView: GraphView,
@@ -137,8 +134,7 @@ interface GraphViewConnectService {
 		newEdgeView: EdgeView<T>,
 		newEdgeViewEndpointType: EdgeViewEndpointType = EdgeViewEndpointType.ORIGIN,
 		otherNewEdgeViewPortView: PortView<T>?,
-		tailEdgeView: EdgeView<T>? = null,
-		joinNetViews: Boolean
+		tailEdgeView: EdgeView<T>? = null
 	): SplitEdgeViewResult<T>
 
 	/**

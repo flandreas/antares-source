@@ -91,7 +91,7 @@ object GraphViewModule : AbstractModule() {
 	val dragEdgeViewOriginConnector: DragEdgeViewOriginConnector by lazy { DragEdgeViewOriginConnector(graphViewConnectService) }
 	val dragEdgeViewDestinationConnector: DragEdgeViewDestinationConnector by lazy { DragEdgeViewDestinationConnector(graphViewConnectService) }
 
-	val edgeToPortConnector: EdgeToPortConnector by lazy { EdgeToPortConnector(graphViewConnectService, edgeViewFactoryImpl) }
+	val edgeToPortOrEdgeConnector: EdgeToPortOrEdgeConnector by lazy { EdgeToPortOrEdgeConnector(graphViewConnectService, edgeViewFactoryImpl) }
 
 	val outputToInputOrEdgeConnector: OutputToInputOrEdgeConnector by lazy { OutputToInputOrEdgeConnector(graphViewConnectService, edgeViewFactoryImpl) }
 
@@ -222,7 +222,7 @@ object GraphViewModule : AbstractModule() {
 
 	private var edgeViewFactoryImpl: EdgeViewFactory = EdgeViewFactoryImpl(
 		DrawStyleModule.styleProvider,
-		{ edgeToPortConnector },
+		{ edgeToPortOrEdgeConnector },
 		{ dragEdgeViewOriginConnector },
 		{ dragEdgeViewDestinationConnector }
 	)

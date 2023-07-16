@@ -11,33 +11,33 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.NetView
 import ch.scorpion.jabbah.graph.view.connect.DragEdgeViewDestinationConnector
 import ch.scorpion.jabbah.graph.view.connect.DragEdgeViewOriginConnector
-import ch.scorpion.jabbah.graph.view.connect.EdgeToPortConnector
+import ch.scorpion.jabbah.graph.view.connect.EdgeToPortOrEdgeConnector
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewFactory
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewImpl
 
 class AntaresEdgeViewFactory(
 	private val styleProvider: StyleProvider,
-	private val edgeToPortConnectorSupplier: () -> EdgeToPortConnector,
+	private val edgeToPortOrEdgeConnectorSupplier: () -> EdgeToPortOrEdgeConnector,
 	private val origEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector,
 	private val destEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector,
 ) : EdgeViewFactory {
 
 	override fun <T: Any> createEdgeView(graphView: GraphView): EdgeView<T> =
 		when (graphView) {
-			is DigitalGraphView -> DigitalEdgeView(styleProvider, edgeToPortConnectorSupplier, origEndpointConnectorSupplier,
+			is DigitalGraphView -> DigitalEdgeView(styleProvider, edgeToPortOrEdgeConnectorSupplier, origEndpointConnectorSupplier,
 				destEndpointConnectorSupplier) as EdgeView<T>
 			is AnalogGraphView -> AnalogEdgeView(styleProvider) as EdgeView<T>
-			is GraphViewImpl -> EdgeViewImpl(styleProvider, edgeToPortConnectorSupplier, origEndpointConnectorSupplier, destEndpointConnectorSupplier)
+			is GraphViewImpl -> EdgeViewImpl(styleProvider, edgeToPortOrEdgeConnectorSupplier, origEndpointConnectorSupplier, destEndpointConnectorSupplier)
 			else -> throw IllegalArgumentException("Unsupported GraphView type when creating EdgeView")
 		}
 
 	override fun <T: Any> createEdgeView(graphView: GraphView, netView: NetView<T>): EdgeView<T> =
 		when (graphView) {
-			is DigitalGraphView -> DigitalEdgeView(styleProvider, edgeToPortConnectorSupplier, origEndpointConnectorSupplier,
+			is DigitalGraphView -> DigitalEdgeView(styleProvider, edgeToPortOrEdgeConnectorSupplier, origEndpointConnectorSupplier,
 				destEndpointConnectorSupplier, netView.net as DigitalNet) as EdgeView<T>
 			is AnalogGraphView -> AnalogEdgeView(styleProvider, netView.net as AnalogNet) as EdgeView<T>
-			is GraphViewImpl -> EdgeViewImpl(styleProvider, edgeToPortConnectorSupplier, origEndpointConnectorSupplier, destEndpointConnectorSupplier)
+			is GraphViewImpl -> EdgeViewImpl(styleProvider, edgeToPortOrEdgeConnectorSupplier, origEndpointConnectorSupplier, destEndpointConnectorSupplier)
 			else -> throw IllegalArgumentException("Unsupported GraphView type when creating EdgeView")
 		}
 }

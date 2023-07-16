@@ -14,7 +14,7 @@ import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.Vertice
-import ch.scorpion.jabbah.graph.view.connect.EdgeToPortConnector
+import ch.scorpion.jabbah.graph.view.connect.EdgeToPortOrEdgeConnector
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeEndpointView
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewStyling
@@ -97,7 +97,7 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
     /** Holds the [Point2D]s (in absolute coordinates) that define the segments of this [EdgeView].*/
     val polyline: PolylineShape
 
-	val edgeToPortConnectorSupplier: () -> EdgeToPortConnector
+	val edgeToPortOrEdgeConnectorSupplier: () -> EdgeToPortOrEdgeConnector
 
 	/**
 	 * Can be set for [EdgeView]s during interactive creation by the user, especially to avoid

@@ -139,8 +139,7 @@ class GraphViewConnectServiceImpl(
 		newEdgeView: EdgeView<T>,
 		newEdgeViewEndpointType: EdgeViewEndpointType,
 		otherNewEdgeViewPortView: PortView<T>?,
-		tailEdgeView: EdgeView<T>?,
-		joinNetViews: Boolean
+		tailEdgeView: EdgeView<T>?
 	): SplitEdgeViewResult<T> {
 		LOG.trace("split EdgeView ${splitEdgeView.id} and connect to Port ${otherNewEdgeViewPortView?.port?.portId} of destination ConnectableView ${otherNewEdgeViewPortView?.owner?.id}")
 
@@ -164,14 +163,14 @@ class GraphViewConnectServiceImpl(
 		graphView.add(tail)
 		connectToOrigin(tail, Connection(nodeView), tail.getSegmentDirection(0))
 
-		// Connect newEdgeView
-		val oldNet = newEdgeView.net
-		newEdgeView.net = splitEdgeView.net
-
 		if (!graphView.contains(newEdgeView)) {
 			graphView.add(newEdgeView)
 		}
+		if (splitEdgeView.model !== newEdgeView.model) {
+			combineNetViews(graphView, splitEdgeView.netView!!, newEdgeView.netView!!)
+		}
 
+		// Connect newEdgeView
 		when (newEdgeViewEndpointType) {
 			EdgeViewEndpointType.ORIGIN -> {
 				connectToOrigin(newEdgeView, Connection(nodeView))
@@ -187,16 +186,17 @@ class GraphViewConnectServiceImpl(
 			}
 		}
 
-		if (joinNetViews) {
-			splitEdgeView.netView!!.combine(newEdgeView.netView!!)
-			graphView.graph?.remove(oldNet!!)
-			graphView.removeNetView(newEdgeView.netView!!)
-		}
-
 		return SplitEdgeViewResult(
 			newEdgeView = newEdgeView,
 			tailEdgeView = tail,
 			nodeView = nodeView)
+	}
+
+	private fun <T: Any> combineNetViews(graphView: GraphView, netView1: NetView<T>, netView2: NetView<T>) {
+		val oldNet = netView2.net
+		netView1.combine(netView2)
+		graphView.graph?.remove(oldNet)
+		graphView.removeNetView(netView2)
 	}
 
 	override fun <T : Any> removeNodeView(graphView: GraphView, nodeView: NodeView<T>) {

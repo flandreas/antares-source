@@ -24,7 +24,7 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewFactory
 
-class EdgeToPortConnector(
+class EdgeToPortOrEdgeConnector(
 	private val connectService: GraphViewConnectService = GraphViewModule.graphViewConnectService,
 	edgeViewFactory: EdgeViewFactory = GraphViewModule.getEdgeViewFactory()
 ) : AbstractCreateEdgeViewConnector(
@@ -34,7 +34,7 @@ class EdgeToPortConnector(
 
 	companion object {
 		val SPLIT_EDGE_VIEW_MODIFIER = Modifier.Alt
-		private val LOG by logger(EdgeToPortConnector::class)
+		private val LOG by logger(EdgeToPortOrEdgeConnector::class)
 	}
 
 	/** The [EdgeView] from which a new [EdgeView] is branched by this connector. */
@@ -42,8 +42,6 @@ class EdgeToPortConnector(
 
 	/** The index of the segment in [branchedEdgeView] at which splitting takes place.*/
 	private var branchedSegmentIndex: Int? = null
-
-	private var splitCommand: Command? = null
 
 	override val handler = StateMachineInputEventHandler(
 
@@ -81,6 +79,9 @@ class EdgeToPortConnector(
 				transitTo("insideTargetPortView") {
 					given { mouseDragged(it) && insideTargetPortView(draggedEndpointType, it) }
 				}
+				transitTo("insideTargetEdgeView") {
+					given { mouseDragged(it) && insideTargetEdgeView(draggedEndpointType, it) }
+				}
 				transitTo("drag") {
 					given { mouseDragged(it) && !insideTargetPortView(draggedEndpointType, it) }
 					onTransit { moveEdgeViewEndpoint(it) }
@@ -115,9 +116,35 @@ class EdgeToPortConnector(
 				}
 			}
 
+			state("insideTargetEdgeView") {
+				onEntry { snapToTargetEdgeView(it) }
+				onExit { removePortViewHighlight(it) }
+				stayIf({ mouseDragged(it) && insideTargetEdgeView(draggedEndpointType, it) }) {
+					onTransit { snapToTargetEdgeView(it) }
+				}
+				transitTo("drag") {
+					given { mouseDragged(it) && !insideTargetEdgeView(draggedEndpointType, it) }
+				}
+				transitTo("connectedToEdge") {
+					given { mouseLeftReleased(it) }
+				}
+				transitTo("cancelled") {
+					given { escapePressed(it) }
+				}
+				stayOtherwise()
+			}
+
 			state("connected") {
 				onEntry {
 					completeConnecting(it)
+					reset()
+				}
+			}
+
+			state("connectedToEdge") {
+				onEntry {
+					edgeView?.underConstruction = false
+					completeConnectingToEdgeView(it)
 					reset()
 				}
 			}
@@ -165,6 +192,8 @@ class EdgeToPortConnector(
 	private fun logConnect() {
 		if (targetPortView != null) {
 			LOG.userTrail("Create junction from EdgeView ${branchedEdgeView?.id} to port ${targetPortView?.port?.portId} of ${targetPortView?.owner?.id}")
+		} else if (targetEdgeView != null) {
+			LOG.userTrail("Create junction from EdgeView ${branchedEdgeView?.id} to new junction in EdgeView ${targetEdgeView?.id}")
 		} else {
 			LOG.userTrail("Create junction from EdgeView ${branchedEdgeView?.id} open-ended")
 		}
@@ -182,8 +211,28 @@ class EdgeToPortConnector(
 		}
 
 		context.editor.commandManager.commitTransaction()
+	}
 
-		splitCommand = null
+	private fun completeConnectingToEdgeView(context: EditInputEventContext) {
+		logConnect()
+
+		edgeView?.underConstruction = false
+		context.editor.commandManager.execute(createSplitEdgeViewToEdgeViewCommand(context.editor))
+		context.editor.commandManager.commitTransaction()
+	}
+
+	private fun createSplitEdgeViewToEdgeViewCommand(editor: Editor): Command {
+		return SplitEdgeViewCommand(
+			editor,
+			connectService = connectService,
+			splitEdgeViewId = targetEdgeView!!.id,
+			segmentIndex = targetEdgeViewSegmentIndex!!,
+			splitLocation = EdgeViewEndpointType.DESTINATION.getLocation(edgeView!!),
+			newEdgeViewProvider = NewEdgeViewAtSplitRetrieveProvider(editor, edgeView!!.id),
+			newEdgeViewEndpointType = EdgeViewEndpointType.DESTINATION,
+			targetConnectableViewId = null,
+			targetPortId = null
+		)
 	}
 
 	private fun createSplitEdgeViewCommand(editor: Editor): SplitEdgeViewCommand {
@@ -196,8 +245,7 @@ class EdgeToPortConnector(
 			newEdgeViewProvider = NewEdgeViewAtSplitCloneProvider(edgeView!!),
 			newEdgeViewEndpointType = EdgeViewEndpointType.ORIGIN,
 			targetConnectableViewId = null,
-			targetPortId = null,
-			joinNetViews = false)
+			targetPortId = null)
 	}
 
 	private fun createConnectDestinationCommand(editor: Editor): Command {

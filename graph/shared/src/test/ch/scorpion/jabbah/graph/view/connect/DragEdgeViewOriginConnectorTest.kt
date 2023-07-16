@@ -9,10 +9,7 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import io.mockk.verify
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class DragEdgeViewOriginConnectorTest
 	: AbstractInputEventHandlerTest(GraphViewModule.dragEdgeViewOriginConnector.handler) {
@@ -207,5 +204,10 @@ class DragEdgeViewOriginConnectorTest
 
 		assertEquals(1, builder.graphView.netViewsCount)
 		assertEquals(1, builder.graph.elements.filterIsInstance<Net<*>>().size)
+
+		assertNull(nodeView.model.designError)
+		builder.graphView.getEdgeViews().forEach {
+			assertFalse(it.hasBrokenPortRef)
+		}
 	}
 }

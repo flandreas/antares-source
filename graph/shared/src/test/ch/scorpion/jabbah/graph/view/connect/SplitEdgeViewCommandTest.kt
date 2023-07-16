@@ -14,9 +14,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
 
-/**
- * Unit tests for [SplitEdgeViewCommand].
- */
 class SplitEdgeViewCommandTest {
 
 	companion object {
@@ -52,8 +49,7 @@ class SplitEdgeViewCommandTest {
 			newEdgeViewProvider = NewEdgeViewAtSplitCloneProvider(newEdgeView),
 			newEdgeViewEndpointType = EdgeViewEndpointType.ORIGIN,
 			targetConnectableViewId = null,
-			targetPortId = null,
-			joinNetViews = false
+			targetPortId = null
 		)
 		command.execute()
 
