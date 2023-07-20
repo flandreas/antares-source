@@ -62,14 +62,14 @@ class MultilineText(
 				val wordRenderInfo = textMeasurer.measureSingleLineText(word.asPlainText(), wordFont)
 				val wordWidth = wordRenderInfo.textBounds.width
 				lAscent = wordRenderInfo.ascent.toInt()
-				val textWidth = if (x != 0.0) blankWidth + wordWidth else wordWidth
+				val textWidth = if (x != location.x) blankWidth + wordWidth else wordWidth
 
 				if (lineWidth + textWidth > preferredWidth) {
 					// No room for word in current line
-					if (x != 0.0) {
+					if (x != location.x) {
 						// Terminate current line, place word in next line
 						maxWidth = max(lineWidth, maxWidth)
-						x = 0.0
+						x = location.x
 						y += lineHeight
 						words.add(Word(word.asPlainText(), Point2D(x, y), wordFont))
 						lineWidth = wordWidth
@@ -83,8 +83,8 @@ class MultilineText(
 					}
 				} else {
 					// Still room for word in current line
-					val wordText = if (x == 0.0) word.asPlainText() else " ${word.asPlainText()}"
-					val wordTextWidth = if (x == 0.0) wordWidth else wordWidth + blankWidth
+					val wordText = if (x == location.x) word.asPlainText() else " ${word.asPlainText()}"
+					val wordTextWidth = if (x == location.x) wordWidth else wordWidth + blankWidth
 					words.add(Word(wordText, Point2D(x, y), wordFont))
 					x += wordTextWidth
 					lineWidth += wordTextWidth
