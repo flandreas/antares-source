@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.app.Workspace
 import ch.scorpion.jabbah.app.DesktopApplication
 import ch.scorpion.jabbah.app.module.AppModuleJvm
 import ch.scorpion.jabbah.base.io.ZipUtil
+import ch.scorpion.jabbah.io.StorableCloner
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FilenameUtils
 import java.io.File
@@ -27,6 +28,7 @@ class SystemDumpService {
 
 		copyWorkspace(tempDir)
 		copyLogfile(application, tempDir)
+		copyCurrentStorable(application, tempDir)
 
 		zipDirectory(tempDir, destination)
 	}
@@ -42,6 +44,15 @@ class SystemDumpService {
 		FileUtils.copyFileToDirectory(
 			Paths.get(application.appDataDirectoryPath.toAbsolutePath().toString(), application.logFileName).toFile(),
 			dir.toFile())
+	}
+
+	private fun copyCurrentStorable(application: DesktopApplication, destination: Path) {
+		application.controller.getUndoableState()?.let {
+			Files.writeString(
+				Paths.get(destination.toAbsolutePath().toString(), "currentStorable.txt"),
+				StorableCloner.serialize(it)
+			)
+		}
 	}
 
 	private fun zipDirectory(dir: Path, destination: Path) {
