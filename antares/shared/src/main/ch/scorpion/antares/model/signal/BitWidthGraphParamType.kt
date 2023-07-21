@@ -2,7 +2,7 @@ package ch.scorpion.antares.model.signal
 
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.dsl.CodeLocation
+import ch.scorpion.jabbah.base.parser.TextLocation
 import ch.scorpion.jabbah.base.dsl.Dsl
 import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.base.dsl.Memory
@@ -73,11 +73,12 @@ object BitWidthGraphParamType : GraphParamType<BitWidth> {
 			try {
 				return BitWidthExpression(expression, BitWidth.of(newValue.toInt()))
 			} catch (e: Throwable) {
-				throw DslError(CodeLocation.UNDEFINED,
+				throw DslError(
+					TextLocation.UNDEFINED,
 					Translations.getString("antares.dsl.bitWidthResolution.msg", StringUtils.limit(expression, 10)))
 			}
 		} else {
-			throw DslError(CodeLocation.UNDEFINED, "Expecting Long as value of BitWidth")
+			throw DslError(TextLocation.UNDEFINED, "Expecting Long as value of BitWidth")
 		}
 	}
 }

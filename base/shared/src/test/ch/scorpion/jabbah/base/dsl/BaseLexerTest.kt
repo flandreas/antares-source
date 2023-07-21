@@ -21,7 +21,7 @@ class BaseLexerTest : AbstractLexerTest() {
 		""".trimIndent())
 
 		assertId("Hello", lexer)
-		assertToken(TokenType.EOF, lexer)
+		assertToken(DslTokenType.EOF, lexer)
 	}
 
 	@Test
@@ -31,6 +31,6 @@ class BaseLexerTest : AbstractLexerTest() {
 		""".trimIndent())
 
 		assertId("Hello", lexer)
-		assertToken(TokenType.EOF, lexer)
+		assertToken(DslTokenType.EOF, lexer)
 	}
 }

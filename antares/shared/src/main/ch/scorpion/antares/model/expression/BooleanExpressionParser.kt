@@ -2,9 +2,11 @@ package ch.scorpion.antares.model.expression
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.*
-import ch.scorpion.jabbah.base.dsl.Lexer.Companion.NOT_TOKEN
-import ch.scorpion.jabbah.base.dsl.Lexer.Companion.OR_TOKEN
-import ch.scorpion.jabbah.base.dsl.TokenType.*
+import ch.scorpion.jabbah.base.dsl.DslLexer.Companion.NOT_TOKEN
+import ch.scorpion.jabbah.base.dsl.DslLexer.Companion.OR_TOKEN
+import ch.scorpion.jabbah.base.dsl.DslTokenType.*
+import ch.scorpion.jabbah.base.parser.AbstractParser
+import ch.scorpion.jabbah.base.parser.Token
 
 /**
  * Parses sentences of the following grammar and creates a corresponding AST.
@@ -45,7 +47,7 @@ class BooleanExpressionParser(
 	private val expectAssignment: Boolean,
 	lexer: BooleanExpressionLexer,
 	private val singleCharIdentifier: Boolean = lexer.singleCharIdentifier
-) : AbstractBaseParser(lexer) {
+) : AbstractParser(lexer) {
 
 	constructor(
 		expectAssignment: Boolean,
@@ -135,7 +137,7 @@ class BooleanExpressionParser(
 		while (currentToken!!.type in AND_OPERATORS) {
 			lexer.location.let { location ->
 				eat(currentToken!!.type)
-				node = BinaryOperation(location, left = node, op = Lexer.AND_TOKEN, right = factor())
+				node = BinaryOperation(location, left = node, op = DslLexer.AND_TOKEN, right = factor())
 			}
 		}
 		return node
@@ -150,7 +152,7 @@ class BooleanExpressionParser(
 				if (currentToken!!.type in AND_OPERATORS) {
 					eat(currentToken!!.type)
 				}
-				node = BinaryOperation(location, left = node, op = Lexer.AND_TOKEN, right = factor())
+				node = BinaryOperation(location, left = node, op = DslLexer.AND_TOKEN, right = factor())
 			}
 		}
 		return node

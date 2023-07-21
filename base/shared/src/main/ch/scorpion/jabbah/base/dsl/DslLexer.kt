@@ -1,8 +1,9 @@
 package ch.scorpion.jabbah.base.dsl
 
-import ch.scorpion.jabbah.base.dsl.TokenType.*
+import ch.scorpion.jabbah.base.dsl.DslTokenType.*
+import ch.scorpion.jabbah.base.parser.Token
 
-typealias LexerFactory = (program: String) -> Lexer
+typealias LexerFactory = (program: String) -> DslLexer
 
 /**
  * Extends [BaseLexer] with tokens for simple languages supporting arithmetic expressions,
@@ -10,7 +11,7 @@ typealias LexerFactory = (program: String) -> Lexer
  *
  * @property text the text to be scanned
  */
-open class Lexer(text: String): BaseLexer(text) {
+open class DslLexer(text: String): BaseLexer(text) {
 
 	companion object {
 

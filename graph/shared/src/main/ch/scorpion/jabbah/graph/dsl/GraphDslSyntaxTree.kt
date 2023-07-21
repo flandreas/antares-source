@@ -2,8 +2,9 @@ package ch.scorpion.jabbah.graph.dsl
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.dsl.*
+import ch.scorpion.jabbah.base.parser.TextLocation
 
-class InitStatement(location: CodeLocation, val block: Block) : AbstractNode(location) {
+class InitStatement(location: TextLocation, val block: Block) : AbstractNode(location) {
 	override fun toString(): String = "init"
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
@@ -14,8 +15,8 @@ class InitStatement(location: CodeLocation, val block: Block) : AbstractNode(loc
 	}
 }
 
-class PropertyPortName(location: CodeLocation, val elemId: Literal, val portName: Variable) : AbstractNode(location) {
-	override fun toString(): String = TokenType.HASH.id
+class PropertyPortName(location: TextLocation, val elemId: Literal, val portName: Variable) : AbstractNode(location) {
+	override fun toString(): String = DslTokenType.HASH.id
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		if (visitor.visitEnter(this)) {
@@ -26,8 +27,8 @@ class PropertyPortName(location: CodeLocation, val elemId: Literal, val portName
 	}
 }
 
-class PropertyPortId(location: CodeLocation, val elemId: Literal, val portId: Literal) : AbstractNode(location) {
-	override fun toString(): String = TokenType.HASH.id
+class PropertyPortId(location: TextLocation, val elemId: Literal, val portId: Literal) : AbstractNode(location) {
+	override fun toString(): String = DslTokenType.HASH.id
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		if (visitor.visitEnter(this)) {

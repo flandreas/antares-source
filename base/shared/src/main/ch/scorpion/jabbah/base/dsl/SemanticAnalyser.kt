@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.base.dsl
 import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.parser.TextLocation
 
 typealias SemanticAnalyserFactory = (symbolTable: SymbolTable?) -> SemanticAnalyser
 
@@ -89,15 +90,15 @@ open class SemanticAnalyser(
 
 	protected open val allowStoreDeclaration: Boolean get() = scope.scopeLevel <= 1
 
-	private fun declareVariableInLocalScope(name: String, location: CodeLocation) {
+	private fun declareVariableInLocalScope(name: String, location: TextLocation) {
 		declareVariable(name, scope, location)
 	}
 
-	private fun declareVariableInGlobalScope(name: String, location: CodeLocation) {
+	private fun declareVariableInGlobalScope(name: String, location: TextLocation) {
 		declareVariable(name, globalScope, location)
 	}
 
-	private fun declareVariable(name: String, destinationScope: SymbolTable, location: CodeLocation) {
+	private fun declareVariable(name: String, destinationScope: SymbolTable, location: TextLocation) {
 		val typeSymbol = null as BuiltInTypeSymbol?
 		val varSymbol = VariableSymbol(name, typeSymbol)
 		if (destinationScope.hasSymbol(name, currentScopeOnly = true)) {

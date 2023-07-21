@@ -4,7 +4,7 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.BitWidthExpression
 import ch.scorpion.antares.model.signal.BitWidthGraphParamType
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.dsl.CodeLocation
+import ch.scorpion.jabbah.base.parser.TextLocation
 import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.ToStringRenderer
@@ -125,7 +125,7 @@ class BitWidthEditor(
 			null
 		} catch (e: Throwable) {
 			LOG.debug("Parsing value throws $e")
-			errorCallback(DslError(CodeLocation.UNDEFINED, e.message ?: "Invalid bit width expression"))
+			errorCallback(DslError(TextLocation.UNDEFINED, e.message ?: "Invalid bit width expression"))
 			null
 		}
 	}

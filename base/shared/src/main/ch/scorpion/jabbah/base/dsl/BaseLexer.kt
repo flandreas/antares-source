@@ -2,27 +2,17 @@ package ch.scorpion.jabbah.base.dsl
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
-
-/** Identifies a location in the code to identify error locations.*/
-data class CodeLocation(val pos: Int, val row: Int, val column: Int) {
-	companion object {
-		val UNDEFINED = CodeLocation(0, 0, 0)
-	}
-	override fun toString(): String = "$row:$column"
-}
+import ch.scorpion.jabbah.base.parser.AbstractLexer
+import ch.scorpion.jabbah.base.parser.Token
 
 /**
- * Lexical analyser, also known as scanner or tokenizer.
- *
- * This class is responsible for breaking a sentence apart into [Token]s, one [Token] at a time.
- * Inspects the [Char] at the current position, advances the current position, and
- * returns the [Token] that corresponds with the consumed [Char].
- *
+ * A base lexer implementation for scanning expressions or scripting languages.
+ * Supports scanning whitespace, comments, literals, and double-quoted strings.
  * Line comments start with // and eliminate everything to the next newline character.
  *
- * @property text the text to be scanned
+ * @param text the text to be scanned
  */
-open class BaseLexer(protected val text: String) {
+open class BaseLexer(text: String) : AbstractLexer(text) {
 
 	companion object {
 
@@ -31,33 +21,15 @@ open class BaseLexer(protected val text: String) {
 		private val RESERVED_KEYWORDS = mapOf<String, Token<String>>()
 
 		// Singleton instances of value-less [Token]s
-		private val EOF_TOKEN = Token<Unit>(TokenType.EOF)
-		private val DOUBLE_QUOTE_TOKEN = Token<Unit>(TokenType.DOUBLE_QUOTE)
+		private val EOF_TOKEN = Token<Unit>(DslTokenType.EOF)
+		private val DOUBLE_QUOTE_TOKEN = Token<Unit>(DslTokenType.DOUBLE_QUOTE)
 
 		// Factory methods for [Token]s with values
-		fun idToken(value: String) = Token(TokenType.ID, value)
-		fun literalToken(value: Any) = Token(TokenType.LITERAL, value)
+		fun idToken(value: String) = Token(DslTokenType.ID, value)
+		fun literalToken(value: Any) = Token(DslTokenType.LITERAL, value)
 	}
 
-	private val state = State()
-
-	private val peekState = State()
-
-	val location: CodeLocation get() = state.location
-
-	val row: Int get() = state.rowCounter
-
-	/**
-	 * Scans more text and returns the next [Token].
-	 * @throws [SyntaxError] if a syntax error was detected
-	 */
-	fun nextToken(): Token<Any> = nextToken(state)
-
-	fun peekNextToken(): Token<Any> = nextToken(peekState.applyFrom(state))
-
-	protected fun isPeeking(state: State): Boolean = state === peekState
-
-	protected open fun nextToken(state: State): Token<Any> {
+	override fun nextToken(state: State): Token<Any> {
 		state.posAtTokenStart = state.pos
 		state.rowAtTokenStart = state.rowCounter
 		state.columnAtTokenStart = state.columnCounter
@@ -107,43 +79,6 @@ open class BaseLexer(protected val text: String) {
 	}
 
 	protected open fun getReservedKeyword(name: String): Token<String>? = RESERVED_KEYWORDS[name]
-
-	/** Advances [State.pos] one position and updates [State.currentChar].*/
-	protected fun advance(state: State) {
-		if (state.currentChar == '\n') {
-			state.rowCounter++
-			state.columnCounter = 0
-		}
-		state.columnCounter++
-		state.pos++
-		state.currentChar = if (state.pos > text.length - 1) null else text[state.pos]
-	}
-
-	protected fun advanceWith(state: State, token: Token<Any>): Token<Any> {
-		advance(state)
-		return token
-	}
-
-	/** Returns the next [Char] (if any) without incrementing [State.pos].*/
-	protected fun peek(state: State): Char? = peek(state, 1)
-
-	protected fun peek(state: State, count: Int): Char? {
-		val peekPos = state.pos + count
-		if (peekPos > text.length - 1) {
-			return null
-		}
-		return text[peekPos]
-	}
-
-	private fun isWhitespace(state: State): Boolean =
-		state.currentChar != null && state.currentChar!!.isWhitespace()
-
-	/** Advances until non-whitespace [State.currentChar] is non-whitespace.*/
-	private fun skipWhitespace(state: State) {
-		while (isWhitespace(state)) {
-			advance(state)
-		}
-	}
 
 	/** Determines whether the current character is the begin of a comment.*/
 	private fun isComment(state: State): Boolean = state.currentChar == '/' && peek(state) == '/'
@@ -228,36 +163,5 @@ open class BaseLexer(protected val text: String) {
 			throw SyntaxError(state.location, Translations.getString("base.dsl.expectedDoubleQuote.msg"))
 		}
 		return result.toString()
-	}
-
-	protected inner class State {
-		/** An index into [text].*/
-		var pos = 0
-
-		/** Contains the [Char] in [text] at position [pos], or `null` if the end of [text] has been reached.*/
-		var currentChar: Char? = if (text.isEmpty()) null else text.first()
-
-		/** Counts the processed number of rows (lines) for syntax error location indication.*/
-		var rowCounter = 1
-
-		/** Counts the processed number of columns (characters) within [rowCounter] for syntax error location indication.*/
-		var columnCounter = 0
-
-		var posAtTokenStart = 0
-
-		var rowAtTokenStart = 1
-
-		var columnAtTokenStart = 0
-
-		val location: CodeLocation get() = CodeLocation(posAtTokenStart, rowAtTokenStart,columnAtTokenStart + 1)
-
-		fun applyFrom(other: State): State {
-			this.pos = other.pos
-			this.currentChar = other.currentChar
-			this.posAtTokenStart = other.posAtTokenStart
-			this.rowCounter = other.rowCounter
-			this.columnCounter = other.columnCounter
-			return this
-		}
 	}
 }

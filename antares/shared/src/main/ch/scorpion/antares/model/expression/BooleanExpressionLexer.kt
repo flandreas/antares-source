@@ -3,8 +3,8 @@ package ch.scorpion.antares.model.expression
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.BaseLexer
 import ch.scorpion.jabbah.base.dsl.SyntaxError
-import ch.scorpion.jabbah.base.dsl.Token
-import ch.scorpion.jabbah.base.dsl.TokenType
+import ch.scorpion.jabbah.base.parser.Token
+import ch.scorpion.jabbah.base.dsl.DslTokenType
 
 class BooleanExpressionLexer(
 	text: String,
@@ -13,29 +13,29 @@ class BooleanExpressionLexer(
 
 	companion object {
 		// General
-		private val ASSIGN_TOKEN = Token<Unit>(TokenType.ASSIGN)
-		private val LPAREN_TOKEN = Token<Unit>(TokenType.LPAREN)
-		private val RPAREN_TOKEN = Token<Unit>(TokenType.RPAREN)
+		private val ASSIGN_TOKEN = Token<Unit>(DslTokenType.ASSIGN)
+		private val LPAREN_TOKEN = Token<Unit>(DslTokenType.LPAREN)
+		private val RPAREN_TOKEN = Token<Unit>(DslTokenType.RPAREN)
 
 		// Arithmetic notation
-		private val MULTIPLY_TOKEN = Token<Unit>(TokenType.MULTIPLY)
-		private val PLUS_TOKEN = Token<Unit>(TokenType.PLUS)
-		private val SINGLE_QUOTE_TOKEN = Token<Unit>(TokenType.SINGLE_QUOTE)
+		private val MULTIPLY_TOKEN = Token<Unit>(DslTokenType.MULTIPLY)
+		private val PLUS_TOKEN = Token<Unit>(DslTokenType.PLUS)
+		private val SINGLE_QUOTE_TOKEN = Token<Unit>(DslTokenType.SINGLE_QUOTE)
 
 		// Logic notation
-		private val LOGIC_AND_TOKEN = Token<Unit>(TokenType.LOGIC_AND)
-		private val LOGIC_OR_TOKEN = Token<Unit>(TokenType.LOGIC_OR)
-		private val LOGIC_NOT_TOKEN = Token<Unit>(TokenType.LOGIC_NOT)
+		private val LOGIC_AND_TOKEN = Token<Unit>(DslTokenType.LOGIC_AND)
+		private val LOGIC_OR_TOKEN = Token<Unit>(DslTokenType.LOGIC_OR)
+		private val LOGIC_NOT_TOKEN = Token<Unit>(DslTokenType.LOGIC_NOT)
 
 		// Programming notation
-		private val PROGRAMMING_AND_TOKEN = Token<Unit>(TokenType.PROGRAMMING_AND)
-		private val PROGRAMMING_OR_TOKEN = Token<Unit>(TokenType.PROGRAMMING_OR)
-		private val PROGRAMMING_NOT_TOKEN = Token<Unit>(TokenType.PROGRAMMING_NOT)
+		private val PROGRAMMING_AND_TOKEN = Token<Unit>(DslTokenType.PROGRAMMING_AND)
+		private val PROGRAMMING_OR_TOKEN = Token<Unit>(DslTokenType.PROGRAMMING_OR)
+		private val PROGRAMMING_NOT_TOKEN = Token<Unit>(DslTokenType.PROGRAMMING_NOT)
 
 		// Verbose notation
-		private val VERBOSE_AND_TOKEN = Token<String>(TokenType.AND)
-		private val VERBOSE_OR_TOKEN = Token<String>(TokenType.OR)
-		private val VERBOSE_NOT_TOKEN = Token<String>(TokenType.NOT)
+		private val VERBOSE_AND_TOKEN = Token<String>(DslTokenType.AND)
+		private val VERBOSE_OR_TOKEN = Token<String>(DslTokenType.OR)
+		private val VERBOSE_NOT_TOKEN = Token<String>(DslTokenType.NOT)
 
 		private val RESERVED_KEYWORDS = mapOf(
 			"AND" to VERBOSE_AND_TOKEN,

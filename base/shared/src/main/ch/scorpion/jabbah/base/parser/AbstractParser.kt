@@ -1,16 +1,18 @@
-package ch.scorpion.jabbah.base.dsl
+package ch.scorpion.jabbah.base.parser
 
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.dsl.Node
+import ch.scorpion.jabbah.base.dsl.SyntaxError
 
-abstract class AbstractBaseParser(
-	protected val lexer: BaseLexer
+abstract class AbstractParser(
+	protected val lexer: AbstractLexer
 ) {
 
-	/** Contains the current [Token] as determined by [Lexer.nextToken].*/
+	/** Contains the current [Token] as determined by [AbstractLexer.nextToken].*/
 	protected var currentToken: Token<Any>? = lexer.nextToken()
 
 	/**
-	 * Parses the program this [Parser] was created with and returns the corresponding AST.
+	 * Parses the program this [AbstractParser] was created with and returns the corresponding AST.
 	 * @throws SyntaxError if the sentence is syntactically invalid
 	 */
 	abstract fun parse(): Node

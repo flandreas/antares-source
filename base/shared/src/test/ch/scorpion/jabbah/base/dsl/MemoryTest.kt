@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.base.dsl
 
+import ch.scorpion.jabbah.base.parser.TextLocation
+import ch.scorpion.jabbah.base.parser.Token
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -60,5 +62,5 @@ class MemoryTest {
 	}
 
 	private fun variable(name: String): Variable =
-		Variable(CodeLocation(0, 0, 0), Token(TokenType.VAR, name))
+		Variable(TextLocation(0, 0, 0), Token(DslTokenType.VAR, name))
 }

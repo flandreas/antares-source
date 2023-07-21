@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.*
+import ch.scorpion.jabbah.base.parser.TextLocation
 
 class AntaresDslGlobalFunctions : DslGlobalFunctions() {
 
@@ -24,7 +25,7 @@ class AntaresDslGlobalFunctions : DslGlobalFunctions() {
 
 	private fun bitsImpl(params: List<Any>): Any {
 		if (params.size < 3) {
-			throw RuntimeError(CodeLocation.UNDEFINED, Translations.getString("base.dsl.notEnoughParameters.msg"))
+			throw RuntimeError(TextLocation.UNDEFINED, Translations.getString("base.dsl.notEnoughParameters.msg"))
 		}
 		return if (params[0] is DigitalSignal) {
 			bits(
@@ -47,7 +48,7 @@ class AntaresDslGlobalFunctions : DslGlobalFunctions() {
 	 * Example: bits(31, 3, 2) = 3.
 	 */
 	private fun bits(signal: DigitalSignal, pos: Long, size: Long): Long =
-		signal.bitsAt(pos.toInt(), size.toInt())?.toLong() ?: throw RuntimeError(CodeLocation.UNDEFINED, "Error bits in function 'bits'")
+		signal.bitsAt(pos.toInt(), size.toInt())?.toLong() ?: throw RuntimeError(TextLocation.UNDEFINED, "Error bits in function 'bits'")
 
 	/**
 	 * Extracts [size] bits at position [pos] from [signal], where bit positions start with 0.
@@ -59,7 +60,7 @@ class AntaresDslGlobalFunctions : DslGlobalFunctions() {
 
 	private fun gatedImpl(params: List<Any>): Any {
 		if (params.isEmpty()) {
-			throw RuntimeError(CodeLocation.UNDEFINED, Translations.getString("base.dsl.notEnoughParameters.msg"))
+			throw RuntimeError(TextLocation.UNDEFINED, Translations.getString("base.dsl.notEnoughParameters.msg"))
 		}
 		return gated(digitalSignalParam(0, params))
 	}
@@ -77,11 +78,11 @@ class AntaresDslGlobalFunctions : DslGlobalFunctions() {
 
 fun digitalSignalParam(index: Int, params: List<Any>): DigitalSignal {
 	if (index >= params.size) {
-		throw RuntimeError(CodeLocation.UNDEFINED, Translations.getString("base.dsl.notEnoughParameters.msg"))
+		throw RuntimeError(TextLocation.UNDEFINED, Translations.getString("base.dsl.notEnoughParameters.msg"))
 	}
 	val param = params[index]
 	if (param !is DigitalSignal) {
-		throw RuntimeError(CodeLocation.UNDEFINED, Translations.getString("antares.dsl.expectedDigitalSignalParameter.msg", index + 1))
+		throw RuntimeError(TextLocation.UNDEFINED, Translations.getString("antares.dsl.expectedDigitalSignalParameter.msg", index + 1))
 	}
 	return param
 }

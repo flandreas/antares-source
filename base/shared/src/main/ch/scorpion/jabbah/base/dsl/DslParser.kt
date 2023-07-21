@@ -1,22 +1,24 @@
 package ch.scorpion.jabbah.base.dsl
 
 import ch.scorpion.jabbah.base.*
+import ch.scorpion.jabbah.base.dsl.DslTokenType.*
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.dsl.TokenType.*
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.parser.AbstractParser
+import ch.scorpion.jabbah.base.parser.Token
 
 /**
- * Creates a [Parser] for parsing a program text.
+ * Creates a [DslParser] for parsing a program text.
  * @param semanticAnalyser the optional [SemanticAnalyser], or `null` if either no semantic analysis
  * is to be done, or the [ParserFactory] decides to (and insists upon) applying a particular
  * [SemanticAnalyser] implementation.
  */
-typealias ParserFactory = (program: String, semanticAnalyser: SemanticAnalyser?) -> Parser
+typealias ParserFactory = (program: String, semanticAnalyser: SemanticAnalyser?) -> DslParser
 
 /**
  * Parses sentences of the following grammar and creates a corresponding AST.
  *
- * <pre>
+ * ```
  *     statementList : statement
  *               | statement statementList
  *     statement : expr
@@ -59,18 +61,18 @@ typealias ParserFactory = (program: String, semanticAnalyser: SemanticAnalyser?)
  *     variable : identifier | assocArray
  *     assocArray : identifier "[" expr "]"
  *     identifier : LETTER (LETTER | DIGIT)* | "'" CHAR (CHAR)* "'"
- * </pre>
+ * ```
  *
- * @property lexer the [Lexer] set up with the program code to scan
+ * @property lexer the [DslLexer] set up with the program code to scan
  * @property semanticAnalyser the [HierarchyVisitor] to perform semantic analysis. Provide
  * [EmptyHierarchyVisitor] to skip semantic analysis
  */
-open class Parser(
-	lexer: Lexer,
+open class DslParser(
+	lexer: DslLexer,
 	private val semanticAnalyser: SemanticAnalyser? = BaseModule.semanticAnalyserFactory(null)
-) : AbstractBaseParser(lexer) {
+) : AbstractParser(lexer) {
 
-	constructor(program: String): this(Lexer(program))
+	constructor(program: String): this(DslLexer(program))
 
 	companion object {
 		private val BINARY_LOGIC_OPERATORS = setOf(AND, OR)
@@ -193,7 +195,7 @@ open class Parser(
 
 	private fun storeDeclaration(): Node = declaration(STORE, store = true)
 
-	private fun declaration(tokenType: TokenType, store: Boolean): Node {
+	private fun declaration(tokenType: DslTokenType, store: Boolean): Node {
 		lexer.location.let { location ->
 			eat(tokenType)
 			return if (lexer.peekNextToken().type == ASSIGN) {

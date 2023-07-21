@@ -25,7 +25,7 @@ abstract class AbstractBooleanExpressionVisitor(
 		when (node) {
 			is UnaryOperation -> {
 				when (node.op.type) {
-					TokenType.NOT -> if (!isNotPostfix) {
+					DslTokenType.NOT -> if (!isNotPostfix) {
 						handleNot()
 					}
 					else -> { }
@@ -57,8 +57,8 @@ abstract class AbstractBooleanExpressionVisitor(
 		when (node) {
 			is BinaryOperation -> {
 				when (node.op.type) {
-					TokenType.OR -> handleOr()
-					TokenType.AND -> handleAnd()
+					DslTokenType.OR -> handleOr()
+					DslTokenType.AND -> handleAnd()
 					else -> throw IllegalStateException("unsupported binary operation ${node.op.type}")
 				}
 			}
@@ -70,7 +70,7 @@ abstract class AbstractBooleanExpressionVisitor(
 		when (node) {
 			is UnaryOperation -> {
 				when (node.op.type) {
-					TokenType.NOT -> if (isNotPostfix) {
+					DslTokenType.NOT -> if (isNotPostfix) {
 						handleNot()
 					}
 					else -> throw IllegalStateException("unsupported unary operation ${node.op.type}")

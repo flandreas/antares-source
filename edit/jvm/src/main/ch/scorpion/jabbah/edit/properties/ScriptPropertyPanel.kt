@@ -4,7 +4,7 @@ import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.dsl.Parser
+import ch.scorpion.jabbah.base.dsl.DslParser
 import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.base.dsl.ParserFactory
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -28,7 +28,7 @@ class ScriptPropertyPanel(
 
 		/**
 		 * Allows the user to edit a script in a popup dialog.
-		 * @param parserFactory creates the [Parser] used in the "check" function, or `null` if "check" is not supported
+		 * @param parserFactory creates the [DslParser] used in the "check" function, or `null` if "check" is not supported
 		 * @return the edited script, or `null` if the user closed the popup dialog with 'Cancel'.
 		 */
 		fun showAsDialog(

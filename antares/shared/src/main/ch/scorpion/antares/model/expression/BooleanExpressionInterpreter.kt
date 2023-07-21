@@ -32,14 +32,14 @@ class BooleanExpressionInterpreter(
 
 	private fun unaryOperation(node: UnaryOperation): Boolean =
 		when (node.op.type) {
-			TokenType.NOT -> !(interpret(node.expr) as Boolean)
+			DslTokenType.NOT -> !(interpret(node.expr) as Boolean)
 			else -> throw SyntaxError(node.location, Translations.getString("base.dsl.unknownUnaryOperation.msg", node.op.type.id))
 		}
 
 	private fun binaryOperation(node: BinaryOperation): Boolean =
 		when (node.op.type) {
-			TokenType.AND -> (interpret(node.left) as Boolean) && (interpret(node.right) as Boolean)
-			TokenType.OR -> (interpret(node.left) as Boolean) || (interpret(node.right) as Boolean)
+			DslTokenType.AND -> (interpret(node.left) as Boolean) && (interpret(node.right) as Boolean)
+			DslTokenType.OR -> (interpret(node.left) as Boolean) || (interpret(node.right) as Boolean)
 			else -> throw SyntaxError(node.location, Translations.getString("base.dsl.unknownBinaryOperation.msg", node.op.type.id))
 		}
 

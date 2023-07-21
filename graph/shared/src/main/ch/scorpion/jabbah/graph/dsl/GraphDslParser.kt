@@ -2,11 +2,11 @@ package ch.scorpion.jabbah.graph.dsl
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.*
-import ch.scorpion.jabbah.base.dsl.TokenType.*
+import ch.scorpion.jabbah.base.dsl.DslTokenType.*
 import ch.scorpion.jabbah.base.module.BaseModule
 
 /**
- * Extends the grammar in [Parser] by the following productions.
+ * Extends the grammar in [DslParser] by the following productions.
  *
  * <pre>
  *     statement : super.statement
@@ -20,11 +20,11 @@ import ch.scorpion.jabbah.base.module.BaseModule
  * </pre>
  */
 open class GraphDslParser(
-	lexer: Lexer,
+	lexer: DslLexer,
 	semanticAnalyser: SemanticAnalyser? = BaseModule.semanticAnalyserFactory(null)
-) : Parser(lexer, semanticAnalyser) {
+) : DslParser(lexer, semanticAnalyser) {
 
-	constructor(program: String): this(Lexer(program))
+	constructor(program: String): this(DslLexer(program))
 
 	override fun statement(): Node =
 		when (currentToken!!.type) {

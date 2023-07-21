@@ -1,9 +1,9 @@
 package ch.scorpion.jabbah.graph.model.vertice
 
 import ch.scorpion.jabbah.base.dsl.Interpreter
-import ch.scorpion.jabbah.base.dsl.Lexer
+import ch.scorpion.jabbah.base.dsl.DslLexer
 import ch.scorpion.jabbah.base.dsl.Memory
-import ch.scorpion.jabbah.base.dsl.Parser
+import ch.scorpion.jabbah.base.dsl.DslParser
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.library.LibraryImpl
@@ -51,7 +51,7 @@ class SubGraphVerticeRefActivationRecordTest {
 		// Use a Parser without semantic analysis, because SemanticAnalyser must also deal with the challenge
 		// of predefining GraphPorts names as variables in the symbol table, but to test that is the
 		// responsibility of another test
-		val parser = Parser(Lexer("O = 2 * I"), null)
+		val parser = DslParser(DslLexer("O = 2 * I"), null)
 		val interpreter = Interpreter(parser.parse(), memory)
 
 		val result = interpreter.interpret()
@@ -68,7 +68,7 @@ class SubGraphVerticeRefActivationRecordTest {
 
 		val activationRecord = SubGraphVerticeRefActivationRecord(vv, signalHandler)
 		val memory = Memory(activationRecord)
-		val parser = Parser(Lexer("L"), null)
+		val parser = DslParser(DslLexer("L"), null)
 		val interpreter = Interpreter(parser.parse(), memory)
 
 		val result = interpreter.interpret()

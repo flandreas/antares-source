@@ -387,7 +387,7 @@ class InterpreterTest {
 	@Test
 	fun shouldStoreVariablesBetweenInterpretations() {
 		val memory = Memory()
-		val interpreter = Interpreter(Parser(Lexer("""
+		val interpreter = Interpreter(DslParser(DslLexer("""
 			store a
 			var out = 0
 			if (doStore) {
@@ -458,7 +458,7 @@ class InterpreterTest {
 		symbolTable.define(ExternalFunctionSymbol("square", 1, function))
 
 		val semanticAnalyser = SemanticAnalyser(symbolTable)
-		val interpreter = Interpreter(Parser(Lexer("square(4)"), semanticAnalyser).parse())
+		val interpreter = Interpreter(DslParser(DslLexer("square(4)"), semanticAnalyser).parse())
 
 		val result = interpreter.interpret()
 

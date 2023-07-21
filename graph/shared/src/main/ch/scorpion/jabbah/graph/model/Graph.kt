@@ -3,7 +3,7 @@ package ch.scorpion.jabbah.graph.model
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.ImmutableList
-import ch.scorpion.jabbah.base.dsl.Parser
+import ch.scorpion.jabbah.base.dsl.DslParser
 import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
 import ch.scorpion.jabbah.base.dsl.Symbol
 import ch.scorpion.jabbah.base.dsl.SymbolTable
@@ -149,11 +149,11 @@ interface Graph : Namable, Describable, Storable, Bean {
     fun <T: Any> getGraphOutput(name: String): GraphOutput<T>?
 
 	/**
-	 * Creates a [Parser] for parsing the [Graph]'s execution script.
-	 * The created [Parser] contains a [SemanticAnalyser] that uses this [GraphView] as
+	 * Creates a [DslParser] for parsing the [Graph]'s execution script.
+	 * The created [DslParser] contains a [SemanticAnalyser] that uses this [GraphView] as
 	 * context [SymbolTable] with all [GraphPort]s predefined as [Symbol]s.
 	 */
-	fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): Parser
+	fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): DslParser
 
 }
 

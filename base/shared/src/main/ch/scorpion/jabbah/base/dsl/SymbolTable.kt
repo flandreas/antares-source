@@ -21,7 +21,7 @@ class ScopedSymbolTable(
 
 	init {
 		if (scopeLevel <= 1) {
-			Lexer.getReservedWords().forEach {
+			DslLexer.getReservedWords().forEach {
 				define(BuiltInTypeSymbol(it))
 			}
 			BaseModule.dslGlobalFunctions.defineIn(this)

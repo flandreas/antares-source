@@ -2,8 +2,8 @@ package ch.scorpion.antares.dsl
 
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.Word
-import ch.scorpion.jabbah.base.dsl.Lexer
-import ch.scorpion.jabbah.base.dsl.TokenType
+import ch.scorpion.jabbah.base.dsl.DslLexer
+import ch.scorpion.jabbah.base.dsl.DslTokenType
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -20,28 +20,28 @@ class AntaresLexerTest {
 	fun shouldScanUndefinedHexLiteral() {
 		val lexer = AntaresLexer("a = 0x?4")
 		assertId("a", lexer)
-		assertToken(TokenType.ASSIGN, lexer)
+		assertToken(DslTokenType.ASSIGN, lexer)
 		val token = lexer.nextToken()
-		assertEquals(TokenType.LITERAL, token.type)
+		assertEquals(DslTokenType.LITERAL, token.type)
 		assertEquals(Word.undefined(BitWidth.BW_4), token.value)
 	}
 
 	private fun assertHexLiteral(expected: Long, literal: String) {
 		val lexer = AntaresLexer("a = $literal")
 		assertId("a", lexer)
-		assertToken(TokenType.ASSIGN, lexer)
+		assertToken(DslTokenType.ASSIGN, lexer)
 		val token = lexer.nextToken()
-		assertEquals(TokenType.LITERAL, token.type)
+		assertEquals(DslTokenType.LITERAL, token.type)
 		assertEquals(expected, token.value)
 	}
 
-	private fun assertId(name: String, lexer: Lexer) {
+	private fun assertId(name: String, lexer: DslLexer) {
 		val token = lexer.nextToken()
-		assertEquals(TokenType.ID, token.type)
+		assertEquals(DslTokenType.ID, token.type)
 		assertEquals(name, token.value)
 	}
 
-	private fun assertToken(type: TokenType, lexer: Lexer) {
+	private fun assertToken(type: DslTokenType, lexer: DslLexer) {
 		assertEquals(type, lexer.nextToken().type)
 	}
 }

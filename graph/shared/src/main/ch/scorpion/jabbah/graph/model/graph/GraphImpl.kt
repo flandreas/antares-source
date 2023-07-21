@@ -3,7 +3,7 @@ package ch.scorpion.jabbah.graph.model.graph
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.dsl.DslError
-import ch.scorpion.jabbah.base.dsl.Parser
+import ch.scorpion.jabbah.base.dsl.DslParser
 import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
 import ch.scorpion.jabbah.base.dsl.SymbolTable
 import ch.scorpion.jabbah.base.event.EventBus
@@ -251,7 +251,7 @@ open class GraphImpl(
 		return getGraphInputOutput(name) as GraphOutput<T>?
 	}
 
-	override fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): Parser =
+	override fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): DslParser =
 		BaseModule.parserFactory(
 			program,
 			BaseModule.semanticAnalyserFactory(symbolTable))

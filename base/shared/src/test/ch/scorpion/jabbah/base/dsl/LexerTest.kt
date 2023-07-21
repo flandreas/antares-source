@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.base.dsl
 
-import ch.scorpion.jabbah.base.dsl.TokenType.*
+import ch.scorpion.jabbah.base.dsl.DslTokenType.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -9,7 +9,7 @@ class LexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldScanMultiplyTerm() {
-		val lexer = Lexer("7*12")
+		val lexer = DslLexer("7*12")
 
 		assertLong(7, lexer)
 		assertToken(MULTIPLY, lexer)
@@ -19,7 +19,7 @@ class LexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldScanDivideTerm() {
-		val lexer = Lexer("48/6")
+		val lexer = DslLexer("48/6")
 
 		assertLong(48, lexer)
 		assertToken(DIVIDE, lexer)
@@ -29,7 +29,7 @@ class LexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldScanPlusExpression() {
-		val lexer = Lexer("12+8")
+		val lexer = DslLexer("12+8")
 
 		assertLong(12, lexer)
 		assertToken(PLUS, lexer)
@@ -39,7 +39,7 @@ class LexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldScanMinusExpression() {
-		val lexer = Lexer("23-11")
+		val lexer = DslLexer("23-11")
 
 		assertLong(23, lexer)
 		assertToken(MINUS, lexer)
@@ -49,7 +49,7 @@ class LexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldScanTermWithParentheses() {
-		val lexer = Lexer("3 * (15 - 7)")
+		val lexer = DslLexer("3 * (15 - 7)")
 
 		assertLong(3, lexer)
 		assertToken(MULTIPLY, lexer)
@@ -63,7 +63,7 @@ class LexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldScanAssignment() {
-		val lexer = Lexer("a = 17")
+		val lexer = DslLexer("a = 17")
 
 		assertId("a", lexer)
 		assertToken(ASSIGN, lexer)
@@ -72,7 +72,7 @@ class LexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldPeekNextToken() {
-		val lexer = Lexer("a = 17")
+		val lexer = DslLexer("a = 17")
 
 		assertId("a", lexer)
 		assertEquals(ASSIGN, lexer.peekNextToken().type)
@@ -83,7 +83,7 @@ class LexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldSkipStartLineComment() {
-		val lexer = Lexer("""
+		val lexer = DslLexer("""
 			a = 5
 			// a = 12
 			a
@@ -97,7 +97,7 @@ class LexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldSkipMidLineComment() {
-		val lexer = Lexer("a = 5 // + 7")
+		val lexer = DslLexer("a = 5 // + 7")
 		assertId("a", lexer)
 		assertToken(ASSIGN, lexer)
 		assertLong(5, lexer)
@@ -106,7 +106,7 @@ class LexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldScanBlock() {
-		val lexer = Lexer("""
+		val lexer = DslLexer("""
 			{
 				a = 12
 			}
@@ -121,7 +121,7 @@ class LexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldScanVar() {
-		val lexer = Lexer("var a")
+		val lexer = DslLexer("var a")
 
 		assertToken(VAR, lexer)
 		assertId("a", lexer)
@@ -129,7 +129,7 @@ class LexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldScanStore() {
-		val lexer = Lexer("store a")
+		val lexer = DslLexer("store a")
 
 		assertToken(STORE, lexer)
 		assertId("a", lexer)
@@ -137,7 +137,7 @@ class LexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldScanEqual() {
-		val lexer = Lexer("a == b")
+		val lexer = DslLexer("a == b")
 		assertId("a", lexer)
 		assertToken(EQUAL, lexer)
 		assertId("b", lexer)
@@ -145,7 +145,7 @@ class LexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldScanDiff() {
-		val lexer = Lexer("a != b")
+		val lexer = DslLexer("a != b")
 		assertId("a", lexer)
 		assertToken(DIFF, lexer)
 		assertId("b", lexer)
@@ -153,7 +153,7 @@ class LexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldScanSmaller() {
-		val lexer = Lexer("a < b")
+		val lexer = DslLexer("a < b")
 		assertId("a", lexer)
 		assertToken(SMALLER, lexer)
 		assertId("b", lexer)
@@ -161,7 +161,7 @@ class LexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldScanGreater() {
-		val lexer = Lexer("a > b")
+		val lexer = DslLexer("a > b")
 		assertId("a", lexer)
 		assertToken(GREATER, lexer)
 		assertId("b", lexer)
@@ -169,7 +169,7 @@ class LexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldScanSmallerEqual() {
-		val lexer = Lexer("a <= b")
+		val lexer = DslLexer("a <= b")
 		assertId("a", lexer)
 		assertToken(SMALLER_EQUAL, lexer)
 		assertId("b", lexer)
@@ -177,7 +177,7 @@ class LexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldScanGreaterEqual() {
-		val lexer = Lexer("a >= b")
+		val lexer = DslLexer("a >= b")
 		assertId("a", lexer)
 		assertToken(GREATER_EQUAL, lexer)
 		assertId("b", lexer)
@@ -185,7 +185,7 @@ class LexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldScanIfThen() {
-		val lexer = Lexer("if (5) {}")
+		val lexer = DslLexer("if (5) {}")
 		assertToken(IF, lexer)
 		assertToken(LPAREN, lexer)
 		assertLong(5, lexer)
@@ -196,7 +196,7 @@ class LexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldScanIfThenElse() {
-		val lexer = Lexer("if (5) { 17 } else { 42 }")
+		val lexer = DslLexer("if (5) { 17 } else { 42 }")
 		assertToken(IF, lexer)
 		assertToken(LPAREN, lexer)
 		assertLong(5, lexer)
@@ -212,7 +212,7 @@ class LexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldScanAnd() {
-		val lexer = Lexer("5 and 7")
+		val lexer = DslLexer("5 and 7")
 		assertLong(5, lexer)
 		assertToken(AND, lexer)
 		assertLong(7, lexer)
@@ -220,7 +220,7 @@ class LexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldScanOr() {
-		val lexer = Lexer("5 or 7")
+		val lexer = DslLexer("5 or 7")
 		assertLong(5, lexer)
 		assertToken(OR, lexer)
 		assertLong(7, lexer)
@@ -228,14 +228,14 @@ class LexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldScanNot() {
-		val lexer = Lexer("not 2")
+		val lexer = DslLexer("not 2")
 		assertToken(NOT, lexer)
 		assertLong(2, lexer)
 	}
 
 	@Test
 	fun shouldScanShiftLeft() {
-		val lexer = Lexer("4 << 1")
+		val lexer = DslLexer("4 << 1")
 		assertLong(4, lexer)
 		assertToken(SHIFT_LEFT, lexer)
 		assertLong(1, lexer)
@@ -243,7 +243,7 @@ class LexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldScanShiftRight() {
-		val lexer = Lexer("4 >> 1")
+		val lexer = DslLexer("4 >> 1")
 		assertLong(4, lexer)
 		assertToken(SHIFT_RIGHT, lexer)
 		assertLong(1, lexer)
@@ -251,7 +251,7 @@ class LexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldScanMod() {
-		val lexer = Lexer("5 % 2")
+		val lexer = DslLexer("5 % 2")
 		assertLong(5, lexer)
 		assertToken(MOD, lexer)
 		assertLong(2, lexer)
@@ -259,7 +259,7 @@ class LexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldScanWhen() {
-		val lexer = Lexer("""
+		val lexer = DslLexer("""
 			when (a) {
 				1 : 11
 				2 : 22
@@ -286,7 +286,7 @@ class LexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldScanFor() {
-		val lexer = Lexer("""
+		val lexer = DslLexer("""
 			for (a in 1 to 10) {
 				b
 			}
@@ -307,13 +307,13 @@ class LexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldScanQuotedId() {
-		assertId("!Q", Lexer("'!Q'"))
-		assertId("ID with blanks", Lexer("'ID with blanks'"))
+		assertId("!Q", DslLexer("'!Q'"))
+		assertId("ID with blanks", DslLexer("'ID with blanks'"))
 	}
 
 	@Test
 	fun shouldContinueAfterQuotedId() {
-		val lexer = Lexer("a 'A B' c")
+		val lexer = DslLexer("a 'A B' c")
 
 		assertId("a", lexer)
 		assertId("A B", lexer)
@@ -323,20 +323,20 @@ class LexerTest : AbstractLexerTest() {
 	@Test
 	fun shouldExpectClosingSingleQuote() {
 		assertFailsWith(SyntaxError::class) {
-			Lexer("'A").nextToken()
+			DslLexer("'A").nextToken()
 		}
 	}
 
 	@Test
 	fun shouldNotAcceptEmptyQuotedId() {
 		assertFailsWith(SyntaxError::class) {
-			Lexer("''").nextToken()
+			DslLexer("''").nextToken()
 		}
 	}
 
 	@Test
 	fun shouldScanAssocArrayValue() {
-		val lexer = Lexer("a[0]")
+		val lexer = DslLexer("a[0]")
 		assertId("a", lexer)
 		assertToken(LEFT_BRACKET, lexer)
 		assertLong(0, lexer)
@@ -345,13 +345,13 @@ class LexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldScanString() {
-		val lexer = Lexer("\"text\"")
+		val lexer = DslLexer("\"text\"")
 		assertString("text", lexer)
 	}
 
 	@Test
 	fun shouldScanStringWithOperators() {
-		val lexer = Lexer("\"A+B\"")
+		val lexer = DslLexer("\"A+B\"")
 		assertString("A+B", lexer)
 	}
 }

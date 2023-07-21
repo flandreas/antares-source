@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.base.dsl
 
-enum class TokenType(val id: String) {
+import ch.scorpion.jabbah.base.parser.TokenType
+
+enum class DslTokenType(override val id: String): TokenType {
 	LITERAL("literal"),
 	PLUS("+"),
 	MINUS("-"),
@@ -49,23 +51,10 @@ enum class TokenType(val id: String) {
 	DOUBLE_QUOTE("\""),
 	SINGLE_QUOTE("'"),
 	LOGIC_AND("∧"),
-	LOGIC_OR("∧"),
+	LOGIC_OR("∨"),
 	LOGIC_NOT("¬"),
 	PROGRAMMING_AND("&&"),
 	PROGRAMMING_OR("||"),
-	PROGRAMMING_NOT("!")
-}
-
-/**
- * The result of [Lexer] representing a part of a scanned text.
- *
- * @property type the type of this [Token]
- * @property T the type of the [value] of this [Token]. Can be [Unit] for [Tokens][Token] without value.
- */
-data class Token<out T: Any>(
-	val type: TokenType,
-	val value: T? = null
-) {
-	override fun toString(): String =
-		value?.let { "Token(${type.name}, $it)" } ?: "Token(${type.name})"
+	PROGRAMMING_NOT("!"),
+	UNDERSCORE("_")
 }

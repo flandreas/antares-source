@@ -1,21 +1,21 @@
 package ch.scorpion.jabbah.base.dsl
 
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.dsl.TokenType.*
+import ch.scorpion.jabbah.base.dsl.DslTokenType.*
 import kotlin.math.pow
 
 typealias InterpreterFactory = (node: Node, memory: Memory) -> Interpreter
 
 /**
- * Interprets an AST according to the grammar parsed by [Parser].
+ * Interprets an AST according to the grammar parsed by [DslParser].
  */
 open class Interpreter(
 	rootNode: Node,
 	memory: Memory = Memory()
 ) : AbstractBaseInterpreter(rootNode, memory) {
 
-	constructor(parser: Parser): this(parser.parse())
-	constructor(program: String): this(Parser(program))
+	constructor(parser: DslParser): this(parser.parse())
+	constructor(program: String): this(DslParser(program))
 
 	override fun interpret(node: Node): Any {
 		return when (node) {

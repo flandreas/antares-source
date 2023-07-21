@@ -1,8 +1,8 @@
 package ch.scorpion.antares.model.truthtable
 
-import ch.scorpion.jabbah.base.dsl.CodeLocation
-import ch.scorpion.jabbah.base.dsl.Token
-import ch.scorpion.jabbah.base.dsl.TokenType
+import ch.scorpion.jabbah.base.parser.TextLocation
+import ch.scorpion.jabbah.base.parser.Token
+import ch.scorpion.jabbah.base.dsl.DslTokenType
 import ch.scorpion.jabbah.base.dsl.Variable
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -28,7 +28,7 @@ class TruthTableActivationRecordTest {
 
 	private fun assertRowValue(ar: TruthTableActivationRecord, row: Int, name: String, value: Boolean) {
 		ar.currentRow = row
-		val variable = Variable(CodeLocation(0, 0, 0), Token(TokenType.ID, name))
+		val variable = Variable(TextLocation(0, 0, 0), Token(DslTokenType.ID, name))
 		assertEquals(value, ar.getValue(variable))
 	}
 }

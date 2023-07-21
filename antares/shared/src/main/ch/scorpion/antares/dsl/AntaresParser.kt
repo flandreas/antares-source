@@ -2,7 +2,7 @@ package ch.scorpion.antares.dsl
 
 import ch.scorpion.jabbah.base.dsl.Node
 import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
-import ch.scorpion.jabbah.base.dsl.TokenType.*
+import ch.scorpion.jabbah.base.dsl.DslTokenType.*
 import ch.scorpion.jabbah.base.dsl.Variable
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.dsl.GraphDslParser

@@ -2,9 +2,11 @@ package ch.scorpion.jabbah.base.dsl
 
 import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
 import ch.scorpion.jabbah.base.HierarchyVisitor
+import ch.scorpion.jabbah.base.parser.TextLocation
+import ch.scorpion.jabbah.base.parser.Token
 
 interface Node {
-	val location: CodeLocation
+	val location: TextLocation
 	fun accept(visitor: HierarchyVisitor): Boolean
 }
 
@@ -32,23 +34,23 @@ fun filterNodes(node: Node, condition: (Node) -> Boolean): Collection<Node> {
 	return result
 }
 
-abstract class AbstractNode(override val location: CodeLocation) : Node {
+abstract class AbstractNode(override val location: TextLocation) : Node {
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		return visitor.visit(this)
 	}
 }
 
 class UnaryOperation(
-	location: CodeLocation,
+	location: TextLocation,
 	val op: Token<Any>,
 	val expr: Node
 ) : AbstractNode(location) {
 
 	override fun toString(): String {
 		return when (op.type) {
-			TokenType.PLUS -> "Unary +"
-			TokenType.MINUS -> "Unary -"
-			TokenType.NOT -> "not"
+			DslTokenType.PLUS -> "Unary +"
+			DslTokenType.MINUS -> "Unary -"
+			DslTokenType.NOT -> "not"
 			else -> throw IllegalStateException("unsupported unary op ${op.type}")
 		}
 	}
@@ -62,7 +64,7 @@ class UnaryOperation(
 }
 
 class BinaryOperation(
-	location: CodeLocation,
+	location: TextLocation,
 	val left: Node,
 	val op: Token<Any>,
 	val right: Node
@@ -80,15 +82,15 @@ class BinaryOperation(
 	}
 }
 
-class Literal(location: CodeLocation, val token: Token<Any>) : AbstractNode(location) {
+class Literal(location: TextLocation, val token: Token<Any>) : AbstractNode(location) {
 	override fun toString(): String = token.value!!.toString()
 }
 
-class NoOp(location: CodeLocation) : AbstractNode(location) {
+class NoOp(location: TextLocation) : AbstractNode(location) {
 	override fun toString(): String = "NoOp"
 }
 
-open class Compound(location: CodeLocation, val children: List<Node>) : AbstractNode(location) {
+open class Compound(location: TextLocation, val children: List<Node>) : AbstractNode(location) {
 
 	override fun toString(): String = "Compound"
 
@@ -104,11 +106,11 @@ open class Compound(location: CodeLocation, val children: List<Node>) : Abstract
 	}
 }
 
-class Block(location: CodeLocation, children: List<Node>) : Compound(location, children) {
+class Block(location: TextLocation, children: List<Node>) : Compound(location, children) {
 	override fun toString(): String = "Block"
 }
 
-open class Variable(location: CodeLocation, val token: Token<String>, val negated: Boolean = false) : AbstractNode(location) {
+open class Variable(location: TextLocation, val token: Token<String>, val negated: Boolean = false) : AbstractNode(location) {
 
 	fun negate(): Variable = Variable(location, token, true)
 
@@ -117,7 +119,7 @@ open class Variable(location: CodeLocation, val token: Token<String>, val negate
 	override fun accept(visitor: HierarchyVisitor): Boolean = visitor.visit(this)
 }
 
-class AssocArray(location: CodeLocation, token: Token<String>, val key: Node): Variable(location, token) {
+class AssocArray(location: TextLocation, token: Token<String>, val key: Node): Variable(location, token) {
 	override fun toString(): String = "${super.toString()}[]"
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
@@ -128,7 +130,7 @@ class AssocArray(location: CodeLocation, token: Token<String>, val key: Node): V
 	}
 }
 
-class Assignment(location: CodeLocation, val left: Variable, val right: Node) : AbstractNode(location) {
+class Assignment(location: TextLocation, val left: Variable, val right: Node) : AbstractNode(location) {
 
 	override fun toString(): String = "="
 
@@ -141,7 +143,7 @@ class Assignment(location: CodeLocation, val left: Variable, val right: Node) : 
 	}
 }
 
-class Declaration(location: CodeLocation, val left: Variable, val right: Node?, val store: Boolean) : AbstractNode(location) {
+class Declaration(location: TextLocation, val left: Variable, val right: Node?, val store: Boolean) : AbstractNode(location) {
 	override fun toString(): String = if (store) "store" else "var"
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
@@ -153,7 +155,7 @@ class Declaration(location: CodeLocation, val left: Variable, val right: Node?, 
 	}
 }
 
-class IfStatement(location: CodeLocation, val condition: Node, val thenStatement: Node, val elseStatement: Node?) : AbstractNode(location) {
+class IfStatement(location: TextLocation, val condition: Node, val thenStatement: Node, val elseStatement: Node?) : AbstractNode(location) {
 	override fun toString(): String = "if"
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
@@ -169,7 +171,7 @@ class IfStatement(location: CodeLocation, val condition: Node, val thenStatement
 /**
  * @property condition `null` only for 'else' case
  */
-class WhenClause(location: CodeLocation, val condition: Node?, val then: Node) : AbstractNode(location) {
+class WhenClause(location: TextLocation, val condition: Node?, val then: Node) : AbstractNode(location) {
 	override fun toString(): String = condition?.let { ":" } ?: "else"
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
@@ -181,7 +183,7 @@ class WhenClause(location: CodeLocation, val condition: Node?, val then: Node) :
 	}
 }
 
-class WhenStatement(location: CodeLocation, val expression: Node, val clauses: List<WhenClause>) : AbstractNode(location) {
+class WhenStatement(location: TextLocation, val expression: Node, val clauses: List<WhenClause>) : AbstractNode(location) {
 	override fun toString(): String = "when"
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
@@ -198,7 +200,7 @@ class WhenStatement(location: CodeLocation, val expression: Node, val clauses: L
 }
 
 class ForStatement(
-	location: CodeLocation,
+	location: TextLocation,
 	val variable: Variable,
 	val inExpr: Node,
 	val toExpr: Node,
@@ -217,7 +219,7 @@ class ForStatement(
 	}
 }
 
-class ReturnStatement(location: CodeLocation, val expr: Node?) : AbstractNode(location) {
+class ReturnStatement(location: TextLocation, val expr: Node?) : AbstractNode(location) {
 	override fun toString(): String = "return"
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
@@ -237,7 +239,7 @@ class ReturnStatement(location: CodeLocation, val expr: Node?) : AbstractNode(lo
  * by a [SemanticAnalyser].
  */
 class FunctionCall(
-	location: CodeLocation,
+	location: TextLocation,
 	val name: Token<String>,
 	val params: List<Node>,
 	var function: ExternalFunctionSymbol? = null

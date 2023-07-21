@@ -13,7 +13,7 @@ class SemanticAnalyserTest {
 
 	@Test
 	fun shouldBuildSymbolTable() {
-		val ast = Parser("""
+		val ast = DslParser("""
 			var a = 5
 			var b = a
 		""".trimIndent()).parse()
@@ -23,7 +23,7 @@ class SemanticAnalyserTest {
 
 		val symbolTable = analyser.scope
 
-		assertEquals(2 + Lexer.RESERVED_KEYWORDS.size + BaseModule.dslGlobalFunctions.reservedFunctionNames.size, symbolTable.symbolsCount)
+		assertEquals(2 + DslLexer.RESERVED_KEYWORDS.size + BaseModule.dslGlobalFunctions.reservedFunctionNames.size, symbolTable.symbolsCount)
 		assertIs<BuiltInTypeSymbol>(symbolTable.lookup("var"))
 		assertIs<VariableSymbol>(symbolTable.lookup("a"))
 		assertIs<VariableSymbol>(symbolTable.lookup("b"))
@@ -32,7 +32,7 @@ class SemanticAnalyserTest {
 	@Test
 	fun shouldThrowNameErrorWithUndefinedVariable() {
 		assertFailsWith(SemanticError::class) {
-			val ast = Parser("""
+			val ast = DslParser("""
 			var a = 5
 			b = c
 		""".trimIndent()).parse()
@@ -45,7 +45,7 @@ class SemanticAnalyserTest {
 	@Test
 	fun shouldNotAllowStoreDeclarationInInnerScope() {
 		assertFailsWith(SemanticError::class) {
-			val ast = Parser("""
+			val ast = DslParser("""
 			var a = 1
 			if (a) {
 				store b = 0
@@ -66,7 +66,7 @@ class SemanticAnalyserTest {
 			symbolTable.define(ExternalFunctionSymbol("f", 1) {})
 			val semanticAnalyser = SemanticAnalyser(symbolTable)
 
-			Parser(Lexer("g(1)"), semanticAnalyser).parse()
+			DslParser(DslLexer("g(1)"), semanticAnalyser).parse()
 		}
 	}
 
@@ -76,7 +76,7 @@ class SemanticAnalyserTest {
 		symbolTable.define(ExternalFunctionSymbol("f", 1) {})
 		val semanticAnalyser = SemanticAnalyser(symbolTable)
 
-		Parser(Lexer("f(1)"), semanticAnalyser).parse()
+		DslParser(DslLexer("f(1)"), semanticAnalyser).parse()
 	}
 
 	@Test
@@ -86,7 +86,7 @@ class SemanticAnalyserTest {
 			symbolTable.define(ExternalFunctionSymbol("f", 1) {})
 			val semanticAnalyser = SemanticAnalyser(symbolTable)
 
-			Parser(Lexer("f(1, 2)"), semanticAnalyser).parse()
+			DslParser(DslLexer("f(1, 2)"), semanticAnalyser).parse()
 		}
 	}
 
@@ -96,7 +96,7 @@ class SemanticAnalyserTest {
 		symbolTable.define(ExternalFunctionSymbol("f", 1) {})
 		val semanticAnalyser = SemanticAnalyser(symbolTable)
 
-		val ast = Parser(Lexer("""
+		val ast = DslParser(DslLexer("""
 			if (1 == 1) {
 				f(1)
 			} else {

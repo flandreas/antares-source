@@ -131,7 +131,7 @@ class UsecaseImpl(
 
 	/** ---- [UsecaseImpl] */
 
-	fun createParser(program: String, @Suppress("UNUSED_PARAMETER") semanticAnalyser: SemanticAnalyser?): Parser =
+	fun createParser(program: String, @Suppress("UNUSED_PARAMETER") semanticAnalyser: SemanticAnalyser?): DslParser =
 		BaseModule.parserFactory(program, BaseModule.semanticAnalyserFactory(createSymbolTable()))
 
 	private fun createScriptInterpreter(graphView: GraphView, ast: Node): Interpreter =

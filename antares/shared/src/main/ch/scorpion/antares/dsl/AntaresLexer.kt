@@ -2,11 +2,11 @@ package ch.scorpion.antares.dsl
 
 import ch.scorpion.antares.model.signal.*
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.dsl.Lexer
+import ch.scorpion.jabbah.base.dsl.DslLexer
 import ch.scorpion.jabbah.base.dsl.SyntaxError
-import ch.scorpion.jabbah.base.dsl.Token
+import ch.scorpion.jabbah.base.parser.Token
 
-class AntaresLexer(text: String) : Lexer(text) {
+class AntaresLexer(text: String) : DslLexer(text) {
 
 	override fun isLiteral(state: State): Boolean =
 		super.isLiteral(state) || isUndefinedHexLiteral(state)

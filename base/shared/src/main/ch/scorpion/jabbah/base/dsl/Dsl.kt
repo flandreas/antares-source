@@ -4,7 +4,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 
 /**
  * Provides convenience facade methods for executing DSL scripts without
- * dealing with [Parser] and [Interpreter] classes.
+ * dealing with [DslParser] and [Interpreter] classes.
  */
 object Dsl {
 

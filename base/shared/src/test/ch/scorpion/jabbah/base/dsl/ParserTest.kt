@@ -12,13 +12,13 @@ class ParserTest {
 
 	@Test
 	fun shouldParseExpressionWithParentheses() {
-		val parser = Parser("(4 + 12) / -3")
+		val parser = DslParser("(4 + 12) / -3")
 		parser.parse()
 	}
 
 	@Test
 	fun shouldParseAssignment() {
-		val parser = Parser("""
+		val parser = DslParser("""
 			var a
 			a = 5
 		""".trimIndent())
@@ -32,7 +32,7 @@ class ParserTest {
 	@Test
 	fun shouldRejectKeywordVariableName() {
 		assertFailsWith(SyntaxError::class) {
-			Parser(Lexer("""
+			DslParser(DslLexer("""
 				in = 42				
 			""".trimIndent())).parse()
 		}
@@ -40,7 +40,7 @@ class ParserTest {
 
 	@Test
 	fun shouldParseExpressionWithVariables() {
-		val parser = Parser("""
+		val parser = DslParser("""
 			var a
 			var b
 			b = a * (7 - b)
@@ -50,7 +50,7 @@ class ParserTest {
 
 	@Test
 	fun shouldParseEmptyLinesBetweenStatements() {
-		val parser = Parser("""
+		val parser = DslParser("""
 			var a = 5
 			
 			var b = 12
@@ -69,7 +69,7 @@ class ParserTest {
 
 	@Test
 	fun shouldParseBlock() {
-		val parser = Parser("""
+		val parser = DslParser("""
 			{
 				var b = 5
 			}
@@ -86,7 +86,7 @@ class ParserTest {
 
 	@Test
 	fun shouldParseVarDeclarationWithoutExpression() {
-		val parser = Parser("""
+		val parser = DslParser("""
 			var a
 			a = 5
 		""".trimIndent())
@@ -103,7 +103,7 @@ class ParserTest {
 
 	@Test
 	fun shouldParseVarDeclarationWithExpression() {
-		val parser = Parser("""
+		val parser = DslParser("""
 			var a = 5
 			var b = a
 		""".trimIndent())
@@ -121,7 +121,7 @@ class ParserTest {
 
 	@Test
 	fun shouldParseStoreDeclarationWithoutExpression() {
-		val parser = Parser("""
+		val parser = DslParser("""
 			store a
 			a = 5
 		""".trimIndent())
@@ -138,7 +138,7 @@ class ParserTest {
 
 	@Test
 	fun shouldParseStoreDeclarationWithExpression() {
-		val parser = Parser("""
+		val parser = DslParser("""
 			store a = 5
 			store b = a
 		""".trimIndent())
@@ -156,7 +156,7 @@ class ParserTest {
 
 	@Test
 	fun shouldParseIfThenStatement() {
-		val parser = Parser("""
+		val parser = DslParser("""
 			if (3 == 5) {
 				42
 			}
@@ -167,7 +167,7 @@ class ParserTest {
 
 	@Test
 	fun shouldParseIfThenElseStatement() {
-		val parser = Parser("""
+		val parser = DslParser("""
 			if (3 == 5) {
 				42
 			} else {
@@ -180,7 +180,7 @@ class ParserTest {
 
 	@Test
 	fun shouldParseExpressionWithLogicOperator() {
-		val parser = Parser("5 == 5 and 13 == 27")
+		val parser = DslParser("5 == 5 and 13 == 27")
 
 		assertAST(parser.parse(), """
 			Compound
@@ -196,7 +196,7 @@ class ParserTest {
 
 	@Test
 	fun shouldParseUnaryNot() {
-		val parser = Parser("not 3")
+		val parser = DslParser("not 3")
 
 		assertAST(parser.parse(), """
 			Compound
@@ -207,7 +207,7 @@ class ParserTest {
 
 	@Test
 	fun shouldParseWhenStatement() {
-		val parser = Parser("""
+		val parser = DslParser("""
 			var a = 2
 			var b = 0
 			when (a) {
@@ -248,7 +248,7 @@ class ParserTest {
 
 	@Test
 	fun shouldParseForStatement() {
-		val parser = Parser("""
+		val parser = DslParser("""
 			for (a in 1 to 10) {
 				1
 			}
@@ -267,7 +267,7 @@ class ParserTest {
 
 	@Test
 	fun shouldParseAssocArray() {
-		val parser = Parser(Lexer("""
+		val parser = DslParser(DslLexer("""
 			a[27] = 15
 			a[28] = 11
 		""".trimIndent()), null)
@@ -287,7 +287,7 @@ class ParserTest {
 
 	@Test
 	fun shouldParseAssocArrayAssignments() {
-		val parser = Parser(Lexer("a[0] = 1"), null)
+		val parser = DslParser(DslLexer("a[0] = 1"), null)
 
 		assertAST(parser.parse(), """
 			Compound
@@ -300,7 +300,7 @@ class ParserTest {
 
 	@Test
 	fun shouldParseAssocArrayWithExpressionIndex() {
-		val parser = Parser(Lexer("a[1+2]"), null)
+		val parser = DslParser(DslLexer("a[1+2]"), null)
 
 		assertAST(parser.parse(), """
 			Compound
@@ -313,7 +313,7 @@ class ParserTest {
 
 	@Test
 	fun shouldParseAssocArrayWithVariableIndex() {
-		val parser = Parser(Lexer("""
+		val parser = DslParser(DslLexer("""
 			a[b]
 		""".trimIndent()), null)
 
@@ -326,7 +326,7 @@ class ParserTest {
 
 	@Test
 	fun shouldParseFunctionCallWithParameters() {
-		val parser = Parser(Lexer("f(1, 2)"), null)
+		val parser = DslParser(DslLexer("f(1, 2)"), null)
 
 		assertAST(parser.parse(), """
 			Compound
@@ -338,7 +338,7 @@ class ParserTest {
 
 	@Test
 	fun shouldParseFunctionCallWithoutParameters() {
-		val parser = Parser(Lexer("f()"), null)
+		val parser = DslParser(DslLexer("f()"), null)
 
 		assertAST(parser.parse(), """
 			Compound
@@ -348,7 +348,7 @@ class ParserTest {
 
 	@Test
 	fun shouldParseStringLiteral() {
-		val parser = Parser(Lexer("a = \"text\""), null)
+		val parser = DslParser(DslLexer("a = \"text\""), null)
 
 		assertAST(parser.parse(), """
 			Compound
@@ -360,7 +360,7 @@ class ParserTest {
 
 	@Test
 	fun shouldParseFunctionCallWithStringParam() {
-		val parser = Parser(Lexer("f(\"A+B\")"), null)
+		val parser = DslParser(DslLexer("f(\"A+B\")"), null)
 
 		assertAST(parser.parse(), """
 			Compound
@@ -371,7 +371,7 @@ class ParserTest {
 
 	@Test
 	fun shouldParseExponentialTerm() {
-		val parser = Parser(Lexer("2^3"), null)
+		val parser = DslParser(DslLexer("2^3"), null)
 
 		assertAST(parser.parse(), """
 			Compound
@@ -383,7 +383,7 @@ class ParserTest {
 
 	@Test
 	fun shouldParseShiftWithVariableRightFactor() {
-		val parser = Parser(Lexer("A << B"), null)
+		val parser = DslParser(DslLexer("A << B"), null)
 
 		assertAST(parser.parse(), """
 			Compound
@@ -391,12 +391,5 @@ class ParserTest {
 			-- A
 			-- B
 		""".trimIndent())
-	}
-
-	private fun assertAST(node: Node, ast: String) {
-		val printer = SyntaxTreePrinter()
-		node.accept(printer)
-
-		assertEquals(ast, printer.result)
 	}
 }

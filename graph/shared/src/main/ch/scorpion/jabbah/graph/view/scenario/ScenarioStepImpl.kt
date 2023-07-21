@@ -211,7 +211,7 @@ class ScenarioStepImpl(
 
 	/** ---- [ScenarioStepImpl] */
 
-	fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): Parser =
+	fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): DslParser =
 		graphView?.graph?.createParser(program, semanticAnalyser)
 			?: BaseModule.parserFactory(program, semanticAnalyser)
 

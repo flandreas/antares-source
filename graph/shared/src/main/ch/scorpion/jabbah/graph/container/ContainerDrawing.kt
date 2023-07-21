@@ -4,7 +4,7 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
-import ch.scorpion.jabbah.base.dsl.Parser
+import ch.scorpion.jabbah.base.dsl.DslParser
 import ch.scorpion.jabbah.base.dsl.ScopedSymbolTable
 import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
 import ch.scorpion.jabbah.base.dsl.Symbol
@@ -223,7 +223,7 @@ class ContainerDrawing(
 		}
 	}
 
-	fun createDrawSymbolScriptParser(program: String, @Suppress("UNUSED_PARAMETER") semanticAnalyser: SemanticAnalyser?): Parser =
+	fun createDrawSymbolScriptParser(program: String, @Suppress("UNUSED_PARAMETER") semanticAnalyser: SemanticAnalyser?): DslParser =
 		BaseModule.parserFactory(program, BaseModule.semanticAnalyserFactory(createDrawExecSymbolParserSymbolTable()))
 
 	private fun createDrawExecSymbolParserSymbolTable(): ScopedSymbolTable =

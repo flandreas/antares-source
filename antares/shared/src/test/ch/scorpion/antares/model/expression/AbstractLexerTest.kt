@@ -3,8 +3,8 @@ package ch.scorpion.antares.model.expression
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.BaseLexer
-import ch.scorpion.jabbah.base.dsl.Token
-import ch.scorpion.jabbah.base.dsl.TokenType
+import ch.scorpion.jabbah.base.parser.Token
+import ch.scorpion.jabbah.base.dsl.DslTokenType
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 
@@ -26,28 +26,28 @@ abstract class AbstractLexerTest {
 	}
 
 	protected fun assertEof(token: Token<Any>) {
-		assertEquals(TokenType.EOF, token.type)
+		assertEquals(DslTokenType.EOF, token.type)
 	}
 
 	protected fun assertLong(value: Long, lexer: BaseLexer) {
 		val token = lexer.nextToken()
-		assertEquals(TokenType.LITERAL, token.type)
+		assertEquals(DslTokenType.LITERAL, token.type)
 		assertEquals(value, token.value)
 	}
 
 	protected fun assertString(value: String, lexer: BaseLexer) {
 		val token = lexer.nextToken()
-		assertEquals(TokenType.LITERAL, token.type)
+		assertEquals(DslTokenType.LITERAL, token.type)
 		assertEquals(value, token.value)
 	}
 
 	protected fun assertId(name: String, lexer: BaseLexer) {
 		val token = lexer.nextToken()
-		assertEquals(TokenType.ID, token.type)
+		assertEquals(DslTokenType.ID, token.type)
 		assertEquals(name, token.value)
 	}
 
-	protected fun assertToken(type: TokenType, lexer: BaseLexer) {
+	protected fun assertToken(type: DslTokenType, lexer: BaseLexer) {
 		assertEquals(type, lexer.nextToken().type)
 	}
 }

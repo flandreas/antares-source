@@ -1,6 +1,6 @@
 package ch.scorpion.antares.model.expression
 
-import ch.scorpion.jabbah.base.dsl.TokenType
+import ch.scorpion.jabbah.base.dsl.DslTokenType
 import kotlin.test.Test
 
 class BooleanExpressionLexerTest : AbstractLexerTest() {
@@ -10,15 +10,15 @@ class BooleanExpressionLexerTest : AbstractLexerTest() {
 		val lexer = BooleanExpressionLexer("X = A * B' + A' * B")
 
 		assertId("X", lexer)
-		assertToken(TokenType.ASSIGN, lexer)
+		assertToken(DslTokenType.ASSIGN, lexer)
 		assertId("A", lexer)
-		assertToken(TokenType.MULTIPLY, lexer)
+		assertToken(DslTokenType.MULTIPLY, lexer)
 		assertId("B", lexer)
-		assertToken(TokenType.SINGLE_QUOTE, lexer)
-		assertToken(TokenType.PLUS, lexer)
+		assertToken(DslTokenType.SINGLE_QUOTE, lexer)
+		assertToken(DslTokenType.PLUS, lexer)
 		assertId("A", lexer)
-		assertToken(TokenType.SINGLE_QUOTE, lexer)
-		assertToken(TokenType.MULTIPLY, lexer)
+		assertToken(DslTokenType.SINGLE_QUOTE, lexer)
+		assertToken(DslTokenType.MULTIPLY, lexer)
 		assertId("B", lexer)
 	}
 
@@ -30,13 +30,13 @@ class BooleanExpressionLexerTest : AbstractLexerTest() {
 		""".trimIndent(), singleCharIdentifier = false)
 
 		assertId("X", lexer)
-		assertToken(TokenType.ASSIGN, lexer)
+		assertToken(DslTokenType.ASSIGN, lexer)
 		assertId("A", lexer)
-		assertToken(TokenType.PLUS, lexer)
+		assertToken(DslTokenType.PLUS, lexer)
 		assertId("BIN", lexer)
 
 		assertId("Y", lexer)
-		assertToken(TokenType.ASSIGN, lexer)
+		assertToken(DslTokenType.ASSIGN, lexer)
 		assertId("BIN", lexer)
 	}
 
@@ -45,15 +45,15 @@ class BooleanExpressionLexerTest : AbstractLexerTest() {
 		val lexer = BooleanExpressionLexer("X = A ∧ ¬B ∨ ¬A ∧ B")
 
 		assertId("X", lexer)
-		assertToken(TokenType.ASSIGN, lexer)
+		assertToken(DslTokenType.ASSIGN, lexer)
 		assertId("A", lexer)
-		assertToken(TokenType.LOGIC_AND, lexer)
-		assertToken(TokenType.LOGIC_NOT, lexer)
+		assertToken(DslTokenType.LOGIC_AND, lexer)
+		assertToken(DslTokenType.LOGIC_NOT, lexer)
 		assertId("B", lexer)
-		assertToken(TokenType.LOGIC_OR, lexer)
-		assertToken(TokenType.LOGIC_NOT, lexer)
+		assertToken(DslTokenType.LOGIC_OR, lexer)
+		assertToken(DslTokenType.LOGIC_NOT, lexer)
 		assertId("A", lexer)
-		assertToken(TokenType.LOGIC_AND, lexer)
+		assertToken(DslTokenType.LOGIC_AND, lexer)
 		assertId("B", lexer)
 	}
 
@@ -62,15 +62,15 @@ class BooleanExpressionLexerTest : AbstractLexerTest() {
 		val lexer = BooleanExpressionLexer("X = A && !B || !A && B")
 
 		assertId("X", lexer)
-		assertToken(TokenType.ASSIGN, lexer)
+		assertToken(DslTokenType.ASSIGN, lexer)
 		assertId("A", lexer)
-		assertToken(TokenType.PROGRAMMING_AND, lexer)
-		assertToken(TokenType.PROGRAMMING_NOT, lexer)
+		assertToken(DslTokenType.PROGRAMMING_AND, lexer)
+		assertToken(DslTokenType.PROGRAMMING_NOT, lexer)
 		assertId("B", lexer)
-		assertToken(TokenType.PROGRAMMING_OR, lexer)
-		assertToken(TokenType.PROGRAMMING_NOT, lexer)
+		assertToken(DslTokenType.PROGRAMMING_OR, lexer)
+		assertToken(DslTokenType.PROGRAMMING_NOT, lexer)
 		assertId("A", lexer)
-		assertToken(TokenType.PROGRAMMING_AND, lexer)
+		assertToken(DslTokenType.PROGRAMMING_AND, lexer)
 		assertId("B", lexer)
 	}
 
@@ -79,15 +79,15 @@ class BooleanExpressionLexerTest : AbstractLexerTest() {
 		val lexer = BooleanExpressionLexer("X = A AND NOT B OR NOT A AND B")
 
 		assertId("X", lexer)
-		assertToken(TokenType.ASSIGN, lexer)
+		assertToken(DslTokenType.ASSIGN, lexer)
 		assertId("A", lexer)
-		assertToken(TokenType.AND, lexer)
-		assertToken(TokenType.NOT, lexer)
+		assertToken(DslTokenType.AND, lexer)
+		assertToken(DslTokenType.NOT, lexer)
 		assertId("B", lexer)
-		assertToken(TokenType.OR, lexer)
-		assertToken(TokenType.NOT, lexer)
+		assertToken(DslTokenType.OR, lexer)
+		assertToken(DslTokenType.NOT, lexer)
 		assertId("A", lexer)
-		assertToken(TokenType.AND, lexer)
+		assertToken(DslTokenType.AND, lexer)
 		assertId("B", lexer)
 	}
 
@@ -96,13 +96,13 @@ class BooleanExpressionLexerTest : AbstractLexerTest() {
 		val lexer = BooleanExpressionLexer("X = AB' + A'B", singleCharIdentifier = true)
 
 		assertId("X", lexer)
-		assertToken(TokenType.ASSIGN, lexer)
+		assertToken(DslTokenType.ASSIGN, lexer)
 		assertId("A", lexer)
 		assertId("B", lexer)
-		assertToken(TokenType.SINGLE_QUOTE, lexer)
-		assertToken(TokenType.PLUS, lexer)
+		assertToken(DslTokenType.SINGLE_QUOTE, lexer)
+		assertToken(DslTokenType.PLUS, lexer)
 		assertId("A", lexer)
-		assertToken(TokenType.SINGLE_QUOTE, lexer)
+		assertToken(DslTokenType.SINGLE_QUOTE, lexer)
 		assertId("B", lexer)
 	}
 
@@ -114,13 +114,13 @@ class BooleanExpressionLexerTest : AbstractLexerTest() {
 		""".trimIndent(), singleCharIdentifier = true)
 
 		assertId("X", lexer)
-		assertToken(TokenType.ASSIGN, lexer)
+		assertToken(DslTokenType.ASSIGN, lexer)
 		assertId("A", lexer)
-		assertToken(TokenType.PLUS, lexer)
+		assertToken(DslTokenType.PLUS, lexer)
 		assertId("B", lexer)
 
 		assertId("Y", lexer)
-		assertToken(TokenType.ASSIGN, lexer)
+		assertToken(DslTokenType.ASSIGN, lexer)
 		assertId("B", lexer)
 	}
 
@@ -132,15 +132,15 @@ class BooleanExpressionLexerTest : AbstractLexerTest() {
 		""".trimIndent(), singleCharIdentifier = true)
 
 		assertId("X", lexer)
-		assertToken(TokenType.ASSIGN, lexer)
+		assertToken(DslTokenType.ASSIGN, lexer)
 		assertId("A", lexer)
-		assertToken(TokenType.PLUS, lexer)
+		assertToken(DslTokenType.PLUS, lexer)
 		assertId("B", lexer)
-		assertToken(TokenType.SINGLE_QUOTE, lexer)
+		assertToken(DslTokenType.SINGLE_QUOTE, lexer)
 
 		assertId("Y", lexer)
-		assertToken(TokenType.SINGLE_QUOTE, lexer)
-		assertToken(TokenType.ASSIGN, lexer)
+		assertToken(DslTokenType.SINGLE_QUOTE, lexer)
+		assertToken(DslTokenType.ASSIGN, lexer)
 		assertId("B", lexer)
 	}
 }

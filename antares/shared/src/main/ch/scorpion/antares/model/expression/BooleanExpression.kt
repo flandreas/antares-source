@@ -1,10 +1,11 @@
 package ch.scorpion.antares.model.expression
 
 import ch.scorpion.jabbah.base.dsl.*
+import ch.scorpion.jabbah.base.parser.TextLocation
 
 /**
  * Boolean expressions are defined by the following parts of the standard Antares DSL
- * as defined by [Parser]:
+ * as defined by [DslParser]:
  *
  * <pre>
  *     expr : term ("or" term)*
@@ -18,24 +19,24 @@ import ch.scorpion.jabbah.base.dsl.*
  */
 object BooleanExpression {
 
-	private val constantTrue = Literal(CodeLocation.UNDEFINED, BaseLexer.literalToken(true))
-	private val constantFalse = Literal(CodeLocation.UNDEFINED, BaseLexer.literalToken(false))
+	private val constantTrue = Literal(TextLocation.UNDEFINED, BaseLexer.literalToken(true))
+	private val constantFalse = Literal(TextLocation.UNDEFINED, BaseLexer.literalToken(false))
 
 	fun or(left: Node, right: Node): Node =
-		BinaryOperation(CodeLocation.UNDEFINED, left, Lexer.OR_TOKEN, right)
+		BinaryOperation(TextLocation.UNDEFINED, left, DslLexer.OR_TOKEN, right)
 
 	fun and(left: Node, right: Node): Node =
-		BinaryOperation(CodeLocation.UNDEFINED, left, Lexer.AND_TOKEN, right)
+		BinaryOperation(TextLocation.UNDEFINED, left, DslLexer.AND_TOKEN, right)
 
 	fun not(node: Node): Node =
-		UnaryOperation(CodeLocation.UNDEFINED, Lexer.NOT_TOKEN, node)
+		UnaryOperation(TextLocation.UNDEFINED, DslLexer.NOT_TOKEN, node)
 
 	fun variable(name: String): Node =
-		Variable(CodeLocation.UNDEFINED, BaseLexer.idToken(name))
+		Variable(TextLocation.UNDEFINED, BaseLexer.idToken(name))
 
 	fun const(value: Boolean): Node =
 		if (value) constantTrue else constantFalse
 
 	fun parenthesis(node: Node): Node =
-		Compound(CodeLocation.UNDEFINED, listOf(node))
+		Compound(TextLocation.UNDEFINED, listOf(node))
 }

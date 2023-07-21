@@ -23,11 +23,11 @@ object BaseModule : AbstractModule() {
 
     var timeService: TimeService = ControlledTimeService()
 
-	var lexerFactory: LexerFactory = { program -> Lexer(program) }
+	var lexerFactory: LexerFactory = { program -> DslLexer(program) }
 
 	var semanticAnalyserFactory: SemanticAnalyserFactory = { symbolTable -> SemanticAnalyser(symbolTable) }
 
-	var parserFactory: ParserFactory = { program, semanticAnalyser -> Parser(lexerFactory(program), semanticAnalyser) }
+	var parserFactory: ParserFactory = { program, semanticAnalyser -> DslParser(lexerFactory(program), semanticAnalyser) }
 
 	var storingActivationRecordFactory: ActivationRecordFactory = { name, parent -> StoringActivationRecord(name, parent) }
 

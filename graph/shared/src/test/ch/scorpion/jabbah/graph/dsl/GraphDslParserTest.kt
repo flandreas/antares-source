@@ -1,13 +1,13 @@
 package ch.scorpion.jabbah.graph.dsl
 
-import ch.scorpion.jabbah.base.dsl.Lexer
+import ch.scorpion.jabbah.base.dsl.DslLexer
 import kotlin.test.Test
 
 class GraphDslParserTest {
 
 	@Test
 	fun shouldParseInitStatement() {
-		val parser = GraphDslParser(Lexer("""
+		val parser = GraphDslParser(DslLexer("""
 			init {
 				a = 0
 			}
@@ -20,7 +20,7 @@ class GraphDslParserTest {
 
 	@Test
 	fun shouldParsePropertyWithPortName() {
-		val parser = GraphDslParser(Lexer("""
+		val parser = GraphDslParser(DslLexer("""
 			#1.OUT
 		""".trimIndent()), null)
 
@@ -31,7 +31,7 @@ class GraphDslParserTest {
 
 	@Test
 	fun shouldParsePropertyWithPortId() {
-		val parser = GraphDslParser(Lexer("""
+		val parser = GraphDslParser(DslLexer("""
 			#1.1
 		""".trimIndent()), null)
 

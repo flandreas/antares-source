@@ -15,7 +15,7 @@ class GraphDslSemanticAnalyserTest {
 
 	@Test
 	fun shouldAllowInitBlockInGlobalScope() {
-		val ast = GraphDslParser(Lexer("""
+		val ast = GraphDslParser(DslLexer("""
 			init {
 				B = 0
 			}
@@ -29,7 +29,7 @@ class GraphDslSemanticAnalyserTest {
 
 	@Test
 	fun shouldNotAllowInitBlockInInnerScope() {
-		val ast = GraphDslParser(Lexer("""
+		val ast = GraphDslParser(DslLexer("""
 			if (A) {
 				init {
 					B = 0
@@ -47,7 +47,7 @@ class GraphDslSemanticAnalyserTest {
 
 	@Test
 	fun shouldAllowAtMostOneInitBlock() {
-		val ast = GraphDslParser(Lexer("""
+		val ast = GraphDslParser(DslLexer("""
 			init {
 				B = 0
 			}
@@ -66,7 +66,7 @@ class GraphDslSemanticAnalyserTest {
 
 	@Test
 	fun shouldAllowStoreDeclarationInInitBlock() {
-		val ast = GraphDslParser(Lexer("""
+		val ast = GraphDslParser(DslLexer("""
 			init {
 				store a
 			}
@@ -78,7 +78,7 @@ class GraphDslSemanticAnalyserTest {
 
 	@Test
 	fun shouldUseStoreDeclarationFromInitBlock() {
-		val ast = GraphDslParser(Lexer("""
+		val ast = GraphDslParser(DslLexer("""
 			init {
 				store a = 0
 			}

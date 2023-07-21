@@ -7,7 +7,7 @@ class SyntaxTreePrinterTest {
 
 	@Test
 	fun shouldPrintSyntaxTree() {
-		val ast = Parser("""
+		val ast = DslParser("""
 			var a = 5 * (10 - 7)
 			var b = a
 		""".trimIndent()).parse()
