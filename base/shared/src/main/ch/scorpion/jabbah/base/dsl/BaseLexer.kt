@@ -30,9 +30,7 @@ open class BaseLexer(text: String) : AbstractLexer(text) {
 	}
 
 	override fun nextToken(state: State): Token<Any> {
-		state.posAtTokenStart = state.pos
-		state.rowAtTokenStart = state.rowCounter
-		state.columnAtTokenStart = state.columnCounter
+		recordLocation(state)
 
 		while (state.currentChar != null) {
 			if (isWhitespace(state)) {

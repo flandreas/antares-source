@@ -71,6 +71,12 @@ abstract class AbstractLexer(protected val text: String) {
 		return token
 	}
 
+	protected fun recordLocation(state: State) {
+		state.posAtTokenStart = state.pos
+		state.rowAtTokenStart = state.rowCounter
+		state.columnAtTokenStart = state.columnCounter
+	}
+
 	protected inner class State {
 
 		/** An index into [text].*/

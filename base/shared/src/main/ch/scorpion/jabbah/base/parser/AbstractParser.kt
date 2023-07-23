@@ -10,6 +10,7 @@ abstract class AbstractParser(
 
 	/** Contains the current [Token] as determined by [AbstractLexer.nextToken].*/
 	protected var currentToken: Token<Any>? = lexer.nextToken()
+		private set
 
 	/**
 	 * Parses the program this [AbstractParser] was created with and returns the corresponding AST.

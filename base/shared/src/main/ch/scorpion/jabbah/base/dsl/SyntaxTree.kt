@@ -90,7 +90,7 @@ class NoOp(location: TextLocation) : AbstractNode(location) {
 	override fun toString(): String = "NoOp"
 }
 
-open class Compound(location: TextLocation, val children: List<Node>) : AbstractNode(location) {
+open class Compound<T: Node> (location: TextLocation, val children: List<T>) : AbstractNode(location) {
 
 	override fun toString(): String = "Compound"
 
@@ -106,7 +106,7 @@ open class Compound(location: TextLocation, val children: List<Node>) : Abstract
 	}
 }
 
-class Block(location: TextLocation, children: List<Node>) : Compound(location, children) {
+class Block(location: TextLocation, children: List<Node>) : Compound<Node>(location, children) {
 	override fun toString(): String = "Block"
 }
 

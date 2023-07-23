@@ -1,29 +1,81 @@
 package ch.scorpion.jabbah.base.richtext
 
-import ch.scorpion.jabbah.base.dsl.BaseLexer
+import ch.scorpion.jabbah.base.parser.AbstractLexer
 import ch.scorpion.jabbah.base.parser.Token
-import ch.scorpion.jabbah.base.dsl.DslTokenType.*
+import ch.scorpion.jabbah.base.parser.TokenType
+import ch.scorpion.jabbah.base.richtext.RichTextTokenType.*
 
-class RichTextLexer(text: String) : BaseLexer(text) {
+enum class RichTextTokenType(override val id: String): TokenType {
+	TEXT("text"),
+	LPAREN("("),
+	RPAREN(")"),
+	OVERLINE("!"),
+	SUBSCRIPT("_"),
+	SUPERSCRIPT("^"),
+	EOF("EOF")
+}
+
+class RichTextLexer(text: String) : AbstractLexer(text) {
 
 	companion object {
+
 		private val LPAREN_TOKEN = Token<Unit>(LPAREN)
 		private val RPAREN_TOKEN = Token<Unit>(RPAREN)
+		private val OVERLINE_TOKEN = Token<Unit>(OVERLINE)
+		private val SUBSCRIPT_TOKEN = Token<Unit>(SUBSCRIPT)
+		private val SUPERSCRIPT_TOKEN = Token<Unit>(SUPERSCRIPT)
+		private val EOF_TOKEN = Token<Unit>(EOF)
 
-		private val OVERLINE_TOKEN = Token<Unit>(PROGRAMMING_NOT)
-		private val SUBSCRIPT_TOKEN = Token<Unit>(UNDERSCORE)
-		private val SUPERSCRIPT_TOKEN = Token<Unit>(CARET)
+		private val TEXT_END_CHARS = listOf('!', '_', '^', ')')
+		private val SINGLE_CHAR_TEXT_CHARS = listOf('!', '_', '^')
 	}
 
-	override fun nextTokenImpl(state: State): Token<Any> {
-		when (state.currentChar!!) {
-			'(' -> return advanceWith(state, LPAREN_TOKEN)
-			')' -> return advanceWith(state, RPAREN_TOKEN)
-			'!' -> return advanceWith(state, OVERLINE_TOKEN)
-			'_' -> return advanceWith(state, SUBSCRIPT_TOKEN)
-			'^' -> return advanceWith(state, SUPERSCRIPT_TOKEN)
+	/** Determines whether only a single character is consumed when reading the next text in [nextToken].*/
+	private var singleCharMode = false
+
+	override fun nextToken(state: State): Token<Any> {
+		recordLocation(state)
+
+		if (state.currentChar == null) {
+			return EOF_TOKEN
 		}
 
-		return super.nextTokenImpl(state)
+		when (state.currentChar!!) {
+			'(' -> return advanceByUpdatingSingleCharMode(state, LPAREN_TOKEN)
+			')' -> return advanceByUpdatingSingleCharMode(state, RPAREN_TOKEN)
+			'!' -> return advanceByUpdatingSingleCharMode(state, OVERLINE_TOKEN)
+			'_' -> return advanceByUpdatingSingleCharMode(state, SUBSCRIPT_TOKEN)
+			'^' -> return advanceByUpdatingSingleCharMode(state, SUPERSCRIPT_TOKEN)
+		}
+
+		return if (singleCharMode) {
+			Token(TEXT, character())
+		} else {
+			Token(TEXT, text())
+		}
+	}
+
+	private fun advanceByUpdatingSingleCharMode(state: State, token: Token<Any>): Token<Any> {
+		this.singleCharMode = SINGLE_CHAR_TEXT_CHARS.contains(state.currentChar)
+		return advanceWith(state, token)
+	}
+
+	private fun text(): String {
+		val text = StringBuilder()
+		while (state.currentChar != null && !TEXT_END_CHARS.contains(state.currentChar)) {
+			text.append(state.currentChar)
+			advance(state)
+		}
+		return text.toString()
+	}
+
+	private fun character(): String {
+		return if (state.currentChar != null && !TEXT_END_CHARS.contains(state.currentChar)) {
+			val s = state.currentChar!!.toString()
+			advance(state)
+			s
+		} else {
+			String()
+		}
 	}
 }

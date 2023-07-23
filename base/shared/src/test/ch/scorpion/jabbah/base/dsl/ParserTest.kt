@@ -24,7 +24,7 @@ class ParserTest {
 		""".trimIndent())
 		val ast = parser.parse()
 
-		val assignment = (ast as Compound).children.first { it is Assignment } as Assignment
+		val assignment = (ast as Compound<*>).children.first { it is Assignment } as Assignment
 		assertEquals("a", assignment.left.token.value)
 		assertIs<Literal>(assignment.right)
 	}

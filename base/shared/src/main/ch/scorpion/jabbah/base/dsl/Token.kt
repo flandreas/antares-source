@@ -55,6 +55,5 @@ enum class DslTokenType(override val id: String): TokenType {
 	LOGIC_NOT("¬"),
 	PROGRAMMING_AND("&&"),
 	PROGRAMMING_OR("||"),
-	PROGRAMMING_NOT("!"),
-	UNDERSCORE("_")
+	PROGRAMMING_NOT("!")
 }

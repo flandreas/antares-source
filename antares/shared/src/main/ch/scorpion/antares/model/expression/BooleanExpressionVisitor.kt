@@ -31,7 +31,7 @@ abstract class AbstractBooleanExpressionVisitor(
 					else -> { }
 				}
 			}
-			is Compound -> handleCompound(begin = true)
+			is Compound<*> -> handleCompound(begin = true)
 		}
 		return true
 	}
@@ -76,7 +76,7 @@ abstract class AbstractBooleanExpressionVisitor(
 					else -> throw IllegalStateException("unsupported unary operation ${node.op.type}")
 				}
 			}
-			is Compound -> handleCompound(begin = false)
+			is Compound<*> -> handleCompound(begin = false)
 		}
 		return true
 	}

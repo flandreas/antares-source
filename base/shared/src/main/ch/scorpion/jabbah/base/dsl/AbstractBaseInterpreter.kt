@@ -19,7 +19,7 @@ abstract class AbstractBaseInterpreter(
 
 	open fun interpret(node: Node): Any =
 		when (node) {
-			is Compound -> compound(node)
+			is Compound<*> -> compound(node)
 			else -> throw SyntaxError(node.location, Translations.getString("base.dsl.unknownASTNode.msg", "${node::class.simpleName}"))
 		}
 
@@ -67,7 +67,7 @@ abstract class AbstractBaseInterpreter(
 		}
 	}
 
-	protected fun compound(node: Compound): Any {
+	protected fun compound(node: Compound<*>): Any {
 		var result: Any = 0L
 		// Tuning: Faster than with streams
 		for (i in 0 until node.children.size) {
