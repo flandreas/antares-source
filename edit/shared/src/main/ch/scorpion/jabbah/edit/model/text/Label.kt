@@ -3,13 +3,11 @@ package ch.scorpion.jabbah.edit.model.text
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.Rotation
-import ch.scorpion.jabbah.base.richtext.RichTextParser
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.drawable.Mirrorable
 import ch.scorpion.jabbah.draw.drawable.RichTextDrawable
-import ch.scorpion.jabbah.draw.drawable.RichTextDrawableTransformer
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Font
 import ch.scorpion.jabbah.draw.module.DrawModule
@@ -53,7 +51,7 @@ class Label(
 			if (field != value) {
 				invalidate()
 				field = value
-				displayableText = RichTextDrawableTransformer(RichTextParser(value).parse(), font).transform()
+				displayableText = RichTextDrawable.of(value, font)
 				updateGeometry()
 			}
 		}
@@ -63,7 +61,7 @@ class Label(
 			if (field != value) {
 				invalidate()
 				field = value
-				displayableText = RichTextDrawableTransformer(RichTextParser(text).parse(), font).transform()
+				displayableText = RichTextDrawable.of(text, field)
 				updateGeometry()
 			}
 		}
@@ -132,7 +130,7 @@ class Label(
 	var inverse: Boolean = false
 
 	init {
-		displayableText = RichTextDrawableTransformer(RichTextParser(text ?: "").parse(), font).transform()
+		displayableText = RichTextDrawable.of(text ?: "", font)
 		updateGeometry()
 	}
 

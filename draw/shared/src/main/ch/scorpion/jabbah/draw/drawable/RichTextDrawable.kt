@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.draw.drawable
 
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.richtext.RichText
+import ch.scorpion.jabbah.base.richtext.RichTextParser
 import ch.scorpion.jabbah.base.richtext.StyledChunk
 import ch.scorpion.jabbah.base.richtext.TextStyle
 import ch.scorpion.jabbah.draw.DrawContext
@@ -74,6 +75,12 @@ class RichTextDrawableTransformer(
 }
 
 class RichTextDrawable : AbstractRectangle() {
+
+	companion object {
+
+		fun of(text: String, font: Font): RichTextDrawable =
+			RichTextDrawableTransformer(RichTextParser(text).parse(), font).transform()
+	}
 
 	/** The coordinates of the [ChunkView]s are relative to the baseline start of the first [ChunkView].*/
 	private val chunkViews = mutableListOf<ChunkView>()
