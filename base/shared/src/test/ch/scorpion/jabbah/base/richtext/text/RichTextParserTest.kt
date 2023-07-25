@@ -278,4 +278,40 @@ class RichTextParserTest {
 			--- DE
 		""".trimIndent())
 	}
+
+	@Test
+	fun shouldEscapeInText() {
+		assertAST(
+			RichTextParser("\\(\\!\\_\\^\\\\\\)").parse(), """
+			Compound
+			- Fragment
+			-- -
+			--- (!_^\)
+		""".trimIndent())
+	}
+
+	@Test
+	fun shouldEscapeInSingleChar() {
+		assertAST(
+			RichTextParser("A_\\!").parse(), """
+			Compound
+			- Fragment
+			-- -
+			--- A
+			-- _
+			--- !
+		""".trimIndent())
+	}
+
+	@Test
+	fun shouldEscapeEscape() {
+		assertAST(
+			RichTextParser("\\\\").parse(), """
+			Compound
+			- Fragment
+			-- -
+			--- \
+		""".trimIndent())
+	}
+
 }

@@ -28,10 +28,14 @@ class RichTextLexer(text: String) : AbstractLexer(text) {
 
 		private val TEXT_END_CHARS = listOf('!', '_', '^', ')')
 		private val SINGLE_CHAR_TEXT_CHARS = listOf('!', '_', '^')
+
+		private const val ESC_CHAR = '\\'
 	}
 
 	/** Determines whether only a single character is consumed when reading the next text in [nextToken].*/
 	private var singleCharMode = false
+
+	private var escapeMode = false
 
 	override fun nextToken(state: State): Token<Any> {
 		recordLocation(state)
@@ -40,12 +44,14 @@ class RichTextLexer(text: String) : AbstractLexer(text) {
 			return EOF_TOKEN
 		}
 
-		when (state.currentChar!!) {
-			'(' -> return advanceByUpdatingSingleCharMode(state, LPAREN_TOKEN)
-			')' -> return advanceByUpdatingSingleCharMode(state, RPAREN_TOKEN)
-			'!' -> return advanceByUpdatingSingleCharMode(state, OVERLINE_TOKEN)
-			'_' -> return advanceByUpdatingSingleCharMode(state, SUBSCRIPT_TOKEN)
-			'^' -> return advanceByUpdatingSingleCharMode(state, SUPERSCRIPT_TOKEN)
+		if (!escapeMode) {
+			when (state.currentChar!!) {
+				'(' -> return advanceByUpdatingSingleCharMode(state, LPAREN_TOKEN)
+				')' -> return advanceByUpdatingSingleCharMode(state, RPAREN_TOKEN)
+				'!' -> return advanceByUpdatingSingleCharMode(state, OVERLINE_TOKEN)
+				'_' -> return advanceByUpdatingSingleCharMode(state, SUBSCRIPT_TOKEN)
+				'^' -> return advanceByUpdatingSingleCharMode(state, SUPERSCRIPT_TOKEN)
+			}
 		}
 
 		return if (singleCharMode) {
@@ -64,15 +70,23 @@ class RichTextLexer(text: String) : AbstractLexer(text) {
 
 	private fun text(): String {
 		val text = StringBuilder()
-		while (state.currentChar != null && !TEXT_END_CHARS.contains(state.currentChar)) {
-			text.append(state.currentChar)
+		var escape = false
+		while (state.currentChar != null && (escape || !TEXT_END_CHARS.contains(state.currentChar))) {
+			escape = !escape && state.currentChar == ESC_CHAR
+			if (!escape) {
+				text.append(state.currentChar)
+			}
 			advance(state)
 		}
 		return text.toString()
 	}
 
 	private fun character(): String {
-		return if (state.currentChar != null && !TEXT_END_CHARS.contains(state.currentChar)) {
+		val escape = state.currentChar == ESC_CHAR
+		if (escape) {
+			advance(state)
+		}
+		return if (state.currentChar != null && (escape || !TEXT_END_CHARS.contains(state.currentChar))) {
 			val s = state.currentChar!!.toString()
 			advance(state)
 			s
