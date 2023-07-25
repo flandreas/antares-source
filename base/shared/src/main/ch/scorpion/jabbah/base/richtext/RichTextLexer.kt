@@ -49,7 +49,9 @@ class RichTextLexer(text: String) : AbstractLexer(text) {
 		}
 
 		return if (singleCharMode) {
-			Token(TEXT, character())
+			Token(TEXT, character()).also {
+				singleCharMode = false
+			}
 		} else {
 			Token(TEXT, text())
 		}

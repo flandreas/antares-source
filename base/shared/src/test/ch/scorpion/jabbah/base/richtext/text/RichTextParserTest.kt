@@ -262,4 +262,20 @@ class RichTextParserTest {
 			--- 1
 		""".trimIndent())
 	}
+
+	@Test
+	fun shouldParseSecondFragmentWithSingleChunk() {
+		assertAST(
+			RichTextParser("ABC_1DE").parse(), """
+			Compound
+			- Fragment
+			-- -
+			--- ABC
+			-- _
+			--- 1
+			- Fragment
+			-- -
+			--- DE
+		""".trimIndent())
+	}
 }
