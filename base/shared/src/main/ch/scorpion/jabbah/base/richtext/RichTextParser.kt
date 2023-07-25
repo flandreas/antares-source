@@ -44,30 +44,34 @@ class RichTextParser(lexer: RichTextLexer) : AbstractParser(lexer) {
 	}
 
 	private fun fragment(): Fragment {
-		val text = FragmentText(lexer.location, styledText())
-		var subscript: Subscript? = null
-		var superscript: Superscript? = null
+		lexer.location.let { location ->
+			val text = FragmentText(location, styledText())
+			var subscript: Subscript? = null
+			var superscript: Superscript? = null
 
-		if (currentToken!!.type == SUBSCRIPT) {
-			subscript = subscript()
-		}
-		if (currentToken!!.type == SUPERSCRIPT) {
-			superscript = superscript()
 			if (currentToken!!.type == SUBSCRIPT) {
 				subscript = subscript()
 			}
-		}
+			if (currentToken!!.type == SUPERSCRIPT) {
+				superscript = superscript()
+				if (currentToken!!.type == SUBSCRIPT) {
+					subscript = subscript()
+				}
+			}
 
-		return Fragment(lexer.location, text, subscript, superscript)
+			return Fragment(location, text, subscript, superscript)
+		}
 	}
 
 	private fun styledText(): StyledText {
-		val chunks = mutableListOf<StyledChunk>()
-		chunks.add(styledChunk())
-		while (isStyledChunk()) {
+		lexer.location.let { location ->
+			val chunks = mutableListOf<StyledChunk>()
 			chunks.add(styledChunk())
+			while (isStyledChunk()) {
+				chunks.add(styledChunk())
+			}
+			return StyledText(location, chunks)
 		}
-		return StyledText(lexer.location, chunks)
 	}
 
 	private fun isStyledChunk(): Boolean {
@@ -79,18 +83,22 @@ class RichTextParser(lexer: RichTextLexer) : AbstractParser(lexer) {
 	}
 
 	private fun styledChunk(): StyledChunk {
-		val token = currentToken!!
-		return when (currentToken!!.type) {
-			OVERLINE -> overline()
-			TEXT -> simpleText(TextStyle.NORMAL)
-			else -> throw SyntaxError(lexer.location, Translations.getString("base.dsl.unexpectedToken.msg", token.type.id))
+		lexer.location.let { location ->
+			val token = currentToken!!
+			return when (currentToken!!.type) {
+				OVERLINE -> overline()
+				TEXT -> simpleText(TextStyle.NORMAL)
+				else -> throw SyntaxError(location, Translations.getString("base.dsl.unexpectedToken.msg", token.type.id))
+			}
 		}
 	}
 
 	private fun simpleText(style: TextStyle): StyledChunk {
-		val token = currentToken!!
-		eat(TEXT)
-		return StyledChunk(lexer.location, token.value as String, style)
+		lexer.location.let { location ->
+			val token = currentToken!!
+			eat(TEXT)
+			return StyledChunk(location, token.value as String, style)
+		}
 	}
 
 	private fun overline(): StyledChunk {
@@ -98,8 +106,9 @@ class RichTextParser(lexer: RichTextLexer) : AbstractParser(lexer) {
 		return if (currentToken!!.type == LPAREN) {
 			eat(LPAREN)
 			val styledText = styledChunk()
+			val chunk = StyledChunk(lexer.location, styledText.text, TextStyle.OVERLINE)
 			eat(RPAREN)
-			StyledChunk(lexer.location, styledText.text, TextStyle.OVERLINE)
+			chunk
 		} else {
 			simpleText(TextStyle.OVERLINE)
 		}
@@ -110,9 +119,9 @@ class RichTextParser(lexer: RichTextLexer) : AbstractParser(lexer) {
 		return when (currentToken!!.type) {
 			LPAREN -> {
 				eat(LPAREN)
-				val styledText = styledText()
+				val subscript = Subscript(lexer.location, styledText())
 				eat(RPAREN)
-				Subscript(lexer.location, styledText)
+				subscript
 			}
 			OVERLINE -> Subscript(lexer.location, StyledText(lexer.location, listOf(overline())))
 			else -> Subscript(lexer.location, singleChar())
@@ -124,9 +133,9 @@ class RichTextParser(lexer: RichTextLexer) : AbstractParser(lexer) {
 		return when (currentToken!!.type) {
 			LPAREN -> {
 				eat(LPAREN)
-				val styledText = styledText()
+				val superscript = Superscript(lexer.location, styledText())
 				eat(RPAREN)
-				Superscript(lexer.location, styledText)
+				superscript
 			}
 			OVERLINE -> Superscript(lexer.location, StyledText(lexer.location, listOf(overline())))
 			else -> Superscript(lexer.location, singleChar())
