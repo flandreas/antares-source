@@ -7,6 +7,8 @@ import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.base.swing.JTreeUtil.findTreeNode
 import ch.scorpion.jabbah.base.swing.JTreeUtil.getPath
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
+import ch.scorpion.jabbah.draw.richtext.RichTextLabel
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.graph.ui.MetaGraphIconProvider
@@ -21,7 +23,10 @@ import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.awt.font.TextAttribute
 import javax.swing.*
-import javax.swing.tree.*
+import javax.swing.tree.DefaultMutableTreeNode
+import javax.swing.tree.DefaultTreeModel
+import javax.swing.tree.TreeNode
+import javax.swing.tree.TreeSelectionModel
 import kotlin.math.min
 
 class LibraryTreeViewSwing(
@@ -276,10 +281,11 @@ class LibraryTreeViewSwing(
 		}
 	}
 
-	private inner class Renderer : DefaultTreeCellRenderer() {
+	private inner class Renderer : RichTextLabel() {
 
 		private val iconCache: MutableMap<String, Icon> = mutableMapOf()
 		private val defaultElemFont = this@LibraryTreeViewSwing.font.deriveFont(mapOf(TextAttribute.UNDERLINE to TextAttribute.UNDERLINE_ON))
+		private val jabbahFont = Graphics2DJvm.fromAwtFont(this@LibraryTreeViewSwing.font)
 		private val projectIcon = UiUtil.themedIcon("/img/project-24.png")
 		private val libraryIcon = UiUtil.themedIcon("/img/library-24.png")
 		private val libraryImportIcon = UiUtil.themedIcon("/img/imported-library.png")
@@ -288,9 +294,10 @@ class LibraryTreeViewSwing(
 		private val desktopIcon = UiUtil.themedIcon("/img/table-20.png")
 
 		override fun getTreeCellRendererComponent(tree: JTree?, value: Any?, sel: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): Component {
-			val component = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus) as JLabel
+			val component = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus) as RichTextLabel
 			component.toolTipText = null
 			component.verticalTextPosition = SwingConstants.CENTER
+			component.richText = null
 			if ((value as DefaultMutableTreeNode).userObject is LibraryItem) {
 				val iconPath = (value.userObject as LibraryItem).iconPath
 				component.font = this@LibraryTreeViewSwing.font
@@ -305,6 +312,7 @@ class LibraryTreeViewSwing(
 					}
 				} else if (value.userObject is ContainerLibraryElement) {
 					val cle = value.userObject as ContainerLibraryElement
+					component.richText = cle.getRichText(jabbahFont)
 					if (showBeginnerTips) {
 						component.toolTipText = Translations.getString("library.action.libraryElement.tip")
 					}

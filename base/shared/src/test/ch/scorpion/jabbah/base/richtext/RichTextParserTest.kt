@@ -1,8 +1,7 @@
-package ch.scorpion.jabbah.base.richtext.text
+package ch.scorpion.jabbah.base.richtext
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.assertAST
-import ch.scorpion.jabbah.base.richtext.RichTextParser
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 

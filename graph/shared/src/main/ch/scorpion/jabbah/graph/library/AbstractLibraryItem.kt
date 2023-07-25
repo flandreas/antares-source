@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.draw.drawable.RichTextDrawable
+import ch.scorpion.jabbah.draw.graphics.Font
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.edit.model.text.description.Name
@@ -14,7 +16,18 @@ abstract class AbstractLibraryItem(
 	override val iconPath: String? = null,
 ) : AbstractStorable(), LibraryItem, Namable {
 
-	override var name: Name by observableName(Name(initialName))
+	private var richText: RichTextDrawable? = null
+
+	override fun getRichText(font: Font): RichTextDrawable {
+		if (richText == null) {
+			richText = RichTextDrawable.of(name.value, font)
+		}
+		return richText!!
+	}
+
+	override var name: Name by observableName(Name(initialName)) {
+		richText = null
+	}
 
     private var _library: Library? = null
 

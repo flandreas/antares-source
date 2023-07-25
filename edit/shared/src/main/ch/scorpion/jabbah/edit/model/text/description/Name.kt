@@ -27,12 +27,13 @@ data class NameChangedEvent(
 	val oldValue: Name)
 
 /** Creates a delegate property that posts a [NameChangedEvent] on the system's [EventBus]. */
-fun observableName(initialValue: Name): ReadWriteProperty<Any?, Name> =
+fun observableName(initialValue: Name, handler: (Name) -> Unit = {}): ReadWriteProperty<Any?, Name> =
 	object : ObservableProperty<Name>(initialValue) {
 		override fun setValue(thisRef: Any?, property: KProperty<*>, value: Name) {
 			val oldValue = getValue(thisRef, property)
 			super.setValue(thisRef, property, value)
 			BaseModule.eventBus.post(NameChangedEvent(thisRef as Namable, value, oldValue))
+			handler(value)
 		}
 	}
 

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.draw.drawable
 
+import ch.scorpion.jabbah.base.dsl.SyntaxError
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.richtext.RichText
 import ch.scorpion.jabbah.base.richtext.RichTextParser
@@ -78,15 +79,29 @@ class RichTextDrawable : AbstractRectangle() {
 
 	companion object {
 
-		fun of(text: String, font: Font): RichTextDrawable =
-			RichTextDrawableTransformer(RichTextParser(text).parse(), font).transform()
+		fun of(text: String, font: Font): RichTextDrawable {
+			val parser = RichTextParser(text)
+			return try {
+				RichTextDrawableTransformer(parser.parse(), font).transform()
+			} catch (e: SyntaxError) {
+				legacy(text, font)
+			}
+		}
+
+		/**
+		 * Creates a simple [RichTextDrawable] for [text] without formatting properties
+		 * to be used as fallback for legacy texts that cannot be parsed successfully.
+		 */
+		private fun legacy(text: String, font: Font): RichTextDrawable =
+			RichTextDrawable().apply {
+				addChunkView(ChunkView(text, 0.0, 0.0, font))
+			}
 	}
 
 	/** The coordinates of the [ChunkView]s are relative to the baseline start of the first [ChunkView].*/
 	private val chunkViews = mutableListOf<ChunkView>()
 
-	var overallAscent: Double = 0.0
-		private set
+	private var overallAscent: Double = 0.0
 
 	/**
 	 * The enclosing rectangle of all [ChunkView]s relative to the baseline start, which is (0,0).
@@ -98,6 +113,12 @@ class RichTextDrawable : AbstractRectangle() {
 		context.g.translate(location.x, location.y + overallAscent)
 		chunkViews.forEach { it.draw(context.g) }
 		context.g.translate(-location.x, -location.y - overallAscent)
+	}
+
+	fun draw(g: Graphics2D) {
+		g.translate(location.x, location.y + overallAscent)
+		chunkViews.forEach { it.draw(g) }
+		g.translate(-location.x, -location.y - overallAscent)
 	}
 
 	override val lineWidth: Double get() = 1.0
