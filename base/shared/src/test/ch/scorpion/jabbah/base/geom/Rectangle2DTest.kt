@@ -105,6 +105,15 @@ class Rectangle2DTest {
 	}
 
 	@Test
+	fun shouldAddNegativeLocation() {
+		val rect = Rectangle2D()
+		rect.add(0, -14)
+		rect.add(29, 3)
+
+		assertEquals(Rectangle2D(0, -14, 29, 17), rect)
+	}
+
+	@Test
 	fun shouldAddRectangle() {
 		val rect = Rectangle2D(0.0, 0.0, 100.0, 100.0).add(Rectangle2D(50.0, 50.0, 100.0, 100.0))
 		assertEquals(Rectangle2D(0.0, 0.0, 150.0, 150.0), rect)

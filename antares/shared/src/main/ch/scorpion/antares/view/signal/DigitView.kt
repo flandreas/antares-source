@@ -1,19 +1,22 @@
 package ch.scorpion.antares.view.signal
 
-import ch.scorpion.antares.model.signal.*
+import ch.scorpion.antares.model.signal.Bit
+import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.style.AntaresTheme
-import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
-import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
-import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.text.FormattedText
-import ch.scorpion.jabbah.draw.drawable.Transparent
-import ch.scorpion.jabbah.draw.drawable.TransparentImpl
-import ch.scorpion.jabbah.draw.graphics.*
+import ch.scorpion.jabbah.base.richtext.RichTextParser
+import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.drawable.*
+import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import ch.scorpion.jabbah.draw.graphics.FontImpl
+import ch.scorpion.jabbah.draw.graphics.FontStyle
+import ch.scorpion.jabbah.draw.graphics.LogicalFontFamily
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
+import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 
 /**
@@ -36,7 +39,7 @@ class DigitView(
         const val WIDTH = 20
         const val HEIGHT = 20
         val FONT = FontImpl(LogicalFontFamily.SANS_SERIF, FontStyle.PLAIN.value, (2.0 * Look.SCALE).toInt())
-	    private val INACTIVE_TEXT = FormattedText("-", textWithOverline = "-")
+	    private val INACTIVE_TEXT = RichTextDrawableTransformer(RichTextParser("-").parse(), FONT).transform()
     }
 
     /** Controls whether this [DigitView] has the focus and should draw a focus border.*/

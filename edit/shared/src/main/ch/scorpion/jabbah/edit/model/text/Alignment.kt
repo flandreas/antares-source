@@ -2,22 +2,22 @@ package ch.scorpion.jabbah.edit.model.text
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Direction
-import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 
 enum class HorizontalAlignment(val customName: String) {
     LEFT("left") {
         override fun opposite(): HorizontalAlignment = RIGHT
-        override fun getX(baselineRect: Rectangle2D): Double = baselineRect.x
+        override fun getX(baselineRect: RectangularShape): Double = baselineRect.x
     },
 
     CENTER("center") {
         override fun opposite() = CENTER
-        override fun getX(baselineRect: Rectangle2D): Double = baselineRect.x - baselineRect.width / 2
+        override fun getX(baselineRect: RectangularShape): Double = baselineRect.x - baselineRect.width / 2
     },
 
     RIGHT("right") {
         override fun opposite(): HorizontalAlignment = LEFT
-        override fun getX(baselineRect: Rectangle2D): Double = baselineRect.x - baselineRect.width
+        override fun getX(baselineRect: RectangularShape): Double = baselineRect.x - baselineRect.width
     };
 
     companion object {
@@ -38,7 +38,7 @@ enum class HorizontalAlignment(val customName: String) {
      * @param baselineRect the text's shape relative to the baseline.
      * @return the x-coordinate of the text shape.
      */
-    abstract fun getX(baselineRect: Rectangle2D): Double
+    abstract fun getX(baselineRect: RectangularShape): Double
 
     override fun toString(): String = when (this) {
         LEFT -> Translations.getString("edit.property.horizontalAlignment.left.name")
@@ -50,17 +50,17 @@ enum class HorizontalAlignment(val customName: String) {
 enum class VerticalAlignment(val customName: String) {
     TOP("top") {
         override fun opposite(): VerticalAlignment = BOTTOM
-        override fun getY(baselineRect: Rectangle2D): Double = 0.0
+        override fun getY(baselineRect: RectangularShape): Double = 0.0
     },
 
 	CENTER("center") {
 		override fun opposite(): VerticalAlignment = CENTER
-		override fun getY(baselineRect: Rectangle2D): Double = baselineRect.height / 2
+		override fun getY(baselineRect: RectangularShape): Double = baselineRect.height / 2
 	},
 
 	BOTTOM("bottom") {
         override fun opposite(): VerticalAlignment = TOP
-        override fun getY(baselineRect: Rectangle2D): Double = baselineRect.height
+        override fun getY(baselineRect: RectangularShape): Double = baselineRect.height
     };
 
     companion object {
@@ -81,7 +81,7 @@ enum class VerticalAlignment(val customName: String) {
      * @param baselineRect the text's shape relative to the baseline.
      * @return the y-coordinate of the text shape.
      */
-    internal abstract fun getY(baselineRect: Rectangle2D): Double
+    internal abstract fun getY(baselineRect: RectangularShape): Double
 
     override fun toString(): String = when (this) {
         TOP -> Translations.getString("edit.property.verticalAlignment.top.name")

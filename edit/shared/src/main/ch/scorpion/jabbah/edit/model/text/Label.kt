@@ -1,18 +1,17 @@
 package ch.scorpion.jabbah.edit.model.text
 
-import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.Rotation
-import ch.scorpion.jabbah.base.text.FormattedText
+import ch.scorpion.jabbah.base.richtext.RichTextParser
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.drawable.Mirrorable
+import ch.scorpion.jabbah.draw.drawable.RichTextDrawable
+import ch.scorpion.jabbah.draw.drawable.RichTextDrawableTransformer
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Font
-import ch.scorpion.jabbah.draw.graphics.Stroke
-import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
 import ch.scorpion.jabbah.draw.module.DrawModule
 
 /**
@@ -47,8 +46,6 @@ class Label(
 		private val DEFAULT_HORIZONTAL_ALIGNMENT = HorizontalAlignment.CENTER
 		private val DEFAULT_VERTICAL_ALIGNMENT = VerticalAlignment.CENTER
 		private const val BOUNDS_INSET = 1
-
-		private val OVERLINE_STROKE = Stroke()
 	}
 
 	var text: String = text ?: ""
@@ -56,7 +53,7 @@ class Label(
 			if (field != value) {
 				invalidate()
 				field = value
-				displayableText = calculateDisplayableText()
+				displayableText = RichTextDrawableTransformer(RichTextParser(value).parse(), font).transform()
 				updateGeometry()
 			}
 		}
@@ -66,6 +63,7 @@ class Label(
 			if (field != value) {
 				invalidate()
 				field = value
+				displayableText = RichTextDrawableTransformer(RichTextParser(text).parse(), font).transform()
 				updateGeometry()
 			}
 		}
@@ -125,19 +123,16 @@ class Label(
 	var ownerRotation: Rotation = ownerRotation
 
 	/** The displayable text after conversion of negated representation. */
-	private var displayableText = FormattedText.empty()
+	private var displayableText: RichTextDrawable
 
 	/** The [Rectangle2D] that contains the text entirely.*/
 	val bounds = Rectangle2D()
-
-	/** The point at which the text's baseline starts relative to the location.*/
-	private var baselinePoint = Point2D.ZERO
 
 	/** If `true`, the text is drawn in background color (only with [DrawContext.useContextColors]).*/
 	var inverse: Boolean = false
 
 	init {
-		displayableText = calculateDisplayableText()
+		displayableText = RichTextDrawableTransformer(RichTextParser(text ?: "").parse(), font).transform()
 		updateGeometry()
 	}
 
@@ -154,15 +149,11 @@ class Label(
 		drawImpl(displayableText, context)
 	}
 
-	fun draw(text: FormattedText, context: DrawContext) {
+	fun draw(text: RichTextDrawable, context: DrawContext) {
 		drawImpl(text, context)
 	}
 
-	private fun drawImpl(lText: FormattedText, context: DrawContext) {
-		if (StringUtils.isBlank(lText.text)) {
-			return
-		}
-
+	private fun drawImpl(richText: RichTextDrawable, context: DrawContext) {
 		val oldColor = context.g.color
 
 		DrawModule.drawDebugBoundingBox(this, context.g, Color.GRAY)
@@ -178,23 +169,19 @@ class Label(
 		}
 
 		context.g.font = font
-		drawTextRotated(lText, context)
+		drawTextRotated(richText, context)
+
 		context.g.color = oldColor
 	}
 
-	private fun drawTextRotated(lText: FormattedText, context: DrawContext) {
+	private fun drawTextRotated(richText: RichTextDrawable, context: DrawContext) {
 		rotationDisplayStrategy.beforeDraw(context, this)
 
 		context.g.translate(location.x, location.y)
 		context.g.rotate(rotation.angle)
 		context.g.translate(-location.x, -location.y)
 
-		context.g.drawString(lText.text, baselinePoint.x.toInt(), baselinePoint.y.toInt())
-
-		if (lText.allNegated) {
-			context.g.stroke = OVERLINE_STROKE
-			context.g.drawLine(bounds.minX + 1, bounds.minY + 1, bounds.maxX - 1, bounds.minY + 1)
-		}
+		richText.draw(context)
 
 		context.g.translate(location.x, location.y)
 		context.g.rotate(-rotation.angle)
@@ -220,22 +207,17 @@ class Label(
 	/** ---- [Label] */
 
 	private fun updateGeometry() {
-		val textRenderInfo = TextRenderInfoFactory.measureSingleLineText(displayableText.text, font)
-
-		bounds.setFrame(
-			location.x + horizontalAlignment.getX(textRenderInfo.textBounds) - BOUNDS_INSET,
-			location.y - verticalAlignment.getY(textRenderInfo.textBounds) - BOUNDS_INSET,
-			textRenderInfo.textBounds.width + 2 * BOUNDS_INSET,
-			textRenderInfo.textBounds.height + 2 * BOUNDS_INSET
-		)
+		invalidate()
 
 		// 1 is a magic number derived from manual/visual optimization
-		baselinePoint = Point2D(bounds.x + BOUNDS_INSET, bounds.y + textRenderInfo.ascent + 1)
+		displayableText.location = Point2D(
+			location.x + horizontalAlignment.getX(displayableText.baselineRect) - BOUNDS_INSET,
+			location.y - verticalAlignment.getY(displayableText.baselineRect) + 1 - BOUNDS_INSET
+		)
 
-		invalidate()
+		bounds.setFrame(displayableText.bounds)
+
 		update()
 		validate()
 	}
-
-	private fun calculateDisplayableText() = FormattedText.replaceNegation(text)
 }

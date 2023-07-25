@@ -13,8 +13,8 @@ class RichText(
 class Fragment(
 	location: TextLocation,
 	val text: FragmentText,
-	private val subscript: Subscript? = null,
-	private val superscript: Superscript? = null
+	val subscript: Subscript? = null,
+	val superscript: Superscript? = null
 ) : AbstractNode(location) {
 
 	override fun toString(): String = "Fragment"
@@ -31,7 +31,7 @@ class Fragment(
 
 abstract class AbstractFragmentPart(
 	location: TextLocation,
-	private val styledText: StyledText
+	val styledText: StyledText
 ) : AbstractNode(location) {
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
