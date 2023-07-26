@@ -21,7 +21,6 @@ import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
-import java.awt.font.TextAttribute
 import javax.swing.*
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
@@ -284,7 +283,6 @@ class LibraryTreeViewSwing(
 	private inner class Renderer : RichTextLabel() {
 
 		private val iconCache: MutableMap<String, Icon> = mutableMapOf()
-		private val defaultElemFont = this@LibraryTreeViewSwing.font.deriveFont(mapOf(TextAttribute.UNDERLINE to TextAttribute.UNDERLINE_ON))
 		private val jabbahFont = Graphics2DJvm.fromAwtFont(this@LibraryTreeViewSwing.font)
 		private val projectIcon = UiUtil.themedIcon("/img/project-24.png")
 		private val libraryIcon = UiUtil.themedIcon("/img/library-24.png")
@@ -298,6 +296,7 @@ class LibraryTreeViewSwing(
 			component.toolTipText = null
 			component.verticalTextPosition = SwingConstants.CENTER
 			component.richText = null
+			component.border = null
 			if ((value as DefaultMutableTreeNode).userObject is LibraryItem) {
 				val iconPath = (value.userObject as LibraryItem).iconPath
 				component.font = this@LibraryTreeViewSwing.font
@@ -317,9 +316,7 @@ class LibraryTreeViewSwing(
 						component.toolTipText = Translations.getString("library.action.libraryElement.tip")
 					}
 					component.icon = MetaGraphIconProvider.provideIcon(cle.graphType, controller.isCurrentItem(cle))
-					if (controller.isDefaultElement(cle)) {
-						component.font = defaultElemFont
-					}
+					component.richText?.underline = controller.isDefaultElement(cle)
 				} else if (value.userObject is Project) {
 					component.icon = projectIcon
 				} else if (value.userObject is Library) {

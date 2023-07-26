@@ -79,6 +79,8 @@ class RichTextDrawable : AbstractRectangle() {
 
 	companion object {
 
+		private val UNDERLINE_STROKE = Stroke(1.0f)
+
 		fun of(text: String, font: Font): RichTextDrawable {
 			val parser = RichTextParser(text)
 			return try {
@@ -109,6 +111,8 @@ class RichTextDrawable : AbstractRectangle() {
 	 */
 	val baselineRect = Rectangle2D()
 
+	var underline: Boolean = false
+
 	override fun draw(context: DrawContext) {
 		context.g.translate(location.x, location.y + overallAscent)
 		chunkViews.forEach { it.draw(context.g) }
@@ -118,6 +122,11 @@ class RichTextDrawable : AbstractRectangle() {
 	fun draw(g: Graphics2D) {
 		g.translate(location.x, location.y + overallAscent)
 		chunkViews.forEach { it.draw(g) }
+		if (underline) {
+			val y = -overallAscent.toInt() + heightInt + 1
+			g.stroke = UNDERLINE_STROKE
+			g.drawLine(0, y, widthInt, y)
+		}
 		g.translate(-location.x, -location.y - overallAscent)
 	}
 
