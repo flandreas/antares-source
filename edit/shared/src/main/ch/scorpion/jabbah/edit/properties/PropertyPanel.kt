@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
-import ch.scorpion.jabbah.base.text.FormattedText
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.edit.Command
@@ -82,7 +81,7 @@ abstract class AbstractPropertyPanelController<T: PropertyPanel>(
 			val beanDescription = if (StringUtils.isEmpty(description)) {
 				Translations.getString("edit.property.bean.undefined")
 			} else {
-				FormattedText.replaceNegation(description!!).textWithOverline
+				description!!
 			}
 			getDefinedDescription(beanDescription)
 		}

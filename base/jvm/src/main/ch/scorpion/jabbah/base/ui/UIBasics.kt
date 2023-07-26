@@ -8,7 +8,7 @@ import javax.swing.border.Border
 
 object UIBasics {
 
-	private val HEADER_FONT: Font = UIManager.getFont("Label.font").let {
+	val HEADER_FONT: Font = UIManager.getFont("Label.font").let {
 		it.deriveFont(Font.BOLD, it.size + 1f)!!
 	}
 

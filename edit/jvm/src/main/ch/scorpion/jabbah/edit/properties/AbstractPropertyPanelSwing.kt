@@ -4,7 +4,9 @@ import ch.scorpion.jabbah.base.Settings
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.UiUtil
-import ch.scorpion.jabbah.base.ui.UIBasics
+import ch.scorpion.jabbah.draw.drawable.RichTextDrawable
+import ch.scorpion.jabbah.draw.richtext.RichTextLabel
+import ch.scorpion.jabbah.draw.ui.UIBasics
 import ch.scorpion.jabbah.edit.Component
 import com.l2fprod.common.propertysheet.PropertySheetPanel
 import java.awt.BorderLayout
@@ -46,7 +48,7 @@ abstract class AbstractPropertyPanelSwing(
 	private val sheet: PropertySheetPanel = sheetFactory.create()
 
 	/** Displays the title that identifies the selected [Component].*/
-	private val title: JLabel
+	private val titleLabel: RichTextLabel
 
 	/** Used for displaying messages such as validation errors.*/
 	private val messageTextArea: JTextArea
@@ -79,8 +81,8 @@ abstract class AbstractPropertyPanelSwing(
 			sheet.isDescriptionVisible = BaseModule.settings.getBoolean(descriptionOpenPropertyName, true)
 		}
 
-		title = UIBasics.createHeaderLabel(controller.title)
-		title.border = BorderFactory.createEmptyBorder(2, 2, 2, 2)
+		titleLabel = UIBasics.createHeaderLabel(controller.title)
+		titleLabel.border = BorderFactory.createEmptyBorder(2, 2, 2, 2)
 
 		messageTextArea = JTextArea()
 		messageTextArea.rows = 3
@@ -96,7 +98,7 @@ abstract class AbstractPropertyPanelSwing(
 		messageTextScroll.background = background
 
 		layout = BorderLayout()
-		add(title, BorderLayout.NORTH)
+		add(titleLabel, BorderLayout.NORTH)
 		add(sheet, BorderLayout.CENTER)
 	}
 
@@ -238,6 +240,6 @@ abstract class AbstractPropertyPanelSwing(
 	}
 
 	private fun updateLabel() {
-		title.text = controller.title
+		titleLabel.richText = RichTextDrawable.of(controller.title, UIBasics.HEADER_FONT)
 	}
 }

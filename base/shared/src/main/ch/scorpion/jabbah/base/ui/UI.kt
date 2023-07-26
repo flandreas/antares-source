@@ -1,5 +1,5 @@
 package ch.scorpion.jabbah.base.ui
 
 object UI {
-	var isDark: Boolean = false;
+	var isDark: Boolean = false
 }
