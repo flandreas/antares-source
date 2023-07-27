@@ -37,7 +37,8 @@ class Label(
 	location: Point2D = Point2D.ZERO,
 	rotationDisplayStrategy: RotationDisplayStrategy = RotationDisplayStrategy.IGNORE,
 	val rotation: Rotation = Rotation.R0,
-	ownerRotation: Rotation = Rotation.R0
+	ownerRotation: Rotation = Rotation.R0,
+	displayableText: RichTextDrawable = RichTextDrawable.of(text ?: "", font)
 ) : AbstractDrawable(), Mirrorable {
 
 	companion object {
@@ -121,7 +122,7 @@ class Label(
 	var ownerRotation: Rotation = ownerRotation
 
 	/** The displayable text after conversion of negated representation. */
-	private var displayableText: RichTextDrawable
+	private var displayableText: RichTextDrawable = displayableText
 
 	/** The [Rectangle2D] that contains the text entirely.*/
 	val bounds = Rectangle2D()
@@ -130,7 +131,6 @@ class Label(
 	var inverse: Boolean = false
 
 	init {
-		displayableText = RichTextDrawable.of(text ?: "", font)
 		updateGeometry()
 	}
 

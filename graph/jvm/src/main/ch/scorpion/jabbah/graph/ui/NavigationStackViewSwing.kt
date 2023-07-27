@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.geom.Path
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.draw.drawable.RichTextDrawable
 import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.edit.DrawingViewContent
@@ -41,7 +42,7 @@ class NavigationStackViewSwing(
 	companion object {
 
 		/** Vertical insets between view border and arrow border.*/
-		private const val V_INSETS = 4
+		private const val V_INSETS = 2
 
 		private val OUTER_HEIGHT = max(
 			GraphDesktopItemHeaderPanelSwing.PREF_HEIGHT,
@@ -216,12 +217,12 @@ class NavigationStackViewSwing(
 		if (last) headFont else tailFont
 
 	private fun createElement(entry: NavigationStackEntry<GraphView>, first: Boolean, last: Boolean): Element {
-		val textRenderInfo = TextRenderInfoFactory.measureSingleLineText(entry.name, getFont(last))
-		val textLength = textRenderInfo.textBounds.width
+		val richText = RichTextDrawable.of(entry.name, getFont(last))
 		val showLock = first && !editable
 		return Element(
 			entry = entry,
-			path = if (first) createFirstPath(textLength, showLock) else createNonFirstPath(textLength),
+			path = if (first) createFirstPath(richText.width, showLock) else createNonFirstPath(richText.width),
+			richText = richText,
 			showLock = showLock,
 			isFirst = first,
 			isHead = last)
@@ -297,6 +298,7 @@ class NavigationStackViewSwing(
 	private inner class Element(
 		val entry: NavigationStackEntry<GraphView>,
 		val path: Path,
+		val richText: RichTextDrawable,
 		val showLock: Boolean,
 		val isFirst: Boolean,
 		val isHead: Boolean
@@ -317,7 +319,9 @@ class NavigationStackViewSwing(
 					} else {
 						path.boundingBox.centerX
 					},
-				y = path.boundingBox.centerY))
+				y = path.boundingBox.centerY),
+			displayableText = richText
+		)
 
 		var location: Point2D = Point2D.ZERO
 
