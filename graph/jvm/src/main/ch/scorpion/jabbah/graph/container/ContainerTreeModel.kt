@@ -6,7 +6,8 @@ import ch.scorpion.jabbah.base.swing.dynamictree.DynamicInitializer
 import ch.scorpion.jabbah.base.swing.dynamictree.DynamicReceiver
 import ch.scorpion.jabbah.base.swing.dynamictree.DynamicTreeModel
 import ch.scorpion.jabbah.base.swing.dynamictree.DynamicTreeNode
-import ch.scorpion.jabbah.base.text.FormattedText
+import ch.scorpion.jabbah.draw.drawable.RichTextDrawable
+import ch.scorpion.jabbah.draw.graphics.Font
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
@@ -284,6 +285,15 @@ class ContainerTreeModel(
 abstract class AbstractContainerTreeItem(
 	val type: ContainerTreeItemType
 ) {
+	private var richText: RichTextDrawable? = null
+
+	fun getRichText(font: Font): RichTextDrawable {
+		if (richText == null) {
+			richText = RichTextDrawable.of(getDescription(), font)
+		}
+		return richText!!
+	}
+
 	abstract fun getDescription(): String
 }
 
@@ -299,9 +309,9 @@ class ContainerTreePortItem(
 ) : DraggableTreeItem(ContainerTreeItemType.Port, factory, graphPortView.iconPath) {
 
 	val portName: String get() = graphPortView.model.name!!
-	private val portLabel: String get() = FormattedText.replaceNegation(graphPortView.model.name!!).textWithOverline
+	//private val portLabel: String get() = FormattedText.replaceNegation(graphPortView.model.name!!).textWithOverline
 
-	override fun getDescription(): String = "${graphPortView.model.portType}: $portLabel"
+	override fun getDescription(): String = "${graphPortView.model.portType}: ${graphPortView.model.name!!}"
 }
 
 private class ContainerTreeControlItem(
@@ -312,9 +322,8 @@ private class ContainerTreeControlItem(
 
 	val controlViewId: String get() = source.controlId
 	val controlModelId: Int get() = source.model.id
-	val controlName: String get() = FormattedText.replaceNegation(source.controlName).textWithOverline
 
-	override fun getDescription(): String = controlName
+	override fun getDescription(): String = source.controlName
 }
 
 private class ContainerTreeFolderItem(

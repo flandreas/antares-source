@@ -22,7 +22,7 @@ class RichTextDrawableTransformer(
 ) {
 
 	companion object {
-		private const val INDEX_FONT_FACTOR = 0.6
+		private const val INDEX_FONT_FACTOR = 0.7
 		private const val SUBSCRIPT_OFFSET_FACTOR = 0.2
 		private const val SUPERSCRIPT_OFFSET_FACTOR = 0.5
 		private const val INDEX_GAP = 2

@@ -5,6 +5,8 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.swing.dynamictree.DynamicTreeModel
+import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
+import ch.scorpion.jabbah.draw.richtext.RichTextLabel
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
@@ -15,10 +17,8 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.PortViewFactory
 import javax.swing.DropMode
 import javax.swing.Icon
-import javax.swing.JLabel
 import javax.swing.JTree
 import javax.swing.tree.DefaultMutableTreeNode
-import javax.swing.tree.DefaultTreeCellRenderer
 import javax.swing.tree.TreeModel
 
 /**
@@ -70,16 +70,17 @@ open class ContainerTreeView(
 	    model = containerTree?.model?.treeModel
     }
 
-    private inner class ContainerTreeCellRenderer : DefaultTreeCellRenderer() {
+    private inner class ContainerTreeCellRenderer : RichTextLabel() {
         private val iconCache: MutableMap<String, Icon> = mutableMapOf()
 	    private val folderIcon = UiUtil.themedIcon("/img/folder-20.png")
+	    private val jabbahFont = Graphics2DJvm.fromAwtFont(this@ContainerTreeView.font)
 
 	    override fun getTreeCellRendererComponent(tree: JTree?, value: Any?, selected: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): java.awt.Component {
-            val label = super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus) as JLabel
+            val label = super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus) as RichTextLabel
 
 		    if (value is DefaultMutableTreeNode && value.userObject is AbstractContainerTreeItem) {
 			    val userObject = value.userObject as AbstractContainerTreeItem
-			    label.text = userObject.getDescription()
+			    label.richText = userObject.getRichText(jabbahFont)
 			    label.icon = when (userObject.type) {
 				    ContainerTreeItemType.Port -> getIcon((value.userObject as DraggableTreeItem).iconPath)
 				    ContainerTreeItemType.Control -> getIcon((value.userObject as DraggableTreeItem).iconPath)
