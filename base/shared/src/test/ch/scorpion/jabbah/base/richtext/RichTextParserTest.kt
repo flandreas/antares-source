@@ -313,4 +313,16 @@ class RichTextParserTest {
 		""".trimIndent())
 	}
 
+	@Test
+	fun shouldParseBold() {
+		assertAST(
+			RichTextParser("This is *(bold)").parse(), """
+			Compound
+			- Fragment
+			-- -
+			--- This is 
+			--- *(bold)
+		""".trimIndent())
+	}
+
 }

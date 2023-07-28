@@ -12,6 +12,7 @@ enum class RichTextTokenType(override val id: String): TokenType {
 	OVERLINE("!"),
 	SUBSCRIPT("_"),
 	SUPERSCRIPT("^"),
+	BOLD("*"),
 	EOF("EOF")
 }
 
@@ -24,10 +25,11 @@ class RichTextLexer(text: String) : AbstractLexer(text) {
 		private val OVERLINE_TOKEN = Token<Unit>(OVERLINE)
 		private val SUBSCRIPT_TOKEN = Token<Unit>(SUBSCRIPT)
 		private val SUPERSCRIPT_TOKEN = Token<Unit>(SUPERSCRIPT)
+		private val BOLD_TOKEN = Token<Unit>(BOLD)
 		private val EOF_TOKEN = Token<Unit>(EOF)
 
-		private val TEXT_END_CHARS = listOf('!', '_', '^', ')')
-		private val SINGLE_CHAR_TEXT_CHARS = listOf('!', '_', '^')
+		private val TEXT_END_CHARS = listOf('!', '_', '^', '*', ')')
+		private val SINGLE_CHAR_TEXT_CHARS = listOf('!', '_', '^', '*')
 
 		private const val ESC_CHAR = '\\'
 	}
@@ -51,6 +53,7 @@ class RichTextLexer(text: String) : AbstractLexer(text) {
 				'!' -> return advanceByUpdatingSingleCharMode(state, OVERLINE_TOKEN)
 				'_' -> return advanceByUpdatingSingleCharMode(state, SUBSCRIPT_TOKEN)
 				'^' -> return advanceByUpdatingSingleCharMode(state, SUPERSCRIPT_TOKEN)
+				'*' -> return advanceByUpdatingSingleCharMode(state, BOLD_TOKEN)
 			}
 		}
 

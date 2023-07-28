@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.draw.drawable
 
-import ch.scorpion.jabbah.base.richtext.RichTextParser
 import ch.scorpion.jabbah.draw.DrawTestRule
 import ch.scorpion.jabbah.draw.graphics.FontImpl
 import kotlin.test.BeforeTest
@@ -15,7 +14,6 @@ class RichTextDrawableTest {
 
 	@Test
 	fun shouldCreateDrawable() {
-		val richText = RichTextParser("Abc").parse()
-		RichTextDrawableTransformer(richText, FontImpl()).transform()
+		RichTextDrawable.of("Abc", FontImpl())
 	}
 }

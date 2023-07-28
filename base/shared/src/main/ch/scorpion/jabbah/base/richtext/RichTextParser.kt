@@ -21,9 +21,10 @@ import ch.scorpion.jabbah.base.richtext.RichTextTokenType.*
  * richText : { fragment }
  * fragment : styledText [([subscript] [superscript] | [superscript] [subscript])]
  * styledText : styledChunk { styledChunk }
- * styledChunk : simpleText | overline
+ * styledChunk : simpleText | overline | bold
  * simpleText : { CHAR }
  * overline : "!" ( singleChar | "(" simpleText ")" )
+ * bold : "*" ( singleChar | "(" simpleText ")" )
  * subscript : "_" ( singleChar | overline | "(" styledText ")" )
  * superscript : "^" ( singleChar | overline | "(" styledText ")" )
  * singleChar : CHAR
@@ -78,6 +79,7 @@ class RichTextParser(lexer: RichTextLexer) : AbstractParser(lexer) {
 		return when (currentToken!!.type) {
 			TEXT -> true
 			OVERLINE -> true
+			BOLD -> true
 			else -> false
 		}
 	}
@@ -87,6 +89,7 @@ class RichTextParser(lexer: RichTextLexer) : AbstractParser(lexer) {
 			val token = currentToken!!
 			return when (currentToken!!.type) {
 				OVERLINE -> overline()
+				BOLD -> bold()
 				TEXT -> simpleText(TextStyle.NORMAL)
 				else -> throw SyntaxError(location, Translations.getString("base.dsl.unexpectedToken.msg", token.type.id))
 			}
@@ -114,6 +117,19 @@ class RichTextParser(lexer: RichTextLexer) : AbstractParser(lexer) {
 		}
 	}
 
+	private fun bold(): StyledChunk {
+		eat(BOLD)
+		return if (currentToken!!.type == LPAREN) {
+			eat(LPAREN)
+			val styledText = styledChunk()
+			val chunk = StyledChunk(lexer.location, styledText.text, TextStyle.BOLD)
+			eat(RPAREN)
+			chunk
+		} else {
+			simpleText(TextStyle.BOLD)
+		}
+	}
+
 	private fun subscript(): Subscript {
 		eat(SUBSCRIPT)
 		return when (currentToken!!.type) {
@@ -124,6 +140,7 @@ class RichTextParser(lexer: RichTextLexer) : AbstractParser(lexer) {
 				subscript
 			}
 			OVERLINE -> Subscript(lexer.location, StyledText(lexer.location, listOf(overline())))
+			BOLD -> Subscript(lexer.location, StyledText(lexer.location, listOf(bold())))
 			else -> Subscript(lexer.location, singleChar())
 		}
 	}
@@ -138,6 +155,7 @@ class RichTextParser(lexer: RichTextLexer) : AbstractParser(lexer) {
 				superscript
 			}
 			OVERLINE -> Superscript(lexer.location, StyledText(lexer.location, listOf(overline())))
+			BOLD -> Superscript(lexer.location, StyledText(lexer.location, listOf(bold())))
 			else -> Superscript(lexer.location, singleChar())
 		}
 	}

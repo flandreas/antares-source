@@ -85,7 +85,8 @@ class StyledText(
 
 enum class TextStyle {
 	NORMAL,
-	OVERLINE
+	OVERLINE,
+	BOLD
 }
 
 class StyledChunk(
@@ -98,6 +99,7 @@ class StyledChunk(
 		return when (style) {
 			TextStyle.NORMAL -> text
 			TextStyle.OVERLINE -> "${RichTextTokenType.OVERLINE.id}($text)"
+			TextStyle.BOLD -> "${RichTextTokenType.BOLD.id}($text)"
 		}
 	}
 }
