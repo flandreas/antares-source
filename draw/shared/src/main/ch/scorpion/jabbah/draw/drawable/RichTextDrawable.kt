@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.base.parser.TextLocation
 import ch.scorpion.jabbah.base.richtext.RichText
 import ch.scorpion.jabbah.base.richtext.RichTextParser
 import ch.scorpion.jabbah.base.richtext.StyledChunk
-import ch.scorpion.jabbah.base.richtext.TextStyle
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.module.DrawModule
@@ -172,9 +171,10 @@ class RichTextDrawable(
 		private val localFont: Font get() = if (indexed) {
 			indexFont
 		} else {
-			when (chunk.style) {
-				TextStyle.BOLD -> boldFont
-				else -> baseFont
+			if (chunk.style.bold) {
+				boldFont
+			} else {
+				baseFont
 			}
 		}
 
@@ -192,7 +192,7 @@ class RichTextDrawable(
 
 			g.drawString(chunk.text, baselineX.toInt(), baselineY.toInt())
 
-			if (chunk.style == TextStyle.OVERLINE) {
+			if (chunk.style.overline) {
 				g.stroke = OVERLINE_STROKE
 				g.drawLine(x, y, x + width, y)
 			}

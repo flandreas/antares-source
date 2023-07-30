@@ -4,6 +4,10 @@ import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.dsl.AbstractNode
 import ch.scorpion.jabbah.base.dsl.Compound
 import ch.scorpion.jabbah.base.parser.TextLocation
+import ch.scorpion.jabbah.base.richtext.TextStyle.Companion.BOLD
+import ch.scorpion.jabbah.base.richtext.TextStyle.Companion.NORMAL
+import ch.scorpion.jabbah.base.richtext.TextStyle.Companion.OVERLINE
+import ch.scorpion.jabbah.base.richtext.TextStyle.Companion.OVERLINE_BOLD
 
 class RichText(
 	location: TextLocation,
@@ -83,23 +87,44 @@ class StyledText(
 	}
 }
 
-enum class TextStyle {
-	NORMAL,
-	OVERLINE,
-	BOLD
+data class TextStyle(
+	val overline: Boolean,
+	val bold: Boolean
+) {
+	companion object {
+		val NORMAL = TextStyle(overline = false, bold = false)
+		val OVERLINE = TextStyle(overline = true, bold = false)
+		val BOLD = TextStyle(overline = false, bold = true)
+		val OVERLINE_BOLD = TextStyle(overline = true, bold = true)
+
+		fun withOverline(style: TextStyle): TextStyle = of (true, style.bold)
+		fun withoutOverline(style: TextStyle): TextStyle = of (false, style.bold)
+
+		fun withBold(style: TextStyle): TextStyle = of(style.overline, true)
+		fun withoutBold(style: TextStyle): TextStyle = of(style.overline, false)
+
+		fun of(overline: Boolean, bold: Boolean): TextStyle =
+			if (overline) {
+				if (bold) OVERLINE_BOLD else OVERLINE
+			} else {
+				if (bold) BOLD else NORMAL
+			}
+	}
 }
 
 class StyledChunk(
 	location: TextLocation,
 	val text: String,
-	val style: TextStyle = TextStyle.NORMAL
+	val style: TextStyle = NORMAL
 ) : AbstractNode(location) {
 
 	override fun toString(): String {
 		return when (style) {
-			TextStyle.NORMAL -> text
-			TextStyle.OVERLINE -> "${RichTextTokenType.OVERLINE.id}($text)"
-			TextStyle.BOLD -> "${RichTextTokenType.BOLD.id}($text)"
+			NORMAL -> text
+			OVERLINE -> "${RichTextTokenType.OVERLINE.id}($text)"
+			BOLD -> "${RichTextTokenType.BOLD.id}($text)"
+			OVERLINE_BOLD -> "${RichTextTokenType.BOLD.id}${RichTextTokenType.OVERLINE.id}($text)"
+			else -> throw IllegalArgumentException("unsupported style")
 		}
 	}
 }

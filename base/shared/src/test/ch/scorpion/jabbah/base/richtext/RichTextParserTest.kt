@@ -325,4 +325,17 @@ class RichTextParserTest {
 		""".trimIndent())
 	}
 
+	@Test
+	fun shouldParseBoldOverline() {
+		assertAST(
+			RichTextParser("This is *(bold !(overline))").parse(), """
+			Compound
+			- Fragment
+			-- -
+			--- This is 
+			--- *(bold )
+			--- *!(overline)
+		""".trimIndent())
+	}
+
 }
