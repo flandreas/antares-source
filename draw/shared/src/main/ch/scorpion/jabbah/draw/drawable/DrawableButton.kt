@@ -87,8 +87,7 @@ open class DrawableButton<C: InputEventContext>(
 
 	override fun getTooltip(x: Double, y: Double): Tooltip? =
 		tooltipKey?.let {
-			val text = StyledTextBuilder().append(Translations.getString(it)).build()
-			Tooltip(text, Rectangle2D.pointLike(toAbsoluteLocation(Point2D(x, y))))
+			Tooltip(Translations.getString(it), Rectangle2D.pointLike(toAbsoluteLocation(Point2D(x, y))))
 		}
 
 	override fun update() {

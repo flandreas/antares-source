@@ -15,7 +15,7 @@ import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.ui.MultilineTextDisplayJvm
-import ch.scorpion.jabbah.draw.view.buildRichToolTipText
+import ch.scorpion.jabbah.draw.view.buildToolTipText
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContext
@@ -173,7 +173,7 @@ class LibraryPreviewPanel(
 		selection = component
 		componentDisplay.updateLayout()
 
-		descriptionDisplay.plainText = buildRichToolTipText(
+		descriptionDisplay.plainText = buildToolTipText(
 			selection!!.type,
 			selection!!.typeDesc,
 			null,

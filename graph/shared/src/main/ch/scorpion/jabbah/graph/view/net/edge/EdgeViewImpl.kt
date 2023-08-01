@@ -5,7 +5,6 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.text.StyledTextBuilder
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.drawable.Movable
@@ -140,7 +139,7 @@ open class EdgeViewImpl<T : Any>(
 			content.append(it)
 		} ?: content.append(getExecutionTooltipContent())
 
-		return Tooltip(StyledTextBuilder().append(content.toString()).build(), x, y)
+		return Tooltip(content.toString(), x, y)
 	}
 
 	protected open fun getExecutionTooltipContent(): String =
@@ -911,25 +910,25 @@ open class EdgeViewImpl<T : Any>(
 
 	private fun createTooltip(): Tooltip? {
 		if (model.designError != null) {
-			return Tooltip(StyledTextBuilder().append(model.designError!!.description).build(), Rectangle2D.ZERO)
+			return Tooltip(model.designError!!.description, Rectangle2D.ZERO)
 		}
 
-		val text = StyledTextBuilder()
+		val text = StringBuilder()
 		if (StringUtils.isNotEmpty(model.description.value)) {
 			text.append(model.description.value!!)
 		}
 
 		if (BaseModule.properties.getBoolean(PROP_BEGINNER_HELP_TOOLTIP)) {
-			if (text.notEmpty) {
+			if (text.isNotEmpty()) {
 				text.appendLine().appendLine()
 			}
 			text.append(Translations.getString("graph.action.splitEdgeView.tip", EdgeToPortOrEdgeConnector.SPLIT_EDGE_VIEW_MODIFIER.label))
 		}
 
-		return if (text.empty) {
+		return if (text.isEmpty()) {
 			null
 		} else {
-			Tooltip(text.build(), Rectangle2D.ZERO)
+			Tooltip(text.toString(), Rectangle2D.ZERO)
 		}
 	}
 

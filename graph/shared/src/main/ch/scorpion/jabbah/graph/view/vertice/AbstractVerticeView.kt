@@ -10,7 +10,6 @@ import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.resettableLazy
-import ch.scorpion.jabbah.base.text.StyledText
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.drawable.TransparentImpl
@@ -19,11 +18,7 @@ import ch.scorpion.jabbah.draw.graphics.Graphics2D
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Cloneable
-import ch.scorpion.jabbah.edit.Snappable
-import ch.scorpion.jabbah.edit.SnappableX
-import ch.scorpion.jabbah.edit.SnappableY
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
@@ -357,7 +352,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 	/** Returns the unrotated bounding box in absolute view coordinates.*/
 	protected abstract fun getBoundingBoxImpl(): Rectangle2D
 
-	protected open fun buildVerticeViewTooltipText(): StyledText? =
+	protected open fun buildVerticeViewTooltipText(): String? =
 		if (description.isNotEmpty) {
 			buildToolTipText(type, description.value, typeDesc)
 		} else {

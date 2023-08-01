@@ -9,7 +9,6 @@ import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.richtext.RichTextParser
 import ch.scorpion.jabbah.base.text.StyledText
-import ch.scorpion.jabbah.base.text.StyledTextBuilder
 import ch.scorpion.jabbah.base.time.Timer
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.*
@@ -43,49 +42,8 @@ import ch.scorpion.jabbah.draw.style.StyleType
  * @param text the text following the title
  * @param subText additional text separated from the previous text by an empty line
  * @param endWithPeriod if `true` add a period at the end of [subText] if it doesn't have one already
-*/
+ */
 fun buildToolTipText(
-	title: String?,
-	text: String?,
-	subText: String?,
-	endWithPeriod: Boolean = false
-): StyledText? {
-	val builder = StyledTextBuilder()
-
-	val hasText = StringUtils.isNotEmpty(text)
-	val hasSubText = StringUtils.isNotEmpty(subText)
-
-	if (StringUtils.isNotBlank(title)) {
-		builder.beginBold()
-		builder.append(title!!)
-		if (hasText) {
-			builder.append(": ")
-		}
-		builder.endBold()
-	}
-
-	if (hasText) {
-		builder.append(text!!)
-		if (endWithPeriod && !text.endsWith(".")) {
-			builder.append('.')
-		}
-	}
-
-	if (hasSubText) {
-		if (builder.notEmpty) {
-			builder.appendLine().appendLine()
-		}
-		builder.append(subText!!)
-		if (endWithPeriod && !subText.endsWith(".")) {
-			builder.append('.')
-		}
-	}
-
-	val styledText = builder.build()
-	return if (styledText.empty) null else styledText
-}
-
-fun buildRichToolTipText(
 	title: String?,
 	text: String?,
 	subText: String?,
@@ -119,7 +77,7 @@ fun buildRichToolTipText(
 		}
 	}
 
-	return builder.toString()
+	return if (builder.isEmpty()) null else builder.toString()
 }
 
 /**
@@ -172,7 +130,7 @@ class TooltipHandler(
 	 * The text for which a [TooltipEvent] has been posted by this [TooltipHandler] recently.
 	 * This reference is kept in order to avoid duplicate consecutive event posts.
 	 */
-	private var lastTooltipText: StyledText? = null
+	private var lastTooltipText: String? = null
 
 	private var lastExplanation: DrawableExplanation<RectangularDrawable>? = null
 
@@ -209,7 +167,7 @@ class TooltipHandler(
 		val tooltip = getTooltip(drawable, x, y)
 		val explanation = getExplanation(drawable, x, y)
 
-		if (tooltip?.text?.empty != false && explanation == null) {
+		if (StringUtils.isBlank(tooltip?.text) && explanation == null) {
 			if (lastTooltipDrawable != null || lastExplanation != null) {
 				clearLastTargets()
 				eventBus.post(TooltipEvent(null, view, null, null))
@@ -251,7 +209,7 @@ class TooltipHandler(
 
 	private fun setLastTargets(
 		drawable: Drawable,
-		tooltipText: StyledText?,
+		tooltipText: String?,
 	    explanation: DrawableExplanation<RectangularDrawable>?,
 		sourceRect: RectangularShape?
 	) {
@@ -419,7 +377,7 @@ object TooltipManager {
 
 	private fun createTextArrowBubble(tooltip: Tooltip, view: View<*>): ArrowBubble {
 		val font = styleProvider.getStyle(StyleType.TOOLTIP).font
-		val multilineText = MultilineText(text = tooltip.text, font = font, preferredWidth = WIDTH.toDouble(), minWidth = MIN_WIDTH.toDouble())
+		val multilineText = RichTextDrawable.multiline(tooltip.text, font, WIDTH.toDouble())
 
 		return ArrowBubble(
 			multilineText,

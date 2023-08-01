@@ -5,7 +5,6 @@ import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.geom.Shape
-import ch.scorpion.jabbah.base.text.StyledText
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Stroke
@@ -128,7 +127,7 @@ abstract class AbstractDrawable(visible: Boolean = true) : Drawable {
 		}
 	}
 
-	protected fun buildToolTipText(title: String?, text: String?, subText: String?): StyledText? =
+	protected fun buildToolTipText(title: String?, text: String?, subText: String?): String? =
 		ch.scorpion.jabbah.draw.view.buildToolTipText(title, text, subText, true)
 
 	/**

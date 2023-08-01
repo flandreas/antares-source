@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.base
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
-import ch.scorpion.jabbah.base.text.StyledText
 
 /**
  * The name of the [Boolean] in [Properties] to activate tool tips with information
@@ -18,6 +17,6 @@ const val PROP_BEGINNER_HELP_TOOLTIP = "base.beginnerHelpTooltip"
  * @param sourceRect the bounding box of the object that produced this [Tooltip]. Used to place
  * the [Tooltip] view beneath or above it. Point-like source objects can use [Rectangle2D.pointLike].
  */
-data class Tooltip(val text: StyledText, var sourceRect: RectangularShape) {
-    constructor(text: StyledText, x: Double, y: Double): this(text, Rectangle2D.pointLike(Point2D(x, y)))
+data class Tooltip(val text: String, var sourceRect: RectangularShape) {
+    constructor(text: String, x: Double, y: Double): this(text, Rectangle2D.pointLike(Point2D(x, y)))
 }
