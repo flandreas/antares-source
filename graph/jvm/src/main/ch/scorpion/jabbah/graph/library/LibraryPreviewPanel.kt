@@ -9,14 +9,13 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.help.HelpIdProvider
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.text.FormattedText
 import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.draw.drawable.DefaultDrawableDrawer
 import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.ui.MultilineTextDisplayJvm
-import ch.scorpion.jabbah.draw.view.buildToolTipText
+import ch.scorpion.jabbah.draw.view.buildRichToolTipText
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContext
@@ -135,7 +134,7 @@ class LibraryPreviewPanel(
 	private fun updateSelection(libraryElement: LibraryElement?) {
 		if (libraryElement == null) {
 			selection = null
-			descriptionDisplay.styledText = null
+			descriptionDisplay.plainText = null
 			return
 		}
 
@@ -173,7 +172,13 @@ class LibraryPreviewPanel(
 	private fun updateSelectionImpl(component: Component) {
 		selection = component
 		componentDisplay.updateLayout()
-		descriptionDisplay.styledText = buildToolTipText(FormattedText.replaceNegation(selection!!.type).text, selection!!.typeDesc, null, true)
+
+		descriptionDisplay.plainText = buildRichToolTipText(
+			selection!!.type,
+			selection!!.typeDesc,
+			null,
+			true
+		)
 	}
 
 	private inner class HelpAction : AbstractAction("base.action.help", imagePath = "/img/help.png") {

@@ -118,13 +118,23 @@ class StyledChunk(
 	val style: TextStyle = NORMAL
 ) : AbstractNode(location) {
 
-	override fun toString(): String {
-		return when (style) {
+	override fun toString(): String =
+		when (style) {
 			NORMAL -> text
 			OVERLINE -> "${RichTextTokenType.OVERLINE.id}($text)"
 			BOLD -> "${RichTextTokenType.BOLD.id}($text)"
 			OVERLINE_BOLD -> "${RichTextTokenType.BOLD.id}${RichTextTokenType.OVERLINE.id}($text)"
 			else -> throw IllegalArgumentException("unsupported style")
+		}
+
+	fun splitWords(): List<StyledChunk> {
+		val words = text.split(' ')
+		return words.mapIndexed { index: Int, s: String ->
+			if (index == words.size - 1) {
+				StyledChunk(location, s, style)
+			} else {
+				StyledChunk(location, "$s ", style)
+			}
 		}
 	}
 }

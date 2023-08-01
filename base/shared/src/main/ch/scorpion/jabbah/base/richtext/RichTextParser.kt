@@ -32,6 +32,10 @@ import ch.scorpion.jabbah.base.richtext.RichTextTokenType.*
  */
 class RichTextParser(lexer: RichTextLexer) : AbstractParser(lexer) {
 
+	companion object {
+		fun bold(text: String): String = "*($text)"
+	}
+
 	constructor(text: String): this(RichTextLexer(text))
 
 	private var style: TextStyle = TextStyle.NORMAL

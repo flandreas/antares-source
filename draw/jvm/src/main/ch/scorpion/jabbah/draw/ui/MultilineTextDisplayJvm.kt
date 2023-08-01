@@ -1,7 +1,8 @@
 package ch.scorpion.jabbah.draw.ui
 
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.text.StyledText
-import ch.scorpion.jabbah.draw.drawable.MultilineText
+import ch.scorpion.jabbah.draw.drawable.RichTextDrawable
 import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.draw.graphics.PhysicalFontFamily
@@ -10,51 +11,52 @@ import java.awt.Graphics2D
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
 import javax.swing.JPanel
+import kotlin.math.abs
 
 /**
- * Renders a [StyledText] by dynamically recalculating its width when this [MultilineTextDisplayJvm]'s width
- * changes.
+ * Renders a [StyledText] by dynamically recalculating its width when this
+ * [MultilineTextDisplayJvm]'s width changes.
  */
 class MultilineTextDisplayJvm: JPanel() {
 
-	private var text: MultilineText? = null
+	private var textDrawable: RichTextDrawable? = null
 
 	private val g2Font = FontImpl(
 		PhysicalFontFamily(font.name),
 		font.style,
 		font.size)
 
-	var styledText: StyledText? = null
+	var plainText: String? = null
 		set(value) {
 			field = value
-			updateMultilineText()
+			updateTextDrawable()
 		}
 
 	init {
 		addComponentListener(object : ComponentAdapter() {
 			override fun componentResized(e: ComponentEvent?) {
-				updateMultilineText()
+				updateTextDrawable()
 			}
 		})
 	}
 
 	override fun paintComponent(g: Graphics) {
 		super.paintComponent(g)
-		text?.let {
+		textDrawable?.let {
 			val jg = Graphics2DJvm(g as Graphics2D)
 			jg.antialiasing = true
-			jg.font = g2Font
 			it.draw(jg)
 		}
 	}
 
-	private fun updateMultilineText() {
-		if (styledText != null) {
-			text = MultilineText(styledText!!, g2Font, width.toDouble())
+	private fun updateTextDrawable() {
+		if (StringUtils.isBlank(plainText)) {
+			textDrawable = null
+		} else {
+			textDrawable = RichTextDrawable.multiline(plainText!!, g2Font, width.toDouble())
+			textDrawable!!.moveBy(0.0, abs(textDrawable!!.baselineRect.y))
 			invalidate()
 			repaint()
-		} else {
-			text = null
 		}
 	}
 }

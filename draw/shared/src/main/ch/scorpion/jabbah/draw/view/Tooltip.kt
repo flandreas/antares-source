@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.richtext.RichTextParser
 import ch.scorpion.jabbah.base.text.StyledText
 import ch.scorpion.jabbah.base.text.StyledTextBuilder
 import ch.scorpion.jabbah.base.time.Timer
@@ -82,6 +83,43 @@ fun buildToolTipText(
 
 	val styledText = builder.build()
 	return if (styledText.empty) null else styledText
+}
+
+fun buildRichToolTipText(
+	title: String?,
+	text: String?,
+	subText: String?,
+	endWithPeriod: Boolean = false
+): String? {
+	val builder = StringBuilder()
+	val hasText = StringUtils.isNotEmpty(text)
+	val hasSubText = StringUtils.isNotEmpty(subText)
+
+	if (StringUtils.isNotBlank(title)) {
+		builder.append(RichTextParser.bold(title!!))
+		if (hasText) {
+			builder.append(": ")
+		}
+	}
+
+	if (hasText) {
+		builder.append(text!!)
+		if (endWithPeriod && !text.endsWith(".")) {
+			builder.append('.')
+		}
+	}
+
+	if (hasSubText) {
+		if (builder.isNotEmpty()) {
+			builder.appendLine().appendLine()
+		}
+		builder.append(subText!!)
+		if (endWithPeriod && !subText.endsWith(".")) {
+			builder.append('.')
+		}
+	}
+
+	return builder.toString()
 }
 
 /**
