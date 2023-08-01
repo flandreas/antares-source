@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.model.graph
 
+import ch.scorpion.jabbah.base.richtext.RichTextLexer
 import ch.scorpion.jabbah.graph.model.Graph
 
 /**
@@ -11,7 +12,7 @@ object GraphNameAbbreviator {
 	private const val LENGTH = 3
 
 	fun abbreviate(name: String): String {
-		val effName = name.filterNot { it.isWhitespace() }
+		val effName = name.filterNot { it.isWhitespace() || RichTextLexer.CONTROL_CHARS.contains(it) }
 
 		if (effName.length <= LENGTH) {
 			return effName
@@ -20,7 +21,7 @@ object GraphNameAbbreviator {
 		if (name.contains(' ')) {
 			return name
 				.split(' ')
-				.map { it.filterNot { c -> c.isWhitespace() } }
+				.map { it.filterNot { c -> c.isWhitespace() || RichTextLexer.CONTROL_CHARS.contains(c)} }
 				.joinToString("") { it.firstOrNull()?.uppercase() ?: "" }
 				.take(LENGTH)
 		}

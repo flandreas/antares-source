@@ -29,4 +29,9 @@ class GraphNameAbbreviatorTest {
 		@Suppress("SpellCheckingInspection")
 		assertEquals("THI", GraphNameAbbreviator.abbreviate("Thisisaverylongword"))
 	}
+
+	@Test
+	fun shouldAbbreviateRichText() {
+		assertEquals("RT", GraphNameAbbreviator.abbreviate("!(Rich Text)_(12)"))
+	}
 }

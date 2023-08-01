@@ -20,6 +20,8 @@ class RichTextLexer(text: String) : AbstractLexer(text) {
 
 	companion object {
 
+		val CONTROL_CHARS = listOf('!', '_', '^', '*','(', ')')
+
 		private val LPAREN_TOKEN = Token<Unit>(LPAREN)
 		private val RPAREN_TOKEN = Token<Unit>(RPAREN)
 		private val OVERLINE_TOKEN = Token<Unit>(OVERLINE)
