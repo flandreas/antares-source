@@ -68,7 +68,12 @@ class RichTextDrawable(
 							UNDEFINED,
 							StyledText(
 								UNDEFINED,
-								listOf(StyledChunk(UNDEFINED, text)))))))
+								listOf(StyledChunk(UNDEFINED, text))
+							)
+						)
+					)
+				)
+			)
 		}
 
 		/**
@@ -191,6 +196,9 @@ class RichTextDrawable(
 						superscriptX += it.width
 					}
 				}
+
+				baselineX = max(subscriptX, superscriptX)
+				lineWidth = baselineX
 			}
 
 			return drawable
@@ -200,6 +208,14 @@ class RichTextDrawable(
 	/** The coordinates of the [ChunkView]s are relative to the baseline start of the first [ChunkView].*/
 	private val chunkViews = mutableListOf<ChunkView>()
 
+	private val boldFont: Font by lazy { baseFont.deriveFont(FontStyle.BOLD) }
+
+	private val indexFont: Font by lazy {
+		baseFont
+			.deriveFont((baseFont.size * INDEX_FONT_FACTOR).toInt())
+			.deriveFont(FontStyle.BOLD)
+	}
+
 	/**
 	 * The enclosing rectangle of all [ChunkView]s relative to the baseline start, which is (0,0).
 	 * This does NOT change when the location of [RichTextDrawable] changes.
@@ -207,14 +223,6 @@ class RichTextDrawable(
 	val baselineRect = Rectangle2D()
 
 	var underline: Boolean = false
-
-	val indexFont: Font by lazy {
-		baseFont
-			.deriveFont((baseFont.size * INDEX_FONT_FACTOR).toInt())
-			.deriveFont(FontStyle.BOLD)
-	}
-
-	val boldFont: Font by lazy { baseFont.deriveFont(FontStyle.BOLD) }
 
 	override fun draw(context: DrawContext) {
 		val ascent = abs(baselineRect.y)

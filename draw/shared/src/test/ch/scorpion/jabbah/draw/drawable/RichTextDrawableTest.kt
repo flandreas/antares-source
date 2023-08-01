@@ -61,4 +61,10 @@ class RichTextDrawableTest {
 		val drawable = RichTextDrawable.multiline("Line1\nLine2", FONT, 10.0 * FONT_SIZE, textMeasurer())
 		assertEquals(2 * FONT_SIZE + 1 * RichTextDrawable.LINE_DIST, drawable.height)
 	}
+
+	@Test
+	fun shouldRespectIndicesWidth() {
+		val drawable = RichTextDrawable.multiline("*(A_(123)):B", FONT, 20.0 * FONT_SIZE, textMeasurer())
+		assertEquals(6 * FONT_SIZE + 2, drawable.widthInt)
+	}
 }

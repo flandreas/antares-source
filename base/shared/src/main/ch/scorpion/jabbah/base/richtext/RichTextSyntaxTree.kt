@@ -17,11 +17,12 @@ class RichText(
 class Fragment(
 	location: TextLocation,
 	val text: FragmentText,
+	val bold: Boolean = false,
 	val subscript: Subscript? = null,
 	val superscript: Superscript? = null
 ) : AbstractNode(location) {
 
-	override fun toString(): String = "Fragment"
+	override fun toString(): String = if (bold) "*Fragment" else "Fragment"
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		if (visitor.visitEnter(this)) {

@@ -338,4 +338,18 @@ class RichTextParserTest {
 		""".trimIndent())
 	}
 
+	@Test
+	fun shouldParseBoldFragment() {
+		assertAST(
+			RichTextParser("*(A_1^2)").parse(), """
+				Compound
+				- *Fragment
+				-- -
+				--- *(A)
+				-- _
+				--- *(1)
+				-- ^
+				--- *(2)
+			""".trimIndent())
+	}
 }

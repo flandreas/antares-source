@@ -18,16 +18,17 @@ import ch.scorpion.jabbah.base.richtext.RichTextTokenType.*
  *
  * ### Syntax
  * ```
- * richText : { fragment }
- * fragment : styledText [([subscript] [superscript] | [superscript] [subscript])]
- * styledText : styledChunk { styledChunk }
- * styledChunk : simpleText | overline | bold
- * text : { CHAR }
+ * richText : { styledFragment }
+ * styledFragment : simpleFragment | boldFragment
+ * simpleFragment : styledText [([subscript] [superscript] | [superscript] [subscript])]
+ * boldFragment : "*(" simpleFragment ")"
+ * styledText : { styledChunk }
+ * styledChunk : text | overline | bold
  * overline : "!" ( singleChar | "(" styledText ")" )
  * bold : "*" ( singleChar | "(" styledText ")" )
+ * text : { CHAR }
  * subscript : "_" ( singleChar | "(" styledText ")" )
  * superscript : "^" ( singleChar | "(" styledText ")" )
- * singleChar : CHAR
  * ```
  */
 class RichTextParser(lexer: RichTextLexer) : AbstractParser(lexer) {
@@ -45,14 +46,29 @@ class RichTextParser(lexer: RichTextLexer) : AbstractParser(lexer) {
 	private fun richText(): RichText {
 		val fragmentList = mutableListOf<Fragment>()
 		while (currentToken!!.type != EOF) {
-			fragmentList.add(fragment())
+			fragmentList.add(styledFragment())
 		}
 		return RichText(lexer.location, fragmentList)
 	}
 
-	private fun fragment(): Fragment {
+	private fun styledFragment(): Fragment {
+		return when (currentToken!!.type) {
+			BOLD -> boldFragment()
+			else -> fragment()
+		}
+	}
+
+	private fun boldFragment(): Fragment {
+		eat(BOLD)
+		eat(LPAREN)
+		val fragment = fragment(true)
+		eat(RPAREN)
+		return fragment
+	}
+
+	private fun fragment(bold: Boolean = false): Fragment {
 		lexer.location.let { location ->
-			style = TextStyle.NORMAL
+			style = if (bold) TextStyle.BOLD else TextStyle.NORMAL
 
 			val text = FragmentText(location, styledText())
 			var subscript: Subscript? = null
@@ -68,7 +84,7 @@ class RichTextParser(lexer: RichTextLexer) : AbstractParser(lexer) {
 				}
 			}
 
-			return Fragment(location, text, subscript, superscript)
+			return Fragment(location, text, bold, subscript, superscript)
 		}
 	}
 
