@@ -135,11 +135,17 @@ abstract class AbstractPropertyPanelSwing(
 		if (propertyObject != null) {
 			try {
 				LOG.trace("storeProperties")
+
+				// Temporarily disable legacy mode in order to receive SyntaxError from RichTextDrawable
+				RichTextDrawable.LEGACY_MODE = false
+
 				sheet.writeToObject(propertyObject)
 				controller.editor.view.drawing.validate()
 				hideMessage()
 			} catch (e: Throwable) {
 				e.message?.let { showMessage(it) }
+			} finally {
+				RichTextDrawable.LEGACY_MODE = true
 			}
 			readBackCalculatedProperties()
 		}
@@ -148,11 +154,17 @@ abstract class AbstractPropertyPanelSwing(
 	private fun storeProperty(property: AbstractReflectionPropertySwing<*>) {
 		try {
 			LOG.trace("storeProperty")
+
+			// Temporarily disable legacy mode in order to receive SyntaxError from RichTextDrawable
+			RichTextDrawable.LEGACY_MODE = false
+
 			property.writeToBeans()
 			controller.editor.view.drawing.validate()
 			hideMessage()
 		} catch (e: Throwable) {
 			e.message?.let { showMessage(it) }
+		} finally {
+			RichTextDrawable.LEGACY_MODE = true
 		}
 		readBackCalculatedProperties()
 	}

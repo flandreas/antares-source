@@ -36,6 +36,15 @@ class RichTextDrawable(
 		const val LINE_DIST = 5.0
 
 		/**
+		 * If `true`, [SyntaxError]s while parsing are caught, and the raw text is displayed without
+		 * interpreting styles. This is needed for backward compatibility with texts created before introduction
+		 * of the new [RichText] format, e.g. text that contains parens.
+		 * Can be temporarily set to `false` when editing new texts to let the [SyntaxError] propagate
+		 * to higher system layers, where it can be presented to the user.
+		 */
+		var LEGACY_MODE: Boolean = true
+
+		/**
 		 * Parses the formatted plain text as [RichText] and creates a [RichTextDrawable]
 		 * that can render it for the specified [font].
 		 */
@@ -43,14 +52,22 @@ class RichTextDrawable(
 			try {
 				transformToSingleLine(RichTextParser(text).parse(), font, textMeasurer)
 			} catch (e: SyntaxError) {
-				transformToSingleLine(legacyRichText(text), font, textMeasurer)
+				if (LEGACY_MODE) {
+					transformToSingleLine(legacyRichText(text), font, textMeasurer)
+				} else {
+					throw e
+				}
 			}
 
 		fun multiline(text: String, font: Font, preferredWidth: Double, textMeasurer: TextMeasurer = TextRenderInfoFactory): RichTextDrawable =
 			try {
 				transformToMultiline(RichTextParser(text).parse(), font, preferredWidth, textMeasurer)
 			} catch (e: SyntaxError) {
-				transformToMultiline(legacyRichText(text), font, preferredWidth, textMeasurer)
+				if (LEGACY_MODE) {
+					transformToMultiline(legacyRichText(text), font, preferredWidth, textMeasurer)
+				} else {
+					throw e
+				}
 			}
 
 		/**
@@ -181,7 +198,7 @@ class RichTextDrawable(
 						}
 					}
 
-				/** Build subscript text [ChunkView], if any. TODO: Word-wrapping. */
+				/** Build subscript text [ChunkView], if any.*/
 				var subscriptX = baselineX + INDEX_GAP
 				fragment.subscript?.styledText?.chunks?.forEach { chunk ->
 					drawable.createAndAddChunkView(chunk.text, chunk.style, subscriptX, +font.size * SUBSCRIPT_OFFSET_FACTOR, true, textMeasurer).also {
@@ -189,7 +206,7 @@ class RichTextDrawable(
 					}
 				}
 
-				/** Build superscript text [ChunkView], if any.  TODO: Word-wrapping. */
+				/** Build superscript text [ChunkView], if any. */
 				var superscriptX = baselineX + INDEX_GAP
 				fragment.superscript?.styledText?.chunks?.forEach { chunk ->
 					drawable.createAndAddChunkView(chunk.text, chunk.style, superscriptX, -font.size * SUPERSCRIPT_OFFSET_FACTOR, true, textMeasurer).also {
