@@ -343,7 +343,7 @@ class RichTextParserTest {
 		assertAST(
 			RichTextParser("*(A_1^2)").parse(), """
 				Compound
-				- *Fragment
+				- Fragment
 				-- -
 				--- *(A)
 				-- _
@@ -351,5 +351,22 @@ class RichTextParserTest {
 				-- ^
 				--- *(2)
 			""".trimIndent())
+	}
+
+	@Test
+	fun shouldParsePortTooltip() {
+		assertAST(
+			RichTextParser("*(Input '!A_1')").parse(), """
+			Compound
+			- Fragment
+			-- -
+			--- *(Input ')
+			--- *!(A)
+			-- _
+			--- *(1)
+			- Fragment
+			-- -
+			--- *(')
+		""".trimIndent())
 	}
 }

@@ -53,7 +53,7 @@ class RichTextDrawable(
 				transformToSingleLine(RichTextParser(text).parse(), font, textMeasurer)
 			} catch (e: SyntaxError) {
 				if (LEGACY_MODE) {
-					transformToSingleLine(legacyRichText(text), font, textMeasurer)
+					transformToSingleLine(legacyRichText(text, e), font, textMeasurer)
 				} else {
 					throw e
 				}
@@ -64,7 +64,7 @@ class RichTextDrawable(
 				transformToMultiline(RichTextParser(text).parse(), font, preferredWidth, textMeasurer)
 			} catch (e: SyntaxError) {
 				if (LEGACY_MODE) {
-					transformToMultiline(legacyRichText(text), font, preferredWidth, textMeasurer)
+					transformToMultiline(legacyRichText(text, e), font, preferredWidth, textMeasurer)
 				} else {
 					throw e
 				}
@@ -74,8 +74,8 @@ class RichTextDrawable(
 		 * Creates a simple [RichText] for [text] without formatting properties
 		 * to be used as fallback for legacy texts that cannot be parsed successfully.
 		 */
-		private fun legacyRichText(text: String): RichText {
-			LOG.debug("Resorting to legacy format")
+		private fun legacyRichText(text: String, error: SyntaxError): RichText {
+			LOG.debug("Resorting to legacy format: ${error.message} at ${error.location}")
 			return RichText(
 				UNDEFINED,
 				listOf(

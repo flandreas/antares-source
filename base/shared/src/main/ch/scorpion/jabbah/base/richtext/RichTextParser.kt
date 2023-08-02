@@ -19,16 +19,17 @@ import ch.scorpion.jabbah.base.richtext.RichTextTokenType.*
  * ### Syntax
  * ```
  * richText : { styledFragment }
- * styledFragment : simpleFragment | boldFragment
- * simpleFragment : styledText [([subscript] [superscript] | [superscript] [subscript])]
- * boldFragment : "*(" simpleFragment ")"
+ * styledFragment : fragment | boldText
+ * fragment : styledText [([subscript] [superscript] | [superscript] [subscript])]
+ * boldText : "*(" richText ")"
+ * subscript : "_" ( CHAR | "(" styledText ")" )
+ * superscript : "^" ( CHAR | "(" styledText ")" )
  * styledText : { styledChunk }
  * styledChunk : text | overline | bold
+ * text : { CHAR }
  * overline : "!" ( singleChar | "(" styledText ")" )
  * bold : "*" ( singleChar | "(" styledText ")" )
- * text : { CHAR }
- * subscript : "_" ( singleChar | "(" styledText ")" )
- * superscript : "^" ( singleChar | "(" styledText ")" )
+ * singleChar : CHAR
  * ```
  */
 class RichTextParser(lexer: RichTextLexer) : AbstractParser(lexer) {
@@ -44,32 +45,34 @@ class RichTextParser(lexer: RichTextLexer) : AbstractParser(lexer) {
 	override fun parse(): RichText = richText()
 
 	private fun richText(): RichText {
-		val fragmentList = mutableListOf<Fragment>()
-		while (currentToken!!.type != EOF) {
-			fragmentList.add(styledFragment())
+		lexer.location.let { location ->
+			val fragments = mutableListOf<Fragment>()
+			while (currentToken!!.type != EOF && currentToken!!.type != RPAREN) {
+				fragments.addAll(styledFragment())
+			}
+			return RichText(location, fragments)
 		}
-		return RichText(lexer.location, fragmentList)
 	}
 
-	private fun styledFragment(): Fragment {
+	private fun styledFragment(): List<Fragment> {
 		return when (currentToken!!.type) {
-			BOLD -> boldFragment()
-			else -> fragment()
+			BOLD -> boldText().children
+			else -> listOf(fragment())
 		}
 	}
 
-	private fun boldFragment(): Fragment {
+	private fun boldText(): RichText {
 		eat(BOLD)
 		eat(LPAREN)
-		val fragment = fragment(true)
+		style = TextStyle.withBold(style)
+		val richText = richText()
 		eat(RPAREN)
-		return fragment
+		style = TextStyle.withoutBold(style)
+		return richText
 	}
 
-	private fun fragment(bold: Boolean = false): Fragment {
+	private fun fragment(): Fragment {
 		lexer.location.let { location ->
-			style = if (bold) TextStyle.BOLD else TextStyle.NORMAL
-
 			val text = FragmentText(location, styledText())
 			var subscript: Subscript? = null
 			var superscript: Superscript? = null
@@ -84,82 +87,18 @@ class RichTextParser(lexer: RichTextLexer) : AbstractParser(lexer) {
 				}
 			}
 
-			return Fragment(location, text, bold, subscript, superscript)
+			return Fragment(location, text, subscript, superscript)
 		}
 	}
 
 	private fun styledText(): StyledText {
 		lexer.location.let { location ->
 			val chunks = mutableListOf<StyledChunk>()
-			chunks.addAll(styledChunk().chunks)
 			while (isStyledChunk()) {
 				chunks.addAll(styledChunk().chunks)
 			}
 			return StyledText(location, chunks)
 		}
-	}
-
-	private fun isStyledChunk(): Boolean {
-		return when (currentToken!!.type) {
-			TEXT -> true
-			OVERLINE -> true
-			BOLD -> true
-			else -> false
-		}
-	}
-
-	private fun styledChunk(): StyledText {
-		lexer.location.let { location ->
-			val token = currentToken!!
-			return when (currentToken!!.type) {
-				OVERLINE -> overline()
-				BOLD -> bold()
-				TEXT -> text()
-				else -> throw SyntaxError(location, Translations.getString("base.dsl.unexpectedToken.msg", token.type.id))
-			}
-		}
-	}
-
-	private fun text(): StyledText {
-		lexer.location.let { location ->
-			val token = currentToken!!
-			eat(TEXT)
-			return StyledText(lexer.location, listOf(StyledChunk(location, token.value as String, style)))
-		}
-	}
-
-	private fun overline(): StyledText {
-		eat(OVERLINE)
-
-		style = TextStyle.withOverline(style)
-		val overline = if (currentToken!!.type == LPAREN) {
-			eat(LPAREN)
-			val styledText = styledText()
-			eat(RPAREN)
-			styledText
-		} else {
-			text()
-		}
-		style = TextStyle.withoutOverline(style)
-
-		return overline
-	}
-
-	private fun bold(): StyledText {
-		eat(BOLD)
-
-		style = TextStyle.withBold(style)
-		val bold = if (currentToken!!.type == LPAREN) {
-			eat(LPAREN)
-			val styledText = styledText()
-			eat(RPAREN)
-			styledText
-		} else {
-			text()
-		}
-		style = TextStyle.withoutBold(style)
-
-		return bold
 	}
 
 	private fun subscript(): Subscript {
@@ -192,5 +131,69 @@ class RichTextParser(lexer: RichTextLexer) : AbstractParser(lexer) {
 		}
 	}
 
+	private fun isStyledChunk(): Boolean {
+		return when (currentToken!!.type) {
+			TEXT -> true
+			OVERLINE -> true
+			BOLD -> true
+			else -> false
+		}
+	}
+
+	private fun styledChunk(): StyledText {
+		lexer.location.let { location ->
+			val token = currentToken!!
+			return when (currentToken!!.type) {
+				OVERLINE -> overline()
+				BOLD -> bold()
+				TEXT -> text()
+				else -> throw SyntaxError(location, Translations.getString("base.dsl.unexpectedToken.msg", token.type.id))
+			}
+		}
+	}
+
+	private fun bold(): StyledText {
+		eat(BOLD)
+
+		style = TextStyle.withBold(style)
+		val bold = if (currentToken!!.type == LPAREN) {
+			eat(LPAREN)
+			val styledText = styledText()
+			eat(RPAREN)
+			styledText
+		} else {
+			singleChar()
+		}
+		style = TextStyle.withoutBold(style)
+
+		return bold
+	}
+
+	private fun overline(): StyledText {
+		eat(OVERLINE)
+
+		style = TextStyle.withOverline(style)
+		val overline = if (currentToken!!.type == LPAREN) {
+			eat(LPAREN)
+			val styledText = styledText()
+			eat(RPAREN)
+			styledText
+		} else {
+			singleChar()
+		}
+		style = TextStyle.withoutOverline(style)
+
+		return overline
+	}
+
+	private fun text(): StyledText {
+		lexer.location.let { location ->
+			val token = currentToken!!
+			eat(TEXT)
+			return StyledText(lexer.location, listOf(StyledChunk(location, token.value as String, style)))
+		}
+	}
+
+	/** [RichTextLexer] will be in single-char mode and only return 1 character.*/
 	private fun singleChar(): StyledText = text()
 }

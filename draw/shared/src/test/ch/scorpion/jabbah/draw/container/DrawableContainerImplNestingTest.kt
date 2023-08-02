@@ -78,7 +78,7 @@ class DrawableContainerImplNestingTest {
 
 		container.add(innerContainer)
 
-		assertEquals("Test", container.getTooltip(125.0, 125.0)?.text?.asPlainText())
+		assertEquals("Test", container.getTooltip(125.0, 125.0)?.text)
 	}
 
 	@Test

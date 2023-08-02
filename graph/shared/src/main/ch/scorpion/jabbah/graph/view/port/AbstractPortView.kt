@@ -337,17 +337,15 @@ abstract class AbstractPortView<T : Any>(
 		// empty
 	}
 
-	private fun buildToolTipTitle(): String {
-		return if (StringUtils.isBlank(port.name)) {
+	private fun buildToolTipTitle(): String =
+		if (StringUtils.isBlank(port.name)) {
 			"${port.portType}"
 		} else {
-			"${port.portType} '${FormattedText.replaceNegation(port.name!!).textWithOverline}'"
+			"${port.portType} '${port.name!!}'"
 		}
-	}
 
-	protected open fun buildToolTipContent(): String {
-		return StringUtils.orEmpty(port.description.value)
-	}
+	protected open fun buildToolTipContent(): String =
+		StringUtils.orEmpty(port.description.value)
 
 	private inner class PortListener : PropertyChangeListener<Any> {
 		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
