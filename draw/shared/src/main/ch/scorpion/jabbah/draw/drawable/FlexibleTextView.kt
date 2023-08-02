@@ -4,13 +4,13 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
-import ch.scorpion.jabbah.base.text.StyledTextBuilder
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.ZoomPan
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
+import kotlin.math.abs
 
 /**
  * A non-editable text view with a fixed width that adjusts its height according to the text to display.
@@ -46,9 +46,9 @@ class FlexibleTextView(
 	private val factor: Double = if (isUnzoomable) devicePixelRatio.toDouble() else 1.0
 
 	private val multilineText = if (isUnzoomable) {
-		MultilineText(StyledTextBuilder().append(text).build(), font.scale(devicePixelRatio), width.toDouble() * devicePixelRatio)
+		RichTextDrawable.multiline(text, font.scale(devicePixelRatio), width.toDouble() * devicePixelRatio)
 	} else {
-		MultilineText(StyledTextBuilder().append(text).build(), font, width.toDouble())
+		RichTextDrawable.multiline(text, font, width.toDouble())
 	}
 
 	/** The shape representing the overall box (including insets) in model coordinates, but excluding stroke widths.*/
@@ -97,7 +97,7 @@ class FlexibleTextView(
 		context.g.font = font
 		context.g.color = transparent.applyTo(textColor)
 
-		context.g.translate(r.x + INSET_X, r.y + INSET_Y)
+		context.g.translate(r.x + INSET_X, r.y + INSET_Y + abs(multilineText.baselineRect.y))
 		multilineText.draw(context)
 		context.g.translate(-(r.x + INSET_X), -(r.y + INSET_Y))
 

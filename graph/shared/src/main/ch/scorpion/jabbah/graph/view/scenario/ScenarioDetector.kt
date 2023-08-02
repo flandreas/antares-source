@@ -8,7 +8,6 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.text.FormattedText
 import ch.scorpion.jabbah.draw.drawable.FlexibleTextView
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.DrawingView
@@ -166,7 +165,7 @@ class ScenarioDetector(
 	private fun displayScenarioDesc(scenario: Scenario) {
 		if (StringUtils.isNotEmpty(scenario.description.value)) {
 			scenarioDesc = FlexibleTextView(
-				FormattedText.replaceNegation(scenario.description.value!!).textWithOverline,
+				scenario.description.value!!,
 				calculateScenarioDescAnchor(),
 				Direction.NORTH,
 				SCENARIO_STEP_DESC_WIDTH,
@@ -180,7 +179,7 @@ class ScenarioDetector(
 	private fun displayScenarioStepDesc(scenarioStep: ScenarioStep) {
 		if (StringUtils.isNotEmpty(scenarioStep.description.value)) {
 			scenarioStepDesc = FlexibleTextView(
-				FormattedText.replaceNegation(scenarioStep.description.value!!).textWithOverline,
+				scenarioStep.description.value!!,
 				calculateScenarioStepDescAnchor(),
 				Direction.SOUTH,
 				SCENARIO_STEP_DESC_WIDTH,
