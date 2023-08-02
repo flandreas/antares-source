@@ -8,10 +8,12 @@ import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.richtext.RichTextParser
-import ch.scorpion.jabbah.base.text.StyledText
 import ch.scorpion.jabbah.base.time.Timer
 import ch.scorpion.jabbah.draw.*
-import ch.scorpion.jabbah.draw.drawable.*
+import ch.scorpion.jabbah.draw.drawable.ArrowBubble
+import ch.scorpion.jabbah.draw.drawable.ArrowBubblePositioner
+import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
+import ch.scorpion.jabbah.draw.drawable.RichTextDrawable
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
@@ -24,7 +26,7 @@ import ch.scorpion.jabbah.draw.style.StyleType
  *
  * The [TooltipHandler] searches for a [Drawable] at the mouse location and, if one is found, asks that
  * [Drawable] for its [Tooltip], typically using [Drawable.getTooltip]. A [Tooltip] consists of
- * a [StyledText] and a location where to display it (only data, no graphical representation).
+ * a [RichTextDrawable] and a location where to display it (only data, no graphical representation).
  *
  * If there is a [Tooltip] to be displayed, [TooltipHandler] posts a [TooltipEvent] on the [EventBus],
  * which is handled by [TooltipManager] in order to display it. [TooltipManager] uses a [Timer] for

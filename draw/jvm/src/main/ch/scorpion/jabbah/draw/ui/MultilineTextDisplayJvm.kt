@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.draw.ui
 
 import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.base.text.StyledText
 import ch.scorpion.jabbah.draw.drawable.RichTextDrawable
 import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
@@ -14,7 +13,7 @@ import javax.swing.JPanel
 import kotlin.math.abs
 
 /**
- * Renders a [StyledText] by dynamically recalculating its width when this
+ * Renders a [RichTextDrawable] by dynamically recalculating its width when this
  * [MultilineTextDisplayJvm]'s width changes.
  */
 class MultilineTextDisplayJvm: JPanel() {
