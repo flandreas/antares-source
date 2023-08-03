@@ -35,7 +35,20 @@ import ch.scorpion.jabbah.base.richtext.RichTextTokenType.*
 class RichTextParser(lexer: RichTextLexer) : AbstractParser(lexer) {
 
 	companion object {
-		fun bold(text: String): String = "*($text)"
+
+		fun bold(text: String): String =
+			when (text.length) {
+				0 -> ""
+				1 -> "${BOLD.id}$text"
+				else -> "${BOLD.id}${LPAREN.id}$text${RPAREN.id}"
+			}
+
+		fun negated(text: String): String =
+			when (text.length) {
+				0 -> ""
+				1 -> "${OVERLINE.id}$text"
+				else -> "${OVERLINE.id}${LPAREN.id}$text${RPAREN.id}"
+			}
 	}
 
 	constructor(text: String): this(RichTextLexer(text))

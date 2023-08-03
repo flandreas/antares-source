@@ -11,7 +11,6 @@ import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.resettableLazy
-import ch.scorpion.jabbah.base.text.FormattedText
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.drawable.Mirrorable

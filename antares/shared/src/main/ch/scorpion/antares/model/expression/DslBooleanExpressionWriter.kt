@@ -2,7 +2,8 @@ package ch.scorpion.antares.model.expression
 
 import ch.scorpion.antares.model.truthtable.TruthTable
 import ch.scorpion.jabbah.base.dsl.DslTokenType
-import ch.scorpion.jabbah.base.text.FormattedText
+import ch.scorpion.jabbah.base.richtext.RichTextParser
+import ch.scorpion.jabbah.base.richtext.RichTextTokenType
 
 /**
  * Write a [BooleanExpression] as an Antares DSL expression string.
@@ -32,8 +33,8 @@ class DslBooleanExpressionWriter : AbstractBooleanExpressionWriter(false) {
 	override fun getOutput(truthTable: TruthTable, outputColumn: Int): String {
 		val info = truthTable.getOutputColumnInfo(outputColumn)
 		return if (info.isNegated) {
-			val negation = FormattedText.createNegation(info.plainName)
-			if (negation.startsWith(FormattedText.NEGATION_SIGN)) {
+			val negation = RichTextParser.negated(info.plainName)
+			if (negation.startsWith(RichTextTokenType.OVERLINE.id)) {
 				"${DslTokenType.SINGLE_QUOTE.id}$negation${DslTokenType.SINGLE_QUOTE.id}"
 			} else {
 				negation
