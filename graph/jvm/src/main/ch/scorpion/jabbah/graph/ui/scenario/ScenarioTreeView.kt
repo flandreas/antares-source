@@ -8,7 +8,10 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.base.swing.UiUtil
-import ch.scorpion.jabbah.base.text.FormattedText
+import ch.scorpion.jabbah.draw.graphics.Font
+import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
+import ch.scorpion.jabbah.draw.richtext.RichTextLabel
+import ch.scorpion.jabbah.edit.model.text.NamableTreeNode
 import ch.scorpion.jabbah.edit.model.text.description.NameChangedEvent
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
@@ -25,7 +28,10 @@ import java.awt.datatransfer.UnsupportedFlavorException
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.*
-import javax.swing.tree.*
+import javax.swing.tree.DefaultMutableTreeNode
+import javax.swing.tree.DefaultTreeModel
+import javax.swing.tree.TreeNode
+import javax.swing.tree.TreeSelectionModel
 
 /**
  * Displays the [Scenario] and [ScenarioStep] tree of a [GraphView].
@@ -151,7 +157,7 @@ class ScenarioTreeView(
 			if (field != value) {
 				field = value
 				// TODO How about null?
-				model = ScenarioTreeModel(field!!)
+				model = ScenarioTreeModel(field!!, Graphics2DJvm.fromAwtFont(font))
 			}
 		}
 
@@ -284,7 +290,10 @@ class ScenarioTreeView(
 	}
 
 	/** Extends [DefaultTreeModel] to add custom model manipulation methods. */
-	private class ScenarioTreeModel(graphView: GraphView) : DefaultTreeModel(DefaultMutableTreeNode(graphView)) {
+	private class ScenarioTreeModel(
+		graphView: GraphView,
+		font: Font
+	) : DefaultTreeModel(NamableTreeNode(graphView, font)) {
 
 		private val graphViewNode: DefaultMutableTreeNode get() = root as DefaultMutableTreeNode
 
@@ -387,7 +396,7 @@ class ScenarioTreeView(
 	}
 
 	/** Adds custom icons to the tree nodes.*/
-	private class ScenarioTreeRenderer : DefaultTreeCellRenderer() {
+	private class ScenarioTreeRenderer : RichTextLabel() {
 
 		companion object {
 			private val scenarioIcon = UiUtil.themedIcon("/img/scenario-20.png")
@@ -395,7 +404,8 @@ class ScenarioTreeView(
 		}
 
 		override fun getTreeCellRendererComponent(tree: JTree?, value: Any?, sel: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): Component {
-			val component = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus) as JLabel
+			val component = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus) as RichTextLabel
+			component.richText = null
 
 			when ((value as DefaultMutableTreeNode).userObject) {
 				is Scenario -> {
@@ -410,7 +420,7 @@ class ScenarioTreeView(
 					val icon = (value.userObject as GraphView).graph?.type?.let {
 						MetaGraphIconProvider.provideIcon(it, false)
 					}
-					component.text = FormattedText.replaceNegation((value.userObject as GraphView).graph!!.name.value).text
+					component.richText = (value as NamableTreeNode).richTextName.value
 					component.icon = icon
 					component.disabledIcon = icon
 				}

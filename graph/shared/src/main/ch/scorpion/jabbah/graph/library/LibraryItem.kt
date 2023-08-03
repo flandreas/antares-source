@@ -3,8 +3,6 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.draw.drawable.RichTextDrawable
-import ch.scorpion.jabbah.draw.graphics.Font
 import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.io.Storable
 
@@ -32,9 +30,6 @@ interface LibraryItem : Storable, Namable {
 	 * is currently open in the using UI.
 	 */
 	val activeIconPath: String? get() = iconPath
-
-	/** Can render [name] in [font] using rich text features.*/
-	fun getRichText(font: Font): RichTextDrawable
 
     fun accept(visitor: HierarchyVisitor): Boolean
 

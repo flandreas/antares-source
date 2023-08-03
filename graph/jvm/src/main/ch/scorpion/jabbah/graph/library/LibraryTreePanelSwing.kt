@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.base.swing.PlaceholderTextField
+import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreePanel
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreePanelController
 import java.awt.BorderLayout
@@ -46,7 +47,7 @@ class LibraryTreePanelSwing(
 		libraryTreeView.model = LibraryTreeModelBuilderSwing(
 			controller.libraryTreeViewController.library,
 			filter
-		).build()
+		).build(Graphics2DJvm.fromAwtFont(font))
 		SwingUtilities.invokeLater {
 			if (filter == null) {
 				JTreeUtil.collapseAll(libraryTreeView)

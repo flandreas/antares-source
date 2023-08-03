@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.swing.JTreeUtil.getPath
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.draw.richtext.RichTextLabel
+import ch.scorpion.jabbah.edit.model.text.NamableTreeNode
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.graph.ui.MetaGraphIconProvider
@@ -32,7 +33,7 @@ class LibraryTreeViewSwing(
 	private val controller: LibraryTreeViewController,
 	application: Application,
 	showWorkspaceNode: Boolean = true
-) : JTree(LibraryTreeModelBuilderSwing(controller.library).build()), LibraryTreeView {
+) : JTree(LibraryTreeModelBuilderSwing(controller.library).build(Graphics2DJvm.fromAwtFont(UIManager.getFont("Tree.font")))), LibraryTreeView {
 
 	companion object {
 		private val LOG by logger(LibraryTreeViewSwing::class)
@@ -132,6 +133,7 @@ class LibraryTreeViewSwing(
 
 	override fun handle(event: ContainerLibraryElementRenamedEvent) {
 		val node = findTreeNode(event.element)
+		(node as NamableTreeNode).richTextName.reset()
 		(model as DefaultTreeModel).nodeChanged(node)
 	}
 
@@ -186,7 +188,7 @@ class LibraryTreeViewSwing(
 	override fun openMainLibrary(library: Library) {
 		LOG.userTrail("Open main Library/Project '${library.name}'")
 
-		model = LibraryTreeModelBuilderSwing(library).build()
+		model = LibraryTreeModelBuilderSwing(library).build(Graphics2DJvm.fromAwtFont(font))
 		expandRow(0)
 
 		if (library.expandedImports.staleImportCount > 0) {
@@ -311,7 +313,7 @@ class LibraryTreeViewSwing(
 					}
 				} else if (value.userObject is ContainerLibraryElement) {
 					val cle = value.userObject as ContainerLibraryElement
-					component.richText = cle.getRichText(jabbahFont)
+					component.richText = (value as NamableTreeNode).richTextName.value
 					if (showBeginnerTips) {
 						component.toolTipText = Translations.getString("library.action.libraryElement.tip")
 					}

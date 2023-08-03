@@ -3,8 +3,6 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.ImmutableList
-import ch.scorpion.jabbah.draw.drawable.RichTextDrawable
-import ch.scorpion.jabbah.draw.graphics.Font
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.edit.auth.UserHolder
@@ -69,15 +67,6 @@ open class LibraryImpl(
 	override var name: Name
 		get() = directory.name
 		set(value) { directory.name = value }
-
-	private var richText: RichTextDrawable? = null
-
-	override fun getRichText(font: Font): RichTextDrawable {
-		if (richText != null) {
-			richText = RichTextDrawable.of(directory.name.value, font)
-		}
-		return richText!!
-	}
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		// Don't use libraryFolder.accept(visitor) in order to achieve that this Library is the resulting instance,

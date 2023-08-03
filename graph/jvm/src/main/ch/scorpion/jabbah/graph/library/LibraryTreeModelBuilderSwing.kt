@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.draw.graphics.Font
+import ch.scorpion.jabbah.edit.model.text.NamableTreeNode
 import ch.scorpion.jabbah.graph.project.Project
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
@@ -15,29 +17,35 @@ class LibraryTreeModelBuilderSwing(
 
 		private fun addItems(
 			parentSwingNode: DefaultMutableTreeNode,
-			parentNode: LibraryTreeNode
+			parentNode: LibraryTreeNode,
+			font: Font
 		) {
 			for (node in parentNode.children) {
-				val swingNode = DefaultMutableTreeNode(node.item)
+				val swingNode = NamableTreeNode(node.item, font)
 				if (node.children.size > 0) {
-					addItems(swingNode, node)
+					addItems(swingNode, node, font)
 				}
 				parentSwingNode.add(swingNode)
 			}
 		}
 
-		private fun addLibrary(parentSwingNode: DefaultMutableTreeNode, library: Library, filter: LibraryFilter? = null) {
-			addItems(parentSwingNode, LibraryDirectoryTreeModelBuilder(library, filter).build())
+		private fun addLibrary(
+			parentSwingNode: NamableTreeNode,
+			font: Font,
+			library: Library,
+			filter: LibraryFilter? = null
+		) {
+			addItems(parentSwingNode, LibraryDirectoryTreeModelBuilder(library, filter).build(), font)
 		}
 	}
 
-	fun build(): TreeModel {
+	fun build(font: Font): TreeModel {
 		val root = DefaultMutableTreeNode(Translations.getString("graph.desktop.name"))
 
 		if (library != null) {
 			for (l in library.expandedImports.libraries) {
-				val node = DefaultMutableTreeNode(l)
-				addLibrary(node, l, filter)
+				val node = NamableTreeNode(l, font)
+				addLibrary(node, font, l, filter)
 				root.add(node)
 			}
 		}

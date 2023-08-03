@@ -7,7 +7,6 @@ import ch.scorpion.jabbah.base.dsl.*
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.resettableLazy
-import ch.scorpion.jabbah.base.text.FormattedText
 import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.ScriptProperty
@@ -54,7 +53,7 @@ class ScenarioImpl(
 
 	/** ---- [Any] */
 
-	override fun toString(): String = FormattedText.replaceNegation(name.value).textWithOverline
+	override fun toString(): String = name.value
 
 	/** ---- [Namable], [Describable] interfaces */
 

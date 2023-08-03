@@ -60,10 +60,10 @@ open class GraphViewImpl(
 
 	/** ---- UI properties */
 
-	override var name: String
-		get() = graph!!.name.value
+	override var name: Name
+		get() = graph!!.name
 		set(value) {
-			graph!!.name = Name(value)
+			graph!!.name = value
 		}
 
 	val type: GraphType? get() = graph?.type

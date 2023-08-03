@@ -105,7 +105,7 @@ class AnalogGraphView(
 				IssueSeverity.Error,
 				Translations.getString("antares.analogCalc.notFullyConnected.error.name"),
 				Translations.getString("antares.analogCalc.notFullyConnected.error.desc"),
-				name,
+				name.value,
 				"Simulation"
 			))
 			return false
@@ -139,7 +139,7 @@ class AnalogGraphView(
 					IssueSeverity.Error,
 					Translations.getString("antares.analogCalc.analyse.error.name"),
 					Translations.getString("antares.analogCalc.analyse.error.desc", e.message ?: ""),
-					graphView.name,
+					graphView.name.value,
 					"Simulation"
 				))
 			}

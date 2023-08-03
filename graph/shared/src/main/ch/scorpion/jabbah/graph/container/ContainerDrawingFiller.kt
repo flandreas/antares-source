@@ -149,7 +149,7 @@ class NarrowContainerDrawingFiller(
 
 	override fun createLabel(): LabelComponent? =
 		if (addLabel) {
-			LabelComponent(GraphNameAbbreviator.abbreviate(graphView.name))
+			LabelComponent(GraphNameAbbreviator.abbreviate(graphView.name.value))
 		} else {
 			null
 		}
@@ -179,7 +179,7 @@ class WideContainerDrawingFiller(
 		private const val LABEL_INSET_Y = 3
 	}
 
-	private val label = LabelComponent(graphView.name, inverse = true)
+	private val label = LabelComponent(graphView.name.value, inverse = true)
 
 	private val labelHeight: Int get() = label.boundingBox.height.toInt() + 2 * LABEL_INSET_Y
 

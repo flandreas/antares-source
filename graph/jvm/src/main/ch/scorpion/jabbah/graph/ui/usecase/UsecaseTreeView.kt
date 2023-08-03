@@ -6,7 +6,10 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.base.swing.UiUtil
-import ch.scorpion.jabbah.base.text.FormattedText
+import ch.scorpion.jabbah.draw.graphics.Font
+import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
+import ch.scorpion.jabbah.draw.richtext.RichTextLabel
+import ch.scorpion.jabbah.edit.model.text.NamableTreeNode
 import ch.scorpion.jabbah.edit.model.text.description.NameChangedEvent
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
@@ -19,10 +22,12 @@ import ch.scorpion.jabbah.graph.view.UsecaseRemovedEvent
 import java.awt.Component
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
-import javax.swing.JLabel
 import javax.swing.JPopupMenu
 import javax.swing.JTree
-import javax.swing.tree.*
+import javax.swing.tree.DefaultMutableTreeNode
+import javax.swing.tree.DefaultTreeModel
+import javax.swing.tree.TreeNode
+import javax.swing.tree.TreeSelectionModel
 
 /** Displays the tree of [Usecase]s of a [GraphView].*/
 class UsecaseTreeView(
@@ -91,7 +96,7 @@ class UsecaseTreeView(
 			if (field != value) {
 				field = value
 				// TODO How about null?
-				model = UsecaseTreeModel(field!!)
+				model = UsecaseTreeModel(field!!, Graphics2DJvm.fromAwtFont(font))
 			}
 		}
 
@@ -128,7 +133,10 @@ class UsecaseTreeView(
 		}
 	}
 
-	private class UsecaseTreeModel(graphView: GraphView) : DefaultTreeModel(DefaultMutableTreeNode(graphView)) {
+	private class UsecaseTreeModel(
+		graphView: GraphView,
+		font: Font
+	) : DefaultTreeModel(NamableTreeNode(graphView, font)) {
 
 		private val graphViewNode: DefaultMutableTreeNode get() = root as DefaultMutableTreeNode
 
@@ -177,17 +185,17 @@ class UsecaseTreeView(
 		}
 	}
 
-	private class UsecaseTreeRenderer : DefaultTreeCellRenderer() {
+	private class UsecaseTreeRenderer : RichTextLabel() {
 
 		companion object {
 			private val usecaseIcon = UiUtil.themedIcon("/img/usecase-16.png")
 		}
 
 		override fun getTreeCellRendererComponent(tree: JTree?, value: Any?, sel: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): Component {
-			val component = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus) as JLabel
+			val component = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus) as RichTextLabel
+			component.richText = null
 
-			val userObject = (value as DefaultMutableTreeNode).userObject
-			when (userObject) {
+			when ((value as DefaultMutableTreeNode).userObject) {
 				is Usecase -> {
 					component.icon = usecaseIcon
 					component.disabledIcon = usecaseIcon
@@ -196,7 +204,7 @@ class UsecaseTreeView(
 					val icon = (value.userObject as GraphView).graph?.type?.let {
 						MetaGraphIconProvider.provideIcon(it, false)
 					}
-					component.text = FormattedText.replaceNegation((value.userObject as GraphView).graph!!.name.value).text
+					component.richText = (value as NamableTreeNode).richTextName.value
 					component.icon = icon
 					component.disabledIcon = icon
 				}

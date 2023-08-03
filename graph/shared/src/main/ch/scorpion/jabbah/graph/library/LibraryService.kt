@@ -249,8 +249,10 @@ class LibraryService(
 		val nameChanged = metaGraph.translatableName != element.name.translation
 		storeContainerLibraryElement(library, metaGraph, element, doClone = false)
 		if (nameChanged) {
+			val oldName = element.name
 			element.name = Name(metaGraph.translatableName)
 			storeLibrary(library)
+			eventBus.post(ContainerLibraryElementRenamedEvent(element, oldName.translation))
 		}
 		eventBus.post(LibraryItemUpdatedEvent(library, element))
 	}
