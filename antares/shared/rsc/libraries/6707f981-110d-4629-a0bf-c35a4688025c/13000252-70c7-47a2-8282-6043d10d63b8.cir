@@ -1,8 +1,9 @@
-<metaGraph _id='0'>
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' script='P = (1 * A) * (1 * B)' purelyScripted='true'>
+        <graph _id='2' type='digital' script='P = (1 * A) * (1 * B)' purelyScripted='true'>
           <elements>
             <circuitInOut _id='3' id='1' name='A' type='input' bitWidth='BW'>
               <desc>
@@ -29,17 +30,17 @@
         <graphView _id='6'>
           <netViews/>
           <components>
-            <circuitInOutView _id='7' id='1' rot='0' filled='true' stroked='true' modelId='3' representation='hex' orientation='east'>
+            <circuitInOutView _id='7' id='1' rot='0' filled='true' stroked='true' modelId='3' orientation='east' representation='hex'>
               <location>
                 <point x='-154.0' y='-154.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='8' id='2' rot='0' filled='true' stroked='true' modelId='4' representation='hex' orientation='east'>
+            <circuitInOutView _id='8' id='2' rot='0' filled='true' stroked='true' modelId='4' orientation='east' representation='hex'>
               <location>
                 <point x='-154.0' y='-84.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='9' id='3' rot='0' filled='true' stroked='true' modelId='5' representation='hex' orientation='east'>
+            <circuitInOutView _id='9' id='3' rot='0' filled='true' stroked='true' modelId='5' orientation='east' representation='hex'>
               <location>
                 <point x='-70.0' y='-119.0'/>
               </location>
@@ -53,7 +54,7 @@
     <containerDrawing _id='10'>
       <components>
         <rectangle _id='11' id='1' style='figure' filled='true' stroked='true' x='140.0' y='140.0' w='56.0' h='56.0'/>
-        <originIndicator _id='12'>
+        <originIndicator _id='12' id='7'>
           <location>
             <point x='126.0' y='154.0'/>
           </location>
@@ -73,7 +74,7 @@
             <digitalPortView _id='20' x='196.0' y='168.0' dir='east' textPos='internal' portId='21'/>
           </portView>
         </digitalPortViewComp>
-        <label _id='22'>
+        <label _id='22' id='6' rot='0'>
           <text>
             <translation lang='en' text='MUL'/>
           </text>
@@ -86,7 +87,7 @@
         <subGraphVertice _id='23' id='0' delay='0' uuid='13000252-70c7-47a2-8282-6043d10d63b8'>
           <desc>
             <translation lang='de' text='Berechnet das Produkt A * B.'/>
-            <translation lang='en' text='Calculates the product A * B.'/>
+            <translation lang='en' text='Calculates the product A \* B.'/>
           </desc>
           <name>
             <translation lang='en' text='Multiplier n Bit'/>
