@@ -148,6 +148,7 @@ class Label(
 	}
 
 	fun draw(text: RichTextDrawable, context: DrawContext) {
+		positionDisplayableText(text)
 		drawImpl(text, context)
 	}
 
@@ -207,15 +208,18 @@ class Label(
 	private fun updateGeometry() {
 		invalidate()
 
-		// 1 is a magic number derived from manual/visual optimization
-		displayableText.location = Point2D(
-			location.x + horizontalAlignment.getX(displayableText.baselineRect) - BOUNDS_INSET,
-			location.y - verticalAlignment.getY(displayableText.baselineRect) + 1 - BOUNDS_INSET
-		)
-
+		positionDisplayableText(displayableText)
 		bounds.setFrame(displayableText.bounds)
 
 		update()
 		validate()
+	}
+
+	private fun positionDisplayableText(text: RichTextDrawable) {
+		// 1 is a magic number derived from manual/visual optimization
+		text.location = Point2D(
+			location.x + horizontalAlignment.getX(text.baselineRect) - BOUNDS_INSET,
+			location.y - verticalAlignment.getY(text.baselineRect) + 1 - BOUNDS_INSET
+		)
 	}
 }
