@@ -11,7 +11,6 @@ import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Path
-import ch.scorpion.jabbah.base.text.FormattedText
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -153,14 +152,14 @@ enum class SymbolStyle(
 
 	VERBOSE("Verbose") {
 
-		private val andText = FormattedText("AND", textWithOverline = "AND")
-		private val orText = FormattedText("OR", textWithOverline = "OR")
-		private val notText = FormattedText("NOT", textWithOverline = "NOT")
-		private val nandText = FormattedText("NAND", textWithOverline = "NAND")
-		private val norText = FormattedText("NOR", textWithOverline = "NOR")
-		private val xorText = FormattedText("XOR", textWithOverline = "XOR")
-		private val xnorText = FormattedText("XNOR", textWithOverline = "XNOR")
-		private val bufferText = FormattedText("Same", textWithOverline = "Same")
+		private val andText ="AND"
+		private val orText = "OR"
+		private val notText = "NOT"
+		private val nandText = "NAND"
+		private val norText = "NOR"
+		private val xorText = "XOR"
+		private val xnorText = "XNOR"
+		private val bufferText = "Same"
 
 		override fun getFont(font: Font): Font = font.deriveFont((font.size * 0.6).toInt())
 
@@ -315,7 +314,7 @@ enum class SymbolStyle(
 			context.g.translate(-x, -y - vOffset)
 		}
 
-		private fun drawEuropeanGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke, text: FormattedText? = null) {
+		private fun drawEuropeanGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke, text: String? = null) {
 			gate.drawBoxShape(context, foregroundColor, backgroundColor, stroke, text)
 		}
 

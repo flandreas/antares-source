@@ -8,7 +8,6 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
-import ch.scorpion.jabbah.base.text.FormattedText
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.graphics.Color
@@ -151,7 +150,7 @@ open class BoxGateView<T : Vertice>(
 		drawBoxShape(context, foregroundColor, backgroundColor, stroke)
 	}
 
-	fun drawBoxShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke, text: FormattedText? = null) {
+	fun drawBoxShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke, text: String? = null) {
 		if (shadow) {
 			DropShadow.draw(context, transparency) {
 				context.g.fillRect(xInt, yInt, widthInt, heightInt)
@@ -171,8 +170,8 @@ open class BoxGateView<T : Vertice>(
 
 		if (label != null) {
 			if (text != null) {
-				if (label.text != text.text) {
-					label.text = text.text
+				if (label.text != text) {
+					label.text = text
 				}
 			}
 			label.draw(context)
