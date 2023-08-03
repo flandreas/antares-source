@@ -369,4 +369,26 @@ class RichTextParserTest {
 			--- *(')
 		""".trimIndent())
 	}
+
+	@Test
+	fun shouldParseParenWithoutOperator() {
+		assertAST(
+			RichTextParser("A(1)").parse(), """
+			Compound
+			- Fragment
+			-- -
+			--- A(1)
+		""".trimIndent())
+	}
+
+	@Test
+	fun shouldParseBoldParenWithoutOperator() {
+		assertAST(
+			RichTextParser("*(A(1))").parse(), """
+			Compound
+			- Fragment
+			-- -
+			--- *(A(1))
+		""".trimIndent())
+	}
 }

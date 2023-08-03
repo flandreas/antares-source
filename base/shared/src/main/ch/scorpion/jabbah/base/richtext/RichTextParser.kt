@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.base.richtext
 
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.dsl.Node
 import ch.scorpion.jabbah.base.dsl.SyntaxError
 import ch.scorpion.jabbah.base.parser.AbstractParser
 import ch.scorpion.jabbah.base.richtext.RichTextTokenType.*
@@ -13,6 +14,7 @@ import ch.scorpion.jabbah.base.richtext.RichTextTokenType.*
  * - Negation: !A, !(ABC)
  * - Subscript: A_1, A_(123)
  * - Superscript: A^1, A^(123)
+ * - Bold: *A, *(ABC), *(A_1)
  *
  * Subscript and superscripts can also contain negation.
  *
@@ -55,6 +57,13 @@ class RichTextParser(lexer: RichTextLexer) : AbstractParser(lexer) {
 
 	private var style: TextStyle = TextStyle.NORMAL
 
+	private fun <T: Node> eatParen(expr: () -> T): T {
+		eat(LPAREN)
+		val result = expr()
+		eat(RPAREN)
+		return result
+	}
+
 	override fun parse(): RichText = richText()
 
 	private fun richText(): RichText {
@@ -76,10 +85,8 @@ class RichTextParser(lexer: RichTextLexer) : AbstractParser(lexer) {
 
 	private fun boldText(): RichText {
 		eat(BOLD)
-		eat(LPAREN)
 		style = TextStyle.withBold(style)
-		val richText = richText()
-		eat(RPAREN)
+		val richText = eatParen { richText() }
 		style = TextStyle.withoutBold(style)
 		return richText
 	}
@@ -118,10 +125,7 @@ class RichTextParser(lexer: RichTextLexer) : AbstractParser(lexer) {
 		eat(SUBSCRIPT)
 		return when (currentToken!!.type) {
 			LPAREN -> {
-				eat(LPAREN)
-				val subscript = Subscript(lexer.location, styledText())
-				eat(RPAREN)
-				subscript
+				eatParen { Subscript(lexer.location, styledText()) }
 			}
 			OVERLINE -> Subscript(lexer.location, overline())
 			BOLD -> Subscript(lexer.location, bold())
@@ -133,10 +137,7 @@ class RichTextParser(lexer: RichTextLexer) : AbstractParser(lexer) {
 		eat(SUPERSCRIPT)
 		return when (currentToken!!.type) {
 			LPAREN -> {
-				eat(LPAREN)
-				val superscript = Superscript(lexer.location, styledText())
-				eat(RPAREN)
-				superscript
+				eatParen { Superscript(lexer.location, styledText()) }
 			}
 			OVERLINE -> Superscript(lexer.location, overline())
 			BOLD -> Superscript(lexer.location, bold())
@@ -170,10 +171,7 @@ class RichTextParser(lexer: RichTextLexer) : AbstractParser(lexer) {
 
 		style = TextStyle.withBold(style)
 		val bold = if (currentToken!!.type == LPAREN) {
-			eat(LPAREN)
-			val styledText = styledText()
-			eat(RPAREN)
-			styledText
+			eatParen { styledText() }
 		} else {
 			singleChar()
 		}
@@ -187,10 +185,7 @@ class RichTextParser(lexer: RichTextLexer) : AbstractParser(lexer) {
 
 		style = TextStyle.withOverline(style)
 		val overline = if (currentToken!!.type == LPAREN) {
-			eat(LPAREN)
-			val styledText = styledText()
-			eat(RPAREN)
-			styledText
+			eatParen { styledText() }
 		} else {
 			singleChar()
 		}
@@ -201,9 +196,9 @@ class RichTextParser(lexer: RichTextLexer) : AbstractParser(lexer) {
 
 	private fun text(): StyledText {
 		lexer.location.let { location ->
-			val token = currentToken!!
+			var text = currentToken!!.value as String
 			eat(TEXT)
-			return StyledText(lexer.location, listOf(StyledChunk(location, token.value as String, style)))
+			return StyledText(lexer.location, listOf(StyledChunk(location, text, style)))
 		}
 	}
 

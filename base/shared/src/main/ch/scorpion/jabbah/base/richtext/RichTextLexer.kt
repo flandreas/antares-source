@@ -30,7 +30,6 @@ class RichTextLexer(text: String) : AbstractLexer(text) {
 		private val BOLD_TOKEN = Token<Unit>(BOLD)
 		private val EOF_TOKEN = Token<Unit>(EOF)
 
-		private val TEXT_END_CHARS = listOf('!', '_', '^', '*', ')')
 		private val SINGLE_CHAR_TEXT_CHARS = listOf('!', '_', '^', '*')
 
 		private const val ESC_CHAR = '\\'
@@ -76,8 +75,22 @@ class RichTextLexer(text: String) : AbstractLexer(text) {
 	private fun text(): String {
 		val text = StringBuilder()
 		var escape = false
-		while (state.currentChar != null && (escape || !TEXT_END_CHARS.contains(state.currentChar))) {
+		var parenDepth = 0
+		while (state.currentChar != null && (escape || !SINGLE_CHAR_TEXT_CHARS.contains(state.currentChar))) {
 			escape = !escape && state.currentChar == ESC_CHAR
+			when (state.currentChar) {
+				'(' -> {
+					parenDepth++
+				}
+				')' -> {
+					if (parenDepth > 0) {
+						parenDepth--
+					} else {
+						return text.toString()
+					}
+				}
+			}
+
 			if (!escape) {
 				text.append(state.currentChar)
 			}
@@ -91,7 +104,7 @@ class RichTextLexer(text: String) : AbstractLexer(text) {
 		if (escape) {
 			advance(state)
 		}
-		return if (state.currentChar != null && (escape || !TEXT_END_CHARS.contains(state.currentChar))) {
+		return if (state.currentChar != null && (escape || !SINGLE_CHAR_TEXT_CHARS.contains(state.currentChar))) {
 			val s = state.currentChar!!.toString()
 			advance(state)
 			s
