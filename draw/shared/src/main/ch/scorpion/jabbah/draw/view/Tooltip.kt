@@ -56,10 +56,11 @@ fun buildToolTipText(
 	val hasSubText = StringUtils.isNotEmpty(subText)
 
 	if (StringUtils.isNotBlank(title)) {
-		builder.append(RichTextParser.bold(title!!))
+		var titleText = title!!
 		if (hasText) {
-			builder.append(": ")
+			titleText += ": "
 		}
+		builder.append(RichTextParser.bold(titleText))
 	}
 
 	if (hasText) {
