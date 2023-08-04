@@ -43,7 +43,7 @@ interface ControlViewSource<T : Vertice> : VerticeView<T> {
 	    if (StringUtils.isEmpty(model.name)) {
 		    return "$type ($id)"
 	    }
-	    return "$type: \"${model.name}\""
+	    return "$type: ${model.name}"
     }
 
     /** Returns the path of the icon that identifies this [ControlViewSource] graphically. */

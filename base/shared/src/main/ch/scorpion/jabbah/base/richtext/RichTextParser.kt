@@ -22,7 +22,7 @@ import ch.scorpion.jabbah.base.richtext.RichTextTokenType.*
  * ```
  * richText : { styledFragment }
  * styledFragment : fragment | boldText
- * fragment : styledText [([subscript] [superscript] | [superscript] [subscript])]
+ * fragment : styledChunk [([subscript] [superscript] | [superscript] [subscript])]
  * boldText : "*(" richText ")"
  * subscript : "_" ( CHAR | "(" styledText ")" )
  * superscript : "^" ( CHAR | "(" styledText ")" )
@@ -93,7 +93,7 @@ class RichTextParser(lexer: RichTextLexer) : AbstractParser(lexer) {
 
 	private fun fragment(): Fragment {
 		lexer.location.let { location ->
-			val text = FragmentText(location, styledText())
+			val text = FragmentText(location, styledChunk())
 			var subscript: Subscript? = null
 			var superscript: Superscript? = null
 

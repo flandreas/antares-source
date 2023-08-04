@@ -53,7 +53,11 @@ class RichTextParserTest {
 			- Fragment
 			-- -
 			--- !(A)
+			- Fragment
+			-- -
 			--- B
+			- Fragment
+			-- -
 			--- !(CD)
 		""".trimIndent())
 	}
@@ -229,9 +233,17 @@ class RichTextParserTest {
 			- Fragment
 			-- -
 			--- A
+			- Fragment
+			-- -
 			--- !(B)
+			- Fragment
+			-- -
 			--- C
+			- Fragment
+			-- -
 			--- !(DE)
+			- Fragment
+			-- -
 			--- F
 			-- _
 			--- 12
@@ -321,6 +333,8 @@ class RichTextParserTest {
 			- Fragment
 			-- -
 			--- This is 
+			- Fragment
+			-- -
 			--- *(bold)
 		""".trimIndent())
 	}
@@ -333,7 +347,11 @@ class RichTextParserTest {
 			- Fragment
 			-- -
 			--- This is 
+			- Fragment
+			-- -
 			--- *(bold )
+			- Fragment
+			-- -
 			--- *!(overline)
 		""".trimIndent())
 	}
@@ -361,6 +379,8 @@ class RichTextParserTest {
 			- Fragment
 			-- -
 			--- *(Input ')
+			- Fragment
+			-- -
 			--- *!(A)
 			-- _
 			--- *(1)
@@ -389,6 +409,27 @@ class RichTextParserTest {
 			- Fragment
 			-- -
 			--- *(A(1))
+		""".trimIndent())
+	}
+
+	@Test
+	fun shouldParseComplexFragments() {
+		assertAST(
+			RichTextParser("LED: *(A_(123)^(456)): Bla").parse(), """
+			Compound
+			- Fragment
+			-- -
+			--- LED: 
+			- Fragment
+			-- -
+			--- *(A)
+			-- _
+			--- *(123)
+			-- ^
+			--- *(456)
+			- Fragment
+			-- -
+			--- : Bla
 		""".trimIndent())
 	}
 }
