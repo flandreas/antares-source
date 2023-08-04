@@ -285,7 +285,6 @@ class LibraryTreeViewSwing(
 	private inner class Renderer : RichTextLabel() {
 
 		private val iconCache: MutableMap<String, Icon> = mutableMapOf()
-		private val jabbahFont = Graphics2DJvm.fromAwtFont(this@LibraryTreeViewSwing.font)
 		private val projectIcon = UiUtil.themedIcon("/img/project-24.png")
 		private val libraryIcon = UiUtil.themedIcon("/img/library-24.png")
 		private val libraryImportIcon = UiUtil.themedIcon("/img/imported-library.png")
@@ -295,6 +294,7 @@ class LibraryTreeViewSwing(
 
 		override fun getTreeCellRendererComponent(tree: JTree?, value: Any?, sel: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): Component {
 			val component = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus) as RichTextLabel
+			component.richText = null
 			component.toolTipText = null
 			component.verticalTextPosition = SwingConstants.CENTER
 			component.richText = null

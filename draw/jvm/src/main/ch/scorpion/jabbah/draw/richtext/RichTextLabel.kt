@@ -24,12 +24,6 @@ import kotlin.math.max
  */
 open class RichTextLabel : DefaultTreeCellRenderer() {
 
-	companion object {
-		private const val HORIZONTAL_INSET = 3
-		private const val VERTICAL_INSET = 0
-		private const val DIST = 5
-	}
-
 	private var _preferredSize = calculatePreferredSize()
 
 	var richText: RichTextDrawable? = null
@@ -62,11 +56,11 @@ open class RichTextLabel : DefaultTreeCellRenderer() {
 	}
 
 	private fun paintCustom(g: Graphics) {
-		var x = HORIZONTAL_INSET
+		var x = insets.left
 
 		if (icon != null) {
 			icon.paintIcon(this, g, x,height / 2 - icon.iconHeight / 2)
-			x += icon.iconWidth + DIST
+			x += icon.iconWidth + iconTextGap
 		}
 
 		if (richText != null) {
@@ -79,19 +73,17 @@ open class RichTextLabel : DefaultTreeCellRenderer() {
 	}
 
 	private fun calculatePreferredSize(): Dimension {
-		var w = 0
-		var h = 0
+		var w = insets.left + insets.right
+		var h = insets.top + insets.bottom
 
 		if (icon != null) {
-			w  += icon.iconWidth + HORIZONTAL_INSET + DIST
-			h  += icon.iconHeight + 2 * VERTICAL_INSET
-		} else {
-			w += HORIZONTAL_INSET
+			w  += icon.iconWidth + iconTextGap
+			h  += icon.iconHeight
 		}
 
 		if (richText != null) {
-			w += richText!!.widthInt + HORIZONTAL_INSET
-			h = max(h, richText!!.heightInt + 2 * VERTICAL_INSET)
+			w += richText!!.widthInt
+			h = max(h, richText!!.heightInt + insets.top + insets.bottom)
 		}
 
 		return Dimension(w, h)
