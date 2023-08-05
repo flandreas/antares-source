@@ -89,7 +89,7 @@ class LibraryTreeViewSwing(
 
 	override fun handle(event: LibraryItemAddedEvent) {
 		findOptionalTreeNode(event.parent)?.let {
-			val newNode = DefaultMutableTreeNode(event.item)
+			val newNode = NamableTreeNode(event.item, Graphics2DJvm.fromAwtFont(font))
 			it.add(newNode)
 			(model as DefaultTreeModel).nodesWereInserted(it, intArrayOf(it.childCount - 1))
 			expandPath(getPath(it))
