@@ -4,10 +4,7 @@ import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.dsl.AbstractNode
 import ch.scorpion.jabbah.base.dsl.Compound
 import ch.scorpion.jabbah.base.parser.TextLocation
-import ch.scorpion.jabbah.base.richtext.TextStyle.Companion.BOLD
 import ch.scorpion.jabbah.base.richtext.TextStyle.Companion.NORMAL
-import ch.scorpion.jabbah.base.richtext.TextStyle.Companion.OVERLINE
-import ch.scorpion.jabbah.base.richtext.TextStyle.Companion.OVERLINE_BOLD
 
 class RichText(
 	location: TextLocation,
@@ -89,25 +86,42 @@ class StyledText(
 
 data class TextStyle(
 	val overline: Boolean,
-	val bold: Boolean
+	val bold: Boolean,
+	val italic: Boolean
 ) {
 	companion object {
-		val NORMAL = TextStyle(overline = false, bold = false)
-		val OVERLINE = TextStyle(overline = true, bold = false)
-		val BOLD = TextStyle(overline = false, bold = true)
-		val OVERLINE_BOLD = TextStyle(overline = true, bold = true)
+		val NORMAL = TextStyle(overline = false, bold = false, false)
+		val OVERLINE = TextStyle(overline = true, bold = false, false)
+		val BOLD = TextStyle(overline = false, bold = true, false)
+		val OVERLINE_BOLD = TextStyle(overline = true, bold = true, false)
 
-		fun withOverline(style: TextStyle): TextStyle = of (true, style.bold)
-		fun withoutOverline(style: TextStyle): TextStyle = of (false, style.bold)
+		val ITALIC = TextStyle(overline = false, bold = false, true)
+		val OVERLINE_ITALIC = TextStyle(overline = true, bold = false, true)
+		val BOLD_ITALIC = TextStyle(overline = false, bold = true, true)
+		val OVERLINE_BOLD_ITALIC = TextStyle(overline = true, bold = true, true)
 
-		fun withBold(style: TextStyle): TextStyle = of(style.overline, true)
-		fun withoutBold(style: TextStyle): TextStyle = of(style.overline, false)
+		fun withOverline(style: TextStyle): TextStyle = of(true, style.bold, style.italic)
+		fun withoutOverline(style: TextStyle): TextStyle = of(false, style.bold, style.italic)
 
-		fun of(overline: Boolean, bold: Boolean): TextStyle =
+		fun withBold(style: TextStyle): TextStyle = of(style.overline, true, style.italic)
+		fun withoutBold(style: TextStyle): TextStyle = of(style.overline, false, style.italic)
+
+		fun withItalic(style: TextStyle): TextStyle = of(style.overline, style.bold, true)
+		fun withoutItalic(style: TextStyle): TextStyle = of(style.overline, style.bold, false)
+
+		fun of(overline: Boolean, bold: Boolean, italic: Boolean): TextStyle =
 			if (overline) {
-				if (bold) OVERLINE_BOLD else OVERLINE
+				if (bold) {
+					if (italic) OVERLINE_BOLD_ITALIC else OVERLINE_BOLD
+				} else {
+					if (italic) OVERLINE_ITALIC else OVERLINE
+				}
 			} else {
-				if (bold) BOLD else NORMAL
+				if (bold) {
+					if (italic) BOLD_ITALIC else BOLD
+				} else {
+					if (italic) ITALIC else NORMAL
+				}
 			}
 	}
 }
@@ -118,14 +132,24 @@ class StyledChunk(
 	val style: TextStyle = NORMAL
 ) : AbstractNode(location) {
 
-	override fun toString(): String =
-		when (style) {
-			NORMAL -> text
-			OVERLINE -> "${RichTextTokenType.OVERLINE.id}($text)"
-			BOLD -> "${RichTextTokenType.BOLD.id}($text)"
-			OVERLINE_BOLD -> "${RichTextTokenType.BOLD.id}${RichTextTokenType.OVERLINE.id}($text)"
-			else -> throw IllegalArgumentException("unsupported style")
+	override fun toString(): String {
+		val s = StringBuilder()
+		if (style.bold) {
+			s.append(RichTextTokenType.BOLD.id)
 		}
+		if (style.italic) {
+			s.append(RichTextTokenType.ITALIC.id)
+		}
+		if (style.overline) {
+			s.append(RichTextTokenType.OVERLINE.id)
+		}
+		if (s.isNotEmpty()) {
+			s.append("($text)")
+		} else {
+			s.append(text)
+		}
+		return s.toString()
+	}
 
 	fun splitWords(): List<StyledChunk> {
 		val words = text.split(' ')

@@ -227,10 +227,21 @@ class RichTextDrawable(
 
 	private val boldFont: Font by lazy { baseFont.deriveFont(FontStyle.BOLD) }
 
+	private val italicFont: Font by lazy { baseFont.deriveFont(FontStyle.ITALIC) }
+
+	private val boldItalicFont: Font by lazy { baseFont.deriveFont(FontStyle.BOLD).deriveFont(FontStyle.ITALIC) }
+
 	private val indexFont: Font by lazy {
 		baseFont
 			.deriveFont((baseFont.size * INDEX_FONT_FACTOR).toInt())
 			.deriveFont(FontStyle.BOLD)
+	}
+
+	private val italicIndexFont: Font by lazy {
+		baseFont
+			.deriveFont((baseFont.size * INDEX_FONT_FACTOR).toInt())
+			.deriveFont(FontStyle.BOLD)
+			.deriveFont(FontStyle.ITALIC)
 	}
 
 	/**
@@ -315,15 +326,16 @@ class RichTextDrawable(
 
 		private var ascent: Double = 0.0
 
-		private val localFont: Font get() = if (indexed) {
-			indexFont
-		} else {
-			if (style.bold) {
-				boldFont
+		private val localFont: Font get() =
+			if (indexed) {
+				if (style.italic) italicIndexFont else indexFont
 			} else {
-				baseFont
+				if (style.bold) {
+					if (style.italic) boldItalicFont else boldFont
+				} else {
+					if (style.italic) italicFont else baseFont
+				}
 			}
-		}
 
 		init {
 			val tri = textMeasurer.measureSingleLineText(text, localFont)
@@ -342,7 +354,11 @@ class RichTextDrawable(
 
 			if (style.overline) {
 				g.stroke = OVERLINE_STROKE
-				g.drawLine(x, y, x + width, y)
+				if (style.italic) {
+					g.drawLine(x + 2, y, x + width, y)
+				} else {
+					g.drawLine(x, y, x + width, y)
+				}
 			}
 
 			if (DrawModule.debugGfx) {

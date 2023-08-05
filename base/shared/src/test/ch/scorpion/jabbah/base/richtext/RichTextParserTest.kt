@@ -372,6 +372,34 @@ class RichTextParserTest {
 	}
 
 	@Test
+	fun shouldParseItalic() {
+		assertAST(
+			RichTextParser("This is /(italic)").parse(), """
+			Compound
+			- Fragment
+			-- -
+			--- This is 
+			- Fragment
+			-- -
+			--- /(italic)
+		""".trimIndent())
+	}
+
+	@Test
+	fun shouldParseBoldItalic() {
+		assertAST(
+			RichTextParser("This is *(/(great))").parse(), """
+			Compound
+			- Fragment
+			-- -
+			--- This is 
+			- Fragment
+			-- -
+			--- */(great)
+		""".trimIndent())
+	}
+
+	@Test
 	fun shouldParsePortTooltip() {
 		assertAST(
 			RichTextParser("*(Input '!A_1')").parse(), """

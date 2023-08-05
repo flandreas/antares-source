@@ -13,6 +13,7 @@ enum class RichTextTokenType(override val id: String): TokenType {
 	SUBSCRIPT("_"),
 	SUPERSCRIPT("^"),
 	BOLD("*"),
+	ITALIC("/"),
 	EOF("EOF")
 }
 
@@ -20,7 +21,7 @@ class RichTextLexer(text: String) : AbstractLexer(text) {
 
 	companion object {
 
-		val CONTROL_CHARS = listOf('!', '_', '^', '*','(', ')')
+		val CONTROL_CHARS = listOf('!', '_', '^', '*', '/', '(', ')')
 
 		private val LPAREN_TOKEN = Token<Unit>(LPAREN)
 		private val RPAREN_TOKEN = Token<Unit>(RPAREN)
@@ -28,9 +29,10 @@ class RichTextLexer(text: String) : AbstractLexer(text) {
 		private val SUBSCRIPT_TOKEN = Token<Unit>(SUBSCRIPT)
 		private val SUPERSCRIPT_TOKEN = Token<Unit>(SUPERSCRIPT)
 		private val BOLD_TOKEN = Token<Unit>(BOLD)
+		private val ITALIC_TOKEN = Token<Unit>(ITALIC)
 		private val EOF_TOKEN = Token<Unit>(EOF)
 
-		private val SINGLE_CHAR_TEXT_CHARS = listOf('!', '_', '^', '*')
+		private val SINGLE_CHAR_TEXT_CHARS = listOf('!', '_', '^', '*', '/')
 
 		private const val ESC_CHAR = '\\'
 	}
@@ -55,6 +57,7 @@ class RichTextLexer(text: String) : AbstractLexer(text) {
 				'_' -> return advanceByUpdatingSingleCharMode(state, SUBSCRIPT_TOKEN)
 				'^' -> return advanceByUpdatingSingleCharMode(state, SUPERSCRIPT_TOKEN)
 				'*' -> return advanceByUpdatingSingleCharMode(state, BOLD_TOKEN)
+				'/' -> return advanceByUpdatingSingleCharMode(state, ITALIC_TOKEN)
 			}
 		}
 

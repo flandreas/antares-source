@@ -61,7 +61,11 @@ data class FontImpl(
 	override fun isItalic(): Boolean = style and FontStyle.ITALIC.value != 0
 
 	override fun deriveFont(style: FontStyle): Font =
-		copy(style = style.value)
+		if (style == FontStyle.PLAIN) {
+			copy(style = FontStyle.PLAIN.value)
+		} else {
+			copy(style = this.style or style.value)
+		}
 
 	override fun deriveFont(size: Int): Font =
 		copy(size = size)

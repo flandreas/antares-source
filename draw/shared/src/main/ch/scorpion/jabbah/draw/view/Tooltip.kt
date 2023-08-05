@@ -58,9 +58,11 @@ fun buildToolTipText(
 	if (StringUtils.isNotBlank(title)) {
 		var titleText = title!!
 		if (hasText) {
-			titleText += ": "
+			titleText += ":"
 		}
-		builder.append(RichTextParser.bold(titleText))
+		builder
+			.append(RichTextParser.bold(titleText))
+			.append(" ")
 	}
 
 	if (hasText) {
