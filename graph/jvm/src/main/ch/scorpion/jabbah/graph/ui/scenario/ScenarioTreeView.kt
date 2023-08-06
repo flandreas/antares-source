@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.ui.scenario
 
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.ActionWrapperSwing
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.logger
@@ -417,8 +418,8 @@ class ScenarioTreeView(
 					component.disabledIcon = stepIcon
 				}
 				is GraphView -> {
-					val icon = (value.userObject as GraphView).graph?.type?.let {
-						MetaGraphIconProvider.provideIcon(it, false)
+					val icon = (value.userObject as GraphView).graph?.let {
+						MetaGraphIconProvider.provideIcon(it.type, false, StringUtils.isNotBlank(it.script))
 					}
 					component.richText = (value as NamableTreeNode).richTextName.value
 					component.icon = icon

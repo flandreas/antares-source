@@ -37,7 +37,9 @@ class ContainerTreeModel(
 	private val containerDrawing: ContainerDrawing
 ) {
 
-	val treeModel = DynamicTreeModel("Container", initializer, false)
+	val treeModel = DynamicTreeModel().apply {
+		initDynamicRoot("Container", initializer, false)
+	}
 
 	/** The top-level node that contains the [PortViewComponent]s.*/
 	private val portsNode = DefaultMutableTreeNode(ContainerTreeFolderItem.PORTS)

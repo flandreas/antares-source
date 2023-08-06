@@ -14,7 +14,7 @@ import javax.swing.tree.TreeNode
  * @param hasChildren determines whether this [DynamicTreeNode] has dynamic children, i.e. whether
  * it has not already loaded its children dynamically.
  */
-class DynamicTreeNode(
+open class DynamicTreeNode(
 	value: Any,
 	private val initializer: DynamicInitializer,
 	private val notifier: DynamicNotifier,
@@ -201,7 +201,7 @@ class DynamicTreeNode(
 		}
 	}
 
-	protected fun createChild(value: Any, initializer: DynamicInitializer, notifier: DynamicNotifier, hasChildren: Boolean): DynamicTreeNode {
+	protected open fun createChild(value: Any, initializer: DynamicInitializer, notifier: DynamicNotifier, hasChildren: Boolean): DynamicTreeNode {
 		return DynamicTreeNode(value, initializer, notifier, hasChildren)
 	}
 

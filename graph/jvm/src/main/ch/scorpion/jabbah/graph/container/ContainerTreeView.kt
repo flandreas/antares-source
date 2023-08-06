@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.container
 
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -85,9 +86,9 @@ open class ContainerTreeView(
 				    ContainerTreeItemType.Port -> getIcon((value.userObject as DraggableTreeItem).iconPath)
 				    ContainerTreeItemType.Control -> getIcon((value.userObject as DraggableTreeItem).iconPath)
 				    ContainerTreeItemType.SubGraph -> {
-					    val graphType = (value.userObject as SubGraphVerticeViewFolderItem).graphView.graph?.type
-					    graphType?.let { MetaGraphIconProvider.provideIcon(it, false) }
-						    ?:MetaGraphIconProvider.provideIcon(GraphModelModule.defaultGraphType, false)
+					    val graph = (value.userObject as SubGraphVerticeViewFolderItem).graphView.graph
+					    graph?.let { MetaGraphIconProvider.provideIcon(it.type, false, StringUtils.isNotBlank(it.script)) }
+						    ?:MetaGraphIconProvider.provideIcon(GraphModelModule.defaultGraphType, current = false, false)
 				    }
 				    else -> folderIcon
 			    }

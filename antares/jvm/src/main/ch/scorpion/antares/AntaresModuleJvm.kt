@@ -405,10 +405,12 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 	}
 
 	private fun configureMetaGraphIcons() {
-		MetaGraphIconProvider.register(AntaresGraphTypes.Digital, current = false, AntaresMetaGraphIcon(current = false))
-		MetaGraphIconProvider.register(AntaresGraphTypes.Digital, current = true, AntaresMetaGraphIcon(current = true))
+		MetaGraphIconProvider.register(AntaresGraphTypes.Digital, current = false, scripted = false, AntaresMetaGraphIcon(current = false, false))
+		MetaGraphIconProvider.register(AntaresGraphTypes.Digital, current = true, scripted = false, AntaresMetaGraphIcon(current = true, false))
+		MetaGraphIconProvider.register(AntaresGraphTypes.Digital, current = false, scripted = true, AntaresMetaGraphIcon(current = false, true))
+		MetaGraphIconProvider.register(AntaresGraphTypes.Digital, current = true, scripted = true, AntaresMetaGraphIcon(current = true, true))
 
-		MetaGraphIconProvider.register(AntaresGraphTypes.Analog, current = false, AnalogMetaGraphIcon(current = false))
-		MetaGraphIconProvider.register(AntaresGraphTypes.Analog, current = true, AnalogMetaGraphIcon(current = true))
+		MetaGraphIconProvider.register(AntaresGraphTypes.Analog, current = false, scripted = false, AnalogMetaGraphIcon(current = false))
+		MetaGraphIconProvider.register(AntaresGraphTypes.Analog, current = true, scripted = false, AnalogMetaGraphIcon(current = true))
 	}
 }

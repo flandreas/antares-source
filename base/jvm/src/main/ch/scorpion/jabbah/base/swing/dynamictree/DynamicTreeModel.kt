@@ -6,19 +6,22 @@ import javax.swing.tree.TreeModel
 
 /**
  * [TreeModel] for dynamic trees.
- * Creates a new dynamic tree model for the specified root object and child initializer.
- * @param root the root object user value.
- * @param initializer the initializer strategy to use to lazily attach children to nodes.
- * @param hasChildren determines whether the root [DynamicTreeNode] of this [DynamicTreeNode] has dynamic children,
- * i.e. whether it has not already loaded its children dynamically.
+ * Clients must call [initDynamicRoot] after initialization.
  */
-open class DynamicTreeModel(
-	root: Any,
-	initializer: DynamicInitializer,
-	hasChildren: Boolean = true
-) : DefaultTreeModel(null), DynamicNotifier {
+open class DynamicTreeModel() : DefaultTreeModel(null), DynamicNotifier {
 
-	init {
+	/**
+	 * Initializes a new dynamic tree model for the specified root object and child initializer.
+	 * @param root the root object user value.
+	 * @param initializer the initializer strategy to use to lazily attach children to nodes.
+	 * @param hasChildren determines whether the root [DynamicTreeNode] of this [DynamicTreeNode] has dynamic children,
+	 * i.e. whether it has not already loaded its children dynamically.
+	 */
+	fun initDynamicRoot(
+		root: Any,
+		initializer: DynamicInitializer,
+		hasChildren: Boolean = true
+	) {
 		setRoot(createNode(root, initializer, this, hasChildren))
 	}
 
@@ -59,7 +62,7 @@ open class DynamicTreeModel(
 	 * @param hasChildren determines whether the created [DynamicTreeNode] has dynamic children, i.e. whether
 	 * it has not already loaded its children dynamically.
 	 */
-	protected fun createNode(value: Any, initializer: DynamicInitializer, notifier: DynamicNotifier, hasChildren: Boolean): DynamicTreeNode {
+	protected open fun createNode(value: Any, initializer: DynamicInitializer, notifier: DynamicNotifier, hasChildren: Boolean): DynamicTreeNode {
 		return DynamicTreeNode(value, initializer, notifier, hasChildren)
 	}
 }

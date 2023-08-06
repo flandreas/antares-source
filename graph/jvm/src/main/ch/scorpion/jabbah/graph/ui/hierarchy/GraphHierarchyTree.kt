@@ -2,10 +2,9 @@ package ch.scorpion.jabbah.graph.ui.hierarchy
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
-import ch.scorpion.jabbah.base.swing.dynamictree.DynamicInitializer
-import ch.scorpion.jabbah.base.swing.dynamictree.DynamicReceiver
-import ch.scorpion.jabbah.base.swing.dynamictree.DynamicTreeNodeValue
-import ch.scorpion.jabbah.base.swing.dynamictree.InitializerTreeNode
+import ch.scorpion.jabbah.base.swing.dynamictree.*
+import ch.scorpion.jabbah.draw.drawable.RichTextDrawable
+import ch.scorpion.jabbah.draw.graphics.Font
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import javax.swing.tree.TreeNode
@@ -47,5 +46,45 @@ class GraphHierarchyTree : DynamicInitializer {
 			.sortedBy { it.describingName }
 			.map { DynamicTreeNodeValue(it, true) }
 			.toTypedArray()
+	}
+}
+
+class GraphHierarchyTreeNode(
+	value: Any,
+	initializer: DynamicInitializer,
+	notifier: DynamicNotifier,
+	hasChildren: Boolean,
+	private val font: Font
+) : DynamicTreeNode(value, initializer, notifier, hasChildren) {
+
+	var richTextDrawable: RichTextDrawable? = null
+		private set
+
+	init {
+		if (value is GraphView) {
+			richTextDrawable = RichTextDrawable.of(value.name.getTranslation(), font)
+		} else if (value is SubGraphVerticeView<*>) {
+			richTextDrawable = RichTextDrawable.of(value.describingName, font)
+		}
+	}
+
+	override fun createChild(
+		value: Any,
+		initializer: DynamicInitializer,
+		notifier: DynamicNotifier,
+		hasChildren: Boolean
+	): DynamicTreeNode {
+		return GraphHierarchyTreeNode(value, initializer, notifier, hasChildren, font)
+	}
+}
+
+class GraphHierarchyTreeModel(private val font: Font) : DynamicTreeModel() {
+	override fun createNode(
+		value: Any,
+		initializer: DynamicInitializer,
+		notifier: DynamicNotifier,
+		hasChildren: Boolean
+	): DynamicTreeNode {
+		return GraphHierarchyTreeNode(value, initializer, notifier, hasChildren, font)
 	}
 }

@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.ui.usecase
 
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.ActionWrapperSwing
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
@@ -201,8 +202,8 @@ class UsecaseTreeView(
 					component.disabledIcon = usecaseIcon
 				}
 				is GraphView -> {
-					val icon = (value.userObject as GraphView).graph?.type?.let {
-						MetaGraphIconProvider.provideIcon(it, false)
+					val icon = (value.userObject as GraphView).graph?.let {
+						MetaGraphIconProvider.provideIcon(it.type, false, StringUtils.isNotBlank(it.script))
 					}
 					component.richText = (value as NamableTreeNode).richTextName.value
 					component.icon = icon

@@ -2,17 +2,16 @@ package ch.scorpion.jabbah.graph.ui.hierarchy
 
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.swing.JTreeUtil
-import ch.scorpion.jabbah.base.swing.dynamictree.DynamicTreeModel
+import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
+import ch.scorpion.jabbah.draw.richtext.RichTextLabel
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.ui.MetaGraphIconProvider
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import java.awt.Component
 import java.awt.Font
-import javax.swing.JLabel
 import javax.swing.JTree
 import javax.swing.tree.DefaultMutableTreeNode
-import javax.swing.tree.DefaultTreeCellRenderer
 import javax.swing.tree.DefaultTreeModel
 import javax.swing.tree.TreeNode
 
@@ -34,7 +33,7 @@ class GraphHierarchyTreeView : JTree(DefaultTreeModel(DefaultMutableTreeNode("Em
 
 	fun refresh(graphView: GraphView?) {
 		graphHierarchyTree = graphView?.let { GraphHierarchyTree() }
-		model = graphHierarchyTree?.let { DynamicTreeModel(graphView!!, it, true) }
+		model = graphHierarchyTree?.let { GraphHierarchyTreeModel(Graphics2DJvm.fromAwtFont(font)).apply { initDynamicRoot(graphView!!, it, true) } }
 	}
 
 	fun remove(subGraphVerticeView: SubGraphVerticeView<*>) {
@@ -49,31 +48,28 @@ class GraphHierarchyTreeView : JTree(DefaultTreeModel(DefaultMutableTreeNode("Em
 		}
 	}
 
-	private inner class Renderer : DefaultTreeCellRenderer() {
+	private inner class Renderer : RichTextLabel() {
 		override fun getTreeCellRendererComponent(tree: JTree?, value: Any?, sel: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): Component {
-			val label = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus) as JLabel
+			val label = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus) as RichTextLabel
 			label.font = this@GraphHierarchyTreeView.font
 
-			if (value is DefaultMutableTreeNode) {
+			if (value is GraphHierarchyTreeNode) {
+				label.richText = value.richTextDrawable
 				if (value.userObject is SubGraphVerticeView<*>) {
 					val subGraphVV = value.userObject as SubGraphVerticeView<*>
-					configureLabel(label, subGraphVV.describingName, subGraphVV.model.getGraphIfPresent())
+					configureIcon(label, subGraphVV.model.getGraphIfPresent())
 				} else if (value.userObject is GraphView) {
 					val graphView = value.userObject as GraphView
-					configureLabel(label, value.toString(), graphView.graph)
+					configureIcon(label, graphView.graph)
 				}
 			}
 
 			return label
 		}
 
-		private fun configureLabel(label: JLabel, text: String, graph: Graph?) {
-			label.text = text
+		private fun configureIcon(label: RichTextLabel, graph: Graph?) {
 			label.icon = graph?.type?.let {
-				MetaGraphIconProvider.provideIcon(it, false)
-			}
-			if (StringUtils.isNotBlank(graph?.script)) {
-				label.font = scriptedFont
+				MetaGraphIconProvider.provideIcon(it, false, StringUtils.isNotBlank(graph.script))
 			}
 		}
 	}

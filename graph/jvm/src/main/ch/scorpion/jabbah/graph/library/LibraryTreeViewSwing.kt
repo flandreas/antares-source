@@ -317,7 +317,7 @@ class LibraryTreeViewSwing(
 					if (showBeginnerTips) {
 						component.toolTipText = Translations.getString("library.action.libraryElement.tip")
 					}
-					component.icon = MetaGraphIconProvider.provideIcon(cle.graphType, controller.isCurrentItem(cle))
+					component.icon = MetaGraphIconProvider.provideIcon(cle.graphType, controller.isCurrentItem(cle), false)
 					component.richText?.underline = controller.isDefaultElement(cle)
 				} else if (value.userObject is Project) {
 					component.icon = projectIcon
