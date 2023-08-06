@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.graph.model.element
 
 import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
+import ch.scorpion.jabbah.draw.drawable.RichTextDrawable
+import ch.scorpion.jabbah.draw.graphics.Font
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Graph
@@ -20,8 +22,13 @@ data class GraphElementCollectorResultEntry(
 	val name: String,
 	val isScripted: Boolean,
 	val graphType: GraphType?,
+	val font: Font,
 	var count: Int = 0
 ) : Comparable<GraphElementCollectorResultEntry> {
+
+	val richText: RichTextDrawable by lazy {
+		RichTextDrawable.of(name, font)
+	}
 
 	fun increment() {
 		count += 1
@@ -36,7 +43,8 @@ data class GraphElementCollectorResultEntry(
  * Can be used for debugging, for gathering statistical information, or for any other funny purpose.
  */
 class GraphElementCollector(
-	private val repository: MetaGraphRepository = LibraryModule.libraryHolder
+	private val repository: MetaGraphRepository = LibraryModule.libraryHolder,
+	private val font: Font
 ) {
 
 	/**
@@ -83,7 +91,7 @@ class GraphElementCollector(
 	) {
 		var entry = entries[id]
 		if (entry == null) {
-			entry = GraphElementCollectorResultEntry(id, clazz, name, isScripted, graphType)
+			entry = GraphElementCollectorResultEntry(id, clazz, name, isScripted, graphType, font)
 			entries[id] = entry
 		}
 		entry.increment()

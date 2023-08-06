@@ -3,6 +3,8 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
+import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
+import ch.scorpion.jabbah.draw.richtext.RichTextTableCellRenderer
 import ch.scorpion.jabbah.draw.view.AbstractViewAction
 import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.draw.view.DrawViewModule
@@ -62,7 +64,7 @@ class GraphStatisticsPanel(graph: Graph) : JPanel() {
 	private val basicFont = UIManager.getFont("Tree.font")
 	private val subGraphFont = UIManager.getFont("Tree.font").deriveFont(Font.ITALIC)
 
-	private val elementRenderer = object : DefaultTableCellRenderer() {
+	private val elementRenderer = object : RichTextTableCellRenderer() {
 		override fun getTableCellRendererComponent(
 			table: JTable?,
 			value: Any?,
@@ -71,15 +73,15 @@ class GraphStatisticsPanel(graph: Graph) : JPanel() {
 			row: Int,
 			column: Int
 		): Component {
-			val label = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column) as JLabel
-			label.text = (value as GraphElementCollectorResultEntry).name
+			val label = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column) as RichTextTableCellRenderer
+			label.richText = (value as GraphElementCollectorResultEntry).richText
 			label.font = if (value.isScripted) {
 				subGraphFont
 			} else {
 				basicFont
 			}
 			label.icon = if (value.clazz == SubGraphVerticeRef::class) {
-				value.graphType?.let { MetaGraphIconProvider.provideIcon(it, current = false, false) }
+				value.graphType?.let { MetaGraphIconProvider.provideIcon(it, current = false, value.isScripted) }
 			} else {
 				null
 			}
@@ -90,7 +92,7 @@ class GraphStatisticsPanel(graph: Graph) : JPanel() {
 	init {
 		buildUI()
 		InvocationHandler.invoke {
-			displayStatistics(GraphElementCollector().collect(graph))
+			displayStatistics(GraphElementCollector(font = Graphics2DJvm.fromAwtFont(font)).collect(graph))
 		}
 	}
 
