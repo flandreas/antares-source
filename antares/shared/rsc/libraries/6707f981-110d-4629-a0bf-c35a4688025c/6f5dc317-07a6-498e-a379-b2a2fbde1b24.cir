@@ -1,14 +1,15 @@
-<metaGraph _id='0'>
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' script='store signal
+        <graph _id='2' type='digital' script='store signal
 if (^C) {
 	// Gets only stored if fully defined
 	signal = D
 
 	O = signal
-}' propDelay='110' startupTime='110'>
+}' purelyScripted='true' propDelay='110' startupTime='110'>
           <elements>
             <circuitInOut _id='3' id='5' name='C' type='input' bitWidth='1'>
               <desc>
@@ -37,17 +38,17 @@ if (^C) {
             <netView _id='7' modelId='8' style='line'/>
           </netViews>
           <components>
-            <circuitInOutView _id='9' id='5' rot='0' filled='true' stroked='true' modelId='3' representation='binary' orientation='east'>
+            <circuitInOutView _id='9' id='5' rot='0' filled='true' stroked='true' modelId='3' orientation='east' representation='binary'>
               <location>
                 <point x='518.0' y='238.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='10' id='6' rot='0' filled='true' stroked='true' modelId='4' representation='hex' orientation='east'>
+            <circuitInOutView _id='10' id='6' rot='0' filled='true' stroked='true' modelId='4' orientation='east' representation='hex'>
               <location>
                 <point x='518.0' y='161.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='11' id='8' rot='0' filled='true' stroked='true' modelId='5' representation='hex' orientation='east'>
+            <circuitInOutView _id='11' id='8' rot='0' filled='true' stroked='true' modelId='5' orientation='east' representation='hex'>
               <location>
                 <point x='581.0' y='203.0'/>
               </location>
@@ -61,7 +62,7 @@ if (^C) {
     <containerDrawing _id='12'>
       <components>
         <rectangle _id='13' id='1' style='figure' filled='true' stroked='true' x='140.0' y='140.0' w='98.0' h='56.0'/>
-        <originIndicator _id='14'>
+        <originIndicator _id='14' id='7'>
           <location>
             <point x='126.0' y='154.0'/>
           </location>
@@ -81,7 +82,7 @@ if (^C) {
             <digitalPortView _id='22' x='238.0' y='168.0' dir='east' textPos='internal' portId='23'/>
           </portView>
         </digitalPortViewComp>
-        <label _id='24'>
+        <label _id='24' id='6' rot='0'>
           <text>
             <translation lang='de' text='REG'/>
           </text>
