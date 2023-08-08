@@ -48,7 +48,7 @@ open class AntaresMetaGraphIcon(
 
 	override fun getIconWidth(): Int = 28
 
-	override fun paintIcon(c: Component, g: Graphics, x: Int, y: Int) {
+	override fun paintIcon(c: Component?, g: Graphics, x: Int, y: Int) {
 		g.translate(x, y)
 
 		g.color = backgroundColor
