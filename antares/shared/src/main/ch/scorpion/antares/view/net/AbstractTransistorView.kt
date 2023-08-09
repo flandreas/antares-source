@@ -99,6 +99,7 @@ abstract class AbstractTransistorView<T: TransistorIF<*>>(
 				updateGeometry()
 				tooltip.reset()
 				invalidate()
+				update()
 			}
 		}
 
