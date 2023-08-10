@@ -157,8 +157,7 @@ class GraphDesktopViewController(
 		vv: VerticeView<*>,
 		itemFactory: (CompositeColor,isParentDetached: Boolean) -> GraphDesktopViewItem
 	) {
-		val assoc = associations.firstOrNull { it.refId == vv.id }
-		if (assoc != null) {
+		if (associations.any { it.contains(vv) }) {
 			eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = vv, messageKey = "graph.vertice.alreadyOpen.msg"))
 			return
 		}
@@ -355,5 +354,7 @@ class GraphDesktopViewController(
 		val refColor: ReferenceColor?
 	) {
 		val verticeView: VerticeView<*>? get() = sourceItem?.drawingView?.drawing?.getWithId(refId) as VerticeView<*>?
+
+		fun contains(verticeView: VerticeView<*>): Boolean = this.verticeView == verticeView
 	}
 }
