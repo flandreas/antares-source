@@ -73,7 +73,7 @@ open class ContainerTreeView(
 
     private inner class ContainerTreeCellRenderer : RichTextLabel() {
         private val iconCache: MutableMap<String, Icon> = mutableMapOf()
-	    private val folderIcon = UiUtil.themedIcon("/img/folder-20.png")
+	    private val folderIcon = UiUtil.themedIcon("/img/folder.png")
 	    private val jabbahFont = Graphics2DJvm.fromAwtFont(this@ContainerTreeView.font)
 
 	    override fun getTreeCellRendererComponent(tree: JTree?, value: Any?, selected: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): java.awt.Component {

@@ -285,12 +285,12 @@ class LibraryTreeViewSwing(
 	private inner class Renderer : RichTextLabel() {
 
 		private val iconCache: MutableMap<String, Icon> = mutableMapOf()
-		private val projectIcon = UiUtil.themedIcon("/img/project-24.png")
-		private val libraryIcon = UiUtil.themedIcon("/img/library-24.png")
+		private val projectIcon = UiUtil.themedIcon("/img/project.png")
+		private val libraryIcon = UiUtil.themedIcon("/img/library.png")
 		private val libraryImportIcon = UiUtil.themedIcon("/img/imported-library.png")
 		private val brokenImportIcon = UiUtil.themedIcon("/img/broken-import.png")
-		private val folderIcon = UiUtil.themedIcon("/img/folder-20.png")
-		private val desktopIcon = UiUtil.themedIcon("/img/table-20.png")
+		private val folderIcon = UiUtil.themedIcon("/img/folder.png")
+		private val desktopIcon = UiUtil.themedIcon("/img/table.png")
 
 		override fun getTreeCellRendererComponent(tree: JTree?, value: Any?, sel: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): Component {
 			val component = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus) as RichTextLabel
