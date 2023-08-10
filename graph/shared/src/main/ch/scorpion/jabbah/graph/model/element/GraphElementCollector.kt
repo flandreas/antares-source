@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.model.element
 
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
 import ch.scorpion.jabbah.draw.drawable.RichTextDrawable
 import ch.scorpion.jabbah.draw.graphics.Font
@@ -13,7 +14,8 @@ import kotlin.reflect.KClass
 
 data class GraphElementCollectorResult(
 	val deep: Collection<GraphElementCollectorResultEntry>,
-	val flat: Collection<GraphElementCollectorResultEntry>
+	val flat: Collection<GraphElementCollectorResultEntry>,
+	val immediate: Collection<GraphElementCollectorResultEntry>
 )
 
 data class GraphElementCollectorResultEntry(
@@ -59,18 +61,26 @@ class GraphElementCollector(
 	 */
 	private val flatEntries = mutableMapOf<Any, GraphElementCollectorResultEntry>()
 
+	/**
+	 * Maps [GraphElement] IDs to immediate statistic information for that [Graph], including the number of occurrences.
+	 * Build-in components use their type name as ID, while the ID of a [SubGraphVerticeRef] is their [UUID].
+	 */
+	private val immediateEntries = mutableMapOf<Any, GraphElementCollectorResultEntry>()
+
 
 	/** Counts the number of occurrence of all inner [Graph]s and prints the result to standard output.*/
 	fun collect(graph: Graph): GraphElementCollectorResult {
 		deepEntries.clear()
 		flatEntries.clear()
+		immediateEntries.clear()
 
 		graph.bind(true, repository)
 
 		graph.accept(DeepGraphVisitor())
 		graph.accept(FlatGraphVisitor())
+		graph.accept(ImmediateGraphVisitor())
 
-		return GraphElementCollectorResult(deepEntries.values, flatEntries.values)
+		return GraphElementCollectorResult(deepEntries.values, flatEntries.values, immediateEntries.values)
 	}
 
 	private fun countDeep(id: Any, clazz: KClass<GraphElement>, name: String, isScripted: Boolean, graphType: GraphType?) {
@@ -79,6 +89,10 @@ class GraphElementCollector(
 
 	private fun countFlat(id: Any, clazz: KClass<GraphElement>, name: String, isScripted: Boolean, graphType: GraphType?) {
 		count(id, clazz, name, isScripted, graphType, flatEntries)
+	}
+
+	private fun countImmediate(id: Any, clazz: KClass<GraphElement>, name: String, isScripted: Boolean, graphType: GraphType?) {
+		count(id, clazz, name, isScripted, graphType, immediateEntries)
 	}
 
 	private fun count(
@@ -133,6 +147,26 @@ class GraphElementCollector(
 			if (node is GraphElement) {
 				val graphType = (node as? SubGraphVerticeRef)?.getGraphIfPresent()?.type
 				countFlat(node.type, node::class as KClass<GraphElement>, node.type, isScripted = false, graphType)
+			}
+			return true
+		}
+	}
+
+	private inner class ImmediateGraphVisitor : EmptyHierarchyVisitor() {
+
+		override fun visitEnter(node: Any): Boolean {
+			if (node is SubGraphVerticeRef) {
+				val graphType = (node as? SubGraphVerticeRef)?.getGraphIfPresent()?.type
+				countImmediate(node.graphUUID!!, node::class as KClass<GraphElement>, node.graphName.value, node.getGraphIfPresent()?.script != null, graphType)
+				return false
+			}
+			return true
+		}
+
+		override fun visit(node: Any): Boolean {
+			if (node is GraphElement) {
+				val graphType = (node as? SubGraphVerticeRef)?.getGraphIfPresent()?.type
+				countImmediate(node.type, node::class as KClass<GraphElement>, node.type, isScripted = false, graphType)
 			}
 			return true
 		}

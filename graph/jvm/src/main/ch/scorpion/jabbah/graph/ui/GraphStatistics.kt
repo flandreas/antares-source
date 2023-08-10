@@ -112,12 +112,14 @@ class GraphStatisticsPanel(graph: Graph) : JPanel() {
 		add(infoText, BorderLayout.NORTH)
 
 		val tabPane = JTabbedPane()
-		tabPane.add(Translations.getString("graph.statistics.deep.name"), buildPage(buildTable(result.deep.sortedDescending())))
+		tabPane.add(Translations.getString("graph.statistics.immediate.name"), buildPage(buildTable(result.immediate.sortedDescending())))
 		tabPane.add(Translations.getString("graph.statistics.flat.name"), buildPage(buildTable(result.flat.sortedDescending())))
+		tabPane.add(Translations.getString("graph.statistics.deep.name"), buildPage(buildTable(result.deep.sortedDescending())))
 		add(tabPane, BorderLayout.CENTER)
 
-		tabPane.setToolTipTextAt(0, Translations.getString("graph.statistics.deep.desc"))
+		tabPane.setToolTipTextAt(0, Translations.getString("graph.statistics.immediate.desc"))
 		tabPane.setToolTipTextAt(1, Translations.getString("graph.statistics.flat.desc"))
+		tabPane.setToolTipTextAt(2, Translations.getString("graph.statistics.deep.desc"))
 
 		revalidate()
 		repaint()
