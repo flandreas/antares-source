@@ -167,7 +167,7 @@
         <subGraphVertice _id='47' id='0' delay='0' uuid='18a65d09-b078-4a1e-9f05-adcf11f02eef'>
           <desc>
             <translation lang='de' text='Nicht-taktgesteuertes NOR-Latch mit Setzeingang S und Rücksetzeingang R'/>
-            <translation lang='en' text='Level-triggered NOR latch mit set input S and reset input R'/>
+            <translation lang='en' text='Level-triggered NOR latch with set input S and reset input R'/>
           </desc>
           <name>
             <translation lang='en' text='RS Latch'/>
