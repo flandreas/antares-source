@@ -3,25 +3,34 @@ package ch.scorpion.jabbah.draw.graphics
 import ch.scorpion.jabbah.base.Translations
 import com.l2fprod.common.beans.editor.ComboBoxPropertyEditor
 import java.awt.Component
-import javax.swing.*
-import javax.swing.table.TableCellRenderer
+import javax.swing.JComboBox
+import javax.swing.JList
+import javax.swing.JTable
+import javax.swing.ListCellRenderer
+import javax.swing.table.DefaultTableCellRenderer
 
-class PredefinedStrokeRenderer : DefaultListCellRenderer(), TableCellRenderer {
+class PredefinedStrokeRenderer : DefaultTableCellRenderer(), ListCellRenderer<PredefinedStroke> {
 
 	private val strokeIcon = StrokeIcon()
 
-	override fun getListCellRendererComponent(list: JList<*>, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
-		setValue(value as PredefinedStroke?)
+	override fun getListCellRendererComponent(
+		list: JList<out PredefinedStroke>?,
+		value: PredefinedStroke?,
+		index: Int,
+		isSelected: Boolean,
+		cellHasFocus: Boolean
+	): Component {
+		setValue(value)
 
 		if (isSelected) {
-			foreground = list.selectionForeground
-			background = list.selectionBackground
+			foreground = list?.selectionForeground
+			background = list?.selectionBackground
 		} else {
-			foreground = list.foreground
-			background = list.background
+			foreground = list?.foreground
+			background = list?.background
 		}
 
-		font = list.font
+		font = list?.font
 		return this
 	}
 

@@ -1,17 +1,18 @@
 package ch.scorpion.jabbah.base.swing
 
 import java.awt.Component
-import javax.swing.DefaultListCellRenderer
 import javax.swing.JList
 import javax.swing.JTable
+import javax.swing.ListCellRenderer
+import javax.swing.table.DefaultTableCellRenderer
 import javax.swing.table.TableCellRenderer
 
 /**
  * A [TableCellRenderer] implementation for rendering enum values as a list.
  */
-open class EnumRenderer<T : Enum<T>> : DefaultListCellRenderer(), TableCellRenderer {
+open class EnumRenderer<T : Enum<T>> : DefaultTableCellRenderer(), ListCellRenderer<T> {
 
-    override fun getListCellRendererComponent(list: JList<*>, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
+    override fun getListCellRendererComponent(list: JList<out T>, value: T?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
 		@Suppress("UNCHECKED_CAST")
         setValue(value as T?)
 

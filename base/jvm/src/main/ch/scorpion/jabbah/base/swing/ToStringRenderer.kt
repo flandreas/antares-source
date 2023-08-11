@@ -1,12 +1,12 @@
 package ch.scorpion.jabbah.base.swing
 
 import java.awt.Component
-import javax.swing.DefaultListCellRenderer
 import javax.swing.JList
 import javax.swing.JTable
-import javax.swing.table.TableCellRenderer
+import javax.swing.ListCellRenderer
+import javax.swing.table.DefaultTableCellRenderer
 
-open class ToStringRenderer<T : Any> : DefaultListCellRenderer(), TableCellRenderer {
+open class ToStringRenderer<T : Any> : DefaultTableCellRenderer(), ListCellRenderer<Any> {
 
 	override fun getListCellRendererComponent(list: JList<*>, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
 		@Suppress("UNCHECKED_CAST")
@@ -38,7 +38,7 @@ open class ToStringRenderer<T : Any> : DefaultListCellRenderer(), TableCellRende
 		return this
 	}
 
-	protected open fun setValue(value: T?) {
+	override fun setValue(value: Any?) {
 		text = value?.toString() ?: ""
 	}
 }

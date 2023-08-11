@@ -4,28 +4,34 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.swing.ColorIcon
 import com.l2fprod.common.beans.editor.ComboBoxPropertyEditor
 import java.awt.Component
-import javax.swing.DefaultListCellRenderer
 import javax.swing.JComboBox
 import javax.swing.JList
 import javax.swing.JTable
-import javax.swing.table.TableCellRenderer
+import javax.swing.ListCellRenderer
+import javax.swing.table.DefaultTableCellRenderer
 
-class PredefinedColorRenderer : DefaultListCellRenderer(), TableCellRenderer {
+class PredefinedColorRenderer : DefaultTableCellRenderer(), ListCellRenderer<PredefinedColor> {
 
 	private val colorIcon = ColorIcon()
 
-	override fun getListCellRendererComponent(list: JList<*>, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
-		setValue(value as PredefinedColor?)
+	override fun getListCellRendererComponent(
+		list: JList<out PredefinedColor>?,
+		value: PredefinedColor?,
+		index: Int,
+		isSelected: Boolean,
+		cellHasFocus: Boolean
+	): Component {
+		setValue(value)
 
 		if (isSelected) {
-			foreground = list.selectionForeground
-			background = list.selectionBackground
+			foreground = list?.selectionForeground
+			background = list?.selectionBackground
 		} else {
-			foreground = list.foreground
-			background = list.background
+			foreground = list?.foreground
+			background = list?.background
 		}
 
-		font = list.font
+		font = list?.font
 		return this
 	}
 
