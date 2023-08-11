@@ -12,8 +12,10 @@ import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.OriginIndicator
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.model.vertice.GraphInputImpl
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
+import ch.scorpion.jabbah.graph.view.TestGraphPortView
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
@@ -138,6 +140,24 @@ class GraphViewCopyPasteServiceTest {
 
 		// The bug #425 threw an IllegalArgumentException
 		service.paste(contents, view.build(), Point2D(10, 10))
+	}
+
+	@Test
+	fun shouldAdjustGraphPortName() {
+		val builder = GraphViewBuilder<Boolean>()
+		val view = DrawingViewMockBuilder().withDrawing(builder.graphView)
+		val input = TestGraphPortView<Boolean>(model = GraphInputImpl(name = "Test"))
+		builder.add(input)
+
+		val contents = service.copy(listOf(input.id), builder.graphView)
+
+		service.paste(contents, view.build(), Point2D(10, 10))
+		var newInput = builder.graphView.drawables.first() as TestGraphPortView<*>
+		assertEquals("Test (2)", newInput.model.name)
+
+		service.paste(contents, view.build(), Point2D(10, 10))
+		newInput = builder.graphView.drawables.first() as TestGraphPortView<*>
+		assertEquals("Test (3)", newInput.model.name)
 	}
 
 	private fun createMetaGraph(): ContainerLibraryElement {

@@ -81,6 +81,14 @@ interface GraphElement : Storable, Actor, Describable {
 	 * @throws DslError if application of [GraphParamValues] to properties with expressions fails
 	 */
 	fun graphParamsChanged(graph: Graph)
+
+	/**
+	 * Called by the copy/paste system after this [GraphElement] was created as a result of a paste
+	 * operation (indirectly via its view), but before it is added to the destination [Graph].
+	 * This gives this [GraphElement] a chance to adjust any of its properties, e.g. changing
+	 * its name "Hello" to "Hello (2)".
+	 */
+	fun beforePaste(graph: Graph) {}
 }
 
 /** An event sent by a [GraphElement] whenever its state has changed. */

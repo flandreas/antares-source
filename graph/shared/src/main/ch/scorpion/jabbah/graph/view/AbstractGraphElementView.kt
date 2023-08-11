@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.view
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.GraphElementAdapter
@@ -104,6 +105,15 @@ abstract class AbstractGraphElementView<T : GraphElement>(
 	/** ---- [Component] interface */
 
 	override val fixStyleType: Boolean get() = true
+
+	override fun beforePaste(drawing: Drawing<Component>) {
+		super<AbstractComponent>.beforePaste(drawing)
+		if (drawing is GraphView) {
+			drawing.graph?.let {
+				model.beforePaste(it)
+			}
+		}
+	}
 
 	/** ---- [AbstractGraphElementView] */
 

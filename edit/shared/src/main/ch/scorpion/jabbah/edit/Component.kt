@@ -93,4 +93,11 @@ interface Component : Movable, Rotatable, Snappable, Storable, Stylable, Focusab
 	 * whether a [Component] has already been visited in order to avoid infinite recursion.
 	 */
 	fun collectSelectBuddies(drawing: Drawing<Component>, buddies: MutableSet<Component>) {}
+
+	/**
+	 * Called by the copy/paste system after this [Component] was created as a result of a paste
+	 * operation, but before it is added to the destination [drawing]. This gives this [Component]
+	 * a chance to adjust any of its properties, e.g. changing its name "Hello" to "Hello (2)".
+	 */
+	fun beforePaste(drawing: Drawing<Component>) {}
 }

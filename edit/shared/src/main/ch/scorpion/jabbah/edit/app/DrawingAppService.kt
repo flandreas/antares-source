@@ -177,11 +177,17 @@ open class DrawingAppServiceImpl(
 	override fun paste(drawingView: DrawingView<Drawing<Component>>) {
 		Clipboard.getStringContents()?.let {
 			LOG.userTrail("Preparing paste from clipboard")
-			val pasteInfo = copyPasteService.paste(it, drawingView)
-			logComponentAction("Paste", pasteInfo.componentIds)
-			commandManager.register(PasteCommand(drawingView, it, pasteInfo, copyPasteService))
-			drawingView.selectionManager.deselectAll()
-			drawingView.selectionManager.select(pasteInfo.componentIds.map { drawingView.drawing.getWithId(it) as Component })
+			try {
+				val pasteInfo = copyPasteService.paste(it, drawingView)
+				logComponentAction("Paste", pasteInfo.componentIds)
+				commandManager.register(PasteCommand(drawingView, it, pasteInfo, copyPasteService))
+				drawingView.selectionManager.deselectAll()
+				drawingView.selectionManager.select(pasteInfo.componentIds.map { drawingView.drawing.getWithId(it) as Component })
+			} catch (e: Throwable) {
+				LOG.debug("Error in paste: $e")
+				// View layers might want to give feedback to the user
+				throw e
+			}
 		}
 	}
 

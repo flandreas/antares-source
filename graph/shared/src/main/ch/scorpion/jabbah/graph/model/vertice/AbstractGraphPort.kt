@@ -19,20 +19,7 @@ abstract class AbstractGraphPort<T : Any>(
 	name: String? = null,
 	calculator: VerticeCalculator<*> = EmptyVerticeCalculator,
 	protected val eventBus: EventBus = BaseModule.eventBus
-) : AbstractInteractableVertice<T>(calculator, defaultName(name, port.portType.reverse())), GraphPort<T> {
-
-	companion object {
-		private fun defaultName(name: String?, portType: PortType): String {
-			if (StringUtils.isNotEmpty(name)) {
-				return name!!
-			}
-			return when (portType) {
-				PortType.INPUT -> "I1"
-				PortType.OUTPUT -> "O1"
-				PortType.INOUT -> "IO1"
-			}
-		}
-	}
+) : AbstractInteractableVertice<T>(calculator, GraphPortName.defaultName(name, port.portType.reverse())), GraphPort<T> {
 
 	init {
 		propagationDelay = 0
@@ -90,6 +77,13 @@ abstract class AbstractGraphPort<T : Any>(
 	override var description: Description
 		get() = getPort<T>().description
 		set(value) { getPort<T>().description = value }
+
+	/** ---- [GraphElement] interface */
+
+	override fun beforePaste(graph: Graph) {
+		super<GraphPort>.beforePaste(graph)
+		name = GraphPortName.createPastedName(name!!, graph)
+	}
 
 	/** ---- [Storable] interface */
 
