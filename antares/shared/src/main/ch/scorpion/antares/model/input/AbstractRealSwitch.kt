@@ -122,6 +122,12 @@ abstract class AbstractRealSwitch<T : AbstractSwitch<T>>(
 		// Real switches are passive and don't publish signals at startup
 	}
 
+	override fun executionStopped(signalHandler: SignalHandler) {
+		super.executionStopped(signalHandler)
+		// Make sure that switch is off at start of next simulation run
+		requestSetSignal(false, signalHandler, graphView = null)
+	}
+
 	/** ---- [AbstractSwitch] */
 
 	override fun requestSetSignal(signal: Boolean, signalHandler: SignalHandler, graphView: GraphView?) {
