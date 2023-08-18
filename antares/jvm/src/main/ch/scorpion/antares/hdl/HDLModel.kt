@@ -69,6 +69,31 @@ class HDLModel(
 							it.expression = createOperation(it.inputs, OperationExpression.Operation.AND)
 						}
 					}
+					NonUnaryLogicGateType.Or -> {
+						createExpression(vertice, parent).also {
+							it.expression = createOperation(it.inputs, OperationExpression.Operation.OR)
+						}
+					}
+					NonUnaryLogicGateType.Xor -> {
+						createExpression(vertice, parent).also {
+							it.expression = createOperation(it.inputs, OperationExpression.Operation.XOR)
+						}
+					}
+					NonUnaryLogicGateType.Nor -> {
+						createExpression(vertice, parent).also {
+							it.expression = NotExpression(createOperation(it.inputs, OperationExpression.Operation.OR))
+						}
+					}
+					NonUnaryLogicGateType.Nand -> {
+						createExpression(vertice, parent).also {
+							it.expression = NotExpression(createOperation(it.inputs, OperationExpression.Operation.AND))
+						}
+					}
+					NonUnaryLogicGateType.Xnor -> {
+						createExpression(vertice, parent).also {
+							it.expression = NotExpression(createOperation(it.inputs, OperationExpression.Operation.XOR))
+						}
+					}
 					else -> throw HDLException("Circuit element ${vertice.type} doesn't support HDL")
 				}
 			}
