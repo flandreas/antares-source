@@ -60,14 +60,12 @@ class HDLCircuit(
 	}
 
 	private fun createNodes() {
-		for (elem in circuit.elements) {
+		for (elem in circuit.elements.filterIsInstance<Vertice>()) {
 			if (elem is GraphInput<*> && elem.portType == PortType.INPUT) {
 				addPort(HDLPort(elem.name!!, HDLPort.Direction.OUT, getHDLNetOfPort(elem.getPort<Any>())))
 			} else if (elem is GraphOutput<*> && elem.portType == PortType.OUTPUT) {
 				addPort(HDLPort(elem.name!!, HDLPort.Direction.IN, getHDLNetOfPort(elem.getPort<Any>())))
-			} else if (elem is Net<*>) {
-				// skip
-			} else {
+			}  else {
 				_nodes.add(model.createNode(elem, this))
 			}
 		}

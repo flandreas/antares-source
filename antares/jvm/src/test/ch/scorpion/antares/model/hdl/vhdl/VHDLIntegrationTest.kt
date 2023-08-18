@@ -120,4 +120,33 @@ class VHDLIntegrationTest {
 			
 		""".trimIndent(), printer.toString())
 	}
+
+	@Test
+	fun testNotGate() {
+		val model = HDLModel(
+			TestCircuitBuilder("test").buildCustomNot().graph as DigitalGraph,
+			library
+		).create()
+
+		VHDLCreator(printer).printCircuit(model.main)
+
+		assertEquals("""
+			LIBRARY ieee;
+			USE ieee.std_logic_1164.all;
+			USE ieee.numeric_std.all;
+
+			-- test
+			entity main is
+			  port (
+			    I1: in std_logic;
+			    O1: out std_logic);
+			end main;
+
+			architecture Behavioral of main is
+			begin
+			  O1 <= NOT I1;
+			end Behavioral;
+			
+		""".trimIndent(), printer.toString())
+	}
 }

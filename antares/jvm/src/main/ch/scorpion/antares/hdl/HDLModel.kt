@@ -1,12 +1,18 @@
 package ch.scorpion.antares.hdl
 
+import ch.scorpion.antares.hdl.expression.NetExpression
+import ch.scorpion.antares.hdl.expression.NotExpression
 import ch.scorpion.antares.hdl.vhdl.HDLException
 import ch.scorpion.antares.model.DigitalGraph
+import ch.scorpion.antares.model.gate.UnaryLogicGate
+import ch.scorpion.antares.model.gate.UnaryLogicGateType
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphRepository
-import ch.scorpion.jabbah.graph.model.GraphElement
+import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 
 /**
@@ -34,25 +40,49 @@ class HDLModel(
 		return this
 	}
 
-	fun createNode(elem: GraphElement, parent: HDLCircuit): AbstractHDLNode {
-		return if (elem is SubGraphVerticeRef) {
-			val hdlCircuit = hdlCircuits.computeIfAbsent(elem.graphUUID!!) {
-				HDLCircuit(elem.getGraph(repository) as DigitalGraph, it.id, this)
+	fun createNode(vertice: Vertice, parent: HDLCircuit): AbstractHDLNode {
+		return when (vertice) {
+			is SubGraphVerticeRef -> {
+				val hdlCircuit = hdlCircuits.computeIfAbsent(vertice.graphUUID!!) {
+					HDLCircuit(vertice.getGraph(repository) as DigitalGraph, it.id, this)
+				}
+				HDLCircuitNode(hdlCircuit).also { addInputsOutputs(it, vertice, parent) }.createExpressions()
 			}
-			HDLCircuitNode(hdlCircuit).also { addInputsOutputs(it, elem, parent) }.createExpressions()
-		} else {
-			throw HDLException("Circuit element ${elem.type} doesn't support HDL")
+			is UnaryLogicGate -> {
+				when (vertice.gateType) {
+					UnaryLogicGateType.Not -> {
+						createExpression(vertice, parent).also {
+							it.expression = NotExpression(NetExpression(it.inputs.first().net!!))
+						}
+					}
+					else -> throw HDLException("Circuit element ${vertice.type} doesn't support HDL")
+				}
+			}
+			else -> throw HDLException("Circuit element ${vertice.type} doesn't support HDL")
 		}
 	}
 
-	private fun addInputsOutputs(node: AbstractHDLNode, elem: SubGraphVerticeRef, hdlCircuit: HDLCircuit) {
-		for (port in elem.getPorts()) {
+	private fun createExpression(vertice: Vertice, parent: HDLCircuit): HDLNodeAssignment {
+		val node = HDLNodeAssignment(vertice.type)
+		addInputsOutputs(node, vertice, parent)
+		return node
+	}
+
+	private fun addInputsOutputs(node: AbstractHDLNode, vertice: Vertice, hdlCircuit: HDLCircuit) {
+		for (port in vertice.getPorts()) {
 			val net = hdlCircuit.getHDLNetOfPort(port)
 			when (port.portType) {
-				PortType.INPUT -> node.addPort(HDLPort(port.name!!, HDLPort.Direction.IN, net))
-				PortType.OUTPUT -> node.addPort(HDLPort(port.name!!, HDLPort.Direction.OUT, net))
+				PortType.INPUT -> node.addPort(HDLPort(portName(port), HDLPort.Direction.IN, net))
+				PortType.OUTPUT -> node.addPort(HDLPort(portName(port), HDLPort.Direction.OUT, net))
 				PortType.INOUT -> TODO()
 			}
 		}
 	}
+
+	private fun portName(port: Port<*>): String =
+		if (StringUtils.isBlank(port.name)) {
+			"p${port.portId}"
+		} else {
+			port.name!!
+		}
 }

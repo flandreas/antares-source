@@ -4,6 +4,7 @@ import ch.scorpion.antares.hdl.*
 import ch.scorpion.antares.hdl.HDLPort.Direction.*
 import ch.scorpion.antares.hdl.expression.Expression
 import ch.scorpion.antares.hdl.expression.NetExpression
+import ch.scorpion.antares.hdl.expression.NotExpression
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.io.CodePrinter
@@ -128,12 +129,27 @@ class VHDLCreator(private val out: CodePrinter) {
 	}
 
 	private fun writeExpression(node: HDLNodeAssignment) {
-
+		node.targetNet?.let {
+			out.print(it.name).print(" <= ")
+			writeExpression(node.expression)
+			out.println(";")
+		}
 	}
 
 	private fun writeExpression(expression: Expression) {
 		when (expression) {
 			is NetExpression -> out.print(expression.net.name)
+			is NotExpression -> {
+				out.print("NOT ")
+				val inner = expression.expression
+				if (inner is NotExpression) {
+					out.print("(")
+					writeExpression(inner)
+					out.print(")")
+				} else {
+					writeExpression(inner)
+				}
+			}
 			else -> TODO()
 		}
 	}
