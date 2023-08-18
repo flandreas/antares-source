@@ -149,4 +149,38 @@ class VHDLIntegrationTest {
 			
 		""".trimIndent(), printer.toString())
 	}
+
+	@Test
+	fun testCustomNand() {
+		val model = HDLModel(
+			TestCircuitBuilder("test").buildCustomNAND(null).graph as DigitalGraph,
+			library
+		).create()
+
+		VHDLCreator(printer).printCircuit(model.main)
+
+		// The result is not yet optimized (not yet implemented). The optimized result would be
+		// O1 <= NOT (I1 AND I2), without the intermediate signal s0.
+		assertEquals("""
+			LIBRARY ieee;
+			USE ieee.std_logic_1164.all;
+			USE ieee.numeric_std.all;
+
+			-- test
+			entity main is
+			  port (
+			    I1: in std_logic;
+			    I2: in std_logic;
+			    O1: out std_logic);
+			end main;
+
+			architecture Behavioral of main is
+			  signal s0: std_logic;
+			begin
+			  O1 <= NOT s0;
+			  s0 <= (I1 AND I2);
+			end Behavioral;
+			
+		""".trimIndent(), printer.toString())
+	}
 }

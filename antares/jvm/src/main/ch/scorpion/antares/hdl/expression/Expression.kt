@@ -12,3 +12,15 @@ class NetExpression(val net: HDLNet) : Expression
  * @property expression the [Expression] to invert
  */
 class NotExpression(val expression: Expression): Expression
+
+class OperationExpression(
+	val operation: Operation,
+	val operands: List<Expression>
+) : Expression {
+
+	enum class Operation {
+		AND,
+		OR,
+		XOR
+	}
+}

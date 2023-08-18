@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
+import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 
 /**
@@ -45,7 +46,7 @@ class TestCircuitBuilder(
 	}
 
     /**
-     * Builds a [GraphView] that contains a [NotGateView] along with [DigitalCircuitInOutView] for input and output.
+     * Builds a [GraphView] that contains a NOT gate along with [DigitalCircuitInOutView] for input and output.
      */
     fun buildCustomNot(): GraphView {
         val not = addVerticeView(LogicGateView.notGateView())
@@ -55,16 +56,18 @@ class TestCircuitBuilder(
     }
 
     /**
-     * Builds a [GraphView] that consists of a elementary [AndGateView] and the provided custom "Not" gate view.
+     * Builds a [GraphView] that consists of a elementary AND gate and the provided custom "Not" gate view.
+     * If [notView] is `null`, an elementary NOT gate is used.
      */
-    fun buildCustomNAND(notView: SubGraphVerticeView<*>): GraphView {
-        graphView.add(notView)
+    fun buildCustomNAND(notView: SubGraphVerticeView<*>?): GraphView {
+	    val effNotView: VerticeView<*> = notView ?: LogicGateView.notGateView()
+        graphView.add(effNotView)
         val andView = addVerticeView(LogicGateView.andGateView())
 
         connect(addInput(), andView, andView.vertice.getInput(1))
         connect(addInput(), andView, andView.vertice.getInput(2))
-        connect(andView, notView)
-        connect(notView, addOutput())
+        connect(andView, effNotView)
+        connect(effNotView, addOutput())
 
         return graphView
     }

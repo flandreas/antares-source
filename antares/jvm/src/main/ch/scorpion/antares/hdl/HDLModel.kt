@@ -1,9 +1,13 @@
 package ch.scorpion.antares.hdl
 
+import ch.scorpion.antares.hdl.expression.Expression
 import ch.scorpion.antares.hdl.expression.NetExpression
 import ch.scorpion.antares.hdl.expression.NotExpression
+import ch.scorpion.antares.hdl.expression.OperationExpression
 import ch.scorpion.antares.hdl.vhdl.HDLException
 import ch.scorpion.antares.model.DigitalGraph
+import ch.scorpion.antares.model.gate.NonUnaryLogicGate
+import ch.scorpion.antares.model.gate.NonUnaryLogicGateType
 import ch.scorpion.antares.model.gate.UnaryLogicGate
 import ch.scorpion.antares.model.gate.UnaryLogicGateType
 import ch.scorpion.jabbah.base.StringUtils
@@ -58,6 +62,16 @@ class HDLModel(
 					else -> throw HDLException("Circuit element ${vertice.type} doesn't support HDL")
 				}
 			}
+			is NonUnaryLogicGate -> {
+				when (vertice.gateType) {
+					NonUnaryLogicGateType.And -> {
+						createExpression(vertice, parent).also {
+							it.expression = createOperation(it.inputs, OperationExpression.Operation.AND)
+						}
+					}
+					else -> throw HDLException("Circuit element ${vertice.type} doesn't support HDL")
+				}
+			}
 			else -> throw HDLException("Circuit element ${vertice.type} doesn't support HDL")
 		}
 	}
@@ -66,6 +80,16 @@ class HDLModel(
 		val node = HDLNodeAssignment(vertice.type)
 		addInputsOutputs(node, vertice, parent)
 		return node
+	}
+
+	private fun createOperation(inputs: Collection<HDLPort>, op: OperationExpression.Operation): Expression {
+		val list = mutableListOf<Expression>()
+		for (input in inputs) {
+			input.net?.let {
+				list.add(NetExpression(it))
+			}
+		}
+		return OperationExpression(op, list)
 	}
 
 	private fun addInputsOutputs(node: AbstractHDLNode, vertice: Vertice, hdlCircuit: HDLCircuit) {

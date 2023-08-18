@@ -5,6 +5,7 @@ import ch.scorpion.antares.hdl.HDLPort.Direction.*
 import ch.scorpion.antares.hdl.expression.Expression
 import ch.scorpion.antares.hdl.expression.NetExpression
 import ch.scorpion.antares.hdl.expression.NotExpression
+import ch.scorpion.antares.hdl.expression.OperationExpression
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.io.CodePrinter
@@ -149,6 +150,25 @@ class VHDLCreator(private val out: CodePrinter) {
 				} else {
 					writeExpression(inner)
 				}
+			}
+			is OperationExpression -> {
+				out.print("(")
+				var first = true
+				val op = when (expression.operation) {
+					OperationExpression.Operation.AND -> " AND "
+					OperationExpression.Operation.OR -> " OR "
+					OperationExpression.Operation.XOR -> " XOR "
+					else -> throw HDLException("Unknown operation ${expression.operation}")
+				}
+				for (exp in expression.operands) {
+					if (first) {
+						first = false
+					} else {
+						out.print(op)
+					}
+					writeExpression(exp)
+				}
+				out.print(")")
 			}
 			else -> TODO()
 		}
