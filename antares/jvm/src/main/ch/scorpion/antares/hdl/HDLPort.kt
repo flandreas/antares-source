@@ -1,0 +1,26 @@
+package ch.scorpion.antares.hdl
+
+import ch.scorpion.antares.model.signal.BitWidth
+
+class HDLPort(
+	val name: String,
+	val direction: Direction,
+	net: HDLNet? = null,
+	val bitWidth: BitWidth = BitWidth.BW_1
+) {
+
+	enum class Direction {
+		IN,
+		OUT,
+		INOUT
+	}
+
+	var net: HDLNet? = net
+		set(value) {
+			if (field != null) {
+				field!!.removePort(this)
+			}
+			field = value
+			value?.addPort(this)
+		}
+}

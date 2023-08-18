@@ -11,12 +11,17 @@ import kotlin.io.path.name
 
 abstract class AbstractJvmCircuitTest : AbstractCircuitTest() {
 
-	protected fun setupLibrary() {
-		val dir = Files.createTempDirectory(null)
-		File.createTempFile("library", ".lib", dir.toFile())
-		LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService({ dir.parent.absolutePathString() }, dir.name)
-		LibraryModule.libraryService = LibraryService()
-		LibraryModule.libraryHolder.l = LibraryImpl("testLib")
+	companion object {
+		fun setupLibrary() {
+			val dir = Files.createTempDirectory(null)
+			File.createTempFile("library", ".lib", dir.toFile())
+			LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService({ dir.parent.absolutePathString() }, dir.name)
+			LibraryModule.libraryService = LibraryService()
+			LibraryModule.libraryHolder.l = LibraryImpl("testLib")
+		}
 	}
 
+	protected fun setupLibrary() {
+		Companion.setupLibrary()
+	}
 }
