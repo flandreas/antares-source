@@ -8,6 +8,7 @@ import ch.scorpion.antares.model.gate.NonUnaryLogicGateType
 import ch.scorpion.antares.model.gate.UnaryLogicGate
 import ch.scorpion.antares.model.gate.UnaryLogicGateType
 import ch.scorpion.antares.model.input.DipSwitch
+import ch.scorpion.antares.model.net.Concentrator
 import ch.scorpion.antares.model.net.Constant
 import ch.scorpion.antares.model.net.Ground
 import ch.scorpion.antares.model.net.Power
@@ -123,6 +124,12 @@ class HDLModel(
 			is Ground -> {
 				createExpression(vertice, parent).also {
 					it.expression = ConstantExpression(DigitalSignalFactory.falseValue(vertice.bitWidth))
+				}
+			}
+			is Concentrator -> {
+				BuiltInNode(vertice.type).also {
+					addInputsOutputs(it, vertice, parent)
+					it.createExpressions()
 				}
 			}
 			else -> throw HDLException("Circuit element ${vertice.type} doesn't support HDL")

@@ -133,6 +133,7 @@ class VHDLCreator(private val out: CodePrinter) {
 			when (node) {
 				is HDLNodeAssignment -> writeExpression(node)
 				is HDLCircuitNode -> writeEntityInstantiation(node, index)
+				is ManyToOneNode -> writeManyToOne(node)
 				else -> throw HDLException("HDL element ${node::class.simpleName} not yet implemented")
 			}
 		}
@@ -213,6 +214,22 @@ class VHDLCreator(private val out: CodePrinter) {
 				if (net.needsVariable || net.isInput) {
 					out.print(output.name).print(" <= ").print(net.name).println(";")
 				}
+			}
+		}
+	}
+
+	private fun writeManyToOne(node: ManyToOneNode) {
+		node.targetSignal?.let { target ->
+			for (input in node) {
+				out.print(target).print("(")
+				if (input.lsb == input.msb) {
+					out.print(input.lsb)
+				} else {
+					out.print(input.msb).print(" downto ").print(input.lsb)
+				}
+				out.print(") <= ")
+				writeExpression(input.expression)
+				out.println(";")
 			}
 		}
 	}

@@ -12,7 +12,7 @@ abstract class AbstractHDLNode(
 		ports.add(port)
 	}
 
-	val inputs: Collection<HDLPort> get() = ports.filter { it.direction == IN }
+	val inputs: List<HDLPort> get() = ports.filter { it.direction == IN }
 
-	val outputs: Collection<HDLPort> get() = ports.filter { it.direction == OUT }
+	val outputs: List<HDLPort> get() = ports.filter { it.direction == OUT }
 }

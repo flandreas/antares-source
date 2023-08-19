@@ -1,6 +1,7 @@
 package ch.scorpion.antares.hdl
 
 import ch.scorpion.antares.model.DigitalGraph
+import ch.scorpion.antares.model.net.Concentrator
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.UUID
@@ -68,6 +69,8 @@ class HDLCircuit(
 			} else if (elem is GraphOutput<*> && elem.portType == PortType.OUTPUT) {
 				val port = elem.getPort<Any>() as DigitalPort
 				addPort(HDLPort(elem.name!!, HDLPort.Direction.IN, getHDLNetOfPort(port), port.bitWidth))
+			} else if (elem is Concentrator) {
+				_nodes.add(ManyToOneNode(model.createNode(elem, this), elem.bitWidth, elem.branchCount))
 			}  else {
 				_nodes.add(model.createNode(elem, this))
 			}
