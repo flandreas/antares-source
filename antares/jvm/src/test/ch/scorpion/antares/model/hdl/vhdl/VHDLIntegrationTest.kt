@@ -7,8 +7,10 @@ import ch.scorpion.antares.TestLibraryBuilder
 import ch.scorpion.antares.hdl.HDLModel
 import ch.scorpion.antares.hdl.vhdl.VHDLCreator
 import ch.scorpion.antares.model.DigitalGraph
+import ch.scorpion.antares.model.input.DipSwitch
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.view.gate.LogicGateView
+import ch.scorpion.antares.view.input.DipSwitchView
 import ch.scorpion.antares.view.net.ConstantView
 import ch.scorpion.jabbah.base.io.StringCodePrinter
 import ch.scorpion.jabbah.graph.library.LibraryElement
@@ -305,6 +307,41 @@ class VHDLIntegrationTest {
 		val builder = TestCircuitBuilder("test")
 		val output = builder.addOutput("O")
 		val constantView = builder.addVerticeView(ConstantView(DigitalSignalFactory.of(true)))
+		builder.connect(constantView, output)
+
+		val model = HDLModel(
+			builder.graph as DigitalGraph,
+			library
+		).create()
+
+		VHDLCreator(printer).printCircuit(model.main)
+
+		assertEquals("""
+			LIBRARY ieee;
+			USE ieee.std_logic_1164.all;
+			USE ieee.numeric_std.all;
+
+			-- test
+			entity main is
+			  port (
+			    O: out std_logic);
+			end main;
+
+			architecture Behavioral of main is
+			begin
+			  O <= '1';
+			end Behavioral;
+			
+		""".trimIndent(), printer.toString())
+	}
+
+	@Test
+	fun testDipSwitch() {
+		val builder = TestCircuitBuilder("test")
+		val output = builder.addOutput("O")
+		val constantView = builder.addVerticeView(DipSwitchView(model = DipSwitch().also {
+			it.initialValue = DigitalSignalFactory.of(true) }
+		))
 		builder.connect(constantView, output)
 
 		val model = HDLModel(

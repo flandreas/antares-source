@@ -66,7 +66,7 @@ class DipSwitch(
 			}
 		}
 
-	/** If set to `true`, [value] is retained between multiple execution runs.*/
+	/** If set to `true`, [signal] is retained between multiple execution runs.*/
 	var retainValue: Boolean = DEF_RETAIN_VALUE
 
 	var bitWidth: BitWidth
@@ -93,11 +93,15 @@ class DipSwitch(
 
 	/** ---- [Actor] interface */
 
+	val startupValue: DigitalSignal get() = if (firstExecution || !retainValue) {
+		initialValue
+	} else {
+		DigitalSignalFactory.falseValue(bitWidth)
+	}
+
 	override fun executionInitialize(signalHandler: SignalHandler) {
 		super.executionInitialize(signalHandler)
-		if (firstExecution || !retainValue) {
-			setSignal(initialValue, signalHandler)
-		}
+		setSignal(startupValue, signalHandler)
 	}
 
 	override fun executionStart(signalHandler: SignalHandler) {

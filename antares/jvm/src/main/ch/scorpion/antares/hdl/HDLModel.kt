@@ -7,6 +7,7 @@ import ch.scorpion.antares.model.gate.NonUnaryLogicGate
 import ch.scorpion.antares.model.gate.NonUnaryLogicGateType
 import ch.scorpion.antares.model.gate.UnaryLogicGate
 import ch.scorpion.antares.model.gate.UnaryLogicGateType
+import ch.scorpion.antares.model.input.DipSwitch
 import ch.scorpion.antares.model.net.Constant
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.UUID
@@ -103,6 +104,11 @@ class HDLModel(
 			is Constant -> {
 				createExpression(vertice, parent).also {
 					it.expression = ConstantExpression(vertice.value)
+				}
+			}
+			is DipSwitch -> {
+				createExpression(vertice, parent).also {
+					it.expression = ConstantExpression(vertice.startupValue)
 				}
 			}
 			else -> throw HDLException("Circuit element ${vertice.type} doesn't support HDL")
