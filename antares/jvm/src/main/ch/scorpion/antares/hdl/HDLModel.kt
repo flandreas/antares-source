@@ -1,15 +1,13 @@
 package ch.scorpion.antares.hdl
 
-import ch.scorpion.antares.hdl.expression.Expression
-import ch.scorpion.antares.hdl.expression.NetExpression
-import ch.scorpion.antares.hdl.expression.NotExpression
-import ch.scorpion.antares.hdl.expression.OperationExpression
+import ch.scorpion.antares.hdl.expression.*
 import ch.scorpion.antares.hdl.vhdl.HDLException
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.gate.NonUnaryLogicGate
 import ch.scorpion.antares.model.gate.NonUnaryLogicGateType
 import ch.scorpion.antares.model.gate.UnaryLogicGate
 import ch.scorpion.antares.model.gate.UnaryLogicGateType
+import ch.scorpion.antares.model.net.Constant
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -100,6 +98,11 @@ class HDLModel(
 						}
 					}
 					else -> throw HDLException("Circuit element ${vertice.type} doesn't support HDL")
+				}
+			}
+			is Constant -> {
+				createExpression(vertice, parent).also {
+					it.expression = ConstantExpression(vertice.value)
 				}
 			}
 			else -> throw HDLException("Circuit element ${vertice.type} doesn't support HDL")

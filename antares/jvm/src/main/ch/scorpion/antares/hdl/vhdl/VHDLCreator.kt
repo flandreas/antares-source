@@ -2,11 +2,9 @@ package ch.scorpion.antares.hdl.vhdl
 
 import ch.scorpion.antares.hdl.*
 import ch.scorpion.antares.hdl.HDLPort.Direction.*
-import ch.scorpion.antares.hdl.expression.Expression
-import ch.scorpion.antares.hdl.expression.NetExpression
-import ch.scorpion.antares.hdl.expression.NotExpression
-import ch.scorpion.antares.hdl.expression.OperationExpression
+import ch.scorpion.antares.hdl.expression.*
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.io.CodePrinter
 import ch.scorpion.jabbah.base.io.Separator
@@ -20,6 +18,15 @@ class VHDLCreator(private val out: CodePrinter) {
 
 	companion object {
 		private val LOG by logger(VHDLCreator::class)
+
+		private fun value(constant: ConstantExpression): String = value(constant.value)
+
+		private fun value(value: DigitalSignal): String =
+			if (value.bitWidth.width > 1) {
+				"\"${value.binaryString}\""
+			} else {
+				"\'${value.binaryString}\'"
+			}
 	}
 
 	/** Helps to ensure that every [HDLCircuitNode] definition is only printed once.*/
@@ -169,6 +176,9 @@ class VHDLCreator(private val out: CodePrinter) {
 					writeExpression(exp)
 				}
 				out.print(")")
+			}
+			is ConstantExpression -> {
+				out.print(value(expression))
 			}
 			else -> TODO()
 		}

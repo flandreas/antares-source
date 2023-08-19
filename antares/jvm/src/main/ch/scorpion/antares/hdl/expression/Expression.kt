@@ -1,6 +1,7 @@
 package ch.scorpion.antares.hdl.expression
 
 import ch.scorpion.antares.hdl.HDLNet
+import ch.scorpion.antares.model.signal.DigitalSignal
 
 interface Expression
 
@@ -24,3 +25,7 @@ class OperationExpression(
 		XOR
 	}
 }
+
+class ConstantExpression(
+	val value: DigitalSignal
+) : Expression
