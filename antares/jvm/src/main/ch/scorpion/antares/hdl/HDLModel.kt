@@ -59,6 +59,11 @@ class HDLModel(
 							it.expression = NotExpression(NetExpression(it.inputs.first().net!!))
 						}
 					}
+					UnaryLogicGateType.Buffer -> {
+						createExpression(vertice, parent).also {
+							it.expression = NetExpression(it.inputs.first().net!!)
+						}
+					}
 					else -> throw HDLException("Circuit element ${vertice.type} doesn't support HDL")
 				}
 			}

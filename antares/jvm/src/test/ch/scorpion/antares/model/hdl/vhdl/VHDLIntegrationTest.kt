@@ -123,7 +123,7 @@ class VHDLIntegrationTest {
 	}
 
 	@Test
-	fun testNotGate() {
+	fun testCustomNotGate() {
 		val model = HDLModel(
 			TestCircuitBuilder("test").buildCustomNot().graph as DigitalGraph,
 			library
@@ -192,27 +192,27 @@ class VHDLIntegrationTest {
 
 	@Test
 	fun testOrGate() {
-		assertNonUnaryLogicGate(LogicGateView.andGateView(), "O <= (A OR B)")
+		assertNonUnaryLogicGate(LogicGateView.orGateView(), "O <= (A OR B)")
 	}
 
 	@Test
 	fun testXorGate() {
-		assertNonUnaryLogicGate(LogicGateView.andGateView(), "O <= (A XOR B)")
+		assertNonUnaryLogicGate(LogicGateView.xorGateView(), "O <= (A XOR B)")
 	}
 
 	@Test
 	fun testNandGate() {
-		assertNonUnaryLogicGate(LogicGateView.andGateView(), "O <= NOT (A AND B)")
+		assertNonUnaryLogicGate(LogicGateView.nandGateView(), "O <= NOT (A AND B)")
 	}
 
 	@Test
 	fun testNorGate() {
-		assertNonUnaryLogicGate(LogicGateView.andGateView(), "O <= NOT (A OR B)")
+		assertNonUnaryLogicGate(LogicGateView.norGateView(), "O <= NOT (A OR B)")
 	}
 
 	@Test
 	fun testXnorGate() {
-		assertNonUnaryLogicGate(LogicGateView.andGateView(), "O <= NOT (A XOR B)")
+		assertNonUnaryLogicGate(LogicGateView.xnorGateView(), "O <= NOT (A XOR B)")
 	}
 
 	private fun assertNonUnaryLogicGate(gateView: LogicGateView, expression: String) {
@@ -242,6 +242,51 @@ class VHDLIntegrationTest {
 			  port (
 			    A: in std_logic;
 			    B: in std_logic;
+			    O: out std_logic);
+			end main;
+
+			architecture Behavioral of main is
+			begin
+			  ${expression};
+			end Behavioral;
+			
+		""".trimIndent(), printer.toString())
+	}
+
+	@Test
+	fun testNotGate() {
+		assertUnaryLogicGate(LogicGateView.notGateView(), "O <= NOT I")
+	}
+
+	@Test
+	fun testBufferGate() {
+		assertUnaryLogicGate(LogicGateView.bufferGateView(), "O <= I")
+	}
+
+	private fun assertUnaryLogicGate(gateView: LogicGateView, expression: String) {
+		val builder = TestCircuitBuilder("test")
+		val input = builder.addInput("I")
+		val output = builder.addOutput("O")
+		builder.addVerticeView(gateView)
+		builder.connect(input, gateView, gateView.model.getInput())
+		builder.connect(gateView, output)
+
+		val model = HDLModel(
+			builder.graph as DigitalGraph,
+			library
+		).create()
+
+		VHDLCreator(printer).printCircuit(model.main)
+
+		assertEquals("""
+			LIBRARY ieee;
+			USE ieee.std_logic_1164.all;
+			USE ieee.numeric_std.all;
+
+			-- test
+			entity main is
+			  port (
+			    I: in std_logic;
 			    O: out std_logic);
 			end main;
 
