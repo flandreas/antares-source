@@ -8,7 +8,6 @@ import ch.scorpion.antares.hdl.HDLModel
 import ch.scorpion.antares.hdl.vhdl.VHDLCreator
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.input.DipSwitch
-import ch.scorpion.antares.model.net.Power
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.view.gate.LogicGateView
 import ch.scorpion.antares.view.input.DipSwitchView

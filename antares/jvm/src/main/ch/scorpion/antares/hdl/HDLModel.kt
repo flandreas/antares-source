@@ -11,6 +11,7 @@ import ch.scorpion.antares.model.input.DipSwitch
 import ch.scorpion.antares.model.net.Constant
 import ch.scorpion.antares.model.net.Ground
 import ch.scorpion.antares.model.net.Power
+import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.UUID
@@ -145,11 +146,11 @@ class HDLModel(
 	}
 
 	private fun addInputsOutputs(node: AbstractHDLNode, vertice: Vertice, hdlCircuit: HDLCircuit) {
-		for (port in vertice.getPorts()) {
+		for (port in vertice.getPorts().map { it as DigitalPort }) {
 			val net = hdlCircuit.getHDLNetOfPort(port)
 			when (port.portType) {
-				PortType.INPUT -> node.addPort(HDLPort(portName(port), HDLPort.Direction.IN, net))
-				PortType.OUTPUT -> node.addPort(HDLPort(portName(port), HDLPort.Direction.OUT, net))
+				PortType.INPUT -> node.addPort(HDLPort(portName(port), HDLPort.Direction.IN, net, port.bitWidth))
+				PortType.OUTPUT -> node.addPort(HDLPort(portName(port), HDLPort.Direction.OUT, net, port.bitWidth))
 				PortType.INOUT -> TODO()
 			}
 		}

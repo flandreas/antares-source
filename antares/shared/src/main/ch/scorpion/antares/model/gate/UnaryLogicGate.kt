@@ -34,7 +34,7 @@ class UnaryLogicGate(
 ): AbstractLogicGate(gateType, PortCount.ONE, bitWidth, PortCount.ONE, PortCount.ONE) {
 
 	companion object {
-		fun notGate(): UnaryLogicGate = UnaryLogicGate(Not)
+		fun notGate(bitWidth: BitWidth = BitWidth.BW_1): UnaryLogicGate = UnaryLogicGate(Not, bitWidth)
 		fun bufferGate(): UnaryLogicGate = UnaryLogicGate(Buffer)
 	}
 

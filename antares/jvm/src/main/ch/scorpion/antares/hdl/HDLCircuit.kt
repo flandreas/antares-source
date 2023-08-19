@@ -1,6 +1,7 @@
 package ch.scorpion.antares.hdl
 
 import ch.scorpion.antares.model.DigitalGraph
+import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.graph.model.*
@@ -62,17 +63,19 @@ class HDLCircuit(
 	private fun createNodes() {
 		for (elem in circuit.elements.filterIsInstance<Vertice>()) {
 			if (elem is GraphInput<*> && elem.portType == PortType.INPUT) {
-				addPort(HDLPort(elem.name!!, HDLPort.Direction.OUT, getHDLNetOfPort(elem.getPort<Any>())))
+				val port = elem.getPort<Any>() as DigitalPort
+				addPort(HDLPort(elem.name!!, HDLPort.Direction.OUT, getHDLNetOfPort(port), port.bitWidth))
 			} else if (elem is GraphOutput<*> && elem.portType == PortType.OUTPUT) {
-				addPort(HDLPort(elem.name!!, HDLPort.Direction.IN, getHDLNetOfPort(elem.getPort<Any>())))
+				val port = elem.getPort<Any>() as DigitalPort
+				addPort(HDLPort(elem.name!!, HDLPort.Direction.IN, getHDLNetOfPort(port), port.bitWidth))
 			}  else {
 				_nodes.add(model.createNode(elem, this))
 			}
 		}
 	}
 
-	fun getHDLNetOfPort(port: Port<*>): HDLNet? =
-		port.net?.let { netMap.computeIfAbsent(it) { HDLNet() } }
+	fun getHDLNetOfPort(port: DigitalPort): HDLNet? =
+		port.net?.let { netMap.computeIfAbsent(it) { HDLNet(bitWidth = port.bitWidth) } }
 
 	private fun addPort(port: HDLPort) {
 		ports.add(port)

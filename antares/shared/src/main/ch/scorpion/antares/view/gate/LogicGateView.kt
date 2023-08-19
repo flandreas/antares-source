@@ -61,7 +61,7 @@ class LogicGateView(
 		fun xorGateView(): LogicGateView = LogicGateView(gate = NonUnaryLogicGate.xorGate())
 		fun xnorGateView(): LogicGateView = LogicGateView(gate = NonUnaryLogicGate.xnorGate())
 
-		fun notGateView(): LogicGateView = LogicGateView(gate = UnaryLogicGate.notGate())
+		fun notGateView(bitWidth: BitWidth = BitWidth.BW_1): LogicGateView = LogicGateView(gate = UnaryLogicGate.notGate(bitWidth))
 		fun bufferGateView(): LogicGateView = LogicGateView(gate = UnaryLogicGate.bufferGate())
 
 		private fun getRenderer(type: LogicGateType): LogicGateViewRenderer =

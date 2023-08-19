@@ -106,10 +106,12 @@ class VHDLCreator(private val out: CodePrinter) {
 			INOUT -> "inout"
 		}
 
-	private fun getType(bitWidth: BitWidth): String {
-		// TODO multi-bit
-		return "std_logic"
-	}
+	private fun getType(bitWidth: BitWidth): String =
+		if (bitWidth == BitWidth.BW_1) {
+			"std_logic"
+		} else {
+			"std_logic_vector(${bitWidth.width - 1} downto 0)"
+		}
 
 	private fun printBehaviour(circuit: HDLCircuit) {
 		out.print("architecture Behavioral of ").print(circuit.elementName).println(" is").inc()

@@ -30,8 +30,8 @@ class TestCircuitBuilder(
 ) : GraphViewBuilder<DigitalSignal>(graphName, AntaresGraphTypes.Digital) {
 
 	/** Builds a [GraphView] that contains only an input and an output, i.e. that perform a "no operation".*/
-	fun buildNOP(propagationDelay: Long = 0): GraphView {
-		connect(addInput("I"), addOutput("O"))
+	fun buildNOP(propagationDelay: Long = 0, bitWidth: BitWidth = BitWidth.BW_1): GraphView {
+		connect(addInput("I", bitWidth), addOutput("O", bitWidth))
 		graph.overallPropagationDelay = propagationDelay
 		return graphView
 	}
@@ -59,15 +59,15 @@ class TestCircuitBuilder(
      * Builds a [GraphView] that consists of a elementary AND gate and the provided custom "Not" gate view.
      * If [notView] is `null`, an elementary NOT gate is used.
      */
-    fun buildCustomNAND(notView: SubGraphVerticeView<*>?): GraphView {
-	    val effNotView: VerticeView<*> = notView ?: LogicGateView.notGateView()
+    fun buildCustomNAND(notView: SubGraphVerticeView<*>?, bitWidth: BitWidth = BitWidth.BW_1): GraphView {
+	    val effNotView: VerticeView<*> = notView ?: LogicGateView.notGateView(bitWidth)
         graphView.add(effNotView)
         val andView = addVerticeView(LogicGateView.andGateView())
 
-        connect(addInput(), andView, andView.vertice.getInput(1))
-        connect(addInput(), andView, andView.vertice.getInput(2))
+        connect(addInput(bitWidth = bitWidth), andView, andView.vertice.getInput(1))
+        connect(addInput(bitWidth = bitWidth), andView, andView.vertice.getInput(2))
         connect(andView, effNotView)
-        connect(effNotView, addOutput())
+        connect(effNotView, addOutput(bitWidth = bitWidth))
 
         return graphView
     }
@@ -126,14 +126,14 @@ class TestCircuitBuilder(
 		return graphView
 	}
 
-	fun addInput(name: String? = null): DigitalCircuitInOutView = addInOut(name, PortType.INPUT)
+	fun addInput(name: String? = null, bitWidth: BitWidth = BitWidth.BW_1): DigitalCircuitInOutView = addInOut(name, PortType.INPUT, bitWidth)
 
-	fun addOutput(name: String? = null): DigitalCircuitInOutView = addInOut(name, PortType.OUTPUT)
+	fun addOutput(name: String? = null, bitWidth: BitWidth = BitWidth.BW_1): DigitalCircuitInOutView = addInOut(name, PortType.OUTPUT, bitWidth)
 
-	fun addInOut(name: String? = null): DigitalCircuitInOutView = addInOut(name, PortType.INOUT)
+	fun addInOut(name: String? = null, bitWidth: BitWidth = BitWidth.BW_1): DigitalCircuitInOutView = addInOut(name, PortType.INOUT, bitWidth)
 
-	private fun addInOut(name: String? = null, portType: PortType): DigitalCircuitInOutView {
-		val inout = DigitalCircuitInOutView(styleProvider, DigitalCircuitInOutImpl(eventBus, name, portType), eventBus)
+	private fun addInOut(name: String? = null, portType: PortType, bitWidth: BitWidth = BitWidth.BW_1): DigitalCircuitInOutView {
+		val inout = DigitalCircuitInOutView(styleProvider, DigitalCircuitInOutImpl(eventBus, name, portType, bitWidth), eventBus)
 		graphView.add(inout)
 		return inout
 	}
