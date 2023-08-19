@@ -8,10 +8,13 @@ import ch.scorpion.antares.hdl.HDLModel
 import ch.scorpion.antares.hdl.vhdl.VHDLCreator
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.input.DipSwitch
+import ch.scorpion.antares.model.net.Power
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.view.gate.LogicGateView
 import ch.scorpion.antares.view.input.DipSwitchView
 import ch.scorpion.antares.view.net.ConstantView
+import ch.scorpion.antares.view.net.GroundView
+import ch.scorpion.antares.view.net.PowerView
 import ch.scorpion.jabbah.base.io.StringCodePrinter
 import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryModule
@@ -339,10 +342,10 @@ class VHDLIntegrationTest {
 	fun testDipSwitch() {
 		val builder = TestCircuitBuilder("test")
 		val output = builder.addOutput("O")
-		val constantView = builder.addVerticeView(DipSwitchView(model = DipSwitch().also {
+		val dipSwitch = builder.addVerticeView(DipSwitchView(model = DipSwitch().also {
 			it.initialValue = DigitalSignalFactory.of(true) }
 		))
-		builder.connect(constantView, output)
+		builder.connect(dipSwitch, output)
 
 		val model = HDLModel(
 			builder.graph as DigitalGraph,
@@ -365,6 +368,44 @@ class VHDLIntegrationTest {
 			architecture Behavioral of main is
 			begin
 			  O <= '1';
+			end Behavioral;
+			
+		""".trimIndent(), printer.toString())
+	}
+
+	@Test
+	fun testPowerAndGround() {
+		val builder = TestCircuitBuilder("test")
+		val output1 = builder.addOutput("O1")
+		val output2 = builder.addOutput("O2")
+		val powerView = builder.addVerticeView(PowerView())
+		val groundView = builder.addVerticeView(GroundView())
+		builder.connect(powerView, output1)
+		builder.connect(groundView, output2)
+
+		val model = HDLModel(
+			builder.graph as DigitalGraph,
+			library
+		).create()
+
+		VHDLCreator(printer).printCircuit(model.main)
+
+		assertEquals("""
+			LIBRARY ieee;
+			USE ieee.std_logic_1164.all;
+			USE ieee.numeric_std.all;
+
+			-- test
+			entity main is
+			  port (
+			    O1: out std_logic;
+			    O2: out std_logic);
+			end main;
+
+			architecture Behavioral of main is
+			begin
+			  O1 <= '1';
+			  O2 <= '0';
 			end Behavioral;
 			
 		""".trimIndent(), printer.toString())
