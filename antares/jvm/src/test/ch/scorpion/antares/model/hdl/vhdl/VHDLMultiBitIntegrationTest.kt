@@ -8,8 +8,10 @@ import ch.scorpion.antares.hdl.vhdl.VHDLCreator
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.net.Concentrator
+import ch.scorpion.antares.model.net.Splitter
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.net.ConcentratorView
+import ch.scorpion.antares.view.net.SplitterView
 import ch.scorpion.jabbah.base.io.StringCodePrinter
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import kotlin.test.BeforeTest
@@ -136,7 +138,7 @@ class VHDLMultiBitIntegrationTest {
 		val builder = TestCircuitBuilder("test")
 		val input1 = builder.addInput("I0", BitWidth.BW_2)
 		val input2 = builder.addInput("I1", BitWidth.BW_2)
-		val output = builder.addOutput("O", bitWidth = BitWidth.BW_4)
+		val output = builder.addOutput("O", BitWidth.BW_4)
 		val concentrator = builder.addVerticeView(ConcentratorView(model = Concentrator(BitWidth.BW_4, BranchCount.BC_2)))
 		builder.connect(input1, concentrator, concentrator.model.getInput(2))
 		builder.connect(input2, concentrator, concentrator.model.getInput(3))
@@ -162,6 +164,78 @@ class VHDLMultiBitIntegrationTest {
 			begin
 			  O(1 downto 0) <= I0;
 			  O(3 downto 2) <= I1;
+			end Behavioral;
+			
+		""".trimIndent(), printer.toString())
+	}
+
+	@Test
+	fun testSplitter() {
+		val builder = TestCircuitBuilder("test")
+		val input = builder.addInput("I", BitWidth.BW_2)
+		val output1 = builder.addOutput("O1", BitWidth.BW_1)
+		val output2 = builder.addOutput("O2", BitWidth.BW_1)
+		val splitter = builder.addVerticeView(SplitterView(model = Splitter(BitWidth.BW_2, BranchCount.BC_2)))
+		builder.connect(input, splitter)
+		builder.connect(splitter, splitter.model.getOutput(2), output1)
+		builder.connect(splitter, splitter.model.getOutput(3), output2)
+
+		val model = HDLModel(builder.graph as DigitalGraph, library).create()
+		VHDLCreator(printer).printCircuit(model.main)
+
+		assertEquals("""
+			LIBRARY ieee;
+			USE ieee.std_logic_1164.all;
+			USE ieee.numeric_std.all;
+			
+			-- test
+			entity main is
+			  port (
+			    I: in std_logic_vector(1 downto 0);
+			    O1: out std_logic;
+			    O2: out std_logic);
+			end main;
+			
+			architecture Behavioral of main is
+			begin
+			  O1 <= I(0);
+			  O2 <= I(1);
+			end Behavioral;
+			
+		""".trimIndent(), printer.toString())
+	}
+
+	@Test
+	fun testWideSplitter() {
+		val builder = TestCircuitBuilder("test")
+		val input = builder.addInput("I", BitWidth.BW_4)
+		val output1 = builder.addOutput("O1", BitWidth.BW_2)
+		val output2 = builder.addOutput("O2", BitWidth.BW_2)
+		val splitter = builder.addVerticeView(SplitterView(model = Splitter(BitWidth.BW_4, BranchCount.BC_2)))
+		builder.connect(input, splitter)
+		builder.connect(splitter, splitter.model.getOutput(2), output1)
+		builder.connect(splitter, splitter.model.getOutput(3), output2)
+
+		val model = HDLModel(builder.graph as DigitalGraph, library).create()
+		VHDLCreator(printer).printCircuit(model.main)
+
+		assertEquals("""
+			LIBRARY ieee;
+			USE ieee.std_logic_1164.all;
+			USE ieee.numeric_std.all;
+			
+			-- test
+			entity main is
+			  port (
+			    I: in std_logic_vector(3 downto 0);
+			    O1: out std_logic_vector(1 downto 0);
+			    O2: out std_logic_vector(1 downto 0));
+			end main;
+			
+			architecture Behavioral of main is
+			begin
+			  O1 <= I(1 downto 0);
+			  O2 <= I(3 downto 2);
 			end Behavioral;
 			
 		""".trimIndent(), printer.toString())

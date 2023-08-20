@@ -2,6 +2,7 @@ package ch.scorpion.antares.hdl
 
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.net.Concentrator
+import ch.scorpion.antares.model.net.Splitter
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.UUID
@@ -71,7 +72,9 @@ class HDLCircuit(
 				addPort(HDLPort(elem.name!!, HDLPort.Direction.IN, getHDLNetOfPort(port), port.bitWidth))
 			} else if (elem is Concentrator) {
 				_nodes.add(ManyToOneNode(model.createNode(elem, this), elem.bitWidth, elem.branchCount))
-			}  else {
+			} else if (elem is Splitter) {
+				_nodes.add(OneToManyNode(model.createNode(elem, this), elem.bitWidth, elem.branchCount))
+			} else {
 				_nodes.add(model.createNode(elem, this))
 			}
 		}
