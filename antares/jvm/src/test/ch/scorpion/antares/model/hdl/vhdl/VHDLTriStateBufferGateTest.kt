@@ -6,10 +6,13 @@ import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.hdl.HDLModel
 import ch.scorpion.antares.hdl.vhdl.VHDLCreator
 import ch.scorpion.antares.model.DigitalGraph
+import ch.scorpion.antares.model.gate.TriStateBufferGate
+import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.gate.TriStateBufferGateView
 import ch.scorpion.jabbah.base.io.StringCodePrinter
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import kotlin.test.BeforeTest
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -30,7 +33,7 @@ class VHDLTriStateBufferGateTest {
 	}
 
 	@Test
-	fun test() {
+	fun testSingleBit() {
 		val builder = TestCircuitBuilder("test")
 		val input = builder.addInput("I")
 		val enable = builder.addInput("EN")
@@ -78,6 +81,69 @@ class VHDLTriStateBufferGateTest {
 			architecture Behavioral of main is
 			begin
 			  node0: entity work.VHDL_TriStateBufferGate
+			    port map (
+			      p1 => I,
+			      EN => EN,
+			      p3 => O);
+			end Behavioral;
+
+		""".trimIndent(), printer.toString())
+	}
+
+	@Ignore // Functionality not yet implemented (require template engine)
+	@Test
+	fun testMultiBit() {
+		val builder = TestCircuitBuilder("test")
+		val input = builder.addInput("I", BitWidth.BW_4)
+		val enable = builder.addInput("EN")
+		val output = builder.addOutput("O", BitWidth.BW_4)
+		val gate = builder.addVerticeView(TriStateBufferGateView(model = TriStateBufferGate(BitWidth.BW_4)))
+		builder.connect(input, gate, gate.model.getInputPort())
+		builder.connect(enable, gate, gate.model.getEnablePort())
+		builder.connect(gate, gate.model.getOutputPort(), output)
+
+		val model = HDLModel(
+			builder.graph as DigitalGraph,
+			library
+		).create()
+
+		VHDLCreator(printer).printCircuit(model.main)
+
+		assertEquals("""
+			LIBRARY ieee;
+			USE ieee.std_logic_1164.all;
+			
+			entity VHDL_TriStateBufferGate_MultiBit is
+			  generic (
+			    BitWidth : integer);
+			  port (
+			    p1: in std_logic_vector((BitWidth - 1) downto 0;
+			    EN: in std_logic;
+			    p3: out std_logic_vector((BitWidth - 1) downto 0);
+			end DRIVER_INV_GATE;
+			
+			architecture Behavioral of VHDL_TriStateBufferGate_MultiBit is
+			begin
+			  p3 <= p1 when sel = '1' else (others => 'Z');
+			end Behavioral;
+			
+			LIBRARY ieee;
+			USE ieee.std_logic_1164.all;
+			USE ieee.numeric_std.all;
+			
+			-- test
+			entity main is
+			  port (
+			    I: in std_logic;
+			    EN: in std_logic;
+			    O: out std_logic);
+			end main;
+			
+			architecture Behavioral of main is
+			begin
+			  node0: entity work.VHDL_TriStateBufferGate_MultiBit
+			    generic map (
+				  BitWidth => 4)
 			    port map (
 			      p1 => I,
 			      EN => EN,
