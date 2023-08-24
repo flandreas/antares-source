@@ -29,16 +29,30 @@ class VHDLCreator(private val out: CodePrinter) {
 			}
 	}
 
+	/** Loads and manages [VHDLTemplate]s.*/
+	private val library = VHDLLibrary()
+
 	/** Helps to ensure that every [HDLCircuitNode] definition is only printed once.*/
 	private val printedCircuitNodes = mutableSetOf<UUID>()
 
+	/** Helps to ensure that every [VHDLTemplate] definition is only printed once.*/
+	private val printedBuiltInNodes = mutableSetOf<VHDLTemplate>()
+
+	private var firstEntity = true
+
 	fun printCircuit(circuit: HDLCircuit) {
 		// Referenced entities must be printed first
-		circuit.circuitNodes.forEachIndexed { index, node -> printCircuitNode(node, index == 0) }
+		circuit.nodes.forEach { node ->
+			if (node is HDLCircuitNode) {
+				printCircuitNode(node)
+			} else if (node is BuiltInNode) {
+				printBuiltInNode(node)
+			}
+		}
 
 		LOG.debug("Exporting '${circuit.elementName}'")
 
-		if (circuit.circuitNodes.isNotEmpty()) {
+		if (!firstEntity) {
 			out.println()
 		}
 
@@ -47,13 +61,26 @@ class VHDLCreator(private val out: CodePrinter) {
 		printBehaviour(circuit)
 	}
 
-	private fun printCircuitNode(circuitNode: HDLCircuitNode, first: Boolean) {
+	private fun printBuiltInNode(builtInNode: BuiltInNode) {
+		val template = library.getTemplate(builtInNode)
+		if (!printedBuiltInNodes.contains(template)) {
+			if (!firstEntity) {
+				out.println()
+			}
+			template.print(out)
+			printedBuiltInNodes.add(template)
+			firstEntity = false
+		}
+	}
+
+	private fun printCircuitNode(circuitNode: HDLCircuitNode) {
 		if (!printedCircuitNodes.contains(circuitNode.circuit.uuid)) {
-			if (!first) {
+			if (!firstEntity) {
 				out.println()
 			}
 			printCircuit(circuitNode.circuit)
 			printedCircuitNodes.add(circuitNode.circuit.uuid)
+			firstEntity = false
 		}
 	}
 
@@ -133,6 +160,7 @@ class VHDLCreator(private val out: CodePrinter) {
 			when (node) {
 				is HDLNodeAssignment -> writeExpression(node)
 				is HDLCircuitNode -> writeEntityInstantiation(node, index)
+				is BuiltInNode -> writeEntityInstantiation(node, index)
 				is ManyToOneNode -> writeManyToOne(node)
 				is OneToManyNode -> writeOneToMany(node)
 				else -> throw HDLException("HDL element ${node::class.simpleName} not yet implemented")
@@ -188,8 +216,8 @@ class VHDLCreator(private val out: CodePrinter) {
 		}
 	}
 
-	private fun writeEntityInstantiation(node: HDLCircuitNode, index: Int) {
-		out.print("node").print(index).print(": entity work.").print(node.circuit.uuid.id)
+	private fun writeEntityInstantiation(node: BuiltInNode, index: Int) {
+		out.print("node").print(index).print(": entity work.").print(node.elementName)
 		out.println().inc()
 		out.println("port map (").inc()
 		val sep = Separator(out, ",\n")

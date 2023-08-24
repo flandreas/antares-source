@@ -122,6 +122,7 @@ subprojects {
 			}
 			val jvmMain by getting {
 				kotlin.srcDir("jvm/src/main")
+				resources.srcDir("jvm/rsc")
 				dependencies {
 					implementation(kotlin("reflect"))
 					implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlinCoroutinesVersion")

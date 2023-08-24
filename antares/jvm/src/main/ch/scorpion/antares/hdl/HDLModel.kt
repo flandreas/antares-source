@@ -2,6 +2,7 @@ package ch.scorpion.antares.hdl
 
 import ch.scorpion.antares.hdl.expression.*
 import ch.scorpion.antares.hdl.vhdl.HDLException
+import ch.scorpion.antares.hdl.vhdl.VHDLTemplate
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.gate.NonUnaryLogicGate
 import ch.scorpion.antares.model.gate.NonUnaryLogicGateType
@@ -123,13 +124,12 @@ class HDLModel(
 					it.expression = ConstantExpression(DigitalSignalFactory.falseValue(vertice.bitWidth))
 				}
 			}
-			is Concentrator, is Splitter -> {
-				BuiltInNode(vertice.type).also {
+			else -> {
+				BuiltInNode("${VHDLTemplate.PREFIX}${vertice::class.simpleName!!}").also {
 					addInputsOutputs(it, vertice, parent)
 					it.createExpressions()
 				}
 			}
-			else -> throw HDLException("Circuit element ${vertice.type} doesn't support HDL")
 		}
 	}
 

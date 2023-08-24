@@ -1,0 +1,14 @@
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+
+entity VHDL_TriStateBufferGate is
+  port (
+    p1: in std_logic;
+    EN: in std_logic;
+    p3: out std_logic);
+end DRIVER_INV_GATE;
+
+architecture Behavioral of VHDL_TriStateBufferGate is
+begin
+  p3 <= p1 when EN = '1' else 'Z';
+end Behavioral;
