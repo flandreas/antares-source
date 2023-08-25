@@ -19,6 +19,7 @@ object XorCalculator : AbstractLogicGateCalculator() {
 			when (it.bitAt(bitIndex)) {
 				True -> trueCount++
 				Error -> return Error
+				else -> {}
 			}
 		}
 		return Bit.of(trueCount.rem(2) == 1)

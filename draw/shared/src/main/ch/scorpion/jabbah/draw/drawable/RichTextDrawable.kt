@@ -33,7 +33,7 @@ class RichTextDrawable(
 		private val OVERLINE_STROKE = Stroke(1.0f)
 
 		/** The distance between lines in multiline text.*/
-		const val LINE_DIST = 5.0
+		const val LINE_DIST = 3.0
 
 		/**
 		 * If `true`, [SyntaxError]s while parsing are caught, and the raw text is displayed without

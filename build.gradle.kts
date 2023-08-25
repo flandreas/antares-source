@@ -11,9 +11,11 @@ buildscript {
 	}
 }
 
+val kotlinVersion: String by extra
+
 plugins {
-	kotlin("multiplatform") version "1.5.30" apply false
-	kotlin("plugin.serialization") version "1.5.30" apply false
+	kotlin("multiplatform") version "1.9.0" apply false
+	kotlin("plugin.serialization") version "1.9.0" apply false
 	id("org.asciidoctor.convert") version "1.5.9.2"
 	id("maven-publish")
 }
@@ -100,6 +102,7 @@ subprojects {
 		if (OperatingSystem.current().isMacOsX) {
 			js {
 				browser()
+				binaries.executable()
 			}
 		}
 
@@ -169,12 +172,6 @@ subprojects {
 					resources.srcDir("js/rsc")
 
 					dependencies {
-						implementation("org.jetbrains.kotlin-wrappers:kotlin-wrappers-bom:${kotlinWrappersVersion}")
-						implementation(npm("react-hot-loader", "^4.12.20"))
-						implementation("org.jetbrains.kotlin-wrappers:kotlin-styled")
-						implementation("com.ccfraser.muirwik:muirwik-components:0.9.0")
-						implementation(npm("react-resize-detector", "~6.7.0"))
-						implementation(npm("react-split-pane", "~0.1.92"))
 						implementation(npm("@auth0/auth0-react", "~1.8.0"))
 					}
 				}
@@ -212,16 +209,6 @@ subprojects {
 				groupId = group_project
 				artifactId = projectName
 				version = version_project
-			}
-		}
-		repositories {
-			maven {
-				name = "bytesafe"
-				url = uri("https://antares.bytesafe.dev/maven/antares/")
-				credentials {
-					username = "bytesafe"
-					password = "01G4ADXPRW5PRW5H8SR9ZRGRFY"
-				}
 			}
 		}
 	}
