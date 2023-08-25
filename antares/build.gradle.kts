@@ -30,12 +30,9 @@ plugins {
 kotlin {
 
 	if (OperatingSystem.current().isMacOsX) {
-		js(LEGACY) {
+		js {
 			browser {
 				binaries.executable()
-				commonWebpackConfig {
-					cssSupport.enabled = true
-				}
 			}
 		}
 	}

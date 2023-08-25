@@ -22,7 +22,7 @@ class AnalogSignalHistoryDrawer(
 	/** ---- [AbstractSignalHistoryDrawer] */
 
 	override fun signalY(entry: SignalHistoryEntry<AnalogSignal>): Double =
-		yAxis!!.baselineY + yAxis.signalY(entry.signal)
+		yAxis!!.baselineY + yAxis!!.signalY(entry.signal)
 
 	override val signalHeight: Double get() = yAxis!!.signalHeight
 

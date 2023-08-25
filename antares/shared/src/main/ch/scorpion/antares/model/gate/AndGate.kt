@@ -17,6 +17,7 @@ object AndCalculator : AbstractLogicGateCalculator() {
 			when (it.bitAt(bitIndex)) {
 				True -> trueCount++
 				Error -> return Error
+				else -> {}
 			}
 		}
 		return Bit.of(trueCount == input.size)
@@ -29,6 +30,7 @@ object AndCalculator : AbstractLogicGateCalculator() {
 			when (effectiveGateInputBit(input.getSignal(i).bitAt(0))) {
 				True -> trueCount++
 				Error -> return Error
+				else -> {}
 			}
 		}
 		return Bit.of(trueCount == input.signalCount)

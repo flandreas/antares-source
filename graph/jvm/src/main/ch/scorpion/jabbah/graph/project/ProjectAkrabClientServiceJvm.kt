@@ -14,6 +14,7 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.util.*
+import io.ktor.utils.io.core.internal.*
 import io.ktor.utils.io.streams.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -68,7 +69,7 @@ class ProjectAkrabClientServiceJvm(
 	 *
 	 * @throws AkrabApiException containing an [AkrabApiError] in case of an error
 	 */
-	@OptIn(KtorExperimentalAPI::class)
+	@OptIn(KtorExperimentalAPI::class, DangerousInternalIoApi::class)
 	suspend fun upload(project: Project) {
 		LOG.userTrail("Uploading project ${project.uuid}")
 

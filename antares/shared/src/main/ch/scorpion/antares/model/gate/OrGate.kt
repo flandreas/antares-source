@@ -19,6 +19,7 @@ object OrCalculator : AbstractLogicGateCalculator() {
 			when (it.bitAt(bitIndex)) {
 				True -> result = true
 				Error -> return Error
+				else -> {}
 			}
 		}
 		return Bit.of(result)
@@ -31,6 +32,7 @@ object OrCalculator : AbstractLogicGateCalculator() {
 			when (effectiveGateInputBit(input.getSignal(i).bitAt(0))) {
 				True -> result = true
 				Error -> return Error
+				else -> {}
 			}
 		}
 		return Bit.of(result)
