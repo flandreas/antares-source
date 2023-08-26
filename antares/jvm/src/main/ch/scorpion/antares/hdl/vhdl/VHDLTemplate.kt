@@ -10,12 +10,12 @@ import org.apache.commons.io.IOUtils
 import java.lang.IllegalStateException
 
 /** Reads a file containing VHDL code to create an [VHDLTemplate] */
-class VHDLTemplate(name: String, private val attributes: Map<String, Any>) {
+class VHDLTemplate(name: String/*, private val attributes: Map<String, Any>*/) {
 
 	companion object {
 		private val LOG by logger(VHDLTemplate::class)
 
-		const val PREFIX = "VHDL_"
+		private const val PREFIX = "VHDL_"
 		private const val EXTENSION = ".template"
 
 		const val ATTR_VHDL = "vhdl"
@@ -33,13 +33,13 @@ class VHDLTemplate(name: String, private val attributes: Map<String, Any>) {
 		}
 	}
 
-	private var entityName: String = "$PREFIX$name"
+	private val entityName: String = "$PREFIX$name"
 
 	/** Maps element names to the corresponding [Entity]. */
 	private val entities = mutableMapOf<String, Entity>()
 
 	private val template = runBlocking {
-		val fileName = createFileName(name)
+		val fileName = createFileName(entityName)
 		try {
 			Template(IOUtils.toString(this.javaClass.classLoader.getResourceAsStream(fileName), Charsets.UTF_8))
 		} catch (e: Throwable) {
@@ -48,8 +48,8 @@ class VHDLTemplate(name: String, private val attributes: Map<String, Any>) {
 		}
 	}
 
-	fun print(out: CodePrinter): String {
-		val entity = getEntity(attributes)
+	fun print(out: CodePrinter, node: BuiltInNode): String {
+		val entity = getEntity(node.attributes)
 		if (!entity.isWritten) {
 			out.print(entity.code)
 			entity.isWritten = true
@@ -58,7 +58,7 @@ class VHDLTemplate(name: String, private val attributes: Map<String, Any>) {
 	}
 
 	fun writeGenericMap(out: CodePrinter, node: BuiltInNode) {
-		val entity = getEntity(attributes)
+		val entity = getEntity(node.attributes)
 		if (entity.generics.isNotEmpty()) {
 			out.println("generic map (").inc()
 			val sep = Separator(out, ",\n")

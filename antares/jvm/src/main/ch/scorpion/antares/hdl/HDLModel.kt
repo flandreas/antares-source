@@ -123,14 +123,14 @@ class HDLModel(
 			}
 			// TODO: Consider extracting attribute setting logic to external registry
 			is TriStateBufferGate -> {
-				BuiltInNode("${VHDLTemplate.PREFIX}${vertice::class.simpleName!!}").also {
+				BuiltInNode(vertice::class.simpleName!!).also {
 					addInputsOutputs(it, vertice, parent)
 					it.createExpressions()
 					it.setAttribute(VHDLTemplate.ATTR_BIT_WIDTH, vertice.bitWidth.width)
 				}
 			}
 			else -> {
-				BuiltInNode("${VHDLTemplate.PREFIX}${vertice::class.simpleName!!}").also {
+				BuiltInNode(vertice::class.simpleName!!).also {
 					addInputsOutputs(it, vertice, parent)
 					it.createExpressions()
 				}

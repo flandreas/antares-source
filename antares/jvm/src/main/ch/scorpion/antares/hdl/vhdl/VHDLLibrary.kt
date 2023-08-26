@@ -18,7 +18,9 @@ class VHDLLibrary {
 	fun getTemplate(node: BuiltInNode): VHDLTemplate {
 		val name = node.elementName
 		try {
-			return templates.computeIfAbsent(name) { VHDLTemplate(name, node.attributes) }
+			return templates.computeIfAbsent(name) {
+				VHDLTemplate(name)
+			}
 		} catch (e: Throwable) {
 			val msg = "Could not load VHDL template for $name"
 			LOG.info("$msg: ${e::class.simpleName} ${e.message}")

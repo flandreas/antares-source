@@ -63,7 +63,7 @@ class VHDLCreator(private val out: CodePrinter) {
 		if (!firstEntity) {
 			out.println()
 		}
-		val entityName = template.print(out)
+		val entityName = template.print(out, builtInNode)
 		firstEntity = false
 		builtInNode.hdlEntityName = entityName
 	}
