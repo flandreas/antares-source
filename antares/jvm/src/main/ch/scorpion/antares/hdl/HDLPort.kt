@@ -1,12 +1,14 @@
 package ch.scorpion.antares.hdl
 
+import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.signal.BitWidth
 
 class HDLPort(
 	val name: String,
 	val direction: Direction,
 	net: HDLNet? = null,
-	val bitWidth: BitWidth = BitWidth.BW_1
+	val bitWidth: BitWidth = BitWidth.BW_1,
+	val logic: Logic = Logic.POSITIVE
 ) {
 
 	enum class Direction {

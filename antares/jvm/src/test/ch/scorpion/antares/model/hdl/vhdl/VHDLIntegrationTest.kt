@@ -409,4 +409,45 @@ class VHDLIntegrationTest {
 			
 		""".trimIndent(), printer.toString())
 	}
+
+	@Test
+	fun testNegatedGateInput() {
+		val builder = TestCircuitBuilder("test")
+		val input1 = builder.addInput("A")
+		val input2 = builder.addInput("B")
+		val output = builder.addOutput("O")
+		val gateView = builder.addVerticeView(LogicGateView.andGateView())
+		gateView.model.setNegateInput(1, true)
+		builder.connect(input1, gateView, gateView.model.getInput(1))
+		builder.connect(input2, gateView, gateView.model.getInput(2))
+		builder.connect(gateView, output)
+
+
+		val model = HDLModel(
+			builder.graph as DigitalGraph,
+			library
+		).create()
+
+		VHDLCreator(printer).printCircuit(model.main)
+
+		assertEquals("""
+			LIBRARY ieee;
+			USE ieee.std_logic_1164.all;
+			USE ieee.numeric_std.all;
+
+			-- test
+			entity main is
+			  port (
+			    A: in std_logic;
+			    B: in std_logic;
+			    O: out std_logic);
+			end main;
+
+			architecture Behavioral of main is
+			begin
+			  O <= (NOT A AND B);
+			end Behavioral;
+			
+		""".trimIndent(), printer.toString())
+	}
 }

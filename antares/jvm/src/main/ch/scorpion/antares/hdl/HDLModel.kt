@@ -4,6 +4,7 @@ import ch.scorpion.antares.hdl.expression.*
 import ch.scorpion.antares.hdl.vhdl.HDLException
 import ch.scorpion.antares.hdl.vhdl.VHDLTemplate
 import ch.scorpion.antares.model.DigitalGraph
+import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.gate.*
 import ch.scorpion.antares.model.input.DipSwitch
 import ch.scorpion.antares.model.net.*
@@ -148,7 +149,11 @@ class HDLModel(
 		val list = mutableListOf<Expression>()
 		for (input in inputs) {
 			input.net?.let {
-				list.add(NetExpression(it))
+				if (input.logic == Logic.NEGATIVE) {
+					list.add(NotExpression(NetExpression(it)))
+				} else {
+					list.add(NetExpression(it))
+				}
 			}
 		}
 		return OperationExpression(op, list)
@@ -158,8 +163,8 @@ class HDLModel(
 		for (port in vertice.getPorts().map { it as DigitalPort }) {
 			val net = hdlCircuit.getHDLNetOfPort(port)
 			when (port.portType) {
-				PortType.INPUT -> node.addPort(HDLPort(portName(port), HDLPort.Direction.IN, net, port.bitWidth))
-				PortType.OUTPUT -> node.addPort(HDLPort(portName(port), HDLPort.Direction.OUT, net, port.bitWidth))
+				PortType.INPUT -> node.addPort(HDLPort(portName(port), HDLPort.Direction.IN, net, port.bitWidth, port.logic))
+				PortType.OUTPUT -> node.addPort(HDLPort(portName(port), HDLPort.Direction.OUT, net, port.bitWidth, port.logic))
 				PortType.INOUT -> TODO()
 			}
 		}
