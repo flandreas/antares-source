@@ -4,9 +4,11 @@ import ch.scorpion.antares.hdl.HDLPort.Direction.IN
 import ch.scorpion.antares.hdl.HDLPort.Direction.OUT
 
 abstract class AbstractHDLNode(
-	val elementName: String
+	var elementName: String
 ) {
 	private val ports = mutableListOf<HDLPort>()
+
+	var hdlEntityName: String = elementName
 
 	fun addPort(port: HDLPort) {
 		ports.add(port)

@@ -35,9 +35,6 @@ class VHDLCreator(private val out: CodePrinter) {
 	/** Helps to ensure that every [HDLCircuitNode] definition is only printed once.*/
 	private val printedCircuitNodes = mutableSetOf<UUID>()
 
-	/** Helps to ensure that every [VHDLTemplate] definition is only printed once.*/
-	private val printedBuiltInNodes = mutableSetOf<VHDLTemplate>()
-
 	private var firstEntity = true
 
 	fun printCircuit(circuit: HDLCircuit) {
@@ -58,19 +55,17 @@ class VHDLCreator(private val out: CodePrinter) {
 
 		printImports()
 		printEntity(circuit)
-		printBehaviour(circuit)
+		writeBehaviour(circuit)
 	}
 
 	private fun printBuiltInNode(builtInNode: BuiltInNode) {
 		val template = library.getTemplate(builtInNode)
-		if (!printedBuiltInNodes.contains(template)) {
-			if (!firstEntity) {
-				out.println()
-			}
-			template.print(out)
-			printedBuiltInNodes.add(template)
-			firstEntity = false
+		if (!firstEntity) {
+			out.println()
 		}
+		val entityName = template.print(out)
+		firstEntity = false
+		builtInNode.hdlEntityName = entityName
 	}
 
 	private fun printCircuitNode(circuitNode: HDLCircuitNode) {
@@ -140,7 +135,7 @@ class VHDLCreator(private val out: CodePrinter) {
 			"std_logic_vector(${bitWidth.width - 1} downto 0)"
 		}
 
-	private fun printBehaviour(circuit: HDLCircuit) {
+	private fun writeBehaviour(circuit: HDLCircuit) {
 		out.print("architecture Behavioral of ").print(circuit.elementName).println(" is").inc()
 		writeSignals(circuit)
 		out.dec().println("begin").inc()
@@ -217,8 +212,11 @@ class VHDLCreator(private val out: CodePrinter) {
 	}
 
 	private fun writeEntityInstantiation(node: BuiltInNode, index: Int) {
-		out.print("node").print(index).print(": entity work.").print(node.elementName)
+		out.print("node").print(index).print(": entity work.").print(node.hdlEntityName)
 		out.println().inc()
+		if (node !is HDLCircuitNode) {
+			library.getTemplate(node).writeGenericMap(out, node)
+		}
 		out.println("port map (").inc()
 		val sep = Separator(out, ",\n")
 		for (ia in node.inputAssignments) {

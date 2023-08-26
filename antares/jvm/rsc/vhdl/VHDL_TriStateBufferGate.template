@@ -1,14 +1,23 @@
 LIBRARY ieee;
 USE ieee.std_logic_1164.all;
 
-entity VHDL_TriStateBufferGate is
-  port (
-    p1: in std_logic;
-    EN: in std_logic;
-    p3: out std_logic);
-end DRIVER_INV_GATE;
+{%- if bitWidth == 1 %}
+    {%- set entityName = vhdl.setEntityName('VHDL_TriStateBufferGate') %}
+{%- else %}
+    {%- set entityName = vhdl.setEntityName('VHDL_TriStateBufferGate_MultiBit') %}
+{%- endif %}
 
-architecture Behavioral of VHDL_TriStateBufferGate is
+entity {{ entityName }} is
+{%- if bitWidth > 1 %}
+  generic (bitWidth : integer);{{ vhdl.registerGeneric('bitWidth') }}
+{%- endif %}
+  port (
+    p1: in {{ vhdl.genericType(bitWidth) }};
+    EN: in std_logic;
+    p3: out {{ vhdl.genericType(bitWidth) }});
+end {{ entityName }};
+
+architecture Behavioral of {{ entityName }} is
 begin
-  p3 <= p1 when EN = '1' else 'Z';
+  p3 <= p1 when EN = '1' else {% if bitWidth == 1 %}'Z'{% else %}(others => 'Z'){% endif %};
 end Behavioral;

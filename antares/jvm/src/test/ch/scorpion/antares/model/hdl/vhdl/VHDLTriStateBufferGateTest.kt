@@ -59,7 +59,7 @@ class VHDLTriStateBufferGateTest {
 			    p1: in std_logic;
 			    EN: in std_logic;
 			    p3: out std_logic);
-			end DRIVER_INV_GATE;
+			end VHDL_TriStateBufferGate;
 			
 			architecture Behavioral of VHDL_TriStateBufferGate is
 			begin
@@ -90,7 +90,6 @@ class VHDLTriStateBufferGateTest {
 		""".trimIndent(), printer.toString())
 	}
 
-	@Ignore // Functionality not yet implemented (require template engine)
 	@Test
 	fun testMultiBit() {
 		val builder = TestCircuitBuilder("test")
@@ -112,19 +111,18 @@ class VHDLTriStateBufferGateTest {
 		assertEquals("""
 			LIBRARY ieee;
 			USE ieee.std_logic_1164.all;
-			
+
 			entity VHDL_TriStateBufferGate_MultiBit is
-			  generic (
-			    BitWidth : integer);
+			  generic (bitWidth : integer);
 			  port (
-			    p1: in std_logic_vector((BitWidth - 1) downto 0;
+			    p1: in std_logic_vector((bitWidth - 1) downto 0);
 			    EN: in std_logic;
-			    p3: out std_logic_vector((BitWidth - 1) downto 0);
-			end DRIVER_INV_GATE;
+			    p3: out std_logic_vector((bitWidth - 1) downto 0));
+			end VHDL_TriStateBufferGate_MultiBit;
 			
 			architecture Behavioral of VHDL_TriStateBufferGate_MultiBit is
 			begin
-			  p3 <= p1 when sel = '1' else (others => 'Z');
+			  p3 <= p1 when EN = '1' else (others => 'Z');
 			end Behavioral;
 			
 			LIBRARY ieee;
@@ -134,16 +132,16 @@ class VHDLTriStateBufferGateTest {
 			-- test
 			entity main is
 			  port (
-			    I: in std_logic;
+			    I: in std_logic_vector(3 downto 0);
 			    EN: in std_logic;
-			    O: out std_logic);
+			    O: out std_logic_vector(3 downto 0));
 			end main;
 			
 			architecture Behavioral of main is
 			begin
 			  node0: entity work.VHDL_TriStateBufferGate_MultiBit
 			    generic map (
-				  BitWidth => 4)
+			      bitWidth => 4)
 			    port map (
 			      p1 => I,
 			      EN => EN,

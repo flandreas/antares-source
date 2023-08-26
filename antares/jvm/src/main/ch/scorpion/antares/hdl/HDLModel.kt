@@ -4,10 +4,7 @@ import ch.scorpion.antares.hdl.expression.*
 import ch.scorpion.antares.hdl.vhdl.HDLException
 import ch.scorpion.antares.hdl.vhdl.VHDLTemplate
 import ch.scorpion.antares.model.DigitalGraph
-import ch.scorpion.antares.model.gate.NonUnaryLogicGate
-import ch.scorpion.antares.model.gate.NonUnaryLogicGateType
-import ch.scorpion.antares.model.gate.UnaryLogicGate
-import ch.scorpion.antares.model.gate.UnaryLogicGateType
+import ch.scorpion.antares.model.gate.*
 import ch.scorpion.antares.model.input.DipSwitch
 import ch.scorpion.antares.model.net.*
 import ch.scorpion.antares.model.port.DigitalPort
@@ -122,6 +119,14 @@ class HDLModel(
 			is Ground -> {
 				createExpression(vertice, parent).also {
 					it.expression = ConstantExpression(DigitalSignalFactory.falseValue(vertice.bitWidth))
+				}
+			}
+			// TODO: Consider extracting attribute setting logic to external registry
+			is TriStateBufferGate -> {
+				BuiltInNode("${VHDLTemplate.PREFIX}${vertice::class.simpleName!!}").also {
+					addInputsOutputs(it, vertice, parent)
+					it.createExpressions()
+					it.setAttribute(VHDLTemplate.ATTR_BIT_WIDTH, vertice.bitWidth.width)
 				}
 			}
 			else -> {

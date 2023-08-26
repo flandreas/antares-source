@@ -8,6 +8,11 @@ open class BuiltInNode(elementName: String) : AbstractHDLNode(elementName), Iter
 	private val _inputAssignments = mutableListOf<InputAssignment>()
 	val inputAssignments: Collection<InputAssignment> get() = _inputAssignments
 
+	private val _attributes = mutableMapOf<String, Any>()
+	val attributes: Map<String, Any>get() = _attributes
+
+	override fun iterator(): Iterator<InputAssignment> = _inputAssignments.iterator()
+
 	fun createExpressions(): BuiltInNode {
 		for (input in inputs) {
 			input.net?.let {
@@ -17,7 +22,9 @@ open class BuiltInNode(elementName: String) : AbstractHDLNode(elementName), Iter
 		return this
 	}
 
-	override fun iterator(): Iterator<InputAssignment> = _inputAssignments.iterator()
+	fun setAttribute(name: String, value: Any) {
+		_attributes[name] = value
+	}
 
 	data class InputAssignment(val name: String, val expression: Expression)
 }
