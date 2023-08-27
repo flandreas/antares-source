@@ -308,6 +308,7 @@ class LibraryTreeViewSwing(
 					} else {
 						component.icon = getIcon(iconPath!!)
 					}
+					component.richText = (value as NamableTreeNode).richTextName.value
 					if (showBeginnerTips) {
 						component.toolTipText = Translations.getString("library.action.baseElement.tip")
 					}

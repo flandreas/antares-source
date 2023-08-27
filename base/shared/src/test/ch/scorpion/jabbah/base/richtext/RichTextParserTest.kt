@@ -460,4 +460,23 @@ class RichTextParserTest {
 			--- : Bla
 		""".trimIndent())
 	}
+
+	@Test
+	fun bug613() {
+		assertAST(
+			RichTextParser("*(Input\\/Output)").parse(), """
+			Compound
+			- Fragment
+			-- -
+			--- *(Input/Output)
+		""".trimIndent())
+
+		assertAST(
+			RichTextParser("Input\\/Output").parse(), """
+			Compound
+			- Fragment
+			-- -
+			--- Input/Output
+		""".trimIndent())
+	}
 }
