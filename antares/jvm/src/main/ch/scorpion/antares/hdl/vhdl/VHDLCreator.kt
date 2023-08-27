@@ -55,7 +55,7 @@ class VHDLCreator(private val out: CodePrinter) {
 
 		printImports()
 		printEntity(circuit)
-		writeBehaviour(circuit)
+		printBehaviour(circuit)
 	}
 
 	private fun printBuiltInNode(builtInNode: BuiltInNode) {
@@ -90,31 +90,31 @@ class VHDLCreator(private val out: CodePrinter) {
 	private fun printEntity(circuit: HDLCircuit) {
 		out.println("-- ${circuit.name}")
 		out.print("entity ").print(circuit.elementName).println(" is").inc()
-		writeEntityPorts(circuit)
+		printEntityPorts(circuit)
 		out.dec()
 		out.print("end ").print(circuit.elementName).println(";")
 		out.println()
 	}
 
-	private fun writeEntityPorts(circuit: HDLCircuit) {
+	private fun printEntityPorts(circuit: HDLCircuit) {
 		var count = 0
 		out.println("port (").inc()
 		circuit.inputs.forEach {
 			count++
-			writePort(it, count == circuit.portsCount)
+			printPort(it, count == circuit.portsCount)
 		}
 		circuit.outputs.forEach {
 			count++
-			writePort(it, count == circuit.portsCount)
+			printPort(it, count == circuit.portsCount)
 		}
 		circuit.inOuts.forEach {
 			count++
-			writePort(it, count == circuit.portsCount)
+			printPort(it, count == circuit.portsCount)
 		}
 		out.println(");").dec()
 	}
 
-	private fun writePort(port: HDLPort, isLast: Boolean) {
+	private fun printPort(port: HDLPort, isLast: Boolean) {
 		out.print(port.name).print(": ").print(getOutsidePortDirection(port)).print(' ').print(getType(port.bitWidth))
 		if (!isLast) {
 			out.println(";")
@@ -135,43 +135,43 @@ class VHDLCreator(private val out: CodePrinter) {
 			"std_logic_vector(${bitWidth.width - 1} downto 0)"
 		}
 
-	private fun writeBehaviour(circuit: HDLCircuit) {
+	private fun printBehaviour(circuit: HDLCircuit) {
 		out.print("architecture Behavioral of ").print(circuit.elementName).println(" is").inc()
-		writeSignals(circuit)
+		printSignals(circuit)
 		out.dec().println("begin").inc()
-		writeNodes(circuit)
-		writeOutputs(circuit)
+		printNodes(circuit)
+		printOutputs(circuit)
 		out.dec().println("end Behavioral;")
 	}
 
-	private fun writeSignals(circuit: HDLCircuit) {
+	private fun printSignals(circuit: HDLCircuit) {
 		circuit.nets.filter { it.needsVariable }.forEach {
 			out.print("signal ").print(it.name).print(": ").print(getType(it.bitWidth)).println(";")
 		}
 	}
 
-	private fun writeNodes(circuit: HDLCircuit) {
+	private fun printNodes(circuit: HDLCircuit) {
 		circuit.nodes.forEachIndexed { index, node ->
 			when (node) {
-				is HDLNodeAssignment -> writeExpression(node)
-				is HDLCircuitNode -> writeEntityInstantiation(node, index)
-				is BuiltInNode -> writeEntityInstantiation(node, index)
-				is ManyToOneNode -> writeManyToOne(node)
-				is OneToManyNode -> writeOneToMany(node)
+				is HDLNodeAssignment -> printExpressions(node)
+				is HDLCircuitNode -> printEntityInstantiation(node, index)
+				is BuiltInNode -> printEntityInstantiation(node, index)
+				is ManyToOneNode -> printManyToOne(node)
+				is OneToManyNode -> printOneToMany(node)
 				else -> throw HDLException("HDL element ${node::class.simpleName} not yet implemented")
 			}
 		}
 	}
 
-	private fun writeExpression(node: HDLNodeAssignment) {
+	private fun printExpressions(node: HDLNodeAssignment) {
 		node.targetNet?.let {
 			out.print(it.name).print(" <= ")
-			writeExpression(node.expression)
+			printExpression(node.expression)
 			out.println(";")
 		}
 	}
 
-	private fun writeExpression(expression: Expression) {
+	private fun printExpression(expression: Expression) {
 		when (expression) {
 			is NetExpression -> out.print(expression.net.name)
 			is NotExpression -> {
@@ -179,10 +179,10 @@ class VHDLCreator(private val out: CodePrinter) {
 				val inner = expression.expression
 				if (inner is NotExpression) {
 					out.print("(")
-					writeExpression(inner)
+					printExpression(inner)
 					out.print(")")
 				} else {
-					writeExpression(inner)
+					printExpression(inner)
 				}
 			}
 			is OperationExpression -> {
@@ -200,7 +200,7 @@ class VHDLCreator(private val out: CodePrinter) {
 					} else {
 						out.print(op)
 					}
-					writeExpression(exp)
+					printExpression(exp)
 				}
 				out.print(")")
 			}
@@ -211,7 +211,7 @@ class VHDLCreator(private val out: CodePrinter) {
 		}
 	}
 
-	private fun writeEntityInstantiation(node: BuiltInNode, index: Int) {
+	private fun printEntityInstantiation(node: BuiltInNode, index: Int) {
 		out.print("node").print(index).print(": entity work.").print(node.hdlEntityName)
 		out.println().inc()
 		if (node !is HDLCircuitNode) {
@@ -222,7 +222,7 @@ class VHDLCreator(private val out: CodePrinter) {
 		for (ia in node.inputAssignments) {
 			sep.check()
 			out.print(ia.name).print(" => ")
-			writeExpression(ia.expression)
+			printExpression(ia.expression)
 		}
 
 		for (output in node.outputs) {
@@ -232,10 +232,17 @@ class VHDLCreator(private val out: CodePrinter) {
 			}
 		}
 
+		for (inout in node.inOuts) {
+			inout.net?.let { net ->
+				sep.check()
+				out.print(inout.name).print(" => ").print(net.name)
+			}
+		}
+
 		out.println(");").dec().dec()
 	}
 
-	private fun writeOutputs(circuit: HDLCircuit) {
+	private fun printOutputs(circuit: HDLCircuit) {
 		for (output in circuit.outputs) {
 			output.net?.let { net ->
 				if (net.needsVariable || net.isInput) {
@@ -245,7 +252,7 @@ class VHDLCreator(private val out: CodePrinter) {
 		}
 	}
 
-	private fun writeManyToOne(node: ManyToOneNode) {
+	private fun printManyToOne(node: ManyToOneNode) {
 		node.targetSignal?.let { target ->
 			for (input in node) {
 				out.print(target).print("(")
@@ -255,13 +262,13 @@ class VHDLCreator(private val out: CodePrinter) {
 					out.print(input.msb).print(" downto ").print(input.lsb)
 				}
 				out.print(") <= ")
-				writeExpression(input.expression)
+				printExpression(input.expression)
 				out.println(";")
 			}
 		}
 	}
 
-	private fun writeOneToMany(node: OneToManyNode) {
+	private fun printOneToMany(node: OneToManyNode) {
 		node.sourceSignal?.let { source ->
 			val narrowSideBitWidth = node.bitWidth.width / node.branchCount.count
 			var i = 0

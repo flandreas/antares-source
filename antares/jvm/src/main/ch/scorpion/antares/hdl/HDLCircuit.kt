@@ -1,6 +1,7 @@
 package ch.scorpion.antares.hdl
 
 import ch.scorpion.antares.model.DigitalGraph
+import ch.scorpion.antares.model.inout.DigitalCircuitInOut
 import ch.scorpion.antares.model.net.Concentrator
 import ch.scorpion.antares.model.net.Splitter
 import ch.scorpion.antares.model.port.DigitalPort
@@ -49,12 +50,20 @@ class HDLCircuit(
 		createNodes()
 
 		for (input in inputs) {
-			input.net?.setIsInput(input.name)
+			input.net?.let { net ->
+				net.setIsInput(input.name)
+				if (net.isInOutNet) {
+					input.setInOut()
+				}
+			}
 		}
 		for (output in outputs) {
-			output.net?.let {
-				if (it.needsVariable) {
-					it.setIsOutput(output.name)
+			output.net?.let { net ->
+				if (net.needsVariable) {
+					net.setIsOutput(output.name)
+				}
+				if (net.isInOutNet) {
+					output.setInOut()
 				}
 			}
 		}
@@ -64,12 +73,13 @@ class HDLCircuit(
 
 	private fun createNodes() {
 		for (elem in circuit.elements.filterIsInstance<Vertice>()) {
-			if (elem is GraphInput<*> && elem.portType == PortType.INPUT) {
+			if (elem is DigitalCircuitInOut) {
 				val port = elem.getPort<Any>() as DigitalPort
-				addPort(HDLPort(elem.name!!, HDLPort.Direction.OUT, getHDLNetOfPort(port), port.bitWidth))
-			} else if (elem is GraphOutput<*> && elem.portType == PortType.OUTPUT) {
-				val port = elem.getPort<Any>() as DigitalPort
-				addPort(HDLPort(elem.name!!, HDLPort.Direction.IN, getHDLNetOfPort(port), port.bitWidth))
+				when (elem.portType) {
+					PortType.INPUT -> addPort(HDLPort(elem.name!!, HDLPort.Direction.OUT, getHDLNetOfPort(port), port.bitWidth))
+					PortType.OUTPUT -> addPort(HDLPort(elem.name!!, HDLPort.Direction.IN, getHDLNetOfPort(port), port.bitWidth))
+					PortType.INOUT -> addPort(HDLPort(elem.name!!, HDLPort.Direction.INOUT, getHDLNetOfPort(port), port.bitWidth))
+				}
 			} else if (elem is Concentrator) {
 				_nodes.add(ManyToOneNode(model.createNode(elem, this), elem.bitWidth, elem.branchCount))
 			} else if (elem is Splitter) {

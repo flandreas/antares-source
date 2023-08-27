@@ -165,7 +165,8 @@ class HDLModel(
 			when (port.portType) {
 				PortType.INPUT -> node.addPort(HDLPort(portName(port), HDLPort.Direction.IN, net, port.bitWidth, port.logic))
 				PortType.OUTPUT -> node.addPort(HDLPort(portName(port), HDLPort.Direction.OUT, net, port.bitWidth, port.logic))
-				PortType.INOUT -> TODO()
+				// InOut not yet really supported by HDL
+				PortType.INOUT -> node.addPort(HDLPort(portName(port), HDLPort.Direction.OUT, net, port.bitWidth, port.logic))
 			}
 		}
 	}

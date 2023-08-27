@@ -5,7 +5,7 @@ import ch.scorpion.antares.model.signal.BitWidth
 
 class HDLPort(
 	val name: String,
-	val direction: Direction,
+	direction: Direction,
 	net: HDLNet? = null,
 	val bitWidth: BitWidth = BitWidth.BW_1,
 	val logic: Logic = Logic.POSITIVE
@@ -17,6 +17,9 @@ class HDLPort(
 		INOUT
 	}
 
+	var direction: Direction = direction
+		private set
+
 	var net: HDLNet? = net
 		set(value) {
 			if (field != null) {
@@ -25,4 +28,8 @@ class HDLPort(
 			field = value
 			value?.addPort(this)
 		}
+
+	fun setInOut() {
+		direction = Direction.INOUT
+	}
 }

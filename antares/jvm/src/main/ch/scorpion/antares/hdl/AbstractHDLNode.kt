@@ -1,7 +1,6 @@
 package ch.scorpion.antares.hdl
 
-import ch.scorpion.antares.hdl.HDLPort.Direction.IN
-import ch.scorpion.antares.hdl.HDLPort.Direction.OUT
+import ch.scorpion.antares.hdl.HDLPort.Direction.*
 
 abstract class AbstractHDLNode(
 	var elementName: String
@@ -17,4 +16,6 @@ abstract class AbstractHDLNode(
 	val inputs: List<HDLPort> get() = ports.filter { it.direction == IN }
 
 	val outputs: List<HDLPort> get() = ports.filter { it.direction == OUT }
+
+	val inOuts: List<HDLPort> get() = ports.filter { it.direction == INOUT}
 }

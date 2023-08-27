@@ -20,6 +20,8 @@ class HDLNet(
 	var needsVariable: Boolean = true
 		private set
 
+	val isInOutNet: Boolean get() = inOuts.isNotEmpty()
+
 	fun addPort(port: HDLPort) {
 		when (port.direction) {
 			HDLPort.Direction.IN -> inputs.add(port)
@@ -38,7 +40,7 @@ class HDLNet(
 		if (port === output) {
 			output = null
 		} else {
-			inOuts.remove(port)
+			inputs.remove(port)
 			inOuts.remove(port)
 		}
 	}
