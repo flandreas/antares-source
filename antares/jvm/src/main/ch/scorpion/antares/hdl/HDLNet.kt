@@ -8,7 +8,8 @@ class HDLNet(
 	val bitWidth: BitWidth = BitWidth.BW_1
 ) {
 
-	private val inputs = mutableListOf<HDLPort>()
+	private val _inputs = mutableListOf<HDLPort>()
+	val inputs: List<HDLPort> get() = _inputs
 
 	private val inOuts = mutableListOf<HDLPort>()
 
@@ -24,7 +25,7 @@ class HDLNet(
 
 	fun addPort(port: HDLPort) {
 		when (port.direction) {
-			HDLPort.Direction.IN -> inputs.add(port)
+			HDLPort.Direction.IN -> _inputs.add(port)
 			HDLPort.Direction.INOUT -> inOuts.add(port)
 			HDLPort.Direction.OUT -> {
 				if (output != null) {
@@ -40,7 +41,7 @@ class HDLNet(
 		if (port === output) {
 			output = null
 		} else {
-			inputs.remove(port)
+			_inputs.remove(port)
 			inOuts.remove(port)
 		}
 	}
@@ -51,8 +52,12 @@ class HDLNet(
 		isInput = true
 	}
 
-	fun setIsOutput(name: String) {
-		this.name = name
-		needsVariable = false
+	fun setIsOutput(name: String, singleRead: Boolean) {
+		if (singleRead) {
+			this.name = name
+			needsVariable = false
+		} else {
+			this.name = name + "_net"
+		}
 	}
 }

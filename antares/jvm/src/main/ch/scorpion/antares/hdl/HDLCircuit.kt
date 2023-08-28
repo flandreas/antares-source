@@ -60,7 +60,7 @@ class HDLCircuit(
 		for (output in outputs) {
 			output.net?.let { net ->
 				if (net.needsVariable) {
-					net.setIsOutput(output.name)
+					net.setIsOutput(output.name, net.inputs.size == 1)
 				}
 				if (net.isInOutNet) {
 					output.setInOut()

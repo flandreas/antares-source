@@ -184,6 +184,18 @@
             </containerLibraryElement>
           </items>
         </libraryFolder>
+        <libraryFolder _id='37'>
+          <name>
+            <translation lang='en' text='VHDL'/>
+          </name>
+          <items>
+            <containerLibraryElement _id='38' uuid='ee6b64f0-7189-4604-b6a9-e0d063336787' type='digital'>
+              <name>
+                <translation lang='en' text='NodeView'/>
+              </name>
+            </containerLibraryElement>
+          </items>
+        </libraryFolder>
       </items>
     </libraryFolder>
   </folder>

@@ -29,6 +29,10 @@ class HDLPort(
 			value?.addPort(this)
 		}
 
+	init {
+		net?.addPort(this)
+	}
+
 	fun setInOut() {
 		direction = Direction.INOUT
 	}
