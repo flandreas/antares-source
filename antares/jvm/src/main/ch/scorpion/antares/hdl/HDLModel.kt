@@ -36,6 +36,9 @@ class HDLModel(
 
 	val main: HDLCircuit = HDLCircuit(circuit, "main", this)
 
+	private var _renaming: HDLRenaming? = null
+	private val renaming: HDLRenaming? get() = _renaming
+
 	init {
 		hdlCircuits[main.uuid] = main
 	}
@@ -137,6 +140,13 @@ class HDLModel(
 					it.createExpressions()
 				}
 			}
+		}
+	}
+
+	fun renameLabels(renaming: HDLRenaming) {
+		this._renaming = RenameSingleCheck(renaming)
+		for (c in hdlCircuits.values) {
+			c.rename(this.renaming!!)
 		}
 	}
 

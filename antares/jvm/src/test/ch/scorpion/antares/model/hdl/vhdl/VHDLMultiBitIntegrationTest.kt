@@ -3,8 +3,7 @@ package ch.scorpion.antares.model.hdl.vhdl
 import ch.scorpion.antares.AbstractJvmCircuitTest
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.TestCircuitBuilder
-import ch.scorpion.antares.hdl.HDLModel
-import ch.scorpion.antares.hdl.vhdl.VHDLCreator
+import ch.scorpion.antares.hdl.vhdl.VHDLGenerator
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.gate.AbstractLogicGate
 import ch.scorpion.antares.model.net.BranchCount
@@ -37,12 +36,8 @@ class VHDLMultiBitIntegrationTest {
 
 	@Test
 	fun testNoOp() {
-		val model = HDLModel(
-			TestCircuitBuilder("test").buildNOP(bitWidth = BitWidth.BW_4).graph as DigitalGraph,
-			library
-		).create()
-
-		VHDLCreator(printer).printCircuit(model.main)
+		VHDLGenerator(library, printer).generate(
+			TestCircuitBuilder("test").buildNOP(bitWidth = BitWidth.BW_4).graph as DigitalGraph)
 
 		assertEquals("""
 			LIBRARY ieee;
@@ -66,12 +61,8 @@ class VHDLMultiBitIntegrationTest {
 
 	@Test
 	fun testCustomNand() {
-		val model = HDLModel(
-			TestCircuitBuilder("test").buildCustomNAND(null, BitWidth.BW_4).graph as DigitalGraph,
-			library
-		).create()
-
-		VHDLCreator(printer).printCircuit(model.main)
+		VHDLGenerator(library, printer).generate(
+			TestCircuitBuilder("test").buildCustomNAND(null, BitWidth.BW_4).graph as DigitalGraph)
 
 		// The result is not yet optimized (not yet implemented). The optimized result would be
 		// O1 <= NOT (I1 AND I2), without the intermediate signal s0.
@@ -109,8 +100,7 @@ class VHDLMultiBitIntegrationTest {
 		builder.connect(input2, concentrator, concentrator.model.getInput(3))
 		builder.connect(concentrator, concentrator.model.getOutput(1), output)
 
-		val model = HDLModel(builder.graph as DigitalGraph, library).create()
-		VHDLCreator(printer).printCircuit(model.main)
+		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
 
 		assertEquals("""
 			LIBRARY ieee;
@@ -145,8 +135,7 @@ class VHDLMultiBitIntegrationTest {
 		builder.connect(input2, concentrator, concentrator.model.getInput(3))
 		builder.connect(concentrator, concentrator.model.getOutput(1), output)
 
-		val model = HDLModel(builder.graph as DigitalGraph, library).create()
-		VHDLCreator(printer).printCircuit(model.main)
+		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
 
 		assertEquals("""
 			LIBRARY ieee;
@@ -181,8 +170,7 @@ class VHDLMultiBitIntegrationTest {
 		builder.connect(splitter, splitter.model.getOutput(2), output1)
 		builder.connect(splitter, splitter.model.getOutput(3), output2)
 
-		val model = HDLModel(builder.graph as DigitalGraph, library).create()
-		VHDLCreator(printer).printCircuit(model.main)
+		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
 
 		assertEquals("""
 			LIBRARY ieee;
@@ -217,8 +205,7 @@ class VHDLMultiBitIntegrationTest {
 		builder.connect(splitter, splitter.model.getOutput(2), output1)
 		builder.connect(splitter, splitter.model.getOutput(3), output2)
 
-		val model = HDLModel(builder.graph as DigitalGraph, library).create()
-		VHDLCreator(printer).printCircuit(model.main)
+		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
 
 		assertEquals("""
 			LIBRARY ieee;

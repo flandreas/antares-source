@@ -30,8 +30,13 @@ class TestCircuitBuilder(
 ) : GraphViewBuilder<DigitalSignal>(graphName, AntaresGraphTypes.Digital) {
 
 	/** Builds a [GraphView] that contains only an input and an output, i.e. that perform a "no operation".*/
-	fun buildNOP(propagationDelay: Long = 0, bitWidth: BitWidth = BitWidth.BW_1): GraphView {
-		connect(addInput("I", bitWidth), addOutput("O", bitWidth))
+	fun buildNOP(
+		propagationDelay: Long = 0,
+		bitWidth: BitWidth = BitWidth.BW_1,
+		inputName: String = "I",
+		outputName: String = "O"
+	): GraphView {
+		connect(addInput(inputName, bitWidth), addOutput(outputName, bitWidth))
 		graph.overallPropagationDelay = propagationDelay
 		return graphView
 	}

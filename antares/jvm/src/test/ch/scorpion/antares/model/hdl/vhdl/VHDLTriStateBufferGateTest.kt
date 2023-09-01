@@ -3,8 +3,7 @@ package ch.scorpion.antares.model.hdl.vhdl
 import ch.scorpion.antares.AbstractJvmCircuitTest
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.TestCircuitBuilder
-import ch.scorpion.antares.hdl.HDLModel
-import ch.scorpion.antares.hdl.vhdl.VHDLCreator
+import ch.scorpion.antares.hdl.vhdl.VHDLGenerator
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.gate.TriStateBufferGate
@@ -43,12 +42,7 @@ class VHDLTriStateBufferGateTest {
 		builder.connect(enable, gate, gate.model.getEnablePort())
 		builder.connect(gate, gate.model.getOutputPort(), output)
 
-		val model = HDLModel(
-			builder.graph as DigitalGraph,
-			library
-		).create()
-
-		VHDLCreator(printer).printCircuit(model.main)
+		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
 
 		assertEquals("""
 			LIBRARY ieee;
@@ -101,12 +95,7 @@ class VHDLTriStateBufferGateTest {
 		builder.connect(enable, gate, gate.model.getEnablePort())
 		builder.connect(gate, gate.model.getOutputPort(), output)
 
-		val model = HDLModel(
-			builder.graph as DigitalGraph,
-			library
-		).create()
-
-		VHDLCreator(printer).printCircuit(model.main)
+		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
 
 		assertEquals("""
 			LIBRARY ieee;
@@ -159,12 +148,7 @@ class VHDLTriStateBufferGateTest {
 		builder.connect(enable, gate, gate.model.getEnablePort())
 		builder.connect(gate, gate.model.getOutputPort(), output)
 
-		val model = HDLModel(
-			builder.graph as DigitalGraph,
-			library
-		).create()
-
-		VHDLCreator(printer).printCircuit(model.main)
+		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
 
 		assertEquals("""
 			LIBRARY ieee;
@@ -229,12 +213,7 @@ class VHDLTriStateBufferGateTest {
 		builder.connect(enable2, gate2, gate2.model.getEnablePort())
 		builder.connect(gate2, gate2.model.getOutputPort(), output2)
 
-		val model = HDLModel(
-			builder.graph as DigitalGraph,
-			library
-		).create()
-
-		VHDLCreator(printer).printCircuit(model.main)
+		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
 
 		assertEquals("""
 			LIBRARY ieee;

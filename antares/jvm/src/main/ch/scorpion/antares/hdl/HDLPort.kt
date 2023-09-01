@@ -4,7 +4,7 @@ import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.signal.BitWidth
 
 class HDLPort(
-	val name: String,
+	name: String,
 	direction: Direction,
 	net: HDLNet? = null,
 	val bitWidth: BitWidth = BitWidth.BW_1,
@@ -16,6 +16,9 @@ class HDLPort(
 		OUT,
 		INOUT
 	}
+
+	var name: String = name
+		private set
 
 	var direction: Direction = direction
 		private set
@@ -35,5 +38,9 @@ class HDLPort(
 
 	fun setInOut() {
 		direction = Direction.INOUT
+	}
+
+	fun rename(renaming: HDLRenaming) {
+		name = renaming.checkName(name)
 	}
 }

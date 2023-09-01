@@ -4,8 +4,7 @@ import ch.scorpion.antares.AbstractJvmCircuitTest
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.TestLibraryBuilder
-import ch.scorpion.antares.hdl.HDLModel
-import ch.scorpion.antares.hdl.vhdl.VHDLCreator
+import ch.scorpion.antares.hdl.vhdl.VHDLGenerator
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.gate.AbstractLogicGate
 import ch.scorpion.antares.model.input.DipSwitch
@@ -43,12 +42,8 @@ class VHDLIntegrationTest {
 
 	@Test
 	fun testNoOp() {
-		val model = HDLModel(
-			TestCircuitBuilder("test").buildNOP().graph as DigitalGraph,
-			library
-		).create()
-
-		VHDLCreator(printer).printCircuit(model.main)
+		VHDLGenerator(library, printer).generate(
+			TestCircuitBuilder("test").buildNOP().graph as DigitalGraph)
 
 		assertEquals("""
 			LIBRARY ieee;
@@ -81,9 +76,8 @@ class VHDLIntegrationTest {
 		builder.connect(input, subGraphVV1, subGraphVV1.model.getInput())
 		builder.connect(subGraphVV1, subGraphVV1.model.getOutput(), subGraphVV2, subGraphVV2.model.getInput())
 		builder.connect(subGraphVV2, subGraphVV2.model.getOutput(), output)
-		val model = HDLModel(builder.graph as DigitalGraph, library).create()
 
-		VHDLCreator(printer).printCircuit(model.main)
+		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
 
 		assertEquals("""
 			LIBRARY ieee;
@@ -131,12 +125,8 @@ class VHDLIntegrationTest {
 
 	@Test
 	fun testCustomNotGate() {
-		val model = HDLModel(
-			TestCircuitBuilder("test").buildCustomNot().graph as DigitalGraph,
-			library
-		).create()
-
-		VHDLCreator(printer).printCircuit(model.main)
+		VHDLGenerator(library, printer)
+			.generate(TestCircuitBuilder("test").buildCustomNot().graph as DigitalGraph)
 
 		assertEquals("""
 			LIBRARY ieee;
@@ -160,12 +150,9 @@ class VHDLIntegrationTest {
 
 	@Test
 	fun testCustomNand() {
-		val model = HDLModel(
-			TestCircuitBuilder("test").buildCustomNAND(null).graph as DigitalGraph,
-			library
-		).create()
+		VHDLGenerator(library, printer)
+			.generate(TestCircuitBuilder("test").buildCustomNAND(null).graph as DigitalGraph)
 
-		VHDLCreator(printer).printCircuit(model.main)
 
 		// The result is not yet optimized (not yet implemented). The optimized result would be
 		// O1 <= NOT (I1 AND I2), without the intermediate signal s0.
@@ -232,12 +219,7 @@ class VHDLIntegrationTest {
 		builder.connect(inputB, gateView, gateView.model.getInput(2))
 		builder.connect(gateView, output)
 
-		val model = HDLModel(
-			builder.graph as DigitalGraph,
-			library
-		).create()
-
-		VHDLCreator(printer).printCircuit(model.main)
+		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
 
 		assertEquals("""
 			LIBRARY ieee;
@@ -278,12 +260,7 @@ class VHDLIntegrationTest {
 		builder.connect(input, gateView, gateView.model.getInput())
 		builder.connect(gateView, output)
 
-		val model = HDLModel(
-			builder.graph as DigitalGraph,
-			library
-		).create()
-
-		VHDLCreator(printer).printCircuit(model.main)
+		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
 
 		assertEquals("""
 			LIBRARY ieee;
@@ -312,12 +289,7 @@ class VHDLIntegrationTest {
 		val constantView = builder.addVerticeView(ConstantView(DigitalSignalFactory.of(true)))
 		builder.connect(constantView, output)
 
-		val model = HDLModel(
-			builder.graph as DigitalGraph,
-			library
-		).create()
-
-		VHDLCreator(printer).printCircuit(model.main)
+		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
 
 		assertEquals("""
 			LIBRARY ieee;
@@ -347,12 +319,7 @@ class VHDLIntegrationTest {
 		))
 		builder.connect(dipSwitch, output)
 
-		val model = HDLModel(
-			builder.graph as DigitalGraph,
-			library
-		).create()
-
-		VHDLCreator(printer).printCircuit(model.main)
+		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
 
 		assertEquals("""
 			LIBRARY ieee;
@@ -383,12 +350,7 @@ class VHDLIntegrationTest {
 		builder.connect(powerView, output1)
 		builder.connect(groundView, output2)
 
-		val model = HDLModel(
-			builder.graph as DigitalGraph,
-			library
-		).create()
-
-		VHDLCreator(printer).printCircuit(model.main)
+		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
 
 		assertEquals("""
 			LIBRARY ieee;
@@ -423,13 +385,7 @@ class VHDLIntegrationTest {
 		builder.connect(input2, gateView, gateView.model.getInput(2))
 		builder.connect(gateView, output)
 
-
-		val model = HDLModel(
-			builder.graph as DigitalGraph,
-			library
-		).create()
-
-		VHDLCreator(printer).printCircuit(model.main)
+		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
 
 		assertEquals("""
 			LIBRARY ieee;

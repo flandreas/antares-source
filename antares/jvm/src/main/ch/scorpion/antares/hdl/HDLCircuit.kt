@@ -1,5 +1,6 @@
 package ch.scorpion.antares.hdl
 
+import ch.scorpion.antares.hdl.vhdl.HDLException
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.inout.DigitalCircuitInOut
 import ch.scorpion.antares.model.net.Concentrator
@@ -45,6 +46,9 @@ class HDLCircuit(
 	val outputs: List<HDLPort> get() = ports.filter { it.direction == HDLPort.Direction.IN }
 
 	val inOuts: List<HDLPort> get() = ports.filter { it.direction == HDLPort.Direction.INOUT }
+
+	private var _entityName: String = elementName
+	val entityName: String = _entityName
 
 	init {
 		createNodes()
@@ -101,6 +105,27 @@ class HDLCircuit(
 		var index = 0
 		netMap.values.filter { StringUtils.isBlank(it.name) }.forEach {
 			it.name = "s${index++}"
+		}
+	}
+
+	fun rename(renaming: HDLRenaming) {
+		ports.forEach { it.rename(renaming) }
+		nets.forEach { it.rename(renaming) }
+		nodes.forEach { it.rename(renaming) }
+		_entityName = renaming.checkName(entityName)
+
+		checkUniqueNames(ports.map { it::name })
+		checkUniqueNames(nets.map { it::name })
+	}
+
+	private fun checkUniqueNames(nameProviders: Collection<() -> String>) {
+		val names = mutableSetOf<String>()
+		nameProviders.forEach {
+			val name = it()
+			if (names.contains(name)) {
+				throw HDLException("Name '$name' is not unique")
+			}
+			names.add(name)
 		}
 	}
 }

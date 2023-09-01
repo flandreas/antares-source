@@ -60,4 +60,8 @@ class HDLNet(
 			this.name = name + "_net"
 		}
 	}
+
+	fun rename(renaming: HDLRenaming) {
+		name = renaming.checkName(name)
+	}
 }

@@ -92,10 +92,10 @@ class VHDLCreator(
 
 	private fun printEntity(circuit: HDLCircuit) {
 		out.println("-- ${circuit.name}")
-		out.print("entity ").print(circuit.elementName).println(" is").inc()
+		out.print("entity ").print(circuit.entityName).println(" is").inc()
 		printEntityPorts(circuit)
 		out.dec()
-		out.print("end ").print(circuit.elementName).println(";")
+		out.print("end ").print(circuit.entityName).println(";")
 		out.println()
 	}
 
@@ -139,7 +139,7 @@ class VHDLCreator(
 		}
 
 	private fun printBehaviour(circuit: HDLCircuit) {
-		out.print("architecture Behavioral of ").print(circuit.elementName).println(" is").inc()
+		out.print("architecture Behavioral of ").print(circuit.entityName).println(" is").inc()
 		printSignals(circuit)
 		out.dec().println("begin").inc()
 		printNodes(circuit)
