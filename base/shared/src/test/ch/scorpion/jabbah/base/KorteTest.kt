@@ -59,4 +59,16 @@ class KorteTest {
 		""".trimIndent())
 		assertEquals("\n\n\na is Blu", template())
 	}
+
+	@Test
+	fun shouldUseBooleanVariable() = runTest {
+		val template = Template("""
+			{%- if negative == true %}
+			negative
+			{%- else %}
+			positive
+		""".trimIndent())
+		val rendered = template(mapOf("negative" to true))
+		assertEquals("\nnegative", rendered)
+	}
 }

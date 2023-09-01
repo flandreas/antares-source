@@ -20,6 +20,7 @@ class VHDLTemplate(name: String/*, private val attributes: Map<String, Any>*/) {
 
 		const val ATTR_VHDL = "vhdl"
 		const val ATTR_BIT_WIDTH = "bitWidth"
+		const val ATTR_NEGATIVE = "negative"
 
 		private fun createFileName(name: String): String = "vhdl/$name$EXTENSION"
 	}

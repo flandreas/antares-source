@@ -128,6 +128,7 @@ class HDLModel(
 					addInputsOutputs(it, vertice, parent)
 					it.createExpressions()
 					it.setAttribute(VHDLTemplate.ATTR_BIT_WIDTH, vertice.bitWidth.width)
+					it.setAttribute(VHDLTemplate.ATTR_NEGATIVE, vertice.enableLogic == Logic.NEGATIVE)
 				}
 			}
 			else -> {
