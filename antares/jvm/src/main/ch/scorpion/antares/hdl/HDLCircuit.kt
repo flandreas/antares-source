@@ -8,6 +8,7 @@ import ch.scorpion.antares.model.net.Splitter
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.model.*
 
 /** A representation of a circuit [Graph] suitable for exporting by a HDL creator.*/
@@ -16,6 +17,10 @@ class HDLCircuit(
 	val elementName: String,
 	private val model: HDLModel
 ) {
+	companion object {
+		private val LOG by logger(HDLCircuit::class)
+	}
+
 	private val _nodes = mutableListOf<AbstractHDLNode>()
 	val nodes: List<AbstractHDLNode> get() = _nodes
 
@@ -51,6 +56,8 @@ class HDLCircuit(
 	val entityName: String = _entityName
 
 	init {
+		LOG.debug("Create HDLCircuit for ${circuit.name} (${circuit.uuid.id})")
+
 		createNodes()
 
 		for (input in inputs) {

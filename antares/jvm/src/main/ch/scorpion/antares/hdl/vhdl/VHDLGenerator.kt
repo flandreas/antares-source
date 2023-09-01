@@ -3,6 +3,7 @@ package ch.scorpion.antares.hdl.vhdl
 import ch.scorpion.antares.hdl.HDLModel
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.jabbah.base.io.CodePrinter
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 
 class VHDLGenerator(
@@ -10,9 +11,14 @@ class VHDLGenerator(
 	private val printer: CodePrinter,
 	private val generateComment: Boolean = false
 ) {
-	fun generate(circuit: DigitalGraph) {
-		val model = HDLModel(circuit, repository).create()
+	companion object {
+		private val LOG by logger(VHDLGenerator::class)
+	}
 
+	fun generate(circuit: DigitalGraph) {
+		LOG.userTrail("Exporting VHDL for '${circuit.name}' (${circuit.uuid.id})")
+
+		val model = HDLModel(circuit, repository).create()
 		model.renameLabels(VHDLRenaming())
 
 		if (generateComment) {

@@ -50,8 +50,11 @@ class HDLModel(
 	fun createNode(vertice: Vertice, parent: HDLCircuit): AbstractHDLNode {
 		return when (vertice) {
 			is SubGraphVerticeRef -> {
-				val hdlCircuit = hdlCircuits.computeIfAbsent(vertice.graphUUID!!) {
-					HDLCircuit(vertice.getGraph(repository) as DigitalGraph, it.id, this)
+				// computeIfAbsent() would generate ConcurrentModificationException
+				var hdlCircuit = hdlCircuits[vertice.graphUUID!!]
+				if (hdlCircuit == null) {
+					hdlCircuit = HDLCircuit(vertice.getGraph(repository) as DigitalGraph, vertice.graphUUID!!.id, this)
+					hdlCircuits[vertice.graphUUID!!] = hdlCircuit
 				}
 				HDLCircuitNode(hdlCircuit).also { addInputsOutputs(it, vertice, parent) }.createExpressions()
 			}

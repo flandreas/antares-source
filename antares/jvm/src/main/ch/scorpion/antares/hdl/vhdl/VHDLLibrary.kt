@@ -22,7 +22,7 @@ class VHDLLibrary {
 				VHDLTemplate(name)
 			}
 		} catch (e: Throwable) {
-			val msg = "Could not load VHDL template for $name"
+			val msg = "Cannot generate VHDL for '$name'"
 			LOG.info("$msg: ${e::class.simpleName} ${e.message}")
 			throw HDLException(msg)
 		}
