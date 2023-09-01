@@ -44,7 +44,7 @@ class KorteTest {
 			{% set a = 5 %}
 			a is {{ a }}
 		""".trimIndent())
-		assertEquals("a is 5", template())
+		assertEquals("\na is 5", template())
 	}
 
 	@Test

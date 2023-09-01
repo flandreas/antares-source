@@ -7,6 +7,7 @@ import ch.scorpion.antares.TestLibraryBuilder
 import ch.scorpion.antares.hdl.HDLModel
 import ch.scorpion.antares.hdl.vhdl.VHDLCreator
 import ch.scorpion.antares.model.DigitalGraph
+import ch.scorpion.antares.model.gate.AbstractLogicGate
 import ch.scorpion.antares.model.input.DipSwitch
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.view.gate.LogicGateView
@@ -151,7 +152,7 @@ class VHDLIntegrationTest {
 
 			architecture Behavioral of main is
 			begin
-			  O1 <= NOT I1;
+			  O1 <= NOT I1 after ${AbstractLogicGate.DEFAULT_PROPAGATION_DELAY} ns;
 			end Behavioral;
 			
 		""".trimIndent(), printer.toString())
@@ -184,8 +185,8 @@ class VHDLIntegrationTest {
 			architecture Behavioral of main is
 			  signal s0: std_logic;
 			begin
-			  O1 <= NOT s0;
-			  s0 <= (I1 AND I2);
+			  O1 <= NOT s0 after ${AbstractLogicGate.DEFAULT_PROPAGATION_DELAY} ns;
+			  s0 <= (I1 AND I2) after ${AbstractLogicGate.DEFAULT_PROPAGATION_DELAY} ns;
 			end Behavioral;
 			
 		""".trimIndent(), printer.toString())
@@ -193,32 +194,32 @@ class VHDLIntegrationTest {
 
 	@Test
 	fun testAndGate() {
-		assertNonUnaryLogicGate(LogicGateView.andGateView(), "O <= (A AND B)")
+		assertNonUnaryLogicGate(LogicGateView.andGateView(), "O <= (A AND B) after ${AbstractLogicGate.DEFAULT_PROPAGATION_DELAY} ns")
 	}
 
 	@Test
 	fun testOrGate() {
-		assertNonUnaryLogicGate(LogicGateView.orGateView(), "O <= (A OR B)")
+		assertNonUnaryLogicGate(LogicGateView.orGateView(), "O <= (A OR B) after ${AbstractLogicGate.DEFAULT_PROPAGATION_DELAY} ns")
 	}
 
 	@Test
 	fun testXorGate() {
-		assertNonUnaryLogicGate(LogicGateView.xorGateView(), "O <= (A XOR B)")
+		assertNonUnaryLogicGate(LogicGateView.xorGateView(), "O <= (A XOR B) after ${AbstractLogicGate.DEFAULT_PROPAGATION_DELAY} ns")
 	}
 
 	@Test
 	fun testNandGate() {
-		assertNonUnaryLogicGate(LogicGateView.nandGateView(), "O <= NOT (A AND B)")
+		assertNonUnaryLogicGate(LogicGateView.nandGateView(), "O <= NOT (A AND B) after ${AbstractLogicGate.DEFAULT_PROPAGATION_DELAY} ns")
 	}
 
 	@Test
 	fun testNorGate() {
-		assertNonUnaryLogicGate(LogicGateView.norGateView(), "O <= NOT (A OR B)")
+		assertNonUnaryLogicGate(LogicGateView.norGateView(), "O <= NOT (A OR B) after ${AbstractLogicGate.DEFAULT_PROPAGATION_DELAY} ns")
 	}
 
 	@Test
 	fun testXnorGate() {
-		assertNonUnaryLogicGate(LogicGateView.xnorGateView(), "O <= NOT (A XOR B)")
+		assertNonUnaryLogicGate(LogicGateView.xnorGateView(), "O <= NOT (A XOR B) after ${AbstractLogicGate.DEFAULT_PROPAGATION_DELAY} ns")
 	}
 
 	private fun assertNonUnaryLogicGate(gateView: LogicGateView, expression: String) {
@@ -261,12 +262,12 @@ class VHDLIntegrationTest {
 
 	@Test
 	fun testNotGate() {
-		assertUnaryLogicGate(LogicGateView.notGateView(), "O <= NOT I")
+		assertUnaryLogicGate(LogicGateView.notGateView(), "O <= NOT I after ${AbstractLogicGate.DEFAULT_PROPAGATION_DELAY} ns")
 	}
 
 	@Test
 	fun testBufferGate() {
-		assertUnaryLogicGate(LogicGateView.bufferGateView(), "O <= I")
+		assertUnaryLogicGate(LogicGateView.bufferGateView(), "O <= I after ${AbstractLogicGate.DEFAULT_PROPAGATION_DELAY} ns")
 	}
 
 	private fun assertUnaryLogicGate(gateView: LogicGateView, expression: String) {
@@ -445,7 +446,7 @@ class VHDLIntegrationTest {
 
 			architecture Behavioral of main is
 			begin
-			  O <= (NOT A AND B);
+			  O <= (NOT A AND B) after ${AbstractLogicGate.DEFAULT_PROPAGATION_DELAY} ns;
 			end Behavioral;
 			
 		""".trimIndent(), printer.toString())

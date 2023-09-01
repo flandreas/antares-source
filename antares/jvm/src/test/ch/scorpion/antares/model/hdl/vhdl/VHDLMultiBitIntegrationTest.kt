@@ -6,6 +6,7 @@ import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.hdl.HDLModel
 import ch.scorpion.antares.hdl.vhdl.VHDLCreator
 import ch.scorpion.antares.model.DigitalGraph
+import ch.scorpion.antares.model.gate.AbstractLogicGate
 import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.net.Concentrator
 import ch.scorpion.antares.model.net.Splitter
@@ -90,8 +91,8 @@ class VHDLMultiBitIntegrationTest {
 			architecture Behavioral of main is
 			  signal s0: std_logic_vector(3 downto 0);
 			begin
-			  O1 <= NOT s0;
-			  s0 <= (I1 AND I2);
+			  O1 <= NOT s0 after ${AbstractLogicGate.DEFAULT_PROPAGATION_DELAY} ns;
+			  s0 <= (I1 AND I2) after ${AbstractLogicGate.DEFAULT_PROPAGATION_DELAY} ns;
 			end Behavioral;
 			
 		""".trimIndent(), printer.toString())

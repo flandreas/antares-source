@@ -14,7 +14,10 @@ import ch.scorpion.jabbah.base.logger
  * Prints a [HDLCircuit] and all referenced sub-circuit [HDLCircuit]s as VHDL
  * using the specified [CodePrinter].
  */
-class VHDLCreator(private val out: CodePrinter) {
+class VHDLCreator(
+	private val out: CodePrinter,
+	private val applyDelays: Boolean = true
+) {
 
 	companion object {
 		private val LOG by logger(VHDLCreator::class)
@@ -167,7 +170,11 @@ class VHDLCreator(private val out: CodePrinter) {
 		node.targetNet?.let {
 			out.print(it.name).print(" <= ")
 			printExpression(node.expression)
-			out.println(";")
+			if (applyDelays && node.expression.delay > 0) {
+				out.print(" after ").print(node.expression.delay).println(" ns;")
+			} else {
+				out.println(";")
+			}
 		}
 	}
 
@@ -192,7 +199,6 @@ class VHDLCreator(private val out: CodePrinter) {
 					OperationExpression.Operation.AND -> " AND "
 					OperationExpression.Operation.OR -> " OR "
 					OperationExpression.Operation.XOR -> " XOR "
-					else -> throw HDLException("Unknown operation ${expression.operation}")
 				}
 				for (exp in expression.operands) {
 					if (first) {
@@ -207,7 +213,7 @@ class VHDLCreator(private val out: CodePrinter) {
 			is ConstantExpression -> {
 				out.print(value(expression))
 			}
-			else -> TODO()
+			else -> throw HDLException("Unsupported expression type ${expression::class.simpleName}")
 		}
 	}
 

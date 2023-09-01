@@ -56,12 +56,12 @@ class HDLModel(
 				when (vertice.gateType) {
 					UnaryLogicGateType.Not -> {
 						createExpression(vertice, parent).also {
-							it.expression = NotExpression(NetExpression(it.inputs.first().net!!))
+							it.expression = NotExpression(NetExpression(it.inputs.first().net!!), vertice.propagationDelay)
 						}
 					}
 					UnaryLogicGateType.Buffer -> {
 						createExpression(vertice, parent).also {
-							it.expression = NetExpression(it.inputs.first().net!!)
+							it.expression = NetExpression(it.inputs.first().net!!, vertice.propagationDelay)
 						}
 					}
 					else -> throw HDLException("Circuit element ${vertice.type} doesn't support HDL")
@@ -71,32 +71,32 @@ class HDLModel(
 				when (vertice.gateType) {
 					NonUnaryLogicGateType.And -> {
 						createExpression(vertice, parent).also {
-							it.expression = createOperation(it.inputs, OperationExpression.Operation.AND)
+							it.expression = createOperation(it.inputs, OperationExpression.Operation.AND, vertice.propagationDelay)
 						}
 					}
 					NonUnaryLogicGateType.Or -> {
 						createExpression(vertice, parent).also {
-							it.expression = createOperation(it.inputs, OperationExpression.Operation.OR)
+							it.expression = createOperation(it.inputs, OperationExpression.Operation.OR, vertice.propagationDelay)
 						}
 					}
 					NonUnaryLogicGateType.Xor -> {
 						createExpression(vertice, parent).also {
-							it.expression = createOperation(it.inputs, OperationExpression.Operation.XOR)
+							it.expression = createOperation(it.inputs, OperationExpression.Operation.XOR, vertice.propagationDelay)
 						}
 					}
 					NonUnaryLogicGateType.Nor -> {
 						createExpression(vertice, parent).also {
-							it.expression = NotExpression(createOperation(it.inputs, OperationExpression.Operation.OR))
+							it.expression = NotExpression(createOperation(it.inputs, OperationExpression.Operation.OR, 0) , vertice.propagationDelay)
 						}
 					}
 					NonUnaryLogicGateType.Nand -> {
 						createExpression(vertice, parent).also {
-							it.expression = NotExpression(createOperation(it.inputs, OperationExpression.Operation.AND))
+							it.expression = NotExpression(createOperation(it.inputs, OperationExpression.Operation.AND, 0), vertice.propagationDelay)
 						}
 					}
 					NonUnaryLogicGateType.Xnor -> {
 						createExpression(vertice, parent).also {
-							it.expression = NotExpression(createOperation(it.inputs, OperationExpression.Operation.XOR))
+							it.expression = NotExpression(createOperation(it.inputs, OperationExpression.Operation.XOR, 0), vertice.propagationDelay)
 						}
 					}
 					else -> throw HDLException("Circuit element ${vertice.type} doesn't support HDL")
@@ -146,7 +146,11 @@ class HDLModel(
 		return node
 	}
 
-	private fun createOperation(inputs: Collection<HDLPort>, op: OperationExpression.Operation): Expression {
+	private fun createOperation(
+		inputs: Collection<HDLPort>,
+		op: OperationExpression.Operation,
+		delay: Long
+	): Expression {
 		val list = mutableListOf<Expression>()
 		for (input in inputs) {
 			input.net?.let {
@@ -157,7 +161,7 @@ class HDLModel(
 				}
 			}
 		}
-		return OperationExpression(op, list)
+		return OperationExpression(op, list, delay)
 	}
 
 	private fun addInputsOutputs(node: AbstractHDLNode, vertice: Vertice, hdlCircuit: HDLCircuit) {
