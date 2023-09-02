@@ -12,7 +12,9 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.InputEventHandler
+import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
+import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
@@ -221,21 +223,26 @@ abstract class AbstractAddressableView<T : Addressable>(
 	}
 
 	override fun drawImpl(context: DrawContext) {
-		super.drawImpl(context)
-
 		val oldColor = context.g.color
-		val oldStroke = context.g.stroke
 
+		drawImplBeforeBorder(context)
+		drawShape(context, getApplicableForegroundColor(context), getApplicableBackgroundColor(context), stroke)
+		drawImplAfterBorder(context)
+
+		context.g.color = oldColor
+	}
+
+	private fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 		if (shadow) {
 			DropShadow.draw(context, transparency) {
 				context.g.fill(bounds)
 			}
 		}
 
-		context.g.color = transparent.applyTo(context.choose(color).backgroundColor)
+		context.g.color = backgroundColor
 		context.g.fill(bounds)
 
-		context.g.color = transparent.applyTo(context.choose(color).foregroundColor)
+		context.g.color = foregroundColor
 		context.g.stroke = stroke
 		context.g.draw(bounds)
 
@@ -252,9 +259,6 @@ abstract class AbstractAddressableView<T : Addressable>(
 			context.g.translate(-contentsView.x, -contentsView.y)
 			context.stylable = null
 		}
-
-		context.g.color = oldColor
-		context.g.stroke = oldStroke
 	}
 
 	/** Determines whether drawing hte [AddressableContentsView] is required depending on the [CurrentSystemSpeedCategory].*/
