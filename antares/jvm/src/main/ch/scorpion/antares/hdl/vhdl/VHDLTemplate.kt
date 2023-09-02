@@ -41,11 +41,16 @@ class VHDLTemplate(name: String/*, private val attributes: Map<String, Any>*/) {
 
 	private val template = runBlocking {
 		val fileName = createFileName(entityName)
-		try {
-			Template(IOUtils.toString(this.javaClass.classLoader.getResourceAsStream(fileName), Charsets.UTF_8))
-		} catch (e: Throwable) {
-			LOG.error("Error while reading VHDL template $fileName", e)
-			throw e
+		this.javaClass.classLoader.getResourceAsStream(fileName).use {
+			if (it == null) {
+				// This is not an error. Certain Vertices like LED are not supported by HDL.
+				// Will be handled and mapped to another exception by the caller. No need to I18N.
+				val msg = "VHDL template $fileName not found"
+				LOG.debug(msg)
+				throw HDLException(msg)
+			} else {
+				Template(IOUtils.toString(it, Charsets.UTF_8))
+			}
 		}
 	}
 

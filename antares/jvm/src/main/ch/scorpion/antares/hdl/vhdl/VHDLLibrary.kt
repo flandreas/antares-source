@@ -21,9 +21,13 @@ class VHDLLibrary {
 			return templates.computeIfAbsent(name) {
 				VHDLTemplate(name)
 			}
+		} catch (e: HDLException) {
+			val msg = "Circuit element '$name'\ndoesn't support HDL."
+			LOG.debug(msg)
+			throw HDLException(msg)
 		} catch (e: Throwable) {
-			val msg = "Cannot generate VHDL for '$name'"
-			LOG.info("$msg: ${e::class.simpleName} ${e.message}")
+			val msg = "Error while generating VHDL for '$name'"
+			LOG.error("$msg: ${e::class.simpleName} ${e.message}")
 			throw HDLException(msg)
 		}
 	}
