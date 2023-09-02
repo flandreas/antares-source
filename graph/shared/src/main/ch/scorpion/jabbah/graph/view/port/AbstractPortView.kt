@@ -338,9 +338,9 @@ abstract class AbstractPortView<T : Any>(
 
 	private fun buildToolTipTitle(): String =
 		if (StringUtils.isBlank(port.name)) {
-			"${port.portType}"
+			"${port.portType.richTextName}"
 		} else {
-			"${port.portType} '${port.name!!}'"
+			"${port.portType.richTextName} '${port.name!!}'"
 		}
 
 	protected open fun buildToolTipContent(): String =

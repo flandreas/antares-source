@@ -253,6 +253,9 @@ enum class PortType(
 	companion object {
 
 		const val BASE_KEY = "graph.property.portType"
+		private const val INPUT_KEY = "$BASE_KEY.input"
+		private const val OUTPUT_KEY = "$BASE_KEY.output"
+		private const val INOUT_KEY = "$BASE_KEY.inout"
 
 		private val LOG by logger(PortType::class)
 
@@ -269,9 +272,9 @@ enum class PortType(
 
 	override fun toString(): String =
 		when (this) {
-			INPUT -> Translations.getString("graph.property.portType.input")
-			OUTPUT -> Translations.getString("graph.property.portType.output")
-			INOUT -> Translations.getString("graph.property.portType.inout")
+			INPUT -> Translations.getString(INPUT_KEY)
+			OUTPUT -> Translations.getString(OUTPUT_KEY)
+			INOUT -> Translations.getString(INOUT_KEY)
 		}
 
 	fun reverse(): PortType =
@@ -283,4 +286,15 @@ enum class PortType(
 
 	fun isCompatibleWith(other: PortType): Boolean =
 		this == INOUT || other == INPUT || reverse() == other
+
+	/**
+	 * Returns the same as [toString], but in a form suitable for displaying as rich text, e.g. in tooltips.
+	 * This representation must escape rich text control characters such as slashes.
+	 */
+	val richTextName: String get() =
+		when (this) {
+			INPUT -> Translations.getOptionalString("$INPUT_KEY.rich") ?: Translations.getString(INPUT_KEY)
+			OUTPUT -> Translations.getOptionalString("$OUTPUT_KEY.rich") ?: Translations.getString(OUTPUT_KEY)
+			INOUT -> Translations.getOptionalString("$INOUT_KEY.rich") ?: Translations.getString(INOUT_KEY)
+		}
 }
