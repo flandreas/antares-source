@@ -10,6 +10,10 @@ import kotlin.test.assertEquals
 @OptIn(ExperimentalCoroutinesApi::class)
 class KorteTest {
 
+	class Function {
+		fun call(input: String): String = input
+	}
+
 	@Test
 	fun helloWorld() = runTest {
 		val template = Template("Hello {{ who }}")
@@ -22,10 +26,6 @@ class KorteTest {
 		val template = Template("Hello {{ function.call('Result') }}")
 		val rendered = template(mapOf("function" to Function()))
 		assertEquals("Hello Result", rendered)
-	}
-
-	class Function {
-		fun call(input: String): String = input
 	}
 
 	@Test
@@ -70,5 +70,41 @@ class KorteTest {
 		""".trimIndent())
 		val rendered = template(mapOf("negative" to true))
 		assertEquals("\nnegative", rendered)
+	}
+
+	@Test
+	fun shouldUseNullStringVariable() = runTest {
+		val template = Template("""
+			{%- if label == '' || label == null %}
+			not set
+			{%- else %}
+			{{ label }}
+		""".trimIndent())
+		val rendered = template(mapOf("label" to null))
+		assertEquals("\nnot set", rendered)
+	}
+
+	@Test
+	fun shouldUseEmptyStringVariable() = runTest {
+		val template = Template("""
+			{%- if label == '' || label == null %}
+			not set
+			{%- else %}
+			{{ label }}
+		""".trimIndent())
+		val rendered = template(mapOf("label" to ""))
+		assertEquals("\nnot set", rendered)
+	}
+
+	@Test
+	fun shouldSetEmptyStringVariable() = runTest {
+		val template = Template("""
+			{%- if label == '' || label == null %}
+			not set
+			{%- else %}
+			{{ label }}
+		""".trimIndent())
+		val rendered = template(mapOf("label" to "abc"))
+		assertEquals("\nabc", rendered)
 	}
 }

@@ -5,6 +5,7 @@ import ch.scorpion.antares.hdl.vhdl.HDLException
 import ch.scorpion.antares.hdl.vhdl.VHDLTemplate
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.Logic
+import ch.scorpion.antares.model.addressable.Addressable
 import ch.scorpion.antares.model.gate.*
 import ch.scorpion.antares.model.input.DipSwitch
 import ch.scorpion.antares.model.net.*
@@ -135,6 +136,15 @@ class HDLModel(
 					it.createExpressions()
 					it.setAttribute(VHDLTemplate.ATTR_BIT_WIDTH, vertice.bitWidth.width)
 					it.setAttribute(VHDLTemplate.ATTR_NEGATIVE, vertice.enableLogic == Logic.NEGATIVE)
+				}
+			}
+			is Addressable -> {
+				BuiltInNode(vertice::class.simpleName!!).also {
+					addInputsOutputs(it, vertice, parent)
+					it.createExpressions()
+					if (StringUtils.isNotBlank(vertice.name)) {
+						it.setAttribute(VHDLTemplate.ATTR_LABEL, vertice.name!!)
+					}
 				}
 			}
 			else -> {
