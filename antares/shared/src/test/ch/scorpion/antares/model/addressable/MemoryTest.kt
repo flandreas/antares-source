@@ -79,6 +79,13 @@ class MemoryTest {
 		}
 	}
 
+	@Test
+	fun shouldYieldNonZeroLength() {
+		val memory = Memory()
+		assertEquals(0, memory.nonZeroLength)
+		memory.write(27, 99UL)
+		assertEquals(28, memory.nonZeroLength)
+	}
 
 	/** ---- NonZeroIterator tests */
 

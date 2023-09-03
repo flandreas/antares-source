@@ -35,8 +35,8 @@ class PseudoBusDriverTest : AbstractFileBasedTest() {
 		VHDLGenerator(LibraryModule.libraryHolder.library, printer).generate(openedCircuitView.graph as DigitalGraph)
 
 		assertEquals("""
-			LIBRARY ieee;
-			USE ieee.std_logic_1164.all;
+			library ieee;
+			use ieee.std_logic_1164.all;
 			
 			entity VHDL_TriStateBufferGate is
 			  port (
@@ -50,9 +50,9 @@ class PseudoBusDriverTest : AbstractFileBasedTest() {
 			  p3 <= p1 when EN = '1' else 'Z';
 			end Behavioral;
 			
-			LIBRARY ieee;
-			USE ieee.std_logic_1164.all;
-			USE ieee.numeric_std.all;
+			library ieee;
+			use ieee.std_logic_1164.all;
+			use ieee.numeric_std.all;
 			
 			-- NodeView
 			entity main is

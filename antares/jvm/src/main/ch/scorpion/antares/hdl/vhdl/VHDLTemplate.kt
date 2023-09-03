@@ -1,11 +1,14 @@
 package ch.scorpion.antares.hdl.vhdl
 
 import ch.scorpion.antares.hdl.BuiltInNode
+import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.io.CodePrinter
 import ch.scorpion.jabbah.base.io.Separator
 import ch.scorpion.jabbah.base.logger
+import korlibs.template.AutoEscapeMode
 import korlibs.template.Template
+import korlibs.template.TemplateConfig
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.io.IOUtils
 import java.lang.IllegalStateException
@@ -22,7 +25,7 @@ class VHDLTemplate(name: String) {
 		const val ATTR_VHDL = "vhdl"
 		const val ATTR_BIT_WIDTH = "bitWidth"
 		const val ATTR_NEGATIVE = "negative"
-		const val ATTR_LABEL = "label"
+		const val ATTR_VERTICE = "vertice"
 
 		private fun createFileName(name: String): String = "vhdl/$name$EXTENSION"
 	}
@@ -51,7 +54,7 @@ class VHDLTemplate(name: String) {
 				LOG.debug(msg)
 				throw HDLException(msg)
 			} else {
-				Template(IOUtils.toString(it, Charsets.UTF_8))
+				Template(IOUtils.toString(it, Charsets.UTF_8), TemplateConfig(autoEscapeMode = AutoEscapeMode.RAW))
 			}
 		}
 	}
@@ -122,7 +125,17 @@ class VHDLTemplate(name: String) {
 
 		var isWritten: Boolean = false
 
-		/** ---- Methods to be called by template */
+		/** ---- Methods to be called by template using reflection */
+
+		fun value(value: Int, bitWidth: BitWidth): String =
+			VHDLCreator.value(value, bitWidth)
+
+		fun zero(bitWidth: BitWidth): String =
+			if (bitWidth == BitWidth.BW_1) {
+				"'0'"
+			} else {
+				"(others => '0')"
+			}
 
 		@Suppress("unused")
 		fun error(textKey: String) {
@@ -144,6 +157,14 @@ class VHDLTemplate(name: String) {
 		fun registerGeneric(name: String) {
 			generics.add(Generic(name, "integer"))
 		}
+
+		@Suppress("unused")
+		fun type(bitWidth: Int): String =
+			if (bitWidth == 1) {
+				"std_logic"
+			} else {
+				"std_logic_vector(${bitWidth - 1} downto 0)"
+			}
 
 		@Suppress("unused")
 		fun genericType(bitWidth: Int): String =

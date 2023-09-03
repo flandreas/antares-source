@@ -1,5 +1,5 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.all;
+library ieee;
+use ieee.std_logic_1164.all;
 
 {%- if bitWidth == 1 %}
     {%- set entityName = vhdl.setEntityName('VHDL_TriStateBufferGate') %}

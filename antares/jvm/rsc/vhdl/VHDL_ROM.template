@@ -1,9 +1,35 @@
-LIBRARY ieee;
-USE ieee.std_logic_1164.all;
-use IEEE.NUMERIC_STD.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
-{%- if label == '' || label == null %}
+{%- if vertice.name == '' || vertice.name == null %}
 {{ vhdl.error('antares.vhdl.missingLabel.error', 'ROM') }}
 {%- else %}
-ROM-Label: '{{ label }}'
+{%- set entityName = vhdl.setEntityName('VHDL_ROM_' + vertice.name) %}
 {%- endif %}
+
+entity {{ entityName }} is
+  port (
+    D: out {{ vhdl.type(vertice.addressWidth.width) }};
+    A: in {{ vhdl.type(vertice.dataWidth.width) }};
+    CS: in std_logic);
+end {{ entityName }};
+
+architecture Behavioral of {{ entityName }} is
+  type memory is array (0 to {{ vertice.memory.nonZeroLength - 1 }}) of {{ vhdl.type(vertice.dataWidth.width) }};
+  constant rom : memory := (
+{%- for i in 0..vertice.memory.nonZeroLength - 1 %}
+    "{{ vertice.dataAsPaddedBinaryAt(i) }}"{% if !loop.last %},{%- endif %}
+{%- endfor %});
+begin
+  process (A, CS)
+  begin
+    if CS='0' then
+      D <= {% if vertice.dataWidth.width > 1 %}(others => 'Z'){% else %}'Z'{% endif %};
+    elsif A >= {{ vhdl.value(vertice.memory.nonZeroLength, vertice.addressWidth) }} then
+      D <= {{ vhdl.zero(vertice.dataWidth) }};
+    else
+      D <= rom(to_integer(unsigned(A)));
+    end if;
+  end process;
+end Behavioral;

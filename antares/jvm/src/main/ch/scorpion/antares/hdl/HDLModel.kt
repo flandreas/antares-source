@@ -142,9 +142,7 @@ class HDLModel(
 				BuiltInNode(vertice::class.simpleName!!).also {
 					addInputsOutputs(it, vertice, parent)
 					it.createExpressions()
-					if (StringUtils.isNotBlank(vertice.name)) {
-						it.setAttribute(VHDLTemplate.ATTR_LABEL, vertice.name!!)
-					}
+					it.setAttribute(VHDLTemplate.ATTR_VERTICE, vertice)
 				}
 			}
 			else -> {

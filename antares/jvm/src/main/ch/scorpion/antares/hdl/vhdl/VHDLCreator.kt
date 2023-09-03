@@ -3,6 +3,7 @@ package ch.scorpion.antares.hdl.vhdl
 import ch.scorpion.antares.hdl.*
 import ch.scorpion.antares.hdl.HDLPort.Direction.*
 import ch.scorpion.antares.hdl.expression.*
+import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.UUID
@@ -30,6 +31,16 @@ class VHDLCreator(
 			} else {
 				"\'${value.binaryString}\'"
 			}
+
+		fun value(value: Int, bitWidth: BitWidth): String {
+			var s = BitOperation.longToBinaryPadded(value.toULong(), bitWidth)
+			s = if (bitWidth == BitWidth.BW_1) {
+				"'$s'"
+			} else {
+				"\"$s\""
+			}
+			return s
+		}
 	}
 
 	/** Loads and manages [VHDLTemplate]s.*/
@@ -84,9 +95,9 @@ class VHDLCreator(
 
 	private fun printImports() {
 		out
-			.println("LIBRARY ieee;")
-			.println("USE ieee.std_logic_1164.all;")
-			.println("USE ieee.numeric_std.all;")
+			.println("library ieee;")
+			.println("use ieee.std_logic_1164.all;")
+			.println("use ieee.numeric_std.all;")
 			.println()
 	}
 

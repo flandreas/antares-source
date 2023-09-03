@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.base
 
+import korlibs.template.AutoEscapeMode
 import korlibs.template.Template
+import korlibs.template.TemplateConfig
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
@@ -11,6 +13,7 @@ import kotlin.test.assertEquals
 class KorteTest {
 
 	class Function {
+		val property: String get() = "property"
 		fun call(input: String): String = input
 	}
 
@@ -19,6 +22,13 @@ class KorteTest {
 		val template = Template("Hello {{ who }}")
 		val rendered = template(mapOf("who" to "world"))
 		assertEquals("Hello world", rendered)
+	}
+
+	@Test
+	fun shouldAccessExternalProperty() = runTest {
+		val template = Template("Hello {{ bean.property }}")
+		val rendered = template(mapOf("bean" to Function()))
+		assertEquals("Hello property", rendered)
 	}
 
 	@Test
@@ -106,5 +116,12 @@ class KorteTest {
 		""".trimIndent())
 		val rendered = template(mapOf("label" to "abc"))
 		assertEquals("\nabc", rendered)
+	}
+
+	@Test
+	fun shouldOutputStringWithQuotes() = runTest {
+		val template = Template("Hello {{ who }}", TemplateConfig(autoEscapeMode = AutoEscapeMode.RAW))
+		val rendered = template(mapOf("who" to "\"Quoted\""))
+		assertEquals("Hello \"Quoted\"", rendered)
 	}
 }

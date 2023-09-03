@@ -45,8 +45,8 @@ class VHDLTriStateBufferGateTest {
 		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
 
 		assertEquals("""
-			LIBRARY ieee;
-			USE ieee.std_logic_1164.all;
+			library ieee;
+			use ieee.std_logic_1164.all;
 			
 			entity VHDL_TriStateBufferGate is
 			  port (
@@ -60,9 +60,9 @@ class VHDLTriStateBufferGateTest {
 			  p3 <= p1 when EN = '1' else 'Z';
 			end Behavioral;
 			
-			LIBRARY ieee;
-			USE ieee.std_logic_1164.all;
-			USE ieee.numeric_std.all;
+			library ieee;
+			use ieee.std_logic_1164.all;
+			use ieee.numeric_std.all;
 			
 			-- test
 			entity main is
@@ -98,8 +98,8 @@ class VHDLTriStateBufferGateTest {
 		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
 
 		assertEquals("""
-			LIBRARY ieee;
-			USE ieee.std_logic_1164.all;
+			library ieee;
+			use ieee.std_logic_1164.all;
 			
 			entity VHDL_TriStateBufferGate is
 			  port (
@@ -113,9 +113,9 @@ class VHDLTriStateBufferGateTest {
 			  p3 <= p1 when EN = '0' else 'Z';
 			end Behavioral;
 			
-			LIBRARY ieee;
-			USE ieee.std_logic_1164.all;
-			USE ieee.numeric_std.all;
+			library ieee;
+			use ieee.std_logic_1164.all;
+			use ieee.numeric_std.all;
 			
 			-- test
 			entity main is
@@ -151,8 +151,8 @@ class VHDLTriStateBufferGateTest {
 		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
 
 		assertEquals("""
-			LIBRARY ieee;
-			USE ieee.std_logic_1164.all;
+			library ieee;
+			use ieee.std_logic_1164.all;
 
 			entity VHDL_TriStateBufferGate_MultiBit is
 			  generic (bitWidth : integer);
@@ -167,9 +167,9 @@ class VHDLTriStateBufferGateTest {
 			  p3 <= p1 when EN = '1' else (others => 'Z');
 			end Behavioral;
 			
-			LIBRARY ieee;
-			USE ieee.std_logic_1164.all;
-			USE ieee.numeric_std.all;
+			library ieee;
+			use ieee.std_logic_1164.all;
+			use ieee.numeric_std.all;
 			
 			-- test
 			entity main is
@@ -216,8 +216,8 @@ class VHDLTriStateBufferGateTest {
 		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
 
 		assertEquals("""
-			LIBRARY ieee;
-			USE ieee.std_logic_1164.all;
+			library ieee;
+			use ieee.std_logic_1164.all;
 
 			entity VHDL_TriStateBufferGate is
 			  port (
@@ -231,8 +231,8 @@ class VHDLTriStateBufferGateTest {
 			  p3 <= p1 when EN = '1' else 'Z';
 			end Behavioral;
 
-			LIBRARY ieee;
-			USE ieee.std_logic_1164.all;
+			library ieee;
+			use ieee.std_logic_1164.all;
 
 			entity VHDL_TriStateBufferGate_MultiBit is
 			  generic (bitWidth : integer);
@@ -247,9 +247,9 @@ class VHDLTriStateBufferGateTest {
 			  p3 <= p1 when EN = '1' else (others => 'Z');
 			end Behavioral;
 			
-			LIBRARY ieee;
-			USE ieee.std_logic_1164.all;
-			USE ieee.numeric_std.all;
+			library ieee;
+			use ieee.std_logic_1164.all;
+			use ieee.numeric_std.all;
 			
 			-- test
 			entity main is

@@ -46,9 +46,9 @@ class VHDLIntegrationTest {
 			TestCircuitBuilder("test").buildNOP().graph as DigitalGraph)
 
 		assertEquals("""
-			LIBRARY ieee;
-			USE ieee.std_logic_1164.all;
-			USE ieee.numeric_std.all;
+			library ieee;
+			use ieee.std_logic_1164.all;
+			use ieee.numeric_std.all;
 
 			-- test
 			entity main is
@@ -80,9 +80,9 @@ class VHDLIntegrationTest {
 		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
 
 		assertEquals("""
-			LIBRARY ieee;
-			USE ieee.std_logic_1164.all;
-			USE ieee.numeric_std.all;
+			library ieee;
+			use ieee.std_logic_1164.all;
+			use ieee.numeric_std.all;
 
 			-- NOP
 			entity ${nop.uuid} is
@@ -96,9 +96,9 @@ class VHDLIntegrationTest {
 			  O <= I;
 			end Behavioral;
 
-			LIBRARY ieee;
-			USE ieee.std_logic_1164.all;
-			USE ieee.numeric_std.all;
+			library ieee;
+			use ieee.std_logic_1164.all;
+			use ieee.numeric_std.all;
 			
 			-- test
 			entity main is
@@ -129,9 +129,9 @@ class VHDLIntegrationTest {
 			.generate(TestCircuitBuilder("test").buildCustomNot().graph as DigitalGraph)
 
 		assertEquals("""
-			LIBRARY ieee;
-			USE ieee.std_logic_1164.all;
-			USE ieee.numeric_std.all;
+			library ieee;
+			use ieee.std_logic_1164.all;
+			use ieee.numeric_std.all;
 
 			-- test
 			entity main is
@@ -157,9 +157,9 @@ class VHDLIntegrationTest {
 		// The result is not yet optimized (not yet implemented). The optimized result would be
 		// O1 <= NOT (I1 AND I2), without the intermediate signal s0.
 		assertEquals("""
-			LIBRARY ieee;
-			USE ieee.std_logic_1164.all;
-			USE ieee.numeric_std.all;
+			library ieee;
+			use ieee.std_logic_1164.all;
+			use ieee.numeric_std.all;
 
 			-- test
 			entity main is
@@ -222,9 +222,9 @@ class VHDLIntegrationTest {
 		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
 
 		assertEquals("""
-			LIBRARY ieee;
-			USE ieee.std_logic_1164.all;
-			USE ieee.numeric_std.all;
+			library ieee;
+			use ieee.std_logic_1164.all;
+			use ieee.numeric_std.all;
 
 			-- test
 			entity main is
@@ -263,9 +263,9 @@ class VHDLIntegrationTest {
 		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
 
 		assertEquals("""
-			LIBRARY ieee;
-			USE ieee.std_logic_1164.all;
-			USE ieee.numeric_std.all;
+			library ieee;
+			use ieee.std_logic_1164.all;
+			use ieee.numeric_std.all;
 
 			-- test
 			entity main is
@@ -292,9 +292,9 @@ class VHDLIntegrationTest {
 		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
 
 		assertEquals("""
-			LIBRARY ieee;
-			USE ieee.std_logic_1164.all;
-			USE ieee.numeric_std.all;
+			library ieee;
+			use ieee.std_logic_1164.all;
+			use ieee.numeric_std.all;
 
 			-- test
 			entity main is
@@ -322,9 +322,9 @@ class VHDLIntegrationTest {
 		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
 
 		assertEquals("""
-			LIBRARY ieee;
-			USE ieee.std_logic_1164.all;
-			USE ieee.numeric_std.all;
+			library ieee;
+			use ieee.std_logic_1164.all;
+			use ieee.numeric_std.all;
 
 			-- test
 			entity main is
@@ -353,9 +353,9 @@ class VHDLIntegrationTest {
 		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
 
 		assertEquals("""
-			LIBRARY ieee;
-			USE ieee.std_logic_1164.all;
-			USE ieee.numeric_std.all;
+			library ieee;
+			use ieee.std_logic_1164.all;
+			use ieee.numeric_std.all;
 
 			-- test
 			entity main is
@@ -388,9 +388,9 @@ class VHDLIntegrationTest {
 		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
 
 		assertEquals("""
-			LIBRARY ieee;
-			USE ieee.std_logic_1164.all;
-			USE ieee.numeric_std.all;
+			library ieee;
+			use ieee.std_logic_1164.all;
+			use ieee.numeric_std.all;
 
 			-- test
 			entity main is

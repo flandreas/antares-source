@@ -34,9 +34,9 @@ class VHDLGeneratorTest {
 		)
 
 		assertEquals("""
-			LIBRARY ieee;
-			USE ieee.std_logic_1164.all;
-			USE ieee.numeric_std.all;
+			library ieee;
+			use ieee.std_logic_1164.all;
+			use ieee.numeric_std.all;
 
 			-- test
 			entity main is
