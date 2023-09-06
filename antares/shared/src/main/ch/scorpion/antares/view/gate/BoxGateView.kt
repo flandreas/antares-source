@@ -54,7 +54,7 @@ open class BoxGateView<T : Vertice>(
 		 */
 		LARGE_CENTERED {
 			override fun updateLabel(box: BoxGateView<*>) {
-				box.label?.let {
+				box.internalLabel?.let {
 					it.font = box.symbolFont
 					it.ownerRotation = box.rotation
 					it.horizontalAlignment = HorizontalAlignment.CENTER
@@ -71,7 +71,7 @@ open class BoxGateView<T : Vertice>(
 
 		SMALL_UPPER_LEFT {
 			override fun updateLabel(box: BoxGateView<*>) {
-				box.label?.let {
+				box.internalLabel?.let {
 					it.font = deriveFont(box)
 					it.ownerRotation = box.rotation
 					it.horizontalAlignment = HorizontalAlignment.RIGHT
@@ -118,7 +118,7 @@ open class BoxGateView<T : Vertice>(
 		}
 
 	/** The text displayed inside the box representing the name of the [Vertice]. */
-	protected val label: Label? = if (StringUtils.isNotEmpty(text)) {
+	protected val internalLabel: Label? = if (StringUtils.isNotEmpty(text)) {
 		Label(
 			text = text,
 			font = font,
@@ -168,13 +168,13 @@ open class BoxGateView<T : Vertice>(
 		context.g.stroke = stroke
 		context.g.drawRect(xInt, yInt, widthInt, heightInt)
 
-		if (label != null) {
+		if (internalLabel != null) {
 			if (text != null) {
-				if (label.text != text) {
-					label.text = text
+				if (internalLabel.text != text) {
+					internalLabel.text = text
 				}
 			}
-			label.draw(context)
+			internalLabel.draw(context)
 		}
 	}
 
@@ -196,11 +196,11 @@ open class BoxGateView<T : Vertice>(
 	open val symbolFont: Font get() = font
 
 	var labelText: String?
-		get() = label?.text
+		get() = internalLabel?.text
 		set(value) {
-			label?.let {
+			internalLabel?.let {
 				invalidate()
-				label.text = value ?: ""
+				internalLabel.text = value ?: ""
 				invalidate()
 				validate()
 			}
