@@ -6,6 +6,7 @@ import ch.scorpion.antares.hdl.vhdl.VHDLTemplate
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.addressable.Addressable
+import ch.scorpion.antares.model.addressable.RAM
 import ch.scorpion.antares.model.gate.*
 import ch.scorpion.antares.model.input.DipSwitch
 import ch.scorpion.antares.model.net.*
@@ -136,6 +137,14 @@ class HDLModel(
 					it.createExpressions()
 					it.setAttribute(VHDLTemplate.ATTR_BIT_WIDTH, vertice.bitWidth.width)
 					it.setAttribute(VHDLTemplate.ATTR_NEGATIVE, vertice.enableLogic == Logic.NEGATIVE)
+				}
+			}
+			is RAM -> {
+				BuiltInNode(vertice::class.simpleName!!).also {
+					addInputsOutputs(it, vertice, parent)
+					it.createExpressions()
+					it.setAttribute(VHDLTemplate.ATTR_ADDR_BIT_WIDTH, vertice.addressWidth.width)
+					it.setAttribute(VHDLTemplate.ATTR_DATA_BIT_WIDTH, vertice.dataWidth.width)
 				}
 			}
 			is Addressable -> {

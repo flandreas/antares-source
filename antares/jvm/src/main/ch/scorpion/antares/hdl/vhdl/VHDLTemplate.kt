@@ -24,6 +24,8 @@ class VHDLTemplate(name: String) {
 
 		const val ATTR_VHDL = "vhdl"
 		const val ATTR_BIT_WIDTH = "bitWidth"
+		const val ATTR_ADDR_BIT_WIDTH = "addrBitWidth"
+		const val ATTR_DATA_BIT_WIDTH = "dataBitWidth"
 		const val ATTR_NEGATIVE = "negative"
 		const val ATTR_VERTICE = "vertice"
 

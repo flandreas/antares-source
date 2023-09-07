@@ -1,0 +1,31 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+entity VHDL_RAM is
+  generic (
+    addrBitWidth: integer;
+    dataBitWidth: integer);
+  port (
+    A: in std_logic_vector((addrBitWidth - 1) downto 0);{{ vhdl.registerGeneric('addrBitWidth') }}
+    CLK: in std_logic;
+    CS: in std_logic;
+    WR: in std_logic;
+    CLR: in std_logic;
+    D: inout std_logic_vector((dataBitWidth - 1) downto 0));{{ vhdl.registerGeneric('dataBitWidth') }}
+end VHDL_RAM;
+
+architecture Behavioral of VHDL_RAM is
+  type memoryType is array(0 to (2**addrBitWidth) - 1) of std_logic_vector((dataBitWidth - 1) downto 0);
+  signal memory: memoryType;
+begin
+  process (CLK, CLR)
+  begin
+    if rising_edge(CLR) then
+      memory := (others => 0)
+    elsif rising_edge(CLK) and (CS='1') and (WR='1') then
+      memory(to_integer(unsigned(A))) <= D;
+    end if;
+  end process;
+  D <= memory(to_integer(unsigned(A))) when CS='1' and WR='0' else (others => 'Z');
+end Behavioral;
