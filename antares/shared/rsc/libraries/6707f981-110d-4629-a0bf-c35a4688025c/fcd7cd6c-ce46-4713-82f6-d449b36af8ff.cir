@@ -1,14 +1,15 @@
-<metaGraph _id='0'>
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' startupTime='70'>
+        <graph _id='2' type='digital' startupTime='70'>
           <elements>
             <circuitInOut _id='3' id='1' name='A' type='input' bitWidth='4'/>
             <circuitInOut _id='4' id='2' name='B' type='input' bitWidth='4'/>
             <circuitInOut _id='5' id='3' name='CI' type='input' bitWidth='1'/>
-            <splitter _id='6' id='4' delay='0' bitWidth='4' branchCount='4' representation='binary'/>
-            <splitter _id='7' id='5' delay='0' bitWidth='4' branchCount='4' representation='binary'/>
+            <splitter _id='6' id='4' delay='0' bitWidth='4' representation='binary' branchCount='4'/>
+            <splitter _id='7' id='5' delay='0' bitWidth='4' representation='binary' branchCount='4'/>
             <digitalNet _id='8' id='6' delay='0'>
               <ports>
                 <netPortRef _id='9' verticeId='3' portId='1'/>
@@ -169,7 +170,7 @@
               </ports>
             </digitalNet>
             <andGate _id='102' id='60' delay='20' inputCount='2'/>
-            <notGate _id='119' id='61' delay='20'/>
+            <bufferGate _id='119' id='61' delay='20'/>
             <andGate _id='92' id='62' delay='20' inputCount='3'/>
             <andGate _id='58' id='63' delay='20' inputCount='4'/>
             <andGate _id='70' id='64' delay='20' inputCount='5'/>
@@ -224,7 +225,7 @@
               </ports>
             </digitalNet>
             <andGate _id='121' id='74' delay='20' inputCount='2' negatedInputs='2'/>
-            <bufferGate _id='104' id='75' delay='20' bitWidth='1'/>
+            <bufferGate _id='104' id='75' delay='20'/>
             <andGate _id='94' id='76' delay='20' inputCount='2'/>
             <andGate _id='60' id='77' delay='20' inputCount='3'/>
             <andGate _id='72' id='78' delay='20' inputCount='4'/>
@@ -267,7 +268,7 @@
               </ports>
             </digitalNet>
             <andGate _id='106' id='87' delay='20' inputCount='2' negatedInputs='2'/>
-            <bufferGate _id='96' id='88' delay='20' bitWidth='1'/>
+            <bufferGate _id='96' id='88' delay='20'/>
             <andGate _id='62' id='89' delay='20' inputCount='2'/>
             <andGate _id='74' id='90' delay='20' inputCount='3'/>
             <norGate _id='178' id='91' delay='20' inputCount='3'/>
@@ -303,7 +304,7 @@
               </ports>
             </digitalNet>
             <andGate _id='98' id='98' delay='20' inputCount='2' negatedInputs='2'/>
-            <bufferGate _id='64' id='99' delay='20' bitWidth='1'/>
+            <bufferGate _id='64' id='99' delay='20'/>
             <andGate _id='76' id='100' delay='20' inputCount='2'/>
             <norGate _id='195' id='101' delay='20' inputCount='2'/>
             <digitalNet _id='196' id='102' delay='0'>
@@ -346,7 +347,7 @@
                 <netPortRef _id='215' verticeId='209' portId='2'/>
               </ports>
             </digitalNet>
-            <concentrator _id='216' id='112' delay='0' bitWidth='4' branchCount='4' representation='binary'/>
+            <concentrator _id='216' id='112' delay='0' bitWidth='4' representation='binary' branchCount='4'/>
             <circuitInOut _id='217' id='113' name='S' type='output' bitWidth='4'/>
             <digitalNet _id='218' id='114' delay='0'>
               <ports>
@@ -434,17 +435,17 @@
             <netView _id='281' modelId='230' style='line'/>
           </netViews>
           <components>
-            <circuitInOutView _id='282' id='1' rot='0' filled='true' stroked='true' modelId='3' representation='hex' orientation='east'>
+            <circuitInOutView _id='282' id='1' rot='0' filled='true' stroked='true' modelId='3' orientation='east' representation='hex'>
               <location>
                 <point x='-392.0' y='-371.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='283' id='2' rot='0' filled='true' stroked='true' modelId='4' representation='hex' orientation='east'>
+            <circuitInOutView _id='283' id='2' rot='0' filled='true' stroked='true' modelId='4' orientation='east' representation='hex'>
               <location>
                 <point x='-392.0' y='-287.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='284' id='3' rot='0' filled='true' stroked='true' modelId='5' representation='binary' orientation='east'>
+            <circuitInOutView _id='284' id='3' rot='0' filled='true' stroked='true' modelId='5' orientation='east' representation='binary'>
               <location>
                 <point x='-392.0' y='-98.0'/>
               </location>
@@ -676,14 +677,14 @@
               </shape>
             </digitalEdgeView>
             <andGateView _id='347' id='131' rot='0' filled='true' stroked='true' modelId='102' x='448.0' y='-56.0'/>
-            <notGateView _id='348' id='132' rot='0' filled='true' stroked='true' modelId='119' x='448.0' y='-126.0'/>
+            <bufferGateView _id='348' id='132' rot='0' filled='true' stroked='true' modelId='119' x='448.0' y='-126.0'/>
             <andGateView _id='349' id='133' rot='0' filled='true' stroked='true' modelId='92' x='448.0' y='14.0'/>
             <andGateView _id='350' id='134' rot='0' filled='true' stroked='true' modelId='58' x='448.0' y='84.0'/>
             <andGateView _id='351' id='135' rot='0' filled='true' stroked='true' modelId='70' x='448.0' y='175.0'/>
             <norGateView _id='352' id='136' rot='0' filled='true' stroked='true' modelId='129' x='574.0' y='14.0'/>
             <digitalEdgeView _id='353' id='137' filled='true' stroked='true' modelId='130' layout='ortho' orig='348' origPort='2' origPortOutput='true' dest='352' destPort='1' adjusted='true'>
               <shape>
-                <polylineShape points='442.0,-126.0 490.0,-126.0 490.0,-14.0 518.0,-14.0'/>
+                <polylineShape points='434.0,-126.0 490.0,-126.0 490.0,-14.0 518.0,-14.0'/>
               </shape>
             </digitalEdgeView>
             <digitalEdgeView _id='354' id='138' filled='true' stroked='true' modelId='133' layout='ortho' orig='347' origPort='3' origPortOutput='true' dest='352' destPort='2' adjusted='false'>
@@ -936,7 +937,7 @@
                 <polylineShape points='-189.0,203.0 392.0,203.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='405' id='188' rot='0' filled='true' stroked='true' modelId='154' representation='binary' orientation='east'>
+            <circuitInOutView _id='405' id='188' rot='0' filled='true' stroked='true' modelId='154' orientation='east' representation='binary'>
               <location>
                 <point x='840.0' y='14.0'/>
               </location>
@@ -1473,7 +1474,7 @@
               </shape>
             </digitalEdgeView>
             <concentratorView _id='520' id='312' rot='0' filled='true' stroked='true' modelId='216' x='826.0' y='742.0' handedness='right'/>
-            <circuitInOutView _id='521' id='313' rot='0' filled='true' stroked='true' modelId='217' representation='hex' orientation='east'>
+            <circuitInOutView _id='521' id='313' rot='0' filled='true' stroked='true' modelId='217' orientation='east' representation='hex'>
               <location>
                 <point x='840.0' y='742.0'/>
               </location>
@@ -1512,7 +1513,7 @@
     <containerDrawing _id='527'>
       <components>
         <rectangle _id='528' id='1' style='figure' filled='true' stroked='true' x='140.0' y='140.0' w='56.0' h='84.0'/>
-        <originIndicator _id='529'>
+        <originIndicator _id='529' id='8'>
           <location>
             <point x='126.0' y='154.0'/>
           </location>
@@ -1542,7 +1543,7 @@
             <digitalPortView _id='543' x='196.0' y='210.0' dir='east' textPos='internal' portId='544'/>
           </portView>
         </digitalPortViewComp>
-        <label _id='545'>
+        <label _id='545' id='7' rot='0'>
           <text>
             <translation lang='de' text='∑'/>
           </text>
