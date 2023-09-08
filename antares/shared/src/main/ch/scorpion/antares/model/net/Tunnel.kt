@@ -84,6 +84,9 @@ class Tunnel(
 			name = value?.let { it.name }
 		}
 
+	val visiblePort: DigitalPort get() = getPort<DigitalSignal>(1) as DigitalPort
+	val invisiblePort: DigitalPort get() = getPort<DigitalSignal>(2) as DigitalPort
+
 	/** ---- [GraphElement] */
 
 	override fun graphParamsChanged(graph: Graph) {

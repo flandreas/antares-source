@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.inout.DigitalCircuitInOut
 import ch.scorpion.antares.model.net.Concentrator
 import ch.scorpion.antares.model.net.Splitter
+import ch.scorpion.antares.model.net.Tunnel
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.UUID
@@ -36,8 +37,6 @@ class HDLCircuit(
 
 	val portsCount: Int get() = ports.size
 
-	val circuitNodes: List<HDLCircuitNode> get() = nodes.filterIsInstance<HDLCircuitNode>()
-
 	/**
 	 * Returns the [HDLPort]s sending a signal into this [HDLCircuit].
 	 * From inside, the [HDLPort] is [HDLPort.Direction.OUT], because it defines a value.
@@ -58,6 +57,7 @@ class HDLCircuit(
 	init {
 		LOG.debug("Create HDLCircuit for ${circuit.name} (${circuit.uuid.id})")
 
+		createTunnelNets()
 		createNodes()
 
 		for (input in inputs) {
@@ -95,10 +95,14 @@ class HDLCircuit(
 				_nodes.add(ManyToOneNode(model.createNode(elem, this), elem.bitWidth, elem.branchCount))
 			} else if (elem is Splitter) {
 				_nodes.add(OneToManyNode(model.createNode(elem, this), elem.bitWidth, elem.branchCount))
-			} else {
+			} else if (isRealElement(elem)) {
 				_nodes.add(model.createNode(elem, this))
 			}
 		}
+	}
+
+	private fun isRealElement(vertice: Vertice): Boolean {
+		return vertice !is Tunnel
 	}
 
 	fun getHDLNetOfPort(port: DigitalPort): HDLNet? =
@@ -122,7 +126,52 @@ class HDLCircuit(
 		_entityName = renaming.checkName(entityName)
 
 		checkUniqueNames(ports.map { it::name })
-		checkUniqueNames(nets.map { it::name })
+		checkUniqueNames(nets.toSet().map { it::name })
+	}
+
+	/**
+	 * Pre-allocates [HDLNet]s for all [Tunnel]s such that all [Tunnel]s with the same name
+	 * end up with a single [HDLNet] connecting all related [Net]s.
+	 */
+	private fun createTunnelNets() {
+		circuit.elements
+			.filterIsInstance<Tunnel>()
+			.filter { StringUtils.isNotEmpty(it.name)}
+			.forEach { tunnel ->
+				val visibleNet = tunnel.visiblePort.net
+				if (visibleNet != null) {
+					if (netMap[visibleNet] == null) {
+						createTunnelNet(tunnel, HDLNet(bitWidth = tunnel.invisiblePort.bitWidth), mutableSetOf())
+					}
+				}
+			}
+	}
+
+	private fun createTunnelNet(tunnel: Tunnel, hdlNet: HDLNet, visitedTunnels: MutableSet<Tunnel>) {
+		if (visitedTunnels.contains(tunnel)) {
+			return
+		}
+		visitedTunnels.add(tunnel)
+
+		val visibleNet = tunnel.visiblePort.net
+		if (visibleNet != null) {
+
+			if (netMap[visibleNet] == null) {
+				netMap[visibleNet] = hdlNet
+			}
+
+			// Expand to other Tunnels with the same name
+			circuit.elements
+				.filterIsInstance<Tunnel>()
+				.filter { it !== tunnel && it.name == tunnel.name }
+				.forEach { createTunnelNet(it, hdlNet, visitedTunnels) }
+
+			// Expand to other Tunnels at the visible Port
+			visibleNet.ports
+				.filter { it !== tunnel.visiblePort && it.owner is Tunnel }
+				.map { it.owner as Tunnel }
+				.forEach { createTunnelNet(it, hdlNet, visitedTunnels) }
+		}
 	}
 
 	private fun checkUniqueNames(nameProviders: Collection<() -> String>) {

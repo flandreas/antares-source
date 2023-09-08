@@ -76,7 +76,7 @@ class DigitalGraph(
 				tunnelNets
 					.getOrPut(tunnel.name!!) { DigitalNet().apply { add(this) } }
 					.also {
-						it.connect(tunnel.getPort(2))
+						it.connect(tunnel.invisiblePort)
 					}
 		}
 	}
@@ -84,7 +84,7 @@ class DigitalGraph(
 	private fun destroyTunnelNets() {
 		val nets = mutableSetOf<Net<*>>()
 		elements.filterIsInstance<Tunnel>().forEach { tunnel ->
-			val port = tunnel.getPort<DigitalSignal>(2)
+			val port = tunnel.invisiblePort
 			port.net?.let {
 				nets.add(it)
 				it.unconnect(port)
