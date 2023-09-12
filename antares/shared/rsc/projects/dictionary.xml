@@ -46,5 +46,10 @@
 Book by J. Clark Scott'/>
       </desc>
     </libraryDictionaryEntry>
+    <libraryDictionaryEntry _id='7' uuid='99ca287b-124d-4e16-9f2e-409bf4a6761d' author='5ecf330b-e395-4e17-88b0-0883834b384a' visibility='private'>
+      <name>
+        <translation lang='en' text='Ben Eater 8-bit computer'/>
+      </name>
+    </libraryDictionaryEntry>
   </entries>
 </libraryDictionary>

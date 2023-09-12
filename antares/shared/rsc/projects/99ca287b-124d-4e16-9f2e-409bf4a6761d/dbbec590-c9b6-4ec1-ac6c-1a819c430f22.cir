@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' manualContainer='false'>
+  <graph>
+    <graphStorable _id='1'>
+      <model>
+        <graph _id='2' type='digital'>
+          <elements>
+            <sevenSegmentDisplay _id='3' id='1' delay='0' portScheme='combined'/>
+            <circuitInOut _id='4' id='2' name='I1' type='input' bitWidth='8'/>
+            <digitalNet _id='5' id='3' delay='0'>
+              <ports>
+                <netPortRef _id='6' verticeId='4' portId='1'/>
+                <netPortRef _id='7' verticeId='3' portId='1'/>
+              </ports>
+            </digitalNet>
+          </elements>
+        </graph>
+      </model>
+      <view>
+        <graphView _id='8'>
+          <netViews>
+            <netView _id='9' modelId='5' style='line'/>
+          </netViews>
+          <components>
+            <sevenSegmentDisplayView _id='10' id='1' rot='0' filled='true' stroked='true' modelId='3' x='-682.0' y='-371.0' lightColor='red' size='medium' hasBorder='true'/>
+            <circuitInOutView _id='11' id='2' rot='0' filled='true' stroked='true' modelId='4' orientation='east' representation='binary'>
+              <location>
+                <point x='-714.0' y='-217.0'/>
+              </location>
+            </circuitInOutView>
+            <digitalEdgeView _id='12' id='3' filled='true' stroked='true' modelId='5' layout='ortho' orig='11' origPort='1' origPortOutput='true' dest='10' destPort='1' adjusted='false'>
+              <shape>
+                <polylineShape points='-728.0,-217.0 -672.0,-217.0 -672.0,-287.0'/>
+              </shape>
+            </digitalEdgeView>
+          </components>
+        </graphView>
+      </view>
+    </graphStorable>
+  </graph>
+  <container>
+    <containerDrawing _id='13'>
+      <components>
+        <rectangle _id='14' id='1' style='figure' filled='true' stroked='true' x='0.0' y='-14.0' w='63.0' h='56.0'/>
+        <digitalPortViewComp _id='15' id='2' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='16' x='0.0' y='0.0' dir='west' textPos='internal' portId='17'/>
+          </portView>
+        </digitalPortViewComp>
+        <label _id='18' id='3' rot='0'>
+          <text>
+            <translation lang='en' text='PLA'/>
+          </text>
+          <location>
+            <point x='31.5' y='14.0'/>
+          </location>
+        </label>
+        <originIndicator _id='19' id='4'>
+          <location>
+            <point x='-14.0' y='0.0'/>
+          </location>
+        </originIndicator>
+      </components>
+      <model>
+        <subGraphVertice _id='20' id='0' delay='0' uuid='dbbec590-c9b6-4ec1-ac6c-1a819c430f22'>
+          <name>
+            <translation lang='en' text='Playground'/>
+          </name>
+          <ports>
+            <subCircuitPort _id='17' portId='1' name='I1' logic='positive' bitWidth='8' trigger='level' type='input' representation='binary'/>
+          </ports>
+        </subGraphVertice>
+      </model>
+    </containerDrawing>
+  </container>
+</metaGraph>

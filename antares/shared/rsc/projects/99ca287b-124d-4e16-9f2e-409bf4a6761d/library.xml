@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project _id='0' defaultElement='60304a9f-1817-4a29-83b7-a5ebb2c62a98' uuid='99ca287b-124d-4e16-9f2e-409bf4a6761d' author='5ecf330b-e395-4e17-88b0-0883834b384a' imports='6707f981-110d-4629-a0bf-c35a4688025c'>
+  <folder>
+    <libraryFolder _id='1'>
+      <name>
+        <translation lang='en' text='Ben Eater 8-bit computer'/>
+      </name>
+      <items>
+        <containerLibraryElement _id='2' uuid='60304a9f-1817-4a29-83b7-a5ebb2c62a98' type='digital'>
+          <name>
+            <translation lang='en' text='8-bit computer'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='3' uuid='650bb3b7-3e5d-4857-8021-5164ff20e6b1' type='digital'>
+          <name>
+            <translation lang='en' text='Clock'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='4' uuid='dbbec590-c9b6-4ec1-ac6c-1a819c430f22' type='digital'>
+          <name>
+            <translation lang='en' text='Playground'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='5' uuid='112591d4-c0dd-48b1-96d9-8b9a98fce1a1' type='digital'>
+          <name>
+            <translation lang='en' text='Bus Register 4 Bit'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='6' uuid='dce24233-6f3e-4b17-a69d-eadde4b19c99' type='digital'>
+          <name>
+            <translation lang='en' text='Bus Register 8 Bit'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='7' uuid='988d6381-7c4b-4d21-b7af-e0fbcf8b8df9' type='digital'>
+          <name>
+            <translation lang='en' text='Ben&apos;s 8 bit register'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='8' uuid='81503898-eabc-4916-9cff-312aa743055c' type='digital'>
+          <name>
+            <translation lang='en' text='ALU'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='9' uuid='e3c86e3a-914a-4ab9-984e-93898ab51f5f' type='digital'>
+          <name>
+            <translation lang='en' text='Latch Register 4 Bit'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='10' uuid='d37e0548-8d87-48ed-888b-205741ee2ce7' type='digital'>
+          <name>
+            <translation lang='en' text='SN 74189'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='11' uuid='1f4f11c8-f517-4f5d-84d3-b84dea03169b' type='digital'>
+          <name>
+            <translation lang='en' text='RAM'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='12' uuid='831c7a90-e82d-4513-aaa0-292fd61a93be' type='digital'>
+          <name>
+            <translation lang='en' text='Memory Address Register'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='13' uuid='b0305451-c948-4bc3-8f0b-fc5ea45acc35' type='digital'>
+          <name>
+            <translation lang='en' text='Memory Contents'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='14' uuid='e42bb751-bbbe-4d7e-b8f9-1f3da2bb7d96' type='digital'>
+          <name>
+            <translation lang='en' text='Program Counter'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='15' uuid='9bf83880-7a45-4c75-a681-d4b1dee9bcdb' type='digital'>
+          <name>
+            <translation lang='en' text='Display'/>
+          </name>
+        </containerLibraryElement>
+      </items>
+    </libraryFolder>
+  </folder>
+</project>
