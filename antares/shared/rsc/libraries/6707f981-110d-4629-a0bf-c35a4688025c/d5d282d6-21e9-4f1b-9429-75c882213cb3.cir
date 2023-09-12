@@ -3,12 +3,12 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' script='var s = S0 + 2 * S1 + 4 * S2
+        <graph _id='2' type='digital' script='var s = 4 * S2 + 2 * S1 + S0
 O = I@s' startupTime='30'>
           <elements>
-            <subGraphVerticeRef _id='3' id='1' delay='0' uuid='4fd29ab0-fb62-4f3c-a2c6-54a9c33ac437'/>
-            <subGraphVerticeRef _id='4' id='2' delay='0' uuid='4fd29ab0-fb62-4f3c-a2c6-54a9c33ac437'/>
-            <subGraphVerticeRef _id='5' id='3' delay='0' uuid='7f483f75-3f41-4d89-aef5-ae07afbaf1f7'/>
+            <subGraphVerticeRef _id='3' id='1' delay='0' uuid='4fd29ab0-fb62-4f3c-a2c6-54a9c33ac437' type='digital'/>
+            <subGraphVerticeRef _id='4' id='2' delay='0' uuid='4fd29ab0-fb62-4f3c-a2c6-54a9c33ac437' type='digital'/>
+            <subGraphVerticeRef _id='5' id='3' delay='0' uuid='7f483f75-3f41-4d89-aef5-ae07afbaf1f7' type='digital'/>
             <circuitInOut _id='6' id='4' name='O' type='output' bitWidth='1'/>
             <digitalNet _id='7' id='5' delay='0'>
               <ports>
@@ -133,7 +133,7 @@ O = I@s' startupTime='30'>
             <subGraphVerticeViewRef _id='75' id='1' rot='0' filled='true' stroked='true' modelId='3' x='-182.0' y='-98.0' controlViewVisibility='simulation'/>
             <subGraphVerticeViewRef _id='76' id='2' rot='0' filled='true' stroked='true' modelId='4' x='-182.0' y='98.0' controlViewVisibility='simulation'/>
             <subGraphVerticeViewRef _id='77' id='3' rot='0' filled='true' stroked='true' modelId='5' x='42.0' y='28.0' controlViewVisibility='simulation'/>
-            <circuitInOutView _id='78' id='4' rot='0' filled='true' stroked='true' modelId='6' representation='binary' orientation='east'>
+            <circuitInOutView _id='78' id='4' rot='0' filled='true' stroked='true' modelId='6' orientation='east' representation='binary'>
               <location>
                 <point x='154.0' y='42.0'/>
               </location>
@@ -143,7 +143,7 @@ O = I@s' startupTime='30'>
                 <polylineShape points='112.0,42.0 168.0,42.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='80' id='6' rot='0' filled='true' stroked='true' modelId='10' representation='binary' orientation='north'>
+            <circuitInOutView _id='80' id='6' rot='0' filled='true' stroked='true' modelId='10' orientation='north' representation='binary'>
               <location>
                 <point x='-133.0' y='308.0'/>
               </location>
@@ -153,12 +153,12 @@ O = I@s' startupTime='30'>
                 <polylineShape points='-133.0,322.0 -133.0,294.0 84.0,294.0 84.0,77.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='82' id='8' rot='0' filled='true' stroked='true' modelId='14' representation='binary' orientation='north'>
+            <circuitInOutView _id='82' id='8' rot='0' filled='true' stroked='true' modelId='14' orientation='north' representation='binary'>
               <location>
                 <point x='0.0' y='308.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='83' id='9' rot='0' filled='true' stroked='true' modelId='15' representation='binary' orientation='north'>
+            <circuitInOutView _id='83' id='9' rot='0' filled='true' stroked='true' modelId='15' orientation='north' representation='binary'>
               <location>
                 <point x='-63.0' y='308.0'/>
               </location>
@@ -173,7 +173,7 @@ O = I@s' startupTime='30'>
                 <polylineShape points='-105.0,126.0 28.0,126.0 28.0,56.0 56.0,56.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='86' id='12' rot='0' filled='true' stroked='true' modelId='22' representation='binary' orientation='east'>
+            <circuitInOutView _id='86' id='12' rot='0' filled='true' stroked='true' modelId='22' orientation='east' representation='binary'>
               <location>
                 <point x='-322.0' y='21.0'/>
               </location>
