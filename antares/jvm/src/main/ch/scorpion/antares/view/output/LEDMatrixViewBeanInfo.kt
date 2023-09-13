@@ -5,11 +5,14 @@ import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
+import ch.scorpion.jabbah.graph.container.ControlViewComponent
+import ch.scorpion.jabbah.graph.container.ControlViewComponentBeanInfo
+import ch.scorpion.jabbah.graph.view.ControlViewBeanInfo
 import ch.scorpion.jabbah.graph.view.vertice.VerticeViewBeanInfo
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
-class LEDMatrixViewBeanInfo : VerticeViewBeanInfo<LEDMatrixView>() {
+class LEDMatrixViewBeanInfo : VerticeViewBeanInfo<LEDMatrixView>(), ControlViewBeanInfo {
 
     companion object {
 	    private val columnWidth = AntaresProperties.bitWidth("columnWidth", "element.property.columns")
@@ -19,6 +22,8 @@ class LEDMatrixViewBeanInfo : VerticeViewBeanInfo<LEDMatrixView>() {
 	    private val afterglow = CommandPropertySwing("afterglowDuration", "element.property.LEDMatrix.afterglow", Long::class.java, componentBeanProvider)
 	    private val isCircleDots = CommandPropertySwing("circleDots", "element.property.LEDMatrix.isCircleDots", Boolean::class.java, componentBeanProvider)
 	    private val isDebug = CommandPropertySwing("debug", "element.property.isDebug", Boolean::class.java, componentBeanProvider)
+
+	    private val controlViewLightColor = AntaresProperties.lightColor(name = "${ControlViewComponentBeanInfo.aggregatePropertyName}.lightColor")
     }
 
 	init {
@@ -36,4 +41,8 @@ class LEDMatrixViewBeanInfo : VerticeViewBeanInfo<LEDMatrixView>() {
 	    properties.add(isCircleDots.bind(editor, beanIdProvider(bean.id)))
 	    properties.add(isDebug.bind(editor, beanIdProvider(bean.id)))
     }
+
+	override fun addControlViewProperties(bean: ControlViewComponent, editor: Editor, properties: MutableList<Property>) {
+		properties.add(controlViewLightColor.bind(editor, beanIdProvider(bean.id)))
+	}
 }

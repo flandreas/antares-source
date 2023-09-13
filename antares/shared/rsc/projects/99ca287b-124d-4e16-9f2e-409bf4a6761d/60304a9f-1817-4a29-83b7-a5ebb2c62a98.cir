@@ -217,42 +217,42 @@
                     </originIndicator>
                     <controlViewComponent _id='120' id='10' style='figure' filled='true' stroked='true' controlModelId='19'>
                       <controlView>
-                        <ledView _id='121' id='22' rot='0' filled='true' stroked='true' modelId='122' x='140.0' y='35.0' size='large' lightColor='red'/>
+                        <ledView _id='121' id='22' rot='0' filled='true' stroked='true' modelId='122' x='140.0' y='35.0' size='large' lightColor='yellow'/>
                       </controlView>
                     </controlViewComponent>
                     <controlViewComponent _id='123' id='11' style='figure' filled='true' stroked='true' controlModelId='20'>
                       <controlView>
-                        <ledView _id='124' id='23' rot='0' filled='true' stroked='true' modelId='125' x='105.0' y='35.0' size='large' lightColor='red'/>
+                        <ledView _id='124' id='23' rot='0' filled='true' stroked='true' modelId='125' x='105.0' y='35.0' size='large' lightColor='yellow'/>
                       </controlView>
                     </controlViewComponent>
                     <controlViewComponent _id='126' id='12' style='figure' filled='true' stroked='true' controlModelId='21'>
                       <controlView>
-                        <ledView _id='127' id='24' rot='0' filled='true' stroked='true' modelId='128' x='70.0' y='35.0' size='large' lightColor='red'/>
+                        <ledView _id='127' id='24' rot='0' filled='true' stroked='true' modelId='128' x='70.0' y='35.0' size='large' lightColor='yellow'/>
                       </controlView>
                     </controlViewComponent>
                     <controlViewComponent _id='129' id='13' style='figure' filled='true' stroked='true' controlModelId='22'>
                       <controlView>
-                        <ledView _id='130' id='25' rot='0' filled='true' stroked='true' modelId='131' x='35.0' y='35.0' size='large' lightColor='red'/>
+                        <ledView _id='130' id='25' rot='0' filled='true' stroked='true' modelId='131' x='35.0' y='35.0' size='large' lightColor='yellow'/>
                       </controlView>
                     </controlViewComponent>
                     <controlViewComponent _id='132' id='14' style='figure' filled='true' stroked='true' controlModelId='23'>
                       <controlView>
-                        <ledView _id='133' id='26' rot='0' filled='true' stroked='true' modelId='134' x='0.0' y='35.0' size='large' lightColor='red'/>
+                        <ledView _id='133' id='26' rot='0' filled='true' stroked='true' modelId='134' x='0.0' y='35.0' size='large' lightColor='blue'/>
                       </controlView>
                     </controlViewComponent>
                     <controlViewComponent _id='135' id='15' style='figure' filled='true' stroked='true' controlModelId='24'>
                       <controlView>
-                        <ledView _id='136' id='27' rot='0' filled='true' stroked='true' modelId='137' x='-35.0' y='35.0' size='large' lightColor='red'/>
+                        <ledView _id='136' id='27' rot='0' filled='true' stroked='true' modelId='137' x='-35.0' y='35.0' size='large' lightColor='blue'/>
                       </controlView>
                     </controlViewComponent>
                     <controlViewComponent _id='138' id='16' style='figure' filled='true' stroked='true' controlModelId='25'>
                       <controlView>
-                        <ledView _id='139' id='28' rot='0' filled='true' stroked='true' modelId='140' x='-70.0' y='35.0' size='large' lightColor='red'/>
+                        <ledView _id='139' id='28' rot='0' filled='true' stroked='true' modelId='140' x='-70.0' y='35.0' size='large' lightColor='blue'/>
                       </controlView>
                     </controlViewComponent>
                     <controlViewComponent _id='141' id='17' style='figure' filled='true' stroked='true' controlModelId='26'>
                       <controlView>
-                        <ledView _id='142' id='29' rot='0' filled='true' stroked='true' modelId='143' x='-105.0' y='35.0' size='large' lightColor='red'/>
+                        <ledView _id='142' id='29' rot='0' filled='true' stroked='true' modelId='143' x='-105.0' y='35.0' size='large' lightColor='blue'/>
                       </controlView>
                     </controlViewComponent>
                   </components>
