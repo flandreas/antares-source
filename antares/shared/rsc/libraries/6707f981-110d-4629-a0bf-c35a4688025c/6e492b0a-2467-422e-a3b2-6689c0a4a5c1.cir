@@ -3,7 +3,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' script='init {
+        <graph _id='2' type='digital' script='init {
 	Q = 0
 	&apos;!Q&apos; = 1
 }
@@ -85,22 +85,22 @@ if (EN) {
           <components>
             <norGateView _id='45' id='1' rot='0' filled='true' stroked='true' modelId='3' x='518.0' y='182.0'/>
             <norGateView _id='46' id='2' rot='0' filled='true' stroked='true' modelId='4' x='518.0' y='308.0'/>
-            <circuitInOutView _id='47' id='3' rot='0' filled='true' stroked='true' modelId='5' representation='binary' orientation='east'>
+            <circuitInOutView _id='47' id='3' rot='0' filled='true' stroked='true' modelId='5' orientation='east' representation='binary'>
               <location>
                 <point x='168.0' y='154.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='48' id='4' rot='0' filled='true' stroked='true' modelId='6' representation='binary' orientation='east'>
+            <circuitInOutView _id='48' id='4' rot='0' filled='true' stroked='true' modelId='6' orientation='east' representation='binary'>
               <location>
                 <point x='168.0' y='238.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='49' id='5' rot='0' filled='true' stroked='true' modelId='7' representation='binary' orientation='east'>
+            <circuitInOutView _id='49' id='5' rot='0' filled='true' stroked='true' modelId='7' orientation='east' representation='binary'>
               <location>
                 <point x='602.0' y='308.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='50' id='6' rot='0' filled='true' stroked='true' modelId='8' representation='binary' orientation='east'>
+            <circuitInOutView _id='50' id='6' rot='0' filled='true' stroked='true' modelId='8' orientation='east' representation='binary'>
               <location>
                 <point x='602.0' y='182.0'/>
               </location>
@@ -237,9 +237,9 @@ if (EN) {
             <digitalPortView _id='86' x='196.0' y='154.0' dir='east' textPos='internal' portId='87'/>
           </portView>
         </digitalPortViewComp>
-        <controlViewComponent _id='88' id='7' style='figure' filled='true' stroked='true' controlModelId='5' name='Circuit Output Q'>
+        <controlViewComponent _id='88' id='9' style='figure' filled='true' stroked='true' controlModelId='6' name='Circuit Output: Q'>
           <controlView>
-            <digitalSignalSourceCV _id='89' id='5' filled='true' stroked='true' modelId='7' x='154.0' y='189.0' representation='binary' orientation='east' controlId='circuitInOut:5' bitWidth='1' name='Circuit Output Q'/>
+            <digitalSignalSourceCV _id='89' id='6' filled='true' stroked='true' modelId='8' x='154.0' y='189.0' representation='binary' orientation='east' controlId='circuitInOut:6' bitWidth='1' name='Circuit Output: Q'/>
           </controlView>
         </controlViewComponent>
       </components>
