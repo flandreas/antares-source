@@ -35,7 +35,11 @@ class ResetSubGraphVerticeViewAction(
 	}
 
 	override fun execute(event: ActionEvent) {
-		LOG.trace("Resetting custom view of SubGraphVerticeView")
-		commandManager.execute(EditSubGraphVerticeViewCommand(drawingView!!, subGraphVerticeView.id, null))
+		LOG.userTrail("Resetting custom view of SubGraphVerticeView")
+		val vv = subGraphVerticeView
+		// Deselect/select to get rid of the invalid inner SelectionModels
+		drawingView!!.selectionManager.deselect(vv)
+		commandManager.execute(EditSubGraphVerticeViewCommand(drawingView!!, vv.id, null))
+		drawingView!!.selectionManager.select(vv)
 	}
 }
