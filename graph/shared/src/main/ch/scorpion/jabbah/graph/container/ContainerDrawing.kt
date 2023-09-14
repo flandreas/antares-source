@@ -205,20 +205,33 @@ class ContainerDrawing(
 
 		val clonedDrawing = StorableCloner.clone(this)
 		val origin = clonedDrawing.getOriginIndicator().location
+		val stalePorts = mutableListOf<PortViewComponent<*>>()
 
 		for (comp in clonedDrawing.drawables) {
 			comp.location = Point2D(comp.location.x - origin.x, comp.location.y - origin.y)
 			if (comp is PortViewComponent<*>) {
 				val portView = comp.portView as PortView<Any>
-				view.addPortView(portView)
-				try {
+				if (view.model.hasPort(portView.port.name!!)) {
+					view.addPortView(portView)
 					portView.port = view.model.getPort(portView.port.name!!)
-				} catch (e: NoSuchElementException) {
-					LOG.error("SubGraphPort '${portView.port.name}' not found when filling SubGraphVerticeView for '${view.subGraphVertice!!.graphUUID}'")
-					throw e
+				} else {
+					// Stale Port reference can occur with custom ContainerDrawing in SubGraphVerticeView
+					// produced by feature "Edit Symbol". Try to resolve later.
+					stalePorts.add(comp)
 				}
 			} else if (comp !is OriginIndicator) {
 				view.addDrawable(comp)
+			}
+		}
+
+		// Resolve state PortViewComponent that couldn't be resolved by name
+		stalePorts.forEach { comp ->
+			val portView = comp.portView as PortView<Any>
+			if (view.model.hasPort(portView.port.portId)) {
+				view.addPortView(portView)
+				portView.port = view.model.getPort(portView.port.portId)
+			} else {
+				LOG.warn("Could not resolve SubGraphPort ${portView.port.name} in Graph ${view.subGraphVertice!!.graphUUID}")
 			}
 		}
 	}
