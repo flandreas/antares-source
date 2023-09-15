@@ -16,7 +16,7 @@
               </ports>
             </digitalNet>
             <circuitInOut _id='10' id='6' name='C' type='input' bitWidth='1'/>
-            <circuitInOut _id='11' id='7' name='EN' type='input' bitWidth='1'/>
+            <circuitInOut _id='11' id='7' name='!(EN)' type='input' bitWidth='1'/>
             <circuitInOut _id='12' id='8' name='OE' type='input' bitWidth='1'/>
             <circuitInOut _id='13' id='9' name='CLR' type='input' bitWidth='1'/>
             <circuitInOut _id='14' id='10' name='O' canBeUndefined='true' type='output' bitWidth='8'/>
@@ -313,7 +313,7 @@
           <ports>
             <subCircuitPort _id='94' portId='1' name='D' logic='positive' bitWidth='8' trigger='level' type='input' representation='hex'/>
             <subCircuitPort _id='97' portId='2' name='C' logic='positive' bitWidth='1' trigger='edge' type='input' representation='binary'/>
-            <subCircuitPort _id='100' portId='3' name='EN' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='100' portId='3' name='!(EN)' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='103' portId='4' name='OE' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='106' portId='5' name='CLR' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='109' portId='6' name='O' logic='positive' bitWidth='8' trigger='level' type='output' representation='binary' canBeUndefined='true'/>

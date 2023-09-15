@@ -6,8 +6,8 @@
         <graph _id='2' type='digital'>
           <elements>
             <clock _id='3' id='1' delay='500000000' unit='ms'/>
-            <switch _id='4' id='2' delay='1000' name='Auto\/Manual'/>
-            <switch _id='5' id='3' delay='1000' name='Manual pulse'/>
+            <switch _id='4' id='2' delay='1000' name='Manual'/>
+            <switch _id='5' id='3' delay='1000' name='Step'/>
             <circuitInOut _id='6' id='4' name='HLT' type='input' bitWidth='1'/>
             <andGate _id='7' id='5' delay='20' inputCount='2' negatedInputs='2'/>
             <andGate _id='8' id='6' delay='20' inputCount='2'/>
@@ -220,19 +220,19 @@
             <clockControlView _id='90' id='1' style='figure' filled='true' stroked='true' x='-56.0' y='21.0' w='20.0' h='20.0'/>
           </controlView>
         </controlViewComponent>
-        <controlViewComponent _id='91' id='7' style='figure' filled='true' stroked='true' controlModelId='2' name='Auto\/Manual'>
+        <controlViewComponent _id='91' id='7' style='figure' filled='true' stroked='true' controlModelId='2' name='Manual'>
           <controlView>
             <switchView _id='92' id='2' rot='0' filled='true' stroked='true' modelId='4' x='-21.0' y='-42.0'/>
           </controlView>
         </controlViewComponent>
-        <controlViewComponent _id='93' id='8' style='figure' filled='true' stroked='true' controlModelId='3' name='Manual pulse'>
+        <controlViewComponent _id='93' id='8' style='figure' filled='true' stroked='true' controlModelId='3' name='Step'>
           <controlView>
             <switchView _id='94' id='3' rot='0' filled='true' stroked='true' modelId='5' x='-21.0' y='-7.0' toggle='false'/>
           </controlView>
         </controlViewComponent>
         <label _id='95' id='9' rot='0'>
           <text>
-            <translation lang='en' text='Auto pulse'/>
+            <translation lang='en' text='Frequency'/>
           </text>
           <location>
             <point x='-98.0' y='28.0'/>

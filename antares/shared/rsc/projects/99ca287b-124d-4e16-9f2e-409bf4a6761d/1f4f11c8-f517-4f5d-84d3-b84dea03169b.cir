@@ -29,7 +29,7 @@
                 <netPortRef _id='17' verticeId='11' portId='3'/>
               </ports>
             </digitalNet>
-            <triStateBufferGate _id='18' id='9' delay='20' bitWidth='8' logic='positive'/>
+            <triStateBufferGate _id='18' id='9' delay='20' bitWidth='8' logic='negative'/>
             <digitalNet _id='19' id='11' delay='0'>
               <ports>
                 <netPortRef _id='20' verticeId='18' portId='3'/>
@@ -63,7 +63,7 @@
                 <netPortRef _id='36' verticeId='4' portId='4'/>
               </ports>
             </digitalNet>
-            <circuitInOut _id='37' id='19' name='OE' type='input' bitWidth='1'/>
+            <circuitInOut _id='37' id='19' name='!(OE)' type='input' bitWidth='1'/>
             <digitalNet _id='38' id='20' delay='0'>
               <ports>
                 <netPortRef _id='39' verticeId='37' portId='1'/>
@@ -264,7 +264,7 @@
             </circuitInOutView>
             <digitalEdgeView _id='134' id='26' filled='true' stroked='true' modelId='38' layout='ortho' orig='133' origPort='1' origPortOutput='true' dest='124' destPort='2' adjusted='false'>
               <shape>
-                <polylineShape points='-287.0,140.0 413.0,140.0 413.0,73.0'/>
+                <polylineShape points='-287.0,140.0 413.0,140.0 413.0,81.0'/>
               </shape>
             </digitalEdgeView>
             <circuitInOutView _id='135' id='27' rot='0' filled='true' stroked='true' modelId='41' orientation='east' representation='binary'>
@@ -473,7 +473,7 @@
           <ports>
             <subCircuitPort _id='169' portId='1' name='A' logic='positive' bitWidth='4' trigger='level' type='input' representation='hex'/>
             <subCircuitPort _id='172' portId='2' name='DO' logic='positive' bitWidth='8' trigger='level' type='output' representation='hex' canBeUndefined='true'/>
-            <subCircuitPort _id='175' portId='3' name='OE' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='175' portId='3' name='!(OE)' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='178' portId='4' name='!(WE)' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='199' portId='5' name='DI' logic='positive' bitWidth='8' trigger='level' type='input' representation='hex'/>
           </ports>
