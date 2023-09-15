@@ -91,6 +91,11 @@
             <translation lang='en' text='Reset'/>
           </name>
         </containerLibraryElement>
+        <containerLibraryElement _id='19' uuid='9d117d01-987d-418f-b8b6-9f10fe8c8884' type='digital'>
+          <name>
+            <translation lang='en' text='Instruction Register'/>
+          </name>
+        </containerLibraryElement>
       </items>
     </libraryFolder>
   </folder>

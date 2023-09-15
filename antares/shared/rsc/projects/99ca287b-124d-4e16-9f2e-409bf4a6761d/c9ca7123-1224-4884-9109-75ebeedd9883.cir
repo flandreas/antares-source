@@ -106,7 +106,7 @@
               </ports>
             </digitalNet>
             <circuitInOut _id='63' id='32' name='OP' type='input' bitWidth='4'/>
-            <rom _id='64' id='49' delay='20' dataSource='/Users/andreas/Desktop/microprogram.txt' addressBitWidth='7' dataBitWidth='16' content='4004 1408 6*0000 4004 1408 4800 1200 4*0000 4004 1408 4800 1020 0280 3*0000 4004 1408 4800 1020 02C0 3*0000 4004 1408 6*0000 4004 1408 6*0000 4004 1408 6*0000 4004 1408 6*0000 4004 1408 6*0000 4004 1408 6*0000 4004 1408 6*0000 4004 1408 6*0000 4004 1408 6*0000 4004 1408 6*0000 4004 1408 0110 5*0000 4004 1408 8000 6*0000' loadDataSource='false'/>
+            <rom _id='64' id='49' delay='20' dataSource='/Users/andreas/Desktop/microprogram.txt' addressBitWidth='7' dataBitWidth='16' content='4004 1408 6*0000 4004 1408 4800 1200 4*0000 4004 1408 4800 1020 0280 3*0000 4004 1408 4800 1020 02C0 3*0000 4004 1408 4800 2100 4*0000 4004 1408 0A00 5*0000 4004 1408 0802 5*0000 4004 1408 6*0000 4004 1408 6*0000 4004 1408 6*0000 4004 1408 6*0000 4004 1408 6*0000 4004 1408 6*0000 4004 1408 6*0000 4004 1408 0110 5*0000 4004 1408 8000 6*0000' loadDataSource='false'/>
             <concentrator _id='27' id='50' delay='0' bitWidth='7' representation='binary' branchCount='7'/>
             <digitalNet _id='65' id='51' delay='0'>
               <ports>
