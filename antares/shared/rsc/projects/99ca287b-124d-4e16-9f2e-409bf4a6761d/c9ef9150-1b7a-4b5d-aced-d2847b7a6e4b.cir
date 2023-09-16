@@ -218,499 +218,549 @@
                 <netPortRef _id='137' verticeId='9' portId='1'/>
               </ports>
             </digitalNet>
+            <circuitInOut _id='138' id='85' name='!(FI)_O' type='output' bitWidth='1'/>
+            <notGate _id='139' id='86' delay='20'/>
+            <digitalNet _id='140' id='87' delay='0'>
+              <ports>
+                <netPortRef _id='141' verticeId='139' portId='2'/>
+                <netPortRef _id='142' verticeId='138' portId='1'/>
+              </ports>
+            </digitalNet>
+            <digitalNet _id='143' id='88' delay='0'>
+              <ports>
+                <netPortRef _id='144' verticeId='9' portId='2'/>
+                <netPortRef _id='145' verticeId='139' portId='1'/>
+                <netPortRef _id='146' verticeId='147' portId='1'/>
+              </ports>
+            </digitalNet>
+            <led _id='147' id='89' delay='0' name=''/>
           </elements>
         </graph>
       </model>
       <view>
-        <graphView _id='138'>
+        <graphView _id='148'>
           <netViews>
-            <netView _id='139' modelId='5' style='line'/>
-            <netView _id='140' modelId='12' style='line'/>
-            <netView _id='141' modelId='15' style='line'/>
-            <netView _id='142' modelId='21' style='line'/>
-            <netView _id='143' modelId='28' style='line'/>
-            <netView _id='144' modelId='31' style='line'/>
-            <netView _id='145' modelId='38' style='line'/>
-            <netView _id='146' modelId='41' style='line'/>
-            <netView _id='147' modelId='48' style='line'/>
-            <netView _id='148' modelId='51' style='line'/>
-            <netView _id='149' modelId='59' style='line'/>
-            <netView _id='150' modelId='63' style='line'/>
-            <netView _id='151' modelId='68' style='line'/>
-            <netView _id='152' modelId='75' style='line'/>
-            <netView _id='153' modelId='78' style='line'/>
-            <netView _id='154' modelId='84' style='line'/>
-            <netView _id='155' modelId='91' style='line'/>
-            <netView _id='156' modelId='94' style='line'/>
-            <netView _id='157' modelId='100' style='line'/>
-            <netView _id='158' modelId='106' style='line'/>
-            <netView _id='159' modelId='113' style='line'/>
-            <netView _id='160' modelId='116' style='line'/>
-            <netView _id='161' modelId='123' style='line'/>
-            <netView _id='162' modelId='126' style='line'/>
-            <netView _id='163' modelId='131' style='line'/>
-            <netView _id='164' modelId='135' style='line'/>
+            <netView _id='149' modelId='5' style='line'/>
+            <netView _id='150' modelId='12' style='line'/>
+            <netView _id='151' modelId='15' style='line'/>
+            <netView _id='152' modelId='21' style='line'/>
+            <netView _id='153' modelId='28' style='line'/>
+            <netView _id='154' modelId='31' style='line'/>
+            <netView _id='155' modelId='38' style='line'/>
+            <netView _id='156' modelId='41' style='line'/>
+            <netView _id='157' modelId='48' style='line'/>
+            <netView _id='158' modelId='51' style='line'/>
+            <netView _id='159' modelId='59' style='line'/>
+            <netView _id='160' modelId='63' style='line'/>
+            <netView _id='161' modelId='68' style='line'/>
+            <netView _id='162' modelId='75' style='line'/>
+            <netView _id='163' modelId='78' style='line'/>
+            <netView _id='164' modelId='84' style='line'/>
+            <netView _id='165' modelId='91' style='line'/>
+            <netView _id='166' modelId='94' style='line'/>
+            <netView _id='167' modelId='100' style='line'/>
+            <netView _id='168' modelId='106' style='line'/>
+            <netView _id='169' modelId='113' style='line'/>
+            <netView _id='170' modelId='116' style='line'/>
+            <netView _id='171' modelId='123' style='line'/>
+            <netView _id='172' modelId='126' style='line'/>
+            <netView _id='173' modelId='131' style='line'/>
+            <netView _id='174' modelId='135' style='line'/>
+            <netView _id='175' modelId='140' style='line'/>
+            <netView _id='176' modelId='143' style='line'/>
           </netViews>
           <components>
-            <circuitInOutView _id='165' id='2' rot='0' filled='true' stroked='true' modelId='3' orientation='north' representation='binary'>
+            <circuitInOutView _id='177' id='2' rot='0' filled='true' stroked='true' modelId='3' orientation='north' representation='binary'>
               <location>
                 <point x='-434.0' y='-154.0'/>
               </location>
             </circuitInOutView>
-            <ledView _id='166' id='3' rot='90' filled='true' stroked='true' modelId='4' x='-455.0' y='-28.0' size='large' lightColor='blue'/>
-            <digitalEdgeView _id='167' id='4' filled='true' stroked='true' modelId='5' layout='ortho' orig='168' origPort='17' origPortOutput='true' dest='169' adjusted='false'>
+            <ledView _id='178' id='3' rot='90' filled='true' stroked='true' modelId='4' x='-455.0' y='-28.0' size='large' lightColor='blue'/>
+            <digitalEdgeView _id='179' id='4' filled='true' stroked='true' modelId='5' layout='ortho' orig='180' origPort='17' origPortOutput='true' dest='181' adjusted='false'>
               <shape>
                 <polylineShape points='-511.0,7.0 -434.0,7.0 -434.0,-28.0'/>
               </shape>
             </digitalEdgeView>
-            <digitalNodeView _id='169' id='5' filled='true' stroked='true' modelId='5'>
+            <digitalNodeView _id='181' id='5' filled='true' stroked='true' modelId='5'>
               <location>
                 <point x='-434.0' y='-28.0'/>
               </location>
             </digitalNodeView>
-            <digitalEdgeView _id='170' id='6' filled='true' stroked='true' modelId='5' layout='ortho' orig='169' dest='165' destPort='1' adjusted='false'>
+            <digitalEdgeView _id='182' id='6' filled='true' stroked='true' modelId='5' layout='ortho' orig='181' dest='177' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='-434.0,-28.0 -434.0,-168.0'/>
               </shape>
             </digitalEdgeView>
-            <digitalEdgeView _id='171' id='7' filled='true' stroked='true' modelId='5' layout='ortho' orig='169' dest='166' destPort='1' adjusted='true'>
+            <digitalEdgeView _id='183' id='7' filled='true' stroked='true' modelId='5' layout='ortho' orig='181' dest='178' destPort='1' adjusted='true'>
               <shape>
                 <polylineShape points='-434.0,-28.0 -455.0,-28.0 -455.0,-42.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='172' id='9' rot='0' filled='true' stroked='true' modelId='10' orientation='north' representation='binary'>
+            <circuitInOutView _id='184' id='9' rot='0' filled='true' stroked='true' modelId='10' orientation='north' representation='binary'>
               <location>
                 <point x='-350.0' y='-154.0'/>
               </location>
             </circuitInOutView>
-            <notGateView _id='173' id='10' rot='90' filled='true' stroked='true' modelId='11' x='-350.0' y='-154.0'/>
-            <digitalEdgeView _id='174' id='11' filled='true' stroked='true' modelId='12' layout='ortho' orig='173' origPort='2' origPortOutput='true' dest='172' destPort='1' adjusted='false'>
+            <notGateView _id='185' id='10' rot='90' filled='true' stroked='true' modelId='11' x='-350.0' y='-154.0'/>
+            <digitalEdgeView _id='186' id='11' filled='true' stroked='true' modelId='12' layout='ortho' orig='185' origPort='2' origPortOutput='true' dest='184' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='-350.0,-148.0 -350.0,-168.0'/>
               </shape>
             </digitalEdgeView>
-            <digitalEdgeView _id='175' id='12' filled='true' stroked='true' modelId='15' layout='ortho' orig='168' origPort='16' origPortOutput='true' dest='176' adjusted='false'>
+            <digitalEdgeView _id='187' id='12' filled='true' stroked='true' modelId='15' layout='ortho' orig='180' origPort='16' origPortOutput='true' dest='188' adjusted='false'>
               <shape>
                 <polylineShape points='-511.0,21.0 -350.0,21.0 -350.0,-28.0'/>
               </shape>
             </digitalEdgeView>
-            <ledView _id='177' id='13' rot='90' filled='true' stroked='true' modelId='18' x='-371.0' y='-28.0' size='large' lightColor='blue'/>
-            <digitalNodeView _id='176' id='14' filled='true' stroked='true' modelId='15'>
+            <ledView _id='189' id='13' rot='90' filled='true' stroked='true' modelId='18' x='-371.0' y='-28.0' size='large' lightColor='blue'/>
+            <digitalNodeView _id='188' id='14' filled='true' stroked='true' modelId='15'>
               <location>
                 <point x='-350.0' y='-28.0'/>
               </location>
             </digitalNodeView>
-            <digitalEdgeView _id='178' id='15' filled='true' stroked='true' modelId='15' layout='ortho' orig='176' dest='173' destPort='1' adjusted='false'>
+            <digitalEdgeView _id='190' id='15' filled='true' stroked='true' modelId='15' layout='ortho' orig='188' dest='185' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='-350.0,-28.0 -350.0,-98.0'/>
               </shape>
             </digitalEdgeView>
-            <digitalEdgeView _id='179' id='16' filled='true' stroked='true' modelId='15' layout='ortho' orig='176' dest='177' destPort='1' adjusted='false'>
+            <digitalEdgeView _id='191' id='16' filled='true' stroked='true' modelId='15' layout='ortho' orig='188' dest='189' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='-350.0,-28.0 -371.0,-28.0 -371.0,-42.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='180' id='18' rot='0' filled='true' stroked='true' modelId='20' orientation='north' representation='binary'>
+            <circuitInOutView _id='192' id='18' rot='0' filled='true' stroked='true' modelId='20' orientation='north' representation='binary'>
               <location>
                 <point x='-273.0' y='-154.0'/>
               </location>
             </circuitInOutView>
-            <digitalEdgeView _id='181' id='19' filled='true' stroked='true' modelId='21' layout='ortho' orig='168' origPort='15' origPortOutput='true' dest='182' adjusted='false'>
+            <digitalEdgeView _id='193' id='19' filled='true' stroked='true' modelId='21' layout='ortho' orig='180' origPort='15' origPortOutput='true' dest='194' adjusted='false'>
               <shape>
                 <polylineShape points='-511.0,35.0 -273.0,35.0 -273.0,-28.0'/>
               </shape>
             </digitalEdgeView>
-            <ledView _id='183' id='20' rot='90' filled='true' stroked='true' modelId='24' x='-294.0' y='-28.0' size='large' lightColor='blue'/>
-            <digitalNodeView _id='182' id='21' filled='true' stroked='true' modelId='21'>
+            <ledView _id='195' id='20' rot='90' filled='true' stroked='true' modelId='24' x='-294.0' y='-28.0' size='large' lightColor='blue'/>
+            <digitalNodeView _id='194' id='21' filled='true' stroked='true' modelId='21'>
               <location>
                 <point x='-273.0' y='-28.0'/>
               </location>
             </digitalNodeView>
-            <digitalEdgeView _id='184' id='22' filled='true' stroked='true' modelId='21' layout='ortho' orig='182' dest='180' destPort='1' adjusted='false'>
+            <digitalEdgeView _id='196' id='22' filled='true' stroked='true' modelId='21' layout='ortho' orig='194' dest='192' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='-273.0,-28.0 -273.0,-168.0'/>
               </shape>
             </digitalEdgeView>
-            <digitalEdgeView _id='185' id='23' filled='true' stroked='true' modelId='21' layout='ortho' orig='182' dest='183' destPort='1' adjusted='false'>
+            <digitalEdgeView _id='197' id='23' filled='true' stroked='true' modelId='21' layout='ortho' orig='194' dest='195' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='-273.0,-28.0 -294.0,-28.0 -294.0,-42.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='186' id='24' rot='0' filled='true' stroked='true' modelId='26' orientation='north' representation='binary'>
+            <circuitInOutView _id='198' id='24' rot='0' filled='true' stroked='true' modelId='26' orientation='north' representation='binary'>
               <location>
                 <point x='-196.0' y='-154.0'/>
               </location>
             </circuitInOutView>
-            <notGateView _id='187' id='26' rot='90' filled='true' stroked='true' modelId='27' x='-196.0' y='-154.0'/>
-            <digitalEdgeView _id='188' id='27' filled='true' stroked='true' modelId='28' layout='ortho' orig='187' origPort='2' origPortOutput='true' dest='186' destPort='1' adjusted='false'>
+            <notGateView _id='199' id='26' rot='90' filled='true' stroked='true' modelId='27' x='-196.0' y='-154.0'/>
+            <digitalEdgeView _id='200' id='27' filled='true' stroked='true' modelId='28' layout='ortho' orig='199' origPort='2' origPortOutput='true' dest='198' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='-196.0,-148.0 -196.0,-168.0'/>
               </shape>
             </digitalEdgeView>
-            <digitalEdgeView _id='189' id='28' filled='true' stroked='true' modelId='31' layout='ortho' orig='168' origPort='14' origPortOutput='true' dest='190' adjusted='false'>
+            <digitalEdgeView _id='201' id='28' filled='true' stroked='true' modelId='31' layout='ortho' orig='180' origPort='14' origPortOutput='true' dest='202' adjusted='false'>
               <shape>
                 <polylineShape points='-511.0,49.0 -196.0,49.0 -196.0,-28.0'/>
               </shape>
             </digitalEdgeView>
-            <ledView _id='191' id='29' rot='90' filled='true' stroked='true' modelId='34' x='-224.0' y='-28.0' size='large' lightColor='blue'/>
-            <digitalNodeView _id='190' id='30' filled='true' stroked='true' modelId='31'>
+            <ledView _id='203' id='29' rot='90' filled='true' stroked='true' modelId='34' x='-224.0' y='-28.0' size='large' lightColor='blue'/>
+            <digitalNodeView _id='202' id='30' filled='true' stroked='true' modelId='31'>
               <location>
                 <point x='-196.0' y='-28.0'/>
               </location>
             </digitalNodeView>
-            <digitalEdgeView _id='192' id='31' filled='true' stroked='true' modelId='31' layout='ortho' orig='190' dest='187' destPort='1' adjusted='false'>
+            <digitalEdgeView _id='204' id='31' filled='true' stroked='true' modelId='31' layout='ortho' orig='202' dest='199' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='-196.0,-28.0 -196.0,-98.0'/>
               </shape>
             </digitalEdgeView>
-            <digitalEdgeView _id='193' id='32' filled='true' stroked='true' modelId='31' layout='ortho' orig='190' dest='191' destPort='1' adjusted='false'>
+            <digitalEdgeView _id='205' id='32' filled='true' stroked='true' modelId='31' layout='ortho' orig='202' dest='203' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='-196.0,-28.0 -224.0,-28.0 -224.0,-42.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='194' id='34' rot='0' filled='true' stroked='true' modelId='36' orientation='north' representation='binary'>
+            <circuitInOutView _id='206' id='34' rot='0' filled='true' stroked='true' modelId='36' orientation='north' representation='binary'>
               <location>
                 <point x='-119.0' y='-154.0'/>
               </location>
             </circuitInOutView>
-            <notGateView _id='195' id='35' rot='90' filled='true' stroked='true' modelId='37' x='-119.0' y='-154.0'/>
-            <digitalEdgeView _id='196' id='36' filled='true' stroked='true' modelId='38' layout='ortho' orig='195' origPort='2' origPortOutput='true' dest='194' destPort='1' adjusted='false'>
+            <notGateView _id='207' id='35' rot='90' filled='true' stroked='true' modelId='37' x='-119.0' y='-154.0'/>
+            <digitalEdgeView _id='208' id='36' filled='true' stroked='true' modelId='38' layout='ortho' orig='207' origPort='2' origPortOutput='true' dest='206' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='-119.0,-148.0 -119.0,-168.0'/>
               </shape>
             </digitalEdgeView>
-            <digitalEdgeView _id='197' id='37' filled='true' stroked='true' modelId='41' layout='ortho' orig='168' origPort='13' origPortOutput='true' dest='198' adjusted='false'>
+            <digitalEdgeView _id='209' id='37' filled='true' stroked='true' modelId='41' layout='ortho' orig='180' origPort='13' origPortOutput='true' dest='210' adjusted='false'>
               <shape>
                 <polylineShape points='-511.0,63.0 -119.0,63.0 -119.0,-28.0'/>
               </shape>
             </digitalEdgeView>
-            <ledView _id='199' id='38' rot='90' filled='true' stroked='true' modelId='44' x='-147.0' y='-28.0' size='large' lightColor='blue'/>
-            <digitalNodeView _id='198' id='39' filled='true' stroked='true' modelId='41'>
+            <ledView _id='211' id='38' rot='90' filled='true' stroked='true' modelId='44' x='-147.0' y='-28.0' size='large' lightColor='blue'/>
+            <digitalNodeView _id='210' id='39' filled='true' stroked='true' modelId='41'>
               <location>
                 <point x='-119.0' y='-28.0'/>
               </location>
             </digitalNodeView>
-            <digitalEdgeView _id='200' id='40' filled='true' stroked='true' modelId='41' layout='ortho' orig='198' dest='195' destPort='1' adjusted='false'>
+            <digitalEdgeView _id='212' id='40' filled='true' stroked='true' modelId='41' layout='ortho' orig='210' dest='207' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='-119.0,-28.0 -119.0,-98.0'/>
               </shape>
             </digitalEdgeView>
-            <digitalEdgeView _id='201' id='41' filled='true' stroked='true' modelId='41' layout='ortho' orig='198' dest='199' destPort='1' adjusted='false'>
+            <digitalEdgeView _id='213' id='41' filled='true' stroked='true' modelId='41' layout='ortho' orig='210' dest='211' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='-119.0,-28.0 -147.0,-28.0 -147.0,-42.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='202' id='43' rot='0' filled='true' stroked='true' modelId='46' orientation='north' representation='binary'>
+            <circuitInOutView _id='214' id='43' rot='0' filled='true' stroked='true' modelId='46' orientation='north' representation='binary'>
               <location>
                 <point x='-42.0' y='-154.0'/>
               </location>
             </circuitInOutView>
-            <notGateView _id='203' id='44' rot='90' filled='true' stroked='true' modelId='47' x='-42.0' y='-154.0'/>
-            <digitalEdgeView _id='204' id='45' filled='true' stroked='true' modelId='48' layout='ortho' orig='203' origPort='2' origPortOutput='true' dest='202' destPort='1' adjusted='false'>
+            <notGateView _id='215' id='44' rot='90' filled='true' stroked='true' modelId='47' x='-42.0' y='-154.0'/>
+            <digitalEdgeView _id='216' id='45' filled='true' stroked='true' modelId='48' layout='ortho' orig='215' origPort='2' origPortOutput='true' dest='214' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='-42.0,-148.0 -42.0,-168.0'/>
               </shape>
             </digitalEdgeView>
-            <digitalEdgeView _id='205' id='46' filled='true' stroked='true' modelId='51' layout='ortho' orig='168' origPort='12' origPortOutput='true' dest='206' adjusted='false'>
+            <digitalEdgeView _id='217' id='46' filled='true' stroked='true' modelId='51' layout='ortho' orig='180' origPort='12' origPortOutput='true' dest='218' adjusted='false'>
               <shape>
                 <polylineShape points='-511.0,77.0 -42.0,77.0 -42.0,-28.0'/>
               </shape>
             </digitalEdgeView>
-            <ledView _id='207' id='47' rot='90' filled='true' stroked='true' modelId='54' x='-70.0' y='-28.0' size='large' lightColor='blue'/>
-            <digitalNodeView _id='206' id='48' filled='true' stroked='true' modelId='51'>
+            <ledView _id='219' id='47' rot='90' filled='true' stroked='true' modelId='54' x='-70.0' y='-28.0' size='large' lightColor='blue'/>
+            <digitalNodeView _id='218' id='48' filled='true' stroked='true' modelId='51'>
               <location>
                 <point x='-42.0' y='-28.0'/>
               </location>
             </digitalNodeView>
-            <digitalEdgeView _id='208' id='49' filled='true' stroked='true' modelId='51' layout='ortho' orig='206' dest='203' destPort='1' adjusted='false'>
+            <digitalEdgeView _id='220' id='49' filled='true' stroked='true' modelId='51' layout='ortho' orig='218' dest='215' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='-42.0,-28.0 -42.0,-98.0'/>
               </shape>
             </digitalEdgeView>
-            <digitalEdgeView _id='209' id='50' filled='true' stroked='true' modelId='51' layout='ortho' orig='206' dest='207' destPort='1' adjusted='false'>
+            <digitalEdgeView _id='221' id='50' filled='true' stroked='true' modelId='51' layout='ortho' orig='218' dest='219' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='-42.0,-28.0 -70.0,-28.0 -70.0,-42.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='210' id='53' rot='0' filled='true' stroked='true' modelId='56' orientation='north' representation='binary'>
+            <circuitInOutView _id='222' id='53' rot='0' filled='true' stroked='true' modelId='56' orientation='north' representation='binary'>
               <location>
                 <point x='35.0' y='-154.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='211' id='54' rot='0' filled='true' stroked='true' modelId='57' orientation='north' representation='binary'>
+            <circuitInOutView _id='223' id='54' rot='0' filled='true' stroked='true' modelId='57' orientation='north' representation='binary'>
               <location>
                 <point x='112.0' y='-154.0'/>
               </location>
             </circuitInOutView>
-            <notGateView _id='212' id='55' rot='90' filled='true' stroked='true' modelId='58' x='35.0' y='-154.0'/>
-            <digitalEdgeView _id='213' id='56' filled='true' stroked='true' modelId='59' layout='ortho' orig='212' origPort='2' origPortOutput='true' dest='210' destPort='1' adjusted='false'>
+            <notGateView _id='224' id='55' rot='90' filled='true' stroked='true' modelId='58' x='35.0' y='-154.0'/>
+            <digitalEdgeView _id='225' id='56' filled='true' stroked='true' modelId='59' layout='ortho' orig='224' origPort='2' origPortOutput='true' dest='222' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='35.0,-148.0 35.0,-168.0'/>
               </shape>
             </digitalEdgeView>
-            <notGateView _id='214' id='57' rot='90' filled='true' stroked='true' modelId='62' x='112.0' y='-154.0'/>
-            <digitalEdgeView _id='215' id='58' filled='true' stroked='true' modelId='63' layout='ortho' orig='168' origPort='11' origPortOutput='true' dest='216' adjusted='false'>
+            <notGateView _id='226' id='57' rot='90' filled='true' stroked='true' modelId='62' x='112.0' y='-154.0'/>
+            <digitalEdgeView _id='227' id='58' filled='true' stroked='true' modelId='63' layout='ortho' orig='180' origPort='11' origPortOutput='true' dest='228' adjusted='false'>
               <shape>
                 <polylineShape points='-511.0,91.0 35.0,91.0 35.0,-28.0'/>
               </shape>
             </digitalEdgeView>
-            <digitalEdgeView _id='217' id='59' filled='true' stroked='true' modelId='68' layout='ortho' orig='168' origPort='10' origPortOutput='true' dest='218' adjusted='false'>
+            <digitalEdgeView _id='229' id='59' filled='true' stroked='true' modelId='68' layout='ortho' orig='180' origPort='10' origPortOutput='true' dest='230' adjusted='false'>
               <shape>
                 <polylineShape points='-511.0,105.0 112.0,105.0 112.0,-28.0'/>
               </shape>
             </digitalEdgeView>
-            <ledView _id='219' id='60' rot='90' filled='true' stroked='true' modelId='66' x='7.0' y='-28.0' size='large' lightColor='blue'/>
-            <digitalNodeView _id='216' id='61' filled='true' stroked='true' modelId='63'>
+            <ledView _id='231' id='60' rot='90' filled='true' stroked='true' modelId='66' x='7.0' y='-28.0' size='large' lightColor='blue'/>
+            <digitalNodeView _id='228' id='61' filled='true' stroked='true' modelId='63'>
               <location>
                 <point x='35.0' y='-28.0'/>
               </location>
             </digitalNodeView>
-            <digitalEdgeView _id='220' id='62' filled='true' stroked='true' modelId='63' layout='ortho' orig='216' dest='212' destPort='1' adjusted='false'>
+            <digitalEdgeView _id='232' id='62' filled='true' stroked='true' modelId='63' layout='ortho' orig='228' dest='224' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='35.0,-28.0 35.0,-98.0'/>
               </shape>
             </digitalEdgeView>
-            <digitalEdgeView _id='221' id='63' filled='true' stroked='true' modelId='63' layout='ortho' orig='216' dest='219' destPort='1' adjusted='false'>
+            <digitalEdgeView _id='233' id='63' filled='true' stroked='true' modelId='63' layout='ortho' orig='228' dest='231' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='35.0,-28.0 7.0,-28.0 7.0,-42.0'/>
               </shape>
             </digitalEdgeView>
-            <ledView _id='222' id='64' rot='90' filled='true' stroked='true' modelId='71' x='84.0' y='-28.0' size='large' lightColor='blue'/>
-            <digitalNodeView _id='218' id='65' filled='true' stroked='true' modelId='68'>
+            <ledView _id='234' id='64' rot='90' filled='true' stroked='true' modelId='71' x='84.0' y='-28.0' size='large' lightColor='blue'/>
+            <digitalNodeView _id='230' id='65' filled='true' stroked='true' modelId='68'>
               <location>
                 <point x='112.0' y='-28.0'/>
               </location>
             </digitalNodeView>
-            <digitalEdgeView _id='223' id='66' filled='true' stroked='true' modelId='68' layout='ortho' orig='218' dest='214' destPort='1' adjusted='false'>
+            <digitalEdgeView _id='235' id='66' filled='true' stroked='true' modelId='68' layout='ortho' orig='230' dest='226' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='112.0,-28.0 112.0,-98.0'/>
               </shape>
             </digitalEdgeView>
-            <digitalEdgeView _id='224' id='67' filled='true' stroked='true' modelId='68' layout='ortho' orig='218' dest='222' destPort='1' adjusted='false'>
+            <digitalEdgeView _id='236' id='67' filled='true' stroked='true' modelId='68' layout='ortho' orig='230' dest='234' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='112.0,-28.0 84.0,-28.0 84.0,-42.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='225' id='69' rot='0' filled='true' stroked='true' modelId='73' orientation='north' representation='binary'>
+            <circuitInOutView _id='237' id='69' rot='0' filled='true' stroked='true' modelId='73' orientation='north' representation='binary'>
               <location>
                 <point x='189.0' y='-154.0'/>
               </location>
             </circuitInOutView>
-            <notGateView _id='226' id='70' rot='90' filled='true' stroked='true' modelId='74' x='189.0' y='-154.0'/>
-            <digitalEdgeView _id='227' id='71' filled='true' stroked='true' modelId='75' layout='ortho' orig='226' origPort='2' origPortOutput='true' dest='225' destPort='1' adjusted='false'>
+            <notGateView _id='238' id='70' rot='90' filled='true' stroked='true' modelId='74' x='189.0' y='-154.0'/>
+            <digitalEdgeView _id='239' id='71' filled='true' stroked='true' modelId='75' layout='ortho' orig='238' origPort='2' origPortOutput='true' dest='237' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='189.0,-148.0 189.0,-168.0'/>
               </shape>
             </digitalEdgeView>
-            <digitalEdgeView _id='228' id='72' filled='true' stroked='true' modelId='78' layout='ortho' orig='168' origPort='9' origPortOutput='true' dest='229' adjusted='false'>
+            <digitalEdgeView _id='240' id='72' filled='true' stroked='true' modelId='78' layout='ortho' orig='180' origPort='9' origPortOutput='true' dest='241' adjusted='false'>
               <shape>
                 <polylineShape points='-511.0,119.0 189.0,119.0 189.0,-28.0'/>
               </shape>
             </digitalEdgeView>
-            <ledView _id='230' id='73' rot='90' filled='true' stroked='true' modelId='81' x='161.0' y='-28.0' size='large' lightColor='blue'/>
-            <digitalNodeView _id='229' id='74' filled='true' stroked='true' modelId='78'>
+            <ledView _id='242' id='73' rot='90' filled='true' stroked='true' modelId='81' x='161.0' y='-28.0' size='large' lightColor='blue'/>
+            <digitalNodeView _id='241' id='74' filled='true' stroked='true' modelId='78'>
               <location>
                 <point x='189.0' y='-28.0'/>
               </location>
             </digitalNodeView>
-            <digitalEdgeView _id='231' id='75' filled='true' stroked='true' modelId='78' layout='ortho' orig='229' dest='226' destPort='1' adjusted='false'>
+            <digitalEdgeView _id='243' id='75' filled='true' stroked='true' modelId='78' layout='ortho' orig='241' dest='238' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='189.0,-28.0 189.0,-98.0'/>
               </shape>
             </digitalEdgeView>
-            <digitalEdgeView _id='232' id='76' filled='true' stroked='true' modelId='78' layout='ortho' orig='229' dest='230' destPort='1' adjusted='false'>
+            <digitalEdgeView _id='244' id='76' filled='true' stroked='true' modelId='78' layout='ortho' orig='241' dest='242' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='189.0,-28.0 161.0,-28.0 161.0,-42.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='233' id='78' rot='0' filled='true' stroked='true' modelId='83' orientation='north' representation='binary'>
+            <circuitInOutView _id='245' id='78' rot='0' filled='true' stroked='true' modelId='83' orientation='north' representation='binary'>
               <location>
                 <point x='266.0' y='-154.0'/>
               </location>
             </circuitInOutView>
-            <digitalEdgeView _id='234' id='79' filled='true' stroked='true' modelId='84' layout='ortho' orig='168' origPort='8' origPortOutput='true' dest='235' adjusted='false'>
+            <digitalEdgeView _id='246' id='79' filled='true' stroked='true' modelId='84' layout='ortho' orig='180' origPort='8' origPortOutput='true' dest='247' adjusted='false'>
               <shape>
                 <polylineShape points='-511.0,133.0 266.0,133.0 266.0,-28.0'/>
               </shape>
             </digitalEdgeView>
-            <ledView _id='236' id='80' rot='90' filled='true' stroked='true' modelId='87' x='238.0' y='-28.0' size='large' lightColor='blue'/>
-            <digitalNodeView _id='235' id='81' filled='true' stroked='true' modelId='84'>
+            <ledView _id='248' id='80' rot='90' filled='true' stroked='true' modelId='87' x='238.0' y='-28.0' size='large' lightColor='blue'/>
+            <digitalNodeView _id='247' id='81' filled='true' stroked='true' modelId='84'>
               <location>
                 <point x='266.0' y='-28.0'/>
               </location>
             </digitalNodeView>
-            <digitalEdgeView _id='237' id='82' filled='true' stroked='true' modelId='84' layout='ortho' orig='235' dest='233' destPort='1' adjusted='false'>
+            <digitalEdgeView _id='249' id='82' filled='true' stroked='true' modelId='84' layout='ortho' orig='247' dest='245' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='266.0,-28.0 266.0,-168.0'/>
               </shape>
             </digitalEdgeView>
-            <digitalEdgeView _id='238' id='83' filled='true' stroked='true' modelId='84' layout='ortho' orig='235' dest='236' destPort='1' adjusted='false'>
+            <digitalEdgeView _id='250' id='83' filled='true' stroked='true' modelId='84' layout='ortho' orig='247' dest='248' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='266.0,-28.0 238.0,-28.0 238.0,-42.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='239' id='85' rot='0' filled='true' stroked='true' modelId='89' orientation='north' representation='binary'>
+            <circuitInOutView _id='251' id='85' rot='0' filled='true' stroked='true' modelId='89' orientation='north' representation='binary'>
               <location>
                 <point x='343.0' y='-154.0'/>
               </location>
             </circuitInOutView>
-            <notGateView _id='240' id='86' rot='90' filled='true' stroked='true' modelId='90' x='343.0' y='-154.0'/>
-            <digitalEdgeView _id='241' id='87' filled='true' stroked='true' modelId='91' layout='ortho' orig='240' origPort='2' origPortOutput='true' dest='239' destPort='1' adjusted='false'>
+            <notGateView _id='252' id='86' rot='90' filled='true' stroked='true' modelId='90' x='343.0' y='-154.0'/>
+            <digitalEdgeView _id='253' id='87' filled='true' stroked='true' modelId='91' layout='ortho' orig='252' origPort='2' origPortOutput='true' dest='251' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='343.0,-148.0 343.0,-168.0'/>
               </shape>
             </digitalEdgeView>
-            <digitalEdgeView _id='242' id='88' filled='true' stroked='true' modelId='94' layout='ortho' orig='168' origPort='7' origPortOutput='true' dest='243' adjusted='false'>
+            <digitalEdgeView _id='254' id='88' filled='true' stroked='true' modelId='94' layout='ortho' orig='180' origPort='7' origPortOutput='true' dest='255' adjusted='false'>
               <shape>
                 <polylineShape points='-511.0,147.0 343.0,147.0 343.0,-28.0'/>
               </shape>
             </digitalEdgeView>
-            <ledView _id='244' id='89' rot='90' filled='true' stroked='true' modelId='97' x='315.0' y='-28.0' size='large' lightColor='blue'/>
-            <digitalNodeView _id='243' id='90' filled='true' stroked='true' modelId='94'>
+            <ledView _id='256' id='89' rot='90' filled='true' stroked='true' modelId='97' x='315.0' y='-28.0' size='large' lightColor='blue'/>
+            <digitalNodeView _id='255' id='90' filled='true' stroked='true' modelId='94'>
               <location>
                 <point x='343.0' y='-28.0'/>
               </location>
             </digitalNodeView>
-            <digitalEdgeView _id='245' id='91' filled='true' stroked='true' modelId='94' layout='ortho' orig='243' dest='240' destPort='1' adjusted='false'>
+            <digitalEdgeView _id='257' id='91' filled='true' stroked='true' modelId='94' layout='ortho' orig='255' dest='252' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='343.0,-28.0 343.0,-98.0'/>
               </shape>
             </digitalEdgeView>
-            <digitalEdgeView _id='246' id='92' filled='true' stroked='true' modelId='94' layout='ortho' orig='243' dest='244' destPort='1' adjusted='false'>
+            <digitalEdgeView _id='258' id='92' filled='true' stroked='true' modelId='94' layout='ortho' orig='255' dest='256' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='343.0,-28.0 315.0,-28.0 315.0,-42.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='247' id='94' rot='0' filled='true' stroked='true' modelId='99' orientation='north' representation='binary'>
+            <circuitInOutView _id='259' id='94' rot='0' filled='true' stroked='true' modelId='99' orientation='north' representation='binary'>
               <location>
                 <point x='420.0' y='-154.0'/>
               </location>
             </circuitInOutView>
-            <digitalEdgeView _id='248' id='95' filled='true' stroked='true' modelId='100' layout='ortho' orig='168' origPort='6' origPortOutput='true' dest='249' adjusted='false'>
+            <digitalEdgeView _id='260' id='95' filled='true' stroked='true' modelId='100' layout='ortho' orig='180' origPort='6' origPortOutput='true' dest='261' adjusted='false'>
               <shape>
                 <polylineShape points='-511.0,161.0 420.0,161.0 420.0,-28.0'/>
               </shape>
             </digitalEdgeView>
-            <ledView _id='250' id='96' rot='90' filled='true' stroked='true' modelId='103' x='392.0' y='-28.0' size='large' lightColor='blue'/>
-            <digitalNodeView _id='249' id='97' filled='true' stroked='true' modelId='100'>
+            <ledView _id='262' id='96' rot='90' filled='true' stroked='true' modelId='103' x='392.0' y='-28.0' size='large' lightColor='blue'/>
+            <digitalNodeView _id='261' id='97' filled='true' stroked='true' modelId='100'>
               <location>
                 <point x='420.0' y='-28.0'/>
               </location>
             </digitalNodeView>
-            <digitalEdgeView _id='251' id='98' filled='true' stroked='true' modelId='100' layout='ortho' orig='249' dest='247' destPort='1' adjusted='false'>
+            <digitalEdgeView _id='263' id='98' filled='true' stroked='true' modelId='100' layout='ortho' orig='261' dest='259' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='420.0,-28.0 420.0,-168.0'/>
               </shape>
             </digitalEdgeView>
-            <digitalEdgeView _id='252' id='99' filled='true' stroked='true' modelId='100' layout='ortho' orig='249' dest='250' destPort='1' adjusted='false'>
+            <digitalEdgeView _id='264' id='99' filled='true' stroked='true' modelId='100' layout='ortho' orig='261' dest='262' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='420.0,-28.0 392.0,-28.0 392.0,-42.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='253' id='101' rot='0' filled='true' stroked='true' modelId='105' orientation='north' representation='binary'>
+            <circuitInOutView _id='265' id='101' rot='0' filled='true' stroked='true' modelId='105' orientation='north' representation='binary'>
               <location>
                 <point x='497.0' y='-154.0'/>
               </location>
             </circuitInOutView>
-            <digitalEdgeView _id='254' id='102' filled='true' stroked='true' modelId='106' layout='ortho' orig='168' origPort='5' origPortOutput='true' dest='255' adjusted='false'>
+            <digitalEdgeView _id='266' id='102' filled='true' stroked='true' modelId='106' layout='ortho' orig='180' origPort='5' origPortOutput='true' dest='267' adjusted='false'>
               <shape>
                 <polylineShape points='-511.0,175.0 497.0,175.0 497.0,-28.0'/>
               </shape>
             </digitalEdgeView>
-            <ledView _id='256' id='103' rot='90' filled='true' stroked='true' modelId='109' x='469.0' y='-28.0' size='large' lightColor='blue'/>
-            <digitalNodeView _id='255' id='104' filled='true' stroked='true' modelId='106'>
+            <ledView _id='268' id='103' rot='90' filled='true' stroked='true' modelId='109' x='469.0' y='-28.0' size='large' lightColor='blue'/>
+            <digitalNodeView _id='267' id='104' filled='true' stroked='true' modelId='106'>
               <location>
                 <point x='497.0' y='-28.0'/>
               </location>
             </digitalNodeView>
-            <digitalEdgeView _id='257' id='105' filled='true' stroked='true' modelId='106' layout='ortho' orig='255' dest='253' destPort='1' adjusted='false'>
+            <digitalEdgeView _id='269' id='105' filled='true' stroked='true' modelId='106' layout='ortho' orig='267' dest='265' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='497.0,-28.0 497.0,-168.0'/>
               </shape>
             </digitalEdgeView>
-            <digitalEdgeView _id='258' id='106' filled='true' stroked='true' modelId='106' layout='ortho' orig='255' dest='256' destPort='1' adjusted='false'>
+            <digitalEdgeView _id='270' id='106' filled='true' stroked='true' modelId='106' layout='ortho' orig='267' dest='268' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='497.0,-28.0 469.0,-28.0 469.0,-42.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='259' id='108' rot='0' filled='true' stroked='true' modelId='111' orientation='north' representation='binary'>
+            <circuitInOutView _id='271' id='108' rot='0' filled='true' stroked='true' modelId='111' orientation='north' representation='binary'>
               <location>
                 <point x='574.0' y='-154.0'/>
               </location>
             </circuitInOutView>
-            <notGateView _id='260' id='109' rot='90' filled='true' stroked='true' modelId='112' x='574.0' y='-154.0'/>
-            <digitalEdgeView _id='261' id='110' filled='true' stroked='true' modelId='113' layout='ortho' orig='260' origPort='2' origPortOutput='true' dest='259' destPort='1' adjusted='false'>
+            <notGateView _id='272' id='109' rot='90' filled='true' stroked='true' modelId='112' x='574.0' y='-154.0'/>
+            <digitalEdgeView _id='273' id='110' filled='true' stroked='true' modelId='113' layout='ortho' orig='272' origPort='2' origPortOutput='true' dest='271' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='574.0,-148.0 574.0,-168.0'/>
               </shape>
             </digitalEdgeView>
-            <digitalEdgeView _id='262' id='111' filled='true' stroked='true' modelId='116' layout='ortho' orig='168' origPort='4' origPortOutput='true' dest='263' adjusted='false'>
+            <digitalEdgeView _id='274' id='111' filled='true' stroked='true' modelId='116' layout='ortho' orig='180' origPort='4' origPortOutput='true' dest='275' adjusted='false'>
               <shape>
                 <polylineShape points='-511.0,189.0 574.0,189.0 574.0,-28.0'/>
               </shape>
             </digitalEdgeView>
-            <ledView _id='264' id='112' rot='90' filled='true' stroked='true' modelId='119' x='546.0' y='-28.0' size='large' lightColor='blue'/>
-            <digitalNodeView _id='263' id='113' filled='true' stroked='true' modelId='116'>
+            <ledView _id='276' id='112' rot='90' filled='true' stroked='true' modelId='119' x='546.0' y='-28.0' size='large' lightColor='blue'/>
+            <digitalNodeView _id='275' id='113' filled='true' stroked='true' modelId='116'>
               <location>
                 <point x='574.0' y='-28.0'/>
               </location>
             </digitalNodeView>
-            <digitalEdgeView _id='265' id='114' filled='true' stroked='true' modelId='116' layout='ortho' orig='263' dest='260' destPort='1' adjusted='false'>
+            <digitalEdgeView _id='277' id='114' filled='true' stroked='true' modelId='116' layout='ortho' orig='275' dest='272' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='574.0,-28.0 574.0,-98.0'/>
               </shape>
             </digitalEdgeView>
-            <digitalEdgeView _id='266' id='115' filled='true' stroked='true' modelId='116' layout='ortho' orig='263' dest='264' destPort='1' adjusted='false'>
+            <digitalEdgeView _id='278' id='115' filled='true' stroked='true' modelId='116' layout='ortho' orig='275' dest='276' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='574.0,-28.0 546.0,-28.0 546.0,-42.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='267' id='117' rot='0' filled='true' stroked='true' modelId='121' orientation='north' representation='binary'>
+            <circuitInOutView _id='279' id='117' rot='0' filled='true' stroked='true' modelId='121' orientation='north' representation='binary'>
               <location>
                 <point x='651.0' y='-154.0'/>
               </location>
             </circuitInOutView>
-            <notGateView _id='268' id='118' rot='90' filled='true' stroked='true' modelId='122' x='651.0' y='-154.0'/>
-            <digitalEdgeView _id='269' id='119' filled='true' stroked='true' modelId='123' layout='ortho' orig='267' origPort='1' dest='268' destPort='2' destPortOutput='true' adjusted='false'>
+            <notGateView _id='280' id='118' rot='90' filled='true' stroked='true' modelId='122' x='651.0' y='-154.0'/>
+            <digitalEdgeView _id='281' id='119' filled='true' stroked='true' modelId='123' layout='ortho' orig='279' origPort='1' dest='280' destPort='2' destPortOutput='true' adjusted='false'>
               <shape>
                 <polylineShape points='651.0,-168.0 651.0,-148.0'/>
               </shape>
             </digitalEdgeView>
-            <digitalEdgeView _id='270' id='120' filled='true' stroked='true' modelId='126' layout='ortho' orig='168' origPort='3' origPortOutput='true' dest='271' adjusted='false'>
+            <digitalEdgeView _id='282' id='120' filled='true' stroked='true' modelId='126' layout='ortho' orig='180' origPort='3' origPortOutput='true' dest='283' adjusted='false'>
               <shape>
                 <polylineShape points='-511.0,203.0 651.0,203.0 651.0,-28.0'/>
               </shape>
             </digitalEdgeView>
-            <ledView _id='272' id='121' rot='90' filled='true' stroked='true' modelId='129' x='623.0' y='-28.0' size='large' lightColor='blue'/>
-            <digitalNodeView _id='271' id='122' filled='true' stroked='true' modelId='126'>
+            <ledView _id='284' id='121' rot='90' filled='true' stroked='true' modelId='129' x='623.0' y='-28.0' size='large' lightColor='blue'/>
+            <digitalNodeView _id='283' id='122' filled='true' stroked='true' modelId='126'>
               <location>
                 <point x='651.0' y='-28.0'/>
               </location>
             </digitalNodeView>
-            <digitalEdgeView _id='273' id='123' filled='true' stroked='true' modelId='126' layout='ortho' orig='271' dest='268' destPort='1' adjusted='false'>
+            <digitalEdgeView _id='285' id='123' filled='true' stroked='true' modelId='126' layout='ortho' orig='283' dest='280' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='651.0,-28.0 651.0,-98.0'/>
               </shape>
             </digitalEdgeView>
-            <digitalEdgeView _id='274' id='124' filled='true' stroked='true' modelId='126' layout='ortho' orig='271' dest='272' destPort='1' adjusted='true'>
+            <digitalEdgeView _id='286' id='124' filled='true' stroked='true' modelId='126' layout='ortho' orig='283' dest='284' destPort='1' adjusted='true'>
               <shape>
                 <polylineShape points='651.0,-28.0 623.0,-28.0 623.0,-42.0'/>
               </shape>
             </digitalEdgeView>
-            <digitalEdgeView _id='275' id='125' filled='true' stroked='true' modelId='131' layout='ortho' orig='211' origPort='1' dest='214' destPort='2' destPortOutput='true' adjusted='false'>
+            <digitalEdgeView _id='287' id='125' filled='true' stroked='true' modelId='131' layout='ortho' orig='223' origPort='1' dest='226' destPort='2' destPortOutput='true' adjusted='false'>
               <shape>
                 <polylineShape points='112.0,-168.0 112.0,-148.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='276' id='127' rot='0' filled='true' stroked='true' modelId='134' orientation='east' representation='hex'>
+            <circuitInOutView _id='288' id='127' rot='0' filled='true' stroked='true' modelId='134' orientation='east' representation='hex'>
               <location>
                 <point x='-560.0' y='112.0'/>
               </location>
             </circuitInOutView>
-            <splitterView _id='168' id='128' rot='0' filled='true' stroked='true' modelId='9' x='-539.0' y='112.0' handedness='right'/>
-            <digitalEdgeView _id='277' id='129' filled='true' stroked='true' modelId='135' layout='ortho' orig='276' origPort='1' origPortOutput='true' dest='168' destPort='1' adjusted='false'>
+            <splitterView _id='180' id='128' rot='0' filled='true' stroked='true' modelId='9' x='-539.0' y='112.0' handedness='right'/>
+            <digitalEdgeView _id='289' id='129' filled='true' stroked='true' modelId='135' layout='ortho' orig='288' origPort='1' origPortOutput='true' dest='180' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='-574.0,112.0 -525.0,112.0'/>
+              </shape>
+            </digitalEdgeView>
+            <circuitInOutView _id='290' id='130' rot='0' filled='true' stroked='true' modelId='138' orientation='north' representation='binary'>
+              <location>
+                <point x='721.0' y='-154.0'/>
+              </location>
+            </circuitInOutView>
+            <notGateView _id='291' id='131' rot='90' filled='true' stroked='true' modelId='139' x='721.0' y='-154.0'/>
+            <digitalEdgeView _id='292' id='132' filled='true' stroked='true' modelId='140' layout='ortho' orig='291' origPort='2' origPortOutput='true' dest='290' destPort='1' adjusted='false'>
+              <shape>
+                <polylineShape points='721.0,-148.0 721.0,-168.0'/>
+              </shape>
+            </digitalEdgeView>
+            <digitalEdgeView _id='293' id='133' filled='true' stroked='true' modelId='143' layout='ortho' orig='180' origPort='2' origPortOutput='true' dest='294' adjusted='true'>
+              <shape>
+                <polylineShape points='-511.0,217.0 721.0,217.0 721.0,-28.0'/>
+              </shape>
+            </digitalEdgeView>
+            <ledView _id='295' id='134' rot='90' filled='true' stroked='true' modelId='147' x='693.0' y='-28.0' size='large' lightColor='blue'/>
+            <digitalNodeView _id='294' id='135' filled='true' stroked='true' modelId='143'>
+              <location>
+                <point x='721.0' y='-28.0'/>
+              </location>
+            </digitalNodeView>
+            <digitalEdgeView _id='296' id='136' filled='true' stroked='true' modelId='143' layout='ortho' orig='294' dest='291' destPort='1' adjusted='false'>
+              <shape>
+                <polylineShape points='721.0,-28.0 721.0,-98.0'/>
+              </shape>
+            </digitalEdgeView>
+            <digitalEdgeView _id='297' id='137' filled='true' stroked='true' modelId='143' layout='ortho' orig='294' dest='295' destPort='1' adjusted='false'>
+              <shape>
+                <polylineShape points='721.0,-28.0 693.0,-28.0 693.0,-42.0'/>
               </shape>
             </digitalEdgeView>
           </components>
@@ -719,20 +769,20 @@
     </graphStorable>
   </graph>
   <container>
-    <containerDrawing _id='278'>
+    <containerDrawing _id='298'>
       <components>
-        <rectangle _id='279' id='1' style='figure' filled='true' stroked='true' x='-21.0' y='-14.0' w='553.0' h='84.0'/>
-        <digitalPortViewComp _id='280' id='4' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <rectangle _id='299' id='1' style='figure' filled='true' stroked='true' x='-21.0' y='-14.0' w='595.0' h='84.0'/>
+        <digitalPortViewComp _id='300' id='4' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='281' x='21.0' y='-14.0' dir='north' textPos='external' intLabelOrient='aligned' portId='282'/>
+            <digitalPortView _id='301' x='21.0' y='-14.0' dir='north' textPos='external' intLabelOrient='aligned' portId='302'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='283' id='5' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='303' id='5' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='284' x='56.0' y='-14.0' dir='north' textPos='external' portId='285'/>
+            <digitalPortView _id='304' x='56.0' y='-14.0' dir='north' textPos='external' portId='305'/>
           </portView>
         </digitalPortViewComp>
-        <label _id='286' id='6' rot='0'>
+        <label _id='306' id='6' rot='0'>
           <text>
             <translation lang='en' text='Control Signals'/>
           </text>
@@ -740,82 +790,82 @@
             <point x='273.0' y='0.0'/>
           </location>
         </label>
-        <originIndicator _id='287' id='7'>
+        <originIndicator _id='307' id='7'>
           <location>
             <point x='21.0' y='84.0'/>
           </location>
         </originIndicator>
-        <controlViewComponent _id='288' id='8' style='figure' filled='true' stroked='true' controlModelId='3'>
+        <controlViewComponent _id='308' id='8' style='figure' filled='true' stroked='true' controlModelId='3'>
           <controlView>
-            <ledView _id='289' id='3' rot='0' filled='true' stroked='true' modelId='4' x='-7.0' y='28.0' size='large' lightColor='blue'/>
+            <ledView _id='309' id='3' rot='0' filled='true' stroked='true' modelId='4' x='-7.0' y='28.0' size='large' lightColor='blue'/>
           </controlView>
         </controlViewComponent>
-        <controlViewComponent _id='290' id='9' style='figure' filled='true' stroked='true' controlModelId='10'>
+        <controlViewComponent _id='310' id='9' style='figure' filled='true' stroked='true' controlModelId='10'>
           <controlView>
-            <ledView _id='291' id='13' rot='0' filled='true' stroked='true' modelId='18' x='28.0' y='28.0' size='large' lightColor='blue'/>
+            <ledView _id='311' id='13' rot='0' filled='true' stroked='true' modelId='18' x='28.0' y='28.0' size='large' lightColor='blue'/>
           </controlView>
         </controlViewComponent>
-        <controlViewComponent _id='292' id='10' style='figure' filled='true' stroked='true' controlModelId='14'>
+        <controlViewComponent _id='312' id='10' style='figure' filled='true' stroked='true' controlModelId='14'>
           <controlView>
-            <ledView _id='293' id='20' rot='0' filled='true' stroked='true' modelId='24' x='63.0' y='28.0' size='large' lightColor='blue'/>
+            <ledView _id='313' id='20' rot='0' filled='true' stroked='true' modelId='24' x='63.0' y='28.0' size='large' lightColor='blue'/>
           </controlView>
         </controlViewComponent>
-        <digitalPortViewComp _id='294' id='12' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='314' id='12' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='295' x='91.0' y='-14.0' dir='north' textPos='external' portId='296'/>
+            <digitalPortView _id='315' x='91.0' y='-14.0' dir='north' textPos='external' portId='316'/>
           </portView>
         </digitalPortViewComp>
-        <controlViewComponent _id='297' id='13' style='figure' filled='true' stroked='true' controlModelId='20'>
+        <controlViewComponent _id='317' id='13' style='figure' filled='true' stroked='true' controlModelId='20'>
           <controlView>
-            <ledView _id='298' id='29' rot='0' filled='true' stroked='true' modelId='34' x='98.0' y='28.0' size='large' lightColor='blue'/>
+            <ledView _id='318' id='29' rot='0' filled='true' stroked='true' modelId='34' x='98.0' y='28.0' size='large' lightColor='blue'/>
           </controlView>
         </controlViewComponent>
-        <digitalPortViewComp _id='299' id='15' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='319' id='15' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='300' x='126.0' y='-14.0' dir='north' textPos='external' portId='301'/>
+            <digitalPortView _id='320' x='126.0' y='-14.0' dir='north' textPos='external' portId='321'/>
           </portView>
         </digitalPortViewComp>
-        <controlViewComponent _id='302' id='16' style='figure' filled='true' stroked='true' controlModelId='26'>
+        <controlViewComponent _id='322' id='16' style='figure' filled='true' stroked='true' controlModelId='26'>
           <controlView>
-            <ledView _id='303' id='38' rot='0' filled='true' stroked='true' modelId='44' x='133.0' y='28.0' size='large' lightColor='blue'/>
+            <ledView _id='323' id='38' rot='0' filled='true' stroked='true' modelId='44' x='133.0' y='28.0' size='large' lightColor='blue'/>
           </controlView>
         </controlViewComponent>
-        <digitalPortViewComp _id='304' id='18' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='324' id='18' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='305' x='161.0' y='-14.0' dir='north' textPos='external' portId='306'/>
+            <digitalPortView _id='325' x='161.0' y='-14.0' dir='north' textPos='external' portId='326'/>
           </portView>
         </digitalPortViewComp>
-        <controlViewComponent _id='307' id='19' style='figure' filled='true' stroked='true' controlModelId='32'>
+        <controlViewComponent _id='327' id='19' style='figure' filled='true' stroked='true' controlModelId='32'>
           <controlView>
-            <ledView _id='308' id='47' rot='0' filled='true' stroked='true' modelId='54' x='168.0' y='28.0' size='large' lightColor='blue'/>
+            <ledView _id='328' id='47' rot='0' filled='true' stroked='true' modelId='54' x='168.0' y='28.0' size='large' lightColor='blue'/>
           </controlView>
         </controlViewComponent>
-        <digitalPortViewComp _id='309' id='21' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='329' id='21' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='310' x='196.0' y='-14.0' dir='north' textPos='external' portId='311'/>
+            <digitalPortView _id='330' x='196.0' y='-14.0' dir='north' textPos='external' portId='331'/>
           </portView>
         </digitalPortViewComp>
-        <controlViewComponent _id='312' id='22' style='figure' filled='true' stroked='true' controlModelId='42'>
+        <controlViewComponent _id='332' id='22' style='figure' filled='true' stroked='true' controlModelId='42'>
           <controlView>
-            <ledView _id='313' id='60' rot='0' filled='true' stroked='true' modelId='66' x='203.0' y='28.0' size='large' lightColor='blue'/>
+            <ledView _id='333' id='60' rot='0' filled='true' stroked='true' modelId='66' x='203.0' y='28.0' size='large' lightColor='blue'/>
           </controlView>
         </controlViewComponent>
-        <controlViewComponent _id='314' id='23' style='figure' filled='true' stroked='true' controlModelId='43'>
+        <controlViewComponent _id='334' id='23' style='figure' filled='true' stroked='true' controlModelId='43'>
           <controlView>
-            <ledView _id='315' id='64' rot='0' filled='true' stroked='true' modelId='71' x='238.0' y='28.0' size='large' lightColor='blue'/>
+            <ledView _id='335' id='64' rot='0' filled='true' stroked='true' modelId='71' x='238.0' y='28.0' size='large' lightColor='blue'/>
           </controlView>
         </controlViewComponent>
-        <digitalPortViewComp _id='316' id='25' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='336' id='25' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='317' x='231.0' y='-14.0' dir='north' textPos='external' portId='318'/>
+            <digitalPortView _id='337' x='231.0' y='-14.0' dir='north' textPos='external' portId='338'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='319' id='27' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='339' id='27' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='320' x='266.0' y='-14.0' dir='north' textPos='external' portId='321'/>
+            <digitalPortView _id='340' x='266.0' y='-14.0' dir='north' textPos='external' portId='341'/>
           </portView>
         </digitalPortViewComp>
-        <label _id='322' id='28' rot='0'>
+        <label _id='342' id='28' rot='0'>
           <text>
             <translation lang='en' text='HLT'/>
           </text>
@@ -823,7 +873,7 @@
             <point x='21.0' y='56.0'/>
           </location>
         </label>
-        <label _id='323' id='29' rot='0'>
+        <label _id='343' id='29' rot='0'>
           <text>
             <translation lang='en' text='MI'/>
           </text>
@@ -831,7 +881,7 @@
             <point x='56.0' y='56.0'/>
           </location>
         </label>
-        <label _id='324' id='30' rot='0'>
+        <label _id='344' id='30' rot='0'>
           <text>
             <translation lang='en' text='RI'/>
           </text>
@@ -839,7 +889,7 @@
             <point x='91.0' y='56.0'/>
           </location>
         </label>
-        <label _id='325' id='31' rot='0'>
+        <label _id='345' id='31' rot='0'>
           <text>
             <translation lang='en' text='RO'/>
           </text>
@@ -847,7 +897,7 @@
             <point x='126.0' y='56.0'/>
           </location>
         </label>
-        <label _id='326' id='32' rot='0'>
+        <label _id='346' id='32' rot='0'>
           <text>
             <translation lang='en' text='IO'/>
           </text>
@@ -855,7 +905,7 @@
             <point x='161.0' y='56.0'/>
           </location>
         </label>
-        <label _id='327' id='33' rot='0'>
+        <label _id='347' id='33' rot='0'>
           <text>
             <translation lang='en' text='II'/>
           </text>
@@ -863,7 +913,7 @@
             <point x='196.0' y='56.0'/>
           </location>
         </label>
-        <label _id='328' id='34' rot='0'>
+        <label _id='348' id='34' rot='0'>
           <text>
             <translation lang='en' text='AI'/>
           </text>
@@ -871,7 +921,7 @@
             <point x='231.0' y='56.0'/>
           </location>
         </label>
-        <label _id='329' id='35' rot='0'>
+        <label _id='349' id='35' rot='0'>
           <text>
             <translation lang='en' text='AO'/>
           </text>
@@ -879,12 +929,12 @@
             <point x='266.0' y='56.0'/>
           </location>
         </label>
-        <controlViewComponent _id='330' id='36' style='figure' filled='true' stroked='true' controlModelId='49'>
+        <controlViewComponent _id='350' id='36' style='figure' filled='true' stroked='true' controlModelId='49'>
           <controlView>
-            <ledView _id='331' id='73' rot='0' filled='true' stroked='true' modelId='81' x='273.0' y='28.0' size='large' lightColor='blue'/>
+            <ledView _id='351' id='73' rot='0' filled='true' stroked='true' modelId='81' x='273.0' y='28.0' size='large' lightColor='blue'/>
           </controlView>
         </controlViewComponent>
-        <label _id='332' id='37' rot='0'>
+        <label _id='352' id='37' rot='0'>
           <text>
             <translation lang='en' text='ALU'/>
           </text>
@@ -892,17 +942,17 @@
             <point x='301.0' y='56.0'/>
           </location>
         </label>
-        <digitalPortViewComp _id='333' id='39' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='353' id='39' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='334' x='301.0' y='-14.0' dir='north' textPos='external' portId='335'/>
+            <digitalPortView _id='354' x='301.0' y='-14.0' dir='north' textPos='external' portId='355'/>
           </portView>
         </digitalPortViewComp>
-        <controlViewComponent _id='336' id='40' style='figure' filled='true' stroked='true' controlModelId='53'>
+        <controlViewComponent _id='356' id='40' style='figure' filled='true' stroked='true' controlModelId='53'>
           <controlView>
-            <ledView _id='337' id='80' rot='0' filled='true' stroked='true' modelId='87' x='308.0' y='28.0' size='large' lightColor='blue'/>
+            <ledView _id='357' id='80' rot='0' filled='true' stroked='true' modelId='87' x='308.0' y='28.0' size='large' lightColor='blue'/>
           </controlView>
         </controlViewComponent>
-        <label _id='338' id='41' rot='0'>
+        <label _id='358' id='41' rot='0'>
           <text>
             <translation lang='en' text='SUB'/>
           </text>
@@ -910,17 +960,17 @@
             <point x='336.0' y='56.0'/>
           </location>
         </label>
-        <digitalPortViewComp _id='339' id='43' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='359' id='43' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='340' x='336.0' y='-14.0' dir='north' textPos='external' portId='341'/>
+            <digitalPortView _id='360' x='336.0' y='-14.0' dir='north' textPos='external' portId='361'/>
           </portView>
         </digitalPortViewComp>
-        <controlViewComponent _id='342' id='44' style='figure' filled='true' stroked='true' controlModelId='59'>
+        <controlViewComponent _id='362' id='44' style='figure' filled='true' stroked='true' controlModelId='59'>
           <controlView>
-            <ledView _id='343' id='89' rot='0' filled='true' stroked='true' modelId='97' x='343.0' y='28.0' size='large' lightColor='blue'/>
+            <ledView _id='363' id='89' rot='0' filled='true' stroked='true' modelId='97' x='343.0' y='28.0' size='large' lightColor='blue'/>
           </controlView>
         </controlViewComponent>
-        <label _id='344' id='45' rot='0'>
+        <label _id='364' id='45' rot='0'>
           <text>
             <translation lang='en' text='BI'/>
           </text>
@@ -928,17 +978,17 @@
             <point x='371.0' y='56.0'/>
           </location>
         </label>
-        <digitalPortViewComp _id='345' id='47' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='365' id='47' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='346' x='371.0' y='-14.0' dir='north' textPos='external' portId='347'/>
+            <digitalPortView _id='366' x='371.0' y='-14.0' dir='north' textPos='external' portId='367'/>
           </portView>
         </digitalPortViewComp>
-        <controlViewComponent _id='348' id='48' style='figure' filled='true' stroked='true' controlModelId='63'>
+        <controlViewComponent _id='368' id='48' style='figure' filled='true' stroked='true' controlModelId='63'>
           <controlView>
-            <ledView _id='349' id='96' rot='0' filled='true' stroked='true' modelId='103' x='378.0' y='28.0' size='large' lightColor='blue'/>
+            <ledView _id='369' id='96' rot='0' filled='true' stroked='true' modelId='103' x='378.0' y='28.0' size='large' lightColor='blue'/>
           </controlView>
         </controlViewComponent>
-        <label _id='350' id='49' rot='0'>
+        <label _id='370' id='49' rot='0'>
           <text>
             <translation lang='en' text='OUT'/>
           </text>
@@ -946,17 +996,17 @@
             <point x='406.0' y='56.0'/>
           </location>
         </label>
-        <digitalPortViewComp _id='351' id='51' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='371' id='51' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='352' x='406.0' y='-14.0' dir='north' textPos='external' portId='353'/>
+            <digitalPortView _id='372' x='406.0' y='-14.0' dir='north' textPos='external' portId='373'/>
           </portView>
         </digitalPortViewComp>
-        <controlViewComponent _id='354' id='52' style='figure' filled='true' stroked='true' controlModelId='67'>
+        <controlViewComponent _id='374' id='52' style='figure' filled='true' stroked='true' controlModelId='67'>
           <controlView>
-            <ledView _id='355' id='103' rot='0' filled='true' stroked='true' modelId='109' x='413.0' y='28.0' size='large' lightColor='blue'/>
+            <ledView _id='375' id='103' rot='0' filled='true' stroked='true' modelId='109' x='413.0' y='28.0' size='large' lightColor='blue'/>
           </controlView>
         </controlViewComponent>
-        <label _id='356' id='53' rot='0'>
+        <label _id='376' id='53' rot='0'>
           <text>
             <translation lang='en' text='CE'/>
           </text>
@@ -964,12 +1014,12 @@
             <point x='441.0' y='56.0'/>
           </location>
         </label>
-        <controlViewComponent _id='357' id='54' style='figure' filled='true' stroked='true' controlModelId='73'>
+        <controlViewComponent _id='377' id='54' style='figure' filled='true' stroked='true' controlModelId='73'>
           <controlView>
-            <ledView _id='358' id='112' rot='0' filled='true' stroked='true' modelId='119' x='448.0' y='28.0' size='large' lightColor='blue'/>
+            <ledView _id='378' id='112' rot='0' filled='true' stroked='true' modelId='119' x='448.0' y='28.0' size='large' lightColor='blue'/>
           </controlView>
         </controlViewComponent>
-        <label _id='359' id='55' rot='0'>
+        <label _id='379' id='55' rot='0'>
           <text>
             <translation lang='en' text='CO'/>
           </text>
@@ -977,12 +1027,12 @@
             <point x='476.0' y='56.0'/>
           </location>
         </label>
-        <controlViewComponent _id='360' id='56' style='figure' filled='true' stroked='true' controlModelId='79'>
+        <controlViewComponent _id='380' id='56' style='figure' filled='true' stroked='true' controlModelId='79'>
           <controlView>
-            <ledView _id='361' id='121' rot='0' filled='true' stroked='true' modelId='129' x='483.0' y='28.0' size='large' lightColor='blue'/>
+            <ledView _id='381' id='121' rot='0' filled='true' stroked='true' modelId='129' x='483.0' y='28.0' size='large' lightColor='blue'/>
           </controlView>
         </controlViewComponent>
-        <label _id='362' id='57' rot='0'>
+        <label _id='382' id='57' rot='0'>
           <text>
             <translation lang='en' text='JMP'/>
           </text>
@@ -990,49 +1040,68 @@
             <point x='511.0' y='56.0'/>
           </location>
         </label>
-        <digitalPortViewComp _id='363' id='59' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='383' id='59' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='364' x='441.0' y='-14.0' dir='north' textPos='external' portId='365'/>
+            <digitalPortView _id='384' x='441.0' y='-14.0' dir='north' textPos='external' portId='385'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='366' id='61' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='386' id='61' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='367' x='476.0' y='-14.0' dir='north' textPos='external' portId='368'/>
+            <digitalPortView _id='387' x='476.0' y='-14.0' dir='north' textPos='external' portId='388'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='369' id='63' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='389' id='63' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='370' x='511.0' y='-14.0' dir='north' textPos='external' portId='371'/>
+            <digitalPortView _id='390' x='511.0' y='-14.0' dir='north' textPos='external' portId='391'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='372' id='64' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='392' id='64' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='373' x='-21.0' y='7.0' dir='west' textPos='internal' portId='374'/>
+            <digitalPortView _id='393' x='-21.0' y='7.0' dir='west' textPos='internal' portId='394'/>
           </portView>
         </digitalPortViewComp>
+        <controlViewComponent _id='395' id='65' style='figure' filled='true' stroked='true' controlModelId='89'>
+          <controlView>
+            <ledView _id='396' id='134' rot='0' filled='true' stroked='true' modelId='147' x='518.0' y='28.0' size='large' lightColor='blue'/>
+          </controlView>
+        </controlViewComponent>
+        <digitalPortViewComp _id='397' id='66' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='398' x='546.0' y='-14.0' dir='north' textPos='external' portId='399'/>
+          </portView>
+        </digitalPortViewComp>
+        <label _id='400' id='67' rot='0'>
+          <text>
+            <translation lang='en' text='FI'/>
+          </text>
+          <location>
+            <point x='546.0' y='56.0'/>
+          </location>
+        </label>
       </components>
       <model>
-        <subGraphVertice _id='375' id='0' delay='0' uuid='c9ef9150-1b7a-4b5d-aced-d2847b7a6e4b'>
+        <subGraphVertice _id='401' id='0' delay='0' uuid='c9ef9150-1b7a-4b5d-aced-d2847b7a6e4b'>
           <name>
             <translation lang='en' text='Control Signals'/>
           </name>
           <ports>
-            <subCircuitPort _id='282' portId='3' name='HLT_O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-            <subCircuitPort _id='285' portId='4' name='!(MI)_O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-            <subCircuitPort _id='296' portId='6' name='RI_O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-            <subCircuitPort _id='301' portId='8' name='!(RO)_O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-            <subCircuitPort _id='306' portId='10' name='!(IO)_O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-            <subCircuitPort _id='311' portId='12' name='!(II)_O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-            <subCircuitPort _id='318' portId='14' name='!(AI)_O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-            <subCircuitPort _id='321' portId='16' name='!(AO)_O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-            <subCircuitPort _id='335' portId='18' name='!(ALU)_O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-            <subCircuitPort _id='341' portId='20' name='SUB_O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-            <subCircuitPort _id='347' portId='22' name='!(BI)_O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-            <subCircuitPort _id='353' portId='24' name='OUT_O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-            <subCircuitPort _id='365' portId='26' name='CE_O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-            <subCircuitPort _id='368' portId='28' name='!(CO)_O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-            <subCircuitPort _id='371' portId='30' name='!(JMP)_O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
-            <subCircuitPort _id='374' portId='31' name='CTRL' logic='positive' bitWidth='16' trigger='level' type='input' representation='hex'/>
+            <subCircuitPort _id='302' portId='3' name='HLT_O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='305' portId='4' name='!(MI)_O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='316' portId='6' name='RI_O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='321' portId='8' name='!(RO)_O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='326' portId='10' name='!(IO)_O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='331' portId='12' name='!(II)_O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='338' portId='14' name='!(AI)_O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='341' portId='16' name='!(AO)_O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='355' portId='18' name='!(ALU)_O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='361' portId='20' name='SUB_O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='367' portId='22' name='!(BI)_O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='373' portId='24' name='OUT_O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='385' portId='26' name='CE_O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='388' portId='28' name='!(CO)_O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='391' portId='30' name='!(JMP)_O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='394' portId='31' name='CTRL' logic='positive' bitWidth='16' trigger='level' type='input' representation='hex'/>
+            <subCircuitPort _id='399' portId='32' name='!(FI)_O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
           </ports>
         </subGraphVertice>
       </model>

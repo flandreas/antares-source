@@ -96,6 +96,11 @@
             <translation lang='en' text='Instruction Register'/>
           </name>
         </containerLibraryElement>
+        <containerLibraryElement _id='20' uuid='95efb1ae-7a28-47e6-876d-61b4292ad15d' type='digital'>
+          <name>
+            <translation lang='en' text='Flags Register'/>
+          </name>
+        </containerLibraryElement>
       </items>
     </libraryFolder>
   </folder>
