@@ -1,8 +1,9 @@
-<metaGraph _id='0'>
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' startupTime='45'>
+        <graph _id='2' type='digital' startupTime='45'>
           <elements>
             <nandGate _id='3' id='1' delay='20' inputCount='3'/>
             <circuitInOut _id='4' id='2' name='J' type='input' bitWidth='1'/>
@@ -21,7 +22,7 @@
                 <netPortRef _id='13' verticeId='5' portId='2'/>
               </ports>
             </digitalNet>
-            <subGraphVerticeRef _id='14' id='8' delay='50' uuid='2d7bbd36-5dca-4c71-9a27-19a3bfa81bc5'/>
+            <subGraphVerticeRef _id='14' id='8' delay='50' uuid='2d7bbd36-5dca-4c71-9a27-19a3bfa81bc5' type='digital'/>
             <digitalNet _id='15' id='9' delay='0'>
               <ports>
                 <netPortRef _id='16' verticeId='7' portId='1'/>
@@ -159,9 +160,9 @@
             <netView _id='99' modelId='79' style='line'/>
           </netViews>
           <components>
-            <graphElement _id='100' modelId='101' id='0'>
+            <graphElement _id='100' modelId='101' id='65'>
               <component>
-                <rectangle _id='102' id='0' style='subsystem' filled='true' stroked='true' x='-196.0' y='-322.0' w='266.0' h='294.0' vAlign='top' hAlign='left'>
+                <rectangle _id='102' id='65' style='subsystem' filled='true' stroked='true' x='-196.0' y='-322.0' w='266.0' h='294.0' vAlign='top' hAlign='left'>
                   <text>
                     <translation lang='en' text='Master JK'/>
                   </text>
@@ -178,18 +179,18 @@
               </component>
             </graphElement>
             <nandGateView _id='106' id='1' rot='0' filled='true' stroked='true' modelId='3' x='-105.0' y='-266.0'/>
-            <circuitInOutView _id='107' id='2' rot='0' filled='true' stroked='true' modelId='4' representation='binary' orientation='east'>
+            <circuitInOutView _id='107' id='2' rot='0' filled='true' stroked='true' modelId='4' orientation='east' representation='binary'>
               <location>
                 <point x='-350.0' y='-266.0'/>
               </location>
             </circuitInOutView>
             <nandGateView _id='108' id='3' rot='0' filled='true' stroked='true' modelId='5' x='-105.0' y='-70.0'/>
-            <circuitInOutView _id='109' id='4' rot='0' filled='true' stroked='true' modelId='6' representation='binary' orientation='east'>
+            <circuitInOutView _id='109' id='4' rot='0' filled='true' stroked='true' modelId='6' orientation='east' representation='binary'>
               <location>
                 <point x='-350.0' y='-70.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='110' id='5' rot='0' filled='true' stroked='true' modelId='7' representation='binary' orientation='east'>
+            <circuitInOutView _id='110' id='5' rot='0' filled='true' stroked='true' modelId='7' orientation='east' representation='binary'>
               <location>
                 <point x='-350.0' y='-168.0'/>
               </location>
@@ -304,12 +305,12 @@
             </digitalEdgeView>
             <nandGateView _id='141' id='34' rot='0' filled='true' stroked='true' modelId='54' x='336.0' y='-238.0'/>
             <nandGateView _id='142' id='35' rot='0' filled='true' stroked='true' modelId='55' x='336.0' y='-98.0'/>
-            <circuitInOutView _id='143' id='36' rot='0' filled='true' stroked='true' modelId='56' representation='binary' orientation='east'>
+            <circuitInOutView _id='143' id='36' rot='0' filled='true' stroked='true' modelId='56' orientation='east' representation='binary'>
               <location>
                 <point x='406.0' y='-238.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='144' id='37' rot='0' filled='true' stroked='true' modelId='57' representation='binary' orientation='east'>
+            <circuitInOutView _id='144' id='37' rot='0' filled='true' stroked='true' modelId='57' orientation='east' representation='binary'>
               <location>
                 <point x='406.0' y='-98.0'/>
               </location>
@@ -394,7 +395,7 @@
                 <polylineShape points='42.0,-70.0 168.0,-70.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='161' id='54' rot='0' filled='true' stroked='true' modelId='74' representation='binary' orientation='south'>
+            <circuitInOutView _id='161' id='54' rot='0' filled='true' stroked='true' modelId='74' orientation='south' representation='binary'>
               <location>
                 <point x='-70.0' y='-420.0'/>
               </location>
@@ -404,7 +405,7 @@
                 <polylineShape points='-70.0,-434.0 -70.0,-406.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='163' id='56' rot='0' filled='true' stroked='true' modelId='78' representation='binary' orientation='north'>
+            <circuitInOutView _id='163' id='56' rot='0' filled='true' stroked='true' modelId='78' orientation='north' representation='binary'>
               <location>
                 <point x='-70.0' y='126.0'/>
               </location>
@@ -453,7 +454,7 @@
     <containerDrawing _id='169'>
       <components>
         <rectangle _id='170' id='1' style='figure' filled='true' stroked='true' x='140.0' y='140.0' w='56.0' h='84.0'/>
-        <originIndicator _id='171'>
+        <originIndicator _id='171' id='11'>
           <location>
             <point x='126.0' y='154.0'/>
           </location>
@@ -506,7 +507,7 @@
             <translation lang='de' text='JK-Master-Slave-Flipflop mit asynchronem Set- und Rücksetzeingang'/>
           </desc>
           <name>
-            <translation lang='en' text='JK MS-Flip-Flop PRE/CLR'/>
+            <translation lang='en' text='JK MS-Flip-Flop PRE\/CLR'/>
             <translation lang='de' text='JK-MS-Flipflop PRE/CLR'/>
           </name>
           <ports>

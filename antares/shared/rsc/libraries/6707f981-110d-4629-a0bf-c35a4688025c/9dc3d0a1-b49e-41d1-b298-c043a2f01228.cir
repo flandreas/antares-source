@@ -1,8 +1,9 @@
-<metaGraph _id='0'>
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' startupTime='40'>
+        <graph _id='2' type='digital' startupTime='40'>
           <elements>
             <circuitInOut _id='3' id='1' name='S' type='input' bitWidth='1'/>
             <circuitInOut _id='4' id='2' name='C' type='input' bitWidth='1'/>
@@ -78,7 +79,7 @@
                 <netPortRef _id='47' verticeId='41' portId='1'/>
               </ports>
             </digitalNet>
-            <subGraphVerticeRef _id='9' id='27' delay='0' uuid='6b75bce8-f115-4154-a7d8-782b8f4b629a'/>
+            <subGraphVerticeRef _id='9' id='27' delay='0' uuid='6b75bce8-f115-4154-a7d8-782b8f4b629a' type='digital'/>
           </elements>
         </graph>
       </model>
@@ -97,17 +98,17 @@
             <netView _id='58' modelId='45' style='line'/>
           </netViews>
           <components>
-            <circuitInOutView _id='59' id='1' rot='0' filled='true' stroked='true' modelId='3' representation='binary' orientation='east'>
+            <circuitInOutView _id='59' id='1' rot='0' filled='true' stroked='true' modelId='3' orientation='east' representation='binary'>
               <location>
                 <point x='-210.0' y='-196.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='60' id='2' rot='0' filled='true' stroked='true' modelId='4' representation='binary' orientation='east'>
+            <circuitInOutView _id='60' id='2' rot='0' filled='true' stroked='true' modelId='4' orientation='east' representation='binary'>
               <location>
                 <point x='-210.0' y='-98.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='61' id='3' rot='0' filled='true' stroked='true' modelId='5' representation='binary' orientation='east'>
+            <circuitInOutView _id='61' id='3' rot='0' filled='true' stroked='true' modelId='5' orientation='east' representation='binary'>
               <location>
                 <point x='-210.0' y='0.0'/>
               </location>
@@ -161,12 +162,12 @@
                 <polylineShape points='22.0,-14.0 126.0,-14.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='76' id='18' rot='0' filled='true' stroked='true' modelId='30' representation='binary' orientation='east'>
+            <circuitInOutView _id='76' id='18' rot='0' filled='true' stroked='true' modelId='30' orientation='east' representation='binary'>
               <location>
                 <point x='280.0' y='-182.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='77' id='19' rot='0' filled='true' stroked='true' modelId='31' representation='binary' orientation='east'>
+            <circuitInOutView _id='77' id='19' rot='0' filled='true' stroked='true' modelId='31' orientation='east' representation='binary'>
               <location>
                 <point x='280.0' y='-14.0'/>
               </location>
@@ -211,12 +212,12 @@
                 <polylineShape points='210.0,-14.0 294.0,-14.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='86' id='28' rot='0' filled='true' stroked='true' modelId='40' representation='binary' orientation='south'>
+            <circuitInOutView _id='86' id='28' rot='0' filled='true' stroked='true' modelId='40' orientation='south' representation='binary'>
               <location>
                 <point x='98.0' y='-301.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='87' id='29' rot='0' filled='true' stroked='true' modelId='41' representation='binary' orientation='north'>
+            <circuitInOutView _id='87' id='29' rot='0' filled='true' stroked='true' modelId='41' orientation='north' representation='binary'>
               <location>
                 <point x='98.0' y='105.0'/>
               </location>
@@ -241,7 +242,7 @@
     <containerDrawing _id='90'>
       <components>
         <rectangle _id='91' id='1' style='figure' filled='true' stroked='true' x='140.0' y='140.0' w='56.0' h='84.0'/>
-        <originIndicator _id='92'>
+        <originIndicator _id='92' id='10'>
           <location>
             <point x='126.0' y='154.0'/>
           </location>
@@ -294,7 +295,7 @@
             <translation lang='de' text='SR-Flipflop mit asynchronem Set- und Rücksetz-Eingang'/>
           </desc>
           <name>
-            <translation lang='en' text='SR Flip-Flop PRE/CLR (Neg)'/>
+            <translation lang='en' text='SR Flip-Flop PRE\/CLR (Neg)'/>
           </name>
           <ports>
             <subCircuitPort _id='95' portId='1' name='S' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
