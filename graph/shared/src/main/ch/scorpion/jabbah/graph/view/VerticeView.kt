@@ -53,6 +53,12 @@ interface VerticeView<T : Vertice>
 	fun getPortViewAtConnectionPoint(p: Point2D): PortView<*>? = getPortViewAtConnectionPoint(p.x, p.y)
 
 	/**
+	 * Returns the absolute connection point (in this [VerticeView]'s coordinate system)
+	 * of the specified [PortView]. Takes this [VerticeView]'s rotation and location into account.
+	 */
+	fun getPortViewConnectionPoint(pv: PortView<*>): Point2D
+
+	/**
 	 * Draws visual primitives to become obvious that this [VerticeView]'s current state let
 	 * information flow from the [InputPort] with name [inputName] to the [OutputPort] with name [outputName].
 	 */

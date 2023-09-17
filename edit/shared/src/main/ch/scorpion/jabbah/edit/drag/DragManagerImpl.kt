@@ -151,14 +151,13 @@ class DragManagerImpl(
 				return null
 			}
 
-			if (moveStartLocation != movedReferenceComponent?.location) {
+			val additionalCommands = if (selection.size == 1) {
+				involvePluginsDragFinished(selection.first())
+			} else {
+				emptyList()
+			}
 
-				val additionalCommands = if (selection.size == 1) {
-					involvePluginsDragFinished(selection.first())
-				} else {
-					emptyList()
-				}
-
+			if (additionalCommands.isNotEmpty() || moveStartLocation != movedReferenceComponent?.location) {
 				try {
 					logMove("mouse")
 					drawingAppService.move(

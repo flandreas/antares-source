@@ -7,11 +7,9 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.model.Net
 
-class GraphViewConsistencyCheck : SystemHealthCheck {
+object GraphViewConsistencyCheck : SystemHealthCheck {
 
-	companion object {
-		private val LOG by logger(GraphViewConsistencyCheck::class)
-	}
+	private val LOG by logger(GraphViewConsistencyCheck::class)
 
 	override fun execute(data: ApplicationData): SystemMalfunctionEvent? {
 		if (data.content !is MetaGraph) {

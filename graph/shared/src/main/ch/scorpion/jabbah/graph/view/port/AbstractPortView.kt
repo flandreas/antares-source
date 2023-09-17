@@ -105,6 +105,8 @@ abstract class AbstractPortView<T : Any>(
 
 	override var connectionGeometry: EdgeViewConnectionGeometry? = null
 
+	override var coincidenceWarning: Boolean = false
+
 	/** Listens for property changes of [port] and updates this [PortView] accordingly.*/
 	private val portListener = PortListener()
 
@@ -257,7 +259,11 @@ abstract class AbstractPortView<T : Any>(
 	/** ---- [Drawable] interface */
 
 	override fun getTooltip(x: Double, y: Double): Tooltip? =
-		tooltip.value?.also { it.sourceRect = Rectangle2D.pointLike(owner!!.getPortConnectionPoint(port)) }
+		if (coincidenceWarning) {
+			Tooltip("Warning: Pin coincides with other pin without\nconnection", Rectangle2D.pointLike(owner!!.getPortConnectionPoint(port)))
+		} else {
+			tooltip.value?.also { it.sourceRect = Rectangle2D.pointLike(owner!!.getPortConnectionPoint(port)) }
+		}
 
 	/** ---- [Mirrorable] interface */
 

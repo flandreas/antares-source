@@ -128,6 +128,13 @@ interface PortView<T : Any> : Drawable, Storable, Mirrorable, SnappableX, Snappa
 	 */
 	var connectionGeometry: EdgeViewConnectionGeometry?
 
+	/**
+	 * Set to `true` if this [PortView]'s [connectionPoint] coincides with another [PortView]'s [connectionPoint],
+	 * and this [PortView]'s [Port] is unconnected. Implementations are recommended to visualize this
+	 * probably unwanted situation as a warning, e.g. by drawing a red dot at the [connectionPoint].
+	 */
+	var coincidenceWarning: Boolean
+
 	/** Sets the relative location of this [PortView] within the owning [VerticeView].*/
 	fun setLocation(x: Double, y: Double)
 
@@ -207,4 +214,10 @@ interface PortView<T : Any> : Drawable, Storable, Mirrorable, SnappableX, Snappa
 	 */
 	fun handleExecutionClick(context: ActorInteractionContext) {}
 
+	/**
+	 * Returns `true` if this [PortView]'s absolute [connectionPoint] (in the owner's coordinate system)
+	 * coincides with any other [PortView]'s [connectionPoint].
+	 */
+	fun coincidesWith(other: PortView<*>): Boolean =
+		owner?.getPortViewConnectionPoint(this) == other.owner?.getPortViewConnectionPoint(other)
 }

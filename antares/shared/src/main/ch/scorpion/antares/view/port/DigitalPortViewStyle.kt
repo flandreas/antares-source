@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
+import ch.scorpion.jabbah.graph.view.style.GraphTheme
 
 /**
  * Defines the various ways in which the access (and only the access) of a [DigitalPortView] is drawn.
@@ -39,7 +40,22 @@ enum class DigitalPortViewStyle(val customName: String) {
 
 		override fun drawAccess(portView: DigitalPortView, context: DrawContext, styleProvider: StyleProvider, transparent: Transparent) {
 			val connPoint = portView.connectionPoint
-			context.g.drawLine(portView.locationX.toInt(), portView.locationY.toInt(), connPoint.x.toInt(), connPoint.y.toInt())
+			context.g.drawLine(
+				portView.locationX.toInt(),
+				portView.locationY.toInt(),
+				connPoint.x.toInt(),
+				connPoint.y.toInt()
+			)
+			with(portView) {
+				if (coincidenceWarning) {
+					context.g.color = context.chooseForeground(Themes.get<GraphTheme>().error.foregroundColor)
+					context.g.fillCircle(
+						locationX + length * direction.dx * 0.8,
+						locationY + length * direction.dy * 0.8,
+						length * 0.2
+					)
+				}
+			}
 		}
 
 		override fun drawLogic(portView: DigitalPortView, context: DrawContext, styleProvider: StyleProvider, transparent: Transparent) {
