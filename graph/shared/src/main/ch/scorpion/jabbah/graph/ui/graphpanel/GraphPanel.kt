@@ -221,7 +221,6 @@ class GraphPanelViewController(
 
 	private fun handle(event: ApplicationDataEvent) {
 		stopSimulationWhenClosingApplicationData(event.newData)
-		issuesViewController.clearIssues()
 
 		val editable = event.newData?.savable?.editable ?: false
 

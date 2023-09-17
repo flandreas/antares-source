@@ -1,12 +1,10 @@
 package ch.scorpion.jabbah.graph.model.net
 
 import ch.scorpion.jabbah.app.SystemMalfunctionEvent
-import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.ExecutionError
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -226,7 +224,12 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 				if (vertice.designError == null) {
 					LOG.warn("Couldn't resolve Port $portId of Vertice ${System.getClassName(vertice)}")
 					brokenRefDesignError = Net.BROKEN_REF_DESIGN_ERROR
-					BaseModule.eventBus.post(SystemMalfunctionEvent("Unresolvable port: verticeID=${reference.referenceId}, portId=$portId"))
+					BaseModule.eventBus.post(IssueImpl(
+						severity = IssueSeverity.Error,
+						name = Translations.getString("graph.designError.brokenPortRef.text"),
+						description = Translations.getString("graph.designError.brokenPortRef.desc", portId, vertice.type),
+						origin = Translations.getString("graph.element.net.name"),
+						context = Translations.getString("graph.action.load.name")))
 				}
 			}
 		}
