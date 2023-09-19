@@ -16,87 +16,82 @@
             <translation lang='en' text='Clock'/>
           </name>
         </containerLibraryElement>
-        <containerLibraryElement _id='4' uuid='dbbec590-c9b6-4ec1-ac6c-1a819c430f22' type='digital'>
-          <name>
-            <translation lang='en' text='Playground'/>
-          </name>
-        </containerLibraryElement>
-        <containerLibraryElement _id='5' uuid='112591d4-c0dd-48b1-96d9-8b9a98fce1a1' type='digital'>
+        <containerLibraryElement _id='4' uuid='112591d4-c0dd-48b1-96d9-8b9a98fce1a1' type='digital'>
           <name>
             <translation lang='en' text='Bus Register 4 Bit'/>
           </name>
         </containerLibraryElement>
-        <containerLibraryElement _id='6' uuid='dce24233-6f3e-4b17-a69d-eadde4b19c99' type='digital'>
+        <containerLibraryElement _id='5' uuid='dce24233-6f3e-4b17-a69d-eadde4b19c99' type='digital'>
           <name>
             <translation lang='en' text='Bus Register 8 Bit'/>
           </name>
         </containerLibraryElement>
-        <containerLibraryElement _id='7' uuid='988d6381-7c4b-4d21-b7af-e0fbcf8b8df9' type='digital'>
+        <containerLibraryElement _id='6' uuid='988d6381-7c4b-4d21-b7af-e0fbcf8b8df9' type='digital'>
           <name>
             <translation lang='en' text='Ben&apos;s 8 bit register'/>
           </name>
         </containerLibraryElement>
-        <containerLibraryElement _id='8' uuid='81503898-eabc-4916-9cff-312aa743055c' type='digital'>
+        <containerLibraryElement _id='7' uuid='81503898-eabc-4916-9cff-312aa743055c' type='digital'>
           <name>
             <translation lang='en' text='ALU'/>
           </name>
         </containerLibraryElement>
-        <containerLibraryElement _id='9' uuid='e3c86e3a-914a-4ab9-984e-93898ab51f5f' type='digital'>
+        <containerLibraryElement _id='8' uuid='e3c86e3a-914a-4ab9-984e-93898ab51f5f' type='digital'>
           <name>
             <translation lang='en' text='Latch Register 4 Bit'/>
           </name>
         </containerLibraryElement>
-        <containerLibraryElement _id='10' uuid='d37e0548-8d87-48ed-888b-205741ee2ce7' type='digital'>
+        <containerLibraryElement _id='9' uuid='d37e0548-8d87-48ed-888b-205741ee2ce7' type='digital'>
           <name>
             <translation lang='en' text='SN 74189'/>
           </name>
         </containerLibraryElement>
-        <containerLibraryElement _id='11' uuid='1f4f11c8-f517-4f5d-84d3-b84dea03169b' type='digital'>
+        <containerLibraryElement _id='10' uuid='1f4f11c8-f517-4f5d-84d3-b84dea03169b' type='digital'>
           <name>
             <translation lang='en' text='RAM'/>
           </name>
         </containerLibraryElement>
-        <containerLibraryElement _id='12' uuid='831c7a90-e82d-4513-aaa0-292fd61a93be' type='digital'>
+        <containerLibraryElement _id='11' uuid='831c7a90-e82d-4513-aaa0-292fd61a93be' type='digital'>
           <name>
             <translation lang='en' text='Memory Address Register'/>
           </name>
         </containerLibraryElement>
-        <containerLibraryElement _id='13' uuid='b0305451-c948-4bc3-8f0b-fc5ea45acc35' type='digital'>
+        <containerLibraryElement _id='12' uuid='b0305451-c948-4bc3-8f0b-fc5ea45acc35' type='digital'>
           <name>
             <translation lang='en' text='Memory Contents'/>
           </name>
         </containerLibraryElement>
-        <containerLibraryElement _id='14' uuid='e42bb751-bbbe-4d7e-b8f9-1f3da2bb7d96' type='digital'>
+        <containerLibraryElement _id='13' uuid='e42bb751-bbbe-4d7e-b8f9-1f3da2bb7d96' type='digital'>
           <name>
             <translation lang='en' text='Program Counter'/>
           </name>
         </containerLibraryElement>
-        <containerLibraryElement _id='15' uuid='9bf83880-7a45-4c75-a681-d4b1dee9bcdb' type='digital'>
+        <containerLibraryElement _id='14' uuid='9bf83880-7a45-4c75-a681-d4b1dee9bcdb' type='digital'>
           <name>
             <translation lang='en' text='Display'/>
           </name>
         </containerLibraryElement>
-        <containerLibraryElement _id='16' uuid='c9ef9150-1b7a-4b5d-aced-d2847b7a6e4b' type='digital'>
+        <containerLibraryElement _id='15' uuid='c9ef9150-1b7a-4b5d-aced-d2847b7a6e4b' type='digital'>
           <name>
             <translation lang='en' text='Control Signals'/>
           </name>
         </containerLibraryElement>
-        <containerLibraryElement _id='17' uuid='c9ca7123-1224-4884-9109-75ebeedd9883' type='digital'>
+        <containerLibraryElement _id='16' uuid='c9ca7123-1224-4884-9109-75ebeedd9883' type='digital'>
           <name>
             <translation lang='en' text='Control Logic'/>
           </name>
         </containerLibraryElement>
-        <containerLibraryElement _id='18' uuid='aa62cab4-a5b3-4aba-b6f3-e6d967155a81' type='digital'>
+        <containerLibraryElement _id='17' uuid='aa62cab4-a5b3-4aba-b6f3-e6d967155a81' type='digital'>
           <name>
             <translation lang='en' text='Reset'/>
           </name>
         </containerLibraryElement>
-        <containerLibraryElement _id='19' uuid='9d117d01-987d-418f-b8b6-9f10fe8c8884' type='digital'>
+        <containerLibraryElement _id='18' uuid='9d117d01-987d-418f-b8b6-9f10fe8c8884' type='digital'>
           <name>
             <translation lang='en' text='Instruction Register'/>
           </name>
         </containerLibraryElement>
-        <containerLibraryElement _id='20' uuid='95efb1ae-7a28-47e6-876d-61b4292ad15d' type='digital'>
+        <containerLibraryElement _id='19' uuid='95efb1ae-7a28-47e6-876d-61b4292ad15d' type='digital'>
           <name>
             <translation lang='en' text='Flags Register'/>
           </name>

@@ -25,7 +25,9 @@ import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.container.InternalLabelOrientation
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewConnectionGeometry
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.port.AbstractPortView
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.port.PortView
@@ -55,6 +57,8 @@ class DigitalPortView(
 ) : AbstractAntaresPortView<DigitalSignal>(styleProvider, port, x, y, direction, portLabelPosition, internalLabelOrientation, length ?: style.unconnectedLength, customUnconnectedLength) {
 
 	companion object {
+		private const val MIN_EDGE_VIEW_LENGTH_FOR_BIT_WIDTH_ANNOTATION = 100
+
 		val EDGE_TRIGGER_PATH: Path = System.createPath()
 			.moveTo(0.0, -INTERNAL_ANNOTATION_SIZE / 2.0)
 			.lineTo(-INTERNAL_ANNOTATION_SIZE, 0)
@@ -91,6 +95,20 @@ class DigitalPortView(
 				field = value
 				invalidate()
 				validate()
+			}
+		}
+
+	/**
+	 * Overrides [showBitWidthAnnotation] with `true` if this [DigitalPortView] is the origin
+	 * of the [EdgeView] to which it is connected AND its destination is also connected.
+	 * Avoids to display two [BitWidthAnnotation]s very close together.
+	 */
+	private var hideBitWidthAnnotation: Boolean = false
+		set(value) {
+			if (field != value) {
+				field = value
+				invalidate()
+				update()
 			}
 		}
 
@@ -184,7 +202,7 @@ class DigitalPortView(
 	}
 
 	override fun drawAboveOwnerImpl(context: DrawContext) {
-		if (bitWidthAnnotation != null && showBitWidthAnnotation) {
+		if (bitWidthAnnotation != null && showBitWidthAnnotation && !hideBitWidthAnnotation) {
 			bitWidthAnnotation!!.draw(context)
 		}
 		portViewStyle.drawLogic(this, context, styleProvider, transparent)
@@ -264,6 +282,16 @@ class DigitalPortView(
 		}
 	}
 
+	override fun handleConnect(edgeView: EdgeView<DigitalSignal>, geometry: EdgeViewConnectionGeometry) {
+		super.handleConnect(edgeView, geometry)
+		updateHideBitWidthAnnotation(edgeView)
+	}
+
+	override fun handleUnconnect(edgeView: EdgeView<DigitalSignal>?, lockEndpoint: Boolean) {
+		super.handleUnconnect(edgeView, lockEndpoint)
+		hideBitWidthAnnotation = false
+	}
+
 	/** ---- [AbstractPortView] */
 
 	override fun setPortName(name: String) {
@@ -295,6 +323,27 @@ class DigitalPortView(
 		super.ownerRotationChanged()
 		portLabel?.ownerRotation = ownerRotation
 		bitWidthAnnotation?.setOwnerRotation(ownerRotation)
+	}
+
+	override fun edgeViewUpdated(edgeView: EdgeView<*>) {
+		updateHideBitWidthAnnotation(edgeView)
+	}
+
+	private fun updateHideBitWidthAnnotation(edgeView: EdgeView<*>) {
+		val oppositePortView = edgeView.getOppositeConnection(port)?.portView
+		if (oppositePortView != null) {
+			// If EdgeView is too short, show bit width annotation at origin and hide at destination
+			val narrow = edgeView.polyline.length < MIN_EDGE_VIEW_LENGTH_FOR_BIT_WIDTH_ANNOTATION
+			if (edgeView.getConnection(EdgeViewEndpointType.ORIGIN)?.port == port) {
+				hideBitWidthAnnotation = false
+				(oppositePortView as DigitalPortView).hideBitWidthAnnotation = narrow
+			} else {
+				hideBitWidthAnnotation = narrow
+				(oppositePortView as DigitalPortView).hideBitWidthAnnotation = false
+			}
+		} else {
+			hideBitWidthAnnotation = false
+		}
 	}
 
 	/** ---- [DigitalPortView] */

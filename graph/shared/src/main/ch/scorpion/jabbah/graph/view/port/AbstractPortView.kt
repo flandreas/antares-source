@@ -212,6 +212,8 @@ abstract class AbstractPortView<T : Any>(
 		}
 	}
 
+	override fun edgeViewUpdated(edgeView: EdgeView<*>) { }
+
 	/** ---- [SnappableX] interface */
 
 	/** Delegate to owner to apply translation and rotation.*/

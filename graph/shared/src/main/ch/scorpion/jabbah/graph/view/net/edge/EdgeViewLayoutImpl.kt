@@ -45,6 +45,9 @@ class EdgeViewLayoutImpl(
 		if (event.source == edgeView.destination?.connectableView && !suspendDestinationLayout) {
 			layoutDestination()
 		}
+
+		edgeView.origin?.portView?.edgeViewUpdated(edgeView)
+		edgeView.destination?.portView?.edgeViewUpdated(edgeView)
 	}
 
 	/** ---- [EdgeViewLayout] */
