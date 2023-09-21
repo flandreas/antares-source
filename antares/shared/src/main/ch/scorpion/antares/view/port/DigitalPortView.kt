@@ -37,6 +37,7 @@ import ch.scorpion.jabbah.io.Reference
 import ch.scorpion.jabbah.io.ReferenceResolver
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
+import kotlin.math.max
 
 /**
  * A view representation of a [DigitalPort], either input or output.
@@ -284,7 +285,7 @@ class DigitalPortView(
 
 	override fun handleConnect(edgeView: EdgeView<DigitalSignal>, geometry: EdgeViewConnectionGeometry) {
 		super.handleConnect(edgeView, geometry)
-		updateHideBitWidthAnnotation(edgeView)
+		updateHideBitWidthAnnotation(edgeView, geometry)
 	}
 
 	override fun handleUnconnect(edgeView: EdgeView<DigitalSignal>?, lockEndpoint: Boolean) {
@@ -325,11 +326,11 @@ class DigitalPortView(
 		bitWidthAnnotation?.setOwnerRotation(ownerRotation)
 	}
 
-	override fun edgeViewUpdated(edgeView: EdgeView<*>) {
-		updateHideBitWidthAnnotation(edgeView)
+	override fun edgeViewUpdated(edgeView: EdgeView<*>, geometry: EdgeViewConnectionGeometry) {
+		updateHideBitWidthAnnotation(edgeView, geometry)
 	}
 
-	private fun updateHideBitWidthAnnotation(edgeView: EdgeView<*>) {
+	private fun updateHideBitWidthAnnotation(edgeView: EdgeView<*>, geometry: EdgeViewConnectionGeometry) {
 		val oppositePortView = edgeView.getOppositeConnection(port)?.portView
 		if (oppositePortView != null) {
 			// If EdgeView is too short, show bit width annotation at origin and hide at destination
@@ -344,6 +345,7 @@ class DigitalPortView(
 		} else {
 			hideBitWidthAnnotation = false
 		}
+		bitWidthAnnotation?.offsetX = getBitWidthAnnotationOffset(geometry.distance)
 	}
 
 	/** ---- [DigitalPortView] */
@@ -356,11 +358,17 @@ class DigitalPortView(
 				// The external label has priority over BitWithAnnotation
 				null
 			} else {
-				BitWidthAnnotation(getDigitalPort().bitWidth, direction, centerExternalLabel, ownerRotation = ownerRotation)
+				BitWidthAnnotation(getDigitalPort().bitWidth, direction, centerExternalLabel,
+					ownerRotation = ownerRotation, offsetX = getBitWidthAnnotationOffset(0))
 			}
 		} else {
 			null
 		}
+	}
+
+	private fun getBitWidthAnnotationOffset(edgeViewConnectionGeometryDist: Int): Int {
+		val dist = max(BitWidthAnnotation.DIST.toInt(), max(edgeViewConnectionGeometryDist, externalAnnotationSize) + 7)
+		return dist - BitWidthAnnotation.DIST.toInt()
 	}
 
 	/**

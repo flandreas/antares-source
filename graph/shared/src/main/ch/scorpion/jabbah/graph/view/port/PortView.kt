@@ -226,6 +226,6 @@ interface PortView<T : Any> : Drawable, Storable, Mirrorable, SnappableX, Snappa
 	 * connected to it. Gives this [PortView] a chance to update whatever depends on the
 	 * geometry of the [EdgeView] to which it is connected, such as []
 	 */
-	fun edgeViewUpdated(edgeView: EdgeView<*>)
+	fun edgeViewUpdated(edgeView: EdgeView<*>, geometry: EdgeViewConnectionGeometry)
 
 }

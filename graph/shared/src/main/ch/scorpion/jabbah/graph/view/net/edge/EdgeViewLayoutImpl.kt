@@ -46,8 +46,8 @@ class EdgeViewLayoutImpl(
 			layoutDestination()
 		}
 
-		edgeView.origin?.portView?.edgeViewUpdated(edgeView)
-		edgeView.destination?.portView?.edgeViewUpdated(edgeView)
+		edgeView.origin?.portView?.edgeViewUpdated(edgeView, edgeView.createConnectionGeometry(edgeView.origin!!))
+		edgeView.destination?.portView?.edgeViewUpdated(edgeView, edgeView.createConnectionGeometry(edgeView.destination!!))
 	}
 
 	/** ---- [EdgeViewLayout] */

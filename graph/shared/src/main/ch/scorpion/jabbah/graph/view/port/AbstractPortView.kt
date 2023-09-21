@@ -212,7 +212,7 @@ abstract class AbstractPortView<T : Any>(
 		}
 	}
 
-	override fun edgeViewUpdated(edgeView: EdgeView<*>) { }
+	override fun edgeViewUpdated(edgeView: EdgeView<*>, geometry: EdgeViewConnectionGeometry) { }
 
 	/** ---- [SnappableX] interface */
 

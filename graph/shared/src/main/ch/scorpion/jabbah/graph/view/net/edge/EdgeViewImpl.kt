@@ -413,7 +413,7 @@ open class EdgeViewImpl<T : Any>(
 		styling.updateBoundingBox()
 	}
 
-	private fun createConnectionGeometry(connection: Connection<*>): EdgeViewConnectionGeometry =
+	override fun createConnectionGeometry(connection: Connection<*>): EdgeViewConnectionGeometry =
 		EdgeViewConnectionGeometry(
 			width,
 			getConnectionEndpointType(connection)!!.getLineTerminator(this)?.size ?: 0)

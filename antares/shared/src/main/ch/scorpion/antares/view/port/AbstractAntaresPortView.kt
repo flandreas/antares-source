@@ -51,6 +51,8 @@ abstract class AbstractAntaresPortView<T: Any>(
 		const val INTERNAL_ANNOTATION_SIZE = (LOGIC_SIZE * 1.25).toInt()
 	}
 
+	protected val externalAnnotationSize: Int get() = if (hasExternalAnnotation) LOGIC_SIZE else 0
+
 	var largeExternalPortLabelDistance: Boolean = false
 		set(value) {
 			if (field != value) {
@@ -276,7 +278,7 @@ abstract class AbstractAntaresPortView<T: Any>(
 	}
 
 	private fun getExternalLabelLocation(direction: Direction): Point2D {
-		val ea = if (hasExternalAnnotation) LOGIC_SIZE else 0
+		val ea = externalAnnotationSize
 		var dist = if (largeExternalPortLabelDistance) LARGE_EXT_BORDER_DIST else SMALL_EXT_BORDER_DIST
 		connectionGeometry?.distance?.let {
 			dist += it

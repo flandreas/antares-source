@@ -16,7 +16,6 @@ import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.RotationDisplayStrategy
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 
-
 /**
  * A graphical annotation that displays the [BitWidth] of a [DigitalPortView].
  * The origin location of the [BitWidthAnnotation] is at the origin of the containing [DigitalPortView].
@@ -25,14 +24,15 @@ class BitWidthAnnotation(
     bitWidth: BitWidth,
     private val direction: Direction,
     private val centerLabel: Boolean,
-    ownerRotation: Rotation = Rotation.R0
+    ownerRotation: Rotation = Rotation.R0,
+	offsetX: Int = 0
 ) : AbstractDrawable() {
 
     companion object {
-        const val LABEL_EDGE_DIST = 10.0
-        const val LINE_WIDTH_HALF = 3.0
-        const val LINE_HEIGHT_HALF = 5.0
-        const val LINE_POS_X_FACT = 0.75
+	    private const val LABEL_EDGE_DIST = 10.0
+	    private const val LINE_WIDTH_HALF = 3.0
+        private const val LINE_HEIGHT_HALF = 5.0
+	    const val DIST = 0.75 * 2 * Look.SCALE
     }
 
     private val label: Label = Label(
@@ -44,6 +44,14 @@ class BitWidthAnnotation(
 	    rotationDisplayStrategy = RotationDisplayStrategy.ROTATE_HALF,
 	    ownerRotation = ownerRotation)
 
+	var offsetX: Int = offsetX
+		set(value) {
+			if (field != value) {
+				field = value
+				label.location = getLabelLocation()
+			}
+		}
+
     /** ---- [Drawable] interface */
 
     override fun draw(context: DrawContext) {
@@ -53,8 +61,8 @@ class BitWidthAnnotation(
             val lineStart = getLineStart()
             val lineEnd = getLineEnd(lineStart)
             context.g.drawLine(
-                    lineStart.x.toInt(), lineStart.y.toInt(),
-                    lineEnd.x.toInt(), lineEnd.y.toInt())
+                lineStart.x.toInt(), lineStart.y.toInt(),
+                lineEnd.x.toInt(), lineEnd.y.toInt())
         }
     }
 
@@ -92,7 +100,7 @@ class BitWidthAnnotation(
     }
 
     private fun getLineEnd(lineStart: Point2D): Point2D =
-            Point2D(lineStart.x - getLineBoxWidth(), lineStart.y + getLineBoxHeight())
+		Point2D(lineStart.x - getLineBoxWidth(), lineStart.y + getLineBoxHeight())
 
     private fun getHorizontalLabelAlignment(): HorizontalAlignment = when (direction) {
         Direction.WEST, Direction.EAST -> HorizontalAlignment.CENTER
@@ -107,17 +115,17 @@ class BitWidthAnnotation(
     private fun getLabelLocation(): Point2D {
         val labelEdgeDist = if (centerLabel) 0.0 else LABEL_EDGE_DIST
         return when (direction) {
-            Direction.WEST -> Point2D(-2 * Look.SCALE * LINE_POS_X_FACT, labelEdgeDist)
-            Direction.EAST -> Point2D(2 * Look.SCALE * LINE_POS_X_FACT, labelEdgeDist)
-            Direction.NORTH -> Point2D(labelEdgeDist, -2 * Look.SCALE * LINE_POS_X_FACT)
-            Direction.SOUTH -> Point2D(labelEdgeDist, 2 * Look.SCALE * LINE_POS_X_FACT)
+            Direction.WEST -> Point2D(-DIST - offsetX, labelEdgeDist)
+            Direction.EAST -> Point2D(DIST + offsetX, labelEdgeDist)
+            Direction.NORTH -> Point2D(labelEdgeDist, -DIST - offsetX)
+            Direction.SOUTH -> Point2D(labelEdgeDist, DIST + offsetX)
         }
     }
 
     private fun getLineStart(): Point2D = when (direction) {
-        Direction.WEST -> Point2D(LINE_POS_X_FACT * -2 * Look.SCALE + LINE_WIDTH_HALF, -LINE_HEIGHT_HALF)
-        Direction.EAST -> Point2D(LINE_POS_X_FACT * 2 * Look.SCALE + LINE_WIDTH_HALF, -LINE_HEIGHT_HALF)
-        Direction.NORTH -> Point2D(LINE_HEIGHT_HALF, -2 * Look.SCALE * LINE_POS_X_FACT - LINE_WIDTH_HALF)
-        Direction.SOUTH -> Point2D(LINE_HEIGHT_HALF, 2 * Look.SCALE * LINE_POS_X_FACT - LINE_WIDTH_HALF)
+        Direction.WEST -> Point2D(-DIST - offsetX + LINE_WIDTH_HALF, -LINE_HEIGHT_HALF)
+        Direction.EAST -> Point2D(DIST + offsetX + LINE_WIDTH_HALF, -LINE_HEIGHT_HALF)
+        Direction.NORTH -> Point2D(LINE_HEIGHT_HALF, -DIST - offsetX - LINE_WIDTH_HALF)
+        Direction.SOUTH -> Point2D(LINE_HEIGHT_HALF, DIST + offsetX - LINE_WIDTH_HALF)
     }
 }
