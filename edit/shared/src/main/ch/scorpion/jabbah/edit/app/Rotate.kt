@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.drawable.Rotatable
 import ch.scorpion.jabbah.draw.drawable.RotationDirection
@@ -25,6 +26,10 @@ class RotateAction(
 	private val commandManager: CommandManager = EditModule.commandManager
 ) : AbstractSelectionAwareAction(if (clockwise) "edit.action.rotateClockwise" else "edit.action.rotate", eventBus, viewManager) {
 
+	companion object {
+		private val LOG by logger(RotateAction::class)
+	}
+
 	override fun calculateEnabled(): Boolean =
 		super.calculateEnabled() && (selectionCount > 1 || selectionCount == 1 && singleSelection!!.rotatable)
 
@@ -36,6 +41,8 @@ class RotateAction(
 				"edit.action.rotate.denied.msg"))
 			return
 		}
+
+		LOG.userTrail("Rotate $selectionCount components, clockwise = $clockwise")
 
 		commandManager.execute(
 			RotateCommand(

@@ -33,7 +33,7 @@ class TestAction(
 	}
 
 	override fun execute(event: ActionEvent) {
-		forceBrokenRefError()
+		createCommandSnapshot()
 	}
 
 	private fun showToast() {

@@ -191,6 +191,9 @@ class EdgeToPortOrEdgeConnector(
 
 	private fun logConnect() {
 		if (targetPortView != null) {
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("Create junction from ${EdgeViewEndpointType.ORIGIN.getLocation(edgeView!!)} to ${targetPortView?.owner?.getPortViewConnectionPoint(targetPortView!!)}")
+			}
 			LOG.userTrail("Create junction from EdgeView ${branchedEdgeView?.id} to port ${targetPortView?.port?.portId} of ${targetPortView?.owner?.id}")
 		} else if (targetEdgeView != null) {
 			LOG.userTrail("Create junction from EdgeView ${branchedEdgeView?.id} to new junction in EdgeView ${targetEdgeView?.id}")

@@ -159,6 +159,7 @@ class DragManagerImpl(
 
 			if (additionalCommands.isNotEmpty() || moveStartLocation != movedReferenceComponent?.location) {
 				try {
+					LOG.debug("Move vector: From $mouseStartLocation to ${context.location}")
 					logMove("mouse")
 					drawingAppService.move(
 						selection,
