@@ -180,9 +180,6 @@ abstract class AbstractVerticeView<T : Vertice>(
 		return null
 	}
 
-	override fun getPortViewConnectionPoint(pv: PortView<*>): Point2D =
-		rotateBack(pv.connectionPoint).subtract(location)
-
 	override fun getPortViewAt(x: Double, y: Double): PortView<*>? {
 		val p = rotateBack(x, y).subtract(location)
 		return portViews.firstOrNull { it.contains(p) || it.containsConnectionPoint(p) }

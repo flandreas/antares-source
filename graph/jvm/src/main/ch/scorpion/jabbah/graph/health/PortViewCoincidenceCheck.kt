@@ -28,7 +28,7 @@ object PortViewCoincidenceCheck : SystemHealthCheck {
 		}
 
 		unconnectedPortViews.forEach { pv ->
-			pv.coincidenceWarning = unconnectedPortViews.any { it !== pv && pv.coincidesWith(it) }
+			pv.coincidenceWarning = unconnectedPortViews.any { it !== pv && it.owner !== pv.owner && pv.coincidesWith(it) }
 		}
 
 		return null

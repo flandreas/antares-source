@@ -219,7 +219,7 @@ interface PortView<T : Any> : Drawable, Storable, Mirrorable, SnappableX, Snappa
 	 * coincides with any other [PortView]'s [connectionPoint].
 	 */
 	fun coincidesWith(other: PortView<*>): Boolean =
-		owner?.getPortViewConnectionPoint(this) == other.owner?.getPortViewConnectionPoint(other)
+		owner?.getUnconnectedPortConnectionPoint(this.port) == other.owner?.getUnconnectedPortConnectionPoint(other.port)
 
 	/**
 	 * Called by [EdgeView] if its geometry has been updated and this [PortView] is

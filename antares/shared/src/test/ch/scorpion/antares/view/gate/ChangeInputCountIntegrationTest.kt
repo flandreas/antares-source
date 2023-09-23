@@ -23,7 +23,7 @@ import kotlin.test.*
  */
 class ChangeInputCountIntegrationTest : AbstractCircuitTest() {
 
-	private val service: AntaresGraphViewService = EditModule.drawingAppService as AntaresGraphViewService
+	private lateinit var service: AntaresGraphViewService
 	private lateinit var builder: TestCircuitBuilder
 	private lateinit var andGateView: LogicGateView
 	private lateinit var switchView1: SwitchView
@@ -40,6 +40,7 @@ class ChangeInputCountIntegrationTest : AbstractCircuitTest() {
 
 	@BeforeTest
 	fun setupCircuit() {
+		service = EditModule.drawingAppService as AntaresGraphViewService
 
 		every { drawingView.drawing } answers { getCircuitView() }
 
