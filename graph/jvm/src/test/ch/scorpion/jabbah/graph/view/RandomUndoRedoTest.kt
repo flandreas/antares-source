@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.graph.view.net.edge.MoveSegmentCommand
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView.Companion.createEastOutputVerticeView
 import kotlin.math.abs
 import kotlin.random.Random
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 /**
@@ -21,14 +22,13 @@ import kotlin.test.Test
  */
 class RandomUndoRedoTest : AbstractGraphViewEditingTest(snapshotSize = 5) {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-			EditModule.drawingAppService = GraphViewAppServiceImpl(GraphViewCopyPasteService())
-		}
-	}
-
 	private val blockCount = 16
+
+	@BeforeTest
+	fun setup() {
+		GraphViewTestRule.configure()
+		EditModule.drawingAppService = GraphViewAppServiceImpl(GraphViewCopyPasteService())
+	}
 
 	override fun setupCircuit() {
 		// Cannot run buildCircuit() because CommandManager is not yet bound.

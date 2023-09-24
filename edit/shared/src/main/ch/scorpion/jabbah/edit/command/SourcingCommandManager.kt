@@ -153,7 +153,7 @@ class SourcingCommandManager(
 		LOG.trace("Register command '${command.getDescription()}'")
 		resetRedo()
 		if (state.transaction == null) {
-			beginTransaction(command, register = true)
+			beginTransactionImpl(command, register = true, allowNewSnapshot = true)
 			commitTransaction()
 		} else {
 			command.setTags(*state.tags.toTypedArray())
@@ -167,7 +167,7 @@ class SourcingCommandManager(
 		resetRedo()
 
 		if (state.transaction == null) {
-			beginTransaction(command, register = false)
+			beginTransactionImpl(command, register = false, allowNewSnapshot = true)
 			commitTransaction()
 		} else {
 			command.setTags(*state.tags.toTypedArray())
@@ -229,18 +229,22 @@ class SourcingCommandManager(
 	}
 
 	override fun beginTransaction(command: Command, register: Boolean) {
+		beginTransactionImpl(command, register, allowNewSnapshot = false)
+	}
+
+	private fun beginTransactionImpl(command: Command, register: Boolean, allowNewSnapshot: Boolean) {
 		LOG.trace("Begin transaction for '${command.getDescription()}'")
 		if (state.transaction == null) {
 			state.transaction = Transaction()
 
-			if (register && !state.snapshots.empty) {
+			if (allowNewSnapshot && !register) {
+				addableSnapshot().add(state.transaction!!)
+			} else {
 				// Registered Command must always be added to the current Snapshot, because
 				// the business layer has always performed the Command's logic (hence only registration),
 				// and the resulting changes would be done twice in a Snapshot replay when it was
 				// added to a new Snapshot. GitHub issue #369.
 				state.snapshots.peek().add(state.transaction!!)
-			} else {
-				addableSnapshot().add(state.transaction!!)
 			}
 		}
 		state.transactionLevel++

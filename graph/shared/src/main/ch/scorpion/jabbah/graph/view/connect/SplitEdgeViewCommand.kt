@@ -11,7 +11,6 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.port.PortView
-import ch.scorpion.jabbah.io.StorableCloner
 
 interface NewEdgeViewAtSplitProvider {
 	fun provide(): EdgeView<*>
@@ -24,7 +23,7 @@ interface NewEdgeViewAtSplitProvider {
 class NewEdgeViewAtSplitCloneProvider(
 	private val newEdgeView: EdgeView<*>
 ) : NewEdgeViewAtSplitProvider {
-	override fun provide(): EdgeView<*> = StorableCloner.clone(newEdgeView)
+	override fun provide(): EdgeView<*> = newEdgeView.doClone() as EdgeView<*>
 }
 
 class NewEdgeViewAtSplitRetrieveProvider(

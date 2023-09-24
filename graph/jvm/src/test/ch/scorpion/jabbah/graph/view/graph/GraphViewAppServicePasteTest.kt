@@ -6,17 +6,11 @@ import ch.scorpion.jabbah.graph.view.AbstractGraphViewEditingTest
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.app.GraphViewAppServiceImpl
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class GraphViewAppServicePasteTest : AbstractGraphViewEditingTest(snapshotSize = 1) {
-
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-			EditModule.drawingAppService = GraphViewAppServiceImpl(GraphViewCopyPasteService())
-		}
-	}
 
 	private lateinit var vv1: TestVerticeView
 	private lateinit var vv2: TestVerticeView
@@ -26,6 +20,12 @@ class GraphViewAppServicePasteTest : AbstractGraphViewEditingTest(snapshotSize =
 		vv1 = builder.addVerticeView(TestVerticeView.createSouthInputVerticeView("vv1", 0, 0))
 		vv2 = builder.addVerticeView(TestVerticeView.createSouthInputVerticeView("vv2", 100, 0))
 		vv3 = builder.addVerticeView(TestVerticeView.createSouthInputVerticeView("vv3", 200, 0))
+	}
+
+	@BeforeTest
+	fun setup() {
+		GraphViewTestRule.configure()
+		EditModule.drawingAppService = GraphViewAppServiceImpl(GraphViewCopyPasteService())
 	}
 
 	@Test
