@@ -32,6 +32,7 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.actor.ActorViewBag
+import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
@@ -491,6 +492,9 @@ class SubGraphVerticeViewImpl(
 	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
 		return editInteractionHandler
 	}
+
+	override fun simulationEventRequiresRepaint(scheduler: Scheduler): Boolean =
+		drawExecScriptInterpreter != null || super.simulationEventRequiresRepaint(scheduler)
 
 	/** ---- [SubGraphVerticeView] */
 

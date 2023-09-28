@@ -320,13 +320,16 @@ abstract class AbstractVerticeView<T : Vertice>(
 
 	override fun handleStateChanged(event: GraphElementEvent) {
 		if (event.signalHandler is Scheduler && (event.reason == Vertice.STATE_CHANGE_INPUT || event.reason == Vertice.STATE_CHANGE_OUTPUT)) {
-			if (!GraphApplicationContext.isShowNetState(event.signalHandler)) {
+			if (!simulationEventRequiresRepaint(event.signalHandler)) {
 				// Avoid leading to unnecessary View repainting
 				return
 			}
 		}
 		super.handleStateChanged(event)
 	}
+
+	protected open fun simulationEventRequiresRepaint(scheduler: Scheduler): Boolean =
+		GraphApplicationContext.isShowNetState(scheduler)
 
 	/** ---- [ActorView] interface */
 
