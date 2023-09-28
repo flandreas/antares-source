@@ -27,6 +27,12 @@ class EditorToolDriver(
 		return this
 	}
 
+	fun moveMouseAndPressAt(x: Int, y: Int, modifiers: Int = 0): EditorToolDriver {
+		mouseMoveTo(x, y, modifiers)
+		pressMouseAt(x, y, modifiers)
+		return this
+	}
+
 	fun dragMouseTo(x: Int, y: Int, modifiers: Int = 0): EditorToolDriver {
 		editor.currentTool.mouseDragged(event(MouseEventType.DRAGGED, x, y, modifiers), Point2D(x, y))
 		return this
@@ -34,6 +40,12 @@ class EditorToolDriver(
 
 	fun releaseMouseAt(x: Int, y: Int, modifiers: Int = 0): EditorToolDriver {
 		editor.currentTool.mouseReleased(event(MouseEventType.RELEASED, x, y, modifiers), Point2D(x, y))
+		return this
+	}
+
+	fun dragMouseAndReleaseAt(x: Int, y: Int, modifiers: Int = 0): EditorToolDriver {
+		dragMouseTo(x, y, modifiers)
+		releaseMouseAt(x, y, modifiers)
 		return this
 	}
 

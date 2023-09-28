@@ -56,7 +56,7 @@ class RotateAction(
 }
 
 /** Rotates a [Component] to the given [Rotation].*/
-private class RotateCommand(
+class RotateCommand(
 	private val clockwise: Boolean,
 	private val drawingView: DrawingView<*>,
 	val componentIds: Collection<Int>,

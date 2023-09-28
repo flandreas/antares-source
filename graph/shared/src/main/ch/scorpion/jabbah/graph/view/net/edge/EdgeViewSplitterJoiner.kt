@@ -12,7 +12,8 @@ object EdgeViewSplitterJoiner {
 
 	fun <T: Any> split(
 		edgeView: EdgeView<T>,
-		index: Int, splitLocation: Point2D,
+		index: Int,
+		splitLocation: Point2D,
 		edgeViewCreator: (NetView<T>) -> EdgeView<T>
 	): EdgeView<T> {
 

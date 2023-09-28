@@ -1,21 +1,17 @@
 package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.base.event.Modifier
-import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.state.UnhandledEventBehaviour.Unhandled
 import ch.scorpion.jabbah.base.state.stateMachine
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler
+import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.escapePressed
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseDragged
-import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseMoved
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeftPressed
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeftReleased
-import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.escapePressed
+import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseMoved
 import ch.scorpion.jabbah.draw.graphics.Cursor
-import ch.scorpion.jabbah.edit.Command
-import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.EditInputEventContext
-import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.EdgeViewSnapLocatorResult
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -161,15 +157,24 @@ class EdgeToPortOrEdgeConnector(
 		handler.sm.start(context)
 	}
 
-	private fun snap(context: EditInputEventContext): EdgeViewSnapLocatorResult? {
-		val result = branchedEdgeView!!.snap(context.x, context.y, context.editor.snapManager)
+	private fun snap(context: EditInputEventContext): EdgeViewSnapLocatorResult? =
+		snap(context.x, context.y, context.editor.snapManager)
+
+	private fun snap(x: Double, y: Double, snapManager: SnapManager): EdgeViewSnapLocatorResult? {
+		val result = branchedEdgeView!!.snap(x, y, snapManager)
 		branchedSegmentIndex = result?.segmentIndex
 		return result
 	}
 
 	private fun beginConnecting(context: EditInputEventContext) {
-		createEdgeView(context.drawingView as DrawingView<GraphView>, Point2D(ConnectionPointHighlighter.portViewHighlight!!.location), branchedEdgeView!!.netView as NetView<Any>)
+		val snapLocation = ConnectionPointHighlighter.portViewHighlight!!.location
+		createEdgeView(context.drawingView as DrawingView<GraphView>, snapLocation, branchedEdgeView!!.netView as NetView<Any>)
 		LOG.userTrail("Start creating junction of EdgeView ${edgeView?.id}")
+
+		// Re-snap to the PortView connection point to retrieve the optimal segment index
+		// (avoid bug #627: wire distortion when splitting at EdgeView corner)
+		snap(snapLocation.x, snapLocation.y, context.editor.snapManager)
+
 		context.drawingView.drawing.remove(edgeView!!)
 		removePortViewHighlight(context)
 
