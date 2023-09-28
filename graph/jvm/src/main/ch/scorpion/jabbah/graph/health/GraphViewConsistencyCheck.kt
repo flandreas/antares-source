@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.health
 
 import ch.scorpion.jabbah.app.ApplicationData
+import ch.scorpion.jabbah.app.RemoteControlService
 import ch.scorpion.jabbah.app.SystemMalfunctionEvent
 import ch.scorpion.jabbah.app.health.SystemHealthCheck
 import ch.scorpion.jabbah.base.logger
@@ -10,6 +11,9 @@ import ch.scorpion.jabbah.graph.model.Net
 object GraphViewConsistencyCheck : SystemHealthCheck {
 
 	private val LOG by logger(GraphViewConsistencyCheck::class)
+
+	/** The name of the property in [RemoteControlService] to enable this check.*/
+	const val REMOTE_PROP_CONSISTENCY_CHECK = "graph.consistencyCheck"
 
 	override fun execute(data: ApplicationData): SystemMalfunctionEvent? {
 		if (data.content !is MetaGraph) {

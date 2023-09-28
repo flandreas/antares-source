@@ -16,7 +16,7 @@ import javax.swing.event.HyperlinkEvent
 
 class NewVersionPanel(
 	private val newVersion: ApplicationVersion,
-	private val service: ApplicationVersionService = AppModuleJvm.applicationVersionService,
+	private val service: RemoteControlService = AppModuleJvm.remoteControlService,
 	private val closeHandler: () -> Unit
 ) : JPanel() {
 
@@ -24,7 +24,7 @@ class NewVersionPanel(
 		fun showAsDialog(
 			parent: JFrame,
 			newVersion: ApplicationVersion,
-			service: ApplicationVersionService = AppModuleJvm.applicationVersionService
+			service: RemoteControlService = AppModuleJvm.remoteControlService
 		) {
 			DialogBuilder<NewVersionPanel>(parent)
 				.title(Translations.getString("application.newVersion.title"))

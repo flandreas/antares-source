@@ -64,7 +64,9 @@ object GraphModuleJvm : AbstractModule() {
 
 		buildPreferencesTree(BaseModuleJvm.preferencesTree)
 
-		SystemHealthChecker.register(GraphViewConsistencyCheck)
+		if (!EditAuthModule.userHolder.user.isDeveloper && AppModuleJvm.remoteControlService.getBoolean(GraphViewConsistencyCheck.REMOTE_PROP_CONSISTENCY_CHECK)) {
+			SystemHealthChecker.register(GraphViewConsistencyCheck)
+		}
 		SystemHealthChecker.register(PortViewCoincidenceCheck)
 	}
 

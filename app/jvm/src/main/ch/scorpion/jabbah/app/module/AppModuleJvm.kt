@@ -12,7 +12,9 @@ import ch.scorpion.jabbah.edit.module.EditModuleJvm
 
 object AppModuleJvm : AbstractModule() {
 
-	var applicationVersionService: ApplicationVersionService = ApplicationVersionServiceImpl()
+	var remotePropertiesUrl: String? = null
+	val remoteControlService = RemoteControlService()
+
 	var applicationUsageService: ApplicationUsageService = RailwayAppUsageServiceImpl()
 	val ratingService: RatingService = RailwayRatingService()
 	var systemDumpService: SystemDumpService = SystemDumpService()
@@ -28,6 +30,6 @@ object AppModuleJvm : AbstractModule() {
 	}
 
 	private fun fillProperties(properties: Properties) {
-		properties.set(ApplicationVersionServiceImpl.PROP_IGNORED_VERSION, ApplicationVersion.DUMMY_VERSION_ID)
+		properties.set(RemoteControlService.PROP_IGNORED_VERSION, ApplicationVersion.DUMMY_VERSION_ID)
 	}
 }

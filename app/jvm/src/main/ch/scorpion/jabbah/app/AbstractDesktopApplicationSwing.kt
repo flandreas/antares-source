@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.module.EditModule
@@ -80,7 +81,9 @@ abstract class AbstractDesktopApplicationSwing(
 		SwingUtilities.invokeLater {
 			val firstUsage = isFirstUsage
 			openInitialSavable()
-			checkForNewestVersion()
+			if (!EditAuthModule.userHolder.user.isDeveloper) {
+				checkForNewestVersion()
+			}
 			if (firstUsage) {
 				showWelcomeMessage()
 			}
@@ -114,7 +117,7 @@ abstract class AbstractDesktopApplicationSwing(
 	}
 
 	private fun checkForNewestVersion() {
-		val offeredVersion = AppModuleJvm.applicationVersionService.checkForNewerVersion(aboutInfo.version)
+		val offeredVersion = AppModuleJvm.remoteControlService.checkForNewerVersion(aboutInfo.version)
 		if (offeredVersion != null) {
 			NewVersionPanel.showAsDialog(mainFrame, offeredVersion)
 		}
