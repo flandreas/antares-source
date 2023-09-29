@@ -123,6 +123,7 @@ tasks {
 
 		keep("class kotlin.** { *; }")
 		keep("class org.apache.** { *; }")
+		keep("class org.slf4j.** { *; }")
 		keep("class com.l2fprod.** { *; }")
 		keep("class com.formdev.** { *; }")
 		keep("class io.ktor.** { *; }")
