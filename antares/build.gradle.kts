@@ -128,6 +128,7 @@ tasks {
 		keep("class com.formdev.** { *; }")
 		keep("class io.ktor.** { *; }")
 		keep("class kotlinx.coroutines.** { *; }")
+		keep("class kotlinx.serialization.** { *; }")
 		keep("class org.jdesktop.** { *; }")
 
 		// Reflection in OsThemeDetector
