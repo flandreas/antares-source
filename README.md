@@ -86,7 +86,7 @@ Deployment is done by pushing all artifacts to git@github.com:flandreas/antares.
 
 * Create a new release in the github project, e.g. "Release 0.3.0"
 * Upload the three installers as attachments to the release
-* Upload antares-x.y.z-all-jar as attachment to the release
+* Upload package/antares-x.y.z.jar as attachment to the release
 * Upload the example projects (zip) as attachments to the release
     * Make sure that download buttons in example pages reference the correctly versioned URL
 * Save as "draft"
