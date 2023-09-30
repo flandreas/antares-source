@@ -30,11 +30,8 @@ class RotateAction(
 		private val LOG by logger(RotateAction::class)
 	}
 
-	override fun calculateEnabled(): Boolean =
-		super.calculateEnabled() && (selectionCount > 1 || selectionCount == 1 && singleSelection!!.rotatable)
-
 	override fun execute(event: ActionEvent) {
-		if (!selection.all { it.rotatable }) {
+		if (!selection.let { sel -> sel.all { it.isRotatableWith(sel) } }) {
 			eventBus.post(ComponentMessage(
 				ComponentMessageType.Error,
 				null,

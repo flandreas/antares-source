@@ -90,7 +90,8 @@ class GraphElementViewWrapper(
 
 	/** ---- [Rotatable] interface */
 
-	override val rotatable: Boolean get() = _component!!.rotatable
+	override fun isRotatableWith(selection: Collection<*>): Boolean =
+		_component!!.isRotatableWith(selection)
 
 	override val useRotation: Boolean get() = _component!!.useRotation
 

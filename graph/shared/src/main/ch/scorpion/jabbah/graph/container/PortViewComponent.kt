@@ -63,7 +63,7 @@ open class PortViewComponent<T : Any>(
 
 	override val type: String get() = TYPE
 
-	override val rotatable: Boolean get() = true
+	override fun isRotatableWith(selection: Collection<*>): Boolean = true
 
 	override fun rotate(direction: RotationDirection, pivot: Point2D?) {
 		this.direction = when (direction) {

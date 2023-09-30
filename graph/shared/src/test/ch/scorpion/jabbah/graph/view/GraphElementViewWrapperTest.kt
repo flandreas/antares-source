@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.drawable.RotationDirection
+import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.model.curve.QuadCurveComponent
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -23,7 +24,7 @@ class GraphElementViewWrapperTest {
 			Point2D(200, 0)
 		))
 		val wrapper = GraphElementViewWrapper(curve)
-		assertTrue(wrapper.rotatable)
+		assertTrue(wrapper.isRotatableWith(listOf<Component>()))
 
 		wrapper.rotate(RotationDirection.Clockwise)
 		assertEquals(

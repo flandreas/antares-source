@@ -663,7 +663,9 @@ open class EdgeViewImpl<T : Any>(
 
 	/** ---- [Rotatable] interface */
 
-	override val rotatable: Boolean get() = true
+	override fun isRotatableWith(selection: Collection<*>): Boolean =
+		(origin == null || selection.contains(origin!!.connectableView))
+			&& (destination == null || selection.contains(destination!!.connectableView))
 
 	override fun prepareRotateBy(components: Collection<Rotatable>) {
 		prepareTransformation(components)
