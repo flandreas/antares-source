@@ -9,17 +9,19 @@ import ch.scorpion.jabbah.graph.model.port.PortImpl
 
 /**
  * A standard implementation of the [GraphInput] interface whose [PortType] cannot be changed.
+ * @param clickValue the value to appear at the output if the user clicks on this [GraphInputImpl]
  */
 class GraphInputImpl<T: Any>(
 	outputPort: OutputPort<T> = PortImpl(PortType.OUTPUT),
 	name: String? = null,
-	eventBus: EventBus = BaseModule.eventBus
+	eventBus: EventBus = BaseModule.eventBus,
+	private val clickValue: T? = null
 ) : AbstractGraphPort<T>(port = outputPort, name = name, eventBus = eventBus, calculator = CALCULATOR), GraphInput<T> {
 
 	companion object {
-		private const val baseResourceKey = "graph.element.input"
-		private val type = Translations.getString("$baseResourceKey.name")
-		private val typeDesc = Translations.getString("$baseResourceKey.desc")
+		private const val BASE_RESOURCE_KEY = "graph.element.input"
+		private val type = Translations.getString("$BASE_RESOURCE_KEY.name")
+		private val typeDesc = Translations.getString("$BASE_RESOURCE_KEY.desc")
 
 		private val CALCULATOR = Calculator()
 
@@ -32,6 +34,12 @@ class GraphInputImpl<T: Any>(
 
 	override val type: String get() = GraphInputImpl.type
 	override val typeDesc: String get() = GraphInputImpl.typeDesc
+
+	fun handleClick(signalHandler: SignalHandler) {
+		if (clickValue != null) {
+			setIncomingSignal(clickValue, signalHandler)
+		}
+	}
 
     /** ---- [GraphPort] interface */
 

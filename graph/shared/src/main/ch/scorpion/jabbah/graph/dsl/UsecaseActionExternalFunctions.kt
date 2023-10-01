@@ -36,6 +36,8 @@ open class UsecaseActionExternalFunctions(
 		with(symbolTable) {
 			define(ExternalFunctionSymbol("setInputAt", 3, ::setInputAtImpl))
 			define(ExternalFunctionSymbol("pauseAt", 1, ::pauseAtImpl))
+			define(ExternalFunctionSymbol("clickMouseAt", 3, ::clickMouseAtImpl))
+			define(ExternalFunctionSymbol("pressKeyAt", 2, ::pressKeyAtImpl))
 		}
 	}
 
@@ -79,5 +81,45 @@ open class UsecaseActionExternalFunctions(
 	private fun pauseAt(time: Long) {
 		LOG.trace("pause at $time")
 		runner.executeAt(time) { runner.scheduler.isSingleStepMode = true }
+	}
+
+	private fun clickMouseAtImpl(params: List<Any>): Any {
+		clickMouseAt(
+			longParam(0, params),
+			longParam(1, params).toInt(),
+			longParam(2, params).toInt()
+		)
+		return 0
+	}
+
+	/**
+	 * Click the left mouse button at a particular coordinate.
+	 * @param time the simulation time (ns) at which the mouse click is to be done
+	 * @param x the x coordinate of the click location  in model space
+	 * @param y the y coordinate of the click location in model space
+	 */
+	private fun clickMouseAt(time: Long, x: Int, y: Int) {
+		runner.executeAt(time) {
+			runner.clickMouseAt(x, y)
+		}
+	}
+
+	private fun pressKeyAtImpl(params: List<Any>): Any {
+		pressKeyAt(
+			longParam(0, params),
+			longParam(1, params).toInt()
+		)
+		return 0
+	}
+
+	/**
+	 * Press the key with the specified ASCII code at a particular simulation time.
+	 * @param time the simulation time (ns) at which the key is to be pressed
+	 * @param keyCode the ASCII code of the key
+	 */
+	private fun pressKeyAt(time: Long, keyCode: Int) {
+		runner.executeAt(time) {
+			runner.pressKey(keyCode)
+		}
 	}
 }

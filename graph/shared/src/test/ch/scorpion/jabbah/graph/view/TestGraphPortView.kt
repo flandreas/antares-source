@@ -3,8 +3,12 @@ package ch.scorpion.jabbah.graph.view
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
+import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
+import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapter
 import ch.scorpion.jabbah.graph.model.GraphPort
 import ch.scorpion.jabbah.graph.model.port.PortImpl
 import ch.scorpion.jabbah.graph.model.vertice.GraphInputImpl
@@ -25,15 +29,27 @@ class TestGraphPortView<T : Any>(
 		fun <T : Any> output(name: String): TestGraphPortView<T> = TestGraphPortView(model = GraphOutputImpl(PortImpl.createInput(name = name), name = name))
 	}
 
+	private val actorInteractionHandler = InteractionHandler()
+
 	init {
 		addPortView(TestPortView<Boolean>(model.getPort(), Direction.WEST, PortLabelPosition.EXTERNAL, 0))
 	}
 
 	override val iconPath: String get() = "icon"
 
-	override fun getBoundingBoxImpl(): Rectangle2D = Rectangle2D()
+	override fun getBoundingBoxImpl(): Rectangle2D = Rectangle2D(location.x, location.y, 20.0, 20.0)
 
-	override fun contains(x: Double, y: Double): Boolean = false
+	override fun contains(x: Double, y: Double): Boolean = boundingBox.contains(x, y)
 
 	override var location: Point2D = Point2D.ZERO
+
+	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler =
+		actorInteractionHandler
+
+	private inner class InteractionHandler : ClickableActorInteractionHandlerAdapter() {
+		override fun mousePressed(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
+			(model as GraphInputImpl<T>).handleClick(context.signalHandler)
+			return null
+		}
+	}
 }

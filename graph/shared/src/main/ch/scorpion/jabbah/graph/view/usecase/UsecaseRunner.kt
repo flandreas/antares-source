@@ -1,6 +1,10 @@
 package ch.scorpion.jabbah.graph.view.usecase
 
+import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.view.ContentViewManager
+import ch.scorpion.jabbah.draw.view.DrawViewModule
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorData
@@ -28,7 +32,8 @@ class UsecaseRunner(
 	private val usecase: Usecase,
 	val graphView: GraphView,
 	val scheduler: Scheduler,
-	private val applicationModeHolder: ApplicationModeHolder
+	private val applicationModeHolder: ApplicationModeHolder,
+	private val viewManager: ContentViewManager = DrawViewModule.viewManager
 ) {
 
 	companion object {
@@ -66,6 +71,42 @@ class UsecaseRunner(
 
 	fun <T : Any> applyOscillation(input: GraphInput<T>, firstValue: T, secondValue: T, period: Long) {
 		scheduler.requestActingAfter(UsecaseClock(input, firstValue, secondValue, period), 1, SimpleActorData())
+	}
+
+	fun clickMouseAt(x: Int, y: Int) {
+		if (viewManager.activeView?.view is DrawingView<*>) {
+			val view = viewManager.activeView!!.view!!
+			view.dispatchEvent(MouseEventImpl(
+				MouseEventType.PRESSED,
+				x = view.modelToViewX(x.toDouble()).toInt(),
+				y = view.modelToViewY(y.toDouble()).toInt(),
+				button = Button.BUTTON1,
+				clickCount = 1
+			))
+			view.dispatchEvent(MouseEventImpl(
+				MouseEventType.RELEASED,
+				x = view.modelToViewX(x.toDouble()).toInt(),
+				y = view.modelToViewY(y.toDouble()).toInt(),
+				button = Button.BUTTON1,
+				clickCount = 1
+			))
+		}
+	}
+
+	fun pressKey(keyCode: Int) {
+		if (viewManager.activeView?.view is DrawingView<*>) {
+			val view = viewManager.activeView!!.view!!
+			view.dispatchEvent(KeyEventImpl(
+				KeyEventType.PRESSED,
+				key = keyCode,
+				keyChar = ' '
+			))
+			view.dispatchEvent(KeyEventImpl(
+				KeyEventType.RELEASED,
+				key = keyCode,
+				keyChar = ' '
+			))
+		}
 	}
 
 	private fun delay(time: Long): Long {

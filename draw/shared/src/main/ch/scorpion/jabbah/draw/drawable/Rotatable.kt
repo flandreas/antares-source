@@ -58,10 +58,10 @@ interface Rotatable : Locatable {
 
 	/**
 	 * Determines whether this [Rotatable] can be interactively rotated by the user in terms of
-	 * [rotate] together with all objects in [others], which doesn't necessarily require [useRotation] to be `true`.
+	 * [rotate] together with all objects in [selection], which doesn't necessarily require [useRotation] to be `true`.
 	 * Some [Rotatable]s may only be rotated if other objects they are attached to are also rotated.
 	 */
-	fun isRotatableWith(others: Collection<*>): Boolean
+	fun isRotatableWith(selection: Collection<*>): Boolean
 
 	/** Informs this [Rotatable] that it is about to be rotated with other [Rotatables][Rotatable]. */
 	fun prepareRotateBy(components: Collection<Rotatable>) {}
