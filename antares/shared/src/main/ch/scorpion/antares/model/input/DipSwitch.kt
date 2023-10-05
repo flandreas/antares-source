@@ -66,7 +66,7 @@ class DipSwitch(
 			}
 		}
 
-	/** If set to `true`, [value] is retained between multiple execution runs.*/
+	/** If set to `true`, [signal] is retained between multiple execution runs.*/
 	var retainValue: Boolean = DEF_RETAIN_VALUE
 
 	var bitWidth: BitWidth
@@ -96,7 +96,7 @@ class DipSwitch(
 	override fun executionInitialize(signalHandler: SignalHandler) {
 		super.executionInitialize(signalHandler)
 		if (firstExecution || !retainValue) {
-			setSignal(initialValue, signalHandler)
+			resetSignal(initialValue, signalHandler)
 		}
 	}
 
@@ -107,7 +107,7 @@ class DipSwitch(
 	override fun executionStopped(signalHandler: SignalHandler) {
 		super.executionStopped(signalHandler)
 		if (!retainValue) {
-			setSignal(initialValue, signalHandler)
+			resetSignal(initialValue, signalHandler)
 		}
 		setInteractionEnabled(true, signalHandler)
 		stateChanged(signalHandler)

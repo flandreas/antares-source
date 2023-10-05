@@ -81,6 +81,13 @@ abstract class AbstractInteractableVertice<S: Any>(
 		bufferedSignal = null
 	}
 
+	protected fun resetSignal(signal: S?, signalHandler: SignalHandler) {
+		this.signal = signal
+		stateChanged(signalHandler)
+		bufferedSignal = null
+		delayedSignal = null
+	}
+
 	fun bufferSignal(signal: S, signalHandler: SignalHandler, graphView: GraphView?) {
 		bufferedSignal = signal
 		requestSetSignal(signal, signalHandler, graphView)
