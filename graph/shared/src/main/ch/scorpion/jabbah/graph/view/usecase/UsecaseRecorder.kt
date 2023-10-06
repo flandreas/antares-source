@@ -50,10 +50,11 @@ class UsecaseRecorder(
 	/** The time (in ns) for which actions are recorded to be executed later. Only used if [realtime] is `false`. */
 	private var time: Long = 0
 
+	private var isFirstEvent = true
+
 	var isRecording: Boolean = false
 		private set
 
-	private var isFirstEvent = true
 
 	fun start(realtime: Boolean, releaseDelay: Int, clickDistance: Int) {
 		this.realtime = realtime

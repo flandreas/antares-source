@@ -5,6 +5,8 @@ import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
+import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.ColorIcon
 import ch.scorpion.jabbah.base.swing.DialogBuilder
@@ -15,6 +17,8 @@ import ch.scorpion.jabbah.draw.drawable.TransparentBridge
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
+import ch.scorpion.jabbah.graph.app.ApplicationMode
+import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.view.Usecase
 import ch.scorpion.jabbah.graph.view.app.UsecaseAppService
@@ -31,6 +35,7 @@ class RecordUsecasePanel(
 	applicationModeHolder: ApplicationModeHolder,
 	graphAppContextHolder: GraphApplicationContextHolder,
 	private val service: UsecaseAppService,
+	private val eventBus: EventBus = BaseModule.eventBus,
 	private var closeHandler: () -> Unit = {}
 ) : JPanel() {
 
@@ -48,8 +53,9 @@ class RecordUsecasePanel(
 			parent: Frame = Frame.getFrames()[0]
 		) {
 			val panel = RecordUsecasePanel(usecase.id, application, applicationModeHolder, graphAppContextHolder, service)
-			DialogBuilder<RecordUsecasePanel>(parent, modal = false)
+			DialogBuilder<RecordUsecasePanel>(parent, modal = true)
 				.content { dialog ->
+					panel.dialog = dialog
 					panel.closeHandler = { dialog.dispose() }
 					panel
 				}
@@ -57,7 +63,15 @@ class RecordUsecasePanel(
 				.defaultButton { panel.okButton }
 				.minimumSize(Dimension(200, 300))
 				.alwaysOnTop(true)
+				.preventWindowClose(true)
+				.onWindowClosed { it.dispose() }
 				.show()
+		}
+	}
+
+	private val applicationModeHandler: EventHandler<ApplicationModeEvent> = {
+		if (it.applicationMode == ApplicationMode.EDIT) {
+			stopRecording()
 		}
 	}
 
@@ -99,17 +113,24 @@ class RecordUsecasePanel(
 		oval = true)
 	private val recordButtonGlower = TransparentBridge(::glowRecordButton)
 
+	/** Used for changing modality while dialog is open, i.e. make it non-modal once recording is started.*/
+	private lateinit var dialog: JDialog
+
 	init {
 		buildUI()
 
-		realtimeCheckbox.addActionListener {
-			timeBetweenClicksTextField.isEnabled = !realtimeCheckbox.isSelected
-		}
+		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
+
+		realtimeCheckbox.addActionListener { updateFields() }
 
 		delayTextField.value = BaseModule.properties.getInt(UsecaseRecorder.PROP_DEF_DELAY_MS)
 		timeBetweenClicksTextField.value = BaseModule.properties.getInt(UsecaseRecorder.PROP_DEF_TIME_BETWEEN_CLICKS_MS)
 
 		recordButton.icon = recordButtonIcon
+	}
+
+	private fun dispose() {
+		eventBus.unregister(applicationModeHandler)
 	}
 
 	private fun consumeStatement(statement: String) {
@@ -118,6 +139,17 @@ class RecordUsecasePanel(
 		}
 		log.append(statement)
 		logView.text = log.toString()
+	}
+
+	private fun resetLog() {
+		log.clear()
+		logView.text = log.toString()
+	}
+
+	private fun updateFields() {
+		realtimeCheckbox.isEnabled = !recorder.isRecording
+		delayTextField.isEnabled = !recorder.isRecording
+		timeBetweenClicksTextField.isEnabled = !realtimeCheckbox.isSelected && !recorder.isRecording
 	}
 
 	private fun buildUI() {
@@ -262,6 +294,8 @@ class RecordUsecasePanel(
 	}
 
 	private fun startRecording() {
+		resetLog()
+		changeModality(false)
 		okAction.enabled = false
 		cancelAction.enabled = false
 		recordAction.name = Translations.getString("usecase.action.record.stop.name")
@@ -273,11 +307,14 @@ class RecordUsecasePanel(
 	}
 
 	private fun stopRecording() {
-		recorder.stop()
-		okAction.enabled = true
-		cancelAction.enabled = true
-		recordAction.name = Translations.getString("usecase.action.record.start.name")
-		SynchronizedGlowAnimation.remove(recordButtonGlower)
+		if (recorder.isRecording) {
+			recorder.stop()
+			okAction.enabled = true
+			cancelAction.enabled = true
+			recordAction.name = Translations.getString("usecase.action.record.start.name")
+			SynchronizedGlowAnimation.remove(recordButtonGlower)
+			changeModality(true)
+		}
 	}
 
 	/** Handler of glow animation ticks to make the [recordButtonIcon] glow.*/
@@ -287,6 +324,14 @@ class RecordUsecasePanel(
 		}
 		recordButton.invalidate()
 		recordButton.repaint()
+	}
+
+	private fun changeModality(modal: Boolean) {
+		SwingUtilities.invokeLater {
+			dialog.isVisible = false
+			dialog.isModal = modal
+			dialog.isVisible = true
+		}
 	}
 
 	private inner class OKAction : AbstractAction("base.action.ok") {
@@ -309,6 +354,7 @@ class RecordUsecasePanel(
 			} else {
 				startRecording()
 			}
+			updateFields()
 		}
 	}
 }
