@@ -66,8 +66,9 @@ abstract class AbstractAntaresDarkThemeBuilder(name: String) : AbstractAntaresTh
 		val DARK_UNDEFINED_COLOR = UNDEFINED_COLOR.withBackground(UNDEFINED_COLOR.foregroundColor.darker())
 
 		val DARK_ERROR_COLOR = CompositeColor(
-			foregroundColor = Color.RED,
-			backgroundColor = Color.RED.darker(),
-			textColor = Color.WHITE)
+			foregroundColor = Color(199, 84, 80).darker(),
+			backgroundColor = Color(199, 84, 80),
+			textColor = Color.WHITE
+		)
 	}
 }

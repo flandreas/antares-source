@@ -6,18 +6,21 @@ import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.swing.ColorIcon
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.swing.EGBL
 import ch.scorpion.jabbah.base.ui.UIBasics
+import ch.scorpion.jabbah.draw.drawable.SynchronizedGlowAnimation
+import ch.scorpion.jabbah.draw.drawable.TransparentBridge
+import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
+import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.view.Usecase
 import ch.scorpion.jabbah.graph.view.app.UsecaseAppService
+import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import ch.scorpion.jabbah.graph.view.usecase.UsecaseRecorder
-import java.awt.BorderLayout
-import java.awt.Component
-import java.awt.Dimension
-import java.awt.Frame
+import java.awt.*
 import java.text.DecimalFormat
 import javax.swing.*
 import javax.swing.text.NumberFormatter
@@ -32,6 +35,9 @@ class RecordUsecasePanel(
 ) : JPanel() {
 
 	companion object {
+
+		/** Maps transparency values to the corresponding glow color. Used for reusing [Color] instances when glowing.*/
+		private val recordButtonGlowColors = mutableMapOf<Int, Color>()
 
 		fun showAsDialog(
 			usecase: Usecase,
@@ -54,6 +60,8 @@ class RecordUsecasePanel(
 				.show()
 		}
 	}
+
+	private val recordColorBackground = Graphics2DJvm.toAwtColor(Themes.get<GraphTheme>().error.backgroundColor)
 
 	private val formatter = NumberFormatter(DecimalFormat.getIntegerInstance()).apply {
 		minimum = 1
@@ -82,6 +90,15 @@ class RecordUsecasePanel(
 
 	private val recorder = UsecaseRecorder(applicationModeHolder, ::consumeStatement, graphAppContextHolder.scheduler)
 
+	/** The [ColorIcon] displayed on [recordButton]. Shows glow effect while in 'record' mode. */
+	private val recordButtonIcon = ColorIcon(
+		backgroundColor = recordColorBackground,
+		foregroundColor = Graphics2DJvm.toAwtColor(Themes.get<GraphTheme>().error.foregroundColor),
+		width = 15,
+		height = 15,
+		oval = true)
+	private val recordButtonGlower = TransparentBridge(::glowRecordButton)
+
 	init {
 		buildUI()
 
@@ -91,6 +108,8 @@ class RecordUsecasePanel(
 
 		delayTextField.value = BaseModule.properties.getInt(UsecaseRecorder.PROP_DEF_DELAY_MS)
 		timeBetweenClicksTextField.value = BaseModule.properties.getInt(UsecaseRecorder.PROP_DEF_TIME_BETWEEN_CLICKS_MS)
+
+		recordButton.icon = recordButtonIcon
 	}
 
 	private fun consumeStatement(statement: String) {
@@ -250,6 +269,7 @@ class RecordUsecasePanel(
 			realtimeCheckbox.isSelected,
 			delayTextField.value as Int * 1_000,
 			timeBetweenClicksTextField.value as Int * 1_000)
+		SynchronizedGlowAnimation.add(recordButtonGlower)
 	}
 
 	private fun stopRecording() {
@@ -257,6 +277,16 @@ class RecordUsecasePanel(
 		okAction.enabled = true
 		cancelAction.enabled = true
 		recordAction.name = Translations.getString("usecase.action.record.start.name")
+		SynchronizedGlowAnimation.remove(recordButtonGlower)
+	}
+
+	/** Handler of glow animation ticks to make the [recordButtonIcon] glow.*/
+	private fun glowRecordButton(transparency: Int) {
+		recordButtonIcon.backgroundColor = recordButtonGlowColors.getOrPut(transparency) {
+			Color(recordColorBackground.red, recordColorBackground.green, recordColorBackground.blue, transparency)
+		}
+		recordButton.invalidate()
+		recordButton.repaint()
 	}
 
 	private inner class OKAction : AbstractAction("base.action.ok") {

@@ -28,7 +28,7 @@ interface Graphics2D {
 	/** Returns the accumulated rotation angle.*/
 	val rotationAngle: Double
 
-    /* Saves the current state of this [Graphics2D] onto a stack.*/
+    /** Saves the current state of this [Graphics2D] onto a stack. **/
     fun save()
 
     /** Restores the previously saved state of this [Graphics2D] from the stack.*/

@@ -1,5 +1,8 @@
 package ch.scorpion.jabbah.draw.drawable
 
+import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
+import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.graphics.Color
 import kotlin.math.floor
@@ -50,4 +53,27 @@ class TransparentImpl(val owner: Drawable) : Transparent, Drawable by owner {
             field = value
             owner.invalidate()
         }
+}
+
+/**
+ * Bridges the [Transparent] and [Drawable] interfaces to classes that don't implement those.
+ * Used e.g. to implement glowing effects on native UI classes like icons or buttons.
+ *
+ * @property target called with the current [transparency] whenever it is updated
+ */
+class TransparentBridge(
+	private val target: (Int) -> Unit
+) : AbstractDrawable(), Transparent {
+
+	override var transparency: Int = 0
+		set(value) {
+			field = value
+			target(field)
+		}
+
+	override val boundingBox: RectangularShape = Rectangle2D()
+
+	override fun draw(context: DrawContext) { }
+
+	override fun contains(x: Double, y: Double): Boolean = false
 }
