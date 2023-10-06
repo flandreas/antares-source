@@ -45,7 +45,7 @@ class UsecaseActionExternalFunctionsTest : AbstractGraphViewExecutionTest() {
 	@Ignore // This doesn't work due to missing View to forward the MouseEvents
 	@Test
 	fun shouldClickMouse() {
-		val usecase = UsecaseImpl("ClickMouse", "clickMouseAt(10000, 10, 10)")
+		val usecase = UsecaseImpl("ClickMouse", "clickMouseAt(10000, 10, 10, 2000)")
 		getGraphView().usecases.add(usecase)
 		val runner = UsecaseRunner(usecase, builder.graphView, scheduler, appModeHolder)
 		runner.run()

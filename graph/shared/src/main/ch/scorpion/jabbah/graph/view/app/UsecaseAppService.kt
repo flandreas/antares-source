@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Usecase
 import ch.scorpion.jabbah.graph.view.usecase.AddUsecaseCommand
 import ch.scorpion.jabbah.graph.view.usecase.DeleteUsecaseCommand
+import ch.scorpion.jabbah.graph.view.usecase.RecordUsecaseCommand
 
 class UsecaseAppService(
 	private val commandManager: CommandManager = EditModule.commandManager
@@ -44,5 +45,11 @@ class UsecaseAppService(
 		val command = AddUsecaseCommand(application.controller, duplicate)
 		commandManager.execute(command)
 		return command.addedUsecaseId
+	}
+
+	fun recordUsecase(application: Application, usecaseId: Int, script: String) {
+		LOG.userTrail("Record usecase in GraphView ${graphView(application).graph?.uuid}")
+		val command = RecordUsecaseCommand(application.controller, usecaseId, script)
+		commandManager.execute(command)
 	}
 }

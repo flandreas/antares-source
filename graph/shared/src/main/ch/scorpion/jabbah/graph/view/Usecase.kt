@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
+import ch.scorpion.jabbah.edit.model.text.ScriptProperty
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -28,10 +29,10 @@ interface Usecase : Namable, Describable, Storable {
 	 */
 	var graphView: GraphView?
 
-	/** The JavaScript script to be executed when this [Usecase] is executed.*/
-	var executionScript: String
+	/** The Antares script to be executed when this [Usecase] is executed.*/
+	var executionScript: ScriptProperty
 
-	/** The JavaScript script to be executed when testing this [Usecase].*/
+	/** The Antares script to be executed when testing this [Usecase].*/
 	var testScript: String?
 
 	val hasTest: Boolean get() = testScript?.isNotBlank() ?: false

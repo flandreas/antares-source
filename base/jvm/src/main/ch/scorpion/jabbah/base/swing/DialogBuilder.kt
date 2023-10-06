@@ -18,9 +18,12 @@ import javax.swing.*
  *
  * @param T the type of the content
  */
-class DialogBuilder<T: JComponent>(private val parent: Frame) {
+class DialogBuilder<T: JComponent>(
+	private val parent: Frame,
+	modal: Boolean = true
+) {
 
-	private val dialog = JDialog(parent, true)
+	private val dialog = JDialog(parent, modal)
 
 	lateinit var content: T
 		private set
@@ -74,6 +77,11 @@ class DialogBuilder<T: JComponent>(private val parent: Frame) {
 
 	fun maximumSize(size: Dimension): DialogBuilder<T> {
 		dialog.maximumSize = size
+		return this
+	}
+
+	fun alwaysOnTop(b: Boolean): DialogBuilder<T> {
+		dialog.isAlwaysOnTop = b
 		return this
 	}
 

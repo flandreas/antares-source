@@ -86,6 +86,7 @@ class UsecaseTreeView(
 
 		usecasePopupMenu.add(ActionWrapperSwing(DeleteUsecaseAction(application, applicationModeHolder)))
 		usecasePopupMenu.add(ActionWrapperSwing(DuplicateUsecaseAction(application, applicationModeHolder)))
+		usecasePopupMenu.add(ActionWrapperSwing(RecordUsecaseAction(application, applicationModeHolder, applicationContextHolder)))
 		usecasePopupMenu.addSeparator()
 		usecasePopupMenu.add(ActionWrapperSwing(RunUsecaseAction(application, applicationContextHolder.scheduler, applicationModeHolder = applicationModeHolder)))
 		usecasePopupMenu.add(ActionWrapperSwing(RunSingleUsecaseTestAction(application, applicationContextHolder.scheduler, applicationModeHolder = applicationModeHolder)))

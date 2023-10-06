@@ -130,7 +130,7 @@ open class SemanticAnalyser(
 			throw SemanticError(functionCall.location, Translations.getString("base.dsl.expectedFunction.msg", name))
 		}
 		if (functionCall.params.size != functionSymbol.paramsCount) {
-			throw SemanticError(functionCall.location, Translations.getString("base.dsl.functionParamCount.msg", functionSymbol.paramsCount))
+			throw SemanticError(functionCall.location, Translations.getString("base.dsl.functionParamCount.msg", name, functionSymbol.paramsCount))
 		}
 		functionCall.function = functionSymbol
 	}

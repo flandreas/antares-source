@@ -78,7 +78,10 @@ class UsecaseSelector(
 	}
 
 	private fun runUsecase(usecase: Usecase) {
-		UsecaseRunner(usecase, graphView!!, scheduler, applicationModeHolder).run()
+		// Reload the Usecase in case the script has changed
+		graphView?.let { gv ->
+			UsecaseRunner(gv.usecases.get(usecase.id), gv, scheduler, applicationModeHolder).run()
+		}
 	}
 
 	private fun handle(event: EditedGraphViewEvent) {

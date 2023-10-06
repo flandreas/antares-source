@@ -18,6 +18,12 @@ open class UsecaseActionExternalFunctions(
 
 	companion object {
 		private val LOG by logger(UsecaseActionExternalFunctions::class)
+
+		fun clickMouseStatement(time: Long, x: Int, y: Int, delay: Int): String =
+			"clickMouseAt($time, $x, $y, $delay)"
+
+		fun pressKeyStatement(time: Long, key: Int, delay: Int): String =
+			"clickKeyAt($time, $key, $delay)"
 	}
 
 	protected lateinit var runner: UsecaseRunner
@@ -36,8 +42,8 @@ open class UsecaseActionExternalFunctions(
 		with(symbolTable) {
 			define(ExternalFunctionSymbol("setInputAt", 3, ::setInputAtImpl))
 			define(ExternalFunctionSymbol("pauseAt", 1, ::pauseAtImpl))
-			define(ExternalFunctionSymbol("clickMouseAt", 3, ::clickMouseAtImpl))
-			define(ExternalFunctionSymbol("pressKeyAt", 2, ::pressKeyAtImpl))
+			define(ExternalFunctionSymbol("clickMouseAt", 4, ::clickMouseAtImpl))
+			define(ExternalFunctionSymbol("clickKeyAt", 3, ::clickKeyAtImpl))
 		}
 	}
 
@@ -87,7 +93,8 @@ open class UsecaseActionExternalFunctions(
 		clickMouseAt(
 			longParam(0, params),
 			longParam(1, params).toInt(),
-			longParam(2, params).toInt()
+			longParam(2, params).toInt(),
+			longParam(3, params).toInt()
 		)
 		return 0
 	}
@@ -97,29 +104,30 @@ open class UsecaseActionExternalFunctions(
 	 * @param time the simulation time (ns) at which the mouse click is to be done
 	 * @param x the x coordinate of the click location  in model space
 	 * @param y the y coordinate of the click location in model space
+	 * @param delay the time (in ns) between mouse press and mouse release
 	 */
-	private fun clickMouseAt(time: Long, x: Int, y: Int) {
-		runner.executeAt(time) {
-			runner.clickMouseAt(x, y)
-		}
+	private fun clickMouseAt(time: Long, x: Int, y: Int, delay: Int) {
+		runner.executeAt(time) { runner.pressMouseAt(x, y) }
+		runner.executeAt(time + delay) { runner.releaseMouseAt(x, y) }
 	}
 
-	private fun pressKeyAtImpl(params: List<Any>): Any {
-		pressKeyAt(
+	private fun clickKeyAtImpl(params: List<Any>): Any {
+		clickKeyAt(
 			longParam(0, params),
-			longParam(1, params).toInt()
+			longParam(1, params).toInt(),
+			longParam(2, params).toInt()
 		)
 		return 0
 	}
 
 	/**
-	 * Press the key with the specified ASCII code at a particular simulation time.
+	 * Click the keyboard key with the specified ASCII code at a particular simulation time.
 	 * @param time the simulation time (ns) at which the key is to be pressed
 	 * @param keyCode the ASCII code of the key
+	 * @param delay the time (in ns) between key press and key release
 	 */
-	private fun pressKeyAt(time: Long, keyCode: Int) {
-		runner.executeAt(time) {
-			runner.pressKey(keyCode)
-		}
+	private fun clickKeyAt(time: Long, keyCode: Int, delay: Int) {
+		runner.executeAt(time) { runner.pressKey(keyCode) }
+		runner.executeAt(time + delay) { runner.releaseKey(keyCode) }
 	}
 }

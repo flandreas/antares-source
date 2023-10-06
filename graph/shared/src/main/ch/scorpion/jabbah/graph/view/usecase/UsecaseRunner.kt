@@ -73,16 +73,24 @@ class UsecaseRunner(
 		scheduler.requestActingAfter(UsecaseClock(input, firstValue, secondValue, period), 1, SimpleActorData())
 	}
 
-	fun clickMouseAt(x: Int, y: Int) {
+	fun pressMouseAt(x: Int, y: Int) {
 		if (viewManager.activeView?.view is DrawingView<*>) {
 			val view = viewManager.activeView!!.view!!
-			view.dispatchEvent(MouseEventImpl(
-				MouseEventType.PRESSED,
-				x = view.modelToViewX(x.toDouble()).toInt(),
-				y = view.modelToViewY(y.toDouble()).toInt(),
-				button = Button.BUTTON1,
-				clickCount = 1
-			))
+			view.dispatchEvent(
+				MouseEventImpl(
+					MouseEventType.PRESSED,
+					x = view.modelToViewX(x.toDouble()).toInt(),
+					y = view.modelToViewY(y.toDouble()).toInt(),
+					button = Button.BUTTON1,
+					clickCount = 1
+				)
+			)
+		}
+	}
+
+	fun releaseMouseAt(x: Int, y: Int) {
+		if (viewManager.activeView?.view is DrawingView<*>) {
+			val view = viewManager.activeView!!.view!!
 			view.dispatchEvent(MouseEventImpl(
 				MouseEventType.RELEASED,
 				x = view.modelToViewX(x.toDouble()).toInt(),
@@ -101,6 +109,12 @@ class UsecaseRunner(
 				key = keyCode,
 				keyChar = ' '
 			))
+		}
+	}
+
+	fun releaseKey(keyCode: Int) {
+		if (viewManager.activeView?.view is DrawingView<*>) {
+			val view = viewManager.activeView!!.view!!
 			view.dispatchEvent(KeyEventImpl(
 				KeyEventType.RELEASED,
 				key = keyCode,

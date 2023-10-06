@@ -17,7 +17,7 @@ import ch.scorpion.jabbah.io.*
 
 class UsecaseImpl(
 	name: String = "",
-	override var executionScript: String = "",
+	executionScript: String? = null,
 	override var testScript: String? = null,
 	graphView: GraphView? = null,
 ) : AbstractStorable(), Usecase, Namable, Describable, Bean {
@@ -27,16 +27,15 @@ class UsecaseImpl(
 	}
 
 	@Suppress("MemberVisibilityCanBePrivate")
-	var executionScriptProperty: ScriptProperty
-		get() = ScriptProperty(executionScript)
+	override var executionScript: ScriptProperty = ScriptProperty(executionScript)
 		set(value) {
-			executionScript = value.script!!
+			field = value
 			executionScriptASTCache.reset()
 			executionScriptInterpreter = null
 		}
 
 	private val executionScriptASTCache = resettableLazy {
-		executionScriptProperty.script?.let {
+		this.executionScript.script?.let {
 			LOG.trace("Parsing execution script of Usecase '${this.name.value}'")
 			createParser(it, null)
 				.parseCatching(ScriptMetaData(this.name.value, Translations.getString("graph.property.usecase.execScript.name")))
@@ -113,7 +112,7 @@ class UsecaseImpl(
 		writer.writeInt("id", id)
 		name.write("name", writer)
 		description.write("desc", writer)
-		writer.writeString("exec", executionScript)
+		writer.writeString("exec", executionScript.script ?: "")
 		writer.writeOptionalString("test", testScript)
 	}
 
@@ -124,7 +123,7 @@ class UsecaseImpl(
 		}
 		name = Name.read("name", reader)
 		description = Description.read("desc", reader)
-		executionScript = reader.readString("exec")
+		executionScript = ScriptProperty(reader.readString("exec"))
 		testScript = reader.readOptionalString("test")
 	}
 
