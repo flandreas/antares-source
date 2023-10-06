@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.swing.EGBL
 import ch.scorpion.jabbah.base.ui.UIBasics
@@ -31,11 +32,6 @@ class RecordUsecasePanel(
 ) : JPanel() {
 
 	companion object {
-
-		// TODO This depends on DEFAULT_DELAY for switches in Antares -> Introduce Property
-		private const val DEF_DELAY_MS = 2
-
-		private const val DEF_TIME_BETWEEN_CLICKS_MS = 100
 
 		fun showAsDialog(
 			usecase: Usecase,
@@ -93,8 +89,8 @@ class RecordUsecasePanel(
 			timeBetweenClicksTextField.isEnabled = !realtimeCheckbox.isSelected
 		}
 
-		delayTextField.value = DEF_DELAY_MS
-		timeBetweenClicksTextField.value = DEF_TIME_BETWEEN_CLICKS_MS
+		delayTextField.value = BaseModule.properties.getInt(UsecaseRecorder.PROP_DEF_DELAY_MS)
+		timeBetweenClicksTextField.value = BaseModule.properties.getInt(UsecaseRecorder.PROP_DEF_TIME_BETWEEN_CLICKS_MS)
 	}
 
 	private fun consumeStatement(statement: String) {
