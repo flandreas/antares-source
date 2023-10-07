@@ -4,6 +4,8 @@ import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.event.Modifier
 import ch.scorpion.jabbah.base.help.BrowserHelpProviderJvm
+import ch.scorpion.jabbah.base.help.HelpSource
+import ch.scorpion.jabbah.base.help.HelpSourceRegistry
 import ch.scorpion.jabbah.base.invocation.InteractiveErrorHandler
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.invocation.SwingInvocationHandler
@@ -36,6 +38,7 @@ object BaseModuleJvm : AbstractModule() {
 		fillProperties(BaseModule.properties)
 
 		buildPreferencesTree(preferencesTree)
+		registerHelpSources()
 	}
 
 	private fun fillProperties(properties: Properties) {
@@ -116,5 +119,9 @@ object BaseModuleJvm : AbstractModule() {
 			nameKey = "base.preferences.showUnexpectedErrors"))
 
 		root.getGroup(PREF_TREE_RENDERING).add(FontIdentificationPreference())
+	}
+
+	private fun registerHelpSources() {
+		HelpSourceRegistry.register(PreferencesDialogPanel.HELP_ID, HelpSource("/misc/preferences"))
 	}
 }

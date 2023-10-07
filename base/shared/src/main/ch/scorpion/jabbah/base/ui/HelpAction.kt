@@ -1,9 +1,9 @@
 package ch.scorpion.jabbah.base.ui
 
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.AbstractAction
-import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.ActionEvent
+import ch.scorpion.jabbah.base.help.HelpId
+import ch.scorpion.jabbah.base.module.BaseModule
 
 /**
  * Opens a browser to display help content.
@@ -12,7 +12,7 @@ import ch.scorpion.jabbah.base.event.ActionEvent
  * that specified the URL of the help page. Should usually start with "/".
  */
 class HelpAction(
-	private val helpId: String
+	private val helpId: HelpId
 ) : AbstractAction("base.action.help", imagePath = "/img/help24.png") {
 
 	init {
@@ -20,6 +20,6 @@ class HelpAction(
 	}
 
 	override fun execute(event: ActionEvent) {
-		System.browse("${BaseModule.baseDocumentationUrl!!.invoke()}$helpId", name)
+		BaseModule.helpProvider.provideHelpFor(helpId)
 	}
 }

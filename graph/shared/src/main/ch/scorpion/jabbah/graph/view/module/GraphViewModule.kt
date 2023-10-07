@@ -4,6 +4,8 @@ import ch.scorpion.jabbah.app.module.AppModule
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.help.HelpSource
+import ch.scorpion.jabbah.base.help.HelpSourceRegistry
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.style.BasicStyle
@@ -154,6 +156,7 @@ object GraphViewModule : AbstractModule() {
 		EditModule.drawingAppService = graphViewAppService
 
 		GraphAuthorizations.define()
+		registerHelpSources()
 	}
 
 	private fun configureTypeMap(typeMap: TypeMap) {
@@ -229,6 +232,10 @@ object GraphViewModule : AbstractModule() {
 		{ dragEdgeViewOriginConnector },
 		{ dragEdgeViewDestinationConnector }
 	)
+
+	private fun registerHelpSources() {
+		HelpSourceRegistry.register(UsecaseRecorder.HELP_ID, HelpSource("/usecases/usecases#recording"))
+	}
 
 	fun getEdgeViewFactory(): EdgeViewFactory = edgeViewFactoryImpl
 

@@ -11,12 +11,12 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.ColorIcon
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.swing.EGBL
+import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.base.ui.HelpAction
 import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.draw.drawable.SynchronizedGlowAnimation
 import ch.scorpion.jabbah.draw.drawable.TransparentBridge
-import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
-import ch.scorpion.jabbah.draw.graphics.PredefinedColor
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.app.ApplicationMode
@@ -103,6 +103,7 @@ class RecordUsecasePanel(
 	private val okButton = JButton(ActionWrapperSwing(okAction))
 	private val cancelAction = CancelAction()
 	private val cancelButton = JButton(ActionWrapperSwing(cancelAction))
+	private val helpAction = HelpAction(UsecaseRecorder.HELP_ID)
 
 	private val log = StringBuilder()
 	private val logView = JTextArea(log.toString())
@@ -301,6 +302,8 @@ class RecordUsecasePanel(
 		val panel = JPanel()
 		panel.layout = BoxLayout(panel, BoxLayout.LINE_AXIS)
 
+		panel.add(UiUtil.createToolBarButton(helpAction))
+		panel.add(Box.createHorizontalGlue())
 		panel.add(Box.createHorizontalGlue())
 		UIBasics.addButtons(panel, okButton, cancelButton)
 

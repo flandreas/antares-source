@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.view.usecase
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.help.HelpId
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.draw.view.DrawViewModule
@@ -23,6 +24,8 @@ class UsecaseRecorder(
 ) {
 
 	companion object {
+
+		val HELP_ID = HelpId("usecaseRecording")
 
 		/** The name of the [Int] value (in ms) in [Properties] for the default delay between 'press' and 'release' events. */
 		const val PROP_DEF_DELAY_MS = "graph.usecase.record.defaultDelay"

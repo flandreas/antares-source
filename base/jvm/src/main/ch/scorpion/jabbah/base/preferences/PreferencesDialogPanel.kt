@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
+import ch.scorpion.jabbah.base.help.HelpId
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.swing.UiUtil
@@ -31,6 +32,8 @@ class PreferencesDialogPanel(
 ) : JPanel() {
 
 	companion object {
+
+		val HELP_ID = HelpId("preferencesDialog")
 
 		private val LOG by logger(PreferencesDialogPanel::class)
 
@@ -61,7 +64,7 @@ class PreferencesDialogPanel(
 		}
 	}
 
-	private val helpAction = HelpAction("/misc/preferences")
+	private val helpAction = HelpAction(HELP_ID)
 
 	val applyButton = JButton(ActionWrapperSwing(applyAction))
 

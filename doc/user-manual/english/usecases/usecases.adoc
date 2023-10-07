@@ -79,8 +79,8 @@ Test:: The script that contains the test conditions of the use case. +
 assertLedOnAt(20000, 2)
 ----
 
-=== Recording Use Cases
 [[recording]]
+=== Recording Use Cases
 
 The scripting API used for writing "Action" scripts in use cases also features the following two functions:
 
