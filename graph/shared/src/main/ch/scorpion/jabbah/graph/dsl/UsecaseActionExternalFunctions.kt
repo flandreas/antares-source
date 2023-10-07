@@ -101,6 +101,7 @@ open class UsecaseActionExternalFunctions(
 
 	/**
 	 * Click the left mouse button at a particular coordinate.
+	 *
 	 * @param time the simulation time (ns) at which the mouse click is to be done
 	 * @param x the x coordinate of the click location  in model space
 	 * @param y the y coordinate of the click location in model space
