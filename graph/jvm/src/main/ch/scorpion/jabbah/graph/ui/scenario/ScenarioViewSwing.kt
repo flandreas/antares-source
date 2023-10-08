@@ -56,6 +56,7 @@ class ScenarioViewSwing(
 	override fun dispose() {
 		BaseModule.settings.set("scenarioPanel.splitPos", splitPane.dividerLocation)
 		treeView.dispose()
+		propertyPanel.dispose()
 	}
 
 	fun clearSelection() {
