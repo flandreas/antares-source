@@ -72,6 +72,8 @@ class UsecaseTreeView(
 	private val nameChangedHandler: EventHandler<NameChangedEvent> = {
 		if (this.graphView != null && it.owner === this.graphView!!.graph) {
 			usecaseTreeModel.updateGraphName()
+		} else if (it.owner is Usecase) {
+			usecaseTreeModel.updateUsecaseName(it.owner as Usecase)
 		}
 	}
 
@@ -162,6 +164,10 @@ class UsecaseTreeView(
 
 		fun updateGraphName() {
 			nodeChanged(graphViewNode)
+		}
+
+		fun updateUsecaseName(usecase: Usecase) {
+			findUsecaseNode(usecase)?.let { nodeChanged(it) }
 		}
 
 		fun addUsecase(usecase: Usecase): TreeNode {

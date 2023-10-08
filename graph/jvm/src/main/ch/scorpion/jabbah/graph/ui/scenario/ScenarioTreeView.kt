@@ -113,6 +113,10 @@ class ScenarioTreeView(
 	private val nameChangedHandler: EventHandler<NameChangedEvent> = {
 		if (this.graphView != null && it.owner === this.graphView!!.graph) {
 			scenarioTreeModel.updateGraphName()
+		} else if (it.owner is Scenario) {
+			scenarioTreeModel.updateScenarioName(it.owner as Scenario)
+		} else if (it.owner is ScenarioStep) {
+			scenarioTreeModel.updateScenarioStepName(it.owner as ScenarioStep)
 		}
 	}
 
@@ -305,6 +309,14 @@ class ScenarioTreeView(
 
 		fun updateGraphName() {
 			nodeChanged(graphViewNode)
+		}
+
+		fun updateScenarioName(scenario: Scenario) {
+			findScenarioNode(scenario)?.let { nodeChanged(it) }
+		}
+
+		fun updateScenarioStepName(scenarioStep: ScenarioStep) {
+			findScenarioStepNode(scenarioStep)?.let { nodeChanged(it) }
 		}
 
 		fun addScenario(scenario: Scenario): TreeNode {
