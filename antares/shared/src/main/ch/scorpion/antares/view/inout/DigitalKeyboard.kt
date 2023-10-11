@@ -3,6 +3,10 @@ package ch.scorpion.antares.view.inout
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.style.AntaresTheme
+import ch.scorpion.jabbah.base.event.KeyEvent
+import ch.scorpion.jabbah.base.event.KeyListener
+import ch.scorpion.jabbah.base.event.MouseAdapter
+import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
@@ -31,7 +35,7 @@ object DigitalKeyboard : ActorViewContainer<Drawable>(useLocation = true), Focus
 
 	/** The object consuming the entered key.*/
 	interface Target {
-		val boundingBox: Rectangle2D
+		val keyboardTargetBoundingBox: RectangularShape
 		val signalRepresentation: DigitalSignalRepresentation
 		fun consumeKey(key: Int, contextHolder: GraphApplicationContextHolder, graphView: GraphView?)
 		fun clear(contextHolder: GraphApplicationContextHolder)
@@ -42,8 +46,8 @@ object DigitalKeyboard : ActorViewContainer<Drawable>(useLocation = true), Focus
 	private const val PADDING = 5
 	private const val BUTTON_GAP = 3
 	private const val BUTTON_SIZE = 25
-	const val KEYBOARD_WIDTH = 2 * MARGIN + 2 * PADDING + 4 * BUTTON_SIZE + 3 * BUTTON_GAP
-	const val KEYBOARD_HEIGHT = 2 * MARGIN + 2 * PADDING + 5 * BUTTON_SIZE + 4 * BUTTON_GAP
+	private const val KEYBOARD_WIDTH = 2 * MARGIN + 2 * PADDING + 4 * BUTTON_SIZE + 3 * BUTTON_GAP
+	private const val KEYBOARD_HEIGHT = 2 * MARGIN + 2 * PADDING + 5 * BUTTON_SIZE + 4 * BUTTON_GAP
 
 	private val styleType: StyleType = StyleType.FIGURE
 
@@ -63,6 +67,10 @@ object DigitalKeyboard : ActorViewContainer<Drawable>(useLocation = true), Focus
 
 	private val digitButtons = mutableListOf<ActorDrawableButton<*>>()
 
+	private val actorInteractionHandler = Handler { super.getActorInteractionHandler(it) }
+
+	private val quitHandler = QuitHandler()
+
 	init {
 		buildHexadecimalUI()
 	}
@@ -78,20 +86,27 @@ object DigitalKeyboard : ActorViewContainer<Drawable>(useLocation = true), Focus
 		this.view = view
 		this.contextHolder = contextHolder
 
-		position(target.boundingBox, view)
+		position(target.keyboardTargetBoundingBox, view)
 		updateUI()
 
 		view.animationContainer.add(this)
 		view.animationContainer.validate()
+		view.addMouseListener(quitHandler)
+		view.addKeyListener(quitHandler)
 	}
 
 	fun hide() {
-		view?.animationContainer?.remove(this)
+		view?.let {
+			it.animationContainer.remove(this)
+			it.animationContainer.validate()
+			it.removeMouseListener(quitHandler)
+			it.removeKeyListener(quitHandler)
+		}
 		target = null
 		view = null
 	}
 
-	private fun position(boundingBox: Rectangle2D, view: View<*>) {
+	private fun position(boundingBox: RectangularShape, view: View<*>) {
 		val loc = positioner.position(
 			Dimension2D(KEYBOARD_WIDTH, KEYBOARD_HEIGHT),
 			boundingBox,
@@ -103,8 +118,6 @@ object DigitalKeyboard : ActorViewContainer<Drawable>(useLocation = true), Focus
 	}
 
 	/** ---- [DrawableContainer] */
-
-	private val actorInteractionHandler = Handler { super.getActorInteractionHandler(it) }
 
 	override fun contains(x: Double, y: Double): Boolean = bounds.contains(x, y)
 
@@ -175,7 +188,12 @@ object DigitalKeyboard : ActorViewContainer<Drawable>(useLocation = true), Focus
 
 	private fun updateUI() {
 		digitButtons.forEachIndexed { index, button ->
-			button.enabled = target!!.signalRepresentation == DigitalSignalRepresentation.HEXADECIMAL || index < 10
+			button.enabled = when (target!!.signalRepresentation) {
+				DigitalSignalRepresentation.BINARY -> index < 2
+				DigitalSignalRepresentation.DECIMAL -> index < 10
+				DigitalSignalRepresentation.HEXADECIMAL -> true
+				else -> false
+			}
 		}
 	}
 
@@ -209,5 +227,25 @@ object DigitalKeyboard : ActorViewContainer<Drawable>(useLocation = true), Focus
 			parent(context).mouseClicked(context)
 			return this
 		}
+	}
+
+	private class QuitHandler : MouseAdapter(), KeyListener {
+		override fun mousePressed(e: MouseEvent) {
+			view?.let {
+				if (!contains(it.viewToModel(e.location))) {
+					hide()
+				}
+			}
+		}
+
+		override fun keyTyped(e: KeyEvent) { }
+
+		override fun keyPressed(e: KeyEvent) {
+			if (e.key == KeyEvent.VK_ESCAPE) {
+				hide()
+			}
+		}
+
+		override fun keyReleased(e: KeyEvent) { }
 	}
 }

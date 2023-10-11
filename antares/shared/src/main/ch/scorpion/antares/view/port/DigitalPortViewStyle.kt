@@ -26,7 +26,7 @@ enum class DigitalPortViewStyle(val customName: String) {
 
 		override fun getConnectedLength(portView: DigitalPortView): Int {
 			with(portView) {
-				if (showLogicAnnotation && getDigitalPort().logic == Logic.NEGATIVE) {
+				if (showLogicAnnotation && digitalPort.logic == Logic.NEGATIVE) {
 					return AbstractAntaresPortView.LOGIC_SIZE
 				}
 				return 0
@@ -60,7 +60,7 @@ enum class DigitalPortViewStyle(val customName: String) {
 
 		override fun drawLogic(portView: DigitalPortView, context: DrawContext, styleProvider: StyleProvider, transparent: Transparent) {
 			with(portView) {
-				if (showLogicAnnotation && getDigitalPort().logic == Logic.NEGATIVE) {
+				if (showLogicAnnotation && digitalPort.logic == Logic.NEGATIVE) {
 					val logicBox = LOGIC_BOXES[portView.direction]!!
 
 					val fillColor = if (Look.FILL_BASIC_COMPONENTS) {
