@@ -678,14 +678,15 @@ class SubGraphVerticeViewImpl(
 				val handler = super.mouseClicked(context)
 
 				if (context.mouseEvent?.isConsumed() != true) {
-					when (context.mouseEvent?.clickCount) {
-						1 -> getPortViewAt(context.x, context.y)?.let { pv ->
-							if (!pv.port.isConnected && pv.port.portType.isInput) {
-								pv.handleExecutionClick(context)
-							}
+					val pv = getPortViewAt(context.x, context.y)
+					if (pv != null) {
+						if (!pv.port.isConnected && pv.port.portType.isInput) {
+							pv.handleExecutionClick(context)
 						}
-						2 -> requestOpenSubGraph(context.mouseEvent!!)
-						null -> {}
+					} else {
+						if (context.mouseEvent?.clickCount == 2) {
+							requestOpenSubGraph(context.mouseEvent!!)
+						}
 					}
 					return null
 				}
