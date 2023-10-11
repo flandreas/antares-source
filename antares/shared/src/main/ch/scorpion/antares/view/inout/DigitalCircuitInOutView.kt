@@ -45,13 +45,14 @@ class DigitalCircuitInOutView(
 	model: DigitalCircuitInOut = DigitalCircuitInOutImpl(),
 	eventBus: EventBus = BaseModule.eventBus,
 	orientation: Direction = Direction.EAST
-) : AbstractCircuitInOutView<DigitalCircuitInOut>(styleProvider, model, eventBus, orientation), ControlViewSource<DigitalCircuitInOut> {
+) : AbstractCircuitInOutView<DigitalCircuitInOut>(styleProvider, model, eventBus, orientation), ControlViewSource<DigitalCircuitInOut>,
+	DigitalKeyboard.Target {
 
 	companion object {
 		val LOG by logger(DigitalCircuitInOutView::class)
 	}
 
-	var signalRepresentation: DigitalSignalRepresentation = DigitalSignalRepresentation.BINARY
+	override var signalRepresentation: DigitalSignalRepresentation = DigitalSignalRepresentation.BINARY
 		set(value) {
 			field = value
 			model.signalRepresentation = value
@@ -70,12 +71,6 @@ class DigitalCircuitInOutView(
 
 	/** Redirects validation requests from [NumberView] during shake animation by [rejectSignal]. */
 	private var numberViewOwner: DrawableOwner? = null
-
-	/** Opened when user clicks on digit if [DigitalSignalRepresentation] is not binary.*/
-	private var popupKeyboard: CircuitInOutKeyboard? = null
-
-	/** The [DrawingView] in which [popupKeyboard] is displayed.*/
-	private var popupKeyboardView: DrawingView<*>? = null
 
 	/** Determines if there is a [ShakeLocatableAnimation] running due to an invalid data entry.*/
 	private var isShaking: Boolean = false
@@ -111,6 +106,16 @@ class DigitalCircuitInOutView(
 		super.modelExchanged(oldModel)
 		model.signalRepresentation = signalRepresentation
 		updateView()
+	}
+
+	/** ---- [DigitalKeyboard.Target] */
+
+	override fun consumeKey(key: Int, contextHolder: GraphApplicationContextHolder, graphView: GraphView?) {
+		consumeKey(key, contextHolder, null, false, graphView)
+	}
+
+	override fun clear(contextHolder: GraphApplicationContextHolder) {
+		clearByUser(contextHolder.scheduler)
 	}
 
 	/** ---- [Storable] */
@@ -333,28 +338,16 @@ class DigitalCircuitInOutView(
 	}
 
 	private fun displayKeyboard(context: ActorInteractionContext): ActorInteractionHandler {
-		hideKeyboard()
-
-		with(context.view as DrawingView<*>) {
-			popupKeyboardView = this
-			popupKeyboard = CircuitInOutKeyboard(
-				this@DigitalCircuitInOutView,
-				context.view,
-				applicationContextHolder as GraphApplicationContextHolder
-			).also { keyboard ->
-				animationContainer.add(keyboard)
-				animationContainer.validate()
-			}
-		}
-		return popupKeyboard!!.getActorInteractionHandler(context)
+		DigitalKeyboard.show(
+			this,
+			context.view as DrawingView<*>,
+			context.view.applicationContextHolder as GraphApplicationContextHolder
+		)
+		return DigitalKeyboard.getActorInteractionHandler(context)
 	}
 
 	private fun hideKeyboard() {
-		popupKeyboard?.let { keyboard ->
-			popupKeyboardView?.animationContainer?.remove(keyboard)
-		}
-		popupKeyboard
-		popupKeyboardView = null
+		DigitalKeyboard.hide()
 	}
 
 	override fun toggle(undefine: Boolean, context: ActorInteractionContext): ActorInteractionHandler? {
