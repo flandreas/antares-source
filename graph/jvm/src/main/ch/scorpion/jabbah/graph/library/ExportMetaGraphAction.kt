@@ -2,9 +2,8 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.richtext.RichText
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
@@ -38,7 +37,7 @@ class ExportMetaGraphAction(
 		val fileChooser = JFileChooser()
 		val title = Translations.getString("library.action.exportMetaGraph.title", metaGraph.name)
 		fileChooser.dialogTitle = title
-		fileChooser.selectedFile = File("${metaGraph.name}.$EXPORT_FILE_EXTENSION")
+		fileChooser.selectedFile = File("${RichText.stripToPlainText(metaGraph.name)}.$EXPORT_FILE_EXTENSION")
 		if (fileChooser.showSaveDialog(Frame.getFrames()[0]) == JFileChooser.APPROVE_OPTION) {
 			LOG.userTrail("Export '${metaGraph.name} as bundle")
 			val path = fileChooser.selectedFile.absolutePath
