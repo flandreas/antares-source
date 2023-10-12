@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
+import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.ui.AbstractApplicationDataEditModeAction
@@ -150,4 +151,20 @@ class RunAllTestsAction(
 
 	override fun calculateEnabled(): Boolean =
 		super.calculateEnabled() && graphView?.usecases?.hasTest == true
+}
+
+class RecordUsecaseAction(
+	application: Application,
+	applicationModeHolder: ApplicationModeHolder,
+	private val graphAppContextHolder: GraphApplicationContextHolder,
+	service: UsecaseAppService = GraphViewModule.usecaseAppService,
+	eventBus: EventBus = BaseModule.eventBus
+) : AbstractUsecaseAction("usecase.action.record", application, applicationModeHolder, service, eventBus) {
+
+	override fun calculateEnabled(): Boolean =
+		super.calculateEnabled() && usecase != null
+
+	override fun execute(event: ActionEvent) {
+		RecordUsecasePanel.showAsDialog(usecase!!, application, applicationModeHolder, graphAppContextHolder, service)
+	}
 }

@@ -50,17 +50,18 @@ interface Rotatable : Locatable {
 	val useRotation: Boolean
 
 	/**
-	 * Determines whether this [Rotatable] can be interactively rotated by the user in terms of
-	 * [rotate], which doesn't necessarily require [useRotation] to be `true`.
-	 */
-	val rotatable: Boolean
-
-	/**
 	 * Holds the geometrical rotation property of this [Rotatable]. This is automatically accounted for when the [Rotatable]
 	 * is drawn, or when its bounding box is calculated.
 	 * @throws IllegalArgumentException when this property is set although [useRotation] is `false`
 	 */
 	var rotation: Rotation
+
+	/**
+	 * Determines whether this [Rotatable] can be interactively rotated by the user in terms of
+	 * [rotate] together with all objects in [selection], which doesn't necessarily require [useRotation] to be `true`.
+	 * Some [Rotatable]s may only be rotated if other objects they are attached to are also rotated.
+	 */
+	fun isRotatableWith(selection: Collection<*>): Boolean
 
 	/** Informs this [Rotatable] that it is about to be rotated with other [Rotatables][Rotatable]. */
 	fun prepareRotateBy(components: Collection<Rotatable>) {}

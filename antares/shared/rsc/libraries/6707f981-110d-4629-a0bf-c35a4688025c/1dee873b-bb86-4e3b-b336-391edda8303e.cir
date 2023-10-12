@@ -446,7 +446,7 @@ O7 = I and ((1*S0 + 2*S1 + 4*S2) == 7)
       <model>
         <subGraphVertice _id='151' id='0' delay='0' uuid='1dee873b-bb86-4e3b-b336-391edda8303e'>
           <desc>
-            <translation lang='de' text='Git das Eingangssignal auf demjenigen Ausgang aus, der durch S ausgewählt wird.'/>
+            <translation lang='de' text='Gibt das Eingangssignal auf demjenigen Ausgang aus, der durch S ausgewählt wird.'/>
             <translation lang='en' text='Forwards the input signal to the output selected by S.'/>
           </desc>
           <name>

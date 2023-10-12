@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.KeyEvent
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule.properties
 import ch.scorpion.jabbah.base.time.Timer
 import ch.scorpion.jabbah.draw.InputEventHandler
@@ -22,6 +23,7 @@ class RubberBandHandler(
 ) : InputEventHandlerAdapter<EditInputEventContext>() {
 
     companion object {
+		private val LOG by logger(RubberBandHandler::class)
 	    const val PROP_SELECT_TARGET_STRATEGY = "edit.select.rubberBandHandler.selectionTargetStrategy"
 	    const val PROP_SELECT_DELAY_MS = "edit.select.rubberBandHandler.selectDelayMs"
     }
@@ -83,6 +85,9 @@ class RubberBandHandler(
     override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
         super.mouseReleased(context)
         rubberBand.inputEventHandler.mouseReleased(context)
+	    if (LOG.isDebugEnabled() && rubberBand is RectangularRubberBand) {
+			LOG.debug("Rectangular selection from ${rubberBand.xInt}/${rubberBand.yInt} to ${rubberBand.xInt + rubberBand.widthInt}/${rubberBand.yInt + rubberBand.heightInt}")
+	    }
         return null
     }
 

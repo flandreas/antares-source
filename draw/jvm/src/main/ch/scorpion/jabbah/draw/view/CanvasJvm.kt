@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.draw.view
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.Canvas
 import ch.scorpion.jabbah.draw.View
@@ -39,6 +40,10 @@ class CanvasJvm(
 	private val eventBus: EventBus = BaseModule.eventBus,
 	private val propertyOwner: PropertyOwner<Any> = PropertyOwnerImpl()
 ) : JPanel(), Canvas, PropertyOwner<Any> by propertyOwner {
+
+	companion object {
+		private val LOG by logger(CanvasJvm::class)
+	}
 
 	private val mouseListeners: MutableList<MouseEventBridge> by lazy { mutableListOf() }
 	private val mouseMotionListeners: MutableList<MouseMotionEventBridge> by lazy { mutableListOf() }
@@ -190,7 +195,23 @@ class CanvasJvm(
 	}
 
 	override fun dispatchEvent(e: InputEvent) {
-		dispatchEvent(e.event as java.awt.event.InputEvent)
+		if (e.event is java.awt.event.InputEvent) {
+			dispatchEvent(e.event as java.awt.event.InputEvent)
+		} else {
+			if (e is MouseEvent) {
+				when (e.type) {
+					MouseEventType.PRESSED -> mouseListeners.forEach { it.listener.mousePressed(e) }
+					MouseEventType.RELEASED -> mouseListeners.forEach { it.listener.mouseReleased(e) }
+					else -> LOG.warn("dispatchEvent: MouseEvent of type ${e.type} not supported")
+				}
+			} else if (e is KeyEvent) {
+				when (e.type) {
+					KeyEventType.PRESSED -> keyListeners.forEach { it.listener.keyPressed(e) }
+					KeyEventType.RELEASED -> keyListeners.forEach { it.listener.keyReleased(e) }
+					else -> LOG.warn("dispatchEvent: KeyEvent of type ${e.type} not supported")
+				}
+			}
+		}
 	}
 
 	/** ---- [JComponent] */

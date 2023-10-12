@@ -4,6 +4,8 @@ import ch.scorpion.jabbah.app.module.AppModule
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.help.HelpSource
+import ch.scorpion.jabbah.base.help.HelpSourceRegistry
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.style.BasicStyle
@@ -62,6 +64,7 @@ import ch.scorpion.jabbah.graph.view.port.UndefinedPortViewFactory
 import ch.scorpion.jabbah.graph.view.scenario.ScenarioDetector
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
+import ch.scorpion.jabbah.graph.view.usecase.UsecaseRecorder
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImplSelectionModel
 import ch.scorpion.jabbah.graph.view.vertice.VerticeViewStorable
@@ -153,6 +156,7 @@ object GraphViewModule : AbstractModule() {
 		EditModule.drawingAppService = graphViewAppService
 
 		GraphAuthorizations.define()
+		registerHelpSources()
 	}
 
 	private fun configureTypeMap(typeMap: TypeMap) {
@@ -199,6 +203,8 @@ object GraphViewModule : AbstractModule() {
 		properties.set(ContainerEditor.PROP_DEFAULT_ZOOM_FACTOR, 2.0f)
 
 		properties.set(OscilloscopeView.PROP_INDIVIDUAL_PROBE_COLORS, true)
+		properties.set(UsecaseRecorder.PROP_DEF_DELAY_MS, 2)
+		properties.set(UsecaseRecorder.PROP_DEF_TIME_BETWEEN_CLICKS_MS, 100)
 	}
 
 	private fun configureSelectionModels(factory: SelectionModelFactory) {
@@ -226,6 +232,10 @@ object GraphViewModule : AbstractModule() {
 		{ dragEdgeViewOriginConnector },
 		{ dragEdgeViewDestinationConnector }
 	)
+
+	private fun registerHelpSources() {
+		HelpSourceRegistry.register(UsecaseRecorder.HELP_ID, HelpSource("/usecases/usecases#recording"))
+	}
 
 	fun getEdgeViewFactory(): EdgeViewFactory = edgeViewFactoryImpl
 

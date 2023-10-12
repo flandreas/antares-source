@@ -150,7 +150,7 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 
 	/** ---- [Component] */
 
-	override val rotatable: Boolean get() = true
+	override fun isRotatableWith(selection: Collection<*>): Boolean = true
 
 	override fun rotate(direction: RotationDirection, pivot: Point2D?) {
 		orientation = when (direction) {

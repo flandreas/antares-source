@@ -12,7 +12,7 @@ enum class HorizontalAlignment(val customName: String) {
 
     CENTER("center") {
         override fun opposite() = CENTER
-        override fun getX(baselineRect: RectangularShape): Double = baselineRect.x - baselineRect.width / 2
+        override fun getX(baselineRect: RectangularShape): Double = baselineRect.x - baselineRect.width / 2 + 1
     },
 
     RIGHT("right") {
@@ -55,7 +55,7 @@ enum class VerticalAlignment(val customName: String) {
 
 	CENTER("center") {
 		override fun opposite(): VerticalAlignment = CENTER
-		override fun getY(baselineRect: RectangularShape): Double = baselineRect.height / 2
+		override fun getY(baselineRect: RectangularShape): Double = baselineRect.height / 2 + 1
 	},
 
 	BOTTOM("bottom") {

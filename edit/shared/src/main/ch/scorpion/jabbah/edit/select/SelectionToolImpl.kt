@@ -172,7 +172,7 @@ class SelectionToolImpl(
 				}
 			} else {
 				if (!editor.view.selectionManager.isSelected(component)) {
-					LOG.trace("Selecting only single component")
+					LOG.debug("Select single component at $x/$y")
 					editor.view.selectionManager.deselectAll()
 					editor.view.selectionManager.select(scope)
 				}

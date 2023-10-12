@@ -3,7 +3,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' script='init {
+        <graph _id='2' type='digital' script='init {
 	Q = 0
 	&apos;!Q&apos; = 1
 }
@@ -112,7 +112,7 @@ if (^C) {
                 <netPortRef _id='53' verticeId='17' portId='3'/>
               </ports>
             </digitalNet>
-            <subGraphVerticeRef _id='16' id='25' delay='50' uuid='2d7bbd36-5dca-4c71-9a27-19a3bfa81bc5'/>
+            <subGraphVerticeRef _id='16' id='25' delay='50' uuid='2d7bbd36-5dca-4c71-9a27-19a3bfa81bc5' type='digital'/>
             <digitalNet _id='54' id='26' delay='0'>
               <ports>
                 <netPortRef _id='55' verticeId='4' portId='1'/>
@@ -139,12 +139,12 @@ if (^C) {
             <netView _id='69' modelId='54' style='line'/>
           </netViews>
           <components>
-            <circuitInOutView _id='70' id='1' rot='0' filled='true' stroked='true' modelId='3' representation='binary' orientation='east'>
+            <circuitInOutView _id='70' id='1' rot='0' filled='true' stroked='true' modelId='3' orientation='east' representation='binary'>
               <location>
                 <point x='-308.0' y='-322.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='71' id='2' rot='0' filled='true' stroked='true' modelId='4' representation='binary' orientation='east'>
+            <circuitInOutView _id='71' id='2' rot='0' filled='true' stroked='true' modelId='4' orientation='east' representation='binary'>
               <location>
                 <point x='-308.0' y='-224.0'/>
               </location>
@@ -179,7 +179,7 @@ if (^C) {
                 <polylineShape points='-28.0,-356.0 -28.0,-322.0 0.0,-322.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='84' id='16' rot='0' filled='true' stroked='true' modelId='29' representation='binary' orientation='south'>
+            <circuitInOutView _id='84' id='16' rot='0' filled='true' stroked='true' modelId='29' orientation='south' representation='binary'>
               <location>
                 <point x='-28.0' y='-420.0'/>
               </location>
@@ -195,7 +195,7 @@ if (^C) {
                 <polylineShape points='-28.0,-106.0 -28.0,-140.0 0.0,-140.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='88' id='20' rot='0' filled='true' stroked='true' modelId='37' representation='binary' orientation='north'>
+            <circuitInOutView _id='88' id='20' rot='0' filled='true' stroked='true' modelId='37' orientation='north' representation='binary'>
               <location>
                 <point x='-28.0' y='-42.0'/>
               </location>
@@ -226,12 +226,12 @@ if (^C) {
                 <polylineShape points='-294.0,-322.0 -127.0,-322.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='94' id='27' rot='0' filled='true' stroked='true' modelId='44' representation='binary' orientation='east'>
+            <circuitInOutView _id='94' id='27' rot='0' filled='true' stroked='true' modelId='44' orientation='east' representation='binary'>
               <location>
                 <point x='140.0' y='-308.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='95' id='28' rot='0' filled='true' stroked='true' modelId='45' representation='binary' orientation='east'>
+            <circuitInOutView _id='95' id='28' rot='0' filled='true' stroked='true' modelId='45' orientation='east' representation='binary'>
               <location>
                 <point x='140.0' y='-154.0'/>
               </location>
@@ -350,7 +350,7 @@ if (^C) {
       <model>
         <subGraphVertice _id='131' id='0' delay='0' uuid='a1b8c056-8f4b-4ffe-90a9-dbcc321fe733'>
           <name>
-            <translation lang='en' text='D Flip-Flop PRE/CRL'/>
+            <translation lang='en' text='D Flip-Flop PRE\/CRL'/>
             <translation lang='de' text='D-Flipflop PRE/CRL'/>
           </name>
           <ports>

@@ -101,7 +101,9 @@ class DipSwitch(
 
 	override fun executionInitialize(signalHandler: SignalHandler) {
 		super.executionInitialize(signalHandler)
-		setSignal(startupValue, signalHandler)
+		if (firstExecution || !retainValue) {
+			resetSignal(initialValue, signalHandler)
+		}
 	}
 
 	override fun executionStart(signalHandler: SignalHandler) {
@@ -111,7 +113,7 @@ class DipSwitch(
 	override fun executionStopped(signalHandler: SignalHandler) {
 		super.executionStopped(signalHandler)
 		if (!retainValue) {
-			setSignal(initialValue, signalHandler)
+			resetSignal(initialValue, signalHandler)
 		}
 		setInteractionEnabled(true, signalHandler)
 		stateChanged(signalHandler)

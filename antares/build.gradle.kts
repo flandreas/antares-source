@@ -123,10 +123,12 @@ tasks {
 
 		keep("class kotlin.** { *; }")
 		keep("class org.apache.** { *; }")
+		keep("class org.slf4j.** { *; }")
 		keep("class com.l2fprod.** { *; }")
 		keep("class com.formdev.** { *; }")
 		keep("class io.ktor.** { *; }")
 		keep("class kotlinx.coroutines.** { *; }")
+		keep("class kotlinx.serialization.** { *; }")
 		keep("class org.jdesktop.** { *; }")
 
 		// Reflection in OsThemeDetector

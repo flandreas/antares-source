@@ -33,12 +33,6 @@ import kotlin.test.assertTrue
  */
 abstract class AbstractCircuitTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	private val issueCollector = IssueCollector()
 	private lateinit var currentSystemSpeedCategory: CurrentSystemSpeedCategory
 	protected lateinit var styleProvider: StyleProvider
@@ -50,6 +44,8 @@ abstract class AbstractCircuitTest {
 
 	@BeforeTest
 	open fun setup() {
+		AntaresTestRule.configure()
+
 		styleProvider = DrawStyleModule.styleProvider
 		eventBus = BaseModule.eventBus
 		currentSystemSpeedCategory = CurrentSystemSpeedCategory(SystemSpeed(eventBus = eventBus), eventBus)

@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.view.usecase
 import ch.scorpion.jabbah.edit.Undoable
 import ch.scorpion.jabbah.edit.UndoableDataHolder
 import ch.scorpion.jabbah.edit.command.AbstractCommand
+import ch.scorpion.jabbah.edit.model.text.ScriptProperty
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Usecase
@@ -42,5 +43,18 @@ class DeleteUsecaseCommand(
 
 	override fun execute() {
 		graphView.usecases.remove(usecaseId)
+	}
+}
+
+class RecordUsecaseCommand(
+	private val dataHolder: UndoableDataHolder,
+	private val usecaseId: Int,
+	private val script: String
+) : AbstractCommand("usecase.command.record") {
+
+	private val graphView: GraphView get() = (dataHolder.getUndoableState() as MetaGraph).graph.graphView
+
+	override fun execute() {
+		graphView.usecases.get(usecaseId).executionScript = ScriptProperty(script)
 	}
 }

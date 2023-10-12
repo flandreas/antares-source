@@ -1,0 +1,55 @@
+package ch.scorpion.antares.view
+
+import ch.scorpion.jabbah.base.event.Button
+import ch.scorpion.jabbah.base.event.MouseEvent
+import ch.scorpion.jabbah.base.event.MouseEventImpl
+import ch.scorpion.jabbah.base.event.MouseEventType
+import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.Tool
+
+/**
+ * An API for driving an [Editor]'s current [Tool] during tests.
+ * TODO: Copy/Paste from corresponding class in ch.scorpion.jabbah.edit test package
+ * due to missing Kotlin MPP feature KT-35073.
+ */
+class EditorToolDriver(
+	private val editor: Editor
+) {
+
+	fun mouseMoveTo(x: Int, y: Int, modifiers: Int = 0): EditorToolDriver {
+		editor.currentTool.mouseMoved(event(MouseEventType.MOVED, x, y, modifiers), Point2D(x, y))
+		return this
+	}
+
+	fun pressMouseAt(x: Int, y: Int, modifiers: Int = 0): EditorToolDriver {
+		editor.currentTool.mousePressed(event(MouseEventType.PRESSED, x, y, modifiers), Point2D(x, y))
+		return this
+	}
+
+	fun moveMouseAndPressAt(x: Int, y: Int, modifiers: Int = 0): EditorToolDriver {
+		mouseMoveTo(x, y, modifiers)
+		pressMouseAt(x, y, modifiers)
+		return this
+	}
+
+	fun dragMouseTo(x: Int, y: Int, modifiers: Int = 0): EditorToolDriver {
+		editor.currentTool.mouseDragged(event(MouseEventType.DRAGGED, x, y, modifiers), Point2D(x, y))
+		return this
+	}
+
+	fun releaseMouseAt(x: Int, y: Int, modifiers: Int = 0): EditorToolDriver {
+		editor.currentTool.mouseReleased(event(MouseEventType.RELEASED, x, y, modifiers), Point2D(x, y))
+		return this
+	}
+
+	fun dragMouseAndReleaseAt(x: Int, y: Int, modifiers: Int = 0): EditorToolDriver {
+		dragMouseTo(x, y, modifiers)
+		releaseMouseAt(x, y, modifiers)
+		return this
+	}
+
+	private fun event(type: MouseEventType, x: Int, y: Int, modifiers: Int = 0): MouseEvent {
+		return MouseEventImpl(type, x, y, button = Button.BUTTON1, modifiers = modifiers)
+	}
+}

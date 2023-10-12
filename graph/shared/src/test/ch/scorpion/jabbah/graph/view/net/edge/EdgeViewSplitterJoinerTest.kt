@@ -193,4 +193,32 @@ class EdgeViewSplitterJoinerTest {
 		assertEquals(vv2, ev1.origin!!.connectableView as TestVerticeView)
 		assertEquals(vv1, ev1.destination!!.connectableView as TestVerticeView)
 	}
+
+	@Test
+	fun shouldJoinOtherTailWithTail() {
+		val ev1 = edgeViewFactory.createEdgeView<Boolean>(gv)
+		ev1.addSegmentPoint(Point2D(0, 0))
+		ev1.addSegmentPoint(Point2D(100, 0))
+		gv.add(ev1)
+
+		val ev2 = edgeViewFactory.createEdgeView(gv, ev1.netView!!)
+		ev2.addSegmentPoint(Point2D(200, 0))
+		ev2.addSegmentPoint(Point2D(100, 0))
+		gv.add(ev2)
+
+		val vv1 = TestVerticeView()
+		ev1.connectToOrigin(Connection(vv1, vv1.model.getOutput()))
+
+		val vv2 = TestVerticeView()
+		ev2.connectToOrigin(Connection(vv2, vv2.model.getOutput()))
+
+		EdgeViewSplitterJoiner.join(ev1, ev2)
+
+		assertEquals(2, ev1.segmentPointCount)
+		assertEquals(Point2D(0, 0), ev1.getSegmentPoint(0))
+		assertEquals(Point2D(200, 0), ev1.getSegmentPoint(1))
+
+		assertEquals(vv2, ev1.destination!!.connectableView as TestVerticeView)
+		assertEquals(vv1, ev1.origin!!.connectableView as TestVerticeView)
+	}
 }

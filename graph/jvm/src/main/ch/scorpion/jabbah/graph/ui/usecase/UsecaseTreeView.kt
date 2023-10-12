@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.base.swing.UiUtil
@@ -35,7 +36,7 @@ class UsecaseTreeView(
 	application: Application,
 	applicationModeHolder: ApplicationModeHolder,
 	applicationContextHolder: GraphApplicationContextHolder,
-	eventBus: EventBus = BaseModule.eventBus
+	private val eventBus: EventBus = BaseModule.eventBus
 ) : JTree() {
 
 	/** The [JPopupMenu] to be displayed for the [GraphView] node.*/
@@ -46,39 +47,46 @@ class UsecaseTreeView(
 
 	private val rightMouseListener = RightMouseListener()
 
+	private val usecaseAddedHandler: EventHandler<UsecaseAddedEvent> = {
+		if (it.graphView === this.graphView) {
+			val usecaseNode = usecaseTreeModel.addUsecase(it.usecase)
+			selectionPath = JTreeUtil.getPath(usecaseNode)
+		}
+	}
+
+	private val usecaseRemovedHandler: EventHandler<UsecaseRemovedEvent> = {
+		if (it.graphView === this.graphView) {
+			usecaseTreeModel.removeUsecase(it.usecase)
+		}
+	}
+
+	private val schedulerActivationStateHandler: EventHandler<SchedulerActivationStateEvent> = {
+		if (it.scheduler === applicationContextHolder.scheduler) {
+			if (it.scheduler.isActive) {
+				selectionModel.clearSelection()
+			}
+			isEnabled = !it.scheduler.isActive
+		}
+	}
+
+	private val nameChangedHandler: EventHandler<NameChangedEvent> = {
+		if (this.graphView != null && it.owner === this.graphView!!.graph) {
+			usecaseTreeModel.updateGraphName()
+		} else if (it.owner is Usecase) {
+			usecaseTreeModel.updateUsecaseName(it.owner as Usecase)
+		}
+	}
+
 	init {
 		selectionModel.selectionMode = TreeSelectionModel.SINGLE_TREE_SELECTION
 		addMouseListener(rightMouseListener)
 
 		setCellRenderer(UsecaseTreeRenderer())
 
-		eventBus.register(UsecaseAddedEvent::class) {
-			if (it.graphView === this.graphView) {
-				val usecaseNode = usecaseTreeModel.addUsecase(it.usecase)
-				selectionPath = JTreeUtil.getPath(usecaseNode)
-			}
-		}
-
-		eventBus.register(UsecaseRemovedEvent::class) {
-			if (it.graphView === this.graphView) {
-				usecaseTreeModel.removeUsecase(it.usecase)
-			}
-		}
-
-		eventBus.register(SchedulerActivationStateEvent::class) {
-			if (it.scheduler === applicationContextHolder.scheduler) {
-				if (it.scheduler.isActive) {
-					selectionModel.clearSelection()
-				}
-				isEnabled = !it.scheduler.isActive
-			}
-		}
-
-		eventBus.register(NameChangedEvent::class) {
-			if (this.graphView != null && it.owner === this.graphView!!.graph) {
-				usecaseTreeModel.updateGraphName()
-			}
-		}
+		eventBus.register(UsecaseAddedEvent::class, usecaseAddedHandler)
+		eventBus.register(UsecaseRemovedEvent::class, usecaseRemovedHandler)
+		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
+		eventBus.register(NameChangedEvent::class, nameChangedHandler)
 
 		graphViewPopupMenu.add(ActionWrapperSwing(AddUsecaseAction(application, applicationModeHolder)))
 		graphViewPopupMenu.addSeparator()
@@ -86,9 +94,17 @@ class UsecaseTreeView(
 
 		usecasePopupMenu.add(ActionWrapperSwing(DeleteUsecaseAction(application, applicationModeHolder)))
 		usecasePopupMenu.add(ActionWrapperSwing(DuplicateUsecaseAction(application, applicationModeHolder)))
+		usecasePopupMenu.add(ActionWrapperSwing(RecordUsecaseAction(application, applicationModeHolder, applicationContextHolder)))
 		usecasePopupMenu.addSeparator()
 		usecasePopupMenu.add(ActionWrapperSwing(RunUsecaseAction(application, applicationContextHolder.scheduler, applicationModeHolder = applicationModeHolder)))
 		usecasePopupMenu.add(ActionWrapperSwing(RunSingleUsecaseTestAction(application, applicationContextHolder.scheduler, applicationModeHolder = applicationModeHolder)))
+	}
+
+	fun dispose() {
+		eventBus.unregister(usecaseAddedHandler)
+		eventBus.unregister(usecaseRemovedHandler)
+		eventBus.unregister(schedulerActivationStateHandler)
+		eventBus.unregister(nameChangedHandler)
 	}
 
 	/** Holds the [GraphView] whose [Usecase]s are displayed by this [UsecaseTreeView].*/
@@ -148,6 +164,10 @@ class UsecaseTreeView(
 
 		fun updateGraphName() {
 			nodeChanged(graphViewNode)
+		}
+
+		fun updateUsecaseName(usecase: Usecase) {
+			findUsecaseNode(usecase)?.let { nodeChanged(it) }
 		}
 
 		fun addUsecase(usecase: Usecase): TreeNode {

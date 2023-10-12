@@ -8,11 +8,14 @@ import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
+import ch.scorpion.jabbah.graph.container.ControlViewComponent
+import ch.scorpion.jabbah.graph.container.ControlViewComponentBeanInfo
+import ch.scorpion.jabbah.graph.view.ControlViewBeanInfo
 import ch.scorpion.jabbah.graph.view.vertice.VerticeViewBeanInfo
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
-class SevenSegmentDisplayViewBeanInfo : VerticeViewBeanInfo<SevenSegmentDisplayView>() {
+class SevenSegmentDisplayViewBeanInfo : VerticeViewBeanInfo<SevenSegmentDisplayView>(), ControlViewBeanInfo {
 
     companion object {
 	    private val name = EditProperties.untranslatableName()
@@ -21,6 +24,8 @@ class SevenSegmentDisplayViewBeanInfo : VerticeViewBeanInfo<SevenSegmentDisplayV
 	    private val logic = CommandPropertySwing("logic", "element.property.segmentDisplay.logic", Logic::class.java, componentBeanProvider)
 	    private val size = EditProperties.size()
 	    private val hasBorder = EditProperties.border()
+
+	    private val controlViewLightColor = AntaresProperties.lightColor(name = "${ControlViewComponentBeanInfo.aggregatePropertyName}.lightColor")
     }
 
 	init {
@@ -41,4 +46,8 @@ class SevenSegmentDisplayViewBeanInfo : VerticeViewBeanInfo<SevenSegmentDisplayV
 	    properties.add(size.bind(editor, beanIdProvider(bean.id), editable = !connected))
 	    properties.add(hasBorder.bind(editor, beanIdProvider(bean.id)))
     }
+
+	override fun addControlViewProperties(bean: ControlViewComponent, editor: Editor, properties: MutableList<Property>) {
+		properties.add(controlViewLightColor.bind(editor, beanIdProvider(bean.id)))
+	}
 }

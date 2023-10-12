@@ -12,7 +12,8 @@ object EdgeViewSplitterJoiner {
 
 	fun <T: Any> split(
 		edgeView: EdgeView<T>,
-		index: Int, splitLocation: Point2D,
+		index: Int,
+		splitLocation: Point2D,
 		edgeViewCreator: (NetView<T>) -> EdgeView<T>
 	): EdgeView<T> {
 
@@ -54,7 +55,8 @@ object EdgeViewSplitterJoiner {
 			edgeView.polyline.getLastPoint() == other.polyline.getFirstPoint() -> joinOtherHeadWithTail(edgeView, other)
 			edgeView.polyline.getFirstPoint() == other.polyline.getLastPoint() -> joinOtherTailWithHead(edgeView, other)
 			edgeView.polyline.getFirstPoint() == other.polyline.getFirstPoint() -> joinOtherHeadWithHead(edgeView, other)
-			else -> throw IllegalArgumentException("joined EdgeView is not adjacent")
+			edgeView.polyline.getLastPoint() == other.polyline.getLastPoint() -> joinOtherTailWithTail(edgeView, other)
+			else -> throw IllegalArgumentException("unsupported join scenario")
 		}
 	}
 
@@ -145,6 +147,21 @@ object EdgeViewSplitterJoiner {
 
 		unconnect(other)
 		origin?.let { edgeView.connectToOrigin(it) }
+
+		return edgeView
+	}
+
+	private fun <T: Any> joinOtherTailWithTail(edgeView: EdgeView<T>, other: EdgeView<T>): EdgeView<*> {
+		for (i in other.segmentPointCount - 1 downTo 0) {
+			if (edgeView.polyline.getFirstPoint() != other.getSegmentPoint(i)) {
+				edgeView.addSegmentPoint(other.getSegmentPoint(i))
+			}
+		}
+		edgeView.compact()
+		val destination = other.origin
+
+		unconnect(other)
+		destination?.let { edgeView.connectToDestination(it) }
 
 		return edgeView
 	}

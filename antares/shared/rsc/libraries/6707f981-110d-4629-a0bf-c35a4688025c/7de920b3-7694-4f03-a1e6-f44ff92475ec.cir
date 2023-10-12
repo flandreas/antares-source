@@ -1,13 +1,14 @@
-<metaGraph _id='0'>
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' startupTime='90'>
+        <graph _id='2' type='digital' startupTime='90'>
           <elements>
-            <subGraphVerticeRef _id='3' id='1' delay='0' uuid='048daa5b-de3e-4ae9-a343-e8c355a033dc'/>
-            <subGraphVerticeRef _id='4' id='2' delay='0' uuid='048daa5b-de3e-4ae9-a343-e8c355a033dc'/>
-            <subGraphVerticeRef _id='5' id='3' delay='0' uuid='048daa5b-de3e-4ae9-a343-e8c355a033dc'/>
-            <subGraphVerticeRef _id='6' id='4' delay='0' uuid='048daa5b-de3e-4ae9-a343-e8c355a033dc'/>
+            <subGraphVerticeRef _id='3' id='1' delay='0' uuid='048daa5b-de3e-4ae9-a343-e8c355a033dc' type='digital'/>
+            <subGraphVerticeRef _id='4' id='2' delay='0' uuid='048daa5b-de3e-4ae9-a343-e8c355a033dc' type='digital'/>
+            <subGraphVerticeRef _id='5' id='3' delay='0' uuid='048daa5b-de3e-4ae9-a343-e8c355a033dc' type='digital'/>
+            <subGraphVerticeRef _id='6' id='4' delay='0' uuid='048daa5b-de3e-4ae9-a343-e8c355a033dc' type='digital'/>
             <orGate _id='7' id='5' delay='20' inputCount='2'/>
             <orGate _id='8' id='6' delay='20' inputCount='2'/>
             <orGate _id='9' id='7' delay='20' inputCount='2'/>
@@ -17,7 +18,7 @@
             <orGate _id='13' id='11' delay='20' inputCount='2'/>
             <orGate _id='14' id='12' delay='20' inputCount='2'/>
             <circuitInOut _id='15' id='13' name='O' type='output' bitWidth='4'/>
-            <concentrator _id='16' id='14' delay='0' bitWidth='4' branchCount='4' representation='binary'/>
+            <concentrator _id='16' id='14' delay='0' bitWidth='4' representation='binary' branchCount='4'/>
             <digitalNet _id='17' id='15' delay='0'>
               <ports>
                 <netPortRef _id='18' verticeId='16' portId='1'/>
@@ -36,7 +37,7 @@
             <andGate _id='29' id='25' delay='20' inputCount='2'/>
             <andGate _id='30' id='26' delay='20' inputCount='2'/>
             <circuitInOut _id='31' id='27' name='I' type='input' bitWidth='4'/>
-            <splitter _id='32' id='28' delay='0' bitWidth='4' branchCount='4' representation='binary'/>
+            <splitter _id='32' id='28' delay='0' bitWidth='4' representation='binary' branchCount='4'/>
             <notGate _id='33' id='29' delay='20'/>
             <notGate _id='34' id='30' delay='20'/>
             <notGate _id='35' id='31' delay='20'/>
@@ -419,7 +420,7 @@
             <orGateView _id='273' id='10' rot='0' filled='true' stroked='true' modelId='12' x='-56.0' y='70.0'/>
             <orGateView _id='274' id='11' rot='0' filled='true' stroked='true' modelId='13' x='-56.0' y='308.0'/>
             <orGateView _id='275' id='12' rot='0' filled='true' stroked='true' modelId='14' x='-56.0' y='238.0'/>
-            <circuitInOutView _id='276' id='13' rot='0' filled='true' stroked='true' modelId='15' representation='hex' orientation='east'>
+            <circuitInOutView _id='276' id='13' rot='0' filled='true' stroked='true' modelId='15' orientation='east' representation='hex'>
               <location>
                 <point x='238.0' y='28.0'/>
               </location>
@@ -441,7 +442,7 @@
             <andGateView _id='287' id='24' rot='0' filled='true' stroked='true' modelId='28' x='-308.0' y='56.0'/>
             <andGateView _id='288' id='25' rot='0' filled='true' stroked='true' modelId='29' x='-308.0' y='322.0'/>
             <andGateView _id='289' id='26' rot='0' filled='true' stroked='true' modelId='30' x='-308.0' y='224.0'/>
-            <circuitInOutView _id='290' id='27' rot='0' filled='true' stroked='true' modelId='31' representation='hex' orientation='east'>
+            <circuitInOutView _id='290' id='27' rot='0' filled='true' stroked='true' modelId='31' orientation='east' representation='hex'>
               <location>
                 <point x='-644.0' y='21.0'/>
               </location>
@@ -454,12 +455,12 @@
             <notGateView _id='296' id='33' rot='0' filled='true' stroked='true' modelId='37' x='-420.0' y='-336.0'/>
             <notGateView _id='297' id='34' rot='0' filled='true' stroked='true' modelId='38' x='-546.0' y='-336.0'/>
             <andGateView _id='298' id='35' rot='0' filled='true' stroked='true' modelId='39' x='-420.0' y='-406.0'/>
-            <circuitInOutView _id='299' id='36' rot='0' filled='true' stroked='true' modelId='40' representation='binary' orientation='east'>
+            <circuitInOutView _id='299' id='36' rot='0' filled='true' stroked='true' modelId='40' orientation='east' representation='binary'>
               <location>
                 <point x='-644.0' y='-420.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='300' id='37' rot='0' filled='true' stroked='true' modelId='41' representation='binary' orientation='east'>
+            <circuitInOutView _id='300' id='37' rot='0' filled='true' stroked='true' modelId='41' orientation='east' representation='binary'>
               <location>
                 <point x='-644.0' y='-336.0'/>
               </location>
@@ -469,12 +470,12 @@
                 <polylineShape points='-658.0,21.0 -616.0,21.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='302' id='39' rot='0' filled='true' stroked='true' modelId='45' representation='binary' orientation='east'>
+            <circuitInOutView _id='302' id='39' rot='0' filled='true' stroked='true' modelId='45' orientation='east' representation='binary'>
               <location>
                 <point x='-644.0' y='378.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='303' id='40' rot='0' filled='true' stroked='true' modelId='46' representation='binary' orientation='east'>
+            <circuitInOutView _id='303' id='40' rot='0' filled='true' stroked='true' modelId='46' orientation='east' representation='binary'>
               <location>
                 <point x='-644.0' y='427.0'/>
               </location>
@@ -680,7 +681,7 @@
               </shape>
             </digitalEdgeView>
             <andGateView _id='344' id='82' rot='0' filled='true' stroked='true' modelId='103' x='168.0' y='483.0'/>
-            <circuitInOutView _id='345' id='83' rot='0' filled='true' stroked='true' modelId='104' representation='binary' orientation='east'>
+            <circuitInOutView _id='345' id='83' rot='0' filled='true' stroked='true' modelId='104' orientation='east' representation='binary'>
               <location>
                 <point x='238.0' y='483.0'/>
               </location>
@@ -910,20 +911,20 @@
                 <polylineShape points='-42.0,-70.0 -42.0,-238.0 14.0,-238.0'/>
               </shape>
             </digitalEdgeView>
-            <constantView _id='395' id='130' filled='true' stroked='true' modelId='178' x='42.0' y='-273.0' representation='binary' orientation='south'/>
+            <constantView _id='395' id='130' rot='0' filled='true' stroked='true' modelId='178' x='42.0' y='-273.0' representation='binary' orientation='south'/>
             <digitalEdgeView _id='396' id='131' filled='true' stroked='true' modelId='179' layout='ortho' orig='395' origPort='1' origPortOutput='true' dest='264' destPort='6' adjusted='false'>
               <shape>
                 <polylineShape points='42.0,-287.0 42.0,-280.0'/>
               </shape>
             </digitalEdgeView>
-            <constantView _id='397' id='132' filled='true' stroked='true' modelId='182' x='42.0' y='-105.0' representation='binary' orientation='south'/>
+            <constantView _id='397' id='132' rot='0' filled='true' stroked='true' modelId='182' x='42.0' y='-105.0' representation='binary' orientation='south'/>
             <digitalEdgeView _id='398' id='133' filled='true' stroked='true' modelId='183' layout='ortho' orig='397' origPort='1' origPortOutput='true' dest='265' destPort='6' adjusted='false'>
               <shape>
                 <polylineShape points='42.0,-119.0 42.0,-112.0'/>
               </shape>
             </digitalEdgeView>
-            <constantView _id='399' id='134' filled='true' stroked='true' modelId='186' x='42.0' y='63.0' representation='binary' orientation='south'/>
-            <constantView _id='400' id='135' filled='true' stroked='true' modelId='187' x='42.0' y='231.0' representation='binary' orientation='south'/>
+            <constantView _id='399' id='134' rot='0' filled='true' stroked='true' modelId='186' x='42.0' y='63.0' representation='binary' orientation='south'/>
+            <constantView _id='400' id='135' rot='0' filled='true' stroked='true' modelId='187' x='42.0' y='231.0' representation='binary' orientation='south'/>
             <digitalEdgeView _id='401' id='136' filled='true' stroked='true' modelId='188' layout='ortho' orig='291' origPort='2' origPortOutput='true' dest='402' adjusted='true'>
               <shape>
                 <polylineShape points='-602.0,0.0 -574.0,0.0 -574.0,-210.0'/>
@@ -1253,7 +1254,7 @@
     <containerDrawing _id='461'>
       <components>
         <rectangle _id='462' id='1' style='figure' filled='true' stroked='true' x='126.0' y='168.0' w='126.0' h='70.0'/>
-        <originIndicator _id='463'>
+        <originIndicator _id='463' id='10'>
           <location>
             <point x='112.0' y='196.0'/>
           </location>
@@ -1293,7 +1294,7 @@
             <digitalPortView _id='483' x='210.0' y='168.0' dir='north' textPos='internal' portId='484'/>
           </portView>
         </digitalPortViewComp>
-        <label _id='485'>
+        <label _id='485' id='9' rot='0'>
           <text>
             <translation lang='de' text='4 Bit CNT'/>
           </text>
@@ -1310,7 +1311,7 @@
           </desc>
           <name>
             <translation lang='de' text='Binärzähler 4-Bit mit Load/Reset'/>
-            <translation lang='en' text='Binary Counter 4 Bit LD/CLR'/>
+            <translation lang='en' text='Binary Counter 4 Bit LD\/CLR'/>
           </name>
           <ports>
             <subCircuitPort _id='466' portId='1' name='O' logic='positive' bitWidth='4' trigger='level' type='output' representation='hex'/>

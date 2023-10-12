@@ -422,11 +422,11 @@ class DipSwitchView(
 					KeyEvent.VK_LEFT -> transferFocusLeft()
 					KeyEvent.VK_RIGHT -> transferFocusRight()
 					KeyEvent.VK_ENTER -> toggleImpl(focusIndex!!, context.signalHandler, all = context.keyEvent?.isAltDown == true, graphView)
-					KeyEvent.VK_0 -> {
+					KeyEvent.VK_0, KeyEvent.VK_NUMPAD_0 -> {
 						model.setBit(focusIndex!!, Bit.False, context.signalHandler, graphView)
 						transferFocusRight()
 					}
-					KeyEvent.VK_1 -> {
+					KeyEvent.VK_1, KeyEvent.VK_NUMPAD_1 -> {
 						model.setBit(focusIndex!!, Bit.True, context.signalHandler, graphView)
 						transferFocusRight()
 					}

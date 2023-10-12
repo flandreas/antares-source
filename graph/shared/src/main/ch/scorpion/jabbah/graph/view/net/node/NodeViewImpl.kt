@@ -62,7 +62,8 @@ open class NodeViewImpl<T : Any>(
 
 	/** ---- [Rotatable] interface */
 
-	override val rotatable: Boolean get() = true
+	override fun isRotatableWith(selection: Collection<*>): Boolean =
+		getEdgeViews().all { selection.contains(it) }
 
 	override fun rotate(direction: RotationDirection, pivot: Point2D?) {
 		pivot?.let {

@@ -48,6 +48,8 @@ class UsecaseViewSwing(
 
 	override fun dispose() {
 		BaseModule.settings.set("usecasePanel.splitPos", splitPane.dividerLocation)
+		treeView.dispose()
+		propertyPanel.dispose()
 	}
 
 	fun clearSelection() {

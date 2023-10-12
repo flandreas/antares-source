@@ -3,7 +3,7 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' script='init {
+        <graph _id='2' type='digital' script='init {
 	Q = 0
 	&apos;!Q&apos; = 1
 }
@@ -98,7 +98,7 @@ if (^C) {
                 <netPortRef _id='45' verticeId='17' portId='3'/>
               </ports>
             </digitalNet>
-            <subGraphVerticeRef _id='16' id='25' delay='50' uuid='2d7bbd36-5dca-4c71-9a27-19a3bfa81bc5'/>
+            <subGraphVerticeRef _id='16' id='25' delay='50' uuid='2d7bbd36-5dca-4c71-9a27-19a3bfa81bc5' type='digital'/>
             <digitalNet _id='46' id='26' delay='0'>
               <ports>
                 <netPortRef _id='47' verticeId='4' portId='1'/>
@@ -123,12 +123,12 @@ if (^C) {
             <netView _id='59' modelId='46' style='line'/>
           </netViews>
           <components>
-            <circuitInOutView _id='60' id='1' rot='0' filled='true' stroked='true' modelId='3' representation='binary' orientation='east'>
+            <circuitInOutView _id='60' id='1' rot='0' filled='true' stroked='true' modelId='3' orientation='east' representation='binary'>
               <location>
                 <point x='-301.0' y='-322.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='61' id='2' rot='0' filled='true' stroked='true' modelId='4' representation='binary' orientation='east'>
+            <circuitInOutView _id='61' id='2' rot='0' filled='true' stroked='true' modelId='4' orientation='east' representation='binary'>
               <location>
                 <point x='-301.0' y='-224.0'/>
               </location>
@@ -157,7 +157,7 @@ if (^C) {
                 <polylineShape points='-77.0,-154.0 0.0,-154.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='72' id='16' rot='0' filled='true' stroked='true' modelId='25' representation='binary' orientation='south'>
+            <circuitInOutView _id='72' id='16' rot='0' filled='true' stroked='true' modelId='25' orientation='south' representation='binary'>
               <location>
                 <point x='-28.0' y='-364.0'/>
               </location>
@@ -167,7 +167,7 @@ if (^C) {
                 <polylineShape points='-28.0,-378.0 -28.0,-322.0 0.0,-322.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='74' id='20' rot='0' filled='true' stroked='true' modelId='29' representation='binary' orientation='north'>
+            <circuitInOutView _id='74' id='20' rot='0' filled='true' stroked='true' modelId='29' orientation='north' representation='binary'>
               <location>
                 <point x='-28.0' y='-105.0'/>
               </location>
@@ -198,12 +198,12 @@ if (^C) {
                 <polylineShape points='-288.0,-322.0 -127.0,-322.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='80' id='27' rot='0' filled='true' stroked='true' modelId='36' representation='binary' orientation='east'>
+            <circuitInOutView _id='80' id='27' rot='0' filled='true' stroked='true' modelId='36' orientation='east' representation='binary'>
               <location>
                 <point x='140.0' y='-308.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='81' id='28' rot='0' filled='true' stroked='true' modelId='37' representation='binary' orientation='east'>
+            <circuitInOutView _id='81' id='28' rot='0' filled='true' stroked='true' modelId='37' orientation='east' representation='binary'>
               <location>
                 <point x='140.0' y='-154.0'/>
               </location>
@@ -323,7 +323,7 @@ if (^C) {
         <subGraphVertice _id='117' id='0' delay='0' uuid='f5ffee61-6d3e-453e-a352-e702a06b11d2'>
           <name>
             <translation lang='de' text='D-Flipflop PRE/CRL (Neg)'/>
-            <translation lang='en' text='D Flip-Flop PRE/CRL (Neg)'/>
+            <translation lang='en' text='D Flip-Flop PRE\/CRL (Neg)'/>
           </name>
           <ports>
             <subCircuitPort _id='99' portId='1' name='D' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>

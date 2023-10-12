@@ -6,6 +6,7 @@ import ch.scorpion.antares.view.OrientableRectangularVerticeViewDrawer
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.theme.AntaresThemes
 import ch.scorpion.jabbah.app.*
+import ch.scorpion.jabbah.app.module.AppModuleJvm
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.Properties
@@ -27,7 +28,6 @@ import ch.scorpion.jabbah.graph.library.LibraryIdentification
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.project.ProjectSavable
-import ch.scorpion.jabbah.graph.ui.GraphContextMenuProvider
 import ch.scorpion.jabbah.graph.ui.GraphDataViewController
 import ch.scorpion.jabbah.graph.ui.GraphFrameSwing
 import com.formdev.flatlaf.FlatDarkLaf
@@ -203,9 +203,10 @@ class AntaresSwing(
 
 	init {
 
-		documentationUrl?.let {
-			BaseModule.baseDocumentationUrl = { it }
-		}
+		// Cannot put this in Properties object, would be initialized too late for access by graph module
+		AppModuleJvm.remotePropertiesUrl = "https://www.antarescircuit.io/remote.properties"
+
+		documentationUrl?.let { BaseModule.baseDocumentationUrl = { it } }
 
 		if (SystemUtils.IS_OS_MAC) {
 			Taskbar.getTaskbar().iconImage = UiUtil.themedIcon("/$ICON_PATH", AntaresSwing::class.java).image

@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.view.connect.EdgeToPortOrEdgeConnector
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeEndpointView
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewConnectionGeometry
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewStyling
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
@@ -146,6 +147,8 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
 	fun getConnectionEndpointType(connection: Connection<*>): EdgeViewEndpointType?
 
 	fun getConnectionEndpointType(connectableView: ConnectableView): EdgeViewEndpointType?
+
+	fun createConnectionGeometry(connection: Connection<*>): EdgeViewConnectionGeometry
 
 	fun getEndpointType(edgeEndpointView: EdgeEndpointView): EdgeViewEndpointType?
 

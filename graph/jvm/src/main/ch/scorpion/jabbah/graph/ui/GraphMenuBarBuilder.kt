@@ -146,6 +146,7 @@ open class GraphMenuBarBuilder(
 		menu.add(JMenuItem(ActionWrapperSwing(AddUsecaseAction(frame.application, graphFrame.controller.applicationModeHolder))))
 		menu.add(JMenuItem(ActionWrapperSwing(DeleteUsecaseAction(frame.application, graphFrame.controller.applicationModeHolder))))
 		menu.add(JMenuItem(ActionWrapperSwing(DuplicateUsecaseAction(frame.application, graphFrame.controller.applicationModeHolder))))
+		menu.add(JMenuItem(ActionWrapperSwing(RecordUsecaseAction(frame.application, graphFrame.controller.applicationModeHolder, graphFrame.controller.applicationContextHolder))))
 		menu.addSeparator()
 		menu.add(JMenuItem(ActionWrapperSwing(RunUsecaseAction(frame.application, applicationModeHolder = applicationModeHolder, scheduler = scheduler))))
 		menu.add(JMenuItem(ActionWrapperSwing(RunSingleUsecaseTestAction(frame.application, applicationModeHolder = applicationModeHolder, scheduler = scheduler))))

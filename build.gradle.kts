@@ -7,7 +7,7 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath("com.guardsquare:proguard-gradle:7.2.1")
+		classpath("com.guardsquare:proguard-gradle:7.4.0-beta02")
 	}
 }
 

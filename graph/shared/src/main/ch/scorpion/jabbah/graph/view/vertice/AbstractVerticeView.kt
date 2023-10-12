@@ -320,13 +320,16 @@ abstract class AbstractVerticeView<T : Vertice>(
 
 	override fun handleStateChanged(event: GraphElementEvent) {
 		if (event.signalHandler is Scheduler && (event.reason == Vertice.STATE_CHANGE_INPUT || event.reason == Vertice.STATE_CHANGE_OUTPUT)) {
-			if (!GraphApplicationContext.isShowNetState(event.signalHandler)) {
+			if (!simulationEventRequiresRepaint(event.signalHandler)) {
 				// Avoid leading to unnecessary View repainting
 				return
 			}
 		}
 		super.handleStateChanged(event)
 	}
+
+	protected open fun simulationEventRequiresRepaint(scheduler: Scheduler): Boolean =
+		GraphApplicationContext.isShowNetState(scheduler)
 
 	/** ---- [ActorView] interface */
 
@@ -523,9 +526,19 @@ abstract class AbstractVerticeView<T : Vertice>(
 	}
 
 	/** Rotates the specified (x,y) point around the location of this [VerticeView] by the inverse of its [Rotation].*/
-	protected fun rotateBack(x: Double, y: Double): Point2D {
-		return rotation.inverse().rotatePointAround(location, x, y)
-	}
+	protected fun rotateBack(x: Double, y: Double): Point2D =
+		if (rotation == Rotation.R0) {
+			Point2D(x, y)
+		} else {
+			rotation.inverse().rotatePointAround(location, x, y)
+		}
+
+	protected fun rotateBack(p: Point2D): Point2D =
+		if (rotation == Rotation.R0) {
+			p
+		} else {
+			rotation.inverse().rotatePointAround(location, p)
+		}
 
 	/** Rotates the specified [Direction] by the [Rotation] of this [VerticeView].*/
 	private fun rotate(direction: Direction): Direction {

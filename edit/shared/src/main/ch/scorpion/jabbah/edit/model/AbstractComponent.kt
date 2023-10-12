@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractStyledDrawable
 import ch.scorpion.jabbah.draw.drawable.Locatable
+import ch.scorpion.jabbah.draw.drawable.Rotatable
 import ch.scorpion.jabbah.draw.drawable.RotationDirection
 import ch.scorpion.jabbah.draw.graphics.Graphics2D
 import ch.scorpion.jabbah.draw.module.DrawModule
@@ -163,7 +164,7 @@ abstract class AbstractComponent(
 	 * same value as [useRotation] by default. Subclasses that implement a custom, non [Rotation] property based rotation
 	 * behaviour can override this method to return `true`.
 	 */
-	override val rotatable: Boolean get() = useRotation
+	override fun isRotatableWith(selection: Collection<*>): Boolean = useRotation
 
 	override fun rotate(direction: RotationDirection, pivot: Point2D?) {
 		rotation = when (direction) {
@@ -174,6 +175,7 @@ abstract class AbstractComponent(
 			location = direction.rotation.rotatePointAround(it, location)
 		}
 	}
+
 
 	/** ---- [AbstractComponent] */
 

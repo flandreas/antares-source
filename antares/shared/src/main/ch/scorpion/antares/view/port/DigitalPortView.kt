@@ -5,9 +5,9 @@ import ch.scorpion.antares.model.OutputAnnotation
 import ch.scorpion.antares.model.Trigger
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.view.inout.DigitalKeyboard
 import ch.scorpion.antares.view.net.DigitalEdgeView
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
@@ -20,12 +20,17 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.container.InternalLabelOrientation
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewConnectionGeometry
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.port.AbstractPortView
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.port.PortView
@@ -35,6 +40,7 @@ import ch.scorpion.jabbah.io.Reference
 import ch.scorpion.jabbah.io.ReferenceResolver
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
+import kotlin.math.max
 
 /**
  * A view representation of a [DigitalPort], either input or output.
@@ -52,9 +58,13 @@ class DigitalPortView(
 	showBitWidthAnnotation: Boolean = true,
 	showLogicAnnotation: Boolean = true,
 	style: DigitalPortViewStyle = DigitalPortViewStyle.Line
-) : AbstractAntaresPortView<DigitalSignal>(styleProvider, port, x, y, direction, portLabelPosition, internalLabelOrientation, length ?: style.unconnectedLength, customUnconnectedLength) {
+) : AbstractAntaresPortView<DigitalSignal>(styleProvider, port, x, y, direction, portLabelPosition,
+		internalLabelOrientation, length ?: style.unconnectedLength, customUnconnectedLength
+), DigitalKeyboard.Target {
 
 	companion object {
+		private const val MIN_EDGE_VIEW_LENGTH_FOR_BIT_WIDTH_ANNOTATION = 100
+
 		val EDGE_TRIGGER_PATH: Path = System.createPath()
 			.moveTo(0.0, -INTERNAL_ANNOTATION_SIZE / 2.0)
 			.lineTo(-INTERNAL_ANNOTATION_SIZE, 0)
@@ -94,6 +104,20 @@ class DigitalPortView(
 			}
 		}
 
+	/**
+	 * Overrides [showBitWidthAnnotation] with `true` if this [DigitalPortView] is the origin
+	 * of the [EdgeView] to which it is connected AND its destination is also connected.
+	 * Avoids to display two [BitWidthAnnotation]s very close together.
+	 */
+	private var hideBitWidthAnnotation: Boolean = false
+		set(value) {
+			if (field != value) {
+				field = value
+				invalidate()
+				update()
+			}
+		}
+
 	var showLogicAnnotation: Boolean = showLogicAnnotation
 		set(value) {
 			if (value != field) {
@@ -105,6 +129,8 @@ class DigitalPortView(
 		}
 
 	private var bitWidthAnnotation: BitWidthAnnotation? = null
+
+	private var keyboardDigitIndex: Int = 0
 
 	override val hasInternalInputAnnotation: Boolean
 		get() = (port as DigitalPort).trigger == Trigger.EDGE
@@ -160,8 +186,8 @@ class DigitalPortView(
 		if (appContext.showNetState) {
 			context.g.color = transparent.applyTo(when (port.portType) {
 				PortType.INOUT -> drawableInOutSignal.color.foregroundColor
-				PortType.INPUT -> getDigitalPort().getIncomingSignal()!!.color.foregroundColor
-				PortType.OUTPUT -> getDigitalPort().getOutgoingSignal()!!.color.foregroundColor
+				PortType.INPUT -> digitalPort.getIncomingSignal()!!.color.foregroundColor
+				PortType.OUTPUT -> digitalPort.getOutgoingSignal()!!.color.foregroundColor
 			})
 		} else {
 			context.g.color = context.choose(styleProvider.getStyle(GraphStyleType.EDGE).color).foregroundColor
@@ -169,22 +195,22 @@ class DigitalPortView(
 	}
 
 	private val drawableInOutSignal: DigitalSignal get() {
-		return if (getDigitalPort().net != null) {
-			getDigitalPort().net!!.signal!!
+		return if (digitalPort.net != null) {
+			digitalPort.net!!.signal!!
 		} else {
-			getDigitalPort().dominantSignal
+			digitalPort.dominantSignal
 		}
 	}
 
 	override fun setupStroke(context: DrawContext) {
 		context.g.stroke = DigitalEdgeView.getStroke(
 			Themes.get<GraphTheme>().edge,
-			getDigitalPort().bitWidth,
+			digitalPort.bitWidth,
 			context.castedAppContext<GraphApplicationContext>()!!.isExecute)
 	}
 
 	override fun drawAboveOwnerImpl(context: DrawContext) {
-		if (bitWidthAnnotation != null && showBitWidthAnnotation) {
+		if (bitWidthAnnotation != null && showBitWidthAnnotation && !hideBitWidthAnnotation) {
 			bitWidthAnnotation!!.draw(context)
 		}
 		portViewStyle.drawLogic(this, context, styleProvider, transparent)
@@ -237,12 +263,37 @@ class DigitalPortView(
 			content.append("${Translations.getString("graph.property.PortId.name")}: ${port.portId}")
 		}
 
-		if (getDigitalPort().bitWidth.width != BitWidth.BW_1.width) {
+		if (digitalPort.bitWidth.width != BitWidth.BW_1.width) {
 			content.appendLine()
-			content.append("${Translations.getString("${BitWidth.BASE_KEY}.name")}: ${getDigitalPort().bitWidth.width}")
+			content.append("${Translations.getString("${BitWidth.BASE_KEY}.name")}: ${digitalPort.bitWidth.width}")
 		}
 		return content.toString()
 	}
+
+	/** ---- [DigitalKeyboard.Target] */
+
+	override fun consumeKey(key: Int, contextHolder: GraphApplicationContextHolder, graphView: GraphView?) {
+		signalRepresentation.digitToWord(BitWidth.of(signalRepresentation.bitCount), key.toChar())?.let { signal ->
+			val newSignal = digitalPort.getIncomingSignal()?.let { incomingSignal ->
+				signalRepresentation.withDigit(incomingSignal, signal, keyboardDigitIndex)
+			}  ?: signal
+			digitalPort.setIncomingSignal(newSignal, contextHolder.scheduler)
+			if (keyboardDigitIndex == 0) {
+				keyboardDigitIndex = signalRepresentation.digitCount(digitalPort.bitWidth) - 1
+			} else {
+				keyboardDigitIndex -= 1
+			}
+		}
+	}
+
+	override fun clear(contextHolder: GraphApplicationContextHolder) {
+		digitalPort.setIncomingSignal(DigitalSignalFactory.of(digitalPort.bitWidth, 0L), contextHolder.scheduler)
+	}
+
+	override val keyboardTargetBoundingBox: RectangularShape
+		get() = Rectangle2D(boundingBox).moveBy(owner!!.location)
+
+	override val signalRepresentation: DigitalSignalRepresentation get() = digitalPort.signalRepresentation
 
 	/** ---- [PortView] interface */
 
@@ -251,7 +302,7 @@ class DigitalPortView(
 	override val unconnectedLength: Int get() = customUnconnectedLength ?: portViewStyle.unconnectedLength
 
 	override fun handleExecutionClick(context: ActorInteractionContext) {
-		with (getDigitalPort()) {
+		with (digitalPort) {
 			if (bitWidth == BitWidth.BW_1) {
 				val signal = getIncomingSignal()
 				val newSignal = if (signal == null || signal.isPartiallyUndefined) {
@@ -260,8 +311,25 @@ class DigitalPortView(
 					signal.not()
 				}
 				setIncomingSignal(newSignal, context.signalHandler)
+			} else {
+				keyboardDigitIndex = signalRepresentation.digitCount(digitalPort.bitWidth) - 1
+				DigitalKeyboard.show(
+					this@DigitalPortView,
+					context.view as DrawingView<*>,
+					context.view.applicationContextHolder as GraphApplicationContextHolder
+				)
 			}
 		}
+	}
+
+	override fun handleConnect(edgeView: EdgeView<DigitalSignal>, geometry: EdgeViewConnectionGeometry) {
+		super.handleConnect(edgeView, geometry)
+		updateHideBitWidthAnnotation(edgeView, geometry)
+	}
+
+	override fun handleUnconnect(edgeView: EdgeView<DigitalSignal>?, lockEndpoint: Boolean) {
+		super.handleUnconnect(edgeView, lockEndpoint)
+		hideBitWidthAnnotation = false
 	}
 
 	/** ---- [AbstractPortView] */
@@ -297,21 +365,49 @@ class DigitalPortView(
 		bitWidthAnnotation?.setOwnerRotation(ownerRotation)
 	}
 
+	override fun edgeViewUpdated(edgeView: EdgeView<*>, geometry: EdgeViewConnectionGeometry) {
+		updateHideBitWidthAnnotation(edgeView, geometry)
+	}
+
+	private fun updateHideBitWidthAnnotation(edgeView: EdgeView<*>, geometry: EdgeViewConnectionGeometry) {
+		val oppositePortView = edgeView.getOppositeConnection(port)?.portView
+		if (oppositePortView != null) {
+			// If EdgeView is too short, show bit width annotation at origin and hide at destination
+			val narrow = edgeView.polyline.length < MIN_EDGE_VIEW_LENGTH_FOR_BIT_WIDTH_ANNOTATION
+			if (edgeView.getConnection(EdgeViewEndpointType.ORIGIN)?.port == port) {
+				hideBitWidthAnnotation = false
+				(oppositePortView as DigitalPortView).hideBitWidthAnnotation = narrow
+			} else {
+				hideBitWidthAnnotation = narrow
+				(oppositePortView as DigitalPortView).hideBitWidthAnnotation = false
+			}
+		} else {
+			hideBitWidthAnnotation = false
+		}
+		bitWidthAnnotation?.offsetX = getBitWidthAnnotationOffset(geometry.distance)
+	}
+
 	/** ---- [DigitalPortView] */
 
-	fun getDigitalPort(): DigitalPort = port as DigitalPort
+	val digitalPort: DigitalPort get() = port as DigitalPort
 
 	private fun buildBitWidthAnnotation() {
-		bitWidthAnnotation = if (getDigitalPort().bitWidth.width != BitWidth.BW_1.width) {
+		bitWidthAnnotation = if (digitalPort.bitWidth.width != BitWidth.BW_1.width) {
 			if (centerExternalLabel && portLabelPosition == PortLabelPosition.EXTERNAL) {
 				// The external label has priority over BitWithAnnotation
 				null
 			} else {
-				BitWidthAnnotation(getDigitalPort().bitWidth, direction, centerExternalLabel, ownerRotation = ownerRotation)
+				BitWidthAnnotation(digitalPort.bitWidth, direction, centerExternalLabel,
+					ownerRotation = ownerRotation, offsetX = getBitWidthAnnotationOffset(0))
 			}
 		} else {
 			null
 		}
+	}
+
+	private fun getBitWidthAnnotationOffset(edgeViewConnectionGeometryDist: Int): Int {
+		val dist = max(BitWidthAnnotation.DIST.toInt(), max(edgeViewConnectionGeometryDist, externalAnnotationSize) + 7)
+		return dist - BitWidthAnnotation.DIST.toInt()
 	}
 
 	/**

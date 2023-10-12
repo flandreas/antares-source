@@ -72,6 +72,10 @@ interface Canvas : PropertyOwner<Any> {
 
     fun setToolTipText(text: String?)
 
+	/**
+	 * Dispatches the inner [InputEvent.event] (if set) to the platform-specific canvas, or else
+	 * dispatches [e] to all registered listeners.
+	 */
     fun dispatchEvent(e: InputEvent)
 }
 

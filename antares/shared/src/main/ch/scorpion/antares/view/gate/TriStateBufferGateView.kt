@@ -114,10 +114,12 @@ class TriStateBufferGateView(
 
 	/** ---- [TriStateBufferGateView] */
 
+	@Suppress("unused") // Reflection
 	var enableLogic: Logic
 		get() = model.enableLogic
 		set(value) {
 			model.enableLogic = value
+			update()
 		}
 
 	var bitWidth: BitWidth

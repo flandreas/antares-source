@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.app.SystemMalfunctionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.CommandEvent
 
@@ -24,6 +25,8 @@ interface SystemHealthCheck {
  */
 object SystemHealthChecker {
 
+	private val LOG by logger(SystemHealthCheck::class)
+
 	private val checks = mutableListOf<SystemHealthCheck>()
 
 	private val commandListener: EventHandler<CommandEvent> = { handle(it) }
@@ -31,6 +34,7 @@ object SystemHealthChecker {
 	private lateinit var applicationDataHolder: ApplicationDataHolder
 
 	fun register(check: SystemHealthCheck) {
+		LOG.info("Activating ${check::class.simpleName}")
 		checks.add(check)
 	}
 

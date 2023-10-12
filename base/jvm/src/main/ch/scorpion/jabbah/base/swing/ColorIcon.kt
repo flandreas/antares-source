@@ -6,7 +6,6 @@ import java.awt.Graphics
 import javax.swing.Icon
 import javax.swing.UIManager
 
-
 /**
  * An [Icon] that renders a [Color] as a small rectangle.
  */
@@ -14,7 +13,8 @@ class ColorIcon(
     var backgroundColor: Color = DEF_BACKGROUND_COLOR,
     var foregroundColor: Color = DEF_FOREGROUND_COLOR,
     private val width: Int = DEF_SIZE,
-    private val height: Int = DEF_SIZE
+    private val height: Int = DEF_SIZE,
+	private val oval: Boolean = false
 ) : Icon {
 
     companion object {
@@ -27,16 +27,21 @@ class ColorIcon(
 
     override fun paintIcon(c: Component, g: Graphics, x: Int, y: Int) {
         g.color = backgroundColor
-        g.fillRect(x, y, width, height)
+	    if (oval) {
+		    g.fillOval(x, y, width, height)
+	    } else {
+		    g.fillRect(x, y, width, height)
+
+	    }
         g.color = foregroundColor
-        g.drawRect(x, y, width, height)
+	    if (oval) {
+		    g.drawOval(x, y, width, height)
+	    } else {
+		    g.drawRect(x, y, width, height)
+	    }
     }
 
-    override fun getIconWidth(): Int {
-        return width
-    }
+    override fun getIconWidth(): Int = width
 
-    override fun getIconHeight(): Int {
-        return height
-    }
+    override fun getIconHeight(): Int = height
 }

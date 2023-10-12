@@ -4,6 +4,8 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.swing.WidePopupComboBox
+import ch.scorpion.jabbah.edit.model.text.description.NameChangedEvent
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
@@ -12,10 +14,10 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Usecase
 import ch.scorpion.jabbah.graph.view.UsecaseAddedEvent
 import ch.scorpion.jabbah.graph.view.UsecaseRemovedEvent
+import ch.scorpion.jabbah.graph.view.usecase.UsecaseImpl
 import ch.scorpion.jabbah.graph.view.usecase.UsecaseRunner
 import java.awt.Component
 import javax.swing.DefaultComboBoxModel
-import javax.swing.JComboBox
 import javax.swing.JLabel
 import javax.swing.JList
 import javax.swing.plaf.basic.BasicComboBoxRenderer
@@ -27,16 +29,30 @@ class UsecaseSelector(
 	private val scheduler: Scheduler,
 	private val applicationModeHolder: ApplicationModeHolder,
 	private val eventBus: EventBus = BaseModule.eventBus
-) : JComboBox<Usecase>() {
+) : WidePopupComboBox<Usecase>(PROTOTYPE_USECASE) {
+
+	companion object {
+		private val PROTOTYPE_USECASE = UsecaseImpl(Translations.getString("usecase.selectUsecase.text"))
+	}
 
 	private var graphView: GraphView? = null
+
 	private val editedGraphViewHandler: EventHandler<EditedGraphViewEvent> = { handle(it) }
+
 	private val schedulerActivationStateHandler: EventHandler<SchedulerActivationStateEvent> = { handle(it) }
+
 	private val usecaseAddedHandler: EventHandler<UsecaseAddedEvent> = {
 		if (it.graphView === graphView) { fillUsecases() }
 	}
+
 	private val usecaseDeletedHandler: EventHandler<UsecaseRemovedEvent> = {
 		if (it.graphView === graphView) { fillUsecases() }
+	}
+
+	private val usecaseNameChangedHandler: EventHandler<NameChangedEvent> = {
+		if (itemCount > 1) {
+			adjustPopupWidth()
+		}
 	}
 
 	init {
@@ -44,6 +60,7 @@ class UsecaseSelector(
 		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
 		eventBus.register(UsecaseAddedEvent::class, usecaseAddedHandler)
 		eventBus.register(UsecaseRemovedEvent::class, usecaseDeletedHandler)
+		eventBus.register(NameChangedEvent::class, usecaseNameChangedHandler)
 
 		renderer = UsecaseModelRenderer()
 		addActionListener {
@@ -61,6 +78,7 @@ class UsecaseSelector(
 		eventBus.unregister(schedulerActivationStateHandler)
 		eventBus.unregister(usecaseAddedHandler)
 		eventBus.unregister(usecaseDeletedHandler)
+		eventBus.unregister(usecaseNameChangedHandler)
 	}
 
 	private fun fillUsecases() {
@@ -74,11 +92,16 @@ class UsecaseSelector(
 		this.model = model
 		maximumSize = preferredSize
 
+		adjustPopupWidth()
+
 		updateEnabledness()
 	}
 
 	private fun runUsecase(usecase: Usecase) {
-		UsecaseRunner(usecase, graphView!!, scheduler, applicationModeHolder).run()
+		// Reload the Usecase in case the script has changed
+		graphView?.let { gv ->
+			UsecaseRunner(gv.usecases.get(usecase.id), gv, scheduler, applicationModeHolder).run()
+		}
 	}
 
 	private fun handle(event: EditedGraphViewEvent) {

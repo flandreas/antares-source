@@ -21,6 +21,7 @@ import ch.scorpion.jabbah.execution.ExecutionModuleJvm
 import ch.scorpion.jabbah.graph.container.ContainerDrawingLayouter
 import ch.scorpion.jabbah.graph.container.ContainerTreeView
 import ch.scorpion.jabbah.graph.health.GraphViewConsistencyCheck
+import ch.scorpion.jabbah.graph.health.PortViewCoincidenceCheck
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.graph.LongGraphParamType
 import ch.scorpion.jabbah.graph.model.graph.StringGraphParamType
@@ -63,7 +64,10 @@ object GraphModuleJvm : AbstractModule() {
 
 		buildPreferencesTree(BaseModuleJvm.preferencesTree)
 
-		SystemHealthChecker.register(GraphViewConsistencyCheck())
+		if (!EditAuthModule.userHolder.user.isDeveloper && AppModuleJvm.remoteControlService.getBoolean(GraphViewConsistencyCheck.REMOTE_PROP_CONSISTENCY_CHECK)) {
+			SystemHealthChecker.register(GraphViewConsistencyCheck)
+		}
+		SystemHealthChecker.register(PortViewCoincidenceCheck)
 	}
 
 	private fun configurePropertyRenderer(registry: DynamicPropertyRendererRegistry) {

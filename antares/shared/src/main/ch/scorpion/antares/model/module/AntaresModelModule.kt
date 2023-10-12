@@ -39,6 +39,7 @@ import ch.scorpion.jabbah.graph.model.GraphType
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.param.GraphParamTypeRegistry
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
+import ch.scorpion.jabbah.graph.view.usecase.UsecaseRecorder
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.TypeMap
 
@@ -77,6 +78,8 @@ object AntaresModelModule : AbstractModule() {
 
 	private fun customizeProperties(properties: Properties) {
 		properties.set(Switch.PROP_DEFAULT_DELAY, 1_000)
+		properties.set(UsecaseRecorder.PROP_DEF_DELAY_MS, properties.getInt(Switch.PROP_DEFAULT_DELAY) / 1_000)
+
 		properties.set(UndefinedGateInputBehavior.PROP_UNDEFINED_GATE_INPUT_BEHAVIOR, UndefinedGateInputBehavior.ReadAs0.customName)
 		properties.set(TruthTableService.PROP_TRUTH_TABLE_MAX_INPUTS, 8)
 		properties.set(TruthTableService.PROP_TRUTH_TABLE_MAX_OUTPUTS, 8)

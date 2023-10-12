@@ -32,6 +32,7 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.actor.ActorViewBag
+import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
@@ -492,6 +493,9 @@ class SubGraphVerticeViewImpl(
 		return editInteractionHandler
 	}
 
+	override fun simulationEventRequiresRepaint(scheduler: Scheduler): Boolean =
+		drawExecScriptInterpreter != null || super.simulationEventRequiresRepaint(scheduler)
+
 	/** ---- [SubGraphVerticeView] */
 
 	override val subGraphVertice: SubGraphVertice get() = model
@@ -674,14 +678,15 @@ class SubGraphVerticeViewImpl(
 				val handler = super.mouseClicked(context)
 
 				if (context.mouseEvent?.isConsumed() != true) {
-					when (context.mouseEvent?.clickCount) {
-						1 -> getPortViewAt(context.x, context.y)?.let { pv ->
-							if (!pv.port.isConnected && pv.port.portType.isInput) {
-								pv.handleExecutionClick(context)
-							}
+					val pv = getPortViewAt(context.x, context.y)
+					if (pv != null) {
+						if (!pv.port.isConnected && pv.port.portType.isInput) {
+							pv.handleExecutionClick(context)
 						}
-						2 -> requestOpenSubGraph(context.mouseEvent!!)
-						null -> {}
+					} else {
+						if (context.mouseEvent?.clickCount == 2) {
+							requestOpenSubGraph(context.mouseEvent!!)
+						}
 					}
 					return null
 				}

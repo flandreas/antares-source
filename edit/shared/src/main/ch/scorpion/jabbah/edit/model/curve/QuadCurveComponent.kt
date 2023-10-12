@@ -108,7 +108,7 @@ class QuadCurveComponent(points: List<Point2D> = DEFAULT_POINTS) : AbstractCompo
 
 	/** ---- [Rotatable] interface */
 
-	override val rotatable: Boolean get() = true
+	override fun isRotatableWith(selection: Collection<*>): Boolean = true
 
 	override val useRotation: Boolean get() = false
 

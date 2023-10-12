@@ -3,6 +3,10 @@ package ch.scorpion.antares.view.inout
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.style.AntaresTheme
+import ch.scorpion.jabbah.base.event.KeyEvent
+import ch.scorpion.jabbah.base.event.KeyListener
+import ch.scorpion.jabbah.base.event.MouseAdapter
+import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
@@ -10,6 +14,7 @@ import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.DrawableAttendantPositioner
 import ch.scorpion.jabbah.draw.style.*
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.Focusable
 import ch.scorpion.jabbah.edit.model.text.TextDrawableButtonRenderer
@@ -21,49 +26,98 @@ import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.view.GraphView
 
 /**
- * Displays a keyboard for entering digits into a [DigitalCircuitInOutView] during simulation.
+ * Displays a keyboard for entering digits into a digital target object during simulation.
  *
  * Note that this object shouldn't request the focus (and therefore can't receive key events)
- * because focus should remain in [DigitalCircuitInOutView] for advancing digits after entering values.
+ * because focus should remain in the target object, e.g. for advancing digits after entering values.
  */
-class CircuitInOutKeyboard(
-	private val circuitInOutView: DigitalCircuitInOutView,
-	view: View<*>,
-	private val contextHolder: GraphApplicationContextHolder,
-	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	private val styleType: StyleType = StyleType.FIGURE,
-	positioner: DrawableAttendantPositioner = DrawableAttendantPositioner
-) : ActorViewContainer<Drawable>(useLocation = true), Focusable {
+object DigitalKeyboard : ActorViewContainer<Drawable>(useLocation = true), Focusable {
 
-	companion object {
-		private const val VERTICAL_DISTANCE = 0
-		private const val MARGIN = 10
-		private const val PADDING = 5
-		private const val BUTTON_GAP = 3
-		private const val BUTTON_SIZE = 25
-		const val KEYBOARD_WIDTH = 2 * MARGIN + 2 * PADDING + 4 * BUTTON_SIZE + 3 * BUTTON_GAP
-		const val KEYBOARD_HEIGHT = 2 * MARGIN + 2 * PADDING + 5 * BUTTON_SIZE + 4 * BUTTON_GAP
+	/** The object consuming the entered key.*/
+	interface Target {
+		val keyboardTargetBoundingBox: RectangularShape
+		val signalRepresentation: DigitalSignalRepresentation
+		fun consumeKey(key: Int, contextHolder: GraphApplicationContextHolder, graphView: GraphView?)
+		fun clear(contextHolder: GraphApplicationContextHolder)
 	}
 
-	private val bounds: Rectangle2D
+	private const val VERTICAL_DISTANCE = 0
+	private const val MARGIN = 10
+	private const val PADDING = 5
+	private const val BUTTON_GAP = 3
+	private const val BUTTON_SIZE = 25
+	private const val KEYBOARD_WIDTH = 2 * MARGIN + 2 * PADDING + 4 * BUTTON_SIZE + 3 * BUTTON_GAP
+	private const val KEYBOARD_HEIGHT = 2 * MARGIN + 2 * PADDING + 5 * BUTTON_SIZE + 4 * BUTTON_GAP
+
+	private val styleType: StyleType = StyleType.FIGURE
+
+	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
 
 	private val style: Style get() = styleProvider.getStyle(styleType)
 
+	private var target: Target? = null
+
+	private var view: DrawingView<*>? = null
+
+	private var contextHolder: GraphApplicationContextHolder? = null
+
+	private val positioner: DrawableAttendantPositioner = DrawableAttendantPositioner
+
+	private var bounds: Rectangle2D = Rectangle2D(Point2D.ZERO, Dimension2D(KEYBOARD_WIDTH, KEYBOARD_HEIGHT))
+
+	private val digitButtons = mutableListOf<ActorDrawableButton<*>>()
+
+	private val actorInteractionHandler = Handler { super.getActorInteractionHandler(it) }
+
+	private val quitHandler = QuitHandler()
+
 	init {
+		buildHexadecimalUI()
+	}
+
+	fun show(
+		target: Target,
+		view: DrawingView<*>,
+		contextHolder: GraphApplicationContextHolder
+	) {
+		hide()
+
+		this.target = target
+		this.view = view
+		this.contextHolder = contextHolder
+
+		position(target.keyboardTargetBoundingBox, view)
+		updateUI()
+
+		view.animationContainer.add(this)
+		view.animationContainer.validate()
+		view.addMouseListener(quitHandler)
+		view.addKeyListener(quitHandler)
+	}
+
+	fun hide() {
+		view?.let {
+			it.animationContainer.remove(this)
+			it.animationContainer.validate()
+			it.removeMouseListener(quitHandler)
+			it.removeKeyListener(quitHandler)
+		}
+		target = null
+		view = null
+	}
+
+	private fun position(boundingBox: RectangularShape, view: View<*>) {
 		val loc = positioner.position(
 			Dimension2D(KEYBOARD_WIDTH, KEYBOARD_HEIGHT),
-			circuitInOutView.boundingBox,
+			boundingBox,
 			view,
 			preferredBelow = true,
 			VERTICAL_DISTANCE)
 		bounds = Rectangle2D(loc, Dimension2D(KEYBOARD_WIDTH, KEYBOARD_HEIGHT))
 		location = loc
-		buildHexadecimalUI()
 	}
 
 	/** ---- [DrawableContainer] */
-
-	private val actorInteractionHandler = Handler()
 
 	override fun contains(x: Double, y: Double): Boolean = bounds.contains(x, y)
 
@@ -94,7 +148,7 @@ class CircuitInOutKeyboard(
 
 	override val isFocusable: Boolean get() = true
 
-	/** ---- [CircuitInOutKeyboard] */
+	/** ---- [DigitalKeyboard] */
 
 	private fun buildHexadecimalUI() {
 		var x = MARGIN + PADDING
@@ -110,7 +164,7 @@ class CircuitInOutKeyboard(
 				actorAction = { buttonClickHandler(BitOperation.HEY_KEY[i - 1], null) },
 				round = true
 			)
-			button.enabled = circuitInOutView.signalRepresentation == DigitalSignalRepresentation.HEXADECIMAL || i <= 10
+			digitButtons.add(button)
 			add(button)
 
 			x += BUTTON_SIZE + BUTTON_GAP
@@ -132,15 +186,28 @@ class CircuitInOutKeyboard(
 		add(clearButton)
 	}
 
+	private fun updateUI() {
+		digitButtons.forEachIndexed { index, button ->
+			button.enabled = when (target!!.signalRepresentation) {
+				DigitalSignalRepresentation.BINARY -> index < 2
+				DigitalSignalRepresentation.DECIMAL -> index < 10
+				DigitalSignalRepresentation.HEXADECIMAL -> true
+				else -> false
+			}
+		}
+	}
+
 	private fun buttonClickHandler(key: Int, graphView: GraphView?) {
-		circuitInOutView.consumeKey(key, contextHolder, graphView = graphView)
+		target!!.consumeKey(key, contextHolder!!, graphView = graphView)
 	}
 
 	private fun clearHandler() {
-		circuitInOutView.clearByUser(contextHolder.scheduler)
+		target!!.clear(contextHolder!!)
 	}
 
-	private inner class Handler : InputEventHandlerAdapter<ActorInteractionContext>() {
+	private class Handler(
+		private val parent: (ActorInteractionContext) -> ActorInteractionHandler
+	) : InputEventHandlerAdapter<ActorInteractionContext>() {
 
 		private var hoverHandler: ActorInteractionHandler? = null
 
@@ -151,14 +218,34 @@ class CircuitInOutKeyboard(
 		override fun mouseMoved(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext> {
 			// Delegate to possible buttons, but keep "modal" control
 			hoverHandler = hoverHandler?.mouseMoved(context)
-				?: super@CircuitInOutKeyboard.getActorInteractionHandler(context).mouseMoved(context)
+				?: parent(context).mouseMoved(context)
 			return this
 		}
 
 		override fun mouseClicked(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext> {
 			// Delegate to possible buttons, but keep "modal" control
-			super@CircuitInOutKeyboard.getActorInteractionHandler(context).mouseClicked(context)
+			parent(context).mouseClicked(context)
 			return this
 		}
+	}
+
+	private class QuitHandler : MouseAdapter(), KeyListener {
+		override fun mousePressed(e: MouseEvent) {
+			view?.let {
+				if (!contains(it.viewToModel(e.location))) {
+					hide()
+				}
+			}
+		}
+
+		override fun keyTyped(e: KeyEvent) { }
+
+		override fun keyPressed(e: KeyEvent) {
+			if (e.key == KeyEvent.VK_ESCAPE) {
+				hide()
+			}
+		}
+
+		override fun keyReleased(e: KeyEvent) { }
 	}
 }
