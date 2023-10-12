@@ -1,5 +1,6 @@
 package ch.scorpion.antares.hdl.vhdl
 
+import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.antares.hdl.BuiltInNode
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.jabbah.base.Translations
@@ -22,17 +23,20 @@ class VHDLTemplate(name: String) {
 		private const val PREFIX = "VHDL_"
 		private const val EXTENSION = ".template"
 
+		/** The name of the [Entity] object passed to template scripts for calling functions.*/
 		const val ATTR_VHDL = "vhdl"
-		const val ATTR_BIT_WIDTH = "bitWidth"
-		const val ATTR_ADDR_BIT_WIDTH = "addrBitWidth"
-		const val ATTR_DATA_BIT_WIDTH = "dataBitWidth"
-		const val ATTR_NEGATIVE = "negative"
+
+		/** The name of the [Vertice] object passed to template scripts for accessing properties.*/
 		const val ATTR_VERTICE = "vertice"
 
 		private fun createFileName(name: String): String = "vhdl/$name$EXTENSION"
 	}
 
-	data class Generic(val name: String, val type: String) {
+	data class Generic(
+		val name: String,
+		val type: String,
+		val value: Any? = null
+	) {
 		fun format(value: Any): String {
 			return when (type) {
 				"integer" ->  (value as Int).toString()
@@ -77,7 +81,9 @@ class VHDLTemplate(name: String) {
 			val sep = Separator(out, ",\n")
 			for (gen in entity.generics) {
 				sep.check()
-				val value = node.attributes[gen.name] ?: throw IllegalStateException("Generic value not available")
+				val value = gen.value
+					?: node.attributes[gen.name]
+					?: throw IllegalStateException("Generic value '${gen.name}' not available")
 				out.print(gen.name).print(" => ").print(gen.format(value))
 			}
 			out.println(")").dec()
@@ -111,6 +117,7 @@ class VHDLTemplate(name: String) {
 		}
 	}
 
+	@Suppress("MemberVisibilityCanBePrivate")
 	class Entity(
 		name: String,
 		template: Template,
@@ -157,7 +164,17 @@ class VHDLTemplate(name: String) {
 
 		@Suppress("unused")
 		fun registerGeneric(name: String) {
-			generics.add(Generic(name, "integer"))
+			registerGeneric(name, "integer")
+		}
+
+		@Suppress("unused")
+		fun registerGeneric(name: String, type: String) {
+			generics.add(Generic(name, type))
+		}
+
+		@Suppress("unused")
+		fun registerGenericValue(name: String, value: Int) {
+			generics.add(Generic(name, "integer", value))
 		}
 
 		@Suppress("unused")
@@ -169,11 +186,11 @@ class VHDLTemplate(name: String) {
 			}
 
 		@Suppress("unused")
-		fun genericType(bitWidth: Int): String =
+		fun genericType(name: String, bitWidth: Int): String =
 			if (bitWidth == 1) {
 				"std_logic"
 			} else {
-				"std_logic_vector(($ATTR_BIT_WIDTH - 1) downto 0)"
+				"std_logic_vector(($name - 1) downto 0)"
 			}
 	}
 }

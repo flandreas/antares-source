@@ -7,12 +7,12 @@ entity VHDL_RAM is
     addrBitWidth: integer;
     dataBitWidth: integer);
   port (
-    A: in std_logic_vector((addrBitWidth - 1) downto 0);{{ vhdl.registerGeneric('addrBitWidth') }}
+    A: in std_logic_vector((addrBitWidth - 1) downto 0);{{ vhdl.registerGenericValue('addrBitWidth', vertice.addressWidth.width) }}
     CLK: in std_logic;
     CS: in std_logic;
     WR: in std_logic;
     CLR: in std_logic;
-    D: inout std_logic_vector((dataBitWidth - 1) downto 0));{{ vhdl.registerGeneric('dataBitWidth') }}
+    D: inout std_logic_vector((dataBitWidth - 1) downto 0));{{ vhdl.registerGenericValue('dataBitWidth', vertice.dataWidth.width) }}
 end VHDL_RAM;
 
 architecture Behavioral of VHDL_RAM is

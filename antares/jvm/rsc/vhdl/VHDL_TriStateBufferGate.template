@@ -1,23 +1,23 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-{%- if bitWidth == 1 %}
+{%- if vertice.bitWidth.width == 1 %}
     {%- set entityName = vhdl.setEntityName('VHDL_TriStateBufferGate') %}
 {%- else %}
     {%- set entityName = vhdl.setEntityName('VHDL_TriStateBufferGate_MultiBit') %}
 {%- endif %}
 
 entity {{ entityName }} is
-{%- if bitWidth > 1 %}
-  generic (bitWidth : integer);{{ vhdl.registerGeneric('bitWidth') }}
+{%- if vertice.bitWidth.width > 1 %}
+  generic (bitWidth : integer);{{ vhdl.registerGenericValue('bitWidth', vertice.bitWidth.width) }}
 {%- endif %}
   port (
-    p1: in {{ vhdl.genericType(bitWidth) }};
+    p1: in {{ vhdl.genericType('bitWidth', vertice.bitWidth.width) }};
     EN: in std_logic;
-    p3: out {{ vhdl.genericType(bitWidth) }});
+    p3: out {{ vhdl.genericType('bitWidth', vertice.bitWidth.width) }});
 end {{ entityName }};
 
 architecture Behavioral of {{ entityName }} is
 begin
-  p3 <= p1 when EN = {% if negative == true %}'0'{% else %}'1'{% end %} else {% if bitWidth == 1 %}'Z'{% else %}(others => 'Z'){% endif %};
+  p3 <= p1 when EN = {% if vertice.isNegative == true %}'0'{% else %}'1'{% end %} else {% if vertice.bitWidth.width == 1 %}'Z'{% else %}(others => 'Z'){% endif %};
 end Behavioral;

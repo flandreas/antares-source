@@ -94,6 +94,9 @@ open class TriStateBufferGate(
             }
         }
 
+	@Suppress("unused") // Reflection
+	val isNegative: Boolean get() = enableLogic == Logic.NEGATIVE
+
 	/** ---- [GraphElement] */
 
 	override fun graphParamsChanged(graph: Graph) {

@@ -130,34 +130,11 @@ class HDLModel(
 					it.expression = ConstantExpression(DigitalSignalFactory.falseValue(vertice.bitWidth))
 				}
 			}
-			// TODO: Consider extracting attribute setting logic to external registry
-			is TriStateBufferGate -> {
-				BuiltInNode(vertice::class.simpleName!!).also {
-					addInputsOutputs(it, vertice, parent)
-					it.createExpressions()
-					it.setAttribute(VHDLTemplate.ATTR_BIT_WIDTH, vertice.bitWidth.width)
-					it.setAttribute(VHDLTemplate.ATTR_NEGATIVE, vertice.enableLogic == Logic.NEGATIVE)
-				}
-			}
-			is RAM -> {
-				BuiltInNode(vertice::class.simpleName!!).also {
-					addInputsOutputs(it, vertice, parent)
-					it.createExpressions()
-					it.setAttribute(VHDLTemplate.ATTR_ADDR_BIT_WIDTH, vertice.addressWidth.width)
-					it.setAttribute(VHDLTemplate.ATTR_DATA_BIT_WIDTH, vertice.dataWidth.width)
-				}
-			}
-			is Addressable -> {
-				BuiltInNode(vertice::class.simpleName!!).also {
-					addInputsOutputs(it, vertice, parent)
-					it.createExpressions()
-					it.setAttribute(VHDLTemplate.ATTR_VERTICE, vertice)
-				}
-			}
 			else -> {
 				BuiltInNode(vertice::class.simpleName!!).also {
 					addInputsOutputs(it, vertice, parent)
 					it.createExpressions()
+					it.setAttribute(VHDLTemplate.ATTR_VERTICE, vertice)
 				}
 			}
 		}
