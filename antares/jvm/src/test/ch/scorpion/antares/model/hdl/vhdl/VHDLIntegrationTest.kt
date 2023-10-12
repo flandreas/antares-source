@@ -1,7 +1,5 @@
 package ch.scorpion.antares.model.hdl.vhdl
 
-import ch.scorpion.antares.AbstractJvmCircuitTest
-import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.TestLibraryBuilder
 import ch.scorpion.antares.hdl.vhdl.VHDLGenerator
@@ -14,31 +12,14 @@ import ch.scorpion.antares.view.input.DipSwitchView
 import ch.scorpion.antares.view.net.ConstantView
 import ch.scorpion.antares.view.net.GroundView
 import ch.scorpion.antares.view.net.PowerView
-import ch.scorpion.jabbah.base.io.StringCodePrinter
 import ch.scorpion.jabbah.graph.library.LibraryElement
-import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class VHDLIntegrationTest {
-
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
-	private val library get() = LibraryModule.libraryHolder.library
-	private val printer = StringCodePrinter()
-
-	@BeforeTest
-	fun setup() {
-		AbstractJvmCircuitTest.setupLibrary()
-	}
+class VHDLIntegrationTest : AbstractVHDLTest() {
 
 	@Test
 	fun testNoOp() {

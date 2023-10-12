@@ -1,7 +1,5 @@
 package ch.scorpion.antares.model.hdl.vhdl
 
-import ch.scorpion.antares.AbstractJvmCircuitTest
-import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.hdl.vhdl.VHDLGenerator
 import ch.scorpion.antares.model.DigitalGraph
@@ -9,27 +7,10 @@ import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.gate.TriStateBufferGate
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.gate.TriStateBufferGateView
-import ch.scorpion.jabbah.base.io.StringCodePrinter
-import ch.scorpion.jabbah.graph.library.LibraryModule
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class VHDLTriStateBufferGateTest {
-
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
-	private val library get() = LibraryModule.libraryHolder.library
-	private val printer = StringCodePrinter()
-
-	@BeforeTest
-	fun setup() {
-		AbstractJvmCircuitTest.setupLibrary()
-	}
+class VHDLTriStateBufferGateTest : AbstractVHDLTest() {
 
 	@Test
 	fun testSingleBit() {

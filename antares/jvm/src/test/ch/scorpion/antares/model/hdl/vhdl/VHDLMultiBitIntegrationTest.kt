@@ -1,7 +1,5 @@
 package ch.scorpion.antares.model.hdl.vhdl
 
-import ch.scorpion.antares.AbstractJvmCircuitTest
-import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.hdl.vhdl.VHDLGenerator
 import ch.scorpion.antares.model.DigitalGraph
@@ -12,27 +10,10 @@ import ch.scorpion.antares.model.net.Splitter
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.net.ConcentratorView
 import ch.scorpion.antares.view.net.SplitterView
-import ch.scorpion.jabbah.base.io.StringCodePrinter
-import ch.scorpion.jabbah.graph.library.LibraryModule
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class VHDLMultiBitIntegrationTest {
-
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
-	private val library get() = LibraryModule.libraryHolder.library
-	private val printer = StringCodePrinter()
-
-	@BeforeTest
-	fun setup() {
-		AbstractJvmCircuitTest.setupLibrary()
-	}
+class VHDLMultiBitIntegrationTest : AbstractVHDLTest() {
 
 	@Test
 	fun testNoOp() {
