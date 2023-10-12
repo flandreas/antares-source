@@ -5,11 +5,11 @@ import ch.scorpion.antares.hdl.vhdl.HDLException
 import ch.scorpion.antares.hdl.vhdl.VHDLTemplate
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.Logic
-import ch.scorpion.antares.model.addressable.Addressable
-import ch.scorpion.antares.model.addressable.RAM
 import ch.scorpion.antares.model.gate.*
 import ch.scorpion.antares.model.input.DipSwitch
-import ch.scorpion.antares.model.net.*
+import ch.scorpion.antares.model.net.Constant
+import ch.scorpion.antares.model.net.Ground
+import ch.scorpion.antares.model.net.Power
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.StringUtils
@@ -174,11 +174,16 @@ class HDLModel(
 	private fun addInputsOutputs(node: AbstractHDLNode, vertice: Vertice, hdlCircuit: HDLCircuit) {
 		for (port in vertice.getPorts().map { it as DigitalPort }) {
 			val net = hdlCircuit.getHDLNetOfPort(port)
+			val logic = if (vertice is AbstractLogicGate) {
+				port.logic
+			} else {
+				Logic.POSITIVE
+			}
 			when (port.portType) {
-				PortType.INPUT -> node.addPort(HDLPort(portName(port), HDLPort.Direction.IN, net, port.bitWidth, port.logic))
-				PortType.OUTPUT -> node.addPort(HDLPort(portName(port), HDLPort.Direction.OUT, net, port.bitWidth, port.logic))
+				PortType.INPUT -> node.addPort(HDLPort(portName(port), HDLPort.Direction.IN, net, port.bitWidth, logic))
+				PortType.OUTPUT -> node.addPort(HDLPort(portName(port), HDLPort.Direction.OUT, net, port.bitWidth))
 				// InOut not yet really supported by HDL
-				PortType.INOUT -> node.addPort(HDLPort(portName(port), HDLPort.Direction.OUT, net, port.bitWidth, port.logic))
+				PortType.INOUT -> node.addPort(HDLPort(portName(port), HDLPort.Direction.OUT, net, port.bitWidth))
 			}
 		}
 	}
