@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.io.CodePrinter
+import ch.scorpion.jabbah.base.richtext.RichText
 import ch.scorpion.jabbah.draw.view.AbstractViewAction
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import java.awt.Frame
@@ -29,7 +30,7 @@ class ExportVHDLAction : AbstractViewAction("antares.vhdl.action") {
 			val mainContent = it.mainContent
 			val fileChooser = JFileChooser()
 			fileChooser.dialogTitle = name
-			fileChooser.selectedFile = File("${mainContent.name}.vhdl")
+			fileChooser.selectedFile = File("${RichText.stripToPlainText(mainContent.name)}.vhdl")
 
 			var retry = true
 

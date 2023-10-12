@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.richtext.RichText
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.edit.auth.UserHolder
@@ -55,7 +56,7 @@ abstract class AbstractLibraryPersistencePanel(
 			selectedLibrary?.let {
 				val fileChooser = JFileChooser()
 				fileChooser.dialogTitle = name
-				fileChooser.selectedFile = File("${it.name.value}.${fileExtension}")
+				fileChooser.selectedFile = File("${RichText.stripToPlainText(it.name.value)}.${fileExtension}")
 				fileChooser.fileFilter = createFileNameFilter()
 
 				if (fileChooser.showSaveDialog(this@AbstractLibraryPersistencePanel) == JFileChooser.APPROVE_OPTION) {

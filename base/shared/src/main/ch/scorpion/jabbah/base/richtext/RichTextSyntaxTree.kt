@@ -9,7 +9,35 @@ import ch.scorpion.jabbah.base.richtext.TextStyle.Companion.NORMAL
 class RichText(
 	location: TextLocation,
 	fragments: List<Fragment>
-) : Compound<Fragment>(location, fragments)
+) : Compound<Fragment>(location, fragments) {
+
+	companion object {
+
+		/**
+		 * Strips [text] encoded as rich text to plain text so that it can be used
+		 * e.g. in file path strings. Strips most of the style information, especially
+		 * the slashes.
+		 */
+		fun stripToPlainText(text: String): String {
+			try {
+				val richText = RichTextParser(text).parse()
+				val result = StringBuilder()
+
+				richText.children.forEach { fragment ->
+					fragment.text.styledText.chunks.forEach { chunk ->
+						val text = chunk.text.replace("/", " ")
+						result.append(text)
+					}
+				}
+
+				return result.toString()
+			} catch (e: Throwable) {
+				return text.replace("/", " ")
+			}
+			return text
+		}
+	}
+}
 
 class Fragment(
 	location: TextLocation,
