@@ -37,7 +37,7 @@ class UsecaseViewController(
 
 	val propertyPanelController = UsecasePropertyPanelController(editor, eventBus)
 
-	/** The [GraphView] whose [Usecase]s. */
+	/** The [GraphView] whose [Usecase]s are displayed. */
 	var graphView: GraphView? = null
 		set(value) {
 			if (field !== value) {

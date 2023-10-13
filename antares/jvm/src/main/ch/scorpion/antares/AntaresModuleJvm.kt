@@ -7,6 +7,7 @@ import ch.scorpion.antares.model.input.Switch
 import ch.scorpion.antares.model.net.*
 import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
 import ch.scorpion.antares.model.signal.*
+import ch.scorpion.antares.model.testcase.TestcaseAppService
 import ch.scorpion.antares.view.*
 import ch.scorpion.antares.view.container.DigitalContainerEditor
 import ch.scorpion.antares.view.container.DigitalContainerToolBarBuilder
@@ -84,7 +85,6 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		const val PREF_TREE_EXPRESSION = "antares.preferences.group.expression"
 
 		val createCircuitFromTruthTableService = CreateCircuitFromTruthTableService()
-
 	}
 
 	override fun initialize() {

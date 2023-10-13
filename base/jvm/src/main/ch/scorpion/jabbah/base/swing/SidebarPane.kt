@@ -123,10 +123,12 @@ class SidebarPane(
 	 * @param index the index of the content, or `-1` to close all content.
 	 */
 	fun open(index: Int) {
-		if (index < 0) {
-			activate(null)
-		} else {
-			activate(entries[index])
+		SwingUtilities.invokeLater {
+			if (index < 0) {
+				activate(null)
+			} else {
+				activate(entries[index])
+			}
 		}
 	}
 

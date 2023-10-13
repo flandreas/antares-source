@@ -1,6 +1,8 @@
 package ch.scorpion.antares
 
 import ch.scorpion.antares.model.expression.ShowBooleanExpressionItemRequest
+import ch.scorpion.antares.model.testcase.TestcaseViewController
+import ch.scorpion.antares.model.testcase.TestcaseViewSwing
 import ch.scorpion.antares.model.truthtable.ShowTruthTableItemRequest
 import ch.scorpion.antares.view.AntaresFrame
 import ch.scorpion.antares.view.AntaresFrameController
@@ -9,8 +11,11 @@ import ch.scorpion.antares.view.addressable.AddressableContentsPanel
 import ch.scorpion.antares.view.addressable.OpenMemoryContentsRequest
 import ch.scorpion.antares.view.expression.BooleanExpressionDesktopItemSwing
 import ch.scorpion.antares.view.truthtable.TruthTableDesktopItemSwing
+import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.DesktopApplication
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.swing.SidebarPaneContentImpl
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.graph.ui.GraphFrame
@@ -29,8 +34,24 @@ class AntaresFrameSwing(
 	actions: GraphFrameActions
 ) : GraphFrameSwing(controller as GraphFrameController<GraphFrame>, application, viewManager, actions), AntaresFrame {
 
+	private val testcaseViewController = TestcaseViewController(
+		controller.graphPanelViewController.editor,
+		controller.applicationContextHolder,
+		controller.applicationModeHolder)
+
 	init {
 		iconImage = Toolkit.getDefaultToolkit().createImage(ClassLoader.getSystemResource(AntaresSwing.ICON_PATH))
+		addTestcaseView(application)
+	}
+
+	private fun addTestcaseView(application: Application) {
+		val testcasesView = TestcaseViewSwing(testcaseViewController, application, controller.applicationModeHolder)
+		graphPanel.graphEditView.add(
+			SidebarPaneContentImpl(
+				Translations.getString("antares.testcases.title"),
+				// TODO Icon by Janis
+				UiUtil.themedIcon("/img/usecase-16.png"),
+				testcasesView))
 	}
 
 	override fun createMemoryContentsDesktopViewItem(request: OpenMemoryContentsRequest, contextColor: CompositeColor): GraphDesktopViewItem =

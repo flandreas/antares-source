@@ -74,6 +74,10 @@ class SidebarSplitPane(
 		BaseModule.settings.set(openIndexSettingName, sidebarPane.openIndex)
 	}
 
+	fun add(content: SidebarPaneContent) {
+		sidebarPane.add(content)
+	}
+
 	private fun buildUI() {
 		layout = BorderLayout()
 

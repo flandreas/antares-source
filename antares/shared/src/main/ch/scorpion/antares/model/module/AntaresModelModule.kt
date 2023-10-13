@@ -25,6 +25,9 @@ import ch.scorpion.antares.model.output.*
 import ch.scorpion.antares.model.port.SubCircuitPort
 import ch.scorpion.antares.model.signal.BitWidthGraphParamType
 import ch.scorpion.antares.model.signal.FixedPointConfig
+import ch.scorpion.antares.model.testcase.Testcase
+import ch.scorpion.antares.model.testcase.TestcaseAppService
+import ch.scorpion.antares.model.testcase.Testcases
 import ch.scorpion.antares.model.truthtable.*
 import ch.scorpion.antares.model.vertice.DigitalSubGraphVerticeRefActivationRecord
 import ch.scorpion.antares.view.port.AntaresPortFactory
@@ -51,6 +54,7 @@ object AntaresModelModule : AbstractModule() {
 	val truthTableService = TruthTableService()
 	val booleanExpressionService = BooleanExpressionService()
 	val circuitAnalysisService = CircuitAnalysisService()
+	val testcaseAppService = TestcaseAppService()
 
 	override fun initialize() {
 		customizeProperties(BaseModule.properties)
@@ -90,6 +94,8 @@ object AntaresModelModule : AbstractModule() {
 
 	private fun configureTypeMap(typeMap: TypeMap) {
 		typeMap.register("graph", DigitalGraph::class)
+		typeMap.register("testcase", Testcase::class)
+		typeMap.register("testcases", Testcases::class)
 
 		typeMap.register("circuitInOut", DigitalCircuitInOutImpl::class)
 		typeMap.register("subCircuitPort", SubCircuitPort::class)

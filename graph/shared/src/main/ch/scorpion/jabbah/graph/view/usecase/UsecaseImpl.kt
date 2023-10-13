@@ -67,7 +67,7 @@ class UsecaseImpl(
 
 	override fun toString(): String = name.value
 
-		/** ---- [Namable], [Describable] interfaces */
+	/** ---- [Namable], [Describable] interfaces */
 
 	override var name: Name by observableName(Name(name))
 
