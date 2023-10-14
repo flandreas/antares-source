@@ -45,7 +45,7 @@ abstract class AbstractLexer(protected val text: String) {
 		return text[peekPos]
 	}
 
-	protected fun isWhitespace(state: State): Boolean =
+	protected open fun isWhitespace(state: State): Boolean =
 		state.currentChar != null && state.currentChar!!.isWhitespace()
 
 	/** Advances until [State.currentChar] is non-whitespace.*/

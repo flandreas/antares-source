@@ -12,6 +12,7 @@ enum class DslTokenType(override val id: String): TokenType {
 	LPAREN("("),
 	RPAREN(")"),
 	EOF("EOF"),
+	EOL("EOL"),
 	ASSIGN("="),
 	ID("ID"),
 	LCURLEY("{"),
