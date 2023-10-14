@@ -60,7 +60,7 @@ open class Value(
 }
 
 class MatchedValue(
-	private val expected: Value,
+	val expected: Value,
 	actual: DigitalSignal
 ) : Value(actual) {
 

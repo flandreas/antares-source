@@ -42,7 +42,7 @@ class TestcaseRunnerTest {
 			1 1 1
 		""".trimIndent()
 
-		val result = TestcaseRunner(testScript, circuit.graph as DigitalGraph).run()
+		val result = TestcaseRunner("test", testScript, circuit.graph as DigitalGraph).run()
 
 		assertEquals(3, result.names.size)
 		assertEquals(4, result.collector.size)
@@ -63,7 +63,7 @@ class TestcaseRunnerTest {
 			1 1 1
 		""".trimIndent()
 
-		val result = TestcaseRunner(testScript, circuit.graph as DigitalGraph).run()
+		val result = TestcaseRunner("test", testScript, circuit.graph as DigitalGraph).run()
 
 		assertEquals(3, result.names.size)
 		assertEquals(4, result.collector.size)

@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.swing.DialogBuilder
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.draw.graphics.PredefinedColorIdentity
@@ -33,6 +34,9 @@ class TestRunResultPanelSwing(
 		private val OUTPUT_CELL_RENDERER = OutputCellRenderer()
 		private const val COLUMN_WIDTH = 30
 
+		private val FAILED_ICON = UiUtil.themedIcon("/img/error-16.png")
+		private val PASSED_ICON = UiUtil.themedIcon("/img/checkmark.png")
+
 		fun showAsDialog(
 			result: TestRunResult,
 			parent: Frame = Frame.getFrames()[0]
@@ -47,6 +51,7 @@ class TestRunResultPanelSwing(
 		}
 	}
 
+	private val summaryLabel = JLabel()
 	private val table = JTable(TableModel(result))
 	private val scrollPane = JScrollPane(table)
 	private val closeAction = CloseAction()
@@ -54,6 +59,7 @@ class TestRunResultPanelSwing(
 
 	init {
 		buildUI()
+		updateSummaryLabel(result)
 		updateColumnModels(result)
 	}
 
@@ -61,6 +67,7 @@ class TestRunResultPanelSwing(
 		layout = BorderLayout(10, 10)
 		border = UIBasics.createDialogBorder()
 
+		add(summaryLabel, BorderLayout.NORTH)
 		add(scrollPane, BorderLayout.CENTER)
 
 		val buttonPanel = JPanel()
@@ -68,6 +75,17 @@ class TestRunResultPanelSwing(
 		buttonPanel.add(Box.createHorizontalGlue())
 		buttonPanel.add(closeButton)
 		add(buttonPanel, BorderLayout.SOUTH)
+	}
+
+	private fun updateSummaryLabel(result: TestRunResult) {
+		val failedCount = result.failedCount
+		if (failedCount == 0) {
+			summaryLabel.icon = PASSED_ICON
+			summaryLabel.text = "${result.testName}: ${Translations.getString("antares.testcase.results.summary.passed")}"
+		} else {
+			summaryLabel.icon = FAILED_ICON
+			summaryLabel.text = "${result.testName}: ${Translations.getString("antares.testcase.results.summary.failed", failedCount)}"
+		}
 	}
 
 	private fun updateColumnModels(result: TestRunResult) {
@@ -117,16 +135,24 @@ class TestRunResultPanelSwing(
 			val label = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column) as JLabel
 			label.horizontalAlignment = SwingConstants.CENTER
 			label.isOpaque = true
-			label.background = when ((value as Value).state) {
-				Value.State.FAILED -> failedBackgroundColor
-				Value.State.PASSED -> successBackgroundColor
-				else -> UIManager.getColor("Label.background")
+
+			label.text = value.toString()
+			when ((value as Value).state) {
+				Value.State.FAILED -> {
+					label.background = failedBackgroundColor
+					label.foreground = failedTextColor
+					label.text = "E: ${(value as MatchedValue).expected} / A: ${value.value}"
+				}
+				Value.State.PASSED -> {
+					label.background = successBackgroundColor
+					label.foreground = successTextColor
+				}
+				else -> {
+					label.background = UIManager.getColor("Label.background")
+					label.foreground = UIManager.getColor("Label.foreground")
+				}
 			}
-			label.foreground = when ((value as Value).state) {
-				Value.State.FAILED -> failedTextColor
-				Value.State.PASSED -> successTextColor
-				else -> UIManager.getColor("Label.foreground")
-			}
+
 			return label
 		}
 	}

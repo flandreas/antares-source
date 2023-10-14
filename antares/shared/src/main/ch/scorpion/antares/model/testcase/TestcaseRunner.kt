@@ -19,15 +19,30 @@ import ch.scorpion.jabbah.execution.SignalHandler
  * have been replaced with [MatchedValue] containing the test result.
  */
 data class TestRunResult(
+	val testName: String,
 	val names: List<String>,
 	val isOutput: List<Boolean>,
 	val collector: TestVectorCollector
-)
+) {
+	/** Returns the number of failed [TestVector]s.*/
+	val failedCount: Int get() {
+		val failedVectors = mutableSetOf<TestVector>()
+		for (column in names.indices) {
+			if (isOutput[column]) {
+				collector.testVectors
+					.filter { it.isFailed(column) }
+					.forEach { failedVectors.add(it) }
+			}
+		}
+		return failedVectors.size
+	}
+}
 
 /**
  * Runs a circuit test script (provided as plain text) on a particular [DigitalGraph].
  */
 class TestcaseRunner(
+	private val testName: String,
 	private val text: String,
 	private val circuit: DigitalGraph
 ) {
@@ -57,7 +72,7 @@ class TestcaseRunner(
 			circuitRunner.run(circuit, ::setInputs, ::readOutputs)
 		}
 
-		return TestRunResult(portNames, determineIsOutput(), collector)
+		return TestRunResult(testName, portNames, determineIsOutput(), collector)
 	}
 
 	private fun determineIsOutput(): List<Boolean> = portNames.map {

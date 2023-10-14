@@ -10,5 +10,7 @@ class TestVector(private val _values: Array<Value>) : Iterable<Value> {
 		_values[index] = value
 	}
 
+	fun isFailed(index: Int): Boolean = _values[index].state == Value.State.FAILED
+
 	override fun iterator(): Iterator<Value> = _values.iterator()
 }
