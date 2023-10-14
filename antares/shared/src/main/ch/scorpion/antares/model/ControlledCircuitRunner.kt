@@ -31,7 +31,7 @@ class ControlledCircuitRunner(
 
 	private val eventBus = EventBusImpl()
 	private val timeService = ControlledTimeService()
-	private val systemSpeedCategory = CurrentSystemSpeedCategory(SystemSpeed(SystemSpeed.MAX_SPEED))
+	private val systemSpeedCategory = CurrentSystemSpeedCategory(SystemSpeed(SystemSpeed.MAX_SPEED, eventBus), eventBus)
 	private val task = ManualSchedulerTask()
 	private val noiseGeneratorHolder = NoiseGeneratorHolder(NoNoiseGenerator())
 
@@ -45,6 +45,7 @@ class ControlledCircuitRunner(
 
 	fun dispose() {
 		scheduler.dispose()
+		systemSpeedCategory.dispose()
 	}
 
 	/**

@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
+import ch.scorpion.jabbah.io.StorableCloner
 
 /**
  * Runs the currently selected [Testcase] and displays [TestRunResultPanelSwing] with the results.
@@ -28,13 +29,20 @@ class RunTestcaseAction(
 		super.calculateEnabled() && StringUtils.isNotEmpty(testcase?.testVectors?.script)
 
 	override fun execute(event: ActionEvent) {
+		// Clone circuit to avoid interference from various objects of the main application,
+		// such as GraphViewExecutionAnimator that listen on Actors of the main circuit
+		val clone = StorableCloner.clone(circuit)
+
+		val runner = TestcaseRunner(testcase!!.testVectors.script!!, clone)
+
 		InvocationHandler.invoke {
 			try {
-				val results = TestcaseRunner(testcase!!.testVectors.script!!, circuit).run()
-				TestRunResultPanelSwing.showAsDialog(results)
+				TestRunResultPanelSwing.showAsDialog(runner.run())
 			} catch (e: Throwable) {
 				// TODO Catch syntax errors etc.
 				throw e
+			} finally {
+				runner.dispose()
 			}
 		}
 	}

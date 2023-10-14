@@ -35,6 +35,10 @@ class TestcaseRunner(
 	private lateinit var portNames: List<String>
 	private lateinit var currentTestVector: TestVector
 
+	fun dispose() {
+		circuitRunner.dispose()
+	}
+
 	/**
 	 * Runs the [TestVector]s contained in [text] and returns the [TestRunResult],
 	 * whose [TestVectorCollector] output columns contain [MatchedValue] with the actual
