@@ -116,6 +116,7 @@ class TestcaseTreeView(
 		graphPopupMenu.add(ActionWrapperSwing(AddTestcaseAction(application, applicationModeHolder)))
 
 		testcasePopupMenu.add(ActionWrapperSwing(DeleteTestcaseAction(application, applicationModeHolder)))
+		testcasePopupMenu.add(ActionWrapperSwing(RunTestcaseAction(application, applicationModeHolder)))
 	}
 
 	fun dispose() {

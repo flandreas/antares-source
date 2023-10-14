@@ -14,11 +14,13 @@ import ch.scorpion.jabbah.execution.SignalHandler
  * The result provided by a [TestcaseRunner].
  *
  * @property names the name of the input and output ports from the plaintext test script
+ * @property isOutput `true` indicates that the corresponding column refers to an output
  * @property collector contains the collected [TestVector]s whose output column values
  * have been replaced with [MatchedValue] containing the test result.
  */
 data class TestRunResult(
 	val names: List<String>,
+	val isOutput: List<Boolean>,
 	val collector: TestVectorCollector
 )
 
@@ -51,8 +53,13 @@ class TestcaseRunner(
 			circuitRunner.run(circuit, ::setInputs, ::readOutputs)
 		}
 
-		return TestRunResult(portNames, collector)
+		return TestRunResult(portNames, determineIsOutput(), collector)
 	}
+
+	private fun determineIsOutput(): List<Boolean> = portNames.map {
+		val port = circuit.getGraphPort<DigitalSignal>(it)
+		port is DigitalCircuitInOut && port.portType.isOutput
+	}.toList()
 
 	private fun setInputs(signalHandler: SignalHandler) {
 		portNames.forEachIndexed { index, portName ->

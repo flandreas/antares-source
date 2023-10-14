@@ -26,6 +26,8 @@ open class Value(
 		FAILED
 	}
 
+	override fun toString(): String = value.toString()
+
 	open val state: State get() = NORMAL
 
 	override fun equals(other: Any?): Boolean {
