@@ -38,4 +38,29 @@ class TestcaseParserTest {
 			-- 1
 		""".trimIndent())
 	}
+
+	@Test
+	fun shouldSkipEmptyLines() {
+		val parser = TestcaseParser("""
+			A B O
+			
+			0 0 0
+			
+			0 1 0
+			
+		""".trimIndent())
+
+		assertAST(parser.parse(), """
+			TestScript
+			- A,B,O
+			- TestVector
+			-- 0
+			-- 0
+			-- 0
+			- TestVector
+			-- 0
+			-- 1
+			-- 0
+		""".trimIndent())
+	}
 }

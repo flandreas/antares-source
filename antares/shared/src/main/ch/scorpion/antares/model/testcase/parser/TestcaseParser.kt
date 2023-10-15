@@ -54,9 +54,10 @@ class TestcaseParser(
 	private fun testVectors(): Compound<TestVectorNode> {
 		val list = mutableListOf<TestVectorNode>()
 		while (currentToken!!.type != EOF) {
-			list.add(testVector())
 			if (currentToken!!.type == EOL) {
 				eat(EOL)
+			} else {
+				list.add(testVector())
 			}
 		}
 		return Compound(lexer.location, list)
