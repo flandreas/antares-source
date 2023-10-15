@@ -5,15 +5,16 @@ import ch.scorpion.jabbah.base.dsl.DslTokenType.*
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.parser.AbstractParser
+import ch.scorpion.jabbah.base.parser.Parser
 import ch.scorpion.jabbah.base.parser.Token
 
 /**
- * Creates a [DslParser] for parsing a program text.
+ * Creates a [Parser] for parsing a program text.
  * @param semanticAnalyser the optional [SemanticAnalyser], or `null` if either no semantic analysis
  * is to be done, or the [ParserFactory] decides to (and insists upon) applying a particular
  * [SemanticAnalyser] implementation.
  */
-typealias ParserFactory = (program: String, semanticAnalyser: SemanticAnalyser?) -> DslParser
+typealias ParserFactory = (program: String, semanticAnalyser: SemanticAnalyser?) -> Parser
 
 /**
  * Parses sentences of the following grammar and creates a corresponding AST.
@@ -83,24 +84,6 @@ open class DslParser(
 	}
 
 	override fun parse(): Node = Compound(lexer.location, statementList()).also { semanticAnalyser?.analyse(it) }
-
-	/**
-	 * Calls [parse] and catches [DslError] by posting an [Issue] on the system's [EventBus].
-	 * @param metaData used for describing the [Issue]
-	 */
-	fun parseCatching(metaData: ScriptMetaData): Node? {
-		return try {
-			parse()
-		} catch (e: DslError) {
-			BaseModule.eventBus.post(IssueImpl(
-				severity = IssueSeverity.Error,
-				name = Translations.getString("base.dsl.scriptError.msg"),
-				description = e.message,
-				origin = metaData.origin,
-				context = metaData.context))
-			null
-		}
-	}
 
 	private fun statementList(): List<Node> {
 		val node = statement()

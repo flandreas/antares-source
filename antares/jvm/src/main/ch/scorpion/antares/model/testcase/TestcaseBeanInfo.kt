@@ -21,11 +21,14 @@ class TestcaseBeanInfo : AbstractBeanInfo<Testcase>() {
 
 		private val name = EditProperties.name()
 		private val description = EditProperties.description()
-		private val testVectors = EditProperties.script("testVectors", "antares.testcase.testVectors", beanProvider = testcaseBeanProvider)
+		//private val testVectors = EditProperties.script("testVectors", "antares.testcase.testVectors", beanProvider = testcaseBeanProvider)
 	}
 
 	override fun addProperties(bean: Testcase, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
+
+		val testVectors = EditProperties.script("testVectors", "antares.testcase.testVectors",
+			beanProvider = testcaseBeanProvider, bean::createParser)
 
 		properties.add(name.bind(editor, beanIdProvider(bean.id)))
 		properties.add(description.bind(editor, beanIdProvider(bean.id)))

@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.inout.DigitalCircuitInOut
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.testcase.parser.TestScript
+import ch.scorpion.antares.model.testcase.parser.TestcaseAnalyser
 import ch.scorpion.antares.model.testcase.parser.TestcaseInterpreter
 import ch.scorpion.antares.model.testcase.parser.TestcaseParser
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -13,17 +14,25 @@ import ch.scorpion.jabbah.execution.SignalHandler
 /**
  * The result provided by a [TestcaseRunner].
  *
+ * @property testName the name of the [Testcase]
  * @property names the name of the input and output ports from the plaintext test script
  * @property isOutput `true` indicates that the corresponding column refers to an output
  * @property collector contains the collected [TestVector]s whose output column values
  * have been replaced with [MatchedValue] containing the test result.
+ * @property errorMessage the error message if parsing or analysing the [Testcase] failed, `null` otherwise
  */
 data class TestRunResult(
 	val testName: String,
 	val names: List<String>,
 	val isOutput: List<Boolean>,
-	val collector: TestVectorCollector
+	val collector: TestVectorCollector,
+	val errorMessage: String? = null
 ) {
+	companion object {
+		fun error(testName: String, msg: String): TestRunResult =
+			TestRunResult(testName, emptyList(), emptyList(), TestVectorCollector(), msg)
+	}
+
 	/** Returns the number of failed [TestVector]s.*/
 	val failedCount: Int get() {
 		val failedVectors = mutableSetOf<TestVector>()
@@ -60,19 +69,22 @@ class TestcaseRunner(
 	 * result values.
 	 */
 	fun run(): TestRunResult {
-		val collector = TestVectorCollector()
+		try {
+			val collector = TestVectorCollector()
+			val testScript = TestcaseParser(text, TestcaseAnalyser(circuit)).parse() as TestScript
+			portNames = testScript.portNames.names.map { it.value!! }
 
-		val testScript = TestcaseParser(text).parse() as TestScript
-		portNames = testScript.portNames.names.map { it.value!! }
+			TestcaseInterpreter(testScript, collector).interpret()
 
-		TestcaseInterpreter(testScript, collector).interpret()
+			for (testVector in collector) {
+				currentTestVector = testVector
+				circuitRunner.run(circuit, ::setInputs, ::readOutputs)
+			}
 
-		for (testVector in collector) {
-			currentTestVector = testVector
-			circuitRunner.run(circuit, ::setInputs, ::readOutputs)
+			return TestRunResult(testName, portNames, determineIsOutput(), collector)
+		} catch (e: Throwable) {
+			return TestRunResult.error(testName, e.message ?: "Error")
 		}
-
-		return TestRunResult(testName, portNames, determineIsOutput(), collector)
 	}
 
 	private fun determineIsOutput(): List<Boolean> = portNames.map {

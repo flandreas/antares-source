@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
 import ch.scorpion.jabbah.base.dsl.Symbol
 import ch.scorpion.jabbah.base.dsl.SymbolTable
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.parser.Parser
 import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Describable
@@ -153,7 +154,7 @@ interface Graph : Namable, Describable, Storable, Bean {
 	 * The created [DslParser] contains a [SemanticAnalyser] that uses this [GraphView] as
 	 * context [SymbolTable] with all [GraphPort]s predefined as [Symbol]s.
 	 */
-	fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): DslParser
+	fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): Parser
 
 }
 

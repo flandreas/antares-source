@@ -1,6 +1,9 @@
 package ch.scorpion.antares.model.testcase
 
 import ch.scorpion.antares.model.DigitalGraph
+import ch.scorpion.antares.model.testcase.parser.TestcaseAnalyser
+import ch.scorpion.antares.model.testcase.parser.TestcaseParser
+import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
 import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.model.text.ScriptProperty
 import ch.scorpion.jabbah.edit.model.text.description.*
@@ -20,6 +23,12 @@ class Testcase(
 
 	/** Contains the executable test vectors. */
 	var testVectors: ScriptProperty = ScriptProperty(script)
+
+	/**
+	 * Non-persistent reference to the owing [DigitalGraph]. Used only for creating a
+	 * [SemanticAnalyser] when editing [testVectors].
+	 */
+	var graph: DigitalGraph? = null
 
 	override fun toString(): String = name.value
 
@@ -46,4 +55,9 @@ class Testcase(
 		description = Description.read("desc", reader)
 		testVectors = ScriptProperty(reader.readOptionalString("testVectors"))
 	}
+
+	/** ---- [Testcase] */
+
+	fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): TestcaseParser =
+		TestcaseParser(program, graph?.let { TestcaseAnalyser(it) })
 }

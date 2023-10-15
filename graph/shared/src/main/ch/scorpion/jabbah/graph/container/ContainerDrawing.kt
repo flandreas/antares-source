@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
-import ch.scorpion.jabbah.base.dsl.DslParser
 import ch.scorpion.jabbah.base.dsl.ScopedSymbolTable
 import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
 import ch.scorpion.jabbah.base.dsl.Symbol
@@ -12,6 +11,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.parser.Parser
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawableContainer
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -35,7 +35,10 @@ import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.vertice.ControlViewVisibility
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
-import ch.scorpion.jabbah.io.*
+import ch.scorpion.jabbah.io.Storable
+import ch.scorpion.jabbah.io.StorableCloner
+import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.io.StoreWriter
 
 /**
  * A [Drawing] that contains the graphical representation of a [SubGraphVertice]' outside view.
@@ -236,7 +239,7 @@ class ContainerDrawing(
 		}
 	}
 
-	fun createDrawSymbolScriptParser(program: String, @Suppress("UNUSED_PARAMETER") semanticAnalyser: SemanticAnalyser?): DslParser =
+	fun createDrawSymbolScriptParser(program: String, @Suppress("UNUSED_PARAMETER") semanticAnalyser: SemanticAnalyser?): Parser =
 		BaseModule.parserFactory(program, BaseModule.semanticAnalyserFactory(createDrawExecSymbolParserSymbolTable()))
 
 	private fun createDrawExecSymbolParserSymbolTable(): ScopedSymbolTable =

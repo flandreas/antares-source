@@ -25,9 +25,14 @@ class Testcases(
 
 	/**
 	 * The [DigitalGraph] owning this [Testcases]. Can be `null` in order to be instantiated by deserialization.
-	 * Used for sending events when adding or removing [Testcase]s.
+	 * Used for sending events when adding or removing [Testcase]s, and for promoting it to the inner
+	 * [Testcase]s.
 	 */
 	var graph: DigitalGraph? = graph
+		set(value) {
+			field = value
+			_testcases.forEach { it.graph = value }
+		}
 
 	fun get(id: Int): Testcase {
 		return testcases.first { it.id == id }
@@ -41,11 +46,13 @@ class Testcases(
 		if (!isLoading) {
 			testcase.id = getMaxId() + 1
 		}
+		testcase.graph = graph
 		_testcases.add(index, testcase)
 		eventBus.post(TestcaseAddedEvent(graph!!, testcase))
 	}
 
 	fun remove(testcase: Testcase) {
+		testcase.graph = null
 		_testcases.remove(testcase)
 		eventBus.post(TestcaseRemovedEvent(graph!!, testcase))
 	}

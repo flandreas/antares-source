@@ -25,7 +25,7 @@ class TestcaseAnalyser(
 	}
 
 	private fun throwSemanticError(key: String, vararg params: Any) {
-		throw SemanticError(TextLocation.UNDEFINED, Translations.getString(key, params))
+		throw SemanticError(TextLocation.UNDEFINED, Translations.getString(key, *params))
 	}
 
 	private fun ensurePortsExist(portNames: List<String>) {
@@ -48,10 +48,10 @@ class TestcaseAnalyser(
 
 	private fun ensureValueCount(portNameCount: Int, testVectors: List<List<ValueNode>>) {
 		testVectors.indexOfFirstOrNull { it.size > portNameCount }?.let {
-			throwSemanticError("antares.testcase.error.tooManyValues", it)
+			throwSemanticError("antares.testcase.error.tooManyValues", it + 1)
 		}
 		testVectors.indexOfFirstOrNull { it.size < portNameCount }?.let {
-			throwSemanticError("antares.testcase.error.tooFewValues", it)
+			throwSemanticError("antares.testcase.error.tooFewValues", it + 1)
 		}
 	}
 }

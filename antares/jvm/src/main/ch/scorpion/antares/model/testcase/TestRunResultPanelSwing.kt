@@ -78,13 +78,24 @@ class TestRunResultPanelSwing(
 	}
 
 	private fun updateSummaryLabel(result: TestRunResult) {
-		val failedCount = result.failedCount
-		if (failedCount == 0) {
-			summaryLabel.icon = PASSED_ICON
-			summaryLabel.text = "${result.testName}: ${Translations.getString("antares.testcase.results.summary.passed")}"
-		} else {
+		if (result.errorMessage != null) {
 			summaryLabel.icon = FAILED_ICON
-			summaryLabel.text = "${result.testName}: ${Translations.getString("antares.testcase.results.summary.failed", failedCount)}"
+			summaryLabel.text = result.errorMessage
+		} else {
+			val failedCount = result.failedCount
+			if (failedCount == 0) {
+				summaryLabel.icon = PASSED_ICON
+				summaryLabel.text =
+					"${result.testName}: ${Translations.getString("antares.testcase.results.summary.passed")}"
+			} else {
+				summaryLabel.icon = FAILED_ICON
+				summaryLabel.text = "${result.testName}: ${
+					Translations.getString(
+						"antares.testcase.results.summary.failed",
+						failedCount
+					)
+				}"
+			}
 		}
 	}
 
