@@ -92,7 +92,8 @@ class TestcaseRunner(
 		port is DigitalCircuitInOut && port.portType.isOutput
 	}.toList()
 
-	private fun setInputs(signalHandler: SignalHandler) {
+	@Suppress("UNUSED_PARAMETER")
+	private fun setInputs(signalHandler: SignalHandler, context: Any?) {
 		portNames.forEachIndexed { index, portName ->
 			val port = circuit.getGraphPort<DigitalSignal>(portName)
 			if (port is DigitalCircuitInOut && port.portType.isInput) {
@@ -103,7 +104,8 @@ class TestcaseRunner(
 		}
 	}
 
-	private fun readOutputs() {
+	@Suppress("UNUSED_PARAMETER")
+	private fun readOutputs(context: Any?) {
 		portNames.forEachIndexed { index, portName ->
 			val port = circuit.getGraphPort<DigitalSignal>(portName)
 			if (port is DigitalCircuitInOut && port.portType.isOutput) {

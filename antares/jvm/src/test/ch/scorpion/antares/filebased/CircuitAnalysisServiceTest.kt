@@ -10,7 +10,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class CircuitAnalysisTest : AbstractFileBasedTest() {
+class CircuitAnalysisServiceTest : AbstractFileBasedTest() {
 
 	companion object {
 		init {

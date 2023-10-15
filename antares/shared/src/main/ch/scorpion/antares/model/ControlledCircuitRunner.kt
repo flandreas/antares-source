@@ -55,19 +55,21 @@ class ControlledCircuitRunner(
 	 * Can be used for setting input signals.
 	 * @param epilogue code to be executed after simulation execution, but before the simulation is stopped.
 	 * Can be used for reading output signals.
+	 * @param context an optional context object to be passed into [prolog] and [epilogue]
 	 * @throws TooManyIterations if the maximum iteration count is reached
 	 */
 	fun run(
 		circuit: DigitalGraph,
-		prolog: (SignalHandler) -> Unit = {},
-		epilogue: () -> Unit = {}
+		prolog: (signalHandler:SignalHandler, context:Any?) -> Unit = { _,_ -> },
+		epilogue: (context:Any?) -> Unit = {},
+		context: Any? = null
 	) {
 		try {
 			timeService.reset()
 			startSimulation(circuit)
-			prolog(scheduler)
+			prolog(scheduler, context)
 			executeSimulation()
-			epilogue()
+			epilogue(context)
 		} finally {
 			stopSimulation(circuit)
 		}
