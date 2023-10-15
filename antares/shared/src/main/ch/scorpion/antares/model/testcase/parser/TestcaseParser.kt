@@ -67,11 +67,13 @@ class TestcaseParser(
 	}
 
 	private fun testVector(): TestVectorNode {
-		val list = mutableListOf<ValueNode>()
-		while (currentToken!!.type == LITERAL) {
-			list.add(ValueNode(lexer.location, (currentToken!!.value as Long).toULong()))
-			eat(LITERAL)
+		lexer.location.let {  loc ->
+			val list = mutableListOf<ValueNode>()
+			while (currentToken!!.type == LITERAL) {
+				list.add(ValueNode(lexer.location, (currentToken!!.value as Long).toULong()))
+				eat(LITERAL)
+			}
+			return TestVectorNode(loc, list)
 		}
-		return TestVectorNode(lexer.location, list)
 	}
 }

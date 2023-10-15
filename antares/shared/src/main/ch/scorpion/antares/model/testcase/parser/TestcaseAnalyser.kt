@@ -16,12 +16,12 @@ class TestcaseAnalyser(
 	override fun analyse(program: Node) {
 		val script = program as TestScript
 		val portNames = script.portNames.names.map { it.value!! }
-		val testVectors: List<List<ValueNode>> = script.testVectors.children.map { it.values }.toList()
+		//val testVectors: List<List<ValueNode>> = script.testVectors.children.map { it.values }.toList()
 
 		ensurePortsExist(portNames)
 		ensureAtLeastOneInput(portNames)
 		ensureAtLeastOneOutput(portNames)
-		ensureValueCount(portNames.size, testVectors)
+		ensureValueCount(portNames.size, script.testVectors.children)
 	}
 
 	private fun throwSemanticError(key: String, vararg params: Any) {
@@ -46,6 +46,16 @@ class TestcaseAnalyser(
 		}
 	}
 
+	private fun ensureValueCount(portNameCount: Int, testVectors: List<TestVectorNode>) {
+		testVectors.firstOrNull { it.values.size > portNameCount }?.let {
+			throwSemanticError("antares.testcase.error.tooManyValues", it.location.row)
+		}
+		testVectors.firstOrNull { it.values.size < portNameCount }?.let {
+			throwSemanticError("antares.testcase.error.tooFewValues", it.location.row)
+		}
+	}
+
+	/*
 	private fun ensureValueCount(portNameCount: Int, testVectors: List<List<ValueNode>>) {
 		testVectors.indexOfFirstOrNull { it.size > portNameCount }?.let {
 			throwSemanticError("antares.testcase.error.tooManyValues", it + 1)
@@ -54,4 +64,6 @@ class TestcaseAnalyser(
 			throwSemanticError("antares.testcase.error.tooFewValues", it + 1)
 		}
 	}
+	*/
+
 }
