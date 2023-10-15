@@ -10,8 +10,8 @@ import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_8
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.Word.Companion.of
+import ch.scorpion.jabbah.base.dsl.DslSemanticAnalyser
 import ch.scorpion.jabbah.base.dsl.Memory
-import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
 import ch.scorpion.jabbah.base.dsl.Symbol
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -32,7 +32,7 @@ class AntaresInterpreterSignalTest {
 			var b = a + 1
 		""".trimIndent()
 
-		val analyser = SemanticAnalyser(null)
+		val analyser = DslSemanticAnalyser(null)
 		analyser.scope.define(Symbol("a"))
 
 		val parser = AntaresParser(AntaresLexer(program), analyser)

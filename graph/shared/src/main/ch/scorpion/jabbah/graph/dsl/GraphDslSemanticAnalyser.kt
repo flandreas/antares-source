@@ -6,7 +6,7 @@ import ch.scorpion.jabbah.base.dsl.*
 
 class GraphDslSemanticAnalyser(
 	symbolTable: SymbolTable?
-) : SemanticAnalyser(symbolTable) {
+) : DslSemanticAnalyser(symbolTable) {
 
 	private var inInit = false
 	private var initVisited = false

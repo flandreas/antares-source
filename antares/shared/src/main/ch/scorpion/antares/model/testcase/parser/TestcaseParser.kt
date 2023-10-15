@@ -24,12 +24,15 @@ import ch.scorpion.jabbah.base.parser.Token
  */
 // TODO Support hexValue and binaryValue
 class TestcaseParser(
-	lexer: TestcaseLexer
+	lexer: TestcaseLexer,
+	private val analyser: TestcaseAnalyser? = null
 ) : AbstractParser(lexer) {
 
-	constructor(text: String): this(TestcaseLexer(text))
+	constructor(text: String, analyser: TestcaseAnalyser? = null): this(TestcaseLexer(text), analyser)
 
-	override fun parse(): Node = TestScript(lexer.location, portNames(), testVectors())
+	override fun parse(): Node = TestScript(lexer.location, portNames(), testVectors()).also {
+		analyser?.analyse(it)
+	}
 
 	private fun portNames(): PortNames {
 		val list = mutableListOf<Token<String>>()
