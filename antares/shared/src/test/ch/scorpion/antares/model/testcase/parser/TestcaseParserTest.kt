@@ -80,4 +80,21 @@ class TestcaseParserTest {
 			-- X
 		""".trimIndent())
 	}
+
+	@Test
+	fun shouldParseUndefined() {
+		val parser = TestcaseParser("""
+			A B O
+			0 Z z
+		""".trimIndent())
+
+		assertAST(parser.parse(), """
+			TestScript
+			- A,B,O
+			- TestVector
+			-- 0
+			-- Z
+			-- Z
+		""".trimIndent())
+	}
 }

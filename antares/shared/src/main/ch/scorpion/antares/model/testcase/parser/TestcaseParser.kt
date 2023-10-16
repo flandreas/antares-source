@@ -84,6 +84,7 @@ class TestcaseParser(
 					ID -> {
 						when ((currentToken!!.value as String).uppercase()) {
 							"X" -> list.add(ValueNode(lexer.location, Value.X))
+							"Z" -> list.add(ValueNode(lexer.location, Value.Z))
 							else -> throw SyntaxError(lexer.location,Translations.getString("base.dsl.invalidCharacter.msg", currentToken!!.value!!))
 						}
 						eat(ID)

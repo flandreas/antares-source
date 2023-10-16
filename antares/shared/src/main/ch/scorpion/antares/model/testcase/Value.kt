@@ -18,6 +18,7 @@ open class Value(
 
 	companion object {
 		val X = Value(0UL, DONT_CARE)
+		val Z = Value(0UL, UNDEFINED)
 	}
 
 	enum class Type {
