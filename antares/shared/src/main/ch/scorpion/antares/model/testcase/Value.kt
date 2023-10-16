@@ -4,15 +4,21 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.testcase.Value.State.*
 import ch.scorpion.antares.model.testcase.Value.State.NORMAL
 import ch.scorpion.antares.model.testcase.Value.Type.*
+import ch.scorpion.jabbah.edit.Cloneable
 
 open class Value(
 	val value: ULong,
 	val type: Type = Type.NORMAL
-) {
+) : Cloneable<Value> {
+
 	constructor(signal: DigitalSignal): this(
 		signal.toLong() ?: 0UL,
 		if (signal.isPartiallyUndefined) UNDEFINED else Type.NORMAL
 	)
+
+	companion object {
+		val X = Value(0UL, DONT_CARE)
+	}
 
 	enum class Type {
 		NORMAL,
@@ -26,7 +32,14 @@ open class Value(
 		FAILED
 	}
 
-	override fun toString(): String = value.toString()
+	override fun doClone(): Value = Value(value, type)
+
+	override fun toString(): String =
+		when (type) {
+			Type.NORMAL -> value.toString()
+			UNDEFINED -> "Z"
+			DONT_CARE -> "X"
+		}
 
 	open val state: State get() = NORMAL
 

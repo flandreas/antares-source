@@ -16,8 +16,6 @@ class TestcaseLexer(text: String) : BaseLexer(text) {
 	override fun isWhitespace(state: State): Boolean =
 		super.isWhitespace(state) && state.currentChar != '\n'
 
-	override fun isLiteral(state: State): Boolean = isNumber(state)
-
 	override fun nextTokenImpl(state: State): Token<Any> {
 		when (state.currentChar!!) {
 			'\n' -> return advanceWith(state, EOL_TOKEN)

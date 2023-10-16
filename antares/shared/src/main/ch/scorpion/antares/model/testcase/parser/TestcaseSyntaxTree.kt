@@ -1,5 +1,6 @@
 package ch.scorpion.antares.model.testcase.parser
 
+import ch.scorpion.antares.model.testcase.Value
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.dsl.AbstractNode
 import ch.scorpion.jabbah.base.dsl.Compound
@@ -56,7 +57,7 @@ class TestVectorNode(
 
 class ValueNode(
 	location: TextLocation,
-	val value: ULong
+	val value: Value
 ) : AbstractNode(location) {
 
 	override fun toString(): String = value.toString()

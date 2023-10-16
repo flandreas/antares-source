@@ -70,4 +70,21 @@ class TestcaseRunnerTest {
 
 		assertEquals(Value.State.FAILED, result.collector.get(2).getValue(2).state)
 	}
+
+	@Test
+	fun shouldAcceptDontCareOutput() {
+		val testScript = """
+			A B O
+			0 0 X
+		""".trimIndent()
+
+		val result = TestcaseRunner("test", testScript, circuit.graph as DigitalGraph).run()
+
+		assertEquals(3, result.names.size)
+		assertEquals(1, result.collector.size)
+
+		for (vector in result.collector) {
+			assertEquals(Value.State.PASSED, vector.getValue(2).state)
+		}
+	}
 }

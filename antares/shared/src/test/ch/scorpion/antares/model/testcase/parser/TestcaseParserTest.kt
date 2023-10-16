@@ -63,4 +63,21 @@ class TestcaseParserTest {
 			-- 0
 		""".trimIndent())
 	}
+
+	@Test
+	fun shouldParseDontCare() {
+		val parser = TestcaseParser("""
+			A B O
+			0 0 X
+		""".trimIndent())
+
+		assertAST(parser.parse(), """
+			TestScript
+			- A,B,O
+			- TestVector
+			-- 0
+			-- 0
+			-- X
+		""".trimIndent())
+	}
 }

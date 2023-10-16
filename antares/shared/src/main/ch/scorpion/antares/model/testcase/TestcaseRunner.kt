@@ -74,7 +74,7 @@ class TestcaseRunner(
 			val testScript = TestcaseParser(text, TestcaseAnalyser(circuit)).parse() as TestScript
 			portNames = testScript.portNames.names.map { it.value!! }
 
-			TestcaseInterpreter(testScript, collector).interpret()
+			TestcaseInterpreter(testScript, circuit, collector).interpret()
 
 			for (testVector in collector) {
 				currentTestVector = testVector

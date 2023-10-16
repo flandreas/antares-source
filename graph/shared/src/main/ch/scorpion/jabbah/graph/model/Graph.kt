@@ -37,7 +37,7 @@ interface GraphFactory {
  * surrounding [Graph] that uses this [Graph], such as to derive a proper clock design for synchronous
  * applications.
  */
-interface Graph : Namable, Describable, Storable, Bean {
+interface Graph : GraphPortOwner, Namable, Describable, Storable, Bean {
 
 	val type: GraphType
 
@@ -139,9 +139,6 @@ interface Graph : Namable, Describable, Storable, Bean {
 
     /** Called by the execution environment after the execution has been stopped.*/
     fun executionStopped(signalHandler: SignalHandler)
-
-    /** Returns the [GraphPort] with the specified name.*/
-    fun <T: Any> getGraphPort(name: String): GraphPort<T>?
 
     /** Returns the [GraphInput] or the [BidirectionalPort] with the specified name.*/
     fun <T: Any> getGraphInput(name: String): GraphInput<T>?

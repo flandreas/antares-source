@@ -152,7 +152,7 @@ class TestRunResultPanelSwing(
 				Value.State.FAILED -> {
 					label.background = failedBackgroundColor
 					label.foreground = failedTextColor
-					label.text = "E: ${(value as MatchedValue).expected} / A: ${value.value}"
+					label.text = "E: ${(value as MatchedValue).expected} / A: $value"
 				}
 				Value.State.PASSED -> {
 					label.background = successBackgroundColor

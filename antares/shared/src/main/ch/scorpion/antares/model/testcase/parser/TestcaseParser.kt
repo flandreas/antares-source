@@ -1,9 +1,12 @@
 package ch.scorpion.antares.model.testcase.parser
 
 import ch.scorpion.antares.model.testcase.Testcase
+import ch.scorpion.antares.model.testcase.Value
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.Compound
 import ch.scorpion.jabbah.base.dsl.DslTokenType.*
 import ch.scorpion.jabbah.base.dsl.Node
+import ch.scorpion.jabbah.base.dsl.SyntaxError
 import ch.scorpion.jabbah.base.parser.AbstractParser
 import ch.scorpion.jabbah.base.parser.Token
 
@@ -13,12 +16,13 @@ import ch.scorpion.jabbah.base.parser.Token
  * <pre>
  *     testScript : portNames { testVector }
  *     portNames : portName portName { portName } EOL
- *     portName: CHAR
+ *     portName: ID
  *     testVector : value value { value } EOL
- *     value : decimalValue | hexValue | binaryValue
+ *     value : decimalValue | hexValue | binaryValue | dontCare
  *     decimalValue : { decimalDigit }
  *     hexValue : '0x' { hexDigit }
  *     binaryValue : '0b' { binaryDigit }
+ *     dontCare : 'X'
  *     EOL : "\n"
  * </pre>
  */
@@ -29,6 +33,8 @@ class TestcaseParser(
 ) : AbstractParser(lexer) {
 
 	constructor(text: String, analyser: TestcaseAnalyser? = null): this(TestcaseLexer(text), analyser)
+
+	private val onLine: Boolean get() = currentToken!!.type != EOF && currentToken!!.type != EOL
 
 	override fun parse(): Node = TestScript(lexer.location, portNames(), testVectors()).also {
 		analyser?.analyse(it)
@@ -69,9 +75,21 @@ class TestcaseParser(
 	private fun testVector(): TestVectorNode {
 		lexer.location.let {  loc ->
 			val list = mutableListOf<ValueNode>()
-			while (currentToken!!.type == LITERAL) {
-				list.add(ValueNode(lexer.location, (currentToken!!.value as Long).toULong()))
-				eat(LITERAL)
+			while (onLine) {
+				when (currentToken!!.type) {
+					LITERAL -> {
+						list.add(ValueNode(lexer.location, Value((currentToken!!.value as Long).toULong())))
+						eat(LITERAL)
+					}
+					ID -> {
+						when ((currentToken!!.value as String).uppercase()) {
+							"X" -> list.add(ValueNode(lexer.location, Value.X))
+							else -> throw SyntaxError(lexer.location,Translations.getString("base.dsl.invalidCharacter.msg", currentToken!!.value!!))
+						}
+						eat(ID)
+					}
+					else -> throw SyntaxError(lexer.location, Translations.getString("base.dsl.unexpectedToken.msg", currentToken!!.type.id))
+				}
 			}
 			return TestVectorNode(loc, list)
 		}
