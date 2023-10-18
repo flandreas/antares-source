@@ -1,11 +1,7 @@
 package ch.scorpion.antares.model.testcase
 
 import ch.scorpion.antares.view.style.AntaresTheme
-import ch.scorpion.jabbah.base.AbstractAction
-import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
@@ -14,18 +10,15 @@ import ch.scorpion.jabbah.draw.graphics.PredefinedColorRepository
 import ch.scorpion.jabbah.draw.style.Themes
 import java.awt.BorderLayout
 import java.awt.Component
-import java.awt.Dimension
-import java.awt.Frame
 import javax.swing.*
 import javax.swing.table.AbstractTableModel
 import javax.swing.table.DefaultTableCellRenderer
 
 /**
- * Displays the results of a [TestcaseRunner] as a table.
+ * Displays [TestRunResult]s as a table.
  */
 class TestRunResultPanelSwing(
-	result: TestRunResult,
-	private val closeHandler: () -> Unit
+	result: TestRunResult
 ) : JPanel() {
 
 	companion object {
@@ -33,29 +26,11 @@ class TestRunResultPanelSwing(
 		private val INPUT_CELL_RENDERER = InputCellRenderer()
 		private val OUTPUT_CELL_RENDERER = OutputCellRenderer()
 		private const val COLUMN_WIDTH = 30
-
-		private val FAILED_ICON = UiUtil.themedIcon("/img/error-16.png")
-		private val PASSED_ICON = UiUtil.themedIcon("/img/checkmark.png")
-
-		fun showAsDialog(
-			result: TestRunResult,
-			parent: Frame = Frame.getFrames()[0]
-		) {
-			DialogBuilder<TestRunResultPanelSwing>(parent)
-				.content { dialog -> TestRunResultPanelSwing(result) { dialog.dispose()} }
-				.title(Translations.getString("antares.testcase.results.title"))
-				.defaultButton { it.closeButton }
-				.minimumSize(Dimension(200, 200))
-				.preferredSize(Dimension(400, 300))
-				.show()
-		}
 	}
 
 	private val summaryLabel = JLabel()
 	private val table = JTable(TableModel(result))
 	private val scrollPane = JScrollPane(table)
-	private val closeAction = CloseAction()
-	private val closeButton = JButton(ActionWrapperSwing(closeAction))
 
 	init {
 		buildUI()
@@ -69,32 +44,17 @@ class TestRunResultPanelSwing(
 
 		add(summaryLabel, BorderLayout.NORTH)
 		add(scrollPane, BorderLayout.CENTER)
-
-		val buttonPanel = JPanel()
-		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
-		buttonPanel.add(Box.createHorizontalGlue())
-		buttonPanel.add(closeButton)
-		add(buttonPanel, BorderLayout.SOUTH)
 	}
 
 	private fun updateSummaryLabel(result: TestRunResult) {
 		if (result.errorMessage != null) {
-			summaryLabel.icon = FAILED_ICON
 			summaryLabel.text = result.errorMessage
 		} else {
 			val failedCount = result.failedCount
 			if (failedCount == 0) {
-				summaryLabel.icon = PASSED_ICON
-				summaryLabel.text =
-					"${result.testName}: ${Translations.getString("antares.testcase.results.summary.passed")}"
+				summaryLabel.text = Translations.getString("antares.testcase.results.summary.passed")
 			} else {
-				summaryLabel.icon = FAILED_ICON
-				summaryLabel.text = "${result.testName}: ${
-					Translations.getString(
-						"antares.testcase.results.summary.failed",
-						failedCount
-					)
-				}"
+				summaryLabel.text = Translations.getString("antares.testcase.results.summary.failed", failedCount)
 			}
 		}
 	}
@@ -165,12 +125,6 @@ class TestRunResultPanelSwing(
 			}
 
 			return label
-		}
-	}
-
-	private inner class CloseAction : AbstractAction("base.action.close") {
-		override fun execute(event: ActionEvent) {
-			closeHandler()
 		}
 	}
 }

@@ -1,7 +1,9 @@
 package ch.scorpion.antares.model.testcase
 
+import ch.scorpion.jabbah.base.Translations
+
 /**
- * The result provided by a [TestcaseRunner].
+ * The result provided by a [TestcaseCircuitRunner].
  *
  * @property testName the name of the [Testcase]
  * @property names the name of the input and output ports from the plaintext test script
@@ -11,6 +13,7 @@ package ch.scorpion.antares.model.testcase
  * @property errorMessage the error message if parsing or analysing the [Testcase] failed, `null` otherwise
  */
 data class TestRunResult(
+	val type: Type,
 	val testName: String,
 	val names: List<String>,
 	val isOutput: List<Boolean>,
@@ -18,8 +21,20 @@ data class TestRunResult(
 	val errorMessage: String? = null
 ) {
 	companion object {
-		fun error(testName: String, msg: String): TestRunResult =
-			TestRunResult(testName, emptyList(), emptyList(), TestVectorCollector(), msg)
+		fun error(type: Type, testName: String, msg: String): TestRunResult =
+			TestRunResult(type, testName, emptyList(), emptyList(), TestVectorCollector(), msg)
+	}
+
+	enum class Type {
+		Circuit,
+		Script;
+
+		override fun toString(): String {
+			return when(this) {
+				Circuit -> Translations.getString("antares.testcase.result.type.circuit")
+				Script -> Translations.getString("antares.testcase.result.type.script")
+			}
+		}
 	}
 
 	/** Returns the number of failed [TestVector]s.*/

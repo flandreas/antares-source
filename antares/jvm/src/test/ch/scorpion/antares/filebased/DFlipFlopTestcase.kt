@@ -1,7 +1,7 @@
 package ch.scorpion.antares.filebased
 
 import ch.scorpion.antares.model.DigitalGraph
-import ch.scorpion.antares.model.testcase.TestcaseRunner
+import ch.scorpion.antares.model.testcase.TestcaseCircuitRunner
 import ch.scorpion.antares.model.testcase.Value
 import ch.scorpion.jabbah.base.UUID
 import kotlin.test.BeforeTest
@@ -31,7 +31,7 @@ class DFlipFlopTestcase : AbstractFileBasedTest() {
 			^1 1 1 0
 		""".trimIndent()
 
-		val result = TestcaseRunner("test", testScript, openedCircuitView.graph as DigitalGraph).run()
+		val result = TestcaseCircuitRunner("test", testScript, openedCircuitView.graph as DigitalGraph).run()
 
 		assertEquals(3, result.collector.size)
 		for (vector in result.collector) {

@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class TestcaseRunnerTest {
+class TestcaseCircuitRunnerTest {
 
 	companion object {
 		init {
@@ -30,7 +30,7 @@ class TestcaseRunnerTest {
 			1 1 1
 		""".trimIndent()
 
-		val result = TestcaseRunner("test", testScript, circuit.graph as DigitalGraph).run()
+		val result = TestcaseCircuitRunner("test", testScript, circuit.graph as DigitalGraph).run()
 
 		assertEquals(3, result.names.size)
 		assertEquals(4, result.collector.size)
@@ -52,7 +52,7 @@ class TestcaseRunnerTest {
 			1 1 1
 		""".trimIndent()
 
-		val result = TestcaseRunner("test", testScript, circuit.graph as DigitalGraph).run()
+		val result = TestcaseCircuitRunner("test", testScript, circuit.graph as DigitalGraph).run()
 
 		assertEquals(3, result.names.size)
 		assertEquals(4, result.collector.size)
@@ -68,7 +68,7 @@ class TestcaseRunnerTest {
 			0 0 X
 		""".trimIndent()
 
-		val result = TestcaseRunner("test", testScript, circuit.graph as DigitalGraph).run()
+		val result = TestcaseCircuitRunner("test", testScript, circuit.graph as DigitalGraph).run()
 
 		assertEquals(3, result.names.size)
 		assertEquals(1, result.collector.size)
@@ -89,7 +89,7 @@ class TestcaseRunnerTest {
 			1 1 1
 		""".trimIndent()
 
-		val result = TestcaseRunner("test", testScript, circuit.graph as DigitalGraph).run()
+		val result = TestcaseCircuitRunner("test", testScript, circuit.graph as DigitalGraph).run()
 		for (vector in result.collector) {
 			assertEquals(Value.State.PASSED, vector.getValue(2).state)
 		}
@@ -104,7 +104,7 @@ class TestcaseRunnerTest {
 			1 0 1
 		""".trimIndent()
 
-		val result = TestcaseRunner("test", testScript, circuit.graph as DigitalGraph).run()
+		val result = TestcaseCircuitRunner("test", testScript, circuit.graph as DigitalGraph).run()
 		assertEquals(Value.State.PASSED, result.collector.get(0).getValue(2).state)
 		assertEquals(Value.State.FAILED, result.collector.get(1).getValue(2).state)
 		assertEquals(Value.Z, result.collector.get(1).getValue(2))

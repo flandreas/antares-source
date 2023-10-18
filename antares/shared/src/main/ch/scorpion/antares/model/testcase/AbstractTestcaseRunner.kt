@@ -4,10 +4,11 @@ import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.inout.DigitalCircuitInOut
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.antares.model.testcase.parser.TestScript
 
 abstract class AbstractTestcaseRunner(
 	protected val testName: String,
-	protected val text: String,
+	protected val testScript: TestScript,
 	protected val circuit: DigitalGraph
 ) {
 

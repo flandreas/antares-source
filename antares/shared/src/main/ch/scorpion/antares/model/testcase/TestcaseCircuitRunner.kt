@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.ControlledCircuitRunner
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.inout.DigitalCircuitInOut
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.testcase.TestRunResult.Type.Circuit
 import ch.scorpion.antares.model.testcase.parser.TestScript
 import ch.scorpion.antares.model.testcase.parser.TestcaseAnalyser
 import ch.scorpion.antares.model.testcase.parser.TestcaseInterpreter
@@ -12,11 +13,16 @@ import ch.scorpion.antares.model.testcase.parser.TestcaseParser
 /**
  * Runs a circuit test script (provided as plain text) on a particular [DigitalGraph].
  */
-class TestcaseRunner(
+class TestcaseCircuitRunner(
 	testName: String,
-	text: String,
+	testScript: TestScript,
 	circuit: DigitalGraph
-) : AbstractTestcaseRunner(testName, text, circuit) {
+) : AbstractTestcaseRunner(testName, testScript, circuit) {
+
+	constructor(testName: String, text: String, circuit: DigitalGraph): this(
+		testName,
+		TestcaseParser(text, TestcaseAnalyser(circuit)).parse() as TestScript,
+		circuit)
 
 	private val circuitRunner = ControlledCircuitRunner()
 
@@ -28,7 +34,6 @@ class TestcaseRunner(
 	override fun run(): TestRunResult {
 		try {
 			val collector = TestVectorCollector()
-			val testScript = TestcaseParser(text, TestcaseAnalyser(circuit)).parse() as TestScript
 			portNames = testScript.portNames.names.map { it.value!! }
 
 			TestcaseInterpreter(testScript, circuit, collector).interpret()
@@ -38,9 +43,9 @@ class TestcaseRunner(
 				circuitRunner.run(circuit, ::setInputs, ::readOutputs)
 			}
 
-			return TestRunResult(testName, portNames, determineIsOutput(portNames), collector)
+			return TestRunResult(Circuit, testName, portNames, determineIsOutput(portNames), collector)
 		} catch (e: Throwable) {
-			return TestRunResult.error(testName, e.message ?: "Error")
+			return TestRunResult.error(Circuit, testName, e.message ?: "Error")
 		}
 	}
 

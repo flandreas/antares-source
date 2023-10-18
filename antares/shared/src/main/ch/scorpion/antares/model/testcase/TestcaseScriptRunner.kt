@@ -3,6 +3,7 @@ package ch.scorpion.antares.model.testcase
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.inout.DigitalCircuitInOut
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.testcase.TestRunResult.Type.Script
 import ch.scorpion.antares.model.testcase.parser.TestScript
 import ch.scorpion.antares.model.testcase.parser.TestcaseAnalyser
 import ch.scorpion.antares.model.testcase.parser.TestcaseInterpreter
@@ -17,9 +18,14 @@ import ch.scorpion.jabbah.base.module.BaseModule
  */
 class TestcaseScriptRunner(
 	testName: String,
-	text: String,
+	testScript: TestScript,
 	circuit: DigitalGraph
-) : AbstractTestcaseRunner(testName, text, circuit) {
+) : AbstractTestcaseRunner(testName, testScript, circuit) {
+
+	constructor(testName: String, text: String, circuit: DigitalGraph): this(
+		testName,
+		TestcaseParser(text, TestcaseAnalyser(circuit)).parse() as TestScript,
+		circuit)
 
 	private val memory = Memory()
 
@@ -28,7 +34,6 @@ class TestcaseScriptRunner(
 
 		try {
 			val collector = TestVectorCollector()
-			val testScript = TestcaseParser(text, TestcaseAnalyser(circuit)).parse() as TestScript
 			portNames = testScript.portNames.names.map { it.value!! }
 			TestcaseInterpreter(testScript, circuit, collector).interpret()
 
@@ -43,9 +48,9 @@ class TestcaseScriptRunner(
 				readOutputs(null)
 			}
 
-			return TestRunResult(testName, portNames, determineIsOutput(portNames), collector)
+			return TestRunResult(Script, testName, portNames, determineIsOutput(portNames), collector)
 		} catch (e: Throwable) {
-			return TestRunResult.error(testName, e.message ?: "Error")
+			return TestRunResult.error(Script, testName, e.message ?: "Error")
 		}
 	}
 

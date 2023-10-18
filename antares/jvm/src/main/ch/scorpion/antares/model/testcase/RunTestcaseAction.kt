@@ -33,17 +33,10 @@ class RunTestcaseAction(
 		// such as GraphViewExecutionAnimator that listen on Actors of the main circuit
 		val clone = StorableCloner.clone(circuit)
 
-		val runner = TestcaseRunner(testcase!!.name.getTranslation(), testcase!!.testVectors.script!!, clone)
+		val runner = CombinedTestcaseRunner(testcase!!.name.getTranslation(), testcase!!.testVectors.script!!, clone)
 
 		InvocationHandler.invoke {
-			try {
-				TestRunResultPanelSwing.showAsDialog(runner.run())
-			} catch (e: Throwable) {
-				// TODO Catch syntax errors etc.
-				throw e
-			} finally {
-				runner.dispose()
-			}
+			CombinedTestRunResultPanelSwing.showAsDialog(runner.run())
 		}
 	}
 }
