@@ -12,23 +12,28 @@ class AntaresLexer(text: String) : DslLexer(text) {
 		super.isLiteral(state) || isUndefinedHexLiteral(state)
 
 	override fun isNumber(state: State): Boolean =
-		isHexLiteral(state) || super.isNumber(state)
+		isHexLiteral(state) || isBinaryLiteral(state) || super.isNumber(state)
 
 	override fun literal(state: State): Token<Any> =
 		when {
 			isUndefinedHexLiteral(state) -> literalToken(undefinedHexLiteral(state))
 			isHexLiteral(state) -> literalToken(hexLiteral(state))
+			isBinaryLiteral(state) -> literalToken(binaryLiteral(state))
 			else -> super.literal(state)
 		}
 
 	override fun number(state: State): Token<Any> =
 		when {
 			isHexLiteral(state) -> literalToken(hexLiteral(state))
+			isBinaryLiteral(state) -> literalToken(binaryLiteral(state))
 			else -> super.number(state)
 		}
 
 	private fun isHexLiteral(state: State): Boolean =
-		state.currentChar == '0' && peek(state) == 'x'
+		state.currentChar == '0' && peek(state)?.uppercaseChar() == 'X'
+
+	private fun isBinaryLiteral(state: State): Boolean =
+		state.currentChar == '0' && peek(state)?.uppercaseChar() == 'B'
 
 	private fun isUndefinedHexLiteral(state: State): Boolean =
 		isHexLiteral(state) && peek(state, 2) == '?'
@@ -53,5 +58,16 @@ class AntaresLexer(text: String) : DslLexer(text) {
 		} else {
 			throw SyntaxError(state.location, Translations.getString("antares.dsl.expectedBitWidthNumber.msg"))
 		}
+	}
+
+	private fun binaryLiteral(state: State): Long {
+		advance(state) // 0
+		advance(state) // b
+		val result = StringBuilder()
+		while (state.currentChar != null && BitOperation.BINARY_DIGITS.contains(state.currentChar!!.uppercaseChar())) {
+			result.append(state.currentChar!!)
+			advance(state)
+		}
+		return BitOperation.binaryToLong(result.toString()).toLong()
 	}
 }

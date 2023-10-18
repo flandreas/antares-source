@@ -19,8 +19,10 @@ import ch.scorpion.jabbah.graph.dsl.GraphDslParser
  *     bitAccess : scalarVariable "@" factor
  *     literal : super.literal
  *             | hexLiteral
+ *             | binaryLiteral
  *     hexLiteral : definedHexLiteral | undefinedHexLiteral
- *     definedHexLiteral : "0x" LONG
+ *     binaryLiteral : "0b" binaryNumber
+ *     definedHexLiteral : "0x" hexNumber
  *     undefinedHexLiteral : "0x?" LONG
  * </pre>
  */

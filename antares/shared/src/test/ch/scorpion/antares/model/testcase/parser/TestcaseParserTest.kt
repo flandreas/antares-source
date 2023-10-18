@@ -119,4 +119,38 @@ class TestcaseParserTest {
 			-- 1
 		""".trimIndent())
 	}
+
+	@Test
+	fun shouldParseHexValues() {
+		val parser = TestcaseParser("""
+			A B O
+			0xFF 0x0 0xA
+		""".trimIndent())
+
+		assertAST(parser.parse(), """
+			TestScript
+			- A,B,O
+			- TestVector
+			-- 255
+			-- 0
+			-- 10
+		""".trimIndent())
+	}
+
+	@Test
+	fun shouldParseBinaryValues() {
+		val parser = TestcaseParser("""
+			A B O
+			0b11 0b0100 0b11111111
+		""".trimIndent())
+
+		assertAST(parser.parse(), """
+			TestScript
+			- A,B,O
+			- TestVector
+			-- 3
+			-- 4
+			-- 255
+		""".trimIndent())
+	}
 }

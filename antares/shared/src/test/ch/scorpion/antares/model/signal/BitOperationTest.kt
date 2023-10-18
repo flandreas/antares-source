@@ -53,8 +53,18 @@ class BitOperationTest {
 		assertEquals(5UL, BitOperation.hexToLong("5"))
 		assertEquals(18UL, BitOperation.hexToLong("12"))
 		assertEquals(10UL, BitOperation.hexToLong("A"))
+		assertEquals(10UL, BitOperation.hexToLong("a"))
 		assertEquals(255UL, BitOperation.hexToLong("FF"))
 		assertEquals(65535UL, BitOperation.hexToLong("FFFF"))
+	}
+
+	@Test
+	fun shouldConvertBinaryToLong() {
+		assertEquals(0UL, BitOperation.binaryToLong(""))
+		assertEquals(0UL, BitOperation.binaryToLong("0"))
+		assertEquals(1UL, BitOperation.binaryToLong("1"))
+		assertEquals(4UL, BitOperation.binaryToLong("0100"))
+		assertEquals(15UL, BitOperation.binaryToLong("1111"))
 	}
 
 	@Test

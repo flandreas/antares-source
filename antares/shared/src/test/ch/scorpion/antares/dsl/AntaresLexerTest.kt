@@ -12,9 +12,9 @@ class AntaresLexerTest {
 
 	@Test
 	fun shouldScanHexLiteral() {
-		assertHexLiteral(255, "0xFF")
-		assertHexLiteral(255, "0xff")
-		assertHexLiteral(7006, "0x1B5E")
+		assertNumberLiteral(255, "0xFF")
+		assertNumberLiteral(255, "0xff")
+		assertNumberLiteral(7006, "0x1B5E")
 	}
 
 	@Test
@@ -27,7 +27,15 @@ class AntaresLexerTest {
 		assertEquals(Word.undefined(BitWidth.BW_4), token.value)
 	}
 
-	private fun assertHexLiteral(expected: Long, literal: String) {
+	@Test
+	fun shouldScanBinaryLiteral() {
+		assertNumberLiteral(0, "0b0")
+		assertNumberLiteral(3, "0b11")
+		assertNumberLiteral(9, "0b1001")
+		assertNumberLiteral(255, "0b11111111")
+	}
+
+	private fun assertNumberLiteral(expected: Long, literal: String) {
 		val lexer = AntaresLexer("a = $literal")
 		assertId("a", lexer)
 		assertToken(DslTokenType.ASSIGN, lexer)

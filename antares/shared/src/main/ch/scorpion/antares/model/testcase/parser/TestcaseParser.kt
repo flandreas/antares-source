@@ -88,7 +88,7 @@ class TestcaseParser(
 
 	private fun value(): ValueNode {
 		return when (currentToken!!.type) {
-			LITERAL -> number(Value.Type.NORMAL)
+			LITERAL -> decimalValue(Value.Type.NORMAL)
 			DONT_CARE -> dontCare()
 			UNDEFINED -> undefined()
 			CARET -> clockedNumber()
@@ -96,7 +96,7 @@ class TestcaseParser(
 		}
 	}
 
-	private fun number(type: Value.Type): ValueNode {
+	private fun decimalValue(type: Value.Type): ValueNode {
 		val value = Value((currentToken!!.value as Long).toULong(), type)
 		eat(LITERAL)
 		return ValueNode(lexer.location, value)
@@ -114,6 +114,6 @@ class TestcaseParser(
 
 	private fun clockedNumber(): ValueNode {
 		eat(CARET)
-		return number(Value.Type.CLOCKED)
+		return decimalValue(Value.Type.CLOCKED)
 	}
 }

@@ -26,6 +26,7 @@ import kotlin.math.pow
  */
 object BitOperation {
 
+	val BINARY_DIGITS = listOf('0', '1')
     val HEX_CHAR = listOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'X', 'Z')
 	val HEY_KEY = listOf(VK_0, VK_1, VK_2, VK_3, VK_4, VK_5, VK_6, VK_7, VK_8, VK_9, VK_A, VK_B, VK_C, VK_D, VK_E, VK_F, VK_X, VK_Z)
 	private val POWER = Array(63 + 1) {
@@ -98,22 +99,18 @@ object BitOperation {
 		}
 	}
 
-    /** Converts a hexadecimal value to a decimal long value*/
-    fun hexToLong(hex: String): ULong {
-        var value = 0UL
-        var factor = 1UL
-
-        for (c in hex.uppercase().reversed()) {
-	        value += when (c) {
-		        in '0'..'9' -> factor * (c.code - '0'.code).toULong()
-		        in 'A'..'F' -> factor * (c.code - 'A'.code + 10).toULong()
-		        else -> throw IllegalArgumentException("'$hex' is not a valid hexadecimal number")
-	        }
-            factor *= 16UL
-        }
-
-        return value
+    /** Converts a hexadecimal value to a decimal long value. */
+    fun hexToLong(hex: String): ULong = if (hex.isEmpty()) {
+	    0UL
+    } else {
+	    hex.toULong(16)
     }
+
+	fun binaryToLong(binary: String): ULong = if (binary.isEmpty()) {
+		0UL
+	} else {
+		binary.toULong(2)
+	}
 
     /**
      * Returns the specified hexadecimal character as a [DigitalSignal] of the specified [BitWidth], or `null` if [hex]
