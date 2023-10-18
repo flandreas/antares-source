@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.ActivationRecord
 import ch.scorpion.jabbah.base.dsl.RuntimeError
 import ch.scorpion.jabbah.base.dsl.Variable
+import ch.scorpion.jabbah.base.parser.TextLocation
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphPort
 import ch.scorpion.jabbah.graph.model.param.GraphParamValues
@@ -33,22 +34,19 @@ class GraphActivationRecord(private val graph: Graph) : ActivationRecord {
 	}
 
 	override fun getValue(variable: Variable): Any =
-		getOptionalValue(variable) ?: throw RuntimeError(variable.location, Translations.getString("antares.dsl.noValueAtPort.msg", variable.token.value!!))
+		getValue(variable.token.value!!, variable.location)
 
-	override fun getOptionalValue(variable: Variable): Any? {
-		return getPortValue(variable) ?: getParamValue(variable)
-	}
+	override fun getValue(name: String, location: TextLocation): Any =
+		getOptionalValue(name) ?: throw RuntimeError(location, Translations.getString("antares.dsl.noValueAtPort.msg", name))
 
-	private fun getPortValue(variable: Variable): Any? {
-		val name = variable.token.value!!
-		val port = graph.getGraphPort<Any>(name)
-		return port?.signal
-	}
+	override fun getOptionalValue(variable: Variable): Any? = getOptionalValue(variable.token.value!!)
 
-	private fun getParamValue(variable: Variable): Any? {
-		val name = variable.token.value!!
-		return graph.parameterValues.getTypedValue<Any>(name)?.let {
+	override fun getOptionalValue(name: String, location: TextLocation): Any? = getPortValue(name) ?: getParamValue(name)
+
+	private fun getPortValue(name: String): Any? = graph.getGraphPort<Any>(name)?.signal
+
+	private fun getParamValue(name: String): Any? =
+		graph.parameterValues.getTypedValue<Any>(name)?.let {
 			it.type.toDslValue(it.value)
 		}
-	}
 }

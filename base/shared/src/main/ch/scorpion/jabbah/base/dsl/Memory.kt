@@ -99,6 +99,8 @@ class Memory(private val context: ActivationRecord? = null) {
 	fun getValue(variable: Variable): Any =
 		callStack.peek().getValue(variable)
 
+	fun getValue(name: String): Any = callStack.peek().getValue(name)
+
 	fun getOptionalValue(variable: Variable): Any? =
 		callStack.peek().getOptionalValue(variable)
 }

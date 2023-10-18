@@ -1,6 +1,5 @@
 package ch.scorpion.antares.model.testcase
 
-import ch.scorpion.antares.model.ControlledCircuitRunner
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.inout.DigitalCircuitInOut
 import ch.scorpion.antares.model.signal.DigitalSignal
@@ -8,34 +7,40 @@ import ch.scorpion.antares.model.testcase.parser.TestScript
 import ch.scorpion.antares.model.testcase.parser.TestcaseAnalyser
 import ch.scorpion.antares.model.testcase.parser.TestcaseInterpreter
 import ch.scorpion.antares.model.testcase.parser.TestcaseParser
+import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.dsl.Interpreter
+import ch.scorpion.jabbah.base.dsl.Memory
+import ch.scorpion.jabbah.base.module.BaseModule
 
 /**
- * Runs a circuit test script (provided as plain text) on a particular [DigitalGraph].
+ * Runs a circuit test script on the execution script of a [DigitalGraph].
  */
-class TestcaseRunner(
+class TestcaseScriptRunner(
 	testName: String,
 	text: String,
 	circuit: DigitalGraph
 ) : AbstractTestcaseRunner(testName, text, circuit) {
 
-	private val circuitRunner = ControlledCircuitRunner()
+	private val memory = Memory()
 
-	/**
-	 * Runs the [TestVector]s contained in [text] and returns the [TestRunResult],
-	 * whose [TestVectorCollector] output columns contain [MatchedValue] with the actual
-	 * result values.
-	 */
 	override fun run(): TestRunResult {
+		require(StringUtils.isNotBlank(circuit.script)) { "Circuit's script must not be empty"}
+
 		try {
 			val collector = TestVectorCollector()
 			val testScript = TestcaseParser(text, TestcaseAnalyser(circuit)).parse() as TestScript
 			portNames = testScript.portNames.names.map { it.value!! }
-
 			TestcaseInterpreter(testScript, circuit, collector).interpret()
 
+			val execScriptInterpreter = createExecScriptInterpreter(circuit.script!!, memory)
+
 			for (testVector in collector) {
+				defineMemory()
 				currentTestVector = testVector
-				circuitRunner.run(circuit, ::setInputs, ::readOutputs)
+
+				setInputs(null)
+				execScriptInterpreter.interpret(keepMemory = true)
+				readOutputs(null)
 			}
 
 			return TestRunResult(testName, portNames, determineIsOutput(portNames), collector)
@@ -44,19 +49,26 @@ class TestcaseRunner(
 		}
 	}
 
-	override fun processInputChanged() {
-		circuitRunner.proceedUntilQueueEmpty()
-	}
-
-	override fun dispose() {
-		circuitRunner.dispose()
+	private fun defineMemory() {
+		memory.clear()
+		for (portName in portNames) {
+			memory.preset(portName, 0)
+		}
 	}
 
 	override fun setInput(port: DigitalCircuitInOut, signal: DigitalSignal) {
-		port.setIncomingSignal(signal, circuitRunner.scheduler)
+		memory.preset(port.name!!, signal)
 	}
 
-	override fun readOutput(port: DigitalCircuitInOut): DigitalSignal? {
-		return port.signal
+	override fun readOutput(port: DigitalCircuitInOut): DigitalSignal? =
+		memory.getValue(port.name!!) as DigitalSignal?
+
+	override fun processInputChanged() { }
+
+	override fun dispose() { }
+
+	private fun createExecScriptInterpreter(circuitScript: String, memory: Memory): Interpreter {
+		val parser = BaseModule.parserFactory(circuitScript, null)
+		return BaseModule.interpreterFactory(parser.parse(), memory)
 	}
 }

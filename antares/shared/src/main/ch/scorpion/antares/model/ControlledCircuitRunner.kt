@@ -35,7 +35,7 @@ class ControlledCircuitRunner(
 	private val task = ManualSchedulerTask()
 	private val noiseGeneratorHolder = NoiseGeneratorHolder(NoNoiseGenerator())
 
-	private val scheduler = SchedulerImpl(
+	val scheduler = SchedulerImpl(
 		systemSpeedCategory,
 		timeService,
 		eventBus,
@@ -60,14 +60,14 @@ class ControlledCircuitRunner(
 	 */
 	fun run(
 		circuit: DigitalGraph,
-		prolog: (signalHandler:SignalHandler, context:Any?) -> Unit = { _,_ -> },
+		prolog: (context:Any?) -> Unit = { },
 		epilogue: (context:Any?) -> Unit = {},
 		context: Any? = null
 	) {
 		try {
 			timeService.reset()
 			startSimulation(circuit)
-			prolog(scheduler, context)
+			prolog(context)
 			proceedUntilQueueEmpty()
 			epilogue(context)
 		} finally {

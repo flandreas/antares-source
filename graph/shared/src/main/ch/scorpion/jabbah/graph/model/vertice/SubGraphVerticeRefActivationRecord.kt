@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.model.vertice
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.*
+import ch.scorpion.jabbah.base.parser.TextLocation
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.InputPort
@@ -41,18 +42,24 @@ open class SubGraphVerticeRefActivationRecord(
 		verticeRef.getOutput<Any>(variable.token.value!!).setOutgoingSignalBuffered(value, signalHandler)
 	}
 
-	override fun getValue(variable: Variable): Any {
-		if (verticeRef.hasInput(variable.token.value!!)) {
-			return verticeRef.getInput<Any>(variable.token.value!!).getIncomingSignal()!!
+	override fun getValue(variable: Variable): Any =
+		getValue(variable.token.value!!, variable.location)
+
+	override fun getValue(name: String, location: TextLocation): Any {
+		if (verticeRef.hasInput(name)) {
+			return verticeRef.getInput<Any>(name).getIncomingSignal()!!
 		}
-		verticeRef.paramValues.getTypedValue<Any>(variable.token.value!!)?.let {
+		verticeRef.paramValues.getTypedValue<Any>(name)?.let {
 			return it.type.toDslValue(it.value)
-		} ?: throw RuntimeError(variable.location, Translations.getString("graph.dsl.inputNotFound.msg", variable.token.value!!))
+		} ?: throw RuntimeError(location, Translations.getString("graph.dsl.inputNotFound.msg", name))
 	}
 
 	override fun getOptionalValue(variable: Variable): Any? =
-		if (isDefined(variable.token.value!!)) {
-			getValue(variable)
+		getOptionalValue(variable.token.value!!, variable.location)
+
+	override fun getOptionalValue(name: String, location: TextLocation): Any? =
+		if (isDefined(name)) {
+			getValue(name, location)
 		} else {
 			null
 		}
