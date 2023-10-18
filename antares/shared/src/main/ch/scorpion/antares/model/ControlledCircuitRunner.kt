@@ -68,7 +68,7 @@ class ControlledCircuitRunner(
 			timeService.reset()
 			startSimulation(circuit)
 			prolog(scheduler, context)
-			executeSimulation()
+			proceedUntilQueueEmpty()
 			epilogue(context)
 		} finally {
 			stopSimulation(circuit)
@@ -82,7 +82,7 @@ class ControlledCircuitRunner(
 		circuit.executionStart(scheduler, null)
 	}
 
-	private fun executeSimulation() {
+	fun proceedUntilQueueEmpty() {
 		var iterationCont = 0
 		while (!scheduler.isQueueEmpty) {
 			iterationCont++

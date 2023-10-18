@@ -2,9 +2,10 @@ package ch.scorpion.antares.model.testcase.parser
 
 import ch.scorpion.antares.model.testcase.Testcase
 import ch.scorpion.antares.model.testcase.Value
+import ch.scorpion.antares.model.testcase.parser.TestcaseTokenType.*
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.dsl.BaseTokenType.*
 import ch.scorpion.jabbah.base.dsl.Compound
-import ch.scorpion.jabbah.base.dsl.DslTokenType.*
 import ch.scorpion.jabbah.base.dsl.Node
 import ch.scorpion.jabbah.base.dsl.SyntaxError
 import ch.scorpion.jabbah.base.parser.AbstractParser
@@ -18,11 +19,14 @@ import ch.scorpion.jabbah.base.parser.Token
  *     portNames : portName portName { portName } EOL
  *     portName: ID
  *     testVector : value value { value } EOL
- *     value : decimalValue | hexValue | binaryValue | dontCare
+ *     value :  number | dontCare | undefined | clockedNumber
+ *     number : decimalValue | hexValue | binaryValue
  *     decimalValue : { decimalDigit }
  *     hexValue : '0x' { hexDigit }
  *     binaryValue : '0b' { binaryDigit }
- *     dontCare : 'X'
+ *     dontCare : 'X' | 'x'
+ *     undefined : 'Z' | 'z'
+ *     clockedNumber : "^" number
  *     EOL : "\n"
  * </pre>
  */
@@ -76,23 +80,40 @@ class TestcaseParser(
 		lexer.location.let {  loc ->
 			val list = mutableListOf<ValueNode>()
 			while (onLine) {
-				when (currentToken!!.type) {
-					LITERAL -> {
-						list.add(ValueNode(lexer.location, Value((currentToken!!.value as Long).toULong())))
-						eat(LITERAL)
-					}
-					ID -> {
-						when ((currentToken!!.value as String).uppercase()) {
-							"X" -> list.add(ValueNode(lexer.location, Value.X))
-							"Z" -> list.add(ValueNode(lexer.location, Value.Z))
-							else -> throw SyntaxError(lexer.location,Translations.getString("base.dsl.invalidCharacter.msg", currentToken!!.value!!))
-						}
-						eat(ID)
-					}
-					else -> throw SyntaxError(lexer.location, Translations.getString("base.dsl.unexpectedToken.msg", currentToken!!.type.id))
-				}
+				list.add(value())
 			}
 			return TestVectorNode(loc, list)
 		}
+	}
+
+	private fun value(): ValueNode {
+		return when (currentToken!!.type) {
+			LITERAL -> number(Value.Type.NORMAL)
+			DONT_CARE -> dontCare()
+			UNDEFINED -> undefined()
+			CARET -> clockedNumber()
+			else -> throw SyntaxError(lexer.location, Translations.getString("base.dsl.unexpectedToken.msg", currentToken!!.type.id))
+		}
+	}
+
+	private fun number(type: Value.Type): ValueNode {
+		val value = Value((currentToken!!.value as Long).toULong(), type)
+		eat(LITERAL)
+		return ValueNode(lexer.location, value)
+	}
+
+	private fun dontCare(): ValueNode {
+		eat(DONT_CARE)
+		return ValueNode(lexer.location, Value.X)
+	}
+
+	private fun undefined(): ValueNode {
+		eat(UNDEFINED)
+		return ValueNode(lexer.location, Value.Z)
+	}
+
+	private fun clockedNumber(): ValueNode {
+		eat(CARET)
+		return number(Value.Type.CLOCKED)
 	}
 }

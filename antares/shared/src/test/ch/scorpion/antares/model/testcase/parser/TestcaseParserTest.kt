@@ -97,4 +97,26 @@ class TestcaseParserTest {
 			-- Z
 		""".trimIndent())
 	}
+
+	@Test
+	fun shouldParseClocks() {
+		val parser = TestcaseParser("""
+			A B O
+			^1 0 1
+			^0 0 1
+		""".trimIndent())
+
+		assertAST(parser.parse(), """
+			TestScript
+			- A,B,O
+			- TestVector
+			-- ^1
+			-- 0
+			-- 1
+			- TestVector
+			-- ^0
+			-- 0
+			-- 1
+		""".trimIndent())
+	}
 }

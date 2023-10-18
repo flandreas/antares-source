@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.base.dsl
 
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.dsl.BaseTokenType.*
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.parser.AbstractLexer
 import ch.scorpion.jabbah.base.parser.Token
@@ -21,12 +22,13 @@ open class BaseLexer(text: String) : AbstractLexer(text) {
 		private val RESERVED_KEYWORDS = mapOf<String, Token<String>>()
 
 		// Singleton instances of value-less [Token]s
-		private val EOF_TOKEN = Token<Unit>(DslTokenType.EOF)
-		private val DOUBLE_QUOTE_TOKEN = Token<Unit>(DslTokenType.DOUBLE_QUOTE)
+		val EOF_TOKEN = Token<Unit>(EOF)
+		val EOL_TOKEN = Token<Unit>(EOL)
+		private val DOUBLE_QUOTE_TOKEN = Token<Unit>(DOUBLE_QUOTE)
 
 		// Factory methods for [Token]s with values
-		fun idToken(value: String) = Token(DslTokenType.ID, value)
-		fun literalToken(value: Any) = Token(DslTokenType.LITERAL, value)
+		fun idToken(value: String) = Token(ID, value)
+		fun literalToken(value: Any) = Token(LITERAL, value)
 	}
 
 	override fun nextToken(state: State): Token<Any> {

@@ -24,7 +24,8 @@ open class Value(
 	enum class Type {
 		NORMAL,
 		UNDEFINED,
-		DONT_CARE
+		DONT_CARE,
+		CLOCKED,
 	}
 
 	enum class State {
@@ -40,6 +41,7 @@ open class Value(
 			Type.NORMAL -> value.toString()
 			UNDEFINED -> "Z"
 			DONT_CARE -> "X"
+			CLOCKED -> "^$value"
 		}
 
 	open val state: State get() = NORMAL

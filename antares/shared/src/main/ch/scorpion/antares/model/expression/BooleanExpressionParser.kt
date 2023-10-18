@@ -2,6 +2,7 @@ package ch.scorpion.antares.model.expression
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.*
+import ch.scorpion.jabbah.base.dsl.BaseTokenType.*
 import ch.scorpion.jabbah.base.dsl.DslLexer.Companion.NOT_TOKEN
 import ch.scorpion.jabbah.base.dsl.DslLexer.Companion.OR_TOKEN
 import ch.scorpion.jabbah.base.dsl.DslTokenType.*

@@ -1,7 +1,7 @@
 package ch.scorpion.antares.model.expression
 
 import ch.scorpion.antares.model.truthtable.TruthTable
-import ch.scorpion.jabbah.base.dsl.DslTokenType
+import ch.scorpion.jabbah.base.dsl.BaseTokenType
 import ch.scorpion.jabbah.base.richtext.RichTextParser
 import ch.scorpion.jabbah.base.richtext.RichTextTokenType
 
@@ -35,7 +35,7 @@ class DslBooleanExpressionWriter : AbstractBooleanExpressionWriter(false) {
 		return if (info.isNegated) {
 			val negation = RichTextParser.negated(info.plainName)
 			if (negation.startsWith(RichTextTokenType.OVERLINE.id)) {
-				"${DslTokenType.SINGLE_QUOTE.id}$negation${DslTokenType.SINGLE_QUOTE.id}"
+				"${BaseTokenType.SINGLE_QUOTE.id}$negation${BaseTokenType.SINGLE_QUOTE.id}"
 			} else {
 				negation
 			}

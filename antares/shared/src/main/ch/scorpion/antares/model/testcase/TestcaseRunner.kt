@@ -94,12 +94,20 @@ class TestcaseRunner(
 
 	@Suppress("UNUSED_PARAMETER")
 	private fun setInputs(signalHandler: SignalHandler, context: Any?) {
+		setInputsFiltered(signalHandler) { it != Value.Type.CLOCKED }
+		setInputsFiltered(signalHandler) { it == Value.Type.CLOCKED }
+	}
+
+	private fun setInputsFiltered(signalHandler: SignalHandler, filter: (Value.Type) -> Boolean) {
 		portNames.forEachIndexed { index, portName ->
 			val port = circuit.getGraphPort<DigitalSignal>(portName)
 			if (port is DigitalCircuitInOut && port.portType.isInput) {
-				val value = currentTestVector.getValue(index).value
-				val signal = DigitalSignalFactory.of(port.bitWidth, value)
-				port.setIncomingSignal(signal, signalHandler)
+				val value = currentTestVector.getValue(index)
+				if (filter(value.type)) {
+					val signal = DigitalSignalFactory.of(port.bitWidth, value.value)
+					port.setIncomingSignal(signal, signalHandler)
+					circuitRunner.proceedUntilQueueEmpty()
+				}
 			}
 		}
 	}

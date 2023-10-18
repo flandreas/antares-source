@@ -4,11 +4,11 @@ import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.jabbah.base.parser.TextLocation
-import ch.scorpion.jabbah.base.parser.Token
-import ch.scorpion.jabbah.base.dsl.DslTokenType
+import ch.scorpion.jabbah.base.dsl.BaseTokenType.ID
 import ch.scorpion.jabbah.base.dsl.Variable
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.parser.TextLocation
+import ch.scorpion.jabbah.base.parser.Token
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.Port
 import io.mockk.every
@@ -27,7 +27,7 @@ abstract class AbstractAntaresInterpreterPortTest {
 
 	protected val context = BaseModule.storingActivationRecordFactory("context", null)
 
-	protected fun variable(name: String): Variable = Variable(TextLocation(0, 0, 0), Token(DslTokenType.ID, name))
+	protected fun variable(name: String): Variable = Variable(TextLocation(0, 0, 0), Token(ID, name))
 
 	protected fun setInput(name: String, signal: DigitalSignal, interpreter: AntaresInterpreter) {
 		val port = mockk<DigitalPort>()

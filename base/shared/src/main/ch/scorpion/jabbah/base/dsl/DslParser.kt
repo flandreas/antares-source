@@ -1,8 +1,8 @@
 package ch.scorpion.jabbah.base.dsl
 
 import ch.scorpion.jabbah.base.*
+import ch.scorpion.jabbah.base.dsl.BaseTokenType.*
 import ch.scorpion.jabbah.base.dsl.DslTokenType.*
-import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.parser.AbstractParser
 import ch.scorpion.jabbah.base.parser.Parser
