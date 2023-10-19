@@ -22,6 +22,7 @@ import ch.scorpion.jabbah.graph.ui.MetaGraphIconProvider
 import java.awt.Component
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
+import javax.swing.JLabel
 import javax.swing.JPopupMenu
 import javax.swing.JTree
 import javax.swing.tree.DefaultMutableTreeNode
@@ -103,6 +104,7 @@ class TestcaseTreeView(
 		addMouseListener(rightMouseListener)
 
 		setCellRenderer(TestcaseTreeRenderer())
+		setRowHeight(24)
 
 		eventBus.register(TestcaseAddedEvent::class, testcaseAddedHandler)
 		eventBus.register(TestcaseRemovedEvent::class, testcaseRemovedHandler)
@@ -210,6 +212,7 @@ class TestcaseTreeView(
 		override fun getTreeCellRendererComponent(tree: JTree?, value: Any?, sel: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): Component {
 			val component = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus) as RichTextLabel
 			component.richText = null
+			component.verticalAlignment = JLabel.CENTER
 
 			when ((value as DefaultMutableTreeNode).userObject) {
 				is Testcase -> {

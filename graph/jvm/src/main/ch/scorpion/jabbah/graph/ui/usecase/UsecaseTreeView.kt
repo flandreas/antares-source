@@ -82,6 +82,7 @@ class UsecaseTreeView(
 		addMouseListener(rightMouseListener)
 
 		setCellRenderer(UsecaseTreeRenderer())
+		setRowHeight(24)
 
 		eventBus.register(UsecaseAddedEvent::class, usecaseAddedHandler)
 		eventBus.register(UsecaseRemovedEvent::class, usecaseRemovedHandler)

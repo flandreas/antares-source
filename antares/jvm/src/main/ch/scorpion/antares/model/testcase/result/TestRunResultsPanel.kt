@@ -43,6 +43,7 @@ class TestRunResultsPanel(
 
 	init {
 		tree.cellRenderer = TreeRenderer()
+		tree.rowHeight = 24
 		tree.showsRootHandles = true
 		tree.addTreeSelectionListener { handleTreeSelection() }
 
