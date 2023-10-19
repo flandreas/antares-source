@@ -3,7 +3,6 @@ package ch.scorpion.antares.model.testcase
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.module.AntaresModelModule
 import ch.scorpion.jabbah.app.Application
-import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
@@ -13,31 +12,29 @@ import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.io.StorableCloner
 
 /**
- * Runs the currently selected [Testcase] and posts [DisplayTestRunResults] on the [EventBus].
+ * Runs all [Testcase]s of the selected [DigitalGraph]
  */
-class RunTestcaseAction(
+class RunCircuitTestcasesAction(
 	application: Application,
 	applicationModeHolder: ApplicationModeHolder,
 	service: TestcaseAppService = AntaresModelModule.testcaseAppService,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractTestcaseAction("antares.testcase.action.run", application, applicationModeHolder, service, eventBus) {
+) : AbstractTestcaseAction("antares.testcase.action.runAll", application, applicationModeHolder, service, eventBus) {
 
 	private val circuit: DigitalGraph get() =
 		(application.controller.data!!.content as MetaGraph).graph.graphView.graph as DigitalGraph
 
-	override fun calculateEnabled(): Boolean =
-		super.calculateEnabled() && StringUtils.isNotEmpty(testcase?.testVectors?.script)
+	override fun calculateEnabled(): Boolean = super.calculateEnabled() && testcase == null
 
 	override fun execute(event: ActionEvent) {
-		// Clone circuit to avoid interference from various objects of the main application,
-		// such as GraphViewExecutionAnimator that listen on Actors of the main circuit
-		val clone = StorableCloner.clone(circuit)
-
-		val runner = CombinedTestcaseRunner(testcase!!, clone)
-
 		InvocationHandler.invoke {
-			val results = runner.run()
-			eventBus.post(DisplayTestRunResults(listOf(results)))
+			val clone = StorableCloner.clone(circuit)
+			val results = mutableListOf<CombinedTestRunResult>()
+			for (testcase in circuit.testcases.testcases) {
+				val runner = CombinedTestcaseRunner(testcase, clone)
+				results.add(runner.run())
+			}
+			eventBus.post(DisplayTestRunResults(results))
 		}
 	}
 }

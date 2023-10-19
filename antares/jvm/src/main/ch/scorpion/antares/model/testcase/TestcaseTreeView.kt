@@ -1,10 +1,6 @@
 package ch.scorpion.antares.model.testcase
 
 import ch.scorpion.antares.model.DigitalGraph
-import ch.scorpion.antares.model.testcase.Testcase
-import ch.scorpion.antares.model.testcase.Testcases
-import ch.scorpion.antares.model.testcase.TestcaseAddedEvent
-import ch.scorpion.antares.model.testcase.TestcaseRemovedEvent
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.StringUtils
@@ -114,6 +110,7 @@ class TestcaseTreeView(
 		eventBus.register(NameChangedEvent::class, nameChangeHandler)
 
 		graphPopupMenu.add(ActionWrapperSwing(AddTestcaseAction(application, applicationModeHolder)))
+		graphPopupMenu.add(ActionWrapperSwing(RunCircuitTestcasesAction(application, applicationModeHolder)))
 
 		testcasePopupMenu.add(ActionWrapperSwing(DeleteTestcaseAction(application, applicationModeHolder)))
 		testcasePopupMenu.add(ActionWrapperSwing(RunTestcaseAction(application, applicationModeHolder)))

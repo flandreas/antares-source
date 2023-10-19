@@ -97,10 +97,13 @@ class CombinedTestRunResultPanelSwing(
 			summaryLabel.text = ""
 		}
 		else if (results.error != null) {
+			summaryLabel.icon = FAILED_ICON
 			summaryLabel.text = results.error
 		} else if (results.totalFailedCount == 0) {
+			summaryLabel.icon = null
 			summaryLabel.text = "${results.testcase.name.value}: ${Translations.getString("antares.testcase.results.summary.passed")}"
 		} else {
+			summaryLabel.icon = null
 			summaryLabel.text = "${results.testcase.name.value}: ${Translations.getString("antares.testcase.results.summary.failed", results.totalFailedCount)}"
 		}
 	}
