@@ -71,7 +71,8 @@ class AntaresFrameSwing(
 				Translations.getString("antares.testcase.results.title"),
 				// TODO Icon by Janis
 				UiUtil.themedIcon("/img/usecase-16.png"),
-				testResultsPanel)
+				testResultsPanel,
+				listOf(testResultsPanel.clearAction))
 		)
 	}
 

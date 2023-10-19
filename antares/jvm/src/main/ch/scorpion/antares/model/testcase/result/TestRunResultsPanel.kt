@@ -4,7 +4,10 @@ import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.testcase.CombinedTestRunResult
 import ch.scorpion.antares.model.testcase.DisplayTestRunResults
 import ch.scorpion.antares.model.testcase.TestRunResult
+import ch.scorpion.jabbah.base.AbstractAction
+import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -28,18 +31,21 @@ import javax.swing.tree.TreeNode
 import kotlin.math.max
 
 /**
- * Shows a tree of [TestRunResult].
+ * Shows a tree of [TestRunResult] on the left and the details of the selected [CombinedTestRunResult]
+ * in a [CombinedTestRunResultPanelSwing] on the right.
  */
 class TestRunResultsPanel(
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : JPanel() {
 
 	private val displayTestRunHandler: EventHandler<DisplayTestRunResults> = { update(it.results) }
-	private val editedGraphViewHandler: EventHandler<EditedGraphViewEvent> = { update(listOf() )}
+	private val editedGraphViewHandler: EventHandler<EditedGraphViewEvent> = { update(listOf() ) }
 
 	private val splitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
 	private val tree = JTree(createTreeModel(listOf()))
 	private val detailsPanel = CombinedTestRunResultPanelSwing(null)
+
+	val clearAction: Action = ClearAction()
 
 	init {
 		tree.cellRenderer = TreeRenderer()
@@ -106,6 +112,10 @@ class TestRunResultsPanel(
 		}
 	}
 
+	private fun clear() {
+		update(emptyList())
+		detailsPanel.setResults(null)
+	}
 
 	private class TreeRenderer : RichTextLabel() {
 
@@ -134,6 +144,14 @@ class TestRunResultsPanel(
 			}
 
 			return label
+		}
+	}
+
+	private inner class ClearAction
+		: AbstractAction("antares.testcase.results.action.clear","/img/trash-16.png")
+	{
+		override fun execute(event: ActionEvent) {
+			clear()
 		}
 	}
 }
