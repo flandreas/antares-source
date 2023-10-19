@@ -16,6 +16,9 @@ class VetoException(msg: String): Throwable(msg)
  */
 interface EventBus {
 
+	/** Returns the number of registered [EventHandler]s. */
+	val size: Int
+
     /** Registers a handler function to be called whenever an event with the specified class is posted. */
     fun <T: Any> register(eventClass: KClass<out T>, handler: EventHandler<T>)
 
@@ -57,6 +60,8 @@ abstract class AbstractEventBus : EventBus {
 	abstract fun getEventClassName(event: Any): String
 
     /** ---- [EventBus] interface */
+
+	override val size: Int get() = registrations.size
 
     override fun <T: Any> register(eventClass: KClass<out T>, handler: EventHandler<T>) {
         @Suppress("UNCHECKED_CAST")

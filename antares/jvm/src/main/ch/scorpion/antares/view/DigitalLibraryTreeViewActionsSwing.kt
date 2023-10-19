@@ -2,6 +2,7 @@ package ch.scorpion.antares.view
 
 import ch.scorpion.antares.model.expression.BooleanExpressionLibraryItem
 import ch.scorpion.antares.model.expression.OpenBooleanExpressionAction
+import ch.scorpion.antares.model.testcase.RunLibraryTestcasesAction
 import ch.scorpion.antares.model.truthtable.OpenTruthTableAction
 import ch.scorpion.antares.model.truthtable.TruthTableLibraryItem
 import ch.scorpion.antares.view.expression.NewBooleanExpressionAction
@@ -34,6 +35,7 @@ class DigitalLibraryTreeViewActionsSwing(
 	private val createCircuitAction = register(CreateCircuitFromTruthTableAction(controller))
 	private val newBooleanExpressionAction = register(NewBooleanExpressionAction(controller))
 	private val openBooleanExpressionAction = register(OpenBooleanExpressionAction(application.controller as GraphDataViewController, controller))
+	private val runTestsAction = register(RunLibraryTestcasesAction(controller))
 
 	override fun fillMainProjectDirectoryCreateActions() {
 		super.fillMainProjectDirectoryCreateActions()
@@ -45,6 +47,11 @@ class DigitalLibraryTreeViewActionsSwing(
 		super.fillMainProjectRootCreateActions()
 		projectRootMenu.add(ActionWrapperSwing(newTruthTableAction))
 		projectRootMenu.add(ActionWrapperSwing(newBooleanExpressionAction))
+	}
+
+	override fun fillMainProjectRootExecuteActions() {
+		super.fillMainProjectRootExecuteActions()
+		projectRootMenu.add(ActionWrapperSwing(runTestsAction))
 	}
 
 	override fun fillMainLibraryDirectoryCreateActions() {

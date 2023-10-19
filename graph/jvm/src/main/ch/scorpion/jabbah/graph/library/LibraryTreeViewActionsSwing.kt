@@ -159,7 +159,7 @@ open class LibraryTreeViewActionsSwing(
 		projectRootMenu.addSeparator()
 		fillMainProjectRootCreateActions()
 		projectRootMenu.addSeparator()
-		projectRootMenu.add(ActionWrapperSwing(importProjectMetaGraphAction))
+		fillMainProjectRootExecuteActions()
 		projectRootMenu.addSeparator()
 		projectRootMenu.add(ActionWrapperSwing(projectPropertiesAction))
 		if (uploadProjectAction != null) {
@@ -171,6 +171,10 @@ open class LibraryTreeViewActionsSwing(
 	protected open fun fillMainProjectRootCreateActions() {
 		projectRootMenu.add(ActionWrapperSwing(newProjectGraphAction))
 		projectRootMenu.add(ActionWrapperSwing(addProjectFolderAction))
+	}
+
+	protected open fun fillMainProjectRootExecuteActions() {
+		projectRootMenu.add(ActionWrapperSwing(importProjectMetaGraphAction))
 	}
 
 	private fun fillMainLibraryDirectoryPopupMenu() {

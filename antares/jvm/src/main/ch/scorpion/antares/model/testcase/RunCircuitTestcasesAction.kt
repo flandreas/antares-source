@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -22,12 +23,18 @@ class RunCircuitTestcasesAction(
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractTestcaseAction("antares.testcase.action.runAll", application, applicationModeHolder, service, eventBus) {
 
+	companion object {
+		private val LOG by logger(RunCircuitTestcasesAction::class)
+	}
+
 	private val circuit: DigitalGraph get() =
 		(application.controller.data!!.content as MetaGraph).graph.graphView.graph as DigitalGraph
 
 	override fun calculateEnabled(): Boolean = super.calculateEnabled() && testcase == null
 
 	override fun execute(event: ActionEvent) {
+		LOG.userTrail("Run all tests in circuit '${circuit.name.value}'")
+
 		InvocationHandler.invoke {
 			val clone = StorableCloner.clone(circuit)
 			val results = mutableListOf<CombinedTestRunResult>()
