@@ -136,6 +136,7 @@ class GraphPanelViewSwing(
 		logPanel.dispose()
 		executionToolbar.dispose()
 		graphEditView.dispose()
+		bottomSidebarPane.dispose()
 
 		BaseModule.settings.set("graphPanel.librarySplitPos", explorerSplitPane.dividerLocation)
 	}

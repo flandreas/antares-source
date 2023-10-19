@@ -1,10 +1,9 @@
 package ch.scorpion.jabbah.base.swing
 
 import ch.scorpion.jabbah.base.AbstractAction
-import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.base.event.PropertyChangeEvent
-import ch.scorpion.jabbah.base.event.PropertyChangeListener
+import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.SidebarPane.Location
 import ch.scorpion.jabbah.base.ui.UIBasics
 import java.awt.*
@@ -25,6 +24,7 @@ import javax.swing.border.AbstractBorder
  */
 class SidebarPane(
 	private val location: Location,
+	private val eventBus: EventBus = BaseModule.eventBus,
 	private val isOpenChangeHandler: () -> Unit
 ) : JPanel() {
 
@@ -106,8 +106,17 @@ class SidebarPane(
 
 	private val collapseAction = CollapseAction()
 
+	private val showContentRequestHandler: EventHandler<ShowSidebarPaneContentRequest> = { request ->
+		entries.firstOrNull { it.component === request.component }?.let { activate(it) }
+	}
+
 	init {
 		initUI()
+		eventBus.register(ShowSidebarPaneContentRequest::class, showContentRequestHandler)
+	}
+
+	fun dispose() {
+		eventBus.unregister(showContentRequestHandler)
 	}
 
 	/** Adds a new content view to this [SidebarPane].*/

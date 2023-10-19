@@ -72,6 +72,7 @@ class SidebarSplitPane(
 	fun dispose() {
 		BaseModule.settings.set(dividerLocationSettingName, splitPane.dividerLocation)
 		BaseModule.settings.set(openIndexSettingName, sidebarPane.openIndex)
+		sidebarPane.dispose()
 	}
 
 	fun add(content: SidebarPaneContent) {

@@ -40,7 +40,6 @@ class RunTestcaseAction(
 		InvocationHandler.invoke {
 			val results = runner.run()
 			eventBus.post(DisplayTestRunResults(listOf(results)))
-			CombinedTestRunResultPanelSwing.showAsDialog(results)
 		}
 	}
 }

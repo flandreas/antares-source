@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
+import ch.scorpion.jabbah.base.swing.ShowSidebarPaneContentRequest
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.richtext.RichTextLabel
 import ch.scorpion.jabbah.graph.ui.MetaGraphIconProvider
@@ -70,6 +71,7 @@ class TestRunResultsPanel(
 				val path = JTreeUtil.getPath(it)
 				tree.expandPath(path)
 				tree.selectionPath = path
+				eventBus.post(ShowSidebarPaneContentRequest(this))
 			}
 		}
 	}
