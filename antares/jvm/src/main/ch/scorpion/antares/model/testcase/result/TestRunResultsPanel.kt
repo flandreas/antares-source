@@ -6,10 +6,9 @@ import ch.scorpion.antares.model.testcase.DisplayTestRunResults
 import ch.scorpion.antares.model.testcase.TestRunResult
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
+import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.base.swing.ShowSidebarPaneContentRequest
@@ -19,7 +18,9 @@ import ch.scorpion.jabbah.graph.ui.MetaGraphIconProvider
 import ch.scorpion.jabbah.graph.ui.graphpanel.EditedGraphViewEvent
 import java.awt.BorderLayout
 import java.awt.Component
+import java.awt.event.MouseEvent
 import javax.swing.JPanel
+import javax.swing.JPopupMenu
 import javax.swing.JScrollPane
 import javax.swing.JSplitPane
 import javax.swing.JTree
@@ -44,14 +45,19 @@ class TestRunResultsPanel(
 	private val splitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
 	private val tree = JTree(createTreeModel(listOf()))
 	private val detailsPanel = CombinedTestRunResultPanelSwing(null)
+	private val popupMenu = JPopupMenu()
 
 	val clearAction: Action = ClearAction()
+	val expandAllAction: Action = ExpandAllAction()
 
 	init {
 		tree.cellRenderer = TreeRenderer()
 		tree.rowHeight = 24
 		tree.showsRootHandles = true
 		tree.addTreeSelectionListener { handleTreeSelection() }
+		tree.addMouseListener(MouseListener())
+
+		popupMenu.add(ActionWrapperSwing(expandAllAction))
 
 		buildUI()
 
@@ -117,6 +123,16 @@ class TestRunResultsPanel(
 		detailsPanel.setResults(null)
 	}
 
+	private fun showPopupMenu(e: MouseEvent) {
+		tree.getPathForLocation(e.x, e.y)?.let { path ->
+			tree.selectionPath = path
+			if (path.lastPathComponent === tree.model.root) {
+				requestFocusInWindow()
+				popupMenu.show(this@TestRunResultsPanel, e.x, e.y)
+			}
+		}
+	}
+
 	private class TreeRenderer : RichTextLabel() {
 
 		// TODO Icon by Janis
@@ -147,11 +163,28 @@ class TestRunResultsPanel(
 		}
 	}
 
-	private inner class ClearAction
-		: AbstractAction("antares.testcase.results.action.clear","/img/trash-16.png")
-	{
+	private inner class MouseListener : java.awt.event.MouseAdapter() {
+		override fun mousePressed(e: MouseEvent?) {
+			if (e?.button == MouseEvent.BUTTON3) {
+				showPopupMenu(e)
+			}
+		}
+	}
+
+	private inner class ClearAction : AbstractAction(
+		"antares.testcase.results.action.clear",
+		"/img/trash-16.png"
+	) {
 		override fun execute(event: ActionEvent) {
 			clear()
+		}
+	}
+
+	private inner class ExpandAllAction : AbstractAction(
+		"library.action.expandAll"
+	) {
+		override fun execute(event: ActionEvent) {
+			tree.selectionPath?.let { JTreeUtil.expandAll(tree, it) }
 		}
 	}
 }
