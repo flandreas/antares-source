@@ -298,7 +298,6 @@ class LibraryTreeViewSwing(
 			component.richText = null
 			component.toolTipText = null
 			component.verticalTextPosition = SwingConstants.CENTER
-			component.richText = null
 			component.border = null
 			if ((value as DefaultMutableTreeNode).userObject is LibraryItem) {
 				val iconPath = (value.userObject as LibraryItem).iconPath

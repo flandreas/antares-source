@@ -3,6 +3,7 @@ package ch.scorpion.antares
 import ch.scorpion.antares.model.expression.ShowBooleanExpressionItemRequest
 import ch.scorpion.antares.model.testcase.TestcaseViewController
 import ch.scorpion.antares.model.testcase.TestcaseViewSwing
+import ch.scorpion.antares.model.testcase.result.TestRunResultsPanel
 import ch.scorpion.antares.model.truthtable.ShowTruthTableItemRequest
 import ch.scorpion.antares.view.AntaresFrame
 import ch.scorpion.antares.view.AntaresFrameController
@@ -42,6 +43,7 @@ class AntaresFrameSwing(
 	init {
 		iconImage = Toolkit.getDefaultToolkit().createImage(ClassLoader.getSystemResource(AntaresSwing.ICON_PATH))
 		addTestcaseView(application)
+		addTestRunResultsView()
 	}
 
 	private fun addTestcaseView(application: Application) {
@@ -52,6 +54,17 @@ class AntaresFrameSwing(
 				// TODO Icon by Janis
 				UiUtil.themedIcon("/img/usecase-16.png"),
 				testcasesView))
+	}
+
+	private fun addTestRunResultsView() {
+		val panel = TestRunResultsPanel()
+		graphPanel.addBottom(
+			SidebarPaneContentImpl(
+				Translations.getString("antares.testcase.results.title"),
+				// TODO Icon by Janis
+				UiUtil.themedIcon("/img/usecase-16.png"),
+				panel)
+		)
 	}
 
 	override fun createMemoryContentsDesktopViewItem(request: OpenMemoryContentsRequest, contextColor: CompositeColor): GraphDesktopViewItem =

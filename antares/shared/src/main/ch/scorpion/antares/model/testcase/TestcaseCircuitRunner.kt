@@ -43,9 +43,9 @@ class TestcaseCircuitRunner(
 				circuitRunner.run(circuit, ::setInputs, ::readOutputs)
 			}
 
-			return TestRunResult(Circuit, testName, portNames, determineIsOutput(portNames), collector)
+			return TestRunResult(circuit, Circuit, testName, portNames, determineIsOutput(portNames), collector)
 		} catch (e: Throwable) {
-			return TestRunResult.error(Circuit, testName, e.message ?: "Error")
+			return TestRunResult.error(circuit, Circuit, testName, e.message ?: "Error")
 		}
 	}
 

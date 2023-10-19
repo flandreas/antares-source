@@ -1,8 +1,10 @@
-package ch.scorpion.antares.model.testcase
+package ch.scorpion.antares.model.testcase.result
 
+import ch.scorpion.antares.model.testcase.MatchedValue
+import ch.scorpion.antares.model.testcase.TestRunResult
+import ch.scorpion.antares.model.testcase.Value
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.draw.graphics.PredefinedColorIdentity
@@ -15,9 +17,9 @@ import javax.swing.table.AbstractTableModel
 import javax.swing.table.DefaultTableCellRenderer
 
 /**
- * Displays [TestRunResult]s as a table.
+ * Displays a single [TestRunResult] as a table.
  */
-class TestRunResultPanelSwing(
+class SingleTestRunResultPanelSwing(
 	result: TestRunResult
 ) : JPanel() {
 
@@ -25,7 +27,7 @@ class TestRunResultPanelSwing(
 
 		private val INPUT_CELL_RENDERER = InputCellRenderer()
 		private val OUTPUT_CELL_RENDERER = OutputCellRenderer()
-		private const val COLUMN_WIDTH = 30
+		private const val COLUMN_WIDTH = 100
 	}
 
 	private val summaryLabel = JLabel()
@@ -41,6 +43,11 @@ class TestRunResultPanelSwing(
 	private fun buildUI() {
 		layout = BorderLayout(10, 10)
 		border = UIBasics.createDialogBorder()
+
+		table.autoResizeMode = JTable.AUTO_RESIZE_OFF
+		table.setShowGrid(true)
+		table.rowMargin = 1
+		table.columnModel.columnMargin = 1
 
 		add(summaryLabel, BorderLayout.NORTH)
 		add(scrollPane, BorderLayout.CENTER)

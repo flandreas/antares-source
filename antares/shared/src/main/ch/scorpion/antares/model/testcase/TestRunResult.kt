@@ -1,6 +1,9 @@
 package ch.scorpion.antares.model.testcase
 
+import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.jabbah.base.Translations
+
+data class DisplayTestRunResults(val results: List<CombinedTestRunResult>)
 
 /**
  * The result provided by a [TestcaseCircuitRunner].
@@ -13,6 +16,7 @@ import ch.scorpion.jabbah.base.Translations
  * @property errorMessage the error message if parsing or analysing the [Testcase] failed, `null` otherwise
  */
 data class TestRunResult(
+	val source: DigitalGraph,
 	val type: Type,
 	val testName: String,
 	val names: List<String>,
@@ -21,8 +25,8 @@ data class TestRunResult(
 	val errorMessage: String? = null
 ) {
 	companion object {
-		fun error(type: Type, testName: String, msg: String): TestRunResult =
-			TestRunResult(type, testName, emptyList(), emptyList(), TestVectorCollector(), msg)
+		fun error(source: DigitalGraph, type: Type, testName: String, msg: String): TestRunResult =
+			TestRunResult(source, type, testName, emptyList(), emptyList(), TestVectorCollector(), msg)
 	}
 
 	enum class Type {
@@ -48,5 +52,29 @@ data class TestRunResult(
 			}
 		}
 		return failedVectors.size
+	}
+}
+
+data class CombinedTestRunResult(
+	val testcase: Testcase,
+	val circuitResults: TestRunResult?,
+	val scriptResults: TestRunResult?,
+	val error: String? = null
+) {
+
+	companion object {
+		fun error(source: Testcase, error: String): CombinedTestRunResult =
+			CombinedTestRunResult(source, null, null, error)
+	}
+
+	val totalFailedCount: Int get() {
+		val circuitResultCount = circuitResults?.let {
+			if (it.errorMessage != null) 1 else it.failedCount
+		} ?: 0
+		val scriptResultCount = scriptResults?.let {
+			if (it.errorMessage != null) 1 else it.failedCount
+		} ?: 0
+
+		return circuitResultCount + scriptResultCount
 	}
 }

@@ -48,9 +48,9 @@ class TestcaseScriptRunner(
 				readOutputs(null)
 			}
 
-			return TestRunResult(Script, testName, portNames, determineIsOutput(portNames), collector)
+			return TestRunResult(circuit, Script, testName, portNames, determineIsOutput(portNames), collector)
 		} catch (e: Throwable) {
-			return TestRunResult.error(Script, testName, e.message ?: "Error")
+			return TestRunResult.error(circuit, Script, testName, e.message ?: "Error")
 		}
 	}
 

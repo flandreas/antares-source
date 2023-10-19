@@ -12,35 +12,35 @@ import ch.scorpion.jabbah.base.StringUtils
  * [DigitalGraph] is marked as [DigitalGraph.purelyScripted].
  */
 class CombinedTestcaseRunner(
-	private val testName: String,
-	private val text: String,
+	private val testcase: Testcase,
 	private val circuit: DigitalGraph
 ) {
 
 	private var testcaseCircuitRunner: TestcaseCircuitRunner? = null
 	private var testcaseScriptRunner: TestcaseScriptRunner? = null
 
-	fun run(): List<TestRunResult> {
-		val results = mutableListOf<TestRunResult>()
+	fun run(): CombinedTestRunResult {
+		var circuitResults: TestRunResult? = null
+		var scriptResults: TestRunResult? = null
 
 		try {
-			val testScript = TestcaseParser(text, TestcaseAnalyser(circuit)).parse() as TestScript
+			val testScript = TestcaseParser(testcase.testVectors.script!!, TestcaseAnalyser(circuit)).parse() as TestScript
 
 			if (!circuit.purelyScripted) {
-				testcaseCircuitRunner = TestcaseCircuitRunner(testName, testScript, circuit)
-				results.add(testcaseCircuitRunner!!.run())
+				testcaseCircuitRunner = TestcaseCircuitRunner(testcase.name.value, testScript, circuit)
+				circuitResults = testcaseCircuitRunner!!.run()
 			}
 			if (StringUtils.isNotEmpty(circuit.script)) {
-				testcaseScriptRunner = TestcaseScriptRunner(testName, testScript, circuit)
-				results.add(testcaseScriptRunner!!.run())
+				testcaseScriptRunner = TestcaseScriptRunner(testcase.name.value, testScript, circuit)
+				scriptResults = testcaseScriptRunner!!.run()
 			}
 		} catch (e: Throwable) {
-			results.add(TestRunResult.error(TestRunResult.Type.Script, testName, e.message ?: "Error"))
+			return CombinedTestRunResult.error(testcase, e.message ?: "Error")
 		} finally {
 			testcaseCircuitRunner?.dispose()
 			testcaseScriptRunner?.dispose()
 		}
 
-		return results
+		return CombinedTestRunResult(testcase, circuitResults, scriptResults)
 	}
 }

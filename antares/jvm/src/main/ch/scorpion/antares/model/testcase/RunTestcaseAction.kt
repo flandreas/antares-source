@@ -2,6 +2,7 @@ package ch.scorpion.antares.model.testcase
 
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.module.AntaresModelModule
+import ch.scorpion.antares.model.testcase.result.CombinedTestRunResultPanelSwing
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.ActionEvent
@@ -13,7 +14,8 @@ import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.io.StorableCloner
 
 /**
- * Runs the currently selected [Testcase] and displays [TestRunResultPanelSwing] with the results.
+ * Runs the currently selected [Testcase] and displays [CombinedTestRunResultPanelSwing] with the results.
+ * Posts [DisplayTestRunResults] on the [EventBus].
  */
 class RunTestcaseAction(
 	application: Application,
@@ -33,10 +35,12 @@ class RunTestcaseAction(
 		// such as GraphViewExecutionAnimator that listen on Actors of the main circuit
 		val clone = StorableCloner.clone(circuit)
 
-		val runner = CombinedTestcaseRunner(testcase!!.name.getTranslation(), testcase!!.testVectors.script!!, clone)
+		val runner = CombinedTestcaseRunner(testcase!!, clone)
 
 		InvocationHandler.invoke {
-			CombinedTestRunResultPanelSwing.showAsDialog(runner.run())
+			val results = runner.run()
+			eventBus.post(DisplayTestRunResults(listOf(results)))
+			CombinedTestRunResultPanelSwing.showAsDialog(results)
 		}
 	}
 }
