@@ -66,6 +66,11 @@ class DigitalLibraryTreeViewActionsSwing(
 		libraryRootMenu.add(ActionWrapperSwing(newBooleanExpressionAction))
 	}
 
+	override fun fillMainLibraryRootExecuteActions() {
+		super.fillMainLibraryRootExecuteActions()
+		libraryRootMenu.add(ActionWrapperSwing(runTestsAction))
+	}
+
 	override fun fillMain() {
 		super.fillMain()
 
