@@ -40,14 +40,23 @@ class AntaresFrameSwing(
 		controller.applicationContextHolder,
 		controller.applicationModeHolder)
 
+	private val testcasesView = TestcaseViewSwing(testcaseViewController, application, controller.applicationModeHolder)
+
+	private val testResultsPanel =  TestRunResultsPanel()
+
 	init {
 		iconImage = Toolkit.getDefaultToolkit().createImage(ClassLoader.getSystemResource(AntaresSwing.ICON_PATH))
 		addTestcaseView(application)
 		addTestRunResultsView()
 	}
 
+	override fun dispose() {
+		super.dispose()
+		testcasesView.dispose()
+		testResultsPanel.dispose()
+	}
+
 	private fun addTestcaseView(application: Application) {
-		val testcasesView = TestcaseViewSwing(testcaseViewController, application, controller.applicationModeHolder)
 		graphPanel.graphEditView.add(
 			SidebarPaneContentImpl(
 				Translations.getString("antares.testcases.title"),
@@ -57,13 +66,12 @@ class AntaresFrameSwing(
 	}
 
 	private fun addTestRunResultsView() {
-		val panel = TestRunResultsPanel()
 		graphPanel.addBottom(
 			SidebarPaneContentImpl(
 				Translations.getString("antares.testcase.results.title"),
 				// TODO Icon by Janis
 				UiUtil.themedIcon("/img/usecase-16.png"),
-				panel)
+				testResultsPanel)
 		)
 	}
 

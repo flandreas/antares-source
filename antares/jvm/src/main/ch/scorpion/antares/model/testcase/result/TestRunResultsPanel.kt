@@ -25,6 +25,7 @@ import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
 import javax.swing.tree.TreeModel
 import javax.swing.tree.TreeNode
+import kotlin.math.max
 
 /**
  * Shows a tree of [TestRunResult].
@@ -52,6 +53,7 @@ class TestRunResultsPanel(
 	}
 
 	fun dispose() {
+		BaseModule.settings.set("testRunResultsPanel.splitPos", splitPane.dividerLocation)
 		eventBus.unregister(displayTestRunHandler)
 		eventBus.unregister(editedGraphViewHandler)
 	}
@@ -61,7 +63,7 @@ class TestRunResultsPanel(
 		val treeScroll = JScrollPane(tree, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED)
 		splitPane.add(treeScroll)
 		splitPane.add(detailsPanel)
-		splitPane.dividerLocation = 200
+		splitPane.dividerLocation = max(100, BaseModule.settings.getInt("testRunResultsPanel.splitPos", 200))
 		add(splitPane, BorderLayout.CENTER)
 	}
 

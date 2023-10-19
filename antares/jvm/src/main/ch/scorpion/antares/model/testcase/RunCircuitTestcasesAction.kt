@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.io.StorableCloner
@@ -33,6 +34,11 @@ class RunCircuitTestcasesAction(
 			for (testcase in circuit.testcases.testcases) {
 				val runner = CombinedTestcaseRunner(testcase, clone)
 				results.add(runner.run())
+			}
+			if (results.isEmpty()) {
+				eventBus.post(ComponentMessage(source = null, messageKey = "antares.testcase.results.empty.text"))
+			} else {
+				eventBus.post(ComponentMessage(source = null, messageKey = "antares.testcase.results.done.text"))
 			}
 			eventBus.post(DisplayTestRunResults(results))
 		}

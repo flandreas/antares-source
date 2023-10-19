@@ -94,6 +94,7 @@ class CombinedTestRunResultPanelSwing(
 
 	private fun updateSummaryLabel(results: CombinedTestRunResult?) {
 		if (results == null) {
+			summaryLabel.icon = null
 			summaryLabel.text = ""
 		}
 		else if (results.error != null) {

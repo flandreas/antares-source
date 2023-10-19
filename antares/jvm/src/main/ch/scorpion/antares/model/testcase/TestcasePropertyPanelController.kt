@@ -1,6 +1,5 @@
 package ch.scorpion.antares.model.testcase
 
-import ch.scorpion.antares.model.testcase.Testcase
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule

@@ -117,13 +117,17 @@ class SingleTestRunResultPanelSwing(
 			label.text = value.toString()
 			when ((value as Value).state) {
 				Value.State.FAILED -> {
-					label.background = failedBackgroundColor
-					label.foreground = failedTextColor
+					if (!isSelected) {
+						label.background = failedBackgroundColor
+						label.foreground = failedTextColor
+					}
 					label.text = "E: ${(value as MatchedValue).expected} / A: $value"
 				}
 				Value.State.PASSED -> {
-					label.background = successBackgroundColor
-					label.foreground = successTextColor
+					if (!isSelected) {
+						label.background = successBackgroundColor
+						label.foreground = successTextColor
+					}
 				}
 				else -> {
 					label.background = UIManager.getColor("Label.background")
