@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.base.swing.ShowSidebarPaneContentRequest
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.richtext.RichTextLabel
 import ch.scorpion.jabbah.graph.ui.MetaGraphIconProvider
+import ch.scorpion.jabbah.graph.ui.graphpanel.EditedGraphViewEvent
 import java.awt.BorderLayout
 import java.awt.Component
 import javax.swing.JPanel
@@ -33,6 +34,7 @@ class TestRunResultsPanel(
 ) : JPanel() {
 
 	private val displayTestRunHandler: EventHandler<DisplayTestRunResults> = { update(it.results) }
+	private val editedGraphViewHandler: EventHandler<EditedGraphViewEvent> = { update(listOf() )}
 
 	private val splitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
 	private val tree = JTree(createTreeModel(listOf()))
@@ -46,10 +48,12 @@ class TestRunResultsPanel(
 		buildUI()
 
 		eventBus.register(DisplayTestRunResults::class, displayTestRunHandler)
+		eventBus.register(EditedGraphViewEvent::class, editedGraphViewHandler)
 	}
 
 	fun dispose() {
 		eventBus.unregister(displayTestRunHandler)
+		eventBus.unregister(editedGraphViewHandler)
 	}
 
 	private fun buildUI() {
