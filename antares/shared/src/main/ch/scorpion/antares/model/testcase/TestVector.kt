@@ -1,6 +1,9 @@
 package ch.scorpion.antares.model.testcase
 
-class TestVector(private val _values: Array<Value>) : Iterable<Value> {
+class TestVector(
+	val description: String,
+	private val _values: Array<Value>
+) : Iterable<Value> {
 
 	val values: List<Value> get() = _values.toList()
 

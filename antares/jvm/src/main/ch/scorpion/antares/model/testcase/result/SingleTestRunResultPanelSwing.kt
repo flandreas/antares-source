@@ -25,6 +25,7 @@ class SingleTestRunResultPanelSwing(
 
 	companion object {
 
+		private val DESCRIPTION_CELL_RENDERER = DescriptionCellRenderer()
 		private val INPUT_CELL_RENDERER = InputCellRenderer()
 		private val OUTPUT_CELL_RENDERER = OutputCellRenderer()
 		private const val COLUMN_WIDTH = 100
@@ -68,7 +69,9 @@ class SingleTestRunResultPanelSwing(
 
 	private fun updateColumnModels(result: TestRunResult) {
 		table.columnModel.columns.asSequence().forEachIndexed { index, tableColumn ->
-			tableColumn.cellRenderer = if (result.isOutput[index]) {
+			tableColumn.cellRenderer = if (index == 0) {
+				DESCRIPTION_CELL_RENDERER
+			} else if (result.isOutput[index - 1]) {
 				OUTPUT_CELL_RENDERER
 			} else {
 				INPUT_CELL_RENDERER
@@ -83,15 +86,32 @@ class SingleTestRunResultPanelSwing(
 
 		override fun getRowCount(): Int = result.collector.size
 
-		override fun getColumnCount(): Int = result.names.size
+		override fun getColumnCount(): Int = result.names.size + 1
 
 		override fun getValueAt(rowIndex: Int, columnIndex: Int): Any =
-			result.collector.get(rowIndex).getValue(columnIndex)
+			if (columnIndex == 0) {
+				result.collector.get(rowIndex).description
+			} else {
+				result.collector.get(rowIndex).getValue(columnIndex - 1)
+			}
 
-		override fun getColumnName(column: Int): String = result.names[column]
+		override fun getColumnName(column: Int): String =
+			if (column == 0) {
+				Translations.getString("antares.testcase.result.description.name")
+			} else {
+				result.names[column - 1]
+			}
 	}
 
 	private class InputCellRenderer : DefaultTableCellRenderer() {
+		override fun getTableCellRendererComponent(table: JTable?, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
+			val label = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column) as JLabel
+			label.horizontalAlignment = SwingConstants.CENTER
+			return label
+		}
+	}
+
+	private class DescriptionCellRenderer : DefaultTableCellRenderer() {
 		override fun getTableCellRendererComponent(table: JTable?, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
 			val label = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column) as JLabel
 			label.horizontalAlignment = SwingConstants.CENTER

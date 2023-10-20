@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.testcase.TestVectorConsumer
 import ch.scorpion.jabbah.base.dsl.AbstractBaseInterpreter
 import ch.scorpion.antares.model.testcase.TestVector
 import ch.scorpion.antares.model.testcase.Value
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.Node
 import ch.scorpion.jabbah.graph.model.GraphPortOwner
 
@@ -17,6 +18,10 @@ class TestcaseInterpreter(
 	private val graphPortOwner: GraphPortOwner,
 	private val consumer: TestVectorConsumer
 ) : AbstractBaseInterpreter(testScript) {
+
+	companion object {
+		private val LINE_TEXT = Translations.getString("antares.testcase.result.line.txt")
+	}
 
 	override fun interpret(node: Node): Any {
 		return when (node) {
@@ -40,7 +45,7 @@ class TestcaseInterpreter(
 		testVectorValues: MutableList<Value>
 	) {
 		if (index == portNames.size) {
-			consumer.consume(TestVector(testVectorValues.toTypedArray()))
+			consumer.consume(TestVector("$LINE_TEXT ${testVectorNode.location.row}", testVectorValues.toTypedArray()))
 			return
 		}
 		if (graphPortOwner.getGraphPort<DigitalSignal>(portNames[index])?.portType?.isInput == true
