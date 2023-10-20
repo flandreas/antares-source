@@ -21,7 +21,6 @@ class TestcaseBeanInfo : AbstractBeanInfo<Testcase>() {
 
 		private val name = EditProperties.name()
 		private val description = EditProperties.description()
-		//private val testVectors = EditProperties.script("testVectors", "antares.testcase.testVectors", beanProvider = testcaseBeanProvider)
 	}
 
 	override fun addProperties(bean: Testcase, editor: Editor, properties: MutableList<Property>) {

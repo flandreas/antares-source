@@ -3,7 +3,6 @@ package ch.scorpion.antares.model.testcase
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.module.AntaresModelModule
 import ch.scorpion.jabbah.app.Application
-import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
@@ -30,9 +29,6 @@ class RunTestcaseAction(
 
 	private val circuit: DigitalGraph get() =
 		(application.controller.data!!.content as MetaGraph).graph.graphView.graph as DigitalGraph
-
-	override fun calculateEnabled(): Boolean =
-		super.calculateEnabled() && StringUtils.isNotEmpty(testcase?.testVectors?.script)
 
 	override fun execute(event: ActionEvent) {
 		LOG.userTrail("Run testcase '${testcase!!.name.value}' in circuit '${circuit.name.value}'")
