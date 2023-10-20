@@ -9,6 +9,9 @@ import ch.scorpion.antares.model.testcase.parser.TestScript
 import ch.scorpion.antares.model.testcase.parser.TestcaseAnalyser
 import ch.scorpion.antares.model.testcase.parser.TestcaseInterpreter
 import ch.scorpion.antares.model.testcase.parser.TestcaseParser
+import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.dsl.SyntaxError
+import ch.scorpion.jabbah.base.logger
 
 /**
  * Runs a circuit test script (provided as plain text) on a particular [DigitalGraph].
@@ -23,6 +26,10 @@ class TestcaseCircuitRunner(
 		testName,
 		TestcaseParser(text, TestcaseAnalyser(circuit)).parse() as TestScript,
 		circuit)
+
+	companion object {
+		private val LOG by logger(TestcaseCircuitRunner::class)
+	}
 
 	private val circuitRunner = ControlledCircuitRunner()
 
@@ -44,8 +51,11 @@ class TestcaseCircuitRunner(
 			}
 
 			return TestRunResult(circuit, Circuit, testName, portNames, determineIsOutput(portNames), collector)
+		} catch (e: SyntaxError) {
+			return TestRunResult.error(circuit, TestRunResult.Type.Script, testName, e.message ?: "Error")
 		} catch (e: Throwable) {
-			return TestRunResult.error(circuit, Circuit, testName, e.message ?: "Error")
+			LOG.error("Error while running test '${testName}' for circuit '${circuit.name.value}'", e)
+			return TestRunResult.error(circuit, Circuit, testName, Translations.getString("antares.testcase.action.technical.error.txt"))
 		}
 	}
 

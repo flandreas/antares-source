@@ -3,15 +3,21 @@ package ch.scorpion.antares.model.testcase
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.inout.DigitalCircuitInOut
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.testcase.TestRunResult.Type.Script
 import ch.scorpion.antares.model.testcase.parser.TestScript
 import ch.scorpion.antares.model.testcase.parser.TestcaseAnalyser
 import ch.scorpion.antares.model.testcase.parser.TestcaseInterpreter
 import ch.scorpion.antares.model.testcase.parser.TestcaseParser
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.Interpreter
 import ch.scorpion.jabbah.base.dsl.Memory
+import ch.scorpion.jabbah.base.dsl.RuntimeError
+import ch.scorpion.jabbah.base.dsl.SyntaxError
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.parser.TextLocation
 
 /**
  * Runs a circuit test script on the execution script of a [DigitalGraph].
@@ -26,6 +32,10 @@ class TestcaseScriptRunner(
 		testName,
 		TestcaseParser(text, TestcaseAnalyser(circuit)).parse() as TestScript,
 		circuit)
+
+	companion object {
+		private val LOG by logger(TestcaseCircuitRunner::class)
+	}
 
 	private val memory = Memory()
 
@@ -49,8 +59,11 @@ class TestcaseScriptRunner(
 			}
 
 			return TestRunResult(circuit, Script, testName, portNames, determineIsOutput(portNames), collector)
-		} catch (e: Throwable) {
+		} catch (e: SyntaxError) {
 			return TestRunResult.error(circuit, Script, testName, e.message ?: "Error")
+		} catch (e: Throwable) {
+			LOG.error("Error while running test '${testName}' for circuit '${circuit.name.value}'", e)
+			return TestRunResult.error(circuit, Script, testName, Translations.getString("antares.testcase.action.technical.error.txt"))
 		}
 	}
 
@@ -66,7 +79,11 @@ class TestcaseScriptRunner(
 	}
 
 	override fun readOutput(port: DigitalCircuitInOut): DigitalSignal? =
-		memory.getValue(port.name!!) as DigitalSignal?
+		when (val value = memory.getValue(port.name!!)) {
+			is DigitalSignal -> value
+			is Long -> DigitalSignalFactory.of(port.bitWidth, value)
+			else -> throw RuntimeError(TextLocation.UNDEFINED, Translations.getString("base.dsl.expectedNumber.msg"))
+		}
 
 	override fun processInputChanged() { }
 
