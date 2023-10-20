@@ -93,11 +93,12 @@ class TestRunResultsPanel(
 		}?.let {
 			SwingUtilities.invokeLater {
 				val path = JTreeUtil.getPath(it)
-				tree.expandPath(path)
+				JTreeUtil.expandAll(tree)
 				tree.selectionPath = path
 				eventBus.post(ShowSidebarPaneContentRequest(this))
 			}
 		}
+
 	}
 
 	private fun createTreeModel(results: List<CombinedTestRunResult>): TreeModel {
@@ -152,10 +153,6 @@ class TestRunResultsPanel(
 	)
 
 	private inner class TreeRenderer : RichTextLabel() {
-
-		// TODO Icon by Janis
-		private val testcaseIcon = UiUtil.themedIcon("/img/usecase-16.png")
-
 		override fun getTreeCellRendererComponent(tree: JTree?, value: Any?, sel: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): Component {
 			val label = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus) as RichTextLabel
 
