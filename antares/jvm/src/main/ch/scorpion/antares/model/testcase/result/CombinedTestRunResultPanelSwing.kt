@@ -71,13 +71,15 @@ class CombinedTestRunResultPanelSwing(
 			tabbedPane.addTab(
 				TestRunResult.Type.Circuit.toString(),
 				getResultIcon(it),
-				SingleTestRunResultPanelSwing(it))
+				SingleTestRunResultPanelSwing(it),
+				Translations.getString("antares.testcase.result.type.circuit.desc"))
 		}
 		results?.scriptResults?.let {
 			tabbedPane.addTab(
 				TestRunResult.Type.Script.toString(),
 				getResultIcon(it),
-				SingleTestRunResultPanelSwing(it))
+				SingleTestRunResultPanelSwing(it),
+				Translations.getString("antares.testcase.result.type.script.desc"))
 		}
 
 		add(tabbedPane, BorderLayout.CENTER)

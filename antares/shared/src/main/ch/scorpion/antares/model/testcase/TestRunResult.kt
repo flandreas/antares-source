@@ -35,8 +35,15 @@ data class TestRunResult(
 
 		override fun toString(): String {
 			return when(this) {
-				Circuit -> Translations.getString("antares.testcase.result.type.circuit")
-				Script -> Translations.getString("antares.testcase.result.type.script")
+				Circuit -> Translations.getString("antares.testcase.result.type.circuit.name")
+				Script -> Translations.getString("antares.testcase.result.type.script.name")
+			}
+		}
+
+		fun tooltip(): String {
+			return when (this) {
+				Circuit -> Translations.getString("antares.testcase.result.type.circuit.desc")
+				Script -> Translations.getString("antares.testcase.result.type.script.desc")
 			}
 		}
 	}
