@@ -32,8 +32,6 @@ open class BaseLexer(text: String) : AbstractLexer(text) {
 	}
 
 	override fun nextToken(state: State): Token<Any> {
-		recordLocation(state)
-
 		while (state.currentChar != null) {
 			if (isWhitespace(state)) {
 				skipWhitespace(state)
@@ -46,6 +44,8 @@ open class BaseLexer(text: String) : AbstractLexer(text) {
 				skipComment(state)
 				continue
 			}
+
+			recordLocation(state)
 
 			val token = nextTokenImpl(state)
 			if (LOG.isTraceEnabled() && state === this.state) {

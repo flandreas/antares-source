@@ -14,6 +14,41 @@ class BaseLexerTest : AbstractLexerTest() {
 	}
 
 	@Test
+	fun shouldReportLocation() {
+		val lexer = BaseLexer("""
+			11
+			21 22
+			31
+		""".trimIndent())
+
+		assertLong(11, lexer)
+		assertRowColumn(1, 1, lexer.location)
+
+		assertLong(21, lexer)
+		assertRowColumn(2, 1, lexer.location)
+
+		assertLong(22, lexer)
+		assertRowColumn(2, 4, lexer.location)
+
+		assertLong(31, lexer)
+		assertRowColumn(3, 1, lexer.location)
+	}
+
+	@Test
+	fun shouldReplaceTabInLocation() {
+		val lexer = BaseLexer("""
+			12345
+				21
+		""".trimIndent())
+
+		assertLong(12345, lexer)
+		assertRowColumn(1, 1, lexer.location)
+
+		assertLong(21, lexer)
+		assertRowColumn(2, 5, lexer.location)
+	}
+
+	@Test
 	fun shouldSkipStartLineComment() {
 		val lexer = BaseLexer("""
 			// Comment
@@ -32,5 +67,24 @@ class BaseLexerTest : AbstractLexerTest() {
 
 		assertId("Hello", lexer)
 		assertToken(BaseTokenType.EOF, lexer)
+	}
+
+	@Test
+	fun shouldIncrementRowOnComment() {
+		val lexer = BaseLexer("""
+			Line1
+			// Comment
+			Line3
+			Line4
+		""".trimIndent())
+
+		assertId("Line1", lexer)
+		assertRowColumn(1, 1, lexer.location)
+
+		assertId("Line3", lexer)
+		assertRowColumn(3, 1, lexer.location)
+
+		assertId("Line4", lexer)
+		assertRowColumn(4, 1, lexer.location)
 	}
 }

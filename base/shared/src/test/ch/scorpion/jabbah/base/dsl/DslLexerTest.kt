@@ -7,7 +7,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-class LexerTest : AbstractLexerTest() {
+class DslLexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldScanMultiplyTerm() {
