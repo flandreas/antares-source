@@ -5,6 +5,8 @@ import ch.scorpion.antares.model.testcase.parser.TestScript
 import ch.scorpion.antares.model.testcase.parser.TestcaseAnalyser
 import ch.scorpion.antares.model.testcase.parser.TestcaseParser
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.logger
 
 /**
  * A combined runner of [Testcase]s that runs a test script on a [DigitalGraph] and/or
@@ -15,6 +17,9 @@ class CombinedTestcaseRunner(
 	private val testcase: Testcase,
 	private val circuit: DigitalGraph
 ) {
+	companion object {
+		private val LOG by logger(CombinedTestcaseRunner::class)
+	}
 
 	private var testcaseCircuitRunner: TestcaseCircuitRunner? = null
 	private var testcaseScriptRunner: TestcaseScriptRunner? = null
@@ -22,6 +27,10 @@ class CombinedTestcaseRunner(
 	fun run(): CombinedTestRunResult {
 		var circuitResults: TestRunResult? = null
 		var scriptResults: TestRunResult? = null
+
+		if (StringUtils.isBlank(testcase.testVectors.script)) {
+			return CombinedTestRunResult.error(testcase, Translations.getString("antares.testcase.error.empty"))
+		}
 
 		try {
 			val testScript = TestcaseParser(testcase.testVectors.script!!, TestcaseAnalyser(circuit)).parse() as TestScript
@@ -35,6 +44,7 @@ class CombinedTestcaseRunner(
 				scriptResults = testcaseScriptRunner!!.run()
 			}
 		} catch (e: Throwable) {
+			LOG.error("Error while running test '${testcase.name.value}' for circuit '${circuit.name.value}'", e)
 			return CombinedTestRunResult.error(testcase, e.message ?: "Error")
 		} finally {
 			testcaseCircuitRunner?.dispose()

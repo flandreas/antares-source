@@ -40,8 +40,6 @@ class TestcaseScriptRunner(
 	private val memory = Memory()
 
 	override fun run(): TestRunResult {
-		require(StringUtils.isNotBlank(circuit.script)) { "Circuit's script must not be empty"}
-
 		try {
 			val collector = TestVectorCollector()
 			portNames = testScript.portNames.names.map { it.value!! }
