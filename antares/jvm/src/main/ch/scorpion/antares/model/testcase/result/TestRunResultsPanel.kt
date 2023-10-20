@@ -43,9 +43,11 @@ class TestRunResultsPanel(
 	private val editedGraphViewHandler: EventHandler<EditedGraphViewEvent> = { update(listOf() ) }
 
 	private val splitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
-	private val tree = JTree(createTreeModel(listOf()))
+	private val tree = JTree()
 	private val detailsPanel = CombinedTestRunResultPanelSwing(null)
 	private val popupMenu = JPopupMenu()
+
+	private var statistics: Statistics = Statistics(0, 0)
 
 	val clearAction: Action = ClearAction()
 	val expandAllAction: Action = ExpandAllAction()
@@ -63,6 +65,8 @@ class TestRunResultsPanel(
 
 		eventBus.register(DisplayTestRunResults::class, displayTestRunHandler)
 		eventBus.register(EditedGraphViewEvent::class, editedGraphViewHandler)
+
+		update(emptyList())
 	}
 
 	fun dispose() {
@@ -81,6 +85,7 @@ class TestRunResultsPanel(
 	}
 
 	private fun update(results: List<CombinedTestRunResult>) {
+		statistics = calculateStatistics(results)
 		tree.model = createTreeModel(results)
 
 		JTreeUtil.findTreeNode(tree.model.root as TreeNode) {
@@ -96,7 +101,12 @@ class TestRunResultsPanel(
 	}
 
 	private fun createTreeModel(results: List<CombinedTestRunResult>): TreeModel {
-		val root = DefaultMutableTreeNode(Translations.getString("antares.testcase.results.title"))
+		val rootName = if (statistics.failedTestVectorCount == 0) {
+			Translations.getString("antares.testcase.results.total.success", statistics.totalTestVectorCount)
+		} else {
+			Translations.getString("antares.testcase.results.total.failed", statistics.failedTestVectorCount, statistics.totalTestVectorCount)
+		}
+		val root = DefaultMutableTreeNode(rootName)
 		val map = mutableMapOf<DigitalGraph, DefaultMutableTreeNode>()
 
 		for (result in results) {
@@ -133,7 +143,15 @@ class TestRunResultsPanel(
 		}
 	}
 
-	private class TreeRenderer : RichTextLabel() {
+	private fun calculateStatistics(results: List<CombinedTestRunResult>): Statistics =
+		Statistics(results.size, results.filter { it.failed }.size)
+
+	private data class Statistics(
+		val totalTestVectorCount: Int,
+		val failedTestVectorCount: Int
+	)
+
+	private inner class TreeRenderer : RichTextLabel() {
 
 		// TODO Icon by Janis
 		private val testcaseIcon = UiUtil.themedIcon("/img/usecase-16.png")
@@ -156,7 +174,11 @@ class TestRunResultsPanel(
 				}
 			} else {
 				// Root
-				label.icon = testcaseIcon
+				label.icon = if (statistics.failedTestVectorCount == 0) {
+					CombinedTestRunResultPanelSwing.PASSED_ICON
+				} else {
+					CombinedTestRunResultPanelSwing.FAILED_ICON
+				}
 			}
 
 			return label

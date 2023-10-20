@@ -42,7 +42,9 @@ data class TestRunResult(
 	}
 
 	/** Returns the number of failed [TestVector]s.*/
-	val failedCount: Int get() {
+	val failedCount: Int
+
+	init {
 		val failedVectors = mutableSetOf<TestVector>()
 		for (column in names.indices) {
 			if (isOutput[column]) {
@@ -51,7 +53,7 @@ data class TestRunResult(
 					.forEach { failedVectors.add(it) }
 			}
 		}
-		return failedVectors.size
+		failedCount = failedVectors.size
 	}
 }
 
@@ -67,14 +69,17 @@ data class CombinedTestRunResult(
 			CombinedTestRunResult(source, null, null, error)
 	}
 
-	val totalFailedCount: Int get() {
-		val circuitResultCount = circuitResults?.let {
+	val totalFailedCount: Int = if (error != null) {
+		1
+	} else {
+		val circuitFailedCount = circuitResults?.let {
 			if (it.errorMessage != null) 1 else it.failedCount
 		} ?: 0
-		val scriptResultCount = scriptResults?.let {
+		val scriptFailedCount = scriptResults?.let {
 			if (it.errorMessage != null) 1 else it.failedCount
 		} ?: 0
-
-		return circuitResultCount + scriptResultCount
+		circuitFailedCount + scriptFailedCount
 	}
+
+	val failed: Boolean get() = totalFailedCount > 0
 }
