@@ -3,13 +3,9 @@ package ch.scorpion.antares.model.testcase.result
 import ch.scorpion.antares.model.testcase.MatchedValue
 import ch.scorpion.antares.model.testcase.TestRunResult
 import ch.scorpion.antares.model.testcase.Value
-import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.UIBasics
-import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
-import ch.scorpion.jabbah.draw.graphics.PredefinedColorIdentity
-import ch.scorpion.jabbah.draw.graphics.PredefinedColorRepository
-import ch.scorpion.jabbah.draw.style.Themes
 import java.awt.BorderLayout
 import java.awt.Component
 import javax.swing.*
@@ -121,14 +117,6 @@ class SingleTestRunResultPanelSwing(
 
 	private class OutputCellRenderer : DefaultTableCellRenderer() {
 
-		private val failedColor = Themes.get<AntaresTheme>().error
-		private val failedBackgroundColor = Graphics2DJvm.toAwtColor(failedColor.backgroundColor)
-		private val failedTextColor = Graphics2DJvm.toAwtColor(failedColor.textColor)
-
-		private val successColor = PredefinedColorRepository.withIdentity(PredefinedColorIdentity.Green)!!
-		private val successBackgroundColor = Graphics2DJvm.toAwtColor(successColor.color.backgroundColor)
-		private val successTextColor = Graphics2DJvm.toAwtColor(successColor.color.textColor)
-
 		override fun getTableCellRendererComponent(table: JTable?, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
 			val label = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column) as JLabel
 			label.horizontalAlignment = SwingConstants.CENTER
@@ -138,15 +126,15 @@ class SingleTestRunResultPanelSwing(
 			when ((value as Value).state) {
 				Value.State.FAILED -> {
 					if (!isSelected) {
-						label.background = failedBackgroundColor
-						label.foreground = failedTextColor
+						label.background = UiUtil.failureBackgroundColor
+						label.foreground = UiUtil.failureTextColor
 					}
 					label.text = "E: ${(value as MatchedValue).expected} / A: $value"
 				}
 				Value.State.PASSED -> {
 					if (!isSelected) {
-						label.background = successBackgroundColor
-						label.foreground = successTextColor
+						label.background = UiUtil.successBackgroundColor
+						label.foreground = UiUtil.successTextColor
 					}
 				}
 				else -> {

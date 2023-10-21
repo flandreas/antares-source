@@ -20,16 +20,45 @@ import kotlin.math.min
 object UiUtil {
 
 	private val LOG by lazy { logger(UiUtil::class) }
+
 	private const val DIVERT = 24
 	private val VARIANT_QUALIFIERS = listOf("", "@125pct", "@150pct", "@2x")
-	private val ERROR_COLOR_DARK = Color(255, 107, 104)
-	private val ERROR_COLOR_LIGHT = Color.RED
+
+	/**
+	 * Error text color is used for drawing text directly on the standard panel background,
+	 * such as validation error text in a dialog.
+	 */
+	private val ERROR_TEXT_COLOR_DARK = Color(255, 107, 104)
+	private val ERROR_TEXT_COLOR_LIGHT = Color.RED
+
+	/**
+	 * Success and failure colors are used for drawing areas in the UI that represent success (red)
+	 * or failure (green), such as backgrounds of table cells.
+	 */
+	private val SUCCESS_BACKGROUND_COLOR_DARK =  Color(7, 87, 0)
+	private val SUCCESS_BACKGROUND_COLOR_LIGHT = Color(232, 255, 232)
+	private val FAILURE_BACKGROUND_COLOR_DARK = Color(116, 55, 56)
+	private val FAILURE_BACKGROUND_COLOR_LIGHT = Color(255, 232, 232    )
 
 	val errorTextColor: Color get() = if (UI.isDark) {
-		ERROR_COLOR_DARK
+		ERROR_TEXT_COLOR_DARK
 	} else {
-		ERROR_COLOR_LIGHT
+		ERROR_TEXT_COLOR_LIGHT
 	}
+
+	val successBackgroundColor: Color get() = if (UI.isDark) {
+		SUCCESS_BACKGROUND_COLOR_DARK
+	} else {
+		SUCCESS_BACKGROUND_COLOR_LIGHT
+	}
+	val successTextColor: Color get() = UIManager.getColor("Label.foreground")
+
+	val failureBackgroundColor: Color get() = if (UI.isDark) {
+		FAILURE_BACKGROUND_COLOR_DARK
+	} else {
+		FAILURE_BACKGROUND_COLOR_LIGHT
+	}
+	val failureTextColor: Color get() = UIManager.getColor("Label.foreground")
 
 	/**
 	 * Invokes the specified invokable on the [EventQueue] an returns immediately.
