@@ -40,6 +40,7 @@ class RunTestcaseAction(
 
 			try {
 				// Setup parameter values (generics)
+				clone.parameterDefinitions = metaGraph.parameterDefinitions
 				clone.parameterValues = GraphParamValues.withDefaults(metaGraph.parameterDefinitions)
 
 				val results = mutableListOf<CombinedTestRunResult>()
