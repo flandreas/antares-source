@@ -9,7 +9,6 @@ import ch.scorpion.antares.model.testcase.parser.TestScript
 import ch.scorpion.antares.model.testcase.parser.TestcaseAnalyser
 import ch.scorpion.antares.model.testcase.parser.TestcaseInterpreter
 import ch.scorpion.antares.model.testcase.parser.TestcaseParser
-import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.Interpreter
 import ch.scorpion.jabbah.base.dsl.Memory
@@ -18,6 +17,7 @@ import ch.scorpion.jabbah.base.dsl.SyntaxError
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.parser.TextLocation
+import ch.scorpion.jabbah.graph.model.graph.GraphActivationRecord
 
 /**
  * Runs a circuit test script on the execution script of a [DigitalGraph].
@@ -37,7 +37,7 @@ class TestcaseScriptRunner(
 		private val LOG by logger(TestcaseCircuitRunner::class)
 	}
 
-	private val memory = Memory()
+	private val memory = Memory(GraphActivationRecord(circuit))
 
 	override fun run(): TestRunResult {
 		try {

@@ -11,10 +11,9 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
-import ch.scorpion.jabbah.io.StorableCloner
 
 /**
- * Runs all [Testcase]s of the selected [DigitalGraph]
+ * Runs all [Testcase]s of the selected [DigitalGraph] and posts [DisplayTestRunResults] on the [EventBus].
  */
 class RunCircuitTestcasesAction(
 	application: Application,
@@ -27,21 +26,16 @@ class RunCircuitTestcasesAction(
 		private val LOG by logger(RunCircuitTestcasesAction::class)
 	}
 
-	private val circuit: DigitalGraph get() =
-		(application.controller.data!!.content as MetaGraph).graph.graphView.graph as DigitalGraph
-
 	override fun calculateEnabled(): Boolean = super.calculateEnabled() && testcase == null
 
 	override fun execute(event: ActionEvent) {
-		LOG.userTrail("Run all tests in circuit '${circuit.name.value}'")
-
 		InvocationHandler.invoke {
-			val clone = StorableCloner.clone(circuit)
-			val results = mutableListOf<CombinedTestRunResult>()
-			for (testcase in circuit.testcases.testcases) {
-				val runner = CombinedTestcaseRunner(testcase, clone)
-				results.add(runner.run())
-			}
+			val metaGraph = application.controller.data!!.content as MetaGraph
+			val circuit = metaGraph.graph.model as DigitalGraph
+
+			LOG.userTrail("Run all tests in circuit '${circuit.name.value}'")
+			val results = RunTestcaseAction.run(metaGraph, circuit.testcases.testcases)
+
 			if (results.isEmpty()) {
 				eventBus.post(ComponentMessage(source = null, messageKey = "antares.testcase.results.empty.text"))
 			} else {

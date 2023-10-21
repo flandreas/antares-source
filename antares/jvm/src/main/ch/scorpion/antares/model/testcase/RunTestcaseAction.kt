@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
+import ch.scorpion.jabbah.graph.model.param.GraphParamValues
 import ch.scorpion.jabbah.io.StorableCloner
 
 /**
@@ -25,24 +26,43 @@ class RunTestcaseAction(
 
 	companion object {
 		private val LOG by logger(RunTestcaseAction::class)
+
+		/**
+		 * Uses by various types of "Run" actions to run [Testcase] of a particular [MetaGraph].
+		 * Encapsulates [DigitalGraph] cloning/disposing and setup of [GraphParamValues].
+		 */
+		fun run(metaGraph: MetaGraph, testcases: List<Testcase>): List<CombinedTestRunResult> {
+			val circuit = metaGraph.graph.model as DigitalGraph
+
+			// Clone circuit to avoid interference from various objects of the main application,
+			// such as GraphViewExecutionAnimator that listen on Actors of the main circuit
+			val clone = StorableCloner.clone(circuit)
+
+			try {
+				// Setup parameter values (generics)
+				clone.parameterValues = GraphParamValues.withDefaults(metaGraph.parameterDefinitions)
+
+				val results = mutableListOf<CombinedTestRunResult>()
+				for (testcase in testcases) {
+					results.add(CombinedTestcaseRunner(testcase, clone).run())
+				}
+				return results
+			} finally {
+				clone.dispose()
+			}
+		}
 	}
 
-	private val circuit: DigitalGraph get() =
-		(application.controller.data!!.content as MetaGraph).graph.graphView.graph as DigitalGraph
-
 	override fun execute(event: ActionEvent) {
-		LOG.userTrail("Run testcase '${testcase!!.name.value}' in circuit '${circuit.name.value}'")
-
-		// Clone circuit to avoid interference from various objects of the main application,
-		// such as GraphViewExecutionAnimator that listen on Actors of the main circuit
-		val clone = StorableCloner.clone(circuit)
-
-		val runner = CombinedTestcaseRunner(testcase!!, clone)
-
 		InvocationHandler.invoke {
-			val results = runner.run()
+			val metaGraph = application.controller.data!!.content as MetaGraph
+			val circuit = metaGraph.graph.model as DigitalGraph
+
+			LOG.userTrail("Run testcase '${testcase!!.name.value}' in circuit '${circuit.name.value}'")
+			val results = run(metaGraph, listOf(testcase!!))
+
 			eventBus.post(ComponentMessage(source = null, messageKey = "antares.testcase.results.done.text"))
-			eventBus.post(DisplayTestRunResults(listOf(results)))
+			eventBus.post(DisplayTestRunResults(results))
 		}
 	}
 }

@@ -12,10 +12,10 @@ import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.graph.library.AbstractLibraryFolderAction
 import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
-import ch.scorpion.jabbah.io.StorableCloner
 
 /**
- * Runs all [Testcase]s of all [DigitalGraph]s in a [Library].
+ * Runs all [Testcase]s of all [DigitalGraph]s in a [Library]
+ * and posts [DisplayTestRunResults] on the [EventBus].
  */
 class RunLibraryTestcasesAction(
 	controller: LibraryTreeViewController,
@@ -39,10 +39,7 @@ class RunLibraryTestcasesAction(
 				val metaGraph = selectedFolder.library!!.getMetaGraph(uuid)
 				if (metaGraph.type == AntaresGraphTypes.Digital) {
 					val circuit = metaGraph.graph.model!! as DigitalGraph
-					val clone = StorableCloner.clone(circuit)
-					for (testcase in circuit.testcases.testcases) {
-						results.add(CombinedTestcaseRunner(testcase, clone).run())
-					}
+					results.addAll(RunTestcaseAction.run(metaGraph, circuit.testcases.testcases))
 				}
 			}
 
