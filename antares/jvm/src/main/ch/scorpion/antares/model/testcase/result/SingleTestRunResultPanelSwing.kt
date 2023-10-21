@@ -110,7 +110,7 @@ class SingleTestRunResultPanelSwing(
 	private class DescriptionCellRenderer : DefaultTableCellRenderer() {
 		override fun getTableCellRendererComponent(table: JTable?, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
 			val label = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column) as JLabel
-			label.horizontalAlignment = SwingConstants.CENTER
+			label.horizontalAlignment = SwingConstants.LEFT
 			return label
 		}
 	}
@@ -135,6 +135,9 @@ class SingleTestRunResultPanelSwing(
 					if (!isSelected) {
 						label.background = UiUtil.successBackgroundColor
 						label.foreground = UiUtil.successTextColor
+					}
+					if ((value as MatchedValue).expected.type == Value.Type.DONT_CARE) {
+						label.text = "E: ${value.expected} / A: $value"
 					}
 				}
 				else -> {
