@@ -60,8 +60,7 @@ class AntaresFrameSwing(
 		graphPanel.graphEditView.add(
 			SidebarPaneContentImpl(
 				Translations.getString("antares.testcases.title"),
-				// TODO Icon by Janis
-				UiUtil.themedIcon("/img/usecase-16.png"),
+				UiUtil.themedIcon("/img/testcase.png"),
 				testcasesView))
 	}
 
@@ -69,8 +68,7 @@ class AntaresFrameSwing(
 		graphPanel.addBottom(
 			SidebarPaneContentImpl(
 				Translations.getString("antares.testcase.results.title"),
-				// TODO Icon by Janis
-				UiUtil.themedIcon("/img/usecase-16.png"),
+				UiUtil.themedIcon("/img/testcase.png"),
 				testResultsPanel,
 				listOf(testResultsPanel.clearAction))
 		)

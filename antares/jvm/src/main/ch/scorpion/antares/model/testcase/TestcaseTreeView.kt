@@ -205,8 +205,7 @@ class TestcaseTreeView(
 	private class TestcaseTreeRenderer : RichTextLabel() {
 
 		companion object {
-			// TODO: Icon by Janis
-			private val testcaseIcon = UiUtil.themedIcon("/img/usecase-16.png")
+			private val testcaseIcon = UiUtil.themedIcon("/img/testcase.png")
 		}
 
 		override fun getTreeCellRendererComponent(tree: JTree?, value: Any?, sel: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): Component {
