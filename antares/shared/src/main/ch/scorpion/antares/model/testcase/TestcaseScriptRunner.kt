@@ -22,13 +22,15 @@ import ch.scorpion.jabbah.graph.model.graph.GraphActivationRecord
 class TestcaseScriptRunner(
 	testName: String,
 	testScript: TestScript,
-	circuit: DigitalGraph
+	circuit: DigitalGraph,
+	private val execScriptAST: Node
 ) : AbstractTestcaseRunner(testName, testScript, circuit) {
 
-	constructor(testName: String, text: String, circuit: DigitalGraph): this(
+	constructor(testName: String, text: String, circuit: DigitalGraph, execScriptAST: Node): this(
 		testName,
 		TestcaseParser(text, TestcaseAnalyser(circuit)).parse() as TestScript,
-		circuit)
+		circuit,
+		execScriptAST)
 
 	companion object {
 		private val LOG by logger(TestcaseCircuitRunner::class)
@@ -42,7 +44,7 @@ class TestcaseScriptRunner(
 			portNames = testScript.portNames.names.map { it.value!! }
 			TestcaseInterpreter(testScript, circuit, collector).interpret()
 
-			val execScriptInterpreter = createExecScriptInterpreter(circuit.script!!, memory)
+			val execScriptInterpreter = BaseModule.interpreterFactory(execScriptAST, memory)
 
 			for (testVector in collector) {
 				defineMemory()
@@ -85,9 +87,4 @@ class TestcaseScriptRunner(
 	override fun processInputChanged() { }
 
 	override fun dispose() { }
-
-	private fun createExecScriptInterpreter(circuitScript: String, memory: Memory): Interpreter {
-		val parser = BaseModule.parserFactory(circuitScript, null)
-		return BaseModule.interpreterFactory(parser.parse(), memory)
-	}
 }

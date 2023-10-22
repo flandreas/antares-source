@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.testcase.TestcaseScriptRunner
 import ch.scorpion.antares.model.testcase.Value
 import ch.scorpion.antares.view.gate.LogicGateView
+import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -33,7 +34,8 @@ class TestcaseScriptRunnerTest {
 			1 1 1
 		""".trimIndent()
 
-		val result = TestcaseScriptRunner("test", testScript, circuit).run()
+		val execScriptAST = BaseModule.parserFactory(circuit.script!!, null).parse()
+		val result = TestcaseScriptRunner("test", testScript, circuit, execScriptAST).run()
 
 		assertNull(result.errorMessage)
 		assertEquals(3, result.names.size)

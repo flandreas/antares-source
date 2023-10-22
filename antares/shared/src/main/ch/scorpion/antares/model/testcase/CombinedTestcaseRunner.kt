@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.testcase.parser.TestcaseAnalyser
 import ch.scorpion.antares.model.testcase.parser.TestcaseParser
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.dsl.Node
 import ch.scorpion.jabbah.base.dsl.SemanticError
 import ch.scorpion.jabbah.base.dsl.SyntaxError
 import ch.scorpion.jabbah.base.logger
@@ -17,7 +18,8 @@ import ch.scorpion.jabbah.base.logger
  */
 class CombinedTestcaseRunner(
 	private val testcase: Testcase,
-	private val circuit: DigitalGraph
+	private val circuit: DigitalGraph,
+	private val execScriptAST: Node? = null
 ) {
 	companion object {
 		private val LOG by logger(CombinedTestcaseRunner::class)
@@ -42,8 +44,8 @@ class CombinedTestcaseRunner(
 				testcaseCircuitRunner = TestcaseCircuitRunner(testcase.name.value, testScript, circuit)
 				circuitResults = testcaseCircuitRunner!!.run()
 			}
-			if (StringUtils.isNotEmpty(circuit.script)) {
-				testcaseScriptRunner = TestcaseScriptRunner(testcase.name.value, testScript, circuit)
+			if (execScriptAST != null) {
+				testcaseScriptRunner = TestcaseScriptRunner(testcase.name.value, testScript, circuit, execScriptAST)
 				scriptResults = testcaseScriptRunner!!.run()
 			}
 		} catch (e: SemanticError) {

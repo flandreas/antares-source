@@ -43,9 +43,13 @@ class RunTestcaseAction(
 				clone.parameterDefinitions = metaGraph.parameterDefinitions
 				clone.parameterValues = GraphParamValues.withDefaults(metaGraph.parameterDefinitions)
 
+				val execScriptAST = circuit.script?.let {
+					BaseModule.parserFactory(it, null).parse()
+				}
+
 				val results = mutableListOf<CombinedTestRunResult>()
 				for (testcase in testcases) {
-					results.add(CombinedTestcaseRunner(testcase, clone).run())
+					results.add(CombinedTestcaseRunner(testcase, clone, execScriptAST).run())
 				}
 				return results
 			} finally {
