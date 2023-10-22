@@ -3,7 +3,6 @@ package ch.scorpion.antares.model.testcase.parser
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.collection.indexOfFirstOrNull
 import ch.scorpion.jabbah.base.dsl.Node
 import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
 import ch.scorpion.jabbah.base.dsl.SemanticError
@@ -16,7 +15,6 @@ class TestcaseAnalyser(
 	override fun analyse(program: Node) {
 		val script = program as TestScript
 		val portNames = script.portNames.names.map { it.value!! }
-		//val testVectors: List<List<ValueNode>> = script.testVectors.children.map { it.values }.toList()
 
 		ensurePortsExist(portNames)
 		ensureAtLeastOneInput(portNames)
@@ -54,16 +52,4 @@ class TestcaseAnalyser(
 			throwSemanticError("antares.testcase.error.tooFewValues", it.location.row)
 		}
 	}
-
-	/*
-	private fun ensureValueCount(portNameCount: Int, testVectors: List<List<ValueNode>>) {
-		testVectors.indexOfFirstOrNull { it.size > portNameCount }?.let {
-			throwSemanticError("antares.testcase.error.tooManyValues", it + 1)
-		}
-		testVectors.indexOfFirstOrNull { it.size < portNameCount }?.let {
-			throwSemanticError("antares.testcase.error.tooFewValues", it + 1)
-		}
-	}
-	*/
-
 }

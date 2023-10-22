@@ -80,6 +80,7 @@ class ControlledCircuitRunner(
 		circuit.formNet(scheduler)
 		circuit.executionInitialize(scheduler)
 		circuit.executionStart(scheduler, null)
+		proceedUntilQueueEmpty()
 	}
 
 	fun proceedUntilQueueEmpty() {
