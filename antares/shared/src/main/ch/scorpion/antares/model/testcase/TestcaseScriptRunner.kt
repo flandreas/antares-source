@@ -69,7 +69,7 @@ class TestcaseScriptRunner(
 	private fun defineMemory() {
 		memory.clear()
 		for (portName in portNames) {
-			memory.preset(portName, 0)
+			memory.preset(portName, 0L)
 		}
 	}
 
