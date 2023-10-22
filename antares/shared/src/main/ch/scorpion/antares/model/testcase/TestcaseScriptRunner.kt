@@ -3,6 +3,7 @@ package ch.scorpion.antares.model.testcase
 import ch.scorpion.antares.dsl.AntaresInterpreter
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.inout.DigitalCircuitInOut
+import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.testcase.TestRunResult.Type.Script
@@ -15,6 +16,9 @@ import ch.scorpion.jabbah.base.dsl.*
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.parser.TextLocation
+import ch.scorpion.jabbah.graph.model.GraphActorData
+import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.model.StoringGraphActorData
 import ch.scorpion.jabbah.graph.model.graph.GraphActivationRecord
 
 /**
@@ -39,6 +43,12 @@ class TestcaseScriptRunner(
 
 	private val memory = Memory(GraphActivationRecord(circuit))
 
+	/** Dummy input port used to support feature "raised input" of [AntaresInterpreter].*/
+	private val inputPort = DigitalPortImpl(PortType.INPUT)
+
+	/** Dummy [GraphActorData] that returns [inputPort] after it has received a new value.*/
+	private var graphActorData: GraphActorData = StoringGraphActorData(inputPort, null)
+
 	override fun run(): TestRunResult {
 		try {
 			val collector = TestVectorCollector()
@@ -53,7 +63,7 @@ class TestcaseScriptRunner(
 
 				execScriptInterpreter.executionStarted()
 				setInputs(null)
-				execScriptInterpreter.interpret(keepMemory = true)
+				execScriptInterpreter.interpret(graphActorData, keepMemory = true)
 				readOutputs(null)
 			}
 
@@ -77,9 +87,11 @@ class TestcaseScriptRunner(
 
 	override fun setInput(port: DigitalCircuitInOut, signal: DigitalSignal) {
 		memory.preset(port.name!!, signal)
+		inputPort.name = port.name
+		graphActorData = StoringGraphActorData(inputPort, signal)
 	}
 
-	override fun readOutput(port: DigitalCircuitInOut): DigitalSignal? =
+	override fun readOutput(port: DigitalCircuitInOut): DigitalSignal =
 		when (val value = memory.getValue(port.name!!)) {
 			is DigitalSignal -> value
 			is Long -> DigitalSignalFactory.of(port.bitWidth, value)
