@@ -1,5 +1,6 @@
 package ch.scorpion.antares.model.testcase
 
+import ch.scorpion.antares.dsl.AntaresInterpreter
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.inout.DigitalCircuitInOut
 import ch.scorpion.antares.model.signal.DigitalSignal
@@ -44,12 +45,13 @@ class TestcaseScriptRunner(
 			portNames = testScript.portNames.names.map { it.value!! }
 			TestcaseInterpreter(testScript, circuit, collector).interpret()
 
-			val execScriptInterpreter = BaseModule.interpreterFactory(execScriptAST, memory)
+			val execScriptInterpreter = BaseModule.interpreterFactory(execScriptAST, memory) as AntaresInterpreter
 
 			for (testVector in collector) {
 				defineMemory()
 				currentTestVector = testVector
 
+				execScriptInterpreter.executionStarted()
 				setInputs(null)
 				execScriptInterpreter.interpret(keepMemory = true)
 				readOutputs(null)
