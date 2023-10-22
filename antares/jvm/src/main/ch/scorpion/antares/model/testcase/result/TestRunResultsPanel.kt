@@ -8,23 +8,19 @@ import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.event.*
+import ch.scorpion.jabbah.base.event.ActionEvent
+import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.base.swing.ShowSidebarPaneContentRequest
-import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.richtext.RichTextLabel
 import ch.scorpion.jabbah.graph.ui.MetaGraphIconProvider
 import ch.scorpion.jabbah.graph.ui.graphpanel.EditedGraphViewEvent
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.event.MouseEvent
-import javax.swing.JPanel
-import javax.swing.JPopupMenu
-import javax.swing.JScrollPane
-import javax.swing.JSplitPane
-import javax.swing.JTree
-import javax.swing.SwingUtilities
+import javax.swing.*
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
 import javax.swing.tree.TreeModel
@@ -40,7 +36,15 @@ class TestRunResultsPanel(
 ) : JPanel() {
 
 	private val displayTestRunHandler: EventHandler<DisplayTestRunResults> = { update(it.results) }
-	private val editedGraphViewHandler: EventHandler<EditedGraphViewEvent> = { update(listOf() ) }
+
+	private val editedGraphViewHandler: EventHandler<EditedGraphViewEvent> = {
+		if (it.oldGraphView != null) {
+			// Don't update for snapshot replays of the same Graph
+			if (it.newGraphView == null || it.newGraphView!!.graph?.uuid != it.oldGraphView!!.graph?.uuid) {
+				update(listOf() )
+			}
+		}
+	}
 
 	private val splitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
 	private val tree = JTree()
@@ -49,8 +53,9 @@ class TestRunResultsPanel(
 
 	private var statistics: Statistics = Statistics(0, 0)
 
+	private val expandAllAction: Action = ExpandAllAction()
+
 	val clearAction: Action = ClearAction()
-	val expandAllAction: Action = ExpandAllAction()
 
 	init {
 		tree.cellRenderer = TreeRenderer()
