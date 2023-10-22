@@ -10,10 +10,7 @@ import ch.scorpion.antares.model.testcase.parser.TestcaseAnalyser
 import ch.scorpion.antares.model.testcase.parser.TestcaseInterpreter
 import ch.scorpion.antares.model.testcase.parser.TestcaseParser
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.dsl.Interpreter
-import ch.scorpion.jabbah.base.dsl.Memory
-import ch.scorpion.jabbah.base.dsl.RuntimeError
-import ch.scorpion.jabbah.base.dsl.SyntaxError
+import ch.scorpion.jabbah.base.dsl.*
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.parser.TextLocation
@@ -58,6 +55,8 @@ class TestcaseScriptRunner(
 
 			return TestRunResult(circuit, Script, testName, portNames, determineIsOutput(portNames), collector)
 		} catch (e: SyntaxError) {
+			return TestRunResult.error(circuit, Script, testName, e.message ?: "Error")
+		} catch (e: SemanticError) {
 			return TestRunResult.error(circuit, Script, testName, e.message ?: "Error")
 		} catch (e: Throwable) {
 			LOG.error("Error while running test '${testName}' for circuit '${circuit.name.value}'", e)

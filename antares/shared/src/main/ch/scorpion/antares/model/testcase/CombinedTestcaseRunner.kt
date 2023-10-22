@@ -6,6 +6,8 @@ import ch.scorpion.antares.model.testcase.parser.TestcaseAnalyser
 import ch.scorpion.antares.model.testcase.parser.TestcaseParser
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.dsl.SemanticError
+import ch.scorpion.jabbah.base.dsl.SyntaxError
 import ch.scorpion.jabbah.base.logger
 
 /**
@@ -33,7 +35,8 @@ class CombinedTestcaseRunner(
 		}
 
 		try {
-			val testScript = TestcaseParser(testcase.testVectors.script!!, TestcaseAnalyser(circuit)).parse() as TestScript
+			val testScript =
+				TestcaseParser(testcase.testVectors.script!!, TestcaseAnalyser(circuit)).parse() as TestScript
 
 			if (!circuit.purelyScripted) {
 				testcaseCircuitRunner = TestcaseCircuitRunner(testcase.name.value, testScript, circuit)
@@ -43,6 +46,10 @@ class CombinedTestcaseRunner(
 				testcaseScriptRunner = TestcaseScriptRunner(testcase.name.value, testScript, circuit)
 				scriptResults = testcaseScriptRunner!!.run()
 			}
+		} catch (e: SemanticError) {
+			return CombinedTestRunResult.error(testcase, e.message ?: "Error")
+		} catch (e: SyntaxError) {
+			return CombinedTestRunResult.error(testcase, e.message ?: "Error")
 		} catch (e: Throwable) {
 			LOG.error("Error while running test '${testcase.name.value}' for circuit '${circuit.name.value}'", e)
 			return CombinedTestRunResult.error(testcase, e.message ?: "Error")
