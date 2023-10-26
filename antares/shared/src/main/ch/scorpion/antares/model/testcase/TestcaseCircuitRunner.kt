@@ -69,7 +69,7 @@ class TestcaseCircuitRunner(
 		}
 	}
 
-	override fun processInputChanged() {
+	override fun processInputChanged(context: Any?) {
 		circuitRunner.proceedUntilQueueEmpty()
 	}
 

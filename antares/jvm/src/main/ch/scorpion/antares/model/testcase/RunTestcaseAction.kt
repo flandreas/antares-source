@@ -1,7 +1,9 @@
 package ch.scorpion.antares.model.testcase
 
 import ch.scorpion.antares.model.DigitalGraph
+import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.module.AntaresModelModule
+import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
@@ -49,7 +51,9 @@ class RunTestcaseAction(
 
 				val results = mutableListOf<CombinedTestRunResult>()
 				for (testcase in testcases) {
-					results.add(CombinedTestcaseRunner(testcase, clone, execScriptAST).run())
+					results.add(CombinedTestcaseRunner(testcase, clone, execScriptAST) {
+						(metaGraph.containerDrawing.getPortViewComponent(it)?.port as DigitalPort?)?.logic ?: Logic.POSITIVE
+					}.run())
 				}
 				return results
 			} finally {

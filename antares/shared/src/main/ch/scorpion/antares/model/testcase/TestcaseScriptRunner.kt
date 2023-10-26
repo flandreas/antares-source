@@ -2,7 +2,9 @@ package ch.scorpion.antares.model.testcase
 
 import ch.scorpion.antares.dsl.AntaresInterpreter
 import ch.scorpion.antares.model.DigitalGraph
+import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.inout.DigitalCircuitInOut
+import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
@@ -17,6 +19,7 @@ import ch.scorpion.jabbah.base.dsl.*
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.parser.TextLocation
+import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.StoringGraphActorData
@@ -24,19 +27,35 @@ import ch.scorpion.jabbah.graph.model.graph.GraphActivationRecord
 
 /**
  * Runs a circuit test script on the execution script of a [DigitalGraph].
+ *
+ * @param testName the name of the test to be displayed in the UI.
+ * @param testScript the test script to run.
+ * @param circuit the [DigitalGraph] to be tested. Used for determining the [PortType] of the port names in [testScript].
+ * @property execScriptAST the abstract syntax tree root node of the [circuit]'s execution script.
+ * @property inputLogicProvider provides the [Logic] of the input [DigitalPort] with a given name. Used to support
+ * implementing "raised signal" literals, because the [Logic] of [DigitalPort]s is defined in the [ContainerDrawing]
+ * and not in [DigitalGraph].
  */
 class TestcaseScriptRunner(
 	testName: String,
 	testScript: TestScript,
 	circuit: DigitalGraph,
-	private val execScriptAST: Node
+	private val execScriptAST: Node,
+	private val inputLogicProvider: (String) -> Logic = { Logic.POSITIVE }
 ) : AbstractTestcaseRunner(testName, testScript, circuit) {
 
-	constructor(testName: String, text: String, circuit: DigitalGraph, execScriptAST: Node): this(
+	constructor(
+		testName: String,
+		text: String,
+		circuit: DigitalGraph,
+		execScriptAST: Node,
+		inputLogicProvider: (String) -> Logic = { Logic.POSITIVE },
+	): this(
 		testName,
 		TestcaseParser(text, TestcaseAnalyser(circuit)).parse() as TestScript,
 		circuit,
-		execScriptAST)
+		execScriptAST,
+		inputLogicProvider)
 
 	companion object {
 		private val LOG by logger(TestcaseCircuitRunner::class)
@@ -81,8 +100,7 @@ class TestcaseScriptRunner(
 			defineMemory()
 			interpreter.executionStarted()
 		}
-		setInputs(null)
-		interpreter.interpret(graphActorData, keepMemory = true)
+		setInputs(interpreter)
 		readOutputs(null)
 	}
 
@@ -93,20 +111,23 @@ class TestcaseScriptRunner(
 		}
 	}
 
-	override fun setInput(port: DigitalCircuitInOut, signal: DigitalSignal) {
-		memory.preset(port.name!!, signal)
-		inputPort.name = port.name
+	override fun setInput(input: DigitalCircuitInOut, signal: DigitalSignal) {
+		inputPort.name = input.name
+		inputPort.logic = inputLogicProvider(input.name!!)
+		memory.preset(input.name!!, signal)
 		graphActorData = StoringGraphActorData(inputPort, signal)
 	}
 
-	override fun readOutput(port: DigitalCircuitInOut): DigitalSignal =
-		when (val value = memory.getValue(port.name!!)) {
+	override fun readOutput(output: DigitalCircuitInOut): DigitalSignal =
+		when (val value = memory.getValue(output.name!!)) {
 			is DigitalSignal -> value
-			is Long -> DigitalSignalFactory.of(port.bitWidth, value)
+			is Long -> DigitalSignalFactory.of(output.bitWidth, value)
 			else -> throw RuntimeError(TextLocation.UNDEFINED, Translations.getString("base.dsl.expectedNumber.msg"))
 		}
 
-	override fun processInputChanged() { }
+	override fun processInputChanged(context: Any?) {
+		(context as AntaresInterpreter).interpret(graphActorData, keepMemory = true)
+	}
 
 	override fun dispose() { }
 }

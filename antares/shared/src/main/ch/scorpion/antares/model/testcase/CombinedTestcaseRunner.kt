@@ -1,6 +1,7 @@
 package ch.scorpion.antares.model.testcase
 
 import ch.scorpion.antares.model.DigitalGraph
+import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.testcase.parser.TestScript
 import ch.scorpion.antares.model.testcase.parser.TestcaseAnalyser
 import ch.scorpion.antares.model.testcase.parser.TestcaseParser
@@ -19,7 +20,8 @@ import ch.scorpion.jabbah.base.logger
 class CombinedTestcaseRunner(
 	private val testcase: Testcase,
 	private val circuit: DigitalGraph,
-	private val execScriptAST: Node? = null
+	private val execScriptAST: Node? = null,
+	private val inputLogicProvider: (String) -> Logic = { Logic.POSITIVE }
 ) {
 	companion object {
 		private val LOG by logger(CombinedTestcaseRunner::class)
@@ -45,7 +47,7 @@ class CombinedTestcaseRunner(
 				circuitResults = testcaseCircuitRunner!!.run()
 			}
 			if (execScriptAST != null) {
-				testcaseScriptRunner = TestcaseScriptRunner(testcase.name.value, testScript, circuit, execScriptAST)
+				testcaseScriptRunner = TestcaseScriptRunner(testcase.name.value, testScript, circuit, execScriptAST, inputLogicProvider)
 				scriptResults = testcaseScriptRunner!!.run()
 			}
 		} catch (e: SemanticError) {

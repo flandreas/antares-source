@@ -17,7 +17,7 @@ abstract class AbstractTestcaseRunner(
 
 	abstract fun run(): TestRunResult
 
-	abstract fun processInputChanged()
+	abstract fun processInputChanged(context: Any?)
 
 	abstract fun dispose()
 
@@ -33,11 +33,11 @@ abstract class AbstractTestcaseRunner(
 
 	@Suppress("UNUSED_PARAMETER")
 	protected fun setInputs(context: Any?) {
-		setInputsFiltered { it != Value.Type.CLOCKED }
-		setInputsFiltered { it == Value.Type.CLOCKED }
+		setInputsFiltered(context) { it != Value.Type.CLOCKED }
+		setInputsFiltered(context) { it == Value.Type.CLOCKED }
 	}
 
-	private fun setInputsFiltered(filter: (Value.Type) -> Boolean) {
+	private fun setInputsFiltered(context: Any?, filter: (Value.Type) -> Boolean) {
 		portNames.forEachIndexed { index, portName ->
 			val port = circuit.getGraphPort<DigitalSignal>(portName)
 			if (port is DigitalCircuitInOut && port.portType.isInput) {
@@ -45,7 +45,7 @@ abstract class AbstractTestcaseRunner(
 				if (filter(value.type)) {
 					val signal = DigitalSignalFactory.of(port.bitWidth, value.value)
 					setInput(port, signal)
-					processInputChanged()
+					processInputChanged(context)
 				}
 			}
 		}
