@@ -1,9 +1,17 @@
 package ch.scorpion.antares.model.testcase
 
 class TestVector(
+	val type: Type,
 	val description: String,
 	private val _values: Array<Value>
 ) : Iterable<Value> {
+
+	enum class Type {
+		Top,
+		RunFirst,
+		RunLine,
+		RunLast
+	}
 
 	val values: List<Value> get() = _values.toList()
 

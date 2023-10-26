@@ -5,7 +5,6 @@ import ch.scorpion.antares.model.testcase.Value
 import ch.scorpion.antares.model.testcase.parser.TestcaseTokenType.*
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.BaseTokenType.*
-import ch.scorpion.jabbah.base.dsl.Compound
 import ch.scorpion.jabbah.base.dsl.Node
 import ch.scorpion.jabbah.base.dsl.SyntaxError
 import ch.scorpion.jabbah.base.parser.AbstractParser
@@ -15,9 +14,11 @@ import ch.scorpion.jabbah.base.parser.Token
  * Parses [Testcase.testVectors] and creates the corresponding AST.
  *
  * <pre>
- *     testScript : portNames { testVector }
+ *     testScript : portNames { statement }
  *     portNames : portName portName { portName } EOL
- *     portName: ID
+ *     portName : ID
+ *     statement : testVector | block
+ *     block : "run" "{“ { testVector } "}"
  *     testVector : value value { value } EOL
  *     value :  number | dontCare | undefined | clockedNumber
  *     number : decimalValue | hexValue | binaryValue
@@ -40,7 +41,7 @@ class TestcaseParser(
 
 	private val onLine: Boolean get() = currentToken!!.type != EOF && currentToken!!.type != EOL
 
-	override fun parse(): Node = TestScript(lexer.location, portNames(), testVectors()).also {
+	override fun parse(): Node = TestScript(lexer.location, portNames(), statementList()).also {
 		analyser?.analyse(it)
 	}
 
@@ -64,25 +65,58 @@ class TestcaseParser(
 		return name
 	}
 
-	private fun testVectors(): Compound<TestVectorNode> {
-		val list = mutableListOf<TestVectorNode>()
+	private fun statementList(): List<Node> {
+		val list = mutableListOf<Node>()
 		while (currentToken!!.type != EOF) {
+			if (currentToken!!.type == EOL) {
+				eat(EOL)
+			} else {
+				list.add(statement())
+			}
+		}
+		return list
+	}
+
+	private fun statement(): Node {
+		return when (currentToken!!.type) {
+			RUN -> run()
+			else -> testVector()
+		}
+	}
+
+	private fun run(): Node {
+		lexer.location.let { location ->
+			val list = mutableListOf<TestVectorNode>()
+			eat(RUN)
+			eat(LCURLEY)
+			list.addAll(testVectors())
+			eat(RCURLEY)
+			return RunNode(location, list)
+		}
+	}
+
+	private fun testVectors(): List<TestVectorNode> {
+		val list = mutableListOf<TestVectorNode>()
+		while (currentToken!!.type != RCURLEY) {
 			if (currentToken!!.type == EOL) {
 				eat(EOL)
 			} else {
 				list.add(testVector())
 			}
 		}
-		return Compound(lexer.location, list)
+		return list
 	}
 
 	private fun testVector(): TestVectorNode {
-		lexer.location.let {  loc ->
+		lexer.location.let {  location ->
 			val list = mutableListOf<ValueNode>()
 			while (onLine) {
 				list.add(value())
 			}
-			return TestVectorNode(loc, list)
+			if (currentToken!!.type == EOL) {
+				eat(EOL)
+			}
+			return TestVectorNode(location, list)
 		}
 	}
 

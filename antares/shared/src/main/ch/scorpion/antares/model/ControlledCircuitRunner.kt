@@ -49,7 +49,8 @@ class ControlledCircuitRunner(
 	}
 
 	/**
-	 * Runs the simulation of [circuit] until the simulation queue is empty.
+	 * Starts the simulation of [circuit], runs it until the simulation queue is empty,
+	 * and then stops the simulation. Throws a [TooManyIterations] if the maximum iteration count is exceeded.
 	 *
 	 * @param prolog code to be executed after simulation start, but before execution of the [circuit].
 	 * Can be used for setting input signals.
@@ -60,17 +61,75 @@ class ControlledCircuitRunner(
 	 */
 	fun run(
 		circuit: DigitalGraph,
-		prolog: (context:Any?) -> Unit = { },
+		prolog: (context:Any?) -> Unit = {},
 		epilogue: (context:Any?) -> Unit = {},
 		context: Any? = null
 	) {
 		try {
+			runImpl(circuit, prolog, epilogue, context, doStart = true, doStop = true)
+		} catch (e: Throwable) {
+			stopSimulation(circuit)
+		}
+	}
+
+	fun runStart(
+		circuit: DigitalGraph,
+		prolog: (context:Any?) -> Unit = {},
+		epilogue: (context:Any?) -> Unit = {},
+		context: Any? = null
+	) {
+		try {
+			runImpl(circuit, prolog, epilogue, context, doStart = true, doStop = false)
+		} catch (e: Throwable) {
+			stopSimulation(circuit)
+		}
+	}
+
+	fun runContinue(
+		circuit: DigitalGraph,
+		prolog: (context:Any?) -> Unit = {},
+		epilogue: (context:Any?) -> Unit = {},
+		context: Any? = null
+	) {
+		try {
+			runImpl(circuit, prolog, epilogue, context, doStart = false, doStop = false)
+		} catch (e: Throwable) {
+			stopSimulation(circuit)
+		}
+	}
+
+	fun runStop(
+		circuit: DigitalGraph,
+		prolog: (context:Any?) -> Unit = {},
+		epilogue: (context:Any?) -> Unit = {},
+		context: Any? = null
+	) {
+		try {
+			runImpl(circuit, prolog, epilogue, context, doStart = false, doStop = true)
+		} catch (e: Throwable) {
+			stopSimulation(circuit)
+		}
+	}
+
+
+	private fun runImpl(
+		circuit: DigitalGraph,
+		prolog: (context:Any?) -> Unit = {},
+		epilogue: (context:Any?) -> Unit = {},
+		context: Any? = null,
+		doStart: Boolean,
+		doStop: Boolean
+	) {
+		if (doStart) {
 			timeService.reset()
 			startSimulation(circuit)
-			prolog(context)
-			proceedUntilQueueEmpty()
-			epilogue(context)
-		} finally {
+		}
+
+		prolog(context)
+		proceedUntilQueueEmpty()
+		epilogue(context)
+
+		if (doStop) {
 			stopSimulation(circuit)
 		}
 	}

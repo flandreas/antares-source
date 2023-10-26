@@ -21,10 +21,10 @@ import javax.swing.JViewport
  */
 class RowHeaderTable(
     private val main: JTable,
-    private val rowHeaderTextProvider: (Int) -> String
+    preferredWidth: Int = 50,
+    renderer: RowHeaderRenderer = RowHeaderRenderer(),
+    private val rowHeaderTextProvider: (Int) -> String = { (it + 1).toString() }
 ) : JTable(), ChangeListener, PropertyChangeListener {
-
-    constructor(main: JTable): this(main, { (it + 1).toString() })
 
     init {
         main.addPropertyChangeListener(this)
@@ -37,9 +37,9 @@ class RowHeaderTable(
         val column = TableColumn()
         column.headerValue = " "
         addColumn(column)
-        column.cellRenderer = RowHeaderRenderer()
+        column.cellRenderer = renderer
 
-        getColumnModel().getColumn(0).preferredWidth = 50
+        getColumnModel().getColumn(0).preferredWidth = preferredWidth
         preferredScrollableViewportSize = preferredSize
     }
 
@@ -110,7 +110,7 @@ class RowHeaderTable(
         revalidate()
     }
 
-    private class RowHeaderRenderer : DefaultTableCellRenderer() {
+    open class RowHeaderRenderer : DefaultTableCellRenderer() {
 
         init {
             horizontalAlignment = JLabel.CENTER

@@ -67,6 +67,16 @@ class TestcaseAnalyserTest {
 		""".trimIndent())
 	}
 
+	@Test
+	fun shouldRejectDontCareInRunBlock() {
+		expectSemanticError("antares.testcase.error.dontCareInRunBlock", """
+			A B O1
+			run {
+				X 0 1
+			}
+		""".trimIndent())
+	}
+
 	private fun expectSemanticError(msgKey: String, script: String) {
 		assertFailsWith<SemanticError>(
 			message = msgKey,

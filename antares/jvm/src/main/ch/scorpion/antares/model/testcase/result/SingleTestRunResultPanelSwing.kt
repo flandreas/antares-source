@@ -2,12 +2,13 @@ package ch.scorpion.antares.model.testcase.result
 
 import ch.scorpion.antares.model.testcase.MatchedValue
 import ch.scorpion.antares.model.testcase.TestRunResult
+import ch.scorpion.antares.model.testcase.TestVector.Type.*
 import ch.scorpion.antares.model.testcase.Value
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.swing.RowHeaderTable
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.UIBasics
-import java.awt.BorderLayout
-import java.awt.Component
+import java.awt.*
 import javax.swing.*
 import javax.swing.table.AbstractTableModel
 import javax.swing.table.DefaultTableCellRenderer
@@ -16,7 +17,7 @@ import javax.swing.table.DefaultTableCellRenderer
  * Displays a single [TestRunResult] as a table.
  */
 class SingleTestRunResultPanelSwing(
-	result: TestRunResult
+	private val result: TestRunResult
 ) : JPanel() {
 
 	companion object {
@@ -25,16 +26,24 @@ class SingleTestRunResultPanelSwing(
 		private val INPUT_CELL_RENDERER = InputCellRenderer()
 		private val OUTPUT_CELL_RENDERER = OutputCellRenderer()
 		private const val COLUMN_WIDTH = 100
+
+		private val ICON_COLOR = UIManager.getColor("Label.foreground")
+		private val ICON_STROKE: Stroke = BasicStroke(2.0f)
 	}
 
 	private val summaryLabel = JLabel()
 	private val table = JTable(TableModel(result))
 	private val scrollPane = JScrollPane(table)
 
+	private val firstRowHeaderIcon = FirstRowHeaderIcon(table.rowHeight)
+	private val lineRowHeaderIcon = LineRowHeaderIcon(table.rowHeight)
+	private val lastRowHeaderIcon = LastRowHeaderIcon(table.rowHeight)
+
 	init {
 		buildUI()
-		updateSummaryLabel(result)
-		updateColumnModels(result)
+		updateSummaryLabel()
+		updateColumnModels()
+		updateRowHeaders()
 	}
 
 	private fun buildUI() {
@@ -50,7 +59,7 @@ class SingleTestRunResultPanelSwing(
 		add(scrollPane, BorderLayout.CENTER)
 	}
 
-	private fun updateSummaryLabel(result: TestRunResult) {
+	private fun updateSummaryLabel() {
 		if (result.errorMessage != null) {
 			summaryLabel.text = result.errorMessage
 		} else {
@@ -63,7 +72,7 @@ class SingleTestRunResultPanelSwing(
 		}
 	}
 
-	private fun updateColumnModels(result: TestRunResult) {
+	private fun updateColumnModels() {
 		table.columnModel.columns.asSequence().forEachIndexed { index, tableColumn ->
 			tableColumn.cellRenderer = if (index == 0) {
 				DESCRIPTION_CELL_RENDERER
@@ -74,6 +83,12 @@ class SingleTestRunResultPanelSwing(
 			}
 			tableColumn.preferredWidth = COLUMN_WIDTH
 		}
+	}
+
+	private fun updateRowHeaders() {
+		val rowHeaderTable = RowHeaderTable(table, 30, RowHeaderRenderer())
+		scrollPane.setRowHeaderView(rowHeaderTable)
+		scrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, rowHeaderTable.tableHeader)
 	}
 
 	private class TableModel(
@@ -144,6 +159,56 @@ class SingleTestRunResultPanelSwing(
 					label.background = UIManager.getColor("Label.background")
 					label.foreground = UIManager.getColor("Label.foreground")
 				}
+			}
+
+			return label
+		}
+	}
+
+
+	private abstract class AbstractRowHeaderIcon(val height: Int) : Icon {
+		override fun getIconHeight(): Int = height
+		override fun getIconWidth(): Int = 10
+	}
+
+	private class FirstRowHeaderIcon(height: Int) : AbstractRowHeaderIcon(height) {
+		override fun paintIcon(c: Component, g: Graphics, x: Int, y: Int) {
+			g.color = ICON_COLOR
+			(g as Graphics2D).stroke = ICON_STROKE
+			g.drawLine(x + iconWidth, y + iconHeight / 2, x + iconWidth / 2, y + iconHeight / 2)
+			g.drawLine(x + iconWidth / 2, y + iconHeight / 2, x + iconWidth / 2, y + iconHeight)
+		}
+	}
+
+	private class LineRowHeaderIcon(height: Int) : AbstractRowHeaderIcon(height) {
+		override fun paintIcon(c: Component, g: Graphics, x: Int, y: Int) {
+			g.color = ICON_COLOR
+			(g as Graphics2D).stroke = ICON_STROKE
+			g.drawLine(x + iconWidth / 2, y, x + iconWidth / 2, y + iconHeight)
+		}
+	}
+
+	private class LastRowHeaderIcon(height: Int) : AbstractRowHeaderIcon(height) {
+		override fun paintIcon(c: Component, g: Graphics, x: Int, y: Int) {
+			g.color = ICON_COLOR
+			(g as Graphics2D).stroke = ICON_STROKE
+			g.drawLine(x + iconWidth, y + iconHeight / 2, x + iconWidth / 2, y + iconHeight / 2)
+			g.drawLine(x + iconWidth / 2, y + iconHeight / 2, x + iconWidth / 2, y)
+		}
+	}
+
+	private inner class RowHeaderRenderer : RowHeaderTable.RowHeaderRenderer() {
+
+		override fun getTableCellRendererComponent(table: JTable?, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
+			val label = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column) as JLabel
+
+			label.horizontalAlignment = JLabel.RIGHT
+			label.text = null
+			label.icon = when (result.collector.get(row).type) {
+				Top -> null
+				RunFirst -> firstRowHeaderIcon
+				RunLine -> lineRowHeaderIcon
+				RunLast -> lastRowHeaderIcon
 			}
 
 			return label

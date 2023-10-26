@@ -1,9 +1,16 @@
 package ch.scorpion.antares.model.testcase.parser
 
+import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.expression.assertAST
 import kotlin.test.Test
 
 class TestcaseParserTest {
+
+	companion object {
+		init {
+			AntaresTestRule.configure()
+		}
+	}
 
 	@Test
 	fun shouldParseNameRow() {
@@ -151,6 +158,33 @@ class TestcaseParserTest {
 			-- 3
 			-- 4
 			-- 255
+		""".trimIndent())
+	}
+
+	@Test
+	fun shouldParseRunBlock() {
+		val parser = TestcaseParser("""
+			I O
+			1 0
+			run {
+				0 1
+				1 1
+			}
+		""".trimIndent())
+
+		assertAST(parser.parse(), """
+			TestScript
+			- I,O
+			- TestVector
+			-- 1
+			-- 0
+			- Run
+			-- TestVector
+			--- 0
+			--- 1
+			-- TestVector
+			--- 1
+			--- 1
 		""".trimIndent())
 	}
 }

@@ -9,6 +9,10 @@ import java.nio.file.Files
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.name
 
+/**
+ * Base class for circuit simulation tests using a library built during test setup
+ * in a temporary directory.
+ */
 abstract class AbstractJvmCircuitTest : AbstractCircuitTest() {
 
 	protected fun setupLibrary() {
@@ -18,5 +22,4 @@ abstract class AbstractJvmCircuitTest : AbstractCircuitTest() {
 		LibraryModule.libraryService = LibraryService()
 		LibraryModule.libraryHolder.l = LibraryImpl("testLib")
 	}
-
 }

@@ -10,6 +10,9 @@ enum class TestcaseTokenType(override val id: String) : TokenType {
 	DONT_CARE("X"),
 	UNDEFINED("Z"),
 	CARET("^"),
+	RUN("run"),
+	LCURLEY("{"),
+	RCURLEY("}")
 }
 
 class TestcaseLexer(text: String) : BaseLexer(text) {
@@ -18,7 +21,17 @@ class TestcaseLexer(text: String) : BaseLexer(text) {
 		private val CARET_TOKEN = Token<Unit>(CARET)
 		private val DONT_CARE_TOKEN = Token<Unit>(DONT_CARE)
 		private val UNDEFINED_TOKEN = Token<Unit>(UNDEFINED)
+		private val RUN_TOKEN = Token<String>(RUN)
+		private val LCURLEY_TOKEN = Token<Unit>(LCURLEY)
+		private val RCURLEY_TOKEN = Token<Unit>(RCURLEY)
+
+		val RESERVED_KEYWORDS = mapOf(
+			"run" to RUN_TOKEN
+		)
 	}
+
+	override fun getReservedKeyword(name: String): Token<String>? =
+		RESERVED_KEYWORDS[name] ?: super.getReservedKeyword(name)
 
 	override fun nextTokenImpl(state: State): Token<Any> {
 		if (isHexIdentifier(state)) {
@@ -34,6 +47,8 @@ class TestcaseLexer(text: String) : BaseLexer(text) {
 			'^' -> return advanceWith(state, CARET_TOKEN)
 			'X','x' -> return advanceWith(state, DONT_CARE_TOKEN)
 			'Z', 'z' -> return advanceWith(state, UNDEFINED_TOKEN)
+			'{' -> return advanceWith(state, LCURLEY_TOKEN)
+			'}' -> return advanceWith(state, RCURLEY_TOKEN)
 		}
 
 		return super.nextTokenImpl(state)

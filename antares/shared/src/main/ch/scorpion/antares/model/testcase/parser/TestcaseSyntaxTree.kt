@@ -4,21 +4,22 @@ import ch.scorpion.antares.model.testcase.Value
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.dsl.AbstractNode
 import ch.scorpion.jabbah.base.dsl.Compound
+import ch.scorpion.jabbah.base.dsl.Node
 import ch.scorpion.jabbah.base.parser.TextLocation
 import ch.scorpion.jabbah.base.parser.Token
 
 class TestScript(
 	location: TextLocation,
 	val portNames: PortNames,
-	val testVectors: Compound<TestVectorNode>
-) : AbstractNode(location) {
+	statements: List<Node>
+) : Compound<Node>(location, statements) {
 
 	override fun toString(): String = "TestScript"
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		if (visitor.visitEnter(this)) {
 			portNames.accept(visitor)
-			for (testVector in testVectors.children) {
+			for (testVector in children) {
 				if (!testVector.accept(visitor)) {
 					break
 				}
@@ -34,6 +35,14 @@ class PortNames(
 ) : AbstractNode(location) {
 
 	override fun toString(): String = names.map { it.value }.joinToString(",")
+}
+
+class RunNode(
+	location: TextLocation,
+	children: List<TestVectorNode>
+): Compound<TestVectorNode>(location, children) {
+
+	override fun toString(): String = "Run"
 }
 
 class TestVectorNode(

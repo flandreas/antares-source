@@ -32,20 +32,44 @@ class TestcaseInterpreter(
 
 	private fun testScript(testScript: TestScript): Any {
 		val portNames: List<String> = testScript.portNames.names.map { it.value!! }
-		for (testVector in testScript.testVectors.children) {
-			testVector(0, portNames, testVector, mutableListOf())
+		for (statement in testScript.children) {
+			when (statement) {
+				is RunNode -> run(statement, portNames)
+				is TestVectorNode -> testVector(0, TestVector.Type.Top, portNames, statement, mutableListOf())
+			}
 		}
 		return 0L
 	}
 
+	private fun run(node: RunNode, portNames: List<String>) {
+		if (node.children.size == 1) {
+			testVector(0, TestVector.Type.Top, portNames, node.children.first(), mutableListOf())
+		} else {
+			node.children.forEachIndexed { index, child ->
+				val type = when (index) {
+					0 -> TestVector.Type.RunFirst
+					node.children.size - 1 -> TestVector.Type.RunLast
+					else -> TestVector.Type.RunLine
+				}
+				testVector(0, type, portNames, child, mutableListOf())
+			}
+		}
+	}
+
+	/**
+	 * Recursive method that duplicates every [TestVector] for every value containing [Value.Type.DONT_CARE].
+	 * Traverses the values list from left to right, starting with [index], and adds the resulting
+	 * [TestVector]s to [testVectorValues]. At the end, [consumer] is called for every final [TestVector].
+	 */
 	private fun testVector(
 		index: Int,
+		type: TestVector.Type,
 		portNames: List<String>,
 		testVectorNode: TestVectorNode,
 		testVectorValues: MutableList<Value>
 	) {
 		if (index == portNames.size) {
-			consumer.consume(TestVector("$LINE_TEXT ${testVectorNode.location.row}", testVectorValues.toTypedArray()))
+			consumer.consume(TestVector(type, "$LINE_TEXT ${testVectorNode.location.row}", testVectorValues.toTypedArray()))
 			return
 		}
 		if (graphPortOwner.getGraphPort<DigitalSignal>(portNames[index])?.portType?.isInput == true
@@ -53,12 +77,12 @@ class TestcaseInterpreter(
 		) {
 			val copy = copyValues(testVectorValues)
 			testVectorValues.add(Value(0UL))
-			testVector(index + 1, portNames, testVectorNode, testVectorValues)
+			testVector(index + 1, type, portNames, testVectorNode, testVectorValues)
 			copy.add(Value(1UL))
-			testVector(index + 1, portNames, testVectorNode, copy)
+			testVector(index + 1, type, portNames, testVectorNode, copy)
 		} else {
 			testVectorValues.add(testVectorNode.values[index].value)
-			testVector(index + 1, portNames, testVectorNode, testVectorValues)
+			testVector(index + 1, type, portNames, testVectorNode, testVectorValues)
 		}
 	}
 

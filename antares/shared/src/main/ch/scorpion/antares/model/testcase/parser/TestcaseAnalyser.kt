@@ -2,6 +2,7 @@ package ch.scorpion.antares.model.testcase.parser
 
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.testcase.Value
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.Node
 import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
@@ -19,7 +20,18 @@ class TestcaseAnalyser(
 		ensurePortsExist(portNames)
 		ensureAtLeastOneInput(portNames)
 		ensureAtLeastOneOutput(portNames)
-		ensureValueCount(portNames.size, script.testVectors.children)
+		for (child in script.children) {
+			when (child) {
+				is RunNode -> {
+					ensureValueCount(portNames.size, child.children)
+					ensureNoDontCareInRunBlock(child)
+				}
+				is TestVectorNode -> {
+					ensureValueCount(portNames.size, listOf(child))
+				}
+				else -> {}
+			}
+		}
 	}
 
 	private fun throwSemanticError(key: String, vararg params: Any) {
@@ -50,6 +62,12 @@ class TestcaseAnalyser(
 		}
 		testVectors.firstOrNull { it.values.size < portNameCount }?.let {
 			throwSemanticError("antares.testcase.error.tooFewValues", it.location.row)
+		}
+	}
+
+	private fun ensureNoDontCareInRunBlock(node: RunNode) {
+		node.children.firstOrNull { vectorNode -> vectorNode.values.any { it.value.type == Value.Type.DONT_CARE } }?.let {
+			throwSemanticError("antares.testcase.error.dontCareInRunBlock", it.location.row)
 		}
 	}
 }

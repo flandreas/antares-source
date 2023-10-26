@@ -7,6 +7,7 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.testcase.TestRunResult.Type.Script
+import ch.scorpion.antares.model.testcase.TestVector.Type.*
 import ch.scorpion.antares.model.testcase.parser.TestScript
 import ch.scorpion.antares.model.testcase.parser.TestcaseAnalyser
 import ch.scorpion.antares.model.testcase.parser.TestcaseInterpreter
@@ -58,13 +59,10 @@ class TestcaseScriptRunner(
 			val execScriptInterpreter = BaseModule.interpreterFactory(execScriptAST, memory) as AntaresInterpreter
 
 			for (testVector in collector) {
-				defineMemory()
 				currentTestVector = testVector
 
-				execScriptInterpreter.executionStarted()
-				setInputs(null)
-				execScriptInterpreter.interpret(graphActorData, keepMemory = true)
-				readOutputs(null)
+				val doStart = testVector.type == Top || testVector.type == RunFirst
+				runImpl(execScriptInterpreter, doStart)
 			}
 
 			return TestRunResult(circuit, Script, testName, portNames, determineIsOutput(portNames), collector)
@@ -76,6 +74,16 @@ class TestcaseScriptRunner(
 			LOG.error("Error while running test '${testName}' for circuit '${circuit.name.value}'", e)
 			return TestRunResult.error(circuit, Script, testName, Translations.getString("antares.testcase.action.technical.error.txt"))
 		}
+	}
+
+	private fun runImpl(interpreter: AntaresInterpreter, doStart: Boolean) {
+		if (doStart) {
+			defineMemory()
+			interpreter.executionStarted()
+		}
+		setInputs(null)
+		interpreter.interpret(graphActorData, keepMemory = true)
+		readOutputs(null)
 	}
 
 	private fun defineMemory() {

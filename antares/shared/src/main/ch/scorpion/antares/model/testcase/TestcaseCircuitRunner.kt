@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.inout.DigitalCircuitInOut
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.testcase.TestRunResult.Type.Circuit
+import ch.scorpion.antares.model.testcase.TestVector.Type.*
 import ch.scorpion.antares.model.testcase.parser.TestScript
 import ch.scorpion.antares.model.testcase.parser.TestcaseAnalyser
 import ch.scorpion.antares.model.testcase.parser.TestcaseInterpreter
@@ -35,7 +36,7 @@ class TestcaseCircuitRunner(
 	private val circuitRunner = ControlledCircuitRunner()
 
 	/**
-	 * Runs the [TestVector]s contained in [text] and returns the [TestRunResult],
+	 * Runs the [TestVector]s contained in [testScript] and returns the [TestRunResult],
 	 * whose [TestVectorCollector] output columns contain [MatchedValue] with the actual
 	 * result values.
 	 */
@@ -48,7 +49,13 @@ class TestcaseCircuitRunner(
 
 			for (testVector in collector) {
 				currentTestVector = testVector
-				circuitRunner.run(circuit, ::setInputs, ::readOutputs)
+
+				when (testVector.type) {
+					Top -> circuitRunner.run(circuit, ::setInputs, ::readOutputs)
+					RunFirst -> circuitRunner.runStart(circuit, ::setInputs, ::readOutputs)
+					RunLine -> circuitRunner.runContinue(circuit, ::setInputs, ::readOutputs)
+					RunLast -> circuitRunner.runStop(circuit, ::setInputs, ::readOutputs)
+				}
 			}
 
 			return TestRunResult(circuit, Circuit, testName, portNames, determineIsOutput(portNames), collector)
