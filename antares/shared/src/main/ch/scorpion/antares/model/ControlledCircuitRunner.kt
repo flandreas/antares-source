@@ -3,7 +3,6 @@ package ch.scorpion.antares.model
 import ch.scorpion.jabbah.base.event.EventBusImpl
 import ch.scorpion.jabbah.base.time.ControlledTimeService
 import ch.scorpion.jabbah.base.time.SystemSpeed
-import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.noise.NoNoiseGenerator
 import ch.scorpion.jabbah.execution.noise.NoiseGeneratorHolder
 import ch.scorpion.jabbah.execution.scheduler.ManualSchedulerTask
@@ -14,8 +13,6 @@ import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 /**
  * Wraps a [Scheduler] with a [ControlledTimeService] in order to run isolated simulations of a [DigitalGraph],
  * e.g. to fill a truth table or to run user-provided tests on [DigitalGraph]s.
- *
- * TODO Use in CircuitAnalysisService
  */
 class ControlledCircuitRunner(
 	private val maxIteration: Int = DEF_MAX_ITERATIONS,
@@ -40,7 +37,8 @@ class ControlledCircuitRunner(
 		timeService,
 		eventBus,
 		noiseGeneratorHolder,
-		task
+		task,
+		isDeepExecution = true
 	)
 
 	fun dispose() {

@@ -38,7 +38,8 @@ class SchedulerImpl(
 	private val eventBus: EventBus = BaseModule.eventBus,
 	private val noiseGeneratorHolder: NoiseGeneratorHolder = ExecutionModule.noiseGeneratorHolder,
 	private val task: SchedulerTask = ExecutionModule.schedulerTaskFactory.invoke(currentSystemSpeedCategory, eventBus),
-	private val executionErrorHandler: ExecutionErrorHandlerImpl = ExecutionErrorHandlerImpl()
+	private val executionErrorHandler: ExecutionErrorHandlerImpl = ExecutionErrorHandlerImpl(),
+	isDeepExecution: Boolean = true
 ) : Scheduler, ExecutionErrorHandler by executionErrorHandler {
 
 	companion object {
@@ -47,7 +48,6 @@ class SchedulerImpl(
 		const val PROP_SCHEDULER_EVENT_SYSTEM_SPEED_LIMIT = "execution.scheduler.eventSystemSpeedLimit"
 
 		private val LOG by logger(SchedulerImpl::class)
-		private const val SETTING_EXECUTION_DEPTH = "execution.scheduler.deepExecution"
 		private const val SETTING_STOP_ON_ISSUE = "execution.scheduler.stopOnIssue"
 		private const val SETTING_ENABLE_SOFT_BREAKPOINTS = "execution.scheduler.enableSoftBreakpoints"
 		private const val SETTING_ENABLE_SIMULATION_TIME_STATUS_BAR = "execution.scheduler.enableSimulationTimeStatusBar"
@@ -244,15 +244,7 @@ class SchedulerImpl(
 
 	/** ---- [SignalHandler] interface */
 
-	override var isDeepExecution: Boolean = BaseModule.settings.getBoolean(SETTING_EXECUTION_DEPTH, true)
-		set(value) {
-			if (field == value) {
-				return
-			}
-			field = value
-			BaseModule.settings.set(SETTING_EXECUTION_DEPTH, field)
-			eventBus.post(ExecutionDepthEvent(this, field))
-		}
+	override var isDeepExecution: Boolean = isDeepExecution
 
 	override val executionTime: Long get() = relativeTime
 

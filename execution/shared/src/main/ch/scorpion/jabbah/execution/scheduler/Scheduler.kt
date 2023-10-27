@@ -107,9 +107,6 @@ data class SchedulerSingleStepModeEvent(val scheduler: Scheduler)
 /** Posted by an executed system to temporarily suspend execution. */
 class BreakEvent
 
-/** Posted by a [Scheduler] when the execution depth changes.*/
-data class ExecutionDepthEvent(val scheduler: Scheduler, val deepSimulation: Boolean)
-
 /** Posted by a [Scheduler] when the [Scheduler.isStopOnIssue] property changes.*/
 data class StopOnIssueEvent(val scheduler: Scheduler, val isStopOnIssue: Boolean)
 
