@@ -200,7 +200,10 @@ class TestRunResultsPanel(
 	}
 
 	private fun calculateStatistics(results: List<CombinedTestRunResult>): Statistics =
-		Statistics(results.size, results.filter { it.failed }.size)
+		Statistics(
+			results.filter { !it.ignored }.size,
+			results.filter { it.failed }.size
+		)
 
 	private data class Statistics(
 		val totalTestVectorCount: Int,
@@ -219,7 +222,9 @@ class TestRunResultsPanel(
 			} else if (value.userObject is CombinedTestRunResult) {
 				val results = value.userObject as CombinedTestRunResult
 				label.text = results.testcase.name.getTranslation()
-				label.icon = if (results.totalFailedCount == 0 && results.error == null) {
+				label.icon = if (results.ignored) {
+					CombinedTestRunResultPanelSwing.IGNORED_ICON
+				} else if (results.totalFailedCount == 0 && results.error == null) {
 					CombinedTestRunResultPanelSwing.PASSED_ICON
 				} else {
 					CombinedTestRunResultPanelSwing.FAILED_ICON

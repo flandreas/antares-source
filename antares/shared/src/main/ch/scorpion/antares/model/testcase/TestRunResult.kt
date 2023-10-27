@@ -68,15 +68,20 @@ data class CombinedTestRunResult(
 	val testcase: Testcase,
 	val circuitResults: TestRunResult?,
 	val scriptResults: TestRunResult?,
-	val error: String? = null
+	val error: String? = null,
+	val ignored: Boolean = false
 ) {
 
 	companion object {
+
 		fun error(source: Testcase, error: String): CombinedTestRunResult =
 			CombinedTestRunResult(source, null, null, error)
+
+		fun ignored(source: Testcase): CombinedTestRunResult =
+			CombinedTestRunResult(source, null, null, null, ignored = true)
 	}
 
-	val totalFailedCount: Int = if (error != null) {
+	val totalFailedCount: Int = if (error != null && !ignored) {
 		1
 	} else {
 		val circuitFailedCount = circuitResults?.let {

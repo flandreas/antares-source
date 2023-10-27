@@ -52,9 +52,14 @@ class RunTestcaseAction(
 
 				val results = mutableListOf<CombinedTestRunResult>()
 				for (testcase in testcases) {
-					results.add(CombinedTestcaseRunner(testcase, clone, execScriptAST) {
-						(metaGraph.containerDrawing.getPortViewComponent(it)?.port as DigitalPort?)?.logic ?: Logic.POSITIVE
-					}.run())
+					if (testcase.ignored) {
+						results.add(CombinedTestRunResult.ignored(testcase))
+					} else {
+						results.add(CombinedTestcaseRunner(testcase, clone, execScriptAST) {
+							(metaGraph.containerDrawing.getPortViewComponent(it)?.port as DigitalPort?)?.logic
+								?: Logic.POSITIVE
+						}.run())
+					}
 				}
 				return results
 			} finally {

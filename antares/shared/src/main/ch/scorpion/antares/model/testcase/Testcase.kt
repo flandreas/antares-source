@@ -24,6 +24,8 @@ class Testcase(
 	/** Contains the executable test vectors. */
 	var testVectors: ScriptProperty = ScriptProperty(script)
 
+	var ignored: Boolean = false
+
 	/**
 	 * Non-persistent reference to the owing [DigitalGraph]. Used only for creating a
 	 * [SemanticAnalyser] when editing [testVectors].
@@ -47,6 +49,9 @@ class Testcase(
 		name.write("name", writer)
 		description.write("desc", writer)
 		writer.writeOptionalString("testVectors", testVectors.script)
+		if (ignored) {
+			writer.writeBoolean("ignored", ignored)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
@@ -54,6 +59,9 @@ class Testcase(
 		name = Name.read("name", reader)
 		description = Description.read("desc", reader)
 		testVectors = ScriptProperty(reader.readOptionalString("testVectors"))
+		if (reader.hasAttribute("ignored")) {
+			ignored = reader.readBoolean("ignored")
+		}
 	}
 
 	/** ---- [Testcase] */

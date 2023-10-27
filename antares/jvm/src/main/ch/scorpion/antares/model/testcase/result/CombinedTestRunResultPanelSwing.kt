@@ -23,6 +23,7 @@ class CombinedTestRunResultPanelSwing(
 
 		val FAILED_ICON = UiUtil.themedIcon("/img/error-16.png")
 		val PASSED_ICON = UiUtil.themedIcon("/img/checkmark.png")
+		val IGNORED_ICON = UiUtil.themedIcon("/img/testcase.png")
 
 		fun showAsDialog(
 			results: CombinedTestRunResult,
@@ -99,7 +100,7 @@ class CombinedTestRunResultPanelSwing(
 			summaryLabel.icon = null
 			summaryLabel.text = ""
 		}
-		else if (results.error != null) {
+		else if (results.error != null && !results.ignored) {
 			summaryLabel.icon = FAILED_ICON
 			summaryLabel.text = results.error
 		} else if (results.totalFailedCount == 0) {

@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.edit.properties.AbstractBeanInfo
+import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.graph.view.GraphView
 import com.l2fprod.common.propertysheet.Property
 
@@ -20,6 +21,7 @@ class TestcaseBeanInfo : AbstractBeanInfo<Testcase>() {
 
 		private val name = EditProperties.name(beanProvider = testcaseBeanProvider)
 		private val description = EditProperties.description(beanProvider = testcaseBeanProvider)
+		private val ignored = CommandPropertySwing("ignored", "antares.testcase.ignored", Boolean::class.java, testcaseBeanProvider)
 	}
 
 	override fun addProperties(bean: Testcase, editor: Editor, properties: MutableList<Property>) {
@@ -31,5 +33,6 @@ class TestcaseBeanInfo : AbstractBeanInfo<Testcase>() {
 		properties.add(name.bind(editor, beanIdProvider(bean.id)))
 		properties.add(description.bind(editor, beanIdProvider(bean.id)))
 		properties.add(testVectors.bind(editor, beanIdProvider(bean.id)))
+		properties.add(ignored.bind(editor, beanIdProvider(bean.id)))
 	}
 }
