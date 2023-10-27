@@ -50,7 +50,7 @@ class CombinedTestRunResultPanelSwing(
 
 	private fun buildUI(results: CombinedTestRunResult?) {
 		layout = BorderLayout(10, 10)
-		border = UIBasics.createDialogBorder()
+		border = BorderFactory.createEmptyBorder(UIBasics.DIALOG_BORDER, UIBasics.DIALOG_BORDER, 0, UIBasics.DIALOG_BORDER)
 
 		if (closeHandler != null) {
 			buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)

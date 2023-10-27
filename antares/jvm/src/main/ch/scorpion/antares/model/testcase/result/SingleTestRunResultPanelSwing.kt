@@ -48,7 +48,7 @@ class SingleTestRunResultPanelSwing(
 
 	private fun buildUI() {
 		layout = BorderLayout(10, 10)
-		border = UIBasics.createDialogBorder()
+		border = BorderFactory.createEmptyBorder(UIBasics.DIALOG_BORDER, UIBasics.DIALOG_BORDER, 0, UIBasics.DIALOG_BORDER)
 
 		table.autoResizeMode = JTable.AUTO_RESIZE_OFF
 		table.setShowGrid(true)
