@@ -7,11 +7,13 @@ import java.awt.Dimension
 import java.awt.Graphics
 import java.awt.Graphics2D
 import javax.swing.Icon
+import javax.swing.JLabel
 import javax.swing.table.DefaultTableCellRenderer
 import kotlin.math.max
 
 /**
  * TODO: Copy/paste from [RichTextLabel].
+ * In addition to [RichTextLabel], also interprets horizontal alignment.
  */
 open class RichTextTableCellRenderer : DefaultTableCellRenderer() {
 
@@ -47,7 +49,11 @@ open class RichTextTableCellRenderer : DefaultTableCellRenderer() {
 	}
 
 	private fun paintCustom(g: Graphics) {
-		var x = insets.left
+		var x = when (horizontalAlignment) {
+			JLabel.CENTER -> insets.left + (width - _preferredSize.width) / 2
+			JLabel.RIGHT -> width - _preferredSize.width - insets.right
+			else -> insets.left
+		}
 
 		if (icon != null) {
 			icon.paintIcon(this, g, x,height / 2 - icon.iconHeight / 2)

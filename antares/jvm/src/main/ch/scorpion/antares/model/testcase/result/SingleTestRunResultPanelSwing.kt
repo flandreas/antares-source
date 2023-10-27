@@ -8,6 +8,9 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.swing.RowHeaderTable
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.UIBasics
+import ch.scorpion.jabbah.draw.drawable.RichTextDrawable
+import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
+import ch.scorpion.jabbah.draw.richtext.RichTextTableCellRenderer
 import java.awt.*
 import javax.swing.*
 import javax.swing.table.AbstractTableModel
@@ -29,6 +32,8 @@ class SingleTestRunResultPanelSwing(
 
 		private val ICON_COLOR = UIManager.getColor("Label.foreground")
 		private val ICON_STROKE: Stroke = BasicStroke(2.0f)
+
+		private val COLUMN_HEADER_BORDER = UIManager.getBorder("TableHeader.cellBorder")
 	}
 
 	private val summaryLabel = JLabel()
@@ -38,6 +43,8 @@ class SingleTestRunResultPanelSwing(
 	private val firstRowHeaderIcon = FirstRowHeaderIcon(table.rowHeight)
 	private val lineRowHeaderIcon = LineRowHeaderIcon(table.rowHeight)
 	private val lastRowHeaderIcon = LastRowHeaderIcon(table.rowHeight)
+
+	private val richTextPortNames: List<RichTextDrawable> = result.names.map { RichTextDrawable.of(it, Graphics2DJvm.fromAwtFont(table.font)) }
 
 	init {
 		buildUI()
@@ -54,6 +61,7 @@ class SingleTestRunResultPanelSwing(
 		table.setShowGrid(true)
 		table.rowMargin = 1
 		table.columnModel.columnMargin = 1
+		table.tableHeader.defaultRenderer = TableColumnRenderer()
 
 		add(summaryLabel, BorderLayout.NORTH)
 		add(scrollPane, BorderLayout.CENTER)
@@ -165,6 +173,22 @@ class SingleTestRunResultPanelSwing(
 		}
 	}
 
+	private inner class TableColumnRenderer : RichTextTableCellRenderer() {
+
+		override fun getTableCellRendererComponent(table: JTable?, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
+			val renderer = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column) as RichTextTableCellRenderer
+
+			renderer.border = COLUMN_HEADER_BORDER
+			if (column == 0) {
+				renderer.horizontalAlignment = JLabel.LEFT
+				renderer.richText = null
+			} else {
+				renderer.horizontalAlignment = JLabel.CENTER
+				renderer.richText = richTextPortNames[column - 1]
+			}
+			return renderer
+		}
+	}
 
 	private abstract class AbstractRowHeaderIcon(val height: Int) : Icon {
 		override fun getIconHeight(): Int = height
