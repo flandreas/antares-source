@@ -52,13 +52,17 @@ class AddTestcaseAction(
 			Frame.getFrames()[0],
 			Translations.getString("antares.testcase.action.add.question"),
 			name,
-			JOptionPane.QUESTION_MESSAGE
-		)
+			JOptionPane.QUESTION_MESSAGE,
+			null,
+			null,
+			"Test"
+		) as String?
+
 		if (StringUtils.isEmpty(name)) {
 			return
 		}
 
-		service.addTestcase(application, Testcase(name))
+		service.addTestcase(application, Testcase(name!!))
 	}
 
 	override fun calculateEnabled(): Boolean =
