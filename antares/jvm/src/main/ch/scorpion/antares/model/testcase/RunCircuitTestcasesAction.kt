@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 
@@ -39,7 +40,8 @@ class RunCircuitTestcasesAction(
 			if (results.isEmpty()) {
 				eventBus.post(ComponentMessage(source = null, messageKey = "antares.testcase.results.empty.text"))
 			} else {
-				eventBus.post(ComponentMessage(source = null, messageKey = "antares.testcase.results.done.text"))
+				val msgType = if (results.any { it.failed }) ComponentMessageType.Error else ComponentMessageType.Info
+				eventBus.post(ComponentMessage(msgType, source = null, messageKey = "antares.testcase.results.done.text"))
 			}
 			eventBus.post(DisplayTestRunResults(results))
 		}

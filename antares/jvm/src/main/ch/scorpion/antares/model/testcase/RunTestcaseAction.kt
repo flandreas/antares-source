@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.model.param.GraphParamValues
@@ -70,7 +71,8 @@ class RunTestcaseAction(
 			LOG.userTrail("Run testcase '${testcase!!.name.value}' in circuit '${circuit.name.value}'")
 			val results = run(metaGraph, listOf(testcase!!))
 
-			eventBus.post(ComponentMessage(source = null, messageKey = "antares.testcase.results.done.text"))
+			val msgType = if (results.any { it.failed }) ComponentMessageType.Error else ComponentMessageType.Info
+			eventBus.post(ComponentMessage(msgType, source = null, messageKey = "antares.testcase.results.done.text"))
 			eventBus.post(DisplayTestRunResults(results))
 		}
 	}

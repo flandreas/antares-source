@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.graph.library.AbstractLibraryFolderAction
 import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
@@ -46,7 +47,8 @@ class RunLibraryTestcasesAction(
 			if (results.isEmpty()) {
 				eventBus.post(ComponentMessage(source = null, messageKey = "antares.testcase.results.empty.text"))
 			} else {
-				eventBus.post(ComponentMessage(source = null, messageKey = "antares.testcase.results.done.text"))
+				val msgType = if (results.any { it.failed }) ComponentMessageType.Error else ComponentMessageType.Info
+				eventBus.post(ComponentMessage(msgType, source = null, messageKey = "antares.testcase.results.done.text"))
 			}
 			eventBus.post(DisplayTestRunResults(results))
 		}
