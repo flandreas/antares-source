@@ -2,6 +2,7 @@ package ch.scorpion.antares.model.testcase
 
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.jabbah.app.Application
+import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
@@ -99,6 +100,9 @@ class TestcaseTreeView(
 			return null
 		}
 
+	val runSelectedTestcaseAction: Action = RunTestcaseAction(application, applicationModeHolder)
+	val runAllTestcasesAction: Action = RunCircuitTestcasesAction(application, applicationModeHolder)
+
 	init {
 		selectionModel.selectionMode = TreeSelectionModel.SINGLE_TREE_SELECTION
 		addMouseListener(rightMouseListener)
@@ -112,10 +116,10 @@ class TestcaseTreeView(
 		eventBus.register(NameChangedEvent::class, nameChangeHandler)
 
 		graphPopupMenu.add(ActionWrapperSwing(AddTestcaseAction(application, applicationModeHolder)))
-		graphPopupMenu.add(ActionWrapperSwing(RunCircuitTestcasesAction(application, applicationModeHolder)))
+		graphPopupMenu.add(ActionWrapperSwing(runAllTestcasesAction))
 
 		testcasePopupMenu.add(ActionWrapperSwing(DeleteTestcaseAction(application, applicationModeHolder)))
-		testcasePopupMenu.add(ActionWrapperSwing(RunTestcaseAction(application, applicationModeHolder)))
+		testcasePopupMenu.add(ActionWrapperSwing(runSelectedTestcaseAction))
 	}
 
 	fun dispose() {
