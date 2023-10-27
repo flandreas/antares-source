@@ -61,7 +61,8 @@ class AntaresFrameSwing(
 			SidebarPaneContentImpl(
 				Translations.getString("antares.testcases.title"),
 				UiUtil.themedIcon("/img/testcase.png"),
-				testcasesView))
+				testcasesView,
+				listOf(testcasesView.runAction)))
 	}
 
 	private fun addTestRunResultsView() {

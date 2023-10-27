@@ -13,7 +13,9 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
+import ch.scorpion.jabbah.base.swing.PopupMenuButton
 import ch.scorpion.jabbah.base.swing.ShowSidebarPaneContentRequest
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.richtext.RichTextLabel
 import ch.scorpion.jabbah.graph.ui.MetaGraphIconProvider
 import ch.scorpion.jabbah.graph.ui.graphpanel.EditedGraphViewEvent
@@ -46,18 +48,38 @@ class TestRunResultsPanel(
 		}
 	}
 
+	private val toolBar = JToolBar()
 	private val splitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
 	private val tree = JTree()
 	private val detailsPanel = CombinedTestRunResultPanelSwing(null)
 	private val popupMenu = JPopupMenu()
 
+	private var results: List<CombinedTestRunResult> = emptyList()
+
 	private var statistics: Statistics = Statistics(0, 0)
 
 	private val expandAllAction: Action = ExpandAllAction()
 
+	private val filterActions = listOf(
+		TestResultFilterAction(this, TestResultFilter.All),
+		TestResultFilterAction(this, TestResultFilter.Failed),
+		TestResultFilterAction(this, TestResultFilter.Passed)
+	)
+
+	private val filterMenuItems = filterActions.map { JRadioButtonMenuItem(ActionWrapperSwing(it)) }
+
+	private val showFilterMenuAction: Action = ShowFilterMenuAction()
+	private val showFilterButton = UiUtil.createToolBarButton(showFilterMenuAction, toggle = true)
+
+	private val currentFilter: TestResultFilter get() = filterActions.first { it.selected }.filter
+
 	val clearAction: Action = ClearAction()
 
 	init {
+		ButtonGroup().also { bg ->
+			filterMenuItems.forEach { bg.add(it) }
+		}
+
 		tree.cellRenderer = TreeRenderer()
 		tree.rowHeight = 24
 		tree.showsRootHandles = true
@@ -72,6 +94,8 @@ class TestRunResultsPanel(
 		eventBus.register(EditedGraphViewEvent::class, editedGraphViewHandler)
 
 		update(emptyList())
+
+		PopupMenuButton.install(showFilterButton, filterMenuItems)
 	}
 
 	fun dispose() {
@@ -82,15 +106,42 @@ class TestRunResultsPanel(
 
 	private fun buildUI() {
 		layout = BorderLayout()
+		buildToolBar()
+
 		val treeScroll = JScrollPane(tree, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED)
-		splitPane.add(treeScroll)
+
+		val leftPanel = JPanel(BorderLayout())
+		leftPanel.add(toolBar, BorderLayout.WEST)
+		leftPanel.add(treeScroll, BorderLayout.CENTER)
+
+		splitPane.add(leftPanel)
 		splitPane.add(detailsPanel)
 		splitPane.dividerLocation = max(100, BaseModule.settings.getInt("testRunResultsPanel.splitPos", 200))
 		add(splitPane, BorderLayout.CENTER)
 	}
 
+	private fun buildToolBar() {
+		toolBar.layout = BoxLayout(toolBar, BoxLayout.Y_AXIS)
+		// TODO Same as in SidebarPanel
+		toolBar.border = BorderFactory.createEmptyBorder(2, 5, 2, 5)
+		toolBar.add(showFilterButton)
+		toolBar.add(Box.createVerticalGlue())
+	}
+
 	private fun update(results: List<CombinedTestRunResult>) {
+		this.results = results
+		filterActions.first().selected = true
+
 		statistics = calculateStatistics(results)
+		display(results)
+	}
+
+	fun applyFilter(filter: TestResultFilter) {
+		display(results.filter { filter.accept(it) })
+		showFilterButton.isSelected = filter != TestResultFilter.All
+	}
+
+	private fun display(results: List<CombinedTestRunResult>) {
 		tree.model = createTreeModel(results)
 
 		JTreeUtil.findTreeNode(tree.model.root as TreeNode) {
@@ -103,7 +154,6 @@ class TestRunResultsPanel(
 				eventBus.post(ShowSidebarPaneContentRequest(this))
 			}
 		}
-
 	}
 
 	private fun createTreeModel(results: List<CombinedTestRunResult>): TreeModel {
@@ -139,7 +189,7 @@ class TestRunResultsPanel(
 		detailsPanel.setResults(null)
 	}
 
-	private fun showPopupMenu(e: MouseEvent) {
+	private fun showTreePopupMenu(e: MouseEvent) {
 		tree.getPathForLocation(e.x, e.y)?.let { path ->
 			tree.selectionPath = path
 			if (path.lastPathComponent === tree.model.root) {
@@ -190,7 +240,7 @@ class TestRunResultsPanel(
 	private inner class MouseListener : java.awt.event.MouseAdapter() {
 		override fun mousePressed(e: MouseEvent?) {
 			if (e?.button == MouseEvent.BUTTON3) {
-				showPopupMenu(e)
+				showTreePopupMenu(e)
 			}
 		}
 	}
@@ -209,6 +259,16 @@ class TestRunResultsPanel(
 	) {
 		override fun execute(event: ActionEvent) {
 			tree.selectionPath?.let { JTreeUtil.expandAll(tree, it) }
+		}
+	}
+
+	private inner class ShowFilterMenuAction : AbstractAction(
+		"antares.testcase.results.action.filter",
+		"/img/filter-16.png"
+	) {
+		override fun execute(event: ActionEvent) {
+			// Showing popup menu is done by PopupMenuButton object
+			showFilterButton.isSelected = currentFilter != TestResultFilter.All
 		}
 	}
 }
