@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.module.AntaresModelModule
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.jabbah.app.Application
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
@@ -47,7 +48,11 @@ class RunTestcaseAction(
 				clone.parameterValues = GraphParamValues.withDefaults(metaGraph.parameterDefinitions)
 
 				val execScriptAST = circuit.script?.let {
-					BaseModule.parserFactory(it, null).parse()
+					if (StringUtils.isNotBlank(it)) {
+						BaseModule.parserFactory(it, null).parse()
+					} else {
+						null
+					}
 				}
 
 				val results = mutableListOf<CombinedTestRunResult>()

@@ -52,12 +52,12 @@ class DefinedWord(
 		if (other == null) return false
 
 		if (other is Word) {
-			return other.bitWidth == bitWidth && other.toLong() == longValue
+			return other.bitWidth.width == bitWidth.width && other.toLong() == longValue
 		}
 
 		other as DefinedWord
 
-		if (bitWidth != other.bitWidth) return false
+		if (bitWidth.width != other.bitWidth.width) return false
 		if (longValue != other.longValue) return false
 
 		return true

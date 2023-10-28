@@ -3,7 +3,6 @@ package ch.scorpion.antares.model.testcase
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.inout.DigitalCircuitInOut
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.testcase.parser.TestScript
 
 abstract class AbstractTestcaseRunner(
@@ -43,7 +42,7 @@ abstract class AbstractTestcaseRunner(
 			if (port is DigitalCircuitInOut && port.portType.isInput) {
 				val value = currentTestVector.getValue(index)
 				if (filter(value.type)) {
-					val signal = DigitalSignalFactory.of(port.bitWidth, value.value)
+					val signal = value.value.ofWidth(port.bitWidth)
 					setInput(port, signal)
 					processInputChanged(context)
 				}
@@ -57,8 +56,11 @@ abstract class AbstractTestcaseRunner(
 			val port = circuit.getGraphPort<DigitalSignal>(portName)
 			if (port is DigitalCircuitInOut && port.portType.isOutput) {
 				val expected = currentTestVector.getValue(index)
-				val value = readOutput(port)
-				val matchedValue = MatchedValue(expected, value!!)
+				val outputValue = readOutput(port)
+				val matchedValue = MatchedValue(
+					expected.withValue(expected.value.ofWidth(port.bitWidth)),
+					outputValue!!.ofWidth(port.bitWidth)
+				)
 				currentTestVector.setValue(index, matchedValue)
 			}
 		}

@@ -1,6 +1,7 @@
 package ch.scorpion.antares.model.testcase.parser
 
 import ch.scorpion.antares.AntaresTestRule
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.testcase.TestVector
 import ch.scorpion.antares.model.testcase.TestVectorCollector
 import ch.scorpion.jabbah.graph.model.GraphPort
@@ -103,7 +104,8 @@ class TestcaseInterpreterTest {
 
 	private fun assert(testVector: TestVector, vararg values: ULong) {
 		values.forEachIndexed { index, l ->
-			assertEquals(l, testVector.getValue(index).value)
+			val signal = testVector.getValue(index).value
+			assertEquals(DigitalSignalFactory.of(signal.bitWidth, l), signal)
 		}
 	}
 }

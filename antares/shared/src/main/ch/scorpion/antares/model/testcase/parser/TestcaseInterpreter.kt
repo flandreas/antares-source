@@ -1,6 +1,8 @@
 package ch.scorpion.antares.model.testcase.parser
 
+import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.testcase.TestVectorConsumer
 import ch.scorpion.jabbah.base.dsl.AbstractBaseInterpreter
 import ch.scorpion.antares.model.testcase.TestVector
@@ -76,9 +78,9 @@ class TestcaseInterpreter(
 			&& testVectorNode.values[index].value.type == Value.Type.DONT_CARE
 		) {
 			val copy = copyValues(testVectorValues)
-			testVectorValues.add(Value(0UL))
+			testVectorValues.add(Value(DigitalSignalFactory.of(Bit.False)))
 			testVector(index + 1, type, portNames, testVectorNode, testVectorValues)
-			copy.add(Value(1UL))
+			copy.add(Value(DigitalSignalFactory.of(Bit.True)))
 			testVector(index + 1, type, portNames, testVectorNode, copy)
 		} else {
 			testVectorValues.add(testVectorNode.values[index].value)

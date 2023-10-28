@@ -1,6 +1,7 @@
 package ch.scorpion.antares.model
 
 import ch.scorpion.jabbah.base.event.EventBusImpl
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.time.ControlledTimeService
 import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.execution.noise.NoNoiseGenerator
@@ -20,6 +21,7 @@ class ControlledCircuitRunner(
 ) {
 
 	companion object {
+		private val LOG by logger(ControlledCircuitRunner::class)
 		private const val DEF_MAX_ITERATIONS = 1_000
 		private const val DEF_ITERATION_STEP_NS = 100
 	}
@@ -65,7 +67,12 @@ class ControlledCircuitRunner(
 	) {
 		try {
 			runImpl(circuit, prolog, epilogue, context, doStart = true, doStop = true)
+		} catch (e: TooManyIterations) {
+			throw e
 		} catch (e: Throwable) {
+			LOG.error("Unexpected error", e)
+			throw e
+		} finally {
 			stopSimulation(circuit)
 		}
 	}

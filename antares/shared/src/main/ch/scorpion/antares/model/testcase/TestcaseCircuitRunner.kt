@@ -3,6 +3,7 @@ package ch.scorpion.antares.model.testcase
 import ch.scorpion.antares.model.ControlledCircuitRunner
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.inout.DigitalCircuitInOut
+import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.testcase.TestRunResult.Type.Circuit
 import ch.scorpion.antares.model.testcase.TestVector.Type.*
@@ -77,11 +78,10 @@ class TestcaseCircuitRunner(
 		circuitRunner.dispose()
 	}
 
-	override fun setInput(port: DigitalCircuitInOut, signal: DigitalSignal) {
-		port.setIncomingSignal(signal, circuitRunner.scheduler)
+	override fun setInput(inOut: DigitalCircuitInOut, signal: DigitalSignal) {
+		inOut.setIncomingSignal(signal, circuitRunner.scheduler)
 	}
 
-	override fun readOutput(port: DigitalCircuitInOut): DigitalSignal? {
-		return port.signal
-	}
+	override fun readOutput(inOut: DigitalCircuitInOut): DigitalSignal? =
+		(inOut.getPort<DigitalSignal>() as DigitalPort).getIncomingSignal()
 }

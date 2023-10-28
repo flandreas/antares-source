@@ -1,5 +1,7 @@
 package ch.scorpion.antares.model.testcase.parser
 
+import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.dsl.BaseTokenType
 import ch.scorpion.jabbah.base.parser.AbstractLexer
 import ch.scorpion.jabbah.base.parser.TokenType
@@ -31,7 +33,7 @@ class TestcaseLexerTest {
 
 	private fun assertLong(value: Long, lexer: AbstractLexer) {
 		val token = lexer.nextToken()
-		assertEquals(BaseTokenType.LITERAL, token.type)
-		assertEquals(value, token.value)
+		assertEquals(TestcaseTokenType.DECIMAL_LITERAL, token.type)
+		assertEquals(DigitalSignalFactory.of(BitWidth.BW_1, value), token.value)
 	}
 }

@@ -43,7 +43,7 @@ enum class Bit(private val value: Int?) {
 				'1' -> True
 				ALL_UNDEFINED_CHAR -> Undefined
 				ERROR_CHAR -> Error
-				else -> throw IllegalArgumentException("not a Bit charachter")
+				else -> throw IllegalArgumentException("not a Bit character")
 			}
 		}
 

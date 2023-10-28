@@ -138,9 +138,9 @@ class TestcaseParserTest {
 			TestScript
 			- A,B,O
 			- TestVector
-			-- 255
+			-- FF
 			-- 0
-			-- 10
+			-- A
 		""".trimIndent())
 	}
 
@@ -155,9 +155,25 @@ class TestcaseParserTest {
 			TestScript
 			- A,B,O
 			- TestVector
-			-- 3
-			-- 4
-			-- 255
+			-- 11
+			-- 100
+			-- 11111111
+		""".trimIndent())
+	}
+
+	@Test
+	fun shouldParseBinaryUndefined() {
+		val parser = TestcaseParser("""
+			A O
+			0bZ1 0b0Z0
+		""".trimIndent())
+
+		assertAST(parser.parse(), """
+			TestScript
+			- A,O
+			- TestVector
+			-- Z1
+			-- Z0
 		""".trimIndent())
 	}
 

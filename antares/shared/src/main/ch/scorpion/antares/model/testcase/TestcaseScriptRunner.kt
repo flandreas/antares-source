@@ -86,9 +86,11 @@ class TestcaseScriptRunner(
 
 			return TestRunResult(circuit, Script, testName, portNames, determineIsOutput(portNames), collector)
 		} catch (e: SyntaxError) {
-			return TestRunResult.error(circuit, Script, testName, e.message ?: "Error")
+			return TestRunResult.error(circuit, Script, testName, e.toString())
 		} catch (e: SemanticError) {
-			return TestRunResult.error(circuit, Script, testName, e.message ?: "Error")
+			return TestRunResult.error(circuit, Script, testName, e.toString())
+		} catch (e: RuntimeError) {
+			return TestRunResult.error(circuit, Script, testName, e.toString())
 		} catch (e: Throwable) {
 			LOG.error("Error while running test '${testName}' for circuit '${circuit.name.value}'", e)
 			return TestRunResult.error(circuit, Script, testName, Translations.getString("antares.testcase.action.technical.error.txt"))

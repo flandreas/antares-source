@@ -3,8 +3,14 @@ package ch.scorpion.antares.model.testcase
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.model.DigitalGraph
+import ch.scorpion.antares.model.inout.DigitalCircuitInOutImpl
+import ch.scorpion.antares.model.signal.Bit
+import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.view.gate.LogicGateView
 import ch.scorpion.antares.view.gate.TriStateBufferGateView
+import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
+import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.GraphView
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -108,7 +114,25 @@ class TestcaseCircuitRunnerTest {
 		assertEquals(Value.State.PASSED, result.collector.get(0).getValue(2).state)
 		assertEquals(Value.State.FAILED, result.collector.get(1).getValue(2).state)
 		assertEquals(Value.Z, result.collector.get(1).getValue(2))
-		assertEquals(1UL, (result.collector.get(1).getValue(2) as MatchedValue).expected.value)
+		assertEquals(DigitalSignalFactory.of(Bit.True), (result.collector.get(1).getValue(2) as MatchedValue).expected.value)
+	}
+
+	@Test
+	fun shouldPassMultiBitTest() {
+		buildMultiBitNOPCircuit()
+		val testScript = """
+			I           O
+			0x1         1			
+			15          0xF
+			10          0xA
+			255         0b11111111
+		""".trimIndent()
+
+		val result = TestcaseCircuitRunner("test", testScript, circuit.graph as DigitalGraph).run()
+
+		for (vector in result.collector) {
+			assertEquals(Value.State.PASSED, vector.getValue(1).state)
+		}
 	}
 
 	private fun buildAndGateCircuit() {
@@ -132,6 +156,14 @@ class TestcaseCircuitRunnerTest {
 		builder.connect(i, gate, gate.model.getInput(1))
 		builder.connect(en, gate, gate.model.getInput(2))
 		builder.connect(gate, gate.model.getOutput(3), o)
+		circuit = builder.build()
+	}
+
+	private fun buildMultiBitNOPCircuit() {
+		val builder = TestCircuitBuilder("test")
+		val i = builder.add(DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "I", bitWidth = BitWidth.BW_8, portType = PortType.INPUT)))
+		val o = builder.add(DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "O", bitWidth = BitWidth.BW_8, portType = PortType.OUTPUT)))
+		builder.connect(i, o)
 		circuit = builder.build()
 	}
 }

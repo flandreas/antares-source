@@ -1,24 +1,32 @@
 package ch.scorpion.antares.model.testcase
 
+import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.model.testcase.Value.State.*
 import ch.scorpion.antares.model.testcase.Value.State.NORMAL
 import ch.scorpion.antares.model.testcase.Value.Type.*
 import ch.scorpion.jabbah.edit.Cloneable
 
 open class Value(
-	val value: ULong,
-	val type: Type = Type.NORMAL
+	val value: DigitalSignal,
+	val type: Type = Type.NORMAL,
+	val representation: DigitalSignalRepresentation = DigitalSignalRepresentation.DECIMAL
 ) : Cloneable<Value> {
 
-	constructor(signal: DigitalSignal): this(
-		signal.toLong() ?: 0UL,
-		if (signal.isPartiallyUndefined) UNDEFINED else Type.NORMAL
+	constructor(
+		signal: DigitalSignal,
+		representation: DigitalSignalRepresentation = DigitalSignalRepresentation.DECIMAL
+	): this(
+		signal,
+		if (signal.isFullyUndefined) UNDEFINED else Type.NORMAL,
+		representation
 	)
 
 	companion object {
-		val X = Value(0UL, DONT_CARE)
-		val Z = Value(0UL, UNDEFINED)
+		val X = Value(DigitalSignalFactory.of(Bit.False), DONT_CARE)
+		val Z = Value(DigitalSignalFactory.of(Bit.Undefined), UNDEFINED)
 	}
 
 	enum class Type {
@@ -34,11 +42,14 @@ open class Value(
 		FAILED
 	}
 
+	open fun withValue(value: DigitalSignal): Value =
+		Value(value = value, type = type, representation = representation)
+
 	override fun doClone(): Value = Value(value, type)
 
 	override fun toString(): String =
 		when (type) {
-			Type.NORMAL -> value.toString()
+			Type.NORMAL -> representation.represent(value)
 			UNDEFINED -> "Z"
 			DONT_CARE -> "X"
 			CLOCKED -> "^$value"
@@ -77,10 +88,13 @@ open class Value(
 
 class MatchedValue(
 	val expected: Value,
-	actual: DigitalSignal
-) : Value(actual) {
+	actual: DigitalSignal,
+) : Value(actual, representation = expected.representation) {
 
 	private val isPassed: Boolean get() = this == expected
 
 	override val state: State get() = if (isPassed) PASSED else FAILED
+
+	override fun withValue(value: DigitalSignal): Value =
+		MatchedValue(expected, value)
 }

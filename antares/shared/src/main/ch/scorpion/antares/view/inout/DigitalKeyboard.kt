@@ -161,7 +161,7 @@ object DigitalKeyboard : ActorViewContainer<Drawable>(useLocation = true), Focus
 					text = BitOperation.HEX_CHAR[i - 1].toString(),
 					dimension = Dimension2D(BUTTON_SIZE, BUTTON_SIZE),
 					style = styleProvider.getStyle(styleType)),
-				actorAction = { buttonClickHandler(BitOperation.HEY_KEY[i - 1], null) },
+				actorAction = { buttonClickHandler(BitOperation.HEX_KEY[i - 1], null) },
 				round = true
 			)
 			digitButtons.add(button)
