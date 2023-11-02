@@ -341,108 +341,113 @@
                 <translation lang='de' text='BCD-DEC Dekodierer (Neg)'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='102' uuid='5f7f0e18-de3f-4776-ab82-a74f6fda8c75' type='digital'>
+            <containerLibraryElement _id='102' uuid='310dce33-19ec-4e53-9d7f-21a97b9633e9' type='digital'>
+              <name>
+                <translation lang='en' text='2-1 Priority Encoder'/>
+              </name>
+            </containerLibraryElement>
+            <containerLibraryElement _id='103' uuid='5f7f0e18-de3f-4776-ab82-a74f6fda8c75' type='digital'>
               <name>
                 <translation lang='en' text='4-2 Priority Encoder'/>
                 <translation lang='de' text='4-2 Priorität-Kodierer'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='103' uuid='473fb78a-d491-42bf-a119-c4299979b89d' type='digital'>
+            <containerLibraryElement _id='104' uuid='473fb78a-d491-42bf-a119-c4299979b89d' type='digital'>
               <name>
                 <translation lang='en' text='8-3 Priority Encoder'/>
                 <translation lang='de' text='8-3 Priorität-Kodierer'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='104' uuid='dc031693-10ee-4310-8ad3-e43710e5f25f' type='digital'>
+            <containerLibraryElement _id='105' uuid='dc031693-10ee-4310-8ad3-e43710e5f25f' type='digital'>
               <name>
                 <translation lang='en' text='ASCII 16-Seg Decoder'/>
               </name>
             </containerLibraryElement>
           </items>
         </libraryFolder>
-        <libraryFolder _id='105'>
+        <libraryFolder _id='106'>
           <name>
             <translation lang='en' text='Flipflops'/>
             <translation lang='de' text='Flipflops'/>
           </name>
           <items>
-            <containerLibraryElement _id='106' uuid='6e492b0a-2467-422e-a3b2-6689c0a4a5c1' type='digital'>
+            <containerLibraryElement _id='107' uuid='6e492b0a-2467-422e-a3b2-6689c0a4a5c1' type='digital'>
               <name>
                 <translation lang='en' text='D Latch'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='107' uuid='d6ab312a-a94b-403a-9291-642295ff29c5' type='digital'>
+            <containerLibraryElement _id='108' uuid='d6ab312a-a94b-403a-9291-642295ff29c5' type='digital'>
               <name>
                 <translation lang='en' text='D Flip-Flop'/>
                 <translation lang='de' text='D-Flipflop'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='108' uuid='a1b8c056-8f4b-4ffe-90a9-dbcc321fe733' type='digital'>
+            <containerLibraryElement _id='109' uuid='a1b8c056-8f4b-4ffe-90a9-dbcc321fe733' type='digital'>
               <name>
                 <translation lang='en' text='D Flip-Flop PRE\/CRL'/>
                 <translation lang='de' text='D-Flipflop PRE/CRL'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='109' uuid='f5ffee61-6d3e-453e-a352-e702a06b11d2' type='digital'>
+            <containerLibraryElement _id='110' uuid='f5ffee61-6d3e-453e-a352-e702a06b11d2' type='digital'>
               <name>
                 <translation lang='de' text='D-Flipflop PRE/CRL (Neg)'/>
                 <translation lang='en' text='D Flip-Flop PRE\/CRL (Neg)'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='110' uuid='e0786c72-2fa2-4ec4-a1de-0a84b7281bec' type='digital'>
+            <containerLibraryElement _id='111' uuid='e0786c72-2fa2-4ec4-a1de-0a84b7281bec' type='digital'>
               <name>
                 <translation lang='en' text='T Flip-Flop'/>
                 <translation lang='de' text='T-Flipflop'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='111' uuid='e57241a4-0282-4006-9abd-59bbcb16bb87' type='digital'>
+            <containerLibraryElement _id='112' uuid='e57241a4-0282-4006-9abd-59bbcb16bb87' type='digital'>
               <name>
                 <translation lang='en' text='SR Latch'/>
                 <translation lang='de' text='SR Latch'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='112' uuid='50285a47-f299-4c92-bc2b-c52441dbcce8' type='digital'>
+            <containerLibraryElement _id='113' uuid='50285a47-f299-4c92-bc2b-c52441dbcce8' type='digital'>
               <name>
                 <translation lang='en' text='SR Flip-Flop'/>
                 <translation lang='de' text='SR-Flipflop'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='113' uuid='54f46f36-85cf-41c9-a63a-b43fe4446742' type='digital'>
+            <containerLibraryElement _id='114' uuid='54f46f36-85cf-41c9-a63a-b43fe4446742' type='digital'>
               <name>
                 <translation lang='en' text='SR Flip-Flop (Neg)'/>
                 <translation lang='de' text='SR Flipflop (Neg)'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='114' uuid='d34d3483-be1d-432b-a949-7f68e0ee756b' type='digital'>
+            <containerLibraryElement _id='115' uuid='d34d3483-be1d-432b-a949-7f68e0ee756b' type='digital'>
               <name>
                 <translation lang='en' text='SR Flip-Flop PRE\/CLR'/>
                 <translation lang='de' text='SR-Flipflop PRE/CLR'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='115' uuid='9dc3d0a1-b49e-41d1-b298-c043a2f01228' type='digital'>
+            <containerLibraryElement _id='116' uuid='9dc3d0a1-b49e-41d1-b298-c043a2f01228' type='digital'>
               <name>
                 <translation lang='en' text='SR Flip-Flop PRE\/CLR (Neg)'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='116' uuid='204aeecf-cdca-4678-8c36-f8a834922966' type='digital'>
+            <containerLibraryElement _id='117' uuid='204aeecf-cdca-4678-8c36-f8a834922966' type='digital'>
               <name>
                 <translation lang='en' text='JK Flip-Flop'/>
                 <translation lang='de' text='JK-Flipflop'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='117' uuid='9631ce5c-fd31-484d-b63a-ef0d9f2b5c58' type='digital'>
+            <containerLibraryElement _id='118' uuid='9631ce5c-fd31-484d-b63a-ef0d9f2b5c58' type='digital'>
               <name>
                 <translation lang='en' text='JK Flip-Flop (Neg)'/>
                 <translation lang='de' text='JK-Flipflop (Neg)'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='118' uuid='5485c628-408c-45ea-9d1e-8d930c8760e7' type='digital'>
+            <containerLibraryElement _id='119' uuid='5485c628-408c-45ea-9d1e-8d930c8760e7' type='digital'>
               <name>
                 <translation lang='en' text='JK Master-Slave Flip-Flop'/>
                 <translation lang='de' text='JK-Master/Slave-Flipflop'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='119' uuid='048daa5b-de3e-4ae9-a343-e8c355a033dc' type='digital'>
+            <containerLibraryElement _id='120' uuid='048daa5b-de3e-4ae9-a343-e8c355a033dc' type='digital'>
               <name>
                 <translation lang='en' text='JK MS-Flip-Flop PRE\/CLR'/>
                 <translation lang='de' text='JK-MS-Flipflop PRE/CLR'/>
@@ -450,124 +455,124 @@
             </containerLibraryElement>
           </items>
         </libraryFolder>
-        <libraryFolder _id='120'>
+        <libraryFolder _id='121'>
           <name>
             <translation lang='en' text='Plexer'/>
             <translation lang='de' text='Plexer'/>
           </name>
           <items>
-            <containerLibraryElement _id='121' uuid='9bc8ab29-0c6e-40b3-912c-62b69a65e2e1' type='digital'>
+            <containerLibraryElement _id='122' uuid='9bc8ab29-0c6e-40b3-912c-62b69a65e2e1' type='digital'>
               <name>
                 <translation lang='de' text='Bitwähler n Bit'/>
                 <translation lang='en' text='Bit Selector n Bit'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='122' uuid='7f483f75-3f41-4d89-aef5-ae07afbaf1f7' type='digital'>
+            <containerLibraryElement _id='123' uuid='7f483f75-3f41-4d89-aef5-ae07afbaf1f7' type='digital'>
               <name>
                 <translation lang='en' text='2:1 Multiplexer'/>
                 <translation lang='de' text='2:1 Multiplexer'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='123' uuid='2cb91fb8-b233-41b5-96b2-e898c9122e68' type='digital'>
+            <containerLibraryElement _id='124' uuid='2cb91fb8-b233-41b5-96b2-e898c9122e68' type='digital'>
               <name>
                 <translation lang='en' text='2:1 Multiplexer 2 bit'/>
                 <translation lang='de' text='2:1 Multiplexer 2 Bit'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='124' uuid='83ba937d-5277-45f2-adff-1abab9207e33' type='digital'>
+            <containerLibraryElement _id='125' uuid='83ba937d-5277-45f2-adff-1abab9207e33' type='digital'>
               <name>
                 <translation lang='en' text='2:1 Multiplexer 4 Bit'/>
                 <translation lang='de' text='2:1 Multiplexer 4 Bit'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='125' uuid='2f202e6b-504f-4a18-b6e9-53f99371b1b9' type='digital'>
+            <containerLibraryElement _id='126' uuid='2f202e6b-504f-4a18-b6e9-53f99371b1b9' type='digital'>
               <name>
                 <translation lang='en' text='2:1 Multiplexer 8 Bit'/>
                 <translation lang='de' text='2:1 Multiplexer 8 Bit'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='126' uuid='06e7b5c3-daad-4019-8a8f-945a9215cab6' type='digital'>
+            <containerLibraryElement _id='127' uuid='06e7b5c3-daad-4019-8a8f-945a9215cab6' type='digital'>
               <name>
                 <translation lang='en' text='2:1 Multiplexer 16 Bit'/>
                 <translation lang='de' text='2:1 Multiplexer 16 Bit'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='127' uuid='ae0652c3-7ad1-4664-9758-c4d2050e76a5' type='digital'>
+            <containerLibraryElement _id='128' uuid='ae0652c3-7ad1-4664-9758-c4d2050e76a5' type='digital'>
               <name>
                 <translation lang='en' text='2:1 Multiplexer n Bit'/>
                 <translation lang='de' text='2:1 Multiplexer n Bit'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='128' uuid='4fd29ab0-fb62-4f3c-a2c6-54a9c33ac437' type='digital'>
+            <containerLibraryElement _id='129' uuid='4fd29ab0-fb62-4f3c-a2c6-54a9c33ac437' type='digital'>
               <name>
                 <translation lang='en' text='4:1 Multiplexer'/>
                 <translation lang='de' text='4:1 Multiplexer'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='129' uuid='d5d282d6-21e9-4f1b-9429-75c882213cb3' type='digital'>
+            <containerLibraryElement _id='130' uuid='d5d282d6-21e9-4f1b-9429-75c882213cb3' type='digital'>
               <name>
                 <translation lang='en' text='8:1 Multiplexer'/>
                 <translation lang='de' text='8:1 Multiplexer'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='130' uuid='02817a97-7f80-48d7-b424-43035d57d85b' type='digital'>
+            <containerLibraryElement _id='131' uuid='02817a97-7f80-48d7-b424-43035d57d85b' type='digital'>
               <name>
                 <translation lang='en' text='16:1 Multiplexer'/>
                 <translation lang='de' text='16:1 Multiplexer'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='131' uuid='3cae4f4b-59df-41cf-a76c-3871a60f86c2' type='digital'>
+            <containerLibraryElement _id='132' uuid='3cae4f4b-59df-41cf-a76c-3871a60f86c2' type='digital'>
               <name>
                 <translation lang='de' text='1:2 Demultiplexer'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='132' uuid='e64a8e8b-d5e1-4c04-acc8-eaf7f77d0f95' type='digital'>
+            <containerLibraryElement _id='133' uuid='e64a8e8b-d5e1-4c04-acc8-eaf7f77d0f95' type='digital'>
               <name>
                 <translation lang='de' text='1:4 Demultiplexer'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='133' uuid='1dee873b-bb86-4e3b-b336-391edda8303e' type='digital'>
+            <containerLibraryElement _id='134' uuid='1dee873b-bb86-4e3b-b336-391edda8303e' type='digital'>
               <name>
                 <translation lang='de' text='1:8 Demultiplexer'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='134' uuid='52500dd2-b26d-4558-bdfd-678ab1d40882' type='digital'>
+            <containerLibraryElement _id='135' uuid='52500dd2-b26d-4558-bdfd-678ab1d40882' type='digital'>
               <name>
                 <translation lang='de' text='1:16 Demultiplexer'/>
               </name>
             </containerLibraryElement>
           </items>
         </libraryFolder>
-        <libraryFolder _id='135'>
+        <libraryFolder _id='136'>
           <name>
             <translation lang='en' text='Counter'/>
             <translation lang='de' text='Zähler'/>
           </name>
           <items>
-            <containerLibraryElement _id='136' uuid='a3990de2-dd5b-481e-ae95-2c77c12e0f87' type='digital'>
+            <containerLibraryElement _id='137' uuid='a3990de2-dd5b-481e-ae95-2c77c12e0f87' type='digital'>
               <name>
                 <translation lang='de' text='Counter n Bit'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='137' uuid='2be67615-ff7b-4f4b-a2e1-3fd9ff1d1d97' type='digital'>
+            <containerLibraryElement _id='138' uuid='2be67615-ff7b-4f4b-a2e1-3fd9ff1d1d97' type='digital'>
               <name>
                 <translation lang='en' text='Sync. Forward Counter 3 Bit'/>
                 <translation lang='de' text='Synch. Vorwärtszähler 3-Bit'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='138' uuid='380a6b70-ca2f-4983-8a45-d2c4de03c7f4' type='digital'>
+            <containerLibraryElement _id='139' uuid='380a6b70-ca2f-4983-8a45-d2c4de03c7f4' type='digital'>
               <name>
                 <translation lang='en' text='Sync. BCD Counter'/>
                 <translation lang='de' text='Synch. BCD-Zähler'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='139' uuid='0a2995f4-af04-4830-b141-76de188e2e34' type='digital'>
+            <containerLibraryElement _id='140' uuid='0a2995f4-af04-4830-b141-76de188e2e34' type='digital'>
               <name>
                 <translation lang='en' text='Frequency Divider 1:16'/>
                 <translation lang='de' text='Frequenzteiler 1:16'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='140' uuid='7de920b3-7694-4f03-a1e6-f44ff92475ec' type='digital'>
+            <containerLibraryElement _id='141' uuid='7de920b3-7694-4f03-a1e6-f44ff92475ec' type='digital'>
               <name>
                 <translation lang='de' text='Binärzähler 4-Bit mit Load/Reset'/>
                 <translation lang='en' text='Binary Counter 4 Bit LD\/CLR'/>
