@@ -43,7 +43,7 @@ object TestcaseService {
 
 			val execScriptAST = circuit.script?.let {
 				if (StringUtils.isNotBlank(it)) {
-					BaseModule.parserFactory(it, null).parse()
+					circuit.createParser(it, null).parse()
 				} else {
 					null
 				}

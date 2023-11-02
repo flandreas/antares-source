@@ -11,7 +11,7 @@ import ch.scorpion.jabbah.graph.model.PortType
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class TestcaseScriptRunnerRest {
+class TestcaseScriptRunnerTest {
 
 	companion object {
 		init {
