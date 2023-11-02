@@ -91,9 +91,9 @@ class MatchedValue(
 	actual: DigitalSignal,
 ) : Value(actual, representation = expected.representation) {
 
-	private val isPassed: Boolean get() = this == expected
+	private val isPassed: Boolean = this == expected
 
-	override val state: State get() = if (isPassed) PASSED else FAILED
+	override val state: State = if (isPassed) PASSED else FAILED
 
 	override fun withValue(value: DigitalSignal): Value =
 		MatchedValue(expected, value)
