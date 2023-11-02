@@ -45,7 +45,7 @@ open class Value(
 	open fun withValue(value: DigitalSignal): Value =
 		Value(value = value, type = type, representation = representation)
 
-	override fun doClone(): Value = Value(value, type)
+	override fun doClone(): Value = Value(value, type, representation)
 
 	override fun toString(): String =
 		when (type) {
