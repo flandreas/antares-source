@@ -13,6 +13,21 @@ import ch.scorpion.jabbah.graph.view.GraphView
  */
 abstract class AbstractStandardLibraryBasedCircuitTest : AbstractCircuitTest() {
 
+	companion object {
+		fun setupLibrary() {
+			LibraryModule.DEF_LIBRARY_UUID = AntaresApplication.DEF_LIBRARY_UUID
+			LibraryModule.systemLibraryPersistenceService = ResourceLibraryPersistenceService()
+			LibraryModule.systemLibraryDictionaryService = LibraryDictionaryService(
+				ResourceLibraryDictionaryPersistenceService()
+			)
+			LibraryModule.libraryManagementService = LibraryManagementService()
+			LibraryModule.libraryService = LibraryService()
+
+			LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(
+				LibraryIdentification(LibraryModule.DEF_LIBRARY_UUID, null), isSystem = true)
+		}
+	}
+
 	private lateinit var _circuitView: GraphView
 
 	protected abstract fun createCircuit(): GraphView
@@ -23,18 +38,5 @@ abstract class AbstractStandardLibraryBasedCircuitTest : AbstractCircuitTest() {
 		super.setup()
 		setupLibrary()
 		_circuitView = createCircuit()
-	}
-
-	private fun setupLibrary() {
-		LibraryModule.DEF_LIBRARY_UUID = AntaresApplication.DEF_LIBRARY_UUID
-		LibraryModule.systemLibraryPersistenceService = ResourceLibraryPersistenceService()
-		LibraryModule.systemLibraryDictionaryService = LibraryDictionaryService(
-			ResourceLibraryDictionaryPersistenceService()
-		)
-		LibraryModule.libraryManagementService = LibraryManagementService()
-		LibraryModule.libraryService = LibraryService()
-
-		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(
-			LibraryIdentification(LibraryModule.DEF_LIBRARY_UUID, null), isSystem = true)
 	}
 }

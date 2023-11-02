@@ -1,6 +1,5 @@
 package ch.scorpion.antares.model.testcase
 
-import ch.scorpion.antares.model.AntaresGraphTypes
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
@@ -35,14 +34,7 @@ class RunLibraryTestcasesAction(
 		LOG.userTrail("Run all tests in library '${selectedFolder.library?.name?.value}'")
 
 		InvocationHandler.invoke {
-			val results = mutableListOf<CombinedTestRunResult>()
-			selectedFolder.library?.metaGraphIds?.forEach { uuid ->
-				val metaGraph = selectedFolder.library!!.getMetaGraph(uuid)
-				if (metaGraph.type == AntaresGraphTypes.Digital) {
-					val circuit = metaGraph.graph.model!! as DigitalGraph
-					results.addAll(RunTestcaseAction.run(metaGraph, circuit.testcases.testcases))
-				}
-			}
+			val results = TestcaseService.runAllLibraryTests(selectedFolder.library!!)
 
 			if (results.isEmpty()) {
 				eventBus.post(ComponentMessage(source = null, messageKey = "antares.testcase.results.empty.text"))

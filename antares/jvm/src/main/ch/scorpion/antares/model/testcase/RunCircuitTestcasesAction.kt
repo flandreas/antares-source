@@ -35,7 +35,7 @@ class RunCircuitTestcasesAction(
 			val circuit = metaGraph.graph.model as DigitalGraph
 
 			LOG.userTrail("Run all tests in circuit '${circuit.name.value}'")
-			val results = RunTestcaseAction.run(metaGraph, circuit.testcases.testcases)
+			val results = TestcaseService.run(metaGraph, circuit.testcases.testcases)
 
 			if (results.isEmpty()) {
 				eventBus.post(ComponentMessage(source = null, messageKey = "antares.testcase.results.empty.text"))
