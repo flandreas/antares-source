@@ -62,7 +62,7 @@ class AntaresFrameSwing(
 				Translations.getString("antares.testcases.title"),
 				UiUtil.themedIcon("/img/testcase.png"),
 				testcasesView,
-				listOf(testcasesView.runAction)))
+				listOf(testcasesView.runAction, testcasesView.helpAction)))
 	}
 
 	private fun addTestRunResultsView() {

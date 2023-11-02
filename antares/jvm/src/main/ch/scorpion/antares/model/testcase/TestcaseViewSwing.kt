@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.help.HelpId
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
@@ -16,6 +17,9 @@ import javax.swing.JPanel
 import javax.swing.JScrollPane
 import javax.swing.JSplitPane
 
+/**
+ * Displays a tree of [Testcase]s of a [DigitalGraph].
+ */
 class TestcaseViewSwing(
 	controller: TestcaseViewController,
 	application: Application,
@@ -23,6 +27,10 @@ class TestcaseViewSwing(
 	private val eventBus: EventBus = BaseModule.eventBus,
 	sheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory
 ) : JPanel(), TestcaseView {
+
+	companion object {
+		val HELP_ID = HelpId("testcaseView")
+	}
 
 	private val splitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
 
@@ -35,6 +43,8 @@ class TestcaseViewSwing(
 	 * the selection in the tree.
 	 */
 	val runAction: Action = RunAction()
+
+	val helpAction: Action = HelpAction()
 
 	override var graph: DigitalGraph? = null
 		set(value) {
@@ -95,6 +105,13 @@ class TestcaseViewSwing(
 			} else {
 				treeView.runAllTestcasesAction.execute(event)
 			}
+		}
+	}
+
+	private class HelpAction : AbstractAction("base.action.help", imagePath = "/img/help.png") {
+
+		override fun execute(event: ActionEvent) {
+			BaseModule.helpProvider.provideHelpFor(HELP_ID)
 		}
 	}
 }
