@@ -27,7 +27,7 @@ import kotlin.math.pow
  */
 object BitOperation {
 
-	val BINARY_DIGITS = listOf('0', '1')
+	val BINARY_DIGITS = listOf('0', '1', 'Z')
 
     val HEX_CHAR = listOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'X', 'Z')
 

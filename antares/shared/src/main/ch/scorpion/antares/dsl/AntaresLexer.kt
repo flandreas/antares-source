@@ -60,14 +60,21 @@ class AntaresLexer(text: String) : DslLexer(text) {
 		}
 	}
 
-	private fun binaryLiteral(state: State): Long {
+	private fun binaryLiteral(state: State): DigitalSignal {
 		advance(state) // 0
 		advance(state) // b
 		val result = StringBuilder()
+		var hasUndefined = false
 		while (state.currentChar != null && BitOperation.BINARY_DIGITS.contains(state.currentChar!!.uppercaseChar())) {
+			hasUndefined = hasUndefined || state.currentChar!!.uppercaseChar() == 'Z'
 			result.append(state.currentChar!!)
 			advance(state)
 		}
-		return BitOperation.binaryToLong(result.toString()).toLong()
+
+		return if (hasUndefined) {
+			DigitalLiteral.parseBinary(result.toString())
+		} else {
+			DigitalSignalFactory.of(BitWidth.of(result.toString().length), BitOperation.binaryToLong(result.toString()))
+		}
 	}
 }

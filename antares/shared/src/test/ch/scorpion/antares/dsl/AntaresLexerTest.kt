@@ -1,6 +1,9 @@
 package ch.scorpion.antares.dsl
 
+import ch.scorpion.antares.model.signal.Bit.*
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.dsl.BaseTokenType
 import ch.scorpion.jabbah.base.dsl.DslLexer
@@ -29,13 +32,25 @@ class AntaresLexerTest {
 
 	@Test
 	fun shouldScanBinaryLiteral() {
-		assertNumberLiteral(0, "0b0")
-		assertNumberLiteral(3, "0b11")
-		assertNumberLiteral(9, "0b1001")
-		assertNumberLiteral(255, "0b11111111")
+		assertDigitalSignalLiteral(DigitalSignalFactory.of(BitWidth.BW_1, 0UL), "0b0")
+		assertDigitalSignalLiteral(DigitalSignalFactory.of(BitWidth.BW_2, 3UL), "0b11")
+		assertDigitalSignalLiteral(DigitalSignalFactory.of(BitWidth.BW_4, 9UL), "0b1001")
+		assertDigitalSignalLiteral(DigitalSignalFactory.of(BitWidth.BW_8, 255UL), "0b11111111")
+
+		assertDigitalSignalLiteral(Word(listOf(False, Undefined)), "0bZ0")
+		assertDigitalSignalLiteral(Word(listOf(True, False, False, False, False, False, False, Undefined)), "0bZ0000001")
 	}
 
 	private fun assertNumberLiteral(expected: Long, literal: String) {
+		val lexer = AntaresLexer("a = $literal")
+		assertId("a", lexer)
+		assertToken(DslTokenType.ASSIGN, lexer)
+		val token = lexer.nextToken()
+		assertEquals(BaseTokenType.LITERAL, token.type)
+		assertEquals(expected, token.value)
+	}
+
+	private fun assertDigitalSignalLiteral(expected: DigitalSignal, literal: String) {
 		val lexer = AntaresLexer("a = $literal")
 		assertId("a", lexer)
 		assertToken(DslTokenType.ASSIGN, lexer)

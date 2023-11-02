@@ -7,6 +7,7 @@ import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_1
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_2
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_4
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_8
+import ch.scorpion.antares.model.signal.DigitalLiteral
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.Word.Companion.of
@@ -498,5 +499,29 @@ class AntaresInterpreterSignalTest {
 		val result = interpreter.interpret()
 
 		assertEquals(DigitalSignalFactory.of(false), result)
+	}
+
+	@Test
+	fun shouldCalculate7SegmentDecoder() {
+		val parser = AntaresParser(AntaresLexer("""
+			var 'a..g'
+			var input = 8*D + 4*C + 2*B + A
+			when (input) {
+				1 : 'a..g' = 0bZ0111111
+				2 : 'a..g' = 0bZ0000110
+				else : 'a..g' = 0bZ0000001
+			}
+		""".trimIndent()), null)
+
+		val memory = Memory()
+		val interpreter = AntaresInterpreter(parser.parse(), memory)
+		memory.preset("A", DigitalSignalFactory.of(false))
+		memory.preset("B", DigitalSignalFactory.of(true))
+		memory.preset("C", DigitalSignalFactory.of(false))
+		memory.preset("D", DigitalSignalFactory.of(false))
+
+		interpreter.interpret(keepMemory = true)
+
+		assertEquals(DigitalLiteral.parseBinary("Z0000110"), memory.getValue("a..g"))
 	}
 }

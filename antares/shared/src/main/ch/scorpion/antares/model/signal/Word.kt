@@ -141,8 +141,9 @@ internal data class Word(
 		if (other is DefinedWord) {
 			return bitWidth.width == other.bitWidth.width && longValue == other.longValue
 		}
-
-		other as Word
+		if (other !is Word) {
+			return false
+		}
 
 		if (bitWidth.width != other.bitWidth.width) return false
 		if (bits != other.bits) return false
