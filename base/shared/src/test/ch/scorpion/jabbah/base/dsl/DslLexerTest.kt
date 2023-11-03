@@ -1,11 +1,13 @@
 package ch.scorpion.jabbah.base.dsl
 
+import ch.scorpion.jabbah.base.dsl.BaseTokenType.EOF
+import ch.scorpion.jabbah.base.dsl.BaseTokenType.LITERAL
 import ch.scorpion.jabbah.base.dsl.DslTokenType.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-class LexerTest : AbstractLexerTest() {
+class DslLexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldScanMultiplyTerm() {

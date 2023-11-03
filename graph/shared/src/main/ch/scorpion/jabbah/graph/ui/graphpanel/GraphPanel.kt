@@ -187,6 +187,8 @@ class GraphPanelViewController(
 		issuesViewController.dispose()
 		logViewController.dispose()
 		graphHierarchyController.dispose()
+
+		executionDepthAction.dispose()
 	}
 
 	/** ---- [GraphPanelViewController] */

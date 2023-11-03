@@ -2,6 +2,7 @@ package ch.scorpion.antares.model.expression
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.BaseLexer
+import ch.scorpion.jabbah.base.dsl.BaseTokenType
 import ch.scorpion.jabbah.base.dsl.SyntaxError
 import ch.scorpion.jabbah.base.parser.Token
 import ch.scorpion.jabbah.base.dsl.DslTokenType
@@ -20,7 +21,7 @@ class BooleanExpressionLexer(
 		// Arithmetic notation
 		private val MULTIPLY_TOKEN = Token<Unit>(DslTokenType.MULTIPLY)
 		private val PLUS_TOKEN = Token<Unit>(DslTokenType.PLUS)
-		private val SINGLE_QUOTE_TOKEN = Token<Unit>(DslTokenType.SINGLE_QUOTE)
+		private val SINGLE_QUOTE_TOKEN = Token<Unit>(BaseTokenType.SINGLE_QUOTE)
 
 		// Logic notation
 		private val LOGIC_AND_TOKEN = Token<Unit>(DslTokenType.LOGIC_AND)

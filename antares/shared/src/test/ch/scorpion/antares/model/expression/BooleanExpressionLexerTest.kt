@@ -1,5 +1,6 @@
 package ch.scorpion.antares.model.expression
 
+import ch.scorpion.jabbah.base.dsl.BaseTokenType
 import ch.scorpion.jabbah.base.dsl.DslTokenType
 import kotlin.test.Test
 
@@ -14,10 +15,10 @@ class BooleanExpressionLexerTest : AbstractLexerTest() {
 		assertId("A", lexer)
 		assertToken(DslTokenType.MULTIPLY, lexer)
 		assertId("B", lexer)
-		assertToken(DslTokenType.SINGLE_QUOTE, lexer)
+		assertToken(BaseTokenType.SINGLE_QUOTE, lexer)
 		assertToken(DslTokenType.PLUS, lexer)
 		assertId("A", lexer)
-		assertToken(DslTokenType.SINGLE_QUOTE, lexer)
+		assertToken(BaseTokenType.SINGLE_QUOTE, lexer)
 		assertToken(DslTokenType.MULTIPLY, lexer)
 		assertId("B", lexer)
 	}
@@ -99,10 +100,10 @@ class BooleanExpressionLexerTest : AbstractLexerTest() {
 		assertToken(DslTokenType.ASSIGN, lexer)
 		assertId("A", lexer)
 		assertId("B", lexer)
-		assertToken(DslTokenType.SINGLE_QUOTE, lexer)
+		assertToken(BaseTokenType.SINGLE_QUOTE, lexer)
 		assertToken(DslTokenType.PLUS, lexer)
 		assertId("A", lexer)
-		assertToken(DslTokenType.SINGLE_QUOTE, lexer)
+		assertToken(BaseTokenType.SINGLE_QUOTE, lexer)
 		assertId("B", lexer)
 	}
 
@@ -136,10 +137,10 @@ class BooleanExpressionLexerTest : AbstractLexerTest() {
 		assertId("A", lexer)
 		assertToken(DslTokenType.PLUS, lexer)
 		assertId("B", lexer)
-		assertToken(DslTokenType.SINGLE_QUOTE, lexer)
+		assertToken(BaseTokenType.SINGLE_QUOTE, lexer)
 
 		assertId("Y", lexer)
-		assertToken(DslTokenType.SINGLE_QUOTE, lexer)
+		assertToken(BaseTokenType.SINGLE_QUOTE, lexer)
 		assertToken(DslTokenType.ASSIGN, lexer)
 		assertId("B", lexer)
 	}

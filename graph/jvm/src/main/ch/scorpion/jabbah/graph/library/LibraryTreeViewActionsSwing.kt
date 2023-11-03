@@ -159,7 +159,7 @@ open class LibraryTreeViewActionsSwing(
 		projectRootMenu.addSeparator()
 		fillMainProjectRootCreateActions()
 		projectRootMenu.addSeparator()
-		projectRootMenu.add(ActionWrapperSwing(importProjectMetaGraphAction))
+		fillMainProjectRootExecuteActions()
 		projectRootMenu.addSeparator()
 		projectRootMenu.add(ActionWrapperSwing(projectPropertiesAction))
 		if (uploadProjectAction != null) {
@@ -171,6 +171,10 @@ open class LibraryTreeViewActionsSwing(
 	protected open fun fillMainProjectRootCreateActions() {
 		projectRootMenu.add(ActionWrapperSwing(newProjectGraphAction))
 		projectRootMenu.add(ActionWrapperSwing(addProjectFolderAction))
+	}
+
+	protected open fun fillMainProjectRootExecuteActions() {
+		projectRootMenu.add(ActionWrapperSwing(importProjectMetaGraphAction))
 	}
 
 	private fun fillMainLibraryDirectoryPopupMenu() {
@@ -196,10 +200,7 @@ open class LibraryTreeViewActionsSwing(
 		libraryRootMenu.addSeparator()
 		fillMainLibraryRootCreateActions()
 		libraryRootMenu.addSeparator()
-		libraryRootMenu.add(ActionWrapperSwing(deleteLibraryFolderAction))
-		libraryRootMenu.add(ActionWrapperSwing(editLibraryAction))
-		libraryRootMenu.add(ActionWrapperSwing(importLibraryMetaGraphAction))
-		libraryRootMenu.add(ActionWrapperSwing(removeLibraryAction))
+		fillMainLibraryRootExecuteActions()
 		libraryRootMenu.addSeparator()
 		libraryRootMenu.add(ActionWrapperSwing(libraryPropertiesAction))
 		libraryRootMenu.add(ActionWrapperSwing(closeLibraryAction))
@@ -208,6 +209,13 @@ open class LibraryTreeViewActionsSwing(
 	protected open fun fillMainLibraryRootCreateActions() {
 		libraryRootMenu.add(ActionWrapperSwing(addLibraryFolderAction))
 		libraryRootMenu.add(ActionWrapperSwing(newLibraryGraphAction))
+	}
+
+	protected open fun fillMainLibraryRootExecuteActions() {
+		libraryRootMenu.add(ActionWrapperSwing(deleteLibraryFolderAction))
+		libraryRootMenu.add(ActionWrapperSwing(editLibraryAction))
+		libraryRootMenu.add(ActionWrapperSwing(importLibraryMetaGraphAction))
+		libraryRootMenu.add(ActionWrapperSwing(removeLibraryAction))
 	}
 
 	private fun fillMainProjectContainerPopupMenu() {

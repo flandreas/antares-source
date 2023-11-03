@@ -29,14 +29,16 @@ abstract class AbstractBaseInterpreter(
 	 * @param params the optional parameters on which execution logic might depend on. The
 	 * values of these parameters might be different for every call of [interpret].
 	 */
-	fun interpret(params: Any? = null): Any {
+	fun interpret(params: Any? = null, keepMemory: Boolean = false): Any {
 		returnValue = null
 		this.params = params
 		try {
 			return interpret(rootNode)
 		} finally {
 			// Don't clear memory BEFORE interpretation in order not to break Memory.preset()
-			memory.clear()
+			if (!keepMemory) {
+				memory.clear()
+			}
 		}
 	}
 

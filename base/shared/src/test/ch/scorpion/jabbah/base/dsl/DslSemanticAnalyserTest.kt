@@ -4,7 +4,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.test.*
 
-class SemanticAnalyserTest {
+class DslSemanticAnalyserTest {
 
 	@BeforeTest
 	fun setup() {
@@ -18,7 +18,7 @@ class SemanticAnalyserTest {
 			var b = a
 		""".trimIndent()).parse()
 
-		val analyser = SemanticAnalyser(null)
+		val analyser = DslSemanticAnalyser(null)
 		analyser.analyse(ast)
 
 		val symbolTable = analyser.scope
@@ -37,7 +37,7 @@ class SemanticAnalyserTest {
 			b = c
 		""".trimIndent()).parse()
 
-			val analyser = SemanticAnalyser(null)
+			val analyser = DslSemanticAnalyser(null)
 			analyser.analyse(ast)
 		}
 	}
@@ -52,7 +52,7 @@ class SemanticAnalyserTest {
 			}
 		""".trimIndent()).parse()
 
-			val analyser = SemanticAnalyser(null)
+			val analyser = DslSemanticAnalyser(null)
 			assertFailsWith(SemanticError::class) {
 				analyser.analyse(ast)
 			}
@@ -64,7 +64,7 @@ class SemanticAnalyserTest {
 		assertFailsWith(SemanticError::class) {
 			val symbolTable = ScopedSymbolTable("global", 1, null)
 			symbolTable.define(ExternalFunctionSymbol("f", 1) {})
-			val semanticAnalyser = SemanticAnalyser(symbolTable)
+			val semanticAnalyser = DslSemanticAnalyser(symbolTable)
 
 			DslParser(DslLexer("g(1)"), semanticAnalyser).parse()
 		}
@@ -74,7 +74,7 @@ class SemanticAnalyserTest {
 	fun shouldAllowDefinedFunctionName() {
 		val symbolTable = ScopedSymbolTable("global", 1, null)
 		symbolTable.define(ExternalFunctionSymbol("f", 1) {})
-		val semanticAnalyser = SemanticAnalyser(symbolTable)
+		val semanticAnalyser = DslSemanticAnalyser(symbolTable)
 
 		DslParser(DslLexer("f(1)"), semanticAnalyser).parse()
 	}
@@ -84,7 +84,7 @@ class SemanticAnalyserTest {
 		assertFailsWith(SemanticError::class) {
 			val symbolTable = ScopedSymbolTable("global", 1, null)
 			symbolTable.define(ExternalFunctionSymbol("f", 1) {})
-			val semanticAnalyser = SemanticAnalyser(symbolTable)
+			val semanticAnalyser = DslSemanticAnalyser(symbolTable)
 
 			DslParser(DslLexer("f(1, 2)"), semanticAnalyser).parse()
 		}
@@ -94,7 +94,7 @@ class SemanticAnalyserTest {
 	fun shouldResolveMultipleFunctionCalls() {
 		val symbolTable = ScopedSymbolTable("global", 1, null)
 		symbolTable.define(ExternalFunctionSymbol("f", 1) {})
-		val semanticAnalyser = SemanticAnalyser(symbolTable)
+		val semanticAnalyser = DslSemanticAnalyser(symbolTable)
 
 		val ast = DslParser(DslLexer("""
 			if (1 == 1) {

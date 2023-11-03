@@ -139,12 +139,13 @@ internal data class Word(
 		if (other == null) return false
 
 		if (other is DefinedWord) {
-			return bitWidth == other.bitWidth && longValue == other.longValue
+			return bitWidth.width == other.bitWidth.width && longValue == other.longValue
+		}
+		if (other !is Word) {
+			return false
 		}
 
-		other as Word
-
-		if (bitWidth != other.bitWidth) return false
+		if (bitWidth.width != other.bitWidth.width) return false
 		if (bits != other.bits) return false
 
 		return true
@@ -199,12 +200,24 @@ internal data class Word(
 		})
 
 	override fun and(signal: DigitalSignal): DigitalSignal =
-		Word((0 until bitWidth.width).map { bitAt(it).and(signal.bitAt(it)) })
+		Word((0 until bitWidth.width).map {
+			if (it < signal.bitWidth.width) {
+				bitAt(it).and(signal.bitAt(it))
+			} else {
+				Bit.False
+			}
+		})
 
 	override fun and(value: ULong): DigitalSignal = and(of(bitWidth, value))
 
 	override fun or(signal: DigitalSignal): DigitalSignal =
-		Word((0 until bitWidth.width).map { bitAt(it).or(signal.bitAt(it)) })
+		Word((0 until bitWidth.width).map {
+			if (it < signal.bitWidth.width) {
+				bitAt(it).or(signal.bitAt(it))
+			} else {
+				bitAt(it)
+			}
+		})
 
 	override fun or(value: ULong): DigitalSignal = or(of(bitWidth, value))
 
@@ -350,7 +363,19 @@ internal data class Word(
 		return Word(resultBits)
 	}
 
-	override fun ofWidth(bitWidth: BitWidth): DigitalSignal = of(bitWidth, getValue())
+	override fun ofWidth(bitWidth: BitWidth): DigitalSignal {
+		return if (this.bitWidth == bitWidth) {
+			this
+		} else {
+			Word((0 until bitWidth.width).map {
+				if (it < this.bitWidth.width) {
+					bits[it]
+				} else {
+					Bit.False
+				}
+			})
+		}
+	}
 
 	override fun shiftLeft(bitCount: Int): DigitalSignal {
 		val newBits = bits.toMutableList()

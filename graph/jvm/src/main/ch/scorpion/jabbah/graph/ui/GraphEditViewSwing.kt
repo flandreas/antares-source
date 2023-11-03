@@ -4,10 +4,7 @@ import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.swing.SidebarPane
-import ch.scorpion.jabbah.base.swing.SidebarPaneContentImpl
-import ch.scorpion.jabbah.base.swing.SidebarSplitPane
-import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.base.swing.*
 import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
@@ -76,5 +73,10 @@ class GraphEditViewSwing(
 	private fun buildUI() {
 		layout = BorderLayout()
 		add(sidebarSplitPane, BorderLayout.CENTER)
+	}
+
+	fun add(content: SidebarPaneContent) {
+		sidebarSplitPane.add(content)
+		// TODO Call clearSelection() for added content
 	}
 }

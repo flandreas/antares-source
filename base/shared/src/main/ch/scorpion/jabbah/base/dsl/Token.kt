@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.base.dsl
 import ch.scorpion.jabbah.base.parser.TokenType
 
 enum class DslTokenType(override val id: String): TokenType {
-	LITERAL("literal"),
 	PLUS("+"),
 	MINUS("-"),
 	MULTIPLY("*"),
@@ -11,9 +10,7 @@ enum class DslTokenType(override val id: String): TokenType {
 	CARET("^"),
 	LPAREN("("),
 	RPAREN(")"),
-	EOF("EOF"),
 	ASSIGN("="),
-	ID("ID"),
 	LCURLEY("{"),
 	RCURLEY("}"),
 	VAR("var"),
@@ -48,8 +45,6 @@ enum class DslTokenType(override val id: String): TokenType {
 	HASH("#"),
 	DOT("."),
 	COMMA(","),
-	DOUBLE_QUOTE("\""),
-	SINGLE_QUOTE("'"),
 	LOGIC_AND("∧"),
 	LOGIC_OR("∨"),
 	LOGIC_NOT("¬"),

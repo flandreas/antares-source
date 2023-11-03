@@ -12,7 +12,7 @@ interface Usecases : Storable {
 
 	/**
 	 * The [GraphView] that owns this [Usecases].
-	 * Can be `null` in order to be instantiated by deserialization. Uses for sending events when adding or
+	 * Can be `null` in order to be instantiated by deserialization. Used for sending events when adding or
 	 * removing [Usecase]s.
 	 */
 	var graphView: GraphView?

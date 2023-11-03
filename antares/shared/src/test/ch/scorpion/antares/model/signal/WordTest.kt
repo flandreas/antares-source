@@ -200,9 +200,30 @@ class WordTest {
 
 	@Test
 	fun shouldCalculateNot() {
+		// Same width
 		assertEquals(Word.of(false), Word.of(true).not())
 		assertEquals(Word.of(true), Word.of(false).not())
 		assertEquals(Word.of(BW_8, 0UL), Word.of(BW_8, 255UL).not())
+	}
+
+	@Test
+	fun shouldCalculateOr() {
+		// Same width
+		assertEquals(Word.of(BW_4, 15UL), Word.of(BW_4, 6UL).or(Word.of(BW_4, 9UL)))
+		// Other narrower that this
+		assertEquals(Word.of(BW_4, 7UL), Word.of(BW_4, 6UL).or(Word.of(true)))
+		// Other wider than this
+		assertEquals(Word.of(true), Word.of(true).or(Word.of(BW_4, 6UL)))
+	}
+
+	@Test
+	fun shouldCalculateAnd() {
+		// Same width
+		assertEquals(Word.of(BW_4, 4UL), Word.of(BW_4, 6UL).and(Word.of(BW_4, 12UL)))
+		// Other narrower that this
+		assertEquals(Word.of(BW_4, 1UL), Word.of(BW_4, 3UL).and(Word.of(true)))
+		// Other wider than this
+		assertEquals(Word.of(false), Word.of(true).and(Word.of(BW_4, 6UL)))
 	}
 
 	@Test
@@ -215,6 +236,11 @@ class WordTest {
 		val expandedWord = Word.of(BW_4, 1UL).ofWidth(BW_8)
 		assertEquals(1UL, expandedWord.getValue())
 		assertEquals(BW_8, expandedWord.bitWidth)
+	}
+
+	@Test
+	fun shouldExpandUndefinedToWidth() {
+		assertEquals(Word(listOf(Undefined, False)), Word.undefined(BW_1).ofWidth(BW_2))
 	}
 
 	@Test

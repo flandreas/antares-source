@@ -33,12 +33,18 @@ interface DigitalSignal {
 
     operator fun not(): DigitalSignal
 
-    /** Returns the bitwise 'and' of this [DigitalSignal] and the specified one.*/
+    /**
+     * Returns the bitwise 'and' of this [DigitalSignal] and the specified one.
+     * The result has the same [BitWidth] as this [DigitalSignal].
+     */
     fun and(signal: DigitalSignal): DigitalSignal
 
     fun and(value: ULong): DigitalSignal
 
-	/** Returns the bitwise 'or' of this [DigitalSignal] and the specified one.*/
+	/**
+	 * Returns the bitwise 'or' of this [DigitalSignal] and the specified one.
+	 * The result has the same [BitWidth] as this [DigitalSignal].
+	 */
     fun or(signal: DigitalSignal): DigitalSignal
 
     fun or(value: ULong): DigitalSignal

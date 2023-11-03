@@ -247,6 +247,27 @@ class ParserTest {
 	}
 
 	@Test
+	fun shouldReportLocation() {
+		val ast = DslParser("""
+			var a = 2
+			var b = 0
+			// This is a WHEN statement
+			when (a) {
+				1 : b = 11
+				2 : b = 22
+				else : b = 99
+			}
+			b
+		""".trimIndent()).parse() as Compound<*>
+
+		assertRowColumn( 1, 1, ast.location)
+		assertRowColumn(1, 1, ast.children[0].location)
+		assertRowColumn(2, 1, ast.children[1].location)
+		assertRowColumn(4, 1, ast.children[2].location)
+		assertRowColumn(5, 5, (ast.children[2] as WhenStatement).clauses[0].location)
+	}
+
+	@Test
 	fun shouldParseForStatement() {
 		val parser = DslParser("""
 			for (a in 1 to 10) {

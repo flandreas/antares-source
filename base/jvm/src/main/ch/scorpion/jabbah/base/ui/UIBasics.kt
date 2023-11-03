@@ -18,8 +18,11 @@ object UIBasics {
 	/** The gap between groups of buttons e.g. in dialogs.*/
 	const val BUTTON_GROUP_GAP = 18
 
+	const val DIALOG_BORDER = 10
+
 	/** Creates an empty border to be used in dialogs around the content.*/
-	fun createDialogBorder(): Border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
+	fun createDialogBorder(): Border =
+		BorderFactory.createEmptyBorder(DIALOG_BORDER, DIALOG_BORDER, DIALOG_BORDER, DIALOG_BORDER)
 
 	fun createHeaderLabel(text: String, icon: Icon? = null): JLabel =
 		JLabel(text, icon, SwingConstants.LEFT).apply { font = HEADER_FONT }

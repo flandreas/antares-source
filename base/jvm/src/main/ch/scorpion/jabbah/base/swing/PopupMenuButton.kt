@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.base.swing
 
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
+import javax.swing.AbstractButton
 import javax.swing.JButton
 import javax.swing.JMenuItem
 import javax.swing.JPopupMenu
@@ -17,7 +18,7 @@ object PopupMenuButton {
      * @param button the [JButton] that should show a [JPopupMenu] containing the specified [JMenuItem]s.
      * @param menuItems the [JMenuItem] to show.
      */
-    fun install(button: JButton, menuItems: List<JMenuItem>) {
+    fun install(button: AbstractButton, menuItems: List<JMenuItem>) {
         if (menuItems.isEmpty()) {
             return
         }

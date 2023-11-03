@@ -7,6 +7,7 @@ import ch.scorpion.antares.model.input.Switch
 import ch.scorpion.antares.model.net.*
 import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
 import ch.scorpion.antares.model.signal.*
+import ch.scorpion.antares.model.testcase.TestcaseViewSwing
 import ch.scorpion.antares.view.*
 import ch.scorpion.antares.view.container.DigitalContainerEditor
 import ch.scorpion.antares.view.container.DigitalContainerToolBarBuilder
@@ -34,6 +35,8 @@ import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.DataLocation
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.auth0.Auth0LoginFlow
+import ch.scorpion.jabbah.base.help.HelpSource
+import ch.scorpion.jabbah.base.help.HelpSourceRegistry
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.preferences.BooleanPreference
@@ -84,7 +87,6 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		const val PREF_TREE_EXPRESSION = "antares.preferences.group.expression"
 
 		val createCircuitFromTruthTableService = CreateCircuitFromTruthTableService()
-
 	}
 
 	override fun initialize() {
@@ -175,6 +177,8 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		configureMetaGraphIcons()
 
 		buildPreferencesTree(BaseModuleJvm.preferencesTree)
+
+		registerHelpSources()
 	}
 
 	@Suppress("SpellCheckingInspection")
@@ -410,5 +414,9 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 		MetaGraphIconProvider.register(AntaresGraphTypes.Analog, current = false, scripted = false, AnalogMetaGraphIcon(current = false))
 		MetaGraphIconProvider.register(AntaresGraphTypes.Analog, current = true, scripted = false, AnalogMetaGraphIcon(current = true))
+	}
+
+	private fun registerHelpSources() {
+		HelpSourceRegistry.register(TestcaseViewSwing.HELP_ID, HelpSource("/circuits/circuit-tests"))
 	}
 }

@@ -2,6 +2,8 @@ package ch.scorpion.jabbah.graph.dsl
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.*
+import ch.scorpion.jabbah.base.dsl.BaseTokenType.ID
+import ch.scorpion.jabbah.base.dsl.BaseTokenType.LITERAL
 import ch.scorpion.jabbah.base.dsl.DslTokenType.*
 import ch.scorpion.jabbah.base.module.BaseModule
 

@@ -457,7 +457,7 @@ class InterpreterTest {
 		val function = ExternalFunction { (it[0] as Long) * (it[0] as Long) }
 		symbolTable.define(ExternalFunctionSymbol("square", 1, function))
 
-		val semanticAnalyser = SemanticAnalyser(symbolTable)
+		val semanticAnalyser = DslSemanticAnalyser(symbolTable)
 		val interpreter = Interpreter(DslParser(DslLexer("square(4)"), semanticAnalyser).parse())
 
 		val result = interpreter.interpret()

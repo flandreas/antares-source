@@ -184,7 +184,12 @@
             </containerLibraryElement>
           </items>
         </libraryFolder>
-        <libraryFolder _id='37'>
+          <containerLibraryElement _id='37' uuid='b1089cae-01cc-4c2f-813a-4a61b0cf7c16' type='digital'>
+              <name>
+                  <translation lang='en' text='D Flip-Flop Testcase'/>
+              </name>
+          </containerLibraryElement>
+        <libraryFolder _id='38'>
           <name>
             <translation lang='en' text='VHDL'/>
           </name>

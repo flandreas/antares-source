@@ -2,6 +2,7 @@ package ch.scorpion.antares.model
 
 import ch.scorpion.antares.model.net.*
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.testcase.Testcases
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
@@ -29,6 +30,9 @@ class DigitalGraph(
 
 	var netSignalApplierStrategy: NetSignalApplierStrategy = DEF_NET_SIGNAL_APPLIER_STRATEGY
 
+	var testcases: Testcases = Testcases(this, eventBus)
+		private set
+
 	/** ---- [GraphImpl] */
 
 	override fun formNet(signalHandler: SignalHandler) {
@@ -51,12 +55,19 @@ class DigitalGraph(
 		if (netSignalApplierStrategy != DEF_NET_SIGNAL_APPLIER_STRATEGY) {
 			writer.writeString("netSignalApplier", netSignalApplierStrategy.customName)
 		}
+		if (!testcases.isEmpty) {
+			writer.writeStorable("testcases", testcases)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		if (reader.hasAttribute("netSignalApplier")) {
 			netSignalApplierStrategy = NetSignalApplierStrategy.withName(reader.readString("netSignalApplier"))
+		}
+		if (reader.hasElement("testcases")) {
+			testcases = reader.readStorable("testcases") as Testcases
+			testcases.graph = this
 		}
 	}
 

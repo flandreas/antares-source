@@ -129,28 +129,26 @@ class ExecutionDepthAction(
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractSchedulerAction("execution.action.deepSimulation", eventBus) {
 
+	companion object {
+		private const val SETTING_EXECUTION_DEPTH = "execution.scheduler.deepExecution"
+	}
+
 	private val schedulerActivationStateHandler: EventHandler<SchedulerActivationStateEvent> = {
 		if (it.scheduler === scheduler) {
 			updateState()
 		}
 	}
 
-	private val executionDepthHandler: EventHandler<ExecutionDepthEvent> = {
-		if (it.scheduler === scheduler) {
-			updateState()
-		}
-	}
-
 	init {
+		scheduler.isDeepExecution = BaseModule.settings.getBoolean(SETTING_EXECUTION_DEPTH, true)
 		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
-		eventBus.register(ExecutionDepthEvent::class, executionDepthHandler)
 		updateState()
 	}
 
 	override fun dispose() {
 		super.dispose()
 		eventBus.unregister(schedulerActivationStateHandler)
-		eventBus.unregister(executionDepthHandler)
+		BaseModule.settings.set(SETTING_EXECUTION_DEPTH, scheduler.isDeepExecution)
 	}
 
 	private fun updateState() {

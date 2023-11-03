@@ -51,7 +51,7 @@ abstract class AbstractCircuitTest {
 		currentSystemSpeedCategory = CurrentSystemSpeedCategory(SystemSpeed(eventBus = eventBus), eventBus)
 		timeService = ControlledTimeService()
 		timer = ControlledTimer(timeService)
-		task = TimedSchedulerTask(CurrentSystemSpeedCategory(SystemSpeed()), ControlledTimer(timeService))
+		task = TimedSchedulerTask(CurrentSystemSpeedCategory(SystemSpeed()), timer)
 		scheduler = SchedulerImpl(currentSystemSpeedCategory, timeService, eventBus, NoiseGeneratorHolder(NoNoiseGenerator()), task = task)
 		CurrentUndefinedGateInputBehavior.value = UndefinedGateInputBehavior.ReadAs0
 	}

@@ -1,5 +1,6 @@
 package ch.scorpion.antares.model.analysis
 
+import ch.scorpion.antares.model.ControlledCircuitRunner
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.inout.DigitalCircuitInOut
 import ch.scorpion.antares.model.signal.BitWidth
@@ -8,12 +9,7 @@ import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.truthtable.TruthTable
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.time.ControlledTimeService
-import ch.scorpion.jabbah.base.time.SystemSpeed
-import ch.scorpion.jabbah.execution.scheduler.ManualSchedulerTask
-import ch.scorpion.jabbah.execution.scheduler.Scheduler
-import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
-import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.PortType
 
 class CircuitAnalysisError(msg: String): Error(msg)
@@ -22,22 +18,22 @@ class CircuitAnalysisService {
 
 	companion object {
 		private val LOG by logger(CircuitAnalysisService::class)
-		private const val MAX_ITERATION_COUNT = 1000
 	}
 
-	private val timeService = ControlledTimeService()
+	private val circuitRunner = ControlledCircuitRunner()
+
+	private data class Context(
+		val row: Int,
+		val circuit: DigitalGraph,
+		val truthTable: TruthTable)
 
 	fun analyse(circuit: DigitalGraph): TruthTable {
 		LOG.userTrail("Analyzing circuit ${circuit.name.value}")
-
-		val scheduler = SchedulerImpl(
-			currentSystemSpeedCategory = CurrentSystemSpeedCategory(SystemSpeed(SystemSpeed.MAX_SPEED)),
-			task = ManualSchedulerTask(),
-			timeService = timeService
-		)
 		val truthTable = buildEmptyTruthTable(circuit)
 
-		(0 until truthTable.rowsCount).forEach { row -> fill(row, circuit, truthTable, scheduler) }
+		(0 until truthTable.rowsCount).forEach { row ->
+			circuitRunner.run(circuit, ::setInputs, ::readOutputs, Context(row, circuit, truthTable))
+		}
 
 		return  truthTable
 	}
@@ -62,61 +58,23 @@ class CircuitAnalysisService {
 		return TruthTable("Analysis Result", inputs.map { it.name!! }, outputs.map { it.name!! })
 	}
 
-	private fun fill(row: Int, circuit: DigitalGraph, truthTable: TruthTable, scheduler: Scheduler) {
-		try {
-			LOG.trace("Filling row $row")
-
-			timeService.reset()
-			startSimulation(circuit, scheduler)
-			setInputs(row, circuit, truthTable, scheduler)
-
-			var iterationCount = 0
-			while (!scheduler.isQueueEmpty) {
-				// Check for too many iterations
-				iterationCount++
-				if (iterationCount > MAX_ITERATION_COUNT) {
-					LOG.trace("Max. iterations exceeded")
-					throw CircuitAnalysisError(Translations.getString("antares.circuitAnalysis.tooManyIterations.msg"))
-				}
-				timeService.setTimeNanos(timeService.nowNanos() + 100)
-				scheduler.execute()
-			}
-
-			readOutputs(row, circuit, truthTable)
-		} catch (e: CircuitAnalysisError) {
-			throw e
-		} finally {
-			stopSimulation(circuit, scheduler)
+	private fun setInputs(c: Any?) {
+		val context = c as Context
+		(0 until context.truthTable.inputColumnCount).forEach { column ->
+			val inputName = context.truthTable.getColumnName(column)
+			val input = context.circuit.getGraphInput<DigitalSignal>(inputName)
+			input!!.setIncomingSignal(DigitalSignalFactory.of(context.truthTable.getValue(context.row, column)), circuitRunner.scheduler)
 		}
 	}
 
-	private fun startSimulation(circuit: DigitalGraph, scheduler: Scheduler) {
-		scheduler.isActive = true
-		circuit.formNet(scheduler)
-		circuit.executionInitialize(scheduler)
-		circuit.executionStart(scheduler, null)
-	}
-
-	private fun stopSimulation(circuit: DigitalGraph, scheduler: Scheduler) {
-		scheduler.isActive = false
-		circuit.executionStopped(scheduler)
-	}
-
-	private fun setInputs(row: Int, circuit: DigitalGraph, truthTable: TruthTable, scheduler: Scheduler) {
-		(0 until truthTable.inputColumnCount).forEach { column ->
-			val inputName = truthTable.getColumnName(column)
-			val input = circuit.getGraphInput<DigitalSignal>(inputName)
-			input!!.setIncomingSignal(DigitalSignalFactory.of(truthTable.getValue(row, column)), scheduler)
-		}
-	}
-
-	private fun readOutputs(row: Int, circuit: DigitalGraph, truthTable: TruthTable) {
-		(truthTable.inputColumnCount until truthTable.columnCount).forEach { column ->
-			val outputName = truthTable.getColumnName(column)
-			val output = circuit.getGraphOutput<DigitalSignal>(outputName)
+	private fun readOutputs(c: Any?) {
+		val context = c as Context
+		(context.truthTable.inputColumnCount until context.truthTable.columnCount).forEach { column ->
+			val outputName = context.truthTable.getColumnName(column)
+			val output = context.circuit.getGraphOutput<DigitalSignal>(outputName)
 			val bit = output!!.signal!!.bitAt(0)
 			if (bit.isDefined) {
-				truthTable.setValue(row, column, bit)
+				context.truthTable.setValue(context.row, column, bit)
 			} else {
 				throw CircuitAnalysisError(Translations.getString("antares.circuitAnalysis.undefinedBit.msg", outputName))
 			}

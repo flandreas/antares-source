@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.*
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.parser.Parser
 import ch.scorpion.jabbah.base.resettableLazy
 import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.DrawingView
@@ -210,7 +211,7 @@ class ScenarioStepImpl(
 
 	/** ---- [ScenarioStepImpl] */
 
-	fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): DslParser =
+	fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): Parser =
 		graphView?.graph?.createParser(program, semanticAnalyser)
 			?: BaseModule.parserFactory(program, semanticAnalyser)
 

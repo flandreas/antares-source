@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.*
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.parser.Parser
 import ch.scorpion.jabbah.base.resettableLazy
 import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.model.text.ScriptProperty
@@ -67,7 +68,7 @@ class UsecaseImpl(
 
 	override fun toString(): String = name.value
 
-		/** ---- [Namable], [Describable] interfaces */
+	/** ---- [Namable], [Describable] interfaces */
 
 	override var name: Name by observableName(Name(name))
 
@@ -129,7 +130,7 @@ class UsecaseImpl(
 
 	/** ---- [UsecaseImpl] */
 
-	fun createParser(program: String, @Suppress("UNUSED_PARAMETER") semanticAnalyser: SemanticAnalyser?): DslParser =
+	fun createParser(program: String, @Suppress("UNUSED_PARAMETER") semanticAnalyser: SemanticAnalyser?): Parser =
 		BaseModule.parserFactory(program, BaseModule.semanticAnalyserFactory(createSymbolTable()))
 
 	private fun createScriptInterpreter(graphView: GraphView, ast: Node): Interpreter =

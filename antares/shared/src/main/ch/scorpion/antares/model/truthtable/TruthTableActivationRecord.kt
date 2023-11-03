@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.expression.BooleanExpressionInterpreter
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.jabbah.base.dsl.ActivationRecord
 import ch.scorpion.jabbah.base.dsl.Variable
+import ch.scorpion.jabbah.base.parser.TextLocation
 
 /**
  * An [ActivationRecord] implementation that allows a [BooleanExpressionInterpreter]
@@ -25,11 +26,16 @@ class TruthTableActivationRecord(
 	override fun isDefined(name: String): Boolean = truthTable.hasInputName(name)
 
 	override fun getValue(variable: Variable): Boolean =
-		truthTable.getInputColumn(variable.token.value!!)?.let {
-			truthTable.getValue(currentRow, it).isSet
-		} ?: throw IllegalArgumentException("Unknown input name ${variable.token.value}")
+		getValue(variable.token.value!!, variable.location)
 
-	override fun getOptionalValue(variable: Variable): Any? = getValue(variable)
+	override fun getValue(name: String, location: TextLocation): Boolean =
+		truthTable.getInputColumn(name)?.let {
+			truthTable.getValue(currentRow, it).isSet
+		} ?: throw IllegalArgumentException("Unknown input name $name")
+
+	override fun getOptionalValue(variable: Variable): Any = getValue(variable)
+
+	override fun getOptionalValue(name: String, location: TextLocation): Any = getValue(name)
 
 	override fun clear() { throw UnsupportedOperationException("not applicable") }
 

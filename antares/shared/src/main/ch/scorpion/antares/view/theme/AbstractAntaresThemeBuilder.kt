@@ -43,7 +43,7 @@ abstract class AbstractAntaresThemeBuilder(val name: String) {
 		val ERROR_COLOR = CompositeColor(
 			foregroundColor = Color.RED,
 			backgroundColor = Color(255, 214, 214),
-			textColor = Color.WHITE)
+			textColor = Color.BLACK)
 
 		val FOCUS_STROKE = Stroke(0.8f, LineCap.BUTT, LineJoin.MITER, 1.0f, floatArrayOf(2.0f, 1.0f), 0.0f)
 

@@ -8,10 +8,7 @@ import ch.scorpion.jabbah.base.IssueSeverity
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.swing.SidebarPane
-import ch.scorpion.jabbah.base.swing.SidebarPaneContentImpl
-import ch.scorpion.jabbah.base.swing.SidebarSplitPane
-import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.base.swing.*
 import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
@@ -139,6 +136,7 @@ class GraphPanelViewSwing(
 		logPanel.dispose()
 		executionToolbar.dispose()
 		graphEditView.dispose()
+		bottomSidebarPane.dispose()
 
 		BaseModule.settings.set("graphPanel.librarySplitPos", explorerSplitPane.dividerLocation)
 	}
@@ -160,6 +158,10 @@ class GraphPanelViewSwing(
 			issuesContent.name = title
 			issuesContent.icon = UiUtil.themedIcon(iconPath)
 		}
+
+	fun addBottom(content: SidebarPaneContent) {
+		bottomSidebarPane.add(content)
+	}
 
 	private fun createTransferHandler(editor: Editor, eventBus: EventBus): TransferHandler =
 		GraphPanelTransferHandler(graphViewAppService, editor, eventBus, GraphElementViewTransferable.FLAVOR)

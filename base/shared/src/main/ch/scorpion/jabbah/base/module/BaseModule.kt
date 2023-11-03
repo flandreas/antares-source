@@ -25,7 +25,7 @@ object BaseModule : AbstractModule() {
 
 	var lexerFactory: LexerFactory = { program -> DslLexer(program) }
 
-	var semanticAnalyserFactory: SemanticAnalyserFactory = { symbolTable -> SemanticAnalyser(symbolTable) }
+	var semanticAnalyserFactory: SemanticAnalyserFactory = { symbolTable -> DslSemanticAnalyser(symbolTable) }
 
 	var parserFactory: ParserFactory = { program, semanticAnalyser -> DslParser(lexerFactory(program), semanticAnalyser) }
 

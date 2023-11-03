@@ -3,6 +3,7 @@ package ch.scorpion.antares.dsl
 import ch.scorpion.antares.model.gate.effectiveGateInputWord
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.*
 import ch.scorpion.jabbah.base.parser.TextLocation
@@ -80,9 +81,9 @@ fun digitalSignalParam(index: Int, params: List<Any>): DigitalSignal {
 	if (index >= params.size) {
 		throw RuntimeError(TextLocation.UNDEFINED, Translations.getString("base.dsl.notEnoughParameters.msg"))
 	}
-	val param = params[index]
-	if (param !is DigitalSignal) {
-		throw RuntimeError(TextLocation.UNDEFINED, Translations.getString("antares.dsl.expectedDigitalSignalParameter.msg", index + 1))
+	return when (val param = params[index]) {
+		is DigitalSignal -> param
+		is Long -> DigitalSignalFactory.ofMinimalBitWidth(param.toULong())
+		else -> throw RuntimeError(TextLocation.UNDEFINED, Translations.getString("antares.dsl.expectedDigitalSignalParameter.msg", index + 1))
 	}
-	return param
 }

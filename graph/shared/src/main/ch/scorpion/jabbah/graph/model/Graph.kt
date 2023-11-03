@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
 import ch.scorpion.jabbah.base.dsl.Symbol
 import ch.scorpion.jabbah.base.dsl.SymbolTable
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.parser.Parser
 import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Describable
@@ -36,7 +37,7 @@ interface GraphFactory {
  * surrounding [Graph] that uses this [Graph], such as to derive a proper clock design for synchronous
  * applications.
  */
-interface Graph : Namable, Describable, Storable, Bean {
+interface Graph : GraphPortOwner, Namable, Describable, Storable, Bean {
 
 	val type: GraphType
 
@@ -139,9 +140,6 @@ interface Graph : Namable, Describable, Storable, Bean {
     /** Called by the execution environment after the execution has been stopped.*/
     fun executionStopped(signalHandler: SignalHandler)
 
-    /** Returns the [GraphPort] with the specified name.*/
-    fun <T: Any> getGraphPort(name: String): GraphPort<T>?
-
     /** Returns the [GraphInput] or the [BidirectionalPort] with the specified name.*/
     fun <T: Any> getGraphInput(name: String): GraphInput<T>?
 
@@ -153,7 +151,7 @@ interface Graph : Namable, Describable, Storable, Bean {
 	 * The created [DslParser] contains a [SemanticAnalyser] that uses this [GraphView] as
 	 * context [SymbolTable] with all [GraphPort]s predefined as [Symbol]s.
 	 */
-	fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): DslParser
+	fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): Parser
 
 }
 

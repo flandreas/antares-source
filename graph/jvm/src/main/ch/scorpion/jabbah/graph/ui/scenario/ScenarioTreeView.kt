@@ -127,6 +127,7 @@ class ScenarioTreeView(
 		addMouseListener(rightMouseAdapter)
 
 		setCellRenderer(ScenarioTreeRenderer())
+		setRowHeight(24)
 
 		dragEnabled = true
 		dropMode = DropMode.INSERT

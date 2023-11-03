@@ -1,5 +1,6 @@
 package ch.scorpion.antares.model.signal
 
+import ch.scorpion.antares.model.signal.Bit.*
 import ch.scorpion.jabbah.base.event.KeyEvent.Companion.VK_0
 import ch.scorpion.jabbah.base.event.KeyEvent.Companion.VK_1
 import ch.scorpion.jabbah.base.event.KeyEvent.Companion.VK_2
@@ -26,8 +27,33 @@ import kotlin.math.pow
  */
 object BitOperation {
 
+	val BINARY_DIGITS = listOf('0', '1', 'Z')
+
     val HEX_CHAR = listOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'X', 'Z')
-	val HEY_KEY = listOf(VK_0, VK_1, VK_2, VK_3, VK_4, VK_5, VK_6, VK_7, VK_8, VK_9, VK_A, VK_B, VK_C, VK_D, VK_E, VK_F, VK_X, VK_Z)
+
+	val HEX_KEY = listOf(VK_0, VK_1, VK_2, VK_3, VK_4, VK_5, VK_6, VK_7, VK_8, VK_9, VK_A, VK_B, VK_C, VK_D, VK_E, VK_F, VK_X, VK_Z)
+
+	private val HEX_BITS = listOf(
+		listOf(False, False, False, False).reversed(),
+		listOf(False, False, False, True).reversed(),
+		listOf(False, False, True, False).reversed(),
+		listOf(False, False, True, True).reversed(),
+		listOf(False, True, False, False).reversed(),
+		listOf(False, True, False, True).reversed(),
+		listOf(False, True, True, False).reversed(),
+		listOf(False, True, True, True).reversed(),
+		listOf(True, False, False, False).reversed(),
+		listOf(True, False, False, True).reversed(),
+		listOf(True, False, True, False).reversed(),
+		listOf(True, False, True, True).reversed(),
+		listOf(True, True, False, False).reversed(),
+		listOf(True, True, False, True).reversed(),
+		listOf(True, True, True, False).reversed(),
+		listOf(True, True, True, True).reversed(),
+		listOf(Error, Error, Error, Error),
+		listOf(Undefined, Undefined, Undefined, Undefined)
+	)
+
 	private val POWER = Array(63 + 1) {
 		2.0.pow(it).toULong()
 	}
@@ -98,22 +124,18 @@ object BitOperation {
 		}
 	}
 
-    /** Converts a hexadecimal value to a decimal long value*/
-    fun hexToLong(hex: String): ULong {
-        var value = 0UL
-        var factor = 1UL
-
-        for (c in hex.uppercase().reversed()) {
-	        value += when (c) {
-		        in '0'..'9' -> factor * (c.code - '0'.code).toULong()
-		        in 'A'..'F' -> factor * (c.code - 'A'.code + 10).toULong()
-		        else -> throw IllegalArgumentException("'$hex' is not a valid hexadecimal number")
-	        }
-            factor *= 16UL
-        }
-
-        return value
+    /** Converts a hexadecimal value to a decimal long value. */
+    fun hexToLong(hex: String): ULong = if (hex.isEmpty()) {
+	    0UL
+    } else {
+	    hex.toULong(16)
     }
+
+	fun binaryToLong(binary: String): ULong = if (binary.isEmpty()) {
+		0UL
+	} else {
+		binary.toULong(2)
+	}
 
     /**
      * Returns the specified hexadecimal character as a [DigitalSignal] of the specified [BitWidth], or `null` if [hex]
@@ -125,10 +147,10 @@ object BitOperation {
             return null
         }
 	    if (uppercaseHex == Bit.ALL_UNDEFINED_CHAR) {
-	    	return DigitalSignalFactory.allOf(bitWidth, Bit.Undefined)
+	    	return DigitalSignalFactory.allOf(bitWidth, Undefined)
 	    }
 	    if (uppercaseHex == Bit.ERROR_CHAR) {
-	    	return DigitalSignalFactory.allOf(bitWidth, Bit.Error)
+	    	return DigitalSignalFactory.allOf(bitWidth, Error)
 	    }
         val value = hexToLong(hex.toString())
 	    if (value <= bitWidth.maxValue) {
@@ -138,6 +160,14 @@ object BitOperation {
 	    return null
     }
 
+	fun hexDigitToBits(hex: Char): List<Bit> {
+		val index = HEX_CHAR.indexOf(hex)
+		if (index < 0) {
+			throw IllegalArgumentException("$hex is not a hexadecimal character")
+		}
+		return HEX_BITS[index]
+	}
+
     /**
      * Returns the specified binary character as a [DigitalSignal] of [BitWidth.BW_1], or `null` if [binary]
      * contains a non-binary character (0, 1).
@@ -146,16 +176,16 @@ object BitOperation {
 	    return when (binary.uppercaseChar()) {
 	    	'0' -> DigitalSignalFactory.of(false)
 		    '1' -> DigitalSignalFactory.of(true)
-		    Bit.ALL_UNDEFINED_CHAR -> DigitalSignalFactory.of(Bit.Undefined)
-		    Bit.ERROR_CHAR -> DigitalSignalFactory.of(Bit.Error)
+		    Bit.ALL_UNDEFINED_CHAR -> DigitalSignalFactory.of(Undefined)
+		    Bit.ERROR_CHAR -> DigitalSignalFactory.of(Error)
 		    else -> null
 	    }
     }
 
 	fun decimalDigitToWord(bitWidth: BitWidth, decimal: Char): DigitalSignal? {
 		return when (decimal.uppercaseChar()) {
-			Bit.ALL_UNDEFINED_CHAR -> DigitalSignalFactory.allOf(bitWidth, Bit.Undefined)
-			Bit.ERROR_CHAR -> DigitalSignalFactory.allOf(bitWidth, Bit.Error)
+			Bit.ALL_UNDEFINED_CHAR -> DigitalSignalFactory.allOf(bitWidth, Undefined)
+			Bit.ERROR_CHAR -> DigitalSignalFactory.allOf(bitWidth, Error)
 			else -> {
 				val value = decimal.code.toULong() - '0'.code.toULong()
 				if (value <= bitWidth.maxValue) {

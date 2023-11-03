@@ -27,6 +27,13 @@ interface GraphPort<out T : Any> : Vertice {
 	var portType: PortType
 }
 
+/** An object owning [GraphPort] and being able to access them by name.*/
+interface GraphPortOwner {
+
+	/** Returns the [GraphPort] with the specified name, or `null` if none of that name is contained.*/
+	fun <T: Any> getGraphPort(name: String): GraphPort<T>?
+}
+
 /** Gets posted on [EventBus] when the name of a [GraphPort] has changed.*/
 data class GraphPortNameChanged<out T : Any>(
 	val graphPort: GraphPort<T>,
