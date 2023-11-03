@@ -39,7 +39,7 @@ class TestLibraryBuilder(
 		return metaGraph
 	}
 
-	/** Builds (as of [TestCircuitBuilder.buildNOP] a custom NOP and adds it to [libraryDirectory].*/
+	/** Builds (as of [TestCircuitBuilder.buildNOP] a custom NOP and adds it to [LibraryDirectory].*/
 	fun addNOP(library: Library, propagationDelay: Long = 0): MetaGraph {
 		val nop = TestCircuitBuilder(NOP).buildNOP(propagationDelay)
 		return addGraphView(nop, library)

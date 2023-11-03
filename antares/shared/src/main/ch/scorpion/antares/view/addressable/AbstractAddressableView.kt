@@ -80,7 +80,14 @@ abstract class AbstractAddressableView<T : Addressable>(
 		set(value) {
 			if (value != text) {
 				field = value
-				label.text = if (value == null || value.isEmpty) buildLabelText() else value.getTranslation()
+				// Forward to model to be accessible for HDL generation
+				if (value == null || value.isEmpty) {
+					label.text = buildLabelText()
+					model.name = null
+				} else {
+					label.text = value.getTranslation()
+					model.name = label.text
+				}
 			}
 		}
 

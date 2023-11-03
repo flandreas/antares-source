@@ -47,6 +47,7 @@ open class GraphMenuBarBuilder(
 		fun createExecutionMenu() = JMenu(Translations.getString("application.menu.simulation"))
 		fun createScenariosMenu() = JMenu(Translations.getString("application.menu.scenarios"))
 		fun createUsecasesMenu() = JMenu(Translations.getString("application.menu.usecases"))
+		fun createExportMenu() = JMenu(Translations.getString("application.menu.file.export"))
 	}
 
 	protected val graphFrame: GraphFrameSwing get() = frame as GraphFrameSwing
@@ -75,9 +76,9 @@ open class GraphMenuBarBuilder(
 		menu.add(JMenuItem(ActionWrapperSwing(ShowLibrariesDialogAction(graphFrame.controller.applicationModeHolder, frame))))
 		menu.addSeparator()
 
-		menu.add(JMenuItem(ActionWrapperSwing(ExportSvgAction())))
-		menu.add(JMenuItem(ActionWrapperSwing(ExportLogfileAction(frame.application))))
-		menu.addSeparator()
+		val exportMenu = createExportMenu()
+		fillExportMenu(exportMenu)
+		menu.add(exportMenu)
 
 		if (GraphModuleJvm.supportWeb) {
 			// Public available not before server has been released
@@ -90,6 +91,11 @@ open class GraphMenuBarBuilder(
 			menu.add(JMenuItem(ActionWrapperSwing(QuitApplicationAction(frame.application))))
 		}
 		menu.add(JMenuItem(ActionWrapperSwing(RatingAction(frame.application))))
+	}
+
+	open fun fillExportMenu(menu: JMenu) {
+		menu.add(JMenuItem(ActionWrapperSwing(ExportSvgAction())))
+		menu.add(JMenuItem(ActionWrapperSwing(ExportLogfileAction(frame.application))))
 	}
 
 	override fun fillEditMenu(menu: JMenu) {

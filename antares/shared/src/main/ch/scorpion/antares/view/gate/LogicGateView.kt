@@ -61,7 +61,10 @@ class LogicGateView(
 		fun xorGateView(): LogicGateView = LogicGateView(gate = NonUnaryLogicGate.xorGate())
 		fun xnorGateView(): LogicGateView = LogicGateView(gate = NonUnaryLogicGate.xnorGate())
 
-		fun notGateView(): LogicGateView = LogicGateView(gate = UnaryLogicGate.notGate())
+		// Default parameter doesn't work in unit tests for some reason..
+		fun notGateView(): LogicGateView = notGateView(BitWidth.BW_1)
+
+		fun notGateView(bitWidth: BitWidth = BitWidth.BW_1): LogicGateView = LogicGateView(gate = UnaryLogicGate.notGate(bitWidth))
 		fun bufferGateView(): LogicGateView = LogicGateView(gate = UnaryLogicGate.bufferGate())
 
 		private fun getRenderer(type: LogicGateType): LogicGateViewRenderer =

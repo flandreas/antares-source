@@ -1,0 +1,32 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+{%- if vertice.name == '' || vertice.name == null %}
+{{ vhdl.error('antares.vhdl.missingLabel.error', 'ROM') }}
+{%- else %}
+{%- set entityName = vhdl.setEntityName('VHDL_LookupTable_' + vertice.name) %}
+{%- endif %}
+
+entity {{ entityName }} is
+  port (
+    A: in {{ vhdl.type(vertice.addressWidth.width) }};
+    D: out {{ vhdl.type(vertice.dataWidth.width) }});
+end {{ entityName }};
+
+architecture Behavioral of {{ entityName }} is
+  type memory is array (0 to {{ vertice.memory.nonZeroLength - 1 }}) of {{ vhdl.type(vertice.dataWidth.width) }};
+  constant lut : memory := (
+{%- for i in 0..vertice.memory.nonZeroLength - 1 %}
+    "{{ vertice.dataAsPaddedBinaryAt(i) }}"{% if !loop.last %},{%- endif %}
+{%- endfor %});
+begin
+  process (A)
+  begin
+    if A >= {{ vhdl.value(vertice.memory.nonZeroLength, vertice.addressWidth) }} then
+      D <= {{ vhdl.zero(vertice.dataWidth) }};
+    else
+      D <= lut(to_integer(unsigned(A)));
+    end if;
+  end process;
+end Behavioral;

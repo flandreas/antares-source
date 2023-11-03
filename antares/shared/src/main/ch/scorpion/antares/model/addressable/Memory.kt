@@ -14,7 +14,17 @@ class Memory(private val segmentSize: Int) {
         private const val DEFAULT_SEGMENT_SIZE = 256
     }
 
+	/** Maps the base address of a [Segment] to the [Segment]. */
     private val segments: MutableMap<Int, Segment> = mutableMapOf()
+
+	/** Returns the number of cells needed to store all non-zero cells as an array.*/
+	val nonZeroLength: Int get() =
+		if (segments.isEmpty()) {
+			0
+		} else {
+			val segment = segments[segments.keys.max()]!!
+			segment.baseAddress + segment.maxNonZeroAddress + 1
+		}
 
     fun read(address: Int): ULong {
         return getSegment(address).readValue(address % segmentSize)
@@ -86,6 +96,13 @@ class Memory(private val segmentSize: Int) {
 
         /** Maps the address relative to the base address to the stored [CellData] at that address. */
         private val data: MutableMap<Int,CellData> = mutableMapOf()
+
+	    /** Returns the maximum relative address containing a non-zero value. */
+	    val maxNonZeroAddress: Int get() = if (data.isEmpty()) {
+		    0
+	    } else {
+		    data.keys.max()
+	    }
 
  		/** Reads the value at a relative segment address. */
 		fun readValue(address: Int): ULong {

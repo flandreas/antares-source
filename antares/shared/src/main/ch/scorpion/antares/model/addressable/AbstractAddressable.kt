@@ -1,5 +1,6 @@
 package ch.scorpion.antares.model.addressable
 
+import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -110,4 +111,10 @@ abstract class AbstractAddressable<T : Addressable>(
 			dataSource = reader.readString("dataSource")
 		}
 	}
+
+	/** ---- [AbstractAddressable] */
+
+	/** Used for HDL export in templates (reflection).*/
+	fun dataAsPaddedBinaryAt(address: Int): String =
+		BitOperation.longToBinaryPadded(dataAt(address), dataWidth)
 }

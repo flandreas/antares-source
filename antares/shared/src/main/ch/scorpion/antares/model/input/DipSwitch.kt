@@ -93,6 +93,12 @@ class DipSwitch(
 
 	/** ---- [Actor] interface */
 
+	val startupValue: DigitalSignal get() = if (firstExecution || !retainValue) {
+		initialValue
+	} else {
+		DigitalSignalFactory.falseValue(bitWidth)
+	}
+
 	override fun executionInitialize(signalHandler: SignalHandler) {
 		super.executionInitialize(signalHandler)
 		if (firstExecution || !retainValue) {

@@ -63,6 +63,7 @@ val commonsCodecVersion: String by extra
 val commonsMathVersion: String by extra
 val l2fprodVersion: String by extra
 val flatLafVersion: String by extra
+val korteVersion: String by extra
 
 subprojects {
 
@@ -113,6 +114,7 @@ subprojects {
 				dependencies {
 					implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
 					implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
+					implementation("com.soywiz.korlibs.korte:korte:$korteVersion")
 				}
 			}
 			val commonTest by getting {
@@ -121,10 +123,12 @@ subprojects {
 					implementation(kotlin("test-common"))
 					implementation(kotlin("test-annotations-common"))
 					implementation("io.mockk:mockk-common:$mockkVersion")
+					implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutinesVersion")
 				}
 			}
 			val jvmMain by getting {
 				kotlin.srcDir("jvm/src/main")
+				resources.srcDir("jvm/rsc")
 				dependencies {
 					implementation(kotlin("reflect"))
 					implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlinCoroutinesVersion")
