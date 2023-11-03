@@ -476,7 +476,7 @@ clickMouseAt(2708300000, -336, -7, 2000)
 clickMouseAt(2708400000, -156, 819, 2000)
 clickMouseAt(2708500000, -223, -167, 2000)'>
                   <name>
-                    <translation lang='en' text='28+14=32'/>
+                    <translation lang='en' text='28+14=42'/>
                   </name>
                 </usecase>
                 <usecase _id='244' id='3' exec='clickMouseAt(4498100000, -221, -169, 2000)
