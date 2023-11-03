@@ -24,9 +24,20 @@ class LibrarySavable(
 
 	override val description: String get() = "${Translations.getString("library.savable.prefix")} \"${element.name.value}\""
 
-	override val editable: Boolean get() = Authorizer.isCurrentUserAuthorizedTo(Change, library)
+	override val editable: Boolean get() = element.library != null && Authorizer.isCurrentUserAuthorizedTo(Change, library)
 
 	override fun open(application: Application): Boolean {
+		if (element.library == null) {
+			// Library has been disposed in the meantime
+			if (LibraryModule.libraryHolder.l == null) {
+				return false
+			}
+			LibraryModule.libraryHolder.getContainerLibraryElement(element.uuid)?.let {
+				eventBus.post(OpenContainerLibraryElementRequest(it))
+				return true
+			} ?: return false
+		}
+
 		eventBus.post(OpenContainerLibraryElementRequest(element))
 		return true
 	}
@@ -45,6 +56,6 @@ class LibrarySavable(
 		if (element.library == null) {
 			return false
 		}
-		return library.name == other.library.name && element.uuid == other.element.uuid
+		return element.uuid == other.element.uuid
 	}
 }

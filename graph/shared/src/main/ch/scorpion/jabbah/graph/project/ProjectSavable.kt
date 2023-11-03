@@ -25,8 +25,10 @@ class ProjectSavable(
 		if (other !is ProjectSavable) {
 			return false
 		}
-		return element.library?.name == other.element.library?.name
-			&& element.uuid == other.element.uuid
+		if (element.library == null) {
+			return false
+		}
+		return element.uuid == other.element.uuid
 	}
 
 	/** ---- [Savable] */
@@ -36,6 +38,17 @@ class ProjectSavable(
 	override val editable: Boolean get() = element.library != null && Authorizer.isCurrentUserAuthorizedTo(Change, project)
 
 	override fun open(application: Application): Boolean {
+		if (element.library == null) {
+			// Library has been disposed in the meantime
+			if (LibraryModule.libraryHolder.l == null) {
+				return false
+			}
+			LibraryModule.libraryHolder.getContainerLibraryElement(element.uuid)?.let {
+				projectManagementService.open(LibraryModule.libraryHolder.library.identification, element.uuid)
+				return true
+			} ?: return false
+		}
+
 		projectManagementService.open(project.identification, element.uuid)
 		return true
 	}

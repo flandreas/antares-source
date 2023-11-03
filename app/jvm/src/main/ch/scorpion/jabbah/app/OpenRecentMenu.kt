@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.app
 
-import ch.scorpion.jabbah.app.action.OpenRecentFileAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
