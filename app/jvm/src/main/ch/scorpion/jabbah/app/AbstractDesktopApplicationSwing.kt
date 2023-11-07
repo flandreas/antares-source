@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.app.rating.RatingPanel
 import ch.scorpion.jabbah.app.rating.RatingService
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.invocation.BusyHandler
+import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.preferences.PreferencesDialogPanel
 import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.edit.Component
@@ -50,14 +51,13 @@ abstract class AbstractDesktopApplicationSwing(
 		if (SystemUtils.IS_OS_MAC) {
 			installMacOSHandlers()
 		}
-		SwingUtilities.invokeLater {
+		InvocationHandler.invoke {
 			init()
 			mainFrame.addWindowListener(object : WindowAdapter() {
 				override fun windowClosing(e: WindowEvent?) {
 					quit()
 				}
 			})
-			mainFrame.isVisible = true
 		}
 	}
 
@@ -75,10 +75,11 @@ abstract class AbstractDesktopApplicationSwing(
 
 		mainFrame = createMainFrame()
 		mainFrame.jMenuBar = createMenuBarBuilder().menuBar
+		mainFrame.isVisible = true
 
 		BusyHandler.register(mainFrame, null)
 
-		SwingUtilities.invokeLater {
+		InvocationHandler.invoke {
 			val firstUsage = isFirstUsage
 			openInitialSavable()
 			if (!EditAuthModule.userHolder.user.isDeveloper) {

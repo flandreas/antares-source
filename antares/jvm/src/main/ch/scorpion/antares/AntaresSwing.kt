@@ -2,14 +2,13 @@ package ch.scorpion.antares
 
 import ch.scorpion.antares.ui.AntaresContextMenuProvider
 import ch.scorpion.antares.view.AntaresFrameController
-import ch.scorpion.antares.view.OrientableRectangularVerticeViewDrawer
 import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.OrientableRectangularVerticeViewDrawer
 import ch.scorpion.antares.view.theme.AntaresThemes
 import ch.scorpion.jabbah.app.*
 import ch.scorpion.jabbah.app.module.AppModuleJvm
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.UUID
-import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.invocation.ErrorHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
