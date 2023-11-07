@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.execution
 import ch.scorpion.jabbah.base.IssueSeverity
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.execution.issue.*
 import java.awt.BorderLayout
 import java.awt.Component
@@ -19,8 +20,8 @@ class IssuesViewSwing(
 
 	companion object {
 		private const val SETTING_COLUMN_WIDTHS = "jabbah.execution.issuesPanel.columnWidth"
-		private val WARNING_ICON = ImageIcon(IssuesViewSwing::class.java.getResource("/img/warning-16.png"))
-		private val ERROR_ICON = ImageIcon(IssuesViewSwing::class.java.getResource("/img/error-16.png"))
+		private val WARNING_ICON = UiUtil.themedIcon("/img/warning-16.png")
+		private val ERROR_ICON = UiUtil.themedIcon("/img/error-16.png")
 		private val COLUMN_NAMES = arrayOf(
 			Translations.getString("issue.property.name.name"),
 			Translations.getString("issue.property.origin.name"),
