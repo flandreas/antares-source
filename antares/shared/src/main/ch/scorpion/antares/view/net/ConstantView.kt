@@ -191,9 +191,9 @@ class ConstantView(
 
 	private val labelLocation: Point2D
 		get() = when (orientation) {
-			Direction.EAST -> Point2D(-AbstractAntaresPortView.LENGTH - HORIZONTAL_INSET, 0)
+			Direction.EAST -> Point2D(-AbstractAntaresPortView.LENGTH - HORIZONTAL_INSET, 1)
 			Direction.NORTH -> Point2D(0, AbstractAntaresPortView.LENGTH + VERTICAL_INSET)
-			Direction.WEST -> Point2D(AbstractAntaresPortView.LENGTH + HORIZONTAL_INSET, 0)
+			Direction.WEST -> Point2D(AbstractAntaresPortView.LENGTH + HORIZONTAL_INSET, 1)
 			Direction.SOUTH -> Point2D(0, -AbstractAntaresPortView.LENGTH - VERTICAL_INSET)
 		}
 
