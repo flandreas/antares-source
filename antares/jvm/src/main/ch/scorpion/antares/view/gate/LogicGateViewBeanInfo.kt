@@ -13,15 +13,37 @@ import com.l2fprod.common.propertysheet.Property
 class LogicGateViewBeanInfo  : BoxGateViewBeanInfo<LogicGateView>() {
 
 	companion object {
+
 		private val inputCount = InputCountPropertySwing(componentBeanProvider)
+
 		private val bitWidth = AntaresProperties.bitWidth()
-		private val outputPortName = CommandPropertySwing("outputPortName", LogicGateView.BASE_KEY_OUTPUT_PORT_NAME, String::class.java, componentBeanProvider)
+
+		private val outputPortName = CommandPropertySwing(
+			"outputPortName",
+			LogicGateView.BASE_KEY_OUTPUT_PORT_NAME,
+			String::class.java,
+			componentBeanProvider)
+
 		private val negateInput = Array(8) { portId ->
-			CommandPropertySwing("negateInput${portId + 1}", "${LogicGateView.BASE_KEY_NEGATE_INPUT}${portId + 1}", Boolean::class.java, componentBeanProvider)
+			CommandPropertySwing(
+				"negateInput${portId + 1}",
+				"${LogicGateView.BASE_KEY_NEGATE_INPUT}",
+				Boolean::class.java,
+				componentBeanProvider,
+				baseKeyParams = arrayOf(portId + 1)
+			)
 		}
+
 		private val inputPortName = Array(8) { portId ->
-			CommandPropertySwing("inputPortName${portId + 1}", "${LogicGateView.BASE_KEY_INPUT_PORT_NAME}${portId + 1}", String::class.java, componentBeanProvider)
+			CommandPropertySwing(
+				"inputPortName${portId + 1}",
+				"${LogicGateView.BASE_KEY_INPUT_PORT_NAME}",
+				String::class.java,
+				componentBeanProvider,
+				baseKeyParams = arrayOf(portId + 1)
+			)
 		}
+
 		val dataPort = CommandPropertySwing("dataPort", LogicGateView.BASE_KEY_DATA_PORT, InputPortNumber::class.java, componentBeanProvider)
 	}
 

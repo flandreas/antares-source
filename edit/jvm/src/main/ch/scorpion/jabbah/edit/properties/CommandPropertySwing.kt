@@ -21,8 +21,9 @@ open class CommandPropertySwing<V>(
 	getterPropertyName: String = propertyName,
 	interactive: Boolean = false,
 	displayName: String? = null,
-	supportMultiSelection: Boolean = true
-) : AbstractReflectionPropertySwing<V>(propertyName, baseKey, valueClass, getterPropertyName, interactive, displayName, supportMultiSelection) {
+	supportMultiSelection: Boolean = true,
+	baseKeyParams: Array<Any> = emptyArray()
+) : AbstractReflectionPropertySwing<V>(propertyName, baseKey, valueClass, getterPropertyName, interactive, displayName, supportMultiSelection, baseKeyParams) {
 
 	companion object {
 		private val LOG by logger(CommandPropertySwing::class)
