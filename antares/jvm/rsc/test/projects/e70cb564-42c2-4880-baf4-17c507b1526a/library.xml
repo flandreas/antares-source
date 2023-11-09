@@ -102,6 +102,11 @@
             <translation lang='en' text='Bug 606'/>
           </name>
         </containerLibraryElement>
+        <containerLibraryElement _id='37' uuid='b1089cae-01cc-4c2f-813a-4a61b0cf7c16' type='digital'>
+          <name>
+              <translation lang='en' text='D Flip-Flop Testcase'/>
+          </name>
+        </containerLibraryElement>
         <libraryFolder _id='21'>
           <name>
             <translation lang='en' text='Analog'/>
@@ -184,17 +189,12 @@
             </containerLibraryElement>
           </items>
         </libraryFolder>
-          <containerLibraryElement _id='37' uuid='b1089cae-01cc-4c2f-813a-4a61b0cf7c16' type='digital'>
-              <name>
-                  <translation lang='en' text='D Flip-Flop Testcase'/>
-              </name>
-          </containerLibraryElement>
         <libraryFolder _id='38'>
           <name>
             <translation lang='en' text='VHDL'/>
           </name>
           <items>
-            <containerLibraryElement _id='38' uuid='ee6b64f0-7189-4604-b6a9-e0d063336787' type='digital'>
+            <containerLibraryElement _id='39' uuid='ee6b64f0-7189-4604-b6a9-e0d063336787' type='digital'>
               <name>
                 <translation lang='en' text='NodeView'/>
               </name>
