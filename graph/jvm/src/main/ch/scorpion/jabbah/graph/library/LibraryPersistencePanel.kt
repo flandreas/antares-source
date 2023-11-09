@@ -209,7 +209,7 @@ class LibraryPersistencePanel(
 				LOG.trace("delete library ${it.uuid}")
 				InvocationHandler.invoke {
 					managementService.delete(getLibraryIdentity(it.uuid))
-					closeHandler.invoke()
+					load()
 				}
 			}
 		}
