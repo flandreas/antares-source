@@ -61,6 +61,7 @@ class RectangularRubberBand : AbstractRectangle(Rectangle2D()), RubberBand {
 			super.mousePressed(context)
 			zoomPan = context.view.zoomPan
 			pressedLocation = context.location
+			setBounds(pressedLocation.x, pressedLocation.y, 0.0, 0.0)
 			return this
 		}
 

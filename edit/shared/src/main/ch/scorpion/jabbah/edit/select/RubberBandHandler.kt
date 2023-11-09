@@ -86,7 +86,9 @@ class RubberBandHandler(
         super.mouseReleased(context)
         rubberBand.inputEventHandler.mouseReleased(context)
 	    if (LOG.isDebugEnabled() && rubberBand is RectangularRubberBand) {
-			LOG.debug("Rectangular selection from ${rubberBand.xInt}/${rubberBand.yInt} to ${rubberBand.xInt + rubberBand.widthInt}/${rubberBand.yInt + rubberBand.heightInt}")
+			if (rubberBand.widthInt > 0 || rubberBand.heightInt > 0) {
+				LOG.debug("Rectangular selection from ${rubberBand.xInt}/${rubberBand.yInt} to ${rubberBand.xInt + rubberBand.widthInt}/${rubberBand.yInt + rubberBand.heightInt}")
+			}
 	    }
         return null
     }
