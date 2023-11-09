@@ -1,17 +1,15 @@
 package ch.scorpion.jabbah.graph.container
 
 import ch.scorpion.jabbah.base.Tooltip
+import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
-import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
-import ch.scorpion.jabbah.draw.drawable.Mirrorable
-import ch.scorpion.jabbah.draw.drawable.Transparent
+import ch.scorpion.jabbah.draw.drawable.*
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.*
 import ch.scorpion.jabbah.edit.model.text.Label
@@ -41,7 +39,7 @@ class ControlViewComponent(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	source: ControlViewSource<Vertice>? = null,
 	baseLink: DeepVerticeLink = DeepVerticeLink.EMPTY
-) : AbstractComponent(styleProvider), GraphElementView<Vertice>, ActorView, Transparent, Mirrorable {
+) : AbstractComponent(styleProvider), GraphElementView<Vertice>, ActorView, Transparent, Mirrorable, Orientable {
 
 	/**
 	 * The ID of the model displayed by [controlView]. This ID is made persistent
@@ -155,6 +153,16 @@ class ControlViewComponent(
 			controlView.location = value
 		}
 
+	/** ---- [Orientable] */
+
+	override val useOrientation: Boolean get() = controlView is Orientable && (controlView as Orientable).useOrientation
+
+	override var orientation: Direction
+		get() = (controlView as Orientable).orientation
+		set(value) {
+			(controlView as Orientable).orientation = value
+		}
+
 	/** ---- [Component] interface */
 
 	override val type: String get() = controlView.type
@@ -166,6 +174,13 @@ class ControlViewComponent(
 		set(value) {
 			super.preferredSelectionDrawingStrategy = value
 		}
+
+	override fun isRotatableWith(selection: Collection<*>): Boolean =
+		controlView.isRotatableWith(selection)
+
+	override fun rotate(direction: RotationDirection, pivot: Point2D?) {
+		controlView.rotate(direction, pivot)
+	}
 
 	/** ---- [ActorView] */
 

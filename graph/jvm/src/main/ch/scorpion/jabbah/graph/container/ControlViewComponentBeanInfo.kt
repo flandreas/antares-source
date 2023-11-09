@@ -16,6 +16,7 @@ class ControlViewComponentBeanInfo : AbstractBeanInfo<ControlViewComponent>() {
 		private val id = EditProperties.id()
 		private val modelId = GraphProperties.modelId()
 		private val name = EditProperties.untranslatableName()
+		private val orientation = EditProperties.orientation()
 
 		const val aggregatePropertyName = "controlView"
 	}
@@ -25,7 +26,9 @@ class ControlViewComponentBeanInfo : AbstractBeanInfo<ControlViewComponent>() {
 		properties.add(id.bind(editor, beanIdProvider(bean.id), editable = false))
 		properties.add(modelId.bind(editor, beanIdProvider(bean.modelId), editable = false))
 		properties.add(name.bind(editor, beanIdProvider(bean.id), editable = false))
-
+		if (bean.useOrientation) {
+			properties.add(orientation.bind(editor, beanIdProvider(bean.id)))
+		}
 		loadControlViewProperties(bean, editor, properties)
 	}
 

@@ -1,7 +1,7 @@
 package ch.scorpion.antares.view
 
 import ch.scorpion.antares.view.Look.SCALE
-import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.draw.drawable.Orientable
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.graph.model.Vertice
@@ -17,40 +17,33 @@ import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 open class OrientableRectangularVerticeView<T : Vertice>(
     styleProvider: StyleProvider,
     model: T
-) : AbstractRectangularVerticeView<T>(styleProvider, model) {
+) : AbstractRectangularVerticeView<T>(styleProvider, model), Orientable {
 
-    companion object {
+	companion object {
 
-        /**
-         * Transforms a width in basic model grid coordinates to view coordinates.
-         * @param value the value in basic model grid coordinates
-         * @return the transformed width in view coordinates.
-         */
-        fun w(value: Int): Double = (value * SCALE).toDouble()
-	    fun w(value: Double): Double = value * SCALE
+		/**
+		 * Transforms a width in basic model grid coordinates to view coordinates.
+		 * @param value the value in basic model grid coordinates
+		 * @return the transformed width in view coordinates.
+		 */
+		fun w(value: Int): Double = (value * SCALE).toDouble()
+		fun w(value: Double): Double = value * SCALE
 
-	    fun wInt(value: Int): Int = value * SCALE
+		fun wInt(value: Int): Int = value * SCALE
 
-        /**
-         * Transforms a height in basic model grid coordinates to view coordinates.
-         * @param value the value in basic model grid coordinates
-         * @return the transformed height in view coordinates.
-         */
-        fun h(value: Int): Double = (value * SCALE).toDouble()
-	    fun h(value: Double): Double = value * SCALE
+		/**
+		 * Transforms a height in basic model grid coordinates to view coordinates.
+		 * @param value the value in basic model grid coordinates
+		 * @return the transformed height in view coordinates.
+		 */
+		fun h(value: Int): Double = (value * SCALE).toDouble()
+		fun h(value: Double): Double = value * SCALE
 
-	    fun hInt(value: Int): Int = value * SCALE
-    }
+		fun hInt(value: Int): Int = value * SCALE
+	}
 
-	protected val propertiesBackgroundColor get() = if (Look.FILL_BASIC_COMPONENTS) backgroundColor else styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
-
-	/** ---- Properties to be edited by the User */
-
-	open val useOrientation: Boolean get() = useRotation
-
-    open var orientation: Direction
-        get() = Direction.of(rotation)
-        set(value) {
-            rotation = value.rotation
-        }
+	protected val propertiesBackgroundColor
+		get() = if (Look.FILL_BASIC_COMPONENTS) backgroundColor else styleProvider.getStyle(
+			StyleType.BACKGROUND
+		).color.backgroundColor
 }
