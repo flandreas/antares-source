@@ -31,9 +31,7 @@ import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
-import ch.scorpion.jabbah.io.Storable
-import ch.scorpion.jabbah.io.StoreReader
-import ch.scorpion.jabbah.io.StoreWriter
+import ch.scorpion.jabbah.io.*
 
 /**
  * A [DigitalCircuitInOutView] is an arrow-like [GraphPortView] for digital [GraphPort]s.
@@ -130,9 +128,20 @@ class DigitalCircuitInOutView(
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
-		signalRepresentation = DigitalSignalRepresentation.withName(reader.readString("representation"))
+		// signalRepresentation is forwarded to the model, so resolve it after the model has been read
+		reader.requestResolution(this, Reference(
+			name = "signalRepresentation",
+			additionalInfo = DigitalSignalRepresentation.withName(reader.readString("representation")),
+			resolveAfter = listOf(reader.readInt("modelId"))))
 		if (reader.hasAttribute("toggle")) {
 			toggle = reader.readBoolean("toggle")
+		}
+	}
+
+	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
+		super.resolve(reference, referenceResolver)
+		if (reference.name == "signalRepresentation") {
+			signalRepresentation = reference.additionalInfo as DigitalSignalRepresentation
 		}
 	}
 
