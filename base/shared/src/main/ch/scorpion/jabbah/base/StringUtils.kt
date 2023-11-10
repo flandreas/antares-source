@@ -111,4 +111,7 @@ object StringUtils {
 
 	fun removeWhitespace(s: String): String =
 		s.filter { !it.isWhitespace() }
+
+	fun simplify(s: String): String =
+		s.trim().lowercase().replace(' ', '_')
 }

@@ -4,6 +4,8 @@ import ch.scorpion.jabbah.base.StringUtils.countChar
 import ch.scorpion.jabbah.base.StringUtils.endWithPeriod
 import ch.scorpion.jabbah.base.StringUtils.formatLong
 import ch.scorpion.jabbah.base.StringUtils.fromList
+import ch.scorpion.jabbah.base.StringUtils.orNull
+import ch.scorpion.jabbah.base.StringUtils.removeWhitespace
 import ch.scorpion.jabbah.base.StringUtils.toList
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -62,15 +64,20 @@ class StringUtilsTest {
 
 	@Test
 	fun shouldOrNull() {
-		assertNull(StringUtils.orNull(""))
-		assertNull(StringUtils.orNull(" "))
-		assertNull(StringUtils.orNull(null))
-		assertEquals("test", StringUtils.orNull("test"))
+		assertNull(orNull(""))
+		assertNull(orNull(" "))
+		assertNull(orNull(null))
+		assertEquals("test", orNull("test"))
 	}
 
 	@Test
 	fun shouldRemoveWhitespace() {
-		assertEquals("HeyThere", StringUtils.removeWhitespace("Hey There"))
+		assertEquals("HeyThere", removeWhitespace("Hey There"))
+	}
+
+	@Test
+	fun shouldSimplify() {
+		assertEquals("test_circuit", StringUtils.simplify(" Test Circuit  "))
 	}
 
 	private fun assertList(list: List<String>) {
