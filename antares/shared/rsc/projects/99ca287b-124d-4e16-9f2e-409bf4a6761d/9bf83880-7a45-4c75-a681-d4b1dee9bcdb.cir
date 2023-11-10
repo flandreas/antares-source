@@ -460,12 +460,12 @@
         </originIndicator>
         <controlViewComponent _id='198' id='7' style='figure' filled='true' stroked='true' controlModelId='12' portScheme='combined'>
           <controlView>
-            <sevenSegmentDisplayView _id='199' id='12' rot='0' filled='true' stroked='true' modelId='10' x='231.0' y='14.0' lightColor='red' size='medium' hasBorder='true'/>
+            <sevenSegmentDisplayView _id='199' id='12' rot='0' filled='true' stroked='true' modelId='10' x='217.0' y='14.0' lightColor='red' size='medium' hasBorder='true'/>
           </controlView>
         </controlViewComponent>
         <controlViewComponent _id='200' id='8' style='figure' filled='true' stroked='true' controlModelId='9' portScheme='combined'>
           <controlView>
-            <sevenSegmentDisplayView _id='201' id='9' rot='0' filled='true' stroked='true' modelId='8' x='175.0' y='14.0' lightColor='red' size='medium' hasBorder='true'/>
+            <sevenSegmentDisplayView _id='201' id='9' rot='0' filled='true' stroked='true' modelId='8' x='168.0' y='14.0' lightColor='red' size='medium' hasBorder='true'/>
           </controlView>
         </controlViewComponent>
         <controlViewComponent _id='202' id='9' style='figure' filled='true' stroked='true' controlModelId='6' portScheme='combined'>
@@ -475,12 +475,12 @@
         </controlViewComponent>
         <controlViewComponent _id='204' id='10' style='figure' filled='true' stroked='true' controlModelId='1' portScheme='combined'>
           <controlView>
-            <sevenSegmentDisplayView _id='205' id='1' rot='0' filled='true' stroked='true' modelId='3' x='63.0' y='14.0' lightColor='red' size='medium' hasBorder='true'/>
+            <sevenSegmentDisplayView _id='205' id='1' rot='0' filled='true' stroked='true' modelId='3' x='70.0' y='14.0' lightColor='red' size='medium' hasBorder='true'/>
           </controlView>
         </controlViewComponent>
         <controlViewComponent _id='206' id='11' style='figure' filled='true' stroked='true' controlModelId='38' name='Signed'>
           <controlView>
-            <switchView _id='207' id='56' rot='0' filled='true' stroked='true' modelId='57' x='294.0' y='119.0'/>
+            <switchView _id='207' id='56' rot='0' filled='true' stroked='true' modelId='57' x='280.0' y='119.0'/>
           </controlView>
         </controlViewComponent>
         <digitalPortViewComp _id='208' id='12' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
