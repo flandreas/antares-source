@@ -32,11 +32,13 @@ import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import kotlin.jvm.JvmStatic
 import kotlin.math.PI
+import kotlin.math.floor
 
 abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: T,
 	lightColor: LightColor = DEFAULT_LIGHT_COLOR,
+	size: Size = DEFAULT_SIZE,
 	protected val eventBus: EventBus = BaseModule.eventBus
 ) : OrientableRectangularVerticeView<T>(styleProvider, model), LightEmitter, ControlViewSource<T>, ControlView<T> {
 
@@ -45,6 +47,7 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 		@JvmStatic
 		protected val DEFAULT_LIGHT_COLOR = LightColor.RED
 
+		@JvmStatic
 		protected val DEFAULT_SIZE = Size.MEDIUM
 
 		protected const val DEFAULT_HAS_BORDER = true
@@ -56,7 +59,7 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 		)
 	}
 
-	var size: Size = DEFAULT_SIZE
+	var size: Size = size
 		set(value) {
 			if (value != field) {
 				invalidate()
@@ -206,8 +209,8 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 		}
 
 		drawDot(context, model.inputValueOf("p"),
-			0.5f * geom.scaledFactor + geom.segLength + geom.scaledFactor,
-			7 * geom.scaledFactor + geom.segHalfWidth)
+			0.5f * geom.snappedScaledFactor + geom.segLength + geom.snappedScaledFactor,
+			7 * geom.snappedScaledFactor + geom.segHalfWidth)
 	}
 
 	private fun drawDot(context: DrawContext, value: Boolean, relX: Float, relY: Float) {
@@ -231,26 +234,34 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 	protected open fun handleSizeChanged() { }
 
 	protected fun createCombinedPortViews() {
-		val dot = DigitalPortView(
+		val startX = when (size) {
+			Size.LARGE, Size.MEDIUM -> 2 * Look.SCALE
+			else -> Look.SCALE
+		}
+		val deltaX = when (size) {
+			Size.LARGE -> 6 * Look.SCALE
+			Size.MEDIUM -> 4 * Look.SCALE
+			Size.SMALL -> 3 * Look.SCALE
+		}
+		val pv = DigitalPortView(
 			styleProvider = styleProvider,
 			port = model.getInput(SixteenSegmentDisplay.SEG_INPUT_NAME),
 			direction = Direction.SOUTH,
 			portLabelPosition = PortLabelPosition.EXTERNAL,
-			x = geom.scaledFactor,
+			x = startX,
 			y = geom.height)
-		dot.showBitWidthAnnotation = false
-		addPortView(dot)
+		pv.showBitWidthAnnotation = false
+		addPortView(pv)
 		addPortView(
 			DigitalPortView(
 				styleProvider = styleProvider,
 				port = model.getInput(SixteenSegmentDisplay.DP_INPUT_NAME),
 				direction = Direction.SOUTH,
 				portLabelPosition = PortLabelPosition.EXTERNAL,
-				x = geom.width - geom.scaledFactor,
+				x = startX + deltaX,
 				y = geom.height)
 		)
 	}
-
 
 	protected fun drawFullHorizontalSegment(context: DrawContext, value: Boolean, relX: Float, relY: Float) {
 		context.g.translate(relX.toDouble(), relY.toDouble())
@@ -279,26 +290,26 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 
 	protected fun drawB(context: DrawContext) {
 		drawVerticalSegment(context, model.inputValueOf("b"),
-			0.5f * geom.scaledFactor + geom.segLength + geom.segHalfWidth,
-			geom.scaledFactor + geom.segHalfWidth)
+			0.5f * geom.snappedScaledFactor + geom.segLength + geom.segHalfWidth,
+			geom.snappedScaledFactor + geom.segHalfWidth)
 	}
 
 	protected fun drawC(context: DrawContext) {
 		drawVerticalSegment(context, model.inputValueOf("c"),
-			0.5f * geom.scaledFactor + geom.segLength + geom.segHalfWidth,
-			4 * geom.scaledFactor + geom.segHalfWidth)
+			0.5f * geom.snappedScaledFactor + geom.segLength + geom.segHalfWidth,
+			4 * geom.snappedScaledFactor + geom.segHalfWidth)
 	}
 
 	protected fun drawE(context: DrawContext) {
 		drawVerticalSegment(context, model.inputValueOf("e"),
-			0.5f * geom.scaledFactor + geom.segHalfWidth,
-			4 * geom.scaledFactor + geom.segHalfWidth)
+			0.5f * geom.snappedScaledFactor + geom.segHalfWidth,
+			4 * geom.snappedScaledFactor + geom.segHalfWidth)
 	}
 
 	protected fun drawF(context: DrawContext) {
 		drawVerticalSegment(context, model.inputValueOf("f"),
-			0.5f * geom.scaledFactor + geom.segHalfWidth,
-			1 * geom.scaledFactor + geom.segHalfWidth)
+			0.5f * geom.snappedScaledFactor + geom.segHalfWidth,
+			1 * geom.snappedScaledFactor + geom.segHalfWidth)
 	}
 
 	private fun updateGeometry() {
@@ -308,13 +319,16 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 	}
 
 	class Geometry(val factor: Float) {
-		val width: Int = (5 * factor * Look.SCALE).toInt()
-		val height: Int = (8 * factor * Look.SCALE).toInt()
-		val segLength: Float = 3 * factor * Look.SCALE
+		val snappedScaledFactor: Float = floor(factor * Look.SCALE)
+		// Width and height must snap to SCALE
+		val width: Int = ((5 * factor * Look.SCALE) / Look.SCALE).toInt() * Look.SCALE
+		val height: Int = ((8 * factor * Look.SCALE) / Look.SCALE).toInt() * Look.SCALE
+		val segLength: Float = 3 * snappedScaledFactor
 		val segHalfWidth: Float = 0.25f * factor * Look.SCALE
+
 		private val segInset: Float = 1f * factor
-		private val diagW = 0.325f * scaledFactor - segInset
-		private val diagH = 0.75f * scaledFactor - segInset
+		private val diagW = 0.325f * snappedScaledFactor - segInset
+		private val diagH = 0.75f * snappedScaledFactor - segInset
 		val dotSize: Int = (4 * factor).toInt()
 
 		// The horizontal, full width segment
@@ -355,7 +369,5 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 			.lineTo(-segLength / 2 + segHalfWidth + segInset + diagW, segLength - segHalfWidth - segInset)
 			.lineTo(-segInset - segHalfWidth, segHalfWidth + segInset + diagH)
 			.close()
-
-		val scaledFactor: Int get() = (factor * Look.SCALE).toInt()
 	}
 }

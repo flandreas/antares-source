@@ -27,8 +27,9 @@ class SevenSegmentDisplayView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: SevenSegmentDisplay = SevenSegmentDisplay(),
 	lightColor: LightColor = DEFAULT_LIGHT_COLOR,
+	size: Size = DEFAULT_SIZE,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractSegmentDisplayView<SevenSegmentDisplay>(styleProvider, model, lightColor, eventBus),
+) : AbstractSegmentDisplayView<SevenSegmentDisplay>(styleProvider, model, lightColor, size, eventBus),
 	ControlView<SevenSegmentDisplay> {
 
 	companion object {
@@ -47,7 +48,7 @@ class SevenSegmentDisplayView(
 					port = model.getInput(i),
 					direction = Direction.NORTH,
 					portLabelPosition = PortLabelPosition.EXTERNAL,
-					x = geom.scaledFactor * i,
+					x = (geom.snappedScaledFactor * i).toInt(),
 					y = 0))
 			}
 			for (i in 5..8) {
@@ -56,7 +57,7 @@ class SevenSegmentDisplayView(
 					port = model.getInput(i),
 					direction = Direction.SOUTH,
 					portLabelPosition = PortLabelPosition.EXTERNAL,
-					x = geom.scaledFactor * (i - 4),
+					x = (geom.snappedScaledFactor * (i - 4)).toInt(),
 					y = geom.height))
 			}
 		}
@@ -111,7 +112,7 @@ class SevenSegmentDisplayView(
 	override val iconPath: String get() = BaseModule.properties.getString(PROP_ICON_PATH)
 
 	override fun createControlView(): ControlView<SevenSegmentDisplay> {
-		val clone = SevenSegmentDisplayView(styleProvider, model, lightColor)
+		val clone = SevenSegmentDisplayView(styleProvider, model, lightColor, size)
 		clone.isShowPortViews = false
 		clone.location = Point2D(0, 0)
 		return clone
@@ -123,22 +124,22 @@ class SevenSegmentDisplayView(
 		super.drawImpl(context)
 
 		drawFullHorizontalSegment(context, model.inputValueOf("a"),
-			0.5f * geom.scaledFactor + geom.segHalfWidth,
-			geom.scaledFactor + geom.segHalfWidth)
+			0.5f * geom.snappedScaledFactor + geom.segHalfWidth,
+			geom.snappedScaledFactor + geom.segHalfWidth)
 
 		drawB(context)
 		drawC(context)
 
 		drawFullHorizontalSegment(context, model.inputValueOf("d"),
-			0.5f * geom.scaledFactor + geom.segHalfWidth,
-			7 * geom.scaledFactor + geom.segHalfWidth)
+			0.5f * geom.snappedScaledFactor + geom.segHalfWidth,
+			7 * geom.snappedScaledFactor + geom.segHalfWidth)
 
 		drawE(context)
 		drawF(context)
 
 		drawFullHorizontalSegment(context, model.inputValueOf("g"),
-			0.5f * geom.scaledFactor + geom.segHalfWidth,
-			4 * geom.scaledFactor + geom.segHalfWidth)
+			0.5f * geom.snappedScaledFactor + geom.segHalfWidth,
+			4 * geom.snappedScaledFactor + geom.segHalfWidth)
 
 		if (model.inactive && context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 			context.g.color = Look.inactiveColor
