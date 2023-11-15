@@ -54,4 +54,9 @@ class VHDLRenamingTest {
 		assertEquals("a_gt_b", renaming.checkName("a>b"))
 		assertEquals("a_lt_b", renaming.checkName("a<b"))
 	}
+
+	@Test
+	fun shouldAdjustUUID() {
+		assertEquals("n08aba425_96c2_4c43_b10b_2e0c72ce8300", renaming.checkName("08aba425-96c2-4c43-b10b-2e0c72ce8300"))
+	}
 }

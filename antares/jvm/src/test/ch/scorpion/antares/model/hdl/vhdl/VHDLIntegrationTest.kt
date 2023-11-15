@@ -3,6 +3,7 @@ package ch.scorpion.antares.model.hdl.vhdl
 import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.TestLibraryBuilder
 import ch.scorpion.antares.hdl.vhdl.VHDLGenerator
+import ch.scorpion.antares.hdl.vhdl.VHDLRenaming
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.gate.AbstractLogicGate
 import ch.scorpion.antares.model.input.DipSwitch
@@ -61,19 +62,21 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 
 		VHDLGenerator(testParams(), library).generateHDL(printer, builder.graph as DigitalGraph)
 
+		val entityName = VHDLRenaming().checkName(nop.uuid.id)
+
 		assertEquals("""
 			library ieee;
 			use ieee.std_logic_1164.all;
 			use ieee.numeric_std.all;
 
 			-- NOP
-			entity ${nop.uuid} is
+			entity $entityName is
 			  port (
 			    I: in std_logic;
 			    O: out std_logic);
-			end ${nop.uuid};
+			end $entityName;
 
-			architecture Behavioral of ${nop.uuid} is
+			architecture Behavioral of $entityName is
 			begin
 			  O <= I;
 			end Behavioral;
@@ -92,11 +95,11 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 			architecture Behavioral of main is
 			  signal s0: std_logic;
 			begin
-			  node0: entity work.${nop.uuid}
+			  node0: entity work.$entityName
 			    port map (
 			      I => A,
 			      O => s0);
-			  node1: entity work.${nop.uuid}
+			  node1: entity work.$entityName
 			    port map (
 			      I => s0,
 			      O => B);

@@ -51,8 +51,8 @@ class HDLCircuit(
 
 	val inOuts: List<HDLPort> get() = ports.filter { it.direction == HDLPort.Direction.INOUT }
 
-	private var _entityName: String = elementName
-	val entityName: String = _entityName
+	var entityName: String = elementName
+		private set
 
 	init {
 		LOG.debug("Create HDLCircuit for ${circuit.name} (${circuit.uuid.id})")
@@ -125,7 +125,7 @@ class HDLCircuit(
 		ports.forEach { it.rename(renaming) }
 		nets.forEach { it.rename(renaming) }
 		nodes.forEach { it.rename(renaming) }
-		_entityName = renaming.checkName(entityName)
+		entityName = renaming.checkName(entityName)
 
 		checkUniqueNames(ports.map { it::name })
 		checkUniqueNames(nets.toSet().map { it::name })

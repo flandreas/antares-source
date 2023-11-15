@@ -19,7 +19,7 @@ abstract class AbstractHDLNode(
 
 	val inOuts: List<HDLPort> get() = ports.filter { it.direction == INOUT }
 
-	fun rename(renaming: HDLRenaming) {
+	open fun rename(renaming: HDLRenaming) {
 		ports.forEach { it.rename(renaming) }
 	}
 }
