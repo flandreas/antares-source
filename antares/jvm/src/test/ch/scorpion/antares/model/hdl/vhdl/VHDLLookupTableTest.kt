@@ -25,7 +25,7 @@ class VHDLLookupTableTest : AbstractVHDLTest() {
 		builder.connect(a, lutView)
 		builder.connect(lutView, d)
 
-		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
+		VHDLGenerator(testParams(),  library).generateHDL(printer, builder.graph as DigitalGraph)
 
 		assertEquals("""
 			library ieee;

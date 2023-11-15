@@ -23,7 +23,8 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 
 	@Test
 	fun testNoOp() {
-		VHDLGenerator(library, printer).generate(
+		VHDLGenerator(testParams(), library).generateHDL(
+			printer,
 			TestCircuitBuilder("test").buildNOP().graph as DigitalGraph)
 
 		assertEquals("""
@@ -58,7 +59,7 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 		builder.connect(subGraphVV1, subGraphVV1.model.getOutput(), subGraphVV2, subGraphVV2.model.getInput())
 		builder.connect(subGraphVV2, subGraphVV2.model.getOutput(), output)
 
-		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
+		VHDLGenerator(testParams(), library).generateHDL(printer, builder.graph as DigitalGraph)
 
 		assertEquals("""
 			library ieee;
@@ -106,8 +107,8 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 
 	@Test
 	fun testCustomNotGate() {
-		VHDLGenerator(library, printer)
-			.generate(TestCircuitBuilder("test").buildCustomNot().graph as DigitalGraph)
+		VHDLGenerator(testParams(),  library)
+			.generateHDL(printer, TestCircuitBuilder("test").buildCustomNot().graph as DigitalGraph)
 
 		assertEquals("""
 			library ieee;
@@ -131,8 +132,8 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 
 	@Test
 	fun testCustomNand() {
-		VHDLGenerator(library, printer)
-			.generate(TestCircuitBuilder("test").buildCustomNAND(null).graph as DigitalGraph)
+		VHDLGenerator(testParams(),  library)
+			.generateHDL(printer, TestCircuitBuilder("test").buildCustomNAND(null).graph as DigitalGraph)
 
 
 		// The result is not yet optimized (not yet implemented). The optimized result would be
@@ -200,7 +201,7 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 		builder.connect(inputB, gateView, gateView.model.getInput(2))
 		builder.connect(gateView, output)
 
-		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
+		VHDLGenerator(testParams(),  library).generateHDL(printer, builder.graph as DigitalGraph)
 
 		assertEquals("""
 			library ieee;
@@ -241,7 +242,7 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 		builder.connect(input, gateView, gateView.model.getInput())
 		builder.connect(gateView, output)
 
-		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
+		VHDLGenerator(testParams(),  library).generateHDL(printer, builder.graph as DigitalGraph)
 
 		assertEquals("""
 			library ieee;
@@ -270,7 +271,7 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 		val constantView = builder.addVerticeView(ConstantView(DigitalSignalFactory.of(true)))
 		builder.connect(constantView, output)
 
-		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
+		VHDLGenerator(testParams(),  library).generateHDL(printer, builder.graph as DigitalGraph)
 
 		assertEquals("""
 			library ieee;
@@ -300,7 +301,7 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 		))
 		builder.connect(dipSwitch, output)
 
-		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
+		VHDLGenerator(testParams(),  library).generateHDL(printer, builder.graph as DigitalGraph)
 
 		assertEquals("""
 			library ieee;
@@ -331,7 +332,7 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 		builder.connect(powerView, output1)
 		builder.connect(groundView, output2)
 
-		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
+		VHDLGenerator(testParams(),  library).generateHDL(printer, builder.graph as DigitalGraph)
 
 		assertEquals("""
 			library ieee;
@@ -366,7 +367,7 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 		builder.connect(input2, gateView, gateView.model.getInput(2))
 		builder.connect(gateView, output)
 
-		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
+		VHDLGenerator(testParams(),  library).generateHDL(printer, builder.graph as DigitalGraph)
 
 		assertEquals("""
 			library ieee;

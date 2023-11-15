@@ -36,7 +36,6 @@ import ch.scorpion.jabbah.base.parser.Token
  *     EOL : "\n"
  * </pre>
  */
-// TODO Support hexValue and binaryValue
 class TestcaseParser(
 	lexer: TestcaseLexer,
 	private val analyser: TestcaseAnalyser? = null

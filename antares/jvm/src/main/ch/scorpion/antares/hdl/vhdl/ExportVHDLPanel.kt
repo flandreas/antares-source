@@ -1,5 +1,7 @@
 package ch.scorpion.antares.hdl.vhdl
 
+import ch.scorpion.antares.hdl.HDLExportParams
+import ch.scorpion.antares.hdl.HDLExportTestBenchParams
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.testcase.Testcase
 import ch.scorpion.jabbah.base.Settings
@@ -18,7 +20,6 @@ import java.awt.Component
 import java.awt.Dimension
 import java.awt.Frame
 import java.awt.event.ActionEvent
-import java.nio.file.Path
 import java.nio.file.Paths
 import java.text.DecimalFormat
 import javax.swing.*
@@ -287,54 +288,109 @@ class ExportVHDLPanel(
 
 	private inner class ExportAction : AbstractAction(Translations.getString("base.action.export.name")) {
 		override fun actionPerformed(e: ActionEvent?) {
-			val vhdlFile = Paths.get(directorySelectionField.path, "${fileNameTextField.text}$VHDL_FILE_EXT")
-			val tbFile = Paths.get(directorySelectionField.path, "${fileNameTextField.text}$VHDL_TEST_SUFFIX$VHDL_FILE_EXT")
+			try {
+				val params = validatedParameters()
 
-			if (vhdlFile.exists() || tbFile.exists()) {
-				when (JOptionPane.showConfirmDialog(
-					Frame.getFrames()[0],
-					Translations.getString("antares.vhdl.fileExists.msg"),
-					name,
-					JOptionPane.YES_NO_CANCEL_OPTION
-				)) {
-					JOptionPane.CANCEL_OPTION -> {
-						closeHandler(this@ExportVHDLPanel)
-						return
+				if (params.hdlFile.exists() || params.testBenchParams?.tbFile?.exists() == true) {
+					when (JOptionPane.showConfirmDialog(
+						this@ExportVHDLPanel,
+						Translations.getString("antares.vhdl.fileExists.msg"),
+						name,
+						JOptionPane.YES_NO_CANCEL_OPTION,
+						JOptionPane.QUESTION_MESSAGE
+					)) {
+						JOptionPane.CANCEL_OPTION -> {
+							closeHandler(this@ExportVHDLPanel)
+							return
+						}
+						JOptionPane.NO_OPTION -> return
+						JOptionPane.YES_OPTION -> {}
 					}
-					JOptionPane.NO_OPTION -> return
-					JOptionPane.YES_OPTION -> {}
 				}
+
+				export(params)
+
+				closeHandler(this@ExportVHDLPanel)
+			} catch (e: IllegalArgumentException) {
+				// Validation error
+				JOptionPane.showMessageDialog(
+					this@ExportVHDLPanel,
+					e.message,
+					name,
+					JOptionPane.ERROR_MESSAGE
+				)
 			}
-
-			export(vhdlFile, tbFile)
-
-			closeHandler(this@ExportVHDLPanel)
 		}
 	}
 
-	private fun export(vhdlFile: Path, tbFile: Path) {
+	/**
+	 * Validates user input parameters and returns them as [HDLExportParams].
+	 * @throws IllegalArgumentException with a translated message in case of an invalid parameter
+	 */
+	private fun validatedParameters(): HDLExportParams {
+		if (StringUtils.isBlank(fileNameTextField.text)) {
+			throw IllegalArgumentException(Translations.getString("antares.vhdl.portNameNotFound.error.text"))
+		}
+		val baseName = fileNameTextField.text
+		val normalizedBaseName = StringUtils.simplify(baseName)
+		if (baseName != normalizedBaseName) {
+			throw IllegalArgumentException(Translations.getString("antares.vhdl.fileNameInvalid.error.txt", normalizedBaseName))
+		}
+
+		val vhdlFile = Paths.get(directorySelectionField.path, "$baseName$VHDL_FILE_EXT")
+
+		var testBenchParams: HDLExportTestBenchParams? = null
+		if (testcaseComboBox.selectedItem != null) {
+			val renaming = VHDLRenaming()
+			val testBenchName = createTestName(baseName, renaming)
+			val tbFile = Paths.get(directorySelectionField.path, "$baseName$VHDL_TEST_SUFFIX$VHDL_FILE_EXT")
+			testBenchParams = HDLExportTestBenchParams(
+				renaming,
+				testBenchName,
+				testcaseComboBox.selectedItem as Testcase,
+				tbFile,
+				waitTimeTextField.text.toInt())
+		}
+
+		return HDLExportParams(
+			baseName,
+			delayModelCheckBox.isSelected,
+			vhdlFile,
+			testBenchParams
+		)
+	}
+
+	private fun createTestName(vhdlFileName: String, renaming: VHDLRenaming): String {
+		val testcase = testcaseComboBox.selectedItem as Testcase
+		val testName = StringUtils.simplify(RichText.stripToPlainText(testcase.name.value))
+		return if (StringUtils.isNotBlank(testName)) {
+			"${vhdlFileName}_${renaming.checkName(testName)}_tb"
+		} else {
+			"${vhdlFileName}_tb"
+		}
+	}
+
+	private fun export(params: HDLExportParams) {
 		InvocationHandler.invoke {
 			try {
-				VHDLService.export(
-					circuit,
-					delayModelCheckBox.isSelected,
-					vhdlFile,
-					testcaseComboBox.selectedItem as Testcase?,
-					tbFile,
-					waitTimeTextField.text.toInt()
-				)
+				VHDLGenerator(
+					params,
+					generateComment = true
+				).generate(circuit)
 
 				JOptionPane.showMessageDialog(
 					Frame.getFrames()[0],
-					Translations.getString("antares.vhdl.success.msg", vhdlFile.toAbsolutePath()),
+					Translations.getString("antares.vhdl.success.msg", params.hdlFile.toAbsolutePath()),
 					name,
-					JOptionPane.INFORMATION_MESSAGE)
+					JOptionPane.INFORMATION_MESSAGE
+				)
 			} catch (e: HDLException) {
 				JOptionPane.showMessageDialog(
 					Frame.getFrames()[0],
 					e.message,
 					name,
-					JOptionPane.ERROR_MESSAGE)
+					JOptionPane.ERROR_MESSAGE
+				)
 			}
 		}
 	}

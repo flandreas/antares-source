@@ -17,7 +17,7 @@ class VHDLMultiBitIntegrationTest : AbstractVHDLTest() {
 
 	@Test
 	fun testNoOp() {
-		VHDLGenerator(library, printer).generate(
+		VHDLGenerator(testParams(), library).generate(
 			TestCircuitBuilder("test").buildNOP(bitWidth = BitWidth.BW_4).graph as DigitalGraph)
 
 		assertEquals("""
@@ -42,7 +42,8 @@ class VHDLMultiBitIntegrationTest : AbstractVHDLTest() {
 
 	@Test
 	fun testCustomNand() {
-		VHDLGenerator(library, printer).generate(
+		VHDLGenerator(testParams(),  library,).generateHDL(
+			printer,
 			TestCircuitBuilder("test").buildCustomNAND(null, BitWidth.BW_4).graph as DigitalGraph)
 
 		// The result is not yet optimized (not yet implemented). The optimized result would be
@@ -81,7 +82,7 @@ class VHDLMultiBitIntegrationTest : AbstractVHDLTest() {
 		builder.connect(input2, concentrator, concentrator.model.getInput(3))
 		builder.connect(concentrator, concentrator.model.getOutput(1), output)
 
-		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
+		VHDLGenerator(testParams(),  library).generateHDL(printer, builder.graph as DigitalGraph)
 
 		assertEquals("""
 			library ieee;
@@ -116,7 +117,7 @@ class VHDLMultiBitIntegrationTest : AbstractVHDLTest() {
 		builder.connect(input2, concentrator, concentrator.model.getInput(3))
 		builder.connect(concentrator, concentrator.model.getOutput(1), output)
 
-		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
+		VHDLGenerator(testParams(), library).generateHDL(printer, builder.graph as DigitalGraph)
 
 		assertEquals("""
 			library ieee;
@@ -151,7 +152,7 @@ class VHDLMultiBitIntegrationTest : AbstractVHDLTest() {
 		builder.connect(splitter, splitter.model.getOutput(2), output1)
 		builder.connect(splitter, splitter.model.getOutput(3), output2)
 
-		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
+		VHDLGenerator(testParams(), library).generateHDL(printer, builder.graph as DigitalGraph)
 
 		assertEquals("""
 			library ieee;
@@ -186,7 +187,7 @@ class VHDLMultiBitIntegrationTest : AbstractVHDLTest() {
 		builder.connect(splitter, splitter.model.getOutput(2), output1)
 		builder.connect(splitter, splitter.model.getOutput(3), output2)
 
-		VHDLGenerator(library, printer).generate(builder.graph as DigitalGraph)
+		VHDLGenerator(testParams(), library).generateHDL(printer, builder.graph as DigitalGraph)
 
 		assertEquals("""
 			library ieee;

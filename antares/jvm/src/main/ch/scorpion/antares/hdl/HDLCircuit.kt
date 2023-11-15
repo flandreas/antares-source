@@ -108,6 +108,8 @@ class HDLCircuit(
 	fun getHDLNetOfPort(port: DigitalPort): HDLNet? =
 		port.net?.let { netMap.computeIfAbsent(it) { HDLNet(bitWidth = port.bitWidth) } }
 
+	fun getPort(name: String): HDLPort? = ports.firstOrNull { it.name.equals(name, true) }
+
 	private fun addPort(port: HDLPort) {
 		ports.add(port)
 	}

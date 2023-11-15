@@ -1,11 +1,7 @@
 package ch.scorpion.antares.hdl.vhdl
 
 import ch.scorpion.antares.hdl.*
-import ch.scorpion.antares.hdl.HDLPort.Direction.*
 import ch.scorpion.antares.hdl.expression.*
-import ch.scorpion.antares.model.signal.BitOperation
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.io.CodePrinter
 import ch.scorpion.jabbah.base.io.Separator
@@ -16,31 +12,14 @@ import ch.scorpion.jabbah.base.logger
  * using the specified [CodePrinter].
  */
 class VHDLCreator(
-	private val out: CodePrinter,
+	out: CodePrinter,
 	private val applyDelays: Boolean = true
-) {
+) : AbstractVHDLCreator(out) {
 
 	companion object {
 		private val LOG by logger(VHDLCreator::class)
 
 		private fun value(constant: ConstantExpression): String = value(constant.value)
-
-		private fun value(value: DigitalSignal): String =
-			if (value.bitWidth.width > 1) {
-				"\"${value.binaryString}\""
-			} else {
-				"\'${value.binaryString}\'"
-			}
-
-		fun value(value: Int, bitWidth: BitWidth): String {
-			var s = BitOperation.longToBinaryPadded(value.toULong(), bitWidth)
-			s = if (bitWidth == BitWidth.BW_1) {
-				"'$s'"
-			} else {
-				"\"$s\""
-			}
-			return s
-		}
 	}
 
 	/** Loads and manages [VHDLTemplate]s.*/
@@ -93,14 +72,6 @@ class VHDLCreator(
 		}
 	}
 
-	private fun printImports() {
-		out
-			.println("library ieee;")
-			.println("use ieee.std_logic_1164.all;")
-			.println("use ieee.numeric_std.all;")
-			.println()
-	}
-
 	private fun printEntity(circuit: HDLCircuit) {
 		out.println("-- ${circuit.name}")
 		out.print("entity ").print(circuit.entityName).println(" is").inc()
@@ -109,45 +80,6 @@ class VHDLCreator(
 		out.print("end ").print(circuit.entityName).println(";")
 		out.println()
 	}
-
-	private fun printEntityPorts(circuit: HDLCircuit) {
-		var count = 0
-		out.println("port (").inc()
-		circuit.inputs.forEach {
-			count++
-			printPort(it, count == circuit.portsCount)
-		}
-		circuit.outputs.forEach {
-			count++
-			printPort(it, count == circuit.portsCount)
-		}
-		circuit.inOuts.forEach {
-			count++
-			printPort(it, count == circuit.portsCount)
-		}
-		out.println(");").dec()
-	}
-
-	private fun printPort(port: HDLPort, isLast: Boolean) {
-		out.print(port.name).print(": ").print(getOutsidePortDirection(port)).print(' ').print(getType(port.bitWidth))
-		if (!isLast) {
-			out.println(";")
-		}
-	}
-
-	private fun getOutsidePortDirection(port: HDLPort): String =
-		when (port.direction) {
-			IN -> "out"
-			OUT -> "in"
-			INOUT -> "inout"
-		}
-
-	private fun getType(bitWidth: BitWidth): String =
-		if (bitWidth == BitWidth.BW_1) {
-			"std_logic"
-		} else {
-			"std_logic_vector(${bitWidth.width - 1} downto 0)"
-		}
 
 	private fun printBehaviour(circuit: HDLCircuit) {
 		out.print("architecture Behavioral of ").print(circuit.entityName).println(" is").inc()

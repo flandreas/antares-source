@@ -10,9 +10,9 @@ class VHDLGeneratorTest : AbstractVHDLTest() {
 
 	@Test
 	fun shouldRename() {
-		VHDLGenerator(library, printer).generate(
-			TestCircuitBuilder("test").buildNOP(outputName = "out").graph as DigitalGraph
-		)
+		VHDLGenerator(testParams(), library).generateHDL(
+			printer,
+			TestCircuitBuilder("test").buildNOP(outputName = "out").graph as DigitalGraph)
 
 		assertEquals("""
 			library ieee;

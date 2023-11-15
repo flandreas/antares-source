@@ -3,6 +3,7 @@ package ch.scorpion.antares.filebased.vhdl
 import ch.scorpion.antares.filebased.AbstractFileBasedTest
 import ch.scorpion.antares.hdl.vhdl.VHDLGenerator
 import ch.scorpion.antares.model.DigitalGraph
+import ch.scorpion.antares.model.hdl.vhdl.AbstractVHDLTest.Companion.testParams
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.io.StringCodePrinter
 import ch.scorpion.jabbah.graph.library.LibraryModule
@@ -32,7 +33,8 @@ class PseudoBusDriverTest : AbstractFileBasedTest() {
 
 	@Test
 	fun test() {
-		VHDLGenerator(LibraryModule.libraryHolder.library, printer).generate(openedCircuitView.graph as DigitalGraph)
+		VHDLGenerator(testParams(), LibraryModule.libraryHolder.library)
+			.generateHDL(printer, openedCircuitView.graph as DigitalGraph)
 
 		assertEquals("""
 			library ieee;
