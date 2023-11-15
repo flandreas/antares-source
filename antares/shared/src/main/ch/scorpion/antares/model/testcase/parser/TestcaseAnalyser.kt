@@ -28,6 +28,7 @@ class TestcaseAnalyser(
 				}
 				is TestVectorNode -> {
 					ensureValueCount(portNames.size, listOf(child))
+					ensureAtMostOneClock(child)
 				}
 				else -> {}
 			}
@@ -68,6 +69,12 @@ class TestcaseAnalyser(
 	private fun ensureNoDontCareInRunBlock(node: RunNode) {
 		node.children.firstOrNull { vectorNode -> vectorNode.values.any { it.value.type == Value.Type.DONT_CARE } }?.let {
 			throwSemanticError("antares.testcase.error.dontCareInRunBlock", it.location.row)
+		}
+	}
+
+	private fun ensureAtMostOneClock(node: TestVectorNode) {
+		if (node.values.count { it.value.type == Value.Type.CLOCKED } > 1) {
+			throwSemanticError("antares.testcase.error.moreThanOneClock", node.location.row)
 		}
 	}
 }

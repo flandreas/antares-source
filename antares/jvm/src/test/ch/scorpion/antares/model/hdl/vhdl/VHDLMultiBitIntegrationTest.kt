@@ -17,7 +17,8 @@ class VHDLMultiBitIntegrationTest : AbstractVHDLTest() {
 
 	@Test
 	fun testNoOp() {
-		VHDLGenerator(testParams(), library).generate(
+		VHDLGenerator(testParams(), library).generateHDL(
+			printer,
 			TestCircuitBuilder("test").buildNOP(bitWidth = BitWidth.BW_4).graph as DigitalGraph)
 
 		assertEquals("""
