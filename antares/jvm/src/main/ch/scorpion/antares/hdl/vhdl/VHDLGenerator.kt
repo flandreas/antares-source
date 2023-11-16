@@ -46,7 +46,7 @@ class VHDLGenerator(
 		HDLModel(circuit, repository)
 			.create()
 			.apply {
-				renameLabels(VHDLRenaming())
+				renameLabels(params.renaming)
 			}
 
 	private fun writeCircuit(model: HDLModel, printer: CodePrinter) {

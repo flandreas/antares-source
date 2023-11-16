@@ -3,6 +3,7 @@ package ch.scorpion.antares.model.hdl.vhdl
 import ch.scorpion.antares.AbstractJvmCircuitTest
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.hdl.HDLExportParams
+import ch.scorpion.antares.hdl.vhdl.VHDLRenaming
 import ch.scorpion.jabbah.base.io.StringCodePrinter
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import java.nio.file.Paths
@@ -16,7 +17,7 @@ abstract class AbstractVHDLTest {
 		}
 
 		fun testParams(): HDLExportParams =
-			HDLExportParams("test", true, Paths.get("/tmp/none"), null)
+			HDLExportParams(VHDLRenaming(), "test", true, Paths.get("/tmp/none"), null)
 	}
 
 	protected val library get() = LibraryModule.libraryHolder.library

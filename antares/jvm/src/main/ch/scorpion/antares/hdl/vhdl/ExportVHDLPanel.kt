@@ -132,7 +132,7 @@ class ExportVHDLPanel(
 		waitTimeTextField.text = circuit.overallPropagationDelay?.toString() ?: DEF_WAIT_TIME.toString()
 
 		fileNameTextField.preferredSize = Dimension(200, fileNameTextField.preferredSize.height)
-		fileNameTextField.text = StringUtils.simplify(RichText.stripToPlainText(circuit.name.value))
+		fileNameTextField.text = VHDLRenaming().checkName(StringUtils.simplify(RichText.stripToPlainText(circuit.name.value)))
 
 		if (testcaseComboBox.model.size > 1) {
 			testcaseComboBox.selectedIndex = 1
@@ -335,8 +335,10 @@ class ExportVHDLPanel(
 		if (StringUtils.isBlank(fileNameTextField.text)) {
 			throw IllegalArgumentException(Translations.getString("antares.vhdl.portNameNotFound.error.text"))
 		}
+
+		val renaming = VHDLRenaming()
 		val baseName = fileNameTextField.text
-		val normalizedBaseName = StringUtils.simplify(baseName)
+		val normalizedBaseName = renaming.checkName(StringUtils.simplify(baseName))
 		if (baseName != normalizedBaseName) {
 			throw IllegalArgumentException(Translations.getString("antares.vhdl.fileNameInvalid.error.txt", normalizedBaseName))
 		}
@@ -345,7 +347,6 @@ class ExportVHDLPanel(
 
 		var testBenchParams: HDLExportTestBenchParams? = null
 		if (testcaseComboBox.selectedItem != null) {
-			val renaming = VHDLRenaming()
 			val testBenchName = createTestName(baseName, renaming)
 			val tbFile = Paths.get(directorySelectionField.path, "$testBenchName$VHDL_FILE_EXT")
 			testBenchParams = HDLExportTestBenchParams(
@@ -357,6 +358,7 @@ class ExportVHDLPanel(
 		}
 
 		return HDLExportParams(
+			renaming,
 			baseName,
 			delayModelCheckBox.isSelected,
 			vhdlFile,

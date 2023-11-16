@@ -12,6 +12,7 @@ import java.nio.file.Path
  * @property testBenchParams parameters controlling the creation of a test bench, if required
  */
 data class HDLExportParams(
+	val renaming: HDLRenaming,
 	val baseName: String,
 	val useDelayModel: Boolean,
 	val hdlFile: Path,
