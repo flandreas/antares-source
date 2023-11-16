@@ -134,6 +134,10 @@ class ExportVHDLPanel(
 		fileNameTextField.preferredSize = Dimension(200, fileNameTextField.preferredSize.height)
 		fileNameTextField.text = StringUtils.simplify(RichText.stripToPlainText(circuit.name.value))
 
+		if (testcaseComboBox.model.size > 1) {
+			testcaseComboBox.selectedIndex = 1
+		}
+
 		testcaseComboBox.addActionListener {
 			updateFields()
 		}
