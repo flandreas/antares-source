@@ -373,7 +373,7 @@ class DipSwitchView(
 	}
 
 	/**
-	 * Updates the text, the location nand the alignments of the external [Label] depending
+	 * Updates the text, the location and the alignments of the external [Label] depending
 	 * on the orientation of this [DipSwitchView].
 	 */
 	private fun updateLabel() {
