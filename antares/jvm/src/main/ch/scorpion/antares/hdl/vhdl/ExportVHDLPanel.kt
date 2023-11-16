@@ -343,7 +343,7 @@ class ExportVHDLPanel(
 		if (testcaseComboBox.selectedItem != null) {
 			val renaming = VHDLRenaming()
 			val testBenchName = createTestName(baseName, renaming)
-			val tbFile = Paths.get(directorySelectionField.path, "$baseName$VHDL_TEST_SUFFIX$VHDL_FILE_EXT")
+			val tbFile = Paths.get(directorySelectionField.path, "$testBenchName$VHDL_FILE_EXT")
 			testBenchParams = HDLExportTestBenchParams(
 				renaming,
 				testBenchName,
