@@ -2,13 +2,16 @@ package ch.scorpion.antares.model.hdl.vhdl
 
 import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.TestLibraryBuilder
+import ch.scorpion.antares.hdl.vhdl.HDLException
 import ch.scorpion.antares.hdl.vhdl.VHDLGenerator
 import ch.scorpion.antares.hdl.vhdl.VHDLRenaming
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.gate.AbstractLogicGate
+import ch.scorpion.antares.model.input.Clock
 import ch.scorpion.antares.model.input.DipSwitch
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.view.gate.LogicGateView
+import ch.scorpion.antares.view.input.ClockView
 import ch.scorpion.antares.view.input.DipSwitchView
 import ch.scorpion.antares.view.net.ConstantView
 import ch.scorpion.antares.view.net.GroundView
@@ -19,6 +22,7 @@ import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class VHDLIntegrationTest : AbstractVHDLTest() {
 
@@ -391,5 +395,51 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 			end Behavioral;
 			
 		""".trimIndent(), printer.toString())
+	}
+
+	@Test
+	fun testClock() {
+		VHDLGenerator(testParams(),  library).generateHDL(printer, buildClockCircuit("CLK"))
+
+		assertEquals("""
+			library ieee;
+			use ieee.std_logic_1164.all;
+			use ieee.numeric_std.all;
+
+			-- test
+			entity main is
+			  port (
+			    CLK: in std_logic;
+			    O: out std_logic);
+			end main;
+
+			architecture Behavioral of main is
+			begin
+			  O <= CLK;
+			end Behavioral;
+			
+		""".trimIndent(), printer.toString())
+	}
+
+	@Test
+	fun shouldRejectClockWithoutName() {
+		assertFailsWith(HDLException::class) {
+			VHDLGenerator(testParams(),  library).generateHDL(printer, buildClockCircuit(null))
+		}
+	}
+
+	@Test
+	fun shouldRejectClockWithoutUniqueName() {
+		assertFailsWith(HDLException::class) {
+			VHDLGenerator(testParams(),  library).generateHDL(printer, buildClockCircuit("O"))
+		}
+	}
+
+	private fun buildClockCircuit(clockName: String?): DigitalGraph {
+		val builder = TestCircuitBuilder("test")
+		val clock = builder.addVerticeView(ClockView(model = Clock(clockName)))
+		val output = builder.addOutput("O")
+		builder.connect(clock, output)
+		return builder.graph as DigitalGraph
 	}
 }

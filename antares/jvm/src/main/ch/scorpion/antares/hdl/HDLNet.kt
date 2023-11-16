@@ -2,6 +2,7 @@ package ch.scorpion.antares.hdl
 
 import ch.scorpion.antares.hdl.vhdl.HDLException
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.jabbah.base.Translations
 
 class HDLNet(
 	var name: String = "",
@@ -29,7 +30,7 @@ class HDLNet(
 			HDLPort.Direction.INOUT -> inOuts.add(port)
 			HDLPort.Direction.OUT -> {
 				if (output != null) {
-					throw HDLException("HDLNet cannot have more than 1 output")
+					throw HDLException(Translations.getString("antares.vhdl.tooManyOutputOnNet.error.text"))
 				} else {
 					output = port
 				}

@@ -2,6 +2,7 @@ package ch.scorpion.antares.hdl.vhdl
 
 import ch.scorpion.antares.hdl.HDLRenaming
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.richtext.RichTextTokenType
 
 class VHDLRenaming : HDLRenaming {
@@ -23,7 +24,7 @@ class VHDLRenaming : HDLRenaming {
 	override fun checkName(name: String): String {
 		var effName = name
 		if (StringUtils.isBlank(effName)) {
-			throw HDLException("Name must not be blank")
+			throw HDLException(Translations.getString("antares.vhdl.emptyName.error.text"))
 		}
 		if (isKeyword(effName)) {
 			return "p_$effName"

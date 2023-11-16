@@ -3,11 +3,15 @@ package ch.scorpion.antares.hdl
 import ch.scorpion.antares.hdl.vhdl.HDLException
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.inout.DigitalCircuitInOut
+import ch.scorpion.antares.model.input.Clock
 import ch.scorpion.antares.model.net.Concentrator
 import ch.scorpion.antares.model.net.Splitter
 import ch.scorpion.antares.model.net.Tunnel
 import ch.scorpion.antares.model.port.DigitalPort
+import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.model.*
@@ -91,6 +95,11 @@ class HDLCircuit(
 					PortType.OUTPUT -> addPort(HDLPort(elem.name!!, HDLPort.Direction.IN, getHDLNetOfPort(port), port.bitWidth))
 					PortType.INOUT -> addPort(HDLPort(elem.name!!, HDLPort.Direction.INOUT, getHDLNetOfPort(port), port.bitWidth))
 				}
+			} else if (elem is Clock) {
+				if (StringUtils.isBlank(elem.name)) {
+					throw HDLException(Translations.getString("antares.vhdl.missingClockName.error.txt"))
+				}
+				addPort(HDLPort(elem.name!!, HDLPort.Direction.OUT, getHDLNetOfPort(elem.getPort<DigitalSignal>() as DigitalPort), BitWidth.BW_1))
 			} else if (elem is Concentrator) {
 				_nodes.add(ManyToOneNode(model.createNode(elem, this), elem.bitWidth, elem.branchCount))
 			} else if (elem is Splitter) {
@@ -181,7 +190,7 @@ class HDLCircuit(
 		nameProviders.forEach {
 			val name = it()
 			if (names.contains(name)) {
-				throw HDLException("Name '$name' is not unique")
+				throw HDLException(Translations.getString("antares.vhdl.nonUniqueName.error.txt", name))
 			}
 			names.add(name)
 		}

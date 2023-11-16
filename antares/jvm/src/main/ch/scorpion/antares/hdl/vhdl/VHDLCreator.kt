@@ -2,6 +2,7 @@ package ch.scorpion.antares.hdl.vhdl
 
 import ch.scorpion.antares.hdl.*
 import ch.scorpion.antares.hdl.expression.*
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.io.CodePrinter
 import ch.scorpion.jabbah.base.io.Separator
@@ -104,7 +105,7 @@ class VHDLCreator(
 				is BuiltInNode -> printEntityInstantiation(node, index)
 				is ManyToOneNode -> printManyToOne(node)
 				is OneToManyNode -> printOneToMany(node)
-				else -> throw HDLException("HDL element ${node::class.simpleName} not yet implemented")
+				else -> throw HDLException(Translations.getString("antares.vhdl.elementNotSupported.error.txt", node::class.simpleName.toString()))
 			}
 		}
 	}
@@ -156,7 +157,7 @@ class VHDLCreator(
 			is ConstantExpression -> {
 				out.print(value(expression))
 			}
-			else -> throw HDLException("Unsupported expression type ${expression::class.simpleName}")
+			else -> throw HDLException(Translations.getString("antares.vhdl.expressionNotSupported.error.text", expression::class.simpleName.toString()))
 		}
 	}
 

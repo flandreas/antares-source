@@ -99,7 +99,7 @@ class VHDLTemplate(name: String) {
 				throw e.cause!!
 			}
 			LOG.error("Error while executing template", e)
-			throw HDLException("Error in VHDL script: ${e.message}")
+			throw HDLException(Translations.getString("antares.vhdl.script.error.text", e.message ?: "-"))
 		}
 
 		val entity = entities[newGenerated.name]

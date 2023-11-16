@@ -13,6 +13,7 @@ import ch.scorpion.antares.model.net.Power
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphRepository
@@ -72,7 +73,7 @@ class HDLModel(
 							it.expression = NetExpression(it.inputs.first().net!!, vertice.propagationDelay)
 						}
 					}
-					else -> throw HDLException("Circuit element ${vertice.type} doesn't support HDL")
+					else -> throw HDLException(Translations.getString("antares.vhdl.elementNotSupported.error.txt", vertice.type))
 				}
 			}
 			is NonUnaryLogicGate -> {
@@ -107,7 +108,7 @@ class HDLModel(
 							it.expression = NotExpression(createOperation(it.inputs, OperationExpression.Operation.XOR, 0), vertice.propagationDelay)
 						}
 					}
-					else -> throw HDLException("Circuit element ${vertice.type} doesn't support HDL")
+					else -> throw HDLException(Translations.getString("antares.vhdl.elementNotSupported.error.txt", vertice.type))
 				}
 			}
 			is Constant -> {

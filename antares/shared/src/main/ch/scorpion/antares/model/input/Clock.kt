@@ -18,7 +18,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 /**
  * A digital component that produces a periodically changing [DigitalSignal].
  */
-class Clock : CalculatingVertice(CALCULATOR) {
+class Clock(name: String? = null) : CalculatingVertice(CALCULATOR, name) {
 
 	companion object {
 
