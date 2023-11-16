@@ -200,7 +200,7 @@ class VHDLTestBenchCreator(
 					}
 					Value.Type.DONT_CARE -> out.print(getSimpleValue(bitWidth, '-'))
 					Value.Type.UNDEFINED -> out.print(getSimpleValue(bitWidth, 'Z'))
-					Value.Type.CLOCKED -> out.print("'").print(value(clock)).print("'")
+					Value.Type.CLOCKED -> out.print(value(clock))
 				}
 			}
 			out.print(")")

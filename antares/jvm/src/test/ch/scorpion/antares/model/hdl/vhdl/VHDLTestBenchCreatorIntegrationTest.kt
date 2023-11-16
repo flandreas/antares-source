@@ -14,7 +14,7 @@ import java.nio.file.Paths
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class VHDLTestBenchCreatorTest : AbstractStandardLibraryBasedCircuitTest() {
+class VHDLTestBenchCreatorIntegrationTest : AbstractStandardLibraryBasedCircuitTest() {
 
 	override fun createCircuit(): GraphView =
 		LibraryModule.libraryHolder
