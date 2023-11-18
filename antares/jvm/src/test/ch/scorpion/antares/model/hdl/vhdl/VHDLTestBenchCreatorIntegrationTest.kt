@@ -64,6 +64,17 @@ class VHDLTestBenchCreatorIntegrationTest : AbstractStandardLibraryBasedCircuitT
 			  signal B: std_logic;
 			  signal S: std_logic;
 			  signal C: std_logic;
+
+			  function to_string(v: std_logic_vector) return string is
+			    variable s : string (1 to v'length) := (others => NUL);
+			    variable si : integer := 1; 
+			  begin
+			    for i in v'range loop
+			      s(si) := std_logic'image(v((i)))(2);
+			      si := si + 1;
+			    end loop;
+			    return s;
+			  end function;			
 			
 			begin
 			  main_0 : main port map (

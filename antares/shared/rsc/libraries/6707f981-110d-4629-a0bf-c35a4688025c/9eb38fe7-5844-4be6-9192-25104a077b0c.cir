@@ -11,7 +11,7 @@
   O = D &lt;&lt; 1 or CIR
   COL = D &gt;= 128
   COR = 0
-}' propDelay='20' startupTime='30'>
+}' propDelay='60' startupTime='60'>
           <elements>
             <andGate _id='3' id='1' delay='20' inputCount='2'/>
             <andGate _id='4' id='2' delay='20' inputCount='2'/>

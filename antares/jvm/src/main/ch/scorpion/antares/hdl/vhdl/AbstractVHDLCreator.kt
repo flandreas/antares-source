@@ -21,8 +21,8 @@ abstract class AbstractVHDLCreator(
 				"\'${value.binaryString}\'"
 			}
 
-		fun value(value: Int, bitWidth: BitWidth): String {
-			var s = BitOperation.longToBinaryPadded(value.toULong(), bitWidth)
+		fun value(value: ULong, bitWidth: BitWidth): String {
+			var s = BitOperation.longToBinaryPadded(value, bitWidth)
 			s = if (bitWidth == BitWidth.BW_1) {
 				"'$s'"
 			} else {

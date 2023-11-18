@@ -137,7 +137,7 @@ class VHDLTemplate(name: String) {
 		/** ---- Methods to be called by template using reflection */
 
 		fun value(value: Int, bitWidth: BitWidth): String =
-			AbstractVHDLCreator.value(value, bitWidth)
+			AbstractVHDLCreator.value(value.toULong(), bitWidth)
 
 		fun zero(bitWidth: BitWidth): String =
 			if (bitWidth == BitWidth.BW_1) {

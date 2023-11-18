@@ -58,6 +58,7 @@ class VHDLTestBenchCreator(
 		out.print("architecture Behavioral of ").print(params.testBenchName).println(" is").inc()
 		printComponent()
 		printSignals()
+		printToString()
 		out.dec().println("begin").inc()
 		printPortMap()
 		printProcess()
@@ -148,13 +149,35 @@ class VHDLTestBenchCreator(
 
 			out.inc().print("report \"assertion failed for ").print(p.name).print(" on line \"")
 				.print(" & integer'image(").print(loopVar).print(")")
-				.print(" & \", expected \" & std_logic'image(test_data(").print(loopVar).print(").").print(p.name).print(")")
-				.print(" & \", actual is \" & std_logic'image(").print(p.name).println(")")
+				.print(" & \", expected \" & ").print(convertFunc(p)).print("(test_data(").print(loopVar).print(").").print(p.name).print(")")
+				.print(" & \", actual is \" & ").print(convertFunc(p)).print("(").print(p.name).println(")")
 
 			out.println("severity error;").dec()
 		}
 
 		out.dec().println("end loop;")
+	}
+
+	private fun printToString() {
+		out.println("""
+			function to_string(v: std_logic_vector) return string is
+			  variable s : string (1 to v'length) := (others => NUL);
+			  variable si : integer := 1; 
+			begin
+			  for i in v'range loop
+			    s(si) := std_logic'image(v((i)))(2);
+			    si := si + 1;
+			  end loop;
+			  return s;
+			end function;			
+		""".trimIndent()).println()
+	}
+
+	private fun convertFunc(p: HDLPort): String {
+		if (p.bitWidth.width > 1) {
+			return "to_string"
+		}
+		return "std_logic'image"
 	}
 
 	private fun getSimpleValue(bitWidth: BitWidth, c: Char): String {
@@ -197,7 +220,7 @@ class VHDLTestBenchCreator(
 						if (isClock && portOrder[index].direction == HDLPort.Direction.IN) {
 							out.print(getSimpleValue(bitWidth, '-'))
 						} else {
-							out.print(value(value.value))
+							out.print(value(value.value.toLong() ?: 0UL, bitWidth))
 						}
 					}
 					Value.Type.DONT_CARE -> out.print(getSimpleValue(bitWidth, '-'))
@@ -205,7 +228,7 @@ class VHDLTestBenchCreator(
 					Value.Type.CLOCKED -> if (clock != null) {
 						out.print(value(clock))
 					} else {
-						out.print(value(value.value))
+						out.print(value(value.value.toLong() ?: 0UL, bitWidth))
 					}
 				}
 			}
