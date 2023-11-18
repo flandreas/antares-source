@@ -146,7 +146,7 @@ class VHDLTestBenchCreator(
 				.print(" AND test_data(").print(loopVar).print(").").print(p.name).print(" = ").print(getSimpleValue(p.bitWidth, 'Z'))
 				.println(")")
 
-			out.inc().print("report \"assertion failed for ").print(p.name).print(" on vector \"")
+			out.inc().print("report \"assertion failed for ").print(p.name).print(" on line \"")
 				.print(" & integer'image(").print(loopVar).print(")")
 				.print(" & \", expected \" & std_logic'image(test_data(").print(loopVar).print(").").print(p.name).print(")")
 				.print(" & \", actual is \" & std_logic'image(").print(p.name).println(")")
@@ -170,6 +170,7 @@ class VHDLTestBenchCreator(
 
 	private inner class VHDLTestVectorConsumer(private val portOrder: List<HDLPort>) : TestVectorConsumer {
 
+		private var line = 0
 		private val lineSep = Separator(out, ",\n")
 
 		override fun consume(testVector: TestVector) {
@@ -185,7 +186,8 @@ class VHDLTestBenchCreator(
 		}
 
 		private fun printValues(values: List<Value>, isClock: Boolean, clock: DigitalSignal) {
-			out.print("(")
+			// Named association required by VHDL specification if list has only 1 element
+			out.print("${line++} => (")
 			val sep = Separator(out, ", ")
 			values.forEachIndexed { index, value ->
 				sep.check()

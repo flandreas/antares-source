@@ -75,15 +75,15 @@ class VHDLTestBenchCreatorClockTest : AbstractVHDLTest() {
 			    end record;
 			    type test_data_array is array (natural range <>) of test_data_type;
 			    constant test_data : test_data_array := (
-			      ('0', '-'),
-			      ('1', '-'),
-			      ('0', '1'));
+			      0 => ('0', '-'),
+			      1 => ('1', '-'),
+			      2 => ('0', '1'));
 			  begin
 			    for i0 in test_data'range loop
 			      I <= test_data(i0).I;
 			      wait for 30 ns;
 			      assert std_match(O, test_data(i0).O) OR (O = 'Z' AND test_data(i0).O = 'Z')
-			        report "assertion failed for O on vector " & integer'image(i0) & ", expected " & std_logic'image(test_data(i0).O) & ", actual is " & std_logic'image(O)
+			        report "assertion failed for O on line " & integer'image(i0) & ", expected " & std_logic'image(test_data(i0).O) & ", actual is " & std_logic'image(O)
 			        severity error;
 			    end loop;
 			  end process;

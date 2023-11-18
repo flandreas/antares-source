@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.base.io
 
-class Separator(
+open class Separator(
 	private val out: CodePrinter,
 	private val sep: String
 ) {
@@ -11,7 +11,11 @@ class Separator(
 		if (first) {
 			first = false
 		} else {
-			out.print(sep)
+			printSeparator(out)
 		}
+	}
+
+	open fun printSeparator(out: CodePrinter) {
+		out.print(sep)
 	}
 }

@@ -80,20 +80,20 @@ class VHDLTestBenchCreatorIntegrationTest : AbstractStandardLibraryBasedCircuitT
 			    end record;
 			    type test_data_array is array (natural range <>) of test_data_type;
 			    constant test_data : test_data_array := (
-			      ('0', '0', '0', '0'),
-			      ('0', '1', '1', '0'),
-			      ('1', '0', '1', '0'),
-			      ('1', '1', '0', '1'));
+			      0 => ('0', '0', '0', '0'),
+			      1 => ('0', '1', '1', '0'),
+			      2 => ('1', '0', '1', '0'),
+			      3 => ('1', '1', '0', '1'));
 			  begin
 			    for i in test_data'range loop
 			      A <= test_data(i).A;
 			      B <= test_data(i).B;
 			      wait for 30 ns;
 			      assert std_match(S, test_data(i).S) OR (S = 'Z' AND test_data(i).S = 'Z')
-			        report "assertion failed for S on vector " & integer'image(i) & ", expected " & std_logic'image(test_data(i).S) & ", actual is " & std_logic'image(S)
+			        report "assertion failed for S on line " & integer'image(i) & ", expected " & std_logic'image(test_data(i).S) & ", actual is " & std_logic'image(S)
 			        severity error;
 			      assert std_match(C, test_data(i).C) OR (C = 'Z' AND test_data(i).C = 'Z')
-			        report "assertion failed for C on vector " & integer'image(i) & ", expected " & std_logic'image(test_data(i).C) & ", actual is " & std_logic'image(C)
+			        report "assertion failed for C on line " & integer'image(i) & ", expected " & std_logic'image(test_data(i).C) & ", actual is " & std_logic'image(C)
 			        severity error;
 			    end loop;
 			  end process;
