@@ -77,7 +77,7 @@ class VHDLTestBenchCreatorClockTest : AbstractVHDLTest() {
 			    constant test_data : test_data_array := (
 			      0 => ('0', '-'),
 			      1 => ('1', '-'),
-			      2 => ('0', '1'));
+			      2 => ('1', '1'));
 			  begin
 			    for i0 in test_data'range loop
 			      I <= test_data(i0).I;

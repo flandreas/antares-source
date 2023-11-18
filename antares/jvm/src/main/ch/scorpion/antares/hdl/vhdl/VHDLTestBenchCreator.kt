@@ -182,10 +182,10 @@ class VHDLTestBenchCreator(
 				printValues(testVector.values, true, clockedSignal.value)
 			}
 			lineSep.check()
-			printValues(testVector.values, false, DigitalSignalFactory.of(Bit.False))
+			printValues(testVector.values, false, null)
 		}
 
-		private fun printValues(values: List<Value>, isClock: Boolean, clock: DigitalSignal) {
+		private fun printValues(values: List<Value>, isClock: Boolean, clock: DigitalSignal?) {
 			// Named association required by VHDL specification if list has only 1 element
 			out.print("${line++} => (")
 			val sep = Separator(out, ", ")
@@ -202,7 +202,11 @@ class VHDLTestBenchCreator(
 					}
 					Value.Type.DONT_CARE -> out.print(getSimpleValue(bitWidth, '-'))
 					Value.Type.UNDEFINED -> out.print(getSimpleValue(bitWidth, 'Z'))
-					Value.Type.CLOCKED -> out.print(value(clock))
+					Value.Type.CLOCKED -> if (clock != null) {
+						out.print(value(clock))
+					} else {
+						out.print(value(value.value))
+					}
 				}
 			}
 			out.print(")")
