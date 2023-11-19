@@ -56,7 +56,11 @@ class HDLModel(
 				// computeIfAbsent() would generate ConcurrentModificationException
 				var hdlCircuit = hdlCircuits[vertice.graphUUID!!]
 				if (hdlCircuit == null) {
-					hdlCircuit = HDLCircuit(vertice.getGraph(repository) as DigitalGraph, vertice.graphUUID!!.id, this)
+					val digitalGraph = vertice.getGraph(repository) as DigitalGraph
+					if (digitalGraph.purelyScripted) {
+						throw HDLException(Translations.getString("antares.vhdl.purelyScriptedNotSupported.error.txt", digitalGraph.name.value))
+					}
+					hdlCircuit = HDLCircuit(digitalGraph, vertice.graphUUID!!.id, this)
 					hdlCircuits[vertice.graphUUID!!] = hdlCircuit
 				}
 				HDLCircuitNode(hdlCircuit).also { addInputsOutputs(it, vertice, parent) }.createExpressions()

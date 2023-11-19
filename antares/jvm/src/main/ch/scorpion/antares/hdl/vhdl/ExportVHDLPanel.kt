@@ -299,7 +299,7 @@ class ExportVHDLPanel(
 					when (JOptionPane.showConfirmDialog(
 						this@ExportVHDLPanel,
 						Translations.getString("antares.vhdl.fileExists.msg"),
-						name,
+						getValue(Action.NAME) as String,
 						JOptionPane.YES_NO_CANCEL_OPTION,
 						JOptionPane.QUESTION_MESSAGE
 					)) {
@@ -320,7 +320,7 @@ class ExportVHDLPanel(
 				JOptionPane.showMessageDialog(
 					this@ExportVHDLPanel,
 					e.message,
-					name,
+					getValue(Action.NAME) as String,
 					JOptionPane.ERROR_MESSAGE
 				)
 			}
@@ -387,14 +387,14 @@ class ExportVHDLPanel(
 				JOptionPane.showMessageDialog(
 					Frame.getFrames()[0],
 					Translations.getString("antares.vhdl.success.msg", params.hdlFile.toAbsolutePath()),
-					name,
+					Translations.getString("base.action.export.name"),
 					JOptionPane.INFORMATION_MESSAGE
 				)
 			} catch (e: HDLException) {
 				JOptionPane.showMessageDialog(
 					Frame.getFrames()[0],
 					e.message,
-					name,
+					Translations.getString("base.action.export.name"),
 					JOptionPane.ERROR_MESSAGE
 				)
 			}
