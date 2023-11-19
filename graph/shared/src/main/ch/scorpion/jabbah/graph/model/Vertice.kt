@@ -48,6 +48,9 @@ interface Vertice : GraphElement, Describable {
     /** Determines whether any of this [Vertice]' [Port]s is connected to a [Net].*/
     val isConnected: Boolean
 
+	/** Returns `true` if all [Port]s are connected to a [Net].*/
+	val isFullyConnected: Boolean
+
     val hasAnyOutput: Boolean
 
 	/** Determines whether all [Port.name] in this [Vertice] must be unique.*/

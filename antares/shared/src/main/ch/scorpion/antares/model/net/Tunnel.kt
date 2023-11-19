@@ -130,6 +130,10 @@ class Tunnel(
 		return result as Collection<CombinedNet<T>>
 	}
 
+	/** ---- [Vertice] */
+
+	override val isFullyConnected: Boolean get() = visiblePort.isConnected
+
 	/** ---- [Tunnel] */
 
 	private fun getIncomingSignal(): DigitalSignal = getInput<DigitalSignal>().getIncomingSignal()!!

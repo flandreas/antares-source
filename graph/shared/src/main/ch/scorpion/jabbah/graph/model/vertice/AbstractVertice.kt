@@ -42,6 +42,8 @@ abstract class AbstractVertice(
 
 	override val isConnected: Boolean get() = ports.any { it.isConnected }
 
+	override val isFullyConnected: Boolean get() = ports.all { it.isConnected }
+
 	override val hasAnyOutput: Boolean get() = ports.any { it.portType.isOutput }
 
 	override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler, force: Boolean) {

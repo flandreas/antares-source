@@ -137,7 +137,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 
 	/** ---- [GraphElementView] */
 
-	override val isFullyConnected: Boolean get() = model.getPorts().all { it.isConnected }
+	override val isFullyConnected: Boolean get() = model.isFullyConnected
 
 	/** ---- [VerticeView] */
 
