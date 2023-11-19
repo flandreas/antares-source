@@ -304,7 +304,6 @@ class RecordUsecasePanel(
 
 		panel.add(UiUtil.createToolBarButton(helpAction))
 		panel.add(Box.createHorizontalGlue())
-		panel.add(Box.createHorizontalGlue())
 		UIBasics.addButtons(panel, okButton, cancelButton)
 
 		return panel

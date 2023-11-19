@@ -7,12 +7,15 @@ import ch.scorpion.antares.model.testcase.Testcase
 import ch.scorpion.jabbah.base.Settings
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.help.HelpId
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.richtext.RichText
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.swing.DirectorySelectionField
 import ch.scorpion.jabbah.base.swing.EGBL
+import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.base.ui.HelpAction
 import ch.scorpion.jabbah.base.ui.UIBasics
 import org.apache.commons.lang3.SystemUtils
 import java.awt.BorderLayout
@@ -47,6 +50,8 @@ class ExportVHDLPanel(
 		private const val SETTING_USE_DELAY_MODEL = "exportVHDL.useDelayModel"
 		private const val SETTING_EXPORT_DIRECTORY = "exportVHDL.directory"
 
+		val HELP_ID = HelpId("exportVHDL")
+
 		fun showAsDialog(
 			digitalGraph: DigitalGraph,
 			parent: Frame = Frame.getFrames()[0]
@@ -66,6 +71,7 @@ class ExportVHDLPanel(
 	private val exportAction = ExportAction()
 	private val okButton = JButton(exportAction)
 	private val cancelAction = CancelAction()
+	private val helpAction = HelpAction(HELP_ID)
 
 	/** Used to select the [Testcase] to created the test bench with. */
 	private val testcaseComboBox = createTestcaseComboBox(circuit.testcases.testcases)
@@ -265,6 +271,8 @@ class ExportVHDLPanel(
 	private fun buildButtonPanel(): JPanel {
 		val panel = JPanel()
 		panel.layout = BoxLayout(panel, BoxLayout.LINE_AXIS)
+
+		panel.add(UiUtil.createToolBarButton(helpAction))
 		panel.add(Box.createHorizontalGlue())
 		UIBasics.addButtons(panel, okButton, JButton(cancelAction))
 		return panel
