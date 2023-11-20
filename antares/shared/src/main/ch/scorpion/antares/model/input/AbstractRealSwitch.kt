@@ -104,7 +104,7 @@ abstract class AbstractRealSwitch<T : AbstractSwitch<T>>(
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
-		if (bitWidth.width != BitWidth.BW_1.width) {
+		if (bitWidth is BitWidthExpression || bitWidth.width != BitWidth.BW_1.width) {
 			bitWidth.write("bitWidth", writer)
 		}
 	}

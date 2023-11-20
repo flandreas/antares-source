@@ -96,7 +96,7 @@ abstract class AbstractLogicGate(
             writer.writeString("outputName", getOutput<DigitalSignal>().name!!)
         }
 	    writer.writeIntegers("negatedInputs", negatedInputPortIds)
-	    if (bitWidth.width != BitWidth.BW_1.width) {
+	    if (bitWidth is BitWidthExpression || bitWidth.width != BitWidth.BW_1.width) {
 		    bitWidth.write("bitWidth", writer)
 	    }
 	    for (i in 1..chosenInputCount.count) {
