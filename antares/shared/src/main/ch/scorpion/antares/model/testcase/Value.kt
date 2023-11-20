@@ -1,9 +1,6 @@
 package ch.scorpion.antares.model.testcase
 
-import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.model.testcase.Value.State.*
 import ch.scorpion.antares.model.testcase.Value.State.NORMAL
 import ch.scorpion.antares.model.testcase.Value.Type.*
@@ -49,7 +46,7 @@ open class Value(
 
 	override fun toString(): String =
 		when (type) {
-			Type.NORMAL -> representation.represent(value)
+			Type.NORMAL -> CurrentDigitalSignalNotation.notation.notate(value, representation)
 			UNDEFINED -> "Z"
 			DONT_CARE -> "X"
 			CLOCKED -> "^$value"

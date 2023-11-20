@@ -2,6 +2,9 @@ package ch.scorpion.antares.model.testcase.parser
 
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.expression.assertAST
+import ch.scorpion.antares.model.signal.CurrentDigitalSignalNotation
+import ch.scorpion.antares.model.signal.DigitalSignalNotation
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 class TestcaseParserTest {
@@ -10,6 +13,11 @@ class TestcaseParserTest {
 		init {
 			AntaresTestRule.configure()
 		}
+	}
+
+	@BeforeTest
+	fun setUp() {
+		CurrentDigitalSignalNotation.notation = DigitalSignalNotation.PREFIX
 	}
 
 	@Test
@@ -134,11 +142,12 @@ class TestcaseParserTest {
 			0xFF 0x0 0xA
 		""".trimIndent())
 
+		// Prefix is only added if digits are not distinct
 		assertAST(parser.parse(), """
 			TestScript
 			- A,B,O
 			- TestVector
-			-- FF
+			-- 0xFF
 			-- 0
 			-- A
 		""".trimIndent())
@@ -155,9 +164,9 @@ class TestcaseParserTest {
 			TestScript
 			- A,B,O
 			- TestVector
-			-- 11
-			-- 100
-			-- 11111111
+			-- 0b11
+			-- 0b100
+			-- 0b11111111
 		""".trimIndent())
 	}
 
@@ -172,8 +181,8 @@ class TestcaseParserTest {
 			TestScript
 			- A,O
 			- TestVector
-			-- Z1
-			-- Z0
+			-- 0bZ1
+			-- 0bZ0
 		""".trimIndent())
 	}
 

@@ -12,7 +12,8 @@ object CurrentDigitalSignalNotation {
 	private val eventBus: EventBus = BaseModule.eventBus
 
 	var notation: DigitalSignalNotation = notationFromProperties
-		private set(value) {
+		// Publicly editable for testing purposes
+		set(value) {
 			if (field != value) {
 				field =value
 				BaseModule.properties.customize(DigitalSignalNotation.PROP_DIGITAL_SIGNAL_NOTATION, field.customName)
