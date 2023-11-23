@@ -53,7 +53,7 @@ class TestcaseRunBlockTest : AbstractStandardLibraryBasedCircuitTest() {
 
 	@Test
 	fun shouldRunTestBlockWithScript() {
-		val script = flipFlopView.model.getGraph(LibraryModule.libraryHolder).script!!
+		val script = flipFlopView.model.getGraph().script!!
 		val execScriptAST = BaseModule.parserFactory(script, null).parse()
 		assertResult(TestcaseScriptRunner("test", testScript, getCircuitView().graph as DigitalGraph, execScriptAST).run())
 	}

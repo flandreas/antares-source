@@ -25,7 +25,7 @@ class VHDLTestBenchCreatorIntegrationTest : AbstractStandardLibraryBasedCircuitT
 	/** Test creating a VHDL test bench for the "Half Adder" from the standard library.*/
 	@Test
 	fun shouldCreateTestBench() {
-		val model = HDLModel(getCircuitView().graph as DigitalGraph, LibraryModule.libraryHolder.library)
+		val model = HDLModel(getCircuitView().graph as DigitalGraph)
 			.create()
 			.apply {
 				renameLabels(VHDLRenaming())

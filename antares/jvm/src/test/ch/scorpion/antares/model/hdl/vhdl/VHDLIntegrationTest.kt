@@ -28,7 +28,7 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 
 	@Test
 	fun testNoOp() {
-		VHDLGenerator(testParams(), library).generateHDL(
+		VHDLGenerator(testParams()).generateHDL(
 			printer,
 			TestCircuitBuilder("test").buildNOP().graph as DigitalGraph)
 
@@ -64,7 +64,7 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 		builder.connect(subGraphVV1, subGraphVV1.model.getOutput(), subGraphVV2, subGraphVV2.model.getInput())
 		builder.connect(subGraphVV2, subGraphVV2.model.getOutput(), output)
 
-		VHDLGenerator(testParams(), library).generateHDL(printer, builder.graph as DigitalGraph)
+		VHDLGenerator(testParams()).generateHDL(printer, builder.graph as DigitalGraph)
 
 		val entityName = VHDLRenaming().checkName(nop.uuid.id)
 
@@ -114,7 +114,7 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 
 	@Test
 	fun testCustomNotGate() {
-		VHDLGenerator(testParams(),  library)
+		VHDLGenerator(testParams())
 			.generateHDL(printer, TestCircuitBuilder("test").buildCustomNot().graph as DigitalGraph)
 
 		assertEquals("""
@@ -139,7 +139,7 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 
 	@Test
 	fun testCustomNand() {
-		VHDLGenerator(testParams(),  library)
+		VHDLGenerator(testParams())
 			.generateHDL(printer, TestCircuitBuilder("test").buildCustomNAND(null).graph as DigitalGraph)
 
 
@@ -208,7 +208,7 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 		builder.connect(inputB, gateView, gateView.model.getInput(2))
 		builder.connect(gateView, output)
 
-		VHDLGenerator(testParams(),  library).generateHDL(printer, builder.graph as DigitalGraph)
+		VHDLGenerator(testParams()).generateHDL(printer, builder.graph as DigitalGraph)
 
 		assertEquals("""
 			library ieee;
@@ -249,7 +249,7 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 		builder.connect(input, gateView, gateView.model.getInput())
 		builder.connect(gateView, output)
 
-		VHDLGenerator(testParams(),  library).generateHDL(printer, builder.graph as DigitalGraph)
+		VHDLGenerator(testParams()).generateHDL(printer, builder.graph as DigitalGraph)
 
 		assertEquals("""
 			library ieee;
@@ -278,7 +278,7 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 		val constantView = builder.addVerticeView(ConstantView(DigitalSignalFactory.of(true)))
 		builder.connect(constantView, output)
 
-		VHDLGenerator(testParams(),  library).generateHDL(printer, builder.graph as DigitalGraph)
+		VHDLGenerator(testParams()).generateHDL(printer, builder.graph as DigitalGraph)
 
 		assertEquals("""
 			library ieee;
@@ -308,7 +308,7 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 		))
 		builder.connect(dipSwitch, output)
 
-		VHDLGenerator(testParams(),  library).generateHDL(printer, builder.graph as DigitalGraph)
+		VHDLGenerator(testParams()).generateHDL(printer, builder.graph as DigitalGraph)
 
 		assertEquals("""
 			library ieee;
@@ -339,7 +339,7 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 		builder.connect(powerView, output1)
 		builder.connect(groundView, output2)
 
-		VHDLGenerator(testParams(),  library).generateHDL(printer, builder.graph as DigitalGraph)
+		VHDLGenerator(testParams()).generateHDL(printer, builder.graph as DigitalGraph)
 
 		assertEquals("""
 			library ieee;
@@ -374,7 +374,7 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 		builder.connect(input2, gateView, gateView.model.getInput(2))
 		builder.connect(gateView, output)
 
-		VHDLGenerator(testParams(),  library).generateHDL(printer, builder.graph as DigitalGraph)
+		VHDLGenerator(testParams()).generateHDL(printer, builder.graph as DigitalGraph)
 
 		assertEquals("""
 			library ieee;
@@ -399,7 +399,7 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 
 	@Test
 	fun testClock() {
-		VHDLGenerator(testParams(),  library).generateHDL(printer, buildClockCircuit("CLK"))
+		VHDLGenerator(testParams()).generateHDL(printer, buildClockCircuit("CLK"))
 
 		assertEquals("""
 			library ieee;
@@ -424,14 +424,14 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 	@Test
 	fun shouldRejectClockWithoutName() {
 		assertFailsWith(HDLException::class) {
-			VHDLGenerator(testParams(),  library).generateHDL(printer, buildClockCircuit(null))
+			VHDLGenerator(testParams()).generateHDL(printer, buildClockCircuit(null))
 		}
 	}
 
 	@Test
 	fun shouldRejectClockWithoutUniqueName() {
 		assertFailsWith(HDLException::class) {
-			VHDLGenerator(testParams(),  library).generateHDL(printer, buildClockCircuit("O"))
+			VHDLGenerator(testParams()).generateHDL(printer, buildClockCircuit("O"))
 		}
 	}
 

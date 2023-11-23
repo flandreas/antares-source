@@ -219,7 +219,7 @@ class SubGraphVerticeRef(
 				fillFrom(metaGraph.containerDrawing.createSubGraphVertice())
 
 				if (paramValues.isNotEmpty) {
-					getGraph(repository).parameterValues = paramValues
+					getGraph().parameterValues = paramValues
 					synchronizePorts()
 				}
 
@@ -349,7 +349,7 @@ class SubGraphVerticeRef(
 		}
 	}
 
-	override fun getGraph(repository: MetaGraphRepository): Graph {
+	override fun getGraph(): Graph {
 		return ensureGraph()
 	}
 
@@ -414,7 +414,7 @@ class SubGraphVerticeRef(
 
 		// First forward to Graph. Local update will then inform Views to sync their state,
 		// which depends on the Graph.
-		getGraph(repository).parameterValues = newParamValues
+		getGraph().parameterValues = newParamValues
 
 		paramValues = newParamValues
 	}

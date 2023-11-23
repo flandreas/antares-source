@@ -27,7 +27,7 @@ class VHDLRAMSyncTest : AbstractVHDLTest() {
 		builder.connect(clr, ramView, ramView.model.getClearInput())
 		builder.connect(ramView, ramView.model.getDataPort(), d)
 
-		VHDLGenerator(testParams(), library).generateHDL(printer, builder.graph as DigitalGraph)
+		VHDLGenerator(testParams()).generateHDL(printer, builder.graph as DigitalGraph)
 
 		assertEquals("""
 			library ieee;

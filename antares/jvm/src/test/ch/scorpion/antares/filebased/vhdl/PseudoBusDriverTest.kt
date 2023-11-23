@@ -6,7 +6,6 @@ import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.hdl.vhdl.AbstractVHDLTest.Companion.testParams
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.io.StringCodePrinter
-import ch.scorpion.jabbah.graph.library.LibraryModule
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -33,7 +32,7 @@ class PseudoBusDriverTest : AbstractFileBasedTest() {
 
 	@Test
 	fun test() {
-		VHDLGenerator(testParams(), LibraryModule.libraryHolder.library)
+		VHDLGenerator(testParams())
 			.generateHDL(printer, openedCircuitView.graph as DigitalGraph)
 
 		assertEquals("""

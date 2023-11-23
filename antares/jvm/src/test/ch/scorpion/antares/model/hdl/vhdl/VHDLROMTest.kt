@@ -25,7 +25,7 @@ class VHDLROMTest : AbstractVHDLTest() {
 		builder.connect(cs, romView, romView.model.getChipSelectInput())
 		builder.connect(romView, romView.model.getDataPort(), d)
 
-		VHDLGenerator(testParams(), library)
+		VHDLGenerator(testParams())
 			.generateHDL(printer, builder.graph as DigitalGraph)
 
 		assertEquals("""

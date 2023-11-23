@@ -10,7 +10,7 @@ class VHDLGeneratorTest : AbstractVHDLTest() {
 
 	@Test
 	fun shouldRename() {
-		VHDLGenerator(testParams(), library).generateHDL(
+		VHDLGenerator(testParams()).generateHDL(
 			printer,
 			TestCircuitBuilder("test").buildNOP(outputName = "out").graph as DigitalGraph)
 

@@ -15,8 +15,6 @@ import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.UUID
-import ch.scorpion.jabbah.graph.MetaGraph
-import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.Vertice
@@ -24,12 +22,8 @@ import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 
 /**
  * The context for creating [HDLCircuit]s.
- * @property repository used for accessing [MetaGraph]s when creating [HDLCircuit]s
  */
-class HDLModel(
-	circuit: DigitalGraph,
-	private val repository: MetaGraphRepository
-) {
+class HDLModel(circuit: DigitalGraph) {
 
 	/**
 	 * Keeps track of the one and only [HDLCircuit] model created for a [DigitalGraph]
@@ -56,7 +50,7 @@ class HDLModel(
 				// computeIfAbsent() would generate ConcurrentModificationException
 				var hdlCircuit = hdlCircuits[vertice.graphUUID!!]
 				if (hdlCircuit == null) {
-					val digitalGraph = vertice.getGraph(repository) as DigitalGraph
+					val digitalGraph = vertice.getGraph() as DigitalGraph
 					if (digitalGraph.purelyScripted) {
 						throw HDLException(Translations.getString("antares.vhdl.purelyScriptedNotSupported.error.txt", digitalGraph.name.value))
 					}

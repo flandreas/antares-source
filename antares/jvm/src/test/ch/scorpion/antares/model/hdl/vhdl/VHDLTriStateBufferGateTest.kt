@@ -23,7 +23,7 @@ class VHDLTriStateBufferGateTest : AbstractVHDLTest() {
 		builder.connect(enable, gate, gate.model.getEnablePort())
 		builder.connect(gate, gate.model.getOutputPort(), output)
 
-		VHDLGenerator(testParams(), library).generateHDL(printer, builder.graph as DigitalGraph)
+		VHDLGenerator(testParams()).generateHDL(printer, builder.graph as DigitalGraph)
 
 		assertEquals("""
 			library ieee;
@@ -76,7 +76,7 @@ class VHDLTriStateBufferGateTest : AbstractVHDLTest() {
 		builder.connect(enable, gate, gate.model.getEnablePort())
 		builder.connect(gate, gate.model.getOutputPort(), output)
 
-		VHDLGenerator(testParams(), library).generateHDL(printer, builder.graph as DigitalGraph)
+		VHDLGenerator(testParams()).generateHDL(printer, builder.graph as DigitalGraph)
 
 		assertEquals("""
 			library ieee;
@@ -129,7 +129,7 @@ class VHDLTriStateBufferGateTest : AbstractVHDLTest() {
 		builder.connect(enable, gate, gate.model.getEnablePort())
 		builder.connect(gate, gate.model.getOutputPort(), output)
 
-		VHDLGenerator(testParams(), library).generateHDL(printer, builder.graph as DigitalGraph)
+		VHDLGenerator(testParams()).generateHDL(printer, builder.graph as DigitalGraph)
 
 		assertEquals("""
 			library ieee;
@@ -194,7 +194,7 @@ class VHDLTriStateBufferGateTest : AbstractVHDLTest() {
 		builder.connect(enable2, gate2, gate2.model.getEnablePort())
 		builder.connect(gate2, gate2.model.getOutputPort(), output2)
 
-		VHDLGenerator(testParams(), library).generateHDL(printer, builder.graph as DigitalGraph)
+		VHDLGenerator(testParams()).generateHDL(printer, builder.graph as DigitalGraph)
 
 		assertEquals("""
 			library ieee;

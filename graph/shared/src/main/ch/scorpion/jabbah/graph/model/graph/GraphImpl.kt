@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.graph.model.graph
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.dsl.DslError
-import ch.scorpion.jabbah.base.dsl.DslParser
 import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
 import ch.scorpion.jabbah.base.dsl.SymbolTable
 import ch.scorpion.jabbah.base.event.EventBus
@@ -217,6 +216,37 @@ open class GraphImpl(
 
 	override fun formNet(signalHandler: SignalHandler) {
 		_elements.forEach { it.formNet(signalHandler) }
+	}
+
+	override fun checkDesign(signalHandler: SignalHandler, eventBus: EventBus): Boolean {
+		val issues = _elements
+			.filter { it.designError != null }
+			.groupBy { it }
+			.map { it.value.first() }
+			.map {
+				IssueImpl(
+					severity = IssueSeverity.Error,
+					name = Translations.getString("graph.designError.name"),
+					description = it.designError?.description,
+					origin = "${it.type} (${it.id})",
+					context = name.value
+				)
+			}
+		issues.forEach { eventBus.post(it) }
+
+		val hasChildIssues = _elements
+			.filterIsInstance<SubGraphVerticeRef>()
+			.map {
+				if (it.isDeepExecution(signalHandler.isDeepExecution)) {
+					it.getGraph()
+				} else {
+					null
+				}
+			}
+			.map { it?.checkDesign(signalHandler, eventBus) }
+			.any { it == false }
+
+		return issues.isEmpty() && !hasChildIssues
 	}
 
 	override fun executionInitialize(signalHandler: SignalHandler) {

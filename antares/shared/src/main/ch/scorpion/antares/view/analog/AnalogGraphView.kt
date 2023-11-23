@@ -76,7 +76,7 @@ class AnalogGraphView(
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
 		analysis = null
-		checkDesign(signalHandler)
+		checkDesign(signalHandler, eventBus)
 		requestActing(signalHandler)
 		CurrentFlowAnimator.register(this, signalHandler.systemSpeedCategory)
 	}
@@ -85,7 +85,7 @@ class AnalogGraphView(
 		CurrentFlowAnimator.unregister(this)
 	}
 
-	override fun checkDesign(signalHandler: SignalHandler): Boolean =
+	override fun checkDesign(signalHandler: SignalHandler, eventBus: EventBus): Boolean =
 		ensureFullyConnected().also { ensureAnalysis() }
 
 	/** ---- [AnalogGraphView] */

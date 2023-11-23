@@ -41,7 +41,7 @@ class SubGraphVerticeRefTest {
 		customNOT.model.bind(true, LibraryModule.libraryHolder.library)
 
 		val libraryGraph = LibraryModule.libraryHolder.library.getMetaGraph(customNOT.model.graphUUID!!).graph.model!!
-		val customGraph = customNOT.model.getGraph(LibraryModule.libraryHolder.library)
+		val customGraph = customNOT.model.getGraph()
 
 		for (i in 1..5) {
 			assertEquals(libraryGraph.withId(i)!!.id, customGraph.withId(i)!!.id)
@@ -62,7 +62,7 @@ class SubGraphVerticeRefTest {
 		customNAND.model.bind(true, LibraryModule.libraryHolder.library)
 
 		val libraryGraph = LibraryModule.libraryHolder.library.getMetaGraph(customNAND.model.graphUUID!!).graph.model!!
-		val customGraph = customNAND.model.getGraph(LibraryModule.libraryHolder.library)
+		val customGraph = customNAND.model.getGraph()
 
 		for (i in 1..6) {
 			assertEquals(libraryGraph.withId(i)!!.id, customGraph.withId(i)!!.id)

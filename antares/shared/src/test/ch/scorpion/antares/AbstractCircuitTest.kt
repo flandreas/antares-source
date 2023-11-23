@@ -2,8 +2,8 @@ package ch.scorpion.antares
 
 import ch.scorpion.antares.model.gate.CurrentUndefinedGateInputBehavior
 import ch.scorpion.antares.model.gate.UndefinedGateInputBehavior
-import ch.scorpion.jabbah.base.math.MILLION
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.math.MILLION
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.ControlledTimeService
 import ch.scorpion.jabbah.base.time.ControlledTimer
@@ -24,7 +24,6 @@ import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.view.GraphView
 import io.mockk.mockk
 import kotlin.test.BeforeTest
-import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
@@ -61,7 +60,7 @@ abstract class AbstractCircuitTest {
 	protected fun startSimulation(proceedTo: Long = 0) {
 		scheduler.isActive = true
 		LibraryModule.libraryHolder.l?.let { getCircuitView().graph!!.bind(true, it) }
-		getCircuitView().checkDesign(scheduler)
+		getCircuitView().checkDesign(scheduler, eventBus)
 		getCircuitView().graph!!.formNet(scheduler)
 		getCircuitView().graph!!.executionInitialize(scheduler)
 		getCircuitView().graph!!.executionStart(scheduler, getCircuitView())

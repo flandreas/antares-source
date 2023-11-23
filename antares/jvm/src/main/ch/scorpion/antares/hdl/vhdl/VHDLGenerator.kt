@@ -5,8 +5,6 @@ import ch.scorpion.antares.hdl.HDLModel
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.jabbah.base.io.CodePrinter
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.graph.MetaGraphRepository
-import ch.scorpion.jabbah.graph.library.LibraryModule
 import java.io.FileOutputStream
 import java.nio.file.Path
 
@@ -16,7 +14,6 @@ import java.nio.file.Path
  */
 class VHDLGenerator(
 	private val params: HDLExportParams,
-	private val repository: MetaGraphRepository = LibraryModule.libraryHolder.library,
 	private val generateComment: Boolean = false
 ) {
 
@@ -43,7 +40,7 @@ class VHDLGenerator(
 	}
 
 	private fun createModel(circuit: DigitalGraph): HDLModel =
-		HDLModel(circuit, repository)
+		HDLModel(circuit)
 			.create()
 			.apply {
 				renameLabels(params.renaming)

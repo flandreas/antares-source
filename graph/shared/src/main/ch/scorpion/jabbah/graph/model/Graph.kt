@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.model
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
+import ch.scorpion.jabbah.base.Issue
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.dsl.DslParser
@@ -128,6 +129,14 @@ interface Graph : GraphPortOwner, Namable, Describable, Storable, Bean {
 	 * Must be called before [executionStart] to avoid race conditions for the established [CombinedNet]s.
 	 */
 	fun formNet(signalHandler: SignalHandler)
+
+	/**
+	 * Checks for design errors in this [Graph] and posts an [Issue] on the specified [EventBus] for every
+	 * detected error. This is called before execution of this [Graph] is started. Design errors are defined
+	 * in terms of [GraphElement.designError].
+	 * @return `true` if the design is okay, `false` if a design error has been found
+	 */
+	fun checkDesign(signalHandler: SignalHandler, eventBus: EventBus): Boolean
 
 	fun executionInitialize(signalHandler: SignalHandler)
 

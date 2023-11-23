@@ -17,7 +17,7 @@ class VHDLMultiBitIntegrationTest : AbstractVHDLTest() {
 
 	@Test
 	fun testNoOp() {
-		VHDLGenerator(testParams(), library).generateHDL(
+		VHDLGenerator(testParams()).generateHDL(
 			printer,
 			TestCircuitBuilder("test").buildNOP(bitWidth = BitWidth.BW_4).graph as DigitalGraph)
 
@@ -43,7 +43,7 @@ class VHDLMultiBitIntegrationTest : AbstractVHDLTest() {
 
 	@Test
 	fun testCustomNand() {
-		VHDLGenerator(testParams(),  library,).generateHDL(
+		VHDLGenerator(testParams()).generateHDL(
 			printer,
 			TestCircuitBuilder("test").buildCustomNAND(null, BitWidth.BW_4).graph as DigitalGraph)
 
@@ -83,7 +83,7 @@ class VHDLMultiBitIntegrationTest : AbstractVHDLTest() {
 		builder.connect(input2, concentrator, concentrator.model.getInput(3))
 		builder.connect(concentrator, concentrator.model.getOutput(1), output)
 
-		VHDLGenerator(testParams(),  library).generateHDL(printer, builder.graph as DigitalGraph)
+		VHDLGenerator(testParams()).generateHDL(printer, builder.graph as DigitalGraph)
 
 		assertEquals("""
 			library ieee;
@@ -118,7 +118,7 @@ class VHDLMultiBitIntegrationTest : AbstractVHDLTest() {
 		builder.connect(input2, concentrator, concentrator.model.getInput(3))
 		builder.connect(concentrator, concentrator.model.getOutput(1), output)
 
-		VHDLGenerator(testParams(), library).generateHDL(printer, builder.graph as DigitalGraph)
+		VHDLGenerator(testParams()).generateHDL(printer, builder.graph as DigitalGraph)
 
 		assertEquals("""
 			library ieee;
@@ -153,7 +153,7 @@ class VHDLMultiBitIntegrationTest : AbstractVHDLTest() {
 		builder.connect(splitter, splitter.model.getOutput(2), output1)
 		builder.connect(splitter, splitter.model.getOutput(3), output2)
 
-		VHDLGenerator(testParams(), library).generateHDL(printer, builder.graph as DigitalGraph)
+		VHDLGenerator(testParams()).generateHDL(printer, builder.graph as DigitalGraph)
 
 		assertEquals("""
 			library ieee;
@@ -188,7 +188,7 @@ class VHDLMultiBitIntegrationTest : AbstractVHDLTest() {
 		builder.connect(splitter, splitter.model.getOutput(2), output1)
 		builder.connect(splitter, splitter.model.getOutput(3), output2)
 
-		VHDLGenerator(testParams(), library).generateHDL(printer, builder.graph as DigitalGraph)
+		VHDLGenerator(testParams()).generateHDL(printer, builder.graph as DigitalGraph)
 
 		assertEquals("""
 			library ieee;

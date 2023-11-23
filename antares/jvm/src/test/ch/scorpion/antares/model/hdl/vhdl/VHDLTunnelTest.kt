@@ -20,7 +20,7 @@ class VHDLTunnelTest : AbstractVHDLTest() {
 		builder.connect(a, tunnelView1)
 		builder.connect(tunnelView2, b)
 
-		VHDLGenerator(testParams(), library).generateHDL(printer, builder.graph as DigitalGraph)
+		VHDLGenerator(testParams()).generateHDL(printer, builder.graph as DigitalGraph)
 
 		assertEquals("""
 			library ieee;
@@ -55,7 +55,7 @@ class VHDLTunnelTest : AbstractVHDLTest() {
 		builder.connect(tunnelView12, tunnelView21)
 		builder.connect(tunnelView22, b)
 
-		VHDLGenerator(testParams(), library).generateHDL(printer, builder.graph as DigitalGraph)
+		VHDLGenerator(testParams()).generateHDL(printer, builder.graph as DigitalGraph)
 
 		assertEquals("""
 			library ieee;

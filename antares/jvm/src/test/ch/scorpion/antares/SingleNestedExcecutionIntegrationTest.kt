@@ -67,13 +67,13 @@ class SingleNestedExcecutionIntegrationTest : AbstractJvmCircuitTest() {
 		nop.model.propagationDelay = 300 * MILLION
 
 		// Set propagation delay of input CircuitInOut
-		input = nop.model.getGraph(LibraryModule.libraryHolder.library).withId(1) as DigitalCircuitInOut
+		input = nop.model.getGraph().withId(1) as DigitalCircuitInOut
 		input.propagationDelay = 100 * MILLION
 		// Set propagation delay of output CircuitInOut
-		output = nop.model.getGraph(LibraryModule.libraryHolder.library).withId(2) as DigitalCircuitInOut
+		output = nop.model.getGraph().withId(2) as DigitalCircuitInOut
 		output.propagationDelay = 100 * MILLION
 		// Set propagation delay of Net
-		innerNet = nop.model.getGraph(LibraryModule.libraryHolder.library).withId(3) as Net<DigitalSignal>
+		innerNet = nop.model.getGraph().withId(3) as Net<DigitalSignal>
 		innerNet.propagationDelay = 100 * MILLION
 
 		circuitView = builder.build()

@@ -2,24 +2,23 @@ package ch.scorpion.jabbah.graph.container
 
 import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.geom.Direction
-import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
-import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
+import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.*
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.*
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
+import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
-import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
-import ch.scorpion.jabbah.graph.MetaGraphRepository
+import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.vertice.DeepVerticeLink
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
@@ -27,9 +26,9 @@ import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
+import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
-import ch.scorpion.jabbah.io.Storable
 
 /**
  * A [Component] that wraps a [ControlView] in order to allow deferred reference
@@ -198,9 +197,9 @@ class ControlViewComponent(
 
 	/** ---- [ControlViewComponent] */
 
-	fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, graph: Graph, repository: MetaGraphRepository) {
+	fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, graph: Graph) {
 		try {
-			val vertice = controlModelLink.getLinkedVertice(graph, repository)
+			val vertice = controlModelLink.getLinkedVertice(graph)
 			controlView.bindControlView(subGraphVerticeView, vertice)
 		} catch (e: IllegalArgumentException) {
 			invalidate()

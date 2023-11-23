@@ -36,8 +36,8 @@ interface SubGraphVertice : Vertice, Describable {
 	 */
 	fun getGraphIfNotBroken(): Graph?
 
-    /** Returns the contained [Graph] by loading and copying it from the specified [MetaGraphRepository] if not already loaded.*/
-    fun getGraph(repository: MetaGraphRepository): Graph
+    /** Returns the contained [Graph] by loading and copying it from its [MetaGraphRepository] if not already loaded.*/
+    fun getGraph(): Graph
 
     fun <T: Any> propagateOutput(outputPort: SubGraphOutputPort<T>, signal: T, signalHandler: SignalHandler)
 }

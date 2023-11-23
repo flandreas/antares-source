@@ -45,8 +45,8 @@ class BitWidthExpressionIntegrationTest : AbstractJvmCircuitTest() {
 
 	@Test
 	fun shouldUpdateCircuit() {
-		val input = subGraphVV.model.getGraph(LibraryModule.libraryHolder).getGraphInput<DigitalSignal>("I") as DigitalCircuitInOut
-		val output = subGraphVV.model.getGraph(LibraryModule.libraryHolder).getGraphOutput<DigitalSignal>("O") as DigitalCircuitInOut
+		val input = subGraphVV.model.getGraph().getGraphInput<DigitalSignal>("I") as DigitalCircuitInOut
+		val output = subGraphVV.model.getGraph().getGraphOutput<DigitalSignal>("O") as DigitalCircuitInOut
 
 		subGraphVV.model.setParamValue(GraphParamValue.create("BW", BitWidthGraphParamType, BitWidth.BW_8))
 

@@ -162,22 +162,6 @@ open class GraphViewImpl(
 		drawables.filterIsInstance<ActorView>().forEach { it.executionStopped(signalHandler) }
 	}
 
-	override fun checkDesign(signalHandler: SignalHandler): Boolean {
-		val issues = getDrawables { it.model.designError != null }
-			.groupBy { it.model }
-			.map { it.value.first() }
-			.map {
-				IssueImpl(
-					severity = IssueSeverity.Error,
-					name = Translations.getString("graph.designError.name"),
-					description = it.model.designError?.description,
-					origin = "${it.type} (${it.id})",
-					context = null)
-			}
-		issues.forEach { eventBus.post(it) }
-		return issues.isEmpty()
-	}
-
 	override fun cloneForExistingModel(model: Graph): GraphView {
 		LOG.trace("clone '${model.name}'for existing model")
 		val clone = StorableCloner.newClone(

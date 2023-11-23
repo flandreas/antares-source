@@ -8,7 +8,6 @@ import ch.scorpion.antares.hdl.vhdl.VHDLTestBenchCreator
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.testcase.Testcase
 import ch.scorpion.jabbah.base.io.StringCodePrinter
-import ch.scorpion.jabbah.graph.library.LibraryModule
 import java.nio.file.Paths
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -22,7 +21,7 @@ class VHDLTestBenchCreatorClockTest : AbstractVHDLTest() {
 		val output = builder.addOutput("O")
 		builder.connect(input, output)
 
-		val model = HDLModel(builder.graph as DigitalGraph, LibraryModule.libraryHolder.library)
+		val model = HDLModel(builder.graph as DigitalGraph)
 			.create()
 			.apply {
 				renameLabels(VHDLRenaming())

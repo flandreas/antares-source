@@ -448,7 +448,7 @@ class SubGraphVerticeViewImpl(
 				val controlViewComponents = getControlViewComponents()
 				if (controlViewComponents.isNotEmpty()) {
 					val innerGraph = getGraph()
-					controlViewComponents.forEach { it.bindControlView(this, innerGraph, repository) }
+					controlViewComponents.forEach { it.bindControlView(this, innerGraph) }
 				}
 			}
 		}
@@ -573,7 +573,7 @@ class SubGraphVerticeViewImpl(
 		drawableBag.drawables.filterIsInstance<ControlViewComponent>().map { it }.toImmutableList()
 
 	private fun getGraph(): Graph =
-		subGraphVertice.getGraph(repository)
+		subGraphVertice.getGraph()
 
 	// Visible for testing
 	fun fillFromContainerDrawing(containerDrawing: ContainerDrawing) {

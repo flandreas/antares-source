@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.Port
@@ -49,7 +48,7 @@ class SubGraphVerticeImpl(
 		return null
 	}
 
-	override fun getGraph(repository: MetaGraphRepository): Graph {
+	override fun getGraph(): Graph {
 		throw UnsupportedOperationException()
 	}
 
