@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.model.param
 
+import ch.scorpion.jabbah.base.help.HelpId
 import ch.scorpion.jabbah.io.*
 
 /**
@@ -50,6 +51,10 @@ class GraphParamDefinition<T : Any>(
 }
 
 class GraphParamDefinitions : AbstractStorable(), Iterable<GraphParamDefinition<*>> {
+
+	companion object {
+		val HELP_ID = HelpId("graph.paramDefinitions")
+	}
 
 	private var _definitions = mutableListOf<GraphParamDefinition<*>>()
 	val definitions: Collection<GraphParamDefinition<*>> get() = _definitions

@@ -36,6 +36,7 @@ import ch.scorpion.jabbah.graph.container.*
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
 import ch.scorpion.jabbah.graph.ui.EmptyGraphNavigationControllerExtension
 import ch.scorpion.jabbah.graph.ui.GraphNavigationViewController
 import ch.scorpion.jabbah.graph.ui.GraphNavigationViewControllerExtension
@@ -243,6 +244,7 @@ object GraphViewModule : AbstractModule() {
 		HelpSourceRegistry.register(ScenarioImpl.CONDITION_HELP_ID, HelpSource("/scenarios/scenarios#scenarioCondition"))
 		HelpSourceRegistry.register(ScenarioStepImpl.SCRIPTING_HELP_ID, HelpSource("/scenarios/scenarios#scenarioStepScripting"))
 		HelpSourceRegistry.register(UsecaseImpl.SCRIPTING_HELP_ID, HelpSource("/usecases/usecase-scripting"))
+		HelpSourceRegistry.register(GraphParamDefinitions.HELP_ID, HelpSource("circuit-parameters#graphParamDefinitions"))
 	}
 
 	fun getEdgeViewFactory(): EdgeViewFactory = edgeViewFactoryImpl

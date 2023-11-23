@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.swing.DataFormPanel
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.base.ui.HelpAction
 import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.param.*
@@ -201,6 +202,7 @@ class GraphParamDefinitionsViewSwing(
 
 		val southButtonPanel = JPanel()
 		southButtonPanel.layout = BoxLayout(southButtonPanel, BoxLayout.LINE_AXIS)
+		southButtonPanel.add(UiUtil.createToolBarButton(HelpAction(GraphParamDefinitions.HELP_ID)))
 		southButtonPanel.add(Box.createHorizontalGlue())
 		UIBasics.addButtons(southButtonPanel, createButton(controller.saveAction), createButton(controller.cancelAction))
 		southPanel.add(Box.createVerticalStrut(20))
