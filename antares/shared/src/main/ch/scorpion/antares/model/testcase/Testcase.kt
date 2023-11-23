@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.testcase.parser.TestcaseAnalyser
 import ch.scorpion.antares.model.testcase.parser.TestcaseParser
 import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
+import ch.scorpion.jabbah.base.help.HelpId
 import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.model.text.ScriptProperty
 import ch.scorpion.jabbah.edit.model.text.description.*
@@ -17,6 +18,10 @@ class Testcase(
 	name: String = "",
 	script: String = ""
 ) : AbstractStorable(), Namable, Describable, Bean {
+
+	companion object {
+		val SCRIPT_HELP_ID = HelpId("antares.testcase.script")
+	}
 
 	/** The identification of this [Testcase] that is unique within a [DigitalGraph]. */
 	var id: Int = 0

@@ -24,9 +24,9 @@ class UsecaseImplBeanInfo : AbstractBeanInfo<UsecaseImpl>() {
 		super.addProperties(bean, editor, properties)
 
 		val execScript = EditProperties.script("executionScript", "graph.property.usecase.execScript",
-			beanProvider = usecaseBeanProvider, bean::createParser)
+			beanProvider = usecaseBeanProvider, bean::createParser, UsecaseImpl.SCRIPTING_HELP_ID)
 		val testScript = EditProperties.script("testScriptProperty", "graph.property.usecase.testScript",
-			beanProvider = usecaseBeanProvider, bean::createParser)
+			beanProvider = usecaseBeanProvider, bean::createParser, UsecaseImpl.SCRIPTING_HELP_ID)
 
 		properties.add(name.bind(editor, beanIdProvider(bean.id)))
 		properties.add(description.bind(editor, beanIdProvider(bean.id)))

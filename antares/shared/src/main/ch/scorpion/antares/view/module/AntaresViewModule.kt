@@ -14,6 +14,7 @@ import ch.scorpion.antares.model.module.AntaresModelModule
 import ch.scorpion.antares.model.net.TransistorType
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalNotation
+import ch.scorpion.antares.model.testcase.Testcase
 import ch.scorpion.antares.view.*
 import ch.scorpion.antares.view.addressable.LookupTableView
 import ch.scorpion.antares.view.addressable.RAMView
@@ -783,6 +784,10 @@ object AntaresViewModule : AbstractModule() {
 
 			register(HelpId(RandomView::class.simpleName!!), HelpSource("$base/random"))
 			register(HelpId(BitExtenderView::class.simpleName!!), HelpSource("$base/bit-extender"))
+
+			// Other
+			register(Testcase.SCRIPT_HELP_ID, HelpSource("/circuits/circuit-tests"))
+			register(ch.scorpion.antares.model.addressable.ROM.DISASSEMBLER_HELP_ID, HelpSource("$base/rom#disassembler"))
 		}
 	}
 }

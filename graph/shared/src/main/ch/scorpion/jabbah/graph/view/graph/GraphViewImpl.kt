@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.help.HelpId
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawableContainer
@@ -44,6 +45,8 @@ open class GraphViewImpl(
 
 	companion object {
 		private val LOG by logger(GraphViewImpl::class)
+
+		val SCRIPT_HELP_ID = HelpId("graph.GraphView.script")
 
 		/** Use the same single [GraphViewInputEventHandler] instance for all [GraphViewImpl]. */
 		var inputEventHandler: GraphViewInputEventHandler<*>? = null

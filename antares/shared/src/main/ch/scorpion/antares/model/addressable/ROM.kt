@@ -10,6 +10,7 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.jabbah.base.*
+import ch.scorpion.jabbah.base.help.HelpId
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.Translation
@@ -38,6 +39,8 @@ class ROM : AbstractAddressable<ROM>(CALCULATOR) {
 		private val ADDRESS_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.rom.addressPort.desc"))
 		private val CHIP_SELECT_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.rom.chipSelectPort.desc"))
 		private val DATA_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.rom.dataPort.desc"))
+
+		val DISASSEMBLER_HELP_ID = HelpId("antares.rom.disassembler")
 
 		val CALCULATOR = Calculator()
 

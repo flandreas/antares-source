@@ -26,7 +26,7 @@ class ScenarioImplBeanInfo : AbstractBeanInfo<ScenarioImpl>() {
 		super.addProperties(bean, editor, properties)
 
 		val condition = EditProperties.script("conditionProperty", "graph.property.scenario.condition",
-			beanProvider = scenarioBeanProvider, bean::createParser)
+			beanProvider = scenarioBeanProvider, bean::createParser, ScenarioImpl.CONDITION_HELP_ID)
 
 		properties.add(name.bind(editor, beanIdProvider(bean.id), filter = { false }))
 		properties.add(description.bind(editor, beanIdProvider(bean.id)))

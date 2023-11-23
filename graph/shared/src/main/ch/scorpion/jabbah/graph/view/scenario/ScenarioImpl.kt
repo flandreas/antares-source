@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.dsl.*
+import ch.scorpion.jabbah.base.help.HelpId
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.parser.Parser
@@ -30,6 +31,7 @@ class ScenarioImpl(
 
 	companion object {
 		private val LOG by logger(ScenarioImpl::class)
+		val CONDITION_HELP_ID = HelpId("graph.scenario.condition")
 	}
 
 	private val steps: MutableList<ScenarioStep> by lazy { mutableListOf() }

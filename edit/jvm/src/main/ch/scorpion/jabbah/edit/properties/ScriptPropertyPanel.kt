@@ -7,10 +7,12 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.DslParser
 import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.base.dsl.ParserFactory
+import ch.scorpion.jabbah.base.help.HelpId
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.swing.LineNumberTextArea
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.base.ui.HelpAction
 import ch.scorpion.jabbah.base.ui.UIBasics
 import java.awt.*
 import javax.swing.*
@@ -18,6 +20,7 @@ import javax.swing.*
 class ScriptPropertyPanel(
 	script: String,
 	editable: Boolean = true,
+	private val helpId: HelpId? = null,
 	private val parserFactory: ParserFactory? = BaseModule.parserFactory,
 	private val closeHandler: () -> Unit
 ) : JPanel() {
@@ -36,10 +39,11 @@ class ScriptPropertyPanel(
 			script: String,
 			propertyName: String,
 			editable: Boolean = true,
+			helpId: HelpId? = null,
 			parserFactory: ParserFactory? = BaseModule.parserFactory
 		): String? {
 			val builder = DialogBuilder<ScriptPropertyPanel>(parent)
-				.content { dialog -> ScriptPropertyPanel(script, editable, parserFactory) { dialog.dispose() } }
+				.content { dialog -> ScriptPropertyPanel(script, editable, helpId, parserFactory) { dialog.dispose() } }
 				.title(propertyName)
 				.preferredSize(Dimension(600, 500))
 				.defaultButton { if (editable) it.okButton else it.closeButton }
@@ -87,6 +91,7 @@ class ScriptPropertyPanel(
 
 		val buttonPanel = JPanel()
 		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
+		helpId?.let { buttonPanel.add(UiUtil.createToolBarButton(HelpAction(it))) }
 		buttonPanel.add(Box.createHorizontalGlue())
 		if (editable) {
 			fillEditableButtonPanel(buttonPanel)

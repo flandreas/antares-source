@@ -28,7 +28,7 @@ class TestcaseBeanInfo : AbstractBeanInfo<Testcase>() {
 		super.addProperties(bean, editor, properties)
 
 		val testVectors = EditProperties.script("testVectors", "antares.testcase.testVectors",
-			beanProvider = testcaseBeanProvider, bean::createParser)
+			beanProvider = testcaseBeanProvider, bean::createParser, Testcase.SCRIPT_HELP_ID)
 
 		properties.add(name.bind(editor, beanIdProvider(bean.id)))
 		properties.add(description.bind(editor, beanIdProvider(bean.id)))

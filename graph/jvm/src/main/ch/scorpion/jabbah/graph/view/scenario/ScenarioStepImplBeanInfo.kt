@@ -35,11 +35,11 @@ class ScenarioStepImplBeanInfo : AbstractBeanInfo<ScenarioStepImpl>() {
 		val ids = listOf("${scenario.id}$ID_SEPARATOR${bean.id}")
 
 		val condition = EditProperties.script("conditionProperty", "graph.property.scenario.condition",
-			beanProvider = scenarioStepProvider, bean::createParser)
+			beanProvider = scenarioStepProvider, bean::createParser, ScenarioStepImpl.SCRIPTING_HELP_ID)
 		val onEntry = EditProperties.script("onEntryProperty", "graph.property.scenario.onEntry",
-			beanProvider = scenarioStepProvider, bean::createParser)
+			beanProvider = scenarioStepProvider, bean::createParser, ScenarioStepImpl.SCRIPTING_HELP_ID)
 		val onExit = EditProperties.script("onExitProperty", "graph.property.scenario.onExit",
-			beanProvider = scenarioStepProvider, bean::createParser)
+			beanProvider = scenarioStepProvider, bean::createParser, ScenarioStepImpl.SCRIPTING_HELP_ID)
 
 		properties.add(name.bind(editor, ids, filter = { false }))
 		properties.add(description.bind(editor, ids))

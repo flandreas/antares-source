@@ -99,6 +99,7 @@ object EditModuleJvm : AbstractModule() {
 			ScriptPropertyEditor(
 				propertyName = (it as ScriptPropertySwing).displayName,
 				editable = it.editable,
+				helpId = it.helpId,
 				parserFactory = it.parserFactory)
 		}
 		registry.register(TranslatableText::class.java) {

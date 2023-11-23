@@ -18,7 +18,7 @@ class ContainerDrawingBeanInfo : AbstractBeanInfo<ContainerDrawing>() {
 		super.addProperties(bean, editor, properties)
 
 		val execDrawScript = EditProperties.script("execDrawScript", "graph.property.ContainerDrawing.execDrawScript",
-			beanProvider = drawingBeanProvider, bean::createDrawSymbolScriptParser)
+			beanProvider = drawingBeanProvider, bean::createDrawSymbolScriptParser, ContainerDrawing.SCRIPT_HELP_ID)
 
 		properties.add(execDrawScript.bind(editor, listOf()))
 		properties.add(controlViewVisibility.bind(editor, listOf()))

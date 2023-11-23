@@ -25,7 +25,8 @@ open class GraphViewImplBeanInfo<in T: GraphViewImpl> : AbstractBeanInfo<T>() {
     override fun addProperties(bean: T, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
-	    val script = EditProperties.script("script", "graph.property.GraphViewImpl.script", drawingBeanProvider, bean.graph!!::createParser)
+	    val script = EditProperties.script("script", "graph.property.GraphViewImpl.script",
+		    drawingBeanProvider, bean.graph!!::createParser, GraphViewImpl.SCRIPT_HELP_ID)
 	    val ids = listOf<String>()
 
 	    properties.add(type.bind(editor, ids, editable = false))

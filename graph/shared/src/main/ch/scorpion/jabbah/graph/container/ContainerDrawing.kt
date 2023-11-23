@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
 import ch.scorpion.jabbah.base.dsl.Symbol
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.help.HelpId
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.parser.Parser
@@ -52,6 +53,7 @@ class ContainerDrawing(
 
 	companion object {
 		private val LOG by logger(ContainerDrawing::class)
+		val SCRIPT_HELP_ID = HelpId("graph.container.script")
 	}
 
 	var model: SubGraphVertice = SubGraphVerticeImpl(name)

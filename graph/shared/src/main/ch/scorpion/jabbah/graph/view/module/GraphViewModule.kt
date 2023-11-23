@@ -62,8 +62,11 @@ import ch.scorpion.jabbah.graph.view.port.PortViewFactory
 import ch.scorpion.jabbah.graph.view.port.PortViewStorable
 import ch.scorpion.jabbah.graph.view.port.UndefinedPortViewFactory
 import ch.scorpion.jabbah.graph.view.scenario.ScenarioDetector
+import ch.scorpion.jabbah.graph.view.scenario.ScenarioImpl
+import ch.scorpion.jabbah.graph.view.scenario.ScenarioStepImpl
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
+import ch.scorpion.jabbah.graph.view.usecase.UsecaseImpl
 import ch.scorpion.jabbah.graph.view.usecase.UsecaseRecorder
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImplSelectionModel
@@ -235,6 +238,11 @@ object GraphViewModule : AbstractModule() {
 
 	private fun registerHelpSources() {
 		HelpSourceRegistry.register(UsecaseRecorder.HELP_ID, HelpSource("/usecases/usecases#recording"))
+		HelpSourceRegistry.register(GraphViewImpl.SCRIPT_HELP_ID, HelpSource("/circuits/circuit-scripting"))
+		HelpSourceRegistry.register(ContainerDrawing.SCRIPT_HELP_ID, HelpSource("/subcircuits/subcircuits#representation"))
+		HelpSourceRegistry.register(ScenarioImpl.CONDITION_HELP_ID, HelpSource("/scenarios/scenarios#scenarioCondition"))
+		HelpSourceRegistry.register(ScenarioStepImpl.SCRIPTING_HELP_ID, HelpSource("/scenarios/scenarios#scenarioStepScripting"))
+		HelpSourceRegistry.register(UsecaseImpl.SCRIPTING_HELP_ID, HelpSource("/usecases/usecase-scripting"))
 	}
 
 	fun getEdgeViewFactory(): EdgeViewFactory = edgeViewFactoryImpl

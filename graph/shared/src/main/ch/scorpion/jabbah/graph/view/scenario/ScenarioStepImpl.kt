@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.view.scenario
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.*
+import ch.scorpion.jabbah.base.help.HelpId
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.parser.Parser
@@ -27,6 +28,7 @@ class ScenarioStepImpl(
 
 	companion object {
 		private val LOG by logger(ScenarioStepImpl::class)
+		val SCRIPTING_HELP_ID = HelpId("graph.scenarioStep.scripting")
 	}
 
 	/** The JavaScript predicate that determines whether this [ScenarioStep] is active. */

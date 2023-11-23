@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.edit.model
 
 import ch.scorpion.jabbah.base.dsl.ParserFactory
 import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.help.HelpId
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.PredefinedColor
 import ch.scorpion.jabbah.draw.graphics.PredefinedStroke
@@ -150,9 +151,10 @@ object EditProperties {
 		name: String,
 		baseKey: String,
 		beanProvider: BeanProvider = componentBeanProvider,
-		parserFactory: ParserFactory? = BaseModule.parserFactory
+		parserFactory: ParserFactory? = BaseModule.parserFactory,
+		helpId: HelpId? = null
 	): CommandPropertySwing<ScriptProperty> {
-		return ScriptPropertySwing(name, baseKey, beanProvider, parserFactory)
+		return ScriptPropertySwing(name, baseKey, beanProvider, parserFactory, helpId)
 	}
 
 	fun border(

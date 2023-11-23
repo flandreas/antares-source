@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view.usecase
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.*
+import ch.scorpion.jabbah.base.help.HelpId
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.parser.Parser
@@ -25,6 +26,7 @@ class UsecaseImpl(
 
 	companion object {
 		private val LOG by logger(UsecaseImpl::class)
+		val SCRIPTING_HELP_ID = HelpId("graph.usecaseImpl.scripting")
 	}
 
 	@Suppress("MemberVisibilityCanBePrivate")
