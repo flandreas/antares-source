@@ -20,6 +20,12 @@ object UIBasics {
 
 	const val DIALOG_BORDER = 10
 
+	/** The gap between a label and its edit field in a data entry form. */
+	const val LABEL_GAP = 8
+
+	/** The gap between rows in a data entry form. */
+	const val ROW_GAP = 8
+
 	/** Creates an empty border to be used in dialogs around the content.*/
 	fun createDialogBorder(): Border =
 		BorderFactory.createEmptyBorder(DIALOG_BORDER, DIALOG_BORDER, DIALOG_BORDER, DIALOG_BORDER)

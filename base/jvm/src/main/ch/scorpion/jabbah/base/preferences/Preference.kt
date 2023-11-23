@@ -127,8 +127,8 @@ class BooleanPreference(
 
 	override fun addToPanel(panel: PreferencesPanel) {
 		this.panel = panel
-		editor.text = name
-		panel.addRow(editor)
+		editor.text = null
+		panel.addLabeledRow(name, editor)
 	}
 
 	override fun load() {

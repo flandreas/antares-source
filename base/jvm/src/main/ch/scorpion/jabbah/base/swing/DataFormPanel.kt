@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.base.swing
 
+import ch.scorpion.jabbah.base.ui.UIBasics
 import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.JPanel
@@ -8,8 +9,6 @@ open class DataFormPanel : JPanel() {
 
 	companion object {
 		private const val INSET = 7
-		private const val ROW_GAP = 5
-		private const val LABEL_GAP = 5
 	}
 
 	private var gridy = 0
@@ -40,7 +39,7 @@ open class DataFormPanel : JPanel() {
 			0.0, 0.0,	// weightX, weightY
 			EGBL.WEST,	// anchor
 			EGBL.NONE,	// fill
-			topInset, INSET, ROW_GAP, 0
+			topInset, INSET, UIBasics.ROW_GAP, 0
 		)
 		gridy++
 	}
@@ -55,7 +54,7 @@ open class DataFormPanel : JPanel() {
 			0.0, 0.0,	// weightX, weightY
 			EGBL.WEST,	// anchor
 			EGBL.NONE,	// fill
-			topInset, INSET, ROW_GAP, 0
+			topInset, INSET, UIBasics.ROW_GAP, 0
 		)
 
 		EGBL.add(
@@ -66,7 +65,7 @@ open class DataFormPanel : JPanel() {
 			1.0, 0.0,	// weightX, weightY
 			EGBL.WEST,	// anchor
 			EGBL.NONE,	// fill
-			topInset, LABEL_GAP, ROW_GAP, 0
+			topInset, UIBasics.LABEL_GAP, UIBasics.ROW_GAP, 0
 		)
 
 		gridy++
