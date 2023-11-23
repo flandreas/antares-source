@@ -15,6 +15,8 @@ import ch.scorpion.jabbah.base.time.TimeService
  */
 object BaseModule : AbstractModule() {
 
+	const val PROP_CONNECTION_TIMEOUT = "base.network.connectionTimeout"
+
 	val properties: Properties = Properties()
 
     var settings: Settings = Settings()
@@ -51,5 +53,6 @@ object BaseModule : AbstractModule() {
 		properties.set(LogSystem.PROP_LOG_LEVEL, LogLevel.Info.name)
 		properties.set(PROP_BEGINNER_HELP_TOOLTIP, true)
 		properties.set(DataLocation.PROP_DATA_LOCATION, DataLocation.Local.customName)
+		properties.set(PROP_CONNECTION_TIMEOUT, 10)
 	}
 }

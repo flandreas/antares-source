@@ -21,6 +21,7 @@ object BaseModuleJvm : AbstractModule() {
 
 	private const val PREF_TREE_ROOT = "base.preferences.group.root"
 	const val PREF_TREE_GENERAL = "base.preferences.group.general"
+	const val PREF_TREE_NETWORK = "base.preferences.group.network"
 	const val PREF_TREE_RENDERING = "base.preferences.group.rendering"
 
 	val preferencesTree: PreferenceGroup = PreferenceGroup(PREF_TREE_ROOT)
@@ -97,6 +98,7 @@ object BaseModuleJvm : AbstractModule() {
 
 	private fun buildPreferencesTree(root: PreferenceGroup) {
 		root.add(PreferenceGroup(PREF_TREE_GENERAL))
+		root.add(PreferenceGroup(PREF_TREE_NETWORK))
 		root.add(PreferenceGroup(PREF_TREE_RENDERING))
 
 		root.getGroup(PREF_TREE_GENERAL).add(EnumPreference(
@@ -117,6 +119,12 @@ object BaseModuleJvm : AbstractModule() {
 		root.getGroup(PREF_TREE_GENERAL).add(BooleanPreference(
 			id = InteractiveErrorHandler.PROP_SHOW_UNEXPECTED_ERROR,
 			nameKey = "base.preferences.showUnexpectedErrors"))
+
+		root.getGroup(PREF_TREE_NETWORK).add(IntPreference(
+			id = BaseModule.PROP_CONNECTION_TIMEOUT,
+			nameKey = "base.preferences.connectionTimeout",
+			minValue = 1,
+			needsRestart = true))
 
 		root.getGroup(PREF_TREE_RENDERING).add(FontIdentificationPreference())
 	}

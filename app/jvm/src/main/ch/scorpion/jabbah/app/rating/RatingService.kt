@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.base.time.TimeService
 import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import io.ktor.client.*
-import io.ktor.client.engine.java.*
+import io.ktor.client.engine.apache.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.request.*
@@ -56,10 +56,13 @@ open class RailwayRatingService(
 ) : AbstractRailwayAppService(properties, settings), RatingService {
 
 	private val client: HttpClient by lazy {
-		HttpClient(Java) {
+		HttpClient(Apache) {
 			install(JsonFeature) {
 				val json = kotlinx.serialization.json.Json { ignoreUnknownKeys = true }
 				serializer = KotlinxSerializer(json)
+			}
+			engine {
+				connectTimeout = 1_000 * BaseModule.properties.getInt(BaseModule.PROP_CONNECTION_TIMEOUT)
 			}
 		}
 	}
