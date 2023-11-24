@@ -35,20 +35,6 @@ class BaseLexerTest : AbstractLexerTest() {
 	}
 
 	@Test
-	fun shouldReplaceTabInLocation() {
-		val lexer = BaseLexer("""
-			12345
-				21
-		""".trimIndent())
-
-		assertLong(12345, lexer)
-		assertRowColumn(1, 1, lexer.location)
-
-		assertLong(21, lexer)
-		assertRowColumn(2, 5, lexer.location)
-	}
-
-	@Test
 	fun shouldSkipStartLineComment() {
 		val lexer = BaseLexer("""
 			// Comment

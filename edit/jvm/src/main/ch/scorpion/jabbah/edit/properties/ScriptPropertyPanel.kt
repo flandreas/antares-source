@@ -46,6 +46,7 @@ class ScriptPropertyPanel(
 				.content { dialog -> ScriptPropertyPanel(script, editable, helpId, parserFactory) { dialog.dispose() } }
 				.title(propertyName)
 				.preferredSize(Dimension(600, 500))
+				.minimumSize(Dimension(300, 200))
 				.defaultButton { if (editable) it.okButton else it.closeButton }
 
 			builder.show()
@@ -55,7 +56,11 @@ class ScriptPropertyPanel(
 	}
 
 	private val scriptTextArea = LineNumberTextArea(editable, script)
-	private val messageTextField = JLabel("", SwingConstants.LEADING)
+
+	private val messageLabel = JLabel(" ", SwingConstants.LEADING)
+
+	/** Display row and column of the caret location. */
+	private val statusLabel = JLabel("")
 
 	private var textToReturn: String? = null
 
@@ -68,27 +73,40 @@ class ScriptPropertyPanel(
 
 	init {
 		buildUI(editable)
+		scriptTextArea.mainTextArea.addCaretListener { updateCaretLocation() }
+		updateStatus(1, 1)
 	}
 
 	private fun buildUI(editable: Boolean) {
 		layout = BorderLayout(0, 10)
 		border = UIBasics.createDialogBorder()
 
-		val textsPanel = JPanel()
-		textsPanel.layout = BoxLayout(textsPanel, BoxLayout.PAGE_AXIS)
+		add(buildContentPanel(), BorderLayout.CENTER)
+		add(buildButtonPanel(editable), BorderLayout.SOUTH)
 
-		scriptTextArea.alignmentX = Component.LEFT_ALIGNMENT
-		scriptTextArea.preferredSize = Dimension(Int.MAX_VALUE, Int.MAX_VALUE)
-		textsPanel.add(scriptTextArea)
+		SwingUtilities.invokeLater {
+			scriptTextArea.mainTextArea.requestFocusInWindow()
+		}
+	}
 
-		textsPanel.add(Box.createVerticalStrut(8))
+	private fun buildContentPanel(): JPanel {
+		val panel = JPanel(BorderLayout(0, 5))
+		panel.add(scriptTextArea, BorderLayout.CENTER)
+		panel.add(buildStatusPanel(), BorderLayout.SOUTH)
+		return panel
+	}
 
-		messageTextField.alignmentX = Component.LEFT_ALIGNMENT
-		messageTextField.border = null
-		textsPanel.add(messageTextField)
+	private fun buildStatusPanel(): JPanel {
+		messageLabel.alignmentX = Component.LEFT_ALIGNMENT
+		messageLabel.border = null
 
-		add(textsPanel, BorderLayout.CENTER)
+		val panel = JPanel(BorderLayout())
+		panel.add(messageLabel, BorderLayout.CENTER)
+		panel.add(statusLabel, BorderLayout.EAST)
+		return panel;
+	}
 
+	private fun buildButtonPanel(editable: Boolean): JPanel {
 		val buttonPanel = JPanel()
 		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
 		helpId?.let { buttonPanel.add(UiUtil.createToolBarButton(HelpAction(it))) }
@@ -98,7 +116,7 @@ class ScriptPropertyPanel(
 		} else {
 			buildNonEditableButtonPanel(buttonPanel)
 		}
-		add(buttonPanel, BorderLayout.SOUTH)
+		return buttonPanel
 	}
 
 	private fun fillEditableButtonPanel(panel: JPanel) {
@@ -123,6 +141,22 @@ class ScriptPropertyPanel(
 	private fun highlightError(error: DslError) {
 		scriptTextArea.mainTextArea.requestFocus()
 		scriptTextArea.mainTextArea. select(error.location.pos, error.location.pos + 1)
+	}
+
+	private fun updateCaretLocation() {
+		try {
+			val caretPos = scriptTextArea.mainTextArea.caretPosition
+			var line = scriptTextArea.mainTextArea.getLineOfOffset(caretPos)
+			var column = caretPos - scriptTextArea.mainTextArea.getLineStartOffset(line) + 1
+			line += 1
+			updateStatus(line, column)
+		} catch (e: Exception) {
+			// empty
+		}
+	}
+
+	private fun updateStatus(line: Int, column: Int) {
+		statusLabel.text = "$line:$column"
 	}
 
 	private inner class OkAction : AbstractAction("base.action.ok") {
@@ -154,11 +188,11 @@ class ScriptPropertyPanel(
 			try {
 				parserFactory.invoke(scriptTextArea.text, null).parse()
 
-				messageTextField.text = Translations.getString("edit.dsl.check.success.msg")
-				messageTextField.icon = CORRECT_ICON
+				messageLabel.text = Translations.getString("edit.dsl.check.success.msg")
+				messageLabel.icon = CORRECT_ICON
 			} catch (e: DslError) {
-				messageTextField.text = e.message
-				messageTextField.icon = ERROR_ICON
+				messageLabel.text = e.toString()
+				messageLabel.icon = ERROR_ICON
 				highlightError(e)
 			}
 		}

@@ -10,17 +10,9 @@ import ch.scorpion.jabbah.base.dsl.SyntaxError
  * returns the [Token] that corresponds with the consumed [Char].
  **
  * @property text the text to be scanned
- * @property tabWidth the number of characters for a single TAB. Used for [TextLocation] calculation.
  */
 
-abstract class AbstractLexer(
-	protected val text: String,
-	private val tabWidth: Int = DEF_TAB_WIDTH
-) {
-
-	companion object {
-		const val DEF_TAB_WIDTH = 4
-	}
+abstract class AbstractLexer(protected val text: String) {
 
 	/** The [TextLocation] of the start of the [Token] after reading it with [nextToken].*/
 	val location: TextLocation get() = state.location
@@ -69,8 +61,6 @@ abstract class AbstractLexer(
 		if (state.currentChar == '\n') {
 			state.rowCounter++
 			state.columnCounter = 0
-		} else if (state.currentChar == '\t') {
-			state.columnCounter += (tabWidth - 1)
 		}
 		state.columnCounter++
 		state.pos++
@@ -109,7 +99,7 @@ abstract class AbstractLexer(
 		var columnAtTokenStart = 1
 
 		/** Returns the captured [TextLocation] at the start of the last read [Token].*/
-		val location: TextLocation get() = TextLocation(posAtTokenStart, rowAtTokenStart,columnAtTokenStart)
+		val location: TextLocation get() = TextLocation(posAtTokenStart, rowAtTokenStart, columnAtTokenStart)
 
 		fun applyFrom(other: State): State {
 			this.pos = other.pos

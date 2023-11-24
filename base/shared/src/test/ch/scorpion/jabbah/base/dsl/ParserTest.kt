@@ -264,7 +264,7 @@ class ParserTest {
 		assertRowColumn(1, 1, ast.children[0].location)
 		assertRowColumn(2, 1, ast.children[1].location)
 		assertRowColumn(4, 1, ast.children[2].location)
-		assertRowColumn(5, 5, (ast.children[2] as WhenStatement).clauses[0].location)
+		assertRowColumn(5, 2, (ast.children[2] as WhenStatement).clauses[0].location)
 	}
 
 	@Test

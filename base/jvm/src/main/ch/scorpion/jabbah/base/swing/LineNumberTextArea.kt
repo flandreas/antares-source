@@ -2,9 +2,7 @@ package ch.scorpion.jabbah.base.swing
 
 import java.awt.BorderLayout
 import java.awt.Font
-import javax.swing.JPanel
-import javax.swing.JScrollPane
-import javax.swing.JTextArea
+import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 
@@ -23,7 +21,9 @@ class LineNumberTextArea(
 	}
 
 	val mainTextArea = JTextArea(text)
+
 	private val lineNumberTextArea = JTextArea(getLineNumbers())
+
 	private val scrollPane = JScrollPane()
 
 	var text: String
@@ -50,7 +50,7 @@ class LineNumberTextArea(
 	}
 
 	private fun buildUI() {
-		layout = BorderLayout(0, 0)
+		layout = BorderLayout(0, 2)
 
 		scrollPane.setViewportView(mainTextArea)
 		scrollPane.setRowHeaderView(lineNumberTextArea)
