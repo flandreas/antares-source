@@ -11,6 +11,8 @@ import ch.scorpion.jabbah.base.sound.Tone
 import ch.scorpion.jabbah.base.sound.ToneFactory
 import ch.scorpion.jabbah.base.sound.ToneParams
 import ch.scorpion.jabbah.base.sound.WaveformType
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.model.text.Translation
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
@@ -24,6 +26,11 @@ class Buzzer : CalculatingVertice(CALCULATOR) {
 
 	companion object {
 		const val BASE_RESOURCE_KEY = "library.element.Buzzer"
+
+		private val VOLUME_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.buzzer.volume.desc"))
+		private val FREQUENCY_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.buzzer.frequency.desc"))
+		private val ENABLE_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.buzzer.enable.desc"))
+
 		private val CALCULATOR = Calculator()
 
 		private class Calculator : VerticeCalculator<Buzzer> {
@@ -58,9 +65,9 @@ class Buzzer : CalculatingVertice(CALCULATOR) {
 
 	init {
 		propagationDelay = AbstractLogicGate.DEFAULT_PROPAGATION_DELAY
-		addPort(DigitalPortImpl.createInput("EN"))
-		addPort(DigitalPortImpl.createInput(Logic.POSITIVE, "F", BitWidth.BW_12))
-		addPort(DigitalPortImpl.createInput(Logic.POSITIVE, "V", BitWidth.BW_8))
+		addPort(DigitalPortImpl.createInput("EN", description = ENABLE_PORT_DESC))
+		addPort(DigitalPortImpl.createInput(Logic.POSITIVE, "F", BitWidth.BW_12, FREQUENCY_PORT_DESC))
+		addPort(DigitalPortImpl.createInput(Logic.POSITIVE, "V", BitWidth.BW_8, VOLUME_PORT_DESC))
 	}
 
 	/** ---- [Actor] interface */

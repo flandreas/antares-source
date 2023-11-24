@@ -46,12 +46,12 @@ open class DigitalPortImpl(
 			return createPort(PortType.INPUT)
 		}
 
-		fun createInput(name: String?): DigitalPort {
-			return DigitalPortImpl(PortType.INPUT, name)
+		fun createInput(name: String?, description: TranslatableText = TranslatableText()): DigitalPort {
+			return DigitalPortImpl(PortType.INPUT, name, description = description)
 		}
 
-		fun createInput(logic: Logic, name: String?, bitWidth: BitWidth): DigitalPort {
-			return DigitalPortImpl(PortType.INPUT, name, logic, bitWidth = bitWidth)
+		fun createInput(logic: Logic, name: String?, bitWidth: BitWidth, description: TranslatableText = TranslatableText()): DigitalPort {
+			return DigitalPortImpl(PortType.INPUT, name, logic, bitWidth = bitWidth, description = description)
 		}
 
 		fun createInput(trigger: Trigger, name: String?, bitWidth: BitWidth): DigitalPort {
