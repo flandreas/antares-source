@@ -55,10 +55,10 @@
               </location>
             </analogCircuitInOutView>
             <analogTransistorView _id='29' id='2' rot='0' filled='true' stroked='true' modelId='4' x='-112.0' y='-7.0' symbol='bulk'/>
-            <analogTransistorView _id='30' id='3' rot='0' filled='true' stroked='true' modelId='5' x='-112.0' y='-161.0' symbol='bulk'/>
+            <analogTransistorView _id='30' id='3' rot='0' filled='true' stroked='true' modelId='5' x='-112.0' y='-140.0' symbol='bulk'/>
             <analogEdgeView _id='31' id='4' filled='true' stroked='true' modelId='6' layout='ortho' orig='30' origPort='3' origPortOutput='true' dest='32' adjusted='false'>
               <shape>
-                <polylineShape points='-70.0,-154.0 -70.0,-84.0'/>
+                <polylineShape points='-70.0,-133.0 -70.0,-84.0'/>
               </shape>
             </analogEdgeView>
             <analogEdgeView _id='33' id='5' filled='true' stroked='true' modelId='11' layout='ortho' orig='28' origPort='1' origPortOutput='true' dest='34' adjusted='false'>
@@ -73,7 +73,7 @@
             </analogNodeView>
             <analogEdgeView _id='35' id='7' filled='true' stroked='true' modelId='11' layout='ortho' orig='34' dest='30' destPort='2' destPortOutput='true' adjusted='true'>
               <shape>
-                <polylineShape points='-140.0,-84.0 -140.0,-161.0 -98.0,-161.0'/>
+                <polylineShape points='-140.0,-84.0 -140.0,-168.0 -98.0,-168.0'/>
               </shape>
             </analogEdgeView>
             <analogEdgeView _id='36' id='8' filled='true' stroked='true' modelId='11' layout='ortho' orig='34' dest='29' destPort='2' destPortOutput='true' adjusted='false'>
@@ -104,7 +104,7 @@
             <analogPowerView _id='40' id='13' rot='270' filled='true' stroked='true' modelId='15' x='-70.0' y='-238.0'/>
             <analogEdgeView _id='41' id='14' filled='true' stroked='true' modelId='16' layout='ortho' orig='40' origPort='1' origPortOutput='true' dest='30' destPort='1' destPortOutput='true' adjusted='false'>
               <shape>
-                <polylineShape points='-70.0,-252.0 -70.0,-196.0'/>
+                <polylineShape points='-70.0,-252.0 -70.0,-175.0'/>
               </shape>
             </analogEdgeView>
             <analogGroundView _id='42' id='15' rot='0' filled='true' stroked='true' modelId='19' x='-70.0' y='49.0'/>
@@ -121,7 +121,7 @@
   <container>
     <containerDrawing _id='44'>
       <components>
-        <rectangle _id='45' id='1' style='figure' filled='true' stroked='true' x='0.0' y='-14.0' w='63.0' h='56.0'/>
+        <rectangle _id='45' id='1' style='figure' filled='true' stroked='true' x='0.0' y='-14.0' w='56.0' h='56.0'/>
         <digitalPortViewComp _id='46' id='2' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
             <digitalPortView _id='47' x='0.0' y='0.0' dir='west' textPos='internal' portId='48'/>
@@ -129,15 +129,15 @@
         </digitalPortViewComp>
         <digitalPortViewComp _id='49' id='3' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='50' x='63.0' y='0.0' dir='east' textPos='internal' portId='51'/>
+            <digitalPortView _id='50' x='56.0' y='0.0' dir='east' textPos='internal' portId='51'/>
           </portView>
         </digitalPortViewComp>
         <label _id='52' id='4' rot='0'>
           <text>
-            <translation lang='en' text='CT'/>
+            <translation lang='en' text='CI'/>
           </text>
           <location>
-            <point x='31.5' y='14.0'/>
+            <point x='28.0' y='14.0'/>
           </location>
         </label>
         <originIndicator _id='53' id='5'>
@@ -149,7 +149,7 @@
       <model>
         <subGraphVertice _id='54' id='0' delay='0' uuid='85e1c5af-7c78-485c-959a-6d0967353799'>
           <name>
-            <translation lang='en' text='CMOS Transistor'/>
+            <translation lang='en' text='CMOS Inverter'/>
           </name>
           <ports>
             <subCircuitPort _id='48' portId='1' name='I' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>

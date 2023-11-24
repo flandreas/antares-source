@@ -10,6 +10,8 @@ interface AnalogCircuitCalculator {
 	/**
 	 * Analyses the structure of an [AnalogGraphView] and returns all information needed for
 	 * calculating electrical currents and voltages depending on the actual resistances in the circuit.
+	 *
+	 * @throws IllegalStateException in case of an invalid circuit
 	 * */
 	fun analyse(circuitView: AnalogGraphView): AnalogCircuitAnalysis
 

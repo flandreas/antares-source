@@ -114,7 +114,7 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 	fun identifyGroundNode(circuitView: AnalogGraphView): Int =
 		findUniqueGroundNode(circuitView)
 		?: findUniqueBatteryGroundNode(circuitView)
-		?: throw IllegalArgumentException("antares.analogCalc.noGroundNode.error.msg")
+		?: throw IllegalStateException(Translations.getString("antares.analogCalc.noGroundNode.error.msg"))
 
 	private fun findUniqueGroundNode(circuitView: AnalogGraphView): Int? {
 		val grounds = circuitView.graph?.elements
@@ -123,7 +123,7 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 
 		if (grounds != null) {
 			if (grounds.size > 1) {
-				throw IllegalArgumentException(Translations.getString("antares.analogCalc.moreThanOneGround.error.msg"))
+				throw IllegalStateException(Translations.getString("antares.analogCalc.moreThanOneGround.error.msg"))
 			}
 			if (grounds.size == 1) {
 				return grounds.first().getPort<AnalogSignal>().net!!.id
@@ -148,7 +148,7 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 			return batteries.first().negativePort.net!!.id
 		}
 
-		throw IllegalArgumentException(Translations.getString("antares.analogCalc.multipleBatteriesAtDifferentNets.error.msg"))
+		throw IllegalStateException(Translations.getString("antares.analogCalc.multipleBatteriesAtDifferentNets.error.msg"))
 	}
 
 	/**

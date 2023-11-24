@@ -76,7 +76,6 @@ class AnalogGraphView(
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
 		analysis = null
-		checkDesign(signalHandler, eventBus)
 		requestActing(signalHandler)
 		CurrentFlowAnimator.register(this, signalHandler.systemSpeedCategory)
 	}
@@ -85,8 +84,26 @@ class AnalogGraphView(
 		CurrentFlowAnimator.unregister(this)
 	}
 
-	override fun checkDesign(signalHandler: SignalHandler, eventBus: EventBus): Boolean =
-		ensureFullyConnected().also { ensureAnalysis() }
+	override fun checkDesign(signalHandler: SignalHandler, eventBus: EventBus): Boolean {
+		if (!ensureFullyConnected()) {
+			return false
+		}
+
+		try {
+			ensureAnalysis()
+		} catch (e: IllegalStateException) {
+			eventBus.post(IssueImpl(
+				severity = IssueSeverity.Error,
+				name = Translations.getString("graph.designError.name"),
+				description = e.message,
+				origin = name.value,
+				context = null
+			))
+			return false
+		}
+
+		return true
+	}
 
 	/** ---- [AnalogGraphView] */
 
@@ -120,6 +137,10 @@ class AnalogGraphView(
 	private fun createActorData(): GraphActorData =
 		StoringGraphActorData(null, null, graphView = this)
 
+	/**
+	 * Analyses this [AnalogGraphView] in case it is not already done.
+	 * @throws IllegalStateException in case this [AnalogGraphView] is invalid
+	 */
 	fun ensureAnalysis(): AnalogCircuitAnalysis {
 		if (analysis == null) {
 			analysis = AntaresViewModule.analogCircuitCalculator.analyse(this)
