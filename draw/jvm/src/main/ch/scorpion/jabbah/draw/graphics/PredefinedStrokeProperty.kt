@@ -65,6 +65,7 @@ class PredefinedStrokeEditor(strokeProvider: PredefinedStrokeProvider) : ComboBo
 		val list = mutableListOf<PredefinedStroke?>(null)
 		list.addAll(strokeProvider.provideAll())
 		setAvailableValues(list.toTypedArray())
-		(editor as JComboBox<*>).renderer = PredefinedStrokeRenderer()
+		@Suppress("UNCHECKED_CAST")
+		(editor as JComboBox<PredefinedStroke>).renderer = PredefinedStrokeRenderer()
 	}
 }

@@ -83,6 +83,7 @@ abstract class AbstractEventBus : EventBus {
         registrations[getEventClassName(event)]?.toList()?.forEach { it.invoke(event) }
     }
 
+    @Deprecated("Use postTwoPhase")
     override fun postVetoable(event: Any, undoEvent: Any, thenHandler: VetoHandler<Any>, elseHandler: VetoHandler<VetoException>) {
         val successHandlers = mutableListOf<EventHandler<Any>>()
         try {

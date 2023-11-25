@@ -184,10 +184,6 @@ open class ViewImpl<C : InputEventContext>(
 		_canvas?.requestViewFocus()
 	}
 
-	override fun setToolTipText(text: String?) {
-		_canvas?.setToolTipText(text)
-	}
-
 	override fun getInputEventHandler(e: InputEvent): InputEventHandler<C> = handler
 
 	override fun addMouseListener(l: MouseListener) {

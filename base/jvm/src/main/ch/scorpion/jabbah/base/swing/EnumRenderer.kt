@@ -13,8 +13,7 @@ import javax.swing.table.TableCellRenderer
 open class EnumRenderer<T : Enum<T>> : DefaultTableCellRenderer(), ListCellRenderer<T> {
 
     override fun getListCellRendererComponent(list: JList<out T>, value: T?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
-		@Suppress("UNCHECKED_CAST")
-        setValue(value as T?)
+        setValue(value)
 
 		if (isSelected) {
 			foreground = list.selectionForeground

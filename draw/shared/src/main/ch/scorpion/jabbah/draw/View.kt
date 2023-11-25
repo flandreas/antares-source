@@ -184,13 +184,6 @@ interface View<C : InputEventContext> : ContentView<C>, ViewToModelTransform {
 	fun requestFocus()
 
 	/**
-	 * Sets the tool tip text to be displayed at the current location of the mouse, or `null` if no tooltip is
-	 * to be displayed.
-	 */
-	@Deprecated("Replaced with custom tooltip Drawables. See ch.scorpion.jabbah.draw.view.TooltipHandler")
-	fun setToolTipText(text: String?)
-
-	/**
 	 * Returns the [InputEventHandler] that forwards mouse and key input events to the interested
 	 * [Drawable]s of this [View].
 	 */

@@ -19,22 +19,20 @@ class RichText(
 		 * the slashes.
 		 */
 		fun stripToPlainText(text: String): String {
-			try {
+			return try {
 				val richText = RichTextParser(text).parse()
 				val result = StringBuilder()
 
 				richText.children.forEach { fragment ->
 					fragment.text.styledText.chunks.forEach { chunk ->
-						val text = chunk.text.replace("/", " ")
-						result.append(text)
+						result.append(chunk.text.replace("/", " "))
 					}
 				}
 
-				return result.toString()
+				result.toString()
 			} catch (e: Throwable) {
-				return text.replace("/", " ")
+				text.replace("/", " ")
 			}
-			return text
 		}
 	}
 }
@@ -112,6 +110,7 @@ class StyledText(
 	}
 }
 
+@Suppress("MemberVisibilityCanBePrivate")
 data class TextStyle(
 	val overline: Boolean,
 	val bold: Boolean,

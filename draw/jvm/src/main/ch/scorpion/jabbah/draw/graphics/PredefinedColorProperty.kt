@@ -67,7 +67,8 @@ class PredefinedColorEditor(colorProvider: PredefinedColorProvider) : ComboBoxPr
 		val list = mutableListOf<PredefinedColor?>(null)
 		list.addAll(colorProvider.provideAll())
 		setAvailableValues(list.toTypedArray())
-		(editor as JComboBox<*>).renderer = PredefinedColorRenderer()
+		@Suppress("UNCHECKED_CAST")
+		(editor as JComboBox<PredefinedColor>).renderer = PredefinedColorRenderer()
 	}
 }
 

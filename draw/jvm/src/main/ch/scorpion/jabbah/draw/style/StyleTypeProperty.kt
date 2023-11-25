@@ -13,7 +13,8 @@ class StyleTypeEditor(styleProvider: StyleProvider = DrawStyleModule.styleProvid
 
 	init {
 		setAvailableValues(styleProvider.getChoosableStyleTypes().toTypedArray())
-		(editor as JComboBox<*>).renderer = StyleTypeRenderer()
+		@Suppress("UNCHECKED_CAST")
+		(editor as JComboBox<StyleType>).renderer = StyleTypeRenderer()
 	}
 }
 

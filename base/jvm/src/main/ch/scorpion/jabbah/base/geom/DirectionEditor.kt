@@ -6,7 +6,8 @@ import javax.swing.JComboBox
 
 class DirectionEditor : ComboBoxPropertyEditor() {
     init {
-        setAvailableValues(Direction.values())
-        (editor as JComboBox<*>).renderer = EnumRenderer<Direction>()
+        setAvailableValues(Direction.entries.toTypedArray())
+	    @Suppress("UNCHECKED_CAST")
+	    (editor as JComboBox<Direction>).renderer = EnumRenderer()
     }
 }
