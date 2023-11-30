@@ -1,7 +1,7 @@
-package ch.scorpion.antares.filebased.analog
+package ch.scorpion.antares.filebased.analog.kirchhoff
 
 import ch.scorpion.antares.view.analog.AnalogCircuitInOutView
-import ch.scorpion.antares.view.analog.KirchhoffAnalogCircuitCalculator
+import ch.scorpion.antares.view.analog.kirchhoff.KirchhoffAnalogCircuitCalculator
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.math.near
 import kotlin.test.BeforeTest

@@ -1,4 +1,4 @@
-package ch.scorpion.antares.filebased.analog
+package ch.scorpion.antares.filebased.analog.kirchhoff
 
 import ch.scorpion.antares.view.analog.AnalogEdgeView
 import ch.scorpion.antares.view.analog.ResistorView

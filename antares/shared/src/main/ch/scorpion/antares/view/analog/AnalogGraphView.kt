@@ -143,7 +143,7 @@ class AnalogGraphView(
 	 */
 	fun ensureAnalysis(): AnalogCircuitAnalysis {
 		if (analysis == null) {
-			analysis = AntaresViewModule.analogCircuitCalculator.analyse(this)
+			analysis = AntaresViewModule.analogCircuitCalculatorFactor.create<AnalogCircuitAnalysis>().analyse(this)
 		}
 		return analysis!!
 	}
@@ -152,7 +152,7 @@ class AnalogGraphView(
 		override fun act(signalHandler: SignalHandler, data: ActorData) {
 			val graphView = (data as GraphActorData).graphView as AnalogGraphView
 			try {
-				AntaresViewModule.analogCircuitCalculator.calculate(graphView.ensureAnalysis(), signalHandler)
+				AntaresViewModule.analogCircuitCalculatorFactor.create<AnalogCircuitAnalysis>().calculate(graphView.ensureAnalysis(), signalHandler)
 				super.act(signalHandler, data)
 			} catch (e: Throwable) {
 				LOG.debug("Error while analyzing: ${e.message}")

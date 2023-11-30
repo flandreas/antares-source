@@ -1,12 +1,13 @@
-package ch.scorpion.antares.filebased.analog
+package ch.scorpion.antares.filebased.analog.kirchhoff
 
 import ch.scorpion.antares.model.analog.AnalogNet
 import ch.scorpion.antares.view.analog.*
-import ch.scorpion.antares.view.analog.KirchhoffAnalogCircuitCalculator.composeComponentConstituentEquations
-import ch.scorpion.antares.view.analog.KirchhoffAnalogCircuitCalculator.composeCurrentLawEquations
-import ch.scorpion.antares.view.analog.KirchhoffAnalogCircuitCalculator.composeEquations
-import ch.scorpion.antares.view.analog.KirchhoffAnalogCircuitCalculator.labelBranchCurrents
-import ch.scorpion.antares.view.analog.KirchhoffAnalogCircuitCalculator.labelVoltageNodes
+import ch.scorpion.antares.view.analog.kirchhoff.KirchhoffAnalogCircuitCalculator
+import ch.scorpion.antares.view.analog.kirchhoff.KirchhoffAnalogCircuitCalculator.composeComponentConstituentEquations
+import ch.scorpion.antares.view.analog.kirchhoff.KirchhoffAnalogCircuitCalculator.composeCurrentLawEquations
+import ch.scorpion.antares.view.analog.kirchhoff.KirchhoffAnalogCircuitCalculator.composeEquations
+import ch.scorpion.antares.view.analog.kirchhoff.KirchhoffAnalogCircuitCalculator.labelBranchCurrents
+import ch.scorpion.antares.view.analog.kirchhoff.KirchhoffAnalogCircuitCalculator.labelVoltageNodes
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.math.near
 import ch.scorpion.jabbah.base.module.BaseModule

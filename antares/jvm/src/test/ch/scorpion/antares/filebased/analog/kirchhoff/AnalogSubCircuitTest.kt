@@ -1,4 +1,4 @@
-package ch.scorpion.antares.filebased.analog
+package ch.scorpion.antares.filebased.analog.kirchhoff
 
 import ch.scorpion.antares.view.input.SwitchView
 import ch.scorpion.antares.view.output.LEDView

@@ -1,6 +1,7 @@
-package ch.scorpion.antares.view.analog
+package ch.scorpion.antares.view.analog.kirchhoff
 
 import ch.scorpion.antares.model.analog.*
+import ch.scorpion.antares.view.analog.*
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.MINUS_ONE
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.ONE
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.ZERO
@@ -23,11 +24,11 @@ import kotlin.math.abs
  *
  * Most methods are public for unit testing purposes.
  */
-object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
+object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator<KirchhoffAnalogCircuitAnalysis> {
 
 	private val LOG by logger(KirchhoffAnalogCircuitCalculator::class)
 
-	override fun analyse(circuitView: AnalogGraphView): AnalogCircuitAnalysis {
+	override fun analyse(circuitView: AnalogGraphView): KirchhoffAnalogCircuitAnalysis {
 		LOG.debug("Analysing analog circuit")
 		val groundNodeNetId: Int = identifyGroundNode(circuitView)
 		val voltageNodeNetIds: List<Int> = labelVoltageNodes(circuitView, groundNodeNetId)
@@ -38,10 +39,10 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 
 		LOG.debug("Linear system: #current vars=${branches.size}, #voltages vars=${voltageNodeNetIds.size}, #equations=${equationSystem.equationCount}")
 
-		return AnalogCircuitAnalysis(circuitView, voltageNodeNetIds, branches, groundNodeNetId, equationSystem)
+		return KirchhoffAnalogCircuitAnalysis(circuitView, voltageNodeNetIds, branches, groundNodeNetId, equationSystem)
 	}
 
-	override fun calculate(analysis: AnalogCircuitAnalysis, signalHandler: SignalHandler) {
+	override fun calculate(analysis: KirchhoffAnalogCircuitAnalysis, signalHandler: SignalHandler) {
 		LOG.trace("Calculating analog circuit")
 		with(analysis) {
 			val result = BaseModule.linearEquationSystemSolver.solve(equationSystem.toLinearEquationSystem())
@@ -238,7 +239,10 @@ object KirchhoffAnalogCircuitCalculator : AnalogCircuitCalculator {
 			val outgoingEdgeView = graphView.getEdgeView(connectableView.getPort(1)!!)!!
 			identifyBranchesRecursivelyImpl(connectableView, outgoingEdgeView, graphView, branches, branch)
 		} else if (connectableView is NodeView<*>) {
-			val edgeViews = connectableView.getEdgeViews().filter { it !== incomingEdgeView && AnalogCircuitBranch.getBranchId(it, branches) == null && followBranchFromNodeView(it, graphView) }
+			val edgeViews = connectableView.getEdgeViews().filter { it !== incomingEdgeView && AnalogCircuitBranch.getBranchId(
+				it,
+				branches
+			) == null && followBranchFromNodeView(it, graphView) }
 			if (edgeViews.size == 1) {
 				// Continue with the same branch by ignoring direct junctions to a GroundView
 				identifyBranchesRecursivelyImpl(connectableView, edgeViews.first(), graphView, branches, branch)

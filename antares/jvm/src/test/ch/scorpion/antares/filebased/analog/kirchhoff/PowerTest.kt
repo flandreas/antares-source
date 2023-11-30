@@ -1,24 +1,23 @@
-package ch.scorpion.antares.filebased.analog
+package ch.scorpion.antares.filebased.analog.kirchhoff
 
-import ch.scorpion.antares.view.analog.KirchhoffAnalogCircuitCalculator
+import ch.scorpion.antares.view.analog.kirchhoff.KirchhoffAnalogCircuitCalculator
 import ch.scorpion.jabbah.base.UUID
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-
-class InOutTest : AbstractAnalogFileBasedTest() {
+class PowerTest : AbstractAnalogFileBasedTest() {
 
 	@BeforeTest
 	fun openCircuit() {
-		openCircuit(UUID("34ded684-35ce-4010-9f9a-f5df9db08bf5"))
+		openCircuit(UUID("f113a3bb-4603-49b6-a2ad-1eccb5c84c6c"))
 	}
 
 	@Test
 	fun shouldLabelVoltageNodes() {
-		val voltageNodes = KirchhoffAnalogCircuitCalculator.labelVoltageNodes(analogGraphView, 6)
-		assertEquals(2, voltageNodes.size)
+		val voltageNodes = KirchhoffAnalogCircuitCalculator.labelVoltageNodes(analogGraphView, 10)
+		assertEquals(3, voltageNodes.size)
 	}
 
 	@Test
@@ -28,10 +27,11 @@ class InOutTest : AbstractAnalogFileBasedTest() {
 		assertEquals(1, branches.size)
 
 		with (branches[0]) {
-			assertEquals(3, size)
-			assertTrue(containsId(3))
+			assertEquals(4, size)
+			assertTrue(containsId(5))
 			assertTrue(containsId(6))
-			assertTrue(containsId(7))
+			assertTrue(containsId(8))
+			assertTrue(containsId(10))
 		}
 	}
 

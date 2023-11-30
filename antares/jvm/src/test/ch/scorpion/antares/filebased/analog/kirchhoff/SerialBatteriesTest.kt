@@ -1,4 +1,4 @@
-package ch.scorpion.antares.filebased.analog
+package ch.scorpion.antares.filebased.analog.kirchhoff
 
 import ch.scorpion.antares.model.analog.AnalogNet
 import ch.scorpion.jabbah.base.UUID

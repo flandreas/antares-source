@@ -1,4 +1,4 @@
-package ch.scorpion.antares.filebased.analog
+package ch.scorpion.antares.filebased.analog.kirchhoff
 
 import ch.scorpion.antares.filebased.AbstractFileBasedTest
 import ch.scorpion.antares.view.analog.AnalogGraphView
