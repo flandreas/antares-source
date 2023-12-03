@@ -1,9 +1,6 @@
 package ch.scorpion.antares.model.analog
 
-import ch.scorpion.antares.view.analog.AnalogCircuitBranch
-import ch.scorpion.antares.view.analog.AnalogEdgeView
-import ch.scorpion.antares.view.analog.AnalogGraphView
-import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem
+import ch.scorpion.antares.view.analog.*
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.Net
@@ -12,7 +9,7 @@ import ch.scorpion.jabbah.graph.model.Vertice
 /**
  * Used as source of constituent equations when building the linear equation system during simulation.
  */
-interface AnalogVertice : Vertice {
+interface AnalogVertice : Vertice, AnalogElement {
 
 	/**
 	 * Composes the constituent equation for this [AnalogVertice] during simulation.

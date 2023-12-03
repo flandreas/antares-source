@@ -2,9 +2,9 @@ package ch.scorpion.antares.view.analog
 
 import ch.scorpion.antares.model.analog.AnalogNet
 import ch.scorpion.antares.model.analog.AnalogSignal
+import ch.scorpion.antares.view.analog.falstad.FalstadAnalogCircuitAnalysis
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.draw.DrawContext
@@ -14,19 +14,26 @@ import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.Net
+import ch.scorpion.jabbah.graph.view.Connection
+import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewImpl
 import kotlin.math.abs
 
+/**
+ * During simulation, [AnalogEdgeView] is treated as resistor with a very small resistance.
+ */
 class AnalogEdgeView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	net: AnalogNet = AnalogNet()
 ) : EdgeViewImpl<AnalogSignal>(
-	styleProvider,
-	DEF_EDGE_TO_PORT_CONNECTOR_SUPPLIER,
-	DEF_ORIG_ENDPOINT_CONNECTOR_SUPPLIER,
-	DEF_DEST_ENDPOINT_CONNECTOR_SUPPLIER,
-	net
-) {
+		styleProvider,
+		DEF_EDGE_TO_PORT_CONNECTOR_SUPPLIER,
+		DEF_ORIG_ENDPOINT_CONNECTOR_SUPPLIER,
+		DEF_DEST_ENDPOINT_CONNECTOR_SUPPLIER,
+		net
+	),
+	AnalogElement
+{
 
 	companion object {
 
@@ -37,6 +44,8 @@ class AnalogEdgeView(
 
 		/** Limits the effective speed of the current flow animation.*/
 		private const val MAX_DELTA = 2.7
+
+		private const val DEF_RESISTANCE = 1E-06
 	}
 
 	/**
@@ -82,7 +91,7 @@ class AnalogEdgeView(
 				if (model.isError) {
 					Themes.get<AntaresTheme>().error
 				} else {
-					model.signal?.color ?: color
+					AnalogSignalColor.ofVoltage(getNodeVoltage(0))
 				}
 			} else {
 				context.choose(color)
@@ -107,4 +116,52 @@ class AnalogEdgeView(
 
 	override fun getExecutionTooltipContent(): String =
 		Translations.getString("antares.analogEdgeView.simTooltipContent", model.signal!!.voltage, abs(current))
+
+	/** ---- [AnalogElement] */
+
+	private lateinit var nodes: Array<Int>
+
+	private lateinit var volts: Array<Double>
+
+	override val isNonLinear: Boolean get() = false
+
+	override val voltageSourceCount: Int get() = 0
+
+	private var voltageSource: Int = 0
+
+	override val postCount: Int get() = 2
+
+	override fun allocateNodes() {
+		nodes = Array(postCount) { 0 }
+		volts = Array(postCount) { 0.0 }
+	}
+
+	override fun setNode(postId: Int, nodeId: Int) {
+		nodes[postId] = nodeId
+	}
+
+	override fun setNodeVoltage(postId: Int, voltage: Double) {
+		volts[postId] = voltage
+		calculateCurrent()
+	}
+
+	override fun getNodeVoltage(postId: Int): Double = volts[postId]
+
+	override fun setCurrent(index: Int, current: Double) {
+		this.current = current
+	}
+
+	override fun getPost(elem: GraphElementView<*>, postId: Int): Connection<*>? = null
+
+	override fun setVoltageSource(index: Int, sourceId: Int) {
+		voltageSource = sourceId
+	}
+
+	override fun stamp(analysis: FalstadAnalogCircuitAnalysis) {
+		analysis.stampResistor(nodes[0], nodes[1], DEF_RESISTANCE)
+	}
+
+	override fun calculateCurrent() {
+		current = (volts[0] - volts[1]) / DEF_RESISTANCE
+	}
 }

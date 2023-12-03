@@ -20,7 +20,7 @@ import ch.scorpion.antares.view.addressable.LookupTableView
 import ch.scorpion.antares.view.addressable.RAMView
 import ch.scorpion.antares.view.addressable.ROMView
 import ch.scorpion.antares.view.analog.*
-import ch.scorpion.antares.view.analog.kirchhoff.KirchhoffAnalogCircuitCalculator
+import ch.scorpion.antares.view.analog.falstad.FalstadAnalogCircuitCalculator
 import ch.scorpion.antares.view.app.AntaresGraphViewService
 import ch.scorpion.antares.view.arithmetic.BitExtenderView
 import ch.scorpion.antares.view.arithmetic.RandomView
@@ -175,7 +175,7 @@ object AntaresViewModule : AbstractModule() {
 
 	var analogCircuitCalculatorFactor: AnalogCircuitCalculatorFactory = object : AnalogCircuitCalculatorFactory {
 		override fun <T : AnalogCircuitAnalysis> create(): AnalogCircuitCalculator<T> {
-			return KirchhoffAnalogCircuitCalculator as AnalogCircuitCalculator<T>
+			return FalstadAnalogCircuitCalculator() as AnalogCircuitCalculator<T>
 		}
 	}
 

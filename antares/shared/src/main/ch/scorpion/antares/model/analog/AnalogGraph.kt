@@ -1,6 +1,7 @@
 package ch.scorpion.antares.model.analog
 
 import ch.scorpion.antares.model.AntaresGraphTypes
+import ch.scorpion.antares.view.analog.AnalogElement
 import ch.scorpion.antares.view.analog.AnalogGraphView
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
@@ -14,6 +15,8 @@ class AnalogGraph(
 	name: TranslatableText = TranslatableText(Translations.getString("graph.name.unknown")),
 	eventBus: EventBus = BaseModule.eventBus
 ) : GraphImpl(name, AntaresGraphTypes.Analog, eventBus) {
+
+	val isNonLinear: Boolean get() = elements.filterIsInstance<AnalogElement>().any { it.isNonLinear }
 
 	override fun executionStart(signalHandler: SignalHandler, graphView: GraphView?) {
 		super.executionStart(signalHandler, graphView)

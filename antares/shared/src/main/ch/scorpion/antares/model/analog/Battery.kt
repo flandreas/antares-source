@@ -1,10 +1,13 @@
 package ch.scorpion.antares.model.analog
 
 import ch.scorpion.antares.view.analog.AnalogCircuitBranch
+import ch.scorpion.antares.view.analog.AnalogElement
+import ch.scorpion.antares.view.analog.AnalogElementMixin
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.MINUS_ONE
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.ONE
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.ZERO
+import ch.scorpion.antares.view.analog.falstad.FalstadAnalogCircuitAnalysis
 import ch.scorpion.jabbah.graph.model.vertice.EmptyVerticeCalculator
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -15,7 +18,11 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 class Battery(
 	voltage: Double = DEF_VOLTAGE
-) : AbstractAnalogTwoPortVertice<Battery>(EmptyVerticeCalculator, "library.element.Battery") {
+) : AbstractAnalogTwoPortVertice<Battery>(
+	EmptyVerticeCalculator,
+	"library.element.Battery",
+	AnalogElementMixin(voltageSourceCount = 1)
+) {
 
 	companion object {
 		private const val DEF_VOLTAGE = 5.0
@@ -66,5 +73,11 @@ class Battery(
 			row[branches.size + negVoltageVariableIndex] = ONE
 		}
 		equationSystem.addEquation(row) { -voltage }
+	}
+
+	/** ---- [AnalogElement] */
+
+	override fun stamp(analysis: FalstadAnalogCircuitAnalysis) {
+		analysis.stampVoltageSource(analogElem.nodes[1], analogElem.nodes[0], analogElem.voltageSource, voltage)
 	}
 }

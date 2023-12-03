@@ -1,6 +1,8 @@
 package ch.scorpion.antares.model.analog
 
 import ch.scorpion.antares.view.analog.AnalogGraphView
+import ch.scorpion.antares.view.analog.AnalogElement
+import ch.scorpion.antares.view.analog.falstad.FalstadAnalogCircuitAnalysis
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
@@ -72,5 +74,11 @@ class Resistor(
 	fun setState(resistance: Double, signalHandler: SignalHandler, graphView: GraphView) {
 		this.resistance = resistance
 		requestActingAfter(signalHandler, propagationDelay, createActorData(null, graphView = graphView))
+	}
+
+	/** ---- [AnalogElement] */
+
+	override fun stamp(analysis: FalstadAnalogCircuitAnalysis) {
+		analysis.stampResistor(analogElem.nodes[0], analogElem.nodes[1], resistance)
 	}
 }

@@ -1,10 +1,7 @@
 package ch.scorpion.antares.model.analog
 
 import ch.scorpion.antares.model.analog.AnalogTwoPortVertice.Companion.incomingCurrentPortId
-import ch.scorpion.antares.view.analog.AnalogCircuitBranch
-import ch.scorpion.antares.view.analog.AnalogEdgeView
-import ch.scorpion.antares.view.analog.AnalogGraphView
-import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem
+import ch.scorpion.antares.view.analog.*
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
@@ -68,8 +65,9 @@ interface AnalogTwoPortVertice : AnalogVertice {
 }
 abstract class AbstractAnalogTwoPortVertice<T: CalculatingVertice>(
 	calculator: VerticeCalculator<T>,
-	baseResourceKey: String
-) : AbstractAnalogVertice<T>(calculator, baseResourceKey), AnalogTwoPortVertice {
+	baseResourceKey: String,
+	analogElement: AnalogElementMixin = AnalogElementMixin()
+) : AbstractAnalogVertice<T>(calculator, baseResourceKey, analogElement), AnalogTwoPortVertice {
 
 	init {
 		addPort(AnalogPort())

@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<project _id='0' defaultElement='11d5650a-3f3d-4110-aee3-4055e3b5ce51' uuid='e70cb564-42c2-4880-baf4-17c507b1526a' author='5ecf330b-e395-4e17-88b0-0883834b384a' imports='6707f981-110d-4629-a0bf-c35a4688025c,b3a5e306-f0c8-11ed-a05b-0242ac120003'>
+<project _id='0' defaultElement='608e8835-d7bf-4601-bb69-42f4fc8c64e7' uuid='e70cb564-42c2-4880-baf4-17c507b1526a' author='5ecf330b-e395-4e17-88b0-0883834b384a' imports='6707f981-110d-4629-a0bf-c35a4688025c,b3a5e306-f0c8-11ed-a05b-0242ac120003'>
   <folder>
     <libraryFolder _id='1'>
       <name>
@@ -112,89 +112,106 @@
             <translation lang='en' text='Analog'/>
           </name>
           <items>
-            <containerLibraryElement _id='23' uuid='7833a5cd-1b34-47ab-823d-1c377420d498' type='analog'>
+            <libraryFolder _id='23'>
+              <name>
+                <translation lang='en' text='Falstad'/>
+              </name>
+              <items>
+                <containerLibraryElement _id='24' uuid='608e8835-d7bf-4601-bb69-42f4fc8c64e7' type='analog'>
+                  <name>
+                    <translation lang='en' text='Resistor'/>
+                  </name>
+                </containerLibraryElement>
+                <containerLibraryElement _id='25' uuid='e0d5ab6a-4476-47b9-9200-0948c692a16a' type='analog'>
+                  <name>
+                    <translation lang='en' text='Ohm&apos;s Law'/>
+                  </name>
+                </containerLibraryElement>
+              </items>
+            </libraryFolder>
+            <containerLibraryElement _id='26' uuid='7833a5cd-1b34-47ab-823d-1c377420d498' type='analog'>
               <name>
                 <translation lang='en' text='Parallel Resistors'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='24' uuid='6ffbf463-8095-48f0-bc55-66e920db6103' type='analog'>
+            <containerLibraryElement _id='27' uuid='6ffbf463-8095-48f0-bc55-66e920db6103' type='analog'>
               <name>
                 <translation lang='en' text='KirchhoffTest'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='25' uuid='8221d057-4f62-4fa1-aecd-21cf62bd31f5' type='analog'>
+            <containerLibraryElement _id='28' uuid='8221d057-4f62-4fa1-aecd-21cf62bd31f5' type='analog'>
               <name>
                 <translation lang='en' text='Simple Circle'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='26' uuid='4d278669-76be-4e1f-bca4-94a871b5c329' type='analog'>
+            <containerLibraryElement _id='29' uuid='4d278669-76be-4e1f-bca4-94a871b5c329' type='analog'>
               <name>
                 <translation lang='en' text='3 Parallel'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='27' uuid='3566b7b9-5949-46d6-84e0-1853d6c4314a' type='analog'>
+            <containerLibraryElement _id='30' uuid='3566b7b9-5949-46d6-84e0-1853d6c4314a' type='analog'>
               <name>
                 <translation lang='en' text='Serial Batteries'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='28' uuid='39825aea-1002-424c-b918-05173d07d3f0' type='analog'>
+            <containerLibraryElement _id='31' uuid='39825aea-1002-424c-b918-05173d07d3f0' type='analog'>
               <name>
                 <translation lang='en' text='Transistor n-Type'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='29' uuid='d0421e9e-dd9b-404d-8b22-b278fdcef535' type='analog'>
+            <containerLibraryElement _id='32' uuid='d0421e9e-dd9b-404d-8b22-b278fdcef535' type='analog'>
               <name>
                 <translation lang='en' text='Transistor p-Type'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='30' uuid='34ded684-35ce-4010-9f9a-f5df9db08bf5' type='analog'>
+            <containerLibraryElement _id='33' uuid='34ded684-35ce-4010-9f9a-f5df9db08bf5' type='analog'>
               <name>
                 <translation lang='en' text='InOut'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='31' uuid='f113a3bb-4603-49b6-a2ad-1eccb5c84c6c' type='analog'>
+            <containerLibraryElement _id='34' uuid='f113a3bb-4603-49b6-a2ad-1eccb5c84c6c' type='analog'>
               <name>
                 <translation lang='en' text='Power'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='32' uuid='af4ddc6f-3edb-434c-8884-0d3378376cb7' type='analog'>
+            <containerLibraryElement _id='35' uuid='af4ddc6f-3edb-434c-8884-0d3378376cb7' type='analog'>
               <name>
                 <translation lang='en' text='Transistor Inverter n-Type'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='33' uuid='e046b285-8c56-40ea-8696-88015af7a89a' type='analog'>
+            <containerLibraryElement _id='36' uuid='e046b285-8c56-40ea-8696-88015af7a89a' type='analog'>
               <name>
                 <translation lang='en' text='Ground without Battery'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='34' uuid='863e2174-9a4d-444c-9d85-3196512c18b2' type='digital'>
+            <containerLibraryElement _id='37' uuid='863e2174-9a4d-444c-9d85-3196512c18b2' type='digital'>
               <name>
                 <translation lang='en' text='Analog Subcircuit'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='35' uuid='64fa06f3-cb8e-4c1b-8d5b-4c28329c32d2' type='analog'>
+            <containerLibraryElement _id='38' uuid='64fa06f3-cb8e-4c1b-8d5b-4c28329c32d2' type='analog'>
               <name>
                 <translation lang='en' text='Transistor Inverter p-Type'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='36' uuid='85e1c5af-7c78-485c-959a-6d0967353799' type='analog'>
+            <containerLibraryElement _id='39' uuid='85e1c5af-7c78-485c-959a-6d0967353799' type='analog'>
               <name>
                 <translation lang='en' text='CMOS Inverter'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='37' uuid='11d5650a-3f3d-4110-aee3-4055e3b5ce51' type='analog'>
+            <containerLibraryElement _id='40' uuid='11d5650a-3f3d-4110-aee3-4055e3b5ce51' type='analog'>
               <name>
                 <translation lang='en' text='Single Current Source'/>
               </name>
             </containerLibraryElement>
           </items>
         </libraryFolder>
-        <libraryFolder _id='38'>
+        <libraryFolder _id='41'>
           <name>
             <translation lang='en' text='VHDL'/>
           </name>
           <items>
-            <containerLibraryElement _id='39' uuid='ee6b64f0-7189-4604-b6a9-e0d063336787' type='digital'>
+            <containerLibraryElement _id='42' uuid='ee6b64f0-7189-4604-b6a9-e0d063336787' type='digital'>
               <name>
                 <translation lang='en' text='NodeView'/>
               </name>

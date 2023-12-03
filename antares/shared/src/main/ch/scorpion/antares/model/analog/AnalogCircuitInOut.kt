@@ -5,9 +5,7 @@ import ch.scorpion.antares.model.AntaresGraphTypes.Digital
 import ch.scorpion.antares.model.inout.AbstractCircuitInOut
 import ch.scorpion.antares.model.inout.CircuitInOut
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.view.analog.AnalogCircuitBranch
-import ch.scorpion.antares.view.analog.AnalogGraphView
-import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem
+import ch.scorpion.antares.view.analog.*
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.ONE
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.ZERO
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -21,12 +19,13 @@ import ch.scorpion.jabbah.graph.view.GraphView
 
 class AnalogCircuitInOut(
 	name: String? = null,
-	portType: PortType = PortType.INPUT
+	portType: PortType = PortType.INPUT,
+	private val analogElement: AnalogElementMixin = AnalogElementMixin()
 ) : AbstractCircuitInOut<AnalogSignal>(
 	port = AnalogPort(portType.reverse(), name),
 	name = name,
 	calculator = CALCULATOR
-), AnalogVertice {
+), AnalogVertice, AnalogElement by analogElement {
 
 	companion object {
 		private val HIGH_VOLTAGE = AnalogSignal.HIGH

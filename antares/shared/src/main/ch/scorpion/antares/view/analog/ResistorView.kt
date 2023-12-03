@@ -26,7 +26,9 @@ import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 class ResistorView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: Resistor = Resistor()
-) : AbstractAnalogVerticeView<Resistor>(styleProvider, model), AnalogBranchVerticeView<Resistor> {
+) : AbstractAnalogVerticeView<Resistor>(styleProvider, model),
+	AnalogBranchVerticeView<Resistor>
+{
 
 	@Suppress("unused") // Reflective bean property
 	var resistance: Double

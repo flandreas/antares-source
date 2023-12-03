@@ -38,6 +38,8 @@ class AnalogGraphView(
 		private const val DEF_PROPAGATION_DELAY = 10L
 	}
 
+	val isNonLinear: Boolean get() = (graph as AnalogGraph).isNonLinear
+
 	/** Not set before [executionStart]. */
 	private var analysis: AnalogCircuitAnalysis? = null
 
@@ -106,6 +108,9 @@ class AnalogGraphView(
 	}
 
 	/** ---- [AnalogGraphView] */
+
+	val analogElementViews: List<AnalogElement> get() =
+		drawables.filterIsInstance<AnalogElement>()
 
 	fun currentFlowAnimationTick(systemSpeedCategory: CurrentSystemSpeedCategory) {
 		getEdgeViews()

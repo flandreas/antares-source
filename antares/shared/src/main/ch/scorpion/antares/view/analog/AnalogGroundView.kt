@@ -15,7 +15,7 @@ import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 class AnalogGroundView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: AnalogGround = AnalogGround()
-) : OrientableRectangularVerticeView<AnalogGround>(styleProvider, model) {
+) : AbstractAnalogVerticeView<AnalogGround>(styleProvider, model) {
 
 	companion object {
 		private val SIZE = wInt(4)
