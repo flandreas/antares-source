@@ -60,7 +60,7 @@ class FalstadAnalogCircuitCalculator : AnalogCircuitCalculator<FalstadAnalogCirc
 
 				analysis.luSolve()
 
-				for (j in 0 until  analysis.matrixSize) {
+				for (j in 0 until  analysis.circuitMatrixFullSize) {
 					val ri = analysis.rowInfo[j]
 					var res = if (ri.type == RowInfo.Type.Constant) {
 						ri.value

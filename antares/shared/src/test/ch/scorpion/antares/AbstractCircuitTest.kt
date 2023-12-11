@@ -107,6 +107,6 @@ abstract class AbstractCircuitTest {
 	}
 
 	protected fun assertNoIssues() {
-		assertTrue(issueCollector.issues.isEmpty(), "A simulation issue occurred")
+		assertTrue(issueCollector.issues.isEmpty(), "A simulation issue occurred: ${issueCollector.issues.firstOrNull()?.description }")
 	}
 }

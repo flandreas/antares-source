@@ -121,8 +121,6 @@ class FalstadAnalogCircuitAnalyzer(private val circuitView: AnalogGraphView) {
 		}
 	}
 
-	private fun createAnalysis(): FalstadAnalogCircuitAnalysis {
-		val matrixSize = nodeList.size - 1 + voltageSourceCount
-		return FalstadAnalogCircuitAnalysis(circuitView, matrixSize, nodeList, voltageSources as Array<AnalogElement>)
-	}
+	private fun createAnalysis(): FalstadAnalogCircuitAnalysis =
+		FalstadAnalogCircuitAnalysis(circuitView, nodeList, voltageSources as Array<AnalogElement>)
 }

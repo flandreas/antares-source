@@ -9,7 +9,6 @@ import kotlin.math.abs
 
 class FalstadAnalogCircuitAnalysis(
 	override val circuitView: AnalogGraphView,
-	matrixSize: Int,
 	val nodeList: List<CircuitNode>,
 	val voltageSources: Array<AnalogElement>
 ) : AnalogCircuitAnalysis {
@@ -150,20 +149,23 @@ class FalstadAnalogCircuitAnalysis(
 		}
 	}
 
-	var matrixSize = matrixSize
-		private set
-
 	val isNonLinear = circuitView.analogElementViews.any { it.isNonLinear }
 
-	val origMatrix = Array(matrixSize) { Array(matrixSize) { 0.0 } }
-
-	val origRightSide = Array(matrixSize) { 0.0 }
+	private var matrixSize = nodeList.size - 1 + voltageSources.size
 
 	var circuitMatrix = Array(matrixSize) { Array(matrixSize) { 0.0 } }
 		private set
 
 	var circuitRightSide = Array(matrixSize) { 0.0 }
 		private set
+
+	val origMatrix = Array(matrixSize) { Array(matrixSize) { 0.0 } }
+
+	val origRightSide = Array(matrixSize) { 0.0 }
+
+	private var circuitMatrixSize = matrixSize
+
+	val circuitMatrixFullSize = matrixSize
 
 	val circuitPermute = Array(matrixSize) { 0 }
 
@@ -181,9 +183,15 @@ class FalstadAnalogCircuitAnalysis(
 	fun getCircuitNode(index: Int): CircuitNode = nodeList[index]
 
 	fun startSubIteration() {
-		origRightSide.copyInto(circuitRightSide)
+		for (i in 0 until circuitMatrixSize) {
+			circuitRightSide[i] = origRightSide[i]
+		}
 		if (isNonLinear) {
-			origMatrix.forEachIndexed { i, v -> v.copyInto(circuitMatrix[i]) }
+			for (i in 0 until circuitMatrixSize) {
+				for (j in 0 until circuitMatrixSize) {
+					circuitMatrix[i][j] = origMatrix[i][j]
+				}
+			}
 		}
 	}
 
@@ -436,6 +444,7 @@ class FalstadAnalogCircuitAnalysis(
 		circuitMatrix = newMatrix
 		circuitRightSide = newRS
 		matrixSize = newSize
+		circuitMatrixSize = newSize
 
 		i = 0
 		while (i < matrixSize) {
