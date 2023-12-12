@@ -12,7 +12,7 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 class AnalogPowerView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: AnalogPower = AnalogPower()
-) : OrientableRectangularVerticeView<AnalogPower>(styleProvider, model) {
+) : AbstractAnalogVerticeView<AnalogPower>(styleProvider, model) {
 
 	var voltage: Double
 		get() = model.voltage
