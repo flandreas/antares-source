@@ -112,6 +112,10 @@ class AnalogGraphView(
 	val analogElementViews: List<AnalogElement> get() =
 		drawables.filterIsInstance<AnalogElement>()
 
+	fun requireAnalysis() {
+		analysis = null
+	}
+
 	fun currentFlowAnimationTick(systemSpeedCategory: CurrentSystemSpeedCategory) {
 		getEdgeViews()
 			.map { it as AnalogEdgeView }

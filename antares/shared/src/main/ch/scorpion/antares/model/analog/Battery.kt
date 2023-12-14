@@ -2,7 +2,6 @@ package ch.scorpion.antares.model.analog
 
 import ch.scorpion.antares.view.analog.AnalogCircuitBranch
 import ch.scorpion.antares.view.analog.AnalogElement
-import ch.scorpion.antares.view.analog.AnalogElementMixin
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.MINUS_ONE
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.ONE
@@ -20,8 +19,7 @@ class Battery(
 	voltage: Double = DEF_VOLTAGE
 ) : AbstractAnalogTwoPortVertice<Battery>(
 	EmptyVerticeCalculator,
-	"library.element.Battery",
-	AnalogElementMixin(voltageSourceCount = 1)
+	"library.element.Battery"
 ) {
 
 	companion object {
@@ -52,7 +50,7 @@ class Battery(
 		writer.writeDouble("voltage", voltage)
 	}
 
-	/** ---- AnalogTwoPortVertice */
+	/** ---- [AnalogTwoPortVertice] */
 
 	/** Constant voltage at positive port. */
 	override fun composeComponentConstituentEquation(
@@ -74,6 +72,8 @@ class Battery(
 		}
 		equationSystem.addEquation(row) { -voltage }
 	}
+
+	override val voltageSourceCount: Int get() = 1
 
 	/** ---- [AnalogElement] */
 

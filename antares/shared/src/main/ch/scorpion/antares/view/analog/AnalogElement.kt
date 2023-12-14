@@ -43,9 +43,11 @@ interface AnalogElement {
 	fun stamp(analysis: FalstadAnalogCircuitAnalysis)
 }
 
+/**
+ * Mixed-in by [AnalogVertice]s as a delegate to implement [AnalogElement].
+ */
 class AnalogElementMixin(
 	override val isNonLinear: Boolean = false,
-	override val voltageSourceCount: Int = 0,
 	override val postCount: Int = 2
 ) : AnalogElement {
 
@@ -62,6 +64,8 @@ class AnalogElementMixin(
 		private set
 
 	private lateinit var voltages: Array<Double>
+
+	override val voltageSourceCount: Int get() = vertice.voltageSourceCount
 
 	override fun allocateNodes() {
 		nodes = Array(postCount) { 0 }

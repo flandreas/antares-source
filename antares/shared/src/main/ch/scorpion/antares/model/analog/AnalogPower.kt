@@ -1,6 +1,7 @@
 package ch.scorpion.antares.model.analog
 
 import ch.scorpion.antares.view.analog.AnalogCircuitBranch
+import ch.scorpion.antares.view.analog.AnalogElement
 import ch.scorpion.antares.view.analog.AnalogElementMixin
 import ch.scorpion.antares.view.analog.AnalogGraphView
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem
@@ -13,7 +14,7 @@ import ch.scorpion.jabbah.io.StoreReader
 class AnalogPower : AbstractAnalogVertice<AnalogPower>(
 	EmptyVerticeCalculator,
 	"library.element.AnalogPower",
-	AnalogElementMixin(voltageSourceCount = 1, postCount = 1)
+	AnalogElementMixin(postCount = 1)
 ) {
 	var voltage: Double = 5.0
 		set(value) {
@@ -55,6 +56,10 @@ class AnalogPower : AbstractAnalogVertice<AnalogPower>(
 
 		equationSystem.addEquation(row) { voltage }
 	}
+
+	/** ---- [AnalogElement] */
+
+	override val voltageSourceCount: Int get() = 1
 
 	override fun stamp(analysis: FalstadAnalogCircuitAnalysis) {
 		analysis.stampVoltageSource(0, analogElem.nodes[0], analogElem.voltageSource, voltage)

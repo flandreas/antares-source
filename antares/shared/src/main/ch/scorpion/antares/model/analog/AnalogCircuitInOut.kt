@@ -8,6 +8,7 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.analog.*
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.ONE
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.ZERO
+import ch.scorpion.antares.view.analog.falstad.FalstadAnalogCircuitAnalysis
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorImpl
@@ -20,7 +21,7 @@ import ch.scorpion.jabbah.graph.view.GraphView
 class AnalogCircuitInOut(
 	name: String? = null,
 	portType: PortType = PortType.INPUT,
-	private val analogElement: AnalogElementMixin = AnalogElementMixin()
+	private val analogElement: AnalogElementMixin = AnalogElementMixin(postCount = 1)
 ) : AbstractCircuitInOut<AnalogSignal>(
 	port = AnalogPort(portType.reverse(), name),
 	name = name,
@@ -36,10 +37,17 @@ class AnalogCircuitInOut(
 		private class Calculator : VerticeCalculator<AnalogCircuitInOut> {
 			override fun calculate(vertice: AnalogCircuitInOut, data: GraphActorData, signalHandler: SignalHandler) {
 				if (data.graphView is AnalogGraphView) {
+					(data.graphView as AnalogGraphView).requireAnalysis()
 					(data.graphView as AnalogGraphView).requestActing(signalHandler)
 				}
 			}
 		}
+	}
+
+	private val isInput: Boolean get() = getPort<AnalogSignal>().portType.isOutput
+
+	init {
+		analogElement.bindAnalogElement(this)
 	}
 
 	/** ---- [GraphPort] */
@@ -94,7 +102,7 @@ class AnalogCircuitInOut(
 	) {
 		val row = Array(equationSystem.variableCount) { ZERO }
 
-		if (getPort<AnalogSignal>().portType.isOutput) {
+		if (isInput) {
 			// Input: Constant voltage
 			val voltageVariableIndex = voltageNodes.indexOf(getPort<AnalogSignal>().net!!.id)
 			row[branches.size + voltageVariableIndex] = ONE
@@ -113,6 +121,18 @@ class AnalogCircuitInOut(
 			setOutgoingSignal(getPort<AnalogSignal>().net!!.signal!!, signalHandler)
 		}
 	}
+
+	/** ---- [AnalogElement] */
+
+	override val voltageSourceCount: Int get() = if (isInput) 1 else 0
+
+	override fun stamp(analysis: FalstadAnalogCircuitAnalysis) {
+		if (isInput) {
+			analysis.stampVoltageSource(0, analogElement.nodes[0], analogElement.voltageSource, signal?.voltage ?: AnalogSignal.ZERO.voltage)
+		}
+	}
+
+	override fun calculateCurrent() { }
 
 	/** ---- [ActorImpl] */
 

@@ -26,6 +26,8 @@ abstract class AbstractAnalogVertice<T: CalculatingVertice>(
 		propagationDelay = 0
 	}
 
+	override val voltageSourceCount: Int get() = 0
+
 	override fun calculateCurrent() {
 		// empty
 	}

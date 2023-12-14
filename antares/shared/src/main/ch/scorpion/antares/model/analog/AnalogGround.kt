@@ -10,12 +10,14 @@ import ch.scorpion.jabbah.graph.model.vertice.EmptyVerticeCalculator
 class AnalogGround : AbstractAnalogVertice<AnalogGround>(
 	EmptyVerticeCalculator,
 	"library.element.AnalogGround",
-	AnalogElementMixin(voltageSourceCount = 1, postCount = 1)
+	AnalogElementMixin(postCount = 1)
 ) {
 
 	init {
 		addPort(AnalogPort())
 	}
+
+	override val voltageSourceCount: Int get() = 1
 
 	override fun composeComponentConstituentEquation(
 		circuitView: AnalogGraphView,
