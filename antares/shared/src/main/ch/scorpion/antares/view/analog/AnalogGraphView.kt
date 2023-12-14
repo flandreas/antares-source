@@ -112,6 +112,11 @@ class AnalogGraphView(
 	val analogElementViews: List<AnalogElement> get() =
 		drawables.filterIsInstance<AnalogElement>()
 
+	/**
+	 * Resets the current [AnalogCircuitAnalysis] so that it is recalculated in the next
+	 * simulation step. This is required for all actions that change the physics of an [AnalogGraph],
+	 * such as toggling a switch or changing the resistance of a resistor.
+	 */
 	fun requireAnalysis() {
 		analysis = null
 	}

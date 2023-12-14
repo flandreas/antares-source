@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' manualContainer='false'>
+  <graph>
+    <graphStorable _id='1'>
+      <model>
+        <analogGraph _id='2' type='analog' propDelay='10'>
+          <elements>
+            <battery _id='3' id='1' delay='0' voltage='5.0'/>
+            <resistor _id='4' id='2' delay='0' resistance='100.0' variable='true'/>
+            <analogNet _id='5' id='3' delay='0'>
+              <ports>
+                <netPortRef _id='6' verticeId='3' portId='1'/>
+                <netPortRef _id='7' verticeId='4' portId='2'/>
+              </ports>
+            </analogNet>
+            <analogNet _id='8' id='4' delay='0'>
+              <ports>
+                <netPortRef _id='9' verticeId='4' portId='1'/>
+                <netPortRef _id='10' verticeId='3' portId='2'/>
+              </ports>
+            </analogNet>
+          </elements>
+        </analogGraph>
+      </model>
+      <view>
+        <analogGraphView _id='11'>
+          <netViews>
+            <netView _id='12' modelId='5' style='line'/>
+            <netView _id='13' modelId='8' style='line'/>
+          </netViews>
+          <components>
+            <batteryView _id='14' id='1' rot='270' filled='true' stroked='true' modelId='3' x='-287.0' y='-147.0'/>
+            <resistorView _id='15' id='2' rot='0' filled='true' stroked='true' modelId='4' x='-133.0' y='-196.0'/>
+            <analogEdgeView _id='16' id='3' filled='true' stroked='true' modelId='5' layout='ortho' orig='14' origPort='1' origPortOutput='true' dest='15' destPort='2' destPortOutput='true' adjusted='false'>
+              <shape>
+                <polylineShape points='-287.0,-133.0 -287.0,-196.0 -189.0,-196.0'/>
+              </shape>
+            </analogEdgeView>
+            <analogEdgeView _id='17' id='4' filled='true' stroked='true' modelId='8' layout='ortho' orig='15' origPort='1' origPortOutput='true' dest='14' destPort='2' destPortOutput='true' adjusted='true'>
+              <shape>
+                <polylineShape points='-147.0,-196.0 -35.0,-196.0 -35.0,-28.0 -287.0,-28.0 -287.0,-105.0'/>
+              </shape>
+            </analogEdgeView>
+          </components>
+        </analogGraphView>
+      </view>
+    </graphStorable>
+  </graph>
+  <container>
+    <containerDrawing _id='18'>
+      <components>
+        <rectangle _id='19' id='1' style='figure' filled='true' stroked='true' x='140.0' y='140.0' w='56.0' h='70.0'/>
+        <originIndicator _id='20' id='2'>
+          <location>
+            <point x='140.0' y='140.0'/>
+          </location>
+        </originIndicator>
+      </components>
+      <model>
+        <subGraphVertice _id='21' id='0' delay='0' uuid='f8af7b2b-0185-4e7d-8eed-18fa3130d6ea'>
+          <name>
+            <translation lang='en' text='Variable Resistor'/>
+          </name>
+          <ports/>
+        </subGraphVertice>
+      </model>
+    </containerDrawing>
+  </container>
+</metaGraph>

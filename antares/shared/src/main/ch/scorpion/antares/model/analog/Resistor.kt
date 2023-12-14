@@ -71,8 +71,9 @@ class Resistor(
 
 	/** ---- [Resistor] */
 
-	fun setState(resistance: Double, signalHandler: SignalHandler, graphView: GraphView) {
+	fun setState(resistance: Double, signalHandler: SignalHandler, graphView: AnalogGraphView) {
 		this.resistance = resistance
+		graphView.requireAnalysis()
 		requestActingAfter(signalHandler, propagationDelay, createActorData(null, graphView = graphView))
 	}
 
