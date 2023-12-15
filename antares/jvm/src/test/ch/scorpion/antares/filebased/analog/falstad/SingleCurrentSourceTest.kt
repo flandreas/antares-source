@@ -1,5 +1,6 @@
-package ch.scorpion.antares.filebased.analog.kirchhoff
+package ch.scorpion.antares.filebased.analog.falstad
 
+import ch.scorpion.antares.filebased.analog.kirchhoff.AbstractAnalogFileBasedTest
 import ch.scorpion.antares.view.analog.AnalogEdgeView
 import ch.scorpion.jabbah.base.UUID
 import kotlin.test.BeforeTest
@@ -22,8 +23,8 @@ class SingleCurrentSourceTest : AbstractAnalogFileBasedTest() {
 	fun shouldSimulate() {
 		startSimulation()
 		processUntilQueueIsEmpty()
-		assertEquals(0.1, leftEdgeView.current)
-		assertEquals(0.1, rightEdgeView.current)
-		assertEquals(10.0, leftEdgeView.model.signal!!.voltage)
+		assertCurrent(0.1, leftEdgeView.current)
+		assertCurrent(0.1, rightEdgeView.current)
+		assertVoltage(10.0, leftEdgeView.model.signal!!.voltage)
 	}
 }

@@ -1,7 +1,9 @@
 package ch.scorpion.antares.model.analog
 
+import ch.scorpion.antares.view.analog.AnalogElement
 import ch.scorpion.antares.view.analog.AnalogCircuitBranch
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem
+import ch.scorpion.antares.view.analog.falstad.FalstadAnalogCircuitAnalysis
 import ch.scorpion.jabbah.graph.model.vertice.EmptyVerticeCalculator
 import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.io.Storable
@@ -52,5 +54,11 @@ class CurrentSource(
 		val row = Array(equationSystem.variableCount) { DynamicLinearEquationSystem.ZERO }
 		row[currentVariableIndex] = DynamicLinearEquationSystem.ONE
 		equationSystem.addEquation(row) { current }
+	}
+
+	/** ---- [AnalogElement] */
+
+	override fun stamp(analysis: FalstadAnalogCircuitAnalysis) {
+		analysis.stampCurrentSource(analogElem.nodes[1], analogElem.nodes[0], current)
 	}
 }

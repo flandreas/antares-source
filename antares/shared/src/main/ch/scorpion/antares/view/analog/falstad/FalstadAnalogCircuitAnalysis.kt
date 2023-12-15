@@ -218,6 +218,11 @@ class FalstadAnalogCircuitAnalysis(
 		stampMatrix(n2, vn, -1.0)
 	}
 
+	fun stampCurrentSource(n1: Int, n2: Int, i: Double) {
+		stampRightSide(n1, -i)
+		stampRightSide(n2, i)
+	}
+
 	/**
 	 * Indicates that the value on the left side of row [i] changes in [AnalogElement.doStep].
 	 */
