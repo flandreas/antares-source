@@ -1,7 +1,7 @@
 package ch.scorpion.antares.model.analog
 
 import ch.scorpion.antares.model.AntaresGraphTypes
-import ch.scorpion.antares.view.analog.AnalogElement
+import ch.scorpion.antares.view.analog.engine.AnalogElement
 import ch.scorpion.antares.view.analog.AnalogGraphView
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus

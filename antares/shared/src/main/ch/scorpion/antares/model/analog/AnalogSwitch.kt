@@ -1,8 +1,10 @@
 package ch.scorpion.antares.model.analog
 
 import ch.scorpion.antares.model.input.AbstractSwitch
-import ch.scorpion.antares.view.analog.*
-import ch.scorpion.antares.view.analog.falstad.FalstadAnalogCircuitAnalysis
+import ch.scorpion.antares.view.analog.engine.AnalogElement
+import ch.scorpion.antares.view.analog.engine.AnalogElementMixin
+import ch.scorpion.antares.view.analog.AnalogGraphView
+import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
@@ -51,7 +53,7 @@ class AnalogSwitch(
 
 	override val voltageSourceCount: Int get() = if (isOn) 1 else 0
 
-	override fun stamp(analysis: FalstadAnalogCircuitAnalysis) {
+	override fun stamp(analysis: AnalogCircuitAnalysis) {
 		if (isOn) {
 			analysis.stampVoltageSource(analogElement.nodes[0], analogElement.nodes[1], analogElement.voltageSource, 0.0)
 		}
@@ -59,29 +61,4 @@ class AnalogSwitch(
 
 	override fun calculateCurrent() { }
 
-	/** ---- AnalogTwoPortVertice */
-
-	override fun composeComponentConstituentEquation(
-		voltageNodes: List<Int>,
-		branches: List<AnalogCircuitBranch>,
-		incomingPortId: Int,
-		currentVariableIndex: Int,
-		groundNodeNetId: Int,
-		equationSystem: DynamicLinearEquationSystem
-	) {
-		AbstractResistingAnalogVertice.composeComponentConstituentEquation(
-			this,
-			voltageNodes, branches, incomingPortId, currentVariableIndex, groundNodeNetId, equationSystem)
-	}
-
-	override fun composeComponentConstituentEquation(
-		circuitView: AnalogGraphView,
-		voltageNodes: List<Int>,
-		branches: List<AnalogCircuitBranch>,
-		groundNodeNetId: Int,
-		equationSystem: DynamicLinearEquationSystem
-	) {
-		AbstractAnalogTwoPortVertice.composeComponentConstituentEquation(this,
-			circuitView, voltageNodes, branches, groundNodeNetId, equationSystem)
-	}
 }

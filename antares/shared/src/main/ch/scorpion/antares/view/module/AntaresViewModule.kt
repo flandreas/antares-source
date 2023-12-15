@@ -20,7 +20,6 @@ import ch.scorpion.antares.view.addressable.LookupTableView
 import ch.scorpion.antares.view.addressable.RAMView
 import ch.scorpion.antares.view.addressable.ROMView
 import ch.scorpion.antares.view.analog.*
-import ch.scorpion.antares.view.analog.falstad.FalstadAnalogCircuitCalculator
 import ch.scorpion.antares.view.app.AntaresGraphViewService
 import ch.scorpion.antares.view.arithmetic.BitExtenderView
 import ch.scorpion.antares.view.arithmetic.RandomView
@@ -172,12 +171,6 @@ object AntaresViewModule : AbstractModule() {
 	private const val ANALOG_POWER = "AnalogPower"
 
 	val currentSymbolStyle: CurrentSymbolStyle by lazy {CurrentSymbolStyle() }
-
-	var analogCircuitCalculatorFactor: AnalogCircuitCalculatorFactory = object : AnalogCircuitCalculatorFactory {
-		override fun <T : AnalogCircuitAnalysis> create(): AnalogCircuitCalculator<T> {
-			return FalstadAnalogCircuitCalculator() as AnalogCircuitCalculator<T>
-		}
-	}
 
 	override fun initialize() {
 		Translations.addBundle("antares")

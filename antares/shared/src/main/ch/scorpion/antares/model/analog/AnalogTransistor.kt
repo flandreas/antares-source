@@ -4,10 +4,8 @@ import ch.scorpion.antares.model.net.TransistorIF
 import ch.scorpion.antares.model.net.TransistorIF.Companion.DEFAULT_TRANSISTOR_TYPE
 import ch.scorpion.antares.model.net.TransistorType
 import ch.scorpion.antares.view.analog.*
-import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.MINUS_ONE
-import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.ONE
-import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.ZERO
-import ch.scorpion.antares.view.analog.falstad.FalstadAnalogCircuitAnalysis
+import ch.scorpion.antares.view.analog.engine.AnalogElementMixin
+import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.jabbah.graph.model.vertice.EmptyVerticeCalculator
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -74,12 +72,12 @@ class AnalogTransistor(
 	private var vt: Double = DEF_THRESHOLD
 	private var mode = 0
 
-	override fun stamp(analysis: FalstadAnalogCircuitAnalysis) {
+	override fun stamp(analysis: AnalogCircuitAnalysis) {
 		analysis.stampNonLinear(analogElem.nodes[0])
 		analysis.stampNonLinear(analogElem.nodes[2])
 	}
 
-	override fun doStep(analysis: FalstadAnalogCircuitAnalysis) {
+	override fun doStep(analysis: AnalogCircuitAnalysis) {
 		val pnp = if (transistorType == TransistorType.N) 1 else -1
 
 		val vs = Array(3) { i -> analogElem.voltages[i] }
@@ -157,75 +155,5 @@ class AnalogTransistor(
 		if (source == 0 && pnp == 1 || source == 2 && pnp == -1) {
 			ids = -ids
 		}
-	}
-
-	/** ---- [AnalogVertice] */
-
-	override fun composeComponentConstituentEquation(
-		circuitView: AnalogGraphView,
-		voltageNodes: List<Int>,
-		branches: List<AnalogCircuitBranch>,
-		groundNodeNetId: Int,
-		equationSystem: DynamicLinearEquationSystem
-	) {
-		composeDrainSourceEquation(circuitView, voltageNodes, branches, equationSystem)
-		composeGateEquation(circuitView, branches, equationSystem)
-	}
-
-	private fun composeDrainSourceEquation(
-		circuitView: AnalogGraphView,
-		voltageNodes: List<Int>,
-		branches: List<AnalogCircuitBranch>,
-		equationSystem: DynamicLinearEquationSystem
-	) {
-		val row = Array(equationSystem.variableCount) { ZERO }
-
-		val sourceCurrentIndex = AnalogCircuitBranch.getCurrentVariableIndex(circuitView, this, branches)
-		if (AnalogCircuitBranch.isCurrentPositive(circuitView, this, branches)) {
-			row[sourceCurrentIndex] = MINUS_ONE
-		} else {
-			row[sourceCurrentIndex] = ONE
-		}
-
-		// If a voltage variable is -1 (not found), vertice is connected to ground
-		val gateVoltageIndex = voltageNodes.indexOf(gatePort.net!!.id)
-		val sourceVoltageIndex = voltageNodes.indexOf(sourcePort.net!!.id)
-
-		when (transistorType) {
-			TransistorType.N -> {
-				// I = k(Ug - Us)
-				if (gateVoltageIndex >= 0) {
-					row[branches.size + gateVoltageIndex] = { -gain }
-				}
-				if (sourceVoltageIndex >= 0) {
-					row[branches.size + sourceVoltageIndex] = { gain }
-				}
-				equationSystem.addEquation(row, ZERO)
-			}
-			TransistorType.P -> {
-				// I = I0 - k(Ug - Us) with I0 = gain * Umax
-				if (gateVoltageIndex >= 0) {
-					row[branches.size + gateVoltageIndex] = { gain }
-				}
-				if (sourceVoltageIndex >= 0) {
-					row[branches.size + sourceVoltageIndex] = { -gain }
-				}
-				equationSystem.addEquation(row) { gain * AnalogSignal.HIGH.voltage }
-			}
-		}
-	}
-
-	private fun composeGateEquation(
-		circuitView: AnalogGraphView,
-		branches: List<AnalogCircuitBranch>,
-		equationSystem: DynamicLinearEquationSystem
-	) {
-		val row = Array(equationSystem.variableCount) { ZERO }
-
-		/** Gate-Source current must be 0. */
-		val currentVariableIndex = AnalogCircuitBranch.getCurrentVariableIndex(circuitView, this, branches, gatePort.portId)
-		row[currentVariableIndex] = ONE
-
-		equationSystem.addEquation(row, ZERO)
 	}
 }

@@ -1,11 +1,9 @@
 package ch.scorpion.antares.model.analog
 
-import ch.scorpion.antares.view.analog.AnalogElement
-import ch.scorpion.antares.view.analog.AnalogCircuitBranch
-import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem
-import ch.scorpion.antares.view.analog.falstad.FalstadAnalogCircuitAnalysis
-import ch.scorpion.jabbah.graph.model.vertice.EmptyVerticeCalculator
+import ch.scorpion.antares.view.analog.engine.AnalogElement
+import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.jabbah.graph.model.OutputPort
+import ch.scorpion.jabbah.graph.model.vertice.EmptyVerticeCalculator
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -41,24 +39,9 @@ class CurrentSource(
 		writer.writeDouble("current", current)
 	}
 
-	/** ---- AnalogTwoPortVertice */
-
-	override fun composeComponentConstituentEquation(
-		voltageNodes: List<Int>,
-		branches: List<AnalogCircuitBranch>,
-		incomingPortId: Int,
-		currentVariableIndex: Int,
-		groundNodeNetId: Int,
-		equationSystem: DynamicLinearEquationSystem
-	) {
-		val row = Array(equationSystem.variableCount) { DynamicLinearEquationSystem.ZERO }
-		row[currentVariableIndex] = DynamicLinearEquationSystem.ONE
-		equationSystem.addEquation(row) { current }
-	}
-
 	/** ---- [AnalogElement] */
 
-	override fun stamp(analysis: FalstadAnalogCircuitAnalysis) {
+	override fun stamp(analysis: AnalogCircuitAnalysis) {
 		analysis.stampCurrentSource(analogElem.nodes[1], analogElem.nodes[0], current)
 	}
 }

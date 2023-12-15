@@ -18,7 +18,6 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.ui.KnobLauncherImpl
-import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
@@ -26,9 +25,7 @@ import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 class ResistorView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: Resistor = Resistor()
-) : AbstractAnalogVerticeView<Resistor>(styleProvider, model),
-	AnalogBranchVerticeView<Resistor>
-{
+) : AbstractAnalogVerticeView<Resistor>(styleProvider, model) {
 
 	@Suppress("unused") // Reflective bean property
 	var resistance: Double

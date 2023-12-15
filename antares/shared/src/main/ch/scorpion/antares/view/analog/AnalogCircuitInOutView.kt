@@ -3,7 +3,8 @@ package ch.scorpion.antares.view.analog
 import ch.scorpion.antares.model.analog.AnalogCircuitInOut
 import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.view.analog.falstad.FalstadAnalogCircuitAnalysis
+import ch.scorpion.antares.view.analog.engine.AnalogElement
+import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.antares.view.inout.AbstractCircuitInOutView
 import ch.scorpion.antares.view.inout.ArrowPath
 import ch.scorpion.antares.view.style.AntaresTheme
@@ -91,7 +92,7 @@ class AnalogCircuitInOutView(
 		// Empty so far
 	}
 
-	override fun stamp(analysis: FalstadAnalogCircuitAnalysis) {
+	override fun stamp(analysis: AnalogCircuitAnalysis) {
 		model.stamp(analysis)
 	}
 

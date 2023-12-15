@@ -4,6 +4,9 @@ import ch.scorpion.antares.model.AntaresGraphTypes
 import ch.scorpion.antares.model.analog.AnalogCalculationRequest
 import ch.scorpion.antares.model.analog.AnalogGraph
 import ch.scorpion.antares.model.analog.AnalogSignal
+import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
+import ch.scorpion.antares.view.analog.engine.AnalogCircuitCalculator
+import ch.scorpion.antares.view.analog.engine.AnalogElement
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.jabbah.base.IssueImpl
 import ch.scorpion.jabbah.base.IssueSeverity
@@ -157,7 +160,7 @@ class AnalogGraphView(
 	 */
 	fun ensureAnalysis(): AnalogCircuitAnalysis {
 		if (analysis == null) {
-			analysis = AntaresViewModule.analogCircuitCalculatorFactor.create<AnalogCircuitAnalysis>().analyse(this)
+			analysis = AnalogCircuitCalculator().analyse(this)
 		}
 		return analysis!!
 	}
@@ -166,9 +169,7 @@ class AnalogGraphView(
 		override fun act(signalHandler: SignalHandler, data: ActorData) {
 			val graphView = (data as GraphActorData).graphView as AnalogGraphView
 			try {
-				AntaresViewModule.analogCircuitCalculatorFactor
-					.create<AnalogCircuitAnalysis>()
-					.calculate(graphView.ensureAnalysis(), signalHandler)
+				AnalogCircuitCalculator().calculate(graphView.ensureAnalysis(), signalHandler)
 				super.act(signalHandler, data)
 			} catch (e: Throwable) {
 				LOG.debug("Error while analyzing: ${e.message}")

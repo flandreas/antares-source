@@ -1,8 +1,8 @@
 package ch.scorpion.antares.model.analog
 
-import ch.scorpion.antares.view.analog.AnalogElement
-import ch.scorpion.antares.view.analog.AnalogElementMixin
-import ch.scorpion.antares.view.analog.falstad.FalstadAnalogCircuitAnalysis
+import ch.scorpion.antares.view.analog.engine.AnalogElement
+import ch.scorpion.antares.view.analog.engine.AnalogElementMixin
+import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
@@ -32,7 +32,7 @@ abstract class AbstractAnalogVertice<T: CalculatingVertice>(
 		// empty
 	}
 
-	override fun stamp(analysis: FalstadAnalogCircuitAnalysis) {
+	override fun stamp(analysis: AnalogCircuitAnalysis) {
 		// empty
 	}
 }

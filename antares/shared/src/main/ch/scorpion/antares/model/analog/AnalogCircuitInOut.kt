@@ -5,10 +5,10 @@ import ch.scorpion.antares.model.AntaresGraphTypes.Digital
 import ch.scorpion.antares.model.inout.AbstractCircuitInOut
 import ch.scorpion.antares.model.inout.CircuitInOut
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.view.analog.*
-import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.ONE
-import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.ZERO
-import ch.scorpion.antares.view.analog.falstad.FalstadAnalogCircuitAnalysis
+import ch.scorpion.antares.view.analog.engine.AnalogElement
+import ch.scorpion.antares.view.analog.engine.AnalogElementMixin
+import ch.scorpion.antares.view.analog.AnalogGraphView
+import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorImpl
@@ -93,29 +93,6 @@ class AnalogCircuitInOut(
 
 	/** ---- [AnalogVertice] */
 
-	override fun composeComponentConstituentEquation(
-		circuitView: AnalogGraphView,
-		voltageNodes: List<Int>,
-		branches: List<AnalogCircuitBranch>,
-		groundNodeNetId: Int,
-		equationSystem: DynamicLinearEquationSystem
-	) {
-		val row = Array(equationSystem.variableCount) { ZERO }
-
-		if (isInput) {
-			// Input: Constant voltage
-			val voltageVariableIndex = voltageNodes.indexOf(getPort<AnalogSignal>().net!!.id)
-			row[branches.size + voltageVariableIndex] = ONE
-			// TODO Handle undefined differently
-			equationSystem.addEquation(row) { signal?.voltage ?: AnalogSignal.ZERO.voltage }
-		} else {
-			// Output: No electrical current flowing outwards
-			val currentVariableIndex = AnalogCircuitBranch.getCurrentVariableIndex(circuitView, this, branches, 1)
-			row[currentVariableIndex] = ONE
-			equationSystem.addEquation(row, ZERO)
-		}
-	}
-
 	override fun handleAnalogPortChanged(port: AnalogPort, signalHandler: SignalHandler) {
 		if (portType.isOutput) {
 			setOutgoingSignal(getPort<AnalogSignal>().net!!.signal!!, signalHandler)
@@ -126,7 +103,7 @@ class AnalogCircuitInOut(
 
 	override val voltageSourceCount: Int get() = if (isInput) 1 else 0
 
-	override fun stamp(analysis: FalstadAnalogCircuitAnalysis) {
+	override fun stamp(analysis: AnalogCircuitAnalysis) {
 		if (isInput) {
 			analysis.stampVoltageSource(0, analogElement.nodes[0], analogElement.voltageSource, signal?.voltage ?: AnalogSignal.ZERO.voltage)
 		}

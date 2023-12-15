@@ -2,7 +2,8 @@ package ch.scorpion.antares.view.analog
 
 import ch.scorpion.antares.model.analog.AnalogNet
 import ch.scorpion.antares.model.analog.AnalogSignal
-import ch.scorpion.antares.view.analog.falstad.FalstadAnalogCircuitAnalysis
+import ch.scorpion.antares.view.analog.engine.AnalogElement
+import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
@@ -157,7 +158,7 @@ class AnalogEdgeView(
 		voltageSource = sourceId
 	}
 
-	override fun stamp(analysis: FalstadAnalogCircuitAnalysis) {
+	override fun stamp(analysis: AnalogCircuitAnalysis) {
 		analysis.stampResistor(nodes[0], nodes[1], DEF_RESISTANCE)
 	}
 

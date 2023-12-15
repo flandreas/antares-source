@@ -16,9 +16,7 @@ import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 class BatteryView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: Battery = Battery()
-) : AbstractAnalogVerticeView<Battery>(styleProvider, model),
-	AnalogBranchVerticeView<Battery>
-{
+) : AbstractAnalogVerticeView<Battery>(styleProvider, model) {
 
 	companion object {
 		private val SIZE = wInt(4)

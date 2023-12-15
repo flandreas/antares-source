@@ -1,15 +1,12 @@
 package ch.scorpion.antares.model.analog
 
-import ch.scorpion.antares.view.analog.AnalogCircuitBranch
-import ch.scorpion.antares.view.analog.AnalogElement
-import ch.scorpion.antares.view.analog.AnalogElementMixin
-import ch.scorpion.antares.view.analog.AnalogGraphView
-import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem
-import ch.scorpion.antares.view.analog.falstad.FalstadAnalogCircuitAnalysis
+import ch.scorpion.antares.view.analog.engine.AnalogElement
+import ch.scorpion.antares.view.analog.engine.AnalogElementMixin
+import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.jabbah.graph.model.vertice.EmptyVerticeCalculator
-import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.io.StoreWriter
 
 class AnalogPower : AbstractAnalogVertice<AnalogPower>(
 	EmptyVerticeCalculator,
@@ -40,28 +37,11 @@ class AnalogPower : AbstractAnalogVertice<AnalogPower>(
 		voltage = reader.readDouble("voltage")
 	}
 
-	/** ---- [AnalogVertice] */
-
-	override fun composeComponentConstituentEquation(
-		circuitView: AnalogGraphView,
-		voltageNodes: List<Int>,
-		branches: List<AnalogCircuitBranch>,
-		groundNodeNetId: Int,
-		equationSystem: DynamicLinearEquationSystem
-	) {
-		val row = Array(equationSystem.variableCount) { DynamicLinearEquationSystem.ZERO }
-
-		val voltageVariableIndex = voltageNodes.indexOf(getPort<AnalogSignal>().net!!.id)
-		row[branches.size + voltageVariableIndex] = DynamicLinearEquationSystem.ONE
-
-		equationSystem.addEquation(row) { voltage }
-	}
-
 	/** ---- [AnalogElement] */
 
 	override val voltageSourceCount: Int get() = 1
 
-	override fun stamp(analysis: FalstadAnalogCircuitAnalysis) {
+	override fun stamp(analysis: AnalogCircuitAnalysis) {
 		analysis.stampVoltageSource(0, analogElem.nodes[0], analogElem.voltageSource, voltage)
 	}
 }

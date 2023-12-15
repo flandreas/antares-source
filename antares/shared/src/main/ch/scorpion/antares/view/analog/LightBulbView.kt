@@ -1,7 +1,6 @@
 package ch.scorpion.antares.view.analog
 
 import ch.scorpion.antares.model.analog.LightBulb
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.output.LightEmitter
 import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
@@ -26,7 +25,7 @@ class LightBulbView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: LightBulb = LightBulb(),
 	lightColor: LightColor = DEFAULT_LIGHT_COLOR
-) : AbstractAnalogVerticeView<LightBulb>(styleProvider, model), LightEmitter, AnalogBranchVerticeView<LightBulb> {
+) : AbstractAnalogVerticeView<LightBulb>(styleProvider, model), LightEmitter {
 
 	companion object {
 		private val SIZE = wInt(4)

@@ -17,7 +17,7 @@ import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 class CurrentSourceView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: CurrentSource = CurrentSource()
-) : AbstractAnalogVerticeView<CurrentSource>(styleProvider, model), AnalogBranchVerticeView<CurrentSource> {
+) : AbstractAnalogVerticeView<CurrentSource>(styleProvider, model) {
 
 	companion object {
 		private const val SIZE = 6 * SCALE

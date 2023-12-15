@@ -3,6 +3,8 @@ package ch.scorpion.antares.view.analog
 import ch.scorpion.antares.model.analog.AnalogTransistor
 import ch.scorpion.antares.model.net.TransistorType
 import ch.scorpion.antares.view.Handedness
+import ch.scorpion.antares.view.analog.engine.AnalogElement
+import ch.scorpion.antares.view.analog.engine.AnalogElementProxy
 import ch.scorpion.antares.view.net.AbstractTransistorView
 import ch.scorpion.jabbah.base.geom.Direction.*
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -15,7 +17,6 @@ class AnalogTransistorView(
 	handedness: Handedness = DEFAULT_HANDEDNESS,
 	private val analogElement: AnalogElementProxy = AnalogElementProxy()
 ) : AbstractTransistorView<AnalogTransistor>(styleProvider, model, handedness),
-	AnalogBranchVerticeView<AnalogTransistor>,
 	AnalogElement by analogElement
 {
 
@@ -47,15 +48,4 @@ class AnalogTransistorView(
 
 		updateGeometry()
 	}
-
-	/** ---- [AnalogBranchVerticeView] */
-
-	override fun getOppositeBranchPortView(portView: AnalogPortView): AnalogPortView? =
-		if (portView === getPortView(model.sourcePort)) {
-			getPortView(model.drainPort) as AnalogPortView
-		} else if (portView === getPortView(model.drainPort)) {
-			getPortView(model.sourcePort) as AnalogPortView
-		} else {
-			null
-		}
 }

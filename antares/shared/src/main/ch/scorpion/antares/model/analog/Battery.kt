@@ -1,12 +1,7 @@
 package ch.scorpion.antares.model.analog
 
-import ch.scorpion.antares.view.analog.AnalogCircuitBranch
-import ch.scorpion.antares.view.analog.AnalogElement
-import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem
-import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.MINUS_ONE
-import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.ONE
-import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem.Companion.ZERO
-import ch.scorpion.antares.view.analog.falstad.FalstadAnalogCircuitAnalysis
+import ch.scorpion.antares.view.analog.engine.AnalogElement
+import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.jabbah.graph.model.vertice.EmptyVerticeCalculator
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -50,34 +45,11 @@ class Battery(
 		writer.writeDouble("voltage", voltage)
 	}
 
-	/** ---- [AnalogTwoPortVertice] */
-
-	/** Constant voltage at positive port. */
-	override fun composeComponentConstituentEquation(
-		voltageNodes: List<Int>,
-		branches: List<AnalogCircuitBranch>,
-		incomingPortId: Int,
-		currentVariableIndex: Int,
-		groundNodeNetId: Int,
-		equationSystem: DynamicLinearEquationSystem
-	) {
-		val row = Array(equationSystem.variableCount) { ZERO }
-
-		val posVoltageVariableIndex = voltageNodes.indexOf(positivePort.net!!.id)
-		val negVoltageVariableIndex = voltageNodes.indexOf(negativePort.net!!.id)
-
-		row[branches.size + posVoltageVariableIndex] = MINUS_ONE
-		if (negVoltageVariableIndex >= 0) {
-			row[branches.size + negVoltageVariableIndex] = ONE
-		}
-		equationSystem.addEquation(row) { -voltage }
-	}
+	/** ---- [AnalogElement] */
 
 	override val voltageSourceCount: Int get() = 1
 
-	/** ---- [AnalogElement] */
-
-	override fun stamp(analysis: FalstadAnalogCircuitAnalysis) {
+	override fun stamp(analysis: AnalogCircuitAnalysis) {
 		analysis.stampVoltageSource(analogElem.nodes[1], analogElem.nodes[0], analogElem.voltageSource, voltage)
 	}
 }
