@@ -1,10 +1,10 @@
-package ch.scorpion.antares.filebased.analog.kirchhoff
+package ch.scorpion.antares.filebased.analog.falstad
 
+import ch.scorpion.antares.filebased.analog.kirchhoff.AbstractAnalogFileBasedTest
 import ch.scorpion.antares.model.analog.AnalogNet
 import ch.scorpion.jabbah.base.UUID
 import kotlin.test.BeforeTest
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
 class SerialBatteriesTest : AbstractAnalogFileBasedTest() {
 
@@ -19,6 +19,6 @@ class SerialBatteriesTest : AbstractAnalogFileBasedTest() {
 		processUntilQueueIsEmpty()
 
 		val net = analogGraphView.graph!!.withId(5) as AnalogNet
-		assertEquals(10.0, net.signal!!.voltage)
+		assertVoltage(10.0, net.signal!!.voltage)
 	}
 }

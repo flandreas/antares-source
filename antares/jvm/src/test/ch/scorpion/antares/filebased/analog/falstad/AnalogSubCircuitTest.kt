@@ -1,5 +1,6 @@
-package ch.scorpion.antares.filebased.analog.kirchhoff
+package ch.scorpion.antares.filebased.analog.falstad
 
+import ch.scorpion.antares.filebased.AbstractFileBasedTest
 import ch.scorpion.antares.view.input.SwitchView
 import ch.scorpion.antares.view.output.LEDView
 import ch.scorpion.jabbah.base.UUID
@@ -9,7 +10,13 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /** Includes an analog inverter (made from a transistor) in a digital circuit.*/
-class AnalogSubCircuitTest : AbstractAnalogFileBasedTest() {
+class AnalogSubCircuitTest : AbstractFileBasedTest() {
+
+	companion object {
+		init {
+			configure()
+		}
+	}
 
 	private lateinit var switch: SwitchView
 	private lateinit var led: LEDView
