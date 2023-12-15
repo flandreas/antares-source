@@ -176,6 +176,8 @@ class FalstadAnalogCircuitAnalysis(
 	var stopMessage: String? = null
 		private set
 
+	var converged: Boolean = true
+
 	private fun stop(msg: String) {
 		stopMessage = msg
 	}
@@ -217,11 +219,20 @@ class FalstadAnalogCircuitAnalysis(
 	}
 
 	/**
+	 * Indicates that the value on the left side of row [i] changes in [AnalogElement.doStep].
+	 */
+	fun stampNonLinear(i: Int) {
+		if (i > 0) {
+			rowInfo[i - 1].lsChanges = true
+		}
+	}
+
+	/**
 	 * Stamps value x in row i, column j, meaning that a voltage change
 	 * of dv in node j will increase the current into node i by x dv,
 	 * unless i or j is a voltage source node.
 	 */
-	private fun stampMatrix(row: Int, col: Int, x: Double) {
+	fun stampMatrix(row: Int, col: Int, x: Double) {
 		var i = row
 		var j = col
 		if (i > 0 && j > 0) {
@@ -245,7 +256,7 @@ class FalstadAnalogCircuitAnalysis(
 	 * Stamps value x on the right side of row i, representing an independent
 	 * current source flowing into node i.
 	 */
-	private fun stampRightSide(row: Int, x: Double) {
+	fun stampRightSide(row: Int, x: Double) {
 		var i = row
 		if (i > 0) {
 			if (circuitNeedsMap) {

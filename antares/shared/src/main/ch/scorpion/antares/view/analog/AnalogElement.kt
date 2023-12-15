@@ -38,7 +38,7 @@ interface AnalogElement {
 
 	fun startIteration() {}
 
-	fun doStep() {}
+	fun doStep(analysis: FalstadAnalogCircuitAnalysis) {}
 
 	fun stamp(analysis: FalstadAnalogCircuitAnalysis)
 }
@@ -63,7 +63,8 @@ class AnalogElementMixin(
 	lateinit var nodes: Array<Int>
 		private set
 
-	private lateinit var voltages: Array<Double>
+	lateinit var voltages: Array<Double>
+		private set
 
 	override val voltageSourceCount: Int get() = vertice.voltageSourceCount
 
@@ -101,5 +102,52 @@ class AnalogElementMixin(
 
 	override fun stamp(analysis: FalstadAnalogCircuitAnalysis) {
 		vertice.stamp(analysis)
+	}
+}
+
+/**
+ * Forwards everything to the registered model [AnalogElement].
+ * Used by view objects that can't inherit from [AbstractAnalogVerticeView].
+ */
+class AnalogElementProxy : AnalogElement {
+
+	private lateinit var model: AnalogElement
+
+	fun bind(model: AnalogElement) {
+		this.model = model
+	}
+
+	override val isNonLinear: Boolean get() = model.isNonLinear
+
+	override val voltageSourceCount: Int get() = model.voltageSourceCount
+
+	override val postCount: Int get() = model.postCount
+
+	override fun allocateNodes() {
+		model.allocateNodes()
+	}
+
+	override fun setNode(postId: Int, nodeId: Int) {
+		model.setNode(postId, nodeId)
+	}
+
+	override fun setVoltageSource(index: Int, sourceId: Int) {
+		model.setVoltageSource(index, sourceId)
+	}
+
+	override fun getPost(elem: GraphElementView<*>, postId: Int): Connection<*>? = model.getPost(elem, postId)
+
+	override fun setNodeVoltage(postId: Int, voltage: Double) {
+		model.setNodeVoltage(postId, voltage)
+	}
+
+	override fun getNodeVoltage(postId: Int): Double = model.getNodeVoltage(postId)
+
+	override fun setCurrent(index: Int, current: Double) {
+		model.setCurrent(index, current)
+	}
+
+	override fun stamp(analysis: FalstadAnalogCircuitAnalysis) {
+		model.stamp(analysis)
 	}
 }

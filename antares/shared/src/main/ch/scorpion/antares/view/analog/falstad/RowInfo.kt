@@ -20,7 +20,7 @@ class RowInfo {
 	val rsChanges = false
 
 	// Row's left side changes
-	val lsChanges = false
+	var lsChanges = false
 
 	// Row is not needed in matrix
 	var dropRow = false

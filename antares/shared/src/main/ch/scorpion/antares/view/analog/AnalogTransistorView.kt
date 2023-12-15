@@ -12,8 +12,12 @@ import ch.scorpion.jabbah.graph.view.port.PortLabelPosition.HIDE
 class AnalogTransistorView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: AnalogTransistor = AnalogTransistor(),
-	handedness: Handedness = DEFAULT_HANDEDNESS
-) : AbstractTransistorView<AnalogTransistor>(styleProvider, model, handedness), AnalogBranchVerticeView<AnalogTransistor> {
+	handedness: Handedness = DEFAULT_HANDEDNESS,
+	private val analogElement: AnalogElementProxy = AnalogElementProxy()
+) : AbstractTransistorView<AnalogTransistor>(styleProvider, model, handedness),
+	AnalogBranchVerticeView<AnalogTransistor>,
+	AnalogElement by analogElement
+{
 
 	constructor(type: TransistorType): this(model = AnalogTransistor(type), handedness = DEFAULT_HANDEDNESS)
 
@@ -34,6 +38,8 @@ class AnalogTransistorView(
 
 	override fun modelExchanged(oldModel: AnalogTransistor?) {
 		super.modelExchanged(oldModel)
+
+		analogElement.bind(model)
 
 		addPortView(AnalogPortView(styleProvider, model.gatePort, 0, 0, WEST, HIDE))
 		addPortView(AnalogPortView(styleProvider, model.sourcePort, 0, 0, NORTH, HIDE))

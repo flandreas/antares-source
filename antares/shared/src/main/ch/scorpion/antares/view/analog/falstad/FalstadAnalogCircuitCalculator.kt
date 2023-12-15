@@ -16,8 +16,6 @@ class FalstadAnalogCircuitCalculator : AnalogCircuitCalculator<FalstadAnalogCirc
 
 	private var steps = 0
 
-	private var converged = true
-
 	private var stopMessage: String? = null
 
 	private var subIterations: Int = 0
@@ -37,11 +35,11 @@ class FalstadAnalogCircuitCalculator : AnalogCircuitCalculator<FalstadAnalogCirc
 			steps++
 
 			for (subIter in 0 until ITERATION_COUNT) {
-				converged = true
+				analysis.converged = true
 				subIterations = subIter
 
 				analysis.startSubIteration()
-				elmList.forEach { it.doStep() }
+				elmList.forEach { it.doStep(analysis) }
 
 				if (stopMessage != null) {
 					stop("Invalid matrix")
@@ -49,7 +47,7 @@ class FalstadAnalogCircuitCalculator : AnalogCircuitCalculator<FalstadAnalogCirc
 				}
 
 				if (analysis.isNonLinear) {
-					if (converged && subIter > 0) {
+					if (analysis.converged && subIter > 0) {
 						break
 					}
 					if (!analysis.luFactor()) {
@@ -69,7 +67,7 @@ class FalstadAnalogCircuitCalculator : AnalogCircuitCalculator<FalstadAnalogCirc
 					}
 
 					if (res.isNaN()) {
-						converged = false
+						analysis.converged = false
 						break
 					}
 
