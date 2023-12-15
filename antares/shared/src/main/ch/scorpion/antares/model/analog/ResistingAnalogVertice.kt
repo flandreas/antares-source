@@ -1,7 +1,9 @@
 package ch.scorpion.antares.model.analog
 
 import ch.scorpion.antares.view.analog.AnalogCircuitBranch
+import ch.scorpion.antares.view.analog.AnalogElement
 import ch.scorpion.antares.view.analog.DynamicLinearEquationSystem
+import ch.scorpion.antares.view.analog.falstad.FalstadAnalogCircuitAnalysis
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 
@@ -73,5 +75,11 @@ abstract class AbstractResistingAnalogVertice<T: CalculatingVertice>(
 	) {
 		Companion.composeComponentConstituentEquation(this,
 			voltageNodes, branches, incomingPortId, currentVariableIndex, groundNodeNetId, equationSystem)
+	}
+
+	/** ---- [AnalogElement] */
+
+	override fun stamp(analysis: FalstadAnalogCircuitAnalysis) {
+		analysis.stampResistor(analogElem.nodes[0], analogElem.nodes[1], resistance)
 	}
 }

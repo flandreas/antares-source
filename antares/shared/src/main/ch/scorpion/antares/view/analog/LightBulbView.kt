@@ -26,7 +26,7 @@ class LightBulbView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: LightBulb = LightBulb(),
 	lightColor: LightColor = DEFAULT_LIGHT_COLOR
-) : OrientableRectangularVerticeView<LightBulb>(styleProvider, model), LightEmitter, AnalogBranchVerticeView<LightBulb> {
+) : AbstractAnalogVerticeView<LightBulb>(styleProvider, model), LightEmitter, AnalogBranchVerticeView<LightBulb> {
 
 	companion object {
 		private val SIZE = wInt(4)

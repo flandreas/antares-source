@@ -76,10 +76,4 @@ class Resistor(
 		graphView.requireAnalysis()
 		requestActingAfter(signalHandler, propagationDelay, createActorData(null, graphView = graphView))
 	}
-
-	/** ---- [AnalogElement] */
-
-	override fun stamp(analysis: FalstadAnalogCircuitAnalysis) {
-		analysis.stampResistor(analogElem.nodes[0], analogElem.nodes[1], resistance)
-	}
 }
