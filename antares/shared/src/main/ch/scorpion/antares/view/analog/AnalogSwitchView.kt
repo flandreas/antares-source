@@ -11,8 +11,12 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 
 class AnalogSwitchView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	model: AnalogSwitch = AnalogSwitch()
-) : AbstractSwitchView<AnalogSwitch>(styleProvider, model), AnalogBranchVerticeView<AnalogSwitch> {
+	model: AnalogSwitch = AnalogSwitch(),
+	private val analogElement: AnalogElementProxy = AnalogElementProxy()
+) : AbstractSwitchView<AnalogSwitch>(styleProvider, model),
+	AnalogBranchVerticeView<AnalogSwitch>,
+	AnalogElement by analogElement
+{
 
 	companion object {
 		private const val SIZE = 6 * Look.SCALE
@@ -26,6 +30,7 @@ class AnalogSwitchView(
 
 	override fun modelExchanged(oldModel: AnalogSwitch?) {
 		super.modelExchanged(oldModel)
+		analogElement.bind(model)
 
 		addPortView(AnalogPortView(styleProvider, model.getPort(1), LENGTH, 0, Direction.WEST))
 		addPortView(AnalogPortView(styleProvider, model.getPort(2), LENGTH + SIZE, 0, Direction.EAST))

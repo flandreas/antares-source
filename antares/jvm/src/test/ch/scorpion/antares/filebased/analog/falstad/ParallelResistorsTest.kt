@@ -1,5 +1,6 @@
-package ch.scorpion.antares.filebased.analog.kirchhoff
+package ch.scorpion.antares.filebased.analog.falstad
 
+import ch.scorpion.antares.filebased.analog.kirchhoff.AbstractAnalogFileBasedTest
 import ch.scorpion.antares.model.analog.AnalogNet
 import ch.scorpion.antares.view.analog.AnalogEdgeView
 import ch.scorpion.antares.view.analog.AnalogSwitchView
@@ -51,6 +52,8 @@ class ParallelResistorsTest : AbstractAnalogFileBasedTest() {
 	fun shouldCalculate() {
 		switchView.model.toggle(scheduler, openedCircuitView)
 		processUntilQueueIsEmpty()
+
+		assertNoIssues()
 
 		val voltage = 5.0
 		val ground = 0.0

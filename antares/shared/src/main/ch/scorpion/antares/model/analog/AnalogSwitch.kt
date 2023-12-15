@@ -2,6 +2,7 @@ package ch.scorpion.antares.model.analog
 
 import ch.scorpion.antares.model.input.AbstractSwitch
 import ch.scorpion.antares.view.analog.*
+import ch.scorpion.antares.view.analog.falstad.FalstadAnalogCircuitAnalysis
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
@@ -26,6 +27,7 @@ class AnalogSwitch(
 				super.calculate(vertice, data, signalHandler)
 
 				if (data.graphView is AnalogGraphView) {
+					(data.graphView as AnalogGraphView).requireAnalysis()
 					(data.graphView as AnalogGraphView).requestActing(signalHandler)
 				}
 			}
@@ -44,6 +46,18 @@ class AnalogSwitch(
 		addPort(AnalogPort())
 		propagationDelay = 0
 	}
+
+	/** ---- [AnalogElement] */
+
+	override val voltageSourceCount: Int get() = if (isOn) 1 else 0
+
+	override fun stamp(analysis: FalstadAnalogCircuitAnalysis) {
+		if (isOn) {
+			analysis.stampVoltageSource(analogElement.nodes[0], analogElement.nodes[1], analogElement.voltageSource, 0.0)
+		}
+	}
+
+	override fun calculateCurrent() { }
 
 	/** ---- AnalogTwoPortVertice */
 
