@@ -116,18 +116,17 @@ class ResistorView(
 			component = this@ResistorView
 		}
 
-		override fun mouseMoved(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
-			return KnobLauncherImpl.launchAfterDelay(
+		override fun mouseMoved(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext> =
+			KnobLauncherImpl.launchAfterDelay(
 				initialValue = resistance.toLong(),
 				location = boundingBox.center,
 				unit = "Ω",
 				mouseMovedCondition = { contains(it.x, it.y) },
 				valueChangeHandler = { model.setState(it.toDouble(), context.signalHandler, (context.view as DrawingView<*>).drawing as AnalogGraphView) }
 			)
-		}
 
-		override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
-			return KnobLauncherImpl.launchImmediately(
+		override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler =
+			KnobLauncherImpl.launchImmediately(
 				view = context.view as DrawingView<*>,
 				initialValue = resistance.toLong(),
 				location = boundingBox.center,
@@ -135,6 +134,5 @@ class ResistorView(
 				mouseMovedCondition = { contains(it.x, it.y) },
 				valueChangeHandler = { model.setState(it.toDouble(), context.signalHandler, (context.view as DrawingView<*>).drawing as AnalogGraphView) }
 			)
-		}
 	}
 }
