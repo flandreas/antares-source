@@ -2,6 +2,7 @@ package ch.scorpion.antares.view.analog.engine
 
 import ch.scorpion.antares.view.analog.*
 import ch.scorpion.jabbah.base.collection.indexOfFirstOrNull
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.ConnectableView
 import ch.scorpion.jabbah.graph.view.Connection
@@ -10,6 +11,10 @@ import ch.scorpion.jabbah.graph.view.net.node.NodeView
 
 class AnalogCircuitAnalyzer(private val circuitView: AnalogGraphView) {
 
+	companion object {
+		private val LOG by logger(AnalogCircuitAnalyzer::class)
+	}
+
 	private val nodeList = mutableListOf<CircuitNode>()
 
 	private lateinit var voltageSources: Array<AnalogElement?>
@@ -17,6 +22,7 @@ class AnalogCircuitAnalyzer(private val circuitView: AnalogGraphView) {
 	private var voltageSourceCount = 0
 
 	fun analyse(): AnalogCircuitAnalysis {
+		LOG.trace("Analyzing analog circuit '${circuitView.graph?.name?.value}'")
 		createNodeList()
 
 		val analysis = createAnalysis()

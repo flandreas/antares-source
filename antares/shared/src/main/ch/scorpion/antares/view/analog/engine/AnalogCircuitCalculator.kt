@@ -5,11 +5,13 @@ import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.model.analog.AnalogVertice
 import ch.scorpion.antares.view.analog.AnalogEdgeView
 import ch.scorpion.antares.view.analog.AnalogGraphView
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
 
 class AnalogCircuitCalculator {
 
 	companion object {
+		private val LOG by logger(AnalogCircuitCalculator::class)
 		private const val ITERATION_COUNT = 1_000
 	}
 
@@ -33,8 +35,9 @@ class AnalogCircuitCalculator {
 	 * [analysis] must be called, typically at the start of the simulation.
 	 */
 	fun calculate(analysis: AnalogCircuitAnalysis, signalHandler: SignalHandler) {
-		val elmList = analysis.circuitView.graph!!.elements.filterIsInstance<AnalogVertice>()
+		LOG.trace("Calculating analog circuit '${analysis.circuitView.graph?.name?.value}'")
 
+		val elmList = analysis.circuitView.graph!!.elements.filterIsInstance<AnalogVertice>()
 		if (elmList.isEmpty()) {
 			return
 		}

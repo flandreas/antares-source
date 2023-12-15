@@ -9,6 +9,7 @@ import ch.scorpion.antares.view.analog.engine.AnalogElement
 import ch.scorpion.antares.view.analog.engine.AnalogElementMixin
 import ch.scorpion.antares.view.analog.AnalogGraphView
 import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorImpl
@@ -29,6 +30,8 @@ class AnalogCircuitInOut(
 ), AnalogVertice, AnalogElement by analogElement {
 
 	companion object {
+		private val LOG by logger(AnalogCircuitInOut::class)
+
 		private val HIGH_VOLTAGE = AnalogSignal.HIGH
 		private val LOW_VOLTAGE = AnalogSignal.ZERO
 
@@ -63,6 +66,7 @@ class AnalogCircuitInOut(
 	/** ---- [GraphInput] */
 
 	override fun setIncomingSignal(signal: AnalogSignal?, signalHandler: SignalHandler, force: Boolean) {
+		LOG.trace("Incoming voltage ${signal?.voltage} at input $name")
 		this.signal = signal
 		BaseModule.eventBus.post(AnalogCalculationRequest(this, signalHandler))
 	}
@@ -95,7 +99,9 @@ class AnalogCircuitInOut(
 
 	override fun handleAnalogPortChanged(port: AnalogPort, signalHandler: SignalHandler) {
 		if (portType.isOutput) {
-			setOutgoingSignal(getPort<AnalogSignal>().net!!.signal!!, signalHandler)
+			val signal = getPort<AnalogSignal>().net!!.signal!!
+			LOG.trace("Outgoing voltage ${signal.voltage} at output $name")
+			setOutgoingSignal(signal, signalHandler)
 		}
 	}
 

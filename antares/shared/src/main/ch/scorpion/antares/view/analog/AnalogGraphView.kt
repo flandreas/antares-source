@@ -7,7 +7,6 @@ import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.antares.view.analog.engine.AnalogCircuitCalculator
 import ch.scorpion.antares.view.analog.engine.AnalogElement
-import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.jabbah.base.IssueImpl
 import ch.scorpion.jabbah.base.IssueSeverity
 import ch.scorpion.jabbah.base.Translations
@@ -169,6 +168,7 @@ class AnalogGraphView(
 		override fun act(signalHandler: SignalHandler, data: ActorData) {
 			val graphView = (data as GraphActorData).graphView as AnalogGraphView
 			try {
+				graphView.requireAnalysis()
 				AnalogCircuitCalculator().calculate(graphView.ensureAnalysis(), signalHandler)
 				super.act(signalHandler, data)
 			} catch (e: Throwable) {

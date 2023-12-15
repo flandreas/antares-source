@@ -34,7 +34,6 @@ class AnalogSubCircuitTest : AbstractFileBasedTest() {
 		assertTrue(led.model.isOn)
 	}
 
-	@Ignore
 	@Test
 	fun shouldInvert() {
 		switch.model.toggle(scheduler, openedCircuitView)
