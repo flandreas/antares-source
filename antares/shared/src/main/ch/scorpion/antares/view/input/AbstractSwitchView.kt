@@ -108,7 +108,7 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 
 	protected fun drawTwoPortRealSwitchShape(context: DrawContext) {
 		// Push annotation
-		context.g.stroke = Themes.get<AntaresTheme>().edge.stroke
+		context.g.stroke = Themes.get<AntaresTheme>().figure.stroke
 		context.g.color = context.chooseForeground(foregroundColor)
 		if (model.isOn) {
 			context.g.drawLine(bounds.minX + w(2.25), h(-2.0), bounds.minX + w(3.75), h(-2.0))
