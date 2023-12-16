@@ -17,7 +17,7 @@ class AnalogPower : AbstractAnalogVertice<AnalogPower>(
 		set(value) {
 			if (value != field) {
 				field = value
-				stateChanged()
+				stateChanged(reason = MAIN_PROPERTY_STATE)
 			}
 		}
 

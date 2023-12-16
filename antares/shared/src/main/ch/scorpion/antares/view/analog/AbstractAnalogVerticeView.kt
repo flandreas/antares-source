@@ -26,7 +26,7 @@ abstract class AbstractAnalogVerticeView<T: AbstractAnalogVertice<*>>(
 ) : OrientableRectangularVerticeView<T>(styleProvider, model), AnalogElement by analogElement {
 
 	companion object {
-		const val MAIN_PROPERTY_LABEL_DIST = Look.SCALE
+		const val MAIN_PROPERTY_LABEL_DIST = 10
 	}
 
 	private val mainPropertyLabel = createLabel()
@@ -80,7 +80,7 @@ abstract class AbstractAnalogVerticeView<T: AbstractAnalogVertice<*>>(
 	protected open fun createLabel(): HorizontalLabel =
 		HorizontalLabel(
 			owner = this,
-			relLocation = Point2D.ZERO,
+			relLocation = labelLocation,
 			orientation = labelOrientation,
 			font = font)
 
