@@ -4,7 +4,7 @@ import ch.scorpion.antares.model.analog.AbstractAnalogVertice
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.analog.engine.AnalogElement
-import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
+import ch.scorpion.antares.view.analog.engine.AnalogElementProxy
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
@@ -17,14 +17,13 @@ import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.edit.model.text.HorizontalLabel
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
-import ch.scorpion.jabbah.graph.view.Connection
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 
 abstract class AbstractAnalogVerticeView<T: AbstractAnalogVertice<*>>(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	model: T
-) : OrientableRectangularVerticeView<T>(styleProvider, model), AnalogElement {
+	model: T,
+	private val analogElement: AnalogElementProxy = AnalogElementProxy()
+) : OrientableRectangularVerticeView<T>(styleProvider, model), AnalogElement by analogElement {
 
 	companion object {
 		const val MAIN_PROPERTY_LABEL_DIST = Look.SCALE
@@ -38,41 +37,9 @@ abstract class AbstractAnalogVerticeView<T: AbstractAnalogVertice<*>>(
 		modelExchanged(null)
 	}
 
-	/** ---- [AnalogElement] */
-
-	override val isNonLinear: Boolean get() = model.isNonLinear
-
-	override val voltageSourceCount: Int get() = model.voltageSourceCount
-
-	override val postCount: Int get() = model.postCount
-
-	override fun allocateNodes() {
-		model.allocateNodes()
-	}
-
-	override fun setNode(postId: Int, nodeId: Int) {
-		model.setNode(postId, nodeId)
-	}
-
-	override fun setVoltageSource(index: Int, sourceId: Int) {
-		model.setVoltageSource(index, sourceId)
-	}
-
-	override fun getPost(elem: GraphElementView<*>, postId: Int): Connection<*>? = model.getPost(elem, postId)
-
-	override fun setNodeVoltage(postId: Int, voltage: Double) {
-		model.setNodeVoltage(postId, voltage)
-		calculateCurrent()
-	}
-
-	override fun getNodeVoltage(postId: Int): Double = model.getNodeVoltage(postId)
-
-	override fun setCurrent(index: Int, current: Double) {
-		// Empty so far
-	}
-
-	override fun stamp(analysis: AnalogCircuitAnalysis) {
-		model.stamp(analysis)
+	override fun modelExchanged(oldModel: T?) {
+		super.modelExchanged(oldModel)
+		analogElement.bind(model)
 	}
 
 	/** ---- [AbstractDrawable] */

@@ -4,7 +4,7 @@ import ch.scorpion.antares.model.analog.AnalogCircuitInOut
 import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.view.analog.engine.AnalogElement
-import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
+import ch.scorpion.antares.view.analog.engine.AnalogElementProxy
 import ch.scorpion.antares.view.inout.AbstractCircuitInOutView
 import ch.scorpion.antares.view.inout.ArrowPath
 import ch.scorpion.antares.view.style.AntaresTheme
@@ -31,8 +31,6 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.PortType
-import ch.scorpion.jabbah.graph.view.Connection
-import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.port.PortView
 
@@ -41,7 +39,8 @@ class AnalogCircuitInOutView(
 	model: AnalogCircuitInOut = AnalogCircuitInOut(),
 	eventBus: EventBus = BaseModule.eventBus,
 	orientation: Direction = Direction.EAST,
-) : AbstractCircuitInOutView<AnalogCircuitInOut>(styleProvider, model, eventBus, orientation), AnalogElement {
+	private val analogElement: AnalogElementProxy = AnalogElementProxy()
+) : AbstractCircuitInOutView<AnalogCircuitInOut>(styleProvider, model, eventBus, orientation), AnalogElement by analogElement {
 
 	private val voltageLabel = Label(
 		"0.0 V",
@@ -56,44 +55,8 @@ class AnalogCircuitInOutView(
 
 	override fun modelExchanged(oldModel: AnalogCircuitInOut?) {
 		super.modelExchanged(oldModel)
+		analogElement.bind(model)
 		updateView()
-	}
-
-	/** ---- [AnalogElement] */
-
-	override val isNonLinear: Boolean get() = model.isNonLinear
-
-	override val voltageSourceCount: Int get() = model.voltageSourceCount
-
-	override val postCount: Int get() = model.postCount
-
-	override fun allocateNodes() {
-		model.allocateNodes()
-	}
-
-	override fun setNode(postId: Int, nodeId: Int) {
-		model.setNode(postId, nodeId)
-	}
-
-	override fun setVoltageSource(index: Int, sourceId: Int) {
-		model.setVoltageSource(index, sourceId)
-	}
-
-	override fun getPost(elem: GraphElementView<*>, postId: Int): Connection<*>? = model.getPost(elem, postId)
-
-	override fun setNodeVoltage(postId: Int, voltage: Double) {
-		model.setNodeVoltage(postId, voltage)
-		calculateCurrent()
-	}
-
-	override fun getNodeVoltage(postId: Int): Double = model.getNodeVoltage(postId)
-
-	override fun setCurrent(index: Int, current: Double) {
-		// Empty so far
-	}
-
-	override fun stamp(analysis: AnalogCircuitAnalysis) {
-		model.stamp(analysis)
 	}
 
 	/** ---- [AbstractCircuitInOutView] */
