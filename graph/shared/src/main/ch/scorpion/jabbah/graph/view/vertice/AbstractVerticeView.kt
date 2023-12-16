@@ -442,6 +442,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 		val oldStylable = context.stylable
 		context.stylable = this
 		if (drawPortViews) {
+			context.g.stroke = styleProvider.getStyle(GraphStyleType.EDGE).stroke
 			portViews.forEach { it.draw(context) }
 		}
 		context.stylable = oldStylable
@@ -451,6 +452,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 		val oldStylable = context.stylable
 		context.stylable = this
 		if (drawPortViews) {
+			context.g.stroke = styleProvider.getStyle(GraphStyleType.EDGE).stroke
 			portViews.forEach { if (beforeBorder) it.drawBelowOwner(context) else it.drawAboveOwner(context) }
 		}
 		context.stylable = oldStylable

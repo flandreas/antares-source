@@ -90,7 +90,7 @@ class PullResistorView(
 			}
 		)
 
-		drawPullDirection(context, portStroke)
+		drawPullDirection(context)
 
 		val applicableForegroundColor = if (context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
 			getColorGradient(context) ?: transparent.applyTo(pullDirectionExecutionColor.foregroundColor)
@@ -130,10 +130,10 @@ class PullResistorView(
 	private val netExecutionColor: CompositeColor get() =
 		model.getOutputPort().net?.signal?.color ?: Bit.Undefined.color
 
-	private fun drawPullDirection(context: DrawContext, stroke: Stroke) {
+	private fun drawPullDirection(context: DrawContext) {
 		when(pullDirection) {
 			LOW -> drawLowPullDirection(context)
-			HIGH -> drawHighPullDirection(context, stroke)
+			HIGH -> drawHighPullDirection(context)
 		}
 	}
 
@@ -141,7 +141,7 @@ class PullResistorView(
 		GroundView.drawBodyAt(-AbstractAntaresPortView.LENGTH - SymbolStyle.RESISTOR_WIDTH, 0.0, context)
 	}
 
-	private fun drawHighPullDirection(context: DrawContext, stroke: Stroke) {
-		PowerViewShape.drawBodyAt(-AbstractAntaresPortView.LENGTH - SymbolStyle.RESISTOR_WIDTH, 0.0, context, stroke)
+	private fun drawHighPullDirection(context: DrawContext) {
+		PowerViewShape.drawBodyAt(-AbstractAntaresPortView.LENGTH - SymbolStyle.RESISTOR_WIDTH, 0.0, context)
 	}
 }

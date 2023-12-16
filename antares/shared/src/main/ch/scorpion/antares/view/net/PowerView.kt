@@ -41,6 +41,6 @@ class PowerView(
 	override fun drawImpl(context: DrawContext) {
 		super.drawImpl(context)
 		getPortViews().first().prepareConnectionDrawContext(context)
-		PowerViewShape.drawBodyAt(-AbstractAntaresPortView.LENGTH.toDouble(), 0.0, context, stroke)
+		PowerViewShape.drawBodyAt(-AbstractAntaresPortView.LENGTH.toDouble(), 0.0, context)
 	}
 }
