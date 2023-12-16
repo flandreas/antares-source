@@ -14,4 +14,10 @@ class AnalogSignalTest {
 		assertFalse(AnalogSignal(3.0) < AnalogSignal(2.0))
 		assertEquals(AnalogSignal(1.8), AnalogSignal(1.8))
 	}
+
+	@Test
+	fun shouldRoundVoltage() {
+		assertEquals("5.0", AnalogSignal.roundVoltage(5.0))
+		assertEquals("4.9", AnalogSignal.roundVoltage(4.9001))
+	}
 }

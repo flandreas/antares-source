@@ -69,7 +69,7 @@ class AnalogCircuitInOutView(
 		val v = model.signal?.voltage
 
 		voltageLabel.text = if (v != null) {
-			"${(v * 10).toInt() / 10.0} V"
+			"${AnalogSignal.roundVoltage(v)} V"
 		} else {
 			"${Bit.ALL_UNDEFINED_CHAR}"
 		}
