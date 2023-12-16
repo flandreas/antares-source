@@ -30,6 +30,10 @@ class BatteryView(
 			model.voltage = value
 		}
 
+	init {
+		orientation = Direction.SOUTH
+	}
+
 	/** ---- [AbstractVerticeView] */
 
 	override fun modelExchanged(oldModel: Battery?) {

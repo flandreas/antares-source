@@ -24,7 +24,6 @@ class AnalogPowerView(
 		}
 
 	init {
-		modelExchanged(null)
 		PowerViewShape.setBounds(this)
 		orientation = Direction.SOUTH
 	}
