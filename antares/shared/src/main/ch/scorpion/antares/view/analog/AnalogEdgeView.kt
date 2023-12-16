@@ -2,8 +2,8 @@ package ch.scorpion.antares.view.analog
 
 import ch.scorpion.antares.model.analog.AnalogNet
 import ch.scorpion.antares.model.analog.AnalogSignal
-import ch.scorpion.antares.view.analog.engine.AnalogElement
 import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
+import ch.scorpion.antares.view.analog.engine.AnalogElement
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
@@ -49,16 +49,18 @@ class AnalogEdgeView(
 		private const val DEF_RESISTANCE = 1E-06
 	}
 
+	private val analogNet: AnalogNet get() = model as AnalogNet
+
 	/**
 	 * The electrical current (in A) flowing through this [AnalogEdgeView] during simulation.
 	 * Positive values indicate current flowing from [origin] to [destination].
 	 * Can't be modelled on model [Net] because [Net] doesn't contain nodes, which
 	 * is required for modelling Kirchhoff's "Current Law".
 	 */
-	var current: Double = 0.0
+	var current: Double
+		get() = analogNet.getCurrent(id)
 		set(value) {
-			LOG.trace("Set current=$value on EdgeView $id")
-			field = value
+			analogNet.setCurrent(id, value)
 			(origin?.portView as AnalogPortView?)?.current = value
 			(destination?.portView as AnalogPortView?)?.current = value
 		}
@@ -120,49 +122,45 @@ class AnalogEdgeView(
 
 	/** ---- [AnalogElement] */
 
-	private lateinit var nodes: Array<Int>
-
-	private lateinit var volts: Array<Double>
-
 	override val isNonLinear: Boolean get() = false
 
 	override val voltageSourceCount: Int get() = 0
 
-	private var voltageSource: Int = 0
-
 	override val postCount: Int get() = 2
 
 	override fun allocateNodes() {
-		nodes = Array(postCount) { 0 }
-		volts = Array(postCount) { 0.0 }
+		// not needed, managed in AnalogNet
 	}
 
 	override fun setNode(postId: Int, nodeId: Int) {
-		nodes[postId] = nodeId
+		analogNet.setNode(id, postId, nodeId)
 	}
 
 	override fun setNodeVoltage(postId: Int, voltage: Double) {
-		volts[postId] = voltage
+		analogNet.setNodeVoltage(id, postId, voltage)
 		calculateCurrent()
 	}
 
-	override fun getNodeVoltage(postId: Int): Double = volts[postId]
+	override fun getNodeVoltage(postId: Int): Double =
+		analogNet.getNodeVoltage(id, postId)
 
 	override fun setCurrent(index: Int, current: Double) {
-		this.current = current
+		analogNet.setCurrent(id, current)
 	}
 
 	override fun getPost(elem: GraphElementView<*>, postId: Int): Connection<*>? = null
 
 	override fun setVoltageSource(index: Int, sourceId: Int) {
-		voltageSource = sourceId
+		// voltageSourceCount is 0, so this is not needed
 	}
 
 	override fun stamp(analysis: AnalogCircuitAnalysis) {
-		analysis.stampResistor(nodes[0], nodes[1], DEF_RESISTANCE)
+		analysis.stampResistor(
+			analogNet.getNode(id, 0), analogNet.getNode(id, 1), DEF_RESISTANCE
+		)
 	}
 
 	override fun calculateCurrent() {
-		current = (volts[0] - volts[1]) / DEF_RESISTANCE
+		current = (analogNet.getNodeVoltage(id, 0) - analogNet.getNodeVoltage(id, 1)) / DEF_RESISTANCE
 	}
 }
