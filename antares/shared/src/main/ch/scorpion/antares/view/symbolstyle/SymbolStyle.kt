@@ -138,7 +138,7 @@ enum class SymbolStyle(
 
 		override fun drawResistor(resistor: OrientableRectangularVerticeView<*>, isVariable: Boolean, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke) {
 			context.g.paint = foregroundColor
-			context.g.stroke = getResistorStroke(context.g.stroke)
+			context.g.stroke = getResistorStroke(resistor.stroke)
 			context.g.draw(RESISTOR_PATH)
 
 			if (isVariable) {
