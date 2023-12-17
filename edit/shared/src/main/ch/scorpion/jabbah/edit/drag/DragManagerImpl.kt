@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.edit.app.DrawingAppService
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.snap.MultiComponentSnappable
 import kotlin.math.abs
+import kotlin.math.max
 
 class DragManagerImpl(
 	private val editor: Editor,
@@ -47,6 +48,9 @@ class DragManagerImpl(
 	/** Support for snapping multiple [Component]s while being moved. Initialized when starting to drag.*/
 	private var multiComponentSnappable: MultiComponentSnappable? = null
 
+	/** The maximum drag distance reached during a single drag operation*/
+	private var maxDragDistance: Int = 0
+
 	init {
 		plugins.forEach { registerPlugin(it) }
 	}
@@ -67,6 +71,7 @@ class DragManagerImpl(
 			moveStartLocation = Point2D(movedReferenceComponent!!.location)
 			moveLastLocation = Point2D(x, y)
 			mouseStartLocation = Point2D(x, y)
+			maxDragDistance = 0
 		}
 	}
 
@@ -105,6 +110,11 @@ class DragManagerImpl(
 				dx = 0.0
 			}
 		}
+
+		maxDragDistance = max(
+			maxDragDistance,
+			mouseStartLocation.distance(moveStartLocation.x + dx, moveStartLocation.y + dy).toInt()
+		)
 
 		// Calculate the delta move using the reference Component
 		val delta = Point2D(moveStartLocation.x + dx, moveStartLocation.y + dy)
@@ -151,7 +161,7 @@ class DragManagerImpl(
 				return null
 			}
 
-			val additionalCommands = if (selection.size == 1) {
+			val additionalCommands = if (selection.size == 1 && maxDragDistance > 0) {
 				involvePluginsDragFinished(selection.first())
 			} else {
 				emptyList()
@@ -159,7 +169,6 @@ class DragManagerImpl(
 
 			if (additionalCommands.isNotEmpty() || moveStartLocation != movedReferenceComponent?.location) {
 				try {
-					LOG.debug("Move vector: From $mouseStartLocation to ${context.location}")
 					logMove("mouse")
 					drawingAppService.move(
 						selection,
