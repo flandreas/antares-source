@@ -1,5 +1,6 @@
 package ch.scorpion.antares.model.vertice
 
+import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.AntaresGraphTypes.Analog
 import ch.scorpion.antares.model.AntaresGraphTypes.Digital
 import ch.scorpion.jabbah.graph.library.BaseLibraryElement
@@ -8,48 +9,52 @@ import ch.scorpion.jabbah.graph.model.GenericGraphType
 import ch.scorpion.jabbah.graph.model.GraphType
 import io.mockk.every
 import io.mockk.mockk
-import kotlin.test.Test
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class AntaresGraphTypesTest {
 
+	companion object {
+		init {
+			AntaresTestRule.configure()
+		}
+	}
+
 	@Test
 	fun canImportSameBaseLibraryElement() {
-		assertTrue(Digital.canImport(baseLibraryElement(Digital)))
-		assertTrue(Analog.canImport(baseLibraryElement(Analog)))
+		assertNull(Digital.checkImport(baseLibraryElement(Digital)))
+		assertNull(Analog.checkImport(baseLibraryElement(Analog)))
 	}
 
 	@Test
 	fun cannotImportNotSameBaseLibraryElement() {
-		assertFalse(Digital.canImport(baseLibraryElement(Analog)))
-		assertFalse(Analog.canImport(baseLibraryElement(Digital)))
+		assertNotNull(Digital.checkImport(baseLibraryElement(Analog)))
+		assertNotNull(Analog.checkImport(baseLibraryElement(Digital)))
 	}
 
 	@Test
 	fun cannotImportNonAntaresBaseLibraryElement() {
-		assertFalse(Digital.canImport(baseLibraryElement(GenericGraphType)))
-		assertFalse(Analog.canImport(baseLibraryElement(GenericGraphType)))
+		assertNotNull(Digital.checkImport(baseLibraryElement(GenericGraphType)))
+		assertNotNull(Analog.checkImport(baseLibraryElement(GenericGraphType)))
 	}
 
 	@Test
 	fun digitalCanImportAnalogContainerLibraryElement() {
-		assertTrue(Digital.canImport(containerLibraryElement(Analog)))
+		assertNull(Digital.checkImport(containerLibraryElement(Analog)))
 	}
 
 	@Test
 	fun digitalCanImportDigitalContainerLibraryElements() {
-		assertTrue(Digital.canImport(containerLibraryElement(Digital)))
+		assertNull(Digital.checkImport(containerLibraryElement(Digital)))
 	}
 
 	@Test
 	fun analogCannotImportDigitalContainerLibraryElement() {
-		assertFalse(Analog.canImport(containerLibraryElement(Digital)))
+		assertNotNull(Analog.checkImport(containerLibraryElement(Digital)))
 	}
 
 	@Test
 	fun analogCannotImportAnalogContainerLibraryElement() {
-		assertFalse(Analog.canImport(containerLibraryElement(Analog)))
+		assertNotNull(Analog.checkImport(containerLibraryElement(Analog)))
 	}
 
 	private fun baseLibraryElement(graphType: GraphType): BaseLibraryElement =

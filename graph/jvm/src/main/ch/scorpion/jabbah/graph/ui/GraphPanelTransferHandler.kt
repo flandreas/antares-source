@@ -132,7 +132,16 @@ class GraphPanelTransferHandler(
 
 	private fun checkGraphType(sourceElement: LibraryElement): Boolean {
 		val targetType = (editor.drawing as GraphView).graph!!.type
-		if (!targetType.canImport(sourceElement)) {
+		return targetType.checkImport(sourceElement)?.let { msg ->
+			JOptionPane.showMessageDialog(
+				Frame.getFrames()[0],
+				msg,
+				Translations.getString("graph.action.addElementToGraph.name"),
+				JOptionPane.ERROR_MESSAGE)
+			false
+		} ?: true
+		/*
+		if (!targetType.checkImport(sourceElement)) {
 			JOptionPane.showMessageDialog(
 				Frame.getFrames()[0],
 				Translations.getString("graph.graphTypeError.msg", sourceElement.graphType, targetType),
@@ -141,5 +150,7 @@ class GraphPanelTransferHandler(
 			return false
 		}
 		return true
+		}
+		 */
 	}
 }

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.model
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
@@ -15,10 +16,17 @@ interface GraphType: Bean {
 	val isCombiningNets: Boolean
 
 	/**
-	 * Determines whether a [Graph] of this [GraphType] can contain [Vertice]s
-	 * instantiated from the specified [LibraryElement]
+	 * Checks whether a [Graph] of this [GraphType] can contain [Vertice]s
+	 * instantiated from the specified [LibraryElement].
+	 * @return a translated message explaining why import is not possible, `null` if import is possible
 	 */
-	fun canImport(libraryElement: LibraryElement): Boolean = libraryElement.graphType === this
+	//fun checkImport(libraryElement: LibraryElement): Boolean = libraryElement.graphType === this
+	fun checkImport(libraryElement: LibraryElement): String? =
+		if (libraryElement.graphType === this) {
+			null
+		} else {
+			Translations.getString("graph.graphTypeError.msg", libraryElement.graphType, this)
+		}
 
 	fun <I: Any, O: Any> adaptTo(other: GraphType): GraphTypeSignalAdapter<I, O>
 

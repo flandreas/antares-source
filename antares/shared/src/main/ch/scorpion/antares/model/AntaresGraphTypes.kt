@@ -40,23 +40,26 @@ enum class AntaresGraphTypes(
 			Analog -> Translations.getString("antares.graphType.analog")
 		}
 
-	override fun canImport(libraryElement: LibraryElement): Boolean {
+	override fun checkImport(libraryElement: LibraryElement): String? {
 		if (libraryElement is ContainerLibraryElement) {
 			if (this === Analog) {
-				return false
+				return Translations.getString("graph.subGraphTypeError.msg", this)
 			}
 			if (this === Digital && libraryElement.graphType === Digital) {
-				return true
+				return null
 			}
-			return values().firstOrNull { it === libraryElement.graphType }?.let {
-				this.ordinal == it.ordinal - 1
-			} ?: false
+			val sourceType = values().firstOrNull { it === libraryElement.graphType }
+			return if (sourceType == null || this.ordinal != sourceType.ordinal - 1) {
+				Translations.getString("graph.graphTypeError.msg", libraryElement.graphType, this)
+			} else {
+				null
+			}
 		}
 
 		if (this === libraryElement.graphType) {
-			return true
+			return null
 		}
 
-		return false
+		return Translations.getString("graph.graphTypeError.msg", libraryElement.graphType, this)
 	}
 }
