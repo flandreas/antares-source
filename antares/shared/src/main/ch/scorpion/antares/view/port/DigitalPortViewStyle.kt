@@ -38,7 +38,7 @@ enum class DigitalPortViewStyle(val customName: String) {
 
 		override fun isDrawAccess(portView: DigitalPortView): Boolean = !portView.port.isConnected
 
-		override fun drawAccess(portView: DigitalPortView, context: DrawContext, styleProvider: StyleProvider, transparent: Transparent) {
+		override fun drawAccess(portView: AbstractAntaresPortView<*>, context: DrawContext, styleProvider: StyleProvider, transparent: Transparent) {
 			val connPoint = portView.connectionPoint
 			context.g.drawLine(
 				portView.locationX.toInt(),
@@ -46,16 +46,7 @@ enum class DigitalPortViewStyle(val customName: String) {
 				connPoint.x.toInt(),
 				connPoint.y.toInt()
 			)
-			with(portView) {
-				if (coincidenceWarning) {
-					context.g.color = context.chooseForeground(Themes.get<GraphTheme>().error.foregroundColor)
-					context.g.fillCircle(
-						locationX + length * direction.dx * 0.8,
-						locationY + length * direction.dy * 0.8,
-						length * 0.2
-					)
-				}
-			}
+			portView.drawPossibleCoincidenceWarning(context)
 		}
 
 		override fun drawLogic(portView: DigitalPortView, context: DrawContext, styleProvider: StyleProvider, transparent: Transparent) {
@@ -92,7 +83,7 @@ enum class DigitalPortViewStyle(val customName: String) {
 				.moveBy(portView.location)
 				.expandBy(Themes.get<AntaresTheme>().figure.stroke.width.toDouble()) as Rectangle2D
 
-		override fun drawAccess(portView: DigitalPortView, context: DrawContext, styleProvider: StyleProvider, transparent: Transparent) {
+		override fun drawAccess(portView: AbstractAntaresPortView<*>, context: DrawContext, styleProvider: StyleProvider, transparent: Transparent) {
 			with(portView) {
 				val access = DIL_ACCESSES[portView.direction]!!
 
@@ -146,7 +137,7 @@ enum class DigitalPortViewStyle(val customName: String) {
 	abstract fun createBasicBoundingBox(portView: DigitalPortView): Rectangle2D
 
 	/** Draws the access (e.g. a line) of [portView] in a [DrawContext] located at the origin of [DigitalPortView]. */
-	abstract fun drawAccess(portView: DigitalPortView, context: DrawContext, styleProvider: StyleProvider, transparent: Transparent)
+	abstract fun drawAccess(portView: AbstractAntaresPortView<*>, context: DrawContext, styleProvider: StyleProvider, transparent: Transparent)
 
 	abstract fun drawLogic(portView: DigitalPortView, context: DrawContext, styleProvider: StyleProvider, transparent: Transparent)
 

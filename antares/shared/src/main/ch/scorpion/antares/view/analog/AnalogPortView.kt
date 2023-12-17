@@ -55,4 +55,9 @@ class AnalogPortView(
 			Themes.get<GraphTheme>().edge.stroke
 		}
 	}
+
+	override fun drawAccess(context: DrawContext) {
+		super.drawAccess(context)
+		drawPossibleCoincidenceWarning(context)
+	}
 }

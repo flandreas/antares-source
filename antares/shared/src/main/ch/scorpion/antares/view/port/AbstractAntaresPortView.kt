@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment.*
 import ch.scorpion.jabbah.edit.model.text.Label
@@ -26,6 +27,7 @@ import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.port.AbstractPortView
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
+import ch.scorpion.jabbah.graph.view.style.GraphTheme
 
 /**
  * @param T the type of signal
@@ -173,6 +175,17 @@ abstract class AbstractAntaresPortView<T: Any>(
 	protected open val hasExternalAnnotation: Boolean get() = false
 
 	protected val centerExternalLabel: Boolean get() = port.isConnected && (connectionGeometry?.edgeViewWidth ?: 1) > Look.EXT_PIN_FONT.size
+
+	fun drawPossibleCoincidenceWarning(context: DrawContext) {
+		if (coincidenceWarning) {
+			context.g.color = context.chooseForeground(Themes.get<GraphTheme>().error.foregroundColor)
+			context.g.fillCircle(
+				locationX + length * direction.dx * 0.8,
+				locationY + length * direction.dy * 0.8,
+				length * 0.2
+			)
+		}
+	}
 
 	protected fun buildPortLabel() {
 		portLabel = when (portLabelPosition) {
