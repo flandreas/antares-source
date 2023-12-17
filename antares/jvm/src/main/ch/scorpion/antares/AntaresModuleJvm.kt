@@ -10,6 +10,7 @@ import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
 import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.model.testcase.TestcaseViewSwing
 import ch.scorpion.antares.view.*
+import ch.scorpion.antares.view.analog.AnalogEdgeView
 import ch.scorpion.antares.view.container.DigitalContainerEditor
 import ch.scorpion.antares.view.container.DigitalContainerToolBarBuilder
 import ch.scorpion.antares.view.container.DigitalContainerTreeView
@@ -85,6 +86,8 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 	companion object {
 		const val PREF_TREE_CIRCUIT = "antares.preferences.group.circuit"
+		const val PREF_TREE_CIRCUIT_DIGITAL = "antares.preferences.group.circuit.digital"
+		const val PREF_TREE_CIRCUIT_ANALOG = "antares.preferences.group.circuit.analog"
 		const val PREF_TREE_EXPRESSION = "antares.preferences.group.expression"
 
 		val createCircuitFromTruthTableService = CreateCircuitFromTruthTableService()
@@ -317,74 +320,95 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 			needsRestart = true
 		))
 
-		root.add(PreferenceGroup(PREF_TREE_CIRCUIT))
+		root.add(buildCircuitPreferenceTree())
 
-		root.getGroup(PREF_TREE_CIRCUIT).add(EnumPreference(
-			id = SymbolStyle.PROP_SYMBOL_STYLE,
-			nameKey = "antares.action.symbolStyle",
-			values = SymbolStyle.values(),
-			withName = SymbolStyle::withName,
-			needsRestart = true
+		root.getGroup(GraphViewModuleJvm.PREF_TREE_OSCILLOSCOPE).add(BooleanPreference(
+			id = AbstractSignalHistoryDrawer.PROP_FILL_SIGNAL,
+			nameKey = "antares.preference.SignalHistory.fill"
 		))
-		root.getGroup(PREF_TREE_CIRCUIT).add(EnumPreference(
-			id = ContainerDrawingLayouter.PROP_CONTAINER_DRAWING_LAYOUTER,
-			nameKey = "graph.containerLayout",
-			values = ContainerDrawingLayouter.values(),
-			withName = ContainerDrawingLayouter::withName
-		))
-		root.getGroup(PREF_TREE_CIRCUIT).add(EnumPreference(
-			id = UndefinedGateInputBehavior.PROP_UNDEFINED_GATE_INPUT_BEHAVIOR,
-			nameKey = "antares.preference.undefinedGateInputBehavior.name",
-			values = UndefinedGateInputBehavior.values(),
-			withName = UndefinedGateInputBehavior::withName
-		))
-		root.getGroup(PREF_TREE_CIRCUIT).add(BooleanPreference(
-			id = LogicGateView.PROP_DATA_FLOW_ENABLED,
-			nameKey = "antares.preferences.AndGateDataFlow"
-		))
+	}
 
-		root.getGroup(PREF_TREE_CIRCUIT).add(LightColorPreference())
-		root.getGroup(PREF_TREE_CIRCUIT).add(EnumPreference(
-			id = DigitalSignalNotation.PROP_DIGITAL_SIGNAL_NOTATION,
-			nameKey = "antares.preferences.DigitalSignalNotation",
-			values = DigitalSignalNotation.values(),
-			withName = DigitalSignalNotation::withName,
-			needsRestart = true
-		))
-		root.getGroup(PREF_TREE_CIRCUIT).add(EnumPreference(
-			id = TunnelViewFace.PROP_TUNNEL_FACE,
-			nameKey = "antares.preference.TunnelViewFace",
-			values = TunnelViewFace.values(),
-			withName = TunnelViewFace::withName
-		))
+	private fun buildCircuitPreferenceTree(): PreferenceGroup =
+		PreferenceGroup(PREF_TREE_CIRCUIT).apply {
+			add(buildDigitalPreferenceTree())
+			add(buildAnalogPreferenceTree())
 
-		root.getGroup(PREF_TREE_CIRCUIT).add(EnumPreference(
-			id = TransistorViewSymbol.PROP_TRANSISTOR_SYMBOL,
-			nameKey = "antares.preference.transistorSymbol.name",
-			values = TransistorViewSymbol.values(),
-			withName = TransistorViewSymbol::withName
-		))
-		root.getGroup(PREF_TREE_CIRCUIT).add(BooleanPreference(
-			id = AbstractTransistorView.PROP_TRANSISTOR_CIRCLE,
-			nameKey = "antares.preference.TransistorCircle"
-		))
+			add(EnumPreference(
+				id = ContainerDrawingLayouter.PROP_CONTAINER_DRAWING_LAYOUTER,
+				nameKey = "graph.containerLayout",
+				values = ContainerDrawingLayouter.values(),
+				withName = ContainerDrawingLayouter::withName
+			))
 
-		root.getGroup(PREF_TREE_CIRCUIT).add(BooleanPreference(
-			id = DigitalEdgeView.PROP_WIDE_BUS_STROKE,
-			nameKey = "antares.preference.wideBusStroke"
-		))
+			add(BooleanPreference(
+				id = AbstractTransistorView.PROP_TRANSISTOR_CIRCLE,
+				nameKey = "antares.preference.TransistorCircle"
+			))
+		}
 
-		root.getGroup(PREF_TREE_CIRCUIT).add(IntPreference(
-			id = Switch.PROP_DEFAULT_DELAY,
-			nameKey = "antares.preference.SwitchPropDelay",
-			minValue = 0,
-			maxValue = 1_000_000
-		))
+	private fun buildDigitalPreferenceTree(): PreferenceGroup =
+		PreferenceGroup(PREF_TREE_CIRCUIT_DIGITAL).apply {
+			add(buildDigitalExpressionsPreferenceTree())
 
-		root.getGroup(PREF_TREE_CIRCUIT).add(PreferenceGroup(PREF_TREE_EXPRESSION))
+			add(EnumPreference(
+				id = SymbolStyle.PROP_SYMBOL_STYLE,
+				nameKey = "antares.action.symbolStyle",
+				values = SymbolStyle.values(),
+				withName = SymbolStyle::withName,
+				needsRestart = true
+			))
 
+			add(EnumPreference(
+				id = UndefinedGateInputBehavior.PROP_UNDEFINED_GATE_INPUT_BEHAVIOR,
+				nameKey = "antares.preference.undefinedGateInputBehavior.name",
+				values = UndefinedGateInputBehavior.values(),
+				withName = UndefinedGateInputBehavior::withName
+			))
 
-		root.getGroup(PREF_TREE_CIRCUIT).getGroup(PREF_TREE_EXPRESSION).apply {
+			add(LightColorPreference())
+
+			add(EnumPreference(
+				id = DigitalSignalNotation.PROP_DIGITAL_SIGNAL_NOTATION,
+				nameKey = "antares.preferences.DigitalSignalNotation",
+				values = DigitalSignalNotation.values(),
+				withName = DigitalSignalNotation::withName,
+				needsRestart = true
+			))
+
+			add(EnumPreference(
+				id = TunnelViewFace.PROP_TUNNEL_FACE,
+				nameKey = "antares.preference.TunnelViewFace",
+				values = TunnelViewFace.values(),
+				withName = TunnelViewFace::withName
+			))
+
+			add(EnumPreference(
+				id = TransistorViewSymbol.PROP_TRANSISTOR_SYMBOL,
+				nameKey = "antares.preference.transistorSymbol.name",
+				values = TransistorViewSymbol.values(),
+				withName = TransistorViewSymbol::withName
+			))
+
+			add(BooleanPreference(
+				id = DigitalEdgeView.PROP_WIDE_BUS_STROKE,
+				nameKey = "antares.preference.wideBusStroke"
+			))
+
+			add(IntPreference(
+				id = Switch.PROP_DEFAULT_DELAY,
+				nameKey = "antares.preference.SwitchPropDelay",
+				minValue = 0,
+				maxValue = 1_000_000
+			))
+
+			add(BooleanPreference(
+				id = LogicGateView.PROP_DATA_FLOW_ENABLED,
+				nameKey = "antares.preferences.AndGateDataFlow"
+			))
+		}
+
+	private fun buildDigitalExpressionsPreferenceTree(): PreferenceGroup =
+		PreferenceGroup(PREF_TREE_EXPRESSION).apply {
 			add(EnumPreference(
 				id = BooleanExpressionNotation.PROP_NOTATION,
 				nameKey = "antares.preference.expression.notation",
@@ -401,11 +425,15 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 			))
 		}
 
-		root.getGroup(GraphViewModuleJvm.PREF_TREE_OSCILLOSCOPE).add(BooleanPreference(
-			id = AbstractSignalHistoryDrawer.PROP_FILL_SIGNAL,
-			nameKey = "antares.preference.SignalHistory.fill"
-		))
-	}
+	private fun buildAnalogPreferenceTree(): PreferenceGroup =
+		PreferenceGroup(PREF_TREE_CIRCUIT_ANALOG).apply {
+
+			add(IntPreference(
+				id = AnalogEdgeView.PREF_SPEED,
+				nameKey = "antares.analog.currentFlowAnimSpeed",
+				minValue = AnalogEdgeView.MIN_SPEED,
+				maxValue = AnalogEdgeView.MAX_SPEED))
+		}
 
 	private fun configureMetaGraphIcons() {
 		MetaGraphIconProvider.register(AntaresGraphTypes.Digital, current = false, scripted = false, AntaresMetaGraphIcon(current = false, false))

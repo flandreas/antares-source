@@ -5,8 +5,10 @@ import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.antares.view.analog.engine.AnalogElement
 import ch.scorpion.antares.view.style.AntaresTheme
+import ch.scorpion.jabbah.base.PreferencesChangedEvent
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -38,15 +40,25 @@ class AnalogEdgeView(
 
 	companion object {
 
-		private val LOG by logger(AnalogEdgeView::class)
+		/** The name of the [Int] preference in [Properties] holding the current flow animation speed factor. */
+		const val PREF_SPEED = "antares.analog.currentFlowAnimationSpeed"
+		const val MIN_SPEED = 1
+		const val DEF_SPEED = 3
+		const val MAX_SPEED = 10
 
 		/** Determines the speed of the current flow animation by multiplication with [SystemSpeed].*/
-		private const val FACTOR = 0.3
+		private var animationSpeedFactor = BaseModule.properties.getInt(PREF_SPEED) / 20.0
 
 		/** Limits the effective speed of the current flow animation.*/
 		private const val MAX_DELTA = 2.7
 
 		private const val DEF_RESISTANCE = 1E-06
+
+		init {
+			BaseModule.eventBus.register(PreferencesChangedEvent::class) {
+				animationSpeedFactor = BaseModule.properties.getInt(PREF_SPEED) / 10.0
+			}
+		}
 	}
 
 	private val analogNet: AnalogNet get() = model as AnalogNet
@@ -76,7 +88,7 @@ class AnalogEdgeView(
 
 	/** Repeatedly called by [AnalogGraphView] to drive the current flow animation. */
 	fun currentFlowAnimationTick(systemSpeed: SystemSpeed) {
-		val factor = systemSpeed.speed * FACTOR
+		val factor = systemSpeed.speed * animationSpeedFactor
 		val delta = abs(current * factor).coerceAtMost(MAX_DELTA)
 		val newOffset = animationOffset + delta
 		animationOffset = if (newOffset >= CurrentFlowVisualization.DISTANCE) {
