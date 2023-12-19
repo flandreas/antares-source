@@ -1,18 +1,25 @@
 package ch.scorpion.antares.view.analog
 
+import ch.scorpion.antares.model.analog.AnalogPort
+import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.model.analog.LightBulb
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.output.LightEmitter
 import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.view.ControlView
+import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -25,9 +32,15 @@ class LightBulbView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: LightBulb = LightBulb(),
 	lightColor: LightColor = DEFAULT_LIGHT_COLOR
-) : AbstractAnalogVerticeView<LightBulb>(styleProvider, model), LightEmitter {
+) : AbstractAnalogVerticeView<LightBulb>(styleProvider, model),
+	LightEmitter,
+	ControlViewSource<LightBulb>,
+	ControlView<LightBulb>
+{
 
 	companion object {
+		const val PROP_ICON_PATH = "ch.scorpion.antares.view.analog.LightBulbView.iconPath"
+
 		private val SIZE = wInt(4)
 		private val DX = cos(PI / 4) * SIZE / 2
 		private val DY = sin(PI / 4) * SIZE / 2
@@ -111,6 +124,45 @@ class LightBulbView(
 
 	override var lightColor: LightColor = lightColor
 
+	/** ---- [ControlViewSource] */
+
+	override val controlId: String get() = "lightBulb:${model.id}"
+
+	override val controlName: String get() = super.controlName
+
+	override val iconPath: String get() = BaseModule.properties.getString(PROP_ICON_PATH)
+
+	override fun createControlView(): ControlView<LightBulb> {
+		val clone = LightBulbView(styleProvider, model, lightColor)
+		clone.isShowPortViews = false
+		clone.location = Point2D.ZERO
+		copyControlViewProperties(this, clone)
+		return clone
+	}
+
+	/** --- [ControlView] */
+
+	override var isActiveControlView: Boolean = false
+
+	override fun writeModelProperties(writer: StoreWriter) { }
+
+	override fun readModelProperties(reader: StoreReader) { }
+
+	override fun sourcePropertiesChanged(source: ControlViewSource<LightBulb>) {
+		if (source is LightBulbView) {
+			copyControlViewProperties(source, this)
+		}
+	}
+
+	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: LightBulb) {
+		this.model = model
+	}
+
+	private fun copyControlViewProperties(source: LightBulbView, dest: LightBulbView) {
+		dest.lightColor = source.lightColor
+		dest.orientation = source.orientation
+	}
+
 	/** ---- [LightBulbView] */
 
 	private fun drawBulb(context: DrawContext) {
@@ -137,6 +189,6 @@ class LightBulbView(
 
 	private val executionBulbColor: Color get() =
 		lightColor.gradient.at(
-			(abs((getPortView(model.getPort()) as AnalogPortView).current - minCurrent).coerceAtLeast(0.0) / maxCurrent)
-			.coerceIn(0.0..1.0).toFloat())
+			(abs((model.getPort<AnalogSignal>() as AnalogPort).current - minCurrent).coerceAtLeast(0.0) / maxCurrent)
+				.coerceIn(0.0..1.0).toFloat())
 }

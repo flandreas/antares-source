@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.analog
 
 import ch.scorpion.antares.model.analog.AnalogNet
+import ch.scorpion.antares.model.analog.AnalogPort
 import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.antares.view.analog.engine.AnalogElement
@@ -73,8 +74,8 @@ class AnalogEdgeView(
 		get() = analogNet.getCurrent(id)
 		set(value) {
 			analogNet.setCurrent(id, value)
-			(origin?.portView as AnalogPortView?)?.current = value
-			(destination?.portView as AnalogPortView?)?.current = value
+			(origin?.port as AnalogPort?)?.current = value
+			(destination?.port as AnalogPort?)?.current = value
 		}
 
 	/**

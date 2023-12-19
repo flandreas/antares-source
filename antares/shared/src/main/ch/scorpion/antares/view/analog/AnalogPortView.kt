@@ -28,9 +28,6 @@ class AnalogPortView(
 	customUnconnectedLength: Int? = null,
 ) : AbstractAntaresPortView<AnalogSignal>(styleProvider, port, x, y, direction, portLabelPosition, internalLabelOrientation, length ?: LENGTH, customUnconnectedLength) {
 
-	/** The electrical current (in A) flowing through this [AnalogPortView] during simulation. */
-	var current: Double = 0.0
-
 	/** ---- [PortView] interface */
 
 	override val connectedLength: Int get() = 0

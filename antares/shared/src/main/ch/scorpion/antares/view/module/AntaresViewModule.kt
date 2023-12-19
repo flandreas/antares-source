@@ -285,6 +285,8 @@ object AntaresViewModule : AbstractModule() {
 		properties.set(JoystickView.PROP_ICON_PATH, "/img/joystick.png")
 		properties.set(VideoRamView.PROP_ICON_PATH, "/img/videoram.png")
 
+		properties.set(LightBulbView.PROP_ICON_PATH, "/img/led.png")
+
 		properties.set(LogicGateView.PROP_DATA_FLOW_ENABLED, true)
 		properties.set(AbstractTransistorView.PROP_TRANSISTOR_CIRCLE, true)
 
@@ -602,7 +604,7 @@ object AntaresViewModule : AbstractModule() {
 
 		// Analog
 
-		repository.register(LIGHT_BULB, "library.element.LightBulb", { "/img/led.png" }, LightBulbView::class)
+		repository.register(LIGHT_BULB, "library.element.LightBulb", { BaseModule.properties.getString(LightBulbView.PROP_ICON_PATH) }, LightBulbView::class)
 		repository.register(BATTERY, "library.element.Battery", { "/img/led.png" }, BatteryView::class)
 		repository.register(CURRENT_SOURCE, "library.element.CurrentSource", { "/img/led.png" }, CurrentSourceView::class)
 		repository.register(RESISTOR, "library.element.Resistor", { "/img/led.png" }, ResistorView::class)

@@ -9,6 +9,9 @@ class AnalogPort(
 	name: String? = null
 ) : PortImpl<AnalogSignal>(portType, name) {
 
+	/** The electrical current (in A) flowing through this [AnalogPort] during simulation. */
+	var current: Double = 0.0
+
 	/** Called by [AnalogNet] when its signal has changed.*/
 	fun handleAnalogSignalChanged(signal: AnalogSignal?, signalHandler: SignalHandler) {
 		(owner as? AnalogVertice)?.let {
