@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.analog
 
+import ch.scorpion.antares.model.analog.AbstractAnalogVertice
 import ch.scorpion.antares.model.analog.AnalogSwitch
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.analog.engine.AnalogElement
@@ -10,11 +11,15 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.Rotation
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.model.text.HorizontalLabel
+import ch.scorpion.jabbah.graph.model.GraphElementEvent
+import ch.scorpion.jabbah.graph.view.ControlView
+import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 
 class AnalogSwitchView(
@@ -22,10 +27,12 @@ class AnalogSwitchView(
 	model: AnalogSwitch = AnalogSwitch(),
 	private val analogElement: AnalogElementProxy = AnalogElementProxy()
 ) : AbstractSwitchView<AnalogSwitch>(styleProvider, model),
-	AnalogElement by analogElement
+	AnalogElement by analogElement,
+	ControlViewSource<AnalogSwitch>
 {
 
 	companion object {
+		const val PROP_ICON_PATH = "ch.scorpion.antares.AnalogSwitchView.iconPath"
 		private const val SIZE = 6 * Look.SCALE
 	}
 
@@ -87,10 +94,28 @@ class AnalogSwitchView(
 		drawTwoPortRealSwitchShape(context)
 	}
 
+	/** ---- [ControlViewSource] */
+
+	override val controlId: String get() = "analogSwitch:${model.id}"
+
+	override val iconPath: String get() = BaseModule.properties.getString(PROP_ICON_PATH)
+
+	override fun createControlView(): ControlView<AnalogSwitch> =
+		AnalogPushButtonSwitchView(styleProvider, model)
+
 	/** ---- [AnalogSwitchView] */
 
 	private fun drawLabel(context: DrawContext) {
 		context.g.color = styleProvider.getStyle(StyleType.BACKGROUND).color.textColor
 		label.draw(context)
+	}
+
+	override fun handleStateChanged(event: GraphElementEvent) {
+		super.handleStateChanged(event)
+		if (event.reason == AbstractAnalogVertice.REQUEST_RECALCULATE) {
+			if (event.signalHandler != null && parent is AnalogGraphView) {
+				(parent as AnalogGraphView).recalculate(event.signalHandler!!)
+			}
+		}
 	}
 }

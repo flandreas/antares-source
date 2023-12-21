@@ -286,6 +286,7 @@ object AntaresViewModule : AbstractModule() {
 		properties.set(VideoRamView.PROP_ICON_PATH, "/img/videoram.png")
 
 		properties.set(LightBulbView.PROP_ICON_PATH, "/img/led.png")
+		properties.set(AnalogSwitchView.PROP_ICON_PATH, "/img/led.png")
 
 		properties.set(LogicGateView.PROP_DATA_FLOW_ENABLED, true)
 		properties.set(AbstractTransistorView.PROP_TRANSISTOR_CIRCLE, true)
@@ -377,6 +378,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("analogTransistorView", AnalogTransistorView::class)
 		typeMap.register("analogCircuitInOutView", AnalogCircuitInOutView::class)
 		typeMap.register("analogPowerView", AnalogPowerView::class)
+		typeMap.register("analogPushButtonView", AnalogPushButtonSwitchView::class)
 	}
 
 	private fun configureSelectionModels(factory: SelectionModelFactory) {
@@ -406,7 +408,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, TriStateBufferGateView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, DelayGateView::class) { SelectedColorSelectionModel(it) }
 
-		factory.register(SelectionDrawingStrategy.REPLACE, SwitchView::class) { SwitchViewSelectionModel(it as SwitchView) }
+		factory.register(SelectionDrawingStrategy.REPLACE, SwitchView::class) { PushButtonSwitchViewSelectionModel(it as SwitchView) }
 		factory.register(SelectionDrawingStrategy.REPLACE, DipSwitchView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, ClockView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, ClockControlView::class) { SelectedColorSelectionModel(it) }
@@ -451,6 +453,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogTransistorView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogCircuitInOutView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogPowerView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, AnalogPushButtonSwitchView::class) { PushButtonSwitchViewSelectionModel(it as AnalogPushButtonSwitchView) }
 	}
 
 	private fun configureHighlightModels(factory: SelectionModelFactory) {
@@ -608,7 +611,7 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(BATTERY, "library.element.Battery", { "/img/led.png" }, BatteryView::class)
 		repository.register(CURRENT_SOURCE, "library.element.CurrentSource", { "/img/led.png" }, CurrentSourceView::class)
 		repository.register(RESISTOR, "library.element.Resistor", { "/img/led.png" }, ResistorView::class)
-		repository.register(ANALOG_SWITCH, "library.element.AnalogSwitch", { "/img/led.png" }, AnalogSwitchView::class)
+		repository.register(ANALOG_SWITCH, "library.element.AnalogSwitch", { BaseModule.properties.getString(AnalogSwitchView.PROP_ICON_PATH) }, AnalogSwitchView::class)
 		repository.register(ANALOG_GROUND, "library.element.AnalogGround", { "/img/led.png" }, AnalogGroundView::class)
 		repository.register(ANALOG_TRANSISTOR_N, "library.element.AnalogTransistor.nType", { "/img/transistor.png" }, HelpId(AbstractTransistorView::class.simpleName!!)) {
 			AnalogTransistorView(TransistorType.N)

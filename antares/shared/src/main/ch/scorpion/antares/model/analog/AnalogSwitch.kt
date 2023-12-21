@@ -27,11 +27,7 @@ class AnalogSwitch(
 		private class Calculator : AbstractSwitch.Companion.AbstractSwitchCalculator<AnalogSwitch>() {
 			override fun calculate(vertice: AnalogSwitch, data: GraphActorData, signalHandler: SignalHandler) {
 				super.calculate(vertice, data, signalHandler)
-
-				if (data.graphView is AnalogGraphView) {
-					(data.graphView as AnalogGraphView).requireAnalysis()
-					(data.graphView as AnalogGraphView).requestActing(signalHandler)
-				}
+				vertice.requestAnalogGraphRecalculation(signalHandler)
 			}
 		}
 	}
@@ -49,6 +45,10 @@ class AnalogSwitch(
 		propagationDelay = 0
 	}
 
+	fun requestAnalogGraphRecalculation(signalHandler: SignalHandler) {
+		stateChanged(signalHandler, AbstractAnalogVertice.REQUEST_RECALCULATE)
+	}
+
 	/** ---- [AnalogElement] */
 
 	override val voltageSourceCount: Int get() = if (isOn) 1 else 0
@@ -60,5 +60,4 @@ class AnalogSwitch(
 	}
 
 	override fun calculateCurrent() { }
-
 }

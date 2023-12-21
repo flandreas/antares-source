@@ -28,6 +28,15 @@ import ch.scorpion.jabbah.graph.model.Graph
  */
 interface ControlViewSource<T : Vertice> : VerticeView<T> {
 
+	companion object {
+		fun getControlName(type: String, id: Int, name: String?): String {
+			if (StringUtils.isEmpty(name)) {
+				return "$type ($id)"
+			}
+			return "$type: $name"
+		}
+	}
+
     /**
      * Returns a unique ID that identifies this [ControlViewSource] to the system, and that is the same that is
      * returned by [ControlView]s created by this [ControlViewSource] in [ControlView.controlId].
@@ -39,12 +48,7 @@ interface ControlViewSource<T : Vertice> : VerticeView<T> {
     val controlId: String
 
     /** Returns a translated text that identifies this [ControlViewSource] to the user.*/
-    val controlName: String get() {
-	    if (StringUtils.isEmpty(model.name)) {
-		    return "$type ($id)"
-	    }
-	    return "$type: ${model.name}"
-    }
+    val controlName: String get() = getControlName(type, id, model.name)
 
     /** Returns the path of the icon that identifies this [ControlViewSource] graphically. */
     val iconPath: String

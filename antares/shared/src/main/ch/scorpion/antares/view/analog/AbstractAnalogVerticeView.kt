@@ -97,6 +97,10 @@ abstract class AbstractAnalogVerticeView<T: AbstractAnalogVertice<*>>(
 		super.handleStateChanged(event)
 		if (event.reason == AbstractAnalogVertice.MAIN_PROPERTY_STATE) {
 			updateLabel()
+		} else if (event.reason == AbstractAnalogVertice.REQUEST_RECALCULATE) {
+			if (event.signalHandler != null && parent is AnalogGraphView) {
+				(parent as AnalogGraphView).recalculate(event.signalHandler!!)
+			}
 		}
 	}
 }

@@ -4,6 +4,7 @@ import ch.scorpion.antares.view.analog.engine.AnalogElement
 import ch.scorpion.antares.view.analog.engine.AnalogElementMixin
 import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 
@@ -14,7 +15,11 @@ abstract class AbstractAnalogVertice<T: CalculatingVertice>(
 ) : CalculatingVertice(calculator), AnalogVertice, AnalogElement by analogElem {
 
 	companion object {
+		/** The 'reason' in [stateChanged] calls if the main property value has changed.*/
 		const val MAIN_PROPERTY_STATE = "mainPropertyState"
+
+		/** The 'reason' in [stateChanged] calls if an [AnalogVertice] request recalculation of the entire [AnalogGraph].*/
+		const val REQUEST_RECALCULATE = "requestRecalculation"
 	}
 
 	override val type: String get() = Translations.getString("${baseResourceKey}.name")
@@ -26,6 +31,8 @@ abstract class AbstractAnalogVertice<T: CalculatingVertice>(
 		propagationDelay = 0
 	}
 
+	/** ---- [AnalogElement] */
+
 	override val voltageSourceCount: Int get() = 0
 
 	override fun calculateCurrent() {
@@ -34,5 +41,11 @@ abstract class AbstractAnalogVertice<T: CalculatingVertice>(
 
 	override fun stamp(analysis: AnalogCircuitAnalysis) {
 		// empty
+	}
+
+	/** ---- [AbstractAnalogVertice] */
+
+	fun requestAnalogGraphRecalculation(signalHandler: SignalHandler) {
+		stateChanged(signalHandler, REQUEST_RECALCULATE)
 	}
 }

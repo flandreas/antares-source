@@ -123,6 +123,11 @@ class AnalogGraphView(
 		analysis = null
 	}
 
+	fun recalculate(signalHandler: SignalHandler) {
+		requireAnalysis()
+		requestActing(signalHandler)
+	}
+
 	fun currentFlowAnimationTick(systemSpeedCategory: CurrentSystemSpeedCategory) {
 		getEdgeViews()
 			.map { it as AnalogEdgeView }

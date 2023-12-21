@@ -1,50 +1,17 @@
 package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.model.input.Switch
-import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.view.Look
-import ch.scorpion.antares.view.Look.SCALE
-import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
-import ch.scorpion.antares.view.style.AntaresTheme
-import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.geom.*
+import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
-import ch.scorpion.jabbah.draw.graphics.DropShadow
-import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.draw.style.StyleType
-import ch.scorpion.jabbah.draw.style.Themes
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
-import ch.scorpion.jabbah.edit.model.text.*
-import ch.scorpion.jabbah.edit.select.AbstractSelectionModel
-import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
-import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
-import ch.scorpion.jabbah.graph.view.vertice.VerticeLabelPosition
-import ch.scorpion.jabbah.io.Storable
-import ch.scorpion.jabbah.io.StoreReader
-import ch.scorpion.jabbah.io.StoreWriter
-import kotlin.math.ceil
-import kotlin.math.max
-
-/** Defines the visual, exchangeable appearance of a [SwitchView]. */
-private interface SwitchViewFace {
-
-	fun drawSelected(context: DrawContext)
-
-	fun drawEdited(context: DrawContext)
-
-	fun drawExecuted(context: DrawContext)
-}
 
 /**
  * A view representation of a [Switch] that supports persistent toggling between two states.
@@ -53,7 +20,9 @@ class SwitchView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: Switch = Switch(),
 	private val eventBus: EventBus = BaseModule.eventBus
-) : AbstractSwitchView<Switch>(styleProvider, model), ControlView<Switch>, ControlViewSource<Switch>, Labeled {
+) : AbstractPushButtonSwitchView<Switch>(styleProvider, model),
+	ControlViewSource<Switch>
+{
 
 	companion object {
 
@@ -68,23 +37,7 @@ class SwitchView(
 		private val SWITCH_TYPE_DESC get() = Translations.getOptionalString("$SWITCH_BASE_RESOURCE_KEY.desc")
 
 		const val PROP_ICON_PATH = "ch.scorpion.antares.view.input.SwitchView.iconPath"
-		private const val SIZE = 4 * SCALE
-		private const val BORDER_WIDTH = 3
-		private const val LABEL_DIST = SCALE
-		private const val LABEL_INSET = 4.0
 	}
-
-	// Individually controlled by ControlView
-	var labelPosition: VerticeLabelPosition = VerticeLabelPosition.EXTERNAL
-		set(value) {
-			invalidate()
-			field = value
-			setBounds(calculateBounds())
-			updateLabelGeometries()
-			invalidate()
-			update()
-			validate()
-		}
 
 	override var toggle: Boolean
 		get() = super.toggle
@@ -95,50 +48,6 @@ class SwitchView(
 			}
 		}
 
-	private val face = AnalogFace()
-
-	/**
-	 * The [Label] that displays the signal for [VerticeLabelPosition.EXTERNAL], or the name of this [SwitchView]
-	 * for [VerticeLabelPosition.INTERNAL].
-	 */
-	private val internalLabel: Label = Label(
-		font = font,
-		text = "",
-		location = Point2D(AbstractAntaresPortView.LENGTH - SIZE / 2.0, 0.0),
-		horizontalAlignment = HorizontalAlignment.CENTER,
-		verticalAlignment = VerticalAlignment.CENTER,
-		rotationDisplayStrategy = RotationDisplayStrategy.KEEP_HORIZONTAL)
-
-	private val externalLabel = HorizontalLabel(
-		owner = this,
-		relLocation = Point2D(-(SIZE + AbstractAntaresPortView.LENGTH + LABEL_DIST), 0),
-		orientation = Direction.WEST,
-		font = font)
-
-	init {
-		isFocusable = true
-		modelExchanged(null)
-		setBounds(calculateBounds())
-	}
-
-	/**
-	 * Calculates the bounds of this [SwitchView] depending on the [labelPosition] and the
-	 * current externalLabel text
-	 */
-	private fun calculateBounds(): RectangularShape {
-		val width = calculateWidth()
-		return Rectangle2D(-AbstractAntaresPortView.LENGTH - width, -SIZE / 2, width, SIZE)
-	}
-
-	private fun updateLabelGeometries() {
-		internalLabel.location = Point2D(bounds.centerX, bounds.centerY)
-		if (labelPosition == VerticeLabelPosition.INTERNAL) {
-			internalLabel.rotationDisplayStrategy = RotationDisplayStrategy.ROTATE_HALF
-		} else {
-			internalLabel.rotationDisplayStrategy = RotationDisplayStrategy.KEEP_HORIZONTAL
-		}
-	}
-
 	override fun modelExchanged(oldModel: Switch?) {
 		super.modelExchanged(oldModel)
 		val portView = DigitalPortView(
@@ -147,122 +56,6 @@ class SwitchView(
 			direction = Direction.EAST)
 		portView.setLocation(-portView.length.toDouble(), 0.0)
 		addPortView(portView)
-		updateLabels()
-	}
-
-	override val label: Label get() = when (labelPosition) {
-		VerticeLabelPosition.HIDE -> internalLabel
-		VerticeLabelPosition.INTERNAL -> internalLabel
-		VerticeLabelPosition.EXTERNAL -> externalLabel.label
-	}
-
-	/** ---- [Storable] interface */
-
-	override fun write(writer: StoreWriter) {
-		super.write(writer)
-		if (labelPosition != VerticeLabelPosition.EXTERNAL) {
-			writer.writeString("labelPos", labelPosition.customName)
-		}
-	}
-
-	override fun read(reader: StoreReader) {
-		super.read(reader)
-		if (reader.hasAttribute("labelPos")) {
-			labelPosition = VerticeLabelPosition.withName(reader.readString("labelPos"))
-		}
-	}
-
-	/** ---- [Component] */
-
-	override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
-		get() = SelectionDrawingStrategy.REPLACE
-		set(@Suppress("UNUSED_PARAMETER") value) {
-			throw UnsupportedOperationException()
-		}
-
-	override fun rotationChanged(newRotation: Rotation) {
-		super.rotationChanged(newRotation)
-		internalLabel.ownerRotation = rotation
-		updateLabels()
-	}
-
-	/** ---- [AbstractDrawable] */
-
-	override val boundingBox: Rectangle2D
-		get() {
-			val bb = super.boundingBox
-			if (StringUtils.isNotEmpty(externalLabel.text)) {
-				val lbb = externalLabel.boundingBox.moveBy(location)
-				bb.add(lbb)
-			}
-			return bb
-		}
-
-	override fun draw(context: DrawContext) {
-		super.draw(context)
-		if (labelPosition != VerticeLabelPosition.INTERNAL) {
-			context.g.color = styleProvider.getStyle(StyleType.BACKGROUND).color.textColor
-		} else {
-			context.g.color = if (model.isOn) Themes.get<AntaresTheme>().one.textColor else Themes.get<AntaresTheme>().zero.textColor
-		}
-		if (labelPosition == VerticeLabelPosition.EXTERNAL) {
-			externalLabel.draw(context)
-		}
-	}
-
-	override fun drawImpl(context: DrawContext) {
-		val appContext = context.castedAppContext<GraphApplicationContext>()!!
-
-		val oldColor = context.g.color
-		super.drawImpl(context)
-
-		if (shadow) {
-			DropShadow.draw(context, transparency) {
-				context.g.fillRect(xInt, yInt, widthInt, heightInt)
-			}
-		}
-
-		if (appContext.isExecute) {
-			face.drawExecuted(context)
-		} else {
-			face.drawEdited(context)
-		}
-
-		drawBorder(context)
-
-		if (appContext.isExecute) {
-			drawFocus(context)
-
-			if (model.shouldDrawDisabled(appContext)) {
-				drawDisabled(context)
-			}
-		}
-		context.g.color = oldColor
-	}
-
-	override fun drawSelected(context: DrawContext) {
-		context.g.color = context.color!!.foregroundColor
-		draw(context) {
-			super.drawImpl(it)
-			face.drawSelected(context)
-			if (labelPosition == VerticeLabelPosition.INTERNAL) {
-				internalLabel.draw(context)
-			}
-		}
-		if (labelPosition == VerticeLabelPosition.EXTERNAL) {
-			externalLabel.draw(context)
-		}
-	}
-
-	private fun drawInnerRectangle(context: DrawContext) {
-		context.g.stroke = Themes.get<AntaresTheme>().annotation.stroke
-		context.g.drawRect(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
-			width.toInt() - 2 * BORDER_WIDTH, SIZE - 2 * BORDER_WIDTH/*, DIAMETER, DIAMETER*/)
-	}
-
-	private fun drawOuterRectangle(context: DrawContext) {
-		context.g.stroke = stroke
-		context.g.drawRect(xInt, yInt, width.toInt(), SIZE)
 	}
 
 	/** ---- [ControlViewSource] */
@@ -274,7 +67,7 @@ class SwitchView(
 			return "switch:" + model.id
 		}
 
-	override val controlName: String get() = super.controlName
+	override val controlName: String get() = super<ControlViewSource>.controlName
 
 	override val iconPath: String get() = BaseModule.properties.getString(PROP_ICON_PATH)
 
@@ -289,34 +82,8 @@ class SwitchView(
 
 	/** ---- [ControlView] */
 
-	override var isActiveControlView: Boolean = false
-
-	override val mirrorWidth: Double get() = -(2 * AbstractAntaresPortView.LENGTH + width)
-
-	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: Switch) {
-		this.model = model
-	}
-
-	override fun writeModelProperties(writer: StoreWriter) {
-		if (StringUtils.isNotEmpty(name)) {
-			writer.writeString("name", name!!)
-		}
-	}
-
-	override fun readModelProperties(reader: StoreReader) {
-		if (reader.hasAttribute("name")) {
-			name = reader.readString("name")
-		}
-	}
-
-	override fun sourcePropertiesChanged(source: ControlViewSource<Switch>) {
-		if (source is SwitchView) {
-			copyControlViewProperties(source, this)
-		}
-	}
-
 	private fun copyControlViewProperties(source: SwitchView, dest: SwitchView) {
-		dest.name = source.name
+		super.copyControlViewProperties(source, dest)
 		dest.toggle = source.toggle
 	}
 
@@ -335,208 +102,4 @@ class SwitchView(
 		} else {
 			SWITCH_TYPE_DESC
 		}
-
-	/** ---- [SwitchView] */
-
-	private fun drawBorder(context: DrawContext) {
-		context.g.color = transparent.applyTo(color.foregroundColor)
-		context.g.stroke = stroke
-		context.g.drawRect(xInt, yInt, widthInt, heightInt)
-	}
-
-	private fun drawBackground(context: DrawContext) {
-		context.g.color = transparent.applyTo(propertiesBackgroundColor)
-		context.g.fillRect(xInt, yInt, widthInt, heightInt)
-	}
-
-	private fun drawSignalBackground(context: DrawContext) {
-		context.g.color = transparent.applyTo(Themes.get<AntaresTheme>().background.color.backgroundColor)
-		context.g.fillRect(xInt, yInt, widthInt, heightInt)
-		context.g.color = transparent.applyTo(Bit.of(model.isOn).color.foregroundColor)
-		context.g.fillRect(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
-			widthInt - 2 * BORDER_WIDTH, heightInt - 2 * BORDER_WIDTH)
-	}
-
-	override fun drawFocus(context: DrawContext) {
-		if (isFocusOwner) {
-			context.g.color = transparent.applyTo(Themes.get<AntaresTheme>().focus.color.foregroundColor)
-			context.g.stroke = Themes.get<AntaresTheme>().focus.stroke
-			context.g.drawRect(xInt + BORDER_WIDTH - 1, yInt + BORDER_WIDTH - 1,
-				widthInt - 2 * BORDER_WIDTH + 2, heightInt - 2 * BORDER_WIDTH + 2)
-		}
-	}
-
-	private fun drawDisabled(context: DrawContext) {
-		context.g.color = Look.disabledColor()
-		context.g.fillRect(xInt, yInt, widthInt, heightInt)
-	}
-
-	override fun updateLabels() {
-		invalidate()
-		if (labelPosition == VerticeLabelPosition.INTERNAL) {
-			internalLabel.text = StringUtils.orEmpty(name)
-		} else {
-			externalLabel.text = StringUtils.orEmpty(name)
-			externalLabel.rotationChanged()
-		}
-		setBounds(calculateBounds())
-		updateLabelGeometries()
-		invalidate()
-		update()
-	}
-
-	/**
-	 * Calculates the width of this [SwitchView] depending on the current externalLabel and
-	 * the [VerticeLabelPosition]. If [labelPosition] is [VerticeLabelPosition.INTERNAL],
-	 * the width is calculated as the smallest integer multiple of [SIZE] that contains the
-	 * externalLabel when drawn with the current font.
-	 */
-	private fun calculateWidth(): Int {
-		if (labelPosition != VerticeLabelPosition.INTERNAL || StringUtils.isEmpty(model.name)) {
-			return SIZE
-		}
-		val tri = TextRenderInfoFactory.measureSingleLineText(model.name!!, font)
-		val requiredSpace = tri.textBounds.width + 2 * LABEL_INSET
-		return (SIZE * max(1.0, ceil(requiredSpace / SIZE))).toInt()
-	}
-
-	/** A [SwitchViewFace] that draws the hexadecimal value of the current state bit. */
-	@Suppress("unused")
-	private inner class DigitalFace : SwitchViewFace {
-
-		override fun drawSelected(context: DrawContext) {
-			drawOuterRectangle(context)
-			drawInnerRectangle(context)
-		}
-
-		override fun drawEdited(context: DrawContext) {
-			drawSignalBackground(context)
-			drawContent(context)
-		}
-
-		override fun drawExecuted(context: DrawContext) {
-			drawSignalBackground(context)
-			drawContent(context)
-		}
-
-		private fun drawContent(context: DrawContext) {
-			drawSignalBackground(context)
-
-			internalLabel.color = transparent.applyTo(if (model.isOn) Themes.get<AntaresTheme>().one.textColor else Themes.get<AntaresTheme>().zero.textColor)
-			if (labelPosition == VerticeLabelPosition.INTERNAL) {
-				internalLabel.text = StringUtils.orEmpty(model.name)
-			} else {
-				internalLabel.text = Bit.of(model.isOn).toHexString()
-			}
-			internalLabel.draw(context)
-		}
-	}
-
-	/**
-	 * A [SwitchViewFace] that draws an open or closed analog switch symbol, or the switch's label
-	 * if [labelPosition] is [VerticeLabelPosition.INTERNAL].
-	 */
-	private inner class AnalogFace : SwitchViewFace {
-
-		override fun drawSelected(context: DrawContext) {
-			drawOuterRectangle(context)
-			drawContent(context)
-		}
-
-		override fun drawEdited(context: DrawContext) {
-			drawBackground(context)
-			context.g.color = transparent.applyTo(color.foregroundColor)
-			drawContent(context)
-		}
-
-		override fun drawExecuted(context: DrawContext) {
-			drawSignalBackground(context)
-			context.g.color = transparent.applyTo(if (model.isOn) Themes.get<AntaresTheme>().one.textColor else Themes.get<AntaresTheme>().zero.textColor)
-			drawContent(context)
-		}
-
-		private fun drawContent(context: DrawContext) {
-			if (labelPosition == VerticeLabelPosition.INTERNAL) {
-				internalLabel.text = StringUtils.orEmpty(model.name)
-				internalLabel.draw(context)
-				drawInnerRectangle(context)
-			} else {
-				drawSymbol(context)
-			}
-		}
-
-		private fun drawSymbol(context: DrawContext) {
-			context.g.translate(-AbstractAntaresPortView.LENGTH - SIZE / 2.0, 0.0)
-			context.g.rotate(rotation.inverse().angle)
-			context.g.translate(AbstractAntaresPortView.LENGTH + SIZE / 2.0, 0.0)
-
-			drawCircles(context)
-			context.g.stroke = styleProvider.getStyle(StyleType.ANNOTATION).stroke
-			if (toggle) {
-				drawToggleSymbol(context)
-			} else {
-				drawPushButtonSymbol(context)
-			}
-
-			context.g.translate(-AbstractAntaresPortView.LENGTH - SIZE / 2.0, 0.0)
-			context.g.rotate(rotation.angle)
-			context.g.translate(AbstractAntaresPortView.LENGTH + SIZE / 2.0, 0.0)
-		}
-
-		private fun drawCircles(context: DrawContext) {
-			context.g.fillCircle(-AbstractAntaresPortView.LENGTH - 3.0 * SCALE, 0.5 * SCALE, 2.0)
-			context.g.fillCircle(-AbstractAntaresPortView.LENGTH - 1.0 * SCALE, 0.5 * SCALE, 2.0)
-		}
-
-		private fun drawPushButtonSymbol(context: DrawContext) {
-			if (model.isOn) {
-				context.g.drawLine(
-					-AbstractAntaresPortView.LENGTH - 3.0 * SCALE, 0.5 * SCALE,
-					-AbstractAntaresPortView.LENGTH - 1.0 * SCALE, 0.5 * SCALE)
-				context.g.drawLine(
-					-AbstractAntaresPortView.LENGTH - 2.0 * SCALE, 0.5 * SCALE,
-					-AbstractAntaresPortView.LENGTH - 2.0 * SCALE, -0.0 * SCALE)
-			} else {
-				context.g.drawLine(
-					-AbstractAntaresPortView.LENGTH - 3.0 * SCALE, -0.25 * SCALE,
-					-AbstractAntaresPortView.LENGTH - 1.0 * SCALE, -0.25 * SCALE)
-				context.g.drawLine(
-					-AbstractAntaresPortView.LENGTH - 2.0 * SCALE, -0.25 * SCALE,
-					-AbstractAntaresPortView.LENGTH - 2.0 * SCALE, -0.75 * SCALE)
-			}
-		}
-
-		private fun drawToggleSymbol(context: DrawContext) {
-			if (model.isOn) {
-				context.g.drawLine(
-					-AbstractAntaresPortView.LENGTH - 1.0 * SCALE, 0.5 * SCALE,
-					-AbstractAntaresPortView.LENGTH - 3.0 * SCALE, 0.5 * SCALE)
-			} else {
-				context.g.drawLine(
-					-AbstractAntaresPortView.LENGTH - 1.0 * SCALE, 0.5 * SCALE,
-					-AbstractAntaresPortView.LENGTH - 2.0 * SCALE, -1.0 * SCALE)
-			}
-		}
-	}
-}
-
-class SwitchViewSelectionModel(component: SwitchView) : AbstractSelectionModel<SwitchView>(component) {
-
-	override fun draw(context: DrawContext) {
-		val oldUseContextColors = context.useContextColors
-		context.useContextColors = true
-		context.color = Themes.get<AntaresTheme>().selection.color
-		component.drawSelected(context)
-		context.useContextColors = oldUseContextColors
-	}
-
-	override val boundingBox: RectangularShape get() = component.boundingBox
-
-	override fun contains(x: Double, y: Double): Boolean {
-		return component.contains(x, y)
-	}
-
-	override fun componentUpdated() {
-		validate()
-	}
 }
