@@ -432,7 +432,10 @@ class SwitchView(
 		}
 	}
 
-	/** A [SwitchViewFace] that draws an open or closed analog switch symbol. */
+	/**
+	 * A [SwitchViewFace] that draws an open or closed analog switch symbol, or the switch's label
+	 * if [labelPosition] is [VerticeLabelPosition.INTERNAL].
+	 */
 	private inner class AnalogFace : SwitchViewFace {
 
 		override fun drawSelected(context: DrawContext) {

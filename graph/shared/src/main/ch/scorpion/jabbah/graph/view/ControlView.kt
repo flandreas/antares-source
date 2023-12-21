@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view
 
+import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.execution.actor.ActorView
@@ -14,7 +15,8 @@ import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
 /**
- * A [VerticeView] that is created by a [ControlViewSource] and used to be added to a [SubGraphVerticeView].
+ * A [Component] that is created by a [ControlViewSource] and used to be added to a [SubGraphVerticeView].
+ * Cannot just be a [Drawable] because it needs to be selectable when editing it within a [ContainerDrawing].
  * @param <T> the type of the model
  */
 interface ControlView<T : Vertice> : Component, Transparent, ActorView {
