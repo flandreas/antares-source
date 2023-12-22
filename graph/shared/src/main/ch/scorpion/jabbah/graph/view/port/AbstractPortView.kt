@@ -116,7 +116,11 @@ abstract class AbstractPortView<T : Any>(
 
 	/** Caches the (static) [Tooltip] (if any) created by [getTooltip]. */
 	private val tooltip = resettableLazy {
-		ch.scorpion.jabbah.draw.view.buildToolTipText(buildToolTipTitle(), buildToolTipContent(), null)?.let {
+		ch.scorpion.jabbah.draw.view.buildToolTipText(
+			buildToolTipTitle(),
+			buildToolTipContent(),
+			null
+		)?.let {
 			Tooltip(it, Rectangle2D.pointLike(owner!!.getPortConnectionPoint(this.port)))
 		}
 	}
@@ -346,13 +350,19 @@ abstract class AbstractPortView<T : Any>(
 
 	private fun buildToolTipTitle(): String =
 		if (StringUtils.isBlank(port.name)) {
-			"${port.portType.richTextName}"
+			port.portType.richTextName
 		} else {
 			"${port.portType.richTextName} '${port.name!!}'"
 		}
 
-	protected open fun buildToolTipContent(): String =
-		StringUtils.orEmpty(port.description.value)
+	protected open fun buildToolTipContent(): String {
+		val content = StringBuilder(StringUtils.orEmpty(port.description.value))
+		if (StringUtils.isEmpty(port.name)) {
+			content.appendLine()
+			content.append("${Translations.getString("graph.property.PortId.name")}: ${port.portId}")
+		}
+		return content.toString()
+	}
 
 	private inner class PortListener : PropertyChangeListener<Any> {
 		override fun propertyChanged(e: PropertyChangeEvent<Any>) {

@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.edit.SnappableX
 import ch.scorpion.jabbah.edit.SnappableY
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.port.PortImpl
 import ch.scorpion.jabbah.graph.model.port.SubGraphPortImpl
@@ -24,6 +25,22 @@ class AbstractPortViewTest {
 		init {
 			GraphViewTestRule.configure()
 		}
+	}
+
+	private fun portView(
+		portType: PortType,
+		direction: Direction = Direction.EAST,
+		globalLocation: Point2D = Point2D.ZERO,
+		name: String? = null,
+		desc: TranslatableText = TranslatableText()
+	): TestPortView<*> {
+		val portView = TestPortView(PortImpl(portType, name, desc), direction)
+		val owner = mockk<VerticeView<*>>()
+		every { owner.getUnconnectedPortConnectionPoint(any()) } returns globalLocation
+		every { owner.getPortConnectionPoint(any())} returns Point2D.ZERO
+		every { owner.rotation } returns Rotation.R0
+		portView.owner = owner
+		return portView
 	}
 
 	@Test
@@ -99,12 +116,31 @@ class AbstractPortViewTest {
 		assertFalse(pv1.accept(pv2 as SnappableY))
 	}
 
-	private fun portView(portType: PortType, direction: Direction, globalLocation: Point2D): TestPortView<*> {
-		val portView = TestPortView(PortImpl(portType), direction)
-		val owner = mockk<VerticeView<*>>()
-		every { owner.getUnconnectedPortConnectionPoint(any()) } returns globalLocation
-		every { owner.rotation } returns Rotation.R0
-		portView.owner = owner
-		return portView
+	private fun tooltipText(portView: TestPortView<*>): String? = portView.getTooltip(0.0, 0.0)?.text
+
+	@Test
+	fun testSimpleInputTooltip() {
+		assertEquals("*(Input) \nPort ID: 0", tooltipText(portView(PortType.INPUT)))
+	}
+
+	@Test
+	fun testSimpleOutputTooltip() {
+		val portView = portView(PortType.OUTPUT)
+		assertEquals("*(Output) \nPort ID: 0", tooltipText(portView))
+	}
+
+	@Test
+	fun testNamedInputTooltip() {
+		assertEquals("*(Input 'Bla')", tooltipText(portView(PortType.INPUT, name = "Bla")))
+	}
+
+	@Test
+	fun testNamedDescInputTooltip() {
+		assertEquals("*(Input 'Bla':) Desc", tooltipText(portView(PortType.INPUT, name = "Bla", desc = TranslatableText("Desc"))))
+	}
+
+	@Test
+	fun testUnnamedDescInputTooltip() {
+		assertEquals("*(Input:) Desc\nPort ID: 0", tooltipText(portView(PortType.INPUT, desc = TranslatableText("Desc"))))
 	}
 }

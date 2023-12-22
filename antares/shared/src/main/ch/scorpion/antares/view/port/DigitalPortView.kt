@@ -258,11 +258,6 @@ class DigitalPortView(
 
 	override fun buildToolTipContent(): String {
 		val content = StringBuilder(super.buildToolTipContent())
-		if (StringUtils.isEmpty(port.name)) {
-			content.appendLine()
-			content.append("${Translations.getString("graph.property.PortId.name")}: ${port.portId}")
-		}
-
 		if (digitalPort.bitWidth.width != BitWidth.BW_1.width) {
 			content.appendLine()
 			content.append("${Translations.getString("${BitWidth.BASE_KEY}.name")}: ${digitalPort.bitWidth.width}")
