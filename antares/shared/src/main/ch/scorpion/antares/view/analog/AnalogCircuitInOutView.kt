@@ -56,6 +56,7 @@ class AnalogCircuitInOutView(
 		super.modelExchanged(oldModel)
 		analogElement.bind(model)
 		updateView()
+		updateVoltageLabel()
 	}
 
 	/** ---- [AbstractCircuitInOutView] */
