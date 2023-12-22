@@ -298,8 +298,7 @@ class DigitalCircuitInOutView(
 		} else if (key == KeyEvent.VK_DELETE && portType == PortType.INOUT && checkTopLevelKey()) {
 			consumeSignal(
 				DigitalSignalFactory.undefined(BitWidth.of(signalRepresentation.bitCount)),
-				contextHolder,
-				graphView = graphView)
+				contextHolder)
 		} else {
 			if (checkTopLevelKey()) {
 				val keyChar = if (key >= KeyEvent.VK_NUMPAD_0 && key <= KeyEvent.VK_NUMPAD_9) {
@@ -310,8 +309,7 @@ class DigitalCircuitInOutView(
 				consumeSignal(
 					signalRepresentation.digitToWord(BitWidth.of(signalRepresentation.bitCount), keyChar),
 					contextHolder,
-					skipAnimation,
-					graphView = graphView)
+					skipAnimation)
 			} else {
 				rejectSignal(contextHolder, skipAnimation)
 			}
@@ -319,11 +317,11 @@ class DigitalCircuitInOutView(
 		validate()
 	}
 
-	private fun consumeSignal(signal: DigitalSignal?, contextHolder: GraphApplicationContextHolder, skipAnimation: Boolean = false, graphView: GraphView?) {
+	private fun consumeSignal(signal: DigitalSignal?, contextHolder: GraphApplicationContextHolder, skipAnimation: Boolean = false) {
 		signal?.let {
 			signalRepresentation.withDigit(model.signal!!, it, numberView!!.focusIndex!!)
 		}?.let {
-			model.setSignalManually(it, contextHolder.scheduler, graphView)
+			model.setSignalManually(it, contextHolder.scheduler)
 			numberView!!.transferFocusRight()
 		} ?: rejectSignal(contextHolder, skipAnimation)
 	}

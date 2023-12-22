@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.analog
 
+import ch.scorpion.antares.model.analog.AbstractAnalogVertice
 import ch.scorpion.antares.model.analog.AnalogCircuitInOut
 import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.model.signal.Bit
@@ -22,7 +23,6 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.Themes
-import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.Alignment
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
@@ -31,7 +31,6 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.PortType
-import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.port.PortView
 
 class AnalogCircuitInOutView(
@@ -62,7 +61,15 @@ class AnalogCircuitInOutView(
 	/** ---- [AbstractCircuitInOutView] */
 
 	override fun handleStateChangedImpl(event: GraphElementEvent) {
-		updateVoltageLabel()
+		if (event.signalHandler != null) {
+			if (event.reason == AbstractAnalogVertice.REQUEST_RECALCULATE) {
+				if (parent is AnalogGraphView) {
+					(parent as AnalogGraphView).recalculate(event.signalHandler!!)
+				}
+			} else {
+				updateVoltageLabel()
+			}
+		}
 	}
 
 	private fun updateVoltageLabel() {
@@ -130,7 +137,7 @@ class AnalogCircuitInOutView(
 	}
 
 	override fun toggle(undefine: Boolean, context: ActorInteractionContext): ActorInteractionHandler? {
-		model.toggle(context.signalHandler, (context.view as DrawingView<*>).drawing as GraphView)
+		model.toggle(context.signalHandler)
 		requestFocus()
 		return null
 	}

@@ -52,7 +52,7 @@ class RealSwitchSeriesSimulationTest : AbstractCircuitTest() {
 	fun combinedNetShouldContainAllNetTopologyChangers() {
 		startSimulation()
 
-		switch1.model.toggle(scheduler, circuitView)
+		switch1.model.toggle(scheduler)
 
 		with(buttonView.model.getOutput<DigitalSignal>().combinedNets) {
 			assertTrue(any { it.netTopologyChanger.contains(switch1.model) })
@@ -67,15 +67,15 @@ class RealSwitchSeriesSimulationTest : AbstractCircuitTest() {
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		buttonView.model.toggle(scheduler, circuitView)
+		buttonView.model.toggle(scheduler)
 		proceedUntilQueueIsEmpty()
 
-		switch1.model.toggle(scheduler, circuitView)
+		switch1.model.toggle(scheduler)
 		proceedUntilQueueIsEmpty()
 
 		assertFalse(ledView.model.isOn)
 
-		switch2.model.toggle(scheduler, circuitView)
+		switch2.model.toggle(scheduler)
 		assertTrue(switch1.model.containsNetTopologyChangeListener(buttonView.model.getOutput<DigitalSignal>(1) as PortImpl<*>))
 		assertTrue(switch2.model.containsNetTopologyChangeListener(buttonView.model.getOutput<DigitalSignal>(1) as PortImpl<*>))
 

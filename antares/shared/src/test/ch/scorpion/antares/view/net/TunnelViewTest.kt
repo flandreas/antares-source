@@ -45,7 +45,7 @@ class TunnelViewTest : AbstractCircuitTest() {
 	fun shouldForwardSignal() {
 		startSimulation(1100L)
 
-		switchView.model.toggle(scheduler, circuitView)
+		switchView.model.toggle(scheduler)
 		proceedUntilQueueIsEmpty()
 
 		assertEquals(DigitalSignalFactory.of(true), receiver.model.getOutput<DigitalSignal>(1).getOutgoingSignal())
@@ -56,7 +56,7 @@ class TunnelViewTest : AbstractCircuitTest() {
 		val receiver2 = builder.addVerticeView(TunnelView("A"))
 
 		startSimulation(1100L)
-		switchView.model.toggle(scheduler, circuitView)
+		switchView.model.toggle(scheduler)
 		proceedToMillis(2200L)
 
 		assertEquals(DigitalSignalFactory.of(true), receiver.model.getOutput<DigitalSignal>(1).getOutgoingSignal())
@@ -68,7 +68,7 @@ class TunnelViewTest : AbstractCircuitTest() {
 		val tunnelB = builder.addVerticeView(TunnelView("B"))
 
 		startSimulation(1100L)
-		switchView.model.toggle(scheduler, circuitView)
+		switchView.model.toggle(scheduler)
 		proceedToMillis(2200L)
 
 		assertEquals(DigitalSignalFactory.of(true), receiver.model.getOutput<DigitalSignal>(1).getOutgoingSignal())

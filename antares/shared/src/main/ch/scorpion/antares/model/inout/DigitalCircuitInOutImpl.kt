@@ -42,7 +42,7 @@ class DigitalCircuitInOutImpl(
 		private class Calculator : VerticeCalculator<DigitalCircuitInOutImpl> {
 			override fun calculate(vertice: DigitalCircuitInOutImpl, data: GraphActorData, signalHandler: SignalHandler) {
 				with(vertice) {
-					calculate(signalHandler, data.graphView)
+					calculate(signalHandler)
 					setOutgoingSignal(data.getSignal(1)!!, signalHandler, data.changedPort == null)
 					setInteractionEnabled(true, signalHandler)
 				}
@@ -174,11 +174,11 @@ class DigitalCircuitInOutImpl(
 		stateChanged(signalHandler)
 	}
 
-	override fun createActorData(inputPort: InputPort<*>?, force: Boolean, signal: Any?, graphView: GraphView?): GraphActorData =
+	override fun createActorData(inputPort: InputPort<*>?, force: Boolean, signal: Any?): GraphActorData =
 		if (inputPort == null) {
 			StoringGraphActorData(null, signal ?: this.signal)
 		} else {
-			super.createActorData(inputPort, force, signal, graphView)
+			super.createActorData(inputPort, force, signal)
 		}
 
 	/** ---- [Storable] interface */
@@ -195,8 +195,8 @@ class DigitalCircuitInOutImpl(
 
 	/** ---- [CircuitInOut] interface */
 
-	override fun setSignalManually(signal: DigitalSignal, signalHandler: SignalHandler, graphView: GraphView?) {
-		requestSetSignal(signal, signalHandler, graphView)
+	override fun setSignalManually(signal: DigitalSignal, signalHandler: SignalHandler) {
+		requestSetSignal(signal, signalHandler)
 	}
 
 	/** ---- [DigitalCircuitInOut] */
@@ -240,7 +240,7 @@ class DigitalCircuitInOutImpl(
 				bit = Bit.False
 			}
 		}
-		setSignalManually(s.withBit(index, bit.not()), signalHandler, graphView)
+		setSignalManually(s.withBit(index, bit.not()), signalHandler)
 	}
 
 	/** ---- [DigitalCircuitInOutImpl] */

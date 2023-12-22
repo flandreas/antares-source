@@ -15,7 +15,7 @@ abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 	companion object {
 		open class AbstractSwitchCalculator<T : AbstractSwitch<T>> : VerticeCalculator<T> {
 			override fun calculate(vertice: T, data: GraphActorData, signalHandler: SignalHandler) {
-				vertice.calculate(signalHandler, data.graphView)
+				vertice.calculate(signalHandler)
 			}
 		}
 	}
@@ -35,7 +35,7 @@ abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
-		requestSetSignal(false, signalHandler, graphView = null)
+		requestSetSignal(false, signalHandler)
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {
@@ -46,23 +46,23 @@ abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 
 	/** ---- [AbstractSwitch] */
 
-	fun toggle(signalHandler: SignalHandler, graphView: GraphView?) {
+	fun toggle(signalHandler: SignalHandler) {
 		if (isOn) {
-			off(signalHandler, graphView)
+			off(signalHandler)
 		} else {
-			on(signalHandler, graphView)
+			on(signalHandler)
 		}
 	}
 
-	fun on(signalHandler: SignalHandler, graphView: GraphView?) {
+	fun on(signalHandler: SignalHandler) {
 		if (enabled && !isOn) {
-			requestSetSignal(true, signalHandler, graphView)
+			requestSetSignal(true, signalHandler)
 		}
 	}
 
-	fun off(signalHandler: SignalHandler, graphView: GraphView?) {
+	fun off(signalHandler: SignalHandler) {
 		if (enabled && isOn) {
-			requestSetSignal(false, signalHandler, graphView)
+			requestSetSignal(false, signalHandler)
 		}
 	}
 }

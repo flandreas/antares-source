@@ -22,9 +22,7 @@ class Resistor(
 		private class Calculator : VerticeCalculator<Resistor> {
 			override fun calculate(vertice: Resistor, data: GraphActorData, signalHandler: SignalHandler) {
 				// React to changes of variable resistance
-				if (data.graphView is AnalogGraphView) {
-					(data.graphView as AnalogGraphView).requestActing(signalHandler)
-				}
+				vertice.requestAnalogGraphRecalculation(signalHandler)
 			}
 		}
 	}
@@ -71,6 +69,6 @@ class Resistor(
 	fun setState(resistance: Double, signalHandler: SignalHandler, graphView: AnalogGraphView) {
 		this.resistance = resistance
 		graphView.requireAnalysis()
-		requestActingAfter(signalHandler, propagationDelay, createActorData(null, graphView = graphView))
+		requestActingAfter(signalHandler, propagationDelay, createActorData(null))
 	}
 }

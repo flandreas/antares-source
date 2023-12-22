@@ -186,8 +186,8 @@ abstract class AbstractVertice(
 	/** ---- [AbstractVertice] */
 
 	/** Visible for testing. */
-	open fun createActorData(inputPort: InputPort<*>?, force: Boolean = false, signal: Any? = null, graphView: GraphView? = null): GraphActorData =
-		ActualPortValueActorData(inputPort, true, force = force, graphView = graphView)
+	open fun createActorData(inputPort: InputPort<*>?, force: Boolean = false, signal: Any? = null): GraphActorData =
+		ActualPortValueActorData(inputPort, true, force = force)
 
 	/**
 	 * Clears all [Port]s, i.e. removes them from this [AbstractVertice].
@@ -226,8 +226,7 @@ abstract class AbstractVertice(
 		override val changedPort: Port<*>?,
 		override val isInput: Boolean = true,
 		override val immediatePort: Port<*>? = changedPort,
-		override val force: Boolean,
-		override val graphView: GraphView? = null
+		override val force: Boolean
 	) : GraphActorData {
 
 		override fun <T : Any> getSignal(portId: Int): T? =

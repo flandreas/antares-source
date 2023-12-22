@@ -70,7 +70,7 @@ class InOutToInOutExecutionIntegrationTest : AbstractJvmCircuitTest() {
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		switchView.model.on(scheduler, circuitView)
+		switchView.model.on(scheduler)
 		proceedUntilQueueIsEmpty()
 
 		assertEquals(DigitalSignalFactory.of(true), subGraphVV.model.getOutput<DigitalSignal>("IO2").net!!.signal)

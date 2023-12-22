@@ -57,18 +57,18 @@ class Bug227 : AbstractFileBasedTest() {
 
 	@Test
 	fun shouldSend1ToOutsideAfterZ() {
-		d.on(scheduler, openedCircuitView)
+		d.on(scheduler)
 		processUntilQueueIsEmpty()
 
-		en.on(scheduler, openedCircuitView)
+		en.on(scheduler)
 		processUntilQueueIsEmpty()
 
-		en.off(scheduler, openedCircuitView)
+		en.off(scheduler)
 		processUntilQueueIsEmpty()
 		assertEquals(Word.of(Bit.Undefined), triStateBuffer.getOutputPort().getOutgoingSignal())
 
-		i.on(scheduler, openedCircuitView)
-		a.on(scheduler, openedCircuitView)
+		i.on(scheduler)
+		a.on(scheduler)
 		processUntilQueueIsEmpty()
 
 		assertEquals(Word.of(true), subGraphVerticeRef.getOutput<DigitalSignal>().net!!.signal)
@@ -77,25 +77,25 @@ class Bug227 : AbstractFileBasedTest() {
 	@Test
 	fun shouldSend1ToOutsideAfter1() {
 		// 1 from outside
-		d.on(scheduler, openedCircuitView)
-		en.on(scheduler, openedCircuitView)
+		d.on(scheduler)
+		en.on(scheduler)
 		processUntilQueueIsEmpty()
 
 		// 1 from inside
-		i.on(scheduler, openedCircuitView)
-		a.on(scheduler, openedCircuitView)
+		i.on(scheduler)
+		a.on(scheduler)
 		processUntilQueueIsEmpty()
 
 		// Z from inside
-		a.off(scheduler, openedCircuitView)
+		a.off(scheduler)
 		processUntilQueueIsEmpty()
 
 		// Z from outside
-		en.off(scheduler, openedCircuitView)
+		en.off(scheduler)
 		processUntilQueueIsEmpty()
 
 		// 1 from inside
-		a.on(scheduler, openedCircuitView)
+		a.on(scheduler)
 		processUntilQueueIsEmpty()
 
 		assertEquals(Word.of(true), subGraphVerticeRef.getOutput<DigitalSignal>().net!!.signal)

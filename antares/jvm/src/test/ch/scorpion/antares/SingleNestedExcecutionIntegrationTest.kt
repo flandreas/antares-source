@@ -87,7 +87,7 @@ class SingleNestedExcecutionIntegrationTest : AbstractJvmCircuitTest() {
 		assertEquals(0, scheduler.numberOfRemainingSlots)
 		scheduler.isSingleStepMode = false
 
-		switchView.model.on(scheduler, circuitView)
+		switchView.model.on(scheduler)
 		// 2_400 Switch
 		assertEquals(ActorState.Waiting, switchView.model.state)
 

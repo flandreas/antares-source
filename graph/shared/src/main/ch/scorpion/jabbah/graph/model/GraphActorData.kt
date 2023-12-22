@@ -28,13 +28,6 @@ interface GraphActorData : ActorData {
 
 	val force: Boolean
 
-	/**
-	 * The optional [GraphView] in which execution of an [Actor] takes place.
-	 * Used by executions (simulations) taking place on the entire [GraphView] (or its [Graph])
-	 * rather than on the individual [Actor] level. Only present when available at the place of creation.
-	 */
-	val graphView: GraphView?
-
 	/** Returns the current signal of a particular [Port] at the beginning of an execution step.*/
 	fun <T : Any> getSignal(portId: Int): T?
 }
@@ -45,8 +38,7 @@ class StoringGraphActorData(
 	val signal: Any?,
 	override val isInput: Boolean = true,
 	override val immediatePort: Port<*>? = changedPort,
-	override val force: Boolean = false,
-	override val graphView: GraphView? = null
+	override val force: Boolean = false
 ) : GraphActorData {
 
 	override fun dataToString(): String = "${changedPort?.name}:$signal"

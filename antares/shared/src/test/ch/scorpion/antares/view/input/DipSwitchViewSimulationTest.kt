@@ -60,7 +60,7 @@ class DipSwitchViewSimulationTest : AbstractCircuitTest() {
 	private fun startSetAndStop(bit0: Bit) {
 		startSimulation()
 		proceedUntilQueueIsEmpty()
-		dipSwitchView.model.setBit(0, bit0, scheduler, circuitView)
+		dipSwitchView.model.setBit(0, bit0, scheduler)
 		proceedUntilQueueIsEmpty()
 		stopSimulation()
 	}

@@ -49,7 +49,7 @@ class ParallelResistorsTest : AbstractAnalogFileBasedTest() {
 
 	@Test
 	fun shouldCalculate() {
-		switchView.model.toggle(scheduler, openedCircuitView)
+		switchView.model.toggle(scheduler)
 		processUntilQueueIsEmpty()
 
 		assertNoIssues()

@@ -47,7 +47,7 @@ class RealSwitchViewSimulationTest : AbstractCircuitTest() {
 	@Test
 	fun shouldRegisterAsNetTopologyChangerIfOn() {
 		startSimulation()
-		realSwitchView.model.on(scheduler, circuitView)
+		realSwitchView.model.on(scheduler)
 		assertTrue(powerView.model.getOutput<DigitalSignal>().combinedNets.first().netTopologyChanger.contains(realSwitchView.model))
 	}
 
@@ -66,7 +66,7 @@ class RealSwitchViewSimulationTest : AbstractCircuitTest() {
 		proceedUntilQueueIsEmpty()
 		val oldCombinedNet = powerView.model.getOutput<DigitalSignal>().combinedNets.first()
 
-		realSwitchView.model.on(scheduler, circuitView)
+		realSwitchView.model.on(scheduler)
 		proceedUntilQueueIsEmpty()
 
 		val newCombinedNet = powerView.model.getOutput<DigitalSignal>().combinedNets.first()
@@ -78,7 +78,7 @@ class RealSwitchViewSimulationTest : AbstractCircuitTest() {
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		realSwitchView.model.on(scheduler, circuitView)
+		realSwitchView.model.on(scheduler)
 		proceedUntilQueueIsEmpty()
 
 		assertTrue(ledView.model.isOn)
@@ -89,10 +89,10 @@ class RealSwitchViewSimulationTest : AbstractCircuitTest() {
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		realSwitchView.model.on(scheduler, circuitView)
+		realSwitchView.model.on(scheduler)
 		proceedUntilQueueIsEmpty()
 
-		realSwitchView.model.off(scheduler, circuitView)
+		realSwitchView.model.off(scheduler)
 		proceedUntilQueueIsEmpty()
 
 		assertFalse(ledView.model.isOn)

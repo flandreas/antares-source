@@ -88,15 +88,15 @@ abstract class AbstractInteractableVertice<S: Any>(
 		delayedSignal = null
 	}
 
-	fun bufferSignal(signal: S, signalHandler: SignalHandler, graphView: GraphView?) {
+	fun bufferSignal(signal: S, signalHandler: SignalHandler) {
 		bufferedSignal = signal
-		requestSetSignal(signal, signalHandler, graphView)
+		requestSetSignal(signal, signalHandler)
 	}
 
-	protected open fun requestSetSignal(signal: S, signalHandler: SignalHandler, graphView: GraphView?) {
+	protected open fun requestSetSignal(signal: S, signalHandler: SignalHandler) {
 		delayedSignal = signal
 		setInteractionEnabled(false, signalHandler)
-		requestActingAfter(signalHandler, interactivePropagationDelay, createActorData(null, signal = signal, graphView = graphView))
+		requestActingAfter(signalHandler, interactivePropagationDelay, createActorData(null, signal = signal))
 	}
 
 	private fun completeSetState(signalHandler: SignalHandler) {
@@ -106,9 +106,9 @@ abstract class AbstractInteractableVertice<S: Any>(
 		setInteractionEnabled(true, signalHandler)
 	}
 
-	protected fun calculate(signalHandler: SignalHandler, graphView: GraphView?) {
+	protected fun calculate(signalHandler: SignalHandler) {
 		if (bufferedSignal != null) {
-			requestSetSignal(bufferedSignal!!, signalHandler, graphView)
+			requestSetSignal(bufferedSignal!!, signalHandler)
 			bufferedSignal = null
 		} else {
 			completeSetState(signalHandler)

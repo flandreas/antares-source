@@ -29,7 +29,7 @@ class DipSwitchTest {
 	fun shouldDelayChangeInSetBit() {
 		val dipSwitch = DipSwitch()
 		dipSwitch.executionInitialize(signalHandler)
-		dipSwitch.setBit(0, Bit.True, signalHandler, graphView)
+		dipSwitch.setBit(0, Bit.True, signalHandler)
 		assertFalse(dipSwitch.enabled)
 		assertEquals(allOf(BW_4, False), dipSwitch.signal)
 
@@ -42,7 +42,7 @@ class DipSwitchTest {
 	fun shouldDelayChangeInSetValue() {
 		val dipSwitch = DipSwitch()
 		dipSwitch.executionInitialize(signalHandler)
-		dipSwitch.setValue(of(BW_4, 3), signalHandler, graphView)
+		dipSwitch.setValue(of(BW_4, 3), signalHandler)
 		assertFalse(dipSwitch.enabled)
 		assertEquals(allOf(BW_4, False), dipSwitch.signal)
 

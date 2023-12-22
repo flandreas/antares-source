@@ -34,5 +34,5 @@ interface CircuitInOut<T : Any> : BidirectionalGraphPort<T>, InteractableVertice
 	 * This method is typically used by the UI and should use a propagation delay that is similar to the one
 	 * used by a [Switch].
 	 */
-	fun setSignalManually(signal: T, signalHandler: SignalHandler, graphView: GraphView? = null)
+	fun setSignalManually(signal: T, signalHandler: SignalHandler)
 }

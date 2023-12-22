@@ -39,10 +39,7 @@ class AnalogCircuitInOut(
 
 		private class Calculator : VerticeCalculator<AnalogCircuitInOut> {
 			override fun calculate(vertice: AnalogCircuitInOut, data: GraphActorData, signalHandler: SignalHandler) {
-				if (data.graphView is AnalogGraphView) {
-					(data.graphView as AnalogGraphView).requireAnalysis()
-					(data.graphView as AnalogGraphView).requestActing(signalHandler)
-				}
+				vertice.requestAnalogGraphRecalculation(signalHandler)
 			}
 		}
 	}
@@ -85,7 +82,7 @@ class AnalogCircuitInOut(
 
 	/** ---- [CircuitInOut] */
 
-	override fun setSignalManually(signal: AnalogSignal, signalHandler: SignalHandler, graphView: GraphView?) {
+	override fun setSignalManually(signal: AnalogSignal, signalHandler: SignalHandler) {
 		setIncomingSignal(signal, signalHandler)
 	}
 
@@ -126,9 +123,13 @@ class AnalogCircuitInOut(
 
 	/** ---- [AnalogCircuitInOut] */
 
-	fun toggle(signalHandler: SignalHandler, graphView: GraphView) {
+	fun requestAnalogGraphRecalculation(signalHandler: SignalHandler) {
+		stateChanged(signalHandler, AbstractAnalogVertice.REQUEST_RECALCULATE)
+	}
+
+	fun toggle(signalHandler: SignalHandler) {
 		signal = if (signal == HIGH_VOLTAGE) LOW_VOLTAGE else HIGH_VOLTAGE
-		requestActingAfter(signalHandler, propagationDelay, createActorData(null, graphView = graphView))
+		requestActingAfter(signalHandler, propagationDelay, createActorData(null))
 	}
 
 	private fun setOutgoingSignal(signal: AnalogSignal, signalHandler: SignalHandler) {

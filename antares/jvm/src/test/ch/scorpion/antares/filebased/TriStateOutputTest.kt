@@ -51,8 +51,8 @@ class TriStateOutputTest : AbstractFileBasedTest() {
 
 	@Test
 	fun shouldActivateFirstSubGraph() {
-		d1.toggle(scheduler, openedCircuitView)
-		s1.toggle(scheduler, openedCircuitView)
+		d1.toggle(scheduler)
+		s1.toggle(scheduler)
 		processUntilQueueIsEmpty()
 
 		assertEquals(of(True), output.signal)
@@ -60,10 +60,10 @@ class TriStateOutputTest : AbstractFileBasedTest() {
 
 	@Test
 	fun shouldOutputBeUndefinedAfterOneDeactivation() {
-		d1.toggle(scheduler, openedCircuitView)
-		s1.toggle(scheduler, openedCircuitView)
+		d1.toggle(scheduler)
+		s1.toggle(scheduler)
 		processUntilQueueIsEmpty()
-		s1.toggle(scheduler, openedCircuitView)
+		s1.toggle(scheduler)
 		processUntilQueueIsEmpty()
 
 		assertEquals(undefined(BW_1), output.signal)
@@ -71,15 +71,15 @@ class TriStateOutputTest : AbstractFileBasedTest() {
 
 	@Test
 	fun shouldOutputBeUndefinedAfterTwoDeactivation() {
-		d1.toggle(scheduler, openedCircuitView)
-		s1.toggle(scheduler, openedCircuitView)
-		d2.toggle(scheduler, openedCircuitView)
-		s2.toggle(scheduler, openedCircuitView)
+		d1.toggle(scheduler)
+		s1.toggle(scheduler)
+		d2.toggle(scheduler)
+		s2.toggle(scheduler)
 		processUntilQueueIsEmpty()
 		assertEquals(of(True), output.signal)
 
-		s1.toggle(scheduler, openedCircuitView)
-		s2.toggle(scheduler, openedCircuitView)
+		s1.toggle(scheduler)
+		s2.toggle(scheduler)
 		processUntilQueueIsEmpty()
 
 		assertEquals(undefined(BW_1), output.signal)
@@ -87,14 +87,14 @@ class TriStateOutputTest : AbstractFileBasedTest() {
 
 	@Test
 	fun shouldOutputBeDefinedWithOnlyOneUndefinedSubcircuit() {
-		d1.toggle(scheduler, openedCircuitView)
-		s1.toggle(scheduler, openedCircuitView)
-		d2.toggle(scheduler, openedCircuitView)
-		s2.toggle(scheduler, openedCircuitView)
+		d1.toggle(scheduler)
+		s1.toggle(scheduler)
+		d2.toggle(scheduler)
+		s2.toggle(scheduler)
 		processUntilQueueIsEmpty()
 		assertEquals(of(True), output.signal)
 
-		s1.toggle(scheduler, openedCircuitView)
+		s1.toggle(scheduler)
 		processUntilQueueIsEmpty()
 
 		val buffer = ref1.getGraphIfPresent()!!.withId(1) as TriStateBufferGate

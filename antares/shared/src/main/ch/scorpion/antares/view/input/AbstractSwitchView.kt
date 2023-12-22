@@ -12,7 +12,6 @@ import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
-import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
@@ -20,7 +19,6 @@ import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapte
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
-import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -149,7 +147,7 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 			if (context.mouseEvent?.button != Button.BUTTON1) {
 				return null
 			}
-			model.toggle(context.signalHandler, (context.view as DrawingView<*>).drawing as GraphView)
+			model.toggle(context.signalHandler)
 			context.mouseEvent?.consume()
 			requestFocus()
 			return this
@@ -164,11 +162,10 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 				return null
 			}
 			if (!toggle) {
-				val graphView = (context.view as DrawingView<*>).drawing as GraphView
 				if (model.isOn) {
-					model.off(context.signalHandler, graphView)
+					model.off(context.signalHandler)
 				} else {
-					model.bufferSignal(false, context.signalHandler, graphView)
+					model.bufferSignal(false, context.signalHandler)
 				}
 				context.mouseEvent?.consume()
 			}
@@ -227,17 +224,17 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 		}
 
 		private fun switchOn(context: ActorInteractionContext) {
-			model.on(context.signalHandler, (context.view as DrawingView<*>).drawing as GraphView)
+			model.on(context.signalHandler)
 			context.keyEvent?.consume()
 		}
 
 		private fun switchOff(context: ActorInteractionContext) {
-			model.off(context.signalHandler, (context.view as DrawingView<*>).drawing as GraphView)
+			model.off(context.signalHandler)
 			context.keyEvent?.consume()
 		}
 
 		private fun toggle(context: ActorInteractionContext) {
-			model.toggle(context.signalHandler, (context.view as DrawingView<*>).drawing as GraphView)
+			model.toggle(context.signalHandler)
 			context.keyEvent?.consume()
 		}
 	}

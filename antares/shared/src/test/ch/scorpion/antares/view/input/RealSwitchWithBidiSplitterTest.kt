@@ -58,7 +58,7 @@ class RealSwitchWithBidiSplitterTest : AbstractCircuitTest() {
 		circuitInOutView.model.toggleBit(0, false, scheduler)
 		proceedUntilQueueIsEmpty()
 
-		realSwitchView.model.on(scheduler, circuitView)
+		realSwitchView.model.on(scheduler)
 		proceedUntilQueueIsEmpty()
 
 		assertTrue(circuitInOutView.model.getOutput<DigitalSignal>().combinedNets.any { it.netTopologyChanger.contains(realSwitchView.model) })

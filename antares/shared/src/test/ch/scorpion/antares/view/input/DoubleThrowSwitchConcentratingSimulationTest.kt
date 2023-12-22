@@ -57,7 +57,7 @@ class DoubleThrowSwitchConcentratingSimulationTest : AbstractCircuitTest() {
 	@Test
 	fun shouldRegisterAsNetTopologyChangerIfOn() {
 		startSimulation()
-		switchView.model.toggle(scheduler, circuitView)
+		switchView.model.toggle(scheduler)
 		assertTrue(inputView1.model.getOutput<DigitalSignal>().combinedNets.first().netTopologyChanger.contains(switchView.model))
 		assertTrue(inputView2.model.getOutput<DigitalSignal>().combinedNets.first().netTopologyChanger.contains(switchView.model))
 	}
@@ -77,7 +77,7 @@ class DoubleThrowSwitchConcentratingSimulationTest : AbstractCircuitTest() {
 		proceedUntilQueueIsEmpty()
 		val oldCombinedNet = inputView1.model.getOutput<DigitalSignal>().combinedNets.first()
 
-		switchView.model.on(scheduler, circuitView)
+		switchView.model.on(scheduler)
 		proceedUntilQueueIsEmpty()
 
 		val newCombinedNet = inputView1.model.getOutput<DigitalSignal>().combinedNets.first()
@@ -92,7 +92,7 @@ class DoubleThrowSwitchConcentratingSimulationTest : AbstractCircuitTest() {
 		inputView1.model.toggleBit(0, undefine = false, scheduler)
 		proceedUntilQueueIsEmpty()
 
-		switchView.model.toggle(scheduler, circuitView)
+		switchView.model.toggle(scheduler)
 		proceedUntilQueueIsEmpty()
 
 		assertTrue(ledView.model.isOn)

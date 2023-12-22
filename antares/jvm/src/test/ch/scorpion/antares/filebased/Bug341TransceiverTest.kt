@@ -31,7 +31,7 @@ class Bug341TransceiverTest : AbstractFileBasedTest() {
 
 	@Test
 	fun shouldNotOscillateDisabled() {
-		enableSwitchView.model.toggle(scheduler, openedCircuitView)
+		enableSwitchView.model.toggle(scheduler)
 		processUntilQueueIsEmpty()
 	}
 }

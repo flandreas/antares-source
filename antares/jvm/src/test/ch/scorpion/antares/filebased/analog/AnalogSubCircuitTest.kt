@@ -36,13 +36,13 @@ class AnalogSubCircuitTest : AbstractFileBasedTest() {
 
 	@Test
 	fun shouldInvert() {
-		switch.model.toggle(scheduler, openedCircuitView)
+		switch.model.toggle(scheduler)
 		processUntilQueueIsEmpty()
 
 		assertTrue(switch.model.isOn)
 		assertFalse(led.model.isOn)
 
-		switch.model.toggle(scheduler, openedCircuitView)
+		switch.model.toggle(scheduler)
 		processUntilQueueIsEmpty()
 
 		assertFalse(switch.model.isOn)

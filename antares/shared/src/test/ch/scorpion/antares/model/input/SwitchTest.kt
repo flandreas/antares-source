@@ -22,7 +22,7 @@ class SwitchTest {
 
 	@Test
 	fun shouldDelaySwitchOn() {
-		switch.on(signalHandler, graphView)
+		switch.on(signalHandler)
 		assertFalse(switch.isOn)
 		assertFalse(switch.enabled)
 
@@ -33,10 +33,10 @@ class SwitchTest {
 
 	@Test
 	fun shouldDelaySwitchOff() {
-		switch.on(signalHandler, graphView)
+		switch.on(signalHandler)
 		switch.act(signalHandler, switch.createActorData(null))
 
-		switch.off(signalHandler, graphView)
+		switch.off(signalHandler)
 		assertTrue(switch.isOn)
 		assertFalse(switch.enabled)
 		switch.act(signalHandler, switch.createActorData(null))

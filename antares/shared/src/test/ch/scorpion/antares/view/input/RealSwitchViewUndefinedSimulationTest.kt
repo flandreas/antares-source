@@ -44,14 +44,14 @@ class RealSwitchViewUndefinedSimulationTest : AbstractCircuitTest() {
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		switchView.model.toggle(scheduler, circuitView)
+		switchView.model.toggle(scheduler)
 		proceedUntilQueueIsEmpty()
 
-		realSwitchView.model.toggle(scheduler, circuitView)
+		realSwitchView.model.toggle(scheduler)
 		proceedUntilQueueIsEmpty()
 		assertEquals(DigitalSignalFactory.of(Bit.True), inOutView.model.signal)
 
-		realSwitchView.model.toggle(scheduler, circuitView)
+		realSwitchView.model.toggle(scheduler)
 		proceedUntilQueueIsEmpty()
 		assertEquals(DigitalSignalFactory.of(Bit.Undefined), inOutView.model.signal)
 	}

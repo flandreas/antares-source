@@ -156,7 +156,7 @@ class AnalogGraphView(
 	}
 
 	private fun createActorData(): GraphActorData =
-		StoringGraphActorData(null, null, graphView = this)
+		StoringGraphActorData(null, null)
 
 	/**
 	 * Analyses this [AnalogGraphView] in case it is not already done.
@@ -169,12 +169,12 @@ class AnalogGraphView(
 		return analysis!!
 	}
 
-	private class AnalogActor : ActorImpl() {
+	private inner class AnalogActor : ActorImpl() {
 		override fun act(signalHandler: SignalHandler, data: ActorData) {
-			val graphView = (data as GraphActorData).graphView as AnalogGraphView
+			//val graphView = (data as GraphActorData).graphView as AnalogGraphView
 			try {
-				graphView.requireAnalysis()
-				AnalogCircuitCalculator().calculate(graphView.ensureAnalysis(), signalHandler)
+				requireAnalysis()
+				AnalogCircuitCalculator().calculate(ensureAnalysis(), signalHandler)
 				super.act(signalHandler, data)
 			} catch (e: Throwable) {
 				LOG.debug("Error while analyzing: ${e.message}")
@@ -182,7 +182,7 @@ class AnalogGraphView(
 					IssueSeverity.Error,
 					Translations.getString("antares.analogCalc.analyse.error.name"),
 					Translations.getString("antares.analogCalc.analyse.error.desc", e.message ?: ""),
-					graphView.name.value,
+					name.value,
 					"Simulation"
 				))
 			}

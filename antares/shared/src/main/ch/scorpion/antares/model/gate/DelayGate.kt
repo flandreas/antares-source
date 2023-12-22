@@ -13,7 +13,6 @@ import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.StoringGraphActorData
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
-import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
@@ -71,8 +70,8 @@ class DelayGate : CalculatingVertice(CALCULATOR) {
 		requestActingAfter(signalHandler, propagationDelay / 2, createActorData(null))
 	}
 
-	override fun createActorData(inputPort: InputPort<*>?, force: Boolean, signal: Any?, graphView: GraphView?): GraphActorData =
-		StoringGraphActorData(inputPort, getInput<DigitalSignal>().getIncomingSignal(), true, force = force, graphView = graphView)
+	override fun createActorData(inputPort: InputPort<*>?, force: Boolean, signal: Any?): GraphActorData =
+		StoringGraphActorData(inputPort, getInput<DigitalSignal>().getIncomingSignal(), true, force = force)
 
     override fun write(writer: StoreWriter) {
         super.write(writer)

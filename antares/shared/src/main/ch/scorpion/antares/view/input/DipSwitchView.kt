@@ -1,9 +1,12 @@
 package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.model.input.DipSwitch
-import ch.scorpion.antares.model.signal.*
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
+import ch.scorpion.antares.model.signal.Bit
+import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
@@ -392,7 +395,7 @@ class DipSwitchView(
 
 		override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler? {
 			getBitViewIndexAt(context.x - location.x, context.y - location.y)?.let {
-				toggleImpl(it, context.signalHandler, all = context.mouseEvent?.isAltDown == true, (context.view as DrawingView<*>).drawing as GraphView)
+				toggleImpl(it, context.signalHandler, all = context.mouseEvent?.isAltDown == true)
 				requestFocus()
 				setFocusTo(it)
 			}
@@ -405,12 +408,12 @@ class DipSwitchView(
 			return this
 		}
 
-		private fun toggleImpl(index: Int, signalHandler: SignalHandler, all: Boolean, graphView: GraphView) {
+		private fun toggleImpl(index: Int, signalHandler: SignalHandler, all: Boolean) {
 			val bit = model.signal!!.bitAt(index).not()
 			if (all) {
-				model.setValue(DigitalSignalFactory.allOf(model.bitWidth, bit), signalHandler, graphView)
+				model.setValue(DigitalSignalFactory.allOf(model.bitWidth, bit), signalHandler)
 			} else {
-				model.setBit(index, bit, signalHandler, graphView)
+				model.setBit(index, bit, signalHandler)
 			}
 		}
 
@@ -421,13 +424,13 @@ class DipSwitchView(
 				when (context.keyEvent?.key) {
 					KeyEvent.VK_LEFT -> transferFocusLeft()
 					KeyEvent.VK_RIGHT -> transferFocusRight()
-					KeyEvent.VK_ENTER -> toggleImpl(focusIndex!!, context.signalHandler, all = context.keyEvent?.isAltDown == true, graphView)
+					KeyEvent.VK_ENTER -> toggleImpl(focusIndex!!, context.signalHandler, all = context.keyEvent?.isAltDown == true)
 					KeyEvent.VK_0, KeyEvent.VK_NUMPAD_0 -> {
-						model.setBit(focusIndex!!, Bit.False, context.signalHandler, graphView)
+						model.setBit(focusIndex!!, Bit.False, context.signalHandler)
 						transferFocusRight()
 					}
 					KeyEvent.VK_1, KeyEvent.VK_NUMPAD_1 -> {
-						model.setBit(focusIndex!!, Bit.True, context.signalHandler, graphView)
+						model.setBit(focusIndex!!, Bit.True, context.signalHandler)
 						transferFocusRight()
 					}
 				}

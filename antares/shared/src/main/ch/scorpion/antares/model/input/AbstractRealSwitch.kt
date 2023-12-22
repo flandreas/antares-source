@@ -17,7 +17,6 @@ import ch.scorpion.jabbah.graph.model.net.NetTopologyChangeEvent
 import ch.scorpion.jabbah.graph.model.net.NetTopologyChangeListener
 import ch.scorpion.jabbah.graph.model.net.NetTopologyChanger
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
-import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -125,14 +124,14 @@ abstract class AbstractRealSwitch<T : AbstractSwitch<T>>(
 	override fun executionStopped(signalHandler: SignalHandler) {
 		super.executionStopped(signalHandler)
 		// Make sure that switch is off at start of next simulation run
-		requestSetSignal(false, signalHandler, graphView = null)
+		requestSetSignal(false, signalHandler)
 	}
 
 	/** ---- [AbstractSwitch] */
 
-	override fun requestSetSignal(signal: Boolean, signalHandler: SignalHandler, graphView: GraphView?) {
+	override fun requestSetSignal(signal: Boolean, signalHandler: SignalHandler) {
 		this.signal = signal
 		notifyNetTopologyChanged(signalHandler)
-		super.requestSetSignal(signal, signalHandler, graphView)
+		super.requestSetSignal(signal, signalHandler)
 	}
 }

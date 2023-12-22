@@ -42,7 +42,7 @@ class Bug606 : AbstractFileBasedTest() {
 	fun shouldPullDownAfterSecondRestart() {
 		startSimulation()
 		processUntilQueueIsEmpty()
-		realSwitch.toggle(scheduler, openedCircuitView)
+		realSwitch.toggle(scheduler)
 
 		stopSimulation()
 		startSimulation()

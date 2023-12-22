@@ -37,7 +37,7 @@ class PMosFetTest : AbstractAnalogFileBasedTest() {
 		startSimulation()
 		processUntilQueueIsEmpty()
 
-		inputView.model.toggle(scheduler, openedCircuitView)
+		inputView.model.toggle(scheduler)
 		processUntilQueueIsEmpty()
 
 		assertNoIssues()

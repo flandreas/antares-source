@@ -59,9 +59,9 @@ class DoubleThrowSwitchSeriesSimulationTest : AbstractCircuitTest() {
 		startSimulation()
 		proceedUntilQueueIsEmpty()
 
-		buttonView.model.toggle(scheduler, circuitView)
+		buttonView.model.toggle(scheduler)
 		proceedUntilQueueIsEmpty()
-		switch1.model.toggle(scheduler, circuitView)
+		switch1.model.toggle(scheduler)
 
 		proceedUntilQueueIsEmpty()
 

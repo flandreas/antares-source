@@ -10,10 +10,9 @@ import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.GraphElement
-import ch.scorpion.jabbah.graph.model.vertice.InteractableVertice
 import ch.scorpion.jabbah.graph.model.vertice.AbstractInteractableVertice
+import ch.scorpion.jabbah.graph.model.vertice.InteractableVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
-import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -40,7 +39,7 @@ class DipSwitch(
 
 		private class Calculator : VerticeCalculator<DipSwitch> {
 			override fun calculate(vertice: DipSwitch, data: GraphActorData, signalHandler: SignalHandler) {
-				vertice.calculate(signalHandler, data.graphView)
+				vertice.calculate(signalHandler)
 				val output = vertice.getOutput<DigitalSignal>()
 				output.setOutgoingSignalBuffered(vertice.signal, signalHandler)
 			}
@@ -146,15 +145,15 @@ class DipSwitch(
 
 	/** ---- [DipSwitch] */
 
-	fun setBit(index: Int, bit: Bit, signalHandler: SignalHandler, graphView: GraphView?) {
+	fun setBit(index: Int, bit: Bit, signalHandler: SignalHandler) {
 		if (enabled) {
-			requestSetSignal(signal!!.withBit(index, bit), signalHandler, graphView)
+			requestSetSignal(signal!!.withBit(index, bit), signalHandler)
 		}
 	}
 
-	fun setValue(value: DigitalSignal, signalHandler: SignalHandler, graphView: GraphView?) {
+	fun setValue(value: DigitalSignal, signalHandler: SignalHandler) {
 		if (enabled) {
-			requestSetSignal(value, signalHandler, graphView)
+			requestSetSignal(value, signalHandler)
 		}
 	}
 
