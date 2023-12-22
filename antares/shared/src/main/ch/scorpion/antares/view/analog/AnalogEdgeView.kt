@@ -126,7 +126,6 @@ class AnalogEdgeView(
 
 	override fun executionStarted(signalHandler: SignalHandler) {
 		super.executionStarted(signalHandler)
-		current = 0.0
 		animationOffset = 0.0
 	}
 
