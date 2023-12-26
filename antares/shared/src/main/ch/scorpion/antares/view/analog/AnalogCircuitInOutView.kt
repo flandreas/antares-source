@@ -41,7 +41,7 @@ class AnalogCircuitInOutView(
 	private val analogElement: AnalogElementProxy = AnalogElementProxy()
 ) : AbstractCircuitInOutView<AnalogCircuitInOut>(styleProvider, model, eventBus, orientation), AnalogElement by analogElement {
 
-	private val voltageLabel = Label(
+	val voltageLabel = Label(
 		"0.0 V",
 		styleProvider.getStyle(StyleType.ANNOTATION).font,
 		textColor,

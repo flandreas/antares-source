@@ -53,12 +53,6 @@ class AnalogCircuitInOut(
 	/** ---- [GraphPort] */
 
 	override var signal: AnalogSignal? = LOW_VOLTAGE
-		set(value) {
-			if (signal != value) {
-				field = value
-				stateChanged()
-			}
-		}
 
 	/** ---- [GraphInput] */
 
@@ -89,6 +83,7 @@ class AnalogCircuitInOut(
 	override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler, force: Boolean) {
 		if (portType.isOutput) {
 			signal = input.net!!.signal as AnalogSignal?
+			stateChanged(signalHandler)
 		}
 	}
 
@@ -96,9 +91,9 @@ class AnalogCircuitInOut(
 
 	override fun handleAnalogPortChanged(port: AnalogPort, signalHandler: SignalHandler) {
 		if (portType.isOutput) {
-			val signal = getPort<AnalogSignal>().net!!.signal!!
-			LOG.trace("Outgoing voltage ${signal.voltage} at output $name")
-			setOutgoingSignal(signal, signalHandler)
+			signal = getPort<AnalogSignal>().net!!.signal!!
+			stateChanged(signalHandler)
+			setOutgoingSignal(signal!!, signalHandler)
 		}
 	}
 

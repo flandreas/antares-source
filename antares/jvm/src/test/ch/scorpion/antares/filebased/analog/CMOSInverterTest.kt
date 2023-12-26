@@ -2,6 +2,7 @@ package ch.scorpion.antares.filebased.analog
 
 import ch.scorpion.antares.view.analog.AnalogCircuitInOutView
 import ch.scorpion.jabbah.base.UUID
+import junit.framework.TestCase.assertEquals
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -25,6 +26,7 @@ class CMOSInverterTest : AbstractAnalogFileBasedTest() {
 		assertNoIssues()
 
 		assertVoltage(5.0, outputView.model.signal!!.voltage)
+		assertEquals("5.0 V", outputView.voltageLabel.text)
 	}
 
 	@Test
@@ -37,5 +39,6 @@ class CMOSInverterTest : AbstractAnalogFileBasedTest() {
 
 		assertNoIssues()
 		assertVoltage(0.0, outputView.model.signal!!.voltage)
+		assertEquals("0.0 V", outputView.voltageLabel.text)
 	}
 }
