@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.model
 
-import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.execution.SignalHandler
 
 /**

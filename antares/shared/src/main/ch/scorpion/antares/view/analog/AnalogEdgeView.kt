@@ -48,7 +48,7 @@ class AnalogEdgeView(
 		const val MAX_SPEED = 10
 
 		/** Determines the speed of the current flow animation by multiplication with [SystemSpeed].*/
-		private var animationSpeedFactor = BaseModule.properties.getInt(PREF_SPEED) / 20.0
+		private var animationSpeedFactor = BaseModule.properties.getInt(PREF_SPEED) / 20.0F
 
 		/** Limits the effective speed of the current flow animation.*/
 		private const val MAX_DELTA = 2.7
@@ -57,7 +57,7 @@ class AnalogEdgeView(
 
 		init {
 			BaseModule.eventBus.register(PreferencesChangedEvent::class) {
-				animationSpeedFactor = BaseModule.properties.getInt(PREF_SPEED) / 10.0
+				animationSpeedFactor = BaseModule.properties.getInt(PREF_SPEED) / 10.0F
 			}
 		}
 	}
@@ -89,7 +89,8 @@ class AnalogEdgeView(
 
 	/** Repeatedly called by [AnalogGraphView] to drive the current flow animation. */
 	fun currentFlowAnimationTick(systemSpeed: SystemSpeed) {
-		val factor = systemSpeed.speed * animationSpeedFactor
+		val speed = if (systemSpeed.isPaused) 0.0F else systemSpeed.speed.toFloat()
+		val factor = speed * animationSpeedFactor
 		val delta = abs(current * factor).coerceAtMost(MAX_DELTA)
 		val newOffset = animationOffset + delta
 		animationOffset = if (newOffset >= CurrentFlowVisualization.DISTANCE) {
