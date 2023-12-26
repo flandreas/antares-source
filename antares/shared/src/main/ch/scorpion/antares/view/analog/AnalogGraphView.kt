@@ -19,12 +19,15 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.execution.actor.ActorImpl
+import ch.scorpion.jabbah.execution.scheduler.Scheduler
+import ch.scorpion.jabbah.execution.scheduler.SchedulerEvent
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.StoringGraphActorData
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView
+import ch.scorpion.jabbah.graph.view.scenario.ScenarioDetector
 
 /**
  * A [GraphViewImpl] for [AnalogSignal] overridden to implement an animation of the
@@ -176,6 +179,11 @@ class AnalogGraphView(
 				requireAnalysis()
 				AnalogCircuitCalculator().calculate(ensureAnalysis(), signalHandler)
 				super.act(signalHandler, data)
+
+				if (signalHandler is Scheduler) {
+					/** Required e.g. by [ScenarioDetector]*/
+					eventBus.post(SchedulerEvent(SchedulerEvent.Type.DONE, signalHandler, this))
+				}
 			} catch (e: Throwable) {
 				LOG.debug("Error while analyzing: ${e.message}")
 				BaseModule.eventBus.post(IssueImpl(

@@ -57,10 +57,10 @@ open class Interpreter(
 		throw RuntimeError(l, Translations.getString("base.dsl.incompatibleTypes.msg", type.id))
 	}
 
-	private fun binaryOperation(node: BinaryOperation): Any =
+	protected open fun binaryOperation(node: BinaryOperation): Any =
 		binaryOpInterpreted(node.location, node.op.type, interpret(node.left), interpret(node.right))
 
-	private fun binaryOpInterpreted(l: TextLocation, type: TokenType, left: Any, right: Any): Any =
+	protected fun binaryOpInterpreted(l: TextLocation, type: TokenType, left: Any, right: Any): Any =
 		when (type) {
 			PLUS -> addL(left, right, l)
 			MINUS -> subtractL(left, right, l)

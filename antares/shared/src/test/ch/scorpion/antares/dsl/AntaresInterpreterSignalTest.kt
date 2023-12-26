@@ -1,6 +1,7 @@
 package ch.scorpion.antares.dsl
 
 import ch.scorpion.antares.AntaresTestRule
+import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.model.gate.CurrentUndefinedGateInputBehavior
 import ch.scorpion.antares.model.gate.UndefinedGateInputBehavior
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_1
@@ -266,6 +267,15 @@ class AntaresInterpreterSignalTest {
 	}
 
 	private fun operation(statement: String, a: Long, b: DigitalSignal? = null): Any {
+		val parser = AntaresParser(AntaresLexer(statement), null)
+		val memory = Memory()
+		val interpreter = AntaresInterpreter(parser.parse(), memory)
+		memory.preset("A", a)
+		b?.let { memory.preset("B", it) }
+		return interpreter.interpret()
+	}
+
+	private fun operation(statement: String, a: AnalogSignal, b: Float? = null): Any {
 		val parser = AntaresParser(AntaresLexer(statement), null)
 		val memory = Memory()
 		val interpreter = AntaresInterpreter(parser.parse(), memory)
@@ -649,5 +659,11 @@ class AntaresInterpreterSignalTest {
 		interpreter.interpret(keepMemory = true)
 
 		assertEquals(DigitalLiteral.parseBinary("Z0000110"), memory.getValue("a..g"))
+	}
+
+	@Test
+	fun shouldInterpretAnalogSignal() {
+		// Ensure that AnalogSignals are generally converted to Float. No need to check all kind of operations.
+		assertEquals(1L, operation("A > B", AnalogSignal(3.5), 2.5F))
 	}
 }

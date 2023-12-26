@@ -11,7 +11,6 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.drawable.FlexibleTextView
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.execution.scheduler.SchedulerEvent
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
@@ -26,9 +25,6 @@ import ch.scorpion.jabbah.graph.view.style.GraphStyleType
  *  Detects the start of a [Scenario] or a [ScenarioStep] in an executing [Graph] and propagates this
  *  by setting the corresponding properties of the associated [GraphView], which in turn posts
  *  a [ScenarioEvent] or a [ScenarioStepEvent] on its [EventBus].
- *
- * A [ScenarioDetector] is only active if the [Scheduler]'s [SchedulerRunningState] is
- * [SchedulerRunningState.PAUSED], that is if the executing is stepping.
  */
 class ScenarioDetector(
 	private val view: DrawingView<GraphView>,
@@ -51,7 +47,11 @@ class ScenarioDetector(
 	}
 
 	private val schedulerEventHandler: EventHandler<SchedulerEvent> = {
-		if (it.scheduler === applicationContextHolder.scheduler && it.actor is GraphElement && view.drawing.graph!!.contains(it.actor as GraphElement)) {
+		if (it.scheduler === applicationContextHolder.scheduler
+			&& it.type == SchedulerEvent.Type.DONE
+			&& it.actor is GraphElement
+			&& view.drawing.graph!!.contains(it.actor as GraphElement))
+		{
 			detect()
 		}
 	}

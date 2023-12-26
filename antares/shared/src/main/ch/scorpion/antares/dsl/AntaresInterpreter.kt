@@ -1,5 +1,6 @@
 package ch.scorpion.antares.dsl
 
+import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.model.gate.CurrentUndefinedGateInputBehavior
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.Bit
@@ -115,6 +116,16 @@ class AntaresInterpreter(
 
 	private fun signalToLong(signal: DigitalSignal): Long =
 		signal.toLong()?.toLong() ?: CurrentUndefinedGateInputBehavior.value.definedValue(signal.bitWidth).toLong()!!.toLong()
+
+	override fun binaryOperation(node: BinaryOperation): Any {
+		var left = interpret(node.left)
+		var right = interpret(node.right)
+
+		if (left is AnalogSignal) left = left.voltage.toFloat()
+		if (right is AnalogSignal) right = right.voltage.toFloat()
+
+		return binaryOpInterpreted(node.location, node.op.type, left, right)
+	}
 
 	override fun addL(l: Any, r: Any, loc: TextLocation): Any =
 		when (l) {
