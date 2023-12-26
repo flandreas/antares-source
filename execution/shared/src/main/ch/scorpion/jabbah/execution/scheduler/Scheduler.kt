@@ -87,7 +87,11 @@ data class ExecutionStepResult(val recalculated: Boolean, val breakpoint: Boolea
 }
 
 /** Posted by a [Scheduler] during execution phase.*/
-class SchedulerEvent(val type: Type, val scheduler: Scheduler, val actor: Actor) {
+class SchedulerEvent(
+	val type: Type,
+	val scheduler: Scheduler,
+	val source: Any
+) {
 
     enum class Type {
         /** An event of this type is sent after an [Actor] has requested scheduling*/

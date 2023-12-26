@@ -7,12 +7,9 @@ import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.antares.view.analog.engine.AnalogCircuitCalculator
 import ch.scorpion.antares.view.analog.engine.AnalogElement
-import ch.scorpion.jabbah.base.IssueImpl
-import ch.scorpion.jabbah.base.IssueSeverity
-import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -174,7 +171,6 @@ class AnalogGraphView(
 
 	private inner class AnalogActor : ActorImpl() {
 		override fun act(signalHandler: SignalHandler, data: ActorData) {
-			//val graphView = (data as GraphActorData).graphView as AnalogGraphView
 			try {
 				requireAnalysis()
 				AnalogCircuitCalculator().calculate(ensureAnalysis(), signalHandler)
@@ -182,7 +178,7 @@ class AnalogGraphView(
 
 				if (signalHandler is Scheduler) {
 					/** Required e.g. by [ScenarioDetector]*/
-					eventBus.post(SchedulerEvent(SchedulerEvent.Type.DONE, signalHandler, this))
+					eventBus.post(SchedulerEvent(SchedulerEvent.Type.DONE, signalHandler, this@AnalogGraphView))
 				}
 			} catch (e: Throwable) {
 				LOG.debug("Error while analyzing: ${e.message}")
