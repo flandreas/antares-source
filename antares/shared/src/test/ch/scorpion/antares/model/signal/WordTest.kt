@@ -392,4 +392,9 @@ class WordTest {
 	fun shouldNotRetrieveErrorBitsAt() {
 		assertNull(Word.allOf(BW_8, Error).bitsAt(0, 2))
 	}
+
+	@Test
+	fun shouldRaiseToThePower() {
+		assertEquals(Word.of(BW_8, 27UL), Word.of(BW_8, 3UL).power(3))
+	}
 }

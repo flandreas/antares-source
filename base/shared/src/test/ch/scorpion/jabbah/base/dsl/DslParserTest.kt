@@ -3,7 +3,7 @@ package ch.scorpion.jabbah.base.dsl
 import ch.scorpion.jabbah.base.Translations
 import kotlin.test.*
 
-class ParserTest {
+class DslParserTest {
 
 	@BeforeTest
 	fun setup() {
@@ -14,6 +14,18 @@ class ParserTest {
 	fun shouldParseExpressionWithParentheses() {
 		val parser = DslParser("(4 + 12) / -3")
 		parser.parse()
+	}
+
+	@Test
+	fun shouldParseFloatOperation() {
+		val parser = DslParser("0.77 - 9")
+
+		assertAST(parser.parse(), """
+			Compound
+			- -
+			-- 0.77
+			-- 9
+		""".trimIndent())
 	}
 
 	@Test

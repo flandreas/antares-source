@@ -25,6 +25,12 @@ abstract class AbstractLexerTest {
 		assertEquals(value, token.value)
 	}
 
+	protected fun assertFloat(value: Float, lexer: AbstractLexer) {
+		val token = lexer.nextToken()
+		assertEquals(BaseTokenType.LITERAL, token.type)
+		assertEquals(value, token.value)
+	}
+
 	protected fun assertString(value: String, lexer: AbstractLexer) {
 		val token = lexer.nextToken()
 		assertEquals(BaseTokenType.LITERAL, token.type)

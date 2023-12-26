@@ -50,6 +50,15 @@ class DslLexerTest : AbstractLexerTest() {
 	}
 
 	@Test
+	fun shouldScanFloatOperation() {
+		val lexer = DslLexer("3.14 - 0.14")
+		assertFloat(3.14F, lexer)
+		assertToken(MINUS, lexer)
+		assertFloat(0.14F, lexer)
+		assertEof(lexer.nextToken())
+	}
+
+	@Test
 	fun shouldScanTermWithParentheses() {
 		val lexer = DslLexer("3 * (15 - 7)")
 

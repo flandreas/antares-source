@@ -17,8 +17,8 @@ import ch.scorpion.jabbah.base.module.BaseModule
  *     factor : super.factor
  *            | property
  *     property : propertyPortName | propertyPortId
- *     propertyPortName : "#" number "." identifier
- *     propertyPortId : "#" number "." number
+ *     propertyPortName : "#" number ":" identifier
+ *     propertyPortId : "#" number ":" number
  * </pre>
  */
 open class GraphDslParser(
@@ -55,7 +55,7 @@ open class GraphDslParser(
 		lexer.location.let { location ->
 			eat(HASH)
 			val id = literal()
-			eat(DOT)
+			eat(COLON)
 			return when (currentToken!!.type) {
 				ID -> propertyPortName(id)
 				LITERAL -> propertyPortId(id)

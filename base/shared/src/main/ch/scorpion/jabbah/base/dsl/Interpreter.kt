@@ -2,6 +2,8 @@ package ch.scorpion.jabbah.base.dsl
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.DslTokenType.*
+import ch.scorpion.jabbah.base.parser.TextLocation
+import ch.scorpion.jabbah.base.parser.TokenType
 import kotlin.math.pow
 
 typealias InterpreterFactory = (node: Node, memory: Memory) -> Interpreter
@@ -36,7 +38,7 @@ open class Interpreter(
 		}
 	}
 
-	protected fun interpretAsLong(node: Node): Long {
+	private fun interpretAsLong(node: Node): Long {
 		val result = interpret(node)
 		if (result !is Long) {
 			throw RuntimeError(node.location, Translations.getString("base.dsl.expectedNumber.msg"))
@@ -51,101 +53,294 @@ open class Interpreter(
 		return result
 	}
 
-	private fun binaryOperation(node: BinaryOperation): Any {
-		return when (node.op.type) {
-			PLUS -> typedBinaryOp(node)
-			MINUS -> typedBinaryOp(node)
-			MULTIPLY -> typedBinaryOp(node)
-			DIVIDE -> typedBinaryOp(node)
-			CARET -> typedBinaryOp(node)
-			EQUAL -> typedBinaryOp(node)
-			DIFF -> typedBinaryOp(node)
-			AND -> typedBinaryOp(node)
-			OR -> typedBinaryOp(node)
-			SMALLER -> typedBinaryOp(node)
-			GREATER -> typedBinaryOp(node)
-			SMALLER_EQUAL -> typedBinaryOp(node)
-			GREATER_EQUAL -> typedBinaryOp(node)
-			SHIFT_LEFT -> typedBinaryOp(node)
-			SHIFT_RIGHT -> typedBinaryOp(node)
-			MOD -> typedBinaryOp(node)
-			else -> throw SyntaxError(node.location, Translations.getString("base.dsl.unknownBinaryOperation.msg", node.op.type.id))
-		}
+	protected fun throwIncompatibleTypes(l: TextLocation, type: TokenType): Nothing {
+		throw RuntimeError(l, Translations.getString("base.dsl.incompatibleTypes.msg", type.id))
 	}
 
-	protected open fun typedBinaryOp(node: BinaryOperation): Any {
-		return when (node.op.type) {
-			AND -> binaryOp(node) { l, r -> l.and(r) }
-			MINUS -> binaryOp(node) { l, r -> l - r }
-			MULTIPLY -> binaryOp(node) { l, r -> l * r }
-			DIVIDE -> binaryOp(node) { l, r -> l.div(r) }
-			CARET -> binaryOp(node) { l, r -> l.toDouble().pow(r.toInt()).toLong() }
-			OR -> binaryOp(node) { l, r -> l.or(r) }
-			SMALLER -> binaryOp(node) { l, r -> if (l < r) 1L else 0L }
-			SMALLER_EQUAL -> binaryOp(node) { l, r -> if (l <= r) 1L else 0L }
-			GREATER -> binaryOp(node) { l, r -> if (l > r) 1L else 0L }
-			GREATER_EQUAL -> binaryOp(node) { l, r -> if (l >= r) 1L else 0L }
-			PLUS -> binaryOp(node) { l, r -> l + r }
-			EQUAL -> binaryOp(node) { l, r -> if (l == r) 1L else 0L }
-			DIFF -> binaryOp(node) { l, r -> if (l != r) 1L else 0L }
-			MOD -> binaryOp(node) { l, r -> l.mod(r) }
-			SHIFT_LEFT -> binaryOp(node) { l, r -> l.shl(r.toInt()) }
-			SHIFT_RIGHT -> binaryOp(node)  { l, r -> l.shr(r.toInt()) }
-			else -> throw SyntaxError(node.location, Translations.getString("base.dsl.unknownBinaryOperation.msg", node.op.type.id))
-		}
-	}
+	private fun binaryOperation(node: BinaryOperation): Any =
+		binaryOpInterpreted(node.location, node.op.type, interpret(node.left), interpret(node.right))
 
-	private fun binaryOp(
-		node: BinaryOperation,
-		longOp: (Long, Long) -> Long
-	): Any {
-		val left = interpret(node.left)
-		val right = interpret(node.right)
-		return if (left is Long && right is Long) {
-			longOp(left, right)
-		} else {
-			throw RuntimeError(node.location, Translations.getString("base.dsl.incompatibleTypes.msg", node.op.type.id))
+	private fun binaryOpInterpreted(l: TextLocation, type: TokenType, left: Any, right: Any): Any =
+		when (type) {
+			PLUS -> addL(left, right, l)
+			MINUS -> subtractL(left, right, l)
+			MULTIPLY -> multiplyL(left, right, l)
+			DIVIDE -> divideL(left, right, l)
+			CARET -> powerL(left, right, l)
+			EQUAL -> equalL(left, right, l)
+			DIFF -> if (equalL(left, right, l) == 1L) 0L else 1L
+			SMALLER -> smallerL(left, right, l)
+			SMALLER_EQUAL -> if (smallerL(left, right, l) == 1L || equalL(left, right, l) == 1L) 1L else 0L
+			GREATER -> greaterL(left, right, l)
+			GREATER_EQUAL -> if (greaterL(left, right, l) == 1L || equalL(left, right, l) == 1L) 1L else 0L
+			AND -> andL(left, right, l)
+			OR -> orL(left, right, l)
+			SHIFT_LEFT -> shiftLeftL(left, right, l)
+			SHIFT_RIGHT -> shiftRightL(left, right, l)
+			MOD -> modL(left, right, l)
+			else -> throw SyntaxError(l, Translations.getString("base.dsl.unknownBinaryOperation.msg", type.id))
 		}
-	}
 
-	private fun binaryOpWithRightInt(
-		node: BinaryOperation,
-		longOp: (Long, Int) -> Long,
-	): Any {
-		val left = interpret(node.left)
-		val right = interpretAsLong(node.right)
-		return when (left) {
-			is Long -> longOp(left, right.toInt())
-			else -> throw RuntimeError(node.location, Translations.getString("base.dsl.incompatibleTypes.msg", node.op.type.id))
+	protected open fun addL(l: Any, r: Any, loc: TextLocation): Any =
+		when (l) {
+			is Long -> addR(l, r, loc)
+			is Float -> addR(l, r, loc)
+			else -> throwIncompatibleTypes(loc, PLUS)
 		}
-	}
+
+	protected open fun addR(l: Long, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is Long -> l + r
+			is Float -> l + r
+			else -> throwIncompatibleTypes(loc, PLUS)
+		}
+
+	protected open fun addR(l: Float, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is Long -> l + r
+			is Float -> l + r
+			else -> throwIncompatibleTypes(loc, PLUS)
+		}
+
+	protected open fun subtractL(l: Any, r: Any, loc: TextLocation): Any =
+		when (l) {
+			is Long -> subtractR(l, r, loc)
+			is Float -> subtractR(l, r, loc)
+			else -> throwIncompatibleTypes(loc, MINUS)
+		}
+
+	protected open fun subtractR(l: Long, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is Long -> l - r
+			is Float -> l - r
+			else -> throwIncompatibleTypes(loc, MINUS)
+		}
+
+	protected open fun subtractR(l: Float, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is Long -> l - r
+			is Float -> l - r
+			else -> throwIncompatibleTypes(loc, MINUS)
+		}
+
+	protected open fun multiplyL(l: Any, r: Any, loc: TextLocation): Any =
+		when (l) {
+			is Long -> multiplyR(l, r, loc)
+			is Float -> multiplyR(l, r, loc)
+			else -> throwIncompatibleTypes(loc, MULTIPLY)
+		}
+
+	protected open fun multiplyR(l: Long, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is Long -> l * r
+			is Float -> l * r
+			else -> throwIncompatibleTypes(loc, MULTIPLY)
+		}
+
+	protected open fun multiplyR(l: Float, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is Long -> l * r
+			is Float -> l * r
+			else -> throwIncompatibleTypes(loc, MULTIPLY)
+		}
+
+	protected open fun divideL(l: Any, r: Any, loc: TextLocation): Any =
+		when (l) {
+			is Long -> divideR(l, r, loc)
+			is Float -> divideR(l, r, loc)
+			else -> throwIncompatibleTypes(loc, DIVIDE)
+		}
+
+	protected open fun divideR(l: Long, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is Long -> l / r
+			is Float -> l / r
+			else -> throwIncompatibleTypes(loc, DIVIDE)
+		}
+
+	protected open fun divideR(l: Float, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is Long -> l / r
+			is Float -> l / r
+			else -> throwIncompatibleTypes(loc, DIVIDE)
+		}
+
+	protected open fun powerL(l: Any, r: Any, loc: TextLocation): Any =
+		when (l) {
+			is Long -> powerR(l, r, loc)
+			is Float -> powerR(l, r, loc)
+			else -> throwIncompatibleTypes(loc, CARET)
+		}
+
+	protected open fun powerR(l: Long, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is Long -> l.toDouble().pow(r.toInt()).toLong()
+			is Float -> l.toDouble().pow(r.toDouble()).toFloat()
+			else -> throwIncompatibleTypes(loc, CARET)
+		}
+
+	protected open fun powerR(l: Float, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is Long -> l.toDouble().pow(r.toInt()).toFloat()
+			is Float -> l.toDouble().pow(r.toDouble()).toFloat()
+			else -> throwIncompatibleTypes(loc, CARET)
+		}
+
+	protected open fun equalL(l: Any, r: Any, loc: TextLocation): Any =
+		when (l) {
+			is Long -> equalR(l, r, loc)
+			is Float -> equalR(l, r, loc)
+			else -> throwIncompatibleTypes(loc, EQUAL)
+		}
+
+	protected open fun equalR(l: Long, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is Long -> if (l == r) 1L else 0L
+			is Float -> if (l.toFloat() == r) 1L else 0L
+			else -> throwIncompatibleTypes(loc, EQUAL)
+		}
+
+	protected open fun equalR(l: Float, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is Long -> if (l == r.toFloat()) 1L else 0L
+			is Float -> if (l == r) 1L else 0L
+			else -> throwIncompatibleTypes(loc, EQUAL)
+		}
+
+	protected open fun smallerL(l: Any, r: Any, loc: TextLocation): Any =
+		when (l) {
+			is Long -> smallerR(l, r, loc)
+			is Float -> smallerR(l, r, loc)
+			else -> throwIncompatibleTypes(loc, SMALLER)
+		}
+
+	protected open fun smallerR(l: Long, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is Long -> if (l < r) 1L else 0L
+			is Float -> if (l < r) 1L else 0L
+			else -> throwIncompatibleTypes(loc, SMALLER)
+		}
+
+	protected open fun smallerR(l: Float, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is Long -> if (l < r) 1L else 0L
+			is Float -> if (l < r) 1L else 0L
+			else -> throwIncompatibleTypes(loc, SMALLER)
+		}
+
+	protected open fun greaterL(l: Any, r: Any, loc: TextLocation): Any =
+		when (l) {
+			is Long -> greaterR(l, r, loc)
+			is Float -> greaterR(l, r, loc)
+			else -> throwIncompatibleTypes(loc, GREATER)
+		}
+
+	protected open fun greaterR(l: Long, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is Long -> if (l > r) 1L else 0L
+			is Float -> if (l > r) 1L else 0L
+			else -> throwIncompatibleTypes(loc, GREATER)
+		}
+
+	protected open fun greaterR(l: Float, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is Long -> if (l > r) 1L else 0L
+			is Float -> if (l > r) 1L else 0L
+			else -> throwIncompatibleTypes(loc, GREATER)
+		}
+
+	protected open fun andL(l: Any, r: Any, loc: TextLocation): Any =
+		when (l) {
+			is Long -> andR(l, r, loc)
+			else -> throwIncompatibleTypes(loc, AND)
+		}
+
+	protected open fun andR(l: Long, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is Long -> l.and(r)
+			else -> throwIncompatibleTypes(loc, AND)
+		}
+
+	protected open fun orL(l: Any, r: Any, loc: TextLocation): Any =
+		when (l) {
+			is Long -> orR(l, r, loc)
+			else -> throwIncompatibleTypes(loc, OR)
+		}
+
+	protected open fun orR(l: Long, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is Long -> l.or(r)
+			else -> throwIncompatibleTypes(loc, OR)
+		}
+
+	protected open fun shiftLeftL(l: Any, r: Any, loc: TextLocation): Any =
+		when (l) {
+			is Long -> shiftLeftR(l, r, loc)
+			else -> throwIncompatibleTypes(loc, SHIFT_LEFT)
+		}
+
+	protected open fun shiftLeftR(l: Long, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is Long -> l.shl(r.toInt())
+			else -> throwIncompatibleTypes(loc, SHIFT_LEFT)
+		}
+
+	protected open fun shiftRightL(l: Any, r: Any, loc: TextLocation): Any =
+		when (l) {
+			is Long -> shiftRightR(l, r, loc)
+			else -> throwIncompatibleTypes(loc, SHIFT_RIGHT)
+		}
+
+	protected open fun shiftRightR(l: Long, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is Long -> l.shr(r.toInt())
+			else -> throwIncompatibleTypes(loc, SHIFT_RIGHT)
+		}
+
+	protected open fun modL(l: Any, r: Any, loc: TextLocation): Any =
+		when (l) {
+			is Long -> modR(l, r, loc)
+			else -> throwIncompatibleTypes(loc, MOD)
+		}
+
+	protected open fun modR(l: Long, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is Long -> l.mod(r)
+			else -> throwIncompatibleTypes(loc, MOD)
+		}
 
 	private fun literal(node: Literal): Any = node.token.value!!
 
 	private fun unaryOperation(node: UnaryOperation): Any =
-		when (node.op.type) {
-			PLUS -> +interpretAsLong(node.expr)
-			MINUS -> -interpretAsLong(node.expr)
-			NOT -> typedUnaryOp(node)
-			else -> throw SyntaxError(node.location, Translations.getString("base.dsl.unknownUnaryOperation.msg", node.op.type.id))
+		unaryOpInterpreted(node.location, node.op.type, interpret(node.expr))
+
+	private fun unaryOpInterpreted(l: TextLocation, type: TokenType, value: Any): Any =
+		when (type) {
+			PLUS -> plus(value, l)
+			MINUS -> minus(value, l)
+			NOT -> not(value, l)
+			else -> throw SyntaxError(l, Translations.getString("base.dsl.unknownUnaryOperation.msg", type.id))
 		}
 
-	protected open fun typedUnaryOp(node: UnaryOperation): Any =
-		when (node.op.type) {
-			NOT -> unaryOp(node) { it.inv() }
-			else -> throw SyntaxError(node.location, Translations.getString("base.dsl.unknownBinaryOperation.msg", node.op.type.id))
+	protected open fun plus(value: Any, loc: TextLocation): Any =
+		when (value) {
+			is Long -> value
+			is Float -> value
+			else -> throwIncompatibleTypes(loc, PLUS)
 		}
 
-	private fun unaryOp(
-		node: UnaryOperation,
-		longOp: (Long) -> Long,
-	): Any {
-		val value = interpret(node.expr)
-		return when (value) {
-			is Long -> longOp(value)
-			else -> throw RuntimeError(node.location, Translations.getString("base.dsl.incompatibleTypes.msg", node.op.type.id))
+	protected open fun minus(value: Any, loc: TextLocation): Any =
+		when (value) {
+			is Long -> -value
+			is Float -> -value
+			else -> throwIncompatibleTypes(loc, MINUS)
 		}
-	}
+
+	protected open fun not(value: Any, loc: TextLocation): Any =
+		when (value) {
+			is Long -> value.inv()
+			else -> throwIncompatibleTypes(loc, NOT)
+		}
 
 	protected open fun storeValue(variable: Variable, value: Any): Any {
 		if (variable is AssocArray) {
@@ -244,14 +439,12 @@ open class Interpreter(
 	private fun whenStatement(node: WhenStatement): Any {
 		val expr = interpret(node.expression)
 		for (clause in node.clauses) {
-			if (clause.condition == null || evaluateTrueCondition(evaluateEqualCondition(clause, expr, interpret(clause.condition) ))) {
+			if (clause.condition == null || evaluateTrueCondition(equalL(expr, interpret(clause.condition), clause.location))) {
 				return interpret(clause.then)
 			}
 		}
 		return 0L
 	}
-
-	protected open fun evaluateEqualCondition(node: Node, left: Any, right: Any): Long = if (left == right) 1L else 0L
 
 	private fun forStatement(node: ForStatement): Any {
 		val startValue = interpretAsLong(node.inExpr)

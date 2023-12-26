@@ -73,4 +73,16 @@ class BaseLexerTest : AbstractLexerTest() {
 		assertId("Line4", lexer)
 		assertRowColumn(4, 1, lexer.location)
 	}
+
+	@Test
+	fun shouldParseLong() {
+		val lexer = BaseLexer("1244")
+		assertLong(1244L, lexer)
+	}
+
+	@Test
+	fun shouldParseFloat() {
+		val lexer = BaseLexer("3.14")
+		assertFloat(3.14F, lexer)
+	}
 }

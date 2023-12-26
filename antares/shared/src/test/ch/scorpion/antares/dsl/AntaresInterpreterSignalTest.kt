@@ -6,16 +6,17 @@ import ch.scorpion.antares.model.gate.UndefinedGateInputBehavior
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_1
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_2
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_4
-import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_8
 import ch.scorpion.antares.model.signal.DigitalLiteral
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.Word.Companion.of
 import ch.scorpion.jabbah.base.dsl.DslSemanticAnalyser
 import ch.scorpion.jabbah.base.dsl.Memory
+import ch.scorpion.jabbah.base.dsl.RuntimeError
 import ch.scorpion.jabbah.base.dsl.Symbol
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 /** Unit tests for [AntaresInterpreter] using [DigitalSignal] values.*/
 class AntaresInterpreterSignalTest {
@@ -83,69 +84,194 @@ class AntaresInterpreterSignalTest {
 	}
 
 	@Test
-	fun shouldAddSignals() {
+	fun shouldAdd() {
 		assertEquals(of(BW_4, 3UL), operation("A + B", of(BW_4, 2UL), of(BW_2, 1UL)))
-		assertEquals(of(BW_4, 15UL), operation("A + B", of(BW_4, 14UL), of(BW_2, 1UL)))
-	}
-
-	@Test
-	fun shouldAddLongToSignal() {
 		assertEquals(of(BW_4, 3UL), operation("A + B", of(BW_4, 2UL), 1L))
-		assertEquals(of(BW_4, 15UL), operation("A + B", of(BW_4, 14UL), 1L))
+		assertEquals(3L, operation("A + B", 1L, of(BW_4, 2UL)))
+		assertEquals(4.5F, AntaresInterpreter("3.5 + 1").interpret())
 	}
 
 	@Test
-	fun shouldSubtractSignals() {
-		assertEquals(of(BW_4, 2UL), operation("A - B", of(BW_4, 3UL), of(BW_2, 1UL)))
-		assertEquals(of(BW_4, 13UL), operation("A - B", of(BW_4, 14UL), of(BW_2, 1UL)))
+	fun shouldSubtract() {
+		assertEquals(of(BW_4, 1UL), operation("A - B", of(BW_4, 2UL), of(BW_2, 1UL)))
+		assertEquals(of(BW_4, 1UL), operation("A - B", of(BW_4, 2UL), 1L))
+		assertEquals(2L, operation("A - B", 4L, of(BW_4, 2UL)))
+		assertEquals(2.5F, AntaresInterpreter("3.5 - 1").interpret())
 	}
 
 	@Test
-	fun shouldSubtractLongFromSignal() {
-		assertEquals(of(BW_4, 2UL), operation("A - B", of(BW_4, 3UL), 1L))
-		assertEquals(of(BW_4, 13UL), operation("A - B", of(BW_4, 14UL), 1L))
+	fun shouldMultiply() {
+		assertEquals(of(BW_4, 6UL), operation("A * B", of(BW_4, 2UL), of(BW_2, 3UL)))
+		assertEquals(of(BW_4, 12UL), operation("A * B", of(BW_4, 3UL), 4L))
+		assertEquals(8L, operation("A * B", 4L, of(BW_4, 2UL)))
+		assertEquals(7.0F, AntaresInterpreter("3.5 * 2").interpret())
 	}
 
 	@Test
-	fun shouldMultiplySignals() {
-		assertEquals(of(BW_4, 6UL), operation("A * B", of(BW_4, 3UL), of(BW_2, 2UL)))
-		assertEquals(of(BW_4, 28UL), operation("A * B", of(BW_4, 14UL), of(BW_2, 2UL)))
+	fun shouldDivide() {
+		assertEquals(of(BW_4, 4UL), operation("A / B", of(BW_4, 12UL), of(BW_2, 3UL)))
+		assertEquals(of(BW_4, 3UL), operation("A / B", of(BW_4, 12UL), 4L))
+		assertEquals(2L, operation("A / B", 4L, of(BW_4, 2UL)))
+		assertEquals(3.5F, AntaresInterpreter("7.0 / 2").interpret())
 	}
 
 	@Test
-	fun shouldMultiplyLongWithSignal() {
-		assertEquals(of(BW_4, 6UL), operation("A * B", of(BW_4, 3UL), 2L))
-		assertEquals(of(BW_4, 28UL), operation("A * B", of(BW_4, 14UL), 2L))
+	fun shouldPower() {
+		assertEquals(of(BW_4, 8UL), operation("A^B", of(BW_4, 2UL), of(BW_2, 3UL)))
+		assertEquals(of(BW_4, 8UL), operation("A^B", of(BW_4, 2UL), 3L))
+		assertEquals(8L, operation("A^B", 2L, of(BW_4, 3UL)))
+		assertEquals(49.0F, AntaresInterpreter("7.0^2").interpret())
 	}
 
 	@Test
-	fun shouldDivideSignals() {
-		assertEquals(of(BW_4, 3UL), operation("A / B", of(BW_4, 6UL), of(BW_2, 2UL)))
-		assertEquals(of(BW_8, 6UL), operation("A / B", of(BW_8, 24UL), of(BW_4, 4UL)))
+	fun shouldBeEqual() {
+		assertEquals(1L, operation("A == B", of(BW_4, 2UL), of(BW_2, 2UL)))
+		assertEquals(1L, operation("A == B", of(BW_4, 2UL), 2L))
+		assertEquals(1L, operation("A == B", 3L, of(BW_4, 3UL)))
+		assertEquals(1L, AntaresInterpreter("7.0 == 7").interpret())
 	}
 
 	@Test
-	fun shouldDivideSignalByLong() {
-		assertEquals(of(BW_4, 3UL), operation("A / B", of(BW_4, 6UL), 2L))
-		assertEquals(of(BW_8, 6UL), operation("A / B", of(BW_8, 24UL), 4L))
+	fun shouldNotBeEqual() {
+		assertEquals(0L, operation("A == B", of(BW_4, 2UL), of(BW_2, 3UL)))
+		assertEquals(0L, operation("A == B", of(BW_4, 2UL), 3L))
+		assertEquals(0L, operation("A == B", 3L, of(BW_4, 4UL)))
+		assertEquals(0L, AntaresInterpreter("7.1 == 7").interpret())
 	}
 
-	private fun operation(statement: String, a: DigitalSignal, b: DigitalSignal): DigitalSignal {
+	@Test
+	fun shouldBeDifferent() {
+		assertEquals(1L, operation("A != B", of(BW_4, 2UL), of(BW_2, 3UL)))
+		assertEquals(1L, operation("A != B", of(BW_4, 2UL), 3L))
+		assertEquals(1L, operation("A != B", 3L, of(BW_4, 4UL)))
+		assertEquals(1L, AntaresInterpreter("7.0 != 8").interpret())
+	}
+
+	@Test
+	fun shouldNotDifferent() {
+		assertEquals(0L, operation("A != B", of(BW_4, 2UL), of(BW_2, 2UL)))
+		assertEquals(0L, operation("A != B", of(BW_4, 2UL), 2L))
+		assertEquals(0L, operation("A != B", 3L, of(BW_4, 3UL)))
+		assertEquals(0L, AntaresInterpreter("7.0 != 7").interpret())
+	}
+
+	@Test
+	fun shouldBeSmaller() {
+		assertEquals(1L, operation("A < B", of(BW_4, 2UL), of(BW_2, 3UL)))
+		assertEquals(1L, operation("A < B", of(BW_4, 2UL), 3L))
+		assertEquals(1L, operation("A < B", 3L, of(BW_4, 4UL)))
+		assertEquals(1L, AntaresInterpreter("7.0 < 8").interpret())
+	}
+
+	@Test
+	fun shouldBeGreater() {
+		assertEquals(1L, operation("A > B", of(BW_4, 3UL), of(BW_2, 2UL)))
+		assertEquals(1L, operation("A > B", of(BW_4, 3UL), 2L))
+		assertEquals(1L, operation("A > B", 4L, of(BW_4, 3UL)))
+		assertEquals(1L, AntaresInterpreter("7.0 > 6").interpret())
+	}
+
+	@Test
+	fun shouldShiftLeft() {
+		assertEquals(of(BW_4, 2UL), operation("A << B", of(BW_4, 1UL), of(BW_2, 1UL)))
+		assertEquals(of(BW_4, 2UL), operation("A << B", of(BW_4, 1UL), 1L))
+		assertEquals(2L, operation("A << B", 1L, of(BW_4, 1UL)))
+		assertEquals(2L, AntaresInterpreter("1 << 1").interpret())
+		assertFailsWith(RuntimeError::class) {
+			AntaresInterpreter("1.0 << 2").interpret()
+		}
+	}
+
+	@Test
+	fun shouldShiftRight() {
+		assertEquals(of(BW_4, 1UL), operation("A >> B", of(BW_4, 2UL), of(BW_2, 1UL)))
+		assertEquals(of(BW_4, 1UL), operation("A >> B", of(BW_4, 2UL), 1L))
+		assertEquals(1L, operation("A >> B", 2L, of(BW_4, 1UL)))
+		assertEquals(1L, AntaresInterpreter("2 >> 1").interpret())
+		assertFailsWith(RuntimeError::class) {
+			AntaresInterpreter("1.0 >> 2").interpret()
+		}
+	}
+
+	@Test
+	fun shouldCalculateAnd() {
+		assertEquals(of(BW_4, 2UL), operation("A and B", of(BW_4, 3UL), of(BW_2, 2UL)))
+		assertEquals(of(BW_4, 2UL), operation("A and B", of(BW_4, 3UL), 2L))
+		assertEquals(2L, operation("A and B", 2L, of(BW_4, 3UL)))
+		assertEquals(2L, AntaresInterpreter("3 and 2").interpret())
+		assertFailsWith(RuntimeError::class) {
+			AntaresInterpreter("7.0 and 2").interpret()
+		}
+	}
+
+	@Test
+	fun shouldCalculateOr() {
+		assertEquals(of(BW_4, 3UL), operation("A or B", of(BW_4, 2UL), of(BW_2, 1UL)))
+		assertEquals(of(BW_4, 3UL), operation("A or B", of(BW_4, 2UL), 1L))
+		assertEquals(3L, operation("A or B", 2L, of(BW_4, 1UL)))
+		assertEquals(3L, AntaresInterpreter("2 or 1").interpret())
+		assertFailsWith(RuntimeError::class) {
+			AntaresInterpreter("7.0 or 2").interpret()
+		}
+	}
+
+	@Test
+	fun shouldCalculateMod() {
+		assertEquals(of(BW_4, 1UL), operation("A % B", of(BW_4, 5UL), of(BW_2, 2UL)))
+		assertEquals(of(BW_4, 1UL), operation("A % B", of(BW_4, 5UL), 2L))
+		assertEquals(1L, operation("A % B", 5L, of(BW_4, 2UL)))
+		assertEquals(1L, AntaresInterpreter("5 % 2").interpret())
+		assertFailsWith(RuntimeError::class) {
+			AntaresInterpreter("5.0 % 2").interpret()
+		}
+	}
+
+	@Test
+	fun shouldCalculateNot() {
+		assertEquals(of(BW_4, 12UL), operation("not A", of(BW_4, 3UL), null as DigitalSignal?))
+		// Result of signed integer calculation
+		assertEquals(-4L, operation("not A", 3L))
+	}
+
+	@Test
+	fun shouldCalculatePlus() {
+		assertEquals(of(BW_4, 3UL), operation("+A", of(BW_4, 3UL), null as DigitalSignal?))
+		assertEquals(3L, operation("+A", 3L))
+	}
+
+	@Test
+	fun shouldCalculateMinus() {
+		assertEquals(-3L, operation("-A", 3L))
+		assertFailsWith(RuntimeError::class) {
+			operation("-A", of(BW_4, 3UL), null as DigitalSignal?)
+		}
+	}
+
+	private fun operation(statement: String, a: DigitalSignal, b: DigitalSignal? = null): Any {
 		val parser = AntaresParser(AntaresLexer(statement), null)
 		val memory = Memory()
 		val interpreter = AntaresInterpreter(parser.parse(), memory)
 		memory.preset("A", a)
-		memory.preset("B", b)
-		return interpreter.interpret() as DigitalSignal
+		b?.let { memory.preset("B", it) }
+		return interpreter.interpret()
 	}
 
-	private fun operation(statement: String, a: DigitalSignal, b: Long): DigitalSignal {
+	private fun operation(statement: String, a: DigitalSignal, b: Long? = null): Any {
 		val parser = AntaresParser(AntaresLexer(statement), null)
 		val memory = Memory()
 		val interpreter = AntaresInterpreter(parser.parse(), memory)
 		memory.preset("A", a)
-		memory.preset("B", b)
-		return interpreter.interpret() as DigitalSignal
+		b?.let { memory.preset("B", it) }
+		return interpreter.interpret()
+	}
+
+	private fun operation(statement: String, a: Long, b: DigitalSignal? = null): Any {
+		val parser = AntaresParser(AntaresLexer(statement), null)
+		val memory = Memory()
+		val interpreter = AntaresInterpreter(parser.parse(), memory)
+		memory.preset("A", a)
+		b?.let { memory.preset("B", it) }
+		return interpreter.interpret()
 	}
 
 	@Test

@@ -15,7 +15,7 @@ class InterpreterTest {
 	}
 
 	@Test
-	fun shouldCalculateTerms() {
+	fun shouldInterpretTerms() {
 		assertEquals(84L, Interpreter("7*12").interpret())
 		assertEquals(-24L, Interpreter("-3*8").interpret())
 		assertEquals(3L, Interpreter("12/4").interpret())
@@ -25,7 +25,47 @@ class InterpreterTest {
 	}
 
 	@Test
-	fun shouldCalculateExpressions() {
+	fun shouldAdd() {
+		assertEquals(3L, Interpreter("1 + 2").interpret())
+		assertEquals(3.5F, Interpreter("1.5 + 2").interpret())
+		assertEquals(3.4F, Interpreter("1 + 2.4").interpret())
+		assertEquals(3.7F, Interpreter("1.2 + 2.5").interpret())
+	}
+
+	@Test
+	fun shouldSubtract() {
+		assertEquals(1L, Interpreter("2 - 1").interpret())
+		assertEquals(0.5F, Interpreter("2 - 1.5").interpret())
+		assertEquals(1.5F, Interpreter("2.5 - 1").interpret())
+		assertEquals(1.3F, Interpreter("2.5 - 1.2").interpret())
+	}
+
+	@Test
+	fun shouldMultiply() {
+		assertEquals(6L, Interpreter("2 * 3").interpret())
+		assertEquals(3.0F, Interpreter("1.5 * 2").interpret())
+		assertEquals(4.8F, Interpreter("2 * 2.4").interpret())
+		assertEquals(5.0F, Interpreter("2.0 * 2.5").interpret())
+	}
+
+	@Test
+	fun shouldDivide() {
+		assertEquals(5L, Interpreter("10 / 2").interpret())
+		assertEquals(5.0F, Interpreter("10.0 / 2").interpret())
+		assertEquals(4.0F, Interpreter("10 / 2.5").interpret())
+		assertEquals(4.0F, Interpreter("10.0 / 2.5").interpret())
+	}
+
+	@Test
+	fun shouldPower() {
+		assertEquals(25L, Interpreter("5^2").interpret())
+		assertEquals(25.0F, Interpreter("5.0^2").interpret())
+		assertEquals(25.0F, Interpreter("5^2.0").interpret())
+		assertEquals(25.0F, Interpreter("5.0^2.0").interpret())
+	}
+
+	@Test
+	fun shouldInterpretExpressions() {
 		assertEquals(3L, Interpreter("1+2").interpret())
 		assertEquals(8L, Interpreter("17 - 9").interpret())
 		assertEquals(20L, Interpreter("(1 + 4) * (7 - 3)").interpret())
@@ -133,41 +173,151 @@ class InterpreterTest {
 	}
 
 	@Test
-	fun shouldInterpretEqual() {
-		assertEquals(0L, Interpreter("3 == 2").interpret())
-		assertEquals(1L, Interpreter("34 == 34").interpret())
+	fun shouldBeEqual() {
+		assertEquals(1L, Interpreter("3 == 3").interpret())
+		assertEquals(1L, Interpreter("3.0 == 3").interpret())
+		assertEquals(1L, Interpreter("3 == 3.0").interpret())
+		assertEquals(1L, Interpreter("3.0 == 3.0").interpret())
 	}
 
 	@Test
-	fun shouldInterpretDiff() {
-		assertEquals(1L, Interpreter("3 != 2").interpret())
-		assertEquals(0L, Interpreter("34 != 34").interpret())
+	fun shouldNotBeEqual() {
+		assertEquals(0L, Interpreter("3 == 4").interpret())
+		assertEquals(0L, Interpreter("3.1 == 3").interpret())
+		assertEquals(0L, Interpreter("3 == 3.1").interpret())
+		assertEquals(0L, Interpreter("3.1 == 3.2").interpret())
 	}
 
 	@Test
-	fun shouldInterpretSmaller() {
-		assertEquals(1L, Interpreter("2 < 3").interpret())
-		assertEquals(0L, Interpreter("3 < 2").interpret())
+	fun shouldBeDifferent() {
+		assertEquals(1L, Interpreter("3 != 4").interpret())
+		assertEquals(1L, Interpreter("3.1 != 3").interpret())
+		assertEquals(1L, Interpreter("3 != 3.1").interpret())
+		assertEquals(1L, Interpreter("3.1 != 3.2").interpret())
 	}
 
 	@Test
-	fun shouldInterpretGreater() {
-		assertEquals(1L, Interpreter("3 > 2").interpret())
-		assertEquals(0L, Interpreter("2 > 3").interpret())
+	fun shouldNotBeDifferent() {
+		assertEquals(0L, Interpreter("3 != 3").interpret())
+		assertEquals(0L, Interpreter("3.0 != 3").interpret())
+		assertEquals(0L, Interpreter("3 != 3.0").interpret())
+		assertEquals(0L, Interpreter("3.0 != 3.0").interpret())
 	}
 
 	@Test
-	fun shouldInterpretSmallerEqual() {
-		assertEquals(1L, Interpreter("2 <= 3").interpret())
-		assertEquals(0L, Interpreter("3 <= 2").interpret())
-		assertEquals(1L, Interpreter("3 <= 3").interpret())
+	fun shouldBeSmaller() {
+		assertEquals(1L, Interpreter("3 < 4").interpret())
+		assertEquals(1L, Interpreter("2.9 < 3").interpret())
+		assertEquals(1L, Interpreter("3 < 3.1").interpret())
+		assertEquals(1L, Interpreter("3.1 < 3.2").interpret())
 	}
 
 	@Test
-	fun shouldInterpretGreaterEqual() {
-		assertEquals(1L, Interpreter("3 >= 2").interpret())
-		assertEquals(1L, Interpreter("3 >= 3").interpret())
-		assertEquals(0L, Interpreter("2 >= 3").interpret())
+	fun shouldBeGreater() {
+		assertEquals(1L, Interpreter("4 > 3").interpret())
+		assertEquals(1L, Interpreter("3.1 > 3").interpret())
+		assertEquals(1L, Interpreter("3 > 2.9").interpret())
+		assertEquals(1L, Interpreter("3.2 > 3.1").interpret())
+	}
+
+	@Test
+	fun shouldBeSmallerEqual() {
+		assertEquals(1L, Interpreter("3 <= 4").interpret())
+		assertEquals(1L, Interpreter("4 <= 4").interpret())
+		assertEquals(1L, Interpreter("2.9 <= 3").interpret())
+		assertEquals(1L, Interpreter("3.0 <= 3").interpret())
+		assertEquals(1L, Interpreter("3 <= 3.1").interpret())
+		assertEquals(1L, Interpreter("3 <= 3.0").interpret())
+		assertEquals(1L, Interpreter("3.1 <= 3.2").interpret())
+		assertEquals(1L, Interpreter("3.1 <= 3.1").interpret())
+	}
+
+	@Test
+	fun shouldBeGreaterEqual() {
+		assertEquals(1L, Interpreter("4 >= 3").interpret())
+		assertEquals(1L, Interpreter("4 >= 4").interpret())
+		assertEquals(1L, Interpreter("3.1 >= 3").interpret())
+		assertEquals(1L, Interpreter("3.0 >= 3").interpret())
+		assertEquals(1L, Interpreter("3 >= 2.9").interpret())
+		assertEquals(1L, Interpreter("3 >= 3.0").interpret())
+		assertEquals(1L, Interpreter("3.2 >= 3.1").interpret())
+		assertEquals(1L, Interpreter("3.2 >= 3.2").interpret())
+	}
+
+	@Test
+	fun shouldInterpretAnd() {
+		assertEquals(5L, Interpreter("5 and 5").interpret())
+		assertEquals(0L, Interpreter("0 and 5").interpret())
+		assertFailsWith(RuntimeError::class) {
+			Interpreter("0.0 and 5").interpret()
+		}
+		assertFailsWith(RuntimeError::class) {
+			Interpreter("5 and 5.3").interpret()
+		}
+	}
+
+	@Test
+	fun shouldInterpretOr() {
+		assertEquals(3L, Interpreter("2 or 1").interpret())
+		assertFailsWith(RuntimeError::class) {
+			Interpreter("0.0 or 5").interpret()
+		}
+		assertFailsWith(RuntimeError::class) {
+			Interpreter("5 or 5.3").interpret()
+		}
+	}
+
+	@Test
+	fun shouldShiftLeft() {
+		assertEquals(2L, Interpreter("1 << 1").interpret())
+		assertFailsWith(RuntimeError::class) {
+			Interpreter("5.3 << 1").interpret()
+		}
+		assertFailsWith(RuntimeError::class) {
+			Interpreter("5 << 1.2").interpret()
+		}
+	}
+
+	@Test
+	fun shouldShiftRight() {
+		assertEquals(1L, Interpreter("2 >> 1").interpret())
+		assertFailsWith(RuntimeError::class) {
+			Interpreter("5.3 >> 1").interpret()
+		}
+		assertFailsWith(RuntimeError::class) {
+			Interpreter("5 >> 1.2").interpret()
+		}
+	}
+
+	@Test
+	fun shouldInterpretMod() {
+		assertEquals(1L, Interpreter("5 % 2").interpret())
+		assertEquals(0L, Interpreter("6 % 2").interpret())
+		assertEquals(3L, Interpreter("7 % 4").interpret())
+		assertFailsWith(RuntimeError::class) {
+			Interpreter("5.2 % 2").interpret()
+		}
+	}
+
+	@Test
+	fun shouldInterpretNot() {
+		// Result of signed integer calculation
+		assertEquals(-3L, Interpreter("not 2").interpret())
+		assertFailsWith(RuntimeError::class) {
+			Interpreter("not 2.0").interpret()
+		}
+	}
+
+	@Test
+	fun shouldInterpretPlus() {
+		assertEquals(2L, Interpreter("+2").interpret())
+		assertEquals(2.1F, Interpreter("+2.1").interpret())
+	}
+
+	@Test
+	fun shouldInterpretMinus() {
+		assertEquals(-2L, Interpreter("-2").interpret())
+		assertEquals(-2.1F, Interpreter("-2.1").interpret())
 	}
 
 	@Test
@@ -231,28 +381,6 @@ class InterpreterTest {
 	}
 
 	@Test
-	fun shouldCalculateAnd() {
-		assertEquals(5L, Interpreter("5 and 5").interpret())
-		assertEquals(0L, Interpreter("0 and 5").interpret())
-	}
-
-	@Test
-	fun shouldCalculateOr() {
-		assertEquals(3L, Interpreter("1 or 2").interpret())
-		assertEquals(5L, Interpreter("0 or 5").interpret())
-	}
-
-	@Test
-	fun shouldShiftLeft() {
-		assertEquals(2L, Interpreter("1 << 1").interpret())
-	}
-
-	@Test
-	fun shouldShiftRight() {
-		assertEquals(1L, Interpreter("2 >> 1").interpret())
-	}
-
-	@Test
 	fun shouldShiftLeftWithVarRightTerm() {
 		val result = Interpreter("""
 			var a = 2
@@ -260,13 +388,6 @@ class InterpreterTest {
 		""".trimIndent()).interpret()
 
 		assertEquals(4L, result)
-	}
-
-	@Test
-	fun shouldInterpretMod() {
-		assertEquals(1L, Interpreter("5 % 2").interpret())
-		assertEquals(0L, Interpreter("6 % 2").interpret())
-		assertEquals(3L, Interpreter("7 % 4").interpret())
 	}
 
 	@Test
@@ -341,12 +462,6 @@ class InterpreterTest {
 		""".trimIndent()).interpret()
 
 		assertEquals(6L, result)
-	}
-
-	@Test
-	fun shouldCalculateNot() {
-		// Result of signed integer calculation
-		assertEquals(-3L, Interpreter("not 2").interpret())
 	}
 
 	@Test

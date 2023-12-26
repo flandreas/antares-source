@@ -98,7 +98,7 @@ run {
                     <translation lang='de' text='Setzen: Mit einer 1 am Eingang S wird das SR Latch gesetzt, wenn der Eingang R gleichzeitig auf 0 ist. Der Zustand 1 erscheint am Ausgang Q.'/>
                   </desc>
                   <steps>
-                    <scenarioStep _id='32' id='1' highlightIds='1' condition='#1.1 == 1 and #1.2 == 0 and #1.3 == 1' onEntry='' onExit=''>
+                    <scenarioStep _id='32' id='1' highlightIds='1' condition='#1:1 == 1 and #1:2 == 0 and #1:3 == 1' onEntry='' onExit=''>
                       <name>
                         <translation lang='de' text='S-Gatter berechnen'/>
                         <translation lang='en' text='Calculate S-gate'/>
@@ -108,7 +108,7 @@ run {
                         <translation lang='de' text='Durch das Setzen des Eingangs &quot;S&quot; ist ein Eingang des oberen NOR-Gates 1. Ein NOR-Gate ist nur 1, wenn beide Eingäge 0 sind. Deshalb schaltet das obere NOR-Gate auf 0.'/>
                       </desc>
                     </scenarioStep>
-                    <scenarioStep _id='33' id='2' highlightIds='9,11,13' condition='#1.1 == 1 and #1.2 == 0 and #2.1 == 1 and #1.3 == 0' onEntry='' onExit=''>
+                    <scenarioStep _id='33' id='2' highlightIds='9,11,13' condition='#1:1 == 1 and #1:2 == 0 and #2:1 == 1 and #1:3 == 0' onEntry='' onExit=''>
                       <name>
                         <translation lang='de' text='!Q zurücksetzen'/>
                         <translation lang='en' text='Reset !Q'/>
@@ -118,7 +118,7 @@ run {
                         <translation lang='de' text='Das 0 am Ausgang des oberen NOR-Gates wird einerseits an den Ausgang !Q gegeben (der damit nun richtig gesetzt ist), und andererseits an das untere NOR-Gate.'/>
                       </desc>
                     </scenarioStep>
-                    <scenarioStep _id='34' id='3' highlightIds='2' condition='#2.1 == 0 and #2.2 == 0 and #2.3 == 0' onEntry='' onExit=''>
+                    <scenarioStep _id='34' id='3' highlightIds='2' condition='#2:1 == 0 and #2:2 == 0 and #2:3 == 0' onEntry='' onExit=''>
                       <name>
                         <translation lang='de' text='R-Gatter berechnen'/>
                         <translation lang='en' text='Calculate R-gate'/>
@@ -128,7 +128,7 @@ run {
                         <translation lang='de' text='Die 0 vom Ausgang des oberen NOR-Gate ist am unteren NOR-Gate angekommen. Der Ausgang einer NOR-Gate ist 1, wenn beide Eingänge 0 sind. Da der zweite Eingang bereits eine 0 vom R-Eingang hat, schaltet das untere NOR-Gate auf 1.'/>
                       </desc>
                     </scenarioStep>
-                    <scenarioStep _id='35' id='4' highlightIds='10,14,16' condition='#2.1 == 0 and #2.2 == 0 and #1.2 == 0 and #2.3 == 1' onEntry='' onExit=''>
+                    <scenarioStep _id='35' id='4' highlightIds='10,14,16' condition='#2:1 == 0 and #2:2 == 0 and #1:2 == 0 and #2:3 == 1' onEntry='' onExit=''>
                       <name>
                         <translation lang='de' text='Q setzen'/>
                         <translation lang='en' text='Set Q'/>
@@ -138,7 +138,7 @@ run {
                         <translation lang='de' text='Die 1 von unteren NOR-Gate wird einerseits an den Ausgang Q geleitet (der damit nun richtig gesetzt ist), und andererseits an das obere NOR-Gate geschickt.'/>
                       </desc>
                     </scenarioStep>
-                    <scenarioStep _id='36' id='5' highlightIds='1' condition='#1.1 == 1 and #1.2 == 1 and #1.3 == 0'>
+                    <scenarioStep _id='36' id='5' highlightIds='1' condition='#1:1 == 1 and #1:2 == 1 and #1:3 == 0'>
                       <name>
                         <translation lang='de' text='S-Gatter bestätigen'/>
                         <translation lang='en' text='Confirm S-gate'/>

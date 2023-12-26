@@ -21,7 +21,7 @@ class GraphDslParserTest {
 	@Test
 	fun shouldParsePropertyWithPortName() {
 		val parser = GraphDslParser(DslLexer("""
-			#1.OUT
+			#1:OUT
 		""".trimIndent()), null)
 
 		parser.parse()
@@ -32,7 +32,7 @@ class GraphDslParserTest {
 	@Test
 	fun shouldParsePropertyWithPortId() {
 		val parser = GraphDslParser(DslLexer("""
-			#1.1
+			#1:1
 		""".trimIndent()), null)
 
 		parser.parse()

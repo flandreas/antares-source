@@ -1,10 +1,16 @@
 package ch.scorpion.jabbah.base
 
 import ch.scorpion.jabbah.base.math.formatRounded
+import ch.scorpion.jabbah.base.math.near
 import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+
+fun assertNear(actual: Float, expected: Float) {
+	assertTrue(actual.near(expected), "$actual expected to be near $expected")
+}
 
 class MathTest {
 

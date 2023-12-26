@@ -42,7 +42,7 @@ class GraphDslInterpreterTest {
 		graph.add(vertice)
 
 		val result = GraphDslInterpreter(
-			node = GraphDslParser(DslLexer("#1.I"), null).parse()
+			node = GraphDslParser(DslLexer("#1:I"), null).parse()
 		).interpret(graph)
 
 		assertEquals(42L, result)
@@ -59,7 +59,7 @@ class GraphDslInterpreterTest {
 		graph.add(vertice)
 
 		val result = GraphDslInterpreter(
-			node = GraphDslParser(DslLexer("#1.O"), null).parse()
+			node = GraphDslParser(DslLexer("#1:O"), null).parse()
 		).interpret(graph)
 
 		assertEquals(17L, result)
@@ -76,7 +76,7 @@ class GraphDslInterpreterTest {
 		graph.add(vertice)
 
 		val result = GraphDslInterpreter(
-			node = GraphDslParser(DslLexer("#1.'I + Bla'"), null).parse()
+			node = GraphDslParser(DslLexer("#1:'I + Bla'"), null).parse()
 		).interpret(graph)
 
 		assertEquals(42L, result)
@@ -93,7 +93,7 @@ class GraphDslInterpreterTest {
 		graph.add(vertice)
 
 		val result = GraphDslInterpreter(
-			node = GraphDslParser(DslLexer("#1.1"), null).parse()
+			node = GraphDslParser(DslLexer("#1:1"), null).parse()
 		).interpret(graph)
 
 		assertEquals(42L, result)
@@ -110,7 +110,7 @@ class GraphDslInterpreterTest {
 		graph.add(vertice)
 
 		val result = GraphDslInterpreter(
-			node = GraphDslParser(DslLexer("#1.2"), null).parse()
+			node = GraphDslParser(DslLexer("#1:2"), null).parse()
 		).interpret(graph)
 
 		assertEquals(17L, result)

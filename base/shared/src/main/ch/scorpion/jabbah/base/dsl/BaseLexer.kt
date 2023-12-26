@@ -92,16 +92,35 @@ open class BaseLexer(text: String) : AbstractLexer(text) {
 
 	protected open fun isLiteral(state: State): Boolean = isNumber(state) || isString(state)
 
-	protected open fun literal(state: State): Token<Any> = number(state)
-
-	protected open fun isNumber(state: State): Boolean = isLong(state)
-
-	protected open fun number(state: State): Token<Any> =
-		when {
-			isLong(state) -> literalToken(long(state))
+	protected open fun literal(state: State): Token<Any> {
+		return when {
+			isNumber(state) -> number(state)
 			isString(state) -> literalToken(string(state))
 			else -> throw SyntaxError(state.location, Translations.getString("base.dsl.unknownLiteral.msg"))
 		}
+	}
+
+	protected open fun isNumber(state: State): Boolean = state.currentChar!!.isDigit()
+
+	/** Returns a multi-digit [Long] of [Float] */
+	protected open fun number(state: State): Token<Any> {
+		val result = StringBuilder()
+		while (state.currentChar != null && state.currentChar!!.isDigit()) {
+			result.append(state.currentChar)
+			advance(state)
+		}
+		if (state.currentChar == '.') {
+			result.append(state.currentChar)
+			advance(state)
+			while (state.currentChar != null && state.currentChar!!.isDigit()) {
+				result.append(state.currentChar)
+				advance(state)
+			}
+			return literalToken(result.toString().toFloat())
+		} else {
+			return literalToken(result.toString().toLong())
+		}
+	}
 
 	private fun isLong(state: State): Boolean = state.currentChar!!.isDigit()
 

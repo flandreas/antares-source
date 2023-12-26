@@ -157,4 +157,6 @@ interface DigitalSignal {
 	fun isSmallerThan(value: ULong): Boolean
 
 	fun isSmallerEqualThan(value: ULong): Boolean
+
+	fun power(exp: Byte): DigitalSignal
 }

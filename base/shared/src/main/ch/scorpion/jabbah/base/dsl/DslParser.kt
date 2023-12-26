@@ -57,7 +57,7 @@ typealias ParserFactory = (program: String, semanticAnalyser: SemanticAnalyser?)
  *     binaryLogicOperator : "and" | "or"
  *     shiftOperator : "<<" | ">>"
  *     literal : number | string
- *     number : LONG
+ *     number : LONG | FLOAT
  *     string : """ { CHAR }"""
  *     variable : identifier | assocArray
  *     assocArray : identifier "[" expr "]"

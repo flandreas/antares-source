@@ -23,3 +23,7 @@ fun Double.formatRounded(): String =
 fun Double.near(value: Double, tolerance: Double): Boolean = abs(this - value) <= tolerance
 
 fun Double.near(value: Double): Boolean = abs(this - value) <= SIGMA
+
+fun Float.near(value: Float, tolerance: Float): Boolean = abs(this - value) <= tolerance
+
+fun Float.near(value: Float): Boolean = abs(this - value) <= SIGMA

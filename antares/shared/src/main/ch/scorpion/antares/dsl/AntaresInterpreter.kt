@@ -9,9 +9,10 @@ import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.*
 import ch.scorpion.jabbah.base.dsl.DslTokenType.*
-import ch.scorpion.jabbah.base.parser.TokenType
+import ch.scorpion.jabbah.base.parser.TextLocation
 import ch.scorpion.jabbah.graph.dsl.GraphDslInterpreter
 import ch.scorpion.jabbah.graph.model.GraphActorData
+import kotlin.math.pow
 
 class AntaresInterpreter(
 	node: Node,
@@ -35,19 +36,6 @@ class AntaresInterpreter(
 			is DigitalSignal -> value.toLong() != null && value.toLong() != 0UL
 			else -> super.evaluateTrueCondition(value)
 		}
-
-	override fun evaluateEqualCondition(node: Node, left: Any, right: Any): Long {
-		return binaryOpInterpreted(
-			node,
-			EQUAL,
-			left,
-			right,
-			{ l, r -> if (l == r) 1L else 0L},
-			{ l, r -> if (l.toLong() == r.toLong()) 1L else 0L },
-			{ l, r -> if (l.toLong() == r.toULong()) 1L else 0L },
-			{ l, r -> if (l == r.getValue().toLong()) 1L else 0L })
-		as Long
-	}
 
 	override fun storeValue(variable: Variable, value: Any): Any {
 		return when (variable) {
@@ -128,144 +116,316 @@ class AntaresInterpreter(
 	private fun signalToLong(signal: DigitalSignal): Long =
 		signal.toLong()?.toLong() ?: CurrentUndefinedGateInputBehavior.value.definedValue(signal.bitWidth).toLong()!!.toLong()
 
-	override fun typedBinaryOp(node: BinaryOperation): Any {
-		return when (node.op.type) {
-			EQUAL -> evaluateEqualCondition(node, interpret(node.left), interpret(node.right))
-			AND -> binaryOp(node,
-				{ l, r -> l.and(r) },
-				{ l, r -> l.and(r)},
-				{ l, r -> l.and(r.toULong()) },
-				{ l, r -> l.and(signalToLong(r)) })
-			OR -> binaryOp(node,
-				{ l, r -> l.or(r) },
-				{ l, r -> l.or(r) },
-				{ l, r -> l.or(r.toULong()) },
-				{ l, r -> l.or(signalToLong(r)) })
-			PLUS -> binaryOp(node,
-				{ l, r -> l + r},
-				{ l, r -> l.add(signalToLong(r).toUInt()) },
-				{ l, r -> l.add(r.toUInt()) },
-				{ l, r -> l.plus(signalToLong(r)) })
-			MINUS -> binaryOp(node,
-				{ l, r -> l - r },
-				{ l, r -> l.subtract(signalToLong(r).toUInt()) },
-				{ l, r -> l.subtract(r.toUInt()) },
-				{ l, r -> l.minus(signalToLong(r)) })
-			MULTIPLY -> binaryOp(node,
-				{ l, r -> l * r},
-				{ l, r -> l.multiply(signalToLong(r).toUInt()) },
-				{ l, r -> l.multiply(r.toUInt()) },
-				{ l, r -> l * signalToLong(r) })
-			DIVIDE -> binaryOp(node,
-				{ l, r -> if (r == 0L) l else l.div(r) },
-				{ l, r -> signalToLong(r).let { if (it == 0L) l else l.divide(it.toULong()) } },
-				{ l, r -> if (r == 0L) l else l.divide(r.toULong()) },
-				{ l, r -> signalToLong(r).let { if (it == 0L) l else l.div(it) } })
-			DIFF -> binaryOp(node,
-				{ l, r -> if (l != r) 1L else 0L},
-				{ l, r -> if (l != r) 1L else 0L },
-				{ l, r -> if (l.toLong() != r.toULong()) 1L else 0L },
-				{ l, r -> if (l != signalToLong(r)) 1L else 0L })
-			MOD -> binaryOp(node,
-				{ l, r -> if (r == 0L) 0L else l.mod(r) },
-				{ l, r -> signalToLong(r).let { if (it == 0L) 0L else l.mod(it.toULong()) }},
-				{ l, r -> if (r == 0L) 0L else l.mod(r.toULong())},
-				{ l, r -> signalToLong(r).let { if (it == 0L) 0L else l.mod(it) } })
-			GREATER -> binaryOp(node,
-				{ l, r -> if (l > r) 1L else 0L },
-				{ l, r -> if (l.isGreaterThan(signalToLong(r).toULong())) 1L else 0L },
-				{ l, r -> if (l.isGreaterThan(r.toULong())) 1L else 0L },
-				{ l, r -> if (l > signalToLong(r)) 1L else 0L })
-			GREATER_EQUAL -> binaryOp(node,
-				{ l, r -> if (l >= r) 1L else 0L },
-				{ l, r -> if (l.isGreaterEqualThan(signalToLong(r).toULong())) 1L else 0L },
-				{ l, r -> if (l.isGreaterEqualThan(r.toULong())) 1L else 0L },
-				{ l, r -> if (l >= signalToLong(r)) 1L else 0L })
-			SMALLER -> binaryOp(node,
-				{ l, r -> if (l < r) 1L else 0L },
-				{ l, r -> if (l.isSmallerThan(signalToLong(r).toULong())) 1L else 0L },
-				{ l, r -> if (l.isSmallerThan(r.toULong())) 1L else 0L },
-				{ l, r -> if (l < signalToLong(r)) 1L else 0L})
-			SMALLER_EQUAL -> binaryOp(node,
-				{ l, r -> if (l <= r) 1L else 0L },
-				{ l, r -> if (l.isSmallerEqualThan(signalToLong(r).toULong())) 1L else 0L },
-				{ l, r -> if (l.isSmallerEqualThan(r.toULong())) 1L else 0L },
-				{ l, r -> if (l <= signalToLong(r)) 1L else 0L })
-			SHIFT_LEFT -> binaryOp(node,
-				{ l, r -> l.shl(r.toInt()) },
-				{ l, r -> l.shiftLeft(r.toInt() ?: 0) },
-				{ l, r -> l.shiftLeft(r.toInt()) },
-				{ l, r -> l.shl(r.toInt() ?: 0) })
-			SHIFT_RIGHT -> binaryOp(node,
-				{ l, r -> l.shr(r.toInt()) },
-				{ l, r -> l.shiftRight(r.toInt() ?: 0) },
-				{ l, r -> l.shiftRight(r.toInt()) },
-				{ l, r -> l.shr(r.toInt() ?: 0) })
-			else -> super.typedBinaryOp(node)
-		}
-	}
-
-	private fun binaryOp(
-		node: BinaryOperation,
-		longOp: (Long, Long) -> Any,
-		signalOp: (DigitalSignal, DigitalSignal) -> Any,
-		mixedOp1: (DigitalSignal, Long) -> Any,
-		mixedOp2: (Long, DigitalSignal) -> Any
-	): Any {
-		val left = interpret(node.left)
-		val right = interpret(node.right)
-		return binaryOpInterpreted(node, node.op.type, left, right, longOp, signalOp, mixedOp1, mixedOp2)
-	}
-
-	private fun binaryOpInterpreted(
-		node: Node,
-		op: TokenType,
-		left: Any,
-		right: Any,
-		longOp: (Long, Long) -> Any,
-		signalOp: (DigitalSignal, DigitalSignal) -> Any,
-		mixedOp1: (DigitalSignal, Long) -> Any,
-		mixedOp2: (Long, DigitalSignal) -> Any
-	): Any {
-		try {
-			return if (left is Long && right is Long) {
-				longOp(left, right)
-			} else if (left is DigitalSignal && right is DigitalSignal) {
-				signalOp(left, right)
-			} else if (left is DigitalSignal && right is Long) {
-				mixedOp1(left, right)
-			} else if (left is Long && right is DigitalSignal) {
-				mixedOp2(left, right)
-			} else {
-				throw RuntimeError(node.location, Translations.getString("base.dsl.incompatibleTypes.msg", op.id))
-			}
-		} catch (e: Throwable) {
-			if (e.message != null) {
-				throw RuntimeError(node.location, Translations.getString("antares.dsl.operationExecutionErrorMsg.msg", e.message!!))
-			} else {
-				throw RuntimeError(node.location, Translations.getString("antares.dsl.operationExecutionError.msg"))
-			}
-		}
-	}
-
-	override fun typedUnaryOp(node: UnaryOperation): Any =
-		when (node.op.type) {
-			NOT -> unaryOp(node, { it.inv() }, { it.not() })
-			else -> super.typedUnaryOp(node)
+	override fun addL(l: Any, r: Any, loc: TextLocation): Any =
+		when (l) {
+			is DigitalSignal -> addR(l, r, loc)
+			else -> super.addL(l, r, loc)
 		}
 
-	private fun unaryOp(
-		node: UnaryOperation,
-		longOp: (Long) -> Long,
-		signalOp: (DigitalSignal) -> DigitalSignal
-	): Any {
-		val value = interpret(node.expr)
-		return when (value) {
-			is Long -> longOp(value)
-			is DigitalSignal -> signalOp(value)
-			else -> throw RuntimeError(node.location, Translations.getString("base.dsl.incompatibleTypes.msg", node.op.type.id))
+	private fun addR(l: DigitalSignal, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> l.add(signalToLong(r).toUInt())
+			is Long -> l.add(r.toUInt())
+			else -> throwIncompatibleTypes(loc, PLUS)
 		}
-	}
+
+	override fun addR(l: Long, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> l + signalToLong(r)
+			else -> super.addR(l, r, loc)
+		}
+
+	override fun addR(l: Float, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> addR(l, signalToLong(r), loc)
+			else -> super.addR(l, r, loc)
+		}
+
+	override fun subtractL(l: Any, r: Any, loc: TextLocation): Any =
+		when (l) {
+			is DigitalSignal -> subtractR(l, r, loc)
+			else -> super.subtractL(l, r, loc)
+		}
+
+	private fun subtractR(l: DigitalSignal, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> l.subtract(signalToLong(r).toUInt())
+			is Long -> l.subtract(r.toUInt())
+			else -> throwIncompatibleTypes(loc, MINUS)
+		}
+
+	override fun subtractR(l: Long, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> l - signalToLong(r)
+			else -> super.subtractR(l, r, loc)
+		}
+
+	override fun subtractR(l: Float, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> subtractR(l, signalToLong(r), loc)
+			else -> super.subtractR(l, r, loc)
+		}
+
+	override fun multiplyL(l: Any, r: Any, loc: TextLocation): Any =
+		when (l) {
+			is DigitalSignal -> multiplyR(l, r, loc)
+			else -> super.multiplyL(l, r, loc)
+		}
+
+	private fun multiplyR(l: DigitalSignal, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> l.multiply(signalToLong(r).toUInt())
+			is Long -> l.multiply(r.toUInt())
+			else -> throwIncompatibleTypes(loc, MULTIPLY)
+		}
+
+	override fun multiplyR(l: Long, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> l * signalToLong(r)
+			else -> super.multiplyR(l, r, loc)
+		}
+
+	override fun multiplyR(l: Float, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> multiplyR(l, signalToLong(r), loc)
+			else -> super.multiplyR(l, r, loc)
+		}
+
+	override fun divideL(l: Any, r: Any, loc: TextLocation): Any =
+		when (l) {
+			is DigitalSignal -> divideR(l, r, loc)
+			is Long -> divideR(l, r, loc)
+			is Float -> divideR(l, r, loc)
+			else -> super.divideL(l, r, loc)
+		}
+
+	private fun divideR(l: DigitalSignal, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> signalToLong(r).let { if (it == 0L) l else l.divide(it.toULong()) }
+			is Long -> l.divide(r.toULong())
+			else -> throwIncompatibleTypes(loc, DIVIDE)
+		}
+
+	override fun divideR(l: Long, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> signalToLong(r).let { if (it == 0L) l else l.div(it) }
+			is Long -> if (r == 0L) l else l.div(r)
+			is Float -> if (r == 0.0F) l else l.div(r)
+			else -> super.divideR(l, r, loc)
+		}
+
+	override fun divideR(l: Float, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> divideR(l, signalToLong(r), loc)
+			else -> super.divideR(l, r, loc)
+		}
+
+	override fun powerL(l: Any, r: Any, loc: TextLocation): Any =
+		when (l) {
+			is DigitalSignal -> powerR(l, r, loc)
+			else -> super.powerL(l, r, loc)
+		}
+
+	private fun powerR(l: DigitalSignal, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> l.power(signalToLong(r).toByte())
+			is Long -> l.power(r.toByte())
+			else -> throwIncompatibleTypes(loc, CARET)
+		}
+
+	override fun powerR(l: Long, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> l.toDouble().pow(signalToLong(r).toInt()).toLong()
+			else -> super.powerR(l, r, loc)
+		}
+
+	override fun powerR(l: Float, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> powerR(l, signalToLong(r), loc)
+			else -> super.powerR(l, r, loc)
+		}
+
+	override fun equalL(l: Any, r: Any, loc: TextLocation): Any =
+		when (l) {
+			is DigitalSignal -> equalR(l, r, loc)
+			else -> super.equalL(l, r, loc)
+		}
+
+	private fun equalR(l: DigitalSignal, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> if (l.toLong() == r.toLong()) 1L else 0L
+			is Long -> if (l.getValue().toLong() == r) 1L else 0L
+			else -> throwIncompatibleTypes(loc, EQUAL)
+		}
+
+	override fun equalR(l: Long, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> if (l == r.getValue().toLong()) 1L else 0L
+			else -> super.equalR(l, r, loc)
+		}
+
+	override fun equalR(l: Float, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> if (l == r.getValue().toFloat()) 1L else 0L
+			else -> super.equalR(l, r, loc)
+		}
+
+	override fun smallerL(l: Any, r: Any, loc: TextLocation): Any =
+		when (l) {
+			is DigitalSignal -> smallerR(l, r, loc)
+			else -> super.smallerL(l, r, loc)
+		}
+
+	private fun smallerR(l: DigitalSignal, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> if (l.getValue() < r.getValue()) 1L else 0L
+			is Long -> if (l.getValue().toLong() < r) 1L else 0L
+			else -> throwIncompatibleTypes(loc, SMALLER)
+		}
+
+	override fun smallerR(l: Long, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> if (l < r.getValue().toLong()) 1L else 0L
+			else -> super.smallerR(l, r, loc)
+		}
+
+	override fun smallerR(l: Float, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> if (l < r.getValue().toFloat()) 1L else 0L
+			else -> super.smallerR(l, r, loc)
+		}
+
+	override fun greaterL(l: Any, r: Any, loc: TextLocation): Any =
+		when (l) {
+			is DigitalSignal -> greaterR(l, r, loc)
+			else -> super.greaterL(l, r, loc)
+		}
+
+	private fun greaterR(l: DigitalSignal, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> if (l.getValue() > r.getValue()) 1L else 0L
+			is Long -> if (l.getValue().toLong() > r) 1L else 0L
+			else -> throwIncompatibleTypes(loc, GREATER)
+		}
+
+	override fun greaterR(l: Long, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> if (l > r.getValue().toLong()) 1L else 0L
+			else -> super.greaterR(l, r, loc)
+		}
+
+	override fun greaterR(l: Float, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> if (l > r.getValue().toFloat()) 1L else 0L
+			else -> super.greaterR(l, r, loc)
+		}
+
+	override fun andL(l: Any, r: Any, loc: TextLocation): Any =
+		when (l) {
+			is DigitalSignal -> andR(l, r, loc)
+			else -> super.andL(l, r, loc)
+		}
+
+	private fun andR(l: DigitalSignal, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> l.and(r)
+			is Long -> l.and(r.toULong())
+			else -> throwIncompatibleTypes(loc, AND)
+		}
+
+	override fun andR(l: Long, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> l.and(signalToLong(r))
+			else -> super.andR(l, r, loc)
+		}
+
+	override fun orL(l: Any, r: Any, loc: TextLocation): Any =
+		when (l) {
+			is DigitalSignal -> orR(l, r, loc)
+			else -> super.orL(l, r, loc)
+		}
+
+	private fun orR(l: DigitalSignal, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> l.or(r)
+			is Long -> l.or(r.toULong())
+			else -> throwIncompatibleTypes(loc, OR)
+		}
+
+	override fun orR(l: Long, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> l.or(signalToLong(r))
+			else -> super.orR(l, r, loc)
+		}
+
+	override fun shiftLeftL(l: Any, r: Any, loc: TextLocation): Any =
+		when (l) {
+			is DigitalSignal -> shiftLeftR(l, r, loc)
+			else -> super.shiftLeftL(l, r, loc)
+		}
+
+	private fun shiftLeftR(l: DigitalSignal, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> l.shiftLeft(signalToLong(r).toInt())
+			is Long -> l.shiftLeft(r.toInt())
+			else -> throwIncompatibleTypes(loc, SHIFT_LEFT)
+		}
+
+	override fun shiftLeftR(l: Long, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> l.shl(signalToLong(r).toInt())
+			else -> super.shiftLeftR(l, r, loc)
+		}
+
+	override fun shiftRightL(l: Any, r: Any, loc: TextLocation): Any =
+		when (l) {
+			is DigitalSignal -> shiftRightR(l, r, loc)
+			else -> super.shiftRightL(l, r, loc)
+		}
+
+	private fun shiftRightR(l: DigitalSignal, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> l.shiftRight(signalToLong(r).toInt())
+			is Long -> l.shiftRight(r.toInt())
+			else -> throwIncompatibleTypes(loc, SHIFT_RIGHT)
+		}
+
+	override fun shiftRightR(l: Long, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> l.shr(signalToLong(r).toInt())
+			else -> super.shiftRightR(l, r, loc)
+		}
+
+	override fun modL(l: Any, r: Any, loc: TextLocation): Any =
+		when (l) {
+			is DigitalSignal -> modR(l, r, loc)
+			else -> super.modL(l, r, loc)
+		}
+
+	private fun modR(l: DigitalSignal, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> l.mod(signalToLong(r).toULong())
+			is Long -> l.mod(r.toULong())
+			else -> throwIncompatibleTypes(loc, MOD)
+		}
+
+	override fun modR(l: Long, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> l.mod(signalToLong(r).toInt()).toLong()
+			else -> super.modR(l, r, loc)
+		}
+
+	override fun not(value: Any, loc: TextLocation): Any =
+		when (value) {
+			is DigitalSignal -> value.not()
+			else -> super.not(value, loc)
+		}
+
+	override fun plus(value: Any, loc: TextLocation): Any =
+		when (value) {
+			is DigitalSignal -> value
+			else -> super.plus(value, loc)
+		}
 
 	private fun raisedInput(node: RaisedInput): Any {
 		val portName = node.variable.token.value as String

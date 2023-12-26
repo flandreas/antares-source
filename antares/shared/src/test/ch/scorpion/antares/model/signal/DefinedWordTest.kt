@@ -156,4 +156,9 @@ class DefinedWordTest {
 		assertEquals('F', DefinedWord(BW_8, 15UL).nibbleToHexChar(0))
 		assertEquals('E', DefinedWord(BW_8, 239UL).nibbleToHexChar(1))
 	}
+
+	@Test
+	fun shouldRaiseToThePower() {
+		assertEquals(DefinedWord.of(BW_8, 27UL), DefinedWord.of(BW_8, 3UL).power(3))
+	}
 }

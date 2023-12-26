@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.gate.CurrentUndefinedGateInputBehavior
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.pow
 
 /**
  * A [Word] is the default [DigitalSignal] implementation consisting of multiple [Bit]s.
@@ -453,4 +454,7 @@ internal data class Word(
 
 	override fun isSmallerEqualThan(value: ULong): Boolean =
 		(longValue ?: asDefined().getValue()) <= value
+
+	override fun power(exp: Byte): DigitalSignal =
+		of(bitWidth, (longValue ?: asDefined().getValue()).toDouble().pow(exp.toInt()).toULong())
 }

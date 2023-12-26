@@ -1,6 +1,7 @@
 package ch.scorpion.antares.model.signal
 
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import kotlin.math.pow
 import kotlin.random.nextULong
 
 /**
@@ -227,4 +228,7 @@ class DefinedWord(
 	override fun isSmallerThan(value: ULong): Boolean = longValue < value
 
 	override fun isSmallerEqualThan(value: ULong): Boolean = longValue <= value
+
+	override fun power(exp: Byte): DigitalSignal =
+		DefinedWord(bitWidth, longValue.toDouble().pow(exp.toInt()).toULong())
 }
