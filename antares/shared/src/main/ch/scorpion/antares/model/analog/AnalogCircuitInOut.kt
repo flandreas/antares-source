@@ -59,6 +59,7 @@ class AnalogCircuitInOut(
 	override fun setIncomingSignal(signal: AnalogSignal?, signalHandler: SignalHandler, force: Boolean) {
 		LOG.trace("Incoming voltage ${signal?.voltage} at input $name")
 		this.signal = signal
+		stateChanged(signalHandler)
 		BaseModule.eventBus.post(AnalogCalculationRequest(this, signalHandler))
 	}
 
