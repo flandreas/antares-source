@@ -45,6 +45,8 @@ abstract class AbstractAnalogVertice<T: CalculatingVertice>(
 
 	/** ---- [AbstractAnalogVertice] */
 
+	override val storePropagationDelay: Boolean get() = false
+
 	fun requestAnalogGraphRecalculation(signalHandler: SignalHandler) {
 		stateChanged(signalHandler, REQUEST_RECALCULATE)
 	}

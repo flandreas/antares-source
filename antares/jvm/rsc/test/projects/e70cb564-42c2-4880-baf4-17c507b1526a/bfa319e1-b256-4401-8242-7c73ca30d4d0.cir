@@ -6,7 +6,7 @@
         <analogGraph _id='2' type='analog' propDelay='10'>
           <elements>
             <analogInOut _id='3' id='1' name='I' type='input'/>
-            <analogTransistor _id='4' type='p' gain='0.1'/>
+            <analogTransistor _id='4' id='2' type='p' gain='0.1'/>
             <analogPower _id='5' id='3' delay='0' voltage='5.0'/>
             <analogGround _id='6' id='4' delay='0'/>
             <analogNet _id='7' id='5' delay='0'>

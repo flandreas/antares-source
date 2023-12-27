@@ -4,8 +4,8 @@ import ch.scorpion.antares.model.net.TransistorIF
 import ch.scorpion.antares.model.net.TransistorIF.Companion.DEFAULT_TRANSISTOR_TYPE
 import ch.scorpion.antares.model.net.TransistorType
 import ch.scorpion.antares.view.analog.*
-import ch.scorpion.antares.view.analog.engine.AnalogElementMixin
 import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
+import ch.scorpion.antares.view.analog.engine.AnalogElementMixin
 import ch.scorpion.jabbah.graph.model.vertice.EmptyVerticeCalculator
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -54,11 +54,13 @@ class AnalogTransistor(
 	/** ---- [Storable] interface */
 
 	override fun write(writer: StoreWriter) {
+		super<AbstractAnalogVertice>.write(writer)
 		super<TransistorIF>.write(writer)
 		writer.writeDouble("gain", gain)
 	}
 
 	override fun read(reader: StoreReader) {
+		super<AbstractAnalogVertice>.read(reader)
 		super<TransistorIF>.read(reader)
 		gain = reader.readDouble("gain")
 	}

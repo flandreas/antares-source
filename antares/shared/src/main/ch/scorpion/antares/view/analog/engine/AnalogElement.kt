@@ -4,6 +4,8 @@ import ch.scorpion.antares.model.analog.AnalogVertice
 import ch.scorpion.jabbah.graph.view.Connection
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.VerticeView
+import ch.scorpion.antares.view.analog.AbstractAnalogVerticeView
+import ch.scorpion.antares.view.analog.AnalogPortView
 
 interface AnalogElement {
 
@@ -92,7 +94,7 @@ class AnalogElementMixin(
 		// empty so far
 	}
 
-	override fun getPost(elem: GraphElementView<*>, postId: Int): Connection<*>? =
+	override fun getPost(elem: GraphElementView<*>, postId: Int): Connection<*> =
 		Connection(elem as VerticeView<*>, vertice.getPort(postId + 1))
 
 	override fun calculateCurrent() {

@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' manualContainer='false'>
+  <graph>
+    <graphStorable _id='1'>
+      <model>
+        <graph _id='2' type='digital'>
+          <elements>
+            <subGraphVerticeRef _id='3' id='1' delay='10' uuid='8da9290d-347b-476e-a680-efdb20c6ddb7' type='digital'/>
+            <switch _id='4' id='2' delay='1000'/>
+            <led _id='5' id='3' delay='0'/>
+            <digitalNet _id='6' id='4' delay='0'>
+              <ports>
+                <netPortRef _id='7' verticeId='4' portId='1'/>
+                <netPortRef _id='8' verticeId='3' portId='1'/>
+              </ports>
+            </digitalNet>
+            <digitalNet _id='9' id='5' delay='0'>
+              <ports>
+                <netPortRef _id='10' verticeId='3' portId='2'/>
+                <netPortRef _id='11' verticeId='5' portId='1'/>
+              </ports>
+            </digitalNet>
+          </elements>
+        </graph>
+      </model>
+      <view>
+        <graphView _id='12'>
+          <netViews>
+            <netView _id='13' modelId='6' style='line'/>
+            <netView _id='14' modelId='9' style='line'/>
+          </netViews>
+          <components>
+            <subGraphVerticeViewRef _id='15' id='1' rot='0' filled='true' stroked='true' modelId='3' x='-42.0' y='21.0' controlViewVisibility='simulation'/>
+            <switchView _id='16' id='2' rot='0' filled='true' stroked='true' modelId='4' x='-77.0' y='21.0'/>
+            <ledView _id='17' id='3' rot='0' filled='true' stroked='true' modelId='5' x='77.0' y='21.0' size='large' lightColor='red'/>
+            <digitalEdgeView _id='18' id='4' filled='true' stroked='true' modelId='6' layout='ortho' orig='16' origPort='1' origPortOutput='true' dest='15' destPort='1' adjusted='false'>
+              <shape>
+                <polylineShape points='-91.0,21.0 -28.0,21.0'/>
+              </shape>
+            </digitalEdgeView>
+            <digitalEdgeView _id='19' id='5' filled='true' stroked='true' modelId='9' layout='ortho' orig='15' origPort='2' origPortOutput='true' dest='17' destPort='1' adjusted='false'>
+              <shape>
+                <polylineShape points='28.0,21.0 91.0,21.0'/>
+              </shape>
+            </digitalEdgeView>
+          </components>
+        </graphView>
+      </view>
+    </graphStorable>
+  </graph>
+  <container>
+    <containerDrawing _id='20'>
+      <components>
+        <rectangle _id='21' id='1' style='figure' filled='true' stroked='true' x='140.0' y='140.0' w='56.0' h='70.0'/>
+        <originIndicator _id='22' id='2'>
+          <location>
+            <point x='140.0' y='140.0'/>
+          </location>
+        </originIndicator>
+      </components>
+      <model>
+        <subGraphVertice _id='23' id='0' delay='0' uuid='5a9cd188-59fd-4c63-90d2-c1678c1c7cbe'>
+          <name>
+            <translation lang='en' text='CMOS Inverter Usage'/>
+          </name>
+          <ports/>
+        </subGraphVertice>
+      </model>
+    </containerDrawing>
+  </container>
+</metaGraph>

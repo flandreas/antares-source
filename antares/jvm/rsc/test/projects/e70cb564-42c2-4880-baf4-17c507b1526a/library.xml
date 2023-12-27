@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<project _id='0' defaultElement='863e2174-9a4d-444c-9d85-3196512c18b2' uuid='e70cb564-42c2-4880-baf4-17c507b1526a' author='5ecf330b-e395-4e17-88b0-0883834b384a' imports='6707f981-110d-4629-a0bf-c35a4688025c,b3a5e306-f0c8-11ed-a05b-0242ac120003'>
+<project _id='0' defaultElement='5a9cd188-59fd-4c63-90d2-c1678c1c7cbe' uuid='e70cb564-42c2-4880-baf4-17c507b1526a' author='5ecf330b-e395-4e17-88b0-0883834b384a' imports='6707f981-110d-4629-a0bf-c35a4688025c,b3a5e306-f0c8-11ed-a05b-0242ac120003'>
   <folder>
     <libraryFolder _id='1'>
       <name>
@@ -182,14 +182,19 @@
                 <translation lang='en' text='3 Parallel'/>
               </name>
             </containerLibraryElement>
+            <containerLibraryElement _id='37' uuid='5a9cd188-59fd-4c63-90d2-c1678c1c7cbe' type='digital'>
+              <name>
+                <translation lang='en' text='CMOS Inverter Usage'/>
+              </name>
+            </containerLibraryElement>
           </items>
         </libraryFolder>
-        <libraryFolder _id='37'>
+        <libraryFolder _id='38'>
           <name>
             <translation lang='en' text='VHDL'/>
           </name>
           <items>
-            <containerLibraryElement _id='38' uuid='ee6b64f0-7189-4604-b6a9-e0d063336787' type='digital'>
+            <containerLibraryElement _id='39' uuid='ee6b64f0-7189-4604-b6a9-e0d063336787' type='digital'>
               <name>
                 <translation lang='en' text='NodeView'/>
               </name>
