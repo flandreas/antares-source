@@ -1,7 +1,6 @@
 package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.model.input.RealSwitch
-import ch.scorpion.antares.view.Look.SCALE
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.geom.Direction
@@ -15,14 +14,10 @@ class RealSwitchView(
 	model: RealSwitch = RealSwitch()
 ) : AbstractRealSwitchView<RealSwitch>(styleProvider, model) {
 
-	companion object {
-		private const val SIZE = 6 * SCALE
-	}
-
 	init {
 		isFocusable = true
 		modelExchanged(null)
-		setBounds(AbstractAntaresPortView.LENGTH, -SIZE / 2, SIZE, SIZE)
+		setBounds(AbstractAntaresPortView.LENGTH, -REAL_SWITCH_HEIGHT_ABOVE, REAL_SWITCH_WIDTH, REAL_SWITCH_HEIGHT_ABOVE + REAL_SWITCH_HEIGHT_BELOW)
 	}
 
 	override fun modelExchanged(oldModel: RealSwitch?) {
@@ -42,7 +37,7 @@ class RealSwitchView(
 				styleProvider,
 				port = model.getPort(2),
 				direction = Direction.EAST,
-				x = AbstractAntaresPortView.LENGTH + SIZE,
+				x = AbstractAntaresPortView.LENGTH + REAL_SWITCH_WIDTH,
 				y = 0,
 				showBitWidthAnnotation = false
 			)

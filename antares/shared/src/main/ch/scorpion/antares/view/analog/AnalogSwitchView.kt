@@ -33,19 +33,18 @@ class AnalogSwitchView(
 
 	companion object {
 		const val PROP_ICON_PATH = "ch.scorpion.antares.AnalogSwitchView.iconPath"
-		private const val SIZE = 6 * Look.SCALE
 	}
 
 	private val label = HorizontalLabel(
 		owner = this,
-		relLocation = Point2D(LENGTH + SIZE / 2, AbstractAnalogVerticeView.MAIN_PROPERTY_LABEL_DIST),
+		relLocation = Point2D(LENGTH + REAL_SWITCH_WIDTH / 2, AbstractAnalogVerticeView.MAIN_PROPERTY_LABEL_DIST),
 		orientation = Direction.SOUTH,
 		font = font)
 
 	init {
 		isFocusable = true
 		modelExchanged(null)
-		setBounds(LENGTH, -SIZE / 2, SIZE, SIZE)
+		setBounds(LENGTH, -REAL_SWITCH_HEIGHT_ABOVE, REAL_SWITCH_WIDTH, REAL_SWITCH_HEIGHT_ABOVE + REAL_SWITCH_HEIGHT_BELOW)
 	}
 
 	override fun modelExchanged(oldModel: AnalogSwitch?) {
@@ -53,7 +52,7 @@ class AnalogSwitchView(
 		analogElement.bind(model)
 
 		addPortView(AnalogPortView(styleProvider, model.getPort(1), LENGTH, 0, Direction.WEST))
-		addPortView(AnalogPortView(styleProvider, model.getPort(2), LENGTH + SIZE, 0, Direction.EAST))
+		addPortView(AnalogPortView(styleProvider, model.getPort(2), LENGTH + REAL_SWITCH_WIDTH, 0, Direction.EAST))
 		updateLabels()
 	}
 

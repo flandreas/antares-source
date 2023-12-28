@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.model.input.AbstractSwitch
+import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.style.AntaresTheme
@@ -22,6 +23,7 @@ import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
+import kotlin.jvm.JvmStatic
 
 abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
@@ -30,7 +32,16 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 
 	companion object {
 		const val DEF_CIRCLE_RADIUS = 2.0
-		private val PUSH_DASHED_STROKE = Stroke(0.8f, LineCap.BUTT, LineJoin.MITER, 1.0f, floatArrayOf(2.0f, 2.0f), 0.0f)
+		private val PUSH_DASHED_STROKE = Stroke(1f, LineCap.BUTT, LineJoin.MITER, 1.0f, floatArrayOf(2.0f, 2.0f), 0.0f)
+
+		@JvmStatic
+		protected val REAL_SWITCH_WIDTH = 6 * Look.SCALE
+
+		@JvmStatic
+		protected val REAL_SWITCH_HEIGHT_ABOVE = 4 * Look.SCALE
+
+		@JvmStatic
+		protected val REAL_SWITCH_HEIGHT_BELOW = 1 * Look.SCALE
 	}
 
 	/** Handles mouse interactions during execution*/
@@ -109,13 +120,13 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 		context.g.stroke = Themes.get<AntaresTheme>().figure.stroke
 		context.g.color = context.chooseForeground(foregroundColor)
 		if (model.isOn) {
-			context.g.drawLine(bounds.minX + w(2.25), h(-2.0), bounds.minX + w(3.75), h(-2.0))
+			context.g.drawLine(bounds.minX + w(1.75), h(-2.0), bounds.minX + w(4.25), h(-2.0))
 			context.g.stroke = PUSH_DASHED_STROKE
 			context.g.drawLine(bounds.minX + w(3), h(-2.0), bounds.minX + w(3), 0.0)
 		} else {
-			context.g.drawLine(bounds.minX + w(2.25), h(-3.0), bounds.minX + w(3.75), h(-3.0))
+			context.g.drawLine(bounds.minX + w(1.75), h(-3.5), bounds.minX + w(4.25), h(-3.5))
 			context.g.stroke = PUSH_DASHED_STROKE
-			context.g.drawLine(bounds.minX + w(3), h(-3), bounds.minX + w(3), h(-1.25))
+			context.g.drawLine(bounds.minX + w(3), h(-3.5), bounds.minX + w(3), h(-1.25))
 		}
 
 		// Side of port 1
