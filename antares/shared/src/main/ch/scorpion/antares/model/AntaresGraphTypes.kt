@@ -1,8 +1,10 @@
 package ch.scorpion.antares.model
 
 import ch.scorpion.antares.model.analog.AnalogOscilloscopeProbeVertice
+import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.model.signal.Digital2AnalogAdapter
 import ch.scorpion.antares.model.signal.Digital2DigitalAdapter
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryElement
@@ -17,18 +19,35 @@ enum class AntaresGraphTypes(
 ) : GraphType {
 
 	Digital("digital", false, true) {
+
 		override fun <I: Any, O: Any> adaptTo(other: GraphType): GraphTypeSignalAdapter<I, O> =
 			when (other) {
 				Analog -> Digital2AnalogAdapter as GraphTypeSignalAdapter<I, O>
 				Digital -> Digital2DigitalAdapter as GraphTypeSignalAdapter<I, O>
 				else -> throw IllegalArgumentException("Cannot adapt digital graph to $other")
 			}
+
+		override fun literalToSignal(literal: Any): Any =
+			when (literal) {
+				is Long -> DigitalSignalFactory.ofMinimalBitWidth(literal.toULong())
+				is ULong -> DigitalSignalFactory.ofMinimalBitWidth(literal)
+				else -> literal
+			}
     },
 
 	Analog("analog", true, false) {
+
 		override fun <I: Any, O: Any> adaptTo(other: GraphType): GraphTypeSignalAdapter<I, O> {
 			throw IllegalArgumentException("Cannot adapt analog graph to $other")
 		}
+
+		override fun literalToSignal(literal: Any): Any =
+			when (literal) {
+				is Float -> AnalogSignal(literal.toDouble())
+				is Double -> AnalogSignal(literal)
+				is Long -> AnalogSignal(literal.toDouble())
+				else -> literal
+			}
 
 		override fun <T : Any> createOscilloscopeProbeVertice(name: String?): OscilloscopeProbeVertice<T> =
 			AnalogOscilloscopeProbeVertice() as OscilloscopeProbeVertice<T>

@@ -63,14 +63,12 @@ open class UsecaseActionExternalFunctions(
 	 * @param signal the signal to set on the specified input pin
 	 */
 	private fun setInputAt(time: Long, inputName: String, signal: Any) {
-		val convertedSignal = convertSignal(signal)
+		val convertedSignal = runner.graphView.graph!!.type.literalToSignal(signal)
 		LOG.trace("setInput of '$inputName' to '$convertedSignal' at $time")
 		delegate.getInputGraphPortView(inputName)?.let { graphPortView ->
 			runner.executeAt(time) { graphPortView.model.setIncomingSignal(convertedSignal, runner.scheduler) }
 		}
 	}
-
-	protected open fun convertSignal(signal: Any): Any = signal
 
 	private fun pauseAtImpl(params: List<Any>): Any {
 		pauseAt(longParam(0, params))

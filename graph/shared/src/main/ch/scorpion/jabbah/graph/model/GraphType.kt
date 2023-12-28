@@ -27,7 +27,17 @@ interface GraphType: Bean {
 			Translations.getString("graph.graphTypeError.msg", libraryElement.graphType, this)
 		}
 
+	/**
+	 * Yields an object that adapts signals from this [GraphType] to signals of [other] [GraphType],
+	 * and vice versa.
+	 */
 	fun <I: Any, O: Any> adaptTo(other: GraphType): GraphTypeSignalAdapter<I, O>
+
+	/**
+	 * Converts a literal value, typically coming from a script and of basic type such as [Long] or [Float],
+	 * to a specific signal type defined by higher-level code.
+	 */
+	fun literalToSignal(literal: Any): Any
 
 	fun <T: Any> createOscilloscopeProbeVertice(name: String? = null): OscilloscopeProbeVertice<T>
 		= OscilloscopeProbeVertice(this)
@@ -43,6 +53,8 @@ object GenericGraphType: GraphType {
 
 	override fun <I: Any, O: Any> adaptTo(other: GraphType): GraphTypeSignalAdapter<I, O> =
 		GenericGraphTypeSignalAdapter as GraphTypeSignalAdapter<I, O>
+
+	override fun literalToSignal(literal: Any): Any = literal
 }
 
 class GraphTypeRegistry {

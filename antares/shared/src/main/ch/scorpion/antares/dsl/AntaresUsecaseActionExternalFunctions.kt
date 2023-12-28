@@ -30,14 +30,6 @@ object AntaresUsecaseActionExternalFunctions : UsecaseActionExternalFunctions() 
 		clockApplications.clear()
 	}
 
-	override fun convertSignal(signal: Any): Any {
-		return when (signal) {
-			is Long -> DigitalSignalFactory.ofMinimalBitWidth(signal.toULong())
-			is ULong -> DigitalSignalFactory.ofMinimalBitWidth(signal)
-			else -> super.convertSignal(signal)
-		}
-	}
-
 	override fun defineIn(symbolTable: SymbolTable) {
 		super.defineIn(symbolTable)
 		with(symbolTable) {
