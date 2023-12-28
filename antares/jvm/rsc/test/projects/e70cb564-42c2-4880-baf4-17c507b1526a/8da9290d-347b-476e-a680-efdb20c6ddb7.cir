@@ -3,7 +3,11 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <analogGraph _id='2' type='analog' propDelay='10'>
+        <analogGraph _id='2' type='analog' script='if (I &gt; 3.5) {
+	O = 0.0
+} else {
+	O = 5.0
+}' propDelay='10'>
           <elements>
             <analogInOut _id='3' id='1' name='I' type='input'/>
             <analogInOut _id='4' id='2' name='O' type='output'/>

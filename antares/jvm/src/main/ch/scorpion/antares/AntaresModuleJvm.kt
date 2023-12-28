@@ -441,8 +441,10 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		MetaGraphIconProvider.register(AntaresGraphTypes.Digital, current = false, scripted = true, AntaresMetaGraphIcon(current = false, true))
 		MetaGraphIconProvider.register(AntaresGraphTypes.Digital, current = true, scripted = true, AntaresMetaGraphIcon(current = true, true))
 
-		MetaGraphIconProvider.register(AntaresGraphTypes.Analog, current = false, scripted = false, AnalogMetaGraphIcon(current = false))
-		MetaGraphIconProvider.register(AntaresGraphTypes.Analog, current = true, scripted = false, AnalogMetaGraphIcon(current = true))
+		MetaGraphIconProvider.register(AntaresGraphTypes.Analog, current = false, scripted = false, AnalogMetaGraphIcon(current = false, false))
+		MetaGraphIconProvider.register(AntaresGraphTypes.Analog, current = true, scripted = false, AnalogMetaGraphIcon(current = true, false))
+		MetaGraphIconProvider.register(AntaresGraphTypes.Analog, current = false, scripted = true, AnalogMetaGraphIcon(current = false, true))
+		MetaGraphIconProvider.register(AntaresGraphTypes.Analog, current = true, scripted = true, AnalogMetaGraphIcon(current = true, true))
 	}
 
 	private fun registerHelpSources() {
