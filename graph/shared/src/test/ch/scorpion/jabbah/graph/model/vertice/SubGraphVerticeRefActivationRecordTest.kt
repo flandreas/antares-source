@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.graph.library.LibraryImpl
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.library.LibraryService
 import ch.scorpion.jabbah.graph.library.MemoryLibraryPersistenceService
+import ch.scorpion.jabbah.graph.model.GenericGraphType
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.graph.LongGraphParamType
@@ -85,6 +86,7 @@ class SubGraphVerticeRefActivationRecordTest {
 		every { output.setOutgoingSignalBuffered(capture(outputSlot), any()) } returns Unit
 
 		val vv = mockk<SubGraphVerticeRef>(relaxed = true)
+		every { vv.graphType } returns GenericGraphType
 		every { vv.hasPort(any<String>()) } returns true
 		every { vv.hasPort(any<Int>()) } returns true
 		every { vv.hasInput(any()) } returns true

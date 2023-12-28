@@ -29,7 +29,7 @@ import ch.scorpion.antares.model.testcase.Testcase
 import ch.scorpion.antares.model.testcase.TestcaseAppService
 import ch.scorpion.antares.model.testcase.Testcases
 import ch.scorpion.antares.model.truthtable.*
-import ch.scorpion.antares.model.vertice.DigitalSubGraphVerticeRefActivationRecord
+import ch.scorpion.antares.model.vertice.AntaresSubGraphVerticeRefActivationRecord
 import ch.scorpion.antares.view.port.AntaresPortFactory
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
@@ -76,7 +76,7 @@ object AntaresModelModule : AbstractModule() {
 		}
 
 		GraphModelModule.subGraphVerticeRefActivationRecordFactory = { verticeRef: SubGraphVerticeRef, signalHandler: SignalHandler ->
-			DigitalSubGraphVerticeRefActivationRecord(verticeRef, signalHandler)
+			AntaresSubGraphVerticeRefActivationRecord(verticeRef, signalHandler)
 		}
 	}
 

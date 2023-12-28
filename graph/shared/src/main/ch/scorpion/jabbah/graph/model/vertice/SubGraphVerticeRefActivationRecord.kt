@@ -39,7 +39,9 @@ open class SubGraphVerticeRefActivationRecord(
 		if (!verticeRef.hasOutput(variable.token.value!!)) {
 			throw RuntimeError(variable.location, Translations.getString("graph.dsl.outputNotFound.msg", variable.token.value!!))
 		}
-		verticeRef.getOutput<Any>(variable.token.value!!).setOutgoingSignalBuffered(value, signalHandler)
+		// Convert between GraphTypes
+		val outerTypeValue = verticeRef.graphType.adaptTo<Any, Any>(verticeRef.getGraph().type).convertOutgoingSignal(value)
+		verticeRef.getOutput<Any>(variable.token.value!!).setOutgoingSignalBuffered(outerTypeValue, signalHandler)
 	}
 
 	override fun getValue(variable: Variable): Any =
@@ -47,7 +49,10 @@ open class SubGraphVerticeRefActivationRecord(
 
 	override fun getValue(name: String, location: TextLocation): Any {
 		if (verticeRef.hasInput(name)) {
-			return verticeRef.getInput<Any>(name).getIncomingSignal()!!
+			// Convert between GraphTypes
+			val outerTypeValue = verticeRef.getInput<Any>(name).getIncomingSignal()!!
+			val adapter = verticeRef.graphType.adaptTo<Any, Any>(verticeRef.getGraph().type)
+			return adapter.convertIncomingSignal(outerTypeValue)!!
 		}
 		verticeRef.paramValues.getTypedValue<Any>(name)?.let {
 			return it.type.toDslValue(it.value)

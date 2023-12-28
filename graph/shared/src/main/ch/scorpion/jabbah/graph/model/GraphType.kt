@@ -20,7 +20,6 @@ interface GraphType: Bean {
 	 * instantiated from the specified [LibraryElement].
 	 * @return a translated message explaining why import is not possible, `null` if import is possible
 	 */
-	//fun checkImport(libraryElement: LibraryElement): Boolean = libraryElement.graphType === this
 	fun checkImport(libraryElement: LibraryElement): String? =
 		if (libraryElement.graphType === this) {
 			null
@@ -42,9 +41,8 @@ object GenericGraphType: GraphType {
 
 	override val isCombiningNets: Boolean get() = true
 
-	override fun <I: Any, O: Any> adaptTo(other: GraphType): GraphTypeSignalAdapter<I, O> {
-		throw UnsupportedOperationException("not implemented")
-	}
+	override fun <I: Any, O: Any> adaptTo(other: GraphType): GraphTypeSignalAdapter<I, O> =
+		GenericGraphTypeSignalAdapter as GraphTypeSignalAdapter<I, O>
 }
 
 class GraphTypeRegistry {
@@ -85,4 +83,12 @@ interface GraphTypeSignalAdapter<I: Any, O: Any> {
 	fun convertIncomingSignal(signal: O?): I?
 
 	fun convertOutgoingSignal(signal: I?): O?
+}
+
+object GenericGraphTypeSignalAdapter : GraphTypeSignalAdapter<Any, Any> {
+
+	override fun convertIncomingSignal(signal: Any?): Any? = signal
+
+	override fun convertOutgoingSignal(signal: Any?): Any? = signal
+
 }

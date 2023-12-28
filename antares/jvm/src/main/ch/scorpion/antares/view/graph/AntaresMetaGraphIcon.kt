@@ -58,7 +58,7 @@ open class AntaresMetaGraphIcon(
 		g.drawRect(BOX_X, BOX_Y, BOX_W, BOX_H)
 
 		// Pins
-		g.drawLine(BOX_X, BOX_Y + 5, BOX_X - PIN_W, BOX_Y + + 5)
+		g.drawLine(BOX_X, BOX_Y + 5, BOX_X - PIN_W, BOX_Y + 5)
 		g.drawLine(BOX_X, BOX_Y + 15, BOX_X - PIN_W, BOX_Y + 15)
 		g.drawLine(BOX_X + BOX_W, BOX_Y + 9, BOX_X + BOX_W + PIN_W, BOX_Y + 9)
 
@@ -82,7 +82,7 @@ open class AntaresMetaGraphIcon(
 	protected open fun customize(g: Graphics?) { }
 }
 
-class AnalogMetaGraphIcon(current: Boolean) : AntaresMetaGraphIcon(current) {
+class AnalogMetaGraphIcon(current: Boolean, scripted: Boolean) : AntaresMetaGraphIcon(current, scripted) {
 
 	companion object {
 		private const val INSET = 4
