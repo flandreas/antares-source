@@ -143,6 +143,11 @@ class GraphViewCopyPasteService(
 		if (copy is GraphStorable) {
 			val graphView = (copy as GraphStorable).graphView
 
+			// Check GraphType
+			if (graphView.graph?.type != (drawing as GraphView).graph?.type) {
+				throw IllegalArgumentException("cannot paste: incompatible GraphTypes")
+			}
+
 			cleanupDanglingNodeViews(graphView)
 			cleanupNets(graphView)
 			disconnectVerticesFromNetsWithoutEdgeView(graphView)
