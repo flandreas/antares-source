@@ -44,7 +44,7 @@
                 <polylineShape points='-287.0,-133.0 -287.0,-196.0 -189.0,-196.0'/>
               </shape>
             </analogEdgeView>
-            <lightBulbView _id='22' id='4' rot='90' filled='true' stroked='true' modelId='8' x='-70.0' y='-84.0' minCurrent='0.0' maxCurrent='0.1'/>
+            <lightBulbView _id='22' id='4' rot='90' filled='true' stroked='true' modelId='8' x='-70.0' y='-84.0' minCurrent='0.0' maxCurrent='0.1' lightColor='white'/>
             <analogEdgeView _id='23' id='5' filled='true' stroked='true' modelId='9' layout='ortho' orig='20' origPort='1' origPortOutput='true' dest='22' destPort='2' destPortOutput='true' adjusted='false'>
               <shape>
                 <polylineShape points='-147.0,-196.0 -70.0,-196.0 -70.0,-126.0'/>

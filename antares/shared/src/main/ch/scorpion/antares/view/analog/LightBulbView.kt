@@ -106,6 +106,7 @@ class LightBulbView(
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
+		lightColor = LightColor.withName(reader.readString("lightColor"))
 		if (reader.hasAttribute("minCurrent")) {
 			minCurrent = reader.readDouble("minCurrent")
 		}
@@ -116,6 +117,7 @@ class LightBulbView(
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
+		writer.writeString("lightColor", lightColor.customName)
 		writer.writeDouble("minCurrent", minCurrent)
 		writer.writeDouble("maxCurrent", maxCurrent)
 	}
