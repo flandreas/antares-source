@@ -85,6 +85,7 @@ class AnalogGraphView(
 	}
 
 	override fun executionStop(signalHandler: SignalHandler) {
+		super.executionStop(signalHandler)
 		CurrentFlowAnimator.unregister(this)
 	}
 

@@ -130,6 +130,12 @@ class AnalogEdgeView(
 		animationOffset = 0.0
 	}
 
+	override fun executionStopped(signalHandler: SignalHandler) {
+		super.executionStopped(signalHandler)
+		current = 0.0
+		animationOffset = 0.0
+	}
+
 	override fun getExecutionTooltipContent(): String =
 		Translations.getString("antares.analogEdgeView.simTooltipContent",
 			model.signal!!.roundedDesc(100),
