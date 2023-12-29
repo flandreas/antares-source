@@ -123,7 +123,7 @@ enum class TransistorViewSymbol(
 		private fun drawBulk(view: AbstractTransistorView<*>, context: DrawContext) {
 			view.apply {
 				val dx = if (view.drawOnOff && !model.isOn && context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-					0.5 * SCALE
+					view.switchOffDisplacement
 				} else {
 					0.0
 				}

@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.analog.AnalogTransistor
 import ch.scorpion.antares.model.net.TransistorType
 import ch.scorpion.antares.view.Handedness
 import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.Look.SCALE
 import ch.scorpion.antares.view.analog.engine.AnalogElement
 import ch.scorpion.antares.view.analog.engine.AnalogElementProxy
 import ch.scorpion.antares.view.net.AbstractTransistorView
@@ -21,6 +22,10 @@ class AnalogTransistorView(
 ) : AbstractTransistorView<AnalogTransistor>(styleProvider, model, handedness),
 	AnalogElement by analogElement
 {
+	companion object {
+		private const val MAX_SWITCH_OFF_DISPLACEMENT = 1.0 * SCALE
+		private const val MAX_GDS = 0.06
+	}
 
 	constructor(type: TransistorType): this(model = AnalogTransistor(type), handedness = DEFAULT_HANDEDNESS)
 
@@ -38,7 +43,11 @@ class AnalogTransistorView(
 		setBounds(AbstractAntaresPortView.LENGTH, -5 * Look.SCALE, WIDTH, HEIGHT)
 	}
 
-	override val drawOnOff: Boolean get() = false
+	override val drawOnOff: Boolean get() = true
+
+	override val switchOffDisplacement: Double get() = //0.0
+		(model.gds / MAX_GDS * MAX_SWITCH_OFF_DISPLACEMENT).coerceIn(0.0, MAX_SWITCH_OFF_DISPLACEMENT)
+
 
 	override fun modelExchanged(oldModel: AnalogTransistor?) {
 		super.modelExchanged(oldModel)

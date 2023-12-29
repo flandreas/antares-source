@@ -33,6 +33,8 @@ class TransistorView(
 
 	override val drawOnOff: Boolean get() = true
 
+	override val switchOffDisplacement: Double get() = 0.5 * SCALE
+
 	override fun modelExchanged(oldModel: Transistor?) {
 		super.modelExchanged(oldModel)
 

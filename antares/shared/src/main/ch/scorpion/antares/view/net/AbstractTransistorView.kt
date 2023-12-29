@@ -175,6 +175,13 @@ abstract class AbstractTransistorView<T: TransistorIF<*>>(
 	/** If `true`, the symbol visualizes the on/off state of this [AbstractTransistorView] (if supported by the symbol style). */
 	abstract val drawOnOff: Boolean
 
+	/**
+	 * The displacement (in view coordinates) of the on/off indication. For digital transistors, this will either be
+	 * 0 (if the transistor is "on") or a maximum value (if the transistor is "off". For analog transistors, this will
+	 * be a value that corresponds with the transistors source/drain conductance.
+	 */
+	abstract val switchOffDisplacement: Double
+
 	val northPortView: PortView<*> get() =
 		if (handedness == DEFAULT_HANDEDNESS) {
 			when (transistorType) {

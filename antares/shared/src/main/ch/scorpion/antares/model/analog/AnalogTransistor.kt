@@ -67,6 +67,9 @@ class AnalogTransistor(
 
 	/** ---- [AnalogElement] */
 
+	var gds: Double = 0.0
+		private set
+
 	private var lastV0: Double = 0.0
 	private var lastV2: Double = 0.0
 	private var ids: Double = 0.0
@@ -120,7 +123,8 @@ class AnalogTransistor(
 
 		ids = 0.0
 		gm = 0.0
-		var gds = 0.0
+
+		gds = 0.0
 
 		if (vgs < vt) {
 			// Should be all zero, but that causes a singular matrix. Instead, treat it as a large resistor.
