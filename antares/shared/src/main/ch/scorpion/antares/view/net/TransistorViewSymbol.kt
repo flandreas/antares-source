@@ -246,10 +246,10 @@ enum class TransistorViewSymbol(
 					}
 				} else {
 					// Bar
-					if (view.drawOnOff && context.castedAppContext<GraphApplicationContext>()!!.isExecute && !view.model.isOn) {
-						// Switched off
+					if (view.drawOnOff && context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 						drawLine(signalLineX, -4.0 * SCALE, signalLineX, -3.5 * SCALE)
-						drawLine(signalLineX, -3.5 * SCALE, signalLineX + SCALE, -2.0 * SCALE)
+						drawLine(signalLineX, -3.5 * SCALE, signalLineX + view.switchOffDisplacement, -2.0 * SCALE)
+
 					} else {
 						drawLine(signalLineX, -4.0 * SCALE, signalLineX, -2.0 * SCALE)
 					}
@@ -283,10 +283,9 @@ enum class TransistorViewSymbol(
 					}
 				} else {
 					// Bar
-					if (view.drawOnOff && context.castedAppContext<GraphApplicationContext>()!!.isExecute && !view.model.isOn) {
-						// Switched off
+					if (view.drawOnOff && context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 						drawLine(signalLineX, 0.0, signalLineX, -0.5 * SCALE)
-						drawLine(signalLineX, -0.5 * SCALE, signalLineX + SCALE, -2.0 * SCALE)
+						drawLine(signalLineX, -0.5 * SCALE, signalLineX + view.switchOffDisplacement, -2.0 * SCALE)
 					} else {
 						drawLine(signalLineX, 0.0, signalLineX, -2.0 * SCALE)
 					}

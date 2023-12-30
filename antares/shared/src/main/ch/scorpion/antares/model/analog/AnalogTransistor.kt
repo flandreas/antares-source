@@ -67,15 +67,15 @@ class AnalogTransistor(
 
 	/** ---- [AnalogElement] */
 
-	var gds: Double = 0.0
-		private set
-
+	private var gm: Double = 0.0
+	private var gds: Double = 0.0
 	private var lastV0: Double = 0.0
 	private var lastV2: Double = 0.0
 	private var ids: Double = 0.0
-	private var gm: Double = 0.0
 	private var vt: Double = DEF_THRESHOLD
 	private var mode = 0
+
+	val conductance: Double get() = abs(-gds - gm)
 
 	override fun stamp(analysis: AnalogCircuitAnalysis) {
 		analysis.stampNonLinear(analogElem.nodes[0])

@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.base.geom.Direction.*
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition.HIDE
+import kotlin.math.abs
 
 class AnalogTransistorView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
@@ -24,7 +25,7 @@ class AnalogTransistorView(
 {
 	companion object {
 		private const val MAX_SWITCH_OFF_DISPLACEMENT = 1.0 * SCALE
-		private const val MAX_GDS = 0.06
+		private const val MAX_CONDUCTANCE = 0.07
 	}
 
 	constructor(type: TransistorType): this(model = AnalogTransistor(type), handedness = DEFAULT_HANDEDNESS)
@@ -45,8 +46,8 @@ class AnalogTransistorView(
 
 	override val drawOnOff: Boolean get() = true
 
-	override val switchOffDisplacement: Double get() = //0.0
-		(model.gds / MAX_GDS * MAX_SWITCH_OFF_DISPLACEMENT).coerceIn(0.0, MAX_SWITCH_OFF_DISPLACEMENT)
+	override val switchOffDisplacement: Double get() =
+		abs(MAX_CONDUCTANCE - model.conductance) / MAX_CONDUCTANCE * MAX_SWITCH_OFF_DISPLACEMENT.coerceIn(0.0, MAX_SWITCH_OFF_DISPLACEMENT)
 
 
 	override fun modelExchanged(oldModel: AnalogTransistor?) {
