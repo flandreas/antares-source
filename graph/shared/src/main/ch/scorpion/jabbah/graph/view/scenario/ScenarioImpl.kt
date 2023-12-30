@@ -49,7 +49,9 @@ class ScenarioImpl(
 	private val conditionScriptASTCache = resettableLazy {
 		LOG.trace("Parsing condition script of '${name.value}'")
 		createParser(conditionScript, null)
-			.parseCatching(ScriptMetaData(name.value, Translations.getString("graph.property.scenario.condition.name")))
+			.parseCatching(ScriptMetaData(
+				Translations.getString("scenario.issueOrigin.name", name.value),
+				Translations.getString("graph.property.scenario.condition.name")))
 	}
 
 	private var interpreter: Interpreter? = null
@@ -91,7 +93,9 @@ class ScenarioImpl(
 	override val condition: (DrawingView<GraphView>) -> Boolean get() = { view ->
 		interpreter?.let {
 			it.interpretCatching(
-				ScriptMetaData(name.value, Translations.getString("graph.property.scenario.condition.name")),
+				ScriptMetaData(
+					Translations.getString("scenario.issueOrigin.name", name.value),
+					Translations.getString("graph.property.scenario.condition.name")),
 				view.drawing.graph!!) != 0L
 		} ?: false
 	}

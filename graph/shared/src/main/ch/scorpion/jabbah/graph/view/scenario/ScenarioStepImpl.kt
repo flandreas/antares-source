@@ -42,7 +42,9 @@ class ScenarioStepImpl(
 		conditionScript?.let {
 			LOG.trace("Parsing condition script of '${name.value}'")
 			createParser(it, null)
-				.parseCatching(ScriptMetaData(name.value, Translations.getString("graph.property.scenario.condition.name")))
+				.parseCatching(ScriptMetaData(
+					Translations.getString("scenarioStep.issueOrigin.name", name.value),
+					Translations.getString("graph.property.scenario.condition.name")))
 		}
 	}
 
@@ -59,7 +61,9 @@ class ScenarioStepImpl(
 		onEntryScript?.let {
 			LOG.trace("Parsing onEntry script of '${name.value}'")
 			createParser(it, null)
-				.parseCatching(ScriptMetaData(name.value, Translations.getString("graph.property.scenario.onEntry.name")))
+				.parseCatching(ScriptMetaData(
+					Translations.getString("scenarioStep.issueOrigin.name", name.value),
+					Translations.getString("graph.property.scenario.onEntry.name")))
 		}
 	}
 
@@ -72,7 +76,9 @@ class ScenarioStepImpl(
 		onExitScript?.let {
 			LOG.trace("Parsing onExit script of '${name.value}'")
 			createParser(it, null)
-				.parseCatching(ScriptMetaData(name.value, Translations.getString("graph.property.scenario.onExit.name")))
+				.parseCatching(ScriptMetaData(
+					Translations.getString("scenarioStep.issueOrigin.name", name.value),
+					Translations.getString("graph.property.scenario.onExit.name")))
 		}
 	}
 
@@ -131,7 +137,9 @@ class ScenarioStepImpl(
 	override val condition: (DrawingView<GraphView>) -> Boolean get() = { view ->
 		conditionInterpreter?.let {
 			it.interpretCatching(
-				ScriptMetaData(name.value, Translations.getString("graph.property.scenario.condition.name")),
+				ScriptMetaData(
+					Translations.getString("scenarioStep.issueOrigin.name", name.value),
+					Translations.getString("graph.property.scenario.condition.name")),
 				view.drawing.graph!!) != 0L
 		} ?: false
 	}
@@ -152,13 +160,17 @@ class ScenarioStepImpl(
 
 	override fun activate(view: DrawingView<GraphView>) {
 		onEntryInterpreter?.interpretCatching(
-			ScriptMetaData(name.value, Translations.getString("graph.property.scenario.onEntry.name")),
+			ScriptMetaData(
+				Translations.getString("scenarioStep.issueOrigin.name", name.value),
+				Translations.getString("graph.property.scenario.onEntry.name")),
 			view.drawing.graph)
 	}
 
 	override fun passivate(view: DrawingView<GraphView>) {
 		onExitInterpreter?.interpretCatching(
-			ScriptMetaData(name.value, Translations.getString("graph.property.scenario.onExit.name")),
+			ScriptMetaData(
+				Translations.getString("scenarioStep.issueOrigin.name", name.value),
+				Translations.getString("graph.property.scenario.onExit.name")),
 			view.drawing.graph)
 	}
 
