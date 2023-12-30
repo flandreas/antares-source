@@ -286,7 +286,7 @@ object AntaresViewModule : AbstractModule() {
 		properties.set(VideoRamView.PROP_ICON_PATH, "/img/videoram.png")
 
 		properties.set(LightBulbView.PROP_ICON_PATH, "/img/led.png")
-		properties.set(AnalogSwitchView.PROP_ICON_PATH, "/img/led.png")
+		properties.set(AnalogSwitchView.PROP_ICON_PATH, "/img/real-switch.png")
 
 		properties.set(LogicGateView.PROP_DATA_FLOW_ENABLED, true)
 		properties.set(AbstractTransistorView.PROP_TRANSISTOR_CIRCLE, true)
