@@ -334,6 +334,14 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 			add(buildAnalogPreferenceTree())
 
 			add(EnumPreference(
+				id = SymbolStyle.PROP_SYMBOL_STYLE,
+				nameKey = "antares.action.symbolStyle",
+				values = SymbolStyle.values(),
+				withName = SymbolStyle::withName,
+				needsRestart = true
+			))
+
+			add(EnumPreference(
 				id = ContainerDrawingLayouter.PROP_CONTAINER_DRAWING_LAYOUTER,
 				nameKey = "graph.containerLayout",
 				values = ContainerDrawingLayouter.values(),
@@ -349,14 +357,6 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 	private fun buildDigitalPreferenceTree(): PreferenceGroup =
 		PreferenceGroup(PREF_TREE_CIRCUIT_DIGITAL).apply {
 			add(buildDigitalExpressionsPreferenceTree())
-
-			add(EnumPreference(
-				id = SymbolStyle.PROP_SYMBOL_STYLE,
-				nameKey = "antares.action.symbolStyle",
-				values = SymbolStyle.values(),
-				withName = SymbolStyle::withName,
-				needsRestart = true
-			))
 
 			add(EnumPreference(
 				id = UndefinedGateInputBehavior.PROP_UNDEFINED_GATE_INPUT_BEHAVIOR,
