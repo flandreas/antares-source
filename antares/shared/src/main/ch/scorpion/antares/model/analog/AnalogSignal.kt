@@ -21,7 +21,7 @@ data class AnalogSignal(val voltage: Double): Comparable<AnalogSignal> {
 
 	val color: CompositeColor by lazy { AnalogSignalColor.ofSignal(this) }
 
-	override fun toString(): String = "$voltage V"
+	override fun toString(): String = "${roundedDesc()} V"
 
 	override fun compareTo(other: AnalogSignal): Int =
 		this.voltage.compareTo(other.voltage)
