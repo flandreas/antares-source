@@ -3,11 +3,11 @@ package ch.scorpion.jabbah.execution
 import ch.scorpion.jabbah.base.IssueSeverity
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.swing.ShowSidebarPaneContentRequest
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.execution.issue.*
 import java.awt.BorderLayout
 import java.awt.Component
-import javax.swing.ImageIcon
 import javax.swing.JPanel
 import javax.swing.JScrollPane
 import javax.swing.JTable
@@ -15,7 +15,7 @@ import javax.swing.table.AbstractTableModel
 import javax.swing.table.DefaultTableCellRenderer
 
 class IssuesViewSwing(
-	controller: IssuesViewController
+	private val controller: IssuesViewController
 ) : JPanel(), IssuesView {
 
 	companion object {
@@ -42,8 +42,9 @@ class IssuesViewSwing(
 		storeColumnsWidths()
 	}
 
-	override fun refresh() {
+	override fun notifyNewIssues() {
 		(table.model as IssueTableModel).fireTableDataChanged()
+		controller.eventBus.post(ShowSidebarPaneContentRequest(this))
 	}
 
 	private fun buildUI() {

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.execution.issue
 
+import ch.scorpion.jabbah.base.Issue
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.base.AbstractAction
@@ -11,18 +12,20 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.module.ExecutionModule
 
 interface IssuesView : UIView {
-	fun refresh()
+
+	/** Informs this [IssuesView] that new [Issue]s have arrived.*/
+	fun notifyNewIssues()
 }
 
 class IssuesViewController(
 	val issueCollector: IssueCollector = ExecutionModule.issueCollector,
-	private val eventBus: EventBus = BaseModule.eventBus
+	val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<IssuesView>() {
 
 	val clearAction: Action = ClearIssuesViewAction()
 
 	private val issueCollectorEventHandler: EventHandler<IssueCollectorEvent> = {
-		view.refresh()
+		view.notifyNewIssues()
 	}
 
 	init {
