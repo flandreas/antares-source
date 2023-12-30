@@ -235,6 +235,18 @@ enum class SymbolStyle(
 			.quadTo(0.5 * SCALE, 4.0 * SCALE, -SCALE.toDouble(), SCALE.toDouble())
 			.close()
 
+		val XOR_PATH = System.createPath()
+			.moveTo(-SCALE, SCALE)
+			.lineTo(SCALE, SCALE)
+			.quadTo(4 * SCALE, SCALE, 6 * SCALE, 4 * SCALE)
+			.quadTo(4 * SCALE, 7 * SCALE, SCALE, 7 * SCALE)
+			.lineTo(-SCALE, 7 * SCALE)
+			.quadTo(0.5 * SCALE, 4.0 * SCALE, -SCALE.toDouble(), SCALE.toDouble())
+			.close()
+			.moveTo(-SCALE - EXCLUSIVE_OFFSET, 7 * SCALE.toDouble())
+			.quadTo(0.5 * SCALE - EXCLUSIVE_OFFSET, 4.0 * SCALE, -SCALE - EXCLUSIVE_OFFSET, SCALE.toDouble())
+			.quadTo(0.5 * SCALE - EXCLUSIVE_OFFSET, 4.0 * SCALE, -SCALE - EXCLUSIVE_OFFSET, 7 * SCALE.toDouble())
+
 		private val EXCLUSIVE_PATH = System.createPath()
 			.moveTo(-SCALE - EXCLUSIVE_OFFSET, 7 * SCALE.toDouble())
 			.quadTo(0.5 * SCALE - EXCLUSIVE_OFFSET, 4.0 * SCALE, -SCALE - EXCLUSIVE_OFFSET, SCALE.toDouble())

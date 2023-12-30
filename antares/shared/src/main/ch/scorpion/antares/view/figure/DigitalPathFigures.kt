@@ -24,6 +24,12 @@ class OrGateFigure : AbstractPathFigure(SymbolStyle.OR_PATH.clone(), TYPE) {
 	}
 }
 
+class XorGateFigure : AbstractPathFigure(SymbolStyle.XOR_PATH.clone(), TYPE) {
+	companion object {
+		val TYPE: String by lazy { Translations.getString("antares.figure.xorShape") }
+	}
+}
+
 class NotGateFigure : AbstractPathFigure(SymbolStyle.NOT_PATH.clone(), TYPE) {
 	companion object {
 		val TYPE: String by lazy { Translations.getString("antares.figure.notShape") }

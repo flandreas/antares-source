@@ -10,4 +10,7 @@ class AndGateFigureBeanInfo : AbstractComponentBeanInfo<AndGateFigure>()
 class OrGateFigureBeanInfo : AbstractComponentBeanInfo<OrGateFigure>()
 
 @Suppress("unused") // Reflection
+class XorGateFigureBeanInfo : AbstractComponentBeanInfo<XorGateFigure>()
+
+@Suppress("unused") // Reflection
 class NotGateFigureBeanInfo : AbstractComponentBeanInfo<NotGateFigure>()

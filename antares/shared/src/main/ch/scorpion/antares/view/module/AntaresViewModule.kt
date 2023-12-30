@@ -362,6 +362,7 @@ object AntaresViewModule : AbstractModule() {
 
 		typeMap.register("andGateShape", AndGateFigure::class)
 		typeMap.register("orGateShape", OrGateFigure::class)
+		typeMap.register("xorGateShape", XorGateFigure::class)
 		typeMap.register("notGateShape", NotGateFigure::class)
 
 		// Analog
@@ -440,6 +441,7 @@ object AntaresViewModule : AbstractModule() {
 
 		factory.register(SelectionDrawingStrategy.REPLACE, AndGateFigure::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, OrGateFigure::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, XorGateFigure::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, NotGateFigure::class) { SelectedColorSelectionModel(it) }
 
 		// Analog
@@ -727,6 +729,7 @@ object AntaresViewModule : AbstractModule() {
 		FigureRegistry.registerGroup(Translations.getString("antares.figureGroup.circuitSymbols")).apply {
 			register(FigureProvider(AndGateFigure.TYPE) { AndGateFigure() })
 			register(FigureProvider(OrGateFigure.TYPE) { OrGateFigure() })
+			register(FigureProvider(XorGateFigure.TYPE) { XorGateFigure() })
 			register(FigureProvider(NotGateFigure.TYPE) { NotGateFigure() })
 			register(FigureProvider(Translations.getString("antares.figure.multiplexer")) { createMultiplexerFigure() })
 			register(FigureProvider(Translations.getString("antares.figure.demultiplexer")) { createDemultiplexerFigure() })
