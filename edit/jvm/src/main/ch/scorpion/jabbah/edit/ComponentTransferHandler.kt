@@ -1,23 +1,29 @@
 package ch.scorpion.jabbah.edit
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.drawable.RotationDirection
 import ch.scorpion.jabbah.edit.app.DrawingAppService
+import ch.scorpion.jabbah.edit.app.RotateAction
 import ch.scorpion.jabbah.edit.drag.DropEvent
 import ch.scorpion.jabbah.edit.module.EditModule
+import java.awt.KeyEventDispatcher
+import java.awt.KeyboardFocusManager
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.Transferable
 import java.awt.dnd.DropTarget
 import java.awt.dnd.DropTargetDragEvent
 import java.awt.dnd.DropTargetDropEvent
 import java.awt.dnd.DropTargetEvent
+import java.awt.event.KeyEvent
 import javax.swing.JComponent
 import javax.swing.JPanel
+import javax.swing.KeyStroke
 import javax.swing.SwingUtilities
 import javax.swing.TransferHandler
-
 
 /**
  * Handles drop gestures with [Component]s on [DrawingView]s.
@@ -31,10 +37,13 @@ open class ComponentTransferHandler(
 
 	companion object {
         private val LOG by logger(ComponentTransferHandler::class)
+		private val ROTATE_KEY_STROKE = KeyStroke.getKeyStroke(Translations.getString(ch.scorpion.jabbah.base.System.getActionAcceleratorKey(RotateAction.ACTION_KEY)))
 	}
 
 	/** Preserves the [Transferable] until the final drop action.*/
 	private var transferable: Transferable? = null
+
+	private val rotationKeyEventDispatcher = RotationKeyEventDispatcher()
 
     protected open fun extractTransferData (transferData: Any?): Any? = transferData
 
@@ -59,7 +68,7 @@ open class ComponentTransferHandler(
             override fun dragExit(dte: DropTargetEvent?) {
                 super.dragExit(dte)
 	            editor.dragManager.dropComponent?.let {
-	            	editor.dragManager.setDropComponent(null, null)
+					resetComponent()
 	            }
             }
 
@@ -80,21 +89,27 @@ open class ComponentTransferHandler(
                     if (dropComponent != null && canImport(dropComponent, localTransferable!!)) {
                         SwingUtilities.invokeLater { importElement(dropComponent, localTransferable, eventBus) }
                     }
-	                editor.dragManager.setDropComponent(null, null)
+	                resetComponent()
                     transferable = null
                 }
 	            dtde.dropComplete(true)
             }
 
             private fun setComponent(component: Component, location: Point2D) {
+	            if (editor.dragManager.dropComponent !== component) {
+	                KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(rotationKeyEventDispatcher)
+				}
 				editor.dragManager.setDropComponent(component, editor.view.viewToModel(location))
+			}
+
+	        private fun resetComponent() {
+		        editor.dragManager.setDropComponent(null, null)
+		        KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventDispatcher(rotationKeyEventDispatcher)
 			}
         }
     }
 
-	override fun canImport(support: TransferSupport): Boolean {
-        return support.isDataFlavorSupported(flavour)
-    }
+	override fun canImport(support: TransferSupport): Boolean = support.isDataFlavorSupported(flavour)
 
     /**
      * Checks whether the specified [Component] is allowed to be imported into the current [Editor]'s
@@ -123,5 +138,25 @@ open class ComponentTransferHandler(
 		val component = service.add(dropComponent, editor.view)
 		editor.dragManager.finishDrop(component)
 		return component
+	}
+
+	private inner class RotationKeyEventDispatcher : KeyEventDispatcher {
+		override fun dispatchKeyEvent(e: KeyEvent?): Boolean {
+			if (e != null) {
+				val keyStroke = KeyStroke.getKeyStrokeForEvent(e)
+				if ((e.id == KeyEvent.KEY_RELEASED || e.id == KeyEvent.KEY_PRESSED)
+					&& !e.isConsumed
+					&& keyStroke.keyCode == ROTATE_KEY_STROKE.keyCode
+					&& keyStroke.modifiers == ROTATE_KEY_STROKE.modifiers
+				) {
+					LOG.userTrail("Rotate Component while dragging into Drawing")
+					editor.dragManager.dropComponent?.rotate(RotationDirection.CounterClockwise)
+					editor.view.repaint()
+					e.consume()
+					return true
+				}
+			}
+			return false
+		}
 	}
 }

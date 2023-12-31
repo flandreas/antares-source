@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view.app
 
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.app.DeleteCommand
@@ -38,6 +39,7 @@ interface GraphViewAppService : DrawingAppService {
 	fun addGraphElementViewFromLibrary(
 		libraryElement: LibraryElement,
 		location: Point2D,
+		rotation: Rotation,
 		editor: Editor
 	): Component
 
@@ -122,6 +124,7 @@ open class GraphViewAppServiceImpl(
 	override fun addGraphElementViewFromLibrary(
 		libraryElement: LibraryElement,
 		location: Point2D,
+		rotation: Rotation,
 		editor: Editor
 	): Component {
 		LOG.userTrail("Add Component '${libraryElement.name}' from library/project at $location")
@@ -130,6 +133,7 @@ open class GraphViewAppServiceImpl(
 			editor,
 			libraryElement,
 			location,
+			rotation,
 			componentCustomizer = ::customizeAddedComponent)
 
 		commandManager.execute(command)

@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -126,7 +127,7 @@ class GrandUiIntegrationTest {
 		val element = project.getContainerLibraryElement(componentUuid)!!
 		val editor = application.editor
 
-		return service.addGraphElementViewFromLibrary(element, Point2D.ZERO, editor) as SubGraphVerticeView<*>
+		return service.addGraphElementViewFromLibrary(element, Point2D.ZERO, Rotation.R0, editor) as SubGraphVerticeView<*>
 	}
 
 	private fun openSubGraphVerticeView(vv: SubGraphVerticeView<*>, newView: Boolean) {

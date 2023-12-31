@@ -24,10 +24,11 @@ class RotateAction(
 	eventBus: EventBus = BaseModule.eventBus,
 	viewManager: ContentViewManager = DrawViewModule.viewManager,
 	private val commandManager: CommandManager = EditModule.commandManager
-) : AbstractSelectionAwareAction(if (clockwise) "edit.action.rotateClockwise" else "edit.action.rotate", eventBus, viewManager) {
+) : AbstractSelectionAwareAction(if (clockwise) "edit.action.rotateClockwise" else ACTION_KEY, eventBus, viewManager) {
 
 	companion object {
 		private val LOG by logger(RotateAction::class)
+		const val ACTION_KEY = "edit.action.rotate"
 	}
 
 	override fun execute(event: ActionEvent) {

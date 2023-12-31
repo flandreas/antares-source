@@ -90,7 +90,7 @@ class GraphPanelTransferHandler(
 
 	override fun addComponent(dropComponent: Component, transferable: Transferable): Component {
 		val data = transferable.getTransferData(GraphElementViewTransferable.FLAVOR) as GraphElementViewTransferableData
-		return service.addGraphElementViewFromLibrary(data.libraryElement, dropComponent.location, editor)
+		return service.addGraphElementViewFromLibrary(data.libraryElement, dropComponent.location, dropComponent.rotation, editor)
 	}
 
 	private fun checkEditability(): Boolean {
@@ -140,17 +140,5 @@ class GraphPanelTransferHandler(
 				JOptionPane.ERROR_MESSAGE)
 			false
 		} ?: true
-		/*
-		if (!targetType.checkImport(sourceElement)) {
-			JOptionPane.showMessageDialog(
-				Frame.getFrames()[0],
-				Translations.getString("graph.graphTypeError.msg", sourceElement.graphType, targetType),
-				Translations.getString("graph.action.addElementToGraph.name"),
-				JOptionPane.ERROR_MESSAGE)
-			return false
-		}
-		return true
-		}
-		 */
 	}
 }

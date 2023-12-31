@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view.app
 
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.DragManager
@@ -20,6 +21,7 @@ class AddGraphElementViewFromLibraryCommand(
 	editor: Editor,
 	private val libraryElement: LibraryElement,
 	private val location: Point2D,
+	private val rotation: Rotation,
 	private val componentCustomizer: (Component, Drawing<*>) -> Unit = {_,_ -> }
 ): AbstractCommand("edit.command.add", editor) {
 
@@ -31,6 +33,7 @@ class AddGraphElementViewFromLibraryCommand(
 	override fun execute() {
 		val graphElementView = libraryElement.getNewInstance<GraphElement>()
 		graphElementView.location = location
+		graphElementView.rotation = rotation
 		graphView.add(graphElementView)
 		addedComponentId = graphElementView.id
 		val verticeView = graphView.getWithId(addedComponentId) as VerticeView
