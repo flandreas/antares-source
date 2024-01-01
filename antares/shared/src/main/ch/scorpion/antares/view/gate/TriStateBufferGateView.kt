@@ -3,6 +3,7 @@ package ch.scorpion.antares.view.gate
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.gate.TriStateBufferGate
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.Handedness
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
@@ -44,6 +45,23 @@ class TriStateBufferGateView(
 			}
 		}
 
+	var inputPortName: String?
+		get() = model.getPort<DigitalSignal>(1).name
+		set(value) {
+			if (model.getPort<DigitalSignal>(1).name != value) {
+				model.getPort<DigitalSignal>(1).name = value
+				update()
+			}
+		}
+
+	var outputPortName: String?
+		get() = model.getOutput<DigitalSignal>().name
+		set(value) {
+			invalidate()
+			model.getOutput<DigitalSignal>().name = value
+			invalidate()
+		}
+
 	init {
 		modelExchanged(null)
 	}
@@ -58,7 +76,8 @@ class TriStateBufferGateView(
 		val inputPortView = DigitalPortView(
 			styleProvider = styleProvider,
 			port = model.getInput(),
-			direction = Direction.WEST)
+			direction = Direction.WEST,
+			portLabelPosition = PortLabelPosition.EXTERNAL)
 		inputPortView.setLocation(inputPortView.unconnectedLength.toDouble(), 0.0)
 		addPortView(inputPortView)
 
@@ -66,6 +85,7 @@ class TriStateBufferGateView(
 			styleProvider = styleProvider,
 			port = model.getOutput(),
 			direction = Direction.EAST,
+			portLabelPosition = PortLabelPosition.EXTERNAL,
 			x = inputPortView.unconnectedLength + bounds.width.toInt(),
 			y = 0))
 

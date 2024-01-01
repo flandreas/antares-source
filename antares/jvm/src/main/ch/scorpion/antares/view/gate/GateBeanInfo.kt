@@ -32,10 +32,13 @@ class DelayGateViewBeanInfo : AbstractComponentBeanInfo<DelayGateView>() {
 
 @Suppress("unused")
 class TriStateBufferGateViewBeanInfo : DigitalComponentViewBeanInfo<TriStateBufferGateView>() {
+
 	companion object {
 		val enableLogic = CommandPropertySwing("enableLogic", Logic.BASE_KEY, Logic::class.java, componentBeanProvider)
 		private val bitWidth = AntaresProperties.bitWidth()
 		val handedness = AntaresProperties.handedness(baseKey = Handedness.BASE_KEY)
+		private val inputPortName = AntaresProperties.inputPortName(portId = 1)
+		private val outputPortName = AntaresProperties.outputPortName()
 	}
 
 	override fun addProperties(bean: TriStateBufferGateView, editor: Editor, properties: MutableList<Property>) {
@@ -43,6 +46,8 @@ class TriStateBufferGateViewBeanInfo : DigitalComponentViewBeanInfo<TriStateBuff
 
 		properties.add(enableLogic.bind(editor, beanIdProvider(bean.id)))
 		properties.add(bitWidth.bind(editor, beanIdProvider(bean.id)))
+		properties.add(inputPortName.bind(editor, beanIdProvider(bean.id)))
+		properties.add(outputPortName.bind(editor, beanIdProvider(bean.id)))
 		properties.add(handedness.bind(editor, beanIdProvider(bean.id)))
 	}
 }

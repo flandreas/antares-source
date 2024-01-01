@@ -18,11 +18,7 @@ class LogicGateViewBeanInfo  : BoxGateViewBeanInfo<LogicGateView>() {
 
 		private val bitWidth = AntaresProperties.bitWidth()
 
-		private val outputPortName = CommandPropertySwing(
-			"outputPortName",
-			LogicGateView.BASE_KEY_OUTPUT_PORT_NAME,
-			String::class.java,
-			componentBeanProvider)
+		private val outputPortName = AntaresProperties.outputPortName()
 
 		private val negateInput = Array(8) { portId ->
 			CommandPropertySwing(

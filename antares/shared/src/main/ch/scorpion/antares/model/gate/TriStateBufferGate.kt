@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.model.signal.Bit.Error
 import ch.scorpion.antares.model.signal.Bit.Undefined
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
@@ -109,12 +110,24 @@ open class TriStateBufferGate(
         super.write(writer)
 	    bitWidth.write("bitWidth", writer)
         writer.writeString("logic", enableLogic.customName)
+	    if (StringUtils.isNotEmpty(getInput<DigitalSignal>().name)) {
+		    writer.writeString("inputName", getInput<DigitalSignal>().name!!)
+	    }
+	    if (StringUtils.isNotEmpty(getOutput<DigitalSignal>().name)) {
+		    writer.writeString("outputName", getOutput<DigitalSignal>().name!!)
+	    }
     }
 
     override fun read(reader: StoreReader) {
         super.read(reader)
 	    bitWidth = BitWidth.read("bitWidth", reader)
         enableLogic = Logic.withName(reader.readString("logic"))
+	    if (reader.hasAttribute("inputName")) {
+		    getInput<DigitalSignal>().name = reader.readString("inputName")
+	    }
+	    if (reader.hasAttribute("outputName")) {
+		    getOutput<DigitalSignal>().name = reader.readString("outputName")
+	    }
     }
 
     /** ---- [Actor] */
