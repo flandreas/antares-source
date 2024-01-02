@@ -54,9 +54,9 @@ class CurrentSourceView(
 		}
 
 		context.g.stroke = stroke
-		context.g.color = backgroundColor
+		context.g.color = context.chooseBackground(transparent.applyTo(backgroundColor))
 		context.g.fillOval(xInt, yInt, SIZE, SIZE)
-		context.g.color = context.chooseForeground(foregroundColor)
+		context.g.color = context.chooseForeground(transparent.applyTo(foregroundColor))
 		context.g.drawOval(xInt, yInt, SIZE, SIZE)
 
 		// Arrow
