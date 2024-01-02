@@ -11,8 +11,8 @@ object AntaresAuthorizations {
 	fun define() {
 		Authorizer.authorize().currentUser().to(View).data(::digitalGraphs)
 		Authorizer.authorize().currentUser().to(View).data(::digitalSystemLibraries)
-		Authorizer.authorize().developer().to(View).data(::analogGraphs)
-		Authorizer.authorize().developer().to(View).data(::allLibraries)
+		Authorizer.authorize().currentUser().to(View).data(::analogGraphs)
+		Authorizer.authorize().currentUser().to(View).data(::allLibraries)
 	}
 
 	private fun digitalGraphs(data: Any): Boolean =
