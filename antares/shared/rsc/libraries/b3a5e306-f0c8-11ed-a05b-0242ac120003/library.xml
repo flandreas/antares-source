@@ -22,7 +22,7 @@
         </libraryFolder>
     </folder>
     <desc>
-        <translation lang='en' text='Contains build-in analog components'/>
+        <translation lang='en' text='Contains built-in analog components'/>
         <translation lang='de' text='Enthält alle eingebauten analogen Komponenten'/>
     </desc>
 </library>

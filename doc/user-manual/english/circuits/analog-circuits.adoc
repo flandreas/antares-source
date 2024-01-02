@@ -1,0 +1,32 @@
+= Analog Circuits
+include::../../page-variables.txt[]
+:page-permalink: /user-manual/english/circuits/analog-circuits
+
+TODO Introduction
+
+== Creating analog circuits
+
+- Select type in "New" dialog
+- Add library to project
+- Reference to "Analog" library
+
+== Designing analog circuits
+
+TODO
+
+== Simulating analog circuits
+
+TODO
+
+== Analog subcircuits
+
+- No subcircuits in analog circuits
+- Execution scripts: Express signals in voltages
+
+== Scenarios
+
+TODO
+
+== Use cases
+
+TODO

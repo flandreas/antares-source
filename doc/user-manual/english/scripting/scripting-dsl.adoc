@@ -443,7 +443,7 @@ TIP: How do you find out the model ID of a circuit component? Select the compone
 
 The above example identifies pins by their names. Remember to use quoted port names like `"!Q"` if the port name doesn't represent a legal variable name.
 
-Since names are not mandatory for ports (and a lot of build-in components like logic gates don't have port names), is is also possible to reference ports by their ID.
+Since names are not mandatory for ports (and a lot of built-in components like logic gates don't have port names), is is also possible to reference ports by their ID.
 
 [source,javascript]
 ----

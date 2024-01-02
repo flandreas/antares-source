@@ -6,7 +6,7 @@
             <translation lang='de' text='Basis'/>
         </name>
         <desc>
-            <translation lang='en' text='Contains only build-in components'/>
+            <translation lang='en' text='Contains only built-in components'/>
             <translation lang='de' text='Enthält nur alle eingebauten Komponenten'/>
         </desc>
     </libraryDictionaryEntry>
@@ -16,7 +16,7 @@
           <translation lang='de' text='Standart'/>
       </name>
       <desc>
-        <translation lang='en' text='Contains build-in components and some commonly used subcircuits'/>
+        <translation lang='en' text='Contains built-in components and some commonly used subcircuits'/>
         <translation lang='de' text='Enthält alle eingebauten Komponenten sowie einige gebräuchliche Teilschaltungen'/>
       </desc>
     </libraryDictionaryEntry>
@@ -26,7 +26,7 @@
           <translation lang='de' text='Analog'/>
       </name>
       <desc>
-          <translation lang='en' text='Contains build-in analog components'/>
+          <translation lang='en' text='Contains built-in analog components'/>
           <translation lang='de' text='Enthält alle eingebauten analogen Komponenten'/>
       </desc>
     </libraryDictionaryEntry>
