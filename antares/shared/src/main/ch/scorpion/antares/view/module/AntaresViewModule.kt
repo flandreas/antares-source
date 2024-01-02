@@ -285,7 +285,7 @@ object AntaresViewModule : AbstractModule() {
 		properties.set(JoystickView.PROP_ICON_PATH, "/img/joystick.png")
 		properties.set(VideoRamView.PROP_ICON_PATH, "/img/videoram.png")
 
-		properties.set(LightBulbView.PROP_ICON_PATH, "/img/led.png")
+		properties.set(LightBulbView.PROP_ICON_PATH, "/img/light-bulb.png")
 		properties.set(AnalogSwitchView.PROP_ICON_PATH, "/img/real-switch.png")
 
 		properties.set(LogicGateView.PROP_DATA_FLOW_ENABLED, true)
@@ -610,11 +610,18 @@ object AntaresViewModule : AbstractModule() {
 		// Analog
 
 		repository.register(LIGHT_BULB, "library.element.LightBulb", { BaseModule.properties.getString(LightBulbView.PROP_ICON_PATH) }, LightBulbView::class)
-		repository.register(BATTERY, "library.element.Battery", { "/img/led.png" }, BatteryView::class)
-		repository.register(CURRENT_SOURCE, "library.element.CurrentSource", { "/img/led.png" }, CurrentSourceView::class)
-		repository.register(RESISTOR, "library.element.Resistor", { "/img/led.png" }, ResistorView::class)
+		repository.register(BATTERY, "library.element.Battery", { "/img/battery.png" }, BatteryView::class)
+		repository.register(CURRENT_SOURCE, "library.element.CurrentSource", { "/img/current-source.png" }, CurrentSourceView::class)
+		repository.register(RESISTOR,
+			"library.element.Resistor",
+			CurrentSymbolStyleToString(mapOf(
+				SymbolStyle.AMERICAN to "/img/resistor-ansi.png",
+				SymbolStyle.EUROPEAN to "/img/resistor-iec.png",
+				SymbolStyle.VERBOSE to "/img/and-iec.png"
+			))::evaluate,
+			ResistorView::class)
 		repository.register(ANALOG_SWITCH, "library.element.AnalogSwitch", { BaseModule.properties.getString(AnalogSwitchView.PROP_ICON_PATH) }, AnalogSwitchView::class)
-		repository.register(ANALOG_GROUND, "library.element.AnalogGround", { "/img/led.png" }, AnalogGroundView::class)
+		repository.register(ANALOG_GROUND, "library.element.AnalogGround", { "/img/signal-ground.png" }, AnalogGroundView::class)
 		repository.register(ANALOG_TRANSISTOR_N, "library.element.AnalogTransistor.nType", { "/img/transistor.png" }, HelpId(AbstractTransistorView::class.simpleName!!)) {
 			AnalogTransistorView(TransistorType.N)
 		}
