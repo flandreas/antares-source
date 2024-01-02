@@ -25,11 +25,9 @@ class VHDLTestBenchCreatorIntegrationTest : AbstractStandardLibraryBasedCircuitT
 	/** Test creating a VHDL test bench for the "Half Adder" from the standard library.*/
 	@Test
 	fun shouldCreateTestBench() {
-		val model = HDLModel(getCircuitView().graph as DigitalGraph)
+		val model = HDLModel(getCircuitView().graph as DigitalGraph, VHDLRenaming())
 			.create()
-			.apply {
-				renameLabels(VHDLRenaming())
-			}
+			.apply { renameLabels() }
 
 		val params = HDLExportTestBenchParams(
 			VHDLRenaming(),
@@ -52,7 +50,7 @@ class VHDLTestBenchCreatorIntegrationTest : AbstractStandardLibraryBasedCircuitT
 			end half_adder_tb;
 			
 			architecture Behavioral of half_adder_tb is
-			  component main
+			  component Half_Adder
 			    port (
 			      A: in std_logic;
 			      B: in std_logic;
@@ -77,7 +75,7 @@ class VHDLTestBenchCreatorIntegrationTest : AbstractStandardLibraryBasedCircuitT
 			  end function;			
 			
 			begin
-			  main_0 : main port map (
+			  main_0 : Half_Adder port map (
 			    A => A,
 			    B => B,
 			    S => S,

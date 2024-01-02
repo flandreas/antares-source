@@ -38,13 +38,13 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 			use ieee.numeric_std.all;
 
 			-- test
-			entity main is
+			entity test is
 			  port (
 			    I: in std_logic;
 			    O: out std_logic);
-			end main;
+			end test;
 
-			architecture Behavioral of main is
+			architecture Behavioral of test is
 			begin
 			  O <= I;
 			end Behavioral;
@@ -64,9 +64,10 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 		builder.connect(subGraphVV1, subGraphVV1.model.getOutput(), subGraphVV2, subGraphVV2.model.getInput())
 		builder.connect(subGraphVV2, subGraphVV2.model.getOutput(), output)
 
-		VHDLGenerator(testParams()).generateHDL(printer, builder.graph as DigitalGraph)
+		val params = testParams()
+		VHDLGenerator(params).generateHDL(printer, builder.graph as DigitalGraph)
 
-		val entityName = VHDLRenaming().checkName(nop.uuid.id)
+		val entityName = params.renaming.checkName(nop.name)
 
 		assertEquals("""
 			library ieee;
@@ -90,13 +91,13 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 			use ieee.numeric_std.all;
 			
 			-- test
-			entity main is
+			entity test is
 			  port (
 			    A: in std_logic;
 			    B: out std_logic);
-			end main;
+			end test;
 			
-			architecture Behavioral of main is
+			architecture Behavioral of test is
 			  signal s0: std_logic;
 			begin
 			  node0: entity work.$entityName
@@ -123,13 +124,13 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 			use ieee.numeric_std.all;
 
 			-- test
-			entity main is
+			entity test is
 			  port (
 			    I1: in std_logic;
 			    O1: out std_logic);
-			end main;
+			end test;
 
-			architecture Behavioral of main is
+			architecture Behavioral of test is
 			begin
 			  O1 <= NOT I1 after ${AbstractLogicGate.DEFAULT_PROPAGATION_DELAY} ns;
 			end Behavioral;
@@ -151,14 +152,14 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 			use ieee.numeric_std.all;
 
 			-- test
-			entity main is
+			entity test is
 			  port (
 			    I1: in std_logic;
 			    I2: in std_logic;
 			    O1: out std_logic);
-			end main;
+			end test;
 
-			architecture Behavioral of main is
+			architecture Behavioral of test is
 			  signal s0: std_logic;
 			begin
 			  O1 <= NOT s0 after ${AbstractLogicGate.DEFAULT_PROPAGATION_DELAY} ns;
@@ -216,14 +217,14 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 			use ieee.numeric_std.all;
 
 			-- test
-			entity main is
+			entity test is
 			  port (
 			    A: in std_logic;
 			    B: in std_logic;
 			    O: out std_logic);
-			end main;
+			end test;
 
-			architecture Behavioral of main is
+			architecture Behavioral of test is
 			begin
 			  ${expression};
 			end Behavioral;
@@ -257,13 +258,13 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 			use ieee.numeric_std.all;
 
 			-- test
-			entity main is
+			entity test is
 			  port (
 			    I: in std_logic;
 			    O: out std_logic);
-			end main;
+			end test;
 
-			architecture Behavioral of main is
+			architecture Behavioral of test is
 			begin
 			  ${expression};
 			end Behavioral;
@@ -286,12 +287,12 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 			use ieee.numeric_std.all;
 
 			-- test
-			entity main is
+			entity test is
 			  port (
 			    O: out std_logic);
-			end main;
+			end test;
 
-			architecture Behavioral of main is
+			architecture Behavioral of test is
 			begin
 			  O <= '1';
 			end Behavioral;
@@ -316,12 +317,12 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 			use ieee.numeric_std.all;
 
 			-- test
-			entity main is
+			entity test is
 			  port (
 			    O: out std_logic);
-			end main;
+			end test;
 
-			architecture Behavioral of main is
+			architecture Behavioral of test is
 			begin
 			  O <= '1';
 			end Behavioral;
@@ -347,13 +348,13 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 			use ieee.numeric_std.all;
 
 			-- test
-			entity main is
+			entity test is
 			  port (
 			    O1: out std_logic;
 			    O2: out std_logic);
-			end main;
+			end test;
 
-			architecture Behavioral of main is
+			architecture Behavioral of test is
 			begin
 			  O1 <= '1';
 			  O2 <= '0';
@@ -382,14 +383,14 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 			use ieee.numeric_std.all;
 
 			-- test
-			entity main is
+			entity test is
 			  port (
 			    A: in std_logic;
 			    B: in std_logic;
 			    O: out std_logic);
-			end main;
+			end test;
 
-			architecture Behavioral of main is
+			architecture Behavioral of test is
 			begin
 			  O <= (NOT A AND B) after ${AbstractLogicGate.DEFAULT_PROPAGATION_DELAY} ns;
 			end Behavioral;
@@ -407,13 +408,13 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 			use ieee.numeric_std.all;
 
 			-- test
-			entity main is
+			entity test is
 			  port (
 			    CLK: in std_logic;
 			    O: out std_logic);
-			end main;
+			end test;
 
-			architecture Behavioral of main is
+			architecture Behavioral of test is
 			begin
 			  O <= CLK;
 			end Behavioral;

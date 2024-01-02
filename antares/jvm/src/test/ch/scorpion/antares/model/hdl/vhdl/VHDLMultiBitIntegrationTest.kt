@@ -27,13 +27,13 @@ class VHDLMultiBitIntegrationTest : AbstractVHDLTest() {
 			use ieee.numeric_std.all;
 
 			-- test
-			entity main is
+			entity test is
 			  port (
 			    I: in std_logic_vector(3 downto 0);
 			    O: out std_logic_vector(3 downto 0));
-			end main;
+			end test;
 
-			architecture Behavioral of main is
+			architecture Behavioral of test is
 			begin
 			  O <= I;
 			end Behavioral;
@@ -55,14 +55,14 @@ class VHDLMultiBitIntegrationTest : AbstractVHDLTest() {
 			use ieee.numeric_std.all;
 
 			-- test
-			entity main is
+			entity test is
 			  port (
 			    I1: in std_logic_vector(3 downto 0);
 			    I2: in std_logic_vector(3 downto 0);
 			    O1: out std_logic_vector(3 downto 0));
-			end main;
+			end test;
 
-			architecture Behavioral of main is
+			architecture Behavioral of test is
 			  signal s0: std_logic_vector(3 downto 0);
 			begin
 			  O1 <= NOT s0 after ${AbstractLogicGate.DEFAULT_PROPAGATION_DELAY} ns;
@@ -91,14 +91,14 @@ class VHDLMultiBitIntegrationTest : AbstractVHDLTest() {
 			use ieee.numeric_std.all;
 			
 			-- test
-			entity main is
+			entity test is
 			  port (
 			    I0: in std_logic;
 			    I1: in std_logic;
 			    O: out std_logic_vector(1 downto 0));
-			end main;
+			end test;
 			
-			architecture Behavioral of main is
+			architecture Behavioral of test is
 			begin
 			  O(0) <= I0;
 			  O(1) <= I1;
@@ -126,14 +126,14 @@ class VHDLMultiBitIntegrationTest : AbstractVHDLTest() {
 			use ieee.numeric_std.all;
 			
 			-- test
-			entity main is
+			entity test is
 			  port (
 			    I0: in std_logic_vector(1 downto 0);
 			    I1: in std_logic_vector(1 downto 0);
 			    O: out std_logic_vector(3 downto 0));
-			end main;
+			end test;
 			
-			architecture Behavioral of main is
+			architecture Behavioral of test is
 			begin
 			  O(1 downto 0) <= I0;
 			  O(3 downto 2) <= I1;
@@ -161,14 +161,14 @@ class VHDLMultiBitIntegrationTest : AbstractVHDLTest() {
 			use ieee.numeric_std.all;
 			
 			-- test
-			entity main is
+			entity test is
 			  port (
 			    I: in std_logic_vector(1 downto 0);
 			    O1: out std_logic;
 			    O2: out std_logic);
-			end main;
+			end test;
 			
-			architecture Behavioral of main is
+			architecture Behavioral of test is
 			begin
 			  O1 <= I(0);
 			  O2 <= I(1);
@@ -196,14 +196,14 @@ class VHDLMultiBitIntegrationTest : AbstractVHDLTest() {
 			use ieee.numeric_std.all;
 			
 			-- test
-			entity main is
+			entity test is
 			  port (
 			    I: in std_logic_vector(3 downto 0);
 			    O1: out std_logic_vector(1 downto 0);
 			    O2: out std_logic_vector(1 downto 0));
-			end main;
+			end test;
 			
-			architecture Behavioral of main is
+			architecture Behavioral of test is
 			begin
 			  O1 <= I(1 downto 0);
 			  O2 <= I(3 downto 2);

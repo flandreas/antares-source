@@ -56,15 +56,15 @@ class PseudoBusDriverTest : AbstractFileBasedTest() {
 			use ieee.numeric_std.all;
 			
 			-- NodeView
-			entity main is
+			entity NodeView is
 			  port (
 			    WR: in std_logic;
 			    OE: in std_logic;
 			    PIN: out std_logic;
 			    RD: out std_logic);
-			end main;
+			end NodeView;
 			
-			architecture Behavioral of main is
+			architecture Behavioral of NodeView is
 			  signal RD_net: std_logic;
 			begin
 			  node0: entity work.VHDL_TriStateBufferGate

@@ -36,6 +36,8 @@ class VHDLTestBenchCreator(
 	private val params: HDLExportTestBenchParams
 ) : AbstractVHDLCreator(out) {
 
+	private val mainComponentName = model.main.elementName
+
 	private val testScript = TestcaseParser(
 		params.testCase.testVectors.scriptOrEmpty,
 		TestcaseAnalyser(model.main.circuit)
@@ -66,7 +68,7 @@ class VHDLTestBenchCreator(
 	}
 
 	private fun printComponent() {
-		out.println("component main").inc()
+		out.println("component $mainComponentName").inc()
 		printEntityPorts(model.main)
 		out.dec().println("end component;")
 		out.println()
@@ -83,7 +85,7 @@ class VHDLTestBenchCreator(
 	}
 
 	private fun printPortMap() {
-		out.println("main_0 : main port map (").inc()
+		out.println("main_0 : $mainComponentName port map (").inc()
 		val sep = Separator(out, ",\n")
 		for (p in model.main.inputs) {
 			sep.check()

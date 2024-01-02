@@ -22,11 +22,9 @@ class VHDLTestBenchCreatorMultiBitTest : AbstractVHDLTest() {
 		val output = builder.addOutput("O", BitWidth.BW_8)
 		builder.connect(input, output)
 
-		val model = HDLModel(builder.graph as DigitalGraph)
+		val model = HDLModel(builder.graph as DigitalGraph, VHDLRenaming())
 			.create()
-			.apply {
-				renameLabels(VHDLRenaming())
-			}
+			.apply { renameLabels() }
 
 		val testcase = Testcase("test", """
 			I O
@@ -55,7 +53,7 @@ class VHDLTestBenchCreatorMultiBitTest : AbstractVHDLTest() {
 			end multi_bit_tb;
 			
 			architecture Behavioral of multi_bit_tb is
-			  component main
+			  component test
 			    port (
 			      I: in std_logic_vector(7 downto 0);
 			      O: out std_logic_vector(7 downto 0));
@@ -76,7 +74,7 @@ class VHDLTestBenchCreatorMultiBitTest : AbstractVHDLTest() {
 			  end function;			
 			
 			begin
-			  main_0 : main port map (
+			  main_0 : test port map (
 			    I => I,
 			    O => O);
 			  process

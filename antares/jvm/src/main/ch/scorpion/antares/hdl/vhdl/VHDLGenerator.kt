@@ -40,11 +40,9 @@ class VHDLGenerator(
 	}
 
 	private fun createModel(circuit: DigitalGraph): HDLModel =
-		HDLModel(circuit)
+		HDLModel(circuit, params.renaming)
 			.create()
-			.apply {
-				renameLabels(params.renaming)
-			}
+			.apply { renameLabels() }
 
 	private fun writeCircuit(model: HDLModel, printer: CodePrinter) {
 		printComment(printer)

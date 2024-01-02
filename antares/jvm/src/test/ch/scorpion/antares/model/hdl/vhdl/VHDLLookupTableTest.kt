@@ -61,13 +61,13 @@ class VHDLLookupTableTest : AbstractVHDLTest() {
 			use ieee.numeric_std.all;
 
 			-- test
-			entity main is
+			entity test is
 			  port (
 			    A: in std_logic_vector(3 downto 0);
 			    D: out std_logic_vector(7 downto 0));
-			end main;
+			end test;
 			
-			architecture Behavioral of main is
+			architecture Behavioral of test is
 			begin
 			  node0: entity work.VHDL_LookupTable_ABC
 			    port map (

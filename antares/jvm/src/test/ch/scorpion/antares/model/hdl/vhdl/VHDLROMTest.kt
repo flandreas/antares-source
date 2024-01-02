@@ -63,14 +63,14 @@ class VHDLROMTest : AbstractVHDLTest() {
 			use ieee.numeric_std.all;
 
 			-- test
-			entity main is
+			entity test is
 			  port (
 			    A: in std_logic_vector(7 downto 0);
 			    CS: in std_logic;
 			    D: out std_logic_vector(7 downto 0));
-			end main;
+			end test;
 			
-			architecture Behavioral of main is
+			architecture Behavioral of test is
 			begin
 			  node0: entity work.VHDL_ROM_ABC
 			    port map (

@@ -46,14 +46,14 @@ class VHDLTriStateBufferGateTest : AbstractVHDLTest() {
 			use ieee.numeric_std.all;
 			
 			-- test
-			entity main is
+			entity test is
 			  port (
 			    I: in std_logic;
 			    EN: in std_logic;
 			    O: out std_logic);
-			end main;
+			end test;
 			
-			architecture Behavioral of main is
+			architecture Behavioral of test is
 			begin
 			  node0: entity work.VHDL_TriStateBufferGate
 			    port map (
@@ -99,14 +99,14 @@ class VHDLTriStateBufferGateTest : AbstractVHDLTest() {
 			use ieee.numeric_std.all;
 			
 			-- test
-			entity main is
+			entity test is
 			  port (
 			    I: in std_logic;
 			    EN: in std_logic;
 			    O: out std_logic);
-			end main;
+			end test;
 			
-			architecture Behavioral of main is
+			architecture Behavioral of test is
 			begin
 			  node0: entity work.VHDL_TriStateBufferGate
 			    port map (
@@ -153,14 +153,14 @@ class VHDLTriStateBufferGateTest : AbstractVHDLTest() {
 			use ieee.numeric_std.all;
 			
 			-- test
-			entity main is
+			entity test is
 			  port (
 			    I: in std_logic_vector(3 downto 0);
 			    EN: in std_logic;
 			    O: out std_logic_vector(3 downto 0));
-			end main;
+			end test;
 			
-			architecture Behavioral of main is
+			architecture Behavioral of test is
 			begin
 			  node0: entity work.VHDL_TriStateBufferGate_MultiBit
 			    generic map (
@@ -233,7 +233,7 @@ class VHDLTriStateBufferGateTest : AbstractVHDLTest() {
 			use ieee.numeric_std.all;
 			
 			-- test
-			entity main is
+			entity test is
 			  port (
 			    I: in std_logic;
 			    EN: in std_logic;
@@ -241,9 +241,9 @@ class VHDLTriStateBufferGateTest : AbstractVHDLTest() {
 			    EN2: in std_logic;
 			    O: out std_logic;
 			    O2: out std_logic_vector(3 downto 0));
-			end main;
+			end test;
 			
-			architecture Behavioral of main is
+			architecture Behavioral of test is
 			begin
 			  node0: entity work.VHDL_TriStateBufferGate
 			    port map (

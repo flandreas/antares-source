@@ -20,13 +20,13 @@ class VHDLGeneratorTest : AbstractVHDLTest() {
 			use ieee.numeric_std.all;
 
 			-- test
-			entity main is
+			entity test is
 			  port (
 			    I: in std_logic;
 			    p_out: out std_logic);
-			end main;
+			end test;
 
-			architecture Behavioral of main is
+			architecture Behavioral of test is
 			begin
 			  p_out <= I;
 			end Behavioral;

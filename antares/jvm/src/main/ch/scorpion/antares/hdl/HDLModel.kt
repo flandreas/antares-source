@@ -23,7 +23,11 @@ import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 /**
  * The context for creating [HDLCircuit]s.
  */
-class HDLModel(circuit: DigitalGraph) {
+class HDLModel(
+	circuit: DigitalGraph,
+	renaming: HDLRenaming
+) {
+	private val renaming: HDLRenaming = RenameSingleCheck(renaming)
 
 	/**
 	 * Keeps track of the one and only [HDLCircuit] model created for a [DigitalGraph]
@@ -31,10 +35,7 @@ class HDLModel(circuit: DigitalGraph) {
 	 */
 	private val hdlCircuits = mutableMapOf<UUID, HDLCircuit>()
 
-	val main: HDLCircuit = HDLCircuit(circuit, "main", this)
-
-	private var _renaming: HDLRenaming? = null
-	private val renaming: HDLRenaming? get() = _renaming
+	val main: HDLCircuit = HDLCircuit(circuit, renaming.checkName(circuit.name.value), this)
 
 	init {
 		hdlCircuits[main.uuid] = main
@@ -54,7 +55,7 @@ class HDLModel(circuit: DigitalGraph) {
 					if (digitalGraph.purelyScripted) {
 						throw HDLException(Translations.getString("antares.vhdl.purelyScriptedNotSupported.error.txt", digitalGraph.name.value))
 					}
-					hdlCircuit = HDLCircuit(digitalGraph, vertice.graphUUID!!.id, this)
+					hdlCircuit = HDLCircuit(digitalGraph, renaming.checkName(vertice.getGraph().name.value), this)
 					hdlCircuits[vertice.graphUUID!!] = hdlCircuit
 				}
 				HDLCircuitNode(hdlCircuit).also { addInputsOutputs(it, vertice, parent) }.createExpressions()
@@ -139,10 +140,9 @@ class HDLModel(circuit: DigitalGraph) {
 		}
 	}
 
-	fun renameLabels(renaming: HDLRenaming) {
-		this._renaming = RenameSingleCheck(renaming)
+	fun renameLabels() {
 		for (c in hdlCircuits.values) {
-			c.rename(this.renaming!!)
+			c.rename(this.renaming)
 		}
 	}
 

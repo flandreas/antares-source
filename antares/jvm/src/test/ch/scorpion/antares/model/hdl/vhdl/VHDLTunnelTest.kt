@@ -28,13 +28,13 @@ class VHDLTunnelTest : AbstractVHDLTest() {
 			use ieee.numeric_std.all;
 
 			-- test
-			entity main is
+			entity test is
 			  port (
 			    A: in std_logic;
 			    B: out std_logic);
-			end main;
+			end test;
 			
-			architecture Behavioral of main is
+			architecture Behavioral of test is
 			begin
 			  B <= A;
 			end Behavioral;
@@ -63,13 +63,13 @@ class VHDLTunnelTest : AbstractVHDLTest() {
 			use ieee.numeric_std.all;
 
 			-- test
-			entity main is
+			entity test is
 			  port (
 			    A: in std_logic;
 			    B: out std_logic);
-			end main;
+			end test;
 			
-			architecture Behavioral of main is
+			architecture Behavioral of test is
 			begin
 			  B <= A;
 			end Behavioral;

@@ -21,11 +21,9 @@ class VHDLTestBenchCreatorClockTest : AbstractVHDLTest() {
 		val output = builder.addOutput("O")
 		builder.connect(input, output)
 
-		val model = HDLModel(builder.graph as DigitalGraph)
+		val model = HDLModel(builder.graph as DigitalGraph, VHDLRenaming())
 			.create()
-			.apply {
-				renameLabels(VHDLRenaming())
-			}
+			.apply { renameLabels() }
 
 		val testcase = Testcase("test", """
 			I O
@@ -54,7 +52,7 @@ class VHDLTestBenchCreatorClockTest : AbstractVHDLTest() {
 			end clocked_tb;
 			
 			architecture Behavioral of clocked_tb is
-			  component main
+			  component test
 			    port (
 			      I: in std_logic;
 			      O: out std_logic);
@@ -75,7 +73,7 @@ class VHDLTestBenchCreatorClockTest : AbstractVHDLTest() {
 			  end function;			
 			
 			begin
-			  main_0 : main port map (
+			  main_0 : test port map (
 			    I => I,
 			    O => O);
 			  process
