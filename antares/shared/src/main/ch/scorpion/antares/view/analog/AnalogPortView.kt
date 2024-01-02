@@ -54,6 +54,7 @@ class AnalogPortView(
 	}
 
 	override fun drawAccess(context: DrawContext) {
+		prepareConnectionDrawContext(context)
 		super.drawAccess(context)
 		drawPossibleCoincidenceWarning(context)
 	}
