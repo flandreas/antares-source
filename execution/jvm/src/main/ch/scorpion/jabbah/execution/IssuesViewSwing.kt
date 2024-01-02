@@ -42,8 +42,12 @@ class IssuesViewSwing(
 		storeColumnsWidths()
 	}
 
-	override fun notifyNewIssues() {
+	override fun refresh() {
 		(table.model as IssueTableModel).fireTableDataChanged()
+	}
+
+	override fun notifyNewIssues() {
+		refresh()
 		controller.eventBus.post(ShowSidebarPaneContentRequest(this))
 	}
 

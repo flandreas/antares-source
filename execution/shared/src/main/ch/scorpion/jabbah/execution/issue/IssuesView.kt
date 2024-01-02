@@ -13,6 +13,8 @@ import ch.scorpion.jabbah.execution.module.ExecutionModule
 
 interface IssuesView : UIView {
 
+	fun refresh()
+
 	/** Informs this [IssuesView] that new [Issue]s have arrived.*/
 	fun notifyNewIssues()
 }
@@ -25,7 +27,11 @@ class IssuesViewController(
 	val clearAction: Action = ClearIssuesViewAction()
 
 	private val issueCollectorEventHandler: EventHandler<IssueCollectorEvent> = {
-		view.notifyNewIssues()
+		if (it.issue != null) {
+			view.notifyNewIssues()
+		} else {
+			view.refresh()
+		}
 	}
 
 	init {
