@@ -156,14 +156,14 @@ These components are contained in the built-in library "Standard".
 
 These components are contained in the built-in library "Analog".
 
-* image:user-manual/base-library/led.svg[Light Bulb] link:{{site.basedir}}/user-manual/english/base-library/analog/light-bulb[Light Bulb]
-* image:user-manual/base-library/led.svg[Battery] link:{{site.basedir}}/user-manual/english/base-library/analog/battery[Battery]
-* image:user-manual/base-library/led.svg[Resistor] link:{{site.basedir}}/user-manual/english/base-library/analog/resistor[Resistor]
-* image:user-manual/base-library/led.svg[Switch] link:{{site.basedir}}/user-manual/english/base-library/analog/switch[Switch]
-* image:user-manual/base-library/led.svg[Signal Ground] link:{{site.basedir}}/user-manual/english/base-library/analog/signal-ground[Signal Ground]
-* image:user-manual/base-library/led.svg[MOSFET] link:{{site.basedir}}/user-manual/english/base-library/analog/mosfet[MOSFET]
-* image:user-manual/base-library/led.svg[Input/Output] link:{{site.basedir}}/user-manual/english/base-library/analog/inout[Input/Output]
-* image:user-manual/base-library/led.svg[Power] link:{{site.basedir}}/user-manual/english/base-library/analog/power[Power]
-* image:user-manual/base-library/led.svg[Current Source] link:{{site.basedir}}/user-manual/english/base-library/analog/current-source[Current Source]
+* image:user-manual/base-library/analog/light-bulb.svg[Light Bulb] link:{{site.basedir}}/user-manual/english/base-library/analog/light-bulb[Light Bulb]
+* image:user-manual/base-library/analog/battery.svg[Battery] link:{{site.basedir}}/user-manual/english/base-library/analog/battery[Battery]
+* image:user-manual/base-library/analog/resistor-ansi.svg[Resistor] link:{{site.basedir}}/user-manual/english/base-library/analog/resistor[Resistor]
+* image:user-manual/base-library/real-switch.svg[Switch] link:{{site.basedir}}/user-manual/english/base-library/analog/switch[Switch]
+* image:user-manual/base-library/analog/signal-ground.svg[Signal Ground] link:{{site.basedir}}/user-manual/english/base-library/analog/signal-ground[Signal Ground]
+* image:user-manual/base-library/transistor.svg[MOSFET] link:{{site.basedir}}/user-manual/english/base-library/analog/mosfet[MOSFET]
+* image:user-manual/base-library/input.svg[Input/Output] link:{{site.basedir}}/user-manual/english/base-library/analog/inout[Input/Output]
+* image:user-manual/base-library/power.svg[Power] link:{{site.basedir}}/user-manual/english/base-library/analog/power[Power]
+* image:user-manual/base-library/analog/current-source.svg[Current Source] link:{{site.basedir}}/user-manual/english/base-library/analog/current-source[Current Source]
 
 
