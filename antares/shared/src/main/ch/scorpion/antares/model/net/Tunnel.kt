@@ -134,6 +134,8 @@ class Tunnel(
 
 	override val isFullyConnected: Boolean get() = visiblePort.isConnected
 
+	override val hasUnconnectedInput: Boolean get() = !visiblePort.isConnected
+
 	/** ---- [Tunnel] */
 
 	private fun getIncomingSignal(): DigitalSignal = getInput<DigitalSignal>().getIncomingSignal()!!

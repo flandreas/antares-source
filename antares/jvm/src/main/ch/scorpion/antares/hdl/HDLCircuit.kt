@@ -64,7 +64,7 @@ class HDLCircuit(
 		createTunnelNets()
 		createNodes()
 
-		ensureConnectedPorts()
+		ensureConnectedInputs()
 
 		for (input in inputs) {
 			input.net?.let { net ->
@@ -198,11 +198,11 @@ class HDLCircuit(
 		}
 	}
 
-	private fun ensureConnectedPorts() {
+	private fun ensureConnectedInputs() {
 		circuit.elements
 			.filterIsInstance<Vertice>()
-			.firstOrNull { !it.isFullyConnected }?.let {
-				throw HDLException(Translations.getString("antares.vhdl.unconnectedPort.error.txt", it.type, circuit.name.value))
+			.firstOrNull { it.hasUnconnectedInput }?.let {
+				throw HDLException(Translations.getString("antares.vhdl.unconnectedInput.error.txt", it.type, circuit.name.value))
 			}
 	}
 }

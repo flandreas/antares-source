@@ -46,6 +46,8 @@ abstract class AbstractVertice(
 
 	override val hasAnyOutput: Boolean get() = ports.any { it.portType.isOutput }
 
+	override val hasUnconnectedInput: Boolean get() = getInputs().any { !it.isConnected }
+
 	override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler, force: Boolean) {
 		if (signalHandler.isLogTrace) {
 			signalHandler.logActorTrace(this) { "input changed to ${dataToString()}, will calculate at ${signalHandler.executionTime + propagationDelay} ns" }

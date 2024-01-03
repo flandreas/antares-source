@@ -53,6 +53,9 @@ interface Vertice : GraphElement, Describable {
 
     val hasAnyOutput: Boolean
 
+	/** Returns `true` if any input [Port] is not connected to a [Net]. */
+	val hasUnconnectedInput: Boolean
+
 	/** Determines whether all [Port.name] in this [Vertice] must be unique.*/
 	val requireUniquePortNames: Boolean get() = true
 
