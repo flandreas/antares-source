@@ -1,10 +1,8 @@
 package ch.scorpion.jabbah.graph.model.port
 
-import ch.scorpion.jabbah.base.HierarchyVisitor
-import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.event.PropertyChangeSupport
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Description
@@ -71,9 +69,10 @@ open class PortImpl<T : Any>(
 			if (value == field) {
 				return
 			}
-			if (owner != null && value != null) {
-				if (owner!!.requireUniquePortNames && owner!!.hasPort(value)) {
-					throw IllegalArgumentException("Port name $value not unique in Vertice")
+			val effValue = if (StringUtils.isBlank(value)) null else value
+			if (owner != null && effValue != null) {
+				if (owner!!.requireUniquePortNames && owner!!.hasPort(effValue)) {
+					throw IllegalArgumentException(Translations.getString("graph.port.nameAlreadyExists.msg"))
 				}
 			}
 			val oldValue = field
