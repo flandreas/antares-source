@@ -374,7 +374,7 @@ class LibraryService(
 	 * @throws GraphQuotaException if the user's [GraphQuota] are not sufficient to import the [Library]
 	 * @return the imported [Library], or `null` if the [Library] is invalid
 	 */
-	fun importLibrary(inputPath: String, currentLibraryCount: Int, quota: GraphQuota): Library =
+	suspend fun importLibrary(inputPath: String, currentLibraryCount: Int, quota: GraphQuota): Library =
 		userLibraryPersister.importLibrary(inputPath, currentLibraryCount, quota)
 
 	/**

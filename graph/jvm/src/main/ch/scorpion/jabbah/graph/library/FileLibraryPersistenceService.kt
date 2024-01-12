@@ -97,7 +97,7 @@ class FileLibraryPersistenceService(
 		copyLibrary(temporaryPath, buildLibraryDirectoryPath(libraryId))
 	}
 
-	override fun importLibrary(inputPath: String, currentLibraryCount: Int, quota: GraphQuota): Library {
+	override suspend fun importLibrary(inputPath: String, currentLibraryCount: Int, quota: GraphQuota): Library {
 		LOG.trace("Importing library from $inputPath")
 		return importLibrary(FileInputStream(inputPath), replaceExisting = false, currentLibraryCount, quota)
 	}
@@ -175,7 +175,7 @@ class FileLibraryPersistenceService(
 	 * @throws GraphQuotaException if the user's [GraphQuota] are not sufficient to import the [Library]
 	 * @return the imported [Library]
 	 */
-	fun importLibrary(
+	suspend fun importLibrary(
 		inputStream: InputStream,
 		replaceExisting: Boolean,
 		currentLibraryCount: Int,

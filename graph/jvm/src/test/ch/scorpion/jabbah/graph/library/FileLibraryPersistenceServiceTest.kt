@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.graph.model.port.TestPortFactory
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.TestPortViewFactory
+import kotlinx.coroutines.runBlocking
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Path
@@ -94,7 +95,7 @@ class FileLibraryPersistenceServiceTest {
 	}
 
 	@Test
-	fun shouldImportLibraryWithArbitraryFilename() {
+	fun shouldImportLibraryWithArbitraryFilename() = runBlocking {
 		val zipFile = Files.createTempFile(null, ".zip")
 		val metaGraph = MetaGraph()
 		persistenceService.storeMetaGraph(LibraryModule.libraryHolder.library, metaGraph)

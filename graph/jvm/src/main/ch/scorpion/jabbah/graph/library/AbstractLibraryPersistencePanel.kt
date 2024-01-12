@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.edit.auth.UserHolder
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
+import kotlinx.coroutines.runBlocking
 import java.io.File
 import javax.swing.JFileChooser
 import javax.swing.JOptionPane
@@ -81,7 +82,9 @@ abstract class AbstractLibraryPersistencePanel(
 			fileChooser.dialogTitle = name
 			fileChooser.fileFilter = createFileNameFilter()
 			if (fileChooser.showOpenDialog(this@AbstractLibraryPersistencePanel) == JFileChooser.APPROVE_OPTION) {
-				importProcess.import(fileChooser.selectedFile.absolutePath)
+				runBlocking {
+					importProcess.import(fileChooser.selectedFile.absolutePath)
+				}
 			}
 		}
 	}

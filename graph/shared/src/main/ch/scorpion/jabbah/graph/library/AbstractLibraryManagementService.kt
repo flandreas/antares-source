@@ -55,7 +55,7 @@ abstract class AbstractLibraryManagementService(
 		libraryService.exportLibrary(libraryId, outputPath)
 	}
 
-	fun import(inputPath: String, replaceIfUuidExists: Boolean): LibraryImportResult {
+	suspend fun import(inputPath: String, replaceIfUuidExists: Boolean): LibraryImportResult {
 		lateinit var library: Library
 
 		try {

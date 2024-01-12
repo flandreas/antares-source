@@ -36,7 +36,7 @@ interface LibraryPersistenceService {
 	 * @throws GraphQuotaException if the user's [GraphQuota] are not sufficient to import the [Library]
 	 * @return the imported [Library]
 	 * */
-	fun importLibrary(inputPath: String, currentLibraryCount: Int, quota: GraphQuota = GraphQuota.UNLIMITED): Library
+	suspend fun importLibrary(inputPath: String, currentLibraryCount: Int, quota: GraphQuota = GraphQuota.UNLIMITED): Library
 
 	fun importTemporaryLibrary(libraryId: LibraryIdentification, temporaryPath: String)
 
@@ -89,7 +89,7 @@ class UnimplementedLibraryPersistenceService : LibraryPersistenceService {
 	override fun deleteLibrary(libraryId: LibraryIdentification): Unit =
 		throw UnsupportedOperationException("not implemented")
 
-	override fun importLibrary(inputPath: String, currentLibraryCount: Int, quota: GraphQuota): Library {
+	override suspend fun importLibrary(inputPath: String, currentLibraryCount: Int, quota: GraphQuota): Library {
 		throw UnsupportedOperationException("not implemented")
 	}
 

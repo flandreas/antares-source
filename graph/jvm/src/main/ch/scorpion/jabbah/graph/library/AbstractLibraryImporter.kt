@@ -36,7 +36,7 @@ abstract class AbstractLibraryImporter(
 	 * @throws GraphQuotaException if the user's [GraphQuota] are not sufficient to import the [Library]
 	 * @return the imported [Library]
 	 */
-	fun import(
+	suspend fun import(
 		inputStream: InputStream,
 		replaceExisting: Boolean,
 		currentLibraryCount: Int,
@@ -63,13 +63,13 @@ abstract class AbstractLibraryImporter(
 	 * @return `true` if a [Library] with [identification] already exists
 	 * @throws LibraryImportConflictException if [Library] already exists and [replaceExisting] is `false`
 	 */
-	protected abstract fun checkIfUuidAlreadyExists(identification: LibraryIdentification, replaceExisting: Boolean): Boolean
+	protected abstract suspend fun checkIfUuidAlreadyExists(identification: LibraryIdentification, replaceExisting: Boolean): Boolean
 
 	/**
 	 * Saves the [Library] and the [MetaGraphs][MetaGraph] contained in the incubation files at [sourceLibraryDir]
 	 * into the proper storage system, which depends on the implementation.
 	 */
-	protected abstract fun save(library: Library, sourceLibraryDir: File, exists: Boolean)
+	protected abstract suspend fun save(library: Library, sourceLibraryDir: File, exists: Boolean)
 
 	/**
 	 * Import and unzip file to incubation directory.

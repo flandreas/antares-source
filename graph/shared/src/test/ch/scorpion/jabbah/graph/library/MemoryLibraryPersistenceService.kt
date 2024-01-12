@@ -44,7 +44,7 @@ class MemoryLibraryPersistenceService(
 		// empty
 	}
 
-	override fun importLibrary(inputPath: String, currentLibraryCount: Int, quota: GraphQuota): Library {
+	override suspend fun importLibrary(inputPath: String, currentLibraryCount: Int, quota: GraphQuota): Library {
 		throw UnsupportedOperationException("not implemented")
 	}
 

@@ -31,6 +31,7 @@ import ch.scorpion.jabbah.graph.ui.GraphDataViewController
 import ch.scorpion.jabbah.graph.ui.GraphFrameSwing
 import com.formdev.flatlaf.FlatDarkLaf
 import com.formdev.flatlaf.FlatLightLaf
+import kotlinx.coroutines.runBlocking
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
@@ -151,7 +152,7 @@ class AntaresSwing(
 			UiUtil.setUIFont(fontResource)
 		}
 
-		private fun importLibrary(path: String) {
+		private suspend fun importLibrary(path: String) {
 			LOG.value.info("Importing $path")
 			val process = AbstractLibraryImportProcess.forPath(path) { library, process ->
 				process.open(library)
@@ -360,7 +361,9 @@ class AntaresSwing(
 			JOptionPane.YES_NO_OPTION,
 			JOptionPane.QUESTION_MESSAGE
 		) == JOptionPane.YES_OPTION) {
-			importLibrary(path)
+			runBlocking {
+				importLibrary(path)
+			}
 		}
 	}
 

@@ -18,7 +18,7 @@ class FileLibraryImporter(
 		private val LOG by logger(FileLibraryImporter::class)
 	}
 
-	override fun checkIfUuidAlreadyExists(identification: LibraryIdentification, replaceExisting: Boolean): Boolean {
+	override suspend fun checkIfUuidAlreadyExists(identification: LibraryIdentification, replaceExisting: Boolean): Boolean {
 		val newDirectory = Paths.get(service.buildLibraryDirectoryPath(identification))
 		val exists = Files.exists(newDirectory)
 		if (exists && !replaceExisting) {
@@ -29,7 +29,7 @@ class FileLibraryImporter(
 		return exists
 	}
 
-	override fun save(library: Library, sourceLibraryDir: File, exists: Boolean) {
+	override suspend fun save(library: Library, sourceLibraryDir: File, exists: Boolean) {
 		val newDirectory = Paths.get(service.buildLibraryDirectoryPath(library.identification))
 		if (exists) {
 			FileUtils.deleteDirectory(newDirectory.toFile())

@@ -83,7 +83,7 @@ class ResourceLibraryPersistenceService(
 		throw UnsupportedOperationException("not implemented")
 	}
 
-	override fun importLibrary(inputPath: String, currentLibraryCount: Int, quota: GraphQuota): Library {
+	override suspend fun importLibrary(inputPath: String, currentLibraryCount: Int, quota: GraphQuota): Library {
 		// This is not supported for system Libraries
 		throw UnsupportedOperationException("Importing system libraries is not supported")
 	}

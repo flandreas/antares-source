@@ -214,6 +214,16 @@ subprojects {
 				version = version_project
 			}
 		}
+		repositories {
+			maven {
+				name = "bytesafe"
+				url = uri("https://antares.bytesafe.dev/maven/antares/")
+				credentials {
+					username = "bytesafe"
+					password = "01G4ADXPRW5PRW5H8SR9ZRGRFY"
+				}
+			}
+		}
 	}
 
 }

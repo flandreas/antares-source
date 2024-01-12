@@ -66,7 +66,7 @@ abstract class AbstractLibraryImportProcess(
 	protected abstract fun getStaleReferenceMsg(name: String): String
 	protected abstract fun getUuidAlreadyExistsMsg(): String
 
-	fun import(path: String) {
+	suspend fun import(path: String) {
 		val name = FilenameUtils.getBaseName(path)
 		var replaceIfUuidExists = false
 		do {
