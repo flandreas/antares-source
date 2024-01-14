@@ -12,6 +12,9 @@ import ch.scorpion.jabbah.base.UUID
 data class UserIdentity(val id: String) {
 
 	companion object {
+		val DEVELOPER = UserIdentity("5ecf330b-e395-4e17-88b0-0883834b384a")
+		val ANYBODY = UserIdentity("7e840175-f9c4-4886-a221-ef91e3493e27")
+
 		fun random(): UserIdentity = UserIdentity(System.createUUID(null).toString())
 	}
 

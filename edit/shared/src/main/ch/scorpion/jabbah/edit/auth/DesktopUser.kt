@@ -12,7 +12,7 @@ data class DesktopUser(
 ) : User {
 
 	companion object {
-		val developer = DesktopUser(UserIdentity("5ecf330b-e395-4e17-88b0-0883834b384a"), "developer", true)
-		val anybody = DesktopUser(UserIdentity("7e840175-f9c4-4886-a221-ef91e3493e27"), "anybody", false)
+		val developer = DesktopUser(UserIdentity.DEVELOPER, "developer", true)
+		val anybody = DesktopUser(UserIdentity.ANYBODY, "anybody", false)
 	}
 }

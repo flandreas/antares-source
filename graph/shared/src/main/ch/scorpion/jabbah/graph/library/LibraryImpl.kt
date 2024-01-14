@@ -3,8 +3,6 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.ImmutableList
-import ch.scorpion.jabbah.edit.auth.EditAuthModule
-import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.edit.auth.UserHolder
 import ch.scorpion.jabbah.edit.auth.UserIdentity
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
@@ -25,17 +23,15 @@ import ch.scorpion.jabbah.io.*
 open class LibraryImpl(
 	properties: LibraryProperties = LibraryProperties(),
 	override val libraryService: LibraryService = LibraryModule.libraryService,
-	private val objectTypeKey: String = "library.library.name",
-	userHolder: UserHolder<User> = EditAuthModule.userHolder
+	private val objectTypeKey: String = "library.library.name"
 ) : AbstractStorable(), Library, Describable {
 
 	constructor(
 		name: TranslatableText = TranslatableText(),
 		libraryService: LibraryService = LibraryModule.libraryService,
 		objectTypeKey: String = "library.library.name",
-		description: TranslatableText = TranslatableText(),
-		userHolder: UserHolder<User> = EditAuthModule.userHolder
-	) : this(LibraryProperties(name, description), libraryService, objectTypeKey, userHolder)
+		description: TranslatableText = TranslatableText()
+	) : this(LibraryProperties(name, description), libraryService, objectTypeKey)
 
 	constructor(
 		name: String,
@@ -262,7 +258,11 @@ open class LibraryImpl(
 
 	override var isSystem: Boolean = false
 
-	override var author: UserIdentity = userHolder.user.identity
+	/**
+	 * Only set for instantiation. Applications creating new [LibraryImpl] should set with [UserIdentity] [UserHolder],
+	 * which can't be done here because Akrab is not supposed to use [UserHolder].
+	 */
+	override var author: UserIdentity = UserIdentity.ANYBODY
 
 	override var importedLibraryIds = mutableSetOf<UUID>()
 
