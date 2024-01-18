@@ -1,14 +1,14 @@
 package ch.scorpion.jabbah.graph.project
 
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.auth0.Auth0Session
-import ch.scorpion.jabbah.base.auth0.Auth0SessionEvent
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.graph.library.AbstractLibraryFolderAction
+import ch.scorpion.jabbah.graph.login.Session
+import ch.scorpion.jabbah.graph.login.SessionEvent
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import kotlinx.coroutines.Dispatchers
@@ -30,15 +30,15 @@ class UploadProjectAction(
 
 	private val scope = MainScope()
 
-	private val auth0SessionHandler: EventHandler<Auth0SessionEvent> = { updateEnabledness() }
+	private val sessionHandler: EventHandler<SessionEvent> = { updateEnabledness() }
 
 	init {
-		controller.eventBus.register(Auth0SessionEvent::class, auth0SessionHandler)
+		controller.eventBus.register(SessionEvent::class, sessionHandler)
 	}
 
 	override fun dispose() {
 		super.dispose()
-		controller.eventBus.unregister(auth0SessionHandler)
+		controller.eventBus.unregister(sessionHandler)
 	}
 
 	// TODO: Shouldn't this be in the base class?
@@ -46,7 +46,7 @@ class UploadProjectAction(
 		get() = operationTarget.invoke()?.let { Authorizer.isCurrentUserAuthorizedTo(Operation.Change, it) } ?: false
 
 	override fun calculateEnabledness(): Boolean =
-		super.calculateEnabledness() && Auth0Session.exists
+		super.calculateEnabledness() && Session.exists
 
 	override fun execute(event: ActionEvent) {
 		if (JOptionPane.showConfirmDialog(

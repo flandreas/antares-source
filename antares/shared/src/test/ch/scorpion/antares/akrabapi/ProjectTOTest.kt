@@ -1,6 +1,5 @@
 package ch.scorpion.antares.akrabapi
 
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals

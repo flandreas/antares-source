@@ -36,7 +36,6 @@ import ch.scorpion.jabbah.app.rating.RailwayRatingService
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.DataLocation
 import ch.scorpion.jabbah.base.Properties
-import ch.scorpion.jabbah.base.auth0.Auth0LoginFlow
 import ch.scorpion.jabbah.base.help.HelpSource
 import ch.scorpion.jabbah.base.help.HelpSourceRegistry
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -204,21 +203,6 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 				properties.set(DataLocation.PROP_SERVER_URL, "https://api.antarescircuit.io")
 			}
 			else -> throw IllegalStateException("no Akrab REST settings for environment ${app.environment}")
-		}
-
-		// Auth0 parameters
-		properties.set(Auth0LoginFlow.PROP_AUTH0_REDIRECT_URL, "http://127.0.0.1:8899/desktop")
-		properties.set(Auth0LoginFlow.PROP_AUTH0_AUDIENCE, "https://antarescircuit.io/api")
-		when (app.environment) {
-			Environment.Development -> {
-				properties.set(Auth0LoginFlow.PROP_AUTH0_DOMAIN, "dev-wq7i977v.eu.auth0.com")
-				properties.set(Auth0LoginFlow.PROP_AUTH0_CLIENT_ID, "RvRibJnRdmdHZ2LGhQ9sLiLtqiXrLOsX")
-			}
-			Environment.Production -> {
-				properties.set(Auth0LoginFlow.PROP_AUTH0_DOMAIN, "antarescircuit.eu.auth0.com")
-				properties.set(Auth0LoginFlow.PROP_AUTH0_CLIENT_ID, "pnSg326RRJOMfMCs09D2fjaKK5Q5mlb5")
-			}
-			else -> throw IllegalStateException("no Auth0 settings for environment ${app.environment}")
 		}
 	}
 
