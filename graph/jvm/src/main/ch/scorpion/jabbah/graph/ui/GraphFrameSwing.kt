@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.app.StatusBar
 import ch.scorpion.jabbah.app.ToolBar
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.ActionWrapperSwing
-import ch.scorpion.jabbah.base.auth0.LoginLogoutAction
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.view.ContentViewManager
@@ -15,6 +14,7 @@ import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.container.ContainerPanelSwing
+import ch.scorpion.jabbah.graph.login.LoginLogoutAction
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import java.awt.BorderLayout
 import javax.swing.*

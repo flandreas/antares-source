@@ -8,7 +8,7 @@ import javax.swing.JPanel
 open class DataFormPanel : JPanel() {
 
 	companion object {
-		private const val INSET = 7
+		const val INSET = 7
 	}
 
 	private var gridy = 0

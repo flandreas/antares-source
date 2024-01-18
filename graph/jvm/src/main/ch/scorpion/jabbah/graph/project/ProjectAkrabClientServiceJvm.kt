@@ -1,27 +1,11 @@
 package ch.scorpion.jabbah.graph.project
 
-import ch.scorpion.jabbah.base.auth0.Auth0Session
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.library.FileLibraryPersistenceService
-import io.ktor.client.*
-import io.ktor.client.engine.java.*
-import io.ktor.client.features.*
-import io.ktor.client.features.json.*
-import io.ktor.client.features.json.serializer.*
-import io.ktor.client.request.*
-import io.ktor.client.request.forms.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
-import io.ktor.http.content.*
 import io.ktor.util.*
 import io.ktor.utils.io.core.internal.*
-import io.ktor.utils.io.streams.*
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import java.io.FileOutputStream
 import java.net.URL
-import java.nio.file.Files
-import kotlin.io.path.absolutePathString
 
 /**
  * A client-side (JVM) service for calling Akrab REST endpoints of [Project].
@@ -42,6 +26,7 @@ class ProjectAkrabClientServiceJvm(
 		}
 	}
 
+	/*
 	private val client: HttpClient by lazy {
 		HttpClient(Java) {
 			install(JsonFeature) {
@@ -60,6 +45,7 @@ class ProjectAkrabClientServiceJvm(
 			}
 		}
 	}
+	*/
 
 
 	/**
@@ -71,6 +57,8 @@ class ProjectAkrabClientServiceJvm(
 	 */
 	@OptIn(KtorExperimentalAPI::class, DangerousInternalIoApi::class)
 	suspend fun upload(project: Project) {
+		TODO()
+		/*
 		LOG.userTrail("Uploading project ${project.uuid}")
 
 		if (!Auth0Session.exists) {
@@ -101,5 +89,6 @@ class ProjectAkrabClientServiceJvm(
 				append(HttpHeaders.Authorization, "Bearer ${Auth0Session.loginInfo!!.accessToken}")
 			}
 		}
+		*/
 	}
 }

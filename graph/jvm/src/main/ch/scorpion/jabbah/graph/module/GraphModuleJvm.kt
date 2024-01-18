@@ -23,6 +23,8 @@ import ch.scorpion.jabbah.graph.container.ContainerTreeView
 import ch.scorpion.jabbah.graph.health.GraphViewConsistencyCheck
 import ch.scorpion.jabbah.graph.health.PortViewCoincidenceCheck
 import ch.scorpion.jabbah.graph.library.*
+import ch.scorpion.jabbah.graph.login.LoginService
+import ch.scorpion.jabbah.graph.login.LoginServiceJvm
 import ch.scorpion.jabbah.graph.model.graph.LongGraphParamType
 import ch.scorpion.jabbah.graph.model.graph.StringGraphParamType
 import ch.scorpion.jabbah.graph.model.param.*
@@ -31,6 +33,7 @@ import ch.scorpion.jabbah.graph.project.ProjectAkrabClientServiceJvm
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
 import ch.scorpion.jabbah.graph.view.net.edge.OrthoEdgeViewLayouter
+import java.net.URL
 
 /**
  * Module definitions for the [ch.scorpion.jabbah.graph] module on the JVM platform.
@@ -48,6 +51,10 @@ object GraphModuleJvm : AbstractModule() {
 		{ params -> LibraryTreeViewActionsSwing(params.controller, params.type, params.application) }
 
 	var metaGraphHistoryService: FileMetaGraphHistoryService = UnimplementedFileMetaGraphHistoryService()
+
+	val loginService: LoginService by lazy {
+		LoginServiceJvm(URL(BaseModule.properties.getString(DataLocation.PROP_SERVER_URL)))
+	}
 
 	override fun initialize() {
 		BaseModuleJvm.require()

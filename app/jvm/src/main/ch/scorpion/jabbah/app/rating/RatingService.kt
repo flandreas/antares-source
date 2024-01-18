@@ -3,15 +3,13 @@ package ch.scorpion.jabbah.app.rating
 import ch.scorpion.jabbah.app.railway.AbstractRailwayAppService
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Settings
+import ch.scorpion.jabbah.base.net.httpClient
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.TimeService
 import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
-import io.ktor.client.*
-import io.ktor.client.engine.apache.*
-import io.ktor.client.features.json.*
-import io.ktor.client.features.json.serializer.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -55,18 +53,6 @@ open class RailwayRatingService(
 	private val timeService: TimeService = BaseModule.timeService
 ) : AbstractRailwayAppService(properties, settings), RatingService {
 
-	private val client: HttpClient by lazy {
-		HttpClient(Apache) {
-			install(JsonFeature) {
-				val json = kotlinx.serialization.json.Json { ignoreUnknownKeys = true }
-				serializer = KotlinxSerializer(json)
-			}
-			engine {
-				connectTimeout = 1_000 * BaseModule.properties.getInt(BaseModule.PROP_CONNECTION_TIMEOUT)
-			}
-		}
-	}
-
 	companion object {
 		private val LOG by logger(RailwayRatingService::class)
 
@@ -94,7 +80,7 @@ open class RailwayRatingService(
 
 			LOG.debug("Retrieving rating aspects from $url")
 
-			val aspects: RatingAspects = client.get(url)
+			val aspects: RatingAspects = httpClient.get(url).body()
 			return aspects.aspects
 		} catch (e: Throwable) {
 			LOG.error("Error while retrieving rating aspects", e)
@@ -126,9 +112,9 @@ open class RailwayRatingService(
 		val url = properties.getString(PROP_RATING_URL)
 		LOG.userTrail("Sending rating to $url")
 
-		val response: HttpResponse =  client.post(url) {
+		val response: HttpResponse =  httpClient.post(url) {
 			contentType(ContentType.Application.Json)
-			body = createRatingRequest(rating, applicationId, userIdentifier)
+			setBody(createRatingRequest(rating, applicationId, userIdentifier))
 		}
 		return response.status
 	}
