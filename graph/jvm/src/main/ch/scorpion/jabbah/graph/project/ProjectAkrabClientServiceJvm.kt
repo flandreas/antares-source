@@ -1,11 +1,17 @@
 package ch.scorpion.jabbah.graph.project
 
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.net.httpClient
 import ch.scorpion.jabbah.graph.library.FileLibraryPersistenceService
-import io.ktor.util.*
-import io.ktor.utils.io.core.internal.*
-import kotlinx.serialization.json.Json
+import ch.scorpion.jabbah.graph.login.Session
+import io.ktor.client.request.*
+import io.ktor.client.request.forms.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import java.io.FileOutputStream
 import java.net.URL
+import java.nio.file.Files
+import kotlin.io.path.absolutePathString
 
 /**
  * A client-side (JVM) service for calling Akrab REST endpoints of [Project].
@@ -16,37 +22,7 @@ class ProjectAkrabClientServiceJvm(
 ) {
 	companion object {
 		private val LOG by logger(ProjectAkrabClientServiceJvm::class)
-
-		fun getError(text: String): AkrabApiError {
-			try {
-				return Json.decodeFromString(text)
-			} catch (e: Throwable) {
-				throw IllegalArgumentException("not a parsable error")
-			}
-		}
 	}
-
-	/*
-	private val client: HttpClient by lazy {
-		HttpClient(Java) {
-			install(JsonFeature) {
-				val json = kotlinx.serialization.json.Json { ignoreUnknownKeys = true }
-				serializer = KotlinxSerializer(json)
-			}
-			HttpResponseValidator {
-				handleResponseException { cause ->
-					when (cause) {
-						is ClientRequestException -> getError(cause.response.readText()).also {
-							throw AkrabApiException(it)
-						}
-						else -> throw cause
-					}
-				}
-			}
-		}
-	}
-	*/
-
 
 	/**
 	 * Creates a ZIP file with all [Project] data and uploads it to the Akrab server for storing
@@ -55,13 +31,10 @@ class ProjectAkrabClientServiceJvm(
 	 *
 	 * @throws AkrabApiException containing an [AkrabApiError] in case of an error
 	 */
-	@OptIn(KtorExperimentalAPI::class, DangerousInternalIoApi::class)
 	suspend fun upload(project: Project) {
-		TODO()
-		/*
 		LOG.userTrail("Uploading project ${project.uuid}")
 
-		if (!Auth0Session.exists) {
+		if (!Session.exists) {
 			throw IllegalStateException("no session")
 		}
 
@@ -69,26 +42,28 @@ class ProjectAkrabClientServiceJvm(
 		FileOutputStream(tempFilePath.absolutePathString()).use {
 			persistenceService.exportLibrary(project.identification, it)
 			it.flush()
-			it.close()
 		}
 
-		val parts: List<PartData> = formData {
-			val headersBuilder = HeadersBuilder()
-			headersBuilder[HttpHeaders.ContentType] = "application/zip"
-			headersBuilder[HttpHeaders.ContentDisposition] = "filename=projectUpload.zip"
-			this.append(
-				"file",
-				InputProvider { tempFilePath.toFile().inputStream().asInput() },
-				headersBuilder.build()
+		val response = httpClient.post("$baseUrl/bundle") {
+			setBody(
+				MultiPartFormDataContent(
+					formData {
+						append("description", "Antares Project Bundle")
+						append("bundle", tempFilePath.toFile().readBytes(), Headers.build {
+							append(HttpHeaders.ContentType, "application/zip")
+							append(HttpHeaders.ContentDisposition, "filename=\"Upload.acp\"")
+						})
+					}
+				)
 			)
 		}
 
-		client.submitFormWithBinaryData<HttpResponse>(formData = parts) {
-			url("$baseUrl/api/projectBundles")
-			headers {
-				append(HttpHeaders.Authorization, "Bearer ${Auth0Session.loginInfo!!.accessToken}")
-			}
+		if (response.status == HttpStatusCode.OK) {
+			return
 		}
-		*/
+
+		val body = response.bodyAsText()
+		LOG.debug("Upload: Status = ${response.status}, body = '$body'")
+		throw AkrabApiException(AkrabApiError(body))
 	}
 }
