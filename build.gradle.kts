@@ -101,9 +101,16 @@ subprojects {
 		}
 
 		if (OperatingSystem.current().isMacOsX) {
-			js {
-				browser()
-				binaries.executable()
+			js(IR) {
+				browser {
+					commonWebpackConfig {
+						cssSupport {
+							enabled.set(true)
+						}
+					}
+				}
+				generateTypeScriptDefinitions()
+				binaries.library()
 			}
 		}
 
