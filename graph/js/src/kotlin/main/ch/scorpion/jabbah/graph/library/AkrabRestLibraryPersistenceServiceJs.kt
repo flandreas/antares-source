@@ -16,6 +16,7 @@ import org.w3c.xhr.XMLHttpRequest
  * An implementation of [LibraryPersistenceService] that calls the REST endpoints of Akrab.
  * Performs synchronous (blocking) calls.
  * TODO: Consider using Kotlin Coroutines.
+ * TODO: Delete, replaced by Akrab2RestLibraryPersistenceServiceJs
  */
 class AkrabRestLibraryPersistenceServiceJs(
 	private val baseUrl: String,

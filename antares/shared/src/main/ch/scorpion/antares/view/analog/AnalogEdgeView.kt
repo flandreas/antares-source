@@ -47,8 +47,17 @@ class AnalogEdgeView(
 		const val DEF_SPEED = 3
 		const val MAX_SPEED = 10
 
-		/** Determines the speed of the current flow animation by multiplication with [SystemSpeed].*/
-		private var animationSpeedFactor = BaseModule.properties.getInt(PREF_SPEED) / 20.0F
+		/**
+		 * Determines the speed of the current flow animation by multiplication with [SystemSpeed].
+		 * Cannot be initialized from [Properties] on JS platform.
+		 */
+		private var _animationSpeedFactor: Float? = null
+		private val animationSpeedFactor: Float get() {
+			if (_animationSpeedFactor == null) {
+				_animationSpeedFactor = BaseModule.properties.getInt(PREF_SPEED) / 20.0F
+			}
+			return _animationSpeedFactor!!
+		}
 
 		/** Limits the effective speed of the current flow animation.*/
 		private const val MAX_DELTA = 2.7
@@ -57,7 +66,7 @@ class AnalogEdgeView(
 
 		init {
 			BaseModule.eventBus.register(PreferencesChangedEvent::class) {
-				animationSpeedFactor = BaseModule.properties.getInt(PREF_SPEED) / 10.0F
+				_animationSpeedFactor = BaseModule.properties.getInt(PREF_SPEED) / 10.0F
 			}
 		}
 	}

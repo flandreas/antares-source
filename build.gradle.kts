@@ -115,12 +115,20 @@ subprojects {
 		}
 
 		sourceSets {
+			all {
+				languageSettings.apply {
+					optIn("kotlin.js.ExperimentalJsExport")
+				}
+			}
 			val commonMain by getting {
 				kotlin.srcDir("shared/src/main")
 				resources.srcDir("shared/rsc")
 				dependencies {
 					implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
 					implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
+					implementation("io.ktor:ktor-client-core:$ktorVersion")
+					implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+					implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 					implementation("com.soywiz.korlibs.korte:korte:$korteVersion")
 				}
 			}
@@ -140,10 +148,7 @@ subprojects {
 					implementation(kotlin("reflect"))
 					implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$kotlinCoroutinesVersion")
 					implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:$kotlinCoroutinesVersion")
-					implementation("io.ktor:ktor-client-core:$ktorVersion")
 					implementation("io.ktor:ktor-client-apache:$ktorVersion")
-					implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-					implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 					implementation("org.slf4j:slf4j-api:$slf4jVersion")
 					implementation("org.slf4j:slf4j-log4j12:$slf4jVersion")
 					implementation("commons-io:commons-io:$commonsIoVersion")
@@ -182,7 +187,7 @@ subprojects {
 					resources.srcDir("js/rsc")
 
 					dependencies {
-						implementation(npm("@auth0/auth0-react", "~1.8.0"))
+						implementation("io.ktor:ktor-client-js:$ktorVersion")
 					}
 				}
 				val jsTest by getting {

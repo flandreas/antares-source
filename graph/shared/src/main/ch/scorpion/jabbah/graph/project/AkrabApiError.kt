@@ -1,8 +1,10 @@
 package ch.scorpion.jabbah.graph.project
 
 import kotlinx.serialization.Serializable
+import kotlin.js.JsExport
 
 @Serializable
+@JsExport
 data class AkrabApiError(
 	val type: String,
 	val msg: String? = null
@@ -13,4 +15,5 @@ data class AkrabApiError(
 	}
 }
 
+@JsExport
 class AkrabApiException(val error: AkrabApiError) : Exception()
