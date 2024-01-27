@@ -11,60 +11,41 @@ import ch.scorpion.jabbah.io.DomXmlReader
 import ch.scorpion.jabbah.io.StoreXmlReader
 import org.w3c.xhr.XMLHttpRequest
 
-class Akrab2RestLibraryPersistenceServiceJs(
+class Akrab2RestSystemLibraryPersistenceServiceJs(
     private val baseUrl: String
 ) : LibraryPersistenceService {
 
     companion object {
-        private val LOG by logger(Akrab2RestLibraryPersistenceServiceJs::class)
+        private val LOG by logger(Akrab2RestSystemLibraryPersistenceServiceJs::class)
     }
 
     override fun loadLibrary(libraryId: LibraryIdentification): Library {
-        LOG.debug("GET project ${libraryId.uuid.id}")
+        LOG.debug("GET system library ${libraryId.uuid.id}")
         try {
             val request = XMLHttpRequest()
-            request.open("GET", "$baseUrl/project/${libraryId.uuid.id}", async = false)
+            request.open("GET", "$baseUrl/library/system/${libraryId.uuid.id}", async = false)
             request.overrideMimeType("text/xml")
 
             request.send()
 
             if (request.status != 200.toShort()) {
-                LOG.error("Error in loadLibrary: status = ${request.status}")
-                throw AkrabApiException(AkrabApiError(AkrabApiError.TYPE_ERROR, "Could not load Project: ${request.status}"))
+                LOG.error("Error in loading system library: status = ${request.status}")
+                throw AkrabApiException(AkrabApiError(AkrabApiError.TYPE_ERROR, "Could not load system Library: ${request.status}"))
             }
 
             return StoreXmlReader(DomXmlReader(request.responseXML!!)).readStorable() as Library
         } catch (e: Throwable) {
-            LOG.error("Error in loadLibrary: ${e.message}")
-            throw AkrabApiException(AkrabApiError(AkrabApiError.TYPE_ERROR, "Could not load Project: ${e.message}"))
+            LOG.error("Error in loading system library: ${e.message}")
+            throw AkrabApiException(AkrabApiError(AkrabApiError.TYPE_ERROR, "Could not load system Library: ${e.message}"))
         }
     }
 
     override fun loadMetaGraphXML(library: Library, uuid: UUID): String {
-        LOG.debug("GET MetaGraph $uuid")
-        val request = XMLHttpRequest()
-        request.open("GET", "$baseUrl/metaGraph/$uuid/xml", async = false)
-        request.overrideMimeType("text/xml")
-        request.overrideMimeType("text/xml")
-
-        request.send()
-
-        if (request.status != 200.toShort()) {
-            throw AkrabApiException(AkrabApiError(AkrabApiError.TYPE_ERROR, "Could not load MetaGraph XML: ${request.status}"))
-        }
-        try {
-            return request.responseText
-        } catch (e: Throwable) {
-            throw AkrabApiException(AkrabApiError(AkrabApiError.TYPE_ERROR, "Could not load MetaGraph XML: ${e.message}"))
-        }
+        TODO("Not yet implemented")
     }
 
     override fun loadMetaGraph(library: Library, uuid: UUID): MetaGraph {
-        try {
-            return StoreXmlReader(DomXmlReader(loadMetaGraphXML(library, uuid))).readStorable() as MetaGraph
-        } catch (e: Throwable) {
-            throw AkrabApiException(AkrabApiError(AkrabApiError.TYPE_ERROR, "Could not load MetaGraph: ${e.message}"))
-        }
+        TODO("Not yet implemented")
     }
 
     override fun storeMetaGraph(library: Library, metaGraph: MetaGraph) {

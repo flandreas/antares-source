@@ -1,8 +1,8 @@
 package ch.scorpion.jabbah.base.module
 
 import ch.scorpion.jabbah.base.AbstractModule
-import ch.scorpion.jabbah.base.TranslationService
-import ch.scorpion.jabbah.base.TranslationServiceImpl
+import ch.scorpion.jabbah.base.TranslationServiceJs
+import ch.scorpion.jabbah.base.TranslationServiceJsImpl
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.invocation.InvocationHandlerJs
 import ch.scorpion.jabbah.base.time.RealTimeServiceJs
@@ -12,7 +12,7 @@ import ch.scorpion.jabbah.base.time.RealTimeServiceJs
  */
 object BaseModuleJs : AbstractModule() {
 
-	var translationService: TranslationService = TranslationServiceImpl()
+	var translationService: TranslationServiceJs = TranslationServiceJsImpl("")
 
     override fun initialize() {
         BaseModule.require()

@@ -4,7 +4,7 @@ import ch.scorpion.jabbah.base.text.PropertiesFileParser
 import kotlinx.browser.window
 import kotlin.js.Promise
 
-interface TranslationService {
+interface TranslationServiceJs {
 	fun load(name: String): Promise<Map<String, String>>
 }
 
@@ -12,24 +12,24 @@ interface TranslationService {
  * Loads translations as a properties file from the server, parses the entries,
  * and returns the translations as key-vale map.
  */
-class TranslationServiceImpl(
-	private val baseUrl: String = BASE_URL
-) : TranslationService {
+class TranslationServiceJsImpl(
+	private val baseUrl: String
+) : TranslationServiceJs {
 
 	companion object {
-		private const val BASE_URL = ".."
+		private val LOG by logger(TranslationServiceJsImpl::class)
 	}
 
 	override fun load(name: String): Promise<Map<String, String>> {
 		val lang = System.currentLanguage().code
-		val url = "$baseUrl/${name}_$lang.properties"
+		val url = "$baseUrl/translation/$name/$lang"
 
 		return window
 			.fetch(url)
 			.then { it.text() }
 			.then { PropertiesFileParser.parse(it) }
 			.catch {
-				console.error("Error while loading translations from $url: $it")
+				LOG.error("Error while loading translations from $url: $it")
 				mapOf()
 			}
 	}

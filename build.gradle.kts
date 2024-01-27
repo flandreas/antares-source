@@ -185,10 +185,6 @@ subprojects {
 				val jsMain by getting {
 					kotlin.srcDir("js/src/kotlin/main")
 					resources.srcDir("js/rsc")
-
-					dependencies {
-						implementation("io.ktor:ktor-client-js:$ktorVersion")
-					}
 				}
 				val jsTest by getting {
 					kotlin.srcDir("js/src/kotlin/test")

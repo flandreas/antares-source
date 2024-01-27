@@ -18,37 +18,5 @@ kotlin {
 				implementation(project(":draw"))
 			}
 		}
-
-		val commonDemo by creating {
-			kotlin.srcDir("shared/src/demo")
-			dependencies {
-				dependsOn(commonMain)
-			}
-		}
-
-		val jvmMain by getting
-
-		targets.getByName("jvm").compilations {
-			val main by getting
-			val demo by creating {
-				kotlinOptions {
-					(this as KotlinJvmOptions).jvmTarget = JavaVersion.VERSION_1_8.toString()
-				}
-				defaultSourceSet {
-					kotlin.srcDir("jvm/src/demo")
-					dependencies {
-						dependsOn(commonMain)
-						dependsOn(commonDemo)
-						dependsOn(jvmMain)
-						implementation(main.compileDependencyFiles + main.output.classesDirs)
-					}
-				}
-			}
-
-			tasks.create<JavaExec>("demo") {
-				setMain("ch.scorpion.jabbah.edit.helloedit.HelloEditJvm")
-				classpath = demo.output.classesDirs + main.compileDependencyFiles + commonMain.resources.sourceDirectories
-			}
-		}
 	}
 }

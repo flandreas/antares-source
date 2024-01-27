@@ -12,20 +12,17 @@ import ch.scorpion.jabbah.draw.graphics.Graphics2DJs
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
-import kotlinx.browser.document
 import kotlinx.browser.window
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 
 class CanvasJs(
-    id: String,
+    private val canvas: HTMLCanvasElement,
     override val view: View<out InputEventContext>,
     size: Dimension2D?,
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     private val propertyOwner: PropertyOwner<Any> = PropertyOwnerImpl()
 ) : Canvas, PropertyOwner<Any> by propertyOwner {
-
-    private val canvas = document.getElementById(id) as HTMLCanvasElement
 
     private val ctx = canvas.getContext("2d")!! as CanvasRenderingContext2D
 

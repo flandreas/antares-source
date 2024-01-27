@@ -1,20 +1,29 @@
 package ch.scorpion.antares
 
-import ch.scorpion.antares.module.AntaresAkrabPublicModule
+import ch.scorpion.antares.module.AntaresModuleJs
 import ch.scorpion.antares.view.theme.AntaresThemes
 import ch.scorpion.jabbah.base.LogLevel
 import ch.scorpion.jabbah.base.LogSystem
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.geom.Dimension2D
+import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.draw.view.CanvasJs
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.auth.AnonymousWebUserHolder
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.UserIdentity
+import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
+import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
+import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.library.LibraryIdentification
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.project.AkrabApiException
 import ch.scorpion.jabbah.graph.project.ProjectModule
-import ch.scorpion.jabbah.graph.ui.graphviewer.GraphViewerController
+import ch.scorpion.jabbah.graph.view.GraphView
+import org.w3c.dom.HTMLCanvasElement
 
 /**
  * Establishes everything in Kotlin code necessary to display a single circuit of a project
@@ -33,39 +42,59 @@ class AntaresSingleCircuitViewerJs(
     ownerUuid: String,
     projectUuid: String,
     metaGraphUuid: String,
-    canvasId: String,
+    canvas: HTMLCanvasElement,
     width: Int? = null,
     height: Int? = null,
     themeName: String? = null
 ) {
-    private val controller: GraphViewerController
     private val canvasJs: CanvasJs
 
     init {
-        console.log("Constructor AntaresSingleCircuitViewerJs")
-
         EditAuthModule.require()
         EditAuthModule.userHolder = AnonymousWebUserHolder
 
-        AntaresAkrabPublicModule.require()
-        LogSystem.level = LogLevel.Debug
+        AntaresModuleJs.require()
+        LogSystem.level = LogLevel.Trace
 
-        console.log("Before loading project")
-        ProjectModule.projectManagementService.load(
+        ProjectModule.projectManagementService.open(
             LibraryIdentification(UUID(projectUuid), UserIdentity(ownerUuid))
         )
-        console.log("After loading project")
 
         AntaresThemes.install(themeName)
 
-        controller = GraphViewerController()
-        controller.setMetaGraph(LibraryModule.libraryHolder.getMetaGraph(UUID(metaGraphUuid)))
+        val metaGraph = LibraryModule.libraryHolder.getMetaGraph(UUID(metaGraphUuid))
+        val clone = metaGraph.cloneGraphGraphStorable()
+
+        val drawingView = createDrawingView(clone.graphView as Drawing<Component>)
 
         val dimension: Dimension2D? = if (width != null && height != null) {
             Dimension2D(width, height)
         } else {
             null
         }
-        canvasJs = CanvasJs(canvasId, controller.drawingView, dimension)
+
+        try {
+            canvasJs = CanvasJs(canvas, drawingView, dimension)
+        } catch (e: Throwable) {
+            console.log("Error in create CanvasJs: ${e.message}, ${e.cause}")
+            console.log(e.printStackTrace())
+            throw e
+        }
+    }
+
+    // TODO This would have to be done by the Angular app
+    private fun createDrawingView(drawing: Drawing<Component>): DrawingView<GraphView> {
+        val systemSpeed = SystemSpeed()
+        val systemSpeedCategory = CurrentSystemSpeedCategory(systemSpeed)
+        val applicationContextHolder = GraphApplicationContextHolder(
+            SchedulerImpl(systemSpeedCategory),
+            systemSpeed = systemSpeed,
+            currentSystemSpeedCategory = systemSpeedCategory)
+        val drawingView = EditModule.drawingViewFactory.create(
+            drawing,
+            applicationContextHolder,
+            displayGlobalMessages = false
+        ) as DrawingView<GraphView>
+        return drawingView
     }
 }

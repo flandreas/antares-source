@@ -12,8 +12,10 @@ actual object StorableCloner : AbstractStorableCloner() {
 	actual fun serialize(storable: Storable): String =
 		serializeImpl(storable, GlobalIdentityCreator()).data.toString(StandardCharsets.UTF_8)
 
-	actual fun deserialize(s: String): Storable =
-		deserializeImpl(Buffer(s.toByteArray(StandardCharsets.UTF_8), s.length), ReferenceResolverImpl())
+	actual fun deserialize(s: String): Storable {
+		val array = s.toByteArray(StandardCharsets.UTF_8)
+		return deserializeImpl(Buffer(array, array.size), ReferenceResolverImpl())
+	}
 
 	override fun <T : Storable> serializeImpl(storable: T, identityProvider: GlobalIdentityProvider): Buffer {
 		val out = ByteArrayOutputStreamWithBufferAccess(256)

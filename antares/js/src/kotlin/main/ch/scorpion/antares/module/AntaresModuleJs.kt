@@ -4,16 +4,13 @@ import ch.scorpion.antares.AntaresApplication
 import ch.scorpion.antares.view.AntaresLibraryFactory
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.jabbah.base.AbstractModule
-import ch.scorpion.jabbah.base.TranslationServiceImpl
+import ch.scorpion.jabbah.base.TranslationServiceJsImpl
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModuleJs
 import ch.scorpion.jabbah.edit.module.EditModuleJs
-import ch.scorpion.jabbah.graph.library.LibraryManagementService
-import ch.scorpion.jabbah.graph.library.LibraryModule
-import ch.scorpion.jabbah.graph.library.LibraryService
-import ch.scorpion.jabbah.graph.library.UrlLibraryPersistenceServiceJs
+import ch.scorpion.jabbah.graph.library.*
+import ch.scorpion.jabbah.graph.library.dictionary.Akrab2RestLibraryDictionaryPersistenceService
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
-import ch.scorpion.jabbah.graph.library.dictionary.RestLibraryDictionaryPersistenceService
 import ch.scorpion.jabbah.graph.project.ProjectManagementService
 import ch.scorpion.jabbah.graph.project.ProjectModule
 
@@ -22,43 +19,30 @@ import ch.scorpion.jabbah.graph.project.ProjectModule
  */
 object AntaresModuleJs : AbstractModule() {
 
+    private const val AKRAB_URL = "http://localhost:8080"
+
     override fun initialize() {
         EditModuleJs.require()
 
-        BaseModuleJs.translationService = TranslationServiceImpl(
-            baseUrl = ".."
-        )
+        BaseModuleJs.translationService = TranslationServiceJsImpl(AKRAB_URL)
 
         LibraryModule.DEF_LIBRARY_UUID = AntaresApplication.DEF_LIBRARY_UUID
 
         AntaresViewModule.require()
 
-        LibraryModule.systemLibraryPersistenceService = UrlLibraryPersistenceServiceJs(
-            baseUrl = "..",
-            libraryDirectoryName = AntaresApplication.DEFAULT_LIB_DIRECTORY,
-            libraryFileName = AntaresApplication.DEFAULT_LIB_FILENAME
-        )
+        LibraryModule.systemLibraryPersistenceService = Akrab2RestSystemLibraryPersistenceServiceJs(AKRAB_URL)
         LibraryModule.libraryFactory = AntaresLibraryFactory()
         LibraryModule.libraryService = LibraryService()
 
         LibraryModule.libraryManagementService = LibraryManagementService()
 
         LibraryModule.systemLibraryDictionaryService = LibraryDictionaryService(
-            RestLibraryDictionaryPersistenceService(
-            baseUrl = "..",
-            libraryDirectoryName = AntaresApplication.DEFAULT_LIB_DIRECTORY,
-            dictionaryFileName = "dictionary.xml",
-            directoryExists = true
-        )
+            Akrab2RestLibraryDictionaryPersistenceService(AKRAB_URL)
         )
 
         LibraryModule.libraryManagementService = LibraryManagementService()
 
-        ProjectModule.projectLibraryPersistenceService = UrlLibraryPersistenceServiceJs(
-            baseUrl = "..",
-            libraryDirectoryName = "web-projects",
-            libraryFileName = AntaresApplication.DEFAULT_LIB_FILENAME
-        )
+        ProjectModule.projectLibraryPersistenceService = Akrab2RestLibraryPersistenceServiceJs(AKRAB_URL)
 
         ProjectModule.projectManagementService = ProjectManagementService(
             newMetaGraphNameTranslationKey = "graph.name.unknown")

@@ -99,7 +99,7 @@ class LibraryService(
 
 	/** Loads the [Library] with the specified [LibraryIdentification] from persistent store.*/
 	fun loadLibrary(libraryId: LibraryIdentification, isSystem: Boolean): Library {
-		LOG.trace("Loading Library $${libraryId.uuid}")
+		LOG.trace("Loading Library ${libraryId.uuid}, isSystem=$isSystem")
 		val library = persister(isSystem).loadLibrary(libraryId)
 		library.bindLibraryItems()
 		return library

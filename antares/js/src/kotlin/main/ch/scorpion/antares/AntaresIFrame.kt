@@ -43,6 +43,7 @@ object AntaresIFrame {
             throw AkrabApiException(AkrabApiError(AkrabApiError.TYPE_ERROR, "Missing parameter '$$$CIRCUIT_UUID_PARAM'"))
         }
 
-        return AntaresSingleCircuitViewerJs(ownerUuid, projectUuid, metaGraphUuid, canvasId, themeName = themeName)
+        TODO()
+        //return AntaresSingleCircuitViewerJs(ownerUuid, projectUuid, metaGraphUuid, null, themeName = themeName)
     }
 }

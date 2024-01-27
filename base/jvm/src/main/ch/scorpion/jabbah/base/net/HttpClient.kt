@@ -7,7 +7,7 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 
-actual val httpClient: HttpClient by lazy {
+val httpClient: HttpClient by lazy {
     HttpClient(Apache) {
         val timeout = 1_000 * BaseModule.properties.getInt(BaseModule.PROP_CONNECTION_TIMEOUT)
         engine {
