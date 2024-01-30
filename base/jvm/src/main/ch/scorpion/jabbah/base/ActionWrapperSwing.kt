@@ -34,12 +34,12 @@ class ActionWrapperSwing(private val action: Action) : javax.swing.AbstractActio
 
 	private val actionPropertyListener = PropertyChangeListener<Any> { e ->
 		when (e.name) {
-			Action.PROP_NAME -> putValue(javax.swing.Action.NAME, e.newValue)
-			Action.PROP_DESCRIPTION -> putValue(javax.swing.Action.SHORT_DESCRIPTION, e.newValue)
-			Action.PROP_ACCELERATOR -> if (e.newValue != null) putValue(javax.swing.Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(e.newValue as String))
-			Action.PROP_ENABLED -> isEnabled = e.newValue as Boolean
-			Action.PROP_SELECTED -> putValue(javax.swing.Action.SELECTED_KEY, e.newValue)
-			Action.PROP_IMAGE_PATH -> if (e.newValue != null) putValue(javax.swing.Action.LARGE_ICON_KEY, UiUtil.themedIcon(e.newValue as String))
+			ActionProperty.PROP_NAME -> putValue(javax.swing.Action.NAME, e.newValue)
+			ActionProperty.PROP_DESCRIPTION -> putValue(javax.swing.Action.SHORT_DESCRIPTION, e.newValue)
+			ActionProperty.PROP_ACCELERATOR -> if (e.newValue != null) putValue(javax.swing.Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(e.newValue as String))
+			ActionProperty.PROP_ENABLED -> isEnabled = e.newValue as Boolean
+			ActionProperty.PROP_SELECTED -> putValue(javax.swing.Action.SELECTED_KEY, e.newValue)
+			ActionProperty.PROP_IMAGE_PATH -> if (e.newValue != null) putValue(javax.swing.Action.LARGE_ICON_KEY, UiUtil.themedIcon(e.newValue as String))
 		}
 	}
 

@@ -2,27 +2,21 @@ package ch.scorpion.antares
 
 import ch.scorpion.antares.module.AntaresModuleJs
 import ch.scorpion.antares.view.theme.AntaresThemes
+import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.LogLevel
 import ch.scorpion.jabbah.base.LogSystem
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.geom.Dimension2D
-import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.draw.view.CanvasJs
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.auth.AnonymousWebUserHolder
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.UserIdentity
-import ch.scorpion.jabbah.edit.module.EditModule
-import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
-import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
-import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.library.LibraryIdentification
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.project.AkrabApiException
 import ch.scorpion.jabbah.graph.project.ProjectModule
-import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.ui.graphviewer.GraphViewerController
+import ch.scorpion.jabbah.graph.ui.graphviewer.GraphViewerView
 import org.w3c.dom.HTMLCanvasElement
 
 /**
@@ -37,64 +31,63 @@ import org.w3c.dom.HTMLCanvasElement
  *
  * @throws AkrabApiException in case of an error
  */
+@Suppress("unused")
 @JsExport
 class AntaresSingleCircuitViewerJs(
     ownerUuid: String,
     projectUuid: String,
     metaGraphUuid: String,
-    canvas: HTMLCanvasElement,
-    width: Int? = null,
-    height: Int? = null,
     themeName: String? = null
 ) {
-    private val canvasJs: CanvasJs
+
+    private val controller: GraphViewerController
 
     init {
-        EditAuthModule.require()
-        EditAuthModule.userHolder = AnonymousWebUserHolder
-
-        AntaresModuleJs.require()
-        LogSystem.level = LogLevel.Trace
-
-        ProjectModule.projectManagementService.open(
-            LibraryIdentification(UUID(projectUuid), UserIdentity(ownerUuid))
-        )
-
-        AntaresThemes.install(themeName)
-
-        val metaGraph = LibraryModule.libraryHolder.getMetaGraph(UUID(metaGraphUuid))
-        val clone = metaGraph.cloneGraphGraphStorable()
-
-        val drawingView = createDrawingView(clone.graphView as Drawing<Component>)
-
-        val dimension: Dimension2D? = if (width != null && height != null) {
-            Dimension2D(width, height)
-        } else {
-            null
-        }
-
         try {
-            canvasJs = CanvasJs(canvas, drawingView, dimension)
+            EditAuthModule.require()
+            EditAuthModule.userHolder = AnonymousWebUserHolder
+
+            AntaresModuleJs.require()
+            LogSystem.level = LogLevel.Trace
+
+            ProjectModule.projectManagementService.open(
+                LibraryIdentification(UUID(projectUuid), UserIdentity(ownerUuid))
+            )
+
+            AntaresThemes.install(themeName)
+
+            val metaGraph = LibraryModule.libraryHolder.getMetaGraph(UUID(metaGraphUuid))
+            val clone = metaGraph.cloneGraphGraphStorable()
+
+            controller = GraphViewerController(clone.graphView, displayGlobalMessages = true)
+            controller.view = object : GraphViewerView {
+                override fun notifyAllResourcesLoaded() {}
+                override fun dispose() {}
+            }
         } catch (e: Throwable) {
-            console.log("Error in create CanvasJs: ${e.message}, ${e.cause}")
-            console.log(e.printStackTrace())
+            e.printStackTrace()
             throw e
         }
     }
 
-    // TODO This would have to be done by the Angular app
-    private fun createDrawingView(drawing: Drawing<Component>): DrawingView<GraphView> {
-        val systemSpeed = SystemSpeed()
-        val systemSpeedCategory = CurrentSystemSpeedCategory(systemSpeed)
-        val applicationContextHolder = GraphApplicationContextHolder(
-            SchedulerImpl(systemSpeedCategory),
-            systemSpeed = systemSpeed,
-            currentSystemSpeedCategory = systemSpeedCategory)
-        val drawingView = EditModule.drawingViewFactory.create(
-            drawing,
-            applicationContextHolder,
-            displayGlobalMessages = false
-        ) as DrawingView<GraphView>
-        return drawingView
+    fun bindCanvas(
+        canvas: HTMLCanvasElement,
+        width: Int? = null,
+        height: Int? = null
+    ) {
+        try {
+            val dimension: Dimension2D? = if (width != null && height != null) {
+                Dimension2D(width, height)
+            } else {
+                null
+            }
+
+            CanvasJs(canvas, controller.drawingView, dimension)
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            throw e
+        }
     }
+
+    fun getToggleApplicationModeAction(): Action = controller.toggleApplicationModeAction
 }

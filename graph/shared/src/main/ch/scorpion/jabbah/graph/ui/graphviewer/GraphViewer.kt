@@ -39,6 +39,8 @@ interface GraphViewerView : UIView {
  * to start independent simulations of the [GraphView].
  */
 class GraphViewerController(
+	graphView: GraphView? = null,
+	displayGlobalMessages: Boolean = false,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<GraphViewerView>(), ApplicationModeHolder {
 
@@ -56,7 +58,7 @@ class GraphViewerController(
 		}
 	}
 
-	/** Spawns a individual [GraphApplicationContextHolder] with its separate [Scheduler] instance.*/
+	/** Spawns an individual [GraphApplicationContextHolder] with its separate [Scheduler] instance.*/
 	val applicationContextHolder = GraphApplicationContextHolder(
 		SchedulerImpl(systemSpeedCategory),
 		systemSpeed = systemSpeed,
@@ -66,10 +68,9 @@ class GraphViewerController(
 		private set
 
 	val drawingView = EditModule.drawingViewFactory.create(
-		GraphViewModule.graphViewFactory.create(null) as Drawing<Component>,
+		(graphView ?: GraphViewModule.graphViewFactory.create(null)) as Drawing<Component>,
 		applicationContextHolder,
-		displayGlobalMessages = false
-	) as DrawingView<GraphView>
+		displayGlobalMessages) as DrawingView<GraphView>
 
 	val graphNavigationViewController = GraphNavigationViewController(isRoot = true, drawingView)
 

@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.base.event
 
+import kotlin.js.JsExport
+
 /**
  * These masks are the same as in the corresponding JDK class. Note that [mask] is writable
  * in order to adjusted for the current platform, particularly "meta", which is "CMD" on MacOS
@@ -16,6 +18,7 @@ enum class Modifier(val label: String, var mask: Int) {
 /**
  * Abstract cross-platform base class of events that indicate a user input.
  */
+@JsExport
 interface InputEvent  {
 
     /** The platform event wrapped by this [InputEvent].*/

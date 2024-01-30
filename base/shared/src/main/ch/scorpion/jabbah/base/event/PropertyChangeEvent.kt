@@ -1,8 +1,11 @@
 package ch.scorpion.jabbah.base.event
 
+import kotlin.js.JsExport
+
 /**
  * A [PropertyChangeEvent] gets delivered to [PropertyChangeListener]s when a bound property of a bean changes.
  */
+@JsExport
 data class PropertyChangeEvent<out T> (
 	val source: Any,
 	val name: String,
@@ -12,6 +15,7 @@ data class PropertyChangeEvent<out T> (
 /**
  * Listens to [PropertyChangeEvent]s from beans.
  */
+@JsExport
 fun interface PropertyChangeListener<in T: Any> {
     fun propertyChanged(e: PropertyChangeEvent<T>)
 }

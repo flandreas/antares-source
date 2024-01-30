@@ -3,18 +3,22 @@ package ch.scorpion.jabbah.base
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.event.PropertyChangeSupport
+import kotlin.js.JsExport
 import kotlin.properties.Delegates
 
-interface Action {
+/** Cannot be inside [Action] companion object due to [JsExport] limitations.*/
+@JsExport
+object ActionProperty {
+	const val PROP_NAME = "name"
+	const val PROP_DESCRIPTION = "description"
+	const val PROP_ACCELERATOR = "accelerator"
+	const val PROP_ENABLED = "enabled"
+	const val PROP_SELECTED = "selected"
+	const val PROP_IMAGE_PATH = "imagePath"
+}
 
-	companion object {
-		const val PROP_NAME = "name"
-		const val PROP_DESCRIPTION = "description"
-		const val PROP_ACCELERATOR = "accelerator"
-		const val PROP_ENABLED = "enabled"
-		const val PROP_SELECTED = "selected"
-		const val PROP_IMAGE_PATH = "imagePath"
-	}
+@JsExport
+interface Action {
 
 	var name: String
 
@@ -64,17 +68,17 @@ abstract class AbstractAction(
 		accelerator = translatedAccelerator(baseName)
 	}
 
-	override var name: String by Delegates.observable(name) { _, old, new -> changeSupport.fire(Action.PROP_NAME, old, new) }
+	override var name: String by Delegates.observable(name) { _, old, new -> changeSupport.fire(ActionProperty.PROP_NAME, old, new) }
 
-	override var description: String? by Delegates.observable(description) { _, old, new -> changeSupport.fire(Action.PROP_DESCRIPTION, old, new) }
+	override var description: String? by Delegates.observable(description) { _, old, new -> changeSupport.fire(ActionProperty.PROP_DESCRIPTION, old, new) }
 
-	override var accelerator: String? by Delegates.observable(accelerator) { _, old, new -> changeSupport.fire(Action.PROP_ACCELERATOR, old, new) }
+	override var accelerator: String? by Delegates.observable(accelerator) { _, old, new -> changeSupport.fire(ActionProperty.PROP_ACCELERATOR, old, new) }
 
-	override var enabled: Boolean by Delegates.observable(enabled) { _, old, new -> changeSupport.fire(Action.PROP_ENABLED, old, new) }
+	override var enabled: Boolean by Delegates.observable(enabled) { _, old, new -> changeSupport.fire(ActionProperty.PROP_ENABLED, old, new) }
 
-	override var selected: Boolean by Delegates.observable(selected) { _, old, new -> changeSupport.fire(Action.PROP_SELECTED, old, new) }
+	override var selected: Boolean by Delegates.observable(selected) { _, old, new -> changeSupport.fire(ActionProperty.PROP_SELECTED, old, new) }
 
-	override var imagePath: String? by Delegates.observable(imagePath) { _, old, new -> changeSupport.fire(Action.PROP_IMAGE_PATH, old, new) }
+	override var imagePath: String? by Delegates.observable(imagePath) { _, old, new -> changeSupport.fire(ActionProperty.PROP_IMAGE_PATH, old, new) }
 
 	private val changeSupport = PropertyChangeSupport<Any>(this)
 
