@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.graph.project.AkrabApiException
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.ui.graphviewer.GraphViewerController
 import ch.scorpion.jabbah.graph.ui.graphviewer.GraphViewerView
+import kotlinx.browser.window
 import org.w3c.dom.HTMLCanvasElement
 
 /**
@@ -82,7 +83,14 @@ class AntaresSingleCircuitViewerJs(
                 null
             }
 
-            CanvasJs(canvas, controller.drawingView, dimension)
+            val effWidth = dimension?.width?.toInt() ?: canvas.offsetWidth
+            val effHeight = dimension?.height?.toInt() ?: canvas.offsetHeight
+
+            canvas.width = effWidth * window.devicePixelRatio.toInt()
+            canvas.height = effHeight * window.devicePixelRatio.toInt()
+
+            val canvasJs = CanvasJs(canvas, controller.drawingView, dimension)
+            canvasJs.repaint()
         } catch (e: Throwable) {
             e.printStackTrace()
             throw e
