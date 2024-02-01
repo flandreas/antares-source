@@ -68,6 +68,7 @@ class AntaresSingleCircuitViewerJs(
                 override fun notifyAllResourcesLoaded() {}
                 override fun dispose() {}
             }
+            controller.drawingView.editable = false
         } catch (e: Throwable) {
             e.printStackTrace()
             throw e

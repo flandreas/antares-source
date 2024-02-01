@@ -265,7 +265,7 @@ private class MouseEventJvm(
 		event.consume()
 	}
 
-	override fun isConsumed(): Boolean = event.isConsumed
+	override fun isEventConsumed(): Boolean = event.isConsumed
 
 	override fun toString(): String = "MouseEvent $type"
 
@@ -303,7 +303,7 @@ private class KeyEventJvm(override val event: AwtKeyEvent) : KeyEvent {
 		event.consume()
 	}
 
-	override fun isConsumed(): Boolean = event.isConsumed
+	override fun isEventConsumed(): Boolean = event.isConsumed
 
 	override fun toString(): String = "KeyEvent $type $key"
 

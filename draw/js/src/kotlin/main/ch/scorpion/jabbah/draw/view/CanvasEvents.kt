@@ -35,7 +35,7 @@ internal class MouseEventJs(
         event.preventDefault()
     }
 
-    override fun isConsumed(): Boolean = event.defaultPrevented
+    override fun isEventConsumed(): Boolean = event.defaultPrevented
 
     override val isLeftButtonDown: Boolean get() = button == Button.BUTTON1
 
@@ -188,7 +188,7 @@ internal class KeyEventJs(
         event.preventDefault()
     }
 
-    override fun isConsumed(): Boolean = event.defaultPrevented
+    override fun isEventConsumed(): Boolean = event.defaultPrevented
 
     private fun convertModifiers(): Int {
         var modifiers = 0

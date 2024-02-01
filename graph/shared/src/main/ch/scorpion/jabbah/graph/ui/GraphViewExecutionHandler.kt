@@ -202,7 +202,7 @@ class GraphViewExecutionHandler(
 				view.drawing.getVerticeViews().forEach {
 					it.getActorInteractionHandler(context).keyPressed(context)
 					context.keyEvent?.let { event ->
-						if (event.isConsumed()) {
+						if (event.isEventConsumed()) {
 							return
 						}
 					}
@@ -223,7 +223,7 @@ class GraphViewExecutionHandler(
 				view.drawing.getVerticeViews().forEach {
 					it.getActorInteractionHandler(context).keyReleased(context)
 					context.keyEvent?.let { event ->
-						if (event.isConsumed()) {
+						if (event.isEventConsumed()) {
 							return
 						}
 					}

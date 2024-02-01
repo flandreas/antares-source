@@ -84,7 +84,7 @@ data class KeyEventImpl(
 		consumed = true
 	}
 
-	override fun isConsumed(): Boolean = consumed
+	override fun isEventConsumed(): Boolean = consumed
 }
 
 interface KeyListener {

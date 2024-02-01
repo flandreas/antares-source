@@ -677,7 +677,7 @@ class SubGraphVerticeViewImpl(
 			override fun mouseClicked(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
 				val handler = super.mouseClicked(context)
 
-				if (context.mouseEvent?.isConsumed() != true) {
+				if (context.mouseEvent?.isEventConsumed() != true) {
 					val pv = getPortViewAt(context.x, context.y)
 					if (pv != null) {
 						if (!pv.port.isConnected && pv.port.portType.isInput) {

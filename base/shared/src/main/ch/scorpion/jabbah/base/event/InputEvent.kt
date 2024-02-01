@@ -47,5 +47,5 @@ interface InputEvent  {
     /** Note: The method name "consume()" gets mangled on JS platform.*/
     fun consumeEvent()
 
-	fun isConsumed(): Boolean
+	fun isEventConsumed(): Boolean
 }

@@ -15,7 +15,7 @@ class ActionEvent(
 		// empty
 	}
 
-	override fun isConsumed(): Boolean = false
+	override fun isEventConsumed(): Boolean = false
 }
 
 @JsExport
