@@ -47,7 +47,7 @@ data class MouseEventImpl(
 
 	private var consumed: Boolean = false
 
-	override fun consume() {
+	override fun consumeEvent() {
 		consumed = true
 	}
 

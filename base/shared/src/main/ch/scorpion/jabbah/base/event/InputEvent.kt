@@ -44,7 +44,8 @@ interface InputEvent  {
 
 	fun hasModifier(modifier: Modifier): Boolean = (modifiers and modifier.mask) != 0
 
-    fun consume()
+    /** Note: The method name "consume()" gets mangled on JS platform.*/
+    fun consumeEvent()
 
 	fun isConsumed(): Boolean
 }

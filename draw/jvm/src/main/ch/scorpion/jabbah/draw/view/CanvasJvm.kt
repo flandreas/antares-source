@@ -261,7 +261,7 @@ private class MouseEventJvm(
 
 	override val isRightButtonDown: Boolean get() = SwingUtilities.isRightMouseButton(event)
 
-	override fun consume() {
+	override fun consumeEvent() {
 		event.consume()
 	}
 
@@ -299,7 +299,7 @@ private class KeyEventJvm(override val event: AwtKeyEvent) : KeyEvent {
 	override val key: Int get() = event.keyCode
 	override val keyChar: Char get() = event.keyChar
 
-	override fun consume() {
+	override fun consumeEvent() {
 		event.consume()
 	}
 

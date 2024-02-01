@@ -19,30 +19,26 @@ import ch.scorpion.jabbah.graph.project.ProjectModule
  */
 object AntaresModuleJs : AbstractModule() {
 
-    private const val AKRAB_URL = "http://localhost:8080"
-
     override fun initialize() {
         EditModuleJs.require()
-
-        BaseModuleJs.translationService = TranslationServiceJsImpl(AKRAB_URL)
 
         LibraryModule.DEF_LIBRARY_UUID = AntaresApplication.DEF_LIBRARY_UUID
 
         AntaresViewModule.require()
 
-        LibraryModule.systemLibraryPersistenceService = Akrab2RestSystemLibraryPersistenceServiceJs(AKRAB_URL)
+        LibraryModule.systemLibraryPersistenceService = Akrab2RestSystemLibraryPersistenceServiceJs(BaseModuleJs.AKRAB_URL)
         LibraryModule.libraryFactory = AntaresLibraryFactory()
         LibraryModule.libraryService = LibraryService()
 
         LibraryModule.libraryManagementService = LibraryManagementService()
 
         LibraryModule.systemLibraryDictionaryService = LibraryDictionaryService(
-            Akrab2RestLibraryDictionaryPersistenceService(AKRAB_URL)
+            Akrab2RestLibraryDictionaryPersistenceService(BaseModuleJs.AKRAB_URL)
         )
 
         LibraryModule.libraryManagementService = LibraryManagementService()
 
-        ProjectModule.projectLibraryPersistenceService = Akrab2RestLibraryPersistenceServiceJs(AKRAB_URL)
+        ProjectModule.projectLibraryPersistenceService = Akrab2RestLibraryPersistenceServiceJs(BaseModuleJs.AKRAB_URL)
 
         ProjectModule.projectManagementService = ProjectManagementService(
             newMetaGraphNameTranslationKey = "graph.name.unknown")

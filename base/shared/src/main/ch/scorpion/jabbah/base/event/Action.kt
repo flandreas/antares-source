@@ -11,7 +11,7 @@ class ActionEvent(
 	val time: Long
 ) : InputEvent {
 
-	override fun consume() {
+	override fun consumeEvent() {
 		// empty
 	}
 

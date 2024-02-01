@@ -169,7 +169,7 @@ class ZoomPanController(
 				panByWheel(e)
 			}
 
-			e.consume()
+			e.consumeEvent()
 		}
 
 		private fun panByWheel(e: MouseEvent) {

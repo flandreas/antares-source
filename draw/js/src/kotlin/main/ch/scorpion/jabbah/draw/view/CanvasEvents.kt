@@ -31,7 +31,7 @@ internal class MouseEventJs(
 
     override val y: Int get() = location.yInt
 
-    override fun consume() {
+    override fun consumeEvent() {
         event.preventDefault()
     }
 
@@ -184,7 +184,7 @@ internal class KeyEventJs(
 
     override val modifiers: Int get() = convertModifiers()
 
-    override fun consume() {
+    override fun consumeEvent() {
         event.preventDefault()
     }
 

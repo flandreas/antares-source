@@ -159,7 +159,7 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 				return null
 			}
 			model.toggle(context.signalHandler)
-			context.mouseEvent?.consume()
+			context.mouseEvent?.consumeEvent()
 			requestFocus()
 			return this
 		}
@@ -178,7 +178,7 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 				} else {
 					model.bufferSignal(false, context.signalHandler)
 				}
-				context.mouseEvent?.consume()
+				context.mouseEvent?.consumeEvent()
 			}
 			return null
 		}
@@ -187,7 +187,7 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 			if (context.mouseEvent?.button != Button.BUTTON1) {
 				return null
 			}
-			context.mouseEvent?.consume()
+			context.mouseEvent?.consumeEvent()
 			return this
 		}
 
@@ -236,17 +236,17 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 
 		private fun switchOn(context: ActorInteractionContext) {
 			model.on(context.signalHandler)
-			context.keyEvent?.consume()
+			context.keyEvent?.consumeEvent()
 		}
 
 		private fun switchOff(context: ActorInteractionContext) {
 			model.off(context.signalHandler)
-			context.keyEvent?.consume()
+			context.keyEvent?.consumeEvent()
 		}
 
 		private fun toggle(context: ActorInteractionContext) {
 			model.toggle(context.signalHandler)
-			context.keyEvent?.consume()
+			context.keyEvent?.consumeEvent()
 		}
 	}
 }

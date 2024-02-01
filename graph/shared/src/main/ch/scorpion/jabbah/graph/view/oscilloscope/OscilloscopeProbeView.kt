@@ -160,7 +160,7 @@ class OscilloscopeProbeView(
 
 			handleProbeViewAddedToDrawing(vv)
 
-			context.mouseEvent?.consume()
+			context.mouseEvent?.consumeEvent()
 			validate()
 
 			return vv

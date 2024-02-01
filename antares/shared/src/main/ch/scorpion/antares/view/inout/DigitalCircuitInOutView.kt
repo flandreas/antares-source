@@ -365,7 +365,7 @@ class DigitalCircuitInOutView(
 				model.toggleBit(digitIndex, undefine, context.signalHandler, (context.view as DrawingView<*>).drawing as GraphView)
 			} else {
 				if (context.view is DrawingView<*>) {
-					context.mouseEvent?.consume()
+					context.mouseEvent?.consumeEvent()
 					handler = displayKeyboard(context)
 				}
 			}
@@ -399,7 +399,7 @@ class DigitalCircuitInOutView(
 
 		override fun mouseReleased(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (!toggle) {
-				context.mouseEvent?.consume()
+				context.mouseEvent?.consumeEvent()
 				return toggle(false, context)
 			}
 			return null

@@ -131,7 +131,7 @@ open class DrawableButton<C: InputEventContext>(
 
 		override fun mouseClicked(context: C): InputEventHandler<C>? {
 			if (enabled) {
-				context.mouseEvent?.consume()
+				context.mouseEvent?.consumeEvent()
 				action.execute(context)
 			}
 			return null

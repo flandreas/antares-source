@@ -399,12 +399,12 @@ class DipSwitchView(
 				requestFocus()
 				setFocusTo(it)
 			}
-			context.mouseEvent?.consume()
+			context.mouseEvent?.consumeEvent()
 			return null
 		}
 
 		override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler {
-			context.mouseEvent?.consume()
+			context.mouseEvent?.consumeEvent()
 			return this
 		}
 

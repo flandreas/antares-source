@@ -31,7 +31,7 @@ class SwitchViewTest {
 		switchView.name = "A"
 		switchView.getActorInteractionHandler(context).keyPressed(context)
 
-		verify { keyEvent.consume() }
+		verify { keyEvent.consumeEvent() }
 	}
 
 	@Test
@@ -41,7 +41,7 @@ class SwitchViewTest {
 		switchView.name = "A"
 		switchView.getActorInteractionHandler(context).keyPressed(context)
 
-		verify(exactly = 0) { keyEvent.consume() }
+		verify(exactly = 0) { keyEvent.consumeEvent() }
 	}
 
 	@Test
