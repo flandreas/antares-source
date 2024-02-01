@@ -12,7 +12,9 @@ import ch.scorpion.jabbah.base.time.RealTimeServiceJs
  */
 object BaseModuleJs : AbstractModule() {
 
-	var translationService: TranslationServiceJs = TranslationServiceJsImpl("")
+    const val AKRAB_URL = "http://localhost:8080"
+
+    var translationService: TranslationServiceJs = TranslationServiceJsImpl(AKRAB_URL)
 
     override fun initialize() {
         BaseModule.require()

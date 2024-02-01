@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.LogLevel
 import ch.scorpion.jabbah.base.LogSystem
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.geom.Dimension2D
+import ch.scorpion.jabbah.base.module.BaseModuleJs
 import ch.scorpion.jabbah.draw.view.CanvasJs
 import ch.scorpion.jabbah.edit.auth.AnonymousWebUserHolder
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
@@ -45,11 +46,13 @@ class AntaresSingleCircuitViewerJs(
 
     init {
         try {
+            BaseModuleJs.require()
+
             EditAuthModule.require()
             EditAuthModule.userHolder = AnonymousWebUserHolder
 
             AntaresModuleJs.require()
-            LogSystem.level = LogLevel.Trace
+            LogSystem.level = LogLevel.Debug
 
             ProjectModule.projectManagementService.open(
                 LibraryIdentification(UUID(projectUuid), UserIdentity(ownerUuid))
@@ -98,4 +101,6 @@ class AntaresSingleCircuitViewerJs(
     }
 
     fun getToggleApplicationModeAction(): Action = controller.toggleApplicationModeAction
+    fun getSingleStepModeAction(): Action = controller.singleStepModeAction
+    fun getPauseOrResumeAction(): Action = controller.pauseOrResumeAction
 }

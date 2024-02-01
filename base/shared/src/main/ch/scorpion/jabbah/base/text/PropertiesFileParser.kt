@@ -40,6 +40,7 @@ object PropertiesFileParser {
 					}
 				} catch (e: Throwable) {
 					LOG.error("Error while parsing translation line '$line': $e")
+					throw e
 				}
 			}
 		if (currentKey != null) {
