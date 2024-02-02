@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.draw.view.CanvasJs
 import ch.scorpion.jabbah.edit.auth.AnonymousWebUserHolder
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.UserIdentity
+import ch.scorpion.jabbah.execution.speed.SystemSpeedOutlet
 import ch.scorpion.jabbah.graph.library.LibraryIdentification
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.project.AkrabApiException
@@ -40,7 +41,7 @@ class AntaresSingleCircuitViewerJs(
     projectUuid: String,
     metaGraphUuid: String,
     themeName: String? = null
-) {
+) : SystemSpeedOutlet {
 
     private val controller: GraphViewerController
 
@@ -104,4 +105,15 @@ class AntaresSingleCircuitViewerJs(
     fun getToggleApplicationModeAction(): Action = controller.toggleApplicationModeAction
     fun getSingleStepModeAction(): Action = controller.singleStepModeAction
     fun getPauseOrResumeAction(): Action = controller.pauseOrResumeAction
+
+    /** ---- [SystemSpeedOutlet] interface */
+
+    override val systemSpeedCategoryName: String
+        get() = controller.applicationContextHolder.currentSystemSpeedCategory.systemSpeedCategory.toString()
+
+    override var currentSystemSpeed: Int
+        get() = controller.applicationContextHolder.currentSystemSpeedCategory.systemSpeed.speed
+        set(value) {
+            controller.applicationContextHolder.currentSystemSpeedCategory.systemSpeed.speed = value
+        }
 }
