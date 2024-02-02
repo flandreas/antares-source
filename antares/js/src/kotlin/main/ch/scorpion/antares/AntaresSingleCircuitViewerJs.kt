@@ -8,14 +8,13 @@ import ch.scorpion.jabbah.base.module.BaseModuleJs
 import ch.scorpion.jabbah.draw.view.CanvasJs
 import ch.scorpion.jabbah.edit.auth.AnonymousWebUserHolder
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
-import ch.scorpion.jabbah.edit.auth.UserIdentity
 import ch.scorpion.jabbah.execution.speed.SystemSpeedOutlet
+import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.LibraryIdentification
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.project.AkrabApiException
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.ui.graphviewer.GraphViewerController
-import ch.scorpion.jabbah.graph.ui.graphviewer.GraphViewerView
 import kotlinx.browser.window
 import org.w3c.dom.HTMLCanvasElement
 
@@ -33,11 +32,7 @@ import org.w3c.dom.HTMLCanvasElement
  */
 @Suppress("unused")
 @JsExport
-class AntaresSingleCircuitViewerJs(
-    projectUuid: String,
-    metaGraphUuid: String,
-    themeName: String? = null
-) : SystemSpeedOutlet {
+class AntaresSingleCircuitViewerJs : SystemSpeedOutlet {
 
     companion object {
         private val LOG by logger(AntaresSingleCircuitViewerJs::class)
@@ -55,29 +50,9 @@ class AntaresSingleCircuitViewerJs(
             AntaresModuleJs.require()
             LogSystem.level = LogLevel.Debug
 
-            if (LibraryModule.systemLibraryDictionaryService.contains(UUID(projectUuid))) {
-                LOG.debug("Opening system library")
-                LibraryModule.libraryManagementService.open(
-                    LibraryIdentification(UUID(projectUuid), null)
-                )
-            } else {
-                LOG.debug("Opening user project")
-                ProjectModule.projectManagementService.open(
-                    LibraryIdentification(UUID(projectUuid), null)
-                )
-            }
+            controller = GraphViewerController(null, displayGlobalMessages = true)
+            ViewMocks(controller)
 
-            AntaresThemes.install(themeName)
-
-            LOG.debug("Loading circuit")
-            val metaGraph = LibraryModule.libraryHolder.getMetaGraph(UUID(metaGraphUuid))
-            val clone = metaGraph.cloneGraphGraphStorable()
-
-            controller = GraphViewerController(clone.graphView, displayGlobalMessages = true)
-            controller.view = object : GraphViewerView {
-                override fun notifyAllResourcesLoaded() {}
-                override fun dispose() {}
-            }
             controller.drawingView.editable = false
         } catch (e: Throwable) {
             e.printStackTrace()
@@ -85,12 +60,45 @@ class AntaresSingleCircuitViewerJs(
         }
     }
 
+    private fun loadLibrary(libraryUuid: String) {
+        LOG.debug("Loading library..")
+        if (LibraryModule.systemLibraryDictionaryService.contains(UUID(libraryUuid))) {
+            LOG.debug("-> opening system library")
+            LibraryModule.libraryManagementService.open(
+                LibraryIdentification(UUID(libraryUuid), null)
+            )
+        } else {
+            LOG.debug("-> opening user project")
+            ProjectModule.projectManagementService.open(
+                LibraryIdentification(UUID(libraryUuid), null)
+            )
+        }
+    }
+
+    private fun loadMetaGraph(metaGraphUuid: String): MetaGraph {
+        LOG.debug("Loading circuit")
+        return LibraryModule.libraryHolder.getMetaGraph(UUID(metaGraphUuid))
+    }
+
+    private fun updateController(metaGraph: MetaGraph) {
+        LOG.debug("Setting MetaGraph in controller")
+        controller.setMetaGraph(metaGraph)
+    }
+
     fun bindCanvas(
+        libraryUuid: String,
+        metaGraphUuid: String,
         canvas: HTMLCanvasElement,
         width: Int? = null,
-        height: Int? = null
+        height: Int? = null,
+        themeName: String? = null
     ) {
         try {
+            AntaresThemes.install(themeName)
+
+            loadLibrary(libraryUuid)
+            val metaGraph = loadMetaGraph(metaGraphUuid)
+
             val dimension: Dimension2D? = if (width != null && height != null) {
                 Dimension2D(width, height)
             } else {
@@ -104,6 +112,9 @@ class AntaresSingleCircuitViewerJs(
             canvas.height = effHeight * window.devicePixelRatio.toInt()
 
             val canvasJs = CanvasJs(canvas, controller.drawingView, dimension)
+
+            updateController(metaGraph)
+
             canvasJs.repaint()
         } catch (e: Throwable) {
             e.printStackTrace()
