@@ -102,6 +102,8 @@ class AntaresSingleCircuitViewerJs(
         }
     }
 
+    val circuitName: String get() = controller.graphNavigationViewController.drawingView.drawing.name.value
+
     fun getToggleApplicationModeAction(): Action = controller.toggleApplicationModeAction
     fun getSingleStepModeAction(): Action = controller.singleStepModeAction
     fun getPauseOrResumeAction(): Action = controller.pauseOrResumeAction
