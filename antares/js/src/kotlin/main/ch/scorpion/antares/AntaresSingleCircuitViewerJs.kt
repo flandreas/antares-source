@@ -34,7 +34,6 @@ import org.w3c.dom.HTMLCanvasElement
 @Suppress("unused")
 @JsExport
 class AntaresSingleCircuitViewerJs(
-    ownerUuid: String,
     projectUuid: String,
     metaGraphUuid: String,
     themeName: String? = null
@@ -59,12 +58,12 @@ class AntaresSingleCircuitViewerJs(
             if (LibraryModule.systemLibraryDictionaryService.contains(UUID(projectUuid))) {
                 LOG.debug("Opening system library")
                 LibraryModule.libraryManagementService.open(
-                    LibraryIdentification(UUID(projectUuid), UserIdentity(ownerUuid))
+                    LibraryIdentification(UUID(projectUuid), null)
                 )
             } else {
                 LOG.debug("Opening user project")
                 ProjectModule.projectManagementService.open(
-                    LibraryIdentification(UUID(projectUuid), UserIdentity(ownerUuid))
+                    LibraryIdentification(UUID(projectUuid), null)
                 )
             }
 
