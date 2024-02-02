@@ -41,11 +41,29 @@ class Akrab2RestSystemLibraryPersistenceServiceJs(
     }
 
     override fun loadMetaGraphXML(library: Library, uuid: UUID): String {
-        TODO("Not yet implemented")
+        LOG.debug("GET system library MetaGraph $uuid")
+        val request = XMLHttpRequest()
+        request.open("GET", "$baseUrl/library/system/${library.uuid}/$uuid/xml", async = false)
+        request.overrideMimeType("text/xml")
+
+        request.send()
+
+        if (request.status != 200.toShort()) {
+            throw AkrabApiException(AkrabApiError(AkrabApiError.TYPE_ERROR, "Could not load system library MetaGraph XML: ${request.status}"))
+        }
+        try {
+            return request.responseText
+        } catch (e: Throwable) {
+            throw AkrabApiException(AkrabApiError(AkrabApiError.TYPE_ERROR, "Could not load system library MetaGraph XML: ${e.message}"))
+        }
     }
 
     override fun loadMetaGraph(library: Library, uuid: UUID): MetaGraph {
-        TODO("Not yet implemented")
+        try {
+            return StoreXmlReader(DomXmlReader(loadMetaGraphXML(library, uuid))).readStorable() as MetaGraph
+        } catch (e: Throwable) {
+            throw AkrabApiException(AkrabApiError(AkrabApiError.TYPE_ERROR, "Could not load MetaGraph: ${e.message}"))
+        }
     }
 
     override fun storeMetaGraph(library: Library, metaGraph: MetaGraph) {

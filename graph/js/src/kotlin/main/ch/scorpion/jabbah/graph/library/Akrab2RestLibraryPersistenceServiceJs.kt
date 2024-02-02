@@ -41,21 +41,20 @@ class Akrab2RestLibraryPersistenceServiceJs(
     }
 
     override fun loadMetaGraphXML(library: Library, uuid: UUID): String {
-        LOG.debug("GET MetaGraph $uuid")
+        LOG.debug("GET project MetaGraph $uuid")
         val request = XMLHttpRequest()
         request.open("GET", "$baseUrl/metaGraph/$uuid/xml", async = false)
-        request.overrideMimeType("text/xml")
         request.overrideMimeType("text/xml")
 
         request.send()
 
         if (request.status != 200.toShort()) {
-            throw AkrabApiException(AkrabApiError(AkrabApiError.TYPE_ERROR, "Could not load MetaGraph XML: ${request.status}"))
+            throw AkrabApiException(AkrabApiError(AkrabApiError.TYPE_ERROR, "Could not load project MetaGraph XML: ${request.status}"))
         }
         try {
             return request.responseText
         } catch (e: Throwable) {
-            throw AkrabApiException(AkrabApiError(AkrabApiError.TYPE_ERROR, "Could not load MetaGraph XML: ${e.message}"))
+            throw AkrabApiException(AkrabApiError(AkrabApiError.TYPE_ERROR, "Could not load project MetaGraph XML: ${e.message}"))
         }
     }
 
@@ -63,7 +62,7 @@ class Akrab2RestLibraryPersistenceServiceJs(
         try {
             return StoreXmlReader(DomXmlReader(loadMetaGraphXML(library, uuid))).readStorable() as MetaGraph
         } catch (e: Throwable) {
-            throw AkrabApiException(AkrabApiError(AkrabApiError.TYPE_ERROR, "Could not load MetaGraph: ${e.message}"))
+            throw AkrabApiException(AkrabApiError(AkrabApiError.TYPE_ERROR, "Could not load project MetaGraph: ${e.message}"))
         }
     }
 

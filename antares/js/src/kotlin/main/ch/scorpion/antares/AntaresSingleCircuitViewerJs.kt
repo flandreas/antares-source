@@ -2,10 +2,7 @@ package ch.scorpion.antares
 
 import ch.scorpion.antares.module.AntaresModuleJs
 import ch.scorpion.antares.view.theme.AntaresThemes
-import ch.scorpion.jabbah.base.Action
-import ch.scorpion.jabbah.base.LogLevel
-import ch.scorpion.jabbah.base.LogSystem
-import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.module.BaseModuleJs
 import ch.scorpion.jabbah.draw.view.CanvasJs
@@ -43,6 +40,10 @@ class AntaresSingleCircuitViewerJs(
     themeName: String? = null
 ) : SystemSpeedOutlet {
 
+    companion object {
+        private val LOG by logger(AntaresSingleCircuitViewerJs::class)
+    }
+
     private val controller: GraphViewerController
 
     init {
@@ -55,12 +56,21 @@ class AntaresSingleCircuitViewerJs(
             AntaresModuleJs.require()
             LogSystem.level = LogLevel.Debug
 
-            ProjectModule.projectManagementService.open(
-                LibraryIdentification(UUID(projectUuid), UserIdentity(ownerUuid))
-            )
+            if (LibraryModule.systemLibraryDictionaryService.contains(UUID(projectUuid))) {
+                LOG.debug("Opening system library")
+                LibraryModule.libraryManagementService.open(
+                    LibraryIdentification(UUID(projectUuid), UserIdentity(ownerUuid))
+                )
+            } else {
+                LOG.debug("Opening user project")
+                ProjectModule.projectManagementService.open(
+                    LibraryIdentification(UUID(projectUuid), UserIdentity(ownerUuid))
+                )
+            }
 
             AntaresThemes.install(themeName)
 
+            LOG.debug("Loading circuit")
             val metaGraph = LibraryModule.libraryHolder.getMetaGraph(UUID(metaGraphUuid))
             val clone = metaGraph.cloneGraphGraphStorable()
 
