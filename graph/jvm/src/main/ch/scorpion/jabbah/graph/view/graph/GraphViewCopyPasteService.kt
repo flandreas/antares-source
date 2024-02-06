@@ -154,7 +154,7 @@ class GraphViewCopyPasteService(
 		}
 
 		Movable.moveBy(copyDrawing.drawables, dislocation)
-		copyDrawing.drawables.forEach { c ->
+		copyDrawing.drawables.reversed().forEach { c ->
 			c.beforePaste(drawing)
 			drawing.add(c)
 			if (c is GraphElementView<*>) {
