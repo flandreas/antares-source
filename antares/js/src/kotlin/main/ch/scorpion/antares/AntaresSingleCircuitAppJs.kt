@@ -76,14 +76,17 @@ object AntaresSingleCircuitAppJs {
         val url = "${BaseModuleJs.AKRAB_URL}/repository/$libraryUuid"
         val headers = Headers()
         headers.append("Content-Type", "text/xml")
+
+        var status = 200
         return window.fetch(url, RequestInit("GET", headers))
             .then {
-                if (it.status != 200.toShort()) {
-                    throw Error("Could not load library: Error ${it.status}")
-                }
+                status = it.status.toInt()
                 it.text()
             }
             .then {
+                if (status != 200) {
+                    throw Error(it)
+                }
                 val library = StoreXmlReader(DomXmlReader(it)).readStorable() as Library
                 library.bindLibraryItems()
                 LibraryModule.libraryHolder.l = library
