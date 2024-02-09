@@ -10,53 +10,44 @@ import ch.scorpion.jabbah.base.module.BaseModuleJs
 import ch.scorpion.jabbah.edit.auth.AnonymousWebUserHolder
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.library.AbstractAkrab2RestLibraryPersistenceServiceJs
 import ch.scorpion.jabbah.graph.library.Library
-import ch.scorpion.jabbah.graph.library.LibraryIdentification
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.project.ProjectModule
-
-/**
- * Contains either the [MetaGraph] data (must be [Any] to avoid JS exporting [MetaGraph])
- * or an error message produces while loading the data.
- */
-@JsExport
-data class AntaresSingleCircuitAppJs(
-    val data: Any?,
-    val errorMsg: String?
-) {
-    companion object {
-
-        fun success(data: Any): AntaresSingleCircuitAppJs =
-            AntaresSingleCircuitAppJs(data, null)
-
-        fun error(errorMsg: String): AntaresSingleCircuitAppJs =
-            AntaresSingleCircuitAppJs(null, errorMsg)
-    }
-}
+import ch.scorpion.jabbah.graph.project.Project
+import ch.scorpion.jabbah.io.DomXmlReader
+import ch.scorpion.jabbah.io.StoreXmlReader
+import kotlinx.browser.window
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.await
+import kotlinx.coroutines.promise
+import org.w3c.fetch.Headers
+import org.w3c.fetch.RequestInit
+import kotlin.js.Promise
 
 /**
  * Establishes everything in Kotlin code necessary to display a single circuit of a project
  * in a JavaScript application, and loads [MetaGraph] and [Library] data to be displayed later.
  */
 @JsExport
-object AntaresSingleCircuitAppLoaderJs {
+object AntaresSingleCircuitAppJs {
 
     private val LOG by logger(AntaresSingleCircuitViewerJs::class)
 
     /**
-     * TODO: This has to be asynchronous and return a Promise.
+     * Initializes an application context and load the specified [Library]/[Project] and [MetaGraph].
+     * The result of the returned [Promise] can be cast to [MetaGraph], which can't be declared
+     * explicitly because that would require @JsExport for everything.
      */
     @Suppress("unused")
-    fun start(libraryUuid: String, metaGraphUuid: String, themeName: String? = null): AntaresSingleCircuitAppJs {
+    fun start(libraryUuid: String, metaGraphUuid: String, themeName: String? = null): Promise<Any> {
         LOG.info("Starting Antares single circuit app")
-        try {
-            init(themeName)
-            loadLibrary(libraryUuid)
-            return AntaresSingleCircuitAppJs.success(loadMetaGraph(metaGraphUuid))
-        } catch (e: Throwable) {
-            LOG.error("Error: ", e)
-            e.printStackTrace()
-            return AntaresSingleCircuitAppJs(null, e.message)
+        init(themeName)
+
+        val scope = CoroutineScope(SupervisorJob())
+        return scope.promise {
+            load(libraryUuid, metaGraphUuid)
         }
     }
 
@@ -72,23 +63,41 @@ object AntaresSingleCircuitAppLoaderJs {
         AntaresThemes.install(themeName)
     }
 
-    private fun loadLibrary(libraryUuid: String) {
-        LOG.debug("Loading library..")
-        if (LibraryModule.systemLibraryDictionaryService.contains(UUID(libraryUuid))) {
-            LOG.debug("-> opening system library")
-            LibraryModule.libraryManagementService.open(
-                LibraryIdentification(UUID(libraryUuid), null)
-            )
-        } else {
-            LOG.debug("-> opening user project")
-            ProjectModule.projectManagementService.open(
-                LibraryIdentification(UUID(libraryUuid), null)
-            )
-        }
+    private suspend fun load(libraryUuid: String, metaGraphUuid: String): Promise<MetaGraph> {
+        LOG.debug("Start loading repository in AntaresSingleCircuitAppLoaderJs")
+        val library = loadRepository(libraryUuid)
+            .await()
+        LOG.debug("Repository loaded, start loading MetaGraph")
+        return loadMetaGraph(library, UUID(metaGraphUuid))
     }
 
-    private fun loadMetaGraph(metaGraphUuid: String): MetaGraph {
-        LOG.debug("Loading circuit..")
-        return LibraryModule.libraryHolder.getMetaGraph(UUID(metaGraphUuid))
+    private fun loadRepository(libraryUuid: String): Promise<Library> {
+        LOG.debug("Loading repository $libraryUuid")
+        val url = "${BaseModuleJs.AKRAB_URL}/repository/$libraryUuid"
+        val headers = Headers()
+        headers.append("Content-Type", "text/xml")
+        return window.fetch(url, RequestInit("GET", headers))
+            .then {
+                if (it.status != 200.toShort()) {
+                    throw Error("Could not load library: Error ${it.status}")
+                }
+                it.text()
+            }
+            .then {
+                val library = StoreXmlReader(DomXmlReader(it)).readStorable() as Library
+                library.bindLibraryItems()
+                LibraryModule.libraryHolder.l = library
+                library
+            }
+    }
+
+    private fun loadMetaGraph(library: Library, uuid: UUID): Promise<MetaGraph> {
+        LOG.debug("Loading MetaGraph ${uuid.id}")
+        val service = if (library.isSystem) {
+            LibraryModule.systemLibraryPersistenceService
+        } else {
+            ProjectModule.projectLibraryPersistenceService
+        }
+        return (service as AbstractAkrab2RestLibraryPersistenceServiceJs).loadMetaGraphAsync(library, uuid)
     }
 }

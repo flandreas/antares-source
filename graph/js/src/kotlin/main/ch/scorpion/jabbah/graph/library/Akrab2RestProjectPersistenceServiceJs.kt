@@ -1,19 +1,24 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.GraphQuota
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphBundle
 
-class Akrab2RestSystemLibraryPersistenceServiceJs(
+class Akrab2RestProjectPersistenceServiceJs(
     baseUrl: String
-) : AbstractAkrab2RestLibraryPersistenceServiceJs(baseUrl, "system library") {
+) : AbstractAkrab2RestLibraryPersistenceServiceJs(baseUrl, "project") {
+
+    companion object {
+        private val LOG by logger(Akrab2RestProjectPersistenceServiceJs::class)
+    }
 
     override fun loadLibrary(libraryId: LibraryIdentification): Library =
-        loadLibrary(libraryId, "$baseUrl/library/system/${libraryId.uuid.id}")
+        loadLibrary(libraryId, "$baseUrl/project/${libraryId.uuid.id}")
 
     override fun getMetaGraphXMLUrl(library: Library, uuid: UUID): String =
-        "$baseUrl/library/system/${library.uuid}/$uuid/xml"
+        "$baseUrl/metaGraph/$uuid/xml"
 
     override fun storeMetaGraph(library: Library, metaGraph: MetaGraph) {
         TODO("Not yet implemented")

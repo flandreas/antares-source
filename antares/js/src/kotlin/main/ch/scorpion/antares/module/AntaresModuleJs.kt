@@ -4,7 +4,6 @@ import ch.scorpion.antares.AntaresApplication
 import ch.scorpion.antares.view.AntaresLibraryFactory
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.jabbah.base.AbstractModule
-import ch.scorpion.jabbah.base.TranslationServiceJsImpl
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModuleJs
 import ch.scorpion.jabbah.edit.module.EditModuleJs
@@ -38,7 +37,7 @@ object AntaresModuleJs : AbstractModule() {
 
         LibraryModule.libraryManagementService = LibraryManagementService()
 
-        ProjectModule.projectLibraryPersistenceService = Akrab2RestLibraryPersistenceServiceJs(BaseModuleJs.AKRAB_URL)
+        ProjectModule.projectLibraryPersistenceService = Akrab2RestProjectPersistenceServiceJs(BaseModuleJs.AKRAB_URL)
 
         ProjectModule.projectManagementService = ProjectManagementService(
             newMetaGraphNameTranslationKey = "graph.name.unknown")

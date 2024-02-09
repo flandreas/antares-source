@@ -22,7 +22,7 @@ import org.w3c.dom.HTMLCanvasElement
 @Suppress("unused")
 @JsExport
 class AntaresSingleCircuitViewerJs(
-    app: AntaresSingleCircuitAppJs
+    data: Any
 ) : SystemSpeedOutlet {
 
     companion object {
@@ -32,13 +32,11 @@ class AntaresSingleCircuitViewerJs(
     private val controller: GraphViewerController
 
     init {
-        if (app.data == null) {
-            LOG.error("Expecting MetaGraph in app data, but was null")
+        if (data !is MetaGraph) {
+            LOG.error("Expecting MetaGraph in app data, but was ${data::class.simpleName}")
         }
-        if (app.data !is MetaGraph) {
-            LOG.error("Expecting MetaGraph in app data, but was ${app.data!!::class.simpleName}")
-        }
-        controller = GraphViewerController((app.data as MetaGraph).graph.graphView, true)
+        LOG.debug("Initializing AntaresSingleCircuitViewerJs with MetaGraph ${(data as MetaGraph).uuid}")
+        controller = GraphViewerController(data.graph.graphView, true)
         controller.drawingView.editable = false
     }
 
