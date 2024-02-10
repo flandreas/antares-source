@@ -76,16 +76,18 @@ abstract class AbstractAkrab2RestLibraryPersistenceServiceJs(
         val url = getMetaGraphXMLUrl(library, uuid)
         val headers = Headers()
         headers.append("Content-Type", "text/xml")
+
+        var status = 200
         return window.fetch(url, RequestInit("GET", headers))
             .then {
-                if (it.status != 200.toShort()) {
-                    throw Error("Could not load MetaGraph: Error ${it.status}")
-                }
+                status = it.status.toInt()
                 it.text()
             }
             .then {
-                val metaGraph = StoreXmlReader(DomXmlReader(it)).readStorable() as MetaGraph
-                metaGraph
+                if (status != 200) {
+                    throw Error(it)
+                }
+                StoreXmlReader(DomXmlReader(it)).readStorable() as MetaGraph
             }
     }
 }
