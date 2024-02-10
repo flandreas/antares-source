@@ -1,10 +1,7 @@
 package ch.scorpion.jabbah.graph.ui.graphviewer
 
 import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.TranslationBundleAdded
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.SystemSpeed
@@ -27,11 +24,7 @@ import ch.scorpion.jabbah.graph.ui.GraphNavigationViewController
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
-interface GraphViewerView : UIView {
-
-	/** Called by [GraphViewerController] after all resources have been (asynchronously) loaded.*/
-	fun notifyAllResourcesLoaded()
-}
+interface GraphViewerView : UIView { }
 
 /**
  * Displays a single [GraphView] and allows the user to start execution of this [GraphView].
@@ -51,12 +44,6 @@ class GraphViewerController(
 	private val systemSpeed = SystemSpeed(eventBus = eventBus)
 
 	private val systemSpeedCategory = CurrentSystemSpeedCategory(systemSpeed)
-
-	private val translationBundleAddedHandler: EventHandler<TranslationBundleAdded> = {
-		if (Translations.hasAllBundles()) {
-			view.notifyAllResourcesLoaded()
-		}
-	}
 
 	/** Spawns an individual [GraphApplicationContextHolder] with its separate [Scheduler] instance.*/
 	val applicationContextHolder = GraphApplicationContextHolder(
@@ -81,13 +68,11 @@ class GraphViewerController(
 	init {
 		// Cyclic dependency
 		applicationContextHolder.applicationModeHolder = this
-		eventBus.register(TranslationBundleAdded::class, translationBundleAddedHandler)
 	}
 
 	override fun dispose() {
 		super.dispose()
 		LOG.userTrail("Close separate viewer for '${graphNavigationViewController.drawingView.drawing.graph!!.name.value}'")
-		eventBus.unregister(translationBundleAddedHandler)
 		applicationContextHolder.scheduler.dispose()
 		graphNavigationViewController.dispose()
 		toggleApplicationModeAction.dispose()

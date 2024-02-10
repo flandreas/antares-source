@@ -2,10 +2,7 @@ package ch.scorpion.antares
 
 import ch.scorpion.antares.module.AntaresModuleJs
 import ch.scorpion.antares.view.theme.AntaresThemes
-import ch.scorpion.jabbah.base.LogLevel
-import ch.scorpion.jabbah.base.LogSystem
-import ch.scorpion.jabbah.base.UUID
-import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.module.BaseModuleJs
 import ch.scorpion.jabbah.edit.auth.AnonymousWebUserHolder
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
@@ -43,10 +40,11 @@ object AntaresSingleCircuitAppJs {
     @Suppress("unused")
     fun start(libraryUuid: String, metaGraphUuid: String, themeName: String? = null): Promise<Any> {
         LOG.info("Starting Antares single circuit app")
-        init(themeName)
 
         val scope = CoroutineScope(SupervisorJob())
         return scope.promise {
+            Promise.all(loadTranslations().toTypedArray()).await()
+            init(themeName)
             load(libraryUuid, metaGraphUuid)
         }
     }
@@ -69,6 +67,18 @@ object AntaresSingleCircuitAppJs {
             .await()
         LOG.debug("Repository loaded, start loading MetaGraph")
         return loadMetaGraph(library, UUID(metaGraphUuid))
+    }
+
+    private fun loadTranslations(): List<Promise<Unit>> {
+        val promises = mutableListOf<Promise<Unit>>()
+        Translations.addBundleAsync("jabbah-base")?.let { promises.add(it) }
+        Translations.addBundleAsync("jabbah-draw")?.let { promises.add(it) }
+        Translations.addBundleAsync("jabbah-edit")?.let { promises.add(it) }
+        Translations.addBundleAsync("jabbah-execution")?.let { promises.add(it) }
+        Translations.addBundleAsync("jabbah-app")?.let { promises.add(it) }
+        Translations.addBundleAsync("jabbah-graph")?.let { promises.add(it) }
+        Translations.addBundleAsync("antares")?.let { promises.add(it) }
+        return promises
     }
 
     private fun loadRepository(libraryUuid: String): Promise<Library> {

@@ -44,12 +44,6 @@ expect object Translations {
 }
 
 /**
- * Posted on the system's [EventBus] after the translations of a bundle
- * have become available.
- */
-data class TranslationBundleAdded(val name: String)
-
-/**
  * Defines all languages supported by the Jabbah framework for translation of dynamic (i.e. user provided) text.
  * @property code the ISO 639-1 two-letter language code. Example: "en" for English.
  */

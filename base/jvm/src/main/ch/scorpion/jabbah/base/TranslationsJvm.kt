@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.base
 
-import ch.scorpion.jabbah.base.module.BaseModule
 import java.text.MessageFormat
 import java.util.*
 
@@ -33,7 +32,6 @@ actual object Translations {
 	actual fun addBundle(name: String) {
 		bundleNames.add(name)
         addBundle(ResourceBundle.getBundle(name))
-		BaseModule.eventBus.post(TranslationBundleAdded(name))
     }
 
 	actual fun hasBundle(name: String): Boolean =

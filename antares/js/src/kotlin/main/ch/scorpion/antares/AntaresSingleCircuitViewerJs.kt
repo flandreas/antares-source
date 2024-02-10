@@ -37,6 +37,7 @@ class AntaresSingleCircuitViewerJs(
         }
         LOG.debug("Initializing AntaresSingleCircuitViewerJs with MetaGraph ${(data as MetaGraph).uuid}")
         controller = GraphViewerController(data.graph.graphView, true)
+        ViewMocks(controller)
         controller.drawingView.editable = false
     }
 

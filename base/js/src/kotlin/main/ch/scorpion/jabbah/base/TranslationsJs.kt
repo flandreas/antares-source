@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.base
 
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJs
+import kotlin.js.Promise
 
 /**
  * Implements [Translations] for the JavaScript target.
@@ -26,15 +26,21 @@ actual object Translations {
 	actual fun withAnyKey() { }
 
 	actual fun addBundle(name: String) {
-		LOG.trace("Adding translation bundle '$name'")
-		requestedBundleNames.add(name)
-		BaseModuleJs.translationService.load(name)
-			.then {
-				translation -> translation.forEach { addKey(it.key, it.value) }
-				loadedBundleNames.add(name)
-				BaseModule.eventBus.post(TranslationBundleAdded(name))
-			}
+		addBundleAsync(name)
     }
+
+	fun addBundleAsync(name: String): Promise<Unit>? {
+		if (!hasBundle(name)) {
+			LOG.trace("Adding translation bundle '$name'")
+			requestedBundleNames.add(name)
+			return BaseModuleJs.translationService.load(name)
+				.then { translation ->
+					translation.forEach { addKey(it.key, it.value) }
+					loadedBundleNames.add(name)
+				}
+		}
+		return null
+	}
 
 	actual fun hasBundle(name: String): Boolean =
 		loadedBundleNames.contains(name)

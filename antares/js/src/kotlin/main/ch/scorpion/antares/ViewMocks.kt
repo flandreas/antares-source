@@ -26,7 +26,6 @@ internal class ViewMocks(
 
     /** ---- [GraphViewerView] */
 
-    override fun notifyAllResourcesLoaded() {}
     override fun dispose() {}
 
     /** ---- [GraphNavigationView] */
