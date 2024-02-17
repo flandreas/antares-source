@@ -64,6 +64,7 @@ val commonsMathVersion: String by extra
 val l2fprodVersion: String by extra
 val flatLafVersion: String by extra
 val korteVersion: String by extra
+val batikVersion: String by extra
 
 subprojects {
 
@@ -162,6 +163,20 @@ subprojects {
 					implementation("org.drjekyll:fontchooser:2.4")
 					implementation("org.swinglabs.swingx:swingx-all:1.6.5-1")
 					implementation("com.formdev:flatlaf-swingx:$flatLafVersion")
+					implementation("org.apache.xmlgraphics:batik-anim:$batikVersion")
+					implementation("org.apache.xmlgraphics:batik-awt-util:$batikVersion")
+					implementation("org.apache.xmlgraphics:batik-bridge:$batikVersion")
+					implementation("org.apache.xmlgraphics:batik-css:$batikVersion")
+					implementation("org.apache.xmlgraphics:batik-dom:$batikVersion")
+					implementation("org.apache.xmlgraphics:batik-ext:$batikVersion")
+					implementation("org.apache.xmlgraphics:batik-gvt:$batikVersion")
+					implementation("org.apache.xmlgraphics:batik-parser:$batikVersion")
+					implementation("org.apache.xmlgraphics:batik-script:$batikVersion")
+					implementation("org.apache.xmlgraphics:batik-svg-dom:$batikVersion")
+					implementation("org.apache.xmlgraphics:batik-svggen:$batikVersion")
+					implementation("org.apache.xmlgraphics:batik-transcoder:$batikVersion")
+					implementation("org.apache.xmlgraphics:batik-util:$batikVersion")
+					implementation("org.apache.xmlgraphics:batik-xml:$batikVersion")
 				}
 
 				// Workaround for bug in Gradle > 7.0 complaining about duplicate translation resources in generated JAR
