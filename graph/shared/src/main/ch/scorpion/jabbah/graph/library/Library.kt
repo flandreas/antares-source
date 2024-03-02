@@ -129,7 +129,7 @@ data class LibraryIdentification(
 data class LibraryProperties(
 	val name: TranslatableText = TranslatableText(),
 	val description: TranslatableText = TranslatableText(),
-	val visibility: LibraryVisibility = LibraryVisibility.Private,
+	val visibility: LibraryVisibility = LibraryVisibility.Hidden,
 	val author: UserIdentity? = null,
 	val importUuid: UUID? = null
 ) {

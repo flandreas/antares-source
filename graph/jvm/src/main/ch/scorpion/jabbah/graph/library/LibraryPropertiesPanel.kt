@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.graph.view.LibraryVisibilityEditor
 import java.awt.Component
 import java.awt.Dimension
+import java.awt.FlowLayout
 import java.awt.Frame
 import javax.swing.*
 import javax.swing.event.AncestorEvent
@@ -86,6 +87,7 @@ class LibraryPropertiesPanel(
 
 	private val visibilityLabel = Translations.getString("library.property.visibility.name")
 	private val visibilityField = LibraryVisibilityEditor()
+	private val visibilityDescLabel = JLabel()
 
 	private val importLabel = Translations.getString("library.property.import.name")
 	private val importField = JComboBox<LibraryDictionaryEntry>()
@@ -96,7 +98,7 @@ class LibraryPropertiesPanel(
 	private val oldAuthor: UserIdentity? = properties?.author
 
 	init {
-		preferredSize = Dimension(400, 180)
+		preferredSize = Dimension(500, 180)
 		visibilityField.customEditor.isEnabled = editable
 		importField.isEnabled = editable
 
@@ -254,9 +256,20 @@ class LibraryPropertiesPanel(
 				rowDist, inset, 0, 0
 			)
 
+			val visibilityPanel = JPanel()
+			visibilityPanel.layout = BoxLayout(visibilityPanel, BoxLayout.LINE_AXIS)
+			visibilityPanel.add(visibilityField.customEditor)
+			visibilityPanel.add(Box.createHorizontalStrut(5))
+			visibilityPanel.add(visibilityDescLabel)
+
+			visibilityDescLabel.border = null
+			(visibilityField.customEditor as JComboBox<*>).addItemListener {
+				visibilityDescLabel.text = (visibilityField.value as LibraryVisibility).description()
+			}
+
 			EGBL.add(
 				this,
-				visibilityField.customEditor,
+				visibilityPanel,
 				1, row,
 				EGBL.REMAINDER, 1,
 				0.0, 0.0,
