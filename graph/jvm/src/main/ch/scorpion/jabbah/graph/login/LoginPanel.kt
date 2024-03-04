@@ -14,6 +14,8 @@ import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.Frame
 import javax.swing.*
+import javax.swing.event.DocumentEvent
+import javax.swing.event.DocumentListener
 
 /**
  * Requests username/password from user in order to login to remote Akrab server.
@@ -51,6 +53,12 @@ class LoginPanel(
     private val cancelAction = CancelAction()
     private val cancelButton = JButton(ActionWrapperSwing(cancelAction))
 
+    private val textFieldListener = object : DocumentListener {
+        override fun insertUpdate(e: DocumentEvent?) { updateLoginAction() }
+        override fun removeUpdate(e: DocumentEvent?) { updateLoginAction() }
+        override fun changedUpdate(e: DocumentEvent?) { updateLoginAction() }
+    }
+
     init {
         UiUtil.selectAllOnFocusGained(usernameField)
         UiUtil.selectAllOnFocusGained(passwordField)
@@ -64,6 +72,15 @@ class LoginPanel(
         if (StringUtils.isNotEmpty(usernameField.text)) {
             System.invokeLater { passwordField.requestFocusInWindow() }
         }
+
+        usernameField.document.addDocumentListener(textFieldListener)
+        passwordField.document.addDocumentListener(textFieldListener)
+
+        updateLoginAction()
+    }
+
+    private fun updateLoginAction() {
+        loginAction.enabled = StringUtils.isNotEmpty(usernameField.text) && StringUtils.isNotEmpty(passwordField.text)
     }
 
     private fun buildUI() {
