@@ -5,13 +5,18 @@ import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.JPanel
 
-open class DataFormPanel : JPanel() {
+open class DataFormPanel(
+	val topInset: Int = DEF_INSET,
+	val leftInset: Int = DEF_INSET
+) : JPanel() {
 
 	companion object {
-		const val INSET = 7
+		const val DEF_INSET = 7
 	}
 
 	private var gridy = 0
+
+	private val rowTopInset: Int get() = if (gridy == 0) topInset else 0
 
 	init {
 		layout = EGBL.getLayout()
@@ -30,7 +35,6 @@ open class DataFormPanel : JPanel() {
 	}
 
 	fun addRow(row: JComponent) {
-		val topInset = if (gridy == 0) INSET else 0
 		EGBL.add(
 			this,
 			row,
@@ -39,13 +43,12 @@ open class DataFormPanel : JPanel() {
 			0.0, 0.0,	// weightX, weightY
 			EGBL.WEST,	// anchor
 			EGBL.NONE,	// fill
-			topInset, INSET, UIBasics.ROW_GAP, 0
+			rowTopInset, leftInset, UIBasics.ROW_GAP, 0
 		)
 		gridy++
 	}
 
 	fun addLabeledRow(label: String, row: JComponent) {
-		val topInset = if (gridy == 0) INSET else 0
 		EGBL.add(
 			this,
 			JLabel("$label:"),
@@ -54,7 +57,7 @@ open class DataFormPanel : JPanel() {
 			0.0, 0.0,	// weightX, weightY
 			EGBL.WEST,	// anchor
 			EGBL.NONE,	// fill
-			topInset, INSET, UIBasics.ROW_GAP, 0
+			rowTopInset, leftInset, UIBasics.ROW_GAP, 0
 		)
 
 		EGBL.add(
@@ -65,7 +68,7 @@ open class DataFormPanel : JPanel() {
 			1.0, 0.0,	// weightX, weightY
 			EGBL.WEST,	// anchor
 			EGBL.NONE,	// fill
-			topInset, UIBasics.LABEL_GAP, UIBasics.ROW_GAP, 0
+			rowTopInset, UIBasics.LABEL_GAP, UIBasics.ROW_GAP, 0
 		)
 
 		gridy++
