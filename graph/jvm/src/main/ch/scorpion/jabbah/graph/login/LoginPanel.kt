@@ -43,6 +43,8 @@ class LoginPanel(
     private val cancelButton = JButton(ActionWrapperSwing(cancelAction))
 
     init {
+        UiUtil.selectAllOnFocusGained(usernameField)
+        UiUtil.selectAllOnFocusGained(passwordField)
         buildUI()
     }
 
@@ -88,6 +90,7 @@ class LoginPanel(
             runBlocking {
                 if (!GraphModuleJvm.loginService.login(LoginRequest(usernameField.text, String(passwordField.password)))) {
                     messageLabel.text = Translations.getString("graph.action.login.unsuccessful.text")
+                    usernameField.requestFocusInWindow()
                 } else {
                     dialogCloser()
                     JOptionPane.showMessageDialog(

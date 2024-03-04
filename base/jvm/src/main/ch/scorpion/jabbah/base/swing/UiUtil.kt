@@ -6,10 +6,13 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.ui.UI
 import java.awt.Color
 import java.awt.EventQueue
+import java.awt.event.FocusAdapter
+import java.awt.event.FocusEvent
 import java.awt.image.BaseMultiResolutionImage
 import java.lang.reflect.InvocationTargetException
 import javax.swing.*
 import javax.swing.plaf.FontUIResource
+import javax.swing.text.JTextComponent
 import kotlin.math.max
 import kotlin.math.min
 
@@ -189,6 +192,19 @@ object UiUtil {
 		} else {
 			getMultiResolutionIcon(path, ::getVariantPath, clazz)
 		}
+	}
+
+	private val focusGainedHandler = object : FocusAdapter() {
+		override fun focusGained(e: FocusEvent?) {
+			if (e?.source is JTextComponent) {
+				(e.source as JTextComponent).selectAll()
+			}
+		}
+	}
+
+	/** Configures a [JTextComponent] to select all text when it receives the focus.*/
+	fun selectAllOnFocusGained(c: JTextComponent) {
+		c.addFocusListener(focusGainedHandler)
 	}
 
 	private fun isDark(color: Color): Boolean =
