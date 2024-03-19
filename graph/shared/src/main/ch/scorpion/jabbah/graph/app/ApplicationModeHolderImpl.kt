@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ContentViewManager
+import ch.scorpion.jabbah.draw.view.CurrentPanMethod
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.model.ComponentMessage
@@ -93,6 +94,10 @@ class ApplicationModeHolderImpl(
 				updateEditorEditability()
 				eventBus.post(ApplicationModeEvent(this, currentMode))
 				Status.set(StatusType.Large, Translations.getString("graph.status.execute"))
+				Status.set(
+					StatusType.Tool,
+					"${Translations.getString("edit.tool.select.zoom.text")}. ${CurrentPanMethod.panMethod.description}"
+				)
 				after.invoke()
 			}
 		} else {
