@@ -12,9 +12,12 @@ class CanvasMockBuilder {
 	private val canvas: Canvas = mockk(relaxed = true)
 	private lateinit var dimension: Dimension2D
 	private val propertyChangeSlot = slot<PropertyChangeListener<Any>>()
+	private val propertyChangeListeners = mutableListOf<PropertyChangeListener<Any>>()
 
 	init {
-		every { canvas.addPropertyChangeListener(capture(propertyChangeSlot)) } answers { }
+		every { canvas.addPropertyChangeListener(capture(propertyChangeSlot)) } answers {
+			propertyChangeListeners.add(propertyChangeSlot.captured)
+		}
 		withDevicePixelRatio(1)
 	}
 
@@ -26,7 +29,9 @@ class CanvasMockBuilder {
 	fun withView(view: View<*>): CanvasMockBuilder {
 		every { canvas.view } returns view
 		view.canvas = canvas
-		propertyChangeSlot.captured.propertyChanged(PropertyChangeEvent(canvas, Canvas.PROP_DIMENSION, null, dimension))
+		propertyChangeListeners.forEach {
+			it.propertyChanged(PropertyChangeEvent(canvas, Canvas.PROP_DIMENSION, null, dimension))
+		}
 		return this
 	}
 
