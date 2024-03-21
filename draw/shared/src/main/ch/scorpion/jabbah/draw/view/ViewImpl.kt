@@ -247,6 +247,8 @@ open class ViewImpl<C : InputEventContext>(
 
 	final override val overlayContainer: DrawableContainer<Drawable> = DrawableContainerImpl(useViewCoordinates = true)
 
+	override val decorator: ViewDecorator = ViewDecorator(this)
+
 	val painter: ViewPainter = viewPainterFactory.invoke(this)
 
 	/** Reusable buffer instance for querying the clipping rectangle from [Graphics2D]. */

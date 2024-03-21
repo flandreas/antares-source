@@ -18,7 +18,7 @@ class ViewImplZoomPanTest {
 
 	private val context = DrawModule.drawContextFactory(graphics2D.build(), null, null)
 
-	private val view = ViewImpl<InputEventContext>(
+	private val view = ViewImpl(
 		affineTransformFactory = { System.createAffineTransform() },
 		viewPainterFactory = { SimpleViewPainter(it) },
 		applicationContextHolder = null)

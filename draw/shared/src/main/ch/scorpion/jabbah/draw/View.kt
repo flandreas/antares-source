@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.geom.AffineTransform
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.graphics.Graphics2D
@@ -131,6 +132,9 @@ interface View<C : InputEventContext> : ContentView<C>, ViewToModelTransform {
 	 * this one is not part of the [View]'s main content, i.e. it is not replaced when replacing the main content.
 	 */
 	val overlayContainer: DrawableContainer<Drawable>
+
+	/** Decorates this [View] by displaying [RectangularDrawable]s at fixed positions.*/
+	val decorator: ViewDecorator
 
 	/** Sets the current cursor of this [View].*/
 	fun setCursor(cursor: Cursor)

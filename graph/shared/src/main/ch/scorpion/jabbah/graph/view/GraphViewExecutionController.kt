@@ -1,9 +1,15 @@
 package ch.scorpion.jabbah.graph.view
 
+import ch.scorpion.jabbah.base.PROP_BEGINNER_HELP_TOOLTIP
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.ViewDecorator
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
+import ch.scorpion.jabbah.edit.model.text.Label
+import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.MetaGraphRepository
@@ -77,13 +83,23 @@ class GraphViewExecutionController(
 	 * i.e. whether it doesn't show accurate signal states due to shallow execution.
 	 */
 	fun updateDetachedUI() {
-		graphViewUI.drawingView.overlayColor = if (graphViewUI.isDetached
+		if (graphViewUI.isDetached
 			&& applicationContextHolder.scheduler.isActive
 			&& (!applicationContextHolder.scheduler.isDeepExecution || graphViewUI.drawingView.drawing.graph!!.purelyScripted)
 		) {
-			Themes.get<GraphTheme>().overlay
+			graphViewUI.drawingView.overlayColor = Themes.get<GraphTheme>().overlay
+			if (BaseModule.properties.getBoolean(PROP_BEGINNER_HELP_TOOLTIP)) {
+				graphViewUI.drawingView.decorator.topCentered = Label(
+					Translations.getString("graph.sim.scripted.shallow.txt"),
+					ViewDecorator.FONT,
+					ViewDecorator.TEXT_COLOR,
+					horizontalAlignment = HorizontalAlignment.LEFT,
+					verticalAlignment = VerticalAlignment.TOP
+				)
+			}
 		} else {
-			null
+			graphViewUI.drawingView.overlayColor = null
+			graphViewUI.drawingView.decorator.topCentered = null
 		}
 	}
 

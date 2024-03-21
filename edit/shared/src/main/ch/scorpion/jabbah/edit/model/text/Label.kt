@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
+import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.drawable.Mirrorable
 import ch.scorpion.jabbah.draw.drawable.RichTextDrawable
 import ch.scorpion.jabbah.draw.graphics.Color
@@ -39,7 +40,7 @@ class Label(
 	val rotation: Rotation = Rotation.R0,
 	ownerRotation: Rotation = Rotation.R0,
 	displayableText: RichTextDrawable = RichTextDrawable.of(text ?: "", font)
-) : AbstractDrawable(), Mirrorable {
+) : AbstractDrawable(), Mirrorable, Locatable {
 
 	companion object {
 		private val DEFAULT_HORIZONTAL_ALIGNMENT = HorizontalAlignment.CENTER
@@ -67,7 +68,7 @@ class Label(
 			}
 		}
 
-	var location: Point2D = location
+	override var location: Point2D = location
 		get() = Point2D(field)
 		set(value) {
 			if (field != value) {
