@@ -33,6 +33,9 @@ class ViewNavigatorImpl(
 
 	private val defaultZoomFactor: Double get() = properties.getFloat(View.PROP_DEFAULT_ZOOM_FACTOR).toDouble()
 
+	private val minZoomFactor: Double get() = BaseModule.properties.getFloat(View.PROP_MIN_ZOOM_FACTOR).toDouble()
+
+	private val maxZoomFactor: Double get() = BaseModule.properties.getFloat(View.PROP_MAX_ZOOM_FACTOR).toDouble()
 	/** ---- [ViewNavigator] interface */
 
 	override fun createTransformation(zoomFactor: Double): ViewTransformation =
@@ -73,7 +76,10 @@ class ViewNavigatorImpl(
 	}
 
 	override fun multiplyZoomFactor(factor: Double, zoomLocation: Point2D?) {
-		setZoomFactor(view.zoomFactor * factor, zoomLocation)
+		val zoomFactor = view.zoomFactor * factor
+		if (isZoomFactorInValidRange(zoomFactor)) {
+			setZoomFactor(zoomFactor, zoomLocation)
+		}
 	}
 
 	override fun panBy(dx: Int, dy: Int) {
@@ -99,17 +105,23 @@ class ViewNavigatorImpl(
 	}
 
 	override fun panCenter(zoomFactor: Double) {
-		setZoomPan(ZoomPan(view, zoomFactor, calculateContentCenterPan(zoomFactor)))
+		if (isZoomFactorInValidRange(zoomFactor)) {
+			setZoomPan(ZoomPan(view, zoomFactor, calculateContentCenterPan(zoomFactor)))
+		}
 	}
 
 	override fun fit() {
 		val zoomFactor = calculateFitZoomFactor()
-		setZoomPan(ZoomPan(view, zoomFactor, calculateContentCenterPan(zoomFactor)))
+		if (isZoomFactorInValidRange(zoomFactor)) {
+			setZoomPan(ZoomPan(view, zoomFactor, calculateContentCenterPan(zoomFactor)))
+		}
 	}
 
 	override fun fitMaxNormal() {
 		val zoomFactor = calculateFixMaxNormalZoomFactor()
-		setZoomPan(ZoomPan(view, zoomFactor, calculateContentCenterPan(zoomFactor, fixMaxNormal = true)))
+		if (isZoomFactorInValidRange(zoomFactor)) {
+			setZoomPan(ZoomPan(view, zoomFactor, calculateContentCenterPan(zoomFactor, fixMaxNormal = true)))
+		}
 	}
 
 	override fun calculateFixMaxNormalZoomFactor(): Double =
@@ -153,6 +165,5 @@ class ViewNavigatorImpl(
 	}
 
 	private fun isZoomFactorInValidRange(zoomFactor: Double): Boolean =
-		zoomFactor >= BaseModule.properties.getFloat(View.PROP_MIN_ZOOM_FACTOR)
-			&& zoomFactor <= BaseModule.properties.getFloat(View.PROP_MAX_ZOOM_FACTOR)
+		zoomFactor in minZoomFactor..maxZoomFactor
 }
