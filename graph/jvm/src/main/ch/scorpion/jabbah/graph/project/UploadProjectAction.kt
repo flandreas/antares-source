@@ -49,6 +49,19 @@ class UploadProjectAction(
 		super.calculateEnabledness() && Session.exists
 
 	override fun execute(event: ActionEvent) {
+		val project = selectedFolder as Project
+
+		if (project.expandedImports.hasCustomLibrary) {
+			JOptionPane.showConfirmDialog(
+				SwingUtilities.getWindowAncestor(controller.view as Component),
+				Translations.getString("project.action.upload.customLib.txt"),
+				name,
+				JOptionPane.DEFAULT_OPTION,
+				JOptionPane.INFORMATION_MESSAGE
+			)
+			return
+		}
+
 		if (JOptionPane.showConfirmDialog(
 			SwingUtilities.getWindowAncestor(controller.view as Component),
 			Translations.getString("project.action.upload.text"),
@@ -62,7 +75,7 @@ class UploadProjectAction(
 		InvocationHandler.invoke {
 			scope.launch(Dispatchers.Main) {
 				try {
-					service.upload(selectedFolder as Project)
+					service.upload(project)
 
 					JOptionPane.showConfirmDialog(
 						SwingUtilities.getWindowAncestor(controller.view as Component),

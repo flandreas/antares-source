@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.DirectedGraph
 import ch.scorpion.jabbah.base.collection.TopologicalSort
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.graph.project.Project
 
 /**
  * Contains the transitive hull of imported [Libraries][Library] of a particular root [Library].
@@ -62,6 +63,9 @@ class LibraryImports private constructor(
 	/** Returns the number of referenced [Libraries][Library] not available in the system.*/
 	var staleImportCount: Int = 0
 		private set
+
+	/** Returns `true` if any of the imported [Libraries][Library] is custom, i.e. non-system.*/
+	val hasCustomLibrary: Boolean get() = libraries.any { it !is Project && !it.isSystem }
 
 	fun contains(uuid: UUID): Boolean = _libraries.any { it.uuid == uuid }
 
