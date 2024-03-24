@@ -302,9 +302,17 @@
             <digitalPortView _id='113' x='210.0' y='175.0' dir='east' textPos='internal' portId='114'/>
           </portView>
         </digitalPortViewComp>
+        <label _id='115' id='10' rot='0'>
+          <text>
+            <translation lang='en' text='PRIO'/>
+          </text>
+          <location>
+            <point x='175.0' y='168.0'/>
+          </location>
+        </label>
       </components>
       <model>
-        <subGraphVertice _id='115' id='0' delay='0' uuid='5f7f0e18-de3f-4776-ab82-a74f6fda8c75'>
+        <subGraphVertice _id='116' id='0' delay='0' uuid='5f7f0e18-de3f-4776-ab82-a74f6fda8c75'>
           <desc>
             <translation lang='en' text='Produces a 2-bit number representing the position of the first asserted input bit'/>
             <translation lang='de' text='Erzeugt eine 2-Bit-Zahl, die die Position des gesetzten Eingang-Bit darstellt'/>
