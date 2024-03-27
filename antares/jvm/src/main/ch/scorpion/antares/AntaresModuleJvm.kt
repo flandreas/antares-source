@@ -334,7 +334,14 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 			add(BooleanPreference(
 				id = AbstractTransistorView.PROP_TRANSISTOR_CIRCLE,
-				nameKey = "antares.preference.TransistorCircle"
+				nameKey = "antares.preference.TransistorCircle",
+				needsRestart = true
+			))
+
+			add(BooleanPreference(
+				id = AbstractTransistorView.PROP_TRANSISTOR_PORT_NAMES,
+				nameKey = "antares.preference.TransistorPortNames",
+				needsRestart = true
 			))
 		}
 

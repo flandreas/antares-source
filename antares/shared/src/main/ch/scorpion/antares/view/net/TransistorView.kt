@@ -10,7 +10,6 @@ import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.geom.Direction.*
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 
 class TransistorView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
@@ -38,36 +37,12 @@ class TransistorView(
 	override fun modelExchanged(oldModel: Transistor?) {
 		super.modelExchanged(oldModel)
 
-		// Gate
-		val gate = DigitalPortView(
-			styleProvider,
-			model.gatePort,
-			0, 0,
-			WEST,
-			showLogicAnnotation = false
-		)
-		gate.portLabelPosition = PortLabelPosition.HIDE
-		addPortView(gate)
-
-		// Source
-		val source = DigitalPortView(
-			styleProvider,
-			model.sourcePort,
-			0, 0,
-			NORTH
-		)
-		source.portLabelPosition = PortLabelPosition.HIDE
-		addPortView(source)
-
-		// Drain
-		val drain = DigitalPortView(
-			styleProvider,
-			model.drainPort,
-			0, 0,
-			SOUTH
-		)
-		drain.portLabelPosition = PortLabelPosition.HIDE
-		addPortView(drain)
+		addPortView(DigitalPortView(styleProvider, model.gatePort, 0, 0, WEST, portLabelPosition,
+			showLogicAnnotation = false, horizontalExternalLabel = true, externalPortLabelDistance = externalPortLabelDistance))
+		addPortView(DigitalPortView(styleProvider, model.sourcePort, 0, 0, NORTH, portLabelPosition,
+			showLogicAnnotation = false, horizontalExternalLabel = true, externalPortLabelDistance = externalPortLabelDistance))
+		addPortView(DigitalPortView(styleProvider, model.drainPort, 0, 0, SOUTH, portLabelPosition,
+			showLogicAnnotation = false, horizontalExternalLabel = true, externalPortLabelDistance = externalPortLabelDistance))
 
 		updateGeometry()
 	}

@@ -42,6 +42,8 @@ abstract class AbstractAntaresPortView<T: Any>(
 	internalLabelOrientation: InternalLabelOrientation = InternalLabelOrientation.Horizontal,
 	length: Int,
 	customUnconnectedLength: Int? = null,
+	private val horizontalExternalLabel: Boolean = false,
+	externalPortLabelDistance: ExternalPortLabelDistance = ExternalPortLabelDistance.Small
 	) : AbstractPortView<T>(port, x, y, direction, portLabelPosition, internalLabelOrientation, length) {
 
 	companion object {
@@ -55,7 +57,7 @@ abstract class AbstractAntaresPortView<T: Any>(
 
 	protected val externalAnnotationSize: Int get() = if (hasExternalAnnotation) LOGIC_SIZE else 0
 
-	var largeExternalPortLabelDistance: Boolean = false
+	var externalPortLabelDistance: ExternalPortLabelDistance = externalPortLabelDistance
 		set(value) {
 			if (field != value) {
 				invalidate()
@@ -224,10 +226,14 @@ abstract class AbstractAntaresPortView<T: Any>(
 	}
 
 	private fun getLabelRotation(): Rotation =
-		when (direction) {
-			NORTH -> Rotation.R90
-			SOUTH -> Rotation.R90
-			else -> Rotation.R0
+		if (horizontalExternalLabel) {
+			Rotation.R0
+		} else {
+			when (direction) {
+				NORTH -> Rotation.R90
+				SOUTH -> Rotation.R90
+				else -> Rotation.R0
+			}
 		}
 
 	private fun getInternalLabelHorizontalAlignment(direction: Direction): HorizontalAlignment =
@@ -246,11 +252,15 @@ abstract class AbstractAntaresPortView<T: Any>(
 		}
 
 	private fun getExternalLabelHorizontalAlignment(direction: Direction): HorizontalAlignment =
-		when (direction) {
-			WEST -> RIGHT
-			EAST -> LEFT
-			NORTH -> LEFT
-			SOUTH -> RIGHT
+		if (horizontalExternalLabel) {
+			RIGHT
+		} else {
+			when (direction) {
+				WEST -> RIGHT
+				EAST -> LEFT
+				NORTH -> LEFT
+				SOUTH -> RIGHT
+			}
 		}
 
 	private fun getInternalLabelVerticalAlignment(direction: Direction): VerticalAlignment =
@@ -269,11 +279,19 @@ abstract class AbstractAntaresPortView<T: Any>(
 			}
 		}
 
-	private fun getExternalLabelVerticalAlignment(): VerticalAlignment =
-		if (centerExternalLabel)
+	private fun getExternalLabelVerticalAlignment(): VerticalAlignment {
+		if (horizontalExternalLabel) {
+			when (direction) {
+				NORTH -> return VerticalAlignment.BOTTOM
+				SOUTH -> return VerticalAlignment.TOP
+				else -> {}
+			}
+		}
+		return if (centerExternalLabel)
 			VerticalAlignment.CENTER
 		else
 			VerticalAlignment.BOTTOM
+	}
 
 	private fun getInternalLabelLocation(direction: Direction): Point2D {
 		val ia = when (port.portType) {
@@ -292,15 +310,27 @@ abstract class AbstractAntaresPortView<T: Any>(
 
 	private fun getExternalLabelLocation(direction: Direction): Point2D {
 		val ea = externalAnnotationSize
-		var dist = if (largeExternalPortLabelDistance) LARGE_EXT_BORDER_DIST else SMALL_EXT_BORDER_DIST
+		var dist = when (externalPortLabelDistance) {
+			ExternalPortLabelDistance.None -> 0
+			ExternalPortLabelDistance.Small -> SMALL_EXT_BORDER_DIST
+			ExternalPortLabelDistance.Large -> LARGE_EXT_BORDER_DIST
+		}
 		connectionGeometry?.distance?.let {
 			dist += it
 		}
 		return when (direction) {
 			WEST -> Point2D(-dist - ea, -1)
 			EAST -> Point2D(dist + ea, -1)
-			NORTH -> Point2D(0, -dist - ea)
-			SOUTH -> Point2D(0, dist + ea)
+			NORTH -> if (horizontalExternalLabel) {
+				Point2D(-3, -dist - ea)
+			} else {
+				Point2D(0, -dist - ea)
+			}
+			SOUTH -> if (horizontalExternalLabel) {
+				Point2D(-3, dist + ea)
+			} else {
+				Point2D(0, dist + ea)
+			}
 		}
 	}
 }

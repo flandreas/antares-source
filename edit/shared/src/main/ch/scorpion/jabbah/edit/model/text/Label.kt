@@ -157,6 +157,7 @@ class Label(
 		val oldColor = context.g.color
 
 		DrawModule.drawDebugBoundingBox(this, context.g, Color.GRAY)
+		DrawModule.drawDebugBoundingBoxLocation(location, context, Color.GREEN)
 
 		context.g.color = if (context.useContextColors) {
 			if (inverse) {

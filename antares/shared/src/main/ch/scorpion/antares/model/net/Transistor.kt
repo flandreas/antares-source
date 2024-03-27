@@ -9,6 +9,8 @@ import ch.scorpion.antares.model.net.TransistorIF.Companion.SOURCE_PORT_ID
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.model.text.Translation
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.*
@@ -65,6 +67,10 @@ class Transistor(
 				Logic.POSITIVE -> TransistorType.N
 				Logic.NEGATIVE -> TransistorType.P
 			}
+
+		private val GATE_DESC by lazy { TranslatableText(Translation.ofStaticKey("library.element.Transistor.gate.desc"))  }
+		private val SOURCE_DESC by lazy { TranslatableText(Translation.ofStaticKey("library.element.Transistor.source.desc"))  }
+		private val DRAIN_DESC by lazy { TranslatableText(Translation.ofStaticKey("library.element.Transistor.drain.desc"))  }
 	}
 
 	override val baseResourceKey: String get() = "library.element.Transistor"
@@ -90,9 +96,9 @@ class Transistor(
 	init {
 		propagationDelay = 10
 
-		addPort(DigitalPortImpl(PortType.INPUT, "S", bitWidth = bitWidth))
-		addPort(DigitalPortImpl(PortType.INPUT, "G", bitWidth = bitWidth))
-		addPort(DigitalPortImpl(PortType.OUTPUT, "D", bitWidth = bitWidth, canBeUndefined = true))
+		addPort(DigitalPortImpl(PortType.INPUT, "S", bitWidth = bitWidth, description = SOURCE_DESC))
+		addPort(DigitalPortImpl(PortType.INPUT, "G", bitWidth = bitWidth, description = GATE_DESC))
+		addPort(DigitalPortImpl(PortType.OUTPUT, "D", bitWidth = bitWidth, description = DRAIN_DESC, canBeUndefined = true))
 	}
 
 	/** ---- [GraphElement] interface */

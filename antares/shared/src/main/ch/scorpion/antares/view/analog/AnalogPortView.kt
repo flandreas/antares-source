@@ -3,6 +3,7 @@ package ch.scorpion.antares.view.analog
 import ch.scorpion.antares.model.analog.AnalogPort
 import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
+import ch.scorpion.antares.view.port.ExternalPortLabelDistance
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -26,7 +27,21 @@ class AnalogPortView(
 	internalLabelOrientation: InternalLabelOrientation = InternalLabelOrientation.Horizontal,
 	length: Int? = null,
 	customUnconnectedLength: Int? = null,
-) : AbstractAntaresPortView<AnalogSignal>(styleProvider, port, x, y, direction, portLabelPosition, internalLabelOrientation, length ?: LENGTH, customUnconnectedLength) {
+	horizontalExternalLabel: Boolean = false,
+	externalPortLabelDistance: ExternalPortLabelDistance = ExternalPortLabelDistance.Small
+) : AbstractAntaresPortView<AnalogSignal>(
+	styleProvider,
+	port,
+	x,
+	y,
+	direction,
+	portLabelPosition,
+	internalLabelOrientation,
+	length ?: LENGTH,
+	customUnconnectedLength,
+	horizontalExternalLabel,
+	externalPortLabelDistance
+) {
 
 	/** ---- [PortView] interface */
 

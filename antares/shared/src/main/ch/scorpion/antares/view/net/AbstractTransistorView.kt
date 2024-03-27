@@ -3,12 +3,17 @@ package ch.scorpion.antares.view.net
 import ch.scorpion.antares.model.net.TransistorIF
 import ch.scorpion.antares.model.net.TransistorType
 import ch.scorpion.antares.view.Handedness
+import ch.scorpion.antares.view.Handedness.LEFT
+import ch.scorpion.antares.view.Handedness.RIGHT
 import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.Look.SCALE
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
-import ch.scorpion.antares.view.port.AbstractAntaresPortView
+import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
+import ch.scorpion.antares.view.port.ExternalPortLabelDistance
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Direction.SOUTH
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.Rotation
@@ -21,6 +26,7 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.edit.model.text.HorizontalLabel
+import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.io.Storable
@@ -37,16 +43,33 @@ abstract class AbstractTransistorView<T: TransistorIF<*>>(
 	companion object {
 
 		@JvmStatic
-		protected val DEFAULT_HANDEDNESS = Handedness.RIGHT
+		protected val DEFAULT_HANDEDNESS = RIGHT
 
-		protected const val LABEL_DIST = Look.SCALE
-		const val WIDTH = 6 * Look.SCALE
-		const val HEIGHT = 6 * Look.SCALE
+		protected const val LABEL_DIST = SCALE
+		const val WIDTH = 6 * SCALE
+		const val HEIGHT = 6 * SCALE
 
 		protected val hasCircle: Boolean get() = BaseModule.properties.getBoolean(PROP_TRANSISTOR_CIRCLE)
 
+		private val showPortNames: Boolean get() = BaseModule.properties.getBoolean(PROP_TRANSISTOR_PORT_NAMES)
+
 		/** The name of the [Boolean] property in [Properties] defining whether transistors are drawn with a circle. */
 		const val PROP_TRANSISTOR_CIRCLE = "antares.transistor.circle"
+
+		/** The name of the [Boolean] property in [Properties] defining whether transistor display port names.*/
+		const val PROP_TRANSISTOR_PORT_NAMES = "antares.transistor.portNames"
+
+		val portLabelPosition = if (showPortNames) {
+			PortLabelPosition.EXTERNAL
+		} else {
+			PortLabelPosition.HIDE
+		}
+
+		val externalPortLabelDistance = if (hasCircle) {
+			ExternalPortLabelDistance.Small
+		} else {
+			ExternalPortLabelDistance.None
+		}
 	}
 
 	/** Displays [name]. */
@@ -155,7 +178,7 @@ abstract class AbstractTransistorView<T: TransistorIF<*>>(
 		if (hasCircle && shadow) {
 			DropShadow.draw(context, transparency) {
 				context.g.fillOval(
-					AbstractAntaresPortView.LENGTH.toDouble(), -5.0 * Look.SCALE,
+					LENGTH.toDouble(), -5.0 * SCALE,
 					WIDTH.toDouble(), HEIGHT.toDouble())
 			}
 		}
@@ -219,22 +242,22 @@ abstract class AbstractTransistorView<T: TransistorIF<*>>(
 	protected fun updateGeometry() {
 		getPortView(model.gatePort)?.apply {
 			setLocation(
-				AbstractAntaresPortView.LENGTH,
+				LENGTH,
 				symbol.getGatePositionY(this@AbstractTransistorView))
 		}
 		northPortView.apply {
-			setLocation(AbstractAntaresPortView.LENGTH + 4 * Look.SCALE, -5 * Look.SCALE)
+			setLocation(LENGTH + 4 * SCALE, -5 * SCALE)
 			direction = Direction.NORTH
 		}
 		southPortView.apply {
-			setLocation(AbstractAntaresPortView.LENGTH + 4 * Look.SCALE, Look.SCALE)
-			direction = Direction.SOUTH
+			setLocation(LENGTH + 4 * SCALE, SCALE)
+			direction = SOUTH
 		}
 		label.relLocation = Point2D(
-			AbstractAntaresPortView.LENGTH + WIDTH + LABEL_DIST,
+			LENGTH + WIDTH + LABEL_DIST,
 			when (handedness) {
-				Handedness.RIGHT -> -2 * Look.SCALE
-				Handedness.LEFT -> 2 * Look.SCALE
+				RIGHT -> -2 * SCALE
+				LEFT -> 2 * SCALE
 			})
 	}
 
@@ -245,12 +268,12 @@ abstract class AbstractTransistorView<T: TransistorIF<*>>(
 				if (Look.FILL_BASIC_COMPONENTS) color else DrawStyleModule.styleProvider.getStyle(StyleType.BACKGROUND).color
 			).backgroundColor)
 			context.g.fillOval(
-				AbstractAntaresPortView.LENGTH.toDouble(), -5.0 * Look.SCALE,
+				LENGTH.toDouble(), -5.0 * SCALE,
 				WIDTH.toDouble(), HEIGHT.toDouble())
 
 			context.g.color = transparent.applyTo(context.choose(color).foregroundColor)
 			context.g.drawOval(
-				AbstractAntaresPortView.LENGTH.toDouble(), -5.0 * Look.SCALE,
+				LENGTH.toDouble(), -5.0 * SCALE,
 				WIDTH.toDouble(), HEIGHT.toDouble())
 		}
 	}

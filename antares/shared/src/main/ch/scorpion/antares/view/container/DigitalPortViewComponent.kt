@@ -7,6 +7,7 @@ import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.port.DigitalPortViewStyle
+import ch.scorpion.antares.view.port.ExternalPortLabelDistance
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Cloneable
@@ -98,10 +99,10 @@ class DigitalPortViewComponent(
 			portView!!.validate()
 		}
 
-	var largeExternalPortLabelDist: Boolean
-		get() = digitalPortView.largeExternalPortLabelDistance
+	var externalPortLabelDistance: ExternalPortLabelDistance
+		get() = digitalPortView.externalPortLabelDistance
 		set(value) {
-			digitalPortView.largeExternalPortLabelDistance = value
+			digitalPortView.externalPortLabelDistance = value
 		}
 
     /** ---- [Storable] */
@@ -112,8 +113,8 @@ class DigitalPortViewComponent(
 	    if (portViewStyle != DigitalPortViewStyle.Line) {
 	    	writer.writeString("portViewStyle", portViewStyle.customName)
 	    }
-	    if (largeExternalPortLabelDist) {
-			writer.writeBoolean("largeExtLabelDist", largeExternalPortLabelDist)
+	    if (externalPortLabelDistance == ExternalPortLabelDistance.Large) {
+			writer.writeBoolean("largeExtLabelDist", true)
 	    }
     }
 
@@ -124,7 +125,7 @@ class DigitalPortViewComponent(
 	    	portViewStyle = DigitalPortViewStyle.withName(reader.readString("portViewStyle"))
 	    }
 	    if (reader.hasAttribute("largeExtLabelDist")) {
-			largeExternalPortLabelDist = reader.readBoolean("largeExtLabelDist")
+            externalPortLabelDistance = ExternalPortLabelDistance.Large
 	    }
     }
 

@@ -12,7 +12,6 @@ import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.jabbah.base.geom.Direction.*
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.graph.view.port.PortLabelPosition.HIDE
 import kotlin.math.abs
 
 class AnalogTransistorView(
@@ -55,9 +54,12 @@ class AnalogTransistorView(
 
 		analogElement.bind(model)
 
-		addPortView(AnalogPortView(styleProvider, model.gatePort, 0, 0, WEST, HIDE))
-		addPortView(AnalogPortView(styleProvider, model.sourcePort, 0, 0, NORTH, HIDE))
-		addPortView(AnalogPortView(styleProvider, model.drainPort, 0, 0, SOUTH, HIDE))
+		addPortView(AnalogPortView(styleProvider, model.gatePort, 0, 0, WEST, portLabelPosition,
+			horizontalExternalLabel = true, externalPortLabelDistance = externalPortLabelDistance))
+		addPortView(AnalogPortView(styleProvider, model.sourcePort, 0, 0, NORTH, portLabelPosition,
+			horizontalExternalLabel = true, externalPortLabelDistance = externalPortLabelDistance))
+		addPortView(AnalogPortView(styleProvider, model.drainPort, 0, 0, SOUTH, portLabelPosition,
+			horizontalExternalLabel = true, externalPortLabelDistance = externalPortLabelDistance))
 
 		updateGeometry()
 	}

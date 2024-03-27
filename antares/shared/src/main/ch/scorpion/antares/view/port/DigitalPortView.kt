@@ -9,7 +9,6 @@ import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.inout.DigitalKeyboard
 import ch.scorpion.antares.view.net.DigitalEdgeView
-import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.*
@@ -57,9 +56,21 @@ class DigitalPortView(
 	customUnconnectedLength: Int? = null,
 	showBitWidthAnnotation: Boolean = true,
 	showLogicAnnotation: Boolean = true,
-	style: DigitalPortViewStyle = DigitalPortViewStyle.Line
-) : AbstractAntaresPortView<DigitalSignal>(styleProvider, port, x, y, direction, portLabelPosition,
-		internalLabelOrientation, length ?: style.unconnectedLength, customUnconnectedLength
+	style: DigitalPortViewStyle = DigitalPortViewStyle.Line,
+	horizontalExternalLabel: Boolean = false,
+	externalPortLabelDistance: ExternalPortLabelDistance = ExternalPortLabelDistance.Small
+) : AbstractAntaresPortView<DigitalSignal>(
+	styleProvider,
+	port,
+	x,
+	y,
+	direction,
+	portLabelPosition,
+	internalLabelOrientation,
+	length ?: style.unconnectedLength,
+	customUnconnectedLength,
+	horizontalExternalLabel,
+	externalPortLabelDistance
 ), DigitalKeyboard.Target {
 
 	companion object {

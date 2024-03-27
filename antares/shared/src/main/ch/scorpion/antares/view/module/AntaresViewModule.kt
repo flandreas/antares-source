@@ -290,6 +290,7 @@ object AntaresViewModule : AbstractModule() {
 
 		properties.set(LogicGateView.PROP_DATA_FLOW_ENABLED, true)
 		properties.set(AbstractTransistorView.PROP_TRANSISTOR_CIRCLE, true)
+		properties.set(AbstractTransistorView.PROP_TRANSISTOR_PORT_NAMES, true)
 
 		properties.set(LightColor.PROP_DEFAULT_LIGHT_COLOR, LightColor.RED.customName)
 		properties.set(DigitalSignalNotation.PROP_DIGITAL_SIGNAL_NOTATION, DigitalSignalNotation.BASE_SUBSCRIPT.customName)
