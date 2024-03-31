@@ -35,7 +35,7 @@ class RatingPanel(
 
 	companion object {
 
-		private const val MAX_REMARK_LENGTH = 20
+		private const val MAX_REMARK_LENGTH = 200
 
 		fun showAsDialog(application: Application, cancelable: Boolean, parent: Frame) {
 			// If this was in an InvocationHandler, dialog would never show up when
@@ -120,7 +120,7 @@ class RatingPanel(
 		contentPanel.add(likeLeastComboBox)
 		contentPanel.add(Box.createVerticalStrut(20))
 
-		val remarksText = JLabel(Translations.getString("application.rating.remarks.text"))
+		val remarksText = JLabel(Translations.getString("application.rating.remarks.text", MAX_REMARK_LENGTH))
 		remarkTextArea.rows = 6
 		remarkTextArea.columns = 30
 		val remarksScrollPane = JScrollPane(remarkTextArea)
