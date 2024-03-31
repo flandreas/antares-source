@@ -415,6 +415,24 @@ class DslParserTest {
 	}
 
 	@Test
+	fun shouldParseExponentialTermWithVariable() {
+		val parser = DslParser("""
+			var a = 4
+			2^a
+		""".trimIndent())
+
+		assertAST(parser.parse(), """
+			Compound
+			- var
+			-- a
+			-- 4
+			- ^
+			-- 2
+			-- a
+		""".trimIndent())
+	}
+
+	@Test
 	fun shouldParseShiftWithVariableRightFactor() {
 		val parser = DslParser(DslLexer("A << B"), null)
 

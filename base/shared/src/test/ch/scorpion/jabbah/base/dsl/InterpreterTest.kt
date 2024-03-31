@@ -62,6 +62,12 @@ class InterpreterTest {
 		assertEquals(25.0F, Interpreter("5.0^2").interpret())
 		assertEquals(25.0F, Interpreter("5^2.0").interpret())
 		assertEquals(25.0F, Interpreter("5.0^2.0").interpret())
+
+		val result = Interpreter("""
+			var a = 4
+			2^a
+		""".trimIndent()).interpret()
+		assertEquals(16L, result)
 	}
 
 	@Test
