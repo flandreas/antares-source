@@ -101,10 +101,12 @@ class SchedulerImpl(
 	}
 
 	private val systemSpeedCategoryHandler: EventHandler<SystemSpeedCategoryEvent> = {
-		if (!displaySimulationTime) {
-			clearSimulationTimeStatus()
-		} else {
-			publishSimulationTimeStatus()
+		if (it.source === currentSystemSpeedCategory) {
+			if (!displaySimulationTime) {
+				clearSimulationTimeStatus()
+			} else {
+				publishSimulationTimeStatus()
+			}
 		}
 	}
 

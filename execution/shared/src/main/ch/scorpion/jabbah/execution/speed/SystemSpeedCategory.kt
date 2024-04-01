@@ -86,7 +86,7 @@ class CurrentSystemSpeedCategory(
         systemSpeedCategory = calculate()
         if (oldValue != systemSpeedCategory) {
             LOG.trace("CurrentSystemSpeedCategory changed to '$systemSpeedCategory'")
-            eventBus.post(SystemSpeedCategoryEvent(oldValue, systemSpeedCategory))
+            eventBus.post(SystemSpeedCategoryEvent(this, oldValue, systemSpeedCategory))
         }
     }
 
@@ -95,4 +95,8 @@ class CurrentSystemSpeedCategory(
 }
 
 /** Posted by [CurrentSystemSpeedCategory] when the current [SystemSpeedCategory] has changed.*/
-data class SystemSpeedCategoryEvent(val oldValue: SystemSpeedCategory, val newValue: SystemSpeedCategory)
+data class SystemSpeedCategoryEvent(
+    val source: CurrentSystemSpeedCategory,
+    val oldValue: SystemSpeedCategory,
+    val newValue: SystemSpeedCategory
+)

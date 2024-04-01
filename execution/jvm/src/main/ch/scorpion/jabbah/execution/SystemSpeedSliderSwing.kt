@@ -14,7 +14,7 @@ import javax.swing.*
  * A [JSlider] that allows to change a [SystemSpeed] and displays the current [SystemSpeedCategory].
  */
 class SystemSpeedSliderSwing(
-    systemSpeed: SystemSpeed,
+    private val systemSpeed: SystemSpeed,
     private val eventBus: EventBus = BaseModule.eventBus
 ) : JPanel() {
 
@@ -22,7 +22,9 @@ class SystemSpeedSliderSwing(
     private val slider = JSlider(JSlider.HORIZONTAL, SystemSpeed.MIN_SPEED, SystemSpeed.MAX_SPEED, systemSpeed.speed)
 
 	private val systemSpeedCategoryHandler: EventHandler<SystemSpeedCategoryEvent> = {
-		slider.toolTipText = "${Translations.getString("execution.action.speed.name")}: ${it.newValue}"
+		if (it.source.systemSpeed === systemSpeed) {
+			slider.toolTipText = "${Translations.getString("execution.action.speed.name")}: ${it.newValue}"
+		}
 	}
 
     init {

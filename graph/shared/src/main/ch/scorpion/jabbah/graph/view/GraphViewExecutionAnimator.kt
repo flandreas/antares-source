@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.animation.AnimationTask
 import ch.scorpion.jabbah.animation.AnimationTaskAdapter
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.drawable.SynchronizedGlowAnimation
@@ -31,8 +32,8 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
  * Since this happens only for visible [GraphView]s, soft breakpoints are only active for displayed [Graph]s.
  *
  * A [GraphViewExecutionAnimator] is active if either the current [GraphViewAnimationType] is [GraphViewAnimationType.Animation],
- * which requires signal flow animation, or if the [Scheduler]'s [SchedulerRunningState] is [SchedulerRunningState.PAUSED],
- * which requires [TransparentAnimation] of executing [GraphElement]s.
+ * which requires signal flow animation, or if [SystemSpeed.isPaused], which requires [TransparentAnimation]
+ * of executing [GraphElement]s.
  *
  * This class should be part of the [ch.scorpion.jabbah.graph] module, but classes needed for signal flow animation
  * have not yet been generalized.
@@ -106,7 +107,7 @@ class GraphViewExecutionAnimator(
 	private fun handleNetActingRequested(net: Net<*>, actorData: GraphActorData) {
 		// The acting of a Net has been requested, because an Output of a Vertice has asserted
 		// a signal onto the net (which is still buffered in the Net and not yet forwarded).
-		// Setup a animation of the signal that will flow along the corresponding EdgeView,
+		// Setup an animation of the signal that will flow along the corresponding EdgeView,
 		// if requested by current settings.
 
 		applicationContextHolder.scheduler.logActorTrace(net) { "handleNetActingRequested" }
