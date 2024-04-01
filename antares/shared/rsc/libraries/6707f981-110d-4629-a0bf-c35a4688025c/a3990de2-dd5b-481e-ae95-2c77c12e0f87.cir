@@ -20,7 +20,11 @@ if (not EN) {
 }
 
 if (^C) {
-	data = data + 1
+	if (data == (2^BW - 1)) {
+		data = 0
+	} else {
+		data = data + 1
+	}
 	O = data 
 }
 
