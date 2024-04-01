@@ -21,6 +21,7 @@ import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.execution.actor.ActorListener
 import ch.scorpion.jabbah.execution.scheduler.*
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
+import ch.scorpion.jabbah.execution.speed.SystemSpeedCategoryEvent
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -53,11 +54,16 @@ class GraphViewExecutionAnimator(
 		private val LOG by logger(GraphViewExecutionAnimator::class)
 	}
 
+	data class NetAnimationData(
+		val actorData: ActorData,
+		val animations: MutableList<EdgeViewNetAnimation> = mutableListOf()
+	)
+
 	/**
 	 * Maps a [Net] to all [EdgeViewNetAnimation]s currently running on it. Note that there can be
 	 * more than one animation for the same [Net] if multiple [OutputPort]s assert their startup values to the same bus.
 	 */
-	private val netAnimationMap = mutableMapOf<Net<*>, MutableList<EdgeViewNetAnimation>>()
+	private val netAnimationMap = mutableMapOf<Net<*>, NetAnimationData>()
 
 	/** Listens for changes of the [SchedulerActivationState].*/
 	private val schedulerActivationStateHandler: EventHandler<SchedulerActivationStateEvent> = {
@@ -71,6 +77,14 @@ class GraphViewExecutionAnimator(
 		}
 	}
 
+	private val systemSpeedCategoryHandler: EventHandler<SystemSpeedCategoryEvent> = {
+		if (applicationContextHolder.scheduler.isActive && it.source === applicationContextHolder.currentSystemSpeedCategory) {
+			if (it.oldValue == SystemSpeedCategory.Explore && it.newValue.ordinal < it.oldValue.ordinal) {
+				interruptAllVerticeViewActingAnimations()
+			}
+		}
+	}
+
 	private val schedulerSingleStepModeHandler: EventHandler<SchedulerSingleStepModeEvent> = {
 		if (it.scheduler === applicationContextHolder.scheduler) {
 			stopAllVerticeViewActingAnimations()
@@ -80,11 +94,13 @@ class GraphViewExecutionAnimator(
 	init {
 		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
 		eventBus.register(SchedulerSingleStepModeEvent::class, schedulerSingleStepModeHandler)
+		eventBus.register(SystemSpeedCategoryEvent::class, systemSpeedCategoryHandler)
 	}
 
 	fun dispose() {
 		eventBus.unregister(schedulerActivationStateHandler)
 		eventBus.unregister(schedulerSingleStepModeHandler)
+		eventBus.unregister(systemSpeedCategoryHandler)
 	}
 
 	fun actingRequested(actor: Actor, data: ActorData) {
@@ -132,16 +148,19 @@ class GraphViewExecutionAnimator(
 		// the simulation by calling SignalHandler#actingDone() for the Net after the animation
 		// has finished.
 
-		registerAnimation(net, animationFactory.createEdgeViewNetAnimation(
-			actorListener = actorListener,
-			actorData = actorData,
-			startEdgeView = edgeView,
-			startPort = changedPort,
-			drawingView = drawingView,
-			animator = applicationContextHolder.animator,
-			scheduler = applicationContextHolder.scheduler,
-			styleProvider = styleProvider
-		))
+		registerAnimation(
+			net,
+			actorData,
+			animationFactory.createEdgeViewNetAnimation(
+				actorListener = actorListener,
+				actorData = actorData,
+				startEdgeView = edgeView,
+				startPort = changedPort,
+				drawingView = drawingView,
+				animator = applicationContextHolder.animator,
+				scheduler = applicationContextHolder.scheduler,
+				styleProvider = styleProvider)
+		)
 
 		EditModule.attentionDrawerFactory.invoke(signal).drawAttentionTo(
 			edgeView.getConnectionEndpointType(edgeView.getConnection(changedPort)!!)!!.getLocation(edgeView),
@@ -164,7 +183,7 @@ class GraphViewExecutionAnimator(
 			return
 		}
 
-		netAnimationMap[net]?.forEach {
+		netAnimationMap[net]?.animations?.forEach {
 			applicationContextHolder.scheduler.logActorTrace(net) { "Starting EdgeViewNetAnimation" }
 			val task = it.start()
 			task.addListener(object : AnimationTaskAdapter() {
@@ -218,14 +237,21 @@ class GraphViewExecutionAnimator(
 		SynchronizedGlowAnimation.removeAll()
 	}
 
-	private fun registerAnimation(net: Net<*>, animation: EdgeViewNetAnimation) {
+	private fun interruptAllVerticeViewActingAnimations() {
+		stopAllVerticeViewActingAnimations()
+		netAnimationMap.keys.forEach { net ->
+			net.actingVisualized(applicationContextHolder.scheduler, actorListener, netAnimationMap[net]!!.actorData)
+		}
+	}
+
+	private fun registerAnimation(net: Net<*>, actorData: ActorData, animation: EdgeViewNetAnimation) {
 		applicationContextHolder.scheduler.logActorTrace(net) { "register net animation" }
-		netAnimationMap.getOrPut(net) { mutableListOf() }.add(animation)
+		netAnimationMap.getOrPut(net) { NetAnimationData(actorData) }.animations.add(animation)
 	}
 
 	private fun unregisterAnimation(net: Net<*>, animation: EdgeViewNetAnimation) {
 		applicationContextHolder.scheduler.logActorTrace(net) { "unregister net animation" }
-		netAnimationMap[net]?.remove(animation)
+		netAnimationMap[net]?.animations?.remove(animation)
 	}
 
 	/** Determines whether [EdgeViewNetAnimation] is required based on the current system settings.*/

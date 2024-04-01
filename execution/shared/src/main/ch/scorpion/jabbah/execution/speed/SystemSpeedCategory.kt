@@ -19,7 +19,7 @@ enum class SystemSpeedCategory(val customName: String, val speedRange: IntRange)
      * e.g. in the results that are produced by the system. Although he'd expect to see the results being produced
      * slower if he reduces the [SystemSpeed], the internals of the system could still run as fast as possible
      */
-    Use("use", 66..100),
+    Use("use", 67..100),
 
     /**
      * When observing the system, the user is not only interested in the outcome of using the system,
@@ -27,7 +27,7 @@ enum class SystemSpeedCategory(val customName: String, val speedRange: IntRange)
      * the system displays intermediate results and provides some visual insights of how information flows across
      * the system.
      */
-    Observe("observer", 33..66),
+    Observe("observer", 34..66),
 
     /**
      * When exploring the system, the user expects from the system to explain how it works in every possible
@@ -91,7 +91,7 @@ class CurrentSystemSpeedCategory(
     }
 
     private fun calculate(): SystemSpeedCategory =
-	    SystemSpeedCategory.values().first { systemSpeed.speed >= it.speedRange.first }
+	    SystemSpeedCategory.entries.first { systemSpeed.speed >= it.speedRange.first }
 }
 
 /** Posted by [CurrentSystemSpeedCategory] when the current [SystemSpeedCategory] has changed.*/

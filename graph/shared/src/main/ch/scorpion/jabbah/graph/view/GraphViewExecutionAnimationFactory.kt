@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.view
 
-import ch.scorpion.jabbah.animation.AnimationModule
 import ch.scorpion.jabbah.animation.AnimationTask
 import ch.scorpion.jabbah.animation.AnimationTaskAdapter
 import ch.scorpion.jabbah.animation.Animator
