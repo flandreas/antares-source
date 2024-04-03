@@ -96,13 +96,23 @@ enum class TunnelViewFace(
 		override fun draw(view: TunnelView, context: DrawContext, background: Color) {
 			context.g.translate(AbstractAntaresPortView.LENGTH.toDouble(), 0.0)
 
+			// Fill global TunnelViews with the component's foreground color
+
 			if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 				context.g.color = Transparent.applyTo(view.transparency, view.model.getInOrOutSignal().color.foregroundColor)
 			} else {
 				context.g.color = if (context.useContextColors) {
-					context.color!!.backgroundColor
+					if (view.isGlobal) {
+						context.color!!.foregroundColor
+					} else {
+						context.color!!.backgroundColor
+					}
 				} else {
-					background
+					if (view.isGlobal) {
+						view.foregroundColor
+					} else {
+						background
+					}
 				}
 			}
 			context.g.fill(getPath(view))

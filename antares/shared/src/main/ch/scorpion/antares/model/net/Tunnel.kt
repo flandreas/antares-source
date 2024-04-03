@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.graph.model.net.NetCombiner
 import ch.scorpion.jabbah.graph.model.vertice.AbstractVertice
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
+import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -84,6 +85,18 @@ class Tunnel(
 			name = value?.let { it.name }
 		}
 
+	/**
+	 * A global [Tunnel] can communicate not only with other [Tunnel]s of the same [Graph], but with all
+	 * [Tunnel]s of the same [Library].
+	 */
+	var isGlobal: Boolean = false
+		set(value) {
+			if (field != value) {
+				field = value
+				stateChanged()
+			}
+		}
+
 	val visiblePort: DigitalPort get() = getPort<DigitalSignal>(1) as DigitalPort
 	val invisiblePort: DigitalPort get() = getPort<DigitalSignal>(2) as DigitalPort
 
@@ -98,11 +111,17 @@ class Tunnel(
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
 		bitWidth.write("bitWidth", writer)
+		if (isGlobal) {
+			writer.writeBoolean("global", isGlobal)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		bitWidth = BitWidth.read("bitWidth", reader)
+		if (reader.hasAttribute("global")) {
+			isGlobal = reader.readBoolean("global")
+		}
 	}
 
 	/** ---- [Actor] */

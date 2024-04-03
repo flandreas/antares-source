@@ -99,6 +99,16 @@ class TunnelView(
 	/** Defaults to [TunnelFlowDirection.Undefined] due to backward compatibility. */
 	var flowDirection: TunnelFlowDirection = TunnelFlowDirection.Undefined
 
+	@Suppress("unused") // Reflection
+	var isGlobal: Boolean
+		get() = model.isGlobal
+		set(value) {
+			invalidate()
+			model.isGlobal = value
+			invalidate()
+			validate()
+		}
+
 	/** ---- [AbstractDrawable] */
 
 	override fun draw(context: DrawContext) {

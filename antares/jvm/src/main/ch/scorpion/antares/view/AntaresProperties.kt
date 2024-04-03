@@ -55,6 +55,9 @@ object AntaresProperties {
 	fun tunnelFlowDirection(name: String = "flowDirection"): CommandPropertySwing<TunnelFlowDirection> =
 		CommandPropertySwing(name, "element.property.tunnelFlowDirection", TunnelFlowDirection::class.java, componentBeanProvider)
 
+	fun tunnelIsGlobal(name: String = "global"): CommandPropertySwing<Boolean> =
+		CommandPropertySwing(name, "element.property.tunnelIsGlobal", Boolean::class.java, componentBeanProvider)
+
 	fun fixedPointConfigFraction(name: String = "fixedPointFractionSize"): CommandPropertySwing<Int> =
 		CommandPropertySwing(name, "element.property.fixedPointConfig.fractionSize", Int::class.java, componentBeanProvider)
 
