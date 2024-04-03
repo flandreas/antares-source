@@ -87,7 +87,11 @@ class DigitalGraph(
 				tunnelNets
 					.getOrPut(tunnel.name!!) { DigitalNet().apply { add(this) } }
 					.also {
-						it.connect(tunnel.invisiblePort)
+						if (!tunnel.invisiblePort.isConnected) {
+							// If already connected, this DigitalGraph is already open via a SubGraphVerticeRef,
+							// and its Tunnel nets have already been indirectly created
+							it.connect(tunnel.invisiblePort)
+						}
 					}
 		}
 	}
