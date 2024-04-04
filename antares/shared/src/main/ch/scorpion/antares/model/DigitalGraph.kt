@@ -26,6 +26,8 @@ class DigitalGraph(
 
 	companion object {
 		private val DEF_NET_SIGNAL_APPLIER_STRATEGY = NetSignalApplierStrategy.Conflict
+
+		private val GLOBAL_NETS = mutableMapOf<SignalHandler, MutableMap<String, Net<DigitalSignal>>>()
 	}
 
 	var netSignalApplierStrategy: NetSignalApplierStrategy = DEF_NET_SIGNAL_APPLIER_STRATEGY
@@ -36,13 +38,14 @@ class DigitalGraph(
 	/** ---- [GraphImpl] */
 
 	override fun formNet(signalHandler: SignalHandler) {
-		createTunnelNets()
+		createTunnelNets(signalHandler)
 		super.formNet(signalHandler)
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {
 		super.executionStopped(signalHandler)
-		destroyTunnelNets()
+		destroyLocalTunnelNets()
+		destroyGlobalTunnelNets(signalHandler)
 	}
 
 	override fun <T : Any> createGraphExecutionContext(): GraphExecutionContext<T> =
@@ -78,25 +81,36 @@ class DigitalGraph(
 		.mapNotNull { it.tunnelName }
 		.toSet()
 
-	private fun createTunnelNets() {
-		val tunnelNets = mutableMapOf<String, Net<DigitalSignal>>()
+	private fun createTunnelNets(signalHandler: SignalHandler) {
+		// If already connected, this DigitalGraph is already open via a SubGraphVerticeRef,
+		// and its Tunnel nets have already been indirectly created
+		val localTunnelNets = mutableMapOf<String, Net<DigitalSignal>>()
 		elements
 			.filterIsInstance<Tunnel>()
 			.filter { StringUtils.isNotEmpty(it.name) }
 			.forEach { tunnel ->
-				tunnelNets
-					.getOrPut(tunnel.name!!) { DigitalNet().apply { add(this) } }
-					.also {
-						if (!tunnel.invisiblePort.isConnected) {
-							// If already connected, this DigitalGraph is already open via a SubGraphVerticeRef,
-							// and its Tunnel nets have already been indirectly created
-							it.connect(tunnel.invisiblePort)
+				if (tunnel.isGlobal) {
+					val netMap = GLOBAL_NETS.getOrPut(signalHandler) { mutableMapOf() }
+					netMap
+						.getOrPut(tunnel.name!!) { DigitalNet() }
+						.also {
+							if (!tunnel.invisiblePort.isConnected) {
+								it.connect(tunnel.invisiblePort)
+							}
 						}
-					}
+				} else {
+					localTunnelNets
+						.getOrPut(tunnel.name!!) { DigitalNet().apply { add(this) } }
+						.also {
+							if (!tunnel.invisiblePort.isConnected) {
+								it.connect(tunnel.invisiblePort)
+							}
+						}
+				}
 		}
 	}
 
-	private fun destroyTunnelNets() {
+	private fun destroyLocalTunnelNets() {
 		val nets = mutableSetOf<Net<*>>()
 		elements.filterIsInstance<Tunnel>().forEach { tunnel ->
 			val port = tunnel.invisiblePort
@@ -106,5 +120,15 @@ class DigitalGraph(
 			}
 		}
 		nets.forEach { remove(it) }
+	}
+
+	private fun destroyGlobalTunnelNets(signalHandler: SignalHandler) {
+		elements
+			.filterIsInstance<Tunnel>()
+			.filter { it.isGlobal }
+			.forEach { tunnel ->
+				tunnel.invisiblePort.net?.unconnect(tunnel.invisiblePort)
+			}
+		GLOBAL_NETS.remove(signalHandler)
 	}
 }

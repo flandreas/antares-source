@@ -201,6 +201,16 @@
             </containerLibraryElement>
           </items>
         </libraryFolder>
+        <containerLibraryElement _id='40' uuid='63fbd870-9251-4323-b5b0-c87a78104612' type='digital'>
+          <name>
+            <translation lang='en' text='Global Tunnel Inner'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='41' uuid='d9183029-8382-4030-982d-b6b22dcce948' type='digital'>
+          <name>
+            <translation lang='en' text='Global Tunnel Outer'/>
+          </name>
+        </containerLibraryElement>
       </items>
     </libraryFolder>
   </folder>

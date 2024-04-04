@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' manualContainer='false'>
+  <graph>
+    <graphStorable _id='1'>
+      <model>
+        <graph _id='2' type='digital'>
+          <elements>
+            <subGraphVerticeRef _id='3' id='1' delay='0' uuid='63fbd870-9251-4323-b5b0-c87a78104612' type='digital'/>
+            <circuitInOut _id='4' id='2' name='A' type='input' bitWidth='1'/>
+            <tunnel _id='5' id='3' delay='0' name='A' bitWidth='1' global='true'/>
+            <digitalNet _id='6' id='4' delay='0'>
+              <ports>
+                <netPortRef _id='7' verticeId='5' portId='1'/>
+                <netPortRef _id='8' verticeId='4' portId='1'/>
+              </ports>
+            </digitalNet>
+            <tunnel _id='9' id='5' delay='0' name='!A' bitWidth='1' global='true'/>
+            <circuitInOut _id='10' id='6' name='!A' type='output' bitWidth='1'/>
+            <digitalNet _id='11' id='7' delay='0'>
+              <ports>
+                <netPortRef _id='12' verticeId='10' portId='1'/>
+                <netPortRef _id='13' verticeId='9' portId='1'/>
+              </ports>
+            </digitalNet>
+          </elements>
+        </graph>
+      </model>
+      <view>
+        <graphView _id='14'>
+          <netViews>
+            <netView _id='15' modelId='6' style='line'/>
+            <netView _id='16' modelId='11' style='line'/>
+          </netViews>
+          <components>
+            <subGraphVerticeViewRef _id='17' id='1' rot='0' filled='true' stroked='true' modelId='3' x='-112.0' y='-77.0' controlViewVisibility='simulation'/>
+            <circuitInOutView _id='18' id='2' rot='0' filled='true' stroked='true' modelId='4' orientation='east' representation='binary'>
+              <location>
+                <point x='-266.0' y='-49.0'/>
+              </location>
+            </circuitInOutView>
+            <tunnelView _id='19' id='3' rot='0' filled='true' stroked='true' modelId='5' x='-217.0' y='-49.0' flowDir='in'/>
+            <digitalEdgeView _id='20' id='4' filled='true' stroked='true' modelId='6' layout='ortho' orig='19' origPort='1' origPortOutput='true' dest='18' destPort='1' destPortOutput='true' adjusted='false'>
+              <shape>
+                <polylineShape points='-203.0,-49.0 -280.0,-49.0'/>
+              </shape>
+            </digitalEdgeView>
+            <tunnelView _id='21' id='5' rot='180' filled='true' stroked='true' modelId='9' x='49.0' y='-49.0' flowDir='out'/>
+            <circuitInOutView _id='22' id='6' rot='0' filled='true' stroked='true' modelId='10' orientation='east' representation='binary'>
+              <location>
+                <point x='70.0' y='-49.0'/>
+              </location>
+            </circuitInOutView>
+            <digitalEdgeView _id='23' id='7' filled='true' stroked='true' modelId='11' layout='ortho' orig='22' origPort='1' dest='21' destPort='1' destPortOutput='true' adjusted='false'>
+              <shape>
+                <polylineShape points='84.0,-49.0 35.0,-49.0'/>
+              </shape>
+            </digitalEdgeView>
+          </components>
+        </graphView>
+      </view>
+    </graphStorable>
+  </graph>
+  <container>
+    <containerDrawing _id='24'>
+      <components>
+        <rectangle _id='25' id='1' style='figure' filled='true' stroked='true' x='0.0' y='-14.0' w='70.0' h='56.0'/>
+        <digitalPortViewComp _id='26' id='2' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='27' x='0.0' y='0.0' dir='west' textPos='internal' portId='28'/>
+          </portView>
+        </digitalPortViewComp>
+        <digitalPortViewComp _id='29' id='3' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='30' x='70.0' y='0.0' dir='east' textPos='internal' portId='31'/>
+          </portView>
+        </digitalPortViewComp>
+        <label _id='32' id='4' rot='0'>
+          <text>
+            <translation lang='en' text='GTO'/>
+          </text>
+          <location>
+            <point x='35.0' y='14.0'/>
+          </location>
+        </label>
+        <originIndicator _id='33' id='5'>
+          <location>
+            <point x='-14.0' y='0.0'/>
+          </location>
+        </originIndicator>
+      </components>
+      <model>
+        <subGraphVertice _id='34' id='0' delay='0' uuid='d9183029-8382-4030-982d-b6b22dcce948'>
+          <name>
+            <translation lang='en' text='Global Tunnel Outer'/>
+          </name>
+          <ports>
+            <subCircuitPort _id='28' portId='1' name='A' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='31' portId='2' name='!A' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+          </ports>
+        </subGraphVertice>
+      </model>
+    </containerDrawing>
+  </container>
+</metaGraph>

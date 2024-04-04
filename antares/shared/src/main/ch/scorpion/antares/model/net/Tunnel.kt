@@ -3,13 +3,13 @@ package ch.scorpion.antares.model.net
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
+import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
-import ch.scorpion.jabbah.graph.model.vertice.AbstractVertice
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.graph.library.Library
@@ -28,9 +28,9 @@ data class TunnelName(val name: String) {
 /**
  * A [Tunnel] forwards a signal to other [Tunnel]s with the same name without the
  * need to explicitly connect them by a [Net].
- * [Tunnel]s with the same name are only connected within the same [Graph].
- * The owning [Graph] will be informed by [stateChanged()], which gets already
- * called by [AbstractVertice.inputChanged].
+ * [Tunnel]s can be either local or global. Local [Tunnel]s with the same name are only connected within the same [Graph].
+ * Global [Tunnel]s communicate with all other [Tunnel]s with the same name in the entire simulation context,
+ * i.e. with the main [DigitalGraph] and the [DigitalGraph]s in all subcircuits.
  */
 class Tunnel(
 	name: String? = null
