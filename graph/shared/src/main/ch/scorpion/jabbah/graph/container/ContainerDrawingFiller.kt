@@ -50,10 +50,14 @@ abstract class AbstractContainerDrawingFiller(
 	}
 
 	fun fill() {
+		val portIds = mutableMapOf<String, Int>()
+		containerDrawing.drawables.filterIsInstance<PortViewComponent<*>>().forEach {
+			portIds[it.port.name!!] = it.port.portId
+		}
 		containerDrawing.drawables.toList().forEach {
 			containerDrawing.remove(it)
 		}
-		createLayout()
+		createLayout(portIds)
 	}
 
 	protected abstract val pinStartY: Int
@@ -75,11 +79,13 @@ abstract class AbstractContainerDrawingFiller(
 	protected fun calculateWidthWithoutLabel(maxInputWidth: Double, maxOutputWidth: Double): Double =
 		max(MIN_WIDTH, maxInputWidth + LABEL_INSET_X + 2 * LABEL_INSET_X + maxOutputWidth)
 
-	private fun createLayout() {
+	private fun createLayout(portIds: MutableMap<String, Int>) {
 		val inputPortViews = graphView.getGraphPortViews().filter { it.model.portType.isInput }.reversed()
 		val outputPortViews = graphView.getGraphPortViews().filter { !inputPortViews.contains(it) }.reversed()
 
 		val height = snap(calculateHeight(inputPortViews, outputPortViews).toDouble())
+
+		// Create PortViewComponents
 
 		val inputs = mutableListOf<PortViewComponent<*>>()
 		val outputs = mutableListOf<PortViewComponent<*>>()
@@ -102,20 +108,27 @@ abstract class AbstractContainerDrawingFiller(
 
 		val width = snap(calculateWidth(maxInputWidth, maxOutputWidth, label))
 
-		val rectangle = RectangleComponent(0.0, -PIN_INSET.toDouble(), width, height.toDouble())
+		val rectangle = RectangleComponent(0.0, -PIN_INSET.toDouble(), width, height)
 		containerDrawing.add(rectangle)
+
+		// Layout and add PortViewComponents. Adding after RectangleComponent ensures that they
+		// are in front of the rectangle
 
 		var pinY = pinStartY
 		for (input in inputs) {
 			input.location = Point2D(0, pinY)
+			val portId = portIds.getOrPut(input.port.name!!) { (portIds.values.maxOrNull() ?: 0) + 1 }
 			containerDrawing.add(input)
+			input.port.portId = portId
 			pinY += PIN_DIST
 		}
 
 		pinY = pinStartY
 		for (output in outputs) {
 			output.location = Point2D(width, pinY.toDouble())
+			val portId = portIds.getOrPut(output.port.name!!) { (portIds.values.maxOrNull() ?: 0) + 1 }
 			containerDrawing.add(output)
+			output.port.portId = portId
 			pinY += PIN_DIST
 		}
 
