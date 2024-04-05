@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view.oscilloscope
 
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Tooltip
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
@@ -100,7 +101,7 @@ class OscilloscopeView(
 	/** Used for restoring [timelineScale] after the simulation has ended. */
 	private var timelineScaleBuffer: Double = 0.0
 
-	/** Returns the height of the drawing area used by a [SignalHistoryDrawer] returned by [createSignalHistoryDrawer].*/
+	/** Returns the height of the drawing area used by a [SignalHistoryDrawer] returned by [OscilloscopeViewFactory].*/
 	val rowHeight: Int get() = factory.getRowHeight(model.graphType)
 
 	/** Returns the number of rows of this [OscilloscopeView].*/
@@ -193,6 +194,8 @@ class OscilloscopeView(
 	}
 
 	/** ---- [Component] */
+
+	override val copyable: Boolean get() = false
 
 	override val deleteBuddies: List<Component> get() = rows.mapNotNull { it.probeView.verticeView }
 

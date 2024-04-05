@@ -12,13 +12,13 @@ interface Focusable {
 	fun requestFocus() = FocusManager.requestFocus(this)
 
 	/**
-	 * Informs this [Focusable] that is has gained the focus. Implementing classes should update their
+	 * Informs this [Focusable] that it has gained the focus. Implementing classes should update their
 	 * graphical representation. This method is typically only called by the [FocusManager].
 	 */
 	fun focusGained() { }
 
 	/**
-	 * Informs this [Component] that is has lost the focus. Implementing classes should update their
+	 * Informs this [Component] that it has lost the focus. Implementing classes should update their
 	 * graphical representation.  This method is typically only called by the [FocusManager].
 	 */
 	fun focusLost() { }
