@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.animation
 
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.math.SIGMA
 import ch.scorpion.jabbah.base.time.SystemSpeed
 import kotlin.sequences.Sequence
 
@@ -58,7 +59,13 @@ class AnimationJob(
 	}
 
 	fun animate() {
-		task.animate(currentDistance())
+		currentDistance().let {
+			if (it < SIGMA) {
+				suspend()
+			} else {
+				task.animate(it)
+			}
+		}
 	}
 
 	/** Calculates the distance to be used for the current animation step. Can depend on [SystemSpeed].*/
@@ -66,10 +73,6 @@ class AnimationJob(
 		if (!task.dependsOnSystemSpeed) {
 			return maxDistance
 		}
-		val distance = systemSpeed.speed / 100.0 * maxDistance
-		if (distance == 0.0) {
-			suspend()
-		}
-		return distance
+		return systemSpeed.speed / 100.0 * maxDistance
 	}
 }
