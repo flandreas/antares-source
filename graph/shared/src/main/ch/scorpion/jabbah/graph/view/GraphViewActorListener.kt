@@ -27,7 +27,9 @@ class GraphViewActorListener(
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : ActorListener {
 
-	private val animatorProxy = AnimatorProxy(GraphViewExecutionAnimator(this, drawingView, applicationContextHolder))
+	private val executionAnimator = GraphViewExecutionAnimator(this, drawingView, applicationContextHolder)
+
+	private val animatorProxy = AnimatorProxy(executionAnimator)
 
 	private val schedulerActivationStateHandler: EventHandler<SchedulerActivationStateEvent> = { handle(it) }
 
@@ -44,6 +46,7 @@ class GraphViewActorListener(
 	}
 
 	fun dispose() {
+		executionAnimator.dispose()
 		drawingView.drawing.graph?.let { unregisterActorListener(it) }
 		eventBus.unregister(schedulerActivationStateHandler)
 		drawingView.removePropertyChangeListener(graphViewExchangeListener)

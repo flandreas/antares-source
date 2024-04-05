@@ -80,7 +80,8 @@ class GraphViewExecutionAnimator(
 	private val systemSpeedCategoryHandler: EventHandler<SystemSpeedCategoryEvent> = {
 		if (applicationContextHolder.scheduler.isActive && it.source === applicationContextHolder.currentSystemSpeedCategory) {
 			if (it.oldValue == SystemSpeedCategory.Explore && it.newValue.ordinal < it.oldValue.ordinal) {
-				interruptAllVerticeViewActingAnimations()
+				stopAllVerticeViewActingAnimations()
+				interruptAllNetActingAnimations()
 			}
 		}
 	}
@@ -237,8 +238,7 @@ class GraphViewExecutionAnimator(
 		SynchronizedGlowAnimation.removeAll()
 	}
 
-	private fun interruptAllVerticeViewActingAnimations() {
-		stopAllVerticeViewActingAnimations()
+	private fun interruptAllNetActingAnimations() {
 		netAnimationMap.keys.forEach { net ->
 			net.actingVisualized(applicationContextHolder.scheduler, actorListener, netAnimationMap[net]!!.actorData)
 		}
