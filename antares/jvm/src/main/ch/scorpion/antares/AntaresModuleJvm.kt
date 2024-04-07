@@ -200,7 +200,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 				properties.set(DataLocation.PROP_SERVER_URL, "http://localhost:8080/api")
 			}
 			Environment.Production -> {
-				properties.set(DataLocation.PROP_SERVER_URL, "https://antarescircuit.io/api")
+				properties.set(DataLocation.PROP_SERVER_URL, "https://api.antarescircuit.io/api")
 			}
 			else -> throw IllegalStateException("no Akrab REST settings for environment ${app.environment}")
 		}
