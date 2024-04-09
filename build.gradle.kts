@@ -14,8 +14,8 @@ buildscript {
 val kotlinVersion: String by extra
 
 plugins {
-	kotlin("multiplatform") version "1.9.0" apply false
-	kotlin("plugin.serialization") version "1.9.0" apply false
+	kotlin("multiplatform") version "1.9.23" apply false
+	kotlin("plugin.serialization") version "1.9.23" apply false
 	id("org.asciidoctor.convert") version "1.5.9.2"
 	id("maven-publish")
 }
@@ -29,7 +29,7 @@ allprojects {
 		maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-js-wrappers")
 		maven("https://jitpack.io")
 		mavenCentral()
-		jcenter()
+		//jcenter()
 		flatDir {
 			dirs("../lib")
 		}
@@ -91,6 +91,7 @@ subprojects {
 					freeCompilerArgs = listOf(
 						// https://youtrack.jetbrains.com/issue/KT-37435
 						"-Xno-optimized-callable-references",
+						"-Xexpect-actual-classes",
 						"-Xinline-classes")
 				}
 			}
