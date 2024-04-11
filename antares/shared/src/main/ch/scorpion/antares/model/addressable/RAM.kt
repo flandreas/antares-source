@@ -27,10 +27,11 @@ import ch.scorpion.jabbah.io.StoreWriter
  * Represents a random access (i.e. writable) memory whose address width and data width can be specified.
  *
  * The content of a [RAM] is cleared when execution is started, which is why a [RAM] is not editable
- * in edit mode.
+ * in edit mode - unless it is non-volatile RAM.
  */
 class RAM(
-	hasClock: Boolean = true
+	hasClock: Boolean = true,
+	isNonVolatile: Boolean = false
 ) : AbstractAddressable<RAM>(RAMCalculator()) {
 
 	companion object {
@@ -70,6 +71,9 @@ class RAM(
 			}
 		}
 
+	/** Whether the RAM is non-volatile, i.e. keeps its contents after execution */
+	var isNonVolatile: Boolean = false
+
 	/**
 	 * Represents the last value of the address input, but gets only updated when the chip is selected (CS).
 	 * Can be used for displaying the "current" (i.e. last) selected address.
@@ -94,7 +98,7 @@ class RAM(
 
 	/** ---- [Addressable] interface */
 
-	override val storesCells: Boolean get() = false
+	override val storesCells: Boolean get() = isNonVolatile
 
 	override val isSelected: Boolean get() = getChipSelectInput().getIncomingSignal() == DigitalSignalFactory.of(true)
 
@@ -113,6 +117,10 @@ class RAM(
 		writer.writeString("addressBitWidth", addressWidth.customName)
 		writer.writeString("dataBitWidth", dataWidth.customName)
 		writer.writeBoolean("clock", hasClock)
+		writer.writeBoolean("nonVolatile", isNonVolatile)
+		if (isNonVolatile) {
+			writer.writeString("content", CompressedMemoryDump.write(memory, dataWidth))
+		}
 	}
 
 	override fun read(reader: StoreReader) {
@@ -120,6 +128,12 @@ class RAM(
 		addressWidth = BitWidth.withName(reader.readString("addressBitWidth"))
 		dataWidth = BitWidth.withName(reader.readString("dataBitWidth"))
 		hasClock = reader.readBoolean("clock")
+		if (reader.hasAttribute("nonVolatile")) {
+			isNonVolatile = reader.readBoolean("nonVolatile")
+			if (isNonVolatile && reader.hasAttribute("content")) {
+				CompressedMemoryDump.read(memory, reader.readString("content"))
+			}
+		}
 	}
 
 	/** ---- [Actor] interface */
@@ -127,13 +141,17 @@ class RAM(
 	override fun executionInitialize(signalHandler: SignalHandler) {
 		super.executionInitialize(signalHandler)
 		currentSelectedAddress = 0
-		clear()
+		if (!isNonVolatile) {
+			clear()
+		}
 		getDataPort().setOutgoingSignalBuffered(DigitalSignalFactory.undefined(dataWidth), signalHandler)
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {
 		super.executionStopped(signalHandler)
-		clear()
+		if (!isNonVolatile) {
+			clear()
+		}
 	}
 
 	/** ---- [CalculatingVertice] interface */
