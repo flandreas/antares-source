@@ -11,7 +11,7 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.module.EditModule
-import ch.scorpion.jabbah.execution.PauseOrResumeAction
+import ch.scorpion.jabbah.execution.PauseOrResumeActionImpl
 import ch.scorpion.jabbah.execution.SingleStepModeAction
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
@@ -63,7 +63,7 @@ class GraphViewerController(
 
 	val toggleApplicationModeAction = ToggleApplicationModeAction(null, this, eventBus)
 	val singleStepModeAction = SingleStepModeAction(applicationContextHolder.scheduler, eventBus)
-	val pauseOrResumeAction = PauseOrResumeAction(applicationContextHolder.scheduler, eventBus)
+	val pauseOrResumeAction = PauseOrResumeActionImpl(applicationContextHolder.scheduler, eventBus)
 
 	init {
 		// Cyclic dependency

@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.time.SystemSpeed
+import ch.scorpion.jabbah.execution.PauseOrResumeAction
 import ch.scorpion.jabbah.execution.SystemSpeedSliderSwing
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
@@ -19,12 +20,12 @@ class ExecutionToolbarSwing(
 	applicationModeHolder: ApplicationModeHolder,
 	toggleApplicationModeAction: Action,
 	singleStepModeAction: Action,
-	pauseOrResumeAction: Action
+	pauseOrResumeAction: PauseOrResumeAction
 ) : ToolBar() {
 
 	private val toggleApplicationModeWrapper = ActionWrapperSwing(toggleApplicationModeAction)
 	private val singleStepModeWrapper = ActionWrapperSwing(singleStepModeAction)
-	private val pauseOrResumeWrapper = ActionWrapperSwing(pauseOrResumeAction)
+	private val pauseOrResumeButton = PauseOrResumeButton(pauseOrResumeAction)
 
 	private val speedSlider = SystemSpeedSliderSwing(systemSpeed)
 	private val usecaseSelector = UsecaseSelector(scheduler, applicationModeHolder)
@@ -40,9 +41,6 @@ class ExecutionToolbarSwing(
 		singleStepModeButton.text = null
 		singleStepModeButton.icon = UiUtil.themedIcon("/img/singleStepMode24.png")
 		singleStepModeButton.toolTipText = singleStepModeAction.name
-
-		val pauseOrResumeButton = JToggleButton(pauseOrResumeWrapper)
-		pauseOrResumeButton.text = null
 
 		speedSlider.preferredSize = Dimension(150, speedSlider.preferredSize.height)
 		speedSlider.maximumSize = Dimension(150, speedSlider.maximumSize.height)
@@ -61,7 +59,7 @@ class ExecutionToolbarSwing(
 	fun dispose() {
 		toggleApplicationModeWrapper.dispose()
 		singleStepModeWrapper.dispose()
-		pauseOrResumeWrapper.dispose()
+		pauseOrResumeButton.dispose()
 		speedSlider.dispose()
 		usecaseSelector.dispose()
 	}

@@ -3,6 +3,7 @@ package ch.scorpion.antares
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.draw.view.CanvasJs
+import ch.scorpion.jabbah.execution.PauseOrResumeAction
 import ch.scorpion.jabbah.execution.speed.SystemSpeedOutlet
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.project.AkrabApiException
@@ -71,7 +72,7 @@ class AntaresSingleCircuitViewerJs(
 
     fun getToggleApplicationModeAction(): Action = controller.toggleApplicationModeAction
     fun getSingleStepModeAction(): Action = controller.singleStepModeAction
-    fun getPauseOrResumeAction(): Action = controller.pauseOrResumeAction
+    fun getPauseOrResumeAction(): PauseOrResumeAction = controller.pauseOrResumeAction
 
     /** ---- [SystemSpeedOutlet] interface */
 
