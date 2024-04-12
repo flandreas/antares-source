@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.graph.ui.GraphNavigationView
+import ch.scorpion.jabbah.graph.ui.NavigationStackEntry
 import ch.scorpion.jabbah.graph.ui.NavigationStackView
 import ch.scorpion.jabbah.graph.ui.graphviewer.GraphViewerController
 import ch.scorpion.jabbah.graph.ui.graphviewer.GraphViewerView
@@ -22,6 +23,8 @@ internal class ViewMocks(
         controller.view = this
         controller.graphNavigationViewController.view = this
         controller.graphNavigationViewController.navigationStackViewController.view = this
+        controller.graphNavigationViewController.navigationStackViewController.navigationStack.rootEntry =
+            NavigationStackEntry(content = controller.drawingView.content)
     }
 
     /** ---- [GraphViewerView] */
