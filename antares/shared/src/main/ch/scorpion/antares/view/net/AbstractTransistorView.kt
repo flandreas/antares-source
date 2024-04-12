@@ -59,13 +59,13 @@ abstract class AbstractTransistorView<T: TransistorIF<*>>(
 		/** The name of the [Boolean] property in [Properties] defining whether transistor display port names.*/
 		const val PROP_TRANSISTOR_PORT_NAMES = "antares.transistor.portNames"
 
-		val portLabelPosition = if (showPortNames) {
+		val portLabelPosition get() = if (showPortNames) {
 			PortLabelPosition.EXTERNAL
 		} else {
 			PortLabelPosition.HIDE
 		}
 
-		val externalPortLabelDistance = if (hasCircle) {
+		val externalPortLabelDistance get() = if (hasCircle) {
 			ExternalPortLabelDistance.Small
 		} else {
 			ExternalPortLabelDistance.None
