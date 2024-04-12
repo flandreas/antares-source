@@ -49,7 +49,7 @@ class SchedulerImpl(
 
 		private val LOG by logger(SchedulerImpl::class)
 		private const val SETTING_STOP_ON_ISSUE = "execution.scheduler.stopOnIssue"
-		private const val SETTING_ENABLE_SOFT_BREAKPOINTS = "execution.scheduler.enableSoftBreakpoints"
+		const val SETTING_ENABLE_SOFT_BREAKPOINTS = "execution.scheduler.enableSoftBreakpoints"
 		private const val SETTING_ENABLE_SIMULATION_TIME_STATUS_BAR = "execution.scheduler.enableSimulationTimeStatusBar"
 	}
 

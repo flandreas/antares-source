@@ -3,9 +3,11 @@ package ch.scorpion.antares
 import ch.scorpion.antares.module.AntaresModuleJs
 import ch.scorpion.antares.view.theme.AntaresThemes
 import ch.scorpion.jabbah.base.*
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJs
 import ch.scorpion.jabbah.edit.auth.AnonymousWebUserHolder
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
+import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.AbstractAkrab2RestLibraryPersistenceServiceJs
 import ch.scorpion.jabbah.graph.library.Library
@@ -56,6 +58,8 @@ object AntaresSingleCircuitAppJs {
         EditAuthModule.userHolder = AnonymousWebUserHolder
 
         AntaresModuleJs.require()
+        BaseModule.settings.set(SchedulerImpl.SETTING_ENABLE_SOFT_BREAKPOINTS, true)
+
         LogSystem.level = LogLevel.Debug
 
         AntaresThemes.install(themeName)
