@@ -2,7 +2,11 @@ package ch.scorpion.antares
 
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.geom.Dimension2D
+import ch.scorpion.jabbah.draw.ViewDecorator
 import ch.scorpion.jabbah.draw.view.CanvasJs
+import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
+import ch.scorpion.jabbah.edit.model.text.Label
+import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.execution.PauseOrResumeAction
 import ch.scorpion.jabbah.execution.speed.SystemSpeedOutlet
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -61,6 +65,8 @@ class AntaresSingleCircuitViewerJs(
             canvas.height = effHeight * window.devicePixelRatio.toInt()
 
             val canvasJs = CanvasJs(canvas, controller.drawingView, dimension)
+            addWatermark()
+
             canvasJs.repaint()
         } catch (e: Throwable) {
             e.printStackTrace()
@@ -84,4 +90,14 @@ class AntaresSingleCircuitViewerJs(
         set(value) {
             controller.applicationContextHolder.currentSystemSpeedCategory.systemSpeed.speed = value
         }
+
+    private fun addWatermark() {
+        controller.drawingView.decorator.bottomRight = Label(
+            "Powered by antarescircuit.io",
+            ViewDecorator.FONT_ITALIC,
+            ViewDecorator.TEXT_COLOR_SUBTLE,
+            horizontalAlignment = HorizontalAlignment.LEFT,
+            verticalAlignment = VerticalAlignment.TOP
+        )
+    }
 }
