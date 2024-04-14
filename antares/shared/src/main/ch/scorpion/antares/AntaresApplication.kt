@@ -20,6 +20,9 @@ interface AntaresApplication : Application {
 		val DEF_LIBRARY_UUID = UUID("6707f981-110d-4629-a0bf-c35a4688025c")
 		const val FREQUENTLY_USED_FOLDER_NAME_EN = "Frequently used"
 
+		const val AKRAB_DEV_URL = "http://localhost:8080/api"
+		const val AKRAB_PROD_URL = "https://api.antarescircuit.io/api"
+
 		val DIGITAL_LIBRARY_IDS = listOf(
 			"cb21300b-8f5d-4c64-8f37-5d9a49807e8c",
 			"6707f981-110d-4629-a0bf-c35a4688025c")

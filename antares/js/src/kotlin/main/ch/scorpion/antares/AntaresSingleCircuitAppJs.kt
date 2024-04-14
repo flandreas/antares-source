@@ -2,6 +2,7 @@ package ch.scorpion.antares
 
 import ch.scorpion.antares.module.AntaresModuleJs
 import ch.scorpion.antares.view.theme.AntaresThemes
+import ch.scorpion.jabbah.app.Environment
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJs
@@ -30,9 +31,11 @@ import kotlin.js.Promise
  * in a JavaScript application, and loads [MetaGraph] and [Library] data to be displayed later.
  */
 @JsExport
-object AntaresSingleCircuitAppJs {
+class AntaresSingleCircuitAppJs(private val environment: Environment) {
 
-    private val LOG by logger(AntaresSingleCircuitViewerJs::class)
+    companion object {
+        private val LOG by logger(AntaresSingleCircuitViewerJs::class)
+    }
 
     /**
      * Initializes an application context and load the specified [Library]/[Project] and [MetaGraph].
@@ -43,6 +46,16 @@ object AntaresSingleCircuitAppJs {
     fun start(libraryUuid: String, metaGraphUuid: String, themeName: String? = null): Promise<Any> {
         LOG.info("Starting Antares single circuit app")
 
+        BaseModuleJs.require()
+        when (environment) {
+            Environment.Development -> {
+                BaseModule.properties.set(DataLocation.PROP_SERVER_URL, AntaresApplication.AKRAB_DEV_URL)
+            }
+            Environment.Production -> {
+                BaseModule.properties.set(DataLocation.PROP_SERVER_URL, AntaresApplication.AKRAB_PROD_URL)
+            }
+        }
+
         val scope = CoroutineScope(SupervisorJob())
         return scope.promise {
             Promise.all(loadTranslations().toTypedArray()).await()
@@ -52,8 +65,6 @@ object AntaresSingleCircuitAppJs {
     }
 
     private fun init(themeName: String?) {
-        BaseModuleJs.require()
-
         EditAuthModule.require()
         EditAuthModule.userHolder = AnonymousWebUserHolder
 
@@ -87,7 +98,7 @@ object AntaresSingleCircuitAppJs {
 
     private fun loadRepository(libraryUuid: String): Promise<Library> {
         LOG.debug("Loading repository $libraryUuid")
-        val url = "${BaseModuleJs.AKRAB_URL}/repository/$libraryUuid"
+        val url = "${BaseModule.properties.getString(DataLocation.PROP_SERVER_URL)}/repository/$libraryUuid"
         val headers = Headers()
         headers.append("Content-Type", "text/xml")
 

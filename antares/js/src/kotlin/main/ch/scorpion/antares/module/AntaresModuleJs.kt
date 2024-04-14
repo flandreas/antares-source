@@ -4,8 +4,9 @@ import ch.scorpion.antares.AntaresApplication
 import ch.scorpion.antares.view.AntaresLibraryFactory
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.jabbah.base.AbstractModule
+import ch.scorpion.jabbah.base.DataLocation
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.module.BaseModuleJs
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.module.EditModuleJs
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.library.dictionary.Akrab2RestLibraryDictionaryPersistenceService
@@ -25,19 +26,21 @@ object AntaresModuleJs : AbstractModule() {
 
         AntaresViewModule.require()
 
-        LibraryModule.systemLibraryPersistenceService = Akrab2RestSystemLibraryPersistenceServiceJs(BaseModuleJs.AKRAB_URL)
+        val akrabUrl = BaseModule.properties.getString(DataLocation.PROP_SERVER_URL)
+
+        LibraryModule.systemLibraryPersistenceService = Akrab2RestSystemLibraryPersistenceServiceJs(akrabUrl)
         LibraryModule.libraryFactory = AntaresLibraryFactory()
         LibraryModule.libraryService = LibraryService()
 
         LibraryModule.libraryManagementService = LibraryManagementService()
 
         LibraryModule.systemLibraryDictionaryService = LibraryDictionaryService(
-            Akrab2RestLibraryDictionaryPersistenceService(BaseModuleJs.AKRAB_URL)
+            Akrab2RestLibraryDictionaryPersistenceService(akrabUrl)
         )
 
         LibraryModule.libraryManagementService = LibraryManagementService()
 
-        ProjectModule.projectLibraryPersistenceService = Akrab2RestProjectPersistenceServiceJs(BaseModuleJs.AKRAB_URL)
+        ProjectModule.projectLibraryPersistenceService = Akrab2RestProjectPersistenceServiceJs(akrabUrl)
 
         ProjectModule.projectManagementService = ProjectManagementService(
             newMetaGraphNameTranslationKey = "graph.name.unknown")

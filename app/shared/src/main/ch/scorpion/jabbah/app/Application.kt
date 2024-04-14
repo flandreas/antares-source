@@ -8,6 +8,9 @@ import ch.scorpion.jabbah.base.Translations
  */
 interface Application {
 
+	/** The [Environment] in which this [Application] runs. */
+	val environment: Environment get() = Environment.Production
+
 	val controller: ApplicationDataViewController
 
     /** Holds the displayable name of this [Application].*/
