@@ -23,13 +23,16 @@ plugins {
 val version_project: String by project
 val group_project = rootProject.name
 
+// Bytesafe repository: Taken from machine local gradle.properties
+val bytesaveUser: String by extra
+val bytesavePassword: String by extra
+
 allprojects {
 
 	repositories {
 		maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-js-wrappers")
 		maven("https://jitpack.io")
 		mavenCentral()
-		//jcenter()
 		flatDir {
 			dirs("../lib")
 		}
@@ -39,8 +42,8 @@ allprojects {
 			name = "bytesafe"
 			url = uri("https://antares.bytesafe.dev/maven/antares/")
 			credentials {
-				username = "bytesafe"
-				password = "01G4ADXPRW5PRW5H8SR9ZRGRFY"
+				username = bytesaveUser
+				password = bytesavePassword
 			}
 		}
 	}
@@ -83,6 +86,8 @@ subprojects {
 	apply(plugin = "maven-publish")
 
 	configure<KotlinMultiplatformExtension> {
+		withSourcesJar(publish = false)
+
 		jvm {
 			// by default kotlin uses JavaVersion 1.6
 			val main by compilations.getting {
@@ -243,13 +248,12 @@ subprojects {
 				name = "bytesafe"
 				url = uri("https://antares.bytesafe.dev/maven/antares/")
 				credentials {
-					username = "bytesafe"
-					password = "01G4ADXPRW5PRW5H8SR9ZRGRFY"
+					username = bytesaveUser
+					password = bytesavePassword
 				}
 			}
 		}
 	}
-
 }
 
 tasks {
