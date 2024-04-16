@@ -81,7 +81,7 @@ class Memory(private val segmentSize: Int) {
 	}
 
     private fun hasSegment(address: Int): Boolean {
-		return segments[address / segmentSize] != null
+		return segments[address / segmentSize * segmentSize] != null
 	}
 
 	/** Holds the internal data representation of an individual cell.*/
