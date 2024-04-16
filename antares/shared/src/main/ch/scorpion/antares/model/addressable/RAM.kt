@@ -31,11 +31,10 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 class RAM(
 	hasClock: Boolean = true,
-	isNonVolatile: Boolean = false
+	nonVolatile: Boolean = false
 ) : AbstractAddressable<RAM>(RAMCalculator()) {
 
 	companion object {
-
 		private const val BASE_RESOURCE_KEY = "library.element.RAM"
 		private val TYPE get() = Translations.getString("$BASE_RESOURCE_KEY.name")
 		private val TYPE_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
@@ -72,7 +71,14 @@ class RAM(
 		}
 
 	/** Whether the RAM is non-volatile, i.e. keeps its contents after execution */
-	var isNonVolatile: Boolean = false
+	var nonVolatile: Boolean = false
+		set(value) {
+			field = value
+			if (field && !value) {
+				// when changing the RAM from non-volatile to volatile, also clear it
+				clear()
+			}
+		}
 
 	/**
 	 * Represents the last value of the address input, but gets only updated when the chip is selected (CS).
@@ -98,7 +104,7 @@ class RAM(
 
 	/** ---- [Addressable] interface */
 
-	override val storesCells: Boolean get() = isNonVolatile
+	override val storesCells: Boolean get() = nonVolatile
 
 	override val isSelected: Boolean get() = getChipSelectInput().getIncomingSignal() == DigitalSignalFactory.of(true)
 
@@ -117,8 +123,8 @@ class RAM(
 		writer.writeString("addressBitWidth", addressWidth.customName)
 		writer.writeString("dataBitWidth", dataWidth.customName)
 		writer.writeBoolean("clock", hasClock)
-		writer.writeBoolean("nonVolatile", isNonVolatile)
-		if (isNonVolatile) {
+		writer.writeBoolean("nonVolatile", nonVolatile)
+		if (nonVolatile) {
 			writer.writeString("content", CompressedMemoryDump.write(memory, dataWidth))
 		}
 	}
@@ -129,8 +135,8 @@ class RAM(
 		dataWidth = BitWidth.withName(reader.readString("dataBitWidth"))
 		hasClock = reader.readBoolean("clock")
 		if (reader.hasAttribute("nonVolatile")) {
-			isNonVolatile = reader.readBoolean("nonVolatile")
-			if (isNonVolatile && reader.hasAttribute("content")) {
+			nonVolatile = reader.readBoolean("nonVolatile")
+			if (nonVolatile && reader.hasAttribute("content")) {
 				CompressedMemoryDump.read(memory, reader.readString("content"))
 			}
 		}
@@ -141,7 +147,7 @@ class RAM(
 	override fun executionInitialize(signalHandler: SignalHandler) {
 		super.executionInitialize(signalHandler)
 		currentSelectedAddress = 0
-		if (!isNonVolatile) {
+		if (!nonVolatile) {
 			clear()
 		}
 		getDataPort().setOutgoingSignalBuffered(DigitalSignalFactory.undefined(dataWidth), signalHandler)
@@ -149,7 +155,7 @@ class RAM(
 
 	override fun executionStopped(signalHandler: SignalHandler) {
 		super.executionStopped(signalHandler)
-		if (!isNonVolatile) {
+		if (!nonVolatile) {
 			clear()
 		}
 	}

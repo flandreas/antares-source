@@ -16,7 +16,7 @@ class RAMViewBeanInfo : DigitalComponentViewBeanInfo<RAMView>() {
 	    private val dataBitWidth = AntaresProperties.bitWidth("dataWidth", "element.property.dataBitWidth")
 	    private val text = GraphProperties.label(name = "text")
 	    private val clock = CommandPropertySwing("hasClock", "element.property.RAM.clock", Boolean::class.java, componentBeanProvider)
-	    private val nonVolatile = CommandPropertySwing("isNonVolatile", "element.property.RAM.nonVolatile", Boolean::class.java, componentBeanProvider)
+	    private val nonVolatile = CommandPropertySwing("nonVolatile", "element.property.RAM.nonVolatile", Boolean::class.java, componentBeanProvider)
 	    private val showContents = CommandPropertySwing("showContents", "element.property.Addressable.showContents", Boolean::class.java, componentBeanProvider)
 	    private val contentsRowCount = CommandPropertySwing("contentRowsCount", "element.property.Addressable.rowsCount", Int::class.java, componentBeanProvider)
 	    private val contentsColumnsCount = CommandPropertySwing("contentColumnsCount", "element.property.Addressable.columnsCount", Int::class.java, componentBeanProvider)

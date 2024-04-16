@@ -97,10 +97,10 @@ class RAMView(
 		}
 
 	@Suppress("unused")
-	var isNonVolatile: Boolean
-		get() = model.isNonVolatile
+	var nonVolatile: Boolean
+		get() = model.nonVolatile
 		set(value) {
-			model.isNonVolatile = value
+			model.nonVolatile = value
 		}
 
 	/** ---- [AbstractAddressableView] */
