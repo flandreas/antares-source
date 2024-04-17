@@ -71,11 +71,12 @@ class Memory(private val segmentSize: Int) {
 	}
 
 	private fun getSegment(address: Int): Segment {
-		val baseAddress = address / segmentSize * segmentSize
-		var segment = segments[baseAddress]
+		val segmentIdx = address / segmentSize
+		val baseAddress = segmentIdx * segmentSize
+		var segment = segments[segmentIdx]
 		if (segment == null) {
 			segment = Segment(baseAddress)
-			segments[baseAddress] = segment
+			segments[segmentIdx] = segment
 		}
 		return segment
 	}

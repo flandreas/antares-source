@@ -191,4 +191,15 @@ class MemoryTest {
 		memory.writeComment(3, null)
 		assertNull(memory.readComment(3))
 	}
+
+	/** ---- Regression tests */
+
+	@Test
+	fun shouldNotDiscardZeros() {
+		// test for flandreas/antares#715
+		val memory = Memory(12)
+		memory.write(2055, 2055UL)
+		memory.write(2055, 0UL)
+		assertEquals(0UL, memory.read(2055))
+	}
 }
