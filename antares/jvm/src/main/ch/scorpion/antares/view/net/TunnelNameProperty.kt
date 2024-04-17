@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.net.TunnelName
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.richtext.RichText
 import ch.scorpion.jabbah.edit.AbstractPropertyCommand
 import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.BeanProvider
@@ -104,7 +105,11 @@ class TunnelNameEditor(
 	private val comboBox: JComboBox<TunnelName> get() = comboBoxEditor.customEditor as JComboBox<TunnelName>
 
 	init {
-		comboBox.model = DefaultComboBoxModel(graph.tunnelNames.toTypedArray())
+		comboBox.model = DefaultComboBoxModel(
+			graph.tunnelNames
+				.sortedBy { RichText.stripToPlainText(it.name) }
+				.toTypedArray()
+		)
 		comboBox.isEditable = true
 		editor = comboBox
 	}
