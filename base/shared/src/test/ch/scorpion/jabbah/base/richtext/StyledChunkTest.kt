@@ -9,7 +9,7 @@ class StyledChunkTest {
 
 	@Test
 	fun shouldSplitWords() {
-		val chunk = StyledChunk(TextLocation(0, 0, 0), "This is a text.", TextStyle.OVERLINE_BOLD)
+		val chunk = StyledChunk(TextLocation(0, 0, 0), "This is a text.", TextStyle(overlineLevel = 1, bold = true, italic = false))
 		val words = chunk.splitWords()
 
 		assertEquals(4, words.size)
@@ -17,6 +17,6 @@ class StyledChunkTest {
 		assertEquals("is ", words[1].text)
 		assertEquals("a ", words[2].text)
 		assertEquals("text.", words[3].text)
-		assertTrue(words.all { it.style.bold && it.style.overline })
+		assertTrue(words.all { it.style.bold && it.style.overlineLevel == 1 })
 	}
 }
