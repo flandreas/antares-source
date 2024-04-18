@@ -105,6 +105,12 @@ open class ApplicationDataViewController(
 		data!!.content = state
 	}
 
+	override fun undoableStateEstablished(state: Storable) {
+		data?.let {
+			eventBus.post(ApplicationDataContentEstablishedEvent(it))
+		}
+	}
+
 	/** ---- [ApplicationDataHolder] interface */
 
 	override var data: ApplicationData? = null

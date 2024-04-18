@@ -25,7 +25,7 @@ data class Connection<T : Any>(
 }
 
 /**
- * Contains the same information like [Connection], but in an instance-independent
+ * Contains the same information as [Connection], but in an instance-independent
  * way that can be used for [Command]s (which must work with snapshot-replaying).
  */
 data class ConnectionReference(

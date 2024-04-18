@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.ui.desktop
 
+import ch.scorpion.jabbah.app.ApplicationDataContentEstablishedEvent
 import ch.scorpion.jabbah.app.ApplicationDataContentEvent
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
@@ -116,7 +117,7 @@ class GraphDesktopViewController(
 
 	private val openHierarchyHandler: EventHandler<OpenHierarchySubGraphRequest> = { handle(it) }
 
-	private val appDataContentHandler: EventHandler<ApplicationDataContentEvent> = { handle(it) }
+	private val appDataContentHandler: EventHandler<ApplicationDataContentEstablishedEvent> = { handle(it) }
 
 	/** Closes an open [GraphDesktopViewItem] when the corresponding [VerticeView] has been removed.*/
 	private val removeListener = RemoveListener()
@@ -130,7 +131,7 @@ class GraphDesktopViewController(
 		eventBus.register(ReferenceColorEvent::class, referenceColorHandler)
 		eventBus.register(CurrentLibraryEvent::class, currentLibraryHandler)
 		eventBus.register(OpenHierarchySubGraphRequest::class, openHierarchyHandler)
-		eventBus.register(ApplicationDataContentEvent::class, appDataContentHandler)
+		eventBus.register(ApplicationDataContentEstablishedEvent::class, appDataContentHandler)
 	}
 
 	override fun dispose() {
@@ -247,7 +248,7 @@ class GraphDesktopViewController(
 		}
 	}
 
-	private fun handle(@Suppress("UNUSED_PARAMETER") event: ApplicationDataContentEvent) {
+	private fun handle(@Suppress("UNUSED_PARAMETER") event: ApplicationDataContentEstablishedEvent) {
 		if (event.data.content is MetaGraph) {
 			refreshHighlightsInMain()
 		}

@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.addressable
 
 import ch.scorpion.antares.model.addressable.Addressable
+import ch.scorpion.antares.model.addressable.AddressableReference
 import ch.scorpion.antares.view.Look
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder

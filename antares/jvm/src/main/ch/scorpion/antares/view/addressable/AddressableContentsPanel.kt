@@ -2,6 +2,7 @@ package ch.scorpion.antares.view.addressable
 
 import ch.scorpion.antares.model.addressable.Addressable
 import ch.scorpion.antares.model.addressable.AddressableClearCommand
+import ch.scorpion.antares.model.addressable.AddressableReference
 import ch.scorpion.antares.model.addressable.MemoryDump
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
@@ -60,6 +61,7 @@ class AddressableContentsPanel(
 				.title(Translations.getString("antares.action.memory.contents.title", name))
 				.defaultButton { it.closeButton }
 				.resizable()
+				.onWindowClosed { it.dispose() }
 				.show()
 		}
 	}

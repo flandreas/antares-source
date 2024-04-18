@@ -26,6 +26,8 @@ class ApplicationDummy(
 	override fun setUndoableState(state: Storable) {
 		data = state as StorableString
 	}
+
+	override fun undoableStateEstablished(state: Storable) {}
 }
 
 class StorableString(value: String = "") : AbstractStorable() {
