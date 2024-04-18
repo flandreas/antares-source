@@ -99,11 +99,16 @@ class DigitalPortViewComponent(
 			portView!!.validate()
 		}
 
-	var externalPortLabelDistance: ExternalPortLabelDistance
-		get() = digitalPortView.externalPortLabelDistance
-		set(value) {
-			digitalPortView.externalPortLabelDistance = value
-		}
+    @Suppress("MemberVisibilityCanBePrivate") // Reflection
+    var largeExternalPortLabelDistance: Boolean
+        get() = digitalPortView.externalPortLabelDistance == ExternalPortLabelDistance.Large
+        set(value) {
+            if (value) {
+                digitalPortView.externalPortLabelDistance = ExternalPortLabelDistance.Large
+            } else {
+                digitalPortView.externalPortLabelDistance = ExternalPortLabelDistance.Small
+            }
+        }
 
     /** ---- [Storable] */
 
@@ -113,7 +118,7 @@ class DigitalPortViewComponent(
 	    if (portViewStyle != DigitalPortViewStyle.Line) {
 	    	writer.writeString("portViewStyle", portViewStyle.customName)
 	    }
-	    if (externalPortLabelDistance == ExternalPortLabelDistance.Large) {
+	    if (largeExternalPortLabelDistance) {
 			writer.writeBoolean("largeExtLabelDist", true)
 	    }
     }
@@ -125,7 +130,7 @@ class DigitalPortViewComponent(
 	    	portViewStyle = DigitalPortViewStyle.withName(reader.readString("portViewStyle"))
 	    }
 	    if (reader.hasAttribute("largeExtLabelDist")) {
-            externalPortLabelDistance = ExternalPortLabelDistance.Large
+            largeExternalPortLabelDistance = true
 	    }
     }
 
