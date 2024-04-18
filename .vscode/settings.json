@@ -1,3 +1,4 @@
 {
-    "asciidoc.antora.enableAntoraSupport": false
+    "asciidoc.antora.enableAntoraSupport": false,
+    "files.trimTrailingWhitespace": false
 }

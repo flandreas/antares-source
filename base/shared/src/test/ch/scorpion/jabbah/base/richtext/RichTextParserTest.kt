@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.assertAST
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class RichTextParserTest {
 
@@ -208,6 +209,28 @@ class RichTextParserTest {
 			-- ^
 			--- !(123)
 		""".trimIndent())
+	}
+
+	@Test
+	fun shouldParseNestedOverline() {
+		val ast = RichTextParser("!(A !(!B) !C) !D").parse()
+		assertAST(
+			ast, """
+			Compound
+			- Fragment
+			-- -
+			--- !(A )
+			--- !!!(B)
+			--- !( )
+			--- !!(C)
+			- Fragment
+			-- -
+			---  
+			- Fragment
+			-- -
+			--- !(D)
+		""".trimIndent())
+		assertEquals(ast.getMaxOverlineLevel(), 3)
 	}
 
 	@Test

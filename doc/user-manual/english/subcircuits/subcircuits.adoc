@@ -29,10 +29,7 @@ Examples:
  !Q
  !(ABC)
 
-Crossbars can also be nested.
-
-Subscript and superscript is possible with the `\_` and `^` marks, e.g. `Mem_(In)` will be displayed as Mem~In~. The `/` mark will make letters _italic_ and `*` will make them bold.
-If this special meaning of the formatting characters is not desired, a backslash can be used to escape them: `I\/O` will become "I/O" instead of "I__O__".
+Negations can also be nested. See link:{{site.basedir}}/user-manual/english/circuits/text-style[Text Style] for more possibilities.
 
 === Bidirectional Ports
 

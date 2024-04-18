@@ -35,6 +35,11 @@ class RichText(
 			}
 		}
 	}
+
+	fun getMaxOverlineLevel() =
+		children.maxOfOrNull {
+			it.text.styledText.chunks.maxOfOrNull { it.style.overlineLevel } ?: 0
+		} ?: 0
 }
 
 class Fragment(
@@ -120,7 +125,7 @@ data class TextStyle(
 		val NORMAL = TextStyle(overlineLevel = 0, bold = false, italic = false)
 
 		fun pushOverline(style: TextStyle) = TextStyle(style.overlineLevel + 1, style.bold, style.italic)
-		fun popOverline(style: TextStyle) = TextStyle(if (style.overlineLevel > 0) style.overlineLevel - 1 else 0, style.bold, style.italic)
+		fun popOverline(style: TextStyle) = TextStyle(Math.max(style.overlineLevel - 1, 0), style.bold, style.italic)
 
 		fun withBold(style: TextStyle) = TextStyle(style.overlineLevel, true, style.italic)
 		fun withoutBold(style: TextStyle) = TextStyle(style.overlineLevel, false, style.italic)
@@ -144,7 +149,7 @@ class StyledChunk(
 		if (style.italic) {
 			s.append(RichTextTokenType.ITALIC.id)
 		}
-		if (style.overlineLevel > 0) {
+		for (i in 1 .. style.overlineLevel) {
 			s.append(RichTextTokenType.OVERLINE.id)
 		}
 		if (s.isNotEmpty()) {

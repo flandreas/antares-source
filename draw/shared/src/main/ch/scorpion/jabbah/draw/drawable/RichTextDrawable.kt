@@ -15,7 +15,7 @@ import kotlin.math.max
  * Displays a [RichText] AST using [Graphics2D] operations as single-line text.
  */
 class RichTextDrawable(
-	private val richText: RichText,
+	richText: RichText,
 	private val baseFont: Font
 ) : AbstractRectangle() {
 
@@ -221,11 +221,6 @@ class RichTextDrawable(
 
 			return drawable
 		}
-
-		private fun getMaxOverlineLevel(richText: RichText) =
-			richText.children.maxOfOrNull {
-				it.text.styledText.chunks.maxOfOrNull { it.style.overlineLevel } ?: 0
-			} ?: 0
 	}
 
 	/** The coordinates of the [ChunkView]s are relative to the baseline start of the first [ChunkView].*/
@@ -258,7 +253,7 @@ class RichTextDrawable(
 
 	var underline: Boolean = false
 
-	private val maxOverlineLevel = getMaxOverlineLevel(richText)
+	private val maxOverlineLevel = richText.getMaxOverlineLevel()
 
 	override fun draw(context: DrawContext) {
 		val ascent = abs(baselineRect.y)
@@ -360,9 +355,9 @@ class RichTextDrawable(
 
 			g.drawString(text, baselineX.toInt(), baselineY.toInt())
 
-			for (i in 1 .. style.overlineLevel) {
+			for (level in 1 .. style.overlineLevel) {
 				g.stroke = OVERLINE_STROKE
-				val lineY = y - 2 * maxOverlineLevel + 2 * i
+				val lineY = y - 2.5 * ( maxOverlineLevel - level)
 				if (style.italic) {
 					g.drawLine(x + 2, lineY, x + width, lineY)
 				} else {
