@@ -43,7 +43,7 @@ Negations can also be nested, for example `!(ENABLE !(A+B))`.
 
 === Bold
 
-Render a text block as bold by using an asterik `\*` for single characters or `*(bold)` for multi-character text.
+Render a text block as bold by using an asterisk `\*` for single characters or `*(bold)` for multi-character text.
 
 **Examples:**
 
