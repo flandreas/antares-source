@@ -7,6 +7,7 @@ import ch.scorpion.antares.model.testcase.Testcase
 import ch.scorpion.jabbah.base.Settings
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.base.help.HelpId
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -402,6 +403,13 @@ class ExportVHDLPanel(
 				JOptionPane.showMessageDialog(
 					Frame.getFrames()[0],
 					e.message,
+					Translations.getString("base.action.export.name"),
+					JOptionPane.ERROR_MESSAGE
+				)
+			} catch (e: DslError) {
+				JOptionPane.showMessageDialog(
+					Frame.getFrames()[0],
+					Translations.getString("antares.vhdl.testcase.error.text", e.message ?: ""),
 					Translations.getString("base.action.export.name"),
 					JOptionPane.ERROR_MESSAGE
 				)

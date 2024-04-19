@@ -180,7 +180,7 @@ class TestcaseTreeView(
 		fun removeTestcase(testcase: Testcase) {
 			val testcaseNode = findTestcaseNode(testcase)
 			val index = getTestcaseIndex(testcase)
-			if (index > 0) {
+			if (index >= 0) {
 				graphNode.remove(index)
 				nodesWereRemoved(graphNode, intArrayOf(index), arrayOf(testcaseNode))
 			}
