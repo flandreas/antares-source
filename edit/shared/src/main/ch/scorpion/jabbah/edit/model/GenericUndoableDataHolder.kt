@@ -24,4 +24,6 @@ class GenericUndoableDataHolder(
 		this.state = state
 		changeHandler(state)
 	}
+
+	override fun undoableStateEstablished(state: Storable) {}
 }

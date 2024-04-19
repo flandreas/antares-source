@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.addressable
 
 import ch.scorpion.antares.model.addressable.AddressableCommentChange
+import ch.scorpion.antares.model.addressable.AddressableReference
 import java.awt.Component
 import java.awt.event.FocusAdapter
 import java.awt.event.FocusEvent

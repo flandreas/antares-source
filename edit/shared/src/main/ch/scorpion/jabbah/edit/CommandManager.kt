@@ -26,7 +26,18 @@ interface UndoableDataHolder {
 
 	fun getUndoableState(): Storable?
 
+	/**
+	 * Notifies this [UndoableDataHolder] that a new instance of undoable state has been set.
+	 * The individual elements of the undoable state are not available until [undoableStateEstablished]
+	 * gets called.
+	 */
 	fun setUndoableState(state: Storable)
+
+	/**
+	 * Notifies this [UndoableDataHolder] that the undoable state has been completely establish,
+	 * e.g. after replaying from a snapshot during undo/redo, and its individual elements are now available.
+	 */
+	fun undoableStateEstablished(state: Storable)
 }
 
 /**
@@ -39,10 +50,10 @@ interface UndoableDataHolder {
  * A [CommandManager] resets its state after the current application data have been saved.
  *
  * [CommandManager] provides "nested transactions" which mainly represent combined [Command]s. When a transaction
- * is started, all subsequently executed or registered [Command]s are stored as children of the the first [Command]
+ * is started, all subsequently executed or registered [Command]s are stored as children of the first [Command]
  * until the transaction is either committed or rolled back. Such [Command]s count in terms of "undo/redo" only as
  * a single [Command]. This can be used for complex application logic, where a single user action can result in
- * multiple [Command]s. If no transaction has been began explicitly, execution or registration starts an
+ * multiple [Command]s. If no transaction began explicitly, execution or registration starts an
  * implicit transaction, which gets immediately auto-committed. During a transaction, undo/redo is not possible,
  * i.e. transaction can only be used while processing a single user action.
  *
@@ -56,7 +67,7 @@ interface UndoableDataHolder {
  * or to resign to do so if these changes should be abandoned.
  *
  * [CommandManager] supports a tagging system. Systems that use a [CommandManager] can set a tag in this [CommandManager].
- * Every [Command] that is subsequently added will automatically received that tag as well. This allows systems to
+ * Every [Command] that is subsequently added will automatically receive that tag as well. This allows systems to
  * determine whether [Command]s from a particular subsystem have been added since the last storing operation.
  * Use [addTag] to add a tag and [removeTag] to remove it, and [hasCommandWithTag] to check if a [Command]
  * with a particular tags exists.

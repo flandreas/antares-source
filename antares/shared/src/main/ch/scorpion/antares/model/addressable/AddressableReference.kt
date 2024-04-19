@@ -1,8 +1,7 @@
-package ch.scorpion.antares.view.addressable
+package ch.scorpion.antares.model.addressable
 
-import ch.scorpion.antares.model.addressable.Addressable
-import ch.scorpion.antares.model.addressable.AddressableDataListener
 import ch.scorpion.jabbah.app.ApplicationData
+import ch.scorpion.jabbah.app.ApplicationDataContentEstablishedEvent
 import ch.scorpion.jabbah.app.ApplicationDataContentEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
@@ -24,19 +23,23 @@ class AddressableReference(
 	lateinit var addressable: Addressable
 		private set
 
-	private val applicationDataContentHandler: EventHandler<ApplicationDataContentEvent> = { updateAddressable() }
+	private val applicationDataContentHandler: EventHandler<ApplicationDataContentEvent> = { unregisterOldContent() }
+
+	private val applicationDataEstablishedHandler: EventHandler<ApplicationDataContentEstablishedEvent> = { registerNewContent() }
 
 	private val dataListeners = mutableListOf<AddressableDataListener>()
 
 	private val graphElementListeners = mutableListOf<GraphElementListener>()
 
 	init {
-		updateAddressable()
+		registerNewContent()
 		eventBus.register(ApplicationDataContentEvent::class, applicationDataContentHandler)
+		eventBus.register(ApplicationDataContentEstablishedEvent::class, applicationDataEstablishedHandler)
 	}
 
 	fun dispose() {
 		eventBus.unregister(applicationDataContentHandler)
+		eventBus.unregister(applicationDataEstablishedHandler)
 		dataListeners.forEach { addressable.removeDataListener(it) }
 	}
 
@@ -64,10 +67,12 @@ class AddressableReference(
 		addressable.removeGraphElementListener(l)
 	}
 
-	private fun updateAddressable() {
+	private fun unregisterOldContent() {
 		dataListeners.forEach { addressable.removeDataListener(it) }
 		graphElementListeners.forEach { addressable.removeGraphElementListener(it) }
+	}
 
+	private fun registerNewContent() {
 		addressable = view.drawing.graph!!.withId(id) as Addressable
 
 		graphElementListeners.forEach { addressable.addGraphElementListener(it) }

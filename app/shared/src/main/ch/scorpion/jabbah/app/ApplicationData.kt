@@ -22,15 +22,19 @@ class ApplicationData(
 
 	override fun toString(): String = savable.description
 
+	/**
+	 * The effective data content to be stored in [savable].
+	 * Note that this content can be exchanged while undo/redo actions requiring replaying from a snapshot.
+	 */
 	var content: Storable = content
 		set(value) {
 			if (field !== value) {
 				val oldContent = field
 				field = value
 
+				// TODO Remove, not used
 				fire(PROP_CONTENT, oldContent, field)
 
-				// TODO Remove
 				eventBus.post(ApplicationDataContentEvent(this, oldContent))
 			}
 		}
@@ -64,4 +68,11 @@ data class ApplicationDataEvent(
 data class ApplicationDataContentEvent(
 	val data: ApplicationData,
 	val oldContent: Storable
+)
+
+/**
+ * Posted on an [EventBus] after an [ApplicationData]'s content has been completely established.
+ */
+data class ApplicationDataContentEstablishedEvent(
+	val data: ApplicationData
 )

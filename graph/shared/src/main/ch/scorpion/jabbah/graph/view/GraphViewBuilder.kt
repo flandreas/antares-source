@@ -54,6 +54,8 @@ open class GraphViewBuilder<T : Any>(
 		LOG.trace("Set undoable state $state with GraphView ${graphView.hashCode().toString(16)}")
 	}
 
+	override fun undoableStateEstablished(state: Storable) {}
+
 	/** ---- [GraphViewBuilder] */
 
 	val graphView: GraphView get() = graphStorable.graphView

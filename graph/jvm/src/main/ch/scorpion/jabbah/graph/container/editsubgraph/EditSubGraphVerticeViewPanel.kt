@@ -94,7 +94,9 @@ class EditSubGraphVerticeViewPanel(
 	override fun getUndoableState(): Storable =
 		containerPanel.controller.editor.drawing
 
-	override fun setUndoableState(state: Storable) {
+	override fun setUndoableState(state: Storable) {}
+
+	override fun undoableStateEstablished(state: Storable) {
 		containerPanel.controller.updateData(state as ContainerDrawing)
 	}
 

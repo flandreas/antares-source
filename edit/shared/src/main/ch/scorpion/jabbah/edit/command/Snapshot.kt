@@ -63,6 +63,7 @@ internal class Snapshot(
 	private fun replayFromSnapshot() {
 		val clonedData = StorableCloner.clone(data)
 		LOG.trace("Clone snapshot and set as new undoable data $clonedData")
+
 		undoableDataHolder.setUndoableState(clonedData)
 
 		LOG.trace("Replaying")
@@ -70,5 +71,7 @@ internal class Snapshot(
 			LOG.trace(".. replaying transaction ${it.headCommand.getDescription()}")
 			it.execute()
 		}
+
+		undoableDataHolder.undoableStateEstablished(clonedData)
 	}
 }
