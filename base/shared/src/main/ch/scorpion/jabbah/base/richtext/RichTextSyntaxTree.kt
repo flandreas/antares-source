@@ -35,6 +35,11 @@ class RichText(
 			}
 		}
 	}
+
+	fun getMaxOverlineLevel() =
+		children.maxOfOrNull {
+			it.text.styledText.chunks.maxOfOrNull { it.style.overlineLevel } ?: 0
+		} ?: 0
 }
 
 class Fragment(
@@ -112,44 +117,21 @@ class StyledText(
 
 @Suppress("MemberVisibilityCanBePrivate")
 data class TextStyle(
-	val overline: Boolean,
+	val overlineLevel: Int,
 	val bold: Boolean,
 	val italic: Boolean
 ) {
 	companion object {
-		val NORMAL = TextStyle(overline = false, bold = false, false)
-		val OVERLINE = TextStyle(overline = true, bold = false, false)
-		val BOLD = TextStyle(overline = false, bold = true, false)
-		val OVERLINE_BOLD = TextStyle(overline = true, bold = true, false)
+		val NORMAL = TextStyle(overlineLevel = 0, bold = false, italic = false)
 
-		val ITALIC = TextStyle(overline = false, bold = false, true)
-		val OVERLINE_ITALIC = TextStyle(overline = true, bold = false, true)
-		val BOLD_ITALIC = TextStyle(overline = false, bold = true, true)
-		val OVERLINE_BOLD_ITALIC = TextStyle(overline = true, bold = true, true)
+		fun pushOverline(style: TextStyle) = TextStyle(style.overlineLevel + 1, style.bold, style.italic)
+		fun popOverline(style: TextStyle) = TextStyle(Math.max(style.overlineLevel - 1, 0), style.bold, style.italic)
 
-		fun withOverline(style: TextStyle): TextStyle = of(true, style.bold, style.italic)
-		fun withoutOverline(style: TextStyle): TextStyle = of(false, style.bold, style.italic)
+		fun withBold(style: TextStyle) = TextStyle(style.overlineLevel, true, style.italic)
+		fun withoutBold(style: TextStyle) = TextStyle(style.overlineLevel, false, style.italic)
 
-		fun withBold(style: TextStyle): TextStyle = of(style.overline, true, style.italic)
-		fun withoutBold(style: TextStyle): TextStyle = of(style.overline, false, style.italic)
-
-		fun withItalic(style: TextStyle): TextStyle = of(style.overline, style.bold, true)
-		fun withoutItalic(style: TextStyle): TextStyle = of(style.overline, style.bold, false)
-
-		fun of(overline: Boolean, bold: Boolean, italic: Boolean): TextStyle =
-			if (overline) {
-				if (bold) {
-					if (italic) OVERLINE_BOLD_ITALIC else OVERLINE_BOLD
-				} else {
-					if (italic) OVERLINE_ITALIC else OVERLINE
-				}
-			} else {
-				if (bold) {
-					if (italic) BOLD_ITALIC else BOLD
-				} else {
-					if (italic) ITALIC else NORMAL
-				}
-			}
+		fun withItalic(style: TextStyle) = TextStyle(style.overlineLevel, style.bold, true)
+		fun withoutItalic(style: TextStyle) = TextStyle(style.overlineLevel, style.bold, false)
 	}
 }
 
@@ -167,7 +149,7 @@ class StyledChunk(
 		if (style.italic) {
 			s.append(RichTextTokenType.ITALIC.id)
 		}
-		if (style.overline) {
+		for (i in 1 .. style.overlineLevel) {
 			s.append(RichTextTokenType.OVERLINE.id)
 		}
 		if (s.isNotEmpty()) {

@@ -15,6 +15,7 @@ import kotlin.math.max
  * Displays a [RichText] AST using [Graphics2D] operations as single-line text.
  */
 class RichTextDrawable(
+	richText: RichText,
 	private val baseFont: Font
 ) : AbstractRectangle() {
 
@@ -98,7 +99,7 @@ class RichTextDrawable(
 		 * with [Graphics2D] operations. Currently supports only single-line text.
 		 */
 		private fun transformToSingleLine(richText: RichText, font: Font, textMeasurer: TextMeasurer): RichTextDrawable {
-			val drawable = RichTextDrawable(font)
+			val drawable = RichTextDrawable(richText, font)
 			var baselineX = 0.0
 
 			richText.children.forEach { fragment ->
@@ -133,7 +134,7 @@ class RichTextDrawable(
 		}
 
 		private fun transformToMultiline(richText: RichText, font: Font, preferredWidth: Double, textMeasurer: TextMeasurer): RichTextDrawable {
-			val drawable = RichTextDrawable(font)
+			val drawable = RichTextDrawable(richText, font)
 			var baselineX = 0.0
 			var baselineY = 0.0
 			var lineWidth = 0.0
@@ -252,10 +253,12 @@ class RichTextDrawable(
 
 	var underline: Boolean = false
 
+	private val maxOverlineLevel = richText.getMaxOverlineLevel()
+
 	override fun draw(context: DrawContext) {
 		val ascent = abs(baselineRect.y)
 		context.g.translate(location.x, location.y + ascent)
-		chunkViews.forEach { it.draw(context.g) }
+		chunkViews.forEach { it.draw(context.g, maxOverlineLevel) }
 		context.g.translate(-location.x, -location.y - ascent)
 	}
 
@@ -263,7 +266,7 @@ class RichTextDrawable(
 		val ascent = abs(baselineRect.y)
 		g.translate(location.x, location.y + ascent)
 
-		chunkViews.forEach { it.draw(g) }
+		chunkViews.forEach { it.draw(g, maxOverlineLevel) }
 		if (underline) {
 			val y = -ascent.toInt() + heightInt + 1
 			g.stroke = UNDERLINE_STROKE
@@ -346,18 +349,19 @@ class RichTextDrawable(
 			height = tri.textBounds.height
 		}
 
-		fun draw(g: Graphics2D) {
+		fun draw(g: Graphics2D, maxOverlineLevel: Int) {
 
 			g.font = localFont
 
 			g.drawString(text, baselineX.toInt(), baselineY.toInt())
 
-			if (style.overline) {
+			for (level in 1 .. style.overlineLevel) {
 				g.stroke = OVERLINE_STROKE
+				val lineY = y - 2.5 * ( maxOverlineLevel - level)
 				if (style.italic) {
-					g.drawLine(x + 2, y, x + width, y)
+					g.drawLine(x + 2, lineY, x + width, lineY)
 				} else {
-					g.drawLine(x, y, x + width, y)
+					g.drawLine(x, lineY, x + width, lineY)
 				}
 			}
 
@@ -371,4 +375,3 @@ class RichTextDrawable(
 		}
 	}
 }
-
