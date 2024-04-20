@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.dsl.AbstractNode
 import ch.scorpion.jabbah.base.dsl.Compound
 import ch.scorpion.jabbah.base.parser.TextLocation
 import ch.scorpion.jabbah.base.richtext.TextStyle.Companion.NORMAL
+import kotlin.math.max
 
 class RichText(
 	location: TextLocation,
@@ -125,7 +126,7 @@ data class TextStyle(
 		val NORMAL = TextStyle(overlineLevel = 0, bold = false, italic = false)
 
 		fun pushOverline(style: TextStyle) = TextStyle(style.overlineLevel + 1, style.bold, style.italic)
-		fun popOverline(style: TextStyle) = TextStyle(Math.max(style.overlineLevel - 1, 0), style.bold, style.italic)
+		fun popOverline(style: TextStyle) = TextStyle(max(style.overlineLevel - 1, 0), style.bold, style.italic)
 
 		fun withBold(style: TextStyle) = TextStyle(style.overlineLevel, true, style.italic)
 		fun withoutBold(style: TextStyle) = TextStyle(style.overlineLevel, false, style.italic)
