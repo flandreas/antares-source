@@ -48,7 +48,7 @@ class PasteAction(
 	override fun execute(event: ActionEvent) {
 		try {
 			service.paste(drawingView!!)
-		} catch (e: IllegalArgumentException) {
+		} catch (e: Throwable) {
 			eventBus.post(ComponentMessage(ComponentMessageType.Error, null, "application.paste.illegal.error"))
 		}
 	}
