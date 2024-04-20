@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.graphics.PredefinedColor
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.view.ControlView
@@ -38,6 +39,15 @@ class SwitchView(
 
 		const val PROP_ICON_PATH = "ch.scorpion.antares.view.input.SwitchView.iconPath"
 	}
+
+	override var customColor: PredefinedColor?
+		get() = super.customColor
+		set(value) {
+			if (value != super.customColor) {
+				super.customColor = value
+				postControlViewSourceChangeEvent(eventBus)
+			}
+		}
 
 	override var toggle: Boolean
 		get() = super.toggle
@@ -82,9 +92,13 @@ class SwitchView(
 
 	/** ---- [ControlView] */
 
-	private fun copyControlViewProperties(source: SwitchView, dest: SwitchView) {
+	override fun copyControlViewProperties(
+		source: AbstractPushButtonSwitchView<*>,
+		dest: AbstractPushButtonSwitchView<*>
+	) {
 		super.copyControlViewProperties(source, dest)
 		dest.toggle = source.toggle
+		dest.customColor = source.customColor
 	}
 
 	/** ---- [AbstractVerticeView] */

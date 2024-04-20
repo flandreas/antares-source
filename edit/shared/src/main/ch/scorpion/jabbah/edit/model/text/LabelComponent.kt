@@ -190,6 +190,9 @@ class LabelComponent(
 			writer.writeDouble("w", it.width)
 			writer.writeDouble("h", it.height)
 		}
+		if (customColor != null) {
+			writer.writeString("color", customColor!!.name)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
@@ -213,6 +216,9 @@ class LabelComponent(
 		}
 		if (reader.hasAttribute("w") && reader.hasAttribute("h")) {
 			dimension = Dimension2D(reader.readDouble("w"), reader.readDouble("h"))
+		}
+		if (reader.hasAttribute("color")) {
+			customColor = styleProvider.predefinedColorProvider.withIdName(reader.readString("color"))
 		}
 	}
 
