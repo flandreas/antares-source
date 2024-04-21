@@ -34,7 +34,7 @@ import kotlin.js.Promise
 class AntaresSingleCircuitAppJs(private val environment: Environment) {
 
     companion object {
-        private val LOG by logger(AntaresSingleCircuitViewerJs::class)
+        private val LOG by logger(AntaresSingleCircuitAppJs::class)
     }
 
     /**
@@ -47,14 +47,19 @@ class AntaresSingleCircuitAppJs(private val environment: Environment) {
         LOG.info("Starting Antares single circuit app")
 
         BaseModuleJs.require()
+
         when (environment) {
             Environment.Development -> {
                 BaseModule.properties.set(DataLocation.PROP_SERVER_URL, AntaresApplication.AKRAB_DEV_URL)
+                LOG.info("Using dev Akrab on ${AntaresApplication.AKRAB_DEV_URL}")
             }
             Environment.Production -> {
+                LOG.info("Using prod Akrab on ${AntaresApplication.AKRAB_PROD_URL}")
                 BaseModule.properties.set(DataLocation.PROP_SERVER_URL, AntaresApplication.AKRAB_PROD_URL)
             }
         }
+
+        BaseModuleJs.translationService = TranslationServiceJsImpl(BaseModule.properties.getString(DataLocation.PROP_SERVER_URL))
 
         val scope = CoroutineScope(SupervisorJob())
         return scope.promise {
