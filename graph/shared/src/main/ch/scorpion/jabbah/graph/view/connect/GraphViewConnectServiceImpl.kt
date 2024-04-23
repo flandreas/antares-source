@@ -26,11 +26,13 @@ class GraphViewConnectServiceImpl(
 
 	/** ---- [GraphViewConnectService] interface */
 
-	override fun <T : Any> connectToOrigin(edgeView: EdgeView<T>, connection: Connection<T>, direction: Direction?) {
+	override fun <T : Any> connectToOrigin(edgeView: EdgeView<T>, connection: Connection<T>, direction: Direction?, doLayout: Boolean) {
 		LOG.trace("connect EdgeView ${edgeView.id} to Port ${connection.port?.portId} of origin ConnectableView ${connection.connectableView.id}")
 		connectPortToNet(connection.port, edgeView.model)
 		edgeView.connectToOrigin(connection)
-		edgeView.layout.layoutOrigin(direction)
+		if (doLayout) {
+			edgeView.layout.layoutOrigin(direction)
+		}
 	}
 
 	override fun <T : Any> unconnectFromOrigin(edgeView: EdgeView<T>) {
@@ -47,11 +49,13 @@ class GraphViewConnectServiceImpl(
 		}
 	}
 
-	override fun <T : Any> connectToDestination(edgeView: EdgeView<T>, connection: Connection<T>, direction: Direction?) {
+	override fun <T : Any> connectToDestination(edgeView: EdgeView<T>, connection: Connection<T>, direction: Direction?, doLayout: Boolean) {
 		LOG.trace("connect EdgeView ${edgeView.id} to Port ${connection.port?.portId} of destination ConnectableView ${connection.connectableView.id}")
 		connectPortToNet(connection.port, edgeView.model)
 		edgeView.connectToDestination(connection)
-		edgeView.layout.layoutDestination(direction)
+		if (doLayout) {
+			edgeView.layout.layoutDestination(direction)
+		}
 	}
 
 	override fun <T : Any> unconnectFromDestination(edgeView: EdgeView<T>) {
