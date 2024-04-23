@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.view.ConnectableView
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.NetView
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
 /**
  * A utility object for splitting and joining [EdgeView]s.
@@ -115,8 +116,8 @@ object EdgeViewSplitterJoiner {
 		edgeView.compact()
 		val origin = other.destination
 
-		unconnect(other)
-		origin?.let { edgeView.connectToOrigin(it) }
+		GraphViewModule.graphViewConnectService.unconnect(other)
+		origin?.let { GraphViewModule.graphViewConnectService.connectToOrigin(edgeView, it, doLayout = false) }
 
 		return edgeView
 	}
@@ -130,8 +131,8 @@ object EdgeViewSplitterJoiner {
 		edgeView.compact()
 		val destination = other.destination
 
-		unconnect(other)
-		destination?.let { edgeView.connectToDestination(it) }
+		GraphViewModule.graphViewConnectService.unconnect(other)
+		destination?.let { GraphViewModule.graphViewConnectService.connectToDestination(edgeView, it, doLayout = false) }
 
 		return edgeView
 	}
@@ -145,8 +146,8 @@ object EdgeViewSplitterJoiner {
 		edgeView.compact()
 		val origin = other.origin
 
-		unconnect(other)
-		origin?.let { edgeView.connectToOrigin(it) }
+		GraphViewModule.graphViewConnectService.unconnect(other)
+		origin?.let { GraphViewModule.graphViewConnectService.connectToOrigin(edgeView, it, doLayout = false) }
 
 		return edgeView
 	}
@@ -160,14 +161,9 @@ object EdgeViewSplitterJoiner {
 		edgeView.compact()
 		val destination = other.origin
 
-		unconnect(other)
-		destination?.let { edgeView.connectToDestination(it) }
+		GraphViewModule.graphViewConnectService.unconnect(other)
+		destination?.let { GraphViewModule.graphViewConnectService.connectToDestination(edgeView, it, doLayout = false) }
 
 		return edgeView
-	}
-
-	private fun <T: Any> unconnect(edgeView: EdgeView<T>) {
-		edgeView.origin?.let { edgeView.unconnectFromOrigin() }
-		edgeView.destination?.let { edgeView.unconnectFromDestination() }
 	}
 }
