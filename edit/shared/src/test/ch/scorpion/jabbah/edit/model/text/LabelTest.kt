@@ -23,4 +23,15 @@ class LabelTest {
         val label = Label(text = "Test", font = FontImpl(LogicalFontFamily.SANS_SERIF, FontStyle.PLAIN.value, 10))
         assertEquals("Test", label.text)
     }
+
+    @Test
+    fun shouldConstructWithPlainText() {
+        val label = Label(
+            text = "!x",
+            font = FontImpl(LogicalFontFamily.MONOSPACED, FontStyle.PLAIN.value, 10),
+            richText = false)
+        assertEquals("!x", label.text)
+        label.text = "!"
+        assertEquals("!", label.text)
+    }
 }

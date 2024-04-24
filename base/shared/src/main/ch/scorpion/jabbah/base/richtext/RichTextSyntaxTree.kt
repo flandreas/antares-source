@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.dsl.AbstractNode
 import ch.scorpion.jabbah.base.dsl.Compound
 import ch.scorpion.jabbah.base.parser.TextLocation
 import ch.scorpion.jabbah.base.richtext.TextStyle.Companion.NORMAL
+import ch.scorpion.jabbah.base.parser.TextLocation.Companion.UNDEFINED
 import kotlin.math.max
 
 class RichText(
@@ -35,6 +36,26 @@ class RichText(
 				text.replace("/", " ")
 			}
 		}
+
+		/**
+		 * Treats the text as plain text and creates a [RichText] object that ignores all markup.
+		 */
+		fun asPlain(text: String) =
+			RichText(
+				UNDEFINED,
+				listOf(
+					Fragment(
+						UNDEFINED,
+						FragmentText(
+							UNDEFINED,
+							StyledText(
+								UNDEFINED,
+								listOf(StyledChunk(UNDEFINED, text))
+							)
+						)
+					)
+				)
+			)
 	}
 
 	fun getMaxOverlineLevel() =
