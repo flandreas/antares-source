@@ -39,8 +39,8 @@ class Label(
 	rotationDisplayStrategy: RotationDisplayStrategy = RotationDisplayStrategy.IGNORE,
 	val rotation: Rotation = Rotation.R0,
 	ownerRotation: Rotation = Rotation.R0,
-	displayableText: RichTextDrawable = RichTextDrawable.of(text ?: "", font),
-	val richText: Boolean = true
+	val richText: Boolean = true,
+	displayableText: RichTextDrawable = if (richText) RichTextDrawable.of(text ?: "", font) else RichTextDrawable.asPlain(text ?: "", font)
 ) : AbstractDrawable(), Mirrorable, Locatable {
 
 	companion object {

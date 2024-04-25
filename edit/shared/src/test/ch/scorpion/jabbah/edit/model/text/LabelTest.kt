@@ -26,12 +26,11 @@ class LabelTest {
 
     @Test
     fun shouldConstructWithPlainText() {
+        // essentially, check that the constructor doesn't throw - which it would if it parsed the text as RichText
         val label = Label(
-            text = "!x",
+            text = "!",
             font = FontImpl(LogicalFontFamily.MONOSPACED, FontStyle.PLAIN.value, 10),
             richText = false)
-        assertEquals("!x", label.text)
-        label.text = "!"
         assertEquals("!", label.text)
     }
 }
