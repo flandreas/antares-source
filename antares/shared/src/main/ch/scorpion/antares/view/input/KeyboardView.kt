@@ -66,7 +66,8 @@ class KeyboardView(
 		color = styleProvider.getStyle(StyleType.BACKGROUND).color.textColor,
 		horizontalAlignment = HorizontalAlignment.LEFT,
 		verticalAlignment = VerticalAlignment.CENTER,
-		location = Point2D(AbstractAntaresPortView.LENGTH + INSET + TEXT_INSET, 0))
+		location = Point2D(AbstractAntaresPortView.LENGTH + INSET + TEXT_INSET, 0),
+		richText = false)
 
 	private val propertiesBackgroundColor get() = if (Look.FILL_BASIC_COMPONENTS) backgroundColor else styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
 

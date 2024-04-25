@@ -60,6 +60,12 @@ class RichTextDrawable(
 				}
 			}
 
+		/**
+		 * Treats the text as-is and creates a [RichTextDrawable] that ignores all markup.
+		 */
+		fun asPlain(text: String, font: Font, textMeasurer: TextMeasurer = TextRenderInfoFactory) =
+			transformToSingleLine(RichText.asPlain(text), font, textMeasurer)
+
 		fun multiline(text: String, font: Font, preferredWidth: Double, textMeasurer: TextMeasurer = TextRenderInfoFactory): RichTextDrawable =
 			try {
 				transformToMultiline(RichTextParser(text).parse(), font, preferredWidth, textMeasurer)
@@ -77,21 +83,7 @@ class RichTextDrawable(
 		 */
 		private fun legacyRichText(text: String, error: SyntaxError): RichText {
 			LOG.debug("Resorting to legacy format: ${error.message} at ${error.location}")
-			return RichText(
-				UNDEFINED,
-				listOf(
-					Fragment(
-						UNDEFINED,
-						FragmentText(
-							UNDEFINED,
-							StyledText(
-								UNDEFINED,
-								listOf(StyledChunk(UNDEFINED, text))
-							)
-						)
-					)
-				)
-			)
+			return RichText.asPlain(text)
 		}
 
 		/**
