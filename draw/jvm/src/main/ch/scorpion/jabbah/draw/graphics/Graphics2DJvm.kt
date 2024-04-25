@@ -92,6 +92,10 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
 
     /** ---- [Graphics2D] interface */
 
+    init {
+        g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON)
+    }
+
     override val supportClipping: Boolean get() = true
 
 	override var rotationAngle: Double = 0.0
