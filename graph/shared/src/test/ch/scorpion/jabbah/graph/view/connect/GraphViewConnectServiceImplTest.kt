@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.view.connect
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.graph.health.GraphViewConsistencyCheck
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.TestVertice
 import ch.scorpion.jabbah.graph.view.Connection
@@ -59,6 +60,8 @@ class GraphViewConnectServiceImplTest {
 		assertEquals(Point2D(150, 100), ev.getSegmentPoint(1))
 		assertEquals(Point2D(150, 200), ev.getSegmentPoint(2))
 		assertEquals(Point2D(200, 200), ev.getSegmentPoint(3))
+
+		GraphViewConsistencyCheck.execute(gv)
 	}
 
 	@Test

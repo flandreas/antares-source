@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.view.connect
 import ch.scorpion.jabbah.base.event.Modifier
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.graphics.Cursor
+import ch.scorpion.jabbah.graph.health.GraphViewConsistencyCheck
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
@@ -48,6 +49,8 @@ class OutputToInputOrEdgeConnectorTest
 
 		assertTrue(newEv.model.isConnectedWith(newV1.model.getOutput()))
 		assertTrue(newEv.model.isConnectedWith(newV2.model.getInput()))
+
+		GraphViewConsistencyCheck.execute(builder.graphView)
 	}
 
 	/**

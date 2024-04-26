@@ -103,11 +103,11 @@ class NetViewImpl<T : Any>(
 	}
 
 	override fun splitOff(ports: Set<Port<T>>): NetView<T> {
-		val newNetView = NetViewImpl(net.splitOff(ports), style, customColor, styleProvider)
+		val newNet = net.splitOff(ports)
+		val newNetView = NetViewImpl(newNet, style, customColor, styleProvider)
 		elements.toList().forEach {
-			val connectedPorts = it.connectedPorts
-			if (connectedPorts.isNotEmpty() && ports.containsAll(connectedPorts)) {
-				it.net = newNetView.net
+			if (it.isConnectedWithAnyPort(ports)) {
+				it.net = newNet
 				it.netView?.remove(it)
 				newNetView.add(it)
 			}

@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.health.GraphViewConsistencyCheck
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.TestVertice
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
@@ -178,6 +179,8 @@ class EdgeToPortConnectorTest
 
 		// 3 VerticeViews, 1 EdgeView
 		assertEquals(4, builder.graphView.drawables.size)
+
+		GraphViewConsistencyCheck.execute(builder.graphView)
 	}
 
 	@Test
@@ -221,6 +224,8 @@ class EdgeToPortConnectorTest
 
 		// 3 VerticeViews, 3 EdgeView, 1 NodeView
 		assertEquals(7, builder.graphView.drawables.size)
+
+		GraphViewConsistencyCheck.execute(builder.graphView)
 	}
 
 	@Test
@@ -273,5 +278,7 @@ class EdgeToPortConnectorTest
 
 		assertFalse(editor.commandManager.canRedo())
 		assertEquals(0, builder.graphView.getDrawables { it is NodeView<*> }.size)
+
+		GraphViewConsistencyCheck.execute(builder.graphView)
 	}
 }

@@ -22,6 +22,7 @@ import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewConnectionGeometry
 import ch.scorpion.jabbah.graph.view.net.netview.AbstractNetViewElement
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
+import ch.scorpion.jabbah.graph.view.net.netview.NetViewTraversal
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -52,6 +53,8 @@ open class NodeViewImpl<T : Any>(
 		}
 	}
 
+	override fun toString(): String = "NodeView id=$id"
+
 	/** ---- [Locatable] interface */
 
 	override var location: Point2D = Point2D.ZERO
@@ -79,8 +82,12 @@ open class NodeViewImpl<T : Any>(
 
 	/** ---- [NetViewElement] interface */
 
-	override val connectedPorts: Set<Port<T>> get() =
-		getEdgeViews().flatMap { it.connectedPorts }.toSet()
+	override fun traverse(traversal: NetViewTraversal<T>) {
+		getEdgeViews().forEach { it.traverse(traversal) }
+	}
+
+	override fun isConnectedWithAnyPort(ports: Set<Port<T>>): Boolean =
+		getEdgeViews().any { it.isConnectedWithAnyPort(ports) }
 
 	override fun handleNetViewStyleChanged() {
 		invalidate()

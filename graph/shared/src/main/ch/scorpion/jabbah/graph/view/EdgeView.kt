@@ -135,6 +135,9 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
 	/** Returns the [Connection] connected with [connectableView]. */
 	fun getConnection(connectableView: ConnectableView): Connection<T>?
 
+	/** Returns the [Connection] opposite to the one connected with [connectableView].*/
+	fun getOppositeConnection(connectableView: ConnectableView): Connection<T>?
+
 	fun getOppositeConnection(port: Port<*>): Connection<T>?
 
 	fun getOppositeConnection(connection: Connection<*>): Connection<T>? =

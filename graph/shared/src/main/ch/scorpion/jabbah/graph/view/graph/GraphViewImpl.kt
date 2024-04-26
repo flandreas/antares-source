@@ -394,8 +394,10 @@ open class GraphViewImpl(
 						removeNetView(netView)
 						graph?.remove(netView.net)
 						partitionedNetViews.forEach {
-							graph?.add(it.net)
-							addNetView(it)
+							if (!it.isEmpty) {
+								graph?.add(it.net)
+								addNetView(it as NetView<Any>)
+							}
 						}
 					}
 				}

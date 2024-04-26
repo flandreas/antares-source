@@ -25,7 +25,6 @@ import java.awt.Image
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 import javax.swing.JOptionPane
-import javax.swing.SwingUtilities
 
 abstract class AbstractDesktopApplicationSwing(
 	commandLine: CommandLine,
