@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.event.Modifier
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.graphics.Cursor
+import ch.scorpion.jabbah.graph.health.GraphViewConsistencyCheck
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -59,6 +60,8 @@ class ReconnectDestinationConnectorTest
 		assertFalse(newEv.model.isConnectedWith(newV2.model.getInput()))
 		assertTrue(newEv.model.isConnectedWith(newV3.model.getInput()))
 		assertEquals(newV3.getPortConnectionPoint(newV3.model.getInput<Boolean>()), newEv.destinationEndpointView.location)
+
+		GraphViewConsistencyCheck.execute(builder.graphView)
 	}
 
 	@Test

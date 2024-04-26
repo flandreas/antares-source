@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.view.connect
 import ch.scorpion.jabbah.base.event.Modifier.Alt
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.graph.health.GraphViewConsistencyCheck
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
@@ -62,5 +63,7 @@ class EdgeToEdgeConnectorTest : AbstractInputEventHandlerTest(GraphViewModule.ed
 		assertSame(net, v3.model.getInput<Boolean>().net)
 		assertSame(net, v4.model.getOutput<Boolean>().net)
 		assertSame(net, v5.model.getInput<Boolean>().net)
+
+		GraphViewConsistencyCheck.execute(builder.graphView)
 	}
 }

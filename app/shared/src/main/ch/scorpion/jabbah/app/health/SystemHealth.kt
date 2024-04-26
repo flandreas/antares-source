@@ -39,7 +39,7 @@ object SystemHealthChecker {
 	}
 
 	fun start(applicationDataHolder: ApplicationDataHolder) {
-		this.applicationDataHolder = applicationDataHolder
+		SystemHealthChecker.applicationDataHolder = applicationDataHolder
 		BaseModule.eventBus.register(CommandEvent::class, commandListener)
 	}
 

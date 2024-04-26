@@ -68,6 +68,14 @@ open class InputEventDriver(
 		pressKey(KeyEvent.VK_ALT)
 		return this
 	}
+	
+	fun pressAndDragTo(x1: Int, y1: Int, x2: Int, y2: Int, modifiers: Int = 0): InputEventDriver {
+		mouseMoveTo(x1, y1, modifiers)
+		pressMouseAt(x1, y1, modifiers)
+		dragMouseTo(x2, y2)
+		releaseMouseAt(x2, y2)
+		return this
+	}
 
 	fun context(type: MouseEventType, x: Int, y: Int, modifiers: Int = 0, clickCount: Int = 1): EditInputEventContext {
 		return EditInputEventContext(

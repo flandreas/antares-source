@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.graphics.Cursor
+import ch.scorpion.jabbah.graph.health.GraphViewConsistencyCheck
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
@@ -50,6 +51,8 @@ class DragEdgeViewDestinationConnectorTest
 
 		assertTrue(newEv.model.isConnectedWith(newV2.model.getInput()))
 		assertEquals(newV2.getPortConnectionPoint(newV2.model.getInput<Boolean>()), newEv.destinationEndpointView.location)
+
+		GraphViewConsistencyCheck.execute(builder.graphView)
 	}
 
 	private fun assertOriginal() {

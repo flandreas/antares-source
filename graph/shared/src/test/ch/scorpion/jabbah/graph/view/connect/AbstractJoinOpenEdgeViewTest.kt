@@ -3,6 +3,8 @@ package ch.scorpion.jabbah.graph.view.connect
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.edit.EditInputEventContext
+import ch.scorpion.jabbah.graph.health.GraphViewConsistencyCheck
+import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
@@ -35,6 +37,7 @@ abstract class AbstractJoinOpenEdgeViewTest(
         assertEquals(1, edgeViews.size)
 
         // Check model consistency
+        assertEquals(1, builder.graph.elements.count { it is Net<*> })
         assertSame(edgeViews[0].net, effV1.model.getOutput<Boolean>().net)
         assertSame(edgeViews[0].net, effV3.model.getInput<Boolean>().net)
 
@@ -43,5 +46,7 @@ abstract class AbstractJoinOpenEdgeViewTest(
         assertEquals(Point2D(150, 100), edgeViews[0].polyline.getPointAt(1))
         assertEquals(Point2D(150, 200), edgeViews[0].polyline.getPointAt(2))
         assertEquals(Point2D(200, 200), edgeViews[0].polyline.getPointAt(3))
+
+        GraphViewConsistencyCheck.execute(builder.graphView)
     }
 }

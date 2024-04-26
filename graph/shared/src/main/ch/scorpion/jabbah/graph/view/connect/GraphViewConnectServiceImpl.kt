@@ -246,7 +246,40 @@ class GraphViewConnectServiceImpl(
 		edgeView2: EdgeView<T>,
 	) {
 		endpointType1.moveTo(edgeView1, location)
+
+		/** Remember the [Connection]s being reset in [EdgeView.join].*/
+		val oldOrigin2 = edgeView2.origin
+		val oldDestination2 = edgeView2.destination
+
+		/** This joins the [EdgeView]s only on the view layer. Requires cleaning up the model layer afterward. */
 		edgeView1.join(edgeView2)
+
+		oldOrigin2?.let { conn ->
+			conn.port?.let { port ->
+				edgeView2.model.unconnect(port)
+			}
+		}
+		oldDestination2?.let { conn ->
+			conn.port?.let { port ->
+				edgeView2.model.unconnect(port)
+			}
+		}
+
+		edgeView1.origin?.let { conn ->
+			conn.port?.let { port ->
+				if (!port.isConnected) {
+					port.connectTo(edgeView1.net!!)
+				}
+			}
+		}
+		edgeView1.destination?.let { conn ->
+			conn.port?.let { port ->
+				if (!port.isConnected) {
+					port.connectTo(edgeView1.net!!)
+				}
+			}
+		}
+
 		graphView.remove(edgeView2)
 	}
 

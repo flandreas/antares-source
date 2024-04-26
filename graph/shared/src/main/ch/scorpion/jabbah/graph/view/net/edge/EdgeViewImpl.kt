@@ -39,6 +39,7 @@ import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType.DESTINATION
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType.ORIGIN
 import ch.scorpion.jabbah.graph.view.net.netview.AbstractNetViewElement
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
+import ch.scorpion.jabbah.graph.view.net.netview.NetViewTraversal
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.io.*
 import kotlin.math.min
@@ -103,8 +104,7 @@ open class EdgeViewImpl<T : Any>(
 	/** ---- [Any] */
 
 	override fun toString(): String {
-		return "${super.toString()} origin=${origin?.connectableView?.id
-			?: "null"} dest=${destination?.connectableView?.id ?: "null"}"
+		return "EdgeView id=$id origin=${origin?.connectableView?.id ?: "null"} dest=${destination?.connectableView?.id ?: "null"}"
 	}
 
 	/** ---- [Cloneable] interface */
@@ -269,6 +269,15 @@ open class EdgeViewImpl<T : Any>(
 			origin
 		} else if (destination?.connectableView === connectableView) {
 			destination
+		} else {
+			null
+		}
+
+	override fun getOppositeConnection(connectableView: ConnectableView): Connection<T>? =
+		if (origin?.connectableView == connectableView) {
+			destination
+		} else if (destination?.connectableView === connectableView) {
+			origin
 		} else {
 			null
 		}
@@ -710,11 +719,29 @@ open class EdgeViewImpl<T : Any>(
 
 	/** ---- [NetViewElement] interface */
 
-	override val connectedPorts: Set<Port<T>> get() {
-		if (origin?.port == null || destination?.port == null) {
-			return emptySet()
+	override fun traverse(traversal: NetViewTraversal<T>) {
+		if (traversal.edgeViews.contains(this)) {
+			return
 		}
-		return setOf(origin!!.port!!, destination!!.port!!)
+		traversal.edgeViews.add(this)
+
+		if (origin?.connectableView is NodeView<*>) {
+			(origin!!.connectableView as NodeView<T>).traverse(traversal)
+		} else if (origin?.port != null) {
+			traversal.ports.add(origin!!.port!!)
+		}
+
+		if (destination?.connectableView is NodeView<*>) {
+			(destination!!.connectableView as NodeView<T>).traverse(traversal)
+		} else if (destination?.port != null) {
+			traversal.ports.add(destination!!.port!!)
+		}
+	}
+
+	override fun isConnectedWithAnyPort(ports: Set<Port<T>>): Boolean {
+		val traversal = NetViewTraversal<T>()
+		traverse(traversal)
+		return ports.intersect(traversal.ports).isNotEmpty()
 	}
 
 	override fun handleNetViewStyleChanged() {

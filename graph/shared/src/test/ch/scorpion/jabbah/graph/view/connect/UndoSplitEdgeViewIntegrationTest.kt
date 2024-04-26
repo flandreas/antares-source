@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.base.event.Modifier
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.graph.health.GraphViewConsistencyCheck
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import ch.scorpion.jabbah.io.StorableCloner
@@ -51,5 +52,7 @@ class UndoSplitEdgeViewIntegrationTest: AbstractGraphViewEditingTest() {
 
 		val v1 = builder.graphView.getDrawable { it is VerticeView<*> && it.model.name == "v1" } as VerticeView<*>
 		service.move(listOf(v1), Point2D(-10, 0), editor, register = false, emptyList())
+
+		GraphViewConsistencyCheck.execute(builder.graphView)
 	}
 }

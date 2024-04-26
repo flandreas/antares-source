@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.net.node.NodeViewStyling
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewStyling
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
+import ch.scorpion.jabbah.graph.view.net.netview.NetViewTraversal
 import kotlin.reflect.KClass
 
 /**
@@ -21,11 +22,14 @@ interface NetViewElement<T : Any> : GraphElementView<Net<T>> {
 	var netView: NetView<T>?
 
 	/**
-	 * Returns the [Port]s that are visually connected by this [NetViewElement] and therefore belong
-	 * to the same [Net]. Used for calculating [Net] partitioning when [NetViewElement]s are removed
-	 * from a [NetView].
+	 * Traverses a [NetView] starting with this [NetViewElement] and collects all reachable [Port]s.
 	 */
-	val connectedPorts: Set<Port<T>>
+	fun traverse(traversal: NetViewTraversal<T>)
+
+	/**
+	 * Returns `true` if this [NetViewElement] is connected with any of the [Port]s in [ports].
+	 */
+	fun isConnectedWithAnyPort(ports: Set<Port<T>>): Boolean
 
 	/**
 	 * Informs this [NetViewElement] that the [NetViewStyle] of this [NetViewElement]'s
