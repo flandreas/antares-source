@@ -5,17 +5,36 @@ import java.awt.Component
 import java.awt.Dimension
 import java.awt.event.ActionEvent
 import javax.swing.*
+import javax.swing.filechooser.FileFilter
 
 /**
- * A reusable UI component for specifying a file system directory.
+ * A reusable UI component for specifying a file system file.
  * Consists of an editable [JTextField] and a button that opens a [JFileChooser].
  */
-class DirectorySelectionField(
+class FileSelectionField(
+	private val mode: Mode = Mode.Directory,
 	text: String = "",
 	private val labelText: String? = null,
 	preferredWidth: Int = 300,
-	private val title: String = Translations.getString("base.action.chooseDirectory.title")
+	private val title: String = mode.title,
+	private val filter: FileFilter? = null,
+	private val selectHandler: (String) -> Unit = {}
 ) : JPanel() {
+
+	enum class Mode {
+		Directory {
+			override val titleKey: String get() = "base.action.chooseDirectory.title"
+			override val selectionMode: Int get() = JFileChooser.DIRECTORIES_ONLY
+		},
+		File {
+			override val titleKey: String get() = "base.action.chooseFile.title"
+			override val selectionMode: Int get() = JFileChooser.FILES_ONLY
+		};
+
+		abstract val titleKey: String
+		abstract val selectionMode: Int
+		val title: String get() = Translations.getString(titleKey)
+	}
 
 	private val textField = JTextField(text)
 
@@ -52,10 +71,12 @@ class DirectorySelectionField(
 		override fun actionPerformed(e: ActionEvent?) {
 			val fileChooser = JFileChooser(textField.text);
 			fileChooser.dialogTitle = title
-			fileChooser.fileSelectionMode = JFileChooser.DIRECTORIES_ONLY
+			fileChooser.fileSelectionMode = mode.selectionMode
+			fileChooser.fileFilter = filter
 
-			if (fileChooser.showOpenDialog(this@DirectorySelectionField) == JFileChooser.APPROVE_OPTION) {
+			if (fileChooser.showOpenDialog(this@FileSelectionField) == JFileChooser.APPROVE_OPTION) {
 				textField.text = fileChooser.selectedFile.absolutePath
+				selectHandler.invoke(textField.text)
 			}
 		}
 	}

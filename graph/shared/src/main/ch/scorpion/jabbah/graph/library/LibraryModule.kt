@@ -2,7 +2,9 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.library.dictionary.*
+import ch.scorpion.jabbah.graph.model.image.ImageLibraryElement
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.TypeMap
 
@@ -16,6 +18,10 @@ object LibraryModule : AbstractModule() {
 	var libraryFactory: LibraryFactory = UnimplementedLibraryFactory()
 
 	var libraryHolder: LibraryHolder = LibraryHolder()
+		set(value) {
+			field = value
+			EditModule.imageRepository = field
+		}
 
 	var userLibraryPersistenceService: LibraryPersistenceService = UnimplementedLibraryPersistenceService()
 
@@ -35,6 +41,7 @@ object LibraryModule : AbstractModule() {
 
 	override fun initialize() {
 		configureTypeMap(IOModule.typeMap)
+		EditModule.imageRepository = libraryHolder
 	}
 
 	private fun configureTypeMap(typeMap: TypeMap) {
@@ -44,5 +51,6 @@ object LibraryModule : AbstractModule() {
 		typeMap.register("containerLibraryElement", ContainerLibraryElement::class)
 		typeMap.register("libraryDictionary", LibraryDictionary::class)
 		typeMap.register("libraryDictionaryEntry", LibraryDictionaryEntry::class)
+		typeMap.register("imageLibraryElement", ImageLibraryElement::class)
 	}
 }

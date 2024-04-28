@@ -5,7 +5,7 @@ import ch.scorpion.jabbah.draw.Drawable
 /**
  * A [SelectionModel] is used to graphically show that a [Component] is selected.
  *
- * [SelectionModel] instances don't have a one to one relationship with [Component] instances. Instead,
+ * [SelectionModel] instances don't have a one-to-one relationship with [Component] instances. Instead,
  * [SelectionModel] instances are designed to potentially be cached and reused for different [Component]
  * instances of the same class.
  *

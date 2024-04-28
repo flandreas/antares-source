@@ -86,7 +86,7 @@ class NavigationStackViewSwing(
 		private val SCROLL_FOREGROUND = Graphics2DJvm.fromAwtColor(elementTextColor)
 		private val SCROLL_HOVER_BACKGROUND = Graphics2DJvm.fromAwtColor(UiUtil.getBackgroundDivertColor(GraphDesktopItemHeaderPanelSwing.headerBackgroundColor))
 
-		private val lockedIcon = ResourceImageJvm.themedImage("/img/locked-16.png")
+		private val lockedIcon = UiUtil.themedIcon("/img/locked-16.png")
 
 		private val elementNavigationTooltip: String by lazy {
 			var tooltip = Translations.getString("graph.navigationStack.text")
@@ -230,7 +230,7 @@ class NavigationStackViewSwing(
 
 	private fun createFirstPath(textLength: Double, showLock: Boolean): Path {
 		val baseLength = if (showLock) {
-			3.0 * TEXT_INSET + lockedIcon.width + textLength
+			3.0 * TEXT_INSET + lockedIcon.iconWidth + textLength
 		} else {
 			2.0 * TEXT_INSET + textLength
 		}
@@ -312,7 +312,7 @@ class NavigationStackViewSwing(
 			location = Point2D(
 				x = if (isFirst) {
 						if (showLock) {
-							path.boundingBox.minX + TEXT_INSET + lockedIcon.width
+							path.boundingBox.minX + TEXT_INSET + lockedIcon.iconWidth
 						} else {
 							path.boundingBox.minX + TEXT_INSET
 						}
@@ -349,10 +349,12 @@ class NavigationStackViewSwing(
 			g.draw(path)
 
 			if (showLock) {
-				g.drawImage(
-					image = lockedIcon,
-					x = (path.boundingBox.minX + TEXT_INSET / 2).toInt(),
-					y = (path.boundingBox.centerY - lockedIcon.height / 2).toInt())
+				g.g.drawImage(
+					lockedIcon.image as java.awt.Image,
+					(path.boundingBox.minX + TEXT_INSET / 2).toInt(),
+					(path.boundingBox.centerY - lockedIcon.iconHeight / 2).toInt(),
+					null
+				)
 			}
 
 			label.color = Graphics2DJvm.fromAwtColor(elementTextColor)

@@ -16,7 +16,7 @@ import ch.scorpion.jabbah.base.geom.RoundRectangle2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
-import ch.scorpion.jabbah.draw.graphics.BufferedImage
+import ch.scorpion.jabbah.draw.graphics.RasterImage
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.module.DrawModule
@@ -121,7 +121,7 @@ class VideoRamView(
 			model.dataWidth = field.dataBitWidth
 		}
 
-	private lateinit var bufferedImage: BufferedImage
+	private lateinit var bufferedImage: RasterImage
 
 	private val dataChangeListener = object : AddressableDataListener {
 
@@ -148,7 +148,7 @@ class VideoRamView(
 	}
 
 	private fun createImage() {
-		bufferedImage = DrawModule.bufferedImageFactory.invoke(columnsCount * pixelSize, rowsCount * pixelSize)
+		bufferedImage = DrawModule.rasterImageFactory.invoke(columnsCount * pixelSize, rowsCount * pixelSize)
 	}
 
 	/** ---- [AbstractGraphElementView] */

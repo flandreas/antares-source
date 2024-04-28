@@ -7,7 +7,7 @@ package ch.scorpion.jabbah.base
  * Objects that make up the hierarchical structure to be visited should offer a method that accepts a [HierarchyVisitor],
  * like `boolean accept(HierarchyVisitor visitor)`. In addition to the traditional visitor pattern, where the
  * visitor only has a `visit()` method, this hierarchical visitor pattern has two additional methods that allow the
- * visitor to distinguishing between siblings and children of composite nodes.
+ * visitor to distinguish between siblings and children of composite nodes.
  *
  * The `accept` method of a composite node should be implemented as follows:
  *

@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.io.ZipUtil
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.graphics.ImageType
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphBundle
 import ch.scorpion.jabbah.io.ElectricXmlReader
@@ -40,6 +41,8 @@ abstract class AbstractFileLibraryPersistenceService(
 	protected abstract fun ensureLibraryDirectory(libraryId: LibraryIdentification)
 
 	protected abstract fun buildMetaGraphFilePath(libraryId: LibraryIdentification, metaGraphUuid: UUID): String
+
+	protected abstract fun buildImageFilePath(libraryId: LibraryIdentification, imageUuid: UUID, imageType: ImageType): String
 
 	@Suppress("unused")
 	fun existsMetaGraphFile(libraryId: LibraryIdentification, metaGraphUuid: UUID): Boolean =

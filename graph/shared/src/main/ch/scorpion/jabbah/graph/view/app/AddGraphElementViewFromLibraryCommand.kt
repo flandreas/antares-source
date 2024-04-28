@@ -11,7 +11,6 @@ import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
-import ch.scorpion.jabbah.graph.view.VerticeView
 
 /**
  * Adds a new [GraphElementView] created by a [LibraryElement] to a [GraphView] and optionally
@@ -36,7 +35,7 @@ class AddGraphElementViewFromLibraryCommand(
 		graphElementView.rotation = rotation
 		graphView.add(graphElementView)
 		addedComponentId = graphElementView.id
-		val verticeView = graphView.getWithId(addedComponentId) as VerticeView
+		val verticeView = graphView.getWithId(addedComponentId) as Component
 
 		componentCustomizer.invoke(verticeView, graphView)
 

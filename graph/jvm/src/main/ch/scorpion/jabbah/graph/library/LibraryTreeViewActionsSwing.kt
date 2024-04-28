@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.ActionWrapperSwing
+import ch.scorpion.jabbah.graph.model.image.ImageLibraryElement
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.project.*
 import ch.scorpion.jabbah.graph.ui.GraphDataViewController
@@ -49,6 +50,7 @@ open class LibraryTreeViewActionsSwing(
 	protected val deleteLibraryItemAction = register(DeleteLibraryItemAction(controller, libraryOperationTarget))
 	private val duplicateLibraryGraphAction = register(DuplicateGraphAction(controller, libraryOperationTarget))
 	private val importLibraryMetaGraphAction = register(ImportMetaGraphAction(controller, libraryOperationTarget))
+	private val importImageAction = register(ImportImageAction(controller, libraryOperationTarget))
 	private val renameLibraryMetaGraphAction = register(RenameMetaGraphAction(controller, libraryOperationTarget))
 	private val closeLibraryAction = register(CloseLibraryAction())
 
@@ -122,6 +124,13 @@ open class LibraryTreeViewActionsSwing(
 					libraryBasePopupMenu
 				}
 			}
+			is ImageLibraryElement -> {
+				if ((treeNode.userObject as ImageLibraryElement).library is Project) {
+					projectBasePopupMenu
+				} else {
+					libraryBasePopupMenu
+				}
+			}
 			is String -> desktopPopupMenu
 			else -> null
 		}
@@ -144,6 +153,7 @@ open class LibraryTreeViewActionsSwing(
 		projectDirectoryPopupMenu.addSeparator()
 		projectDirectoryPopupMenu.add(ActionWrapperSwing(deleteProjectFolderAction))
 		projectDirectoryPopupMenu.add(ActionWrapperSwing(importProjectMetaGraphAction))
+		projectDirectoryPopupMenu.add(ActionWrapperSwing(importImageAction))
 		projectDirectoryPopupMenu.addSeparator()
 		projectDirectoryPopupMenu.add(ActionWrapperSwing(projectFolderPropertiesAction))
 	}
@@ -175,6 +185,7 @@ open class LibraryTreeViewActionsSwing(
 
 	protected open fun fillMainProjectRootExecuteActions() {
 		projectRootMenu.add(ActionWrapperSwing(importProjectMetaGraphAction))
+		projectRootMenu.add(ActionWrapperSwing(importImageAction))
 	}
 
 	private fun fillMainLibraryDirectoryPopupMenu() {
@@ -185,6 +196,7 @@ open class LibraryTreeViewActionsSwing(
 		libraryDirectoryPopupMenu.addSeparator()
 		libraryDirectoryPopupMenu.add(ActionWrapperSwing(deleteLibraryFolderAction))
 		libraryDirectoryPopupMenu.add(ActionWrapperSwing(importLibraryMetaGraphAction))
+		libraryDirectoryPopupMenu.add(ActionWrapperSwing(importImageAction))
 		libraryDirectoryPopupMenu.addSeparator()
 		libraryDirectoryPopupMenu.add(ActionWrapperSwing(libraryFolderPropertiesAction))
 	}
@@ -216,6 +228,7 @@ open class LibraryTreeViewActionsSwing(
 		libraryRootMenu.add(ActionWrapperSwing(editLibraryAction))
 		libraryRootMenu.add(ActionWrapperSwing(importLibraryMetaGraphAction))
 		libraryRootMenu.add(ActionWrapperSwing(removeLibraryAction))
+		libraryRootMenu.add(ActionWrapperSwing(importImageAction))
 	}
 
 	private fun fillMainProjectContainerPopupMenu() {

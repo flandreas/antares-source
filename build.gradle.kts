@@ -68,6 +68,7 @@ val l2fprodVersion: String by extra
 val flatLafVersion: String by extra
 val korteVersion: String by extra
 val batikVersion: String by extra
+val jsvgVersion: String by extra
 
 subprojects {
 
@@ -166,6 +167,7 @@ subprojects {
 					implementation("l2fprod:l2fprod-common-all:$l2fprodVersion")
 					implementation("exml:exml:7.0")
 					implementation("com.formdev:flatlaf:$flatLafVersion")
+					implementation("com.github.weisj:jsvg:$jsvgVersion")
 					implementation("org.drjekyll:fontchooser:2.4")
 					implementation("org.swinglabs.swingx:swingx-all:1.6.5-1")
 					implementation("com.formdev:flatlaf-swingx:$flatLafVersion")

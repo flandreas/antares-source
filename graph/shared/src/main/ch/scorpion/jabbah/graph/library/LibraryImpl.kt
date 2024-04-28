@@ -5,6 +5,9 @@ import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.edit.auth.UserHolder
 import ch.scorpion.jabbah.edit.auth.UserIdentity
+import ch.scorpion.jabbah.edit.model.image.ImageData
+import ch.scorpion.jabbah.edit.model.image.ImageIdentification
+import ch.scorpion.jabbah.edit.model.image.ImageRepository
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Description
@@ -14,6 +17,7 @@ import ch.scorpion.jabbah.graph.MetaGraphBundle
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.element.ContainerLibraryElementCollector
+import ch.scorpion.jabbah.graph.model.image.ImageLibraryElement
 import ch.scorpion.jabbah.graph.repository.SubGraphVerticeLocator
 import ch.scorpion.jabbah.io.*
 
@@ -113,6 +117,26 @@ open class LibraryImpl(
 	override fun move(item: LibraryItem, newIndex: Int) { directory.move(item, newIndex) }
 
 	override fun replaceWith(libraryDirectory: LibraryDirectory) { directory.replaceWith(libraryDirectory) }
+
+	/** ---- [ImageRepository] */
+
+	override fun getImage(uuid: UUID): ImageData? {
+		val element = findImageLibraryElementFor(uuid)
+		if (element != null) {
+			return ImageData(
+				element.library!!.libraryService.getImage(this, element),
+				element.name
+			)
+		}
+		return null
+	}
+
+	override fun getAllImageIds(): List<ImageIdentification> {
+		return ImageCollector().run {
+			directory.accept(this)
+			imageIds.sortedBy { it.name.value }
+		}
+	}
 
 	/** ---- [MetaGraphRepository] */
 
@@ -368,6 +392,21 @@ open class LibraryImpl(
 		return graphFinder.result
 	}
 
+	private fun findImageLibraryElementFor(uuid: UUID): ImageLibraryElement? {
+		if (importedLibraryIds.isEmpty()) {
+			return findImageLibraryElement(directory, uuid)
+		}
+		return expandedImports
+			.libraries
+			.firstNotNullOfOrNull { findImageLibraryElement(it, uuid) }
+	}
+
+	private fun findImageLibraryElement(dir: LibraryDirectory, uuid: UUID): ImageLibraryElement? {
+		val imageFinder = ImageFinder(uuid)
+		dir.accept(imageFinder)
+		return imageFinder.result
+	}
+
 	/**
 	 * Traverses the [Library] tree until it finds the [ContainerLibraryElement]
 	 * which contains the [Graph] with the specified [UUID], if any.
@@ -383,6 +422,30 @@ open class LibraryImpl(
 				return false
 			}
 			return node is LibraryDirectory
+		}
+	}
+
+	private class ImageFinder(private val uuid: UUID) : EmptyHierarchyVisitor() {
+
+		var result: ImageLibraryElement? = null
+
+		override fun visit(node: Any): Boolean {
+			if (node is ImageLibraryElement && node.imageId.uuid == uuid) {
+				result = node
+				return false
+			}
+			return true
+		}
+	}
+
+	private class ImageCollector : EmptyHierarchyVisitor() {
+		val imageIds = mutableSetOf<ImageIdentification>()
+
+		override fun visit(node: Any): Boolean {
+			if (node is ImageLibraryElement) {
+				imageIds.add(node.imageId)
+			}
+			return true
 		}
 	}
 

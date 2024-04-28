@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.graph.*
 import ch.scorpion.jabbah.graph.dsl.GraphDslModule
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.graph.GraphImpl
+import ch.scorpion.jabbah.edit.model.image.ImageIdentification
 import ch.scorpion.jabbah.graph.model.net.NetImpl
 import ch.scorpion.jabbah.graph.model.net.SignalConflictBehaviour
 import ch.scorpion.jabbah.graph.model.net.SignalConflictBehaviourHolder
@@ -105,6 +106,8 @@ object GraphModelModule : AbstractModule() {
 
 		typeMap.register("usecases", UsecasesImpl::class)
 		typeMap.register("usecase", UsecaseImpl::class)
+
+		typeMap.register("imageIdentification", ImageIdentification::class)
 	}
 
 	private fun fillProperties(properties: Properties) {

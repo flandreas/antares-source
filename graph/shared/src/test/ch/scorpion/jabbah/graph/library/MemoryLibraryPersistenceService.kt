@@ -1,6 +1,9 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.draw.graphics.Image
+import ch.scorpion.jabbah.draw.graphics.ImageType
+import ch.scorpion.jabbah.edit.model.image.ImageIdentification
 import ch.scorpion.jabbah.graph.GraphQuota
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphBundle
@@ -65,6 +68,14 @@ class MemoryLibraryPersistenceService(
 	}
 
 	override fun importMetaGraphBundle(inputPath: String): MetaGraphBundle {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun loadImage(library: Library, imageUuid: UUID, imageType: ImageType): Image {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun importImage(library: Library, imageId: ImageIdentification, inputPath: String) {
 		throw UnsupportedOperationException("not implemented")
 	}
 }

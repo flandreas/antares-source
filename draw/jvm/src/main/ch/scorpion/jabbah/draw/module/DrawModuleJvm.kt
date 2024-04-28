@@ -7,9 +7,9 @@ import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.preferences.*
 import ch.scorpion.jabbah.draw.ThemePreference
 import ch.scorpion.jabbah.draw.View
-import ch.scorpion.jabbah.draw.graphics.BufferedImageJvm
+import ch.scorpion.jabbah.draw.graphics.RasterImageJvm
 import ch.scorpion.jabbah.draw.graphics.DropShadow
-import ch.scorpion.jabbah.draw.graphics.ResourceImageJvm
+import ch.scorpion.jabbah.draw.graphics.ImageLoaderJvm
 import ch.scorpion.jabbah.draw.view.*
 import org.apache.commons.lang3.SystemUtils
 import javax.swing.JPopupMenu
@@ -36,8 +36,9 @@ object DrawModuleJvm : AbstractModule() {
     override fun initialize() {
         BaseModuleJvm.require()
 
-        DrawModule.imageLoader = { ResourceImageJvm(it) }
-	    DrawModule.bufferedImageFactory = { w, h -> BufferedImageJvm(w, h) }
+	    DrawModule.rasterImageFactory = { w, h -> RasterImageJvm(w, h) }
+
+		DrawModule.imageLoader = ImageLoaderJvm()
 
         DrawModule.require()
 

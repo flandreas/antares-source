@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.edit.auth.UserIdentity
+import ch.scorpion.jabbah.edit.model.image.ImageRepository
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Namable
@@ -18,7 +19,7 @@ import ch.scorpion.jabbah.io.Storable
  *
  * Note that the name of the [Library] is maintained as the name of its root [LibraryDirectory].
  */
-interface Library : MetaGraphRepository, Storable, Namable, Describable, LibraryDirectory {
+interface Library : MetaGraphRepository, ImageRepository, Storable, Namable, Describable, LibraryDirectory {
 
 	/** Returns the [LibraryIdentification] used for building persistent paths to this [Library]. */
 	val identification: LibraryIdentification get() = if (isSystem) {

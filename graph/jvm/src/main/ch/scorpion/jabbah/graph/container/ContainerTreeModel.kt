@@ -11,6 +11,9 @@ import ch.scorpion.jabbah.draw.graphics.Font
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.model.image.ImageComponent
+import ch.scorpion.jabbah.edit.model.image.ImageIdentification
+import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
@@ -50,6 +53,9 @@ class ContainerTreeModel(
 	/** The node that contains the top-level [SubGraphVerticeViewFolderItem].*/
 	private var subGraphsNode: DynamicTreeNode
 
+	/** The node that contains the images. */
+	private var imagesNode: DynamicTreeNode
+
 	init {
 		fillGraphPortViews(graphView, containerDrawing)
 		fillControlViewSources(graphView, containerDrawing)
@@ -57,6 +63,8 @@ class ContainerTreeModel(
 		(treeModel.root as DefaultMutableTreeNode).add(controlsNode)
 		subGraphsNode = DynamicTreeNode(SubGraphsFolderItem(graphView, DeepVerticeLink()), initializer, treeModel)
 		(treeModel.root as DefaultMutableTreeNode).add(subGraphsNode)
+		imagesNode = DynamicTreeNode(ImagesFolderItem(), initializer, treeModel)
+		(treeModel.root as DefaultMutableTreeNode).add(imagesNode)
 	}
 
 	/** ---- Ports management */
@@ -282,6 +290,21 @@ class ContainerTreeModel(
 		}
 		return null
 	}
+
+	/** ---- Images management */
+
+	fun addImages(receiver: DynamicReceiver) {
+		receiver.addChildren(
+			LibraryModule.libraryHolder.library.getAllImageIds()
+				.map { createImageTreeNode(it) }
+		)
+	}
+
+	private fun createImageTreeNode(imageId: ImageIdentification): MutableTreeNode {
+		return DefaultMutableTreeNode(ImageItem(imageId) {
+			ImageComponent(imageId.uuid)
+		})
+	}
 }
 
 abstract class AbstractContainerTreeItem(
@@ -336,6 +359,7 @@ private class ContainerTreeFolderItem(
 		val CONTROLS_NAME = Translations.getString("graph.component.controls")
 		val SUBGRAPHS_NAME = Translations.getString("graph.component.subgraphs")
 		val PORTS_NAME = Translations.getString("graph.component.ports")
+		val IMAGES_NAME = Translations.getString("graph.component.images")
 		val PORTS = ContainerTreeFolderItem(ContainerTreeItemType.Ports, PORTS_NAME)
 		val CONTROLS = ContainerTreeFolderItem(ContainerTreeItemType.Controls, CONTROLS_NAME)
 	}
@@ -376,4 +400,18 @@ class ControlsFolderTreeItem(
 ) : AbstractContainerTreeItem(ContainerTreeItemType.Controls) {
 
 	override fun getDescription(): String = ContainerTreeFolderItem.CONTROLS_NAME
+}
+
+class ImagesFolderItem: AbstractContainerTreeItem(ContainerTreeItemType.Images) {
+
+	override fun getDescription(): String = ContainerTreeFolderItem.IMAGES_NAME
+}
+
+// TODO Icon by Janis
+private class ImageItem(
+	private val imageId: ImageIdentification,
+	factory: () -> Component
+) : DraggableTreeItem(ContainerTreeItemType.Image, factory, "/img/truth-table.png") {
+
+	override fun getDescription(): String = imageId.name.value
 }

@@ -3,10 +3,14 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.graphics.Image
+import ch.scorpion.jabbah.draw.graphics.ImageType
 import ch.scorpion.jabbah.edit.auth.UserIdentity
+import ch.scorpion.jabbah.edit.model.image.ImageIdentification
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.*
+import ch.scorpion.jabbah.graph.model.image.ImageLibraryElement
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.io.StorableCloner
 import kotlin.math.min
@@ -561,6 +565,35 @@ class LibraryService(
 			LOG.trace("Loaded MetaGraph $ref with ID ${metaGraph.hashCode()} from Library with ID ${library.hashCode()}")
 			element.updateStorable(metaGraph)
 		}
+	}
+
+	fun getImage(library: Library, element: ImageLibraryElement): Image {
+		ensureImage(library, element)
+		return element.image!!
+	}
+
+	private fun ensureImage(library: Library, element: ImageLibraryElement, loadAlways: Boolean = false) {
+		if (loadAlways || element.image == null) {
+			val image = persister(library.isSystem).loadImage(library, element.imageId.uuid, element.imageId.imageType)
+			element.image = image
+		}
+	}
+
+	/**
+	 * Imports an image file located at local absolute [inputPath], stores the file in the [Library]'s
+	 * physical storage, adds the created [ImageLibraryElement] as last element to [directory],
+	 * and stores the [Library].
+	 */
+	fun importImage(inputPath: String, imageType: ImageType, name: String, directory: LibraryDirectory): ImageLibraryElement {
+		val library = directory.library!!
+		val imageId = ImageIdentification(System.createUUID(), imageType, Name(TranslatableText(name)))
+		val element = ImageLibraryElement(imageId)
+
+		persister(library.isSystem).importImage(library, imageId, inputPath)
+
+		addLibraryItem(library, element, directory)
+
+		return element
 	}
 
 	/** Finds the [LibraryDirectory] that directly contains `item`.*/

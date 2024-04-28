@@ -13,7 +13,7 @@ import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.richtext.RichText
 import ch.scorpion.jabbah.base.swing.DialogBuilder
-import ch.scorpion.jabbah.base.swing.DirectorySelectionField
+import ch.scorpion.jabbah.base.swing.FileSelectionField
 import ch.scorpion.jabbah.base.swing.EGBL
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.HelpAction
@@ -93,8 +93,9 @@ class ExportVHDLPanel(
 	private val fileNameTextField = JTextField()
 
 	/** Used to select the directory where the export files are written.*/
-	private val directorySelectionField = DirectorySelectionField(
-		BaseModule.settings.getString(SETTING_EXPORT_DIRECTORY, SystemUtils.getUserHome().absolutePath)
+	private val directorySelectionField = FileSelectionField(
+		mode = FileSelectionField.Mode.Directory,
+		text = BaseModule.settings.getString(SETTING_EXPORT_DIRECTORY, SystemUtils.getUserHome().absolutePath)
 	)
 
 	private val fileNameTextExplanation = JLabel()

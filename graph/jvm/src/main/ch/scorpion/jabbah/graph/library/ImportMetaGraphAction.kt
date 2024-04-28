@@ -31,7 +31,6 @@ class ImportMetaGraphAction(
 		private val title: String by lazy { Translations.getString("library.action.importMetaGraph.title") }
 	}
 
-
 	override val operationAuthorized: Boolean
 		get() = operationTarget.invoke() != null && Authorizer.isCurrentUserAuthorizedTo(operation, operationTarget.invoke()!!)
 

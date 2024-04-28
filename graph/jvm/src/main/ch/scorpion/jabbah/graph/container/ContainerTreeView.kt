@@ -90,6 +90,7 @@ open class ContainerTreeView(
 					    graph?.let { MetaGraphIconProvider.provideIcon(it.type, false, StringUtils.isNotBlank(it.script)) }
 						    ?:MetaGraphIconProvider.provideIcon(GraphModelModule.defaultGraphType, current = false, false)
 				    }
+					ContainerTreeItemType.Image -> getIcon((value.userObject as DraggableTreeItem).iconPath)
 				    else -> folderIcon
 			    }
 		    }

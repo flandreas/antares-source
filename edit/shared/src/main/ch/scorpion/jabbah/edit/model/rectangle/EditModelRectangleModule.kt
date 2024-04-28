@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.edit.model.rectangle
 
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
+import ch.scorpion.jabbah.edit.model.image.ImageComponent
 import ch.scorpion.jabbah.edit.select.EditSelectModule
 
 /**
@@ -54,5 +55,10 @@ object EditModelRectangleModule : AbstractModule() {
 			SelectionDrawingStrategy.REPLACE,
 			RoundRectangleComponent::class
 		) { RectangularReplaceSelectionModel(it as AbstractRectangularComponent) }
+
+		EditSelectModule.selectionModelFactory.register(SelectionDrawingStrategy.BELOW, ImageComponent::class) { RectangularBelowSelectionModel(it as AbstractRectangularComponent) }
+		EditSelectModule.selectionModelFactory.register(SelectionDrawingStrategy.REPLACE, ImageComponent::class) { RectangularReplaceSelectionModel(it as AbstractRectangularComponent) }
+		EditSelectModule.selectionModelFactory.register(SelectionDrawingStrategy.ABOVE, ImageComponent::class) { RectangularHandleSelectionModel(it as AbstractRectangularComponent) }
+
 	}
 }

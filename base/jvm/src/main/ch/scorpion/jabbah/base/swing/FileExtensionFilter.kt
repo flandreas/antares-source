@@ -8,7 +8,12 @@ import javax.swing.JFileChooser
 /**
  * Filters file name to file with a given extension to be used in [JFileChooser].
  */
-class FileExtensionFilter(private val extension: String, private val displayName: String) : FileFilter() {
+class FileExtensionFilter(
+	private val extensions: Set<String>,
+	private val displayName: String
+) : FileFilter() {
+
+	constructor(extension: String, displayName: String) : this(setOf(extension), displayName)
 
 	override fun accept(file: File): Boolean {
 		if (file.isDirectory) {
@@ -16,12 +21,10 @@ class FileExtensionFilter(private val extension: String, private val displayName
 		}
 		val extension = FilenameUtils.getExtension(file.name)
 		if (extension != null) {
-			return extension == this.extension
+			return extensions.any { it.lowercase() == extension.lowercase() }
 		}
 		return false
 	}
 
-	override fun getDescription(): String {
-		return displayName
-	}
+	override fun getDescription(): String = displayName
 }

@@ -30,11 +30,18 @@ object DrawModule : AbstractModule() {
 
 	var properties: DrawProperties = DrawProperties(BaseModule.properties)
 
-    /** Loads an [Image] from the specified path. Must be implemented platform-specifically. */
-    var imageLoader: ImageLoader = { throw UnsupportedOperationException() }
+	/** Creates a raster image. Must be implemented platform-specifically. */
+	var rasterImageFactory: RasterImageFactory = { _, _ -> throw UnsupportedOperationException() }
 
-	/** Creates a buffered image. Must be implemented platform-specifically. */
-	var bufferedImageFactory: BufferedImageFactory = { _, _ -> throw UnsupportedOperationException() }
+	var imageLoader: ImageLoader = object : ImageLoader {
+		override fun loadSystemImage(path: String, type: ImageType): Image {
+			throw UnsupportedOperationException()
+		}
+
+		override fun loadUserImage(path: String, type: ImageType): Image {
+			throw UnsupportedOperationException()
+		}
+	}
 
 	var drawContextFactory: DrawContextFactory = { g, mc, appContext -> DrawContext(g, mc, appContext) }
 

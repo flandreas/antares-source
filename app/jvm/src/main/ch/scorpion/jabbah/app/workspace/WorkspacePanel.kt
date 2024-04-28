@@ -8,7 +8,7 @@ import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.swing.DialogBuilder
-import ch.scorpion.jabbah.base.swing.DirectorySelectionField
+import ch.scorpion.jabbah.base.swing.FileSelectionField
 import ch.scorpion.jabbah.base.ui.UIBasics
 import java.awt.BorderLayout
 import java.awt.Dimension
@@ -41,7 +41,7 @@ class WorkspacePanel(
 	private val okButton = createButton(okAction)
 	private val cancelAction = CancelAction()
 
-	private val directorySelectionField = DirectorySelectionField(
+	private val directorySelectionField = FileSelectionField(
 		text = AppModuleJvm.workspaceHolder.userDataDirectoryPath,
 		labelText = Translations.getString("application.workspace.label")
 	)

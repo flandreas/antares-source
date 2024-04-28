@@ -35,7 +35,9 @@ enum class ContainerTreeItemType {
 	Ports,
 	Controls,
 	SubGraphs,
-	SubGraph
+	SubGraph,
+	Images,
+	Image
 }
 
 /**
@@ -146,6 +148,7 @@ class  ContainerTree(
 				when (value.type) {
 					ContainerTreeItemType.SubGraphs -> model.addSubGraphVerticeNodes(value as SubGraphsFolderItem, receiver)
 					ContainerTreeItemType.Controls -> model.addControlNodes(value as ControlsFolderTreeItem, receiver)
+					ContainerTreeItemType.Images -> model.addImages(receiver)
 					else ->	receiver.addChildren(listOf())
 				}
 			}

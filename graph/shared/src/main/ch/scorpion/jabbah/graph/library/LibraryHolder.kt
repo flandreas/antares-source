@@ -4,6 +4,9 @@ import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.model.image.ImageData
+import ch.scorpion.jabbah.edit.model.image.ImageIdentification
+import ch.scorpion.jabbah.edit.model.image.ImageRepository
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphBundle
 import ch.scorpion.jabbah.graph.MetaGraphRepository
@@ -14,7 +17,7 @@ import ch.scorpion.jabbah.graph.MetaGraphRepository
 class LibraryHolder(
 	l: Library? = null,
 	private val eventBus: EventBus = BaseModule.eventBus
-) : MetaGraphRepository {
+) : MetaGraphRepository, ImageRepository {
 
 	companion object {
 		private val LOG by logger(LibraryHolder::class)
@@ -59,6 +62,12 @@ class LibraryHolder(
 	override fun unwrap() {
 		library.unwrap()
 	}
+
+	/** ---- [ImageRepository] */
+
+	override fun getImage(uuid: UUID): ImageData? = library.getImage(uuid)
+
+	override fun getAllImageIds(): List<ImageIdentification> = library.getAllImageIds()
 }
 
 /** Posted on [EventBus] when the current [Library] has changed.*/

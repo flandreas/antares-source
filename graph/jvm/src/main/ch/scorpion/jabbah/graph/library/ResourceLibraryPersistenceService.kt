@@ -3,6 +3,10 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.io.ResourcesUtil
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.graphics.Image
+import ch.scorpion.jabbah.draw.graphics.ImageType
+import ch.scorpion.jabbah.draw.module.DrawModule
+import ch.scorpion.jabbah.edit.model.image.ImageIdentification
 import ch.scorpion.jabbah.graph.GraphQuota
 import ch.scorpion.jabbah.graph.MetaGraph
 import java.io.File
@@ -88,10 +92,21 @@ class ResourceLibraryPersistenceService(
 		throw UnsupportedOperationException("Importing system libraries is not supported")
 	}
 
+	override fun loadImage(library: Library, imageUuid: UUID, imageType: ImageType): Image =
+		DrawModule.imageLoader.loadSystemImage(buildImageFilePath(library.identification, imageUuid, imageType), imageType)
+
+	override fun importImage(library: Library, imageId: ImageIdentification, inputPath: String) {
+		// This is not supported for system Libraries
+		throw UnsupportedOperationException("not implemented")
+	}
+
 	/** ---- [AbstractFileLibraryPersistenceService] */
 
 	override fun buildMetaGraphFilePath(libraryId: LibraryIdentification, metaGraphUuid: UUID): String =
 		"${buildResourceLibraryDirectoryPath(libraryId)}/$metaGraphUuid.$metaGraphFileExtension"
+
+	override fun buildImageFilePath(libraryId: LibraryIdentification, imageUuid: UUID, imageType: ImageType): String =
+		"${buildResourceLibraryDirectoryPath(libraryId)}/$imageUuid.${imageType.fileExtension}"
 
 	override fun ensureLibraryDirectory(libraryId: LibraryIdentification) {
 		val path = Paths.get(buildResourceLibraryDirectoryPath(libraryId))
