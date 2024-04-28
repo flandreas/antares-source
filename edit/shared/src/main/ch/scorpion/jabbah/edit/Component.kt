@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.edit
 
 import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.Focusable
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.drawable.Movable
 import ch.scorpion.jabbah.draw.drawable.Rotatable

@@ -43,6 +43,9 @@ class CanvasJvm(
 
 	companion object {
 		private val LOG by logger(CanvasJvm::class)
+
+		/** Converts an AWT-specific [KeyEvent] to one with a platform-neutral [KeyEvent] interface.*/
+		fun convertKeyEvent(keyEvent: AwtKeyEvent): KeyEvent = KeyEventJvm(keyEvent)
 	}
 
 	private val mouseListeners: MutableList<MouseEventBridge> by lazy { mutableListOf() }

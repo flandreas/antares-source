@@ -1,11 +1,9 @@
 package ch.scorpion.jabbah.draw.view
 
+import ch.scorpion.jabbah.draw.FocusManager
 import ch.scorpion.jabbah.draw.View
 import java.awt.BorderLayout
-import java.awt.event.FocusAdapter
-import java.awt.event.FocusEvent
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
+import java.awt.event.*
 import java.awt.event.MouseEvent.BUTTON1
 import javax.swing.BorderFactory
 import javax.swing.JComponent
@@ -51,6 +49,14 @@ class FocusPanel(
 			override fun mousePressed(e: MouseEvent) {
 				if (e.button == BUTTON1) {
 					focusSource.requestFocus()
+				}
+			}
+		})
+
+		focusSource.addKeyListener(object : KeyAdapter() {
+			override fun keyPressed(e: KeyEvent) {
+				if (FocusManager.focusOwner?.canConsume(CanvasJvm.convertKeyEvent(e)) == true) {
+					e.consume()
 				}
 			}
 		})

@@ -16,7 +16,7 @@ import ch.scorpion.jabbah.draw.drawable.DrawableAttendantPositioner
 import ch.scorpion.jabbah.draw.style.*
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.EditInputEventContext
-import ch.scorpion.jabbah.edit.Focusable
+import ch.scorpion.jabbah.draw.Focusable
 import ch.scorpion.jabbah.edit.model.text.TextDrawableButtonRenderer
 import ch.scorpion.jabbah.execution.actor.ActorDrawableButton
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
