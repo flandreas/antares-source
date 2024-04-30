@@ -83,6 +83,7 @@ class RAMCalculator : VerticeCalculator<RAM> {
         if (data.changedPort === ram.getClearInput()) {
             ram.clear()
             read(ram, signalHandler)
+            return
         }
 
         if (ram.isChipSelected) {
@@ -97,30 +98,18 @@ class RAMCalculator : VerticeCalculator<RAM> {
 	    }
 	    ram.currentSelectedAddress = addressInt
 
-	    if (data.changedPort === ram.getAddressInput()) {
-		    readOrWrite(ram, signalHandler)
-	    } else if (data.changedPort === ram.getDataPort()) {
-		    readOrWrite(ram, signalHandler)
-	    } else if (data.changedPort === ram.getChipSelectInput()) {
-		    readOrWrite(ram, signalHandler)
-	    } else if (data.changedPort === ram.getWriteInput()) {
-		    if (ram.isRead) {
-			    readOrWrite(ram, signalHandler)
-		    } else {
-			    undefinedOutput(ram, signalHandler)
-		    }
-	    } else if (data.changedPort === null) {
-	    	if (ram.isRead) {
-	    		read(ram, signalHandler)
-		    }
-	    }
-    }
-
-    private fun readOrWrite(ram: RAM, signalHandler: SignalHandler) {
-        if (ram.isWrite) {
+        if (data.changedPort === ram.getWriteInput() && ram.isWrite) {
+            // edge-triggered write
             write(ram, signalHandler)
+            undefinedOutput(ram, signalHandler)
         } else {
-            read(ram, signalHandler)
+            // otherwise: level-triggered read
+            if (ram.isWrite) {
+                // pending write
+			    undefinedOutput(ram, signalHandler)
+            } else {
+                read(ram, signalHandler)
+            }
         }
     }
 

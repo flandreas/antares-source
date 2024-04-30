@@ -103,9 +103,29 @@ class RAMCalculatorTest {
 		ram.getAddressInput().setIncomingSignal(DigitalSignalFactory.of(BitWidth.BW_8, 1L), signalHandler)
 		ram.getDataPort().setIncomingSignal(DigitalSignalFactory.of(BitWidth.BW_8, 99L), signalHandler)
 
-		calculator.calculate(ram, ram.createActorData(ram.getDataPort()), signalHandler)
+		calculator.calculate(ram, ram.createActorData(ram.getWriteInput()), signalHandler)
 
 		assertEquals(99UL, ram.read(1))
+	}
+
+	@Test
+	fun shouldWriteUnclockedEdgeTriggeredOnly() {
+		val ram = createRam(false)
+		ram.getChipSelectInput().setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
+		ram.getClearInput().setIncomingSignal(DigitalSignalFactory.of(false), signalHandler)
+		
+		// write 0 <- 1
+		ram.getAddressInput().setIncomingSignal(DigitalSignalFactory.of(BitWidth.BW_8, 0L), signalHandler)
+		ram.getDataPort().setIncomingSignal(DigitalSignalFactory.of(BitWidth.BW_8, 99L), signalHandler)
+		ram.getWriteInput().setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
+		calculator.calculate(ram, ram.createActorData(ram.getWriteInput()), signalHandler)
+
+		// with the write pulse still present, change address to 1
+		ram.getAddressInput().setIncomingSignal(DigitalSignalFactory.of(BitWidth.BW_8, 1L), signalHandler)
+		calculator.calculate(ram, ram.createActorData(ram.getAddressInput()), signalHandler)
+
+		// the address change should have no effect as writing should be edge-triggered
+		assertEquals(0UL, ram.read(1))
 	}
 
 	@Test

@@ -67,6 +67,11 @@ class RAM(
 				} else {
 					removePort(getPort<DigitalSignal>(CLOCK_PORT_NAME))
 				}
+				val writePort = getPort<DigitalSignal>(WRITE_PORT_NAME)
+				if (writePort is DigitalPortImpl) {
+					// writing is level-triggered if and only if we a clock input
+					writePort.trigger = if (value) Trigger.LEVEL else Trigger.EDGE
+				}
 			}
 		}
 

@@ -16,7 +16,7 @@ The RAM component provides two different interfaces that can be selected via the
 
 Synchronous:: With this interface the RAM contains the clock input "CLK". If the input "WR" has the value 1, the data present at input "D" is read on the rising edge of the clock input.
 
-Asynchronous:: With this interface the RAM does not contain a clock input. If input "WR" has the value 1, the data present at input "D" are read each time they change.
+Asynchronous:: With this interface the RAM does not contain a clock input. Instead, "WR" is edge-triggered in this case. That is, if the input "WR" reaches the value 1, the data present at input "D" is read once. For a new write, "WR" has to go back to the value 0 first.
 
 == Pins
 
@@ -28,7 +28,7 @@ D:: Input/Output "Data": Outputs the data to be read or accepts the data to be w
 
 CLK:: Input "Clock": Is only displayed if the property "Clock Input" is set. At the rising edge of the CLK signal, data is read or written, depending on the value of "WR".
 
-WR:: Input "Write": With the value 1 data can be written into the RAM.
+WR:: Input "Write": With the value 1 data can be written into the RAM once per clock cycle or write edge.
 
 CLR:: Input "Clear": Asynchronous input at which a value of 1 causes all memory cells to be reset to the value 0, independent of the other inputs.
 
