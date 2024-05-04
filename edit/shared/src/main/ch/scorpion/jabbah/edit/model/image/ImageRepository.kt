@@ -18,9 +18,9 @@ interface ImageRepository {
 
     fun getImage(uuid: UUID): ImageData?
 
+    /** Returns all [ImageIdentification]s sorted ascending by name. */
     fun getAllImageIds(): List<ImageIdentification>
 }
-
 
 data class ImageData(
     val image: Image,

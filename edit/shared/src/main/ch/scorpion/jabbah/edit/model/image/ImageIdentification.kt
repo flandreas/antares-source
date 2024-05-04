@@ -38,4 +38,28 @@ class ImageIdentification(
     override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
         // No references
     }
+
+    /** ---- [Any] */
+
+    override fun toString(): String = name.value
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as ImageIdentification
+
+        if (uuid != other.uuid) return false
+        if (imageType != other.imageType) return false
+        if (name != other.name) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = uuid.hashCode()
+        result = 31 * result + imageType.hashCode()
+        result = 31 * result + name.hashCode()
+        return result
+    }
 }

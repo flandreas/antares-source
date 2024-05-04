@@ -80,6 +80,7 @@
             <baseLibraryElement _id='22' id='Clock'/>
             <baseLibraryElement _id='35' id='Keyboard'/>
             <baseLibraryElement _id='50' id='Joystick'/>
+            <baseLibraryElement _id='74' id='ImageSwitch'/>
           </items>
         </libraryFolder>
         <libraryFolder _id='24'>

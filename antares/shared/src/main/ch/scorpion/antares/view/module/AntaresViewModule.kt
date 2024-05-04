@@ -131,6 +131,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val INPUT = "Input"
 	private const val INPUT_OUTPUT = "InputOutput"
 	private const val SWITCH = "Switch"
+	private const val IMAGE_SWITCH = "ImageSwitch"
 	private const val DIP_SWITCH = "DipSwitch"
 	private const val CLOCK = "Clock"
 	private const val KEYBOARD = "Keyboard"
@@ -272,6 +273,7 @@ object AntaresViewModule : AbstractModule() {
 		properties.set(AbstractCircuitInOutView.PROP_OUTPUT_ICON_PATH, "/img/output.png")
 		properties.set(AbstractCircuitInOutView.PROP_INOUT_ICON_PATH, "/img/inout.png")
 		properties.set(SwitchView.PROP_ICON_PATH, "/img/switch.png")
+		properties.set(ImageSwitchView.PROP_ICON_PATH, "/img/switch.png")
 		properties.set(DipSwitchView.PROP_ICON_PATH, "/img/dip-switch.png")
 		properties.set(ProbeView.PROP_ICON_PATH, "/img/probe.png")
 		properties.set(LEDView.PROP_ICON_PATH, "/img/led.png")
@@ -323,6 +325,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("triStateBufferGateView", TriStateBufferGateView::class)
 
 		typeMap.register("switchView", SwitchView::class)
+		typeMap.register("imageSwitchView", ImageSwitchView::class)
 		typeMap.register("dipSwitchView", DipSwitchView::class)
 		typeMap.register("clockView", ClockView::class)
 		typeMap.register("clockControlView", ClockControlView::class)
@@ -411,6 +414,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, DelayGateView::class) { SelectedColorSelectionModel(it) }
 
 		factory.register(SelectionDrawingStrategy.REPLACE, SwitchView::class) { PushButtonSwitchViewSelectionModel(it as SwitchView) }
+		factory.register(SelectionDrawingStrategy.REPLACE, ImageSwitchView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, DipSwitchView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, ClockView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, ClockControlView::class) { SelectedColorSelectionModel(it) }
@@ -577,6 +581,7 @@ object AntaresViewModule : AbstractModule() {
 		}
 
 		repository.register(SWITCH, "library.element.Toggle", { "/img/switch.png" }, SwitchView::class)
+		repository.register(IMAGE_SWITCH, "library.element.ImageToggle", { "/img/switch.png" }, ImageSwitchView::class)
 		repository.register(DIP_SWITCH, "library.element.DipSwitch", { "/img/dip-switch.png" }, DipSwitchView::class)
 		repository.register(CLOCK, "library.element.Clock", { "/img/clock.png" }, ClockView::class)
 		repository.register(KEYBOARD, "library.element.Keyboard", { "/img/keyboard.png" }, KeyboardView::class)

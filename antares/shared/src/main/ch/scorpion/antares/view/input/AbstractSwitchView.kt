@@ -103,6 +103,10 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 
 	/** ---- [AbstractSwitchView] */
 
+	/**
+	 * Called by this [AbstractSwitchView] to ask subclasses to update the content and geometry
+	 * of their label in edit mode.
+	 */
 	protected abstract fun updateLabels()
 
 	protected open val circleRadius: Double get() = DEF_CIRCLE_RADIUS
