@@ -29,9 +29,11 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
+import kotlin.math.max
 
 /**
  * A switch with an [Image] for "on" and "off" state.
+ * Draws a dummy rectangle if one of the two [Image]s is not set.
  */
 class ImageSwitchView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
@@ -190,7 +192,7 @@ class ImageSwitchView(
             }
         }
 
-        if (onImageData.value != null) {
+        if (onImageData.value != null && offImageData.value != null) {
             drawImage(context)
         } else {
             drawEmpty(context)
@@ -270,6 +272,20 @@ class ImageSwitchView(
 
     /** ---- [ImageSwitchView] */
 
+    private val effWidth: Double get() =
+        if (onImageData.value == null || offImageData.value == null) {
+            DEF_SIZE.toDouble()
+        } else {
+            max(scale * onImageData.value!!.image.width, scale * offImageData.value!!.image.width)
+        }
+
+    private val effHeight: Double get() =
+        if (onImageData.value == null || offImageData.value == null) {
+            DEF_SIZE.toDouble()
+        } else {
+            max(scale * onImageData.value!!.image.height, scale * offImageData.value!!.image.height)
+        }
+
     private fun updateGeometry() {
         invalidate()
         getPortView(model.getPort())?.let {
@@ -286,22 +302,16 @@ class ImageSwitchView(
     }
 
     private fun calculateBounds(): RectangularShape {
-        return if (onImageData.value != null) {
-            val width = scale * onImageData.value!!.image.width
-            val height = scale * onImageData.value!!.image.height
-            calculateBoxCorner(width, height).let {
-                Rectangle2D(it.x, it.y, width, height)
-            }
-        } else {
-            calculateBoxCorner(DEF_SIZE.toDouble(), DEF_SIZE.toDouble()).let {
-                Rectangle2D(it.x, it.y, DEF_SIZE.toDouble(), DEF_SIZE.toDouble())
-            }
+        val w = effWidth
+        val h = effHeight
+        return calculateBoxCorner(w, h).let {
+            Rectangle2D(it.x, it.y, w, h)
         }
     }
 
     private fun calculateBoxCorner(w: Double, h: Double): Point2D {
         return when (portDirection) {
-            EAST -> Point2D(-LENGTH - w, -h / 2)
+            EAST -> Point2D(-LENGTH.toDouble() - w, -h / 2)
             NORTH -> Point2D(-w / 2, LENGTH.toDouble())
             WEST -> Point2D(LENGTH.toDouble(), -h / 2)
             SOUTH -> Point2D(-w / 2, -LENGTH - h)

@@ -82,7 +82,7 @@ object EditModuleJvm : AbstractModule() {
 		registry.register(TranslatableText::class.java) { TranslatablePropertyRenderer((it as CommandPropertySwing<Translatable>).filter) }
 		registry.register(Name::class.java) { TranslatablePropertyRenderer() }
 		registry.register(Description::class.java) { TranslatablePropertyRenderer((it as CommandPropertySwing<Translatable>).filter) }
-		registry.registerRenderer(ImageIdentification::class.java, DefaultTableCellRenderer::class.java)
+		registry.registerRenderer(ImageIdentification::class.java, ImageIdentificationRenderer::class.java)
 	}
 
 	@Suppress("UNCHECKED_CAST")
