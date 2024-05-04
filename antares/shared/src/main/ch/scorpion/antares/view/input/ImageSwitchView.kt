@@ -124,6 +124,7 @@ class ImageSwitchView(
         }
 
     init {
+        isFocusable = true
         modelExchanged(null)
     }
 
@@ -185,6 +186,11 @@ class ImageSwitchView(
             drawImage(context)
         } else {
             drawEmpty(context)
+        }
+
+        val appContext = context.castedAppContext<GraphApplicationContext>()!!
+        if (appContext.isExecute) {
+            drawFocus(context)
         }
     }
 
