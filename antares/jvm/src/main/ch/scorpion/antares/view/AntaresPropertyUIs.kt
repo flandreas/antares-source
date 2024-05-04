@@ -13,6 +13,7 @@ import ch.scorpion.antares.view.net.TunnelFlowDirection
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.output.VideoRamColorModel
 import ch.scorpion.antares.view.port.DigitalPortViewStyle
+import ch.scorpion.antares.view.EnterBehaviorEditor
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.sound.WaveformType
 import ch.scorpion.jabbah.base.swing.ColorIcon
@@ -86,6 +87,13 @@ class LogicEditor : ComboBoxPropertyEditor() {
     init {
         setAvailableValues(Logic.values())
         (editor as JComboBox<*>).renderer = EnumRenderer<Logic>()
+    }
+}
+
+class EnterBehaviorEditor : ComboBoxPropertyEditor() {
+    init {
+        setAvailableValues(EnterBehavior.values())
+        (editor as JComboBox<*>).renderer = EnumRenderer<EnterBehavior>()
     }
 }
 
@@ -186,4 +194,3 @@ class NetSignalApplierChoiceEditor : ComboBoxPropertyEditor() {
 		(editor as JComboBox<*>).renderer = EnumRenderer<NetSignalApplierStrategy>()
 	}
 }
-

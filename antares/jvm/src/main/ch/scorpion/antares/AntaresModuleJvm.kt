@@ -233,6 +233,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerRenderer(TunnelFlowDirection::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(NetSignalApplierStrategy::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(TunnelName::class.java, DefaultTableCellRenderer::class.java)
+		registry.registerRenderer(EnterBehavior::class.java, EnumRenderer::class.java)
 	}
 
 	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
@@ -257,6 +258,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerEditor(TunnelFlowDirection::class.java, TunnelFlowDirectionEditor::class.java)
 		registry.registerEditor(NetSignalApplierStrategy::class.java, NetSignalApplierChoiceEditor::class.java)
 		registry.register(TunnelName::class.java) { TunnelNameEditor((it as TunnelNameProperty).graph) }
+		registry.registerEditor(EnterBehavior::class.java, EnterBehaviorEditor::class.java)
 
 		registry.register(BitWidth::class.java) { prop ->
 			BitWidthEditor(
