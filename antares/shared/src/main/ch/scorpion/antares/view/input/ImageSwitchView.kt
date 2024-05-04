@@ -6,6 +6,7 @@ import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Direction.*
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -42,6 +43,7 @@ class ImageSwitchView(
     offImageUuid: UUID? = null,
     portDirection: Direction = EAST,
     scale: Double = 0.5,
+    private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractSwitchView<Switch>(styleProvider, model),
     ControlViewSource<Switch>,
     ControlView<Switch>
@@ -111,6 +113,15 @@ class ImageSwitchView(
         }
 
     /** ---- UI properties */
+
+    override var toggle: Boolean
+        get() = super.toggle
+        set(value) {
+            if (value != super.toggle) {
+                super.toggle = value
+                postControlViewSourceChangeEvent(eventBus)
+            }
+        }
 
     @Suppress("unused") // Reflection
     var onImageId: ImageIdentification?
@@ -242,6 +253,7 @@ class ImageSwitchView(
     }
 
     private fun copyControlViewProperties(source: ImageSwitchView, dest: ImageSwitchView) {
+        dest.toggle = source.toggle
         dest.name = source.name
         dest.onImageId = source.onImageId
         dest.offImageId = source.offImageId

@@ -12,6 +12,7 @@ import com.l2fprod.common.propertysheet.Property
 class ImageSwitchViewBeanInfo : DigitalComponentViewBeanInfo<ImageSwitchView>() {
 
     companion object {
+        private val toggle = CommandPropertySwing("toggle", SwitchView.BASE_KEY_TOGGLE, Boolean::class.java, componentBeanProvider)
         private val portDirection = CommandPropertySwing("portDirection", "library.element.ImageSwitch.portDirection", Direction::class.java, componentBeanProvider)
         private val onImage = CommandPropertySwing("onImageId", "library.element.ImageSwitch.onImage", ImageIdentification::class.java, componentBeanProvider)
         private val offImage = CommandPropertySwing("offImageId", "library.element.ImageSwitch.offImage", ImageIdentification::class.java, componentBeanProvider)
@@ -20,6 +21,7 @@ class ImageSwitchViewBeanInfo : DigitalComponentViewBeanInfo<ImageSwitchView>() 
 
     override fun addProperties(bean: ImageSwitchView, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
+        properties.add(toggle.bind(editor, beanIdProvider(bean.id)))
         properties.add(portDirection.bind(editor, beanIdProvider(bean.id)))
         properties.add(onImage.bind(editor, beanIdProvider(bean.id)))
         properties.add(offImage.bind(editor, beanIdProvider(bean.id)))
