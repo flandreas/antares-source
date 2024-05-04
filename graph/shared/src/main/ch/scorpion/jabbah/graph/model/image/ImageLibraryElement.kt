@@ -14,11 +14,10 @@ import ch.scorpion.jabbah.io.*
 
 /**
  * A [LibraryItem] referencing an image resource.
- * TODO: Icon by Janis
  */
 class ImageLibraryElement(
     imageId: ImageIdentification = ImageIdentification()
-) : LibraryElement(imageId.name.translation, iconPath = "/img/truth-table.png") {
+) : LibraryElement(imageId.name.translation, iconPath = "/img/image.png") {
 
     var imageId: ImageIdentification = imageId
         private set

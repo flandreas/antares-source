@@ -63,6 +63,7 @@ class GraphViewExecutionHandler(
 	/** Enhance superclass behaviour by mouseListener.*/
 	override fun passivate() {
 		super.passivate()
+		FocusManager.resetFocus()
 		view.removeMouseListener(mouseHandler)
 	}
 
