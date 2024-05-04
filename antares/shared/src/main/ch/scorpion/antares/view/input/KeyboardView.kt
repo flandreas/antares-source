@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.model.input.Keyboard
+import ch.scorpion.antares.model.EnterBehavior
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
@@ -9,6 +10,7 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.graphics.LogicalFontFamily
@@ -86,6 +88,16 @@ class KeyboardView(
 			if (value != model.bufferSize) {
 				invalidate()
 				model.bufferSize = value
+				invalidate()
+			}
+		}
+
+	var enterBehavior: EnterBehavior
+		get() = model.enterBehavior
+		set(value) {
+			if (value != model.enterBehavior) {
+				invalidate()
+				model.enterBehavior = value
 				invalidate()
 			}
 		}
@@ -268,8 +280,13 @@ class KeyboardView(
 		override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
 			val keyChar = context.keyEvent!!.keyChar
 			LOG.trace("keyPressed '$keyChar'")
-			if (KeyHandler.acceptKey(keyChar)) {
-				model.enter(keyChar.code.toByte(), context.signalHandler)
+			if (KeyHandler.acceptKey(keyChar.code)) {
+				var code = when (keyChar.code) {
+					KeyEvent.VK_ESCAPE -> KeyHandler.ESCAPE
+					'\n'.code -> if (model.enterBehavior == EnterBehavior.CR) '\r'.code.toByte() else '\n'.code.toByte()
+					else -> keyChar.code
+				}
+				model.enter(code.toByte(), context.signalHandler)
 			} else {
 				LOG.trace("reject character '$keyChar'")
 			}
@@ -278,26 +295,48 @@ class KeyboardView(
 	}
 
 	object KeyHandler {
-
-		private const val BACKSPACE = 8
-		private const val TAB = 9
-		private const val LINEFEED = 10
+		const val ESCAPE = 27
 		private const val MIN_CHAR = ' '.code
 		private const val MAX_CHAR = '~'.code
+		private const val MAX_ASCII = 127
 
-		fun acceptKey(keyChar: Char): Boolean {
-			return keyChar.code in MIN_CHAR..MAX_CHAR
-				|| keyChar.code == BACKSPACE
-				|| keyChar.code == TAB
-				|| keyChar.code == LINEFEED
-		}
+		fun acceptKey(keyCode: Int) = keyCode <= MAX_ASCII
 
 		fun displayKey(keyChar: Int): String {
 			return when (keyChar) {
 				in MIN_CHAR..MAX_CHAR -> keyChar.toChar().toString()
-				BACKSPACE -> "\\b"
-				TAB -> "\\t"
-				LINEFEED -> "\\n"
+				0 -> "<NUL>"	// CTRL + @
+				1 -> "<SOH>"	// CTRL + A
+				2 -> "<STX>"	// CTRL + B
+				3 -> "<ETX>"	// CTRL + C
+				4 -> "<EOT>"	// CTRL + D
+				5 -> "<ENQ>"	// CTRL + E
+				6 -> "<ACK>"	// CTRL + F
+				7 -> "<BEL>"	// CTRL + G
+				8 -> "\\b"		// CTRL + H
+				9 -> "\\t"		// CTRL + I
+				10 -> "\\n"		// CTRL + J
+				11 -> "<VT>"	// CTRL + K
+				12 -> "<FF>"	// CTRL + L
+				13 -> "\\r"		// CTRL + M
+				14 -> "<SO>"	// CTRL + N
+				15 -> "<SI>"	// CTRL + O
+				16 -> "<DLE>"	// CTRL + P
+				17 -> "<DC1>"	// CTRL + Q
+				18 -> "<DC2>"	// CTRL + R
+				19 -> "<DC3>"	// CTRL + S
+				20 -> "<DC4>"	// CTRL + T
+				21 -> "<NAK>"	// CTRL + U
+				22 -> "<SYN>"	// CTRL + V
+				23 -> "<ETB>"	// CTRL + W
+				24 -> "<CAN>"	// CTRL + X
+				25 -> "<EM>"	// CTRL + Y
+				26 -> "<SUB>"	// CTRL + Z
+				27 -> "<ESC>"	// CTRL + [
+				28 -> "<FS>"	// CTRL + \
+				29 -> "<GS>"	// CTRL + ]
+				30 -> "<RS>"	// CTRL + ^
+				31 -> "<US>"	// CTRL + _
 				else -> ""
 			}
 		}

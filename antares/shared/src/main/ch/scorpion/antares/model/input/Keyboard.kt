@@ -2,6 +2,7 @@ package ch.scorpion.antares.model.input
 
 import ch.scorpion.antares.model.Trigger
 import ch.scorpion.antares.model.port.DigitalPort
+import ch.scorpion.antares.model.EnterBehavior
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
@@ -31,7 +32,8 @@ import ch.scorpion.jabbah.io.StoreWriter
  * [InputPort] is set, the oldest key entry is removed from the buffer and forwarded to the [OutputPort].
  */
 class Keyboard(
-	bufferSize: Int = DEFAULT_BUFFER_SIZE
+	bufferSize: Int = DEFAULT_BUFFER_SIZE,
+	var enterBehavior: EnterBehavior = EnterBehavior.LF
 ) : CalculatingVertice(KeyboardCalculator()) {
 
 	companion object {
@@ -114,11 +116,15 @@ class Keyboard(
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
 		writer.writeInt("bufferSize", bufferSize)
+		writer.writeString("enterBehavior", enterBehavior.customName)
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		bufferSize = reader.readInt("bufferSize")
+	    if (reader.hasAttribute("enterBehavior")) {
+			enterBehavior = EnterBehavior.withName(reader.readString("enterBehavior"))
+	    }
 	}
 
 	/** ---- [Keyboard] */
@@ -133,7 +139,7 @@ class Keyboard(
 
 	fun enter(byte: Byte, signalHandler: SignalHandler) {
 		if (bufferItemsCount < bufferSize) {
-			buffer.add(byte)
+			buffer.add(byte)				
 			stateChanged(signalHandler)
 			requestActingAfter(signalHandler, propagationDelay, createActorData(null))
 		}
@@ -171,4 +177,3 @@ class Keyboard(
 		}
 	}
 }
-
