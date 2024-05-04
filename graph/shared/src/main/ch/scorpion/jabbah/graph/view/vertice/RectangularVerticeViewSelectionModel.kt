@@ -1,18 +1,22 @@
-package ch.scorpion.antares.view.input
+package ch.scorpion.jabbah.graph.view.vertice
 
-import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.SelectionModel
 import ch.scorpion.jabbah.edit.select.AbstractSelectionModel
+import ch.scorpion.jabbah.edit.style.EditTheme
 
-class PushButtonSwitchViewSelectionModel(component: AbstractPushButtonSwitchView<*>)
-	: AbstractSelectionModel<AbstractPushButtonSwitchView<*>>(component) {
+/**
+ * A [SelectionModel] that calls [AbstractRectangularVerticeView.drawSelected].
+ */
+class RectangularVerticeViewSelectionModel(component: AbstractRectangularVerticeView<*>)
+	: AbstractSelectionModel<AbstractRectangularVerticeView<*>>(component) {
 
 	override fun draw(context: DrawContext) {
 		val oldUseContextColors = context.useContextColors
 		context.useContextColors = true
-		context.color = Themes.get<AntaresTheme>().selection.color
+		context.color = Themes.get<EditTheme>().selection.color
 		component.drawSelected(context)
 		context.useContextColors = oldUseContextColors
 	}

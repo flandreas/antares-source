@@ -114,6 +114,15 @@ class ImageSwitchView(
         addPortView(portView)
     }
 
+    override fun drawSelected(context: DrawContext) {
+        context.g.color = context.color!!.foregroundColor
+        draw(context) {
+            super.drawImpl(it)
+            context.g.stroke = stroke
+            context.g.draw(bounds)
+        }
+    }
+
     /** ---- [AbstractSwitchView] */
 
     override fun updateLabels() {}
