@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.drawable.Rotatable
 import ch.scorpion.jabbah.draw.graphics.Image
+import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.edit.module.EditModule
@@ -94,6 +95,11 @@ class ImageComponent(
         }
     }
 
+    /** Used when [ImageComponent] is drawn within a selected outer [Component]*/
+    fun drawSelected(context: DrawContext) {
+        context.g.color = context.color!!.foregroundColor
+        super.drawShape(context, context.color!!.foregroundColor, null)
+    }
 
     private fun drawImage(context: DrawContext) {
         val scaleX = width / imageData.value!!.image.width
