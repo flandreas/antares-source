@@ -94,9 +94,13 @@ abstract class AbstractInteractableVertice<S: Any>(
 	}
 
 	protected open fun requestSetSignal(signal: S, signalHandler: SignalHandler) {
+		requestSetSignalAfter(signal, signalHandler, interactivePropagationDelay)
+	}
+
+	protected open fun requestSetSignalAfter(signal: S, signalHandler: SignalHandler, delay: Long) {
 		delayedSignal = signal
 		setInteractionEnabled(false, signalHandler)
-		requestActingAfter(signalHandler, interactivePropagationDelay, createActorData(null, signal = signal))
+		requestActingAfter(signalHandler, delay, createActorData(null, signal = signal))
 	}
 
 	private fun completeSetState(signalHandler: SignalHandler) {

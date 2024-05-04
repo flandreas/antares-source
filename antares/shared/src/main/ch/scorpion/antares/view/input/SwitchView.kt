@@ -28,6 +28,7 @@ class SwitchView(
 	companion object {
 
 		const val BASE_KEY_TOGGLE = "element.property.Switch.toggle"
+		const val MIN_ON_TIME = "element.property.Switch.minOnTime"
 
 		private const val TOGGLE_BASE_RESOURCE_KEY = "library.element.Toggle"
 		private val TOGGLE_TYPE get() = Translations.getString("$TOGGLE_BASE_RESOURCE_KEY.name")
@@ -56,6 +57,12 @@ class SwitchView(
 				super.toggle = value
 				postControlViewSourceChangeEvent(eventBus)
 			}
+		}
+
+	var minOnTime: Long
+		get() = model.minOnTime
+		set(value) {
+			model.minOnTime = value
 		}
 
 	override fun modelExchanged(oldModel: Switch?) {

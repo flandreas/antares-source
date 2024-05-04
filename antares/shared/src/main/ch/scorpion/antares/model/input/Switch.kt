@@ -7,6 +7,9 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
+import ch.scorpion.jabbah.io.Storable
+import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.io.StoreWriter
 
 /**
  * Represents an interactive switch that can toggle between two states.
@@ -33,11 +36,46 @@ class Switch : AbstractSwitch<Switch>(CALCULATOR) {
 		}
 	}
 
+	private var switchedOnAt: Long = 0
+	var minOnTime: Long = 0
+
 	init {
 		addPort(DigitalPortImpl.createOutput())
 		propagationDelay = DEF_PROP_DELAY
+		minOnTime = DEF_PROP_DELAY * 5
 	}
 
 	override val type: String get() = TYPE
 	override val typeDesc: String? get() = TYPE_DESC
+
+	/** ---- [AbstractSwitch] */
+	override fun on(signalHandler: SignalHandler) {
+		switchedOnAt = signalHandler.executionTime
+		super.on(signalHandler)
+	}
+
+	override fun off(signalHandler: SignalHandler) {
+		val passedNs = signalHandler.executionTime - switchedOnAt
+		if (passedNs < minOnTime) {
+			super.delayedOff(signalHandler, minOnTime - passedNs)
+		} else {
+			super.off(signalHandler)
+		}
+	}
+
+	/** ---- [Storable] interface */
+
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		if (minOnTime != 0L) {
+			writer.writeLong("minOnTime", minOnTime)
+		}
+	}
+
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+		if (reader.hasAttribute("minOnTime")) {
+			minOnTime = reader.readLong("minOnTime")
+		}
+	}
 }
