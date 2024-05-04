@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.resettableLazy
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.graphics.Image
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -182,6 +183,13 @@ class ImageSwitchView(
 
     override fun drawImpl(context: DrawContext) {
         super.drawImpl(context)
+
+        if (shadow) {
+            DropShadow.draw(context, transparency) {
+                context.g.fillRect(xInt, yInt, widthInt, heightInt)
+            }
+        }
+
         if (onImageData.value != null) {
             drawImage(context)
         } else {
