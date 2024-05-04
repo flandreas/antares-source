@@ -2,15 +2,18 @@ package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.model.input.Switch
 import ch.scorpion.antares.view.Look
-import ch.scorpion.antares.view.port.AbstractAntaresPortView
+import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Direction.*
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.resettableLazy
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.graphics.Image
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.model.image.ImageIdentification
@@ -21,6 +24,9 @@ import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
+/**
+ * A switch with an [Image] for "on" and "off" state.
+ */
 class ImageSwitchView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     model: Switch = Switch(),
@@ -72,7 +78,15 @@ class ImageSwitchView(
     }
 
     /** The [Direction] in which the output [PortView] faces relative to normal image rotation.*/
-    var portDirection: Direction = Direction.EAST
+    var portDirection: Direction = EAST
+        set(value) {
+            if (field != value) {
+                invalidate()
+                field = value
+                updateGeometry()
+                validate()
+            }
+        }
 
     /** The factor with which the images are scaled when drawn.*/
     var scale: Double = 0.5
@@ -101,7 +115,6 @@ class ImageSwitchView(
 
     init {
         modelExchanged(null)
-        updateGeometry()
     }
 
     override fun modelExchanged(oldModel: Switch?) {
@@ -110,8 +123,8 @@ class ImageSwitchView(
             styleProvider = styleProvider,
             port = model.getOutput(),
             direction = portDirection)
-        portView.setLocation(-portView.length.toDouble(), 0.0)
         addPortView(portView)
+        updateGeometry()
     }
 
     override fun drawSelected(context: DrawContext) {
@@ -193,6 +206,15 @@ class ImageSwitchView(
 
     private fun updateGeometry() {
         invalidate()
+        getPortView(model.getPort())?.let {
+            it.direction = portDirection
+            it.location = when (portDirection) {
+                EAST -> Point2D(-LENGTH, 0)
+                NORTH -> Point2D(0, LENGTH)
+                WEST -> Point2D(LENGTH, 0)
+                SOUTH -> Point2D(0, -LENGTH)
+            }
+        }
         setBounds(calculateBounds())
         invalidate()
     }
@@ -201,14 +223,22 @@ class ImageSwitchView(
         return if (onImageData.value != null) {
             val width = scale * onImageData.value!!.image.width
             val height = scale * onImageData.value!!.image.height
-            Rectangle2D(
-                -AbstractAntaresPortView.LENGTH - width,
-                -height / 2,
-                width,
-                height
-            )
+            calculateBoxCorner(width, height).let {
+                Rectangle2D(it.x, it.y, width, height)
+            }
         } else {
-            Rectangle2D(-AbstractAntaresPortView.LENGTH - DEF_SIZE, -DEF_SIZE / 2, DEF_SIZE, DEF_SIZE)
+            calculateBoxCorner(DEF_SIZE.toDouble(), DEF_SIZE.toDouble()).let {
+                Rectangle2D(it.x, it.y, DEF_SIZE.toDouble(), DEF_SIZE.toDouble())
+            }
+        }
+    }
+
+    private fun calculateBoxCorner(w: Double, h: Double): Point2D {
+        return when (portDirection) {
+            EAST -> Point2D(-LENGTH - w, -h / 2)
+            NORTH -> Point2D(-w / 2, LENGTH.toDouble())
+            WEST -> Point2D(LENGTH.toDouble(), -h / 2)
+            SOUTH -> Point2D(-w / 2, -LENGTH - h)
         }
     }
 }
