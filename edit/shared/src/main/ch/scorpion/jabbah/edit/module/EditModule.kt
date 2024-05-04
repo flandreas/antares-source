@@ -27,6 +27,7 @@ import ch.scorpion.jabbah.edit.model.curve.QuadCurveComponent
 import ch.scorpion.jabbah.edit.model.group.EditModelGroupModule
 import ch.scorpion.jabbah.edit.model.group.GroupComponent
 import ch.scorpion.jabbah.edit.model.image.ImageComponent
+import ch.scorpion.jabbah.edit.model.image.ImageData
 import ch.scorpion.jabbah.edit.model.image.ImageIdentification
 import ch.scorpion.jabbah.edit.model.image.ImageRepository
 import ch.scorpion.jabbah.edit.model.polyline.EditModelPolylineModule
@@ -73,7 +74,7 @@ object EditModule : AbstractModule() {
     var drawingAppService: DrawingAppService = DrawingAppServiceImpl()
 
     var imageRepository: ImageRepository = object : ImageRepository {
-        override fun getImage(uuid: UUID): Image? = null
+        override fun getImage(uuid: UUID): ImageData? = null
         override fun getAllImageIds(): List<ImageIdentification> = emptyList()
     }
 

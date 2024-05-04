@@ -407,11 +407,10 @@ class ImagesFolderItem: AbstractContainerTreeItem(ContainerTreeItemType.Images) 
 	override fun getDescription(): String = ContainerTreeFolderItem.IMAGES_NAME
 }
 
-// TODO Icon by Janis
 private class ImageItem(
 	private val imageId: ImageIdentification,
 	factory: () -> Component
-) : DraggableTreeItem(ContainerTreeItemType.Image, factory, "/img/truth-table.png") {
+) : DraggableTreeItem(ContainerTreeItemType.Image, factory, "/img/image.png") {
 
 	override fun getDescription(): String = imageId.name.value
 }
