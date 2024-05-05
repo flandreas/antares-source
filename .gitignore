@@ -2,7 +2,7 @@
 antares.log
 build/
 out/
-antares/shared/rsc/history/
+antares/jvm/rsc/history/
 antares/jvm/rsc/test/history/
 doc/model/model.mdj
 doc/model/model-img/
