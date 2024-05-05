@@ -11,8 +11,10 @@ class GraphParamValuePropertySwing<V : Any>(
 	baseKey: String,
 	valueClass: Class<V>,
 	beanProvider: BeanProvider,
-	interactive: Boolean = false
-): CommandPropertySwing<V>(propertyName, baseKey, valueClass, beanProvider, propertyName, propertyName, interactive) {
+	interactive: Boolean = false,
+	displayName: String? = null,
+	baseKeyParams: Array<Any> = emptyArray()
+): CommandPropertySwing<V>(propertyName, baseKey, valueClass, beanProvider, propertyName, propertyName, interactive, displayName, baseKeyParams = baseKeyParams) {
 
 	override fun readFromObject(bean: Any?) {
 		val subGraphVerticeView = bean as SubGraphVerticeViewImpl?
@@ -20,5 +22,5 @@ class GraphParamValuePropertySwing<V : Any>(
 	}
 
 	override fun createCommand(newValue: V?): AbstractPropertyCommand<V> =
-		GraphParamValueCommand(paramDefinition, editor!!, baseKey, beanProvider, beanIds, newValue)
+		GraphParamValueCommand(paramDefinition, editor!!, baseKey, baseKeyParams, beanProvider, beanIds, newValue)
 }

@@ -74,7 +74,7 @@ class BitWidthParamValuePropertySwing(
 	}
 
 	override fun createCommand(newValue: BitWidth?): AbstractPropertyCommand<BitWidth> =
-		GraphParamValueCommand(paramDefinition, editor!!, baseKey, beanProvider, beanIds, newValue)
+		GraphParamValueCommand(paramDefinition, editor!!, baseKey, emptyArray(), beanProvider, beanIds, newValue)
 }
 
 class BitWidthEditor(

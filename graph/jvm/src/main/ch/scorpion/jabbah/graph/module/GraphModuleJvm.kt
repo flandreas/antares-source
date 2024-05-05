@@ -25,8 +25,8 @@ import ch.scorpion.jabbah.graph.health.PortViewCoincidenceCheck
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.login.LoginService
 import ch.scorpion.jabbah.graph.login.LoginServiceJvm
-import ch.scorpion.jabbah.graph.model.graph.LongGraphParamType
-import ch.scorpion.jabbah.graph.model.graph.StringGraphParamType
+import ch.scorpion.jabbah.graph.model.param.LongGraphParamType
+import ch.scorpion.jabbah.graph.model.param.StringGraphParamType
 import ch.scorpion.jabbah.graph.model.param.*
 import ch.scorpion.jabbah.graph.model.port.InconsistentNetError
 import ch.scorpion.jabbah.graph.project.ProjectAkrabClientServiceJvm
@@ -66,6 +66,7 @@ object GraphModuleJvm : AbstractModule() {
 		configurePropertyRenderer(EditModuleJvm.propertyRendererRegistry)
 		configurePropertyEditors(EditModuleJvm.propertyEditorRegistry)
 		configureGraphParamValueProperties()
+		configureGraphParamValueEditors()
 
 		fillProperties(BaseModule.properties)
 
@@ -103,9 +104,11 @@ object GraphModuleJvm : AbstractModule() {
 					return GraphParamValuePropertySwing(
 						paramDefinition = def as GraphParamDefinition<String>,
 						propertyName = "<notUsed>",
-						baseKey ="element.property.bitWidth", // TODO: This must be a dynamic name and not a resource key
+						baseKey ="graph.paramDefs.genericParameter",
+						baseKeyParams = arrayOf(def.name),
 						valueClass = String::class.java,
-						beanProvider
+						beanProvider = beanProvider,
+						//displayName = def.name
 					)
 				}
 			}
@@ -122,13 +125,20 @@ object GraphModuleJvm : AbstractModule() {
 					return GraphParamValuePropertySwing(
 						paramDefinition = def as GraphParamDefinition<Long>,
 						propertyName = "<notUsed>",
-						baseKey ="element.property.bitWidth", // TODO: This must be a dynamic name and not a resource key
+						baseKey ="graph.paramDefs.genericParameter",
+						baseKeyParams = arrayOf(def.name),
 						valueClass = Long::class.java,
-						beanProvider
+						beanProvider = beanProvider,
+						//displayName = def.name
 					)
 				}
 			}
 		)
+	}
+
+	private fun configureGraphParamValueEditors() {
+		GraphParamValueEditorRegistry.register(LongGraphParamType) { LongGraphParamValueEditor() }
+		GraphParamValueEditorRegistry.register(StringGraphParamType) { StringGraphParamValueEditor() }
 	}
 
 	private fun fillProperties(properties: Properties) {

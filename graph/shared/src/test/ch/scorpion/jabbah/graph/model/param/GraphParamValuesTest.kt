@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.model.param
 
-import ch.scorpion.jabbah.graph.model.graph.StringGraphParamType
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

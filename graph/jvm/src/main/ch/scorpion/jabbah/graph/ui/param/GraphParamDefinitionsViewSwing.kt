@@ -123,7 +123,7 @@ class GraphParamDefinitionsViewSwing(
 
 	private fun setDefaultValueEditor(type: GraphParamType<*>, defaultValue: Any? = null) {
 		defaultValueEditor = createDefaultValueEditor(type).also { editor ->
-			defaultValue?.let { editor.value = it }
+			defaultValue?.let { editor.paramValue = it }
 			defaultValueFieldHolder.removeAll()
 			defaultValueFieldHolder.add(editor as JComponent, BorderLayout.CENTER)
 		}
@@ -149,7 +149,7 @@ class GraphParamDefinitionsViewSwing(
 		GraphParamDefinition.create(
 			nameField.text,
 			typeField.selectedItem as GraphParamType<T>,
-			defaultValueEditor!!.value as T
+			defaultValueEditor!!.paramValue as T
 		)
 
 	override fun valueChanged() {

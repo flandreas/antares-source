@@ -18,10 +18,7 @@ import ch.scorpion.jabbah.graph.model.net.SignalConflictBehaviourHolder
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistories
-import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
-import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
-import ch.scorpion.jabbah.graph.model.param.GraphParamValue
-import ch.scorpion.jabbah.graph.model.param.GraphParamValues
+import ch.scorpion.jabbah.graph.model.param.*
 import ch.scorpion.jabbah.graph.model.port.InconsistentNetError
 import ch.scorpion.jabbah.graph.model.port.PortFactory
 import ch.scorpion.jabbah.graph.model.port.UndefinedPortFactory
@@ -64,6 +61,7 @@ object GraphModelModule : AbstractModule() {
 		Translations.addBundle("jabbah-graph")
 
 		registerGraphTypes()
+		registerGraphParamTypes()
 		fillProperties(BaseModule.properties)
 		configureTypeMap(IOModule.typeMap)
 	}
@@ -78,6 +76,11 @@ object GraphModelModule : AbstractModule() {
 	/** More specific modules can register other implementations for [GraphPort] value type adjustments. */
 	var subGraphVerticeRefActivationRecordFactory: SubGraphVerticeRefActivationRecordFactory = { verticeRef: SubGraphVerticeRef, signalHandler: SignalHandler ->
 		SubGraphVerticeRefActivationRecord(verticeRef, signalHandler)
+	}
+
+	private fun registerGraphParamTypes() {
+		GraphParamTypeRegistry.register(LongGraphParamType.name) { LongGraphParamType }
+		GraphParamTypeRegistry.register(StringGraphParamType.name) { StringGraphParamType }
 	}
 
 	private fun registerGraphTypes() {

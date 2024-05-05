@@ -13,8 +13,8 @@ import ch.scorpion.jabbah.graph.library.MemoryLibraryPersistenceService
 import ch.scorpion.jabbah.graph.model.GenericGraphType
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.OutputPort
-import ch.scorpion.jabbah.graph.model.graph.LongGraphParamType
-import ch.scorpion.jabbah.graph.model.graph.StringGraphParamType
+import ch.scorpion.jabbah.graph.model.param.LongGraphParamType
+import ch.scorpion.jabbah.graph.model.param.StringGraphParamType
 import ch.scorpion.jabbah.graph.model.param.*
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import io.mockk.every
