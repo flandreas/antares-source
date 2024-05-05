@@ -42,7 +42,7 @@ class Switch : AbstractSwitch<Switch>(CALCULATOR) {
 	init {
 		addPort(DigitalPortImpl.createOutput())
 		propagationDelay = DEF_PROP_DELAY
-		minOnTime = DEF_PROP_DELAY * 5
+		minOnTime = 0
 	}
 
 	override val type: String get() = TYPE

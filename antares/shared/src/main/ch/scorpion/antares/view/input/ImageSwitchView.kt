@@ -123,6 +123,12 @@ class ImageSwitchView(
             }
         }
 
+    var minOnTime: Long
+		get() = model.minOnTime
+		set(value) {
+			model.minOnTime = value
+		}
+
     @Suppress("unused") // Reflection
     var onImageId: ImageIdentification?
         get() = onImageData.value?.let { ImageIdentification(uuid = onImageUuid!!, name = it.name) }
