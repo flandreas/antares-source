@@ -130,6 +130,7 @@ tasks {
 		keep("class kotlinx.coroutines.** { *; }")
 		keep("class kotlinx.serialization.** { *; }")
 		keep("class org.jdesktop.** { *; }")
+		keep("class com.github.weisj.jsvg.** { *; }")
 
 		// Reflection in OsThemeDetector
 		keep("class com.sun.** { *; }")
