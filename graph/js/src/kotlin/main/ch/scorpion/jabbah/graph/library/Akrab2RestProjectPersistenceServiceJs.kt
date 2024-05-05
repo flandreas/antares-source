@@ -1,6 +1,9 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.draw.graphics.Image
+import ch.scorpion.jabbah.draw.graphics.ImageType
+import ch.scorpion.jabbah.edit.model.image.ImageIdentification
 import ch.scorpion.jabbah.graph.GraphQuota
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphBundle
@@ -52,6 +55,14 @@ class Akrab2RestProjectPersistenceServiceJs(
     }
 
     override fun importMetaGraphBundle(inputPath: String): MetaGraphBundle {
+        TODO("Not yet implemented")
+    }
+
+    override fun loadImage(library: Library, imageUuid: UUID, imageType: ImageType): Image {
+        TODO("Not yet implemented")
+    }
+
+    override fun importImage(library: Library, imageId: ImageIdentification, inputPath: String) {
         TODO("Not yet implemented")
     }
 }
