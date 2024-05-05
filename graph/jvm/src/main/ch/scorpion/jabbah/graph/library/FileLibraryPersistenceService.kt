@@ -119,6 +119,7 @@ class FileLibraryPersistenceService(
 			LOG.trace("Loaded image $imageUuid")
 			return image
 		} catch (e: Throwable) {
+			LOG.error("Error while loading image: ${e.message}", e)
 			throw LibraryPersistenceServiceException()
 		}
 	}

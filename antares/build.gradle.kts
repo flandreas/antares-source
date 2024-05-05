@@ -121,6 +121,7 @@ tasks {
 
 		libraryjars(configurations.findByName("runtimeClasspath")?.files)
 
+		keep("class javax.** { *; }")
 		keep("class kotlin.** { *; }")
 		keep("class org.apache.** { *; }")
 		keep("class org.slf4j.** { *; }")
