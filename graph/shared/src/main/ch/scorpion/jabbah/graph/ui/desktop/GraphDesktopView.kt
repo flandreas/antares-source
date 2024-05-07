@@ -1,10 +1,10 @@
 package ch.scorpion.jabbah.graph.ui.desktop
 
 import ch.scorpion.jabbah.app.ApplicationDataContentEstablishedEvent
-import ch.scorpion.jabbah.app.ApplicationDataContentEvent
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.AbstractUIController
@@ -15,8 +15,8 @@ import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.ReferenceColor
 import ch.scorpion.jabbah.draw.graphics.ReferenceColorEvent
 import ch.scorpion.jabbah.draw.graphics.ReferenceColorSequenceProvider
-import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ContentViewManager
+import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
@@ -213,7 +213,11 @@ class GraphDesktopViewController(
 
 	private fun handle(request: OpenSubGraphRequest) {
 		if (request.newView) {
-			System.invokeLater { openSubGraphVerticeView(request.subGraphVerticeView) }
+			System.invokeLater {
+				InvocationHandler.invoke {
+					openSubGraphVerticeView(request.subGraphVerticeView)
+				}
+			}
 		}
 	}
 
