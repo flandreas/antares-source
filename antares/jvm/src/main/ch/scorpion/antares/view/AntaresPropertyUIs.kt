@@ -33,10 +33,10 @@ open class LightColorRenderer : EnumRenderer<LightColor>() {
 
     override fun setValue(value: LightColor?) {
 	    if (value == null) {
-		    icon.backgroundColor = Graphics2DJvm.toAwtColor(LightColor.getSystemDefault().onColor)
+		    icon.backgroundColor = Graphics2DJvm.toAwtColor(LightColor.getSystemDefault().executeColor(true))
 		    text = Translations.getString("element.color.none")
 	    } else {
-		    icon.backgroundColor = Graphics2DJvm.toAwtColor(value.onColor)
+		    icon.backgroundColor = Graphics2DJvm.toAwtColor(value.executeColor(true))
 		    text = value.toString()
 	    }
 	    setIcon(icon)

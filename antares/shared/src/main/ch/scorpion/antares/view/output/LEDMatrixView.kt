@@ -2,8 +2,8 @@ package ch.scorpion.antares.view.output
 
 import ch.scorpion.antares.model.output.LEDMatrix
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.event.EventBus
@@ -67,7 +67,7 @@ class LEDMatrixView(
 			}
 		}
 
-	/** `true` if the dots are drawn as circles, `false` if the are drawn as squares .*/
+	/** `true` if the dots are drawn as circles, `false` if they are drawn as squares .*/
 	var isCircleDots: Boolean = true
 		set(value) {
 			if (field != value) {
@@ -271,11 +271,7 @@ class LEDMatrixView(
 			var y = height - inset - DOT_SIZE * factor
 			for (row in 0 until model.rowWidth.width) {
 				context.g.color = if (isExecute) {
-					if (model.isOn(column, row)) {
-						lightColor.onColor
-					} else {
-						lightColor.offColor
-					}
+					lightColor.executeColor(isExecute)
 				} else {
 					foregroundColor
 				}

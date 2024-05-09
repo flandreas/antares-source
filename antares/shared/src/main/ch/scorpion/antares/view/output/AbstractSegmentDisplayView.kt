@@ -3,8 +3,8 @@ package ch.scorpion.antares.view.output
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.output.AbstractSegmentDisplay
 import ch.scorpion.antares.model.output.SixteenSegmentDisplay
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.StringUtils
@@ -223,7 +223,7 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 	protected fun getColor(value: Boolean, context: DrawContext): Color =
 		transparent.applyTo(
 			if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-				if (logic.evaluate(value)) lightColor.onColor else lightColor.offColor
+				lightColor.executeColor(logic.evaluate(value))
 			} else {
 				context.chooseForeground(foregroundColor)
 			}

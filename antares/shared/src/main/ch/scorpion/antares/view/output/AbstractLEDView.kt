@@ -66,6 +66,7 @@ abstract class AbstractLEDView<T: Vertice>(
 
 	var size: Size by ControlViewSourceProperty(DEFAULT_SIZE, eventBus, ::updateGeometry)
 
+	@Suppress("MemberVisibilityCanBePrivate") // Reflection
 	var hasBorder: Boolean by ControlViewSourceProperty(DEFAULT_HAS_BORDER, eventBus)
 
 	private val widthOfSize: Int get() = when (size) {
@@ -243,16 +244,22 @@ abstract class AbstractLEDView<T: Vertice>(
 
 	/** ---- [AbstractLEDView] */
 
-	/** Returns the [Color] to be used for drawing the bulb of this [LED].*/
-	protected abstract fun getBulbColor(): Color
+	/** Returns the [Color] to be used for drawing the bulb of this [LED] when executing.*/
+	protected abstract fun getBulbExecuteColor(): Color
 
-	/** Draws the bulb in the color returned by [getBulbColor].*/
-	protected open fun drawBulb(context: DrawContext) {
+	protected open fun getBulbEditColor(): Color = backgroundColor
+
+	/** Draws the bulb in the color returned by [getBulbExecuteColor].*/
+	private fun drawBulb(context: DrawContext) {
 		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-			drawBulb(context, transparent.applyTo(getBulbColor()))
+			drawBulb(context, transparent.applyTo(getBulbExecuteColor()))
 		} else {
-			drawBulb(context, transparent.applyTo(backgroundColor))
+			drawBulbEdited(context)
 		}
+	}
+
+	protected open fun drawBulbEdited(context: DrawContext) {
+		drawBulb(context, getBulbEditColor())
 	}
 
 	/** Draws the bulb using the specified [Color].*/
@@ -317,9 +324,7 @@ class LEDViewSelectionModel(c: AbstractLEDView<*>) : AbstractSelectionModel<Abst
 
 	override val boundingBox: RectangularShape get() = component.boundingBox
 
-	override fun contains(x: Double, y: Double): Boolean {
-		return component.contains(x, y)
-	}
+	override fun contains(x: Double, y: Double): Boolean = component.contains(x, y)
 
 	override fun componentUpdated() {
 		validate()

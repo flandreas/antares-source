@@ -43,5 +43,5 @@ class RgbLEDView(
 
 	/** ---- [AbstractLEDView] */
 
-	override fun getBulbColor(): Color = model.color
+	override fun getBulbExecuteColor(): Color = model.color
 }
