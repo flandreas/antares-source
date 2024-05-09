@@ -81,6 +81,7 @@ object AntaresModelModule : AbstractModule() {
 	}
 
 	private fun customizeProperties(properties: Properties) {
+		properties.set(AbstractLogicGate.PROP_DEFAULT_PROPAGATION_DELAY, 20)
 		properties.set(Switch.PROP_DEFAULT_DELAY, 1_000)
 		properties.set(UsecaseRecorder.PROP_DEF_DELAY_MS, properties.getInt(Switch.PROP_DEFAULT_DELAY) / 1_000)
 
