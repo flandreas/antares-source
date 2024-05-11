@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.io.ZipUtil
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.graphics.Image
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.GraphQuota
 import ch.scorpion.jabbah.graph.GraphQuotaException
@@ -66,8 +67,8 @@ abstract class AbstractLibraryImporter(
 	protected abstract suspend fun checkIfUuidAlreadyExists(identification: LibraryIdentification, replaceExisting: Boolean): Boolean
 
 	/**
-	 * Saves the [Library] and the [MetaGraphs][MetaGraph] contained in the incubation files at [sourceLibraryDir]
-	 * into the proper storage system, which depends on the implementation.
+	 * Saves the [Library] and the content ([MetaGraphs][MetaGraph], [Images][Image] etc.) contained in the
+	 * incubation files at [sourceLibraryDir] into the proper storage system, which depends on the implementation.
 	 */
 	protected abstract suspend fun save(library: Library, sourceLibraryDir: File, exists: Boolean)
 

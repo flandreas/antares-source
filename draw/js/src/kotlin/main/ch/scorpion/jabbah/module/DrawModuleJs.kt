@@ -7,15 +7,11 @@ import ch.scorpion.jabbah.base.module.BaseModuleJs
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.view.TooltipHandler
 import ch.scorpion.jabbah.draw.view.ZoomPanController
-import org.w3c.dom.HTMLCanvasElement
-import kotlinx.browser.document
 
 /**
  * Module definitions for the [ch.scorpion.jabbah.draw] package for the JavaScript target.
  */
 object DrawModuleJs : AbstractModule() {
-
-	private val canvas = document.createElement("canvas") as HTMLCanvasElement
 
 	override fun initialize() {
 		BaseModuleJs.require()

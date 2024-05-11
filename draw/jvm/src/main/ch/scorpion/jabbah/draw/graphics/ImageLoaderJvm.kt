@@ -5,6 +5,10 @@ import java.io.FileInputStream
 import java.nio.file.Paths
 import javax.imageio.ImageIO
 
+/**
+ * An [ImageLoader] implementation for the JVM platform that loads system [Image]s
+ * from a JAR resource, and used [Image] from the local file system.
+ */
 class ImageLoaderJvm : ImageLoader {
 
     override fun loadSystemImage(path: String, type: ImageType): Image {
