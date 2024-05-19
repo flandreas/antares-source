@@ -585,4 +585,19 @@ class InterpreterTest {
 
 		assertEquals(16L, result)
 	}
+
+	@Test
+	fun comparisonShouldHavePrecedenceOverTerms() {
+		val interpreter = Interpreter("""
+			if (12 + 12 == 2 * 12) {
+				1
+			} else {
+				0
+			}
+		""".trimIndent())
+
+		val result = interpreter.interpret()
+
+		assertEquals(1L, result)
+	}
 }
