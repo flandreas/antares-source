@@ -76,7 +76,11 @@ open class GraphImpl(
 
 	/** ---- [Namable], [Describable] interfaces */
 
-	override var name: Name by observableName(Name(name))
+	override var name: Name by observableName(Name(name)) {
+		if (it.isEmpty || StringUtils.isBlank(it.value)) {
+			throw IllegalArgumentException(Translations.getString("edit.property.name.empty.error"))
+		}
+	}
 
 	override var description: Description by observableDescription(Description(""))
 
