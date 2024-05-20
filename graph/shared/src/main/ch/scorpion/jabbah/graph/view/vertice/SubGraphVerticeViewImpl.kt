@@ -412,6 +412,12 @@ class SubGraphVerticeViewImpl(
 		}
 	}
 
+	override fun allResolutionDone() {
+		super<AbstractVerticeView>.allResolutionDone()
+		// This causes connected EdgeViews to adjust their end locations, if necessary
+		update()
+	}
+
 	/** ---- [ConnectableView] */
 
 	override fun <G : Any> handleConnect(edgeView: EdgeView<G>, port: Port<G>?, geometry: EdgeViewConnectionGeometry) {
