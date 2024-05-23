@@ -1,7 +1,5 @@
-package ch.scorpion.jabbah.base
+package ch.scorpion.jabbah.base.math
 
-import ch.scorpion.jabbah.base.math.formatRounded
-import ch.scorpion.jabbah.base.math.near
 import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.test.BeforeTest
 import kotlin.test.Test
