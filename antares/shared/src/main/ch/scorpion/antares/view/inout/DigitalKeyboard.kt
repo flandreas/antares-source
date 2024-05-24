@@ -190,6 +190,7 @@ object DigitalKeyboard : ActorViewContainer<Drawable>(useLocation = true), Focus
 		digitButtons.forEachIndexed { index, button ->
 			button.enabled = when (target!!.signalRepresentation) {
 				DigitalSignalRepresentation.BINARY -> index < 2
+				DigitalSignalRepresentation.OCTAL -> index < 8
 				DigitalSignalRepresentation.DECIMAL -> index < 10
 				DigitalSignalRepresentation.HEXADECIMAL -> true
 				else -> false

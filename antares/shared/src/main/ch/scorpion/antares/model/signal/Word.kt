@@ -182,9 +182,14 @@ internal data class Word(
 		sb.toString()
 	}
 
+	override val octalString: String by lazy {
+		toLong()?.toString(8) ?:
+			if (isPartiallyUndefined) Bit.ALL_UNDEFINED_CHAR.toString() else Bit.ERROR_CHAR.toString()
+	}
+
 	override val decimalString: String by lazy {
 		toLong()?.toString() ?:
-		if (isPartiallyUndefined) Bit.ALL_UNDEFINED_CHAR.toString() else Bit.ERROR_CHAR.toString()
+			if (isPartiallyUndefined) Bit.ALL_UNDEFINED_CHAR.toString() else Bit.ERROR_CHAR.toString()
 	}
 
 	override val color: CompositeColor by lazy { DigitalSignalColor.ofSignal(this) }

@@ -20,6 +20,21 @@ enum class DigitalSignalRepresentation(override val customName: String) : EnumPr
 	    override fun withDigit(word: DigitalSignal, digitWord: DigitalSignal, index: Int): DigitalSignal = word.withSubwordValue(digitWord, index)
     },
 
+	OCTAL("octal") {
+		override val prefix: String get() = "0o"
+		override val base: Int get() = 8
+		override val suffix: String get() = "o"
+		override val bitCount: Int get() = 3
+		override val digitGroupSize: Int get() = 4
+		override fun digitCount(bitWidth: BitWidth): Int = ceil(bitWidth.width / 3.0).toInt()
+		override fun represent(signal: DigitalSignal, properties: Any?): String = trimLeadingZeros(signal.octalString)
+		override fun signalAt(signal: DigitalSignal, index: Int): DigitalSignal = signal.getSubword(BitWidth.of(bitCount), index)
+		override fun digitToWord(bitWidth: BitWidth, digit: Char): DigitalSignal? = BitOperation.octalDigitToWord(bitWidth, digit)
+		override fun withDigit(word: DigitalSignal, digitWord: DigitalSignal, index: Int): DigitalSignal? {
+			return word.withSubwordValue(digitWord, index)
+		}
+	},
+
 	DECIMAL("decimal") {
 		override val prefix: String get() = "0d"
 		override val base: Int get() = 10
@@ -126,6 +141,7 @@ enum class DigitalSignalRepresentation(override val customName: String) : EnumPr
     /** Returns the number of [Bit]s needed to represent a single digit.*/
     abstract val bitCount: Int
 
+	/** The number of digits in a group. Groups are separated by more space in UI visualizations.*/
     abstract val digitGroupSize: Int
 
     /** Returns the number of digits required to represent a signal of [bitWidth].*/
@@ -134,7 +150,7 @@ enum class DigitalSignalRepresentation(override val customName: String) : EnumPr
     /** Represents the specified [DigitalSignal] as a [String].*/
     abstract fun represent(signal: DigitalSignal, properties: Any? = null): String
 
-    /** Returns the sub-signal of a [DigitalSignal] at the specified digit index, where the least significant index is 0*/
+    /** Returns the sub-signal of a [DigitalSignal] at the specified digit index, where the least significant index is 0.*/
 	abstract fun signalAt(signal: DigitalSignal, index: Int): DigitalSignal
 
     /**
@@ -147,9 +163,10 @@ enum class DigitalSignalRepresentation(override val customName: String) : EnumPr
 	 * Creates a copy of [word] and sets the specified [digitWord] in the copy.
 	 *
 	 * @param word the [DigitalSignal] to be changed
-	 * @param digitWord the [DigitalSignal] to be set in the copy of this [DigitalSignal]
+	 * @param digitWord the [DigitalSignal] to be set in the copy of [word]
 	 * @param index the index of the replaced sub-word. For example, an 8-Bit word consists of
-	 * two sub-words with index 0 (bits 0..3) and index 1 (bits 4..7)
+	 * two sub-words with index 0 (bits 0..3) and index 1 (bits 4..7). The size of the sub-word is defined
+	 * by the bit count of [digitWord].
 	 * @return the copied and adjusted [DigitalSignal], or `null` if replacement was not possible
 	 */
 	abstract fun withDigit(word: DigitalSignal, digitWord: DigitalSignal, index: Int): DigitalSignal?
@@ -157,6 +174,7 @@ enum class DigitalSignalRepresentation(override val customName: String) : EnumPr
     override fun toString(): String {
         return when (this) {
             BINARY -> Translations.getString("element.property.DigitalSignalRepresentation.binary")
+            OCTAL -> Translations.getString("element.property.DigitalSignalRepresentation.octal")
             DECIMAL -> Translations.getString("element.property.DigitalSignalRepresentation.decimal")
             HEXADECIMAL -> Translations.getString("element.property.DigitalSignalRepresentation.hexadecimal")
             FIXED_POINT -> Translations.getString("element.property.DigitalSignalRepresentation.fixedPoint")

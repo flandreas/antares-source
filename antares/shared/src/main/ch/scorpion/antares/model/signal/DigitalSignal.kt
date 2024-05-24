@@ -21,6 +21,8 @@ interface DigitalSignal {
 
 	val binaryString: String
 
+	val octalString: String
+
 	val decimalString: String
 
 	val color: CompositeColor

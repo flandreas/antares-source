@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_2
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_3
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_4
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_5
+import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_6
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_8
 import ch.scorpion.antares.model.signal.DigitalSignalFactory.allOf
 import ch.scorpion.antares.model.signal.DigitalSignalFactory.of
@@ -37,6 +38,13 @@ class DigitalSignalRepresentationTest {
 		assertEquals(of(BW_1, 1L), BINARY.signalAt(of(BW_8, 255L), 7))
 		assertEquals(of(BW_1, 1L), BINARY.signalAt(of(BW_16, 256L), 8))
 		assertEquals(of(BW_1, 0L), BINARY.signalAt(of(BW_16, 256L), 0))
+	}
+
+	@Test
+	fun shouldRetrieveOctalSignalAt() {
+		assertEquals(of(BW_3, 0L), OCTAL.signalAt(of(BW_8, 0L), 0))
+		assertEquals(of(BW_3, 7L), OCTAL.signalAt(of(BW_8, 15L), 0))
+		assertEquals(of(BW_3, 1L), OCTAL.signalAt(of(BW_8, 15L), 1))
 	}
 
 	@Test
@@ -95,6 +103,11 @@ class DigitalSignalRepresentationTest {
 	fun shouldNotReplaceDecimalSubWordOutsideRange() {
 		// Value 923 cannot be represented with 8 bit, outside range of 255
 		assertNull(DECIMAL.withDigit(of(BW_8, 123L), of(BW_4, 9L), 2))
+	}
+
+	@Test
+	fun shouldReplaceOctalSubWord() {
+		assertEquals(of(BW_6, 23L), OCTAL.withDigit(of(BW_6, 15L), of(BW_3, 2L), 1))
 	}
 
 	@Test
