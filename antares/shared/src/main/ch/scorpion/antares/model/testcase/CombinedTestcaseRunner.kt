@@ -35,7 +35,7 @@ class CombinedTestcaseRunner(
 		var scriptResults: TestRunResult? = null
 
 		if (StringUtils.isBlank(testcase.testVectors.script)) {
-			return CombinedTestRunResult.error(testcase, Translations.getString("antares.testcase.error.empty"))
+			return CombinedTestRunResult.error(circuit, testcase, Translations.getString("antares.testcase.error.empty"))
 		}
 
 		try {
@@ -51,17 +51,17 @@ class CombinedTestcaseRunner(
 				scriptResults = testcaseScriptRunner!!.run()
 			}
 		} catch (e: SemanticError) {
-			return CombinedTestRunResult.error(testcase, e.message ?: "Error")
+			return CombinedTestRunResult.error(circuit, testcase, e.message ?: "Error")
 		} catch (e: SyntaxError) {
-			return CombinedTestRunResult.error(testcase, e.message ?: "Error")
+			return CombinedTestRunResult.error(circuit, testcase, e.message ?: "Error")
 		} catch (e: Throwable) {
 			LOG.error("Error while running test '${testcase.name.value}' for circuit '${circuit.name.value}'", e)
-			return CombinedTestRunResult.error(testcase, e.message ?: "Error")
+			return CombinedTestRunResult.error(circuit, testcase, e.message ?: "Error")
 		} finally {
 			testcaseCircuitRunner?.dispose()
 			testcaseScriptRunner?.dispose()
 		}
 
-		return CombinedTestRunResult(testcase, circuitResults, scriptResults)
+		return CombinedTestRunResult(circuit, testcase, circuitResults, scriptResults)
 	}
 }

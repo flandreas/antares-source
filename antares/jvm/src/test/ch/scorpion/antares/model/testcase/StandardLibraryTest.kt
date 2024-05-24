@@ -20,6 +20,13 @@ class StandardLibraryTest {
 	@Test
 	fun test() {
 		val results = TestcaseService.runAllLibraryTests(LibraryModule.libraryHolder.library)
+
+		results.forEach {
+			if (it.failed) {
+				println("Failed tests in '${it.source.name.value}' (UUID ${it.source.uuid.id})")
+			}
+		}
+
 		assertTrue(results.all { !it.failed })
 	}
 }
