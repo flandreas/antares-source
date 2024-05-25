@@ -182,6 +182,20 @@ object BitOperation {
 	    }
     }
 
+	fun octalDigitToWord(bitWidth: BitWidth, octal: Char): DigitalSignal? {
+		return when (octal.uppercaseChar()) {
+			Bit.ALL_UNDEFINED_CHAR -> DigitalSignalFactory.allOf(bitWidth, Undefined)
+			Bit.ERROR_CHAR -> DigitalSignalFactory.allOf(bitWidth, Error)
+			else -> {
+				val value = octal.code.toULong() - '0'.code.toULong()
+				if (value <= 7UL && value <= bitWidth.maxValue) {
+					return DigitalSignalFactory.of(bitWidth, value)
+				}
+				return null
+			}
+		}
+	}
+
 	fun decimalDigitToWord(bitWidth: BitWidth, decimal: Char): DigitalSignal? {
 		return when (decimal.uppercaseChar()) {
 			Bit.ALL_UNDEFINED_CHAR -> DigitalSignalFactory.allOf(bitWidth, Undefined)

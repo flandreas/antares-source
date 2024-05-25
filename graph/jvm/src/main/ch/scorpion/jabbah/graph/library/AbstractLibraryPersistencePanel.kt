@@ -57,7 +57,7 @@ abstract class AbstractLibraryPersistencePanel(
 			selectedLibrary?.let {
 				val fileChooser = JFileChooser()
 				fileChooser.dialogTitle = name
-				fileChooser.selectedFile = File("${RichText.stripToPlainText(it.name.value)}.${fileExtension}")
+				fileChooser.selectedFile = File("${RichText.stripToPlainText(it.name.value).replace("?", "")}.${fileExtension}")
 				fileChooser.fileFilter = createFileNameFilter()
 
 				if (fileChooser.showSaveDialog(this@AbstractLibraryPersistencePanel) == JFileChooser.APPROVE_OPTION) {

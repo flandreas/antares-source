@@ -256,7 +256,11 @@ class ClockView(
 				location = boundingBox.center,
 				unit = "µs",
 				mouseMovedCondition = { contains(it.x, it.y) },
-				valueChangeHandler = { model.propagationDelay = it * 1_000 }
+				valueChangeHandler = {
+					if (it < Long.MAX_VALUE / 1_000) {
+						model.propagationDelay = it * 1_000
+					}
+				}
 			)
 		}
 
@@ -272,7 +276,11 @@ class ClockView(
 				location = boundingBox.center,
 				unit = "µs",
 				mouseMovedCondition = { contains(it.x, it.y) },
-				valueChangeHandler = { model.propagationDelay = it * 1_000 }
+				valueChangeHandler = {
+					if (it < Long.MAX_VALUE / 1_000) {
+						model.propagationDelay = it * 1_000
+					}
+				}
 			)
 		}
 	}

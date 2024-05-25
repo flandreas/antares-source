@@ -27,6 +27,7 @@ import ch.scorpion.jabbah.edit.model.text.Alignment
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
@@ -141,6 +142,11 @@ class AnalogCircuitInOutView(
 		model.toggle(context.signalHandler)
 		requestFocus()
 		return null
+	}
+
+	override fun executionStarted(signalHandler: SignalHandler) {
+		super.executionStarted(signalHandler)
+		updateVoltageLabel()
 	}
 
 	/** ---- [AnalogCircuitInOutView] */

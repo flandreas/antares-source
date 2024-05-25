@@ -6,6 +6,8 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.ColorGradient
+import ch.scorpion.jabbah.draw.style.DrawTheme
+import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.graph.view.VerticeView
 
 /**
@@ -16,21 +18,80 @@ interface LightEmitter {
 	/** Defines the [LightColor] of the light emitted by this [LightEmitter].*/
 	var lightColor: LightColor
 }
+
+private val RED_ON = Color(255, 0, 0)
+private val YELLOW_ON = Color(255, 255, 0)
+private val GREEN_ON = Color(0, 255, 0)
+private val BLUE_ON = Color(0, 255, 255)
+private val ORANGE_ON = Color(253, 146, 71)
+private val WHITE_ON = Color.WHITE
+
+private const val STEPS = 100
+private const val OFF_LIGHT_AT = 25
+private const val OFF_DARK_AT = 8
+private const val EDIT_DARK_AT = 20
+private const val EDIT_LIGHT_ALPHA = 64
+
 /**
  * Enumerates the colors of [VerticeView]s that emit light.
  */
 enum class LightColor(
 	override val customName: String,
-	val onColor: Color,
-	val offColor: Color
+	private val onColorLight: Color,
+	private val offColorLight: Color,
+    private val editColorLight: Color = onColorLight.withAlpha(EDIT_LIGHT_ALPHA),
+    private val onColorDark: Color = onColorLight,
+    private val offColorDark: Color = offColorLight,
+    private val editColorDark: Color = offColorDark
 ) : EnumProperty<LightColor> {
 
-    RED("red", Color(255, 0, 0), Color(60, 0, 0)),
-    YELLOW("yellow", Color(255, 255, 0), Color(60, 47, 0)),
-    GREEN("green", Color(0, 255, 0), Color(0, 60, 0)),
-    BLUE("blue", Color(0, 255, 255), Color(0, 0, 60)),
-    ORANGE("orange", Color(253, 146, 71), Color(105, 2,5)),
-	WHITE("white", Color(255, 255, 255), Color(8, 8, 8));
+    RED(
+        "red",
+        onColorLight = RED_ON,
+        offColorLight = ColorGradient.calculateAt(Color.BLACK, RED_ON, STEPS, OFF_LIGHT_AT),
+        offColorDark = ColorGradient.calculateAt(Color.BLACK, RED_ON, STEPS, OFF_DARK_AT),
+        editColorDark = ColorGradient.calculateAt(Color.BLACK, RED_ON, STEPS, EDIT_DARK_AT),
+    ),
+
+    YELLOW(
+        "yellow",
+        onColorLight = YELLOW_ON,
+        offColorLight = ColorGradient.calculateAt(Color.BLACK, YELLOW_ON, STEPS, OFF_LIGHT_AT),
+        offColorDark = ColorGradient.calculateAt(Color.BLACK, YELLOW_ON, STEPS, OFF_DARK_AT),
+        editColorDark = ColorGradient.calculateAt(Color.BLACK, YELLOW_ON, STEPS, EDIT_DARK_AT),
+    ),
+
+    GREEN(
+        "green",
+        onColorLight = GREEN_ON,
+        offColorLight = ColorGradient.calculateAt(Color.BLACK, GREEN_ON, STEPS, OFF_LIGHT_AT),
+        offColorDark = ColorGradient.calculateAt(Color.BLACK, GREEN_ON, STEPS, OFF_DARK_AT),
+        editColorDark = ColorGradient.calculateAt(Color.BLACK, GREEN_ON, STEPS, EDIT_DARK_AT),
+    ),
+
+    BLUE(
+        "blue",
+        onColorLight = BLUE_ON,
+        offColorLight = ColorGradient.calculateAt(Color.BLACK, BLUE_ON, STEPS, OFF_LIGHT_AT),
+        offColorDark = ColorGradient.calculateAt(Color.BLACK, BLUE_ON, STEPS, OFF_DARK_AT),
+        editColorDark = Color(0, 0, 60),
+    ),
+
+    ORANGE(
+        "orange",
+        onColorLight = ORANGE_ON,
+        offColorLight = ColorGradient.calculateAt(Color.BLACK, ORANGE_ON, STEPS, OFF_LIGHT_AT),
+        offColorDark = ColorGradient.calculateAt(Color.BLACK, ORANGE_ON, STEPS, OFF_DARK_AT),
+        editColorDark = ColorGradient.calculateAt(Color.BLACK, ORANGE_ON, STEPS, EDIT_DARK_AT),
+    ),
+
+	WHITE(
+        "white",
+        onColorLight = WHITE_ON,
+        offColorLight = ColorGradient.calculateAt(Color.BLACK, WHITE_ON, STEPS, OFF_LIGHT_AT),
+        offColorDark = ColorGradient.calculateAt(Color.BLACK, WHITE_ON, STEPS, OFF_DARK_AT),
+        editColorDark = ColorGradient.calculateAt(Color.BLACK, WHITE_ON, STEPS, EDIT_DARK_AT),
+    );
 
     companion object {
 
@@ -38,7 +99,7 @@ enum class LightColor(
 	    const val PROP_DEFAULT_LIGHT_COLOR = "antares.view.output.defaultLightColor"
 
         fun withName(customName: String): LightColor {
-            for (c in values()) {
+            for (c in entries) {
                 if (c.customName == customName) {
                     return c
                 }
@@ -50,16 +111,26 @@ enum class LightColor(
 		    withName(properties.getString(PROP_DEFAULT_LIGHT_COLOR))
     }
 
-	val gradient = ColorGradient(offColor, onColor)
+    val onColor: Color get() = if (Themes.get<DrawTheme>().dark) onColorDark else onColorLight
 
-    override fun toString(): String {
-        return when(this) {
+    val offColor: Color get() = if (Themes.get<DrawTheme>().dark) offColorDark else offColorLight
+
+    /** The [Color] to be used in edit mode.*/
+    val editColor: Color get() = if (Themes.get<DrawTheme>().dark) editColorDark else editColorLight
+
+    /** The [Color] to be used in execution mode.*/
+    fun executeColor(isOn: Boolean): Color = if (isOn) onColor else offColor
+
+    /** A [ColorGradient] from [offColor] to [onColor].*/
+	val gradient by lazy { ColorGradient(offColor, onColor) }
+
+    override fun toString(): String =
+        when(this) {
             RED -> Translations.getString("element.color.red")
             YELLOW -> Translations.getString("element.color.yellow")
             GREEN -> Translations.getString("element.color.green")
             BLUE -> Translations.getString("element.color.blue")
-	        ORANGE -> Translations.getString("element.color.orange")
-	        WHITE -> Translations.getString("element.color.white")
+            ORANGE -> Translations.getString("element.color.orange")
+            WHITE -> Translations.getString("element.color.white")
         }
-    }
 }

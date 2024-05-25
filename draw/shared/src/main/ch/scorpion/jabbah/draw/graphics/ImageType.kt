@@ -3,12 +3,13 @@ package ch.scorpion.jabbah.draw.graphics
 enum class ImageType(
     val customName: String,
     val fileExtension: String,
+    val mimeType: String,
     val isRaster: Boolean
 ) {
-    SVG("SVG", "svg", false),
-    JPG("JPG", "jpg", true),
-    GIF("GIF", "gif", true),
-    PNG("PNG", "png", true);
+    SVG("SVG", "svg", "image/svg+xml", false),
+    JPG("JPG", "jpg", "image/jpeg",true),
+    GIF("GIF", "gif", "image/gif", true),
+    PNG("PNG", "png", "image/png", true);
 
     companion object {
 
@@ -22,5 +23,8 @@ enum class ImageType(
 
         fun withExtension(extension: String): ImageType? =
             entries.firstOrNull { it.fileExtension == extension.lowercase() }
+
+        fun withMimeType(mimeType: String): ImageType? =
+            entries.firstOrNull { it.mimeType == mimeType }
     }
 }

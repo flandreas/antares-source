@@ -94,6 +94,8 @@ class DefinedWord(
 
 	override val binaryString: String by lazy { BitOperation.longToBinaryPadded(longValue, bitWidth) }
 
+	override val octalString: String by lazy { longValue.toString(8) }
+
 	override val decimalString: String by lazy { longValue.toString() }
 
 	override val color: CompositeColor by lazy { DigitalSignalColor.ofSignal(this) }

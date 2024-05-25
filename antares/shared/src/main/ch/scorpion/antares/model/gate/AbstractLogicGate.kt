@@ -10,6 +10,8 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.truthtable.TruthTableModel
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.*
@@ -33,7 +35,14 @@ abstract class AbstractLogicGate(
 
     companion object {
         val LOG by logger(AbstractLogicGate::class)
-	    const val DEFAULT_PROPAGATION_DELAY = 20L
+
+		/** The name of the [Long] property in [Properties] for the default gate propagation delay. */
+		const val PROP_DEFAULT_PROPAGATION_DELAY = "antares.model.gate.defaultPropagationDelay"
+
+	    val DEFAULT_PROPAGATION_DELAY by lazy {
+			BaseModule.properties.getInt(PROP_DEFAULT_PROPAGATION_DELAY).toLong()
+		}
+
         val DEF_MIN_INPUT_COUNT = PortCount.TWO
         val DEF_MAX_INPUT_COUNT = PortCount.EIGHT
     }

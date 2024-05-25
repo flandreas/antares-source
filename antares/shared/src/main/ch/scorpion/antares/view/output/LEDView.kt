@@ -12,7 +12,6 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.DrawTheme
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
-import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.ControlViewSourceProperty
@@ -68,7 +67,6 @@ class LEDView(
 
     override val iconPath: String get() = BaseModule.properties.getString(PROP_ICON_PATH)
 
-
     /** ---- [Storable] interface */
 
     override fun write(writer: StoreWriter) {
@@ -81,25 +79,18 @@ class LEDView(
         lightColor = LightColor.withName(reader.readString("lightColor"))
     }
 
-    /** ---- [LEDView] */
+    /** ---- [AbstractLEDView] */
 
-    override fun getBulbColor(): Color {
-        if (model.isOn) {
-            return lightColor.onColor
+    override fun getBulbExecuteColor(): Color = lightColor.executeColor(model.isOn)
+
+    override fun getBulbEditColor(): Color = lightColor.editColor
+
+    override fun drawBulbEdited(context: DrawContext) {
+        if (!Themes.get<DrawTheme>().dark) {
+            // Special case: Blend the edit color with its alpha into the circuit's light background color
+            // to give it a pastell-like look
+            drawBulb(context, transparent.applyTo(Themes.get<AntaresTheme>().background.color.backgroundColor))
         }
-        return lightColor.offColor
+        super.drawBulbEdited(context)
     }
-
-	override fun drawBulb(context: DrawContext) {
-		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-			super.drawBulb(context)
-		} else {
-			drawBulb(context, transparent.applyTo(Themes.get<AntaresTheme>().background.color.backgroundColor))
-			if (Themes.get<DrawTheme>().dark) {
-				drawBulb(context, transparent.applyTo(lightColor.offColor))
-			} else {
-				drawBulb(context, transparent.applyTo(lightColor.onColor.withAlpha(64)))
-			}
-		}
-	}
 }

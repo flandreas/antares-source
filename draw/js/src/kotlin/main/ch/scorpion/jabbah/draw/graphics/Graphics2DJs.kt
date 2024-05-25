@@ -298,8 +298,10 @@ class Graphics2DJs(
 	}
 
 	override fun drawImage(image: Image, x: Int, y: Int) {
-		// TODO Implement properly
-		//ctx.drawImage(image.path, x.toDouble(), y.toDouble())
+		when (image) {
+			is EmbeddedImageJs -> ctx.drawImage(image.image, x.toDouble(), y.toDouble())
+			else -> throw IllegalArgumentException("unsupported image type ${image::class.simpleName}")
+		}
 	}
 
 	/** ---- [Graphics2DJs] */

@@ -32,8 +32,8 @@ fun observableName(initialValue: Name, handler: (Name) -> Unit = {}): ReadWriteP
 		override fun setValue(thisRef: Any?, property: KProperty<*>, value: Name) {
 			val oldValue = getValue(thisRef, property)
 			super.setValue(thisRef, property, value)
-			BaseModule.eventBus.post(NameChangedEvent(thisRef as Namable, value, oldValue))
 			handler(value)
+			BaseModule.eventBus.post(NameChangedEvent(thisRef as Namable, value, oldValue))
 		}
 	}
 

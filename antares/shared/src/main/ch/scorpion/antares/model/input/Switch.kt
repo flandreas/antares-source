@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
+import ch.scorpion.jabbah.graph.model.vertice.InteractableVertice
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -49,6 +50,7 @@ class Switch : AbstractSwitch<Switch>(CALCULATOR) {
 	override val typeDesc: String? get() = TYPE_DESC
 
 	/** ---- [AbstractSwitch] */
+
 	override fun on(signalHandler: SignalHandler) {
 		switchedOnAt = signalHandler.executionTime
 		super.on(signalHandler)
@@ -62,6 +64,10 @@ class Switch : AbstractSwitch<Switch>(CALCULATOR) {
 			super.off(signalHandler)
 		}
 	}
+
+	/** ---- [InteractableVertice] interface */
+
+	override val interactivePropagationDelay: Long get() = propagationDelay
 
 	/** ---- [Storable] interface */
 

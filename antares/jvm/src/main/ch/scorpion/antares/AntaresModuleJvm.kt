@@ -3,6 +3,7 @@ package ch.scorpion.antares
 import ch.scorpion.antares.hdl.vhdl.ExportVHDLPanel
 import ch.scorpion.antares.model.*
 import ch.scorpion.antares.model.expression.BooleanExpressionNotation
+import ch.scorpion.antares.model.gate.AbstractLogicGate
 import ch.scorpion.antares.model.gate.UndefinedGateInputBehavior
 import ch.scorpion.antares.model.input.Switch
 import ch.scorpion.antares.model.net.*
@@ -350,6 +351,14 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 	private fun buildDigitalPreferenceTree(): PreferenceGroup =
 		PreferenceGroup(PREF_TREE_CIRCUIT_DIGITAL).apply {
 			add(buildDigitalExpressionsPreferenceTree())
+
+			add(IntPreference(
+				id = AbstractLogicGate.PROP_DEFAULT_PROPAGATION_DELAY,
+				nameKey = "antares.preference.defaultPropagationDelay",
+				minValue = 1,
+				maxValue = 1_000_000,
+				needsRestart = true
+			))
 
 			add(EnumPreference(
 				id = UndefinedGateInputBehavior.PROP_UNDEFINED_GATE_INPUT_BEHAVIOR,

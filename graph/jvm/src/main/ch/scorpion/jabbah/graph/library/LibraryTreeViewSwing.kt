@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.*
+import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.base.swing.JTreeUtil.findTreeNode
@@ -245,7 +246,9 @@ class LibraryTreeViewSwing(
 	private fun openSelectedItem() {
 		if (controller.selectedItem is LibraryItem) {
 			if (!controller.isCurrentItem(controller.selectedItem as LibraryItem)) {
-				(controller.selectedItem as LibraryItem).open(controller.eventBus)
+				InvocationHandler.invoke {
+					(controller.selectedItem as LibraryItem).open(controller.eventBus)
+				}
 			}
 		}
 	}

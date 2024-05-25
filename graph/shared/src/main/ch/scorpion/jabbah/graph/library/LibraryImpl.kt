@@ -120,15 +120,20 @@ open class LibraryImpl(
 
 	/** ---- [ImageRepository] */
 
+	private val imageCache by lazy { mutableMapOf<UUID, ImageData?>() }
+
 	override fun getImage(uuid: UUID): ImageData? {
-		val element = findImageLibraryElementFor(uuid)
-		if (element != null) {
-			return ImageData(
-				element.library!!.libraryService.getImage(this, element),
-				element.name
-			)
+		return imageCache.getOrPut(uuid) {
+			val element = findImageLibraryElementFor(uuid)
+			if (element != null) {
+				ImageData(
+					element.library!!.libraryService.getImage(this, element),
+					element.name
+				)
+			} else {
+				null
+			}
 		}
-		return null
 	}
 
 	override fun getAllImageIds(): List<ImageIdentification> {
@@ -428,6 +433,14 @@ open class LibraryImpl(
 	private class ImageFinder(private val uuid: UUID) : EmptyHierarchyVisitor() {
 
 		var result: ImageLibraryElement? = null
+
+		override fun visitEnter(node: Any): Boolean {
+			if (node is ContainerLibraryElement) {
+				// don't dive into already instantiated MetaGraphs
+				return false
+			}
+			return super.visitEnter(node)
+		}
 
 		override fun visit(node: Any): Boolean {
 			if (node is ImageLibraryElement && node.imageId.uuid == uuid) {

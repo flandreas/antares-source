@@ -7,7 +7,9 @@ import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.DataLocation
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.edit.module.EditModuleJs
+import ch.scorpion.jabbah.graph.draw.ImageLoaderJs
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.library.dictionary.Akrab2RestLibraryDictionaryPersistenceService
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
@@ -28,6 +30,11 @@ object AntaresModuleJs : AbstractModule() {
 
         val akrabUrl = BaseModule.properties.getString(DataLocation.PROP_SERVER_URL)
 
+        // TODO Initialize RasterImageFactory as well.
+        // Required by Components that build Images programmatically, such as VideoRamView.
+
+        DrawModule.imageLoader = ImageLoaderJs()
+
         LibraryModule.systemLibraryPersistenceService = Akrab2RestSystemLibraryPersistenceServiceJs(akrabUrl)
         LibraryModule.libraryFactory = AntaresLibraryFactory()
         LibraryModule.libraryService = LibraryService()
@@ -45,9 +52,6 @@ object AntaresModuleJs : AbstractModule() {
         ProjectModule.projectManagementService = ProjectManagementService(
             newMetaGraphNameTranslationKey = "graph.name.unknown")
 
-
-        // This was used for React icons. Not needed any more.
-        //registerAntaresIconsInProvider()
 
         loadTranslations()
     }

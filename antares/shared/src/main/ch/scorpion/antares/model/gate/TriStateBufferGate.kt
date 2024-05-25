@@ -66,7 +66,7 @@ open class TriStateBufferGate(
 	}
 
     init {
-        propagationDelay = 20
+        propagationDelay = AbstractLogicGate.DEFAULT_PROPAGATION_DELAY
 
         addPort(DigitalPortImpl.createInput(Logic.POSITIVE, null, bitWidth))
         addPort(DigitalPortImpl.createInput(enableLogic, ENABLE_PORT_NAME, BitWidth.BW_1))

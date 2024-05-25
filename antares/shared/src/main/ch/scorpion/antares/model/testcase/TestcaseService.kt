@@ -5,7 +5,7 @@ import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.graph.model.param.GraphParamValues
@@ -35,6 +35,7 @@ object TestcaseService {
 		// Clone circuit to avoid interference from various objects of the main application,
 		// such as GraphViewExecutionAnimator that listen on Actors of the main circuit
 		val clone = StorableCloner.clone(circuit)
+		clone.name = Name(circuit.name.translation)
 
 		try {
 			// Setup parameter values (generics)
@@ -52,7 +53,7 @@ object TestcaseService {
 			val results = mutableListOf<CombinedTestRunResult>()
 			for (testcase in testcases) {
 				if (testcase.ignored) {
-					results.add(CombinedTestRunResult.ignored(testcase))
+					results.add(CombinedTestRunResult.ignored(circuit, testcase))
 				} else {
 					results.add(CombinedTestcaseRunner(testcase, clone, execScriptAST) {
 						(metaGraph.containerDrawing.getPortViewComponent(it)?.port as DigitalPort?)?.logic
