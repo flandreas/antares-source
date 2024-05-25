@@ -79,7 +79,7 @@ object GraphModelModule : AbstractModule() {
 	}
 
 	private fun registerGraphParamTypes() {
-		GraphParamTypeRegistry.register(LongGraphParamType.name) { LongGraphParamType }
+		GraphParamTypeRegistry.register(LongValueGraphParamType.name) { LongValueGraphParamType }
 		GraphParamTypeRegistry.register(StringGraphParamType.name) { StringGraphParamType }
 	}
 

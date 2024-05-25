@@ -29,6 +29,7 @@ import ch.scorpion.jabbah.graph.model.param.LongGraphParamType
 import ch.scorpion.jabbah.graph.model.param.StringGraphParamType
 import ch.scorpion.jabbah.graph.model.param.*
 import ch.scorpion.jabbah.graph.model.port.InconsistentNetError
+import ch.scorpion.jabbah.graph.model.value.LongValue
 import ch.scorpion.jabbah.graph.project.ProjectAkrabClientServiceJvm
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
@@ -90,9 +91,36 @@ object GraphModuleJvm : AbstractModule() {
 				graph = (it.editor!!.drawing as GraphView).graph!!
 			)
 		}
+		registry.register(LongValue::class.java) { prop ->
+			LongValueEditor(
+				propertyName = prop.displayName,
+				editable = (prop as LongValuePropertySwing).editable,
+				graphEditor = prop.editor,
+				errorCallback = { prop.dslError = it },
+				prop.filter
+			)
+		}
 	}
 
 	private fun configureGraphParamValueProperties() {
+		GraphParamValuePropertyFactoryRegistry.register(
+			LongValueGraphParamType,
+			object : GraphParamValuePropertyFactory {
+				override fun create(
+					def: GraphParamDefinition<*>,
+					editor: Editor,
+					beanProvider: BeanProvider
+				): AbstractReflectionPropertySwing<*> {
+					return LongValueParamValuePropertySwing(
+						paramDefinition = def as GraphParamDefinition<LongValue>,
+						propertyName = "LongValue", // only used for logging
+						baseKey ="graph.paramDefs.genericParameter",
+						beanProvider
+					)
+				}
+			}
+		)
+
 		GraphParamValuePropertyFactoryRegistry.register(
 			StringGraphParamType,
 			object : GraphParamValuePropertyFactory {
@@ -137,7 +165,7 @@ object GraphModuleJvm : AbstractModule() {
 	}
 
 	private fun configureGraphParamValueEditors() {
-		GraphParamValueEditorRegistry.register(LongGraphParamType) { LongGraphParamValueEditor() }
+		GraphParamValueEditorRegistry.register(LongValueGraphParamType) { LongValueGraphParamValueEditor() }
 		GraphParamValueEditorRegistry.register(StringGraphParamType) { StringGraphParamValueEditor() }
 	}
 

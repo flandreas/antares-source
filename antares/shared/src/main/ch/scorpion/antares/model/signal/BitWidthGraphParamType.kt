@@ -78,7 +78,7 @@ object BitWidthGraphParamType : GraphParamType<BitWidth> {
 					Translations.getString("antares.dsl.bitWidthResolution.msg", StringUtils.limit(expression, 10)))
 			}
 		} else {
-			throw DslError(TextLocation.UNDEFINED, "Expecting Long as value of BitWidth")
+			throw DslError(TextLocation.UNDEFINED, "Expecting Long as value of BitWidth expression")
 		}
 	}
 }

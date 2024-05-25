@@ -85,16 +85,16 @@ class BitWidthEditor(
 	filter: (BitWidth) -> Boolean = { _ -> true }
 ) : AbstractPropertyEditor() {
 
+	companion object {
+		private val LOG by logger(BitWidthEditor::class)
+	}
+
 	private val comboBoxEditor = ComboBoxPropertyEditor()
 	private val button = JButton()
 	private val comboBox: JComboBox<BitWidth> get() = comboBoxEditor.customEditor as JComboBox<BitWidth>
 
 	private val graph = (graphEditor?.drawing as GraphView?)?.graph
 	private val parserFactory = if (graph != null) graph::createParser else null
-
-	companion object {
-		private val LOG by logger(BitWidthEditor::class)
-	}
 
 	init {
 		comboBox.renderer = ToStringRenderer<BitWidth>()
@@ -188,8 +188,8 @@ class BitWidthEditor(
 			editable = editable,
 			propertyName = propertyName,
 			parserFactory = parserFactory!!
-		) ?.let {
-			// The script is evaluated when the editor losses focus
+		)?.let {
+			// The script is evaluated when the editor loses focus
 			comboBox.editor.item = BitWidthExpression(it)
 		}
 	}

@@ -78,7 +78,7 @@ abstract class AbstractGraphElementView<T : GraphElement>(
 			val modelId = reader.readInt(STORABLE_MODEL_ID)
 			if (modelId >= 0) {
 				// There are Storables like ControlView wrapped in ControlViewComponent that don't have
-				// a model at design time. The are linked to there Model when execution is started.
+				// a model at design time. They are linked to their Model when execution is started.
 				reader.requestResolution(this, Reference(
 					name = STORABLE_MODEL_ID,
 					referenceId = modelId,
