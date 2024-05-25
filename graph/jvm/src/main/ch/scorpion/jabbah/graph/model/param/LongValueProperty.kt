@@ -12,10 +12,9 @@ import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.edit.properties.ScriptPropertyPanel
 import ch.scorpion.jabbah.edit.properties.TextPropertyEditor
-import ch.scorpion.jabbah.graph.model.value.LongValue
-import ch.scorpion.jabbah.graph.model.value.LongValueExpression
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
+import ch.scorpion.jabbah.base.LongValue
 import com.l2fprod.common.beans.editor.AbstractPropertyEditor
 import java.awt.BorderLayout
 import java.awt.Component

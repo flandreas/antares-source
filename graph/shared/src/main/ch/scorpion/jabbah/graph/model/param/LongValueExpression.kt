@@ -1,16 +1,18 @@
-package ch.scorpion.jabbah.graph.model.value
+package ch.scorpion.jabbah.graph.model.param
 
 import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.model.param.GraphParamValues
-import ch.scorpion.jabbah.graph.model.param.LongValueGraphParamType
+import ch.scorpion.jabbah.base.LongValue
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
-interface LongValue {
+data class LongValueExpression(
+    var expression: String,
+    var longValue: LongValue = LongValueImpl(0)
+) : LongValue {
 
     companion object {
-
         fun read(name: String, reader: StoreReader): LongValue {
             val value = reader.readString(name)
             val number = value.toLongOrNull()
@@ -18,30 +20,9 @@ interface LongValue {
         }
     }
 
-    val value: Long
-
-    fun write(name: String, writer: StoreWriter)
-}
-
-class LongValueImpl(
-    override val value: Long
-) : LongValue {
-
-    override fun write(name: String, writer: StoreWriter) {
-        writer.writeLong(name, value)
-    }
-
-    override fun toString(): String = value.toString()
-}
-
-data class LongValueExpression(
-    var expression: String,
-    var longValue: LongValue = LongValueImpl(0)
-) : LongValue {
-
     override val value: Long get() = longValue.value
 
-    override fun write(name: String, writer: StoreWriter) {
+    fun write(name: String, writer: StoreWriter) {
         writer.writeString(name, expression)
     }
 

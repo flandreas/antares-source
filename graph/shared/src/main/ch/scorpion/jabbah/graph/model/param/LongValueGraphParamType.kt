@@ -7,9 +7,8 @@ import ch.scorpion.jabbah.base.dsl.Memory
 import ch.scorpion.jabbah.base.parser.TextLocation
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.graph.GraphActivationRecord
-import ch.scorpion.jabbah.graph.model.value.LongValue
-import ch.scorpion.jabbah.graph.model.value.LongValueExpression
-import ch.scorpion.jabbah.graph.model.value.LongValueImpl
+import ch.scorpion.jabbah.base.LongValue
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import kotlin.reflect.KClass
@@ -24,10 +23,13 @@ object LongValueGraphParamType : GraphParamType<LongValue> {
 
     override fun toString(): String = displayableName
 
-    override fun readValue(name: String, reader: StoreReader): LongValue = LongValue.read(name, reader)
+    override fun readValue(name: String, reader: StoreReader): LongValue = LongValueExpression.read(name, reader)
 
     override fun writeValue(name: String, value: LongValue, writer: StoreWriter) {
-        value.write(name, writer)
+        when (value) {
+            is LongValueExpression -> value.write(name, writer)
+            else -> writer.writeLong(name, value.value)
+        }
     }
 
     override fun evaluateIn(graph: Graph, value: LongValue): LongValue =

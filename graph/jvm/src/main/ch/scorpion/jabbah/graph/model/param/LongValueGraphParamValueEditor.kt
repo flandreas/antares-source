@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.graph.model.param
 
-import ch.scorpion.jabbah.graph.model.value.LongValue
-import ch.scorpion.jabbah.graph.model.value.LongValueImpl
+import ch.scorpion.jabbah.base.LongValue
+import ch.scorpion.jabbah.base.LongValueImpl
 import java.text.DecimalFormat
 import javax.swing.JComponent
 import javax.swing.JFormattedTextField

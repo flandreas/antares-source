@@ -29,11 +29,11 @@ import ch.scorpion.jabbah.graph.model.param.LongGraphParamType
 import ch.scorpion.jabbah.graph.model.param.StringGraphParamType
 import ch.scorpion.jabbah.graph.model.param.*
 import ch.scorpion.jabbah.graph.model.port.InconsistentNetError
-import ch.scorpion.jabbah.graph.model.value.LongValue
 import ch.scorpion.jabbah.graph.project.ProjectAkrabClientServiceJvm
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
 import ch.scorpion.jabbah.graph.view.net.edge.OrthoEdgeViewLayouter
+import ch.scorpion.jabbah.base.LongValue
 import java.net.URL
 
 /**
