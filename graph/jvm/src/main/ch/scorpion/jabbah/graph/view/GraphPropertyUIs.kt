@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.graph.library.LibraryVisibility
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoriesType
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
+import ch.scorpion.jabbah.graph.model.param.LongValuePropertySwing
 import ch.scorpion.jabbah.graph.view.net.edge.LayoutType
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
@@ -27,8 +28,8 @@ object GraphProperties {
 		beanProvider: BeanProvider = componentBeanProvider
 	): CommandPropertySwing<Int> = CommandPropertySwing(name, baseKey, Int::class.java, beanProvider)
 
-	fun propagationDelay(name: String = "propagationDelay", beanProvider: BeanProvider = componentBeanProvider): CommandPropertySwing<Long> =
-		CommandPropertySwing(name, AbstractGraphElementView.BASE_KEY_PROPAGATION_DELAY, Long::class.java, beanProvider)
+	fun propagationDelay(name: String = "propagationDelay", beanProvider: BeanProvider = componentBeanProvider): LongValuePropertySwing =
+		LongValuePropertySwing(name, AbstractGraphElementView.BASE_KEY_PROPAGATION_DELAY, beanProvider)
 
 	fun startupTime(beanProvider: BeanProvider = drawingBeanProvider): CommandPropertySwing<Long> =
 		CommandPropertySwing("graph.startupTime", "graph.property.startupTime", Long::class.java, beanProvider)

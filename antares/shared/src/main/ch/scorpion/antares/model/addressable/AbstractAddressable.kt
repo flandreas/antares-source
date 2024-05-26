@@ -52,7 +52,7 @@ abstract class AbstractAddressable<T : Addressable>(
 		memory.write(address, value)
 		update()
 		notifyDataChanged(address, oldValue, value)
-		signalHandler?.requestActingAfter(this, propagationDelay, createActorData(null))
+		signalHandler?.requestActingAfter(this, propagationDelay.value, createActorData(null))
 	}
 
 	override fun commentAt(address: Int): String? = memory.readComment(address)

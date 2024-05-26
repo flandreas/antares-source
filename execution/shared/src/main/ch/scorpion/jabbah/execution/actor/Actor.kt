@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.execution.actor
 
+import ch.scorpion.jabbah.base.LongValue
 import ch.scorpion.jabbah.execution.ExecutionError
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
@@ -31,7 +32,7 @@ interface Actor {
 	 * Returns the propagation delay (in nanoseconds), i.e. the time this [Actor] requires to recalculate
 	 * its new state after its prerequisites have changed.
 	 */
-	var propagationDelay: Long
+	var propagationDelay: LongValue
 
 	/**
 	 * Decides whether this [Actor] acts as breakpoint when [Scheduler] performs a stepwise execution.

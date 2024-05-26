@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.execution.actor
 
+import ch.scorpion.jabbah.base.LongValue
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.execution.ExecutionError
 import ch.scorpion.jabbah.execution.SignalHandler
 
@@ -18,9 +20,9 @@ open class ActorImpl(
 
     /** ---- [Actor] interface */
 
-    override var propagationDelay: Long = propagationDelay
+    override var propagationDelay: LongValue = LongValueImpl(propagationDelay)
         set(value) {
-            require(value >= 0) { "Propagation delay must be greater than 0" }
+            require(value.value >= 0) { "Propagation delay must be greater than 0" }
             field = value
         }
 

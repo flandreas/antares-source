@@ -18,12 +18,6 @@ import kotlin.test.assertEquals
 
 class BitWidthExpressionIntegrationTest : AbstractJvmCircuitTest() {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	private lateinit var circuitView: GraphView
 	private val library get() = LibraryModule.libraryHolder.library
 	private lateinit var subGraphVV: SubGraphVerticeViewImpl

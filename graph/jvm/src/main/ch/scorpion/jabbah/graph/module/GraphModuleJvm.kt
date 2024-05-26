@@ -34,6 +34,7 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
 import ch.scorpion.jabbah.graph.view.net.edge.OrthoEdgeViewLayouter
 import ch.scorpion.jabbah.base.LongValue
+import ch.scorpion.jabbah.base.swing.ToStringRenderer
 import java.net.URL
 
 /**
@@ -81,6 +82,7 @@ object GraphModuleJvm : AbstractModule() {
 
 	private fun configurePropertyRenderer(registry: DynamicPropertyRendererRegistry) {
 		registry.register(GraphParamDefinitions::class.java) { GraphParamDefinitionsPropertyRenderer() }
+		registry.registerRenderer(LongValue::class.java, ToStringRenderer::class.java)
 	}
 
 	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {

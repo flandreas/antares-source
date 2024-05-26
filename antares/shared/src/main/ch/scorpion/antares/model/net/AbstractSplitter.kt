@@ -2,6 +2,7 @@ package ch.scorpion.antares.model.net
 
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.*
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.graph.model.*
@@ -37,12 +38,13 @@ abstract class AbstractSplitter(
 	abstract val narrowSideBitWidth: BitWidth
 
 	init {
-		propagationDelay = 0
+		propagationDelay = LongValueImpl.ZERO
 	}
 
 	/** ---- [GraphElement] */
 
 	override fun graphParamsChanged(graph: Graph) {
+		super.graphParamsChanged(graph)
 		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
 	}
 

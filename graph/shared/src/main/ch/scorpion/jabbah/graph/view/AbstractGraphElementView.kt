@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view
 
+import ch.scorpion.jabbah.base.LongValue
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.Component
@@ -55,7 +56,7 @@ abstract class AbstractGraphElementView<T : GraphElement>(
 	val modelId: Int
 		get() = model.id
 
-	var propagationDelay: Long
+	var propagationDelay: LongValue
 		get() = model.propagationDelay
 		set(value) {
 			model.propagationDelay = value

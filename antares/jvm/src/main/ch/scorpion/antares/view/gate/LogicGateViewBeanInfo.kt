@@ -23,7 +23,7 @@ class LogicGateViewBeanInfo  : BoxGateViewBeanInfo<LogicGateView>() {
 		private val negateInput = Array(8) { portId ->
 			CommandPropertySwing(
 				"negateInput${portId + 1}",
-				"${LogicGateView.BASE_KEY_NEGATE_INPUT}",
+				LogicGateView.BASE_KEY_NEGATE_INPUT,
 				Boolean::class.java,
 				componentBeanProvider,
 				baseKeyParams = arrayOf(portId + 1)
@@ -33,7 +33,7 @@ class LogicGateViewBeanInfo  : BoxGateViewBeanInfo<LogicGateView>() {
 		private val inputPortName = Array(8) { portId ->
 			CommandPropertySwing(
 				"inputPortName${portId + 1}",
-				"${LogicGateView.BASE_KEY_INPUT_PORT_NAME}",
+				LogicGateView.BASE_KEY_INPUT_PORT_NAME,
 				String::class.java,
 				componentBeanProvider,
 				baseKeyParams = arrayOf(portId + 1)

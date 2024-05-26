@@ -56,6 +56,6 @@ class GraphInputImpl<T: Any>(
 
     override fun setIncomingSignal(signal: T?, signalHandler: SignalHandler, force: Boolean) {
 	    this.signal = signal
-    	requestActingAfter(signalHandler, propagationDelay, StoringGraphActorData(null, signal, force = force))
+    	requestActingAfter(signalHandler, propagationDelay.value, StoringGraphActorData(null, signal, force = force))
     }
 }

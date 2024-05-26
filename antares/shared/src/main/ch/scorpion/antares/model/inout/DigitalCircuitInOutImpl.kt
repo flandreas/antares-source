@@ -57,6 +57,7 @@ class DigitalCircuitInOutImpl(
 	/** ---- [GraphElement] */
 
 	override fun graphParamsChanged(graph: Graph) {
+		super.graphParamsChanged(graph)
 		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
 	}
 
@@ -69,7 +70,7 @@ class DigitalCircuitInOutImpl(
 	/** ---- [GraphInput] interface */
 
 	override fun setIncomingSignal(signal: DigitalSignal?, signalHandler: SignalHandler, force: Boolean) {
-		setIncomingSignal(signal, signalHandler, propagationDelay, force)
+		setIncomingSignal(signal, signalHandler, propagationDelay.value, force)
 	}
 
 	override fun outputChanged(output: OutputPort<*>, signalHandler: SignalHandler) {
@@ -121,7 +122,7 @@ class DigitalCircuitInOutImpl(
 
 	/** ---- [InteractableVertice] interface */
 
-	override val interactivePropagationDelay: Long get() = Switch.DEF_PROP_DELAY
+	override val interactivePropagationDelay: Long get() = Switch.DEF_PROP_DELAY.value
 
 	/** ---- [Vertice] */
 
@@ -147,7 +148,7 @@ class DigitalCircuitInOutImpl(
 
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
-		requestActingAfter(signalHandler, propagationDelay, StoringGraphActorData(null, signal))
+		requestActingAfter(signalHandler, propagationDelay.value, StoringGraphActorData(null, signal))
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {
@@ -159,7 +160,7 @@ class DigitalCircuitInOutImpl(
 		super.act(signalHandler, data)
 
 		if (portType.isOutput && subGraphOutputPort != null) {
-			if ((data as GraphActorData).changedPort != null || signalHandler.executionTime == propagationDelay) {
+			if ((data as GraphActorData).changedPort != null || signalHandler.executionTime == propagationDelay.value) {
 				// Send signal to outside only if it came from inside
 				subGraphOutputPort?.flush(signalHandler, data.force)
 			}
@@ -251,7 +252,7 @@ class DigitalCircuitInOutImpl(
 		this.signal = signal
 		stateChanged(signalHandler)
 
-		if (signalHandler.executionTime == propagationDelay) {
+		if (signalHandler.executionTime == propagationDelay.value) {
 			// start-up
 			if (portType.isOutput) {
 				propagateToSubGraphOutputPort(signal, signalHandler)

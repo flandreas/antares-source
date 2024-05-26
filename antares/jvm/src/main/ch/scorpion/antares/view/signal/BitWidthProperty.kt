@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.edit.properties.ScriptPropertyPanel
 import ch.scorpion.jabbah.edit.properties.TextPropertyEditor
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
+import ch.scorpion.jabbah.graph.model.param.GraphParamType
 import ch.scorpion.jabbah.graph.model.param.GraphParamValueCommand
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
@@ -138,7 +139,7 @@ class BitWidthEditor(
 			}
 			is BitWidthExpression -> {
 				LOG.trace("The user has entered an expression using the dialog")
-				parseExpression("=${value.expression}")
+				parseExpression("${GraphParamType.EXPRESSION_OP}${value.expression}")
 			}
 			is BitWidth -> {
 				LOG.trace("Returning directly BitWidth")

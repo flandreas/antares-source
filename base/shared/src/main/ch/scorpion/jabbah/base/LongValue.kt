@@ -14,5 +14,10 @@ class LongValueImpl(
     override val value: Long
 ) : LongValue {
 
+    companion object {
+        val ZERO = LongValueImpl(0L)
+        val ONE = LongValueImpl(1L)
+    }
+
     override fun toString(): String = value.toString()
 }

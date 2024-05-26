@@ -125,7 +125,7 @@ class AnalogCircuitInOut(
 
 	fun toggle(signalHandler: SignalHandler) {
 		signal = if (signal == HIGH_VOLTAGE) LOW_VOLTAGE else HIGH_VOLTAGE
-		requestActingAfter(signalHandler, propagationDelay, createActorData(null))
+		requestActingAfter(signalHandler, propagationDelay.value, createActorData(null))
 	}
 
 	private fun setOutgoingSignal(signal: AnalogSignal, signalHandler: SignalHandler) {

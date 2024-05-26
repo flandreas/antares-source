@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.input.PeriodOrFrequencyUnit.Nanosecond
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -63,7 +64,7 @@ class Clock(name: String? = null) : CalculatingVertice(CALCULATOR, name) {
 		set(value) {
 			// Set propagationDelay even if periodOrFrequency hasn't changed in order to restore
 			// propagationDelay that might have changed during simulation
-			propagationDelay = value.asNanoseconds.value
+			propagationDelay = LongValueImpl(value.asNanoseconds.value)
 			if (field != value) {
 				field = value
 				stateChanged()
@@ -74,7 +75,7 @@ class Clock(name: String? = null) : CalculatingVertice(CALCULATOR, name) {
 	private lateinit var periodOrFrequencyBuffer: PeriodOrFrequency
 
 	init {
-		propagationDelay = periodOrFrequency.asNanoseconds.value
+		propagationDelay = LongValueImpl(periodOrFrequency.asNanoseconds.value)
 		addPort(DigitalPortImpl.createOutput())
 	}
 
@@ -97,11 +98,11 @@ class Clock(name: String? = null) : CalculatingVertice(CALCULATOR, name) {
 		}
 		periodOrFrequency = if (reader.hasAttribute("unit")) {
 			PeriodOrFrequency.fromNanoseconds(
-				propagationDelay,
+				propagationDelay.value,
 				PeriodOrFrequencyUnit.withName(reader.readString("unit")))
 		} else {
 			PeriodOrFrequency.fromNanoseconds(
-				propagationDelay,
+				propagationDelay.value,
 				Nanosecond)
 		}
 	}
@@ -119,7 +120,7 @@ class Clock(name: String? = null) : CalculatingVertice(CALCULATOR, name) {
 
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
-		requestActingAfter(signalHandler, propagationDelay / 2, createActorData(null))
+		requestActingAfter(signalHandler, propagationDelay.value / 2, createActorData(null))
 		setOn(signalHandler, false)
 	}
 
@@ -139,7 +140,7 @@ class Clock(name: String? = null) : CalculatingVertice(CALCULATOR, name) {
 			getOutput<DigitalSignal>().setOutgoingSignalBuffered(DigitalSignalFactory.of(this.isOn), signalHandler)
 			stateChanged(signalHandler)
 			if (isEnabled) {
-				requestActingAfter(signalHandler, propagationDelay / 2, createActorData(null))
+				requestActingAfter(signalHandler, propagationDelay.value / 2, createActorData(null))
 			}
 		}
 	}

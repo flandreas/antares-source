@@ -114,6 +114,7 @@ class LongValueEditor(
     override fun setValue(value: Any?) {
         if (value is LongValue?) {
             this.value = value
+            textField.text = value.toString()
         }
     }
 
@@ -134,7 +135,8 @@ class LongValueEditor(
     private fun getValueImpl(): LongValue {
         return when (value) {
             is LongValueExpression -> {
-                parseExpression((value as LongValueExpression).expression)
+                val expr = (value as LongValueExpression).expression
+                parseExpression("${GraphParamType.EXPRESSION_OP}$expr")
             }
             is LongValue -> value!!
             else -> throw IllegalStateException("Illegal number value")

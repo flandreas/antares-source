@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.Translation
@@ -94,7 +95,7 @@ class Terminal(
 		addPort(DigitalPortImpl(portType = PortType.INPUT, name = WRITE_ENABLE_PORT_NAME, description = ENABLE_PORT_DESC))
 		addPort(DigitalPortImpl(portType = PortType.INPUT, name = DATA_PORT_NAME, bitWidth = BitWidth.BW_8, description = DATA_PORT_DESC))
 
-		propagationDelay = 1
+		propagationDelay = LongValueImpl.ONE
 	}
 
 	/** ---- [Storable] */

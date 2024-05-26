@@ -146,6 +146,7 @@ class SubGraphVerticeRef(
 	}
 
 	override fun graphParamsChanged(graph: Graph) {
+		super.graphParamsChanged(graph)
 		var newParamValues: GraphParamValues = paramValues
 		var changed = false
 		for (paramValue in paramValues.values) {
@@ -224,7 +225,7 @@ class SubGraphVerticeRef(
 				}
 
 				if (metaGraph.graph.model!!.overallPropagationDelay != null) {
-					propagationDelay = metaGraph.graph.model!!.overallPropagationDelay!!
+					propagationDelay = LongValueImpl(metaGraph.graph.model!!.overallPropagationDelay!!)
 				}
 			} else {
 				// Broken reference to library component
@@ -260,7 +261,7 @@ class SubGraphVerticeRef(
 				if (interpreter is GraphDslInterpreter) {
 					(interpreter as GraphDslInterpreter).executionStarted()
 				}
-				requestActingAfter(signalHandler, propagationDelay, createActorData(null))
+				requestActingAfter(signalHandler, propagationDelay.value, createActorData(null))
 			}
 		}
 	}

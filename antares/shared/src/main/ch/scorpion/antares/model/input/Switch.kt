@@ -3,6 +3,7 @@ package ch.scorpion.antares.model.input
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -20,7 +21,7 @@ class Switch : AbstractSwitch<Switch>(CALCULATOR) {
 	companion object {
 
 		const val PROP_DEFAULT_DELAY = "ch.scorpion.antares.model.input.Switch.defaultPropDelay"
-		val DEF_PROP_DELAY get() = BaseModule.properties.getInt(PROP_DEFAULT_DELAY).toLong()
+		val DEF_PROP_DELAY get() = LongValueImpl(BaseModule.properties.getInt(PROP_DEFAULT_DELAY).toLong())
 
 		private const val BASE_RESOURCE_KEY = "library.element.Toggle"
 		private val TYPE get() = Translations.getString("$BASE_RESOURCE_KEY.name")
@@ -67,7 +68,7 @@ class Switch : AbstractSwitch<Switch>(CALCULATOR) {
 
 	/** ---- [InteractableVertice] interface */
 
-	override val interactivePropagationDelay: Long get() = propagationDelay
+	override val interactivePropagationDelay: Long get() = propagationDelay.value
 
 	/** ---- [Storable] interface */
 

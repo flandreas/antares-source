@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
@@ -48,7 +49,7 @@ class DipSwitch(
 
 	init {
 		addPort(DigitalPortImpl.createOutput(Logic.POSITIVE, null, bitWidth))
-		propagationDelay = 1000
+		propagationDelay = LongValueImpl(1000)
 		signal = DigitalSignalFactory.allOf(bitWidth, Bit.False)
 	}
 
@@ -82,11 +83,12 @@ class DipSwitch(
 
 	/** ---- [InteractableVertice] */
 
-	override val interactivePropagationDelay: Long get() = Switch.DEF_PROP_DELAY
+	override val interactivePropagationDelay: Long get() = Switch.DEF_PROP_DELAY.value
 
 	/** ---- [GraphElement] */
 
 	override fun graphParamsChanged(graph: Graph) {
+		super.graphParamsChanged(graph)
 		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
 	}
 
@@ -106,7 +108,7 @@ class DipSwitch(
 	}
 
 	override fun executionStart(signalHandler: SignalHandler) {
-		requestActingAfter(signalHandler, propagationDelay, createActorData(null))
+		requestActingAfter(signalHandler, propagationDelay.value, createActorData(null))
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.model
 
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.port.PortImpl
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
@@ -27,7 +28,7 @@ class TestControlVertice : CalculatingVertice(CALCULATOR) {
 		private set
 
 	init {
-		propagationDelay = 0
+		propagationDelay = LongValueImpl.ZERO
 		addPort(PortImpl.createInput())
 	}
 

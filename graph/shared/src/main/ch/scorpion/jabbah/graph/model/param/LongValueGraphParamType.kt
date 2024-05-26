@@ -26,10 +26,7 @@ object LongValueGraphParamType : GraphParamType<LongValue> {
     override fun readValue(name: String, reader: StoreReader): LongValue = LongValueExpression.read(name, reader)
 
     override fun writeValue(name: String, value: LongValue, writer: StoreWriter) {
-        when (value) {
-            is LongValueExpression -> value.write(name, writer)
-            else -> writer.writeLong(name, value.value)
-        }
+        LongValueExpression.write(name, value, writer)
     }
 
     override fun evaluateIn(graph: Graph, value: LongValue): LongValue =
