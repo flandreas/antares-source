@@ -28,6 +28,7 @@ open class LongValuePropertySwing(
     propertyName: String,
     baseKey: String,
     beanProvider: BeanProvider = componentBeanProvider,
+    baseKeyParams: Array<Any> = emptyArray(),
     displayName: String? = null
 ) : CommandPropertySwing<LongValue>(
     propertyName,
@@ -35,7 +36,8 @@ open class LongValuePropertySwing(
     LongValue::class.java,
     beanProvider,
     interactive = true,
-    displayName = displayName
+    displayName = displayName,
+    baseKeyParams = baseKeyParams
 ) {
     var dslError: DslError? = null
 
@@ -63,7 +65,7 @@ class LongValueParamValuePropertySwing(
     propertyName,
     baseKey,
     beanProvider,
-    displayName = "${Translations.getString("$baseKey.name")} '${paramDefinition.name}'"
+    arrayOf(paramDefinition.name)
 ) {
     override fun readFromObject(bean: Any?) {
         val subGraphVerticeView = bean as SubGraphVerticeViewImpl?
@@ -79,8 +81,7 @@ class LongValueEditor(
     private val propertyName: String,
     private val editable: Boolean,
     graphEditor: Editor?,
-    private val errorCallback: (DslError) -> Unit,
-    filter: (LongValue) -> Boolean = { _ -> true }
+    private val errorCallback: (DslError) -> Unit
 ) : AbstractPropertyEditor() {
 
     companion object {
@@ -138,7 +139,10 @@ class LongValueEditor(
                 val expr = (value as LongValueExpression).expression
                 parseExpression("${GraphParamType.EXPRESSION_OP}$expr")
             }
-            is LongValue -> value!!
+            is LongValue -> {
+                val expr = textField.text
+                parseExpression(expr)
+            }
             else -> throw IllegalStateException("Illegal number value")
         }
     }

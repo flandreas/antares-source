@@ -98,8 +98,7 @@ object GraphModuleJvm : AbstractModule() {
 				propertyName = prop.displayName,
 				editable = (prop as LongValuePropertySwing).editable,
 				graphEditor = prop.editor,
-				errorCallback = { prop.dslError = it },
-				prop.filter
+				errorCallback = { prop.dslError = it }
 			)
 		}
 	}
