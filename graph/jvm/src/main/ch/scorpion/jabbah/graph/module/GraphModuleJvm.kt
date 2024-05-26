@@ -25,7 +25,6 @@ import ch.scorpion.jabbah.graph.health.PortViewCoincidenceCheck
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.login.LoginService
 import ch.scorpion.jabbah.graph.login.LoginServiceJvm
-import ch.scorpion.jabbah.graph.model.param.LongGraphParamType
 import ch.scorpion.jabbah.graph.model.param.StringGraphParamType
 import ch.scorpion.jabbah.graph.model.param.*
 import ch.scorpion.jabbah.graph.model.port.InconsistentNetError
@@ -137,28 +136,6 @@ object GraphModuleJvm : AbstractModule() {
 						baseKeyParams = arrayOf(def.name),
 						valueClass = String::class.java,
 						beanProvider = beanProvider,
-						//displayName = def.name
-					)
-				}
-			}
-		)
-
-		GraphParamValuePropertyFactoryRegistry.register(
-			LongGraphParamType,
-			object : GraphParamValuePropertyFactory {
-				override fun create(
-					def: GraphParamDefinition<*>,
-					editor: Editor,
-					beanProvider: BeanProvider
-				): AbstractReflectionPropertySwing<*> {
-					return GraphParamValuePropertySwing(
-						paramDefinition = def as GraphParamDefinition<Long>,
-						propertyName = "<notUsed>",
-						baseKey ="graph.paramDefs.genericParameter",
-						baseKeyParams = arrayOf(def.name),
-						valueClass = Long::class.java,
-						beanProvider = beanProvider,
-						//displayName = def.name
 					)
 				}
 			}

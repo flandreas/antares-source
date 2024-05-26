@@ -116,7 +116,7 @@ class BitWidthImpl(
  */
 class BitWidthExpression(
 	var expression: String,
-	var value: BitWidth = BitWidth.BW_1
+	val value: BitWidth = BitWidth.BW_1
 ) : BitWidth {
 
 	override val width: Int get() = value.width

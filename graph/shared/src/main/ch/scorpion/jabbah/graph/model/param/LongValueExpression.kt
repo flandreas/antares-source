@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 
 class LongValueExpression(
     var expression: String,
-    var longValue: LongValue = LongValueImpl.ZERO
+    private val longValue: LongValue = LongValueImpl.ZERO
 ) : LongValue {
 
     companion object {
