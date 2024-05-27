@@ -4,10 +4,12 @@ import ch.scorpion.jabbah.app.health.SystemHealthChecker
 import ch.scorpion.jabbah.app.module.AppModuleJvm
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.DataLocation
+import ch.scorpion.jabbah.base.LongValue
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.preferences.*
+import ch.scorpion.jabbah.base.swing.ToStringRenderer
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
 import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.Editor
@@ -25,15 +27,12 @@ import ch.scorpion.jabbah.graph.health.PortViewCoincidenceCheck
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.login.LoginService
 import ch.scorpion.jabbah.graph.login.LoginServiceJvm
-import ch.scorpion.jabbah.graph.model.param.StringGraphParamType
 import ch.scorpion.jabbah.graph.model.param.*
 import ch.scorpion.jabbah.graph.model.port.InconsistentNetError
 import ch.scorpion.jabbah.graph.project.ProjectAkrabClientServiceJvm
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
 import ch.scorpion.jabbah.graph.view.net.edge.OrthoEdgeViewLayouter
-import ch.scorpion.jabbah.base.LongValue
-import ch.scorpion.jabbah.base.swing.ToStringRenderer
 import java.net.URL
 
 /**
@@ -95,7 +94,7 @@ object GraphModuleJvm : AbstractModule() {
 		registry.register(LongValue::class.java) { prop ->
 			LongValueEditor(
 				propertyName = prop.displayName,
-				editable = (prop as LongValuePropertySwing).editable,
+				editable = (prop as ExpressionPropertySwing<LongValue>).editable,
 				graphEditor = prop.editor,
 				errorCallback = { prop.dslError = it }
 			)
@@ -111,10 +110,10 @@ object GraphModuleJvm : AbstractModule() {
 					editor: Editor,
 					beanProvider: BeanProvider
 				): AbstractReflectionPropertySwing<*> {
-					return LongValueParamValuePropertySwing(
-						paramDefinition = def as GraphParamDefinition<LongValue>,
-						propertyName = "LongValue", // only used for logging
-						baseKey ="graph.paramDefs.genericParameter",
+					return GraphParamValuePropertySwing(
+						def as GraphParamDefinition<LongValue>,
+						"LongValue", // only used for logging
+						LongValue::class.java,
 						beanProvider
 					)
 				}

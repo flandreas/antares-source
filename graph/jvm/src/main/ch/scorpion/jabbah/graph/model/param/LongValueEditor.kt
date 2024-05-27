@@ -1,0 +1,88 @@
+package ch.scorpion.jabbah.graph.model.param
+
+import ch.scorpion.jabbah.base.LongValue
+import ch.scorpion.jabbah.base.dsl.DslError
+import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.properties.ScriptPropertyPanel
+import ch.scorpion.jabbah.graph.view.GraphView
+import java.awt.event.FocusAdapter
+import java.awt.event.FocusEvent
+import javax.swing.JComponent
+import javax.swing.JTextField
+
+class LongValueEditor(
+    propertyName: String,
+    editable: Boolean,
+    graphEditor: Editor?,
+    errorCallback: (DslError) -> Unit
+) : ExpressionPropertyEditor<LongValue>(propertyName, editable, errorCallback) {
+
+    private val textField = JTextField()
+
+    private val graph = (graphEditor?.drawing as GraphView?)?.graph
+    private val parserFactory = if (graph != null) graph::createParser else null
+
+    private var value: LongValue? = null
+
+    init {
+        textField.isEnabled = editable
+
+        buildUI()
+
+        if (editable) {
+            editor.addFocusListener(object : FocusAdapter() {
+                override fun focusGained(e: FocusEvent?) {
+                    textField.requestFocusInWindow()
+                    textField.selectAll()
+                }
+            })
+        }
+    }
+
+    override val contentEditor: JComponent get() = textField
+
+    override fun setValue(value: Any?) {
+        if (value is LongValue?) {
+            this.value = value
+            textField.text = value.toString()
+        }
+    }
+
+    override fun getValueImpl(): LongValue {
+        return when (value) {
+            is LongValueExpression -> {
+                val expr = (value as LongValueExpression).expression
+                parseExpression("${GraphParamType.EXPRESSION_OP}$expr")
+            }
+            is LongValue -> {
+                val expr = textField.text
+                parseExpression(expr)
+            }
+            else -> throw IllegalStateException("Illegal number value")
+        }
+    }
+
+    private fun parseExpression(script: String): LongValue {
+        val longValue = LongValueGraphParamType.parse(script)
+        return if (longValue is LongValueExpression) {
+            graph?.let { longValue.evaluateIn(it) } ?: longValue
+        } else {
+            longValue
+        }
+    }
+
+    override fun showDialog() {
+        val script = when (value) {
+            is LongValueExpression -> (value as LongValueExpression).expression
+            else -> value?.toString() ?: ""
+        }
+        ScriptPropertyPanel.showAsDialog(
+            script = script,
+            editable = editable,
+            propertyName = propertyName,
+            parserFactory = parserFactory!!
+        )?.let {
+            value = LongValueExpression(it)
+        }
+    }
+}

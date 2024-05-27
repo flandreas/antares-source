@@ -8,16 +8,16 @@ import ch.scorpion.antares.view.gate.LogicGateView
 import ch.scorpion.antares.view.net.TransistorViewSymbol
 import ch.scorpion.antares.view.net.TunnelFlowDirection
 import ch.scorpion.antares.view.output.LightColor
-import ch.scorpion.antares.view.signal.BitWidthPropertySwing
 import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.model.param.ExpressionPropertySwing
 
 object AntaresProperties {
 
-	fun bitWidth(name: String = "bitWidth", baseKey: String = BitWidth.BASE_KEY, beanProvider: BeanProvider = componentBeanProvider): BitWidthPropertySwing =
-		BitWidthPropertySwing(name, baseKey, beanProvider)
+	fun bitWidth(name: String = "bitWidth", baseKey: String = BitWidth.BASE_KEY, beanProvider: BeanProvider = componentBeanProvider) =
+		ExpressionPropertySwing(name, baseKey, BitWidth::class.java, beanProvider)
 
 	fun portType(name: String = "portType"): CommandPropertySwing<PortType> =
 		CommandPropertySwing(name, PortType.BASE_KEY, PortType::class.java, componentBeanProvider)
