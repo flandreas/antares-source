@@ -39,7 +39,7 @@ class ContainerLibraryElementCollector(
 			.sort(dependencies)
 			.toList()
 
-	private inner class GraphVisitor() : EmptyHierarchyVisitor() {
+	private inner class GraphVisitor : EmptyHierarchyVisitor() {
 
 		private val stack = Stack<Graph>()
 

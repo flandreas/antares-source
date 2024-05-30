@@ -23,7 +23,7 @@ abstract class AbstractGraphElementView<T : GraphElement>(
 	companion object {
 		const val STORABLE_MODEL_ID = "modelId"
 		const val BASE_KEY_MODEL_ID = "graph.property.modelId"
-		const val BASE_KEY_PROPAGATION_DELAY = "element.property.propagationDelay"
+		const val BASE_KEY_PROPAGATION_DELAY = "graph.property.propagationDelay"
 	}
 
 	/** Listens for changes of the model [GraphElement] and updates this view accordingly.*/

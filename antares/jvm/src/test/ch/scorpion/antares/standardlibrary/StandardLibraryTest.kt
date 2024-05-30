@@ -1,8 +1,8 @@
-package ch.scorpion.antares.model.testcase
+package ch.scorpion.antares.standardlibrary
 
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.DigitalGraph
-import ch.scorpion.antares.standardlibrary.AbstractStandardLibraryBasedCircuitTest
+import ch.scorpion.antares.model.testcase.TestcaseService
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import junit.framework.TestCase.assertTrue
 import kotlin.test.BeforeTest
