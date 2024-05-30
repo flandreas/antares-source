@@ -4,10 +4,7 @@ import ch.scorpion.antares.model.input.Clock
 import ch.scorpion.antares.model.input.PeriodOrFrequencyParser
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.gate.BoxGateView
-import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.Tooltip
-import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
@@ -252,13 +249,13 @@ class ClockView(
 			}
 
 			return KnobLauncherImpl.launchAfterDelay(
-				initialValue = model.propagationDelay / 1_000,
+				initialValue = model.propagationDelay.value / 1_000,
 				location = boundingBox.center,
 				unit = "µs",
 				mouseMovedCondition = { contains(it.x, it.y) },
 				valueChangeHandler = {
 					if (it < Long.MAX_VALUE / 1_000) {
-						model.propagationDelay = it * 1_000
+						model.propagationDelay = LongValueImpl(it * 1_000)
 					}
 				}
 			)
@@ -272,13 +269,13 @@ class ClockView(
 
 			return KnobLauncherImpl.launchImmediately(
 				view = context.view as DrawingView<*>,
-				initialValue = model.propagationDelay / 1_000,
+				initialValue = model.propagationDelay.value / 1_000,
 				location = boundingBox.center,
 				unit = "µs",
 				mouseMovedCondition = { contains(it.x, it.y) },
 				valueChangeHandler = {
 					if (it < Long.MAX_VALUE / 1_000) {
-						model.propagationDelay = it * 1_000
+						model.propagationDelay = LongValueImpl(it * 1_000)
 					}
 				}
 			)

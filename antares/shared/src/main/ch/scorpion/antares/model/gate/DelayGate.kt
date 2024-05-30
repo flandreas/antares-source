@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.BitWidthExpression
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.Graph
@@ -46,9 +47,9 @@ class DelayGate : CalculatingVertice(CALCULATOR) {
 
 	/** The delay in nanoseconds.*/
     var delay: Long
-        get() = propagationDelay
+        get() = propagationDelay.value
         set(value) {
-            propagationDelay = value
+            propagationDelay = LongValueImpl(value)
         }
 
 	var bitWidth: BitWidth
@@ -62,12 +63,13 @@ class DelayGate : CalculatingVertice(CALCULATOR) {
 		}
 
 	override fun graphParamsChanged(graph: Graph) {
+		super.graphParamsChanged(graph)
 		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
 	}
 
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
-		requestActingAfter(signalHandler, propagationDelay / 2, createActorData(null))
+		requestActingAfter(signalHandler, propagationDelay.value / 2, createActorData(null))
 	}
 
 	override fun createActorData(inputPort: InputPort<*>?, force: Boolean, signal: Any?): GraphActorData =

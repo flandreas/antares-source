@@ -3,6 +3,7 @@ package ch.scorpion.antares.model.output
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
@@ -44,7 +45,7 @@ class LED : CalculatingVertice(CALCULATOR) {
 
 	init {
 		addPort(DigitalPortImpl.createInput())
-		propagationDelay = 0
+		propagationDelay = LongValueImpl.ZERO
 	}
 
 	/** ---- [Actor] */

@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.model.input.Clock
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Dimension2D
@@ -131,12 +132,12 @@ class ClockControlView(
 				}
 
 				return knobLauncher.launchAfterDelay(
-					initialValue = model.propagationDelay / 1_000,
+					initialValue = model.propagationDelay.value / 1_000,
 					location = knobLocation,
 					unit = "µs",
 					mouseMovedCondition = { keepMouseMoved(it.location) },
 					displayHandler = { isHovering = false },
-					valueChangeHandler = { model.propagationDelay = it * 1_000 }
+					valueChangeHandler = { model.propagationDelay = LongValueImpl(it * 1_000) }
 				)
 			}
 

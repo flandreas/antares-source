@@ -101,6 +101,7 @@ open class TriStateBufferGate(
 	/** ---- [GraphElement] */
 
 	override fun graphParamsChanged(graph: Graph) {
+		super.graphParamsChanged(graph)
 		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
 	}
 
@@ -134,7 +135,7 @@ open class TriStateBufferGate(
 
     override fun executionStart(signalHandler: SignalHandler) {
         super.executionStart(signalHandler)
-        requestActingAfter(signalHandler, propagationDelay / 2, createActorData(null))
+        requestActingAfter(signalHandler, propagationDelay.value / 2, createActorData(null))
     }
 
     /** ---- [TriStateBufferGate] */

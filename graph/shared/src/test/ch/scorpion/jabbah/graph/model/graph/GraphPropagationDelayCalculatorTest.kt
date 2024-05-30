@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.model.graph
 
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.graph.model.TestVertice
 import ch.scorpion.jabbah.graph.model.vertice.GraphInputImpl
@@ -25,8 +26,8 @@ class GraphPropagationDelayCalculatorTest {
         val builder = GraphViewBuilder<Boolean>()
 
         val input = builder.addVerticeView(TestGraphPortView<Boolean>(model = GraphInputImpl()))
-        val v1 = builder.addVerticeView(TestVerticeView(vertice = TestVertice().apply { propagationDelay = 100 }))
-        val v2 = builder.addVerticeView(TestVerticeView(vertice = TestVertice().apply { propagationDelay = 200 }))
+        val v1 = builder.addVerticeView(TestVerticeView(vertice = TestVertice().apply { propagationDelay = LongValueImpl(100) }))
+        val v2 = builder.addVerticeView(TestVerticeView(vertice = TestVertice().apply { propagationDelay = LongValueImpl(200) }))
         val output = builder.addVerticeView(TestGraphPortView<Boolean>(model = GraphOutputImpl()))
         builder.connect(input, v1)
         builder.connect(v1, v2)

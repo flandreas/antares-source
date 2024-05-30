@@ -3,8 +3,8 @@ package ch.scorpion.antares.model.analog
 import ch.scorpion.antares.model.input.AbstractSwitch
 import ch.scorpion.antares.view.analog.engine.AnalogElement
 import ch.scorpion.antares.view.analog.engine.AnalogElementMixin
-import ch.scorpion.antares.view.analog.AnalogGraphView
 import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
@@ -42,7 +42,7 @@ class AnalogSwitch(
 		analogElement.bindAnalogElement(this)
 		addPort(AnalogPort())
 		addPort(AnalogPort())
-		propagationDelay = 0
+		propagationDelay = LongValueImpl.ZERO
 	}
 
 	fun requestAnalogGraphRecalculation(signalHandler: SignalHandler) {

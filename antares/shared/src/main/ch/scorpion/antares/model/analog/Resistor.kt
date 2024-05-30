@@ -69,6 +69,6 @@ class Resistor(
 	fun setState(resistance: Double, signalHandler: SignalHandler, graphView: AnalogGraphView) {
 		this.resistance = resistance
 		graphView.requireAnalysis()
-		requestActingAfter(signalHandler, propagationDelay, createActorData(null))
+		requestActingAfter(signalHandler, propagationDelay.value, createActorData(null))
 	}
 }

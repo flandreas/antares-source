@@ -3,8 +3,9 @@ package ch.scorpion.jabbah.graph.model.param
 import javax.swing.JComponent
 
 interface GraphParamValueEditor {
+
 	/** Allows to set and get the value of [editor]. */
-	var value: Any
+	var paramValue: Any
 
 	/** The handler to be called by this [GraphParamValueEditor] when the user has changed its value.*/
 	var changeHandler: (() -> Unit)?

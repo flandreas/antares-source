@@ -8,6 +8,7 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.BitWidthExpression
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
@@ -23,7 +24,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 
 /**
  * A [Vertice] that outputs a fixed signal during circuit start-up, and then outputs the inverted signal
- * afterwards. Used for bringing a (typically sequential) circuit into the same defined state each time
+ * afterward. Used for bringing a (typically sequential) circuit into the same defined state each time
  * the circuit is powered on.
  */
 class PowerOnReset(
@@ -45,7 +46,7 @@ class PowerOnReset(
 				if (vertice.isPowerOn) {
 					vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(vertice.powerOnSignal, signalHandler)
 					vertice.isPowerOn = false
-					vertice.requestActingAfter(signalHandler, vertice.propagationDelay, vertice.createActorData(null))
+					vertice.requestActingAfter(signalHandler, vertice.propagationDelay.value, vertice.createActorData(null))
 				} else {
 					vertice.getOutput<DigitalSignal>().setOutgoingSignalBuffered(vertice.powerOnSignal.not(), signalHandler)
 				}
@@ -79,7 +80,7 @@ class PowerOnReset(
 
 	init {
 		addPort(DigitalPortImpl.createOutput(logic, null, bitWidth))
-		propagationDelay = 2 * AbstractLogicGate.DEFAULT_PROPAGATION_DELAY
+		propagationDelay = LongValueImpl(2 * AbstractLogicGate.DEFAULT_PROPAGATION_DELAY.value)
 	}
 
 	/** ---- [GraphElement] */
@@ -92,6 +93,7 @@ class PowerOnReset(
 	}
 
 	override fun graphParamsChanged(graph: Graph) {
+		super.graphParamsChanged(graph)
 		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
 	}
 

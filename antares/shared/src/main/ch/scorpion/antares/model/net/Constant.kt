@@ -3,6 +3,7 @@ package ch.scorpion.antares.model.net
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
@@ -22,7 +23,7 @@ class Constant(
 
 	init {
 		addPort(DigitalPortImpl(portType = PortType.OUTPUT, bitWidth = value.bitWidth))
-		propagationDelay = 1
+		propagationDelay = LongValueImpl.ONE
 	}
 
 	companion object {
@@ -64,6 +65,7 @@ class Constant(
 	/** ---- [GraphElement] */
 
 	override fun graphParamsChanged(graph: Graph) {
+		super.graphParamsChanged(graph)
 		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
 	}
 
@@ -71,7 +73,7 @@ class Constant(
 
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
-		requestActingAfter(signalHandler, propagationDelay, createActorData(null))
+		requestActingAfter(signalHandler, propagationDelay.value, createActorData(null))
 	}
 
 	/** ---- [Storable] interface */

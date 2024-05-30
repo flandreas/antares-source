@@ -58,7 +58,7 @@ object AntaresUsecaseActionExternalFunctions : UsecaseActionExternalFunctions() 
 				button.model.toggle(runner.scheduler)
 				if (!button.toggle) {
 					// TODO BUG: This should not happen before visualization of first toggle has completed!
-					runner.executeAt(time + button.model.propagationDelay) { button.model.toggle(runner.scheduler)}
+					runner.executeAt(time + button.model.propagationDelay.value) { button.model.toggle(runner.scheduler)}
 				}
 			}
 		}

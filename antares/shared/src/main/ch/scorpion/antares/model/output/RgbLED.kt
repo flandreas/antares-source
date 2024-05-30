@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.style.AntaresTheme
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.style.Themes
@@ -53,7 +54,7 @@ class RgbLED : CalculatingVertice(CALCULATOR) {
 
 	init {
 		addPort(DigitalPortImpl(portType = PortType.INPUT, name = null, bitWidth = BitWidth.BW_24, description = DATA_PORT_DESC))
-		propagationDelay = 0
+		propagationDelay = LongValueImpl.ZERO
 	}
 
 	/** ---- [Actor] */

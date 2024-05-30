@@ -51,6 +51,7 @@ val drawingBeanProvider: BeanProvider = { e, _ -> listOf(e.drawing) }
 abstract class AbstractPropertyCommand<V>(
 	editor: Editor,
 	private val propertyBaseKey: String,
+	private val baseKeyParams: Array<Any> = emptyArray(),
 	private val beanProvider: BeanProvider,
 	private val beanIds: Collection<String>,
 	private val newValue: V?,
@@ -83,7 +84,7 @@ abstract class AbstractPropertyCommand<V>(
 
 	protected val beans get() = beanProvider(editor!!, beanIds)
 
-	override fun getDescription(): String = Translations.getString("$propertyBaseKey.name")
+	override fun getDescription(): String = Translations.getString("$propertyBaseKey.name", *baseKeyParams)
 
 	override fun execute() {
 		if (oldValues == null) {

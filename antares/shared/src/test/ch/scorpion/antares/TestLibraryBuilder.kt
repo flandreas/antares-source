@@ -31,6 +31,7 @@ class TestLibraryBuilder(
 		const val INOUT_TO_INOUT = "InOutToInOut"
 		const val BINARY_FUNCTION = "BinaryFunction"
 		const val BIT_WITH_EXPRESSION = "BitWidthExpression"
+		const val PROPAGATION_DELAY_EXPRESSION = "PropagationDelayExpression"
 	}
 
 	fun addGraphView(graphView: GraphView, library: Library): MetaGraph {
@@ -81,6 +82,11 @@ class TestLibraryBuilder(
 
 	fun addBitWidthExpressionInputOutput(library: Library, inputExpression: String, outputExpression: String, graphScript: String? = null): MetaGraph {
 		val graphView = TestCircuitBuilder(BIT_WITH_EXPRESSION).buildBitWidthExpressionInputOutput(inputExpression, outputExpression, graphScript)
+		return addGraphView(graphView, library)
+	}
+
+	fun addPropagationDelayExpressionOrGate(library: Library, parameterName: String, expression: String): MetaGraph {
+		val graphView = TestCircuitBuilder(PROPAGATION_DELAY_EXPRESSION).buildPropagationDelayExpressionOrGate(parameterName, expression)
 		return addGraphView(graphView, library)
 	}
 

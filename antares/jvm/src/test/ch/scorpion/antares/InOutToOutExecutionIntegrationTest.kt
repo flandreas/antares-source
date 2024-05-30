@@ -69,7 +69,7 @@ class InOutToOutExecutionIntegrationTest : AbstractJvmCircuitTest() {
 		val executionTime = scheduler.executionTime
 
 		switchView.model.on(scheduler)
-		proceedToNanos(executionTime + Switch.DEF_PROP_DELAY + 1)
+		proceedToNanos(executionTime + Switch.DEF_PROP_DELAY.value + 1)
 
 		assertEquals(DigitalSignalFactory.of(true), subGraphVV.model.getOutput<DigitalSignal>().getOutgoingSignal())
 	}

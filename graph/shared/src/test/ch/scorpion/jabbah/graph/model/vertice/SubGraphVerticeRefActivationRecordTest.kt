@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.model.vertice
 
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.dsl.Interpreter
 import ch.scorpion.jabbah.base.dsl.DslLexer
 import ch.scorpion.jabbah.base.dsl.Memory
@@ -13,8 +14,6 @@ import ch.scorpion.jabbah.graph.library.MemoryLibraryPersistenceService
 import ch.scorpion.jabbah.graph.model.GenericGraphType
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.OutputPort
-import ch.scorpion.jabbah.graph.model.graph.LongGraphParamType
-import ch.scorpion.jabbah.graph.model.graph.StringGraphParamType
 import ch.scorpion.jabbah.graph.model.param.*
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import io.mockk.every
@@ -29,7 +28,6 @@ class SubGraphVerticeRefActivationRecordTest {
 	companion object {
 		init {
 			GraphViewTestRule.configure()
-			GraphParamTypeRegistry.register(StringGraphParamType.name) { LongGraphParamType }
 		}
 	}
 
@@ -62,7 +60,7 @@ class SubGraphVerticeRefActivationRecordTest {
 
 	@Test
 	fun shouldAccessGraphParamsAsVariables() {
-		val paramValue = GraphParamValue.create("L", LongGraphParamType, 99L)
+		val paramValue = GraphParamValue.create("L", LongValueGraphParamType, LongValueImpl(99L), null)
 
 		val vv = mockk<SubGraphVerticeRef>(relaxed = true)
 		every { vv.paramValues } returns GraphParamValues().withValue(paramValue)
