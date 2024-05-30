@@ -131,8 +131,8 @@ object GraphModuleJvm : AbstractModule() {
 					return GraphParamValuePropertySwing(
 						paramDefinition = def as GraphParamDefinition<String>,
 						propertyName = "<notUsed>",
-						baseKey ="graph.paramDefs.genericParameter",
-						baseKeyParams = arrayOf(def.name),
+						baseKey = if (def.hasSemantic) "graph.paramDefs.genericSemanticParameter" else "graph.paramDefs.genericParameter",
+						baseKeyParams = if (def.hasSemantic) arrayOf(def.name, def.semantic!!.translatedName) else arrayOf(def.name),
 						valueClass = String::class.java,
 						beanProvider = beanProvider,
 					)

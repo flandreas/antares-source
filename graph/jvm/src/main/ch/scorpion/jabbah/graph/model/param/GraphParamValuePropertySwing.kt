@@ -62,10 +62,10 @@ class GraphParamValuePropertySwing<V : Any>(
 	propertyName: String,
 	valueClass: Class<V>,
 	beanProvider: BeanProvider,
-	baseKey: String = "graph.paramDefs.genericParameter",
+	baseKey: String = if (paramDefinition.hasSemantic) "graph.paramDefs.genericSemanticParameter" else "graph.paramDefs.genericParameter",
 	interactive: Boolean = false,
 	displayName: String? = null,
-	baseKeyParams: Array<Any> = arrayOf(paramDefinition.name)
+	baseKeyParams: Array<Any> = if (paramDefinition.hasSemantic) arrayOf(paramDefinition.name, paramDefinition.semantic!!.translatedName) else arrayOf(paramDefinition.name),
 ): ExpressionPropertySwing<V>(
 	propertyName,
 	baseKey,

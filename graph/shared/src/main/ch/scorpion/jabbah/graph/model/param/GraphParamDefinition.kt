@@ -35,6 +35,8 @@ class GraphParamDefinition<T : Any>(
 
 	var semantic: Semantic? = null
 
+	val hasSemantic: Boolean get() = semantic != null
+
 	fun createDefaultValue(): GraphParamValue<T> = type.createValue(name, defaultValue, semantic)
 
 	fun createValue(value: T): GraphParamValue<T> = type.createValue(name, value, semantic)
