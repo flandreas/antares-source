@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.model.param
 
 import ch.scorpion.jabbah.edit.semantic.Semantic
+import ch.scorpion.jabbah.edit.semantic.SemanticRegistry
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.io.*
 
@@ -42,12 +43,18 @@ class GraphParamValue<T : Any> : AbstractStorable() {
 		writer.writeString("name", name)
 		writer.writeString("type", type.name)
 		type.writeValue("value", value, writer)
+		semantic?.let {
+			writer.writeString("semantic", it.customName)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
 		_name =reader.readString("name")
 		_type = GraphParamTypeRegistry.get(reader.readString("type"))
 		_value = type.readValue("value", reader)
+		if (reader.hasAttribute("semantic")) {
+			_semantic = SemanticRegistry.withCustomName(reader.readString("semantic"))
+		}
 	}
 }
 
