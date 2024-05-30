@@ -11,7 +11,7 @@ enum class GraphSemantic(
     private val translationKey: String
 ) : Semantic {
 
-    PropagationDelay("propagationDelay", "element.property.propagationDelay.name");
+    PropagationDelay("propagationDelay", "graph.property.propagationDelay.name");
 
     override fun toString(): String = customName
 
