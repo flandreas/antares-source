@@ -28,7 +28,7 @@ class GraphPropagationDelayCalculator {
     private fun calculateFrom(vertice: Vertice): Long {
         return vertice.getOutputs()
             .filter { !path.contains(it) }
-            .maxOfOrNull { vertice.propagationDelay + calculateFrom(it) }
+            .maxOfOrNull { vertice.propagationDelay.value + calculateFrom(it) }
             ?: 0L
     }
 }

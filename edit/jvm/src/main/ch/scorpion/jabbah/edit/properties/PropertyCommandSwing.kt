@@ -15,6 +15,7 @@ open class PropertyCommandSwing<V>(
 ) : AbstractPropertyCommand<V>(
 	editor,
 	propertyBaseKey,
+	emptyArray(),
 	beanProvider,
 	beanIds,
 	newValue

@@ -75,7 +75,7 @@ class LookupTable(
 
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
-		requestActingAfter(signalHandler, propagationDelay / 2, createActorData(null))
+		requestActingAfter(signalHandler, propagationDelay.value / 2, createActorData(null))
 	}
 
 	/** ---- [Storable] */

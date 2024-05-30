@@ -24,7 +24,7 @@ abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 
 	/** ---- [InteractableVertice] interface */
 
-	override val interactivePropagationDelay: Long get() = Switch.DEF_PROP_DELAY
+	override val interactivePropagationDelay: Long get() = Switch.DEF_PROP_DELAY.value
 
 	/** ---- [Actor] interface */
 

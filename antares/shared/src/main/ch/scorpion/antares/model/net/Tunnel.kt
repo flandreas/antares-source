@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.model.DigitalGraph
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
@@ -57,7 +58,7 @@ class Tunnel(
 	}
 
 	init {
-		propagationDelay = 0
+		propagationDelay = LongValueImpl.ZERO
 		this.name = name
 
 		// The Port to which the user connects visible Nets (portId 1)
@@ -103,6 +104,7 @@ class Tunnel(
 	/** ---- [GraphElement] */
 
 	override fun graphParamsChanged(graph: Graph) {
+		super.graphParamsChanged(graph)
 		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
 	}
 

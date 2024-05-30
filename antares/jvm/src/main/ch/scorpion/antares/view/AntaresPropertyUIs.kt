@@ -49,7 +49,7 @@ class LightColorEditor(optional: Boolean = false) : ComboBoxPropertyEditor() {
 	    if (optional) {
 		    list.add(null)
 	    }
-	    list.addAll(LightColor.values())
+	    list.addAll(LightColor.entries.toTypedArray())
         setAvailableValues(list.toTypedArray())
         (editor as JComboBox<*>).renderer = LightColorRenderer()
     }
@@ -57,21 +57,21 @@ class LightColorEditor(optional: Boolean = false) : ComboBoxPropertyEditor() {
 
 class HandednessEditor : ComboBoxPropertyEditor() {
     init {
-        setAvailableValues(Handedness.values())
+        setAvailableValues(Handedness.entries.toTypedArray())
         (editor as JComboBox<*>).renderer = EnumRenderer<Handedness>()
     }
 }
 
 class PortCountEditor(filter: (PortCount) -> Boolean = { _ -> true }) : ComboBoxPropertyEditor() {
     init {
-        setAvailableValues(PortCount.values().filter { filter.invoke(it) }.toTypedArray())
+        setAvailableValues(PortCount.entries.filter { filter.invoke(it) }.toTypedArray())
         (editor as JComboBox<*>).renderer = EnumRenderer<PortCount>()
     }
 }
 
 class InputPortNumberEditor(filter: (InputPortNumber) -> Boolean = { _ -> true }) : ComboBoxPropertyEditor() {
     init {
-        setAvailableValues(InputPortNumber.values().filter { filter.invoke(it) }.toTypedArray())
+        setAvailableValues(InputPortNumber.entries.filter { filter.invoke(it) }.toTypedArray())
         (editor as JComboBox<*>).renderer = EnumRenderer<InputPortNumber>()
     }
 }
@@ -85,112 +85,112 @@ class BranchCountEditor(filter: (BranchCount) -> Boolean = { _ -> true }) : Comb
 
 class LogicEditor : ComboBoxPropertyEditor() {
     init {
-        setAvailableValues(Logic.values())
+        setAvailableValues(Logic.entries.toTypedArray())
         (editor as JComboBox<*>).renderer = EnumRenderer<Logic>()
     }
 }
 
 class EnterBehaviorEditor : ComboBoxPropertyEditor() {
     init {
-        setAvailableValues(EnterBehavior.values())
+        setAvailableValues(EnterBehavior.entries.toTypedArray())
         (editor as JComboBox<*>).renderer = EnumRenderer<EnterBehavior>()
     }
 }
 
 class TriggerEditor : ComboBoxPropertyEditor() {
     init {
-        setAvailableValues(Trigger.values())
+        setAvailableValues(Trigger.entries.toTypedArray())
         (editor as JComboBox<*>).renderer = EnumRenderer<Trigger>()
     }
 }
 
 class DigitalSignalRepresentationEditor(filter: (DigitalSignalRepresentation) -> Boolean = { true }) : ComboBoxPropertyEditor() {
     init {
-        setAvailableValues(DigitalSignalRepresentation.values().filter { filter.invoke(it)}.toTypedArray())
+        setAvailableValues(DigitalSignalRepresentation.entries.filter { filter.invoke(it)}.toTypedArray())
         (editor as JComboBox<*>).renderer = EnumRenderer<DigitalSignalRepresentation>()
     }
 }
 
 class SevenSegmentDisplaySchemeEditor : ComboBoxPropertyEditor() {
     init {
-        setAvailableValues(SevenSegmentDisplayScheme.values())
+        setAvailableValues(SevenSegmentDisplayScheme.entries.toTypedArray())
         (editor as JComboBox<*>).renderer = EnumRenderer<SevenSegmentDisplayScheme>()
     }
 }
 
 class OutputAnnotationEditor : ComboBoxPropertyEditor() {
     init {
-        setAvailableValues(OutputAnnotation.values())
+        setAvailableValues(OutputAnnotation.entries.toTypedArray())
         (editor as JComboBox<*>).renderer = EnumRenderer<OutputAnnotation>()
     }
 }
 
 class PullDirectionEditor : ComboBoxPropertyEditor() {
 	init {
-		setAvailableValues(PullDirection.values())
+		setAvailableValues(PullDirection.entries.toTypedArray())
 		(editor as JComboBox<*>).renderer = EnumRenderer<PullDirection>()
 	}
 }
 
 class TransistorTypeEditor : ComboBoxPropertyEditor() {
 	init {
-		setAvailableValues(TransistorType.values())
+		setAvailableValues(TransistorType.entries.toTypedArray())
 		(editor as JComboBox<*>).renderer = EnumRenderer<TransistorType>()
 	}
 }
 
 class TransistorSymbolEditor : ComboBoxPropertyEditor() {
 	init {
-		setAvailableValues(TransistorViewSymbol.values())
+		setAvailableValues(TransistorViewSymbol.entries.toTypedArray())
 		(editor as JComboBox<*>).renderer = EnumRenderer<TransistorViewSymbol>()
 	}
 }
 
 class JoystickDeflectionEditor : ComboBoxPropertyEditor() {
 	init {
-		setAvailableValues(JoystickDeflection.values())
+		setAvailableValues(JoystickDeflection.entries.toTypedArray())
 		(editor as JComboBox<*>).renderer = EnumRenderer<JoystickDeflection>()
 	}
 }
 
 class DigitalPortViewStyleEditor : ComboBoxPropertyEditor() {
 	init {
-		setAvailableValues(DigitalPortViewStyle.values())
+		setAvailableValues(DigitalPortViewStyle.entries.toTypedArray())
 		(editor as JComboBox<*>).renderer = EnumRenderer<DigitalPortViewStyle>()
 	}
 }
 
 class PortViewSpacingEditor : ComboBoxPropertyEditor() {
 	init {
-		setAvailableValues(PortViewSpacing.values())
+		setAvailableValues(PortViewSpacing.entries.toTypedArray())
 		(editor as JComboBox<*>).renderer = EnumRenderer<PortViewSpacing>()
 	}
 }
 
 class WaveformTypeEditor : ComboBoxPropertyEditor() {
 	init {
-		setAvailableValues(WaveformType.values())
+		setAvailableValues(WaveformType.entries.toTypedArray())
 		(editor as JComboBox<*>).renderer = EnumRenderer<WaveformType>()
 	}
 }
 
 class VideoRamColorModelEditor : ComboBoxPropertyEditor() {
 	init {
-		setAvailableValues(VideoRamColorModel.values())
+		setAvailableValues(VideoRamColorModel.entries.toTypedArray())
 		(editor as JComboBox<*>).renderer = EnumRenderer<VideoRamColorModel>()
 	}
 }
 
 class TunnelFlowDirectionEditor : ComboBoxPropertyEditor() {
 	init {
-		setAvailableValues(TunnelFlowDirection.values())
+		setAvailableValues(TunnelFlowDirection.entries.toTypedArray())
 		(editor as JComboBox<*>).renderer = EnumRenderer<TunnelFlowDirection>()
 	}
 }
 
 class NetSignalApplierChoiceEditor : ComboBoxPropertyEditor() {
 	init {
-		setAvailableValues(NetSignalApplierStrategy.values())
+		setAvailableValues(NetSignalApplierStrategy.entries.toTypedArray())
 		(editor as JComboBox<*>).renderer = EnumRenderer<NetSignalApplierStrategy>()
 	}
 }

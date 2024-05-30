@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.BitWidthExpression
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
@@ -56,7 +57,7 @@ abstract class AbstractRealSwitch<T : AbstractSwitch<T>>(
 		}
 
 	init {
-		propagationDelay = 0
+		propagationDelay = LongValueImpl.ZERO
 		for (i in 1..portCount) {
 			addPort(DigitalPortImpl.createInOut(Logic.POSITIVE, null, bitWidth))
 		}
@@ -65,6 +66,7 @@ abstract class AbstractRealSwitch<T : AbstractSwitch<T>>(
 	/** ---- [GraphElement] */
 
 	override fun graphParamsChanged(graph: Graph) {
+		super.graphParamsChanged(graph)
 		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
 	}
 

@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
@@ -69,7 +70,7 @@ class WireTap(
 	val tapCount: PortCount get() = config.narrowPortCount
 
 	init {
-		propagationDelay = 0
+		propagationDelay = LongValueImpl.ZERO
 		createPorts()
 	}
 

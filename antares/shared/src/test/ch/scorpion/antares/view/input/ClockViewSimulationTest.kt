@@ -7,6 +7,7 @@ import ch.scorpion.antares.model.input.PeriodOrFrequencyUnit
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.view.output.LEDView
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.io.StorableCloner
 import kotlin.test.*
@@ -65,12 +66,12 @@ class ClockViewSimulationTest : AbstractCircuitTest() {
 	fun shouldNotWritePropagationDelayChangedDuringSimulation() {
 		startSimulation()
 		// The knob sets the propagation delay directly
-		clockView.model.propagationDelay = 200_000
+		clockView.model.propagationDelay = LongValueImpl(200_000)
 		stopSimulation()
 
 		val clone = StorableCloner.clone(clockView.model)
 
-		assertEquals(100_000_000, clone.propagationDelay)
+		assertEquals(100_000_000, clone.propagationDelay.value)
 	}
 
 	@Test

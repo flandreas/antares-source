@@ -8,6 +8,7 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.BitWidthExpression
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.truthtable.TruthTableModel
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.Properties
@@ -40,7 +41,7 @@ abstract class AbstractLogicGate(
 		const val PROP_DEFAULT_PROPAGATION_DELAY = "antares.model.gate.defaultPropagationDelay"
 
 	    val DEFAULT_PROPAGATION_DELAY by lazy {
-			BaseModule.properties.getInt(PROP_DEFAULT_PROPAGATION_DELAY).toLong()
+			LongValueImpl(BaseModule.properties.getInt(PROP_DEFAULT_PROPAGATION_DELAY).toLong())
 		}
 
         val DEF_MIN_INPUT_COUNT = PortCount.TWO
@@ -91,6 +92,7 @@ abstract class AbstractLogicGate(
 	/** ---- [GraphElement] */
 
 	override fun graphParamsChanged(graph: Graph) {
+		super.graphParamsChanged(graph)
 		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
 	}
 
@@ -153,7 +155,7 @@ abstract class AbstractLogicGate(
 
     override fun executionStart(signalHandler: SignalHandler) {
         super.executionStart(signalHandler)
-        requestActingAfter(signalHandler, propagationDelay / 2, createActorData(null))
+        requestActingAfter(signalHandler, propagationDelay.value / 2, createActorData(null))
     }
 
     /** ---- [AbstractLogicGate] */

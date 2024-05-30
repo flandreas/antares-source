@@ -63,12 +63,13 @@ class Joystick(bitWidth: BitWidth = BitWidth.BW_2) : CalculatingVertice(CALCULAT
 
 	fun setKnobPosition(position: Point2D, signalHandler: SignalHandler) {
 		knobPosition = position
-		requestActingAfter(signalHandler, propagationDelay, createActorData(null))
+		requestActingAfter(signalHandler, propagationDelay.value, createActorData(null))
 	}
 
 	/** ---- [GraphElement] */
 
 	override fun graphParamsChanged(graph: Graph) {
+		super.graphParamsChanged(graph)
 		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
 	}
 
@@ -95,7 +96,7 @@ class Joystick(bitWidth: BitWidth = BitWidth.BW_2) : CalculatingVertice(CALCULAT
 
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
-		requestActingAfter(signalHandler, propagationDelay / 2, createActorData(null))
+		requestActingAfter(signalHandler, propagationDelay.value / 2, createActorData(null))
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {

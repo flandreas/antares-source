@@ -8,6 +8,7 @@ import ch.scorpion.antares.model.signal.BitWidthGraphParamType
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.gate.LogicGateView
 import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -15,6 +16,8 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
+import ch.scorpion.jabbah.graph.model.param.LongValueExpression
+import ch.scorpion.jabbah.graph.model.param.LongValueGraphParamType
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.VerticeView
@@ -110,7 +113,7 @@ class TestCircuitBuilder(
 	 * Builds a [GraphView] whose [Graph] consists of a [DigitalCircuitInOutImpl] of type [PortType.INPUT]
 	 * with [BitWidthExpression] [inputExpression] and a [DigitalCircuitInOutImpl] of type [PortType.OUTPUT]
 	 * with [BitWidthExpression] [outputExpression], both unconnected.
-	 * Adds a [GraphParamDefinition] of type [BitWidthGraphParamType] with name "BW"
+	 * Adds a [GraphParamDefinition] with a parameter of type [BitWidthGraphParamType] with name "BW"
 	 */
 	fun buildBitWidthExpressionInputOutput(
 		inputExpression: String,
@@ -127,6 +130,24 @@ class TestCircuitBuilder(
 
 		graph.parameterDefinitions = graph.parameterDefinitions.withDefinition(
 			GraphParamDefinition.create("BW", BitWidthGraphParamType, BitWidth.BW_4))
+
+		return graphView
+	}
+
+	/**
+	 * Builds a [GraphView] with an OR gate having [expression] as propagation delay expression.
+	 * Adds a [GraphParamDefinition] with a parameter of type [LongValueGraphParamType] with name [parameterName].
+	 */
+	fun buildPropagationDelayExpressionOrGate(
+		parameterName: String,
+		expression: String
+	): GraphView {
+		val orGateView = addVerticeView(LogicGateView.orGateView())
+		orGateView.propagationDelay = LongValueExpression(expression)
+
+		graph.parameterDefinitions = graph.parameterDefinitions.withDefinition(
+			GraphParamDefinition.create(parameterName, LongValueGraphParamType, LongValueImpl(20))
+		)
 
 		return graphView
 	}

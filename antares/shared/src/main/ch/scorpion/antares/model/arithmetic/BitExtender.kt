@@ -81,6 +81,7 @@ class BitExtender(
 	/** ---- [GraphElement] */
 
 	override fun graphParamsChanged(graph: Graph) {
+		super.graphParamsChanged(graph)
 		(inputBitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> inputBitWidth = bw } }
 		(outputBitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> outputBitWidth = bw } }
 	}

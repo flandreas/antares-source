@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.model.vertice
 
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
@@ -22,7 +23,7 @@ abstract class AbstractGraphPort<T : Any>(
 ) : AbstractInteractableVertice<T>(calculator, GraphPortName.defaultName(name, port.portType.reverse())), GraphPort<T> {
 
 	init {
-		propagationDelay = 0
+		propagationDelay = LongValueImpl.ZERO
 		addPort(port)
 	}
 

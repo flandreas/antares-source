@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.param.GraphParamValuePropertyFactoryRegistry
+import ch.scorpion.jabbah.graph.model.semantic.GraphSemantic
 import ch.scorpion.jabbah.graph.view.GraphProperties
 import com.l2fprod.common.propertysheet.Property
 
@@ -34,7 +35,14 @@ class SubGraphVerticeViewImplBeanInfo : AbstractComponentBeanInfo<SubGraphVertic
 		    return
 	    }
 
-	    properties.add(propDelay.bind(editor, beanIdProvider(bean.id)))
+		val paramDefs = bean.model.graphUUID?.let {
+			LibraryModule.libraryHolder.getMetaGraph(it).graph.model?.parameterDefinitions
+		}
+
+		if (paramDefs == null || !paramDefs.hasAnyWithSemantic(GraphSemantic.PropagationDelay)) {
+			properties.add(propDelay.bind(editor, beanIdProvider(bean.id)))
+		}
+
 	    properties.add(orientation.bind(editor, beanIdProvider(bean.id)))
 	    properties.add(mirrorH.bind(editor, beanIdProvider(bean.id)))
 	    properties.add(mirrorV.bind(editor, beanIdProvider(bean.id)))
@@ -45,13 +53,11 @@ class SubGraphVerticeViewImplBeanInfo : AbstractComponentBeanInfo<SubGraphVertic
 	    }
 	    properties.add(description.bind(editor, beanIdProvider(bean.id)))
 
-	    bean.model.graphUUID?.let {
-	        LibraryModule.libraryHolder.getMetaGraph(it).graph.model?.parameterDefinitions?.let { defs ->
-		        for (def in defs.iterator()) {
-			        val property = GraphParamValuePropertyFactoryRegistry.createProperty(def, editor, componentBeanProvider)
-			        properties.add(property.bind(editor, beanIdProvider(bean.id)))
-		        }
-	        }
-	    }
+	    paramDefs?.let { defs ->
+			for (def in defs.iterator()) {
+				val property = GraphParamValuePropertyFactoryRegistry.createProperty(def, editor, componentBeanProvider)
+				properties.add(property.bind(editor, beanIdProvider(bean.id)))
+			}
+		}
     }
 }

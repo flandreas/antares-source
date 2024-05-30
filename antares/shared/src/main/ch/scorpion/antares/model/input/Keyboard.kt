@@ -8,6 +8,7 @@ import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
@@ -94,7 +95,7 @@ class Keyboard(
 		addPort(DigitalPortImpl(portType = PortType.OUTPUT, name = DATA_PORT_NAME, bitWidth = BitWidth.BW_8, description = DATA_PORT_DESC))
 		addPort(DigitalPortImpl(portType = PortType.OUTPUT, name = AVAILABLE_PORT_NAME, description = AVAILABLE_PORT_DESC))
 
-		propagationDelay = 1000
+		propagationDelay = LongValueImpl(1000)
 	}
 
 	/** ---- [Actor] */
@@ -141,7 +142,7 @@ class Keyboard(
 		if (bufferItemsCount < bufferSize) {
 			buffer.add(byte)				
 			stateChanged(signalHandler)
-			requestActingAfter(signalHandler, propagationDelay, createActorData(null))
+			requestActingAfter(signalHandler, propagationDelay.value, createActorData(null))
 		}
 	}
 

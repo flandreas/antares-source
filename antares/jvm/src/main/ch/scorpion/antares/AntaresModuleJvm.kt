@@ -25,8 +25,6 @@ import ch.scorpion.antares.view.output.LightColorPreference
 import ch.scorpion.antares.view.output.VideoRamColorModel
 import ch.scorpion.antares.view.port.DigitalPortViewStyle
 import ch.scorpion.antares.view.signal.BitWidthEditor
-import ch.scorpion.antares.view.signal.BitWidthParamValuePropertySwing
-import ch.scorpion.antares.view.signal.BitWidthPropertySwing
 import ch.scorpion.antares.view.symbolstyle.SymbolStyle
 import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTableService
 import ch.scorpion.jabbah.app.Environment
@@ -62,10 +60,7 @@ import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.library.dictionary.FileLibraryDictionaryPersistenceService
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
 import ch.scorpion.jabbah.graph.library.dictionary.ResourceLibraryDictionaryPersistenceService
-import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
-import ch.scorpion.jabbah.graph.model.param.GraphParamValueEditorRegistry
-import ch.scorpion.jabbah.graph.model.param.GraphParamValuePropertyFactory
-import ch.scorpion.jabbah.graph.model.param.GraphParamValuePropertyFactoryRegistry
+import ch.scorpion.jabbah.graph.model.param.*
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.project.ProjectAkrabClientServiceJvm
 import ch.scorpion.jabbah.graph.project.ProjectManagementService
@@ -264,7 +259,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.register(BitWidth::class.java) { prop ->
 			BitWidthEditor(
 				propertyName = prop.displayName,
-				editable = (prop as BitWidthPropertySwing).editable,
+				editable = (prop as ExpressionPropertySwing<BitWidth>).editable,
 				graphEditor = prop.editor,
 				errorCallback = { prop.dslError = it },
 				prop.filter )
@@ -280,11 +275,11 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 					editor: Editor,
 					beanProvider: BeanProvider
 				): AbstractReflectionPropertySwing<*> {
-					return BitWidthParamValuePropertySwing(
+					return GraphParamValuePropertySwing(
 						paramDefinition = def as GraphParamDefinition<BitWidth>,
 						propertyName = "BitWidth", // only used for logging
-						baseKey ="element.property.bitWidth",
-						beanProvider,
+						BitWidth::class.java,
+						beanProvider
 					)
 				}
 			}

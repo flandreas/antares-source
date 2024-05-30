@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.event.EventBusImpl
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
+import ch.scorpion.jabbah.graph.model.param.StringGraphParamType
 import ch.scorpion.jabbah.graph.model.port.PortImpl
 import ch.scorpion.jabbah.graph.model.vertice.GraphInputImpl
 import ch.scorpion.jabbah.graph.model.vertice.GraphOutputImpl

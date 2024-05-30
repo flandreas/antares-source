@@ -13,12 +13,14 @@ class GraphParamValueCommand<V : Any>(
 	private val paramDef: GraphParamDefinition<V>,
 	editor: Editor,
 	propertyBaseKey: String,
+	baseKeyParams: Array<Any> = emptyArray(),
 	beanProvider: BeanProvider,
 	beanIds: Collection<String>,
 	newValue: V?
 ) : AbstractPropertyCommand<V>(
 	editor,
 	propertyBaseKey,
+	baseKeyParams,
 	beanProvider,
 	beanIds,
 	newValue

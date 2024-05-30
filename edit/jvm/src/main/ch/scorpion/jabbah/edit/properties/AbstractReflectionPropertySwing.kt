@@ -21,7 +21,7 @@ abstract class AbstractReflectionPropertySwing<V>(
 	private var interactive: Boolean = false,
 	private val displayName: String? = null,
 	val supportMultiSelection: Boolean = true,
-	private val baseKeyParams: Array<Any> = emptyArray()
+	protected val baseKeyParams: Array<Any> = emptyArray()
 ) : AbstractProperty() {
 
 	companion object {
@@ -69,7 +69,7 @@ abstract class AbstractReflectionPropertySwing<V>(
 
 	override fun getName(): String = getterPropertyName
 
-	override fun getDisplayName(): String = displayName ?: Translations.getString("$baseKey.name", *baseKeyParams )
+	override fun getDisplayName(): String = displayName ?: Translations.getString("$baseKey.name", *baseKeyParams)
 
 	override fun getType(): Class<*> = valueClass
 

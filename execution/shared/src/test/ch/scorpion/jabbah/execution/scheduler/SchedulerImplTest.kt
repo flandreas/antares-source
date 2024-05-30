@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.execution.scheduler
 
+import ch.scorpion.jabbah.base.LongValue
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.math.MILLION
 import ch.scorpion.jabbah.base.event.EventBusImpl
 import ch.scorpion.jabbah.base.time.ControlledTimeService
@@ -280,7 +282,7 @@ class SchedulerImplTest {
 		val actorData = createActorData()
 
 		scheduler.isActive = true
-		scheduler.requestActingAfter(actor, actor.propagationDelay, actorData)
+		scheduler.requestActingAfter(actor, actor.propagationDelay.value, actorData)
 		timeService.setTimeMillis(50)
 
 		scheduler.actPrematurely(actor, actorData)
@@ -291,7 +293,7 @@ class SchedulerImplTest {
 
 	private fun createActor(isBreakpoint: Boolean = true, propagationDelay: Long = 0): Actor {
 		val actor = spyk<ActorImpl>()
-		actor.propagationDelay = propagationDelay
+		actor.propagationDelay = LongValueImpl(propagationDelay)
 		every { actor.isBreakpoint } returns isBreakpoint
 		return actor
 	}
@@ -318,7 +320,7 @@ class SchedulerImplTest {
 		override var state: ActorState = ActorState.NonExecuting
 			private set
 
-		override var propagationDelay: Long = 100L
+		override var propagationDelay: LongValue = LongValueImpl(100L)
 
 		override val isBreakpoint: Boolean get() = true
 
