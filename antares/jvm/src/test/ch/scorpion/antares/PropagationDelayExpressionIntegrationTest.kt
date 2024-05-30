@@ -38,7 +38,7 @@ class PropagationDelayExpressionIntegrationTest : AbstractJvmCircuitTest() {
     fun shouldUpdateCircuit() {
         val gate = subGraphVV.model.getGraph().elements.first() as NonUnaryLogicGate
 
-        subGraphVV.model.setParamValue(GraphParamValue.create("PD", LongValueGraphParamType, LongValueImpl(25L)))
+        subGraphVV.model.setParamValue(GraphParamValue.create("PD", LongValueGraphParamType, LongValueImpl(25L), null))
 
         assertEquals(2 * 25, gate.propagationDelay.value)
     }

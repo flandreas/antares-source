@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.model.param
 
 import ch.scorpion.jabbah.base.dsl.DslError
+import ch.scorpion.jabbah.edit.semantic.Semantic
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -25,7 +26,7 @@ interface GraphParamType<T : Any> {
 
 	fun readValue(name: String, reader: StoreReader): T
 
-	fun createValue(name: String, value: T): GraphParamValue<T>
+	fun createValue(name: String, value: T, semantic: Semantic?): GraphParamValue<T>
 
 	/** Convert [value] to a type supported by the DSL in order to evaluate expressions such as addition.*/
 	fun toDslValue(value: T): Any

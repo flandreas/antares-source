@@ -11,7 +11,7 @@ class GraphParamValuesTest {
 			GraphParamDefinition.create("test", StringGraphParamType, "Default"))
 		var values = GraphParamValues.withDefaults(defs)
 
-		values = values.withValue(GraphParamValue.create("test", StringGraphParamType, "New"))
+		values = values.withValue(GraphParamValue.create("test", StringGraphParamType, "New", null))
 
 		assertEquals(1, values.values.size)
 		assertEquals("New", values.getValue("test")!!.value)

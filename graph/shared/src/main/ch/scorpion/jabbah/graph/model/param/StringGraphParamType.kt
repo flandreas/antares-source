@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.model.param
 
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.edit.semantic.Semantic
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -17,8 +18,8 @@ object StringGraphParamType : GraphParamType<String> {
 
     override fun toString(): String = displayableName
 
-    override fun createValue(name: String, value: String): GraphParamValue<String> =
-        GraphParamValue.create(name, this, value)
+    override fun createValue(name: String, value: String, semantic: Semantic?): GraphParamValue<String> =
+        GraphParamValue.create(name, this, value, semantic)
 
     override fun writeValue(name: String, value: String, writer: StoreWriter) {
         writer.writeString(name, value)

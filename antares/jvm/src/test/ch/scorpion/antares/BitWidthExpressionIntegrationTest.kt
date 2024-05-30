@@ -42,7 +42,7 @@ class BitWidthExpressionIntegrationTest : AbstractJvmCircuitTest() {
 		val input = subGraphVV.model.getGraph().getGraphInput<DigitalSignal>("I") as DigitalCircuitInOut
 		val output = subGraphVV.model.getGraph().getGraphOutput<DigitalSignal>("O") as DigitalCircuitInOut
 
-		subGraphVV.model.setParamValue(GraphParamValue.create("BW", BitWidthGraphParamType, BitWidth.BW_8))
+		subGraphVV.model.setParamValue(GraphParamValue.create("BW", BitWidthGraphParamType, BitWidth.BW_8, null))
 
 		assertEquals(BitWidth.BW_8.width, input.bitWidth.width)
 		assertEquals(BitWidth.BW_16.width, output.bitWidth.width)
@@ -53,7 +53,7 @@ class BitWidthExpressionIntegrationTest : AbstractJvmCircuitTest() {
 		val inputPortView = subGraphVV.getPortView(subGraphVV.model.getInput())!!
 		val outputPortView = subGraphVV.getPortView(subGraphVV.model.getOutput())!!
 
-		subGraphVV.model.setParamValue(GraphParamValue.create("BW", BitWidthGraphParamType, BitWidth.BW_8))
+		subGraphVV.model.setParamValue(GraphParamValue.create("BW", BitWidthGraphParamType, BitWidth.BW_8, null))
 
 		assertEquals(BitWidth.BW_8.width, (inputPortView.port as DigitalPort).bitWidth.width)
 		assertEquals(BitWidth.BW_16.width, (outputPortView.port as DigitalPort).bitWidth.width)
@@ -61,7 +61,7 @@ class BitWidthExpressionIntegrationTest : AbstractJvmCircuitTest() {
 
 	@Test
 	fun shouldApplyParamsWhenLoadingSubGraphVerticeView() {
-		subGraphVV.model.setParamValue(GraphParamValue.create("BW", BitWidthGraphParamType, BitWidth.BW_8))
+		subGraphVV.model.setParamValue(GraphParamValue.create("BW", BitWidthGraphParamType, BitWidth.BW_8, null))
 
 		val usingCircuitBuilder = TestCircuitBuilder("Using", styleProvider, eventBus)
 		usingCircuitBuilder.addVerticeView(subGraphVV)

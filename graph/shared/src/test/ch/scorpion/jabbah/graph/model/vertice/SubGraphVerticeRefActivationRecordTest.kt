@@ -60,7 +60,7 @@ class SubGraphVerticeRefActivationRecordTest {
 
 	@Test
 	fun shouldAccessGraphParamsAsVariables() {
-		val paramValue = GraphParamValue.create("L", LongValueGraphParamType, LongValueImpl(99L))
+		val paramValue = GraphParamValue.create("L", LongValueGraphParamType, LongValueImpl(99L), null)
 
 		val vv = mockk<SubGraphVerticeRef>(relaxed = true)
 		every { vv.paramValues } returns GraphParamValues().withValue(paramValue)

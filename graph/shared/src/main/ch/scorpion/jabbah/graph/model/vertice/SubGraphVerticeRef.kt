@@ -24,6 +24,7 @@ import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
 import ch.scorpion.jabbah.graph.model.param.GraphParamValue
 import ch.scorpion.jabbah.graph.model.param.GraphParamValues
+import ch.scorpion.jabbah.graph.model.semantic.GraphSemantic
 import ch.scorpion.jabbah.graph.model.vertice.GraphReferenceState.*
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.BrokenReferenceView
@@ -122,6 +123,18 @@ class SubGraphVerticeRef(
 	private val executionMetaData by lazy {
 		ScriptMetaData(type, Translations.getString("graph.property.GraphViewImpl.script.name"))
 	}
+
+	override var propagationDelay: LongValue
+		get() {
+			val propDelay = paramValues.firstOrNullWithSemantic(GraphSemantic.PropagationDelay)?.value
+			if (propDelay is LongValue) {
+				return propDelay
+			}
+			return super.propagationDelay
+		}
+		set(value) {
+			super.propagationDelay = value
+		}
 
 	/** ---- [GraphElement] interface */
 

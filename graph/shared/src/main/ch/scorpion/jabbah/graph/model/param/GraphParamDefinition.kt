@@ -35,9 +35,9 @@ class GraphParamDefinition<T : Any>(
 
 	var semantic: Semantic? = null
 
-	fun createDefaultValue(): GraphParamValue<T> = type.createValue(name, defaultValue)
+	fun createDefaultValue(): GraphParamValue<T> = type.createValue(name, defaultValue, semantic)
 
-	fun createValue(value: T): GraphParamValue<T> = type.createValue(name, value)
+	fun createValue(value: T): GraphParamValue<T> = type.createValue(name, value, semantic)
 
 	/** ---- [Storable] interface */
 

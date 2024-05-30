@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.parser.TextLocation
 import ch.scorpion.jabbah.base.dsl.Dsl
 import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.base.dsl.Memory
+import ch.scorpion.jabbah.edit.semantic.Semantic
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.graph.GraphActivationRecord
 import ch.scorpion.jabbah.graph.model.param.GraphParamType
@@ -29,8 +30,8 @@ object BitWidthGraphParamType : GraphParamType<BitWidth> {
 
 	override fun toString(): String = displayableName
 
-	override fun createValue(name: String, value: BitWidth): GraphParamValue<BitWidth> =
-		GraphParamValue.create(name, this, value)
+	override fun createValue(name: String, value: BitWidth, semantic: Semantic?): GraphParamValue<BitWidth> =
+		GraphParamValue.create(name, this, value, semantic)
 
 	override fun writeValue(name: String, value: BitWidth, writer: StoreWriter) {
 		value.write(name, writer)
