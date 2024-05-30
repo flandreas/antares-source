@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.graph.model.param
 
 import ch.scorpion.jabbah.base.help.HelpId
+import ch.scorpion.jabbah.edit.semantic.Semantic
+import ch.scorpion.jabbah.edit.semantic.SemanticRegistry
 import ch.scorpion.jabbah.io.*
 
 /**
@@ -14,11 +16,13 @@ class GraphParamDefinition<T : Any>(
 		fun <T : Any> create(
 			name: String,
 			type: GraphParamType<T>,
-			defaultValue: T
+			defaultValue: T,
+			semantic: Semantic? = null
 		) : GraphParamDefinition<T> {
 			val definition = GraphParamDefinition<T>(name)
 			definition.type = type
 			definition.defaultValue = defaultValue
+			definition.semantic = semantic
 			return definition
 		}
 	}
@@ -28,6 +32,8 @@ class GraphParamDefinition<T : Any>(
 	lateinit var type: GraphParamType<T>
 
 	lateinit var defaultValue: T
+
+	var semantic: Semantic? = null
 
 	fun createDefaultValue(): GraphParamValue<T> = type.createValue(name, defaultValue)
 
@@ -41,12 +47,18 @@ class GraphParamDefinition<T : Any>(
 		writer.writeString("name", name)
 		writer.writeString("type", type.name)
 		type.writeValue("defaultValue", defaultValue, writer)
+		if (semantic != null) {
+			writer.writeString("semantic", semantic!!.customName)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
 		name = reader.readString("name")
 		type = GraphParamTypeRegistry.get(reader.readString("type"))
 		defaultValue = type.readValue("defaultValue", reader)
+		if (reader.hasAttribute("semantic")) {
+			semantic = SemanticRegistry.withCustomName(reader.readString("semantic"))
+		}
 	}
 }
 
@@ -72,6 +84,8 @@ class GraphParamDefinitions : AbstractStorable(), Iterable<GraphParamDefinition<
 	override fun iterator(): Iterator<GraphParamDefinition<*>> = _definitions.iterator()
 
 	fun contains(name: String): Boolean = _definitions.any { it.name == name }
+
+	fun hasAnyWithSemantic(semantic: Semantic): Boolean = _definitions.any { it.semantic == semantic }
 
 	fun withDefinition(def: GraphParamDefinition<*>): GraphParamDefinitions =
 		GraphParamDefinitions().also { newDefs ->

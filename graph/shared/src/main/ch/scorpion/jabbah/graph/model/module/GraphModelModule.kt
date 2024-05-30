@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.graph.dsl.GraphDslModule
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.graph.GraphImpl
 import ch.scorpion.jabbah.edit.model.image.ImageIdentification
+import ch.scorpion.jabbah.edit.semantic.SemanticRegistry
 import ch.scorpion.jabbah.graph.model.net.NetImpl
 import ch.scorpion.jabbah.graph.model.net.SignalConflictBehaviour
 import ch.scorpion.jabbah.graph.model.net.SignalConflictBehaviourHolder
@@ -22,6 +23,7 @@ import ch.scorpion.jabbah.graph.model.param.*
 import ch.scorpion.jabbah.graph.model.port.InconsistentNetError
 import ch.scorpion.jabbah.graph.model.port.PortFactory
 import ch.scorpion.jabbah.graph.model.port.UndefinedPortFactory
+import ch.scorpion.jabbah.graph.model.semantic.GraphSemantic
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeImpl
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRefActivationRecord
@@ -62,6 +64,8 @@ object GraphModelModule : AbstractModule() {
 
 		registerGraphTypes()
 		registerGraphParamTypes()
+		registerSemantics()
+
 		fillProperties(BaseModule.properties)
 		configureTypeMap(IOModule.typeMap)
 	}
@@ -85,6 +89,10 @@ object GraphModelModule : AbstractModule() {
 
 	private fun registerGraphTypes() {
 		graphTypeRegistry.register(GenericGraphType, asDefault = true)
+	}
+
+	private fun registerSemantics() {
+		GraphSemantic.entries.forEach { SemanticRegistry.register(it) }
 	}
 
 	private fun configureTypeMap(typeMap: TypeMap) {
