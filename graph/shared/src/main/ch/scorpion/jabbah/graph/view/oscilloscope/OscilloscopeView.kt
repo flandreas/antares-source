@@ -82,6 +82,10 @@ class OscilloscopeView(
 			.close()
 	}
 
+	/**
+	 * The scale of the [OscilloscopeViewTimeline] changed by the user during simulation.
+	 * Is preserved during multiple simulation runs.
+	 */
 	var timelineScale: Double
 		get() = timeline.scale
 		set(value) {
@@ -98,8 +102,13 @@ class OscilloscopeView(
 			validate()
 		}
 
-	/** Used for restoring [timelineScale] after the simulation has ended. */
-	private var timelineScaleBuffer: Double = 0.0
+	/** Changed by the user in edit mode. Persistently stored in the [GraphView].*/
+	@Suppress("MemberVisibilityCanBePrivate") // Reflection
+	var persistentTimelineScale: Double = INIT_SCALE
+		set(value) {
+			field = value
+			timelineScale = field
+		}
 
 	/** Returns the height of the drawing area used by a [SignalHistoryDrawer] returned by [OscilloscopeViewFactory].*/
 	val rowHeight: Int get() = factory.getRowHeight(model.graphType)
@@ -246,7 +255,6 @@ class OscilloscopeView(
 		super.executionStarted(signalHandler)
 		model.enabled = visible
 		if (visible) {
-			timelineScaleBuffer = timelineScale
 			rows.forEach { it.bindDrawer() }
 			scaleRow.bindDrawer()
 		}
@@ -254,7 +262,6 @@ class OscilloscopeView(
 
 	override fun executionStopped(signalHandler: SignalHandler) {
 		super.executionStopped(signalHandler)
-		timelineScale = timelineScaleBuffer
 		rows.forEach { it.unbindDrawer() }
 		scaleRow.unbindDrawer()
 	}
@@ -263,14 +270,14 @@ class OscilloscopeView(
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
-		writer.writeDouble("scale", timelineScale)
+		writer.writeDouble("scale", persistentTimelineScale)
 		writer.writeBoolean("visible", visible)
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		if (reader.hasAttribute("scale")) {
-			timelineScale = reader.readDouble("scale")
+			persistentTimelineScale = reader.readDouble("scale")
 		}
 		if (reader.hasAttribute("visible")) {
 			visible = reader.readBoolean("visible")

@@ -11,7 +11,7 @@ import com.l2fprod.common.propertysheet.Property
 class OscilloscopeViewBeanInfo : AbstractComponentBeanInfo<OscilloscopeView>() {
 
     companion object {
-	    private val scale = CommandPropertySwing("timelineScale", "graph.property.oscilloscopeScale", Double::class.java, componentBeanProvider)
+	    private val scale = CommandPropertySwing("persistentTimelineScale", "graph.property.oscilloscopeScale", Double::class.java, componentBeanProvider)
 	    private val mode = CommandPropertySwing("mode", "graph.property.oscilloscopeMode.type", SignalHistoriesType::class.java, componentBeanProvider)
     }
 
