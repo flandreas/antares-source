@@ -163,6 +163,7 @@ class GraphParamDefinitionsViewSwing(
 		typeField.selectedItem = typeField.getItemAt(0)
 		setDefaultValueEditor(typeField.selectedItem as GraphParamType<*>)
 		semanticField.selectedItem = null
+		nameField.requestFocusInWindow()
 	}
 
 	override fun <T: Any> getEditedDefinition(): GraphParamDefinition<T> =
