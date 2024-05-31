@@ -95,6 +95,7 @@ class BitWidthEditor(
 			script = script,
 			editable = editable,
 			propertyName = propertyName,
+			variables = graph?.symbolTable?.names(),
 			parserFactory = parserFactory!!
 		)?.let {
 			// The script is evaluated when the editor loses focus

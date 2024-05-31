@@ -80,6 +80,7 @@ class LongValueEditor(
             script = script,
             editable = editable,
             propertyName = propertyName,
+            variables = graph?.symbolTable?.names(),
             parserFactory = parserFactory!!
         )?.let {
             value = LongValueExpression(it)

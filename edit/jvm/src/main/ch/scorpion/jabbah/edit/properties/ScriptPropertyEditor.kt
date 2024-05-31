@@ -75,6 +75,7 @@ class ScriptPropertyEditor(
 			editable = editable,
 			helpId = helpId,
 			propertyName = propertyName,
+			variables = null,
 			parserFactory = parserFactory
 		) ?.let {
 			script = ScriptProperty(it)

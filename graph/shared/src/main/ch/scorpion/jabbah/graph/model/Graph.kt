@@ -82,8 +82,8 @@ interface Graph : GraphPortOwner, Namable, Describable, Storable, Bean {
     val graphPorts: ImmutableList<GraphPort<*>>
 
 	/**
-	 * Returns a [SymbolTable] containing the name of all [GraphPort] of this [Graph]
-	 * as variable definitions.
+	 * Returns a [SymbolTable] containing the name of all [GraphPort] and [GraphParamDefinitions]
+	 * of this [Graph] as variable definitions.
 	 */
 	val symbolTable: SymbolTable
 

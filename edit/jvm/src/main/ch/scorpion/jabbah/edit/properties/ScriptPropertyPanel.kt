@@ -22,6 +22,7 @@ class ScriptPropertyPanel(
 	editable: Boolean = true,
 	private val helpId: HelpId? = null,
 	private val parserFactory: ParserFactory? = BaseModule.parserFactory,
+	private val variables: Iterator<String>? = null,
 	private val closeHandler: () -> Unit
 ) : JPanel() {
 
@@ -40,10 +41,11 @@ class ScriptPropertyPanel(
 			propertyName: String,
 			editable: Boolean = true,
 			helpId: HelpId? = null,
+			variables: Iterator<String>? = null,
 			parserFactory: ParserFactory? = BaseModule.parserFactory
 		): String? {
 			val builder = DialogBuilder<ScriptPropertyPanel>(parent)
-				.content { dialog -> ScriptPropertyPanel(script, editable, helpId, parserFactory) { dialog.dispose() } }
+				.content { dialog -> ScriptPropertyPanel(script, editable, helpId, parserFactory, variables) { dialog.dispose() } }
 				.title(propertyName)
 				.preferredSize(Dimension(600, 500))
 				.minimumSize(Dimension(300, 200))
@@ -78,11 +80,14 @@ class ScriptPropertyPanel(
 	}
 
 	private fun buildUI(editable: Boolean) {
-		layout = BorderLayout(0, 10)
+		layout = BorderLayout(5, 10)
 		border = UIBasics.createDialogBorder()
 
 		add(buildContentPanel(), BorderLayout.CENTER)
 		add(buildButtonPanel(editable), BorderLayout.SOUTH)
+		variables?.let {
+			add(buildDocumentationComponent(it), BorderLayout.EAST)
+		}
 
 		SwingUtilities.invokeLater {
 			scriptTextArea.mainTextArea.requestFocusInWindow()
@@ -94,6 +99,23 @@ class ScriptPropertyPanel(
 		panel.add(scriptTextArea, BorderLayout.CENTER)
 		panel.add(buildStatusPanel(), BorderLayout.SOUTH)
 		return panel
+	}
+
+	private fun buildDocumentationComponent(variables: Iterator<String>): JComponent {
+		val builder = StringBuilder("${Translations.getString("edit.property.variables.text")}: <br><br>")
+		variables.forEach { builder.append("$it<br>") }
+		val textPane = JEditorPane()
+		textPane.border = null
+		textPane.contentType = "text/html"
+		textPane.isEditable = false
+		textPane.text = builder.toString()
+
+		val scrollPane = JScrollPane(textPane)
+		scrollPane.horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+		scrollPane.verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
+		scrollPane.border = null
+
+		return scrollPane
 	}
 
 	private fun buildStatusPanel(): JPanel {
