@@ -94,6 +94,7 @@ class LEDMatrixView(
 
 	/** ---- UI controllable properties */
 
+	@Suppress("MemberVisibilityCanBePrivate") // Reflection
 	var columnWidth: BitWidth
 		get() = model.columnWidth
 		set(value) {
@@ -104,6 +105,7 @@ class LEDMatrixView(
 			}
 		}
 
+	@Suppress("MemberVisibilityCanBePrivate") // Reflection
 	var rowWidth: BitWidth
 		get() = model.rowWidth
 		set(value) {
@@ -114,6 +116,7 @@ class LEDMatrixView(
 			}
 		}
 
+	@Suppress("MemberVisibilityCanBePrivate") // Reflection
 	var afterglowDuration: Long
 		get() = model.afterglowDuration
 		set(value) {
@@ -271,7 +274,7 @@ class LEDMatrixView(
 			var y = height - inset - DOT_SIZE * factor
 			for (row in 0 until model.rowWidth.width) {
 				context.g.color = if (isExecute) {
-					lightColor.executeColor(isExecute)
+					lightColor.executeColor(model.isOn(column, row))
 				} else {
 					foregroundColor
 				}

@@ -8,7 +8,7 @@
             <circuitInOut _id='3' id='1' name='I' type='input' bitWidth='2^BW'>
               <desc>
                 <translation lang='de' text='Dateneingang'/>
-                <translation lang='en' text='Ddata input'/>
+                <translation lang='en' text='Data input'/>
               </desc>
             </circuitInOut>
             <circuitInOut _id='4' id='3' name='O' type='output' bitWidth='1'>
