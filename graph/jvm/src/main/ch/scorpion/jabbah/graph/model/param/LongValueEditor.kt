@@ -50,19 +50,8 @@ class LongValueEditor(
         }
     }
 
-    override fun getValueImpl(): LongValue {
-        return when (value) {
-            is LongValueExpression -> {
-                val expr = (value as LongValueExpression).expression
-                parseExpression("${GraphParamType.EXPRESSION_OP}$expr")
-            }
-            is LongValue -> {
-                val expr = textField.text
-                parseExpression(expr)
-            }
-            else -> throw IllegalStateException("Illegal number value")
-        }
-    }
+    override fun getValueImpl(): LongValue =
+        parseExpression(textField.text)
 
     private fun parseExpression(script: String): LongValue {
         val longValue = LongValueGraphParamType.parse(script)
