@@ -45,6 +45,8 @@ class LongValueEditor(
         if (value is LongValue?) {
             this.value = value
             textField.text = value.toString()
+        } else {
+            throw IllegalStateException("Illegal number value")
         }
     }
 

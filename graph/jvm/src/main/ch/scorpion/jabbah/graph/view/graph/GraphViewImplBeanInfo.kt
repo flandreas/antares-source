@@ -16,7 +16,7 @@ open class GraphViewImplBeanInfo<in T: GraphViewImpl> : AbstractBeanInfo<T>() {
     companion object {
 	    private val type = CommandPropertySwing("type.typeName", "graph.property.type", String::class.java, drawingBeanProvider)
 	    private val name = CommandPropertySwing("translatableName", "graph.property.GraphViewImpl", TranslatableText::class.java, drawingBeanProvider)
-	    private val propDelay = GraphProperties.propagationDelay("overallPropagationDelay", drawingBeanProvider)
+	    private val propDelay = GraphProperties.overallPropagationDelay("overallPropagationDelay", drawingBeanProvider)
 	    private val startupTime = GraphProperties.startupTime(drawingBeanProvider)
 		private val description = CommandPropertySwing("description", "graph.property.GraphViewImpl.shortDescription", TranslatableText::class.java, drawingBeanProvider)
 	    private val purelyScripted = GraphProperties.purelyScripted(drawingBeanProvider)
