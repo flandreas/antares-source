@@ -23,19 +23,19 @@ when (input) {
             <circuitInOut _id='4' id='2' name='B' type='input' bitWidth='1'/>
             <circuitInOut _id='5' id='3' name='C' type='input' bitWidth='1'/>
             <circuitInOut _id='6' id='4' name='D' type='input' bitWidth='1'/>
-            <notGate _id='7' id='5' delay='20'/>
-            <notGate _id='8' id='6' delay='20'/>
-            <notGate _id='9' id='7' delay='20'/>
-            <notGate _id='10' id='8' delay='20'/>
-            <andGate _id='11' id='9' delay='20' inputCount='2'/>
-            <andGate _id='12' id='10' delay='20' inputCount='2'/>
-            <andGate _id='13' id='11' delay='20' inputCount='2'/>
-            <andGate _id='14' id='12' delay='20' inputCount='2'/>
-            <andGate _id='15' id='13' delay='20' inputCount='2'/>
-            <andGate _id='16' id='14' delay='20' inputCount='2'/>
-            <andGate _id='17' id='15' delay='20' inputCount='2'/>
-            <andGate _id='18' id='16' delay='20' inputCount='2'/>
-            <andGate _id='19' id='17' delay='20' inputCount='3'/>
+            <notGate _id='7' id='5' delay='PD/3'/>
+            <notGate _id='8' id='6' delay='PD/3'/>
+            <notGate _id='9' id='7' delay='PD/3'/>
+            <notGate _id='10' id='8' delay='PD/3'/>
+            <andGate _id='11' id='9' delay='PD/3' inputCount='2'/>
+            <andGate _id='12' id='10' delay='PD/3' inputCount='2'/>
+            <andGate _id='13' id='11' delay='PD/3' inputCount='2'/>
+            <andGate _id='14' id='12' delay='PD/3' inputCount='2'/>
+            <andGate _id='15' id='13' delay='PD/3' inputCount='2'/>
+            <andGate _id='16' id='14' delay='PD/3' inputCount='2'/>
+            <andGate _id='17' id='15' delay='PD/3' inputCount='2'/>
+            <andGate _id='18' id='16' delay='PD/3' inputCount='2'/>
+            <andGate _id='19' id='17' delay='PD/3' inputCount='3'/>
             <digitalNet _id='20' id='18' delay='0'>
               <ports>
                 <netPortRef _id='21' verticeId='11' portId='1'/>
@@ -106,12 +106,12 @@ when (input) {
                 <netPortRef _id='70' verticeId='10' portId='2'/>
               </ports>
             </digitalNet>
-            <orGate _id='50' id='26' delay='20' inputCount='4'/>
-            <orGate _id='71' id='27' delay='20' inputCount='4'/>
-            <orGate _id='68' id='28' delay='20' inputCount='3'/>
-            <orGate _id='25' id='29' delay='20' inputCount='3'/>
-            <orGate _id='72' id='30' delay='20' inputCount='2'/>
-            <orGate _id='44' id='32' delay='20' inputCount='4'/>
+            <orGate _id='50' id='26' delay='PD/3' inputCount='4'/>
+            <orGate _id='71' id='27' delay='PD/3' inputCount='4'/>
+            <orGate _id='68' id='28' delay='PD/3' inputCount='3'/>
+            <orGate _id='25' id='29' delay='PD/3' inputCount='3'/>
+            <orGate _id='72' id='30' delay='PD/3' inputCount='2'/>
+            <orGate _id='44' id='32' delay='PD/3' inputCount='4'/>
             <digitalNet _id='73' id='47' delay='0'>
               <ports>
                 <netPortRef _id='74' verticeId='68' portId='2'/>
@@ -168,7 +168,7 @@ when (input) {
                 <netPortRef _id='104' verticeId='71' portId='1'/>
               </ports>
             </digitalNet>
-            <orGate _id='47' id='56' delay='20' inputCount='4'/>
+            <orGate _id='47' id='56' delay='PD/3' inputCount='4'/>
             <digitalNet _id='105' id='58' delay='0'>
               <ports>
                 <netPortRef _id='106' verticeId='50' portId='2'/>
@@ -303,15 +303,15 @@ when (input) {
             <notGateView _id='167' id='6' rot='270' filled='true' stroked='true' modelId='8' x='224.0' y='203.0'/>
             <notGateView _id='168' id='7' rot='270' filled='true' stroked='true' modelId='9' x='308.0' y='203.0'/>
             <notGateView _id='169' id='8' rot='270' filled='true' stroked='true' modelId='10' x='385.0' y='203.0'/>
-            <andGateView _id='170' id='9' rot='0' filled='true' stroked='true' modelId='11' x='504.0' y='252.0'/>
-            <andGateView _id='171' id='10' rot='0' filled='true' stroked='true' modelId='12' x='504.0' y='322.0'/>
-            <andGateView _id='172' id='11' rot='0' filled='true' stroked='true' modelId='13' x='504.0' y='392.0'/>
-            <andGateView _id='173' id='12' rot='0' filled='true' stroked='true' modelId='14' x='504.0' y='462.0'/>
-            <andGateView _id='174' id='13' rot='0' filled='true' stroked='true' modelId='15' x='504.0' y='532.0'/>
-            <andGateView _id='175' id='14' rot='0' filled='true' stroked='true' modelId='16' x='504.0' y='602.0'/>
-            <andGateView _id='176' id='15' rot='0' filled='true' stroked='true' modelId='17' x='504.0' y='672.0'/>
-            <andGateView _id='177' id='16' rot='0' filled='true' stroked='true' modelId='18' x='504.0' y='742.0'/>
-            <andGateView _id='178' id='17' rot='0' filled='true' stroked='true' modelId='19' x='504.0' y='812.0'/>
+            <andGateView _id='170' id='9' rot='0' filled='true' stroked='true' shadow='true' modelId='11' x='504.0' y='252.0'/>
+            <andGateView _id='171' id='10' rot='0' filled='true' stroked='true' shadow='true' modelId='12' x='504.0' y='322.0'/>
+            <andGateView _id='172' id='11' rot='0' filled='true' stroked='true' shadow='true' modelId='13' x='504.0' y='392.0'/>
+            <andGateView _id='173' id='12' rot='0' filled='true' stroked='true' shadow='true' modelId='14' x='504.0' y='462.0'/>
+            <andGateView _id='174' id='13' rot='0' filled='true' stroked='true' shadow='true' modelId='15' x='504.0' y='532.0'/>
+            <andGateView _id='175' id='14' rot='0' filled='true' stroked='true' shadow='true' modelId='16' x='504.0' y='602.0'/>
+            <andGateView _id='176' id='15' rot='0' filled='true' stroked='true' shadow='true' modelId='17' x='504.0' y='672.0'/>
+            <andGateView _id='177' id='16' rot='0' filled='true' stroked='true' shadow='true' modelId='18' x='504.0' y='742.0'/>
+            <andGateView _id='178' id='17' rot='0' filled='true' stroked='true' shadow='true' modelId='19' x='504.0' y='812.0'/>
             <digitalEdgeView _id='179' id='18' filled='true' stroked='true' modelId='20' layout='ortho' orig='162' origPort='1' origPortOutput='true' dest='180' adjusted='false'>
               <shape>
                 <polylineShape points='98.0,98.0 98.0,126.0'/>
@@ -1299,4 +1299,11 @@ when (input) {
       </model>
     </containerDrawing>
   </container>
+  <params>
+    <graphParamDefs _id='389'>
+      <paramDefs>
+        <graphParamDef _id='390' name='PD' type='Long' defaultValue='60' semantic='propagationDelay'/>
+      </paramDefs>
+    </graphParamDefs>
+  </params>
 </metaGraph>

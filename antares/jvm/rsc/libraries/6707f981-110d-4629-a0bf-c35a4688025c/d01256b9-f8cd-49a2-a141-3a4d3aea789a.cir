@@ -9,10 +9,10 @@
             <circuitInOut _id='4' id='2' name='I1' type='input' bitWidth='1'/>
             <circuitInOut _id='5' id='3' name='I2' type='input' bitWidth='1'/>
             <circuitInOut _id='6' id='4' name='I3' type='input' bitWidth='1'/>
-            <notGate _id='7' id='5' delay='20'/>
-            <notGate _id='8' id='6' delay='20'/>
-            <notGate _id='9' id='7' delay='20'/>
-            <notGate _id='10' id='8' delay='20'/>
+            <notGate _id='7' id='5' delay='PD/2'/>
+            <notGate _id='8' id='6' delay='PD/2'/>
+            <notGate _id='9' id='7' delay='PD/2'/>
+            <notGate _id='10' id='8' delay='PD/2'/>
             <digitalNet _id='11' id='9' delay='0'>
               <ports>
                 <netPortRef _id='12' verticeId='3' portId='1'/>
@@ -97,26 +97,26 @@
                 <netPortRef _id='80' verticeId='21' portId='4'/>
               </ports>
             </digitalNet>
-            <nandGate _id='50' id='17' delay='20' inputCount='4'/>
+            <nandGate _id='50' id='17' delay='PD/2' inputCount='4'/>
             <circuitInOut _id='81' id='18' name='!(O0)' type='output' bitWidth='1'/>
             <circuitInOut _id='82' id='19' name='!(O1)' type='output' bitWidth='1'/>
-            <nandGate _id='15' id='20' delay='20' inputCount='4'/>
+            <nandGate _id='15' id='20' delay='PD/2' inputCount='4'/>
             <circuitInOut _id='83' id='21' name='!(O2)' type='output' bitWidth='1'/>
-            <nandGate _id='28' id='22' delay='20' inputCount='4'/>
+            <nandGate _id='28' id='22' delay='PD/2' inputCount='4'/>
             <circuitInOut _id='84' id='23' name='!(O3)' type='output' bitWidth='1'/>
-            <nandGate _id='17' id='24' delay='20' inputCount='4'/>
+            <nandGate _id='17' id='24' delay='PD/2' inputCount='4'/>
             <circuitInOut _id='85' id='25' name='!(O4)' type='output' bitWidth='1'/>
-            <nandGate _id='37' id='26' delay='20' inputCount='4'/>
+            <nandGate _id='37' id='26' delay='PD/2' inputCount='4'/>
             <circuitInOut _id='86' id='27' name='!(O5)' type='output' bitWidth='1'/>
-            <nandGate _id='19' id='28' delay='20' inputCount='4'/>
+            <nandGate _id='19' id='28' delay='PD/2' inputCount='4'/>
             <circuitInOut _id='87' id='29' name='!(O6)' type='output' bitWidth='1'/>
-            <nandGate _id='31' id='30' delay='20' inputCount='4'/>
+            <nandGate _id='31' id='30' delay='PD/2' inputCount='4'/>
             <circuitInOut _id='88' id='31' name='!(O7)' type='output' bitWidth='1'/>
-            <nandGate _id='21' id='32' delay='20' inputCount='4'/>
+            <nandGate _id='21' id='32' delay='PD/2' inputCount='4'/>
             <circuitInOut _id='89' id='33' name='!(O8)' type='output' bitWidth='1'/>
-            <nandGate _id='45' id='34' delay='20' inputCount='4'/>
+            <nandGate _id='45' id='34' delay='PD/2' inputCount='4'/>
             <circuitInOut _id='90' id='35' name='!(O9)' type='output' bitWidth='1'/>
-            <nandGate _id='23' id='36' delay='20' inputCount='4'/>
+            <nandGate _id='23' id='36' delay='PD/2' inputCount='4'/>
             <digitalNet _id='91' id='37' delay='0'>
               <ports>
                 <netPortRef _id='92' verticeId='50' portId='5'/>
@@ -1195,4 +1195,11 @@
       </model>
     </containerDrawing>
   </container>
+  <params>
+    <graphParamDefs _id='368'>
+      <paramDefs>
+        <graphParamDef _id='369' name='PD' type='Long' defaultValue='40' semantic='propagationDelay'/>
+      </paramDefs>
+    </graphParamDefs>
+  </params>
 </metaGraph>

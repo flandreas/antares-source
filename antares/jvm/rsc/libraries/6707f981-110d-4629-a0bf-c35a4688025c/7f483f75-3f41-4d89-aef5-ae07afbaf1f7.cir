@@ -6,7 +6,7 @@
         <graph _id='2' type='digital' script='if (S) O = I1 else O = I0' startupTime='30'>
           <elements>
             <circuitInOut _id='3' id='1' name='S' type='input' bitWidth='1'/>
-            <notGate _id='4' id='2' delay='20'/>
+            <notGate _id='4' id='2' delay='PD/3'/>
             <digitalNet _id='5' id='3' delay='0'>
               <ports>
                 <netPortRef _id='6' verticeId='3' portId='1'/>
@@ -22,9 +22,9 @@
             </digitalNet>
             <circuitInOut _id='14' id='5' name='I0' type='input' bitWidth='1'/>
             <circuitInOut _id='15' id='6' name='I1' type='input' bitWidth='1'/>
-            <andGate _id='13' id='7' delay='20' inputCount='2'/>
-            <andGate _id='9' id='8' delay='20' inputCount='2'/>
-            <orGate _id='16' id='9' delay='20' inputCount='2'/>
+            <andGate _id='13' id='7' delay='PD/3' inputCount='2'/>
+            <andGate _id='9' id='8' delay='PD/3' inputCount='2'/>
+            <orGate _id='16' id='9' delay='PD/3' inputCount='2'/>
             <digitalNet _id='17' id='10' delay='0'>
               <ports>
                 <netPortRef _id='18' verticeId='13' portId='3'/>
@@ -253,4 +253,11 @@ x	1	0	1
       </model>
     </containerDrawing>
   </container>
+  <params>
+    <graphParamDefs _id='85'>
+      <paramDefs>
+        <graphParamDef _id='86' name='PD' type='Long' defaultValue='60' semantic='propagationDelay'/>
+      </paramDefs>
+    </graphParamDefs>
+  </params>
 </metaGraph>

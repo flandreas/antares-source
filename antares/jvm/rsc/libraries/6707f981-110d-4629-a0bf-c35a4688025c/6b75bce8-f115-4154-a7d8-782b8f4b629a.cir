@@ -1,11 +1,12 @@
-<metaGraph _id='0'>
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' startupTime='20'>
+        <graph _id='2' type='digital' startupTime='20'>
           <elements>
-            <norGate _id='3' id='1' delay='10' inputCount='2'/>
-            <notGate _id='4' id='2' delay='20'/>
+            <norGate _id='3' id='1' delay='PD/3' inputCount='2'/>
+            <notGate _id='4' id='2' delay='PD/3 * 2'/>
             <digitalNet _id='5' id='3' delay='0'>
               <ports>
                 <netPortRef _id='6' verticeId='4' portId='2'/>
@@ -45,7 +46,7 @@
                 <polylineShape points='-216.0,-140.0 -161.0,-140.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='24' id='4' rot='0' filled='true' stroked='true' modelId='8' representation='binary' orientation='east'>
+            <circuitInOutView _id='24' id='4' rot='0' filled='true' stroked='true' modelId='8' orientation='east' representation='binary'>
               <location>
                 <point x='-336.0' y='-140.0'/>
               </location>
@@ -55,7 +56,7 @@
                 <polylineShape points='-350.0,-140.0 -308.0,-140.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='27' id='6' rot='0' filled='true' stroked='true' modelId='13' representation='binary' orientation='east'>
+            <circuitInOutView _id='27' id='6' rot='0' filled='true' stroked='true' modelId='13' orientation='east' representation='binary'>
               <location>
                 <point x='-70.0' y='-154.0'/>
               </location>
@@ -89,7 +90,7 @@
     <containerDrawing _id='31'>
       <components>
         <rectangle _id='32' id='1' style='figure' filled='true' stroked='true' x='140.0' y='140.0' w='56.0' h='70.0'/>
-        <originIndicator _id='33'>
+        <originIndicator _id='33' id='5'>
           <location>
             <point x='126.0' y='175.0'/>
           </location>
@@ -124,4 +125,11 @@
       </model>
     </containerDrawing>
   </container>
+  <params>
+    <graphParamDefs _id='42'>
+      <paramDefs>
+        <graphParamDef _id='43' name='PD' type='Long' defaultValue='30' semantic='propagationDelay'/>
+      </paramDefs>
+    </graphParamDefs>
+  </params>
 </metaGraph>

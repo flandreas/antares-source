@@ -13,26 +13,26 @@
   COR = 0
 }' propDelay='60' startupTime='60'>
           <elements>
-            <andGate _id='3' id='1' delay='20' inputCount='2'/>
-            <andGate _id='4' id='2' delay='20' inputCount='2'/>
-            <andGate _id='5' id='3' delay='20' inputCount='2'/>
-            <andGate _id='6' id='4' delay='20' inputCount='2'/>
-            <andGate _id='7' id='5' delay='20' inputCount='2'/>
-            <andGate _id='8' id='6' delay='20' inputCount='2'/>
-            <andGate _id='9' id='7' delay='20' inputCount='2'/>
-            <andGate _id='10' id='8' delay='20' inputCount='2'/>
-            <andGate _id='11' id='9' delay='20' inputCount='2'/>
-            <andGate _id='12' id='10' delay='20' inputCount='2'/>
-            <andGate _id='13' id='11' delay='20' inputCount='2'/>
-            <andGate _id='14' id='12' delay='20' inputCount='2'/>
-            <orGate _id='15' id='13' delay='20' inputCount='2'/>
-            <orGate _id='16' id='14' delay='20' inputCount='2'/>
-            <orGate _id='17' id='15' delay='20' inputCount='2'/>
-            <orGate _id='18' id='16' delay='20' inputCount='2'/>
-            <orGate _id='19' id='17' delay='20' inputCount='2'/>
-            <orGate _id='20' id='18' delay='20' inputCount='2'/>
-            <orGate _id='21' id='19' delay='20' inputCount='2'/>
-            <orGate _id='22' id='20' delay='20' inputCount='2'/>
+            <andGate _id='3' id='1' delay='PD / 3' inputCount='2'/>
+            <andGate _id='4' id='2' delay='PD / 3' inputCount='2'/>
+            <andGate _id='5' id='3' delay='PD / 3' inputCount='2'/>
+            <andGate _id='6' id='4' delay='PD / 3' inputCount='2'/>
+            <andGate _id='7' id='5' delay='PD / 3' inputCount='2'/>
+            <andGate _id='8' id='6' delay='PD / 3' inputCount='2'/>
+            <andGate _id='9' id='7' delay='PD / 3' inputCount='2'/>
+            <andGate _id='10' id='8' delay='PD / 3' inputCount='2'/>
+            <andGate _id='11' id='9' delay='PD / 3' inputCount='2'/>
+            <andGate _id='12' id='10' delay='PD / 3' inputCount='2'/>
+            <andGate _id='13' id='11' delay='PD / 3' inputCount='2'/>
+            <andGate _id='14' id='12' delay='PD / 3' inputCount='2'/>
+            <orGate _id='15' id='13' delay='PD / 3' inputCount='2'/>
+            <orGate _id='16' id='14' delay='PD / 3' inputCount='2'/>
+            <orGate _id='17' id='15' delay='PD / 3' inputCount='2'/>
+            <orGate _id='18' id='16' delay='PD / 3' inputCount='2'/>
+            <orGate _id='19' id='17' delay='PD / 3' inputCount='2'/>
+            <orGate _id='20' id='18' delay='PD / 3' inputCount='2'/>
+            <orGate _id='21' id='19' delay='PD / 3' inputCount='2'/>
+            <orGate _id='22' id='20' delay='PD / 3' inputCount='2'/>
             <circuitInOut _id='23' id='21' name='CIR' type='input' bitWidth='1'>
               <desc>
                 <translation lang='de' text='Eingehendes Übertrags-Bit (rechts)'/>
@@ -45,8 +45,8 @@
                 <translation lang='en' text='Carry-in (left)'/>
               </desc>
             </circuitInOut>
-            <andGate _id='25' id='24' delay='20' inputCount='2'/>
-            <andGate _id='26' id='25' delay='20' inputCount='2'/>
+            <andGate _id='25' id='24' delay='PD / 3' inputCount='2'/>
+            <andGate _id='26' id='25' delay='PD / 3' inputCount='2'/>
             <digitalNet _id='27' id='28' delay='0'>
               <ports>
                 <netPortRef _id='28' verticeId='29' portId='2'/>
@@ -78,14 +78,14 @@
                 <netPortRef _id='44' verticeId='16' portId='2'/>
               </ports>
             </digitalNet>
-            <andGate _id='45' id='33' delay='20' inputCount='2'/>
+            <andGate _id='45' id='33' delay='PD / 3' inputCount='2'/>
             <circuitInOut _id='46' id='34' name='F' type='input' bitWidth='1'>
               <desc>
                 <translation lang='de' text='0: Schieben nach links, 1: Schieben nach rechts'/>
                 <translation lang='en' text='0: Shift to left, 1: Shift to right'/>
               </desc>
             </circuitInOut>
-            <notGate _id='47' id='35' delay='20'/>
+            <notGate _id='47' id='35' delay='PD / 3'/>
             <circuitInOut _id='48' id='36' name='D' type='input' bitWidth='8'>
               <desc>
                 <translation lang='de' text='Dateneingang. Die Zahl, die geschoben werden soll.'/>
@@ -127,7 +127,7 @@
                 <netPortRef _id='76' verticeId='10' portId='1'/>
               </ports>
             </digitalNet>
-            <andGate _id='69' id='40' delay='20' inputCount='2'/>
+            <andGate _id='69' id='40' delay='PD / 3' inputCount='2'/>
             <digitalNet _id='77' id='41' delay='0'>
               <ports>
                 <netPortRef _id='78' verticeId='22' portId='2'/>
@@ -159,8 +159,8 @@
                 <netPortRef _id='88' verticeId='32' portId='9'/>
               </ports>
             </digitalNet>
-            <andGate _id='29' id='47' delay='20' inputCount='2'/>
-            <andGate _id='63' id='48' delay='20' inputCount='2'/>
+            <andGate _id='29' id='47' delay='PD / 3' inputCount='2'/>
+            <andGate _id='63' id='48' delay='PD / 3' inputCount='2'/>
             <digitalNet _id='89' id='49' delay='0'>
               <ports>
                 <netPortRef _id='90' verticeId='29' portId='3'/>
@@ -1151,4 +1151,11 @@
       </model>
     </containerDrawing>
   </container>
+  <params>
+    <graphParamDefs _id='405'>
+      <paramDefs>
+        <graphParamDef _id='406' name='PD' type='Long' defaultValue='60' semantic='propagationDelay'/>
+      </paramDefs>
+    </graphParamDefs>
+  </params>
 </metaGraph>

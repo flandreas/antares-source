@@ -14,7 +14,7 @@ when (s) {
           <elements>
             <circuitInOut _id='3' id='4' name='S1' type='input' bitWidth='1'/>
             <circuitInOut _id='4' id='5' name='S0' type='input' bitWidth='1'/>
-            <notGate _id='5' id='6' delay='20'/>
+            <notGate _id='5' id='6' delay='PD/3'/>
             <digitalNet _id='6' id='7' delay='0'>
               <ports>
                 <netPortRef _id='7' verticeId='3' portId='1'/>
@@ -38,7 +38,7 @@ when (s) {
                 <netPortRef _id='24' verticeId='12' portId='2'/>
               </ports>
             </digitalNet>
-            <notGate _id='22' id='10' delay='20'/>
+            <notGate _id='22' id='10' delay='PD/3'/>
             <digitalNet _id='25' id='11' delay='0'>
               <ports>
                 <netPortRef _id='26' verticeId='22' portId='2'/>
@@ -46,11 +46,11 @@ when (s) {
                 <netPortRef _id='28' verticeId='10' portId='2'/>
               </ports>
             </digitalNet>
-            <andGate _id='16' id='12' delay='20' inputCount='3'/>
-            <andGate _id='18' id='13' delay='20' inputCount='3'/>
-            <andGate _id='10' id='14' delay='20' inputCount='3'/>
-            <andGate _id='12' id='15' delay='20' inputCount='3'/>
-            <orGate _id='29' id='16' delay='20' inputCount='4'/>
+            <andGate _id='16' id='12' delay='PD/3' inputCount='3'/>
+            <andGate _id='18' id='13' delay='PD/3' inputCount='3'/>
+            <andGate _id='10' id='14' delay='PD/3' inputCount='3'/>
+            <andGate _id='12' id='15' delay='PD/3' inputCount='3'/>
+            <orGate _id='29' id='16' delay='PD/3' inputCount='4'/>
             <circuitInOut _id='30' id='17' name='I0' type='input' bitWidth='1'/>
             <circuitInOut _id='31' id='18' name='I1' type='input' bitWidth='1'/>
             <circuitInOut _id='32' id='19' name='I2' type='input' bitWidth='1'/>
@@ -491,4 +491,11 @@ when (s) {
       </model>
     </containerDrawing>
   </container>
+  <params>
+    <graphParamDefs _id='162'>
+      <paramDefs>
+        <graphParamDef _id='163' name='PD' type='Long' defaultValue='60' semantic='propagationDelay'/>
+      </paramDefs>
+    </graphParamDefs>
+  </params>
 </metaGraph>

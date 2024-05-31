@@ -31,12 +31,12 @@ when (input) {
           <elements>
             <circuitInOut _id='3' id='1' name='A' type='input' bitWidth='1'/>
             <circuitInOut _id='4' id='2' name='B' type='input' bitWidth='1'/>
-            <notGate _id='5' id='3' delay='20'/>
+            <notGate _id='5' id='3' delay='PD/4'/>
             <circuitInOut _id='6' id='4' name='C' type='input' bitWidth='1'/>
             <circuitInOut _id='7' id='5' name='D' type='input' bitWidth='1'/>
-            <notGate _id='8' id='6' delay='20'/>
-            <notGate _id='9' id='7' delay='20'/>
-            <notGate _id='10' id='8' delay='20'/>
+            <notGate _id='8' id='6' delay='PD/4'/>
+            <notGate _id='9' id='7' delay='PD/4'/>
+            <notGate _id='10' id='8' delay='PD/4'/>
             <digitalNet _id='11' id='9' delay='0'>
               <ports>
                 <netPortRef _id='12' verticeId='5' portId='1'/>
@@ -129,7 +129,7 @@ when (input) {
                 <netPortRef _id='105' verticeId='39' portId='1'/>
               </ports>
             </digitalNet>
-            <andGate _id='73' id='17' delay='20' inputCount='2' outputName='C&apos;A&apos;'/>
+            <andGate _id='73' id='17' delay='PD/4' inputCount='2' outputName='C&apos;A&apos;'/>
             <digitalNet _id='106' id='18' delay='0'>
               <ports>
                 <netPortRef _id='107' verticeId='108' portId='5'/>
@@ -139,8 +139,8 @@ when (input) {
                 <netPortRef _id='113' verticeId='114' portId='6'/>
               </ports>
             </digitalNet>
-            <andGate _id='37' id='19' delay='20' inputCount='2' outputName='CB'/>
-            <andGate _id='104' id='20' delay='20' inputCount='2' outputName='D&apos;C&apos;A&apos;'/>
+            <andGate _id='37' id='19' delay='PD/4' inputCount='2' outputName='CB'/>
+            <andGate _id='104' id='20' delay='PD/4' inputCount='2' outputName='D&apos;C&apos;A&apos;'/>
             <digitalNet _id='115' id='21' delay='0'>
               <ports>
                 <netPortRef _id='116' verticeId='104' portId='3'/>
@@ -154,14 +154,14 @@ when (input) {
                 <netPortRef _id='122' verticeId='114' portId='5'/>
               </ports>
             </digitalNet>
-            <andGate _id='71' id='23' delay='20' inputCount='2' outputName='CBA&apos;'/>
+            <andGate _id='71' id='23' delay='PD/4' inputCount='2' outputName='CBA&apos;'/>
             <digitalNet _id='123' id='24' delay='0'>
               <ports>
                 <netPortRef _id='124' verticeId='118' portId='4'/>
                 <netPortRef _id='125' verticeId='71' portId='3'/>
               </ports>
             </digitalNet>
-            <andGate _id='39' id='25' delay='20' inputCount='2' outputName='D&apos;B'/>
+            <andGate _id='39' id='25' delay='PD/4' inputCount='2' outputName='D&apos;B'/>
             <digitalNet _id='126' id='26' delay='0'>
               <ports>
                 <netPortRef _id='127' verticeId='39' portId='3'/>
@@ -169,21 +169,21 @@ when (input) {
                 <netPortRef _id='129' verticeId='25' portId='1'/>
               </ports>
             </digitalNet>
-            <andGate _id='25' id='27' delay='20' inputCount='2' outputName='D&apos;BA'/>
+            <andGate _id='25' id='27' delay='PD/4' inputCount='2' outputName='D&apos;BA'/>
             <digitalNet _id='130' id='28' delay='0'>
               <ports>
                 <netPortRef _id='131' verticeId='25' portId='3'/>
                 <netPortRef _id='132' verticeId='108' portId='1'/>
               </ports>
             </digitalNet>
-            <andGate _id='62' id='29' delay='20' inputCount='2' outputName='DA&apos;'/>
+            <andGate _id='62' id='29' delay='PD/4' inputCount='2' outputName='DA&apos;'/>
             <digitalNet _id='133' id='30' delay='0'>
               <ports>
                 <netPortRef _id='134' verticeId='114' portId='3'/>
                 <netPortRef _id='135' verticeId='62' portId='3'/>
               </ports>
             </digitalNet>
-            <andGate _id='82' id='31' delay='20' inputCount='2' outputName='C&apos;B&apos;'/>
+            <andGate _id='82' id='31' delay='PD/4' inputCount='2' outputName='C&apos;B&apos;'/>
             <digitalNet _id='136' id='32' delay='0'>
               <ports>
                 <netPortRef _id='137' verticeId='138' portId='3'/>
@@ -192,14 +192,14 @@ when (input) {
                 <netPortRef _id='141' verticeId='82' portId='3'/>
               </ports>
             </digitalNet>
-            <andGate _id='65' id='33' delay='20' inputCount='2' outputName='DC&apos;B&apos;'/>
+            <andGate _id='65' id='33' delay='PD/4' inputCount='2' outputName='DC&apos;B&apos;'/>
             <digitalNet _id='142' id='34' delay='0'>
               <ports>
                 <netPortRef _id='143' verticeId='65' portId='3'/>
                 <netPortRef _id='144' verticeId='114' portId='1'/>
               </ports>
             </digitalNet>
-            <andGate _id='60' id='35' delay='20' inputCount='2' outputName='DC&apos;'/>
+            <andGate _id='60' id='35' delay='PD/4' inputCount='2' outputName='DC&apos;'/>
             <digitalNet _id='145' id='36' delay='0'>
               <ports>
                 <netPortRef _id='146' verticeId='138' portId='5'/>
@@ -208,7 +208,7 @@ when (input) {
                 <netPortRef _id='151' verticeId='60' portId='3'/>
               </ports>
             </digitalNet>
-            <andGate _id='18' id='37' delay='20' inputCount='2' outputName='B&apos;A'/>
+            <andGate _id='18' id='37' delay='PD/4' inputCount='2' outputName='B&apos;A'/>
             <digitalNet _id='152' id='38' delay='0'>
               <ports>
                 <netPortRef _id='153' verticeId='18' portId='3'/>
@@ -216,14 +216,14 @@ when (input) {
                 <netPortRef _id='155' verticeId='57' portId='1'/>
               </ports>
             </digitalNet>
-            <andGate _id='57' id='39' delay='20' inputCount='2' outputName='DB&apos;A'/>
+            <andGate _id='57' id='39' delay='PD/4' inputCount='2' outputName='DB&apos;A'/>
             <digitalNet _id='156' id='40' delay='0'>
               <ports>
                 <netPortRef _id='157' verticeId='108' portId='2'/>
                 <netPortRef _id='158' verticeId='57' portId='3'/>
               </ports>
             </digitalNet>
-            <andGate _id='16' id='41' delay='20' inputCount='2' outputName='D&apos;A'/>
+            <andGate _id='16' id='41' delay='PD/4' inputCount='2' outputName='D&apos;A'/>
             <digitalNet _id='159' id='42' delay='0'>
               <ports>
                 <netPortRef _id='160' verticeId='16' portId='3'/>
@@ -231,14 +231,14 @@ when (input) {
                 <netPortRef _id='162' verticeId='138' portId='2'/>
               </ports>
             </digitalNet>
-            <andGate _id='52' id='43' delay='20' inputCount='2' outputName='D&apos;CA'/>
+            <andGate _id='52' id='43' delay='PD/4' inputCount='2' outputName='D&apos;CA'/>
             <digitalNet _id='163' id='44' delay='0'>
               <ports>
                 <netPortRef _id='164' verticeId='114' portId='2'/>
                 <netPortRef _id='165' verticeId='52' portId='3'/>
               </ports>
             </digitalNet>
-            <andGate _id='45' id='45' delay='20' inputCount='2' outputName='D&apos;C'/>
+            <andGate _id='45' id='45' delay='PD/4' inputCount='2' outputName='D&apos;C'/>
             <digitalNet _id='166' id='46' delay='0'>
               <ports>
                 <netPortRef _id='167' verticeId='148' portId='1'/>
@@ -247,28 +247,28 @@ when (input) {
                 <netPortRef _id='170' verticeId='138' portId='1'/>
               </ports>
             </digitalNet>
-            <andGate _id='87' id='47' delay='20' inputCount='2' outputName='D&apos;CB&apos;'/>
+            <andGate _id='87' id='47' delay='PD/4' inputCount='2' outputName='D&apos;CB&apos;'/>
             <digitalNet _id='171' id='48' delay='0'>
               <ports>
                 <netPortRef _id='172' verticeId='150' portId='2'/>
                 <netPortRef _id='173' verticeId='87' portId='3'/>
               </ports>
             </digitalNet>
-            <andGate _id='67' id='49' delay='20' inputCount='2' outputName='DB&apos;'/>
+            <andGate _id='67' id='49' delay='PD/4' inputCount='2' outputName='DB&apos;'/>
             <digitalNet _id='174' id='50' delay='0'>
               <ports>
                 <netPortRef _id='175' verticeId='67' portId='3'/>
                 <netPortRef _id='176' verticeId='118' portId='2'/>
               </ports>
             </digitalNet>
-            <andGate _id='43' id='51' delay='20' inputCount='2' outputName='DC'/>
+            <andGate _id='43' id='51' delay='PD/4' inputCount='2' outputName='DC'/>
             <digitalNet _id='177' id='52' delay='0'>
               <ports>
                 <netPortRef _id='178' verticeId='110' portId='3'/>
                 <netPortRef _id='179' verticeId='43' portId='3'/>
               </ports>
             </digitalNet>
-            <andGate _id='28' id='53' delay='20' inputCount='2' outputName='BA&apos;'/>
+            <andGate _id='28' id='53' delay='PD/4' inputCount='2' outputName='BA&apos;'/>
             <digitalNet _id='180' id='54' delay='0'>
               <ports>
                 <netPortRef _id='181' verticeId='110' portId='2'/>
@@ -276,7 +276,7 @@ when (input) {
                 <netPortRef _id='183' verticeId='150' portId='4'/>
               </ports>
             </digitalNet>
-            <andGate _id='31' id='55' delay='20' inputCount='2' outputName='DB'/>
+            <andGate _id='31' id='55' delay='PD/4' inputCount='2' outputName='DB'/>
             <digitalNet _id='184' id='56' delay='0'>
               <ports>
                 <netPortRef _id='185' verticeId='110' portId='1'/>
@@ -284,7 +284,7 @@ when (input) {
                 <netPortRef _id='187' verticeId='148' portId='2'/>
               </ports>
             </digitalNet>
-            <andGate _id='78' id='57' delay='20' inputCount='2' outputName='B&apos;A&apos;'/>
+            <andGate _id='78' id='57' delay='PD/4' inputCount='2' outputName='B&apos;A&apos;'/>
             <digitalNet _id='188' id='58' delay='0'>
               <ports>
                 <netPortRef _id='189' verticeId='78' portId='3'/>
@@ -292,57 +292,57 @@ when (input) {
                 <netPortRef _id='191' verticeId='99' portId='1'/>
               </ports>
             </digitalNet>
-            <andGate _id='99' id='59' delay='20' inputCount='2' outputName='D&apos;B&apos;A&apos;'/>
+            <andGate _id='99' id='59' delay='PD/4' inputCount='2' outputName='D&apos;B&apos;A&apos;'/>
             <digitalNet _id='192' id='60' delay='0'>
               <ports>
                 <netPortRef _id='193' verticeId='108' portId='3'/>
                 <netPortRef _id='194' verticeId='99' portId='3'/>
               </ports>
             </digitalNet>
-            <andGate _id='48' id='61' delay='20' inputCount='2' outputName='CA&apos;'/>
+            <andGate _id='48' id='61' delay='PD/4' inputCount='2' outputName='CA&apos;'/>
             <digitalNet _id='195' id='62' delay='0'>
               <ports>
                 <netPortRef _id='196' verticeId='148' portId='3'/>
                 <netPortRef _id='197' verticeId='48' portId='3'/>
               </ports>
             </digitalNet>
-            <andGate _id='20' id='63' delay='20' inputCount='2' outputName='DA'/>
+            <andGate _id='20' id='63' delay='PD/4' inputCount='2' outputName='DA'/>
             <digitalNet _id='198' id='64' delay='0'>
               <ports>
                 <netPortRef _id='199' verticeId='150' portId='3'/>
                 <netPortRef _id='200' verticeId='20' portId='3'/>
               </ports>
             </digitalNet>
-            <andGate _id='34' id='65' delay='20' inputCount='2' outputName='C&apos;B'/>
+            <andGate _id='34' id='65' delay='PD/4' inputCount='2' outputName='C&apos;B'/>
             <digitalNet _id='201' id='66' delay='0'>
               <ports>
                 <netPortRef _id='202' verticeId='34' portId='3'/>
                 <netPortRef _id='203' verticeId='150' portId='1'/>
               </ports>
             </digitalNet>
-            <andGate _id='23' id='67' delay='20' inputCount='3' outputName='CB&apos;A'/>
+            <andGate _id='23' id='67' delay='PD/4' inputCount='3' outputName='CB&apos;A'/>
             <digitalNet _id='204' id='68' delay='0'>
               <ports>
                 <netPortRef _id='205' verticeId='118' portId='1'/>
                 <netPortRef _id='206' verticeId='23' portId='4'/>
               </ports>
             </digitalNet>
-            <andGate _id='14' id='69' delay='20' inputCount='3' outputName='C&apos;BA'/>
+            <andGate _id='14' id='69' delay='PD/4' inputCount='3' outputName='C&apos;BA'/>
             <digitalNet _id='207' id='70' delay='0'>
               <ports>
                 <netPortRef _id='208' verticeId='118' portId='3'/>
                 <netPortRef _id='209' verticeId='14' portId='4'/>
               </ports>
             </digitalNet>
-            <orGate _id='114' id='71' delay='20' inputCount='6' outputName='a'/>
+            <orGate _id='114' id='71' delay='PD/4' inputCount='6' outputName='a'/>
             <concentrator _id='210' id='72' delay='0' bitWidth='8' representation='binary' branchCount='8'/>
             <circuitInOut _id='211' id='73' name='a..g' type='output' bitWidth='8'/>
-            <orGate _id='108' id='76' delay='20' inputCount='5' outputName='b'/>
-            <orGate _id='138' id='78' delay='20' inputCount='5' outputName='c'/>
-            <orGate _id='118' id='80' delay='20' inputCount='5' outputName='d'/>
-            <orGate _id='110' id='81' delay='20' inputCount='4' outputName='e'/>
-            <orGate _id='148' id='82' delay='20' inputCount='5' outputName='f'/>
-            <orGate _id='150' id='83' delay='20' inputCount='5' outputName='g'/>
+            <orGate _id='108' id='76' delay='PD/4' inputCount='5' outputName='b'/>
+            <orGate _id='138' id='78' delay='PD/4' inputCount='5' outputName='c'/>
+            <orGate _id='118' id='80' delay='PD/4' inputCount='5' outputName='d'/>
+            <orGate _id='110' id='81' delay='PD/4' inputCount='4' outputName='e'/>
+            <orGate _id='148' id='82' delay='PD/4' inputCount='5' outputName='f'/>
+            <orGate _id='150' id='83' delay='PD/4' inputCount='5' outputName='g'/>
             <digitalNet _id='212' id='84' delay='0'>
               <ports>
                 <netPortRef _id='213' verticeId='114' portId='7'/>
@@ -2256,4 +2256,11 @@ when (input) {
       </model>
     </containerDrawing>
   </container>
+  <params>
+    <graphParamDefs _id='681'>
+      <paramDefs>
+        <graphParamDef _id='682' name='PD' type='Long' defaultValue='80' semantic='propagationDelay'/>
+      </paramDefs>
+    </graphParamDefs>
+  </params>
 </metaGraph>

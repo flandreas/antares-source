@@ -16,19 +16,19 @@ O7 = EN and val == 7' propDelay='43' startupTime='30'>
             <circuitInOut _id='3' id='1' name='I0' type='input' bitWidth='1'/>
             <circuitInOut _id='4' id='2' name='I1' type='input' bitWidth='1'/>
             <circuitInOut _id='5' id='3' name='I2' type='input' bitWidth='1'/>
-            <notGate _id='6' id='4' delay='20'/>
-            <notGate _id='7' id='5' delay='20'/>
-            <notGate _id='8' id='6' delay='20'/>
+            <notGate _id='6' id='4' delay='PD/2'/>
+            <notGate _id='7' id='5' delay='PD/2'/>
+            <notGate _id='8' id='6' delay='PD/2'/>
             <circuitInOut _id='9' id='7' name='EN' type='input' bitWidth='1'/>
-            <andGate _id='10' id='8' delay='20' inputCount='4'/>
+            <andGate _id='10' id='8' delay='PD / 2' inputCount='4'/>
             <circuitInOut _id='11' id='9' name='O0' type='output' bitWidth='1'/>
-            <andGate _id='12' id='10' delay='20' inputCount='4'/>
-            <andGate _id='13' id='11' delay='20' inputCount='4'/>
-            <andGate _id='14' id='12' delay='20' inputCount='4'/>
-            <andGate _id='15' id='13' delay='20' inputCount='4'/>
-            <andGate _id='16' id='14' delay='20' inputCount='4'/>
-            <andGate _id='17' id='15' delay='20' inputCount='4'/>
-            <andGate _id='18' id='16' delay='20' inputCount='4'/>
+            <andGate _id='12' id='10' delay='PD / 2' inputCount='4'/>
+            <andGate _id='13' id='11' delay='PD / 2' inputCount='4'/>
+            <andGate _id='14' id='12' delay='PD / 2' inputCount='4'/>
+            <andGate _id='15' id='13' delay='PD / 2' inputCount='4'/>
+            <andGate _id='16' id='14' delay='PD / 2' inputCount='4'/>
+            <andGate _id='17' id='15' delay='PD / 2' inputCount='4'/>
+            <andGate _id='18' id='16' delay='PD / 2' inputCount='4'/>
             <digitalNet _id='19' id='17' delay='0'>
               <ports>
                 <netPortRef _id='20' verticeId='13' portId='1'/>
@@ -151,9 +151,9 @@ O7 = EN and val == 7' propDelay='43' startupTime='30'>
                 <netPortRef _id='97' verticeId='98' portId='2'/>
               </ports>
             </digitalNet>
-            <bufferGate _id='54' id='40' delay='20'/>
-            <bufferGate _id='98' id='41' delay='20'/>
-            <bufferGate _id='35' id='42' delay='20'/>
+            <bufferGate _id='54' id='40' delay='PD/2'/>
+            <bufferGate _id='98' id='41' delay='PD/2'/>
+            <bufferGate _id='35' id='42' delay='PD/2'/>
             <digitalNet _id='99' id='43' delay='0'>
               <ports>
                 <netPortRef _id='100' verticeId='3' portId='1'/>
@@ -1021,4 +1021,11 @@ O7 = EN and val == 7' propDelay='43' startupTime='30'>
       </model>
     </containerDrawing>
   </container>
+  <params>
+    <graphParamDefs _id='322'>
+      <paramDefs>
+        <graphParamDef _id='323' name='PD' type='Long' defaultValue='40' semantic='propagationDelay'/>
+      </paramDefs>
+    </graphParamDefs>
+  </params>
 </metaGraph>

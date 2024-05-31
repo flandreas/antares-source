@@ -5,7 +5,7 @@
       <model>
         <graph _id='2' type='digital' script='var sum = (1 * A) + (1 * B) + CI
 S = sum
-CO = sum &gt; (2^BW - 1)' purelyScripted='true'>
+CO = sum &gt; (2^BW - 1)' purelyScripted='true' propDelay='1000'>
           <elements>
             <circuitInOut _id='3' id='1' name='A' type='input' bitWidth='BW'>
               <desc>

@@ -7,7 +7,7 @@
 C = A and B
 ' propDelay='20' startupTime='10'>
           <elements>
-            <xorGate _id='3' id='1' delay='20' inputCount='2'>
+            <xorGate _id='3' id='1' delay='PD' inputCount='2'>
               <desc>
                 <translation lang='de' text='Die XOR-Funktion bildet die Rechenregeln der binären Addition ab, indem sie 0 ausgibt, wenn beide Summanden 1 sind'/>
                 <translation lang='en' text='The XOR function maps the calculation rules of binary addition by outputting 0 if both summands are 1'/>
@@ -25,9 +25,9 @@ C = A and B
                 <translation lang='en' text='Seconds Summand-Bit'/>
               </desc>
             </circuitInOut>
-            <andGate _id='6' id='4' delay='20' inputCount='2'>
+            <andGate _id='6' id='4' delay='PD' inputCount='2'>
               <desc>
-                <translation lang='de' text='Ein Übertrag bei der Summenbildung kann nur dann enstehen, wenn beide Summanden 1 sind'/>
+                <translation lang='de' text='Ein Übertrag bei der Summenbildung kann nur dann entstehen, wenn beide Summanden 1 sind'/>
                 <translation lang='en' text='During summation, a carry bit can only occur if both summands are 1'/>
               </desc>
             </andGate>
@@ -315,4 +315,11 @@ assertOutputAt(200, &quot;C&quot;, 1)'>
       </model>
     </containerDrawing>
   </container>
+  <params>
+    <graphParamDefs _id='73'>
+      <paramDefs>
+        <graphParamDef _id='74' name='PD' type='Long' defaultValue='20' semantic='propagationDelay'/>
+      </paramDefs>
+    </graphParamDefs>
+  </params>
 </metaGraph>

@@ -9,7 +9,7 @@
 } else {
 	Q = A / B
 	R = A % B
-}' purelyScripted='true'>
+}' purelyScripted='true' propDelay='1000'>
           <elements>
             <circuitInOut _id='3' id='1' name='A' type='input' bitWidth='BW'>
               <desc>

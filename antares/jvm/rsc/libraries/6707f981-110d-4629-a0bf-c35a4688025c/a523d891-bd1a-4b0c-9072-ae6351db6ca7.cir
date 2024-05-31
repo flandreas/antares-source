@@ -5,25 +5,25 @@
       <model>
         <graph _id='2' type='digital' script='O = A == B' startupTime='10'>
           <elements>
-            <xorGate _id='3' id='1' delay='20' inputCount='2'>
+            <xorGate _id='3' id='1' delay='PD / 2' inputCount='2'>
               <desc>
                 <translation lang='de' text='Vergleicht die Bit an Position 0'/>
                 <translation lang='en' text='Compares the bits at position 0'/>
               </desc>
             </xorGate>
-            <xorGate _id='4' id='2' delay='20' inputCount='2'>
+            <xorGate _id='4' id='2' delay='PD / 2' inputCount='2'>
               <desc>
                 <translation lang='de' text='Vergleicht die Bit an Position 1'/>
                 <translation lang='en' text='Compares the bits at position 1'/>
               </desc>
             </xorGate>
-            <xorGate _id='5' id='3' delay='20' inputCount='2'>
+            <xorGate _id='5' id='3' delay='PD / 2' inputCount='2'>
               <desc>
                 <translation lang='de' text='Vergleicht die Bit an Position 2'/>
                 <translation lang='en' text='Compares the bits at position 2'/>
               </desc>
             </xorGate>
-            <xorGate _id='6' id='4' delay='20' inputCount='2'>
+            <xorGate _id='6' id='4' delay='PD / 2' inputCount='2'>
               <desc>
                 <translation lang='de' text='Vergleicht die Bit an Position 3'/>
                 <translation lang='en' text='Compares the bits at position 3'/>
@@ -103,7 +103,7 @@
                 <netPortRef _id='40' verticeId='9' portId='5'/>
               </ports>
             </digitalNet>
-            <norGate _id='41' id='20' delay='20' inputCount='4'>
+            <norGate _id='41' id='20' delay='PD / 2' inputCount='4'>
               <desc>
                 <translation lang='de' text='Die 4 XOR-Gatter melden 1, wenn sich die Bits an ihrer Position unterscheiden. Das NOR-Gatter schaltet in diesem Fall auf 0.'/>
                 <translation lang='en' text='The 4 XOR gates signal 1 if the bits differ in their position. The NOR gate switches to 0 in this case.'/>
@@ -340,4 +340,11 @@
       </model>
     </containerDrawing>
   </container>
+  <params>
+    <graphParamDefs _id='115'>
+      <paramDefs>
+        <graphParamDef _id='116' name='PD' type='Long' defaultValue='40' semantic='propagationDelay'/>
+      </paramDefs>
+    </graphParamDefs>
+  </params>
 </metaGraph>

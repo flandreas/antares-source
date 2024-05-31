@@ -6,7 +6,7 @@
         <graph _id='2' type='digital' script='var diff = (1 * A) - (1 * B) - CI
 
 D = diff
-CO = diff &lt; 0' purelyScripted='true'>
+CO = diff &lt; 0' purelyScripted='true' propDelay='1000'>
           <elements>
             <circuitInOut _id='3' id='1' name='A' type='input' bitWidth='BW'>
               <desc>

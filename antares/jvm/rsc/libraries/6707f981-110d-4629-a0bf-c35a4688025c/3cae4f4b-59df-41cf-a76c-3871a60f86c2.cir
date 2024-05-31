@@ -12,8 +12,8 @@ O1 = I and (S == 1)'>
                 <translation lang='en' text='Data input'/>
               </desc>
             </circuitInOut>
-            <andGate _id='4' id='2' delay='20' inputCount='2'/>
-            <andGate _id='5' id='3' delay='20' inputCount='2'/>
+            <andGate _id='4' id='2' delay='PD/2' inputCount='2'/>
+            <andGate _id='5' id='3' delay='PD/2' inputCount='2'/>
             <circuitInOut _id='6' id='6' name='O0' type='output' bitWidth='1'>
               <desc>
                 <translation lang='de' text='Datenausgang 0'/>
@@ -44,7 +44,7 @@ O1 = I and (S == 1)'>
                 <translation lang='en' text='Selection input'/>
               </desc>
             </circuitInOut>
-            <notGate _id='15' id='16' delay='20'/>
+            <notGate _id='15' id='16' delay='PD/2'/>
             <digitalNet _id='16' id='19' delay='0'>
               <ports>
                 <netPortRef _id='17' verticeId='14' portId='1'/>
@@ -255,4 +255,11 @@ O1 = I and (S == 1)'>
       </model>
     </containerDrawing>
   </container>
+  <params>
+    <graphParamDefs _id='75'>
+      <paramDefs>
+        <graphParamDef _id='76' name='PD' type='Long' defaultValue='40' semantic='propagationDelay'/>
+      </paramDefs>
+    </graphParamDefs>
+  </params>
 </metaGraph>

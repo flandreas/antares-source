@@ -25,6 +25,6 @@ class CalculatePropagationDelayTest {
 
         val delay = GraphPropagationDelayCalculator().calculate(metaGraph.graph.model!!)
 
-        assertEquals(19L, delay)
+        assertEquals(40L, delay)
     }
 }

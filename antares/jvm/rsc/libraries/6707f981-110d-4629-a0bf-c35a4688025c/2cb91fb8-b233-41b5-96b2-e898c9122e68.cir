@@ -22,7 +22,7 @@
               </ports>
             </digitalNet>
             <circuitInOut _id='13' id='7' name='S' type='input' bitWidth='1'/>
-            <notGate _id='14' id='8' delay='20'/>
+            <notGate _id='14' id='8' delay='PD/3'/>
             <digitalNet _id='15' id='9' delay='0'>
               <ports>
                 <netPortRef _id='16' verticeId='13' portId='1'/>
@@ -40,12 +40,12 @@
             </digitalNet>
             <circuitInOut _id='28' id='11' name='O' type='output' bitWidth='2'/>
             <concentrator _id='29' id='12' delay='0' bitWidth='2' representation='binary' branchCount='2'/>
-            <orGate _id='30' id='14' delay='20' inputCount='2'/>
-            <orGate _id='31' id='15' delay='20' inputCount='2'/>
-            <andGate _id='25' id='18' delay='20' inputCount='2'/>
-            <andGate _id='27' id='19' delay='20' inputCount='2'/>
-            <andGate _id='19' id='20' delay='20' inputCount='2'/>
-            <andGate _id='21' id='21' delay='20' inputCount='2'/>
+            <orGate _id='30' id='14' delay='PD/3' inputCount='2'/>
+            <orGate _id='31' id='15' delay='PD/3' inputCount='2'/>
+            <andGate _id='25' id='18' delay='PD/3' inputCount='2'/>
+            <andGate _id='27' id='19' delay='PD/3' inputCount='2'/>
+            <andGate _id='19' id='20' delay='PD/3' inputCount='2'/>
+            <andGate _id='21' id='21' delay='PD/3' inputCount='2'/>
             <digitalNet _id='32' id='22' delay='0'>
               <ports>
                 <netPortRef _id='33' verticeId='25' portId='3'/>
@@ -392,4 +392,11 @@ x	2	0	2
       </model>
     </containerDrawing>
   </container>
+  <params>
+    <graphParamDefs _id='145'>
+      <paramDefs>
+        <graphParamDef _id='146' name='PD' type='Long' defaultValue='60' semantic='propagationDelay'/>
+      </paramDefs>
+    </graphParamDefs>
+  </params>
 </metaGraph>

@@ -12,14 +12,14 @@
             <circuitInOut _id='7' id='10' name='O0' type='output' bitWidth='1'/>
             <circuitInOut _id='8' id='11' name='O1' type='output' bitWidth='1'/>
             <circuitInOut _id='9' id='12' name='V' type='output' bitWidth='1'/>
-            <orGate _id='10' id='13' delay='20' inputCount='2'/>
+            <orGate _id='10' id='13' delay='PD/3' inputCount='2'/>
             <digitalNet _id='11' id='14' delay='0'>
               <ports>
                 <netPortRef _id='12' verticeId='10' portId='3'/>
                 <netPortRef _id='13' verticeId='7' portId='1'/>
               </ports>
             </digitalNet>
-            <andGate _id='14' id='15' delay='20' inputCount='2'/>
+            <andGate _id='14' id='15' delay='PD/3' inputCount='2'/>
             <digitalNet _id='15' id='16' delay='0'>
               <ports>
                 <netPortRef _id='16' verticeId='14' portId='3'/>
@@ -33,7 +33,7 @@
                 <netPortRef _id='21' verticeId='22' portId='1'/>
               </ports>
             </digitalNet>
-            <notGate _id='23' id='18' delay='20'/>
+            <notGate _id='23' id='18' delay='PD/3'/>
             <digitalNet _id='24' id='19' delay='0'>
               <ports>
                 <netPortRef _id='25' verticeId='23' portId='2'/>
@@ -47,7 +47,7 @@
                 <netPortRef _id='30' verticeId='22' portId='2'/>
               </ports>
             </digitalNet>
-            <orGate _id='22' id='21' delay='20' inputCount='2'/>
+            <orGate _id='22' id='21' delay='PD/3' inputCount='2'/>
             <digitalNet _id='31' id='22' delay='0'>
               <ports>
                 <netPortRef _id='32' verticeId='4' portId='1'/>
@@ -62,7 +62,7 @@
                 <netPortRef _id='39' verticeId='35' portId='1'/>
               </ports>
             </digitalNet>
-            <orGate _id='35' id='24' delay='20' inputCount='3'/>
+            <orGate _id='35' id='24' delay='PD/3' inputCount='3'/>
             <digitalNet _id='40' id='25' delay='0'>
               <ports>
                 <netPortRef _id='41' verticeId='35' portId='4'/>
@@ -334,4 +334,11 @@
       </model>
     </containerDrawing>
   </container>
+  <params>
+    <graphParamDefs _id='117'>
+      <paramDefs>
+        <graphParamDef _id='118' name='PD' type='Long' defaultValue='60' semantic='propagationDelay'/>
+      </paramDefs>
+    </graphParamDefs>
+  </params>
 </metaGraph>

@@ -9,7 +9,7 @@
             <circuitInOut _id='4' id='2' name='I1' type='input' bitWidth='1'/>
             <circuitInOut _id='5' id='11' name='O' type='output' bitWidth='1'/>
             <circuitInOut _id='6' id='12' name='V' type='output' bitWidth='1'/>
-            <orGate _id='7' id='13' delay='20' inputCount='2'/>
+            <orGate _id='7' id='13' delay='PD' inputCount='2'/>
             <digitalNet _id='8' id='14' delay='0'>
               <ports>
                 <netPortRef _id='9' verticeId='3' portId='1'/>
@@ -167,4 +167,11 @@
       </model>
     </containerDrawing>
   </container>
+  <params>
+    <graphParamDefs _id='52'>
+      <paramDefs>
+        <graphParamDef _id='53' name='PD' type='Long' defaultValue='20' semantic='propagationDelay'/>
+      </paramDefs>
+    </graphParamDefs>
+  </params>
 </metaGraph>
