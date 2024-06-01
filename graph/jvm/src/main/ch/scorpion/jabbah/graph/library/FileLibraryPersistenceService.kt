@@ -129,6 +129,12 @@ class FileLibraryPersistenceService(
 		FileUtils.copyFile(File(inputPath), File(outputPath))
 	}
 
+	@Suppress("unused") // Used in Akrab
+	fun getImageBytes(library: Library, imageId: ImageIdentification): ByteArray {
+		val path = Paths.get(buildImageFilePath(library.identification, imageId.uuid, imageId.imageType))
+		return Files.readAllBytes(path)
+	}
+
 	/** ---- [AbstractFileLibraryPersistenceService] */
 
 	override fun ensureLibraryDirectory(libraryId: LibraryIdentification) {
