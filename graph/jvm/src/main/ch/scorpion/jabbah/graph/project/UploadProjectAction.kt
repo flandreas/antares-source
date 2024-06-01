@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.graph.library.AbstractLibraryFolderAction
+import ch.scorpion.jabbah.graph.library.LibraryVisibility
 import ch.scorpion.jabbah.graph.login.Session
 import ch.scorpion.jabbah.graph.login.SessionEvent
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
@@ -70,6 +71,18 @@ class UploadProjectAction(
 			JOptionPane.QUESTION_MESSAGE
 		) != JOptionPane.YES_OPTION) {
 			return
+		}
+
+		if (project.visibility == LibraryVisibility.Private) {
+			if (JOptionPane.showConfirmDialog(
+					SwingUtilities.getWindowAncestor(controller.view as Component),
+					Translations.getString("project.action.upload.privateWarning.text"),
+					name,
+					JOptionPane.YES_NO_OPTION,
+					JOptionPane.WARNING_MESSAGE
+				) != JOptionPane.YES_OPTION) {
+				return
+			}
 		}
 
 		InvocationHandler.invoke {
