@@ -96,6 +96,9 @@ class LibraryService(
 
 	companion object {
 		private val LOG by logger(LibraryService::class)
+
+		/** The name of the [String] param in [Properties] with the JS Graph Viewer URL.*/
+		const val PROP_VIEWER_JS_URL = "graph.library.viewerJsUrl"
 	}
 
 	private fun persister(system: Boolean): LibraryPersistenceService =
@@ -429,16 +432,15 @@ class LibraryService(
 	fun getEmbeddingIFrame(uuid: UUID): String {
 		val metaGraph = metaGraphRepository.getMetaGraph(uuid)
 		val library = metaGraphRepository.getContainingLibrary(uuid)!!
-		val src = StringBuilder(BaseModule.properties.getString(DataLocation.PROP_SERVER_URL))
-			.append("/jabbah/iframe/iframe.html?")
-			.append("project=${library.uuid.id}")
-			.append("&owner=${library.author.id}")
+		val src = StringBuilder(BaseModule.properties.getString(PROP_VIEWER_JS_URL))
+			.append("?")
+			.append("library=${library.uuid.id}")
 			.append("&circuit=${uuid.id}")
 			.toString()
 
 		return """
 			|<iframe
-			|   style="border:none;"
+			|   style="border:1px solid gray;"
 			|   title="${metaGraph.name}"
 			|   width="500px"
 			|   height="500px"

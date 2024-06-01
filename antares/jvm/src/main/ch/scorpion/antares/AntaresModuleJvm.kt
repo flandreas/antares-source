@@ -189,6 +189,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		properties.set(RailwayAppUsageServiceImpl.PROP_PING_URL, "https://metrics.antarescircuit.io/api/ping")
 		properties.set(RailwayRatingService.PROP_ASPECTS_URL, "https://metrics.antarescircuit.io/api/aspects")
 		properties.set(RailwayRatingService.PROP_RATING_URL, "https://metrics.antarescircuit.io/api/rating")
+		properties.set(LibraryService.PROP_VIEWER_JS_URL, AntaresApplication.ANTARES_VIEWER_JS_URL)
 
 		// Akrab REST API
 		when (app.environment) {
