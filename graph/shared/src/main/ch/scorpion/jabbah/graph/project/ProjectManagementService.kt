@@ -77,6 +77,7 @@ class ProjectManagementService(
 
 		val project = projectFactory.invoke(properties.name)
 		project.description = Description(properties.description)
+		project.visibility = properties.visibility
 		properties.importUuid?.let {
 			project.addImport(it)
 		}
