@@ -18,7 +18,7 @@ interface XmlReader {
     /** Returns the number of child elements of the current element.*/
     fun getElementsCount(): Int
 
-    /** Descends to the first element with the specified name an makes it the current one. */
+    /** Descends to the first element with the specified name and makes it the current one. */
     fun descend(name: String)
 
     /**
@@ -27,6 +27,6 @@ interface XmlReader {
      */
     fun descend(index: Int = 1)
 
-    /** Ascends from the the current element and makes its parent the new current element.*/
+    /** Ascends from the current element and makes its parent the new current element.*/
     fun ascend()
 }
