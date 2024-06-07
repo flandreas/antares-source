@@ -40,7 +40,7 @@ import java.net.URL
  */
 object GraphModuleJvm : AbstractModule() {
 
-	val supportWeb: Boolean get() = EditAuthModule.userHolder.user.isDeveloper
+	val supportWeb: Boolean get() = true
 
 	var containerTreeViewFactory: () -> ContainerTreeView = { ContainerTreeView() }
 
