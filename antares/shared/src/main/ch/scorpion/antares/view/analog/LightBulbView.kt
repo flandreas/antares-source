@@ -189,8 +189,9 @@ class LightBulbView(
 		}
 	}
 
-	private val executionBulbColor: Color get() =
-		lightColor.gradient.at(
-			(abs((model.getPort<AnalogSignal>() as AnalogPort).current - minCurrent).coerceAtLeast(0.0) / maxCurrent)
-				.coerceIn(0.0..1.0).toFloat())
+	@Suppress("MemberVisibilityCanBePrivate") // For testing
+	val executionLightFactor: Float get() = ((abs((model.getPort<AnalogSignal>() as AnalogPort).current) - minCurrent).coerceAtLeast(0.0) / maxCurrent)
+		.coerceIn(0.0..1.0).toFloat()
+
+	private val executionBulbColor: Color get() = lightColor.gradient.at(executionLightFactor)
 }
