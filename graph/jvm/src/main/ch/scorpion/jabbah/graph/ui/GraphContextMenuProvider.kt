@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.app.DisplayIdsAction
 import ch.scorpion.jabbah.edit.view.EditContextMenuProvider
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
@@ -21,6 +22,7 @@ open class GraphContextMenuProvider(
 		private val openGraphAction by lazy { OpenGraphNavigationAction() }
 		private val openGraphActionWrapper by lazy { ActionWrapperSwing(openGraphAction) }
 		private val resetSubGraphAction by lazy { ActionWrapperSwing(ResetSubGraphVerticeViewAction()) }
+		private val displayIdsAction by lazy { ActionWrapperSwing(DisplayIdsAction()) }
 	}
 
 	private val extractMetaGraphAction = ActionWrapperSwing(ExtractMetaGraphAction(application.controller))
@@ -40,6 +42,7 @@ open class GraphContextMenuProvider(
 	override fun addActions(view: View<*>, popupMenu: JPopupMenu) {
 		super.addActions(view, popupMenu)
 		popupMenu.addSeparator()
+		popupMenu.add(displayIdsAction)
 		popupMenu.add(openGraphActionWrapper)
 		getGraphApplicationContextHolder(view)?.let {
 			popupMenu.add(ActionWrapperSwing(OpenSubGraphViewerAction(applicationName, it)))
