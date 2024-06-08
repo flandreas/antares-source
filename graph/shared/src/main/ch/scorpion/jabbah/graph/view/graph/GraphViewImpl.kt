@@ -86,9 +86,11 @@ open class GraphViewImpl(
 
 	@Suppress("unused") // Reflection
 	open var overallPropagationDelay: Long?
-		get() = graph!!.overallPropagationDelay
+		get() = graph?.overallPropagationDelay
 		set(value) {
-			graph!!.overallPropagationDelay = value
+			graph?.let {
+				it.overallPropagationDelay = value
+			}
 		}
 
 	var script: ScriptProperty

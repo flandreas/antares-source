@@ -90,7 +90,9 @@ abstract class AbstractAkrab2RestLibraryPersistenceServiceJs(
                 try {
                     StoreXmlReader(DomXmlReader(it)).readStorable() as MetaGraph
                 } catch (e: Throwable) {
+                    println("Hallo Sepp")
                     LOG.error("Error in loadMetaGraphAsync: ${e.message}")
+                    e.printStackTrace()
                     throw e
                 }
             }
