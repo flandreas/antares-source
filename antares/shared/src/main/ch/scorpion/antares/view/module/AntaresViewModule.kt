@@ -93,6 +93,7 @@ import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewBelowSelectionModel
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewReplaceSelectionModel
 import ch.scorpion.jabbah.graph.view.oscilloscope.AbstractSignalHistoryDrawer
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
+import ch.scorpion.jabbah.graph.view.vertice.RectangularVerticeViewBelowSelectionModel
 import ch.scorpion.jabbah.graph.view.vertice.RectangularVerticeViewSelectionModel
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.TypeMap
@@ -466,6 +467,7 @@ object AntaresViewModule : AbstractModule() {
 
 	private fun configureHighlightModels(factory: SelectionModelFactory) {
 		factory.register(SelectionDrawingStrategy.BELOW, DigitalEdgeView::class) { EdgeViewBelowSelectionModel(component = it as EdgeView<*>, styleType = EditStyleType.HIGHLIGHT) }
+		factory.register(SelectionDrawingStrategy.BELOW, AnalogEdgeView::class) { EdgeViewBelowSelectionModel(component = it as EdgeView<*>, styleType = EditStyleType.HIGHLIGHT) }
 		factory.register(SelectionDrawingStrategy.BELOW, LogicGateView::class) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
 		factory.register(SelectionDrawingStrategy.BELOW, TriStateBufferGateView::class) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
 		factory.register(SelectionDrawingStrategy.BELOW, DelayGateView::class) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
@@ -476,8 +478,13 @@ object AntaresViewModule : AbstractModule() {
 
 		factory.register(SelectionDrawingStrategy.BELOW, PullResistorView::class) { BoundingBoxBelowSelectionModel(it, styleType = EditStyleType.HIGHLIGHT) }
 		factory.register(SelectionDrawingStrategy.BELOW, TransistorView::class) { TransistorViewBelowSelectionModel(it as TransistorView, styleType = EditStyleType.HIGHLIGHT) }
+		factory.register(SelectionDrawingStrategy.BELOW, AnalogTransistorView::class) { TransistorViewBelowSelectionModel(it as AnalogTransistorView, styleType = EditStyleType.HIGHLIGHT) }
 		factory.register(SelectionDrawingStrategy.BELOW, GroundView::class) { BoundingBoxBelowSelectionModel(it, styleType = EditStyleType.HIGHLIGHT) }
 		factory.register(SelectionDrawingStrategy.BELOW, PowerView::class) { BoundingBoxBelowSelectionModel(it, styleType = EditStyleType.HIGHLIGHT) }
+
+		factory.register(SelectionDrawingStrategy.BELOW, ResistorView::class) { RectangularVerticeViewBelowSelectionModel(it as ResistorView, styleType = EditStyleType.HIGHLIGHT) }
+		factory.register(SelectionDrawingStrategy.BELOW, AnalogPowerView::class) { RectangularVerticeViewBelowSelectionModel(it as AnalogPowerView, styleType = EditStyleType.HIGHLIGHT) }
+		factory.register(SelectionDrawingStrategy.BELOW, AnalogGroundView::class) { RectangularVerticeViewBelowSelectionModel(it as AnalogGroundView, styleType = EditStyleType.HIGHLIGHT) }
 	}
 
 	private fun configureDragDestinationHighlights(registry: DragDestinationHighlightFactoryRegistry) {

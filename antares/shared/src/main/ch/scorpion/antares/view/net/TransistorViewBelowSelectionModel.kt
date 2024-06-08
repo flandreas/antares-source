@@ -11,10 +11,10 @@ import ch.scorpion.jabbah.edit.select.AbstractBelowSelectionModel
 import ch.scorpion.jabbah.edit.style.EditStyleType
 
 class TransistorViewBelowSelectionModel(
-	transistorView: TransistorView,
+	transistorView: AbstractTransistorView<*>,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	styleType: StyleType = EditStyleType.SELECTION
-) : AbstractBelowSelectionModel<TransistorView>(transistorView, styleProvider, styleType) {
+) : AbstractBelowSelectionModel<AbstractTransistorView<*>>(transistorView, styleProvider, styleType) {
 
 	private var bounds = Ellipse2D()
 

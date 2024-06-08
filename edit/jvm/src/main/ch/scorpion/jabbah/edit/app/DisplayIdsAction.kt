@@ -19,12 +19,17 @@ import javax.swing.*
  * in a dialog.
  */
 class DisplayIdsAction(
-    eventBus: EventBus = BaseModule.eventBus
+    eventBus: EventBus = BaseModule.eventBus,
+    private val filter: (Component) -> Boolean = { true },
 ) : AbstractSelectionAwareAction("edit.action.displayIds", eventBus) {
 
     override fun execute(event: ActionEvent) {
         DisplayIdsPanel.showAsDialog(
-            selection.map { it.id }.sorted().joinToString(",")
+            selection
+                .filter { filter.invoke(it) }
+                .map { it.id }
+                .sorted()
+                .joinToString(",")
         )
     }
 }
@@ -92,6 +97,7 @@ internal class DisplayIdsPanel(
     private inner class CopyToClipboardAction : AbstractAction("base.action.copyToClipboard") {
         override fun execute(event: ActionEvent) {
             Clipboard.setStringContents(textArea.text)
+            closeHandler.invoke()
         }
     }
 }
