@@ -5,14 +5,16 @@ import org.w3c.dom.CanvasRenderingContext2D
 /**
  * A simple implementation of a [Path2 to be rendered on a HTML canvas.
  */
-class Path2DJs : Path {
+class Path2DJs(
+    boundingBox: Rectangle2D = Rectangle2D()
+) : Path {
 
 	private val entries: MutableList<Entry> = mutableListOf()
 
     /** ---- [Path] interface */
 
     override fun clone(): Path {
-	    val clone = Path2DJs()
+	    val clone = Path2DJs(Rectangle2D(_boundingBox))
 	    entries.forEach {
 			clone.entries.add(Entry(it.command.clone()))
 	    }
@@ -20,57 +22,60 @@ class Path2DJs : Path {
     }
 
 	override fun moveTo(x: Double, y: Double): Path {
-        boundingBox.add(x, y)
+        _boundingBox.add(x, y)
         entries.add(Entry(MoveTo(Point2D(x, y))))
         return this
     }
 
     override fun moveTo(x: Int, y: Int): Path {
-        boundingBox.add(x.toDouble(), y.toDouble())
+        _boundingBox.add(x.toDouble(), y.toDouble())
         entries.add(Entry(MoveTo(Point2D(x, y))))
         return this
     }
 
     override fun moveTo(x: Float, y: Float): Path {
-        boundingBox.add(x.toDouble(), y.toDouble())
+        _boundingBox.add(x.toDouble(), y.toDouble())
         entries.add(Entry(MoveTo(Point2D(x.toDouble(), y.toDouble()))))
         return this
     }
 
     override fun lineTo(x: Double, y: Double): Path {
-        boundingBox.add(x, y)
+        _boundingBox.add(x, y)
         entries.add(Entry(LineTo(Point2D(x, y))))
         return this
     }
 
     override fun lineTo(x: Int, y: Int): Path {
-        boundingBox.add(x.toDouble(), y.toDouble())
+        _boundingBox.add(x.toDouble(), y.toDouble())
         entries.add(Entry(LineTo(Point2D(x, y))))
         return this
     }
 
     override fun lineTo(x: Float, y: Float): Path {
-        boundingBox.add(x.toDouble(), y.toDouble())
+        _boundingBox.add(x.toDouble(), y.toDouble())
         entries.add(Entry(LineTo(Point2D(x.toDouble(), y.toDouble()))))
         return this
     }
 
     override fun quadTo(x1: Double, y1: Double, x2: Double, y2: Double): Path {
-        boundingBox.add(x1, y1)
-        boundingBox.add(x2, y2)
+        _boundingBox.add(x1, y1)
+        _boundingBox.add(x2, y2)
         entries.add(Entry(QuadTo(Point2D(x1, y1), Point2D(x2, y2))))
         return this
     }
 
     override fun curveTo(x1: Double, y1: Double, x2: Double, y2: Double, x3: Double, y3: Double): Path {
-        boundingBox.add(x1, y1)
-        boundingBox.add(x2, y2)
-        boundingBox.add(x3, y3)
+        _boundingBox.add(x1, y1)
+        _boundingBox.add(x2, y2)
+        _boundingBox.add(x3, y3)
         entries.add(Entry(CurveTo(Point2D(x1, y1), Point2D(x2, y2), Point2D(x3, y3))))
         return this
     }
 
     override fun close(): Path {
+        lastMoveToEntry()?.let {
+            _boundingBox.add((it.command as MoveTo).p)
+        }
         entries.add(Entry(ClosePath()))
         return this
     }
@@ -81,19 +86,19 @@ class Path2DJs : Path {
 
     /** ---- [Shape] interface */
 
-    override val boundingBox = Rectangle2D()
+    private val _boundingBox: Rectangle2D = boundingBox
 
-    override fun contains(x: Double, y: Double): Boolean {
-        return boundingBox.contains(x, y)
-    }
+    override val boundingBox: Rectangle2D
+        get() = Rectangle2D(_boundingBox)
 
-    override fun contains(x: Double, y: Double, width: Double, height: Double): Boolean {
-        return boundingBox.contains(x, y, width, height)
-    }
+    override fun contains(x: Double, y: Double): Boolean =
+        _boundingBox.contains(x, y)
 
-    override fun intersects(x: Double, y: Double, w: Double, h: Double): Boolean {
-        return boundingBox.intersects(x, y, w, h)
-    }
+    override fun contains(x: Double, y: Double, width: Double, height: Double): Boolean =
+        _boundingBox.contains(x, y, width, height)
+
+    override fun intersects(x: Double, y: Double, w: Double, h: Double): Boolean =
+        _boundingBox.intersects(x, y, w, h)
 
     /** ---- [Path2DJs] */
 
@@ -103,9 +108,8 @@ class Path2DJs : Path {
         }
     }
 
-    private fun lastMoveToEntry(): Entry? {
-        return entries.last { it.command is MoveTo }
-    }
+    private fun lastMoveToEntry(): Entry? =
+        entries.lastOrNull { it.command is MoveTo }
 
     private interface Command {
 	    fun clone(): Command

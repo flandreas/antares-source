@@ -33,6 +33,7 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.port.PortView
+import kotlin.math.max
 
 class AnalogCircuitInOutView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
@@ -47,7 +48,8 @@ class AnalogCircuitInOutView(
 		styleProvider.getStyle(StyleType.ANNOTATION).font,
 		textColor,
 		HorizontalAlignment.CENTER,
-		VerticalAlignment.CENTER)
+		VerticalAlignment.CENTER,
+		richText = false)
 
 	init {
 		modelExchanged(null)
@@ -87,7 +89,7 @@ class AnalogCircuitInOutView(
 	override fun updateViewImpl() {
 		arrowPath = ArrowPath.Companion.Builder(
 			orientation,
-			Dimension2D(voltageLabel.bounds.width, voltageLabel.bounds.height)
+			Dimension2D(max(25.0, voltageLabel.bounds.width), voltageLabel.bounds.height)
 		).build(inout = portType === PortType.INOUT)
 
 		voltageLabel.location = voltageLabelCenter
