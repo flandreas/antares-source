@@ -76,7 +76,7 @@ class AntaresSingleCircuitAppJs(private val environment: Environment) {
         AntaresModuleJs.require()
         BaseModule.settings.set(SchedulerImpl.SETTING_ENABLE_SOFT_BREAKPOINTS, true)
 
-        LogSystem.level = LogLevel.Debug
+        LogSystem.level = LogLevel.Info
 
         AntaresThemes.install(themeName)
     }
