@@ -45,7 +45,7 @@ actual object LogSystem {
 		}
 	}
 
-	private fun toLog4jLevel(level: LogLevel): org.apache.log4j.Level {
+	fun toLog4jLevel(level: LogLevel): org.apache.log4j.Level {
 		return when (level) {
 			Error -> org.apache.log4j.Level.ERROR
 			Warning -> org.apache.log4j.Level.WARN
@@ -55,7 +55,7 @@ actual object LogSystem {
 		}
 	}
 
-	private fun fromLog4jLevel(level: org.apache.log4j.Level): LogLevel {
+	fun fromLog4jLevel(level: org.apache.log4j.Level): LogLevel {
 		return when (level) {
 			org.apache.log4j.Level.ERROR -> Error
 			org.apache.log4j.Level.WARN -> Warning
@@ -70,6 +70,13 @@ actual object LogSystem {
 actual class Logger(private val slf4jLogger: org.slf4j.Logger) {
 
 	private val fqcn = Logger::class.java.name
+
+	// Not yet implemented
+	actual var level: LogLevel?
+		get() = null
+		set(value) {
+			// empty
+		}
 
 	actual fun userTrail(msg: String) {
 		info(msg)

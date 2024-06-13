@@ -29,6 +29,8 @@ expect object LogSystem {
 
 expect class Logger {
 
+    var level: LogLevel?
+
 	/** Used for logging main user interactions used for replaying them in support cases. */
 	fun userTrail(msg: String)
 
