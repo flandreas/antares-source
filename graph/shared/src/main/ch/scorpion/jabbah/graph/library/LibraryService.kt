@@ -450,8 +450,8 @@ class LibraryService(
 			|   title="${metaGraph.name}"
 			|   width="500px"
 			|   height="500px"
-			|   src="$src"
-			|/>
+			|   src="$src">
+			|</iframe>
 		""".trimMargin()
 	}
 

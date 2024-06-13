@@ -108,7 +108,7 @@ internal class MetaGraphEmbedPanel(
 	}
 
 	private fun createPage(title: String, contentProvider: () -> String): Page {
-		val textArea = JTextArea(10, 40)
+		val textArea = JTextArea(15, 60)
 		textArea.text = ""
 		textArea.isEditable = false
 		return Page(title, buildPageView(textArea), textArea, contentProvider)
