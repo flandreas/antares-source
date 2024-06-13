@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.Image
 import ch.scorpion.jabbah.draw.graphics.ImageType
+import ch.scorpion.jabbah.draw.style.Theme
 import ch.scorpion.jabbah.edit.auth.UserIdentity
 import ch.scorpion.jabbah.edit.model.image.ImageIdentification
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
@@ -428,14 +429,19 @@ class LibraryService(
 		return MetaGraphBundleImportResult.Success
 	}
 
-	/** Returns the code snippet to embed the [MetaGraph] with [UUID] as a HTML <iframe>.*/
-	fun getEmbeddingIFrame(uuid: UUID): String {
+	/**
+	 * Returns the code snippet to embed the [MetaGraph] with [UUID] as an HTML <iframe>.
+	 * @param uuid the [UUID] of the [MetaGraph] to be embedded
+	 * @param themeName the URL-encoded name of the [Theme] in which the [MetaGraph] is rendered
+	 */
+	fun getEmbeddingIFrame(uuid: UUID, themeName: String): String {
 		val metaGraph = metaGraphRepository.getMetaGraph(uuid)
 		val library = metaGraphRepository.getContainingLibrary(uuid)!!
 		val src = StringBuilder(BaseModule.properties.getString(PROP_VIEWER_JS_URL))
 			.append("?")
 			.append("library=${library.uuid.id}")
 			.append("&circuit=${uuid.id}")
+			.append("&theme=$themeName")
 			.toString()
 
 		return """
