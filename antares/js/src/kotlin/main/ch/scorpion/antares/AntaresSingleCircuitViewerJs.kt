@@ -44,7 +44,9 @@ class AntaresSingleCircuitViewerJs(
         controller = GraphViewerController(data.graph.graphView, true)
         controller.graphNavigationViewController.enableOpenSubGraphRequests = false
         ViewMocks(controller)
-        controller.drawingView.editable = false
+
+        // Required to activate ScenarioDetector
+        controller.graphNavigationViewController.setRootGraphView(data.graph.graphView, false)
     }
 
     fun bindCanvas(
