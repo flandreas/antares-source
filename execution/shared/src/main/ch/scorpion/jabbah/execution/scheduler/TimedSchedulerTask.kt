@@ -38,15 +38,15 @@ class TimedSchedulerTask(
 	}
 
 	private val stepsMap = mapOf(
-		Use to 30..MAX_SPEED_STEPS,
-		Observe to 1..5,
-		Explore to 1..1
+		Use to 100..MAX_SPEED_STEPS,
+		Observe to 3..100,
+		Explore to 1..3
 	)
 
 	private val intervalMap = mapOf(
 		Use to (5 downTo 1),
 		Observe to (10 downTo 5),
-		Explore to (50 downTo 10)
+		Explore to (30 downTo 10)
 	)
 
 	private val systemSpeedHandler: EventHandler<SystemSpeedEvent> = {

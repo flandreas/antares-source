@@ -44,7 +44,7 @@ class AnalogEdgeView(
 		/** The name of the [Int] preference in [Properties] holding the current flow animation speed factor. */
 		const val PREF_SPEED = "antares.analog.currentFlowAnimationSpeed"
 		const val MIN_SPEED = 1
-		const val DEF_SPEED = 3
+		const val DEF_SPEED = 5
 		const val MAX_SPEED = 10
 
 		/**
@@ -54,7 +54,7 @@ class AnalogEdgeView(
 		private var _animationSpeedFactor: Float? = null
 		private val animationSpeedFactor: Float get() {
 			if (_animationSpeedFactor == null) {
-				_animationSpeedFactor = BaseModule.properties.getInt(PREF_SPEED) / 20.0F
+				_animationSpeedFactor = BaseModule.properties.getInt(PREF_SPEED) / 5.0F
 			}
 			return _animationSpeedFactor!!
 		}
@@ -66,7 +66,7 @@ class AnalogEdgeView(
 
 		init {
 			BaseModule.eventBus.register(PreferencesChangedEvent::class) {
-				_animationSpeedFactor = BaseModule.properties.getInt(PREF_SPEED) / 10.0F
+				_animationSpeedFactor = BaseModule.properties.getInt(PREF_SPEED) / 5.0F
 			}
 		}
 	}
