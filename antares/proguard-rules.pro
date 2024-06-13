@@ -12,10 +12,26 @@
 }
 
 # Change here com.yourcompany.yourpackage
--keep,includedescriptorclasses class ch.scorpion.jabbah.app.rating.**$$serializer { *; } # <-- change package name to your app's
--keepclassmembers class ch.scorpion.jabbah.app.rating.** { # <-- change package name to your app's
+-keep,includedescriptorclasses class ch.scorpion.jabbah.app.rating.**$$serializer { *; }
+-keepclassmembers class ch.scorpion.jabbah.app.rating.** {
     *** Companion;
 }
--keepclasseswithmembers class ch.scorpion.jabbah.app.rating.** { # <-- change package name to your app's
+-keepclasseswithmembers class ch.scorpion.jabbah.app.rating.** {
+    kotlinx.serialization.KSerializer serializer(...);
+}
+
+-keep,includedescriptorclasses class ch.scorpion.jabbah.graph.login.**$$serializer { *; }
+-keepclassmembers class ch.scorpion.jabbah.graph.login.** {
+    *** Companion;
+}
+-keepclasseswithmembers class ch.scorpion.jabbah.graph.login.** {
+    kotlinx.serialization.KSerializer serializer(...);
+}
+
+-keep,includedescriptorclasses class ch.scorpion.jabbah.graph.project.**$$serializer { *; }
+-keepclassmembers class ch.scorpion.jabbah.graph.project.** {
+    *** Companion;
+}
+-keepclasseswithmembers class ch.scorpion.jabbah.graph.project.** {
     kotlinx.serialization.KSerializer serializer(...);
 }
