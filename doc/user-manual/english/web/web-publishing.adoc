@@ -1,6 +1,6 @@
 = Web publishing
 include::../../page-variables.txt[]
-:page-permalink: /user-manual/english/web-publishing/web-publishing
+:page-permalink: /user-manual/english/web/web-publishing
 
 Starting with version 1.3, Antares allows you to publish your circuits in your own web pages. This can be useful for teachers or authors of textbooks who want to create online content with embedded, runnable circuits.
 
