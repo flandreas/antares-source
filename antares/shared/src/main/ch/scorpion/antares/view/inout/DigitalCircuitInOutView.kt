@@ -275,6 +275,13 @@ class DigitalCircuitInOutView(
 			y - location.y - arrowPath!!.contentLocation.y - getArrowPathTranslation().y)
 	}
 
+	private fun canConsumeKey(key: Int): Boolean {
+		return when (key) {
+			KeyEvent.VK_SPACE -> false
+			else -> true
+		}
+	}
+
 	/** Consumes a key the user pressed during simulation while this [DigitalCircuitInOutView] has focus.*/
 	fun consumeKey(key: Int, contextHolder: GraphApplicationContextHolder, keyEvent: KeyEvent? = null, skipAnimation: Boolean = false, graphView: GraphView? = null) {
 		invalidate()
@@ -380,7 +387,7 @@ class DigitalCircuitInOutView(
 		return handler
 	}
 
-	override fun createActorInteractionHandler(): ActorInteractionHandler = InteractionHandler()
+	override fun createActorInteractionHandler(): ToggleInteractionHandler = InteractionHandler()
 
 	/**
 	 * Allows to toggle individual [Bit]s by clicking with the mouse and entering
@@ -404,6 +411,9 @@ class DigitalCircuitInOutView(
 			}
 			return null
 		}
+
+		override fun canConsume(keyEvent: KeyEvent): Boolean =
+			super.canConsume(keyEvent) && canConsumeKey(keyEvent.key)
 
 		override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (numberView!!.focusIndex != null) {

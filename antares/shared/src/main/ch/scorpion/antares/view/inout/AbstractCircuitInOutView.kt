@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.Look
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
@@ -12,6 +13,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.RotationDirection
+import ch.scorpion.jabbah.draw.Focusable
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.graphics.Stroke
@@ -63,7 +65,7 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 	/** Initialized in [updateView] */
 	protected var arrowPath: ArrowPath? = null
 
-	private val actorInteractionHandler = createActorInteractionHandler()
+	private val actorInteractionHandler: ToggleInteractionHandler = createActorInteractionHandler()
 
 	var orientation: Direction = orientation
 		set(value) {
@@ -131,6 +133,11 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 		}
 		orientation = Direction.withName(reader.readString("orientation"))
 	}
+
+	/** ---- [Focusable] */
+
+	override fun canConsume(keyEvent: KeyEvent): Boolean =
+		actorInteractionHandler.canConsume(keyEvent)
 
 	/** ---- [ActorView] */
 
@@ -387,7 +394,7 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 	}
 
 
-	protected open fun createActorInteractionHandler(): ActorInteractionHandler = ToggleInteractionHandler()
+	protected open fun createActorInteractionHandler(): ToggleInteractionHandler = ToggleInteractionHandler()
 
 	protected abstract fun toggle(undefine: Boolean, context: ActorInteractionContext): ActorInteractionHandler?
 
@@ -396,6 +403,8 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 	 * unless it is not a toplevel component.
 	 */
 	protected open inner class ToggleInteractionHandler : ClickableActorInteractionHandlerAdapter() {
+
+		open fun canConsume(keyEvent: KeyEvent): Boolean = keyEvent.modifiers == 0
 
 		override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (!model.isToplevel) {

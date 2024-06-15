@@ -168,9 +168,17 @@ class AnalogCircuitInOutView(
 		}
 	}
 
-	override fun createActorInteractionHandler(): ActorInteractionHandler = InteractionHandler()
+	override fun createActorInteractionHandler(): ToggleInteractionHandler = InteractionHandler()
 
 	private inner class InteractionHandler : ToggleInteractionHandler() {
+
+		override fun canConsume(keyEvent: KeyEvent): Boolean {
+			return when (keyEvent.key) {
+				KeyEvent.VK_SPACE -> false
+				else -> super.canConsume(keyEvent)
+			}
+		}
+
 		override fun keyPressed(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
 			if (checkTopLevelKey()) {
 				when (context.keyEvent?.key) {

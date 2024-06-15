@@ -207,6 +207,9 @@ class DipSwitchView(
 		orientation = Direction.withName(reader.readString("orientation"))
 	}
 
+	override fun canConsume(keyEvent: KeyEvent): Boolean =
+		actorInteractionHandler.canConsume(keyEvent)
+
 	/** ---- [Drawable] interface */
 
 	override fun drawImpl(context: DrawContext) {
@@ -417,9 +420,20 @@ class DipSwitchView(
 			}
 		}
 
+		fun canConsume(keyEvent: KeyEvent): Boolean {
+			return when (keyEvent.key) {
+				KeyEvent.VK_LEFT -> true
+				KeyEvent.VK_RIGHT -> true
+				KeyEvent.VK_ENTER -> true
+				KeyEvent.VK_LEFT -> true
+				KeyEvent.VK_0 -> true
+				KeyEvent.VK_1 -> true
+				else -> false
+			}
+		}
+
 		override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
 			LOG.trace("keyPressed '${context.keyEvent!!.key.toChar()}'")
-			val graphView = (context.view as DrawingView<*>).drawing as GraphView
 			if (focusIndex != null) {
 				when (context.keyEvent?.key) {
 					KeyEvent.VK_LEFT -> transferFocusLeft()
