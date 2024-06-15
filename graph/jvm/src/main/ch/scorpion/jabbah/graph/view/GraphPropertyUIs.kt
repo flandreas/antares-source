@@ -68,63 +68,63 @@ object GraphProperties {
 
 class PortTypeEditor : ComboBoxPropertyEditor() {
 	init {
-		setAvailableValues(PortType.values())
-		(editor as JComboBox<*>).renderer = EnumRenderer<PortType>()
+		setAvailableValues(PortType.entries.toTypedArray())
+		(editor as JComboBox<PortType>).renderer = EnumRenderer()
 	}
 }
 
 class LayoutEditor(filter: (LayoutType) -> Boolean = { _ -> true} ) : ComboBoxPropertyEditor() {
 	init {
-		setAvailableValues(LayoutType.values().filter { filter.invoke(it) }.toTypedArray())
-		(editor as JComboBox<*>).renderer = EnumRenderer<LayoutType>()
+		setAvailableValues(LayoutType.entries.filter { filter.invoke(it) }.toTypedArray())
+		(editor as JComboBox<LayoutType>).renderer = EnumRenderer()
 	}
 }
 
 class NetViewStyleEditor(filter: (NetViewStyle) -> Boolean = { _ -> true }) : ComboBoxPropertyEditor() {
 	init {
-		setAvailableValues(NetViewStyle.values().filter { filter.invoke(it) }.toTypedArray())
-		(editor as JComboBox<*>).renderer = EnumRenderer<NetViewStyle>()
+		setAvailableValues(NetViewStyle.entries.filter { filter.invoke(it) }.toTypedArray())
+		(editor as JComboBox<NetViewStyle>).renderer = EnumRenderer()
 	}
 }
 
 class PortLabelPositionEditor : ComboBoxPropertyEditor() {
 	init {
-		setAvailableValues(PortLabelPosition.values())
-		(editor as JComboBox<*>).renderer = EnumRenderer<PortLabelPosition>()
+		setAvailableValues(PortLabelPosition.entries.toTypedArray())
+		(editor as JComboBox<PortLabelPosition>).renderer = EnumRenderer()
 	}
 }
 
 class InternalLabelOrientationEditor : ComboBoxPropertyEditor() {
 	init {
-		setAvailableValues(InternalLabelOrientation.values())
-		(editor as JComboBox<*>).renderer = EnumRenderer<InternalLabelOrientation>()
+		setAvailableValues(InternalLabelOrientation.entries.toTypedArray())
+		(editor as JComboBox<InternalLabelOrientation>).renderer = EnumRenderer()
 	}
 }
 
 class VerticeLabelPositionEditor : ComboBoxPropertyEditor() {
 	init {
-		setAvailableValues(VerticeLabelPosition.values())
-		(editor as JComboBox<*>).renderer = EnumRenderer<VerticeLabelPosition>()
+		setAvailableValues(VerticeLabelPosition.entries.toTypedArray())
+		(editor as JComboBox<VerticeLabelPosition>).renderer = EnumRenderer()
 	}
 }
 
 class ControlViewVisibilityEditor : ComboBoxPropertyEditor() {
 	init {
-		setAvailableValues(ControlViewVisibility.values())
-		(editor as JComboBox<*>).renderer = EnumRenderer<ControlViewVisibility>()
+		setAvailableValues(ControlViewVisibility.entries.toTypedArray())
+		(editor as JComboBox<ControlViewVisibility>).renderer = EnumRenderer()
 	}
 }
 
 class LibraryVisibilityEditor : ComboBoxPropertyEditor() {
 	init {
-		setAvailableValues(LibraryVisibility.values())
-		(editor as JComboBox<*>).renderer = EnumRenderer<LibraryVisibility>()
+		setAvailableValues(LibraryVisibility.entries.toTypedArray())
+		(editor as JComboBox<LibraryVisibility>).renderer = EnumRenderer()
 	}
 }
 
 class SignalHistoriesTypeEditor : ComboBoxPropertyEditor() {
 	init {
-		setAvailableValues(SignalHistoriesType.values())
-		(editor as JComboBox<*>).renderer = EnumRenderer<SignalHistoriesType>()
+		setAvailableValues(SignalHistoriesType.entries.toTypedArray())
+		(editor as JComboBox<SignalHistoriesType>).renderer = EnumRenderer()
 	}
 }

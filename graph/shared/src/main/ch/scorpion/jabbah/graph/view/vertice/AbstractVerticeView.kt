@@ -57,7 +57,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 			BaseModule.eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = c, messageKey = "graph.vertice.cannotOpen.msg"))
 		}
 
-		private object CannotOpenClickHandler : InputEventHandlerAdapter<InputEventContext>() {
+		protected object CannotOpenClickHandler : InputEventHandlerAdapter<InputEventContext>() {
 			var component: Component? = null
 			override fun mouseClicked(context: InputEventContext): InputEventHandler<InputEventContext>? {
 				if (context.mouseEvent?.button == Button.BUTTON1 && context.mouseEvent?.clickCount == 2) {
@@ -67,7 +67,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 			}
 		}
 
-		protected open class CannotOpenActorClickHandler : InputEventHandlerAdapter<ActorInteractionContext>() {
+		open class CannotOpenActorClickHandler : InputEventHandlerAdapter<ActorInteractionContext>() {
 			var component: Component? = null
 
 			override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {

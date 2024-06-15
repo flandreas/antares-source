@@ -14,7 +14,7 @@ buildscript {
 val kotlinVersion: String by extra
 
 plugins {
-	kotlin("multiplatform") version "1.9.23" apply false
+	kotlin("multiplatform") version "2.0.0" apply false
 	kotlin("plugin.serialization") version "1.9.23" apply false
 	id("org.asciidoctor.convert") version "1.5.9.2"
 	id("maven-publish")
@@ -90,6 +90,7 @@ subprojects {
 		withSourcesJar(publish = false)
 
 		jvm {
+
 			// by default kotlin uses JavaVersion 1.6
 			val main by compilations.getting {
 				kotlinOptions {

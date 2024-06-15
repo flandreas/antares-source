@@ -36,7 +36,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
     private val selectionManagerFactory: SelectionManagerFactory = EditSelectModule.selectionManagerFactory,
     private val highlighterFactory: HighlighterFactory = EditHighlightModule.highlighterFactory,
     eventBus: EventBus = BaseModule.eventBus,
-    viewPainterFactory: ViewPainterFactory<out EditInputEventContext> = { InvalidatableViewPainter(it) },
+    viewPainterFactory: ViewPainterFactory<EditInputEventContext> = { InvalidatableViewPainter(it) },
     editable: Boolean = true
 ) : ViewImpl<EditInputEventContext>(transformFactory, applicationContextHolder, eventBus, viewPainterFactory), DrawingView<T> {
 

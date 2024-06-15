@@ -9,21 +9,21 @@ import javax.swing.JComboBox
 
 class SizeEditor : ComboBoxPropertyEditor() {
 	init {
-		setAvailableValues(Size.values())
-		(editor as JComboBox<*>).renderer = EnumRenderer<Size>()
+		setAvailableValues(Size.entries.toTypedArray())
+		(editor as JComboBox<Size>).renderer = EnumRenderer()
 	}
 }
 
 class VerticalAlignmentEditor : ComboBoxPropertyEditor() {
 	init {
-		setAvailableValues(VerticalAlignment.values())
-		(editor as JComboBox<*>).renderer = EnumRenderer<VerticalAlignment>()
+		setAvailableValues(VerticalAlignment.entries.toTypedArray())
+		(editor as JComboBox<VerticalAlignment>).renderer = EnumRenderer()
 	}
 }
 
 class HorizontalAlignmentEditor : ComboBoxPropertyEditor() {
 	init {
-		setAvailableValues(HorizontalAlignment.values())
-		(editor as JComboBox<*>).renderer = EnumRenderer<HorizontalAlignment>()
+		setAvailableValues(HorizontalAlignment.entries.toTypedArray())
+		(editor as JComboBox<HorizontalAlignment>).renderer = EnumRenderer()
 	}
 }
