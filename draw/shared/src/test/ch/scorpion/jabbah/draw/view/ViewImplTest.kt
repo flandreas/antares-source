@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.draw.container.DrawableContainerImpl
 import ch.scorpion.jabbah.draw.drawable.DrawableMockBuilder
 import ch.scorpion.jabbah.draw.graphics.Graphics2DMockBuilder
 import ch.scorpion.jabbah.draw.module.DrawModule
-import io.mockk.verify
+import dev.mokkery.verify
 import kotlin.test.BeforeTest
 import kotlin.test.Ignore
 import kotlin.test.Test

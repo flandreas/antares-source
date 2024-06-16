@@ -18,6 +18,7 @@ plugins {
 	kotlin("plugin.serialization") version "1.9.23" apply false
 	id("org.asciidoctor.convert") version "1.5.9.2"
 	id("maven-publish")
+	id("dev.mokkery") version "2.0.0" apply false
 }
 
 val version_project: String by project
@@ -76,15 +77,18 @@ subprojects {
 
 	// jsBrowserTest doesn't work in JS targets due to open issues with mockk-js
 	// See https://github.com/mockk/mockk/issues/100
+	/*
 	tasks.whenTaskAdded {
 		if (this.name.contains("jsBrowserTest")) {
 			this.enabled = false
 		}
 	}
+	*/
 
 	apply(plugin = "org.jetbrains.kotlin.multiplatform")
 	apply(plugin = "kotlinx-serialization")
 	apply(plugin = "maven-publish")
+	apply(plugin = "dev.mokkery")
 
 	configure<KotlinMultiplatformExtension> {
 		withSourcesJar(publish = false)
@@ -146,7 +150,7 @@ subprojects {
 				dependencies {
 					implementation(kotlin("test-common"))
 					implementation(kotlin("test-annotations-common"))
-					implementation("io.mockk:mockk-common:$mockkVersion")
+					//implementation("io.mockk:mockk-common:$mockkVersion")
 					implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutinesVersion")
 				}
 			}
@@ -201,7 +205,7 @@ subprojects {
 				dependencies {
 					implementation(kotlin("test"))
 					implementation(kotlin("test-junit"))
-					implementation("io.mockk:mockk:$mockkVersion")
+					//implementation("io.mockk:mockk:$mockkVersion")
 				}
 			}
 
@@ -214,7 +218,7 @@ subprojects {
 					kotlin.srcDir("js/src/kotlin/test")
 					dependencies {
 						implementation(kotlin("test-js"))
-						implementation("io.mockk:mockk-js:1.7.17")
+						//implementation("io.mockk:mockk-js:1.7.17")
 					}
 				}
 			}

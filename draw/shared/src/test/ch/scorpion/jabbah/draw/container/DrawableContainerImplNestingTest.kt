@@ -7,9 +7,11 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.View
-import io.mockk.mockk
-import io.mockk.spyk
-import io.mockk.verify
+import dev.mokkery.MockMode
+import dev.mokkery.mock
+import dev.mokkery.spy
+import dev.mokkery.verify
+import dev.mokkery.verify.VerifyMode.Companion.exactly
 import kotlin.test.*
 
 class DrawableContainerImplNestingTest {
@@ -21,7 +23,7 @@ class DrawableContainerImplNestingTest {
 	fun setup() {
 		BaseModule.require()
 		container = DrawableContainerImpl()
-		context = DrawContext(mockk(relaxed = true))
+		context = DrawContext(mock(MockMode.autofill))
 	}
 
 	@Test
@@ -83,7 +85,7 @@ class DrawableContainerImplNestingTest {
 
 	@Test
 	fun shouldDispatchMouseMovedToNestedDrawable() {
-		val view = mockk<View<InputEventContext>>()
+		val view = mock<View<InputEventContext>>()
 		val context = InputEventContext(view = view, x = 125.0, y = 125.0)
 
 		val rect = TestRectangle(Rectangle2D(20, 20, 10, 10))
@@ -98,7 +100,7 @@ class DrawableContainerImplNestingTest {
 
 	@Test
 	fun shouldDispatchMousePressedToNestedDrawable() {
-		val view = mockk<View<InputEventContext>>()
+		val view = mock<View<InputEventContext>>()
 		val context = InputEventContext(view = view, x = 125.0, y = 125.0)
 
 		val rect = TestRectangle(Rectangle2D(20, 20, 10, 10))
@@ -113,8 +115,8 @@ class DrawableContainerImplNestingTest {
 
 	@Test
 	fun shouldClip() {
-		val rect1 = spyk(TestRectangle(Rectangle2D(0, 0, 10, 10)))
-		val rect2 = spyk(TestRectangle(Rectangle2D(90, 90, 10, 10)))
+		val rect1 = spy<Drawable>(TestRectangle(Rectangle2D(0, 0, 10, 10)))
+		val rect2 = spy<Drawable>(TestRectangle(Rectangle2D(90, 90, 10, 10)))
 		val innerContainer = DrawableContainerImpl<Drawable>(location = Point2D(100, 100), useLocation = true)
 		innerContainer.add(rect1)
 		innerContainer.add(rect2)
@@ -123,14 +125,14 @@ class DrawableContainerImplNestingTest {
 
 		container.draw(context)
 
-		verify(exactly = 1) { rect1.draw(context) }
-		verify(exactly = 0) { rect2.draw(context) }
+		verify(exactly(1)) { rect1.draw(context) }
+		verify(exactly(0)) { rect2.draw(context) }
 	}
 
 	@Test
 	fun shouldClipRecursively() {
 		val deepContainer = DrawableContainerImpl<Drawable>(location = Point2D(100, 100), useLocation = true)
-		val rect = spyk(TestRectangle(Rectangle2D(10, 10, 10, 10)))
+		val rect = spy<Drawable>(TestRectangle(Rectangle2D(10, 10, 10, 10)))
 		deepContainer.add(rect)
 		val innerContainer = DrawableContainerImpl<Drawable>(location = Point2D(100, 100), useLocation = true)
 		innerContainer.add(deepContainer)
@@ -138,13 +140,13 @@ class DrawableContainerImplNestingTest {
 
 		context.modelClip = Rectangle2D(100, 100, 20, 20)
 		container.draw(context)
-		verify(exactly = 0) { rect.draw(context) }
+		verify(exactly(0)) { rect.draw(context) }
 	}
 
 	@Test
 	fun shouldDrawRecursively() {
 		val deepContainer = DrawableContainerImpl<Drawable>(location = Point2D(100, 100), useLocation = true)
-		val rect = spyk(TestRectangle(Rectangle2D(10, 10, 10, 10)))
+		val rect = spy<Drawable>(TestRectangle(Rectangle2D(10, 10, 10, 10)))
 		deepContainer.add(rect)
 		val innerContainer = DrawableContainerImpl<Drawable>(location = Point2D(100, 100), useLocation = true)
 		innerContainer.add(deepContainer)
@@ -152,6 +154,6 @@ class DrawableContainerImplNestingTest {
 
 		context.modelClip = Rectangle2D(200, 200, 20, 20)
 		container.draw(context)
-		verify(exactly = 1) { rect.draw(context) }
+		verify(exactly(1)) { rect.draw(context) }
 	}
 }

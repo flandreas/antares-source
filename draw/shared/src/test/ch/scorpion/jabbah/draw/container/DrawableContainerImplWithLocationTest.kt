@@ -5,7 +5,9 @@ import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
-import io.mockk.mockk
+import ch.scorpion.jabbah.draw.graphics.Graphics2D
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -19,7 +21,7 @@ class DrawableContainerImplWithLocationTest {
 	fun setup() {
 		BaseModule.require()
 		container = DrawableContainerImpl(Point2D(100, 100), useLocation = true)
-		context = mockk(relaxed = true)
+		context = DrawContext(mock<Graphics2D>(MockMode.autofill))
 	}
 
 	@Test

@@ -30,7 +30,7 @@ actual object System {
 
 	actual fun getClassName(clazz: KClass<*>): String = clazz.qualifiedName!!
 
-	actual fun getClassName(obj: Any): String = obj.javaClass.name
+	actual fun getClassName(obj: Any): String = obj::class.qualifiedName!!
 
 	actual fun commonSuperClass(classes: Collection<KClass<*>>): KClass<*>? = Inheritance.commonSuperClass(classes)
 

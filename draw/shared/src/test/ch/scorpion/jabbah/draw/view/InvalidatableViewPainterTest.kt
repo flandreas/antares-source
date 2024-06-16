@@ -4,7 +4,8 @@ import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.DrawTestRule
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.View
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -14,7 +15,7 @@ import kotlin.test.assertEquals
  */
 class InvalidatableViewPainterTest {
 
-    private var view: View<InputEventContext> = mockk()
+    private var view: View<InputEventContext> = mock(MockMode.autofill)
     private var viewPainter = InvalidatableViewPainter(view)
 
 	@BeforeTest

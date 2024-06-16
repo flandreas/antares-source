@@ -3,13 +3,11 @@ package ch.scorpion.jabbah.base
 import korlibs.template.AutoEscapeMode
 import korlibs.template.Template
 import korlibs.template.TemplateConfig
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /** Basic test of the Korte Template Engine.*/
-@OptIn(ExperimentalCoroutinesApi::class)
 class KorteTest {
 
 	class Function {

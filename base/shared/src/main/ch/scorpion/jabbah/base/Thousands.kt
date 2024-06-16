@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.base
 
+import ch.scorpion.jabbah.base.math.formatRounded
+import ch.scorpion.jabbah.base.math.toDoubleString
 import kotlin.math.log10
 import kotlin.math.pow
 
@@ -25,7 +27,7 @@ object Thousands {
 	/**
 	 * Converts the specified value to a [String] with a predefined number of relevant digits,
 	 * using the commonly knows abbreviation letter for multiples of thousand, such as K (Kilo) for
-	 * thousand or M (Mega) for million.
+	 * thousands or M (Mega) for millions.
 	 *
 	 * @param value the value to be converted
 	 * @return the converted value, such as "12.3K" for "12345, or "BIG" if `value` is larger not smaller
@@ -47,7 +49,7 @@ object Thousands {
 	/** Rounds `value` to at most `digits` digits after the comma, removing unnecessary trailing zeros and commas.*/
 	fun round(value: Double, digits: Int): String {
 		val tenPower = 10.0.pow(digits.toDouble())
-		val s = ((value * tenPower).toInt() / tenPower).toString()
+		val s = ((value * tenPower).toInt() / tenPower).toDoubleString()
 		return s.trimEnd('0').trimEnd('.')
 	}
 }

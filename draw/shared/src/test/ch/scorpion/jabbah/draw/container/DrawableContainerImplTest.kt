@@ -5,10 +5,9 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.DrawableMockBuilder
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.spyk
-import io.mockk.verify
+import ch.scorpion.jabbah.draw.graphics.Graphics2D
+import dev.mokkery.*
+import dev.mokkery.verify.VerifyMode.Companion.exactly
 import kotlin.test.*
 
 class DrawableContainerImplTest {
@@ -20,7 +19,7 @@ class DrawableContainerImplTest {
 	fun setup() {
 		BaseModule.require()
 		container = DrawableContainerImpl()
-		context = mockk(relaxed = true)
+		context = DrawContext(mock<Graphics2D>())
 	}
 
 	@Test
@@ -43,11 +42,11 @@ class DrawableContainerImplTest {
 			.invisible()
 			.build()
 		container.add(drawable)
-		every { context.modelClip } returns Rectangle2D(0, 0, 50, 50)
+		context.modelClip = Rectangle2D(0, 0, 50, 50)
 
 		container.draw(context)
 
-		verify(exactly = 0) { drawable.draw(context) }
+		verify(exactly(0)) { drawable.draw(context) }
 	}
 
 	@Test
@@ -95,15 +94,15 @@ class DrawableContainerImplTest {
 
 	@Test
 	fun shouldClip() {
-		val rect1 = spyk(TestRectangle(Rectangle2D(0, 0, 10, 10)))
-		val rect2 = spyk(TestRectangle(Rectangle2D(90, 90, 10, 10)))
+		val rect1 = spy<Drawable>(TestRectangle(Rectangle2D(0, 0, 10, 10)))
+		val rect2 = spy<Drawable>(TestRectangle(Rectangle2D(90, 90, 10, 10)))
 		container.add(rect1)
 		container.add(rect2)
-		every { context.modelClip } returns Rectangle2D(5, 5, 10, 10)
+		context.modelClip = Rectangle2D(5, 5, 10, 10)
 
 		container.draw(context)
 
-		verify(exactly = 1) { rect1.draw(context) }
-		verify(exactly = 0) { rect2.draw(context) }
+		verify(exactly(1)) { rect1.draw(context) }
+		verify(exactly (0)) { rect2.draw(context) }
 	}
 }

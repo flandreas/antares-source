@@ -4,9 +4,10 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.ControlledTimeService
 import ch.scorpion.jabbah.base.time.ControlledTimer
 import ch.scorpion.jabbah.base.time.SystemSpeed
-import io.mockk.every
-import io.mockk.spyk
-import io.mockk.verify
+import dev.mokkery.matcher.any
+import dev.mokkery.spy
+import dev.mokkery.verify
+import dev.mokkery.verify.VerifyMode.Companion.exactly
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -30,7 +31,7 @@ class AnimatorImplTest {
 		task.start()
 		timeService.setTimeMillis(50)
 
-		verify(exactly = 0) { task.animate(any()) }
+		verify(exactly(0)) { task.animate(any()) }
 	}
 
 	@Test
@@ -40,7 +41,7 @@ class AnimatorImplTest {
 		task.start()
 		timeService.setTimeMillis(150)
 
-		verify(exactly = 1) { task.animate(any()) }
+		verify(exactly(1)) { task.animate(any()) }
 	}
 
 	@Test
@@ -50,13 +51,13 @@ class AnimatorImplTest {
 		task.start()
 
 		timeService.setTimeMillis(150)
-		verify(exactly = 1) { task.animate(10.0) }
+		verify(exactly(1)) { task.animate(10.0) }
 
 		timeService.setTimeMillis(250)
-		verify(exactly = 2) { task.animate(10.0) }
+		verify(exactly(1)) { task.animate(10.0) }
 
 		timeService.setTimeMillis(350)
-		verify(exactly = 3) { task.animate(10.0) }
+		verify(exactly(1)) { task.animate(10.0) }
 	}
 
 	@Test
@@ -67,7 +68,7 @@ class AnimatorImplTest {
 
 		assertEquals(1, animator.taskCount)
 		timeService.setTimeMillis(150)
-		verify(exactly = 1) { task.animate(10.0) }
+		verify(exactly(1)) { task.animate(10.0) }
 
 		task.stop()
 		assertEquals(0, animator.taskCount)
@@ -93,12 +94,12 @@ class AnimatorImplTest {
 		animator.schedule(task)
 		task.start()
 		timeService.setTimeMillis(150)
-		verify(exactly = 1) { task.animate(any()) }
+		verify(exactly(1)) { task.animate(any()) }
 
 		animator.systemSpeed.pause()
 		timeService.setTimeMillis(250)
 
-		verify(exactly = 1) { task.animate(any()) }
+		verify(exactly(0)) { task.animate(any()) }
 	}
 
 	@Test
@@ -107,7 +108,7 @@ class AnimatorImplTest {
 		animator.schedule(task)
 		task.start()
 		timeService.setTimeMillis(150)
-		verify(exactly = 1) { task.animate(any()) }
+		verify(exactly(1)) { task.animate(any()) }
 
 		animator.systemSpeed.pause()
 		timeService.setTimeMillis(250)
@@ -115,7 +116,7 @@ class AnimatorImplTest {
 		animator.systemSpeed.resume()
 		timeService.setTimeMillis(350)
 
-		verify(exactly = 2) { task.animate(any()) }
+		verify(exactly(1)) { task.animate(any()) }
 	}
 
 	@Test
@@ -124,39 +125,51 @@ class AnimatorImplTest {
 		animator.schedule(task)
 		task.start()
 		timeService.setTimeMillis(150)
-		verify(exactly = 1) { task.animate(any()) }
+		verify(exactly(1)) { task.animate(any()) }
 
 		animator.systemSpeed.pause()
 		timeService.setTimeMillis(250)
 
-		verify(exactly = 2) { task.animate(any()) }
+		verify(exactly(1)) { task.animate(any()) }
 	}
 
 	private fun createTask(duration: Double, size: Double, pausable: Boolean = false): AnimationTask {
-		val task = spyk<TestTask>()
-
-		every { task.duration } returns duration
-		every { task.size } returns size
-		every { task.dependsOnSystemSpeed } returns false
-		every { task.isPausable } returns pausable
+		val spiedObject = TestTask(duration, size, pausable)
+		val task = spy<AnimationTask>(spiedObject)
+		spiedObject.outerTask = task
 
 		return task
 	}
 
-	abstract class TestTask : AnimationTask {
+	private class TestTask(
+		override val duration: Double,
+		override val size: Double,
+		override val isPausable: Boolean
+	) : AnimationTask {
+		lateinit var outerTask: AnimationTask
 		var listener: AnimationTaskListener? = null
 
 		override fun start() {
-			listener!!.started(this)
+			listener!!.started(outerTask)
 		}
 
 		override fun stop() {
-			listener!!.ended(this)
+			listener!!.ended(outerTask)
 		}
 
 		override fun addListener(listener: AnimationTaskListener): AnimationTask {
 			this.listener = listener
 			return this
 		}
+
+		override fun removeListener(listener: AnimationTaskListener) {
+			this.listener = null
+		}
+
+		override fun animate(distance: Double) {}
+		override fun scheduled() {}
+		override val target: Any get() = outerTask
+		override val dependsOnSystemSpeed: Boolean get() = false
+		override val key: String? get() = null
 	}
 }

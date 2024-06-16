@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.base.event
 
+import ch.scorpion.jabbah.base.System
 import kotlin.reflect.KClass
 
 typealias EventHandler<T> = (T) -> Unit
@@ -50,14 +51,10 @@ interface EventBus {
 	fun clear()
 }
 
-abstract class AbstractEventBus : EventBus {
+class EventBusImpl : EventBus {
 
     /** Maps event simple class names to all handlers that have been registered for that event class.*/
     private val registrations: MutableMap<String, MutableList<EventHandler<Any>>> = mutableMapOf()
-
-	abstract fun <T: Any> getEventClassName(eventClass: KClass<out T>): String
-
-	abstract fun getEventClassName(event: Any): String
 
     /** ---- [EventBus] interface */
 
@@ -132,6 +129,8 @@ abstract class AbstractEventBus : EventBus {
     private fun unregister(eventClassName: String, handler: EventHandler<*>) {
         registrations[eventClassName]?.remove(handler)
     }
-}
 
-expect class EventBusImpl() : EventBus
+    private fun <T: Any> getEventClassName(eventClass: KClass<out T>): String = System.getClassName(eventClass)
+
+    private fun getEventClassName(event: Any): String = System.getClassName(event)
+}

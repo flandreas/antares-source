@@ -3,6 +3,7 @@
 antares.log
 build/
 out/
+kotlin-js-store
 antares/jvm/rsc/history/
 antares/jvm/rsc/test/history/
 doc/model/model.mdj

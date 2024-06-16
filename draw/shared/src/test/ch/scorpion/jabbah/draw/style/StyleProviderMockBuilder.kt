@@ -1,14 +1,17 @@
 package ch.scorpion.jabbah.draw.style
 
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.matcher.any
+import dev.mokkery.mock
+
 
 /**
  * A builder for mocks of [StyleProvider].
  */
 class StyleProviderMockBuilder {
 
-    private val styleProvider = mockk<StyleProvider>()
+    private val styleProvider = mock<StyleProvider>()
 
     init {
 	    every { styleProvider.getStyleType(any()) } returns StyleType.FIGURE
