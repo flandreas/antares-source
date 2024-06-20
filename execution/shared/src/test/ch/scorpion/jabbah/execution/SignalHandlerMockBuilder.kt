@@ -1,12 +1,14 @@
 package ch.scorpion.jabbah.execution
 
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.mock
+
 
 /** A builder for mocks of [SignalHandler].*/
 class SignalHandlerMockBuilder {
 
-    private val signalHandler = mockk<SignalHandler>()
+    private val signalHandler = mock<SignalHandler>()
 
     fun withExecutionTime(time: Long): SignalHandlerMockBuilder {
         every { signalHandler.executionTime } returns time

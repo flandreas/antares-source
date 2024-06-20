@@ -12,7 +12,13 @@ import ch.scorpion.jabbah.execution.actor.SimpleActorData
 import ch.scorpion.jabbah.execution.noise.NoNoiseGenerator
 import ch.scorpion.jabbah.execution.noise.NoiseGeneratorHolder
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
-import io.mockk.*
+import dev.mokkery.*
+import dev.mokkery.answering.calls
+import dev.mokkery.answering.returns
+import dev.mokkery.matcher.any
+import dev.mokkery.matcher.capture.Capture
+import dev.mokkery.matcher.capture.capture
+import dev.mokkery.matcher.capture.get
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -47,7 +53,7 @@ class ExecutionErrorHandlerImplTest {
 	fun shouldNotRemoveExecutionErrorBeforeReevaluationTime() {
 		val error = createError(200 * MILLION)
 		val errorActor = createActorWithExecutionError(error)
-		val normalActor = mockk<Actor>()
+		val normalActor = mock<Actor>()
 
 		scheduler.requestActingAfter(errorActor, 100 * MILLION, SimpleActorData())
 		scheduler.requestActingAfter(normalActor, 150 * MILLION, SimpleActorData())
@@ -82,16 +88,16 @@ class ExecutionErrorHandlerImplTest {
 	}
 
 	private fun createError(reevaluationTime: Long): ExecutionError {
-		val error = spyk<ExecutionError>()
-		val force = slot<Boolean>()
-		every { error.reevaluated(capture(force), any()) } answers { force.captured || timeService.nowNanos() >= reevaluationTime }
+		val error = mock<ExecutionError>()
+		val force = Capture.slot<Boolean>()
+		every { error.reevaluated(capture(force), any()) } calls { force.get() || timeService.nowNanos() >= reevaluationTime }
 		return error
 	}
 
 	private fun createActorWithExecutionError(error: ExecutionError): Actor {
-		val actor = mockk<Actor>(relaxed = true)
+		val actor = mock<Actor>(MockMode.autofill)
 		every { actor.isBreakpoint } returns true
-		every { actor.act(any(), any()) } answers {
+		every { actor.act(any(), any()) } calls {
 			scheduler.deferExecutionError(error)
 			scheduler.actingDone(actor, null)
 		}

@@ -1,12 +1,15 @@
 package ch.scorpion.jabbah.app
 
 import ch.scorpion.jabbah.io.Storable
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.matcher.any
+import dev.mokkery.mock
 
 class ApplicationDataRepositoryMockBuilder {
 
-	val repository = mockk<ApplicationDataRepository<Savable>>(relaxed = true)
+	val repository = mock<ApplicationDataRepository<Savable>>(MockMode.autofill)
 	var providedSavable: Savable? = null
 
 	init {
