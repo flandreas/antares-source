@@ -12,7 +12,8 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.TestGraphPortView
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 import kotlin.test.*
 
 /** Unit tests for [ScenarioImpl]. */
@@ -99,7 +100,7 @@ class ScenarioImplTest {
 
 	@Test
 	fun shouldEvaluateConditionScriptToTrue() {
-		val signalHandler = mockk<SignalHandler>(relaxed = true)
+		val signalHandler = mock<SignalHandler>(MockMode.autofill)
 
 		val graphView = GraphViewImpl()
 		val drawingView = DrawingViewMockBuilder().withDrawing(graphView).build<Component>()
@@ -118,7 +119,7 @@ class ScenarioImplTest {
 
 	@Test
 	fun shouldEvaluateConditionScriptToFalse() {
-		val signalHandler = mockk<SignalHandler>(relaxed = true)
+		val signalHandler = mock<SignalHandler>(MockMode.autofill)
 
 		val graphView = GraphViewImpl()
 		val drawingView = DrawingViewMockBuilder().withDrawing(graphView).build<Component>()

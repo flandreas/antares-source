@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
+import ch.scorpion.jabbah.graph.CanvasMockBuilder
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.TestLibraryBuilder
 import ch.scorpion.jabbah.graph.library.*
@@ -21,7 +22,6 @@ import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
-import io.mockk.mockk
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -51,7 +51,7 @@ class GraphDesktopControllerTest {
 		.withMainViewItem(viewItemMock.build())
 
 	init {
-		drawingView.canvas = mockk(relaxed = true)
+		drawingView.canvas = CanvasMockBuilder().withView(drawingView).build()
 		graphViewBuilder.addVerticeView(vv)
 	}
 
@@ -72,13 +72,15 @@ class GraphDesktopControllerTest {
 	@Test
 	fun shouldCloseSubGraphOnRequest() {
 		openSubGraph()
-		eventBus.post(GraphDesktopViewItemCloseRequest(controller.additionalDesktopItems.first(), false))
+		val item = controller.additionalDesktopItems.first()
+		viewItemMock.withFindContent(item.drawingView!!.content)
+		eventBus.post(GraphDesktopViewItemCloseRequest(item, false))
 		assertEquals(0, controller.additionalDesktopItems.size)
 	}
 
 	@Test
 	fun shouldCloseSubGraphOnDeleteVerticeView() {
-		viewMock.withCreatedSubGraphDesktopItem(GraphDesktopViewItemMockBuilder().build())
+		viewMock.withCreatedSubGraphDesktopItem(viewItemMock.build())
 		viewItemMock.withFindContent(drawingView.content as DrawingViewContent<GraphView>)
 		openSubGraph()
 		graphViewBuilder.graphView.remove(vv)

@@ -106,7 +106,9 @@ class GraphDesktopViewController(
 
 	private val editedGraphViewEventHandler: EventHandler<EditedGraphViewEvent> = { handle(it) }
 
-	private val closeRequestHandler: EventHandler<GraphDesktopViewItemCloseRequest> = { closeItem(it.item)}
+	private val closeRequestHandler: EventHandler<GraphDesktopViewItemCloseRequest> = {
+		closeItem(it.item)
+	}
 
 	private val openRequestHandler: EventHandler<OpenSubGraphRequest> = { handle(it) }
 

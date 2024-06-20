@@ -4,8 +4,11 @@ import ch.scorpion.jabbah.app.ApplicationDataView
 import ch.scorpion.jabbah.app.ApplicationDataViewController
 import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.app.SaveUnchangedDataDecision
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.matcher.any
+import dev.mokkery.mock
 
 /**
  * TODO: Copy/Paste from corresponding class in ch.scorpion.jabbah.app test package
@@ -13,7 +16,7 @@ import io.mockk.mockk
  */
 class ApplicationDataViewMockBuilder(controller: ApplicationDataViewController) {
 
-	private val view = mockk<ApplicationDataView>(relaxed = true)
+	private val view = mock<ApplicationDataView>(MockMode.autofill)
 
 	init {
 		controller.view = view

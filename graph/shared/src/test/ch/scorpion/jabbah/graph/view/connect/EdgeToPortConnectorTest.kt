@@ -3,9 +3,12 @@ package ch.scorpion.jabbah.graph.view.connect
 import ch.scorpion.jabbah.base.event.Modifier
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.health.GraphViewConsistencyCheck
 import ch.scorpion.jabbah.graph.model.Port
@@ -16,9 +19,9 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import dev.mokkery.MockMode
+import dev.mokkery.mock
+import dev.mokkery.verify
 import kotlin.test.*
 
 class EdgeToPortConnectorTest
@@ -48,9 +51,9 @@ class EdgeToPortConnectorTest
 		ev.netView?.style = NetViewStyle.BLOCK
 		shouldConnectToPortViewImpl()
 
-		val context = mockk<DrawContext>(relaxed = true)
-		every { context.castedAppContext<GraphApplicationContext>() } returns mockk(relaxed = true)
-
+		val appContext = GraphApplicationContext(CurrentSystemSpeedCategory(SystemSpeed()))
+		val context = DrawContext(mock(MockMode.autofill), appContext = appContext)
+		context.color = CompositeColor()
 		builder.graphView.draw(context)
 	}
 

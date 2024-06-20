@@ -2,6 +2,8 @@ package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.invocation.InvocationHandler
+import ch.scorpion.jabbah.base.invocation.SynchronousInvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.auth.DesktopUser
@@ -39,6 +41,8 @@ object GraphViewTestRule {
 		GraphViewModule.require()
 
 		Translations.withAnyKey()
+
+		InvocationHandler.implementation = SynchronousInvocationHandler()
 
 		IOModule.typeMap.register("testVertice", TestVertice::class)
 		IOModule.typeMap.register("testVerticeView", TestVerticeView::class)

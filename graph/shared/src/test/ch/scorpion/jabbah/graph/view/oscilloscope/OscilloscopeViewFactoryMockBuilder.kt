@@ -1,14 +1,18 @@
 package ch.scorpion.jabbah.graph.view.oscilloscope
 
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.matcher.any
+import dev.mokkery.mock
+
 
 class OscilloscopeViewFactoryMockBuilder {
 
-	private val factory = mockk<OscilloscopeViewFactory>()
-	private val signalHistoryDrawer: SignalHistoryDrawer<Any> = mockk(relaxed = true)
-	private val timelineView: SignalHistoryTimelineView = mockk(relaxed = true)
-	private val yAxis: SignalHistoryYAxis<Any> = mockk(relaxed = true)
+	private val factory = mock<OscilloscopeViewFactory>()
+	private val signalHistoryDrawer: SignalHistoryDrawer<Any> = mock(MockMode.autofill)
+	private val timelineView: SignalHistoryTimelineView = mock(MockMode.autofill)
+	private val yAxis: SignalHistoryYAxis<Any> = mock(MockMode.autofill)
 
 	init {
 		every { factory.getRowHeight(any()) } returns 20

@@ -5,9 +5,11 @@ import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.mock
+import dev.mokkery.verify
+import dev.mokkery.verify.VerifyMode.Companion.exactly
 import kotlin.test.Test
 
 class NavigationStackViewControllerTest {
@@ -25,21 +27,21 @@ class NavigationStackViewControllerTest {
 	fun shouldUpdateOnRootNameChange() {
 		controller.navigationStack.push(entry("Test"))
 		controller.navigationStack.rootEntry!!.content.drawing.graph!!.name = Name("New")
-		verify(exactly = 2) { view.refresh() }
+		verify(exactly(2)) { view.refresh() }
 	}
 
 	@Test
 	fun shouldUpdateOnHeadChange() {
 		controller.navigationStack.push(entry("Test"))
 		controller.navigationStack.push(entry("Test2"))
-		verify(exactly = 2) { view.refresh() }
+		verify(exactly(2)) { view.refresh() }
 	}
 
 	private fun entry(name: String): NavigationStackEntry<GraphView> {
 		val graphView = GraphViewBuilder<Boolean>().build()
 		graphView.graph!!.name = Name(name)
 
-		val content = mockk<DrawingViewContent<GraphView>>()
+		val content = mock<DrawingViewContent<GraphView>>()
 		every { content.drawing } returns graphView
 
 		return NavigationStackEntry(subGraphVerticeView = null, content)

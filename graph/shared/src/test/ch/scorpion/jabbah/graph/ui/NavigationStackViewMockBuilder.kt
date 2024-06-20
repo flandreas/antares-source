@@ -1,10 +1,11 @@
 package ch.scorpion.jabbah.graph.ui
 
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 
 class NavigationStackViewMockBuilder(controller: NavigationStackViewController) {
 
-	private val view = mockk<NavigationStackView>(relaxed = true)
+	private val view = mock<NavigationStackView>(MockMode.autofill)
 
 	init {
 		controller.view = view

@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.edit
 
-import dev.mokkery.MockMode
+import dev.mokkery.MockMode.autofill
 import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.mock
@@ -9,9 +9,9 @@ import dev.mokkery.mock
 /** A builder for [DrawingView] mocks*/
 class DrawingViewMockBuilder {
 
-    private val drawingView = mock<DrawingView<Drawing<*>>>()
-    private val selectionManager = mock<SelectionManager>(MockMode.autofill)
-    private val grid = mock<Grid>(MockMode.autofill)
+    private val drawingView = mock<DrawingView<Drawing<*>>>(autofill)
+    private val selectionManager = mock<SelectionManager>(autofill)
+    private val grid = mock<Grid>(autofill)
 
     init {
 	    editable(true)

@@ -17,7 +17,7 @@ typealias SubGraphVerticeRefActivationRecordFactory =
  * for reading ([InputPort]) and writing ([OutputPort]).
  */
 open class SubGraphVerticeRefActivationRecord(
-	protected val verticeRef: SubGraphVerticeRef,
+	protected val verticeRef: SubGraphVerticeRefIF,
 	protected val signalHandler: SignalHandler
 ) : ActivationRecord {
 

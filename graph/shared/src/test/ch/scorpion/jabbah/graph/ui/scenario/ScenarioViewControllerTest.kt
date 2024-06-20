@@ -7,9 +7,10 @@ import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ConstantApplicationModeHolder
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import ch.scorpion.jabbah.graph.view.Scenario
-import ch.scorpion.jabbah.graph.view.ScenarioStep
-import io.mockk.mockk
+import ch.scorpion.jabbah.graph.view.scenario.ScenarioImpl
+import ch.scorpion.jabbah.graph.view.scenario.ScenarioStepImpl
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertNull
 import kotlin.test.assertSame
@@ -25,7 +26,7 @@ class ScenarioViewControllerTest {
 	private val eventBus = EventBusImpl()
 	private val graphView = GraphViewBuilder<Boolean>().build()
 	private val editor = TestEditorBuilder().withDrawing(graphView).build()
-	private val controller = ScenarioViewController(editor, GraphApplicationContextHolder(mockk(relaxed = true)), ConstantApplicationModeHolder(ApplicationMode.EDIT), eventBus)
+	private val controller = ScenarioViewController(editor, GraphApplicationContextHolder(mock(MockMode.autofill)), ConstantApplicationModeHolder(ApplicationMode.EDIT), eventBus)
 
 	init {
 		ScenarioViewMockBuilder(controller)
@@ -34,7 +35,7 @@ class ScenarioViewControllerTest {
 
 	@Test
 	fun shouldSetCurrentScenarioOnGraphView() {
-		val scenario = mockk<Scenario>(relaxed = true)
+		val scenario = ScenarioImpl()
 		eventBus.post(ScenarioSelectionEvent(graphView, scenario, null))
 		assertSame(scenario, graphView.currentScenario)
 		assertNull(graphView.currentScenarioStep)
@@ -42,8 +43,8 @@ class ScenarioViewControllerTest {
 
 	@Test
 	fun shouldSetCurrentScenarioStepInGraphView() {
-		val scenario = mockk<Scenario>(relaxed = true)
-		val scenarioStep = mockk<ScenarioStep>(relaxed = true)
+		val scenario = ScenarioImpl()
+		val scenarioStep = ScenarioStepImpl()
 		eventBus.post(ScenarioSelectionEvent(graphView, scenario, scenarioStep))
 		assertSame(scenario, graphView.currentScenario)
 		assertSame(scenarioStep, graphView.currentScenarioStep)

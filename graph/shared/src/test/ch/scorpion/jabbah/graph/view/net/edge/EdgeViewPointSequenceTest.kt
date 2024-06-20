@@ -3,7 +3,7 @@ package ch.scorpion.jabbah.graph.view.net.edge
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import io.mockk.mockk
+import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -134,7 +134,7 @@ class EdgeViewPointSequenceTest {
 		offset: Double = 0.0
 	): EdgeViewPointSequence {
 		val edgeView = GraphViewModule.getEdgeViewFactory()
-			.createEdgeView<Boolean>(mockk())
+			.createEdgeView<Boolean>(mock())
 			.also { ev ->
 				points.forEach { ev.addSegmentPoint(it) }
 			}

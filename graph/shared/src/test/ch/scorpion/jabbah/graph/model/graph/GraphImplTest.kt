@@ -10,7 +10,8 @@ import ch.scorpion.jabbah.graph.model.port.PortImpl
 import ch.scorpion.jabbah.graph.model.vertice.GraphInputImpl
 import ch.scorpion.jabbah.graph.model.vertice.GraphOutputImpl
 import ch.scorpion.jabbah.io.StorableCloner
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 import kotlin.test.*
 
 /**
@@ -31,7 +32,7 @@ class GraphImplTest {
 
 	@Test
 	fun shouldClear() {
-		val graph = GraphImpl(eventBus = mockk(relaxed = true))
+		val graph = GraphImpl(eventBus = mock(MockMode.autofill))
 			.add(TestVertice())
 			.add(TestVertice())
 			.clear()
@@ -42,7 +43,7 @@ class GraphImplTest {
 	fun shouldSetGraphElementId() {
 		val v1 = TestVertice()
 		val v2 = TestVertice()
-		val graph = GraphImpl(eventBus = mockk(relaxed = true))
+		val graph = GraphImpl(eventBus = mock(MockMode.autofill))
 		graph.add(v1)
 		graph.add(v2)
 
@@ -52,7 +53,7 @@ class GraphImplTest {
 
 	@Test
 	fun shouldBeStorable() {
-		val testGraph = TestGraph(eventBus = mockk(relaxed = true))
+		val testGraph = TestGraph(eventBus = mock(MockMode.autofill))
 		val clone = StorableCloner.clone(testGraph.graph) as Graph
 
 		val v1: Vertice = clone.withId(1)!! as Vertice
@@ -64,7 +65,7 @@ class GraphImplTest {
 
 	@Test
 	fun shouldUnconnectEdgeWhenRemovingOriginVertice() {
-		val testGraph = TestGraph(eventBus = mockk(relaxed = true))
+		val testGraph = TestGraph(eventBus = mock(MockMode.autofill))
 
 		testGraph.graph.remove(testGraph.v1)
 
@@ -74,7 +75,7 @@ class GraphImplTest {
 
 	@Test
 	fun shouldUnconnectEdgeWhenRemovingDestinationVertice() {
-		val testGraph = TestGraph(eventBus = mockk(relaxed = true))
+		val testGraph = TestGraph(eventBus = mock(MockMode.autofill))
 
 		testGraph.graph.remove(testGraph.v2)
 
@@ -84,7 +85,7 @@ class GraphImplTest {
 
 	@Test
 	fun shouldUnconnectOutputPortWhenRemovingNet() {
-		val testGraph = TestGraph(eventBus = mockk(relaxed = true))
+		val testGraph = TestGraph(eventBus = mock(MockMode.autofill))
 
 		testGraph.graph.remove(testGraph.net)
 
@@ -96,7 +97,7 @@ class GraphImplTest {
 
 	@Test
 	fun shouldCreateUniqueGraphInputName() {
-		val testGraph = GraphImpl(eventBus = mockk(relaxed = true))
+		val testGraph = GraphImpl(eventBus = mock(MockMode.autofill))
 
 		val in1 = GraphInputImpl(PortImpl.createOutput())
 		testGraph.add(in1)
@@ -109,7 +110,7 @@ class GraphImplTest {
 
 	@Test
 	fun shouldCreateUniqueGraphInputNameForExisting() {
-		val testGraph = GraphImpl(eventBus = mockk(relaxed = true))
+		val testGraph = GraphImpl(eventBus = mock(MockMode.autofill))
 
 		val in1 = GraphInputImpl(PortImpl.createOutput(), "I1")
 		testGraph.add(in1)
@@ -122,7 +123,7 @@ class GraphImplTest {
 
 	@Test
 	fun shouldCreateUniqueGraphOutputName() {
-		val testGraph = GraphImpl(eventBus = mockk(relaxed = true))
+		val testGraph = GraphImpl(eventBus = mock(MockMode.autofill))
 
 		val out1 = GraphOutputImpl(PortImpl.createInput())
 		testGraph.add(out1)
@@ -135,7 +136,7 @@ class GraphImplTest {
 
 	@Test
 	fun shouldCreateUniqueGraphInputOutputName() {
-		val testGraph = GraphImpl(eventBus = mockk(relaxed = true))
+		val testGraph = GraphImpl(eventBus = mock(MockMode.autofill))
 
 		val `in` = GraphInputImpl(PortImpl.createOutput())
 		testGraph.add(`in`)

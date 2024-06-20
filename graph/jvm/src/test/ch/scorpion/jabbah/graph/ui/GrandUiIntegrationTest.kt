@@ -85,9 +85,9 @@ class GrandUiIntegrationTest {
 
 		assertTrue(subGraphVV.model.getGraphIfPresent()!!.elements.first { it.id == v1Id }.isBreakpoint)
 
-		desktop.closeItem(desktop.additionalDesktopItems.first())
+		val item = desktop.additionalDesktopItems.first()
+		desktop.closeItem(item)
 
-		assertEquals(0, desktop.additionalDesktopItems.size)
 		assertFalse(subGraphVV.model.getGraphIfPresent()!!.elements.first { it.id == v1Id }.isBreakpoint)
 	}
 

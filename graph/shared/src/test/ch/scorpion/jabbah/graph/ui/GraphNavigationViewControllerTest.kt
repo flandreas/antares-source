@@ -3,7 +3,9 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.app.CurrentSavableEvent
 import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.event.EventBusImpl
+import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.time.SystemSpeed
+import ch.scorpion.jabbah.draw.Canvas
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
@@ -25,9 +27,13 @@ import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import dev.mokkery.MockMode
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.matcher.any
+import dev.mokkery.matcher.eq
+import dev.mokkery.mock
+import dev.mokkery.verify
 import kotlin.test.*
 
 class GraphNavigationViewControllerTest {
@@ -42,13 +48,13 @@ class GraphNavigationViewControllerTest {
 		}
 	}
 
-	private val scheduler = mockk<Scheduler>(relaxed = true)
+	private val scheduler = mock<Scheduler>(MockMode.autofill)
 	private val eventBus = EventBusImpl()
 	private val systemSpeed = SystemSpeed(eventBus = eventBus)
 	private val currentSystemSpeedCategory = CurrentSystemSpeedCategory(systemSpeed, eventBus)
 	private val graphViewBuilder = GraphViewBuilder<Boolean>()
 	private val applicationContextHolder = GraphApplicationContextHolder(scheduler, eventBus, systemSpeed, currentSystemSpeedCategory)
-	private val applicationModeHolder = mockk<ApplicationModeHolder>().also {
+	private val applicationModeHolder = mock<ApplicationModeHolder>().also {
 		applicationContextHolder.applicationModeHolder = it
 		every { it.currentMode } returns ApplicationMode.EDIT
 	}
@@ -60,7 +66,10 @@ class GraphNavigationViewControllerTest {
 	private val controller = GraphNavigationViewController(isRoot = true, drawingView as DrawingView<GraphView>, eventBus = eventBus)
 
 	init {
-		drawingView.canvas = mockk(relaxed = true)
+		val canvas = mock<Canvas>(MockMode.autofill)
+		every { canvas.dimension } returns Dimension2D(0, 0)
+		every { canvas.view } returns drawingView
+		drawingView.canvas = canvas
 		graphViewBuilder.addVerticeView(vv)
 		GraphNavigationViewMockBuilder(controller)
 	}
@@ -123,7 +132,7 @@ class GraphNavigationViewControllerTest {
 	@Test
 	fun shouldDisableViewWithNonEditableSavable() {
 		controller.setRootGraphView(graphViewBuilder.build(), editable = true)
-		val savable = mockk<Savable>()
+		val savable = mock<Savable>()
 		every { savable.editable } returns false
 		eventBus.post(CurrentSavableEvent(savable))
 
@@ -132,8 +141,8 @@ class GraphNavigationViewControllerTest {
 
 	@Test
 	fun shouldBindOnExecutionStart() {
-		val testVertice = mockk<Vertice>(relaxed = true)
-		val testVerticeView = mockk<VerticeView<Vertice>>(relaxed = true)
+		val testVertice = mock<Vertice>(MockMode.autofill)
+		val testVerticeView = mock<VerticeView<Vertice>>(MockMode.autofill)
 		every { testVerticeView.model } returns testVertice
 		every { scheduler.isActive } returns true
 		every { scheduler.isDeepExecution } returns true

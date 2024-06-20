@@ -8,8 +8,9 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.graph.ui.KnobModel
 import ch.scorpion.jabbah.graph.ui.KnobView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.mock
 import kotlin.math.PI
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -113,14 +114,14 @@ class KnobViewTest {
 	}
 
 	private fun contextFor(x: Double, y: Double, clickCount: Int = 0): ActorInteractionContext {
-		val mouseEvent = mockk<MouseEvent>()
+		val mouseEvent = mock<MouseEvent>()
 		every { mouseEvent.clickCount } returns clickCount
 		every { mouseEvent.button} returns Button.BUTTON1
 		return ActorInteractionContext(
-			signalHandler = mockk(),
-			view = mockk(),
+			signalHandler = mock(),
+			view = mock(),
 			mouseEvent = mouseEvent,
-			keyEvent = mockk(),
+			keyEvent = mock(),
 			x = x,
 			y = y
 		)

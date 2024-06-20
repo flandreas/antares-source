@@ -21,7 +21,7 @@ import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import io.mockk.mockk
+import dev.mokkery.mock
 import kotlin.test.BeforeTest
 
 /**
@@ -73,7 +73,7 @@ abstract class AbstractGraphViewExecutionTest {
 		getGraphView().graph!!.executionStopped(scheduler)
 	}
 
-	protected fun proceedUntilQueueIsEmpty(actorListener: ActorListener = mockk()) {
+	protected fun proceedUntilQueueIsEmpty(actorListener: ActorListener = mock()) {
 		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)
 	}
 

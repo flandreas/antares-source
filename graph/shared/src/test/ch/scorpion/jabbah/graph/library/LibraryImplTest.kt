@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.library
 
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -12,7 +13,7 @@ class LibraryImplTest {
 		}
 	}
 
-	private val libraryPersistenceService = mockk<LibraryPersistenceService>(relaxed = true)
+	private val libraryPersistenceService = mock<LibraryPersistenceService>(MockMode.autofill)
 	private val service: LibraryService = LibraryService(userLibraryPersister = libraryPersistenceService)
 	private val libraryBuilder = LibraryBuilder(name = "Library", libraryService = service)
 	private val library: Library get() = libraryBuilder.library

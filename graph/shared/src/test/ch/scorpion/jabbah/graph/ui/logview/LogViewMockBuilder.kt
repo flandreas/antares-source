@@ -1,10 +1,11 @@
 package ch.scorpion.jabbah.graph.ui.logview
 
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 
 class LogViewMockBuilder(private val controller: LogViewController) {
 
-	private val view = mockk<LogView>(relaxed = true)
+	private val view = mock<LogView>(MockMode.autofill)
 
 	fun build(): LogView = view
 }

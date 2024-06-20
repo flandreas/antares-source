@@ -8,17 +8,23 @@ import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.ui.*
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.slot
+import dev.mokkery.MockMode
+import dev.mokkery.answering.calls
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.matcher.any
+import dev.mokkery.matcher.capture.Capture
+import dev.mokkery.matcher.capture.capture
+import dev.mokkery.matcher.capture.get
+import dev.mokkery.mock
 
 class GraphDesktopViewMockBuilder(private val controller: GraphDesktopViewController) {
 
-	private val view = mockk<GraphDesktopView>(relaxed = true)
-	private val referenceColorSlot = slot<CompositeColor>()
-	val referenceColor get() = referenceColorSlot.captured
+	private val view = mock<GraphDesktopView>(MockMode.autofill)
+	private val referenceColorSlot = Capture.slot<CompositeColor>()
+	val referenceColor get() = referenceColorSlot.get()
 
-	private val subGraphVerticeViewSlot = slot<SubGraphVerticeView<*>>()
+	private val subGraphVerticeViewSlot = Capture.slot<SubGraphVerticeView<*>>()
 
 	init {
 		controller.view = view
@@ -37,8 +43,8 @@ class GraphDesktopViewMockBuilder(private val controller: GraphDesktopViewContro
 	}
 
 	fun withCreateGraphNavigationViewSubGraphDesktopItem(isParentDetached: Boolean) {
-		every { view.createSubGraphDesktopItem(capture(subGraphVerticeViewSlot), any(), any(), any()) } answers {
-			createGraphNavigationViewDesktopItem(subGraphVerticeViewSlot.captured, isParentDetached)
+		every { view.createSubGraphDesktopItem(capture(subGraphVerticeViewSlot), any(), any(), any()) } calls {
+			createGraphNavigationViewDesktopItem(subGraphVerticeViewSlot.get(), isParentDetached)
 		}
 	}
 

@@ -1,8 +1,14 @@
 package ch.scorpion.jabbah.graph
 
+import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.DrawableContainer
+import ch.scorpion.jabbah.draw.container.UnzoomableContainerIF
+import ch.scorpion.jabbah.draw.drawable.Unzoomable
 import ch.scorpion.jabbah.edit.*
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.MockMode.autofill
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.mock
 
 /**
  * A builder for [DrawingView] mocks.
@@ -11,15 +17,19 @@ import io.mockk.mockk
  */
 class DrawingViewMockBuilder {
 
-	private val drawingView = mockk<DrawingView<Drawing<*>>>(relaxed = true)
-	private val selectionManager = mockk<SelectionManager>(relaxed = true)
-	private val grid = mockk<Grid>(relaxed = true)
+	private val drawingView = mock<DrawingView<Drawing<*>>>(autofill)
+	private val selectionManager = mock<SelectionManager>(autofill)
+	private val grid = mock<Grid>(autofill)
+	private val ghostContainer = mock<UnzoomableContainerIF<Unzoomable>>(autofill)
+	private val animationContainer = mock<DrawableContainer<Drawable>>(autofill)
 
 	init {
 		every { grid.distance } returns 10.0
 		every { drawingView.grid } returns grid
 		every { drawingView.selectionManager } returns selectionManager
 		every { drawingView.editable } returns true
+		every { drawingView.ghostContainer } returns ghostContainer
+		every { drawingView.animationContainer } returns animationContainer
 	}
 
 	fun withDrawing(drawing: Drawing<*>): DrawingViewMockBuilder {

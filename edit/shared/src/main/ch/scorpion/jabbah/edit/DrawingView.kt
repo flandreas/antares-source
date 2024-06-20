@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.container.UnzoomableContainer
+import ch.scorpion.jabbah.draw.container.UnzoomableContainerIF
 import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
 import ch.scorpion.jabbah.draw.drawable.Unzoomable
 import ch.scorpion.jabbah.edit.module.EditModule
@@ -74,7 +75,7 @@ interface DrawingView<T : Drawing<*>> : View<EditInputEventContext> {
 	var defaultSelectionDrawingStrategy: SelectionDrawingStrategy
 
 	/** Holds the [DrawableContainer] for temporarily displaying [Unzoomable] graphical objects like ghosts.*/
-	val ghostContainer: UnzoomableContainer<Unzoomable>
+	val ghostContainer: UnzoomableContainerIF<Unzoomable>
 
 	/** Holds the [DrawableContainer] for rendering zoomed animations.*/
 	val animationContainer: DrawableContainer<Drawable>

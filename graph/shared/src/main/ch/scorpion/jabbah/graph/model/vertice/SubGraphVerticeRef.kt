@@ -59,14 +59,20 @@ private data class GraphReference(
 	}
 }
 
+/** Explicit interface of [SubGraphVerticeRef] primarily for mocking in tests.*/
+interface SubGraphVerticeRefIF : SubGraphVertice, NetCombiner {
+	val graphType: GraphType
+	val paramValues: GraphParamValues
+}
+
 /**
  * A [SubGraphVertice] implementation that is part of one [Graph] and references another [Graph] in the [Library].
  */
 class SubGraphVerticeRef(
 	override var graphUUID: UUID? = null,
-	var graphType: GraphType = GraphModelModule.defaultGraphType,
+	override var graphType: GraphType = GraphModelModule.defaultGraphType,
 	private val repository: MetaGraphRepository = LibraryModule.libraryHolder
-) : CalculatingVertice(CALCULATOR), SubGraphVertice, NetCombiner {
+) : CalculatingVertice(CALCULATOR), SubGraphVerticeRefIF {
 
 	companion object {
 
@@ -110,7 +116,7 @@ class SubGraphVerticeRef(
 
 	private var isDeepExecutionCache: Boolean? = null
 
-	var paramValues = GraphParamValues()
+	override var paramValues = GraphParamValues()
 		private set(value) {
 			field = value
 			getGraphIfPresent()?.let {

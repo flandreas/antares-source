@@ -2,8 +2,10 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -50,7 +52,7 @@ class LibraryDirectoryTreeModelBuilderTest {
 	}
 
 	private fun item(name: String): LibraryItem {
-		val item = mockk<LibraryItem>(relaxed = true)
+		val item = mock<LibraryItem>(MockMode.autofill)
 		every { item.name } returns Name(TranslatableText(name))
 		return item
 	}

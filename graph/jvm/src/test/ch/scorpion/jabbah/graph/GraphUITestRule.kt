@@ -10,7 +10,6 @@ object GraphUITestRule {
 	fun configure() {
 		GraphViewTestRule.configure()
 
-		InvocationHandler.implementation = SynchronousInvocationHandler()
 		UiUtil.eventQueueInvoker = {
 			false
 		}

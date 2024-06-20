@@ -4,7 +4,10 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.edit.SnapManager
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import io.mockk.*
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.matcher.any
+import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -17,7 +20,7 @@ class EdgeViewSnapLocatorTest {
 		}
 	}
 
-	private val ev = GraphViewModule.getEdgeViewFactory().createEdgeView<Boolean>(mockk())
+	private val ev = GraphViewModule.getEdgeViewFactory().createEdgeView<Boolean>(mock())
 
 	@Test
 	fun shouldSnapOnEdgeView() {
@@ -55,7 +58,7 @@ class EdgeViewSnapLocatorTest {
 
 	@Test
 	fun shouldSnapToGridOnEdgeView() {
-		val snapManager = mockk<SnapManager>()
+		val snapManager = mock<SnapManager>()
 		every { snapManager.snap(any(), any(), any()) } returns Point2D(5, 0)
 
 		ev.addSegmentPoint(Point2D(0, 0))

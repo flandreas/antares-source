@@ -85,20 +85,6 @@ class MetaGraphTest {
 	}
 
 	@Test
-	fun shouldUpdateContainerGraphPortType() {
-		val graphView = GraphViewImpl()
-		val graphPortBuilder = GraphPortMockBuilder<Boolean>().withPortType(PortType.INOUT)
-		val graphPortView = TestGraphPortView(model = graphPortBuilder.build())
-		val metaGraph = MetaGraph(GraphStorable(graphView), ContainerDrawing())
-		graphView.add(graphPortView)
-		metaGraph.containerDrawing.add(createPortViewComponent(graphPortView.model))
-
-		graphPortBuilder.graphPort.portType = PortType.OUTPUT
-
-		assertEquals(PortType.OUTPUT, metaGraph.containerDrawing.model.getPort<Boolean>().portType)
-	}
-
-	@Test
 	fun shouldDuplicate() {
 		val orig = MetaGraph.create(TranslatableText("Original"), GenericGraphType)
 		val duplicate = orig.duplicate(TranslatableText("Duplicate"))

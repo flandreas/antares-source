@@ -1,11 +1,12 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.ApplicationDataView
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 
 class GraphDataViewMockBuilder(private val controller: GraphDataViewController) {
 
-	private val view = mockk<ApplicationDataView>(relaxed = true)
+	private val view = mock<ApplicationDataView>(MockMode.autofill)
 
 	init {
 		controller.view = view

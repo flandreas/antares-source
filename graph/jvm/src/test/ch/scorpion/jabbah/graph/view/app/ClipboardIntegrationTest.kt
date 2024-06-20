@@ -32,7 +32,7 @@ class ClipboardIntegrationTest {
 	private val service = GraphViewAppServiceImpl(cpService, commandManager)
 
 	private val builder: GraphViewBuilder<Boolean> = GraphViewBuilder()
-	private val _view = DrawingViewMockBuilder()
+	private val _view = DrawingViewMockBuilder().withDrawing(builder.build())
 	private val _editor = EditorImpl(view, commandManager, EditSelectModule.selectionToolFactory)
 
 	private val v1 = builder.addVerticeView(createEastOutputVerticeView("v1", 100, 100))

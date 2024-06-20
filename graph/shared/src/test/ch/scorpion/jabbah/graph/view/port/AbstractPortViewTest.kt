@@ -11,8 +11,10 @@ import ch.scorpion.jabbah.graph.model.port.PortImpl
 import ch.scorpion.jabbah.graph.model.port.SubGraphPortImpl
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.VerticeView
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.matcher.any
+import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -35,7 +37,7 @@ class AbstractPortViewTest {
 		desc: TranslatableText = TranslatableText()
 	): TestPortView<*> {
 		val portView = TestPortView(PortImpl(portType, name, desc), direction)
-		val owner = mockk<VerticeView<*>>()
+		val owner = mock<VerticeView<*>>()
 		every { owner.getUnconnectedPortConnectionPoint(any()) } returns globalLocation
 		every { owner.getPortConnectionPoint(any())} returns Point2D.ZERO
 		every { owner.rotation } returns Rotation.R0
