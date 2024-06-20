@@ -1,16 +1,18 @@
 package ch.scorpion.jabbah.edit.editor
 
 import ch.scorpion.jabbah.edit.*
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.mock
 
 /**
  * Builds test mocks for [Editor].
  */
 class TestEditorBuilder {
 
-    val editor: Editor = mockk(relaxed = true)
-    private val view: DrawingView<Drawing<Component>> = mockk(relaxed = true)
+    val editor: Editor = mock(MockMode.autofill)
+    private val view: DrawingView<Drawing<Component>> = mock(MockMode.autofill)
 
     init {
         every { editor.view } returns view
@@ -28,14 +30,14 @@ class TestEditorBuilder {
     }
 
     fun withGridDistance(distance: Double): TestEditorBuilder {
-        val grid: Grid = mockk()
+        val grid: Grid = mock()
 	    every { grid.distance } returns distance
 	    every { view.grid } returns grid
         return this
     }
 
     fun withSelectionManager(): TestEditorBuilder {
-	    every { view.selectionManager } returns mockk()
+	    every { view.selectionManager } returns mock()
         return this
     }
 

@@ -8,7 +8,7 @@ import ch.scorpion.jabbah.edit.select.EditSelectModule
 import ch.scorpion.jabbah.edit.select.SelectionModelFactoryImpl
 import ch.scorpion.jabbah.edit.select.SimpleSelectionModelProvider
 
-abstract class AbstractRectangularHandleSelectionModelTest() : AbstractEditIntegrationTest() {
+abstract class AbstractRectangularHandleSelectionModelTest : AbstractEditIntegrationTest() {
 
     companion object {
         init {

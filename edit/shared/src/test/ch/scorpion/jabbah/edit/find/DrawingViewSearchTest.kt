@@ -8,8 +8,10 @@ import ch.scorpion.jabbah.edit.ComponentMockBuilder
 import ch.scorpion.jabbah.edit.EditTestRule
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.module.EditModule
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -54,7 +56,7 @@ class DrawingViewSearchTest {
 	}
 
 	private fun createCanvas(): Canvas {
-		val canvas: Canvas = mockk(relaxed = true)
+		val canvas: Canvas = mock(MockMode.autofill)
 		every { canvas.view } returns view
 		every { canvas.dimension } returns Dimension2D(100, 100)
 		return canvas

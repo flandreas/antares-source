@@ -3,7 +3,8 @@ package ch.scorpion.jabbah.edit.model
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.ComponentMockBuilder
 import ch.scorpion.jabbah.edit.module.EditModule
-import io.mockk.verify
+import dev.mokkery.verify
+import dev.mokkery.verify.VerifyMode.Companion.exactly
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -29,8 +30,8 @@ class ComponentContainerImplTest {
 
 		container.add(c1)
 		container.add(c2)
-		verify(exactly = 1) { c1.id = 1 }
-		verify(exactly = 1) { c2.id = 2 }
+		verify(exactly(1)) { c1.id = 1 }
+		verify(exactly( 1)) { c2.id = 2 }
 	}
 
 	@Test

@@ -4,16 +4,21 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.slot
+import dev.mokkery.MockMode
+import dev.mokkery.answering.calls
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.matcher.any
+import dev.mokkery.matcher.capture.Capture
+import dev.mokkery.matcher.capture.capture
+import dev.mokkery.mock
 
 /**
  * A builder for mocks of [Component].
  */
 class ComponentMockBuilder {
 
-    private val component = mockk<Component>(relaxed = true)
+    private val component = mock<Component>(MockMode.autofill)
 
     init {
 	    withId(0)
@@ -35,11 +40,15 @@ class ComponentMockBuilder {
 
 	fun withBoundingBox(bbox: Rectangle2D): ComponentMockBuilder {
 		every { component.boundingBox } returns bbox
-		val x = slot<Double>()
-		val y = slot<Double>()
-		val p = slot<Point2D>()
-		every { component.contains(capture(x), capture(y)) } answers { bbox.contains(x.captured, y.captured)}
-		every { component.contains(capture(p)) } answers { bbox.contains(p.captured) }
+		val x = Capture.slot<Double>()
+		val y = Capture.slot<Double>()
+		val p = Capture.slot<Point2D>()
+		every { component.contains(capture(x), capture(y)) } calls {
+			bbox.contains(it.args[0] as Double, it.args[1] as Double)
+		}
+		every { component.contains(capture(p)) } calls {
+			bbox.contains(it.args[0] as Point2D)
+		}
 		return this
 	}
 

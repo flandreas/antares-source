@@ -205,7 +205,7 @@ subprojects {
 				dependencies {
 					implementation(kotlin("test"))
 					implementation(kotlin("test-junit"))
-					//implementation("io.mockk:mockk:$mockkVersion")
+					implementation("io.mockk:mockk:$mockkVersion")
 				}
 			}
 
@@ -218,7 +218,7 @@ subprojects {
 					kotlin.srcDir("js/src/kotlin/test")
 					dependencies {
 						implementation(kotlin("test-js"))
-						//implementation("io.mockk:mockk-js:1.7.17")
+						implementation("io.mockk:mockk-js:1.7.17")
 					}
 				}
 			}

@@ -10,10 +10,9 @@ import ch.scorpion.jabbah.edit.EditTestRule
 import ch.scorpion.jabbah.edit.highlight.EditHighlightModule
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.select.EditSelectModule
-import io.mockk.clearMocks
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import dev.mokkery.*
+import dev.mokkery.answering.returns
+import dev.mokkery.verify.VerifyMode.Companion.exactly
 import kotlin.test.Test
 
 /** Unit tests for [DrawingViewImpl].*/
@@ -51,10 +50,10 @@ class DrawingViewImplTest {
 		val newContent = DrawingViewContentImpl(view, newDrawing, EditSelectModule.selectionManagerFactory, EditHighlightModule.highlighterFactory)
 		view.content = newContent
 
-		clearMocks(canvas)
+		resetCalls(canvas)
 		oldContent.drawing.validate()
 
-		verify(exactly = 0) { canvas.repaint() }
+		verify(exactly(0)) { canvas.repaint() }
 	}
 
 	@Test
@@ -63,7 +62,7 @@ class DrawingViewImplTest {
 		val newContent = DrawingViewContentImpl(view, newDrawing, EditSelectModule.selectionManagerFactory, EditHighlightModule.highlighterFactory)
 		view.content = newContent
 
-		clearMocks(canvas)
+		resetCalls(canvas)
 		newContent.drawing.validate()
 
 		verify { canvas.repaint() }
@@ -77,14 +76,14 @@ class DrawingViewImplTest {
 		view.content = newContent
 		view.content = oldContent
 
-		clearMocks(canvas)
+		resetCalls(canvas)
 		oldContent.drawing.validate()
 
 		verify { canvas.repaint() }
 	}
 
 	private fun createCanvas(): Canvas {
-		val canvas: Canvas = mockk(relaxed = true)
+		val canvas: Canvas = mock(MockMode.autofill)
 		every { canvas.view } returns view
 		every { canvas.dimension } returns Dimension2D(100, 100)
 		return canvas

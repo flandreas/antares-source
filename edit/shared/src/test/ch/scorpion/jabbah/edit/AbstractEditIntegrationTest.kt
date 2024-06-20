@@ -1,13 +1,16 @@
 package ch.scorpion.jabbah.edit
 
 import ch.scorpion.jabbah.base.geom.Dimension2D
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.Canvas
 import ch.scorpion.jabbah.edit.editor.EditorImpl
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.model.GenericUndoableDataHolder
 import ch.scorpion.jabbah.edit.module.EditModule
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.mock
 
 abstract class AbstractEditIntegrationTest {
 
@@ -31,9 +34,10 @@ abstract class AbstractEditIntegrationTest {
 	}
 
 	private fun createCanvas(): Canvas {
-		val canvas: Canvas = mockk(relaxed = true)
+		val canvas: Canvas = mock(MockMode.autofill)
 		every { canvas.view } returns view
 		every { canvas.dimension } returns Dimension2D(100, 100)
+		every { canvas.mouseLocation } returns Point2D.ZERO
 		return canvas
 	}
 }

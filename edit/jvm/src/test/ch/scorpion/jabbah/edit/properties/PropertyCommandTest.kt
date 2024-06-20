@@ -12,10 +12,11 @@ import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.edit.model.text.description.BASE_KEY_NAME
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.answering.returns
+import dev.mokkery.mock
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import dev.mokkery.every
 
 class PropertyCommandTest {
 
@@ -27,7 +28,7 @@ class PropertyCommandTest {
 	}
 
 	private val drawing = DrawingImpl<Component>()
-	private val editor = mockk<Editor>()
+	private val editor = mock<Editor>()
 	private val rectangle = RectangleComponent()
 
 	init {
