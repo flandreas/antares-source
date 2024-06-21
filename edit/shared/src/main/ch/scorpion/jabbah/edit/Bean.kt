@@ -33,7 +33,13 @@ typealias BeanProvider = (Editor, Collection<String>) -> Collection<Bean>
 
 /** Provides the [Component] of an [Editor]'s [Drawing] with a particular ID. */
 val componentBeanProvider: BeanProvider = { e, ids ->
-	e.drawing.getWidthIds(ids.map { it.toInt() }).map { it.propertyOwner }
+	e.drawing.getWidthIds(
+		ids.map {
+			it.toInt()
+		}
+	).map {
+		it.propertyOwner
+	}
 }
 
 /** Provides the current [Drawing] of an [Editor].*/

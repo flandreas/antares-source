@@ -4,8 +4,10 @@ import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.execution.ForwardSignalHandler
-import io.mockk.mockk
+import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
+import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -17,7 +19,7 @@ class BitExtenderTest {
 		}
 	}
 
-	private val signalHandler = ForwardSignalHandler(mockk())
+	private val signalHandler = ForwardSignalHandler(CurrentSystemSpeedCategory(SystemSpeed()))
 
 	@Test
 	fun shouldExtendSingle() {

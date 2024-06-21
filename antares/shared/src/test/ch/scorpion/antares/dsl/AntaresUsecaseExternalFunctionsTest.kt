@@ -25,8 +25,10 @@ import ch.scorpion.jabbah.graph.view.usecase.UsecaseImpl
 import ch.scorpion.jabbah.graph.view.usecase.UsecaseRunner
 import ch.scorpion.jabbah.graph.view.usecase.UsecaseTestFailureException
 import ch.scorpion.jabbah.graph.view.usecase.UsecaseTestRunner
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.mock
 import kotlin.test.*
 
 class AntaresUsecaseExternalFunctionsTest : AbstractCircuitTest() {
@@ -67,16 +69,16 @@ class AntaresUsecaseExternalFunctionsTest : AbstractCircuitTest() {
 
 		circuitView = builder.build()
 
-		val canvas: Canvas = mockk(relaxed = true)
+		val canvas: Canvas = mock(MockMode.autofill)
+		every { canvas.dimension } returns Dimension2D(100, 100)
 
 		view = DrawingViewImpl(
 			drawing = circuitView as Drawing<Component>,
 			transformFactory = { AffineTransformImpl() },
 		) as DrawingView<GraphView>
-		view.canvas = canvas
-
 		every { canvas.view } returns view
-		every { canvas.dimension } returns Dimension2D(100, 100)
+
+		view.canvas = canvas
 	}
 
 	@Test

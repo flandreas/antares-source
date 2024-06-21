@@ -58,7 +58,6 @@ allprojects {
 val kotlinWrappersVersion: String by extra
 val ktorVersion: String by extra
 val kotlinCoroutinesVersion: String by extra
-val mockkVersion: String by extra
 val slf4jVersion: String by extra
 val commonsIoVersion: String by extra
 val commonsLang3Version: String by extra
@@ -74,16 +73,6 @@ val jsvgVersion: String by extra
 subprojects {
 
 	val projectName = this.name
-
-	// jsBrowserTest doesn't work in JS targets due to open issues with mockk-js
-	// See https://github.com/mockk/mockk/issues/100
-	/*
-	tasks.whenTaskAdded {
-		if (this.name.contains("jsBrowserTest")) {
-			this.enabled = false
-		}
-	}
-	*/
 
 	apply(plugin = "org.jetbrains.kotlin.multiplatform")
 	apply(plugin = "kotlinx-serialization")
@@ -150,7 +139,6 @@ subprojects {
 				dependencies {
 					implementation(kotlin("test-common"))
 					implementation(kotlin("test-annotations-common"))
-					//implementation("io.mockk:mockk-common:$mockkVersion")
 					implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutinesVersion")
 				}
 			}
@@ -205,7 +193,6 @@ subprojects {
 				dependencies {
 					implementation(kotlin("test"))
 					implementation(kotlin("test-junit"))
-					implementation("io.mockk:mockk:$mockkVersion")
 				}
 			}
 
@@ -218,7 +205,6 @@ subprojects {
 					kotlin.srcDir("js/src/kotlin/test")
 					dependencies {
 						implementation(kotlin("test-js"))
-						implementation("io.mockk:mockk-js:1.7.17")
 					}
 				}
 			}

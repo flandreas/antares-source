@@ -16,8 +16,10 @@ import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.mock
 
 /**
  * Provides an [EditorToolDriver] in a [DrawingView] to support
@@ -44,7 +46,7 @@ abstract class AbstractGraphViewEditingTest(
 	init {
 		BaseModule.properties.set(SourcingCommandManager.PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT, snapshotSize)
 
-		val canvas = mockk<Canvas>(relaxed = true)
+		val canvas = mock<Canvas>(MockMode.autofill)
 		every { canvas.dimension } returns Dimension2D(1000, 1000)
 		every { canvas.devicePixelRatio } returns 1
 		view.canvas = canvas

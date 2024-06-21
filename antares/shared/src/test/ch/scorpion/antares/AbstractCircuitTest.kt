@@ -22,7 +22,7 @@ import ch.scorpion.jabbah.execution.scheduler.TimedSchedulerTask
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.view.GraphView
-import io.mockk.mockk
+import dev.mokkery.mock
 import kotlin.test.BeforeTest
 import kotlin.test.assertTrue
 
@@ -76,7 +76,7 @@ abstract class AbstractCircuitTest {
 		timeService.reset()
 	}
 
-	protected fun proceedUntilQueueIsEmpty(actorListener: ActorListener = mockk(), maxIterationCount: Int = 1_000) {
+	protected fun proceedUntilQueueIsEmpty(actorListener: ActorListener = mock(), maxIterationCount: Int = 1_000) {
 		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener, maxIterationCount)
 	}
 

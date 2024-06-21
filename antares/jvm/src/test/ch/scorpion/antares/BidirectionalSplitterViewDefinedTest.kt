@@ -11,7 +11,8 @@ import ch.scorpion.jabbah.execution.actor.ActorListener
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -28,7 +29,7 @@ class BidirectionalSplitterViewDefinedTest : AbstractJvmCircuitTest() {
 	}
 
 	private lateinit var circuitView: GraphView
-	private val actorListener = mockk<ActorListener>(relaxed = true)
+	private val actorListener = mock<ActorListener>(MockMode.autofill)
 	private val bidiSplitterView = BidirectionalSplitterView(model = BidirectionalSplitter(BitWidth.BW_2, BranchCount.BC_2))
 	private val circuitInputView = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "A", bitWidth = BitWidth.BW_2, portType = PortType.INPUT))
 	private val ledView1 = LEDView()

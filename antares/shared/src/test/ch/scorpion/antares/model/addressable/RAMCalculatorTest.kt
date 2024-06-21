@@ -5,7 +5,8 @@ import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.execution.SignalHandler
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -21,7 +22,7 @@ class RAMCalculatorTest {
 	}
 
 	private val calculator = RAMCalculator()
-	private val signalHandler: SignalHandler = mockk(relaxed = true)
+	private val signalHandler: SignalHandler = mock(MockMode.autofill)
 
 	/** ---- Clocked tests */
 

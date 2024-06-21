@@ -6,12 +6,12 @@ import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_4
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_8
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.graph.model.OutputPort
-import io.mockk.mockk
+import dev.mokkery.mock
 import kotlin.test.*
 
 class DigitalCombinedNetAccessTest {
 
-	private val port = mockk<OutputPort<DigitalSignal>>()
+	private val port = mock<OutputPort<DigitalSignal>>()
 
 	@Test
 	fun shouldContainQuarterAccess() {

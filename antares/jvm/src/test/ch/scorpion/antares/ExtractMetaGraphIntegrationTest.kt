@@ -19,8 +19,9 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.graph.GraphViewCopyPasteService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.answering.calls
+import dev.mokkery.every
+import dev.mokkery.mock
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -41,7 +42,7 @@ class ExtractMetaGraphIntegrationTest : AbstractJvmCircuitTest()  {
 	private lateinit var ledView2: LEDView
 	private lateinit var edgeView: EdgeView<DigitalSignal>
 
-	private val drawingView = mockk<DrawingView<GraphView>>()
+	private val drawingView = mock<DrawingView<GraphView>>()
 
 	private val library get() = LibraryModule.libraryHolder.library
 
@@ -62,7 +63,7 @@ class ExtractMetaGraphIntegrationTest : AbstractJvmCircuitTest()  {
 		val libraryBuilder = TestLibraryBuilder()
 		sourceMetaGraph = libraryBuilder.addGraphView(builder.graphView, library)
 
-		every { drawingView.drawing }.answers {getCircuitView() }
+		every { drawingView.drawing } calls { getCircuitView() }
 	}
 
 	@Test

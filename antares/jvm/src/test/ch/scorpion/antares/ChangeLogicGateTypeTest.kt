@@ -9,7 +9,8 @@ import ch.scorpion.antares.view.input.SwitchView
 import ch.scorpion.antares.view.output.LEDView
 import ch.scorpion.jabbah.execution.actor.ActorListener
 import ch.scorpion.jabbah.graph.view.GraphView
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 import org.junit.Test
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
@@ -24,7 +25,7 @@ class ChangeLogicGateTypeTest : AbstractJvmCircuitTest() {
 	}
 
 	private lateinit var circuitView: GraphView
-	private val actorListener = mockk<ActorListener>(relaxed = true)
+	private val actorListener = mock<ActorListener>(MockMode.autofill)
 
 	private val gateView = LogicGateView.andGateView()
 	private val switchView1 = SwitchView()

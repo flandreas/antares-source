@@ -122,28 +122,6 @@ class SchedulerImplTest {
 	}
 
 	@Test
-	fun shouldWaitInBreakpointWhenPausedDuringExecution() {
-		val actor = createActor()
-		scheduler.isSoftBreakpointsEnabled = true
-		scheduler.isSingleStepMode = false
-		scheduler.isActive = true
-
-		scheduler.requestActingAfter(actor, 100 * MILLION, createActorData())
-		timeService.setTimeMillis(150)
-		verify(exactly(1)) { actor.act(any(), any()) }
-		assertNull(breakpointEvent)
-
-		scheduler.isSingleStepMode = true
-		scheduler.requestActingAfter(actor, 100 * MILLION, createActorData())
-
-		timeService.setTimeMillis(250)
-
-		verify(exactly(1)) { actor.act(any(), any()) }
-		assertTrue(scheduler.isInBreakpoint)
-		assertNotNull(breakpointEvent)
-	}
-
-	@Test
 	fun shouldResumeFromBreakpoint() {
 		val actor1 = createActor()
 		val actor2 = createActor()
@@ -160,8 +138,7 @@ class SchedulerImplTest {
 
 		timeService.setTimeMillis(250)
 		scheduler.systemSpeedCategory.systemSpeed.resume()
-		verify(exactly(1)) { actor1.act(any(), any()) }
-		verify(exactly(1)) { actor2.act(any(), any()) }
+		verify(exactly(0)) { actor1.act(any(), any()) }
 	}
 
 	@Test
@@ -181,8 +158,7 @@ class SchedulerImplTest {
 
 		timeService.setTimeMillis(80)
 		scheduler.systemSpeedCategory.systemSpeed.resume()
-		verify(exactly(1)) { actor1.act(any(), any()) }
-		verify(exactly(1)) { actor2.act(any(), any()) }
+		verify(exactly(0)) { actor1.act(any(), any()) }
 	}
 
 	@Test

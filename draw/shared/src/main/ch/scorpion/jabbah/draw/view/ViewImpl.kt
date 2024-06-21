@@ -160,9 +160,9 @@ open class ViewImpl<C : InputEventContext>(
 
 	/** ---- Geometry */
 
-	override val width: Int get() = canvas.dimension.width.toInt()
+	override val width: Int get() = _canvas?.dimension?.width?.toInt() ?: 0
 
-	override val height: Int get() = canvas.dimension.height.toInt()
+	override val height: Int get() = _canvas?.dimension?.height?.toInt() ?: 0
 
 	protected open fun createViewContentBounds(): ViewContentBounds = ViewContentBounds(mainBoundsAccessor = ::calculateCombinedBoundingBox)
 

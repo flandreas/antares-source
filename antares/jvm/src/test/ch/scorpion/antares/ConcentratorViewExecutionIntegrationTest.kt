@@ -10,7 +10,8 @@ import ch.scorpion.antares.view.net.ConcentratorView
 import ch.scorpion.jabbah.execution.actor.ActorListener
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.GraphView
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 import org.junit.Test
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
@@ -24,7 +25,7 @@ class ConcentratorViewExecutionIntegrationTest : AbstractJvmCircuitTest() {
 	}
 
 	private lateinit var circuitView: GraphView
-	private val actorListener = mockk<ActorListener>(relaxed = true)
+	private val actorListener = mock<ActorListener>(MockMode.autofill)
 
 	private val circuitOutputView = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(portType = PortType.OUTPUT, bitWidth = BitWidth.BW_2))
 	private val concentratorView = ConcentratorView(model = Concentrator(BitWidth.BW_2, BranchCount.BC_2))

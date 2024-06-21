@@ -9,7 +9,8 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 import java.io.File
 import java.nio.file.Files
 import kotlin.io.path.absolutePathString
@@ -26,7 +27,7 @@ class AntaresDslGraphExecutionTest {
 		}
 	}
 
-	private val signalHandler = mockk<SignalHandler>(relaxed = true)
+	private val signalHandler = mock<SignalHandler>(MockMode.autofill)
 
 	@BeforeTest
 	fun setup() {

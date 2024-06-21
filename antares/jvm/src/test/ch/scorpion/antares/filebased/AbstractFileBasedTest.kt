@@ -12,7 +12,8 @@ import ch.scorpion.jabbah.graph.library.dictionary.ResourceLibraryDictionaryPers
 import ch.scorpion.jabbah.graph.project.ProjectManagementService
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.view.GraphView
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 import java.nio.file.Paths
 
 abstract class AbstractFileBasedTest : AbstractCircuitTest() {
@@ -41,7 +42,7 @@ abstract class AbstractFileBasedTest : AbstractCircuitTest() {
 
 	protected lateinit var openedCircuitView: GraphView
 
-	protected val actorListener = mockk<ActorListener>(relaxed = true)
+	protected val actorListener = mock<ActorListener>(MockMode.autofill)
 
 	override fun getCircuitView(): GraphView = openedCircuitView
 

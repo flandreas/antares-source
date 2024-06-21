@@ -9,8 +9,10 @@ import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.model.StoringGraphActorData
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -22,7 +24,7 @@ class CircuitInOutViewTest {
 		}
 	}
 
-	private val signalHandler = mockk<SignalHandler>(relaxed = true)
+	private val signalHandler = mock<SignalHandler>(MockMode.autofill)
 
 	@Test
 	fun shouldNotChangeLocationWhenChangingBitWidthWhileConnected() {
@@ -45,7 +47,7 @@ class CircuitInOutViewTest {
 		val input = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(bitWidth = BitWidth.BW_8))
 		input.signalRepresentation = DigitalSignalRepresentation.DECIMAL
 		input.focusGained()
-		input.consumeKey(KeyEvent.VK_Z, mockk(), skipAnimation = true)
+		input.consumeKey(KeyEvent.VK_Z, GraphApplicationContextHolder(mock(MockMode.autofill)), skipAnimation = true)
 	}
 
 	@Test

@@ -3,7 +3,8 @@ package ch.scorpion.antares.model.net
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.signal.*
 import ch.scorpion.jabbah.execution.SignalHandler
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -15,7 +16,7 @@ class BidirectionalSplitterTest {
 		}
 	}
 
-	private val signalHandler = mockk<SignalHandler>(relaxed = true)
+	private val signalHandler = mock<SignalHandler>(MockMode.autofill)
 
 	@Test
 	fun shouldSynchronizeInputSignal() {

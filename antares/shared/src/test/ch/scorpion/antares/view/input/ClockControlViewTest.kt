@@ -12,9 +12,12 @@ import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.ui.KnobLauncher
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import dev.mokkery.MockMode
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.matcher.any
+import dev.mokkery.mock
+import dev.mokkery.verify
 import kotlin.test.Test
 
 class ClockControlViewTest {
@@ -27,7 +30,7 @@ class ClockControlViewTest {
 
 	@Test
 	fun shouldFindRotatedIconButton() {
-		val knobLauncher = mockk<KnobLauncher>(relaxed = true)
+		val knobLauncher = mock<KnobLauncher>(MockMode.autofill)
 		val controlViewSource = ClockView()
 
 		val containerDrawing = ContainerDrawing()
@@ -48,14 +51,14 @@ class ClockControlViewTest {
 	}
 
 	private fun contextFor(x: Double, y: Double, clickCount: Int = 0): ActorInteractionContext {
-		val mouseEvent = mockk<MouseEvent>()
+		val mouseEvent = mock<MouseEvent>()
 		every { mouseEvent.clickCount } returns clickCount
 		every { mouseEvent.button} returns Button.BUTTON1
 		return ActorInteractionContext(
-			signalHandler = mockk(),
-			view = mockk(),
+			signalHandler = mock(),
+			view = mock(MockMode.autofill),
 			mouseEvent = mouseEvent,
-			keyEvent = mockk(),
+			keyEvent = mock(),
 			x = x,
 			y = y
 		)

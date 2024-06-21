@@ -6,7 +6,7 @@ import ch.scorpion.antares.model.net.Tunnel
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.Net
-import io.mockk.mockk
+import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
@@ -20,7 +20,7 @@ class DigitalGraphTest {
 		}
 	}
 
-	private val signalHandler = mockk<SignalHandler>()
+	private val signalHandler = mock<SignalHandler>()
 	private lateinit var tunnel1: Tunnel
 	private lateinit var tunnel2: Tunnel
 

@@ -8,7 +8,8 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphPortTypeChanged
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.StoringGraphActorData
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -23,11 +24,11 @@ class CircuitInOutImplTest {
 	}
 
 	private val inout = DigitalCircuitInOutImpl()
-	private val signalHandler = mockk<SignalHandler>(relaxed = true)
+	private val signalHandler = mock<SignalHandler>(MockMode.autofill)
 
 	@Test
 	fun shouldDelaySwitchOn() {
-		inout.toggleBit(0, false, signalHandler, mockk(relaxed = true))
+		inout.toggleBit(0, false, signalHandler, mock(MockMode.autofill))
 		assertEquals(DigitalSignalFactory.undefined(BitWidth.BW_1), inout.signal)
 		assertFalse(inout.enabled)
 

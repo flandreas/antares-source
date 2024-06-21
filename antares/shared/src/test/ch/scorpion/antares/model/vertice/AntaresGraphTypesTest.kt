@@ -7,8 +7,9 @@ import ch.scorpion.jabbah.graph.library.BaseLibraryElement
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.model.GenericGraphType
 import ch.scorpion.jabbah.graph.model.GraphType
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.mock
 import kotlin.test.*
 
 class AntaresGraphTypesTest {
@@ -58,8 +59,8 @@ class AntaresGraphTypesTest {
 	}
 
 	private fun baseLibraryElement(graphType: GraphType): BaseLibraryElement =
-		mockk<BaseLibraryElement>().also { every { it.graphType }.returns(graphType) }
+		BaseLibraryElement(graphType)
 
 	private fun containerLibraryElement(graphType: GraphType): ContainerLibraryElement =
-		mockk<ContainerLibraryElement>().also { every { it.graphType }.returns(graphType) }
+		ContainerLibraryElement(graphType = graphType)
 }

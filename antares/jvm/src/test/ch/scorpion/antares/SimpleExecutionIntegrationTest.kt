@@ -9,7 +9,8 @@ import ch.scorpion.jabbah.execution.actor.ActorListener
 import ch.scorpion.jabbah.execution.actor.ActorState
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 import kotlin.test.BeforeTest
 import kotlin.test.Ignore
 import kotlin.test.Test
@@ -25,7 +26,7 @@ class SimpleExecutionIntegrationTest : AbstractJvmCircuitTest() {
 	private lateinit var edgeView: EdgeView<*>
 	private val switchView = SwitchView()
 	private val ledView = LEDView()
-	private val actorListener = mockk<ActorListener>(relaxed = true)
+	private val actorListener = mock<ActorListener>(MockMode.autofill)
 
 	override fun getCircuitView(): GraphView {
 		return circuitView

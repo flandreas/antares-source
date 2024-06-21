@@ -8,9 +8,14 @@ import ch.scorpion.jabbah.draw.graphics.DrawGraphicsModule
 import ch.scorpion.jabbah.draw.graphics.Graphics2D
 import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistory
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeViewTimeline
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.slot
+import dev.mokkery.MockMode
+import dev.mokkery.answering.calls
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.matcher.capture.Capture
+import dev.mokkery.matcher.capture.capture
+import dev.mokkery.matcher.capture.get
+import dev.mokkery.mock
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -63,18 +68,17 @@ class AnalogSignalHistoryDrawerTest {
 	}
 
 	private fun createDrawContext(): DrawContext {
-		val drawContext = mockk<DrawContext>(relaxed = true)
-		val g2 = mockk<Graphics2D>(relaxed = true)
+		val g2 = mock<Graphics2D>(MockMode.autofill)
+		val drawContext = DrawContext(g2)
 
-		val x1 = slot<Double>()
-		val y1 = slot<Double>()
-		val x2 = slot<Double>()
-		val y2 = slot<Double>()
-		every { g2.drawLine(capture(x1), capture(y1), capture(x2), capture(y2)) } answers {
-			lines.add(Pair(Point2D(x1.captured, y1.captured), Point2D(x2.captured, y2.captured)))
+		val x1 = Capture.slot<Double>()
+		val y1 = Capture.slot<Double>()
+		val x2 = Capture.slot<Double>()
+		val y2 = Capture.slot<Double>()
+		every { g2.drawLine(capture<Double>(x1), capture(y1), capture(x2), capture(y2)) } calls {
+			lines.add(Pair(Point2D(x1.get(), y1.get()), Point2D(x2.get(), y2.get())))
 		}
 
-		every { drawContext.g } returns g2
 		return drawContext
 	}
 
