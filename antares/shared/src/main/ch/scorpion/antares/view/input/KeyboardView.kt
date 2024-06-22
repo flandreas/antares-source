@@ -278,6 +278,9 @@ class KeyboardView(
 		}
 
 		override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
+			if (!isFocusOwner) {
+				return null
+			}
 			val keyChar = context.keyEvent!!.keyChar
 			LOG.trace("keyPressed '$keyChar'")
 			if (KeyHandler.acceptKey(keyChar.code)) {

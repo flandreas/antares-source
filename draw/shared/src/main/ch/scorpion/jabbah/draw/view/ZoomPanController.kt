@@ -125,7 +125,7 @@ class ZoomPanController(
 
 		override fun mousePressed(e: MouseEvent) {
 			isMousePressed = true
-			if (!CurrentPanMethod.panMethod.isActivatedByPressed(e)) {
+			if (!CurrentPanMethod.panMethod.isActivatedByPressed(e, mouseWheelModeController.pressedKeyCode)) {
 				return
 			}
 			startPan(e.location)
@@ -135,7 +135,7 @@ class ZoomPanController(
 			if (e.isLeftButtonDown || e.isMiddleButtonDown) {
 				autoPanning.activate()
 			}
-			if (!CurrentPanMethod.panMethod.isActivatedByPressed(e)) {
+			if (!CurrentPanMethod.panMethod.isActivatedByPressed(e, mouseWheelModeController.pressedKeyCode)) {
 				return
 			}
 			pan(e.location)
@@ -146,7 +146,7 @@ class ZoomPanController(
 			if (e.button != Button.BUTTON3) {
 				autoPanning.deactivate()
 			}
-			if (CurrentPanMethod.panMethod.isActivatedByPressed(e)) {
+			if (CurrentPanMethod.panMethod.isActivatedByPressed(e, mouseWheelModeController.pressedKeyCode)) {
 				view.zoomStrategy = ZoomStrategy.NONE
 			}
 		}

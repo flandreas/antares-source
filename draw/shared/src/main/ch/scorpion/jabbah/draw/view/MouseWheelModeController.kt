@@ -30,6 +30,9 @@ class MouseWheelModeController : KeyAdapter() {
 
 	private var isWheelZoom = true
 
+	var pressedKeyCode: Int? = null
+		private set
+
 	fun reset() {
 		isModifierDown = false
 		isWheelZoom = true
@@ -59,12 +62,14 @@ class MouseWheelModeController : KeyAdapter() {
 	/** ---- [KeyAdapter] */
 
 	override fun keyPressed(e: KeyEvent) {
+		pressedKeyCode = e.key
 		if (e.key == DrawModule.mouseWheelPanModifier) {
 			isModifierDown = true
 		}
 	}
 
 	override fun keyReleased(e: KeyEvent) {
+		pressedKeyCode = null
 		if (e.key == DrawModule.mouseWheelPanModifier) {
 			isModifierDown = false
 		}
