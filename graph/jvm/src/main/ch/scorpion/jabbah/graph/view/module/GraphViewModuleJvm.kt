@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.base.preferences.IntPreference
 import ch.scorpion.jabbah.base.preferences.PreferenceGroup
 import ch.scorpion.jabbah.base.swing.EnumRenderer
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
+import ch.scorpion.jabbah.draw.module.DrawModuleJvm.PREF_TREE_VIEW_ZOOM_PAN
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
 import ch.scorpion.jabbah.edit.model.rectangle.RectangularHandleSelectionModel
@@ -107,7 +108,7 @@ object GraphViewModuleJvm : AbstractModule() {
 			id = GraphFrameController.PROP_AUTO_SWITCH,
 			nameKey = "graph.preferences.GraphFrame.autoSwitch"
 		))
-		root.getGroup(DrawModuleJvm.PREF_TREE_VIEW).add(FloatPreference(
+		root.getGroup(DrawModuleJvm.PREF_TREE_VIEW).getGroup(PREF_TREE_VIEW_ZOOM_PAN).add(FloatPreference(
 			id = ContainerEditor.PROP_DEFAULT_ZOOM_FACTOR,
 			nameKey = "graph.preferences.ContainerEditor.defaultZoomFactor"
 		))

@@ -36,6 +36,12 @@ Fill basic components:: If enabled, basic components like gates or switches are 
 
 == View
 
+Component tooltips:: If enabled, tooltips for circuit components are displayed when the mouse hovers over the component.
+
+Tooltip delay (ms):: The time in milliseconds Antares waits before displaying a tooltip after the mouse stopped moving over a component.
+
+=== Zoom / Pan
+
 Zoom step:: The increment or decrement of the zoom factor when using menu:View[Zoom In] or menu:View[Zoom Out].
 
 Zoom step (mousse wheel):: The increment or decrement of the zoom factor when zooming with the mouse wheel.
@@ -48,11 +54,10 @@ Minimum zoom factor:: The minimum zoom factor.
 
 Maximum zoom factor:: The maximum zoom factor.
 
-Tooltip delay (ms):: The time in milliseconds Antares waits before displaying a tooltip after the mouse stopped moving over a component.
-
 Pan method:: The method to use to pan the view.
 
 Zoom factor in symbol editor:: The initial zoom factor used when switching to the symbol editor.
+
 
 === Navigation
 

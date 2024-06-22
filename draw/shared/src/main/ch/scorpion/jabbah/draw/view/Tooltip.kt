@@ -142,6 +142,8 @@ class TooltipHandler(
 
 	private val tooltipsEnabled = BaseModule.properties.getBoolean(PROP_TOOLTIPS_ENABLED)
 
+	private val beginnerHelpEnabled = BaseModule.properties.getBoolean(PROP_BEGINNER_HELP_TOOLTIP)
+
 	private val popupMenuHandler: EventHandler<PopupMenuEvent> = { clear(it.canvas.view) }
 
 	init {
@@ -195,7 +197,7 @@ class TooltipHandler(
 		} else null
 
 	private fun getExplanation(drawable: Drawable, x: Double, y: Double): DrawableExplanation<RectangularDrawable>? =
-		if (tooltipsEnabled) {
+		if (tooltipsEnabled && beginnerHelpEnabled) {
 			explanationAccessor(drawable, x, y)
 		} else null
 
