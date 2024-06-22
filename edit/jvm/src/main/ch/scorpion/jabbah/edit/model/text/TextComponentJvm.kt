@@ -222,7 +222,7 @@ open class TextComponentJvm(
 		val oldClip = context.g.getClipBounds()
 		context.g.clip(x.toInt(), y.toInt(), width.toInt(), height.toInt())
 
-		setupTextPainter(context)
+		setupTextPainter(context, filled)
 
 		context.g.translate(TEXT_PAINTER.x.toDouble(), TEXT_PAINTER.y.toDouble())
 		TEXT_PAINTER.paint((context.g as Graphics2DJvm).g)
@@ -281,7 +281,7 @@ open class TextComponentJvm(
 	/**
 	 * Sets up the shared instance of the [TEXT_PAINTER] object with everything it needs to properly render the text.
 	 */
-	private fun setupTextPainter(context: DrawContext) {
+	private fun setupTextPainter(context: DrawContext, filled: Boolean) {
 		val attr = SimpleAttributeSet()
 		val awtFont = Graphics2DJvm.toAwtFont(font)
 
@@ -289,11 +289,31 @@ open class TextComponentJvm(
 		StyleConstants.setFontSize(attr, awtFont.size)
 		StyleConstants.setBold(attr, awtFont.isBold)
 		StyleConstants.setItalic(attr, awtFont.isItalic)
-		StyleConstants.setForeground(attr, Graphics2DJvm.toAwtColor(
-			if (context.useContextColors) context.color!!.textColor else transparent.applyTo(color.textColor)))
-		StyleConstants.setBackground(attr, Graphics2DJvm.toAwtColor(
-			if (context.useContextColors) context.color!!.backgroundColor else transparent.applyTo(color.backgroundColor)))
 		StyleConstants.setAlignment(attr, horizontalAlignmentSwing)
+
+		if (filled) {
+			StyleConstants.setForeground(
+				attr, Graphics2DJvm.toAwtColor(
+					if (context.useContextColors) context.color!!.textColor else transparent.applyTo(color.textColor)
+				)
+			)
+			StyleConstants.setBackground(
+				attr, Graphics2DJvm.toAwtColor(
+					if (context.useContextColors) context.color!!.backgroundColor else transparent.applyTo(color.backgroundColor)
+				)
+			)
+		} else {
+			StyleConstants.setForeground(
+				attr, Graphics2DJvm.toAwtColor(
+					if (context.useContextColors) context.color!!.textColor else transparent.applyTo(color.foregroundColor)
+				)
+			)
+			StyleConstants.setBackground(
+				attr, Graphics2DJvm.toAwtColor(
+					if (context.useContextColors) context.color!!.backgroundColor else transparent.applyTo(color.textColor)
+				)
+			)
+		}
 
 		val bounds = shape
 		TEXT_PAINTER.setBounds(
