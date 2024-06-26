@@ -5,11 +5,11 @@ import kotlinx.browser.document
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 
-actual object TextRenderInfoFactory : TextMeasurer {
+actual object TextRenderInfoFactoryImpl {
 
 	private val canvas = document.createElement("canvas") as HTMLCanvasElement
 
-	override fun measureSingleLineText(text: String, font: Font): TextRenderInfo {
+	actual fun measureSingleLineTextImpl(text: String, font: Font): TextRenderInfo {
 		val context = canvas.getContext("2d") as CanvasRenderingContext2D
 		context.font = Graphics2DJs.toJsFont(font)
 		var metrics = context.measureText(text)
