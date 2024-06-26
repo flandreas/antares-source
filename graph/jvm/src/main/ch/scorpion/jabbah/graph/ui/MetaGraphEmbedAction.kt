@@ -15,10 +15,12 @@ import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.draw.style.Theme
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.auth.Operation
+import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.AbstractContainerLibraryElementAction
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.library.LibraryService
+import ch.scorpion.jabbah.graph.library.LibraryService.Companion.PROP_VIEWER_JS_URL
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import java.awt.BorderLayout
 import java.awt.Frame
@@ -94,7 +96,7 @@ internal class MetaGraphEmbedPanel(
 
 		pages.add(
 			createPage(Translations.getString("graph.action.embed.iframe.name")) {
-				libraryService.getEmbeddingIFrame(uuid, URLEncoder.encode((themeComboBox.selectedItem as Theme).name, StandardCharsets.UTF_8))
+				getEmbeddingIFrame(uuid, URLEncoder.encode((themeComboBox.selectedItem as Theme).name, StandardCharsets.UTF_8))
 			})
 
 		pages.forEach {
@@ -179,6 +181,32 @@ internal class MetaGraphEmbedPanel(
 		buttonPanel.add(closeButton)
 
 		return buttonPanel
+	}
+
+	/**
+	 * Returns the code snippet to embed the [MetaGraph] with [UUID] as an HTML <iframe>.
+	 * @param uuid the [UUID] of the [MetaGraph] to be embedded
+	 * @param themeName the URL-encoded name of the [Theme] in which the [MetaGraph] is rendered
+	 */
+	private fun getEmbeddingIFrame(uuid: UUID, themeName: String): String {
+		val metaGraph = LibraryModule.libraryHolder.getMetaGraph(uuid)
+		val library = LibraryModule.libraryHolder.getContainingLibrary(uuid)!!
+		val src = StringBuilder(BaseModule.properties.getString(PROP_VIEWER_JS_URL))
+			.append("?")
+			.append("library=${library.uuid.id}")
+			.append("&circuit=${uuid.id}")
+			.append("&theme=$themeName")
+			.toString()
+
+		return """
+			|<iframe
+			|   style="border:1px solid gray;"
+			|   title="${metaGraph.name}"
+			|   width="500px"
+			|   height="500px"
+			|   src="$src">
+			|</iframe>
+		""".trimMargin()
 	}
 
 	private fun copyToClipboard() {

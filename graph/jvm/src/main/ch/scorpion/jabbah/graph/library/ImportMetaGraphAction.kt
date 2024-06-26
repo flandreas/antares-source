@@ -52,7 +52,7 @@ class ImportMetaGraphAction(
 			var repeat = false
 			LOG.userTrail("Import bundle '$bundleName', replace if UUID exists = $replaceIfUuidExists")
 
-			when (service.importMetaGraphBundle(path, bundleName, destination, replaceIfUuidExists)) {
+			when (service.importMetaGraphBundle(path, bundleName, destination, replaceIfUuidExists, LibraryModule.libraryHolder)) {
 				Success -> handleSuccessfulImport()
 				Invalid -> handleInvalidImportFile(bundleName)
 				StaleLibraryReference -> handleStaleLibraryReference(bundleName)

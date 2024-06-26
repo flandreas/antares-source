@@ -17,7 +17,7 @@ object LibraryModule : AbstractModule() {
 
 	var libraryFactory: LibraryFactory = UnimplementedLibraryFactory()
 
-	var libraryHolder: LibraryHolder = LibraryHolder()
+	var libraryHolder: LibraryHolder = LibraryHolderImpl()
 		set(value) {
 			field = value
 			EditModule.imageRepository = field

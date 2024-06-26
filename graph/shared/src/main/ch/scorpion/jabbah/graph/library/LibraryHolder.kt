@@ -14,16 +14,21 @@ import ch.scorpion.jabbah.graph.MetaGraphRepository
 /**
  * Holds the one and only [Library].
  */
-class LibraryHolder(
+interface LibraryHolder : MetaGraphRepository, ImageRepository {
+	var l: Library?
+	val library: Library
+}
+
+class LibraryHolderImpl(
 	l: Library? = null,
 	private val eventBus: EventBus = BaseModule.eventBus
-) : MetaGraphRepository, ImageRepository {
+) : LibraryHolder {
 
 	companion object {
 		private val LOG by logger(LibraryHolder::class)
 	}
 
-    var l: Library? = l
+    override var l: Library? = l
         set(value) {
 	        if (field != value) {
 		        LOG.trace("LibraryHolder: setting current Library to '${value?.name}'")
@@ -33,7 +38,7 @@ class LibraryHolder(
 	        }
         }
 
-    val library: Library get() = l!!
+    override val library: Library get() = l!!
 
 	/** ---- [MetaGraphRepository] */
 

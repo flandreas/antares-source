@@ -53,9 +53,14 @@ class FileLibraryServiceTest {
 
 		val tempDir = Files.createTempDirectory(null)
 		val tempFile = Files.createTempFile(tempDir, "Test", "zip")
-		service.exportMetaGraphBundle(orig, tempFile.absolutePathString())
+		service.exportMetaGraphBundle(orig, LibraryModule.libraryHolder, tempFile.absolutePathString())
 
-		val importResult = service.importMetaGraphBundle(tempFile.absolutePathString(), FilenameUtils.getBaseName(tempFile.absolutePathString()), libraryBuilder.peek(), replaceIfUuidExists = true)
+		val importResult = service.importMetaGraphBundle(
+			tempFile.absolutePathString(),
+			FilenameUtils.getBaseName(tempFile.absolutePathString()),
+			libraryBuilder.peek(),
+			replaceIfUuidExists = true,
+			LibraryModule.libraryHolder)
 
 		assertEquals(MetaGraphBundleImportResult.Success, importResult)
 	}

@@ -92,7 +92,6 @@ class LibraryService(
 	private val userLibraryPersister: LibraryPersistenceService = LibraryModule.userLibraryPersistenceService,
 	private val systemLibraryPersister: LibraryPersistenceService = LibraryModule.systemLibraryPersistenceService,
 	private val eventBus: EventBus = BaseModule.eventBus,
-	private val metaGraphRepository: MetaGraphRepository = LibraryModule.libraryHolder
 ) {
 
 	companion object {
@@ -389,7 +388,7 @@ class LibraryService(
 	 * Creates a [MetaGraphBundle] for the [MetaGraph] in [element] and stores it as a ZIP file
 	 * at the location [outputPath].
 	 */
-	fun exportMetaGraphBundle(element: ContainerLibraryElement, outputPath: String) {
+	fun exportMetaGraphBundle(element: ContainerLibraryElement, metaGraphRepository: MetaGraphRepository, outputPath: String) {
 		ensureMetaGraph(element.library!!, element)
 		val bundle = metaGraphRepository.createBundle(element.metaGraph!!)
 		userLibraryPersister.exportMetaGraphBundle(bundle, outputPath)
@@ -399,7 +398,8 @@ class LibraryService(
 		inputPath: String,
 		bundleName: String,
 		destination: LibraryDirectory,
-		replaceIfUuidExists: Boolean
+		replaceIfUuidExists: Boolean,
+		metaGraphRepository: MetaGraphRepository
 	): MetaGraphBundleImportResult {
 		lateinit var bundle: MetaGraphBundle
 
@@ -414,7 +414,7 @@ class LibraryService(
 			return MetaGraphBundleImportResult.StaleLibraryReference
 		}
 
-		val conflict = anyBundleUuidExists(bundle)
+		val conflict = anyBundleUuidExists(bundle, metaGraphRepository)
 		if (conflict && !replaceIfUuidExists) {
 			return MetaGraphBundleImportResult.UuidAlreadyExists
 		}
@@ -427,32 +427,6 @@ class LibraryService(
 		importMetaGraphBundle(bundle, bundleName, destination)
 
 		return MetaGraphBundleImportResult.Success
-	}
-
-	/**
-	 * Returns the code snippet to embed the [MetaGraph] with [UUID] as an HTML <iframe>.
-	 * @param uuid the [UUID] of the [MetaGraph] to be embedded
-	 * @param themeName the URL-encoded name of the [Theme] in which the [MetaGraph] is rendered
-	 */
-	fun getEmbeddingIFrame(uuid: UUID, themeName: String): String {
-		val metaGraph = metaGraphRepository.getMetaGraph(uuid)
-		val library = metaGraphRepository.getContainingLibrary(uuid)!!
-		val src = StringBuilder(BaseModule.properties.getString(PROP_VIEWER_JS_URL))
-			.append("?")
-			.append("library=${library.uuid.id}")
-			.append("&circuit=${uuid.id}")
-			.append("&theme=$themeName")
-			.toString()
-
-		return """
-			|<iframe
-			|   style="border:1px solid gray;"
-			|   title="${metaGraph.name}"
-			|   width="500px"
-			|   height="500px"
-			|   src="$src">
-			|</iframe>
-		""".trimMargin()
 	}
 
 	/**
@@ -500,7 +474,7 @@ class LibraryService(
 	fun evaluateLibraryReferences(master: Library, target: Library): LibraryReferenceEvaluation =
 		LibraryReferenceEvaluation.calculate(master, target)
 
-	private fun anyBundleUuidExists(bundle: MetaGraphBundle): Boolean =
+	private fun anyBundleUuidExists(bundle: MetaGraphBundle, metaGraphRepository: MetaGraphRepository): Boolean =
 		bundle.metaGraphs.any { metaGraph ->
 			metaGraphRepository.containsMetaGraph(metaGraph.uuid).also {
 				if (it) {
