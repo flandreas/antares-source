@@ -397,14 +397,14 @@
             </containerLibraryElement>
             <containerLibraryElement _id='112' uuid='a1b8c056-8f4b-4ffe-90a9-dbcc321fe733' type='digital'>
               <name>
-                <translation lang='en' text='D Flip-Flop PRE\/CRL'/>
-                <translation lang='de' text='D-Flipflop PRE/CRL'/>
+                <translation lang='en' text='D Flip-Flop PRE\/CLR'/>
+                <translation lang='de' text='D-Flipflop PRE/CLR'/>
               </name>
             </containerLibraryElement>
             <containerLibraryElement _id='113' uuid='f5ffee61-6d3e-453e-a352-e702a06b11d2' type='digital'>
               <name>
-                <translation lang='de' text='D-Flipflop PRE/CRL (Neg)'/>
-                <translation lang='en' text='D Flip-Flop PRE\/CRL (Neg)'/>
+                <translation lang='de' text='D-Flipflop PRE/CLR (Neg)'/>
+                <translation lang='en' text='D Flip-Flop PRE\/CLR (Neg)'/>
               </name>
             </containerLibraryElement>
             <containerLibraryElement _id='114' uuid='e0786c72-2fa2-4ec4-a1de-0a84b7281bec' type='digital'>
