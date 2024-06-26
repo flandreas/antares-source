@@ -7,6 +7,7 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.GraphElement
@@ -62,7 +63,7 @@ class BitExtender(
 		get() = digitalInput.bitWidth
 		set(value) {
 			if (value != inputBitWidth) {
-				require(value.width < outputBitWidth.width) { "Input BitWidth must be smaller than output" }
+				require(value.width <= outputBitWidth.width) { "Input BitWidth must be smaller than or equal to output" }
 				digitalInput.bitWidth = value
 				stateChanged()
 			}
@@ -72,12 +73,18 @@ class BitExtender(
 		get() = digitalOutput.bitWidth
 		set(value) {
 			if (value != outputBitWidth) {
-				require(value.width > inputBitWidth.width) { "Output BitWidth must be larger that input" }
+				require(value.width >= inputBitWidth.width) { "Output BitWidth must be larger than or equal that input" }
 				digitalOutput.bitWidth = value
 				stateChanged()
 			}
 		}
 
+	/** ---- [Actor] interface */
+
+	override fun executionStart(signalHandler: SignalHandler) {
+		super.executionStart(signalHandler)
+		requestActingAfter(signalHandler, propagationDelay.value / 2, createActorData(null))
+	}
 	/** ---- [GraphElement] */
 
 	override fun graphParamsChanged(graph: Graph) {
