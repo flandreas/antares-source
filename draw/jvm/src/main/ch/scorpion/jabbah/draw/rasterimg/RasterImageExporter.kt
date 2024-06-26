@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.draw.module.DrawModule
 import java.awt.RenderingHints
 import java.awt.RenderingHints.KEY_ANTIALIASING
 import java.awt.image.BufferedImage
+import java.io.ByteArrayOutputStream
 import java.nio.file.Path
 import javax.imageio.ImageIO
 import kotlin.math.abs
@@ -17,14 +18,25 @@ object RasterImageExporter {
     private const val DEF_WIDTH = 800
     private const val DEF_HEIGHT = 800
 
-    fun export(
+    fun exportToFile(
         content: MainContent,
         imageType: ImageType,
         path: String,
         width: Int = DEF_WIDTH,
         height: Int = DEF_HEIGHT,
-        inset: Int = IMAGE_INSET) {
-        saveImage(drawToImage(content, width, height, inset), imageType, path)
+        inset: Int = IMAGE_INSET
+    ) {
+        saveToFile(drawToImage(content, width, height, inset), imageType, path)
+    }
+
+    fun exportToByteArray(
+        content: MainContent,
+        imageType: ImageType,
+        width: Int = DEF_WIDTH,
+        height: Int = DEF_HEIGHT,
+        inset: Int = IMAGE_INSET
+    ) : ByteArray {
+        return saveToByteArray(drawToImage(content, width, height, inset), imageType)
     }
 
     private fun drawToImage(content: MainContent, width: Int, height: Int, inset: Int): BufferedImage {
@@ -54,11 +66,22 @@ object RasterImageExporter {
         return image
     }
 
-    private fun saveImage(image: BufferedImage, imageType: ImageType, path: String) {
+    private fun saveToFile(image: BufferedImage, imageType: ImageType, path: String) {
         ImageIO.write(
             image,
             imageType.customName.lowercase(),
             Path.of(path).toFile()
         )
+    }
+
+    private fun saveToByteArray(image: BufferedImage, imageType: ImageType): ByteArray {
+        return ByteArrayOutputStream().use {
+            ImageIO.write(
+                image,
+                imageType.customName.lowercase(),
+                it
+            )
+            it
+        }.toByteArray()
     }
 }

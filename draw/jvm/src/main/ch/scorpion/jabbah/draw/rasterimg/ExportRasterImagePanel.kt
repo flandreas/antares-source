@@ -251,7 +251,7 @@ class ExportRasterImagePanel(
                 }
             }
 
-            RasterImageExporter.export(
+            RasterImageExporter.exportToFile(
                 mainContent,
                 imageTypeComboBox.selectedItem as ImageType,
                 path.absolutePathString(),
