@@ -27,4 +27,6 @@ enum class ImageType(
         fun withMimeType(mimeType: String): ImageType? =
             entries.firstOrNull { it.mimeType == mimeType }
     }
+
+    override fun toString(): String = customName
 }

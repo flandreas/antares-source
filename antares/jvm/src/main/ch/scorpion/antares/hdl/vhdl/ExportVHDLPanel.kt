@@ -133,7 +133,7 @@ class ExportVHDLPanel(
 	private fun buildParametersPanel(): JPanel {
 		val inset = 5
 		var row = 0
-		val rowDist = 8
+		val rowDist = UIBasics.ROW_GAP
 		val panel = JPanel(EGBL.getLayout())
 
 		waitTimeTextField.preferredSize = Dimension(100, waitTimeTextField.preferredSize.height)
