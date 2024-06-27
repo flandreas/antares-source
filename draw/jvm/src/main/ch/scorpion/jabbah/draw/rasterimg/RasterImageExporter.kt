@@ -54,11 +54,15 @@ object RasterImageExporter {
         val image = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
         val g2 = image.createGraphics()
         val context = DrawModule.drawContextFactory(Graphics2DJvm(g2), null, null)
-
         g2.setRenderingHint(KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+
+        // Draw background
+        g2.color = Graphics2DJvm.toAwtColor(content.background)
+        g2.fillRect(0, 0, width, height)
+
+        // Draw content
         g2.scale(zoomFactor, zoomFactor)
         g2.translate(-bbox.x + dx, -bbox.y + dy)
-
         content.drawable.draw(context)
 
         g2.dispose()
