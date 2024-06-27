@@ -76,7 +76,7 @@ abstract class AbstractLibraryImporter(
 	 * Import and unzip file to incubation directory.
 	 * @return the [Path] of the incubation directory
 	 */
-	private fun incubate(inputStream: InputStream): Path {
+	protected fun incubate(inputStream: InputStream): Path {
 		val incubationDirPath = Files.createTempDirectory(null)
 		inputStream.use { input ->
 			ZipInputStream(input).use {
@@ -90,7 +90,7 @@ abstract class AbstractLibraryImporter(
 	 * Check the incubated directory structure and returns the incubation directory of the imported [Library].
 	 * @throws IllegalArgumentException if the structure is invalid
 	 */
-	private fun getLibraryDirectory(incubationDirPath: Path): File {
+	protected fun getLibraryDirectory(incubationDirPath: Path): File {
 		val incubationDir = incubationDirPath.toFile()
 		val incubationFiles = incubationDir.listFiles()
 		if (incubationFiles == null || incubationFiles.size != 1) {
@@ -105,7 +105,7 @@ abstract class AbstractLibraryImporter(
 	 * Loads the [Library] from the library file in the incubation directory.
 	 * @throws IllegalArgumentException if the structure is invalid
 	 */
-	private fun loadIncubatedLibrary(incubationDirPath: Path, libraryDirName: String): Library {
+	protected fun loadIncubatedLibrary(incubationDirPath: Path, libraryDirName: String): Library {
 		val libraryFilePath = FileLibraryPersistenceService.buildLibraryFilePath(incubationDirPath.toAbsolutePath().toString(), libraryDirName, libraryFileName)
 		val library = createLibraryFileInputStream(libraryFilePath).use {
 			try {
@@ -122,7 +122,7 @@ abstract class AbstractLibraryImporter(
 	 * Checks if [GraphQuota] are sufficient to import the [Library].
 	 * @throws GraphQuotaException if [GraphQuota] are not sufficient
 	 */
-	private fun checkQuota(library: Library, quota: GraphQuota, currentLibraryCount: Int, exists: Boolean) {
+	protected fun checkQuota(library: Library, quota: GraphQuota, currentLibraryCount: Int, exists: Boolean) {
 		if (library.metaGraphCount > quota.maxGraphPerLibrary) {
 			val msg = "Only ${quota.maxGraphPerLibrary} graphs per library allowed"
 			LOG.trace(msg)
@@ -136,7 +136,7 @@ abstract class AbstractLibraryImporter(
 		}
 	}
 
-	private fun createLibraryFileInputStream(path: String): InputStream {
+	protected fun createLibraryFileInputStream(path: String): InputStream {
 		try {
 			return FileInputStream(path)
 		} catch (e: FileNotFoundException) {
