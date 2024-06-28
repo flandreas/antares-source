@@ -168,7 +168,7 @@ open class DrawableContainerImpl<T : Drawable>(
 	}
 
 	/** Returns the [Drawable]s in the order they should be drawn.*/
-	protected open fun drawablesInDrawingOrder(): ImmutableList<T> = children.asReversed().toImmutableList()
+	protected open fun drawablesInDrawingOrder(): List<T> = children.asReversed()
 
 	override fun getTooltip(x: Double, y: Double): Tooltip? {
 		if (useLocation) {

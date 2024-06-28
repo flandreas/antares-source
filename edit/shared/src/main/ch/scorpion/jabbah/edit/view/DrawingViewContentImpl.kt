@@ -1,13 +1,13 @@
 package ch.scorpion.jabbah.edit.view
 
-import ch.scorpion.jabbah.base.geom.RectangularShape
-import ch.scorpion.jabbah.draw.*
+import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.DrawableContainer
+import ch.scorpion.jabbah.draw.DrawableContainerEvent
+import ch.scorpion.jabbah.draw.ViewTransformation
 import ch.scorpion.jabbah.draw.container.DrawableContainerAdapter
 import ch.scorpion.jabbah.draw.container.DrawableContainerImpl
 import ch.scorpion.jabbah.draw.container.UnzoomableContainer
-import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.drawable.Unzoomable
-import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.select.UnzoomableSelectionModel
 
@@ -52,8 +52,6 @@ class DrawingViewContentImpl<T : Drawing<Component>>(
 	override val ghostContainer: UnzoomableContainer<Unzoomable> = UnzoomableContainer()
 
 	override val highlightContainer: DrawableContainer<Drawable> = DrawableContainerImpl()
-
-	override val backdropDrawer: Drawable = BackdropDrawer()
 
 	override fun dispose() {
 		drawing.removeDrawableContainerListener(componentRemoveListener)
@@ -115,22 +113,5 @@ class DrawingViewContentImpl<T : Drawing<Component>>(
 				selectionManager.deselect(event.child as Component)
 			}
 		}
-	}
-
-	/**
-	 * A virtual layer that draws all [Components][Component] of [drawing] whose [StyleType.isBackdrop]
-	 * is `true`.
-	 */
-	private inner class BackdropDrawer : AbstractDrawable() {
-
-		override val boundingBox: RectangularShape get() = drawing.boundingBox
-
-		override fun draw(context: DrawContext) {
-			drawing
-				.getDrawables { it.styleType.isBackdrop }
-				.forEach { it.draw(context) }
-		}
-
-		override fun contains(x: Double, y: Double): Boolean = boundingBox.contains(x, y)
 	}
 }

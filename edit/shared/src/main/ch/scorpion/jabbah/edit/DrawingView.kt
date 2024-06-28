@@ -136,9 +136,6 @@ interface DrawingViewContent<T : Drawing<*>> {
 	/** Holds the [DrawableContainer] that contains the [Drawable]s that highlight [Component]s.*/
 	val highlightContainer: DrawableContainer<Drawable>
 
-	/** Draws all [Components][Component] in [drawing] with [StyleType.isBackdrop] is `true`.*/
-	val backdropDrawer: Drawable
-
 	/** Frees this [DrawingViewContent] from usage and disposes all inner objects, including the [Drawing].*/
 	fun dispose()
 
