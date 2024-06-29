@@ -216,9 +216,10 @@ class ContainerDrawing(
 			comp.location = Point2D(comp.location.x - origin.x, comp.location.y - origin.y)
 			if (comp is PortViewComponent<*>) {
 				val portView = comp.portView as PortView<Any>
-				if (view.model.hasPort(portView.port.name!!)) {
+				val name = portView.port.name!!
+				if (view.model.hasPort(name)) {
 					view.addPortView(portView)
-					portView.port = view.model.getPort(portView.port.name!!)
+					portView.port = view.model.getPort(name)
 				} else {
 					// Stale Port reference can occur with custom ContainerDrawing in SubGraphVerticeView
 					// produced by feature "Edit Symbol". Try to resolve later.

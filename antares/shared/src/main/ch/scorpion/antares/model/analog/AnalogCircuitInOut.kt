@@ -56,6 +56,8 @@ class AnalogCircuitInOut(
 
 	/** ---- [GraphInput] */
 
+	override var startValue: AnalogSignal? = null
+
 	override fun setIncomingSignal(signal: AnalogSignal?, signalHandler: SignalHandler, force: Boolean) {
 		LOG.trace("Incoming voltage ${signal?.voltage} at input $name")
 		this.signal = signal

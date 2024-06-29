@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.Trigger
 import ch.scorpion.antares.model.inout.DigitalCircuitInOut
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -67,6 +68,9 @@ class SubCircuitPort(
 		if (customCanBeUndefined) {
 			writer.writeBoolean("canBeUndefined", customCanBeUndefined)
 		}
+		if (unconnectedStartValue != null) {
+			writer.writeULong("startValue", unconnectedStartValue!!.getValue())
+		}
 	}
 
 	override fun read(reader: StoreReader) {
@@ -94,6 +98,9 @@ class SubCircuitPort(
 		}
 		if (reader.hasAttribute("canBeUndefined")) {
 			customCanBeUndefined = reader.readBoolean("canBeUndefined")
+		}
+		if (reader.hasAttribute("startValue")) {
+			unconnectedStartValue = DigitalSignalFactory.of(bitWidth, reader.readULong("startValue"))
 		}
 	}
 }

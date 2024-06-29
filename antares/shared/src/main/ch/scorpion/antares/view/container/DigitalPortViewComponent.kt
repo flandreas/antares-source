@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.OutputAnnotation
 import ch.scorpion.antares.model.Trigger
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.port.DigitalPortViewStyle
 import ch.scorpion.antares.view.port.ExternalPortLabelDistance

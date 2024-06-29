@@ -31,6 +31,7 @@ class AntaresPortFactory : PortFactory {
 		val subCircuitPort = SubCircuitPort(graphPort.portType, graphPort.name)
 		subCircuitPort.bitWidth = (graphPort as DigitalCircuitInOut).bitWidth
 		subCircuitPort.signalRepresentation = graphPort.signalRepresentation
+		subCircuitPort.unconnectedStartValue = (graphPort as DigitalCircuitInOut).startValue
 		return subCircuitPort as Port<T>
 	}
 

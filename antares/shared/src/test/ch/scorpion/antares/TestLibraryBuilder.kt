@@ -1,5 +1,6 @@
 package ch.scorpion.antares
 
+import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.graph.GraphStorable
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
@@ -41,8 +42,8 @@ class TestLibraryBuilder(
 	}
 
 	/** Builds (as of [TestCircuitBuilder.buildNOP] a custom NOP and adds it to [LibraryDirectory].*/
-	fun addNOP(library: Library, propagationDelay: Long = 0): MetaGraph {
-		val nop = TestCircuitBuilder(NOP).buildNOP(propagationDelay)
+	fun addNOP(library: Library, propagationDelay: Long = 0, inputStartValue: DigitalSignal? = null): MetaGraph {
+		val nop = TestCircuitBuilder(NOP).buildNOP(propagationDelay, inputStartValue = inputStartValue)
 		return addGraphView(nop, library)
 	}
 

@@ -64,6 +64,12 @@ object GraphProperties {
 		beanProvider: BeanProvider = drawingBeanProvider
 	): CommandPropertySwing<GraphParamDefinitions> =
 		CommandPropertySwing(name, baseKey, GraphParamDefinitions::class.java, beanProvider)
+
+	fun graphPortStartValue(
+		name: String = "startValue",
+		baseKey: String = "graph.property.input.startValue",
+		beanProvider: BeanProvider = componentBeanProvider
+	): CommandPropertySwing<Long> = CommandPropertySwing(name, baseKey, Long::class.java, beanProvider)
 }
 
 class PortTypeEditor : ComboBoxPropertyEditor() {

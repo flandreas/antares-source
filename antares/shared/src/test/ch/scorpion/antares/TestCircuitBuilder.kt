@@ -37,9 +37,10 @@ class TestCircuitBuilder(
 		propagationDelay: Long = 0,
 		bitWidth: BitWidth = BitWidth.BW_1,
 		inputName: String = "I",
-		outputName: String = "O"
+		outputName: String = "O",
+		inputStartValue: DigitalSignal? = null
 	): GraphView {
-		connect(addInput(inputName, bitWidth), addOutput(outputName, bitWidth))
+		connect(addInput(inputName, bitWidth, inputStartValue), addOutput(outputName, bitWidth))
 		graph.overallPropagationDelay = propagationDelay
 		return graphView
 	}
@@ -152,14 +153,30 @@ class TestCircuitBuilder(
 		return graphView
 	}
 
-	fun addInput(name: String? = null, bitWidth: BitWidth = BitWidth.BW_1): DigitalCircuitInOutView = addInOut(name, PortType.INPUT, bitWidth)
+	fun addInput(
+		name: String? = null,
+		bitWidth: BitWidth = BitWidth.BW_1,
+		inputStartValue: DigitalSignal? = null
+	): DigitalCircuitInOutView = addInOut(name, PortType.INPUT, bitWidth, inputStartValue)
 
-	fun addOutput(name: String? = null, bitWidth: BitWidth = BitWidth.BW_1): DigitalCircuitInOutView = addInOut(name, PortType.OUTPUT, bitWidth)
+	fun addOutput(
+		name: String? = null,
+		bitWidth: BitWidth = BitWidth.BW_1
+	): DigitalCircuitInOutView = addInOut(name, PortType.OUTPUT, bitWidth)
 
-	fun addInOut(name: String? = null, bitWidth: BitWidth = BitWidth.BW_1): DigitalCircuitInOutView = addInOut(name, PortType.INOUT, bitWidth)
+	fun addInOut(
+		name: String? = null,
+		bitWidth: BitWidth = BitWidth.BW_1
+	): DigitalCircuitInOutView = addInOut(name, PortType.INOUT, bitWidth)
 
-	private fun addInOut(name: String? = null, portType: PortType, bitWidth: BitWidth = BitWidth.BW_1): DigitalCircuitInOutView {
+	private fun addInOut(
+		name: String? = null,
+		portType: PortType,
+		bitWidth: BitWidth = BitWidth.BW_1,
+		inputStartValue: DigitalSignal? = null
+	): DigitalCircuitInOutView {
 		val inout = DigitalCircuitInOutView(styleProvider, DigitalCircuitInOutImpl(eventBus, name, portType, bitWidth), eventBus)
+		inout.model.startValue = inputStartValue
 		graphView.add(inout)
 		return inout
 	}

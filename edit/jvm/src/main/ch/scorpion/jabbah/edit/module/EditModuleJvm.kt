@@ -87,6 +87,11 @@ object EditModuleJvm : AbstractModule() {
 
 	@Suppress("UNCHECKED_CAST")
 	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
+		registry.register(Long::class.java) {
+			LongOptionalPropertyEditor(
+				isOptional = (it as CommandPropertySwing<Long>).optional
+			)
+		}
 		registry.registerEditor(Direction::class.java, DirectionEditor::class.java)
 		registry.registerEditor(Size::class.java, SizeEditor::class.java)
 		registry.registerEditor(StyleType::class.java, StyleTypeEditor::class.java)

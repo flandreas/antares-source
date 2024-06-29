@@ -2,6 +2,7 @@ package ch.scorpion.antares.view.container
 
 import ch.scorpion.antares.model.inout.DigitalCircuitInOutBitWidthChanged
 import ch.scorpion.antares.model.inout.DigitalCircuitInOutSignalRepresentationChanged
+import ch.scorpion.antares.model.inout.DigitalCircuitInOutStartValueChanged
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
@@ -30,13 +31,24 @@ class DigitalContainerEditor(
 		}
 	}
 
+	private val circuitInOutStartValueHandler: EventHandler<DigitalCircuitInOutStartValueChanged> = {
+		val portViewComponent = getContainerDrawing().getPortViewComponent(it.circuitInOut.name!!)
+		if (portViewComponent != null) {
+			if (portViewComponent.port.portType.isInput) {
+				(portViewComponent.port as DigitalPort).unconnectedStartValue = it.newValue
+			}
+		}
+	}
+
     init {
         eventBus.register(DigitalCircuitInOutBitWidthChanged::class, circuitInOutBitWidthHandler)
 	    eventBus.register(DigitalCircuitInOutSignalRepresentationChanged::class, circuitInOutSignalRepresentationHandler)
+		eventBus.register(DigitalCircuitInOutStartValueChanged::class, circuitInOutStartValueHandler)
     }
 
 	override fun dispose() {
 		eventBus.unregister(circuitInOutBitWidthHandler)
 		eventBus.unregister(circuitInOutSignalRepresentationHandler)
+		eventBus.unregister(circuitInOutStartValueHandler)
 	}
 }

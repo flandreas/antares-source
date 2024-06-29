@@ -69,6 +69,18 @@ class DigitalCircuitInOutImpl(
 
 	/** ---- [GraphInput] interface */
 
+	override var startValue: DigitalSignal? = null
+		set(value) {
+			if (value != startValue) {
+				val oldValue = startValue
+				field = value
+				if (isNotReading) {
+					stateChanged(null)
+					eventBus.post(DigitalCircuitInOutStartValueChanged(this, oldValue, value))
+				}
+			}
+		}
+
 	override fun setIncomingSignal(signal: DigitalSignal?, signalHandler: SignalHandler, force: Boolean) {
 		setIncomingSignal(signal, signalHandler, propagationDelay.value, force)
 	}
@@ -142,7 +154,11 @@ class DigitalCircuitInOutImpl(
 	override fun executionInitialize(signalHandler: SignalHandler) {
 		super.executionInitialize(signalHandler)
 		setInteractionEnabled(true, signalHandler)
-		signal = getDigitalPort().dominantSignal
+		signal = if (startValue != null) {
+			startValue
+		} else {
+			getDigitalPort().dominantSignal
+		}
 		stateChanged(signalHandler)
 	}
 
@@ -187,11 +203,17 @@ class DigitalCircuitInOutImpl(
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
 		bitWidth.write("bitWidth", writer)
+		if (startValue != null) {
+			writer.writeULong("startValue", startValue!!.getValue())
+		}
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		bitWidth = BitWidth.read("bitWidth", reader)
+		if (reader.hasAttribute("startValue")) {
+			startValue = DigitalSignalFactory.of(bitWidth, reader.readULong("startValue"))
+		}
 	}
 
 	/** ---- [CircuitInOut] interface */

@@ -33,3 +33,9 @@ class DigitalCircuitInOutSignalRepresentationChanged(
 	val oldValue: DigitalSignalRepresentation,
 	val newValue: DigitalSignalRepresentation
 )
+
+class DigitalCircuitInOutStartValueChanged(
+	val circuitInOut: DigitalCircuitInOut,
+	val oldValue: DigitalSignal?,
+	val newValue: DigitalSignal?
+)

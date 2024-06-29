@@ -71,6 +71,14 @@ interface GraphInput<T : Any> : GraphPort<T> {
 	 */
 	var subGraphInputPort: SubGraphInputPort<T>?
 
+	/**
+	 * The value assigned by the system to this [GraphInput] upon execution start.
+	 * Can be set by the user. Can be `null` for backward compatibility in older [Graph]s.
+	 * `null` means that the effective start value is determined by classes implementing this interface,
+	 * just like before this feature was introduced.
+	 */
+	var startValue: T?
+
 	/** Sets the signal to be forwarded into the [Graph] that owns this [GraphInput].*/
 	fun setIncomingSignal(signal: T?, signalHandler: SignalHandler, force: Boolean = false)
 }

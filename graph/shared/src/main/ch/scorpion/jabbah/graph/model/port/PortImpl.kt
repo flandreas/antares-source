@@ -140,6 +140,8 @@ open class PortImpl<T : Any>(
 
 	/** ---- [InputPort] interface */
 
+	override var unconnectedStartValue: T? = null
+
 	protected var _incomingSignal: T? = null
 
 	private var incomingSignalRevoked: Boolean = false
@@ -163,6 +165,10 @@ open class PortImpl<T : Any>(
 
 	override fun revokeSignal() {
 		incomingSignalRevoked = true
+	}
+
+	override fun applyUnconnectedStartValue(signalHandler: SignalHandler) {
+		setIncomingSignal(unconnectedStartValue, signalHandler)
 	}
 
 	/** ---- [OutputPort] interface */

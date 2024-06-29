@@ -54,6 +54,8 @@ class GraphInputImpl<T: Any>(
 
     override var subGraphInputPort: SubGraphInputPort<T>? = null
 
+	override var startValue: T? = null
+
     override fun setIncomingSignal(signal: T?, signalHandler: SignalHandler, force: Boolean) {
 	    this.signal = signal
     	requestActingAfter(signalHandler, propagationDelay.value, StoringGraphActorData(null, signal, force = force))

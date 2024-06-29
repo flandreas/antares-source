@@ -273,6 +273,15 @@ class SubGraphVerticeRef(
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
 		if (!hasDesignError) {
+			// Establish start signals of unconnected inputs
+			getInputs()
+				.filter {
+					!it.isConnected && it.unconnectedStartValue != null
+				}
+				.forEach {
+					it.applyUnconnectedStartValue(signalHandler)
+				}
+
 			if (isDeepExecution(signalHandler.isDeepExecution)) {
 				graphReference.graph?.executionStart(signalHandler, graphView)
 			} else {

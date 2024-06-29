@@ -87,11 +87,22 @@ class DigitalCircuitInOutView(
 			updateView()
 		}
 
-	@Suppress("unused")
+	@Suppress("unused") // Reflection
 	var customCanBeUndefined: Boolean
 		get() = model.customCanBeUndefined
 		set(value) {
 			model.customCanBeUndefined = value
+		}
+
+	@Suppress("unused") // Reflection
+	var startValue: Long?
+		get() = model.startValue?.getValue()?.toLong()
+		set(value) {
+			model.startValue = if (value != null) {
+				DigitalSignalFactory.of(bitWidth, value)
+			} else {
+				null
+			}
 		}
 
 	init {
