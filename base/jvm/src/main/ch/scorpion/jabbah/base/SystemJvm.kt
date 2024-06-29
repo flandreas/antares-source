@@ -6,13 +6,13 @@ import ch.scorpion.jabbah.base.geom.Path
 import ch.scorpion.jabbah.base.geom.Path2DJvm
 import ch.scorpion.jabbah.base.time.RealTimeTimerJvm
 import ch.scorpion.jabbah.base.time.Timer
-import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.SystemUtils
 import java.awt.Desktop
 import java.awt.Frame
 import java.net.URI
 import java.nio.file.Files
 import java.nio.file.Paths
+import javax.swing.JFrame
 import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
 import kotlin.reflect.KClass
@@ -93,5 +93,14 @@ actual object System {
 
 	actual fun getFileContents(path: String): String? {
 		return Files.readString(Paths.get(path))
+	}
+
+	actual fun showModalMessage(title: String, message: String, isError: Boolean) {
+		JOptionPane.showMessageDialog(
+			JFrame.getFrames()[0],
+			message,
+			title,
+			if (isError) JOptionPane.ERROR_MESSAGE else JOptionPane.INFORMATION_MESSAGE
+		)
 	}
 }

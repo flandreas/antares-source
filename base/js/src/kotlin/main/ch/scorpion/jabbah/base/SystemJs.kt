@@ -88,4 +88,8 @@ actual object System {
 	}
 
 	actual fun getFileContents(path: String): String? = null
+
+	actual fun showModalMessage(title: String, message: String, isError: Boolean) {
+		// Not yet implemented
+	}
 }

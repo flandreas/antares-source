@@ -60,7 +60,7 @@ interface UndoableDataHolder {
  * [CommandManager] uses the concept of "checkpoints" for stacking [CommandManager] states. Consider an
  * application that uses a single [CommandManager] or an [Editor]. This application consists of a modal dialog,
  * in which the user performs some undoable actions. If the user closes this dialog using "Cancel" (and confirming
- * a warning that he will loose his changes), the application want the [CommandManager] to delete all registered
+ * a warning that he will lose his changes), the application want the [CommandManager] to delete all registered
  * [Command]s back to the point where the modal dialog was opened. This can be done by opening a checkpoint when
  * the dialog is opened, and closing the checkpoint when the dialog is closed. It is up to the client code to
  * execute or register a special [Command] that represents the changes performed since opening the checkpoint,
