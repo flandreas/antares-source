@@ -88,7 +88,7 @@ class RichTextDrawable(
 
 		/**
 		 * Transforms a [RichText] AST to a [RichTextDrawable] that can be drawn
-		 * with [Graphics2D] operations. Currently supports only single-line text.
+		 * with [Graphics2D] operations. Currently, supports only single-line text.
 		 */
 		private fun transformToSingleLine(richText: RichText, font: Font, textMeasurer: TextMeasurer): RichTextDrawable {
 			val drawable = RichTextDrawable(richText, font)
@@ -248,10 +248,7 @@ class RichTextDrawable(
 	private val maxOverlineLevel = richText.getMaxOverlineLevel()
 
 	override fun draw(context: DrawContext) {
-		val ascent = abs(baselineRect.y)
-		context.g.translate(location.x, location.y + ascent)
-		chunkViews.forEach { it.draw(context.g, maxOverlineLevel) }
-		context.g.translate(-location.x, -location.y - ascent)
+		draw(context.g)
 	}
 
 	fun draw(g: Graphics2D) {
