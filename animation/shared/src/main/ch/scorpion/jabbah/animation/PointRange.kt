@@ -120,7 +120,7 @@ class PointRange(
 		}
 	}
 
-	private inline fun resetNext() {
+	private fun resetNext() {
 		nextX = null
 		nextY = null
 	}

@@ -109,7 +109,7 @@ class PolylineShapeImplTest {
 			Point2D(100, 0),
 			Point2D(100, 100)))
 
-		polyline.rotate(RotationDirection.CounterClockwise)
+		polyline.rotate(RotationDirection.CounterClockwise, null)
 
 		assertEquals(Point2D(0, 0), polyline.getPointAt(0))
 		assertEquals(Point2D(0, -100), polyline.getPointAt(1))
@@ -123,7 +123,7 @@ class PolylineShapeImplTest {
 			Point2D(100, 0),
 			Point2D(100, 100)))
 
-		polyline.rotate(RotationDirection.Clockwise)
+		polyline.rotate(RotationDirection.Clockwise, null)
 
 		assertEquals(Point2D(0, 0), polyline.getPointAt(0))
 		assertEquals(Point2D(0, 100), polyline.getPointAt(1))

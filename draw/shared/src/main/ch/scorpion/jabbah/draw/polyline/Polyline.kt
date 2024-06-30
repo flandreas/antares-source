@@ -176,7 +176,7 @@ interface Polyline {
 	fun reverse()
 
 	/** Rotates by 90 degrees to the specified [RotationDirection]. */
-	fun rotate(direction: RotationDirection, pivot: Point2D? = null)
+	fun rotate(direction: RotationDirection, pivot: Point2D?)
 
 	fun overlapsOrthogonallyWith(otherIndex: Int, other: List<Point2D>): Boolean
 }

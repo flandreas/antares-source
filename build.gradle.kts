@@ -90,6 +90,7 @@ subprojects {
 					jvmTarget = JavaVersion.VERSION_1_8.toString()
 					freeCompilerArgs = listOf(
 						// https://youtrack.jetbrains.com/issue/KT-37435
+						"-Xopt-in=kotlin.ExperimentalUnsignedTypes",
 						"-Xno-optimized-callable-references",
 						"-Xexpect-actual-classes",
 						"-Xinline-classes")
