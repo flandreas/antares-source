@@ -34,17 +34,13 @@
             <baseLibraryElement _id='3' id='Splitter'/>
             <baseLibraryElement _id='4' id='Concentrator'/>
             <baseLibraryElement _id='50' id='BidirectionalSplitter'/>
-            <baseLibraryElement _id='5' id='Probe'/>
             <baseLibraryElement _id='6' id='Tunnel'/>
-            <baseLibraryElement _id='7' id='Constant'/>
             <baseLibraryElement _id='37' id='Break'/>
             <baseLibraryElement _id='46' id='PullResistor'/>
             <baseLibraryElement _id='53' id='TransistorN'/>
             <baseLibraryElement _id='47' id='TransistorP'/>
             <baseLibraryElement _id='48' id='Ground'/>
             <baseLibraryElement _id='49' id='Power'/>
-            <baseLibraryElement _id='51' id='RealSwitch'/>
-            <baseLibraryElement _id='55' id='DoubleThrowSwitch'/>
             <baseLibraryElement _id='57' id='WireTap'/>
             <baseLibraryElement _id='59' id='PowerOnReset'/>
           </items>
@@ -75,12 +71,15 @@
           <items>
             <baseLibraryElement _id='23' id='Input'/>
             <baseLibraryElement _id='72' id='InputOutput'/>
+            <baseLibraryElement _id='7' id='Constant'/>
+            <baseLibraryElement _id='22' id='Clock'/>
             <baseLibraryElement _id='20' id='Switch'/>
             <baseLibraryElement _id='21' id='DipSwitch'/>
-            <baseLibraryElement _id='22' id='Clock'/>
+            <baseLibraryElement _id='51' id='RealSwitch'/>
+            <baseLibraryElement _id='55' id='DoubleThrowSwitch'/>
+            <baseLibraryElement _id='74' id='ImageSwitch'/>
             <baseLibraryElement _id='35' id='Keyboard'/>
             <baseLibraryElement _id='50' id='Joystick'/>
-            <baseLibraryElement _id='74' id='ImageSwitch'/>
           </items>
         </libraryFolder>
         <libraryFolder _id='24'>
@@ -91,6 +90,7 @@
           <items>
             <baseLibraryElement _id='29' id='Output'/>
             <baseLibraryElement _id='73' id='OutputInput'/>
+            <baseLibraryElement _id='5' id='Probe'/>
             <baseLibraryElement _id='25' id='LED'/>
             <baseLibraryElement _id='26' id='RgbLED'/>
             <baseLibraryElement _id='27' id='SevenSegmentDisplay'/>
