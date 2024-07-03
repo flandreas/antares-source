@@ -2,10 +2,7 @@ package ch.scorpion.jabbah.graph.dsl
 
 import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.dsl.Interpreter
-import ch.scorpion.jabbah.base.dsl.Memory
-import ch.scorpion.jabbah.base.dsl.Node
-import ch.scorpion.jabbah.base.dsl.RuntimeError
+import ch.scorpion.jabbah.base.dsl.*
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 

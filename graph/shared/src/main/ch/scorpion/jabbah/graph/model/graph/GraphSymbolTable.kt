@@ -40,4 +40,7 @@ class GraphSymbolTable(
 	override fun lookup(name: String, currentScopeOnly: Boolean): Symbol? =
 		graph.graphPorts.firstOrNull { it.name == name }?.let { Symbol(it.name!!) }
 			?: graph.parameterDefinitions.get(name)?.let { Symbol(it.name) }
+
+	override fun canWrite(name: String): Boolean =
+		graph.getGraphPort<Any>(name)?.portType?.isOutput ?: false
 }

@@ -2,6 +2,10 @@ package ch.scorpion.jabbah.graph.dsl
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.*
+import ch.scorpion.jabbah.graph.model.GraphModelTestRule
+import ch.scorpion.jabbah.graph.model.graph.GraphImpl
+import ch.scorpion.jabbah.graph.model.graph.GraphSymbolTable
+import ch.scorpion.jabbah.graph.model.vertice.GraphInputImpl
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
@@ -10,6 +14,7 @@ class GraphDslSemanticAnalyserTest {
 
 	@BeforeTest
 	fun setup() {
+		GraphModelTestRule.configure()
 		Translations.withAnyKey()
 	}
 
@@ -87,5 +92,21 @@ class GraphDslSemanticAnalyserTest {
 
 		val analyser = GraphDslSemanticAnalyser(null)
 		analyser.analyse(ast)
+	}
+
+	@Test
+	fun shouldNotAllowWritingInput() {
+		val ast = GraphDslParser(DslLexer("""
+			I = 1
+		""".trimIndent()), null).parse()
+
+		val graph = GraphImpl()
+		graph.add(GraphInputImpl<Int>(name = "I"))
+		val symbolTable = GraphSymbolTable(graph)
+		val analyser = GraphDslSemanticAnalyser(symbolTable)
+
+		assertFailsWith(SemanticError::class) {
+			analyser.analyse(ast)
+		}
 	}
 }

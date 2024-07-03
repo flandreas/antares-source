@@ -103,7 +103,7 @@ open class DslSemanticAnalyser(
 		destinationScope.define(varSymbol)
 	}
 
-	private fun enterAssignment(assignment: Assignment) {
+	protected open fun enterAssignment(assignment: Assignment) {
 		val varName = assignment.left.token.value as String
 		if (!scope.hasSymbol(varName)) {
 			throw SemanticError(assignment.left.location, Translations.getString("base.dsl.variableNotDefined.msg", varName))

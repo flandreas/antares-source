@@ -11,6 +11,7 @@ interface SymbolTable {
 	fun define(symbol: Symbol)
 	fun hasSymbol(name: String, currentScopeOnly: Boolean = false): Boolean
 	fun lookup(name: String, currentScopeOnly: Boolean = false): Symbol?
+	fun canWrite(name: String): Boolean
 }
 
 class ScopedSymbolTable(
@@ -52,5 +53,12 @@ class ScopedSymbolTable(
 			return symbols[name]
 		}
 		return symbols[name] ?: enclosingScope?.lookup(name)
+	}
+
+	override fun canWrite(name: String): Boolean {
+		if (hasSymbol(name, true)) {
+			return true
+		}
+		return enclosingScope?.canWrite(name) ?: false
 	}
 }

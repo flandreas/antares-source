@@ -41,4 +41,11 @@ class GraphDslSemanticAnalyser(
 		}
 		initVisited = true
 	}
+
+	override fun enterAssignment(assignment: Assignment) {
+		super.enterAssignment(assignment)
+		if (!scope.canWrite(assignment.left.token.value as String)) {
+			throw SemanticError(assignment.location, Translations.getString("graph.dsl.cannotWriteInput.msg"))
+		}
+	}
 }
