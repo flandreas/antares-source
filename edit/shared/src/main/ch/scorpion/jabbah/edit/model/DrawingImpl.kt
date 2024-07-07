@@ -14,12 +14,4 @@ open class DrawingImpl<T : Component> : ComponentContainerImpl<T>(), Drawing<T> 
     override fun dispose() {
         // empty
     }
-
-    override fun drawablesInDrawingOrder(): List<T> {
-        val components = mutableListOf<T>()
-        val fromSuper = super.drawablesInDrawingOrder()
-        components.addAll(fromSuper.filter { it.styleType.isBackdrop })
-        components.addAll(fromSuper.filter { !it.styleType.isBackdrop })
-        return components
-    }
 }

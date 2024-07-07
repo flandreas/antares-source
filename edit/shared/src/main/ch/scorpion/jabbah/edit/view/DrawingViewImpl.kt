@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawableDrawer
 import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
 import ch.scorpion.jabbah.draw.style.DrawTheme
+import ch.scorpion.jabbah.draw.style.Stylable
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.draw.view.InvalidatableViewPainter
 import ch.scorpion.jabbah.draw.view.ViewImpl
@@ -191,6 +192,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
         super.addDrawable(drawing)
         super.addDrawable(content.zoomableSelectionContainerFor(SelectionDrawingStrategy.BELOW)!!)
         super.addDrawable(highlightContainer)
+        super.addDrawable(content.backdropDrawer)
     }
 
     private fun replaceContent(newContent: DrawingViewContent<T>) {
@@ -202,6 +204,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
         replaceDrawable(content.drawing, newContent.drawing)
         replaceDrawable(content.zoomableSelectionContainerFor(SelectionDrawingStrategy.BELOW)!!, newContent.zoomableSelectionContainerFor(SelectionDrawingStrategy.BELOW)!!)
         replaceDrawable(content.highlightContainer, newContent.highlightContainer)
+        replaceDrawable(content.backdropDrawer, newContent.backdropDrawer)
         transformation = newContent.transformation
         repaint()
     }
@@ -238,8 +241,10 @@ class DrawingViewImpl<T: Drawing<Component>>(
 	        nextProcessor(context, drawable)
         }
 
-	    private fun draw(drawable: Drawable, context: DrawContext) {
-            drawable.draw(context)
-		}
+        private fun draw(drawable: Drawable, context: DrawContext) {
+            if (drawable !is Stylable || !drawable.styleType.isBackdrop) {
+                drawable.draw(context)
+            }
+        }
     }
 }
