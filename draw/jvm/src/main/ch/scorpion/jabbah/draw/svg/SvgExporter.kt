@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.draw.svg
 
 import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.DrawableContainer
 import ch.scorpion.jabbah.draw.MainContent
 import ch.scorpion.jabbah.draw.graphics.AbstractGraphics2D
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
@@ -15,6 +16,8 @@ import java.io.StringWriter
 object SvgExporter {
 
 	fun export(content: MainContent, path: String) {
+		require(content.drawable is DrawableContainer<*>)
+
 		// Get a DOMImplementation
 		val domImpl = GenericDOMImplementation.getDOMImplementation()
 
@@ -28,7 +31,7 @@ object SvgExporter {
 
 		// Draw
 		val drawContext = DrawModule.drawContextFactory(Graphics2DJvm(svgGenerator), null, null)
-		content.drawable.draw(drawContext)
+		content.drawable.drawStandalone(drawContext)
 
 		// Getting the root clears the contents of the SVGGenerator
 		val root = svgGenerator.root

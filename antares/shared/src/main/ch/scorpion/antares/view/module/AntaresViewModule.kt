@@ -181,7 +181,7 @@ object AntaresViewModule : AbstractModule() {
 		// Overwritten in order to change the [DrawableDrawer]
 		EditModule.drawingViewFactory = DrawingViewFactory { drawing, contextHolder, displayGlobalMessages ->
 			val drawingView = DrawingViewImpl(drawing, applicationContextHolder = contextHolder, displayGlobalMessages = displayGlobalMessages)
-			drawingView.addDrawableDrawer(OrientableRectangularVerticeViewDrawer())
+			drawingView.addDrawableDrawer(DigitalComponentViewDrawer())
 			drawingView
 		}
 		EditModule.drawingAppService = AntaresGraphViewService()

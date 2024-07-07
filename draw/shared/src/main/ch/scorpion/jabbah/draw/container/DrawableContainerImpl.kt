@@ -2,8 +2,6 @@ package ch.scorpion.jabbah.draw.container
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.Tooltip
-import ch.scorpion.jabbah.base.collection.ImmutableList
-import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
@@ -14,6 +12,7 @@ import ch.scorpion.jabbah.draw.drawable.DefaultDrawableDrawer
 import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.module.DrawModule
+import ch.scorpion.jabbah.draw.style.Stylable
 
 /**
  * Standard implementation of the [DrawableContainer] interface.
@@ -114,6 +113,10 @@ open class DrawableContainerImpl<T : Drawable>(
 	}
 
 	override fun draw(context: DrawContext) {
+		drawImpl(context, drawableDrawer)
+	}
+
+	protected fun drawImpl(context: DrawContext, drawer: DrawableDrawer<T>) {
 		if (visible && children.isNotEmpty()) {
 			var clip = getClip(context)
 			val oldModelClip = context.modelClip
@@ -132,7 +135,7 @@ open class DrawableContainerImpl<T : Drawable>(
 				if (it.visible) {
 					// Clipping
 					if (clip == null || it.intersects(clip)) {
-						drawableDrawer.process(context, it)
+						drawer.process(context, it)
 					}
 				}
 			}
@@ -266,5 +269,16 @@ open class DrawableContainerImpl<T : Drawable>(
 			invalidate(childBoundingBox(drawable))
 			notifyDrawableRemoved(drawable)
 		}
+	}
+
+	override fun drawStandalone(context: DrawContext) {
+		val drawer = DrawableContainerDrawer<T>()
+		drawBackdrop(context)
+		drawImpl(context, drawer)
+	}
+
+	private fun drawBackdrop(context: DrawContext) {
+		getDrawables { it is Stylable && (it as Stylable).styleType.isBackdrop }
+			.forEach { it.draw(context) }
 	}
 }

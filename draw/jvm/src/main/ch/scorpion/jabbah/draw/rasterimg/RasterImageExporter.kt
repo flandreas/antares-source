@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.draw.rasterimg
 
+import ch.scorpion.jabbah.draw.DrawableContainer
 import ch.scorpion.jabbah.draw.MainContent
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.draw.graphics.ImageType
@@ -29,6 +30,7 @@ object RasterImageExporter {
         saveToFile(drawToImage(content, width, height, inset), imageType, path)
     }
 
+    @Suppress("unused") // Used by Akrab
     fun exportToByteArray(
         content: MainContent,
         imageType: ImageType,
@@ -40,6 +42,8 @@ object RasterImageExporter {
     }
 
     private fun drawToImage(content: MainContent, width: Int, height: Int, inset: Int): BufferedImage {
+        require(content.drawable is DrawableContainer<*>)
+
         val bbox = content.drawable.boundingBox
         // If bbox is empty, quotients are infinite, and zoomFactor is 1
         val zoomFactor = listOf(
@@ -63,7 +67,7 @@ object RasterImageExporter {
         // Draw content
         g2.scale(zoomFactor, zoomFactor)
         g2.translate(-bbox.x + dx, -bbox.y + dy)
-        content.drawable.draw(context)
+        content.drawable.drawStandalone(context)
 
         g2.dispose()
 
