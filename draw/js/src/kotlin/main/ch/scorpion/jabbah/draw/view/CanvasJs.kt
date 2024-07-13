@@ -15,6 +15,8 @@ import ch.scorpion.jabbah.draw.style.StyleType
 import kotlinx.browser.window
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
+import org.w3c.dom.events.Event
+import kotlin.math.ceil
 
 class CanvasJs(
     private val canvas: HTMLCanvasElement,
@@ -37,7 +39,7 @@ class CanvasJs(
 
     /** ---- [Canvas] interface */
 
-    override val devicePixelRatio: Int get() = window.devicePixelRatio.toInt()
+    override val devicePixelRatio: Double get() = window.devicePixelRatio
 
     override var dimension: Dimension2D = size ?: Dimension2D(canvas.offsetWidth, canvas.offsetHeight)
         private set
@@ -65,18 +67,55 @@ class CanvasJs(
             field = value
         }
 
+    private var removeDevicePixelRatioHandler: ((Event?) -> Unit)? = null
+
+    /**
+     * Sets up a media query to listen to changes of [devicePixelRatio] in the browser window.
+     * Required to adjust the canvas' internal image resolution when the user moves
+     * the browser window between screens with different DPIs.
+     * Source: https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio.
+     */
+    private lateinit var devicePixelRatioHandler: (Event?) -> Unit
+
     init {
         propertyOwner.source = this
         view.canvas = this
         view.initialize()
         initalizing = false
+
+        // This doesn't work reliably yet on Chrome when zooming on browser level with CMD-!:
+        // The resulting zoom in the canvas and the pan position aren't accurate for some reason..
+        initializeDevicePixelRatioHandler()
+        devicePixelRatioHandler(null)
     }
+
+    private fun initializeDevicePixelRatioHandler() {
+        devicePixelRatioHandler = {
+            removeDevicePixelRatioHandler?.invoke(null)
+            val mqString = "(resolution: ${window.devicePixelRatio}dppx"
+            val media = window.matchMedia(mqString)
+            media.addEventListener("change", devicePixelRatioHandler)
+            removeDevicePixelRatioHandler = {
+                media.removeEventListener("change", devicePixelRatioHandler)
+            }
+            handleDevicePixelRatioChanged()
+        }
+    }
+
+    private fun handleDevicePixelRatioChanged() {
+        dimension = Dimension2D(canvas.offsetWidth, canvas.offsetHeight)
+        canvas.width = ceil(dimension.widthInt * devicePixelRatio).toInt()
+        canvas.height = ceil(dimension.heightInt * devicePixelRatio).toInt()
+        repaint()
+        propertyOwner.fire(Canvas.PROP_DEVICE_PIXEL_RATIO, devicePixelRatio, devicePixelRatio)
+    }
+
 
     fun resize(w: Int, h: Int) {
         val oldDimension = dimension
         dimension = Dimension2D(w, h)
-        canvas.width = dimension.widthInt * devicePixelRatio
-        canvas.height = dimension.heightInt * devicePixelRatio
+        canvas.width = ceil(dimension.widthInt * devicePixelRatio).toInt()
+        canvas.height = ceil(dimension.heightInt * devicePixelRatio).toInt()
         repaint()
         propertyOwner.fire(Canvas.PROP_DIMENSION, oldDimension, dimension)
     }

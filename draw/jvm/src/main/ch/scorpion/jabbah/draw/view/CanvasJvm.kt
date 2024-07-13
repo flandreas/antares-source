@@ -86,7 +86,7 @@ class CanvasJvm(
 		background = Graphics2DJvm.toAwtColor(styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor)
 	}
 
-	override val devicePixelRatio: Int = 1
+	override val devicePixelRatio: Double = 1.0
 
 	override var backgroundColor: Color
 		get() = Color(background.red, background.green, backgroundColor.blue, backgroundColor.alpha)

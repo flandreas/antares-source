@@ -26,7 +26,7 @@ class FlexibleTextView(
 	private val direction: Direction,
 	private val width: Int = DEFAULT_WIDTH,
 	private val isUnzoomable: Boolean = true,
-	devicePixelRatio: Int = 1,
+	devicePixelRatio: Double = 1.0,
 	styleType: StyleType = StyleType.FIGURE,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractStyledDrawable(styleType, styleProvider), Transparent, Unzoomable, Locatable {

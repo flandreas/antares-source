@@ -15,10 +15,13 @@ interface Canvas : PropertyOwner<Any> {
 
 		/** The name of the [dimension] property in [PropertyChangeEvent]s. */
 		const val PROP_DIMENSION = "PROP_DIMENSION"
+
+        /** The name of the [devicePixelRatio] property in [PropertyChangeEvent]s. */
+        const val PROP_DEVICE_PIXEL_RATIO = "PROP_DEVICE_PIXEL_RATIO"
 	}
 
 	/** The number of actual physical pixels used per view pixel. */
-	val devicePixelRatio: Int
+	val devicePixelRatio: Double
 
     /**
      * Contains the [View] that effectively displays the [Drawable]s.

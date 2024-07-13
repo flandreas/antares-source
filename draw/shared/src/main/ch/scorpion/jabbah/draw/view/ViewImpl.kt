@@ -475,6 +475,9 @@ open class ViewImpl<C : InputEventContext>(
 					canvasLaidOut = space.viewDimension.widthInt > 0 && space.viewDimension.heightInt > 0
 					applyZoomStrategy()
 				}
+				Canvas.PROP_DEVICE_PIXEL_RATIO -> {
+					applyZoomStrategy()
+				}
 				ViewSpace.PROP_AREA -> applyZoomStrategy()
 				ApplicationContextHolder.PROP_APPLICATION_CONTEXT -> {
 					invalidate()
