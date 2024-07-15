@@ -15,9 +15,10 @@ class VerilogGenerator(
     }
 
     override fun writeCircuit(model: HDLModel, printer: CodePrinter) {
+        val topModuleName = model.renaming.checkName(model.main.name)
         printer.use {
             printComment(it)
-            VerilogCreator(it, applyDelays = params.useDelayModel).printCircuit(model.main)
+            VerilogCreator(it, applyDelays = params.useDelayModel).printCircuit(model.main, topModuleName)
         }
     }
 

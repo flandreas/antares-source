@@ -38,7 +38,12 @@ class VerilogRenaming : HDLRenaming {
         val sb = StringBuilder()
         var needEscaping = false
         for (c in name) {
-            if (c in 'a'..'z' || c in 'A'..'Z' || c == '_' || c == '$') {
+            if (c in 'a'..'z' ||
+                c in 'A'..'Z' ||
+                c in '0'..'9' ||
+                c == '_' ||
+                c == '$'
+            ) {
                 sb.append(c)
             } else {
                 when (c) {

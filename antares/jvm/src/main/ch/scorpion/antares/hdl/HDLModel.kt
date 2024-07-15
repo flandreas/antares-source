@@ -27,7 +27,7 @@ class HDLModel(
 	circuit: DigitalGraph,
 	renaming: HDLRenaming
 ) {
-	private val renaming: HDLRenaming = RenameSingleCheck(renaming)
+	val renaming: HDLRenaming = RenameSingleCheck(renaming)
 
 	/**
 	 * Keeps track of the one and only [HDLCircuit] model created for a [DigitalGraph]
