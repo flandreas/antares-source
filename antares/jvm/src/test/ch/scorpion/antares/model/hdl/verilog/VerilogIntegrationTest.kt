@@ -3,18 +3,24 @@ package ch.scorpion.antares.model.hdl.verilog
 import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.TestLibraryBuilder
 import ch.scorpion.antares.hdl.verilog.VerilogGenerator
+import ch.scorpion.antares.hdl.vhdl.HDLException
 import ch.scorpion.antares.model.DigitalGraph
+import ch.scorpion.antares.model.input.Clock
 import ch.scorpion.antares.model.input.DipSwitch
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.view.gate.LogicGateView
+import ch.scorpion.antares.view.input.ClockView
 import ch.scorpion.antares.view.input.DipSwitchView
 import ch.scorpion.antares.view.net.ConstantView
+import ch.scorpion.antares.view.net.GroundView
+import ch.scorpion.antares.view.net.PowerView
 import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class VerilogIntegrationTest : AbstractVerilogTest() {
 
@@ -144,5 +150,88 @@ class VerilogIntegrationTest : AbstractVerilogTest() {
             endmodule
             
         """.trimIndent(), printer.toString())
+    }
+
+    @Test
+    fun testPowerAndGround() {
+        val builder = TestCircuitBuilder("power-ground")
+        val output1 = builder.addOutput("O1")
+        val output2 = builder.addOutput("O2")
+        val powerView = builder.addVerticeView(PowerView())
+        val groundView = builder.addVerticeView(GroundView())
+        builder.connect(powerView, output1)
+        builder.connect(groundView, output2)
+
+        VerilogGenerator(testParams()).generateHDL(printer, builder.graph as DigitalGraph)
+
+        assertEquals("""
+            
+            module \power-ground  (
+              output O1,
+              output O2
+            );
+              assign O1 = 1'b1;
+              assign O2 = 1'b0;
+            endmodule
+            
+        """.trimIndent(), printer.toString())
+    }
+
+    @Test
+    fun testNegatedGateInput() {
+        val builder = TestCircuitBuilder("negated-gate")
+        val input1 = builder.addInput("A")
+        val input2 = builder.addInput("B")
+        val output = builder.addOutput("O")
+        val gateView = builder.addVerticeView(LogicGateView.andGateView())
+        gateView.model.setNegateInput(1, true)
+        builder.connect(input1, gateView, gateView.model.getInput(1))
+        builder.connect(input2, gateView, gateView.model.getInput(2))
+        builder.connect(gateView, output)
+
+        VerilogGenerator(testParams()).generateHDL(printer, builder.graph as DigitalGraph)
+
+        assertEquals("""
+            
+            module \negated-gate  (
+              input A,
+              input B,
+              output O
+            );
+              assign O = (~ A & B);
+            endmodule
+            
+        """.trimIndent(), printer.toString())
+    }
+
+    @Test
+    fun testClock() {
+        VerilogGenerator(testParams()).generateHDL(printer, buildClockCircuit("CLK"))
+
+        assertEquals("""
+            
+            module test (
+              input CLK,
+              output O
+            );
+              assign O = CLK;
+            endmodule
+            
+        """.trimIndent(), printer.toString())
+    }
+
+    @Test
+    fun shouldRejectClockWithoutName() {
+        assertFailsWith(HDLException::class) {
+            VerilogGenerator(testParams()).generateHDL(printer, buildClockCircuit(null))
+        }
+    }
+
+    private fun buildClockCircuit(clockName: String?): DigitalGraph {
+        val builder = TestCircuitBuilder("test")
+        val clock = builder.addVerticeView(ClockView(model = Clock(clockName)))
+        val output = builder.addOutput("O")
+        builder.connect(clock, output)
+        return builder.graph as DigitalGraph
     }
 }
