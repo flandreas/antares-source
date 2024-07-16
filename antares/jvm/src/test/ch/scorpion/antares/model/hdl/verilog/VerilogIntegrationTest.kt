@@ -4,7 +4,9 @@ import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.TestLibraryBuilder
 import ch.scorpion.antares.hdl.verilog.VerilogGenerator
 import ch.scorpion.antares.model.DigitalGraph
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.view.gate.LogicGateView
+import ch.scorpion.antares.view.net.ConstantView
 import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
@@ -71,10 +73,7 @@ class VerilogIntegrationTest : AbstractVerilogTest() {
         builder.connect(subGraphVV1, subGraphVV1.model.getOutput(), subGraphVV2, subGraphVV2.model.getInput())
         builder.connect(subGraphVV2, subGraphVV2.model.getOutput(), output)
 
-        val params = testParams()
         VerilogGenerator(testParams()).generateHDL(printer, builder.graph as DigitalGraph)
-
-        val entityName = params.renaming.checkName(nop.name)
 
         assertEquals("""
             
@@ -98,6 +97,26 @@ class VerilogIntegrationTest : AbstractVerilogTest() {
                 .I( s0 ),
                 .O( B )
               );
+            endmodule
+            
+        """.trimIndent(), printer.toString())
+    }
+
+    @Test
+    fun testConstant() {
+        val builder = TestCircuitBuilder("constant")
+        val output = builder.addOutput("O")
+        val constantView = builder.addVerticeView(ConstantView(DigitalSignalFactory.of(true)))
+        builder.connect(constantView, output)
+
+        VerilogGenerator(testParams()).generateHDL(printer, builder.graph as DigitalGraph)
+
+        assertEquals("""
+            
+            module constant (
+              output O
+            );
+              assign O = 1'b1;
             endmodule
             
         """.trimIndent(), printer.toString())

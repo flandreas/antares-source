@@ -177,7 +177,7 @@ class VerilogCreator(
 
     private fun value(value: ULong, bitWidth: BitWidth): String {
         var s = BitOperation.longToBinaryPadded(value, bitWidth)
-        return "${bitWidth.width}b$s"
+        return "${bitWidth.width}'b$s"
     }
 
     private fun printModuleInstantiation(node: BuiltInNode, index: Int) {
