@@ -4,8 +4,10 @@ import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.TestLibraryBuilder
 import ch.scorpion.antares.hdl.verilog.VerilogGenerator
 import ch.scorpion.antares.model.DigitalGraph
+import ch.scorpion.antares.model.input.DipSwitch
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.view.gate.LogicGateView
+import ch.scorpion.antares.view.input.DipSwitchView
 import ch.scorpion.antares.view.net.ConstantView
 import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
@@ -117,6 +119,28 @@ class VerilogIntegrationTest : AbstractVerilogTest() {
               output O
             );
               assign O = 1'b1;
+            endmodule
+            
+        """.trimIndent(), printer.toString())
+    }
+
+    @Test
+    fun testDipSwitch() {
+        val builder = TestCircuitBuilder("dip-switch")
+        val output = builder.addOutput("O")
+        val dipSwitch = builder.addVerticeView(DipSwitchView(model = DipSwitch().also {
+            it.initialValue = DigitalSignalFactory.of(false) }
+        ))
+        builder.connect(dipSwitch, output)
+
+        VerilogGenerator(testParams()).generateHDL(printer, builder.graph as DigitalGraph)
+
+        assertEquals("""
+            
+            module \dip-switch  (
+              output O
+            );
+              assign O = 1'b0;
             endmodule
             
         """.trimIndent(), printer.toString())
