@@ -1,5 +1,6 @@
 package ch.scorpion.antares.hdl.vhdl
 
+import ch.scorpion.antares.hdl.ExportHDLPanel
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.view.DigitalGraphView
 import ch.scorpion.jabbah.base.event.ActionEvent
@@ -16,6 +17,9 @@ class ExportVHDLAction : AbstractViewAction("antares.vhdl.action") {
 	}
 
 	override fun execute(event: ActionEvent) {
-		ExportVHDLPanel.showAsDialog((view!!.mainContent.drawable as DigitalGraphView).graph as DigitalGraph)
+		ExportHDLPanel.showAsDialog(
+			ExportHDLPanel.Companion.Language.VHDL,
+			(view!!.mainContent.drawable as DigitalGraphView).graph as DigitalGraph
+		)
 	}
 }

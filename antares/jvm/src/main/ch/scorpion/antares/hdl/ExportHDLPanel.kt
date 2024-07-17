@@ -1,7 +1,9 @@
-package ch.scorpion.antares.hdl.vhdl
+package ch.scorpion.antares.hdl
 
-import ch.scorpion.antares.hdl.HDLExportParams
-import ch.scorpion.antares.hdl.HDLExportTestBenchParams
+import ch.scorpion.antares.hdl.verilog.VerilogGenerator
+import ch.scorpion.antares.hdl.vhdl.HDLException
+import ch.scorpion.antares.hdl.vhdl.VHDLGenerator
+import ch.scorpion.antares.hdl.vhdl.VHDLRenaming
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.testcase.Testcase
 import ch.scorpion.jabbah.base.Settings
@@ -31,35 +33,51 @@ import javax.swing.text.NumberFormatter
 import kotlin.io.path.exists
 
 /**
- * A panel for specifying parameters when exporting a [DigitalGraph] to VHDL,
+ * A panel for specifying parameters when exporting a [DigitalGraph] to VHDL or Verilog,
  * as well as perform exporting when pressing "Export".
  */
-class ExportVHDLPanel(
+class ExportHDLPanel(
+	private val language: Language,
 	private val circuit: DigitalGraph,
-	private val closeHandler: (ExportVHDLPanel) -> Unit
+	private val closeHandler: (ExportHDLPanel) -> Unit
 ) : JPanel() {
 
 	companion object {
 
+		enum class Language {
+			VHDL {
+				override val titleKey: String get() = "antares.vhdl.title"
+				override val fileExtension: String get() = ".vhdl"
+			},
+			Verilog {
+				override val titleKey: String get() = "antares.verilog.title"
+				override val fileExtension: String get() = ".v"
+			};
+
+			abstract val titleKey: String
+
+			/** File name extensions used for naming the generated files.*/
+			abstract val fileExtension: String
+		}
+
 		private const val DEF_WAIT_TIME = 30
 
-		/** File name extensions used for naming the generated files.*/
-		private const val VHDL_FILE_EXT = ".vhdl"
-		private const val VHDL_TEST_SUFFIX = "_tb"
+		private const val TEST_SUFFIX = "_tb"
 
 		/** Names of persistent [Settings]. */
-		private const val SETTING_USE_DELAY_MODEL = "exportVHDL.useDelayModel"
-		private const val SETTING_EXPORT_DIRECTORY = "exportVHDL.directory"
+		private const val SETTING_USE_DELAY_MODEL = "exportHDL.useDelayModel"
+		private const val SETTING_EXPORT_DIRECTORY = "exportHDL.directory"
 
-		val HELP_ID = HelpId("exportVHDL")
+		val HELP_ID = HelpId("exportHDL")
 
 		fun showAsDialog(
+			language: Language,
 			digitalGraph: DigitalGraph,
 			parent: Frame = Frame.getFrames()[0]
 		) {
-			DialogBuilder<ExportVHDLPanel>(parent)
-				.title(Translations.getString("antares.vhdl.action.name"))
-				.content { dialog -> ExportVHDLPanel(digitalGraph) {
+			DialogBuilder<ExportHDLPanel>(parent)
+				.title(Translations.getString(language.titleKey))
+				.content { dialog -> ExportHDLPanel(language, digitalGraph) {
 					it.dispose()
 					dialog.dispose()}
 				}
@@ -74,10 +92,10 @@ class ExportVHDLPanel(
 	private val cancelAction = CancelAction()
 	private val helpAction = HelpAction(HELP_ID)
 
-	/** Used to select the [Testcase] to created the test bench with. */
+	/** Used to select the [Testcase] to create the test bench with. */
 	private val testcaseComboBox = createTestcaseComboBox(circuit.testcases.testcases)
 
-	/** Used to choose if delay models in the VHDL file are to be created (e.g. "after 20 ns")*/
+	/** Used to choose if delay models in the HDL file are to be created (e.g. "after 20 ns")*/
 	private val delayModelCheckBox = JCheckBox().also {
 		it.isSelected = BaseModule.settings.getBoolean(SETTING_USE_DELAY_MODEL, true)
 	}
@@ -89,7 +107,7 @@ class ExportVHDLPanel(
 	/** Used to enter the time between test vector execution in the test bench. */
 	private val waitTimeTextField = JFormattedTextField(waitTimeFormatter)
 
-	/** Used to specify the base file name of the exported files. Will be expanded by .vhdl. */
+	/** Used to specify the base file name of the exported files. Will be expanded by [Language.fileExtension]. */
 	private val fileNameTextField = JTextField()
 
 	/** Used to select the directory where the export files are written.*/
@@ -123,9 +141,9 @@ class ExportVHDLPanel(
 		testcaseComboBox.isEnabled = testcaseComboBox.itemCount > 1
 		waitTimeTextField.isEnabled = testcaseComboBox.selectedItem != null
 
-		var text = VHDL_FILE_EXT
+		var text = language.fileExtension
 		if (testcaseComboBox.selectedItem != null) {
-			text = "$text / $VHDL_TEST_SUFFIX$VHDL_FILE_EXT"
+			text = "$text / $TEST_SUFFIX${language.fileExtension}"
 		}
 		fileNameTextExplanation.text = text
 	}
@@ -153,7 +171,7 @@ class ExportVHDLPanel(
 		// Testcase selection
 		EGBL.add(
 			panel,
-			JLabel("${Translations.getString("antares.vhdl.testcase.name")}:"),
+			JLabel("${Translations.getString("antares.hdl.testcase.name")}:"),
 			0, row,
 			1, 1,
 			0.0, 0.0,
@@ -174,7 +192,7 @@ class ExportVHDLPanel(
 		// Wait TextField
 		EGBL.add(
 			panel,
-			JLabel("${Translations.getString("antares.vhdl.waitTime.name")}:"),
+			JLabel("${Translations.getString("antares.hdl.waitTime.name")}:"),
 			0, row,    // x, y
 			1, 1,    // width, height
 			0.0, 0.0,    // weightX, weightY
@@ -192,24 +210,28 @@ class ExportVHDLPanel(
 			rowDist, 10, 0, inset)
 
 		// Delay model TextField
-		EGBL.add(
-			panel,
-			JLabel("${Translations.getString("antares.vhdl.delayModel.name")}:"),
-			0, row,    // x, y
-			1, 1,    // width, height
-			0.0, 0.0,    // weightX, weightY
-			EGBL.WEST,    // anchor
-			EGBL.NONE,    // fill
-			rowDist, inset, 0, 0)
-		EGBL.add(
-			panel,
-			delayModelCheckBox,
-			1, row++,
-			EGBL.REMAINDER, 1,
-			0.0, 0.0,
-			EGBL.WEST,
-			EGBL.NONE,
-			rowDist, 10, 0, inset)
+		if (language == Language.VHDL) {
+			EGBL.add(
+				panel,
+				JLabel("${Translations.getString("antares.vhdl.delayModel.name")}:"),
+				0, row,    // x, y
+				1, 1,    // width, height
+				0.0, 0.0,    // weightX, weightY
+				EGBL.WEST,    // anchor
+				EGBL.NONE,    // fill
+				rowDist, inset, 0, 0
+			)
+			EGBL.add(
+				panel,
+				delayModelCheckBox,
+				1, row++,
+				EGBL.REMAINDER, 1,
+				0.0, 0.0,
+				EGBL.WEST,
+				EGBL.NONE,
+				rowDist, 10, 0, inset
+			)
+		}
 
 		val fileNameTextPanel = JPanel()
 		fileNameTextPanel.layout = BoxLayout(fileNameTextPanel, BoxLayout.LINE_AXIS)
@@ -220,7 +242,7 @@ class ExportVHDLPanel(
 		// File name TextField
 		EGBL.add(
 			panel,
-			JLabel("${Translations.getString("antares.vhdl.baseFileName.name")}:"),
+			JLabel("${Translations.getString("antares.hdl.baseFileName.name")}:"),
 			0, row,    // x, y
 			1, 1,    // width, height
 			0.0, 0.0,    // weightX, weightY
@@ -240,7 +262,7 @@ class ExportVHDLPanel(
 		// Directory field
 		EGBL.add(
 			panel,
-			JLabel("${Translations.getString("antares.vhdl.exportDirectory.name")}:"),
+			JLabel("${Translations.getString("antares.hdl.exportDirectory.name")}:"),
 			0, row,    // x, y
 			1, 1,    // width, height
 			0.0, 0.0,    // weightX, weightY
@@ -292,7 +314,7 @@ class ExportVHDLPanel(
 		override fun getListCellRendererComponent(list: JList<*>?, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
 			val label = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus) as JLabel
 			label.text = if (value == null) {
-				Translations.getString("antares.vhdl.testcase.none")
+				Translations.getString("antares.hdl.testcase.none")
 			} else {
 				(value as Testcase).name.getTranslation()
 			}
@@ -307,14 +329,14 @@ class ExportVHDLPanel(
 
 				if (params.hdlFile.exists() || params.testBenchParams?.tbFile?.exists() == true) {
 					when (JOptionPane.showConfirmDialog(
-						this@ExportVHDLPanel,
-						Translations.getString("antares.vhdl.fileExists.msg"),
+						this@ExportHDLPanel,
+						Translations.getString("antares.hdl.fileExists.msg"),
 						getValue(Action.NAME) as String,
 						JOptionPane.YES_NO_CANCEL_OPTION,
 						JOptionPane.QUESTION_MESSAGE
 					)) {
 						JOptionPane.CANCEL_OPTION -> {
-							closeHandler(this@ExportVHDLPanel)
+							closeHandler(this@ExportHDLPanel)
 							return
 						}
 						JOptionPane.NO_OPTION -> return
@@ -324,11 +346,11 @@ class ExportVHDLPanel(
 
 				export(params)
 
-				closeHandler(this@ExportVHDLPanel)
+				closeHandler(this@ExportHDLPanel)
 			} catch (e: IllegalArgumentException) {
 				// Validation error
 				JOptionPane.showMessageDialog(
-					this@ExportVHDLPanel,
+					this@ExportHDLPanel,
 					e.message,
 					getValue(Action.NAME) as String,
 					JOptionPane.ERROR_MESSAGE
@@ -343,22 +365,22 @@ class ExportVHDLPanel(
 	 */
 	private fun validatedParameters(): HDLExportParams {
 		if (StringUtils.isBlank(fileNameTextField.text)) {
-			throw IllegalArgumentException(Translations.getString("antares.vhdl.portNameNotFound.error.text"))
+			throw IllegalArgumentException(Translations.getString("antares.hdl.fileNameEmpty.error.txt"))
 		}
 
 		val renaming = VHDLRenaming()
 		val baseName = fileNameTextField.text
 		val normalizedBaseName = renaming.checkName(StringUtils.simplify(baseName))
 		if (baseName != normalizedBaseName) {
-			throw IllegalArgumentException(Translations.getString("antares.vhdl.fileNameInvalid.error.txt", normalizedBaseName))
+			throw IllegalArgumentException(Translations.getString("antares.hdl.fileNameInvalid.error.txt", normalizedBaseName))
 		}
 
-		val vhdlFile = Paths.get(directorySelectionField.path, "$baseName$VHDL_FILE_EXT")
+		val vhdlFile = Paths.get(directorySelectionField.path, "$baseName${language.fileExtension}")
 
 		var testBenchParams: HDLExportTestBenchParams? = null
 		if (testcaseComboBox.selectedItem != null) {
 			val testBenchName = createTestName(baseName, renaming)
-			val tbFile = Paths.get(directorySelectionField.path, "$testBenchName$VHDL_FILE_EXT")
+			val tbFile = Paths.get(directorySelectionField.path, "$testBenchName${language.fileExtension}")
 			testBenchParams = HDLExportTestBenchParams(
 				renaming,
 				testBenchName,
@@ -389,14 +411,15 @@ class ExportVHDLPanel(
 	private fun export(params: HDLExportParams) {
 		InvocationHandler.invoke {
 			try {
-				VHDLGenerator(
-					params,
-					generateComment = true
-				).generate(circuit)
+				if (language == Language.VHDL) {
+					VHDLGenerator(params, generateComment = true).generate(circuit)
+				} else {
+					VerilogGenerator(params, generateComment = true).generate(circuit)
+				}
 
 				JOptionPane.showMessageDialog(
 					Frame.getFrames()[0],
-					Translations.getString("antares.vhdl.success.msg", params.hdlFile.toAbsolutePath()),
+					Translations.getString("antares.hdl.success.msg", params.hdlFile.toAbsolutePath()),
 					Translations.getString("base.action.export.name"),
 					JOptionPane.INFORMATION_MESSAGE
 				)
@@ -410,7 +433,7 @@ class ExportVHDLPanel(
 			} catch (e: DslError) {
 				JOptionPane.showMessageDialog(
 					Frame.getFrames()[0],
-					Translations.getString("antares.vhdl.testcase.error.text", e.message ?: ""),
+					Translations.getString("antares.hdl.testcase.error.text", e.message ?: ""),
 					Translations.getString("base.action.export.name"),
 					JOptionPane.ERROR_MESSAGE
 				)
@@ -420,7 +443,7 @@ class ExportVHDLPanel(
 
 	private inner class CancelAction : AbstractAction(Translations.getString("base.action.cancel.name")) {
 		override fun actionPerformed(e: ActionEvent?) {
-			closeHandler(this@ExportVHDLPanel)
+			closeHandler(this@ExportHDLPanel)
 		}
 	}
 }

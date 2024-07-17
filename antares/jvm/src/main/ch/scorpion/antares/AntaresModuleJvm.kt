@@ -1,6 +1,6 @@
 package ch.scorpion.antares
 
-import ch.scorpion.antares.hdl.vhdl.ExportVHDLPanel
+import ch.scorpion.antares.hdl.ExportHDLPanel
 import ch.scorpion.antares.model.*
 import ch.scorpion.antares.model.expression.BooleanExpressionNotation
 import ch.scorpion.antares.model.gate.AbstractLogicGate
@@ -447,6 +447,6 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 	private fun registerHelpSources() {
 		HelpSourceRegistry.register(TestcaseViewSwing.HELP_ID, HelpSource("/circuits/circuit-tests"))
-		HelpSourceRegistry.register(ExportVHDLPanel.HELP_ID, HelpSource("/circuits/vhdl-export"))
+		HelpSourceRegistry.register(ExportHDLPanel.HELP_ID, HelpSource("/circuits/vhdl-export"))
 	}
 }

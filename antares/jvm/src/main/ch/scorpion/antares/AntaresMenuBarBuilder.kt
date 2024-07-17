@@ -1,5 +1,6 @@
 package ch.scorpion.antares
 
+import ch.scorpion.antares.hdl.verilog.ExportVerilogAction
 import ch.scorpion.antares.hdl.vhdl.ExportVHDLAction
 import ch.scorpion.antares.view.GraphViewAnimationAction
 import ch.scorpion.antares.view.TestAction
@@ -48,6 +49,7 @@ class AntaresMenuBarBuilder(
 	override fun fillExportMenu(menu: JMenu) {
 		super.fillExportMenu(menu)
 		menu.add(JMenuItem(ActionWrapperSwing(ExportVHDLAction())))
+		menu.add(JMenuItem(ActionWrapperSwing(ExportVerilogAction())))
 	}
 
     override fun fillViewMenu(menu: JMenu) {
