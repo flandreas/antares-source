@@ -77,7 +77,7 @@ class ViewImplTest {
 	@Test
 	@Ignore
 	fun shouldUseHigherDevicePixelRatio() {
-		canvas.withDevicePixelRatio(2)
+		canvas.withDevicePixelRatio(2.0)
 
 		view.addDrawable(DrawableMockBuilder()
 			.withBoundingBox(Rectangle2D(0, 0, 10, 10))

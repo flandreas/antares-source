@@ -2,16 +2,16 @@ package ch.scorpion.antares.hdl.verilog
 
 import ch.scorpion.antares.hdl.*
 import ch.scorpion.antares.hdl.expression.*
-import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.jabbah.base.io.CodePrinter
 import ch.scorpion.jabbah.base.io.Separator
 import ch.scorpion.jabbah.base.logger
 
 class VerilogCreator(
-    private val out: CodePrinter,
+    out: CodePrinter,
     private val applyDelays: Boolean = true
-) {
+) : AbstractVerilogCreator(out) {
+
     companion object {
         private val LOG by logger(VerilogCreator::class)
     }
@@ -50,7 +50,9 @@ class VerilogCreator(
     }
 
     private fun printBuiltInNode(node: BuiltInNode) {
-        // TODO
+        val template = library.getTemplate(node)
+        val entityName = template.print(out, node)
+        node.hdlEntityName = entityName
     }
 
     private fun printModule(circuit: HDLCircuit, moduleName: String) {
@@ -84,7 +86,8 @@ class VerilogCreator(
         val builder = StringBuilder()
         builder.append(getOutsidePortDirection(port))
         if (bitWidth.width > 1) {
-            builder.append(" [${bitWidth.width - 1}:0")
+            builder.append(' ')
+            builder.append(getType(bitWidth))
         }
         return builder.toString()
     }
@@ -100,7 +103,7 @@ class VerilogCreator(
         circuit.nets.filter { it.needsVariable }.forEach { net ->
             var range = ""
             if (net.bitWidth.width > 1) {
-                range += " [${net.bitWidth.width - 1}:0]"
+                range += getType(net.bitWidth)
             }
             out.print("wire").print(range).print(' ').print(net.name).println(";")
         }
@@ -110,7 +113,7 @@ class VerilogCreator(
         circuit.nodes.forEachIndexed { index, node ->
             when (node) {
                 is HDLNodeAssignment -> printExpression(node)
-                is HDLCircuitNode -> printModuleInstantiation(node, index)
+                is BuiltInNode -> printModuleInstantiation(node, index)
                 else -> throw IllegalArgumentException("Unknown node type ${node.javaClass.canonicalName}")
             }
         }
@@ -174,11 +177,6 @@ class VerilogCreator(
 
     private fun value(constant: ConstantExpression): String =
         value(constant.value.getValue(), constant.value.bitWidth)
-
-    private fun value(value: ULong, bitWidth: BitWidth): String {
-        var s = BitOperation.longToBinaryPadded(value, bitWidth)
-        return "${bitWidth.width}'b$s"
-    }
 
     private fun printModuleInstantiation(node: BuiltInNode, index: Int) {
         val moduleName = node.hdlEntityName

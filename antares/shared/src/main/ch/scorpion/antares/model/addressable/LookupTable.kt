@@ -96,6 +96,9 @@ class LookupTable(
 
 	/** ---- [LookupTable] */
 
+	@Suppress("unused") // Scripts
+	fun intDataAt(address: Int): Int = dataAt(address).toInt()
+
 	fun fillFromTruthTable(truthTable: TruthTable, outputColumn: Int) {
 		for (row in 0 until truthTable.rowsCount) {
 			val value = truthTable.getValue(row, outputColumn)

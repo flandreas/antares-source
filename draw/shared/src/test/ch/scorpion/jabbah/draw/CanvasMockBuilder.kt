@@ -23,10 +23,10 @@ class CanvasMockBuilder {
 		every { canvas.addPropertyChangeListener(capture(propertyChangeSlot)) } calls  {
 			propertyChangeListeners.add(propertyChangeSlot.get())
 		}
-		withDevicePixelRatio(1)
+		withDevicePixelRatio(1.0)
 	}
 
-	fun withDevicePixelRatio(devicePixelRatio: Int): CanvasMockBuilder {
+	fun withDevicePixelRatio(devicePixelRatio: Double): CanvasMockBuilder {
 		every { canvas.devicePixelRatio } returns devicePixelRatio
 		return this
 	}

@@ -30,6 +30,13 @@ abstract class AbstractVHDLCreator(
 			}
 			return s
 		}
+
+		fun getType(bitWidth: BitWidth): String =
+			if (bitWidth == BitWidth.BW_1) {
+				"std_logic"
+			} else {
+				"std_logic_vector(${bitWidth.width - 1} downto 0)"
+			}
 	}
 
 	protected fun printImports() {
@@ -40,12 +47,6 @@ abstract class AbstractVHDLCreator(
 			.println()
 	}
 
-	protected fun getType(bitWidth: BitWidth): String =
-		if (bitWidth == BitWidth.BW_1) {
-			"std_logic"
-		} else {
-			"std_logic_vector(${bitWidth.width - 1} downto 0)"
-		}
 
 	private fun getOutsidePortDirection(port: HDLPort): String =
 		when (port.direction) {

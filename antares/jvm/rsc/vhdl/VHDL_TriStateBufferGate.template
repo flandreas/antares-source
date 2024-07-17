@@ -2,19 +2,19 @@ library ieee;
 use ieee.std_logic_1164.all;
 
 {%- if vertice.bitWidth.width == 1 %}
-    {%- set entityName = vhdl.setEntityName('VHDL_TriStateBufferGate') %}
+    {%- set entityName = entity.setEntityName('VHDL_TriStateBufferGate') %}
 {%- else %}
-    {%- set entityName = vhdl.setEntityName('VHDL_TriStateBufferGate_MultiBit') %}
+    {%- set entityName = entity.setEntityName('VHDL_TriStateBufferGate_MultiBit') %}
 {%- endif %}
 
 entity {{ entityName }} is
 {%- if vertice.bitWidth.width > 1 %}
-  generic (bitWidth : integer);{{ vhdl.registerGenericValue('bitWidth', vertice.bitWidth.width) }}
+  generic (bitWidth : integer);{{ entity.registerGenericValue('bitWidth', vertice.bitWidth.width) }}
 {%- endif %}
   port (
-    p1: in {{ vhdl.genericType('bitWidth', vertice.bitWidth.width) }};
+    p1: in {{ entity.genericType('bitWidth', vertice.bitWidth.width) }};
     EN: in std_logic;
-    p3: out {{ vhdl.genericType('bitWidth', vertice.bitWidth.width) }});
+    p3: out {{ entity.genericType('bitWidth', vertice.bitWidth.width) }});
 end {{ entityName }};
 
 architecture Behavioral of {{ entityName }} is

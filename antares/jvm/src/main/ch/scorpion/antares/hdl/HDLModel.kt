@@ -134,7 +134,7 @@ class HDLModel(
 				BuiltInNode(vertice::class.simpleName!!, vertice.type).also {
 					addInputsOutputs(it, vertice, parent)
 					it.createExpressions()
-					it.setAttribute(VHDLTemplate.ATTR_VERTICE, vertice)
+					it.setAttribute(AbstractHDLTemplate.ATTR_VERTICE, vertice)
 				}
 			}
 		}

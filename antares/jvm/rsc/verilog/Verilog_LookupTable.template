@@ -1,0 +1,26 @@
+{%- if vertice.name == '' || vertice.name == null %}
+{{ entity.error('antares.vhdl.missingLabel.error', 'ROM') }}
+{%- else %}
+{%- set entityName = entity.setEntityName('Verilog_LookupTable_' + vertice.name) %}
+{%- endif %}
+{%- if vertice.addressWidth.width > 1 %}
+{%- set dBitRange = '[0:' + (vertice.addressWidth.width - 1) + ']' %}
+{%- else %}
+{%- set dBitRange = ' ' %}
+{%- endif %}
+module {{ entityName }} (
+  input {{ entity.type(vertice.addressWidth.width) }} A,
+  output reg {{ entity.type(vertice.dataWidth.width) }} D
+);
+  reg {{ entity.type(vertice.dataWidth.width) }} lut {{ dBitRange }};
+
+  always @ (*) begin
+    D = lut[A];
+  end
+
+  initial begin
+{%- for i in 0..vertice.memory.nonZeroLength - 1 %}
+    lut[{{i}}] = {{ entity.value(vertice.intDataAt(i), vertice.dataWidth) }};
+{%- endfor %}
+  end
+endmodule
