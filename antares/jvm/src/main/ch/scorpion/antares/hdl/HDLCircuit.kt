@@ -29,7 +29,8 @@ class HDLCircuit(
 	private val _nodes = mutableListOf<AbstractHDLNode>()
 	val nodes: List<AbstractHDLNode> get() = _nodes
 
-	private val ports = mutableListOf<HDLPort>()
+	private val _ports = mutableListOf<HDLPort>()
+	val ports: List<HDLPort> get() = _ports
 
 	private val netMap: MutableMap<Net<*>, HDLNet> = mutableMapOf()
 
@@ -39,21 +40,21 @@ class HDLCircuit(
 
 	val uuid: UUID get() = circuit.uuid
 
-	val portsCount: Int get() = ports.size
+	val portsCount: Int get() = _ports.size
 
 	/**
 	 * Returns the [HDLPort]s sending a signal into this [HDLCircuit].
 	 * From inside, the [HDLPort] is [HDLPort.Direction.OUT], because it defines a value.
 	 */
-	val inputs: List<HDLPort> get() = ports.filter { it.direction == HDLPort.Direction.OUT }
+	val inputs: List<HDLPort> get() = _ports.filter { it.direction == HDLPort.Direction.OUT }
 
 	/**
 	 * Returns the [HDLPort]s sending a signal out of this [HDLCircuit].
 	 * From inside, the [HDLPort] is [HDLPort.Direction.IN], because it reads the value to be sent outwards.
 	 */
-	val outputs: List<HDLPort> get() = ports.filter { it.direction == HDLPort.Direction.IN }
+	val outputs: List<HDLPort> get() = _ports.filter { it.direction == HDLPort.Direction.IN }
 
-	val inOuts: List<HDLPort> get() = ports.filter { it.direction == HDLPort.Direction.INOUT }
+	val inOuts: List<HDLPort> get() = _ports.filter { it.direction == HDLPort.Direction.INOUT }
 
 	var entityName: String = elementName
 		private set
@@ -119,10 +120,10 @@ class HDLCircuit(
 	fun getHDLNetOfPort(port: DigitalPort): HDLNet? =
 		port.net?.let { netMap.computeIfAbsent(it) { HDLNet(bitWidth = port.bitWidth) } }
 
-	fun getPort(name: String): HDLPort? = ports.firstOrNull { it.name.equals(name, true) }
+	fun getPort(name: String): HDLPort? = _ports.firstOrNull { it.name.equals(name, true) }
 
 	private fun addPort(port: HDLPort) {
-		ports.add(port)
+		_ports.add(port)
 	}
 
 	private fun nameNets() {
@@ -133,12 +134,12 @@ class HDLCircuit(
 	}
 
 	fun rename(renaming: HDLRenaming) {
-		ports.forEach { it.rename(renaming) }
+		_ports.forEach { it.rename(renaming) }
 		nets.forEach { it.rename(renaming) }
 		nodes.forEach { it.rename(renaming) }
 		entityName = renaming.checkName(entityName)
 
-		checkUniqueNames(ports.map { it::name })
+		checkUniqueNames(_ports.map { it::name })
 		checkUniqueNames(nets.toSet().map { it::name })
 	}
 

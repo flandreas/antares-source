@@ -45,6 +45,8 @@ class VerilogRenaming : HDLRenaming {
                 c == '$'
             ) {
                 sb.append(c)
+            } else if (c == ' ') {
+                sb.append('_')
             } else {
                 when (c) {
                     '\\' -> {}

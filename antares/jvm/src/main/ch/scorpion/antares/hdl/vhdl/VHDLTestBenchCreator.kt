@@ -3,13 +3,10 @@ package ch.scorpion.antares.hdl.vhdl
 import ch.scorpion.antares.hdl.HDLExportTestBenchParams
 import ch.scorpion.antares.hdl.HDLModel
 import ch.scorpion.antares.hdl.HDLPort
+import ch.scorpion.antares.hdl.HdlTestVectorConsumer
 import ch.scorpion.antares.model.port.DigitalPort
-import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.model.testcase.TestVector
-import ch.scorpion.antares.model.testcase.TestVectorConsumer
 import ch.scorpion.antares.model.testcase.Testcase
 import ch.scorpion.antares.model.testcase.Value
 import ch.scorpion.antares.model.testcase.parser.TestScript
@@ -17,8 +14,8 @@ import ch.scorpion.antares.model.testcase.parser.TestcaseAnalyser
 import ch.scorpion.antares.model.testcase.parser.TestcaseInterpreter
 import ch.scorpion.antares.model.testcase.parser.TestcaseParser
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.dsl.SyntaxError
 import ch.scorpion.jabbah.base.dsl.SemanticError
+import ch.scorpion.jabbah.base.dsl.SyntaxError
 import ch.scorpion.jabbah.base.io.CodePrinter
 import ch.scorpion.jabbah.base.io.Separator
 import ch.scorpion.jabbah.base.parser.TextLocation
@@ -35,6 +32,19 @@ class VHDLTestBenchCreator(
 	private val baseName: String,
 	private val params: HDLExportTestBenchParams
 ) : AbstractVHDLCreator(out) {
+
+	companion object {
+		private fun getSimpleValue(bitWidth: BitWidth, c: Char): String {
+			if (bitWidth == BitWidth.BW_1) {
+				return "'$c'"
+			}
+			val sb = StringBuilder("\"")
+			(0 until bitWidth.width).forEach { _ ->
+				sb.append(c)
+			}
+			return sb.append("\"").toString()
+		}
+	}
 
 	private val mainComponentName = model.main.elementName
 
@@ -124,7 +134,7 @@ class VHDLTestBenchCreator(
 
 	private fun printTestData(portOrder: List<HDLPort>) {
 		out.println("constant test_data : test_data_array := (").inc()
-		val consumer = VHDLTestVectorConsumer(portOrder)
+		val consumer = VHDLTestVectorConsumer(out, portOrder)
 		val interpreter = TestcaseInterpreter(testScript, model.main.circuit, consumer)
 		interpreter.interpret()
 		out.println(");").dec()
@@ -182,35 +192,15 @@ class VHDLTestBenchCreator(
 		return "std_logic'image"
 	}
 
-	private fun getSimpleValue(bitWidth: BitWidth, c: Char): String {
-		if (bitWidth == BitWidth.BW_1) {
-			return "'$c'"
-		}
-		val sb = StringBuilder("\"")
-		(0 until bitWidth.width).forEach { _ ->
-			sb.append(c)
-		}
-		return sb.append("\"").toString()
-	}
+	private class VHDLTestVectorConsumer(out: CodePrinter, portOrder: List<HDLPort>) : HdlTestVectorConsumer(out, portOrder) {
 
-	private inner class VHDLTestVectorConsumer(private val portOrder: List<HDLPort>) : TestVectorConsumer {
-
-		private var line = 0
 		private val lineSep = Separator(out, ",\n")
 
-		override fun consume(testVector: TestVector) {
-			val clockedSignal = testVector.values.firstOrNull { it.type == Value.Type.CLOCKED }
-			if (clockedSignal != null) {
-				lineSep.check()
-				printValues(testVector.values, true, clockedSignal.value.not())
-				lineSep.check()
-				printValues(testVector.values, true, clockedSignal.value)
-			}
+		override fun checkNewLine() {
 			lineSep.check()
-			printValues(testVector.values, false, null)
 		}
 
-		private fun printValues(values: List<Value>, isClock: Boolean, clock: DigitalSignal?) {
+		override fun printValues(values: List<Value>, isClock: Boolean, clock: DigitalSignal?) {
 			// Named association required by VHDL specification if list has only 1 element
 			out.print("${line++} => (")
 			val sep = Separator(out, ", ")

@@ -23,7 +23,10 @@ class VerilogGenerator(
     }
 
     override fun writeTestBench(model: HDLModel, printer: CodePrinter) {
-        TODO("Not yet implemented")
+        printer.use {
+            printComment(it)
+            VerilogTestBenchCreator(it, model, params.baseName, params.testBenchParams!!).print()
+        }
     }
 
     private fun printComment(printer: CodePrinter) {

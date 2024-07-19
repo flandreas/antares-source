@@ -23,4 +23,9 @@ class VerilogRenamingTest {
         assertEquals("\\input ", renaming.checkName("input"))
         assertEquals("\\output ", renaming.checkName("output"))
     }
+
+    @Test
+    fun shouldReplaceBlanksWithUnderscoresIfNotEscaped() {
+        assertEquals("Half_Adder", renaming.checkName("Half Adder"))
+    }
 }
