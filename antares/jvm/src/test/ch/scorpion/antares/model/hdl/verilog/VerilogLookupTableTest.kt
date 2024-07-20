@@ -36,7 +36,10 @@ class VerilogLookupTableTest : AbstractVerilogTest() {
               reg [7:0] lut [0:3];
             
               always @ (*) begin
-                D = lut[A];
+                if (A >= 4'b0100)
+                  D = 8'h0;
+                else
+                  D = lut[A];
               end
             
               initial begin

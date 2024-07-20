@@ -31,6 +31,8 @@ abstract class AbstractHDLTemplate(private val entityName: String) {
 
     abstract fun typeImpl(bitWidth: Int): String
 
+    abstract fun zeroImpl(bitWidth: BitWidth): String
+
     abstract fun createFileName(name: String): String
 
     fun print(out: CodePrinter, node: BuiltInNode): String {
@@ -120,13 +122,9 @@ abstract class AbstractHDLTemplate(private val entityName: String) {
         fun value(value: Int, bitWidth: BitWidth): String =
             valueImpl(value.toULong(), bitWidth)
 
-        // TODO: This is VHDL
+        @Suppress("unused")
         fun zero(bitWidth: BitWidth): String =
-            if (bitWidth == BitWidth.BW_1) {
-                "'0'"
-            } else {
-                "(others => '0')"
-            }
+            zeroImpl(bitWidth)
 
         @Suppress("unused")
         fun error(textKey: String) {

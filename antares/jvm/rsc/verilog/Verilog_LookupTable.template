@@ -16,7 +16,10 @@ module {{ entityName }} (
   reg {{ entity.type(vertice.dataWidth.width) }} lut [0:{{ lutSize - 1 }}];
 
   always @ (*) begin
-    D = lut[A];
+    if (A >= {{ entity.value(lutSize, vertice.addressWidth) }})
+      D = {{ entity.zero(vertice.dataWidth)}};
+    else
+      D = lut[A];
   end
 
   initial begin

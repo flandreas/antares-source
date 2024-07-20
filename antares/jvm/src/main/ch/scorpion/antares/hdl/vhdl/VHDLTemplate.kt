@@ -1,13 +1,10 @@
 package ch.scorpion.antares.hdl.vhdl
 
 import ch.scorpion.antares.hdl.AbstractHDLTemplate
-import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.antares.hdl.BuiltInNode
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.jabbah.base.io.CodePrinter
 import ch.scorpion.jabbah.base.io.Separator
-import ch.scorpion.jabbah.base.logger
-import java.lang.IllegalStateException
 
 /** Reads a file containing VHDL code to create an [VHDLTemplate] */
 class VHDLTemplate(name: String) : AbstractHDLTemplate("VHDL_$name") {
@@ -22,6 +19,13 @@ class VHDLTemplate(name: String) : AbstractHDLTemplate("VHDL_$name") {
 		AbstractVHDLCreator.value(value, bitWidth)
 
 	override fun typeImpl(bitWidth: Int): String = AbstractVHDLCreator.getType(BitWidth.of(bitWidth))
+
+	override fun zeroImpl(bitWidth: BitWidth): String =
+		if (bitWidth == BitWidth.BW_1) {
+			"'0'"
+		} else {
+			"(others => '0')"
+		}
 
 	fun writeGenericMap(out: CodePrinter, node: BuiltInNode) {
 		val entity = getEntity(node.attributes)
