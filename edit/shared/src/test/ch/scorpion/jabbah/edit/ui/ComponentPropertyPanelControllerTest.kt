@@ -38,7 +38,7 @@ class ComponentPropertyPanelControllerTest {
 	init {
 		val canvas = mock<Canvas>(MockMode.autofill)
 		every { canvas.dimension } returns Dimension2D(1000, 1000)
-		every { canvas.devicePixelRatio } returns 1
+		every { canvas.devicePixelRatio } returns 1.0
 		view.canvas = canvas
 		ComponentPropertyPanelMockBuilder(controller)
 		drawing.add(component)

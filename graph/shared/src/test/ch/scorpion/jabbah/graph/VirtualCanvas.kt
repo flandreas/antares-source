@@ -26,7 +26,7 @@ class VirtualCanvas(
 
 	/** ---- [Canvas] interface */
 
-	override val devicePixelRatio: Int = 1
+	override val devicePixelRatio: Double = 1.0
 
 	override val dimension: Dimension2D = Dimension2D(1000, 1000)
 

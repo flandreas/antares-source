@@ -41,7 +41,7 @@ abstract class AbstractGraphViewEditingTest(
 
 		view.canvas = CanvasMockBuilder()
 			.withDimension(Dimension2D(1000, 1000))
-			.withDevicePixelRatio(1)
+			.withDevicePixelRatio(1.0)
 			.withView(view)
 			.build()
 
