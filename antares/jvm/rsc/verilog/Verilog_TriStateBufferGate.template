@@ -1,0 +1,18 @@
+{%- if vertice.bitWidth.width == 1 %}
+    {%- set entityName = entity.setEntityName('Verilog_TriStateBufferGate') %}
+    {%- set zval = "1'bz" %}
+{%- else %}
+    {%- set entityName = entity.setEntityName('Verilog_TriStateBufferGate_MultiBit') %}
+    {%- set zval = "{BIT_WIDTH{1'bz}}" %}
+{%- endif %}
+module {{ entityName }} {%- if vertice.bitWidth.width > 1 %}#(
+  parameter BIT_WIDTH = 2{{ entity.registerGenericValue('BIT_WIDTH', vertice.bitWidth.width) }}
+)
+{%- endif %}
+(
+  input {{ entity.genericType('BIT_WIDTH', vertice.bitWidth.width) }} p1,
+  input EN,
+  output {{ entity.genericType('BIT_WIDTH', vertice.bitWidth.width) }} p3
+);
+  assign p3 = (EN == 1'b1)? p1 : {{ zval }};
+endmodule

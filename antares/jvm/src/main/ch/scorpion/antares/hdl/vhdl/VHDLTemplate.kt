@@ -27,6 +27,13 @@ class VHDLTemplate(name: String) : AbstractHDLTemplate("VHDL_$name") {
 			"(others => '0')"
 		}
 
+	override fun genericTypeImpl(name: String, bitWidth: Int): String =
+		if (bitWidth == 1) {
+			"std_logic"
+		} else {
+			"std_logic_vector(($name - 1) downto 0)"
+		}
+
 	fun writeGenericMap(out: CodePrinter, node: BuiltInNode) {
 		val entity = getEntity(node.attributes)
 		if (entity.generics.isNotEmpty()) {

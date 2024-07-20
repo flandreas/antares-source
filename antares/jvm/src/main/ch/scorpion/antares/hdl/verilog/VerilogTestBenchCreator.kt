@@ -210,7 +210,7 @@ class VerilogTestBenchCreator(
                 if (port.direction == HDLPort.Direction.IN) {
                     sep.check()
                     if (isClock) {
-                        out.print(toBinaryString(0UL, Value.Type.DONT_CARE, port.bitWidth.width))
+                        out.print(toBinaryString(Value.X, port.bitWidth.width))
                     } else {
                         out.print(toBinaryString(value, port.bitWidth.width))
                     }
@@ -226,13 +226,10 @@ class VerilogTestBenchCreator(
             // empty
         }
 
-        private fun toBinaryString(value: Value, bits: Int): String =
-            toBinaryString(value.value.getValue(), value.type, bits)
-
-        private fun toBinaryString(value: ULong, type: Value.Type, bits: Int): String {
+        private fun toBinaryString(value: Value, bits: Int): String {
             var binStr = ""
             var fillChar = '0'
-            when (type) {
+            when (value.type) {
                 Value.Type.DONT_CARE -> fillChar = 'x'
                 Value.Type.UNDEFINED -> fillChar = 'z'
                 else -> {
@@ -240,7 +237,7 @@ class VerilogTestBenchCreator(
                         // TODO I18N
                         throw HDLException("Test vector longer than ${BitWidth.MAX} not supported")
                     }
-                    binStr = BitOperation.longToBinaryPadded(value, BitWidth.of(bits))
+                    binStr = BitOperation.longToBinaryPadded(value.value.getValue(), BitWidth.of(bits))
                 }
             }
 

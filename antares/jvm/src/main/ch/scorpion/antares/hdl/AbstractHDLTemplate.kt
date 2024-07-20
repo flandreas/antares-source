@@ -33,6 +33,8 @@ abstract class AbstractHDLTemplate(private val entityName: String) {
 
     abstract fun zeroImpl(bitWidth: BitWidth): String
 
+    abstract fun genericTypeImpl(name: String, bitWidth: Int): String
+
     abstract fun createFileName(name: String): String
 
     fun print(out: CodePrinter, node: BuiltInNode): String {
@@ -160,13 +162,7 @@ abstract class AbstractHDLTemplate(private val entityName: String) {
         @Suppress("unused")
         fun type(bitWidth: Int): String = typeImpl(bitWidth)
 
-        // TODO: This is VHDL
         @Suppress("unused")
-        fun genericType(name: String, bitWidth: Int): String =
-            if (bitWidth == 1) {
-                "std_logic"
-            } else {
-                "std_logic_vector(($name - 1) downto 0)"
-            }
+        fun genericType(name: String, bitWidth: Int): String = genericTypeImpl(name, bitWidth)
     }
 }

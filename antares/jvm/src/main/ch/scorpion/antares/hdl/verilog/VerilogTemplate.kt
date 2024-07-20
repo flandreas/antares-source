@@ -22,6 +22,13 @@ class VerilogTemplate(name: String) : AbstractHDLTemplate("Verilog_$name") {
 
     override fun zeroImpl(bitWidth: BitWidth): String = valueImpl(0UL, bitWidth)
 
+    override fun genericTypeImpl(name: String, bitWidth: Int): String =
+        if (bitWidth == 1) {
+            ""
+        } else {
+            "[($name - 1):0]"
+        }
+
     fun writeGenericMap(out: CodePrinter, node: BuiltInNode) {
         val entity = getEntity(node.attributes)
         if (entity.generics.isNotEmpty()) {
