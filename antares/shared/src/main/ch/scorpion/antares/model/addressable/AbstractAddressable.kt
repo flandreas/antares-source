@@ -47,6 +47,9 @@ abstract class AbstractAddressable<T : Addressable>(
 
 	override fun dataAt(address: Int): ULong = memory.read(address)
 
+	@Suppress("unused") // Scripts
+	fun intDataAt(address: Int): Int = dataAt(address).toInt()
+
 	override fun setDataAt(address: Int, value: ULong, signalHandler: SignalHandler?) {
 		val oldValue = memory.read(address)
 		memory.write(address, value)

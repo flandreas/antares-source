@@ -27,8 +27,6 @@ abstract class AbstractHDLTemplate(private val entityName: String) {
     /** Maps element names to the corresponding [Entity]. */
     private val entities = mutableMapOf<String, Entity>()
 
-    //abstract val entityName: String
-
     abstract fun valueImpl(value: ULong, bitWidth: BitWidth): String
 
     abstract fun typeImpl(bitWidth: Int): String
@@ -122,6 +120,7 @@ abstract class AbstractHDLTemplate(private val entityName: String) {
         fun value(value: Int, bitWidth: BitWidth): String =
             valueImpl(value.toULong(), bitWidth)
 
+        // TODO: This is VHDL
         fun zero(bitWidth: BitWidth): String =
             if (bitWidth == BitWidth.BW_1) {
                 "'0'"
@@ -163,6 +162,7 @@ abstract class AbstractHDLTemplate(private val entityName: String) {
         @Suppress("unused")
         fun type(bitWidth: Int): String = typeImpl(bitWidth)
 
+        // TODO: This is VHDL
         @Suppress("unused")
         fun genericType(name: String, bitWidth: Int): String =
             if (bitWidth == 1) {

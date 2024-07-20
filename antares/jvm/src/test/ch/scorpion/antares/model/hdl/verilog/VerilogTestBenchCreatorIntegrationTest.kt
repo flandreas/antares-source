@@ -49,7 +49,7 @@ class VerilogTestBenchCreatorIntegrationTest : AbstractStandardLibraryBasedCircu
               wire S;
               wire C;
 
-              half_adder half_adder0 (
+              Half_Adder Half_Adder0 (
                 .A(A),
                 .B(B),
                 .S(S),
