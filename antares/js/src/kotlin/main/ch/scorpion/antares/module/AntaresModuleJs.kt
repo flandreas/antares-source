@@ -13,6 +13,8 @@ import ch.scorpion.jabbah.graph.draw.ImageLoaderJs
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.library.dictionary.Akrab2RestLibraryDictionaryPersistenceService
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.model.nonvolatile.NonVolatileServiceJs
 import ch.scorpion.jabbah.graph.project.ProjectManagementService
 import ch.scorpion.jabbah.graph.project.ProjectModule
 
@@ -34,6 +36,8 @@ object AntaresModuleJs : AbstractModule() {
         // Required by Components that build Images programmatically, such as VideoRamView.
 
         DrawModule.imageLoader = ImageLoaderJs()
+
+        GraphModelModule.nonVolatileService = NonVolatileServiceJs()
 
         LibraryModule.systemLibraryPersistenceService = Akrab2RestSystemLibraryPersistenceServiceJs(akrabUrl)
         LibraryModule.libraryFactory = AntaresLibraryFactory()

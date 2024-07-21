@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
+import ch.scorpion.jabbah.graph.model.nonvolatile.NonVolatileStorable
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
 import ch.scorpion.jabbah.graph.model.param.GraphParamValues
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -138,7 +139,12 @@ interface Graph : GraphPortOwner, Namable, Describable, Storable, Bean {
 	 */
 	fun checkDesign(signalHandler: SignalHandler, eventBus: EventBus): Boolean
 
-	fun executionInitialize(signalHandler: SignalHandler)
+	/**
+	 * Called when execution has been started.
+	 * @param nonVolatileData the [NonVolatileStorable] from which inner [GraphElement]s can
+	 * load non-volatile date stored in previous executions
+	 */
+	fun executionInitialize(signalHandler: SignalHandler, nonVolatileData: NonVolatileStorable? = null)
 
 	/**
 	 * Called by the execution environment after the execution has been started.
@@ -147,7 +153,7 @@ interface Graph : GraphPortOwner, Namable, Describable, Storable, Bean {
     fun executionStart(signalHandler: SignalHandler, graphView: GraphView?)
 
     /** Called by the execution environment after the execution has been stopped.*/
-    fun executionStopped(signalHandler: SignalHandler)
+    fun executionStopped(signalHandler: SignalHandler, nonVolatileData: NonVolatileStorable? = null)
 
     /** Returns the [GraphInput] or the [BidirectionalPort] with the specified name.*/
     fun <T: Any> getGraphInput(name: String): GraphInput<T>?

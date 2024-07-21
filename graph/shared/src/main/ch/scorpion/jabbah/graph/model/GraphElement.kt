@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorState
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
+import ch.scorpion.jabbah.graph.model.nonvolatile.NonVolatileStorable
 import ch.scorpion.jabbah.graph.model.param.GraphParamValues
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.io.Storable
@@ -24,7 +25,7 @@ interface GraphElement : Storable, Actor, Describable {
 	/**
 	 * Returns a short translated type name of this [GraphElement].
 	 *
-	 * The type of a [GraphElement] names the "kind" or the nature of a [GraphElement].
+	 * The type of [GraphElement] names the "kind" or the nature of a [GraphElement].
 	 * Typically, the type is not persistent, but provided by concrete implementation of the [GraphElement] interface.
 	 *
 	 * Example: "AND Gate"
@@ -89,6 +90,26 @@ interface GraphElement : Storable, Actor, Describable {
 	 * its name "Hello" to "Hello (2)".
 	 */
 	fun beforePaste(graph: Graph) {}
+
+	/**
+	 * Complements [Actor.executionInitialize] in cases where this [GraphElement] is given the
+	 * opportunity to load [NonVolatileStorable] data from previous execution runs.
+	 * Cannot use [executionInitialize] from the execution module because it doesn't depend on io module.
+	 * The default implementation simply calls [executionInitialize].
+	 */
+	fun executionInitializeNonVolatile(signalHandler: SignalHandler, nonVolatileData: NonVolatileStorable? = null) {
+		executionInitialize(signalHandler)
+	}
+
+	/**
+	 * Complements [Actor.executionStopped] in cases where this [GraphElement] is given the
+	 * opportunity to store [NonVolatileStorable] data to make is available in successive execution runs.
+	 * Cannot use [executionStopped]  from the execution module because it doesn't depend on io module.
+	 * The default implementation simply calls [executionStopped].
+	 */
+	fun executionStoppedNonVolatile(signalHandler: SignalHandler, nonVolatileData: NonVolatileStorable? = null) {
+		executionStopped(signalHandler)
+	}
 }
 
 /** An event sent by a [GraphElement] whenever its state has changed. */

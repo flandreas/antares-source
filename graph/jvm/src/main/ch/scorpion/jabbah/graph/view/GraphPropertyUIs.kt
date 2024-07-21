@@ -70,6 +70,12 @@ object GraphProperties {
 		baseKey: String = "graph.property.input.startValue",
 		beanProvider: BeanProvider = componentBeanProvider
 	): CommandPropertySwing<Long> = CommandPropertySwing(name, baseKey, Long::class.java, beanProvider)
+
+	fun nonVolatile(
+		name: String = "nonVolatile",
+		baseKey: String = "graph.property.nonVolatile",
+		beanProvider: BeanProvider = componentBeanProvider
+	): CommandPropertySwing<Boolean> = CommandPropertySwing(name, baseKey, Boolean::class.java, beanProvider)
 }
 
 class PortTypeEditor : ComboBoxPropertyEditor() {

@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElementRenamedEvent
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.model.nonvolatile.NonVolatileStorable
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
@@ -253,17 +254,19 @@ open class GraphImpl(
 		return issues.isEmpty() && !hasChildIssues
 	}
 
-	override fun executionInitialize(signalHandler: SignalHandler) {
+	override fun executionInitialize(signalHandler: SignalHandler, nonVolatileData: NonVolatileStorable?) {
 		signalHandler.executionContext = createGraphExecutionContext<Any>()
-		_elements.forEach { it.executionInitialize(signalHandler) }
+		_elements.forEach {
+			it.executionInitializeNonVolatile(signalHandler, nonVolatileData?.getChild(it.id))
+		}
 	}
 
 	override fun executionStart(signalHandler: SignalHandler, graphView: GraphView?) {
 		_elements.forEach { it.executionStart(signalHandler) }
 	}
 
-	override fun executionStopped(signalHandler: SignalHandler) {
-		_elements.forEach { it.executionStopped(signalHandler) }
+	override fun executionStopped(signalHandler: SignalHandler, nonVolatileData: NonVolatileStorable?) {
+		_elements.forEach { it.executionStoppedNonVolatile(signalHandler, nonVolatileData) }
 	}
 
 	override fun <T : Any> getGraphPort(name: String): GraphPort<T>? {

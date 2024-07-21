@@ -2,6 +2,7 @@ package ch.scorpion.antares
 
 import ch.scorpion.antares.AntaresApplication.Companion.DEFAULT_LIB_DIRECTORY
 import ch.scorpion.antares.AntaresApplication.Companion.DEFAULT_LIB_FILENAME
+import ch.scorpion.antares.AntaresApplication.Companion.DEFAULT_NON_VOLATILE_DIRECTORY
 import ch.scorpion.antares.AntaresApplication.Companion.DEFAULT_PROJECT_DIRECTORY
 import ch.scorpion.antares.AntaresApplication.Companion.DOC_URL_DEV
 import ch.scorpion.antares.AntaresApplication.Companion.DOC_URL_PROD
@@ -40,6 +41,8 @@ interface AntaresDesktop : AntaresApplication, DesktopApplication {
 	val projectDirectoryName: String get() = DEFAULT_PROJECT_DIRECTORY
 
 	val userLibraryDirectoryName: String get() = DEFAULT_LIB_DIRECTORY
+
+	val nonVolatileDirectoryName: String get() = DEFAULT_NON_VOLATILE_DIRECTORY
 
 	/**
 	 * Returns the optional path to the file system base directory containing the [Libraries][Library] directory.

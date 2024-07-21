@@ -96,6 +96,13 @@ class RAMView(
 			validate()
 		}
 
+	@Suppress("unused")
+	var nonVolatile: Boolean
+		get() = model.nonVolatile
+		set(value) {
+			model.nonVolatile = value
+		}
+
 	/** ---- [AbstractAddressableView] */
 
 	override fun updatePortViewPositions() {

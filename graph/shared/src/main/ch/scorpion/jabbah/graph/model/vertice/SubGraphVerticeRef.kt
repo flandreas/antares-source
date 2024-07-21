@@ -22,6 +22,7 @@ import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
+import ch.scorpion.jabbah.graph.model.nonvolatile.NonVolatileStorable
 import ch.scorpion.jabbah.graph.model.param.GraphParamValue
 import ch.scorpion.jabbah.graph.model.param.GraphParamValues
 import ch.scorpion.jabbah.graph.model.semantic.GraphSemantic
@@ -270,6 +271,16 @@ class SubGraphVerticeRef(
 		}
 	}
 
+	override fun executionInitializeNonVolatile(signalHandler: SignalHandler, nonVolatileData: NonVolatileStorable?) {
+		isDeepExecutionCache = null
+		super.executionInitialize(signalHandler)
+		if (!hasDesignError) {
+			if (isDeepExecution(signalHandler.isDeepExecution)) {
+				graphReference.graph?.executionInitialize(signalHandler, nonVolatileData)
+			}
+		}
+	}
+
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
 		if (!hasDesignError) {
@@ -323,6 +334,17 @@ class SubGraphVerticeRef(
 		super.executionStopped(signalHandler)
 		if (isDeepExecution(signalHandler.isDeepExecution)) {
 			graphReference.graph?.executionStopped(signalHandler)
+		}
+		isDeepExecutionCache = null
+	}
+
+	override fun executionStoppedNonVolatile(signalHandler: SignalHandler, nonVolatileData: NonVolatileStorable?) {
+		if (isDeepExecution(signalHandler.isDeepExecution)) {
+			val relativeData: NonVolatileStorable? = nonVolatileData?.let { NonVolatileStorable(id) }
+			graphReference.graph?.executionStopped(signalHandler, relativeData)
+			if (relativeData?.hasChildren == true) {
+				nonVolatileData.addChild(relativeData)
+			}
 		}
 		isDeepExecutionCache = null
 	}

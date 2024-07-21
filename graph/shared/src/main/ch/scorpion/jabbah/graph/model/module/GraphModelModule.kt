@@ -16,6 +16,9 @@ import ch.scorpion.jabbah.edit.semantic.SemanticRegistry
 import ch.scorpion.jabbah.graph.model.net.NetImpl
 import ch.scorpion.jabbah.graph.model.net.SignalConflictBehaviour
 import ch.scorpion.jabbah.graph.model.net.SignalConflictBehaviourHolder
+import ch.scorpion.jabbah.graph.model.nonvolatile.NonVolatileService
+import ch.scorpion.jabbah.graph.model.nonvolatile.NonVolatileStorable
+import ch.scorpion.jabbah.graph.model.nonvolatile.UnimplementedNonVolatileService
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistories
@@ -52,6 +55,8 @@ object GraphModelModule : AbstractModule() {
 	val signalConflictBehaviourHolder by lazy { SignalConflictBehaviourHolder() }
 
 	val graphTypeRegistry = GraphTypeRegistry()
+
+	var nonVolatileService: NonVolatileService = UnimplementedNonVolatileService()
 
 	override fun initialize() {
 		BaseModule.require()
@@ -119,6 +124,8 @@ object GraphModelModule : AbstractModule() {
 		typeMap.register("usecase", UsecaseImpl::class)
 
 		typeMap.register("imageIdentification", ImageIdentification::class)
+
+		typeMap.register("nonVolatile", NonVolatileStorable::class)
 	}
 
 	private fun fillProperties(properties: Properties) {

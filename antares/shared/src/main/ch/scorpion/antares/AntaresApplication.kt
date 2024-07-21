@@ -10,6 +10,7 @@ interface AntaresApplication : Application {
 		const val DISPLAY_NAME = "Antares"
 		const val DEFAULT_LIB_DIRECTORY = "libraries"
 		const val DEFAULT_PROJECT_DIRECTORY = "projects"
+		const val DEFAULT_NON_VOLATILE_DIRECTORY = "nonVolatile"
 		const val DEFAULT_LIB_FILENAME = "library.xml"
 		const val FILE_EXTENSION_NAME = "cir"
 		const val DOC_URL_PROD = "https://www.antarescircuit.io/user-manual/english"

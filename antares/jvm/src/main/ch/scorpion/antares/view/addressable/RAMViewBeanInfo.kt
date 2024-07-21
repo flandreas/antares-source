@@ -19,6 +19,7 @@ class RAMViewBeanInfo : DigitalComponentViewBeanInfo<RAMView>() {
 	    private val showContents = CommandPropertySwing("showContents", "element.property.Addressable.showContents", Boolean::class.java, componentBeanProvider)
 	    private val contentsRowCount = CommandPropertySwing("contentRowsCount", "element.property.Addressable.rowsCount", Int::class.java, componentBeanProvider)
 	    private val contentsColumnsCount = CommandPropertySwing("contentColumnsCount", "element.property.Addressable.columnsCount", Int::class.java, componentBeanProvider)
+		private val nonVolatile = GraphProperties.nonVolatile()
     }
 
     override fun addProperties(bean: RAMView, editor: Editor, properties: MutableList<Property>) {
@@ -33,5 +34,6 @@ class RAMViewBeanInfo : DigitalComponentViewBeanInfo<RAMView>() {
 		    properties.add(contentsRowCount.bind(editor, beanIdProvider(bean.id)))
 		    properties.add(contentsColumnsCount.bind(editor, beanIdProvider(bean.id)))
 	    }
+		properties.add(nonVolatile.bind(editor, beanIdProvider(bean.id)))
     }
 }

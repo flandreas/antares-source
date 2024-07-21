@@ -60,6 +60,8 @@ import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.library.dictionary.FileLibraryDictionaryPersistenceService
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
 import ch.scorpion.jabbah.graph.library.dictionary.ResourceLibraryDictionaryPersistenceService
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.model.nonvolatile.NonVolatileServiceJvm
 import ch.scorpion.jabbah.graph.model.param.*
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.project.ProjectAkrabClientServiceJvm
@@ -99,6 +101,11 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 				params -> DigitalLibraryTreeViewActionsSwing(params.controller, params.type, params.application)
 		}
 		GraphModuleJvm.metaGraphHistoryService = FileMetaGraphHistoryServiceImpl({ AppModuleJvm.workspaceHolder.userDataDirectoryPath })
+
+		GraphModelModule.nonVolatileService = NonVolatileServiceJvm(
+			{ AppModuleJvm.workspaceHolder.userDataDirectoryPath },
+			app.nonVolatileDirectoryName
+		)
 
 		GraphModuleJvm.require()
 		AntaresViewModule.require()
