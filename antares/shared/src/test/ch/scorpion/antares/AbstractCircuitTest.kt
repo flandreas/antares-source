@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.base.time.Timer
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorListener
 import ch.scorpion.jabbah.execution.issue.IssueCollector
@@ -20,8 +21,15 @@ import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
 import ch.scorpion.jabbah.execution.scheduler.TimedSchedulerTask
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
+import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.ui.GraphViewUI
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.GraphViewExecutionController
+import dev.mokkery.MockMode
+import dev.mokkery.answering.calls
+import dev.mokkery.answering.returns
+import dev.mokkery.every
 import dev.mokkery.mock
 import kotlin.test.BeforeTest
 import kotlin.test.assertTrue
@@ -41,6 +49,8 @@ abstract class AbstractCircuitTest {
 	protected lateinit var scheduler: SchedulerImpl
 	private lateinit var task: TimedSchedulerTask
 
+	private lateinit var executionController: GraphViewExecutionController
+
 	@BeforeTest
 	open fun setup() {
 		AntaresTestRule.configure()
@@ -53,6 +63,20 @@ abstract class AbstractCircuitTest {
 		task = TimedSchedulerTask(CurrentSystemSpeedCategory(SystemSpeed()), timer)
 		scheduler = SchedulerImpl(currentSystemSpeedCategory, timeService, eventBus, NoiseGeneratorHolder(NoNoiseGenerator()), task = task)
 		CurrentUndefinedGateInputBehavior.value = UndefinedGateInputBehavior.ReadAs0
+
+		val drawingView = mock<DrawingView<GraphView>>(MockMode.autofill)
+		every { drawingView.drawing } calls { getCircuitView() }
+		val graphViewUI = mock<GraphViewUI>(MockMode.autofill)
+		every { graphViewUI.drawingView } returns drawingView
+
+		executionController = GraphViewExecutionController(
+			graphViewUI = graphViewUI,
+			isRoot = true,
+			rootGraphProvider = { getCircuitView().graph},
+			graphViewsProvider = { listOf(getCircuitView()) },
+			applicationContextHolder = GraphApplicationContextHolder(scheduler, eventBus),
+			eventBus = eventBus,
+		)
 	}
 
 	abstract fun getCircuitView(): GraphView
@@ -60,11 +84,9 @@ abstract class AbstractCircuitTest {
 	protected fun startSimulation(proceedTo: Long = 0) {
 		scheduler.isActive = true
 		LibraryModule.libraryHolder.l?.let { getCircuitView().graph!!.bind(true, it) }
+
 		getCircuitView().checkDesign(scheduler, eventBus)
-		getCircuitView().graph!!.formNet(scheduler)
-		getCircuitView().graph!!.executionInitialize(scheduler)
-		getCircuitView().graph!!.executionStart(scheduler, getCircuitView())
-		getCircuitView().executionStart(scheduler)
+
 		if (proceedTo > 0) {
 			proceedToNanos(proceedTo)
 		}

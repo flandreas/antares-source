@@ -9,6 +9,8 @@ import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.library.dictionary.FileLibraryDictionaryPersistenceService
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
 import ch.scorpion.jabbah.graph.library.dictionary.ResourceLibraryDictionaryPersistenceService
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.model.nonvolatile.NonVolatileServiceJvm
 import ch.scorpion.jabbah.graph.project.ProjectManagementService
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -34,6 +36,8 @@ abstract class AbstractFileBasedTest : AbstractCircuitTest() {
 			ProjectModule.projectDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService({ path.toString() }, "projects"))
 			ProjectModule.projectLibraryPersistenceService = FileLibraryPersistenceService({ path.toString() }, "projects")
 			ProjectModule.projectManagementService = ProjectManagementService()
+
+			GraphModelModule.nonVolatileService = NonVolatileServiceJvm({ path.toString() }, "nonVolatile")
 
 			LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(
 				LibraryIdentification(LibraryModule.DEF_LIBRARY_UUID, null), isSystem = true)
