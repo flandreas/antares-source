@@ -211,6 +211,16 @@
             <translation lang='en' text='Global Tunnel Outer'/>
           </name>
         </containerLibraryElement>
+        <containerLibraryElement _id='42' uuid='7ce25d9a-1a45-47fb-9925-69447c0e4f05' type='digital'>
+          <name>
+            <translation lang='en' text='NonVolatile Inner'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='43' uuid='654d580e-5b1e-4b68-b5c2-61fe32e73236' type='digital'>
+          <name>
+            <translation lang='en' text='NonVolatile'/>
+          </name>
+        </containerLibraryElement>
       </items>
     </libraryFolder>
   </folder>

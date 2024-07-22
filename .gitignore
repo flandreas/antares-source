@@ -6,6 +6,7 @@ out/
 kotlin-js-store
 antares/jvm/rsc/history/
 antares/jvm/rsc/test/history/
+antares/jvm/rsc/test/nonVolatile/
 doc/model/model.mdj
 doc/model/model-img/
 doc/model/graffle-img
