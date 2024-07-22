@@ -154,7 +154,7 @@ class GraphNavigationViewControllerTest {
 		eventBus.post(SchedulerActivationStateEvent(scheduler))
 
 		verify { testVerticeView.bind(eq(graphViewBuilder.graphView), true) }
-		verify { testVertice.executionInitialize(any()) }
+		verify { testVertice.executionInitializeNonVolatile(any(), any()) }
 		verify { testVertice.executionStart(any()) }
 	}
 

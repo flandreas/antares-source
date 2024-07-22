@@ -14,7 +14,7 @@ import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.library.dictionary.Akrab2RestLibraryDictionaryPersistenceService
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
-import ch.scorpion.jabbah.graph.model.nonvolatile.NonVolatileServiceJs
+import ch.scorpion.jabbah.graph.model.nonvolatile.EmptyNonVolatileService
 import ch.scorpion.jabbah.graph.project.ProjectManagementService
 import ch.scorpion.jabbah.graph.project.ProjectModule
 
@@ -37,7 +37,7 @@ object AntaresModuleJs : AbstractModule() {
 
         DrawModule.imageLoader = ImageLoaderJs()
 
-        GraphModelModule.nonVolatileService = NonVolatileServiceJs()
+        GraphModelModule.nonVolatileService = EmptyNonVolatileService()
 
         LibraryModule.systemLibraryPersistenceService = Akrab2RestSystemLibraryPersistenceServiceJs(akrabUrl)
         LibraryModule.libraryFactory = AntaresLibraryFactory()

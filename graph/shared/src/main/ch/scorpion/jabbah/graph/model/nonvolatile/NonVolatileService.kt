@@ -41,3 +41,12 @@ class UnimplementedNonVolatileService : NonVolatileService {
         throw UnsupportedOperationException("not implemented")
     }
 }
+
+class EmptyNonVolatileService : NonVolatileService {
+
+    override fun load(rootMetaGraphId: UUID): NonVolatileStorable? = null
+
+    override fun store(rootMetaGraphId: UUID, nonVolatileStorable: NonVolatileStorable) {}
+
+    override fun delete(rootMetaGraphId: UUID) {}
+}

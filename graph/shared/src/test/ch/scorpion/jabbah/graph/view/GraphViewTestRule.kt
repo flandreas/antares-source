@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.graph.container.PortViewComponent
 import ch.scorpion.jabbah.graph.model.TestControlVertice
 import ch.scorpion.jabbah.graph.model.TestVertice
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.model.nonvolatile.EmptyNonVolatileService
 import ch.scorpion.jabbah.graph.model.param.GraphParamTypeRegistry
 import ch.scorpion.jabbah.graph.model.port.SubGraphPortImpl
 import ch.scorpion.jabbah.graph.model.port.TestPortFactory
@@ -60,6 +61,7 @@ object GraphViewTestRule {
 		EditAuthModule.userHolder = DesktopUserHolder(DesktopUser.developer)
 
 		GraphModelModule.portFactory = TestPortFactory()
+		GraphModelModule.nonVolatileService = EmptyNonVolatileService()
 		GraphViewModule.portViewFactory = TestPortViewFactory()
 		GraphViewModule.oscilloscopeViewFactory = OscilloscopeViewFactoryMockBuilder().build()
 
