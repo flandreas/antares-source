@@ -141,8 +141,9 @@ class RAM(
 		clear()
 		if (nonVolatile) {
 			nonVolatileData?.let {
-				if (it.content is StringStorable) {
-					CompressedMemoryDump.read(memory, (it.content as StringStorable).content)
+				val m = it.getContent("memory")
+				if (m is StringStorable) {
+					CompressedMemoryDump.read(memory, m.content)
 				}
 			}
 		}
@@ -153,10 +154,11 @@ class RAM(
 		super<AbstractAddressable>.executionStoppedNonVolatile(signalHandler, nonVolatileData)
 		if (nonVolatile) {
 			nonVolatileData?.let {
-				it.addChild(NonVolatileStorable(
-					id = id,
-					content = StringStorable(CompressedMemoryDump.write(memory, dataWidth))
-				))
+				it.addChild(
+					NonVolatileStorable(id).apply {
+						setContent("memory", StringStorable(CompressedMemoryDump.write(memory, dataWidth)))
+					}
+				)
 			}
 		}
 		clear()

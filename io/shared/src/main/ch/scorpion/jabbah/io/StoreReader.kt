@@ -14,6 +14,9 @@ interface StoreReader {
 
     fun hasElement(name: String): Boolean
 
+    /** Returns the distinctive names of all children of the current [Storable].*/
+    fun getElementNames(): Set<String>
+
     fun <T: Storable> getStorable(id: Int): T
 
 	/**
@@ -57,6 +60,12 @@ interface StoreReader {
      * @return an [Iterator] over the read [Storable]s.
      */
     fun <T : Storable> readStorables(name: String, afterReadCallback: ((T) -> Unit)? = null): List<T>
+
+    /**
+     * Reads all named [Storable]s children of the [Storable] with the given name
+     * and returns them as a [Map].
+     */
+    fun readMap(name: String): Map<String, Storable>
 
     /** Reads the next `int` attribute with the given name.*/
     fun readInt(name: String): Int

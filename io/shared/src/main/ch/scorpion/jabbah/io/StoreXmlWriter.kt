@@ -76,6 +76,14 @@ class StoreXmlWriter(
 		}
 	}
 
+	override fun writeMap(name: String, map: Map<String, Storable>) {
+		xmlWriter.addElementAndDescend(name)
+		map.keys.sorted().forEach {
+			writeStorable(it, map[it]!!)
+		}
+		xmlWriter.ascend()
+	}
+
 	override fun writeInt(name: String, value: Int) {
 		xmlWriter.setAttributeValue(name, value.toString())
 	}

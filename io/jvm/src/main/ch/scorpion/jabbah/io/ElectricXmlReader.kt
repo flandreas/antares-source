@@ -61,4 +61,15 @@ class ElectricXmlReader(inputStream: InputStream) : XmlReader {
         LOG.trace("ascend from '${stack.peek().name}'")
         stack.pop()
     }
+
+    override fun getElementNames(): Set<String> {
+        val e = stack.peek().elements
+        val names = mutableSetOf<String>()
+        while (e.hasMoreElements()) {
+            val elem = e.current()
+            names.add(elem.name)
+            e.next()
+        }
+        return names
+    }
 }

@@ -18,6 +18,12 @@ interface XmlReader {
     /** Returns the number of child elements of the current element.*/
     fun getElementsCount(): Int
 
+    /**
+     * Returns the set of distinct child element names of the current element.
+     * Can be used for storing hashmap-like child structures.
+     */
+    fun getElementNames(): Set<String>
+
     /** Descends to the first element with the specified name and makes it the current one. */
     fun descend(name: String)
 

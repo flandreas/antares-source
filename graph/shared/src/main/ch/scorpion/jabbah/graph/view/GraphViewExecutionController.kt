@@ -119,9 +119,11 @@ class GraphViewExecutionController(
 					graphViewsProvider.invoke().forEach {
 						it.bind(event.scheduler.isDeepExecution)
 					}
-					formNet(event.scheduler)
-					executionInitialize(event.scheduler, GraphModelModule.nonVolatileService.load(uuid))
-					executionStart(event.scheduler, null)
+					if (isRoot) {
+						formNet(event.scheduler)
+						executionInitialize(event.scheduler, GraphModelModule.nonVolatileService.load(uuid))
+						executionStart(event.scheduler, null)
+					}
 					graphViewsProvider.invoke().forEach {
 						it.executionStart(event.scheduler)
 					}

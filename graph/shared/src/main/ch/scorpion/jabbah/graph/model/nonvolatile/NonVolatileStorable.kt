@@ -1,21 +1,37 @@
 package ch.scorpion.jabbah.graph.model.nonvolatile
 
 import ch.scorpion.jabbah.io.*
+import ch.scorpion.jabbah.graph.model.GraphElement
 
+/**
+ * A [Storable] for storing a tree of [NonVolatileStorable] used to store non-volatile
+ * data produced by [NonVolatile]. Each tree node corresponds with a [NonVolatile]
+ * with the given ID.
+ *
+ * A [NonVolatile] adds its non-volatile data in [GraphElement.executionStoppedNonVolatile]
+ * as content to the provided [NonVolatileStorable], and reads it back in
+ * [GraphElement.executionInitializeNonVolatile]. The content data is organized as
+ * a map of named [Storable]s.
+ *
+ * @param id the ID of the [GraphElement]
+ */
 class NonVolatileStorable(
-    id: Int = 0,
-    content: Storable? = null
+    id: Int = 0
 ) : AbstractStorable() {
 
     private var graphElementId: Int = id
 
-    // TODO: Is it necessary to store a Map of content?
-    var content: Storable? = content
-        private set
+    private val content = mutableMapOf<String, Storable>()
 
     private val children = mutableListOf<NonVolatileStorable>()
 
     val hasChildren: Boolean get() = children.isNotEmpty()
+
+    fun setContent(name: String, storable: Storable) {
+        content[name] = storable
+    }
+
+    fun getContent(name: String): Storable? = content[name]
 
     fun addChild(child: NonVolatileStorable) {
         children.add(child)
@@ -35,18 +51,24 @@ class NonVolatileStorable(
 
     override fun write(writer: StoreWriter) {
         writer.writeInt("id", graphElementId)
-        content?.let {
-            writer.writeStorable("content", it)
+        if (content.isNotEmpty()) {
+            writer.writeMap("content", content)
         }
-        writer.writeStorables("children", children.iterator())
+        if (children.isNotEmpty()) {
+            writer.writeStorables("children", children.iterator())
+        }
     }
 
     override fun read(reader: StoreReader) {
         graphElementId = reader.readInt("id")
         children.clear()
         if (reader.hasElement("content")) {
-            content = reader.readStorable("content")
+            reader.readMap("content").forEach {
+                (name, storable) -> content[name] = storable
+            }
         }
-        children.addAll(reader.readStorables("children"))
+        if (reader.hasElement("children")) {
+            children.addAll(reader.readStorables("children"))
+        }
     }
 }

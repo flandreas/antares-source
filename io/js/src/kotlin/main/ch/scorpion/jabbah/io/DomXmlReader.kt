@@ -45,6 +45,15 @@ class DomXmlReader(document: Document) : XmlReader {
         return null
     }
 
+    override fun getElementNames(): Set<String> {
+        val names = mutableSetOf<String>()
+        val children = stack.peek().childNodes
+        for (i in 0 until children.length) {
+            names.add(children[i]!!.nodeName)
+        }
+        return names
+    }
+
     override fun getElementsCount(): Int {
         return stack.peek().childElementCount
     }
