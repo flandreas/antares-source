@@ -1,9 +1,11 @@
-package ch.scorpion.antares.view.net
+package ch.scorpion.antares.view.net.tunnel
 
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.net.Tunnel
+import ch.scorpion.antares.view.net.TunnelFlowDirection
+import ch.scorpion.antares.view.net.TunnelView
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.LibraryModule
@@ -16,7 +18,7 @@ class GlobalTunnelCollector {
 
     private val result = mutableMapOf<String, MutableList<GlobalTunnelUsage>>()
 
-    fun collect():GlobalTunnelCollectionResult {
+    fun collect(): GlobalTunnelCollectionResult {
         result.clear()
         LibraryModule.libraryHolder.library.expandedImports.libraries.forEach {
             searchLibrary(it)

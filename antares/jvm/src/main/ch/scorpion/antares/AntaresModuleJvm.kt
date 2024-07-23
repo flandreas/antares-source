@@ -20,6 +20,8 @@ import ch.scorpion.antares.view.graph.AnalogMetaGraphIcon
 import ch.scorpion.antares.view.graph.AntaresMetaGraphIcon
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.net.*
+import ch.scorpion.antares.view.net.tunnel.TunnelNameEditor
+import ch.scorpion.antares.view.net.tunnel.TunnelNameProperty
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.output.LightColorPreference
 import ch.scorpion.antares.view.output.VideoRamColorModel

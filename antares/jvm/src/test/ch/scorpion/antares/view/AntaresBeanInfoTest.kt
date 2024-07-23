@@ -13,12 +13,12 @@ import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.antares.view.inout.DigitalCircuitInOutViewBeanInfo
 import ch.scorpion.antares.view.input.*
 import ch.scorpion.antares.view.net.*
+import ch.scorpion.antares.view.net.tunnel.TunnelViewBeanInfo
 import ch.scorpion.antares.view.output.*
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.properties.AbstractBeanInfo
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
-import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl

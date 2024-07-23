@@ -6,7 +6,7 @@ import ch.scorpion.antares.model.testcase.RunLibraryTestcasesAction
 import ch.scorpion.antares.model.truthtable.OpenTruthTableAction
 import ch.scorpion.antares.model.truthtable.TruthTableLibraryItem
 import ch.scorpion.antares.view.expression.NewBooleanExpressionAction
-import ch.scorpion.antares.view.net.GlobalTunnelAction
+import ch.scorpion.antares.view.net.tunnel.GlobalTunnelAction
 import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTableAction
 import ch.scorpion.antares.view.truthtable.NewTruthTableAction
 import ch.scorpion.jabbah.app.Application
