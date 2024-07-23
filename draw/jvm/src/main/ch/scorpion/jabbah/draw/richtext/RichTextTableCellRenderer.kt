@@ -15,7 +15,9 @@ import kotlin.math.max
  * TODO: Copy/paste from [RichTextLabel].
  * In addition to [RichTextLabel], also interprets horizontal alignment.
  */
-open class RichTextTableCellRenderer : DefaultTableCellRenderer() {
+open class RichTextTableCellRenderer(
+	private val setPreferredSize: Boolean = true
+) : DefaultTableCellRenderer() {
 
 	private var _preferredSize = calculatePreferredSize()
 
@@ -34,11 +36,12 @@ open class RichTextTableCellRenderer : DefaultTableCellRenderer() {
 		_preferredSize = calculatePreferredSize()
 	}
 
-	override fun getPreferredSize(): Dimension = if (richText != null) {
-		_preferredSize
-	} else {
-		super.getPreferredSize()
-	}
+	override fun getPreferredSize(): Dimension =
+		if (setPreferredSize && richText != null) {
+			_preferredSize
+		} else {
+			super.getPreferredSize()
+		}
 
 	override fun paintComponent(g: Graphics) {
 		if (richText != null) {
@@ -49,6 +52,10 @@ open class RichTextTableCellRenderer : DefaultTableCellRenderer() {
 	}
 
 	private fun paintCustom(g: Graphics) {
+		// Draw selection background if needed
+		text = ""
+		super.paintComponent(g)
+
 		var x = when (horizontalAlignment) {
 			JLabel.CENTER -> insets.left + (width - _preferredSize.width) / 2
 			JLabel.RIGHT -> width - _preferredSize.width - insets.right

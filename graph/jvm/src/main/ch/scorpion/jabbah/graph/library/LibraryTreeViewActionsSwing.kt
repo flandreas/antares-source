@@ -76,7 +76,7 @@ open class LibraryTreeViewActionsSwing(
 
 	private val editLibraryAction = register(EditLibraryAction(controller, application))
 
-	private val desktopPopupMenu = JPopupMenu()
+	protected val desktopPopupMenu = JPopupMenu()
 	protected val projectDirectoryPopupMenu = JPopupMenu()
 	private val projectContainerPopupMenu = JPopupMenu()
 	protected val projectRootMenu = JPopupMenu()
