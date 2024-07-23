@@ -1,10 +1,17 @@
 package ch.scorpion.antares.view.net.tunnel
 
+import ch.scorpion.jabbah.base.AbstractAction
+import ch.scorpion.jabbah.base.Action
+import ch.scorpion.jabbah.base.event.ActionEvent
+import ch.scorpion.jabbah.base.invocation.InvocationHandler
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.richtext.RichText
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.draw.drawable.RichTextDrawable
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
+import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.library.OpenContainerLibraryElementRequest
 import javax.swing.UIManager
 
 interface GlobalTunnelPanel : UIView {
@@ -29,6 +36,22 @@ class GlobalTunnelPanelController : AbstractUIController<GlobalTunnelPanel>() {
     /** Maps all rich text tunnel names to the corresponding plain text names used for filtering.*/
     private var allPlainTextTunnelNames: Map<String, String> = emptyMap()
 
+    val openCircuitAction: Action = OpenCircuitAction()
+
+    var selectedUsage: GlobalTunnelUsage? = null
+        set(value) {
+            field = value
+            update()
+        }
+
+    init {
+        update()
+    }
+
+    private fun update() {
+        openCircuitAction.enabled = selectedUsage != null
+    }
+
     fun load() {
         result = GlobalTunnelCollector().collect()
 
@@ -51,7 +74,18 @@ class GlobalTunnelPanelController : AbstractUIController<GlobalTunnelPanel>() {
             .filter { text == null || it.contains(text, ignoreCase = true) }
             .sortedBy { allPlainTextTunnelNames[it] }
         view.updateResult()
+        update()
     }
 
     fun getUsages(tunnelName: String): List<GlobalTunnelUsage> = result[tunnelName]!!
+
+    private inner class OpenCircuitAction : AbstractAction("antares.globalTunnels.action.openCircuit") {
+        override fun execute(event: ActionEvent) {
+            InvocationHandler.invoke {
+                LibraryModule.libraryHolder.library.getContainerLibraryElement(selectedUsage!!.graphUUID)?.let {
+                    BaseModule.eventBus.post(OpenContainerLibraryElementRequest(it))
+                }
+            }
+        }
+    }
 }

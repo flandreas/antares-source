@@ -89,6 +89,10 @@ class GlobalTunnelPanelSwing(
             updateUsagesTable()
         }
 
+        usagesTable.selectionModel.addListSelectionListener {
+            controller.selectedUsage = (usagesTable.model as UsageTableModel).getUsage(usagesTable.selectedRow)
+        }
+
         tunnelNameSearchField.document.addDocumentListener(object : DocumentListener {
             override fun insertUpdate(e: DocumentEvent?) { search() }
             override fun removeUpdate(e: DocumentEvent?) { search() }
@@ -136,6 +140,8 @@ class GlobalTunnelPanelSwing(
         val panel = JPanel()
         panel.layout = BoxLayout(panel, BoxLayout.LINE_AXIS)
         panel.add(Box.createHorizontalGlue())
+        panel.add(JButton(ActionWrapperSwing(controller.openCircuitAction)))
+        panel.add(Box.createHorizontalStrut(UIBasics.BUTTON_GAP))
         panel.add(closeButton)
         return panel
     }
@@ -186,6 +192,8 @@ class GlobalTunnelPanelSwing(
         private val usages: List<GlobalTunnelUsage>
     ): AbstractTableModel() {
 
+        fun getUsage(row: Int): GlobalTunnelUsage? =
+            if (row <0) null else usages[row]
 
         override fun getRowCount(): Int = usages.size
 
