@@ -6,7 +6,7 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.gate.LogicGateView
 import ch.scorpion.antares.view.net.TransistorViewSymbol
-import ch.scorpion.antares.view.net.TunnelFlowDirection
+import ch.scorpion.antares.view.net.tunnel.TunnelFlowDirection
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.componentBeanProvider

@@ -2,7 +2,6 @@ package ch.scorpion.antares.view.net.tunnel
 
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.net.TunnelName
-import ch.scorpion.antares.view.net.TunnelView
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.richtext.RichText

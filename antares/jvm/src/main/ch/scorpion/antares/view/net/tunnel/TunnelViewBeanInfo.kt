@@ -3,8 +3,6 @@ package ch.scorpion.antares.view.net.tunnel
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.view.AntaresProperties
 import ch.scorpion.antares.view.DigitalComponentViewBeanInfo
-import ch.scorpion.antares.view.net.TunnelView
-import ch.scorpion.antares.view.net.TunnelViewFace
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.text.description.BASE_KEY_NAME

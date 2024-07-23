@@ -1,4 +1,4 @@
-package ch.scorpion.antares.view.net
+package ch.scorpion.antares.view.net.tunnel
 
 import ch.scorpion.antares.view.Look.SCALE
 import ch.scorpion.antares.view.port.AbstractAntaresPortView

@@ -1,4 +1,4 @@
-package ch.scorpion.antares.view.net
+package ch.scorpion.antares.view.net.tunnel
 
 import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.base.Translations

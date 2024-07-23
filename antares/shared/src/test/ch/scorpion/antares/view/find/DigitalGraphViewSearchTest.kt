@@ -4,7 +4,7 @@ import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.model.net.Tunnel
 import ch.scorpion.antares.view.gate.LogicGateView
-import ch.scorpion.antares.view.net.TunnelView
+import ch.scorpion.antares.view.net.tunnel.TunnelView
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.draw.Canvas
 import ch.scorpion.jabbah.draw.view.find.SearchRequest
