@@ -19,13 +19,13 @@ import ch.scorpion.jabbah.edit.select.MoveCommand
  * An application service for [Drawing] that enhances the domain services and classes with
  * undo/redo functionality.
  */
-interface DrawingAppService {
+interface DrawingAppService : ComponentCustomizer {
 
 	/**
 	 * Adds the specified [Component] to a [DrawingView]'s [Drawing].
 	 * @return the effectively added [Component]. Implementations might clone [component] before adding
 	 */
-	fun add(component: Component, drawingView: DrawingView<Drawing<Component>>): Component
+	fun add(component: Component, drawingView: DrawingView<Drawing<Component>>, customizer: ComponentCustomizer? = null): Component
 
 	/**
 	 * Deletes the specified [Component] from its [Drawing].
@@ -76,8 +76,12 @@ open class DrawingAppServiceImpl(
 		private val LOG by logger(DrawingAppServiceImpl::class)
 	}
 
-	override fun add(component: Component, drawingView: DrawingView<Drawing<Component>>): Component {
-		val command = AddCommand(drawingView, component, componentCustomizer = ::customizeAddedComponent)
+	override fun add(
+		component: Component,
+		drawingView: DrawingView<Drawing<Component>>,
+		customizer: ComponentCustomizer?
+	): Component {
+		val command = AddCommand(drawingView, component, componentCustomizer = customizer?.let { ComponentCustomizerPair(it, this) } ?: this)
 		commandManager.execute(command)
 		val addedComponent = drawingView.drawing.getWithId(command.addedComponentId)!!
 		drawingView.selectionManager.deselectAll()
@@ -85,13 +89,7 @@ open class DrawingAppServiceImpl(
 		return addedComponent
 	}
 
-	/**
-	 * Used by method that add [Component]s to a [Drawing] (and the corresponding [Command]s)
-	 * to customize the properties of the [Component] after it has been added to the [Drawing].
-	 * Can for example be used to apply default from the [Drawing] (such as default colors)
-	 * to added [Component]s.
-	 */
-	protected open fun customizeAddedComponent(component: Component, drawing: Drawing<*>) {
+	override fun customizeAddedComponent(component: Component, drawing: Drawing<*>) {
 		// empty
 	}
 

@@ -5,9 +5,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.*
-import ch.scorpion.jabbah.edit.app.DeleteCommand
-import ch.scorpion.jabbah.edit.app.DrawingAppService
-import ch.scorpion.jabbah.edit.app.DrawingAppServiceImpl
+import ch.scorpion.jabbah.edit.app.*
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.model.CopyPasteService
 import ch.scorpion.jabbah.edit.model.group.GroupComponent
@@ -40,7 +38,8 @@ interface GraphViewAppService : DrawingAppService {
 		libraryElement: LibraryElement,
 		location: Point2D,
 		rotation: Rotation,
-		editor: Editor
+		editor: Editor,
+		customizer: ComponentCustomizer? = null
 	): Component
 
 	/**
@@ -67,11 +66,15 @@ open class GraphViewAppServiceImpl(
 
 	/** ---- [DrawingAppService] interface */
 
-	override fun add(component: Component, drawingView: DrawingView<Drawing<Component>>): Component {
+	override fun add(
+		component: Component,
+		drawingView: DrawingView<Drawing<Component>>,
+		customizer: ComponentCustomizer?
+	): Component {
 		return if (drawingView.drawing !is GraphView || component is GraphElementView<*>) {
-			super.add(component, drawingView)
+			super.add(component, drawingView, customizer)
 		} else {
-			super.add(GraphElementViewWrapper(component), drawingView)
+			super.add(GraphElementViewWrapper(component), drawingView, customizer)
 		}
 	}
 
@@ -125,7 +128,8 @@ open class GraphViewAppServiceImpl(
 		libraryElement: LibraryElement,
 		location: Point2D,
 		rotation: Rotation,
-		editor: Editor
+		editor: Editor,
+		customizer: ComponentCustomizer?
 	): Component {
 		LOG.userTrail("Add Component '${libraryElement.name}' from library/project at $location")
 
@@ -134,7 +138,8 @@ open class GraphViewAppServiceImpl(
 			libraryElement,
 			location,
 			rotation,
-			componentCustomizer = ::customizeAddedComponent)
+			componentCustomizer = customizer?.let { ComponentCustomizerPair(it, this) } ?: this
+		)
 
 		commandManager.execute(command)
 		val component = editor.view.drawing.getWithId(command.addedComponentId) as Component

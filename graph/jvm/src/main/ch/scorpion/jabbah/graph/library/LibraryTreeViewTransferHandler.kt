@@ -36,7 +36,7 @@ class LibraryTreeViewTransferHandler(
 		private val ICON_CACHE = mutableMapOf<String, Image>()
 
 		/** Gets the icon [Image] to be used for drag&drop. */
-		private fun getIcon(libraryItem: LibraryItem): Image {
+		fun getIcon(libraryItem: LibraryItem): Image {
 			return if (libraryItem is ContainerLibraryElement) {
 				MetaGraphIconProvider.provideImage(libraryItem.graphType)
 			} else {

@@ -14,8 +14,6 @@ import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dimension
 import java.awt.Frame
-import java.awt.event.KeyAdapter
-import java.awt.event.KeyEvent
 import java.awt.event.MouseAdapter
 import javax.swing.*
 import javax.swing.event.DocumentEvent
@@ -174,6 +172,8 @@ class GlobalTunnelPanelSwing(
         val table = JTable(TunnelNamesTableModel())
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION)
         table.columnModel.getColumn(0).cellRenderer = TunnelNamesRenderer()
+        table.transferHandler = GlobalTunnelTransferHandler(controller)
+        table.dragEnabled = true
         return table
     }
 

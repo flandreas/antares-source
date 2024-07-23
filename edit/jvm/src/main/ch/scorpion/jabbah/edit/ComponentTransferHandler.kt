@@ -134,7 +134,10 @@ open class ComponentTransferHandler(
         }
     }
 
-	protected open fun addComponent(dropComponent: Component, transferable: Transferable): Component {
+	protected open fun addComponent(
+		dropComponent: Component,
+		transferable: Transferable
+	): Component {
 		val component = service.add(dropComponent, editor.view)
 		editor.dragManager.finishDrop(component)
 		return component

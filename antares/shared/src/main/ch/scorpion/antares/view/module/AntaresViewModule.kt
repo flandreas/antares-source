@@ -110,7 +110,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val SPLITTER = "Splitter"
 	private const val CONCENTRATOR = "Concentrator"
 	private const val PROBE = "Probe"
-	private const val TUNNEL = "Tunnel"
+	const val TUNNEL = "Tunnel"
 	private const val BREAK = "Break"
 	private const val PULL_RESISTOR = "PullResistor"
 	private const val TRANSISTOR = "Transistor"

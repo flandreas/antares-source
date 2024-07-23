@@ -377,6 +377,12 @@ open class LibraryImpl(
 		_imports.reset()
 	}
 
+	override fun firstLocalItemOrNull(filter: (LibraryItem) -> Boolean): LibraryItem? {
+		val finder = ItemFinder(filter)
+		accept(finder)
+		return finder.result
+	}
+
 	/** ---- [LibraryImpl] */
 
 	/**
@@ -483,6 +489,19 @@ open class LibraryImpl(
 		override fun visitEnter(node: Any): Boolean {
 			if (node is ContainerLibraryElement) {
 				uuids.add(node.uuid)
+			}
+			return true
+		}
+	}
+
+	private class ItemFinder(private val exp: (LibraryItem) -> Boolean) : EmptyHierarchyVisitor() {
+
+		var result: LibraryItem? = null
+
+		override fun visit(node: Any): Boolean {
+			if (node is LibraryItem && exp(node)) {
+				result = node
+				return false
 			}
 			return true
 		}

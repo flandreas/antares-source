@@ -111,6 +111,12 @@ interface Library : MetaGraphRepository, ImageRepository, Storable, Namable, Des
 	 * to be imported instead to resolve dangling references
 	 */
 	fun removeImport(libraryId: UUID, replacingSystemLibraries: Set<UUID>)
+
+	/**
+	 * Returns the first locally in this [Library] contained [LibraryItem] that
+	 * fulfills the specified filter. "Locally" means that [expandedImports] is not involved.
+	 */
+	fun firstLocalItemOrNull(filter: (LibraryItem) -> Boolean): LibraryItem?
 }
 
 /**

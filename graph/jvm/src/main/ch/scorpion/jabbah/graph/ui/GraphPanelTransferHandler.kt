@@ -88,9 +88,12 @@ class GraphPanelTransferHandler(
         return true
     }
 
-	override fun addComponent(dropComponent: Component, transferable: Transferable): Component {
+	override fun addComponent(
+		dropComponent: Component,
+		transferable: Transferable
+	): Component {
 		val data = transferable.getTransferData(GraphElementViewTransferable.FLAVOR) as GraphElementViewTransferableData
-		return service.addGraphElementViewFromLibrary(data.libraryElement, dropComponent.location, dropComponent.rotation, editor)
+		return service.addGraphElementViewFromLibrary(data.libraryElement, dropComponent.location, dropComponent.rotation, editor, data.customizer)
 	}
 
 	private fun checkEditability(): Boolean {

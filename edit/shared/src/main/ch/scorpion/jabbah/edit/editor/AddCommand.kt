@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.edit.editor
 
 import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.edit.app.ComponentCustomizer
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 
 /**
@@ -9,7 +10,7 @@ import ch.scorpion.jabbah.edit.command.AbstractCommand
 class AddCommand(
     private val drawingView: DrawingView<Drawing<in Component>>,
     val component: Component,
-    private val componentCustomizer: (Component, Drawing<*>) -> Unit = { _,_ -> }
+    private val componentCustomizer: ComponentCustomizer? = null
 ) : AbstractCommand("edit.command.add", null), Undoable {
 
     constructor(editor: Editor, component: Component): this(editor.view, component)
@@ -20,7 +21,7 @@ class AddCommand(
     override fun execute() {
 	    val clone = component.doClone()
         drawingView.drawing.add(clone)
-	    componentCustomizer.invoke(clone, drawingView.drawing)
+	    componentCustomizer?.customizeAddedComponent(clone, drawingView.drawing)
 	    addedComponentId = clone.id
     }
 
