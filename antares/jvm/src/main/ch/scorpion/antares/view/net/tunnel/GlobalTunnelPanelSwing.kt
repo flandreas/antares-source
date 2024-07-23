@@ -14,6 +14,9 @@ import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dimension
 import java.awt.Frame
+import java.awt.event.KeyAdapter
+import java.awt.event.KeyEvent
+import java.awt.event.MouseAdapter
 import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
@@ -38,7 +41,7 @@ class GlobalTunnelPanelSwing(
         ) {
             val controller = GlobalTunnelPanelController()
 
-            DialogBuilder<GlobalTunnelPanelSwing>(parent)
+            DialogBuilder<GlobalTunnelPanelSwing>(parent, modal = false)
                 .title(Translations.getString("antares.globalTunnels.title"))
                 .content { dialog ->
                     GlobalTunnelPanelSwing(controller) {
@@ -72,9 +75,17 @@ class GlobalTunnelPanelSwing(
 
     override fun dispose() {}
 
-    override fun updateResult() {
+    override fun updateTunnelNames() {
         (tunnelNamesTable.model as AbstractTableModel).fireTableDataChanged()
         usagesTable.model = UsageTableModel(emptyList())
+    }
+
+    override fun updateUsages() {
+        usagesTable.model = UsageTableModel(controller.getUsages())
+        usagesTable.columnModel.getColumn(0).preferredWidth = 50
+        usagesTable.columnModel.getColumn(1).preferredWidth = 50
+        usagesTable.columnModel.getColumn(2).preferredWidth = 50
+        usagesTable.columnModel.getColumn(3).preferredWidth = 300
     }
 
     /** ---- [GlobalTunnelPanelSwing] */
@@ -86,12 +97,24 @@ class GlobalTunnelPanelSwing(
         add(buildButtonPanel(), BorderLayout.SOUTH)
 
         tunnelNamesTable.selectionModel.addListSelectionListener {
-            updateUsagesTable()
+            controller.selectedTunnelName = if (tunnelNamesTable.selectedRow >= 0) {
+                tunnelNamesTable.model.getValueAt(tunnelNamesTable.selectedRow, 0) as String
+            } else {
+                null
+            }
         }
 
         usagesTable.selectionModel.addListSelectionListener {
             controller.selectedUsage = (usagesTable.model as UsageTableModel).getUsage(usagesTable.selectedRow)
         }
+
+        usagesTable.addMouseListener(object : MouseAdapter() {
+            override fun mouseClicked(e: java.awt.event.MouseEvent?) {
+                if (e?.clickCount == 2) {
+                    controller.openSelectedUsage()
+                }
+            }
+        })
 
         tunnelNameSearchField.document.addDocumentListener(object : DocumentListener {
             override fun insertUpdate(e: DocumentEvent?) { search() }
@@ -104,7 +127,7 @@ class GlobalTunnelPanelSwing(
     }
 
     private fun buildContent(): JPanel {
-        val panel = JPanel(BorderLayout(0, 10))
+        val panel = JPanel(BorderLayout(0, 5))
 
         val splitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
         splitPane.dividerLocation = 150
@@ -139,6 +162,7 @@ class GlobalTunnelPanelSwing(
     private fun buildButtonPanel(): JPanel {
         val panel = JPanel()
         panel.layout = BoxLayout(panel, BoxLayout.LINE_AXIS)
+        panel.add(JButton(ActionWrapperSwing(controller.copyToClipboardAction)))
         panel.add(Box.createHorizontalGlue())
         panel.add(JButton(ActionWrapperSwing(controller.openCircuitAction)))
         panel.add(Box.createHorizontalStrut(UIBasics.BUTTON_GAP))
@@ -223,19 +247,6 @@ class GlobalTunnelPanelSwing(
                 3 -> java.lang.String::class.java
                 else -> throw IllegalArgumentException("Illegal column $columnIndex")
         }
-    }
-
-    private fun updateUsagesTable() {
-        if (tunnelNamesTable.selectedRow >= 0) {
-            val name = tunnelNamesTable.model.getValueAt(tunnelNamesTable.selectedRow, 0) as String
-            usagesTable.model = UsageTableModel(controller.getUsages(name))
-        } else {
-            usagesTable.model = UsageTableModel(emptyList())
-        }
-        usagesTable.columnModel.getColumn(0).preferredWidth = 50
-        usagesTable.columnModel.getColumn(1).preferredWidth = 50
-        usagesTable.columnModel.getColumn(2).preferredWidth = 50
-        usagesTable.columnModel.getColumn(3).preferredWidth = 300
     }
 
     private inner class CloseAction : AbstractAction("base.action.close") {

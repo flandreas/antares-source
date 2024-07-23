@@ -6,6 +6,7 @@ import ch.scorpion.antares.view.TestAction
 import ch.scorpion.antares.view.analysis.AnalyseCircuitAction
 import ch.scorpion.antares.view.expression.NewBooleanExpressionAction
 import ch.scorpion.antares.view.gate.GateMnemonicAction
+import ch.scorpion.antares.view.net.tunnel.GlobalTunnelAction
 import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTableAction
 import ch.scorpion.antares.view.truthtable.NewTruthTableAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
@@ -44,6 +45,12 @@ class AntaresMenuBarBuilder(
 		    menuBar.add(fillDevelopmentMenu(JMenu(Translations.getString("application.menu.development"))))
 	    }
     }
+
+	override fun fillFileMenu(menu: JMenu) {
+		super.fillFileMenu(menu)
+		menu.addSeparator()
+		menu.add(ActionWrapperSwing(GlobalTunnelAction()))
+	}
 
 	override fun fillExportMenu(menu: JMenu) {
 		super.fillExportMenu(menu)

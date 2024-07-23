@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.richtext.RichText
 import ch.scorpion.jabbah.base.ui.AbstractUIController
+import ch.scorpion.jabbah.base.ui.Clipboard
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.draw.drawable.RichTextDrawable
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
@@ -15,7 +16,12 @@ import ch.scorpion.jabbah.graph.library.OpenContainerLibraryElementRequest
 import javax.swing.UIManager
 
 interface GlobalTunnelPanel : UIView {
-    fun updateResult()
+
+    /** Notifies this [GlobalTunnelUsage] that the set of tunnel names has changed.*/
+    fun updateTunnelNames()
+
+    /** Notifies this [GlobalTunnelUsage] that the set of [GlobalTunnelUsage]s has changed.*/
+    fun updateUsages()
 }
 
 class GlobalTunnelPanelController : AbstractUIController<GlobalTunnelPanel>() {
@@ -38,6 +44,15 @@ class GlobalTunnelPanelController : AbstractUIController<GlobalTunnelPanel>() {
 
     val openCircuitAction: Action = OpenCircuitAction()
 
+    val copyToClipboardAction: Action = CopyToClipboardAction()
+
+    var selectedTunnelName: String? = null
+        set(value) {
+            field = value
+            view.updateUsages()
+            update()
+        }
+
     var selectedUsage: GlobalTunnelUsage? = null
         set(value) {
             field = value
@@ -49,6 +64,7 @@ class GlobalTunnelPanelController : AbstractUIController<GlobalTunnelPanel>() {
     }
 
     private fun update() {
+        copyToClipboardAction.enabled = selectedTunnelName != null
         openCircuitAction.enabled = selectedUsage != null
     }
 
@@ -66,25 +82,44 @@ class GlobalTunnelPanelController : AbstractUIController<GlobalTunnelPanel>() {
 
         filterTunnelNames(null)
 
-        view.updateResult()
+        view.updateTunnelNames()
     }
 
     fun filterTunnelNames(text: String?) {
         filteredTunnelNames = result.keys
             .filter { text == null || it.contains(text, ignoreCase = true) }
             .sortedBy { allPlainTextTunnelNames[it] }
-        view.updateResult()
+        view.updateTunnelNames()
         update()
     }
 
-    fun getUsages(tunnelName: String): List<GlobalTunnelUsage> = result[tunnelName]!!
+    fun getUsages(): List<GlobalTunnelUsage> =
+        if (selectedTunnelName == null) {
+            emptyList()
+        } else {
+            result[selectedTunnelName]!!
+        }
 
-    private inner class OpenCircuitAction : AbstractAction("antares.globalTunnels.action.openCircuit") {
-        override fun execute(event: ActionEvent) {
+    fun openSelectedUsage() {
+        if (selectedUsage != null) {
             InvocationHandler.invoke {
                 LibraryModule.libraryHolder.library.getContainerLibraryElement(selectedUsage!!.graphUUID)?.let {
                     BaseModule.eventBus.post(OpenContainerLibraryElementRequest(it))
                 }
+            }
+        }
+    }
+
+    private inner class OpenCircuitAction : AbstractAction("antares.globalTunnels.action.openCircuit") {
+        override fun execute(event: ActionEvent) {
+            openSelectedUsage()
+        }
+    }
+
+    private inner class CopyToClipboardAction : AbstractAction("antares.globalTunnels.action.copyToClipboard") {
+        override fun execute(event: ActionEvent) {
+            selectedTunnelName?.let {
+                Clipboard.setStringContents(it)
             }
         }
     }
