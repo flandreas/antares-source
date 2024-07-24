@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.draw.view.ContentViewManager
+import ch.scorpion.jabbah.draw.view.FocusDrawablePlayer
 import ch.scorpion.jabbah.draw.view.FocusPanel
 import ch.scorpion.jabbah.draw.view.find.SearchBarSwing
 import ch.scorpion.jabbah.draw.view.find.SearchRequest
@@ -62,6 +63,9 @@ class GraphNavigationViewSwing(
 	private val searchInMetaGraphHandler: EventHandler<SearchInMetaGraphRequest> = {
 		if (it.metaGraphId == controller.drawingView.drawing.graph?.uuid) {
 			execute(it.searchRequest)
+			if (drawingView.selectionManager.selectionCount > 0) {
+				FocusDrawablePlayer.playFocus(drawingView.selectionManager.selection.first(), drawingView)
+			}
 		}
 	}
 
