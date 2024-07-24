@@ -1,8 +1,10 @@
 package ch.scorpion.antares.view.net.tunnel
 
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.ActionEvent
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.richtext.RichText
@@ -11,6 +13,8 @@ import ch.scorpion.jabbah.base.ui.Clipboard
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.draw.drawable.RichTextDrawable
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
+import ch.scorpion.jabbah.draw.view.find.SearchRequest
+import ch.scorpion.jabbah.graph.SearchInMetaGraphRequest
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.library.OpenContainerLibraryElementRequest
 import javax.swing.UIManager
@@ -24,7 +28,9 @@ interface GlobalTunnelPanel : UIView {
     fun updateUsages()
 }
 
-class GlobalTunnelPanelController : AbstractUIController<GlobalTunnelPanel>() {
+class GlobalTunnelPanelController(
+    private val eventBus: EventBus = BaseModule.eventBus
+) : AbstractUIController<GlobalTunnelPanel>() {
 
     private val font = Graphics2DJvm.fromAwtFont(UIManager.getFont("Table.font"))
 
@@ -104,7 +110,10 @@ class GlobalTunnelPanelController : AbstractUIController<GlobalTunnelPanel>() {
         if (selectedUsage != null) {
             InvocationHandler.invoke {
                 LibraryModule.libraryHolder.library.getContainerLibraryElement(selectedUsage!!.graphUUID)?.let {
-                    BaseModule.eventBus.post(OpenContainerLibraryElementRequest(it))
+                    eventBus.post(OpenContainerLibraryElementRequest(it))
+                    System.invokeLater {
+                        eventBus.post(SearchInMetaGraphRequest(selectedUsage!!.graphUUID, SearchRequest(selectedTunnelName!!)))
+                    }
                 }
             }
         }
