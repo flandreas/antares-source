@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.graph.model.Vertice
  * Contains an ordered list of the IDs of all [Vertice]s that are visited along the path to the referenced [Vertice].
  * Designed to be immutable.
  */
-class DeepVerticeLink(verticeIds: List<Int>) {
+class DeepVerticeLink(verticeIds: List<Int>): VerticeLink {
 
 	constructor(verticeId: Int): this(listOf(verticeId))
 	constructor(): this(listOf())
@@ -58,16 +58,14 @@ class DeepVerticeLink(verticeIds: List<Int>) {
 	}
 
 	/** Appends the specified ID at the end of path and returns the result as a new [DeepVerticeLink].*/
-	fun append(id: Int): DeepVerticeLink {
-		return DeepVerticeLink(listOf(*verticeIds.toTypedArray(), id))
-	}
+	fun append(id: Int): DeepVerticeLink =
+		DeepVerticeLink(listOf(*verticeIds.toTypedArray(), id))
 
-	/**
-	 * Returns the [Vertice] that this [DeepVerticeLink] is pointing to, starting with the specified [Graph].
-	 * @param startGraph the [Graph] where resolving is started
-	 * @throws IllegalArgumentException if any of the [Vertice]s in the referencing path cannot be resolved
-	 */
-	fun getLinkedVertice(startGraph: Graph): Vertice {
+	/** Prepends the specified ID at the beginning of the paths and returns the result as a new [DeepVerticeLink] */
+	fun prepend(id: Int): DeepVerticeLink =
+		DeepVerticeLink(listOf(id, *verticeIds.toTypedArray()))
+
+	override fun getLinkedVertice(startGraph: Graph): Vertice {
 		var link = this
 		var graph = startGraph
 		while (link.size > 1) {

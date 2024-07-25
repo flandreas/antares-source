@@ -7,7 +7,10 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElementListener
+import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.GraphView
 
 /**
@@ -15,8 +18,8 @@ import ch.scorpion.jabbah.graph.view.GraphView
  * whenever [ApplicationData] content has changed due to an undo/redo snapshot exchange.
  */
 class AddressableReference(
-	val id: Int,
-	private val view: DrawingView<GraphView>,
+	val link: VerticeLink,
+	val view: DrawingView<GraphView>,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) {
 
@@ -25,14 +28,16 @@ class AddressableReference(
 
 	private val applicationDataContentHandler: EventHandler<ApplicationDataContentEvent> = { unregisterOldContent() }
 
-	private val applicationDataEstablishedHandler: EventHandler<ApplicationDataContentEstablishedEvent> = { registerNewContent() }
+	private val applicationDataEstablishedHandler: EventHandler<ApplicationDataContentEstablishedEvent> = {
+		registerNewContent((it.data.content as MetaGraph).graph.model!!)
+	}
 
 	private val dataListeners = mutableListOf<AddressableDataListener>()
 
 	private val graphElementListeners = mutableListOf<GraphElementListener>()
 
 	init {
-		registerNewContent()
+		registerNewContent(view.drawing.graph!!)
 		eventBus.register(ApplicationDataContentEvent::class, applicationDataContentHandler)
 		eventBus.register(ApplicationDataContentEstablishedEvent::class, applicationDataEstablishedHandler)
 	}
@@ -72,9 +77,8 @@ class AddressableReference(
 		graphElementListeners.forEach { addressable.removeGraphElementListener(it) }
 	}
 
-	private fun registerNewContent() {
-		addressable = view.drawing.graph!!.withId(id) as Addressable
-
+	private fun registerNewContent(graph: Graph) {
+		addressable = link.getLinkedVertice(graph) as Addressable
 		graphElementListeners.forEach { addressable.addGraphElementListener(it) }
 		dataListeners.forEach { addressable.addDataListener(it) }
 	}

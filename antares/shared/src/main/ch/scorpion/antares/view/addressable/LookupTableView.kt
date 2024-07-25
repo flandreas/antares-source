@@ -20,6 +20,7 @@ import ch.scorpion.jabbah.edit.model.text.*
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
+import ch.scorpion.jabbah.graph.model.vertice.ImmediateVerticeLink
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 
@@ -34,9 +35,16 @@ class LookupTableView(
 	}
 
 	private val inputEventHandler = AddressableInputEventHandler(
-		{ view, newDesktopView -> OpenMemoryContentsRequest(view, this, "LUT", this.model, newDesktopView) },
-		eventBus
-	)
+		eventBus,
+	) { view, newDesktopView ->
+		OpenMemoryContentsRequest(
+			view,
+			this,
+			"LUT",
+			ImmediateVerticeLink(this.model.id),
+			newDesktopView
+		)
+	}
 
 	private val externalLabel = Label(
 		model.name,

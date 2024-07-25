@@ -7,7 +7,9 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.TestControlVertice
+import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.port.TestPortView
@@ -45,8 +47,8 @@ class TestControlVerticeView(
 
 	override val controlId: String get() = "$type \"${model.name}\""
 
-	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: TestControlVertice) {
-		this.model = model
+	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
+		this.model = link.getLinkedVertice(startGraph) as TestControlVertice
 	}
 
 	override fun sourcePropertiesChanged(source: ControlViewSource<TestControlVertice>) {

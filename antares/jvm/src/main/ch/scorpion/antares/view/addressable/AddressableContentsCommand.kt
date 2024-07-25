@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.addressable
 
 import ch.scorpion.antares.model.addressable.Addressable
+import ch.scorpion.antares.model.addressable.AddressableReference
 import ch.scorpion.antares.model.addressable.MemoryDump
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.jabbah.base.logger
@@ -8,6 +9,7 @@ import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Undoable
 import ch.scorpion.jabbah.edit.command.AbstractCommand
+import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -17,7 +19,7 @@ import java.nio.file.Paths
  */
 class AddressableContentsCommand(
 	private val view: DrawingView<GraphView>,
-	private val addressableId: Int,
+	private val link: VerticeLink,
 	private val bitWidth: BitWidth,
 	private val filePath: String
 ) : AbstractCommand("antares.command.memoryContents", null), Undoable {
@@ -26,7 +28,7 @@ class AddressableContentsCommand(
 		private val LOG by logger(AddressableContentsCommand::class)
 	}
 
-	private val addressable: Addressable get() = view.drawing.graph!!.withId(addressableId) as Addressable
+	private val addressable: Addressable get() = link.getLinkedVertice(view.drawing.graph!!) as Addressable
 
 	private var oldContents: String? = null
 

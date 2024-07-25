@@ -1,16 +1,16 @@
 package ch.scorpion.antares.view.input
 
-import ch.scorpion.antares.model.input.Keyboard
 import ch.scorpion.antares.model.EnterBehavior
+import ch.scorpion.antares.model.input.Keyboard
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
+import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.graphics.LogicalFontFamily
@@ -26,7 +26,9 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapter
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
+import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
@@ -189,8 +191,8 @@ class KeyboardView(
 
 	override val mirrorWidth: Double get() = 2 * AbstractAntaresPortView.LENGTH + width
 
-	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: Keyboard) {
-		this.model = model
+	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
+		this.model = link.getLinkedVertice(startGraph) as Keyboard
 	}
 
 	override fun sourcePropertiesChanged(source: ControlViewSource<Keyboard>) {

@@ -1,8 +1,8 @@
 package ch.scorpion.antares.view.output
 
 import ch.scorpion.antares.model.output.LED
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
@@ -26,7 +26,9 @@ import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.Labeled
 import ch.scorpion.jabbah.edit.select.AbstractSelectionModel
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.ControlViewSourceProperty
@@ -153,8 +155,8 @@ abstract class AbstractLEDView<T: Vertice>(
 		}
 	}
 
-	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: T) {
-		this.model = model
+	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
+		this.model = link.getLinkedVertice(startGraph) as T
 	}
 
 	override fun writeModelProperties(writer: StoreWriter) {

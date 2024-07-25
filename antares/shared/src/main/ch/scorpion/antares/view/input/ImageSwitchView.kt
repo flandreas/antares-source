@@ -22,6 +22,8 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.model.image.ImageIdentification
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.port.PortView
@@ -274,8 +276,8 @@ class ImageSwitchView(
     override val controlName: String
         get() = ControlViewSource.getControlName(type, id, model.name)
 
-    override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: Switch) {
-        this.model = model
+    override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
+        this.model = link.getLinkedVertice(startGraph) as Switch
     }
 
     override fun writeModelProperties(writer: StoreWriter) {}

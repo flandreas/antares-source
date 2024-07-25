@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
+import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.ui.desktop.*
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
@@ -22,7 +23,7 @@ import java.awt.event.FocusListener
 /** Wraps a [AddressableContentsPanel] as a [GraphDesktopViewItem] so it can be added to the [GraphDesktopView]. */
 class AddressableContentGraphDesktopItemSwing(
 	drawingView: DrawingView<GraphView>,
-	addressableId: Int,
+	link: VerticeLink,
 	title: String,
 	applicationContextHolder: GraphApplicationContextHolder,
 	cmdManager: CommandManager = EditModule.commandManager,
@@ -30,7 +31,7 @@ class AddressableContentGraphDesktopItemSwing(
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractGraphDesktopItemPanelSwing() {
 
-	private val memoryContentPanel = AddressableContentsPanel(drawingView, applicationContextHolder, addressableId, cmdManager)
+	private val memoryContentPanel = AddressableContentsPanel(drawingView, applicationContextHolder, link, cmdManager)
 
 	private val headerPanel = GraphDesktopItemHeaderPanelSwing(this, UIBasics.createHeaderLabel(title), allowClose = true)
 

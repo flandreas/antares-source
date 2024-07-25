@@ -16,9 +16,9 @@ import ch.scorpion.jabbah.base.geom.RoundRectangle2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
-import ch.scorpion.jabbah.draw.graphics.RasterImage
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
+import ch.scorpion.jabbah.draw.graphics.RasterImage
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -27,6 +27,8 @@ import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
@@ -290,8 +292,8 @@ class VideoRamView(
 
 	override val mirrorHeight: Double get() = abs(abs(bounds.maxY) - abs(bounds.minY))
 
-	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: RAM) {
-		this.model =  model
+	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
+		this.model = link.getLinkedVertice(startGraph) as RAM
 	}
 
 	override fun sourcePropertiesChanged(source: ControlViewSource<RAM>) {

@@ -22,6 +22,8 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
@@ -148,8 +150,8 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 
 	override val mirrorHeight: Double get() = -height
 
-	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: T) {
-		this.model = model
+	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
+		this.model = link.getLinkedVertice(startGraph) as T
 	}
 
 	override fun writeModelProperties(writer: StoreWriter) {

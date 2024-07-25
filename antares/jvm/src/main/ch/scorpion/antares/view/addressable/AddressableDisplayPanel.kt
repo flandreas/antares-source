@@ -8,10 +8,8 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.FocusJTable
 import ch.scorpion.jabbah.base.swing.RowHeaderTable
 import ch.scorpion.jabbah.edit.CommandManager
-import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
-import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import java.awt.FlowLayout
 import java.awt.Font
@@ -28,7 +26,6 @@ class AddressableDisplayPanel(
 	private val addressableRef: AddressableReference,
 	editable: () -> Boolean,
 	private val applicationContextHolder: GraphApplicationContextHolder,
-	private val view: DrawingView<GraphView>,
 	private val cmdManager: CommandManager = EditModule.commandManager,
 	private val settings: Settings = BaseModule.settings
 ) : JPanel() {
@@ -119,11 +116,11 @@ class AddressableDisplayPanel(
 	}
 
 	private fun consumeValueChange(change: AddressableCellChange) {
-		cmdManager.register(AddressableCellChangeCommand(view, addressableRef.id, listOf(change)))
+		cmdManager.register(AddressableCellChangeCommand(addressableRef.view, addressableRef.link, listOf(change)))
 	}
 
 	private fun consumeCommentChange(change: AddressableCommentChange) {
-		cmdManager.register(AddressableCommentChangeCommand(view, addressableRef.id, listOf(change)))
+		cmdManager.register(AddressableCommentChangeCommand(addressableRef.view, addressableRef.link, listOf(change)))
 	}
 
 	private fun storeCommentColumnWidth() {

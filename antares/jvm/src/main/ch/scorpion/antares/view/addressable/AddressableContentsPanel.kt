@@ -18,6 +18,7 @@ import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.model.GraphElementAdapter
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
+import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import java.awt.Dimension
@@ -37,7 +38,7 @@ import javax.swing.*
 class AddressableContentsPanel(
 	private val view: DrawingView<GraphView>,
 	private val applicationContextHolder: GraphApplicationContextHolder,
-	addressableId: Int,
+	link: VerticeLink,
 	private val cmdManager: CommandManager,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	private val closeHandler: ((AddressableContentsPanel) -> Unit)? = null
@@ -53,11 +54,11 @@ class AddressableContentsPanel(
 			view: DrawingView<GraphView>,
 			applicationContextHolder: GraphApplicationContextHolder,
 			name: String,
-			addressableId: Int,
+			link: VerticeLink,
 			cmdManager: CommandManager
 		) {
 			DialogBuilder<AddressableContentsPanel>(parent)
-				.content { dialog -> AddressableContentsPanel(view, applicationContextHolder, addressableId, cmdManager) { dialog.dispose()} }
+				.content { dialog -> AddressableContentsPanel(view, applicationContextHolder, link, cmdManager) { dialog.dispose()} }
 				.title(Translations.getString("antares.action.memory.contents.title", name))
 				.defaultButton { it.closeButton }
 				.resizable()
@@ -66,9 +67,9 @@ class AddressableContentsPanel(
 		}
 	}
 
-	private val addressableRef = AddressableReference(addressableId, view, eventBus)
+	private val addressableRef = AddressableReference(link, view, eventBus)
 
-	private val memoryDisplayPanel = AddressableDisplayPanel(addressableRef, { editable } , applicationContextHolder, view)
+	private val memoryDisplayPanel = AddressableDisplayPanel(addressableRef, { editable } , applicationContextHolder)
 
 	private val addressableListener = object : GraphElementAdapter() {
 		override fun stateChanged(e: GraphElementEvent) {
@@ -177,7 +178,7 @@ class AddressableContentsPanel(
 			val fileChooser = JFileChooser()
 			if (fileChooser.showOpenDialog(this@AddressableContentsPanel) == JFileChooser.APPROVE_OPTION) {
 				try {
-					executeCommand(AddressableContentsCommand(view, addressableRef.id, addressableRef.addressable.dataWidth, fileChooser.selectedFile!!.absolutePath))
+					executeCommand(AddressableContentsCommand(view, addressableRef.link, addressableRef.addressable.dataWidth, fileChooser.selectedFile!!.absolutePath))
 					memoryDisplayPanel.refresh()
 				} catch (e: IllegalArgumentException) {
 					LOG.error("Invalid data in memory file: ${e.message}")
@@ -202,7 +203,7 @@ class AddressableContentsPanel(
 
 	private inner class ClearAction : AbstractAction(Translations.getString("antares.action.memory.clear.name")) {
 		override fun actionPerformed(e: ActionEvent?) {
-			executeCommand(AddressableClearCommand(view, addressableRef.id, addressableRef.addressable.dataWidth))
+			executeCommand(AddressableClearCommand(view, addressableRef.link, addressableRef.addressable.dataWidth))
 			memoryDisplayPanel.refresh()
 		}
 	}

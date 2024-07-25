@@ -22,6 +22,8 @@ import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.edit.select.AbstractSelectionModel
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
@@ -134,8 +136,8 @@ class LEDMatrixView(
 	override val controlId: String
 		get() = "ledMatrix:${model.id}"
 
-	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: LEDMatrix) {
-		this.model = model
+	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
+		this.model = link.getLinkedVertice(startGraph) as LEDMatrix
 	}
 
 	override fun sourcePropertiesChanged(source: ControlViewSource<LEDMatrix>) {

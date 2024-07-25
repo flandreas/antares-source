@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.graph.container.ControlViewComponent
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.io.StoreReader
@@ -52,8 +53,9 @@ interface ControlView<T : Vertice> : Component, Transparent, ActorView {
      * Binds this [ControlView] to the corresponding [Vertice] of the [Graph] that is contained in the
      * [SubGraphVerticeView] that owns this [ControlView]. Used for establishing a process to update this [ControlView]
      * whenever the corresponding [Vertice] changes.
+	 * Implementations will use [link] to retrieve the [Vertice] and set it as their own model.
      */
-    fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: T)
+	fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph)
 
 	/**
 	 * Called by the editor environment to inform this [ControlView] that some properties of the [ControlViewSource]

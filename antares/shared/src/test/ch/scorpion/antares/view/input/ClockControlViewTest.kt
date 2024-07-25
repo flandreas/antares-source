@@ -8,7 +8,9 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.ControlViewComponent
 import ch.scorpion.jabbah.graph.container.OriginIndicator
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.model.vertice.ImmediateVerticeLink
 import ch.scorpion.jabbah.graph.ui.KnobLauncher
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
@@ -37,11 +39,14 @@ class ClockControlViewTest {
 		containerDrawing.add(ControlViewComponent(source = controlViewSource as ControlViewSource<Vertice>))
 		containerDrawing.add(OriginIndicator())
 
+		val graph = mock<Graph>(MockMode.autofill)
+		every { graph.withId(any()) } returns controlViewSource.model
+
 		val vv = SubGraphVerticeViewImpl()
 		vv.fillFromContainerDrawing(containerDrawing)
 		val controlView = vv.getControlViewComponents().first().controlView as ClockControlView
 		controlView.knobLauncher = knobLauncher
-		controlView.bindControlView(vv, controlViewSource.model)
+		controlView.bindControlView(vv, ImmediateVerticeLink(controlViewSource.model.id), graph)
 		vv.rotate(RotationDirection.CounterClockwise)
 
 		val context = contextFor(ClockControlView.ICON_BUTTON_SIZE / 2.0, -ClockControlView.ICON_BUTTON_SIZE / 2.0)

@@ -24,6 +24,8 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorDrawableButton
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
+import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.ui.KnobLauncher
 import ch.scorpion.jabbah.graph.ui.KnobLauncherImpl
 import ch.scorpion.jabbah.graph.view.ControlView
@@ -98,8 +100,8 @@ class ClockControlView(
 
 	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? = null
 
-	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: Clock) {
-		_model = model
+	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
+		_model = link.getLinkedVertice(startGraph) as Clock
 		this.subGraphVerticeView = subGraphVerticeView
 	}
 
