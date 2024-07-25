@@ -56,11 +56,12 @@ class ROMView(
 			columnsCount = contentColumnsCount,
 			showDisassembler = showDisassembler,
 			highlightCurrentCellWhenNotSelected = highlightCurrentCellWhenNotSelected)
+
+		updateGeometry()
 	}
 
 	init {
 		modelExchanged(null)
-		updateGeometry()
 	}
 
 	/** ---- UI properties */

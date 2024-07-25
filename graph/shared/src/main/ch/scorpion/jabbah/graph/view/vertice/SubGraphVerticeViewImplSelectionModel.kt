@@ -56,7 +56,7 @@ class SubGraphVerticeViewImplSelectionModel(
 	/** ---- [AbstractSelectionModel] */
 
 	override fun componentUpdated() {
-		if (component.getControlViewComponents().isNotEmpty()) {
+		if (component.getControlViewComponents().isNotEmpty() && selectionModels.isEmpty()) {
 			component.getControlViewComponents().forEach {
 				selectionModels[it] = provider.provideFor(it.controlView, SelectionDrawingStrategy.REPLACE)!!
 			}
