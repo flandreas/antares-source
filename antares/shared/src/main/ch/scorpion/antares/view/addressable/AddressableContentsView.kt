@@ -183,10 +183,10 @@ class AddressableContentsView(
 		}
 
 		setBounds(
-			0,
-			0,
-			HORIZONTAL_INSET + addressColumnWidth + effectiveDataAreaWidth + HORIZONTAL_INSET,
-			+rowsCount * rowHeight)
+			bounds.x,
+			bounds.y,
+			HORIZONTAL_INSET + addressColumnWidth + effectiveDataAreaWidth + HORIZONTAL_INSET.toDouble(),
+			rowsCount * rowHeight.toDouble())
 	}
 
 	/** Called by clients of this class when the current address of [Addressable] has changed.*/

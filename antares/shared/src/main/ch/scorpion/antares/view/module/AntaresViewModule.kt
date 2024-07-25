@@ -290,6 +290,8 @@ object AntaresViewModule : AbstractModule() {
 		properties.set(ClockView.PROP_ICON_PATH, "/img/clock.png")
 		properties.set(JoystickView.PROP_ICON_PATH, "/img/joystick.png")
 		properties.set(VideoRamView.PROP_ICON_PATH, "/img/videoram.png")
+		properties.set(ROMView.PROP_ICON_PATH, "/img/rom.png")
+		properties.set(RAMView.PROP_ICON_PATH, "/img/ram.png")
 
 		properties.set(LightBulbView.PROP_ICON_PATH, "/img/light-bulb.png")
 		properties.set(AnalogSwitchView.PROP_ICON_PATH, "/img/real-switch.png")
@@ -616,8 +618,8 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(LED_MATRIX, "library.element.LEDMatrix", { "/img/led-matrix.png" }, LEDMatrixView::class)
 		repository.register(BUZZER, "library.element.Buzzer", { "/img/buzzer.png" }, BuzzerView::class)
 
-		repository.register(ROM, "library.element.ROM", { "/img/rom.png" }, ROMView::class)
-		repository.register(RAM, "library.element.RAM", { "/img/ram.png" }, RAMView::class)
+		repository.register(ROM, "library.element.ROM", { BaseModule.properties.getString(ROMView.PROP_ICON_PATH) }, ROMView::class)
+		repository.register(RAM, "library.element.RAM", { BaseModule.properties.getString(RAMView.PROP_ICON_PATH) }, RAMView::class)
 		repository.register(LUT, "library.element.LookupTable", { "/img/lut.png" }, LookupTableView::class)
 
 		repository.register(RANDOM, "library.element.Random", { "/img/random.png" }, RandomView::class)

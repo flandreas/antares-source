@@ -8,18 +8,23 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.graph.view.ControlView
+import ch.scorpion.jabbah.graph.view.ControlViewSource
 
 class RAMView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	eventBus: EventBus = BaseModule.eventBus,
 	model: RAM = RAM()
-) : AbstractAddressableView<RAM>(styleProvider, eventBus, model) {
-
+) : AbstractAddressableView<RAM>(styleProvider, eventBus, model),
+	ControlViewSource<RAM>
+{
 	companion object {
 		const val CLOCK_PORT_X_FACTOR = 6
 		const val CS_PORT_X_FACTOR = 10
 		const val WRITE_PORT_X_FACTOR = 14
 		const val CLEAR_PORT_X_FACTOR = 18
+
+		const val PROP_ICON_PATH = "ch.scorpion.antares.view.addressable.RAMView.iconPath"
 	}
 
 	override fun modelExchanged(oldModel: RAM?) {
@@ -75,11 +80,12 @@ class RAMView(
 			rowsCount = contentRowsCount,
 			columnsCount = contentColumnsCount,
 			showDisassembler = false)
+
+		updateGeometry()
 	}
 
 	init {
 		modelExchanged(null)
-		updateGeometry()
 	}
 
 	/** ---- UI properties */
@@ -102,6 +108,24 @@ class RAMView(
 		set(value) {
 			model.nonVolatile = value
 		}
+
+	/** ---- [ControlViewSource] */
+
+	override val controlId: String
+		get() {
+			// Don't use GraphElementView#getId() as part of the controlId, because that one might be changed
+			// when ControlViews (event as part of a wrapping Component) are added to a Drawing
+			return "ram:" + model.id
+		}
+
+	override val iconPath: String get() = BaseModule.properties.getString(ROMView.PROP_ICON_PATH)
+
+	override fun createControlView(): ControlView<RAM> {
+		val clone = RAMView(styleProvider, model = model)
+		clone.isShowPortViews = false
+		copyControlViewProperties(this, clone)
+		return clone
+	}
 
 	/** ---- [AbstractAddressableView] */
 
