@@ -9,6 +9,7 @@ import javax.swing.BorderFactory
 import javax.swing.JPanel
 import javax.swing.JScrollPane
 import javax.swing.JTextArea
+import javax.swing.SwingUtilities
 import javax.swing.tree.DefaultMutableTreeNode
 
 class GraphHierarchyViewSwing(
@@ -61,10 +62,14 @@ class GraphHierarchyViewSwing(
 		scrollPane.verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
 		add(scrollPane, BorderLayout.CENTER)
 
+		//description.columns = 20
 		description.isEditable = false
 		description.lineWrap = true
 		description.wrapStyleWord = true
 		description.border = BorderFactory.createEmptyBorder(5, 0, 5, 0)
-		add(description, BorderLayout.SOUTH)
+
+		val descriptionScroll = JScrollPane(description, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER)
+		descriptionScroll.border = null
+		add(descriptionScroll, BorderLayout.SOUTH)
 	}
 }
