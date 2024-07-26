@@ -17,18 +17,18 @@ class MemoryLibraryPersistenceService(
 ) : LibraryPersistenceService {
 
 	/** Maps the [UUID] of a [MetaGraph] to the [MetaGraph]. */
-	private val map = mutableMapOf<UUID, MetaGraph>()
+	private val map = mutableMapOf<UUID, String>()
 
 	override fun loadMetaGraphXML(library: Library, uuid: UUID): String {
-		throw UnsupportedOperationException("not implemented")
+		return map[uuid]!!
 	}
 
 	override fun loadMetaGraph(library: Library, uuid: UUID): MetaGraph {
-		return StorableCloner.clone(map[uuid]!!)
+		return StorableCloner.deserialize(map[uuid]!!) as MetaGraph
 	}
 
 	override fun storeMetaGraph(library: Library, metaGraph: MetaGraph) {
-		map[metaGraph.uuid] = StorableCloner.clone(metaGraph)
+		map[metaGraph.uuid] = StorableCloner.serialize(metaGraph)
 	}
 
 	override fun deleteMetaGraph(library: Library, uuid: UUID) {

@@ -460,6 +460,8 @@ class SubGraphVerticeRef(
 
 	/** ---- [SubGraphVerticeRef] */
 
+	val isBroken: Boolean get() = graphReference.state == BROKEN
+
 	fun setParamValue(paramValue: GraphParamValue<*>) {
 		val newParamValues = paramValues.withValue(paramValue)
 
@@ -508,7 +510,7 @@ class SubGraphVerticeRef(
 	}
 
 	private fun synchronizePorts() {
-		if (paramValues.isNotEmpty) {
+		if (paramValues.isNotEmpty && graphReference.state != BROKEN) {
 			with(ensureGraph()) {
 				for (port in getPorts()) {
 					val graphPort = getGraphPort<Any>(port.name!!)
