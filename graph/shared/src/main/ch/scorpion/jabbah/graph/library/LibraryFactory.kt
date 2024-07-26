@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.library
 
-import ch.scorpion.jabbah.edit.auth.EditAuthModule
+import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.graph.project.Project
 
 /**
  * A factory for creating new [Libraries][Library].
@@ -15,29 +16,11 @@ interface LibraryFactory {
 	 * This can be used as a starting point when creating new user provided [Libraries][Library].
 	 */
 	fun createBaseLibrary(properties: LibraryProperties): Library
-}
 
-/** Null pattern.*/
-class UnimplementedLibraryFactory : LibraryFactory {
-
-	override fun createEmptyLibrary(properties: LibraryProperties, importedLibraryId: LibraryIdentification?): Library {
-		throw UnsupportedOperationException("not implemented")
-	}
-
-	override fun createBaseLibrary(properties: LibraryProperties): Library {
-		throw UnsupportedOperationException("not implemented")
-	}
-}
-
-class EmptyLibraryFactory : LibraryFactory {
-
-	override fun createEmptyLibrary(properties: LibraryProperties, importedLibraryId: LibraryIdentification?): Library {
-		val library = LibraryImpl(properties, libraryService = LibraryModule.libraryService)
-		library.author = EditAuthModule.userHolder.user.identity
-		importedLibraryId?.let { library.addImport(it.uuid) }
-		return library
-	}
-
-	override fun createBaseLibrary(properties: LibraryProperties): Library =
-		createEmptyLibrary(properties)
+	/**
+	 * Fills the specified [library] with preferences from [BaseModule.properties].
+	 * This can't be solely implemented in [createEmptyLibrary], because this [LibraryFactory] is also
+	 * used by code that creates [Project], which must be initialized with the same preferences.
+	 */
+	fun fillPreferences(library: Library)
 }

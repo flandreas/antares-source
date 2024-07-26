@@ -82,6 +82,7 @@ class ProjectManagementService(
 			project.addImport(it)
 		}
 		project.defaultElementUUID = metaGraph.uuid
+		LibraryModule.libraryFactory.fillPreferences(project)
 
 		libraryService.storeLibrary(project)
 		userDictionaryService.add(project)

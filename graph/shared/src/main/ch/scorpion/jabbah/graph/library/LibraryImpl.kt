@@ -257,6 +257,9 @@ open class LibraryImpl(
 		if (visibility != LibraryVisibility.Private) {
 			writer.writeString("visibility", visibility.customName)
 		}
+		if (_preferences.size > 0) {
+			writer.writeStorable("preferences", _preferences)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
@@ -276,6 +279,9 @@ open class LibraryImpl(
 		}
 		if (reader.hasAttribute("visibility")) {
 			visibility = LibraryVisibility.withName(reader.readString("visibility"))
+		}
+		if (reader.hasElement("preferences")) {
+			_preferences = reader.readStorable("preferences")
 		}
 	}
 
@@ -324,6 +330,9 @@ open class LibraryImpl(
 			visibility = value.visibility
 			value.author?.let { author = it }
 		}
+
+	private var _preferences: LibraryPreferences = LibraryPreferences()
+	override val preferences: LibraryPreferences get() = _preferences
 
 	override fun bindLibraryItems() {
 		this.accept(object : EmptyHierarchyVisitor() {

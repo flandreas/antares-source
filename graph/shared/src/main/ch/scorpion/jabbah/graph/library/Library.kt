@@ -69,6 +69,12 @@ interface Library : MetaGraphRepository, ImageRepository, Storable, Namable, Des
 	var properties: LibraryProperties
 
 	/**
+	 * Contains preferences that influence execution of [Graph]s in a [Library] and are therefore
+	 * copied from the local preferences to go along with exported [Libraries][Library].
+	 */
+	val preferences: LibraryPreferences
+
+	/**
 	 * The [LibraryService] to use when operation on this [Library]. Needed in order to be able to distinguish
 	 * between different service implementations for libraries and projects.
 	 */

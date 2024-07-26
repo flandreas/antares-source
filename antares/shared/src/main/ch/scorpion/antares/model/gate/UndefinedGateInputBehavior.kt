@@ -8,6 +8,8 @@ import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.base.PreferencesChangedEvent
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStatePreparationEvent
+import ch.scorpion.jabbah.graph.library.LibraryPreferences
 
 enum class UndefinedGateInputBehavior(
 	override val customName: String
@@ -59,5 +61,15 @@ object CurrentUndefinedGateInputBehavior {
 
 	init {
 		BaseModule.eventBus.register(PreferencesChangedEvent::class) { value = fromProperties }
+		BaseModule.eventBus.register(SchedulerActivationStatePreparationEvent::class) {
+			value = if (it.scheduler.isActive) {
+				// Still active, about to become inactive: Reset to preference from base properties
+				fromProperties
+			} else {
+				// Still inactive, about to become active: Use preference from Library
+				UndefinedGateInputBehavior.withName(
+					LibraryPreferences.getString(UndefinedGateInputBehavior.PROP_UNDEFINED_GATE_INPUT_BEHAVIOR))
+			}
+		}
 	}
 }

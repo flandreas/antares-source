@@ -442,6 +442,7 @@ class SchedulerImpl(
 	}
 
 	private fun start() {
+		eventBus.post(SchedulerActivationStatePreparationEvent(this))
 		LOG.trace("Scheduler started")
 		reset()
 		realStartTime = timeService.nowNanos()
@@ -469,6 +470,7 @@ class SchedulerImpl(
 		isInBreakpoint = false
 		eventBus.post(SchedulerActivationStateEvent(this))
 		reset()
+		eventBus.post(SchedulerActivationStatePreparationEvent(this))
 	}
 
 	private fun updateRelativeTime(relativeTime: Long) {

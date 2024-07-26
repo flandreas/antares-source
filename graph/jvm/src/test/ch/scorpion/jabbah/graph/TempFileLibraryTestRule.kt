@@ -20,7 +20,7 @@ object TempFileLibraryTestRule {
 
 		val tempDir = Files.createTempDirectory(null)
 
-		LibraryModule.libraryFactory = EmptyLibraryFactory()
+		LibraryModule.libraryFactory = GraphLibraryFactory()
 
 		LibraryModule.systemLibraryPersistenceService = FileLibraryPersistenceService({ tempDir.absolutePathString() }, "systemLibs")
 		LibraryModule.systemLibraryDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService({ tempDir.absolutePathString() }, "systemLibs"))

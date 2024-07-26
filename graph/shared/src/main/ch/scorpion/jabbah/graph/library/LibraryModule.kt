@@ -15,7 +15,7 @@ object LibraryModule : AbstractModule() {
 
 	lateinit var DEF_LIBRARY_UUID: UUID
 
-	var libraryFactory: LibraryFactory = UnimplementedLibraryFactory()
+	var libraryFactory: LibraryFactory = GraphLibraryFactory()
 
 	var libraryHolder: LibraryHolder = LibraryHolderImpl()
 		set(value) {

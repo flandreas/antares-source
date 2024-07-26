@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.execution.scheduler
 
+import ch.scorpion.jabbah.base.event.EventBus
+
 /**
  * Represents the activation state of a [Scheduler].
  */
@@ -12,5 +14,11 @@ enum class SchedulerActivationState {
     PASSIVE
 }
 
-/** An event being posted on a [Scheduler]'s [EventBus] whenever its [SchedulerActivationState] has changed.*/
+/**
+ * An event being posted on a [Scheduler]'s [EventBus] before it will become [SchedulerActivationState.ACTIVE],
+ * and after it has become [SchedulerActivationState.PASSIVE], excluding all necessary setup and tear-down activities.
+ */
+data class SchedulerActivationStatePreparationEvent(val scheduler: Scheduler)
+
+/** An event being posted on a [Scheduler]'s [EventBus] immediately after its [SchedulerActivationState] has changed.*/
 data class SchedulerActivationStateEvent(val scheduler: Scheduler)

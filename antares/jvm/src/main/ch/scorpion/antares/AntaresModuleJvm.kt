@@ -3,9 +3,9 @@ package ch.scorpion.antares
 import ch.scorpion.antares.hdl.vhdl.ExportVHDLPanel
 import ch.scorpion.antares.model.*
 import ch.scorpion.antares.model.expression.BooleanExpressionNotation
-import ch.scorpion.antares.model.gate.AbstractLogicGate
+import ch.scorpion.antares.model.gate.CurrentDefaultPropagationDelay
 import ch.scorpion.antares.model.gate.UndefinedGateInputBehavior
-import ch.scorpion.antares.model.input.Switch
+import ch.scorpion.antares.model.input.CurrentSwitchPropagationDelay
 import ch.scorpion.antares.model.net.*
 import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
 import ch.scorpion.antares.model.signal.*
@@ -19,7 +19,9 @@ import ch.scorpion.antares.view.gate.LogicGateView
 import ch.scorpion.antares.view.graph.AnalogMetaGraphIcon
 import ch.scorpion.antares.view.graph.AntaresMetaGraphIcon
 import ch.scorpion.antares.view.module.AntaresViewModule
-import ch.scorpion.antares.view.net.*
+import ch.scorpion.antares.view.net.AbstractTransistorView
+import ch.scorpion.antares.view.net.DigitalEdgeView
+import ch.scorpion.antares.view.net.TransistorViewSymbol
 import ch.scorpion.antares.view.net.tunnel.TunnelFlowDirection
 import ch.scorpion.antares.view.net.tunnel.TunnelNameEditor
 import ch.scorpion.antares.view.net.tunnel.TunnelNameProperty
@@ -360,7 +362,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 			add(buildDigitalExpressionsPreferenceTree())
 
 			add(IntPreference(
-				id = AbstractLogicGate.PROP_DEFAULT_PROPAGATION_DELAY,
+				id = CurrentDefaultPropagationDelay.PROP_DEFAULT_PROPAGATION_DELAY,
 				nameKey = "antares.preference.defaultPropagationDelay",
 				minValue = 1,
 				maxValue = 1_000_000,
@@ -404,7 +406,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 			))
 
 			add(IntPreference(
-				id = Switch.PROP_DEFAULT_DELAY,
+				id = CurrentSwitchPropagationDelay.PROP_DEFAULT_DELAY,
 				nameKey = "antares.preference.SwitchPropDelay",
 				minValue = 0,
 				maxValue = 1_000_000
