@@ -165,6 +165,25 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		ProjectModule.projectManagementService = ProjectManagementService(
 			newMetaGraphNameTranslationKey = "graph.name.unknown")
 
+		GraphViewModuleJvm.libraryPreferencesProvider = {
+			GraphViewModuleJvm.getLibraryPreferences().apply {
+				add(BaseModuleJvm.preferencesTree
+					.getGroup(PREF_TREE_CIRCUIT)
+					.getGroup(PREF_TREE_CIRCUIT_DIGITAL)
+					.get(UndefinedGateInputBehavior.PROP_UNDEFINED_GATE_INPUT_BEHAVIOR))
+
+				add(BaseModuleJvm.preferencesTree
+					.getGroup(PREF_TREE_CIRCUIT)
+					.getGroup(PREF_TREE_CIRCUIT_DIGITAL)
+					.get(CurrentDefaultPropagationDelay.PROP_DEFAULT_PROPAGATION_DELAY))
+
+				add(BaseModuleJvm.preferencesTree
+					.getGroup(PREF_TREE_CIRCUIT)
+					.getGroup(PREF_TREE_CIRCUIT_DIGITAL)
+					.get(CurrentSwitchPropagationDelay.PROP_DEFAULT_DELAY))
+			}
+		}
+
 		if (app.dataLocation == DataLocation.Local) {
 			GraphModuleJvm.projectAkrabClientServiceJvm = {
 				val serverUrl = try {

@@ -1,7 +1,12 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.preferences.Preferences
+import ch.scorpion.jabbah.base.preferences.PreferencesMessageDisplay
+import ch.scorpion.jabbah.base.preferences.PreferencesPanel
 import ch.scorpion.jabbah.base.swing.EGBL
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.UserIdentity
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
@@ -10,10 +15,8 @@ import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.graph.view.LibraryVisibilityEditor
-import java.awt.Component
-import java.awt.Dimension
-import java.awt.FlowLayout
-import java.awt.Frame
+import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
+import java.awt.*
 import javax.swing.*
 import javax.swing.event.AncestorEvent
 import javax.swing.event.AncestorListener
@@ -31,11 +34,13 @@ class LibraryPropertiesPanel(
 	supportImport: Boolean,
 	isSystem: Boolean,
 	properties: LibraryProperties? = null,
+	libraryPreferences: LibraryPreferences,
 	editable: Boolean = true,
 	private val managementService: LibraryManagementService = LibraryModule.libraryManagementService
 ) : JPanel() {
 
 	companion object {
+
 		fun showAsDialog(
 			parent: Component = Frame.getFrames()[0],
 			title: String,
@@ -43,9 +48,11 @@ class LibraryPropertiesPanel(
 			supportImport: Boolean,
 			isSystem: Boolean,
 			properties: LibraryProperties? = null,
+			libraryPreferences: LibraryPreferences = LibraryPreferences(),
 			editable: Boolean = true,
 		): LibraryProperties? {
-			val panel = LibraryPropertiesPanel(supportOwnership, supportImport, isSystem, properties, editable)
+			val panel = LibraryPropertiesPanel(supportOwnership, supportImport, isSystem, properties, libraryPreferences, editable)
+
 			(panel.nameField.textComponent as JComponent).addAncestorListener(object : AncestorListener {
 				override fun ancestorAdded(event: AncestorEvent?) {
 					SwingUtilities.invokeLater {
@@ -97,6 +104,18 @@ class LibraryPropertiesPanel(
 
 	private val oldAuthor: UserIdentity? = properties?.author
 
+	/** Bridges [LibraryPreferences] to the [Preferences] class used by the UI.*/
+	private val preferences = Preferences(libraryPreferences)
+
+	private val preferenceMessageDisplay = MyMessageDisplay()
+
+	private val preferencesPanel = PreferencesPanel(
+		{ GraphViewModuleJvm.libraryPreferencesProvider().iterator() },
+		preferences,
+		preferenceMessageDisplay,
+		addFiller = false
+	)
+
 	init {
 		preferredSize = Dimension(500, 180)
 		visibilityField.customEditor.isEnabled = editable
@@ -123,6 +142,8 @@ class LibraryPropertiesPanel(
 			visibilityField.value = it.visibility
 			ownedByMeField.isSelected = it.author == EditAuthModule.userHolder.user.identity
 		}
+
+		preferencesPanel.load()
 	}
 
 	private fun updateOwnedByMe(ownedByMe: Boolean) {
@@ -145,14 +166,45 @@ class LibraryPropertiesPanel(
 		importField.selectedItem = entries.first { it.uuid == LibraryModule.DEF_LIBRARY_UUID }
 	}
 
+	override fun paintComponent(g: Graphics?) {
+		super.paintComponent(g)
+	}
+
 	private fun buildUI(supportOwnership: Boolean, supportImport: Boolean) {
+		layout = BorderLayout()
+
+		val propertiesPanel = buildPropertiesPanel(supportOwnership, supportImport)
+		propertiesPanel.border = BorderFactory.createEmptyBorder(preferencesPanel.topInset, 0, 20, 0)
+
+		val localPreferencesPanel = buildPreferencesPanel()
+
+		val tabPane = JTabbedPane()
+		tabPane.add(Translations.getString("library.dialog.properties.properties"), propertiesPanel)
+		tabPane.add(Translations.getString("library.dialog.properties.preferences"), localPreferencesPanel)
+		add(tabPane, BorderLayout.CENTER)
+	}
+
+	private fun buildPreferencesPanel(): JPanel {
+		val panel = JPanel()
+		preferencesPanel.alignmentX = Component.LEFT_ALIGNMENT
+		preferenceMessageDisplay.alignmentX = Component.LEFT_ALIGNMENT
+		preferenceMessageDisplay.border = BorderFactory.createEmptyBorder(10, preferencesPanel.leftInset, 0, 0)
+		panel.layout = BoxLayout(panel, BoxLayout.PAGE_AXIS)
+		panel.add(preferencesPanel)
+		panel.add(preferenceMessageDisplay)
+		panel.add(Box.createVerticalStrut(10))
+		return panel
+	}
+
+	private fun buildPropertiesPanel(supportOwnership: Boolean, supportImport: Boolean): JPanel {
+		val panel = JPanel()
 		var row = -1
 		val inset = 5
 		val rowDist = 5
-		layout = EGBL.getLayout()
+		panel.layout = EGBL.getLayout()
 
 		EGBL.add(
-			this,
+			panel,
 			JLabel("$nameLabel:"),
 			0, ++row,
 			1, 1,
@@ -163,7 +215,7 @@ class LibraryPropertiesPanel(
 		)
 
 		EGBL.add(
-			this,
+			panel,
 			nameField.customEditor,
 			1, row,
 			EGBL.REMAINDER, 1,
@@ -174,7 +226,7 @@ class LibraryPropertiesPanel(
 		)
 
 		EGBL.add(
-			this,
+			panel,
 			JLabel("$descLabel:"),
 			0, ++row,
 			1, 1,
@@ -186,7 +238,7 @@ class LibraryPropertiesPanel(
 
 		descField.customEditor.preferredSize = Dimension(descField.customEditor.preferredSize.width, 50)
 		EGBL.add(
-			this,
+			panel,
 			descField.customEditor,
 			1, row,
 			EGBL.REMAINDER, 1,
@@ -198,7 +250,7 @@ class LibraryPropertiesPanel(
 
 		if (supportImport) {
 			EGBL.add(
-				this,
+				panel,
 				JLabel("$importLabel:"),
 				0, ++row,
 				1, 1,
@@ -209,7 +261,7 @@ class LibraryPropertiesPanel(
 			)
 
 			EGBL.add(
-				this,
+				panel,
 				importField,
 				1, row,
 				EGBL.REMAINDER, 1,
@@ -222,7 +274,7 @@ class LibraryPropertiesPanel(
 
 		if (supportOwnership) {
 			EGBL.add(
-				this,
+				panel,
 				JLabel("$ownedByMeLabel:"),
 				0, ++row,
 				1, 1,
@@ -233,7 +285,7 @@ class LibraryPropertiesPanel(
 			)
 
 			EGBL.add(
-				this,
+				panel,
 				ownedByMeField,
 				1, row,
 				EGBL.REMAINDER, 1,
@@ -246,7 +298,7 @@ class LibraryPropertiesPanel(
 
 		if (GraphModuleJvm.supportWeb) {
 			EGBL.add(
-				this,
+				panel,
 				JLabel("$visibilityLabel:"),
 				0, ++row,
 				1, 1,
@@ -268,7 +320,7 @@ class LibraryPropertiesPanel(
 			}
 
 			EGBL.add(
-				this,
+				panel,
 				visibilityPanel,
 				1, row,
 				EGBL.REMAINDER, 1,
@@ -279,9 +331,11 @@ class LibraryPropertiesPanel(
 			)
 		}
 
+		// Filler
+
 		val filler = JPanel()
 		EGBL.add(
-			this,
+			panel,
 			filler,
 			10, ++row,
 			EGBL.REMAINDER, EGBL.REMAINDER,
@@ -289,6 +343,8 @@ class LibraryPropertiesPanel(
 			EGBL.NORTHWEST,
 			EGBL.BOTH
 		)
+
+		return panel
 	}
 
 	private fun confirmOwnByMe(): Boolean =
@@ -299,4 +355,27 @@ class LibraryPropertiesPanel(
 			JOptionPane.OK_CANCEL_OPTION,
 			JOptionPane.WARNING_MESSAGE
 		) == JOptionPane.OK_OPTION
+
+	private class MyMessageDisplay : JLabel(" ", LEFT), PreferencesMessageDisplay {
+
+		init {
+			foreground = UiUtil.errorTextColor
+		}
+
+		override fun showMessage(message: String) {
+			if (StringUtils.isEmpty(message)) {
+				hideMessage()
+			} else {
+				updateMessage(message)
+			}
+		}
+
+		override fun hideMessage() {
+			updateMessage(" ")
+		}
+
+		private fun updateMessage(message: String) {
+			this.text = message
+		}
+	}
 }

@@ -43,6 +43,8 @@ class PreferenceGroup(
 		return this
 	}
 
+	fun get(id: String): Preference = _preferences.find {it.id == id }!!
+
 	/**
 	 * Returns the child [PreferenceGroup] of this [PreferenceGroup] with the specified name
 	 * @throws IllegalArgumentException if not found
@@ -76,6 +78,7 @@ interface Preference {
 
 open class Preferences(origProperties: Properties) : PropertiesProxy(origProperties) {
 
+	/** Customize the value of [preference] with [value], thereby overwriting the value in [target].*/
 	open fun customize(preference: Preference, value: Any) {
 		customize(preference.id, value)
 	}
