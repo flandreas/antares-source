@@ -53,20 +53,31 @@ abstract class AbstractBaseInterpreter(
 		return try {
 			interpret(params)
 		} catch (e: DslError) {
-			BaseModule.eventBus.post(
-				IssueImpl(
+			postError(metaData, "base.dsl.scriptError.msg", e)
+			if (rethrow) {
+				throw e
+			}
+			Unit
+
+		} catch (e: Exception) {
+			postError(metaData, "base.dsl.systemError.msg", e)
+			if (rethrow) {
+				throw e
+			}
+			Unit
+		}
+	}
+
+	private fun postError(metaData: ScriptMetaData, msgKey: String, e: Throwable) {
+		BaseModule.eventBus.post(
+			IssueImpl(
 				severity = IssueSeverity.Error,
 				name = Translations.getString("base.dsl.scriptError.msg"),
 				description = e.toString(),
 				origin = metaData.origin,
 				context = metaData.context
 			)
-			)
-			if (rethrow) {
-				throw e
-			}
-			Unit
-		}
+		)
 	}
 
 	protected fun compound(node: Compound<*>): Any {
