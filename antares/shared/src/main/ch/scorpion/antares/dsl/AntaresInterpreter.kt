@@ -265,19 +265,19 @@ class AntaresInterpreter(
 	private fun equalR(l: DigitalSignal, r: Any, loc: TextLocation): Any =
 		when (r) {
 			is DigitalSignal -> if (l.toLong() == r.toLong()) 1L else 0L
-			is Long -> if (l.getValue().toLong() == r) 1L else 0L
+			is Long -> if (signalToLong(l) == r) 1L else 0L
 			else -> throwIncompatibleTypes(loc, EQUAL)
 		}
 
 	override fun equalR(l: Long, r: Any, loc: TextLocation): Any =
 		when (r) {
-			is DigitalSignal -> if (l == r.getValue().toLong()) 1L else 0L
+			is DigitalSignal -> if (l == signalToLong(r)) 1L else 0L
 			else -> super.equalR(l, r, loc)
 		}
 
 	override fun equalR(l: Float, r: Any, loc: TextLocation): Any =
 		when (r) {
-			is DigitalSignal -> if (l == r.getValue().toFloat()) 1L else 0L
+			is DigitalSignal -> if (l == signalToLong(r).toFloat()) 1L else 0L
 			else -> super.equalR(l, r, loc)
 		}
 
@@ -289,20 +289,20 @@ class AntaresInterpreter(
 
 	private fun smallerR(l: DigitalSignal, r: Any, loc: TextLocation): Any =
 		when (r) {
-			is DigitalSignal -> if (l.getValue() < r.getValue()) 1L else 0L
-			is Long -> if (l.getValue().toLong() < r) 1L else 0L
+			is DigitalSignal -> if (signalToLong(l) < signalToLong(r)) 1L else 0L
+			is Long -> if (signalToLong(l) < r) 1L else 0L
 			else -> throwIncompatibleTypes(loc, SMALLER)
 		}
 
 	override fun smallerR(l: Long, r: Any, loc: TextLocation): Any =
 		when (r) {
-			is DigitalSignal -> if (l < r.getValue().toLong()) 1L else 0L
+			is DigitalSignal -> if (l < signalToLong(r)) 1L else 0L
 			else -> super.smallerR(l, r, loc)
 		}
 
 	override fun smallerR(l: Float, r: Any, loc: TextLocation): Any =
 		when (r) {
-			is DigitalSignal -> if (l < r.getValue().toFloat()) 1L else 0L
+			is DigitalSignal -> if (l < signalToLong(r).toFloat()) 1L else 0L
 			else -> super.smallerR(l, r, loc)
 		}
 
@@ -314,20 +314,20 @@ class AntaresInterpreter(
 
 	private fun greaterR(l: DigitalSignal, r: Any, loc: TextLocation): Any =
 		when (r) {
-			is DigitalSignal -> if (l.getValue() > r.getValue()) 1L else 0L
-			is Long -> if (l.getValue().toLong() > r) 1L else 0L
+			is DigitalSignal -> if (signalToLong(l) > signalToLong(r)) 1L else 0L
+			is Long -> if (signalToLong(l) > r) 1L else 0L
 			else -> throwIncompatibleTypes(loc, GREATER)
 		}
 
 	override fun greaterR(l: Long, r: Any, loc: TextLocation): Any =
 		when (r) {
-			is DigitalSignal -> if (l > r.getValue().toLong()) 1L else 0L
+			is DigitalSignal -> if (l > signalToLong(r)) 1L else 0L
 			else -> super.greaterR(l, r, loc)
 		}
 
 	override fun greaterR(l: Float, r: Any, loc: TextLocation): Any =
 		when (r) {
-			is DigitalSignal -> if (l > r.getValue().toFloat()) 1L else 0L
+			is DigitalSignal -> if (l > signalToLong(r).toFloat()) 1L else 0L
 			else -> super.greaterR(l, r, loc)
 		}
 

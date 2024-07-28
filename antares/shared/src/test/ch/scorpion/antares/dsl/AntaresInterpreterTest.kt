@@ -1,6 +1,8 @@
 package ch.scorpion.antares.dsl
 
 import ch.scorpion.antares.AntaresTestRule
+import ch.scorpion.antares.model.gate.CurrentUndefinedGateInputBehavior
+import ch.scorpion.antares.model.gate.UndefinedGateInputBehavior
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import kotlin.test.Test
@@ -12,6 +14,12 @@ class AntaresInterpreterTest {
 		init {
 			AntaresTestRule.configure()
 		}
+	}
+
+	@Test
+	fun setup() {
+		// This is used in expression evaluation
+		CurrentUndefinedGateInputBehavior.value = UndefinedGateInputBehavior.ReadAs0
 	}
 
 	@Test
@@ -58,5 +66,72 @@ class AntaresInterpreterTest {
 	fun shouldInterpretStringLiteral() {
 		val result = AntaresInterpreter("var a = \"test\"").interpret()
 		assertEquals("test", result)
+	}
+
+	@Test
+	fun shouldEvaluateEquals() {
+		shouldBeTrue("5 == 5")
+		shouldBeTrue("5.0 == 5")
+		shouldBeTrue("5 == 5.0")
+		shouldBeTrue("5.0 == 5.0")
+		shouldBeTrue("0xF == 15")
+		shouldBeTrue("15 == 0xF")
+		shouldBeTrue("0x?8 == 0")
+		shouldBeTrue("0x?8 == 0x?8")
+
+		shouldBeFalse("5 == 6")
+		shouldBeFalse("5.0 == 6")
+		shouldBeFalse("6 == 5.0")
+		shouldBeFalse("6.0 == 5.0")
+		shouldBeFalse("0xF == 14")
+		shouldBeFalse("14 == 0xF")
+		shouldBeFalse("0x?8 == 1")
+	}
+
+	@Test
+	fun shouldEvaluateSmaller() {
+		shouldBeTrue("5 < 6")
+		shouldBeTrue("5.0 < 6")
+		shouldBeTrue("4 < 5.0")
+		shouldBeTrue("4.0 < 5.0")
+		shouldBeTrue("0xE < 15")
+		shouldBeTrue("14 < 0xF")
+		shouldBeTrue("0x?8 < 1")
+
+		shouldBeFalse("6 < 5")
+		shouldBeFalse("6.0 < 5")
+		shouldBeFalse("6 < 5.0")
+		shouldBeFalse("6.0 < 5.0")
+		shouldBeFalse("0xF < 14")
+		shouldBeFalse("15 < 0xF")
+		shouldBeFalse("0x?8 < 0")
+		shouldBeFalse("0x?8 < 0x?8")
+	}
+
+	@Test
+	fun shouldEvaluateGreater() {
+		shouldBeTrue("6 > 5")
+		shouldBeTrue("6.0 > 5")
+		shouldBeTrue("6 > 5.0")
+		shouldBeTrue("6.0 > 5.0")
+		shouldBeTrue("0xF > 14")
+		shouldBeTrue("15 > 0xE")
+
+		shouldBeFalse("5 > 6")
+		shouldBeFalse("5.0 > 6")
+		shouldBeFalse("4 > 5.0")
+		shouldBeFalse("4.0 > 5.0")
+		shouldBeFalse("0xE > 15")
+		shouldBeFalse("14 > 0xF")
+		shouldBeFalse("0x?8 > 1")
+		shouldBeFalse("0x?8 > 0x?8")
+	}
+
+	private fun shouldBeTrue(exp: String) {
+		assertEquals(1L, AntaresInterpreter(exp).interpret())
+	}
+
+	private fun shouldBeFalse(exp: String) {
+		assertEquals(0L, AntaresInterpreter(exp).interpret())
 	}
 }
