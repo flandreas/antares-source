@@ -67,13 +67,16 @@ open class Value(
 		if (this.type == DONT_CARE || other.type == DONT_CARE) {
 			return true
 		}
+		if (this.value == other.value) {
+			return true
+		}
 		if (this.type != other.type) {
 			return false
 		}
 		if (type == UNDEFINED) {
 			return true
 		}
-		return this.value == other.value
+		return false
 	}
 
 	override fun hashCode(): Int {
@@ -91,6 +94,12 @@ class MatchedValue(
 	private val isPassed: Boolean = this == expected
 
 	override val state: State = if (isPassed) PASSED else FAILED
+
+	init {
+		if (!isPassed) {
+			println("Test failed: expected $expected, actual $actual")
+		}
+	}
 
 	override fun withValue(value: DigitalSignal): Value =
 		MatchedValue(expected, value)
