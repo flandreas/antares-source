@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.SemanticError
 import ch.scorpion.jabbah.base.dsl.SyntaxError
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.graph.model.PortType
 
 /**
  * Runs a circuit test script (provided as plain text) on a particular [DigitalGraph].
@@ -83,5 +84,12 @@ class TestcaseCircuitRunner(
 	}
 
 	override fun readOutput(inOut: DigitalCircuitInOut): DigitalSignal? =
-		(inOut.getPort<DigitalSignal>() as DigitalPort).getIncomingSignal()
+		//(inOut.getPort<DigitalSignal>() as DigitalPort).getIncomingSignal()
+		with(inOut.getPort<DigitalSignal>() as DigitalPort) {
+			if (portType == PortType.INOUT) {
+				getOutgoingSignal()
+			} else {
+				getIncomingSignal()
+			}
+		}
 }
