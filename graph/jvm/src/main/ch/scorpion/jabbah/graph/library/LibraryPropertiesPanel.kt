@@ -166,10 +166,6 @@ class LibraryPropertiesPanel(
 		importField.selectedItem = entries.first { it.uuid == LibraryModule.DEF_LIBRARY_UUID }
 	}
 
-	override fun paintComponent(g: Graphics?) {
-		super.paintComponent(g)
-	}
-
 	private fun buildUI(supportOwnership: Boolean, supportImport: Boolean) {
 		layout = BorderLayout()
 
@@ -242,9 +238,9 @@ class LibraryPropertiesPanel(
 			descField.customEditor,
 			1, row,
 			EGBL.REMAINDER, 1,
-			0.0, 0.0,
+			0.0, 1.0,
 			EGBL.WEST,
-			EGBL.HORIZONTAL,
+			EGBL.BOTH,
 			rowDist, inset, 0, 0
 		)
 
@@ -339,7 +335,7 @@ class LibraryPropertiesPanel(
 			filler,
 			10, ++row,
 			EGBL.REMAINDER, EGBL.REMAINDER,
-			1.0, 1.0,
+			1.0, 0.0,
 			EGBL.NORTHWEST,
 			EGBL.BOTH
 		)
