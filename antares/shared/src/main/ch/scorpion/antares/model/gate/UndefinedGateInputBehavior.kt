@@ -5,11 +5,10 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.EnumProperty
-import ch.scorpion.jabbah.base.PreferencesChangedEvent
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStatePreparationEvent
 import ch.scorpion.jabbah.graph.library.LibraryPreferences
+import ch.scorpion.jabbah.graph.library.LibraryPreferencesProperty
 
 enum class UndefinedGateInputBehavior(
 	override val customName: String
@@ -52,24 +51,11 @@ enum class UndefinedGateInputBehavior(
 	}
 }
 
-object CurrentUndefinedGateInputBehavior {
+object CurrentUndefinedGateInputBehavior : LibraryPreferencesProperty<UndefinedGateInputBehavior>() {
 
-	var value: UndefinedGateInputBehavior = fromProperties
-
-	private val fromProperties: UndefinedGateInputBehavior get() =
+	override val fromProperties: UndefinedGateInputBehavior get() =
 		UndefinedGateInputBehavior.withName(BaseModule.properties.getString(UndefinedGateInputBehavior.PROP_UNDEFINED_GATE_INPUT_BEHAVIOR))
 
-	init {
-		BaseModule.eventBus.register(PreferencesChangedEvent::class) { value = fromProperties }
-		BaseModule.eventBus.register(SchedulerActivationStatePreparationEvent::class) {
-			value = if (it.scheduler.isActive) {
-				// Still active, about to become inactive: Reset to preference from base properties
-				fromProperties
-			} else {
-				// Still inactive, about to become active: Use preference from Library
-				UndefinedGateInputBehavior.withName(
-					LibraryPreferences.getString(UndefinedGateInputBehavior.PROP_UNDEFINED_GATE_INPUT_BEHAVIOR))
-			}
-		}
-	}
+	override val fromLibraryPreferences: UndefinedGateInputBehavior get() =
+		UndefinedGateInputBehavior.withName(LibraryPreferences.getString(UndefinedGateInputBehavior.PROP_UNDEFINED_GATE_INPUT_BEHAVIOR))
 }

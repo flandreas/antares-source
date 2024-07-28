@@ -34,12 +34,17 @@ data class LibraryItemUpdatedEvent(
 	val item: LibraryItem
 )
 
-/** Posted on [EventBus] when a [LibraryImpl] has been within the same or to another [LibraryDirectory].*/
+/** Posted on [EventBus] when a [LibraryImpl] has been moved within the same or to another [LibraryDirectory].*/
 data class LibraryItemMovedEvent(
 	val oldDirectory: LibraryDirectory,
 	val item: LibraryItem,
 	val newDirectory: LibraryDirectory,
 	val index: Int
+)
+
+/** Posted on [EventBus] when a [Library] has been stored, i.e. made persistent.*/
+data class LibraryStoredEvent(
+	val library: Library
 )
 
 /** Posted on [EventBus] when a [Library] has been deleted.*/
@@ -116,6 +121,7 @@ class LibraryService(
 	fun storeLibrary(library: Library) {
 		LOG.trace("Storing Library ${library.uuid} with ID ${library.hashCode()}")
 		persister(library.isSystem).storeLibrary(library)
+		eventBus.post(LibraryStoredEvent(library))
 	}
 
 	/**
