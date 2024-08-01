@@ -1,6 +1,7 @@
 package ch.scorpion.antares
 
 import ch.scorpion.antares.hdl.vhdl.ExportVHDLPanel
+import ch.scorpion.antares.health.SubCircuitPortConsistencyCheck
 import ch.scorpion.antares.model.*
 import ch.scorpion.antares.model.expression.BooleanExpressionNotation
 import ch.scorpion.antares.model.gate.CurrentDefaultPropagationDelay
@@ -35,6 +36,7 @@ import ch.scorpion.antares.view.symbolstyle.SymbolStyle
 import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTableService
 import ch.scorpion.jabbah.app.Environment
 import ch.scorpion.jabbah.app.RailwayAppUsageServiceImpl
+import ch.scorpion.jabbah.app.health.SystemHealthChecker
 import ch.scorpion.jabbah.app.module.AppModuleJvm
 import ch.scorpion.jabbah.app.railway.AbstractRailwayAppService.Companion.PROP_PING_APPLICATION_ID
 import ch.scorpion.jabbah.app.rating.RailwayRatingService
@@ -54,6 +56,7 @@ import ch.scorpion.jabbah.base.swing.EnumRenderer
 import ch.scorpion.jabbah.base.swing.ToStringRenderer
 import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.model.text.TextComponentJvm
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.properties.AbstractReflectionPropertySwing
@@ -62,6 +65,7 @@ import ch.scorpion.jabbah.edit.properties.DynamicPropertyEditorRegistry
 import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
 import ch.scorpion.jabbah.execution.ExecutionModuleJvm
 import ch.scorpion.jabbah.graph.container.ContainerDrawingLayouter
+import ch.scorpion.jabbah.graph.health.GraphViewConsistencyCheck
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.library.dictionary.FileLibraryDictionaryPersistenceService
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
@@ -210,6 +214,10 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		buildPreferencesTree(BaseModuleJvm.preferencesTree)
 
 		registerHelpSources()
+
+		if (EditAuthModule.userHolder.user.isDeveloper || AppModuleJvm.remoteControlService.getBoolean(GraphViewConsistencyCheck.REMOTE_PROP_CONSISTENCY_CHECK)) {
+			SystemHealthChecker.register(SubCircuitPortConsistencyCheck)
+		}
 	}
 
 	@Suppress("SpellCheckingInspection")

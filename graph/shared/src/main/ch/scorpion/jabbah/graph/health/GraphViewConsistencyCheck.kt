@@ -6,8 +6,13 @@ import ch.scorpion.jabbah.app.health.SystemHealthCheck
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.model.Net
+import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.EdgeView
 
+/**
+ * Checks if there are any broken [Port] references as of [EdgeView.hasBrokenPortRef].
+ */
 object GraphViewConsistencyCheck : SystemHealthCheck {
 
 	private val LOG by logger(GraphViewConsistencyCheck::class)

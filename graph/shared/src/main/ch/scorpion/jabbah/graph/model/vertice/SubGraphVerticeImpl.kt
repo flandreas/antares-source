@@ -102,7 +102,6 @@ class SubGraphVerticeImpl(
 
 	/** ---- [SubGraphVerticeImpl] */
 
-	private fun getSubGraphPorts(): ImmutableList<SubGraphPort<Any>> {
-		return getPorts().map { it as SubGraphPort<Any> }.toImmutableList()
-	}
+	fun getSubGraphPorts(): ImmutableList<SubGraphPort<*>> =
+		getPorts().map { it as SubGraphPort<Any> }.toImmutableList()
 }

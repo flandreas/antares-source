@@ -10,7 +10,7 @@ Die Liste ist alphabetisch aufsteigend nach dem englischen Begriff sortiert.
 
 Antares (Antares):: Lernplatform für digitale Schaltungen.
 Author (Autor):: Der Benutzer, dem ein Projekt oder eine Bibliothek gehört und der sie als einziger bearbeiten kann.
-Bit Width (Bit-Breite):: Die Anzahl von Bits, die an einem Anschluss oder in einem Leitungsbündel gleichzeitig übertragen werden können. Kann auch als "Anzahl Bits" bezeichnet werden.
+Bit Width (Anzahl Bits):: Die Anzahl von Bits, die an einem Anschluss oder in einem Leitungsbündel gleichzeitig übertragen werden können. Kann auch als "Anzahl Bits" bezeichnet werden.
 Bidirectional (Bidirektional):: Signalrichtung an einem Anschluss, der gleichzeitig Eingang und Ausgang ist.
 Bundle (Bündel):: Ein exportiertes Projekt, das auch die referenzierte Bibliothek enthält.
 Circuit (Schaltung):: Die darstellbare Form einer digitalen Schaltung in `antares`.
