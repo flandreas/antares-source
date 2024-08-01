@@ -9,6 +9,7 @@ import ch.scorpion.antares.view.gate.GateMnemonicAction
 import ch.scorpion.antares.view.net.tunnel.GlobalTunnelAction
 import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTableAction
 import ch.scorpion.antares.view.truthtable.NewTruthTableAction
+import ch.scorpion.jabbah.app.dump.SystemMalfunctionPanel
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
@@ -80,6 +81,7 @@ class AntaresMenuBarBuilder(
         menu.add(JMenuItem(ActionWrapperSwing(NextRepaintingObserverLogAction())))
         menu.addSeparator()
         menu.add(JMenuItem(ActionWrapperSwing(PrintScheduleAction((frame as GraphFrameSwing).controller.applicationContextHolder.scheduler))))
+		menu.add(JMenuItem(ActionWrapperSwing(SystemMalfunctionPanel.createDeveloperAction(frame.application))))
 
         return menu
     }
