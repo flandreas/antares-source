@@ -161,7 +161,7 @@ class EdgeToPortOrEdgeConnector(
 		snap(context.x, context.y, context.editor.snapManager)
 
 	private fun snap(x: Double, y: Double, snapManager: SnapManager): EdgeViewSnapLocatorResult? {
-		val result = branchedEdgeView!!.snap(x, y, snapManager)
+		val result = branchedEdgeView?.snap(x, y, snapManager)
 		branchedSegmentIndex = result?.segmentIndex
 		return result
 	}
