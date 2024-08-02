@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.view.metagraph
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
@@ -62,7 +63,7 @@ open class MetaGraphService(
 	}
 
 	private fun replaceComponents(drawing: GraphView, componentIds: Collection<Int>, elem: ContainerLibraryElement) {
-		val bbox = drawing.combinedBoundingBox(drawing.getWidthIds(componentIds))
+		val bbox = Drawable.combinedBoundingBox(drawing.getWidthIds(componentIds))
 		drawing.remove(componentIds)
 
 		val subGraphVV = elem.getNewInstance<GraphElement>()

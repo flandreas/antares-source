@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph
 
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawableContainer
 import ch.scorpion.jabbah.draw.container.UnzoomableContainerIF
@@ -8,6 +9,7 @@ import ch.scorpion.jabbah.edit.*
 import dev.mokkery.MockMode.autofill
 import dev.mokkery.answering.returns
 import dev.mokkery.every
+import dev.mokkery.matcher.any
 import dev.mokkery.mock
 
 /**
@@ -39,6 +41,17 @@ class DrawingViewMockBuilder {
 
 	fun withSelection(vararg components: Component): DrawingViewMockBuilder {
 		every { selectionManager.selection } returns components.toList()
+		return this
+	}
+
+	fun withSize(w: Int, h: Int): DrawingViewMockBuilder {
+		every { drawingView.width } returns w
+		every { drawingView.height } returns h
+		return this
+	}
+
+	fun withModelToView(rectangularShape: RectangularShape): DrawingViewMockBuilder {
+		every { drawingView.modelToView(any<RectangularShape>()) } returns rectangularShape
 		return this
 	}
 

@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.draw
 
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 
 /**
  * Provides methods for transforming coordinates from view space to model space, and vice versa.
@@ -39,6 +41,12 @@ interface ViewToModelTransform {
     fun modelToViewLength(length: Double): Double
 
 	fun modelToViewLength(length: Double, zoomFactor: Double): Double
+
+    fun modelToView(rect: RectangularShape): RectangularShape =
+        Rectangle2D().apply {
+            add(modelToView(rect.topLeft))
+            add(modelToView(rect.bottomRight))
+        }
 }
 
 object IdentityViewToModelTransform : ViewToModelTransform {

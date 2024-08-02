@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.draw
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
 
@@ -17,6 +18,18 @@ import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
  * [contains] methods.
  */
 interface Drawable {
+
+	companion object {
+
+		/**
+		 * Returns a [RectangularShape] representing the combined [Drawable.boundingBox] of
+		 * all specified [drawables].
+		 */
+		fun combinedBoundingBox(drawables: Collection<Drawable>): RectangularShape =
+			Rectangle2D().also { bbox ->
+				drawables.forEach { bbox.add(it.boundingBox) }
+			}
+	}
 
 	/** The parent [DrawableContainer] that contains this [Drawable].*/
 	val parent: DrawableContainer<*>?

@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.Clipboard
 import ch.scorpion.jabbah.draw.drawable.Movable
+import ch.scorpion.jabbah.draw.view.FocusDrawablePlayer
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.editor.AddCommand
 import ch.scorpion.jabbah.edit.model.ComponentMessage
@@ -180,7 +181,9 @@ open class DrawingAppServiceImpl(
 				logComponentAction("Paste", pasteInfo.componentIds)
 				commandManager.register(PasteCommand(drawingView, it, pasteInfo, copyPasteService))
 				drawingView.selectionManager.deselectAll()
-				drawingView.selectionManager.select(pasteInfo.componentIds.map { drawingView.drawing.getWithId(it) as Component })
+				val components = pasteInfo.componentIds.map { id -> drawingView.drawing.getWithId(id) as Component }
+				drawingView.selectionManager.select(components)
+				FocusDrawablePlayer.ensureVisible(components, drawingView)
 			} catch (e: Throwable) {
 				LOG.debug("Error in paste: $e")
 				// View layers might want to give feedback to the user

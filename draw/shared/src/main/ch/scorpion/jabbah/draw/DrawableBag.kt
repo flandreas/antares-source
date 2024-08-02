@@ -124,11 +124,6 @@ interface DrawableBag<T: Drawable> {
 
 	fun rotateBack(rect: RectangularShape): Rectangle2D
 		= rotation.inverse().rotateRectangleAround(location, rect)
-
-	fun combinedBoundingBox(drawables: Collection<Drawable>): RectangularShape =
-		Rectangle2D().also { bbox ->
-			drawables.forEach { bbox.add(it.boundingBox) }
-		}
 }
 
 inline fun <reified R> DrawableBag<*>.getDrawableInstances(): ImmutableList<R> =
