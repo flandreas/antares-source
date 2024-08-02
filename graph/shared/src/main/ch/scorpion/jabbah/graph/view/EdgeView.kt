@@ -43,10 +43,10 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
 		const val PROP_MIN_EDGE_VIEW_LENGTH = "ch.scorpion.jabbah.graph.view.EdgeView.minLength"
 
 		/** The size of the rectangular area defining whether a point is "inside" this [EdgeView]. Used for snapping.*/
-		const val containsSize: Int = 4
+		const val CONTAINS_SIZE: Int = 4
 
 		/** The maximum distance for regarding a snap point as being on a corner of this [EdgeView]. Used for snapping.*/
-		const val edgeCornerDistance: Int = 15
+		const val EDGE_CORNER_DISTANCE: Int = 10
 	}
 
 	override var description: Description
