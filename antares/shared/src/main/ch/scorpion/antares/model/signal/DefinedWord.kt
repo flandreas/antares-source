@@ -29,12 +29,24 @@ class DefinedWord(
 		private val ZERO = DefinedWord(BitWidth.BW_1, 0UL)
 		private val ONE = DefinedWord(BitWidth.BW_1, 1UL)
 
-		fun of(bitWidth: BitWidth, value: ULong): DefinedWord =
-			if (bitWidth == BitWidth.BW_1) {
-				if (value == 0UL) ZERO else ONE
-			} else {
-				DefinedWord(bitWidth, value)
+		private val WIDTH_2_VALUES = Array(4) { DefinedWord(BitWidth.BW_2, it.toULong()) }
+
+		private val WIDTH_4_VALUES = Array(16) { DefinedWord(BitWidth.BW_4, it.toULong()) }
+
+		private val WIDTH_8_VALUES = Array(256) { DefinedWord(BitWidth.BW_8, it.toULong()) }
+
+		fun of(bitWidth: BitWidth, value: ULong): DefinedWord {
+			if (value <= bitWidth.maxValue) {
+				return when (bitWidth) {
+					BitWidth.BW_1 -> if (value == 0UL) ZERO else ONE
+					BitWidth.BW_2 -> WIDTH_2_VALUES[value.toInt()]
+					BitWidth.BW_4 -> WIDTH_4_VALUES[value.toInt()]
+					BitWidth.BW_8 -> WIDTH_8_VALUES[value.toInt()]
+					else -> DefinedWord(bitWidth, value)
+				}
 			}
+			return DefinedWord(bitWidth, value)
+		}
 
 		fun of(bitValue: Boolean): DefinedWord = if (bitValue) ONE else ZERO
 

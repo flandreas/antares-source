@@ -535,8 +535,9 @@ class SchedulerImpl(
 
 			isInBreakpoint = false
 
+			// Requires filtering with creating result collection in order to avoid
+			// ConcurrentModException from Request.act()
 			slot.getRequests().filter { it.isActable }.forEach {
-				// logActorTrace(it.actor) { "Executing" }
 				it.act()
 			}
 
