@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.io.ElectricXmlReader
 import ch.scorpion.jabbah.io.ElectricXmlWriter
 import ch.scorpion.jabbah.io.StoreXmlReader
 import ch.scorpion.jabbah.io.StoreXmlWriter
+import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils
 import java.io.*
 import java.nio.charset.Charset
@@ -57,6 +58,8 @@ abstract class AbstractFileLibraryPersistenceService(
 
 	abstract fun createLibraryFileOutputStream(libraryId: LibraryIdentification): OutputStream
 
+	abstract fun buildLibraryFilePath(libraryId: LibraryIdentification): String
+
 	/** ---- [LibraryPersistenceService] */
 
 	override fun loadMetaGraphXML(library: Library, uuid: UUID): String {
@@ -92,10 +95,14 @@ abstract class AbstractFileLibraryPersistenceService(
 		}
 
 		// Store
-		createMetaGraphOutputStream(library.identification, metaGraph.uuid).use {
+		val tempFile = File.createTempFile("metaGraph", null)
+		// First write into a temp file so that in case of an exception, the original file doesn't get emptied
+		FileOutputStream(tempFile).use {
 			try {
 				val storeWriter = StoreXmlWriter(ElectricXmlWriter(it))
 				storeWriter.writeStorable(metaGraph)
+				it.flush()
+				FileUtils.copyFile(tempFile, File(buildMetaGraphFilePath(library.identification, metaGraph.uuid)))
 			} catch (e: Throwable) {
 				LOG.error("Error while storing MetaGraph ${metaGraph.uuid}: ${e.message}")
 				throw e
@@ -105,10 +112,14 @@ abstract class AbstractFileLibraryPersistenceService(
 
 	override fun storeLibrary(library: Library) {
 		ensureLibraryDirectory(library.identification)
-		createLibraryFileOutputStream(library.identification).use {
+		val tempFile = File.createTempFile("lib", null)
+		// First write into a temp file so that in case of an exception, the original file doesn't get emptied
+		FileOutputStream(tempFile).use {
 			try {
 				val storeWriter = StoreXmlWriter(ElectricXmlWriter(it))
 				storeWriter.writeStorable(library)
+				it.flush()
+				FileUtils.copyFile(tempFile, File(buildLibraryFilePath(library.identification)))
 			} catch (e: Throwable) {
 				LOG.error("Error while storing Library ${library.uuid}: ${e.message}")
 				throw e

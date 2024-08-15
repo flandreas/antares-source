@@ -130,8 +130,6 @@ class ResourceLibraryPersistenceService(
 	override fun createLibraryFileOutputStream(libraryId: LibraryIdentification): OutputStream =
 		FileOutputStream(File(ResourceLibraryPersistenceService::class.java.getResource(buildLibraryFilePath(libraryId)).toURI()))
 
-	/** ---- [ResourceLibraryPersistenceService] */
-
-	private fun buildLibraryFilePath(libraryId: LibraryIdentification): String =
+	override fun buildLibraryFilePath(libraryId: LibraryIdentification): String =
 		"${buildResourceLibraryDirectoryPath(libraryId)}/$libraryFileName"
 }

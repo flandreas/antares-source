@@ -222,7 +222,7 @@ class FileLibraryPersistenceService(
 	override fun buildImageFilePath(libraryId: LibraryIdentification, imageUuid: UUID, imageType: ImageType): String =
 		FileSystems.getDefault().getPath(getBaseName(), libraryId.uuid.toString(), "$imageUuid.${imageType.fileExtension}").toString()
 
-	private fun buildLibraryFilePath(libraryId: LibraryIdentification): String =
+	override fun buildLibraryFilePath(libraryId: LibraryIdentification): String =
 		buildLibraryFilePath(getBaseName(), libraryId.uuid.toString())
 
 	private fun buildLibraryFilePath(directoryPath: String, libraryDirName: String): String =
