@@ -264,7 +264,7 @@ abstract class AbstractPortView<T : Any>(
 
 	/** ---- [Drawable] interface */
 
-	override fun getTooltip(x: Double, y: Double): Tooltip? =
+	override fun getTooltip(x: Double, y: Double, editable: Boolean): Tooltip? =
 		if (coincidenceWarning) {
 			Tooltip("Warning: Pin coincides with other pin without\nconnection", Rectangle2D.pointLike(owner!!.getPortConnectionPoint(port)))
 		} else {

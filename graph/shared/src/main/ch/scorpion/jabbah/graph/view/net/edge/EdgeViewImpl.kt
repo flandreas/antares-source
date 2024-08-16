@@ -94,7 +94,8 @@ open class EdgeViewImpl<T : Any>(
 	protected var styling: EdgeViewStyling = NetViewStyle.LINE.createEdgeViewStyling(styleProvider, this)
 		private set
 
-	private val tooltip = resettableLazy { createTooltip() }
+	/** The tooltip displayed when not in execution mode.*/
+	private val nonExecutionTooltip = resettableLazy { createNonExecutionTooltip() }
 
 	init {
 		modelExchanged(null)
@@ -704,7 +705,12 @@ open class EdgeViewImpl<T : Any>(
 		return polyline.findSegment(x, y) != null
 	}
 
-	override fun getTooltip(x: Double, y: Double): Tooltip? = tooltip.value?.also { it.sourceRect = Rectangle2D.pointLike(Point2D(x, y)) }
+	override fun getTooltip(x: Double, y: Double, editable: Boolean): Tooltip? =
+		if (editable) {
+			nonExecutionTooltip.value?.also { it.sourceRect = Rectangle2D.pointLike(Point2D(x, y)) }
+		} else {
+			null
+		}
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		return visitor.visit(this)
@@ -899,7 +905,7 @@ open class EdgeViewImpl<T : Any>(
 		}
 		super.handleStateChanged(event)
 		if (event.signalHandler != null) {
-			tooltip.reset()
+			nonExecutionTooltip.reset()
 		}
 	}
 
@@ -937,7 +943,7 @@ open class EdgeViewImpl<T : Any>(
 	private fun checkDestinationSegmentLength(): Boolean =
 		destination?.port == null || polyline.getSegmentLength(polyline.pointsCount - 2) >= destination!!.portView!!.minSegmentLength
 
-	private fun createTooltip(): Tooltip? {
+	private fun createNonExecutionTooltip(): Tooltip? {
 		if (model.designError != null) {
 			return Tooltip(model.designError!!.description, Rectangle2D.ZERO)
 		}

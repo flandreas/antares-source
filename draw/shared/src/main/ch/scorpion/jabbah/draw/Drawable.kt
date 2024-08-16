@@ -104,7 +104,7 @@ interface Drawable {
 	fun intersects(rect: RectangularShape): Boolean = boundingBox.intersects(rect)
 
 	/**
-	 * Notifies this [Drawable] that is has been added to a [DrawableContainer].
+	 * Notifies this [Drawable] that it has been added to a [DrawableContainer].
 	 * As a reaction, this [Drawable] should store a reference to that parent [DrawableContainer] in order
 	 * to be able to call the parent's invalidate and repaint methods.
 	 */
@@ -119,10 +119,11 @@ interface Drawable {
 	 *
 	 * @param x x-coordinate of the mouse position
 	 * @param y y-coordinate of the mouse position
+	 * @param editable `true` if the [DrawableContainer] is editable, which can influence the tooltip shown
 	 * @return the [Tooltip] of this [Drawable], or `null`if this [Drawable] doesn't want to display a
 	 *      text at the specified location.
 	 */
-	fun getTooltip(x: Double, y: Double): Tooltip?
+	fun getTooltip(x: Double, y: Double, editable: Boolean = true): Tooltip?
 
 	/**
 	 * Returns an epic, graphical explanation of this [Drawable] to be displayed when the user hovers over

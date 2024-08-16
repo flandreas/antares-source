@@ -80,7 +80,7 @@ abstract class AbstractDrawable(visible: Boolean = true) : Drawable {
 		_parent = null
 	}
 
-	override fun getTooltip(x: Double, y: Double): Tooltip? = null
+	override fun getTooltip(x: Double, y: Double, editable: Boolean): Tooltip? = null
 
 	override fun getExplanation(x: Double, y: Double): DrawableExplanation<RectangularDrawable>? = null
 

@@ -173,12 +173,12 @@ open class DrawableContainerImpl<T : Drawable>(
 	/** Returns the [Drawable]s in the order they should be drawn.*/
 	protected open fun drawablesInDrawingOrder(): List<T> = children.asReversed()
 
-	override fun getTooltip(x: Double, y: Double): Tooltip? {
+	override fun getTooltip(x: Double, y: Double, editable: Boolean): Tooltip? {
 		if (useLocation) {
 			val l = Point2D(x, y).subtract(this.location)
-			return getDrawableAt(x, y)?.getTooltip(l.x, l.y) ?: super.getTooltip(l.x, l.y)
+			return getDrawableAt(x, y)?.getTooltip(l.x, l.y) ?: super.getTooltip(l.x, l.y, editable)
 		}
-		return getDrawableAt(x, y)?.getTooltip(x, y) ?: super.getTooltip(x, y)
+		return getDrawableAt(x, y)?.getTooltip(x, y) ?: super.getTooltip(x, y, editable)
 	}
 
 	/** ---- [DrawableContainer] interface */

@@ -277,7 +277,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 			return bbox
 		}
 
-	override fun getTooltip(x: Double, y: Double): Tooltip? {
+	override fun getTooltip(x: Double, y: Double, editable: Boolean): Tooltip? {
 		val portView = getPortViewAt(x, y)
 		if (portView != null) {
 			return portView.getTooltip(x, y)

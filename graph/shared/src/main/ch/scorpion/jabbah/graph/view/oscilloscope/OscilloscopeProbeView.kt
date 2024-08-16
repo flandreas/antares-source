@@ -81,7 +81,7 @@ class OscilloscopeProbeView(
 
 	override val lineWidth: Double get() = 0.0
 
-	override fun getTooltip(x: Double, y: Double): Tooltip? =
+	override fun getTooltip(x: Double, y: Double, editable: Boolean): Tooltip? =
 		if (verticeViewPresent) createTooltip(x, y) else null
 
 	override fun createEditInteractionHandler(): InputEventHandler<InputEventContext> =

@@ -84,7 +84,7 @@ open class DrawableButton<C: InputEventContext>(
 	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> =
 		handler as InputEventHandler<T>
 
-	override fun getTooltip(x: Double, y: Double): Tooltip? =
+	override fun getTooltip(x: Double, y: Double, editable: Boolean): Tooltip? =
 		tooltipKey?.let {
 			Tooltip(Translations.getString(it), Rectangle2D.pointLike(toAbsoluteLocation(Point2D(x, y))))
 		}
