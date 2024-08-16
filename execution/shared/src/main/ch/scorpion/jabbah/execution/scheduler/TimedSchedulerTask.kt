@@ -148,6 +148,6 @@ class TimedSchedulerTask(
 		do {
 			result = scheduler.execute()
 			count++
-		} while (!result.breakpoint && count < number && !scheduler.isQueueEmpty)
+		} while (!result.breakpoint && count < number && !scheduler.isQueueEmpty && result.recalculated)
 	}
 }
