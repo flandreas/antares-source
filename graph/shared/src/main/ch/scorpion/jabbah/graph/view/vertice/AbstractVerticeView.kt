@@ -505,7 +505,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 	 */
 	private fun configureExecutionInfoLabel() {
 		val bbox = plainBoundingBox
-		val text = "$propagationDelay ns"
+		val text = "${propagationDelay.value} ns"
 		val style = Themes.get<GraphTheme>().annotation
 		executionInfoLabel.font = style.font
 		executionInfoLabel.text = text
