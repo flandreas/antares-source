@@ -152,7 +152,7 @@ class AnalogCircuitAnalysis(
 	 * Influences how quick signal change across multiple "act" cycles, i.e. when active components
 	 * e.g. like [Capacitor] change their state.
 	 */
-	val timeStep = 5e-4
+	val timeStep = 1e-3
 
 	val isNonLinear = circuitView.analogElementViews.any { it.isNonLinear }
 
