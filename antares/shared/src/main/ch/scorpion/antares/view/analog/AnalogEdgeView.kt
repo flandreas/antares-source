@@ -158,6 +158,8 @@ class AnalogEdgeView(
 
 	override val postCount: Int get() = 2
 
+	override fun reset() { }
+
 	override fun allocateNodes() {
 		// not needed, managed in AnalogNet
 	}
@@ -174,9 +176,9 @@ class AnalogEdgeView(
 	override fun getNodeVoltage(postId: Int): Double =
 		analogNet.getNodeVoltage(id, postId)
 
-	override fun setCurrent(index: Int, current: Double) {
-		analogNet.setCurrent(id, current)
-	}
+	override fun setInternalCurrent(index: Int, current: Double) { }
+
+	override fun getInternalCurrent(): Double = 0.0
 
 	override fun getPost(elem: GraphElementView<*>, postId: Int): Connection<*>? = null
 

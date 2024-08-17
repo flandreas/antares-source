@@ -24,6 +24,7 @@ interface AnalogVertice : Vertice, AnalogElement {
  */
 data class AnalogCalculationRequest(
 	val source: AnalogVertice,
-	val signalHandler: SignalHandler
+	val signalHandler: SignalHandler,
+	val needAnalysis: Boolean
 )
 

@@ -27,7 +27,7 @@ class AnalogSwitch(
 		private class Calculator : AbstractSwitch.Companion.AbstractSwitchCalculator<AnalogSwitch>() {
 			override fun calculate(vertice: AnalogSwitch, data: GraphActorData, signalHandler: SignalHandler) {
 				super.calculate(vertice, data, signalHandler)
-				vertice.requestAnalogGraphRecalculation(signalHandler)
+				vertice.requestAnalogGraphRecanalization(signalHandler)
 			}
 		}
 	}
@@ -45,8 +45,8 @@ class AnalogSwitch(
 		propagationDelay = LongValueImpl.ZERO
 	}
 
-	fun requestAnalogGraphRecalculation(signalHandler: SignalHandler) {
-		stateChanged(signalHandler, AbstractAnalogVertice.REQUEST_RECALCULATE)
+	private fun requestAnalogGraphRecanalization(signalHandler: SignalHandler) {
+		stateChanged(signalHandler, AbstractAnalogVertice.REQUEST_REANALYZE)
 	}
 
 	/** ---- [AnalogElement] */

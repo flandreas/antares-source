@@ -174,6 +174,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val ANALOG_INPUT = "AnalogInput"
 	private const val ANALOG_OUTPUT = "AnalogOutput"
 	private const val ANALOG_POWER = "AnalogPower"
+	private const val CAPACITOR = "Capacitor"
 
 	val currentSymbolStyle: CurrentSymbolStyle by lazy {CurrentSymbolStyle() }
 
@@ -381,6 +382,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("analogEdgeView", AnalogEdgeView::class)
 		typeMap.register("lightBulbView", LightBulbView::class)
 		typeMap.register("batteryView", BatteryView::class)
+		typeMap.register("capacitorView", CapacitorView::class)
 		typeMap.register("currentSourceView", CurrentSourceView::class)
 		typeMap.register("resistorView", ResistorView::class)
 		typeMap.register("analogSwitchView", AnalogSwitchView::class)
@@ -459,6 +461,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogNodeView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, LightBulbView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, BatteryView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, CapacitorView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, CurrentSourceView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, ResistorView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogSwitchView::class) { SelectedColorSelectionModel(it) }
@@ -629,6 +632,7 @@ object AntaresViewModule : AbstractModule() {
 
 		repository.register(LIGHT_BULB, "library.element.LightBulb", { BaseModule.properties.getString(LightBulbView.PROP_ICON_PATH) }, LightBulbView::class)
 		repository.register(BATTERY, "library.element.Battery", { "/img/battery.png" }, BatteryView::class)
+		repository.register(CAPACITOR, "library.element.Capacitor", { "/img/capacitor.png" }, CapacitorView::class)
 		repository.register(CURRENT_SOURCE, "library.element.CurrentSource", { "/img/current-source.png" }, CurrentSourceView::class)
 		repository.register(RESISTOR,
 			"library.element.Resistor",

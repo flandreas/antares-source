@@ -7,7 +7,6 @@ import ch.scorpion.antares.model.inout.CircuitInOut
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.analog.engine.AnalogElement
 import ch.scorpion.antares.view.analog.engine.AnalogElementMixin
-import ch.scorpion.antares.view.analog.AnalogGraphView
 import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -17,7 +16,6 @@ import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
-import ch.scorpion.jabbah.graph.view.GraphView
 
 class AnalogCircuitInOut(
 	name: String? = null,
@@ -39,7 +37,7 @@ class AnalogCircuitInOut(
 
 		private class Calculator : VerticeCalculator<AnalogCircuitInOut> {
 			override fun calculate(vertice: AnalogCircuitInOut, data: GraphActorData, signalHandler: SignalHandler) {
-				vertice.requestAnalogGraphRecalculation(signalHandler)
+				vertice.requestAnalogGraphReanalization(signalHandler)
 			}
 		}
 	}
@@ -62,7 +60,7 @@ class AnalogCircuitInOut(
 		LOG.trace("Incoming voltage ${signal?.voltage} at input $name")
 		this.signal = signal
 		stateChanged(signalHandler)
-		BaseModule.eventBus.post(AnalogCalculationRequest(this, signalHandler))
+		BaseModule.eventBus.post(AnalogCalculationRequest(this, signalHandler, true))
 	}
 
 	/** ---- [NetCombiner] */
@@ -121,8 +119,8 @@ class AnalogCircuitInOut(
 
 	/** ---- [AnalogCircuitInOut] */
 
-	fun requestAnalogGraphRecalculation(signalHandler: SignalHandler) {
-		stateChanged(signalHandler, AbstractAnalogVertice.REQUEST_RECALCULATE)
+	private fun requestAnalogGraphReanalization(signalHandler: SignalHandler) {
+		stateChanged(signalHandler, AbstractAnalogVertice.REQUEST_REANALYZE)
 	}
 
 	fun toggle(signalHandler: SignalHandler) {

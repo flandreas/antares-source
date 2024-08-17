@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.analog.engine
 
+import ch.scorpion.antares.model.analog.Capacitor
 import ch.scorpion.antares.view.analog.AnalogGraphView
 import ch.scorpion.antares.view.analog.engine.RowInfo.Type.*
 import ch.scorpion.jabbah.base.logger
@@ -147,6 +148,12 @@ class AnalogCircuitAnalysis(
 		}
 	}
 
+	/**
+	 * Influences how quick signal change across multiple "act" cycles, i.e. when active components
+	 * e.g. like [Capacitor] change their state.
+	 */
+	val timeStep = 5e-4
+
 	val isNonLinear = circuitView.analogElementViews.any { it.isNonLinear }
 
 	private var matrixSize = nodeList.size - 1 + voltageSources.size
@@ -268,6 +275,15 @@ class AnalogCircuitAnalysis(
 				i--
 			}
 			circuitRightSide[i] += x
+		}
+	}
+
+	/**
+	 * Indicate that the value on the right side of row [row] changes in doStep().
+	 */
+	fun stampRightSide(row: Int) {
+		if (row > 0) {
+			rowInfo[row - 1].rsChanges = true
 		}
 	}
 

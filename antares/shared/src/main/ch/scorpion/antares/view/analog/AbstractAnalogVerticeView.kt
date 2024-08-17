@@ -99,7 +99,11 @@ abstract class AbstractAnalogVerticeView<T: AbstractAnalogVertice<*>>(
 			updateLabel()
 		} else if (event.reason == AbstractAnalogVertice.REQUEST_RECALCULATE) {
 			if (event.signalHandler != null && parent is AnalogGraphView) {
-				(parent as AnalogGraphView).recalculate(event.signalHandler!!)
+				(parent as AnalogGraphView).recalculate(event.signalHandler!!, false)
+			}
+		} else if (event.reason == AbstractAnalogVertice.REQUEST_REANALYZE) {
+			if (event.signalHandler != null && parent is AnalogGraphView) {
+				(parent as AnalogGraphView).recalculate(event.signalHandler!!, true)
 			}
 		}
 	}

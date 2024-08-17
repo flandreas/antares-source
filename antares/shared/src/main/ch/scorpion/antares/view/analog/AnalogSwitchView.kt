@@ -111,9 +111,9 @@ class AnalogSwitchView(
 
 	override fun handleStateChanged(event: GraphElementEvent) {
 		super.handleStateChanged(event)
-		if (event.reason == AbstractAnalogVertice.REQUEST_RECALCULATE) {
+		if (event.reason == AbstractAnalogVertice.REQUEST_REANALYZE) {
 			if (event.signalHandler != null && parent is AnalogGraphView) {
-				(parent as AnalogGraphView).recalculate(event.signalHandler!!)
+				(parent as AnalogGraphView).recalculate(event.signalHandler!!, true)
 			}
 		}
 	}

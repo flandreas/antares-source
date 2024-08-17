@@ -66,9 +66,9 @@ class AnalogCircuitInOutView(
 
 	override fun handleStateChangedImpl(event: GraphElementEvent) {
 		if (event.signalHandler != null) {
-			if (event.reason == AbstractAnalogVertice.REQUEST_RECALCULATE) {
+			if (event.reason == AbstractAnalogVertice.REQUEST_REANALYZE) {
 				if (parent is AnalogGraphView) {
-					(parent as AnalogGraphView).recalculate(event.signalHandler!!)
+					(parent as AnalogGraphView).recalculate(event.signalHandler!!, true)
 				}
 			} else {
 				updateVoltageLabel()

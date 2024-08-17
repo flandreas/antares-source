@@ -20,7 +20,7 @@ class AnalogGraph(
 
 	override fun executionStart(signalHandler: SignalHandler, graphView: GraphView?) {
 		super.executionStart(signalHandler, graphView)
-		(graphView as AnalogGraphView?)?.requestActing(signalHandler)
+		(graphView as AnalogGraphView?)?.requestActing(signalHandler, true)
 	}
 
 	override fun checkDesign(signalHandler: SignalHandler, eventBus: EventBus): Boolean = true
