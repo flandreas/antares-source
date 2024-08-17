@@ -83,7 +83,9 @@ abstract class AbstractSignalHistoryDrawer<T: Any>(
 		}
 
 		if (!signalHistory!!.isEmpty) {
-			drawGrid(context)
+			if (gridEnabled) {
+				drawGrid(context)
+			}
 			drawCurve(context)
 		}
 	}
@@ -93,6 +95,8 @@ abstract class AbstractSignalHistoryDrawer<T: Any>(
 	protected val baseLineY: Double get() = yAxis?.baselineY ?: (bounds.maxY - 2)
 
 	/** ---- [AbstractSignalHistoryDrawer]*/
+
+	protected abstract val gridEnabled: Boolean
 
 	/**
 	 * The maximum height of the signal, i.e. the vertical distance in model coordinates

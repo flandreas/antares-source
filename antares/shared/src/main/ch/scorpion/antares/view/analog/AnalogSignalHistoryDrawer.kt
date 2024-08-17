@@ -21,6 +21,8 @@ class AnalogSignalHistoryDrawer(
 
 	/** ---- [AbstractSignalHistoryDrawer] */
 
+	override val gridEnabled: Boolean get() = false
+
 	override fun signalY(entry: SignalHistoryEntry<AnalogSignal>): Double =
 		yAxis!!.baselineY + yAxis!!.signalY(entry.signal)
 
