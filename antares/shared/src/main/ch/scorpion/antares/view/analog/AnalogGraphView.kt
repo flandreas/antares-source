@@ -40,7 +40,9 @@ class AnalogGraphView(
 		private const val DEF_PROPAGATION_DELAY = 10L
 	}
 
-	val isNonLinear: Boolean get() = (graph as AnalogGraph).isNonLinear
+	private val analogGraph: AnalogGraph get() = (graph as AnalogGraph)
+
+	val isNonLinear: Boolean get() = analogGraph.isNonLinear
 
 	/** Not set before [executionStart]. */
 	private var analysis: AnalogCircuitAnalysis? = null
@@ -58,6 +60,13 @@ class AnalogGraphView(
 		set(value) {
 			require(value != null && value > 0) { "Propagation delay must be greater than 0" }
 			super.overallPropagationDelay = value
+		}
+
+	@Suppress("unused") // Reflection
+	var timeStep: Double
+		get() = analogGraph.timeStep
+		set(value) {
+			analogGraph.timeStep = value
 		}
 
 	@Suppress("unused") // Reflection

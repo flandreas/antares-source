@@ -74,7 +74,7 @@ class Capacitor(
         resistance = if (isTrapezoidal) {
             analysis.timeStep / (2 * capacitance * 1e-6)
         } else {
-            analysis.timeStep / capacitance * 1e-6
+            analysis.timeStep / (capacitance * 1e-6)
         }
         analysis.stampResistor(analogElem.nodes[0], analogElem.nodes[1], resistance)
         analysis.stampRightSide(analogElem.nodes[0])

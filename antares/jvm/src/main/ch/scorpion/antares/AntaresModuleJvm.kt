@@ -13,6 +13,7 @@ import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.model.testcase.TestcaseViewSwing
 import ch.scorpion.antares.view.*
 import ch.scorpion.antares.view.analog.AnalogEdgeView
+import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.antares.view.container.DigitalContainerEditor
 import ch.scorpion.antares.view.container.DigitalContainerToolBarBuilder
 import ch.scorpion.antares.view.container.DigitalContainerTreeView
@@ -47,10 +48,7 @@ import ch.scorpion.jabbah.base.help.HelpSource
 import ch.scorpion.jabbah.base.help.HelpSourceRegistry
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
-import ch.scorpion.jabbah.base.preferences.BooleanPreference
-import ch.scorpion.jabbah.base.preferences.EnumPreference
-import ch.scorpion.jabbah.base.preferences.IntPreference
-import ch.scorpion.jabbah.base.preferences.PreferenceGroup
+import ch.scorpion.jabbah.base.preferences.*
 import ch.scorpion.jabbah.base.sound.WaveformType
 import ch.scorpion.jabbah.base.swing.EnumRenderer
 import ch.scorpion.jabbah.base.swing.ToStringRenderer
@@ -471,6 +469,14 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 				nameKey = "antares.analog.currentFlowAnimSpeed",
 				minValue = AnalogEdgeView.MIN_SPEED,
 				maxValue = AnalogEdgeView.MAX_SPEED))
+
+			add(
+				FloatPreference(
+				id = AnalogCircuitAnalysis.PROP_TIME_STEP,
+				nameKey = "antares.analog.timeStep.name",
+				minValue = AnalogCircuitAnalysis.MIN_TIME_STEP,
+				maxValue = AnalogCircuitAnalysis.MAX_TIME_STEP)
+			)
 		}
 
 	private fun configureMetaGraphIcons() {
