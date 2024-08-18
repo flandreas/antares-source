@@ -1,8 +1,6 @@
 package ch.scorpion.jabbah.graph.model
 
-import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorData
-import ch.scorpion.jabbah.graph.view.GraphView
 
 /**
  * An [ActorData] used for graph related actors that remembers the [Port] that has changed.

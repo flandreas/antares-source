@@ -19,7 +19,7 @@ open class DslGlobalFunctions : DslExternalFunctions {
 		}
 	}
 
-	private fun log2Impl(params: List<Any>): Any =
+	private fun log2Impl(params: List<Any>, @Suppress("UNUSED_PARAMETER") context: Any? = null): Any =
 		log2(longParam(0, params))
 
 	/**

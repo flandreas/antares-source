@@ -39,7 +39,7 @@ open class Interpreter(
 				is WhenStatement -> whenStatement(node)
 				is ForStatement -> forStatement(node)
 				is ReturnStatement -> returnStatement(node)
-				is FunctionCall -> functionCall(node)
+				is FunctionCall -> functionCall(node, params)
 				else -> super.interpret(node)
 			}
 		} catch (e: DslError) {
@@ -488,12 +488,12 @@ open class Interpreter(
 		return returnValue!!
 	}
 
-	private fun functionCall(node: FunctionCall): Any {
+	private fun functionCall(node: FunctionCall, context: Any?): Any {
 		if (node.function == null) {
 			throw RuntimeError(node.location, Translations.getString("base.dsl.noImplementationOfFunction.msg", node.name.value!!))
 		}
 		try {
-			return node.function!!.function.execute(node.params.map { interpret(it) })
+			return node.function!!.function.execute(node.params.map { interpret(it) }, context)
 		} catch (e: RuntimeError) {
 			// Catch and rethrow with CodeLocation to avoid passing CodeLocation as argument of the execute() method
 			throw RuntimeError(node.location, e.message!!)

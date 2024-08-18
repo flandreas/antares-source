@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.dsl.Interpreter
 import ch.scorpion.jabbah.base.dsl.Memory
 import ch.scorpion.jabbah.base.dsl.ScriptMetaData
+import ch.scorpion.jabbah.base.dsl.ExternalFunction
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
@@ -67,6 +68,15 @@ interface SubGraphVerticeRefIF : SubGraphVertice, NetCombiner {
 }
 
 /**
+ * Passed into [Interpreter.interpret] as params to be used by [ExternalFunction]s.
+ */
+data class SubGraphFunctionContext(
+	val data: GraphActorData,
+	val actor: Actor?,
+	val signalHandler: SignalHandler?
+)
+
+/**
  * A [SubGraphVertice] implementation that is part of one [Graph] and references another [Graph] in the [Library].
  */
 class SubGraphVerticeRef(
@@ -82,7 +92,7 @@ class SubGraphVerticeRef(
 		val CALCULATOR = object : VerticeCalculator<SubGraphVerticeRef> {
 			override fun calculate(vertice: SubGraphVerticeRef, data: GraphActorData, signalHandler: SignalHandler) {
 				if (data.isInput && !vertice.isDeepExecution(signalHandler.isDeepExecution)) {
-					vertice.runExecutionScript(data)
+					vertice.runExecutionScript(data, vertice, signalHandler)
 				}
 			}
 		}
@@ -358,8 +368,8 @@ class SubGraphVerticeRef(
 		}
 	}
 
-	private fun runExecutionScript(data: GraphActorData?) {
-		interpreter?.interpretCatching(executionMetaData, params = data)
+	private fun runExecutionScript(data: GraphActorData, actor: Actor, signalHandler: SignalHandler) {
+		interpreter?.interpretCatching(executionMetaData, params = SubGraphFunctionContext(data, actor, signalHandler))
 	}
 
 	/** ---- [AbstractVertice] */

@@ -24,6 +24,7 @@ import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.StoringGraphActorData
 import ch.scorpion.jabbah.graph.model.graph.GraphActivationRecord
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphFunctionContext
 
 /**
  * Runs a circuit test script on the execution script of a [DigitalGraph].
@@ -128,7 +129,12 @@ class TestcaseScriptRunner(
 		}
 
 	override fun processInputChanged(context: Any?) {
-		(context as AntaresInterpreter).interpret(graphActorData, keepMemory = true)
+		// In this environment, SignalHandler is not used and therefore not provided in context.
+		// This means that test scripts using external functions based on SignalHandler won't work
+		(context as AntaresInterpreter).interpret(
+			SubGraphFunctionContext(graphActorData, null, null),
+			keepMemory = true
+		)
 	}
 
 	override fun dispose() { }
