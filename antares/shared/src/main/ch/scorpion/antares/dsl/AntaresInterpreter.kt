@@ -12,7 +12,7 @@ import ch.scorpion.jabbah.base.dsl.*
 import ch.scorpion.jabbah.base.dsl.DslTokenType.*
 import ch.scorpion.jabbah.base.parser.TextLocation
 import ch.scorpion.jabbah.graph.dsl.GraphDslInterpreter
-import ch.scorpion.jabbah.graph.model.GraphActorData
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphFunctionContext
 import kotlin.math.pow
 
 class AntaresInterpreter(
@@ -24,7 +24,7 @@ class AntaresInterpreter(
 	constructor(parser: AntaresParser, memory: Memory): this(parser.parse(), memory)
 	constructor(program: String): this(AntaresParser(program))
 
-	private val data: GraphActorData? get() = if (params is GraphActorData) params as GraphActorData else null
+	private val context: SubGraphFunctionContext? get() = params as? SubGraphFunctionContext
 
 	override fun interpret(node: Node): Any =
 		when (node) {
@@ -440,9 +440,9 @@ class AntaresInterpreter(
 
 	private fun raisedInput(node: RaisedInput): Any {
 		val portName = node.variable.token.value as String
-		return data?.let {
-			if (it.changedPort?.name == portName
-				&& (it.changedPort as DigitalPort).logic.evaluate(it.getSignal<DigitalSignal>(it.changedPort!!.portId)!!.bitAt(0)).isSet
+		return context?.let {
+			if (it.data.changedPort?.name == portName
+				&& (it.data.changedPort as DigitalPort).logic.evaluate(it.data.getSignal<DigitalSignal>(it.data.changedPort!!.portId)!!.bitAt(0)).isSet
 			) 1L else 0L
 		} ?: 0L
 	}

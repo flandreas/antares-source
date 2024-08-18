@@ -7,7 +7,7 @@ import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 
 /**
- * Expects the [Graph] to be provided as "params in [interpret] whose [GraphElements][GraphElement]
+ * Expects the [Graph] to be provided as "params" in [interpret] whose [GraphElements][GraphElement]
  * are accessed as property, or `null` if this [GraphDslInterpreter] doesn't run in the context of a [Graph]
  * (for example when executing a [SubGraphVerticeRef]'s execution script).
  */

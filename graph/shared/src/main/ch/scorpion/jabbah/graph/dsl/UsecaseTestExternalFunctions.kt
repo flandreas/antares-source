@@ -30,7 +30,7 @@ open class UsecaseTestExternalFunctions(
 		}
 	}
 
-	private fun assertOutputAtImpl(params: List<Any>): Any {
+	private fun assertOutputAtImpl(params: List<Any>, @Suppress("UNUSED_PARAMETER") context: Any? = null): Any {
 		assertOutputAt(
 			longParam(0, params),
 			stringParam(1, params),

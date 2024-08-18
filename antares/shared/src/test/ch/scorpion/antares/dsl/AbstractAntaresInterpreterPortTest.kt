@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.base.parser.TextLocation
 import ch.scorpion.jabbah.base.parser.Token
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.Port
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphFunctionContext
 import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.matcher.any
@@ -53,6 +54,6 @@ abstract class AbstractAntaresInterpreterPortTest {
 		every { data.getSignal<DigitalSignal>(any()) } returns signal
 
 		context.setValue(variable(port.name!!), signal)
-		interpreter.interpret(data)
+		interpreter.interpret(SubGraphFunctionContext(data, null, null))
 	}
 }

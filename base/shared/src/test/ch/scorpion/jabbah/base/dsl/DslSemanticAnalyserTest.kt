@@ -63,7 +63,7 @@ class DslSemanticAnalyserTest {
 	fun shouldNotAllowUndefinedFunctionName() {
 		assertFailsWith(SemanticError::class) {
 			val symbolTable = ScopedSymbolTable("global", 1, null)
-			symbolTable.define(ExternalFunctionSymbol("f", 1) {})
+			symbolTable.define(ExternalFunctionSymbol("f", 1) {_,_ -> })
 			val semanticAnalyser = DslSemanticAnalyser(symbolTable)
 
 			DslParser(DslLexer("g(1)"), semanticAnalyser).parse()
@@ -73,7 +73,7 @@ class DslSemanticAnalyserTest {
 	@Test
 	fun shouldAllowDefinedFunctionName() {
 		val symbolTable = ScopedSymbolTable("global", 1, null)
-		symbolTable.define(ExternalFunctionSymbol("f", 1) {})
+		symbolTable.define(ExternalFunctionSymbol("f", 1) {_,_ -> })
 		val semanticAnalyser = DslSemanticAnalyser(symbolTable)
 
 		DslParser(DslLexer("f(1)"), semanticAnalyser).parse()
@@ -83,7 +83,7 @@ class DslSemanticAnalyserTest {
 	fun shouldRejectTooManyFunctionParams() {
 		assertFailsWith(SemanticError::class) {
 			val symbolTable = ScopedSymbolTable("global", 1, null)
-			symbolTable.define(ExternalFunctionSymbol("f", 1) {})
+			symbolTable.define(ExternalFunctionSymbol("f", 1) {_,_ -> })
 			val semanticAnalyser = DslSemanticAnalyser(symbolTable)
 
 			DslParser(DslLexer("f(1, 2)"), semanticAnalyser).parse()
@@ -93,7 +93,7 @@ class DslSemanticAnalyserTest {
 	@Test
 	fun shouldResolveMultipleFunctionCalls() {
 		val symbolTable = ScopedSymbolTable("global", 1, null)
-		symbolTable.define(ExternalFunctionSymbol("f", 1) {})
+		symbolTable.define(ExternalFunctionSymbol("f", 1) {_,_ -> })
 		val semanticAnalyser = DslSemanticAnalyser(symbolTable)
 
 		val ast = DslParser(DslLexer("""

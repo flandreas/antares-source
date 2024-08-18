@@ -21,7 +21,7 @@ object AntaresUsecaseTestExternalFunctions : UsecaseTestExternalFunctions(GraphD
 		}
 	}
 
-	private fun assertLedOnAtImpl(params: List<Any>): Any {
+	private fun assertLedOnAtImpl(params: List<Any>, @Suppress("UNUSED_PARAMETER") context: Any? = null): Any {
 		assertLedOnAt(
 			longParam(0, params),
 			longParam(1, params).toInt())
@@ -42,7 +42,7 @@ object AntaresUsecaseTestExternalFunctions : UsecaseTestExternalFunctions(GraphD
 		}
 	}
 
-	private fun assertLedOffAtImpl(params: List<Any>): Any {
+	private fun assertLedOffAtImpl(params: List<Any>, @Suppress("UNUSED_PARAMETER") context: Any? = null): Any {
 		assertLedOffAt(
 			longParam(0, params),
 			longParam(1, params).toInt())

@@ -38,7 +38,7 @@ object AntaresUsecaseActionExternalFunctions : UsecaseActionExternalFunctions() 
 		}
 	}
 
-	private fun pressButtonAtImpl(params: List<Any>): Any {
+	private fun pressButtonAtImpl(params: List<Any>, @Suppress("UNUSED_PARAMETER") context: Any? = null): Any {
 		pressButtonAt(
 			longParam(0, params),
 			longParam(1, params))
@@ -64,7 +64,7 @@ object AntaresUsecaseActionExternalFunctions : UsecaseActionExternalFunctions() 
 		}
 	}
 
-	private fun applyClockImpl(params: List<Any>): Any {
+	private fun applyClockImpl(params: List<Any>, @Suppress("UNUSED_PARAMETER") context: Any? = null): Any {
 		applyClock(
 			stringParam(0, params),
 			longParam(1, params))
