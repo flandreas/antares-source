@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
+import ch.scorpion.jabbah.graph.model.vertice.InteractableVertice
 
 /**
  * The electrical [resistance] of [AnalogSwitch] depends on the state of [isOn].
@@ -27,7 +28,7 @@ class AnalogSwitch(
 		private class Calculator : AbstractSwitch.Companion.AbstractSwitchCalculator<AnalogSwitch>() {
 			override fun calculate(vertice: AnalogSwitch, data: GraphActorData, signalHandler: SignalHandler) {
 				super.calculate(vertice, data, signalHandler)
-				vertice.requestAnalogGraphRecanalization(signalHandler)
+				vertice.requestAnalogGraphReanalization(signalHandler)
 			}
 		}
 	}
@@ -45,9 +46,13 @@ class AnalogSwitch(
 		propagationDelay = LongValueImpl.ZERO
 	}
 
-	private fun requestAnalogGraphRecanalization(signalHandler: SignalHandler) {
+	private fun requestAnalogGraphReanalization(signalHandler: SignalHandler) {
 		stateChanged(signalHandler, AbstractAnalogVertice.REQUEST_REANALYZE)
 	}
+
+	/** ---- [InteractableVertice] interface */
+
+	override val interactivePropagationDelay: Long get() = propagationDelay.value
 
 	/** ---- [AnalogElement] */
 
