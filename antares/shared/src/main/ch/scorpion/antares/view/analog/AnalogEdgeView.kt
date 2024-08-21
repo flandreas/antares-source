@@ -98,8 +98,10 @@ class AnalogEdgeView(
 
 	/** Repeatedly called by [AnalogGraphView] to drive the current flow animation. */
 	fun currentFlowAnimationTick(systemSpeed: SystemSpeed) {
-		val speed = if (systemSpeed.isPaused) 0.0F else systemSpeed.speed.toFloat()
-		val factor = speed * animationSpeedFactor
+		// Before #802, current animation speed was also depending on the SystemSpeed.
+		// We got rid of that, and 50 is just the middle of the SystemSpeed range.
+		val factor = if (systemSpeed.isPaused) 0.0F else animationSpeedFactor * 50
+
 		val delta = abs(current * factor).coerceAtMost(MAX_DELTA)
 		val newOffset = animationOffset + delta
 		animationOffset = if (newOffset >= CurrentFlowVisualization.DISTANCE) {
