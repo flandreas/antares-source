@@ -16,7 +16,7 @@ class AnalogSignalHistoryDrawer(
 ): AbstractSignalHistoryDrawer<AnalogSignal>(rightInset, Themes.get<AntaresTheme>().screen, yAxis) {
 
 	companion object {
-		const val ROW_HEIGHT = 60
+		const val ROW_HEIGHT = 100
 	}
 
 	/** ---- [AbstractSignalHistoryDrawer] */
