@@ -25,8 +25,11 @@ class SubCircuitPort(
 	/** ---- [SubGraphPort] interface */
 
 	override fun handleGraphPortChanged(graphPort: GraphPort<*>) {
-		if (bitWidth.width != (graphPort as DigitalCircuitInOut).bitWidth.width) {
-			bitWidth = BitWidth.of(graphPort.bitWidth.width)
+		if (graphPort is DigitalCircuitInOut) {
+			// Bug #803 Cast failed for analog circuits
+			if (bitWidth.width != graphPort.bitWidth.width) {
+				bitWidth = BitWidth.of(graphPort.bitWidth.width)
+			}
 		}
 	}
 
