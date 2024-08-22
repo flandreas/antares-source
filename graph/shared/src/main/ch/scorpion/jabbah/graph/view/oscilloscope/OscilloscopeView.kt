@@ -357,7 +357,7 @@ class OscilloscopeView(
 	private fun adjustSize() {
 		scaleRow.updateLocation()
 		invalidate()
-		setBounds(0.0, 0.0, WIDTH.toDouble(), (TITLE_HEIGHT + (rows.size + 1) * rowHeight).toDouble())
+		setBounds(0.0, 0.0, WIDTH.toDouble(), (TITLE_HEIGHT + rows.size * rowHeight + OscilloscopeScaleRowView.ROW_HEIGHT).toDouble())
 		invalidate()
 		update()
 	}

@@ -39,16 +39,19 @@ class OscilloscopeScaleRowView(
 	factory: OscilloscopeViewFactory
 ) : ActorViewContainer<Drawable>(location = location, useLocation = true) {
 
+	companion object {
+		const val ROW_HEIGHT = ICON_BUTTON_SIZE + 2 * ROW_INSET
+	}
+
 	private val addButton = DrawableButton<EditInputEventContext>(
 		renderer = IconDrawableButtonRenderer(AddIcon(Dimension2D(ICON_BUTTON_SIZE, ICON_BUTTON_SIZE))),
 		action = { service.addRow(it.drawingView, oscilloscopeView) },
-		location = Point2D(ROW_INSET, oscilloscopeView.rowHeight / 2 - ICON_BUTTON_SIZE / 2),
+		location = Point2D(ROW_INSET, ROW_HEIGHT / 2 - ICON_BUTTON_SIZE / 2),
 		styleType = StyleType.ANNOTATION
 	)
 
-
 	private val scaleButton = ScaleButton(
-		location = Point2D(2 * ROW_INSET + ICON_BUTTON_SIZE, oscilloscopeView.rowHeight / 2 - ICON_BUTTON_SIZE / 2))
+		location = Point2D(2 * ROW_INSET + ICON_BUTTON_SIZE, ROW_HEIGHT / 2 - ICON_BUTTON_SIZE / 2))
 
 	private val timelineView = factory.createSignalHistoryTimelineView(rightInset)
 
@@ -85,7 +88,7 @@ class OscilloscopeScaleRowView(
 	private fun updateGeometry() {
 		timelineView.setBounds(
 			OscilloscopeView.DRAWER_X, 0.0,
-			oscilloscopeView.drawerWidth, oscilloscopeView.rowHeight.toDouble())
+			oscilloscopeView.drawerWidth, ROW_HEIGHT.toDouble())
 	}
 
 	/** Displays a [KnobView] to be used for changing the [SignalHistoryTimeline]'s scale.*/
