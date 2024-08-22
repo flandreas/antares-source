@@ -14,7 +14,7 @@ if (waiting == 0) {
 } else {
 	O = 0.0
 	waiting = 0
-}' purelyScripted='true' propDelay='10' timeStep='0.02'>
+}' purelyScripted='true' propDelay='10' timeStep='0.01'>
           <elements>
             <analogTransistor _id='3' id='5' type='p' gain='0.1'/>
             <analogTransistor _id='4' id='6' type='p' gain='0.1'/>

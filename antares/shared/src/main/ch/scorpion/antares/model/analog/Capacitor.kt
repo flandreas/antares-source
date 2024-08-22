@@ -25,7 +25,7 @@ class Capacitor(
 
         private const val INIT_VOLT_DIFF = 1e-3
 
-        private const val CURRENT_LIMIT = 0.00001
+        private const val CURRENT_LIMIT = 0.0001
     }
 
     private val isTrapezoidal = true
