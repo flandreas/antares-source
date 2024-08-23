@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.model.oscilloscope
 import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 /** Unit tests for [SignalHistory]. */
 class SignalHistoryTest {
@@ -60,5 +61,19 @@ class SignalHistoryTest {
 
 		history.add(0, 400)
 		assertEquals(0, history.minimum)
+	}
+
+	@Test
+	fun shouldYieldEntry() {
+		history.add(1, 100)
+		history.add(10, 200)
+		history.add(5, 300)
+
+		assertNull(history.getEntryAt(0)?.signal)
+		assertEquals(1, history.getEntryAt(100)!!.signal)
+		assertEquals(1, history.getEntryAt(110)!!.signal)
+		assertEquals(10, history.getEntryAt(200)!!.signal)
+		assertEquals(10, history.getEntryAt(250)!!.signal)
+		assertEquals(5, history.getEntryAt(400)?.signal)
 	}
 }

@@ -134,14 +134,19 @@ abstract class AbstractDrawable(visible: Boolean = true) : Drawable {
 	 * Calculates the absolute (i.e. toplevel) model space coordinate of the specified [Point2D]
 	 * by walking up the [DrawableContainer] hierarchy.
 	 */
-	protected fun toAbsoluteLocation(relativeLocation: Point2D): Point2D {
-		var result = relativeLocation
+	protected fun toAbsoluteLocation(relativeLocation: Point2D): Point2D =
+		toAbsoluteLocation(relativeLocation.x, relativeLocation.y)
+
+	protected fun toAbsoluteLocation(relX: Double, relY: Double): Point2D {
+		var x = relX
+		var y = relY
 		var p: DrawableContainer<*>? = parent
 		while (p != null) {
-			result = result.add(p.location)
+			x += p.location.x
+			y += p.location.y
 			p = p.parent
 		}
-		return result
+		return Point2D(x, y)
 	}
 
 	/**

@@ -29,6 +29,9 @@ class Oscilloscope(
 
 	companion object {
 		private val TYPE get() = Translations.getString("graph.component.oscilloscope.name")
+
+		/** The reason in [GraphElementEvent] sent to [GraphElementListener]s if a new signal has arrived. */
+		const val SIGNAL_RECEIVED = "signalReceived"
 	}
 
 	private lateinit var signalHistories: SignalHistories
@@ -48,7 +51,7 @@ class Oscilloscope(
 	override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler, force: Boolean) {
 		if (enabled) {
 			signalHistories.storeSignal(input, signalHandler)
-			stateChanged(signalHandler)
+			stateChanged(signalHandler, SIGNAL_RECEIVED)
 		}
 	}
 

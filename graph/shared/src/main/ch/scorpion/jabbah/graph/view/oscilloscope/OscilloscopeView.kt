@@ -25,6 +25,7 @@ import ch.scorpion.jabbah.execution.actor.ActorViewContainer
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.model.GenericGraphType
+import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.GraphType
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
@@ -116,6 +117,7 @@ class OscilloscopeView(
 	/** Returns the number of rows of this [OscilloscopeView].*/
 	val rowsCount: Int get() = rows.size
 
+	/** Contains all the [OscilloscopeScaleRowView]s and the [OscilloscopeScaleRowView].*/
 	private val container = ActorViewContainer<Drawable>(useLocation = true)
 
 	private val rows = mutableListOf<OscilloscopeSignalRowView>()
@@ -123,7 +125,7 @@ class OscilloscopeView(
 	val signalRowViews: ImmutableList<OscilloscopeSignalRowView> get() = rows.toImmutableList()
 
 	/** Depend on current model and its [GraphType]. */
-	private val scaleRow by lazy { OscilloscopeScaleRowView(this, Point2D.ZERO, RIGHT_INSET, service, factory) }
+	val scaleRowView by lazy { OscilloscopeScaleRowView(this, Point2D.ZERO, RIGHT_INSET, service, factory) }
 
 	private val refColorSequence = referenceColorSequenceProvider.provide()
 
@@ -171,7 +173,7 @@ class OscilloscopeView(
 		super.modelExchanged(oldModel)
 		timeline = OscilloscopeViewTimeline(timelineScale, model::maxTime)
 
-		container.add(scaleRow)
+		container.add(scaleRowView)
 		adjustSize()
 
 		DrawableOwner(this, container)
@@ -181,7 +183,7 @@ class OscilloscopeView(
 
 	private fun updateState() {
 		rows.forEach { it.updateState() }
-		scaleRow.updateState()
+		scaleRowView.updateState()
 	}
 
 	/** ---- [Drawable] */
@@ -212,6 +214,17 @@ class OscilloscopeView(
 
 	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? =
 		container.getExecutionTooltip(x, y) ?: super.getExecutionTooltip(x, y)
+
+	override fun handleStateChanged(event: GraphElementEvent) {
+		if (event.signalHandler != null && event.reason == Oscilloscope.SIGNAL_RECEIVED) {
+			handleSignalReceived()
+		}
+		super.handleStateChanged(event)
+	}
+
+	private fun handleSignalReceived() {
+		scaleRowView.timelineView.updateGeometry()
+	}
 
 	/** ---- [AbstractRectangularVerticeView] */
 
@@ -256,14 +269,14 @@ class OscilloscopeView(
 		model.enabled = visible
 		if (visible) {
 			rows.forEach { it.bindDrawer() }
-			scaleRow.bindDrawer()
+			scaleRowView.bindDrawer()
 		}
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {
 		super.executionStopped(signalHandler)
 		rows.forEach { it.unbindDrawer() }
-		scaleRow.unbindDrawer()
+		scaleRowView.unbindDrawer()
 	}
 
 	/** ---- [Storable] interface */
@@ -292,7 +305,7 @@ class OscilloscopeView(
 			addRowView(port.name!!)
 		}
 
-		scaleRow.updateState()
+		scaleRowView.updateState()
 		adjustSize()
 
 		parent?.getDrawables{ it is OscilloscopeProbeVerticeView<*> }
@@ -311,7 +324,7 @@ class OscilloscopeView(
 
 		invalidate()
 		addRowView(name)
-		scaleRow.updateState()
+		scaleRowView.updateState()
 		adjustSize()
 	}
 
@@ -355,7 +368,7 @@ class OscilloscopeView(
 	}
 
 	private fun adjustSize() {
-		scaleRow.updateLocation()
+		scaleRowView.updateLocation()
 		invalidate()
 		setBounds(0.0, 0.0, WIDTH.toDouble(), (TITLE_HEIGHT + rows.size * rowHeight + OscilloscopeScaleRowView.ROW_HEIGHT).toDouble())
 		invalidate()
@@ -397,8 +410,8 @@ class OscilloscopeView(
 		for (i in rowIndex until rows.size) {
 			rows[i].location = Point2D(rows[i].location.x, rows[i].location.y - rowHeight)
 		}
-		scaleRow.updateLocation()
-		scaleRow.updateState()
+		scaleRowView.updateLocation()
+		scaleRowView.updateState()
 	}
 
 	private fun findProbeViewInDrawing(name: String): OscilloscopeProbeVerticeView<*>? {

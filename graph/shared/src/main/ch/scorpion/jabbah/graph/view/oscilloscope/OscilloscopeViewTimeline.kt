@@ -19,4 +19,8 @@ class OscilloscopeViewTimeline(
 	override fun getDx(duration: Long): Double = scale * duration / FACTOR
 
 	override fun getX(time: Long): Double = getDx(maxTime - time)
+
+	override fun getTime(x: Double): Long = maxTime - getDTime(x)
+
+	private fun getDTime(dx: Double): Long = (dx * FACTOR / scale).toLong()
 }

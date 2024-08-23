@@ -27,7 +27,24 @@ interface SignalHistoryTimelineView : RectangularDrawable {
 		gridSignalHistory: SignalHistory<Any>?,
 		timeline: SignalHistoryTimeline?
 	)
+
+	/**
+	 * Returns the simulation time corresponding with an x-coordinate on this [SignalHistoryTimelineView].
+	 * Can be used e.g. for displaying a tooltip with time/value at that coordinate.
+	 */
+	fun getTime(x: Double): SignalHistoryTimelineTime
+
+	/**
+	 * Called by [OscilloscopeView] after new signals have arrived to ask this [SignalHistoryTimelineView]
+	 * to update its scale, if necessary.
+	 */
+	fun updateGeometry()
 }
+
+data class SignalHistoryTimelineTime(
+	val absoluteTime: Long,
+	val relativeTime: Long
+)
 
 /** Draws a ruler-like timeline. */
 class SignalHistoryTimelineViewImpl(
@@ -40,7 +57,10 @@ class SignalHistoryTimelineViewImpl(
 		private const val MIN_LABEL_GAP = 10
 	}
 
-	/** The [SignalHistory] whose signal times determine the locations of the vertical grid lines.*/
+	/**
+	 * The [SignalHistory] whose signal times determine the locations of the vertical grid lines
+	 * and therefore also of the scale markings.
+	 */
 	private var gridSignalHistory: SignalHistory<Any>? = null
 
 	/** The [SignalHistoryTimeline] used for mapping signal time to horizontal model coordinates.*/
@@ -56,11 +76,22 @@ class SignalHistoryTimelineViewImpl(
 
 	private val rightBorder: Double get() = bounds.x + bounds.width - rightInset
 
+	private var minDisplayableTime: Long = 0
+
 	/** ---- [SignalHistoryTimelineView] */
 
 	override fun bind(gridSignalHistory: SignalHistory<Any>?, timeline: SignalHistoryTimeline?) {
 		this.gridSignalHistory = gridSignalHistory
 		this.timeline = timeline
+	}
+
+	override fun getTime(x: Double): SignalHistoryTimelineTime {
+		val time = timeline!!.getTime(rightBorder - x)
+		return SignalHistoryTimelineTime(time, time - minDisplayableTime)
+	}
+
+	override fun updateGeometry() {
+		updateMinDisplayableTime()
 	}
 
 	/** ---- [Drawable] */
@@ -108,23 +139,29 @@ class SignalHistoryTimelineViewImpl(
 
 	/** ---- [SignalHistoryTimelineViewImpl] */
 
-	private val minDisplayableTime: Long get() {
+	/**
+	 * The smallest effective simulation time that can be displayed to the left side of the view.
+	 * This is then displayed as "0"", and all subsequent time marks are relative to this one.
+	 */
+	private fun updateMinDisplayableTime() {
 		var time = timeline!!.maxTime
 		val entries = gridSignalHistory!!.getReverseEntriesUntil(0)
 
 		if (!entries.hasNext()) {
-			return time
+			minDisplayableTime = time
+			return
 		}
 
 		do {
 			val entry = entries.next()
 			if ((rightBorder - timeline!!.getX(entry.time)) < bounds.minX) {
-				return time
+				minDisplayableTime = time
+				return
 			}
 			time = entry.time
 
 		} while (entries.hasNext())
 
-		return time
+		minDisplayableTime = time
 	}
 }

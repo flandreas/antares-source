@@ -53,7 +53,7 @@ class OscilloscopeScaleRowView(
 	private val scaleButton = ScaleButton(
 		location = Point2D(2 * ROW_INSET + ICON_BUTTON_SIZE, ROW_HEIGHT / 2 - ICON_BUTTON_SIZE / 2))
 
-	private val timelineView = factory.createSignalHistoryTimelineView(rightInset)
+	val timelineView = factory.createSignalHistoryTimelineView(rightInset)
 
 	init {
 		add(addButton)
