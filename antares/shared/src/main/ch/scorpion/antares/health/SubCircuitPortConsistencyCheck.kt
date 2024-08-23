@@ -31,7 +31,7 @@ object SubCircuitPortConsistencyCheck : SystemHealthCheck {
             model.getSubGraphPorts().forEach { subGraphPort ->
                 val graphPort = metaGraph.graph.model!!.getGraphPort<DigitalSignal>(subGraphPort.name!!)
                 if (subGraphPort is SubCircuitPort && graphPort is DigitalCircuitInOut) {
-                    if (graphPort.bitWidth != subGraphPort.bitWidth) {
+                    if (graphPort.bitWidth.width != subGraphPort.bitWidth.width) {
                         return SystemMalfunctionEvent(Translations.getString("antares.system.inconsistentSubCircuitPortBitWidth.msg"))
                     }
                 }
