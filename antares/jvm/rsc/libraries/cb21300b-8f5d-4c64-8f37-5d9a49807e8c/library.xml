@@ -1,7 +1,7 @@
 <library _id='0' uuid='cb21300b-8f5d-4c64-8f37-5d9a49807e8c' author='5ecf330b-e395-4e17-88b0-0883834b384a' system="true" visibility="public">
   <desc>
     <translation lang='en' text='Contains only built-in components'/>
-    <translation lang='de' text='Enhält nur alle eingebauten Komponenten'/>
+    <translation lang='de' text='Enthält nur alle eingebauten Komponenten'/>
   </desc>
   <folder>
     <libraryFolder _id='1'>
@@ -122,25 +122,6 @@
             <baseLibraryElement _id='52' id='BitExtender'/>
           </items>
         </libraryFolder>
-      </items>
-    </libraryFolder>
-    <libraryFolder _id='60'>
-      <name>
-        <translation lang='en' text='Analog'/>
-        <translation lang='de' text='Analog'/>
-      </name>
-      <items>
-        <baseLibraryElement _id='61' id='LightBulb' type='analog'/>
-        <baseLibraryElement _id='62' id='Battery' type='analog'/>
-        <baseLibraryElement _id='63' id='Resistor' type='analog'/>
-        <baseLibraryElement _id='64' id='AnalogSwitch' type='analog'/>
-        <baseLibraryElement _id='65' id='AnalogGround' type='analog'/>
-        <baseLibraryElement _id='66' id='AnalogTransistorN' type='analog'/>
-        <baseLibraryElement _id='67' id='AnalogTransistorP' type='analog'/>
-        <baseLibraryElement _id='68' id='AnalogInput' type='analog'/>
-        <baseLibraryElement _id='69' id='AnalogOutput' type='analog'/>
-        <baseLibraryElement _id='70' id='AnalogPower' type='analog'/>
-        <baseLibraryElement _id='71' id='CurrentSource' type='analog'/>
       </items>
     </libraryFolder>
   </folder>
