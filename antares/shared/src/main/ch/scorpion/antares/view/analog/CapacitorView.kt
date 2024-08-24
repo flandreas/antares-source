@@ -2,6 +2,7 @@ package ch.scorpion.antares.view.analog
 
 import ch.scorpion.antares.model.analog.Capacitor
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
+import ch.scorpion.jabbah.base.Thousands
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -55,5 +56,5 @@ class CapacitorView(
         }
     }
 
-    override val mainPropertyValue: String get() = "${model.capacitance} µF"
+    override val mainPropertyValue: String get() = "${Thousands.convert(model.capacitance / 1_000_000.0, " ")}F"
 }

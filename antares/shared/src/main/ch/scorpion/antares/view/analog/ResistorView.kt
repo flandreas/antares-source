@@ -90,7 +90,7 @@ class ResistorView(
 
 	/** ---- [AbstractAnalogVerticeView] */
 
-	override val mainPropertyValue: String get() = "${Thousands.convert(model.resistance.toLong())} Ω"
+	override val mainPropertyValue: String get() = "${Thousands.convert(model.resistance.toLong(), " ")}Ω"
 
 	private fun getColorGradient(context: DrawContext): LinearColorGradient? {
 		if (context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
