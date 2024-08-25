@@ -22,6 +22,7 @@ actual object Translations {
 			throw NotImplementedError()
 		}
 
+	actual val bundleNames: Set<String> get() = loadedBundleNames.toSet()
 
 	actual fun withAnyKey() { }
 

@@ -20,6 +20,8 @@ actual object Translations {
 			}
 		}
 
+	actual val bundleNames: Set<String> get() = _bundleNames.toSet()
+
 	actual fun withAnyKey() {
 		withAllKeys = true
 	}
@@ -30,12 +32,12 @@ actual object Translations {
 	actual fun getOptionalString(key: String): String? = getString(key, optional = true)
 
 	actual fun addBundle(name: String) {
-		bundleNames.add(name)
+		_bundleNames.add(name)
         addBundle(ResourceBundle.getBundle(name))
     }
 
 	actual fun hasBundle(name: String): Boolean =
-		bundleNames.contains(name)
+		_bundleNames.contains(name)
 
 	actual fun hasAllBundles(): Boolean = true
 
@@ -43,7 +45,7 @@ actual object Translations {
 
     /** ---- [Translations] */
 
-    private val bundleNames: MutableList<String> = mutableListOf()
+    private val _bundleNames: MutableList<String> = mutableListOf()
     private val bundles: MutableList<ResourceBundle> = mutableListOf()
 
     private fun addBundle(bundle: ResourceBundle) {
@@ -52,7 +54,7 @@ actual object Translations {
     }
 
     fun clear() {
-	    bundleNames.clear()
+	    _bundleNames.clear()
         bundles.clear()
     }
 
@@ -77,6 +79,6 @@ actual object Translations {
 	private fun handleLanguageChanged(languageCode: String) {
 		java.lang.System.setProperty("user.language", languageCode)
 		bundles.clear()
-		bundleNames.forEach { addBundle(ResourceBundle.getBundle(it, Locale(languageCode))) }
+		_bundleNames.forEach { addBundle(ResourceBundle.getBundle(it, Locale(languageCode))) }
 	}
 }
