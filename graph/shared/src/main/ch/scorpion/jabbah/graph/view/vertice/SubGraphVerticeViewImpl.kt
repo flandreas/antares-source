@@ -541,7 +541,6 @@ class SubGraphVerticeViewImpl(
 		val graphView = libraryGraph.graph.graphView.cloneForExistingModel(getGraph())
 		graphView.bind(signalHandler?.isDeepExecution ?: false)
 		signalHandler?.let {
-			graphView.graph?.executionInitialize(it)
 			graphView.executionStart(it)
 		}
 		return graphView
