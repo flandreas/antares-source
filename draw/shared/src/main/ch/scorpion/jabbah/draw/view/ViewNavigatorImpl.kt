@@ -36,6 +36,9 @@ class ViewNavigatorImpl(
 	private val minZoomFactor: Double get() = BaseModule.properties.getFloat(View.PROP_MIN_ZOOM_FACTOR).toDouble()
 
 	private val maxZoomFactor: Double get() = BaseModule.properties.getFloat(View.PROP_MAX_ZOOM_FACTOR).toDouble()
+
+	private val effDefaultZoomFactor: Double get() = defaultZoomFactor * view.canvas.devicePixelRatio
+
 	/** ---- [ViewNavigator] interface */
 
 	override fun createTransformation(zoomFactor: Double): ViewTransformation =
@@ -101,7 +104,7 @@ class ViewNavigatorImpl(
 	}
 
 	override fun panCenterDefault() {
-		panCenter(defaultZoomFactor)
+		panCenter(effDefaultZoomFactor)
 	}
 
 	override fun panCenter(zoomFactor: Double) {
@@ -125,7 +128,7 @@ class ViewNavigatorImpl(
 	}
 
 	override fun calculateFixMaxNormalZoomFactor(): Double =
-		min(defaultZoomFactor, calculateFitZoomFactor())
+		min(effDefaultZoomFactor, calculateFitZoomFactor())
 
 	/** ---- [ViewNavigatorImpl] */
 
@@ -153,10 +156,10 @@ class ViewNavigatorImpl(
 	private fun calculateFitZoomFactor(): Double {
 		val bounds = view.contentBounds.total
 		if (bounds.width == 0.0 || bounds.height == 0.0) {
-			return defaultZoomFactor
+			return effDefaultZoomFactor
 		}
 		if (view.space.area.widthInt == 0 || view.space.area.heightInt == 0) {
-			return defaultZoomFactor
+			return effDefaultZoomFactor
 		}
 
 		return min(

@@ -49,25 +49,9 @@ class AntaresSingleCircuitViewerJs(
         controller.graphNavigationViewController.setRootGraphView(data.graph.graphView, false)
     }
 
-    fun bindCanvas(
-        canvas: HTMLCanvasElement,
-        width: Int? = null,
-        height: Int? = null,
-    ) {
+    fun bindCanvas(canvas: HTMLCanvasElement) {
         try {
-            val dimension: Dimension2D? = if (width != null && height != null) {
-                Dimension2D(width, height)
-            } else {
-                null
-            }
-
-            val effWidth = dimension?.width?.toInt() ?: canvas.offsetWidth
-            val effHeight = dimension?.height?.toInt() ?: canvas.offsetHeight
-
-            canvas.width = effWidth * window.devicePixelRatio.toInt()
-            canvas.height = effHeight * window.devicePixelRatio.toInt()
-
-            val canvasJs = CanvasJs(canvas, controller.drawingView, dimension)
+            val canvasJs = CanvasJs(canvas, controller.drawingView)
             addWatermark()
 
             canvasJs.repaint()

@@ -21,14 +21,13 @@ import kotlin.math.ceil
 class CanvasJs(
     private val canvas: HTMLCanvasElement,
     override val view: View<out InputEventContext>,
-    size: Dimension2D?,
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     private val propertyOwner: PropertyOwner<Any> = PropertyOwnerImpl()
 ) : Canvas, PropertyOwner<Any> by propertyOwner {
 
     private val ctx = canvas.getContext("2d")!! as CanvasRenderingContext2D
 
-    private val g = Graphics2DJs(ctx, window.devicePixelRatio)
+    private val g = Graphics2DJs(ctx)
 
     private var initalizing: Boolean = true
 
@@ -41,8 +40,7 @@ class CanvasJs(
 
     override val devicePixelRatio: Double get() = window.devicePixelRatio
 
-    override var dimension: Dimension2D = size ?: Dimension2D(canvas.offsetWidth, canvas.offsetHeight)
-        private set
+    override val dimension: Dimension2D get() = Dimension2D(canvas.width, canvas.height)
 
     override var backgroundColor: Color = styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
 
@@ -103,19 +101,16 @@ class CanvasJs(
     }
 
     private fun handleDevicePixelRatioChanged() {
-        dimension = Dimension2D(canvas.offsetWidth, canvas.offsetHeight)
-        canvas.width = ceil(dimension.widthInt * devicePixelRatio).toInt()
-        canvas.height = ceil(dimension.heightInt * devicePixelRatio).toInt()
-        repaint()
+        resize()
         propertyOwner.fire(Canvas.PROP_DEVICE_PIXEL_RATIO, devicePixelRatio, devicePixelRatio)
     }
 
-
-    fun resize(w: Int, h: Int) {
+    private fun resize() {
         val oldDimension = dimension
-        dimension = Dimension2D(w, h)
-        canvas.width = ceil(dimension.widthInt * devicePixelRatio).toInt()
-        canvas.height = ceil(dimension.heightInt * devicePixelRatio).toInt()
+        val rect = canvas.getBoundingClientRect()
+        val dpr = window.devicePixelRatio
+        canvas.width = ceil(rect.width * dpr).toInt()
+        canvas.height = ceil(rect.height * dpr).toInt()
         repaint()
         propertyOwner.fire(Canvas.PROP_DIMENSION, oldDimension, dimension)
     }
@@ -165,7 +160,11 @@ class CanvasJs(
         ctx.fillRect(xx, yy, ww, hh)
 
         ctx.restore()
+
+        val dpr = devicePixelRatio
+        ctx.scale(dpr, dpr)
         paint()
+        ctx.scale(1 / dpr, 1 / dpr)
     }
 
     override fun addMouseListener(l: MouseListener) {
@@ -264,8 +263,8 @@ class CanvasJs(
     private fun windowToCanvas(event: org.w3c.dom.events.MouseEvent): Point2D {
         val rect = canvas.getBoundingClientRect()
         return Point2D(
-            ((event.clientX - rect.left)).toInt(),
-            ((event.clientY - rect.top)).toInt()
+            ((event.clientX - rect.left) * window.devicePixelRatio).toInt(),
+            ((event.clientY - rect.top) * window.devicePixelRatio).toInt()
         )
     }
 

@@ -7,8 +7,7 @@ import org.w3c.dom.*
  * Bridges [Graphics2D] methods to [CanvasRenderingContext2D] functionality.
  */
 class Graphics2DJs(
-	private val ctx: CanvasRenderingContext2D,
-	initialScale: Double = 1.0
+	private val ctx: CanvasRenderingContext2D
 ) : AbstractGraphics2D() {
 
 	val clip: Rectangle2D = Rectangle2D()
@@ -39,7 +38,7 @@ class Graphics2DJs(
 	}
 
 	init {
-		ctx.setTransform(initialScale, 0.0, 0.0, initialScale, 0.0, 0.0)
+		ctx.setTransform(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
 	}
 
 	/** ---- Path rendering methods */
@@ -103,7 +102,7 @@ class Graphics2DJs(
 	 * HTML canvas doesn't provide access to the current transform yet, so keep a local
 	 * [AffineTransform] and forward all changes to the rendering context.
 	 */
-	override var transform: AffineTransform = AffineTransformImpl(m00 = initialScale, m11 = initialScale)
+	override var transform: AffineTransform = AffineTransformImpl(m00 = 1.0, m11 = 1.0)
 		get() = AffineTransformImpl(field as AffineTransformImpl)
 		set(value) {
 			field = value
