@@ -47,6 +47,14 @@ interface ViewToModelTransform {
             add(modelToView(rect.topLeft))
             add(modelToView(rect.bottomRight))
         }
+
+    fun modelToDeviceX(x: Double): Double
+
+    fun modelToDeviceY(y: Double): Double
+
+    fun modelToDevice(p: Point2D): Point2D
+
+    fun modelToDeviceLength(length: Double): Double
 }
 
 object IdentityViewToModelTransform : ViewToModelTransform {
@@ -72,4 +80,12 @@ object IdentityViewToModelTransform : ViewToModelTransform {
 	override fun modelToViewLength(length: Double): Double = length
 
 	override fun modelToViewLength(length: Double, zoomFactor: Double): Double = length
+
+    override fun modelToDeviceX(x: Double): Double = x
+
+    override fun modelToDeviceY(y: Double): Double = y
+
+    override fun modelToDevice(p: Point2D): Point2D = p
+
+    override fun modelToDeviceLength(length: Double): Double = length
 }

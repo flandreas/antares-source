@@ -319,7 +319,9 @@ open class ViewImpl<C : InputEventContext>(
 
 		context.g.save()
 
+		// This creates a copy of the Transform with scaling set to 1.0
 		val oldTransform = context.g.transform
+
 		val zoomedTransform = context.g.transform
 		zoomedTransform.concatenate(transformation.affineTransform)
 
@@ -346,9 +348,13 @@ open class ViewImpl<C : InputEventContext>(
 			context.g.drawLine(0.0, originView.y, width.toDouble(), originView.y)
 		}
 
+		// Draw the overlay container
 		context.g.transform = oldTransform
-
-		overlayContainer.draw(context)
+		canvas.devicePixelRatio.also { dpr ->
+			context.g.scale(dpr, dpr)
+			overlayContainer.draw(context)
+			context.g.scale(1 / dpr, 1 / dpr)
+		}
 
 		context.g.restore()
 	}
@@ -460,6 +466,14 @@ open class ViewImpl<C : InputEventContext>(
 	override fun modelToViewLength(length: Double): Double = length * zoomFactor
 
 	override fun modelToViewLength(length: Double, zoomFactor: Double): Double = length * zoomFactor
+
+	override fun modelToDeviceX(x: Double): Double = modelToViewX(x) / canvas.devicePixelRatio
+
+	override fun modelToDeviceY(x: Double): Double = modelToViewY(x) / canvas.devicePixelRatio
+
+	override fun modelToDevice(p: Point2D): Point2D = modelToView(p).multiply(1 / canvas.devicePixelRatio)
+
+	override fun modelToDeviceLength(length: Double): Double = modelToViewLength(length) / canvas.devicePixelRatio
 
 	/** ---- [ViewImpl] */
 

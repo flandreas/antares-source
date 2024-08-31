@@ -1,7 +1,7 @@
 package ch.scorpion.antares
 
-import ch.scorpion.jabbah.base.*
-import ch.scorpion.jabbah.base.geom.Dimension2D
+import ch.scorpion.jabbah.base.Action
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.ViewDecorator
 import ch.scorpion.jabbah.draw.view.CanvasJs
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
@@ -12,7 +12,6 @@ import ch.scorpion.jabbah.execution.speed.SystemSpeedOutlet
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.project.AkrabApiException
 import ch.scorpion.jabbah.graph.ui.graphviewer.GraphViewerController
-import kotlinx.browser.window
 import org.w3c.dom.HTMLCanvasElement
 
 /**

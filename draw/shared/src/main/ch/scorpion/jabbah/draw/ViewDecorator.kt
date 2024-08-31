@@ -82,12 +82,15 @@ class ViewDecorator(private val view: View<*>) {
     }
 
     private fun updateTopCentered() {
-        topCentered!!.location = Point2D(view.width / 2 - topCentered!!.boundingBox.width / 2, INSET)
+        topCentered!!.location = Point2D(
+            view.width / view.canvas.devicePixelRatio / 2 - view.modelToViewLength(topCentered!!.boundingBox.width / 2) / view.canvas.devicePixelRatio,
+            INSET)
     }
 
     private fun updateBottonRight() {
         bottomRight!!.location = Point2D(
-            view.width - bottomRight!!.boundingBox.width - INSET,
-            view.height - bottomRight!!.boundingBox.height - INSET)
+            view.width / view.canvas.devicePixelRatio - view.modelToViewLength(bottomRight!!.boundingBox.width) / view.canvas.devicePixelRatio - INSET,
+            view.height / view.canvas.devicePixelRatio - view.modelToViewLength(bottomRight!!.boundingBox.height) / view.canvas.devicePixelRatio - INSET
+        )
     }
 }

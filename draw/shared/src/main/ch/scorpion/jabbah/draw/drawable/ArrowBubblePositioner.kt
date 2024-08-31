@@ -19,7 +19,7 @@ object ArrowBubblePositioner {
 		val belowLocation = positionY > describable.maxY
 
 		return ArrowBubblePosition(
-			view.modelToView(Point2D(horizontal.coordinate, positionY)),
+			view.modelToDevice(Point2D(horizontal.coordinate, positionY)),
 			belowLocation = belowLocation,
 			rightOfLocation = horizontal.defaultPosition)
 	}
