@@ -215,7 +215,7 @@ class CanvasJs(
         var bridge: MouseWheelEventBridge? = mouseWheelEventBridgeOf(l)
         if (bridge == null) {
             bridge = MouseWheelEventBridge(::windowToCanvas, l, canvas)
-            canvas.addEventListener("mousewheel", bridge)
+            canvas.addEventListener("wheel", bridge)
             mouseWheelListeners.add(bridge)
         }
     }
@@ -223,7 +223,7 @@ class CanvasJs(
     override fun removeMouseWheelListener(l: MouseWheelListener) {
         val bridge = mouseWheelEventBridgeOf(l)
         if (bridge != null) {
-            canvas.removeEventListener("mousewheel", bridge)
+            canvas.removeEventListener("wheel", bridge)
             mouseWheelListeners.remove(bridge)
         }
     }

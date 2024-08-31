@@ -62,6 +62,8 @@ class ZoomPanController(
 
 	private var isMousePressed: Boolean = false
 
+	private var isPanning: Boolean = false
+
 	private val wheelZoomStep: Double get() = BaseModule.properties.getFloat(PROP_WHEEL_ZOOM_STEP).toDouble()
 
 	private val wheelPanStep: Int get() = BaseModule.properties.getInt(PROP_WHEEL_PAN_STEP)
@@ -89,6 +91,7 @@ class ZoomPanController(
 
 	private fun startPan(pos: Point2D) {
 		startPos = pos
+		isPanning = true
 	}
 
 	private fun pan(pos: Point2D) {
@@ -135,14 +138,16 @@ class ZoomPanController(
 			if (e.isLeftButtonDown || e.isMiddleButtonDown) {
 				autoPanning.activate()
 			}
-			if (!CurrentPanMethod.panMethod.isActivatedByPressed(e, mouseWheelModeController.pressedKeyCode)) {
-				return
+			// Some web browsers don't report the same button code for dragging as the did for pressing,
+			// so we can't check again the panMethod as we did in mousePressed()
+			if (isPanning) {
+				pan(e.location)
 			}
-			pan(e.location)
 		}
 
 		override fun mouseReleased(e: MouseEvent) {
 			isMousePressed = false
+			isPanning = false
 			if (e.button != Button.BUTTON3) {
 				autoPanning.deactivate()
 			}
