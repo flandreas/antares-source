@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.edit.auth
 
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.UUID
+import kotlin.js.JsExport
 
 /**
  * Unique identification of a [User].
@@ -9,6 +10,7 @@ import ch.scorpion.jabbah.base.UUID
  * Cannot be [UUID] because [User] identities can also be created by third-party
  * identity providers like Auth0.
  */
+@JsExport
 data class UserIdentity(val id: String) {
 
 	companion object {
