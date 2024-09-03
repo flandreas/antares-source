@@ -34,9 +34,15 @@ class Oscilloscope(
 		const val SIGNAL_RECEIVED = "signalReceived"
 	}
 
-	private lateinit var signalHistories: SignalHistories
+	private var signalHistories: SignalHistories = mode.createSignalHistories(this)
 
 	var mode: SignalHistoriesType = mode
+		set(value) {
+			if (field != value) {
+				field = value
+				signalHistories = mode.createSignalHistories(this)
+			}
+		}
 
 	var enabled: Boolean = true
 
@@ -84,8 +90,13 @@ class Oscilloscope(
 	/** ---- [Actor] interface */
 
 	override fun executionInitialize(signalHandler: SignalHandler) {
-		signalHistories = mode.createSignalHistories(this)
+		signalHistories.clear()
 		super.executionInitialize(signalHandler)
+	}
+
+	override fun executionStart(signalHandler: SignalHandler) {
+		signalHistories = mode.createSignalHistories(this)
+		super.executionStart(signalHandler)
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {
