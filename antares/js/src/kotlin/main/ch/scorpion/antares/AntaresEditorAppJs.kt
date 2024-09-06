@@ -16,6 +16,12 @@ import kotlinx.coroutines.promise
 import kotlin.js.Promise
 
 @JsExport
+data class AntaresEditorContent(
+    val library: Any,
+    val metaGraph: Any?
+)
+
+@JsExport
 class AntaresEditorAppJs(environment: Environment) : AbstractAntaresAppJs(environment) {
 
     companion object {
@@ -28,8 +34,8 @@ class AntaresEditorAppJs(environment: Environment) : AbstractAntaresAppJs(enviro
      * The result of the returned [Promise] is either [MetaGraph], if there is a default circuit in the [Library],
      * or the [Library] itself. Both can't be declared explicitly because that would require `@JsExport` for everything.
      */
-    @Suppress("unused")
-    fun start(libraryUuid: String, userIdentity: UserIdentity, themeName: String? = null): Promise<Any> {
+    @Suppress("unused") // JS app
+    fun start(libraryUuid: String, userIdentity: UserIdentity, themeName: String? = null): Promise<AntaresEditorContent> {
         LOG.info("Starting Antares editor app")
 
         configure()
@@ -44,13 +50,16 @@ class AntaresEditorAppJs(environment: Environment) : AbstractAntaresAppJs(enviro
 
             LOG.debug("Loading repository in AntaresEditorAppJs")
             val libraryPromise = loadRepository(libraryUuid)
+
             val library = libraryPromise.await()
 
             if (library.getDefaultElement() != null) {
                 LOG.debug("Repository loaded, start loading MetaGraph")
-                loadMetaGraph(library, UUID(library.getDefaultElement()!!.uuid.toString()))
+                val metaGraphPromise = loadMetaGraph(library, UUID(library.getDefaultElement()!!.uuid.toString()))
+                val metaGraph = metaGraphPromise.await()
+                AntaresEditorContent(library, metaGraph)
             } else {
-                libraryPromise
+                AntaresEditorContent(library, null)
             }
         }
     }
