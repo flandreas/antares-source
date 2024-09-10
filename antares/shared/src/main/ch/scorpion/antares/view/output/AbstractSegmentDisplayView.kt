@@ -216,10 +216,10 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 	}
 
 	private fun drawDot(context: DrawContext, value: Boolean, relX: Float, relY: Float) {
-		context.g.translate(relX.toDouble(), relY.toDouble())
 		context.g.color = getColor(value, context)
-		context.g.fillOval(-geom.dotSize / 2, -geom.dotSize / 2, geom.dotSize, geom.dotSize)
-		context.g.translate(-relX.toDouble(), -relY.toDouble())
+		context.translated(relX.toDouble(), relY.toDouble()) {
+			it.g.fillOval(-geom.dotSize / 2, -geom.dotSize / 2, geom.dotSize, geom.dotSize)
+		}
 	}
 
 	protected fun getColor(value: Boolean, context: DrawContext): Color =
@@ -266,28 +266,24 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 	}
 
 	protected fun drawFullHorizontalSegment(context: DrawContext, value: Boolean, relX: Float, relY: Float) {
-		context.g.translate(relX.toDouble(), relY.toDouble())
 		context.g.color = getColor(value, context)
-		context.g.fill(geom.path)
-		context.g.translate(-relX.toDouble(), -relY.toDouble())
+		context.translated(relX.toDouble(), relY.toDouble()) {
+			it.g.fill(geom.path)
+		}
 	}
 
 	protected fun drawHalfHorizontalSegment(context: DrawContext, value: Boolean, relX: Float, relY: Float) {
-		context.g.translate(relX.toDouble(), relY.toDouble())
 		context.g.color = getColor(value, context)
-		context.g.fill(geom.halfPath)
-		context.g.translate(-relX.toDouble(), -relY.toDouble())
+		context.translated(relX.toDouble(), relY.toDouble()) {
+			it.g.fill(geom.halfPath)
+		}
 	}
 
 	protected fun drawVerticalSegment(context: DrawContext, value: Boolean, relX: Float, relY: Float) {
-		context.g.translate(relX.toDouble(), relY.toDouble())
-		context.g.rotate(PI / 2)
-
 		context.g.color = getColor(value, context)
-		context.g.fill(geom.path)
-
-		context.g.rotate(-PI / 2)
-		context.g.translate(-relX.toDouble(), -relY.toDouble())
+		context.translatedAndRotated(relX.toDouble(), relY.toDouble(), PI / 2) {
+			it.g.fill(geom.path)
+		}
 	}
 
 	protected fun drawB(context: DrawContext) {

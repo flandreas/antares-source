@@ -222,11 +222,10 @@ class DigitalCircuitInOutView(
 				transparent.applyTo(model.signal!!.color.foregroundColor))
 		}
 
-		val translation = getArrowPathTranslation()
-		context.g.translate(translation.x, translation.y)
-		numberView!!.draw(context)
-		drawDisabled(context)
-		context.g.translate(-translation.x, -translation.y)
+		context.translated(getArrowPathTranslation()) {
+			numberView!!.draw(it)
+			drawDisabled(it)
+		}
 	}
 
 	/** ---- [DigitalCircuitInOutView] */

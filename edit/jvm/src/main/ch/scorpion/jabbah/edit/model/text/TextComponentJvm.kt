@@ -176,9 +176,9 @@ open class TextComponentJvm(
 
 		setupTextPainter(context, filled)
 
-		context.g.translate(TEXT_PAINTER.x.toDouble(), TEXT_PAINTER.y.toDouble())
-		TEXT_PAINTER.paint((context.g as Graphics2DJvm).g)
-		context.g.translate(-TEXT_PAINTER.x.toDouble(), -TEXT_PAINTER.y.toDouble())
+		context.translated(TEXT_PAINTER.x.toDouble(), TEXT_PAINTER.y.toDouble()) {
+			TEXT_PAINTER.paint((it.g as Graphics2DJvm).g)
+		}
 
 		context.g.setClipBounds(oldClip)
 

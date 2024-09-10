@@ -135,19 +135,19 @@ abstract class AbstractAntaresPortView<T: Any>(
 		val origColor = context.g.color
 
 		setupColor(context)
-		context.g.translate(locationX, locationY)
-		drawAboveOwnerImpl(context)
 
-		portLabel?.let {
-			context.g.color = transparent.applyTo(if (portLabelPosition == PortLabelPosition.EXTERNAL) {
-				context.choose(styleProvider.getStyle(GraphStyleType.EDGE).color).textColor
-			} else {
-				context.choose(context.styleColor(styleProvider.getStyle(StyleType.FIGURE).color).deriveTextTowardsBackgroundColor()).textColor
-			})
-			portLabel?.draw(context)
+		context.translated(locationX, locationY) { c ->
+			drawAboveOwnerImpl(c)
+			portLabel?.let {
+				c.g.color = transparent.applyTo(if (portLabelPosition == PortLabelPosition.EXTERNAL) {
+					c.choose(styleProvider.getStyle(GraphStyleType.EDGE).color).textColor
+				} else {
+					c.choose(c.styleColor(styleProvider.getStyle(StyleType.FIGURE).color).deriveTextTowardsBackgroundColor()).textColor
+				})
+				portLabel?.draw(c)
+			}
 		}
 
-		context.g.translate(-locationX, -locationY)
 		DrawModule.drawDebugBoundingBox(this, context.g, DrawModule.DEBUG_BBOX_COLOR_SECONDARY)
 		context.g.color = origColor
 	}

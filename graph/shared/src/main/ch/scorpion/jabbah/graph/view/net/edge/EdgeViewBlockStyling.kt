@@ -270,17 +270,13 @@ class EdgeViewBlockStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling 
 			EdgeViewEndpointType.DESTINATION -> endpointType.getDirection(edgeView)!!.rotation.angle
 		}
 
-		context.g.translate(location.x, location.y)
-		context.g.rotate(angle)
-
-		if (fill) {
-			context.g.fill(getArrowPath(endpointType))
-		} else {
-			context.g.draw(getArrowPath(endpointType))
+		context.translatedAndRotated(location, angle) {
+			if (fill) {
+				it.g.fill(getArrowPath(endpointType))
+			} else {
+				it.g.draw(getArrowPath(endpointType))
+			}
 		}
-
-		context.g.rotate(-angle)
-		context.g.translate(-location.x, -location.y)
 	}
 
 	private fun getOriginArrowOverallLength(): Int {

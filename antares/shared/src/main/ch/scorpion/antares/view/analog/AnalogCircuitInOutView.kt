@@ -126,18 +126,15 @@ class AnalogCircuitInOutView(
 			)
 		}
 
-		val translation = getArrowPathTranslation()
-		context.g.translate(translation.x, translation.y)
-
 		if (model.signal == null) {
 			context.g.color = Bit.Undefined.color.textColor
 		} else {
 			context.g.color = textColor
 		}
-		voltageLabel.draw(context)
-
-		drawFocus(context)
-		context.g.translate(-translation.x, -translation.y)
+		context.translated(getArrowPathTranslation()) {
+			voltageLabel.draw(context)
+			drawFocus(context)
+		}
 	}
 
 	override fun toggle(undefine: Boolean, context: ActorInteractionContext): ActorInteractionHandler? {

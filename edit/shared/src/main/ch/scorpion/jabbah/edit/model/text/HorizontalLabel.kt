@@ -69,9 +69,7 @@ class HorizontalLabel(
 
 	/** Draws the contained [Label] using an unrotated and untranslated [DrawContext].*/
 	fun draw(context: DrawContext) {
-		context.g.translate(owner.location.x, owner.location.y)
-		label.draw(context)
-		context.g.translate(-owner.location.x, -owner.location.y)
+		context.translated(owner.location) { label.draw(it) }
 	}
 
 	private fun updateLocation() {

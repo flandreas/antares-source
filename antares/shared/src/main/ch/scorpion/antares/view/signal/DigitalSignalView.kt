@@ -63,9 +63,7 @@ class DigitalSignalView(
 
 	override fun draw(context: DrawContext) {
 		drawRectangle(context, signal.color.backgroundColor, signal.color.foregroundColor, Themes.get<AntaresTheme>().annotation.stroke)
-		context.g.translate(location.x, location.y)
-		label.draw(context)
-		context.g.translate(-location.x, -location.y)
+		context.translated(location) { label.draw(it) }
 	}
 
 	override val lineWidth: Double get() = Themes.get<AntaresTheme>().annotation.stroke.width.toDouble()

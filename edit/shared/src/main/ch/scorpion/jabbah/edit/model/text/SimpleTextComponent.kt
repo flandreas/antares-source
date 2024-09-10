@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.RichTextDrawable
 import ch.scorpion.jabbah.draw.drawable.Transparent
-import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
@@ -64,9 +63,9 @@ class SimpleTextComponent(
 		// val b = shape
 		// val oldClip = context.g.getClipBounds()
 		//(context.g as Graphics2DJvm).g.setClip(b.x.toInt(), b.y.toInt(), b.width.toInt(), b.height.toInt())
-		context.g.translate(x + INSET_X, y + INSET_Y + JVM_OFFSET_Y)
-		multilineText.draw(context)
-		context.g.translate(-(x + INSET_X), -(y + INSET_Y + JVM_OFFSET_Y))
+		context.translated(x + INSET_X, y + INSET_Y + JVM_OFFSET_Y) {
+			multilineText.draw(it)
+		}
 		//(context.g as Graphics2DJvm).g.setClip(oldClip.x.toInt(), oldClip.y.toInt(), oldClip.width.toInt(), oldClip.height.toInt())
 
 		if (stroked) {

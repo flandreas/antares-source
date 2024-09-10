@@ -105,11 +105,11 @@ class ImageComponent(
         val scaleX = width / imageData.value!!.image.width
         val scaleY = height / imageData.value!!.image.height
 
-        context.g.translate(x, y)
-        context.g.scale(scaleX, scaleY)
-        context.g.drawImage(imageData.value!!.image, 0, 0)
-        context.g.scale(1 / scaleX, 1 / scaleY)
-        context.g.translate(-x, -y)
+        context.translated(location) {
+            it.g.scale(scaleX, scaleY)
+            it.g.drawImage(imageData.value!!.image, 0, 0)
+            it.g.scale(1 / scaleX, 1 / scaleY)
+        }
     }
 
     private fun initializeGeometry() {

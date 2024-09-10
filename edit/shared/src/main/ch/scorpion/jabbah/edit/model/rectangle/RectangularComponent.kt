@@ -186,10 +186,10 @@ abstract class RectangularComponent(
 	}
 
 	override fun drawText(context: DrawContext) {
-		context.g.translate(x, y)
 		label.font = font
-		label.draw(context)
-		context.g.translate(-x, -y)
+		context.translated(location) {
+			label.draw(it)
+		}
 	}
 
 	override fun getTooltip(x: Double, y: Double, editable: Boolean): Tooltip? {

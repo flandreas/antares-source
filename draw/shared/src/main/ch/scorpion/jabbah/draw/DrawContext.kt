@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.draw
 
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.Color
@@ -59,4 +60,48 @@ class DrawContext(
 	 * if no [Stylable] is set.
 	 */
 	fun styleColor(defaultColor: CompositeColor): CompositeColor = stylable?.color ?: defaultColor
+
+	/**
+	 * Executes [body] by first translating [Graphics2D] of this [DrawContext] by
+	 * dx,dy and then translating back after execution.
+	 */
+	inline fun translated(dx: Double, dy: Double, body: (DrawContext) -> Unit) {
+		g.translate(dx, dy)
+		body(this)
+		g.translate(-dx, -dy)
+	}
+
+	/**
+	 * Executes [body] by first translating [Graphics2D] of this [DrawContext] by
+	 * the vector [d] and then translating back after execution.
+	 */
+	inline fun translated(d: Point2D, body: (DrawContext) -> Unit) {
+		g.translate(d.x, d.y)
+		body(this)
+		g.translate(-d.x, -d.y)
+	}
+
+	/**
+	 * Executes [body] by first translating [Graphics2D] of this [DrawContext] by
+	 * the vector [dx]/[dy] and rotating by [angle], and then undoing it after execution.
+	 */
+	inline fun translatedAndRotated(dx: Double, dy: Double, angle: Double, body: (DrawContext) -> Unit) {
+		g.translate(dx, dy)
+		g.rotate(angle)
+		body(this)
+		g.rotate(-angle)
+		g.translate(-dx, -dy)
+	}
+
+	/**
+	 * Executes [body] by first translating [Graphics2D] of this [DrawContext] by
+	 * the vector [d] and rotating by [angle], and then undoing it after execution.
+	 */
+	inline fun translatedAndRotated(d: Point2D, angle: Double, body: (DrawContext) -> Unit) {
+		g.translate(d.x, d.y)
+		g.rotate(angle)
+		body(this)
+		g.rotate(-angle)
+		g.translate(-d.x, -d.y)
+	}
 }

@@ -267,9 +267,7 @@ class KnobView(
 		val currAngle = angle
 
 		context.g.rotate(currAngle)
-		context.g.translate(INNER_SIZE / 2 + TRIANGLE_SIZE, 0.0)
-		context.g.fill(TRIANGLE_PATH)
-		context.g.translate(-(INNER_SIZE / 2 + TRIANGLE_SIZE), 0.0)
+		context.translated(INNER_SIZE / 2 + TRIANGLE_SIZE, 0.0) { it.g.fill(TRIANGLE_PATH) }
 		context.g.rotate(-currAngle)
 
 		var text = Thousands.convert(model.value)

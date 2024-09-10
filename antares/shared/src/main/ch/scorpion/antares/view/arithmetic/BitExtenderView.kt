@@ -4,7 +4,7 @@ import ch.scorpion.antares.model.arithmetic.BitExtender
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.Look
-import ch.scorpion.antares.view.port.AbstractAntaresPortView
+import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.geom.Direction
@@ -45,13 +45,13 @@ class BitExtenderView(
 		addPortView(DigitalPortView(
 			styleProvider,
 			model.getInput(),
-			x = AbstractAntaresPortView.LENGTH,
+			x = LENGTH,
 			y = 0,
 			direction = Direction.WEST))
 		addPortView(DigitalPortView(
 			styleProvider,
 			model.getOutput(),
-			x = AbstractAntaresPortView.LENGTH + SIZE,
+			x = LENGTH + SIZE,
 			y = 0,
 			direction = Direction.EAST))
 	}
@@ -91,20 +91,18 @@ class BitExtenderView(
 	private fun drawShadow(context: DrawContext) {
 		if (shadow) {
 			DropShadow.draw(context, transparency) {
-				context.g.translate(AbstractAntaresPortView.LENGTH.toDouble(), 0.0)
-				context.g.fill(SHAPE)
-				context.g.translate(-AbstractAntaresPortView.LENGTH.toDouble(), 0.0)
+				context.translated(LENGTH.toDouble(), 0.0) { it.g.fill(SHAPE) }
 			}
 		}
 	}
 
 	private fun drawShape(context: DrawContext) {
-		context.g.translate(AbstractAntaresPortView.LENGTH.toDouble(), 0.0)
-		context.g.color = getApplicableBackgroundColor(context)
-		context.g.fill(SHAPE)
-		context.g.color = getApplicableForegroundColor(context)
-		context.g.stroke = stroke
-		context.g.draw(SHAPE)
-		context.g.translate(-AbstractAntaresPortView.LENGTH.toDouble(), 0.0)
+		context.translated(LENGTH.toDouble(), 0.0) {
+			it.g.color = getApplicableBackgroundColor(it)
+			it.g.fill(SHAPE)
+			it.g.color = getApplicableForegroundColor(it)
+			it.g.stroke = stroke
+			it.g.draw(SHAPE)
+		}
 	}
 }

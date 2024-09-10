@@ -12,8 +12,8 @@ import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.drawable.RotationDirection
 import ch.scorpion.jabbah.draw.Focusable
+import ch.scorpion.jabbah.draw.drawable.RotationDirection
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.graphics.Stroke
@@ -335,28 +335,25 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 	}
 
 
-	fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color?, stroke: Stroke) {
-		val translation = getArrowPathTranslation()
-		context.g.translate(translation.x, translation.y)
-
-		if (shadow) {
-			DropShadow.draw(context, transparency) {
-				if (backgroundColor != null) {
-					context.g.fill(arrowPath!!.path)
+	private fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color?, stroke: Stroke) {
+		context.translated(getArrowPathTranslation()) { c ->
+			if (shadow) {
+				DropShadow.draw(context, transparency) {
+					if (backgroundColor != null) {
+						c.g.fill(arrowPath!!.path)
+					}
+					c.g.draw(arrowPath!!.path)
 				}
-				context.g.draw(arrowPath!!.path)
 			}
-		}
 
-		if (backgroundColor != null) {
-			context.g.color = backgroundColor
-			context.g.fill(arrowPath!!.path)
+			if (backgroundColor != null) {
+				c.g.color = backgroundColor
+				c.g.fill(arrowPath!!.path)
+			}
+			c.g.stroke = stroke
+			c.g.color = foregroundColor
+			c.g.draw(arrowPath!!.path)
 		}
-		context.g.stroke = stroke
-		context.g.color = foregroundColor
-		context.g.draw(arrowPath!!.path)
-
-		context.g.translate(-translation.x, -translation.y)
 	}
 
 	protected fun drawEdited(context: DrawContext, color: Color, backgroundColor: Color?) {
@@ -372,10 +369,7 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 			context.g.color = styleProvider.getStyle(StyleType.BACKGROUND).color.textColor
 		}
 
-		val translation = getArrowPathTranslation()
-		context.g.translate(translation.x, translation.y)
-		label.draw(context)
-		context.g.translate(-translation.x, -translation.y)
+		context.translated(getArrowPathTranslation()) { label.draw(it) }
 	}
 
 	protected fun drawDisabled(context: DrawContext) {

@@ -240,11 +240,11 @@ class ImageSwitchView(
             offImageData.value!!.image
         }
 
-        context.g.translate(bounds.x, bounds.y)
-        context.g.scale(scale, scale)
-        context.g.drawImage(image, 0, 0)
-        context.g.scale(1.0 / scale, 1.0 / scale)
-        context.g.translate(-bounds.x, -bounds.y)
+        context.translated(bounds.topLeft) {
+            it.g.scale(scale, scale)
+            it.g.drawImage(image, 0, 0)
+            it.g.scale(1.0 / scale, 1.0 / scale)
+        }
     }
 
     /** ---- [ControlViewSource] */

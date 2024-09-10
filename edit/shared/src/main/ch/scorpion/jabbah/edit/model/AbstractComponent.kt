@@ -198,13 +198,9 @@ abstract class AbstractComponent(
 	 * @param drawer the code that effectively draws content within the prepared translation and rotation context.
 	 */
 	open fun draw(context: DrawContext, drawer: (DrawContext) -> Unit) {
-		context.g.translate(location.x, location.y)
-		context.g.rotate(rotation.angle)
-
-		drawer.invoke(context)
-
-		context.g.rotate(-rotation.angle)
-		context.g.translate(-location.x, -location.y)
+		context.translatedAndRotated(location, rotation.angle) {
+			drawer.invoke(context)
+		}
 
 		DrawModule.drawLocatableDebugBoundingBox(this, context)
 	}

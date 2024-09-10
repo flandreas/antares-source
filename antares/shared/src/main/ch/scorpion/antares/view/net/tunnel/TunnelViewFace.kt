@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.net.tunnel
 
 import ch.scorpion.antares.view.Look.SCALE
+import ch.scorpion.antares.view.net.tunnel.TunnelView.Companion.SIZE
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.base.Properties
@@ -24,7 +25,7 @@ enum class TunnelViewFace(
 		override fun drawShadow(view: TunnelView, context: DrawContext) {
 			if (view.shadow) {
 				DropShadow.draw(context, view.transparency) {
-					context.g.fillRect(view.xInt, view.yInt, TunnelView.SIZE, TunnelView.SIZE)
+					context.g.fillRect(view.xInt, view.yInt, SIZE, SIZE)
 				}
 			}
 		}
@@ -35,24 +36,21 @@ enum class TunnelViewFace(
 			} else {
 				background
 			}
-			context.g.fillRect(view.xInt, view.yInt, TunnelView.SIZE, TunnelView.SIZE)
+			context.g.fillRect(view.xInt, view.yInt, SIZE, SIZE)
 
 			context.g.color = Transparent.applyTo(view.transparency, context.choose(view.color).foregroundColor)
 			context.g.stroke = view.stroke
-			context.g.drawRect(view.xInt, view.yInt, TunnelView.SIZE, TunnelView.SIZE)
+			context.g.drawRect(view.xInt, view.yInt, SIZE, SIZE)
 
 			if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 				context.g.color = Transparent.applyTo(view.transparency, view.model.getInOrOutSignal().color.foregroundColor)
 			}
 
 			// Draw tunnel entry
-			context.g.translate(view.xInt + TunnelView.SIZE / 2.0, 0.0)
-			context.g.rotate(view.rotation.inverse().angle)
-			context.g.fillOval(-TunnelView.SIZE / 4, -TunnelView.SIZE / 4, TunnelView.SIZE / 2, TunnelView.SIZE / 2)
-			context.g.fillRect(-TunnelView.SIZE / 4, 0, TunnelView.SIZE / 2, TunnelView.SIZE / 4)
-
-			context.g.rotate(-view.rotation.inverse().angle)
-			context.g.translate(-(view.xInt + TunnelView.SIZE / 2.0), 0.0)
+			context.translatedAndRotated(view.xInt + SIZE / 2.0, 0.0, view.rotation.inverse().angle) {
+				it.g.fillOval(-SIZE / 4, -SIZE / 4, SIZE / 2, SIZE / 2)
+				it.g.fillRect(-SIZE / 4, 0, SIZE / 2, SIZE / 4)
+			}
 		}
 	},
 
@@ -62,14 +60,12 @@ enum class TunnelViewFace(
 			.moveTo(0, 0)
 			.lineTo(3.0 * SCALE, -1.5 * SCALE)
 			.lineTo(3.0 * SCALE, 1.5 * SCALE)
-			//.lineTo(0, 0)
 			.close()
 
 		private val inPath = System.createPath()
 			.moveTo(3.0 * SCALE, 0.0)
 			.lineTo(0.0, -1.5 * SCALE)
 			.lineTo(0.0, 1.5 * SCALE)
-			//.lineTo(3.0 * SCALE, 0.0)
 			.close()
 
 		private val inOutPath = System.createPath()
@@ -87,9 +83,7 @@ enum class TunnelViewFace(
 		override fun drawShadow(view: TunnelView, context: DrawContext) {
 			if (view.shadow) {
 				DropShadow.draw(context, view.transparency) {
-					context.g.translate(AbstractAntaresPortView.LENGTH.toDouble(), 0.0)
-					context.g.fill(getPath(view))
-					context.g.translate(-AbstractAntaresPortView.LENGTH.toDouble(), 0.0)
+					context.translated(AbstractAntaresPortView.LENGTH.toDouble(), 0.0) { it.g.fill(getPath(view)) }
 				}
 			}
 		}
@@ -140,7 +134,7 @@ enum class TunnelViewFace(
 		const val PROP_TUNNEL_FACE = "ch.scorpion.antares.view.net.tunnelFace"
 
 		fun withName(customName: String): TunnelViewFace {
-			for (tunnelViewFace in values()) {
+			for (tunnelViewFace in entries) {
 				if (tunnelViewFace.customName == customName) {
 					return tunnelViewFace
 				}
@@ -153,10 +147,9 @@ enum class TunnelViewFace(
 	abstract fun drawShadow(view: TunnelView, context: DrawContext)
 	abstract fun draw(view: TunnelView, context: DrawContext, background: Color)
 
-	override fun toString(): String {
-		return when(this) {
+	override fun toString(): String =
+		when(this) {
 			TUNNEL -> Translations.getString("element.tunnelViewFace.tunnel")
 			ARROW -> Translations.getString("element.tunnelViewFace.arrow")
 		}
-	}
 }

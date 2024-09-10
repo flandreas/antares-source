@@ -237,15 +237,14 @@ class OscilloscopeView(
 
 	override fun draw(context: DrawContext) {
 		super.draw(context)
-		context.g.translate(location.x, location.y)
 
-		context.g.color = context.choose(color).backgroundColor
-		context.g.fill(bounds)
-		context.g.color = context.choose(color).foregroundColor
-		context.g.stroke = stroke
-		context.g.draw(bounds)
-
-		context.g.translate(-location.x, -location.y)
+		context.translated(location) {
+			it.g.color = it.choose(color).backgroundColor
+			it.g.fill(bounds)
+			it.g.color = it.choose(color).foregroundColor
+			it.g.stroke = stroke
+			it.g.draw(bounds)
+		}
 
 		container.draw(context)
 
@@ -253,9 +252,9 @@ class OscilloscopeView(
 		if (rows.size >= 1 && model.mode == SignalHistoriesType.Clocked) {
 			context.g.color = color.foregroundColor
 			context.g.stroke = stroke
-			context.g.translate(location.x + bounds.width, location.y + TITLE_HEIGHT + rowHeight / 2)
-			context.g.draw(CLOCKED_ANNOTATION)
-			context.g.translate(-(location.x + bounds.width), -(location.y + TITLE_HEIGHT + rowHeight / 2))
+			context.translated(location.x + bounds.width, location.y + TITLE_HEIGHT + rowHeight / 2) {
+				it.g.draw(CLOCKED_ANNOTATION)
+			}
 		}
 	}
 

@@ -161,16 +161,16 @@ class SixteenSegmentDisplayView(
 	}
 
 	private fun drawDiagonalEastSegment(context: DrawContext, value: Boolean, relX: Float, relY: Float) {
-		context.g.translate(relX.toDouble(), relY.toDouble())
-		context.g.color = getColor(value, context)
-		context.g.fill(geom.diagonalEastPath)
-		context.g.translate(-relX.toDouble(), -relY.toDouble())
+		context.translated(relX.toDouble(), relY.toDouble()) {
+			it.g.color = getColor(value, it)
+			it.g.fill(geom.diagonalEastPath)
+		}
 	}
 
 	private fun drawDiagonalWestSegment(context: DrawContext, value: Boolean, relX: Float, relY: Float) {
-		context.g.translate(relX.toDouble(), relY.toDouble())
-		context.g.color = getColor(value, context)
-		context.g.fill(geom.diagonalWestPath)
-		context.g.translate(-relX.toDouble(), -relY.toDouble())
+		context.translated(relX.toDouble(), relY.toDouble()) {
+			it.g.color = getColor(value, it)
+			it.g.fill(geom.diagonalWestPath)
+		}
 	}
 }

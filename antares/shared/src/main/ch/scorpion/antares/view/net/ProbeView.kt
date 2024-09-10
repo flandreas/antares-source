@@ -95,6 +95,7 @@ class ProbeView(
 
 	/** ---- UI properties */
 
+	@Suppress("MemberVisibilityCanBePrivate") // Reflection
 	var hasOutput: Boolean
 		get() = model.hasOutput
 		set(value) {
@@ -291,11 +292,9 @@ class ProbeView(
 		context.g.drawRoundRect(xInt, yInt, width.toInt(), height.toInt(), 10, 10)
 
 		if (hasOutput) {
-			context.g.translate(getOutput().locationX, getOutput().locationY)
-			context.g.rotate(orientation.rotation.angle)
-			context.g.fill(TRIANGLE_PATH)
-			context.g.rotate(-orientation.rotation.angle)
-			context.g.translate(-getOutput().locationX, -getOutput().locationY)
+			context.translatedAndRotated(getOutput().location, orientation.rotation.angle) {
+				it.g.fill(TRIANGLE_PATH)
+			}
 		}
 
 		context.g.color = textColor

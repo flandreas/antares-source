@@ -97,10 +97,15 @@ class FlexibleTextView(
 		context.g.font = font
 		context.g.color = transparent.applyTo(textColor)
 
+		context.translated(r.x + INSET_X, r.y + INSET_Y + abs(multilineText.baselineRect.y)) {
+			multilineText.draw(it)
+		}
+		// Was this a bug?
+		/*
 		context.g.translate(r.x + INSET_X, r.y + INSET_Y + abs(multilineText.baselineRect.y))
 		multilineText.draw(context)
 		context.g.translate(-(r.x + INSET_X), -(r.y + INSET_Y))
-
+		*/
 	}
 
 	override fun contains(x: Double, y: Double): Boolean = shape.contains(x, y)

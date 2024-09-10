@@ -164,11 +164,9 @@ class ClockView(
 			R180 -> bounds.centerY + bounds.height / 5
 		}
 
-		context.g.translate(dx, dy)
-		context.g.rotate(rotation.inverse().angle)
-		context.g.draw(ANNOTATION_PATH)
-		context.g.rotate(-rotation.inverse().angle)
-		context.g.translate(-dx, -dy)
+		context.translatedAndRotated(dx, dy, rotation.inverse().angle) {
+			it.g.draw(ANNOTATION_PATH)
+		}
 	}
 
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler {
