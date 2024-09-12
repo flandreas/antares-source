@@ -15,17 +15,16 @@ interface Project : Library
 class ProjectImpl(
 	name: TranslatableText = TranslatableText(),
 	description: TranslatableText = TranslatableText(),
-	libraryService: LibraryService = ProjectModule.projectLibraryService,
 	objectTypeKey: String = "project.project.name"
 ) : LibraryImpl(
 	name = name,
 	description = description,
-	libraryService = libraryService,
 	objectTypeKey = objectTypeKey
 ), Project {
 
-	constructor(name: String, description: String, libraryService: LibraryService)
-		: this(TranslatableText(name), TranslatableText(description), libraryService)
+	constructor(name: String, description: String) : this(TranslatableText(name), TranslatableText(description))
+
+	override val libraryService: LibraryService get() = ProjectModule.projectLibraryService
 
 	/** ---- [Storable] interface */
 

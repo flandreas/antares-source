@@ -8,7 +8,6 @@ import ch.scorpion.jabbah.graph.GraphStorable
 import ch.scorpion.jabbah.graph.library.FileLibraryPersistenceService
 import ch.scorpion.jabbah.graph.library.LibraryImpl
 import ch.scorpion.jabbah.graph.library.LibraryModule
-import ch.scorpion.jabbah.graph.library.LibraryService
 import ch.scorpion.jabbah.io.StorableCloner
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -35,7 +34,7 @@ class StoreTest {
 		val dir = Files.createTempDirectory(null)
 		File.createTempFile("library", ".lib", dir.toFile())
 		LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService({ dir.parent.absolutePathString() }, dir.name)
-		LibraryModule.libraryHolder.l = LibraryImpl("test", libraryService = LibraryModule.libraryService)
+		LibraryModule.libraryHolder.l = LibraryImpl("test")
 	}
 
 	@Test

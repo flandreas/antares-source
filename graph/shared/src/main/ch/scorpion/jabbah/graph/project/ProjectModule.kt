@@ -24,7 +24,7 @@ object ProjectModule : AbstractModule() {
 	lateinit var projectManagementService: ProjectManagementService
 
 	val projectFactory: (TranslatableText) -> Project = {
-		val project = ProjectImpl(name = it, libraryService = projectLibraryService, objectTypeKey = "project.project.name")
+		val project = ProjectImpl(name = it, objectTypeKey = "project.project.name")
 		project.author = EditAuthModule.userHolder.user.identity
 		project
 	}

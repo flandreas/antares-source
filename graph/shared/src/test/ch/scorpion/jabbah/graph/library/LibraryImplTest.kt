@@ -13,10 +13,14 @@ class LibraryImplTest {
 		}
 	}
 
-	private val libraryPersistenceService = mock<LibraryPersistenceService>(MockMode.autofill)
-	private val service: LibraryService = LibraryService(userLibraryPersisterProvider = { libraryPersistenceService })
-	private val libraryBuilder = LibraryBuilder(name = "Library", libraryService = service)
+	private val libraryBuilder: LibraryBuilder
+
 	private val library: Library get() = libraryBuilder.library
+
+	init {
+		LibraryModule.userLibraryPersistenceService = mock<LibraryPersistenceService>(MockMode.autofill)
+		libraryBuilder = LibraryBuilder(name = "Library")
+	}
 
 	@Test
 	fun shouldFindIndexOf() {

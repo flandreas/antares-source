@@ -24,7 +24,7 @@ import javax.swing.tree.DefaultMutableTreeNode
  */
 class LibraryTreeViewTransferHandler(
 	private val controller: LibraryTreeViewController,
-	private val repositoryService: RepositoryService = RepositoryModule.repositoryService.invoke()
+	private val repositoryService: RepositoryService = RepositoryModule.repositoryService
 ) : TransferHandler() {
 
 	companion object {

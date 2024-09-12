@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.project.ProjectImpl
+import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import kotlin.test.*
@@ -18,20 +19,20 @@ class RepositoryServiceImplTest {
 		}
 	}
 
-	private val libraryPersistenceService = MemoryLibraryPersistenceService()
-	private val libraryService: LibraryService = LibraryService(userLibraryPersisterProvider = { libraryPersistenceService })
-	private val libraryBuilder = LibraryBuilder(name = "Library", libraryService = libraryService)
+	private val libraryBuilder: LibraryBuilder
 
-	private val projectPersistenceService = MemoryLibraryPersistenceService()
-	private val projectLibraryService: LibraryService = LibraryService(userLibraryPersisterProvider = { projectPersistenceService })
-	private val projectBuilder = LibraryBuilder(name = "Project", libraryService = projectLibraryService,
-		library = ProjectImpl("Project", "", projectLibraryService))
+	private val projectBuilder: LibraryBuilder
 
-	private val service = RepositoryServiceImpl(libraryService = libraryService, projectLibraryService = projectLibraryService)
+	private val service: RepositoryService get() = RepositoryModule.repositoryService
 
-	@BeforeTest
-	fun setup() {
+
+	init {
+		LibraryModule.userLibraryPersistenceService = MemoryLibraryPersistenceService()
+		libraryBuilder = LibraryBuilder(name = "Library")
 		LibraryModule.libraryHolder.l = libraryBuilder.library
+
+		ProjectModule.projectLibraryPersistenceService = MemoryLibraryPersistenceService()
+		projectBuilder = LibraryBuilder(name = "Project", library = ProjectImpl("Project", ""))
 	}
 
 	@Test
@@ -85,9 +86,9 @@ class RepositoryServiceImplTest {
 
 		val directory = project.getRecursively("ProjectDirectory") as LibraryDirectory
 		val element = project.getRecursively("Element") as ContainerLibraryElement
-		projectLibraryService.loadMetaGraph(project, element)
+		ProjectModule.projectLibraryService.loadMetaGraph(project, element)
 		assertEquals(0, directory.indexOf(element))
-		assertNotNull(projectLibraryService.getMetaGraph(project, element))
+		assertNotNull(ProjectModule.projectLibraryService.getMetaGraph(project, element))
 	}
 
 	@Test

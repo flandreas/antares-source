@@ -34,7 +34,7 @@ class LibraryTest {
 		File.createTempFile("library", ".lib", dir.toFile())
 		LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService({ dir.parent.absolutePathString() }, dir.name)
 		LibraryModule.libraryService = LibraryService(userLibraryPersisterProvider = { LibraryModule.userLibraryPersistenceService })
-		libraryHolder.l = LibraryImpl("test", libraryService = LibraryModule.libraryService)
+		libraryHolder.l = LibraryImpl("test")
 	}
 
 	@Test

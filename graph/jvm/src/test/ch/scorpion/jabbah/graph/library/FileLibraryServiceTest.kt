@@ -21,13 +21,14 @@ class FileLibraryServiceTest {
 		}
 	}
 
-	private val directory = Files.createTempDirectory(null)
-	private val libraryPersistenceService = FileLibraryPersistenceService({ directory.parent.absolutePathString() }, directory.name)
-	private val service: LibraryService = LibraryService(userLibraryPersisterProvider = { libraryPersistenceService })
-	private val libraryBuilder = LibraryBuilder(name = "Library", libraryService = service)
+	private val libraryBuilder: LibraryBuilder
 	private val library: Library get() = libraryBuilder.library
+	private val service: LibraryService get() = LibraryModule.libraryService
 
 	init {
+		val directory = Files.createTempDirectory(null)
+		LibraryModule.userLibraryPersistenceService  = FileLibraryPersistenceService({ directory.parent.absolutePathString() }, directory.name)
+		libraryBuilder = LibraryBuilder(name = "Library")
 		LibraryModule.libraryHolder.l = library
 	}
 

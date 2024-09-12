@@ -26,27 +26,24 @@ import ch.scorpion.jabbah.io.*
  */
 open class LibraryImpl(
 	properties: LibraryProperties = LibraryProperties(),
-	override val libraryService: LibraryService = LibraryModule.libraryService,
 	private val objectTypeKey: String = "library.library.name"
 ) : AbstractStorable(), Library, Describable {
-
-	constructor(
-		name: TranslatableText = TranslatableText(),
-		libraryService: LibraryService = LibraryModule.libraryService,
-		objectTypeKey: String = "library.library.name",
-		description: TranslatableText = TranslatableText()
-	) : this(LibraryProperties(name, description), libraryService, objectTypeKey)
-
-	constructor(
-		name: String,
-		libraryService: LibraryService = LibraryModule.libraryService
-	) : this(TranslatableText(name), libraryService)
 
 	companion object {
 		private val LOG by logger(LibraryImpl::class)
 	}
 
+	constructor(
+		name: TranslatableText = TranslatableText(),
+		objectTypeKey: String = "library.library.name",
+		description: TranslatableText = TranslatableText()
+	) : this(LibraryProperties(name, description), objectTypeKey)
+
+	constructor(name: String, ) : this(TranslatableText(name))
+
 	override var directory: LibraryDirectory = LibraryFolder(properties.name)
+
+	override val libraryService: LibraryService get() = LibraryModule.libraryService
 
 	init {
 		directory.bindTo(this)
