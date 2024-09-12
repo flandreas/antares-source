@@ -19,11 +19,11 @@ class RepositoryServiceImplTest {
 	}
 
 	private val libraryPersistenceService = MemoryLibraryPersistenceService()
-	private val libraryService: LibraryService = LibraryService(userLibraryPersister = libraryPersistenceService)
+	private val libraryService: LibraryService = LibraryService(userLibraryPersisterProvider = { libraryPersistenceService })
 	private val libraryBuilder = LibraryBuilder(name = "Library", libraryService = libraryService)
 
 	private val projectPersistenceService = MemoryLibraryPersistenceService()
-	private val projectLibraryService: LibraryService = LibraryService(userLibraryPersister = projectPersistenceService)
+	private val projectLibraryService: LibraryService = LibraryService(userLibraryPersisterProvider = { projectPersistenceService })
 	private val projectBuilder = LibraryBuilder(name = "Project", libraryService = projectLibraryService,
 		library = ProjectImpl("Project", "", projectLibraryService))
 

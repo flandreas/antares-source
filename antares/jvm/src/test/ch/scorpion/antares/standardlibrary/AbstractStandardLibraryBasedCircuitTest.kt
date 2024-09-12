@@ -21,7 +21,6 @@ abstract class AbstractStandardLibraryBasedCircuitTest : AbstractCircuitTest() {
 				ResourceLibraryDictionaryPersistenceService()
 			)
 			LibraryModule.libraryManagementService = LibraryManagementService()
-			LibraryModule.libraryService = LibraryService()
 
 			LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(
 				LibraryIdentification(LibraryModule.DEF_LIBRARY_UUID, null), isSystem = true)

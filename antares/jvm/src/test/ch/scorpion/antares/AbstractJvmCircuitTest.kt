@@ -3,7 +3,6 @@ package ch.scorpion.antares
 import ch.scorpion.jabbah.graph.library.FileLibraryPersistenceService
 import ch.scorpion.jabbah.graph.library.LibraryImpl
 import ch.scorpion.jabbah.graph.library.LibraryModule
-import ch.scorpion.jabbah.graph.library.LibraryService
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.nonvolatile.NonVolatileServiceJvm
 import java.io.File
@@ -23,7 +22,6 @@ abstract class AbstractJvmCircuitTest : AbstractCircuitTest() {
 			val dir = Files.createTempDirectory(null)
 			File.createTempFile("library", ".lib", dir.toFile())
 			LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService({ dir.parent.absolutePathString() }, dir.name)
-			LibraryModule.libraryService = LibraryService()
 			LibraryModule.libraryHolder.l = LibraryImpl("testLib")
 		}
 	}

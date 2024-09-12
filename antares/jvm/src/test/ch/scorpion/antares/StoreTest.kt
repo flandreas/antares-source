@@ -35,7 +35,6 @@ class StoreTest {
 		val dir = Files.createTempDirectory(null)
 		File.createTempFile("library", ".lib", dir.toFile())
 		LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService({ dir.parent.absolutePathString() }, dir.name)
-		LibraryModule.libraryService = LibraryService()
 		LibraryModule.libraryHolder.l = LibraryImpl("test", libraryService = LibraryModule.libraryService)
 	}
 

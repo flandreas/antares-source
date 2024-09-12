@@ -18,7 +18,7 @@ import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
 /** Provides methods for managing the set of a user's [Project]s, including open and closing [Project]s. */
 class ProjectManagementService(
 	private val projectFactory: (TranslatableText) -> Project = ProjectModule.projectFactory,
-	libraryService: LibraryService = ProjectModule.projectLibraryService.invoke(),
+	libraryService: LibraryService = ProjectModule.projectLibraryService,
 	private val newMetaGraphNameTranslationKey: String = "project.dialog.metaGraph.name",
 	libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	projectDictionaryService: LibraryDictionaryService = ProjectModule.projectDictionaryService,

@@ -41,7 +41,6 @@ class SubGraphVerticeViewImplTest {
 	@BeforeTest
 	fun setup() {
 		LibraryModule.userLibraryPersistenceService = MemoryLibraryPersistenceService()
-		LibraryModule.libraryService = LibraryService()
 		LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"))
 	}
 

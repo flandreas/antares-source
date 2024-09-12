@@ -5,7 +5,6 @@ import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.TestLibraryBuilder
 import ch.scorpion.jabbah.graph.library.LibraryImpl
 import ch.scorpion.jabbah.graph.library.LibraryModule
-import ch.scorpion.jabbah.graph.library.LibraryService
 import ch.scorpion.jabbah.graph.library.MemoryLibraryPersistenceService
 import ch.scorpion.jabbah.graph.model.GenericGraphType
 import ch.scorpion.jabbah.graph.model.param.StringGraphParamType
@@ -27,7 +26,6 @@ class SubGraphVerticeRefParamTest {
 	@BeforeTest
 	fun setup() {
 		LibraryModule.userLibraryPersistenceService = MemoryLibraryPersistenceService()
-		LibraryModule.libraryService = LibraryService()
 		LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"))
 		GraphParamTypeRegistry.register(StringGraphParamType.name) { StringGraphParamType }
 	}

@@ -5,7 +5,6 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.Image
 import ch.scorpion.jabbah.draw.graphics.ImageType
-import ch.scorpion.jabbah.draw.style.Theme
 import ch.scorpion.jabbah.edit.auth.UserIdentity
 import ch.scorpion.jabbah.edit.model.image.ImageIdentification
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
@@ -94,8 +93,8 @@ open class LibraryServiceCallbackAdapter : LibraryServiceCallback {
  * Calls all registered [LibraryModule.libraryServiceCallbacks] in the corresponding situations.
  */
 class LibraryService(
-	private val userLibraryPersister: LibraryPersistenceService = LibraryModule.userLibraryPersistenceService,
-	private val systemLibraryPersister: LibraryPersistenceService = LibraryModule.systemLibraryPersistenceService,
+	private val userLibraryPersisterProvider: () -> LibraryPersistenceService = { LibraryModule.userLibraryPersistenceService },
+	private val systemLibraryPersisterProvider: () -> LibraryPersistenceService = { LibraryModule.systemLibraryPersistenceService },
 	private val eventBus: EventBus = BaseModule.eventBus,
 ) {
 
@@ -105,6 +104,10 @@ class LibraryService(
 		/** The name of the [String] param in [Properties] with the JS Graph Viewer URL.*/
 		const val PROP_VIEWER_JS_URL = "graph.library.viewerJsUrl"
 	}
+
+	private val userLibraryPersister: LibraryPersistenceService get() = userLibraryPersisterProvider()
+
+	private val systemLibraryPersister: LibraryPersistenceService get() = systemLibraryPersisterProvider()
 
 	private fun persister(system: Boolean): LibraryPersistenceService =
 		if (system) systemLibraryPersister else userLibraryPersister

@@ -140,7 +140,6 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 
 		LibraryModule.libraryFactory = AntaresLibraryFactory()
-		LibraryModule.libraryService = LibraryService()
 
 		LibraryModule.userLibraryDictionaryService = LibraryDictionaryService(
 			FileLibraryDictionaryPersistenceService({ AppModuleJvm.workspaceHolder.userDataDirectoryPath }, app.userLibraryDirectoryName))

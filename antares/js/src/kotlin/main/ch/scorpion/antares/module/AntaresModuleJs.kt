@@ -41,7 +41,6 @@ object AntaresModuleJs : AbstractModule() {
 
         LibraryModule.systemLibraryPersistenceService = Akrab2RestSystemLibraryPersistenceServiceJs(akrabUrl)
         LibraryModule.libraryFactory = AntaresLibraryFactory()
-        LibraryModule.libraryService = LibraryService()
 
         LibraryModule.libraryManagementService = LibraryManagementService()
 

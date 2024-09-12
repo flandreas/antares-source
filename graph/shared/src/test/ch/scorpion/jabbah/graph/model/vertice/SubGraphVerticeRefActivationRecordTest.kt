@@ -1,18 +1,22 @@
 package ch.scorpion.jabbah.graph.model.vertice
 
 import ch.scorpion.jabbah.base.LongValueImpl
-import ch.scorpion.jabbah.base.dsl.Interpreter
 import ch.scorpion.jabbah.base.dsl.DslLexer
-import ch.scorpion.jabbah.base.dsl.Memory
 import ch.scorpion.jabbah.base.dsl.DslParser
+import ch.scorpion.jabbah.base.dsl.Interpreter
+import ch.scorpion.jabbah.base.dsl.Memory
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.library.LibraryImpl
 import ch.scorpion.jabbah.graph.library.LibraryModule
-import ch.scorpion.jabbah.graph.library.LibraryService
 import ch.scorpion.jabbah.graph.library.MemoryLibraryPersistenceService
-import ch.scorpion.jabbah.graph.model.*
-import ch.scorpion.jabbah.graph.model.param.*
+import ch.scorpion.jabbah.graph.model.GenericGraphType
+import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.InputPort
+import ch.scorpion.jabbah.graph.model.OutputPort
+import ch.scorpion.jabbah.graph.model.param.GraphParamValue
+import ch.scorpion.jabbah.graph.model.param.GraphParamValues
+import ch.scorpion.jabbah.graph.model.param.LongValueGraphParamType
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import dev.mokkery.MockMode
 import dev.mokkery.answering.returns
@@ -38,7 +42,6 @@ class SubGraphVerticeRefActivationRecordTest {
 	@BeforeTest
 	fun setup() {
 		LibraryModule.userLibraryPersistenceService = MemoryLibraryPersistenceService()
-		LibraryModule.libraryService = LibraryService()
 		LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"))
 	}
 

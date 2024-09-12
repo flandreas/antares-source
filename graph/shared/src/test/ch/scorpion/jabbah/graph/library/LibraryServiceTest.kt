@@ -13,7 +13,7 @@ class LibraryServiceTest {
 	}
 
 	private val libraryPersistenceService = MemoryLibraryPersistenceService()
-	private val service: LibraryService = LibraryService(userLibraryPersister = libraryPersistenceService)
+	private val service: LibraryService = LibraryService(userLibraryPersisterProvider = { libraryPersistenceService })
 	private val libraryBuilder = LibraryBuilder(name = "Library", libraryService = service)
 	private val library: Library get() = libraryBuilder.library
 

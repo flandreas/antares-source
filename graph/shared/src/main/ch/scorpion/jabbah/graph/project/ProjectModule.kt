@@ -16,16 +16,15 @@ object ProjectModule : AbstractModule() {
 
 	var projectLibraryPersistenceService: LibraryPersistenceService = UnimplementedLibraryPersistenceService()
 
-	var projectLibraryService: () -> LibraryService = {
-		LibraryService(userLibraryPersister = projectLibraryPersistenceService)
-	}
+	var projectLibraryService: LibraryService =
+		LibraryService(userLibraryPersisterProvider = { projectLibraryPersistenceService })
 
 	var projectDictionaryService: LibraryDictionaryService = LibraryDictionaryService(UnimplementedLibraryDictionaryPersistenceService())
 
 	lateinit var projectManagementService: ProjectManagementService
 
 	val projectFactory: (TranslatableText) -> Project = {
-		val project = ProjectImpl(name = it, libraryService = projectLibraryService.invoke(), objectTypeKey = "project.project.name")
+		val project = ProjectImpl(name = it, libraryService = projectLibraryService, objectTypeKey = "project.project.name")
 		project.author = EditAuthModule.userHolder.user.identity
 		project
 	}

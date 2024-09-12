@@ -17,8 +17,6 @@ import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import dev.mokkery.MockMode
-import dev.mokkery.answering.returns
-import dev.mokkery.every
 import dev.mokkery.matcher.any
 import dev.mokkery.mock
 import dev.mokkery.verify
@@ -38,7 +36,6 @@ class SubGraphVerticeViewDslDrawSymbolTest {
 	fun setup() {
 		Translations.withAnyKey()
 		LibraryModule.userLibraryPersistenceService = MemoryLibraryPersistenceService()
-		LibraryModule.libraryService = LibraryService()
 		LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"))
 	}
 

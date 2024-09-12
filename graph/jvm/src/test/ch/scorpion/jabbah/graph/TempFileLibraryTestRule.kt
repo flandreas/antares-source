@@ -28,11 +28,10 @@ object TempFileLibraryTestRule {
 		LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService({ tempDir.absolutePathString() }, "libraries")
 		LibraryModule.userLibraryDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService({ tempDir.absolutePathString() }, "libraries"))
 
-		LibraryModule.libraryService = LibraryService()
 		LibraryModule.libraryManagementService = LibraryManagementService()
 
 		ProjectModule.projectLibraryPersistenceService = FileLibraryPersistenceService({ tempDir.absolutePathString() }, "projects")
-		ProjectModule.projectLibraryService = { LibraryService(userLibraryPersister = ProjectModule.projectLibraryPersistenceService ) }
+		ProjectModule.projectLibraryService = LibraryService(userLibraryPersisterProvider = { ProjectModule.projectLibraryPersistenceService } )
 		ProjectModule.projectDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService({ tempDir.absolutePathString() }, "projects"))
 		ProjectModule.projectManagementService = ProjectManagementService()
 	}

@@ -15,7 +15,7 @@ interface Project : Library
 class ProjectImpl(
 	name: TranslatableText = TranslatableText(),
 	description: TranslatableText = TranslatableText(),
-	libraryService: LibraryService = ProjectModule.projectLibraryService.invoke(),
+	libraryService: LibraryService = ProjectModule.projectLibraryService,
 	objectTypeKey: String = "project.project.name"
 ) : LibraryImpl(
 	name = name,
