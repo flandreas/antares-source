@@ -3,7 +3,6 @@ package ch.scorpion.antares
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.view.CanvasJs
 import ch.scorpion.jabbah.graph.MetaGraph
-import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.graph.ui.graphviewer.GraphViewerController
 import org.w3c.dom.HTMLCanvasElement
 
@@ -15,17 +14,16 @@ class AntaresEditorViewerJs(
         private val LOG by logger(AntaresEditorViewerJs::class)
     }
 
-    private var library: Library
+
+    @Suppress("unused") // Used in JS applications
+    var libraryTree: LibraryTreeNodeJS = content.libraryTree
+        private set
 
     private var metaGraph: MetaGraph? = null
 
     private val controller: GraphViewerController
 
     init {
-        if (content.library !is Library) {
-            LOG.error("Expecting Library in content, got ${content.library::class.simpleName}")
-        }
-        library = content.library as Library
         if (content.metaGraph != null && content.metaGraph !is MetaGraph) {
             LOG.error("Expecting MetaGraph in content, got ${content.metaGraph::class.simpleName}")
         }
