@@ -14,14 +14,16 @@ class AntaresEditorViewerJs(
         private val LOG by logger(AntaresEditorViewerJs::class)
     }
 
+    private var metaGraph: MetaGraph? = null
+
+    private val controller: GraphViewerController
 
     @Suppress("unused") // Used in JS applications
     var libraryTree: LibraryTreeNodeJS = content.libraryTree
         private set
 
-    private var metaGraph: MetaGraph? = null
-
-    private val controller: GraphViewerController
+    @Suppress("unused") // Used in JS applications
+    val metaGraphId: String? get() = metaGraph?.uuid?.id
 
     init {
         if (content.metaGraph != null && content.metaGraph !is MetaGraph) {
