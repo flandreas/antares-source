@@ -1,14 +1,16 @@
 package ch.scorpion.antares
 
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.view.CanvasJs
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.graph.ui.graphviewer.GraphViewerController
 import org.w3c.dom.HTMLCanvasElement
 
 @JsExport
 class AntaresEditorViewerJs(
-    content: AntaresEditorContent
+    private val content: AntaresEditorContent
 ) {
     companion object {
         private val LOG by logger(AntaresEditorViewerJs::class)
@@ -52,5 +54,13 @@ class AntaresEditorViewerJs(
             e.printStackTrace()
             throw e
         }
+    }
+
+    @Suppress("unused") // JS app
+    fun openMetaGraph(id: String) {
+        val library = content.library as Library
+        metaGraph = library.getMetaGraph(UUID(id))
+        controller.setMetaGraph(metaGraph!!)
+        controller.graphNavigationViewController.setRootGraphView(metaGraph!!.graph.graphView, false)
     }
 }

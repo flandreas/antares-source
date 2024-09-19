@@ -17,6 +17,7 @@ import kotlin.js.Promise
 
 @JsExport
 data class AntaresEditorContent(
+    val library: Any,
     val libraryTree: LibraryTreeNodeJS,
     val metaGraph: Any?
 )
@@ -59,9 +60,9 @@ class AntaresEditorAppJs(environment: Environment) : AbstractAntaresAppJs(enviro
                 LOG.debug("Repository loaded, start loading MetaGraph")
                 val metaGraphPromise = loadMetaGraph(library, UUID(library.getDefaultElement()!!.uuid.toString()))
                 val metaGraph = metaGraphPromise.await()
-                AntaresEditorContent(libraryTree, metaGraph)
+                AntaresEditorContent(library, libraryTree, metaGraph)
             } else {
-                AntaresEditorContent(libraryTree, null)
+                AntaresEditorContent(library, libraryTree, null)
             }
         }
     }
