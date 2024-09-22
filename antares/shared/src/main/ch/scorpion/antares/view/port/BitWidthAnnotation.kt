@@ -35,6 +35,14 @@ class BitWidthAnnotation(
 	    const val DIST = 0.75 * 2 * Look.SCALE
     }
 
+    var offsetX: Int = offsetX
+        set(value) {
+            if (field != value) {
+                field = value
+                label.location = getLabelLocation()
+            }
+        }
+
     private val label: Label = Label(
         text = bitWidth.width.toString(),
         font = Themes.get<AntaresTheme>().annotation.font,
@@ -42,15 +50,8 @@ class BitWidthAnnotation(
         verticalAlignment = getVerticalLabelAlignment(),
         location = getLabelLocation(),
 	    rotationDisplayStrategy = RotationDisplayStrategy.ROTATE_HALF,
-	    ownerRotation = ownerRotation)
-
-	var offsetX: Int = offsetX
-		set(value) {
-			if (field != value) {
-				field = value
-				label.location = getLabelLocation()
-			}
-		}
+	    ownerRotation = ownerRotation,
+        richText = false)
 
     /** ---- [Drawable] interface */
 

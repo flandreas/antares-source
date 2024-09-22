@@ -3,8 +3,9 @@ package ch.scorpion.jabbah.draw.drawable
 import ch.scorpion.jabbah.base.dsl.SyntaxError
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.parser.TextLocation.Companion.UNDEFINED
-import ch.scorpion.jabbah.base.richtext.*
+import ch.scorpion.jabbah.base.richtext.RichText
+import ch.scorpion.jabbah.base.richtext.RichTextParser
+import ch.scorpion.jabbah.base.richtext.TextStyle
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.module.DrawModule
