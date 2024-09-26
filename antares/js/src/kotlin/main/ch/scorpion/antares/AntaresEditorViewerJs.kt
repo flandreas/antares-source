@@ -1,17 +1,22 @@
 package ch.scorpion.antares
 
+import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.view.CanvasJs
+import ch.scorpion.jabbah.execution.PauseOrResumeAction
+import ch.scorpion.jabbah.execution.ExecutionControlOutlet
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.graph.ui.graphviewer.GraphViewerController
 import org.w3c.dom.HTMLCanvasElement
 
+@Suppress("unused") // JS app
 @JsExport
 class AntaresEditorViewerJs(
     private val content: AntaresEditorContent
-) {
+) : ExecutionControlOutlet {
+
     companion object {
         private val LOG by logger(AntaresEditorViewerJs::class)
     }
@@ -63,4 +68,19 @@ class AntaresEditorViewerJs(
         controller.setMetaGraph(metaGraph!!)
         controller.graphNavigationViewController.setRootGraphView(metaGraph!!.graph.graphView, false)
     }
+
+    /** ---- [ExecutionControlOutlet] interface */
+
+    override val toggleApplicationModeAction: Action get() = controller.toggleApplicationModeAction
+    override val singleStepModeAction: Action get() = controller.singleStepModeAction
+    override val pauseOrResumeAction: PauseOrResumeAction get() = controller.pauseOrResumeAction
+
+    override val systemSpeedCategoryName: String
+        get() = controller.applicationContextHolder.currentSystemSpeedCategory.systemSpeedCategory.toString()
+
+    override var currentSystemSpeed: Int
+        get() = controller.applicationContextHolder.currentSystemSpeedCategory.systemSpeed.speed
+        set(value) {
+            controller.applicationContextHolder.currentSystemSpeedCategory.systemSpeed.speed = value
+        }
 }
