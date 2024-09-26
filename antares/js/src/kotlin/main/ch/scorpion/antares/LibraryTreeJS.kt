@@ -1,5 +1,6 @@
 package ch.scorpion.antares
 
+import ch.scorpion.jabbah.base.richtext.RichText
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.graph.library.LibraryDirectory
@@ -36,7 +37,7 @@ private fun createLibraryTreeNode(item: LibraryItem): LibraryTreeNodeJS? {
         }
 
         is ContainerLibraryElement -> {
-            LibraryTreeNodeJS(item.name.value, LibraryTreeNodeType.MetaGraph, emptyArray(), item.uuid.id)
+            LibraryTreeNodeJS(RichText.stripToPlainText(item.name.value), LibraryTreeNodeType.MetaGraph, emptyArray(), item.uuid.id)
         }
 
         else -> {
