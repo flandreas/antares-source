@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.draw.view.CanvasJs
 import ch.scorpion.jabbah.execution.PauseOrResumeAction
 import ch.scorpion.jabbah.execution.ExecutionControlOutlet
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.graph.ui.graphviewer.GraphViewerController
 import org.w3c.dom.HTMLCanvasElement
@@ -63,6 +64,9 @@ class AntaresEditorViewerJs(
 
     @Suppress("unused") // JS app
     fun openMetaGraph(id: String) {
+        if (controller.currentMode.isExecute()) {
+            controller.setMode(ApplicationMode.EDIT)
+        }
         val library = content.library as Library
         metaGraph = library.getMetaGraph(UUID(id))
         controller.setMetaGraph(metaGraph!!)
