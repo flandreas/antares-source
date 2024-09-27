@@ -363,6 +363,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 		}
 
 	protected fun clearPortViews() {
+		portViews.forEach { it.dispose() }
 		portViews.clear()
 	}
 
