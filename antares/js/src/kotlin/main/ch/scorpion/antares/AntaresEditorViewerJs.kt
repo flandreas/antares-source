@@ -3,6 +3,7 @@ package ch.scorpion.antares
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.richtext.RichText
 import ch.scorpion.jabbah.draw.view.CanvasJs
 import ch.scorpion.jabbah.execution.PauseOrResumeAction
 import ch.scorpion.jabbah.execution.ExecutionControlOutlet
@@ -35,6 +36,8 @@ class AntaresEditorViewerJs(
         private set
 
     val metaGraphId: String? get() = metaGraph?.uuid?.id
+
+    val metaGraphName: String get() = metaGraph?.name?.let { RichText.stripToPlainText(it) } ?: ""
 
     init {
         if (content.metaGraph != null && content.metaGraph !is MetaGraph) {
