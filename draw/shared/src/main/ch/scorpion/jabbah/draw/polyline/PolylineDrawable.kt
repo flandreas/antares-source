@@ -29,7 +29,7 @@ class PolylineDrawable constructor(
 	/** ---- [Locatable] interface */
 
 	override var location: Point2D
-		get() = Point2D(shape.getPointAt(0))
+		get() = shape.getPointAt(0)
 		set(value) {
 			invalidate()
 			shape.setLocation(value.x, value.y)

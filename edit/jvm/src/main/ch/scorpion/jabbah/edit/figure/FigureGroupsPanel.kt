@@ -95,7 +95,7 @@ private class FigurePanel(
 	}
 
 	private fun updateLayout() {
-		figure.location = Point2D(0, 0)
+		figure.location = Point2D.ZERO
 		val bbox = figure.boundingBox
 
 		val fx = (this.width - 2 * INSET) / bbox.width

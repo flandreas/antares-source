@@ -23,7 +23,7 @@ abstract class AbstractRectangularUnzoomable(
 	var location: Point2D = location
 		set(value) {
 			invalidate()
-			field = Point2D(value)
+			field = value
 			invalidate()
 			update()
 		}
