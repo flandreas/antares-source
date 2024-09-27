@@ -1,14 +1,14 @@
 package ch.scorpion.jabbah.draw.container
 
 import ch.scorpion.jabbah.base.Tooltip
-import ch.scorpion.jabbah.base.geom.RectangularShape
+import ch.scorpion.jabbah.base.geom.MutableRectangularShape
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
 
-internal class TestRectangle(shape: RectangularShape) : AbstractRectangle(shape) {
+internal class TestRectangle(shape: MutableRectangularShape) : AbstractRectangle(shape) {
 	var mouseMoved = false
 	var mousePressed = false
 	private val handler = Handler()

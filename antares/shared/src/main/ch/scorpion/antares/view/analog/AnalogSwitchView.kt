@@ -2,15 +2,11 @@ package ch.scorpion.antares.view.analog
 
 import ch.scorpion.antares.model.analog.AbstractAnalogVertice
 import ch.scorpion.antares.model.analog.AnalogSwitch
-import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.analog.engine.AnalogElement
 import ch.scorpion.antares.view.analog.engine.AnalogElementProxy
 import ch.scorpion.antares.view.input.AbstractSwitchView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
-import ch.scorpion.jabbah.base.geom.Direction
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.geom.Rotation
+import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -70,10 +66,10 @@ class AnalogSwitchView(
 
 	/** ---- [AbstractVerticeView] */
 
-	override val boundingBox: Rectangle2D
+	override val boundingBox: RectangularShape
 		get() {
 			val bb = Rectangle2D(super.boundingBox)
-			val lbb = label.boundingBox.moveBy(location)
+			val lbb = Rectangle2D(label.boundingBox).moveBy(location)
 			bb.add(lbb)
 			return bb
 		}

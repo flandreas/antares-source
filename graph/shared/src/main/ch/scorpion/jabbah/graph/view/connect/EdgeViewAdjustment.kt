@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.collection.Stack
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.event.PropertyChangeSupport
+import ch.scorpion.jabbah.base.geom.MutableRectangularShape
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
@@ -149,7 +150,7 @@ class SimpleEdgeViewAdjustmentView(
 		}
 	}
 
-	private var bbox: RectangularShape = Rectangle2D()
+	private var bbox: MutableRectangularShape = Rectangle2D()
 
 	/** ---- [Drawable] interface */
 

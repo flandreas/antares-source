@@ -215,7 +215,7 @@ class ClockView(
 	override fun getBoundingBoxImpl(): Rectangle2D {
 		val bb = super.getBoundingBoxImpl()
 		if (StringUtils.isNotEmpty(label.text)) {
-			val lbb = label.boundingBox.moveBy(location)
+			val lbb = Rectangle2D(label.boundingBox).moveBy(location)
 			bb.add(lbb)
 		}
 		return bb

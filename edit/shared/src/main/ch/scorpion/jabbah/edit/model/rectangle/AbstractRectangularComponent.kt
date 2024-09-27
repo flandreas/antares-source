@@ -1,9 +1,6 @@
 package ch.scorpion.jabbah.edit.model.rectangle
 
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.geom.RectangularShape
-import ch.scorpion.jabbah.base.geom.Shape
+import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.Locatable
@@ -27,8 +24,8 @@ import ch.scorpion.jabbah.io.StoreWriter
 abstract class AbstractRectangularComponent(
     styleType: StyleType = StyleType.FIGURE,
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-    val shape: RectangularShape = Rectangle2D()
-) : AbstractComponent(styleProvider, styleType), RectangularShape by shape, Mirrorable {
+    val shape: MutableRectangularShape = Rectangle2D()
+) : AbstractComponent(styleProvider, styleType), MutableRectangularShape by shape, Mirrorable {
 
     open val shapeToDraw: Shape get() = shape
 
@@ -65,7 +62,7 @@ abstract class AbstractRectangularComponent(
 
     /** ---- [Drawable] interface */
 
-    override val boundingBox: Rectangle2D
+    override val boundingBox: RectangularShape
         get() {
             val bb = Rectangle2D(shape.boundingBox)
             val lw = stroke.width

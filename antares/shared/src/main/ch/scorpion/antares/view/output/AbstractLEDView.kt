@@ -193,10 +193,10 @@ abstract class AbstractLEDView<T: Vertice>(
 
 	/** ---- [AbstractDrawable] */
 
-	override val boundingBox: Rectangle2D
+	override val boundingBox: RectangularShape
 		get() {
 			val bb = Rectangle2D(super.boundingBox)
-			val lbb = horizontalLabel.boundingBox.moveBy(location)
+			val lbb = Rectangle2D(horizontalLabel.boundingBox).moveBy(location)
 			bb.add(lbb)
 			return bb
 		}

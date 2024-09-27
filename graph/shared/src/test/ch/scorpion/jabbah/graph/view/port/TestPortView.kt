@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.view.port
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.PortType
@@ -21,7 +22,7 @@ class TestPortView<T: Any>(
 	}
 	override var transparency: Int = 0
 
-    override val boundingBox: Rectangle2D
+    override val boundingBox: RectangularShape
         get() {
             val bbox = Rectangle2D()
             bbox.add(location.toRect(0.0))

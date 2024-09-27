@@ -242,7 +242,7 @@ class DigitalPortView(
 		}
 	}
 
-	override val boundingBox: Rectangle2D
+	override val boundingBox: RectangularShape
 		get() {
 			val bbox: Rectangle2D = if (portLabel != null) {
 				val lb = portLabel!!.boundingBox

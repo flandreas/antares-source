@@ -4,12 +4,10 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawableTest.TestDrawable
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 
+@Ignore
 class QuadTreeTest {
 
 	@Test

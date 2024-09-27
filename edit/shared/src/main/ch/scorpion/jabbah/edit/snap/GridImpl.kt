@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.edit.snap
 import ch.scorpion.jabbah.base.PreferencesChangedEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
@@ -113,7 +114,7 @@ class GridImpl(
 
 	/** ---- [Drawable] */
 
-	override val boundingBox: Rectangle2D
+	override val boundingBox: RectangularShape
 		get() {
 			if (view == null) {
 				return Rectangle2D()

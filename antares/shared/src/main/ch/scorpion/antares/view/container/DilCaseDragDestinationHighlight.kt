@@ -4,6 +4,7 @@ import ch.scorpion.antares.view.port.DigitalPortViewStyle
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
@@ -16,7 +17,7 @@ import ch.scorpion.jabbah.edit.snap.ComponentSnapper
 
 class DilCaseDragDestinationHighlight(
 	destination: DilCase
-) : AbstractRectangle(destination.boundingBox), DragDestinationHighlight {
+) : AbstractRectangle(Rectangle2D(destination.boundingBox)), DragDestinationHighlight {
 
 	companion object {
 		private const val HALF_SIZE = 3
@@ -53,8 +54,8 @@ class DilCaseDragDestinationHighlight(
 
 	/** ---- [Drawable] */
 
-	override val boundingBox: Rectangle2D
-		get() = super.boundingBox.expandBy(HALF_SIZE.toDouble()) as Rectangle2D
+	override val boundingBox: RectangularShape
+		get() = Rectangle2D(super.boundingBox).expandBy(HALF_SIZE.toDouble()) as Rectangle2D
 
 	override fun draw(context: DrawContext) {
 		context.g.color = DrawModule.properties.getColor(ComponentSnapper.PROP_SNAP_HIGHLIGHT_COLOR)

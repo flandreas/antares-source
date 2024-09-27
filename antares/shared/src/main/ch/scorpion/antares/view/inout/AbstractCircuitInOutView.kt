@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
@@ -150,7 +151,7 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 
 	/** ---- [Drawable] */
 
-	override fun getBoundingBoxImpl(): Rectangle2D = boundingBox
+	override fun getBoundingBoxImpl(): RectangularShape = boundingBox
 
 	override fun contains(x: Double, y: Double): Boolean =
 		rotate(boundingBox).contains(x, y)
@@ -224,7 +225,8 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 
 	/** ---- [AbstractCircuitInOutView] */
 
-	override val boundingBox = Rectangle2D()
+	private val _boundingBox = Rectangle2D()
+	override val boundingBox: RectangularShape get() = _boundingBox
 
 	protected fun updateView() {
 		invalidate()
@@ -295,8 +297,8 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 	protected fun updateBoundingBox() {
 		invalidate()
 
-		boundingBox.setFrame(location.x, location.y, 0.0, 0.0)
-		addPortViewsTo(boundingBox, null)
+		_boundingBox.setFrame(location.x, location.y, 0.0, 0.0)
+		addPortViewsTo(_boundingBox, null)
 
 		val pathBB = arrowPath!!.path.boundingBox
 		val pathTranslation = getArrowPathTranslation()
@@ -308,10 +310,10 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 		if (shadow) {
 			DropShadow.expand(pathBBoxRect, rotation)
 		}
-		boundingBox.add(pathBBoxRect)
+		_boundingBox.add(pathBBoxRect)
 
 		val labelBB = label.boundingBox
-		boundingBox.add(Rectangle2D(
+		_boundingBox.add(Rectangle2D(
 			location.x + labelBB.x + pathTranslation.x - 1,
 			location.y + labelBB.y + pathTranslation.y - 1,
 			labelBB.width + 2,

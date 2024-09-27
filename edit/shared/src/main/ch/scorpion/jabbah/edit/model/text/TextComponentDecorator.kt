@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.edit.model.text
 
+import ch.scorpion.jabbah.base.geom.MutableRectangularShape
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.TransparentImpl
 import ch.scorpion.jabbah.base.geom.RectangularShape
@@ -15,9 +16,9 @@ interface TextComponentDecorator {
 
 /** A [TextComponentDecorator] that decorates a [TextComponent] with a [RectangularShape]. */
 class RectangularShapeTextComponentDecorator(
-        private val shape: RectangularShape,
-        private val stylable: Stylable,
-        private val transparent: TransparentImpl
+    private val shape: MutableRectangularShape,
+    private val stylable: Stylable,
+    private val transparent: TransparentImpl
 ) : TextComponentDecorator {
 
     /** ---- [TextComponentDecorator] interface */

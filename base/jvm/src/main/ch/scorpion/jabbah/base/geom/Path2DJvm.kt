@@ -44,7 +44,7 @@ class Path2DJvm(
 
     /** ---- [Shape] */
 
-    override val boundingBox: Rectangle2D
+    override val boundingBox: RectangularShape
         get() {
             val b = path.bounds2D
             return Rectangle2D(b.x, b.y, b.width, b.height)

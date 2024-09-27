@@ -28,7 +28,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 abstract class RectangularComponent(
 	styleType: StyleType = StyleType.FIGURE,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	shape: RectangularShape,
+	shape: MutableRectangularShape,
 	labelRotation: Rotation = Rotation.R0,
 	labelRotationDisplayStrategy: RotationDisplayStrategy = RotationDisplayStrategy.IGNORE
 ) : AbstractRectangularComponent(styleType, styleProvider, shape), Transparent, Describable, Labeled, Figure {
@@ -143,8 +143,10 @@ abstract class RectangularComponent(
 
 	/** ---- [Drawable] interface */
 
-	override val boundingBox: Rectangle2D
-		get() = super.boundingBox.add(label.boundingBox.moveBy(location)) as Rectangle2D
+	override val boundingBox: RectangularShape get() =
+		Rectangle2D(super.boundingBox)
+			.add(Rectangle2D(label.boundingBox)
+			.moveBy(location)) as Rectangle2D
 
 	override fun draw(context: DrawContext) {
 		if (context.useContextColors) {

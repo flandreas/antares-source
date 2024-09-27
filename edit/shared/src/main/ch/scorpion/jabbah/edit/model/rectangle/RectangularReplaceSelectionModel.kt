@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.edit.model.rectangle
 
+import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
@@ -52,7 +53,7 @@ open class RectangularReplaceSelectionModel(
 	/** ---- [Drawable] */
 
 	override val boundingBox: RectangularShape
-		get() = component.boundingBox.expandBy(component.stroke.width.toDouble())
+		get() = Rectangle2D(component.boundingBox).expandBy(component.stroke.width.toDouble())
 
 	override fun draw(context: DrawContext) {
 		drawStrategy.draw(component, context)

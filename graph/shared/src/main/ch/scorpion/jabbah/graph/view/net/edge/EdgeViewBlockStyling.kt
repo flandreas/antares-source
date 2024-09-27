@@ -1,10 +1,7 @@
 package ch.scorpion.jabbah.graph.view.net.edge
 
 import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.geom.Path
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.geom.Turn
+import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.EdgeView
@@ -58,7 +55,8 @@ class EdgeViewBlockStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling 
 
 	override val width: Int get() = 2 * HALF_WIDTH
 
-	override val boundingBox: Rectangle2D = Rectangle2D()
+	private val _boundingBox = Rectangle2D()
+	override val boundingBox: RectangularShape get() = _boundingBox
 
 	override val isArea: Boolean get() = true
 
@@ -109,18 +107,18 @@ class EdgeViewBlockStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling 
 
 	override fun updateBoundingBox() {
 		if (edgeView.polyline.pointsCount > 0) {
-			boundingBox.setFrame(edgeView.polyline.getPointAt(0).x, edgeView.polyline.getPointAt(0).y, 0.0, 0.0)
+			_boundingBox.setFrame(edgeView.polyline.getPointAt(0).x, edgeView.polyline.getPointAt(0).y, 0.0, 0.0)
 		}
-		boundingBox.add(edgeView.polyline.boundingBox)
+		_boundingBox.add(edgeView.polyline.boundingBox)
 
-		boundingBox.setFrame(
+		_boundingBox.setFrame(
 			boundingBox.x - HALF_WIDTH,
 			boundingBox.y - HALF_WIDTH - NetViewStyle.BLOCK_BORDER_STROKE.width,
 			boundingBox.width + 2 * HALF_WIDTH,
 			boundingBox.height + 2 * HALF_WIDTH + NetViewStyle.BLOCK_BORDER_STROKE.width)
 
 		if (getDestinationArrowOverallLength() > 0) {
-			boundingBox.setFrame(
+			_boundingBox.setFrame(
 				boundingBox.x - ARROW_WIDTH, boundingBox.y - ARROW_WIDTH,
 				boundingBox.width + 2 * ARROW_WIDTH, boundingBox.height + 2 * ARROW_WIDTH)
 		}

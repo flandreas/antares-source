@@ -1,10 +1,7 @@
 package ch.scorpion.jabbah.edit.model.text
 
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.geom.RectangularShape
-import ch.scorpion.jabbah.base.geom.RoundRectangle2D
+import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.drawable.TransparentImpl
@@ -20,7 +17,7 @@ import kotlin.jvm.JvmStatic
 
 abstract class AbstractTextComponent(
     location: Point2D = Point2D.ZERO,
-    shape: RectangularShape = Rectangle2D(location.x, location.y, 0.0, 0.0),
+    shape: MutableRectangularShape = Rectangle2D(location.x, location.y, 0.0, 0.0),
     styleType: StyleType = StyleType.TEXT,
     styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractRectangularComponent(

@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
@@ -158,12 +159,12 @@ class DipSwitchView(
 
 	override val useOrientation: Boolean get() = true
 
-	override val boundingBox: Rectangle2D
+	override val boundingBox: RectangularShape
 		get() {
-			val bb = super.boundingBox
+			var bb = super.boundingBox
 			if (StringUtils.isNotEmpty(label.text)) {
-				val lbb = label.boundingBox.moveBy(location)
-				bb.add(lbb)
+				val lbb = Rectangle2D(label.boundingBox).moveBy(location)
+				bb = Rectangle2D(bb).add(lbb)
 			}
 			return bb
 		}

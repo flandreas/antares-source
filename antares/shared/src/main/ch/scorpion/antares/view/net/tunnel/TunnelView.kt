@@ -9,10 +9,7 @@ import ch.scorpion.antares.view.DigitalGraphView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.base.geom.Direction
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.geom.Rotation
+import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
@@ -123,10 +120,10 @@ class TunnelView(
 		face.draw(this, context, propertiesBackgroundColor)
 	}
 
-	override val boundingBox: Rectangle2D
+	override val boundingBox: RectangularShape
 		get() {
-			val bb = super.boundingBox
-			val lbb = horizontalLabel.boundingBox.moveBy(location)
+			val bb = Rectangle2D(super.boundingBox)
+			val lbb = Rectangle2D(horizontalLabel.boundingBox).moveBy(location)
 			bb.add(lbb)
 			return bb
 		}

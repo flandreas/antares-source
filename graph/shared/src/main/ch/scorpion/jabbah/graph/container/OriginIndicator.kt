@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -41,7 +42,8 @@ class OriginIndicator(
 			invalidate()
 		}
 
-	override val boundingBox = Rectangle2D()
+	private val _boundingBox = Rectangle2D()
+	override val boundingBox: RectangularShape get() = _boundingBox
 
 	init {
 		updateBoundingBox()
@@ -110,7 +112,7 @@ class OriginIndicator(
 	}
 
 	private fun updateBoundingBox() {
-		boundingBox.setFrame(
+		_boundingBox.setFrame(
 			location.x - SIZE / 2 - 1, location.y - SIZE / 2 - 1, SIZE + 2, SIZE + 2)
 	}
 }

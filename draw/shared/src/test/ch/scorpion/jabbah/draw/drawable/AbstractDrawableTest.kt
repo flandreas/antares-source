@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.draw.drawable
 
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.DrawableContainer
@@ -113,7 +114,8 @@ class AbstractDrawableTest {
 
 	    constructor(x: Int, y: Int, w: Int, h: Int): this(Rectangle2D(x, y, w, h))
 
-        override val boundingBox: Rectangle2D = bbox
+        private val _boundingBox = bbox
+        override val boundingBox: RectangularShape get() = _boundingBox
 
         /** ---- [Drawable] interface */
 
@@ -127,7 +129,7 @@ class AbstractDrawableTest {
 
         fun setBounds(bounds: Rectangle2D) {
             invalidate()
-            boundingBox.setFrame(bounds)
+            _boundingBox.setFrame(bounds)
             invalidate()
             update()
         }

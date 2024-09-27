@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.draw.polyline
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
@@ -57,7 +58,7 @@ class PolylineDrawable constructor(
 
 	override val boundingBox: RectangularShape
 		get() {
-			val bbox = shape.boundingBox
+			val bbox = Rectangle2D(shape.boundingBox)
 			val lw = getLineWidth()
 			bbox.setFrame(bbox.x - lw, bbox.y - lw, bbox.width + 2 * lw, bbox.height + 2 * lw)
 			return bbox

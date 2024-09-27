@@ -23,7 +23,8 @@ class EdgeViewBelowSelectionModel(
 
 	/** ---- [AbstractSelectionModel] */
 
-	override val boundingBox: RectangularShape = Rectangle2D()
+	private var _boundingBox = Rectangle2D()
+	override val boundingBox: RectangularShape get() = _boundingBox
 
 	override fun draw(context: DrawContext) {
 		val oldStroke = context.g.stroke
@@ -46,7 +47,7 @@ class EdgeViewBelowSelectionModel(
 		invalidate()
 		val bbox = component.boundingBox
 		val outset = strokeWidth / 2
-		boundingBox.setFrame(
+		_boundingBox.setFrame(
 			bbox.x - outset,
 			bbox.y - outset,
 			bbox.width + 2 * outset,

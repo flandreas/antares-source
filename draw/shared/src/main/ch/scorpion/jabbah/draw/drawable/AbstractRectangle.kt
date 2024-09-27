@@ -1,18 +1,15 @@
 package ch.scorpion.jabbah.draw.drawable
 
-import ch.scorpion.jabbah.base.geom.Dimension2D
-import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Stroke
 
 /**
  * A base class for implementing [Drawable]s with a [RectangularShape].
  */
-abstract class AbstractRectangle(val shape: RectangularShape) : AbstractDrawable(), RectangularDrawable {
+abstract class AbstractRectangle(val shape: MutableRectangularShape) : AbstractDrawable(), RectangularDrawable {
 
 	/** Constructs this [AbstractRectangle] with a [Rectangle2D] shape.*/
 	constructor(x: Double, y: Double, w: Double, h: Double) : this(Rectangle2D(x, y, w, h))
@@ -36,7 +33,7 @@ abstract class AbstractRectangle(val shape: RectangularShape) : AbstractDrawable
 	/** ---- [AbstractDrawable] */
 
 	/** Calculates the bounding box as the [bounds] extended by the line width on each side of the rectangle.*/
-	override val boundingBox: Rectangle2D
+	override val boundingBox: RectangularShape
 		get() {
 			return Rectangle2D(
 				bounds.x - lineWidth, bounds.y - lineWidth,
@@ -49,8 +46,8 @@ abstract class AbstractRectangle(val shape: RectangularShape) : AbstractDrawable
 
 	/** ---- [RectangularDrawable] */
 
-	override val bounds: RectangularShape
-		get() = shape.boundingBox
+	override val bounds: MutableRectangularShape
+		get() = shape
 
 	override var width: Double
 		get() = bounds.width

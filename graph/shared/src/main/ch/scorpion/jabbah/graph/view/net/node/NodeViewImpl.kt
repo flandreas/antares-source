@@ -3,7 +3,7 @@ package ch.scorpion.jabbah.graph.view.net.node
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.Locatable
@@ -163,7 +163,7 @@ open class NodeViewImpl<T : Any>(
 
 	/** ---- [Drawable] interface */
 
-	override val boundingBox: Rectangle2D get() = styling.boundingBox
+	override val boundingBox: RectangularShape get() = styling.boundingBox
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		if (visitor.visitEnter(this)) {

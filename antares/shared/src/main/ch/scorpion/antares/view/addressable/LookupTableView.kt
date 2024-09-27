@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
@@ -107,7 +108,7 @@ class LookupTableView(
 
 	/** ---- [AbstractDrawable] */
 
-	override val boundingBox: Rectangle2D
+	override val boundingBox: RectangularShape
 		get() {
 			val bb = Rectangle2D(super.boundingBox)
 			bb.add(externalLabel.boundingBox)

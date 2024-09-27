@@ -1,8 +1,8 @@
 package ch.scorpion.jabbah.graph.view.vertice
 
 import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.MutableRectangularShape
 import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
@@ -21,7 +21,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 class TestControlVerticeView(
 	vertice: TestControlVertice = TestControlVertice(),
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	rectangle: RectangularShape = Rectangle2D(0, 0, 100, 100)
+	rectangle: MutableRectangularShape = Rectangle2D(0, 0, 100, 100)
 ) : AbstractRectangularVerticeView<TestControlVertice>(styleProvider, vertice, rectangle),
 	ControlView<TestControlVertice>,
 	ControlViewSource<TestControlVertice>

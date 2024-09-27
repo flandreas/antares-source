@@ -106,7 +106,7 @@ class LabelComponent(
 
 	/** ---- [Drawable] */
 
-	override val boundingBox: Rectangle2D get() {
+	override val boundingBox: RectangularShape get() {
 		val bbox = if (dimension == null) {
 			label.boundingBox
 		} else {

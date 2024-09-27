@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.edit.model.rectangle
 
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.graphics.Stroke
@@ -27,7 +28,7 @@ class RectangularBelowSelectionModel(
 
 	/** ---- [AbstractDrawable] */
 
-	override val boundingBox: Rectangle2D
+	override val boundingBox: RectangularShape
 		get() = Rectangle2D(bounds.x - WITH_HALF - 1, bounds.y - WITH_HALF - 1, bounds.width + WITH + 1, bounds.height + WITH + 1)
 
 	override fun draw(context: DrawContext) {

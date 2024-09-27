@@ -72,9 +72,9 @@ open class DrawableContainerImpl<T : Drawable>(
 		if (drawable.visible) {
 			val drawableBBox = childBoundingBox(drawable)
 			if (drawables.size == 1) {
-				boundingBox.setFrame(drawableBBox)
+				_boundingBox.setFrame(drawableBBox)
 			} else {
-				boundingBox.add(drawableBBox)
+				_boundingBox.add(drawableBBox)
 			}
 
 			invalidate(drawableBBox)
@@ -99,7 +99,8 @@ open class DrawableContainerImpl<T : Drawable>(
 
 	/** ---- [Drawable] interface */
 
-	override val boundingBox: RectangularShape = Rectangle2D()
+	private val _boundingBox = Rectangle2D()
+	override val boundingBox: RectangularShape get() = _boundingBox
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		if (visitor.visitEnter(this)) {
@@ -204,7 +205,7 @@ open class DrawableContainerImpl<T : Drawable>(
 
 	override fun handleDrawableInvalidated(drawable: Drawable, region: RectangularShape) {
 		if (useLocation) {
-			invalidate(region.moveBy(location))
+			invalidate(Rectangle2D(region).moveBy(location))
 		} else {
 			invalidate(region)
 		}
@@ -240,9 +241,9 @@ open class DrawableContainerImpl<T : Drawable>(
 	 */
 	protected fun updateBoundingBox() {
 		children.firstOrNull { it.visible }
-			?.let { boundingBox.setFrame(childBoundingBox(it)) }
-			?: boundingBox.setFrame(0.0, 0.0, 0.0, 0.0)
-		children.filter { it.visible }.forEach { boundingBox.add(childBoundingBox(it)) }
+			?.let { _boundingBox.setFrame(childBoundingBox(it)) }
+			?: _boundingBox.setFrame(0.0, 0.0, 0.0, 0.0)
+		children.filter { it.visible }.forEach { _boundingBox.add(childBoundingBox(it)) }
 	}
 
 	private fun notifyDrawableAdded(drawable: T) {

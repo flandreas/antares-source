@@ -1,12 +1,9 @@
 package ch.scorpion.jabbah.draw.polyline
 
 import ch.scorpion.jabbah.base.collection.indexOfFirstOrNull
-import ch.scorpion.jabbah.base.geom.Geometry
-import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.base.geom.Point2D.Companion.xRange
 import ch.scorpion.jabbah.base.geom.Point2D.Companion.yRange
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.geom.Shape
 import ch.scorpion.jabbah.draw.drawable.RotationDirection
 import ch.scorpion.jabbah.draw.graphics.Graphics2D
 import kotlin.math.abs
@@ -116,7 +113,7 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 	/** ---- [Shape] interface */
 
 	// TODO Shouldn't the bounding box be cached rather than calculating it each time?
-	override val boundingBox: Rectangle2D
+	override val boundingBox: RectangularShape
 		get() {
 			val bbox = Rectangle2D()
 			if (pointsCount == 0) {

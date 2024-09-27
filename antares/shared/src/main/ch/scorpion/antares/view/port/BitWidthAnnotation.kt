@@ -3,15 +3,12 @@ package ch.scorpion.antares.view.port
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.style.AntaresTheme
+import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.edit.model.text.Label
-import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Direction.*
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.RotationDisplayStrategy
@@ -41,7 +38,7 @@ class BitWidthAnnotation(
             if (field != value) {
                 field = value
                 label.location = getLabelLocation()
-                boundingBox = calculateBoundingBox()
+                _boundingBox = calculateBoundingBox()
             }
         }
 
@@ -57,8 +54,8 @@ class BitWidthAnnotation(
 
     /** ---- [Drawable] interface */
 
-    override var boundingBox: Rectangle2D = calculateBoundingBox()
-        private set
+    private var _boundingBox = calculateBoundingBox()
+    override val boundingBox: RectangularShape get() = _boundingBox
 
     override fun draw(context: DrawContext) {
         label.draw(context)
@@ -79,7 +76,7 @@ class BitWidthAnnotation(
     fun setOwnerRotation(rotation: Rotation) {
 	    invalidate()
 	    label.ownerRotation = rotation
-        boundingBox = calculateBoundingBox()
+        _boundingBox = calculateBoundingBox()
 	    invalidate()
 	    update()
     }

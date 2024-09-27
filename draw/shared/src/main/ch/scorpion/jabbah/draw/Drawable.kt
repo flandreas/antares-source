@@ -38,6 +38,10 @@ interface Drawable {
 	 * The rectangular area in model coordinate space that completely contains this [Drawable].
 	 * The bounding box is used for invalidation and repainting. Therefore, make sure that the bounding
 	 * box of a figure [Drawable] (e.g. a rectangle) includes the width of any border stroke used for painting.
+	 *
+	 * The returned object is immutable so that implementations can update their own rectangular area
+	 * and just return it when asked, instead of calculating it on-the-fly. Since this property is
+	 * accessed a lot, this can improve performance during editing and redrawing.
 	 */
 	val boundingBox: RectangularShape
 
@@ -48,7 +52,7 @@ interface Drawable {
 	fun accept(visitor: HierarchyVisitor): Boolean
 
 	/**
-	 * Informs this [Drawable] that it is not actively used any more.
+	 * Informs this [Drawable] that it is not actively used anymore.
 	 * Implementing classes should release references to other objects, and especially de-register from listening
 	 * to events. However, it might be that a disposed [Drawable] might be re-activated later.
 	 */

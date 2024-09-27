@@ -3,7 +3,7 @@ package ch.scorpion.jabbah.edit.model.text
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Font
 import ch.scorpion.jabbah.edit.Component
@@ -36,10 +36,7 @@ class HorizontalLabel(
 			label.text = value
 		}
 
-	val boundingBox: Rectangle2D
-		get() {
-			return label.boundingBox
-		}
+	val boundingBox: RectangularShape get() = label.boundingBox
 
 	var orientation: Direction? = orientation
 		set(value) {

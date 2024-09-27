@@ -88,8 +88,7 @@ class Path2DJs(
 
     private val _boundingBox: Rectangle2D = boundingBox
 
-    override val boundingBox: Rectangle2D
-        get() = Rectangle2D(_boundingBox)
+    override val boundingBox: RectangularShape get() = _boundingBox
 
     override fun contains(x: Double, y: Double): Boolean =
         _boundingBox.contains(x, y)

@@ -1,11 +1,8 @@
 package ch.scorpion.antares.view.port
 
 import ch.scorpion.antares.view.Look
-import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.base.geom.Direction.*
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.Transparent
@@ -98,7 +95,7 @@ abstract class AbstractAntaresPortView<T: Any>(
 
 	/** ---- [Drawable] */
 
-	override val boundingBox: Rectangle2D
+	override val boundingBox: RectangularShape
 		get() {
 			val bbox: Rectangle2D = if (portLabel != null) {
 				val lb = portLabel!!.boundingBox

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.draw.drawable
 
+import ch.scorpion.jabbah.base.geom.MutableRectangularShape
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import kotlin.math.ceil
 
@@ -8,7 +9,7 @@ import kotlin.math.ceil
  */
 interface RectangularDrawable : Locatable {
 
-    val bounds: RectangularShape
+    val bounds: MutableRectangularShape
 
     var width: Double
 

@@ -44,7 +44,7 @@ open class DrawableButton<C: InputEventContext>(
 		private val LOG by logger(DrawableButton::class)
 		private const val CORNER_ARC = 6.0
 
-		private fun createShape(location: Point2D, dimension: Dimension2D, round: Boolean): RectangularShape {
+		private fun createShape(location: Point2D, dimension: Dimension2D, round: Boolean): MutableRectangularShape {
 			return if (round) {
 				RoundRectangle2D(location, dimension, CORNER_ARC)
 			} else {

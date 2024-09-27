@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.draw.drawable
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.geom.Path
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawContext
@@ -74,7 +75,9 @@ class ArrowBubble(
 
 	/** ----  [AbstractDrawable] */
 
-	override val boundingBox: RectangularShape get() = path.boundingBox.expandBy(style.stroke.width.toDouble()).moveBy(position.location)
+	override val boundingBox: RectangularShape get() = Rectangle2D(path.boundingBox)
+		.expandBy(style.stroke.width.toDouble())
+		.moveBy(position.location)
 
 	override fun draw(context: DrawContext) {
 		context.translated(position.location) {

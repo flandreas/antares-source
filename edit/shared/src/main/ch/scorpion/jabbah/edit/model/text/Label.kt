@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.edit.model.text
 
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
@@ -135,14 +136,19 @@ class Label(
 	/** If `true`, the text is drawn in background color (only with [DrawContext.useContextColors]).*/
 	var inverse: Boolean = false
 
+	override var boundingBox: RectangularShape = Rectangle2D()
+		private set
+
 	init {
 		updateGeometry()
 	}
 
 	/** ---- [Drawable] */
 
-	override val boundingBox: Rectangle2D
-		get() = rotation.rotateRectangleAround(location, bounds)
+
+	private fun updateBoundingBox() {
+		boundingBox = rotation.rotateRectangleAround(location, bounds)
+	}
 
 	override fun contains(x: Double, y: Double): Boolean {
 		return bounds.contains(x, y)
@@ -216,6 +222,7 @@ class Label(
 
 		positionDisplayableText(displayableText)
 		bounds.setFrame(displayableText.bounds)
+		updateBoundingBox()
 
 		update()
 		validate()
