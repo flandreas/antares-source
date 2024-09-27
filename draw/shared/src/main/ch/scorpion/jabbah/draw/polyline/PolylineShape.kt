@@ -112,26 +112,28 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 
 	/** ---- [Shape] interface */
 
-	// TODO Shouldn't the bounding box be cached rather than calculating it each time?
-	override val boundingBox: RectangularShape
-		get() {
-			val bbox = Rectangle2D()
-			if (pointsCount == 0) {
-				return bbox
-			}
-			bbox.setFrame(points[0].x, points[0].y, 0.0, 0.0)
-			for (i in 1 until pointsCount) {
-				bbox.add(points[i])
-			}
-			if (beginLineTerminator != null) {
-				bbox.add(beginLineTerminator!!.boundingBox)
-			}
-			if (endLineTerminator != null) {
-				bbox.add(endLineTerminator!!.boundingBox)
-			}
+	private var _boundingBox = Rectangle2D()
+	override val boundingBox: RectangularShape get() = _boundingBox
 
-			return bbox
+	private fun updateBoundingBox() {
+		val bbox = Rectangle2D()
+		if (pointsCount == 0) {
+			_boundingBox = bbox
+			return
 		}
+		bbox.setFrame(points[0].x, points[0].y, 0.0, 0.0)
+		for (i in 1 until pointsCount) {
+			bbox.add(points[i])
+		}
+		if (beginLineTerminator != null) {
+			bbox.add(beginLineTerminator!!.boundingBox)
+		}
+		if (endLineTerminator != null) {
+			bbox.add(endLineTerminator!!.boundingBox)
+		}
+
+		_boundingBox = bbox
+	}
 
 	override fun contains(x: Double, y: Double): Boolean = containsInArea(x, y)
 		|| intersects(
@@ -158,40 +160,45 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 			return l
 		}
 
-	override val pointsCount: Int
-		get() = points.size
+	override val pointsCount: Int get() = points.size
 
 	override var beginLineTerminator: LineTerminator? = null
 		set(value) {
 			field = value
 			updateLineTerminatorLocations()
+			updateBoundingBox()
 		}
 
 	override var endLineTerminator: LineTerminator? = null
 		set(value) {
 			field = value
 			updateLineTerminatorLocations()
+			updateBoundingBox()
 		}
 
 	override fun clear() {
 		points.clear()
+		updateBoundingBox()
 	}
 
 	override fun addPoint(x: Double, y: Double): Polyline {
 		points.add(Point2D(x, y))
 		updateLineTerminatorLocations()
+		updateBoundingBox()
 		return this
 	}
 
 	override fun addPointAt(index: Int, x: Double, y: Double): Polyline {
 		points.add(index, Point2D(x, y))
 		updateLineTerminatorLocations()
+		updateBoundingBox()
 		return this
 	}
 
 	override fun removePoint(index: Int): Polyline {
 		points.removeAt(index)
 		updateLineTerminatorLocations()
+		updateBoundingBox()
 		return this
 	}
 
@@ -200,6 +207,7 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 	override fun setPointAt(index: Int, x: Double, y: Double): Polyline {
 		points[index] = Point2D(x, y)
 		updateLineTerminatorLocations()
+		updateBoundingBox()
 		return this
 	}
 
@@ -209,6 +217,7 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 			this.points.add(Point2D(p))
 		}
 		updateLineTerminatorLocations()
+		updateBoundingBox()
 		return this
 	}
 
@@ -220,6 +229,7 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 		val dy = y - points[0].y
 		points.toList().forEachIndexed { index, p -> points[index] = Point2D(p.x + dx, p.y + dy) }
 		updateLineTerminatorLocations()
+		updateBoundingBox()
 		return this
 	}
 
@@ -253,6 +263,9 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 				i++
 			}
 		}
+		if (changed) {
+			updateBoundingBox()
+		}
 		return changed
 	}
 
@@ -283,6 +296,7 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 		points.clear()
 		points.addAll(buffer)
 		updateLineTerminatorLocations()
+		updateBoundingBox()
 	}
 
 	override fun rotate(direction: RotationDirection, pivot: Point2D?) {
