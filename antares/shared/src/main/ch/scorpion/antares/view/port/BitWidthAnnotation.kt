@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Direction.*
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.Rotation
@@ -40,6 +41,7 @@ class BitWidthAnnotation(
             if (field != value) {
                 field = value
                 label.location = getLabelLocation()
+                boundingBox = calculateBoundingBox()
             }
         }
 
@@ -55,6 +57,9 @@ class BitWidthAnnotation(
 
     /** ---- [Drawable] interface */
 
+    override var boundingBox: Rectangle2D = calculateBoundingBox()
+        private set
+
     override fun draw(context: DrawContext) {
         label.draw(context)
         if (!centerLabel) {
@@ -67,14 +72,6 @@ class BitWidthAnnotation(
         }
     }
 
-    override val boundingBox: Rectangle2D get() {
-        val bbox = Rectangle2D(label.boundingBox)
-        val lineStart = getLineStart()
-        bbox.add(lineStart)
-        bbox.add(getLineEnd(lineStart))
-        return bbox
-    }
-
     override fun contains(x: Double, y: Double): Boolean = label.contains(x, y)
 
     /** ---- [BitWidthAnnotation] */
@@ -82,8 +79,17 @@ class BitWidthAnnotation(
     fun setOwnerRotation(rotation: Rotation) {
 	    invalidate()
 	    label.ownerRotation = rotation
+        boundingBox = calculateBoundingBox()
 	    invalidate()
 	    update()
+    }
+
+    private fun calculateBoundingBox(): Rectangle2D {
+        val bbox = Rectangle2D(label.boundingBox)
+        val lineStart = getLineStart()
+        bbox.add(lineStart)
+        bbox.add(getLineEnd(lineStart))
+        return bbox
     }
 
     private fun getLineBoxWidth(): Double {
@@ -103,30 +109,33 @@ class BitWidthAnnotation(
     private fun getLineEnd(lineStart: Point2D): Point2D =
 		Point2D(lineStart.x - getLineBoxWidth(), lineStart.y + getLineBoxHeight())
 
-    private fun getHorizontalLabelAlignment(): HorizontalAlignment = when (direction) {
-        Direction.WEST, Direction.EAST -> HorizontalAlignment.CENTER
-        Direction.NORTH, Direction.SOUTH -> if (centerLabel) HorizontalAlignment.CENTER else HorizontalAlignment.LEFT
-    }
+    private fun getHorizontalLabelAlignment(): HorizontalAlignment =
+        when (direction) {
+            WEST, EAST -> HorizontalAlignment.CENTER
+            NORTH, SOUTH -> if (centerLabel) HorizontalAlignment.CENTER else HorizontalAlignment.LEFT
+        }
 
-    private fun getVerticalLabelAlignment(): VerticalAlignment = when (direction) {
-        Direction.WEST, Direction.EAST -> if (centerLabel) VerticalAlignment.CENTER else VerticalAlignment.TOP
-        Direction.NORTH, Direction.SOUTH -> VerticalAlignment.CENTER
-    }
+    private fun getVerticalLabelAlignment(): VerticalAlignment =
+        when (direction) {
+            WEST, EAST -> if (centerLabel) VerticalAlignment.CENTER else VerticalAlignment.TOP
+            NORTH, SOUTH -> VerticalAlignment.CENTER
+        }
 
     private fun getLabelLocation(): Point2D {
         val labelEdgeDist = if (centerLabel) 0.0 else LABEL_EDGE_DIST
         return when (direction) {
-            Direction.WEST -> Point2D(-DIST - offsetX, labelEdgeDist)
-            Direction.EAST -> Point2D(DIST + offsetX, labelEdgeDist)
-            Direction.NORTH -> Point2D(labelEdgeDist, -DIST - offsetX)
-            Direction.SOUTH -> Point2D(labelEdgeDist, DIST + offsetX)
+            WEST -> Point2D(-DIST - offsetX, labelEdgeDist)
+            EAST -> Point2D(DIST + offsetX, labelEdgeDist)
+            NORTH -> Point2D(labelEdgeDist, -DIST - offsetX)
+            SOUTH -> Point2D(labelEdgeDist, DIST + offsetX)
         }
     }
 
-    private fun getLineStart(): Point2D = when (direction) {
-        Direction.WEST -> Point2D(-DIST - offsetX + LINE_WIDTH_HALF, -LINE_HEIGHT_HALF)
-        Direction.EAST -> Point2D(DIST + offsetX + LINE_WIDTH_HALF, -LINE_HEIGHT_HALF)
-        Direction.NORTH -> Point2D(LINE_HEIGHT_HALF, -DIST - offsetX - LINE_WIDTH_HALF)
-        Direction.SOUTH -> Point2D(LINE_HEIGHT_HALF, DIST + offsetX - LINE_WIDTH_HALF)
-    }
+    private fun getLineStart(): Point2D =
+        when (direction) {
+            WEST -> Point2D(-DIST - offsetX + LINE_WIDTH_HALF, -LINE_HEIGHT_HALF)
+            EAST -> Point2D(DIST + offsetX + LINE_WIDTH_HALF, -LINE_HEIGHT_HALF)
+            NORTH -> Point2D(LINE_HEIGHT_HALF, -DIST - offsetX - LINE_WIDTH_HALF)
+            SOUTH -> Point2D(LINE_HEIGHT_HALF, DIST + offsetX - LINE_WIDTH_HALF)
+        }
 }
