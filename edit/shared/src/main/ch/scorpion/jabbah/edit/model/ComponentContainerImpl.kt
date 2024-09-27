@@ -105,7 +105,7 @@ open class ComponentContainerImpl<T: Component> : DrawableContainerImpl<T>(), Co
 	}
 
 	/**
-	 * Due du bug #401 (Auto-generating symbols incompatible with already created symbols),
+	 * Due to bug #401 (Auto-generating symbols incompatible with already created symbols),
 	 * some [Component]s didn't store an ID, leading to possibly multiple [Component]s with ID 0.
 	 */
 	private fun fixMissingComponentIds() {

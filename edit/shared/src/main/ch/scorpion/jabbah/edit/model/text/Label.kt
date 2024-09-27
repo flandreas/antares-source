@@ -74,7 +74,6 @@ class Label(
 		}
 
 	override var location: Point2D = location
-		get() = Point2D(field)
 		set(value) {
 			if (field != value) {
 				invalidate()

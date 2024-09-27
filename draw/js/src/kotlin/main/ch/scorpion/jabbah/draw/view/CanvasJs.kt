@@ -3,6 +3,8 @@ package ch.scorpion.jabbah.draw.view
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.util.Throttle
 import ch.scorpion.jabbah.draw.Canvas
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.View
@@ -24,6 +26,10 @@ class CanvasJs(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     private val propertyOwner: PropertyOwner<Any> = PropertyOwnerImpl()
 ) : Canvas, PropertyOwner<Any> by propertyOwner {
+
+    companion object {
+        private val LOG by logger(CanvasJs::class)
+    }
 
     private val ctx = canvas.getContext("2d")!! as CanvasRenderingContext2D
 
@@ -75,6 +81,8 @@ class CanvasJs(
      */
     private lateinit var devicePixelRatioHandler: (Event?) -> Unit
 
+    private val resizeThrottle = Throttle(::resize, 100)
+
     init {
         propertyOwner.source = this
         view.canvas = this
@@ -85,6 +93,14 @@ class CanvasJs(
         // The resulting zoom in the canvas and the pan position aren't accurate for some reason..
         initializeDevicePixelRatioHandler()
         devicePixelRatioHandler(null)
+
+        // Would have wanted to use ResizeObserver on the canvas itself, but that seems
+        // not to be available in Kotlin JS
+        window.addEventListener("resize", ::throttledResize)
+    }
+
+    private fun throttledResize(event: Event? = null) {
+        resizeThrottle.invokeLast()
     }
 
     private fun initializeDevicePixelRatioHandler() {
@@ -109,6 +125,7 @@ class CanvasJs(
         val oldDimension = dimension
         val rect = canvas.getBoundingClientRect()
         val dpr = window.devicePixelRatio
+        LOG.debug("Resize CanvasJs w=${rect.width}, h=${rect.height}")
         canvas.width = ceil(rect.width * dpr).toInt()
         canvas.height = ceil(rect.height * dpr).toInt()
         repaint()

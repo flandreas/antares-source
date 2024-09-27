@@ -24,6 +24,7 @@ import ch.scorpion.antares.model.net.*
 import ch.scorpion.antares.model.output.*
 import ch.scorpion.antares.model.port.SubCircuitPort
 import ch.scorpion.antares.model.signal.BitWidthGraphParamType
+import ch.scorpion.antares.model.signal.DigitalSignalColor
 import ch.scorpion.antares.model.signal.FixedPointConfig
 import ch.scorpion.antares.model.testcase.Testcase
 import ch.scorpion.antares.model.testcase.TestcaseAppService
@@ -85,6 +86,7 @@ object AntaresModelModule : AbstractModule() {
 		properties.set(CurrentDefaultPropagationDelay.PROP_DEFAULT_PROPAGATION_DELAY, 20)
 		properties.set(CurrentSwitchPropagationDelay.PROP_DEFAULT_DELAY, 1_000)
 		properties.set(UsecaseRecorder.PROP_DEF_DELAY_MS, properties.getInt(CurrentSwitchPropagationDelay.PROP_DEFAULT_DELAY) / 1_000)
+		properties.set(DigitalSignalColor.PROP_DIFFERENT_NON_ZERO_MULTI_BIT_COLOR, true)
 
 		properties.set(UndefinedGateInputBehavior.PROP_UNDEFINED_GATE_INPUT_BEHAVIOR, UndefinedGateInputBehavior.ReadAs0.customName)
 		properties.set(TruthTableService.PROP_TRUTH_TABLE_MAX_INPUTS, 8)

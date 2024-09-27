@@ -8,7 +8,7 @@ import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.execution.PauseOrResumeAction
-import ch.scorpion.jabbah.execution.speed.SystemSpeedOutlet
+import ch.scorpion.jabbah.execution.ExecutionControlOutlet
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.project.AkrabApiException
 import ch.scorpion.jabbah.graph.ui.graphviewer.GraphViewerController
@@ -27,7 +27,7 @@ import org.w3c.dom.HTMLCanvasElement
 @JsExport
 class AntaresSingleCircuitViewerJs(
     data: Any
-) : SystemSpeedOutlet {
+) : ExecutionControlOutlet {
 
     companion object {
         private val LOG by logger(AntaresSingleCircuitViewerJs::class)
@@ -62,11 +62,11 @@ class AntaresSingleCircuitViewerJs(
 
     val circuitName: String get() = controller.graphNavigationViewController.drawingView.drawing.name.value
 
-    fun getToggleApplicationModeAction(): Action = controller.toggleApplicationModeAction
-    fun getSingleStepModeAction(): Action = controller.singleStepModeAction
-    fun getPauseOrResumeAction(): PauseOrResumeAction = controller.pauseOrResumeAction
+    /** ---- [ExecutionControlOutlet] interface */
 
-    /** ---- [SystemSpeedOutlet] interface */
+    override val toggleApplicationModeAction: Action get() = controller.toggleApplicationModeAction
+    override val singleStepModeAction: Action get() = controller.singleStepModeAction
+    override val pauseOrResumeAction: PauseOrResumeAction get() = controller.pauseOrResumeAction
 
     override val systemSpeedCategoryName: String
         get() = controller.applicationContextHolder.currentSystemSpeedCategory.systemSpeedCategory.toString()

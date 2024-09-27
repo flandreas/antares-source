@@ -43,7 +43,7 @@ class FlexibleTextView(
 		private const val INSET_Y = 10
 	}
 
-	private val factor: Double = if (isUnzoomable) devicePixelRatio.toDouble() else 1.0
+	private val factor: Double = if (isUnzoomable) devicePixelRatio else 1.0
 
 	private val multilineText = if (isUnzoomable) {
 		RichTextDrawable.multiline(text, font.scale(devicePixelRatio), width.toDouble() * devicePixelRatio)
@@ -100,12 +100,6 @@ class FlexibleTextView(
 		context.translated(r.x + INSET_X, r.y + INSET_Y + abs(multilineText.baselineRect.y)) {
 			multilineText.draw(it)
 		}
-		// Was this a bug?
-		/*
-		context.g.translate(r.x + INSET_X, r.y + INSET_Y + abs(multilineText.baselineRect.y))
-		multilineText.draw(context)
-		context.g.translate(-(r.x + INSET_X), -(r.y + INSET_Y))
-		*/
 	}
 
 	override fun contains(x: Double, y: Double): Boolean = shape.contains(x, y)
