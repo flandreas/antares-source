@@ -8,11 +8,15 @@ import ch.scorpion.jabbah.execution.PauseOrResumeAction
 import ch.scorpion.jabbah.execution.ExecutionControlOutlet
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.app.ApplicationMode
+import ch.scorpion.jabbah.graph.library.AbstractAkrab2RestLibraryPersistenceServiceJs
 import ch.scorpion.jabbah.graph.library.Library
+import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.ui.graphviewer.GraphViewerController
 import org.w3c.dom.HTMLCanvasElement
+import kotlin.js.Promise
 
-@Suppress("unused") // JS app
+@Suppress("unused") // Used in JS applications
 @JsExport
 class AntaresEditorViewerJs(
     private val content: AntaresEditorContent
@@ -30,7 +34,6 @@ class AntaresEditorViewerJs(
     var libraryTree: LibraryTreeNodeJS = content.libraryTree
         private set
 
-    @Suppress("unused") // Used in JS applications
     val metaGraphId: String? get() = metaGraph?.uuid?.id
 
     init {
@@ -49,7 +52,6 @@ class AntaresEditorViewerJs(
         }
     }
 
-    @Suppress("unused") // JS app
     fun bindCanvas(canvas: HTMLCanvasElement) {
         try {
             val canvasJs = CanvasJs(canvas, controller.drawingView)
@@ -62,15 +64,38 @@ class AntaresEditorViewerJs(
         }
     }
 
-    @Suppress("unused") // JS app
-    fun openMetaGraph(id: String) {
+    /**
+     * Loads the [MetaGraph] with the specified [UUID] asynchronously.
+     * The promised object is the [MetaGraph] (not exposed to JS).
+     */
+    fun loadMetaGraphAsync(uuid: String): Promise<Any> {
         if (controller.currentMode.isExecute()) {
             controller.setMode(ApplicationMode.EDIT)
         }
-        val library = content.library as Library
-        metaGraph = library.getMetaGraph(UUID(id))
-        controller.setMetaGraph(metaGraph!!)
-        controller.graphNavigationViewController.setRootGraphView(metaGraph!!.graph.graphView, false)
+
+        val library = (content.library as Library).getContainerLibraryElement(UUID(uuid))?.library
+            ?: throw IllegalArgumentException("Circuit not found")
+
+        val service = if (library.isSystem) {
+            LibraryModule.systemLibraryPersistenceService
+        } else {
+            ProjectModule.projectLibraryPersistenceService
+        }
+
+        return (service as AbstractAkrab2RestLibraryPersistenceServiceJs).loadMetaGraphAsync(library, UUID(uuid))
+    }
+
+    /**
+     * Sets a [MetaGraph] as the currently displayed one.
+     * The argument [metaGraph] is of type [MetaGraph] (not exposed to JS).
+     */
+    fun setMetaGraph(metaGraph: Any) {
+        if (controller.currentMode.isExecute()) {
+            controller.setMode(ApplicationMode.EDIT)
+        }
+        this.metaGraph = metaGraph as MetaGraph
+        controller.setMetaGraph(metaGraph)
+        controller.graphNavigationViewController.setRootGraphView(metaGraph.graph.graphView, false)
     }
 
     /** ---- [ExecutionControlOutlet] interface */
