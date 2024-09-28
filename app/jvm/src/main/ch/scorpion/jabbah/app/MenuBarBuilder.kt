@@ -30,12 +30,12 @@ open class MenuBarBuilder(
 		fun createHelpMenu(): JMenu = JMenu(Translations.getString("application.menu.help"))
 
 		fun addZoomActions(menu:JMenu) {
-			menu.add(JMenuItem(ActionWrapperSwing(ZoomInAction())))
-			menu.add(JMenuItem(ActionWrapperSwing(ZoomNormalAction())))
-			menu.add(JMenuItem(ActionWrapperSwing(ZoomOutAction())))
-			menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ZoomCenterAction())))
-			menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ZoomFitAction())))
-			menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ZoomFitMaxNormalAction())))
+			menu.add(JMenuItem(ActionWrapperSwing(ZoomPanActions.zoomInAction)))
+			menu.add(JMenuItem(ActionWrapperSwing(ZoomPanActions.zoomNormalAction)))
+			menu.add(JMenuItem(ActionWrapperSwing(ZoomPanActions.zoomOutAction)))
+			menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ZoomPanActions.zoomCenterAction)))
+			menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ZoomPanActions.zoomFitAction)))
+			menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ZoomPanActions.zoomFitMaxNormalAction)))
 		}
 	}
 

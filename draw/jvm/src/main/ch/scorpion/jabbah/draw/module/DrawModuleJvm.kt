@@ -43,17 +43,12 @@ object DrawModuleJvm : AbstractModule() {
 
         DrawModule.require()
 
-        fillProperties(DrawModule.properties)
 	    buildPreferencesTree(BaseModuleJvm.preferencesTree)
 
 	    if (SystemUtils.IS_OS_WINDOWS) {
 			// Under Windows, the standard ALT key transfers focus to the main menu
 			DrawModule.mouseWheelPanModifier = KeyEvent.VK_CTRL
 	    }
-    }
-
-    private fun fillProperties(properties: Properties) {
-        properties.set(AbstractZoomPanAction.PROP_ZOOM_STEP, 1.5f)
     }
 
 	private fun buildPreferencesTree(root: PreferenceGroup) {

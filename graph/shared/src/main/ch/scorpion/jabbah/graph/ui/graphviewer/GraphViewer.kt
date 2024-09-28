@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.execution.ExecutionControlOutlet
 import ch.scorpion.jabbah.execution.PauseOrResumeActionImpl
 import ch.scorpion.jabbah.execution.SingleStepModeAction
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
@@ -35,7 +36,7 @@ class GraphViewerController(
 	graphView: GraphView? = null,
 	displayGlobalMessages: Boolean = false,
 	private val eventBus: EventBus = BaseModule.eventBus
-) : AbstractUIController<GraphViewerView>(), ApplicationModeHolder {
+) : AbstractUIController<GraphViewerView>(), ApplicationModeHolder, ExecutionControlOutlet {
 
 	companion object {
 		private val LOG by logger(GraphViewerController::class)
@@ -61,10 +62,6 @@ class GraphViewerController(
 
 	val graphNavigationViewController = GraphNavigationViewController(isRoot = true, drawingView)
 
-	val toggleApplicationModeAction = ToggleApplicationModeAction(null, this, eventBus)
-	val singleStepModeAction = SingleStepModeAction(applicationContextHolder.scheduler, eventBus)
-	val pauseOrResumeAction = PauseOrResumeActionImpl(applicationContextHolder.scheduler, eventBus)
-
 	init {
 		// Cyclic dependency
 		applicationContextHolder.applicationModeHolder = this
@@ -81,11 +78,22 @@ class GraphViewerController(
 		systemSpeedCategory.dispose()
 	}
 
-	fun setMetaGraph(metaGraph: MetaGraph) {
-		val clone = metaGraph.cloneGraphGraphStorable()
-		LOG.userTrail("Show '${clone.graphView.graph!!.name.value}' in separate viewer")
-		graphNavigationViewController.setRootGraphView(clone.graphView, editable = false)
-	}
+	/** ---- [ExecutionControlOutlet] */
+
+	override val toggleApplicationModeAction = ToggleApplicationModeAction(null, this, eventBus)
+
+	override val singleStepModeAction = SingleStepModeAction(applicationContextHolder.scheduler, eventBus)
+
+	override val pauseOrResumeAction = PauseOrResumeActionImpl(applicationContextHolder.scheduler, eventBus)
+
+	override val systemSpeedCategoryName: String
+		get() = applicationContextHolder.currentSystemSpeedCategory.systemSpeedCategory.toString()
+
+	override var currentSystemSpeed: Int
+		get() = applicationContextHolder.currentSystemSpeedCategory.systemSpeed.speed
+		set(value) {
+			applicationContextHolder.currentSystemSpeedCategory.systemSpeed.speed = value
+		}
 
 	/** ---- [ApplicationModeHolder] interface */
 
@@ -97,6 +105,14 @@ class GraphViewerController(
 			EDIT -> quitExecutionMode()
 			EXECUTE, EXEC_USECASE -> enterExecutionMode(mode, after)
 		}
+	}
+
+	/** ---- [GraphView] */
+
+	fun setMetaGraph(metaGraph: MetaGraph) {
+		val clone = metaGraph.cloneGraphGraphStorable()
+		LOG.userTrail("Show '${clone.graphView.graph!!.name.value}' in separate viewer")
+		graphNavigationViewController.setRootGraphView(clone.graphView, editable = false)
 	}
 
 	private fun quitExecutionMode() {

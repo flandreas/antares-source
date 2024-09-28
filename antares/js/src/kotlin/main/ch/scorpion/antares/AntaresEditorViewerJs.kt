@@ -1,11 +1,10 @@
 package ch.scorpion.antares
 
-import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.richtext.RichText
 import ch.scorpion.jabbah.draw.view.CanvasJs
-import ch.scorpion.jabbah.execution.PauseOrResumeAction
+import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.execution.ExecutionControlOutlet
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.app.ApplicationMode
@@ -21,7 +20,7 @@ import kotlin.js.Promise
 @JsExport
 class AntaresEditorViewerJs(
     private val content: AntaresEditorContent
-) : ExecutionControlOutlet {
+) {
 
     companion object {
         private val LOG by logger(AntaresEditorViewerJs::class)
@@ -39,6 +38,8 @@ class AntaresEditorViewerJs(
 
     val metaGraphName: String get() = metaGraph?.name?.let { RichText.stripToPlainText(it) } ?: ""
 
+    val executionControlOutlet: ExecutionControlOutlet get() = controller
+
     init {
         if (content.metaGraph != null && content.metaGraph !is MetaGraph) {
             LOG.error("Expecting MetaGraph in content, got ${content.metaGraph::class.simpleName}")
@@ -48,6 +49,9 @@ class AntaresEditorViewerJs(
         controller = GraphViewerController(metaGraph?.graph?.graphView, true)
         controller.graphNavigationViewController.enableOpenSubGraphRequests = false
         ViewMocks(controller)
+
+        // This application has only 1 View, so set this View as the current one right from the start
+        DrawViewModule.viewManager.activeView = controller.drawingView
 
         // Required to activate ScenarioDetector
         if (metaGraph != null) {
@@ -100,19 +104,4 @@ class AntaresEditorViewerJs(
         controller.setMetaGraph(metaGraph)
         controller.graphNavigationViewController.setRootGraphView(metaGraph.graph.graphView, false)
     }
-
-    /** ---- [ExecutionControlOutlet] interface */
-
-    override val toggleApplicationModeAction: Action get() = controller.toggleApplicationModeAction
-    override val singleStepModeAction: Action get() = controller.singleStepModeAction
-    override val pauseOrResumeAction: PauseOrResumeAction get() = controller.pauseOrResumeAction
-
-    override val systemSpeedCategoryName: String
-        get() = controller.applicationContextHolder.currentSystemSpeedCategory.systemSpeedCategory.toString()
-
-    override var currentSystemSpeed: Int
-        get() = controller.applicationContextHolder.currentSystemSpeedCategory.systemSpeed.speed
-        set(value) {
-            controller.applicationContextHolder.currentSystemSpeedCategory.systemSpeed.speed = value
-        }
 }

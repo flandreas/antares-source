@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.draw.container.QuadTree
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
+import ch.scorpion.jabbah.draw.view.AbstractZoomPanAction
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.PanMethod
 
@@ -61,6 +62,7 @@ object DrawModule : AbstractModule() {
     }
 
 	private fun fillProperties(properties: Properties) {
+		properties.set(AbstractZoomPanAction.PROP_ZOOM_STEP, 1.5f)
 		properties.set(PanMethod.PROP_PAN_METHOD, PanMethod.MiddleMouseButton.customName)
 	}
 
