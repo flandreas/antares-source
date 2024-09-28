@@ -4,13 +4,14 @@ import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.math.near
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.ZoomStrategy
 
 /**
  * Allows the user to zoom in a [View] by using the mouse wheel and to pan in the [View] using
- * the [CurrentPanMethod] (or by making scroll gestures on the track pad while pressing ALT).
+ * the [CurrentPanMethod] (or by making scroll gestures on the trackpad while pressing ALT).
  */
 class ZoomPanController(
 	val view: View<*>,
@@ -102,27 +103,19 @@ class ZoomPanController(
 
 	private inner class MouseController : MouseAdapter() {
 
-		private fun isZoomOutWheelRotation(e: MouseEvent) = e.wheelRotation > 0
+		private fun isZoomOutWheelRotation(e: MouseEvent) = e.wheelRotation.y < 0.0
 
 		private fun isZoomWithMetaIfRequired(e: MouseEvent) = e.isMetaDown || !wheelZoomRequiresMeta
 
 		private fun getZoomChangeFactorFromWheelRotation(e: MouseEvent): Double {
-			if (e.wheelRotation != 0) {
+			if (!e.wheelRotation.y.near(0.0)) {
 				return if (isZoomOutWheelRotation(e)) 1 / wheelZoomStep else wheelZoomStep
 			}
 			return 1.0
 		}
 
-		private fun getPanVectorFromWheelRotation(e: MouseEvent): Point2D {
-			if (e.wheelRotation != 0) {
-				return if (e.isShiftDown) {
-					Point2D(-e.wheelRotation * wheelPanStep, 0)
-				} else {
-					Point2D(0, -e.wheelRotation * wheelPanStep)
-				}
-			}
-			return Point2D.ZERO
-		}
+		private fun getPanVectorFromWheelRotation(e: MouseEvent): Point2D =
+			e.wheelRotation.multiply(wheelPanStep.toDouble())
 
 		/** ---- [MouseAdapter] */
 

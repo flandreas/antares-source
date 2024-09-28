@@ -256,7 +256,16 @@ private class MouseEventJvm(
 
 	override val clickCount: Int get() = event.clickCount
 
-	override val wheelRotation: Int get() = (event as? AwtMouseWheelEvent)?.wheelRotation ?: 0
+	override val wheelRotation: Point2D get() =
+		if (event is AwtMouseWheelEvent) {
+			if (isShiftDown) {
+				Point2D(-event.wheelRotation, 0)
+			} else {
+				Point2D(0, -event.wheelRotation)
+			}
+		} else {
+			Point2D.ZERO
+		}
 
 	override val isLeftButtonDown: Boolean get() = SwingUtilities.isLeftMouseButton(event)
 

@@ -24,8 +24,8 @@ internal class MouseEventJs(
 
     override val modifiers: Int get() = convertModifiers()
 
-    override val wheelRotation: Int
-        get() = if (event is org.w3c.dom.events.WheelEvent) event.deltaY.toInt() else 0
+    override val wheelRotation: Point2D
+        get() = if (event is org.w3c.dom.events.WheelEvent) Point2D(-event.deltaX.toInt(), -event.deltaY.toInt()) else Point2D.ZERO
 
     override val x: Int get() = location.xInt
 

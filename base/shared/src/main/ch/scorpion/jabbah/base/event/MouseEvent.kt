@@ -22,7 +22,16 @@ interface MouseEvent : InputEvent {
     val y: Int
     val button: Button
     val clickCount: Int
-    val wheelRotation: Int
+
+    /**
+     * On the JVM platform, [wheelRotation] represents only movement along the y-axis,
+     * and the sign of the value distinguishes between upwards and downwards. When events are produced
+     * by the trackpad, an artificial SHIFT_DOWN is added to distinguish between horizontal and
+     * vertical "scrolling".
+     * On the JS platform, a WheelEvent has two separate values for x and y.
+     */
+    val wheelRotation: Point2D
+
     val location: Point2D get() = Point2D(x.toDouble(), y.toDouble())
 	val isLeftButtonDown: Boolean
 	val isMiddleButtonDown: Boolean
@@ -34,15 +43,15 @@ interface MouseEvent : InputEvent {
  * or for testing.
  */
 data class MouseEventImpl(
-	override val type: MouseEventType = MouseEventType.PRESSED,
-	override val event: Any = "",
-	override val x: Int = 0,
-	override val y: Int = 0,
-	override val button: Button = Button.NONE,
-	override val clickCount: Int = 0,
-	override val wheelRotation: Int = 0,
-	override val source: Any = "",
-	override val modifiers: Int = 0
+    override val type: MouseEventType = MouseEventType.PRESSED,
+    override val event: Any = "",
+    override val x: Int = 0,
+    override val y: Int = 0,
+    override val button: Button = Button.NONE,
+    override val clickCount: Int = 0,
+    override val wheelRotation: Point2D = Point2D.ZERO,
+    override val source: Any = "",
+    override val modifiers: Int = 0
 ) : MouseEvent {
 
 	private var consumed: Boolean = false
