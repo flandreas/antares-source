@@ -24,7 +24,7 @@ data class LibraryTreeNodeJS(
 )
 
 fun createLibraryTreeJS(library: Library): LibraryTreeNodeJS =
-    createLibraryTreeNode("Desktop", LibraryTreeNodeType.Desktop, null, library.expandedImports.libraries)
+    createLibraryTreeNode("Desktop", LibraryTreeNodeType.Desktop, null, library.expandedImports.libraries)!!
 
 private fun createLibraryTreeNode(item: LibraryItem): LibraryTreeNodeJS? {
     return when (item) {
@@ -51,4 +51,11 @@ private fun createLibraryTreeNode(
     type: LibraryTreeNodeType,
     id: String?,
     items: List<LibraryItem>
-): LibraryTreeNodeJS = LibraryTreeNodeJS(name, type, items.mapNotNull { createLibraryTreeNode(it) }.toTypedArray(), id)
+): LibraryTreeNodeJS? {
+    val children = items.mapNotNull { createLibraryTreeNode(it) }
+    return if (type == LibraryTreeNodeType.Folder && children.isEmpty()) {
+        null
+    } else {
+        LibraryTreeNodeJS(name, type, items.mapNotNull { createLibraryTreeNode(it) }.toTypedArray(), id)
+    }
+}
