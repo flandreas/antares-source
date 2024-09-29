@@ -160,7 +160,7 @@ class FlexibleTextView(
 
 	/** Transform [shape] to view coordinates using the current [zoomPan]. */
 	private fun getViewRectangle(): Rectangle2D {
-		val anchorView = zoomPan!!.transform.modelToView(location)
+		val anchorView = zoomPan!!.transform.modelToView(location).divide(zoomPan!!.devicePixelRatio())
 		val p = calculateBoxCorner(anchorView, factor)
 		return Rectangle2D(p.x, p.y, shape.width * factor, shape.height)
 	}
