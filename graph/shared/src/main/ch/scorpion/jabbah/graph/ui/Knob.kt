@@ -292,7 +292,7 @@ class KnobView(
 	}
 
 	override fun contains(x: Double, y: Double): Boolean =
-		boundingBox.center.distance(x, y) <= OUTER_SIZE / 2 / zoomPan!!.zoomFactor
+		boundingBox.center.distance(x, y) <= OUTER_SIZE / 2 / zoomPan!!.zoomFactor * zoomPan!!.devicePixelRatio()
 
 	/** ---- [ActorView] */
 

@@ -68,7 +68,7 @@ abstract class AbstractRectangularUnzoomable(
 
 	/** Returns the rectangle in view coordinate space.*/
 	protected fun getViewRectangle(): Rectangle2D {
-		val p = zoomPan!!.transform.modelToView(location)
+		val p = zoomPan!!.transform.modelToView(location).divide(zoomPan!!.devicePixelRatio())
 		return Rectangle2D(p.x - halfSize, p.y - halfSize, 2 * halfSize, 2 * halfSize)
 	}
 }

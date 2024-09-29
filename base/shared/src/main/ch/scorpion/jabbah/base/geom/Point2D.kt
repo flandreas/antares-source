@@ -70,6 +70,8 @@ data class Point2D(val x: Double = 0.0, val y: Double = 0.0) {
 	/** Creates a new [Point2D] by multiplying the coordinates of this [Point2D] with the specified factor.*/
 	fun multiply(factor: Double): Point2D = Point2D(x * factor, y * factor)
 
+	fun divide(dividend: Double): Point2D = Point2D(x / dividend, y / dividend)
+
 	/** Creates a new [Point2D] by keeping [y] and adding [dx] to [x].*/
 	fun addX(dx: Double): Point2D = Point2D(x + dx, y)
 

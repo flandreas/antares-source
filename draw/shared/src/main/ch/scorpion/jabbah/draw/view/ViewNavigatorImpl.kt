@@ -42,7 +42,7 @@ class ViewNavigatorImpl(
 	/** ---- [ViewNavigator] interface */
 
 	override fun createTransformation(zoomFactor: Double): ViewTransformation =
-		createTransformation(ZoomPan(view, zoomFactor, view.zoomPan.panOrigin))
+		createTransformation(ZoomPan(view, zoomFactor, view.zoomPan.panOrigin, view::devicePixelRatio))
 
 	private fun createTransformation(zoomPan: ZoomPan): ViewTransformation =
 		ViewTransformation(
@@ -64,7 +64,7 @@ class ViewNavigatorImpl(
 		val zoomLocationAfterM = view.viewToModel(effZoomLocation, zoomFactor)
 		val offset = zoomLocationBeforeM.subtract(zoomLocationAfterM)
 
-		val zoomPan = ZoomPan(view, zoomFactor, view.zoomPan.panOrigin.add(offset))
+		val zoomPan = ZoomPan(view, zoomFactor, view.zoomPan.panOrigin.add(offset), view::devicePixelRatio)
 		view.transformation = createTransformation(zoomPan)
 	}
 
@@ -73,7 +73,7 @@ class ViewNavigatorImpl(
 		val offsetV = translation.viewPoint.subtract(locationAfterZoomV)
 		val offsetM = offsetV.multiply(1 / translation.zoomFactor).negate
 
-		val zoomPan = ZoomPan(view, translation.zoomFactor, offsetM)
+		val zoomPan = ZoomPan(view, translation.zoomFactor, offsetM, view::devicePixelRatio)
 
 		view.transformation = createTransformation(zoomPan)
 	}
@@ -86,13 +86,20 @@ class ViewNavigatorImpl(
 	}
 
 	override fun panBy(dx: Int, dy: Int) {
-		setZoomPan(ZoomPan(view, view.zoomFactor, Point2D(
-			view.zoomPan.panOrigin.x - dx / view.zoomFactor,
-			view.zoomPan.panOrigin.y - dy / view.zoomFactor)))
+		setZoomPan(
+			ZoomPan(
+				view,
+				view.zoomFactor,
+				Point2D(
+					view.zoomPan.panOrigin.x - dx / view.zoomFactor,
+					view.zoomPan.panOrigin.y - dy / view.zoomFactor),
+				view::devicePixelRatio
+			)
+		)
 	}
 
 	override fun setPanOrigin(p: Point2D) {
-		setZoomPan(ZoomPan(view, view.zoomPan.zoomFactor, p))
+		setZoomPan(ZoomPan(view, view.zoomPan.zoomFactor, p, view::devicePixelRatio))
 	}
 
 	private fun setZoomPan(zoomPan: ZoomPan) {
@@ -109,21 +116,21 @@ class ViewNavigatorImpl(
 
 	override fun panCenter(zoomFactor: Double) {
 		if (isZoomFactorInValidRange(zoomFactor)) {
-			setZoomPan(ZoomPan(view, zoomFactor, calculateContentCenterPan(zoomFactor)))
+			setZoomPan(ZoomPan(view, zoomFactor, calculateContentCenterPan(zoomFactor), view::devicePixelRatio))
 		}
 	}
 
 	override fun fit() {
 		val zoomFactor = calculateFitZoomFactor()
 		if (isZoomFactorInValidRange(zoomFactor)) {
-			setZoomPan(ZoomPan(view, zoomFactor, calculateContentCenterPan(zoomFactor)))
+			setZoomPan(ZoomPan(view, zoomFactor, calculateContentCenterPan(zoomFactor), view::devicePixelRatio))
 		}
 	}
 
 	override fun fitMaxNormal() {
 		val zoomFactor = calculateFixMaxNormalZoomFactor()
 		if (isZoomFactorInValidRange(zoomFactor)) {
-			setZoomPan(ZoomPan(view, zoomFactor, calculateContentCenterPan(zoomFactor, fixMaxNormal = true)))
+			setZoomPan(ZoomPan(view, zoomFactor, calculateContentCenterPan(zoomFactor, fixMaxNormal = true), view::devicePixelRatio))
 		}
 	}
 

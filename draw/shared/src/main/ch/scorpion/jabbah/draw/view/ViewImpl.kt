@@ -330,10 +330,15 @@ open class ViewImpl<C : InputEventContext>(
 		drawables.asReversed().forEach {
 			if (it is Unzoomable) {
 				context.g.transform = oldTransform
+				canvas.devicePixelRatio.also { dpr ->
+					context.g.scale(dpr, dpr)
+					it.draw(context)
+					context.g.scale(1 / dpr, 1 / dpr)
+				}
 			} else {
 				context.g.transform = zoomedTransform
+				it.draw(context)
 			}
-			it.draw(context)
 		}
 
 		if (overlayColor != null) {

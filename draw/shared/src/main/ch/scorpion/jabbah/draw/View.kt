@@ -79,6 +79,8 @@ interface View<C : InputEventContext> : ContentView<C>, ViewToModelTransform {
 	 */
 	var canvas: Canvas
 
+	val devicePixelRatio: Double get() = canvas.devicePixelRatio
+
 	/** Controls the rectangular area that is free to display content to the user. Can be reduced from outside.*/
 	val space: ViewSpace
 
