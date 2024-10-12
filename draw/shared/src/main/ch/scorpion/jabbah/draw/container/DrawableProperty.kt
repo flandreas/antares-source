@@ -14,7 +14,8 @@ import kotlin.reflect.KProperty
  */
 abstract class AbstractDrawableProperty<V : Drawable, T>(
 	initialValue: T,
-	private val afterSet: (() -> Unit)? = null
+	private val afterSet: (() -> Unit)? = null,
+	private val afterChange: ((V) -> Unit)? = null
 ) : ReadWriteProperty<V, T> {
 
 	private var value = initialValue
@@ -29,30 +30,22 @@ abstract class AbstractDrawableProperty<V : Drawable, T>(
 			thisRef.invalidate()
 			thisRef.validate()
 
-			afterChange(thisRef, property, value)
+			afterChange?.invoke(thisRef)
 		}
 	}
-
-	protected abstract fun afterChange(thisRef: V, property: KProperty<*>, value: T)
 }
 
 open class DrawableProperty<V : Drawable, T>(
 	initialValue: T,
-	afterSet: (() -> Unit)? = null
-) : AbstractDrawableProperty<V, T>(initialValue, afterSet) {
-
-	override fun afterChange(thisRef: V, property: KProperty<*>, value: T) { }
-}
+	afterSet: (() -> Unit)? = null,
+	afterChange: ((V) -> Unit)? = null
+) : AbstractDrawableProperty<V, T>(initialValue, afterSet, afterChange)
 
 /**
  * An [AbstractDrawableProperty] that calls [Drawable.update] after a value has changed.
  */
 open class DrawableGeometryProperty<V : Drawable, T>(
 	initialValue: T,
-	afterSet: (() -> Unit)? = null
-) : AbstractDrawableProperty<V, T>(initialValue, afterSet) {
-
-	override fun afterChange(thisRef: V, property: KProperty<*>, value: T) {
-		thisRef.update()
-	}
-}
+	afterSet: (() -> Unit)? = null,
+	afterChange: ((V) -> Unit)? = { it.update() }
+) : AbstractDrawableProperty<V, T>(initialValue, afterSet, afterChange)

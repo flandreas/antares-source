@@ -27,6 +27,7 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
+import ch.scorpion.jabbah.graph.view.ControlViewSourceProperty
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
@@ -43,7 +44,7 @@ class TerminalView(
 	model: Terminal = Terminal(),
 	lightColor: LightColor? = null,
 	handedness: Handedness = Handedness.LEFT,
-	private val eventBus: EventBus = BaseModule.eventBus
+	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractRectangularVerticeView<Terminal>(
 	styleProvider,
 	model,
@@ -70,15 +71,7 @@ class TerminalView(
 		}
 
 	/** The color used for drawing the text. If `null`, the text color from [AntaresTheme]'s screen property is used.*/
-	var lightColor: LightColor? = lightColor
-		set(value) {
-			if (field != value) {
-				invalidate()
-				field = value
-				postControlViewSourceChangeEvent(eventBus)
-				validate()
-			}
-		}
+	var lightColor: LightColor? by ControlViewSourceProperty(lightColor, eventBus)
 
 	var handedness: Handedness = handedness
 		set(value) {

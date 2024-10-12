@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.container.DrawableProperty
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -26,6 +27,8 @@ import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
+import ch.scorpion.jabbah.graph.view.ControlViewSourceGeometryProperty
+import ch.scorpion.jabbah.graph.view.ControlViewSourceProperty
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -61,26 +64,13 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 		)
 	}
 
-	var size: Size = size
-		set(value) {
-			if (value != field) {
-				invalidate()
-				field = value
-				handleSizeChanged()
-				updateGeometry()
-				invalidate()
-				postControlViewSourceChangeEvent(eventBus)
-			}
-		}
+	var size: Size by ControlViewSourceGeometryProperty(size, eventBus) {
+		handleSizeChanged()
+		updateGeometry()
+	}
 
-	var hasBorder: Boolean = DEFAULT_HAS_BORDER
-		set(value) {
-			if (field != value) {
-				invalidate()
-				field = value
-				invalidate()
-			}
-		}
+	@Suppress("MemberVisibilityCanBePrivate") // Reflection
+	var hasBorder: Boolean by DrawableProperty(DEFAULT_HAS_BORDER)
 
 	/** Returns the [Geometry] of the current [SevenSegmentDisplayView] size.*/
 	protected val geom: Geometry get() = geometries.getValue(size)
@@ -110,14 +100,7 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 
 	/** ---- [LightEmitter] interface */
 
-	override var lightColor: LightColor = lightColor
-		set(value) {
-			if (field != value) {
-				invalidate()
-				field = value
-				postControlViewSourceChangeEvent(eventBus)
-			}
-		}
+	override var lightColor: LightColor by ControlViewSourceProperty(lightColor, eventBus)
 
 	/** ---- [Storable] */
 

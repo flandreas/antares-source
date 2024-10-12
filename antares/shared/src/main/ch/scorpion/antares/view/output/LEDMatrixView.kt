@@ -26,6 +26,8 @@ import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
+import ch.scorpion.jabbah.graph.view.ControlViewSourceGeometryProperty
+import ch.scorpion.jabbah.graph.view.ControlViewSourceProperty
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -53,32 +55,16 @@ class LEDMatrixView(
 		private const val DOT_SIZE = Look.SCALE
 	}
 
-	override var lightColor: LightColor = lightColor
-		set(value) {
-			invalidate()
-			field = value
-			postControlViewSourceChangeEvent(eventBus)
-		}
+	override var lightColor: LightColor by ControlViewSourceProperty(lightColor)
 
-	var size: Size = DEFAULT_SIZE
-		set(value) {
-			if (value != field) {
-				field = value
-				updateGeometry()
-				postControlViewSourceChangeEvent(eventBus)
-			}
-		}
+	var size: Size by ControlViewSourceGeometryProperty(DEFAULT_SIZE, eventBus, ::updateGeometry)
 
 	/** `true` if the dots are drawn as circles, `false` if they are drawn as squares .*/
-	var isCircleDots: Boolean = true
-		set(value) {
-			if (field != value) {
-				field = value
-				postControlViewSourceChangeEvent(eventBus)
-			}
-		}
+	@Suppress("MemberVisibilityCanBePrivate") // Reflection
+	var isCircleDots: Boolean by ControlViewSourceProperty(true)
 
 	/** `true` if the dots additionally show whether the corresponding port bits are set to 1.*/
+	@Suppress("MemberVisibilityCanBePrivate") // Reflection
 	var isDebug: Boolean = false
 
 	private val factor: Double
