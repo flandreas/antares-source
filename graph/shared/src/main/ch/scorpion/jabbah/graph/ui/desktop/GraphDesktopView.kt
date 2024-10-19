@@ -215,6 +215,10 @@ class GraphDesktopViewController(
 
 	private fun handle(request: OpenSubGraphRequest) {
 		if (request.newView) {
+			if (request.notifyIfBroken(eventBus)) {
+				return
+			}
+
 			System.invokeLater {
 				InvocationHandler.invoke {
 					openSubGraphVerticeView(request.subGraphVerticeView)

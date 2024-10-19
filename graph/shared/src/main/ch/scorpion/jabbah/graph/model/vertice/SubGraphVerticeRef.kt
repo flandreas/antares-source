@@ -120,7 +120,7 @@ class SubGraphVerticeRef(
 	/** Can be set during [read] if reference to [MetaGraph] is broken. */
 	private var _designError: DesignError? = null
 
-	private val hasDesignError: Boolean get() = designError != null
+	val hasDesignError: Boolean get() = designError != null
 
 	/** Interprets the script in [Graph.script] during execution (if required by system parameters). */
 	private var interpreter: Interpreter? = null
