@@ -76,4 +76,6 @@ interface ViewNavigator {
     fun fitMaxNormal()
 
 	fun calculateFixMaxNormalZoomFactor(): Double
+
+    fun isZoomFactorInValidRange(zoomFactor: Double): Boolean
 }

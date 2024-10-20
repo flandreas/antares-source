@@ -43,6 +43,8 @@ abstract class AbstractZoomPanAction(
 		const val PROP_ZOOM_STEP = "view.command.zoom.step"
 	}
 
+	protected val zoomStep: Double = BaseModule.properties.getFloat(PROP_ZOOM_STEP).toDouble()
+
 	override fun execute(event: ActionEvent) {
 		viewManager.activeView!!.view!!.zoomStrategy = zoomStrategy
 	}
@@ -55,6 +57,7 @@ abstract class AbstractZoomPanAction(
 		when (e.name) {
 			View.PROP_USER_ZOOM_ENABLED -> updateEnabled()
 			View.PROP_ZOOM_STRATEGY -> updateSelected()
+			View.PROP_TRANSFORMATION -> updateEnabled()
 		}
 	}
 
@@ -81,9 +84,14 @@ private class ZoomInAction(
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractZoomPanAction(ZoomStrategy.NONE, "view.action.zoomIn", eventBus, viewManager) {
 
+	override fun calculateEnabled(): Boolean =
+		super.calculateEnabled()
+			&& view != null
+			&& view!!.navigator.isZoomFactorInValidRange(view!!.zoomFactor * zoomStep)
+
 	override fun execute(event: ActionEvent) {
 		val view = viewManager.activeView!!.view!!
-		view.navigator.multiplyZoomFactor(BaseModule.properties.getFloat(PROP_ZOOM_STEP).toDouble())
+		view.navigator.multiplyZoomFactor(zoomStep)
 		view.zoomStrategy = ZoomStrategy.NONE
 	}
 }
@@ -94,9 +102,14 @@ private class ZoomOutAction(
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractZoomPanAction(ZoomStrategy.NONE,"view.action.zoomOut", eventBus, viewManager) {
 
+	override fun calculateEnabled(): Boolean =
+		super.calculateEnabled()
+			&& view != null
+			&& view!!.navigator.isZoomFactorInValidRange(1 / view!!.zoomFactor * zoomStep)
+
 	override fun execute(event: ActionEvent) {
 		val view = viewManager.activeView!!.view!!
-		view.navigator.multiplyZoomFactor(1 / BaseModule.properties.getFloat(PROP_ZOOM_STEP).toDouble())
+		view.navigator.multiplyZoomFactor(1 / zoomStep)
 		view.zoomStrategy = ZoomStrategy.NONE
 	}
 }

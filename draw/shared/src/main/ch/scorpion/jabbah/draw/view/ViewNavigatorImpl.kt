@@ -137,6 +137,9 @@ class ViewNavigatorImpl(
 	override fun calculateFixMaxNormalZoomFactor(): Double =
 		min(effDefaultZoomFactor, calculateFitZoomFactor())
 
+	override fun isZoomFactorInValidRange(zoomFactor: Double): Boolean =
+		zoomFactor in minZoomFactor..maxZoomFactor
+
 	/** ---- [ViewNavigatorImpl] */
 
 	private fun calculateContentCenterPan(zoomFactor: Double, fixMaxNormal: Boolean = false): Point2D {
@@ -173,7 +176,4 @@ class ViewNavigatorImpl(
 			(view.space.area.widthInt - 2 * FIT_ZOOM_INSET) / bounds.width,
 			(view.space.area.heightInt - 2 * FIT_ZOOM_INSET) / bounds.height)
 	}
-
-	private fun isZoomFactorInValidRange(zoomFactor: Double): Boolean =
-		zoomFactor in minZoomFactor..maxZoomFactor
 }
