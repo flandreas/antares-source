@@ -35,7 +35,7 @@ import kotlin.reflect.KClass
 class SchedulerImpl(
 	private val currentSystemSpeedCategory: CurrentSystemSpeedCategory,
 	private val timeService: TimeService = BaseModule.timeService,
-	private val eventBus: EventBus = BaseModule.eventBus,
+	override val eventBus: EventBus = BaseModule.eventBus,
 	private val noiseGeneratorHolder: NoiseGeneratorHolder = ExecutionModule.noiseGeneratorHolder,
 	private val task: SchedulerTask = ExecutionModule.schedulerTaskFactory.invoke(currentSystemSpeedCategory, eventBus),
 	private val executionErrorHandler: ExecutionErrorHandlerImpl = ExecutionErrorHandlerImpl(),

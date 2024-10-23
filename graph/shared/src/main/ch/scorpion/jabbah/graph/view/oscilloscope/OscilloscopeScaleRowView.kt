@@ -120,7 +120,8 @@ class OscilloscopeScaleRowView(
 					unit = "x",
 					mouseMovedCondition = { keepMouseMoved(it.location) },
 					displayHandler = { isHovering = false },
-					valueChangeHandler = { oscilloscopeView.timelineScale = it.toDouble() }
+					valueChangeHandler = { oscilloscopeView.timelineScale = it.toDouble() },
+					signalHandler = context.signalHandler
 				)
 			}
 
@@ -134,7 +135,8 @@ class OscilloscopeScaleRowView(
 					unit = "x",
 					mouseMovedCondition = { keepMouseMoved(it.location) },
 					displayHandler = { isHovering = false },
-					valueChangeHandler = { oscilloscopeView.timelineScale = it.toDouble() }
+					valueChangeHandler = { oscilloscopeView.timelineScale = it.toDouble() },
+					signalHandler = context.signalHandler
 				)
 			}
 		}

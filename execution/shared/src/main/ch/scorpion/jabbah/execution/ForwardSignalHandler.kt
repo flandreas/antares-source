@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.execution
 
+import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
@@ -10,7 +12,8 @@ import kotlin.reflect.KClass
  * Primarily used for testing.
  */
 class ForwardSignalHandler(
-	override val systemSpeedCategory: CurrentSystemSpeedCategory
+	override val systemSpeedCategory: CurrentSystemSpeedCategory,
+	override val eventBus: EventBus = BaseModule.eventBus
 ) : SignalHandler {
 
 	override var isDeepExecution: Boolean

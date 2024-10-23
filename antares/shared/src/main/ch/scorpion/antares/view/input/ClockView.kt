@@ -255,7 +255,8 @@ class ClockView(
 					if (it < Long.MAX_VALUE / 1_000) {
 						model.propagationDelay = LongValueImpl(it * 1_000)
 					}
-				}
+				},
+				signalHandler = context.signalHandler
 			)
 		}
 
@@ -275,7 +276,8 @@ class ClockView(
 					if (it < Long.MAX_VALUE / 1_000) {
 						model.propagationDelay = LongValueImpl(it * 1_000)
 					}
-				}
+				},
+				signalHandler = context.signalHandler
 			)
 		}
 	}

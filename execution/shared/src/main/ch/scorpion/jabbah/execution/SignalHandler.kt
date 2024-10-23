@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.execution
 
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
@@ -11,6 +12,12 @@ import kotlin.reflect.KClass
  * scheduling functionality.
  */
 interface SignalHandler : ExecutionErrorHandler {
+
+	/**
+	 * The [EventBus] on which this [SignalHandler] posts event related to the state of the [SignalHandler],
+	 * or the [Scheduler] respectively.
+	 */
+	val eventBus: EventBus
 
 	val systemSpeedCategory: CurrentSystemSpeedCategory
 

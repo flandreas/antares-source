@@ -139,7 +139,8 @@ class ClockControlView(
 					unit = "µs",
 					mouseMovedCondition = { keepMouseMoved(it.location) },
 					displayHandler = { isHovering = false },
-					valueChangeHandler = { model.propagationDelay = LongValueImpl(it * 1_000) }
+					valueChangeHandler = { model.propagationDelay = LongValueImpl(it * 1_000) },
+					signalHandler = context.signalHandler
 				)
 			}
 
