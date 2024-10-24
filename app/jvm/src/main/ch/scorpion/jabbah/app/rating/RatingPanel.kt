@@ -37,16 +37,46 @@ class RatingPanel(
 
 		private const val MAX_REMARK_LENGTH = 200
 
-		fun showAsDialog(application: Application, cancelable: Boolean, parent: Frame) {
+		fun showAsDialog(application: Application, cancelable: Boolean, parent: Frame, service: RatingService = AppModuleJvm.ratingService) {
 			// If this was in an InvocationHandler, dialog would never show up when
 			// called from Application.handleShutDown()
+
+			var aspects: List<RatingAspect>? = null
+			var aspectError: Throwable? = null
+
+			/**
+			 * If this method is automatically called when the application finishes (cancelable = false),
+			 * and there is no internet connection (which is often the case in a lab environment),
+			 * we don't want to show the [RatingPanel] overlaid by an error dialog. Instead, just skip everything
+			 * and don't ask for a rating.
+			 *
+			 * Finding out whether there is a working internet connection or not is done by pre-fetching
+			 * [RatingAspect]s. If they could be successfully loaded, they are provided to the dialog in order
+			 * to avoid being loaded again.
+			 */
+			if (!cancelable) {
+				runBlocking {
+					try {
+						aspects = service.retrieveAspects()
+					} catch (e: Throwable) {
+						aspectError = e
+					}
+				}
+			}
+
+			if (aspectError != null) {
+				return
+			}
+
 			DialogBuilder<RatingPanel>(parent)
-				.content { dialog -> RatingPanel(application, cancelable, closeHandler = { dialog.dispose() }) }
+				.content { dialog -> RatingPanel(application, cancelable, service, closeHandler = { dialog.dispose() }) }
 				.title(Translations.getString("application.rating.dialog.title"))
 				.nonResizable()
 				.preventWindowClose(!cancelable)
 				.preferredSize(Dimension(400, 500))
-				.onWindowOpened { it.loadData() }
+				.onWindowOpened {
+					it.loadData(aspects)
+				}
 				.show()
 		}
 	}
@@ -156,29 +186,37 @@ class RatingPanel(
 		add(buttonPanel, BorderLayout.SOUTH)
 	}
 
-	private fun loadData() {
+	private fun loadData(aspects: List<RatingAspect>?) {
 		InvocationHandler.invoke {
 			runBlocking {
 				try {
-					aspects = service.retrieveAspects()
+					if (aspects == null) {
+						setAspects(service.retrieveAspects())
+					} else {
+						setAspects(aspects)
+					}
 				} catch (e: Throwable) {
 					showLoadError()
 					closeHandler()
 					return@runBlocking
 				}
-
-				likeMostComboBox.model = DefaultComboBoxModel(aspects.toTypedArray())
-					.also { it.insertElementAt(null, 0) }
-				likeLeastComboBox.model = DefaultComboBoxModel(aspects.toTypedArray())
-					.also { it.insertElementAt(null, 0) }
-
-
-				likeMostComboBox.selectedIndex = 0
-				likeLeastComboBox.selectedIndex = 0
-
-				isEnabled = true
 			}
 		}
+	}
+
+	private fun setAspects(aspects: List<RatingAspect>) {
+		this.aspects = aspects
+
+		likeMostComboBox.model = DefaultComboBoxModel(aspects.toTypedArray())
+			.also { it.insertElementAt(null, 0) }
+		likeLeastComboBox.model = DefaultComboBoxModel(aspects.toTypedArray())
+			.also { it.insertElementAt(null, 0) }
+
+
+		likeMostComboBox.selectedIndex = 0
+		likeLeastComboBox.selectedIndex = 0
+
+		isEnabled = true
 	}
 
 	private fun showLoadError() {

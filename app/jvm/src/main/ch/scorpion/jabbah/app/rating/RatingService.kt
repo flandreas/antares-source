@@ -14,6 +14,7 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.serialization.Serializable
+import java.net.UnknownHostException
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -82,6 +83,9 @@ open class RailwayRatingService(
 
 			val aspects: RatingAspects = httpClient.get(url).body()
 			return aspects.aspects
+		} catch (e: UnknownHostException) {
+			LOG.info("Could not load rating aspects due to UnknownHostException. Probably no internet connection.")
+			throw e
 		} catch (e: Throwable) {
 			LOG.error("Error while retrieving rating aspects", e)
 			throw e
