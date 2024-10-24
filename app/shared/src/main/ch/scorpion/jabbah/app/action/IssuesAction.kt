@@ -8,7 +8,11 @@ class IssuesAction(
 	application: Application
 ) : AbstractApplicationAction("help.action.issues", application) {
 
+	init {
+	    enabled = application.issuesUrl != null
+	}
+
 	override fun execute(event: ActionEvent) {
-		System.browse("${application.documentationUrl!!}/usermanual", name)
+		System.browse(application.issuesUrl!!, name)
 	}
 }
