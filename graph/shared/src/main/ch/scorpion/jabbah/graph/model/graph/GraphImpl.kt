@@ -6,6 +6,8 @@ import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
 import ch.scorpion.jabbah.base.dsl.SymbolTable
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.PropertyOwner
+import ch.scorpion.jabbah.base.event.PropertyOwnerImpl
 import ch.scorpion.jabbah.base.event.VetoException
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.parser.Parser
@@ -14,6 +16,8 @@ import ch.scorpion.jabbah.edit.model.text.description.*
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.*
+import ch.scorpion.jabbah.graph.model.Graph.Companion.PROP_DESCRIPTION
+import ch.scorpion.jabbah.graph.model.Graph.Companion.PROP_NAME
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.nonvolatile.NonVolatileStorable
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
@@ -30,8 +34,9 @@ import ch.scorpion.jabbah.io.*
 open class GraphImpl(
 	name: TranslatableText = TranslatableText(Translations.getString("graph.name.unknown")),
 	type: GraphType = GraphModelModule.graphTypeRegistry.default,
-	private val eventBus: EventBus = BaseModule.eventBus
-) : AbstractStorable(), Graph, Namable, Describable {
+	private val eventBus: EventBus = BaseModule.eventBus,
+	private val propertyOwner: PropertyOwner<Any> = PropertyOwnerImpl()
+) : AbstractStorable(), Graph, Namable, Describable, PropertyOwner<Any> by propertyOwner {
 
 	companion object {
 		private val LOG by logger(GraphImpl::class)
@@ -45,6 +50,10 @@ open class GraphImpl(
 	/** Forwards signal changes of a [OscilloscopeProbeVertice] to the [Oscilloscope].*/
 	private val oscilloscopeProbeHandler = OscilloscopeProbeHandler()
 
+	init {
+	    propertyOwner.source = this
+	}
+
 	override fun dispose() {}
 
 	/** ---- [Namable], [Describable] interfaces */
@@ -53,9 +62,12 @@ open class GraphImpl(
 		if (it.isEmpty || StringUtils.isBlank(it.value)) {
 			throw IllegalArgumentException(Translations.getString("edit.property.name.empty.error"))
 		}
+		propertyOwner.fire(PROP_NAME, null, it)
 	}
 
-	override var description: Description by observableDescription(Description(""))
+	override var description: Description by observableDescription(Description("")) {
+		propertyOwner.fire(PROP_DESCRIPTION, null, it)
+	}
 
 	/** ---- [Graph] interface */
 

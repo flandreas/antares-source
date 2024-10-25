@@ -9,6 +9,8 @@ import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
 import ch.scorpion.jabbah.base.dsl.Symbol
 import ch.scorpion.jabbah.base.dsl.SymbolTable
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.PropertyOwner
+import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.parser.Parser
 import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
@@ -41,7 +43,16 @@ interface GraphFactory {
  * surrounding [Graph] that uses this [Graph], such as to derive a proper clock design for synchronous
  * applications.
  */
-interface Graph : GraphPortOwner, Namable, Describable, Storable, Bean {
+interface Graph : GraphPortOwner, Namable, Describable, Storable, Bean, PropertyOwner<Any> {
+
+	companion object {
+
+		/** The name of the [PropertyChangeEvent] sent if [name] changes.*/
+		const val PROP_NAME = "name"
+
+		/** The name of the [PropertyChangeEvent] sent if [description] changes.*/
+		const val PROP_DESCRIPTION = "description"
+	}
 
 	val type: GraphType
 
