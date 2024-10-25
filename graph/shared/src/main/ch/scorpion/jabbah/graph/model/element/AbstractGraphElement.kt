@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.graph.model.element
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
+import ch.scorpion.jabbah.base.event.VetoException
+import ch.scorpion.jabbah.base.event.VetoHandler
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.edit.model.text.description.observableDescription
@@ -101,6 +103,23 @@ abstract class AbstractGraphElement : ActorImpl(), GraphElement, Describable {
 		if (listeners != null) {
 			val event = GraphElementEvent(this, signalHandler, reason)
 			listeners!!.toList().forEach { it.stateChanged(event) }
+		}
+	}
+
+	/**
+	 * Implements two-phase vetoable [GraphElementEvent] handling.
+	 *
+	 * First let all registered [GraphElementListener] check whether they would accept [event] by calling
+	 * [GraphElementListener.checkStateChange]. If any of them throws [VetoException], [vetoHandler] is called,
+	 * otherwise [GraphElementListener.stateChanged] is called on all [GraphElementListener]s, and finally[successHandler] gets called to give this [GraphElement] a chance to update its state.
+	 */
+	protected fun vetoableStateChanged(event: GraphElementEvent, successHandler: VetoHandler<Any>, vetoHandler: VetoHandler<VetoException>) {
+		try {
+			listeners?.toList()?.forEach { it.checkStateChange(event) }
+			listeners?.toList()?.forEach { it.stateChanged(event) }
+			successHandler(event)
+		} catch (e: VetoException) {
+			vetoHandler(e)
 		}
 	}
 }

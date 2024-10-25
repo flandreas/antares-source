@@ -41,19 +41,11 @@ open class GraphImpl(
 
 	private val _elements = mutableListOf<GraphElement>()
 
+	/** Listens for [GraphElementEvent]s from child [GraphElement]s. */
+	private val elementListener = GraphElementListener()
+
 	/** Forwards signal changes of a [OscilloscopeProbeVertice] to the [Oscilloscope].*/
 	private val oscilloscopeProbeHandler = OscilloscopeProbeHandler()
-
-	private val graphPortNameChangedHandler: EventHandler<GraphPortNameChanged<Any>> = {
-		if (it.newName != null &&  contains(it.graphPort)) {
-			if (existsGraphPortNameExcluding(it.newName, it.graphPort)) {
-				if (parameterDefinitions.contains(it.newName)) {
-					throw VetoException(Translations.getString("graph.port.nameConflictsWithParam.msg"))
-				}
-				throw VetoException(Translations.getString("graph.port.nameAlreadyExists.msg"))
-			}
-		}
-	}
 
 	private val containerLibraryElementRenameHandler: EventHandler<ContainerLibraryElementRenamedEvent> = { event ->
 		_elements
@@ -66,12 +58,10 @@ open class GraphImpl(
 	}
 
 	init {
-		eventBus.register(GraphPortNameChanged::class, graphPortNameChangedHandler)
 		eventBus.register(ContainerLibraryElementRenamedEvent::class, containerLibraryElementRenameHandler)
 	}
 
 	override fun dispose() {
-		eventBus.unregister(GraphPortNameChanged::class, graphPortNameChangedHandler)
 		eventBus.unregister(containerLibraryElementRenameHandler)
 	}
 
@@ -177,6 +167,7 @@ open class GraphImpl(
 			graphElement.id = getMaxId() + 1
 			ensureUniqueGraphPortName(graphElement)
 			_elements.add(graphElement)
+			graphElement.addGraphElementListener(elementListener)
 			handleGraphElementAdded(graphElement)
 			eventBus.post(GraphElementAddedEvent(this, graphElement))
 		}
@@ -191,6 +182,7 @@ open class GraphImpl(
 				handleVerticeRemoved(graphElement)
 			}
 			_elements.remove(graphElement)
+			graphElement.removeGraphElementListener(elementListener)
 			handleGraphElementRemoved(graphElement)
 			eventBus.post(GraphElementRemovedEvent(this, graphElement))
 		}
@@ -342,6 +334,17 @@ open class GraphImpl(
 
 	protected open fun <T: Any> createGraphExecutionContext(): GraphExecutionContext<T> = GraphExecutionContext()
 
+	private fun handle(event: GraphPortNameChanged<Any>) {
+		if (event.newName != null &&  contains(event.graphPort)) {
+			if (existsGraphPortNameExcluding(event.newName, event.graphPort)) {
+				if (parameterDefinitions.contains(event.newName)) {
+					throw VetoException(Translations.getString("graph.port.nameConflictsWithParam.msg"))
+				}
+				throw VetoException(Translations.getString("graph.port.nameAlreadyExists.msg"))
+			}
+		}
+	}
+
 	/** Called by this [GraphImpl] when a [GraphElement] has been added or read as [Storable].*/
 	protected open fun handleGraphElementAdded(graphElem: GraphElement) {
 		if (graphElem is OscilloscopeProbeVertice<*>) {
@@ -408,6 +411,14 @@ open class GraphImpl(
 
 	private fun getOscilloscope(): Oscilloscope? {
 		return elements.firstOrNull() { it is Oscilloscope } as Oscilloscope?
+	}
+
+	private inner class GraphElementListener : GraphElementAdapter() {
+		override fun checkStateChange(e: GraphElementEvent) {
+			if (e is GraphPortNameChanged<*>) {
+				handle(e)
+			}
+		}
 	}
 
 	/** Forwards signal changes of a [OscilloscopeProbeVertice] to the [Oscilloscope].*/

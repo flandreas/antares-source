@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.model
 
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.model.Vertice.Companion.STATE_CHANGE_NAME
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.io.Storable
@@ -39,7 +40,7 @@ data class GraphPortNameChanged<out T : Any>(
 	val graphPort: GraphPort<T>,
 	val oldName: String?,
 	val newName: String?
-)
+) : GraphElementEvent(graphPort, null, STATE_CHANGE_NAME)
 
 /** Gets posted on [EventBus] when the [PortType] of a [GraphPort] has changed.*/
 data class GraphPortTypeChanged<out T : Any>(

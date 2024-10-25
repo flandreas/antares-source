@@ -25,6 +25,7 @@ interface Vertice : GraphElement, Describable {
 	companion object {
 
 		/** Used in [GraphElementEvent]s sent to [GraphElementListener], typically views.*/
+        const val STATE_CHANGE_NAME = "name"
 		const val STATE_CHANGE_INPUT = "input"
 		const val STATE_CHANGE_OUTPUT = "output"
 		const val STATE_CHANGE_TYPE = "type"

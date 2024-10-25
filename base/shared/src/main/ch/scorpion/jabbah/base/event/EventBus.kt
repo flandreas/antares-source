@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.base.event
 
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.logger
 import kotlin.reflect.KClass
 
 typealias EventHandler<T> = (T) -> Unit
@@ -49,9 +50,17 @@ interface EventBus {
 
 	/** Unregisters all [EventHandler]s. Primarily for integration testing.*/
 	fun clear()
+
+    fun createStatistics(): EventBusStatistics
+
+    fun printRegistrations(eventClass: KClass<*>): String
 }
 
 class EventBusImpl : EventBus {
+
+    companion object {
+        private val LOG by logger(EventBusImpl::class)
+    }
 
     /** Maps event simple class names to all handlers that have been registered for that event class.*/
     private val registrations: MutableMap<String, MutableList<EventHandler<Any>>> = mutableMapOf()
@@ -61,15 +70,28 @@ class EventBusImpl : EventBus {
 	override val size: Int get() = registrations.size
 
     override fun <T: Any> register(eventClass: KClass<out T>, handler: EventHandler<T>) {
+        val eventName = getEventClassName(eventClass)
+        LOG.debug("EventBus ${hashCode()}: Register $eventClass")
+
+        /*
         @Suppress("UNCHECKED_CAST")
         registrations
-	        .getOrPut(getEventClassName(eventClass)) { mutableListOf()}
+	        .getOrPut(eventName) { mutableListOf() }
 	        .add(handler as (Any) -> Unit)
+         */
+
+        val list = registrations.getOrPut(eventName) { mutableListOf() }
+        if (!list.contains(handler)) {
+            @Suppress("UNCHECKED_CAST")
+            list.add(handler as (Any) -> Unit)
+        }
+
     }
 
     override fun <T : Any> unregister(eventClass: KClass<out T>, handler: EventHandler<T>) {
+        val eventName = getEventClassName(eventClass)
 	    @Suppress("UNCHECKED_CAST")
-        unregister(getEventClassName(eventClass), handler as EventHandler<Any>)
+        unregister(eventName, handler as EventHandler<Any>)
     }
 
     override fun unregister(handler: EventHandler<*>) {
@@ -127,10 +149,27 @@ class EventBusImpl : EventBus {
     /** ---- [EventBusImpl] */
 
     private fun unregister(eventClassName: String, handler: EventHandler<*>) {
+        LOG.debug("Unregister $eventClassName. Before remove: ${registrations[eventClassName]?.size}")
         registrations[eventClassName]?.remove(handler)
+        LOG.debug(".. after remove: ${registrations[eventClassName]?.size}")
     }
 
     private fun <T: Any> getEventClassName(eventClass: KClass<out T>): String = System.getClassName(eventClass)
 
     private fun getEventClassName(event: Any): String = System.getClassName(event)
+
+    override fun createStatistics(): EventBusStatistics =
+        EventBusStatistics(hashCode().toString()).apply {
+            registrations.entries.forEach { entry -> addRegistrationCount(entry.key, entry.value.size) }
+        }
+
+    override fun printRegistrations(eventClass: KClass<*>): String {
+        val sb = StringBuilder()
+        val eventName = getEventClassName(eventClass)
+        sb.appendLine("Registrations for event $eventName:")
+        registrations[eventName]?.forEach {
+            sb.appendLine("- ${it::class.qualifiedName}")
+        }
+        return sb.toString()
+    }
 }

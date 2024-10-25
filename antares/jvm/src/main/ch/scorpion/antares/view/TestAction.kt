@@ -3,7 +3,9 @@ package ch.scorpion.antares.view
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.BitWidthGraphParamType
 import ch.scorpion.jabbah.base.event.ActionEvent
+import ch.scorpion.jabbah.base.event.EventBusStatistics
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.ui.Toast
 import ch.scorpion.jabbah.draw.view.AbstractViewAction
 import ch.scorpion.jabbah.edit.Component
@@ -12,6 +14,7 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.command.SourcingCommandManager
+import ch.scorpion.jabbah.graph.model.GraphPortNameChanged
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
@@ -32,8 +35,25 @@ class TestAction(
 		private val LOG by logger(TestAction::class)
 	}
 
+	private var eventBusStatistic: EventBusStatistics? = null
+
 	override fun execute(event: ActionEvent) {
-		createCommandSnapshot()
+		printEventBusStatistic()
+	}
+
+	private fun printEventBusStatistic() {
+		val newEventBusStatistic = BaseModule.eventBus.createStatistics()
+
+		println(newEventBusStatistic.print())
+		if (eventBusStatistic != null) {
+			println()
+			println(newEventBusStatistic.printExpansion(eventBusStatistic!!))
+
+			println()
+			println(BaseModule.eventBus.printRegistrations(GraphPortNameChanged::class))
+		}
+
+		eventBusStatistic = newEventBusStatistic
 	}
 
 	private fun showToast() {

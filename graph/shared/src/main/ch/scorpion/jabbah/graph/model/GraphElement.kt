@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.model
 
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.ExecutionError
+import ch.scorpion.jabbah.base.event.VetoException
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.edit.model.text.description.Describable
@@ -113,7 +114,7 @@ interface GraphElement : Storable, Actor, Describable {
 }
 
 /** An event sent by a [GraphElement] whenever its state has changed. */
-class GraphElementEvent(
+open class GraphElementEvent(
 	val element: GraphElement,
 	val signalHandler: SignalHandler? = null,
 	val reason: String? = null
@@ -121,9 +122,21 @@ class GraphElementEvent(
 
 /** Listens for [GraphElementEvent]s from [GraphElement]s.*/
 interface GraphElementListener {
+
+	/**
+	 * Called for vetoable [GraphElementEvent]s. Implementations should check whether they would
+	 * accept [e], in which case the do nothing, otherwise throw a [VetoException].
+	 * If no [GraphElementListener] has vetoed the change, each of them is called with [stateChanged].
+	 */
+	fun checkStateChange(e: GraphElementEvent)
+
+	/** Called by [GraphElement]s when its state has changed.*/
     fun stateChanged(e: GraphElementEvent)
 }
 
+/** Base class providing default (empty) implementations for [GraphElementListener].*/
 open class GraphElementAdapter : GraphElementListener {
-    override fun stateChanged(e: GraphElementEvent) { }
+	override fun stateChanged(e: GraphElementEvent) {}
+	override fun checkStateChange(e: GraphElementEvent) {}
 }
+
