@@ -89,6 +89,8 @@ class SubGraphVerticeRef(
 
 		private val LOG by logger(SubGraphVerticeRef::class)
 
+		private val BROKEN_REFERENCE_NAME = Name(BrokenReferenceView.NAME)
+
 		val CALCULATOR = object : VerticeCalculator<SubGraphVerticeRef> {
 			override fun calculate(vertice: SubGraphVerticeRef, data: GraphActorData, signalHandler: SignalHandler) {
 				if (data.isInput && !vertice.isDeepExecution(signalHandler.isDeepExecution)) {
@@ -157,13 +159,12 @@ class SubGraphVerticeRef(
 
 	override val designError: DesignError? get() = _designError
 
-	override var type: String = "" // lateinit not possible with custom setter
-		set(value) {
-			if (field != value) {
-				field = value
-				stateChanged(null, Vertice.STATE_CHANGE_TYPE)
-			}
-		}
+	override val type: String get() =
+		graphUUID?.let { LibraryModule.libraryHolder.getMetaGraph(it).name } ?: BROKEN_REFERENCE_NAME.value
+
+	fun handleTypeChanged() {
+		stateChanged(null, Vertice.STATE_CHANGE_TYPE)
+	}
 
 	private var _typeDesc: String? = null
 	override val typeDesc: String? get() = _typeDesc
@@ -190,7 +191,9 @@ class SubGraphVerticeRef(
 
 	/** ---- [SubGraphVertice] */
 
-	override var graphName: Name = Name(TranslatableText())
+	override var graphName: Name
+		get() = graphUUID?.let { LibraryModule.libraryHolder.getMetaGraph(it).graph.model!!.name } ?: BROKEN_REFERENCE_NAME
+		set(@Suppress("UNUSED_PARAMETER") value) {}
 
 	override fun <T : Any> propagateOutput(outputPort: SubGraphOutputPort<T>, signal: T, signalHandler: SignalHandler) {
 		if (LOG.isTraceEnabled()) {
@@ -246,7 +249,6 @@ class SubGraphVerticeRef(
 			val metaGraph = repository.getOptionalMetaGraph(graphUUID!!)
 			if (metaGraph != null) {
 				name = metaGraph.name
-				graphName = metaGraph.containerDrawing.model.graphName
 				fillFrom(metaGraph.containerDrawing.createSubGraphVertice())
 
 				if (paramValues.isNotEmpty) {
@@ -260,8 +262,6 @@ class SubGraphVerticeRef(
 			} else {
 				// Broken reference to library component
 				LOG.warn("broken reference $graphUUID")
-				graphName = Name(BrokenReferenceView.NAME)
-				type = graphName.value
 				_designError = DesignError("graph.designError.brokenSubGraphRef.text")
 				graphReference = GraphReference.broken()
 			}
@@ -485,9 +485,7 @@ class SubGraphVerticeRef(
 	private fun fillFrom(subGraphVertice: SubGraphVertice) {
 		graphUUID = subGraphVertice.graphUUID
 
-		type = subGraphVertice.graphName.value
 		_typeDesc = subGraphVertice.description.value
-		graphName = subGraphVertice.graphName
 
 		for (port in subGraphVertice.getPorts()) {
 			addPort(port, port.portId)

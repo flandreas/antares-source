@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
 import ch.scorpion.jabbah.base.dsl.SymbolTable
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.event.VetoException
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.parser.Parser
@@ -14,7 +13,6 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.*
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.MetaGraphRepository
-import ch.scorpion.jabbah.graph.library.ContainerLibraryElementRenamedEvent
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.nonvolatile.NonVolatileStorable
@@ -47,23 +45,7 @@ open class GraphImpl(
 	/** Forwards signal changes of a [OscilloscopeProbeVertice] to the [Oscilloscope].*/
 	private val oscilloscopeProbeHandler = OscilloscopeProbeHandler()
 
-	private val containerLibraryElementRenameHandler: EventHandler<ContainerLibraryElementRenamedEvent> = { event ->
-		_elements
-			.filterIsInstance<SubGraphVerticeRef>()
-			.filter { it.graphUUID == event.element.uuid }
-			.forEach { vRef ->
-				vRef.graphName = event.element.name
-				vRef.type = event.element.name.value
-			}
-	}
-
-	init {
-		eventBus.register(ContainerLibraryElementRenamedEvent::class, containerLibraryElementRenameHandler)
-	}
-
-	override fun dispose() {
-		eventBus.unregister(containerLibraryElementRenameHandler)
-	}
+	override fun dispose() {}
 
 	/** ---- [Namable], [Describable] interfaces */
 
@@ -285,6 +267,15 @@ open class GraphImpl(
 		BaseModule.parserFactory(
 			program,
 			BaseModule.semanticAnalyserFactory(symbolTable))
+
+	override fun handleSubGraphNameChanged(uuid: UUID) {
+		_elements
+			.filterIsInstance<SubGraphVerticeRef>()
+			.filter { it.graphUUID == uuid }
+			.forEach { vRef ->
+				vRef.handleTypeChanged()
+			}
+	}
 
 	/** ---- [Storable] interface */
 

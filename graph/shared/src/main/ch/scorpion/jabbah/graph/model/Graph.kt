@@ -20,7 +20,9 @@ import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.nonvolatile.NonVolatileStorable
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
 import ch.scorpion.jabbah.graph.model.param.GraphParamValues
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.io.Storable
 
 interface GraphFactory {
@@ -168,6 +170,12 @@ interface Graph : GraphPortOwner, Namable, Describable, Storable, Bean {
 	 */
 	fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): Parser
 
+	/**
+	 * Called if the name of a [Graph] in the current [Library] has changed, and this [Graph]
+	 * might update cached information in any of its [SubGraphVerticeRef]s, such as lazily
+	 * calculated tooltips.
+	 */
+	fun handleSubGraphNameChanged(uuid: UUID)
 }
 
 class GraphElementAddedEvent(val graph: Graph, val element: GraphElement)
