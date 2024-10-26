@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.app
 
 import ch.scorpion.jabbah.app.SaveUnchangedDataDecision.*
 import ch.scorpion.jabbah.app.action.SaveFileAction
+import ch.scorpion.jabbah.base.Disposable
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.PropertyOwner
@@ -120,6 +121,10 @@ open class ApplicationDataViewController(
 			commandManager.reset()
 			eventBus.post(ApplicationDataEvent(oldField, field))
 			eventBus.post(CurrentSavableEvent(field?.savable))
+
+			if (oldField?.content is Disposable) {
+				(oldField.content as Disposable).dispose()
+			}
 
 			if (value != null && value.savable.supportsMostRecent && value.savable.defined) {
 				mostRecentSavables.register(value.savable)

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.edit.command
 
+import ch.scorpion.jabbah.base.Disposable
 import ch.scorpion.jabbah.base.collection.Stack
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.UndoableDataHolder
@@ -14,7 +15,7 @@ import ch.scorpion.jabbah.io.StorableCloner
 internal class Snapshot(
 	private val data: Storable,
 	private var undoableDataHolder: UndoableDataHolder
-) {
+) : Disposable {
 
 	companion object {
 		private val LOG by logger(Snapshot::class)
@@ -28,6 +29,12 @@ internal class Snapshot(
 	val redoDescription: String get() = redoStack.optionalPeek()?.headCommand?.getDescription() ?: ""
 	val canUndo: Boolean get() = !undoStack.empty
 	val canRedo: Boolean get() = !redoStack.empty
+
+	override fun dispose() {
+		if (data is Disposable) {
+			data.dispose()
+		}
+	}
 
 	fun add(transaction: Transaction) {
 		undoStack.push(transaction)

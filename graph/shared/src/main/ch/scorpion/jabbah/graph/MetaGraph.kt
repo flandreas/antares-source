@@ -1,19 +1,14 @@
 package ch.scorpion.jabbah.graph
 
-import ch.scorpion.jabbah.base.HierarchyVisitor
-import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.UUID
-import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
-import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
-import ch.scorpion.jabbah.graph.model.*
+import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.GraphType
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -24,9 +19,8 @@ import ch.scorpion.jabbah.io.*
  */
 class MetaGraph(
 	graph: GraphStorable = GraphStorable(TranslatableText(Translations.getString("graph.name.unknown"))),
-	containerDrawing: ContainerDrawing = ContainerDrawing(Translations.getString("graph.name.unknown")),
-	private val eventBus: EventBus = BaseModule.eventBus
-) : AbstractStorable() {
+	containerDrawing: ContainerDrawing = ContainerDrawing(Translations.getString("graph.name.unknown"))
+) : AbstractStorable(), Disposable {
 
 	companion object {
 		private val LOG by logger(MetaGraph::class)
@@ -90,7 +84,9 @@ class MetaGraph(
 		containerDrawing.initialize()
 	}
 
-	fun dispose() {
+	/** ---- [Disposable] interface */
+
+	override fun dispose() {
 		graph.dispose()
 		containerDrawing.dispose()
 	}

@@ -126,7 +126,12 @@ class GraphDataViewController(
 
 			open {
 				val library = element.library!!
-				library.libraryService.loadMetaGraph(library, element)
+				library.libraryService.loadMetaGraph(library, element, loadAlways = false)
+
+				/**
+				 * Create a copy of the [MetaGraph] as part of the [ApplicationData] that can be safely edited
+				 * without corrupting the instance in the [Library].
+				 */
 				ApplicationData(StorableCloner.clone(element.metaGraph!!), library.createSavable(element), eventBus)
 			}
 		} catch (e: Throwable) {

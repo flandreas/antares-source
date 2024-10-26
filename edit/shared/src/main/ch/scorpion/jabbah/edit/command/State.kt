@@ -20,4 +20,9 @@ internal class State(val name: String, val dataHolder: UndoableDataHolder) {
 
 	fun hasCommandWithTag(name: String): Boolean =
 		snapshots.items.any { it.hasTag(name) }
+
+	fun dispose() {
+		snapshots.dispose()
+		redoSnapshots.dispose()
+	}
 }

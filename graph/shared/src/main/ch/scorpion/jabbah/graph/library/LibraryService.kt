@@ -293,10 +293,11 @@ class LibraryService(
 	}
 
 	/**
-	 * Reloads the [MetaGraph] of a [ContainerLibraryElement], loading it always, even if it is already loaded.
+	 * Ensures that the [MetaGraph] of a [ContainerLibraryElement] is loaded.
+	 * @param loadAlways `true` if the [MetaGraph] should be reloaded even if it is already loaded
 	 */
-	fun loadMetaGraph(library: Library, element: ContainerLibraryElement) {
-		ensureMetaGraph(library, element, loadAlways = true)
+	fun loadMetaGraph(library: Library, element: ContainerLibraryElement, loadAlways: Boolean = true) {
+		ensureMetaGraph(library, element, loadAlways)
 	}
 
 	/**

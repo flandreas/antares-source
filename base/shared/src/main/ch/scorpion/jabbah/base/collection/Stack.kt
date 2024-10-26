@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.base.collection
 
+import ch.scorpion.jabbah.base.Disposable
+
 /**
  * A simple stack implementation.
  */
@@ -10,6 +12,10 @@ class Stack<T> {
     val size: Int get() = items.size
 
     val empty: Boolean get() = items.isEmpty()
+
+    fun dispose() {
+        clear()
+    }
 
 	fun getItem(index: Int): T = items[index]
 
@@ -37,6 +43,11 @@ class Stack<T> {
 	fun optionalPeek(): T? = if (empty) null else items.last()
 
     fun clear() {
+        items.forEach {
+            if (it is Disposable) {
+                it.dispose()
+            }
+        }
         items.clear()
     }
 

@@ -323,7 +323,7 @@ class SourcingCommandManager(
 			throw IllegalStateException("no checkpoint to close")
 		}
 		LOG.trace("Close checkpoint ${states.peek().name}")
-		states.pop()
+		states.pop().dispose()
 		eventBus.post(CommandEvent(this, CommandEventType.CLOSE_CHECKPOINT))
 	}
 
