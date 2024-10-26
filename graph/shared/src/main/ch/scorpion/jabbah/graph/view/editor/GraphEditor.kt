@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.editor.EditorImpl
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElementRenamedEvent
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.view.ControlViewSource
@@ -25,9 +26,9 @@ class GraphEditor(
     private val eventBus: EventBus = BaseModule.eventBus
 ) : EditorImpl(view) {
 
-    private val containerLibraryElementRenamedHandler: EventHandler<ContainerLibraryElementRenamedEvent> = {
-        ((view.drawing as GraphView).graph)?.handleSubGraphNameChanged(it.element.uuid)
-    }
+    private val containerLibraryElementRenamedHandler: EventHandler<ContainerLibraryElementRenamedEvent> = { handle(it) }
+
+    private val graph: Graph? get() = (view.drawing as GraphView).graph
 
     init {
         eventBus.register(ContainerLibraryElementRenamedEvent::class, containerLibraryElementRenamedHandler)
@@ -60,6 +61,10 @@ class GraphEditor(
 	    if (component is SubGraphVerticeView<*>) {
 		    eventBus.post(SubGraphVerticeViewEvent(SubGraphVerticeViewEvent.Type.REMOVE, component as SubGraphVerticeView<SubGraphVertice>))
 	    }
+    }
+
+    private fun handle(event: ContainerLibraryElementRenamedEvent) {
+        graph?.handleSubGraphNameChanged(event.element.uuid)
     }
 }
 

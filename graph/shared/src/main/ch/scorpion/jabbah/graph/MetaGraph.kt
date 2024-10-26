@@ -83,25 +83,14 @@ class MetaGraph(
 
 	private val graphListener = GraphPropertyListener()
 
-	private val graphPortNameHandler: EventHandler<GraphPortNameChanged<*>> = { handle(it) }
-
-	private val graphPortTypeHandler: EventHandler<GraphPortTypeChanged<*>> = { handle(it) }
-
-	private val graphPortCanBeUndefinedHandler: EventHandler<GraphPortCanBeUndefinedChanged<*>> = { handle(it) }
-
 	init {
 		LOG.trace("Instantiated new MetaGraph with ID ${hashCode()}")
 		graph.model?.addPropertyChangeListener(graphListener)
-		eventBus.register(GraphPortNameChanged::class, graphPortNameHandler)
-		eventBus.register(GraphPortTypeChanged::class, graphPortTypeHandler)
-		eventBus.register(GraphPortCanBeUndefinedChanged::class, graphPortCanBeUndefinedHandler)
 		containerDrawing.model.graphUUID = uuid
 		containerDrawing.initialize()
 	}
 
 	fun dispose() {
-		eventBus.unregister(GraphPortNameChanged::class, graphPortNameHandler)
-		eventBus.unregister(GraphPortCanBeUndefinedChanged::class, graphPortCanBeUndefinedHandler)
 		graph.dispose()
 		containerDrawing.dispose()
 	}
@@ -204,31 +193,6 @@ class MetaGraph(
 			}
 		}
 		return visitor.visitLeave(this)
-	}
-
-	private fun handle(event: GraphPortNameChanged<*>) {
-		if (graph.graphView.graph!!.contains(event.graphPort)) {
-			containerDrawing.getPortViewComponent(event.oldName!!)?.let {
-				it.portView!!.setPortName(event.newName!!) }
-		}
-	}
-
-	private fun handle(event: GraphPortTypeChanged<*>) {
-		if (graph.graphView.graph!!.contains(event.graphPort)) {
-			containerDrawing.getPortViewComponent(event.graphPort.name!!)?.let {
-				it.portView!!.port.portType = event.newPortType
-			}
-		}
-	}
-
-	private fun handle(event: GraphPortCanBeUndefinedChanged<*>) {
-		if (graph.graphView.graph!!.contains(event.graphPort)) {
-			containerDrawing.getPortViewComponent(event.graphPort.name!!)?.let {
-				if (it.portView!!.port is OutputPort) {
-					(it.portView!!.port as OutputPort).customCanBeUndefined = event.value
-				}
-			}
-		}
 	}
 
 	private fun copyGraphDataFromContainerModel(graph: Graph) {
