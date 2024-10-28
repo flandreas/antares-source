@@ -48,9 +48,6 @@ class TestAction(
 		if (eventBusStatistic != null) {
 			println()
 			println(newEventBusStatistic.printExpansion(eventBusStatistic!!))
-
-			println()
-			println(BaseModule.eventBus.printRegistrations(GraphPortNameChanged::class))
 		}
 
 		eventBusStatistic = newEventBusStatistic

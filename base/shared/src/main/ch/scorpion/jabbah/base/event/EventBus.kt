@@ -73,19 +73,11 @@ class EventBusImpl : EventBus {
         val eventName = getEventClassName(eventClass)
         LOG.debug("EventBus ${hashCode()}: Register $eventClass")
 
-        /*
-        @Suppress("UNCHECKED_CAST")
-        registrations
-	        .getOrPut(eventName) { mutableListOf() }
-	        .add(handler as (Any) -> Unit)
-         */
-
         val list = registrations.getOrPut(eventName) { mutableListOf() }
         if (!list.contains(handler)) {
             @Suppress("UNCHECKED_CAST")
             list.add(handler as (Any) -> Unit)
         }
-
     }
 
     override fun <T : Any> unregister(eventClass: KClass<out T>, handler: EventHandler<T>) {
@@ -149,9 +141,8 @@ class EventBusImpl : EventBus {
     /** ---- [EventBusImpl] */
 
     private fun unregister(eventClassName: String, handler: EventHandler<*>) {
-        LOG.debug("Unregister $eventClassName. Before remove: ${registrations[eventClassName]?.size}")
+        LOG.debug("Unregister $eventClassName")
         registrations[eventClassName]?.remove(handler)
-        LOG.debug(".. after remove: ${registrations[eventClassName]?.size}")
     }
 
     private fun <T: Any> getEventClassName(eventClass: KClass<out T>): String = System.getClassName(eventClass)
