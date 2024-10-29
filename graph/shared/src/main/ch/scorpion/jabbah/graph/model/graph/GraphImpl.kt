@@ -329,6 +329,7 @@ open class GraphImpl(
 		_elements.clear()
 		reader.readStorables<GraphElement>("elements").forEach {
 			_elements.add(it)
+			it.addGraphElementListener(elementListener)
 			handleGraphElementAdded(it)
 		}
 	}
