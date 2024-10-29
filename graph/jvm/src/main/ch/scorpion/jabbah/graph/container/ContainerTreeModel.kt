@@ -92,6 +92,14 @@ class ContainerTreeModel(
 		}
 	}
 
+	fun handleGraphPortViewRenamed(portName: String) {
+		val index = findGraphPortViewIndex(portName)
+		if (index != null) {
+			((portsNode.getChildAt(index) as DefaultMutableTreeNode).userObject as AbstractContainerTreeItem).invalidateRichText()
+			treeModel.nodesChanged(portsNode, intArrayOf(index))
+		}
+	}
+
 	/** Returns the [TreeNode] with the [PortViewComponent] for the [Port] with the specified name. */
 	fun getPortsTreeNode(portName: String): DefaultMutableTreeNode? {
 		val index = findGraphPortViewIndex(portName)
@@ -317,6 +325,10 @@ abstract class AbstractContainerTreeItem(
 			richText = RichTextDrawable.of(getDescription(), font)
 		}
 		return richText!!
+	}
+
+	fun invalidateRichText() {
+		richText = null
 	}
 
 	abstract fun getDescription(): String

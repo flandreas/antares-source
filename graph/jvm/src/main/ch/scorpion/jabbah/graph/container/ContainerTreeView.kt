@@ -36,7 +36,7 @@ open class ContainerTreeView(
 		private val LOG = logger(ContainerTreeView::class)
 	}
 
-	/** Fills an manages the [DynamicTreeModel] displayed by this [ContainerTreeView].*/
+	/** Fills and manages the [DynamicTreeModel] displayed by this [ContainerTreeView].*/
     var containerTree: ContainerTree? = null
 		private set
 

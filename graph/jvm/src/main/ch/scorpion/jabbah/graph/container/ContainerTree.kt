@@ -92,6 +92,9 @@ class  ContainerTree(
 	}
 
 	private val graphPortNameHandler: EventHandler<GraphPortNameChanged<*>> = {
+		if (it.newName != null) {
+			model.handleGraphPortViewRenamed(it.newName)
+		}
 		if (requiresAutoLayout) {
 			// Also check for old name to be independent of event dispatching order
 			if (it.newName != null && containerDrawing.getPortViewComponent(it.newName) != null
