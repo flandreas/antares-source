@@ -202,7 +202,7 @@ class ApplicationDataViewControllerTest {
 		controller.save()
 
 		verify { repositoryBuilder.build().store(eq(savable), eq(data.content)) }
-		verify(exactly(2)) { commandManagerMock.build().reset() }
+		verify(exactly(1)) { commandManagerMock.build().reset() }
 	}
 
 	@Test
@@ -215,7 +215,7 @@ class ApplicationDataViewControllerTest {
 		controller.save()
 
 		verify { repositoryBuilder.build().store(eq(newSavable), eq(controller.data!!.content)) }
-		verify(exactly(3)) { commandManagerMock.build().reset() }
+		verify(exactly(2)) { commandManagerMock.build().reset() }
 	}
 
 	@Test

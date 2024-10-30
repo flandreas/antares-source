@@ -220,7 +220,7 @@ open class ApplicationDataViewController(
 		data?.let {
 			LOG.info("Save application data")
 			if (it.savable.save(this)) {
-				commandManager.reset()
+				// Resetting CommandManager not necessary, already done in setData as a consequence of Savable.save
 				eventBus.post(CurrentSavableEvent(it.savable))
 				Toast.show(Translations.getString("application.data.saved.msg", it.savable.typeName))
 			}
