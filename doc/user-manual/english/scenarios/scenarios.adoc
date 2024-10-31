@@ -87,7 +87,7 @@ See link:{{site.basedir}}/user-manual/english/scripting/scripting[Scripting] for
 .Example
 [source,javascript]
 ----
-#1.1 == 1 and #1.2 == 0 and #1.3 == 1
+#1:1 == 1 and #1:2 == 0 and #1:3 == 1
 ----
 
 Highlightings:: A comma-separated list of IDs of components to be highlighted when the scenario step has been detected. The ID of a component is displayed in the properties window of the circuit when the component is selected. Antares displays highlighted components on a bright yellow background (the color may vary depending on the theme used).  +
