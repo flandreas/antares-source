@@ -156,11 +156,22 @@ class ContainerTreeModel(
 	fun addControlViewSourceFor(comp: ControlViewComponent) {
 		val treeNode = findSubGraphVerticeViewFolder(comp.controlModelLink)
 		if (treeNode != null && (treeNode.getChildAt(0) as DynamicTreeNode).isInitialized) {
-			val subGraphVerticeView = (treeNode as DefaultMutableTreeNode).userObject as SubGraphVerticeViewFolderItem
+			val subGraphVerticeViewFolder = (treeNode as DefaultMutableTreeNode).userObject as SubGraphVerticeViewFolderItem
 			val innerFolder = treeNode.getChildAt(0) as DynamicTreeNode
-			val source = subGraphVerticeView.graphView.getControlViewSource(comp.controlView.controlId!!)
-			innerFolder.add(createControlViewNode(source!!, comp.controlModelLink.withoutLast()))
-			treeModel.nodesWereInserted(innerFolder, intArrayOf(innerFolder.childCount - 1))
+
+			// comp.controlView.controlId returns something of the form "switch:0", where 0 is the model ID,
+			// which is always 0, because it isn't part of a circuit. We would rather use comp.controlModelLink.last,
+			// but that one contains only the model ID, without the "switch" part. Therefore, try to reconstruct
+			// the correct controlId with a hack...
+
+			if (comp.controlView.controlId?.contains(':') == true) {
+				val controlId = comp.controlView.controlId!!.substringBeforeLast(':') + ":" + comp.controlModelLink.last.toString()
+				val source = subGraphVerticeViewFolder.graphView.getControlViewSource(controlId)
+				if (source != null) {
+					innerFolder.add(createControlViewNode(source, comp.controlModelLink.withoutLast()))
+					treeModel.nodesWereInserted(innerFolder, intArrayOf(innerFolder.childCount - 1))
+				}
+			}
 		}
 	}
 
@@ -199,6 +210,7 @@ class ContainerTreeModel(
 		val subGraphVerticeViewLink = link.withoutLast()
 		return JTreeUtil.findTreeNode(treeModel.root as TreeNode) {
 			it is DefaultMutableTreeNode
+				&& !(it is DynamicTreeNode && !it.isInitialized)
 				&& it.childCount > 0
 				&& it.userObject is SubGraphVerticeViewFolderItem
 				&& (it.userObject as SubGraphVerticeViewFolderItem).link == subGraphVerticeViewLink

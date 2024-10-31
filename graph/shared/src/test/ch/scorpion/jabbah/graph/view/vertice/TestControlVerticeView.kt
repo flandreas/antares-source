@@ -45,7 +45,7 @@ class TestControlVerticeView(
 
 	override var isActiveControlView: Boolean = false
 
-	override val controlId: String get() = "$type \"${model.name}\""
+	override val controlId: String get() = "$type:${model.id}"
 
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
 		this.model = link.getLinkedVertice(startGraph) as TestControlVertice
