@@ -256,8 +256,8 @@ class LibraryService(
 	}
 
 	/**
-	 * Clones the specified [MetaGraph], uses it as the new [MetaGraph] of the specified [ContainerLibraryElement],
-	 * and makes the change persistent.
+	 * Stores [metaGraph] persistently and sets it as the new [MetaGraph] of the specified [ContainerLibraryElement],
+	 * without first cloning it.
 	 * Posts a [LibraryItemUpdatedEvent] on this [LibraryService]'s [EventBus].
 	 */
 	fun updateContainerLibraryElement(library: Library, metaGraph: MetaGraph, element: ContainerLibraryElement) {

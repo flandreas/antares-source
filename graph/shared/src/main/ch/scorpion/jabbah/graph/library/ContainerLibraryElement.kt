@@ -51,10 +51,11 @@ class ContainerLibraryElement(
 	var metaGraph: MetaGraph? = null
 		private set(value) {
 			if (field != value) {
-				field?.dispose()
+				val oldValue = field
 				field = value
 				executionScriptASTCache.reset()
 				drawSymbolScriptASTCache.reset()
+				oldValue?.dispose()
 			}
 		}
 

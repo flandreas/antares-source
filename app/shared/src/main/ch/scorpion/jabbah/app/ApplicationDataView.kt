@@ -122,9 +122,8 @@ open class ApplicationDataViewController(
 			eventBus.post(ApplicationDataEvent(oldField, field))
 			eventBus.post(CurrentSavableEvent(field?.savable))
 
-			if (oldField?.content is Disposable) {
-				(oldField.content as Disposable).dispose()
-			}
+			// Don't dispose oldField. It is unclear how current application keep cached version
+			// of the former content, which would be destroyed by disposing it.
 
 			if (value != null && value.savable.supportsMostRecent && value.savable.defined) {
 				mostRecentSavables.register(value.savable)
