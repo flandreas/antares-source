@@ -403,7 +403,14 @@ class SubGraphVerticeViewFolderItem(
 	val link: DeepVerticeLink
 ) : AbstractContainerTreeItem(ContainerTreeItemType.SubGraph) {
 
-	override fun getDescription(): String = subGraphVerticeView.subGraphVertice?.name ?: "n.a."
+	override fun getDescription(): String {
+		val name = subGraphVerticeView.subGraphVertice?.name ?: return "n.a."
+
+		if (subGraphVerticeView.label != null) {
+			return "$name: ${subGraphVerticeView.label!!.getTranslation()}"
+		}
+		return name
+	}
 }
 
 class ControlsFolderTreeItem(
