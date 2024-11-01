@@ -534,70 +534,80 @@
                 <translation lang='de' text='4:1 Multiplexer'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='135' uuid='d5d282d6-21e9-4f1b-9429-75c882213cb3' type='digital'>
+            <containerLibraryElement _id='135' uuid='3c4b616b-515d-4dcd-a5c9-b607350ec079' type='digital'>
+              <name>
+                <translation lang='en' text='4:1 Multiplexer n Bit'/>
+              </name>
+            </containerLibraryElement>
+            <containerLibraryElement _id='136' uuid='d5d282d6-21e9-4f1b-9429-75c882213cb3' type='digital'>
               <name>
                 <translation lang='en' text='8:1 Multiplexer'/>
                 <translation lang='de' text='8:1 Multiplexer'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='136' uuid='02817a97-7f80-48d7-b424-43035d57d85b' type='digital'>
+            <containerLibraryElement _id='137' uuid='6c8875d2-685f-407d-807e-ef789ffcfa2b' type='digital'>
+              <name>
+                <translation lang='en' text='8:1 Multiplexer n Bit'/>
+              </name>
+            </containerLibraryElement>
+            <containerLibraryElement _id='138' uuid='02817a97-7f80-48d7-b424-43035d57d85b' type='digital'>
               <name>
                 <translation lang='en' text='16:1 Multiplexer'/>
                 <translation lang='de' text='16:1 Multiplexer'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='137' uuid='3cae4f4b-59df-41cf-a76c-3871a60f86c2' type='digital'>
+            <containerLibraryElement _id='139' uuid='3cae4f4b-59df-41cf-a76c-3871a60f86c2' type='digital'>
               <name>
                 <translation lang='de' text='1:2 Demultiplexer'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='138' uuid='e64a8e8b-d5e1-4c04-acc8-eaf7f77d0f95' type='digital'>
+            <containerLibraryElement _id='140' uuid='e64a8e8b-d5e1-4c04-acc8-eaf7f77d0f95' type='digital'>
               <name>
                 <translation lang='de' text='1:4 Demultiplexer'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='139' uuid='1dee873b-bb86-4e3b-b336-391edda8303e' type='digital'>
+            <containerLibraryElement _id='141' uuid='1dee873b-bb86-4e3b-b336-391edda8303e' type='digital'>
               <name>
                 <translation lang='de' text='1:8 Demultiplexer'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='140' uuid='52500dd2-b26d-4558-bdfd-678ab1d40882' type='digital'>
+            <containerLibraryElement _id='142' uuid='52500dd2-b26d-4558-bdfd-678ab1d40882' type='digital'>
               <name>
                 <translation lang='de' text='1:16 Demultiplexer'/>
               </name>
             </containerLibraryElement>
           </items>
         </libraryFolder>
-        <libraryFolder _id='141'>
+        <libraryFolder _id='143'>
           <name>
             <translation lang='en' text='Counter'/>
             <translation lang='de' text='Zähler'/>
           </name>
           <items>
-            <containerLibraryElement _id='142' uuid='a3990de2-dd5b-481e-ae95-2c77c12e0f87' type='digital'>
+            <containerLibraryElement _id='144' uuid='a3990de2-dd5b-481e-ae95-2c77c12e0f87' type='digital'>
               <name>
                 <translation lang='de' text='Counter n Bit'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='143' uuid='2be67615-ff7b-4f4b-a2e1-3fd9ff1d1d97' type='digital'>
+            <containerLibraryElement _id='145' uuid='2be67615-ff7b-4f4b-a2e1-3fd9ff1d1d97' type='digital'>
               <name>
                 <translation lang='en' text='Sync. Forward Counter 3 Bit'/>
                 <translation lang='de' text='Synch. Vorwärtszähler 3-Bit'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='144' uuid='380a6b70-ca2f-4983-8a45-d2c4de03c7f4' type='digital'>
+            <containerLibraryElement _id='146' uuid='380a6b70-ca2f-4983-8a45-d2c4de03c7f4' type='digital'>
               <name>
                 <translation lang='en' text='Sync. BCD Counter'/>
                 <translation lang='de' text='Synch. BCD-Zähler'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='145' uuid='0a2995f4-af04-4830-b141-76de188e2e34' type='digital'>
+            <containerLibraryElement _id='147' uuid='0a2995f4-af04-4830-b141-76de188e2e34' type='digital'>
               <name>
                 <translation lang='en' text='Frequency Divider 1:16'/>
                 <translation lang='de' text='Frequenzteiler 1:16'/>
               </name>
             </containerLibraryElement>
-            <containerLibraryElement _id='146' uuid='7de920b3-7694-4f03-a1e6-f44ff92475ec' type='digital'>
+            <containerLibraryElement _id='148' uuid='7de920b3-7694-4f03-a1e6-f44ff92475ec' type='digital'>
               <name>
                 <translation lang='de' text='Binärzähler 4-Bit mit Load/Reset'/>
                 <translation lang='en' text='Binary Counter 4 Bit LD\/CLR'/>

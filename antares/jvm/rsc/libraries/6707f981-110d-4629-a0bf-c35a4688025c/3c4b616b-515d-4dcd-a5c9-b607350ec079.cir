@@ -1,0 +1,184 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' manualContainer='true'>
+  <graph>
+    <graphStorable _id='1'>
+      <model>
+        <graph _id='2' type='digital' script='var s = 2 * S1 + S0
+when (s) {
+	0 : O = I0
+	1 : O = I1
+	2 : O = I2
+	3 : O = I3
+	else : O = 0
+}' purelyScripted='true' startupTime='30'>
+          <elements>
+            <circuitInOut _id='3' id='4' name='S1' type='input' bitWidth='1'/>
+            <circuitInOut _id='4' id='5' name='S0' type='input' bitWidth='1'/>
+            <circuitInOut _id='5' id='17' name='I0' type='input' bitWidth='BW'/>
+            <circuitInOut _id='6' id='18' name='I1' type='input' bitWidth='BW'/>
+            <circuitInOut _id='7' id='19' name='I2' type='input' bitWidth='BW'/>
+            <circuitInOut _id='8' id='20' name='I3' type='input' bitWidth='BW'/>
+            <circuitInOut _id='9' id='29' name='O' type='output' bitWidth='BW'/>
+            <graphElementWrapper _id='10' id='30' delay='0'/>
+          </elements>
+          <testcases>
+            <testcases _id='11'>
+              <testcases>
+                <testcase _id='12' id='1' testVectors='I3	I2	I1	I0	S1	S0	O
+x	x	x	0	0	0	0
+x	x	x	1	0	0	1
+x	x	0	x	0	1	0
+x	x	1	x	0	1	1
+x	0	x	x	1	0	0
+x	1	x	x	1	0	1
+0	x	x	x	1	1	0
+1	x	x	x	1	1	1'>
+                  <name>
+                    <translation lang='en' text='Test'/>
+                  </name>
+                </testcase>
+              </testcases>
+            </testcases>
+          </testcases>
+        </graph>
+      </model>
+      <view>
+        <graphView _id='13'>
+          <netViews/>
+          <components>
+            <circuitInOutView _id='14' id='4' rot='0' filled='true' stroked='true' modelId='3' orientation='north' representation='binary'>
+              <location>
+                <point x='-28.0' y='-28.0'/>
+              </location>
+            </circuitInOutView>
+            <circuitInOutView _id='15' id='5' rot='0' filled='true' stroked='true' modelId='4' orientation='north' representation='binary'>
+              <location>
+                <point x='56.0' y='-28.0'/>
+              </location>
+            </circuitInOutView>
+            <circuitInOutView _id='16' id='23' rot='0' filled='true' stroked='true' modelId='5' orientation='east' representation='hex'>
+              <location>
+                <point x='-98.0' y='-182.0'/>
+              </location>
+            </circuitInOutView>
+            <circuitInOutView _id='17' id='24' rot='0' filled='true' stroked='true' modelId='6' orientation='east' representation='hex'>
+              <location>
+                <point x='-98.0' y='-140.0'/>
+              </location>
+            </circuitInOutView>
+            <circuitInOutView _id='18' id='25' rot='0' filled='true' stroked='true' modelId='7' orientation='east' representation='hex'>
+              <location>
+                <point x='-98.0' y='-98.0'/>
+              </location>
+            </circuitInOutView>
+            <circuitInOutView _id='19' id='26' rot='0' filled='true' stroked='true' modelId='8' orientation='east' representation='hex'>
+              <location>
+                <point x='-98.0' y='-56.0'/>
+              </location>
+            </circuitInOutView>
+            <circuitInOutView _id='20' id='59' rot='0' filled='true' stroked='true' modelId='9' orientation='east' representation='hex'>
+              <location>
+                <point x='91.0' y='-119.0'/>
+              </location>
+            </circuitInOutView>
+            <graphElement _id='21' modelId='10' id='60'>
+              <component>
+                <ellipse _id='22' id='60' style='figure' filled='true' stroked='true' x='-49.0' y='-140.0' w='105.0' h='49.0'>
+                  <text>
+                    <translation lang='de' text='Scripted'/>
+                  </text>
+                </ellipse>
+              </component>
+            </graphElement>
+          </components>
+        </graphView>
+      </view>
+    </graphStorable>
+  </graph>
+  <container>
+    <containerDrawing _id='23' execDrawScript='var s = 1*S0 + 2*S1
+when (s) {
+	0: drawDataFlow(&quot;I0&quot;, &quot;O&quot;)
+	1: drawDataFlow(&quot;I1&quot;, &quot;O&quot;)
+	2: drawDataFlow(&quot;I2&quot;, &quot;O&quot;)
+	3: drawDataFlow(&quot;I3&quot;, &quot;O&quot;)
+}'>
+      <components>
+        <originIndicator _id='24' id='10'>
+          <location>
+            <point x='154.0' y='189.0'/>
+          </location>
+        </originIndicator>
+        <polyline _id='25' id='1' style='figure' filled='true' stroked='true' points='168.0,161.0 168.0,273.0 231.0,252.0 231.0,182.0 168.0,161.0'/>
+        <digitalPortViewComp _id='26' id='2' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='27' x='168.0' y='189.0' dir='west' textPos='internal' portId='28'/>
+          </portView>
+        </digitalPortViewComp>
+        <digitalPortViewComp _id='29' id='3' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='30' x='168.0' y='210.0' dir='west' textPos='internal' portId='31'/>
+          </portView>
+        </digitalPortViewComp>
+        <digitalPortViewComp _id='32' id='4' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='33' x='168.0' y='231.0' dir='west' textPos='internal' portId='34'/>
+          </portView>
+        </digitalPortViewComp>
+        <digitalPortViewComp _id='35' id='5' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='36' x='168.0' y='252.0' dir='west' textPos='internal' portId='37'/>
+          </portView>
+        </digitalPortViewComp>
+        <digitalPortViewComp _id='38' id='6' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='39' x='231.0' y='217.0' dir='east' textPos='internal' portId='40'/>
+          </portView>
+        </digitalPortViewComp>
+        <digitalPortViewComp _id='41' id='7' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='42' x='217.0' y='259.0' dir='south' textPos='internal' portId='43'/>
+          </portView>
+        </digitalPortViewComp>
+        <digitalPortViewComp _id='44' id='8' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='45' x='196.0' y='266.0' dir='south' textPos='internal' portId='46'/>
+          </portView>
+        </digitalPortViewComp>
+        <controlViewComponent _id='47' id='9' style='figure' filled='true' stroked='true' controlModelId='29' name='Circuit Output O'>
+          <controlView>
+            <digitalSignalSourceCV _id='48' id='59' filled='true' stroked='true' modelId='9' x='189.0' y='217.0' representation='binary' orientation='east' controlId='circuitInOut:59' bitWidth='4' name='Circuit Output O'/>
+          </controlView>
+        </controlViewComponent>
+      </components>
+      <model>
+        <subGraphVertice _id='49' id='0' delay='0' uuid='3c4b616b-515d-4dcd-a5c9-b607350ec079'>
+          <desc>
+            <translation lang='en' text='Selects one of 4 inputs'/>
+            <translation lang='de' text='Wählt aus 4 Eingängen einen aus'/>
+          </desc>
+          <name>
+            <translation lang='en' text='4:1 Multiplexer n Bit'/>
+          </name>
+          <ports>
+            <subCircuitPort _id='28' portId='1' name='I0' logic='positive' bitWidth='4' trigger='level' type='input' representation='hex'/>
+            <subCircuitPort _id='31' portId='2' name='I1' logic='positive' bitWidth='4' trigger='level' type='input' representation='hex'/>
+            <subCircuitPort _id='34' portId='3' name='I2' logic='positive' bitWidth='4' trigger='level' type='input' representation='hex'/>
+            <subCircuitPort _id='37' portId='4' name='I3' logic='positive' bitWidth='4' trigger='level' type='input' representation='hex'/>
+            <subCircuitPort _id='43' portId='6' name='S0' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='46' portId='7' name='S1' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='40' portId='5' name='O' logic='positive' bitWidth='4' trigger='level' type='output' representation='hex'/>
+          </ports>
+        </subGraphVertice>
+      </model>
+    </containerDrawing>
+  </container>
+  <params>
+    <graphParamDefs _id='50'>
+      <paramDefs>
+        <graphParamDef _id='51' name='BW' type='bitWidth' defaultValue='4'/>
+        <graphParamDef _id='52' name='PD' type='Long' defaultValue='60' semantic='propagationDelay'/>
+      </paramDefs>
+    </graphParamDefs>
+  </params>
+</metaGraph>

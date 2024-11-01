@@ -125,7 +125,7 @@ x	254	0	254
         <subGraphVertice _id='32' id='0' delay='0' uuid='ae0652c3-7ad1-4664-9758-c4d2050e76a5'>
           <desc>
             <translation lang='de' text='Wählt eine von zwei Input-Verbindungen aus'/>
-            <translation lang='en' text='Select one of two input connections'/>
+            <translation lang='en' text='Select one of two input.'/>
           </desc>
           <name>
             <translation lang='en' text='2:1 Multiplexer n Bit'/>
