@@ -145,6 +145,11 @@ class GraphParamDefinitionsViewSwing(
 			defaultValue?.let { editor.paramValue = it }
 			defaultValueFieldHolder.removeAll()
 			defaultValueFieldHolder.add(editor as JComponent, BorderLayout.CENTER)
+			revalidate()
+			repaint()
+		}
+		SwingUtilities.invokeLater {
+			defaultValueEditor?.editorEnabled = controller.isFormEnabled
 		}
 	}
 
