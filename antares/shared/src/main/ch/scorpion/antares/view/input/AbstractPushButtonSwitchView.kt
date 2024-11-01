@@ -140,10 +140,10 @@ abstract class AbstractPushButtonSwitchView<T: AbstractSwitch<T>>(
 
 	override val boundingBox: RectangularShape
 		get() {
-			val bb = super.boundingBox
+			var bb = super.boundingBox
 			if (StringUtils.isNotEmpty(externalLabel.text)) {
 				val lbb = Rectangle2D(externalLabel.boundingBox).moveBy(location)
-				Rectangle2D(bb).add(lbb)
+				bb = Rectangle2D(bb).add(lbb)
 			}
 			return bb
 		}
