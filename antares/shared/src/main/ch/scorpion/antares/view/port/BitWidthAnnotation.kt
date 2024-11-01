@@ -27,7 +27,7 @@ class BitWidthAnnotation(
 ) : AbstractDrawable() {
 
     companion object {
-	    private const val LABEL_EDGE_DIST = 10.0
+	    private const val LABEL_EDGE_DIST = 5.0
 	    private const val LINE_WIDTH_HALF = 3.0
         private const val LINE_HEIGHT_HALF = 5.0
 	    const val DIST = 0.75 * 2 * Look.SCALE
