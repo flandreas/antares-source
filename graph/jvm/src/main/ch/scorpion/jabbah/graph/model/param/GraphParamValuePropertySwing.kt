@@ -103,10 +103,6 @@ abstract class ExpressionPropertyEditor<T>(
 
 	protected abstract fun showDialog()
 
-	init {
-		button.isEnabled = editable
-	}
-
 	protected fun buildUI() {
 		val panel = JPanel()
 		panel.background = UIManager.getColor("Table.background")

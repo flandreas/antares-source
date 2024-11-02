@@ -83,7 +83,7 @@ class BitWidthEditor(
 	}
 
 	override fun setValue(value: Any?) {
-		comboBox.editor.item = value
+		comboBoxEditor.value = value
 	}
 
 	override fun showDialog() {
