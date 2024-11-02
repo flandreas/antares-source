@@ -39,6 +39,7 @@ class AddressableContentsCommand(
 		try {
 			MemoryDump.read(addressable.memory, String(Files.readAllBytes(Paths.get(filePath))))
 			addressable.dataSource = filePath
+			addressable.update()
 		} catch (e: Throwable) {
 			LOG.error("Error while reading memory from file '$filePath'")
 			throw e
@@ -48,5 +49,6 @@ class AddressableContentsCommand(
 	override fun undo() {
 		MemoryDump.read(addressable.memory, oldContents!!)
 		addressable.dataSource = oldDataSource
+		addressable.update()
 	}
 }
