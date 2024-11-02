@@ -160,7 +160,9 @@ class SubGraphVerticeRef(
 	override val designError: DesignError? get() = _designError
 
 	override val type: String get() =
-		graphUUID?.let { LibraryModule.libraryHolder.getMetaGraph(it).name } ?: BROKEN_REFERENCE_NAME.value
+		graphUUID?.let {
+			LibraryModule.libraryHolder.getOptionalMetaGraph(it)?.name ?: BROKEN_REFERENCE_NAME.value
+		} ?: BROKEN_REFERENCE_NAME.value
 
 	fun handleTypeChanged() {
 		stateChanged(null, Vertice.STATE_CHANGE_TYPE)
