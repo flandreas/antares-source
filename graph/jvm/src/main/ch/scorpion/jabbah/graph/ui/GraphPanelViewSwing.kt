@@ -2,10 +2,7 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.ToolBar
-import ch.scorpion.jabbah.base.ActionWrapperSwing
-import ch.scorpion.jabbah.base.Issue
-import ch.scorpion.jabbah.base.IssueSeverity
-import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.*
@@ -43,6 +40,9 @@ class GraphPanelViewSwing(
 
 	companion object {
 		private const val DEF_SIDEBAR_SIZE = 200
+
+		/** The name in [Settings] (extending `propertyBaseName`) of the bottom [JSplitPane] divider position.*/
+		private const val BOTTOM_SPLIT_POS = "graphPanel.bottomSidebarSplitPos"
 	}
 
 	/** Allows editing and execute the currently open GraphView.*/
@@ -100,7 +100,7 @@ class GraphPanelViewSwing(
 	private val bottomSidebarSplitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
 
 	/** Holds the location of [bottomSidebarSplitPane]'s divider for re-establishing it the next time it opens.*/
-	private var bottomSidebarDividerLocation: Int = BaseModule.settings.getInt("graphPanel.bottomSidebarSplitPos", -1)
+	private var bottomSidebarDividerLocation: Int = BaseModule.settings.getInt(BOTTOM_SPLIT_POS, -1)
 
 	/** Displays the current [Issue]s. */
 	private val issuesPanel = IssuesViewSwing(controller.issuesViewController)
@@ -131,6 +131,7 @@ class GraphPanelViewSwing(
 	}
 
 	override fun dispose() {
+		BaseModule.settings.set(BOTTOM_SPLIT_POS, bottomSidebarSplitPane.dividerLocation)
 		leftSidebarPane.dispose()
 		issuesPanel.dispose()
 		logPanel.dispose()
