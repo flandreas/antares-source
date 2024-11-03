@@ -105,7 +105,7 @@
       <model>
         <subGraphVertice _id='25' id='0' delay='0' uuid='13000252-70c7-47a2-8282-6043d10d63b8'>
           <desc>
-            <translation lang='de' text='Berechnet das Produkt A * B.'/>
+            <translation lang='de' text='Berechnet das Produkt A \* B.'/>
             <translation lang='en' text='Calculates the product A \* B.'/>
           </desc>
           <name>

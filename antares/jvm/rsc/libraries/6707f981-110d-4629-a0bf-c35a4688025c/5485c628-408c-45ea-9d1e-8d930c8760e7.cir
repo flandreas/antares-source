@@ -236,7 +236,7 @@ run {
         <subGraphVertice _id='83' id='0' delay='0' uuid='5485c628-408c-45ea-9d1e-8d930c8760e7'>
           <name>
             <translation lang='en' text='JK Master-Slave Flip-Flop'/>
-            <translation lang='de' text='JK-Master/Slave-Flipflop'/>
+            <translation lang='de' text='JK-Master\/Slave-Flipflop'/>
           </name>
           <ports>
             <subCircuitPort _id='68' portId='1' name='J' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>

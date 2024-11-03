@@ -124,8 +124,8 @@
       <model>
         <subGraphVertice _id='30' id='0' delay='0' uuid='8177d84d-e541-412f-9b02-c5ff51c9efbe'>
           <desc>
-            <translation lang='de' text='Berechnet den ganzzahligen Quotient A / B sowie den Rest der Division.'/>
-            <translation lang='en' text='Calculates the integral quotient A / B and the remainder of the division.'/>
+            <translation lang='de' text='Berechnet den ganzzahligen Quotient A \/ B sowie den Rest der Division.'/>
+            <translation lang='en' text='Calculates the integral quotient A \/ B and the remainder of the division.'/>
           </desc>
           <name>
             <translation lang='en' text='Divider n Bit'/>

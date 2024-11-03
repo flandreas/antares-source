@@ -351,7 +351,7 @@ if (^C) {
       <model>
         <subGraphVertice _id='121' id='0' delay='0' uuid='f5ffee61-6d3e-453e-a352-e702a06b11d2'>
           <name>
-            <translation lang='de' text='D-Flipflop PRE/CRL (Neg)'/>
+            <translation lang='de' text='D-Flipflop PRE\/CRL (Neg)'/>
             <translation lang='en' text='D Flip-Flop PRE\/CRL (Neg)'/>
           </name>
           <ports>
@@ -359,8 +359,8 @@ if (^C) {
             <subCircuitPort _id='106' portId='2' name='C' logic='positive' bitWidth='1' trigger='edge' type='input' representation='binary'/>
             <subCircuitPort _id='109' portId='3' name='Q' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='112' portId='4' name='!Q' logic='negative' bitWidth='1' trigger='level' type='output' representation='binary'/>
-            <subCircuitPort _id='115' portId='5' name='!(PRE)' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
-            <subCircuitPort _id='118' portId='6' name='!(CLR)' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='115' portId='5' name='!(PRE)' logic='negative' bitWidth='1' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='118' portId='6' name='!(CLR)' logic='negative' bitWidth='1' trigger='level' type='input' representation='binary'/>
           </ports>
         </subGraphVertice>
       </model>

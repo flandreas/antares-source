@@ -555,7 +555,7 @@ run {
           </desc>
           <name>
             <translation lang='en' text='JK MS-Flip-Flop PRE\/CLR'/>
-            <translation lang='de' text='JK-MS-Flipflop PRE/CLR'/>
+            <translation lang='de' text='JK-MS-Flipflop PRE\/CLR'/>
           </name>
           <ports>
             <subCircuitPort _id='179' portId='1' name='J' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>

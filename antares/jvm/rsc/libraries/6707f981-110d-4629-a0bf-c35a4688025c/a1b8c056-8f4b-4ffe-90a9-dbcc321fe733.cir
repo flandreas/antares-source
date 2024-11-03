@@ -380,7 +380,7 @@ if (^C) {
         <subGraphVertice _id='135' id='0' delay='0' uuid='a1b8c056-8f4b-4ffe-90a9-dbcc321fe733'>
           <name>
             <translation lang='en' text='D Flip-Flop PRE\/CRL'/>
-            <translation lang='de' text='D-Flipflop PRE/CRL'/>
+            <translation lang='de' text='D-Flipflop PRE\/CRL'/>
           </name>
           <ports>
             <subCircuitPort _id='117' portId='1' name='D' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>

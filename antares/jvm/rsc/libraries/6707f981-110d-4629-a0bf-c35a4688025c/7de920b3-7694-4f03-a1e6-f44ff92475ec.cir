@@ -1361,7 +1361,7 @@ run {
             <translation lang='en' text='4-Bit binary counter with parallel load and asynchronous reset'/>
           </desc>
           <name>
-            <translation lang='de' text='Binärzähler 4-Bit mit Load/Reset'/>
+            <translation lang='de' text='Binärzähler 4-Bit mit Load\/Reset'/>
             <translation lang='en' text='Binary Counter 4 Bit sync. LD\/CLR'/>
           </name>
           <ports>

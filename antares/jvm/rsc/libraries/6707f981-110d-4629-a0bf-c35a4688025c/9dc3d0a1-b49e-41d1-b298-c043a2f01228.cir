@@ -332,6 +332,7 @@ run {
           </desc>
           <name>
             <translation lang='en' text='SR Flip-Flop PRE\/CLR (Neg)'/>
+            <translation lang='de' text='SR Flip-Flop PRE\/CLR (Neg)'/>
           </name>
           <ports>
             <subCircuitPort _id='100' portId='1' name='S' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>

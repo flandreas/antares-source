@@ -369,7 +369,7 @@ run {
           </desc>
           <name>
             <translation lang='en' text='SR Flip-Flop PRE\/CLR'/>
-            <translation lang='de' text='SR-Flipflop PRE/CLR'/>
+            <translation lang='de' text='SR-Flipflop PRE\/CLR'/>
           </name>
           <ports>
             <subCircuitPort _id='114' portId='1' name='S' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
