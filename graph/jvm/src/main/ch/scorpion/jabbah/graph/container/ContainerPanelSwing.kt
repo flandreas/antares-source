@@ -61,12 +61,13 @@ class ContainerPanelSwing(
 	/** Displays the (inverted) value of [ContainerPanelController.isManualContainerCurrent] in the UI.*/
 	private val isGeneratedContainerCheckbox = JCheckBox(Translations.getString("graph.property.ContainerDrawing.generated"))
 
+	private val canvas = CanvasJvm(controller.drawingView)
+
 	val toolbars = GraphViewModuleJvm.containerToolBarBuilderFactory().buildToolBars(application, controller.editor, separator = true)
 
 	init {
 		controller.view = this
 
-		CanvasJvm(controller.drawingView)
 		propertyPanel = ComponentPropertyPanelSwing(controller.propertyPanelController, "container", propertySheetFactory)
 
 		treeView.transferHandler = ContainerTransferHandler()
@@ -79,6 +80,7 @@ class ContainerPanelSwing(
 
 	override fun dispose() {
 		treeView.dispose()
+		canvas.dispose()
 
 		BaseModule.settings.set(PROP_MAIN_SPLIT_POS, mainSplitPane.dividerLocation)
 		BaseModule.settings.set(PROP_LEFT_SPLIT_POS, leftSplitPane.dividerLocation)

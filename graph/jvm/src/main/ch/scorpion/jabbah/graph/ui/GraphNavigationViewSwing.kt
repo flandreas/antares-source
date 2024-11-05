@@ -69,6 +69,8 @@ class GraphNavigationViewSwing(
 		}
 	}
 
+	private val canvas = CanvasJvm(drawingView)
+
 	override val showsNavigationRoot: Boolean get() = navigationStack.size == 1
 
 	init {
@@ -78,12 +80,11 @@ class GraphNavigationViewSwing(
 	}
 
 	override fun dispose() {
+		canvas.dispose()
 		eventBus.unregister(searchInMetaGraphHandler)
 	}
 
 	private fun buildUI(contextColor: CompositeColor?) {
-		CanvasJvm(drawingView)
-
 		mainPanel.layout = BoxLayout(mainPanel, BoxLayout.PAGE_AXIS)
 
 		updateMainPanel(contextColor?.foregroundColor)

@@ -53,11 +53,13 @@ class CanvasJvm(
 	private val mouseWheelListeners: MutableList<MouseWheelEventBridge> by lazy { mutableListOf() }
 	private val keyListeners: MutableList<KeyEventBridge> by lazy { mutableListOf() }
 
+	private val themeHandler: EventHandler<ThemeEvent> = { installBackgroundColor() }
+
 	private val contextMenu = JPopupMenu()
 
 	init {
 		propertyOwner.source = this
-		eventBus.register(ThemeEvent::class) { installBackgroundColor() }
+		eventBus.register(ThemeEvent::class, themeHandler)
 		installBackgroundColor()
 
 		layout = null
@@ -80,6 +82,10 @@ class CanvasJvm(
 				propertyOwner.fire(Canvas.PROP_DIMENSION, dimension, dimension)
 			}
 		})
+	}
+
+	fun dispose() {
+		eventBus.unregister(themeHandler)
 	}
 
 	private fun installBackgroundColor() {

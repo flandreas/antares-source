@@ -93,6 +93,10 @@ class MetaGraphHistoryPanel(
 		}
 	}
 
+	fun dispose() {
+		preview.dispose()
+	}
+
 	private fun buildUI() {
 		layout = BorderLayout(0, 10)
 		border = UIBasics.createDialogBorder()
