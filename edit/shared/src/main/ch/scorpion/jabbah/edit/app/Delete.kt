@@ -4,14 +4,10 @@ import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ContentViewManager
-import ch.scorpion.jabbah.edit.Command
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.Undoable
-import ch.scorpion.jabbah.edit.command.AbstractCommand
+import ch.scorpion.jabbah.draw.view.DrawViewModule
+import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.edit.command.AbstractDrawingViewCommand
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.module.EditModule
@@ -62,13 +58,13 @@ class DeleteAction(
  * TODO How can we preserve the original stacking order of the removed Components?
  */
 class DeleteCommand(
-	val drawingView: DrawingView<*>,
+	drawingView: DrawingView<*>,
 	private val componentIds: List<Int>
-) : AbstractCommand("edit.command.delete", null) {
+) : AbstractDrawingViewCommand("edit.command.delete", drawingView) {
 
-	constructor(drawingView: DrawingView<Drawing<Component>>, component: Component) : this(drawingView, mutableListOf(component.id))
+	constructor(drawingView: DrawingView<*>, component: Component) : this(drawingView, mutableListOf(component.id))
 
 	override fun execute() {
-		drawingView.drawing.remove(componentIds)
+		view.drawing.remove(componentIds)
 	}
 }

@@ -33,8 +33,7 @@ class DeleteForkToothEdgeViewTest : AbstractForkEdgeViewTest() {
     private fun assertDeleteToothEdgeView(name: String) {
         GraphViewModule.graphViewAppService.delete(
             listOf(getToothEdgeView(name)),
-            drawingViewBuilder.build<GraphElementView<GraphElement>>()
-        )
+            drawingViewBuilder.build<GraphElementView<GraphElement>>())
 
         assertNets()
         assertNull(GraphViewConsistencyCheck.execute(builder.graphView))

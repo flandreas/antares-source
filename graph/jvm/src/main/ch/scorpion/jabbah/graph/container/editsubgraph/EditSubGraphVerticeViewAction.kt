@@ -11,8 +11,8 @@ import ch.scorpion.jabbah.edit.app.AbstractSelectionAwareAction
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.MetaGraphRepository
-import ch.scorpion.jabbah.graph.container.ContainerEditor
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
+import ch.scorpion.jabbah.graph.container.ContainerEditor
 import ch.scorpion.jabbah.graph.container.ContainerPanelSwing
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.ui.container.ContainerPanelController

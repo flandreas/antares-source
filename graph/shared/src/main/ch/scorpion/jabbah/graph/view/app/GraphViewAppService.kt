@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.app.*
-import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.model.CopyPasteService
 import ch.scorpion.jabbah.edit.model.group.GroupComponent
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
@@ -14,6 +13,7 @@ import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.library.LibraryDirectory
 import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.app.AbstractGraphViewCommand
 import ch.scorpion.jabbah.graph.model.GraphType
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.*
@@ -186,10 +186,10 @@ open class GraphViewAppServiceImpl(
 }
 
 private class UnconnectEdgeViewCommand(
-	private val drawingView: DrawingView<GraphView>,
+	drawingView: DrawingView<GraphView>,
 	private val connectService: GraphViewConnectService,
 	private val edgeViewId: Int
-) : AbstractCommand("graph.command.unconnectEdgeView", null) {
+) : AbstractGraphViewCommand("graph.command.unconnectEdgeView", drawingView) {
 
 	private val edgeView get() = drawingView.drawing.getWithId(edgeViewId) as EdgeView<Any>
 
@@ -199,10 +199,10 @@ private class UnconnectEdgeViewCommand(
 }
 
 private class UnconnectEdgeViewOriginCommand(
-	private val drawingView: DrawingView<GraphView>,
+	drawingView: DrawingView<GraphView>,
 	private val connectService: GraphViewConnectService,
 	private val edgeViewId: Int
-) : AbstractCommand("graph.command.unconnectEdgeViewOrigin", null) {
+) : AbstractGraphViewCommand("graph.command.unconnectEdgeViewOrigin", drawingView) {
 
 	private val edgeView get() = drawingView.drawing.getWithId(edgeViewId) as EdgeView<Any>
 
@@ -212,10 +212,10 @@ private class UnconnectEdgeViewOriginCommand(
 }
 
 private class UnconnectEdgeViewDestinationCommand(
-	private val drawingView: DrawingView<GraphView>,
+	drawingView: DrawingView<GraphView>,
 	private val connectService: GraphViewConnectService,
 	private val edgeViewId: Int
-) : AbstractCommand("graph.command.unconnectEdgeViewDestination", null) {
+) : AbstractGraphViewCommand("graph.command.unconnectEdgeViewDestination", drawingView) {
 
 	private val edgeView get() = drawingView.drawing.getWithId(edgeViewId) as EdgeView<Any>
 
@@ -227,10 +227,10 @@ private class UnconnectEdgeViewDestinationCommand(
 class ExtractMetaGraphCommand(
 	private val graphName: TranslatableText,
 	private val type: GraphType,
-	private val drawingView: DrawingView<GraphView>,
+	drawingView: DrawingView<GraphView>,
 	private val componentIds: Collection<Int>,
 	private val libraryDirectory: LibraryDirectory
-) : AbstractCommand("graph.command.extractMetaGraph") {
+) : AbstractGraphViewCommand("graph.command.extractMetaGraph", drawingView) {
 
 	private lateinit var uuid: UUID
 

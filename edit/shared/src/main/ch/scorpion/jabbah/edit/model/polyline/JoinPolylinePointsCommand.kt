@@ -1,11 +1,11 @@
 package ch.scorpion.jabbah.edit.model.polyline
 
-import ch.scorpion.jabbah.draw.polyline.Polyline
-import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.draw.polyline.Polyline
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.Undoable
+import ch.scorpion.jabbah.edit.Command
+import ch.scorpion.jabbah.edit.command.AbstractCommand
 
 /**
  * A [Command] for joining two adjacent points of a [Polyline] by moving one of them onto the other one.

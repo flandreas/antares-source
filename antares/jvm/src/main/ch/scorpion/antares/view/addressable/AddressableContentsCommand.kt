@@ -1,14 +1,13 @@
 package ch.scorpion.antares.view.addressable
 
 import ch.scorpion.antares.model.addressable.Addressable
-import ch.scorpion.antares.model.addressable.AddressableReference
 import ch.scorpion.antares.model.addressable.MemoryDump
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Undoable
-import ch.scorpion.jabbah.edit.command.AbstractCommand
+import ch.scorpion.jabbah.graph.app.AbstractGraphViewCommand
 import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.nio.file.Files
@@ -18,17 +17,17 @@ import java.nio.file.Paths
  * A [Command] for loading the contents of an [Addressable] from a file.
  */
 class AddressableContentsCommand(
-	private val view: DrawingView<GraphView>,
+	view: DrawingView<GraphView>,
 	private val link: VerticeLink,
 	private val bitWidth: BitWidth,
 	private val filePath: String
-) : AbstractCommand("antares.command.memoryContents", null), Undoable {
+) : AbstractGraphViewCommand("antares.command.memoryContents", view), Undoable {
 
 	companion object {
 		private val LOG by logger(AddressableContentsCommand::class)
 	}
 
-	private val addressable: Addressable get() = link.getLinkedVertice(view.drawing.graph!!) as Addressable
+	private val addressable: Addressable get() = link.getLinkedVertice(drawingView.drawing.graph!!) as Addressable
 
 	private var oldContents: String? = null
 

@@ -111,7 +111,7 @@ open class DrawingAppServiceImpl(
 		require(components.size >= 2) { "grouping requires at least two Components" }
 		val group = GroupComponent(components)
 		commandManager.beginTransaction("edit.command.group", drawingView)
-		components.forEach { commandManager.execute(DeleteCommand(drawingView, it)) }
+		components.forEach { commandManager.execute(DeleteCommand(drawingView as DrawingView<*>, it)) }
 		add(group, drawingView)
 		commandManager.commitTransaction()
 	}

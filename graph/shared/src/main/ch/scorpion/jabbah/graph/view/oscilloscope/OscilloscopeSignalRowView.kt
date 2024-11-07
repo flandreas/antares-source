@@ -13,8 +13,10 @@ import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.ReferenceColor
 import ch.scorpion.jabbah.draw.graphics.RemoveIcon
 import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.execution.actor.ActorViewContainer
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.app.oscilloscope.OscilloscopeViewService
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView.Companion.DRAWER_X
 

@@ -1,6 +1,9 @@
 package ch.scorpion.jabbah.graph.view.net
 
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.DrawingViewMockBuilder
 import ch.scorpion.jabbah.graph.model.GraphElement
@@ -38,7 +41,9 @@ class DivideNetTest {
 
 	@Test
 	fun shouldNotDivideNet() {
-		EditModule.drawingAppService.delete(listOf(ev12), drawingViewBuilder.build<GraphElementView<GraphElement>>())
+		EditModule.drawingAppService.delete(
+			listOf(ev12),
+			drawingViewBuilder.build<GraphElementView<GraphElement>>())
 
 		assertSame(vv2.model.getInput<Boolean>().net, vv3.model.getInput<Boolean>().net)
 		assertSame(vv3.model.getInput<Boolean>().net, vv4.model.getInput<Boolean>().net)
@@ -46,7 +51,9 @@ class DivideNetTest {
 
 	@Test
 	fun shouldDivideNet() {
-		EditModule.drawingAppService.delete(listOf(split3.newEdgeView), drawingViewBuilder.build<GraphElementView<GraphElement>>())
+		EditModule.drawingAppService.delete(
+			listOf(split3.newEdgeView),
+			drawingViewBuilder.build<GraphElementView<GraphElement>>())
 
 		assertEquals(6, builder.graph.elementsCount)
 		assertEquals(6, builder.graphView.drawables.size)

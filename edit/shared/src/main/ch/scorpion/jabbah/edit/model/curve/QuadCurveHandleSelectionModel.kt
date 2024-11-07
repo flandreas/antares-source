@@ -57,7 +57,7 @@ class QuadCurveHandleSelectionModel(c: QuadCurveComponent) : AbstractHandleSelec
 			val index = getIndexOf(focusHandle!!)
 			val newLocation = component.getPointAt(index)
 			context.editor.commandManager.register(
-				MoveQuadCurvePointCommand(context.editor.view, context.editor, component.id, index, oldLocation, newLocation))
+				MoveQuadCurvePointCommand(context.editor.view, component.id, index, oldLocation, newLocation))
 		}
 	}
 

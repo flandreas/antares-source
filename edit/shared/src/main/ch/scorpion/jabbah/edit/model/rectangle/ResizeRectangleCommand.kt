@@ -12,12 +12,13 @@ import ch.scorpion.jabbah.edit.command.AbstractCommand
  */
 class ResizeRectangleCommand(
     editor: Editor,
-    val rectangleId: Int,
-    val oldBounds: Rectangle2D,
-    val newBounds: Rectangle2D
+    private val rectangleId: Int,
+    private val oldBounds: Rectangle2D,
+    private val newBounds: Rectangle2D
 ) : AbstractCommand("edit.model.rectangle.resize", editor), Undoable {
 
-	private val rectangle: AbstractRectangularComponent get() = editor!!.drawing.getWithId(rectangleId)!!.selectableComponent as AbstractRectangularComponent
+	private val rectangle: AbstractRectangularComponent get() =
+        editor!!.drawing.getWithId(rectangleId)!!.selectableComponent as AbstractRectangularComponent
 
     override fun execute() {
         rectangle.setFrame(newBounds)

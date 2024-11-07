@@ -11,7 +11,9 @@ class DeleteFirstIntermediateEdgeViewTest : AbstractForkEdgeViewTest() {
 
     @Test
     fun shouldDeleteFirstIntermediateEdgeView() {
-        GraphViewModule.graphViewAppService.delete(listOf(ev2), drawingViewBuilder.build<GraphElementView<GraphElement>>())
+        GraphViewModule.graphViewAppService.delete(
+            listOf(ev2),
+            drawingViewBuilder.build<GraphElementView<GraphElement>>())
 
         assertViews()
         assertNets()
