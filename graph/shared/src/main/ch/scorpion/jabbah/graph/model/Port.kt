@@ -48,6 +48,24 @@ interface Port<T : Any> : Describable, Bean {
 	/** Determines whether this [Port] is currently connected to a [Net].*/
 	val isConnected: Boolean get() = net != null
 
+	/**
+	 * The signal on its ways outgoing from this [Port], but not yet definitively established on the connected [Net].
+	 * This is used e.g. for signal flow animations, where outgoing signals are animated to flow across a [Net]
+	 * until they reach the destination [Ports][Port]. This gives view level classes a chance to draw parts of
+	 * their representation according to the [temporarySignal], and not, as they usually would, according to
+	 * the definitive [Net.signal].
+	 */
+	val temporarySignal: T?
+
+	/**
+	 * Sets up [temporarySignal] using the value from the connected [Net.signal], if any. This is an optional method
+	 * and only to be called by classes like signal flow animations on the view level.
+	 */
+	fun captureTemporarySignal()
+
+	/** Sets [temporarySignal] previously set by [captureTemporarySignal] to `null`.*/
+	fun resetTemporarySignal()
+
 	fun accept(visitor: HierarchyVisitor)
 
 	fun addPropertyChangeListener(l: PropertyChangeListener<Any>)
