@@ -186,6 +186,14 @@ class GraphViewExecutionAnimator(
 			return
 		}
 
+		// Fixed bug #697: If the Net has started acting in mode "Observe" or "Use", there is no pending
+		// animation, and acted() will be skipped, resulting in the Net never receive actingVisualized.
+		// Therefore, also check for "no animation" in map
+		if (netAnimationMap[net] == null || netAnimationMap[net]?.animations?.isEmpty() == true) {
+			net.actingVisualized(applicationContextHolder.scheduler, actorListener, data)
+			return
+		}
+
 		netAnimationMap[net]?.animations?.forEach {
 			applicationContextHolder.scheduler.logActorTrace(net) { "Starting EdgeViewNetAnimation" }
 			val task = it.start()
