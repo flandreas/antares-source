@@ -31,7 +31,7 @@ class PullResistor(
 
 		private class Calculator : VerticeCalculator<PullResistor> {
 			override fun calculate(vertice: PullResistor, data: GraphActorData, signalHandler: SignalHandler) {
-				if (signalHandler.executionTime == vertice.propagationDelay) {
+				if (signalHandler.executionTime == vertice.propagationDelay.value) {
 					vertice.getOutput<DigitalSignal>().net?.let {
 						if (it.signal?.isFullyUndefined == true) {
 							vertice.getOutput<DigitalSignal>().setOutgoingSignal(vertice.preferredOutputSignal, signalHandler)
@@ -98,6 +98,7 @@ class PullResistor(
 	/** ---- [GraphElement] */
 
 	override fun graphParamsChanged(graph: Graph) {
+		super.graphParamsChanged(graph)
 		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
 	}
 
@@ -151,6 +152,6 @@ class PullResistor(
 
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
-		requestActingAfter(signalHandler, propagationDelay, createActorData(null))
+		requestActingAfter(signalHandler, propagationDelay.value, createActorData(null))
 	}
 }

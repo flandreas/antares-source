@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.edit.model.text
 
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
@@ -39,7 +40,8 @@ class Label(
 	rotationDisplayStrategy: RotationDisplayStrategy = RotationDisplayStrategy.IGNORE,
 	val rotation: Rotation = Rotation.R0,
 	ownerRotation: Rotation = Rotation.R0,
-	displayableText: RichTextDrawable = RichTextDrawable.of(text ?: "", font)
+	val richText: Boolean = true,
+	displayableText: RichTextDrawable = if (richText) RichTextDrawable.of(text ?: "", font) else RichTextDrawable.asPlain(text ?: "", font)
 ) : AbstractDrawable(), Mirrorable, Locatable {
 
 	companion object {
@@ -53,7 +55,11 @@ class Label(
 			if (field != value) {
 				invalidate()
 				field = value
-				displayableText = RichTextDrawable.of(value, font)
+				if (richText) {
+					displayableText = RichTextDrawable.of(value, font)
+				} else {
+					displayableText = RichTextDrawable.asPlain(value, font)
+				}
 				updateGeometry()
 			}
 		}
@@ -69,7 +75,6 @@ class Label(
 		}
 
 	override var location: Point2D = location
-		get() = Point2D(field)
 		set(value) {
 			if (field != value) {
 				invalidate()
@@ -131,14 +136,19 @@ class Label(
 	/** If `true`, the text is drawn in background color (only with [DrawContext.useContextColors]).*/
 	var inverse: Boolean = false
 
+	override var boundingBox: RectangularShape = Rectangle2D()
+		private set
+
 	init {
 		updateGeometry()
 	}
 
 	/** ---- [Drawable] */
 
-	override val boundingBox: Rectangle2D
-		get() = rotation.rotateRectangleAround(location, bounds)
+
+	private fun updateBoundingBox() {
+		boundingBox = rotation.rotateRectangleAround(location, bounds)
+	}
 
 	override fun contains(x: Double, y: Double): Boolean {
 		return bounds.contains(x, y)
@@ -212,6 +222,7 @@ class Label(
 
 		positionDisplayableText(displayableText)
 		bounds.setFrame(displayableText.bounds)
+		updateBoundingBox()
 
 		update()
 		validate()

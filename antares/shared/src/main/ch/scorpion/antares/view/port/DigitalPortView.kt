@@ -205,13 +205,16 @@ class DigitalPortView(
 		}
 	}
 
-	private val drawableInOutSignal: DigitalSignal get() {
-		return if (digitalPort.net != null) {
-			digitalPort.net!!.signal!!
+	private val drawableInOutSignal: DigitalSignal get() =
+		if (digitalPort.temporarySignal != null) {
+			digitalPort.temporarySignal!!
 		} else {
-			digitalPort.dominantSignal
+			if (digitalPort.net != null) {
+				digitalPort.net!!.signal!!
+			} else {
+				digitalPort.dominantSignal
+			}
 		}
-	}
 
 	override fun setupStroke(context: DrawContext) {
 		context.g.stroke = DigitalEdgeView.getStroke(
@@ -242,7 +245,7 @@ class DigitalPortView(
 		}
 	}
 
-	override val boundingBox: Rectangle2D
+	override val boundingBox: RectangularShape
 		get() {
 			val bbox: Rectangle2D = if (portLabel != null) {
 				val lb = portLabel!!.boundingBox

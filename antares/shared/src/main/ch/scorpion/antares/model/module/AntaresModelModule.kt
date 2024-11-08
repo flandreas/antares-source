@@ -24,12 +24,14 @@ import ch.scorpion.antares.model.net.*
 import ch.scorpion.antares.model.output.*
 import ch.scorpion.antares.model.port.SubCircuitPort
 import ch.scorpion.antares.model.signal.BitWidthGraphParamType
+import ch.scorpion.antares.model.signal.DigitalSignalColor
 import ch.scorpion.antares.model.signal.FixedPointConfig
 import ch.scorpion.antares.model.testcase.Testcase
 import ch.scorpion.antares.model.testcase.TestcaseAppService
 import ch.scorpion.antares.model.testcase.Testcases
 import ch.scorpion.antares.model.truthtable.*
 import ch.scorpion.antares.model.vertice.AntaresSubGraphVerticeRefActivationRecord
+import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.antares.view.port.AntaresPortFactory
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
@@ -81,8 +83,10 @@ object AntaresModelModule : AbstractModule() {
 	}
 
 	private fun customizeProperties(properties: Properties) {
-		properties.set(Switch.PROP_DEFAULT_DELAY, 1_000)
-		properties.set(UsecaseRecorder.PROP_DEF_DELAY_MS, properties.getInt(Switch.PROP_DEFAULT_DELAY) / 1_000)
+		properties.set(CurrentDefaultPropagationDelay.PROP_DEFAULT_PROPAGATION_DELAY, 20)
+		properties.set(CurrentSwitchPropagationDelay.PROP_DEFAULT_DELAY, 1_000)
+		properties.set(UsecaseRecorder.PROP_DEF_DELAY_MS, properties.getInt(CurrentSwitchPropagationDelay.PROP_DEFAULT_DELAY) / 1_000)
+		properties.set(DigitalSignalColor.PROP_DIFFERENT_NON_ZERO_MULTI_BIT_COLOR, true)
 
 		properties.set(UndefinedGateInputBehavior.PROP_UNDEFINED_GATE_INPUT_BEHAVIOR, UndefinedGateInputBehavior.ReadAs0.customName)
 		properties.set(TruthTableService.PROP_TRUTH_TABLE_MAX_INPUTS, 8)
@@ -90,6 +94,8 @@ object AntaresModelModule : AbstractModule() {
 		properties.set(BooleanExpressionNotation.PROP_NOTATION, BooleanExpressionNotation.ARITHMETIC.customName)
 		properties.set(BooleanExpressionNotation.PROP_OMIT_AND, true)
 		properties.set(BooleanExpressionNotation.PROP_AND_PARENTHESIS, false)
+
+		properties.set(AnalogCircuitAnalysis.PROP_TIME_STEP, AnalogCircuitAnalysis.DEF_TIME_STEP)
 	}
 
 	private fun configureTypeMap(typeMap: TypeMap) {
@@ -163,6 +169,7 @@ object AntaresModelModule : AbstractModule() {
 		typeMap.register("battery", Battery::class)
 		typeMap.register("currentSource", CurrentSource::class)
 		typeMap.register("resistor", Resistor::class)
+		typeMap.register("capacitor", Capacitor::class)
 		typeMap.register("analogSwitch", AnalogSwitch::class)
 		typeMap.register("analogGround", AnalogGround::class)
 		typeMap.register("analogTransistor", AnalogTransistor::class)

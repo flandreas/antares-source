@@ -1,16 +1,17 @@
 package ch.scorpion.jabbah.edit.properties
 
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.edit.BeanProvider
-import ch.scorpion.jabbah.edit.EditTestRule
-import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.draw.View
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.command.AppendCommand
 import ch.scorpion.jabbah.edit.command.ApplicationDummy
 import ch.scorpion.jabbah.edit.command.SourcingCommandManager
 import ch.scorpion.jabbah.edit.command.StorableString
 import ch.scorpion.jabbah.io.IOModule
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.answering.returns
+import dev.mokkery.mock
+import dev.mokkery.every
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -90,8 +91,10 @@ class CommandPropertySwingTest {
 	}
 
 	private fun createEditor(): Editor {
-		val editor =  mockk<Editor>(relaxed = true)
+		val editor =  mock<Editor>(MockMode.autofill)
+		val view =  mock<DrawingView<Drawing<Component>>>(MockMode.autofill)
 		every { editor.commandManager } returns cmdManager
+		every { editor.view } returns view
 		return editor
 	}
 }

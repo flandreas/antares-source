@@ -14,4 +14,7 @@ interface SignalHistoryTimeline {
 
     /** Returns the x-coordinate at which a signal that occurred at the specified execution time should be drawn.*/
     fun getX(time: Long): Double
+
+    /** Returns the execution time drawn at the specified x-coordinate.*/
+    fun getTime(x: Double): Long
 }

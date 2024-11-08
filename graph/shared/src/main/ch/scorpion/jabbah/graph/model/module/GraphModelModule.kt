@@ -11,19 +11,23 @@ import ch.scorpion.jabbah.graph.*
 import ch.scorpion.jabbah.graph.dsl.GraphDslModule
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.graph.GraphImpl
+import ch.scorpion.jabbah.edit.model.image.ImageIdentification
+import ch.scorpion.jabbah.edit.semantic.SemanticRegistry
+import ch.scorpion.jabbah.graph.library.LibraryPreferences
 import ch.scorpion.jabbah.graph.model.net.NetImpl
 import ch.scorpion.jabbah.graph.model.net.SignalConflictBehaviour
 import ch.scorpion.jabbah.graph.model.net.SignalConflictBehaviourHolder
+import ch.scorpion.jabbah.graph.model.nonvolatile.NonVolatileService
+import ch.scorpion.jabbah.graph.model.nonvolatile.NonVolatileStorable
+import ch.scorpion.jabbah.graph.model.nonvolatile.UnimplementedNonVolatileService
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistories
-import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
-import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
-import ch.scorpion.jabbah.graph.model.param.GraphParamValue
-import ch.scorpion.jabbah.graph.model.param.GraphParamValues
+import ch.scorpion.jabbah.graph.model.param.*
 import ch.scorpion.jabbah.graph.model.port.InconsistentNetError
 import ch.scorpion.jabbah.graph.model.port.PortFactory
 import ch.scorpion.jabbah.graph.model.port.UndefinedPortFactory
+import ch.scorpion.jabbah.graph.model.semantic.GraphSemantic
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeImpl
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRefActivationRecord
@@ -53,6 +57,8 @@ object GraphModelModule : AbstractModule() {
 
 	val graphTypeRegistry = GraphTypeRegistry()
 
+	var nonVolatileService: NonVolatileService = UnimplementedNonVolatileService()
+
 	override fun initialize() {
 		BaseModule.require()
 		IOModule.require()
@@ -63,6 +69,9 @@ object GraphModelModule : AbstractModule() {
 		Translations.addBundle("jabbah-graph")
 
 		registerGraphTypes()
+		registerGraphParamTypes()
+		registerSemantics()
+
 		fillProperties(BaseModule.properties)
 		configureTypeMap(IOModule.typeMap)
 	}
@@ -79,8 +88,17 @@ object GraphModelModule : AbstractModule() {
 		SubGraphVerticeRefActivationRecord(verticeRef, signalHandler)
 	}
 
+	private fun registerGraphParamTypes() {
+		GraphParamTypeRegistry.register(LongValueGraphParamType.name) { LongValueGraphParamType }
+		GraphParamTypeRegistry.register(StringGraphParamType.name) { StringGraphParamType }
+	}
+
 	private fun registerGraphTypes() {
 		graphTypeRegistry.register(GenericGraphType, asDefault = true)
+	}
+
+	private fun registerSemantics() {
+		GraphSemantic.entries.forEach { SemanticRegistry.register(it) }
 	}
 
 	private fun configureTypeMap(typeMap: TypeMap) {
@@ -105,11 +123,16 @@ object GraphModelModule : AbstractModule() {
 
 		typeMap.register("usecases", UsecasesImpl::class)
 		typeMap.register("usecase", UsecaseImpl::class)
+
+		typeMap.register("imageIdentification", ImageIdentification::class)
+
+		typeMap.register("nonVolatile", NonVolatileStorable::class)
+		typeMap.register("libraryPrefs", LibraryPreferences::class)
 	}
 
 	private fun fillProperties(properties: Properties) {
 		properties.set(SignalConflictBehaviour.PROP_SIGNAL_CONFLICT_BEHAVIOUR, SignalConflictBehaviour.IGNORE.customName)
-		properties.set(InconsistentNetError.PROP_ALLOWED_DURATION, 20)
+		properties.set(InconsistentNetError.PROP_ALLOWED_DURATION, InconsistentNetError.DEF_ALLOWED_DURATION)
 		properties.set(SignalHistories.PROP_BUFFER_SIZE, 50)
 	}
 }

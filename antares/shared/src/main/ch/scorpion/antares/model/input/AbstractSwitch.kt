@@ -24,7 +24,7 @@ abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 
 	/** ---- [InteractableVertice] interface */
 
-	override val interactivePropagationDelay: Long get() = Switch.DEF_PROP_DELAY
+	override val interactivePropagationDelay: Long get() = Switch.DEF_PROP_DELAY.value
 
 	/** ---- [Actor] interface */
 
@@ -46,7 +46,7 @@ abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 
 	/** ---- [AbstractSwitch] */
 
-	fun toggle(signalHandler: SignalHandler) {
+	open fun toggle(signalHandler: SignalHandler) {
 		if (isOn) {
 			off(signalHandler)
 		} else {
@@ -54,15 +54,21 @@ abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 		}
 	}
 
-	fun on(signalHandler: SignalHandler) {
+	open fun on(signalHandler: SignalHandler) {
 		if (enabled && !isOn) {
 			requestSetSignal(true, signalHandler)
 		}
 	}
 
-	fun off(signalHandler: SignalHandler) {
+	open fun off(signalHandler: SignalHandler) {
 		if (enabled && isOn) {
 			requestSetSignal(false, signalHandler)
+		}
+	}
+
+	protected fun delayedOff(signalHandler: SignalHandler, delayedBy: Long) {
+		if (enabled && isOn) {
+			requestSetSignalAfter(false, signalHandler, delayedBy)
 		}
 	}
 }

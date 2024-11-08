@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
@@ -20,6 +21,7 @@ import ch.scorpion.jabbah.edit.model.text.*
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
+import ch.scorpion.jabbah.graph.model.vertice.ImmediateVerticeLink
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 
@@ -34,9 +36,16 @@ class LookupTableView(
 	}
 
 	private val inputEventHandler = AddressableInputEventHandler(
-		{ view, newDesktopView -> OpenMemoryContentsRequest(view, this, "LUT", this.model, newDesktopView) },
-		eventBus
-	)
+		eventBus,
+	) { view, newDesktopView ->
+		OpenMemoryContentsRequest(
+			view,
+			this,
+			"LUT",
+			ImmediateVerticeLink(this.model.id),
+			newDesktopView
+		)
+	}
 
 	private val externalLabel = Label(
 		model.name,
@@ -99,7 +108,7 @@ class LookupTableView(
 
 	/** ---- [AbstractDrawable] */
 
-	override val boundingBox: Rectangle2D
+	override val boundingBox: RectangularShape
 		get() {
 			val bb = Rectangle2D(super.boundingBox)
 			bb.add(externalLabel.boundingBox)

@@ -3,9 +3,13 @@ package ch.scorpion.jabbah.draw.graphics
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawTestRule
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.slot
+import dev.mokkery.MockMode
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.matcher.capture.Capture
+import dev.mokkery.matcher.capture.capture
+import dev.mokkery.matcher.capture.get
+import dev.mokkery.mock
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -60,13 +64,13 @@ class ReferenceColorSequenceProviderTest {
 	fun shouldNotifyReplacement() {
 		ReferenceColorSequenceProvider.replaceColors(listOf(WHITE, RED, YELLOW))
 
-		val eventBus = mockk<EventBus>(relaxed = true)
-		val slot = slot<ReferenceColorEvent>()
-		every { eventBus.post(capture(slot)) } answers { Unit }
+		val eventBus = mock<EventBus>(MockMode.autofill)
+		val slot = Capture.slot<ReferenceColorEvent>()
+		every { eventBus.post(capture(slot)) } returns Unit
 		BaseModule.eventBus = eventBus
 
 		ReferenceColorSequenceProvider.replaceColors(listOf(BLUE, BLACK, GRAY))
-		val event = slot.captured
+		val event = slot.get()
 
 		assertEquals(BLUE, event.getNewColorFor(WHITE))
 		assertEquals(BLACK, event.getNewColorFor(RED))

@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.Trigger
 import ch.scorpion.antares.model.inout.DigitalCircuitInOut
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -24,8 +25,11 @@ class SubCircuitPort(
 	/** ---- [SubGraphPort] interface */
 
 	override fun handleGraphPortChanged(graphPort: GraphPort<*>) {
-		if (bitWidth.width != (graphPort as DigitalCircuitInOut).bitWidth.width) {
-			bitWidth = BitWidth.of(graphPort.bitWidth.width)
+		if (graphPort is DigitalCircuitInOut) {
+			// Bug #803 Cast failed for analog circuits
+			if (bitWidth.width != graphPort.bitWidth.width) {
+				bitWidth = BitWidth.of(graphPort.bitWidth.width)
+			}
 		}
 	}
 
@@ -67,6 +71,9 @@ class SubCircuitPort(
 		if (customCanBeUndefined) {
 			writer.writeBoolean("canBeUndefined", customCanBeUndefined)
 		}
+		if (unconnectedStartValue != null) {
+			writer.writeULong("startValue", unconnectedStartValue!!.getValue())
+		}
 	}
 
 	override fun read(reader: StoreReader) {
@@ -94,6 +101,9 @@ class SubCircuitPort(
 		}
 		if (reader.hasAttribute("canBeUndefined")) {
 			customCanBeUndefined = reader.readBoolean("canBeUndefined")
+		}
+		if (reader.hasAttribute("startValue")) {
+			unconnectedStartValue = DigitalSignalFactory.of(bitWidth, reader.readULong("startValue"))
 		}
 	}
 }

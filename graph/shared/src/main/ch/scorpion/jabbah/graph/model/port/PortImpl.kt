@@ -84,6 +84,18 @@ open class PortImpl<T : Any>(
 
 	override var net: Net<T>? = null
 
+	private var _temporarySignal: T? = null
+
+	override val temporarySignal: T? get() = _temporarySignal
+
+	override fun captureTemporarySignal() {
+		_temporarySignal = net?.signalBuffer
+	}
+
+	override fun resetTemporarySignal() {
+		_temporarySignal = null
+	}
+
 	override fun accept(visitor: HierarchyVisitor) {
 		visitor.visit(this)
 	}
@@ -140,6 +152,8 @@ open class PortImpl<T : Any>(
 
 	/** ---- [InputPort] interface */
 
+	override var unconnectedStartValue: T? = null
+
 	protected var _incomingSignal: T? = null
 
 	private var incomingSignalRevoked: Boolean = false
@@ -163,6 +177,10 @@ open class PortImpl<T : Any>(
 
 	override fun revokeSignal() {
 		incomingSignalRevoked = true
+	}
+
+	override fun applyUnconnectedStartValue(signalHandler: SignalHandler) {
+		setIncomingSignal(unconnectedStartValue, signalHandler)
 	}
 
 	/** ---- [OutputPort] interface */

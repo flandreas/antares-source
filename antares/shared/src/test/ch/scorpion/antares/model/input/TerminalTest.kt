@@ -3,9 +3,9 @@ package ch.scorpion.antares.model.input
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.execution.SignalHandler
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -23,7 +23,7 @@ class TerminalTest {
 
 	val terminal = Terminal()
 
-	private val signalHandler: SignalHandler = mockk(relaxed = true)
+	private val signalHandler: SignalHandler = mock(MockMode.autofill)
 
 	@Test
 	fun shouldAddCharacterIfEnabled() {

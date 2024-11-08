@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
@@ -27,7 +28,6 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.edit.model.text.*
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -36,11 +36,12 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapter
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
+import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
-import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -158,12 +159,12 @@ class DipSwitchView(
 
 	override val useOrientation: Boolean get() = true
 
-	override val boundingBox: Rectangle2D
+	override val boundingBox: RectangularShape
 		get() {
-			val bb = super.boundingBox
+			var bb = super.boundingBox
 			if (StringUtils.isNotEmpty(label.text)) {
-				val lbb = label.boundingBox.moveBy(location)
-				bb.add(lbb)
+				val lbb = Rectangle2D(label.boundingBox).moveBy(location)
+				bb = Rectangle2D(bb).add(lbb)
 			}
 			return bb
 		}
@@ -206,6 +207,9 @@ class DipSwitchView(
 		super.read(reader)
 		orientation = Direction.withName(reader.readString("orientation"))
 	}
+
+	override fun canConsume(keyEvent: KeyEvent): Boolean =
+		actorInteractionHandler.canConsume(keyEvent)
 
 	/** ---- [Drawable] interface */
 
@@ -299,8 +303,8 @@ class DipSwitchView(
 
 	override val mirrorWidth: Double get() = -(2 * AbstractAntaresPortView.LENGTH + width)
 
-	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: DipSwitch) {
-		this.model = model
+	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
+		this.model = link.getLinkedVertice(startGraph) as DipSwitch
 	}
 
 	override fun writeModelProperties(writer: StoreWriter) {
@@ -417,9 +421,20 @@ class DipSwitchView(
 			}
 		}
 
+		fun canConsume(keyEvent: KeyEvent): Boolean {
+			return when (keyEvent.key) {
+				KeyEvent.VK_LEFT -> true
+				KeyEvent.VK_RIGHT -> true
+				KeyEvent.VK_ENTER -> true
+				KeyEvent.VK_LEFT -> true
+				KeyEvent.VK_0 -> true
+				KeyEvent.VK_1 -> true
+				else -> false
+			}
+		}
+
 		override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
 			LOG.trace("keyPressed '${context.keyEvent!!.key.toChar()}'")
-			val graphView = (context.view as DrawingView<*>).drawing as GraphView
 			if (focusIndex != null) {
 				when (context.keyEvent?.key) {
 					KeyEvent.VK_LEFT -> transferFocusLeft()

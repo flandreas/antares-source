@@ -26,9 +26,17 @@ import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
+import ch.scorpion.jabbah.graph.model.vertice.DeepVerticeLink
+import ch.scorpion.jabbah.graph.model.vertice.ImmediateVerticeLink
+import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
+import ch.scorpion.jabbah.graph.view.ControlView
+import ch.scorpion.jabbah.graph.view.ControlViewSource
+import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.*
 import kotlin.math.max
 
@@ -36,7 +44,10 @@ abstract class AbstractAddressableView<T : Addressable>(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	eventBus: EventBus = BaseModule.eventBus,
 	model: T
-) : OrientableRectangularVerticeView<T>(styleProvider, model) {
+) : OrientableRectangularVerticeView<T>(styleProvider, model),
+	ControlView<T>,
+	ControlViewSource<T>
+{
 
 	companion object {
 
@@ -66,9 +77,15 @@ abstract class AbstractAddressableView<T : Addressable>(
 	protected var contentsView = AddressableContentsView(model)
 
 	private val inputEventHandler = AddressableInputEventHandler(
-		{ view, newDesktopView -> OpenMemoryContentsRequest(view, this, label.text, this.model, newDesktopView) },
-		eventBus
-	)
+		eventBus,
+	) { view, newDesktopView ->
+		val verticeLink: VerticeLink = if (isActiveControlView) {
+			displayContentVerticeLink!!
+		} else {
+			ImmediateVerticeLink(this.model.id)
+		}
+		OpenMemoryContentsRequest(view, displayContentVerticeView ?: this, label.text, verticeLink, newDesktopView)
+	}
 
 	/** ---- UI properties */
 
@@ -88,6 +105,7 @@ abstract class AbstractAddressableView<T : Addressable>(
 					label.text = value.getTranslation()
 					model.name = label.text
 				}
+				postControlViewSourceChangeEvent()
 			}
 		}
 
@@ -101,6 +119,7 @@ abstract class AbstractAddressableView<T : Addressable>(
 			}
 			invalidate()
 			validate()
+			postControlViewSourceChangeEvent()
 		}
 
 	var dataWidth: BitWidth
@@ -113,6 +132,7 @@ abstract class AbstractAddressableView<T : Addressable>(
 			}
 			invalidate()
 			validate()
+			postControlViewSourceChangeEvent()
 		}
 
 	var showContents: Boolean = false
@@ -121,6 +141,7 @@ abstract class AbstractAddressableView<T : Addressable>(
 				field = value
 				updateGeometry()
 				validate()
+				postControlViewSourceChangeEvent()
 			}
 		}
 
@@ -131,6 +152,7 @@ abstract class AbstractAddressableView<T : Addressable>(
 				contentsView.rowsCount = value
 				updateGeometry()
 				validate()
+				postControlViewSourceChangeEvent()
 			}
 		}
 
@@ -141,6 +163,7 @@ abstract class AbstractAddressableView<T : Addressable>(
 				contentsView.columnsCount = value
 				updateGeometry()
 				validate()
+				postControlViewSourceChangeEvent()
 			}
 		}
 
@@ -275,6 +298,59 @@ abstract class AbstractAddressableView<T : Addressable>(
 			!graphApplicationContext.isExecute
 				|| graphApplicationContext.isPausing
 				|| graphApplicationContext.systemSpeedCategory.systemSpeedCategory >= SystemSpeedCategory.Observe)
+	}
+
+	/** ---- [ControlViewSource] */
+
+	override val controlName: String get() = super.controlName
+
+	/** ---- [ControlView] */
+
+	override var isActiveControlView: Boolean = false
+
+	/**
+	 * The link to the [Addressable] containing the content to be opened for displaying in another view.
+	 * Only used during execution. Only set if this [AbstractAddressableView] is used as [ControlView]
+	 * in a [SubGraphVerticeView], otherwise `null`.
+	 */
+	private var displayContentVerticeLink: VerticeLink? = null
+
+	/**
+	 * The [VerticeView] that contains this [AbstractVerticeView] and is therefore rendered as "origin" of this
+	 * [AbstractAddressableView]. If used as a [ControlView], this is the [SubGraphVerticeView], otherwise this is
+	 * a ROM or RAM. Only used during execution. Only set if this [AbstractAddressableView] is used as [ControlView]
+	 * 	 * in a [SubGraphVerticeView], otherwise `null`.
+	 */
+	private var displayContentVerticeView: VerticeView<*>? = null
+
+	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
+		displayContentVerticeLink = if (link is DeepVerticeLink) {
+			link.prepend(subGraphVerticeView.model.id)
+		} else {
+			link
+		}
+		this.model = link.getLinkedVertice(startGraph) as T
+		this.displayContentVerticeView = subGraphVerticeView
+	}
+
+	override fun writeModelProperties(writer: StoreWriter) {}
+
+	override fun readModelProperties(reader: StoreReader) {}
+
+	override fun sourcePropertiesChanged(source: ControlViewSource<T>) {
+		if (source is AbstractAddressableView<*>) {
+			copyControlViewProperties(source, this)
+		}
+	}
+
+	protected open fun copyControlViewProperties(source: AbstractAddressableView<*>, dest: AbstractAddressableView<*>) {
+		dest.addressWidth = source.addressWidth
+		dest.dataWidth = source.dataWidth
+		dest.text = source.text
+		dest.showContents = source.showContents
+		dest.contentRowsCount = source.contentRowsCount
+		dest.contentColumnsCount = source.contentColumnsCount
+		dest.customColor = source.customColor
 	}
 
 	/** ---- [AbstractAddressableView] */

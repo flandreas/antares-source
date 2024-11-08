@@ -86,7 +86,7 @@ class GraphViewDisplayHandler(
 			val p = view.viewToModel(e.location)
 
 			val drawable = view.drawing.getDrawableAt(p)
-			tooltipHandler.handle(view, view.drawing, p.x, p.y)
+			tooltipHandler.handle(view, view.drawing, p.x, p.y, view.editable)
 
 			if (drawable != null /*&& drawable is SubGraphVerticeView<*>*/) {
 				view.setCursor(Cursor.CLICK)

@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.model.GraphType
 import ch.scorpion.jabbah.graph.model.GraphTypeSignalAdapter
+import ch.scorpion.jabbah.graph.model.image.ImageLibraryElement
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 
 enum class AntaresGraphTypes(
@@ -76,6 +77,10 @@ enum class AntaresGraphTypes(
 		}
 
 		if (this === libraryElement.graphType) {
+			return null
+		}
+
+		if (libraryElement is ImageLibraryElement) {
 			return null
 		}
 

@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.preferences.PreferencesAction
+import ch.scorpion.jabbah.draw.rasterimg.ExportRasterImageAction
 import ch.scorpion.jabbah.draw.svg.ExportSvgAction
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.app.CopyAction
@@ -95,6 +96,7 @@ open class GraphMenuBarBuilder(
 
 	open fun fillExportMenu(menu: JMenu) {
 		menu.add(JMenuItem(ActionWrapperSwing(ExportSvgAction())))
+		menu.add(JMenuItem(ActionWrapperSwing(ExportRasterImageAction())))
 		menu.add(JMenuItem(ActionWrapperSwing(ExportLogfileAction(frame.application))))
 	}
 

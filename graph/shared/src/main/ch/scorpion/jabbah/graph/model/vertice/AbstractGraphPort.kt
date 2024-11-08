@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.model.vertice
 
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
@@ -22,7 +23,7 @@ abstract class AbstractGraphPort<T : Any>(
 ) : AbstractInteractableVertice<T>(calculator, GraphPortName.defaultName(name, port.portType.reverse())), GraphPort<T> {
 
 	init {
-		propagationDelay = 0
+		propagationDelay = LongValueImpl.ZERO
 		addPort(port)
 	}
 
@@ -56,20 +57,18 @@ abstract class AbstractGraphPort<T : Any>(
 				if (StringUtils.isEmpty(value)) {
 					throw IllegalArgumentException(Translations.getString("graph.port.nameMustNotBeEmpty.msg"))
 				}
-				val oldName = super.name
-				super.name = value
-				if (isNotReading) {
-					stateChanged()
-					eventBus.postVetoable(
-						event = GraphPortNameChanged(this, oldName, value),
-						undoEvent = GraphPortNameChanged(this, value, oldName),
-						elseHandler = {
-							super.name = oldName
-							stateChanged()
-							throw IllegalArgumentException(it.message)
-						}
-					)
-				}
+				vetoableStateChanged(
+					GraphPortNameChanged(this, super.name, value),
+					successHandler = {
+						super.name = value
+						stateChanged()
+						// TODO MetaGraph (and others) still relies on EventBus communication. Eliminate!
+						eventBus.post(it)
+					},
+					vetoHandler = {
+						throw IllegalArgumentException(it.message)
+					}
+				)
 			}
 		}
 

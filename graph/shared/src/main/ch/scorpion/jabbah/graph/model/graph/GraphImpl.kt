@@ -6,7 +6,8 @@ import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
 import ch.scorpion.jabbah.base.dsl.SymbolTable
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.event.PropertyOwner
+import ch.scorpion.jabbah.base.event.PropertyOwnerImpl
 import ch.scorpion.jabbah.base.event.VetoException
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.parser.Parser
@@ -14,9 +15,11 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.*
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.MetaGraphRepository
-import ch.scorpion.jabbah.graph.library.ContainerLibraryElementRenamedEvent
 import ch.scorpion.jabbah.graph.model.*
+import ch.scorpion.jabbah.graph.model.Graph.Companion.PROP_DESCRIPTION
+import ch.scorpion.jabbah.graph.model.Graph.Companion.PROP_NAME
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.model.nonvolatile.NonVolatileStorable
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
@@ -31,8 +34,9 @@ import ch.scorpion.jabbah.io.*
 open class GraphImpl(
 	name: TranslatableText = TranslatableText(Translations.getString("graph.name.unknown")),
 	type: GraphType = GraphModelModule.graphTypeRegistry.default,
-	private val eventBus: EventBus = BaseModule.eventBus
-) : AbstractStorable(), Graph, Namable, Describable {
+	private val eventBus: EventBus = BaseModule.eventBus,
+	private val propertyOwner: PropertyOwner<Any> = PropertyOwnerImpl()
+) : AbstractStorable(), Graph, Namable, Describable, PropertyOwner<Any> by propertyOwner {
 
 	companion object {
 		private val LOG by logger(GraphImpl::class)
@@ -40,45 +44,30 @@ open class GraphImpl(
 
 	private val _elements = mutableListOf<GraphElement>()
 
+	/** Listens for [GraphElementEvent]s from child [GraphElement]s. */
+	private val elementListener = GraphElementListener()
+
 	/** Forwards signal changes of a [OscilloscopeProbeVertice] to the [Oscilloscope].*/
 	private val oscilloscopeProbeHandler = OscilloscopeProbeHandler()
 
-	private val graphPortNameChangedHandler: EventHandler<GraphPortNameChanged<Any>> = {
-		if (it.newName != null &&  contains(it.graphPort)) {
-			if (existsGraphPortNameExcluding(it.newName, it.graphPort)) {
-				if (parameterDefinitions.contains(it.newName)) {
-					throw VetoException(Translations.getString("graph.port.nameConflictsWithParam.msg"))
-				}
-				throw VetoException(Translations.getString("graph.port.nameAlreadyExists.msg"))
-			}
-		}
-	}
-
-	private val containerLibraryElementRenameHandler: EventHandler<ContainerLibraryElementRenamedEvent> = { event ->
-		_elements
-			.filterIsInstance<SubGraphVerticeRef>()
-			.filter { it.graphUUID == event.element.uuid }
-			.forEach { vRef ->
-				vRef.graphName = event.element.name
-				vRef.type = event.element.name.value
-			}
-	}
-
 	init {
-		eventBus.register(GraphPortNameChanged::class, graphPortNameChangedHandler)
-		eventBus.register(ContainerLibraryElementRenamedEvent::class, containerLibraryElementRenameHandler)
+	    propertyOwner.source = this
 	}
 
-	override fun dispose() {
-		eventBus.unregister(GraphPortNameChanged::class, graphPortNameChangedHandler)
-		eventBus.unregister(containerLibraryElementRenameHandler)
-	}
+	override fun dispose() {}
 
 	/** ---- [Namable], [Describable] interfaces */
 
-	override var name: Name by observableName(Name(name))
+	override var name: Name by observableName(Name(name)) {
+		if (it.isEmpty || StringUtils.isBlank(it.value)) {
+			throw IllegalArgumentException(Translations.getString("edit.property.name.empty.error"))
+		}
+		propertyOwner.fire(PROP_NAME, null, it)
+	}
 
-	override var description: Description by observableDescription(Description(""))
+	override var description: Description by observableDescription(Description("")) {
+		propertyOwner.fire(PROP_DESCRIPTION, null, it)
+	}
 
 	/** ---- [Graph] interface */
 
@@ -172,6 +161,7 @@ open class GraphImpl(
 			graphElement.id = getMaxId() + 1
 			ensureUniqueGraphPortName(graphElement)
 			_elements.add(graphElement)
+			graphElement.addGraphElementListener(elementListener)
 			handleGraphElementAdded(graphElement)
 			eventBus.post(GraphElementAddedEvent(this, graphElement))
 		}
@@ -186,6 +176,7 @@ open class GraphImpl(
 				handleVerticeRemoved(graphElement)
 			}
 			_elements.remove(graphElement)
+			graphElement.removeGraphElementListener(elementListener)
 			handleGraphElementRemoved(graphElement)
 			eventBus.post(GraphElementRemovedEvent(this, graphElement))
 		}
@@ -249,17 +240,19 @@ open class GraphImpl(
 		return issues.isEmpty() && !hasChildIssues
 	}
 
-	override fun executionInitialize(signalHandler: SignalHandler) {
+	override fun executionInitialize(signalHandler: SignalHandler, nonVolatileData: NonVolatileStorable?) {
 		signalHandler.executionContext = createGraphExecutionContext<Any>()
-		_elements.forEach { it.executionInitialize(signalHandler) }
+		_elements.forEach {
+			it.executionInitializeNonVolatile(signalHandler, nonVolatileData?.getChild(it.id))
+		}
 	}
 
 	override fun executionStart(signalHandler: SignalHandler, graphView: GraphView?) {
 		_elements.forEach { it.executionStart(signalHandler) }
 	}
 
-	override fun executionStopped(signalHandler: SignalHandler) {
-		_elements.forEach { it.executionStopped(signalHandler) }
+	override fun executionStopped(signalHandler: SignalHandler, nonVolatileData: NonVolatileStorable?) {
+		_elements.forEach { it.executionStoppedNonVolatile(signalHandler, nonVolatileData) }
 	}
 
 	override fun <T : Any> getGraphPort(name: String): GraphPort<T>? {
@@ -286,6 +279,15 @@ open class GraphImpl(
 		BaseModule.parserFactory(
 			program,
 			BaseModule.semanticAnalyserFactory(symbolTable))
+
+	override fun handleSubGraphNameChanged(uuid: UUID) {
+		_elements
+			.filterIsInstance<SubGraphVerticeRef>()
+			.filter { it.graphUUID == uuid }
+			.forEach { vRef ->
+				vRef.handleTypeChanged()
+			}
+	}
 
 	/** ---- [Storable] interface */
 
@@ -327,6 +329,7 @@ open class GraphImpl(
 		_elements.clear()
 		reader.readStorables<GraphElement>("elements").forEach {
 			_elements.add(it)
+			it.addGraphElementListener(elementListener)
 			handleGraphElementAdded(it)
 		}
 	}
@@ -334,6 +337,17 @@ open class GraphImpl(
 	/** ---- [GraphImpl] */
 
 	protected open fun <T: Any> createGraphExecutionContext(): GraphExecutionContext<T> = GraphExecutionContext()
+
+	private fun handle(event: GraphPortNameChanged<Any>) {
+		if (event.newName != null &&  contains(event.graphPort)) {
+			if (existsGraphPortNameExcluding(event.newName, event.graphPort)) {
+				if (parameterDefinitions.contains(event.newName)) {
+					throw VetoException(Translations.getString("graph.port.nameConflictsWithParam.msg"))
+				}
+				throw VetoException(Translations.getString("graph.port.nameAlreadyExists.msg"))
+			}
+		}
+	}
 
 	/** Called by this [GraphImpl] when a [GraphElement] has been added or read as [Storable].*/
 	protected open fun handleGraphElementAdded(graphElem: GraphElement) {
@@ -401,6 +415,14 @@ open class GraphImpl(
 
 	private fun getOscilloscope(): Oscilloscope? {
 		return elements.firstOrNull() { it is Oscilloscope } as Oscilloscope?
+	}
+
+	private inner class GraphElementListener : GraphElementAdapter() {
+		override fun checkStateChange(e: GraphElementEvent) {
+			if (e is GraphPortNameChanged<*>) {
+				handle(e)
+			}
+		}
 	}
 
 	/** Forwards signal changes of a [OscilloscopeProbeVertice] to the [Oscilloscope].*/

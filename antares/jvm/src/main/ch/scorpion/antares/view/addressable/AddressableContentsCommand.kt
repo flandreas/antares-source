@@ -7,7 +7,8 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Undoable
-import ch.scorpion.jabbah.edit.command.AbstractCommand
+import ch.scorpion.jabbah.graph.app.AbstractGraphViewCommand
+import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -16,17 +17,17 @@ import java.nio.file.Paths
  * A [Command] for loading the contents of an [Addressable] from a file.
  */
 class AddressableContentsCommand(
-	private val view: DrawingView<GraphView>,
-	private val addressableId: Int,
+	view: DrawingView<GraphView>,
+	private val link: VerticeLink,
 	private val bitWidth: BitWidth,
 	private val filePath: String
-) : AbstractCommand("antares.command.memoryContents", null), Undoable {
+) : AbstractGraphViewCommand("antares.command.memoryContents", view), Undoable {
 
 	companion object {
 		private val LOG by logger(AddressableContentsCommand::class)
 	}
 
-	private val addressable: Addressable get() = view.drawing.graph!!.withId(addressableId) as Addressable
+	private val addressable: Addressable get() = link.getLinkedVertice(drawingView.drawing.graph!!) as Addressable
 
 	private var oldContents: String? = null
 
@@ -37,6 +38,7 @@ class AddressableContentsCommand(
 		try {
 			MemoryDump.read(addressable.memory, String(Files.readAllBytes(Paths.get(filePath))))
 			addressable.dataSource = filePath
+			addressable.update()
 		} catch (e: Throwable) {
 			LOG.error("Error while reading memory from file '$filePath'")
 			throw e
@@ -46,5 +48,6 @@ class AddressableContentsCommand(
 	override fun undo() {
 		MemoryDump.read(addressable.memory, oldContents!!)
 		addressable.dataSource = oldDataSource
+		addressable.update()
 	}
 }

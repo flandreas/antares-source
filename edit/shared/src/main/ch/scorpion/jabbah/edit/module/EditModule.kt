@@ -3,10 +3,11 @@ package ch.scorpion.jabbah.edit.module
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.graphics.Image
 import ch.scorpion.jabbah.draw.module.DrawModule
-import ch.scorpion.jabbah.draw.polyline.PolylineShapeImpl
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.Component
@@ -25,6 +26,10 @@ import ch.scorpion.jabbah.edit.model.curve.EditModuleQuadCurveModule
 import ch.scorpion.jabbah.edit.model.curve.QuadCurveComponent
 import ch.scorpion.jabbah.edit.model.group.EditModelGroupModule
 import ch.scorpion.jabbah.edit.model.group.GroupComponent
+import ch.scorpion.jabbah.edit.model.image.ImageComponent
+import ch.scorpion.jabbah.edit.model.image.ImageData
+import ch.scorpion.jabbah.edit.model.image.ImageIdentification
+import ch.scorpion.jabbah.edit.model.image.ImageRepository
 import ch.scorpion.jabbah.edit.model.polyline.EditModelPolylineModule
 import ch.scorpion.jabbah.edit.model.polyline.PolylineComponent
 import ch.scorpion.jabbah.edit.model.rectangle.EditModelRectangleModule
@@ -68,6 +73,11 @@ object EditModule : AbstractModule() {
 
     var drawingAppService: DrawingAppService = DrawingAppServiceImpl()
 
+    var imageRepository: ImageRepository = object : ImageRepository {
+        override fun getImage(uuid: UUID): ImageData? = null
+        override fun getAllImageIds(): List<ImageIdentification> = emptyList()
+    }
+
     override fun initialize() {
         DrawModule.require()
         EditModelRectangleModule.require()
@@ -100,6 +110,7 @@ object EditModule : AbstractModule() {
         typeMap.register("group", GroupComponent::class)
         typeMap.register("quadCurve", QuadCurveComponent::class)
 	    typeMap.register("translation", Translation::class)
+        typeMap.register("image", ImageComponent::class)
     }
 
 	private fun fillProperties(properties: Properties) {

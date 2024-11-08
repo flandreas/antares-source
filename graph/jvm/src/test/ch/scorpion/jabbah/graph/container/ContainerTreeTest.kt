@@ -5,17 +5,20 @@ import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.GraphUITestRule
 import ch.scorpion.jabbah.graph.TestLibraryBuilder
-import ch.scorpion.jabbah.graph.library.*
+import ch.scorpion.jabbah.graph.library.FileLibraryPersistenceService
+import ch.scorpion.jabbah.graph.library.LibraryElement
+import ch.scorpion.jabbah.graph.library.LibraryImpl
+import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.GraphPort
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.model.port.TestPortFactory
 import ch.scorpion.jabbah.graph.model.vertice.DeepVerticeLink
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.editor.GraphPortViewEvent
 import ch.scorpion.jabbah.graph.view.editor.SubGraphVerticeViewEvent
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import ch.scorpion.jabbah.graph.model.port.TestPortFactory
 import ch.scorpion.jabbah.graph.view.port.TestPortViewFactory
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.TestControlVerticeView
@@ -51,8 +54,7 @@ class ContainerTreeTest {
 		val dir = Files.createTempDirectory(null)
 		File.createTempFile("library", ".lib", dir.toFile())
 		LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService({ dir.parent.absolutePathString() }, dir.name)
-		LibraryModule.libraryService = LibraryService()
-		LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"), libraryService = LibraryModule.libraryService)
+		LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"))
 		GraphModelModule.portFactory = TestPortFactory()
 		GraphViewModule.portViewFactory = TestPortViewFactory()
 	}

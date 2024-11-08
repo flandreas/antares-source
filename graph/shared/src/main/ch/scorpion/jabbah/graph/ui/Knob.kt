@@ -8,10 +8,8 @@ import ch.scorpion.jabbah.base.math.TWO_PI
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.Timer
 import ch.scorpion.jabbah.draw.*
-import ch.scorpion.jabbah.draw.container.UnzoomableContainer
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangularUnzoomable
-import ch.scorpion.jabbah.draw.drawable.Unzoomable
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.graphics.Graphics2D
@@ -20,9 +18,11 @@ import ch.scorpion.jabbah.draw.view.TooltipManager
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
+import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import kotlin.math.*
 
@@ -39,6 +39,8 @@ interface KnobLauncher {
 	 * @param displayHandler the additional code to be executed when the [KnobView] is displayed.
 	 * Allows the client to reset any of its state, e.g. hover highlighting over a button that initiates launching
 	 * @param valueChangeHandler called by this [KnobLauncherImpl] whenever the [KnobView]'s value has changed
+	 * @param signalHandler the [SignalHandler] in whose context the [KnobView] is launched. If set, [KnobLauncher]
+	 * listens for deactivations of the [Scheduler], which result in hiding the [KnobView]
 	 */
 	fun launchAfterDelay(
 		initialValue: Long,
@@ -46,7 +48,8 @@ interface KnobLauncher {
 		unit: String,
 		mouseMovedCondition: (ActorInteractionContext) -> Boolean,
 		displayHandler: () -> Unit = {},
-		valueChangeHandler: (Long) -> Unit
+		valueChangeHandler: (Long) -> Unit,
+		signalHandler: SignalHandler? = null
 	): ActorInteractionHandler
 
 	fun launchImmediately(
@@ -56,8 +59,11 @@ interface KnobLauncher {
 		unit: String,
 		mouseMovedCondition: (ActorInteractionContext) -> Boolean,
 		displayHandler: () -> Unit = {},
-		valueChangeHandler: (Long) -> Unit
+		valueChangeHandler: (Long) -> Unit,
+		signalHandler: SignalHandler? = null
 	): ActorInteractionHandler
+
+	fun hide()
 }
 
 /**
@@ -76,12 +82,20 @@ object KnobLauncherImpl : KnobLauncher {
 	private var timer: Timer? = null
 	private val knobView: KnobView by lazy { KnobView() }
 
+	private var drawingView: DrawingView<*>? = null
 	private var initialValue: Long = 0
 	private var location: Point2D = Point2D.ZERO
 	private var unit: String = ""
 	private var mouseMovedCondition: ((ActorInteractionContext) -> Boolean)? = null
 	private var displayHandler: (() -> Unit)? = null
 	private var valueChangeHandler: ((Long) -> Unit)? = null
+	private var signalHandler: SignalHandler? = null
+
+	private val activationStateHandler: EventHandler<SchedulerActivationStateEvent> = {
+		if (it.scheduler === signalHandler && !it.scheduler.isActive && drawingView	!= null) {
+			hide()
+		}
+	}
 
 	override fun launchAfterDelay(
 		initialValue: Long,
@@ -89,7 +103,8 @@ object KnobLauncherImpl : KnobLauncher {
 		unit: String,
 		mouseMovedCondition: (ActorInteractionContext) -> Boolean,
 		displayHandler: () -> Unit,
-		valueChangeHandler: (Long) -> Unit
+		valueChangeHandler: (Long) -> Unit,
+		signalHandler: SignalHandler?
 	): ActorInteractionHandler {
 		this.initialValue = initialValue
 		this.location = location
@@ -97,6 +112,7 @@ object KnobLauncherImpl : KnobLauncher {
 		this.mouseMovedCondition = mouseMovedCondition
 		this.displayHandler = displayHandler
 		this.valueChangeHandler = valueChangeHandler
+		this.signalHandler = signalHandler
 
 		return handler
 	}
@@ -108,7 +124,8 @@ object KnobLauncherImpl : KnobLauncher {
 		unit: String,
 		mouseMovedCondition: (ActorInteractionContext) -> Boolean,
 		displayHandler: () -> Unit,
-		valueChangeHandler: (Long) -> Unit
+		valueChangeHandler: (Long) -> Unit,
+		signalHandler: SignalHandler?
 	): ActorInteractionHandler {
 		this.initialValue = initialValue
 		this.location = location
@@ -116,6 +133,7 @@ object KnobLauncherImpl : KnobLauncher {
 		this.mouseMovedCondition = mouseMovedCondition
 		this.displayHandler = displayHandler
 		this.valueChangeHandler = valueChangeHandler
+		this.signalHandler = signalHandler
 
 		display(view)
 
@@ -125,6 +143,7 @@ object KnobLauncherImpl : KnobLauncher {
 	private fun startTimerIfNeeded(view: DrawingView<*>) {
 		if (timer == null) {
 			LOG.trace("starting KnobView timer")
+			drawingView = view
 			timer = System.createTimer()
 			timer!!.initialize(timerDelay) { display(view) }
 			timer!!.start()
@@ -147,6 +166,9 @@ object KnobLauncherImpl : KnobLauncher {
 		knobView.defaultValue = initialValue
 		knobView.unit = unit
 
+		signalHandler?.eventBus?.register(SchedulerActivationStateEvent::class, activationStateHandler)
+		drawingView = view
+
 		LOG.trace("show KnobView")
 		knobView.zoomPan = view.zoomPan
 		view.content.ghostContainer.add(knobView)
@@ -154,6 +176,14 @@ object KnobLauncherImpl : KnobLauncher {
 		view.setCursor(Cursor.CLICK)
 
 		displayHandler?.invoke()
+	}
+
+	override fun hide() {
+		drawingView?.apply {
+			content.ghostContainer.remove(knobView)
+			content.ghostContainer.validate()
+		}
+		signalHandler?.eventBus?.unregister(activationStateHandler)
 	}
 
 	private class Handler : InputEventHandlerAdapter<ActorInteractionContext>() {
@@ -267,9 +297,7 @@ class KnobView(
 		val currAngle = angle
 
 		context.g.rotate(currAngle)
-		context.g.translate(INNER_SIZE / 2 + TRIANGLE_SIZE, 0.0)
-		context.g.fill(TRIANGLE_PATH)
-		context.g.translate(-(INNER_SIZE / 2 + TRIANGLE_SIZE), 0.0)
+		context.translated(INNER_SIZE / 2 + TRIANGLE_SIZE, 0.0) { it.g.fill(TRIANGLE_PATH) }
 		context.g.rotate(-currAngle)
 
 		var text = Thousands.convert(model.value)
@@ -294,7 +322,7 @@ class KnobView(
 	}
 
 	override fun contains(x: Double, y: Double): Boolean =
-		boundingBox.center.distance(x, y) <= OUTER_SIZE / 2 / zoomPan!!.zoomFactor
+		boundingBox.center.distance(x, y) <= OUTER_SIZE / 2 / zoomPan!!.zoomFactor * zoomPan!!.devicePixelRatio()
 
 	/** ---- [ActorView] */
 
@@ -306,11 +334,6 @@ class KnobView(
 
 	override fun executionStopped(signalHandler: SignalHandler) { }
 
-	private fun removeFromParent(container: UnzoomableContainer<Unzoomable>) {
-		container.remove(this)
-		container.validate()
-	}
-
 	/** Controls popup and rotation of [KnobView]. */
 	private inner class Handler : InputEventHandlerAdapter<ActorInteractionContext>() {
 
@@ -320,7 +343,7 @@ class KnobView(
 
 		override fun mouseMoved(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (!this@KnobView.contains(context.x, context.y)) {
-				removeFromParent((context.view as DrawingView<*>).content.ghostContainer)
+				KnobLauncherImpl.hide()
 				return null
 			}
 			return this
@@ -359,7 +382,7 @@ class KnobView(
 
 		override fun mouseReleased(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (!this@KnobView.contains(context.x, context.y)) {
-				removeFromParent((context.view as DrawingView<*>).content.ghostContainer)
+				KnobLauncherImpl.hide()
 				return null
 			}
 			return this

@@ -4,15 +4,17 @@ import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.model.net.Tunnel
 import ch.scorpion.antares.view.gate.LogicGateView
-import ch.scorpion.antares.view.net.TunnelView
+import ch.scorpion.antares.view.net.tunnel.TunnelView
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.draw.Canvas
 import ch.scorpion.jabbah.draw.view.find.SearchRequest
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.module.EditModule
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -66,7 +68,7 @@ class DigitalGraphViewSearchTest {
 	}
 
 	private fun createCanvas(): Canvas {
-		val canvas: Canvas = mockk(relaxed = true)
+		val canvas: Canvas = mock(MockMode.autofill)
 		every { canvas.view } returns view
 		every { canvas.dimension } returns Dimension2D(100, 100)
 		return canvas

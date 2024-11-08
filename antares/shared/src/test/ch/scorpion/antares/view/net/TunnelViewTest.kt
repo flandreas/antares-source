@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.view.input.SwitchView
+import ch.scorpion.antares.view.net.tunnel.TunnelView
 import ch.scorpion.jabbah.graph.view.GraphView
 import kotlin.test.BeforeTest
 import kotlin.test.Test

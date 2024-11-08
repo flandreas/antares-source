@@ -13,8 +13,9 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.answering.calls
+import dev.mokkery.every
+import dev.mokkery.mock
 import kotlin.test.*
 
 /**
@@ -33,13 +34,13 @@ class ChangeInputCountIntegrationTest : AbstractCircuitTest() {
 	private lateinit var evIn2: EdgeView<DigitalSignal>
 	private lateinit var evIn3: EdgeView<DigitalSignal>
 	private lateinit var evOut: EdgeView<DigitalSignal>
-	private val drawingView = mockk<DrawingView<GraphView>>()
+	private val drawingView = mock<DrawingView<GraphView>>()
 
 	override fun getCircuitView(): GraphView = builder.graphView
 
 	@BeforeTest
 	fun setupCircuit() {
-		every { drawingView.drawing } answers { getCircuitView() }
+		every { drawingView.drawing } calls { getCircuitView() }
 
 		val model = NonUnaryLogicGate(And, PortCount.THREE)
 		builder = TestCircuitBuilder("test", styleProvider, eventBus)

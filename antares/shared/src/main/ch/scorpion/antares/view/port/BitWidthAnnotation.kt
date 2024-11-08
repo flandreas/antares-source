@@ -3,14 +3,12 @@ package ch.scorpion.antares.view.port
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.style.AntaresTheme
+import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.edit.model.text.Label
-import ch.scorpion.jabbah.base.geom.Direction
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.geom.Rotation
+import ch.scorpion.jabbah.base.geom.Direction.*
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.RotationDisplayStrategy
@@ -29,11 +27,20 @@ class BitWidthAnnotation(
 ) : AbstractDrawable() {
 
     companion object {
-	    private const val LABEL_EDGE_DIST = 10.0
+	    private const val LABEL_EDGE_DIST = 5.0
 	    private const val LINE_WIDTH_HALF = 3.0
         private const val LINE_HEIGHT_HALF = 5.0
 	    const val DIST = 0.75 * 2 * Look.SCALE
     }
+
+    var offsetX: Int = offsetX
+        set(value) {
+            if (field != value) {
+                field = value
+                label.location = getLabelLocation()
+                _boundingBox = calculateBoundingBox()
+            }
+        }
 
     private val label: Label = Label(
         text = bitWidth.width.toString(),
@@ -42,17 +49,13 @@ class BitWidthAnnotation(
         verticalAlignment = getVerticalLabelAlignment(),
         location = getLabelLocation(),
 	    rotationDisplayStrategy = RotationDisplayStrategy.ROTATE_HALF,
-	    ownerRotation = ownerRotation)
-
-	var offsetX: Int = offsetX
-		set(value) {
-			if (field != value) {
-				field = value
-				label.location = getLabelLocation()
-			}
-		}
+	    ownerRotation = ownerRotation,
+        richText = false)
 
     /** ---- [Drawable] interface */
+
+    private var _boundingBox = calculateBoundingBox()
+    override val boundingBox: RectangularShape get() = _boundingBox
 
     override fun draw(context: DrawContext) {
         label.draw(context)
@@ -66,14 +69,6 @@ class BitWidthAnnotation(
         }
     }
 
-    override val boundingBox: Rectangle2D get() {
-        val bbox = Rectangle2D(label.boundingBox)
-        val lineStart = getLineStart()
-        bbox.add(lineStart)
-        bbox.add(getLineEnd(lineStart))
-        return bbox
-    }
-
     override fun contains(x: Double, y: Double): Boolean = label.contains(x, y)
 
     /** ---- [BitWidthAnnotation] */
@@ -81,8 +76,17 @@ class BitWidthAnnotation(
     fun setOwnerRotation(rotation: Rotation) {
 	    invalidate()
 	    label.ownerRotation = rotation
+        _boundingBox = calculateBoundingBox()
 	    invalidate()
 	    update()
+    }
+
+    private fun calculateBoundingBox(): Rectangle2D {
+        val bbox = Rectangle2D(label.boundingBox)
+        val lineStart = getLineStart()
+        bbox.add(lineStart)
+        bbox.add(getLineEnd(lineStart))
+        return bbox
     }
 
     private fun getLineBoxWidth(): Double {
@@ -102,30 +106,33 @@ class BitWidthAnnotation(
     private fun getLineEnd(lineStart: Point2D): Point2D =
 		Point2D(lineStart.x - getLineBoxWidth(), lineStart.y + getLineBoxHeight())
 
-    private fun getHorizontalLabelAlignment(): HorizontalAlignment = when (direction) {
-        Direction.WEST, Direction.EAST -> HorizontalAlignment.CENTER
-        Direction.NORTH, Direction.SOUTH -> if (centerLabel) HorizontalAlignment.CENTER else HorizontalAlignment.LEFT
-    }
+    private fun getHorizontalLabelAlignment(): HorizontalAlignment =
+        when (direction) {
+            WEST, EAST -> HorizontalAlignment.CENTER
+            NORTH, SOUTH -> if (centerLabel) HorizontalAlignment.CENTER else HorizontalAlignment.LEFT
+        }
 
-    private fun getVerticalLabelAlignment(): VerticalAlignment = when (direction) {
-        Direction.WEST, Direction.EAST -> if (centerLabel) VerticalAlignment.CENTER else VerticalAlignment.TOP
-        Direction.NORTH, Direction.SOUTH -> VerticalAlignment.CENTER
-    }
+    private fun getVerticalLabelAlignment(): VerticalAlignment =
+        when (direction) {
+            WEST, EAST -> if (centerLabel) VerticalAlignment.CENTER else VerticalAlignment.TOP
+            NORTH, SOUTH -> VerticalAlignment.CENTER
+        }
 
     private fun getLabelLocation(): Point2D {
         val labelEdgeDist = if (centerLabel) 0.0 else LABEL_EDGE_DIST
         return when (direction) {
-            Direction.WEST -> Point2D(-DIST - offsetX, labelEdgeDist)
-            Direction.EAST -> Point2D(DIST + offsetX, labelEdgeDist)
-            Direction.NORTH -> Point2D(labelEdgeDist, -DIST - offsetX)
-            Direction.SOUTH -> Point2D(labelEdgeDist, DIST + offsetX)
+            WEST -> Point2D(-DIST - offsetX, labelEdgeDist)
+            EAST -> Point2D(DIST + offsetX, labelEdgeDist)
+            NORTH -> Point2D(labelEdgeDist, -DIST - offsetX)
+            SOUTH -> Point2D(labelEdgeDist, DIST + offsetX)
         }
     }
 
-    private fun getLineStart(): Point2D = when (direction) {
-        Direction.WEST -> Point2D(-DIST - offsetX + LINE_WIDTH_HALF, -LINE_HEIGHT_HALF)
-        Direction.EAST -> Point2D(DIST + offsetX + LINE_WIDTH_HALF, -LINE_HEIGHT_HALF)
-        Direction.NORTH -> Point2D(LINE_HEIGHT_HALF, -DIST - offsetX - LINE_WIDTH_HALF)
-        Direction.SOUTH -> Point2D(LINE_HEIGHT_HALF, DIST + offsetX - LINE_WIDTH_HALF)
-    }
+    private fun getLineStart(): Point2D =
+        when (direction) {
+            WEST -> Point2D(-DIST - offsetX + LINE_WIDTH_HALF, -LINE_HEIGHT_HALF)
+            EAST -> Point2D(DIST + offsetX + LINE_WIDTH_HALF, -LINE_HEIGHT_HALF)
+            NORTH -> Point2D(LINE_HEIGHT_HALF, -DIST - offsetX - LINE_WIDTH_HALF)
+            SOUTH -> Point2D(LINE_HEIGHT_HALF, DIST + offsetX - LINE_WIDTH_HALF)
+        }
 }

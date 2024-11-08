@@ -1,8 +1,5 @@
 package ch.scorpion.jabbah.base.geom
 
-import kotlin.math.max
-import kotlin.math.min
-
 /**
  * A [RectangularShape] is a [Shape] whose geometry is defined by a rectangular frame.
  */
@@ -74,88 +71,4 @@ interface RectangularShape : Shape {
 	val centerLeft: Point2D get() = Point2D(minX, centerY)
 
 	val centerRight: Point2D get() = Point2D(maxX, centerY)
-
-    /** Moves this [RectangularShape] by the specified translation vector.*/
-    fun moveBy(v: Point2D): RectangularShape {
-        setFrame(x + v.x, y + v.y, width, height)
-        return this
-    }
-
-    /** Sets the location and size of the outer bounds of this [RectangularShape].*/
-    fun setFrame(x: Double, y: Double, width: Double, height: Double)
-
-    /** Sets the location and size of this [RectangularShape] to those of the specified [RectangularShape].*/
-    fun setFrame(rect: RectangularShape) {
-        setFrame(rect.x, rect.y, rect.width, rect.height)
-    }
-
-    /** Sets the location and dimension of this [RectangularShape] to the corresponding argument values.*/
-    fun setFrame(location: Point2D, dimension: Dimension2D) {
-        setFrame(location.x, location.y, dimension.width, dimension.height)
-    }
-
-    /**
-     * Adds a point, specified by its coordinates, to this [RectangularShape]. The resulting [RectangularShape] is the smallest
-     * rectangle that contains both the original [RectangularShape] and the specified point.
-     * @return this [RectangularShape] to support method chaining
-     */
-    fun add(x: Double, y: Double): RectangularShape {
-        if (isInitial) {
-            setFrame(x, y, 0.0, 0.0)
-        } else {
-            val x1 = min(minX, x)
-            val x2 = max(maxX, x)
-            val y1 = min(minY, y)
-            val y2 = max(maxY, y)
-            setFrame(x1, y1, x2 - x1, y2 - y1)
-        }
-        return this
-    }
-
-    fun add(x: Int, y: Int): RectangularShape {
-        return add(x.toDouble(), y.toDouble())
-    }
-
-    fun add(p: Point2D): RectangularShape {
-        return add(p.x, p.y)
-    }
-
-    /**
-     * Adds the specified [RectangularShape] to this [RectangularShape]. The resulting [RectangularShape] is the union of
-     * the two [RectangularShape]s.
-     * @return this [RectangularShape] to support method chaining
-     */
-    fun add(rect: RectangularShape): RectangularShape {
-        if (isInitial) {
-            setFrame(rect)
-        } else {
-            val x1 = min(minX, rect.minX)
-            val x2 = max(maxX, rect.maxX)
-            val y1 = min(minY, rect.minY)
-            val y2 = max(maxY, rect.maxY)
-            setFrame(x1, y1, x2 - x1, y2 - y1)
-        }
-        return this
-    }
-
-    /**
-     * Expands this [RectangularShape] by adding the corresponding delta to each side of this [RectangularShape].
-     */
-    fun expandBy(deltaX: Double, deltaY: Double): RectangularShape {
-        setFrame(x - deltaX, y - deltaY, width + 2 * deltaX, height + 2 * deltaY)
-        return this
-    }
-
-    /** Expands this [RectangularShape] by adding the delta to each side of this [RectangularShape].*/
-    fun expandBy(delta: Double): RectangularShape = expandBy(delta, delta)
-
-	fun expandBy(topY: Double, leftX: Double, bottomY: Double, rightX: Double): RectangularShape {
-		setFrame(x - leftX, y - topY, width + leftX + rightX, height + topY + bottomY)
-		return this
-	}
-
-	fun expandLeftBy(deltaX: Double): RectangularShape {
-		setFrame(x - deltaX, y, width + deltaX, height)
-		return this
-	}
 }

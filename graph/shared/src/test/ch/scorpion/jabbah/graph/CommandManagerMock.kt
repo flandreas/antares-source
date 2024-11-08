@@ -1,8 +1,10 @@
 package ch.scorpion.jabbah.graph
 
 import ch.scorpion.jabbah.edit.CommandManager
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.mock
 
 /**
  * TODO Copy/paste of corresponding class in app module.
@@ -10,7 +12,7 @@ import io.mockk.mockk
  */
 class CommandManagerMock {
 
-	private val commandManager = mockk<CommandManager>(relaxed = true)
+	private val commandManager = mock<CommandManager>(MockMode.autofill)
 
 	init {
 		cannotUndo()

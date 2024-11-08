@@ -1,19 +1,23 @@
 package ch.scorpion.jabbah.graph.view.app.oscilloscope
 
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Undoable
 import ch.scorpion.jabbah.edit.command.AbstractCommand
+import ch.scorpion.jabbah.edit.command.AbstractDrawingViewCommand
+import ch.scorpion.jabbah.graph.app.AbstractGraphViewCommand
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView
 
 internal class AddOscilloscopeRowCommand(
-	private val drawingView: DrawingView<*>,
+	drawingView: DrawingView<*>,
 	private val oscilloscopeViewId: Int
-) : AbstractCommand("graph.command.addOscilloscopeRow"), Undoable {
+) : AbstractDrawingViewCommand("graph.command.addOscilloscopeRow", drawingView), Undoable {
 
-	private val oscilloscopeView get() = drawingView.drawing.getWithId(oscilloscopeViewId) as OscilloscopeView
+	private val oscilloscopeView get() = view.drawing.getWithId(oscilloscopeViewId) as OscilloscopeView
 
 	override fun execute() {
 		oscilloscopeView.addRow()
@@ -25,12 +29,12 @@ internal class AddOscilloscopeRowCommand(
 }
 
 internal class RemoveOscilloscopeRowCommand(
-	private val drawingView: DrawingView<*>,
+	drawingView: DrawingView<*>,
 	private val name: String,
 	private val oscilloscopeViewId: Int
-) : AbstractCommand("graph.command.removeOscilloscopeRow"), Undoable {
+) : AbstractDrawingViewCommand("graph.command.removeOscilloscopeRow", drawingView), Undoable {
 
-	private val oscilloscopeView get() = drawingView.drawing.getWithId(oscilloscopeViewId) as OscilloscopeView
+	private val oscilloscopeView get() = view.drawing.getWithId(oscilloscopeViewId) as OscilloscopeView
 
 	override fun execute() {
 		oscilloscopeView.removeRow(name)
@@ -58,12 +62,12 @@ internal class OscilloscopeVisibilityCommand(
 }
 
 internal class DropOscilloscopeProbeCommand<T : Any>(
-	private val drawingView: DrawingView<GraphView>,
+	drawingView: DrawingView<GraphView>,
 	private var name: String,
 	private val location: Point2D,
 	private val probeVerticeViewId: Int?,
 	private val service: OscilloscopeViewService = GraphViewModule.oscilloscopeViewService
-) : AbstractCommand("graph.command.dropOscilloscopeProbe") {
+) : AbstractGraphViewCommand("graph.command.dropOscilloscopeProbe", drawingView) {
 
 	override fun execute() {
 		service.dropProbe<T>(drawingView, name, location, probeVerticeViewId)

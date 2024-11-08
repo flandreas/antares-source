@@ -44,8 +44,10 @@ typealias ParserFactory = (program: String, semanticAnalyser: SemanticAnalyser?)
  *     forStatement : "for" "(" variable "in" expr "to" expr ")" statement
  *     returnStatement : "return" [ expr ]
  *     functionCall : identifier "(" { expr ("," expr)* } ")"
- *     expr : term (("+" | "-" | binaryLogicOperator) term)*
- *     term : factor (("*" | "/" | "%" | "^" | comparisonOperator | shiftOperator) factor)*
+ *	   expr: expr1 (binaryLogicOperator expr1)*
+ *	   expr1: expr2 (comparisonOperator) expr2)*
+ *	   expr2: term (("+" | "-" ) term)*
+ *     term : factor (("*" | "/" | "%" | "^" | shiftOperator) factor)*
  *     comparisonOperator : "==" | "!=" | "<" | ">" | "<=" | ">="
  *     factor : "+" factor
  *            | "-" factor
@@ -79,8 +81,8 @@ open class DslParser(
 		private val BINARY_LOGIC_OPERATORS = setOf(AND, OR)
 		private val COMPARISON_OPERATORS = setOf(EQUAL, DIFF, SMALLER, GREATER, SMALLER_EQUAL, GREATER_EQUAL)
 		private val SHIFT_OPERATORS = setOf(SHIFT_LEFT, SHIFT_RIGHT)
-		private val FACTOR_OPERATORS = setOf(MULTIPLY, DIVIDE, MOD, CARET) + COMPARISON_OPERATORS + SHIFT_OPERATORS
-		private val TERM_OPERATORS = setOf(PLUS, MINUS) + BINARY_LOGIC_OPERATORS
+		private val FACTOR_OPERATORS = setOf(MULTIPLY, DIVIDE, MOD, CARET) + SHIFT_OPERATORS
+		private val TERM_OPERATORS = setOf(PLUS, MINUS)
 	}
 
 	override fun parse(): Node = Compound(lexer.location, statementList()).also { semanticAnalyser?.analyse(it) }
@@ -287,6 +289,41 @@ open class DslParser(
 	private fun empty(): Node = NoOp(lexer.location)
 
 	private fun expr(): Node {
+		var node = expr1()
+		while (currentToken!!.type in BINARY_LOGIC_OPERATORS) {
+			lexer.location.let { location ->
+				val token = currentToken!!
+				if (BINARY_LOGIC_OPERATORS.contains(token.type)) {
+					eat(token.type)
+				} else {
+					throw SyntaxError(location, Translations.getString("base.dsl.unexpectedToken.msg", token.type.id))
+				}
+
+				node = BinaryOperation(location, left = node, op = token, right = expr1())
+			}
+		}
+		return node
+	}
+
+	private fun isExpr(): Boolean = isTerm()
+
+	private fun expr1(): Node {
+		var node = expr2()
+		while (currentToken!!.type in COMPARISON_OPERATORS) {
+			lexer.location.let { location ->
+				val token = currentToken!!
+				if (COMPARISON_OPERATORS.contains(token.type)) {
+					eat(token.type)
+				} else {
+					throw SyntaxError(location, Translations.getString("base.dsl.unexpectedToken.msg", token.type.id))
+				}
+				node = BinaryOperation(location, left = node, op = token, right = expr2())
+			}
+		}
+		return node
+	}
+
+	private fun expr2(): Node {
 		var node = term()
 		while (currentToken!!.type in TERM_OPERATORS) {
 			lexer.location.let { location ->
@@ -296,14 +333,11 @@ open class DslParser(
 				} else {
 					throw SyntaxError(location, Translations.getString("base.dsl.unexpectedToken.msg", token.type.id))
 				}
-
 				node = BinaryOperation(location, left = node, op = token, right = term())
 			}
 		}
 		return node
 	}
-
-	private fun isExpr(): Boolean = isTerm()
 
 	private fun term(): Node {
 		var node = factor()

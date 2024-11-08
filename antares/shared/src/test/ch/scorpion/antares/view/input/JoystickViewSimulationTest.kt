@@ -5,11 +5,11 @@ import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.graph.view.GraphView
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -104,7 +104,7 @@ class JoystickViewSimulationTest : AbstractCircuitTest() {
 	private fun contextFor(mouseEvent: MouseEvent): ActorInteractionContext {
 		return ActorInteractionContext(
 			signalHandler = scheduler,
-			view = mockk(relaxed = true),
+			view = mock(MockMode.autofill),
 			mouseEvent = mouseEvent,
 			keyEvent = null,
 			x = mouseEvent.x.toDouble(),

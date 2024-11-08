@@ -8,6 +8,8 @@ import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.HelpAction
 import ch.scorpion.jabbah.base.ui.UIBasics
+import ch.scorpion.jabbah.edit.semantic.Semantic
+import ch.scorpion.jabbah.edit.semantic.createSemanticComboBox
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.param.*
 import java.awt.*
@@ -16,6 +18,12 @@ import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 import javax.swing.table.AbstractTableModel
 
+/**
+ * A UI for managing the [GraphParamDefinitions] of a [Graph].
+ *
+ * Shows the list of existing [GraphParamDefinition], and allows the user to add new ones,
+ * edit existing ones, and delete them.
+ */
 class GraphParamDefinitionsViewSwing(
 	private val controller: GraphParamDefinitionsController,
 	private val closeHandler: () -> Unit
@@ -48,7 +56,14 @@ class GraphParamDefinitionsViewSwing(
 	private val typeField = createTypeEditor()
 	private val defaultValueFieldHolder = JPanel()
 	private var defaultValueEditor: GraphParamValueEditor? = null
+	private val semanticField: JComboBox<Semantic> = createSemanticComboBox(Translations.getString("graph.paramDefs.dialog.semantic.none"))
 	private val errorMessageLabel = JLabel(" ", SwingConstants.LEADING)
+
+	private val documentListener = object : DocumentListener {
+		override fun insertUpdate(e: DocumentEvent?) { controller.formChanged() }
+		override fun removeUpdate(e: DocumentEvent?) { controller.formChanged() }
+		override fun changedUpdate(e: DocumentEvent?) { controller.formChanged() }
+	}
 
 	init {
 		controller.view = this
@@ -58,14 +73,15 @@ class GraphParamDefinitionsViewSwing(
 
 		buildUI()
 
-		nameField.document.addDocumentListener(object : DocumentListener {
-			override fun insertUpdate(e: DocumentEvent?) { controller.formChanged() }
-			override fun removeUpdate(e: DocumentEvent?) { controller.formChanged() }
-			override fun changedUpdate(e: DocumentEvent?) { controller.formChanged() }
-		})
+		nameField.document.addDocumentListener(documentListener)
 
 		typeField.addActionListener {
+			controller.formChanged()
 			setDefaultValueEditor(typeField.selectedItem as GraphParamType<*>)
+		}
+
+		semanticField.addActionListener {
+			controller.formChanged()
 		}
 
 		table.selectionModel.addListSelectionListener {
@@ -88,6 +104,7 @@ class GraphParamDefinitionsViewSwing(
 	private fun clearForm() {
 		nameField.text = ""
 		typeField.selectedIndex = 0
+		semanticField.selectedItem = null
 		setDefaultValueEditor(typeField.selectedItem as GraphParamType<*>)
 
 		updateFormEnabledness()
@@ -102,6 +119,7 @@ class GraphParamDefinitionsViewSwing(
 	private fun fillForm(def: GraphParamDefinition<*>) {
 		nameField.text = def.name
 		typeField.selectedItem = def.type
+		semanticField.selectedItem = def.semantic
 		setDefaultValueEditor(def.type, def.defaultValue)
 
 		updateFormEnabledness()
@@ -118,14 +136,20 @@ class GraphParamDefinitionsViewSwing(
 			nameField.isEnabled = it
 			typeField.isEnabled = it
 			defaultValueEditor?.editorEnabled = it
+			semanticField.isEnabled = it
 		}
 	}
 
 	private fun setDefaultValueEditor(type: GraphParamType<*>, defaultValue: Any? = null) {
 		defaultValueEditor = createDefaultValueEditor(type).also { editor ->
-			defaultValue?.let { editor.value = it }
+			defaultValue?.let { editor.paramValue = it }
 			defaultValueFieldHolder.removeAll()
 			defaultValueFieldHolder.add(editor as JComponent, BorderLayout.CENTER)
+			revalidate()
+			repaint()
+		}
+		SwingUtilities.invokeLater {
+			defaultValueEditor?.editorEnabled = controller.isFormEnabled
 		}
 	}
 
@@ -143,13 +167,16 @@ class GraphParamDefinitionsViewSwing(
 		nameField.text = name
 		typeField.selectedItem = typeField.getItemAt(0)
 		setDefaultValueEditor(typeField.selectedItem as GraphParamType<*>)
+		semanticField.selectedItem = null
+		nameField.requestFocusInWindow()
 	}
 
 	override fun <T: Any> getEditedDefinition(): GraphParamDefinition<T> =
 		GraphParamDefinition.create(
 			nameField.text,
 			typeField.selectedItem as GraphParamType<T>,
-			defaultValueEditor!!.value as T
+			defaultValueEditor!!.paramValue as T,
+			semanticField.selectedItem as Semantic?
 		)
 
 	override fun valueChanged() {
@@ -192,6 +219,7 @@ class GraphParamDefinitionsViewSwing(
 		form.addLabeledRow(Translations.getString("graph.paramDefs.dialog.name"), nameField)
 		form.addLabeledRow(Translations.getString("graph.paramDefs.dialog.type"), typeField)
 		form.addLabeledRow(Translations.getString("graph.paramDefs.dialog.defaultValue"), defaultValueFieldHolder)
+		form.addLabeledRow(Translations.getString("graph.paramDefs.dialog.semantic"), semanticField)
 		southPanel.add(Box.createVerticalStrut(10))
 		southPanel.add(form)
 
@@ -233,7 +261,7 @@ class GraphParamDefinitionsViewSwing(
 
 		override fun getRowCount(): Int = controller.value.size
 
-		override fun getColumnCount(): Int = 3
+		override fun getColumnCount(): Int = 4
 
 		override fun getValueAt(rowIndex: Int, columnIndex: Int): Any {
 			val definition = getDefinition(rowIndex)
@@ -241,6 +269,7 @@ class GraphParamDefinitionsViewSwing(
 				0 -> definition.name
 				1 -> definition.type.displayableName
 				2 -> definition.defaultValue.toString()
+				3 -> definition.semantic?.translatedName ?: Translations.getString("graph.paramDefs.dialog.semantic.none")
 				else -> throw IllegalArgumentException("column does not exist")
 			}
 		}
@@ -250,6 +279,7 @@ class GraphParamDefinitionsViewSwing(
 				0 -> Translations.getString("graph.paramDefs.dialog.name")
 				1 -> Translations.getString("graph.paramDefs.dialog.type")
 				2 -> Translations.getString("graph.paramDefs.dialog.defaultValue")
+				3 -> Translations.getString("graph.paramDefs.dialog.semantic")
 				else -> throw IllegalArgumentException("column does not exist")
 			}
 	}

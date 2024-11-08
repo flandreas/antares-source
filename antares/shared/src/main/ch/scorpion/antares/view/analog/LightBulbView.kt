@@ -16,6 +16,8 @@ import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
@@ -156,8 +158,8 @@ class LightBulbView(
 		}
 	}
 
-	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: LightBulb) {
-		this.model = model
+	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
+		this.model = link.getLinkedVertice(startGraph) as LightBulb
 	}
 
 	private fun copyControlViewProperties(source: LightBulbView, dest: LightBulbView) {
@@ -189,8 +191,9 @@ class LightBulbView(
 		}
 	}
 
-	private val executionBulbColor: Color get() =
-		lightColor.gradient.at(
-			(abs((model.getPort<AnalogSignal>() as AnalogPort).current - minCurrent).coerceAtLeast(0.0) / maxCurrent)
-				.coerceIn(0.0..1.0).toFloat())
+	@Suppress("MemberVisibilityCanBePrivate") // For testing
+	val executionLightFactor: Float get() = ((abs((model.getPort<AnalogSignal>() as AnalogPort).current) - minCurrent).coerceAtLeast(0.0) / maxCurrent)
+		.coerceIn(0.0..1.0).toFloat()
+
+	private val executionBulbColor: Color get() = lightColor.gradient.at(executionLightFactor)
 }

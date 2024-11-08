@@ -63,8 +63,8 @@ class BidirectionalSplitterView(
 
 	override fun drawDirectionAnnotation(context: DrawContext) {
 		context.g.stroke = Themes.get<AntaresTheme>().annotation.stroke
-		context.g.translate(bounds.minX + 0.75 * bounds.width, 0.0)
-		context.g.draw(DIR_PATH)
-		context.g.translate(-(bounds.minX + 0.75 * bounds.width), 0.0)
+		context.translated(bounds.minX + 0.75 * bounds.width, 0.0) {
+			it.g.draw(DIR_PATH)
+		}
 	}
 }

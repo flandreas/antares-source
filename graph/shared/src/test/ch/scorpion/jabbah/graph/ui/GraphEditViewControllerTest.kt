@@ -8,13 +8,15 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
+import ch.scorpion.jabbah.graph.CanvasMockBuilder
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.TestEditorBuilder
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolderImpl
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertSame
 
@@ -40,10 +42,10 @@ class GraphEditViewControllerTest {
 	private val applicationModeHolder = ApplicationModeHolderImpl(editor, scheduler).also {
 		applicationContextHolder.applicationModeHolder = it
 	}
-	private val controller = GraphEditViewController(editor, mockk(), applicationContextHolder, eventBus = eventBus)
+	private val controller = GraphEditViewController(editor, mock(), applicationContextHolder, eventBus = eventBus)
 
 	init {
-		drawingView.canvas = mockk(relaxed = true)
+		drawingView.canvas = CanvasMockBuilder().build()
 		GraphEditViewMockBuilder(controller)
 	}
 

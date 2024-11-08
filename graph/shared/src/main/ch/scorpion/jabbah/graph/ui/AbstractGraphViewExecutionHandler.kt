@@ -81,7 +81,7 @@ abstract class AbstractGraphViewExecutionHandler(
 	protected val tooltipHandler = TooltipHandler(
 		eventBus,
 		{ _, x, y -> getActorViewAt(x, y) as Drawable? },
-		{ d, x, y -> (d as ActorView).getExecutionTooltip(x, y) })
+		{ d, x, y, _ -> (d as ActorView).getExecutionTooltip(x, y) })
 
 	/** Returns the [ActorView] in [view] at the specified location, if any.*/
 	protected fun getActorViewAt(x: Double, y: Double): ActorView? {

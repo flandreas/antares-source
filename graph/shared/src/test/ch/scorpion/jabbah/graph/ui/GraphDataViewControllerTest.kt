@@ -8,7 +8,7 @@ import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.project.ProjectSavable
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import io.mockk.mockk
+import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertSame
 
@@ -17,7 +17,7 @@ class GraphDataViewControllerTest {
 	companion object {
 		init {
 			GraphViewTestRule.configure()
-			ProjectModule.projectManagementService = mockk()
+			//ProjectModule.projectManagementService = mock()
 		}
 	}
 
@@ -28,7 +28,7 @@ class GraphDataViewControllerTest {
 	private val projectSavable = ProjectSavable(containerLibraryElement)
 
 	init {
-		containerLibraryElement.bindTo(mockk<Project>())
+		containerLibraryElement.bindTo(mock<Project>())
 		containerLibraryElement.updateStorable(metaGraph)
 	}
 

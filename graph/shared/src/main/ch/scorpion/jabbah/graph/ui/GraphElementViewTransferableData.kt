@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.edit.app.ComponentCustomizer
 import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.view.GraphElementView
@@ -13,5 +14,6 @@ import ch.scorpion.jabbah.graph.view.GraphElementView
  */
 data class GraphElementViewTransferableData(
 	val graphElementView: GraphElementView<GraphElement>,
-	val libraryElement: LibraryElement
+	val libraryElement: LibraryElement,
+	val customizer: ComponentCustomizer? = null
 )

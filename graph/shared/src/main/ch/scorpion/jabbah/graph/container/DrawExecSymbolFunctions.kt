@@ -26,7 +26,7 @@ object DrawExecSymbolFunctions : DslExternalFunctions {
 	}
 
 	/** Maps to [VerticeView.drawDataFlow]. */
-	private fun drawDataFlowImpl(params: List<Any>): Any {
+	private fun drawDataFlowImpl(params: List<Any>, @Suppress("UNUSED_PARAMETER") context: Any? = null): Any {
 		drawDataFlow(
 			stringParam(0, params),
 			stringParam(1, params))
@@ -42,7 +42,7 @@ object DrawExecSymbolFunctions : DslExternalFunctions {
 		view.drawDataFlow(inputName, outputName, context)
 	}
 
-	private fun setLabelImpl(params: List<Any>): Any {
+	private fun setLabelImpl(params: List<Any>, @Suppress("UNUSED_PARAMETER") context: Any? = null): Any {
 		setLabel(
 			stringParam(0, params))
 		return 0L

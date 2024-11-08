@@ -3,7 +3,7 @@ package ch.scorpion.jabbah.graph.view.net.edge
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.Stroke
-import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
@@ -17,7 +17,7 @@ interface EdgeViewStyling {
      */
     val width: Int
 
-    val boundingBox: Rectangle2D
+    val boundingBox: RectangularShape
 
 	/** Returns `true` is this [EdgeViewStyling] draws large or wide areas, which is used for determining background colors. */
 	val isArea: Boolean

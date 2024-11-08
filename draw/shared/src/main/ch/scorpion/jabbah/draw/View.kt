@@ -79,6 +79,8 @@ interface View<C : InputEventContext> : ContentView<C>, ViewToModelTransform {
 	 */
 	var canvas: Canvas
 
+	val devicePixelRatio: Double get() = canvas.devicePixelRatio
+
 	/** Controls the rectangular area that is free to display content to the user. Can be reduced from outside.*/
 	val space: ViewSpace
 
@@ -127,7 +129,7 @@ interface View<C : InputEventContext> : ContentView<C>, ViewToModelTransform {
 	 * Contains [Drawable]s that are painted above the main content on the [View] level.
 	 * This is like a slide that lies above all other [DrawableContainer]s. Its [Drawable]s
 	 * use the coordinate system of the [View] and not the one of the main content, and they
-	 * are never zoomed. It can be used for displaying UI controls, or for displaying system wide messages
+	 * are never zoomed. It can be used for displaying UI controls, or for displaying system-wide messages
 	 * that are not related with a particular [Drawable] in the main content. Unlike all other [DrawableContainer]s,
 	 * this one is not part of the [View]'s main content, i.e. it is not replaced when replacing the main content.
 	 */

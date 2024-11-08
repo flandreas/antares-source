@@ -2,8 +2,10 @@ package ch.scorpion.antares.model.net
 
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.signal.*
+import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.execution.ForwardSignalHandler
-import io.mockk.mockk
+import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
+import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -18,7 +20,7 @@ class SplitterTest {
 		}
 	}
 
-	private val signalHandler = ForwardSignalHandler(mockk())
+	private val signalHandler = ForwardSignalHandler(CurrentSystemSpeedCategory(SystemSpeed()))
 
 	@Test
 	fun shouldSplitToBits() {

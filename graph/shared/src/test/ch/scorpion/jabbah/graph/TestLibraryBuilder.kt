@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph
 
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.model.param.GraphParamValue
 import ch.scorpion.jabbah.graph.model.port.PortFactory
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.CompositeTestGraphViewBuilder
@@ -39,17 +40,31 @@ class TestLibraryBuilder(
 		).metaGraph!!
 	}
 
-	fun addOuterCustomComponent(library: Library, label: String? = null, innerLibrary: Library = library): MetaGraph {
+	fun addOuterCustomComponent(
+		library: Library,
+		label: String? = null,
+		innerLibrary: Library = library,
+		paramValue: GraphParamValue<*>? = null
+	): MetaGraph {
 		val builder = CompositeTestGraphViewBuilder(OUTER_CUSTOM_COMP, portFactory, portViewFactory)
 		return libraryService.addContainerLibraryElement(
 			library,
 			builder.buildMetaGraph(
-				builder.buildOuterCustomComponent(createSubGraphVerticeView(INNER_CUSTOM_COMP, innerLibrary)),
+				builder.buildOuterCustomComponent(createSubGraphVerticeView(INNER_CUSTOM_COMP, innerLibrary, paramValue)),
 				label),
 			library
 		).metaGraph!!
 	}
 
-	private fun createSubGraphVerticeView(name: String, libraryDirectory: LibraryDirectory): SubGraphVerticeViewImpl =
-		(libraryDirectory.get(name) as LibraryElement).getNewInstance<SubGraphVerticeRef>() as SubGraphVerticeViewImpl
+	private fun createSubGraphVerticeView(
+		name: String,
+		libraryDirectory: LibraryDirectory,
+		paramValue: GraphParamValue<*>? = null
+	): SubGraphVerticeViewImpl {
+		val vv = (libraryDirectory.get(name) as LibraryElement).getNewInstance<SubGraphVerticeRef>() as SubGraphVerticeViewImpl
+		paramValue?.let {
+			vv.model.setParamValue(it)
+		}
+		return vv
+	}
 }

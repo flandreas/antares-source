@@ -3,25 +3,30 @@ package ch.scorpion.jabbah.draw
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.geom.Dimension2D
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.slot
+import dev.mokkery.MockMode
+import dev.mokkery.answering.calls
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.matcher.capture.Capture
+import dev.mokkery.matcher.capture.capture
+import dev.mokkery.matcher.capture.get
+import dev.mokkery.mock
 
 class CanvasMockBuilder {
 
-	private val canvas: Canvas = mockk(relaxed = true)
+	private val canvas: Canvas = mock(MockMode.autofill)
 	private lateinit var dimension: Dimension2D
-	private val propertyChangeSlot = slot<PropertyChangeListener<Any>>()
+	private val propertyChangeSlot = Capture.slot<PropertyChangeListener<Any>>()
 	private val propertyChangeListeners = mutableListOf<PropertyChangeListener<Any>>()
 
 	init {
-		every { canvas.addPropertyChangeListener(capture(propertyChangeSlot)) } answers {
-			propertyChangeListeners.add(propertyChangeSlot.captured)
+		every { canvas.addPropertyChangeListener(capture(propertyChangeSlot)) } calls  {
+			propertyChangeListeners.add(propertyChangeSlot.get())
 		}
-		withDevicePixelRatio(1)
+		withDevicePixelRatio(1.0)
 	}
 
-	fun withDevicePixelRatio(devicePixelRatio: Int): CanvasMockBuilder {
+	fun withDevicePixelRatio(devicePixelRatio: Double): CanvasMockBuilder {
 		every { canvas.devicePixelRatio } returns devicePixelRatio
 		return this
 	}

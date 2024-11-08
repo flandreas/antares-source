@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.draw.container.DrawableContainerImpl
 import ch.scorpion.jabbah.draw.drawable.DrawableMockBuilder
 import ch.scorpion.jabbah.draw.graphics.Graphics2DMockBuilder
 import ch.scorpion.jabbah.draw.module.DrawModule
-import io.mockk.verify
+import dev.mokkery.verify
 import kotlin.test.BeforeTest
 import kotlin.test.Ignore
 import kotlin.test.Test
@@ -77,7 +77,7 @@ class ViewImplTest {
 	@Test
 	@Ignore
 	fun shouldUseHigherDevicePixelRatio() {
-		canvas.withDevicePixelRatio(2)
+		canvas.withDevicePixelRatio(2.0)
 
 		view.addDrawable(DrawableMockBuilder()
 			.withBoundingBox(Rectangle2D(0, 0, 10, 10))

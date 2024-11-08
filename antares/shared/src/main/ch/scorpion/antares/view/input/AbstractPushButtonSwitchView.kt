@@ -20,6 +20,8 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.text.*
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -108,8 +110,8 @@ abstract class AbstractPushButtonSwitchView<T: AbstractSwitch<T>>(
 
 	override val mirrorWidth: Double get() = -(2 * AbstractAntaresPortView.LENGTH + width)
 
-	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: T) {
-		this.model = model
+	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
+		this.model = link.getLinkedVertice(startGraph) as T
 	}
 
 	override fun writeModelProperties(writer: StoreWriter) {
@@ -136,12 +138,12 @@ abstract class AbstractPushButtonSwitchView<T: AbstractSwitch<T>>(
 
 	/** ---- [AbstractDrawable] */
 
-	override val boundingBox: Rectangle2D
+	override val boundingBox: RectangularShape
 		get() {
-			val bb = super.boundingBox
+			var bb = super.boundingBox
 			if (StringUtils.isNotEmpty(externalLabel.text)) {
-				val lbb = externalLabel.boundingBox.moveBy(location)
-				bb.add(lbb)
+				val lbb = Rectangle2D(externalLabel.boundingBox).moveBy(location)
+				bb = Rectangle2D(bb).add(lbb)
 			}
 			return bb
 		}

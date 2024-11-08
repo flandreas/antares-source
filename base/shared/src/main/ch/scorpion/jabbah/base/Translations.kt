@@ -1,13 +1,13 @@
 package ch.scorpion.jabbah.base
 
-import ch.scorpion.jabbah.base.event.EventBus
-
 /**
  * Provides I18N translations of static texts.
  */
 expect object Translations {
 
 	var language: Language
+
+	val bundleNames: Set<String>
 
 	/** Returns the key if no value is found. Primarily used for testing.*/
 	fun withAnyKey()

@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.antares.view.analog.AbstractAnalogVerticeView
 import ch.scorpion.antares.view.analog.AnalogPortView
+import ch.scorpion.jabbah.execution.SignalHandler
 
 interface AnalogElement {
 
@@ -15,6 +16,9 @@ interface AnalogElement {
 	val voltageSourceCount: Int
 
 	val postCount: Int
+
+	/** Resets the state of this [AnalogElement] at simulation start.*/
+	fun reset()
 
 	/**
 	 * Allocates [postCount] storage places for holding the values provided in [setNode].
@@ -33,13 +37,15 @@ interface AnalogElement {
 
 	fun getNodeVoltage(postId: Int): Double
 
-	fun setCurrent(index: Int, current: Double)
+	fun setInternalCurrent(index: Int, current: Double)
+
+	fun getInternalCurrent(): Double
 
 	fun calculateCurrent() {}
 
 	fun startIteration() {}
 
-	fun doStep(analysis: AnalogCircuitAnalysis) {}
+	fun doStep(analysis: AnalogCircuitAnalysis, signalHandler: SignalHandler) {}
 
 	fun stamp(analysis: AnalogCircuitAnalysis)
 }
@@ -64,10 +70,19 @@ class AnalogElementMixin(
 	lateinit var nodes: Array<Int>
 		private set
 
-	lateinit var voltages: Array<Double>
+	var voltages: Array<Double> = emptyArray()
 		private set
 
+	private var internalCurrent: Double = 0.0
+
 	override val voltageSourceCount: Int get() = vertice.voltageSourceCount
+
+	override fun reset() {
+		internalCurrent = 0.0
+		for (i in voltages.indices) {
+			voltages[i] = 0.0
+		}
+	}
 
 	override fun allocateNodes() {
 		nodes = Array(postCount) { 0 }
@@ -90,9 +105,11 @@ class AnalogElementMixin(
 
 	override fun getNodeVoltage(postId: Int): Double = voltages[postId]
 
-	override fun setCurrent(index: Int, current: Double) {
-		// empty so far
+	override fun setInternalCurrent(index: Int, current: Double) {
+		this.internalCurrent = current
 	}
+
+	override fun getInternalCurrent(): Double = internalCurrent
 
 	override fun getPost(elem: GraphElementView<*>, postId: Int): Connection<*> =
 		Connection(elem as VerticeView<*>, vertice.getPort(postId + 1))
@@ -124,6 +141,10 @@ class AnalogElementProxy : AnalogElement {
 
 	override val postCount: Int get() = model.postCount
 
+	override fun reset() {
+		model.reset()
+	}
+
 	override fun allocateNodes() {
 		model.allocateNodes()
 	}
@@ -144,9 +165,11 @@ class AnalogElementProxy : AnalogElement {
 
 	override fun getNodeVoltage(postId: Int): Double = model.getNodeVoltage(postId)
 
-	override fun setCurrent(index: Int, current: Double) {
-		model.setCurrent(index, current)
+	override fun setInternalCurrent(index: Int, current: Double) {
+		model.setInternalCurrent(index, current)
 	}
+
+	override fun getInternalCurrent(): Double = model.getInternalCurrent()
 
 	override fun stamp(analysis: AnalogCircuitAnalysis) {
 		model.stamp(analysis)

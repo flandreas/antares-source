@@ -13,12 +13,14 @@ import ch.scorpion.jabbah.graph.ui.library.LibraryPanelViewMockBuilder
 import ch.scorpion.jabbah.graph.ui.logview.LogView
 import ch.scorpion.jabbah.graph.ui.logview.LogViewMockBuilder
 import ch.scorpion.jabbah.graph.view.GraphView
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.mock
 
 class GraphPanelViewMockBuilder(private val controller: GraphPanelViewController) {
 
-	private val graphPanelView = mockk<GraphPanelView>(relaxed = true)
+	private val graphPanelView = mock<GraphPanelView>(MockMode.autofill)
 
 	init {
 		controller.view = graphPanelView

@@ -35,10 +35,10 @@ class KnobIcon(override val dim: Dimension2D) : Icon {
 
 	override fun draw(context: DrawContext, location: Point2D) {
 		context.g.color = context.choose(Themes.get<DrawTheme>().figure.color).foregroundColor
-		context.g.translate(location.x, location.y)
-		context.g.drawOval(0.0, 0.0, dim.width, dim.height)
-		context.g.fillOval(dim.width / 2 - 3, dim.height / 2 - 3, 6.0, 6.0)
-		context.g.drawLine(dim.width / 2, dim.height / 2, dim.width / 2 + 4, dim.height / 2  - 4)
-		context.g.translate(-location.x, -location.y)
+		context.translated(location) {
+			it.g.drawOval(0.0, 0.0, dim.width, dim.height)
+			it.g.fillOval(dim.width / 2 - 3, dim.height / 2 - 3, 6.0, 6.0)
+			it.g.drawLine(dim.width / 2, dim.height / 2, dim.width / 2 + 4, dim.height / 2  - 4)
+		}
 	}
 }

@@ -33,7 +33,9 @@ abstract class AbstractLogicGate(
 
     companion object {
         val LOG by logger(AbstractLogicGate::class)
-	    const val DEFAULT_PROPAGATION_DELAY = 20L
+
+		val DEFAULT_PROPAGATION_DELAY get() = CurrentDefaultPropagationDelay.value
+
         val DEF_MIN_INPUT_COUNT = PortCount.TWO
         val DEF_MAX_INPUT_COUNT = PortCount.EIGHT
     }
@@ -63,7 +65,7 @@ abstract class AbstractLogicGate(
 	    require(inputCount.count >= minInputCount.count) { "InputCount ${inputCount.count} below min ${minInputCount.count}" }
 	    require(inputCount.count <= maxInputCount.count) { "InputCount ${inputCount.count} above max ${maxInputCount.count}" }
 
-	    propagationDelay = DEFAULT_PROPAGATION_DELAY
+		propagationDelay = DEFAULT_PROPAGATION_DELAY
 	    setupInputCount(inputCount)
     }
 
@@ -82,6 +84,7 @@ abstract class AbstractLogicGate(
 	/** ---- [GraphElement] */
 
 	override fun graphParamsChanged(graph: Graph) {
+		super.graphParamsChanged(graph)
 		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
 	}
 
@@ -144,7 +147,7 @@ abstract class AbstractLogicGate(
 
     override fun executionStart(signalHandler: SignalHandler) {
         super.executionStart(signalHandler)
-        requestActingAfter(signalHandler, propagationDelay / 2, createActorData(null))
+        requestActingAfter(signalHandler, propagationDelay.value / 2, createActorData(null))
     }
 
     /** ---- [AbstractLogicGate] */

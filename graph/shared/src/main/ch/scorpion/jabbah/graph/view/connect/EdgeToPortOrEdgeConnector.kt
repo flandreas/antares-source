@@ -63,7 +63,7 @@ class EdgeToPortOrEdgeConnector(
 					onTransit { removePortViewHighlight(it) }
 				}
 				transitTo("drag") {
-					given { mouseLeftPressed(it) }
+					given { mouseLeftPressed(it) && snap(it) != null }
 					onTransit {
 						beginConnecting(it)
 						removePortViewHighlight(it)
@@ -72,6 +72,11 @@ class EdgeToPortOrEdgeConnector(
 			}
 
 			state("drag") {
+				transitTo("sense") {
+					// Connecting has been interrupted in beginConnecting() because snap was not valid
+					// Transaction has not yet been started, so we can't cancel(), which would rollback
+					given { edgeView == null }
+				}
 				transitTo("insideTargetPortView") {
 					given { mouseDragged(it) && insideTargetPortView(draggedEndpointType, it) }
 				}
@@ -161,7 +166,7 @@ class EdgeToPortOrEdgeConnector(
 		snap(context.x, context.y, context.editor.snapManager)
 
 	private fun snap(x: Double, y: Double, snapManager: SnapManager): EdgeViewSnapLocatorResult? {
-		val result = branchedEdgeView!!.snap(x, y, snapManager)
+		val result = branchedEdgeView?.snap(x, y, snapManager)
 		branchedSegmentIndex = result?.segmentIndex
 		return result
 	}
@@ -173,19 +178,23 @@ class EdgeToPortOrEdgeConnector(
 
 		// Re-snap to the PortView connection point to retrieve the optimal segment index
 		// (avoid bug #627: wire distortion when splitting at EdgeView corner)
-		snap(snapLocation.x, snapLocation.y, context.editor.snapManager)
+		val snapResult = snap(snapLocation.x, snapLocation.y, context.editor.snapManager)
 
 		context.drawingView.drawing.remove(edgeView!!)
 		removePortViewHighlight(context)
 
-		val command = createSplitEdgeViewCommand(context.editor)
-		context.editor.commandManager.beginTransaction(command)
+		if (snapResult == null) {
+			edgeView = null
+		} else {
+			val command = createSplitEdgeViewCommand(context.editor)
+			context.editor.commandManager.beginTransaction(command)
 
-		edgeView = command.addedNewEdgeView
-		edgeView!!.underConstruction = true
+			edgeView = command.addedNewEdgeView
+			edgeView!!.underConstruction = true
 
-		context.drawingView.selectionManager.deselectAll()
-		context.drawingView.selectionManager.select(edgeView!!)
+			context.drawingView.selectionManager.deselectAll()
+			context.drawingView.selectionManager.select(edgeView!!)
+		}
 	}
 
 	override fun cancel(editor: Editor) {

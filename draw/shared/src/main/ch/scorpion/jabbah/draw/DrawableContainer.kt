@@ -3,6 +3,8 @@ package ch.scorpion.jabbah.draw
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
 import ch.scorpion.jabbah.draw.drawable.Locatable
+import ch.scorpion.jabbah.draw.style.Stylable
+import ch.scorpion.jabbah.draw.style.StyleType
 
 /**
  * A [DrawableContainer] is a [Drawable] that contains other [Drawable]s.
@@ -57,4 +59,11 @@ interface DrawableContainer<T : Drawable> : Drawable, DrawableBag<T>, Locatable 
 
     /** Notifies this [DrawableContainer] that one of its child [Drawable]s has updated its geometry.*/
     fun handleDrawableUpdated(drawable: Drawable)
+
+    /**
+     * Draws the contents of this [DrawableContainer] without any additional things that is typically added
+     * when a [View] draws its content. In particular, this method ensures that all [Stylable]s whose
+     * [StyleType.isBackdrop] is set are drawn first.
+     */
+    fun drawStandalone(context: DrawContext)
 }

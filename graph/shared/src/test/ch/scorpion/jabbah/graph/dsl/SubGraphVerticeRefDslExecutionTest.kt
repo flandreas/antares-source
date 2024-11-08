@@ -2,12 +2,14 @@ package ch.scorpion.jabbah.graph.dsl
 
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.issue.IssueCollector
 import ch.scorpion.jabbah.graph.TestLibraryBuilder
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -24,12 +26,12 @@ class SubGraphVerticeRefDslExecutionTest {
 		}
 	}
 
-	private val signalHandler = mockk<SignalHandler>(relaxed = true)
+	private val signalHandler = mock<SignalHandler>(MockMode.autofill)
+	private val issueCollector = IssueCollector()
 
 	@BeforeTest
 	fun setup() {
 		LibraryModule.userLibraryPersistenceService = MemoryLibraryPersistenceService()
-		LibraryModule.libraryService = LibraryService()
 		LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"))
 	}
 
@@ -98,6 +100,22 @@ class SubGraphVerticeRefDslExecutionTest {
 
 		val o = vv.model.getOutput<Long>().getOutgoingSignal()
 		assertEquals(42L, o)
+	}
+
+	@Test
+	fun semanticAnalyserShouldNotAllowWritingInputPort() {
+		val libraryElement = createScriptedMetaGraph(
+			inputName = "I",
+			outputName = "O",
+			script = """
+				I = 1
+			""".trimIndent())
+
+		val vv = createAndStart(libraryElement)
+		vv.model.act(signalHandler, vv.model.createActorData(vv.model.getInput<Boolean>()))
+
+		assertEquals(1, issueCollector.size)
+		issueCollector.issues[0].description!!.contains("Assigning value to input")
 	}
 
 	private fun createAndStart(libraryElement: ContainerLibraryElement): SubGraphVerticeView<SubGraphVerticeRef> {

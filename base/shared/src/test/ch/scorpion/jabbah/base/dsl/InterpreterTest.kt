@@ -575,7 +575,7 @@ class InterpreterTest {
 	@Test
 	fun shouldInterpretFunctionCall() {
 		val symbolTable = ScopedSymbolTable("global", 1, null)
-		val function = ExternalFunction { (it[0] as Long) * (it[0] as Long) }
+		val function = ExternalFunction { p,_ -> (p[0] as Long) * (p[0] as Long) }
 		symbolTable.define(ExternalFunctionSymbol("square", 1, function))
 
 		val semanticAnalyser = DslSemanticAnalyser(symbolTable)
@@ -584,5 +584,20 @@ class InterpreterTest {
 		val result = interpreter.interpret()
 
 		assertEquals(16L, result)
+	}
+
+	@Test
+	fun comparisonShouldHavePrecedenceOverTerms() {
+		val interpreter = Interpreter("""
+			if (12 + 12 == 2 * 12) {
+				1
+			} else {
+				0
+			}
+		""".trimIndent())
+
+		val result = interpreter.interpret()
+
+		assertEquals(1L, result)
 	}
 }

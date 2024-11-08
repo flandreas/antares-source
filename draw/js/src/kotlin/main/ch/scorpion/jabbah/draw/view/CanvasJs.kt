@@ -3,6 +3,8 @@ package ch.scorpion.jabbah.draw.view
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.util.Throttle
 import ch.scorpion.jabbah.draw.Canvas
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.View
@@ -15,18 +17,23 @@ import ch.scorpion.jabbah.draw.style.StyleType
 import kotlinx.browser.window
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
+import org.w3c.dom.events.Event
+import kotlin.math.ceil
 
 class CanvasJs(
     private val canvas: HTMLCanvasElement,
     override val view: View<out InputEventContext>,
-    size: Dimension2D?,
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     private val propertyOwner: PropertyOwner<Any> = PropertyOwnerImpl()
 ) : Canvas, PropertyOwner<Any> by propertyOwner {
 
+    companion object {
+        private val LOG by logger(CanvasJs::class)
+    }
+
     private val ctx = canvas.getContext("2d")!! as CanvasRenderingContext2D
 
-    private val g = Graphics2DJs(ctx, window.devicePixelRatio)
+    private val g = Graphics2DJs(ctx)
 
     private var initalizing: Boolean = true
 
@@ -37,10 +44,9 @@ class CanvasJs(
 
     /** ---- [Canvas] interface */
 
-    override val devicePixelRatio: Int get() = window.devicePixelRatio.toInt()
+    override val devicePixelRatio: Double get() = window.devicePixelRatio
 
-    override var dimension: Dimension2D = size ?: Dimension2D(canvas.offsetWidth, canvas.offsetHeight)
-        private set
+    override val dimension: Dimension2D get() = Dimension2D(canvas.width, canvas.height)
 
     override var backgroundColor: Color = styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
 
@@ -65,18 +71,63 @@ class CanvasJs(
             field = value
         }
 
+    private var removeDevicePixelRatioHandler: ((Event?) -> Unit)? = null
+
+    /**
+     * Sets up a media query to listen to changes of [devicePixelRatio] in the browser window.
+     * Required to adjust the canvas' internal image resolution when the user moves
+     * the browser window between screens with different DPIs.
+     * Source: https://developer.mozilla.org/en-US/docs/Web/API/Window/devicePixelRatio.
+     */
+    private lateinit var devicePixelRatioHandler: (Event?) -> Unit
+
+    private val resizeThrottle = Throttle(::resize, 100)
+
     init {
         propertyOwner.source = this
         view.canvas = this
         view.initialize()
         initalizing = false
+
+        // This doesn't work reliably yet on Chrome when zooming on browser level with CMD-!:
+        // The resulting zoom in the canvas and the pan position aren't accurate for some reason..
+        initializeDevicePixelRatioHandler()
+        devicePixelRatioHandler(null)
+
+        // Would have wanted to use ResizeObserver on the canvas itself, but that seems
+        // not to be available in Kotlin JS
+        window.addEventListener("resize", ::throttledResize)
     }
 
-    fun resize(w: Int, h: Int) {
+    private fun throttledResize(event: Event? = null) {
+        resizeThrottle.invokeLast()
+    }
+
+    private fun initializeDevicePixelRatioHandler() {
+        devicePixelRatioHandler = {
+            removeDevicePixelRatioHandler?.invoke(null)
+            val mqString = "(resolution: ${window.devicePixelRatio}dppx"
+            val media = window.matchMedia(mqString)
+            media.addEventListener("change", devicePixelRatioHandler)
+            removeDevicePixelRatioHandler = {
+                media.removeEventListener("change", devicePixelRatioHandler)
+            }
+            handleDevicePixelRatioChanged()
+        }
+    }
+
+    private fun handleDevicePixelRatioChanged() {
+        resize()
+        propertyOwner.fire(Canvas.PROP_DEVICE_PIXEL_RATIO, devicePixelRatio, devicePixelRatio)
+    }
+
+    private fun resize() {
         val oldDimension = dimension
-        dimension = Dimension2D(w, h)
-        canvas.width = dimension.widthInt * devicePixelRatio
-        canvas.height = dimension.heightInt * devicePixelRatio
+        val rect = canvas.getBoundingClientRect()
+        val dpr = window.devicePixelRatio
+        LOG.debug("Resize CanvasJs w=${rect.width}, h=${rect.height}")
+        canvas.width = ceil(rect.width * dpr).toInt()
+        canvas.height = ceil(rect.height * dpr).toInt()
         repaint()
         propertyOwner.fire(Canvas.PROP_DIMENSION, oldDimension, dimension)
     }
@@ -126,7 +177,11 @@ class CanvasJs(
         ctx.fillRect(xx, yy, ww, hh)
 
         ctx.restore()
+
+        val dpr = devicePixelRatio
+        ctx.scale(dpr, dpr)
         paint()
+        ctx.scale(1 / dpr, 1 / dpr)
     }
 
     override fun addMouseListener(l: MouseListener) {
@@ -177,7 +232,7 @@ class CanvasJs(
         var bridge: MouseWheelEventBridge? = mouseWheelEventBridgeOf(l)
         if (bridge == null) {
             bridge = MouseWheelEventBridge(::windowToCanvas, l, canvas)
-            canvas.addEventListener("mousewheel", bridge)
+            canvas.addEventListener("wheel", bridge)
             mouseWheelListeners.add(bridge)
         }
     }
@@ -185,7 +240,7 @@ class CanvasJs(
     override fun removeMouseWheelListener(l: MouseWheelListener) {
         val bridge = mouseWheelEventBridgeOf(l)
         if (bridge != null) {
-            canvas.removeEventListener("mousewheel", bridge)
+            canvas.removeEventListener("wheel", bridge)
             mouseWheelListeners.remove(bridge)
         }
     }
@@ -225,8 +280,8 @@ class CanvasJs(
     private fun windowToCanvas(event: org.w3c.dom.events.MouseEvent): Point2D {
         val rect = canvas.getBoundingClientRect()
         return Point2D(
-            ((event.clientX - rect.left)).toInt(),
-            ((event.clientY - rect.top)).toInt()
+            ((event.clientX - rect.left) * window.devicePixelRatio).toInt(),
+            ((event.clientY - rect.top) * window.devicePixelRatio).toInt()
         )
     }
 

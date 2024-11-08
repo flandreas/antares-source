@@ -44,6 +44,7 @@ class LibrarySavable(
 
 	override fun save(appDataViewController: ApplicationDataViewController): Boolean {
 		library.libraryService.updateContainerLibraryElement(library, appDataViewController.data!!.content as MetaGraph, element)
+		appDataViewController.data = appDataViewController.data!!.withSavable(this)
 		return true
 	}
 

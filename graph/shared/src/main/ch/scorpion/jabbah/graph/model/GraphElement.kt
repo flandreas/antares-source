@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.model
 
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.ExecutionError
+import ch.scorpion.jabbah.base.event.VetoException
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.edit.model.text.description.Describable
@@ -9,6 +10,7 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorState
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
+import ch.scorpion.jabbah.graph.model.nonvolatile.NonVolatileStorable
 import ch.scorpion.jabbah.graph.model.param.GraphParamValues
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.io.Storable
@@ -24,7 +26,7 @@ interface GraphElement : Storable, Actor, Describable {
 	/**
 	 * Returns a short translated type name of this [GraphElement].
 	 *
-	 * The type of a [GraphElement] names the "kind" or the nature of a [GraphElement].
+	 * The type of [GraphElement] names the "kind" or the nature of a [GraphElement].
 	 * Typically, the type is not persistent, but provided by concrete implementation of the [GraphElement] interface.
 	 *
 	 * Example: "AND Gate"
@@ -89,10 +91,30 @@ interface GraphElement : Storable, Actor, Describable {
 	 * its name "Hello" to "Hello (2)".
 	 */
 	fun beforePaste(graph: Graph) {}
+
+	/**
+	 * Complements [Actor.executionInitialize] in cases where this [GraphElement] is given the
+	 * opportunity to load [NonVolatileStorable] data from previous execution runs.
+	 * Cannot use [executionInitialize] from the execution module because it doesn't depend on io module.
+	 * The default implementation simply calls [executionInitialize].
+	 */
+	fun executionInitializeNonVolatile(signalHandler: SignalHandler, nonVolatileData: NonVolatileStorable? = null) {
+		executionInitialize(signalHandler)
+	}
+
+	/**
+	 * Complements [Actor.executionStopped] in cases where this [GraphElement] is given the
+	 * opportunity to store [NonVolatileStorable] data to make is available in successive execution runs.
+	 * Cannot use [executionStopped]  from the execution module because it doesn't depend on io module.
+	 * The default implementation simply calls [executionStopped].
+	 */
+	fun executionStoppedNonVolatile(signalHandler: SignalHandler, nonVolatileData: NonVolatileStorable? = null) {
+		executionStopped(signalHandler)
+	}
 }
 
 /** An event sent by a [GraphElement] whenever its state has changed. */
-class GraphElementEvent(
+open class GraphElementEvent(
 	val element: GraphElement,
 	val signalHandler: SignalHandler? = null,
 	val reason: String? = null
@@ -100,9 +122,21 @@ class GraphElementEvent(
 
 /** Listens for [GraphElementEvent]s from [GraphElement]s.*/
 interface GraphElementListener {
+
+	/**
+	 * Called for vetoable [GraphElementEvent]s. Implementations should check whether they would
+	 * accept [e], in which case the do nothing, otherwise throw a [VetoException].
+	 * If no [GraphElementListener] has vetoed the change, each of them is called with [stateChanged].
+	 */
+	fun checkStateChange(e: GraphElementEvent)
+
+	/** Called by [GraphElement]s when its state has changed.*/
     fun stateChanged(e: GraphElementEvent)
 }
 
+/** Base class providing default (empty) implementations for [GraphElementListener].*/
 open class GraphElementAdapter : GraphElementListener {
-    override fun stateChanged(e: GraphElementEvent) { }
+	override fun stateChanged(e: GraphElementEvent) {}
+	override fun checkStateChange(e: GraphElementEvent) {}
 }
+

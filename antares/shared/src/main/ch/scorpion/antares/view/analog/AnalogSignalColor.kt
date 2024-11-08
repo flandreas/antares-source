@@ -31,7 +31,7 @@ object AnalogSignalColor {
 	private const val MAX_VOLTAGE = 5.0
 
 	fun ofVoltage(voltage: Double): CompositeColor =
-		if (voltage >= 0 || abs(voltage) < 1E-6) {
+		if (voltage >= 0 || abs(voltage) < 1E-3) {
 			POS_GRADIENT.at((voltage.coerceIn(MIN_VOLTAGE, MAX_VOLTAGE) / MAX_VOLTAGE).toFloat())
 		} else {
 			NEG_GRADIENT.at((voltage.absoluteValue.coerceAtMost(MAX_VOLTAGE) / MAX_VOLTAGE).toFloat())

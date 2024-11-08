@@ -66,7 +66,7 @@ open class TriStateBufferGate(
 	}
 
     init {
-        propagationDelay = 20
+        propagationDelay = AbstractLogicGate.DEFAULT_PROPAGATION_DELAY
 
         addPort(DigitalPortImpl.createInput(Logic.POSITIVE, null, bitWidth))
         addPort(DigitalPortImpl.createInput(enableLogic, ENABLE_PORT_NAME, BitWidth.BW_1))
@@ -101,6 +101,7 @@ open class TriStateBufferGate(
 	/** ---- [GraphElement] */
 
 	override fun graphParamsChanged(graph: Graph) {
+		super.graphParamsChanged(graph)
 		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
 	}
 
@@ -134,7 +135,7 @@ open class TriStateBufferGate(
 
     override fun executionStart(signalHandler: SignalHandler) {
         super.executionStart(signalHandler)
-        requestActingAfter(signalHandler, propagationDelay / 2, createActorData(null))
+        requestActingAfter(signalHandler, propagationDelay.value / 2, createActorData(null))
     }
 
     /** ---- [TriStateBufferGate] */

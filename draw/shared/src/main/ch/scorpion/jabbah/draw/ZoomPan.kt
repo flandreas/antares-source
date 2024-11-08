@@ -8,13 +8,17 @@ import ch.scorpion.jabbah.base.geom.Point2D
 data class ZoomPan(
 	val transform: ViewToModelTransform,
 	val zoomFactor: Double,
-	val panOrigin: Point2D
+	val panOrigin: Point2D,
+	val devicePixelRatio: () -> Double
 ) {
+	companion object {
+		fun defaultDevicePixelRatio(): Double = 1.0
+	}
 
 	constructor() : this(IdentityViewToModelTransform)
 
 	constructor(transform: ViewToModelTransform) : this(transform, 1.0, 0.0, 0.0)
 
 	constructor(transform: ViewToModelTransform, zoomFactor: Double, panX: Double, panY: Double)
-		: this(transform, zoomFactor, Point2D(panX, panY))
+		: this(transform, zoomFactor, Point2D(panX, panY), Companion::defaultDevicePixelRatio)
 }

@@ -1,8 +1,11 @@
 package ch.scorpion.antares.view.analog.engine
 
+import ch.scorpion.antares.model.analog.Capacitor
 import ch.scorpion.antares.view.analog.AnalogGraphView
 import ch.scorpion.antares.view.analog.engine.RowInfo.Type.*
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.math.abs
 
 class AnalogCircuitAnalysis(
@@ -13,6 +16,15 @@ class AnalogCircuitAnalysis(
 
 	companion object {
 		private val LOG by logger(AnalogCircuitAnalysis::class)
+
+		/** The name in [Properties] of the [Float] "time step" property. */
+		const val PROP_TIME_STEP = "antares.analog.timeStep"
+
+		/** The default value of the [PROP_TIME_STEP] property.*/
+		const val DEF_TIME_STEP = 1E-2F
+
+		const val MIN_TIME_STEP = 1E-3F
+		const val MAX_TIME_STEP = 1E-1F
 
 		/**
 		 * Factors matrix [circuitMatrix] into upper and lower triangular matrices
@@ -147,6 +159,12 @@ class AnalogCircuitAnalysis(
 		}
 	}
 
+	/**
+	 * Influences how quick signal change across multiple "act" cycles, i.e. when active components
+	 * e.g. like [Capacitor] change their state.
+	 */
+	val timeStep: Double get() = circuitView.timeStep
+
 	val isNonLinear = circuitView.analogElementViews.any { it.isNonLinear }
 
 	private var matrixSize = nodeList.size - 1 + voltageSources.size
@@ -268,6 +286,15 @@ class AnalogCircuitAnalysis(
 				i--
 			}
 			circuitRightSide[i] += x
+		}
+	}
+
+	/**
+	 * Indicate that the value on the right side of row [row] changes in doStep().
+	 */
+	fun stampRightSide(row: Int) {
+		if (row > 0) {
+			rowInfo[row - 1].rsChanges = true
 		}
 	}
 

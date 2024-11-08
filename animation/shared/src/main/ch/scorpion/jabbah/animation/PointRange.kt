@@ -110,15 +110,18 @@ class PointRange(
 				nextX = end.x
 				nextY = end.y
 			} else {
-				nextX = null
-				nextY = null
+				resetNext()
 				return
 			}
 		}
 
 		if (nextX == valueX!! && nextY == valueY!!) {
-			nextX = null
-			nextY = null
+			resetNext()
 		}
+	}
+
+	private fun resetNext() {
+		nextX = null
+		nextY = null
 	}
 }

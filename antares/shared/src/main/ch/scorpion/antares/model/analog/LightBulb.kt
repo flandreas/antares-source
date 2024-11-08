@@ -1,6 +1,8 @@
 package ch.scorpion.antares.model.analog
 
 import ch.scorpion.jabbah.graph.model.vertice.EmptyVerticeCalculator
+import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.io.StoreWriter
 
 /**
  * Treating [LightBulb] as element with constant resistance, i.e. independent of changing
@@ -10,5 +12,18 @@ class LightBulb : AbstractResistingAnalogVertice<LightBulb>(DEF_RESISTANCE, Empt
 
 	companion object {
 		private const val DEF_RESISTANCE = 20.0
+	}
+
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+		if (reader.hasAttribute("resistance")) {
+			// Backward compatability due to bug #740
+			resistance = reader.readDouble("resistance")
+		}
+	}
+
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		writer.writeDouble("resistance", resistance)
 	}
 }

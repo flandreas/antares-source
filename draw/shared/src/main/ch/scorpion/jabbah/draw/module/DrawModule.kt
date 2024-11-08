@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.draw.container.QuadTree
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
+import ch.scorpion.jabbah.draw.view.AbstractZoomPanAction
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.PanMethod
 
@@ -30,11 +31,18 @@ object DrawModule : AbstractModule() {
 
 	var properties: DrawProperties = DrawProperties(BaseModule.properties)
 
-    /** Loads an [Image] from the specified path. Must be implemented platform-specifically. */
-    var imageLoader: ImageLoader = { throw UnsupportedOperationException() }
+	/** Creates a raster image. Must be implemented platform-specifically. */
+	var rasterImageFactory: RasterImageFactory = { _, _ -> throw UnsupportedOperationException() }
 
-	/** Creates a buffered image. Must be implemented platform-specifically. */
-	var bufferedImageFactory: BufferedImageFactory = { _, _ -> throw UnsupportedOperationException() }
+	var imageLoader: ImageLoader = object : ImageLoader {
+		override fun loadSystemImage(path: String, type: ImageType): Image {
+			throw UnsupportedOperationException()
+		}
+
+		override fun loadUserImage(path: String, type: ImageType): Image {
+			throw UnsupportedOperationException()
+		}
+	}
 
 	var drawContextFactory: DrawContextFactory = { g, mc, appContext -> DrawContext(g, mc, appContext) }
 
@@ -54,6 +62,7 @@ object DrawModule : AbstractModule() {
     }
 
 	private fun fillProperties(properties: Properties) {
+		properties.set(AbstractZoomPanAction.PROP_ZOOM_STEP, 1.5f)
 		properties.set(PanMethod.PROP_PAN_METHOD, PanMethod.MiddleMouseButton.customName)
 	}
 

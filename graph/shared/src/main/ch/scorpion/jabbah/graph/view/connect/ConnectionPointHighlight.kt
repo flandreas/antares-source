@@ -181,11 +181,11 @@ class ConnectionPointReconnect : AbstractRectangularUnzoomable(SIZE_HALF), Conne
 			rect.x.toInt() + INSET, rect.y.toInt() + INSET,
 			rect.width.toInt() - 2 * INSET, rect.height.toInt() - 2* INSET)
 
-		context.g.translate(rect.centerX, rect.centerY)
-		context.g.fill(NORTH)
-		context.g.fill(SOUTH)
-		context.g.fill(EAST)
-		context.g.fill(WEST)
-		context.g.translate(-rect.centerX, -rect.centerY)
+		context.translated(rect.center) {
+			it.g.fill(NORTH)
+			it.g.fill(SOUTH)
+			it.g.fill(EAST)
+			it.g.fill(WEST)
+		}
 	}
 }

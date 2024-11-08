@@ -18,45 +18,45 @@ actual object LogSystem {
 		loggers.getOrPut(clazz) { lazy { Logger() } }
 }
 
-actual class Logger(private var localLevel: LogLevel? = null) {
+actual class Logger(actual var level: LogLevel? = null) {
 
 	actual fun userTrail(msg: String) {
 		console.info(msg)
 	}
 
 	actual fun error(msg: String, t: Throwable?) {
-		if (level().ordinal >= Error.ordinal) {
+		if (effectiveLevel().ordinal >= Error.ordinal) {
 			console.error(msg)
 		}
 	}
 
 	actual fun warn(msg: String) {
-		if (level().ordinal >= Warning.ordinal) {
+		if (effectiveLevel().ordinal >= Warning.ordinal) {
 			console.warn(msg)
 		}
 	}
 
 	actual fun info(msg: String) {
-		if (level().ordinal >= Info.ordinal) {
+		if (effectiveLevel().ordinal >= Info.ordinal) {
 			console.info(msg)
 		}
 	}
 
 	actual fun debug(msg: String) {
-		if (level().ordinal >= Debug.ordinal) {
+		if (effectiveLevel().ordinal >= Debug.ordinal) {
 			console.log(msg)
 		}
 	}
 
 	actual fun trace(msg: String) {
-		if (level().ordinal >= Trace.ordinal) {
+		if (effectiveLevel().ordinal >= Trace.ordinal) {
 			console.log(msg)
 		}
 	}
 
-	actual fun isDebugEnabled(): Boolean = level().ordinal >= Debug.ordinal
+	actual fun isDebugEnabled(): Boolean = effectiveLevel().ordinal >= Debug.ordinal
 
-	actual fun isTraceEnabled(): Boolean = level().ordinal >= Trace.ordinal
+	actual fun isTraceEnabled(): Boolean = effectiveLevel().ordinal >= Trace.ordinal
 
-	private fun level(): LogLevel = localLevel ?: LogSystem.level
+	private fun effectiveLevel(): LogLevel = level ?: LogSystem.level
 }

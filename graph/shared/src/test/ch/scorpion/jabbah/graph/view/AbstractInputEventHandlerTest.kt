@@ -15,12 +15,12 @@ import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
  */
 abstract class AbstractInputEventHandlerTest(
 	handler: InputEventHandler<EditInputEventContext>,
+	protected val builder: GraphViewBuilder<Boolean> = GraphViewBuilder(),
 	private val viewMock: DrawingViewMockBuilder = DrawingViewMockBuilder()
 ): InputEventDriver(
-	EditEditorModule.createEditor(viewMock.build()),
+	EditEditorModule.createEditor(viewMock.withDrawing(builder.build()).build()),
 	handler
 ) {
-	protected val builder: GraphViewBuilder<Boolean> = GraphViewBuilder()
 	protected val draggedEdgeView get() = builder.graphView.getEdgeViews().first()
 
 	protected val v1 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v1", 100, 100))
@@ -36,6 +36,7 @@ abstract class AbstractInputEventHandlerTest(
 
 	init {
 		GraphViewImpl.inputEventHandler = null
+		viewMock.withDrawing(builder.build())
 		editor.commandManager.bindDataHolder(builder)
 	}
 

@@ -70,23 +70,22 @@ class DoubleThrowSwitchView(
 	override fun drawImpl(context: DrawContext) {
 		super.drawImpl(context)
 
+		// Port 1
 		(getPortView(model.getPort(1)) as DigitalPortView).prepareConnectionDrawContext(context)
-
 		context.g.drawLine(bounds.minX, 0.0, bounds.minX + 1 * SCALE, 0.0)
-
 		if (model.isOn) {
 			context.g.drawLine(bounds.minX + 1 * SCALE, 0.0, bounds.maxX - 1 * SCALE, -2.0 * SCALE)
 		} else {
 			context.g.drawLine(bounds.minX + 1 * SCALE, 0.0, bounds.maxX - 1 * SCALE, 2.0 * SCALE)
 		}
-
 		context.g.fillCircle(bounds.minX + 1 * SCALE, 0.0, circleRadius)
 
+		// Port 2
 		(getPortView(model.getPort(2)) as DigitalPortView).prepareConnectionDrawContext(context)
-
 		context.g.drawLine(bounds.maxX - 1 * SCALE, -2.0 * SCALE, bounds.maxX, -2.0 * SCALE)
 		context.g.fillCircle(bounds.maxX - 1 * SCALE, -2.0 * SCALE, circleRadius)
 
+		// Port 3
 		(getPortView(model.getPort(3)) as DigitalPortView).prepareConnectionDrawContext(context)
 		context.g.drawLine(bounds.maxX - 1 * SCALE, 2.0 * SCALE, bounds.maxX,2.0 * SCALE)
 		context.g.fillCircle(bounds.maxX - 1 * SCALE, 2.0 * SCALE, circleRadius)

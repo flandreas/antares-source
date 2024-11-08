@@ -28,7 +28,7 @@ class PropertiesFileParserTest {
 		val properties = PropertiesFileParser.parse(text)
 
 		assertEquals(1, properties.size)
-		assertEquals("value1\\nTest", properties["name"])
+		assertEquals("value1\nTest", properties["name"])
 	}
 
 	@Test

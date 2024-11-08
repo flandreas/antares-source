@@ -3,20 +3,22 @@ package ch.scorpion.jabbah.graph.view.net.node
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle.Companion.BLOCK_BORDER_STROKE
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle.Companion.BLOCK_HW
 
 class NodeViewBlockStyling(private val nodeView: NodeView<*>) : NodeViewStyling {
 
-	override val boundingBox = Rectangle2D()
+	private val _boundingBox = Rectangle2D()
+	override val boundingBox: RectangularShape get() = _boundingBox
 
 	override val isArea: Boolean get() = true
 
 	override fun updateBoundingBox() {
-		boundingBox.setFrame(
+		_boundingBox.setFrame(
 			nodeView.location.x - BLOCK_HW, nodeView.location.y - BLOCK_HW,
 			2.0 * BLOCK_HW, 2.0 * BLOCK_HW)
-		boundingBox.setFrame(
+		_boundingBox.setFrame(
 			boundingBox.x - BLOCK_BORDER_STROKE.width,
 			boundingBox.y - BLOCK_BORDER_STROKE.width,
 			boundingBox.width + 2 * -BLOCK_BORDER_STROKE.width,

@@ -6,9 +6,12 @@ interface SymbolTable {
 	val scopeLevel: Int
 	val enclosingScope: SymbolTable?
 	val symbolsCount: Int
+
+	fun names(): Iterator<String>
 	fun define(symbol: Symbol)
 	fun hasSymbol(name: String, currentScopeOnly: Boolean = false): Boolean
 	fun lookup(name: String, currentScopeOnly: Boolean = false): Symbol?
+	fun canWrite(name: String): Boolean
 }
 
 class ScopedSymbolTable(
@@ -30,6 +33,8 @@ class ScopedSymbolTable(
 
 	override val symbolsCount: Int get() = symbols.size
 
+	override fun names(): Iterator<String> = symbols.keys.iterator()
+
 	override fun toString(): String = "Scope $name at level $scopeLevel"
 
 	override fun define(symbol: Symbol) {
@@ -48,5 +53,12 @@ class ScopedSymbolTable(
 			return symbols[name]
 		}
 		return symbols[name] ?: enclosingScope?.lookup(name)
+	}
+
+	override fun canWrite(name: String): Boolean {
+		if (hasSymbol(name, true)) {
+			return true
+		}
+		return enclosingScope?.canWrite(name) ?: false
 	}
 }

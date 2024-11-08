@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.element.AbstractGraphElement
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
-import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -50,10 +49,10 @@ abstract class AbstractVertice(
 
 	override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler, force: Boolean) {
 		if (signalHandler.isLogTrace) {
-			signalHandler.logActorTrace(this) { "input changed to ${dataToString()}, will calculate at ${signalHandler.executionTime + propagationDelay} ns" }
+			signalHandler.logActorTrace(this) { "input changed to ${dataToString()}, will calculate at ${signalHandler.executionTime + propagationDelay.value} ns" }
 		}
 
-		requestActingAfter(signalHandler, propagationDelay, createActorData(input, force))
+		requestActingAfter(signalHandler, propagationDelay.value, createActorData(input, force))
 		stateChanged(signalHandler, Vertice.STATE_CHANGE_INPUT)
 	}
 

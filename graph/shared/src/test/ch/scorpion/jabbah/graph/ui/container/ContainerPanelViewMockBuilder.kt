@@ -1,16 +1,18 @@
 package ch.scorpion.jabbah.graph.ui.container
 
 import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanel
+import ch.scorpion.jabbah.graph.CanvasMockBuilder
 import ch.scorpion.jabbah.graph.ui.ComponentPropertyPanelMockBuilder
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 
 class ContainerPanelViewMockBuilder(private val controller: ContainerPanelController) {
 
-	private val containerPanelView = mockk<ContainerPanelView>(relaxed = true)
+	private val containerPanelView = mock<ContainerPanelView>(MockMode.autofill)
 
 	init {
 		controller.view = containerPanelView
-		controller.drawingView.canvas = mockk(relaxed = true)
+		controller.drawingView.canvas = CanvasMockBuilder().build()
 		withPropertyPanel(ComponentPropertyPanelMockBuilder(controller.propertyPanelController).build())
 	}
 

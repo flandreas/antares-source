@@ -32,6 +32,11 @@ class TestGraphPortView<T : Any>(
 	private val actorInteractionHandler = InteractionHandler()
 
 	init {
+		modelExchanged(null)
+	}
+
+	override fun modelExchanged(oldModel: GraphPort<T>?) {
+		super.modelExchanged(oldModel)
 		addPortView(TestPortView<Boolean>(model.getPort(), Direction.WEST, PortLabelPosition.EXTERNAL, 0))
 	}
 

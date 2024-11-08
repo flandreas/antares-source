@@ -1,16 +1,19 @@
 package ch.scorpion.antares
 
 import ch.scorpion.antares.hdl.vhdl.ExportVHDLPanel
+import ch.scorpion.antares.health.SubCircuitPortConsistencyCheck
 import ch.scorpion.antares.model.*
 import ch.scorpion.antares.model.expression.BooleanExpressionNotation
+import ch.scorpion.antares.model.gate.CurrentDefaultPropagationDelay
 import ch.scorpion.antares.model.gate.UndefinedGateInputBehavior
-import ch.scorpion.antares.model.input.Switch
+import ch.scorpion.antares.model.input.CurrentSwitchPropagationDelay
 import ch.scorpion.antares.model.net.*
 import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
 import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.model.testcase.TestcaseViewSwing
 import ch.scorpion.antares.view.*
 import ch.scorpion.antares.view.analog.AnalogEdgeView
+import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.antares.view.container.DigitalContainerEditor
 import ch.scorpion.antares.view.container.DigitalContainerToolBarBuilder
 import ch.scorpion.antares.view.container.DigitalContainerTreeView
@@ -18,18 +21,23 @@ import ch.scorpion.antares.view.gate.LogicGateView
 import ch.scorpion.antares.view.graph.AnalogMetaGraphIcon
 import ch.scorpion.antares.view.graph.AntaresMetaGraphIcon
 import ch.scorpion.antares.view.module.AntaresViewModule
-import ch.scorpion.antares.view.net.*
+import ch.scorpion.antares.view.net.AbstractTransistorView
+import ch.scorpion.antares.view.net.DigitalEdgeView
+import ch.scorpion.antares.view.net.TransistorViewSymbol
+import ch.scorpion.antares.view.net.tunnel.TunnelFlowDirection
+import ch.scorpion.antares.view.net.tunnel.TunnelNameEditor
+import ch.scorpion.antares.view.net.tunnel.TunnelNameProperty
+import ch.scorpion.antares.view.net.tunnel.TunnelViewFace
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.output.LightColorPreference
 import ch.scorpion.antares.view.output.VideoRamColorModel
 import ch.scorpion.antares.view.port.DigitalPortViewStyle
 import ch.scorpion.antares.view.signal.BitWidthEditor
-import ch.scorpion.antares.view.signal.BitWidthParamValuePropertySwing
-import ch.scorpion.antares.view.signal.BitWidthPropertySwing
 import ch.scorpion.antares.view.symbolstyle.SymbolStyle
 import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTableService
 import ch.scorpion.jabbah.app.Environment
 import ch.scorpion.jabbah.app.RailwayAppUsageServiceImpl
+import ch.scorpion.jabbah.app.health.SystemHealthChecker
 import ch.scorpion.jabbah.app.module.AppModuleJvm
 import ch.scorpion.jabbah.app.railway.AbstractRailwayAppService.Companion.PROP_PING_APPLICATION_ID
 import ch.scorpion.jabbah.app.rating.RailwayRatingService
@@ -40,15 +48,13 @@ import ch.scorpion.jabbah.base.help.HelpSource
 import ch.scorpion.jabbah.base.help.HelpSourceRegistry
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
-import ch.scorpion.jabbah.base.preferences.BooleanPreference
-import ch.scorpion.jabbah.base.preferences.EnumPreference
-import ch.scorpion.jabbah.base.preferences.IntPreference
-import ch.scorpion.jabbah.base.preferences.PreferenceGroup
+import ch.scorpion.jabbah.base.preferences.*
 import ch.scorpion.jabbah.base.sound.WaveformType
 import ch.scorpion.jabbah.base.swing.EnumRenderer
 import ch.scorpion.jabbah.base.swing.ToStringRenderer
 import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.model.text.TextComponentJvm
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.properties.AbstractReflectionPropertySwing
@@ -57,14 +63,14 @@ import ch.scorpion.jabbah.edit.properties.DynamicPropertyEditorRegistry
 import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
 import ch.scorpion.jabbah.execution.ExecutionModuleJvm
 import ch.scorpion.jabbah.graph.container.ContainerDrawingLayouter
+import ch.scorpion.jabbah.graph.health.GraphViewConsistencyCheck
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.library.dictionary.FileLibraryDictionaryPersistenceService
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
 import ch.scorpion.jabbah.graph.library.dictionary.ResourceLibraryDictionaryPersistenceService
-import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
-import ch.scorpion.jabbah.graph.model.param.GraphParamValueEditorRegistry
-import ch.scorpion.jabbah.graph.model.param.GraphParamValuePropertyFactory
-import ch.scorpion.jabbah.graph.model.param.GraphParamValuePropertyFactoryRegistry
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.model.nonvolatile.NonVolatileServiceJvm
+import ch.scorpion.jabbah.graph.model.param.*
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.project.ProjectAkrabClientServiceJvm
 import ch.scorpion.jabbah.graph.project.ProjectManagementService
@@ -104,6 +110,11 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		}
 		GraphModuleJvm.metaGraphHistoryService = FileMetaGraphHistoryServiceImpl({ AppModuleJvm.workspaceHolder.userDataDirectoryPath })
 
+		GraphModelModule.nonVolatileService = NonVolatileServiceJvm(
+			{ AppModuleJvm.workspaceHolder.userDataDirectoryPath },
+			app.nonVolatileDirectoryName
+		)
+
 		GraphModuleJvm.require()
 		AntaresViewModule.require()
 
@@ -129,7 +140,6 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 
 		LibraryModule.libraryFactory = AntaresLibraryFactory()
-		LibraryModule.libraryService = LibraryService()
 
 		LibraryModule.userLibraryDictionaryService = LibraryDictionaryService(
 			FileLibraryDictionaryPersistenceService({ AppModuleJvm.workspaceHolder.userDataDirectoryPath }, app.userLibraryDirectoryName))
@@ -155,6 +165,25 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 		ProjectModule.projectManagementService = ProjectManagementService(
 			newMetaGraphNameTranslationKey = "graph.name.unknown")
+
+		GraphViewModuleJvm.libraryPreferencesProvider = {
+			GraphViewModuleJvm.getLibraryPreferences().apply {
+				add(BaseModuleJvm.preferencesTree
+					.getGroup(PREF_TREE_CIRCUIT)
+					.getGroup(PREF_TREE_CIRCUIT_DIGITAL)
+					.get(UndefinedGateInputBehavior.PROP_UNDEFINED_GATE_INPUT_BEHAVIOR))
+
+				add(BaseModuleJvm.preferencesTree
+					.getGroup(PREF_TREE_CIRCUIT)
+					.getGroup(PREF_TREE_CIRCUIT_DIGITAL)
+					.get(CurrentDefaultPropagationDelay.PROP_DEFAULT_PROPAGATION_DELAY))
+
+				add(BaseModuleJvm.preferencesTree
+					.getGroup(PREF_TREE_CIRCUIT)
+					.getGroup(PREF_TREE_CIRCUIT_DIGITAL)
+					.get(CurrentSwitchPropagationDelay.PROP_DEFAULT_DELAY))
+			}
+		}
 
 		if (app.dataLocation == DataLocation.Local) {
 			GraphModuleJvm.projectAkrabClientServiceJvm = {
@@ -182,25 +211,29 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		buildPreferencesTree(BaseModuleJvm.preferencesTree)
 
 		registerHelpSources()
+
+		if (EditAuthModule.userHolder.user.isDeveloper || AppModuleJvm.remoteControlService.getBoolean(GraphViewConsistencyCheck.REMOTE_PROP_CONSISTENCY_CHECK)) {
+			SystemHealthChecker.register(SubCircuitPortConsistencyCheck)
+		}
 	}
 
 	@Suppress("SpellCheckingInspection")
 	private fun customizeProperties(properties: Properties) {
 		properties.set(AbstractLibraryImportProcess.PROP_PROJECT_FILE_EXTENSION, "acp") // Antares Circuit Project
 		properties.set(AbstractLibraryImportProcess.PROP_LIBRARY_FILE_EXTENSION, "acl") // Antares Circuit Library
-		properties.set(DigitalSignalColor.PROP_DIFFERENT_NON_ZERO_MULTI_BIT_COLOR, true)
 		properties.set(PROP_PING_APPLICATION_ID, "498417e8-efd2-4c78-8a11-317037cc9afa")
 		properties.set(RailwayAppUsageServiceImpl.PROP_PING_URL, "https://metrics.antarescircuit.io/api/ping")
 		properties.set(RailwayRatingService.PROP_ASPECTS_URL, "https://metrics.antarescircuit.io/api/aspects")
 		properties.set(RailwayRatingService.PROP_RATING_URL, "https://metrics.antarescircuit.io/api/rating")
+		properties.set(LibraryService.PROP_VIEWER_JS_URL, AntaresApplication.ANTARES_VIEWER_JS_URL)
 
 		// Akrab REST API
 		when (app.environment) {
 			Environment.Development -> {
-				properties.set(DataLocation.PROP_SERVER_URL, "http://localhost:8080/api")
+				properties.set(DataLocation.PROP_SERVER_URL, AntaresApplication.AKRAB_DEV_URL)
 			}
 			Environment.Production -> {
-				properties.set(DataLocation.PROP_SERVER_URL, "https://antarescircuit.io/api")
+				properties.set(DataLocation.PROP_SERVER_URL, AntaresApplication.AKRAB_PROD_URL)
 			}
 			else -> throw IllegalStateException("no Akrab REST settings for environment ${app.environment}")
 		}
@@ -233,6 +266,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerRenderer(TunnelFlowDirection::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(NetSignalApplierStrategy::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(TunnelName::class.java, DefaultTableCellRenderer::class.java)
+		registry.registerRenderer(EnterBehavior::class.java, EnumRenderer::class.java)
 	}
 
 	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
@@ -257,11 +291,12 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerEditor(TunnelFlowDirection::class.java, TunnelFlowDirectionEditor::class.java)
 		registry.registerEditor(NetSignalApplierStrategy::class.java, NetSignalApplierChoiceEditor::class.java)
 		registry.register(TunnelName::class.java) { TunnelNameEditor((it as TunnelNameProperty).graph) }
+		registry.registerEditor(EnterBehavior::class.java, EnterBehaviorEditor::class.java)
 
 		registry.register(BitWidth::class.java) { prop ->
 			BitWidthEditor(
 				propertyName = prop.displayName,
-				editable = (prop as BitWidthPropertySwing).editable,
+				editable = (prop as ExpressionPropertySwing<BitWidth>).editable,
 				graphEditor = prop.editor,
 				errorCallback = { prop.dslError = it },
 				prop.filter )
@@ -277,11 +312,11 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 					editor: Editor,
 					beanProvider: BeanProvider
 				): AbstractReflectionPropertySwing<*> {
-					return BitWidthParamValuePropertySwing(
+					return GraphParamValuePropertySwing(
 						paramDefinition = def as GraphParamDefinition<BitWidth>,
 						propertyName = "BitWidth", // only used for logging
-						baseKey ="element.property.bitWidth",
-						beanProvider,
+						BitWidth::class.java,
+						beanProvider
 					)
 				}
 			}
@@ -349,6 +384,14 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		PreferenceGroup(PREF_TREE_CIRCUIT_DIGITAL).apply {
 			add(buildDigitalExpressionsPreferenceTree())
 
+			add(IntPreference(
+				id = CurrentDefaultPropagationDelay.PROP_DEFAULT_PROPAGATION_DELAY,
+				nameKey = "antares.preference.defaultPropagationDelay",
+				minValue = 1,
+				maxValue = 1_000_000,
+				needsRestart = true
+			))
+
 			add(EnumPreference(
 				id = UndefinedGateInputBehavior.PROP_UNDEFINED_GATE_INPUT_BEHAVIOR,
 				nameKey = "antares.preference.undefinedGateInputBehavior.name",
@@ -386,7 +429,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 			))
 
 			add(IntPreference(
-				id = Switch.PROP_DEFAULT_DELAY,
+				id = CurrentSwitchPropagationDelay.PROP_DEFAULT_DELAY,
 				nameKey = "antares.preference.SwitchPropDelay",
 				minValue = 0,
 				maxValue = 1_000_000
@@ -424,6 +467,14 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 				nameKey = "antares.analog.currentFlowAnimSpeed",
 				minValue = AnalogEdgeView.MIN_SPEED,
 				maxValue = AnalogEdgeView.MAX_SPEED))
+
+			add(
+				FloatPreference(
+				id = AnalogCircuitAnalysis.PROP_TIME_STEP,
+				nameKey = "antares.analog.timeStep.name",
+				minValue = AnalogCircuitAnalysis.MIN_TIME_STEP,
+				maxValue = AnalogCircuitAnalysis.MAX_TIME_STEP)
+			)
 		}
 
 	private fun configureMetaGraphIcons() {

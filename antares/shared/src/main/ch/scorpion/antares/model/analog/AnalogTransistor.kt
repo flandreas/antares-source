@@ -3,9 +3,10 @@ package ch.scorpion.antares.model.analog
 import ch.scorpion.antares.model.net.TransistorIF
 import ch.scorpion.antares.model.net.TransistorIF.Companion.DEFAULT_TRANSISTOR_TYPE
 import ch.scorpion.antares.model.net.TransistorType
-import ch.scorpion.antares.view.analog.*
+import ch.scorpion.antares.view.analog.engine.AnalogElement
 import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.antares.view.analog.engine.AnalogElementMixin
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.vertice.EmptyVerticeCalculator
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -82,7 +83,7 @@ class AnalogTransistor(
 		analysis.stampNonLinear(analogElem.nodes[2])
 	}
 
-	override fun doStep(analysis: AnalogCircuitAnalysis) {
+	override fun doStep(analysis: AnalogCircuitAnalysis, signalHandler: SignalHandler) {
 		val pnp = if (transistorType == TransistorType.N) 1 else -1
 
 		val vs = Array(3) { i -> analogElem.voltages[i] }

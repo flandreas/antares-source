@@ -1,6 +1,10 @@
 package ch.scorpion.jabbah.graph.view.vertice
 
+import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.GraphView
 
 /**
@@ -14,7 +18,20 @@ import ch.scorpion.jabbah.graph.view.GraphView
 data class OpenSubGraphRequest(
 	val subGraphVerticeView: SubGraphVerticeView<*>,
 	val newView: Boolean,
-	val quickMode: Boolean)
+	val quickMode: Boolean
+) {
+	/**
+	 * Checks if [subGraphVerticeView] has a broken reference, and if so, post an info message
+	 * and return `true`.
+	 */
+	fun notifyIfBroken(eventBus: EventBus): Boolean {
+		if ((subGraphVerticeView.model as SubGraphVerticeRef?)?.hasDesignError == true) {
+			eventBus.post(ComponentMessage(ComponentMessageType.Info, subGraphVerticeView, "graph.element.brokenRef.cannotOpen.msg"))
+			return true
+		}
+		return false
+	}
+}
 
 data class OpenHierarchySubGraphRequest(
 	val subGraphVerticeView: SubGraphVerticeView<*>,

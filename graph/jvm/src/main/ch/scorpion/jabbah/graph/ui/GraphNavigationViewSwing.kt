@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.CloseViewRequest
@@ -8,6 +9,7 @@ import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.draw.view.ContentViewManager
+import ch.scorpion.jabbah.draw.view.FocusDrawablePlayer
 import ch.scorpion.jabbah.draw.view.FocusPanel
 import ch.scorpion.jabbah.draw.view.find.SearchBarSwing
 import ch.scorpion.jabbah.draw.view.find.SearchRequest
@@ -17,6 +19,7 @@ import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.graph.SearchInMetaGraphRequest
 import ch.scorpion.jabbah.graph.ui.desktop.AbstractGraphDesktopItemPanelSwing
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopItemHeaderPanelSwing
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
@@ -34,7 +37,7 @@ class GraphNavigationViewSwing(
 	override val drawingView: DrawingView<GraphView>,
 	private val viewManager: ContentViewManager,
 	contextBorderColor: CompositeColor? = null,
-	eventBus: EventBus = BaseModule.eventBus,
+	private val eventBus: EventBus = BaseModule.eventBus,
 	allowCloseInHeader: Boolean = true
 ) : AbstractGraphDesktopItemPanelSwing(), GraphNavigationView {
 
@@ -57,18 +60,31 @@ class GraphNavigationViewSwing(
 
 	private val hideSearchBarAction = HideSearchBarAction()
 
+	private val searchInMetaGraphHandler: EventHandler<SearchInMetaGraphRequest> = {
+		if (it.metaGraphId == controller.drawingView.drawing.graph?.uuid) {
+			execute(it.searchRequest)
+			if (drawingView.selectionManager.selectionCount > 0) {
+				FocusDrawablePlayer.playFocus(drawingView.selectionManager.selection.first(), drawingView)
+			}
+		}
+	}
+
+	private val canvas = CanvasJvm(drawingView)
+
 	override val showsNavigationRoot: Boolean get() = navigationStack.size == 1
 
 	init {
 		controller.view = this
+		eventBus.register(SearchInMetaGraphRequest::class, searchInMetaGraphHandler)
 		buildUI(contextBorderColor)
 	}
 
-	override fun dispose() { }
+	override fun dispose() {
+		canvas.dispose()
+		eventBus.unregister(searchInMetaGraphHandler)
+	}
 
 	private fun buildUI(contextColor: CompositeColor?) {
-		CanvasJvm(drawingView)
-
 		mainPanel.layout = BoxLayout(mainPanel, BoxLayout.PAGE_AXIS)
 
 		updateMainPanel(contextColor?.foregroundColor)

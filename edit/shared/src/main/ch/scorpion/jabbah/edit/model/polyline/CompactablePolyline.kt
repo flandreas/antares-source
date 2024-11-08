@@ -1,9 +1,6 @@
 package ch.scorpion.jabbah.edit.model.polyline
 
-import ch.scorpion.jabbah.base.geom.Direction
-import ch.scorpion.jabbah.base.geom.Geometry
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.*
 import kotlin.math.PI
 import kotlin.math.abs
 
@@ -24,7 +21,7 @@ class CompactablePolyline(points: List<Point2D>) {
 
 	val size: Int get() = _points.size
 
-	val boundingBox: Rectangle2D get() = Rectangle2D(_boundingBox)
+	val boundingBox: RectangularShape get() = Rectangle2D(_boundingBox)
 
 	val isDegenerated: Boolean get() = size < 2 || _points[0] == _points[1]
 

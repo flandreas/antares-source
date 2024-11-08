@@ -19,11 +19,11 @@ abstract class AbstractStorableCloner {
 	protected abstract fun <T: Storable> deserializeImpl(s: Buffer, referenceResolver: ReferenceResolver): T
 
 	fun <T: Storable> clone(storable: T): T {
-		return newClone(storable)
+		return newClone(storable, GlobalIdentityCreator())
 	}
 
 	fun <T: Storable> clonePreservingIdentities(storable: T): T {
-		return newClone(storable)
+		return newClone(storable, GlobalIdentityCreator())
 	}
 
 	fun <T: Storable> clone(
@@ -42,7 +42,7 @@ abstract class AbstractStorableCloner {
 
 	fun <T: Storable> newClone(
 		storable: T,
-		identityProvider: GlobalIdentityProvider = GlobalIdentityCreator()
+		identityProvider: GlobalIdentityProvider
 	): T {
 		try {
 			val data = serializeImpl(storable, identityProvider)

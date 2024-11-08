@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.edit.auth.UserIdentity
+import ch.scorpion.jabbah.edit.model.image.ImageRepository
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Namable
@@ -18,7 +19,7 @@ import ch.scorpion.jabbah.io.Storable
  *
  * Note that the name of the [Library] is maintained as the name of its root [LibraryDirectory].
  */
-interface Library : MetaGraphRepository, Storable, Namable, Describable, LibraryDirectory {
+interface Library : MetaGraphRepository, ImageRepository, Storable, Namable, Describable, LibraryDirectory {
 
 	/** Returns the [LibraryIdentification] used for building persistent paths to this [Library]. */
 	val identification: LibraryIdentification get() = if (isSystem) {
@@ -68,6 +69,12 @@ interface Library : MetaGraphRepository, Storable, Namable, Describable, Library
 	var properties: LibraryProperties
 
 	/**
+	 * Contains preferences that influence execution of [Graph]s in a [Library] and are therefore
+	 * copied from the local preferences to go along with exported [Libraries][Library].
+	 */
+	val preferences: LibraryPreferences
+
+	/**
 	 * The [LibraryService] to use when operation on this [Library]. Needed in order to be able to distinguish
 	 * between different service implementations for libraries and projects.
 	 */
@@ -110,6 +117,12 @@ interface Library : MetaGraphRepository, Storable, Namable, Describable, Library
 	 * to be imported instead to resolve dangling references
 	 */
 	fun removeImport(libraryId: UUID, replacingSystemLibraries: Set<UUID>)
+
+	/**
+	 * Returns the first locally in this [Library] contained [LibraryItem] that
+	 * fulfills the specified filter. "Locally" means that [expandedImports] is not involved.
+	 */
+	fun firstLocalItemOrNull(filter: (LibraryItem) -> Boolean): LibraryItem?
 }
 
 /**

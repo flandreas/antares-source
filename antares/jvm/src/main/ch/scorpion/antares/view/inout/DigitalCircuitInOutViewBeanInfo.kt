@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.view.GraphProperties
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
@@ -19,6 +20,7 @@ class DigitalCircuitInOutViewBeanInfo : AbstractCircuitInOutViewBeanInfo<Digital
 	    private val toggle = CommandPropertySwing("toggle", SwitchView.BASE_KEY_TOGGLE, Boolean::class.java, componentBeanProvider)
 	    private val canBeUndefined = AntaresProperties.canBeUndefined()
 	    private val description = EditProperties.description()
+		private val startValue = GraphProperties.graphPortStartValue()
     }
 
     override fun addProperties(bean: DigitalCircuitInOutView, editor: Editor, properties: MutableList<Property>) {
@@ -28,6 +30,7 @@ class DigitalCircuitInOutViewBeanInfo : AbstractCircuitInOutViewBeanInfo<Digital
 	    properties.add(signalRepresentation.bind(editor, beanIdProvider(bean.id), filter = { it != DigitalSignalRepresentation.FIXED_POINT }))
 	    if (bean.model.portType.isInput) {
 		    properties.add(toggle.bind(editor, beanIdProvider(bean.id)))
+			properties.add(startValue.bind(editor, beanIdProvider(bean.id), optional = true))
 	    }
 	    if (bean.model.portType == PortType.OUTPUT) {
 			properties.add(canBeUndefined.bind(editor, beanIdProvider(bean.id)))

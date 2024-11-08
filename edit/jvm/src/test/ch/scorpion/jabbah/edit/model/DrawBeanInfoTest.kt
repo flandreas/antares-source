@@ -11,8 +11,9 @@ import ch.scorpion.jabbah.edit.model.polyline.PolylineComponentBeanInfo
 import ch.scorpion.jabbah.edit.model.rectangle.*
 import ch.scorpion.jabbah.edit.model.text.*
 import ch.scorpion.jabbah.edit.properties.AbstractBeanInfo
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.answering.returns
+import dev.mokkery.mock
+import dev.mokkery.every
 import org.junit.Test
 
 class DrawBeanInfoTest {
@@ -25,7 +26,7 @@ class DrawBeanInfoTest {
 	}
 
 	private val view = DrawingViewMockBuilder().build<Component>()
-	private val editor = mockk<Editor>()
+	private val editor = mock<Editor>()
 
 	init {
 		every { editor.active } returns true

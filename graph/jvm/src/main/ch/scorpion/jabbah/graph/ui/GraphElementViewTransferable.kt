@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.edit.app.ComponentCustomizer
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.library.LibraryElement
@@ -17,8 +18,14 @@ class GraphElementViewTransferable(
     companion object {
         val FLAVOR = DataFlavor("${DataFlavor.javaJVMLocalObjectMimeType};class=\"${GraphElementViewTransferable::class.java.name}\"")
 
-	    fun of(graphElementView: GraphElementView<GraphElement>, libraryElement: LibraryElement): GraphElementViewTransferable {
-		    return GraphElementViewTransferable(GraphElementViewTransferableData(graphElementView, libraryElement))
+	    fun of(
+            graphElementView: GraphElementView<GraphElement>,
+            libraryElement: LibraryElement,
+            customizer: ComponentCustomizer? = null
+        ): GraphElementViewTransferable {
+		    return GraphElementViewTransferable(
+                GraphElementViewTransferableData(graphElementView, libraryElement, customizer)
+            )
 	    }
     }
 

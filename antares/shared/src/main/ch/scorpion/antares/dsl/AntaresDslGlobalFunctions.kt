@@ -7,6 +7,10 @@ import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.*
 import ch.scorpion.jabbah.base.parser.TextLocation
+import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.Actor
+import ch.scorpion.jabbah.graph.model.StoringGraphActorData
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphFunctionContext
 
 class AntaresDslGlobalFunctions : DslGlobalFunctions() {
 
@@ -21,10 +25,11 @@ class AntaresDslGlobalFunctions : DslGlobalFunctions() {
 		with(symbolTable) {
 			define(ExternalFunctionSymbol("bits", 3, ::bitsImpl))
 			define(ExternalFunctionSymbol("gated", 1, ::gatedImpl))
+			define(ExternalFunctionSymbol("triggerAfter", 1, ::triggerAfterImpl))
 		}
 	}
 
-	private fun bitsImpl(params: List<Any>): Any {
+	private fun bitsImpl(params: List<Any>, @Suppress("UNUSED_PARAMETER") context: Any? = null): Any {
 		if (params.size < 3) {
 			throw RuntimeError(TextLocation.UNDEFINED, Translations.getString("base.dsl.notEnoughParameters.msg"))
 		}
@@ -59,7 +64,7 @@ class AntaresDslGlobalFunctions : DslGlobalFunctions() {
 	private fun bits(signal: Long, pos: Long, size: Long): Long =
 		BitOperation.bits(signal.toULong(), pos.toInt(), size.toInt()).toLong()
 
-	private fun gatedImpl(params: List<Any>): Any {
+	private fun gatedImpl(params: List<Any>, @Suppress("UNUSED_PARAMETER") context: Any? = null): Any {
 		if (params.isEmpty()) {
 			throw RuntimeError(TextLocation.UNDEFINED, Translations.getString("base.dsl.notEnoughParameters.msg"))
 		}
@@ -75,6 +80,28 @@ class AntaresDslGlobalFunctions : DslGlobalFunctions() {
 	 * is "Read as O"
 	 */
 	private fun gated(signal: DigitalSignal): DigitalSignal = effectiveGateInputWord(signal)
+
+	private fun triggerAfterImpl(params: List<Any>, context: Any?): Any {
+		if (params.isEmpty()) {
+			throw RuntimeError(TextLocation.UNDEFINED, Translations.getString("base.dsl.notEnoughParameters.msg"))
+		}
+		if (context !is SubGraphFunctionContext) {
+			throw RuntimeError(TextLocation.UNDEFINED, "Program error: Unsupported context")
+		}
+		if (context.actor == null || context.signalHandler == null) {
+			throw RuntimeError(TextLocation.UNDEFINED, "Program error: Incomplete context")
+		}
+		return triggerAfter(longParam(0, params), context.actor!!, context.signalHandler!!)
+	}
+
+	/**
+	 * Recalculates a component after [delay] ns have passed in the simulator.
+	 *
+	 * Example: triggerAfter(200)
+	 */
+	private fun triggerAfter(delay: Long, actor: Actor, signalHandler: SignalHandler) {
+		signalHandler.requestActingAfter(actor, delay, StoringGraphActorData(null, null))
+	}
 }
 
 fun digitalSignalParam(index: Int, params: List<Any>): DigitalSignal {

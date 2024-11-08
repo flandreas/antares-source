@@ -5,8 +5,9 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.EditTestRule
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.model.DrawingImpl
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -20,7 +21,7 @@ class MovePolylinePointCommandTest {
 	}
 
 	private val drawing = DrawingImpl<Component>()
-	private val editor = mockk<Editor>()
+	private val editor = mock<Editor>()
 
 	init {
 		every { editor.drawing } returns drawing

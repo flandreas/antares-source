@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.edit.snap
 
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
@@ -50,7 +51,7 @@ class ComponentSnapper(
 	/** Highlights the currently snapped y coordinate. Lazy initialized.  */
 	private var highlightY: SnapHighlightY? = null
 
-	override val boundingBox: Rectangle2D = EMPTY_BBOX
+	override val boundingBox: RectangularShape = EMPTY_BBOX
 
 	@Suppress("UNUSED_PARAMETER")
 	override fun draw(context: DrawContext) {
@@ -201,7 +202,8 @@ class ComponentSnapper(
 
 		override var zoomPan: ZoomPan? = null
 
-		override val boundingBox: Rectangle2D = Rectangle2D()
+		private val _boundingBox = Rectangle2D()
+		override val boundingBox: RectangularShape get() = _boundingBox
 
 		/** ---- [Drawable] interface  */
 
@@ -236,7 +238,7 @@ class ComponentSnapper(
 			invalidate()
 
 			positionX = x
-			boundingBox.setFrame(
+			_boundingBox.setFrame(
 				positionX - lineWidth / 2,
 				editor.view.viewToModelY(0.0),
 				lineWidth.toDouble(),
@@ -255,7 +257,8 @@ class ComponentSnapper(
 
 		override var zoomPan: ZoomPan? = null
 
-		override val boundingBox = Rectangle2D()
+		private val _boundingBox = Rectangle2D()
+		override val boundingBox: RectangularShape get() = _boundingBox
 
 		/** ---- [Drawable] interface  */
 
@@ -290,7 +293,7 @@ class ComponentSnapper(
 			invalidate()
 
 			positionY = y
-			boundingBox.setFrame(
+			_boundingBox.setFrame(
 				editor.view.viewToModelX(0.0),
 				positionY - lineWidth / 2,
 				editor.view.viewToModelX(editor.view.width.toDouble()) - editor.view.viewToModelX(0.0),

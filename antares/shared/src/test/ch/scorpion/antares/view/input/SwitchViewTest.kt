@@ -6,9 +6,12 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.graph.view.GraphView
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import dev.mokkery.MockMode
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.mock
+import dev.mokkery.verify
+import dev.mokkery.verify.VerifyMode.Companion.exactly
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -22,7 +25,7 @@ class SwitchViewTest {
 	}
 
 	private val switchView = SwitchView()
-	private val signalHandler: SignalHandler = mockk(relaxed = true)
+	private val signalHandler: SignalHandler = mock(MockMode.autofill)
 
 	@Test
 	fun shouldConsumeKeyEventForName() {
@@ -41,7 +44,7 @@ class SwitchViewTest {
 		switchView.name = "A"
 		switchView.getActorInteractionHandler(context).keyPressed(context)
 
-		verify(exactly = 0) { keyEvent.consumeEvent() }
+		verify(exactly(0)) { keyEvent.consumeEvent() }
 	}
 
 	@Test
@@ -119,7 +122,7 @@ class SwitchViewTest {
 	}
 
 	private fun keyEvent(key: Int): KeyEvent {
-		val keyEvent: KeyEvent = mockk(relaxed = true)
+		val keyEvent: KeyEvent = mock(MockMode.autofill)
 		every { keyEvent.key } returns key
 		every { keyEvent.modifiers } returns 0
 		return keyEvent
@@ -127,7 +130,7 @@ class SwitchViewTest {
 
 	private fun contextFor(mouseEvent: MouseEvent? = null, keyEvent: KeyEvent? = null): ActorInteractionContext {
 		return ActorInteractionContext(
-			signalHandler = mockk(relaxed = true),
+			signalHandler = mock(MockMode.autofill),
 			view = mockDrawingView(),
 			mouseEvent = mouseEvent,
 			keyEvent = keyEvent,
@@ -136,8 +139,10 @@ class SwitchViewTest {
 	}
 
 	private fun mockDrawingView(): DrawingView<*> {
-		val drawingView = mockk<DrawingView<*>>(relaxed = true)
-		every { drawingView.drawing } returns mockk<GraphView>(relaxed = true)
+		val drawingView = mock<DrawingView<*>>(
+			MockMode.autofill
+		)
+		every { drawingView.drawing } returns mock<GraphView>(MockMode.autofill)
 		return drawingView
 	}
 }

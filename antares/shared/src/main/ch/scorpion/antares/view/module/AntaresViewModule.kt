@@ -34,6 +34,8 @@ import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.antares.view.input.*
 import ch.scorpion.antares.view.metagraph.AntaresMetaGraphService
 import ch.scorpion.antares.view.net.*
+import ch.scorpion.antares.view.net.tunnel.TunnelView
+import ch.scorpion.antares.view.net.tunnel.TunnelViewFace
 import ch.scorpion.antares.view.oscilloscope.AntaresOscilloscopeViewFactory
 import ch.scorpion.antares.view.oscilloscope.DigitalOscilloscopeProbeNameStrategy
 import ch.scorpion.antares.view.output.*
@@ -93,6 +95,8 @@ import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewBelowSelectionModel
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewReplaceSelectionModel
 import ch.scorpion.jabbah.graph.view.oscilloscope.AbstractSignalHistoryDrawer
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
+import ch.scorpion.jabbah.graph.view.vertice.RectangularVerticeViewBelowSelectionModel
+import ch.scorpion.jabbah.graph.view.vertice.RectangularVerticeViewSelectionModel
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.TypeMap
 
@@ -106,7 +110,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val SPLITTER = "Splitter"
 	private const val CONCENTRATOR = "Concentrator"
 	private const val PROBE = "Probe"
-	private const val TUNNEL = "Tunnel"
+	const val TUNNEL = "Tunnel"
 	private const val BREAK = "Break"
 	private const val PULL_RESISTOR = "PullResistor"
 	private const val TRANSISTOR = "Transistor"
@@ -131,6 +135,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val INPUT = "Input"
 	private const val INPUT_OUTPUT = "InputOutput"
 	private const val SWITCH = "Switch"
+	private const val IMAGE_SWITCH = "ImageSwitch"
 	private const val DIP_SWITCH = "DipSwitch"
 	private const val CLOCK = "Clock"
 	private const val KEYBOARD = "Keyboard"
@@ -169,6 +174,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val ANALOG_INPUT = "AnalogInput"
 	private const val ANALOG_OUTPUT = "AnalogOutput"
 	private const val ANALOG_POWER = "AnalogPower"
+	private const val CAPACITOR = "Capacitor"
 
 	val currentSymbolStyle: CurrentSymbolStyle by lazy {CurrentSymbolStyle() }
 
@@ -178,7 +184,7 @@ object AntaresViewModule : AbstractModule() {
 		// Overwritten in order to change the [DrawableDrawer]
 		EditModule.drawingViewFactory = DrawingViewFactory { drawing, contextHolder, displayGlobalMessages ->
 			val drawingView = DrawingViewImpl(drawing, applicationContextHolder = contextHolder, displayGlobalMessages = displayGlobalMessages)
-			drawingView.addDrawableDrawer(OrientableRectangularVerticeViewDrawer())
+			drawingView.addDrawableDrawer(DigitalComponentViewDrawer())
 			drawingView
 		}
 		EditModule.drawingAppService = AntaresGraphViewService()
@@ -272,6 +278,7 @@ object AntaresViewModule : AbstractModule() {
 		properties.set(AbstractCircuitInOutView.PROP_OUTPUT_ICON_PATH, "/img/output.png")
 		properties.set(AbstractCircuitInOutView.PROP_INOUT_ICON_PATH, "/img/inout.png")
 		properties.set(SwitchView.PROP_ICON_PATH, "/img/switch.png")
+		properties.set(ImageSwitchView.PROP_ICON_PATH, "/img/switch.png")
 		properties.set(DipSwitchView.PROP_ICON_PATH, "/img/dip-switch.png")
 		properties.set(ProbeView.PROP_ICON_PATH, "/img/probe.png")
 		properties.set(LEDView.PROP_ICON_PATH, "/img/led.png")
@@ -284,6 +291,8 @@ object AntaresViewModule : AbstractModule() {
 		properties.set(ClockView.PROP_ICON_PATH, "/img/clock.png")
 		properties.set(JoystickView.PROP_ICON_PATH, "/img/joystick.png")
 		properties.set(VideoRamView.PROP_ICON_PATH, "/img/videoram.png")
+		properties.set(ROMView.PROP_ICON_PATH, "/img/rom.png")
+		properties.set(RAMView.PROP_ICON_PATH, "/img/ram.png")
 
 		properties.set(LightBulbView.PROP_ICON_PATH, "/img/light-bulb.png")
 		properties.set(AnalogSwitchView.PROP_ICON_PATH, "/img/real-switch.png")
@@ -323,6 +332,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("triStateBufferGateView", TriStateBufferGateView::class)
 
 		typeMap.register("switchView", SwitchView::class)
+		typeMap.register("imageSwitchView", ImageSwitchView::class)
 		typeMap.register("dipSwitchView", DipSwitchView::class)
 		typeMap.register("clockView", ClockView::class)
 		typeMap.register("clockControlView", ClockControlView::class)
@@ -372,6 +382,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("analogEdgeView", AnalogEdgeView::class)
 		typeMap.register("lightBulbView", LightBulbView::class)
 		typeMap.register("batteryView", BatteryView::class)
+		typeMap.register("capacitorView", CapacitorView::class)
 		typeMap.register("currentSourceView", CurrentSourceView::class)
 		typeMap.register("resistorView", ResistorView::class)
 		typeMap.register("analogSwitchView", AnalogSwitchView::class)
@@ -410,7 +421,8 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, TriStateBufferGateView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, DelayGateView::class) { SelectedColorSelectionModel(it) }
 
-		factory.register(SelectionDrawingStrategy.REPLACE, SwitchView::class) { PushButtonSwitchViewSelectionModel(it as SwitchView) }
+		factory.register(SelectionDrawingStrategy.REPLACE, SwitchView::class) { RectangularVerticeViewSelectionModel(it as SwitchView) }
+		factory.register(SelectionDrawingStrategy.REPLACE, ImageSwitchView::class) { RectangularVerticeViewSelectionModel(it as ImageSwitchView) }
 		factory.register(SelectionDrawingStrategy.REPLACE, DipSwitchView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, ClockView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, ClockControlView::class) { SelectedColorSelectionModel(it) }
@@ -449,6 +461,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogNodeView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, LightBulbView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, BatteryView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, CapacitorView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, CurrentSourceView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, ResistorView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogSwitchView::class) { SelectedColorSelectionModel(it) }
@@ -456,11 +469,12 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogTransistorView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogCircuitInOutView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogPowerView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, AnalogPushButtonSwitchView::class) { PushButtonSwitchViewSelectionModel(it as AnalogPushButtonSwitchView) }
+		factory.register(SelectionDrawingStrategy.REPLACE, AnalogPushButtonSwitchView::class) { RectangularVerticeViewSelectionModel(it as AnalogPushButtonSwitchView) }
 	}
 
 	private fun configureHighlightModels(factory: SelectionModelFactory) {
 		factory.register(SelectionDrawingStrategy.BELOW, DigitalEdgeView::class) { EdgeViewBelowSelectionModel(component = it as EdgeView<*>, styleType = EditStyleType.HIGHLIGHT) }
+		factory.register(SelectionDrawingStrategy.BELOW, AnalogEdgeView::class) { EdgeViewBelowSelectionModel(component = it as EdgeView<*>, styleType = EditStyleType.HIGHLIGHT) }
 		factory.register(SelectionDrawingStrategy.BELOW, LogicGateView::class) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
 		factory.register(SelectionDrawingStrategy.BELOW, TriStateBufferGateView::class) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
 		factory.register(SelectionDrawingStrategy.BELOW, DelayGateView::class) { BoxGateViewBelowSelectionModel(component = it as BoxGateView<*>, styleType = EditStyleType.HIGHLIGHT) }
@@ -471,8 +485,13 @@ object AntaresViewModule : AbstractModule() {
 
 		factory.register(SelectionDrawingStrategy.BELOW, PullResistorView::class) { BoundingBoxBelowSelectionModel(it, styleType = EditStyleType.HIGHLIGHT) }
 		factory.register(SelectionDrawingStrategy.BELOW, TransistorView::class) { TransistorViewBelowSelectionModel(it as TransistorView, styleType = EditStyleType.HIGHLIGHT) }
+		factory.register(SelectionDrawingStrategy.BELOW, AnalogTransistorView::class) { TransistorViewBelowSelectionModel(it as AnalogTransistorView, styleType = EditStyleType.HIGHLIGHT) }
 		factory.register(SelectionDrawingStrategy.BELOW, GroundView::class) { BoundingBoxBelowSelectionModel(it, styleType = EditStyleType.HIGHLIGHT) }
 		factory.register(SelectionDrawingStrategy.BELOW, PowerView::class) { BoundingBoxBelowSelectionModel(it, styleType = EditStyleType.HIGHLIGHT) }
+
+		factory.register(SelectionDrawingStrategy.BELOW, ResistorView::class) { RectangularVerticeViewBelowSelectionModel(it as ResistorView, styleType = EditStyleType.HIGHLIGHT) }
+		factory.register(SelectionDrawingStrategy.BELOW, AnalogPowerView::class) { RectangularVerticeViewBelowSelectionModel(it as AnalogPowerView, styleType = EditStyleType.HIGHLIGHT) }
+		factory.register(SelectionDrawingStrategy.BELOW, AnalogGroundView::class) { RectangularVerticeViewBelowSelectionModel(it as AnalogGroundView, styleType = EditStyleType.HIGHLIGHT) }
 	}
 
 	private fun configureDragDestinationHighlights(registry: DragDestinationHighlightFactoryRegistry) {
@@ -577,6 +596,7 @@ object AntaresViewModule : AbstractModule() {
 		}
 
 		repository.register(SWITCH, "library.element.Toggle", { "/img/switch.png" }, SwitchView::class)
+		repository.register(IMAGE_SWITCH, "library.element.ImageToggle", { "/img/switch.png" }, ImageSwitchView::class)
 		repository.register(DIP_SWITCH, "library.element.DipSwitch", { "/img/dip-switch.png" }, DipSwitchView::class)
 		repository.register(CLOCK, "library.element.Clock", { "/img/clock.png" }, ClockView::class)
 		repository.register(KEYBOARD, "library.element.Keyboard", { "/img/keyboard.png" }, KeyboardView::class)
@@ -601,8 +621,8 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(LED_MATRIX, "library.element.LEDMatrix", { "/img/led-matrix.png" }, LEDMatrixView::class)
 		repository.register(BUZZER, "library.element.Buzzer", { "/img/buzzer.png" }, BuzzerView::class)
 
-		repository.register(ROM, "library.element.ROM", { "/img/rom.png" }, ROMView::class)
-		repository.register(RAM, "library.element.RAM", { "/img/ram.png" }, RAMView::class)
+		repository.register(ROM, "library.element.ROM", { BaseModule.properties.getString(ROMView.PROP_ICON_PATH) }, ROMView::class)
+		repository.register(RAM, "library.element.RAM", { BaseModule.properties.getString(RAMView.PROP_ICON_PATH) }, RAMView::class)
 		repository.register(LUT, "library.element.LookupTable", { "/img/lut.png" }, LookupTableView::class)
 
 		repository.register(RANDOM, "library.element.Random", { "/img/random.png" }, RandomView::class)
@@ -612,6 +632,7 @@ object AntaresViewModule : AbstractModule() {
 
 		repository.register(LIGHT_BULB, "library.element.LightBulb", { BaseModule.properties.getString(LightBulbView.PROP_ICON_PATH) }, LightBulbView::class)
 		repository.register(BATTERY, "library.element.Battery", { "/img/battery.png" }, BatteryView::class)
+		repository.register(CAPACITOR, "library.element.Capacitor", { "/img/capacitor.png" }, CapacitorView::class)
 		repository.register(CURRENT_SOURCE, "library.element.CurrentSource", { "/img/current-source.png" }, CurrentSourceView::class)
 		repository.register(RESISTOR,
 			"library.element.Resistor",

@@ -31,8 +31,7 @@ class FileLibraryPersistenceServiceTest {
 	@BeforeTest
 	fun setup() {
 		LibraryModule.userLibraryPersistenceService = persistenceService
-		LibraryModule.libraryService = LibraryService()
-		LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"), libraryService = LibraryModule.libraryService)
+		LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"))
 		GraphModelModule.portFactory = TestPortFactory()
 		GraphViewModule.portViewFactory = TestPortViewFactory()
 	}

@@ -13,6 +13,8 @@ import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.antares.view.inout.DigitalCircuitInOutViewBeanInfo
 import ch.scorpion.antares.view.input.*
 import ch.scorpion.antares.view.net.*
+import ch.scorpion.antares.view.net.tunnel.TunnelView
+import ch.scorpion.antares.view.net.tunnel.TunnelViewBeanInfo
 import ch.scorpion.antares.view.output.*
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.edit.*
@@ -21,9 +23,15 @@ import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.slot
+import dev.mokkery.MockMode
+import dev.mokkery.answering.calls
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.matcher.any
+import dev.mokkery.matcher.capture.Capture
+import dev.mokkery.matcher.capture.capture
+import dev.mokkery.matcher.capture.get
+import dev.mokkery.mock
 import org.junit.Test
 import kotlin.test.Ignore
 
@@ -36,25 +44,28 @@ class AntaresBeanInfoTest {
 		}
 	}
 
-	private val graph = mockk<DigitalGraph>(relaxed = true)
-	private val drawing = mockk<GraphView>(relaxed = true)
-	private val commandManager = mockk<CommandManager>(relaxed = true)
-	private val editor = mockk<Editor>(relaxed = true)
+	private val graph = DigitalGraph()
+	private val drawing = mock<GraphView>(MockMode.autofill)
+	private val commandManager = mock<CommandManager>(MockMode.autofill)
+	private val view = mock<DrawingView<Drawing<Component>>>(MockMode.autofill)
+	private val editor = mock<Editor>(MockMode.autofill)
 
 	init {
 		every { drawing.graph } returns graph
+		every { editor.view } returns view
 		every { editor.active } returns true
 		every { editor.drawing } returns drawing as Drawing<Component>
 		every { editor.commandManager } returns commandManager
 
-		val command = slot<Command>()
-		every { commandManager.beginTransaction(capture(command)) } answers {
-			command.captured.execute()
+		val command = Capture.slot<Command>()
+		every { commandManager.beginTransaction(capture<Command>(command)) } calls {
+			command.get().execute()
 		}
 	}
 
 	private fun <T: GraphElementView<*>> readWrite(component: T, beanInfo: AbstractBeanInfo<T>) {
 		every { drawing.getWithId(any()) } returns component
+		every { drawing.getWidthIds(any()) } returns listOf(component)
 
 		val properties = beanInfo.getProperties(component, editor)
 

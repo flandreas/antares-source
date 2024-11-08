@@ -90,7 +90,7 @@ class ResistorView(
 
 	/** ---- [AbstractAnalogVerticeView] */
 
-	override val mainPropertyValue: String get() = "${Thousands.convert(model.resistance.toLong())} Ω"
+	override val mainPropertyValue: String get() = "${Thousands.convert(model.resistance.toLong(), " ")}Ω"
 
 	private fun getColorGradient(context: DrawContext): LinearColorGradient? {
 		if (context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
@@ -119,7 +119,8 @@ class ResistorView(
 				location = boundingBox.center,
 				unit = "Ω",
 				mouseMovedCondition = { contains(it.x, it.y) },
-				valueChangeHandler = { model.setState(it.toDouble(), context.signalHandler, (context.view as DrawingView<*>).drawing as AnalogGraphView) }
+				valueChangeHandler = { model.setState(it.toDouble(), context.signalHandler, (context.view as DrawingView<*>).drawing as AnalogGraphView) },
+				signalHandler = context.signalHandler
 			)
 
 		override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler =
@@ -129,7 +130,8 @@ class ResistorView(
 				location = boundingBox.center,
 				unit = "Ω",
 				mouseMovedCondition = { contains(it.x, it.y) },
-				valueChangeHandler = { model.setState(it.toDouble(), context.signalHandler, (context.view as DrawingView<*>).drawing as AnalogGraphView) }
+				valueChangeHandler = { model.setState(it.toDouble(), context.signalHandler, (context.view as DrawingView<*>).drawing as AnalogGraphView) },
+				signalHandler = context.signalHandler
 			)
 	}
 }

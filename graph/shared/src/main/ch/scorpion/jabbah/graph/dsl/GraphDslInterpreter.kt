@@ -2,15 +2,12 @@ package ch.scorpion.jabbah.graph.dsl
 
 import ch.scorpion.jabbah.base.EmptyHierarchyVisitor
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.dsl.Interpreter
-import ch.scorpion.jabbah.base.dsl.Memory
-import ch.scorpion.jabbah.base.dsl.Node
-import ch.scorpion.jabbah.base.dsl.RuntimeError
+import ch.scorpion.jabbah.base.dsl.*
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 
 /**
- * Expects the [Graph] to be provided as "params in [interpret] whose [GraphElements][GraphElement]
+ * Expects the [Graph] to be provided as "params" in [interpret] whose [GraphElements][GraphElement]
  * are accessed as property, or `null` if this [GraphDslInterpreter] doesn't run in the context of a [Graph]
  * (for example when executing a [SubGraphVerticeRef]'s execution script).
  */

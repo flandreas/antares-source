@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view.net.edge
 
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.InputEventContext
@@ -69,7 +70,7 @@ class EdgeEndpointView(
 		context.g.color = oldColor
 	}
 
-	override val boundingBox: Rectangle2D get() = bounds
+	override val boundingBox: RectangularShape get() = bounds
 
 	override fun contains(x: Double, y: Double): Boolean = bounds.contains(x, y)
 

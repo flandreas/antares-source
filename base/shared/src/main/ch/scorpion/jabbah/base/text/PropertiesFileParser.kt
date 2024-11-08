@@ -31,6 +31,7 @@ object PropertiesFileParser {
 					} else {
 						currentValue = currentValue?.plus(line.trim())
 					}
+					currentValue = currentValue!!.replace("\\n", "\n")
 					if (currentValue!!.endsWith('\\')) {
 						currentValue = currentValue!!.removeSuffix("\\")
 					} else {

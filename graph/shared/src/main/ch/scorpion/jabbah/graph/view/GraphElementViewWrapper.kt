@@ -119,7 +119,7 @@ class GraphElementViewWrapper(
 
 	override fun contains(x: Double, y: Double): Boolean = _component!!.contains(x, y)
 
-	override fun getTooltip(x: Double, y: Double): Tooltip? = _component!!.getTooltip(x, y)
+	override fun getTooltip(x: Double, y: Double, editable: Boolean): Tooltip? = _component!!.getTooltip(x, y)
 
 	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> =
 		_component!!.getInputEventHandler(context)

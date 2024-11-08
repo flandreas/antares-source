@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.edit.model
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.Focusable
 import ch.scorpion.jabbah.draw.drawable.AbstractStyledDrawable
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.drawable.Rotatable
@@ -197,13 +198,9 @@ abstract class AbstractComponent(
 	 * @param drawer the code that effectively draws content within the prepared translation and rotation context.
 	 */
 	open fun draw(context: DrawContext, drawer: (DrawContext) -> Unit) {
-		context.g.translate(location.x, location.y)
-		context.g.rotate(rotation.angle)
-
-		drawer.invoke(context)
-
-		context.g.rotate(-rotation.angle)
-		context.g.translate(-location.x, -location.y)
+		context.translatedAndRotated(location, rotation.angle) {
+			drawer.invoke(context)
+		}
 
 		DrawModule.drawLocatableDebugBoundingBox(this, context)
 	}

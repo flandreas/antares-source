@@ -27,8 +27,8 @@ import ch.scorpion.jabbah.io.StorableCloner
  * When this [SourcingCommandManager] creates a new [Snapshot], it is set on [UndoableDataHolder]
  * as the new current undoable state.
  *
- * Note that is is not sufficient to create new [Snapshot]s in [execute], because clients can change the application
- * state during complex editing operations, and [register] a corresponding [Command] afterwards.
+ * Note that it is not sufficient to create new [Snapshot]s in [execute], because clients can change the application
+ * state during complex editing operations, and [register] a corresponding [Command] afterward.
  */
 class SourcingCommandManager(
 	override val eventBus: EventBus = BaseModule.eventBus,
@@ -323,7 +323,7 @@ class SourcingCommandManager(
 			throw IllegalStateException("no checkpoint to close")
 		}
 		LOG.trace("Close checkpoint ${states.peek().name}")
-		states.pop()
+		states.pop().dispose()
 		eventBus.post(CommandEvent(this, CommandEventType.CLOSE_CHECKPOINT))
 	}
 

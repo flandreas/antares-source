@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.input
 
+import ch.scorpion.antares.model.EnterBehavior
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
@@ -11,10 +12,12 @@ class KeyboardViewBeanInfo : VerticeViewBeanInfo<KeyboardView>() {
 
 	companion object {
 		private val bufferSize = CommandPropertySwing("bufferSize", "element.property.bufferSize", Int::class.java, componentBeanProvider)
-	}
+		private val enterBehavior = CommandPropertySwing("enterBehavior", "element.property.Keyboard.enterBehavior", EnterBehavior::class.java, componentBeanProvider)
+ 	}
 
 	override fun addProperties(bean: KeyboardView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 		properties.add(bufferSize.bind(editor, beanIdProvider(bean.id)))
+		properties.add(enterBehavior.bind(editor, beanIdProvider(bean.id)))
 	}
 }

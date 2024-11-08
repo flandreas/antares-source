@@ -13,8 +13,8 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.VerticeViewActorInteractionHandler
 
 class AddressableInputEventHandler(
+	private val eventBus: EventBus = BaseModule.eventBus,
 	private val openRequestProvider: (view: DrawingView<GraphView>, newDesktopView: Boolean) -> OpenMemoryContentsRequest,
-	private val eventBus: EventBus = BaseModule.eventBus
 ) {
 
 	private val inputEventHandler = DoubleClickHandler()
@@ -35,6 +35,7 @@ class AddressableInputEventHandler(
 		override fun mouseClicked(context: InputEventContext): InputEventHandler<InputEventContext>? {
 			if (context.mouseEvent?.clickCount == 2 && context.mouseEvent?.isLeftButtonDown == true) {
 				requestOpenMemoryContents(context.view as DrawingView<GraphView>, context.mouseEvent?.isAltDown == true)
+				context.mouseEvent?.consumeEvent()
 				return null
 			}
 			return super.mouseClicked(context)
@@ -44,6 +45,7 @@ class AddressableInputEventHandler(
 	private inner class ActorHandler : VerticeViewActorInteractionHandler() {
 		override fun handleDoubleClick(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
 			requestOpenMemoryContents(context.view as DrawingView<GraphView>, context.mouseEvent?.isAltDown == true)
+			context.mouseEvent?.consumeEvent()
 			return null
 		}
 	}

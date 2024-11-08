@@ -38,7 +38,7 @@ object AntaresUsecaseActionExternalFunctions : UsecaseActionExternalFunctions() 
 		}
 	}
 
-	private fun pressButtonAtImpl(params: List<Any>): Any {
+	private fun pressButtonAtImpl(params: List<Any>, @Suppress("UNUSED_PARAMETER") context: Any? = null): Any {
 		pressButtonAt(
 			longParam(0, params),
 			longParam(1, params))
@@ -58,13 +58,13 @@ object AntaresUsecaseActionExternalFunctions : UsecaseActionExternalFunctions() 
 				button.model.toggle(runner.scheduler)
 				if (!button.toggle) {
 					// TODO BUG: This should not happen before visualization of first toggle has completed!
-					runner.executeAt(time + button.model.propagationDelay) { button.model.toggle(runner.scheduler)}
+					runner.executeAt(time + button.model.propagationDelay.value) { button.model.toggle(runner.scheduler)}
 				}
 			}
 		}
 	}
 
-	private fun applyClockImpl(params: List<Any>): Any {
+	private fun applyClockImpl(params: List<Any>, @Suppress("UNUSED_PARAMETER") context: Any? = null): Any {
 		applyClock(
 			stringParam(0, params),
 			longParam(1, params))

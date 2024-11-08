@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view
 
+import ch.scorpion.jabbah.base.LongValue
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.Component
@@ -23,7 +24,7 @@ abstract class AbstractGraphElementView<T : GraphElement>(
 	companion object {
 		const val STORABLE_MODEL_ID = "modelId"
 		const val BASE_KEY_MODEL_ID = "graph.property.modelId"
-		const val BASE_KEY_PROPAGATION_DELAY = "element.property.propagationDelay"
+		const val BASE_KEY_PROPAGATION_DELAY = "graph.property.propagationDelay"
 	}
 
 	/** Listens for changes of the model [GraphElement] and updates this view accordingly.*/
@@ -55,7 +56,7 @@ abstract class AbstractGraphElementView<T : GraphElement>(
 	val modelId: Int
 		get() = model.id
 
-	var propagationDelay: Long
+	var propagationDelay: LongValue
 		get() = model.propagationDelay
 		set(value) {
 			model.propagationDelay = value
@@ -78,7 +79,7 @@ abstract class AbstractGraphElementView<T : GraphElement>(
 			val modelId = reader.readInt(STORABLE_MODEL_ID)
 			if (modelId >= 0) {
 				// There are Storables like ControlView wrapped in ControlViewComponent that don't have
-				// a model at design time. The are linked to there Model when execution is started.
+				// a model at design time. They are linked to their Model when execution is started.
 				reader.requestResolution(this, Reference(
 					name = STORABLE_MODEL_ID,
 					referenceId = modelId,

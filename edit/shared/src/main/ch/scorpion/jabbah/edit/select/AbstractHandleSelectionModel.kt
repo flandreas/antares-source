@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.edit.select
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.Unzoomable
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
 import ch.scorpion.jabbah.edit.*
@@ -36,8 +37,8 @@ abstract class AbstractHandleSelectionModel<T : Component>(
 
 	private val boundingBoxBuffer = Rectangle2D()
 
-	override val boundingBox: Rectangle2D
-		get() = Rectangle2D(boundingBoxBuffer)
+	override val boundingBox: RectangularShape
+		get() = boundingBoxBuffer
 
 	override fun <C : InputEventContext> getInputEventHandler(context: C): InputEventHandler<C> {
 		@Suppress("UNCHECKED_CAST")

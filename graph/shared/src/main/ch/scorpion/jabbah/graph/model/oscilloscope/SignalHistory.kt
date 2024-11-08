@@ -40,6 +40,13 @@ class SignalHistory<T : Any>(private val bufferSize: Int) {
 
 	val maxTime: Long get() = entries.maxOfOrNull { it.time } ?: 0
 
+	/**
+	 * Returns the [SignalHistoryEntry] with the largest [SignalHistoryEntry.time] smaller than or equal to [time].
+	 * This corresponds with the way a curve is drawn using horizontal segments.
+	 */
+	fun getEntryAt(time: Long): SignalHistoryEntry<T>? =
+		entries.filter { it.time <= time }.maxByOrNull { it.time }
+
 	/** Iterates the [SignalHistoryEntries][SignalHistoryEntry] since the specified execution time in ascending time order.*/
 	fun getEntriesSince(startTime: Long): Iterator<SignalHistoryEntry<T>> =
 		entries.filter { it.time >= startTime }.iterator()

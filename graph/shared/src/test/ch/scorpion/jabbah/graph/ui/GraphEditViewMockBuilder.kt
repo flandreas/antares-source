@@ -4,12 +4,14 @@ import ch.scorpion.jabbah.graph.ui.scenario.ScenarioView
 import ch.scorpion.jabbah.graph.ui.scenario.ScenarioViewMockBuilder
 import ch.scorpion.jabbah.graph.ui.usecase.UsecaseView
 import ch.scorpion.jabbah.graph.ui.usecase.UsecaseViewMockBuilder
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.mock
 
 class GraphEditViewMockBuilder(private val controller: GraphEditViewController) {
 
-	private val graphEditView = mockk<GraphEditView>(relaxed = true)
+	private val graphEditView = mock<GraphEditView>(MockMode.autofill)
 
 	init {
 		controller.view = graphEditView

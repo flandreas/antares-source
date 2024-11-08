@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' manualContainer='true'>
+  <graph>
+    <graphStorable _id='1'>
+      <model>
+        <graph _id='2' type='digital' script='O = A == B' purelyScripted='true' propDelay='100' startupTime='10'>
+          <elements>
+            <circuitInOut _id='3' id='5' name='A' type='input' bitWidth='BW'>
+              <desc>
+                <translation lang='de' text='Erster zu vergleichender Wert'/>
+                <translation lang='en' text='First value to compare'/>
+              </desc>
+            </circuitInOut>
+            <circuitInOut _id='4' id='6' name='B' type='input' bitWidth='BW'>
+              <desc>
+                <translation lang='de' text='Zweiter zu vergleichender Wert'/>
+                <translation lang='en' text='Second value to compare'/>
+              </desc>
+            </circuitInOut>
+            <circuitInOut _id='5' id='25' name='O' type='output' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Resultat = 1, falls A = B'/>
+                <translation lang='en' text='Result = 1, if A = B'/>
+              </desc>
+            </circuitInOut>
+          </elements>
+          <testcases>
+            <testcases _id='6'>
+              <testcases>
+                <testcase _id='7' id='1' testVectors='A	B	O
+0	0	1
+7	45	0
+38	38	1
+255	255	1'>
+                  <name>
+                    <translation lang='en' text='Test'/>
+                  </name>
+                </testcase>
+              </testcases>
+            </testcases>
+          </testcases>
+        </graph>
+      </model>
+      <view>
+        <graphView _id='8'>
+          <netViews/>
+          <components>
+            <circuitInOutView _id='9' id='5' rot='0' filled='true' stroked='true' modelId='3' orientation='east' representation='hex'>
+              <location>
+                <point x='714.0' y='434.0'/>
+              </location>
+            </circuitInOutView>
+            <circuitInOutView _id='10' id='6' rot='0' filled='true' stroked='true' modelId='4' orientation='east' representation='hex'>
+              <location>
+                <point x='714.0' y='490.0'/>
+              </location>
+            </circuitInOutView>
+            <circuitInOutView _id='11' id='25' rot='0' filled='true' stroked='true' modelId='5' orientation='east' representation='binary'>
+              <location>
+                <point x='777.0' y='469.0'/>
+              </location>
+            </circuitInOutView>
+          </components>
+        </graphView>
+      </view>
+    </graphStorable>
+  </graph>
+  <container>
+    <containerDrawing _id='12'>
+      <components>
+        <rectangle _id='13' id='1' style='figure' filled='true' stroked='true' x='140.0' y='140.0' w='56.0' h='84.0'/>
+        <originIndicator _id='14' id='7'>
+          <location>
+            <point x='126.0' y='154.0'/>
+          </location>
+        </originIndicator>
+        <digitalPortViewComp _id='15' id='3' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='16' x='140.0' y='154.0' dir='west' textPos='internal' portId='17'/>
+          </portView>
+        </digitalPortViewComp>
+        <digitalPortViewComp _id='18' id='4' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='19' x='140.0' y='210.0' dir='west' textPos='internal' portId='20'/>
+          </portView>
+        </digitalPortViewComp>
+        <digitalPortViewComp _id='21' id='5' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='22' x='196.0' y='182.0' dir='east' textPos='internal' portId='23'/>
+          </portView>
+        </digitalPortViewComp>
+        <label _id='24' id='6' rot='0'>
+          <text>
+            <translation lang='en' text='='/>
+          </text>
+          <location>
+            <point x='168.0' y='168.0'/>
+          </location>
+        </label>
+      </components>
+      <model>
+        <subGraphVertice _id='25' id='0' delay='0' uuid='5d8cbe96-748d-4867-8abe-83eeb1d41332'>
+          <desc>
+            <translation lang='en' text='Compares two n-Bit numbers. The output is 1 if both numbers are equal'/>
+            <translation lang='de' text='Vergleicht zwei n-Bit-Zahlen. Der Ausgang ist 1, wenn beide Zahlen gleich sind'/>
+          </desc>
+          <name>
+            <translation lang='de' text='Komparator n Bit'/>
+            <translation lang='en' text='Comparator n Bit'/>
+          </name>
+          <ports>
+            <subCircuitPort _id='17' portId='1' name='A' logic='positive' bitWidth='8' trigger='level' type='input' representation='hex'/>
+            <subCircuitPort _id='20' portId='2' name='B' logic='positive' bitWidth='8' trigger='level' type='input' representation='hex'/>
+            <subCircuitPort _id='23' portId='3' name='O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
+          </ports>
+        </subGraphVertice>
+      </model>
+    </containerDrawing>
+  </container>
+  <params>
+    <graphParamDefs _id='26'>
+      <paramDefs>
+        <graphParamDef _id='27' name='BW' type='bitWidth' defaultValue='8'/>
+      </paramDefs>
+    </graphParamDefs>
+  </params>
+</metaGraph>

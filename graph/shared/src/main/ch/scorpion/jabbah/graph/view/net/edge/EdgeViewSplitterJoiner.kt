@@ -115,6 +115,7 @@ object EdgeViewSplitterJoiner {
 		edgeView.compact()
 		val origin = other.destination
 
+		// Intentionally operate only on view level. Other systems rely on model connections.
 		unconnect(other)
 		origin?.let { edgeView.connectToOrigin(it) }
 
@@ -130,6 +131,7 @@ object EdgeViewSplitterJoiner {
 		edgeView.compact()
 		val destination = other.destination
 
+		// Intentionally operate only on view level. Other systems rely on model connections.
 		unconnect(other)
 		destination?.let { edgeView.connectToDestination(it) }
 
@@ -145,6 +147,7 @@ object EdgeViewSplitterJoiner {
 		edgeView.compact()
 		val origin = other.origin
 
+		// Intentionally operate only on view level. Other systems rely on model connections.
 		unconnect(other)
 		origin?.let { edgeView.connectToOrigin(it) }
 
@@ -160,6 +163,7 @@ object EdgeViewSplitterJoiner {
 		edgeView.compact()
 		val destination = other.origin
 
+		// Intentionally operate only on view level. Other systems rely on model connections.
 		unconnect(other)
 		destination?.let { edgeView.connectToDestination(it) }
 

@@ -5,7 +5,7 @@ import kotlin.reflect.KClass
 
 class SelectionModelMockFactory : SelectionModelFactory {
 
-	override fun create(component: Component, strategy: SelectionDrawingStrategy): SelectionModel<Component>? =
+	override fun create(component: Component, strategy: SelectionDrawingStrategy): SelectionModel<Component> =
 		SelectionModelMockBuilder().withComponent(component).build()
 
 	override fun register(

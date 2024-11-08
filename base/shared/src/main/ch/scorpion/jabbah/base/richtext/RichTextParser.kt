@@ -219,13 +219,13 @@ class RichTextParser(lexer: RichTextLexer) : AbstractParser(lexer) {
 	private fun overline(): StyledText {
 		eat(OVERLINE)
 
-		style = TextStyle.withOverline(style)
+		style = TextStyle.pushOverline(style)
 		val overline = if (currentToken!!.type == LPAREN) {
 			eatParen { styledText() }
 		} else {
 			singleChar()
 		}
-		style = TextStyle.withoutOverline(style)
+		style = TextStyle.popOverline(style)
 
 		return overline
 	}

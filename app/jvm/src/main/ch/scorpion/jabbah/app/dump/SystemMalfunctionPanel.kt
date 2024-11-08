@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.app.SystemMalfunctionEvent
 import ch.scorpion.jabbah.app.module.AppModuleJvm
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.AbstractAction
+import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.ui.UIBasics
@@ -29,6 +30,18 @@ class SystemMalfunctionPanel(
 		private val LOG by logger(SystemMalfunctionPanel::class)
 
 		fun showAsDialog(application: DesktopApplication, event: SystemMalfunctionEvent, parent: Frame) {
+			show(application, event, parent)
+		}
+
+		fun createDeveloperAction(application: DesktopApplication): Action {
+			return object : AbstractAction("application.systemMalfunction.action") {
+				override fun execute(event: ActionEvent) {
+					show(application, SystemMalfunctionEvent("Developer"), Frame.getFrames()[0])
+				}
+			}
+		}
+
+		private fun show(application: DesktopApplication, event: SystemMalfunctionEvent, parent: Frame) {
 			DialogBuilder<SystemMalfunctionPanel>(parent)
 				.title(Translations.getString("application.systemMalfunction.title"))
 				.content { dialog -> SystemMalfunctionPanel(application, event) { dialog.dispose() } }

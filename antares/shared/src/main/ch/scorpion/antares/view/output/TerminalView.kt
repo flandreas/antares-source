@@ -22,9 +22,12 @@ import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
+import ch.scorpion.jabbah.graph.view.ControlViewSourceProperty
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
@@ -41,7 +44,7 @@ class TerminalView(
 	model: Terminal = Terminal(),
 	lightColor: LightColor? = null,
 	handedness: Handedness = Handedness.LEFT,
-	private val eventBus: EventBus = BaseModule.eventBus
+	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractRectangularVerticeView<Terminal>(
 	styleProvider,
 	model,
@@ -68,15 +71,7 @@ class TerminalView(
 		}
 
 	/** The color used for drawing the text. If `null`, the text color from [AntaresTheme]'s screen property is used.*/
-	var lightColor: LightColor? = lightColor
-		set(value) {
-			if (field != value) {
-				invalidate()
-				field = value
-				postControlViewSourceChangeEvent(eventBus)
-				validate()
-			}
-		}
+	var lightColor: LightColor? by ControlViewSourceProperty(lightColor, eventBus)
 
 	var handedness: Handedness = handedness
 		set(value) {
@@ -325,8 +320,8 @@ class TerminalView(
 
 	override val mirrorHeight: Double get() = abs(abs(bounds.maxY) - abs(bounds.minY))
 
-	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: Terminal) {
-		this.model = model
+	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
+		this.model = link.getLinkedVertice(startGraph) as Terminal
 	}
 
 	override fun sourcePropertiesChanged(source: ControlViewSource<Terminal>) {

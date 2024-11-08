@@ -310,9 +310,9 @@ enum class SymbolStyle(
 			context.g.fill(path)
 
 			if (comp is CustomShapeContent) {
-				context.g.translate(-x, -(y + vOffset))
-				comp.drawCustomShapeContent(context, foregroundColor, backgroundColor)
-				context.g.translate(x, y + vOffset)
+				context.translated(-x, -(y + vOffset)) {
+					comp.drawCustomShapeContent(it, foregroundColor, backgroundColor)
+				}
 			}
 
 			context.g.color = foregroundColor

@@ -4,12 +4,17 @@ import ch.scorpion.antares.AntaresApplication
 import ch.scorpion.antares.view.AntaresLibraryFactory
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.jabbah.base.AbstractModule
+import ch.scorpion.jabbah.base.DataLocation
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.module.BaseModuleJs
+import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.edit.module.EditModuleJs
+import ch.scorpion.jabbah.graph.draw.ImageLoaderJs
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.library.dictionary.Akrab2RestLibraryDictionaryPersistenceService
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.model.nonvolatile.EmptyNonVolatileService
 import ch.scorpion.jabbah.graph.project.ProjectManagementService
 import ch.scorpion.jabbah.graph.project.ProjectModule
 
@@ -25,26 +30,31 @@ object AntaresModuleJs : AbstractModule() {
 
         AntaresViewModule.require()
 
-        LibraryModule.systemLibraryPersistenceService = Akrab2RestSystemLibraryPersistenceServiceJs(BaseModuleJs.AKRAB_URL)
+        val akrabUrl = BaseModule.properties.getString(DataLocation.PROP_SERVER_URL)
+
+        // TODO Initialize RasterImageFactory as well.
+        // Required by Components that build Images programmatically, such as VideoRamView.
+
+        DrawModule.imageLoader = ImageLoaderJs()
+
+        GraphModelModule.nonVolatileService = EmptyNonVolatileService()
+
+        LibraryModule.systemLibraryPersistenceService = Akrab2RestSystemLibraryPersistenceServiceJs(akrabUrl)
         LibraryModule.libraryFactory = AntaresLibraryFactory()
-        LibraryModule.libraryService = LibraryService()
 
         LibraryModule.libraryManagementService = LibraryManagementService()
 
         LibraryModule.systemLibraryDictionaryService = LibraryDictionaryService(
-            Akrab2RestLibraryDictionaryPersistenceService(BaseModuleJs.AKRAB_URL)
+            Akrab2RestLibraryDictionaryPersistenceService(akrabUrl)
         )
 
         LibraryModule.libraryManagementService = LibraryManagementService()
 
-        ProjectModule.projectLibraryPersistenceService = Akrab2RestProjectPersistenceServiceJs(BaseModuleJs.AKRAB_URL)
+        ProjectModule.projectLibraryPersistenceService = Akrab2RestProjectPersistenceServiceJs(akrabUrl)
 
         ProjectModule.projectManagementService = ProjectManagementService(
             newMetaGraphNameTranslationKey = "graph.name.unknown")
 
-
-        // This was used for React icons. Not needed any more.
-        //registerAntaresIconsInProvider()
 
         loadTranslations()
     }

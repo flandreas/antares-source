@@ -86,9 +86,11 @@ open class GraphViewImpl(
 
 	@Suppress("unused") // Reflection
 	open var overallPropagationDelay: Long?
-		get() = graph!!.overallPropagationDelay
+		get() = graph?.overallPropagationDelay
 		set(value) {
-			graph!!.overallPropagationDelay = value
+			graph?.let {
+				it.overallPropagationDelay = value
+			}
 		}
 
 	var script: ScriptProperty
@@ -296,15 +298,15 @@ open class GraphViewImpl(
 	/**
 	 * Returns first all [VerticeView]s and then all other [GraphElementView]s, so that [EdgeView]s don't
 	 * overwrite [VerticeView] boundaries when being connected to them.
-	 * By doing so, we accept the negative side affect that simple [Component]s such as [RectangleComponent]s
+	 * By doing so, we accept the negative side effect that simple [Component]s such as [RectangleComponent]s
 	 * can never be drawn above [VerticeView]s, but it's more important that [RectangleComponent]s can be used
 	 * as subsystem boundaries, which are always drawn above all other [GraphElementView]s.
 	 */
-	override fun drawablesInDrawingOrder(): ImmutableList<GraphElementView<*>> {
+	override fun drawablesInDrawingOrder(): List<GraphElementView<*>> {
 		val drawables = mutableListOf<GraphElementView<*>>()
 		drawables.addAll(super.drawablesInDrawingOrder().filter { it !is VerticeView<*> })
 		drawables.addAll(super.drawablesInDrawingOrder().filterIsInstance<VerticeView<*>>())
-		return drawables.toImmutableList()
+		return drawables
 	}
 
 	override fun provideInputEventHandler(): DrawableBagInputEventHandler<GraphElementView<*>, InputEventContext> {
@@ -394,8 +396,10 @@ open class GraphViewImpl(
 						removeNetView(netView)
 						graph?.remove(netView.net)
 						partitionedNetViews.forEach {
-							graph?.add(it.net)
-							addNetView(it)
+							if (!it.isEmpty) {
+								graph?.add(it.net)
+								addNetView(it as NetView<Any>)
+							}
 						}
 					}
 				}

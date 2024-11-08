@@ -20,7 +20,7 @@ object TempFileLibraryTestRule {
 
 		val tempDir = Files.createTempDirectory(null)
 
-		LibraryModule.libraryFactory = EmptyLibraryFactory()
+		LibraryModule.libraryFactory = GraphLibraryFactory()
 
 		LibraryModule.systemLibraryPersistenceService = FileLibraryPersistenceService({ tempDir.absolutePathString() }, "systemLibs")
 		LibraryModule.systemLibraryDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService({ tempDir.absolutePathString() }, "systemLibs"))
@@ -28,11 +28,10 @@ object TempFileLibraryTestRule {
 		LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService({ tempDir.absolutePathString() }, "libraries")
 		LibraryModule.userLibraryDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService({ tempDir.absolutePathString() }, "libraries"))
 
-		LibraryModule.libraryService = LibraryService()
 		LibraryModule.libraryManagementService = LibraryManagementService()
 
 		ProjectModule.projectLibraryPersistenceService = FileLibraryPersistenceService({ tempDir.absolutePathString() }, "projects")
-		ProjectModule.projectLibraryService = { LibraryService(userLibraryPersister = ProjectModule.projectLibraryPersistenceService ) }
+		ProjectModule.projectLibraryService = LibraryService(userLibraryPersisterProvider = { ProjectModule.projectLibraryPersistenceService } )
 		ProjectModule.projectDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService({ tempDir.absolutePathString() }, "projects"))
 		ProjectModule.projectManagementService = ProjectManagementService()
 	}

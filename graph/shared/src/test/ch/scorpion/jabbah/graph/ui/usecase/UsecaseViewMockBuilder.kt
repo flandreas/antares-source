@@ -1,10 +1,11 @@
 package ch.scorpion.jabbah.graph.ui.usecase
 
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 
 class UsecaseViewMockBuilder(controller: UsecaseViewController) {
 
-	private val view = mockk<UsecaseView>(relaxed = true)
+	private val view = mock<UsecaseView>(MockMode.autofill)
 
 	init {
 		controller.view = view

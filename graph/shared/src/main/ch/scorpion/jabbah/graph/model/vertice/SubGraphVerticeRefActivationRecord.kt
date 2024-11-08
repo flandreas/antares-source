@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.*
 import ch.scorpion.jabbah.base.parser.TextLocation
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.model.GraphTypeSignalAdapter
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.OutputPort
@@ -17,9 +18,13 @@ typealias SubGraphVerticeRefActivationRecordFactory =
  * for reading ([InputPort]) and writing ([OutputPort]).
  */
 open class SubGraphVerticeRefActivationRecord(
-	protected val verticeRef: SubGraphVerticeRef,
+	protected val verticeRef: SubGraphVerticeRefIF,
 	protected val signalHandler: SignalHandler
 ) : ActivationRecord {
+
+	private val adapter: GraphTypeSignalAdapter<Any, Any> get() =
+		// Accesses singletons, no objects being created
+		verticeRef.graphType.adaptTo(verticeRef.getGraph().type)
 
 	override fun clear() { }
 
@@ -51,8 +56,10 @@ open class SubGraphVerticeRefActivationRecord(
 		if (verticeRef.hasInput(name)) {
 			// Convert between GraphTypes
 			val outerTypeValue = verticeRef.getInput<Any>(name).getIncomingSignal()!!
-			val adapter = verticeRef.graphType.adaptTo<Any, Any>(verticeRef.getGraph().type)
 			return adapter.convertIncomingSignal(outerTypeValue)!!
+		} else if (verticeRef.hasOutput(name)) {
+			val innerTypeValue = verticeRef.getOutput<Any>(name).getOutgoingSignal()!!
+			return adapter.convertOutgoingSignal(innerTypeValue)!!
 		}
 		verticeRef.paramValues.getTypedValue<Any>(name)?.let {
 			return it.type.toDslValue(it.value)

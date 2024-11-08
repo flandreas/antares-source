@@ -7,10 +7,8 @@ import ch.scorpion.jabbah.base.geom.AffineTransform
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.*
-import ch.scorpion.jabbah.draw.drawable.AbstractDrawableDrawer
 import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
 import ch.scorpion.jabbah.draw.style.DrawTheme
-import ch.scorpion.jabbah.draw.style.Stylable
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.draw.view.InvalidatableViewPainter
 import ch.scorpion.jabbah.draw.view.ViewImpl
@@ -19,6 +17,7 @@ import ch.scorpion.jabbah.edit.DrawingView.Companion.PROP_EDITABLE
 import ch.scorpion.jabbah.edit.DrawingView.Companion.PROP_SHOW_GRID
 import ch.scorpion.jabbah.edit.highlight.EditHighlightModule
 import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.draw.container.DrawableContainerDrawer
 import ch.scorpion.jabbah.edit.select.EditSelectModule
 import ch.scorpion.jabbah.edit.snap.GridImpl
 
@@ -36,7 +35,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
     private val selectionManagerFactory: SelectionManagerFactory = EditSelectModule.selectionManagerFactory,
     private val highlighterFactory: HighlighterFactory = EditHighlightModule.highlighterFactory,
     eventBus: EventBus = BaseModule.eventBus,
-    viewPainterFactory: ViewPainterFactory<out EditInputEventContext> = { InvalidatableViewPainter(it) },
+    viewPainterFactory: ViewPainterFactory<EditInputEventContext> = { InvalidatableViewPainter(it) },
     editable: Boolean = true
 ) : ViewImpl<EditInputEventContext>(transformFactory, applicationContextHolder, eventBus, viewPainterFactory), DrawingView<T> {
 
@@ -57,7 +56,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
 		}
 
     /** The [DrawableDrawer] used for drawing the [Drawing].*/
-    private var drawableDrawer: DrawableDrawer<Component> = DrawingDrawer()
+    private var drawableDrawer: DrawableDrawer<Component> = DrawingViewDrawer()
 
     /** Displays [ComponentMessage]s from [Component]s of the current [Drawing]. */
     private val componentMessageDisplayer = ComponentMessageDisplayer(
@@ -192,7 +191,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
         super.addDrawable(drawing)
         super.addDrawable(content.zoomableSelectionContainerFor(SelectionDrawingStrategy.BELOW)!!)
         super.addDrawable(highlightContainer)
-	    super.addDrawable(content.backdropDrawer)
+        super.addDrawable(content.backdropDrawer)
     }
 
     private fun replaceContent(newContent: DrawingViewContent<T>) {
@@ -204,7 +203,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
         replaceDrawable(content.drawing, newContent.drawing)
         replaceDrawable(content.zoomableSelectionContainerFor(SelectionDrawingStrategy.BELOW)!!, newContent.zoomableSelectionContainerFor(SelectionDrawingStrategy.BELOW)!!)
         replaceDrawable(content.highlightContainer, newContent.highlightContainer)
-	    replaceDrawable(content.backdropDrawer, newContent.backdropDrawer)
+        replaceDrawable(content.backdropDrawer, newContent.backdropDrawer)
         transformation = newContent.transformation
         repaint()
     }
@@ -226,7 +225,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
      * The [DrawableDrawer] used for drawing the [Drawing]. Implements the drawing behaviour used for the
      * different [SelectionDrawingStrategies][SelectionDrawingStrategy].
      */
-    private inner class DrawingDrawer : AbstractDrawableDrawer<Component>() {
+    private inner class DrawingViewDrawer : DrawableContainerDrawer<Component>() {
         override fun process(context: DrawContext, drawable: Component) {
 
 	        if (selectionManager.isSelected(drawable)) {
@@ -240,11 +239,5 @@ class DrawingViewImpl<T: Drawing<Component>>(
 
 	        nextProcessor(context, drawable)
         }
-
-	    private fun draw(drawable: Drawable, context: DrawContext) {
-			if (drawable !is Stylable || !drawable.styleType.isBackdrop) {
-				drawable.draw(context)
-			}
-		}
     }
 }

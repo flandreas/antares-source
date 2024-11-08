@@ -4,16 +4,23 @@ import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.*
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.slot
+import dev.mokkery.MockMode
+import dev.mokkery.answering.calls
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.matcher.any
+import dev.mokkery.matcher.capture.Capture
+import dev.mokkery.matcher.capture.capture
+import dev.mokkery.matcher.capture.get
+import dev.mokkery.matcher.eq
+import dev.mokkery.mock
 
 /**
  * A builder for mocks of [Drawable].
  */
 class DrawableMockBuilder {
 
-    private val drawable: Drawable = mockk(relaxed = true)
+    private val drawable: Drawable = mock(MockMode.autofill)
 
 	private val boundingBoxDrawer: (DrawContext) -> Unit = { it.g.drawRect(
 		drawable.boundingBox.x.toInt(),
@@ -31,11 +38,15 @@ class DrawableMockBuilder {
 
 	fun withBoundingBox(bbox: Rectangle2D): DrawableMockBuilder {
 		every { drawable.boundingBox } returns bbox
-		val x = slot<Double>()
-		val y = slot<Double>()
-		val point = slot<Point2D>()
-		every { drawable.contains(capture(x), capture(y)) } answers { bbox.contains(x.captured, y.captured) }
-		every { drawable.contains(capture(point)) } answers { bbox.contains(point.captured)}
+		val x = Capture.slot<Double>()
+		val y = Capture.slot<Double>()
+		val point = Capture.slot<Point2D>()
+		every { drawable.contains(capture(x), capture(y)) } calls {
+			bbox.contains(it.args[0] as Double, it.args[1] as Double)
+		}
+		every { drawable.contains(capture(point)) } calls {
+			bbox.contains(it.args[0] as Point2D)
+		}
 		return this
 	}
 
@@ -66,8 +77,8 @@ class DrawableMockBuilder {
 	}
 
 	fun withDrawLogic(logic: (context: DrawContext) -> Unit): DrawableMockBuilder {
-		val slot = slot<DrawContext>()
-		every { drawable.draw(capture(slot)) } answers { logic.invoke(slot.captured) }
+		val slot = Capture.slot<DrawContext>()
+		every { drawable.draw(capture(slot)) } calls { logic.invoke(slot.get()) }
 		return this
 	}
 

@@ -16,11 +16,14 @@ import ch.scorpion.jabbah.edit.model.text.Translation
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorData
+import ch.scorpion.jabbah.graph.model.nonvolatile.NonVolatile
 import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.model.nonvolatile.NonVolatileStorable
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
+import ch.scorpion.jabbah.io.StringStorable
 
 
 /**
@@ -31,7 +34,7 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 class RAM(
 	hasClock: Boolean = true
-) : AbstractAddressable<RAM>(RAMCalculator()) {
+) : AbstractAddressable<RAM>(RAMCalculator()), NonVolatile {
 
 	companion object {
 
@@ -69,6 +72,8 @@ class RAM(
 				}
 			}
 		}
+
+	override var nonVolatile: Boolean = false
 
 	/**
 	 * Represents the last value of the address input, but gets only updated when the chip is selected (CS).
@@ -113,6 +118,9 @@ class RAM(
 		writer.writeString("addressBitWidth", addressWidth.customName)
 		writer.writeString("dataBitWidth", dataWidth.customName)
 		writer.writeBoolean("clock", hasClock)
+		if (nonVolatile) {
+			writer.writeBoolean("nonVolatile", nonVolatile)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
@@ -120,19 +128,39 @@ class RAM(
 		addressWidth = BitWidth.withName(reader.readString("addressBitWidth"))
 		dataWidth = BitWidth.withName(reader.readString("dataBitWidth"))
 		hasClock = reader.readBoolean("clock")
+		if (reader.hasAttribute("nonVolatile")) {
+			nonVolatile = reader.readBoolean("nonVolatile")
+		}
 	}
 
 	/** ---- [Actor] interface */
 
-	override fun executionInitialize(signalHandler: SignalHandler) {
-		super.executionInitialize(signalHandler)
+	override fun executionInitializeNonVolatile(signalHandler: SignalHandler, nonVolatileData: NonVolatileStorable?) {
+		super<AbstractAddressable>.executionInitializeNonVolatile(signalHandler, nonVolatileData)
 		currentSelectedAddress = 0
 		clear()
+		if (nonVolatile) {
+			nonVolatileData?.let {
+				val m = it.getContent("memory")
+				if (m is StringStorable) {
+					CompressedMemoryDump.read(memory, m.content)
+				}
+			}
+		}
 		getDataPort().setOutgoingSignalBuffered(DigitalSignalFactory.undefined(dataWidth), signalHandler)
 	}
 
-	override fun executionStopped(signalHandler: SignalHandler) {
-		super.executionStopped(signalHandler)
+	override fun executionStoppedNonVolatile(signalHandler: SignalHandler, nonVolatileData: NonVolatileStorable?) {
+		super<AbstractAddressable>.executionStoppedNonVolatile(signalHandler, nonVolatileData)
+		if (nonVolatile) {
+			nonVolatileData?.let {
+				it.addChild(
+					NonVolatileStorable(id).apply {
+						setContent("memory", StringStorable(CompressedMemoryDump.write(memory, dataWidth)))
+					}
+				)
+			}
+		}
 		clear()
 	}
 

@@ -1,15 +1,10 @@
 package ch.scorpion.antares.dsl
 
 import ch.scorpion.antares.model.Logic
-import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.base.dsl.Memory
-import ch.scorpion.jabbah.graph.model.InputPort
-import io.mockk.every
-import io.mockk.mockk
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

@@ -1,10 +1,11 @@
 package ch.scorpion.jabbah.graph.ui.scenario
 
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 
 class ScenarioPropertyPanelMockBuilder(controller: ScenarioPropertyPanelController) {
 
-	private val view = mockk<ScenarioPropertyPanel>(relaxed = true)
+	private val view = mock<ScenarioPropertyPanel>(MockMode.autofill)
 
 	init {
 		controller.view = view

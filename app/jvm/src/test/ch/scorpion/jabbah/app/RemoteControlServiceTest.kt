@@ -2,8 +2,11 @@ package ch.scorpion.jabbah.app
 
 import ch.scorpion.jabbah.app.module.AppModuleJvm
 import ch.scorpion.jabbah.base.Properties
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.answering.returns
+import dev.mokkery.answering.throws
+import dev.mokkery.every
+import dev.mokkery.matcher.any
+import dev.mokkery.mock
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import org.junit.Test
@@ -19,8 +22,8 @@ class RemoteControlServiceTest {
 		}
 	}
 
-	private val newVersionReader = mockk<(String) -> String>()
-	private val properties = mockk<Properties>()
+	private val newVersionReader = mock<(String) -> String>()
+	private val properties = Properties()
 	private val service = RemoteControlService(properties, newVersionReader)
 
 	init {
@@ -29,7 +32,7 @@ class RemoteControlServiceTest {
 
 	@Test
 	fun shouldOfferNewVersion() {
-		every { properties.getString(eq(RemoteControlService.PROP_IGNORED_VERSION)) } returns "0.0.0"
+		properties.set(RemoteControlService.PROP_IGNORED_VERSION, "0.0.0")
 		every { newVersionReader.invoke(any()) } returns "app.currentVersion=0.4.0"
 
 		val newerVersion = service.checkForNewerVersion(ApplicationVersion("0.3.1"))
@@ -39,7 +42,7 @@ class RemoteControlServiceTest {
 
 	@Test
 	fun shouldNotOfferIgnoredVersion() {
-		every { properties.getString(eq(RemoteControlService.PROP_IGNORED_VERSION)) } returns "0.4.0"
+		properties.set(RemoteControlService.PROP_IGNORED_VERSION, "0.4.0")
 		every { newVersionReader.invoke(any()) } returns "app.currentVersion=0.4.0"
 
 		val newerVersion = service.checkForNewerVersion(ApplicationVersion("0.3.1"))
@@ -49,7 +52,7 @@ class RemoteControlServiceTest {
 
 	@Test
 	fun shouldNotComplainUponConnectionError() {
-		every { properties.getString(eq(RemoteControlService.PROP_IGNORED_VERSION)) } returns "0.0.0"
+		properties.set(RemoteControlService.PROP_IGNORED_VERSION, "0.0.0")
 		every { newVersionReader.invoke(any()) } throws RuntimeException("network error")
 
 		val newerVersion = service.checkForNewerVersion(ApplicationVersion("0.3.1"))

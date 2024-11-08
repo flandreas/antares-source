@@ -27,11 +27,13 @@ import ch.scorpion.jabbah.edit.model.text.Alignment
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.port.PortView
+import kotlin.math.max
 
 class AnalogCircuitInOutView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
@@ -46,7 +48,8 @@ class AnalogCircuitInOutView(
 		styleProvider.getStyle(StyleType.ANNOTATION).font,
 		textColor,
 		HorizontalAlignment.CENTER,
-		VerticalAlignment.CENTER)
+		VerticalAlignment.CENTER,
+		richText = false)
 
 	init {
 		modelExchanged(null)
@@ -63,9 +66,9 @@ class AnalogCircuitInOutView(
 
 	override fun handleStateChangedImpl(event: GraphElementEvent) {
 		if (event.signalHandler != null) {
-			if (event.reason == AbstractAnalogVertice.REQUEST_RECALCULATE) {
+			if (event.reason == AbstractAnalogVertice.REQUEST_REANALYZE) {
 				if (parent is AnalogGraphView) {
-					(parent as AnalogGraphView).recalculate(event.signalHandler!!)
+					(parent as AnalogGraphView).recalculate(event.signalHandler!!, true)
 				}
 			} else {
 				updateVoltageLabel()
@@ -86,7 +89,7 @@ class AnalogCircuitInOutView(
 	override fun updateViewImpl() {
 		arrowPath = ArrowPath.Companion.Builder(
 			orientation,
-			Dimension2D(voltageLabel.bounds.width, voltageLabel.bounds.height)
+			Dimension2D(max(25.0, voltageLabel.bounds.width), voltageLabel.bounds.height)
 		).build(inout = portType === PortType.INOUT)
 
 		voltageLabel.location = voltageLabelCenter
@@ -123,24 +126,26 @@ class AnalogCircuitInOutView(
 			)
 		}
 
-		val translation = getArrowPathTranslation()
-		context.g.translate(translation.x, translation.y)
-
 		if (model.signal == null) {
 			context.g.color = Bit.Undefined.color.textColor
 		} else {
 			context.g.color = textColor
 		}
-		voltageLabel.draw(context)
-
-		drawFocus(context)
-		context.g.translate(-translation.x, -translation.y)
+		context.translated(getArrowPathTranslation()) {
+			voltageLabel.draw(context)
+			drawFocus(context)
+		}
 	}
 
 	override fun toggle(undefine: Boolean, context: ActorInteractionContext): ActorInteractionHandler? {
 		model.toggle(context.signalHandler)
 		requestFocus()
 		return null
+	}
+
+	override fun executionStarted(signalHandler: SignalHandler) {
+		super.executionStarted(signalHandler)
+		updateVoltageLabel()
 	}
 
 	/** ---- [AnalogCircuitInOutView] */
@@ -160,9 +165,17 @@ class AnalogCircuitInOutView(
 		}
 	}
 
-	override fun createActorInteractionHandler(): ActorInteractionHandler = InteractionHandler()
+	override fun createActorInteractionHandler(): ToggleInteractionHandler = InteractionHandler()
 
 	private inner class InteractionHandler : ToggleInteractionHandler() {
+
+		override fun canConsume(keyEvent: KeyEvent): Boolean {
+			return when (keyEvent.key) {
+				KeyEvent.VK_SPACE -> false
+				else -> super.canConsume(keyEvent)
+			}
+		}
+
 		override fun keyPressed(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
 			if (checkTopLevelKey()) {
 				when (context.keyEvent?.key) {

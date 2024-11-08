@@ -7,21 +7,26 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath("com.guardsquare:proguard-gradle:7.4.0-beta02")
+		classpath("com.guardsquare:proguard-gradle:7.5.0")
 	}
 }
 
 val kotlinVersion: String by extra
 
 plugins {
-	kotlin("multiplatform") version "1.9.0" apply false
-	kotlin("plugin.serialization") version "1.9.0" apply false
+	kotlin("multiplatform") version "2.0.0" apply false
+	kotlin("plugin.serialization") version "1.9.23" apply false
 	id("org.asciidoctor.convert") version "1.5.9.2"
 	id("maven-publish")
+	id("dev.mokkery") version "2.0.0" apply false
 }
 
 val version_project: String by project
 val group_project = rootProject.name
+
+// Bytesafe repository: Taken from machine local gradle.properties
+val bytesaveUser: String by extra
+val bytesavePassword: String by extra
 
 allprojects {
 
@@ -29,7 +34,6 @@ allprojects {
 		maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-js-wrappers")
 		maven("https://jitpack.io")
 		mavenCentral()
-		jcenter()
 		flatDir {
 			dirs("../lib")
 		}
@@ -39,8 +43,8 @@ allprojects {
 			name = "bytesafe"
 			url = uri("https://antares.bytesafe.dev/maven/antares/")
 			credentials {
-				username = "bytesafe"
-				password = "01G4ADXPRW5PRW5H8SR9ZRGRFY"
+				username = bytesaveUser
+				password = bytesavePassword
 			}
 		}
 	}
@@ -54,7 +58,6 @@ allprojects {
 val kotlinWrappersVersion: String by extra
 val ktorVersion: String by extra
 val kotlinCoroutinesVersion: String by extra
-val mockkVersion: String by extra
 val slf4jVersion: String by extra
 val commonsIoVersion: String by extra
 val commonsLang3Version: String by extra
@@ -65,32 +68,31 @@ val l2fprodVersion: String by extra
 val flatLafVersion: String by extra
 val korteVersion: String by extra
 val batikVersion: String by extra
+val jsvgVersion: String by extra
 
 subprojects {
 
 	val projectName = this.name
 
-	// jsBrowserTest doesn't work in JS targets due to open issues with mockk-js
-	// See https://github.com/mockk/mockk/issues/100
-	tasks.whenTaskAdded {
-		if (this.name.contains("jsBrowserTest")) {
-			this.enabled = false
-		}
-	}
-
 	apply(plugin = "org.jetbrains.kotlin.multiplatform")
 	apply(plugin = "kotlinx-serialization")
 	apply(plugin = "maven-publish")
+	apply(plugin = "dev.mokkery")
 
 	configure<KotlinMultiplatformExtension> {
+		withSourcesJar(publish = false)
+
 		jvm {
+
 			// by default kotlin uses JavaVersion 1.6
 			val main by compilations.getting {
 				kotlinOptions {
 					jvmTarget = JavaVersion.VERSION_1_8.toString()
 					freeCompilerArgs = listOf(
 						// https://youtrack.jetbrains.com/issue/KT-37435
+						"-Xopt-in=kotlin.ExperimentalUnsignedTypes",
 						"-Xno-optimized-callable-references",
+						"-Xexpect-actual-classes",
 						"-Xinline-classes")
 				}
 			}
@@ -138,7 +140,6 @@ subprojects {
 				dependencies {
 					implementation(kotlin("test-common"))
 					implementation(kotlin("test-annotations-common"))
-					implementation("io.mockk:mockk-common:$mockkVersion")
 					implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutinesVersion")
 				}
 			}
@@ -160,6 +161,7 @@ subprojects {
 					implementation("l2fprod:l2fprod-common-all:$l2fprodVersion")
 					implementation("exml:exml:7.0")
 					implementation("com.formdev:flatlaf:$flatLafVersion")
+					implementation("com.github.weisj:jsvg:$jsvgVersion")
 					implementation("org.drjekyll:fontchooser:2.4")
 					implementation("org.swinglabs.swingx:swingx-all:1.6.5-1")
 					implementation("com.formdev:flatlaf-swingx:$flatLafVersion")
@@ -192,7 +194,6 @@ subprojects {
 				dependencies {
 					implementation(kotlin("test"))
 					implementation(kotlin("test-junit"))
-					implementation("io.mockk:mockk:$mockkVersion")
 				}
 			}
 
@@ -205,7 +206,6 @@ subprojects {
 					kotlin.srcDir("js/src/kotlin/test")
 					dependencies {
 						implementation(kotlin("test-js"))
-						implementation("io.mockk:mockk-js:1.7.17")
 					}
 				}
 			}
@@ -242,13 +242,12 @@ subprojects {
 				name = "bytesafe"
 				url = uri("https://antares.bytesafe.dev/maven/antares/")
 				credentials {
-					username = "bytesafe"
-					password = "01G4ADXPRW5PRW5H8SR9ZRGRFY"
+					username = bytesaveUser
+					password = bytesavePassword
 				}
 			}
 		}
 	}
-
 }
 
 tasks {

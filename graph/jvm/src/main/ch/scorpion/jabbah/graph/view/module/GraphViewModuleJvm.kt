@@ -4,12 +4,10 @@ import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
-import ch.scorpion.jabbah.base.preferences.BooleanPreference
-import ch.scorpion.jabbah.base.preferences.FloatPreference
-import ch.scorpion.jabbah.base.preferences.IntPreference
-import ch.scorpion.jabbah.base.preferences.PreferenceGroup
+import ch.scorpion.jabbah.base.preferences.*
 import ch.scorpion.jabbah.base.swing.EnumRenderer
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
+import ch.scorpion.jabbah.draw.module.DrawModuleJvm.PREF_TREE_VIEW_ZOOM_PAN
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
 import ch.scorpion.jabbah.edit.model.rectangle.RectangularHandleSelectionModel
@@ -21,13 +19,16 @@ import ch.scorpion.jabbah.edit.properties.DynamicPropertyEditorRegistry
 import ch.scorpion.jabbah.edit.select.EditSelectModule
 import ch.scorpion.jabbah.edit.select.SelectionModelFactory
 import ch.scorpion.jabbah.edit.view.DynamicPropertyRendererRegistry
+import ch.scorpion.jabbah.execution.ExecutionModuleJvm
 import ch.scorpion.jabbah.graph.container.ContainerEditor
 import ch.scorpion.jabbah.graph.container.ContainerToolBarBuilder
 import ch.scorpion.jabbah.graph.container.InternalLabelOrientation
+import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.graph.library.LibraryVisibility
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistories
 import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoriesType
+import ch.scorpion.jabbah.graph.model.port.InconsistentNetError
 import ch.scorpion.jabbah.graph.ui.GraphFrameController
 import ch.scorpion.jabbah.graph.ui.GraphNavigationViewController
 import ch.scorpion.jabbah.graph.view.*
@@ -49,6 +50,17 @@ object GraphViewModuleJvm : AbstractModule() {
 
 	var containerToolBarBuilderFactory: () -> ContainerToolBarBuilder = { ContainerToolBarBuilder() }
 
+	/** Provides the [Preference]s from the base [Properties] the user can overwrite on a [Library].*/
+	var libraryPreferencesProvider: () -> MutableList<Preference> = {
+		getLibraryPreferences()
+	}
+
+	fun getLibraryPreferences(): MutableList<Preference> {
+		return mutableListOf(
+			BaseModuleJvm.preferencesTree.getGroup(ExecutionModuleJvm.PREF_TREE_EXECUTION).get(InconsistentNetError.PROP_ALLOWED_DURATION)
+		)
+	}
+
 	override fun initialize() {
 		IOModuleJvm.require()
 		DrawModuleJvm.require()
@@ -61,7 +73,6 @@ object GraphViewModuleJvm : AbstractModule() {
 		configureSelectionModels(EditSelectModule.selectionModelFactory)
 		configurePropertyRenderer(EditModuleJvm.propertyRendererRegistry)
 		configurePropertyEditors(EditModuleJvm.propertyEditorRegistry)
-
 
 		buildPreferencesTree(BaseModuleJvm.preferencesTree)
 	}
@@ -107,7 +118,7 @@ object GraphViewModuleJvm : AbstractModule() {
 			id = GraphFrameController.PROP_AUTO_SWITCH,
 			nameKey = "graph.preferences.GraphFrame.autoSwitch"
 		))
-		root.getGroup(DrawModuleJvm.PREF_TREE_VIEW).add(FloatPreference(
+		root.getGroup(DrawModuleJvm.PREF_TREE_VIEW).getGroup(PREF_TREE_VIEW_ZOOM_PAN).add(FloatPreference(
 			id = ContainerEditor.PROP_DEFAULT_ZOOM_FACTOR,
 			nameKey = "graph.preferences.ContainerEditor.defaultZoomFactor"
 		))

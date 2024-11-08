@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.draw
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
 
@@ -18,6 +19,18 @@ import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
  */
 interface Drawable {
 
+	companion object {
+
+		/**
+		 * Returns a [RectangularShape] representing the combined [Drawable.boundingBox] of
+		 * all specified [drawables].
+		 */
+		fun combinedBoundingBox(drawables: Collection<Drawable>): RectangularShape =
+			Rectangle2D().also { bbox ->
+				drawables.forEach { bbox.add(it.boundingBox) }
+			}
+	}
+
 	/** The parent [DrawableContainer] that contains this [Drawable].*/
 	val parent: DrawableContainer<*>?
 
@@ -25,6 +38,10 @@ interface Drawable {
 	 * The rectangular area in model coordinate space that completely contains this [Drawable].
 	 * The bounding box is used for invalidation and repainting. Therefore, make sure that the bounding
 	 * box of a figure [Drawable] (e.g. a rectangle) includes the width of any border stroke used for painting.
+	 *
+	 * The returned object is immutable so that implementations can update their own rectangular area
+	 * and just return it when asked, instead of calculating it on-the-fly. Since this property is
+	 * accessed a lot, this can improve performance during editing and redrawing.
 	 */
 	val boundingBox: RectangularShape
 
@@ -35,7 +52,7 @@ interface Drawable {
 	fun accept(visitor: HierarchyVisitor): Boolean
 
 	/**
-	 * Informs this [Drawable] that it is not actively used any more.
+	 * Informs this [Drawable] that it is not actively used anymore.
 	 * Implementing classes should release references to other objects, and especially de-register from listening
 	 * to events. However, it might be that a disposed [Drawable] might be re-activated later.
 	 */
@@ -91,7 +108,7 @@ interface Drawable {
 	fun intersects(rect: RectangularShape): Boolean = boundingBox.intersects(rect)
 
 	/**
-	 * Notifies this [Drawable] that is has been added to a [DrawableContainer].
+	 * Notifies this [Drawable] that it has been added to a [DrawableContainer].
 	 * As a reaction, this [Drawable] should store a reference to that parent [DrawableContainer] in order
 	 * to be able to call the parent's invalidate and repaint methods.
 	 */
@@ -106,10 +123,11 @@ interface Drawable {
 	 *
 	 * @param x x-coordinate of the mouse position
 	 * @param y y-coordinate of the mouse position
+	 * @param editable `true` if the [DrawableContainer] is editable, which can influence the tooltip shown
 	 * @return the [Tooltip] of this [Drawable], or `null`if this [Drawable] doesn't want to display a
 	 *      text at the specified location.
 	 */
-	fun getTooltip(x: Double, y: Double): Tooltip?
+	fun getTooltip(x: Double, y: Double, editable: Boolean = true): Tooltip?
 
 	/**
 	 * Returns an epic, graphical explanation of this [Drawable] to be displayed when the user hovers over

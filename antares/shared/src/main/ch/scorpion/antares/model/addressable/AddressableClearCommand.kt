@@ -4,17 +4,18 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Undoable
-import ch.scorpion.jabbah.edit.command.AbstractCommand
+import ch.scorpion.jabbah.graph.app.AbstractGraphViewCommand
+import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.GraphView
 
 /** A [Command] for clearing the contents of an [Addressable].*/
 class AddressableClearCommand(
-	private val view: DrawingView<GraphView>,
-	private val addressableId: Int,
+	view: DrawingView<GraphView>,
+	private val link: VerticeLink,
 	private val bitWidth: BitWidth
-) : AbstractCommand("antares.command.clearMemory"), Undoable {
+) : AbstractGraphViewCommand("antares.command.clearMemory", view), Undoable {
 
-	private val addressable: Addressable get() = view.drawing.graph!!.withId(addressableId) as Addressable
+	private val addressable: Addressable get() = link.getLinkedVertice(drawingView.drawing.graph!!) as Addressable
 
 	private var oldContents: String? = null
 

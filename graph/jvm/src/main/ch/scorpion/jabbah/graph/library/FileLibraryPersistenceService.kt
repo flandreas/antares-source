@@ -3,6 +3,10 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.io.ZipUtil
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.graphics.Image
+import ch.scorpion.jabbah.draw.graphics.ImageType
+import ch.scorpion.jabbah.draw.module.DrawModule
+import ch.scorpion.jabbah.edit.model.image.ImageIdentification
 import ch.scorpion.jabbah.graph.GraphQuota
 import ch.scorpion.jabbah.graph.GraphQuotaException
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -102,6 +106,35 @@ class FileLibraryPersistenceService(
 		return importLibrary(FileInputStream(inputPath), replaceExisting = false, currentLibraryCount, quota)
 	}
 
+	override fun loadImage(library: Library, imageUuid: UUID, imageType: ImageType): Image {
+		try {
+			val image = DrawModule.imageLoader.loadUserImage(
+				buildImageFilePath(
+					library.identification,
+					imageUuid,
+					imageType
+				),
+				imageType
+			)
+			LOG.trace("Loaded image $imageUuid")
+			return image
+		} catch (e: Throwable) {
+			LOG.error("Error while loading image: ${e.message}", e)
+			throw LibraryPersistenceServiceException()
+		}
+	}
+
+	override fun importImage(library: Library, imageId: ImageIdentification, inputPath: String) {
+		val outputPath = buildImageFilePath(library.identification, imageId.uuid, imageId.imageType)
+		FileUtils.copyFile(File(inputPath), File(outputPath))
+	}
+
+	@Suppress("unused") // Used in Akrab
+	fun getImageBytes(library: Library, imageId: ImageIdentification): ByteArray {
+		val path = Paths.get(buildImageFilePath(library.identification, imageId.uuid, imageId.imageType))
+		return Files.readAllBytes(path)
+	}
+
 	/** ---- [AbstractFileLibraryPersistenceService] */
 
 	override fun ensureLibraryDirectory(libraryId: LibraryIdentification) {
@@ -186,7 +219,10 @@ class FileLibraryPersistenceService(
 	override fun buildMetaGraphFilePath(libraryId: LibraryIdentification, metaGraphUuid: UUID): String =
 		FileSystems.getDefault().getPath(getBaseName(), libraryId.uuid.toString(), "$metaGraphUuid.$metaGraphFileExtension").toString()
 
-	private fun buildLibraryFilePath(libraryId: LibraryIdentification): String =
+	override fun buildImageFilePath(libraryId: LibraryIdentification, imageUuid: UUID, imageType: ImageType): String =
+		FileSystems.getDefault().getPath(getBaseName(), libraryId.uuid.toString(), "$imageUuid.${imageType.fileExtension}").toString()
+
+	override fun buildLibraryFilePath(libraryId: LibraryIdentification): String =
 		buildLibraryFilePath(getBaseName(), libraryId.uuid.toString())
 
 	private fun buildLibraryFilePath(directoryPath: String, libraryDirName: String): String =

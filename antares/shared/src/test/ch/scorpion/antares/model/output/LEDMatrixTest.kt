@@ -4,7 +4,8 @@ import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.execution.SignalHandler
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -20,7 +21,7 @@ class LEDMatrixTest {
 		}
 	}
 
-	private val signalHandler = mockk<SignalHandler>(relaxed = true)
+	private val signalHandler = mock<SignalHandler>(MockMode.autofill)
 
 	@Test
 	fun shouldBuffer1x1() {

@@ -1,8 +1,8 @@
 package ch.scorpion.antares.view.output
 
 import ch.scorpion.antares.model.output.LED
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
@@ -26,7 +26,9 @@ import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.Labeled
 import ch.scorpion.jabbah.edit.select.AbstractSelectionModel
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.ControlViewSourceProperty
@@ -66,6 +68,7 @@ abstract class AbstractLEDView<T: Vertice>(
 
 	var size: Size by ControlViewSourceProperty(DEFAULT_SIZE, eventBus, ::updateGeometry)
 
+	@Suppress("MemberVisibilityCanBePrivate") // Reflection
 	var hasBorder: Boolean by ControlViewSourceProperty(DEFAULT_HAS_BORDER, eventBus)
 
 	private val widthOfSize: Int get() = when (size) {
@@ -152,8 +155,8 @@ abstract class AbstractLEDView<T: Vertice>(
 		}
 	}
 
-	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: T) {
-		this.model = model
+	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
+		this.model = link.getLinkedVertice(startGraph) as T
 	}
 
 	override fun writeModelProperties(writer: StoreWriter) {
@@ -190,10 +193,10 @@ abstract class AbstractLEDView<T: Vertice>(
 
 	/** ---- [AbstractDrawable] */
 
-	override val boundingBox: Rectangle2D
+	override val boundingBox: RectangularShape
 		get() {
 			val bb = Rectangle2D(super.boundingBox)
-			val lbb = horizontalLabel.boundingBox.moveBy(location)
+			val lbb = Rectangle2D(horizontalLabel.boundingBox).moveBy(location)
 			bb.add(lbb)
 			return bb
 		}
@@ -243,16 +246,22 @@ abstract class AbstractLEDView<T: Vertice>(
 
 	/** ---- [AbstractLEDView] */
 
-	/** Returns the [Color] to be used for drawing the bulb of this [LED].*/
-	protected abstract fun getBulbColor(): Color
+	/** Returns the [Color] to be used for drawing the bulb of this [LED] when executing.*/
+	protected abstract fun getBulbExecuteColor(): Color
 
-	/** Draws the bulb in the color returned by [getBulbColor].*/
-	protected open fun drawBulb(context: DrawContext) {
+	protected open fun getBulbEditColor(): Color = backgroundColor
+
+	/** Draws the bulb in the color returned by [getBulbExecuteColor].*/
+	private fun drawBulb(context: DrawContext) {
 		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-			drawBulb(context, transparent.applyTo(getBulbColor()))
+			drawBulb(context, transparent.applyTo(getBulbExecuteColor()))
 		} else {
-			drawBulb(context, transparent.applyTo(backgroundColor))
+			drawBulbEdited(context)
 		}
+	}
+
+	protected open fun drawBulbEdited(context: DrawContext) {
+		drawBulb(context, getBulbEditColor())
 	}
 
 	/** Draws the bulb using the specified [Color].*/
@@ -317,9 +326,7 @@ class LEDViewSelectionModel(c: AbstractLEDView<*>) : AbstractSelectionModel<Abst
 
 	override val boundingBox: RectangularShape get() = component.boundingBox
 
-	override fun contains(x: Double, y: Double): Boolean {
-		return component.contains(x, y)
-	}
+	override fun contains(x: Double, y: Double): Boolean = component.contains(x, y)
 
 	override fun componentUpdated() {
 		validate()

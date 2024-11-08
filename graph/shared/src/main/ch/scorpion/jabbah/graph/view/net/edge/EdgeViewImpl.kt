@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.Locatable
@@ -39,6 +40,7 @@ import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType.DESTINATION
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType.ORIGIN
 import ch.scorpion.jabbah.graph.view.net.netview.AbstractNetViewElement
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
+import ch.scorpion.jabbah.graph.view.net.netview.NetViewTraversal
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.io.*
 import kotlin.math.min
@@ -93,7 +95,8 @@ open class EdgeViewImpl<T : Any>(
 	protected var styling: EdgeViewStyling = NetViewStyle.LINE.createEdgeViewStyling(styleProvider, this)
 		private set
 
-	private val tooltip = resettableLazy { createTooltip() }
+	/** The tooltip displayed when not in execution mode.*/
+	private val nonExecutionTooltip = resettableLazy { createNonExecutionTooltip() }
 
 	init {
 		modelExchanged(null)
@@ -103,8 +106,7 @@ open class EdgeViewImpl<T : Any>(
 	/** ---- [Any] */
 
 	override fun toString(): String {
-		return "${super.toString()} origin=${origin?.connectableView?.id
-			?: "null"} dest=${destination?.connectableView?.id ?: "null"}"
+		return "EdgeView id=$id origin=${origin?.connectableView?.id ?: "null"} dest=${destination?.connectableView?.id ?: "null"}"
 	}
 
 	/** ---- [Cloneable] interface */
@@ -269,6 +271,15 @@ open class EdgeViewImpl<T : Any>(
 			origin
 		} else if (destination?.connectableView === connectableView) {
 			destination
+		} else {
+			null
+		}
+
+	override fun getOppositeConnection(connectableView: ConnectableView): Connection<T>? =
+		if (origin?.connectableView == connectableView) {
+			destination
+		} else if (destination?.connectableView === connectableView) {
+			origin
 		} else {
 			null
 		}
@@ -689,13 +700,18 @@ open class EdgeViewImpl<T : Any>(
 
 	/** ---- [Drawable] interface */
 
-	override val boundingBox: Rectangle2D get() = styling.boundingBox
+	override val boundingBox: RectangularShape get() = styling.boundingBox
 
 	override fun contains(x: Double, y: Double): Boolean {
 		return polyline.findSegment(x, y) != null
 	}
 
-	override fun getTooltip(x: Double, y: Double): Tooltip? = tooltip.value?.also { it.sourceRect = Rectangle2D.pointLike(Point2D(x, y)) }
+	override fun getTooltip(x: Double, y: Double, editable: Boolean): Tooltip? =
+		if (editable) {
+			nonExecutionTooltip.value?.also { it.sourceRect = Rectangle2D.pointLike(Point2D(x, y)) }
+		} else {
+			null
+		}
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		return visitor.visit(this)
@@ -710,11 +726,29 @@ open class EdgeViewImpl<T : Any>(
 
 	/** ---- [NetViewElement] interface */
 
-	override val connectedPorts: Set<Port<T>> get() {
-		if (origin?.port == null || destination?.port == null) {
-			return emptySet()
+	override fun traverse(traversal: NetViewTraversal<T>) {
+		if (traversal.edgeViews.contains(this)) {
+			return
 		}
-		return setOf(origin!!.port!!, destination!!.port!!)
+		traversal.edgeViews.add(this)
+
+		if (origin?.connectableView is NodeView<*>) {
+			(origin!!.connectableView as NodeView<T>).traverse(traversal)
+		} else if (origin?.port != null) {
+			traversal.ports.add(origin!!.port!!)
+		}
+
+		if (destination?.connectableView is NodeView<*>) {
+			(destination!!.connectableView as NodeView<T>).traverse(traversal)
+		} else if (destination?.port != null) {
+			traversal.ports.add(destination!!.port!!)
+		}
+	}
+
+	override fun isConnectedWithAnyPort(ports: Set<Port<T>>): Boolean {
+		val traversal = NetViewTraversal<T>()
+		traverse(traversal)
+		return ports.intersect(traversal.ports).isNotEmpty()
 	}
 
 	override fun handleNetViewStyleChanged() {
@@ -872,7 +906,7 @@ open class EdgeViewImpl<T : Any>(
 		}
 		super.handleStateChanged(event)
 		if (event.signalHandler != null) {
-			tooltip.reset()
+			nonExecutionTooltip.reset()
 		}
 	}
 
@@ -910,7 +944,7 @@ open class EdgeViewImpl<T : Any>(
 	private fun checkDestinationSegmentLength(): Boolean =
 		destination?.port == null || polyline.getSegmentLength(polyline.pointsCount - 2) >= destination!!.portView!!.minSegmentLength
 
-	private fun createTooltip(): Tooltip? {
+	private fun createNonExecutionTooltip(): Tooltip? {
 		if (model.designError != null) {
 			return Tooltip(model.designError!!.description, Rectangle2D.ZERO)
 		}

@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.app
 
 import ch.scorpion.jabbah.app.SaveUnchangedDataDecision.*
 import ch.scorpion.jabbah.app.action.SaveFileAction
+import ch.scorpion.jabbah.base.Disposable
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.PropertyOwner
@@ -105,6 +106,12 @@ open class ApplicationDataViewController(
 		data!!.content = state
 	}
 
+	override fun undoableStateEstablished(state: Storable) {
+		data?.let {
+			eventBus.post(ApplicationDataContentEstablishedEvent(it))
+		}
+	}
+
 	/** ---- [ApplicationDataHolder] interface */
 
 	override var data: ApplicationData? = null
@@ -114,6 +121,9 @@ open class ApplicationDataViewController(
 			commandManager.reset()
 			eventBus.post(ApplicationDataEvent(oldField, field))
 			eventBus.post(CurrentSavableEvent(field?.savable))
+
+			// Don't dispose oldField. It is unclear how current application keep cached version
+			// of the former content, which would be destroyed by disposing it.
 
 			if (value != null && value.savable.supportsMostRecent && value.savable.defined) {
 				mostRecentSavables.register(value.savable)
@@ -209,7 +219,7 @@ open class ApplicationDataViewController(
 		data?.let {
 			LOG.info("Save application data")
 			if (it.savable.save(this)) {
-				commandManager.reset()
+				// Resetting CommandManager not necessary, already done in setData as a consequence of Savable.save
 				eventBus.post(CurrentSavableEvent(it.savable))
 				Toast.show(Translations.getString("application.data.saved.msg", it.savable.typeName))
 			}

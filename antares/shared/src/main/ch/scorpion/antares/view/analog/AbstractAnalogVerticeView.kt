@@ -1,14 +1,10 @@
 package ch.scorpion.antares.view.analog
 
 import ch.scorpion.antares.model.analog.AbstractAnalogVertice
-import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.analog.engine.AnalogElement
 import ch.scorpion.antares.view.analog.engine.AnalogElementProxy
-import ch.scorpion.jabbah.base.geom.Direction
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.geom.Rotation
+import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -44,10 +40,10 @@ abstract class AbstractAnalogVerticeView<T: AbstractAnalogVertice<*>>(
 
 	/** ---- [AbstractDrawable] */
 
-	override val boundingBox: Rectangle2D
+	override val boundingBox: RectangularShape
 		get() {
 			val bb = Rectangle2D(super.boundingBox)
-			val lbb = mainPropertyLabel.boundingBox.moveBy(location)
+			val lbb = Rectangle2D(mainPropertyLabel.boundingBox).moveBy(location)
 			bb.add(lbb)
 			return bb
 		}
@@ -99,7 +95,11 @@ abstract class AbstractAnalogVerticeView<T: AbstractAnalogVertice<*>>(
 			updateLabel()
 		} else if (event.reason == AbstractAnalogVertice.REQUEST_RECALCULATE) {
 			if (event.signalHandler != null && parent is AnalogGraphView) {
-				(parent as AnalogGraphView).recalculate(event.signalHandler!!)
+				(parent as AnalogGraphView).recalculate(event.signalHandler!!, false)
+			}
+		} else if (event.reason == AbstractAnalogVertice.REQUEST_REANALYZE) {
+			if (event.signalHandler != null && parent is AnalogGraphView) {
+				(parent as AnalogGraphView).recalculate(event.signalHandler!!, true)
 			}
 		}
 	}

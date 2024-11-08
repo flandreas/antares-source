@@ -17,8 +17,20 @@ private const val ROUND_PRECISION = 1000.0
  * method produces a [String] representation of a [Double] with 3 decimal places.
  * This can be used for serializing [Double]s to persistent representations.
  */
-fun Double.formatRounded(): String =
-	((this * ROUND_PRECISION).roundToInt() / ROUND_PRECISION).toString()
+fun Double.formatRounded(precision: Double = ROUND_PRECISION): String =
+	((this * precision).roundToInt() / precision).toDoubleString()
+
+/**
+ * Returns a [String] representation of a [Double] with guaranteed decimal point.
+ * On JS platform, 100.0.toString() returns "100" and not "100.0", hence this method.
+ */
+fun Double.toDoubleString(): String {
+	val s = toString()
+	if (!s.contains(".")) {
+		return "$s.0"
+	}
+	return s
+}
 
 fun Double.near(value: Double, tolerance: Double): Boolean = abs(this - value) <= tolerance
 

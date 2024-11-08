@@ -130,19 +130,17 @@ enum class TransistorViewSymbol(
 
 				(getPortView(model.drainPort) as AbstractAntaresPortView<*>).prepareConnectionDrawContext(context)
 
-				context.g.translate(dx, 0.0)
+				context.translated(dx, 0.0) {
+					// arrow
+					drawBulkArrow(view, it)
 
-				// arrow
-				drawBulkArrow(view, context)
-
-				// bar
-				context.g.stroke = BAR_STROKE
-				context.g.drawLine(
-					signalLineX, -2.5 * SCALE,
-					signalLineX, -1.5 * SCALE
-				)
-
-				context.g.translate(-dx, 0.0)
+					// bar
+					it.g.stroke = BAR_STROKE
+					it.g.drawLine(
+						signalLineX, -2.5 * SCALE,
+						signalLineX, -1.5 * SCALE
+					)
+				}
 			}
 		}
 
@@ -233,20 +231,12 @@ enum class TransistorViewSymbol(
 					// Bar
 					drawLine(signalLineX, -4.0 * SCALE, signalLineX, -2.0 * SCALE)
 					when (view.transistorType) {
-						P -> {
-							translate(signalLineX, -3.5 * SCALE)
-							fill(pArrowPath)
-							translate(-signalLineX, 3.5 * SCALE)
-						}
-						N -> {
-							translate(signalPortX, -3.5 * SCALE)
-							fill(nArrowPath)
-							translate(-signalPortX, 3.5 * SCALE)
-						}
+						P -> context.translated(signalLineX, -3.5 * SCALE) { fill(pArrowPath) }
+						N -> context.translated(signalPortX, -3.5 * SCALE) { fill(nArrowPath) }
 					}
 				} else {
 					// Bar
-					if (view.drawOnOff && context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+					if (view.drawOnOff && context.castedAppContext<GraphApplicationContext>()!!.isExecute && !view.model.isOn) {
 						drawLine(signalLineX, -4.0 * SCALE, signalLineX, -3.5 * SCALE)
 						drawLine(signalLineX, -3.5 * SCALE, signalLineX + view.switchOffDisplacement, -2.0 * SCALE)
 
@@ -270,20 +260,12 @@ enum class TransistorViewSymbol(
 					// Bar
 					drawLine(signalLineX, 0.0, signalLineX, -2.0 * SCALE)
 					when (view.transistorType) {
-						P -> {
-							translate(signalLineX, -0.5 * SCALE)
-							fill(pArrowPath)
-							translate(-signalLineX, 0.5 * SCALE)
-						}
-						N -> {
-							translate(signalPortX, -0.5 * SCALE)
-							fill(nArrowPath)
-							translate(-signalPortX, 0.5 * SCALE)
-						}
+						P -> context.translated(signalLineX, -0.5 * SCALE) { fill(pArrowPath) }
+						N -> context.translated(signalPortX, -0.5 * SCALE) { fill(nArrowPath) }
 					}
 				} else {
 					// Bar
-					if (view.drawOnOff && context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+					if (view.drawOnOff && context.castedAppContext<GraphApplicationContext>()!!.isExecute && !view.model.isOn) {
 						drawLine(signalLineX, 0.0, signalLineX, -0.5 * SCALE)
 						drawLine(signalLineX, -0.5 * SCALE, signalLineX + view.switchOffDisplacement, -2.0 * SCALE)
 					} else {

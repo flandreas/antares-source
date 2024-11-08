@@ -8,7 +8,8 @@ import ch.scorpion.antares.model.signal.DigitalSignalFactory.allOf
 import ch.scorpion.antares.model.signal.DigitalSignalFactory.of
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.view.GraphView
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -22,8 +23,8 @@ class DipSwitchTest {
 		}
 	}
 
-	private val signalHandler: SignalHandler = mockk(relaxed = true)
-	private val graphView = mockk<GraphView>(relaxed = true)
+	private val signalHandler: SignalHandler = mock(MockMode.autofill)
+	private val graphView = mock<GraphView>(MockMode.autofill)
 
 	@Test
 	fun shouldDelayChangeInSetBit() {

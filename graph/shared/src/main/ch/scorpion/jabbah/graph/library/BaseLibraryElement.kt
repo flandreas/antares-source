@@ -28,9 +28,12 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 class BaseLibraryElement(
 	graphType: GraphType = GenericGraphType,
-	private var id: String = "",
+	id: String = "",
 	private val repository: BaseLibraryElementRepository = LibraryModule.baseLibraryElementRepository
 ) : LibraryElement(), HelpIdProvider {
+
+	var id: String = id
+		private set
 
 	/** ---- [HelpIdProvider] */
 

@@ -4,10 +4,12 @@ import ch.scorpion.jabbah.draw.DrawableContainer
 import ch.scorpion.jabbah.draw.ZoomPan
 import ch.scorpion.jabbah.draw.drawable.Unzoomable
 
+interface UnzoomableContainerIF<T : Unzoomable> : DrawableContainer<T>, Unzoomable
+
 /**
  * Implementation of a [DrawableContainer] that contains [Unzoomable]s.
  */
-class UnzoomableContainer<T : Unzoomable> : DrawableContainerImpl<T>(), Unzoomable {
+class UnzoomableContainer<T : Unzoomable> : DrawableContainerImpl<T>(), UnzoomableContainerIF<T> {
 
     override var zoomPan: ZoomPan? = null
         set(value) {

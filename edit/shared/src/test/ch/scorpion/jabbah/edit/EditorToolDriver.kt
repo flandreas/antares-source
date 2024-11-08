@@ -40,6 +40,14 @@ class EditorToolDriver(
 		return this
 	}
 
+	fun pressAndDragTo(x1: Int, y1: Int, x2: Int, y2: Int, modifiers: Int = 0): EditorToolDriver {
+		mouseMoveTo(x1, y1, modifiers)
+		pressMouseAt(x1, y1, modifiers)
+		dragMouseTo(x2, y2)
+		releaseMouseAt(x2, y2)
+		return this
+	}
+
 	private fun event(type: MouseEventType, x: Int, y: Int, modifiers: Int = 0): MouseEvent =
 		MouseEventImpl(type, x, y, button = Button.BUTTON1, modifiers = modifiers)
 

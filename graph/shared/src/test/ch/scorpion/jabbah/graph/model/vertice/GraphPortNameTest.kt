@@ -5,8 +5,9 @@ import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphModelTestRule
 import ch.scorpion.jabbah.graph.model.GraphPort
 import ch.scorpion.jabbah.graph.model.vertice.GraphPortName.createPastedName
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -49,9 +50,9 @@ class GraphPortNameTest {
 	}
 
 	private fun graph(vararg names: String): Graph {
-		val graph = mockk<Graph>()
+		val graph = mock<Graph>()
 		val graphPorts = names
-			.map { name -> mockk<GraphPort<*>>().also { every { it.name } returns name } }
+			.map { name -> mock<GraphPort<*>>().also { every { it.name } returns name } }
 			.toImmutableList()
 		every { graph.graphPorts } returns graphPorts
 		return graph

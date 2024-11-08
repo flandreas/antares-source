@@ -10,12 +10,14 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
 object GraphModule : AbstractModule() {
 
+	private val DUMMY_APP_CONTEXT = GraphApplicationContext(CurrentSystemSpeedCategory(SystemSpeed()))
+
 	override fun initialize() {
 		GraphViewModule.require()
 
 		DrawModule.drawContextFactory = { g, mc, appContext ->
 			if (appContext == null) {
-				DrawContext(g, mc, GraphApplicationContext(CurrentSystemSpeedCategory(SystemSpeed())))
+				DrawContext(g, mc, DUMMY_APP_CONTEXT)
 			} else {
 				DrawContext(g, mc, appContext)
 			}

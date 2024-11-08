@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.drawable.RotationDirection
+import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.model.text.LabelComponent
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
@@ -19,9 +20,12 @@ import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.io.StorableCloner
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import dev.mokkery.MockMode
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.matcher.any
+import dev.mokkery.mock
+import dev.mokkery.verify
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -37,13 +41,12 @@ class SubGraphVerticeViewImplTest {
 	@BeforeTest
 	fun setup() {
 		LibraryModule.userLibraryPersistenceService = MemoryLibraryPersistenceService()
-		LibraryModule.libraryService = LibraryService()
 		LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"))
 	}
 
 	@Test
 	fun shouldFindRotatedControlView() {
-		val handler = mockk<ActorInteractionHandler>(relaxed = true)
+		val handler = mock<ActorInteractionHandler>(MockMode.autofill)
 		val controlView = TestControlVerticeView(rectangle = Rectangle2D(0, 0, 100, 100))
 
 		val containerDrawing = ContainerDrawing()
@@ -87,14 +90,14 @@ class SubGraphVerticeViewImplTest {
 	}
 
 	private fun contextFor(x: Double, y: Double, clickCount: Int = 0): ActorInteractionContext {
-		val mouseEvent = mockk<MouseEvent>()
+		val mouseEvent = mock<MouseEvent>()
 		every { mouseEvent.clickCount } returns clickCount
 		every { mouseEvent.button} returns Button.BUTTON1
 		return ActorInteractionContext(
-			signalHandler = mockk(),
-			view = mockk(),
+			signalHandler = mock(),
+			view = DrawingViewMockBuilder().withDrawing(GraphViewBuilder<Boolean>().build()).build<Component>(),
 			mouseEvent = mouseEvent,
-			keyEvent = mockk(),
+			keyEvent = mock(),
 			x = x,
 			y = y
 		)

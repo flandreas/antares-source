@@ -17,6 +17,9 @@ import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.model.nonvolatile.NonVolatileDeterminator
+import ch.scorpion.jabbah.graph.model.nonvolatile.NonVolatileStorable
 import ch.scorpion.jabbah.graph.ui.GraphViewDisplayHandler
 import ch.scorpion.jabbah.graph.ui.GraphViewExecutionHandler
 import ch.scorpion.jabbah.graph.ui.GraphViewUI
@@ -116,9 +119,11 @@ class GraphViewExecutionController(
 					graphViewsProvider.invoke().forEach {
 						it.bind(event.scheduler.isDeepExecution)
 					}
-					formNet(event.scheduler)
-					executionInitialize(event.scheduler)
-					executionStart(event.scheduler, null)
+					if (isRoot) {
+						formNet(event.scheduler)
+						executionInitialize(event.scheduler, GraphModelModule.nonVolatileService.load(uuid))
+						executionStart(event.scheduler, null)
+					}
 					graphViewsProvider.invoke().forEach {
 						it.executionStart(event.scheduler)
 					}
@@ -126,7 +131,17 @@ class GraphViewExecutionController(
 					graphViewsProvider.invoke().forEach {
 						it.executionStop(event.scheduler)
 					}
-					executionStopped(event.scheduler)
+					if (isRoot && NonVolatileDeterminator().hasNonVolatileData(this)) {
+						val nonVolatileStorable = NonVolatileStorable()
+						executionStopped(event.scheduler, nonVolatileStorable)
+						if (nonVolatileStorable.hasChildren) {
+							GraphModelModule.nonVolatileService.store(uuid, nonVolatileStorable)
+						} else {
+							GraphModelModule.nonVolatileService.delete(uuid)
+						}
+					} else {
+						executionStopped(event.scheduler)
+					}
 				}
 			}
 		}

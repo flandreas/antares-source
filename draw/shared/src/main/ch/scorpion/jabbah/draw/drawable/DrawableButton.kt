@@ -44,7 +44,7 @@ open class DrawableButton<C: InputEventContext>(
 		private val LOG by logger(DrawableButton::class)
 		private const val CORNER_ARC = 6.0
 
-		private fun createShape(location: Point2D, dimension: Dimension2D, round: Boolean): RectangularShape {
+		private fun createShape(location: Point2D, dimension: Dimension2D, round: Boolean): MutableRectangularShape {
 			return if (round) {
 				RoundRectangle2D(location, dimension, CORNER_ARC)
 			} else {
@@ -84,7 +84,7 @@ open class DrawableButton<C: InputEventContext>(
 	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> =
 		handler as InputEventHandler<T>
 
-	override fun getTooltip(x: Double, y: Double): Tooltip? =
+	override fun getTooltip(x: Double, y: Double, editable: Boolean): Tooltip? =
 		tooltipKey?.let {
 			Tooltip(Translations.getString(it), Rectangle2D.pointLike(toAbsoluteLocation(Point2D(x, y))))
 		}

@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphExecutionContext
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.graph.GraphImpl
+import ch.scorpion.jabbah.graph.model.nonvolatile.NonVolatileStorable
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -42,8 +43,8 @@ class DigitalGraph(
 		super.formNet(signalHandler)
 	}
 
-	override fun executionStopped(signalHandler: SignalHandler) {
-		super.executionStopped(signalHandler)
+	override fun executionStopped(signalHandler: SignalHandler, nonVolatileData: NonVolatileStorable?) {
+		super.executionStopped(signalHandler, nonVolatileData)
 		destroyLocalTunnelNets()
 		destroyGlobalTunnelNets(signalHandler)
 	}

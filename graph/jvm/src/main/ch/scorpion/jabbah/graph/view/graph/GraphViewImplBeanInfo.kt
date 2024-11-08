@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.properties.AbstractBeanInfo
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
+import ch.scorpion.jabbah.graph.model.semantic.GraphSemantic
 import ch.scorpion.jabbah.graph.view.GraphProperties
 import com.l2fprod.common.propertysheet.Property
 
@@ -15,7 +16,7 @@ open class GraphViewImplBeanInfo<in T: GraphViewImpl> : AbstractBeanInfo<T>() {
     companion object {
 	    private val type = CommandPropertySwing("type.typeName", "graph.property.type", String::class.java, drawingBeanProvider)
 	    private val name = CommandPropertySwing("translatableName", "graph.property.GraphViewImpl", TranslatableText::class.java, drawingBeanProvider)
-	    private val propDelay = GraphProperties.propagationDelay("overallPropagationDelay", drawingBeanProvider)
+	    private val propDelay = GraphProperties.overallPropagationDelay("overallPropagationDelay", drawingBeanProvider)
 	    private val startupTime = GraphProperties.startupTime(drawingBeanProvider)
 		private val description = CommandPropertySwing("description", "graph.property.GraphViewImpl.shortDescription", TranslatableText::class.java, drawingBeanProvider)
 	    private val purelyScripted = GraphProperties.purelyScripted(drawingBeanProvider)
@@ -29,9 +30,14 @@ open class GraphViewImplBeanInfo<in T: GraphViewImpl> : AbstractBeanInfo<T>() {
 		    drawingBeanProvider, bean.graph!!::createParser, GraphViewImpl.SCRIPT_HELP_ID)
 	    val ids = listOf<String>()
 
+
 	    properties.add(type.bind(editor, ids, editable = false))
 	    properties.add(name.bind(editor, ids, filter = { false }))
-	    properties.add(propDelay.bind(editor, ids))
+
+		if (bean.graph?.parameterDefinitions?.hasAnyWithSemantic(GraphSemantic.PropagationDelay) != true) {
+			properties.add(propDelay.bind(editor, ids))
+		}
+
 	    properties.add(startupTime.bind(editor, ids, optional = true))
 	    properties.add(description.bind(editor, ids, filter = { true }))
 	    properties.add(script.bind(editor, ids))

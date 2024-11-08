@@ -2,8 +2,8 @@ package ch.scorpion.antares.view.output
 
 import ch.scorpion.antares.model.output.LEDMatrix
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.event.EventBus
@@ -22,8 +22,12 @@ import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.edit.select.AbstractSelectionModel
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
+import ch.scorpion.jabbah.graph.view.ControlViewSourceGeometryProperty
+import ch.scorpion.jabbah.graph.view.ControlViewSourceProperty
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -51,32 +55,16 @@ class LEDMatrixView(
 		private const val DOT_SIZE = Look.SCALE
 	}
 
-	override var lightColor: LightColor = lightColor
-		set(value) {
-			invalidate()
-			field = value
-			postControlViewSourceChangeEvent(eventBus)
-		}
+	override var lightColor: LightColor by ControlViewSourceProperty(lightColor)
 
-	var size: Size = DEFAULT_SIZE
-		set(value) {
-			if (value != field) {
-				field = value
-				updateGeometry()
-				postControlViewSourceChangeEvent(eventBus)
-			}
-		}
+	var size: Size by ControlViewSourceGeometryProperty(DEFAULT_SIZE, eventBus, ::updateGeometry)
 
-	/** `true` if the dots are drawn as circles, `false` if the are drawn as squares .*/
-	var isCircleDots: Boolean = true
-		set(value) {
-			if (field != value) {
-				field = value
-				postControlViewSourceChangeEvent(eventBus)
-			}
-		}
+	/** `true` if the dots are drawn as circles, `false` if they are drawn as squares .*/
+	@Suppress("MemberVisibilityCanBePrivate") // Reflection
+	var isCircleDots: Boolean by ControlViewSourceProperty(true)
 
 	/** `true` if the dots additionally show whether the corresponding port bits are set to 1.*/
+	@Suppress("MemberVisibilityCanBePrivate") // Reflection
 	var isDebug: Boolean = false
 
 	private val factor: Double
@@ -94,6 +82,7 @@ class LEDMatrixView(
 
 	/** ---- UI controllable properties */
 
+	@Suppress("MemberVisibilityCanBePrivate") // Reflection
 	var columnWidth: BitWidth
 		get() = model.columnWidth
 		set(value) {
@@ -104,6 +93,7 @@ class LEDMatrixView(
 			}
 		}
 
+	@Suppress("MemberVisibilityCanBePrivate") // Reflection
 	var rowWidth: BitWidth
 		get() = model.rowWidth
 		set(value) {
@@ -114,6 +104,7 @@ class LEDMatrixView(
 			}
 		}
 
+	@Suppress("MemberVisibilityCanBePrivate") // Reflection
 	var afterglowDuration: Long
 		get() = model.afterglowDuration
 		set(value) {
@@ -131,8 +122,8 @@ class LEDMatrixView(
 	override val controlId: String
 		get() = "ledMatrix:${model.id}"
 
-	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: LEDMatrix) {
-		this.model = model
+	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
+		this.model = link.getLinkedVertice(startGraph) as LEDMatrix
 	}
 
 	override fun sourcePropertiesChanged(source: ControlViewSource<LEDMatrix>) {
@@ -271,11 +262,7 @@ class LEDMatrixView(
 			var y = height - inset - DOT_SIZE * factor
 			for (row in 0 until model.rowWidth.width) {
 				context.g.color = if (isExecute) {
-					if (model.isOn(column, row)) {
-						lightColor.onColor
-					} else {
-						lightColor.offColor
-					}
+					lightColor.executeColor(model.isOn(column, row))
 				} else {
 					foregroundColor
 				}

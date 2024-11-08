@@ -1,10 +1,11 @@
 package ch.scorpion.jabbah.graph.view.oscilloscope
 
+import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.container.DrawableContainerImpl
 import ch.scorpion.jabbah.draw.drawable.DrawableButton
 import ch.scorpion.jabbah.draw.drawable.IconDrawableButtonRenderer
 import ch.scorpion.jabbah.draw.graphics.Color
@@ -12,7 +13,10 @@ import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.ReferenceColor
 import ch.scorpion.jabbah.draw.graphics.RemoveIcon
 import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.EditInputEventContext
+import ch.scorpion.jabbah.execution.actor.ActorViewContainer
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.app.oscilloscope.OscilloscopeViewService
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView.Companion.DRAWER_X
 
@@ -31,7 +35,7 @@ class OscilloscopeSignalRowView(
 	private val service: OscilloscopeViewService,
 	private val drawer: SignalHistoryDrawer<Any>,
 	val yAxis: SignalHistoryYAxis<*>?
-) : DrawableContainerImpl<Drawable>(location = initLocation, useLocation = true) {
+) : ActorViewContainer<Drawable>(location = initLocation, useLocation = true) {
 
 	companion object {
 		private val NON_INDIVIDUAL_SIGNAL_COLOR = CompositeColor(Color.LIGHT_GRAY, Color.DARK_GRAY)
@@ -100,5 +104,18 @@ class OscilloscopeSignalRowView(
 
 	fun unbindDrawer() {
 		drawer.bind(null, null, null, color.onDark)
+	}
+
+	private var tooltipLocation = Rectangle2D()
+
+	override fun getExecutionTooltip(x: Double, y: Double): Tooltip {
+		val time = oscilloscopeView.scaleRowView.timelineView.getTime(x)
+		val entry = oscilloscopeView.model.getSignalHistory(name)!!.getEntryAt(time.absoluteTime)
+
+		val absMouse = toAbsoluteLocation(x, y)
+		tooltipLocation.x = absMouse.x
+		tooltipLocation.y = absMouse.y
+
+		return Tooltip("${time.relativeTime} ns: ${entry?.signal ?: "?"}", tooltipLocation)
 	}
 }

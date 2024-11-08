@@ -47,7 +47,7 @@ open class UsecaseActionExternalFunctions(
 		}
 	}
 
-	private fun setInputAtImpl(params: List<Any>): Any {
+	private fun setInputAtImpl(params: List<Any>, @Suppress("UNUSED_PARAMETER") context: Any? = null): Any {
 		setInputAt(
 			longParam(0, params),
 			stringParam(1, params),
@@ -70,7 +70,7 @@ open class UsecaseActionExternalFunctions(
 		}
 	}
 
-	private fun pauseAtImpl(params: List<Any>): Any {
+	private fun pauseAtImpl(params: List<Any>, @Suppress("UNUSED_PARAMETER") context: Any? = null): Any {
 		pauseAt(longParam(0, params))
 		return 0
 	}
@@ -87,7 +87,7 @@ open class UsecaseActionExternalFunctions(
 		runner.executeAt(time) { runner.scheduler.isSingleStepMode = true }
 	}
 
-	private fun clickMouseAtImpl(params: List<Any>): Any {
+	private fun clickMouseAtImpl(params: List<Any>, @Suppress("UNUSED_PARAMETER") context: Any? = null): Any {
 		clickMouseAt(
 			longParam(0, params),
 			longParam(1, params).toInt(),
@@ -110,7 +110,7 @@ open class UsecaseActionExternalFunctions(
 		runner.executeAt(time + delay) { runner.releaseMouseAt(x, y) }
 	}
 
-	private fun clickKeyAtImpl(params: List<Any>): Any {
+	private fun clickKeyAtImpl(params: List<Any>, @Suppress("UNUSED_PARAMETER") context: Any? = null): Any {
 		clickKeyAt(
 			longParam(0, params),
 			longParam(1, params).toInt(),

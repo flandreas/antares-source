@@ -12,10 +12,14 @@ class LibraryServiceTest {
 		}
 	}
 
-	private val libraryPersistenceService = MemoryLibraryPersistenceService()
-	private val service: LibraryService = LibraryService(userLibraryPersister = libraryPersistenceService)
-	private val libraryBuilder = LibraryBuilder(name = "Library", libraryService = service)
+	private val libraryBuilder: LibraryBuilder
 	private val library: Library get() = libraryBuilder.library
+	private val service: LibraryService get() = LibraryModule.libraryService
+
+	init {
+		LibraryModule.userLibraryPersistenceService = MemoryLibraryPersistenceService()
+		libraryBuilder = LibraryBuilder(name = "Library")
+	}
 
 	@Test
 	fun shouldAddFolderToRoot() {

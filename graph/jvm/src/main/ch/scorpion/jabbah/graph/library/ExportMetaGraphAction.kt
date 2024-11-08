@@ -41,7 +41,7 @@ class ExportMetaGraphAction(
 		if (fileChooser.showSaveDialog(Frame.getFrames()[0]) == JFileChooser.APPROVE_OPTION) {
 			LOG.userTrail("Export '${metaGraph.name} as bundle")
 			val path = fileChooser.selectedFile.absolutePath
-			service.exportMetaGraphBundle(element, path)
+			service.exportMetaGraphBundle(element, LibraryModule.libraryHolder, path)
 			JOptionPane.showConfirmDialog(
 				Frame.getFrames()[0],
 				Translations.getString("library.action.exportMetaGraph.success.msg", metaGraph.name, path),

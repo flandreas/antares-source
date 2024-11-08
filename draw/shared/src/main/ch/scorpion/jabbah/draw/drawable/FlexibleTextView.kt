@@ -26,7 +26,7 @@ class FlexibleTextView(
 	private val direction: Direction,
 	private val width: Int = DEFAULT_WIDTH,
 	private val isUnzoomable: Boolean = true,
-	devicePixelRatio: Int = 1,
+	devicePixelRatio: Double = 1.0,
 	styleType: StyleType = StyleType.FIGURE,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractStyledDrawable(styleType, styleProvider), Transparent, Unzoomable, Locatable {
@@ -43,7 +43,7 @@ class FlexibleTextView(
 		private const val INSET_Y = 10
 	}
 
-	private val factor: Double = if (isUnzoomable) devicePixelRatio.toDouble() else 1.0
+	private val factor: Double = if (isUnzoomable) devicePixelRatio else 1.0
 
 	private val multilineText = if (isUnzoomable) {
 		RichTextDrawable.multiline(text, font.scale(devicePixelRatio), width.toDouble() * devicePixelRatio)
@@ -97,10 +97,9 @@ class FlexibleTextView(
 		context.g.font = font
 		context.g.color = transparent.applyTo(textColor)
 
-		context.g.translate(r.x + INSET_X, r.y + INSET_Y + abs(multilineText.baselineRect.y))
-		multilineText.draw(context)
-		context.g.translate(-(r.x + INSET_X), -(r.y + INSET_Y))
-
+		context.translated(r.x + INSET_X, r.y + INSET_Y + abs(multilineText.baselineRect.y)) {
+			multilineText.draw(it)
+		}
 	}
 
 	override fun contains(x: Double, y: Double): Boolean = shape.contains(x, y)
@@ -161,7 +160,7 @@ class FlexibleTextView(
 
 	/** Transform [shape] to view coordinates using the current [zoomPan]. */
 	private fun getViewRectangle(): Rectangle2D {
-		val anchorView = zoomPan!!.transform.modelToView(location)
+		val anchorView = zoomPan!!.transform.modelToView(location).divide(zoomPan!!.devicePixelRatio())
 		val p = calculateBoxCorner(anchorView, factor)
 		return Rectangle2D(p.x, p.y, shape.width * factor, shape.height)
 	}

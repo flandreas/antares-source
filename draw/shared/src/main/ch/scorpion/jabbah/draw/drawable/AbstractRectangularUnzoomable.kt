@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.ZoomPan
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 
 /**
  * A base class for implementing rectangular [Drawable]s of fixed size that implement the [Unzoomable]
@@ -22,7 +23,7 @@ abstract class AbstractRectangularUnzoomable(
 	var location: Point2D = location
 		set(value) {
 			invalidate()
-			field = Point2D(value)
+			field = value
 			invalidate()
 			update()
 		}
@@ -47,7 +48,7 @@ abstract class AbstractRectangularUnzoomable(
 	/** Contains the width of the outline. Used for bounding box calculation. */
 	abstract val lineWidth: Double
 
-	override val boundingBox: Rectangle2D
+	override val boundingBox: RectangularShape
 		get() {
 			bboxModel.setFrame(
 				location.x - halfSize / zoomPan!!.zoomFactor - lineWidth,
@@ -67,7 +68,7 @@ abstract class AbstractRectangularUnzoomable(
 
 	/** Returns the rectangle in view coordinate space.*/
 	protected fun getViewRectangle(): Rectangle2D {
-		val p = zoomPan!!.transform.modelToView(location)
+		val p = zoomPan!!.transform.modelToView(location).divide(zoomPan!!.devicePixelRatio())
 		return Rectangle2D(p.x - halfSize, p.y - halfSize, 2 * halfSize, 2 * halfSize)
 	}
 }

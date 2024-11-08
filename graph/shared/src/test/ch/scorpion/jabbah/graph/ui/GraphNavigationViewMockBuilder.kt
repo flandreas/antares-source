@@ -1,11 +1,13 @@
 package ch.scorpion.jabbah.graph.ui
 
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.answering.calls
+import dev.mokkery.every
+import dev.mokkery.mock
 
 class GraphNavigationViewMockBuilder(private val controller: GraphNavigationViewController) {
 
-	private val view = mockk<GraphNavigationView>(relaxed = true)
+	private val view = mock<GraphNavigationView>(MockMode.autofill)
 
 	init {
 		controller.view = view
@@ -13,7 +15,7 @@ class GraphNavigationViewMockBuilder(private val controller: GraphNavigationView
 			NavigationStackViewMockBuilder(controller.navigationStackViewController)
 				.build())
 
-		every { view.drawingView } answers { controller.drawingView }
+		every { view.drawingView } calls  { controller.drawingView }
 	}
 
 	fun withNavigationStackView(view: NavigationStackView): GraphNavigationViewMockBuilder {

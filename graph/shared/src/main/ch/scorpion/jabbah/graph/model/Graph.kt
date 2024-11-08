@@ -9,6 +9,8 @@ import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
 import ch.scorpion.jabbah.base.dsl.Symbol
 import ch.scorpion.jabbah.base.dsl.SymbolTable
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.PropertyOwner
+import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.parser.Parser
 import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
@@ -17,9 +19,12 @@ import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
+import ch.scorpion.jabbah.graph.model.nonvolatile.NonVolatileStorable
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
 import ch.scorpion.jabbah.graph.model.param.GraphParamValues
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.io.Storable
 
 interface GraphFactory {
@@ -38,7 +43,16 @@ interface GraphFactory {
  * surrounding [Graph] that uses this [Graph], such as to derive a proper clock design for synchronous
  * applications.
  */
-interface Graph : GraphPortOwner, Namable, Describable, Storable, Bean {
+interface Graph : GraphPortOwner, Namable, Describable, Storable, Bean, PropertyOwner<Any> {
+
+	companion object {
+
+		/** The name of the [PropertyChangeEvent] sent if [name] changes.*/
+		const val PROP_NAME = "name"
+
+		/** The name of the [PropertyChangeEvent] sent if [description] changes.*/
+		const val PROP_DESCRIPTION = "description"
+	}
 
 	val type: GraphType
 
@@ -82,8 +96,8 @@ interface Graph : GraphPortOwner, Namable, Describable, Storable, Bean {
     val graphPorts: ImmutableList<GraphPort<*>>
 
 	/**
-	 * Returns a [SymbolTable] containing the name of all [GraphPort] of this [Graph]
-	 * as variable definitions.
+	 * Returns a [SymbolTable] containing the name of all [GraphPort] and [GraphParamDefinitions]
+	 * of this [Graph] as variable definitions.
 	 */
 	val symbolTable: SymbolTable
 
@@ -138,7 +152,12 @@ interface Graph : GraphPortOwner, Namable, Describable, Storable, Bean {
 	 */
 	fun checkDesign(signalHandler: SignalHandler, eventBus: EventBus): Boolean
 
-	fun executionInitialize(signalHandler: SignalHandler)
+	/**
+	 * Called when execution has been started.
+	 * @param nonVolatileData the [NonVolatileStorable] from which inner [GraphElement]s can
+	 * load non-volatile date stored in previous executions
+	 */
+	fun executionInitialize(signalHandler: SignalHandler, nonVolatileData: NonVolatileStorable? = null)
 
 	/**
 	 * Called by the execution environment after the execution has been started.
@@ -147,7 +166,7 @@ interface Graph : GraphPortOwner, Namable, Describable, Storable, Bean {
     fun executionStart(signalHandler: SignalHandler, graphView: GraphView?)
 
     /** Called by the execution environment after the execution has been stopped.*/
-    fun executionStopped(signalHandler: SignalHandler)
+    fun executionStopped(signalHandler: SignalHandler, nonVolatileData: NonVolatileStorable? = null)
 
     /** Returns the [GraphInput] or the [BidirectionalPort] with the specified name.*/
     fun <T: Any> getGraphInput(name: String): GraphInput<T>?
@@ -162,6 +181,12 @@ interface Graph : GraphPortOwner, Namable, Describable, Storable, Bean {
 	 */
 	fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): Parser
 
+	/**
+	 * Called if the name of a [Graph] in the current [Library] has changed, and this [Graph]
+	 * might update cached information in any of its [SubGraphVerticeRef]s, such as lazily
+	 * calculated tooltips.
+	 */
+	fun handleSubGraphNameChanged(uuid: UUID)
 }
 
 class GraphElementAddedEvent(val graph: Graph, val element: GraphElement)

@@ -15,6 +15,10 @@ import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.*
+import ch.scorpion.jabbah.graph.model.GraphPortCanBeUndefinedChanged
+import ch.scorpion.jabbah.graph.model.GraphPortNameChanged
+import ch.scorpion.jabbah.graph.model.GraphPortTypeChanged
+import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItemCloseQuestion
@@ -53,6 +57,12 @@ class GraphDataViewController(
 	private val libraryImportRemovedHandler: EventHandler<LibraryImportRemovedEvent> = { handle(it) }
 	private val currentWorkspaceHandler: EventHandler<CurrentWorkspaceEvent> = { handle(it) }
 
+	private val graphPortNameHandler: EventHandler<GraphPortNameChanged<*>> = { handle(it) }
+	private val graphPortTypeHandler: EventHandler<GraphPortTypeChanged<*>> = { handle(it) }
+	private val graphPortCanBeUndefinedHandler: EventHandler<GraphPortCanBeUndefinedChanged<*>> = { handle(it) }
+
+	private val metaGraph: MetaGraph? get() = data?.content as MetaGraph?
+
 	init {
 		eventBus.register(OpenLibraryRequest::class, openLibraryRequestHandler)
 		eventBus.register(CloseLibraryRequest::class, closeLibraryRequestHandler)
@@ -63,6 +73,9 @@ class GraphDataViewController(
 		eventBus.register(LibraryImportRemoveQuestion::class, libraryImportRemoveQuestionHandler)
 		eventBus.register(LibraryImportRemovedEvent::class, libraryImportRemovedHandler)
 		eventBus.register(CurrentWorkspaceEvent::class, currentWorkspaceHandler)
+		eventBus.register(GraphPortNameChanged::class, graphPortNameHandler)
+		eventBus.register(GraphPortTypeChanged::class, graphPortTypeHandler)
+		eventBus.register(GraphPortCanBeUndefinedChanged::class, graphPortCanBeUndefinedHandler)
 	}
 
 	override fun dispose() {
@@ -76,6 +89,9 @@ class GraphDataViewController(
 		eventBus.unregister(libraryImportRemoveQuestionHandler)
 		eventBus.unregister(libraryImportRemovedHandler)
 		eventBus.unregister(currentWorkspaceHandler)
+		eventBus.unregister(graphPortNameHandler)
+		eventBus.unregister(graphPortTypeHandler)
+		eventBus.unregister(graphPortCanBeUndefinedHandler)
 	}
 
 	override fun setUndoableState(state: Storable) {
@@ -110,7 +126,12 @@ class GraphDataViewController(
 
 			open {
 				val library = element.library!!
-				library.libraryService.loadMetaGraph(library, element)
+				library.libraryService.loadMetaGraph(library, element, loadAlways = false)
+
+				/**
+				 * Create a copy of the [MetaGraph] as part of the [ApplicationData] that can be safely edited
+				 * without corrupting the instance in the [Library].
+				 */
 				ApplicationData(StorableCloner.clone(element.metaGraph!!), library.createSavable(element), eventBus)
 			}
 		} catch (e: Throwable) {
@@ -180,6 +201,32 @@ class GraphDataViewController(
 		if (!event.isPrepare) {
 			LibraryModule.libraryManagementService.close()
 			Toast.show(Translations.getString("graph.workspace.msg"))
+		}
+	}
+
+	private fun handle(event: GraphPortNameChanged<*>) {
+		if (metaGraph?.graph?.graphView?.graph?.contains(event.graphPort) == true) {
+			metaGraph?.containerDrawing?.getPortViewComponent(event.oldName!!)?.let {
+				it.portView!!.setPortName(event.newName!!)
+			}
+		}
+	}
+
+	private fun handle(event: GraphPortTypeChanged<*>) {
+		if (metaGraph?.graph?.graphView?.graph?.contains(event.graphPort) == true) {
+			metaGraph?.containerDrawing?.getPortViewComponent(event.graphPort.name!!)?.let {
+				it.portView!!.port.portType = event.newPortType
+			}
+		}
+	}
+
+	private fun handle(event: GraphPortCanBeUndefinedChanged<*>) {
+		if (metaGraph?.graph?.graphView?.graph?.contains(event.graphPort) == true) {
+			metaGraph?.containerDrawing?.getPortViewComponent(event.graphPort.name!!)?.let {
+				if (it.portView!!.port is OutputPort) {
+					(it.portView!!.port as OutputPort).customCanBeUndefined = event.value
+				}
+			}
 		}
 	}
 }

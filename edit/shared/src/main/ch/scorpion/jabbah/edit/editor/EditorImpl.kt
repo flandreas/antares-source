@@ -58,6 +58,7 @@ open class EditorImpl(
 	            view.removeMouseMotionListener(mouseEventDelegator)
 	            view.removeKeyListener(keyEventDelegator)
 	            currentTool.deactivate()
+                view.selectionManager.deselectAll()
             }
             view.autoPanningEnabled = active
             changeSupport.fire(Editor.PROP_ACTIVE, oldValue, field)

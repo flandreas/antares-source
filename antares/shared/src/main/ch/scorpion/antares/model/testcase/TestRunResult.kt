@@ -65,6 +65,7 @@ data class TestRunResult(
 }
 
 data class CombinedTestRunResult(
+	val source: DigitalGraph,
 	val testcase: Testcase,
 	val circuitResults: TestRunResult?,
 	val scriptResults: TestRunResult?,
@@ -74,11 +75,11 @@ data class CombinedTestRunResult(
 
 	companion object {
 
-		fun error(source: Testcase, error: String): CombinedTestRunResult =
-			CombinedTestRunResult(source, null, null, error)
+		fun error(source: DigitalGraph, testcase: Testcase, error: String): CombinedTestRunResult =
+			CombinedTestRunResult(source, testcase, null, null, error)
 
-		fun ignored(source: Testcase): CombinedTestRunResult =
-			CombinedTestRunResult(source, null, null, null, ignored = true)
+		fun ignored(source: DigitalGraph, testcase: Testcase): CombinedTestRunResult =
+			CombinedTestRunResult(source, testcase, null, null, null, ignored = true)
 	}
 
 	val totalFailedCount: Int = if (error != null && !ignored) {

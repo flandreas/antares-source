@@ -1,6 +1,9 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.UUID
+import ch.scorpion.jabbah.draw.graphics.Image
+import ch.scorpion.jabbah.draw.graphics.ImageType
+import ch.scorpion.jabbah.edit.model.image.ImageIdentification
 import ch.scorpion.jabbah.graph.GraphQuota
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphBundle
@@ -14,18 +17,18 @@ class MemoryLibraryPersistenceService(
 ) : LibraryPersistenceService {
 
 	/** Maps the [UUID] of a [MetaGraph] to the [MetaGraph]. */
-	private val map = mutableMapOf<UUID, MetaGraph>()
+	private val map = mutableMapOf<UUID, String>()
 
 	override fun loadMetaGraphXML(library: Library, uuid: UUID): String {
-		throw UnsupportedOperationException("not implemented")
+		return map[uuid]!!
 	}
 
 	override fun loadMetaGraph(library: Library, uuid: UUID): MetaGraph {
-		return StorableCloner.clone(map[uuid]!!)
+		return StorableCloner.deserialize(map[uuid]!!) as MetaGraph
 	}
 
 	override fun storeMetaGraph(library: Library, metaGraph: MetaGraph) {
-		map[metaGraph.uuid] = StorableCloner.clone(metaGraph)
+		map[metaGraph.uuid] = StorableCloner.serialize(metaGraph)
 	}
 
 	override fun deleteMetaGraph(library: Library, uuid: UUID) {
@@ -65,6 +68,14 @@ class MemoryLibraryPersistenceService(
 	}
 
 	override fun importMetaGraphBundle(inputPath: String): MetaGraphBundle {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun loadImage(library: Library, imageUuid: UUID, imageType: ImageType): Image {
+		throw UnsupportedOperationException("not implemented")
+	}
+
+	override fun importImage(library: Library, imageId: ImageIdentification, inputPath: String) {
 		throw UnsupportedOperationException("not implemented")
 	}
 }

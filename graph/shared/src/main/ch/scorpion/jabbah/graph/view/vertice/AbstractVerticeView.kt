@@ -4,10 +4,7 @@ import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.Button
-import ch.scorpion.jabbah.base.geom.Direction
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.geom.Rotation
+import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.resettableLazy
 import ch.scorpion.jabbah.draw.*
@@ -57,7 +54,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 			BaseModule.eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = c, messageKey = "graph.vertice.cannotOpen.msg"))
 		}
 
-		private object CannotOpenClickHandler : InputEventHandlerAdapter<InputEventContext>() {
+		protected object CannotOpenClickHandler : InputEventHandlerAdapter<InputEventContext>() {
 			var component: Component? = null
 			override fun mouseClicked(context: InputEventContext): InputEventHandler<InputEventContext>? {
 				if (context.mouseEvent?.button == Button.BUTTON1 && context.mouseEvent?.clickCount == 2) {
@@ -67,7 +64,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 			}
 		}
 
-		protected open class CannotOpenActorClickHandler : InputEventHandlerAdapter<ActorInteractionContext>() {
+		open class CannotOpenActorClickHandler : InputEventHandlerAdapter<ActorInteractionContext>() {
 			var component: Component? = null
 
 			override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
@@ -267,7 +264,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 
 	private val plainBoundingBox get() = rotate(getBoundingBoxImpl())
 
-	override val boundingBox: Rectangle2D
+	override val boundingBox: RectangularShape
 		get() {
 			val bbox = plainBoundingBox
 			if (isExecutionInfoDrawn(requiredBySystemSpeed = true, isPausing = true)) {
@@ -277,7 +274,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 			return bbox
 		}
 
-	override fun getTooltip(x: Double, y: Double): Tooltip? {
+	override fun getTooltip(x: Double, y: Double, editable: Boolean): Tooltip? {
 		val portView = getPortViewAt(x, y)
 		if (portView != null) {
 			return portView.getTooltip(x, y)
@@ -353,7 +350,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 	/** ---- [AbstractVerticeView] */
 
 	/** Returns the unrotated bounding box in absolute view coordinates.*/
-	protected abstract fun getBoundingBoxImpl(): Rectangle2D
+	protected abstract fun getBoundingBoxImpl(): RectangularShape
 
 	protected open fun buildVerticeViewTooltipText(): String? =
 		if (description.isNotEmpty) {
@@ -363,6 +360,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 		}
 
 	protected fun clearPortViews() {
+		portViews.forEach { it.dispose() }
 		portViews.clear()
 	}
 
@@ -388,7 +386,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 	}
 
 	/** Adds all [PortView]s to the overall bounding box and the box used for 'contains' calculation.*/
-	protected fun addPortViewsTo(boundingBox: Rectangle2D, containsBox: Rectangle2D?) {
+	protected fun addPortViewsTo(boundingBox: MutableRectangularShape, containsBox: MutableRectangularShape?) {
 		containsBox?.setFrame(boundingBox)
 		if (isShowPortViews) {
 			for (pv in portViews) {
@@ -401,9 +399,9 @@ abstract class AbstractVerticeView<T : Vertice>(
 	 * Adds the bounding box of the specified [PortView] to the overall bounding box and the box
 	 * used for 'contains' calculation.
 	 */
-	protected fun addPortViewTo(portView: PortView<*>, boundingBox: Rectangle2D, containsBox: Rectangle2D?) {
+	protected fun addPortViewTo(portView: PortView<*>, boundingBox: MutableRectangularShape, containsBox: MutableRectangularShape?) {
 		val outset = BaseModule.properties.getInt(PROP_SENSITIVE_AREA)
-		val bb = portView.boundingBox
+		val bb = Rectangle2D(portView.boundingBox)
 
 		bb.setFrame(location.x + bb.x, location.y + bb.y, bb.width, bb.height)
 		boundingBox.add(bb)
@@ -505,7 +503,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 	 */
 	private fun configureExecutionInfoLabel() {
 		val bbox = plainBoundingBox
-		val text = "$propagationDelay ns"
+		val text = "${propagationDelay.value} ns"
 		val style = Themes.get<GraphTheme>().annotation
 		executionInfoLabel.font = style.font
 		executionInfoLabel.text = text
@@ -513,7 +511,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 		executionInfoLabel.location = Point2D(bbox.centerX.toInt(), bbox.minY.toInt() - 3)
 	}
 
-	protected fun rotate(rect: Rectangle2D): Rectangle2D {
+	protected fun rotate(rect: RectangularShape): Rectangle2D {
 		return rotation.rotateRectangleAround(location, rect)
 	}
 

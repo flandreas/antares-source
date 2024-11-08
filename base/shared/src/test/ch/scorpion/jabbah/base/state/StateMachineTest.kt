@@ -2,8 +2,11 @@ package ch.scorpion.jabbah.base.state
 
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.state.UnhandledEventBehaviour.*
-import io.mockk.mockk
-import io.mockk.verify
+import dev.mokkery.MockMode.autofill
+import dev.mokkery.matcher.any
+import dev.mokkery.mock
+import dev.mokkery.verify
+import dev.mokkery.verify.VerifyMode.Companion.exactly
 import kotlin.test.*
 
 class StateMachineTest {
@@ -13,11 +16,11 @@ class StateMachineTest {
 		BaseModule.require()
 	}
 
-	private val entryA = mockk<Action<String>>(relaxed = true)
-	private val exitA = mockk<Action<String>>(relaxed = true)
-	private val transitionActionAB = mockk<Action<String>>(relaxed = true)
-	private val transitionActionAC = mockk<Action<String>>(relaxed = true)
-	private val entryB = mockk<Action<String>>(relaxed = true)
+	private val entryA = mock<Action<String>>(autofill)
+	private val exitA = mock<Action<String>>(autofill)
+	private val transitionActionAB = mock<Action<String>>(autofill)
+	private val transitionActionAC = mock<Action<String>>(autofill)
+	private val entryB = mock<Action<String>>(autofill)
 
 	private fun buildStateMachine(behaviour: UnhandledEventBehaviour = Strict): StateMachine<String> {
 
@@ -59,7 +62,7 @@ class StateMachineTest {
 		val sm = buildStateMachine().start("START")
 
 		assertEquals("A", sm.currentState.name)
-		verify(exactly = 1) { entryA.invoke(any()) }
+		verify { entryA.invoke(any()) }
 	}
 
 	@Test
@@ -75,9 +78,9 @@ class StateMachineTest {
 		val handled = sm.handle("eventB")
 
 		assertTrue(handled)
-		verify(exactly = 1) { transitionActionAB.invoke(any()) }
-		verify(exactly = 1) { exitA.invoke(any())}
-		verify(exactly = 1) { entryB.invoke(any()) }
+		verify(exactly(1)) { transitionActionAB.invoke(any()) }
+		verify(exactly(1)) { exitA.invoke(any())}
+		verify(exactly(1)) { entryB.invoke(any()) }
 		assertEquals("B", sm.currentState.name)
 	}
 
@@ -98,8 +101,8 @@ class StateMachineTest {
 		val handled = sm.handle("eventA")
 
 		assertTrue(handled)
-		verify(exactly = 1) { entryA.invoke(any())} // from init
-		verify(exactly = 0) { exitA.invoke(any()) }
+		verify(exactly(1)) { entryA.invoke(any())} // from init
+		verify(exactly(0)) { exitA.invoke(any()) }
 		assertEquals("A", sm.currentState.name)
 	}
 

@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.testcase.RunLibraryTestcasesAction
 import ch.scorpion.antares.model.truthtable.OpenTruthTableAction
 import ch.scorpion.antares.model.truthtable.TruthTableLibraryItem
 import ch.scorpion.antares.view.expression.NewBooleanExpressionAction
+import ch.scorpion.antares.view.net.tunnel.GlobalTunnelAction
 import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTableAction
 import ch.scorpion.antares.view.truthtable.NewTruthTableAction
 import ch.scorpion.jabbah.app.Application
@@ -36,6 +37,7 @@ class DigitalLibraryTreeViewActionsSwing(
 	private val newBooleanExpressionAction = register(NewBooleanExpressionAction(controller))
 	private val openBooleanExpressionAction = register(OpenBooleanExpressionAction(application.controller as GraphDataViewController, controller))
 	private val runTestsAction = register(RunLibraryTestcasesAction(controller))
+	private val globalTunnelAction = register(GlobalTunnelAction())
 
 	override fun fillMainProjectDirectoryCreateActions() {
 		super.fillMainProjectDirectoryCreateActions()
@@ -73,6 +75,8 @@ class DigitalLibraryTreeViewActionsSwing(
 
 	override fun fillMain() {
 		super.fillMain()
+
+		desktopPopupMenu.add(ActionWrapperSwing(globalTunnelAction))
 
 		projectTruthTablePopupMenu.add(ActionWrapperSwing(openTruthTableAction))
 		projectTruthTablePopupMenu.add(ActionWrapperSwing(deleteProjectItemAction))

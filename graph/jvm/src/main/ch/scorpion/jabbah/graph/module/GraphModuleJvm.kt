@@ -4,10 +4,12 @@ import ch.scorpion.jabbah.app.health.SystemHealthChecker
 import ch.scorpion.jabbah.app.module.AppModuleJvm
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.DataLocation
+import ch.scorpion.jabbah.base.LongValue
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.preferences.*
+import ch.scorpion.jabbah.base.swing.ToStringRenderer
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
 import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.Editor
@@ -25,8 +27,6 @@ import ch.scorpion.jabbah.graph.health.PortViewCoincidenceCheck
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.login.LoginService
 import ch.scorpion.jabbah.graph.login.LoginServiceJvm
-import ch.scorpion.jabbah.graph.model.graph.LongGraphParamType
-import ch.scorpion.jabbah.graph.model.graph.StringGraphParamType
 import ch.scorpion.jabbah.graph.model.param.*
 import ch.scorpion.jabbah.graph.model.port.InconsistentNetError
 import ch.scorpion.jabbah.graph.project.ProjectAkrabClientServiceJvm
@@ -40,7 +40,7 @@ import java.net.URL
  */
 object GraphModuleJvm : AbstractModule() {
 
-	val supportWeb: Boolean get() = EditAuthModule.userHolder.user.isDeveloper
+	val supportWeb: Boolean get() = true
 
 	var containerTreeViewFactory: () -> ContainerTreeView = { ContainerTreeView() }
 
@@ -66,12 +66,13 @@ object GraphModuleJvm : AbstractModule() {
 		configurePropertyRenderer(EditModuleJvm.propertyRendererRegistry)
 		configurePropertyEditors(EditModuleJvm.propertyEditorRegistry)
 		configureGraphParamValueProperties()
+		configureGraphParamValueEditors()
 
 		fillProperties(BaseModule.properties)
 
 		buildPreferencesTree(BaseModuleJvm.preferencesTree)
 
-		if (!EditAuthModule.userHolder.user.isDeveloper && AppModuleJvm.remoteControlService.getBoolean(GraphViewConsistencyCheck.REMOTE_PROP_CONSISTENCY_CHECK)) {
+		if (EditAuthModule.userHolder.user.isDeveloper || AppModuleJvm.remoteControlService.getBoolean(GraphViewConsistencyCheck.REMOTE_PROP_CONSISTENCY_CHECK)) {
 			SystemHealthChecker.register(GraphViewConsistencyCheck)
 		}
 		SystemHealthChecker.register(PortViewCoincidenceCheck)
@@ -79,6 +80,7 @@ object GraphModuleJvm : AbstractModule() {
 
 	private fun configurePropertyRenderer(registry: DynamicPropertyRendererRegistry) {
 		registry.register(GraphParamDefinitions::class.java) { GraphParamDefinitionsPropertyRenderer() }
+		registry.registerRenderer(LongValue::class.java, ToStringRenderer::class.java)
 	}
 
 	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
@@ -89,9 +91,35 @@ object GraphModuleJvm : AbstractModule() {
 				graph = (it.editor!!.drawing as GraphView).graph!!
 			)
 		}
+		registry.register(LongValue::class.java) { prop ->
+			LongValueEditor(
+				propertyName = prop.displayName,
+				editable = (prop as ExpressionPropertySwing<LongValue>).editable,
+				graphEditor = prop.editor,
+				errorCallback = { prop.dslError = it }
+			)
+		}
 	}
 
 	private fun configureGraphParamValueProperties() {
+		GraphParamValuePropertyFactoryRegistry.register(
+			LongValueGraphParamType,
+			object : GraphParamValuePropertyFactory {
+				override fun create(
+					def: GraphParamDefinition<*>,
+					editor: Editor,
+					beanProvider: BeanProvider
+				): AbstractReflectionPropertySwing<*> {
+					return GraphParamValuePropertySwing(
+						def as GraphParamDefinition<LongValue>,
+						"LongValue", // only used for logging
+						LongValue::class.java,
+						beanProvider
+					)
+				}
+			}
+		)
+
 		GraphParamValuePropertyFactoryRegistry.register(
 			StringGraphParamType,
 			object : GraphParamValuePropertyFactory {
@@ -103,32 +131,19 @@ object GraphModuleJvm : AbstractModule() {
 					return GraphParamValuePropertySwing(
 						paramDefinition = def as GraphParamDefinition<String>,
 						propertyName = "<notUsed>",
-						baseKey ="element.property.bitWidth", // TODO: This must be a dynamic name and not a resource key
+						baseKey = if (def.hasSemantic) "graph.paramDefs.genericSemanticParameter" else "graph.paramDefs.genericParameter",
+						baseKeyParams = if (def.hasSemantic) arrayOf(def.name, def.semantic!!.translatedName) else arrayOf(def.name),
 						valueClass = String::class.java,
-						beanProvider
+						beanProvider = beanProvider,
 					)
 				}
 			}
 		)
+	}
 
-		GraphParamValuePropertyFactoryRegistry.register(
-			LongGraphParamType,
-			object : GraphParamValuePropertyFactory {
-				override fun create(
-					def: GraphParamDefinition<*>,
-					editor: Editor,
-					beanProvider: BeanProvider
-				): AbstractReflectionPropertySwing<*> {
-					return GraphParamValuePropertySwing(
-						paramDefinition = def as GraphParamDefinition<Long>,
-						propertyName = "<notUsed>",
-						baseKey ="element.property.bitWidth", // TODO: This must be a dynamic name and not a resource key
-						valueClass = Long::class.java,
-						beanProvider
-					)
-				}
-			}
-		)
+	private fun configureGraphParamValueEditors() {
+		GraphParamValueEditorRegistry.register(LongValueGraphParamType) { LongValueGraphParamValueEditor() }
+		GraphParamValueEditorRegistry.register(StringGraphParamType) { StringGraphParamValueEditor() }
 	}
 
 	private fun fillProperties(properties: Properties) {

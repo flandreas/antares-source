@@ -1,5 +1,6 @@
 package ch.scorpion.antares
 
+import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.graph.GraphStorable
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
@@ -31,6 +32,7 @@ class TestLibraryBuilder(
 		const val INOUT_TO_INOUT = "InOutToInOut"
 		const val BINARY_FUNCTION = "BinaryFunction"
 		const val BIT_WITH_EXPRESSION = "BitWidthExpression"
+		const val PROPAGATION_DELAY_EXPRESSION = "PropagationDelayExpression"
 	}
 
 	fun addGraphView(graphView: GraphView, library: Library): MetaGraph {
@@ -40,8 +42,8 @@ class TestLibraryBuilder(
 	}
 
 	/** Builds (as of [TestCircuitBuilder.buildNOP] a custom NOP and adds it to [LibraryDirectory].*/
-	fun addNOP(library: Library, propagationDelay: Long = 0): MetaGraph {
-		val nop = TestCircuitBuilder(NOP).buildNOP(propagationDelay)
+	fun addNOP(library: Library, propagationDelay: Long = 0, inputStartValue: DigitalSignal? = null): MetaGraph {
+		val nop = TestCircuitBuilder(NOP).buildNOP(propagationDelay, inputStartValue = inputStartValue)
 		return addGraphView(nop, library)
 	}
 
@@ -81,6 +83,11 @@ class TestLibraryBuilder(
 
 	fun addBitWidthExpressionInputOutput(library: Library, inputExpression: String, outputExpression: String, graphScript: String? = null): MetaGraph {
 		val graphView = TestCircuitBuilder(BIT_WITH_EXPRESSION).buildBitWidthExpressionInputOutput(inputExpression, outputExpression, graphScript)
+		return addGraphView(graphView, library)
+	}
+
+	fun addPropagationDelayExpressionOrGate(library: Library, parameterName: String, expression: String): MetaGraph {
+		val graphView = TestCircuitBuilder(PROPAGATION_DELAY_EXPRESSION).buildPropagationDelayExpressionOrGate(parameterName, expression)
 		return addGraphView(graphView, library)
 	}
 

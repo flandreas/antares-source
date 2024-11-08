@@ -22,11 +22,11 @@ class VHDLLibrary {
 				VHDLTemplate(name)
 			}
 		} catch (e: HDLException) {
-			val msg = "Circuit element '$name'\ndoesn't support HDL."
+			val msg = "Circuit element '${node.translatedName}'\ndoesn't support HDL."
 			LOG.debug(msg)
 			throw HDLException(msg)
 		} catch (e: Throwable) {
-			val msg = "Error while generating VHDL for '$name'"
+			val msg = "Error while generating VHDL for '${node.translatedName}'"
 			LOG.error("$msg: ${e::class.simpleName} ${e.message}")
 			throw HDLException(msg)
 		}

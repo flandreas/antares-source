@@ -4,6 +4,9 @@ import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.model.image.ImageData
+import ch.scorpion.jabbah.edit.model.image.ImageIdentification
+import ch.scorpion.jabbah.edit.model.image.ImageRepository
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphBundle
 import ch.scorpion.jabbah.graph.MetaGraphRepository
@@ -11,16 +14,21 @@ import ch.scorpion.jabbah.graph.MetaGraphRepository
 /**
  * Holds the one and only [Library].
  */
-class LibraryHolder(
+interface LibraryHolder : MetaGraphRepository, ImageRepository {
+	var l: Library?
+	val library: Library
+}
+
+class LibraryHolderImpl(
 	l: Library? = null,
 	private val eventBus: EventBus = BaseModule.eventBus
-) : MetaGraphRepository {
+) : LibraryHolder {
 
 	companion object {
 		private val LOG by logger(LibraryHolder::class)
 	}
 
-    var l: Library? = l
+    override var l: Library? = l
         set(value) {
 	        if (field != value) {
 		        LOG.trace("LibraryHolder: setting current Library to '${value?.name}'")
@@ -30,7 +38,7 @@ class LibraryHolder(
 	        }
         }
 
-    val library: Library get() = l!!
+    override val library: Library get() = l!!
 
 	/** ---- [MetaGraphRepository] */
 
@@ -59,6 +67,12 @@ class LibraryHolder(
 	override fun unwrap() {
 		library.unwrap()
 	}
+
+	/** ---- [ImageRepository] */
+
+	override fun getImage(uuid: UUID): ImageData? = library.getImage(uuid)
+
+	override fun getAllImageIds(): List<ImageIdentification> = library.getAllImageIds()
 }
 
 /** Posted on [EventBus] when the current [Library] has changed.*/

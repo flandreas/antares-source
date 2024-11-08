@@ -21,13 +21,14 @@ class FileLibraryServiceTest {
 		}
 	}
 
-	private val directory = Files.createTempDirectory(null)
-	private val libraryPersistenceService = FileLibraryPersistenceService({ directory.parent.absolutePathString() }, directory.name)
-	private val service: LibraryService = LibraryService(userLibraryPersister = libraryPersistenceService)
-	private val libraryBuilder = LibraryBuilder(name = "Library", libraryService = service)
+	private val libraryBuilder: LibraryBuilder
 	private val library: Library get() = libraryBuilder.library
+	private val service: LibraryService get() = LibraryModule.libraryService
 
 	init {
+		val directory = Files.createTempDirectory(null)
+		LibraryModule.userLibraryPersistenceService  = FileLibraryPersistenceService({ directory.parent.absolutePathString() }, directory.name)
+		libraryBuilder = LibraryBuilder(name = "Library")
 		LibraryModule.libraryHolder.l = library
 	}
 
@@ -53,9 +54,14 @@ class FileLibraryServiceTest {
 
 		val tempDir = Files.createTempDirectory(null)
 		val tempFile = Files.createTempFile(tempDir, "Test", "zip")
-		service.exportMetaGraphBundle(orig, tempFile.absolutePathString())
+		service.exportMetaGraphBundle(orig, LibraryModule.libraryHolder, tempFile.absolutePathString())
 
-		val importResult = service.importMetaGraphBundle(tempFile.absolutePathString(), FilenameUtils.getBaseName(tempFile.absolutePathString()), libraryBuilder.peek(), replaceIfUuidExists = true)
+		val importResult = service.importMetaGraphBundle(
+			tempFile.absolutePathString(),
+			FilenameUtils.getBaseName(tempFile.absolutePathString()),
+			libraryBuilder.peek(),
+			replaceIfUuidExists = true,
+			LibraryModule.libraryHolder)
 
 		assertEquals(MetaGraphBundleImportResult.Success, importResult)
 	}

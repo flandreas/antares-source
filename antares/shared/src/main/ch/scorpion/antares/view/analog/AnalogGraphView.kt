@@ -40,14 +40,16 @@ class AnalogGraphView(
 		private const val DEF_PROPAGATION_DELAY = 10L
 	}
 
-	val isNonLinear: Boolean get() = (graph as AnalogGraph).isNonLinear
+	private val analogGraph: AnalogGraph get() = (graph as AnalogGraph)
+
+	val isNonLinear: Boolean get() = analogGraph.isNonLinear
 
 	/** Not set before [executionStart]. */
 	private var analysis: AnalogCircuitAnalysis? = null
 
 	private val calculationRequestHandler: EventHandler<AnalogCalculationRequest> = {
 		if (this.graph!!.elements.contains(it.source)) {
-			requestActing(it.signalHandler)
+			requestActing(it.signalHandler, it.needAnalysis)
 		}
 	}
 
@@ -58,6 +60,13 @@ class AnalogGraphView(
 		set(value) {
 			require(value != null && value > 0) { "Propagation delay must be greater than 0" }
 			super.overallPropagationDelay = value
+		}
+
+	@Suppress("unused") // Reflection
+	var timeStep: Double
+		get() = analogGraph.timeStep
+		set(value) {
+			analogGraph.timeStep = value
 		}
 
 	@Suppress("unused") // Reflection
@@ -80,7 +89,7 @@ class AnalogGraphView(
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
 		analysis = null
-		requestActing(signalHandler)
+		requestActing(signalHandler, true)
 		CurrentFlowAnimator.register(this, signalHandler.systemSpeedCategory)
 	}
 
@@ -124,9 +133,8 @@ class AnalogGraphView(
 		analysis = null
 	}
 
-	fun recalculate(signalHandler: SignalHandler) {
-		requireAnalysis()
-		requestActing(signalHandler)
+	fun recalculate(signalHandler: SignalHandler, needAnalysis: Boolean) {
+		requestActing(signalHandler, needAnalysis)
 	}
 
 	fun currentFlowAnimationTick(systemSpeedCategory: CurrentSystemSpeedCategory) {
@@ -152,12 +160,12 @@ class AnalogGraphView(
 		return true
 	}
 
-	fun requestActing(signalHandler: SignalHandler) {
-		signalHandler.requestActingAfter(actor, overallPropagationDelay ?: DEF_PROPAGATION_DELAY, createActorData())
+	fun requestActing(signalHandler: SignalHandler, needAnalysis: Boolean) {
+		signalHandler.requestActingAfter(actor, overallPropagationDelay ?: DEF_PROPAGATION_DELAY, createActorData(needAnalysis))
 	}
 
-	private fun createActorData(): GraphActorData =
-		StoringGraphActorData(null, null)
+	private fun createActorData(needAnalysis: Boolean): GraphActorData =
+		StoringGraphActorData(null, needAnalysis)
 
 	/**
 	 * Analyses this [AnalogGraphView] in case it is not already done.
@@ -173,7 +181,9 @@ class AnalogGraphView(
 	private inner class AnalogActor : ActorImpl() {
 		override fun act(signalHandler: SignalHandler, data: ActorData) {
 			try {
-				requireAnalysis()
+				if (data is StoringGraphActorData && (data.signal as Boolean) ) {
+					requireAnalysis()
+				}
 				AnalogCircuitCalculator().calculate(ensureAnalysis(), signalHandler)
 				super.act(signalHandler, data)
 

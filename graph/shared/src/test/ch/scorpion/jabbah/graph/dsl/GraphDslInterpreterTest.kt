@@ -7,7 +7,8 @@ import ch.scorpion.jabbah.graph.model.GenericGraphType
 import ch.scorpion.jabbah.graph.model.TestVertice
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -19,7 +20,7 @@ class GraphDslInterpreterTest {
 		}
 	}
 
-	private val signalHandler = mockk<SignalHandler>(relaxed = true)
+	private val signalHandler = mock<SignalHandler>(MockMode.autofill)
 
 	@Test
 	fun shouldInterpretInitStatement() {

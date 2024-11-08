@@ -1,21 +1,23 @@
 package ch.scorpion.jabbah.draw.drawable
 
+import ch.scorpion.jabbah.base.geom.MutableRectangularShape
 import ch.scorpion.jabbah.base.geom.RectangularShape
+import kotlin.math.ceil
 
 /**
  * Defines properties and methods common to all rectangular graphical objects.
  */
 interface RectangularDrawable : Locatable {
 
-    val bounds: RectangularShape
+    val bounds: MutableRectangularShape
 
     var width: Double
 
-    val widthInt: Int get() = width.toInt()
+    val widthInt: Int get() = ceil(width).toInt()
 
     var height: Double
 
-    val heightInt: Int get() = height.toInt()
+    val heightInt: Int get() = ceil(height).toInt()
 
     val x: Double get() = bounds.x
 

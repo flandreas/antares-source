@@ -43,6 +43,9 @@ class CanvasJvm(
 
 	companion object {
 		private val LOG by logger(CanvasJvm::class)
+
+		/** Converts an AWT-specific [KeyEvent] to one with a platform-neutral [KeyEvent] interface.*/
+		fun convertKeyEvent(keyEvent: AwtKeyEvent): KeyEvent = KeyEventJvm(keyEvent)
 	}
 
 	private val mouseListeners: MutableList<MouseEventBridge> by lazy { mutableListOf() }
@@ -50,11 +53,13 @@ class CanvasJvm(
 	private val mouseWheelListeners: MutableList<MouseWheelEventBridge> by lazy { mutableListOf() }
 	private val keyListeners: MutableList<KeyEventBridge> by lazy { mutableListOf() }
 
+	private val themeHandler: EventHandler<ThemeEvent> = { installBackgroundColor() }
+
 	private val contextMenu = JPopupMenu()
 
 	init {
 		propertyOwner.source = this
-		eventBus.register(ThemeEvent::class) { installBackgroundColor() }
+		eventBus.register(ThemeEvent::class, themeHandler)
 		installBackgroundColor()
 
 		layout = null
@@ -79,11 +84,15 @@ class CanvasJvm(
 		})
 	}
 
+	fun dispose() {
+		eventBus.unregister(themeHandler)
+	}
+
 	private fun installBackgroundColor() {
 		background = Graphics2DJvm.toAwtColor(styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor)
 	}
 
-	override val devicePixelRatio: Int = 1
+	override val devicePixelRatio: Double = 1.0
 
 	override var backgroundColor: Color
 		get() = Color(background.red, background.green, backgroundColor.blue, backgroundColor.alpha)
@@ -253,7 +262,16 @@ private class MouseEventJvm(
 
 	override val clickCount: Int get() = event.clickCount
 
-	override val wheelRotation: Int get() = (event as? AwtMouseWheelEvent)?.wheelRotation ?: 0
+	override val wheelRotation: Point2D get() =
+		if (event is AwtMouseWheelEvent) {
+			if (isShiftDown) {
+				Point2D(-event.wheelRotation, 0)
+			} else {
+				Point2D(0, -event.wheelRotation)
+			}
+		} else {
+			Point2D.ZERO
+		}
 
 	override val isLeftButtonDown: Boolean get() = SwingUtilities.isLeftMouseButton(event)
 

@@ -3,10 +3,14 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.graphics.Image
+import ch.scorpion.jabbah.draw.graphics.ImageType
 import ch.scorpion.jabbah.edit.auth.UserIdentity
+import ch.scorpion.jabbah.edit.model.image.ImageIdentification
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.*
+import ch.scorpion.jabbah.graph.model.image.ImageLibraryElement
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.io.StorableCloner
 import kotlin.math.min
@@ -29,12 +33,17 @@ data class LibraryItemUpdatedEvent(
 	val item: LibraryItem
 )
 
-/** Posted on [EventBus] when a [LibraryImpl] has been within the same or to another [LibraryDirectory].*/
+/** Posted on [EventBus] when a [LibraryImpl] has been moved within the same or to another [LibraryDirectory].*/
 data class LibraryItemMovedEvent(
 	val oldDirectory: LibraryDirectory,
 	val item: LibraryItem,
 	val newDirectory: LibraryDirectory,
 	val index: Int
+)
+
+/** Posted on [EventBus] when a [Library] has been stored, i.e. made persistent.*/
+data class LibraryStoredEvent(
+	val library: Library
 )
 
 /** Posted on [EventBus] when a [Library] has been deleted.*/
@@ -84,15 +93,21 @@ open class LibraryServiceCallbackAdapter : LibraryServiceCallback {
  * Calls all registered [LibraryModule.libraryServiceCallbacks] in the corresponding situations.
  */
 class LibraryService(
-	private val userLibraryPersister: LibraryPersistenceService = LibraryModule.userLibraryPersistenceService,
-	private val systemLibraryPersister: LibraryPersistenceService = LibraryModule.systemLibraryPersistenceService,
+	private val userLibraryPersisterProvider: () -> LibraryPersistenceService = { LibraryModule.userLibraryPersistenceService },
+	private val systemLibraryPersisterProvider: () -> LibraryPersistenceService = { LibraryModule.systemLibraryPersistenceService },
 	private val eventBus: EventBus = BaseModule.eventBus,
-	private val metaGraphRepository: MetaGraphRepository = LibraryModule.libraryHolder
 ) {
 
 	companion object {
 		private val LOG by logger(LibraryService::class)
+
+		/** The name of the [String] param in [Properties] with the JS Graph Viewer URL.*/
+		const val PROP_VIEWER_JS_URL = "graph.library.viewerJsUrl"
 	}
+
+	private val userLibraryPersister: LibraryPersistenceService get() = userLibraryPersisterProvider()
+
+	private val systemLibraryPersister: LibraryPersistenceService get() = systemLibraryPersisterProvider()
 
 	private fun persister(system: Boolean): LibraryPersistenceService =
 		if (system) systemLibraryPersister else userLibraryPersister
@@ -109,6 +124,7 @@ class LibraryService(
 	fun storeLibrary(library: Library) {
 		LOG.trace("Storing Library ${library.uuid} with ID ${library.hashCode()}")
 		persister(library.isSystem).storeLibrary(library)
+		eventBus.post(LibraryStoredEvent(library))
 	}
 
 	/**
@@ -240,8 +256,8 @@ class LibraryService(
 	}
 
 	/**
-	 * Clones the specified [MetaGraph], uses it as the new [MetaGraph] of the specified [ContainerLibraryElement],
-	 * and makes the change persistent.
+	 * Stores [metaGraph] persistently and sets it as the new [MetaGraph] of the specified [ContainerLibraryElement],
+	 * without first cloning it.
 	 * Posts a [LibraryItemUpdatedEvent] on this [LibraryService]'s [EventBus].
 	 */
 	fun updateContainerLibraryElement(library: Library, metaGraph: MetaGraph, element: ContainerLibraryElement) {
@@ -277,10 +293,11 @@ class LibraryService(
 	}
 
 	/**
-	 * Reloads the [MetaGraph] of a [ContainerLibraryElement], loading it always, even if it is already loaded.
+	 * Ensures that the [MetaGraph] of a [ContainerLibraryElement] is loaded.
+	 * @param loadAlways `true` if the [MetaGraph] should be reloaded even if it is already loaded
 	 */
-	fun loadMetaGraph(library: Library, element: ContainerLibraryElement) {
-		ensureMetaGraph(library, element, loadAlways = true)
+	fun loadMetaGraph(library: Library, element: ContainerLibraryElement, loadAlways: Boolean = true) {
+		ensureMetaGraph(library, element, loadAlways)
 	}
 
 	/**
@@ -381,7 +398,7 @@ class LibraryService(
 	 * Creates a [MetaGraphBundle] for the [MetaGraph] in [element] and stores it as a ZIP file
 	 * at the location [outputPath].
 	 */
-	fun exportMetaGraphBundle(element: ContainerLibraryElement, outputPath: String) {
+	fun exportMetaGraphBundle(element: ContainerLibraryElement, metaGraphRepository: MetaGraphRepository, outputPath: String) {
 		ensureMetaGraph(element.library!!, element)
 		val bundle = metaGraphRepository.createBundle(element.metaGraph!!)
 		userLibraryPersister.exportMetaGraphBundle(bundle, outputPath)
@@ -391,7 +408,8 @@ class LibraryService(
 		inputPath: String,
 		bundleName: String,
 		destination: LibraryDirectory,
-		replaceIfUuidExists: Boolean
+		replaceIfUuidExists: Boolean,
+		metaGraphRepository: MetaGraphRepository
 	): MetaGraphBundleImportResult {
 		lateinit var bundle: MetaGraphBundle
 
@@ -406,7 +424,7 @@ class LibraryService(
 			return MetaGraphBundleImportResult.StaleLibraryReference
 		}
 
-		val conflict = anyBundleUuidExists(bundle)
+		val conflict = anyBundleUuidExists(bundle, metaGraphRepository)
 		if (conflict && !replaceIfUuidExists) {
 			return MetaGraphBundleImportResult.UuidAlreadyExists
 		}
@@ -419,28 +437,6 @@ class LibraryService(
 		importMetaGraphBundle(bundle, bundleName, destination)
 
 		return MetaGraphBundleImportResult.Success
-	}
-
-	/** Returns the code snippet to embed the [MetaGraph] with [UUID] as a HTML <iframe>.*/
-	fun getEmbeddingIFrame(uuid: UUID): String {
-		val metaGraph = metaGraphRepository.getMetaGraph(uuid)
-		val library = metaGraphRepository.getContainingLibrary(uuid)!!
-		val src = StringBuilder(BaseModule.properties.getString(DataLocation.PROP_SERVER_URL))
-			.append("/jabbah/iframe/iframe.html?")
-			.append("project=${library.uuid.id}")
-			.append("&owner=${library.author.id}")
-			.append("&circuit=${uuid.id}")
-			.toString()
-
-		return """
-			|<iframe
-			|   style="border:none;"
-			|   title="${metaGraph.name}"
-			|   width="500px"
-			|   height="500px"
-			|   src="$src"
-			|/>
-		""".trimMargin()
 	}
 
 	/**
@@ -488,7 +484,7 @@ class LibraryService(
 	fun evaluateLibraryReferences(master: Library, target: Library): LibraryReferenceEvaluation =
 		LibraryReferenceEvaluation.calculate(master, target)
 
-	private fun anyBundleUuidExists(bundle: MetaGraphBundle): Boolean =
+	private fun anyBundleUuidExists(bundle: MetaGraphBundle, metaGraphRepository: MetaGraphRepository): Boolean =
 		bundle.metaGraphs.any { metaGraph ->
 			metaGraphRepository.containsMetaGraph(metaGraph.uuid).also {
 				if (it) {
@@ -561,6 +557,35 @@ class LibraryService(
 			LOG.trace("Loaded MetaGraph $ref with ID ${metaGraph.hashCode()} from Library with ID ${library.hashCode()}")
 			element.updateStorable(metaGraph)
 		}
+	}
+
+	fun getImage(library: Library, element: ImageLibraryElement): Image {
+		ensureImage(library, element)
+		return element.image!!
+	}
+
+	private fun ensureImage(library: Library, element: ImageLibraryElement, loadAlways: Boolean = false) {
+		if (loadAlways || element.image == null) {
+			val image = persister(library.isSystem).loadImage(library, element.imageId.uuid, element.imageId.imageType)
+			element.image = image
+		}
+	}
+
+	/**
+	 * Imports an image file located at local absolute [inputPath], stores the file in the [Library]'s
+	 * physical storage, adds the created [ImageLibraryElement] as last element to [directory],
+	 * and stores the [Library].
+	 */
+	fun importImage(inputPath: String, imageType: ImageType, name: String, directory: LibraryDirectory): ImageLibraryElement {
+		val library = directory.library!!
+		val imageId = ImageIdentification(System.createUUID(), imageType, Name(TranslatableText(name)))
+		val element = ImageLibraryElement(imageId)
+
+		persister(library.isSystem).importImage(library, imageId, inputPath)
+
+		addLibraryItem(library, element, directory)
+
+		return element
 	}
 
 	/** Finds the [LibraryDirectory] that directly contains `item`.*/

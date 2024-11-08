@@ -75,5 +75,10 @@ expect object System {
 	 * Environments without access to files can return `null`.
 	 */
 	fun getFileContents(path: String): String?
+
+	/**
+	 * Shows a modal message the user must confirm by "OK".
+	 */
+	fun showModalMessage(title: String, message: String, isError: Boolean = false)
 }
 

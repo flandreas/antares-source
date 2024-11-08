@@ -3,10 +3,10 @@ package ch.scorpion.jabbah.edit.app
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ContentViewManager
+import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.*
-import ch.scorpion.jabbah.edit.command.AbstractCommand
+import ch.scorpion.jabbah.edit.command.AbstractDrawingViewCommand
 import ch.scorpion.jabbah.edit.module.EditModule
 
 class ToFrontAction(
@@ -55,16 +55,12 @@ class ToBackAction(
 
 abstract class StackingOrderCommand(
 	name: String,
-	protected val drawingView: DrawingView<*>,
+	drawingView: DrawingView<*>,
 	protected val componentIds: Collection<Int>
-) : AbstractCommand(name, null) {
+) : AbstractDrawingViewCommand(name, drawingView) {
 
-	protected val drawing: Drawing<*> get() = drawingView.drawing
+	protected val drawing: Drawing<*> get() = view.drawing
 	protected val components get() = componentIds.map { drawing.getWithId(it) as Component }
-
-	override fun validate() {
-		drawingView.drawing.validate()
-	}
 }
 
 /**

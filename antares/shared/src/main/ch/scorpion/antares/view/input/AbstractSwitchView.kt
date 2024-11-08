@@ -6,7 +6,9 @@ import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.event.Button
+import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.Focusable
 import ch.scorpion.jabbah.draw.graphics.LineCap
 import ch.scorpion.jabbah.draw.graphics.LineJoin
 import ch.scorpion.jabbah.draw.graphics.Stroke
@@ -71,9 +73,8 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 
 	/** ---- [ActorView] interface */
 
-	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler {
-		return actorInteractionHandler
-	}
+	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler =
+		actorInteractionHandler
 
 	/** ---- [AbstractGraphElementView] */
 
@@ -101,8 +102,17 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 		}
 	}
 
+	override fun canConsume(keyEvent: KeyEvent): Boolean =
+		actorInteractionHandler.canConsume(keyEvent)
+
+	/** ---- [Focusable] interface */
+
 	/** ---- [AbstractSwitchView] */
 
+	/**
+	 * Called by this [AbstractSwitchView] to ask subclasses to update the content and geometry
+	 * of their label in edit mode.
+	 */
 	protected abstract fun updateLabels()
 
 	protected open val circleRadius: Double get() = DEF_CIRCLE_RADIUS
@@ -189,6 +199,18 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 			}
 			context.mouseEvent?.consumeEvent()
 			return this
+		}
+
+		fun canConsume(keyEvent: KeyEvent): Boolean {
+			if (name != null) {
+				if (name!!.length == 1 && name!![0].code == keyEvent.key) {
+					return true
+				}
+			}
+			return when (keyEvent.key) {
+				'0'.code, '1'.code, '\n'.code -> true
+				else -> false
+			}
 		}
 
 		override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {

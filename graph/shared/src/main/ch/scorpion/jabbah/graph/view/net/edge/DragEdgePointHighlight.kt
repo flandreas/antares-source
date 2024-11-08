@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.view.net.edge
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.ZoomPan
@@ -47,7 +48,7 @@ class DragEdgePointHighlight(private val edgeView: EdgeView<*>) : AbstractDrawab
 
 	/** ---- [Drawable] interface */
 
-	override val boundingBox: Rectangle2D
+	override val boundingBox: RectangularShape
 		get() {
 			val zf = zoomPan?.zoomFactor ?: 1.0
 			val size = DrawModule.properties.getInt(PROP_HALF_SIZE) / zf

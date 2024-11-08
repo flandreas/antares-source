@@ -8,13 +8,10 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.drawable.Rotatable
 import ch.scorpion.jabbah.draw.drawable.RotationDirection
-import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ContentViewManager
-import ch.scorpion.jabbah.edit.CommandManager
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.Undoable
-import ch.scorpion.jabbah.edit.command.AbstractCommand
+import ch.scorpion.jabbah.draw.view.DrawViewModule
+import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.edit.command.AbstractDrawingViewCommand
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.module.EditModule
@@ -56,12 +53,12 @@ class RotateAction(
 /** Rotates a [Component] to the given [Rotation].*/
 class RotateCommand(
 	private val clockwise: Boolean,
-	private val drawingView: DrawingView<*>,
+	drawingView: DrawingView<*>,
 	val componentIds: Collection<Int>,
 	val pivot: Point2D? = null
-) : AbstractCommand(if (clockwise) "edit.command.rotateClockwise" else "edit.command.rotate", null), Undoable {
+) : AbstractDrawingViewCommand(if (clockwise) "edit.command.rotateClockwise" else "edit.command.rotate", drawingView), Undoable {
 
-	private val components: Collection<Component> get() = componentIds.map { drawingView.drawing.getWithId(it)!! }.toList()
+	private val components: Collection<Component> get() = componentIds.map { view.drawing.getWithId(it)!! }.toList()
 
 	override fun execute() {
 		Rotatable.rotate(components, RotationDirection.of(clockwise), pivot)

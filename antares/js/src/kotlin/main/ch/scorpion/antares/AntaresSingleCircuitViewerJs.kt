@@ -1,13 +1,17 @@
 package ch.scorpion.antares
 
-import ch.scorpion.jabbah.base.*
-import ch.scorpion.jabbah.base.geom.Dimension2D
+import ch.scorpion.jabbah.base.Action
+import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.ViewDecorator
 import ch.scorpion.jabbah.draw.view.CanvasJs
-import ch.scorpion.jabbah.execution.speed.SystemSpeedOutlet
+import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
+import ch.scorpion.jabbah.edit.model.text.Label
+import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
+import ch.scorpion.jabbah.execution.PauseOrResumeAction
+import ch.scorpion.jabbah.execution.ExecutionControlOutlet
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.project.AkrabApiException
 import ch.scorpion.jabbah.graph.ui.graphviewer.GraphViewerController
-import kotlinx.browser.window
 import org.w3c.dom.HTMLCanvasElement
 
 /**
@@ -23,7 +27,7 @@ import org.w3c.dom.HTMLCanvasElement
 @JsExport
 class AntaresSingleCircuitViewerJs(
     data: Any
-) : SystemSpeedOutlet {
+) : ExecutionControlOutlet {
 
     companion object {
         private val LOG by logger(AntaresSingleCircuitViewerJs::class)
@@ -37,29 +41,18 @@ class AntaresSingleCircuitViewerJs(
         }
         LOG.debug("Initializing AntaresSingleCircuitViewerJs with MetaGraph ${(data as MetaGraph).uuid}")
         controller = GraphViewerController(data.graph.graphView, true)
+        controller.graphNavigationViewController.enableOpenSubGraphRequests = false
         ViewMocks(controller)
-        controller.drawingView.editable = false
+
+        // Required to activate ScenarioDetector
+        controller.graphNavigationViewController.setRootGraphView(data.graph.graphView, false)
     }
 
-    fun bindCanvas(
-        canvas: HTMLCanvasElement,
-        width: Int? = null,
-        height: Int? = null,
-    ) {
+    fun bindCanvas(canvas: HTMLCanvasElement) {
         try {
-            val dimension: Dimension2D? = if (width != null && height != null) {
-                Dimension2D(width, height)
-            } else {
-                null
-            }
+            val canvasJs = CanvasJs(canvas, controller.drawingView)
+            addWatermark()
 
-            val effWidth = dimension?.width?.toInt() ?: canvas.offsetWidth
-            val effHeight = dimension?.height?.toInt() ?: canvas.offsetHeight
-
-            canvas.width = effWidth * window.devicePixelRatio.toInt()
-            canvas.height = effHeight * window.devicePixelRatio.toInt()
-
-            val canvasJs = CanvasJs(canvas, controller.drawingView, dimension)
             canvasJs.repaint()
         } catch (e: Throwable) {
             e.printStackTrace()
@@ -69,11 +62,11 @@ class AntaresSingleCircuitViewerJs(
 
     val circuitName: String get() = controller.graphNavigationViewController.drawingView.drawing.name.value
 
-    fun getToggleApplicationModeAction(): Action = controller.toggleApplicationModeAction
-    fun getSingleStepModeAction(): Action = controller.singleStepModeAction
-    fun getPauseOrResumeAction(): Action = controller.pauseOrResumeAction
+    /** ---- [ExecutionControlOutlet] interface */
 
-    /** ---- [SystemSpeedOutlet] interface */
+    override val toggleApplicationModeAction: Action get() = controller.toggleApplicationModeAction
+    override val singleStepModeAction: Action get() = controller.singleStepModeAction
+    override val pauseOrResumeAction: PauseOrResumeAction get() = controller.pauseOrResumeAction
 
     override val systemSpeedCategoryName: String
         get() = controller.applicationContextHolder.currentSystemSpeedCategory.systemSpeedCategory.toString()
@@ -83,4 +76,14 @@ class AntaresSingleCircuitViewerJs(
         set(value) {
             controller.applicationContextHolder.currentSystemSpeedCategory.systemSpeed.speed = value
         }
+
+    private fun addWatermark() {
+        controller.drawingView.decorator.bottomRight = Label(
+            "Powered by antarescircuit.io",
+            ViewDecorator.FONT_ITALIC,
+            ViewDecorator.TEXT_COLOR_SUBTLE,
+            horizontalAlignment = HorizontalAlignment.LEFT,
+            verticalAlignment = VerticalAlignment.TOP
+        )
+    }
 }

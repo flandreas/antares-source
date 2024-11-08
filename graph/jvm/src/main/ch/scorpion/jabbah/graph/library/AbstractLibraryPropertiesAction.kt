@@ -34,6 +34,8 @@ abstract class AbstractLibraryPropertiesAction(
 
 	protected val currentProperties: LibraryProperties get() = library.properties
 
+	private val currentPreferences: LibraryPreferences get() = library.preferences
+
 	private val isEditable: Boolean get() = Authorizer.isCurrentUserAuthorizedTo(Operation.Change, library)
 
 	private val isSystem: Boolean get() = library.isSystem
@@ -54,6 +56,7 @@ abstract class AbstractLibraryPropertiesAction(
 				supportImport = false,
 				isSystem = isSystem,
 				properties = properties,
+				libraryPreferences = currentPreferences,
 				editable = isEditable
 			)
 			if (properties == null) {

@@ -3,10 +3,9 @@ package ch.scorpion.jabbah.base.event
 import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.test.*
 
-/** Unit tests for [EventBusImpl]. */
 class EventBusImplTest {
 
-	val eventBus = EventBusImpl()
+	private val eventBus = EventBusImpl()
 
 	private class TestEventA
 	private class TestEventB

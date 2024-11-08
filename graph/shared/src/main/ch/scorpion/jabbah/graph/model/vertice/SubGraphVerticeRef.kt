@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.dsl.Interpreter
 import ch.scorpion.jabbah.base.dsl.Memory
 import ch.scorpion.jabbah.base.dsl.ScriptMetaData
+import ch.scorpion.jabbah.base.dsl.ExternalFunction
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
@@ -22,8 +23,10 @@ import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
+import ch.scorpion.jabbah.graph.model.nonvolatile.NonVolatileStorable
 import ch.scorpion.jabbah.graph.model.param.GraphParamValue
 import ch.scorpion.jabbah.graph.model.param.GraphParamValues
+import ch.scorpion.jabbah.graph.model.semantic.GraphSemantic
 import ch.scorpion.jabbah.graph.model.vertice.GraphReferenceState.*
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.BrokenReferenceView
@@ -58,23 +61,40 @@ private data class GraphReference(
 	}
 }
 
+/** Explicit interface of [SubGraphVerticeRef] primarily for mocking in tests.*/
+interface SubGraphVerticeRefIF : SubGraphVertice, NetCombiner {
+	val graphType: GraphType
+	val paramValues: GraphParamValues
+}
+
+/**
+ * Passed into [Interpreter.interpret] as params to be used by [ExternalFunction]s.
+ */
+data class SubGraphFunctionContext(
+	val data: GraphActorData,
+	val actor: Actor?,
+	val signalHandler: SignalHandler?
+)
+
 /**
  * A [SubGraphVertice] implementation that is part of one [Graph] and references another [Graph] in the [Library].
  */
 class SubGraphVerticeRef(
 	override var graphUUID: UUID? = null,
-	var graphType: GraphType = GraphModelModule.defaultGraphType,
+	override var graphType: GraphType = GraphModelModule.defaultGraphType,
 	private val repository: MetaGraphRepository = LibraryModule.libraryHolder
-) : CalculatingVertice(CALCULATOR), SubGraphVertice, NetCombiner {
+) : CalculatingVertice(CALCULATOR), SubGraphVerticeRefIF {
 
 	companion object {
 
 		private val LOG by logger(SubGraphVerticeRef::class)
 
+		private val BROKEN_REFERENCE_NAME = Name(BrokenReferenceView.NAME)
+
 		val CALCULATOR = object : VerticeCalculator<SubGraphVerticeRef> {
 			override fun calculate(vertice: SubGraphVerticeRef, data: GraphActorData, signalHandler: SignalHandler) {
 				if (data.isInput && !vertice.isDeepExecution(signalHandler.isDeepExecution)) {
-					vertice.runExecutionScript(data)
+					vertice.runExecutionScript(data, vertice, signalHandler)
 				}
 			}
 		}
@@ -102,14 +122,14 @@ class SubGraphVerticeRef(
 	/** Can be set during [read] if reference to [MetaGraph] is broken. */
 	private var _designError: DesignError? = null
 
-	private val hasDesignError: Boolean get() = designError != null
+	val hasDesignError: Boolean get() = designError != null
 
 	/** Interprets the script in [Graph.script] during execution (if required by system parameters). */
 	private var interpreter: Interpreter? = null
 
 	private var isDeepExecutionCache: Boolean? = null
 
-	var paramValues = GraphParamValues()
+	override var paramValues = GraphParamValues()
 		private set(value) {
 			field = value
 			getGraphIfPresent()?.let {
@@ -123,17 +143,30 @@ class SubGraphVerticeRef(
 		ScriptMetaData(type, Translations.getString("graph.property.GraphViewImpl.script.name"))
 	}
 
+	override var propagationDelay: LongValue
+		get() {
+			val propDelay = paramValues.firstOrNullWithSemantic(GraphSemantic.PropagationDelay)?.value
+			if (propDelay is LongValue) {
+				return propDelay
+			}
+			return super.propagationDelay
+		}
+		set(value) {
+			super.propagationDelay = value
+		}
+
 	/** ---- [GraphElement] interface */
 
 	override val designError: DesignError? get() = _designError
 
-	override var type: String = "" // lateinit not possible with custom setter
-		set(value) {
-			if (field != value) {
-				field = value
-				stateChanged(null, Vertice.STATE_CHANGE_TYPE)
-			}
-		}
+	override val type: String get() =
+		graphUUID?.let {
+			LibraryModule.libraryHolder.getOptionalMetaGraph(it)?.name ?: BROKEN_REFERENCE_NAME.value
+		} ?: BROKEN_REFERENCE_NAME.value
+
+	fun handleTypeChanged() {
+		stateChanged(null, Vertice.STATE_CHANGE_TYPE)
+	}
 
 	private var _typeDesc: String? = null
 	override val typeDesc: String? get() = _typeDesc
@@ -146,6 +179,7 @@ class SubGraphVerticeRef(
 	}
 
 	override fun graphParamsChanged(graph: Graph) {
+		super.graphParamsChanged(graph)
 		var newParamValues: GraphParamValues = paramValues
 		var changed = false
 		for (paramValue in paramValues.values) {
@@ -159,7 +193,9 @@ class SubGraphVerticeRef(
 
 	/** ---- [SubGraphVertice] */
 
-	override var graphName: Name = Name(TranslatableText())
+	override var graphName: Name
+		get() = graphUUID?.let { LibraryModule.libraryHolder.getMetaGraph(it).graph.model!!.name } ?: BROKEN_REFERENCE_NAME
+		set(@Suppress("UNUSED_PARAMETER") value) {}
 
 	override fun <T : Any> propagateOutput(outputPort: SubGraphOutputPort<T>, signal: T, signalHandler: SignalHandler) {
 		if (LOG.isTraceEnabled()) {
@@ -215,7 +251,6 @@ class SubGraphVerticeRef(
 			val metaGraph = repository.getOptionalMetaGraph(graphUUID!!)
 			if (metaGraph != null) {
 				name = metaGraph.name
-				graphName = metaGraph.containerDrawing.model.graphName
 				fillFrom(metaGraph.containerDrawing.createSubGraphVertice())
 
 				if (paramValues.isNotEmpty) {
@@ -224,13 +259,11 @@ class SubGraphVerticeRef(
 				}
 
 				if (metaGraph.graph.model!!.overallPropagationDelay != null) {
-					propagationDelay = metaGraph.graph.model!!.overallPropagationDelay!!
+					propagationDelay = LongValueImpl(metaGraph.graph.model!!.overallPropagationDelay!!)
 				}
 			} else {
 				// Broken reference to library component
 				LOG.warn("broken reference $graphUUID")
-				graphName = Name(BrokenReferenceView.NAME)
-				type = graphName.value
 				_designError = DesignError("graph.designError.brokenSubGraphRef.text")
 				graphReference = GraphReference.broken()
 			}
@@ -250,9 +283,28 @@ class SubGraphVerticeRef(
 		}
 	}
 
+	override fun executionInitializeNonVolatile(signalHandler: SignalHandler, nonVolatileData: NonVolatileStorable?) {
+		isDeepExecutionCache = null
+		super.executionInitialize(signalHandler)
+		if (!hasDesignError) {
+			if (isDeepExecution(signalHandler.isDeepExecution)) {
+				graphReference.graph?.executionInitialize(signalHandler, nonVolatileData)
+			}
+		}
+	}
+
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
 		if (!hasDesignError) {
+			// Establish start signals of unconnected inputs
+			getInputs()
+				.filter {
+					!it.isConnected && it.unconnectedStartValue != null
+				}
+				.forEach {
+					it.applyUnconnectedStartValue(signalHandler)
+				}
+
 			if (isDeepExecution(signalHandler.isDeepExecution)) {
 				graphReference.graph?.executionStart(signalHandler, graphView)
 			} else {
@@ -260,7 +312,7 @@ class SubGraphVerticeRef(
 				if (interpreter is GraphDslInterpreter) {
 					(interpreter as GraphDslInterpreter).executionStarted()
 				}
-				requestActingAfter(signalHandler, propagationDelay, createActorData(null))
+				requestActingAfter(signalHandler, propagationDelay.value, createActorData(null))
 			}
 		}
 	}
@@ -298,6 +350,17 @@ class SubGraphVerticeRef(
 		isDeepExecutionCache = null
 	}
 
+	override fun executionStoppedNonVolatile(signalHandler: SignalHandler, nonVolatileData: NonVolatileStorable?) {
+		if (isDeepExecution(signalHandler.isDeepExecution)) {
+			val relativeData: NonVolatileStorable? = nonVolatileData?.let { NonVolatileStorable(id) }
+			graphReference.graph?.executionStopped(signalHandler, relativeData)
+			if (relativeData?.hasChildren == true) {
+				nonVolatileData.addChild(relativeData)
+			}
+		}
+		isDeepExecutionCache = null
+	}
+
 	override fun formNet(signalHandler: SignalHandler) {
 		super.formNet(signalHandler)
 		if (!hasDesignError) {
@@ -307,8 +370,8 @@ class SubGraphVerticeRef(
 		}
 	}
 
-	private fun runExecutionScript(data: GraphActorData?) {
-		interpreter?.interpretCatching(executionMetaData, params = data)
+	private fun runExecutionScript(data: GraphActorData, actor: Actor, signalHandler: SignalHandler) {
+		interpreter?.interpretCatching(executionMetaData, params = SubGraphFunctionContext(data, actor, signalHandler))
 	}
 
 	/** ---- [AbstractVertice] */
@@ -409,6 +472,8 @@ class SubGraphVerticeRef(
 
 	/** ---- [SubGraphVerticeRef] */
 
+	val isBroken: Boolean get() = graphReference.state == BROKEN
+
 	fun setParamValue(paramValue: GraphParamValue<*>) {
 		val newParamValues = paramValues.withValue(paramValue)
 
@@ -422,9 +487,7 @@ class SubGraphVerticeRef(
 	private fun fillFrom(subGraphVertice: SubGraphVertice) {
 		graphUUID = subGraphVertice.graphUUID
 
-		type = subGraphVertice.graphName.value
 		_typeDesc = subGraphVertice.description.value
-		graphName = subGraphVertice.graphName
 
 		for (port in subGraphVertice.getPorts()) {
 			addPort(port, port.portId)
@@ -457,7 +520,7 @@ class SubGraphVerticeRef(
 	}
 
 	private fun synchronizePorts() {
-		if (paramValues.isNotEmpty) {
+		if (paramValues.isNotEmpty && graphReference.state != BROKEN) {
 			with(ensureGraph()) {
 				for (port in getPorts()) {
 					val graphPort = getGraphPort<Any>(port.name!!)

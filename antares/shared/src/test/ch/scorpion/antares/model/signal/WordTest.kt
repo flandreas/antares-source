@@ -145,6 +145,14 @@ class WordTest {
 	}
 
 	@Test
+	fun shouldRepresentAsOctal() {
+		assertEquals("1", Word.of(BW_4, 1UL).octalString)
+		assertEquals("10", Word.of(BW_4, 8UL).octalString)
+		assertEquals("12", Word.of(BW_4, 10UL).octalString)
+		assertEquals("0", Word.of(BW_8, 0UL).octalString)
+	}
+
+	@Test
 	fun shouldRepresentAsDecimal() {
 		assertEquals("6", Word.of(BW_4, 6UL).decimalString)
 		assertEquals("6", Word.of(BW_8, 6UL).decimalString)

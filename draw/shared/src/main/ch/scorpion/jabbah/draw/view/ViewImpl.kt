@@ -160,9 +160,9 @@ open class ViewImpl<C : InputEventContext>(
 
 	/** ---- Geometry */
 
-	override val width: Int get() = canvas.dimension.width.toInt()
+	override val width: Int get() = _canvas?.dimension?.width?.toInt() ?: 0
 
-	override val height: Int get() = canvas.dimension.height.toInt()
+	override val height: Int get() = _canvas?.dimension?.height?.toInt() ?: 0
 
 	protected open fun createViewContentBounds(): ViewContentBounds = ViewContentBounds(mainBoundsAccessor = ::calculateCombinedBoundingBox)
 
@@ -319,7 +319,9 @@ open class ViewImpl<C : InputEventContext>(
 
 		context.g.save()
 
+		// This creates a copy of the Transform with scaling set to 1.0
 		val oldTransform = context.g.transform
+
 		val zoomedTransform = context.g.transform
 		zoomedTransform.concatenate(transformation.affineTransform)
 
@@ -328,10 +330,15 @@ open class ViewImpl<C : InputEventContext>(
 		drawables.asReversed().forEach {
 			if (it is Unzoomable) {
 				context.g.transform = oldTransform
+				canvas.devicePixelRatio.also { dpr ->
+					context.g.scale(dpr, dpr)
+					it.draw(context)
+					context.g.scale(1 / dpr, 1 / dpr)
+				}
 			} else {
 				context.g.transform = zoomedTransform
+				it.draw(context)
 			}
-			it.draw(context)
 		}
 
 		if (overlayColor != null) {
@@ -346,9 +353,13 @@ open class ViewImpl<C : InputEventContext>(
 			context.g.drawLine(0.0, originView.y, width.toDouble(), originView.y)
 		}
 
+		// Draw the overlay container
 		context.g.transform = oldTransform
-
-		overlayContainer.draw(context)
+		canvas.devicePixelRatio.also { dpr ->
+			context.g.scale(dpr, dpr)
+			overlayContainer.draw(context)
+			context.g.scale(1 / dpr, 1 / dpr)
+		}
 
 		context.g.restore()
 	}
@@ -461,6 +472,14 @@ open class ViewImpl<C : InputEventContext>(
 
 	override fun modelToViewLength(length: Double, zoomFactor: Double): Double = length * zoomFactor
 
+	override fun modelToDeviceX(x: Double): Double = modelToViewX(x) / canvas.devicePixelRatio
+
+	override fun modelToDeviceY(x: Double): Double = modelToViewY(x) / canvas.devicePixelRatio
+
+	override fun modelToDevice(p: Point2D): Point2D = modelToView(p).multiply(1 / canvas.devicePixelRatio)
+
+	override fun modelToDeviceLength(length: Double): Double = modelToViewLength(length) / canvas.devicePixelRatio
+
 	/** ---- [ViewImpl] */
 
 	init {
@@ -473,6 +492,9 @@ open class ViewImpl<C : InputEventContext>(
 				Canvas.PROP_DIMENSION -> {
 					space.viewDimension = canvas.dimension
 					canvasLaidOut = space.viewDimension.widthInt > 0 && space.viewDimension.heightInt > 0
+					applyZoomStrategy()
+				}
+				Canvas.PROP_DEVICE_PIXEL_RATIO -> {
 					applyZoomStrategy()
 				}
 				ViewSpace.PROP_AREA -> applyZoomStrategy()

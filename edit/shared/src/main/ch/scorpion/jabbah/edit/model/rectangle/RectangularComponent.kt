@@ -5,12 +5,12 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.drawable.*
+import ch.scorpion.jabbah.draw.drawable.Transparent
+import ch.scorpion.jabbah.draw.drawable.TransparentImpl
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.*
-import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.figure.Figure
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.edit.model.text.*
@@ -22,121 +22,13 @@ import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
 /**
- * An abstract [Component] implementation that has a [RectangularShape].
- *
- * [AbstractRectangularComponent] provides a changeable rectangular geometry, but doesn't draw itself.
- * It can be used as a base class for implementing various rectangular [Component]s.
- */
-abstract class AbstractRectangularComponent(
-	styleType: StyleType = StyleType.FIGURE,
-	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	val shape: RectangularShape = Rectangle2D()
-) : AbstractComponent(styleProvider, styleType), RectangularShape by shape, Mirrorable {
-
-	open val shapeToDraw: Shape get() = shape
-
-	open fun drawText(context: DrawContext) {
-		// empty
-	}
-
-	/** ---- [RectangularShape] */
-
-	override fun setFrame(x: Double, y: Double, width: Double, height: Double) {
-		invalidate()
-		shape.setFrame(x, y, width, height)
-		invalidate()
-		update()
-	}
-
-	override fun setFrame(rect: RectangularShape) {
-		this.setFrame(rect.x, rect.y, rect.width, rect.height)
-	}
-
-	/** ---- [Locatable] interface */
-
-	override var location: Point2D
-		get() = Point2D(x, y)
-		set(value) {
-			setFrame(value.x, value.y, width, height)
-		}
-
-	/** ---- [Drawable] interface */
-
-	override val boundingBox: Rectangle2D
-		get() {
-			val bb = Rectangle2D(shape.boundingBox)
-			val lw = stroke.width
-			bb.setFrame(
-				bb.x - lw,
-				bb.y - lw,
-				bb.width + 2 * lw,
-				bb.height + 2 * lw
-			)
-			if (shadow) {
-				DropShadow.expand(bb, rotation)
-			}
-			return bb
-		}
-
-	override fun contains(x: Double, y: Double): Boolean = shape.contains(x, y)
-
-	override fun contains(p: Point2D): Boolean = shape.contains(p)
-
-	override fun intersects(rect: RectangularShape): Boolean = shape.intersects(rect)
-
-	/** ---- [Mirrorable] */
-
-	override fun mirrorHorizontally(x: Double) {
-		setFrame(Point2D(this.x + width, this.y).mirrorHorizontally(x).x, this.y, width, height)
-	}
-
-	override fun mirrorVertically(y: Double) {
-		setFrame(this.x, Point2D(this.x, this.y + height).mirrorVertically(y).y, width, height)
-	}
-
-	/** ---- [Snappable] interface */
-
-	override val snappableX: Array<SnappableX>
-		get() = arrayOf(
-			SnappableXCoordinate(minX),
-			SnappableXCoordinate(centerX),
-			SnappableXCoordinate(maxX))
-
-	override val snappableY: Array<SnappableY>
-		get() = arrayOf(
-			SnappableYCoordinate(minY),
-			SnappableYCoordinate(centerY),
-			SnappableYCoordinate(maxY))
-
-	/** ---- [Storable] interface */
-
-	override fun write(writer: StoreWriter) {
-		super.write(writer)
-		writer.writeDouble("x", x)
-		writer.writeDouble("y", y)
-		writer.writeDouble("w", width)
-		writer.writeDouble("h", height)
-	}
-
-	override fun read(reader: StoreReader) {
-		super.read(reader)
-		setFrame(
-			reader.readDouble("x"),
-			reader.readDouble("y"),
-			reader.readDouble("w"),
-			reader.readDouble("h")
-		)
-	}
-}
-
-/**
  * A [RectangularComponent] is an [AbstractRectangularComponent] with a singe line text label
  * whose vertical alignment relative to the rectangle box can be chosen.
  */
 abstract class RectangularComponent(
 	styleType: StyleType = StyleType.FIGURE,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	shape: RectangularShape,
+	shape: MutableRectangularShape,
 	labelRotation: Rotation = Rotation.R0,
 	labelRotationDisplayStrategy: RotationDisplayStrategy = RotationDisplayStrategy.IGNORE
 ) : AbstractRectangularComponent(styleType, styleProvider, shape), Transparent, Describable, Labeled, Figure {
@@ -251,8 +143,10 @@ abstract class RectangularComponent(
 
 	/** ---- [Drawable] interface */
 
-	override val boundingBox: Rectangle2D
-		get() = super.boundingBox.add(label.boundingBox.moveBy(location)) as Rectangle2D
+	override val boundingBox: RectangularShape get() =
+		Rectangle2D(super.boundingBox)
+			.add(Rectangle2D(label.boundingBox)
+			.moveBy(location)) as Rectangle2D
 
 	override fun draw(context: DrawContext) {
 		if (context.useContextColors) {
@@ -294,13 +188,13 @@ abstract class RectangularComponent(
 	}
 
 	override fun drawText(context: DrawContext) {
-		context.g.translate(x, y)
 		label.font = font
-		label.draw(context)
-		context.g.translate(-x, -y)
+		context.translated(location) {
+			label.draw(it)
+		}
 	}
 
-	override fun getTooltip(x: Double, y: Double): Tooltip? {
+	override fun getTooltip(x: Double, y: Double, editable: Boolean): Tooltip? {
 		if (text.isNotEmpty && label.contains(Point2D(x, y).subtract(location))) {
 			return buildToolTipText(title = null, text = description.value, subText = null)?.let {
 				Tooltip(it, Rectangle2D(label.boundingBox).moveBy(location))

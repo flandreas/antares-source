@@ -21,8 +21,9 @@ import ch.scorpion.jabbah.graph.view.usecase.UsecaseImpl
 import ch.scorpion.jabbah.graph.view.usecase.UsecaseImplBeanInfo
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImplBeanInfo
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.mock
 import org.junit.Test
 
 class GraphBeanInfoTest {
@@ -34,7 +35,7 @@ class GraphBeanInfoTest {
 	}
 
 	private val view = DrawingViewMockBuilder().build<Component>()
-	private val editor = mockk<Editor>()
+	private val editor = mock<Editor>()
 
 	init {
 		every { editor.active } returns true

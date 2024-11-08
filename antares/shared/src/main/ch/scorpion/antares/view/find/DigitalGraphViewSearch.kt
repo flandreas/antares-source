@@ -4,7 +4,7 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.antares.view.input.DipSwitchView
 import ch.scorpion.antares.view.input.SwitchView
-import ch.scorpion.antares.view.net.TunnelView
+import ch.scorpion.antares.view.net.tunnel.TunnelView
 import ch.scorpion.jabbah.draw.view.find.SearchRequest
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing

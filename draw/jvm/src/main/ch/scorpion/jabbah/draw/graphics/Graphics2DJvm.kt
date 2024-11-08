@@ -92,6 +92,10 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
 
     /** ---- [Graphics2D] interface */
 
+    init {
+        g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON)
+    }
+
     override val supportClipping: Boolean get() = true
 
 	override var rotationAngle: Double = 0.0
@@ -307,7 +311,8 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
     override fun drawImage(image: Image, x: Int, y: Int) {
 	    when (image) {
 			is ResourceImageJvm -> g.drawImage(image.imageIcon.image, x, y, null)
-		    is BufferedImageJvm -> g.drawImage(image.jvmImage, x, y, null)
+		    is RasterImageJvm -> g.drawImage(image.jvmImage, x, y, null)
+            is SvgImageJvm -> image.draw(g)
 		    else -> throw IllegalArgumentException("unsupported image type ${image::class.simpleName}")
 		}
     }

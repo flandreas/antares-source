@@ -89,7 +89,7 @@ interface Graphics2D {
 
     fun drawString(s: String, x: Int, y: Int)
 
-    /** Draws an [Image] at the upper-left corner (x,y).*/
+    /** Draws an [Image] in the upper-left corner (x,y).*/
     fun drawImage(image: Image, x: Int, y: Int)
 
     /** Draws the specified [Shape] with the current [Color].*/
@@ -121,6 +121,5 @@ interface Graphics2D {
      * @return [r]
      */
     fun getClipBounds(r: Rectangle2D): Rectangle2D
-
 }
 

@@ -5,11 +5,10 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.MetaGraph
 
-/** A builder that helps to setup a [LibraryImpl] to be used for testing.*/
+/** A builder that helps to set up a [LibraryImpl] to be used for testing.*/
 class LibraryBuilder(
 	name: String,
-	libraryService: LibraryService,
-	val library: Library = LibraryImpl(name = TranslatableText(name), libraryService = libraryService)
+	val library: Library = LibraryImpl(name = TranslatableText(name))
 ) {
 
 	private val stack = Stack<LibraryDirectory>()

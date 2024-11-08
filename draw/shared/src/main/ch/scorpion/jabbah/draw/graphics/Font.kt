@@ -48,7 +48,7 @@ interface Font {
 	fun deriveFont(style: FontStyle): Font
 	fun deriveFont(size: Int): Font
 	fun deriveFont(family: FontFamily): Font
-	fun scale(factor: Int): Font
+	fun scale(factor: Double): Font
 }
 
 data class FontImpl(
@@ -73,10 +73,10 @@ data class FontImpl(
 	override fun deriveFont(family: FontFamily): Font =
 		copy(family = family)
 
-	override fun scale(factor: Int): Font =
-		if (factor == 1) {
+	override fun scale(factor: Double): Font =
+		if (factor == 1.0) {
 			this
 		} else {
-			deriveFont(size * factor)
+			deriveFont((size * factor).toInt())
 		}
 }

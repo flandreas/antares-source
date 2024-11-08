@@ -43,10 +43,10 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
 		const val PROP_MIN_EDGE_VIEW_LENGTH = "ch.scorpion.jabbah.graph.view.EdgeView.minLength"
 
 		/** The size of the rectangular area defining whether a point is "inside" this [EdgeView]. Used for snapping.*/
-		const val containsSize: Int = 4
+		const val CONTAINS_SIZE: Int = 4
 
 		/** The maximum distance for regarding a snap point as being on a corner of this [EdgeView]. Used for snapping.*/
-		const val edgeCornerDistance: Int = 15
+		const val EDGE_CORNER_DISTANCE: Int = 10
 	}
 
 	override var description: Description
@@ -135,6 +135,9 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
 	/** Returns the [Connection] connected with [connectableView]. */
 	fun getConnection(connectableView: ConnectableView): Connection<T>?
 
+	/** Returns the [Connection] opposite to the one connected with [connectableView].*/
+	fun getOppositeConnection(connectableView: ConnectableView): Connection<T>?
+
 	fun getOppositeConnection(port: Port<*>): Connection<T>?
 
 	fun getOppositeConnection(connection: Connection<*>): Connection<T>? =
@@ -194,6 +197,10 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
      */
     fun connectToOrigin(connection: Connection<T>)
 
+	/**
+	 * Unconnects this [EdgeView] from the [Port] of the origin [ConnectableView].
+	 * Note that this method does **NOT** release the connection on the model layer.
+	 */
 	fun unconnectFromOrigin()
 
     /**
@@ -202,6 +209,10 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
      */
     fun connectToDestination(connection: Connection<T>)
 
+	/**
+	 * Unconnects this [EdgeView] from the [Port] of the destination [ConnectableView].
+	 * Note that this method does **NOT** release the connection on the model layer.
+	 */
 	fun unconnectFromDestination(lockEndpoint: Boolean = false)
 
     /** Moves the point with the specified index to a new location. */

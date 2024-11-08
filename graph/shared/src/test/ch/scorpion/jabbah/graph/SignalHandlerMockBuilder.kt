@@ -1,8 +1,9 @@
 package ch.scorpion.jabbah.graph
 
 import ch.scorpion.jabbah.execution.SignalHandler
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.mock
 
 /**
  * A builder for mocks of [SignalHandler].
@@ -11,7 +12,7 @@ import io.mockk.mockk
  */
 class SignalHandlerMockBuilder {
 
-	private val signalHandler = mockk<SignalHandler>()
+	private val signalHandler = mock<SignalHandler>()
 
 	fun withExecutionTime(time: Long): SignalHandlerMockBuilder {
 		every { signalHandler.executionTime } returns time

@@ -130,7 +130,7 @@ class GraphPanelViewController(
 
 	val toggleApplicationModeAction = ToggleApplicationModeAction(applicationDataHolder, applicationModeHolder, eventBus)
 	val singleStepModeAction = SingleStepModeAction(applicationContextHolder.scheduler, eventBus)
-	val pauseOrResumeAction = PauseOrResumeAction(applicationContextHolder.scheduler, eventBus)
+	val pauseOrResumeAction = PauseOrResumeActionImpl(applicationContextHolder.scheduler, eventBus)
 	val executionDepthAction = ExecutionDepthAction(applicationContextHolder.scheduler, eventBus)
 	val stopOnIssueAction = StopOnIssueAction(applicationContextHolder.scheduler, eventBus)
 	val enableSoftBreakpointsAction = EnableSoftBreakpointsAction(applicationContextHolder.scheduler, eventBus)

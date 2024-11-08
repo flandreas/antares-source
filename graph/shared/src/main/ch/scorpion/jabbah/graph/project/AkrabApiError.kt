@@ -12,6 +12,8 @@ data class AkrabApiError(
 	companion object {
 		const val TYPE_QUOTA = "quota"
 		const val TYPE_ERROR = "error"
+
+		fun quota(msg: String): AkrabApiError = AkrabApiError(TYPE_QUOTA, msg)
 	}
 }
 

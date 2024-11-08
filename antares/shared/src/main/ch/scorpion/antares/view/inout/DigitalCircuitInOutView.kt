@@ -87,11 +87,22 @@ class DigitalCircuitInOutView(
 			updateView()
 		}
 
-	@Suppress("unused")
+	@Suppress("unused") // Reflection
 	var customCanBeUndefined: Boolean
 		get() = model.customCanBeUndefined
 		set(value) {
 			model.customCanBeUndefined = value
+		}
+
+	@Suppress("unused") // Reflection
+	var startValue: Long?
+		get() = model.startValue?.getValue()?.toLong()
+		set(value) {
+			model.startValue = if (value != null) {
+				DigitalSignalFactory.of(bitWidth, value)
+			} else {
+				null
+			}
 		}
 
 	init {
@@ -211,11 +222,10 @@ class DigitalCircuitInOutView(
 				transparent.applyTo(model.signal!!.color.foregroundColor))
 		}
 
-		val translation = getArrowPathTranslation()
-		context.g.translate(translation.x, translation.y)
-		numberView!!.draw(context)
-		drawDisabled(context)
-		context.g.translate(-translation.x, -translation.y)
+		context.translated(getArrowPathTranslation()) {
+			numberView!!.draw(it)
+			drawDisabled(it)
+		}
 	}
 
 	/** ---- [DigitalCircuitInOutView] */
@@ -273,6 +283,13 @@ class DigitalCircuitInOutView(
 		return numberView!!.getDigitIndexAt(
 			x - location.x - arrowPath!!.contentLocation.x - getArrowPathTranslation().x,
 			y - location.y - arrowPath!!.contentLocation.y - getArrowPathTranslation().y)
+	}
+
+	private fun canConsumeKey(key: Int): Boolean {
+		return when (key) {
+			KeyEvent.VK_SPACE -> false
+			else -> true
+		}
 	}
 
 	/** Consumes a key the user pressed during simulation while this [DigitalCircuitInOutView] has focus.*/
@@ -380,7 +397,7 @@ class DigitalCircuitInOutView(
 		return handler
 	}
 
-	override fun createActorInteractionHandler(): ActorInteractionHandler = InteractionHandler()
+	override fun createActorInteractionHandler(): ToggleInteractionHandler = InteractionHandler()
 
 	/**
 	 * Allows to toggle individual [Bit]s by clicking with the mouse and entering
@@ -404,6 +421,9 @@ class DigitalCircuitInOutView(
 			}
 			return null
 		}
+
+		override fun canConsume(keyEvent: KeyEvent): Boolean =
+			super.canConsume(keyEvent) && canConsumeKey(keyEvent.key)
 
 		override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (numberView!!.focusIndex != null) {

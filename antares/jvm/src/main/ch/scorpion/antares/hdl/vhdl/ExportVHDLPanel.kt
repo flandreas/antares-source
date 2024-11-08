@@ -7,12 +7,13 @@ import ch.scorpion.antares.model.testcase.Testcase
 import ch.scorpion.jabbah.base.Settings
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.base.help.HelpId
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.richtext.RichText
 import ch.scorpion.jabbah.base.swing.DialogBuilder
-import ch.scorpion.jabbah.base.swing.DirectorySelectionField
+import ch.scorpion.jabbah.base.swing.FileSelectionField
 import ch.scorpion.jabbah.base.swing.EGBL
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.HelpAction
@@ -92,8 +93,9 @@ class ExportVHDLPanel(
 	private val fileNameTextField = JTextField()
 
 	/** Used to select the directory where the export files are written.*/
-	private val directorySelectionField = DirectorySelectionField(
-		BaseModule.settings.getString(SETTING_EXPORT_DIRECTORY, SystemUtils.getUserHome().absolutePath)
+	private val directorySelectionField = FileSelectionField(
+		mode = FileSelectionField.Mode.Directory,
+		text = BaseModule.settings.getString(SETTING_EXPORT_DIRECTORY, SystemUtils.getUserHome().absolutePath)
 	)
 
 	private val fileNameTextExplanation = JLabel()
@@ -131,7 +133,7 @@ class ExportVHDLPanel(
 	private fun buildParametersPanel(): JPanel {
 		val inset = 5
 		var row = 0
-		val rowDist = 8
+		val rowDist = UIBasics.ROW_GAP
 		val panel = JPanel(EGBL.getLayout())
 
 		waitTimeTextField.preferredSize = Dimension(100, waitTimeTextField.preferredSize.height)
@@ -402,6 +404,13 @@ class ExportVHDLPanel(
 				JOptionPane.showMessageDialog(
 					Frame.getFrames()[0],
 					e.message,
+					Translations.getString("base.action.export.name"),
+					JOptionPane.ERROR_MESSAGE
+				)
+			} catch (e: DslError) {
+				JOptionPane.showMessageDialog(
+					Frame.getFrames()[0],
+					Translations.getString("antares.vhdl.testcase.error.text", e.message ?: ""),
 					Translations.getString("base.action.export.name"),
 					JOptionPane.ERROR_MESSAGE
 				)

@@ -114,7 +114,7 @@ private data class TooltipEvent(
 class TooltipHandler(
 	private val eventBus: EventBus,
 	private val drawableRetriever: (DrawableContainer<*>, Double, Double) -> Drawable? = { c, x, y -> c.getDrawableAt(x, y)},
-	private val tooltipAccessor: (Drawable, Double, Double) -> Tooltip? = { d, x, y -> d.getTooltip(x, y) },
+	private val tooltipAccessor: (Drawable, Double, Double, editable: Boolean) -> Tooltip? = { d, x, y, e -> d.getTooltip(x, y, e) },
 	private val explanationAccessor: (Drawable, Double, Double) -> DrawableExplanation<RectangularDrawable>? = { d, x, y -> d.getExplanation(x, y) }
 ) {
 
@@ -142,6 +142,8 @@ class TooltipHandler(
 
 	private val tooltipsEnabled = BaseModule.properties.getBoolean(PROP_TOOLTIPS_ENABLED)
 
+	private val beginnerHelpEnabled = BaseModule.properties.getBoolean(PROP_BEGINNER_HELP_TOOLTIP)
+
 	private val popupMenuHandler: EventHandler<PopupMenuEvent> = { clear(it.canvas.view) }
 
 	init {
@@ -157,7 +159,7 @@ class TooltipHandler(
 	 * or hiding as appropriate. Called by the client of the tooltip system in its event handling methods
 	 * if none of its [Drawable]s is interested in handling a mouse moved event.
 	 */
-	fun handle(view: View<*>, container: DrawableContainer<*>, x: Double, y: Double) {
+	fun handle(view: View<*>, container: DrawableContainer<*>, x: Double, y: Double, editable: Boolean = true) {
 		val drawable = drawableRetriever.invoke(container, x, y)
 
 		if (drawable == null) {
@@ -168,7 +170,7 @@ class TooltipHandler(
 			return
 		}
 
-		val tooltip = getTooltip(drawable, x, y)
+		val tooltip = getTooltip(drawable, x, y, editable)
 		val explanation = getExplanation(drawable, x, y)
 
 		if (StringUtils.isBlank(tooltip?.text) && explanation == null) {
@@ -189,13 +191,13 @@ class TooltipHandler(
 		}
 	}
 
-	private fun getTooltip(drawable: Drawable, x: Double, y: Double): Tooltip? =
+	private fun getTooltip(drawable: Drawable, x: Double, y: Double, editable: Boolean): Tooltip? =
 		if (tooltipsEnabled) {
-			tooltipAccessor(drawable, x, y)
+			tooltipAccessor(drawable, x, y, editable)
 		} else null
 
 	private fun getExplanation(drawable: Drawable, x: Double, y: Double): DrawableExplanation<RectangularDrawable>? =
-		if (tooltipsEnabled) {
+		if (tooltipsEnabled && beginnerHelpEnabled) {
 			explanationAccessor(drawable, x, y)
 		} else null
 

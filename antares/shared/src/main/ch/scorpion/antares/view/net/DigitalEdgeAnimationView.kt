@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.signal.DigitalSignalView
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
@@ -14,7 +15,6 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
-import ch.scorpion.jabbah.graph.view.style.EdgeStyle
 
 /**
  * An animatable representation of an [EdgeView] while being executed.
@@ -90,7 +90,7 @@ class DigitalEdgeAnimationView(
 
 	override val boundingBox: RectangularShape
 		get() {
-			val bbox = signalView.boundingBox
+			val bbox = Rectangle2D(signalView.boundingBox)
 			bbox.add(signalView.orthoPolyline.boundingBox)
 			if (artificialNodeView != null) {
 				bbox.add(artificialNodeView!!.boundingBox)

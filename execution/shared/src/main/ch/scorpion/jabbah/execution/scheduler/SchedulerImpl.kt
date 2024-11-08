@@ -35,7 +35,7 @@ import kotlin.reflect.KClass
 class SchedulerImpl(
 	private val currentSystemSpeedCategory: CurrentSystemSpeedCategory,
 	private val timeService: TimeService = BaseModule.timeService,
-	private val eventBus: EventBus = BaseModule.eventBus,
+	override val eventBus: EventBus = BaseModule.eventBus,
 	private val noiseGeneratorHolder: NoiseGeneratorHolder = ExecutionModule.noiseGeneratorHolder,
 	private val task: SchedulerTask = ExecutionModule.schedulerTaskFactory.invoke(currentSystemSpeedCategory, eventBus),
 	private val executionErrorHandler: ExecutionErrorHandlerImpl = ExecutionErrorHandlerImpl(),
@@ -49,7 +49,7 @@ class SchedulerImpl(
 
 		private val LOG by logger(SchedulerImpl::class)
 		private const val SETTING_STOP_ON_ISSUE = "execution.scheduler.stopOnIssue"
-		private const val SETTING_ENABLE_SOFT_BREAKPOINTS = "execution.scheduler.enableSoftBreakpoints"
+		const val SETTING_ENABLE_SOFT_BREAKPOINTS = "execution.scheduler.enableSoftBreakpoints"
 		private const val SETTING_ENABLE_SIMULATION_TIME_STATUS_BAR = "execution.scheduler.enableSimulationTimeStatusBar"
 	}
 
@@ -442,6 +442,7 @@ class SchedulerImpl(
 	}
 
 	private fun start() {
+		eventBus.post(SchedulerActivationStatePreparationEvent(this))
 		LOG.trace("Scheduler started")
 		reset()
 		realStartTime = timeService.nowNanos()
@@ -469,6 +470,7 @@ class SchedulerImpl(
 		isInBreakpoint = false
 		eventBus.post(SchedulerActivationStateEvent(this))
 		reset()
+		eventBus.post(SchedulerActivationStatePreparationEvent(this))
 	}
 
 	private fun updateRelativeTime(relativeTime: Long) {
@@ -533,8 +535,9 @@ class SchedulerImpl(
 
 			isInBreakpoint = false
 
+			// Requires filtering with creating result collection in order to avoid
+			// ConcurrentModException from Request.act()
 			slot.getRequests().filter { it.isActable }.forEach {
-				// logActorTrace(it.actor) { "Executing" }
 				it.act()
 			}
 

@@ -10,9 +10,11 @@ import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_6
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_8
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.execution.ForwardSignalHandler
+import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.io.StorableCloner
-import io.mockk.mockk
+import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -25,7 +27,7 @@ class WireTapTest {
 		}
 	}
 
-	private val signalHandler = ForwardSignalHandler(mockk())
+	private val signalHandler = ForwardSignalHandler(CurrentSystemSpeedCategory(SystemSpeed()))
 
 	@Test
 	fun shouldInstantiate() {

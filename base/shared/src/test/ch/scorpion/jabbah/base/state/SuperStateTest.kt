@@ -1,9 +1,15 @@
 package ch.scorpion.jabbah.base.state
 
 import ch.scorpion.jabbah.base.module.BaseModule
-import io.mockk.mockk
-import io.mockk.verify
-import kotlin.test.*
+import dev.mokkery.MockMode.autofill
+import dev.mokkery.matcher.any
+import dev.mokkery.mock
+import dev.mokkery.verify
+import dev.mokkery.verify.VerifyMode.Companion.exactly
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class SuperStateTest {
 
@@ -12,9 +18,9 @@ class SuperStateTest {
 		BaseModule.require()
 	}
 
-	private val entrySuperstate = mockk<Action<String>>(relaxed = true)
-	private val entrySubstateA = mockk<Action<String>>(relaxed = true)
-	private val entrySubstateB = mockk<Action<String>>(relaxed = true)
+	private val entrySuperstate = mock<Action<String>>(autofill)
+	private val entrySubstateA = mock<Action<String>>(autofill)
+	private val entrySubstateB = mock<Action<String>>(autofill)
 
 	private fun buildStateMachine(behaviour: UnhandledEventBehaviour = UnhandledEventBehaviour.Strict): StateMachine<String> {
 
@@ -54,8 +60,8 @@ class SuperStateTest {
 		assertTrue(handled)
 		assertEquals("superstate", sm.currentState.name)
 		assertEquals("substateA", (sm.currentState as SuperState<String>).stateMachine.currentState.name)
-		verify(exactly = 1) { entrySuperstate.invoke(any()) }
-		verify(exactly = 1) { entrySubstateA.invoke(any()) }
+		verify(exactly(1)) { entrySuperstate.invoke(any()) }
+		verify(exactly( 1)) { entrySubstateA.invoke(any()) }
 	}
 
 	@Test
@@ -66,6 +72,6 @@ class SuperStateTest {
 		sm.handle("eventSubstateB")
 
 		assertEquals("substateB", (sm.currentState as SuperState<String>).stateMachine.currentState.name)
-		verify(exactly = 1) { entrySubstateB.invoke(any()) }
+		verify(exactly(1)) { entrySubstateB.invoke(any()) }
 	}
 }

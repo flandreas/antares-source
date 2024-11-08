@@ -115,6 +115,8 @@ class GraphNavigationViewController(
 		}
 	}
 
+	var enableOpenSubGraphRequests: Boolean = true
+
 	init {
 		eventBus.register(OpenSubGraphRequest::class, openSubGraphRequestHandler)
 		eventBus.register(NavigationStackEvent::class, navigationStackEventHandler)
@@ -215,9 +217,17 @@ class GraphNavigationViewController(
 	}
 
 	private fun handle(request: OpenSubGraphRequest) {
+		if (!enableOpenSubGraphRequests) {
+			return
+		}
 		if (!shouldDescendFor(request)) {
 			return
 		}
+
+		if (request.notifyIfBroken(eventBus)) {
+			return
+		}
+
 		LOG.userTrail("Descending into SubGraphVerticeView")
 
 		rememberZoomPanOfCurrentNavigationStack()

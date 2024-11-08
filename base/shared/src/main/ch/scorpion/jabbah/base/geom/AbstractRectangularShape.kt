@@ -8,7 +8,7 @@ abstract class AbstractRectangularShape(
     override var y: Double,
     override var width: Double,
     override var height: Double
-) : RectangularShape {
+) : MutableRectangularShape {
 
     @Suppress("unused") constructor() : this(0.0, 0.0, 0.0, 0.0)
     @Suppress("unused") constructor(x: Int, y: Int, w: Int, h: Int): this(x.toDouble(), y.toDouble(), w.toDouble(), h.toDouble())

@@ -2,6 +2,8 @@ package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.invocation.InvocationHandler
+import ch.scorpion.jabbah.base.invocation.SynchronousInvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.auth.DesktopUser
@@ -13,6 +15,7 @@ import ch.scorpion.jabbah.graph.container.PortViewComponent
 import ch.scorpion.jabbah.graph.model.TestControlVertice
 import ch.scorpion.jabbah.graph.model.TestVertice
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.model.nonvolatile.EmptyNonVolatileService
 import ch.scorpion.jabbah.graph.model.param.GraphParamTypeRegistry
 import ch.scorpion.jabbah.graph.model.port.SubGraphPortImpl
 import ch.scorpion.jabbah.graph.model.port.TestPortFactory
@@ -40,6 +43,8 @@ object GraphViewTestRule {
 
 		Translations.withAnyKey()
 
+		InvocationHandler.implementation = SynchronousInvocationHandler()
+
 		IOModule.typeMap.register("testVertice", TestVertice::class)
 		IOModule.typeMap.register("testVerticeView", TestVerticeView::class)
 		IOModule.typeMap.register("testControl", TestControlVertice::class)
@@ -56,6 +61,7 @@ object GraphViewTestRule {
 		EditAuthModule.userHolder = DesktopUserHolder(DesktopUser.developer)
 
 		GraphModelModule.portFactory = TestPortFactory()
+		GraphModelModule.nonVolatileService = EmptyNonVolatileService()
 		GraphViewModule.portViewFactory = TestPortViewFactory()
 		GraphViewModule.oscilloscopeViewFactory = OscilloscopeViewFactoryMockBuilder().build()
 

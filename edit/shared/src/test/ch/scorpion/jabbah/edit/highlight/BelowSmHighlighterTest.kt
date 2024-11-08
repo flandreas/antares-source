@@ -6,8 +6,12 @@ import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
 import ch.scorpion.jabbah.edit.select.BoundingBoxBelowSelectionModel
 import ch.scorpion.jabbah.edit.view.DrawingViewContentImpl
-import io.mockk.every
-import io.mockk.mockk
+import ch.scorpion.jabbah.edit.view.DrawingViewImpl
+import dev.mokkery.MockMode
+import dev.mokkery.answering.calls
+import dev.mokkery.every
+import dev.mokkery.matcher.any
+import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -21,7 +25,7 @@ class BelowSmHighlighterTest {
 		}
 	}
 
-	private val selectionModelProvider = mockk<SelectionModelProvider>(relaxed = true)
+	private val selectionModelProvider = mock<SelectionModelProvider>(MockMode.autofill)
 
 	private val highlighterFactory = object : HighlighterFactory {
 		override fun create(content: DrawingViewContent<*>): Highlighter {
@@ -29,10 +33,12 @@ class BelowSmHighlighterTest {
 		}
 	}
 
+	private val drawingView = DrawingViewImpl(mock(MockMode.autofill))
+
 	private val content = DrawingViewContentImpl(
-		drawingView = mockk(relaxed = true),
-		drawing = mockk(relaxed = true),
-		selectionManagerFactory = { mockk(relaxed = true) },
+		drawingView = drawingView,
+		drawing = drawingView.drawing,
+		selectionManagerFactory = { mock(MockMode.autofill) },
 		highlighterFactory = highlighterFactory)
 
 	private val highlightColor = CompositeColor(backgroundColor = Color.YELLOW)
@@ -42,7 +48,7 @@ class BelowSmHighlighterTest {
 	private val highlight = BoundingBoxBelowSelectionModel(rect)
 
 	init {
-		every { selectionModelProvider.provideFor(any(), any()) } answers { highlight }
+		every { selectionModelProvider.provideFor(any(), any()) } calls { highlight }
 	}
 
 	@Test

@@ -1,8 +1,10 @@
 package ch.scorpion.antares.hdl
 
+import ch.scorpion.jabbah.base.Translations
+
 class HDLCircuitNode(
 	val circuit: HDLCircuit
-) : BuiltInNode(circuit.entityName) {
+) : BuiltInNode(circuit.entityName, Translations.getString("library.element.SubGraphVerticeRef.name")) {
 
 	override fun rename(renaming: HDLRenaming) {
 		super.rename(renaming)

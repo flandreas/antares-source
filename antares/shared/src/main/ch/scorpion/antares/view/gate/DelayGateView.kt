@@ -63,15 +63,11 @@ class DelayGateView(
         context.g.stroke = styleProvider.getStyle(StyleType.ANNOTATION).stroke
 
         val sizeHalf = 12
-        context.g.translate(bounds.centerX, 0.0)
-        context.g.rotate(-rotation.angle)
-
-        context.g.drawLine(-sizeHalf, 0, sizeHalf, 0)
-        context.g.drawLine(-sizeHalf, -3, -sizeHalf, 3)
-        context.g.drawLine(sizeHalf, -3, sizeHalf, 3)
-
-        context.g.rotate(rotation.angle)
-        context.g.translate(-bounds.centerX, 0.0)
+        context.translatedAndRotated(bounds.centerX, 0.0, -rotation.angle) {
+            it.g.drawLine(-sizeHalf, 0, sizeHalf, 0)
+            it.g.drawLine(-sizeHalf, -3, -sizeHalf, 3)
+            it.g.drawLine(sizeHalf, -3, sizeHalf, 3)
+        }
 
         context.g.color = oldColor
     }

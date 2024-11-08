@@ -9,7 +9,9 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.vertice.AbstractVertice
+import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
@@ -85,9 +87,9 @@ class DigitalSignalSourceControlView<T : DigitalSignalSource>(
 		    return "${model.type} \"${model.name}\""
 	    }
 
-	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: T) {
-        this.model = model
-    }
+	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
+		this.model = link.getLinkedVertice(startGraph) as T
+	}
 
 	override fun sourcePropertiesChanged(source: ControlViewSource<T>) {
 		if (source is AbstractNumberViewComponent<*>) {

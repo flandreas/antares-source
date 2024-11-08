@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.base.time
 
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 
 /**
@@ -13,8 +14,12 @@ class SystemSpeed(
 ) {
 
 	companion object {
+
+		private val LOG by logger(SystemSpeed::class)
+
 		/** The name of the [Int] speed property in [Properties].*/
 		private const val SETTING_SPEED = "jabbah.base.time.SystemSpeed"
+
 		const val DEFAULT_SPEED: Int = 60
 		const val MIN_SPEED: Int = 0
 		const val MAX_SPEED: Int = 100
@@ -57,6 +62,7 @@ class SystemSpeed(
 	fun pause() {
 		if (!isPaused) {
 			isPaused = true
+			LOG.trace("SystemSpeed paused")
 			eventBus.post(SystemSpeedPauseEvent(this, isPaused))
 		}
 	}
@@ -64,6 +70,7 @@ class SystemSpeed(
 	fun resume() {
 		if (isPaused) {
 			isPaused = false
+			LOG.trace("SystemSpeed resumed")
 			eventBus.post(SystemSpeedPauseEvent(this, isPaused))
 		}
 	}

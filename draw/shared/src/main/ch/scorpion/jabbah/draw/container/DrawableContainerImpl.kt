@@ -2,8 +2,6 @@ package ch.scorpion.jabbah.draw.container
 
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.Tooltip
-import ch.scorpion.jabbah.base.collection.ImmutableList
-import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
@@ -14,6 +12,7 @@ import ch.scorpion.jabbah.draw.drawable.DefaultDrawableDrawer
 import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
 import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.module.DrawModule
+import ch.scorpion.jabbah.draw.style.Stylable
 
 /**
  * Standard implementation of the [DrawableContainer] interface.
@@ -73,9 +72,9 @@ open class DrawableContainerImpl<T : Drawable>(
 		if (drawable.visible) {
 			val drawableBBox = childBoundingBox(drawable)
 			if (drawables.size == 1) {
-				boundingBox.setFrame(drawableBBox)
+				_boundingBox.setFrame(drawableBBox)
 			} else {
-				boundingBox.add(drawableBBox)
+				_boundingBox.add(drawableBBox)
 			}
 
 			invalidate(drawableBBox)
@@ -100,7 +99,8 @@ open class DrawableContainerImpl<T : Drawable>(
 
 	/** ---- [Drawable] interface */
 
-	override val boundingBox: RectangularShape = Rectangle2D()
+	private val _boundingBox = Rectangle2D()
+	override val boundingBox: RectangularShape get() = _boundingBox
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		if (visitor.visitEnter(this)) {
@@ -114,6 +114,10 @@ open class DrawableContainerImpl<T : Drawable>(
 	}
 
 	override fun draw(context: DrawContext) {
+		drawImpl(context, drawableDrawer)
+	}
+
+	protected fun drawImpl(context: DrawContext, drawer: DrawableDrawer<T>) {
 		if (visible && children.isNotEmpty()) {
 			var clip = getClip(context)
 			val oldModelClip = context.modelClip
@@ -132,7 +136,7 @@ open class DrawableContainerImpl<T : Drawable>(
 				if (it.visible) {
 					// Clipping
 					if (clip == null || it.intersects(clip)) {
-						drawableDrawer.process(context, it)
+						drawer.process(context, it)
 					}
 				}
 			}
@@ -168,14 +172,14 @@ open class DrawableContainerImpl<T : Drawable>(
 	}
 
 	/** Returns the [Drawable]s in the order they should be drawn.*/
-	protected open fun drawablesInDrawingOrder(): ImmutableList<T> = children.asReversed().toImmutableList()
+	protected open fun drawablesInDrawingOrder(): List<T> = children.asReversed()
 
-	override fun getTooltip(x: Double, y: Double): Tooltip? {
+	override fun getTooltip(x: Double, y: Double, editable: Boolean): Tooltip? {
 		if (useLocation) {
 			val l = Point2D(x, y).subtract(this.location)
-			return getDrawableAt(x, y)?.getTooltip(l.x, l.y) ?: super.getTooltip(l.x, l.y)
+			return getDrawableAt(x, y)?.getTooltip(l.x, l.y) ?: super.getTooltip(l.x, l.y, editable)
 		}
-		return getDrawableAt(x, y)?.getTooltip(x, y) ?: super.getTooltip(x, y)
+		return getDrawableAt(x, y)?.getTooltip(x, y) ?: super.getTooltip(x, y, editable)
 	}
 
 	/** ---- [DrawableContainer] interface */
@@ -201,7 +205,7 @@ open class DrawableContainerImpl<T : Drawable>(
 
 	override fun handleDrawableInvalidated(drawable: Drawable, region: RectangularShape) {
 		if (useLocation) {
-			invalidate(region.moveBy(location))
+			invalidate(Rectangle2D(region).moveBy(location))
 		} else {
 			invalidate(region)
 		}
@@ -237,9 +241,9 @@ open class DrawableContainerImpl<T : Drawable>(
 	 */
 	protected fun updateBoundingBox() {
 		children.firstOrNull { it.visible }
-			?.let { boundingBox.setFrame(childBoundingBox(it)) }
-			?: boundingBox.setFrame(0.0, 0.0, 0.0, 0.0)
-		children.filter { it.visible }.forEach { boundingBox.add(childBoundingBox(it)) }
+			?.let { _boundingBox.setFrame(childBoundingBox(it)) }
+			?: _boundingBox.setFrame(0.0, 0.0, 0.0, 0.0)
+		children.filter { it.visible }.forEach { _boundingBox.add(childBoundingBox(it)) }
 	}
 
 	private fun notifyDrawableAdded(drawable: T) {
@@ -266,5 +270,16 @@ open class DrawableContainerImpl<T : Drawable>(
 			invalidate(childBoundingBox(drawable))
 			notifyDrawableRemoved(drawable)
 		}
+	}
+
+	override fun drawStandalone(context: DrawContext) {
+		val drawer = DrawableContainerDrawer<T>()
+		drawBackdrop(context)
+		drawImpl(context, drawer)
+	}
+
+	private fun drawBackdrop(context: DrawContext) {
+		getDrawables { it is Stylable && (it as Stylable).styleType.isBackdrop }
+			.forEach { it.draw(context) }
 	}
 }

@@ -1,9 +1,10 @@
 package ch.scorpion.jabbah.graph.ui.desktop
 
-import ch.scorpion.jabbah.app.ApplicationDataContentEvent
+import ch.scorpion.jabbah.app.ApplicationDataContentEstablishedEvent
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.AbstractUIController
@@ -14,8 +15,8 @@ import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.ReferenceColor
 import ch.scorpion.jabbah.draw.graphics.ReferenceColorEvent
 import ch.scorpion.jabbah.draw.graphics.ReferenceColorSequenceProvider
-import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ContentViewManager
+import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
@@ -105,7 +106,9 @@ class GraphDesktopViewController(
 
 	private val editedGraphViewEventHandler: EventHandler<EditedGraphViewEvent> = { handle(it) }
 
-	private val closeRequestHandler: EventHandler<GraphDesktopViewItemCloseRequest> = { closeItem(it.item)}
+	private val closeRequestHandler: EventHandler<GraphDesktopViewItemCloseRequest> = {
+		closeItem(it.item)
+	}
 
 	private val openRequestHandler: EventHandler<OpenSubGraphRequest> = { handle(it) }
 
@@ -116,7 +119,7 @@ class GraphDesktopViewController(
 
 	private val openHierarchyHandler: EventHandler<OpenHierarchySubGraphRequest> = { handle(it) }
 
-	private val appDataContentHandler: EventHandler<ApplicationDataContentEvent> = { handle(it) }
+	private val appDataContentHandler: EventHandler<ApplicationDataContentEstablishedEvent> = { handle(it) }
 
 	/** Closes an open [GraphDesktopViewItem] when the corresponding [VerticeView] has been removed.*/
 	private val removeListener = RemoveListener()
@@ -130,7 +133,7 @@ class GraphDesktopViewController(
 		eventBus.register(ReferenceColorEvent::class, referenceColorHandler)
 		eventBus.register(CurrentLibraryEvent::class, currentLibraryHandler)
 		eventBus.register(OpenHierarchySubGraphRequest::class, openHierarchyHandler)
-		eventBus.register(ApplicationDataContentEvent::class, appDataContentHandler)
+		eventBus.register(ApplicationDataContentEstablishedEvent::class, appDataContentHandler)
 	}
 
 	override fun dispose() {
@@ -212,7 +215,15 @@ class GraphDesktopViewController(
 
 	private fun handle(request: OpenSubGraphRequest) {
 		if (request.newView) {
-			System.invokeLater { openSubGraphVerticeView(request.subGraphVerticeView) }
+			if (request.notifyIfBroken(eventBus)) {
+				return
+			}
+
+			System.invokeLater {
+				InvocationHandler.invoke {
+					openSubGraphVerticeView(request.subGraphVerticeView)
+				}
+			}
 		}
 	}
 
@@ -247,7 +258,7 @@ class GraphDesktopViewController(
 		}
 	}
 
-	private fun handle(@Suppress("UNUSED_PARAMETER") event: ApplicationDataContentEvent) {
+	private fun handle(@Suppress("UNUSED_PARAMETER") event: ApplicationDataContentEstablishedEvent) {
 		if (event.data.content is MetaGraph) {
 			refreshHighlightsInMain()
 		}

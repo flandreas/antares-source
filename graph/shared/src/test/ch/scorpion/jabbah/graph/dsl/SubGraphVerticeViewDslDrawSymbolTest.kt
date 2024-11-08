@@ -11,13 +11,15 @@ import ch.scorpion.jabbah.execution.issue.IssueCollector
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.TestLibraryBuilder
+import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import dev.mokkery.MockMode
+import dev.mokkery.matcher.any
+import dev.mokkery.mock
+import dev.mokkery.verify
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -34,11 +36,10 @@ class SubGraphVerticeViewDslDrawSymbolTest {
 	fun setup() {
 		Translations.withAnyKey()
 		LibraryModule.userLibraryPersistenceService = MemoryLibraryPersistenceService()
-		LibraryModule.libraryService = LibraryService()
 		LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"))
 	}
 
-	private val signalHandler = mockk<SignalHandler>(relaxed = true)
+	private val signalHandler = mock<SignalHandler>(MockMode.autofill)
 
 	@Test
 	fun shouldDrawExecSymbol() {
@@ -50,14 +51,11 @@ class SubGraphVerticeViewDslDrawSymbolTest {
 
 		val vv = createAndStart(libraryElement)
 
-		val g2 = mockk<Graphics2D>(relaxed = true)
-		val appContext = mockk<GraphApplicationContext>()
-		every { appContext.isExecute } returns true
-		every { appContext.systemSpeedCategory } returns CurrentSystemSpeedCategory(SystemSpeed(SystemSpeed.DEFAULT_SPEED))
-		every { appContext.isPausing } returns false
-		val drawContext = mockk<DrawContext>(relaxed = true)
-		every { drawContext.g } returns g2
-		every { drawContext.castedAppContext<GraphApplicationContext>() } returns appContext
+		val g2 = mock<Graphics2D>(MockMode.autofill)
+		val appContext = GraphApplicationContext(
+			CurrentSystemSpeedCategory(SystemSpeed(SystemSpeed.DEFAULT_SPEED)),
+			ApplicationMode.EXECUTE)
+		val drawContext = DrawContext(g2, appContext = appContext)
 
 		vv.draw(drawContext)
 

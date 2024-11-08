@@ -12,18 +12,27 @@ import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.net.SignalConflict
 import ch.scorpion.jabbah.graph.model.net.SignalConflictBehaviour
+import ch.scorpion.jabbah.graph.library.LibraryPreferences
 
 /** Signals that a [PortImpl] tried to assign a signal to its [Net] that turns the [Net] inconsistent.*/
 class InconsistentNetError(
 	originPort: OutputPort<*>,
 	private val conflict: SignalConflict<*>,
 	creationTime: Long
-) : AbstractExecutionError(creationTime, gracePeriod = BaseModule.properties.getInt(PROP_ALLOWED_DURATION)) {
+) : AbstractExecutionError(
+		creationTime,
+		gracePeriod = LibraryPreferences.getInt(PROP_ALLOWED_DURATION)
+) {
 
 	companion object {
 
-		/** The name of the [Int] property in [Properties] representing the allowed duration (in ns) for inconsistent net states.*/
+		/**
+		 * The name of the [Int] property in [Properties] representing the allowed duration (in ns) for inconsistent net states.
+		 * Also stored locally in [LibraryPreferences] to be independent of base [Properties].
+		 */
 		const val PROP_ALLOWED_DURATION = "graph.model.allowedInconsistentNetDuration"
+
+		const val DEF_ALLOWED_DURATION = 20
 
 		private val NAME by lazy { Translations.getString("graph.inconsistentNetError.name") }
 	}

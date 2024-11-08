@@ -1,18 +1,14 @@
 package ch.scorpion.jabbah.edit.app
 
+import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ContentViewManager
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.Undoable
-import ch.scorpion.jabbah.edit.CommandManager
-import ch.scorpion.jabbah.edit.command.AbstractCommand
-import ch.scorpion.jabbah.edit.model.ComponentMessage
-import ch.scorpion.jabbah.edit.model.ComponentMessageType
+import ch.scorpion.jabbah.draw.view.DrawViewModule
+import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.edit.command.AbstractDrawingViewCommand
 import ch.scorpion.jabbah.edit.model.CopyPasteService
 import ch.scorpion.jabbah.edit.model.PasteInfo
 import ch.scorpion.jabbah.edit.module.EditModule
@@ -48,8 +44,12 @@ class PasteAction(
 	override fun execute(event: ActionEvent) {
 		try {
 			service.paste(drawingView!!)
-		} catch (e: IllegalArgumentException) {
-			eventBus.post(ComponentMessage(ComponentMessageType.Error, null, "application.paste.illegal.error"))
+		} catch (e: Throwable) {
+			System.showModalMessage(
+				Translations.getString("edit.action.paste.name"),
+				Translations.getString("application.paste.illegal.error", e.message!!),
+				isError = true
+			)
 		}
 	}
 }
@@ -60,20 +60,20 @@ class PasteAction(
  * [CommandManager]. Its [execute] method is only used for undo.
  */
 class PasteCommand(
-	private val drawingView: DrawingView<Drawing<Component>>,
+	drawingView: DrawingView<Drawing<Component>>,
 	private val clipboardContents: String,
 	private var pasteInfo: PasteInfo,
 	private val service: CopyPasteService = EditModule.copyPasteService
-) : AbstractCommand("edit.command.paste", null), Undoable {
+) : AbstractDrawingViewCommand("edit.command.paste", drawingView), Undoable {
 
 	override fun execute() {
 		pasteInfo = PasteInfo(
-			service.paste(clipboardContents, drawingView, pasteInfo.dislocation).map { it.id },
+			service.paste(clipboardContents, view as DrawingView<Drawing<Component>>, pasteInfo.dislocation).map { it.id },
 			pasteInfo.dislocation)
 	}
 
 	override fun undo() {
-		pasteInfo.componentIds.forEach { drawingView.drawing.remove(drawingView.drawing.getWithId(it) as Component) }
+		pasteInfo.componentIds.forEach { view.drawing.remove(view.drawing.getWithId(it) as Component) }
 		service.decrementPasteCount()
 	}
 }
@@ -90,20 +90,20 @@ class DuplicateAction(
 }
 
 class DuplicateCommand(
-	private val drawingView: DrawingView<Drawing<Component>>,
+	drawingView: DrawingView<Drawing<Component>>,
 	private val contents: String,
 	private var pasteInfo: PasteInfo,
 	private val service: CopyPasteService = EditModule.copyPasteService
-) : AbstractCommand("edit.action.duplicate.name", null), Undoable {
+) : AbstractDrawingViewCommand("edit.action.duplicate.name", drawingView), Undoable {
 
 	override fun execute() {
 		pasteInfo = PasteInfo(
-			service.paste(contents, drawingView, pasteInfo.dislocation).map { it.id },
+			service.paste(contents, view as DrawingView<Drawing<Component>>, pasteInfo.dislocation).map { it.id },
 			pasteInfo.dislocation)
 	}
 
 	override fun undo() {
-		pasteInfo.componentIds.forEach { drawingView.drawing.remove(drawingView.drawing.getWithId(it) as Component) }
+		pasteInfo.componentIds.forEach { view.drawing.remove(view.drawing.getWithId(it) as Component) }
 		service.decrementPasteCount()
 	}
 }

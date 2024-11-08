@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.execution.actor.ActorListener
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
@@ -112,7 +113,7 @@ class GraphViewActorListener(
 
 		override fun acted(actor: Actor, signalHandler: SignalHandler, data: ActorData) {
 			if (animationRequired) {
-				animator.acted(actor, signalHandler, data)
+				animator.acted(actor, signalHandler, data as GraphActorData)
 			} else {
 				actor.actingVisualized(signalHandler, this@GraphViewActorListener, data)
 			}

@@ -64,12 +64,12 @@ class HDLModel(
 				when (vertice.gateType) {
 					UnaryLogicGateType.Not -> {
 						createExpression(vertice, parent).also {
-							it.expression = NotExpression(NetExpression(it.inputs.first().net!!), vertice.propagationDelay)
+							it.expression = NotExpression(NetExpression(it.inputs.first().net!!), vertice.propagationDelay.value)
 						}
 					}
 					UnaryLogicGateType.Buffer -> {
 						createExpression(vertice, parent).also {
-							it.expression = NetExpression(it.inputs.first().net!!, vertice.propagationDelay)
+							it.expression = NetExpression(it.inputs.first().net!!, vertice.propagationDelay.value)
 						}
 					}
 					else -> throw HDLException(Translations.getString("antares.vhdl.elementNotSupported.error.txt", vertice.type))
@@ -79,32 +79,32 @@ class HDLModel(
 				when (vertice.gateType) {
 					NonUnaryLogicGateType.And -> {
 						createExpression(vertice, parent).also {
-							it.expression = createOperation(it.inputs, OperationExpression.Operation.AND, vertice.propagationDelay)
+							it.expression = createOperation(it.inputs, OperationExpression.Operation.AND, vertice.propagationDelay.value)
 						}
 					}
 					NonUnaryLogicGateType.Or -> {
 						createExpression(vertice, parent).also {
-							it.expression = createOperation(it.inputs, OperationExpression.Operation.OR, vertice.propagationDelay)
+							it.expression = createOperation(it.inputs, OperationExpression.Operation.OR, vertice.propagationDelay.value)
 						}
 					}
 					NonUnaryLogicGateType.Xor -> {
 						createExpression(vertice, parent).also {
-							it.expression = createOperation(it.inputs, OperationExpression.Operation.XOR, vertice.propagationDelay)
+							it.expression = createOperation(it.inputs, OperationExpression.Operation.XOR, vertice.propagationDelay.value)
 						}
 					}
 					NonUnaryLogicGateType.Nor -> {
 						createExpression(vertice, parent).also {
-							it.expression = NotExpression(createOperation(it.inputs, OperationExpression.Operation.OR, 0) , vertice.propagationDelay)
+							it.expression = NotExpression(createOperation(it.inputs, OperationExpression.Operation.OR, 0) , vertice.propagationDelay.value)
 						}
 					}
 					NonUnaryLogicGateType.Nand -> {
 						createExpression(vertice, parent).also {
-							it.expression = NotExpression(createOperation(it.inputs, OperationExpression.Operation.AND, 0), vertice.propagationDelay)
+							it.expression = NotExpression(createOperation(it.inputs, OperationExpression.Operation.AND, 0), vertice.propagationDelay.value)
 						}
 					}
 					NonUnaryLogicGateType.Xnor -> {
 						createExpression(vertice, parent).also {
-							it.expression = NotExpression(createOperation(it.inputs, OperationExpression.Operation.XOR, 0), vertice.propagationDelay)
+							it.expression = NotExpression(createOperation(it.inputs, OperationExpression.Operation.XOR, 0), vertice.propagationDelay.value)
 						}
 					}
 					else -> throw HDLException(Translations.getString("antares.vhdl.elementNotSupported.error.txt", vertice.type))
@@ -131,7 +131,7 @@ class HDLModel(
 				}
 			}
 			else -> {
-				BuiltInNode(vertice::class.simpleName!!).also {
+				BuiltInNode(vertice::class.simpleName!!, vertice.type).also {
 					addInputsOutputs(it, vertice, parent)
 					it.createExpressions()
 					it.setAttribute(VHDLTemplate.ATTR_VERTICE, vertice)

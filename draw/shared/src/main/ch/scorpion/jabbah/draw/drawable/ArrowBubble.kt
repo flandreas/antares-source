@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.draw.drawable
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.geom.Path
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawContext
@@ -74,22 +75,22 @@ class ArrowBubble(
 
 	/** ----  [AbstractDrawable] */
 
-	override val boundingBox: RectangularShape get() = path.boundingBox.expandBy(style.stroke.width.toDouble()).moveBy(position.location)
+	override val boundingBox: RectangularShape get() = Rectangle2D(path.boundingBox)
+		.expandBy(style.stroke.width.toDouble())
+		.moveBy(position.location)
 
 	override fun draw(context: DrawContext) {
-		context.g.translate(position.location.x, position.location.y)
+		context.translated(position.location) {
+			it.g.color = style.color.backgroundColor
+			it.g.fill(path)
+			it.g.color = style.color.foregroundColor
+			it.g.stroke = style.stroke
+			it.g.draw(path)
 
-		context.g.color = style.color.backgroundColor
-		context.g.fill(path)
-		context.g.color = style.color.foregroundColor
-		context.g.stroke = style.stroke
-		context.g.draw(path)
-
-		context.g.color = style.color.textColor
-		context.g.font = style.font
-		content.draw(context)
-
-		context.g.translate(-position.location.x, -position.location.y)
+			it.g.color = style.color.textColor
+			it.g.font = style.font
+			content.draw(context)
+		}
 	}
 
 	override fun contains(x: Double, y: Double): Boolean = path.contains(x - position.location.x, y - position.location.y)

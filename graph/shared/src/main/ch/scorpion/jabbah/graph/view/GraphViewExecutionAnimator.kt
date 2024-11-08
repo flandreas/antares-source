@@ -112,7 +112,7 @@ class GraphViewExecutionAnimator(
 		}
 	}
 
-	fun acted(actor: Actor, signalHandler: SignalHandler, data: ActorData) {
+	fun acted(actor: Actor, signalHandler: SignalHandler, data: GraphActorData) {
 		if (actor is Net<*>) {
 			handleNetActed(actor, data)
 		} else {
@@ -139,6 +139,8 @@ class GraphViewExecutionAnimator(
 			?: return
 
 		val signal = edgeView.model.signalBuffer
+
+		changedPort.captureTemporarySignal()
 
 		// Creating the EdgeViewNetAnimation will make it visible in the View, but the animation
 		// is not started yet. The outgoing EdgeAnimationView waits at the OutputPortView
@@ -172,7 +174,7 @@ class GraphViewExecutionAnimator(
 		applicationContextHolder.scheduler.logActorTrace(edgeView.model) { "Registered EdgeView animation for EdgeView '${edgeView.id}'" }
 	}
 
-	private fun handleNetActed(net: Net<*>, data: ActorData) {
+	private fun handleNetActed(net: Net<*>, data: GraphActorData) {
 		// The simulation of a Net has been scheduled by the Scheduler. Lookup all pending net animations
 		// and start them. If there are no pending net animations, the acted Net belongs to a SubVertice
 		// whose views are not displayed by the GraphView managed by this GraphViewAnimator.
@@ -189,6 +191,7 @@ class GraphViewExecutionAnimator(
 			val task = it.start()
 			task.addListener(object : AnimationTaskAdapter() {
 				override fun ended(task: AnimationTask) {
+					data.changedPort?.resetTemporarySignal()
 					unregisterAnimation(net, it)
 				}
 			})

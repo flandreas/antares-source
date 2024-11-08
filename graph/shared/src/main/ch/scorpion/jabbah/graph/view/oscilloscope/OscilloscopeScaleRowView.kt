@@ -18,6 +18,7 @@ import ch.scorpion.jabbah.execution.actor.ActorViewContainer
 import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoriesType
 import ch.scorpion.jabbah.graph.ui.KnobLauncherImpl
 import ch.scorpion.jabbah.graph.ui.KnobView
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.app.oscilloscope.OscilloscopeViewService
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView.Companion.ICON_BUTTON_SIZE
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView.Companion.MAX_ROW_NUMBER
@@ -39,18 +40,21 @@ class OscilloscopeScaleRowView(
 	factory: OscilloscopeViewFactory
 ) : ActorViewContainer<Drawable>(location = location, useLocation = true) {
 
+	companion object {
+		const val ROW_HEIGHT = ICON_BUTTON_SIZE + 2 * ROW_INSET
+	}
+
 	private val addButton = DrawableButton<EditInputEventContext>(
 		renderer = IconDrawableButtonRenderer(AddIcon(Dimension2D(ICON_BUTTON_SIZE, ICON_BUTTON_SIZE))),
 		action = { service.addRow(it.drawingView, oscilloscopeView) },
-		location = Point2D(ROW_INSET, oscilloscopeView.rowHeight / 2 - ICON_BUTTON_SIZE / 2),
+		location = Point2D(ROW_INSET, ROW_HEIGHT / 2 - ICON_BUTTON_SIZE / 2),
 		styleType = StyleType.ANNOTATION
 	)
 
-
 	private val scaleButton = ScaleButton(
-		location = Point2D(2 * ROW_INSET + ICON_BUTTON_SIZE, oscilloscopeView.rowHeight / 2 - ICON_BUTTON_SIZE / 2))
+		location = Point2D(2 * ROW_INSET + ICON_BUTTON_SIZE, ROW_HEIGHT / 2 - ICON_BUTTON_SIZE / 2))
 
-	private val timelineView = factory.createSignalHistoryTimelineView(rightInset)
+	val timelineView = factory.createSignalHistoryTimelineView(rightInset)
 
 	init {
 		add(addButton)
@@ -85,7 +89,7 @@ class OscilloscopeScaleRowView(
 	private fun updateGeometry() {
 		timelineView.setBounds(
 			OscilloscopeView.DRAWER_X, 0.0,
-			oscilloscopeView.drawerWidth, oscilloscopeView.rowHeight.toDouble())
+			oscilloscopeView.drawerWidth, ROW_HEIGHT.toDouble())
 	}
 
 	/** Displays a [KnobView] to be used for changing the [SignalHistoryTimeline]'s scale.*/
@@ -117,7 +121,8 @@ class OscilloscopeScaleRowView(
 					unit = "x",
 					mouseMovedCondition = { keepMouseMoved(it.location) },
 					displayHandler = { isHovering = false },
-					valueChangeHandler = { oscilloscopeView.timelineScale = it.toDouble() }
+					valueChangeHandler = { oscilloscopeView.timelineScale = it.toDouble() },
+					signalHandler = context.signalHandler
 				)
 			}
 
@@ -131,7 +136,8 @@ class OscilloscopeScaleRowView(
 					unit = "x",
 					mouseMovedCondition = { keepMouseMoved(it.location) },
 					displayHandler = { isHovering = false },
-					valueChangeHandler = { oscilloscopeView.timelineScale = it.toDouble() }
+					valueChangeHandler = { oscilloscopeView.timelineScale = it.toDouble() },
+					signalHandler = context.signalHandler
 				)
 			}
 		}

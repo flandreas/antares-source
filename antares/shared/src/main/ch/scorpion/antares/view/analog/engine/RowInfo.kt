@@ -17,7 +17,7 @@ class RowInfo {
 	var value = 0.0
 
 	// Row's right side changes
-	val rsChanges = false
+	var rsChanges = false
 
 	// Row's left side changes
 	var lsChanges = false

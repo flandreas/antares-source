@@ -2,12 +2,13 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanel
 import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanelController
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 
 // TODO: This should be located in the edit module, but cannot yet be imported as test artefact
 class ComponentPropertyPanelMockBuilder(controller: ComponentPropertyPanelController) {
 
-	private val view = mockk<ComponentPropertyPanel>(relaxed = true)
+	private val view = mock<ComponentPropertyPanel>(MockMode.autofill)
 
 	init {
 		controller.view = view

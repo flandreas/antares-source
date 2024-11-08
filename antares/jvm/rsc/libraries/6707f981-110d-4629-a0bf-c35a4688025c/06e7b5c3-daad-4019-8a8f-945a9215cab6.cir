@@ -1,0 +1,286 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' manualContainer='true'>
+  <graph>
+    <graphStorable _id='1'>
+      <model>
+        <graph _id='2' type='digital' script='if (S) O = B else O = A' propDelay='60' startupTime='30'>
+          <elements>
+            <subGraphVerticeRef _id='3' id='1' delay='PD' uuid='2f202e6b-504f-4a18-b6e9-53f99371b1b9' type='digital'>
+              <params>
+                <graphParams _id='4'>
+                  <values>
+                    <graphParam _id='5' name='PD' type='Long' value='PD' semantic='propagationDelay'/>
+                  </values>
+                </graphParams>
+              </params>
+            </subGraphVerticeRef>
+            <subGraphVerticeRef _id='6' id='2' delay='PD' uuid='2f202e6b-504f-4a18-b6e9-53f99371b1b9' type='digital'>
+              <params>
+                <graphParams _id='7'>
+                  <values>
+                    <graphParam _id='8' name='PD' type='Long' value='PD' semantic='propagationDelay'/>
+                  </values>
+                </graphParams>
+              </params>
+            </subGraphVerticeRef>
+            <circuitInOut _id='9' id='3' name='A' type='input' bitWidth='16'/>
+            <circuitInOut _id='10' id='4' name='B' type='input' bitWidth='16'/>
+            <splitter _id='11' id='5' delay='0' bitWidth='16' representation='binary' branchCount='2'/>
+            <splitter _id='12' id='6' delay='0' bitWidth='16' representation='binary' branchCount='2'/>
+            <digitalNet _id='13' id='7' delay='0'>
+              <ports>
+                <netPortRef _id='14' verticeId='9' portId='1'/>
+                <netPortRef _id='15' verticeId='11' portId='1'/>
+              </ports>
+            </digitalNet>
+            <digitalNet _id='16' id='8' delay='0'>
+              <ports>
+                <netPortRef _id='17' verticeId='10' portId='1'/>
+                <netPortRef _id='18' verticeId='12' portId='1'/>
+              </ports>
+            </digitalNet>
+            <digitalNet _id='19' id='9' delay='0'>
+              <ports>
+                <netPortRef _id='20' verticeId='11' portId='2'/>
+                <netPortRef _id='21' verticeId='3' portId='1'/>
+              </ports>
+            </digitalNet>
+            <digitalNet _id='22' id='10' delay='0'>
+              <ports>
+                <netPortRef _id='23' verticeId='11' portId='3'/>
+                <netPortRef _id='24' verticeId='6' portId='1'/>
+              </ports>
+            </digitalNet>
+            <digitalNet _id='25' id='11' delay='0'>
+              <ports>
+                <netPortRef _id='26' verticeId='12' portId='3'/>
+                <netPortRef _id='27' verticeId='6' portId='2'/>
+              </ports>
+            </digitalNet>
+            <digitalNet _id='28' id='12' delay='0'>
+              <ports>
+                <netPortRef _id='29' verticeId='3' portId='2'/>
+                <netPortRef _id='30' verticeId='12' portId='2'/>
+              </ports>
+            </digitalNet>
+            <circuitInOut _id='31' id='13' name='S' type='input' bitWidth='1'/>
+            <digitalNet _id='32' id='14' delay='0'>
+              <ports>
+                <netPortRef _id='33' verticeId='6' portId='3'/>
+                <netPortRef _id='34' verticeId='31' portId='1'/>
+                <netPortRef _id='35' verticeId='3' portId='3'/>
+              </ports>
+            </digitalNet>
+            <concentrator _id='36' id='15' delay='0' bitWidth='16' representation='binary' branchCount='2'/>
+            <circuitInOut _id='37' id='18' name='O' type='output' bitWidth='16'/>
+            <digitalNet _id='38' id='19' delay='0'>
+              <ports>
+                <netPortRef _id='39' verticeId='36' portId='1'/>
+                <netPortRef _id='40' verticeId='37' portId='1'/>
+              </ports>
+            </digitalNet>
+            <digitalNet _id='41' id='20' delay='0'>
+              <ports>
+                <netPortRef _id='42' verticeId='3' portId='4'/>
+                <netPortRef _id='43' verticeId='36' portId='2'/>
+              </ports>
+            </digitalNet>
+            <digitalNet _id='44' id='21' delay='0'>
+              <ports>
+                <netPortRef _id='45' verticeId='6' portId='4'/>
+                <netPortRef _id='46' verticeId='36' portId='3'/>
+              </ports>
+            </digitalNet>
+          </elements>
+          <testcases>
+            <testcases _id='47'>
+              <testcases>
+                <testcase _id='48' id='1' testVectors='B		A		S	O
+x		0		0	0
+x		2		0	2
+x		14		0	14
+x		254		0	254
+x		0xFC8E	0	0xFC8E
+0		x		1	0
+1		x		1	1
+3		x		1	3
+9		x		1	9
+197		x		1	197
+0x77AB	x		1	0x77AB'>
+                  <name>
+                    <translation lang='en' text='Test'/>
+                  </name>
+                </testcase>
+              </testcases>
+            </testcases>
+          </testcases>
+        </graph>
+      </model>
+      <view>
+        <graphView _id='49'>
+          <netViews>
+            <netView _id='50' modelId='28' style='line'/>
+            <netView _id='51' modelId='16' style='line'/>
+            <netView _id='52' modelId='13' style='line'/>
+            <netView _id='53' modelId='22' style='line'/>
+            <netView _id='54' modelId='32' style='line'/>
+            <netView _id='55' modelId='19' style='line'/>
+            <netView _id='56' modelId='25' style='line'/>
+            <netView _id='57' modelId='38' style='line'/>
+            <netView _id='58' modelId='41' style='line'/>
+            <netView _id='59' modelId='44' style='line'/>
+          </netViews>
+          <components>
+            <subGraphVerticeViewRef _id='60' id='1' rot='0' filled='true' stroked='true' modelId='3' x='392.0' y='147.0' controlViewVisibility='simulation'/>
+            <subGraphVerticeViewRef _id='61' id='2' rot='0' filled='true' stroked='true' modelId='6' x='392.0' y='308.0' controlViewVisibility='simulation'/>
+            <circuitInOutView _id='62' id='3' rot='0' filled='true' stroked='true' modelId='9' orientation='east' representation='hex'>
+              <location>
+                <point x='210.0' y='154.0'/>
+              </location>
+            </circuitInOutView>
+            <circuitInOutView _id='63' id='4' rot='0' filled='true' stroked='true' modelId='10' orientation='east' representation='hex'>
+              <location>
+                <point x='210.0' y='343.0'/>
+              </location>
+            </circuitInOutView>
+            <splitterView _id='64' id='5' rot='0' filled='true' stroked='true' modelId='11' x='238.0' y='154.0' handedness='left'/>
+            <splitterView _id='65' id='6' rot='0' filled='true' stroked='true' modelId='12' x='238.0' y='343.0' handedness='left'/>
+            <digitalEdgeView _id='66' id='7' filled='true' stroked='true' modelId='13' layout='ortho' orig='62' origPort='1' origPortOutput='true' dest='64' destPort='1' adjusted='false'>
+              <shape>
+                <polylineShape points='196.0,154.0 252.0,154.0'/>
+              </shape>
+            </digitalEdgeView>
+            <digitalEdgeView _id='67' id='8' filled='true' stroked='true' modelId='16' layout='ortho' orig='63' origPort='1' origPortOutput='true' dest='65' destPort='1' adjusted='false'>
+              <shape>
+                <polylineShape points='196.0,343.0 252.0,343.0'/>
+              </shape>
+            </digitalEdgeView>
+            <digitalEdgeView _id='68' id='9' filled='true' stroked='true' modelId='19' layout='ortho' orig='64' origPort='2' origPortOutput='true' dest='60' destPort='1' adjusted='false'>
+              <shape>
+                <polylineShape points='266.0,147.0 406.0,147.0'/>
+              </shape>
+            </digitalEdgeView>
+            <digitalEdgeView _id='69' id='10' filled='true' stroked='true' modelId='22' layout='ortho' orig='64' origPort='3' origPortOutput='true' dest='61' destPort='1' adjusted='true'>
+              <shape>
+                <polylineShape points='266.0,161.0 308.0,161.0 308.0,308.0 406.0,308.0'/>
+              </shape>
+            </digitalEdgeView>
+            <digitalEdgeView _id='70' id='11' filled='true' stroked='true' modelId='25' layout='ortho' orig='65' origPort='3' origPortOutput='true' dest='61' destPort='2' adjusted='false'>
+              <shape>
+                <polylineShape points='266.0,350.0 406.0,350.0'/>
+              </shape>
+            </digitalEdgeView>
+            <digitalEdgeView _id='71' id='12' filled='true' stroked='true' modelId='28' layout='ortho' orig='65' origPort='2' origPortOutput='true' dest='60' destPort='2' adjusted='true'>
+              <shape>
+                <polylineShape points='266.0,336.0 364.0,336.0 364.0,189.0 406.0,189.0'/>
+              </shape>
+            </digitalEdgeView>
+            <circuitInOutView _id='72' id='13' rot='0' filled='true' stroked='true' modelId='31' orientation='north' representation='binary'>
+              <location>
+                <point x='504.0' y='420.0'/>
+              </location>
+            </circuitInOutView>
+            <digitalEdgeView _id='73' id='14' filled='true' stroked='true' modelId='32' layout='ortho' orig='72' origPort='1' origPortOutput='true' dest='74' adjusted='false'>
+              <shape>
+                <polylineShape points='504.0,434.0 504.0,406.0'/>
+              </shape>
+            </digitalEdgeView>
+            <digitalNodeView _id='74' id='15' filled='true' stroked='true' modelId='32'>
+              <location>
+                <point x='504.0' y='406.0'/>
+              </location>
+            </digitalNodeView>
+            <digitalEdgeView _id='75' id='16' filled='true' stroked='true' modelId='32' layout='ortho' orig='74' dest='61' destPort='3' adjusted='true'>
+              <shape>
+                <polylineShape points='504.0,406.0 434.0,406.0 434.0,371.0'/>
+              </shape>
+            </digitalEdgeView>
+            <digitalEdgeView _id='76' id='17' filled='true' stroked='true' modelId='32' layout='ortho' orig='74' dest='60' destPort='3' adjusted='true'>
+              <shape>
+                <polylineShape points='504.0,406.0 504.0,238.0 434.0,238.0 434.0,210.0'/>
+              </shape>
+            </digitalEdgeView>
+            <concentratorView _id='77' id='18' rot='0' filled='true' stroked='true' modelId='36' x='616.0' y='259.0' handedness='left'/>
+            <circuitInOutView _id='78' id='21' rot='0' filled='true' stroked='true' modelId='37' orientation='east' representation='hex'>
+              <location>
+                <point x='637.0' y='259.0'/>
+              </location>
+            </circuitInOutView>
+            <digitalEdgeView _id='79' id='22' filled='true' stroked='true' modelId='38' layout='ortho' orig='77' origPort='1' origPortOutput='true' dest='78' destPort='1' adjusted='false'>
+              <shape>
+                <polylineShape points='602.0,259.0 651.0,259.0'/>
+              </shape>
+            </digitalEdgeView>
+            <digitalEdgeView _id='80' id='23' filled='true' stroked='true' modelId='41' layout='ortho' orig='60' origPort='4' origPortOutput='true' dest='77' destPort='2' adjusted='false'>
+              <shape>
+                <polylineShape points='462.0,168.0 525.0,168.0 525.0,252.0 588.0,252.0'/>
+              </shape>
+            </digitalEdgeView>
+            <digitalEdgeView _id='81' id='24' filled='true' stroked='true' modelId='44' layout='ortho' orig='61' origPort='4' origPortOutput='true' dest='77' destPort='3' adjusted='false'>
+              <shape>
+                <polylineShape points='462.0,329.0 525.0,329.0 525.0,266.0 588.0,266.0'/>
+              </shape>
+            </digitalEdgeView>
+          </components>
+        </graphView>
+      </view>
+    </graphStorable>
+  </graph>
+  <container>
+    <containerDrawing _id='82' execDrawScript='if (S) drawDataFlow(&quot;B&quot;, &quot;O&quot;) else drawDataFlow(&quot;A&quot;, &quot;O&quot;)'>
+      <components>
+        <originIndicator _id='83' id='8'>
+          <location>
+            <point x='168.0' y='182.0'/>
+          </location>
+        </originIndicator>
+        <polyline _id='84' id='3' style='figure' filled='true' stroked='true' points='182.0,154.0 182.0,252.0 238.0,238.0 238.0,168.0 182.0,154.0'/>
+        <digitalPortViewComp _id='85' id='4' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='86' x='182.0' y='182.0' dir='west' textPos='internal' portId='87'/>
+          </portView>
+        </digitalPortViewComp>
+        <digitalPortViewComp _id='88' id='5' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='89' x='182.0' y='224.0' dir='west' textPos='internal' portId='90'/>
+          </portView>
+        </digitalPortViewComp>
+        <digitalPortViewComp _id='91' id='6' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='92' x='238.0' y='203.0' dir='east' textPos='internal' portId='93'/>
+          </portView>
+        </digitalPortViewComp>
+        <digitalPortViewComp _id='94' id='7' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='95' x='210.0' y='245.0' dir='south' textPos='internal' portId='96'/>
+          </portView>
+        </digitalPortViewComp>
+      </components>
+      <model>
+        <subGraphVertice _id='97' id='0' delay='0' uuid='06e7b5c3-daad-4019-8a8f-945a9215cab6'>
+          <desc>
+            <translation lang='en' text='Selects one of two 16-bit data connections'/>
+            <translation lang='de' text='Wählt aus zwei 16-Bit-Datenleitungen eine aus'/>
+          </desc>
+          <name>
+            <translation lang='en' text='2:1 Multiplexer 16 Bit'/>
+            <translation lang='de' text='2:1 Multiplexer 16 Bit'/>
+          </name>
+          <ports>
+            <subCircuitPort _id='87' portId='1' name='A' logic='positive' bitWidth='16' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='90' portId='2' name='B' logic='positive' bitWidth='16' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='96' portId='3' name='S' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='93' portId='4' name='O' logic='positive' bitWidth='16' trigger='level' type='output' representation='hex'/>
+          </ports>
+        </subGraphVertice>
+      </model>
+    </containerDrawing>
+  </container>
+  <params>
+    <graphParamDefs _id='98'>
+      <paramDefs>
+        <graphParamDef _id='99' name='PD' type='Long' defaultValue='60' semantic='propagationDelay'/>
+      </paramDefs>
+    </graphParamDefs>
+  </params>
+</metaGraph>

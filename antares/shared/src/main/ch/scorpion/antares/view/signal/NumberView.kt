@@ -83,18 +83,16 @@ class NumberView(
 	}
 
 	fun draw(context: DrawContext, isOn: Boolean, inactive: Boolean = false) {
-		context.g.translate(x, y)
+		context.translated(location) {
+			for (digitView in digitViews) {
+				digitView.draw(it, isOn, inactive)
+			}
+			drawByteIndexLabels(it)
 
-		for (digitView in digitViews) {
-			digitView.draw(context, isOn, inactive)
+			if (digitViews.size > 1) {
+				signalNotationLabel.draw(it)
+			}
 		}
-		drawByteIndexLabels(context)
-
-		if (digitViews.size > 1) {
-			signalNotationLabel.draw(context)
-		}
-
-		context.g.translate(-x, -y)
 	}
 
 	private fun drawByteIndexLabels(context: DrawContext) {

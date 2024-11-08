@@ -3,6 +3,7 @@ package ch.scorpion.antares.view.net
 import ch.scorpion.antares.model.net.DigitalNet
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.view.net.tunnel.TunnelView
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule

@@ -3,11 +3,12 @@ package ch.scorpion.antares.model.analog
 import ch.scorpion.antares.model.input.AbstractSwitch
 import ch.scorpion.antares.view.analog.engine.AnalogElement
 import ch.scorpion.antares.view.analog.engine.AnalogElementMixin
-import ch.scorpion.antares.view.analog.AnalogGraphView
 import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
+import ch.scorpion.jabbah.graph.model.vertice.InteractableVertice
 
 /**
  * The electrical [resistance] of [AnalogSwitch] depends on the state of [isOn].
@@ -27,7 +28,7 @@ class AnalogSwitch(
 		private class Calculator : AbstractSwitch.Companion.AbstractSwitchCalculator<AnalogSwitch>() {
 			override fun calculate(vertice: AnalogSwitch, data: GraphActorData, signalHandler: SignalHandler) {
 				super.calculate(vertice, data, signalHandler)
-				vertice.requestAnalogGraphRecalculation(signalHandler)
+				vertice.requestAnalogGraphReanalization(signalHandler)
 			}
 		}
 	}
@@ -42,12 +43,16 @@ class AnalogSwitch(
 		analogElement.bindAnalogElement(this)
 		addPort(AnalogPort())
 		addPort(AnalogPort())
-		propagationDelay = 0
+		propagationDelay = LongValueImpl.ZERO
 	}
 
-	fun requestAnalogGraphRecalculation(signalHandler: SignalHandler) {
-		stateChanged(signalHandler, AbstractAnalogVertice.REQUEST_RECALCULATE)
+	private fun requestAnalogGraphReanalization(signalHandler: SignalHandler) {
+		stateChanged(signalHandler, AbstractAnalogVertice.REQUEST_REANALYZE)
 	}
+
+	/** ---- [InteractableVertice] interface */
+
+	override val interactivePropagationDelay: Long get() = propagationDelay.value
 
 	/** ---- [AnalogElement] */
 

@@ -79,7 +79,8 @@ enum class DigitalPortViewStyle(val customName: String) {
 		override fun isDrawAccess(portView: DigitalPortView): Boolean = true
 
 		override fun createBasicBoundingBox(portView: DigitalPortView): Rectangle2D =
-			DIL_ACCESSES[portView.direction]!!.copy()
+			DIL_ACCESSES[portView.direction]!!
+				.copy()
 				.moveBy(portView.location)
 				.expandBy(Themes.get<AntaresTheme>().figure.stroke.width.toDouble()) as Rectangle2D
 

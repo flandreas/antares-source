@@ -31,6 +31,9 @@ interface StoreWriter : GlobalIdentityProvider {
      */
     fun writeStorables(name: String, iterator: Iterator<Storable>)
 
+    /** Writes a [Map] of named [Storable]s as children of an element with the specified name.*/
+    fun writeMap(name: String, map: Map<String, Storable>)
+
     /**
      * Writes the specified [Int] attribute under the given name.
      * @param name the name of the attribute.

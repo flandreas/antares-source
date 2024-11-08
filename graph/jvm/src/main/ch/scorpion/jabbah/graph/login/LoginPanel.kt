@@ -3,12 +3,14 @@ package ch.scorpion.jabbah.graph.login
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.event.ActionEvent
+import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.DataFormPanel
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
+import io.ktor.client.network.sockets.*
 import kotlinx.coroutines.runBlocking
 import java.awt.BorderLayout
 import java.awt.Dimension
@@ -25,6 +27,8 @@ class LoginPanel(
 ) : JPanel() {
 
     companion object {
+
+        private val LOG by logger(LoginPanel::class)
 
         /** The name of the boolean setting in [Settings] to store whether the username is to be remembered.*/
         private const val SETTINGS_REMEMBER_USERNAME = "jabbah.graph.login.rememberUsername"
@@ -133,17 +137,42 @@ class LoginPanel(
 
     private inner class LoginAction : AbstractAction("graph.action.login") {
         override fun execute(event: ActionEvent) {
-            runBlocking {
-                if (!GraphModuleJvm.loginService.login(LoginRequest(usernameField.text, String(passwordField.password)))) {
-                    messageLabel.text = Translations.getString("graph.action.login.unsuccessful.text")
-                    usernameField.requestFocusInWindow()
-                } else {
-                    closeDialogOnSuccess()
-                    JOptionPane.showMessageDialog(
-                        Frame.getFrames()[0],
-                        Translations.getString("graph.action.login.successful.text"),
-                        this@LoginAction.name,
-                        JOptionPane.INFORMATION_MESSAGE)
+            InvocationHandler.invoke {
+                runBlocking {
+                    try {
+                        if (!GraphModuleJvm.loginService.login(
+                                LoginRequest(
+                                    usernameField.text,
+                                    String(passwordField.password)
+                                )
+                            )
+                        ) {
+                            messageLabel.text = Translations.getString("graph.action.login.unsuccessful.text")
+                            usernameField.requestFocusInWindow()
+                        } else {
+                            closeDialogOnSuccess()
+                            JOptionPane.showMessageDialog(
+                                Frame.getFrames()[0],
+                                Translations.getString("graph.action.login.successful.text"),
+                                this@LoginAction.name,
+                                JOptionPane.INFORMATION_MESSAGE
+                            )
+                        }
+                    } catch (e: Exception) {
+                        val msg = when (e) {
+                            is SocketTimeoutException -> "Timeout"
+                            else -> {
+                                LOG.error("Error in login: ${e.message}", e)
+                                e.message
+                            }
+                        }
+                        JOptionPane.showMessageDialog(
+                            Frame.getFrames()[0],
+                            "Error: $msg",
+                            this@LoginAction.name,
+                            JOptionPane.ERROR_MESSAGE
+                        )
+                    }
                 }
             }
         }

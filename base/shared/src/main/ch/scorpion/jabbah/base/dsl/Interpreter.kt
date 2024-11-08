@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.base.dsl
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.DslTokenType.*
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.parser.TextLocation
 import ch.scorpion.jabbah.base.parser.TokenType
 import kotlin.math.pow
@@ -16,25 +17,36 @@ open class Interpreter(
 	memory: Memory = Memory()
 ) : AbstractBaseInterpreter(rootNode, memory) {
 
+	companion object {
+		private val LOG by logger(Interpreter::class)
+	}
+
 	constructor(parser: DslParser): this(parser.parse())
 	constructor(program: String): this(DslParser(program))
 
 	override fun interpret(node: Node): Any {
-		return when (node) {
-			is Block -> block(node)
-			is NoOp -> 0L
-			is UnaryOperation -> unaryOperation(node)
-			is BinaryOperation -> binaryOperation(node)
-			is Literal -> literal(node)
-			is Assignment -> assignment(node)
-			is Variable -> variable(node)
-			is Declaration -> declaration(node)
-			is IfStatement -> ifStatement(node)
-			is WhenStatement -> whenStatement(node)
-			is ForStatement -> forStatement(node)
-			is ReturnStatement -> returnStatement(node)
-			is FunctionCall -> functionCall(node)
-			else -> super.interpret(node)
+		try {
+			return when (node) {
+				is Block -> block(node)
+				is NoOp -> 0L
+				is UnaryOperation -> unaryOperation(node)
+				is BinaryOperation -> binaryOperation(node)
+				is Literal -> literal(node)
+				is Assignment -> assignment(node)
+				is Variable -> variable(node)
+				is Declaration -> declaration(node)
+				is IfStatement -> ifStatement(node)
+				is WhenStatement -> whenStatement(node)
+				is ForStatement -> forStatement(node)
+				is ReturnStatement -> returnStatement(node)
+				is FunctionCall -> functionCall(node, params)
+				else -> super.interpret(node)
+			}
+		} catch (e: DslError) {
+			throw e
+		} catch (e: Throwable) {
+			LOG.error("Unexpected error in script interpretation", e)
+			throw RuntimeError(node.location, Translations.getString("base.dsl.systemError.msg"))
 		}
 	}
 
@@ -476,12 +488,12 @@ open class Interpreter(
 		return returnValue!!
 	}
 
-	private fun functionCall(node: FunctionCall): Any {
+	private fun functionCall(node: FunctionCall, context: Any?): Any {
 		if (node.function == null) {
 			throw RuntimeError(node.location, Translations.getString("base.dsl.noImplementationOfFunction.msg", node.name.value!!))
 		}
 		try {
-			return node.function!!.function.execute(node.params.map { interpret(it) })
+			return node.function!!.function.execute(node.params.map { interpret(it) }, context)
 		} catch (e: RuntimeError) {
 			// Catch and rethrow with CodeLocation to avoid passing CodeLocation as argument of the execute() method
 			throw RuntimeError(node.location, e.message!!)

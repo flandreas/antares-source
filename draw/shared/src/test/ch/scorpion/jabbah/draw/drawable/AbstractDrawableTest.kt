@@ -1,14 +1,22 @@
 package ch.scorpion.jabbah.draw.drawable
 
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.DrawableContainer
 import ch.scorpion.jabbah.draw.DrawableEvent
 import ch.scorpion.jabbah.draw.DrawableListener
-import io.mockk.mockk
-import io.mockk.slot
-import io.mockk.verify
+import dev.mokkery.MockMode
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.matcher.any
+import dev.mokkery.matcher.capture.Capture
+import dev.mokkery.matcher.capture.capture
+import dev.mokkery.matcher.capture.get
+import dev.mokkery.mock
+import dev.mokkery.verify
+import dev.mokkery.verify.VerifyMode.Companion.exactly
 import kotlin.test.*
 
 /**
@@ -23,8 +31,8 @@ class AbstractDrawableTest {
     @BeforeTest
     fun setup() {
         drawable = TestDrawable()
-        listener  = mockk(relaxed = true)
-        container = mockk(relaxed = true)
+        listener  = mock(MockMode.autofill)
+        container = mock(MockMode.autofill)
     }
 
     @Test
@@ -32,7 +40,7 @@ class AbstractDrawableTest {
         drawable.addDrawableListener(listener)
         drawable.removeDrawableListener(listener)
         drawable.invalidate()
-	    verify(exactly = 0) { listener.drawableInvalidated(DrawableEvent(drawable)) }
+	    verify(exactly(0)) { listener.drawableInvalidated(DrawableEvent(drawable)) }
     }
 
     @Test
@@ -57,31 +65,34 @@ class AbstractDrawableTest {
     @Test
     fun shouldNotifyListenerWhenInvalidated() {
         drawable.addDrawableListener(listener)
-        drawable.invalidate()
 
-	    val slot = slot<DrawableEvent>()
-	    verify { listener.drawableInvalidated(capture(slot)) }
-	    assertEquals(drawable.boundingBox, slot.captured.area)
+	    val slot = Capture.slot<DrawableEvent>()
+        every { listener.drawableInvalidated(capture(slot)) } returns Unit
+
+        drawable.invalidate()
+	    assertEquals(drawable.boundingBox, slot.get().area)
     }
 
     @Test
     fun shouldNotifyListenerWhenValidated() {
         drawable.addDrawableListener(listener)
-        drawable.validate()
 
-	    val slot = slot<DrawableEvent>()
-	    verify { listener.drawableRequestRedraw(capture(slot)) }
-	    assertEquals(drawable.boundingBox, slot.captured.area)
+	    val slot = Capture.slot<DrawableEvent>()
+	    every { listener.drawableRequestRedraw(capture(slot)) } returns Unit
+
+        drawable.validate()
+	    assertEquals(drawable.boundingBox, slot.get().area)
     }
 
     @Test
     fun shouldNotifyListenerWhenUpdated() {
         drawable.addDrawableListener(listener)
-        drawable.setBounds(Rectangle2D(100.0, 100.0, 10.0, 10.0))
 
-	    val slot = slot<DrawableEvent>()
-	    verify { listener.drawableUpdated(capture(slot)) }
-	    assertEquals(drawable.boundingBox, slot.captured.area)
+	    val slot = Capture.slot<DrawableEvent>()
+	    every { listener.drawableUpdated(capture(slot)) } returns Unit
+
+        drawable.setBounds(Rectangle2D(100.0, 100.0, 10.0, 10.0))
+	    assertEquals(drawable.boundingBox, slot.get().area)
     }
 
     @Test
@@ -103,7 +114,8 @@ class AbstractDrawableTest {
 
 	    constructor(x: Int, y: Int, w: Int, h: Int): this(Rectangle2D(x, y, w, h))
 
-        override val boundingBox: Rectangle2D = bbox
+        private val _boundingBox = bbox
+        override val boundingBox: RectangularShape get() = _boundingBox
 
         /** ---- [Drawable] interface */
 
@@ -117,7 +129,7 @@ class AbstractDrawableTest {
 
         fun setBounds(bounds: Rectangle2D) {
             invalidate()
-            boundingBox.setFrame(bounds)
+            _boundingBox.setFrame(bounds)
             invalidate()
             update()
         }

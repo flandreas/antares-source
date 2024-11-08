@@ -18,6 +18,7 @@ import ch.scorpion.jabbah.edit.GridType
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.command.SourcingCommandManager
 import ch.scorpion.jabbah.edit.model.Size
+import ch.scorpion.jabbah.edit.model.image.ImageIdentification
 import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
 import ch.scorpion.jabbah.edit.model.rectangle.RectangularReplaceSelectionModel
 import ch.scorpion.jabbah.edit.model.text.*
@@ -32,6 +33,7 @@ import ch.scorpion.jabbah.edit.view.*
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.IOModuleJvm
 import ch.scorpion.jabbah.io.TypeMap
+import javax.swing.table.DefaultTableCellRenderer
 
 /**
  * Setup of the [ch.scorpion.jabbah.edit] module for the JVM target.
@@ -80,10 +82,16 @@ object EditModuleJvm : AbstractModule() {
 		registry.register(TranslatableText::class.java) { TranslatablePropertyRenderer((it as CommandPropertySwing<Translatable>).filter) }
 		registry.register(Name::class.java) { TranslatablePropertyRenderer() }
 		registry.register(Description::class.java) { TranslatablePropertyRenderer((it as CommandPropertySwing<Translatable>).filter) }
+		registry.registerRenderer(ImageIdentification::class.java, ImageIdentificationRenderer::class.java)
 	}
 
 	@Suppress("UNCHECKED_CAST")
 	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
+		registry.register(Long::class.java) {
+			LongOptionalPropertyEditor(
+				isOptional = (it as CommandPropertySwing<Long>).optional
+			)
+		}
 		registry.registerEditor(Direction::class.java, DirectionEditor::class.java)
 		registry.registerEditor(Size::class.java, SizeEditor::class.java)
 		registry.registerEditor(StyleType::class.java, StyleTypeEditor::class.java)
@@ -117,6 +125,8 @@ object EditModuleJvm : AbstractModule() {
 				propertyName = (it as CommandPropertySwing<Translatable>).displayName,
 				multiline = it.filter)
 		}
+
+		registry.registerEditor(ImageIdentification::class.java, ImageIdentificationEditor::class.java)
 	}
 
 	private fun registerTypes(typeMap: TypeMap) {

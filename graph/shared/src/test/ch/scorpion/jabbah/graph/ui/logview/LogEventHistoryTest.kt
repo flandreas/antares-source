@@ -3,7 +3,7 @@ package ch.scorpion.jabbah.graph.ui.logview
 import ch.scorpion.jabbah.graph.model.LogEvent
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import io.mockk.mockk
+import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -24,7 +24,7 @@ class LogEventHistoryTest {
 
 	@Test
 	fun shouldAddEventsFromSameSourceToSameColumn() {
-		val source = mockk<Vertice>()
+		val source = mock<Vertice>()
 		history.add(LogEvent(source, "A", "Value 1", 1))
 		history.add(LogEvent(source, "A", "Value 2", 2))
 
@@ -34,8 +34,8 @@ class LogEventHistoryTest {
 
 	@Test
 	fun shouldAddEventFromDifferentSourceToNewColumn() {
-		val sourceA = mockk<Vertice>()
-		val sourceB = mockk<Vertice>()
+		val sourceA = mock<Vertice>()
+		val sourceB = mock<Vertice>()
 		history.add(LogEvent(sourceA, "A", "Value 1", 1))
 		history.add(LogEvent(sourceB, "B", "Value 2", 2))
 
@@ -45,8 +45,8 @@ class LogEventHistoryTest {
 
 	@Test
 	fun shouldCollectTimeOnRow() {
-		val sourceA = mockk<Vertice>()
-		val sourceB = mockk<Vertice>()
+		val sourceA = mock<Vertice>()
+		val sourceB = mock<Vertice>()
 		history.add(LogEvent(sourceA, "A", "Value 1", 1))
 		history.add(LogEvent(sourceB, "B", "Value 2", 1))
 
@@ -56,8 +56,8 @@ class LogEventHistoryTest {
 
 	@Test
 	fun shouldReturnMostRecentValue() {
-		val sourceA = mockk<Vertice>()
-		val sourceB = mockk<Vertice>()
+		val sourceA = mock<Vertice>()
+		val sourceB = mock<Vertice>()
 		history.add(LogEvent(sourceA, "A", "Value 1", 1))
 		history.add(LogEvent(sourceB, "B", "Value 2", 2))
 

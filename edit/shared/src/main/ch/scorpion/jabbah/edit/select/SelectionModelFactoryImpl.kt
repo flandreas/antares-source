@@ -4,17 +4,15 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.SelectionModel
 import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.logger
 import kotlin.reflect.KClass
 
 /**
  * A standard implementation of the [SelectionModelFactory] interface.
+ * @property defaultFactories the factories to be used for creating a [SelectionModel] if no suitable factory was registered
  */
-class SelectionModelFactoryImpl : SelectionModelFactory {
-
-	companion object {
-		private val LOG by logger(SelectionModelFactoryImpl::class)
-	}
+class SelectionModelFactoryImpl(
+	private val defaultFactories: Map<SelectionDrawingStrategy,((Component) -> SelectionModel<Component>)> = emptyMap()
+) : SelectionModelFactory {
 
 	/** Contains the registered [Entries][Entry] for a particular [SelectionDrawingStrategy].*/
 	private val registry: MutableMap<SelectionDrawingStrategy, MutableList<Entry>> = mutableMapOf()
@@ -29,7 +27,7 @@ class SelectionModelFactoryImpl : SelectionModelFactory {
 				return entry.factory.invoke(component.selectableComponent)
 			}
 		}
-		return null
+		return defaultFactories[strategy]?.let { it(component.selectableComponent) }
 	}
 
 	override fun register(strategy: SelectionDrawingStrategy, componentClass: KClass<*>, factory: (Component) -> SelectionModel<Component>) {

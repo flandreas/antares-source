@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.view.connect
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.TestEditorBuilder
+import ch.scorpion.jabbah.graph.health.GraphViewConsistencyCheck
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.TestGraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -67,5 +68,7 @@ class SplitEdgeViewCommandTest {
 		assertSame(nodeView, ev.origin?.connectableView as NodeView<Boolean>)
 		assertSame(testGraphView.vv2, ev.destination?.connectableView as TestVerticeView)
 		assertEquals(nodeView.location, ev.getSegmentPoint(0))
+
+		GraphViewConsistencyCheck.execute(testGraphView.graphView)
 	}
 }

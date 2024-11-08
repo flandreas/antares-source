@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view.app
 
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.command.SourcingCommandManager
@@ -32,7 +33,7 @@ class ClipboardIntegrationTest {
 	private val service = GraphViewAppServiceImpl(cpService, commandManager)
 
 	private val builder: GraphViewBuilder<Boolean> = GraphViewBuilder()
-	private val _view = DrawingViewMockBuilder()
+	private val _view = DrawingViewMockBuilder().withDrawing(builder.build()).withSize(800, 600)
 	private val _editor = EditorImpl(view, commandManager, EditSelectModule.selectionToolFactory)
 
 	private val v1 = builder.addVerticeView(createEastOutputVerticeView("v1", 100, 100))
@@ -53,6 +54,7 @@ class ClipboardIntegrationTest {
 	}
 
 	init {
+		_view.withModelToView(Rectangle2D(0, 0, 800, 600))
 		_editor.commandManager.bindDataHolder(builder)
 		editor.commandManager.reset()
 		cpService.reset()

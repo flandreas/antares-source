@@ -119,7 +119,7 @@ class SelectionToolImpl(
 		if (target == null) {
 			updateCursor(editor.drawing.getDrawableAt(x, y))
 		}
-		tooltipHandler.handle(editor.view, editor.drawing, x, y)
+		tooltipHandler.handle(editor.view, editor.drawing, x, y, editor.view.editable)
 	}
 
 	override fun mousePressed(e: MouseEvent, x: Double, y: Double) {
@@ -172,7 +172,7 @@ class SelectionToolImpl(
 				}
 			} else {
 				if (!editor.view.selectionManager.isSelected(component)) {
-					LOG.debug("Select single component at $x/$y")
+					LOG.debug("Select single component at ${x.toInt()}/${y.toInt()}")
 					editor.view.selectionManager.deselectAll()
 					editor.view.selectionManager.select(scope)
 				}

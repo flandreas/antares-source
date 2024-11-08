@@ -16,6 +16,11 @@ import ch.scorpion.jabbah.execution.ExecutionError
  * time has come.
  *
  * Listens for [SystemSpeedPauseEvent]s from the [SystemSpeed] to pause and resume this [Scheduler].
+ *
+ * [Scheduler] features a breakpoint model. When execution runs into a breakpoint, execution is suspended,
+ * until the user manually resumed it. Two kinds of breakpoints are supported:
+ * - Soft breakpoints: Implicit breakpoints (if enabled) are set whenever an [Actor] produces a new output signal
+ * - Hard breakpoints: Explicit breakpoints produced by special [Actor]s that send a [BreakEvent]
  */
 interface Scheduler : SignalHandler {
 
@@ -42,6 +47,7 @@ interface Scheduler : SignalHandler {
 	 */
 	var isSimulationTimeStatusEnabled: Boolean
 
+	/** Determines whether soft breakpoints are enabled.*/
 	var isSoftBreakpointsEnabled: Boolean
 
 	/**

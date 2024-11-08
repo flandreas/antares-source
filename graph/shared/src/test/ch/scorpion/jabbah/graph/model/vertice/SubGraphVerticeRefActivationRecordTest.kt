@@ -1,25 +1,30 @@
 package ch.scorpion.jabbah.graph.model.vertice
 
-import ch.scorpion.jabbah.base.dsl.Interpreter
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.dsl.DslLexer
-import ch.scorpion.jabbah.base.dsl.Memory
 import ch.scorpion.jabbah.base.dsl.DslParser
+import ch.scorpion.jabbah.base.dsl.Interpreter
+import ch.scorpion.jabbah.base.dsl.Memory
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.library.LibraryImpl
 import ch.scorpion.jabbah.graph.library.LibraryModule
-import ch.scorpion.jabbah.graph.library.LibraryService
 import ch.scorpion.jabbah.graph.library.MemoryLibraryPersistenceService
 import ch.scorpion.jabbah.graph.model.GenericGraphType
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.OutputPort
-import ch.scorpion.jabbah.graph.model.graph.LongGraphParamType
-import ch.scorpion.jabbah.graph.model.graph.StringGraphParamType
-import ch.scorpion.jabbah.graph.model.param.*
+import ch.scorpion.jabbah.graph.model.param.GraphParamValue
+import ch.scorpion.jabbah.graph.model.param.GraphParamValues
+import ch.scorpion.jabbah.graph.model.param.LongValueGraphParamType
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.slot
+import dev.mokkery.MockMode
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.matcher.any
+import dev.mokkery.matcher.capture.Capture
+import dev.mokkery.matcher.capture.capture
+import dev.mokkery.mock
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -29,16 +34,14 @@ class SubGraphVerticeRefActivationRecordTest {
 	companion object {
 		init {
 			GraphViewTestRule.configure()
-			GraphParamTypeRegistry.register(StringGraphParamType.name) { LongGraphParamType }
 		}
 	}
 
-	private val signalHandler = mockk<SignalHandler>(relaxed = true)
+	private val signalHandler = mock<SignalHandler>(MockMode.autofill)
 
 	@BeforeTest
 	fun setup() {
 		LibraryModule.userLibraryPersistenceService = MemoryLibraryPersistenceService()
-		LibraryModule.libraryService = LibraryService()
 		LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"))
 	}
 
@@ -62,9 +65,9 @@ class SubGraphVerticeRefActivationRecordTest {
 
 	@Test
 	fun shouldAccessGraphParamsAsVariables() {
-		val paramValue = GraphParamValue.create("L", LongGraphParamType, 99L)
+		val paramValue = GraphParamValue.create("L", LongValueGraphParamType, LongValueImpl(99L), null)
 
-		val vv = mockk<SubGraphVerticeRef>(relaxed = true)
+		val vv = mock<SubGraphVerticeRefIF>(MockMode.autofill)
 		every { vv.paramValues } returns GraphParamValues().withValue(paramValue)
 
 		val activationRecord = SubGraphVerticeRefActivationRecord(vv, signalHandler)
@@ -77,16 +80,20 @@ class SubGraphVerticeRefActivationRecordTest {
 		assertEquals(99L, result)
 	}
 
-	private fun createSubGraphVerticeRefMock(paramValue: GraphParamValue<Long>? = null): SubGraphVerticeRef {
-		val input = mockk<InputPort<Long>>()
+	private fun createSubGraphVerticeRefMock(paramValue: GraphParamValue<Long>? = null): SubGraphVerticeRefIF {
+		val input = mock<InputPort<Long>>()
 		every { input.getIncomingSignal() } returns 42L
 
-		val output = mockk<OutputPort<Long>>()
-		val outputSlot = slot<Long>()
+		val output = mock<OutputPort<Long>>()
+		val outputSlot = Capture.slot<Long>()
 		every { output.setOutgoingSignalBuffered(capture(outputSlot), any()) } returns Unit
 
-		val vv = mockk<SubGraphVerticeRef>(relaxed = true)
+		val graph = mock<Graph>()
+		every { graph.type } returns GenericGraphType
+
+		val vv = mock<SubGraphVerticeRefIF>(MockMode.autofill)
 		every { vv.graphType } returns GenericGraphType
+		every { vv.getGraph() } returns graph
 		every { vv.hasPort(any<String>()) } returns true
 		every { vv.hasPort(any<Int>()) } returns true
 		every { vv.hasInput(any()) } returns true

@@ -36,10 +36,13 @@ class ViewNavigatorImpl(
 	private val minZoomFactor: Double get() = BaseModule.properties.getFloat(View.PROP_MIN_ZOOM_FACTOR).toDouble()
 
 	private val maxZoomFactor: Double get() = BaseModule.properties.getFloat(View.PROP_MAX_ZOOM_FACTOR).toDouble()
+
+	private val effDefaultZoomFactor: Double get() = defaultZoomFactor * view.canvas.devicePixelRatio
+
 	/** ---- [ViewNavigator] interface */
 
 	override fun createTransformation(zoomFactor: Double): ViewTransformation =
-		createTransformation(ZoomPan(view, zoomFactor, view.zoomPan.panOrigin))
+		createTransformation(ZoomPan(view, zoomFactor, view.zoomPan.panOrigin, view::devicePixelRatio))
 
 	private fun createTransformation(zoomPan: ZoomPan): ViewTransformation =
 		ViewTransformation(
@@ -61,7 +64,7 @@ class ViewNavigatorImpl(
 		val zoomLocationAfterM = view.viewToModel(effZoomLocation, zoomFactor)
 		val offset = zoomLocationBeforeM.subtract(zoomLocationAfterM)
 
-		val zoomPan = ZoomPan(view, zoomFactor, view.zoomPan.panOrigin.add(offset))
+		val zoomPan = ZoomPan(view, zoomFactor, view.zoomPan.panOrigin.add(offset), view::devicePixelRatio)
 		view.transformation = createTransformation(zoomPan)
 	}
 
@@ -70,7 +73,7 @@ class ViewNavigatorImpl(
 		val offsetV = translation.viewPoint.subtract(locationAfterZoomV)
 		val offsetM = offsetV.multiply(1 / translation.zoomFactor).negate
 
-		val zoomPan = ZoomPan(view, translation.zoomFactor, offsetM)
+		val zoomPan = ZoomPan(view, translation.zoomFactor, offsetM, view::devicePixelRatio)
 
 		view.transformation = createTransformation(zoomPan)
 	}
@@ -83,13 +86,20 @@ class ViewNavigatorImpl(
 	}
 
 	override fun panBy(dx: Int, dy: Int) {
-		setZoomPan(ZoomPan(view, view.zoomFactor, Point2D(
-			view.zoomPan.panOrigin.x - dx / view.zoomFactor,
-			view.zoomPan.panOrigin.y - dy / view.zoomFactor)))
+		setZoomPan(
+			ZoomPan(
+				view,
+				view.zoomFactor,
+				Point2D(
+					view.zoomPan.panOrigin.x - dx / view.zoomFactor,
+					view.zoomPan.panOrigin.y - dy / view.zoomFactor),
+				view::devicePixelRatio
+			)
+		)
 	}
 
 	override fun setPanOrigin(p: Point2D) {
-		setZoomPan(ZoomPan(view, view.zoomPan.zoomFactor, p))
+		setZoomPan(ZoomPan(view, view.zoomPan.zoomFactor, p, view::devicePixelRatio))
 	}
 
 	private fun setZoomPan(zoomPan: ZoomPan) {
@@ -101,31 +111,34 @@ class ViewNavigatorImpl(
 	}
 
 	override fun panCenterDefault() {
-		panCenter(defaultZoomFactor)
+		panCenter(effDefaultZoomFactor)
 	}
 
 	override fun panCenter(zoomFactor: Double) {
 		if (isZoomFactorInValidRange(zoomFactor)) {
-			setZoomPan(ZoomPan(view, zoomFactor, calculateContentCenterPan(zoomFactor)))
+			setZoomPan(ZoomPan(view, zoomFactor, calculateContentCenterPan(zoomFactor), view::devicePixelRatio))
 		}
 	}
 
 	override fun fit() {
 		val zoomFactor = calculateFitZoomFactor()
 		if (isZoomFactorInValidRange(zoomFactor)) {
-			setZoomPan(ZoomPan(view, zoomFactor, calculateContentCenterPan(zoomFactor)))
+			setZoomPan(ZoomPan(view, zoomFactor, calculateContentCenterPan(zoomFactor), view::devicePixelRatio))
 		}
 	}
 
 	override fun fitMaxNormal() {
 		val zoomFactor = calculateFixMaxNormalZoomFactor()
 		if (isZoomFactorInValidRange(zoomFactor)) {
-			setZoomPan(ZoomPan(view, zoomFactor, calculateContentCenterPan(zoomFactor, fixMaxNormal = true)))
+			setZoomPan(ZoomPan(view, zoomFactor, calculateContentCenterPan(zoomFactor, fixMaxNormal = true), view::devicePixelRatio))
 		}
 	}
 
 	override fun calculateFixMaxNormalZoomFactor(): Double =
-		min(defaultZoomFactor, calculateFitZoomFactor())
+		min(effDefaultZoomFactor, calculateFitZoomFactor())
+
+	override fun isZoomFactorInValidRange(zoomFactor: Double): Boolean =
+		zoomFactor in minZoomFactor..maxZoomFactor
 
 	/** ---- [ViewNavigatorImpl] */
 
@@ -153,17 +166,14 @@ class ViewNavigatorImpl(
 	private fun calculateFitZoomFactor(): Double {
 		val bounds = view.contentBounds.total
 		if (bounds.width == 0.0 || bounds.height == 0.0) {
-			return defaultZoomFactor
+			return effDefaultZoomFactor
 		}
 		if (view.space.area.widthInt == 0 || view.space.area.heightInt == 0) {
-			return defaultZoomFactor
+			return effDefaultZoomFactor
 		}
 
 		return min(
 			(view.space.area.widthInt - 2 * FIT_ZOOM_INSET) / bounds.width,
 			(view.space.area.heightInt - 2 * FIT_ZOOM_INSET) / bounds.height)
 	}
-
-	private fun isZoomFactorInValidRange(zoomFactor: Double): Boolean =
-		zoomFactor in minZoomFactor..maxZoomFactor
 }

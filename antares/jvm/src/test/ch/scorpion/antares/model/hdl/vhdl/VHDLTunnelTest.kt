@@ -4,7 +4,7 @@ import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.hdl.vhdl.VHDLGenerator
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.net.Tunnel
-import ch.scorpion.antares.view.net.TunnelView
+import ch.scorpion.antares.view.net.tunnel.TunnelView
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

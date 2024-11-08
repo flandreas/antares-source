@@ -8,8 +8,10 @@ import ch.scorpion.jabbah.edit.editor.EditorImpl
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.tool.ToolTestUtil
-import io.mockk.verify
+import dev.mokkery.matcher.any
 import org.junit.Test
+import dev.mokkery.verify
+import dev.mokkery.verify.VerifyMode.Companion.exactly
 
 class SelectionToolImplEventDelegationTest {
 
@@ -40,7 +42,7 @@ class SelectionToolImplEventDelegationTest {
 		handler.withMouseMoved(true)
 		toolUtil.moveMouseTo(160, 150)
 
-		verify(exactly = 2) { handler.build().mouseMoved(any()) }
+		verify(exactly(2)) { handler.build().mouseMoved(any()) }
 	}
 
 	@Test
@@ -52,7 +54,7 @@ class SelectionToolImplEventDelegationTest {
 		toolUtil.moveMouseTo(300, 150)
 		toolUtil.moveMouseTo(400, 150)
 
-		verify(exactly = 2) { handler.build().mouseMoved(any()) }
+		verify(exactly(2)) { handler.build().mouseMoved(any()) }
 	}
 
 }

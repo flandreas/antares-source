@@ -443,4 +443,38 @@ class DslParserTest {
 			-- B
 		""".trimIndent())
 	}
+
+	@Test
+	fun comparisonShouldHavePrecedenceOverTerms() {
+		val parser = DslParser(DslLexer("A + 5 == 2 * A"), null)
+
+		assertAST(parser.parse(), """
+			Compound
+			- ==
+			-- +
+			--- A
+			--- 5
+			-- *
+			--- 2
+			--- A
+		""".trimIndent())
+	}
+
+	@Test
+	fun logicOperationShouldHavePrecedenceOverComparison() {
+		val parser = DslParser(DslLexer("A == 5 and B > C + 1"), null)
+
+		assertAST(parser.parse(), """
+			Compound
+			- and
+			-- ==
+			--- A
+			--- 5
+			-- >
+			--- B
+			--- +
+			---- C
+			---- 1
+		""".trimIndent())
+	}
 }

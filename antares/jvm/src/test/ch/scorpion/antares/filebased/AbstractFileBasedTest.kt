@@ -9,10 +9,13 @@ import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.library.dictionary.FileLibraryDictionaryPersistenceService
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
 import ch.scorpion.jabbah.graph.library.dictionary.ResourceLibraryDictionaryPersistenceService
+import ch.scorpion.jabbah.graph.model.module.GraphModelModule
+import ch.scorpion.jabbah.graph.model.nonvolatile.NonVolatileServiceJvm
 import ch.scorpion.jabbah.graph.project.ProjectManagementService
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.view.GraphView
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 import java.nio.file.Paths
 
 abstract class AbstractFileBasedTest : AbstractCircuitTest() {
@@ -27,12 +30,13 @@ abstract class AbstractFileBasedTest : AbstractCircuitTest() {
 
 			LibraryModule.systemLibraryPersistenceService = ResourceLibraryPersistenceService()
 			LibraryModule.systemLibraryDictionaryService = LibraryDictionaryService(ResourceLibraryDictionaryPersistenceService())
-			LibraryModule.libraryService = LibraryService()
 			LibraryModule.libraryManagementService = LibraryManagementService()
 
 			ProjectModule.projectDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService({ path.toString() }, "projects"))
 			ProjectModule.projectLibraryPersistenceService = FileLibraryPersistenceService({ path.toString() }, "projects")
 			ProjectModule.projectManagementService = ProjectManagementService()
+
+			GraphModelModule.nonVolatileService = NonVolatileServiceJvm({ path.toString() }, "nonVolatile")
 
 			LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(
 				LibraryIdentification(LibraryModule.DEF_LIBRARY_UUID, null), isSystem = true)
@@ -41,7 +45,7 @@ abstract class AbstractFileBasedTest : AbstractCircuitTest() {
 
 	protected lateinit var openedCircuitView: GraphView
 
-	protected val actorListener = mockk<ActorListener>(relaxed = true)
+	protected val actorListener = mock<ActorListener>(MockMode.autofill)
 
 	override fun getCircuitView(): GraphView = openedCircuitView
 

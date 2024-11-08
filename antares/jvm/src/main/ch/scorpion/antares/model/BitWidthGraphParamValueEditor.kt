@@ -12,7 +12,7 @@ class BitWidthGraphParamValueEditor : JComboBox<BitWidth>(), GraphParamValueEdit
 		model = DefaultComboBoxModel(BitWidth.PREDEFINED.toTypedArray())
 	}
 
-	override var value: Any
+	override var paramValue: Any
 		get() = selectedItem
 		set(value) {
 			selectedItem = value

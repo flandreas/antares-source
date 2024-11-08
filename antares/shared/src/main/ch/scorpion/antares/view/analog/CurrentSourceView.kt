@@ -63,9 +63,7 @@ class CurrentSourceView(
 		val tip = Point2D(0.0, LENGTH + h(1.5))
 		context.g.stroke = styleProvider.getStyle(StyleType.ANNOTATION).stroke
 		context.g.drawLine(0.0, LENGTH + h(2.5), 0.0, LENGTH + h(4.5))
-		context.g.translate(tip.x, tip.y)
-		context.g.fill(ARROW_PATH)
-		context.g.translate(-tip.x, -tip.y)
+		context.translated(tip) { it.g.fill(ARROW_PATH) }
 	}
 
 	/** ---- [AbstractAnalogVerticeView] */

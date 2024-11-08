@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view.net.edge
 
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.module.DrawModule
@@ -17,7 +18,8 @@ class EdgeViewLineStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling {
 
 	override val width: Int get() = edgeView.style.stroke.width.toInt()
 
-	override val boundingBox: Rectangle2D = Rectangle2D()
+	private val _boundingBox = Rectangle2D()
+	override val boundingBox: RectangularShape get() = _boundingBox
 
 	override val isArea: Boolean get() = false
 
@@ -46,20 +48,20 @@ class EdgeViewLineStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling {
 
 	override fun updateBoundingBox() {
 		if (edgeView.polyline.pointsCount > 0) {
-			boundingBox.setFrame(edgeView.polyline.getPointAt(0).x, edgeView.polyline.getPointAt(0).y, 0.0, 0.0)
+			_boundingBox.setFrame(edgeView.polyline.getPointAt(0).x, edgeView.polyline.getPointAt(0).y, 0.0, 0.0)
 		}
-		boundingBox.add(edgeView.polyline.boundingBox)
+		_boundingBox.add(edgeView.polyline.boundingBox)
 		if (edgeView.origin == null) {
-			boundingBox.add(edgeView.originEndpointView.boundingBox)
+			_boundingBox.add(edgeView.originEndpointView.boundingBox)
 		} else if (edgeView.origin?.connectableView is NodeView<*>) {
-			boundingBox.add(edgeView.origin!!.connectableView.boundingBox)
+			_boundingBox.add(edgeView.origin!!.connectableView.boundingBox)
 		}
 		if (edgeView.destination == null) {
-			boundingBox.add(edgeView.destinationEndpointView.boundingBox)
+			_boundingBox.add(edgeView.destinationEndpointView.boundingBox)
 		} else if (edgeView.destination?.connectableView is NodeView<*>) {
-			boundingBox.add(edgeView.destination!!.connectableView.boundingBox)
+			_boundingBox.add(edgeView.destination!!.connectableView.boundingBox)
 		}
-		boundingBox.setFrame(
+		_boundingBox.setFrame(
 			boundingBox.x - edgeView.stroke.width, boundingBox.y - edgeView.stroke.width,
 			boundingBox.width + 2 * edgeView.stroke.width, boundingBox.height + 2 * edgeView.stroke.width)
 	}

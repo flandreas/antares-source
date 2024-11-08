@@ -2,12 +2,10 @@ package ch.scorpion.jabbah.execution
 
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.time.SystemSpeedPauseEvent
 import ch.scorpion.jabbah.execution.scheduler.*
 
 /**
@@ -42,84 +40,6 @@ class SingleStepModeAction(
 
 	override fun execute(event: ActionEvent) {
 		scheduler.isSingleStepMode = !scheduler.isSingleStepMode
-	}
-}
-
-/**
- * Pauses the running [Scheduler], or resumes it if already paused.
- */
-class PauseOrResumeAction(
-	val scheduler: Scheduler,
-	eventBus: EventBus = BaseModule.eventBus
-) : AbstractSchedulerAction("execution.action.pause", eventBus) {
-
-	companion object {
-		private const val INACTIVE_ICON = "/img/pause24.png"
-		private const val ACTIVE_ICON = "/img/pause-active24.png"
-	}
-
-	private val pausedHandler: EventHandler<SystemSpeedPauseEvent> = {
-		if (it.source === scheduler.systemSpeedCategory.systemSpeed) {
-			updateSelected()
-		}
-	}
-
-	private val schedulerActivationStateHandler: EventHandler<SchedulerActivationStateEvent> = {
-		if (it.scheduler === scheduler) {
-			updateState()
-			updateSelected()
-		}
-	}
-
-	private val breakpointHandler: EventHandler<BreakpointEvent> = {
-		if (it.scheduler === scheduler) {
-			updateIcon()
-		}
-	}
-
-	init {
-		eventBus.register(SystemSpeedPauseEvent::class, pausedHandler)
-		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
-		eventBus.register(BreakpointEvent::class, breakpointHandler)
-
-		updateState()
-		updateSelected()
-		updateIcon()
-	}
-
-	override fun dispose() {
-		super.dispose()
-		eventBus.unregister(pausedHandler)
-		eventBus.unregister(schedulerActivationStateHandler)
-		eventBus.unregister(breakpointHandler)
-	}
-
-	override fun execute(event: ActionEvent) {
-		if (scheduler.systemSpeedCategory.systemSpeed.isPaused) {
-			scheduler.systemSpeedCategory.systemSpeed.resume()
-		} else {
-			scheduler.systemSpeedCategory.systemSpeed.pause()
-		}
-	}
-
-	private fun updateSelected() {
-		selected = scheduler.isActive && scheduler.systemSpeedCategory.systemSpeed.isPaused
-		description = if (selected) {
-			Translations.getString("execution.action.resume.desc")
-		} else {
-			Translations.getString("execution.action.pause.desc")
-		}
-	}
-
-	private fun updateState() {
-		enabled = scheduler.isActive
-	}
-
-	private fun updateIcon() {
-		val newImagePath = if (scheduler.isInBreakpoint) ACTIVE_ICON else INACTIVE_ICON
-		if (newImagePath != imagePath) {
-			imagePath = newImagePath
-		}
 	}
 }
 

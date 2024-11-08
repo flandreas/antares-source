@@ -5,12 +5,15 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.Look
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.Focusable
 import ch.scorpion.jabbah.draw.drawable.RotationDirection
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
@@ -63,7 +66,7 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 	/** Initialized in [updateView] */
 	protected var arrowPath: ArrowPath? = null
 
-	private val actorInteractionHandler = createActorInteractionHandler()
+	private val actorInteractionHandler: ToggleInteractionHandler = createActorInteractionHandler()
 
 	var orientation: Direction = orientation
 		set(value) {
@@ -132,6 +135,11 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 		orientation = Direction.withName(reader.readString("orientation"))
 	}
 
+	/** ---- [Focusable] */
+
+	override fun canConsume(keyEvent: KeyEvent): Boolean =
+		actorInteractionHandler.canConsume(keyEvent)
+
 	/** ---- [ActorView] */
 
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler =
@@ -143,7 +151,7 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 
 	/** ---- [Drawable] */
 
-	override fun getBoundingBoxImpl(): Rectangle2D = boundingBox
+	override fun getBoundingBoxImpl(): RectangularShape = boundingBox
 
 	override fun contains(x: Double, y: Double): Boolean =
 		rotate(boundingBox).contains(x, y)
@@ -217,7 +225,8 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 
 	/** ---- [AbstractCircuitInOutView] */
 
-	override val boundingBox = Rectangle2D()
+	private val _boundingBox = Rectangle2D()
+	override val boundingBox: RectangularShape get() = _boundingBox
 
 	protected fun updateView() {
 		invalidate()
@@ -288,8 +297,8 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 	protected fun updateBoundingBox() {
 		invalidate()
 
-		boundingBox.setFrame(location.x, location.y, 0.0, 0.0)
-		addPortViewsTo(boundingBox, null)
+		_boundingBox.setFrame(location.x, location.y, 0.0, 0.0)
+		addPortViewsTo(_boundingBox, null)
 
 		val pathBB = arrowPath!!.path.boundingBox
 		val pathTranslation = getArrowPathTranslation()
@@ -301,10 +310,10 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 		if (shadow) {
 			DropShadow.expand(pathBBoxRect, rotation)
 		}
-		boundingBox.add(pathBBoxRect)
+		_boundingBox.add(pathBBoxRect)
 
 		val labelBB = label.boundingBox
-		boundingBox.add(Rectangle2D(
+		_boundingBox.add(Rectangle2D(
 			location.x + labelBB.x + pathTranslation.x - 1,
 			location.y + labelBB.y + pathTranslation.y - 1,
 			labelBB.width + 2,
@@ -328,28 +337,25 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 	}
 
 
-	fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color?, stroke: Stroke) {
-		val translation = getArrowPathTranslation()
-		context.g.translate(translation.x, translation.y)
-
-		if (shadow) {
-			DropShadow.draw(context, transparency) {
-				if (backgroundColor != null) {
-					context.g.fill(arrowPath!!.path)
+	private fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color?, stroke: Stroke) {
+		context.translated(getArrowPathTranslation()) { c ->
+			if (shadow) {
+				DropShadow.draw(context, transparency) {
+					if (backgroundColor != null) {
+						c.g.fill(arrowPath!!.path)
+					}
+					c.g.draw(arrowPath!!.path)
 				}
-				context.g.draw(arrowPath!!.path)
 			}
-		}
 
-		if (backgroundColor != null) {
-			context.g.color = backgroundColor
-			context.g.fill(arrowPath!!.path)
+			if (backgroundColor != null) {
+				c.g.color = backgroundColor
+				c.g.fill(arrowPath!!.path)
+			}
+			c.g.stroke = stroke
+			c.g.color = foregroundColor
+			c.g.draw(arrowPath!!.path)
 		}
-		context.g.stroke = stroke
-		context.g.color = foregroundColor
-		context.g.draw(arrowPath!!.path)
-
-		context.g.translate(-translation.x, -translation.y)
 	}
 
 	protected fun drawEdited(context: DrawContext, color: Color, backgroundColor: Color?) {
@@ -365,10 +371,7 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 			context.g.color = styleProvider.getStyle(StyleType.BACKGROUND).color.textColor
 		}
 
-		val translation = getArrowPathTranslation()
-		context.g.translate(translation.x, translation.y)
-		label.draw(context)
-		context.g.translate(-translation.x, -translation.y)
+		context.translated(getArrowPathTranslation()) { label.draw(it) }
 	}
 
 	protected fun drawDisabled(context: DrawContext) {
@@ -387,7 +390,7 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 	}
 
 
-	protected open fun createActorInteractionHandler(): ActorInteractionHandler = ToggleInteractionHandler()
+	protected open fun createActorInteractionHandler(): ToggleInteractionHandler = ToggleInteractionHandler()
 
 	protected abstract fun toggle(undefine: Boolean, context: ActorInteractionContext): ActorInteractionHandler?
 
@@ -396,6 +399,8 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 	 * unless it is not a toplevel component.
 	 */
 	protected open inner class ToggleInteractionHandler : ClickableActorInteractionHandlerAdapter() {
+
+		open fun canConsume(keyEvent: KeyEvent): Boolean = keyEvent.modifiers == 0
 
 		override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (!model.isToplevel) {

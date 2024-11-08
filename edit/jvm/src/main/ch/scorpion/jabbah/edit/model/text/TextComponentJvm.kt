@@ -1,13 +1,12 @@
 package ch.scorpion.jabbah.edit.model.text
 
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.Transparent
-import ch.scorpion.jabbah.draw.drawable.TransparentImpl
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
+import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
@@ -15,7 +14,6 @@ import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.SnappableX
 import ch.scorpion.jabbah.edit.SnappableXCoordinate
-import ch.scorpion.jabbah.edit.model.rectangle.AbstractRectangularComponent
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -43,20 +41,15 @@ open class TextComponentJvm(
 	location: Point2D = Point2D.ZERO,
 	styleType: StyleType = StyleType.TEXT,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider
-) : AbstractRectangularComponent(styleType = styleType, styleProvider = styleProvider, shape = Rectangle2D(location.x, location.y, 0.0, 0.0)),
-	Transparent, TextComponent {
+) : AbstractTextComponent(
+	styleType = styleType,
+	styleProvider = styleProvider,
+	shape = Rectangle2D(location.x, location.y, 0.0, 0.0)
+), Transparent, TextComponent {
 
 	private companion object {
 
 		private val LOG by logger(TextComponentJvm::class)
-
-		private val TYPE = Translations.getString("edit.component.text")
-
-		/** The horizontal inset between the bounding box and the text.  */
-		private const val INSET_X = 10
-
-		/** The vertical inset between the bounding box and the text.  */
-		private const val INSET_Y = 10
 
 		/**
 		 * A shared instance of the [JTextPane][javax.swing.JTextPane] that is used for painting
@@ -138,32 +131,7 @@ open class TextComponentJvm(
 			}
 		}
 
-	override var horizontalAlignment: HorizontalAlignment = HorizontalAlignment.LEFT
-		set(value) {
-			if (field != value) {
-				invalidate()
-				field = value
-				update()
-			}
-		}
-
 	private val eventHandler = EventHandler()
-
-	/** ---- [Transparent] */
-
-	private val transparent = TransparentImpl(this)
-
-	override var transparency: Int
-		get() = transparent.transparency
-		set(value) {
-			transparent.transparency = value
-		}
-
-	private var decorator: TextComponentDecorator = RectangularShapeTextComponentDecorator(
-		shape = RoundRectangle2D(0.0, 0.0, 0.0, 0.0, 20.0, 20.0),
-		stylable = this,
-		transparent = transparent
-	)
 
 	init {
 		filled = false
@@ -175,21 +143,11 @@ open class TextComponentJvm(
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
-		if (!text.isEmpty) {
-			writer.writeStorables("text", text.allTranslations())
-		}
 		writer.writeString("hAlign", horizontalAlignment.customName)
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
-		if (reader.hasAttribute("text")) {
-			// Backward compatibility
-			text = TranslatableText(reader.readString("text"))
-		}
-		if (reader.hasElement("text")) {
-			text = TranslatableText(reader.readStorables("text"))
-		}
 		if (reader.hasAttribute("hAlign")) {
 			horizontalAlignment = HorizontalAlignment.withName(reader.readString("hAlign"))
 		}
@@ -208,12 +166,6 @@ open class TextComponentJvm(
 
 	/** ---- [Drawable] */
 
-	override fun contains(x: Double, y: Double): Boolean = super<AbstractRectangularComponent>.contains(x, y)
-
-	override fun contains(p: Point2D): Boolean = super<AbstractRectangularComponent>.contains(p)
-
-	override fun intersects(rect: RectangularShape): Boolean = super<AbstractRectangularComponent>.intersects(rect)
-
 	override fun draw(context: DrawContext) {
 		if (filled) {
 			decorator.drawBackground(this, context)
@@ -222,13 +174,17 @@ open class TextComponentJvm(
 		val oldClip = context.g.getClipBounds()
 		context.g.clip(x.toInt(), y.toInt(), width.toInt(), height.toInt())
 
-		setupTextPainter(context)
+		setupTextPainter(context, filled)
 
-		context.g.translate(TEXT_PAINTER.x.toDouble(), TEXT_PAINTER.y.toDouble())
-		TEXT_PAINTER.paint((context.g as Graphics2DJvm).g)
-		context.g.translate(-TEXT_PAINTER.x.toDouble(), -TEXT_PAINTER.y.toDouble())
+		context.translated(TEXT_PAINTER.x.toDouble(), TEXT_PAINTER.y.toDouble()) {
+			TEXT_PAINTER.paint((it.g as Graphics2DJvm).g)
+		}
 
 		context.g.setClipBounds(oldClip)
+
+		if (DrawModule.debugGfx) {
+			DrawModule.drawLocatableDebugBoundingBox(this, context)
+		}
 
 		if (stroked) {
 			decorator.drawForeground(this, context)
@@ -243,10 +199,6 @@ open class TextComponentJvm(
 			InputEventHandlerAdapter.EMPTY_HANDLER
 		}
 
-	/** ---- [Component] interface */
-
-	override val type: String get() = TYPE
-
 	/** ---- [TextComponent] */
 
 	/**
@@ -254,7 +206,7 @@ open class TextComponentJvm(
 	 * the constant horizontal and vertical insets.
 	 *
 	 * Currently, this method only changes the width and height of the shape, but not its position. It should be
-	 * considered whether or not this method should also change the position of the shape, depending on the current
+	 * considered whether this method should also change the position of the shape, depending on the current
 	 * alignment settings.
 	 */
 	private fun adjustBounds() {
@@ -281,7 +233,7 @@ open class TextComponentJvm(
 	/**
 	 * Sets up the shared instance of the [TEXT_PAINTER] object with everything it needs to properly render the text.
 	 */
-	private fun setupTextPainter(context: DrawContext) {
+	private fun setupTextPainter(context: DrawContext, filled: Boolean) {
 		val attr = SimpleAttributeSet()
 		val awtFont = Graphics2DJvm.toAwtFont(font)
 
@@ -289,11 +241,31 @@ open class TextComponentJvm(
 		StyleConstants.setFontSize(attr, awtFont.size)
 		StyleConstants.setBold(attr, awtFont.isBold)
 		StyleConstants.setItalic(attr, awtFont.isItalic)
-		StyleConstants.setForeground(attr, Graphics2DJvm.toAwtColor(
-			if (context.useContextColors) context.color!!.textColor else transparent.applyTo(color.textColor)))
-		StyleConstants.setBackground(attr, Graphics2DJvm.toAwtColor(
-			if (context.useContextColors) context.color!!.backgroundColor else transparent.applyTo(color.backgroundColor)))
 		StyleConstants.setAlignment(attr, horizontalAlignmentSwing)
+
+		if (filled) {
+			StyleConstants.setForeground(
+				attr, Graphics2DJvm.toAwtColor(
+					if (context.useContextColors) context.color!!.textColor else transparent.applyTo(color.textColor)
+				)
+			)
+			StyleConstants.setBackground(
+				attr, Graphics2DJvm.toAwtColor(
+					if (context.useContextColors) context.color!!.backgroundColor else transparent.applyTo(color.backgroundColor)
+				)
+			)
+		} else {
+			StyleConstants.setForeground(
+				attr, Graphics2DJvm.toAwtColor(
+					if (context.useContextColors) context.color!!.textColor else transparent.applyTo(color.foregroundColor)
+				)
+			)
+			StyleConstants.setBackground(
+				attr, Graphics2DJvm.toAwtColor(
+					if (context.useContextColors) context.color!!.backgroundColor else transparent.applyTo(color.textColor)
+				)
+			)
+		}
 
 		val bounds = shape
 		TEXT_PAINTER.setBounds(

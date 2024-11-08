@@ -1,11 +1,8 @@
 package ch.scorpion.antares.view.port
 
 import ch.scorpion.antares.view.Look
-import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.base.geom.Direction.*
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.Transparent
@@ -98,7 +95,7 @@ abstract class AbstractAntaresPortView<T: Any>(
 
 	/** ---- [Drawable] */
 
-	override val boundingBox: Rectangle2D
+	override val boundingBox: RectangularShape
 		get() {
 			val bbox: Rectangle2D = if (portLabel != null) {
 				val lb = portLabel!!.boundingBox
@@ -135,19 +132,19 @@ abstract class AbstractAntaresPortView<T: Any>(
 		val origColor = context.g.color
 
 		setupColor(context)
-		context.g.translate(locationX, locationY)
-		drawAboveOwnerImpl(context)
 
-		portLabel?.let {
-			context.g.color = transparent.applyTo(if (portLabelPosition == PortLabelPosition.EXTERNAL) {
-				context.choose(styleProvider.getStyle(GraphStyleType.EDGE).color).textColor
-			} else {
-				context.choose(context.styleColor(styleProvider.getStyle(StyleType.FIGURE).color).deriveTextTowardsBackgroundColor()).textColor
-			})
-			portLabel?.draw(context)
+		context.translated(locationX, locationY) { c ->
+			drawAboveOwnerImpl(c)
+			portLabel?.let {
+				c.g.color = transparent.applyTo(if (portLabelPosition == PortLabelPosition.EXTERNAL) {
+					c.choose(styleProvider.getStyle(GraphStyleType.EDGE).color).textColor
+				} else {
+					c.choose(c.styleColor(styleProvider.getStyle(StyleType.FIGURE).color).deriveTextTowardsBackgroundColor()).textColor
+				})
+				portLabel?.draw(c)
+			}
 		}
 
-		context.g.translate(-locationX, -locationY)
 		DrawModule.drawDebugBoundingBox(this, context.g, DrawModule.DEBUG_BBOX_COLOR_SECONDARY)
 		context.g.color = origColor
 	}

@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.model.input.Clock
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Dimension2D
@@ -23,6 +24,8 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorDrawableButton
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
+import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.ui.KnobLauncher
 import ch.scorpion.jabbah.graph.ui.KnobLauncherImpl
 import ch.scorpion.jabbah.graph.view.ControlView
@@ -97,8 +100,8 @@ class ClockControlView(
 
 	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? = null
 
-	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, model: Clock) {
-		_model = model
+	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
+		_model = link.getLinkedVertice(startGraph) as Clock
 		this.subGraphVerticeView = subGraphVerticeView
 	}
 
@@ -131,12 +134,13 @@ class ClockControlView(
 				}
 
 				return knobLauncher.launchAfterDelay(
-					initialValue = model.propagationDelay / 1_000,
+					initialValue = model.propagationDelay.value / 1_000,
 					location = knobLocation,
 					unit = "µs",
 					mouseMovedCondition = { keepMouseMoved(it.location) },
 					displayHandler = { isHovering = false },
-					valueChangeHandler = { model.propagationDelay = it * 1_000 }
+					valueChangeHandler = { model.propagationDelay = LongValueImpl(it * 1_000) },
+					signalHandler = context.signalHandler
 				)
 			}
 

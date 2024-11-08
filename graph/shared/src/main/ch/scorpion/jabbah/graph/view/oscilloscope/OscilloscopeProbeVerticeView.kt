@@ -140,6 +140,8 @@ class OscilloscopeProbeVerticeView<T : Any>(
 
 	override val isDragManager: Boolean get() = true
 
+	override val copyable: Boolean get() = false
+
 	/** ---- [AbstractRectangularVerticeView] */
 
 	override fun modelExchanged(oldModel: OscilloscopeProbeVertice<T>?) {

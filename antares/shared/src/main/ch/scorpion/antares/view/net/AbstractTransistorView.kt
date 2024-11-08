@@ -12,11 +12,8 @@ import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
 import ch.scorpion.antares.view.port.ExternalPortLabelDistance
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.base.geom.Direction.SOUTH
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
@@ -59,13 +56,13 @@ abstract class AbstractTransistorView<T: TransistorIF<*>>(
 		/** The name of the [Boolean] property in [Properties] defining whether transistor display port names.*/
 		const val PROP_TRANSISTOR_PORT_NAMES = "antares.transistor.portNames"
 
-		val portLabelPosition = if (showPortNames) {
+		val portLabelPosition get() = if (showPortNames) {
 			PortLabelPosition.EXTERNAL
 		} else {
 			PortLabelPosition.HIDE
 		}
 
-		val externalPortLabelDistance = if (hasCircle) {
+		val externalPortLabelDistance get() = if (hasCircle) {
 			ExternalPortLabelDistance.Small
 		} else {
 			ExternalPortLabelDistance.None
@@ -152,10 +149,10 @@ abstract class AbstractTransistorView<T: TransistorIF<*>>(
 
 	/** ---- [AbstractDrawable] */
 
-	override val boundingBox: Rectangle2D
+	override val boundingBox: RectangularShape
 		get() {
 			val bb = Rectangle2D(super.boundingBox)
-			val lbb = label.boundingBox.moveBy(location)
+			val lbb = Rectangle2D(label.boundingBox).moveBy(location)
 			bb.add(lbb)
 			return bb
 		}

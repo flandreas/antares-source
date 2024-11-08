@@ -26,12 +26,15 @@ class MouseWheelModeController : KeyAdapter() {
 
 	private var lastMouseWheelZoomTime = 0L
 	private var lastMouseWheelPanTime = 0L
-	private var isModifierDown = false
+	private var isPanModifierDown = false
 
 	private var isWheelZoom = true
 
+	var pressedKeyCode: Int? = null
+		private set
+
 	fun reset() {
-		isModifierDown = false
+		isPanModifierDown = false
 		isWheelZoom = true
 		lastMouseWheelPanTime = 0L
 		lastMouseWheelPanTime = 0L
@@ -40,8 +43,8 @@ class MouseWheelModeController : KeyAdapter() {
 	fun calculateIsWheelZoom(): Boolean {
 		val now = System.currentTimeMillis()
 		val switchMode =
-			isWheelZoom && isModifierDown && now - lastMouseWheelZoomTime > WHEEL_COOL_DOWN
-				|| !isWheelZoom && !isModifierDown && now - lastMouseWheelPanTime > WHEEL_COOL_DOWN
+			isWheelZoom && isPanModifierDown && now - lastMouseWheelZoomTime > WHEEL_COOL_DOWN
+				|| !isWheelZoom && !isPanModifierDown && now - lastMouseWheelPanTime > WHEEL_COOL_DOWN
 
 		isWheelZoom = isWheelZoom && !switchMode || !isWheelZoom && switchMode
 
@@ -59,14 +62,16 @@ class MouseWheelModeController : KeyAdapter() {
 	/** ---- [KeyAdapter] */
 
 	override fun keyPressed(e: KeyEvent) {
+		pressedKeyCode = e.key
 		if (e.key == DrawModule.mouseWheelPanModifier) {
-			isModifierDown = true
+			isPanModifierDown = true
 		}
 	}
 
 	override fun keyReleased(e: KeyEvent) {
+		pressedKeyCode = null
 		if (e.key == DrawModule.mouseWheelPanModifier) {
-			isModifierDown = false
+			isPanModifierDown = false
 		}
 	}
 }

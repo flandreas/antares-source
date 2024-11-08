@@ -3,7 +3,7 @@ package ch.scorpion.jabbah.graph.view.net.node
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.Locatable
@@ -22,6 +22,7 @@ import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewConnectionGeometry
 import ch.scorpion.jabbah.graph.view.net.netview.AbstractNetViewElement
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
+import ch.scorpion.jabbah.graph.view.net.netview.NetViewTraversal
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -52,6 +53,8 @@ open class NodeViewImpl<T : Any>(
 		}
 	}
 
+	override fun toString(): String = "NodeView id=$id"
+
 	/** ---- [Locatable] interface */
 
 	override var location: Point2D = Point2D.ZERO
@@ -79,8 +82,12 @@ open class NodeViewImpl<T : Any>(
 
 	/** ---- [NetViewElement] interface */
 
-	override val connectedPorts: Set<Port<T>> get() =
-		getEdgeViews().flatMap { it.connectedPorts }.toSet()
+	override fun traverse(traversal: NetViewTraversal<T>) {
+		getEdgeViews().forEach { it.traverse(traversal) }
+	}
+
+	override fun isConnectedWithAnyPort(ports: Set<Port<T>>): Boolean =
+		getEdgeViews().any { it.isConnectedWithAnyPort(ports) }
 
 	override fun handleNetViewStyleChanged() {
 		invalidate()
@@ -156,7 +163,7 @@ open class NodeViewImpl<T : Any>(
 
 	/** ---- [Drawable] interface */
 
-	override val boundingBox: Rectangle2D get() = styling.boundingBox
+	override val boundingBox: RectangularShape get() = styling.boundingBox
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		if (visitor.visitEnter(this)) {

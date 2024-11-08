@@ -4,9 +4,16 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.Translation
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.io.StoreWriter
-import io.mockk.mockk
-import io.mockk.slot
-import io.mockk.verify
+import dev.mokkery.MockMode
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.matcher.any
+import dev.mokkery.matcher.capture.Capture
+import dev.mokkery.matcher.capture.capture
+import dev.mokkery.matcher.capture.get
+import dev.mokkery.mock
+import dev.mokkery.verify
+import dev.mokkery.verify.VerifyMode.Companion.exactly
 import kotlin.test.*
 
 class DescriptionTest {
@@ -55,23 +62,23 @@ class DescriptionTest {
 
 	@Test
 	fun shouldNotWriteEmptyDescription() {
-		val storeWriter = mockk<StoreWriter>(relaxed = true)
+		val storeWriter = mock<StoreWriter>(MockMode.autofill)
 		val describable = TestDescribable("")
 		describable.description.write("desc", storeWriter)
 
-		verify(exactly = 0) { storeWriter.writeStorables(any(), any()) }
+		verify(exactly(0)) { storeWriter.writeStorables(any(), any()) }
 	}
 
 	@Test
 	fun shouldWriteNonEmptyDescription() {
-		val storeWriter = mockk<StoreWriter>(relaxed = true)
-		val slot = slot<Iterator<Translation>>()
+		val storeWriter = mock<StoreWriter>(MockMode.autofill)
+		val slot = Capture.slot<Iterator<Translation>>()
 		val describable = TestDescribable("Test")
 
+		every { storeWriter.writeStorables("desc", capture(slot)) } returns Unit
 		describable.description.write("desc", storeWriter)
 
-		verify(exactly = 1) { storeWriter.writeStorables("desc", capture(slot)) }
-		assertEquals("Test", slot.captured.next().text)
+		assertEquals("Test", slot.get().next().text)
 	}
 
 	private class TestDescribable(

@@ -154,14 +154,20 @@ class GraphViewCopyPasteService(
 		}
 
 		Movable.moveBy(copyDrawing.drawables, dislocation)
+
+		// First pass: Force possible errors before starting to alter Drawing.
+		// If this produces an exception, the Drawing is still left unchanged.
 		copyDrawing.drawables.reversed().forEach { c ->
-			c.beforePaste(drawing)
-			drawing.add(c)
 			if (c is GraphElementView<*>) {
 				(drawing as? GraphView)?.graph?.let {
 					c.model.graphParamsChanged(it)
 				}
 			}
+		}
+		// Second pass: Alter Drawing by adding Components
+		copyDrawing.drawables.reversed().forEach { c ->
+			c.beforePaste(drawing)
+			drawing.add(c)
 		}
 
 		if (pastedAnchorComponent != null) {

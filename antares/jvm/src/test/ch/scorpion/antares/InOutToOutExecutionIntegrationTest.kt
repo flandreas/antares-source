@@ -15,7 +15,8 @@ import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -32,7 +33,7 @@ class InOutToOutExecutionIntegrationTest : AbstractJvmCircuitTest() {
 	}
 
 	private lateinit var circuitView: GraphView
-	private val actorListener = mockk<ActorListener>(relaxed = true)
+	private val actorListener = mock<ActorListener>(MockMode.autofill)
 	private val library get() = LibraryModule.libraryHolder.library
 
 	private lateinit var subGraphVV: SubGraphVerticeView<out SubGraphVertice>
@@ -69,7 +70,7 @@ class InOutToOutExecutionIntegrationTest : AbstractJvmCircuitTest() {
 		val executionTime = scheduler.executionTime
 
 		switchView.model.on(scheduler)
-		proceedToNanos(executionTime + Switch.DEF_PROP_DELAY + 1)
+		proceedToNanos(executionTime + Switch.DEF_PROP_DELAY.value + 1)
 
 		assertEquals(DigitalSignalFactory.of(true), subGraphVV.model.getOutput<DigitalSignal>().getOutgoingSignal())
 	}

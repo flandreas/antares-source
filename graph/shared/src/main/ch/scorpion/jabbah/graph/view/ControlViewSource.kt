@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view
 
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
@@ -61,7 +62,7 @@ interface ControlViewSource<T : Vertice> : VerticeView<T> {
 	 * [ControlViewSource] has changed some of its property, which might be of interest
 	 * for [ControlView]s created by this [ControlViewSource].
 	 */
-	fun postControlViewSourceChangeEvent(eventBus: EventBus) {
+	fun postControlViewSourceChangeEvent(eventBus: EventBus = BaseModule.eventBus) {
 		eventBus.post(ControlViewSourceEvent(ControlViewSourceEvent.Type.CHANGE, this as ControlViewSource<Vertice>))
 	}
 }

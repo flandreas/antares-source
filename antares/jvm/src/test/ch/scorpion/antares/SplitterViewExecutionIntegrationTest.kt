@@ -9,7 +9,8 @@ import ch.scorpion.antares.view.net.SplitterView
 import ch.scorpion.antares.view.output.LEDView
 import ch.scorpion.jabbah.execution.actor.ActorListener
 import ch.scorpion.jabbah.graph.view.GraphView
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 import kotlin.test.*
 
 class SplitterViewExecutionIntegrationTest : AbstractJvmCircuitTest() {
@@ -21,7 +22,7 @@ class SplitterViewExecutionIntegrationTest : AbstractJvmCircuitTest() {
 	}
 
 	private lateinit var circuitView: GraphView
-	private val actorListener = mockk<ActorListener>(relaxed = true)
+	private val actorListener = mock<ActorListener>(MockMode.autofill)
 
 	private val circuitInputView = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(bitWidth = BitWidth.BW_2))
 	private val splitterView = SplitterView(model = Splitter(BitWidth.BW_2, BranchCount.BC_2))

@@ -31,7 +31,6 @@ class ImportMetaGraphAction(
 		private val title: String by lazy { Translations.getString("library.action.importMetaGraph.title") }
 	}
 
-
 	override val operationAuthorized: Boolean
 		get() = operationTarget.invoke() != null && Authorizer.isCurrentUserAuthorizedTo(operation, operationTarget.invoke()!!)
 
@@ -53,7 +52,7 @@ class ImportMetaGraphAction(
 			var repeat = false
 			LOG.userTrail("Import bundle '$bundleName', replace if UUID exists = $replaceIfUuidExists")
 
-			when (service.importMetaGraphBundle(path, bundleName, destination, replaceIfUuidExists)) {
+			when (service.importMetaGraphBundle(path, bundleName, destination, replaceIfUuidExists, LibraryModule.libraryHolder)) {
 				Success -> handleSuccessfulImport()
 				Invalid -> handleInvalidImportFile(bundleName)
 				StaleLibraryReference -> handleStaleLibraryReference(bundleName)

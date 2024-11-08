@@ -5,9 +5,13 @@ import ch.scorpion.jabbah.draw.DrawTestRule
 import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.TextMeasurer
 import ch.scorpion.jabbah.draw.graphics.TextRenderInfo
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.slot
+import dev.mokkery.answering.calls
+import dev.mokkery.every
+import dev.mokkery.matcher.any
+import dev.mokkery.matcher.capture.Capture
+import dev.mokkery.matcher.capture.capture
+import dev.mokkery.matcher.capture.get
+import dev.mokkery.mock
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -20,13 +24,13 @@ class RichTextDrawableTest {
 
 		/** Measures the width of a text as the number of characters times the font size 10.*/
 		private fun textMeasurer(): TextMeasurer {
-			val textMeasurer = mockk<TextMeasurer>()
+			val textMeasurer = mock<TextMeasurer>()
 
-			val slot = slot<String>()
+			val slot = Capture.slot<String>()
 			every {
 				textMeasurer.measureSingleLineText(text = capture(slot), font = any())
-			} answers {
-				TextRenderInfo(Rectangle2D(0, 0, FONT_SIZE * slot.captured.length, FONT_SIZE), 0.8 * FONT_SIZE)
+			} calls  {
+				TextRenderInfo(Rectangle2D(0, 0, FONT_SIZE * slot.get().length, FONT_SIZE), 0.8 * FONT_SIZE)
 			}
 
 			return textMeasurer

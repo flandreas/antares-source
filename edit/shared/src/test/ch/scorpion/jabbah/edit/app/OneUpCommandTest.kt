@@ -7,8 +7,9 @@ import ch.scorpion.jabbah.edit.EditTestRule
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
 import ch.scorpion.jabbah.io.StorableCloner
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -24,7 +25,7 @@ class OneUpCommandTest {
 	}
 
     private val drawing = DrawingImpl<Component>()
-	private val drawingView = mockk<DrawingView<Drawing<Component>>>()
+	private val drawingView = mock<DrawingView<Drawing<Component>>>()
     private val c1 = RectangleComponent()
     private val c2 = RectangleComponent()
     private val c3 = RectangleComponent()

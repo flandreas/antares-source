@@ -27,7 +27,7 @@ interface GraphViewConnectService {
 	 * both on the view and the model layer.
 	 * @param direction the [Direction] in which the [EdgeView]'s first segment should be laid out
 	 */
-	fun <T : Any> connectToOrigin(edgeView: EdgeView<T>, connection: Connection<T>, direction: Direction? = null)
+	fun <T : Any> connectToOrigin(edgeView: EdgeView<T>, connection: Connection<T>, direction: Direction? = null, doLayout: Boolean = true)
 
 	/**
 	 * Unconnects an [EdgeView] from its origin [ConnectableView].
@@ -39,7 +39,7 @@ interface GraphViewConnectService {
 	 * [ConnectableView] both on the view and the model layer.
 	 * @param direction the [Direction] in which the [EdgeView]'s last segment should be laid out
 	 */
-	fun <T : Any> connectToDestination(edgeView: EdgeView<T>, connection: Connection<T>, direction: Direction? = null)
+	fun <T : Any> connectToDestination(edgeView: EdgeView<T>, connection: Connection<T>, direction: Direction? = null, doLayout: Boolean = true)
 
 	/**
 	 * Unconnects an [EdgeView] from its destination [ConnectableView].
@@ -59,7 +59,7 @@ interface GraphViewConnectService {
 	fun <T : Any> connect(edgeView: EdgeView<T>, origOutput: PortView<T>?, destInput: PortView<T>?)
 
 	/**
-	 * Unconnects an [EdgeView] from the origin [Port] to which it it currently connected,
+	 * Unconnects an [EdgeView] from the origin [Port] to which it is currently connected,
 	 * and from the [ConnectableView] that contains a [PortView] for that [Port].
 	 * Does nothing if not connected.
 	 */
@@ -119,7 +119,7 @@ interface GraphViewConnectService {
 	): EdgeView<T>
 
 	/**
-	 * Splits an existing [EdgeView], inserts a [NodeView] at the begin location of [newEdgeView],
+	 * Splits an existing [EdgeView], inserts a [NodeView] at the start location of [newEdgeView],
 	 * and connects the [NodeView] with a destination [Port], if available.
 	 * Adds the [newEdgeView] to the [graphView] if not already contained.
 	 *

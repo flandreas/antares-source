@@ -7,7 +7,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.FocusManager
+import ch.scorpion.jabbah.draw.FocusManager
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
@@ -63,6 +63,7 @@ class GraphViewExecutionHandler(
 	/** Enhance superclass behaviour by mouseListener.*/
 	override fun passivate() {
 		super.passivate()
+		FocusManager.resetFocus()
 		view.removeMouseListener(mouseHandler)
 	}
 

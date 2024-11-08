@@ -5,7 +5,8 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.state.UnhandledEventBehaviour.Unhandled
 import ch.scorpion.jabbah.base.state.stateMachine
 import ch.scorpion.jabbah.draw.graphics.Cursor
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -18,7 +19,7 @@ class StateMachineInputEventHandlerTest {
 	}
 
 	private val rectangle = TestRectangle(0, 0, 100, 100)
-	private val view = mockk<View<*>>(relaxed = true)
+	private val view = mock<View<*>>(MockMode.autofill)
 	private val test = TestHandler()
 
 	private inner class TestHandler {

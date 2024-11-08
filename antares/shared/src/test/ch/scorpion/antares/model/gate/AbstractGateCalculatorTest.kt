@@ -5,8 +5,10 @@ import ch.scorpion.antares.model.TestGate
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.execution.ForwardSignalHandler
-import io.mockk.mockk
+import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
+import dev.mokkery.mock
 import kotlin.test.assertEquals
 
 abstract class AbstractGateCalculatorTest(protected val gateType: LogicGateType) {
@@ -18,7 +20,7 @@ abstract class AbstractGateCalculatorTest(protected val gateType: LogicGateType)
 	}
 
 	private val gate = TestGate(gateType)
-	protected val signalHandler = ForwardSignalHandler(mockk())
+	protected val signalHandler = ForwardSignalHandler(CurrentSystemSpeedCategory(SystemSpeed()))
 
 	init {
 		gate.getInput<DigitalSignal>(1).name = "a"

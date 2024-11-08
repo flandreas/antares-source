@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.draw
 
 import ch.scorpion.jabbah.base.event.*
+import ch.scorpion.jabbah.draw.graphics.Graphics2D
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.base.geom.Dimension2D
@@ -15,10 +16,17 @@ interface Canvas : PropertyOwner<Any> {
 
 		/** The name of the [dimension] property in [PropertyChangeEvent]s. */
 		const val PROP_DIMENSION = "PROP_DIMENSION"
+
+        /** The name of the [devicePixelRatio] property in [PropertyChangeEvent]s. */
+        const val PROP_DEVICE_PIXEL_RATIO = "PROP_DEVICE_PIXEL_RATIO"
 	}
 
-	/** The number of actual physical pixels used per view pixel. */
-	val devicePixelRatio: Int
+	/**
+     * The number of actual physical pixels used per UI coordinate system unit.
+     * On hDPI systems, this is 2 (or even more). Only relevant on the JS platform when run in browsers.
+     * On the JVM platform, this value is always 1.
+     */
+	val devicePixelRatio: Double
 
     /**
      * Contains the [View] that effectively displays the [Drawable]s.
@@ -26,7 +34,15 @@ interface Canvas : PropertyOwner<Any> {
      */
     val view: View<*>
 
-    /** Contains the dimension of the target canvas.*/
+    /**
+     * The dimension of the drawing area in the target canvas, which is equivalent to the dimension
+     * of the image that is backing up the contents of the canvas. This also defines the coordinate system
+     * used by [Graphics2D] drawing on this [Canvas].
+     *
+     * Note that this is NOT the same as the dimension of the target system's canvas UI element.
+     * If [devicePixelRatio] is 2, this property's width and height are twice as large as the corresponding
+     * sizes of the UI element.
+     */
     val dimension: Dimension2D
 
     /** The background [Color] of this [Canvas].*/

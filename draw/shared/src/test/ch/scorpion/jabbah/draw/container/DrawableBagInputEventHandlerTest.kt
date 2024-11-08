@@ -7,8 +7,11 @@ import ch.scorpion.jabbah.draw.InputEventDriver
 import ch.scorpion.jabbah.draw.InputEventHandlerMockBuilder
 import ch.scorpion.jabbah.draw.drawable.DrawableMockBuilder
 import ch.scorpion.jabbah.draw.module.DrawModule
-import io.mockk.mockk
-import io.mockk.verify
+import dev.mokkery.MockMode
+import dev.mokkery.matcher.any
+import dev.mokkery.mock
+import dev.mokkery.verify
+import dev.mokkery.verify.VerifyMode.Companion.exactly
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -24,7 +27,7 @@ class DrawableBagInputEventHandlerTest {
 	}
 
 	private val container = DrawableContainerImpl<Drawable>(useLocation = true)
-	private val driver = InputEventDriver(view = mockk(), container)
+	private val driver = InputEventDriver(view = mock(MockMode.autofill), container)
 	private val drawableHandler = InputEventHandlerMockBuilder()
 	private val drawable = DrawableMockBuilder()
 		.withBoundingBox(Rectangle2D(100, 100, 100, 100))
@@ -40,12 +43,12 @@ class DrawableBagInputEventHandlerTest {
 
 		driver.moveMouseTo(150, 150)
 
-		verify(exactly = 1) { drawableHandler.build().mouseMoved(any()) }
+		verify(exactly(1)) { drawableHandler.build().mouseMoved(any()) }
 		assertEquals(Point2D(150, 150), drawableHandler.eventLocation)
 
 		driver.moveMouseTo(160, 160)
 
-		verify(exactly = 2) { drawableHandler.build().mouseMoved(any()) }
+		verify(exactly(1)) { drawableHandler.build().mouseMoved(any()) }
 		assertEquals(Point2D(160, 160), drawableHandler.eventLocation)
 	}
 
@@ -56,12 +59,12 @@ class DrawableBagInputEventHandlerTest {
 
 		driver.moveMouseTo(1150, 1150)
 
-		verify(exactly = 1) { drawableHandler.build().mouseMoved(any()) }
+		verify(exactly(1)) { drawableHandler.build().mouseMoved(any()) }
 		assertEquals(Point2D(150, 150), drawableHandler.eventLocation)
 
 		driver.moveMouseTo(1160, 1160)
 
-		verify(exactly = 2) { drawableHandler.build().mouseMoved(any()) }
+		verify(exactly (1)) { drawableHandler.build().mouseMoved(any()) }
 		assertEquals(Point2D(160, 160), drawableHandler.eventLocation)
 	}
 }

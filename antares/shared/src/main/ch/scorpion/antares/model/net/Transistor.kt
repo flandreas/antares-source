@@ -9,6 +9,7 @@ import ch.scorpion.antares.model.net.TransistorIF.Companion.SOURCE_PORT_ID
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.Translation
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -94,7 +95,7 @@ class Transistor(
 		}
 
 	init {
-		propagationDelay = 10
+		propagationDelay = LongValueImpl(10)
 
 		addPort(DigitalPortImpl(PortType.INPUT, "S", bitWidth = bitWidth, description = SOURCE_DESC))
 		addPort(DigitalPortImpl(PortType.INPUT, "G", bitWidth = bitWidth, description = GATE_DESC))
@@ -104,6 +105,7 @@ class Transistor(
 	/** ---- [GraphElement] interface */
 
 	override fun graphParamsChanged(graph: Graph) {
+		super.graphParamsChanged(graph)
 		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
 	}
 
@@ -129,7 +131,7 @@ class Transistor(
 
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
-		requestActingAfter(signalHandler, propagationDelay / 2, createActorData(null))
+		requestActingAfter(signalHandler, propagationDelay.value / 2, createActorData(null))
 	}
 
 	/** ---- [Transistor] */

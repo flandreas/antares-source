@@ -80,7 +80,7 @@ abstract class AbstractAction(
 
 	override var imagePath: String? by Delegates.observable(imagePath) { _, old, new -> changeSupport.fire(ActionProperty.PROP_IMAGE_PATH, old, new) }
 
-	private val changeSupport = PropertyChangeSupport<Any>(this)
+	protected val changeSupport = PropertyChangeSupport<Any>(this)
 
 	override fun dispose() { }
 

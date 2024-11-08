@@ -45,6 +45,8 @@ class StoreXmlReader(
 		return xmlReader.hasElement(name)
 	}
 
+	override fun getElementNames(): Set<String> = xmlReader.getElementNames()
+
 	override fun <T: Storable> getStorable(id: Int): T {
 		val storable: T? = referenceResolver.getStorable(id)
 		if (storable == null) {
@@ -117,6 +119,16 @@ class StoreXmlReader(
 		}
 		xmlReader.ascend()
 		return storables
+	}
+
+	override fun readMap(name: String): Map<String, Storable> {
+		val map = mutableMapOf<String, Storable>()
+		xmlReader.descend(name)
+		getElementNames().forEach {
+			map[it] = readStorable(it)
+		}
+		xmlReader.ascend()
+		return map
 	}
 
 	override fun readInt(name: String): Int {

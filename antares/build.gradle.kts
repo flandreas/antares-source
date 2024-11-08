@@ -62,18 +62,6 @@ kotlin {
 
 tasks {
 
-	val deployTranslations by register<Copy>("deployTranslations") {
-		from(
-			file("$projectDir/../base/shared/rsc/jabbah-base_en.properties"),
-			file("$projectDir/../draw/shared/rsc/jabbah-draw_en.properties"),
-			file("$projectDir/../execution/shared/rsc/jabbah-execution_en.properties"),
-			file("$projectDir/../edit/shared/rsc/jabbah-edit_en.properties"),
-			file("$projectDir/../app/shared/rsc/jabbah-app_en.properties"),
-			file("$projectDir/../graph/shared/rsc/jabbah-graph_en.properties")
-		)
-		into(file("$buildDir/processedResources/js/main"))
-	}
-
 	val combinedJar by creating(ShadowJar::class) {
 		dependsOn(assemble)
 		archiveClassifier.set("combined")
@@ -102,7 +90,7 @@ tasks {
 	}
 
 	val copySplash by register<Copy>("copySplash") {
-		from("$projectDir/shared/rsc/img")
+		from("$projectDir/jvm/rsc/img")
 		include("splash*.png")
 		into(file("$buildDir/package"))
 	}
@@ -121,6 +109,7 @@ tasks {
 
 		libraryjars(configurations.findByName("runtimeClasspath")?.files)
 
+		keep("class javax.** { *; }")
 		keep("class kotlin.** { *; }")
 		keep("class org.apache.** { *; }")
 		keep("class org.slf4j.** { *; }")
@@ -130,6 +119,7 @@ tasks {
 		keep("class kotlinx.coroutines.** { *; }")
 		keep("class kotlinx.serialization.** { *; }")
 		keep("class org.jdesktop.** { *; }")
+		keep("class com.github.weisj.jsvg.** { *; }")
 
 		// Reflection in OsThemeDetector
 		keep("class com.sun.** { *; }")

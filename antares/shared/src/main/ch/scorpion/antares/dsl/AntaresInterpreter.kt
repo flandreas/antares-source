@@ -12,7 +12,7 @@ import ch.scorpion.jabbah.base.dsl.*
 import ch.scorpion.jabbah.base.dsl.DslTokenType.*
 import ch.scorpion.jabbah.base.parser.TextLocation
 import ch.scorpion.jabbah.graph.dsl.GraphDslInterpreter
-import ch.scorpion.jabbah.graph.model.GraphActorData
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphFunctionContext
 import kotlin.math.pow
 
 class AntaresInterpreter(
@@ -24,7 +24,7 @@ class AntaresInterpreter(
 	constructor(parser: AntaresParser, memory: Memory): this(parser.parse(), memory)
 	constructor(program: String): this(AntaresParser(program))
 
-	private val data: GraphActorData? get() = if (params is GraphActorData) params as GraphActorData else null
+	private val context: SubGraphFunctionContext? get() = params as? SubGraphFunctionContext
 
 	override fun interpret(node: Node): Any =
 		when (node) {
@@ -265,19 +265,19 @@ class AntaresInterpreter(
 	private fun equalR(l: DigitalSignal, r: Any, loc: TextLocation): Any =
 		when (r) {
 			is DigitalSignal -> if (l.toLong() == r.toLong()) 1L else 0L
-			is Long -> if (l.getValue().toLong() == r) 1L else 0L
+			is Long -> if (signalToLong(l) == r) 1L else 0L
 			else -> throwIncompatibleTypes(loc, EQUAL)
 		}
 
 	override fun equalR(l: Long, r: Any, loc: TextLocation): Any =
 		when (r) {
-			is DigitalSignal -> if (l == r.getValue().toLong()) 1L else 0L
+			is DigitalSignal -> if (l == signalToLong(r)) 1L else 0L
 			else -> super.equalR(l, r, loc)
 		}
 
 	override fun equalR(l: Float, r: Any, loc: TextLocation): Any =
 		when (r) {
-			is DigitalSignal -> if (l == r.getValue().toFloat()) 1L else 0L
+			is DigitalSignal -> if (l == signalToLong(r).toFloat()) 1L else 0L
 			else -> super.equalR(l, r, loc)
 		}
 
@@ -289,20 +289,20 @@ class AntaresInterpreter(
 
 	private fun smallerR(l: DigitalSignal, r: Any, loc: TextLocation): Any =
 		when (r) {
-			is DigitalSignal -> if (l.getValue() < r.getValue()) 1L else 0L
-			is Long -> if (l.getValue().toLong() < r) 1L else 0L
+			is DigitalSignal -> if (signalToLong(l) < signalToLong(r)) 1L else 0L
+			is Long -> if (signalToLong(l) < r) 1L else 0L
 			else -> throwIncompatibleTypes(loc, SMALLER)
 		}
 
 	override fun smallerR(l: Long, r: Any, loc: TextLocation): Any =
 		when (r) {
-			is DigitalSignal -> if (l < r.getValue().toLong()) 1L else 0L
+			is DigitalSignal -> if (l < signalToLong(r)) 1L else 0L
 			else -> super.smallerR(l, r, loc)
 		}
 
 	override fun smallerR(l: Float, r: Any, loc: TextLocation): Any =
 		when (r) {
-			is DigitalSignal -> if (l < r.getValue().toFloat()) 1L else 0L
+			is DigitalSignal -> if (l < signalToLong(r).toFloat()) 1L else 0L
 			else -> super.smallerR(l, r, loc)
 		}
 
@@ -314,20 +314,20 @@ class AntaresInterpreter(
 
 	private fun greaterR(l: DigitalSignal, r: Any, loc: TextLocation): Any =
 		when (r) {
-			is DigitalSignal -> if (l.getValue() > r.getValue()) 1L else 0L
-			is Long -> if (l.getValue().toLong() > r) 1L else 0L
+			is DigitalSignal -> if (signalToLong(l) > signalToLong(r)) 1L else 0L
+			is Long -> if (signalToLong(l) > r) 1L else 0L
 			else -> throwIncompatibleTypes(loc, GREATER)
 		}
 
 	override fun greaterR(l: Long, r: Any, loc: TextLocation): Any =
 		when (r) {
-			is DigitalSignal -> if (l > r.getValue().toLong()) 1L else 0L
+			is DigitalSignal -> if (l > signalToLong(r)) 1L else 0L
 			else -> super.greaterR(l, r, loc)
 		}
 
 	override fun greaterR(l: Float, r: Any, loc: TextLocation): Any =
 		when (r) {
-			is DigitalSignal -> if (l > r.getValue().toFloat()) 1L else 0L
+			is DigitalSignal -> if (l > signalToLong(r).toFloat()) 1L else 0L
 			else -> super.greaterR(l, r, loc)
 		}
 
@@ -440,9 +440,9 @@ class AntaresInterpreter(
 
 	private fun raisedInput(node: RaisedInput): Any {
 		val portName = node.variable.token.value as String
-		return data?.let {
-			if (it.changedPort?.name == portName
-				&& (it.changedPort as DigitalPort).logic.evaluate(it.getSignal<DigitalSignal>(it.changedPort!!.portId)!!.bitAt(0)).isSet
+		return context?.let {
+			if (it.data.changedPort?.name == portName
+				&& (it.data.changedPort as DigitalPort).logic.evaluate(it.data.getSignal<DigitalSignal>(it.data.changedPort!!.portId)!!.bitAt(0)).isSet
 			) 1L else 0L
 		} ?: 0L
 	}

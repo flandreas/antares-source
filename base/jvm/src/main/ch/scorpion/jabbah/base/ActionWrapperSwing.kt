@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.base
 
-import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.swing.UiUtil
 import java.awt.event.ActionEvent
@@ -32,7 +31,7 @@ class ActionWrapperSwing(private val action: Action) : javax.swing.AbstractActio
 				time = e.`when`)
 	}
 
-	private val actionPropertyListener = PropertyChangeListener<Any> { e ->
+	private val actionPropertyListener = PropertyChangeListener { e ->
 		when (e.name) {
 			ActionProperty.PROP_NAME -> putValue(javax.swing.Action.NAME, e.newValue)
 			ActionProperty.PROP_DESCRIPTION -> putValue(javax.swing.Action.SHORT_DESCRIPTION, e.newValue)

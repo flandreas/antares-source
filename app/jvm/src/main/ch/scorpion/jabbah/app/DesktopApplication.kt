@@ -8,7 +8,7 @@ import java.nio.file.Path
  *
  * Different implementations of [DesktopApplication] can use different strategies for managing stored [Savable]s.
  * Some might store [Savable]s in individual files at a fully qualified file path, while others might implement
- * a kind of a repository whose entries are identified by a simple name.
+ * a kind of repository whose entries are identified by a simple name.
  */
 interface DesktopApplication : Application {
 
@@ -20,9 +20,6 @@ interface DesktopApplication : Application {
 
 	/** The name of the [Application]'s log file. */
 	val logFileName: String
-
-	/** The [Environment] in which this [DesktopApplication] runs. */
-	val environment: Environment get() = Environment.Production
 
 	val version: ApplicationVersion
 

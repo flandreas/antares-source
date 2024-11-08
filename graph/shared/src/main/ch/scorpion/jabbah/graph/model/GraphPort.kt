@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.model
 
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.model.Vertice.Companion.STATE_CHANGE_NAME
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.io.Storable
@@ -39,7 +40,7 @@ data class GraphPortNameChanged<out T : Any>(
 	val graphPort: GraphPort<T>,
 	val oldName: String?,
 	val newName: String?
-)
+) : GraphElementEvent(graphPort, null, STATE_CHANGE_NAME)
 
 /** Gets posted on [EventBus] when the [PortType] of a [GraphPort] has changed.*/
 data class GraphPortTypeChanged<out T : Any>(
@@ -70,6 +71,14 @@ interface GraphInput<T : Any> : GraphPort<T> {
 	 * change the signal manually. `null` for top-level [Graph]s. Not set before binding.
 	 */
 	var subGraphInputPort: SubGraphInputPort<T>?
+
+	/**
+	 * The value assigned by the system to this [GraphInput] upon execution start.
+	 * Can be set by the user. Can be `null` for backward compatibility in older [Graph]s.
+	 * `null` means that the effective start value is determined by classes implementing this interface,
+	 * just like before this feature was introduced.
+	 */
+	var startValue: T?
 
 	/** Sets the signal to be forwarded into the [Graph] that owns this [GraphInput].*/
 	fun setIncomingSignal(signal: T?, signalHandler: SignalHandler, force: Boolean = false)

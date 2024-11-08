@@ -5,6 +5,9 @@ import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.edit.auth.UserHolder
 import ch.scorpion.jabbah.edit.auth.UserIdentity
+import ch.scorpion.jabbah.edit.model.image.ImageData
+import ch.scorpion.jabbah.edit.model.image.ImageIdentification
+import ch.scorpion.jabbah.edit.model.image.ImageRepository
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Description
@@ -14,6 +17,7 @@ import ch.scorpion.jabbah.graph.MetaGraphBundle
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.element.ContainerLibraryElementCollector
+import ch.scorpion.jabbah.graph.model.image.ImageLibraryElement
 import ch.scorpion.jabbah.graph.repository.SubGraphVerticeLocator
 import ch.scorpion.jabbah.io.*
 
@@ -22,27 +26,24 @@ import ch.scorpion.jabbah.io.*
  */
 open class LibraryImpl(
 	properties: LibraryProperties = LibraryProperties(),
-	override val libraryService: LibraryService = LibraryModule.libraryService,
 	private val objectTypeKey: String = "library.library.name"
 ) : AbstractStorable(), Library, Describable {
-
-	constructor(
-		name: TranslatableText = TranslatableText(),
-		libraryService: LibraryService = LibraryModule.libraryService,
-		objectTypeKey: String = "library.library.name",
-		description: TranslatableText = TranslatableText()
-	) : this(LibraryProperties(name, description), libraryService, objectTypeKey)
-
-	constructor(
-		name: String,
-		libraryService: LibraryService = LibraryModule.libraryService
-	) : this(TranslatableText(name), libraryService)
 
 	companion object {
 		private val LOG by logger(LibraryImpl::class)
 	}
 
+	constructor(
+		name: TranslatableText = TranslatableText(),
+		objectTypeKey: String = "library.library.name",
+		description: TranslatableText = TranslatableText()
+	) : this(LibraryProperties(name, description), objectTypeKey)
+
+	constructor(name: String, ) : this(TranslatableText(name))
+
 	override var directory: LibraryDirectory = LibraryFolder(properties.name)
+
+	override val libraryService: LibraryService get() = LibraryModule.libraryService
 
 	init {
 		directory.bindTo(this)
@@ -113,6 +114,31 @@ open class LibraryImpl(
 	override fun move(item: LibraryItem, newIndex: Int) { directory.move(item, newIndex) }
 
 	override fun replaceWith(libraryDirectory: LibraryDirectory) { directory.replaceWith(libraryDirectory) }
+
+	/** ---- [ImageRepository] */
+
+	private val imageCache by lazy { mutableMapOf<UUID, ImageData?>() }
+
+	override fun getImage(uuid: UUID): ImageData? {
+		return imageCache.getOrPut(uuid) {
+			val element = findImageLibraryElementFor(uuid)
+			if (element != null) {
+				ImageData(
+					element.library!!.libraryService.getImage(this, element),
+					element.name
+				)
+			} else {
+				null
+			}
+		}
+	}
+
+	override fun getAllImageIds(): List<ImageIdentification> {
+		return ImageCollector().run {
+			directory.accept(this)
+			imageIds.sortedBy { it.name.value }
+		}
+	}
 
 	/** ---- [MetaGraphRepository] */
 
@@ -228,6 +254,9 @@ open class LibraryImpl(
 		if (visibility != LibraryVisibility.Private) {
 			writer.writeString("visibility", visibility.customName)
 		}
+		if (_preferences.size > 0) {
+			writer.writeStorable("preferences", _preferences)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
@@ -247,6 +276,9 @@ open class LibraryImpl(
 		}
 		if (reader.hasAttribute("visibility")) {
 			visibility = LibraryVisibility.withName(reader.readString("visibility"))
+		}
+		if (reader.hasElement("preferences")) {
+			_preferences = reader.readStorable("preferences")
 		}
 	}
 
@@ -295,6 +327,9 @@ open class LibraryImpl(
 			visibility = value.visibility
 			value.author?.let { author = it }
 		}
+
+	private var _preferences: LibraryPreferences = LibraryPreferences()
+	override val preferences: LibraryPreferences get() = _preferences
 
 	override fun bindLibraryItems() {
 		this.accept(object : EmptyHierarchyVisitor() {
@@ -348,6 +383,12 @@ open class LibraryImpl(
 		_imports.reset()
 	}
 
+	override fun firstLocalItemOrNull(filter: (LibraryItem) -> Boolean): LibraryItem? {
+		val finder = ItemFinder(filter)
+		accept(finder)
+		return finder.result
+	}
+
 	/** ---- [LibraryImpl] */
 
 	/**
@@ -368,6 +409,21 @@ open class LibraryImpl(
 		return graphFinder.result
 	}
 
+	private fun findImageLibraryElementFor(uuid: UUID): ImageLibraryElement? {
+		if (importedLibraryIds.isEmpty()) {
+			return findImageLibraryElement(directory, uuid)
+		}
+		return expandedImports
+			.libraries
+			.firstNotNullOfOrNull { findImageLibraryElement(it, uuid) }
+	}
+
+	private fun findImageLibraryElement(dir: LibraryDirectory, uuid: UUID): ImageLibraryElement? {
+		val imageFinder = ImageFinder(uuid)
+		dir.accept(imageFinder)
+		return imageFinder.result
+	}
+
 	/**
 	 * Traverses the [Library] tree until it finds the [ContainerLibraryElement]
 	 * which contains the [Graph] with the specified [UUID], if any.
@@ -383,6 +439,38 @@ open class LibraryImpl(
 				return false
 			}
 			return node is LibraryDirectory
+		}
+	}
+
+	private class ImageFinder(private val uuid: UUID) : EmptyHierarchyVisitor() {
+
+		var result: ImageLibraryElement? = null
+
+		override fun visitEnter(node: Any): Boolean {
+			if (node is ContainerLibraryElement) {
+				// don't dive into already instantiated MetaGraphs
+				return false
+			}
+			return super.visitEnter(node)
+		}
+
+		override fun visit(node: Any): Boolean {
+			if (node is ImageLibraryElement && node.imageId.uuid == uuid) {
+				result = node
+				return false
+			}
+			return true
+		}
+	}
+
+	private class ImageCollector : EmptyHierarchyVisitor() {
+		val imageIds = mutableSetOf<ImageIdentification>()
+
+		override fun visit(node: Any): Boolean {
+			if (node is ImageLibraryElement) {
+				imageIds.add(node.imageId)
+			}
+			return true
 		}
 	}
 
@@ -407,6 +495,19 @@ open class LibraryImpl(
 		override fun visitEnter(node: Any): Boolean {
 			if (node is ContainerLibraryElement) {
 				uuids.add(node.uuid)
+			}
+			return true
+		}
+	}
+
+	private class ItemFinder(private val exp: (LibraryItem) -> Boolean) : EmptyHierarchyVisitor() {
+
+		var result: LibraryItem? = null
+
+		override fun visit(node: Any): Boolean {
+			if (node is LibraryItem && exp(node)) {
+				result = node
+				return false
 			}
 			return true
 		}

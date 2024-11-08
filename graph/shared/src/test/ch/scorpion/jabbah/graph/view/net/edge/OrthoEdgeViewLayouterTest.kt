@@ -7,8 +7,9 @@ import ch.scorpion.jabbah.edit.model.polyline.CompactablePolyline
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.mock
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -29,7 +30,7 @@ class OrthoEdgeViewLayouterTest {
 
 	@BeforeTest
 	fun setup() {
-		graphView = mockk()
+		graphView = mock()
 		every { graphView.snapper } returns null
 		every { graphView.getEdgeViews()} returns listOf<EdgeView<*>>().toImmutableList()
 	}

@@ -22,6 +22,6 @@ expect object StorableCloner {
 
 	fun <T: Storable> newClone(
 		storable: T,
-		identityProvider: GlobalIdentityProvider = GlobalIdentityCreator()
+		identityProvider: GlobalIdentityProvider
 	): T
 }

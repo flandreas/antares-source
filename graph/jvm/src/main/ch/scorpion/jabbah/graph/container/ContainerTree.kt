@@ -35,7 +35,9 @@ enum class ContainerTreeItemType {
 	Ports,
 	Controls,
 	SubGraphs,
-	SubGraph
+	SubGraph,
+	Images,
+	Image
 }
 
 /**
@@ -90,6 +92,9 @@ class  ContainerTree(
 	}
 
 	private val graphPortNameHandler: EventHandler<GraphPortNameChanged<*>> = {
+		if (it.newName != null) {
+			model.handleGraphPortViewRenamed(it.newName)
+		}
 		if (requiresAutoLayout) {
 			// Also check for old name to be independent of event dispatching order
 			if (it.newName != null && containerDrawing.getPortViewComponent(it.newName) != null
@@ -146,6 +151,7 @@ class  ContainerTree(
 				when (value.type) {
 					ContainerTreeItemType.SubGraphs -> model.addSubGraphVerticeNodes(value as SubGraphsFolderItem, receiver)
 					ContainerTreeItemType.Controls -> model.addControlNodes(value as ControlsFolderTreeItem, receiver)
+					ContainerTreeItemType.Images -> model.addImages(receiver)
 					else ->	receiver.addChildren(listOf())
 				}
 			}

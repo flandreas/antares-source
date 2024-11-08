@@ -8,15 +8,15 @@ import ch.scorpion.jabbah.graph.view.EdgeViewSnapLocatorResult
 /** Snaps a point to an [EdgeView] with [LayoutType.ORTHOGONAL].*/
 object EdgeViewSnapLocator {
 
-	/** Must be larger than [EdgeView.edgeCornerDistance]. */
-	const val FORBIDDEN_END_AREA = 16.0
+	/** Must be larger than [EdgeView.EDGE_CORNER_DISTANCE]. */
+	const val FORBIDDEN_END_AREA = 11.0
 
 	private val snappable = XYSnappable()
 
 	fun snap(edgeView: EdgeView<*>, x: Double, y: Double, snapManager: SnapManager? = null): EdgeViewSnapLocatorResult? {
 		snappable.set(x, y)
 
-		val segmentIndex = edgeView.polyline.findSegment(x, y, EdgeView.containsSize) ?: return null
+		val segmentIndex = edgeView.polyline.findSegment(x, y, EdgeView.CONTAINS_SIZE) ?: return null
 
 		if (isInForbiddenOriginArea(edgeView, x, y, segmentIndex)) {
 			return null
@@ -27,10 +27,10 @@ object EdgeViewSnapLocator {
 		}
 
 		// Try to snap to a nearby [EdgeView] corner, if any
-		if (edgeView.getSegmentPoint(segmentIndex).distance(x, y) <= EdgeView.edgeCornerDistance) {
+		if (edgeView.getSegmentPoint(segmentIndex).distance(x, y) <= EdgeView.EDGE_CORNER_DISTANCE) {
 			return EdgeViewSnapLocatorResult(segmentIndex, edgeView.getSegmentPoint(segmentIndex).x, edgeView.getSegmentPoint(segmentIndex).y)
 		}
-		if (segmentIndex < edgeView.segmentPointCount - 2 && edgeView.getSegmentPoint(segmentIndex + 1).distance(x, y) <= EdgeView.edgeCornerDistance) {
+		if (segmentIndex < edgeView.segmentPointCount - 2 && edgeView.getSegmentPoint(segmentIndex + 1).distance(x, y) <= EdgeView.EDGE_CORNER_DISTANCE) {
 			return EdgeViewSnapLocatorResult(segmentIndex, edgeView.getSegmentPoint(segmentIndex + 1).x, edgeView.getSegmentPoint(segmentIndex + 1).y)
 		}
 

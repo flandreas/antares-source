@@ -7,8 +7,9 @@ import ch.scorpion.antares.model.testcase.TestVectorCollector
 import ch.scorpion.jabbah.graph.model.GraphPort
 import ch.scorpion.jabbah.graph.model.GraphPortOwner
 import ch.scorpion.jabbah.graph.model.PortType
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -21,8 +22,8 @@ class TestcaseInterpreterTest {
 		}
 	}
 
-	private val inputPort = mockk<GraphPort<Any>>()
-	private val outputPort = mockk<GraphPort<Any>>()
+	private val inputPort = mock<GraphPort<Any>>()
+	private val outputPort = mock<GraphPort<Any>>()
 
 	@Suppress("UNCHECKED_CAST")
 	private val graphPortOwner = object : GraphPortOwner {

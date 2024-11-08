@@ -1,18 +1,14 @@
 package ch.scorpion.jabbah.graph
 
-import ch.scorpion.jabbah.base.HierarchyVisitor
-import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.UUID
-import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.event.EventHandler
-import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.*
+import ch.scorpion.jabbah.base.event.PropertyChangeEvent
+import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
-import ch.scorpion.jabbah.edit.model.text.description.DescriptionChangedEvent
+import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.edit.model.text.description.Name
-import ch.scorpion.jabbah.edit.model.text.description.NameChangedEvent
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
-import ch.scorpion.jabbah.graph.model.*
+import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.GraphType
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -23,9 +19,8 @@ import ch.scorpion.jabbah.io.*
  */
 class MetaGraph(
 	graph: GraphStorable = GraphStorable(TranslatableText(Translations.getString("graph.name.unknown"))),
-	containerDrawing: ContainerDrawing = ContainerDrawing(Translations.getString("graph.name.unknown")),
-	private val eventBus: EventBus = BaseModule.eventBus
-) : AbstractStorable() {
+	containerDrawing: ContainerDrawing = ContainerDrawing(Translations.getString("graph.name.unknown"))
+) : AbstractStorable(), Disposable {
 
 	companion object {
 		private val LOG by logger(MetaGraph::class)
@@ -49,8 +44,10 @@ class MetaGraph(
 	var graph: GraphStorable = graph
 		private set(value) {
 			if (field !== value) {
+				field.model?.removePropertyChangeListener(graphListener)
 				field.dispose()
 				field = value
+				field.model?.addPropertyChangeListener(graphListener)
 			}
 		}
 
@@ -78,33 +75,18 @@ class MetaGraph(
 
 	val translatableName: TranslatableText get() = graph.model!!.name.translation
 
-	private val graphNameHandler: EventHandler<NameChangedEvent> = { handle(it) }
-
-	private val graphDescHandler: EventHandler<DescriptionChangedEvent> = { handle(it) }
-
-	private val graphPortNameHandler: EventHandler<GraphPortNameChanged<*>> = { handle(it) }
-
-	private val graphPortTypeHandler: EventHandler<GraphPortTypeChanged<*>> = { handle(it) }
-
-	private val graphPortCanBeUndefinedHandler: EventHandler<GraphPortCanBeUndefinedChanged<*>> = { handle(it) }
+	private val graphListener = GraphPropertyListener()
 
 	init {
 		LOG.trace("Instantiated new MetaGraph with ID ${hashCode()}")
-		eventBus.register(NameChangedEvent::class, graphNameHandler)
-		eventBus.register(DescriptionChangedEvent::class, graphDescHandler)
-		eventBus.register(GraphPortNameChanged::class, graphPortNameHandler)
-		eventBus.register(GraphPortTypeChanged::class, graphPortTypeHandler)
-		eventBus.register(GraphPortCanBeUndefinedChanged::class, graphPortCanBeUndefinedHandler)
+		graph.model?.addPropertyChangeListener(graphListener)
 		containerDrawing.model.graphUUID = uuid
 		containerDrawing.initialize()
 	}
 
-	fun dispose() {
-		eventBus.unregister(NameChangedEvent::class, graphNameHandler)
-		eventBus.unregister(DescriptionChangedEvent::class, graphDescHandler)
-		eventBus.unregister(GraphPortNameChanged::class, graphPortNameHandler)
-		eventBus.unregister(GraphPortCanBeUndefinedChanged::class, graphPortCanBeUndefinedHandler)
-		eventBus.unregister(graphDescHandler)
+	/** ---- [Disposable] interface */
+
+	override fun dispose() {
 		graph.dispose()
 		containerDrawing.dispose()
 	}
@@ -209,44 +191,20 @@ class MetaGraph(
 		return visitor.visitLeave(this)
 	}
 
-	private fun handle(event: NameChangedEvent) {
-		if (event.owner === graph.model) {
-			containerDrawing.model.graphName = Name(event.name.translation)
-		}
+	private fun copyGraphDataFromContainerModel(graph: Graph) {
+		copyGraphDataFromContainerModel(graph, containerDrawing)
 	}
 
-	private fun handle(event: DescriptionChangedEvent) {
-		if (event.owner === graph.model) {
-			containerDrawing.model.description = event.description
-		}
-	}
-
-	private fun handle(event: GraphPortNameChanged<*>) {
-		if (graph.graphView.graph!!.contains(event.graphPort)) {
-			containerDrawing.getPortViewComponent(event.oldName!!)?.let {
-				it.portView!!.setPortName(event.newName!!) }
-		}
-	}
-
-	private fun handle(event: GraphPortTypeChanged<*>) {
-		if (graph.graphView.graph!!.contains(event.graphPort)) {
-			containerDrawing.getPortViewComponent(event.graphPort.name!!)?.let {
-				it.portView!!.port.portType = event.newPortType
-			}
-		}
-	}
-
-	private fun handle(event: GraphPortCanBeUndefinedChanged<*>) {
-		if (graph.graphView.graph!!.contains(event.graphPort)) {
-			containerDrawing.getPortViewComponent(event.graphPort.name!!)?.let {
-				if (it.portView!!.port is OutputPort) {
-					(it.portView!!.port as OutputPort).customCanBeUndefined = event.value
+	private inner class GraphPropertyListener : PropertyChangeListener<Any> {
+		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
+			when (e.name) {
+				Graph.PROP_NAME -> {
+					containerDrawing.model.graphName = Name((e.newValue as Name).translation)
+				}
+				Graph.PROP_DESCRIPTION -> {
+					containerDrawing.model.description = e.newValue as Description
 				}
 			}
 		}
-	}
-
-	private fun copyGraphDataFromContainerModel(graph: Graph) {
-		copyGraphDataFromContainerModel(graph, containerDrawing)
 	}
 }

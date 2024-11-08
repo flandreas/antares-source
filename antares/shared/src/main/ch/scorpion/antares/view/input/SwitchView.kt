@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.graphics.PredefinedColor
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.view.ControlView
@@ -27,6 +28,7 @@ class SwitchView(
 	companion object {
 
 		const val BASE_KEY_TOGGLE = "element.property.Switch.toggle"
+		const val MIN_ON_TIME = "element.property.Switch.minOnTime"
 
 		private const val TOGGLE_BASE_RESOURCE_KEY = "library.element.Toggle"
 		private val TOGGLE_TYPE get() = Translations.getString("$TOGGLE_BASE_RESOURCE_KEY.name")
@@ -39,6 +41,15 @@ class SwitchView(
 		const val PROP_ICON_PATH = "ch.scorpion.antares.view.input.SwitchView.iconPath"
 	}
 
+	override var customColor: PredefinedColor?
+		get() = super.customColor
+		set(value) {
+			if (value != super.customColor) {
+				super.customColor = value
+				postControlViewSourceChangeEvent(eventBus)
+			}
+		}
+
 	override var toggle: Boolean
 		get() = super.toggle
 		set(value) {
@@ -46,6 +57,12 @@ class SwitchView(
 				super.toggle = value
 				postControlViewSourceChangeEvent(eventBus)
 			}
+		}
+
+	var minOnTime: Long
+		get() = model.minOnTime
+		set(value) {
+			model.minOnTime = value
 		}
 
 	override fun modelExchanged(oldModel: Switch?) {
@@ -82,9 +99,13 @@ class SwitchView(
 
 	/** ---- [ControlView] */
 
-	private fun copyControlViewProperties(source: SwitchView, dest: SwitchView) {
+	override fun copyControlViewProperties(
+		source: AbstractPushButtonSwitchView<*>,
+		dest: AbstractPushButtonSwitchView<*>
+	) {
 		super.copyControlViewProperties(source, dest)
 		dest.toggle = source.toggle
+		dest.customColor = source.customColor
 	}
 
 	/** ---- [AbstractVerticeView] */

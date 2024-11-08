@@ -81,6 +81,9 @@ class SubGraphVerticeViewImpl(
 	/** The [ContainerDrawing] that has been customized by the user for this [SubGraphVerticeView], if any.*/
 	private var customizedContainerDrawing: ContainerDrawing? = null
 
+	private val applicableContainerDrawing: ContainerDrawing
+		get() = customizedContainerDrawing ?: repository.getMetaGraph(subGraphVertice.graphUUID!!).containerDrawing
+
 	private val containsBox = Rectangle2D()
 
 	private val _boundingBox = Rectangle2D()
@@ -199,7 +202,11 @@ class SubGraphVerticeViewImpl(
 		set(value) {
 			if (value != super.customColor) {
 				super.customColor = value
-				updateCustomColor(value)
+				if (!isReading) {
+					fillFromContainerDrawing(applicableContainerDrawing)
+					handleCustomColorChanged()
+					update()
+				}
 			}
 		}
 
@@ -405,6 +412,12 @@ class SubGraphVerticeViewImpl(
 		}
 	}
 
+	override fun allResolutionDone() {
+		super<AbstractVerticeView>.allResolutionDone()
+		// This causes connected EdgeViews to adjust their end locations, if necessary
+		update()
+	}
+
 	/** ---- [ConnectableView] */
 
 	override fun <G : Any> handleConnect(edgeView: EdgeView<G>, port: Port<G>?, geometry: EdgeViewConnectionGeometry) {
@@ -537,13 +550,13 @@ class SubGraphVerticeViewImpl(
 		if (customizedContainerDrawing != null) {
 			return customizedContainerDrawing!!
 		}
-		return getLibraryContainerDrawing()
+		return getClonedLibraryContainerDrawing()
 	}
 
 	override fun setEditedContainerDrawing(containerDrawing: ContainerDrawing?) {
 		invalidate()
 		customizedContainerDrawing = containerDrawing
-		fillFromContainerDrawing(customizedContainerDrawing ?: getLibraryContainerDrawing())
+		fillFromContainerDrawing(customizedContainerDrawing ?: getClonedLibraryContainerDrawing())
 		invalidate()
 		validate()
 		update()
@@ -589,7 +602,7 @@ class SubGraphVerticeViewImpl(
 		}
 		rotationChanged(rotation)
 
-		updateCustomColor(customColor)
+		handleCustomColorChanged()
 
 		updateBoxes()
 	}
@@ -606,7 +619,7 @@ class SubGraphVerticeViewImpl(
 		updateBoxes()
 	}
 
-	private fun getLibraryContainerDrawing(): ContainerDrawing {
+	private fun getClonedLibraryContainerDrawing(): ContainerDrawing {
 		val libraryGraph = repository.getMetaGraph(subGraphVertice.graphUUID!!)
 		return StorableCloner.clonePreservingIdentities(libraryGraph.containerDrawing)
 	}
@@ -635,11 +648,19 @@ class SubGraphVerticeViewImpl(
 		}
 	}
 
-	private fun updateCustomColor(customColor: PredefinedColor?) {
+	/**
+	 * If [customColor] is `null` (which means "Use color from style" in other components),
+	 * instead [SubGraphVerticeView] uses the colors of its [Drawables][Drawable] as defined in the [ContainerDrawing],
+	 * which is already established upon creation. If [customColor] is reset from a particular [PredefinedColor] to `null`,
+	 * [SubGraphVerticeView] must be refilled from the [ContainerDrawing] to regain the original colors.
+	 */
+	private fun handleCustomColorChanged() {
 		invalidate()
 		drawableBag.drawables.forEach {
 			if (it is Stylable) {
-				it.customColor = customColor
+				if (customColor != null) {
+					it.customColor = customColor
+				}
 			}
 		}
 		validate()

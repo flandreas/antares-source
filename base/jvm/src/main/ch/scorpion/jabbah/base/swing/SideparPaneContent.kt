@@ -30,7 +30,7 @@ interface SidebarPaneContent {
 }
 
 /**
- * Sent by any object (but particularly [JComponent] displayed within a [SidebarPaneContent]
+ * Sent by any object (but particularly [JComponent]) displayed within a [SidebarPaneContent]
  * that it has new interesting content it want to display. [SidebarPane] checks whether any
  * of its [SidebarPaneContent]s contain that [JComponent], and open it if so.
  */

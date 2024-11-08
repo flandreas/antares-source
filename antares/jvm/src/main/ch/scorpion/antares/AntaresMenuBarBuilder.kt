@@ -6,8 +6,10 @@ import ch.scorpion.antares.view.TestAction
 import ch.scorpion.antares.view.analysis.AnalyseCircuitAction
 import ch.scorpion.antares.view.expression.NewBooleanExpressionAction
 import ch.scorpion.antares.view.gate.GateMnemonicAction
+import ch.scorpion.antares.view.net.tunnel.GlobalTunnelAction
 import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTableAction
 import ch.scorpion.antares.view.truthtable.NewTruthTableAction
+import ch.scorpion.jabbah.app.dump.SystemMalfunctionPanel
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
@@ -45,6 +47,12 @@ class AntaresMenuBarBuilder(
 	    }
     }
 
+	override fun fillFileMenu(menu: JMenu) {
+		super.fillFileMenu(menu)
+		menu.addSeparator()
+		menu.add(ActionWrapperSwing(GlobalTunnelAction()))
+	}
+
 	override fun fillExportMenu(menu: JMenu) {
 		super.fillExportMenu(menu)
 		menu.add(JMenuItem(ActionWrapperSwing(ExportVHDLAction())))
@@ -73,6 +81,7 @@ class AntaresMenuBarBuilder(
         menu.add(JMenuItem(ActionWrapperSwing(NextRepaintingObserverLogAction())))
         menu.addSeparator()
         menu.add(JMenuItem(ActionWrapperSwing(PrintScheduleAction((frame as GraphFrameSwing).controller.applicationContextHolder.scheduler))))
+		menu.add(JMenuItem(ActionWrapperSwing(SystemMalfunctionPanel.createDeveloperAction(frame.application))))
 
         return menu
     }

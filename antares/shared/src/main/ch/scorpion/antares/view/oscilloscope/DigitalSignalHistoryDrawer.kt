@@ -40,6 +40,8 @@ class DigitalSignalHistoryDrawer(
 
 	/** ---- [DigitalSignalHistoryDrawer] */
 
+	override val gridEnabled: Boolean get() = true
+
 	override fun drawCurve(context: DrawContext) {
 		val singleBit = signalHistory!!.last().signal.bitWidth.width == 1
 		var lastPoint = Point2D.ZERO

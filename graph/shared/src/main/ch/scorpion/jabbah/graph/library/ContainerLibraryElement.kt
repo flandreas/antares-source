@@ -51,10 +51,11 @@ class ContainerLibraryElement(
 	var metaGraph: MetaGraph? = null
 		private set(value) {
 			if (field != value) {
-				field?.dispose()
+				val oldValue = field
 				field = value
 				executionScriptASTCache.reset()
 				drawSymbolScriptASTCache.reset()
+				oldValue?.dispose()
 			}
 		}
 
@@ -137,7 +138,7 @@ class ContainerLibraryElement(
 		LOG.trace("Create new GraphElementView of '$name' MetaGraph with ID ${metaGraph!!.hashCode()} in Library with ID ${library.hashCode()}")
 		val instance = metaGraph!!.containerDrawing.createSubGraphVerticeView(graphType)
 		if (metaGraph!!.graph.model!!.overallPropagationDelay != null) {
-			instance.model.propagationDelay = metaGraph!!.graph.model!!.overallPropagationDelay!!
+			instance.model.propagationDelay = LongValueImpl(metaGraph!!.graph.model!!.overallPropagationDelay!!)
 		}
 		@Suppress("UNCHECKED_CAST")
 		return instance as GraphElementView<T>

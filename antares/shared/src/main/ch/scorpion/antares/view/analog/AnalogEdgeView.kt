@@ -44,7 +44,7 @@ class AnalogEdgeView(
 		/** The name of the [Int] preference in [Properties] holding the current flow animation speed factor. */
 		const val PREF_SPEED = "antares.analog.currentFlowAnimationSpeed"
 		const val MIN_SPEED = 1
-		const val DEF_SPEED = 3
+		const val DEF_SPEED = 5
 		const val MAX_SPEED = 10
 
 		/**
@@ -54,7 +54,7 @@ class AnalogEdgeView(
 		private var _animationSpeedFactor: Float? = null
 		private val animationSpeedFactor: Float get() {
 			if (_animationSpeedFactor == null) {
-				_animationSpeedFactor = BaseModule.properties.getInt(PREF_SPEED) / 20.0F
+				_animationSpeedFactor = BaseModule.properties.getInt(PREF_SPEED) / 5.0F
 			}
 			return _animationSpeedFactor!!
 		}
@@ -66,7 +66,7 @@ class AnalogEdgeView(
 
 		init {
 			BaseModule.eventBus.register(PreferencesChangedEvent::class) {
-				_animationSpeedFactor = BaseModule.properties.getInt(PREF_SPEED) / 10.0F
+				_animationSpeedFactor = BaseModule.properties.getInt(PREF_SPEED) / 5.0F
 			}
 		}
 	}
@@ -98,8 +98,10 @@ class AnalogEdgeView(
 
 	/** Repeatedly called by [AnalogGraphView] to drive the current flow animation. */
 	fun currentFlowAnimationTick(systemSpeed: SystemSpeed) {
-		val speed = if (systemSpeed.isPaused) 0.0F else systemSpeed.speed.toFloat()
-		val factor = speed * animationSpeedFactor
+		// Before #802, current animation speed was also depending on the SystemSpeed.
+		// We got rid of that, and 50 is just the middle of the SystemSpeed range.
+		val factor = if (systemSpeed.isPaused) 0.0F else animationSpeedFactor * 50
+
 		val delta = abs(current * factor).coerceAtMost(MAX_DELTA)
 		val newOffset = animationOffset + delta
 		animationOffset = if (newOffset >= CurrentFlowVisualization.DISTANCE) {
@@ -158,6 +160,8 @@ class AnalogEdgeView(
 
 	override val postCount: Int get() = 2
 
+	override fun reset() { }
+
 	override fun allocateNodes() {
 		// not needed, managed in AnalogNet
 	}
@@ -174,9 +178,9 @@ class AnalogEdgeView(
 	override fun getNodeVoltage(postId: Int): Double =
 		analogNet.getNodeVoltage(id, postId)
 
-	override fun setCurrent(index: Int, current: Double) {
-		analogNet.setCurrent(id, current)
-	}
+	override fun setInternalCurrent(index: Int, current: Double) { }
+
+	override fun getInternalCurrent(): Double = 0.0
 
 	override fun getPost(elem: GraphElementView<*>, postId: Int): Connection<*>? = null
 

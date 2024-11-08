@@ -36,7 +36,7 @@ open class ContainerTreeView(
 		private val LOG = logger(ContainerTreeView::class)
 	}
 
-	/** Fills an manages the [DynamicTreeModel] displayed by this [ContainerTreeView].*/
+	/** Fills and manages the [DynamicTreeModel] displayed by this [ContainerTreeView].*/
     var containerTree: ContainerTree? = null
 		private set
 
@@ -90,6 +90,7 @@ open class ContainerTreeView(
 					    graph?.let { MetaGraphIconProvider.provideIcon(it.type, false, StringUtils.isNotBlank(it.script)) }
 						    ?:MetaGraphIconProvider.provideIcon(GraphModelModule.defaultGraphType, current = false, false)
 				    }
+					ContainerTreeItemType.Image -> getIcon((value.userObject as DraggableTreeItem).iconPath)
 				    else -> folderIcon
 			    }
 		    }

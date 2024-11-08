@@ -8,6 +8,7 @@ import ch.scorpion.antares.model.signal.BitWidthGraphParamType
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.gate.LogicGateView
 import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -15,6 +16,8 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
+import ch.scorpion.jabbah.graph.model.param.LongValueExpression
+import ch.scorpion.jabbah.graph.model.param.LongValueGraphParamType
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.VerticeView
@@ -34,9 +37,10 @@ class TestCircuitBuilder(
 		propagationDelay: Long = 0,
 		bitWidth: BitWidth = BitWidth.BW_1,
 		inputName: String = "I",
-		outputName: String = "O"
+		outputName: String = "O",
+		inputStartValue: DigitalSignal? = null
 	): GraphView {
-		connect(addInput(inputName, bitWidth), addOutput(outputName, bitWidth))
+		connect(addInput(inputName, bitWidth, inputStartValue), addOutput(outputName, bitWidth))
 		graph.overallPropagationDelay = propagationDelay
 		return graphView
 	}
@@ -110,7 +114,7 @@ class TestCircuitBuilder(
 	 * Builds a [GraphView] whose [Graph] consists of a [DigitalCircuitInOutImpl] of type [PortType.INPUT]
 	 * with [BitWidthExpression] [inputExpression] and a [DigitalCircuitInOutImpl] of type [PortType.OUTPUT]
 	 * with [BitWidthExpression] [outputExpression], both unconnected.
-	 * Adds a [GraphParamDefinition] of type [BitWidthGraphParamType] with name "BW"
+	 * Adds a [GraphParamDefinition] with a parameter of type [BitWidthGraphParamType] with name "BW"
 	 */
 	fun buildBitWidthExpressionInputOutput(
 		inputExpression: String,
@@ -131,14 +135,48 @@ class TestCircuitBuilder(
 		return graphView
 	}
 
-	fun addInput(name: String? = null, bitWidth: BitWidth = BitWidth.BW_1): DigitalCircuitInOutView = addInOut(name, PortType.INPUT, bitWidth)
+	/**
+	 * Builds a [GraphView] with an OR gate having [expression] as propagation delay expression.
+	 * Adds a [GraphParamDefinition] with a parameter of type [LongValueGraphParamType] with name [parameterName].
+	 */
+	fun buildPropagationDelayExpressionOrGate(
+		parameterName: String,
+		expression: String
+	): GraphView {
+		val orGateView = addVerticeView(LogicGateView.orGateView())
+		orGateView.propagationDelay = LongValueExpression(expression)
 
-	fun addOutput(name: String? = null, bitWidth: BitWidth = BitWidth.BW_1): DigitalCircuitInOutView = addInOut(name, PortType.OUTPUT, bitWidth)
+		graph.parameterDefinitions = graph.parameterDefinitions.withDefinition(
+			GraphParamDefinition.create(parameterName, LongValueGraphParamType, LongValueImpl(20))
+		)
 
-	fun addInOut(name: String? = null, bitWidth: BitWidth = BitWidth.BW_1): DigitalCircuitInOutView = addInOut(name, PortType.INOUT, bitWidth)
+		return graphView
+	}
 
-	private fun addInOut(name: String? = null, portType: PortType, bitWidth: BitWidth = BitWidth.BW_1): DigitalCircuitInOutView {
+	fun addInput(
+		name: String? = null,
+		bitWidth: BitWidth = BitWidth.BW_1,
+		inputStartValue: DigitalSignal? = null
+	): DigitalCircuitInOutView = addInOut(name, PortType.INPUT, bitWidth, inputStartValue)
+
+	fun addOutput(
+		name: String? = null,
+		bitWidth: BitWidth = BitWidth.BW_1
+	): DigitalCircuitInOutView = addInOut(name, PortType.OUTPUT, bitWidth)
+
+	fun addInOut(
+		name: String? = null,
+		bitWidth: BitWidth = BitWidth.BW_1
+	): DigitalCircuitInOutView = addInOut(name, PortType.INOUT, bitWidth)
+
+	private fun addInOut(
+		name: String? = null,
+		portType: PortType,
+		bitWidth: BitWidth = BitWidth.BW_1,
+		inputStartValue: DigitalSignal? = null
+	): DigitalCircuitInOutView {
 		val inout = DigitalCircuitInOutView(styleProvider, DigitalCircuitInOutImpl(eventBus, name, portType, bitWidth), eventBus)
+		inout.model.startValue = inputStartValue
 		graphView.add(inout)
 		return inout
 	}

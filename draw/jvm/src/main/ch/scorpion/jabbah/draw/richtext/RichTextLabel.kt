@@ -86,14 +86,6 @@ open class RichTextLabel : DefaultTreeCellRenderer() {
 			h = max(h, richText!!.heightInt + insets.top + insets.bottom)
 		}
 
-		/**
-		 * Text is sometimes cropped at the right border (GitHub #663).
-		 * Width calculation of [RichTextDrawable] is somewhat inaccurate, maybe depending on font and screen resolution.
-		 * Fixing that is hard and would influence how texts with many chunks are rendered.
-		 * Therefore, apply a quick fix here to provide some more space.
-		 */
-		w += 10
-
 		return Dimension(w, h)
 	}
 }

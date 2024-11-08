@@ -7,8 +7,6 @@ typealias Action<T> = (T) -> Unit
 
 typealias Condition<T> = (T) -> Boolean
 
-//val Always: Condition<Any> = { true }
-
 /**
  * DSL factory method for creating an defining a [StateMachine].
  *

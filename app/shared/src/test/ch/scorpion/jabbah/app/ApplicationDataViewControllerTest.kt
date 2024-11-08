@@ -3,8 +3,12 @@ package ch.scorpion.jabbah.app
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventBusImpl
 import ch.scorpion.jabbah.io.Storable
-import io.mockk.mockk
-import io.mockk.verify
+import dev.mokkery.MockMode
+import dev.mokkery.matcher.any
+import dev.mokkery.matcher.eq
+import dev.mokkery.mock
+import dev.mokkery.verify
+import dev.mokkery.verify.VerifyMode.Companion.exactly
 import kotlin.test.*
 
 class ApplicationDataViewControllerTest {
@@ -32,7 +36,7 @@ class ApplicationDataViewControllerTest {
 	private class NewStorableProvider {
 		var providedStorable: Storable? = null
 		fun provide(): Storable {
-			providedStorable = mockk(relaxed = true)
+			providedStorable = mock(MockMode.autofill)
 			return providedStorable!!
 		}
 	}
@@ -56,7 +60,7 @@ class ApplicationDataViewControllerTest {
 		assertNull(applicationDataEvent!!.oldData)
 		assertSame(storableProvider.providedStorable, applicationDataEvent!!.newData!!.content)
 		assertSame(repositoryBuilder.providedSavable, currentSavableEvent!!.savable)
-		verify(exactly = 1) { commandManagerMock.build().reset() }
+		verify(exactly(1)) { commandManagerMock.build().reset() }
 	}
 
 	@Test
@@ -83,8 +87,8 @@ class ApplicationDataViewControllerTest {
 		val newStorable = storableProvider.providedStorable
 
 		assertSame(newStorable, controller.data!!.content)
-		verify(exactly = 1) { repositoryBuilder.repository.store(any(), any()) }
-		verify(exactly = 3) { commandManagerMock.build().reset() }
+		verify(exactly(1)) { repositoryBuilder.repository.store(any(), any()) }
+		verify(exactly(3)) { commandManagerMock.build().reset() }
 	}
 
 	/** ---- Tests for closing the current [ApplicationData] */
@@ -99,7 +103,7 @@ class ApplicationDataViewControllerTest {
 		controller.closeData()
 
 		assertSame(changedStorable, controller.data!!.content)
-		verify(exactly = 0) { repositoryBuilder.repository.store(any(), any()) }
+		verify(exactly (0)) { repositoryBuilder.repository.store(any(), any()) }
 	}
 
 	@Test
@@ -115,8 +119,8 @@ class ApplicationDataViewControllerTest {
 		controller.closeData()
 
 		assertNull(controller.data)
-		verify(exactly = 1) { repositoryBuilder.repository.store(eq(newSavable), eq(changedData)) }
-		verify(exactly = 3) { commandManagerMock.build().reset() }
+		verify(exactly(1)) { repositoryBuilder.repository.store(eq(newSavable), eq(changedData)) }
+		verify(exactly(3)) { commandManagerMock.build().reset() }
 	}
 
 	@Test
@@ -128,7 +132,7 @@ class ApplicationDataViewControllerTest {
 		controller.closeData()
 
 		assertNull(controller.data)
-		verify(exactly = 0) { repositoryBuilder.repository.store(any(), any()) }
+		verify(exactly(0)) { repositoryBuilder.repository.store(any(), any()) }
 	}
 
 	@Test
@@ -143,7 +147,7 @@ class ApplicationDataViewControllerTest {
 		controller.closeData()
 
 		assertSame(changedStorable, controller.data!!.content)
-		verify(exactly = 0) { repositoryBuilder.repository.store(any(), any()) }
+		verify(exactly(0)) { repositoryBuilder.repository.store(any(), any()) }
 	}
 
 	/** ---- Tests for opening [ApplicationData] */
@@ -151,7 +155,7 @@ class ApplicationDataViewControllerTest {
 	@Test
 	fun shouldOpenData() {
 		commandManagerMock.cannotUndo()
-		val data = ApplicationData(content = mockk(), savable = mockk(relaxed = true), eventBus)
+		val data = ApplicationData(content = mock(), savable = mock(MockMode.autofill), eventBus)
 
 		controller.open { data }
 
@@ -166,7 +170,7 @@ class ApplicationDataViewControllerTest {
 		commandManagerMock.canUndo()
 		viewMock.withSaveUnchangedDataDecision(SaveUnchangedDataDecision.Cancel)
 		val changedStorable = storableProvider.providedStorable!!
-		val data = ApplicationData(content = mockk(), savable = mockk(), eventBus)
+		val data = ApplicationData(content = mock(), savable = mock(), eventBus)
 
 		controller.open { data }
 
@@ -176,7 +180,7 @@ class ApplicationDataViewControllerTest {
 	@Test
 	fun shouldOpenFromSavable() {
 		val existingSavable = DefaultSavable.withIdentification("test")
-		val existingStorable = mockk<Storable>()
+		val existingStorable = mock<Storable>()
 		viewMock.withSavableForLoading(existingSavable)
 		repositoryBuilder.withLoadedStorable(existingStorable)
 
@@ -191,14 +195,14 @@ class ApplicationDataViewControllerTest {
 	@Test
 	fun shouldSave() {
 		val savable = DefaultSavable.withIdentification("test")
-		val data = ApplicationData(content = mockk(), savable = savable, eventBus)
+		val data = ApplicationData(content = mock(), savable = savable, eventBus)
 		controller.data = data
 		commandManagerMock.canUndo()
 
 		controller.save()
 
 		verify { repositoryBuilder.build().store(eq(savable), eq(data.content)) }
-		verify(exactly = 2) { commandManagerMock.build().reset() }
+		verify(exactly(1)) { commandManagerMock.build().reset() }
 	}
 
 	@Test
@@ -211,7 +215,7 @@ class ApplicationDataViewControllerTest {
 		controller.save()
 
 		verify { repositoryBuilder.build().store(eq(newSavable), eq(controller.data!!.content)) }
-		verify(exactly = 3) { commandManagerMock.build().reset() }
+		verify(exactly(2)) { commandManagerMock.build().reset() }
 	}
 
 	@Test

@@ -29,11 +29,20 @@ class Oscilloscope(
 
 	companion object {
 		private val TYPE get() = Translations.getString("graph.component.oscilloscope.name")
+
+		/** The reason in [GraphElementEvent] sent to [GraphElementListener]s if a new signal has arrived. */
+		const val SIGNAL_RECEIVED = "signalReceived"
 	}
 
-	private lateinit var signalHistories: SignalHistories
+	private var signalHistories: SignalHistories = mode.createSignalHistories(this)
 
 	var mode: SignalHistoriesType = mode
+		set(value) {
+			if (field != value) {
+				field = value
+				signalHistories = mode.createSignalHistories(this)
+			}
+		}
 
 	var enabled: Boolean = true
 
@@ -48,7 +57,7 @@ class Oscilloscope(
 	override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler, force: Boolean) {
 		if (enabled) {
 			signalHistories.storeSignal(input, signalHandler)
-			stateChanged(signalHandler)
+			stateChanged(signalHandler, SIGNAL_RECEIVED)
 		}
 	}
 
@@ -81,8 +90,13 @@ class Oscilloscope(
 	/** ---- [Actor] interface */
 
 	override fun executionInitialize(signalHandler: SignalHandler) {
-		signalHistories = mode.createSignalHistories(this)
+		signalHistories.clear()
 		super.executionInitialize(signalHandler)
+	}
+
+	override fun executionStart(signalHandler: SignalHandler) {
+		signalHistories = mode.createSignalHistories(this)
+		super.executionStart(signalHandler)
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {

@@ -1,11 +1,13 @@
 package ch.scorpion.jabbah.app
 
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.matcher.any
+import dev.mokkery.mock
 
 class ApplicationDataViewMockBuilder(controller: ApplicationDataViewController) {
 
-	private val view = mockk<ApplicationDataView>()
+	private val view = mock<ApplicationDataView>()
 
 	init {
 		controller.view = view

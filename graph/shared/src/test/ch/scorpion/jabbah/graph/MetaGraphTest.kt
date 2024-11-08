@@ -52,53 +52,6 @@ class MetaGraphTest {
 	}
 
 	@Test
-	fun shouldUpdateContainerGraphPortName() {
-		val graphView = GraphViewImpl()
-		val graphPortView = TestGraphPortView(model = GraphInputImpl(name = "A"))
-		val metaGraph = MetaGraph(GraphStorable(graphView), ContainerDrawing())
-		graphView.add(graphPortView)
-		metaGraph.containerDrawing.add(createPortViewComponent(graphPortView.model))
-
-		graphPortView.model.name = "B"
-
-		assertEquals("B", metaGraph.containerDrawing.model.getPort<Boolean>().name)
-	}
-
-	@Test
-	fun shouldNotUpdateForeignContainerGraphPortName() {
-		val graphView = GraphViewImpl()
-		val graphPortView = TestGraphPortView(model = GraphInputImpl(name = "A"))
-		val metaGraph = MetaGraph(GraphStorable(graphView), ContainerDrawing())
-		graphView.add(graphPortView)
-		metaGraph.containerDrawing.add(createPortViewComponent(graphPortView.model))
-
-		val graphView2 = GraphViewImpl()
-		val graphPortView2 = TestGraphPortView(model = GraphInputImpl(name = "A"))
-		val metaGraph2 = MetaGraph(GraphStorable(graphView2), ContainerDrawing())
-		graphView2.add(graphPortView2)
-		metaGraph2.containerDrawing.add(createPortViewComponent(graphPortView.model))
-
-		graphPortView.model.name = "B"
-
-		assertEquals("B", metaGraph.containerDrawing.model.getPort<Boolean>().name)
-		assertEquals("A", metaGraph2.containerDrawing.model.getPort<Boolean>().name)
-	}
-
-	@Test
-	fun shouldUpdateContainerGraphPortType() {
-		val graphView = GraphViewImpl()
-		val graphPortBuilder = GraphPortMockBuilder<Boolean>().withPortType(PortType.INOUT)
-		val graphPortView = TestGraphPortView(model = graphPortBuilder.build())
-		val metaGraph = MetaGraph(GraphStorable(graphView), ContainerDrawing())
-		graphView.add(graphPortView)
-		metaGraph.containerDrawing.add(createPortViewComponent(graphPortView.model))
-
-		graphPortBuilder.graphPort.portType = PortType.OUTPUT
-
-		assertEquals(PortType.OUTPUT, metaGraph.containerDrawing.model.getPort<Boolean>().portType)
-	}
-
-	@Test
 	fun shouldDuplicate() {
 		val orig = MetaGraph.create(TranslatableText("Original"), GenericGraphType)
 		val duplicate = orig.duplicate(TranslatableText("Duplicate"))

@@ -19,7 +19,7 @@ import ch.scorpion.jabbah.graph.view.GraphView
 /**
  * A [UIView] for editing a root [GraphView].
  *
- * Consists of a [GraphNavigationView] at the left side and a side bar at the right side
+ * Consists of a [GraphNavigationView] on the left side and a sidebar on the right side
  * for displaying a [ScenarioView] and a [UsecaseView].
  */
 interface GraphEditView : UIView, GraphDesktopViewItem {

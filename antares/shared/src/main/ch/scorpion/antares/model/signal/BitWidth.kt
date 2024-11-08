@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.param.GraphParamType
+import ch.scorpion.jabbah.graph.model.param.GraphParamValues
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
@@ -92,7 +93,7 @@ interface BitWidth {
 	}
 }
 
-open class BitWidthImpl(
+class BitWidthImpl(
 	override val width: Int,
 	override val size: String
 ) : BitWidth {
@@ -115,7 +116,7 @@ open class BitWidthImpl(
  */
 class BitWidthExpression(
 	var expression: String,
-	var value: BitWidth = BitWidth.BW_1
+	val value: BitWidth = BitWidth.BW_1
 ) : BitWidth {
 
 	override val width: Int get() = value.width

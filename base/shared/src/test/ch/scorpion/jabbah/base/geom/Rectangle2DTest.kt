@@ -160,4 +160,17 @@ class Rectangle2DTest {
 		rect.expandLeftBy(10.0)
 		assertEquals(Rectangle2D(90, 100, 110, 100), rect)
 	}
+
+	@Test
+	fun shouldAddPathWithClose() {
+		val rect = Rectangle2D()
+		rect.add(0, 0)
+		rect.add(-50, -50)
+		rect.add(-100, -50)
+		rect.add(-100, 50)
+		rect.add(-50, 50)
+		rect.add(0, 0)
+
+		assertEquals(Rectangle2D(-100, -50, 100, 100), rect.boundingBox)
+	}
 }

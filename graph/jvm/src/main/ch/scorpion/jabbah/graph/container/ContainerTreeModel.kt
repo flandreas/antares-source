@@ -11,6 +11,9 @@ import ch.scorpion.jabbah.draw.graphics.Font
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.model.image.ImageComponent
+import ch.scorpion.jabbah.edit.model.image.ImageIdentification
+import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
@@ -50,6 +53,9 @@ class ContainerTreeModel(
 	/** The node that contains the top-level [SubGraphVerticeViewFolderItem].*/
 	private var subGraphsNode: DynamicTreeNode
 
+	/** The node that contains the images. */
+	private var imagesNode: DynamicTreeNode
+
 	init {
 		fillGraphPortViews(graphView, containerDrawing)
 		fillControlViewSources(graphView, containerDrawing)
@@ -57,6 +63,8 @@ class ContainerTreeModel(
 		(treeModel.root as DefaultMutableTreeNode).add(controlsNode)
 		subGraphsNode = DynamicTreeNode(SubGraphsFolderItem(graphView, DeepVerticeLink()), initializer, treeModel)
 		(treeModel.root as DefaultMutableTreeNode).add(subGraphsNode)
+		imagesNode = DynamicTreeNode(ImagesFolderItem(), initializer, treeModel)
+		(treeModel.root as DefaultMutableTreeNode).add(imagesNode)
 	}
 
 	/** ---- Ports management */
@@ -81,6 +89,14 @@ class ContainerTreeModel(
 			val child = portsNode.getChildAt(index)
 			portsNode.remove(index)
 			treeModel.nodesWereRemoved(portsNode, intArrayOf(index), arrayOf(child))
+		}
+	}
+
+	fun handleGraphPortViewRenamed(portName: String) {
+		val index = findGraphPortViewIndex(portName)
+		if (index != null) {
+			((portsNode.getChildAt(index) as DefaultMutableTreeNode).userObject as AbstractContainerTreeItem).invalidateRichText()
+			treeModel.nodesChanged(portsNode, intArrayOf(index))
 		}
 	}
 
@@ -140,11 +156,22 @@ class ContainerTreeModel(
 	fun addControlViewSourceFor(comp: ControlViewComponent) {
 		val treeNode = findSubGraphVerticeViewFolder(comp.controlModelLink)
 		if (treeNode != null && (treeNode.getChildAt(0) as DynamicTreeNode).isInitialized) {
-			val subGraphVerticeView = (treeNode as DefaultMutableTreeNode).userObject as SubGraphVerticeViewFolderItem
+			val subGraphVerticeViewFolder = (treeNode as DefaultMutableTreeNode).userObject as SubGraphVerticeViewFolderItem
 			val innerFolder = treeNode.getChildAt(0) as DynamicTreeNode
-			val source = subGraphVerticeView.graphView.getControlViewSource(comp.controlView.controlId!!)
-			innerFolder.add(createControlViewNode(source!!, comp.controlModelLink.withoutLast()))
-			treeModel.nodesWereInserted(innerFolder, intArrayOf(innerFolder.childCount - 1))
+
+			// comp.controlView.controlId returns something of the form "switch:0", where 0 is the model ID,
+			// which is always 0, because it isn't part of a circuit. We would rather use comp.controlModelLink.last,
+			// but that one contains only the model ID, without the "switch" part. Therefore, try to reconstruct
+			// the correct controlId with a hack...
+
+			if (comp.controlView.controlId?.contains(':') == true) {
+				val controlId = comp.controlView.controlId!!.substringBeforeLast(':') + ":" + comp.controlModelLink.last.toString()
+				val source = subGraphVerticeViewFolder.graphView.getControlViewSource(controlId)
+				if (source != null) {
+					innerFolder.add(createControlViewNode(source, comp.controlModelLink.withoutLast()))
+					treeModel.nodesWereInserted(innerFolder, intArrayOf(innerFolder.childCount - 1))
+				}
+			}
 		}
 	}
 
@@ -183,6 +210,7 @@ class ContainerTreeModel(
 		val subGraphVerticeViewLink = link.withoutLast()
 		return JTreeUtil.findTreeNode(treeModel.root as TreeNode) {
 			it is DefaultMutableTreeNode
+				&& !(it is DynamicTreeNode && !it.isInitialized)
 				&& it.childCount > 0
 				&& it.userObject is SubGraphVerticeViewFolderItem
 				&& (it.userObject as SubGraphVerticeViewFolderItem).link == subGraphVerticeViewLink
@@ -282,6 +310,21 @@ class ContainerTreeModel(
 		}
 		return null
 	}
+
+	/** ---- Images management */
+
+	fun addImages(receiver: DynamicReceiver) {
+		receiver.addChildren(
+			LibraryModule.libraryHolder.library.getAllImageIds()
+				.map { createImageTreeNode(it) }
+		)
+	}
+
+	private fun createImageTreeNode(imageId: ImageIdentification): MutableTreeNode {
+		return DefaultMutableTreeNode(ImageItem(imageId) {
+			ImageComponent(imageId.uuid)
+		})
+	}
 }
 
 abstract class AbstractContainerTreeItem(
@@ -294,6 +337,10 @@ abstract class AbstractContainerTreeItem(
 			richText = RichTextDrawable.of(getDescription(), font)
 		}
 		return richText!!
+	}
+
+	fun invalidateRichText() {
+		richText = null
 	}
 
 	abstract fun getDescription(): String
@@ -336,6 +383,7 @@ private class ContainerTreeFolderItem(
 		val CONTROLS_NAME = Translations.getString("graph.component.controls")
 		val SUBGRAPHS_NAME = Translations.getString("graph.component.subgraphs")
 		val PORTS_NAME = Translations.getString("graph.component.ports")
+		val IMAGES_NAME = Translations.getString("graph.component.images")
 		val PORTS = ContainerTreeFolderItem(ContainerTreeItemType.Ports, PORTS_NAME)
 		val CONTROLS = ContainerTreeFolderItem(ContainerTreeItemType.Controls, CONTROLS_NAME)
 	}
@@ -367,7 +415,14 @@ class SubGraphVerticeViewFolderItem(
 	val link: DeepVerticeLink
 ) : AbstractContainerTreeItem(ContainerTreeItemType.SubGraph) {
 
-	override fun getDescription(): String = subGraphVerticeView.subGraphVertice?.name ?: "n.a."
+	override fun getDescription(): String {
+		val name = subGraphVerticeView.subGraphVertice?.name ?: return "n.a."
+
+		if (subGraphVerticeView.label != null) {
+			return "$name: ${subGraphVerticeView.label!!.getTranslation()}"
+		}
+		return name
+	}
 }
 
 class ControlsFolderTreeItem(
@@ -376,4 +431,17 @@ class ControlsFolderTreeItem(
 ) : AbstractContainerTreeItem(ContainerTreeItemType.Controls) {
 
 	override fun getDescription(): String = ContainerTreeFolderItem.CONTROLS_NAME
+}
+
+class ImagesFolderItem: AbstractContainerTreeItem(ContainerTreeItemType.Images) {
+
+	override fun getDescription(): String = ContainerTreeFolderItem.IMAGES_NAME
+}
+
+private class ImageItem(
+	private val imageId: ImageIdentification,
+	factory: () -> Component
+) : DraggableTreeItem(ContainerTreeItemType.Image, factory, "/img/image.png") {
+
+	override fun getDescription(): String = imageId.name.value
 }

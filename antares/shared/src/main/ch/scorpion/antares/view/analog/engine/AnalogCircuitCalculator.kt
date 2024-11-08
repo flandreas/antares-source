@@ -51,7 +51,7 @@ class AnalogCircuitCalculator {
 				subIterations = subIter
 
 				analysis.startSubIteration()
-				elmList.forEach { it.doStep(analysis) }
+				elmList.forEach { it.doStep(analysis, signalHandler) }
 
 				if (stopMessage != null) {
 					stop("Invalid matrix")
@@ -91,7 +91,7 @@ class AnalogCircuitCalculator {
 						}
 					} else {
 						val ji = j - (analysis.nodeList.size - 1)
-						analysis.voltageSources[ji].setCurrent(ji, res)
+						analysis.voltageSources[ji].setInternalCurrent(ji, res)
 					}
 				}
 

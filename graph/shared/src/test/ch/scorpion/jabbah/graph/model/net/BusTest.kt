@@ -1,9 +1,10 @@
 package ch.scorpion.jabbah.graph.model.net
 
+import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.execution.ForwardSignalHandler
+import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.port.PortImpl
-import io.mockk.mockk
 import kotlin.test.*
 
 /**
@@ -17,7 +18,7 @@ class BusTest {
 	    }
     }
 
-    private val signalHandler = ForwardSignalHandler(mockk())
+    private val signalHandler = ForwardSignalHandler(CurrentSystemSpeedCategory(SystemSpeed()))
 	private var net: Net<Boolean>
 	private val output1 = TestVertice(name = "V1", canBeUndefined = true)
 	private val output2 = TestVertice(name = "V2", canBeUndefined = true)

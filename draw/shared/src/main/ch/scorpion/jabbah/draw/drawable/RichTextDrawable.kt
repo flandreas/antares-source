@@ -3,8 +3,9 @@ package ch.scorpion.jabbah.draw.drawable
 import ch.scorpion.jabbah.base.dsl.SyntaxError
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.parser.TextLocation.Companion.UNDEFINED
-import ch.scorpion.jabbah.base.richtext.*
+import ch.scorpion.jabbah.base.richtext.RichText
+import ch.scorpion.jabbah.base.richtext.RichTextParser
+import ch.scorpion.jabbah.base.richtext.TextStyle
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.module.DrawModule
@@ -15,6 +16,7 @@ import kotlin.math.max
  * Displays a [RichText] AST using [Graphics2D] operations as single-line text.
  */
 class RichTextDrawable(
+	richText: RichText,
 	private val baseFont: Font
 ) : AbstractRectangle() {
 
@@ -59,6 +61,12 @@ class RichTextDrawable(
 				}
 			}
 
+		/**
+		 * Treats the text as-is and creates a [RichTextDrawable] that ignores all markup.
+		 */
+		fun asPlain(text: String, font: Font, textMeasurer: TextMeasurer = TextRenderInfoFactory) =
+			transformToSingleLine(RichText.asPlain(text), font, textMeasurer)
+
 		fun multiline(text: String, font: Font, preferredWidth: Double, textMeasurer: TextMeasurer = TextRenderInfoFactory): RichTextDrawable =
 			try {
 				transformToMultiline(RichTextParser(text).parse(), font, preferredWidth, textMeasurer)
@@ -76,29 +84,15 @@ class RichTextDrawable(
 		 */
 		private fun legacyRichText(text: String, error: SyntaxError): RichText {
 			LOG.debug("Resorting to legacy format: ${error.message} at ${error.location}")
-			return RichText(
-				UNDEFINED,
-				listOf(
-					Fragment(
-						UNDEFINED,
-						FragmentText(
-							UNDEFINED,
-							StyledText(
-								UNDEFINED,
-								listOf(StyledChunk(UNDEFINED, text))
-							)
-						)
-					)
-				)
-			)
+			return RichText.asPlain(text)
 		}
 
 		/**
 		 * Transforms a [RichText] AST to a [RichTextDrawable] that can be drawn
-		 * with [Graphics2D] operations. Currently supports only single-line text.
+		 * with [Graphics2D] operations. Currently, supports only single-line text.
 		 */
 		private fun transformToSingleLine(richText: RichText, font: Font, textMeasurer: TextMeasurer): RichTextDrawable {
-			val drawable = RichTextDrawable(font)
+			val drawable = RichTextDrawable(richText, font)
 			var baselineX = 0.0
 
 			richText.children.forEach { fragment ->
@@ -133,7 +127,7 @@ class RichTextDrawable(
 		}
 
 		private fun transformToMultiline(richText: RichText, font: Font, preferredWidth: Double, textMeasurer: TextMeasurer): RichTextDrawable {
-			val drawable = RichTextDrawable(font)
+			val drawable = RichTextDrawable(richText, font)
 			var baselineX = 0.0
 			var baselineY = 0.0
 			var lineWidth = 0.0
@@ -252,18 +246,17 @@ class RichTextDrawable(
 
 	var underline: Boolean = false
 
+	private val maxOverlineLevel = richText.getMaxOverlineLevel()
+
 	override fun draw(context: DrawContext) {
-		val ascent = abs(baselineRect.y)
-		context.g.translate(location.x, location.y + ascent)
-		chunkViews.forEach { it.draw(context.g) }
-		context.g.translate(-location.x, -location.y - ascent)
+		draw(context.g)
 	}
 
 	fun draw(g: Graphics2D) {
 		val ascent = abs(baselineRect.y)
 		g.translate(location.x, location.y + ascent)
 
-		chunkViews.forEach { it.draw(g) }
+		chunkViews.forEach { it.draw(g, maxOverlineLevel) }
 		if (underline) {
 			val y = -ascent.toInt() + heightInt + 1
 			g.stroke = UNDERLINE_STROKE
@@ -346,18 +339,19 @@ class RichTextDrawable(
 			height = tri.textBounds.height
 		}
 
-		fun draw(g: Graphics2D) {
+		fun draw(g: Graphics2D, maxOverlineLevel: Int) {
 
 			g.font = localFont
 
 			g.drawString(text, baselineX.toInt(), baselineY.toInt())
 
-			if (style.overline) {
+			for (level in 1 .. style.overlineLevel) {
 				g.stroke = OVERLINE_STROKE
+				val lineY = y - 2.5 * ( maxOverlineLevel - level)
 				if (style.italic) {
-					g.drawLine(x + 2, y, x + width, y)
+					g.drawLine(x + 2, lineY, x + width, lineY)
 				} else {
-					g.drawLine(x, y, x + width, y)
+					g.drawLine(x, lineY, x + width, lineY)
 				}
 			}
 
@@ -371,4 +365,3 @@ class RichTextDrawable(
 		}
 	}
 }
-

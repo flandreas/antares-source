@@ -8,6 +8,8 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.model.text.ScriptProperty
+import ch.scorpion.jabbah.graph.view.ControlView
+import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -16,7 +18,12 @@ class ROMView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	eventBus: EventBus = BaseModule.eventBus,
 	model: ROM = ROM()
-) : AbstractAddressableView<ROM>(styleProvider, eventBus, model) {
+) : AbstractAddressableView<ROM>(styleProvider, eventBus, model),
+	ControlViewSource<ROM>
+{
+	companion object {
+		const val PROP_ICON_PATH = "ch.scorpion.antares.view.addressable.ROMView.iconPath"
+	}
 
 	override fun modelExchanged(oldModel: ROM?) {
 		super.modelExchanged(oldModel)
@@ -49,11 +56,12 @@ class ROMView(
 			columnsCount = contentColumnsCount,
 			showDisassembler = showDisassembler,
 			highlightCurrentCellWhenNotSelected = highlightCurrentCellWhenNotSelected)
+
+		updateGeometry()
 	}
 
 	init {
 		modelExchanged(null)
-		updateGeometry()
 	}
 
 	/** ---- UI properties */
@@ -110,6 +118,26 @@ class ROMView(
 		if (reader.hasAttribute("highlightCurrentCell")) {
 			highlightCurrentCellWhenNotSelected = reader.readBoolean("highlightCurrentCell")
 		}
+	}
+
+	/** ---- [ControlViewSource] */
+
+	override val controlId: String
+		get() {
+			// Don't use GraphElementView#getId() as part of the controlId, because that one might be changed
+			// when ControlViews (event as part of a wrapping Component) are added to a Drawing
+			return "rom:" + model.id
+		}
+
+
+
+	override val iconPath: String get() = BaseModule.properties.getString(PROP_ICON_PATH)
+
+	override fun createControlView(): ControlView<ROM> {
+		val clone = ROMView(styleProvider, model = model)
+		clone.isShowPortViews = false
+		copyControlViewProperties(this, clone)
+		return clone
 	}
 
 	/** ---- [AbstractAddressableView] */

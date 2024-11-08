@@ -1,9 +1,6 @@
 package ch.scorpion.jabbah.graph.view.vertice
 
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.geom.RectangularShape
-import ch.scorpion.jabbah.base.geom.Rotation
+import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawableAdapter
@@ -41,7 +38,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 abstract class AbstractRectangularVerticeView<T : Vertice>(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: T,
-	rectangle: RectangularShape
+	rectangle: MutableRectangularShape
 ) : AbstractVerticeView<T>(styleProvider, model), RectangularDrawable {
 
 	/**
@@ -60,7 +57,7 @@ abstract class AbstractRectangularVerticeView<T : Vertice>(
 	) : this(styleProvider, model, Rectangle2D(x, y, w, h))
 
 	/** Contains the position relative to [location] and the size of the rectangle.*/
-	protected val rectangle: RectangularShape = rectangle
+	protected val rectangle: MutableRectangularShape = rectangle
 
 	/** Contains the actual and absolute bounding box including all [PortView] bounding boxes. */
 	private val _boundingBox = Rectangle2D()
@@ -155,7 +152,7 @@ abstract class AbstractRectangularVerticeView<T : Vertice>(
 
 	/** ---- [RectangularDrawable] */
 
-	override val bounds: RectangularShape get() = rectangle
+	override val bounds: MutableRectangularShape get() = rectangle
 
 	override fun setBounds(x: Double, y: Double, w: Double, h: Double) {
 		if (this.x == x && this.y == y && this.width == w && this.height == h) {

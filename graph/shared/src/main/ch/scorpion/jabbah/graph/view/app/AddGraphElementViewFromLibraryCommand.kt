@@ -5,13 +5,12 @@ import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.DragManager
-import ch.scorpion.jabbah.edit.Drawing
+import ch.scorpion.jabbah.edit.app.ComponentCustomizer
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
-import ch.scorpion.jabbah.graph.view.VerticeView
 
 /**
  * Adds a new [GraphElementView] created by a [LibraryElement] to a [GraphView] and optionally
@@ -22,7 +21,7 @@ class AddGraphElementViewFromLibraryCommand(
 	private val libraryElement: LibraryElement,
 	private val location: Point2D,
 	private val rotation: Rotation,
-	private val componentCustomizer: (Component, Drawing<*>) -> Unit = {_,_ -> }
+	private val componentCustomizer: ComponentCustomizer
 ): AbstractCommand("edit.command.add", editor) {
 
 	private val graphView: GraphView get() = editor!!.view.drawing as GraphView
@@ -36,9 +35,9 @@ class AddGraphElementViewFromLibraryCommand(
 		graphElementView.rotation = rotation
 		graphView.add(graphElementView)
 		addedComponentId = graphElementView.id
-		val verticeView = graphView.getWithId(addedComponentId) as VerticeView
+		val verticeView = graphView.getWithId(addedComponentId) as Component
 
-		componentCustomizer.invoke(verticeView, graphView)
+		componentCustomizer.customizeAddedComponent(verticeView, graphView)
 
 		editor!!.dragManager.finishDrop(verticeView).forEach { it.execute() }
 	}

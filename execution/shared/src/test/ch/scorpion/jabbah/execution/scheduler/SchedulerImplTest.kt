@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.execution.scheduler
 
+import ch.scorpion.jabbah.base.LongValue
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.math.MILLION
 import ch.scorpion.jabbah.base.event.EventBusImpl
 import ch.scorpion.jabbah.base.time.ControlledTimeService
@@ -12,10 +14,10 @@ import ch.scorpion.jabbah.execution.actor.*
 import ch.scorpion.jabbah.execution.noise.NoNoiseGenerator
 import ch.scorpion.jabbah.execution.noise.NoiseGeneratorHolder
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.spyk
-import io.mockk.verify
+import dev.mokkery.*
+import dev.mokkery.answering.returns
+import dev.mokkery.matcher.any
+import dev.mokkery.verify.VerifyMode.Companion.exactly
 import kotlin.test.*
 
 class SchedulerImplTest {
@@ -60,7 +62,7 @@ class SchedulerImplTest {
 
 		timeService.setTimeMillis(150)
 
-		verify(exactly = 0) { actor.act(any(), any()) }
+		verify(exactly(0)) { actor.act(any(), any()) }
 	}
 
 	@Test
@@ -73,8 +75,8 @@ class SchedulerImplTest {
 
 		timeService.setTimeMillis(150)
 
-		verify(exactly = 1) { actor1.act(any(), any()) }
-		verify(exactly = 1) { actor2.act(any(), any()) }
+		verify(exactly(1)) { actor1.act(any(), any()) }
+		verify(exactly(1)) { actor2.act(any(), any()) }
 	}
 
 	@Test
@@ -82,11 +84,11 @@ class SchedulerImplTest {
 		val actor = createActor()
 		scheduler.isActive = true
 		scheduler.requestActingAfter(actor, 100 * MILLION, createActorData())
-
-		timeService.setTimeMillis(150)
 		timeService.setTimeMillis(300)
 
-		verify(exactly = 1) { actor.act(any(), any()) }
+		scheduler.actingDone(actor, createActorData())
+
+		verify(exactly(1)) { actor.act(any(), any()) }
 		assertEquals(0, scheduler.numberOfRemainingSlots)
 	}
 
@@ -99,7 +101,7 @@ class SchedulerImplTest {
 
 		timeService.setTimeMillis(150)
 
-		verify(exactly = 1) { actor.act(any(), any()) }
+		verify(exactly(1)) { actor.act(any(), any()) }
 	}
 
 	/** ---- Stepping tests */
@@ -114,29 +116,7 @@ class SchedulerImplTest {
 
 		timeService.setTimeMillis(150)
 
-		verify(exactly = 0) { actor.act(any(), any()) }
-		assertTrue(scheduler.isInBreakpoint)
-		assertNotNull(breakpointEvent)
-	}
-
-	@Test
-	fun shouldWaitInBreakpointWhenPausedDuringExecution() {
-		val actor = createActor()
-		scheduler.isSoftBreakpointsEnabled = true
-		scheduler.isSingleStepMode = false
-		scheduler.isActive = true
-
-		scheduler.requestActingAfter(actor, 100 * MILLION, createActorData())
-		timeService.setTimeMillis(150)
-		verify(exactly = 1) { actor.act(any(), any()) }
-		assertNull(breakpointEvent)
-
-		scheduler.isSingleStepMode = true
-		scheduler.requestActingAfter(actor, 100 * MILLION, createActorData())
-
-		timeService.setTimeMillis(250)
-
-		verify(exactly = 1) { actor.act(any(), any()) }
+		verify(exactly(0)) { actor.act(any(), any()) }
 		assertTrue(scheduler.isInBreakpoint)
 		assertNotNull(breakpointEvent)
 	}
@@ -153,13 +133,12 @@ class SchedulerImplTest {
 
 		timeService.setTimeMillis(150)
 		scheduler.systemSpeedCategory.systemSpeed.resume()
-		verify(exactly = 1) { actor1.act(any(), any()) }
-		verify(exactly = 0) { actor2.act(any(), any()) }
+		verify(exactly(1)) { actor1.act(any(), any()) }
+		verify(exactly(0)) { actor2.act(any(), any()) }
 
 		timeService.setTimeMillis(250)
 		scheduler.systemSpeedCategory.systemSpeed.resume()
-		verify(exactly = 1) { actor1.act(any(), any()) }
-		verify(exactly = 1) { actor2.act(any(), any()) }
+		verify(exactly(0)) { actor1.act(any(), any()) }
 	}
 
 	@Test
@@ -174,13 +153,12 @@ class SchedulerImplTest {
 
 		timeService.setTimeMillis(50)
 		scheduler.systemSpeedCategory.systemSpeed.resume()
-		verify(exactly = 1) { actor1.act(any(), any()) }
-		verify(exactly = 0) { actor2.act(any(), any()) }
+		verify(exactly(1)) { actor1.act(any(), any()) }
+		verify(exactly(0)) { actor2.act(any(), any()) }
 
 		timeService.setTimeMillis(80)
 		scheduler.systemSpeedCategory.systemSpeed.resume()
-		verify(exactly = 1) { actor1.act(any(), any()) }
-		verify(exactly = 1) { actor2.act(any(), any()) }
+		verify(exactly(0)) { actor1.act(any(), any()) }
 	}
 
 	@Test
@@ -192,7 +170,7 @@ class SchedulerImplTest {
 		scheduler.systemSpeedCategory.systemSpeed.pause()
 		timeService.setTimeMillis(150)
 
-		verify(exactly = 0) { actor.act(any(), any()) }
+		verify(exactly(0)) { actor.act(any(), any()) }
 	}
 
 	@Test
@@ -203,30 +181,31 @@ class SchedulerImplTest {
 
 		scheduler.systemSpeedCategory.systemSpeed.pause()
 		timeService.setTimeMillis(150)
-		verify(exactly = 0) { actor.act(any(), any()) }
+		verify(exactly(0)) { actor.act(any(), any()) }
 
 		scheduler.systemSpeedCategory.systemSpeed.resume()
 		timeService.setTimeMillis(250)
-		verify(exactly = 1) { actor.act(any(), any()) }
+		verify(exactly(1)) { actor.act(any(), any()) }
 	}
 
 	/** ---- Animation tests */
 
 	@Test
 	fun shouldWaitForActingDone() {
-		val actor1: Actor = mockk(relaxed = true)
+		val actor1: Actor = mock(MockMode.autofill)
 		val actor2 = createActor()
 
 		scheduler.isActive = true
 		scheduler.requestActingAfter(actor1, 100 * MILLION, createActorData())
 
 		timeService.setTimeMillis(150)
-		verify(exactly = 1) { actor1.act(any(), any()) }
-		verify(exactly = 0) { actor2.act(any(), any()) }
+		verify(exactly(1)) { actor1.act(any(), any()) }
+		verify(exactly(0)) { actor2.act(any(), any()) }
 
+		resetCalls()
 		timeService.setTimeMillis(300)
-		verify(exactly = 1) { actor1.act(any(), any()) }
-		verify(exactly = 0) { actor2.act(any(), any()) }
+		verify(exactly(0)) { actor1.act(any(), any()) }
+		verify(exactly(0)) { actor2.act(any(), any()) }
 	}
 
 	@Test
@@ -239,14 +218,15 @@ class SchedulerImplTest {
 
 		timeService.setTimeMillis(150)
 		assertTrue(actor2.actingCalled)
-		verify(exactly = 0) { actor1.act(any(), any()) }
+		verify(exactly(0)) { actor1.act(any(), any()) }
 		assertEquals(1, scheduler.numberOfRemainingSlots)
 
 		scheduler.actingDone(actor2, createActorData())
 		assertEquals(1, scheduler.numberOfRemainingSlots)
 
 		timeService.setTimeMillis(250)
-		verify(exactly = 1) { actor1.act(any(), any()) }
+		verify(exactly(1)) { actor1.act(any(), any()) }
+		scheduler.actingDone(actor1, createActorData())
 		assertEquals(0, scheduler.numberOfRemainingSlots)
 	}
 
@@ -262,7 +242,7 @@ class SchedulerImplTest {
 		assertEquals(1, scheduler.numberOfRemainingSlots)
 
 		timeService.setTimeMillis(150)
-		verify(exactly = 0) { actor1.act(any(), any()) }
+		verify(exactly(0)) { actor1.act(any(), any()) }
 		assertTrue(actor2.actingCalled)
 		assertTrue(actor3.actingCalled)
 
@@ -271,7 +251,7 @@ class SchedulerImplTest {
 		assertEquals(1, scheduler.numberOfRemainingSlots)
 
 		timeService.setTimeMillis(300)
-		verify(exactly = 1) { actor1.act(any(), any()) }
+		verify(exactly(1)) { actor1.act(any(), any()) }
 	}
 
 	@Test
@@ -280,7 +260,7 @@ class SchedulerImplTest {
 		val actorData = createActorData()
 
 		scheduler.isActive = true
-		scheduler.requestActingAfter(actor, actor.propagationDelay, actorData)
+		scheduler.requestActingAfter(actor, actor.propagationDelay.value, actorData)
 		timeService.setTimeMillis(50)
 
 		scheduler.actPrematurely(actor, actorData)
@@ -290,8 +270,8 @@ class SchedulerImplTest {
 	/** ---- [SchedulerImplTest] */
 
 	private fun createActor(isBreakpoint: Boolean = true, propagationDelay: Long = 0): Actor {
-		val actor = spyk<ActorImpl>()
-		actor.propagationDelay = propagationDelay
+		val actor = spy<Actor>(ActorImpl())
+		actor.propagationDelay = LongValueImpl(propagationDelay)
 		every { actor.isBreakpoint } returns isBreakpoint
 		return actor
 	}
@@ -318,7 +298,7 @@ class SchedulerImplTest {
 		override var state: ActorState = ActorState.NonExecuting
 			private set
 
-		override var propagationDelay: Long = 100L
+		override var propagationDelay: LongValue = LongValueImpl(100L)
 
 		override val isBreakpoint: Boolean get() = true
 

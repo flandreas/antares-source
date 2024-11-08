@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.base.geom
 
+import ch.scorpion.jabbah.base.math.toDoubleString
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sqrt
@@ -24,7 +25,7 @@ data class Point2D(val x: Double = 0.0, val y: Double = 0.0) {
 	constructor(p: Point2D) : this(p.x, p.y)
 	constructor(x: Int, y: Int) : this(x.toDouble(), y.toDouble())
 
-	override fun toString(): String = "Point2D($x,$y)"
+	override fun toString(): String = "Point2D(${x.toDoubleString()},${y.toDoubleString()})"
 
 	val xInt: Int get() = x.toInt()
 	val yInt: Int get() = y.toInt()
@@ -68,6 +69,8 @@ data class Point2D(val x: Double = 0.0, val y: Double = 0.0) {
 
 	/** Creates a new [Point2D] by multiplying the coordinates of this [Point2D] with the specified factor.*/
 	fun multiply(factor: Double): Point2D = Point2D(x * factor, y * factor)
+
+	fun divide(dividend: Double): Point2D = Point2D(x / dividend, y / dividend)
 
 	/** Creates a new [Point2D] by keeping [y] and adding [dx] to [x].*/
 	fun addX(dx: Double): Point2D = Point2D(x + dx, y)

@@ -11,8 +11,11 @@ import ch.scorpion.jabbah.base.parser.TextLocation
 import ch.scorpion.jabbah.base.parser.Token
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.Port
-import io.mockk.every
-import io.mockk.mockk
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphFunctionContext
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.matcher.any
+import dev.mokkery.mock
 
 /**
  * Unit tests for Antares DSL that incorporate mocked [Port]s.
@@ -30,7 +33,7 @@ abstract class AbstractAntaresInterpreterPortTest {
 	protected fun variable(name: String): Variable = Variable(TextLocation(0, 0, 0), Token(ID, name))
 
 	protected fun setInput(name: String, signal: DigitalSignal, interpreter: AntaresInterpreter) {
-		val port = mockk<DigitalPort>()
+		val port = mock<DigitalPort>()
 		every { port.name } returns name
 		every { port.portId } returns 1
 
@@ -38,7 +41,7 @@ abstract class AbstractAntaresInterpreterPortTest {
 	}
 
 	protected fun createPort(name: String, logic: Logic = Logic.POSITIVE): DigitalPort {
-		val port = mockk<DigitalPort>()
+		val port = mock<DigitalPort>()
 		every { port.name } returns name
 		every { port.portId } returns 1
 		every { port.logic } returns logic
@@ -46,11 +49,11 @@ abstract class AbstractAntaresInterpreterPortTest {
 	}
 
 	protected fun setInput(port: DigitalPort, signal: DigitalSignal, interpreter: AntaresInterpreter) {
-		val data = mockk<GraphActorData>()
+		val data = mock<GraphActorData>()
 		every { data.changedPort } returns port
 		every { data.getSignal<DigitalSignal>(any()) } returns signal
 
 		context.setValue(variable(port.name!!), signal)
-		interpreter.interpret(data)
+		interpreter.interpret(SubGraphFunctionContext(data, null, null))
 	}
 }

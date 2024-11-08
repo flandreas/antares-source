@@ -121,13 +121,13 @@ class PowerOnResetView(
 	}
 
 	private fun drawAnnotation(context: DrawContext) {
-		context.g.translate(-AbstractAntaresPortView.LENGTH - SIZE / 2.0, 0.0)
-		context.g.rotate(rotation.inverse().angle)
-		context.g.stroke = POWER_ON_STROKE
-		context.g.drawLine(-0.5 * SCALE, -1.5 * SCALE, -0.5 * SCALE, 1.5 * SCALE)
-		context.g.stroke = styleProvider.getStyle(StyleType.ANNOTATION).stroke
-		context.g.draw(symbolPath)
-		context.g.rotate(rotation.angle)
-		context.g.translate(AbstractAntaresPortView.LENGTH + SIZE / 2.0, 0.0)
+		context.translated(-AbstractAntaresPortView.LENGTH - SIZE / 2.0, 0.0) {
+			it.g.rotate(rotation.inverse().angle)
+			it.g.stroke = POWER_ON_STROKE
+			it.g.drawLine(-0.5 * SCALE, -1.5 * SCALE, -0.5 * SCALE, 1.5 * SCALE)
+			it.g.stroke = styleProvider.getStyle(StyleType.ANNOTATION).stroke
+			it.g.draw(symbolPath)
+			it.g.rotate(rotation.angle)
+		}
 	}
 }

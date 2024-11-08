@@ -2,11 +2,12 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.graph.ui.hierarchy.GraphHierarchyController
 import ch.scorpion.jabbah.graph.ui.hierarchy.GraphHierarchyView
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 
 class GraphHierarchyViewMockBuilder(controller: GraphHierarchyController) {
 
-	private val view = mockk<GraphHierarchyView>(relaxed = true)
+	private val view = mock<GraphHierarchyView>(MockMode.autofill)
 
 	init {
 		controller.view = view

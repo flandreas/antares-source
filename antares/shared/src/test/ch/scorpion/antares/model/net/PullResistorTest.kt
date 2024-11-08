@@ -1,13 +1,11 @@
 package ch.scorpion.antares.model.net
 
 import ch.scorpion.antares.AntaresTestRule
-import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.Bit.*
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.jabbah.execution.SignalHandler
-import io.mockk.mockk
+import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -19,7 +17,7 @@ class PullResistorTest {
 		}
 	}
 
-	private val signalHandler = mockk<SignalHandler>()
+	private val signalHandler = mock<SignalHandler>()
 
 	@Test
 	fun shouldWithdrawWeakOutput() {

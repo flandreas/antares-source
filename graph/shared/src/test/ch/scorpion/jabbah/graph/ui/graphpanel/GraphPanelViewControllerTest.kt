@@ -12,10 +12,7 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
-import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
-import ch.scorpion.jabbah.graph.GraphStorable
-import ch.scorpion.jabbah.graph.MetaGraph
-import ch.scorpion.jabbah.graph.TestEditorBuilder
+import ch.scorpion.jabbah.graph.*
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolderImpl
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
@@ -24,7 +21,8 @@ import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
@@ -51,17 +49,17 @@ class GraphPanelViewControllerTest {
 	private val controller: GraphPanelViewController
 
 	init {
-		drawingView.canvas = mockk(relaxed = true)
-		LibraryModule.libraryHolder.l = mockk(relaxed = true)
+		drawingView.canvas = CanvasMockBuilder().build()
+		LibraryModule.libraryHolder.l = mock(MockMode.autofill)
 
-		controller = GraphPanelViewController(editor, mockk(relaxed = true), applicationContextHolder, applicationModeHolder, eventBus = eventBus)
+		controller = GraphPanelViewController(editor, mock(MockMode.autofill), applicationContextHolder, applicationModeHolder, eventBus = eventBus)
 		GraphPanelViewMockBuilder(controller)
 	}
 
 	@Test
 	fun shouldSetApplicationData() {
 		val content = GraphViewBuilder<Boolean>().build()
-		val savable = mockk<Savable>(relaxed = true)
+		val savable = mock<Savable>(MockMode.autofill)
 		lateinit var event: EditedGraphViewEvent
 		eventBus.register(EditedGraphViewEvent::class) { event = it }
 
@@ -74,7 +72,7 @@ class GraphPanelViewControllerTest {
 	@Test
 	fun shouldSetApplicationDataContent() {
 		val content = GraphViewBuilder<Boolean>().build()
-		val savable = mockk<Savable>(relaxed = true)
+		val savable = mock<Savable>(MockMode.autofill)
 		lateinit var event: EditedGraphViewEvent
 		eventBus.register(EditedGraphViewEvent::class) { event = it }
 
@@ -89,7 +87,7 @@ class GraphPanelViewControllerTest {
 	@Test
 	fun shouldStopSimulationIfApplicationDataIsClosed() {
 		val content = GraphViewBuilder<Boolean>().build()
-		val savable = mockk<Savable>(relaxed = true)
+		val savable = mock<Savable>(MockMode.autofill)
 		eventBus.post(ApplicationDataEvent(null, applicationDataFor(content, savable)))
 		controller.applicationModeHolder.setMode(ApplicationMode.EXECUTE)
 

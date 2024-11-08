@@ -12,8 +12,10 @@ import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.NetView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
-import io.mockk.every
-import io.mockk.mockk
+import dev.mokkery.MockMode
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.mock
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -29,9 +31,9 @@ class UndoDeleteNetViewsTest {
 
 	private lateinit var builder: GraphViewBuilder<Boolean>
 
-	private val drawingView = mockk<DrawingView<Drawing<Component>>>()
+	private val drawingView = mock<DrawingView<Drawing<Component>>>()
 
-	private val selectionManager = mockk<SelectionManager>(relaxed = true)
+	private val selectionManager = mock<SelectionManager>(MockMode.autofill)
 
 	@BeforeTest
 	fun setup(){

@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.Clipboard
 import ch.scorpion.jabbah.draw.drawable.Movable
+import ch.scorpion.jabbah.draw.view.FocusDrawablePlayer
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.editor.AddCommand
 import ch.scorpion.jabbah.edit.model.ComponentMessage
@@ -19,13 +20,13 @@ import ch.scorpion.jabbah.edit.select.MoveCommand
  * An application service for [Drawing] that enhances the domain services and classes with
  * undo/redo functionality.
  */
-interface DrawingAppService {
+interface DrawingAppService : ComponentCustomizer {
 
 	/**
 	 * Adds the specified [Component] to a [DrawingView]'s [Drawing].
 	 * @return the effectively added [Component]. Implementations might clone [component] before adding
 	 */
-	fun add(component: Component, drawingView: DrawingView<Drawing<Component>>): Component
+	fun add(component: Component, drawingView: DrawingView<Drawing<Component>>, customizer: ComponentCustomizer? = null): Component
 
 	/**
 	 * Deletes the specified [Component] from its [Drawing].
@@ -76,8 +77,12 @@ open class DrawingAppServiceImpl(
 		private val LOG by logger(DrawingAppServiceImpl::class)
 	}
 
-	override fun add(component: Component, drawingView: DrawingView<Drawing<Component>>): Component {
-		val command = AddCommand(drawingView, component, componentCustomizer = ::customizeAddedComponent)
+	override fun add(
+		component: Component,
+		drawingView: DrawingView<Drawing<Component>>,
+		customizer: ComponentCustomizer?
+	): Component {
+		val command = AddCommand(drawingView, component, componentCustomizer = customizer?.let { ComponentCustomizerPair(it, this) } ?: this)
 		commandManager.execute(command)
 		val addedComponent = drawingView.drawing.getWithId(command.addedComponentId)!!
 		drawingView.selectionManager.deselectAll()
@@ -85,13 +90,7 @@ open class DrawingAppServiceImpl(
 		return addedComponent
 	}
 
-	/**
-	 * Used by method that add [Component]s to a [Drawing] (and the corresponding [Command]s)
-	 * to customize the properties of the [Component] after it has been added to the [Drawing].
-	 * Can for example be used to apply default from the [Drawing] (such as default colors)
-	 * to added [Component]s.
-	 */
-	protected open fun customizeAddedComponent(component: Component, drawing: Drawing<*>) {
+	override fun customizeAddedComponent(component: Component, drawing: Drawing<*>) {
 		// empty
 	}
 
@@ -112,7 +111,7 @@ open class DrawingAppServiceImpl(
 		require(components.size >= 2) { "grouping requires at least two Components" }
 		val group = GroupComponent(components)
 		commandManager.beginTransaction("edit.command.group", drawingView)
-		components.forEach { commandManager.execute(DeleteCommand(drawingView, it)) }
+		components.forEach { commandManager.execute(DeleteCommand(drawingView as DrawingView<*>, it)) }
 		add(group, drawingView)
 		commandManager.commitTransaction()
 	}
@@ -182,7 +181,9 @@ open class DrawingAppServiceImpl(
 				logComponentAction("Paste", pasteInfo.componentIds)
 				commandManager.register(PasteCommand(drawingView, it, pasteInfo, copyPasteService))
 				drawingView.selectionManager.deselectAll()
-				drawingView.selectionManager.select(pasteInfo.componentIds.map { drawingView.drawing.getWithId(it) as Component })
+				val components = pasteInfo.componentIds.map { id -> drawingView.drawing.getWithId(id) as Component }
+				drawingView.selectionManager.select(components)
+				FocusDrawablePlayer.ensureVisible(components, drawingView)
 			} catch (e: Throwable) {
 				LOG.debug("Error in paste: $e")
 				// View layers might want to give feedback to the user

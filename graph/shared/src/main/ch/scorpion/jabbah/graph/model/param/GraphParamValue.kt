@@ -1,20 +1,23 @@
 package ch.scorpion.jabbah.graph.model.param
 
+import ch.scorpion.jabbah.edit.semantic.Semantic
+import ch.scorpion.jabbah.edit.semantic.SemanticRegistry
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.io.*
 
 /**
- * Holds an quasi-immutable named value of a [GraphParamType].
+ * Holds a quasi-immutable named value of a [GraphParamType].
  * Quasi-immutable means immutable interface, but for technical reasons updated during deserialization.
  */
 class GraphParamValue<T : Any> : AbstractStorable() {
 
 	companion object {
-		fun <T : Any> create(name: String, type: GraphParamType<T>, value: T): GraphParamValue<T> {
+		fun <T : Any> create(name: String, type: GraphParamType<T>, value: T, semantic: Semantic?): GraphParamValue<T> {
 			return GraphParamValue<T>().also {
 				it._name = name
 				it._type = type
 				it._value = value
+				it._semantic = semantic
 			}
 		}
 	}
@@ -28,8 +31,11 @@ class GraphParamValue<T : Any> : AbstractStorable() {
 	private lateinit var _value: T
 	val value: T get() = _value
 
+	private var _semantic: Semantic? = null
+	val semantic: Semantic? get() = _semantic
+
 	fun evaluateIn(graph: Graph): GraphParamValue<T> =
-		create(name, type, type.evaluateIn(graph, value))
+		create(name, type, type.evaluateIn(graph, value), semantic)
 
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
 
@@ -37,12 +43,18 @@ class GraphParamValue<T : Any> : AbstractStorable() {
 		writer.writeString("name", name)
 		writer.writeString("type", type.name)
 		type.writeValue("value", value, writer)
+		semantic?.let {
+			writer.writeString("semantic", it.customName)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
 		_name =reader.readString("name")
 		_type = GraphParamTypeRegistry.get(reader.readString("type"))
 		_value = type.readValue("value", reader)
+		if (reader.hasAttribute("semantic")) {
+			_semantic = SemanticRegistry.withCustomName(reader.readString("semantic"))
+		}
 	}
 }
 
@@ -75,6 +87,9 @@ class GraphParamValues : AbstractStorable() {
 			newValues._values = values.filter { it.name != value.name }.toMutableList()
 			newValues._values.add(value)
 		}
+
+	fun firstOrNullWithSemantic(semantic: Semantic): GraphParamValue<*>? =
+		_values.firstOrNull { it.semantic == semantic }
 
 	/** ---- [Storable] interface */
 
