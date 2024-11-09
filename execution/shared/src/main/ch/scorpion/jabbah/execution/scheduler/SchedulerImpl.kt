@@ -102,6 +102,7 @@ class SchedulerImpl(
 
 	private val systemSpeedCategoryHandler: EventHandler<SystemSpeedCategoryEvent> = {
 		if (it.source === currentSystemSpeedCategory) {
+			LOG.trace("${StringUtils.formatLong(executionTime)} ns: SpeedCategory changed to '${currentSystemSpeedCategory.systemSpeedCategory.customName}'")
 			if (!displaySimulationTime) {
 				clearSimulationTimeStatus()
 			} else {

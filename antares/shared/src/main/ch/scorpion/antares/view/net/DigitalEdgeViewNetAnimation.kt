@@ -82,14 +82,17 @@ class DigitalEdgeViewNetAnimation(
 	}
 
 	/**
-	 * TODO What is the purpose of returning an [AnimationTask]? This task cannot be used for stopping the
-	 * animation, because if the animation has been spit at a [DigitalNodeView], there are multiple additional tasks.
-	 * It would be better to return nothing and to provide a stop() method that stops all running tasks.
+	 * Starts the animation.
+	 * The returned [AnimationTask] can be used to register as listener for when the [AnimationTask] has ended.
 	 */
 	override fun start(): AnimationTask {
 		val animationInfo = predecessorMap[startEdgeView]!!
 		animationInfo.animationTask!!.start()
 		return animationInfo.animationTask
+	}
+
+	override fun stop() {
+		predecessorMap[startEdgeView]?.animationTask?.stop()
 	}
 
 	/**

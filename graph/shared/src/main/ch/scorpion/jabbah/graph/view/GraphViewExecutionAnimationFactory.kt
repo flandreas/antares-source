@@ -20,6 +20,7 @@ import ch.scorpion.jabbah.graph.model.Vertice
  */
 interface EdgeViewNetAnimation {
 	fun start(): AnimationTask
+	fun stop()
 }
 
 /**

@@ -250,9 +250,16 @@ class GraphViewExecutionAnimator(
 	}
 
 	private fun interruptAllNetActingAnimations() {
-		netAnimationMap.keys.forEach { net ->
-			net.actingVisualized(applicationContextHolder.scheduler, actorListener, netAnimationMap[net]!!.actorData)
+		netAnimationMap.entries.forEach { entry ->
+			val net = entry.key
+			val actorData = netAnimationMap[net]!!.actorData
+			// Stopping the animation leads to deregister in the animation list. Create a copy of the List to avoid ConcurrentModificationException.
+			entry.value.animations.toList().forEach { animation ->
+				animation.stop()
+			}
+			net.actingVisualized(applicationContextHolder.scheduler, actorListener, actorData)
 		}
+		netAnimationMap.clear()
 	}
 
 	private fun registerAnimation(net: Net<*>, actorData: ActorData, animation: EdgeViewNetAnimation) {
