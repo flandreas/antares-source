@@ -159,7 +159,7 @@ class EventBusImpl : EventBus {
         val eventName = getEventClassName(eventClass)
         sb.appendLine("Registrations for event $eventName:")
         registrations[eventName]?.forEach {
-            sb.appendLine("- ${it::class.qualifiedName}")
+            sb.appendLine("- ${System.getClassName(it::class)}")
         }
         return sb.toString()
     }
