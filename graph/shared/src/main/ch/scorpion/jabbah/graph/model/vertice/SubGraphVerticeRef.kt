@@ -3,12 +3,11 @@ package ch.scorpion.jabbah.graph.model.vertice
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
+import ch.scorpion.jabbah.base.dsl.ExternalFunction
 import ch.scorpion.jabbah.base.dsl.Interpreter
 import ch.scorpion.jabbah.base.dsl.Memory
 import ch.scorpion.jabbah.base.dsl.ScriptMetaData
-import ch.scorpion.jabbah.base.dsl.ExternalFunction
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
@@ -126,8 +125,6 @@ class SubGraphVerticeRef(
 
 	/** Interprets the script in [Graph.script] during execution (if required by system parameters). */
 	private var interpreter: Interpreter? = null
-
-	private var isDeepExecutionCache: Boolean? = null
 
 	override var paramValues = GraphParamValues()
 		private set(value) {
@@ -273,8 +270,6 @@ class SubGraphVerticeRef(
 	/** ---- [Actor] */
 
 	override fun executionInitialize(signalHandler: SignalHandler) {
-		isDeepExecutionCache = null
-
 		super.executionInitialize(signalHandler)
 		if (!hasDesignError) {
 			if (isDeepExecution(signalHandler.isDeepExecution)) {
@@ -284,7 +279,6 @@ class SubGraphVerticeRef(
 	}
 
 	override fun executionInitializeNonVolatile(signalHandler: SignalHandler, nonVolatileData: NonVolatileStorable?) {
-		isDeepExecutionCache = null
 		super.executionInitialize(signalHandler)
 		if (!hasDesignError) {
 			if (isDeepExecution(signalHandler.isDeepExecution)) {
@@ -347,7 +341,6 @@ class SubGraphVerticeRef(
 		if (isDeepExecution(signalHandler.isDeepExecution)) {
 			graphReference.graph?.executionStopped(signalHandler)
 		}
-		isDeepExecutionCache = null
 	}
 
 	override fun executionStoppedNonVolatile(signalHandler: SignalHandler, nonVolatileData: NonVolatileStorable?) {
@@ -358,7 +351,6 @@ class SubGraphVerticeRef(
 				nonVolatileData.addChild(relativeData)
 			}
 		}
-		isDeepExecutionCache = null
 	}
 
 	override fun formNet(signalHandler: SignalHandler) {
@@ -497,12 +489,9 @@ class SubGraphVerticeRef(
 	}
 
 	fun isDeepExecution(deepExecution: Boolean): Boolean {
-		if (isDeepExecutionCache == null) {
-			isDeepExecutionCache = (graphReference.graph ?: repository.getMetaGraph(graphUUID!!).graph.model!!).let {
-				!it.purelyScripted && deepExecution || StringUtils.isEmpty(it.script)
-			}
+		return (graphReference.graph ?: repository.getMetaGraph(graphUUID!!).graph.model!!).let {
+			!it.purelyScripted && deepExecution || StringUtils.isEmpty(it.script)
 		}
-		return isDeepExecutionCache!!
 	}
 
 	private fun getSubGraphInputPorts(): ImmutableList<SubGraphInputPort<Any>> =
