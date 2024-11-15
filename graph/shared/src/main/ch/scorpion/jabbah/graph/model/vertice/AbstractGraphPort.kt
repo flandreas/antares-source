@@ -38,7 +38,9 @@ abstract class AbstractGraphPort<T : Any>(
 				getPort<Any>().let {
 					if (it is OutputPort) {
 						it.customCanBeUndefined = value
-						eventBus.post(GraphPortCanBeUndefinedChanged(this, value))
+						if (!isReading) {
+							eventBus.post(GraphPortCanBeUndefinedChanged(this, value))
+						}
 					}
 				}
 			}
@@ -54,21 +56,25 @@ abstract class AbstractGraphPort<T : Any>(
 		get() = super.name
 		set(value) {
 			if (super.name != value) {
-				if (StringUtils.isEmpty(value)) {
-					throw IllegalArgumentException(Translations.getString("graph.port.nameMustNotBeEmpty.msg"))
-				}
-				vetoableStateChanged(
-					GraphPortNameChanged(this, super.name, value),
-					successHandler = {
-						super.name = value
-						stateChanged()
-						// TODO MetaGraph (and others) still relies on EventBus communication. Eliminate!
-						eventBus.post(it)
-					},
-					vetoHandler = {
-						throw IllegalArgumentException(it.message)
+				if (isReading) {
+					super.name = value
+				} else {
+					if (StringUtils.isEmpty(value)) {
+						throw IllegalArgumentException(Translations.getString("graph.port.nameMustNotBeEmpty.msg"))
 					}
-				)
+					vetoableStateChanged(
+						GraphPortNameChanged(this, super.name, value),
+						successHandler = {
+							super.name = value
+							// super calls stateChanged
+							//stateChanged()
+							eventBus.post(it)
+						},
+						vetoHandler = {
+							throw IllegalArgumentException(it.message)
+						}
+					)
+				}
 			}
 		}
 

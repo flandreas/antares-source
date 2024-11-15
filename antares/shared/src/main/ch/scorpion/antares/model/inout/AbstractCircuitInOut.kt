@@ -58,7 +58,9 @@ abstract class AbstractCircuitInOut<T : Any>(
 			if (portType != value) {
 				val oldValue = portType
 				getPort<T>().portType = value.reverse()
-				eventBus.post(GraphPortTypeChanged(this, oldValue, portType))
+				if (!isReading) {
+					eventBus.post(GraphPortTypeChanged(this, oldValue, portType))
+				}
 			}
 		}
 

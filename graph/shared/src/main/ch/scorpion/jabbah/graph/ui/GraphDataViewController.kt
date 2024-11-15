@@ -61,7 +61,7 @@ class GraphDataViewController(
 	private val graphPortTypeHandler: EventHandler<GraphPortTypeChanged<*>> = { handle(it) }
 	private val graphPortCanBeUndefinedHandler: EventHandler<GraphPortCanBeUndefinedChanged<*>> = { handle(it) }
 
-	private val metaGraph: MetaGraph? get() = data?.content as MetaGraph?
+	private val metaGraph: MetaGraph? get() = data?.content as? MetaGraph?
 
 	init {
 		eventBus.register(OpenLibraryRequest::class, openLibraryRequestHandler)
