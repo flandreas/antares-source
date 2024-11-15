@@ -23,21 +23,21 @@ class DigitalContainerTreeView(
 ) : ContainerTreeView(portFactory, portViewFactory, styleProvider, eventBus) {
 
 	private val bitWidthHandler: EventHandler<DigitalCircuitInOutBitWidthChanged> = {
-		val treeNode = containerTree?.model?.getPortsTreeNode(it.circuitInOut.name!!)
+		val treeNode = containerTree?.model?.getPortTreeNode(it.circuitInOut.name!!)
 		if (treeNode != null && treeNode.userObject is DigitalCircuitInOutView) {
 			(treeNode.userObject as DigitalCircuitInOutView).bitWidth = it.newValue
 		}
 	}
 
 	private val signalRepresentationHandler: EventHandler<DigitalCircuitInOutSignalRepresentationChanged> = {
-		val treeNode = containerTree?.model?.getPortsTreeNode(it.circuitInOut.name!!)
+		val treeNode = containerTree?.model?.getPortTreeNode(it.circuitInOut.name!!)
 		if (treeNode != null && treeNode.userObject is DigitalCircuitInOutView) {
 			(treeNode.userObject as DigitalCircuitInOutView).signalRepresentation = it.newValue
 		}
 	}
 
 	private val startValueHandler: EventHandler<DigitalCircuitInOutStartValueChanged> = {
-		val treeNode = containerTree?.model?.getPortsTreeNode(it.circuitInOut.name!!)
+		val treeNode = containerTree?.model?.getPortTreeNode(it.circuitInOut.name!!)
 		if (treeNode != null && treeNode.userObject is DigitalCircuitInOutView) {
 			(treeNode.userObject as DigitalCircuitInOutView).startValue = it.newValue?.getValue()?.toLong()
 		}

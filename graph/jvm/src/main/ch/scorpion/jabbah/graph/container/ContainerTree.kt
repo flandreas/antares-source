@@ -112,6 +112,9 @@ class  ContainerTree(
 	}
 
 	private val portTypeHandler: EventHandler<GraphPortTypeChanged<*>> = {
+		if (it.graphPort.name != null) {
+			model.handleGraphPortTypeChanged(it.graphPort.name!!)
+		}
 		if (requiresAutoLayout) {
 			if (mainGraphView.graph!!.graphPorts.contains(it.graphPort)) {
 				generateContainerDrawing()
