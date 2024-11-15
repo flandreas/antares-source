@@ -51,5 +51,10 @@ Book by J. Clark Scott'/>
         <translation lang='en' text='Ben Eater 8-bit computer'/>
       </name>
     </libraryDictionaryEntry>
+    <libraryDictionaryEntry _id='8' uuid='87e048a2-3e58-4155-b7fc-7de69576b9b3' author='5ecf330b-e395-4e17-88b0-0883834b384a' visibility='public'>
+      <name>
+        <translation lang='en' text='Tic-Tac-Toe'/>
+      </name>
+    </libraryDictionaryEntry>
   </entries>
 </libraryDictionary>

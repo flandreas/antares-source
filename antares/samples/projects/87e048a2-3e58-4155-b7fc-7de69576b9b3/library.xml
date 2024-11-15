@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project _id='0' defaultElement='d2f41129-f90f-4905-85a7-a02881ac7754' uuid='87e048a2-3e58-4155-b7fc-7de69576b9b3' author='5ecf330b-e395-4e17-88b0-0883834b384a' imports='6707f981-110d-4629-a0bf-c35a4688025c' visibility='public'>
+  <folder>
+    <libraryFolder _id='1'>
+      <name>
+        <translation lang='en' text='Tic-Tac-Toe'/>
+      </name>
+      <items>
+        <containerLibraryElement _id='2' uuid='d2f41129-f90f-4905-85a7-a02881ac7754' type='digital'>
+          <name>
+            <translation lang='en' text='Main'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='3' uuid='19ba2150-0006-4935-937b-74ee458f2b06' type='digital'>
+          <name>
+            <translation lang='en' text='Single button ctrl'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='4' uuid='d522174f-9eda-476c-944c-a4393f8b1c93' type='digital'>
+          <name>
+            <translation lang='en' text='Keyboard'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='5' uuid='c3ecbe16-1285-4099-a716-60cef9152560' type='digital'>
+          <name>
+            <translation lang='en' text='Display'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='6' uuid='4bc59db7-e110-4385-8fba-6aefbc88b7e5' type='digital'>
+          <name>
+            <translation lang='en' text='Single LED ctrl'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='7' uuid='70cd408c-653e-4ba5-9750-39f73103a63a' type='digital'>
+          <name>
+            <translation lang='en' text='Turn indicator'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='8' uuid='6198d15b-7276-41de-8075-47e406d29a8a' type='digital'>
+          <name>
+            <translation lang='en' text='Win detector'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='9' uuid='678bc148-5a9b-4729-842d-8b88e9a48ceb' type='digital'>
+          <name>
+            <translation lang='en' text='Arbitrator'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='10' uuid='2dc64ea5-498d-4009-afce-dc11eadf0480' type='digital'>
+          <name>
+            <translation lang='en' text='End detector'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='11' uuid='2896707d-5167-42a9-830f-0f942adfe150' type='digital'>
+          <name>
+            <translation lang='en' text='Stop watch'/>
+          </name>
+        </containerLibraryElement>
+      </items>
+    </libraryFolder>
+  </folder>
+  <preferences>
+    <libraryPrefs _id='12'>
+      <content>
+        <antares.model.gate.defaultPropagationDelay>
+          <string content='20'/>
+        </antares.model.gate.defaultPropagationDelay>
+        <antares.model.undefinedInputBehaviour>
+          <string content='readAs0'/>
+        </antares.model.undefinedInputBehaviour>
+        <ch.scorpion.antares.model.input.Switch.defaultPropDelay>
+          <string content='1000'/>
+        </ch.scorpion.antares.model.input.Switch.defaultPropDelay>
+        <graph.model.allowedInconsistentNetDuration>
+          <string content='20'/>
+        </graph.model.allowedInconsistentNetDuration>
+      </content>
+    </libraryPrefs>
+  </preferences>
+</project>
