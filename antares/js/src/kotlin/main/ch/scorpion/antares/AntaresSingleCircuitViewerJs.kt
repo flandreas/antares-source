@@ -1,13 +1,11 @@
 package ch.scorpion.antares
 
-import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.ViewDecorator
 import ch.scorpion.jabbah.draw.view.CanvasJs
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
-import ch.scorpion.jabbah.execution.PauseOrResumeAction
 import ch.scorpion.jabbah.execution.ExecutionControlOutlet
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.project.AkrabApiException
@@ -27,13 +25,15 @@ import org.w3c.dom.HTMLCanvasElement
 @JsExport
 class AntaresSingleCircuitViewerJs(
     data: Any
-) : ExecutionControlOutlet {
+) {
 
     companion object {
         private val LOG by logger(AntaresSingleCircuitViewerJs::class)
     }
 
     private val controller: GraphViewerController
+
+    val executionControlOutlet: ExecutionControlOutlet get() = controller
 
     init {
         if (data !is MetaGraph) {
@@ -63,19 +63,6 @@ class AntaresSingleCircuitViewerJs(
     val circuitName: String get() = controller.graphNavigationViewController.drawingView.drawing.name.value
 
     /** ---- [ExecutionControlOutlet] interface */
-
-    override val toggleApplicationModeAction: Action get() = controller.toggleApplicationModeAction
-    override val singleStepModeAction: Action get() = controller.singleStepModeAction
-    override val pauseOrResumeAction: PauseOrResumeAction get() = controller.pauseOrResumeAction
-
-    override val systemSpeedCategoryName: String
-        get() = controller.applicationContextHolder.currentSystemSpeedCategory.systemSpeedCategory.toString()
-
-    override var currentSystemSpeed: Int
-        get() = controller.applicationContextHolder.currentSystemSpeedCategory.systemSpeed.speed
-        set(value) {
-            controller.applicationContextHolder.currentSystemSpeedCategory.systemSpeed.speed = value
-        }
 
     private fun addWatermark() {
         controller.drawingView.decorator.bottomRight = Label(
