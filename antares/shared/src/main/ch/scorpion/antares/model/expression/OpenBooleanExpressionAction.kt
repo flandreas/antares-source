@@ -33,6 +33,7 @@ class OpenBooleanExpressionAction(
 	}
 
 	override fun dispose() {
+		super.dispose()
 		controller.eventBus.unregister(openHandler)
 	}
 

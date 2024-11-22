@@ -19,10 +19,10 @@ class TruthTableSavable(
 
 	private val truthTableLibraryItem: TruthTableLibraryItem get() = item as TruthTableLibraryItem
 
-	override val description: String = if (item.library is Project) {
-		"${Translations.getString("project.savable.prefix")} \"${item.truthTable.name.getTranslation()}\""
+	override val description: String get() = if (item.library is Project) {
+		"${Translations.getString("project.savable.prefix")} \"${truthTableLibraryItem.name.getTranslation()}\""
 	} else {
-		"${Translations.getString("library.savable.prefix")} \"${item.truthTable.name.getTranslation()}\""
+		"${Translations.getString("library.savable.prefix")} \"${truthTableLibraryItem.name.getTranslation()}\""
 	}
 
 	override val editable: Boolean

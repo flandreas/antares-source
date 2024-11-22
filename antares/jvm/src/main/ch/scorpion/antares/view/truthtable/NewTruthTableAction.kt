@@ -13,7 +13,7 @@ import java.awt.Frame
 
 /**
  * Asks the user for parameters of a new [TruthTable] and creates it as new [TruthTableLibraryItem]
- * in the currently selected [LibraryDirectory]
+ * in the currently selected [LibraryDirectory].
  */
 class NewTruthTableAction(
 	controller: LibraryTreeViewController,

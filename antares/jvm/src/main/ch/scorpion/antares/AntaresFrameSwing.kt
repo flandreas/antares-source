@@ -1,5 +1,6 @@
 package ch.scorpion.antares
 
+import ch.scorpion.antares.model.addressable.ShowMemoryLibraryItemRequest
 import ch.scorpion.antares.model.expression.ShowBooleanExpressionItemRequest
 import ch.scorpion.antares.model.testcase.TestcaseViewController
 import ch.scorpion.antares.model.testcase.TestcaseViewSwing
@@ -9,6 +10,7 @@ import ch.scorpion.antares.view.AntaresFrame
 import ch.scorpion.antares.view.AntaresFrameController
 import ch.scorpion.antares.view.addressable.AddressableContentGraphDesktopItemSwing
 import ch.scorpion.antares.view.addressable.AddressableContentsPanel
+import ch.scorpion.antares.view.addressable.MemoryStorableGraphDesktopItemSwing
 import ch.scorpion.antares.view.addressable.OpenMemoryContentsRequest
 import ch.scorpion.antares.view.expression.BooleanExpressionDesktopItemSwing
 import ch.scorpion.antares.view.truthtable.TruthTableDesktopItemSwing
@@ -89,6 +91,9 @@ class AntaresFrameSwing(
 
 	override fun createBooleanExpressionDesktopViewItem(request: ShowBooleanExpressionItemRequest): GraphDesktopViewItem =
 		BooleanExpressionDesktopItemSwing(request.item, commandManager = editor.commandManager)
+
+	override fun createMemoryStorableGraphDesktopViewItem(request: ShowMemoryLibraryItemRequest): GraphDesktopViewItem =
+		MemoryStorableGraphDesktopItemSwing(request.item)
 
 	override fun showMemoryContents(request: OpenMemoryContentsRequest) {
 		AddressableContentsPanel.showAsDialog(

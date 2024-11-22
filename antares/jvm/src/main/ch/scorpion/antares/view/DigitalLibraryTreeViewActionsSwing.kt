@@ -1,10 +1,13 @@
 package ch.scorpion.antares.view
 
+import ch.scorpion.antares.model.addressable.MemoryLibraryItem
 import ch.scorpion.antares.model.expression.BooleanExpressionLibraryItem
 import ch.scorpion.antares.model.expression.OpenBooleanExpressionAction
 import ch.scorpion.antares.model.testcase.RunLibraryTestcasesAction
 import ch.scorpion.antares.model.truthtable.OpenTruthTableAction
 import ch.scorpion.antares.model.truthtable.TruthTableLibraryItem
+import ch.scorpion.antares.view.addressable.NewMemoryStorableAction
+import ch.scorpion.antares.view.addressable.OpenMemoryStorableAction
 import ch.scorpion.antares.view.expression.NewBooleanExpressionAction
 import ch.scorpion.antares.view.net.tunnel.GlobalTunnelAction
 import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTableAction
@@ -31,6 +34,9 @@ class DigitalLibraryTreeViewActionsSwing(
 	private val projectExpressionPopupMenu = JPopupMenu()
 	private val libraryExpressionPopupMenu = JPopupMenu()
 
+	private val projectMemoryPopup = JPopupMenu()
+	private val libraryMemoryPopup = JPopupMenu()
+
 	private val newTruthTableAction = register(NewTruthTableAction(controller))
 	private val openTruthTableAction = register(OpenTruthTableAction(application.controller as GraphDataViewController, controller))
 	private val createCircuitAction = register(CreateCircuitFromTruthTableAction(controller))
@@ -38,17 +44,21 @@ class DigitalLibraryTreeViewActionsSwing(
 	private val openBooleanExpressionAction = register(OpenBooleanExpressionAction(application.controller as GraphDataViewController, controller))
 	private val runTestsAction = register(RunLibraryTestcasesAction(controller))
 	private val globalTunnelAction = register(GlobalTunnelAction())
+	private val newMemoryStorableAction = register(NewMemoryStorableAction(controller))
+	private val openMemoryStorableAction = register(OpenMemoryStorableAction(application.controller as GraphDataViewController, controller))
 
 	override fun fillMainProjectDirectoryCreateActions() {
 		super.fillMainProjectDirectoryCreateActions()
 		projectDirectoryPopupMenu.add(ActionWrapperSwing(newTruthTableAction))
 		projectDirectoryPopupMenu.add(ActionWrapperSwing(newBooleanExpressionAction))
+		projectDirectoryPopupMenu.add(ActionWrapperSwing(newMemoryStorableAction))
 	}
 
 	override fun fillMainProjectRootCreateActions() {
 		super.fillMainProjectRootCreateActions()
 		projectRootMenu.add(ActionWrapperSwing(newTruthTableAction))
 		projectRootMenu.add(ActionWrapperSwing(newBooleanExpressionAction))
+		projectRootMenu.add(ActionWrapperSwing(newMemoryStorableAction))
 	}
 
 	override fun fillMainProjectRootExecuteActions() {
@@ -60,12 +70,14 @@ class DigitalLibraryTreeViewActionsSwing(
 		super.fillMainLibraryDirectoryCreateActions()
 		libraryDirectoryPopupMenu.add(ActionWrapperSwing(newTruthTableAction))
 		libraryDirectoryPopupMenu.add(ActionWrapperSwing(newBooleanExpressionAction))
+		libraryDirectoryPopupMenu.add(ActionWrapperSwing(newMemoryStorableAction))
 	}
 
 	override fun fillMainLibraryRootCreateActions() {
 		super.fillMainLibraryRootCreateActions()
 		libraryRootMenu.add(ActionWrapperSwing(newTruthTableAction))
 		libraryRootMenu.add(ActionWrapperSwing(newBooleanExpressionAction))
+		libraryRootMenu.add(ActionWrapperSwing(newMemoryStorableAction))
 	}
 
 	override fun fillMainLibraryRootExecuteActions() {
@@ -91,6 +103,12 @@ class DigitalLibraryTreeViewActionsSwing(
 
 		libraryExpressionPopupMenu.add(ActionWrapperSwing(openBooleanExpressionAction))
 		libraryExpressionPopupMenu.add(ActionWrapperSwing(deleteLibraryItemAction))
+
+		projectMemoryPopup.add(ActionWrapperSwing(openMemoryStorableAction))
+		projectMemoryPopup.add(ActionWrapperSwing(deleteProjectItemAction))
+
+		libraryMemoryPopup.add(ActionWrapperSwing(openMemoryStorableAction))
+		libraryMemoryPopup.add(ActionWrapperSwing(deleteLibraryItemAction))
 	}
 
 	override fun getPopupMenu(treeNode: DefaultMutableTreeNode): JPopupMenu? {
@@ -109,6 +127,13 @@ class DigitalLibraryTreeViewActionsSwing(
 				projectExpressionPopupMenu
 			} else {
 				libraryExpressionPopupMenu
+			}
+		}
+		if (treeNode.userObject is MemoryLibraryItem) {
+			return if ((treeNode.userObject as MemoryLibraryItem).library is Project) {
+				projectMemoryPopup
+			} else {
+				libraryMemoryPopup
 			}
 		}
 		return super.getPopupMenu(treeNode)

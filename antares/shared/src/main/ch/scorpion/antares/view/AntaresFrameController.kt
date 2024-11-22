@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view
 
+import ch.scorpion.antares.model.addressable.ShowMemoryLibraryItemRequest
 import ch.scorpion.antares.model.expression.ShowBooleanExpressionItemRequest
 import ch.scorpion.antares.model.truthtable.ShowTruthTableItemRequest
 import ch.scorpion.antares.view.addressable.OpenMemoryContentsRequest
@@ -22,6 +23,8 @@ interface AntaresFrame : GraphFrame {
 
 	fun createBooleanExpressionDesktopViewItem(request: ShowBooleanExpressionItemRequest): GraphDesktopViewItem
 
+	fun createMemoryStorableGraphDesktopViewItem(request: ShowMemoryLibraryItemRequest): GraphDesktopViewItem
+
 	fun showMemoryContents(request: OpenMemoryContentsRequest)
 
 	fun shouldReplaceLightColor(): Boolean
@@ -36,21 +39,24 @@ class AntaresFrameController(
 ) {
 
 	private val openMemoryContentsRequestHandler: EventHandler<OpenMemoryContentsRequest> = { handle(it) }
-	private val openTruthTableRequestHandler: EventHandler<ShowTruthTableItemRequest> = { handle(it) }
-	private val openBooleanExpressionRequestHandler: EventHandler<ShowBooleanExpressionItemRequest> = { handle(it) }
+	private val showTruthTableRequestHandler: EventHandler<ShowTruthTableItemRequest> = { handle(it) }
+	private val showBooleanExpressionRequestHandler: EventHandler<ShowBooleanExpressionItemRequest> = { handle(it) }
+	private val showMemoryLibraryItemRequestHandler: EventHandler<ShowMemoryLibraryItemRequest> = { handle(it) }
 	private val defaultLightColorHandler: EventHandler<DefaultLightColorEvent> = { handle(it) }
 
 	init {
 		eventBus.register(OpenMemoryContentsRequest::class, openMemoryContentsRequestHandler)
-		eventBus.register(ShowTruthTableItemRequest::class, openTruthTableRequestHandler)
-		eventBus.register(ShowBooleanExpressionItemRequest::class, openBooleanExpressionRequestHandler)
+		eventBus.register(ShowTruthTableItemRequest::class, showTruthTableRequestHandler)
+		eventBus.register(ShowBooleanExpressionItemRequest::class, showBooleanExpressionRequestHandler)
+		eventBus.register(ShowMemoryLibraryItemRequest::class, showMemoryLibraryItemRequestHandler)
 		eventBus.register(DefaultLightColorEvent::class, defaultLightColorHandler)
 	}
 
 	override fun dispose() {
 		super.dispose()
 		eventBus.unregister(openMemoryContentsRequestHandler)
-		eventBus.unregister(openTruthTableRequestHandler)
+		eventBus.unregister(showTruthTableRequestHandler)
+		eventBus.unregister(showMemoryLibraryItemRequestHandler)
 		eventBus.unregister(defaultLightColorHandler)
 	}
 
@@ -70,6 +76,10 @@ class AntaresFrameController(
 
 	private fun handle(event: ShowBooleanExpressionItemRequest) {
 		graphPanelViewController.desktopController.show(view.createBooleanExpressionDesktopViewItem(event))
+	}
+
+	private fun handle(event: ShowMemoryLibraryItemRequest) {
+		graphPanelViewController.desktopController.show(view.createMemoryStorableGraphDesktopViewItem(event))
 	}
 
 	private fun handle(event: DefaultLightColorEvent) {

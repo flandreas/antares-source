@@ -3,9 +3,7 @@ package ch.scorpion.antares.model.module
 import ch.scorpion.antares.dsl.AntaresDslModule
 import ch.scorpion.antares.model.AntaresGraphTypes
 import ch.scorpion.antares.model.DigitalGraph
-import ch.scorpion.antares.model.addressable.LookupTable
-import ch.scorpion.antares.model.addressable.RAM
-import ch.scorpion.antares.model.addressable.ROM
+import ch.scorpion.antares.model.addressable.*
 import ch.scorpion.antares.model.analog.*
 import ch.scorpion.antares.model.analysis.CircuitAnalysisService
 import ch.scorpion.antares.model.arithmetic.BitExtender
@@ -161,6 +159,8 @@ object AntaresModelModule : AbstractModule() {
 		typeMap.register("truthTableLibraryItem", TruthTableLibraryItem::class)
 		typeMap.register("expression", BooleanExpressionStorable::class)
 		typeMap.register("expressionLibraryItem", BooleanExpressionLibraryItem::class)
+		typeMap.register("memory", MemoryStorable::class)
+		typeMap.register("memoryLibraryItem", MemoryLibraryItem::class)
 
 		// Analog
 		typeMap.register("analogGraph", AnalogGraph::class)

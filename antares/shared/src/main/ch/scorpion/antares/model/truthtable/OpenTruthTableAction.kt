@@ -34,6 +34,7 @@ class OpenTruthTableAction(
 	}
 
 	override fun dispose() {
+		super.dispose()
 		controller.eventBus.unregister(openHandler)
 	}
 
