@@ -34,6 +34,8 @@ class AddressableDisplayPanel(
 		private const val SETTING_COMMENT_COLUMN_WIDTH = "addressable.commentWidth"
 		private const val DEF_VALUE_COLUMN_WIDTH = 50
 		private const val DEF_COMMENT_COLUMN_WIDTH = 200
+		private const val SETTING_LAYOUT = "addressable.layout"
+		private const val DEF_LAYOUT = 1
 	}
 
 	private val layouts = arrayOf<AddressableDisplayLayout>(
@@ -49,13 +51,18 @@ class AddressableDisplayPanel(
 	private val addressableDisplayLayout: AddressableDisplayLayout get() = layoutComboBox.selectedItem as AddressableDisplayLayout
 
     init {
+		val cellsPerRow = settings.getInt(SETTING_LAYOUT, DEF_LAYOUT)
+		layouts.firstOrNull { it.cellsPerRow == cellsPerRow }.let {
+			layoutComboBox.selectedItem = it
+		}
+
         buildUI()
 	    layoutComboBox.addActionListener { updateMemoryDisplayLayout(addressableDisplayLayout, exchange = true) }
 	    updateMemoryDisplayLayout(addressableDisplayLayout)
     }
 
 	fun dispose() {
-		storeCommentColumnWidth()
+		storeSettings()
 	}
 
 	fun refresh() {
@@ -86,7 +93,7 @@ class AddressableDisplayPanel(
 
 	private fun updateMemoryDisplayLayout(addressableDisplayLayout: AddressableDisplayLayout, exchange: Boolean = false) {
 		if (exchange) {
-			storeCommentColumnWidth()
+			storeSettings()
 		}
 
 		val tableModel = addressableDisplayLayout.createTableModel()
@@ -123,9 +130,10 @@ class AddressableDisplayPanel(
 		cmdManager.register(AddressableCommentChangeCommand(addressableRef.view, addressableRef.link, listOf(change)))
 	}
 
-	private fun storeCommentColumnWidth() {
+	private fun storeSettings() {
 		if (table.model.columnCount == 2) {
 			settings.set(SETTING_COMMENT_COLUMN_WIDTH, table.columnModel.getColumn(1).width)
 		}
+		settings.set(SETTING_LAYOUT, addressableDisplayLayout.cellsPerRow)
 	}
 }
