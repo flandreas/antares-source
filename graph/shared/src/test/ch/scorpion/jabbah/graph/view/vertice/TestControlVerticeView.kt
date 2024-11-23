@@ -48,7 +48,7 @@ class TestControlVerticeView(
 	override val controlId: String get() = "$type:${model.id}"
 
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
-		this.model = link.getLinkedVertice(startGraph) as TestControlVertice
+		this.model = link.getLinkedObject(startGraph) as TestControlVertice
 	}
 
 	override fun sourcePropertiesChanged(source: ControlViewSource<TestControlVertice>) {

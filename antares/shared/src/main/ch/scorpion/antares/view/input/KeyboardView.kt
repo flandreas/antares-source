@@ -192,7 +192,7 @@ class KeyboardView(
 	override val mirrorWidth: Double get() = 2 * AbstractAntaresPortView.LENGTH + width
 
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
-		this.model = link.getLinkedVertice(startGraph) as Keyboard
+		this.model = link.getLinkedObject(startGraph) as Keyboard
 	}
 
 	override fun sourcePropertiesChanged(source: ControlViewSource<Keyboard>) {

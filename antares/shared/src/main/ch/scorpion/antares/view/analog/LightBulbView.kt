@@ -159,7 +159,7 @@ class LightBulbView(
 	}
 
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
-		this.model = link.getLinkedVertice(startGraph) as LightBulb
+		this.model = link.getLinkedObject(startGraph) as LightBulb
 	}
 
 	private fun copyControlViewProperties(source: LightBulbView, dest: LightBulbView) {

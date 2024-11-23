@@ -1,7 +1,7 @@
 package ch.scorpion.antares.model.addressable
 
 import ch.scorpion.antares.AntaresTestRule
-import ch.scorpion.antares.model.addressable.Addressable.Companion.DATA_PORT_NAME
+import ch.scorpion.antares.model.addressable.AddressableVertice.Companion.DATA_PORT_NAME
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory

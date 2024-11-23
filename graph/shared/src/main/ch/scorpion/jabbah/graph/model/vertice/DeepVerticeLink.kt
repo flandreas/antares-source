@@ -65,21 +65,21 @@ class DeepVerticeLink(verticeIds: List<Int>): VerticeLink {
 	fun prepend(id: Int): DeepVerticeLink =
 		DeepVerticeLink(listOf(id, *verticeIds.toTypedArray()))
 
-	override fun getLinkedVertice(startGraph: Graph): Vertice {
+	override fun getLinkedObject(startGraph: Graph?): Vertice {
 		var link = this
 		var graph = startGraph
 		while (link.size > 1) {
 			val id = link.first
-			val element = graph.withId(id) as SubGraphVertice?
+			val element = graph?.withId(id) as SubGraphVertice?
 			if (element == null) {
-				LOG.warn("DeepVerticeLink broken: Cannot find element $id in graph '${graph.name}'")
+				LOG.warn("DeepVerticeLink broken: Cannot find element $id in graph '${graph?.name}'")
 				throw IllegalArgumentException()
 			}
 			graph = element.getGraph()
 			link = link.withoutFirst()
 		}
 		val id = link.first
-		val vertice = graph.withId(id) as Vertice?
+		val vertice = graph?.withId(id) as Vertice?
 		if (vertice == null) {
 			LOG.warn("DeepVerticeLink broken: Cannot find referenced Control with model ID $id")
 			throw IllegalArgumentException()

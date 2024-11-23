@@ -1,9 +1,9 @@
 package ch.scorpion.antares.model.addressable
 
 import ch.scorpion.antares.model.Trigger
-import ch.scorpion.antares.model.addressable.Addressable.Companion.ADDRESS_PORT_NAME
-import ch.scorpion.antares.model.addressable.Addressable.Companion.CHIP_SELECT_PORT_NAME
-import ch.scorpion.antares.model.addressable.Addressable.Companion.DATA_PORT_NAME
+import ch.scorpion.antares.model.addressable.AddressableVertice.Companion.ADDRESS_PORT_NAME
+import ch.scorpion.antares.model.addressable.AddressableVertice.Companion.CHIP_SELECT_PORT_NAME
+import ch.scorpion.antares.model.addressable.AddressableVertice.Companion.DATA_PORT_NAME
 import ch.scorpion.antares.model.gate.AbstractLogicGate
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
@@ -16,8 +16,8 @@ import ch.scorpion.jabbah.edit.model.text.Translation
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorData
-import ch.scorpion.jabbah.graph.model.nonvolatile.NonVolatile
 import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.model.nonvolatile.NonVolatile
 import ch.scorpion.jabbah.graph.model.nonvolatile.NonVolatileStorable
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.io.Storable
@@ -104,8 +104,6 @@ class RAM(
 	override val isSelected: Boolean get() = getChipSelectInput().getIncomingSignal() == DigitalSignalFactory.of(true)
 
 	override val currentAddress: Int get() = currentSelectedAddress
-
-	override val maxAddress: Int get() = getAddressInput().bitWidth.maxValue.toInt()
 
 	override val disassemblyWidth: Int get() = 0
 

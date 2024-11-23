@@ -221,7 +221,7 @@ class JoystickView(
 	override val mirrorHeight: Double get() = -abs(abs(bounds.maxY) - abs(bounds.minY))
 
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
-		this.model = link.getLinkedVertice(startGraph) as Joystick
+		this.model = link.getLinkedObject(startGraph) as Joystick
 	}
 
 	override fun writeModelProperties(writer: StoreWriter) { }

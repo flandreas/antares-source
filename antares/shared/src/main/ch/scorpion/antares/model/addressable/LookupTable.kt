@@ -1,5 +1,7 @@
 package ch.scorpion.antares.model.addressable
 
+import ch.scorpion.antares.model.addressable.AddressableVertice.Companion.ADDRESS_PORT_NAME
+import ch.scorpion.antares.model.addressable.AddressableVertice.Companion.DATA_PORT_NAME
 import ch.scorpion.antares.model.gate.AbstractLogicGate
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
@@ -52,8 +54,8 @@ class LookupTable(
 
 	init {
 		propagationDelay = AbstractLogicGate.DEFAULT_PROPAGATION_DELAY
-		addPort(DigitalPortImpl(portType = PortType.INPUT, name = Addressable.ADDRESS_PORT_NAME, bitWidth = addressBitWidth, description = ADDRESS_PORT_DESC))
-		addPort(DigitalPortImpl(portType = PortType.OUTPUT, name = Addressable.DATA_PORT_NAME, bitWidth = dataBitWidth,
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = ADDRESS_PORT_NAME, bitWidth = addressBitWidth, description = ADDRESS_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.OUTPUT, name = DATA_PORT_NAME, bitWidth = dataBitWidth,
 			signalRepresentation = DigitalSignalRepresentation.HEXADECIMAL, description = DATA_PORT_DESC, canBeUndefined = false))
 	}
 
@@ -62,8 +64,6 @@ class LookupTable(
 	override val storesCells: Boolean get() = true
 
 	override val isSelected: Boolean get() = true
-
-	override val maxAddress: Int get() = getAddressInput().bitWidth.maxValue.toInt()
 
 	override val currentAddress: Int get() = getAddressInput().getIncomingSignal()?.toInt() ?: 0
 

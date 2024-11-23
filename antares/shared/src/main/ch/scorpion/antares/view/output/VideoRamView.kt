@@ -293,7 +293,7 @@ class VideoRamView(
 	override val mirrorHeight: Double get() = abs(abs(bounds.maxY) - abs(bounds.minY))
 
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
-		this.model = link.getLinkedVertice(startGraph) as RAM
+		this.model = link.getLinkedObject(startGraph) as RAM
 	}
 
 	override fun sourcePropertiesChanged(source: ControlViewSource<RAM>) {

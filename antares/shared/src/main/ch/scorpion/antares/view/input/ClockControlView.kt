@@ -101,7 +101,7 @@ class ClockControlView(
 	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? = null
 
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
-		_model = link.getLinkedVertice(startGraph) as Clock
+		_model = link.getLinkedObject(startGraph) as Clock
 		this.subGraphVerticeView = subGraphVerticeView
 	}
 

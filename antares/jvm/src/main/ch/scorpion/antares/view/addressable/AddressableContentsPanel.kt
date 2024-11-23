@@ -18,7 +18,7 @@ import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.model.GraphElementAdapter
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
-import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
+import ch.scorpion.jabbah.graph.model.vertice.ObjectLink
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import java.awt.Dimension
@@ -36,9 +36,9 @@ import javax.swing.*
  * Must not keep reference to [Addressable] in order to deal with changing snapshots due to [Command] execution.
  */
 class AddressableContentsPanel(
-	private val view: DrawingView<GraphView>,
+	private val view: DrawingView<GraphView>?,
 	private val applicationContextHolder: GraphApplicationContextHolder,
-	link: VerticeLink,
+	link: ObjectLink<Addressable>,
 	private val cmdManager: CommandManager,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	private val closeHandler: ((AddressableContentsPanel) -> Unit)? = null
@@ -54,7 +54,7 @@ class AddressableContentsPanel(
 			view: DrawingView<GraphView>,
 			applicationContextHolder: GraphApplicationContextHolder,
 			name: String,
-			link: VerticeLink,
+			link: ObjectLink<Addressable>,
 			cmdManager: CommandManager
 		) {
 			DialogBuilder<AddressableContentsPanel>(parent)
@@ -113,7 +113,7 @@ class AddressableContentsPanel(
 
 	private fun updateEditable() {
 		editable = if (addressableRef.addressable.storesCells) {
-			view.editable && applicationContextHolder.applicationModeHolder.currentMode.isEdit()
+			(view == null || view.editable) && applicationContextHolder.applicationModeHolder.currentMode.isEdit()
 		} else {
 			applicationContextHolder.applicationModeHolder.currentMode.isExecute()
 		}

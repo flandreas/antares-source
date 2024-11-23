@@ -6,13 +6,13 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
-import ch.scorpion.jabbah.io.StoreWriter
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.io.StoreWriter
 
-abstract class AbstractAddressable<T : Addressable>(
+abstract class AbstractAddressable<T : AddressableVertice>(
 	calculator: VerticeCalculator<T>
-) : CalculatingVertice(calculator), Addressable {
+) : CalculatingVertice(calculator), AddressableVertice {
 
 	private val dataListeners = mutableListOf<AddressableDataListener>()
 

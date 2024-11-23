@@ -111,7 +111,7 @@ abstract class AbstractPushButtonSwitchView<T: AbstractSwitch<T>>(
 	override val mirrorWidth: Double get() = -(2 * AbstractAntaresPortView.LENGTH + width)
 
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
-		this.model = link.getLinkedVertice(startGraph) as T
+		this.model = link.getLinkedObject(startGraph) as T
 	}
 
 	override fun writeModelProperties(writer: StoreWriter) {

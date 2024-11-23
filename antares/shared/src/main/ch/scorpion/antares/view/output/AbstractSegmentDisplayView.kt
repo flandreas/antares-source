@@ -134,7 +134,7 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 	override val mirrorHeight: Double get() = -height
 
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
-		this.model = link.getLinkedVertice(startGraph) as T
+		this.model = link.getLinkedObject(startGraph) as T
 	}
 
 	override fun writeModelProperties(writer: StoreWriter) {

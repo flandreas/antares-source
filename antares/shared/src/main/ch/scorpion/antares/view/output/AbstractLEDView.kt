@@ -156,7 +156,7 @@ abstract class AbstractLEDView<T: Vertice>(
 	}
 
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
-		this.model = link.getLinkedVertice(startGraph) as T
+		this.model = link.getLinkedObject(startGraph) as T
 	}
 
 	override fun writeModelProperties(writer: StoreWriter) {

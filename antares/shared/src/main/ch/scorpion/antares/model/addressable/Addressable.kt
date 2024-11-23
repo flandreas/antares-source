@@ -29,38 +29,32 @@ interface AddressableDataListener {
 }
 
 /**
- * An [Addressable] is a [Vertice] that consists of addressable cells, each containing data content
+ * An [Addressable] is an object that consists of addressable cells, each containing data content
  * of a particular [BitWidth].
  */
-interface Addressable : Vertice {
-
-	companion object {
-		const val ADDRESS_PORT_NAME = "A"
-		const val CHIP_SELECT_PORT_NAME = "CS"
-		const val DATA_PORT_NAME = "D"
-	}
+interface Addressable {
 
 	val memory: Memory
 
-    /** Returns the current address.*/
-    val currentAddress: Int
+	/** Contains the width of the cell's addresses.*/
+	var addressWidth: BitWidth
 
-    /**
-     * Returns the maximum (i.e. the largest) address of this [Addressable]. Note that the minimum (i.e. the smallest)
-     * address is always 0. */
-    val maxAddress: Int
+	/** Contains the width of the cell's data. */
+	var dataWidth: BitWidth
 
-    /** Returns the current data at [currentAddress].*/
-    val data: ULong
+	/** Returns the current address.*/
+	val currentAddress: Int
 
-    /** Contains the width of the cell's addresses.*/
-    var addressWidth: BitWidth
+	/**
+	 * Returns the maximum (i.e. the largest) address of this [Addressable]. Note that the minimum (i.e. the smallest)
+	 * address is always 0. */
+	val maxAddress: Int
 
-    /** Contains the width of the cell's data. */
-    var dataWidth: BitWidth
+	/** Returns the current data at [currentAddress].*/
+	val data: ULong
 
-    /** Returns the maximum number of characters of all disassembly values.*/
-    val disassemblyWidth: Int
+	/** Returns the maximum number of characters of all disassembly values.*/
+	val disassemblyWidth: Int
 
 	/** Typically corresponds with the value of a "chip select (CS)" input.*/
 	val isSelected: Boolean
@@ -84,8 +78,8 @@ interface Addressable : Vertice {
 	/** Called if the underlying data of this [Addressable] has changed*/
 	fun update()
 
-    /** Returns the data at the specified address.*/
-    fun dataAt(address: Int): ULong
+	/** Returns the data at the specified address.*/
+	fun dataAt(address: Int): ULong
 
 	fun setDataAt(address: Int, value: ULong, signalHandler: SignalHandler?)
 
@@ -94,10 +88,21 @@ interface Addressable : Vertice {
 
 	fun setCommentAt(address: Int, value: String?, signalHandler: SignalHandler?)
 
-    /** Disassembles the data at the specified address and returns the result, or returns an empty
-     * [String] if this [Addressable] doesn't support disassembling.
-     */
-    fun disassemblyAt(address: Int): String
+	/** Disassembles the data at the specified address and returns the result, or returns an empty
+	 * [String] if this [Addressable] doesn't support disassembling.
+	 */
+	fun disassemblyAt(address: Int): String
+}
+
+interface AddressableVertice : Addressable, Vertice {
+
+	companion object {
+		const val ADDRESS_PORT_NAME = "A"
+		const val CHIP_SELECT_PORT_NAME = "CS"
+		const val DATA_PORT_NAME = "D"
+	}
+
+	override val maxAddress: Int get() = getAddressInput().bitWidth.maxValue.toInt()
 
 	fun getAddressInput(): DigitalPort =
 		getPort<DigitalSignal>(ADDRESS_PORT_NAME) as DigitalPort

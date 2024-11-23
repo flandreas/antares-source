@@ -123,7 +123,7 @@ class LEDMatrixView(
 		get() = "ledMatrix:${model.id}"
 
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
-		this.model = link.getLinkedVertice(startGraph) as LEDMatrix
+		this.model = link.getLinkedObject(startGraph) as LEDMatrix
 	}
 
 	override fun sourcePropertiesChanged(source: ControlViewSource<LEDMatrix>) {

@@ -277,7 +277,7 @@ class ImageSwitchView(
         get() = ControlViewSource.getControlName(type, id, model.name)
 
     override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
-        this.model = link.getLinkedVertice(startGraph) as Switch
+        this.model = link.getLinkedObject(startGraph) as Switch
     }
 
     override fun writeModelProperties(writer: StoreWriter) {}

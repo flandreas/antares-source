@@ -6,6 +6,7 @@ import ch.scorpion.antares.view.gate.LogicGateView
 import ch.scorpion.jabbah.app.ApplicationDataContentEvent
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.graph.model.vertice.ImmediateVerticeLink
+import ch.scorpion.jabbah.graph.model.vertice.ObjectLink
 import ch.scorpion.jabbah.graph.view.GraphView
 import kotlin.test.Test
 
@@ -24,7 +25,7 @@ class AddressableReferenceTest : AbstractGraphViewEditingTest(5) {
         service.add(LogicGateView.andGateView(), view)
         service.add(ROMView(), view)
 
-        ref = AddressableReference(ImmediateVerticeLink(romView.modelId), view as DrawingView<GraphView>)
+        ref = AddressableReference(ImmediateVerticeLink(romView.modelId) as ObjectLink<Addressable>, view as DrawingView<GraphView>)
     }
 
     /**

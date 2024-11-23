@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElementListener
-import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
+import ch.scorpion.jabbah.graph.model.vertice.ObjectLink
 import ch.scorpion.jabbah.graph.view.GraphView
 
 /**
@@ -18,8 +18,8 @@ import ch.scorpion.jabbah.graph.view.GraphView
  * whenever [ApplicationData] content has changed due to an undo/redo snapshot exchange.
  */
 class AddressableReference(
-	val link: VerticeLink,
-	val view: DrawingView<GraphView>,
+	val link: ObjectLink<Addressable>,
+	val view: DrawingView<GraphView>?,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) {
 
@@ -37,7 +37,7 @@ class AddressableReference(
 	private val graphElementListeners = mutableListOf<GraphElementListener>()
 
 	init {
-		registerNewContent(view.drawing.graph!!)
+		registerNewContent(view?.drawing?.graph)
 		eventBus.register(ApplicationDataContentEvent::class, applicationDataContentHandler)
 		eventBus.register(ApplicationDataContentEstablishedEvent::class, applicationDataEstablishedHandler)
 	}
@@ -48,38 +48,38 @@ class AddressableReference(
 		dataListeners.forEach { addressable.removeDataListener(it) }
 	}
 
-	fun addDataListener(l: AddressableDataListener) {
-		if (!dataListeners.contains(l)) {
-			dataListeners.add(l)
-			addressable.addDataListener(l)
-		}
-	}
-
-	fun removeDataListener(l: AddressableDataListener) {
-		dataListeners.remove(l)
-		addressable.removeDataListener(l)
-	}
-
 	fun addGraphElementListener(l: GraphElementListener) {
 		if (!graphElementListeners.contains(l)) {
 			graphElementListeners.add(l)
-			addressable.addGraphElementListener(l)
+			if (addressable is AddressableVertice) {
+				(addressable as AddressableVertice).addGraphElementListener(l)
+			}
 		}
 	}
 
 	fun removeGraphElementListener(l: GraphElementListener) {
 		graphElementListeners.remove(l)
-		addressable.removeGraphElementListener(l)
+		if (addressable is AddressableVertice) {
+			(addressable as AddressableVertice).removeGraphElementListener(l)
+		}
 	}
 
 	private fun unregisterOldContent() {
 		dataListeners.forEach { addressable.removeDataListener(it) }
-		graphElementListeners.forEach { addressable.removeGraphElementListener(it) }
+		graphElementListeners.forEach {
+			if (addressable is AddressableVertice) {
+				(addressable as AddressableVertice).removeGraphElementListener(it)
+			}
+		}
 	}
 
-	private fun registerNewContent(graph: Graph) {
-		addressable = link.getLinkedVertice(graph) as Addressable
-		graphElementListeners.forEach { addressable.addGraphElementListener(it) }
+	private fun registerNewContent(graph: Graph?) {
+		addressable = link.getLinkedObject(graph) as Addressable
+		graphElementListeners.forEach {
+			if (addressable is AddressableVertice) {
+				(addressable as AddressableVertice).addGraphElementListener(it)
+			}
+		}
 		dataListeners.forEach { addressable.addDataListener(it) }
 	}
 }

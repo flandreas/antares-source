@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.addressable
 
+import ch.scorpion.antares.model.addressable.Addressable
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -13,7 +14,7 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
-import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
+import ch.scorpion.jabbah.graph.model.vertice.ObjectLink
 import ch.scorpion.jabbah.graph.ui.desktop.*
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
@@ -23,7 +24,7 @@ import java.awt.event.FocusListener
 /** Wraps a [AddressableContentsPanel] as a [GraphDesktopViewItem] so it can be added to the [GraphDesktopView]. */
 class AddressableContentGraphDesktopItemSwing(
 	drawingView: DrawingView<GraphView>,
-	link: VerticeLink,
+	link: ObjectLink<Addressable>,
 	title: String,
 	applicationContextHolder: GraphApplicationContextHolder,
 	cmdManager: CommandManager = EditModule.commandManager,

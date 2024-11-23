@@ -1,9 +1,10 @@
 package ch.scorpion.antares.view.addressable
 
 import ch.scorpion.antares.model.addressable.Addressable
+import ch.scorpion.antares.model.addressable.AddressableVertice
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -30,6 +31,7 @@ import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.vertice.DeepVerticeLink
 import ch.scorpion.jabbah.graph.model.vertice.ImmediateVerticeLink
+import ch.scorpion.jabbah.graph.model.vertice.ObjectLink
 import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.ControlView
@@ -40,7 +42,7 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.*
 import kotlin.math.max
 
-abstract class AbstractAddressableView<T : Addressable>(
+abstract class AbstractAddressableView<T : AddressableVertice>(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	eventBus: EventBus = BaseModule.eventBus,
 	model: T
@@ -84,7 +86,12 @@ abstract class AbstractAddressableView<T : Addressable>(
 		} else {
 			ImmediateVerticeLink(this.model.id)
 		}
-		OpenMemoryContentsRequest(view, displayContentVerticeView ?: this, label.text, verticeLink, newDesktopView)
+		OpenMemoryContentsRequest(
+			view,
+			displayContentVerticeView ?: this,
+			label.text,
+			verticeLink as ObjectLink<Addressable>,
+			newDesktopView)
 	}
 
 	/** ---- UI properties */
@@ -329,7 +336,7 @@ abstract class AbstractAddressableView<T : Addressable>(
 		} else {
 			link
 		}
-		this.model = link.getLinkedVertice(startGraph) as T
+		this.model = link.getLinkedObject(startGraph) as T
 		this.displayContentVerticeView = subGraphVerticeView
 	}
 

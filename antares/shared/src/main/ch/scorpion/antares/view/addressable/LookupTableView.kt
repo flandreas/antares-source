@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.addressable
 
+import ch.scorpion.antares.model.addressable.Addressable
 import ch.scorpion.antares.model.addressable.LookupTable
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.Look
@@ -22,6 +23,7 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.vertice.ImmediateVerticeLink
+import ch.scorpion.jabbah.graph.model.vertice.ObjectLink
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 
@@ -42,7 +44,7 @@ class LookupTableView(
 			view,
 			this,
 			"LUT",
-			ImmediateVerticeLink(this.model.id),
+			ImmediateVerticeLink(this.model.id) as ObjectLink<Addressable>,
 			newDesktopView
 		)
 	}

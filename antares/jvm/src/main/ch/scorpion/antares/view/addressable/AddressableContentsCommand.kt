@@ -7,8 +7,8 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Undoable
-import ch.scorpion.jabbah.graph.app.AbstractGraphViewCommand
-import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
+import ch.scorpion.jabbah.edit.command.AbstractCommand
+import ch.scorpion.jabbah.graph.model.vertice.ObjectLink
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -17,17 +17,17 @@ import java.nio.file.Paths
  * A [Command] for loading the contents of an [Addressable] from a file.
  */
 class AddressableContentsCommand(
-	view: DrawingView<GraphView>,
-	private val link: VerticeLink,
+	private val drawingView: DrawingView<GraphView>?,
+	private val link: ObjectLink<Addressable>,
 	private val bitWidth: BitWidth,
 	private val filePath: String
-) : AbstractGraphViewCommand("antares.command.memoryContents", view), Undoable {
+) : AbstractCommand("antares.command.memoryContents"), Undoable {
 
 	companion object {
 		private val LOG by logger(AddressableContentsCommand::class)
 	}
 
-	private val addressable: Addressable get() = link.getLinkedVertice(drawingView.drawing.graph!!) as Addressable
+	private val addressable: Addressable get() = link.getLinkedObject(drawingView?.drawing?.graph)
 
 	private var oldContents: String? = null
 

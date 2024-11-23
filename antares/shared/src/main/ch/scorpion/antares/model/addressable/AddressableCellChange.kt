@@ -2,8 +2,8 @@ package ch.scorpion.antares.model.addressable
 
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Undoable
-import ch.scorpion.jabbah.graph.app.AbstractGraphViewCommand
-import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
+import ch.scorpion.jabbah.edit.command.AbstractCommand
+import ch.scorpion.jabbah.graph.model.vertice.ObjectLink
 import ch.scorpion.jabbah.graph.view.GraphView
 
 /** Represents the change of the value of an [Addressable] cell by the user.*/
@@ -14,12 +14,12 @@ data class AddressableCellChange(
 )
 
 class AddressableCellChangeCommand(
-	view: DrawingView<GraphView>,
-	private val link: VerticeLink,
+	private val drawingView: DrawingView<GraphView>?,
+	private val link: ObjectLink<Addressable>,
 	private val changes: Collection<AddressableCellChange>
-) : AbstractGraphViewCommand("antares.command.memoryContents", view), Undoable {
+) : AbstractCommand("antares.command.memoryContents"), Undoable {
 
-	private val addressable: Addressable get() = link.getLinkedVertice(drawingView.drawing.graph!!) as Addressable
+	private val addressable: Addressable get() = link.getLinkedObject(drawingView?.drawing?.graph)
 
 	override fun execute() {
 		changes.forEach { addressable.setDataAt(it.address, it.newValue, null) }

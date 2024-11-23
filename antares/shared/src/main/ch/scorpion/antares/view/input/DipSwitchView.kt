@@ -304,7 +304,7 @@ class DipSwitchView(
 	override val mirrorWidth: Double get() = -(2 * AbstractAntaresPortView.LENGTH + width)
 
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
-		this.model = link.getLinkedVertice(startGraph) as DipSwitch
+		this.model = link.getLinkedObject(startGraph) as DipSwitch
 	}
 
 	override fun writeModelProperties(writer: StoreWriter) {

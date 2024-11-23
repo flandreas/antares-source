@@ -93,7 +93,7 @@ class AntaresFrameSwing(
 		BooleanExpressionDesktopItemSwing(request.item, commandManager = editor.commandManager)
 
 	override fun createMemoryStorableGraphDesktopViewItem(request: ShowMemoryLibraryItemRequest): GraphDesktopViewItem =
-		MemoryStorableGraphDesktopItemSwing(request.item)
+		MemoryStorableGraphDesktopItemSwing(request.item, application.controller, controller.applicationContextHolder, editor.commandManager)
 
 	override fun showMemoryContents(request: OpenMemoryContentsRequest) {
 		AddressableContentsPanel.showAsDialog(

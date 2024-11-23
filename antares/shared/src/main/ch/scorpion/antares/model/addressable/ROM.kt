@@ -1,8 +1,8 @@
 package ch.scorpion.antares.model.addressable
 
-import ch.scorpion.antares.model.addressable.Addressable.Companion.ADDRESS_PORT_NAME
-import ch.scorpion.antares.model.addressable.Addressable.Companion.CHIP_SELECT_PORT_NAME
-import ch.scorpion.antares.model.addressable.Addressable.Companion.DATA_PORT_NAME
+import ch.scorpion.antares.model.addressable.AddressableVertice.Companion.ADDRESS_PORT_NAME
+import ch.scorpion.antares.model.addressable.AddressableVertice.Companion.CHIP_SELECT_PORT_NAME
+import ch.scorpion.antares.model.addressable.AddressableVertice.Companion.DATA_PORT_NAME
 import ch.scorpion.antares.model.gate.AbstractLogicGate
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitOperation
@@ -111,8 +111,6 @@ class ROM : AbstractAddressable<ROM>(CALCULATOR) {
 	override val isSelected: Boolean get() = getChipSelectInput().getIncomingSignal() == DigitalSignalFactory.of(true)
 
 	override val currentAddress: Int get() = currentSelectedAddress
-
-	override val maxAddress: Int get() = getAddressInput().bitWidth.maxValue.toInt()
 
 	override val disassemblyWidth: Int get() = _disassemblyWidth
 

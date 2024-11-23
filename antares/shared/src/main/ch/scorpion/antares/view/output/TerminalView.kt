@@ -321,7 +321,7 @@ class TerminalView(
 	override val mirrorHeight: Double get() = abs(abs(bounds.maxY) - abs(bounds.minY))
 
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
-		this.model = link.getLinkedVertice(startGraph) as Terminal
+		this.model = link.getLinkedObject(startGraph) as Terminal
 	}
 
 	override fun sourcePropertiesChanged(source: ControlViewSource<Terminal>) {
