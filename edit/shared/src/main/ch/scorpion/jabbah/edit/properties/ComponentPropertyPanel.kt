@@ -69,7 +69,16 @@ class ComponentPropertyPanelController(
 			else -> bean.toString()
 		}
 
-	override val defaultBean: Any? get() = if (editor.active) editor.drawing else null
+	override val defaultBean: Any? get() {
+		val beans = applicationDataBeanProvider.invoke(editor, emptyList())
+		return if (beans.size == 1) {
+			beans.first()
+		} else if (editor.active) {
+			editor.drawing
+		} else {
+			null
+		}
+	}
 
 	override fun getDefinedDescription(description: String): String =
 		if (bean is MultiSelection) {

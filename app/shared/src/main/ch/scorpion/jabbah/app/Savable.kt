@@ -1,5 +1,8 @@
 package ch.scorpion.jabbah.app
 
+import ch.scorpion.jabbah.edit.Bean
+import ch.scorpion.jabbah.io.Storable
+
 /**
  * An object that can be saved by [ApplicationDataViewController.save].
  */
@@ -49,6 +52,12 @@ interface Savable {
 	 * @return `true` if this [Savable] has been saved, `false` if the save process has been aborted by the user
 	 */
 	fun save(appDataViewController: ApplicationDataViewController): Boolean
+
+	/**
+	 * Returns the [Bean] whose properties are to be edited when [storable] is the current one.
+	 * @return `null` if property editing is not supported
+	 */
+	fun getPropertyBean(storable: Storable): Bean? = null
 }
 
 /** Posted by [Application] when its current [Savable] has changed.*/

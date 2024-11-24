@@ -1,15 +1,10 @@
 package ch.scorpion.jabbah.edit.properties
 
+import ch.scorpion.jabbah.edit.BeanIdProvider
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.Editor
 import com.l2fprod.common.propertysheet.Property
 import java.beans.SimpleBeanInfo
-
-/**
- * Provides the IDs of the collection of selected beans by featuring [String]
- * to also support concatenated paths of beans.
- */
-typealias BeanIdProvider = (Int) -> Collection<String>
 
 /**
  * Base class for implementing [SimpleBeanInfo]s for any kind of beans whose property changes

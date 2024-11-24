@@ -74,10 +74,10 @@ data class IssuesSummary(
  * A [UIView] for editing and executing a root [GraphView].
  *
  * Consists of the following parts:
- * - Left side: A side bar with a library panel (Preview, Library tree, Properties) and
+ * - Left side: A sidebar with a library panel (Preview, Library tree, Properties) and
  * a properties panel for editing the properties of the selected [GraphElementView].
  * - Center: A [GraphDesktopView] with a [GraphEditView] and optionally multiple [GraphNavigationView]s
- * - Bottom: A side bar with a [LogView] and an [IssuesView]
+ * - Bottom: A sidebar with a [LogView] and an [IssuesView]
  */
 interface GraphPanelView : UIView {
 	var issuesSummary: IssuesSummary?

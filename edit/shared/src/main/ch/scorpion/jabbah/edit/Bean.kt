@@ -31,6 +31,13 @@ typealias PropertyGetter<V> = (Any) -> V?
  */
 typealias BeanProvider = (Editor, Collection<String>) -> Collection<Bean>
 
+/**
+ * Provides the IDs of the collection of selected beans by featuring [String]
+ * to also support concatenated paths of beans.
+ */
+typealias BeanIdProvider = (Int) -> Collection<String>
+
+
 /** Provides the [Component] of an [Editor]'s [Drawing] with a particular ID. */
 val componentBeanProvider: BeanProvider = { e, ids ->
 	e.drawing.getWidthIds(
@@ -44,6 +51,10 @@ val componentBeanProvider: BeanProvider = { e, ids ->
 
 /** Provides the current [Drawing] of an [Editor].*/
 val drawingBeanProvider: BeanProvider = { e, _ -> listOf(e.drawing) }
+
+val emptyApplicationDataBeanProvider: BeanProvider = { _, _ -> emptyList() }
+
+var applicationDataBeanProvider: BeanProvider = emptyApplicationDataBeanProvider
 
 /**
  * A [Command] that reflects the undoable change of an object's property.

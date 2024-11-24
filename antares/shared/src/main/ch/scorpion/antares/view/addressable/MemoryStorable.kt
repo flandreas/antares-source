@@ -1,6 +1,9 @@
-package ch.scorpion.antares.model.addressable
+package ch.scorpion.antares.view.addressable
 
+import ch.scorpion.antares.model.addressable.*
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.edit.model.text.description.observableName
@@ -12,9 +15,11 @@ class MemoryStorable(
     initialName: String = "",
     addressWidth: BitWidth = BitWidth.BW_8,
     dataWidth: BitWidth = BitWidth.BW_8
-) : AbstractStorable(), Namable, Addressable {
+) : AbstractStorable(), Namable, Addressable, Bean {
 
     private val dataListeners = mutableListOf<AddressableDataListener>()
+
+    override fun toString(): String = Translations.getString("library.element.memory.name")
 
     /** ---- [Addressable] interface */
 

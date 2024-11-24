@@ -1,6 +1,5 @@
 package ch.scorpion.antares.view.addressable
 
-import ch.scorpion.antares.model.addressable.MemoryStorable
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.ActionWrapperSwing

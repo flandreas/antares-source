@@ -2,7 +2,6 @@ package ch.scorpion.antares.view.addressable
 
 import ch.scorpion.antares.model.addressable.Addressable
 import ch.scorpion.antares.model.addressable.MemoryLibraryItem
-import ch.scorpion.antares.model.addressable.MemoryStorable
 import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus

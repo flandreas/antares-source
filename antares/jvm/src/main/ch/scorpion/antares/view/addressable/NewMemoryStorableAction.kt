@@ -1,7 +1,6 @@
 package ch.scorpion.antares.view.addressable
 
 import ch.scorpion.jabbah.graph.library.LibraryDirectory
-import ch.scorpion.antares.model.addressable.MemoryStorable
 import ch.scorpion.antares.model.addressable.MemoryLibraryItem
 import ch.scorpion.antares.model.addressable.OpenMemoryLibraryItemRequest
 import ch.scorpion.jabbah.base.event.ActionEvent

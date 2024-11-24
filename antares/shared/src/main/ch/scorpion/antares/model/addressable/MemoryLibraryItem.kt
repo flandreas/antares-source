@@ -1,5 +1,6 @@
 package ch.scorpion.antares.model.addressable
 
+import ch.scorpion.antares.view.addressable.MemoryStorable
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.edit.model.text.TranslatableText

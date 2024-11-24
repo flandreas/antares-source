@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.app
 
 import ch.scorpion.jabbah.app.SaveUnchangedDataDecision.*
 import ch.scorpion.jabbah.app.action.SaveFileAction
-import ch.scorpion.jabbah.base.Disposable
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.PropertyOwner
@@ -12,8 +11,10 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.draw.ui.Toast
+import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.UndoableDataHolder
+import ch.scorpion.jabbah.edit.applicationDataBeanProvider
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.io.Storable
 
@@ -79,6 +80,19 @@ open class ApplicationDataViewController(
 
 	val saveAction by lazy { SaveFileAction(this, eventBus, commandManager) }
 
+	private val applicationDataViewBeanProvider : BeanProvider = { _, _ ->
+		if (data?.savable != null) {
+			val bean = data!!.savable.getPropertyBean(data!!.content)
+			if (bean != null) {
+				listOf(bean)
+			} else {
+				emptyList()
+			}
+		} else {
+			emptyList()
+		}
+	}
+
 	/**
 	 * Determines whether saving is currently possible.
 	 * Can be controlled by higher-level classes that e.g. implement special application modes like
@@ -96,6 +110,7 @@ open class ApplicationDataViewController(
 	init {
 		source = this
 		commandManager.bindDataHolder(this)
+		applicationDataBeanProvider = this.applicationDataViewBeanProvider
 	}
 
 	/** ---- [UndoableDataHolder] interface */

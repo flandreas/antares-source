@@ -53,7 +53,6 @@ class ApplicationData(
  * Posts an [ApplicationDataEvent] and a [CurrentSavableEvent] on [EventBus] when it has changed.
  */
 interface ApplicationDataHolder {
-
 	var data: ApplicationData?
 }
 

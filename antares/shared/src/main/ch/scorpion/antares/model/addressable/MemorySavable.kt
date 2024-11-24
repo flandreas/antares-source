@@ -1,13 +1,16 @@
 package ch.scorpion.antares.model.addressable
 
+import ch.scorpion.antares.view.addressable.MemoryStorable
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.ApplicationDataViewController
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.graph.library.AbstractLibraryItemSavable
+import ch.scorpion.jabbah.io.Storable
 
 class MemorySavable(
     item: MemoryLibraryItem,
@@ -37,4 +40,6 @@ class MemorySavable(
         appDataViewController.data = appDataViewController.data!!.withSavable(this)
         return true
     }
+
+    override fun getPropertyBean(storable: Storable): Bean = (storable as MemoryStorable)
 }
