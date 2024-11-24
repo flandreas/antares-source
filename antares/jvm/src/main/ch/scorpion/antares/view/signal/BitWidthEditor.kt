@@ -21,9 +21,10 @@ class BitWidthEditor(
 	propertyName: String,
 	editable: Boolean,
 	graphEditor: Editor?,
+	supportExpressions: Boolean,
 	errorCallback: (DslError) -> Unit,
 	filter: (BitWidth) -> Boolean = { _ -> true }
-) : ExpressionPropertyEditor<BitWidth>(propertyName, editable, errorCallback) {
+) : ExpressionPropertyEditor<BitWidth>(propertyName, editable, supportExpressions, errorCallback) {
 
 	companion object {
 		private val LOG by logger(BitWidthEditor::class)
@@ -74,7 +75,7 @@ class BitWidthEditor(
 		}
 
 	private fun parseExpression(script: String): BitWidth {
-		val bitWidth = BitWidthGraphParamType.parse(script)
+		val bitWidth = BitWidthGraphParamType.parse(script, supportExpressions)
 		return if (bitWidth is BitWidthExpression) {
 			graph?.let { bitWidth.evaluateIn(it) } ?: bitWidth
 		} else {

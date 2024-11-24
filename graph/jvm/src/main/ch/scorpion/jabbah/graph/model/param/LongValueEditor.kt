@@ -15,7 +15,7 @@ class LongValueEditor(
     editable: Boolean,
     graphEditor: Editor?,
     errorCallback: (DslError) -> Unit
-) : ExpressionPropertyEditor<LongValue>(propertyName, editable, errorCallback) {
+) : ExpressionPropertyEditor<LongValue>(propertyName, editable, true, errorCallback) {
 
     private val textField = JTextField()
 

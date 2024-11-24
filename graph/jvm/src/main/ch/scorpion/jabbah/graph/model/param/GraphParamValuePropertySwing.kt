@@ -27,6 +27,7 @@ open class ExpressionPropertySwing<T>(
 	interactive: Boolean = true,
 	displayName: String? = null,
 	baseKeyParams: Array<Any> = emptyArray(),
+	val supportExpressions: Boolean = true
 ) : CommandPropertySwing<T>(
 	propertyName,
 	baseKey,
@@ -88,14 +89,13 @@ class GraphParamValuePropertySwing<V : Any>(
 abstract class ExpressionPropertyEditor<T>(
 	protected val propertyName: String,
 	protected val editable: Boolean,
+	protected val supportExpressions: Boolean = true,
 	private val errorCallback: (DslError) -> Unit
 ) : AbstractPropertyEditor() {
 
 	companion object {
 		private val LOG by logger(ExpressionPropertyEditor::class)
 	}
-
-	private val button = JButton()
 
 	protected abstract val contentEditor: JComponent
 
@@ -110,13 +110,15 @@ abstract class ExpressionPropertyEditor<T>(
 
 		panel.add(contentEditor, BorderLayout.CENTER)
 
-		button.alignmentY = Component.TOP_ALIGNMENT
-		button.icon = UiUtil.themedIcon(TextPropertyEditor.ICON_PATH)
-		button.border = BorderFactory.createEmptyBorder(0, 0, 0, 0)
-		button.toolTipText = Translations.getString("edit.action.editScript.tooltip")
-		button.addActionListener { showDialog() }
-
-		panel.add(button, BorderLayout.EAST)
+		if (supportExpressions) {
+			val button = JButton()
+			button.alignmentY = Component.TOP_ALIGNMENT
+			button.icon = UiUtil.themedIcon(TextPropertyEditor.ICON_PATH)
+			button.border = BorderFactory.createEmptyBorder(0, 0, 0, 0)
+			button.toolTipText = Translations.getString("edit.action.editScript.tooltip")
+			button.addActionListener { showDialog() }
+			panel.add(button, BorderLayout.EAST)
+		}
 
 		editor = panel
 	}

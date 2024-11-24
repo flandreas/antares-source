@@ -16,8 +16,8 @@ import ch.scorpion.jabbah.graph.model.param.ExpressionPropertySwing
 
 object AntaresProperties {
 
-	fun bitWidth(name: String = "bitWidth", baseKey: String = BitWidth.BASE_KEY, beanProvider: BeanProvider = componentBeanProvider) =
-		ExpressionPropertySwing(name, baseKey, BitWidth::class.java, beanProvider)
+	fun bitWidth(name: String = "bitWidth", baseKey: String = BitWidth.BASE_KEY, beanProvider: BeanProvider = componentBeanProvider, supportExpressions: Boolean = true) =
+		ExpressionPropertySwing(name, baseKey, BitWidth::class.java, beanProvider, supportExpressions = supportExpressions)
 
 	fun portType(name: String = "portType"): CommandPropertySwing<PortType> =
 		CommandPropertySwing(name, PortType.BASE_KEY, PortType::class.java, componentBeanProvider)

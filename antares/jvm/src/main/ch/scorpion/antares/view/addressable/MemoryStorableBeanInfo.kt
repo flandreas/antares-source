@@ -12,8 +12,10 @@ class MemoryStorableBeanInfo : AbstractBeanInfo<MemoryStorable>() {
 
     companion object {
         private val name = EditProperties.name(beanProvider = applicationDataBeanProvider)
-        private val addressBitWidth = AntaresProperties.bitWidth("addressWidth", "element.property.addressBitWidth", beanProvider = applicationDataBeanProvider)
-        private val dataBitWidth = AntaresProperties.bitWidth("dataWidth", "element.property.dataBitWidth", beanProvider = applicationDataBeanProvider)
+        private val addressBitWidth = AntaresProperties.bitWidth("addressWidth",
+            "element.property.addressBitWidth", beanProvider = applicationDataBeanProvider, supportExpressions = false)
+        private val dataBitWidth = AntaresProperties.bitWidth("dataWidth", "element.property.dataBitWidth",
+            beanProvider = applicationDataBeanProvider, supportExpressions = false)
     }
 
     override fun addProperties(bean: MemoryStorable, editor: Editor, properties: MutableList<Property>) {

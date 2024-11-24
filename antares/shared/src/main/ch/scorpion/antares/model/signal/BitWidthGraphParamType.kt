@@ -55,11 +55,14 @@ object BitWidthGraphParamType : GraphParamType<BitWidth> {
 
 	/** ---- [BitWidthGraphParamType] */
 
-	fun parse(s: String): BitWidth {
+	fun parse(s: String, supportExpression: Boolean): BitWidth {
 		val number = s.toIntOrNull()
 		return if (number != null) {
 			BitWidth.of(number)
 		} else {
+			if (!supportExpression) {
+				throw IllegalArgumentException("Expressions not supported")
+			}
 			if (s.trimStart().startsWith(GraphParamType.EXPRESSION_OP)) {
 				BitWidthExpression(s.trimStart().drop(1))
 			} else {
