@@ -9,7 +9,6 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.model.GraphElementListener
 import ch.scorpion.jabbah.graph.model.vertice.ObjectLink
 import ch.scorpion.jabbah.graph.view.GraphView
 
@@ -34,8 +33,6 @@ class AddressableReference(
 
 	private val dataListeners = mutableListOf<AddressableDataListener>()
 
-	private val graphElementListeners = mutableListOf<GraphElementListener>()
-
 	init {
 		registerNewContent(view?.drawing?.graph)
 		eventBus.register(ApplicationDataContentEvent::class, applicationDataContentHandler)
@@ -48,38 +45,24 @@ class AddressableReference(
 		dataListeners.forEach { addressable.removeDataListener(it) }
 	}
 
-	fun addGraphElementListener(l: GraphElementListener) {
-		if (!graphElementListeners.contains(l)) {
-			graphElementListeners.add(l)
-			if (addressable is AddressableVertice) {
-				(addressable as AddressableVertice).addGraphElementListener(l)
-			}
+	fun addDataListener(l: AddressableDataListener) {
+		if (!dataListeners.contains(l)) {
+			dataListeners.add(l)
+			addressable.addDataListener(l)
 		}
 	}
 
-	fun removeGraphElementListener(l: GraphElementListener) {
-		graphElementListeners.remove(l)
-		if (addressable is AddressableVertice) {
-			(addressable as AddressableVertice).removeGraphElementListener(l)
-		}
+	fun removeDataListener(l: AddressableDataListener) {
+		dataListeners.remove(l)
+		addressable.removeDataListener(l)
 	}
 
 	private fun unregisterOldContent() {
 		dataListeners.forEach { addressable.removeDataListener(it) }
-		graphElementListeners.forEach {
-			if (addressable is AddressableVertice) {
-				(addressable as AddressableVertice).removeGraphElementListener(it)
-			}
-		}
 	}
 
 	private fun registerNewContent(graph: Graph?) {
-		addressable = link.getLinkedObject(graph) as Addressable
-		graphElementListeners.forEach {
-			if (addressable is AddressableVertice) {
-				(addressable as AddressableVertice).addGraphElementListener(it)
-			}
-		}
+		this.addressable = link.getLinkedObject(graph)
 		dataListeners.forEach { addressable.addDataListener(it) }
 	}
 }

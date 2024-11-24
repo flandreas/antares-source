@@ -1,9 +1,6 @@
 package ch.scorpion.antares.view.addressable
 
-import ch.scorpion.antares.model.addressable.Addressable
-import ch.scorpion.antares.model.addressable.AddressableClearCommand
-import ch.scorpion.antares.model.addressable.AddressableReference
-import ch.scorpion.antares.model.addressable.MemoryDump
+import ch.scorpion.antares.model.addressable.*
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
@@ -16,8 +13,6 @@ import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
-import ch.scorpion.jabbah.graph.model.GraphElementAdapter
-import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.vertice.ObjectLink
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
@@ -71,8 +66,16 @@ class AddressableContentsPanel(
 
 	private val memoryDisplayPanel = AddressableDisplayPanel(addressableRef, { editable } , applicationContextHolder)
 
-	private val addressableListener = object : GraphElementAdapter() {
-		override fun stateChanged(e: GraphElementEvent) {
+	private val addressableDataListener = object : AddressableDataListener {
+		override fun dataChanged(event: AddressableDataEvent) {
+			handle()
+		}
+
+		override fun commentChanged(event: AddressableCommentEvent) {
+			handle()
+		}
+
+		private fun handle() {
 			invalidate()
 			repaint()
 		}
@@ -96,7 +99,7 @@ class AddressableContentsPanel(
 	var closeButton: JButton? = null
 
 	init {
-		addressableRef.addGraphElementListener(addressableListener)
+		addressableRef.addDataListener(addressableDataListener)
 		buildUI()
 		updateEditable()
 		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
@@ -104,7 +107,7 @@ class AddressableContentsPanel(
 
 	fun dispose() {
 		eventBus.unregister(applicationModeHandler)
-		addressableRef.removeGraphElementListener(addressableListener)
+		addressableRef.removeDataListener(addressableDataListener)
 		addressableRef.dispose()
 		memoryDisplayPanel.dispose()
 	}

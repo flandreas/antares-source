@@ -14,6 +14,8 @@ class MemoryStorable(
     dataWidth: BitWidth = BitWidth.BW_8
 ) : AbstractStorable(), Namable, Addressable {
 
+    private val dataListeners = mutableListOf<AddressableDataListener>()
+
     /** ---- [Addressable] interface */
 
     override val memory = Memory()
@@ -37,15 +39,18 @@ class MemoryStorable(
     override var dataSource: String? = null
 
     override fun addDataListener(listener: AddressableDataListener) {
-        // Not needed?
+        if (!dataListeners.contains(listener)) {
+            dataListeners.add(listener)
+        }
     }
 
     override fun removeDataListener(listener: AddressableDataListener) {
-        // Not needed?
+        dataListeners.remove(listener)
     }
 
     override fun clear() {
         memory.clear()
+        notifyDataChanged(null, null, null)
     }
 
     override fun update() {
@@ -55,13 +60,17 @@ class MemoryStorable(
     override fun dataAt(address: Int): ULong = memory.read(address)
 
     override fun setDataAt(address: Int, value: ULong, signalHandler: SignalHandler?) {
+        val oldValue = memory.read(address)
         memory.write(address, value)
+        notifyDataChanged(address, oldValue, value)
     }
 
     override fun commentAt(address: Int): String? = memory.readComment(address)
 
     override fun setCommentAt(address: Int, value: String?, signalHandler: SignalHandler?) {
+        val oldValue = memory.readComment(address)
         memory.writeComment(address, value)
+        notifyCommentChanged(address, oldValue, value)
     }
 
     override fun disassemblyAt(address: Int): String = ""
@@ -87,4 +96,16 @@ class MemoryStorable(
     }
 
     override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {}
+
+    /** ---- [MemoryStorable] */
+
+    private fun notifyDataChanged(address: Int?, oldValue: ULong?, newValue: ULong?) {
+        val event = AddressableDataEvent(address, oldValue, newValue)
+        dataListeners.forEach { it.dataChanged(event) }
+    }
+
+    private fun notifyCommentChanged(address: Int, oldValue: String?, newValue: String?) {
+        val event = AddressableCommentEvent(address, oldValue, newValue)
+        dataListeners.forEach { it.commentChanged(event) }
+    }
 }
