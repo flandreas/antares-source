@@ -38,7 +38,7 @@ class ComponentPropertyPanelController(
 	/**
 	 * Listens for property changes of the currently selected [Component] that are NOT initiated by this
 	 * [ComponentPropertyPanel], such as rotations requested by keyboard or menu interactions, in order
-	 * to update the contents of the [ComponentPropertyPanel] and avoiding to set outdated property values
+	 * to update the contents of the [ComponentPropertyPanel] and avoid wetting outdated property values
 	 * the next time the user changes any other properties.
 	 *
 	 * Ideally, this mechanisms would use regular PropertyEvents from editable [Component] properties,
@@ -74,7 +74,7 @@ class ComponentPropertyPanelController(
 	override fun getDefinedDescription(description: String): String =
 		if (bean is MultiSelection) {
 			(bean as MultiSelection).let {
-				// Cannot use commonType, because their might be different types implemented by the same class
+				// Cannot use commonType, because there might be different types implemented by the same class
 				if (it.selection.all { component -> component.type == it.type }) {
 					Translations.getString("edit.property.bean.multiSelect", description)
 				} else {
@@ -157,7 +157,7 @@ class ComponentPropertyPanelController(
 		}
 
 		// Optimization: Avoid expensive common superclass calculation if all have the same type
-		// Cannot use clazz comparison, because their might be different types implemented by the same class
+		// Cannot use clazz comparison, because there might be different types implemented by the same class
 		if (components.map { it.propertyOwner }.all { it.type == components.first().type }) {
 			return MultiSelection(components, components.first().propertyOwner::class)
 		}
