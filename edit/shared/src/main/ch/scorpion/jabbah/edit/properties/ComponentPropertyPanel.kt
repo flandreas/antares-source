@@ -18,10 +18,11 @@ interface ComponentPropertyPanel : PropertyPanel
 
 /**
  * Displays the properties of the currently selected [Component] and allows the user to edit them.
+ * If there is no selection, it displays the current application data property bean as [defaultBean].
  */
-class ComponentPropertyPanelController(
+open class ComponentPropertyPanelController(
 	editor: Editor,
-	private val eventBus: EventBus = BaseModule.eventBus,
+	protected val eventBus: EventBus = BaseModule.eventBus,
 	private val properties: Properties = BaseModule.properties
 ) : AbstractPropertyPanelController<ComponentPropertyPanel>(editor) {
 
@@ -69,16 +70,7 @@ class ComponentPropertyPanelController(
 			else -> bean.toString()
 		}
 
-	override val defaultBean: Any? get() {
-		val beans = applicationDataBeanProvider.invoke(editor, emptyList())
-		return if (beans.size == 1) {
-			beans.first()
-		} else if (editor.active) {
-			editor.drawing
-		} else {
-			null
-		}
-	}
+	override val defaultBean: Any? get() = if (editor.active) editor.drawing else null
 
 	override fun getDefinedDescription(description: String): String =
 		if (bean is MultiSelection) {

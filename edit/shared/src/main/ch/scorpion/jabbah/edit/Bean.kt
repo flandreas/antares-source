@@ -52,10 +52,6 @@ val componentBeanProvider: BeanProvider = { e, ids ->
 /** Provides the current [Drawing] of an [Editor].*/
 val drawingBeanProvider: BeanProvider = { e, _ -> listOf(e.drawing) }
 
-val emptyApplicationDataBeanProvider: BeanProvider = { _, _ -> emptyList() }
-
-var applicationDataBeanProvider: BeanProvider = emptyApplicationDataBeanProvider
-
 /**
  * A [Command] that reflects the undoable change of an object's property.
  *

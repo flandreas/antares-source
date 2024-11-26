@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.ui.graphpanel
 
 import ch.scorpion.jabbah.app.*
+import ch.scorpion.jabbah.app.properties.ApplicationDataPropertyPanelController
 import ch.scorpion.jabbah.base.IssueSeverity
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
@@ -29,7 +30,6 @@ import ch.scorpion.jabbah.edit.model.text.EditModelTextModule
 import ch.scorpion.jabbah.edit.model.text.TextTool
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.module.EditModule
-import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanelController
 import ch.scorpion.jabbah.execution.*
 import ch.scorpion.jabbah.execution.issue.IssueCollectorEvent
 import ch.scorpion.jabbah.execution.issue.IssuesView
@@ -111,7 +111,7 @@ class GraphPanelViewController(
 		private val LOG by logger(GraphPanelViewController::class)
 	}
 
-	val propertyPanelController = ComponentPropertyPanelController(editor, eventBus)
+	val propertyPanelController = ApplicationDataPropertyPanelController(editor, eventBus)
 	val libraryPanelController = LibraryPanelController(applicationModeHolder, libraryHolder, eventBus)
 	val editViewController = GraphEditViewController(editor, applicationModeHolder, applicationContextHolder, applicationDataHolder.data?.savable, eventBus)
 	val desktopController = GraphDesktopViewController(applicationContextHolder, eventBus = eventBus)

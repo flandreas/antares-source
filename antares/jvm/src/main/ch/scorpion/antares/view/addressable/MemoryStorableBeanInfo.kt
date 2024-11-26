@@ -1,8 +1,8 @@
 package ch.scorpion.antares.view.addressable
 
 import ch.scorpion.antares.view.AntaresProperties
+import ch.scorpion.jabbah.app.properties.applicationDataBeanProvider
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.applicationDataBeanProvider
 import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.edit.properties.AbstractBeanInfo
 import com.l2fprod.common.propertysheet.Property

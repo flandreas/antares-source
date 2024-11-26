@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.app
 
 import ch.scorpion.jabbah.app.SaveUnchangedDataDecision.*
 import ch.scorpion.jabbah.app.action.SaveFileAction
+import ch.scorpion.jabbah.app.properties.applicationDataBeanProvider
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.PropertyOwner
@@ -14,7 +15,6 @@ import ch.scorpion.jabbah.draw.ui.Toast
 import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.UndoableDataHolder
-import ch.scorpion.jabbah.edit.applicationDataBeanProvider
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.io.Storable
 
@@ -49,7 +49,7 @@ interface ApplicationDataView : UIView {
 	 * Called if [ApplicationData] is opened. Tracks usage if previous registration is
 	 * older than a certain time. Used to track usage even if users seldom restart the application.
 	 *
-	 * Part of the [UIView] because the controller is platform agnostic.
+	 * Part of the [UIView] because the controller is platform-agnostic.
 	 */
 	fun registerKeepAliveUsage()
 }
@@ -169,7 +169,6 @@ open class ApplicationDataViewController(
 	 */
 	fun open(provider: () -> ApplicationData) {
 		if (canReplaceSavable("file.action.open.name")) {
-			LOG.userTrail("Open application data")
 			this.data = provider.invoke()
 		}
 	}
