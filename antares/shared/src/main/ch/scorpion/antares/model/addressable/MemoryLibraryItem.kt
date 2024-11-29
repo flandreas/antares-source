@@ -29,12 +29,11 @@ data class OpenMemoryLibraryItemRequest(val item: MemoryLibraryItem)
  */
 data class ShowMemoryLibraryItemRequest(val item: MemoryLibraryItem)
 
-// TODO: Icon
 class MemoryLibraryItem(
     memoryStorable: MemoryStorable = MemoryStorable()
 ) : AbstractLibraryItem(
     TranslatableText(Translations.getString("library.element.memory.name")),
-    iconPath = "/img/truth-table.png"
+    iconPath = "/img/memory-storable.png"
 ), UndoableStateLibraryItem<MemoryStorable> {
 
     var memoryStorable: MemoryStorable = memoryStorable
@@ -46,7 +45,7 @@ class MemoryLibraryItem(
         get() = memoryStorable.name
         set(value) { memoryStorable.name = value }
 
-    override val activeIconPath: String get() = "/img/truth-table-active.png"
+    override val activeIconPath: String get() = "/img/memory-storable-active.png"
 
     override val isFixed: Boolean get() = false
 
