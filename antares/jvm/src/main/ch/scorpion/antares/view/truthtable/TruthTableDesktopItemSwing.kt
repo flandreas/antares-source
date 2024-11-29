@@ -17,12 +17,11 @@ import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.draw.CloseViewRequest
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.view.DrawViewModule
-import ch.scorpion.jabbah.draw.view.ContentView
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
-import ch.scorpion.jabbah.graph.ui.desktop.AbstractGraphDesktopItemPanelSwing
+import ch.scorpion.jabbah.graph.ui.desktop.AbstractGraphDesktopViewItemSwing
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopItemHeaderPanelSwing
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItemCloseRequest
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -43,7 +42,7 @@ class TruthTableDesktopItemSwing(
 	private val createCircuitService: CreateCircuitFromTruthTableService = AntaresModuleJvm.createCircuitFromTruthTableService,
 	commandManager: CommandManager,
 	private val eventBus: EventBus = BaseModule.eventBus
-) : AbstractGraphDesktopItemPanelSwing() {
+) : AbstractGraphDesktopViewItemSwing() {
 
 	companion object {
 		private val EXPRESSION_FONT = Font(Font.MONOSPACED, Font.PLAIN, 12)
@@ -145,7 +144,7 @@ class TruthTableDesktopItemSwing(
 		return panel
 	}
 
-	/** ---- [AbstractGraphDesktopItemPanelSwing] */
+	/** ---- [AbstractGraphDesktopViewItemSwing] */
 
 	override fun addContextColorBorder(color: Color) { }
 

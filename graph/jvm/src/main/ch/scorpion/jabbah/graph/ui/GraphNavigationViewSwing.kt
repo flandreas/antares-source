@@ -20,7 +20,7 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.SearchInMetaGraphRequest
-import ch.scorpion.jabbah.graph.ui.desktop.AbstractGraphDesktopItemPanelSwing
+import ch.scorpion.jabbah.graph.ui.desktop.AbstractGraphDesktopViewItemSwing
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopItemHeaderPanelSwing
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -39,7 +39,7 @@ class GraphNavigationViewSwing(
 	contextBorderColor: CompositeColor? = null,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	allowCloseInHeader: Boolean = true
-) : AbstractGraphDesktopItemPanelSwing(), GraphNavigationView {
+) : AbstractGraphDesktopViewItemSwing(), GraphNavigationView {
 
 	private val navigationStack: NavigationStack<GraphView> = controller.navigationStack
 

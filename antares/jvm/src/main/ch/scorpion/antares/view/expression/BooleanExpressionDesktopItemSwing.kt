@@ -22,12 +22,11 @@ import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.draw.CloseViewRequest
 import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.draw.view.ContentView
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
-import ch.scorpion.jabbah.graph.ui.desktop.AbstractGraphDesktopItemPanelSwing
+import ch.scorpion.jabbah.graph.ui.desktop.AbstractGraphDesktopViewItemSwing
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopItemHeaderPanelSwing
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItemCloseRequest
@@ -46,7 +45,7 @@ class BooleanExpressionDesktopItemSwing(
 	private val truthTableService: TruthTableService = AntaresModelModule.truthTableService,
 	private val createCircuitService: CreateCircuitFromTruthTableService = AntaresModuleJvm.createCircuitFromTruthTableService,
 	private val eventBus: EventBus = BaseModule.eventBus
-) : AbstractGraphDesktopItemPanelSwing() {
+) : AbstractGraphDesktopViewItemSwing() {
 
 	companion object {
 		private val ERROR_ICON = UiUtil.themedIcon("/img/error-16.png")
