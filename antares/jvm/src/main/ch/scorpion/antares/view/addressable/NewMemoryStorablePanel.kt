@@ -24,7 +24,6 @@ class NewMemoryStorablePanel(
                 .content { dialog -> NewMemoryStorablePanel(closeHandler = { dialog.dispose() }) }
                 .title(Translations.getString("library.newMemoryStorable.title"))
                 .defaultButton { it.okButton }
-                .preferredSize(Dimension(300, 200))
                 .nonResizable()
                 .show()
 
