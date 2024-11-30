@@ -1,4 +1,4 @@
-package ch.scorpion.antares.view.addressable
+package ch.scorpion.antares.model.addressable
 
 import ch.scorpion.antares.view.AntaresProperties
 import ch.scorpion.jabbah.app.properties.applicationDataBeanProvider

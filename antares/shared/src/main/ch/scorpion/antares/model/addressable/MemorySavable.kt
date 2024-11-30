@@ -1,6 +1,5 @@
 package ch.scorpion.antares.model.addressable
 
-import ch.scorpion.antares.view.addressable.MemoryStorable
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.ApplicationDataViewController
 import ch.scorpion.jabbah.base.Translations

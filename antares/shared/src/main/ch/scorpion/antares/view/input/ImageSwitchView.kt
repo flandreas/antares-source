@@ -60,6 +60,7 @@ class ImageSwitchView(
         private const val DEF_SIZE = Look.SCALE * 6
     }
 
+    @Suppress("MemberVisibilityCanBePrivate") // Reflection
     var onImageUuid: UUID? = onImageUuid
         set(value) {
             if (field != value) {
@@ -77,6 +78,7 @@ class ImageSwitchView(
         }
     }
 
+    @Suppress("MemberVisibilityCanBePrivate") // Reflection
     var offImageUuid: UUID? = offImageUuid
         set(value) {
             if (field != value) {

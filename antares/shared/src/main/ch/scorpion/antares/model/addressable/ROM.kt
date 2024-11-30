@@ -16,6 +16,8 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.Translation
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
+import ch.scorpion.jabbah.graph.library.LibraryHolder
+import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
@@ -24,11 +26,12 @@ import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import kotlin.math.max
 
-
 /**
  * A read-only memory whose address width and data width can be specified.
  */
-class ROM : AbstractAddressable<ROM>(CALCULATOR) {
+class ROM(
+	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder
+) : AbstractAddressable<ROM>(CALCULATOR) {
 
 	companion object {
 
@@ -85,8 +88,15 @@ class ROM : AbstractAddressable<ROM>(CALCULATOR) {
 	 * If `true`, the data in [dataSource] is loaded every time the simulation is started.
 	 * This eases editing data files with an external tool and eliminates the need to manually
 	 * import data after every change.
+	 * Not used if [memoryStorableUuid] is set.
 	 */
 	var loadDataSource: Boolean = false
+
+	/**
+	 * If set, the contents from the referenced [MemoryStorable] is loaded into [memory] every time
+	 * the simulation is started. Overwrites the property [loadDataSource].
+	 */
+	var memoryStorableUuid: UUID? = null
 
 	private val disassembler = Disassembler()
 
@@ -139,6 +149,9 @@ class ROM : AbstractAddressable<ROM>(CALCULATOR) {
 			writer.writeString("disassembler", disassemblerConfig)
 		}
 		writer.writeBoolean("loadDataSource", loadDataSource)
+		if (memoryStorableUuid != null) {
+			writer.writeString("memoryStorable", memoryStorableUuid.toString())
+		}
 	}
 
 	override fun read(reader: StoreReader) {
@@ -150,26 +163,41 @@ class ROM : AbstractAddressable<ROM>(CALCULATOR) {
 		if (reader.hasAttribute("loadDataSource")) {
 			loadDataSource = reader.readBoolean("loadDataSource")
 		}
+		if (reader.hasAttribute("memoryStorable")) {
+			memoryStorableUuid = UUID(reader.readString("memoryStorable"))
+		}
 	}
 
 	/** --- [Actor] interface */
 
 	override fun executionInitialize(signalHandler: SignalHandler) {
 		super.executionInitialize(signalHandler)
-		if (loadDataSource && StringUtils.isNotBlank(dataSource)) {
-			try {
-				System.getFileContents(dataSource!!)?.let {
-					MemoryDump.read(memory, it)
-				}
-			} catch (e: Exception) {
-				BaseModule.eventBus.post(IssueImpl(
-					IssueSeverity.Warning,
-					Translations.getString("ROM.loadDataSource.loadError.txt"),
-					null,
-					"ROM (ID $id)",
-					null)
-				)
+		try {
+			if (memoryStorableUuid != null) {
+				loadFromMemoryStorable()
+			} else if (loadDataSource && StringUtils.isNotBlank(dataSource)) {
+				loadFromDataSource()
 			}
+		} catch (e: Exception) {
+			BaseModule.eventBus.post(IssueImpl(
+				IssueSeverity.Warning,
+				Translations.getString("ROM.loadDataSource.loadError.txt"),
+				null,
+				"ROM (ID $id)",
+				null)
+			)
+		}
+	}
+
+	private fun loadFromDataSource() {
+		System.getFileContents(dataSource!!)?.let {
+			MemoryDump.read(memory, it)
+		}
+	}
+
+	private fun loadFromMemoryStorable() {
+		findMemoryLibraryItem(memoryStorableUuid!!)?.let {
+			MemoryDump.read(memory, MemoryDump.write(it.memoryStorable.memory, dataWidth))
 		}
 	}
 
@@ -206,5 +234,17 @@ class ROM : AbstractAddressable<ROM>(CALCULATOR) {
 		val d = disassembler.disassemble(value)
 		disassembly[address] = d
 		_disassemblyWidth = max(_disassemblyWidth, disassembly[address]!!.length)
+	}
+
+	private fun findMemoryLibraryItem(uuid: UUID): MemoryLibraryItem? {
+		libraryHolder.library.expandedImports.libraries.forEach { lib ->
+			val elem = lib.firstLocalItemOrNull { elem ->
+				elem is MemoryLibraryItem && elem.uuid.id == uuid.toString()
+			}
+			if (elem != null) {
+				return elem as MemoryLibraryItem
+			}
+		}
+		return null
 	}
 }

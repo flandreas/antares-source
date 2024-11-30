@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.addressable
 
+import ch.scorpion.antares.model.addressable.MemoryStorable
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.ActionWrapperSwing
@@ -9,7 +10,6 @@ import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.ui.UIBasics
 import java.awt.BorderLayout
 import java.awt.Component
-import java.awt.Dimension
 import java.awt.Frame
 import javax.swing.*
 

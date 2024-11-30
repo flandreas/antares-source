@@ -1,10 +1,11 @@
 package ch.scorpion.antares.model.addressable
 
-import ch.scorpion.antares.view.addressable.MemoryStorable
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.app.Savable
+import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.library.LibraryItem
@@ -36,6 +37,9 @@ class MemoryLibraryItem(
     iconPath = "/img/memory-storable.png"
 ), UndoableStateLibraryItem<MemoryStorable> {
 
+    var uuid: UUID = System.createUUID()
+        private set
+
     var memoryStorable: MemoryStorable = memoryStorable
         private set
 
@@ -65,10 +69,12 @@ class MemoryLibraryItem(
     /** ---- [Storable] interface */
 
     override fun write(writer: StoreWriter) {
+        writer.writeString("uuid", uuid.toString())
         writer.writeStorable("memory", memoryStorable)
     }
 
     override fun read(reader: StoreReader) {
+        uuid = UUID(reader.readString("uuid"))
         memoryStorable = reader.readStorable("memory")
     }
 
