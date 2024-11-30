@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.addressable
 
+import ch.scorpion.antares.model.addressable.MemoryStorableIdentification
 import ch.scorpion.antares.model.addressable.ROM
 import ch.scorpion.antares.view.AntaresProperties
 import ch.scorpion.antares.view.DigitalComponentViewBeanInfo
@@ -30,6 +31,8 @@ class ROMViewBeanInfo : DigitalComponentViewBeanInfo<ROMView>() {
 		private val highlightCurrentCellWhenNotSelected = CommandPropertySwing("highlightCurrentCellWhenNotSelected", "element.property.ROM.highlightCurrentCellWhenNotSelected", Boolean::class.java, componentBeanProvider)
 
 		private val loadDataSource = CommandPropertySwing("loadDataSource", "element.property.ROM.loadDataSource", Boolean::class.java, componentBeanProvider)
+
+		private val memoryStorable = CommandPropertySwing("memoryStorableId", "element.property.memoryStorable", MemoryStorableIdentification::class.java, componentBeanProvider)
 	}
 
 	override fun addProperties(bean: ROMView, editor: Editor, properties: MutableList<Property>) {
@@ -39,6 +42,7 @@ class ROMViewBeanInfo : DigitalComponentViewBeanInfo<ROMView>() {
 		properties.add(dataBitWidth.bind(editor, beanIdProvider(bean.id)))
 		properties.add(text.bind(editor, beanIdProvider(bean.id), filter = { false }))
 		properties.add(loadDataSource.bind(editor, beanIdProvider(bean.id)))
+		properties.add(memoryStorable.bind(editor, beanIdProvider(bean.id)))
 		properties.add(showContents.bind(editor, beanIdProvider(bean.id)))
 		if (bean.showContents) {
 			properties.add(contentsRowCount.bind(editor, beanIdProvider(bean.id)))

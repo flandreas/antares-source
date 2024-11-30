@@ -3,6 +3,7 @@ package ch.scorpion.antares
 import ch.scorpion.antares.hdl.vhdl.ExportVHDLPanel
 import ch.scorpion.antares.health.SubCircuitPortConsistencyCheck
 import ch.scorpion.antares.model.*
+import ch.scorpion.antares.model.addressable.MemoryStorableIdentification
 import ch.scorpion.antares.model.expression.BooleanExpressionNotation
 import ch.scorpion.antares.model.gate.CurrentDefaultPropagationDelay
 import ch.scorpion.antares.model.gate.UndefinedGateInputBehavior
@@ -12,6 +13,8 @@ import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
 import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.model.testcase.TestcaseViewSwing
 import ch.scorpion.antares.view.*
+import ch.scorpion.antares.view.addressable.MemoryStorableIdentificationEditor
+import ch.scorpion.antares.view.addressable.MemoryStorableIdentificationRenderer
 import ch.scorpion.antares.view.analog.AnalogEdgeView
 import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.antares.view.container.DigitalContainerEditor
@@ -267,6 +270,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerRenderer(NetSignalApplierStrategy::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(TunnelName::class.java, DefaultTableCellRenderer::class.java)
 		registry.registerRenderer(EnterBehavior::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(MemoryStorableIdentification::class.java, MemoryStorableIdentificationRenderer::class.java)
 	}
 
 	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
@@ -292,6 +296,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerEditor(NetSignalApplierStrategy::class.java, NetSignalApplierChoiceEditor::class.java)
 		registry.register(TunnelName::class.java) { TunnelNameEditor((it as TunnelNameProperty).graph) }
 		registry.registerEditor(EnterBehavior::class.java, EnterBehaviorEditor::class.java)
+		registry.registerEditor(MemoryStorableIdentification::class.java, MemoryStorableIdentificationEditor::class.java)
 
 		registry.register(BitWidth::class.java) { prop ->
 			BitWidthEditor(

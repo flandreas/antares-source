@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.addressable
 
+import ch.scorpion.antares.model.addressable.MemoryStorableIdentification
 import ch.scorpion.antares.model.addressable.ROM
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.event.EventBus
@@ -8,6 +9,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.model.text.ScriptProperty
+import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.io.Storable
@@ -66,12 +68,14 @@ class ROMView(
 
 	/** ---- UI properties */
 
+	@Suppress("unused") // Reflection
 	var disassemblerConfig: ScriptProperty
 		get() = ScriptProperty(model.disassemblerConfig)
 		set(value) {
 			model.disassemblerConfig = value.script!!
 		}
 
+	@Suppress("MemberVisibilityCanBePrivate") // Reflection
 	var showDisassembler: Boolean
 		get() = contentsView.showDisassembler
 		set(value) {
@@ -82,7 +86,7 @@ class ROMView(
 			}
 		}
 
-	@Suppress("unused") // Reflection
+	@Suppress("unused", "MemberVisibilityCanBePrivate") // Reflection
 	var highlightCurrentCellWhenNotSelected: Boolean = true
 		set(value) {
 			if (field != value) {
@@ -97,6 +101,15 @@ class ROMView(
 		get() = model.loadDataSource
 		set(value) {
 			model.loadDataSource = value
+		}
+
+	@Suppress("unused") // Reflection
+	var memoryStorableId: MemoryStorableIdentification?
+		get() = model.memoryStorableUuid?.let {
+			MemoryStorableIdentification(it, model.findMemoryLibraryItem()?.name ?: Name("undefined"))
+		}
+		set(value) {
+			model.memoryStorableUuid = value?.uuid
 		}
 
 	/** ---- [Storable] interface */

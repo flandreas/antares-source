@@ -196,7 +196,7 @@ class ROM(
 	}
 
 	private fun loadFromMemoryStorable() {
-		findMemoryLibraryItem(memoryStorableUuid!!)?.let {
+		findMemoryLibraryItem()?.let {
 			MemoryDump.read(memory, MemoryDump.write(it.memoryStorable.memory, dataWidth))
 		}
 	}
@@ -236,10 +236,10 @@ class ROM(
 		_disassemblyWidth = max(_disassemblyWidth, disassembly[address]!!.length)
 	}
 
-	private fun findMemoryLibraryItem(uuid: UUID): MemoryLibraryItem? {
+	fun findMemoryLibraryItem(): MemoryLibraryItem? {
 		libraryHolder.library.expandedImports.libraries.forEach { lib ->
 			val elem = lib.firstLocalItemOrNull { elem ->
-				elem is MemoryLibraryItem && elem.uuid.id == uuid.toString()
+				elem is MemoryLibraryItem && elem.uuid.id == memoryStorableUuid!!.toString()
 			}
 			if (elem != null) {
 				return elem as MemoryLibraryItem

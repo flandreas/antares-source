@@ -389,6 +389,9 @@ open class LibraryImpl(
 		return finder.result
 	}
 
+	override fun allLocalItems(filter: (LibraryItem) -> Boolean): List<LibraryItem> =
+		ItemCollector(filter).also { accept(it) }.items
+
 	/** ---- [LibraryImpl] */
 
 	/**
@@ -469,6 +472,17 @@ open class LibraryImpl(
 		override fun visit(node: Any): Boolean {
 			if (node is ImageLibraryElement) {
 				imageIds.add(node.imageId)
+			}
+			return true
+		}
+	}
+
+	private class ItemCollector(private val exp: (LibraryItem) -> Boolean) : EmptyHierarchyVisitor() {
+		val items = mutableListOf<LibraryItem>()
+
+		override fun visit(node: Any): Boolean {
+			if (node is LibraryItem && exp(node)) {
+				items.add(node)
 			}
 			return true
 		}

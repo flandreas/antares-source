@@ -123,6 +123,12 @@ interface Library : MetaGraphRepository, ImageRepository, Storable, Namable, Des
 	 * fulfills the specified filter. "Locally" means that [expandedImports] is not involved.
 	 */
 	fun firstLocalItemOrNull(filter: (LibraryItem) -> Boolean): LibraryItem?
+
+	/**
+	 * Returns all locally in this [Library] contained [LibraryItem] that
+	 * fulfills the specified filter. "Locally" means that [expandedImports] is not involved.
+	 */
+	fun allLocalItems(filter: (LibraryItem) -> Boolean): List<LibraryItem>
 }
 
 /**
