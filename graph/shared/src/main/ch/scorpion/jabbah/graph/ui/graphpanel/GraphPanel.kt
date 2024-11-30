@@ -29,6 +29,7 @@ import ch.scorpion.jabbah.edit.model.rectangle.RectangleTool
 import ch.scorpion.jabbah.edit.model.text.EditModelTextModule
 import ch.scorpion.jabbah.edit.model.text.TextTool
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.model.text.description.NameChangedEvent
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.execution.*
 import ch.scorpion.jabbah.execution.issue.IssueCollectorEvent
@@ -42,7 +43,7 @@ import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeBeginEvent
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.app.ToggleApplicationModeAction
-import ch.scorpion.jabbah.graph.library.ContainerLibraryElementRenamedEvent
+import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryHolder
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.ui.GraphEditView
@@ -149,7 +150,11 @@ class GraphPanelViewController(
 	private val activeViewChangeHandler: EventHandler<ActiveContentViewChangedEvent> = { applicationModeHolder.updateEditorEditability() }
 	private val issuesCollectorHandler:EventHandler<IssueCollectorEvent> = { handle(it) }
 	private val executionStoppedOnIssueHandler: EventHandler<ExecutionStoppedOnIssueEvent> = { handle(it) }
-	private val containerLibraryElementRenamedHandler: EventHandler<ContainerLibraryElementRenamedEvent> = { propertyPanelController.refresh() }
+	private val containerLibraryElementRenamedHandler: EventHandler<NameChangedEvent> = {
+		if (it.owner is ContainerLibraryElement) {
+			propertyPanelController.refresh()
+		}
+	}
 
 	private val rootGraphView: GraphView? get() = editViewController.editor.view.drawing as GraphView?
 
@@ -161,7 +166,7 @@ class GraphPanelViewController(
 		eventBus.register(ActiveContentViewChangedEvent::class, activeViewChangeHandler)
 		eventBus.register(IssueCollectorEvent::class, issuesCollectorHandler)
 		eventBus.register(ExecutionStoppedOnIssueEvent::class, executionStoppedOnIssueHandler)
-		eventBus.register(ContainerLibraryElementRenamedEvent::class, containerLibraryElementRenamedHandler)
+		eventBus.register(NameChangedEvent::class, containerLibraryElementRenamedHandler)
 	}
 
 	/** ---- [AbstractUIController] */

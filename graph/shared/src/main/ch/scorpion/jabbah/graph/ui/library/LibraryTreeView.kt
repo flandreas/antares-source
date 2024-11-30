@@ -67,10 +67,6 @@ interface LibraryTreeView : UIView {
 	fun handle(event: LibraryItemUpdatedEvent)
 
 	fun handle(event: LibraryItemMovedEvent)
-
-	fun handle(event: LibraryDirectoryRenamedEvent)
-
-	fun handle(event: ContainerLibraryElementRenamedEvent)
 }
 
 /**
@@ -108,16 +104,8 @@ class LibraryTreeViewController (
 		if (displaysLibrary(it.item.library)) { view.handle(it) }
 	}
 
-	private val libraryItemDirectoryRenamedHandler: EventHandler<LibraryDirectoryRenamedEvent> = {
-		if (displaysLibrary(it.directory.library)) { view.handle(it) }
-	}
-
 	private val openContainerLibraryElementHandler: EventHandler<OpenContainerLibraryElementRequest> = {
 		if (displaysLibrary(it.element.library)) { view.expandTo(it.element) }
-	}
-
-	private val renameContainerLibraryElementHandler: EventHandler<ContainerLibraryElementRenamedEvent> = {
-		if (displaysLibrary(it.element.library)) { view.handle(it) }
 	}
 
 	private val currentSavableHandler: EventHandler<CurrentSavableEvent> = {
@@ -185,8 +173,6 @@ class LibraryTreeViewController (
 		eventBus.register(LibraryItemRemovedEvent::class, libraryItemRemovedHandler)
 		eventBus.register(LibraryItemUpdatedEvent::class, libraryItemUpdatedHandler)
 		eventBus.register(LibraryItemMovedEvent::class, libraryItemMovedHandler)
-		eventBus.register(LibraryDirectoryRenamedEvent::class, libraryItemDirectoryRenamedHandler)
-		eventBus.register(ContainerLibraryElementRenamedEvent::class, renameContainerLibraryElementHandler)
 		eventBus.register(LibraryImportsEvent::class, libraryImportsHandler)
 
 		eventBus.register(CurrentSavableEvent::class, currentSavableHandler)
@@ -201,8 +187,6 @@ class LibraryTreeViewController (
 		eventBus.unregister(libraryItemRemovedHandler)
 		eventBus.unregister(libraryItemUpdatedHandler)
 		eventBus.unregister(libraryItemMovedHandler)
-		eventBus.unregister(libraryItemDirectoryRenamedHandler)
-		eventBus.unregister(renameContainerLibraryElementHandler)
 		eventBus.unregister(libraryImportsHandler)
 
 		eventBus.unregister(currentSavableHandler)

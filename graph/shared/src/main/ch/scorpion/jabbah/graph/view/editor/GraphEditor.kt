@@ -8,7 +8,8 @@ import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.editor.EditorImpl
-import ch.scorpion.jabbah.graph.library.ContainerLibraryElementRenamedEvent
+import ch.scorpion.jabbah.edit.model.text.description.NameChangedEvent
+import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
@@ -26,12 +27,12 @@ class GraphEditor(
     private val eventBus: EventBus = BaseModule.eventBus
 ) : EditorImpl(view) {
 
-    private val containerLibraryElementRenamedHandler: EventHandler<ContainerLibraryElementRenamedEvent> = { handle(it) }
+    private val containerLibraryElementRenamedHandler: EventHandler<NameChangedEvent> = { handle(it) }
 
     private val graph: Graph? get() = (view.drawing as GraphView).graph
 
     init {
-        eventBus.register(ContainerLibraryElementRenamedEvent::class, containerLibraryElementRenamedHandler)
+        eventBus.register(NameChangedEvent::class, containerLibraryElementRenamedHandler)
     }
 
     override fun dispose() {
@@ -63,8 +64,10 @@ class GraphEditor(
 	    }
     }
 
-    private fun handle(event: ContainerLibraryElementRenamedEvent) {
-        graph?.handleSubGraphNameChanged(event.element.uuid)
+    private fun handle(event: NameChangedEvent) {
+        if (event.owner is ContainerLibraryElement) {
+            graph?.handleSubGraphNameChanged((event.owner as ContainerLibraryElement).uuid)
+        }
     }
 }
 

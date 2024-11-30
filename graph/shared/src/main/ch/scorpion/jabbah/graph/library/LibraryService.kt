@@ -55,17 +55,6 @@ data class LibraryRenamedEvent(
 	val oldName: TranslatableText
 )
 
-/** Posted on [EventBus] when a [LibraryDirectory] has been renamed*/
-data class LibraryDirectoryRenamedEvent(
-	val directory: LibraryDirectory,
-	val oldName: TranslatableText
-)
-
-data class ContainerLibraryElementRenamedEvent(
-	val element: ContainerLibraryElement,
-	val oldName: TranslatableText
-)
-
 enum class MetaGraphBundleImportResult {
 	Success,
 	Invalid,
@@ -235,10 +224,8 @@ class LibraryService(
 	 */
 	fun renameDirectory(directory: LibraryDirectory, newName: TranslatableText) {
 		LOG.userTrail("Rename folder '${directory.name}' to '${newName.getOptionalTranslation()}'")
-		val oldName = directory.name.translation
 		directory.name = Name(newName)
 		storeLibrary(directory.library!!)
-		eventBus.post(LibraryDirectoryRenamedEvent(directory, oldName))
 	}
 
 	/**
@@ -265,10 +252,8 @@ class LibraryService(
 		val nameChanged = metaGraph.translatableName != element.name.translation
 		storeContainerLibraryElement(library, metaGraph, element, doClone = false)
 		if (nameChanged) {
-			val oldName = element.name
 			element.name = Name(metaGraph.translatableName)
 			storeLibrary(library)
-			eventBus.post(ContainerLibraryElementRenamedEvent(element, oldName.translation))
 		}
 		eventBus.post(LibraryItemUpdatedEvent(library, element))
 	}
@@ -334,15 +319,12 @@ class LibraryService(
 
 	fun renameContainerLibraryElement(element: ContainerLibraryElement, newName: TranslatableText) {
 		LOG.userTrail("Renaming '${element.metaGraph?.uuid} to '${newName.getTranslation()}'")
-		val oldName = element.name.translation
 		val name = Name(newName)
 		element.metaGraph!!.graph.model!!.name = name
 		element.name = name
 
 		persister(element.library!!.isSystem).storeMetaGraph(element.library!!, element.metaGraph!!)
 		storeLibrary(element.library!!)
-
-		eventBus.post(ContainerLibraryElementRenamedEvent(element, oldName))
 	}
 
 	/**

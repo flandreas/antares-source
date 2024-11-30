@@ -108,6 +108,9 @@ class LibraryTreeViewSwing(
 
 	override fun handle(event: LibraryItemUpdatedEvent) {
 		findOptionalTreeNode(event.item)?.let {
+			if (it is NamableTreeNode) {
+				it.richTextName.reset()
+			}
 			it.userObject = event.item
 			(model as DefaultTreeModel).nodeChanged(it)
 		}
@@ -125,17 +128,6 @@ class LibraryTreeViewSwing(
 				selectionPath = getPath(itemNode)
 			}
 		}
-	}
-
-	override fun handle(event: LibraryDirectoryRenamedEvent) {
-		val node = findTreeNode(event.directory)
-		(model as DefaultTreeModel).nodeChanged(node)
-	}
-
-	override fun handle(event: ContainerLibraryElementRenamedEvent) {
-		val node = findTreeNode(event.element)
-		(node as NamableTreeNode).richTextName.reset()
-		(model as DefaultTreeModel).nodeChanged(node)
 	}
 
 	override fun expandTo(element: ContainerLibraryElement) {
