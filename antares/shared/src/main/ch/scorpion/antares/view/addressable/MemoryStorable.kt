@@ -2,7 +2,9 @@ package ch.scorpion.antares.view.addressable
 
 import ch.scorpion.antares.model.addressable.*
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.edit.model.text.description.Name
@@ -18,6 +20,9 @@ class MemoryStorable(
 ) : AbstractStorable(), Namable, Addressable, Bean {
 
     private val dataListeners = mutableListOf<AddressableDataListener>()
+
+    var uuid: UUID = System.createUUID()
+        private set
 
     override fun toString(): String = Translations.getString("library.element.memory.name")
 
@@ -87,6 +92,7 @@ class MemoryStorable(
     /** ---- [Storable] interface */
 
     override fun write(writer: StoreWriter) {
+        writer.writeString("uuid", uuid.toString())
         name.write("name", writer)
         writer.writeString("dataBitWidth", dataWidth.customName)
         writer.writeString("addressBitWidth", addressWidth.customName)
@@ -94,6 +100,7 @@ class MemoryStorable(
     }
 
     override fun read(reader: StoreReader) {
+        uuid = UUID(reader.readString("uuid"))
         name = Name.read("name", reader)
         dataWidth = BitWidth.withName(reader.readString("dataBitWidth"))
         addressWidth = BitWidth.withName(reader.readString("addressBitWidth"))
