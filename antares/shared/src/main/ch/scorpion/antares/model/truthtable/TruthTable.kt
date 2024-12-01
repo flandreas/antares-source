@@ -6,9 +6,8 @@ import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.app.ApplicationDataContentEvent
 import ch.scorpion.jabbah.base.collection.indexOfFirstOrNull
-import ch.scorpion.jabbah.edit.model.text.description.Namable
-import ch.scorpion.jabbah.edit.model.text.description.Name
-import ch.scorpion.jabbah.edit.model.text.description.observableName
+import ch.scorpion.jabbah.edit.Bean
+import ch.scorpion.jabbah.edit.model.text.description.*
 import ch.scorpion.jabbah.io.*
 
 /**
@@ -27,7 +26,7 @@ class TruthTable(
 	initialName: String = "",
 	inputColumnNames: List<String> = emptyList(),
 	outputColumnNames: List<String> = emptyList()
-) : AbstractStorable(), Namable {
+) : AbstractStorable(), Namable, Describable, Bean {
 
 	companion object {
 		private val outputRegex = listOf(
@@ -60,6 +59,8 @@ class TruthTable(
 		updateRowsCounts()
 		fillInputCells()
 	}
+
+	override fun toString(): String = name.getTranslation()
 
 	fun getValue(row: Int, column: Int): Bit = getColumn(column).getValue(row)
 
@@ -156,10 +157,13 @@ class TruthTable(
 		}
 	}
 
-
 	/** ---- [Namable] interface */
 
 	override var name: Name by observableName(Name(initialName))
+
+	/** ---- [Describable] interface */
+
+	override var description: Description by observableDescription(Description(""))
 
 	/** ---- [Storable] interface */
 
@@ -167,12 +171,16 @@ class TruthTable(
 
 	override fun write(writer: StoreWriter) {
 		name.write("name", writer)
+		description.write("description", writer)
 		writer.writeStorables("inputs", inputColumns.iterator())
 		writer.writeStorables("outputs", outputColumns.iterator())
 	}
 
 	override fun read(reader: StoreReader) {
 		name = Name.read("name", reader)
+		if (reader.hasElement("desc")) {
+			description = Description.read("desc", reader)
+		}
 		inputColumns.clear()
 		inputColumns.addAll(reader.readStorables("inputs"))
 

@@ -18,7 +18,7 @@ import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItemCloseRequest
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
-import javax.swing.JComponent
+import javax.swing.JPanel
 
 /**
  * Displays top-level data as a [contentPanel] and a title whose text is derived from
@@ -29,7 +29,7 @@ import javax.swing.JComponent
  */
 abstract class AbstractTitledGraphDesktopViewItemSwing(
     initialTitle: String,
-    private val contentPanel: JComponent,
+    protected val contentPanel: JPanel,
     private val applicationDataHolder: ApplicationDataHolder,
     private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractGraphDesktopViewItemSwing() {

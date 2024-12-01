@@ -3,27 +3,23 @@ package ch.scorpion.antares.view.truthtable
 import ch.scorpion.antares.AntaresModuleJvm
 import ch.scorpion.antares.model.expression.BooleanExpressionNotation
 import ch.scorpion.antares.model.module.AntaresModelModule
+import ch.scorpion.antares.model.truthtable.TruthTable
 import ch.scorpion.antares.model.truthtable.TruthTableLibraryItem
 import ch.scorpion.antares.model.truthtable.TruthTableReference
 import ch.scorpion.antares.model.truthtable.TruthTableService
 import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTablePanel
 import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTableService
+import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.draw.CloseViewRequest
-import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.CommandManager
-import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
+import ch.scorpion.jabbah.graph.AbstractTitledGraphDesktopViewItemSwing
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
-import ch.scorpion.jabbah.graph.ui.desktop.AbstractGraphDesktopViewItemSwing
-import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopItemHeaderPanelSwing
-import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItemCloseRequest
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import java.awt.Component
@@ -38,24 +34,26 @@ import kotlin.math.max
 
 class TruthTableDesktopItemSwing(
 	private val item: TruthTableLibraryItem,
+	private val applicationDataHolder: ApplicationDataHolder,
 	private val truthTableService: TruthTableService = AntaresModelModule.truthTableService,
 	private val createCircuitService: CreateCircuitFromTruthTableService = AntaresModuleJvm.createCircuitFromTruthTableService,
 	commandManager: CommandManager,
-	private val eventBus: EventBus = BaseModule.eventBus
-) : AbstractGraphDesktopViewItemSwing() {
+	eventBus: EventBus = BaseModule.eventBus
+) : AbstractTitledGraphDesktopViewItemSwing(
+	createTitleText(item.truthTable),
+	JPanel(),
+	applicationDataHolder,
+	eventBus
+) {
 
 	companion object {
 		private val EXPRESSION_FONT = Font(Font.MONOSPACED, Font.PLAIN, 12)
+
+		fun createTitleText(truthTable: TruthTable): String =
+			"${Translations.getString("library.element.truthTable.name")} \"${truthTable.name.getTranslation()}\""
 	}
 
 	private val ref = TruthTableReference(item)
-
-	private val headerPanel = GraphDesktopItemHeaderPanelSwing(
-		this,
-		UIBasics.createHeaderLabel("${Translations.getString("library.element.truthTable.name")} \"${item.truthTable.name.getTranslation()}\""),
-		allowClose = true)
-
-	private val closeViewRequestHandler: EventHandler<CloseViewRequest> = { handle(it) }
 
 	private val tableView = TruthTableTableView(ref, commandManager)
 
@@ -69,8 +67,9 @@ class TruthTableDesktopItemSwing(
 
 	private val createCircuitButton = JButton(ActionWrapperSwing(createCircuitAction))
 
+	private val truthTable: TruthTable get() = applicationDataHolder.data!!.content as TruthTable
+
 	init {
-		eventBus.register(CloseViewRequest::class, closeViewRequestHandler)
 		buildUI()
 
 		createCircuitAction.enabled = false
@@ -82,6 +81,8 @@ class TruthTableDesktopItemSwing(
 
 		setupViewActivationFocusListener()
 	}
+
+	override fun createHeaderText(): String = createTitleText(truthTable)
 
 	private fun setupViewActivationFocusListener() {
 		val focusListener = object : FocusListener {
@@ -98,15 +99,16 @@ class TruthTableDesktopItemSwing(
 	}
 
 	private fun buildUI() {
-		border = BorderFactory.createEmptyBorder(0, 0, 0, 5)
-		layout = BorderLayout(10, 10)
+		with(contentPanel) {
+			border = BorderFactory.createEmptyBorder(0, 0, 0, 5)
+			layout = BorderLayout(10, 10)
 
-		add(headerPanel, BorderLayout.NORTH)
-		add(createContentsPanel(), BorderLayout.CENTER)
-		add(createExpressionsPanel(), BorderLayout.SOUTH)
+			add(createTablePanel(), BorderLayout.CENTER)
+			add(createExpressionsPanel(), BorderLayout.SOUTH)
+		}
 	}
 
-	private fun createContentsPanel(): JComponent {
+	private fun createTablePanel(): JComponent {
 		expressionsTextArea.font = EXPRESSION_FONT
 
 		val panel = JPanel(BorderLayout())
@@ -144,18 +146,10 @@ class TruthTableDesktopItemSwing(
 		return panel
 	}
 
-	/** ---- [AbstractGraphDesktopViewItemSwing] */
-
-	override fun addContextColorBorder(color: Color) { }
-
-	override fun removeContextColorBorder() { }
-
 	/** ---- [GraphDesktopViewItem] */
 
-	override val drawingView: DrawingView<GraphView>? get() = null
-
 	override fun disposeItem() {
-		eventBus.unregister(closeViewRequestHandler)
+		super.disposeItem()
 		ref.dispose()
 	}
 
@@ -164,15 +158,6 @@ class TruthTableDesktopItemSwing(
 	override fun createCloseRequest(): Any = CloseViewRequest(this)
 
 	/** ---- [TruthTableDesktopItemSwing] */
-
-	private fun handle(request: CloseViewRequest) {
-		if (request.view === this) {
-			eventBus.postTwoPhase(
-				prepareEvent = GraphDesktopViewItemCloseRequest(this, isRoot = true),
-				execEvent = GraphDesktopViewItemCloseRequest(this, isRoot = true)
-			)
-		}
-	}
 
 	private fun generateExpressions() {
 		expressionsTextArea.text = truthTableService.generateExpressions(

@@ -87,7 +87,7 @@ class AntaresFrameSwing(
 			contextColor = contextColor)
 
 	override fun createTruthTableDesktopViewItem(request: ShowTruthTableItemRequest): GraphDesktopViewItem =
-		TruthTableDesktopItemSwing(request.item, commandManager = editor.commandManager)
+		TruthTableDesktopItemSwing(request.item, application.controller, commandManager = editor.commandManager)
 
 	override fun createBooleanExpressionDesktopViewItem(request: ShowBooleanExpressionItemRequest): GraphDesktopViewItem =
 		BooleanExpressionDesktopItemSwing(request.item, commandManager = editor.commandManager)
