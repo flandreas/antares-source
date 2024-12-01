@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.draw.richtext.RichTextLabel
 import ch.scorpion.jabbah.edit.model.text.NamableTreeNode
+import ch.scorpion.jabbah.graph.model.image.ImageLibraryElement
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.graph.ui.MetaGraphIconProvider
@@ -304,10 +305,8 @@ class LibraryTreeViewSwing(
 						component.icon = getIcon(iconPath!!)
 					}
 					component.richText = (value as NamableTreeNode).richTextName.value
-					if (showBeginnerTips) {
-						component.toolTipText = Translations.getString("library.action.baseElement.tip")
-					}
-				} else if (value.userObject is ContainerLibraryElement) {
+				}
+				if (value.userObject is ContainerLibraryElement) {
 					val cle = value.userObject as ContainerLibraryElement
 					component.richText = (value as NamableTreeNode).richTextName.value
 					if (showBeginnerTips) {
@@ -329,6 +328,14 @@ class LibraryTreeViewSwing(
 					}
 				} else if (value.userObject is LibraryFolder) {
 					component.icon = folderIcon
+				} else if (value.userObject is BaseLibraryElement || value.userObject is ImageLibraryElement) {
+					if (showBeginnerTips) {
+						component.toolTipText = Translations.getString("library.action.baseElement.tip")
+					}
+				} else {
+					if (showBeginnerTips) {
+						component.toolTipText = Translations.getString("library.action.openElement.tip")
+					}
 				}
 			} else {
 				component.icon = desktopIcon
