@@ -221,6 +221,20 @@
             <translation lang='en' text='NonVolatile'/>
           </name>
         </containerLibraryElement>
+        <memoryLibraryItem _id='44' uuid='df053d2d-fea0-4580-87cc-d78a910e03c8'>
+          <memory>
+            <memory _id='45' dataBitWidth='8' addressBitWidth='8' content='11 22 33'>
+              <name>
+                <translation lang='en' text='Memory Contents A'/>
+              </name>
+            </memory>
+          </memory>
+        </memoryLibraryItem>
+        <containerLibraryElement _id='46' uuid='58fdc6b5-39e7-425d-a91f-8f1899d19f30' type='digital'>
+          <name>
+            <translation lang='en' text='ROM with Memory Contents'/>
+          </name>
+        </containerLibraryElement>
       </items>
     </libraryFolder>
   </folder>
