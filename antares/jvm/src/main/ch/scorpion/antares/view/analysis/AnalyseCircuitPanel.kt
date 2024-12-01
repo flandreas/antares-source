@@ -159,7 +159,9 @@ class AnalyseCircuitPanel(
 					val directory = library.libraryService.getDirectoryOf(library, containerLibraryElement)
 					val item = BooleanExpressionLibraryItem(TranslatableText(name))
 					item.expressions = BooleanExpressionStorable(
-						expressionsTextArea.text, singleCharIdentifier = truthTable.allNamesAreSingleChar)
+						TranslatableText(name),
+						expressionsTextArea.text,
+						singleCharIdentifier = truthTable.allNamesAreSingleChar)
 
 					library.libraryService.addLibraryItem(library, item, directory)
 				}

@@ -12,8 +12,8 @@ class BooleanExpressionCommand(
 	private lateinit var oldValue: BooleanExpressionStorable
 
 	override fun execute() {
-		oldValue = BooleanExpressionStorable(ref.expressions.expressions, ref.expressions.singleCharIdentifier)
-		ref.expressions = BooleanExpressionStorable(expressions, singleCharIdentifier)
+		oldValue = BooleanExpressionStorable(ref.expressions.name.translation, ref.expressions.expressions, ref.expressions.singleCharIdentifier)
+		ref.expressions = BooleanExpressionStorable(ref.expressions.name.translation, expressions, singleCharIdentifier)
 	}
 
 	override fun undo() {

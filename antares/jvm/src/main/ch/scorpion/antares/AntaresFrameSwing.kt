@@ -90,7 +90,7 @@ class AntaresFrameSwing(
 		TruthTableDesktopItemSwing(request.item, application.controller, commandManager = editor.commandManager)
 
 	override fun createBooleanExpressionDesktopViewItem(request: ShowBooleanExpressionItemRequest): GraphDesktopViewItem =
-		BooleanExpressionDesktopItemSwing(request.item, commandManager = editor.commandManager)
+		BooleanExpressionDesktopItemSwing(request.item, application.controller, commandManager = editor.commandManager)
 
 	override fun createMemoryStorableGraphDesktopViewItem(request: ShowMemoryLibraryItemRequest): GraphDesktopViewItem =
 		MemoryStorableGraphDesktopItemSwing(request.item, application.controller, controller.applicationContextHolder, editor.commandManager)

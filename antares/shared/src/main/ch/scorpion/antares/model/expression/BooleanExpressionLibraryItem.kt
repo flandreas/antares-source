@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.library.AbstractLibraryItem
+import ch.scorpion.jabbah.graph.library.LibraryItem
 import ch.scorpion.jabbah.graph.library.UndoableStateLibraryItem
 import ch.scorpion.jabbah.io.*
 
@@ -21,7 +22,7 @@ class BooleanExpressionLibraryItem(
 	iconPath = "/img/expression.png"
 ), UndoableStateLibraryItem<BooleanExpressionStorable> {
 
-	var expressions = BooleanExpressionStorable(expressions, singleCharIdentifier)
+	var expressions = BooleanExpressionStorable(initialName, expressions, singleCharIdentifier)
 
 	override val activeIconPath: String get() = "/img/expression-active.png"
 
@@ -33,18 +34,26 @@ class BooleanExpressionLibraryItem(
 
 	override fun accept(visitor: HierarchyVisitor): Boolean = visitor.visit(this)
 
+	/** ---- [LibraryItem] interface */
+
+	override var name: Name
+		get() = expressions.name
+		set(value) { expressions.name = value }
+
 	/** ---- [Storable] interface */
 
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
 
 	override fun write(writer: StoreWriter) {
-		name.write("name", writer)
 		writer.writeStorable("expressions", expressions)
 	}
 
 	override fun read(reader: StoreReader) {
-		name = Name.read("name", reader)
 		expressions = reader.readStorable("expressions")
+		if (reader.hasElement("name")) {
+			// Backward compatibility: Name was stored here, but is now in BooleanExpressionStorable
+			expressions.name = Name.read("name", reader)
+		}
 	}
 
 	override fun updateStorable(storable: BooleanExpressionStorable) {

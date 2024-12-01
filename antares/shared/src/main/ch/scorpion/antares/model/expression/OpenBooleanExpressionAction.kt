@@ -47,7 +47,7 @@ class OpenBooleanExpressionAction(
 	private fun openAsSavable(item: BooleanExpressionLibraryItem) {
 		InvocationHandler.invoke {
 			LOG.userTrail("Open BooleanExpression as main view")
-			graphDataViewController.openAsStorable(item, BooleanExpressionSavable(item))
+			graphDataViewController.openAsStorable(item.expressions, BooleanExpressionSavable(item))
 			controller.eventBus.post(ShowBooleanExpressionItemRequest(item))
 		}
 	}

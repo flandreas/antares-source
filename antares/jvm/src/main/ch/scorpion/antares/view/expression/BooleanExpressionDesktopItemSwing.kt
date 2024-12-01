@@ -9,28 +9,22 @@ import ch.scorpion.antares.model.truthtable.TruthTableService
 import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTablePanel
 import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTableService
 import ch.scorpion.antares.view.truthtable.TruthTableTableView
+import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.LineNumberTextArea
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.UIBasics
-import ch.scorpion.jabbah.draw.CloseViewRequest
-import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.CommandManager
-import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.DrawingViewContent
-import ch.scorpion.jabbah.graph.ui.desktop.AbstractGraphDesktopViewItemSwing
+import ch.scorpion.jabbah.graph.AbstractTitledGraphDesktopViewItemSwing
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopItemHeaderPanelSwing
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
-import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItemCloseRequest
-import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.*
 import java.awt.event.FocusEvent
 import java.awt.event.FocusListener
@@ -40,28 +34,30 @@ import javax.swing.event.DocumentListener
 
 class BooleanExpressionDesktopItemSwing(
 	private val item: BooleanExpressionLibraryItem,
+	private val applicationDataHolder: ApplicationDataHolder,
 	private val commandManager: CommandManager,
 	private val expressionService: BooleanExpressionService = AntaresModelModule.booleanExpressionService,
 	private val truthTableService: TruthTableService = AntaresModelModule.truthTableService,
 	private val createCircuitService: CreateCircuitFromTruthTableService = AntaresModuleJvm.createCircuitFromTruthTableService,
-	private val eventBus: EventBus = BaseModule.eventBus
-) : AbstractGraphDesktopViewItemSwing() {
+	eventBus: EventBus = BaseModule.eventBus
+) : AbstractTitledGraphDesktopViewItemSwing(
+	createTitleText(item.expressions),
+	JPanel(),
+	applicationDataHolder,
+	eventBus
+) {
 
 	companion object {
 		private val ERROR_ICON = UiUtil.themedIcon("/img/error-16.png")
 		private val CORRECT_ICON = UiUtil.themedIcon("/img/checkmark.png")
 		private val FONT = Font(Font.MONOSPACED, Font.PLAIN, 12)
 		private const val PREF_TEXT_AREA_HEIGHT = 150
+
+		fun createTitleText(expression: BooleanExpressionStorable): String =
+			"${Translations.getString("library.element.booleanExpression.name")} \"${expression.name.getTranslation()}\""
 	}
 
 	private val ref = BooleanExpressionReference(item)
-
-	private val headerPanel = GraphDesktopItemHeaderPanelSwing(
-		this,
-		UIBasics.createHeaderLabel("${Translations.getString("library.element.booleanExpression.name")} \"${item.name.getTranslation()}\""),
-		allowClose = true)
-
-	private val closeViewRequestHandler: EventHandler<CloseViewRequest> = { handle(it) }
 
 	private val singleCharIdentifierCheckbox = JCheckBox(
 		Translations.getString("antares.booleanExpression.singleCharIdentifier"),
@@ -98,8 +94,9 @@ class BooleanExpressionDesktopItemSwing(
 
 	private val createCircuitButton = JButton(ActionWrapperSwing(createCircuitAction))
 
+	private val expressions: BooleanExpressionStorable get() = applicationDataHolder.data!!.content as BooleanExpressionStorable
+
 	init {
-		eventBus.register(CloseViewRequest::class, closeViewRequestHandler)
 		buildUI()
 
 		setupViewActivationFocusListener()
@@ -119,6 +116,8 @@ class BooleanExpressionDesktopItemSwing(
 			expressionsTextArea.mainTextArea.requestFocusInWindow()
 		}
 	}
+
+	override fun createHeaderText(): String = createTitleText(expressions)
 
 	private fun setupViewActivationFocusListener() {
 		val focusListener = object : FocusListener {
@@ -155,11 +154,11 @@ class BooleanExpressionDesktopItemSwing(
 	}
 
 	private fun buildUI() {
-		border = BorderFactory.createEmptyBorder(0, 5, 0, 5)
-		layout = BorderLayout(10, 10)
-
-		add(headerPanel, BorderLayout.NORTH)
-		add(createContentsPanel(), BorderLayout.CENTER)
+		with(contentPanel) {
+			border = BorderFactory.createEmptyBorder(0, 5, 0, 5)
+			layout = BorderLayout(10, 10)
+			add(createContentsPanel(), BorderLayout.CENTER)
+		}
 	}
 
 	private fun createContentsPanel(): JComponent {
@@ -281,20 +280,10 @@ class BooleanExpressionDesktopItemSwing(
 
 	/** ---- [GraphDesktopViewItem] */
 
-	override fun addContextColorBorder(color: Color) { }
-
-	override fun removeContextColorBorder() { }
-
-	override val drawingView: DrawingView<GraphView>? get() = null
-
 	override fun disposeItem() {
-		eventBus.unregister(closeViewRequestHandler)
+		super.disposeItem()
 		ref.dispose()
 	}
-
-	override fun findContent(condition: (DrawingViewContent<GraphView>) -> Boolean): DrawingViewContent<*>? = null
-
-	override fun createCloseRequest(): Any = CloseViewRequest(this)
 
 	/** ---- [BooleanExpressionDesktopItemSwing] */
 
@@ -323,15 +312,6 @@ class BooleanExpressionDesktopItemSwing(
 			messageLabel.icon = ERROR_ICON
 			messageLabel.text = e.toString()
 			minimizedTextArea.text = ""
-		}
-	}
-
-	private fun handle(request: CloseViewRequest) {
-		if (request.view === this) {
-			eventBus.postTwoPhase(
-				prepareEvent = GraphDesktopViewItemCloseRequest(this, isRoot = true),
-				execEvent = GraphDesktopViewItemCloseRequest(this, isRoot = true)
-			)
 		}
 	}
 
