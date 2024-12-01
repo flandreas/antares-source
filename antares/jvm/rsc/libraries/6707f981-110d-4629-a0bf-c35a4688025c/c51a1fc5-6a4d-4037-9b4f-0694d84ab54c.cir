@@ -8,7 +8,7 @@
             <circuitInOut _id='3' id='1' name='A' type='input' bitWidth='4'/>
             <circuitInOut _id='4' id='2' name='B' type='input' bitWidth='4'/>
             <circuitInOut _id='5' id='3' name='I&lt;' type='input' bitWidth='1'/>
-            <circuitInOut _id='6' id='4' name='I=' type='input' bitWidth='1'/>
+            <circuitInOut _id='6' id='4' name='I=' type='input' bitWidth='1' startValue='1'/>
             <circuitInOut _id='7' id='5' name='I&gt;' type='input' bitWidth='1'/>
             <splitter _id='8' id='6' delay='0' bitWidth='4' representation='binary' branchCount='4'/>
             <splitter _id='9' id='7' delay='0' bitWidth='4' representation='binary' branchCount='4'/>
@@ -1671,7 +1671,7 @@
           <ports>
             <subCircuitPort _id='545' portId='1' name='A' logic='positive' bitWidth='4' trigger='level' type='input' representation='hex'/>
             <subCircuitPort _id='548' portId='2' name='B' logic='positive' bitWidth='4' trigger='level' type='input' representation='hex'/>
-            <subCircuitPort _id='551' portId='3' name='I=' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='551' portId='3' name='I=' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary' startValue='1'/>
             <subCircuitPort _id='554' portId='4' name='I&lt;' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='557' portId='5' name='I&gt;' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='560' portId='6' name='=' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
