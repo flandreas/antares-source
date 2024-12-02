@@ -42,7 +42,7 @@ class AddressableInputEventHandler(
 		}
 	}
 
-	private inner class ActorHandler : VerticeViewActorInteractionHandler() {
+	private inner class ActorHandler : VerticeViewActorInteractionHandler(openable = true) {
 		override fun handleDoubleClick(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
 			requestOpenMemoryContents(context.view as DrawingView<GraphView>, context.mouseEvent?.isAltDown == true)
 			context.mouseEvent?.consumeEvent()

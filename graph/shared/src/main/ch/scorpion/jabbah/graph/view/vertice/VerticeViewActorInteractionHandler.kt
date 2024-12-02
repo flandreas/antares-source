@@ -35,7 +35,7 @@ open class VerticeViewActorInteractionHandler(
 	}
 
 	override fun mouseMoved(context: ActorInteractionContext): ActorInteractionHandler? {
-		if (clickable) {
+		if (clickable || openable) {
 			context.view.setCursor(Cursor.CLICK)
 		}
 		return null
