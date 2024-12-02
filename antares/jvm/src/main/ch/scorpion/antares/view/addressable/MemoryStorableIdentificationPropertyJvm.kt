@@ -65,7 +65,7 @@ class MemoryStorableIdentificationEditor : AbstractPropertyEditor() {
         comboBox.model = DefaultComboBoxModel(MemoryStorableIdentification.getAll().toTypedArray())
             .also { it.insertElementAt(null, 0) }
 
-        comboBox.isEditable = true
+        comboBox.isEditable = false
         editor = comboBox
     }
 
