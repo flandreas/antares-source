@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.help.HelpId
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.ui.HelpAction
 import ch.scorpion.jabbah.draw.CloseViewRequest
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.CommandManager
@@ -44,7 +45,8 @@ class TruthTableDesktopItemSwing(
 	createTitleText(item.truthTable),
 	JPanel(),
 	applicationDataHolder,
-	eventBus
+	eventBus,
+	listOf(HelpAction.withSmallImage(HELP_ID))
 ) {
 
 	companion object {

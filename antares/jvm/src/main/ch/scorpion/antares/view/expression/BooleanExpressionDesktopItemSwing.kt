@@ -8,6 +8,7 @@ import ch.scorpion.antares.model.truthtable.TruthTableReference
 import ch.scorpion.antares.model.truthtable.TruthTableService
 import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTablePanel
 import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTableService
+import ch.scorpion.antares.view.truthtable.TruthTableDesktopItemSwing
 import ch.scorpion.antares.view.truthtable.TruthTableTableView
 import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.base.AbstractAction
@@ -16,14 +17,14 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.help.HelpId
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.LineNumberTextArea
 import ch.scorpion.jabbah.base.swing.UiUtil
-import ch.scorpion.jabbah.base.ui.UIBasics
+import ch.scorpion.jabbah.base.ui.HelpAction
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.graph.AbstractTitledGraphDesktopViewItemSwing
-import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopItemHeaderPanelSwing
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
 import java.awt.*
 import java.awt.event.FocusEvent
@@ -44,10 +45,13 @@ class BooleanExpressionDesktopItemSwing(
 	createTitleText(item.expressions),
 	JPanel(),
 	applicationDataHolder,
-	eventBus
+	eventBus,
+	listOf(HelpAction.withSmallImage(TruthTableDesktopItemSwing.HELP_ID))
 ) {
 
 	companion object {
+		val HELP_ID = HelpId("booleanExpressionDesktopItem")
+
 		private val ERROR_ICON = UiUtil.themedIcon("/img/error-16.png")
 		private val CORRECT_ICON = UiUtil.themedIcon("/img/checkmark.png")
 		private val FONT = Font(Font.MONOSPACED, Font.PLAIN, 12)

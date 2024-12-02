@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.ui.desktop
 
 import ch.scorpion.jabbah.base.AbstractAction
+import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -50,7 +51,8 @@ class GraphDesktopItemHeaderPanelSwing(
 	private val graphDesktopViewItem: GraphDesktopViewItem,
 	private val content: JComponent,
 	private val eventBus: EventBus = BaseModule.eventBus,
-	allowClose: Boolean = true
+	allowClose: Boolean = true,
+	actions: List<Action> = emptyList()
 ) : JPanel() {
 
 	companion object {
@@ -67,8 +69,12 @@ class GraphDesktopItemHeaderPanelSwing(
 		add(content)
 		background = headerBackgroundColor
 
+		add(Box.createHorizontalGlue())
+		actions.forEach {
+			add(UiUtil.createToolBarButton(it))
+			add(Box.createHorizontalStrut(5))
+		}
 		if (allowClose) {
-			add(Box.createHorizontalGlue())
 			add(UiUtil.createToolBarButton(CloseAction()))
 		}
 	}

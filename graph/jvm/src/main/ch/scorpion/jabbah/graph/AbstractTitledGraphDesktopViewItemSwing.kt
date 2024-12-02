@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph
 
 import ch.scorpion.jabbah.app.ApplicationData
 import ch.scorpion.jabbah.app.ApplicationDataHolder
+import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.Disposable
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
@@ -31,7 +32,8 @@ abstract class AbstractTitledGraphDesktopViewItemSwing(
     initialTitle: String,
     protected val contentPanel: JPanel,
     private val applicationDataHolder: ApplicationDataHolder,
-    private val eventBus: EventBus = BaseModule.eventBus
+    private val eventBus: EventBus = BaseModule.eventBus,
+    actions: List<Action> = emptyList()
 ) : AbstractGraphDesktopViewItemSwing() {
 
     private val closeViewRequestHandler: EventHandler<CloseViewRequest> = { handle(it) }
@@ -40,7 +42,7 @@ abstract class AbstractTitledGraphDesktopViewItemSwing(
 
     private val headerLabel = UIBasics.createHeaderLabel(initialTitle)
 
-    private val headerPanel = GraphDesktopItemHeaderPanelSwing(this, headerLabel, allowClose = true)
+    private val headerPanel = GraphDesktopItemHeaderPanelSwing(this, headerLabel, allowClose = true, actions = actions)
 
     protected abstract fun createHeaderText(): String
 

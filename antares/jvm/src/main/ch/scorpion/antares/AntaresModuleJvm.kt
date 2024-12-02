@@ -20,6 +20,7 @@ import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.antares.view.container.DigitalContainerEditor
 import ch.scorpion.antares.view.container.DigitalContainerToolBarBuilder
 import ch.scorpion.antares.view.container.DigitalContainerTreeView
+import ch.scorpion.antares.view.expression.BooleanExpressionDesktopItemSwing
 import ch.scorpion.antares.view.gate.LogicGateView
 import ch.scorpion.antares.view.graph.AnalogMetaGraphIcon
 import ch.scorpion.antares.view.graph.AntaresMetaGraphIcon
@@ -38,6 +39,7 @@ import ch.scorpion.antares.view.port.DigitalPortViewStyle
 import ch.scorpion.antares.view.signal.BitWidthEditor
 import ch.scorpion.antares.view.symbolstyle.SymbolStyle
 import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTableService
+import ch.scorpion.antares.view.truthtable.TruthTableDesktopItemSwing
 import ch.scorpion.jabbah.app.Environment
 import ch.scorpion.jabbah.app.RailwayAppUsageServiceImpl
 import ch.scorpion.jabbah.app.health.SystemHealthChecker
@@ -498,5 +500,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 	private fun registerHelpSources() {
 		HelpSourceRegistry.register(TestcaseViewSwing.HELP_ID, HelpSource("/circuits/circuit-tests"))
 		HelpSourceRegistry.register(ExportVHDLPanel.HELP_ID, HelpSource("/circuits/vhdl-export"))
+		HelpSourceRegistry.register(TruthTableDesktopItemSwing.HELP_ID, HelpSource("/circuits/synthesis#chapter-truth-tables"))
+		HelpSourceRegistry.register(BooleanExpressionDesktopItemSwing.HELP_ID, HelpSource("/circuits/synthesis#chapter-boolean-expressions"))
 	}
 }
