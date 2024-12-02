@@ -1,15 +1,17 @@
 package ch.scorpion.jabbah.graph.library
 
-import ch.scorpion.jabbah.base.*
-import ch.scorpion.jabbah.base.AbstractAction
-import ch.scorpion.jabbah.base.event.ActionEvent
+import ch.scorpion.jabbah.base.ActionWrapperSwing
+import ch.scorpion.jabbah.base.PreferencesChangedEvent
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.help.HelpIdProvider
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.SystemSpeed
+import ch.scorpion.jabbah.base.ui.HelpAction
 import ch.scorpion.jabbah.draw.drawable.DefaultDrawableDrawer
 import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
@@ -49,7 +51,7 @@ class LibraryPreviewPanel(
 	/** Maps a [LibraryElement] to the instantiated [Component] to be displayed as preview.*/
 	private val map: MutableMap<LibraryElement, Component> = mutableMapOf()
 
-	private val helpAction = HelpAction()
+	private val helpAction = HelpAction.withSmallImage { (controller.selectedItem as HelpIdProvider).helpId }
 
 	private val componentDisplay = ComponentDisplay()
 
@@ -179,12 +181,6 @@ class LibraryPreviewPanel(
 			null,
 			true
 		)
-	}
-
-	private inner class HelpAction : AbstractAction("base.action.help", imagePath = "/img/help.png") {
-		override fun execute(event: ActionEvent) {
-			BaseModule.helpProvider.provideHelpFor((controller.selectedItem as HelpIdProvider).helpId)
-		}
 	}
 
 	/** Displays the graphical preview of the selected [Component]. */

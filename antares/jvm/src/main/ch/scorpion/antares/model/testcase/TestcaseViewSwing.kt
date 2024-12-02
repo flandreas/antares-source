@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.help.HelpId
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.ui.HelpAction
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
@@ -44,7 +45,7 @@ class TestcaseViewSwing(
 	 */
 	val runAction: Action = RunAction()
 
-	val helpAction: Action = HelpAction()
+	val helpAction: Action = HelpAction.withSmallImage(HELP_ID)
 
 	override var graph: DigitalGraph? = null
 		set(value) {
@@ -105,13 +106,6 @@ class TestcaseViewSwing(
 			} else {
 				treeView.runAllTestcasesAction.execute(event)
 			}
-		}
-	}
-
-	private class HelpAction : AbstractAction("base.action.help", imagePath = "/img/help.png") {
-
-		override fun execute(event: ActionEvent) {
-			BaseModule.helpProvider.provideHelpFor(HELP_ID)
 		}
 	}
 }

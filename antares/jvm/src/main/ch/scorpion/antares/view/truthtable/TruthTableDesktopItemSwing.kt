@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.help.HelpId
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.CloseViewRequest
 import ch.scorpion.jabbah.draw.view.DrawViewModule
@@ -47,6 +48,8 @@ class TruthTableDesktopItemSwing(
 ) {
 
 	companion object {
+		val HELP_ID = HelpId("truthTableDesktopItem")
+
 		private val EXPRESSION_FONT = Font(Font.MONOSPACED, Font.PLAIN, 12)
 
 		fun createTitleText(truthTable: TruthTable): String =
