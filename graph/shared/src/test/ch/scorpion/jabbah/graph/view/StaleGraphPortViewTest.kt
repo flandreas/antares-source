@@ -39,7 +39,7 @@ class StaleGraphPortViewTest {
 			LibraryModule.libraryHolder.library,
 			element)
 
-		assertNotNull(element.metaGraph!!.graph.graphView.getGraphPortView("O")!!.model.getPort<Boolean>().net!!.designError)
+		assertNotNull(element.storable!!.graph.graphView.getGraphPortView("O")!!.model.getPort<Boolean>().net!!.designError)
 	}
 
 	private fun removeInputPortFromInner(inner: MetaGraph) {

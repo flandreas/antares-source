@@ -197,7 +197,7 @@ class ROM(
 
 	private fun loadFromMemoryStorable() {
 		findMemoryLibraryItem()?.let {
-			MemoryDump.read(memory, MemoryDump.write(it.memoryStorable.memory, dataWidth))
+			MemoryDump.read(memory, MemoryDump.write(it.storable.memory, dataWidth))
 		}
 	}
 

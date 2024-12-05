@@ -132,7 +132,7 @@ class GraphDataViewController(
 				 * Create a copy of the [MetaGraph] as part of the [ApplicationData] that can be safely edited
 				 * without corrupting the instance in the [Library].
 				 */
-				ApplicationData(StorableCloner.clone(element.metaGraph!!), library.createSavable(element), eventBus)
+				ApplicationData(StorableCloner.clone(element.storable!!), library.createSavable(element), eventBus)
 			}
 		} catch (e: Throwable) {
 			LOG.error("Error while loading ${element.uuid}: ${e.message}")

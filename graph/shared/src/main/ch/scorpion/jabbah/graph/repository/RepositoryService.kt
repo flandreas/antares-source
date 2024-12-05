@@ -79,7 +79,7 @@ class RepositoryServiceImpl(
 		if (origService === destService) {
 			origService.move(elem.library!!, elem, destDir, destPos)
 		} else {
-			val metaGraph = elem.metaGraph!!
+			val metaGraph = elem.storable!!
 			origService.removeLibraryItem(origDir.library!!, elem)
 			destService.addContainerLibraryElement(destDir.library!!, metaGraph, destDir, destPos)
 		}
@@ -90,7 +90,7 @@ class RepositoryServiceImpl(
 	 * @throws LibraryDependencyException if it does
 	 */
 	private fun checkLibraryDependency(elem: ContainerLibraryElement) {
-		val projectSubGraphVertice = elem.metaGraph!!.graph.model!!.elements
+		val projectSubGraphVertice = elem.storable!!.graph.model!!.elements
 			.filterIsInstance<SubGraphVertice>()
 			.firstOrNull { elem.library!!.containsMetaGraph(it.graphUUID!!) }
 		if (projectSubGraphVertice != null) {

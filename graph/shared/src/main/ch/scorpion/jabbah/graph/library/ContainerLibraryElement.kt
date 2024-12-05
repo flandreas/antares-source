@@ -43,12 +43,12 @@ class ContainerLibraryElement(
 		val LOG by logger(ContainerLibraryElement::class)
 	}
 
-	/** Uses as long as [metaGraph] has not yet been instantiated, e.g. when displaying a [Library] in the UI.*/
+	/** Uses as long as [storable] has not yet been instantiated, e.g. when displaying a [Library] in the UI.*/
 	override var graphType: GraphType = graphType
 		private set
 
 	/** Lazily initialized instance of the referenced [MetaGraph]. */
-	var metaGraph: MetaGraph? = null
+	override var storable: MetaGraph? = null
 		private set(value) {
 			if (field != value) {
 				val oldValue = field
@@ -60,11 +60,11 @@ class ContainerLibraryElement(
 		}
 
 	private val executionScriptASTCache = resettableLazy {
-		metaGraph?.graph?.model?.script?.let {
-			LOG.trace("Parsing script of '${metaGraph!!.name}'")
-			metaGraph!!.graph.model!!
+		storable?.graph?.model?.script?.let {
+			LOG.trace("Parsing script of '${storable!!.name}'")
+			storable!!.graph.model!!
 				.createParser(it, null)
-				.parseCatching(ScriptMetaData(metaGraph!!.name, Translations.getString("graph.property.GraphViewImpl.script.name")))
+				.parseCatching(ScriptMetaData(storable!!.name, Translations.getString("graph.property.GraphViewImpl.script.name")))
 		}
 	}
 
@@ -72,11 +72,11 @@ class ContainerLibraryElement(
 	val executionScriptAST: Node? get() = executionScriptASTCache.value
 
 	private val drawSymbolScriptASTCache = resettableLazy {
-		metaGraph?.containerDrawing?.execDrawScript?.script?.let {
-			LOG.trace("Parsing symbol drawing script of '${metaGraph!!.name}'")
-			metaGraph!!.containerDrawing.
+		storable?.containerDrawing?.execDrawScript?.script?.let {
+			LOG.trace("Parsing symbol drawing script of '${storable!!.name}'")
+			storable!!.containerDrawing.
 				createDrawSymbolScriptParser(it, null)
-				.parseCatching(ScriptMetaData(metaGraph!!.name, Translations.getString("graph.property.ContainerDrawing.execDrawScript.name")))
+				.parseCatching(ScriptMetaData(storable!!.name, Translations.getString("graph.property.ContainerDrawing.execDrawScript.name")))
 		}
 	}
 
@@ -93,7 +93,7 @@ class ContainerLibraryElement(
 
 	override fun dispose() {
 		super.dispose()
-		metaGraph?.dispose()
+		storable?.dispose()
 	}
 
 	/** ---- [Storable] */
@@ -125,8 +125,8 @@ class ContainerLibraryElement(
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		if (visitor.visitEnter(this)) {
-			if (metaGraph != null) {
-				metaGraph!!.accept(visitor)
+			if (storable != null) {
+				storable!!.accept(visitor)
 			}
 		}
 		return visitor.visitLeave(this)
@@ -135,10 +135,10 @@ class ContainerLibraryElement(
 	override fun <T : GraphElement> getNewInstance(): GraphElementView<T> {
 		library!!.libraryService.getMetaGraph(library!!, this)
 
-		LOG.trace("Create new GraphElementView of '$name' MetaGraph with ID ${metaGraph!!.hashCode()} in Library with ID ${library.hashCode()}")
-		val instance = metaGraph!!.containerDrawing.createSubGraphVerticeView(graphType)
-		if (metaGraph!!.graph.model!!.overallPropagationDelay != null) {
-			instance.model.propagationDelay = LongValueImpl(metaGraph!!.graph.model!!.overallPropagationDelay!!)
+		LOG.trace("Create new GraphElementView of '$name' MetaGraph with ID ${storable!!.hashCode()} in Library with ID ${library.hashCode()}")
+		val instance = storable!!.containerDrawing.createSubGraphVerticeView(graphType)
+		if (storable!!.graph.model!!.overallPropagationDelay != null) {
+			instance.model.propagationDelay = LongValueImpl(storable!!.graph.model!!.overallPropagationDelay!!)
 		}
 		@Suppress("UNCHECKED_CAST")
 		return instance as GraphElementView<T>
@@ -147,6 +147,6 @@ class ContainerLibraryElement(
 	override fun updateStorable(storable: MetaGraph) {
 		uuid = storable.uuid
 		name = Name(storable.translatableName)
-		this.metaGraph = storable
+		this.storable = storable
 	}
 }

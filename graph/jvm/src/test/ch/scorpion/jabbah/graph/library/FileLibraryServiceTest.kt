@@ -42,8 +42,8 @@ class FileLibraryServiceTest {
 		service.loadMetaGraph(library, duplicate)
 
 		assertNotEquals(orig.uuid, duplicate.uuid)
-		assertEquals("Element", orig.metaGraph!!.name)
-		assertEquals("NewName", duplicate.metaGraph!!.name)
+		assertEquals("Element", orig.storable!!.name)
+		assertEquals("NewName", duplicate.storable!!.name)
 	}
 
 	@Test

@@ -37,7 +37,7 @@ class TestLibraryBuilder(
 			library,
 			builder.buildMetaGraph(builder.buildInnerCustomComponent(inputName, outputName), label),
 			library
-		).metaGraph!!
+		).storable!!
 	}
 
 	fun addOuterCustomComponent(
@@ -53,7 +53,7 @@ class TestLibraryBuilder(
 				builder.buildOuterCustomComponent(createSubGraphVerticeView(INNER_CUSTOM_COMP, innerLibrary, paramValue)),
 				label),
 			library
-		).metaGraph!!
+		).storable!!
 	}
 
 	private fun createSubGraphVerticeView(

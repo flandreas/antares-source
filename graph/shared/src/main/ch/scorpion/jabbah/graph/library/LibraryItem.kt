@@ -56,6 +56,8 @@ interface LibraryItem : Storable, Namable {
  */
 interface UndoableStateLibraryItem<T : Storable> : LibraryItem {
 
+	val storable: T?
+
 	/**
 	 * Asks this [UndoableStateLibraryItem] to update its reference to its [Storable],
 	 * e.g. as a consequence of recovery from an undoable snapshot.

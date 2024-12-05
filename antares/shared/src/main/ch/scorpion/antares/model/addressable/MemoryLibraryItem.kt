@@ -29,18 +29,14 @@ class MemoryLibraryItem(
     var uuid: UUID = System.createUUID()
         private set
 
-    var memoryStorable: MemoryStorable = memoryStorable
+    override var storable: MemoryStorable = memoryStorable
         private set
-
-    fun updateMemoryStorable(memoryStorable: MemoryStorable) {
-        this.memoryStorable = memoryStorable
-    }
 
     /** ---- [LibraryItem] interface */
 
     override var name: Name
-        get() = memoryStorable.name
-        set(value) { memoryStorable.name = value }
+        get() = storable.name
+        set(value) { storable.name = value }
 
     override val activeIconPath: String get() = "/img/memory-storable-active.png"
 
@@ -52,23 +48,22 @@ class MemoryLibraryItem(
         eventBus.post(OpenMemoryLibraryItemRequest(this))
     }
 
-
     /** ---- [UndoableStateLibraryItem] */
 
     override fun updateStorable(storable: MemoryStorable) {
-        memoryStorable = storable
+        this.storable = storable
     }
 
     /** ---- [Storable] interface */
 
     override fun write(writer: StoreWriter) {
         writer.writeString("uuid", uuid.toString())
-        writer.writeStorable("memory", memoryStorable)
+        writer.writeStorable("memory", storable)
     }
 
     override fun read(reader: StoreReader) {
         uuid = UUID(reader.readString("uuid"))
-        memoryStorable = reader.readStorable("memory")
+        storable = reader.readStorable("memory")
     }
 
     override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {}

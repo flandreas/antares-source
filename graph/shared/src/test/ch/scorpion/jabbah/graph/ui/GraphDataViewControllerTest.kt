@@ -5,7 +5,6 @@ import ch.scorpion.jabbah.graph.CommandManagerMock
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.project.Project
-import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.project.ProjectSavable
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import dev.mokkery.mock
@@ -41,6 +40,6 @@ class GraphDataViewControllerTest {
 		val newMetaGraph = MetaGraph()
 		controller.setUndoableState(newMetaGraph)
 
-		assertSame(newMetaGraph, containerLibraryElement.metaGraph)
+		assertSame(newMetaGraph, containerLibraryElement.storable)
 	}
 }

@@ -29,7 +29,7 @@ class AnalyseCircuitAction(
 			try {
 				// Close circuit to git rid of the GraphView acting as ActorListener
 				val element = selectedItem as ContainerLibraryElement
-				val clone = StorableCloner.clone(element.metaGraph!!.graph.model as DigitalGraph)
+				val clone = StorableCloner.clone(element.storable!!.graph.model as DigitalGraph)
 				val truthTable = service.analyse(clone)
 
 				AnalyseCircuitPanel.showAsDialog(Frame.getFrames()[0], element, truthTable)

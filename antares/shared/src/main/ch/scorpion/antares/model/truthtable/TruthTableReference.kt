@@ -17,7 +17,7 @@ class TruthTableReference(
 	constructor(
 		item: TruthTableLibraryItem,
 		eventBus: EventBus = BaseModule.eventBus
-	): this({item.truthTable}, eventBus)
+	): this({item.storable}, eventBus)
 
 	lateinit var truthTable: TruthTable
 

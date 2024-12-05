@@ -169,7 +169,7 @@ class LibraryManagementService(
 
 	fun canCopyContainerLibraryElement(element: ContainerLibraryElement, destination: Library): Boolean {
 		libraryService.loadMetaGraph(element.library!!, element)
-		return destination.containsAllRecursivelyReferencedBy(element.metaGraph!!.graph.model!!)
+		return destination.containsAllRecursivelyReferencedBy(element.storable!!.graph.model!!)
 	}
 
 	/**
@@ -192,7 +192,7 @@ class LibraryManagementService(
 
 	private fun copyContainerLibraryElement(element: ContainerLibraryElement, destination: LibraryDirectory) {
 		libraryService.loadMetaGraph(element.library!!, element)
-		val clone = StorableCloner.clone(element.metaGraph!!)
+		val clone = StorableCloner.clone(element.storable!!)
 		libraryService.addContainerLibraryElement(destination.library!!, clone, destination, null)
 	}
 }

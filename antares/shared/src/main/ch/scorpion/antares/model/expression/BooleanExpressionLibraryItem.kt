@@ -21,15 +21,12 @@ class BooleanExpressionLibraryItem(
 	iconPath = "/img/expression.png"
 ), UndoableStateLibraryItem<BooleanExpressionStorable> {
 
-	var expressions = BooleanExpressionStorable(initialName, expressions, singleCharIdentifier)
+	override var storable = BooleanExpressionStorable(initialName, expressions, singleCharIdentifier)
+		private set
 
 	override val activeIconPath: String get() = "/img/expression-active.png"
 
 	override val isFixed: Boolean = false
-
-	fun updateExpressions(expressions: BooleanExpressionStorable) {
-		this.expressions = expressions
-	}
 
 	override fun open(eventBus: EventBus) {
 		eventBus.post(OpenBooleanExpressionItemRequest(this))
@@ -40,26 +37,26 @@ class BooleanExpressionLibraryItem(
 	/** ---- [LibraryItem] interface */
 
 	override var name: Name
-		get() = expressions.name
-		set(value) { expressions.name = value }
+		get() = storable.name
+		set(value) { storable.name = value }
 
 	/** ---- [Storable] interface */
 
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
 
 	override fun write(writer: StoreWriter) {
-		writer.writeStorable("expressions", expressions)
+		writer.writeStorable("expressions", storable)
 	}
 
 	override fun read(reader: StoreReader) {
-		expressions = reader.readStorable("expressions")
+		storable = reader.readStorable("expressions")
 		if (reader.hasElement("name")) {
 			// Backward compatibility: Name was stored here, but is now in BooleanExpressionStorable
-			expressions.name = Name.read("name", reader)
+			storable.name = Name.read("name", reader)
 		}
 	}
 
 	override fun updateStorable(storable: BooleanExpressionStorable) {
-		expressions = storable
+		this.storable = storable
 	}
 }

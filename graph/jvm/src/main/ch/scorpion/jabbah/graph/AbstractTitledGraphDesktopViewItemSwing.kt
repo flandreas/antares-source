@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.model.text.description.NameChangedEvent
+import ch.scorpion.jabbah.graph.library.UndoableStateLibraryItem
 import ch.scorpion.jabbah.graph.ui.desktop.*
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
@@ -87,7 +88,8 @@ abstract class AbstractTitledGraphDesktopViewItemSwing(
     }
 
     private fun handle(event: NameChangedEvent) {
-        if (event.owner === applicationDataHolder.data?.content) {
+        val content = applicationDataHolder.data?.content
+        if (content is UndoableStateLibraryItem<*> && content.storable === event.owner) {
             headerLabel.text = createHeaderText()
         }
     }

@@ -24,7 +24,7 @@ class CreateCircuitFromTruthTableAction(
 		val item = selectedItem as TruthTableLibraryItem
 		CreateCircuitFromTruthTablePanel.showAsDialog(
 			Frame.getFrames()[0],
-			item.truthTable,
+			item.storable,
 			item,
 			service)
 	}

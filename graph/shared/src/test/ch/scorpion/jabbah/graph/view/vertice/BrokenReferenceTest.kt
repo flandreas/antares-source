@@ -44,7 +44,7 @@ class BrokenReferenceTest {
         val outerCle = library.getContainerLibraryElement(outer.uuid)!!
         LibraryModule.libraryService.loadMetaGraph(library, outerCle)
 
-        val metaGraph = outerCle.metaGraph!!
+        val metaGraph = outerCle.storable!!
         val vv = metaGraph.graph.graphView.getDrawables { it is SubGraphVerticeView }.first()
 
         assertTrue((vv.model as SubGraphVerticeRef).isBroken)

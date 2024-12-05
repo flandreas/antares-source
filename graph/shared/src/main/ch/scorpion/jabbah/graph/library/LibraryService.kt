@@ -274,7 +274,7 @@ class LibraryService(
 	 */
 	fun getMetaGraph(library: Library, element: ContainerLibraryElement): MetaGraph {
 		ensureMetaGraph(library, element)
-		return element.metaGraph!!
+		return element.storable!!
 	}
 
 	/**
@@ -312,18 +312,18 @@ class LibraryService(
 	}
 
 	fun duplicateContainerLibraryElement(directory: LibraryDirectory, element: ContainerLibraryElement, newName: TranslatableText): ContainerLibraryElement {
-		LOG.userTrail("Duplicate '${element.metaGraph?.uuid}' with name '${element.metaGraph?.name}'")
-		val duplicate = element.metaGraph!!.duplicate(newName)
+		LOG.userTrail("Duplicate '${element.storable?.uuid}' with name '${element.storable?.name}'")
+		val duplicate = element.storable!!.duplicate(newName)
 		return addContainerLibraryElement(directory.library!!, duplicate, directory)
 	}
 
 	fun renameContainerLibraryElement(element: ContainerLibraryElement, newName: TranslatableText) {
-		LOG.userTrail("Renaming '${element.metaGraph?.uuid} to '${newName.getTranslation()}'")
+		LOG.userTrail("Renaming '${element.storable?.uuid} to '${newName.getTranslation()}'")
 		val name = Name(newName)
-		element.metaGraph!!.graph.model!!.name = name
+		element.storable!!.graph.model!!.name = name
 		element.name = name
 
-		persister(element.library!!.isSystem).storeMetaGraph(element.library!!, element.metaGraph!!)
+		persister(element.library!!.isSystem).storeMetaGraph(element.library!!, element.storable!!)
 		storeLibrary(element.library!!)
 	}
 
@@ -382,7 +382,7 @@ class LibraryService(
 	 */
 	fun exportMetaGraphBundle(element: ContainerLibraryElement, metaGraphRepository: MetaGraphRepository, outputPath: String) {
 		ensureMetaGraph(element.library!!, element)
-		val bundle = metaGraphRepository.createBundle(element.metaGraph!!)
+		val bundle = metaGraphRepository.createBundle(element.storable!!)
 		userLibraryPersister.exportMetaGraphBundle(bundle, outputPath)
 	}
 
@@ -518,7 +518,7 @@ class LibraryService(
 			LibraryModule.libraryServiceCallbacks.forEach { it.beforeStoreMetaGraph(metaGraph) }
 			element.updateStorable(metaGraph)
 			metaGraph.graph.model?.let { graph ->
-				element.metaGraph?.containerDrawing?.completeFromGraph(graph)
+				element.storable?.containerDrawing?.completeFromGraph(graph)
 			}
 			persister(library.isSystem).storeMetaGraph(library, metaGraph)
 		}
@@ -533,8 +533,8 @@ class LibraryService(
 			eventBus = eventBus)
 
 	private fun ensureMetaGraph(library: Library, element: ContainerLibraryElement, loadAlways: Boolean = false) {
-		if (loadAlways || element.metaGraph == null) {
-			val ref = "'${element.metaGraph?.name}' ${element.uuid}"
+		if (loadAlways || element.storable == null) {
+			val ref = "'${element.storable?.name}' ${element.uuid}"
 			val metaGraph = persister(library.isSystem).loadMetaGraph(library, element.uuid)
 			LOG.trace("Loaded MetaGraph $ref with ID ${metaGraph.hashCode()} from Library with ID ${library.hashCode()}")
 			element.updateStorable(metaGraph)

@@ -18,7 +18,7 @@ class CalculatePropagationDelayAction(
     controller
 ) {
     override fun execute(event: ActionEvent) {
-        (controller.selectedItem as ContainerLibraryElement).metaGraph?.graph?.model?.let {
+        (controller.selectedItem as ContainerLibraryElement).storable?.graph?.model?.let {
             val propDelay = GraphPropagationDelayCalculator().calculate(it)
             JOptionPane.showMessageDialog(
                 Frame.getFrames()[0],

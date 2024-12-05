@@ -32,7 +32,7 @@ class MemorySavable(
     }
 
     override fun save(appDataViewController: ApplicationDataViewController): Boolean {
-        memoryLibraryItem.updateMemoryStorable((appDataViewController.data!!.content as MemoryLibraryItem).memoryStorable)
+        memoryLibraryItem.updateStorable((appDataViewController.data!!.content as MemoryLibraryItem).storable)
         with (item.library!!) {
             libraryService.updateLibraryItem(this, item)
         }
@@ -40,5 +40,5 @@ class MemorySavable(
         return true
     }
 
-    override fun getPropertyBean(storable: Storable): Bean = (storable as MemoryLibraryItem).memoryStorable
+    override fun getPropertyBean(storable: Storable): Bean = (storable as MemoryLibraryItem).storable
 }

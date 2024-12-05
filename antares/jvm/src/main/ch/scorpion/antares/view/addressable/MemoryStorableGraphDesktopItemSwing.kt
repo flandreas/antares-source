@@ -20,7 +20,7 @@ class MemoryStorableGraphDesktopItemSwing(
     commandManager: CommandManager,
     eventBus: EventBus = BaseModule.eventBus
 ) : AbstractTitledGraphDesktopViewItemSwing(
-        createTitleText(item.memoryStorable),
+        createTitleText(item.storable),
         AddressableContentsPanel(
             null,
             applicationContextHolder,
@@ -36,7 +36,7 @@ class MemoryStorableGraphDesktopItemSwing(
             "${Translations.getString("library.element.memory.name")} \"${storable.name.getTranslation()}\""
     }
 
-    private val memoryStorable: MemoryStorable get() = (applicationDataHolder.data!!.content as MemoryLibraryItem).memoryStorable
+    private val memoryStorable: MemoryStorable get() = (applicationDataHolder.data!!.content as MemoryLibraryItem).storable
 
     override fun createHeaderText(): String = createTitleText(memoryStorable)
 
@@ -47,6 +47,6 @@ class MemoryStorableGraphDesktopItemSwing(
     ) : ObjectLink<Addressable> {
 
         override fun getLinkedObject(startGraph: Graph?): Addressable =
-            (applicationDataHolder.data!!.content as MemoryLibraryItem).memoryStorable
+            (applicationDataHolder.data!!.content as MemoryLibraryItem).storable
     }
 }

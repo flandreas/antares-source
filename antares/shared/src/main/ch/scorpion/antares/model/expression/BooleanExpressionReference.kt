@@ -10,10 +10,10 @@ class BooleanExpressionReference(
 	private val eventBus: EventBus = BaseModule.eventBus
 ) {
 
-	var expressions: BooleanExpressionStorable = item.expressions
+	var expressions: BooleanExpressionStorable = item.storable
 		set(value) {
 			field = value
-			item.expressions = expressions
+			item.updateStorable(expressions)
 			BooleanExpressionEvent(this).also { event ->
 				dataListeners.forEach { it.dataChanged(event) }
 			}
@@ -43,7 +43,7 @@ class BooleanExpressionReference(
 	}
 
 	private fun updateReference() {
-		expressions = item.expressions
+		expressions = item.storable
 	}
 }
 

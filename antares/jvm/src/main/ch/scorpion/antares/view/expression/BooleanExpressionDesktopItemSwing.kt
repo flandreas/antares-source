@@ -42,7 +42,7 @@ class BooleanExpressionDesktopItemSwing(
 	private val createCircuitService: CreateCircuitFromTruthTableService = AntaresModuleJvm.createCircuitFromTruthTableService,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractTitledGraphDesktopViewItemSwing(
-	createTitleText(item.expressions),
+	createTitleText(item.storable),
 	JPanel(),
 	applicationDataHolder,
 	eventBus,
@@ -65,9 +65,9 @@ class BooleanExpressionDesktopItemSwing(
 
 	private val singleCharIdentifierCheckbox = JCheckBox(
 		Translations.getString("antares.booleanExpression.singleCharIdentifier"),
-		item.expressions.singleCharIdentifier)
+		item.storable.singleCharIdentifier)
 
-	private val expressionsTextArea = LineNumberTextArea(text = item.expressions.expressions, font = FONT)
+	private val expressionsTextArea = LineNumberTextArea(text = item.storable.expressions, font = FONT)
 
 	private val minimizedTextArea = JTextArea()
 
@@ -98,7 +98,7 @@ class BooleanExpressionDesktopItemSwing(
 
 	private val createCircuitButton = JButton(ActionWrapperSwing(createCircuitAction))
 
-	private val expressions: BooleanExpressionStorable get() = applicationDataHolder.data!!.content as BooleanExpressionStorable
+	private val expressions: BooleanExpressionStorable get() = (applicationDataHolder.data!!.content as BooleanExpressionLibraryItem).storable
 
 	init {
 		buildUI()
@@ -112,7 +112,7 @@ class BooleanExpressionDesktopItemSwing(
 
 		disableApplyActionForNoExpressionChanges()
 
-		if (item.expressions.expressions.isNotBlank()) {
+		if (item.storable.expressions.isNotBlank()) {
 			generateMinimizedExpressions()
 		}
 

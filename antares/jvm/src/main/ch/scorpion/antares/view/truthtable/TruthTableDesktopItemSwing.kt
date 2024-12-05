@@ -39,7 +39,7 @@ class TruthTableDesktopItemSwing(
 	commandManager: CommandManager,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractTitledGraphDesktopViewItemSwing(
-	createTitleText(item.truthTable),
+	createTitleText(item.storable),
 	JPanel(),
 	applicationDataHolder,
 	eventBus,
@@ -69,7 +69,7 @@ class TruthTableDesktopItemSwing(
 
 	private val createCircuitButton = JButton(ActionWrapperSwing(createCircuitAction))
 
-	private val truthTable: TruthTable get() = applicationDataHolder.data!!.content as TruthTable
+	private val truthTable: TruthTable get() = (applicationDataHolder.data!!.content as TruthTableLibraryItem).storable
 
 	init {
 		buildUI()
@@ -169,7 +169,7 @@ class TruthTableDesktopItemSwing(
 	private fun createCircuit() {
 		CreateCircuitFromTruthTablePanel.showAsDialog(
 			Frame.getFrames()[0],
-			item.truthTable,
+			item.storable,
 			item,
 			createCircuitService)
 	}

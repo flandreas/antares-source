@@ -27,20 +27,16 @@ class TruthTableLibraryItem(
 	iconPath = "/img/truth-table.png"
 ), UndoableStateLibraryItem<TruthTable> {
 
-	var truthTable: TruthTable = truthTable
+	override var storable: TruthTable = truthTable
 		private set
 
 	override val activeIconPath: String get() = "/img/truth-table-active.png"
 
-	fun updateTruthTable(truthTable: TruthTable) {
-		this.truthTable = truthTable
-	}
-
 	/** ---- [LibraryItem] interface */
 
 	override var name: Name
-		get() = truthTable.name
-		set(value) { truthTable.name = value }
+		get() = storable.name
+		set(value) { storable.name = value }
 
 	override val isFixed: Boolean get() = false
 
@@ -51,17 +47,17 @@ class TruthTableLibraryItem(
 	override fun accept(visitor: HierarchyVisitor): Boolean = visitor.visit(this)
 
 	override fun updateStorable(storable: TruthTable) {
-		truthTable = storable
+		this.storable = storable
 	}
 
 	/** ---- [Storable] interface */
 
 	override fun write(writer: StoreWriter) {
-		writer.writeStorable("truthTable", truthTable)
+		writer.writeStorable("truthTable", storable)
 	}
 
 	override fun read(reader: StoreReader) {
-		truthTable = reader.readStorable("truthTable")
+		storable = reader.readStorable("truthTable")
 	}
 
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
