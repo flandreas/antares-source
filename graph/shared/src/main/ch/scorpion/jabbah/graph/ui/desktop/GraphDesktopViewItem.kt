@@ -34,6 +34,13 @@ interface GraphDesktopViewItem : ContentView<EditInputEventContext> {
 	 */
 	val isDetached: Boolean
 
+	/**
+	 * Returns `true` if this [GraphDesktopViewItem] displays [content].
+	 * Used by certain implementations to decide whether a new [GraphDesktopViewItem] instance has
+	 * to be created when opening objects or after saving content.
+	 */
+	fun displays(content: Any?): Boolean
+
 	/** Disposes this [GraphDesktopViewItem] and also its [DrawingView] and the [GraphView] it is currently displaying.*/
 	fun disposeItem()
 

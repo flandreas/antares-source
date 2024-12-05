@@ -67,6 +67,8 @@ class AddressableContentGraphDesktopItemSwing(
 
 	override val drawingView: DrawingView<GraphView>? get() = null
 
+	override fun displays(content: Any?): Boolean = content === memoryContentPanel.addressableRef.addressable
+
 	override fun disposeItem() {
 		memoryContentPanel.dispose()
 		eventBus.unregister(closeViewRequestHandler)

@@ -123,6 +123,8 @@ class BooleanExpressionDesktopItemSwing(
 
 	override fun createHeaderText(): String = createTitleText(expressions)
 
+	override fun displays(content: Any?): Boolean = content === item
+
 	private fun setupViewActivationFocusListener() {
 		val focusListener = object : FocusListener {
 			override fun focusGained(e: FocusEvent?) {

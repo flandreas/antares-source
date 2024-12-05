@@ -13,10 +13,7 @@ import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.model.text.description.NameChangedEvent
-import ch.scorpion.jabbah.graph.ui.desktop.AbstractGraphDesktopViewItemSwing
-import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopItemHeaderPanelSwing
-import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
-import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItemCloseRequest
+import ch.scorpion.jabbah.graph.ui.desktop.*
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import javax.swing.JPanel
@@ -83,7 +80,7 @@ abstract class AbstractTitledGraphDesktopViewItemSwing(
     private fun handle(request: CloseViewRequest) {
         if (request.view === this) {
             eventBus.postTwoPhase(
-                prepareEvent = GraphDesktopViewItemCloseRequest(this, isRoot = true),
+                prepareEvent = GraphDesktopViewItemCloseQuestion(this, isRoot = true),
                 execEvent = GraphDesktopViewItemCloseRequest(this, isRoot = true)
             )
         }

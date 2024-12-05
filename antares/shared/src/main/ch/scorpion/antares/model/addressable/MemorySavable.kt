@@ -28,11 +28,11 @@ class MemorySavable(
 
     override fun open(application: Application): Boolean {
         eventBus.post(OpenMemoryLibraryItemRequest(memoryLibraryItem))
-        // TODO What about "Cancel"?
         return true
     }
 
     override fun save(appDataViewController: ApplicationDataViewController): Boolean {
+        memoryLibraryItem.updateMemoryStorable((appDataViewController.data!!.content as MemoryLibraryItem).memoryStorable)
         with (item.library!!) {
             libraryService.updateLibraryItem(this, item)
         }
@@ -40,5 +40,5 @@ class MemorySavable(
         return true
     }
 
-    override fun getPropertyBean(storable: Storable): Bean = (storable as MemoryStorable)
+    override fun getPropertyBean(storable: Storable): Bean = (storable as MemoryLibraryItem).memoryStorable
 }

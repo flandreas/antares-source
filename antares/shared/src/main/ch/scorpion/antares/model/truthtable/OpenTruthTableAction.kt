@@ -3,7 +3,6 @@ package ch.scorpion.antares.model.truthtable
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventHandler
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
@@ -16,10 +15,6 @@ class OpenTruthTableAction(
 	private val graphDataViewController: GraphDataViewController,
 	controller: LibraryTreeViewController
 ) : AbstractLibraryAction("file.action.open", Operation.View, controller) {
-
-	companion object {
-		private val LOG by logger(OpenTruthTableAction::class)
-	}
 
 	private val openHandler: EventHandler<OpenTruthTableItemRequest> = {
 		if (!controller.applicationModeHolder.currentMode.isEdit()) {
@@ -46,8 +41,6 @@ class OpenTruthTableAction(
 		super.calculateEnabledness() && selectedItem is TruthTableLibraryItem
 
 	private fun openAsSavable(item: TruthTableLibraryItem) {
-		LOG.userTrail("Open TruthTable as main view")
-		graphDataViewController.openAsStorable(item.truthTable, TruthTableSavable(item))
-		controller.eventBus.post(ShowTruthTableItemRequest(item))
+		graphDataViewController.openLibraryItem(item, "-", this.name, TruthTableSavable(item))
 	}
 }

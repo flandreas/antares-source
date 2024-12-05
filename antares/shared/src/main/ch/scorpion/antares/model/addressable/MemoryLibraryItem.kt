@@ -1,34 +1,23 @@
 package ch.scorpion.antares.model.addressable
 
-import ch.scorpion.jabbah.base.HierarchyVisitor
-import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.app.Savable
+import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
-import ch.scorpion.jabbah.graph.library.LibraryItem
 import ch.scorpion.jabbah.graph.library.AbstractLibraryItem
+import ch.scorpion.jabbah.graph.library.LibraryItem
 import ch.scorpion.jabbah.graph.library.UndoableStateLibraryItem
-import ch.scorpion.jabbah.io.Reference
-import ch.scorpion.jabbah.io.ReferenceResolver
-import ch.scorpion.jabbah.io.Storable
-import ch.scorpion.jabbah.io.StoreReader
-import ch.scorpion.jabbah.io.StoreWriter
+import ch.scorpion.jabbah.io.*
 
 /**
  * A request to initiate opening the [MemoryStorable] of a [MemoryLibraryItem].
  * This is used to establish the [MemorySavable] as new application [Savable].
  */
 data class OpenMemoryLibraryItemRequest(val item: MemoryLibraryItem)
-
-/**
- * A request to show the [MemoryStorable] of a [MemoryLibraryItem].
- * This is used after the [MemorySavable] has been established as new application [Savable],
- * and the second request is needed to avoid recursive handling of the first request.
- */
-data class ShowMemoryLibraryItemRequest(val item: MemoryLibraryItem)
 
 class MemoryLibraryItem(
     memoryStorable: MemoryStorable = MemoryStorable()
@@ -42,6 +31,10 @@ class MemoryLibraryItem(
 
     var memoryStorable: MemoryStorable = memoryStorable
         private set
+
+    fun updateMemoryStorable(memoryStorable: MemoryStorable) {
+        this.memoryStorable = memoryStorable
+    }
 
     /** ---- [LibraryItem] interface */
 

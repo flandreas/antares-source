@@ -16,13 +16,10 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.help.HelpId
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.HelpAction
-import ch.scorpion.jabbah.draw.CloseViewRequest
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.CommandManager
-import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.graph.AbstractTitledGraphDesktopViewItemSwing
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
-import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Font
@@ -35,7 +32,7 @@ import javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
 import kotlin.math.max
 
 class TruthTableDesktopItemSwing(
-	private val item: TruthTableLibraryItem,
+	val item: TruthTableLibraryItem,
 	private val applicationDataHolder: ApplicationDataHolder,
 	private val truthTableService: TruthTableService = AntaresModelModule.truthTableService,
 	private val createCircuitService: CreateCircuitFromTruthTableService = AntaresModuleJvm.createCircuitFromTruthTableService,
@@ -158,9 +155,7 @@ class TruthTableDesktopItemSwing(
 		ref.dispose()
 	}
 
-	override fun findContent(condition: (DrawingViewContent<GraphView>) -> Boolean): DrawingViewContent<*>? = null
-
-	override fun createCloseRequest(): Any = CloseViewRequest(this)
+	override fun displays(content: Any?): Boolean = content === item
 
 	/** ---- [TruthTableDesktopItemSwing] */
 

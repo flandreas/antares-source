@@ -11,7 +11,6 @@ import ch.scorpion.jabbah.graph.library.UndoableStateLibraryItem
 import ch.scorpion.jabbah.io.*
 
 data class OpenBooleanExpressionItemRequest(val item: BooleanExpressionLibraryItem)
-data class ShowBooleanExpressionItemRequest(val item: BooleanExpressionLibraryItem)
 
 class BooleanExpressionLibraryItem(
 	initialName: TranslatableText = TranslatableText(),
@@ -27,6 +26,10 @@ class BooleanExpressionLibraryItem(
 	override val activeIconPath: String get() = "/img/expression-active.png"
 
 	override val isFixed: Boolean = false
+
+	fun updateExpressions(expressions: BooleanExpressionStorable) {
+		this.expressions = expressions
+	}
 
 	override fun open(eventBus: EventBus) {
 		eventBus.post(OpenBooleanExpressionItemRequest(this))

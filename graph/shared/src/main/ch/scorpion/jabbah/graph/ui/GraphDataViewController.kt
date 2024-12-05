@@ -149,6 +149,34 @@ class GraphDataViewController(
 		}
 	}
 
+	/**
+	 * Opens the contents of the general [LibraryItem], which complements the earlier, more specialized version
+	 * for [ContainerLibraryElement]. This method creates a clone of [libraryItem] and uses it in the returned
+	 * [ApplicationData] to be opened as the new [ApplicationData].
+	 *  The [savable] will typically contain the original, not cloned [libraryItem].
+	 */
+	fun openLibraryItem(libraryItem: LibraryItem, id: String, actionName: String, savable: Savable) {
+		try {
+			LOG.info("Open ${savable::class.simpleName} '${libraryItem.name.value}'")
+			view.registerKeepAliveUsage()
+
+			open {
+				/**
+				 * Create a copy of the [LibraryItem] as part of the [ApplicationData] that can be safely edited
+				 * without corrupting the instance in the [Library].
+				 */
+				ApplicationData(StorableCloner.clone(libraryItem), savable, eventBus)
+			}
+
+		} catch (e: Throwable) {
+			LOG.error("Error while loading $id: ${e.message}")
+			view.showModalMessage(
+				ModalMessageType.Error,
+				actionName,
+				Translations.getString("graph.action.load.error.general.desc"))
+		}
+	}
+
 	private fun handle(@Suppress("UNUSED_PARAMETER") event: OpenLibraryRequest) {
 		if (!canReplaceSavable("library.action.open.name")) {
 			throw VetoException(Translations.getString("application.replaceSavableVeto.msg"))

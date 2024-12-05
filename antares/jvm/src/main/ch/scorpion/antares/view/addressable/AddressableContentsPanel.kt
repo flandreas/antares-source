@@ -62,7 +62,7 @@ class AddressableContentsPanel(
 		}
 	}
 
-	private val addressableRef = AddressableReference(link, view, eventBus)
+	val addressableRef = AddressableReference(link, view, eventBus)
 
 	private val memoryDisplayPanel = AddressableDisplayPanel(addressableRef, { editable } , applicationContextHolder)
 

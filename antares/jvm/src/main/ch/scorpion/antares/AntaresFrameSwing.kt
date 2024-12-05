@@ -1,11 +1,11 @@
 package ch.scorpion.antares
 
-import ch.scorpion.antares.model.addressable.ShowMemoryLibraryItemRequest
-import ch.scorpion.antares.model.expression.ShowBooleanExpressionItemRequest
+import ch.scorpion.antares.model.addressable.MemoryLibraryItem
+import ch.scorpion.antares.model.expression.BooleanExpressionLibraryItem
 import ch.scorpion.antares.model.testcase.TestcaseViewController
 import ch.scorpion.antares.model.testcase.TestcaseViewSwing
 import ch.scorpion.antares.model.testcase.result.TestRunResultsPanel
-import ch.scorpion.antares.model.truthtable.ShowTruthTableItemRequest
+import ch.scorpion.antares.model.truthtable.TruthTableLibraryItem
 import ch.scorpion.antares.view.AntaresFrame
 import ch.scorpion.antares.view.AntaresFrameController
 import ch.scorpion.antares.view.addressable.AddressableContentGraphDesktopItemSwing
@@ -86,14 +86,14 @@ class AntaresFrameSwing(
 			cmdManager = controller.graphPanelViewController.editor.commandManager,
 			contextColor = contextColor)
 
-	override fun createTruthTableDesktopViewItem(request: ShowTruthTableItemRequest): GraphDesktopViewItem =
-		TruthTableDesktopItemSwing(request.item, application.controller, commandManager = editor.commandManager)
+	override fun createTruthTableDesktopViewItem(item: TruthTableLibraryItem): GraphDesktopViewItem =
+		TruthTableDesktopItemSwing(item, application.controller, commandManager = editor.commandManager)
 
-	override fun createBooleanExpressionDesktopViewItem(request: ShowBooleanExpressionItemRequest): GraphDesktopViewItem =
-		BooleanExpressionDesktopItemSwing(request.item, application.controller, commandManager = editor.commandManager)
+	override fun createBooleanExpressionDesktopViewItem(item: BooleanExpressionLibraryItem): GraphDesktopViewItem =
+		BooleanExpressionDesktopItemSwing(item, application.controller, commandManager = editor.commandManager)
 
-	override fun createMemoryStorableGraphDesktopViewItem(request: ShowMemoryLibraryItemRequest): GraphDesktopViewItem =
-		MemoryStorableGraphDesktopItemSwing(request.item, application.controller, controller.applicationContextHolder, editor.commandManager)
+	override fun createMemoryStorableGraphDesktopViewItem(item: MemoryLibraryItem): GraphDesktopViewItem =
+		MemoryStorableGraphDesktopItemSwing(item, application.controller, controller.applicationContextHolder, editor.commandManager)
 
 	override fun showMemoryContents(request: OpenMemoryContentsRequest) {
 		AddressableContentsPanel.showAsDialog(

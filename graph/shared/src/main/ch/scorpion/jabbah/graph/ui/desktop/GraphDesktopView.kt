@@ -34,8 +34,8 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 /**
  * Displays an optional main [GraphDesktopViewItem] and multiple additional [GraphDesktopViewItem] that
  * are associated with [VerticeView]s in the main [GraphDesktopViewItem]. A typical implementation
- * might display the main [GraphDesktopViewItem] in a large area at the left side, and additional
- * [GraphDesktopViewItem]s below each other in a area at the right side.
+ * might display the main [GraphDesktopViewItem] in a large area to the left side, and additional
+ * [GraphDesktopViewItem]s below each other in an area to the right side.
  */
 interface GraphDesktopView : UIView {
 

@@ -14,7 +14,7 @@ import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.vertice.ObjectLink
 
 class MemoryStorableGraphDesktopItemSwing(
-    item: MemoryLibraryItem,
+    val item: MemoryLibraryItem,
     private val applicationDataHolder: ApplicationDataHolder,
     applicationContextHolder: GraphApplicationContextHolder,
     commandManager: CommandManager,
@@ -36,16 +36,17 @@ class MemoryStorableGraphDesktopItemSwing(
             "${Translations.getString("library.element.memory.name")} \"${storable.name.getTranslation()}\""
     }
 
-    private val memoryStorable: MemoryStorable get() = applicationDataHolder.data!!.content as MemoryStorable
+    private val memoryStorable: MemoryStorable get() = (applicationDataHolder.data!!.content as MemoryLibraryItem).memoryStorable
 
     override fun createHeaderText(): String = createTitleText(memoryStorable)
+
+    override fun displays(content: Any?): Boolean = content == item
 
     private class MemoryStorableLink(
         private val applicationDataHolder: ApplicationDataHolder
     ) : ObjectLink<Addressable> {
 
-        override fun getLinkedObject(startGraph: Graph?): Addressable {
-            return applicationDataHolder.data!!.content as MemoryStorable
-        }
+        override fun getLinkedObject(startGraph: Graph?): Addressable =
+            (applicationDataHolder.data!!.content as MemoryLibraryItem).memoryStorable
     }
 }

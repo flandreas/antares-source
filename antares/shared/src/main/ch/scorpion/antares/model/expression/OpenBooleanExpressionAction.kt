@@ -2,8 +2,6 @@ package ch.scorpion.antares.model.expression
 
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventHandler
-import ch.scorpion.jabbah.base.invocation.InvocationHandler
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
@@ -15,10 +13,6 @@ class OpenBooleanExpressionAction(
 	private val graphDataViewController: GraphDataViewController,
 	controller: LibraryTreeViewController
 ) : AbstractLibraryAction("file.action.open", Operation.View, controller) {
-
-	companion object {
-		private val LOG by logger(OpenBooleanExpressionAction::class)
-	}
 
 	private val openHandler: EventHandler<OpenBooleanExpressionItemRequest> = {
 		if (!controller.applicationModeHolder.currentMode.isEdit()) {
@@ -45,10 +39,6 @@ class OpenBooleanExpressionAction(
 		super.calculateEnabledness() && selectedItem is BooleanExpressionLibraryItem
 
 	private fun openAsSavable(item: BooleanExpressionLibraryItem) {
-		InvocationHandler.invoke {
-			LOG.userTrail("Open BooleanExpression as main view")
-			graphDataViewController.openAsStorable(item.expressions, BooleanExpressionSavable(item))
-			controller.eventBus.post(ShowBooleanExpressionItemRequest(item))
-		}
+		graphDataViewController.openLibraryItem(item, "-", this.name, BooleanExpressionSavable(item))
 	}
 }

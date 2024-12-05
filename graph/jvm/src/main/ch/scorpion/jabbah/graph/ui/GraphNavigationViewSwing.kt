@@ -157,6 +157,8 @@ class GraphNavigationViewSwing(
 		controller.dispose()
 	}
 
+	override fun displays(content: Any?): Boolean = content === graphView
+
 	override val isDetached: Boolean = controller.isDetached
 
 	override fun addContextColorBorder(color: Color) {
