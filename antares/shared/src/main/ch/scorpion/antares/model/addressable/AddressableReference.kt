@@ -31,7 +31,7 @@ class AddressableReference(
 		registerNewContent((it.data.content as MetaGraph).graph.model!!)
 	}
 
-	private val dataListeners = mutableListOf<AddressableDataListener>()
+	private val addressableListeners = mutableListOf<AddressableListener>()
 
 	init {
 		registerNewContent(view?.drawing?.graph)
@@ -42,27 +42,27 @@ class AddressableReference(
 	fun dispose() {
 		eventBus.unregister(applicationDataContentHandler)
 		eventBus.unregister(applicationDataEstablishedHandler)
-		dataListeners.forEach { addressable.removeDataListener(it) }
+		addressableListeners.forEach { addressable.removeListener(it) }
 	}
 
-	fun addDataListener(l: AddressableDataListener) {
-		if (!dataListeners.contains(l)) {
-			dataListeners.add(l)
-			addressable.addDataListener(l)
+	fun addListener(l: AddressableListener) {
+		if (!addressableListeners.contains(l)) {
+			addressableListeners.add(l)
+			addressable.addListener(l)
 		}
 	}
 
-	fun removeDataListener(l: AddressableDataListener) {
-		dataListeners.remove(l)
-		addressable.removeDataListener(l)
+	fun removeListener(l: AddressableListener) {
+		addressableListeners.remove(l)
+		addressable.removeListener(l)
 	}
 
 	private fun unregisterOldContent() {
-		dataListeners.forEach { addressable.removeDataListener(it) }
+		addressableListeners.forEach { addressable.removeListener(it) }
 	}
 
 	private fun registerNewContent(graph: Graph?) {
 		this.addressable = link.getLinkedObject(graph)
-		dataListeners.forEach { addressable.addDataListener(it) }
+		addressableListeners.forEach { addressable.addListener(it) }
 	}
 }

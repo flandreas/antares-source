@@ -14,7 +14,7 @@ abstract class AbstractAddressable<T : AddressableVertice>(
 	calculator: VerticeCalculator<T>
 ) : CalculatingVertice(calculator), AddressableVertice {
 
-	private val dataListeners = mutableListOf<AddressableDataListener>()
+	private val dataListeners = mutableListOf<AddressableListener>()
 
 	/** ---- [Addressable] interface */
 
@@ -32,15 +32,23 @@ abstract class AbstractAddressable<T : AddressableVertice>(
 	override var addressWidth: BitWidth
 		get() = getAddressInput().bitWidth
 		set(value) {
-			getAddressInput().bitWidth = value
-			stateChanged()
+			if (value != addressWidth) {
+				val oldValue = addressWidth
+				getAddressInput().bitWidth = value
+				stateChanged()
+				notifyBitWidthChanged(true, oldValue, value)
+			}
 		}
 
 	override var dataWidth: BitWidth
 		get() = getDataPort().bitWidth
 		set(value) {
-			getDataPort().bitWidth = value
-			stateChanged()
+			if (value != dataWidth) {
+				val oldValue = dataWidth
+				getDataPort().bitWidth = value
+				stateChanged()
+				notifyBitWidthChanged(true, oldValue, value)
+			}
 		}
 
 	override var dataSource: String? = null
@@ -74,13 +82,13 @@ abstract class AbstractAddressable<T : AddressableVertice>(
 		stateChanged()
 	}
 
-	override fun addDataListener(listener: AddressableDataListener) {
+	override fun addListener(listener: AddressableListener) {
 		if (!dataListeners.contains(listener)) {
 			dataListeners.add(listener)
 		}
 	}
 
-	override fun removeDataListener(listener: AddressableDataListener) {
+	override fun removeListener(listener: AddressableListener) {
 		dataListeners.remove(listener)
 	}
 
@@ -94,6 +102,11 @@ abstract class AbstractAddressable<T : AddressableVertice>(
 	private fun notifyCommentChanged(address: Int, oldValue: String?, newValue: String?) {
 		val event = AddressableCommentEvent(address, oldValue, newValue)
 		dataListeners.forEach { it.commentChanged(event) }
+	}
+
+	private fun notifyBitWidthChanged(isAddress: Boolean, oldValue: BitWidth, newValue: BitWidth) {
+		val event = AddressableBitWidthEvent(isAddress, oldValue, newValue)
+		dataListeners.forEach { it.bitWidthChanged(event) }
 	}
 
 	/** ---- [Storable] */

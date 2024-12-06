@@ -16,7 +16,7 @@ class MemoryStorable(
     dataWidth: BitWidth = BitWidth.BW_8
 ) : AbstractStorable(), Namable, Addressable, Bean {
 
-    private val dataListeners = mutableListOf<AddressableDataListener>()
+    private val dataListeners = mutableListOf<AddressableListener>()
 
     override fun toString(): String = Translations.getString("library.element.memory.name")
 
@@ -42,13 +42,13 @@ class MemoryStorable(
 
     override var dataSource: String? = null
 
-    override fun addDataListener(listener: AddressableDataListener) {
+    override fun addListener(listener: AddressableListener) {
         if (!dataListeners.contains(listener)) {
             dataListeners.add(listener)
         }
     }
 
-    override fun removeDataListener(listener: AddressableDataListener) {
+    override fun removeListener(listener: AddressableListener) {
         dataListeners.remove(listener)
     }
 

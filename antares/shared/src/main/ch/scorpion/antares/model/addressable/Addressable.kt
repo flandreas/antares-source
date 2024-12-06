@@ -7,7 +7,7 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.Vertice
 
 /**
- * Sent to [AddressableDataListener] if a cell value in [Addressable] has changed.
+ * Sent to [AddressableListener] if a cell value in [Addressable] has changed.
  * Properties are `null` if ALL values have been changed.
  */
 data class AddressableDataEvent(
@@ -22,10 +22,20 @@ data class AddressableCommentEvent(
 	val newValue: String?
 )
 
+/**
+ * @param isAddress `true`, if [Addressable.addressWidth] was changed, `false` if [Addressable.dataWidth] was changed
+ */
+data class AddressableBitWidthEvent(
+	val isAddress: Boolean,
+	val oldValue: BitWidth,
+	val newValue: BitWidth
+)
+
 /** Listens for cell values changes in [Addressable]. */
-interface AddressableDataListener {
+interface AddressableListener {
 	fun dataChanged(event: AddressableDataEvent)
 	fun commentChanged(event: AddressableCommentEvent)
+	fun bitWidthChanged(event: AddressableBitWidthEvent)
 }
 
 /**
@@ -68,9 +78,9 @@ interface Addressable {
 	/** An optional indication (typically a file path/name) from which the [memory] contents have been loaded.*/
 	var dataSource: String?
 
-	fun addDataListener(listener: AddressableDataListener)
+	fun addListener(listener: AddressableListener)
 
-	fun removeDataListener(listener: AddressableDataListener)
+	fun removeListener(listener: AddressableListener)
 
 	/** Clears all content in this [Addressable].*/
 	fun clear()

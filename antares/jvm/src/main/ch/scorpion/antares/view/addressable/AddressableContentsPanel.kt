@@ -66,16 +66,20 @@ class AddressableContentsPanel(
 
 	private val memoryDisplayPanel = AddressableDisplayPanel(addressableRef, { editable } , applicationContextHolder)
 
-	private val addressableDataListener = object : AddressableDataListener {
+	private val addressableListener = object : AddressableListener {
 		override fun dataChanged(event: AddressableDataEvent) {
-			handle()
+			handleContentChanged()
 		}
 
 		override fun commentChanged(event: AddressableCommentEvent) {
-			handle()
+			handleContentChanged()
 		}
 
-		private fun handle() {
+		override fun bitWidthChanged(event: AddressableBitWidthEvent) {
+			handleContentChanged()
+		}
+
+		private fun handleContentChanged() {
 			invalidate()
 			repaint()
 		}
@@ -99,7 +103,7 @@ class AddressableContentsPanel(
 	var closeButton: JButton? = null
 
 	init {
-		addressableRef.addDataListener(addressableDataListener)
+		addressableRef.addListener(addressableListener)
 		buildUI()
 		updateEditable()
 		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
@@ -107,7 +111,7 @@ class AddressableContentsPanel(
 
 	fun dispose() {
 		eventBus.unregister(applicationModeHandler)
-		addressableRef.removeDataListener(addressableDataListener)
+		addressableRef.removeListener(addressableListener)
 		addressableRef.dispose()
 		memoryDisplayPanel.dispose()
 	}

@@ -1,9 +1,6 @@
 package ch.scorpion.antares.view.output
 
-import ch.scorpion.antares.model.addressable.AddressableCommentEvent
-import ch.scorpion.antares.model.addressable.AddressableDataEvent
-import ch.scorpion.antares.model.addressable.AddressableDataListener
-import ch.scorpion.antares.model.addressable.RAM
+import ch.scorpion.antares.model.addressable.*
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
@@ -125,7 +122,7 @@ class VideoRamView(
 
 	private lateinit var bufferedImage: RasterImage
 
-	private val dataChangeListener = object : AddressableDataListener {
+	private val dataChangeListener = object : AddressableListener {
 
 		override fun dataChanged(event: AddressableDataEvent) {
 			event.address?.let { address ->
@@ -141,6 +138,10 @@ class VideoRamView(
 		}
 
 		override fun commentChanged(event: AddressableCommentEvent) { }
+
+		override fun bitWidthChanged(event: AddressableBitWidthEvent) {
+			// TODO
+		}
 	}
 
 	init {
@@ -158,8 +159,8 @@ class VideoRamView(
 	override fun modelExchanged(oldModel: RAM?) {
 		super.modelExchanged(oldModel)
 
-		oldModel?.let { it.removeDataListener(dataChangeListener) }
-		model.addDataListener(dataChangeListener)
+		oldModel?.let { it.removeListener(dataChangeListener) }
+		model.addListener(dataChangeListener)
 
 		model.type = Translations.getString("library.element.VideoRam.name")
 		model.typeDesc = Translations.getOptionalString("library.element.VideoRam.desc")
