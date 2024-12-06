@@ -36,10 +36,11 @@ class GraphNavigationViewSwing(
 	private val controller: GraphNavigationViewController,
 	override val drawingView: DrawingView<GraphView>,
 	private val viewManager: ContentViewManager,
+	reusable: Boolean,
 	contextBorderColor: CompositeColor? = null,
 	private val eventBus: EventBus = BaseModule.eventBus,
-	allowCloseInHeader: Boolean = true
-) : AbstractGraphDesktopViewItemSwing(), GraphNavigationView {
+	allowCloseInHeader: Boolean = true,
+) : AbstractGraphDesktopViewItemSwing(reusable), GraphNavigationView {
 
 	private val navigationStack: NavigationStack<GraphView> = controller.navigationStack
 

@@ -31,6 +31,7 @@ class GraphViewerFrameSwing(
 		drawingView = controller.drawingView,
 		viewManager = DrawViewModule.viewManager,
 		contextBorderColor = null,
+		reusable = false,
 		allowCloseInHeader = false)
 
 	private val closeRequestHandler: (CloseViewRequest) -> Unit = { handle(it) }

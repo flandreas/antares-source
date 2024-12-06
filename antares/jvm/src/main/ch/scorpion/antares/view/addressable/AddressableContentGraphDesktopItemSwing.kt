@@ -30,7 +30,7 @@ class AddressableContentGraphDesktopItemSwing(
 	cmdManager: CommandManager = EditModule.commandManager,
 	contextColor: CompositeColor,
 	private val eventBus: EventBus = BaseModule.eventBus
-) : AbstractGraphDesktopViewItemSwing() {
+) : AbstractGraphDesktopViewItemSwing(reusable = false) {
 
 	private val memoryContentPanel = AddressableContentsPanel(drawingView, applicationContextHolder, link, cmdManager)
 

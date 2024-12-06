@@ -14,7 +14,9 @@ import javax.swing.*
 import javax.swing.border.Border
 import kotlin.math.max
 
-abstract class AbstractGraphDesktopViewItemSwing : JPanel(), GraphDesktopViewItem {
+abstract class AbstractGraphDesktopViewItemSwing(
+	override val reusable: Boolean
+) : JPanel(), GraphDesktopViewItem {
 
 	companion object {
 		private const val BORDER_THICKNESS = 5

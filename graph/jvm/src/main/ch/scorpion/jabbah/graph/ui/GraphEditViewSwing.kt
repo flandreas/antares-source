@@ -29,6 +29,7 @@ class GraphEditViewSwing(
 		controller = controller.graphNavigationViewController,
 		drawingView = controller.editor.view as DrawingView<GraphView>,
 		viewManager = viewManager,
+		reusable = true,
 		contextBorderColor = null)
 ) : JPanel(), GraphEditView, GraphDesktopViewItem by graphNavigationView {
 

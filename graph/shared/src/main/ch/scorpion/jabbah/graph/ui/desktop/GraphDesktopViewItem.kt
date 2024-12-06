@@ -16,6 +16,12 @@ import ch.scorpion.jabbah.graph.view.GraphView
 interface GraphDesktopViewItem : ContentView<EditInputEventContext> {
 
 	/**
+	 * If a [GraphDesktopViewItem] is reusable, its [disposeItem] method is NOT called
+	 * when it is closed.
+	 */
+	val reusable: Boolean
+
+	/**
 	 * The [DrawingView] displayed by this [GraphDesktopViewItem]. Implementations that don't
 	 * display a drawing can return `null`.
 	 */

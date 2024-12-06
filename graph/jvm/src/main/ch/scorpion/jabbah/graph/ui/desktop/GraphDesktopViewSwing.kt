@@ -116,6 +116,7 @@ class GraphDesktopViewSwing(
 			controller = controller,
 			drawingView = drawingView,
 			viewManager = viewManager,
+			reusable = false,
 			contextBorderColor = referenceColor
 		)
 

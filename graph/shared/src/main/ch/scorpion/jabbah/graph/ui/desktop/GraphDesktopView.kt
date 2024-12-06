@@ -270,24 +270,43 @@ class GraphDesktopViewController(
 		LOG.userTrail("Open '${verticeView.model.getGraphIfPresent()?.name?.value}' in new desktop item")
 	}
 
+	/**
+	 * Closes the specified [GraphDesktopViewItem]. If it is the main view, all other views are
+	 * closed as well.
+	 */
 	fun closeItem(item: GraphDesktopViewItem) {
 		LOG.userTrail("Close single desktop item")
 		if (item === view.mainDesktopViewItem) {
 			closeAll()
 		} else {
 			deassociate(item)
-			item.disposeItem()
+			freeItem(item)
 			view.closeItem(item)
 		}
 	}
 
+	private fun freeItem(item: GraphDesktopViewItem) {
+		if (!item.reusable) {
+			item.disposeItem()
+		}
+	}
+
+	/**
+	 * Closes all open [GraphDesktopViewItem] and shows [item] as the main view.
+	 */
 	fun show(item: GraphDesktopViewItem) {
+		if (view.mainDesktopViewItem != null) {
+			freeItem(view.mainDesktopViewItem!!)
+		}
 		deassociateAdditional()
 		viewManager.activeView = item
 		view.show(item)
 	}
 
 	fun closeAll() {
+		if (view.mainDesktopViewItem != null) {
+			freeItem(view.mainDesktopViewItem!!)
+		}
 		deassociateAdditional()
 		view.closeAll()
 		viewManager.activeView = null
@@ -296,7 +315,7 @@ class GraphDesktopViewController(
 	private fun deassociateAdditional() {
 		additionalDesktopItems.forEach {
 			deassociate(it)
-			it.disposeItem()
+			freeItem(it)
 		}
 	}
 

@@ -25,6 +25,7 @@ class SubGraphViewerViewSwing(
 		controller = controller.graphNavigationViewController,
 		drawingView = controller.drawingView,
 		viewManager = DrawViewModule.viewManager,
+		reusable = false,
 		allowCloseInHeader = false)
 
 	init {

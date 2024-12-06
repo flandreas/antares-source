@@ -34,6 +34,7 @@ internal class ViewMocks(
     /** ---- [GraphNavigationView] */
 
     override val graphView: GraphView get() = controller.drawingView.drawing
+    override val reusable: Boolean get() = false
     override val showsNavigationRoot: Boolean get() = true
     override fun refresh() {}
     override val drawingView: DrawingView<GraphView> get() = controller.drawingView
@@ -42,6 +43,7 @@ internal class ViewMocks(
     override fun disposeItem() {}
     override fun findContent(condition: (DrawingViewContent<GraphView>) -> Boolean): DrawingViewContent<*>? = null
     override fun createCloseRequest(): Any = "Close Request"
+    override fun displays(content: Any?): Boolean = content === graphView
 
     /** ---- [NavigationStackView] */
 

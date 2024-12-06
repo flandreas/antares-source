@@ -32,7 +32,7 @@ abstract class AbstractTitledGraphDesktopViewItemSwing(
     private val applicationDataHolder: ApplicationDataHolder,
     private val eventBus: EventBus = BaseModule.eventBus,
     actions: List<Action> = emptyList()
-) : AbstractGraphDesktopViewItemSwing() {
+) : AbstractGraphDesktopViewItemSwing(reusable = false) {
 
     private val closeViewRequestHandler: EventHandler<CloseViewRequest> = { handle(it) }
 
