@@ -84,8 +84,13 @@ open class GraphFrameSwing(
 
 			editor.view.initialize()
 
-			viewManager.activeView = controller.graphPanelViewController.view.graphEditView
-			controller.graphPanelViewController.editor.active = true
+			if (controller.graphPanelViewController.desktopController.view.mainDesktopViewItem == null) {
+				viewManager.activeView = null
+				controller.graphPanelViewController.editor.active = false
+			} else {
+				viewManager.activeView = controller.graphPanelViewController.view.graphEditView
+				controller.graphPanelViewController.editor.active = true
+			}
 			controller.containerPanelController.active = false
 		}
 	}
