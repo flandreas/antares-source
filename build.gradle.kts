@@ -90,7 +90,6 @@ subprojects {
 					jvmTarget = JavaVersion.VERSION_1_8.toString()
 					freeCompilerArgs = listOf(
 						// https://youtrack.jetbrains.com/issue/KT-37435
-						"-Xopt-in=kotlin.ExperimentalUnsignedTypes",
 						"-Xno-optimized-callable-references",
 						"-Xexpect-actual-classes",
 						"-Xinline-classes")
@@ -121,6 +120,7 @@ subprojects {
 			all {
 				languageSettings.apply {
 					optIn("kotlin.js.ExperimentalJsExport")
+					optIn("kotlin.ExperimentalUnsignedTypes")
 				}
 			}
 			val commonMain by getting {
