@@ -219,6 +219,9 @@ class LibraryTreeViewController (
 			// Moving LibraryFolders between Libraries not yet supported
 			return item !== destination && item.library === destination.library
 		}
+		if (item is UndoableStateLibraryItem<*>) {
+			return true
+		}
 		return false
 	}
 

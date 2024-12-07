@@ -68,7 +68,7 @@ class LibraryTreeViewTransferHandler(
 		}
 
 		val item = extractTransferItem(support)
-		if (item !is LibraryElement && item !is LibraryFolder) {
+		if (item !is LibraryElement && item !is LibraryFolder && item !is UndoableStateLibraryItem<*>) {
 			return false
 		}
 
@@ -89,6 +89,8 @@ class LibraryTreeViewTransferHandler(
 			createLibraryElementTransferable()
 		} else if (controller.selectedItem is LibraryFolder && controller.selectedItem !is Library) {
 			createFolderTransferable(controller.selectedItem as LibraryFolder)
+		} else if (controller.selectedItem is UndoableStateLibraryItem<*>) {
+			createUndoableStateLibraryItemTransferable(controller.selectedItem as UndoableStateLibraryItem<*>)
 		} else {
 			null
 		}
@@ -109,6 +111,10 @@ class LibraryTreeViewTransferHandler(
 						true
 					}
 					is LibraryFolder -> {
+						InvocationHandler.invoke { item.library!!.libraryService.move(item.library!!, item, it.directory, it.index) }
+						true
+					}
+					is UndoableStateLibraryItem<*> -> {
 						InvocationHandler.invoke { item.library!!.libraryService.move(item.library!!, item, it.directory, it.index) }
 						true
 					}
@@ -138,6 +144,9 @@ class LibraryTreeViewTransferHandler(
 	private fun createFolderTransferable(folder: LibraryFolder): Transferable =
 		LibraryFolderTransferable(folder)
 
+	private fun createUndoableStateLibraryItemTransferable(item: UndoableStateLibraryItem<*>): Transferable =
+		UndoableStateLibraryItemTransferable(item)
+
 	private fun confirmMove(item: LibraryItem, destination: LibraryDirectory): Boolean {
 		val otherDirectory = if (destination !== item.library!!.libraryService.getDirectoryOf(item.library!!, item)) {
 			destination
@@ -148,6 +157,7 @@ class LibraryTreeViewTransferHandler(
 		return when (item) {
 			is LibraryElement -> confirmMoveLibraryElement(item, otherDirectory)
 			is LibraryFolder -> confirmMoveLibraryFolder(item, otherDirectory)
+			is UndoableStateLibraryItem<*> -> confirmMoveUndoableStateLibraryItem(item, otherDirectory)
 			else -> false
 		}
 	}
@@ -180,6 +190,20 @@ class LibraryTreeViewTransferHandler(
 			JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION
 	}
 
+	private fun confirmMoveUndoableStateLibraryItem(item: UndoableStateLibraryItem<*>, otherDirectory: LibraryDirectory?): Boolean {
+		val question = if (otherDirectory != null) {
+			Translations.getString("repository.action.moveItemToOtherDirectory.question", item.name.value, otherDirectory.name.value)
+		} else {
+			Translations.getString("repository.action.moveItem.question", item.name.value)
+		}
+		return JOptionPane.showConfirmDialog(
+			Frame.getFrames()[0],
+			question,
+			Translations.getString("repository.action.moveItem.name"),
+			JOptionPane.YES_NO_OPTION,
+			JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION
+	}
+
 	private fun getLibraryDropLocation(support: TransferSupport): LibraryDropLocation? {
 		if (!support.isDrop) {
 			return null
@@ -203,6 +227,9 @@ class LibraryTreeViewTransferHandler(
 		}
 		if (support.isDataFlavorSupported(LibraryFolderTransferable.FLAVOR)) {
 			return support.transferable.getTransferData(LibraryFolderTransferable.FLAVOR) as LibraryFolder
+		}
+		if (support.isDataFlavorSupported(UndoableStateLibraryItemTransferable.FLAVOR)) {
+			return support.transferable.getTransferData(UndoableStateLibraryItemTransferable.FLAVOR) as UndoableStateLibraryItem<*>
 		}
 
 		return null
