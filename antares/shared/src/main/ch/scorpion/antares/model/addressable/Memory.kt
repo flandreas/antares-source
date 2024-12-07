@@ -63,6 +63,17 @@ class Memory(private val segmentSize: Int) {
 		segments.clear()
 	}
 
+	fun addressWithValueLargerThan(value: ULong): Int? {
+		val iter = getNonZeroCells()
+		while (iter.hasNext()) {
+			val cell = iter.next()
+			if (cell.value > value) {
+				return cell.address
+			}
+		}
+		return null
+	}
+
 	private fun writeSingleValue(address: Int, value: ULong) {
 		if (value == 0UL && !hasSegment(address)) {
 			return

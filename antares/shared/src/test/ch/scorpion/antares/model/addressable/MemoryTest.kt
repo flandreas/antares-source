@@ -192,6 +192,18 @@ class MemoryTest {
 		assertNull(memory.readComment(3))
 	}
 
+	@Test
+	fun shouldDetectValueLargerThan() {
+		val memory = Memory().apply {
+			write(0, 15UL)
+			write(1000, 1024UL)
+		}
+
+		assertNull(memory.addressWithValueLargerThan(2000UL))
+		assertNull(memory.addressWithValueLargerThan(1024UL))
+		assertEquals(1000, memory.addressWithValueLargerThan(255UL))
+	}
+
 	/** ---- Regression tests */
 
 	@Test

@@ -182,7 +182,7 @@ class ROM(
 			BaseModule.eventBus.post(IssueImpl(
 				IssueSeverity.Warning,
 				Translations.getString("ROM.loadDataSource.loadError.txt"),
-				null,
+				e.message,
 				"ROM (ID $id)",
 				null)
 			)
@@ -191,14 +191,23 @@ class ROM(
 
 	private fun loadFromDataSource() {
 		System.getFileContents(dataSource!!)?.let {
+			validateData(it)
 			MemoryDump.read(memory, it)
 		}
 	}
 
 	private fun loadFromMemoryStorable() {
 		findMemoryLibraryItem()?.let {
-			MemoryDump.read(memory, MemoryDump.write(it.storable.memory, dataWidth))
+			val data = MemoryDump.write(it.storable.memory, dataWidth)
+			validateData(data)
+			MemoryDump.read(memory, data)
 		}
+	}
+
+	private fun validateData(data: String) {
+		val tempMemory = Memory()
+		MemoryDump.read(tempMemory, data)
+		validateDataBitWidth(tempMemory, dataWidth)
 	}
 
 	/** ---- [ROM]  */

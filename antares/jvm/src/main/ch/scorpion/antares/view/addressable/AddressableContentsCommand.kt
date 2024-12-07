@@ -37,10 +37,11 @@ class AddressableContentsCommand(
 		oldContents = MemoryDump.write(addressable.memory, bitWidth)
 		try {
 			MemoryDump.read(addressable.memory, String(Files.readAllBytes(Paths.get(filePath))))
+			addressable.validateDataBitWidth(addressable.dataWidth)
 			addressable.dataSource = filePath
 			addressable.update()
 		} catch (e: Throwable) {
-			LOG.error("Error while reading memory from file '$filePath'")
+			LOG.debug("Error while reading memory from file '$filePath'")
 			throw e
 		}
 	}

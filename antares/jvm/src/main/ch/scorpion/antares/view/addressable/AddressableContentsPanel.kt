@@ -188,10 +188,10 @@ class AddressableContentsPanel(
 					executeCommand(AddressableContentsCommand(view, addressableRef.link, addressableRef.addressable.dataWidth, fileChooser.selectedFile!!.absolutePath))
 					memoryDisplayPanel.refresh()
 				} catch (e: IllegalArgumentException) {
-					LOG.error("Invalid data in memory file: ${e.message}")
+					val msg = Translations.getString("antares.memory.invalidData.text") + "\n${e.message}"
 					JOptionPane.showConfirmDialog(
 						JFrame.getFrames()[0],
-						Translations.getString("antares.memory.invalidData.text"),
+						msg,
 						getValue(Action.NAME) as String,
 						JOptionPane.DEFAULT_OPTION,
 						JOptionPane.ERROR_MESSAGE)

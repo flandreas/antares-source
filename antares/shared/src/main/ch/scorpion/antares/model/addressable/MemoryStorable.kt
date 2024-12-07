@@ -79,6 +79,10 @@ class MemoryStorable(
 
     override fun disassemblyAt(address: Int): String = ""
 
+    override fun validateDataBitWidth(bitWidth: BitWidth) {
+        AbstractAddressable.validateDataBitWidth(memory, bitWidth)
+    }
+
     /** ---- [Namable] interface */
 
     override var name: Name by observableName(Name(initialName))

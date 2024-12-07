@@ -102,6 +102,13 @@ interface Addressable {
 	 * [String] if this [Addressable] doesn't support disassembling.
 	 */
 	fun disassemblyAt(address: Int): String
+
+	/**
+	 * Checks if the current data content doesn't have cell values
+	 * larger than that supported by [bitWidth].
+	 * @throws IllegalArgumentException if any cell value is larger
+	 */
+	fun validateDataBitWidth(bitWidth: BitWidth)
 }
 
 interface AddressableVertice : Addressable, Vertice {

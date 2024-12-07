@@ -3,6 +3,7 @@ package ch.scorpion.antares.model.addressable
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import kotlin.math.max
 
@@ -94,13 +95,20 @@ object MemoryDump {
 		memory.clear()
 		for ((address, cell) in removeCommentLines(dump).split(cellSeparationRegex).withIndex()) {
 			val cellTokens = cell.split(cellTokenSeparationRegex)
-			when (cellTokens.size) {
-				1 -> memory.write(address, BitOperation.hexToLong(cellTokens[0]))
-				2 -> memory.writeCommentedValue(address, BitOperation.hexToLong(cellTokens[0]), readEscapedCellComment(cellTokens[1]))
-				else -> {
-					LOG.error("illegal syntax at address $address in cell $cell")
-					throw IllegalArgumentException("Illegal syntax in MemoryDump")
+			try {
+				when (cellTokens.size) {
+					1 -> memory.write(address, BitOperation.hexToLong(cellTokens[0]))
+					2 -> memory.writeCommentedValue(address, BitOperation.hexToLong(cellTokens[0]), readEscapedCellComment(cellTokens[1]))
+					else -> {
+						val txt = Translations.getString("antares.memory.illegalSyntax.text", cell, address)
+						LOG.debug("Error while reading memory dump: $txt")
+						throw IllegalArgumentException(txt)
+					}
 				}
+			} catch (e: NumberFormatException) {
+				val txt = Translations.getString("antares.memory.illegalHexNumber.text", cellTokens[0], address)
+				LOG.debug("Error while reading memory dump: $txt")
+				throw IllegalArgumentException(txt)
 			}
 		}
 	}
@@ -114,12 +122,25 @@ object MemoryDump {
 			val value: ULong
 			if (commentDelimiterIndex == -1) {
 				for (cell in line.split(CELL_DELIMITER)) {
-					memory.write(address++, BitOperation.hexToLong(cell))
+					try {
+						memory.write(address++, BitOperation.hexToLong(cell))
+					} catch (e: NumberFormatException) {
+						val txt = Translations.getString("antares.memory.illegalHexNumber.text", cell, address)
+						LOG.debug("Error while reading memory dump: $txt")
+						throw IllegalArgumentException(txt)
+					}
 				}
 			} else {
-				value = BitOperation.hexToLong(line.substring(0, commentDelimiterIndex))
-				comment = line.substring(commentDelimiterIndex + 1)
-				memory.writeCommentedValue(address++, value, comment)
+				val text = line.substring(0, commentDelimiterIndex)
+				try {
+					value = BitOperation.hexToLong(text)
+					comment = line.substring(commentDelimiterIndex + 1)
+					memory.writeCommentedValue(address++, value, comment)
+				}  catch (e: NumberFormatException) {
+					val txt = Translations.getString("antares.memory.illegalHexNumber.text", text, address)
+					LOG.debug("Error while reading memory dump: $txt")
+					throw IllegalArgumentException(txt)
+				}
 			}
 		}
 	}

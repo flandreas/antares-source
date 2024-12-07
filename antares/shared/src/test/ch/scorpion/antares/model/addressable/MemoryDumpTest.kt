@@ -2,8 +2,7 @@ package ch.scorpion.antares.model.addressable
 
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.signal.BitWidth
-import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.*
 
 /**
  * Unit tests for [MemoryDump].
@@ -57,7 +56,7 @@ class MemoryDumpTest {
 	}
 
 
-	/** ---- Write 8 bit tests */
+	/** ---- Write 8-bit tests */
 
     @Test
     fun shouldWriteEmptyData() {
@@ -77,7 +76,7 @@ class MemoryDumpTest {
         assertEquals("04 FF FF 00 00 00 00 00 01 00 02", MemoryDump.write(memory, BitWidth.BW_8))
     }
 
-    /** ---- Write 16 bit tests */
+    /** ---- Write 16-bit tests */
 
     @Test
     fun shouldWriteArbitrary16BitData() {
@@ -91,7 +90,7 @@ class MemoryDumpTest {
         assertEquals("0004 FFFF 00FF 0000 0000 0000 0000 0000 0001 0000 008A", MemoryDump.write(memory, BitWidth.BW_16))
     }
 
-    /** ---- Read 8 bit data */
+    /** ---- Read 8-bit data */
 
     @Test
     fun shouldClearBeforeRead() {
@@ -137,7 +136,7 @@ class MemoryDumpTest {
 		}
 	}
 
-    /** ---- Read 16 bit test */
+    /** ---- Read 16-bit test */
 
     @Test
     fun shouldReadArbitrary16BitData() {
@@ -155,7 +154,7 @@ class MemoryDumpTest {
         assertEquals(0UL, memory.read(7))
     }
 
-    /** ---- Read 32 bit tests */
+    /** ---- Read 32-bit tests */
 
     @Test
     fun shouldReadNewlineSeparatedData() {
@@ -253,5 +252,25 @@ class MemoryDumpTest {
 
 		assertEquals("7000".toULong(16), memory.read(0))
 		assertEquals("Initialize I at 0800", memory.readComment(0))
+	}
+
+	/** ---- Exception handling tests */
+
+	@Test
+	fun shouldThrowWithIllegalSyntax() {
+		val e = assertFails {
+			MemoryDump.read(Memory(), "00 FF:Comment:Hallo")
+		}
+		assertIs<IllegalArgumentException>(e)
+		assertEquals("Illegal syntax in 'FF:Comment:Hallo' at address 1", e.message)
+	}
+
+	@Test
+	fun shouldThrowWithIllegalValue() {
+		val e = assertFails {
+			MemoryDump.read(Memory(), "00 XY")
+		}
+		assertIs<IllegalArgumentException>(e)
+		assertEquals("Illegal hex number 'XY' at address 1", e.message)
 	}
 }

@@ -3,6 +3,7 @@ package ch.scorpion.antares.model.addressable
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
@@ -13,6 +14,14 @@ import ch.scorpion.jabbah.io.StoreWriter
 abstract class AbstractAddressable<T : AddressableVertice>(
 	calculator: VerticeCalculator<T>
 ) : CalculatingVertice(calculator), AddressableVertice {
+
+	companion object {
+		fun validateDataBitWidth(memory: Memory, bitWidth: BitWidth) {
+			memory.addressWithValueLargerThan(bitWidth.maxValue)?.let {
+				throw IllegalArgumentException(Translations.getString("antares.memory.bitWidthTooSmallForData.msg", it))
+			}
+		}
+	}
 
 	private val dataListeners = mutableListOf<AddressableListener>()
 
@@ -44,6 +53,10 @@ abstract class AbstractAddressable<T : AddressableVertice>(
 		get() = getDataPort().bitWidth
 		set(value) {
 			if (value != dataWidth) {
+				if (!isReading && value.width < dataWidth.width) {
+					Companion.validateDataBitWidth(memory, value)
+				}
+
 				val oldValue = dataWidth
 				getDataPort().bitWidth = value
 				stateChanged()
@@ -107,6 +120,10 @@ abstract class AbstractAddressable<T : AddressableVertice>(
 	private fun notifyBitWidthChanged(isAddress: Boolean, oldValue: BitWidth, newValue: BitWidth) {
 		val event = AddressableBitWidthEvent(isAddress, oldValue, newValue)
 		dataListeners.forEach { it.bitWidthChanged(event) }
+	}
+
+	override fun validateDataBitWidth(bitWidth: BitWidth) {
+		Companion.validateDataBitWidth(memory, bitWidth)
 	}
 
 	/** ---- [Storable] */
