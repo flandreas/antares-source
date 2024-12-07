@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.graph.model.image.ImageLibraryElement
 import ch.scorpion.jabbah.graph.repository.LibraryDependencyException
 import ch.scorpion.jabbah.graph.repository.RepositoryModule
 import ch.scorpion.jabbah.graph.repository.RepositoryService
@@ -110,6 +111,10 @@ class LibraryTreeViewTransferHandler(
 						InvocationHandler.invoke { repositoryService.move(item, it.directory, it.index) }
 						true
 					}
+					is ImageLibraryElement -> {
+						InvocationHandler.invoke { item.library!!.libraryService.move(item.library!!, item, it.directory, it.index) }
+						true
+					}
 					is LibraryFolder -> {
 						InvocationHandler.invoke { item.library!!.libraryService.move(item.library!!, item, it.directory, it.index) }
 						true
@@ -155,11 +160,26 @@ class LibraryTreeViewTransferHandler(
 		}
 
 		return when (item) {
+			is ImageLibraryElement -> confirmMoveImageLibraryElement(item, otherDirectory)
 			is LibraryElement -> confirmMoveLibraryElement(item, otherDirectory)
 			is LibraryFolder -> confirmMoveLibraryFolder(item, otherDirectory)
 			is UndoableStateLibraryItem<*> -> confirmMoveUndoableStateLibraryItem(item, otherDirectory)
 			else -> false
 		}
+	}
+
+	private fun confirmMoveImageLibraryElement(item: ImageLibraryElement, otherDirectory: LibraryDirectory?): Boolean {
+		val question = if (otherDirectory != null) {
+			Translations.getString("repository.action.moveImageToOtherDirectory.question", item.name.value, otherDirectory.name.value)
+		} else {
+			Translations.getString("repository.action.moveImage.question", item.name.value)
+		}
+		return JOptionPane.showConfirmDialog(
+			Frame.getFrames()[0],
+			question,
+			Translations.getString("repository.action.moveImage.name"),
+			JOptionPane.YES_NO_OPTION,
+			JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION
 	}
 
 	private fun confirmMoveLibraryElement(item: LibraryElement, otherDirectory: LibraryDirectory?): Boolean {

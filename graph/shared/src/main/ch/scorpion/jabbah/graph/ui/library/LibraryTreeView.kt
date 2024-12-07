@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.GraphElement
+import ch.scorpion.jabbah.graph.model.image.ImageLibraryElement
 import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.graph.view.GraphElementView
 
@@ -211,6 +212,10 @@ class LibraryTreeViewController (
 	fun allowMove(item: LibraryItem, destination: LibraryDirectory): Boolean {
 		if (!canEdit(destination.library!!) || !canEdit(item.library!!)) {
 			return false
+		}
+		if (item is ImageLibraryElement) {
+			// Moving images between Libraries not yet supported
+			return item !== destination && item.library === destination.library
 		}
 		if (item is LibraryElement) {
 			return true
