@@ -139,9 +139,7 @@ class VideoRamView(
 
 		override fun commentChanged(event: AddressableCommentEvent) { }
 
-		override fun bitWidthChanged(event: AddressableBitWidthEvent) {
-			// TODO
-		}
+		override fun bitWidthChanged(event: AddressableBitWidthEvent) { }
 	}
 
 	init {
