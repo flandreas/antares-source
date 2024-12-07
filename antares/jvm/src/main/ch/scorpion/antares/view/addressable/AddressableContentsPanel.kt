@@ -76,7 +76,11 @@ class AddressableContentsPanel(
 		}
 
 		override fun bitWidthChanged(event: AddressableBitWidthEvent) {
-			handleContentChanged()
+			if (event.isAddress) {
+				memoryDisplayPanel.updateAddressWidth()
+			} else {
+				handleContentChanged()
+			}
 		}
 
 		private fun handleContentChanged() {

@@ -41,7 +41,7 @@ class FixedWidthLayout(
 	private val signalHandler: SignalHandler? = null
 ) : AbstractAddressableDisplayLayout(addressable) {
 
-	private val rowCount: Int = ceil(((addressableRef.addressable.addressWidth.maxValue + 1UL) / cellsPerRow.toULong()).toDouble()).toInt()
+	private val rowCount: Int get() = ceil(((addressableRef.addressable.addressWidth.maxValue + 1UL) / cellsPerRow.toULong()).toDouble()).toInt()
 
 	override fun toString(): String =
 		Translations.getString("antares.memory.layout.columns", cellsPerRow)

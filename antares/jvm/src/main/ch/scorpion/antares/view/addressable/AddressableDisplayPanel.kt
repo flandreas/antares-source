@@ -57,7 +57,7 @@ class AddressableDisplayPanel(
 		}
 
         buildUI()
-	    layoutComboBox.addActionListener { updateMemoryDisplayLayout(addressableDisplayLayout, exchange = true) }
+	    layoutComboBox.addActionListener { updateMemoryDisplayLayout(addressableDisplayLayout) }
 	    updateMemoryDisplayLayout(addressableDisplayLayout)
     }
 
@@ -69,6 +69,10 @@ class AddressableDisplayPanel(
 		table.invalidate()
 		table.revalidate()
 		table.repaint()
+	}
+
+	fun updateAddressWidth() {
+		updateMemoryDisplayLayout(addressableDisplayLayout)
 	}
 
     private fun buildUI() {
@@ -91,10 +95,8 @@ class AddressableDisplayPanel(
 		table.addFocusListener(focusListener)
 	}
 
-	private fun updateMemoryDisplayLayout(addressableDisplayLayout: AddressableDisplayLayout, exchange: Boolean = false) {
-		if (exchange) {
-			storeSettings()
-		}
+	private fun updateMemoryDisplayLayout(addressableDisplayLayout: AddressableDisplayLayout) {
+		storeSettings()
 
 		val tableModel = addressableDisplayLayout.createTableModel()
 		table.model = tableModel
