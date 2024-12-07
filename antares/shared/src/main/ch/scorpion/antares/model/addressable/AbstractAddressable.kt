@@ -60,7 +60,7 @@ abstract class AbstractAddressable<T : AddressableVertice>(
 				val oldValue = dataWidth
 				getDataPort().bitWidth = value
 				stateChanged()
-				notifyBitWidthChanged(true, oldValue, value)
+				notifyBitWidthChanged(false, oldValue, value)
 			}
 		}
 

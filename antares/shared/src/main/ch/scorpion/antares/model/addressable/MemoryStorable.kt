@@ -25,8 +25,25 @@ class MemoryStorable(
     override val memory = Memory()
 
     override var dataWidth: BitWidth = dataWidth
+        set(value) {
+            if (value != field) {
+                if (!isReading && value.width < field.width) {
+                    AbstractAddressable.validateDataBitWidth(memory, value)
+                }
+                val oldValue = field
+                field = value
+                notifyBitWidthChanged(false, oldValue, value)
+            }
+        }
 
     override var addressWidth: BitWidth = addressWidth
+        set(value) {
+            if (value != field) {
+                val oldValue = field
+                field = value
+                notifyBitWidthChanged(true, oldValue, value)
+            }
+        }
 
     override val currentAddress: Int get() = 0
 
@@ -115,5 +132,10 @@ class MemoryStorable(
     private fun notifyCommentChanged(address: Int, oldValue: String?, newValue: String?) {
         val event = AddressableCommentEvent(address, oldValue, newValue)
         dataListeners.forEach { it.commentChanged(event) }
+    }
+
+    private fun notifyBitWidthChanged(isAddress: Boolean, oldValue: BitWidth, newValue: BitWidth) {
+        val event = AddressableBitWidthEvent(isAddress, oldValue, newValue)
+        dataListeners.forEach { it.bitWidthChanged(event) }
     }
 }
