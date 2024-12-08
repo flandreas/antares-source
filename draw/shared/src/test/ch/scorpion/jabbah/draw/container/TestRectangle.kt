@@ -16,7 +16,7 @@ internal class TestRectangle(shape: MutableRectangularShape) : AbstractRectangle
 	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> = handler
 	override fun draw(context: DrawContext) {}
 	override val lineWidth: Double get() = 0.0
-	override fun getTooltip(x: Double, y: Double, editable: Boolean): Tooltip = Tooltip("Test", x, y)
+	override fun <T: InputEventContext> getTooltip(context: T): Tooltip = Tooltip("Test", context.x, context.y)
 
 	private inner class Handler : InputEventHandlerAdapter<InputEventContext>() {
 		override fun mouseMoved(context: InputEventContext): InputEventHandler<InputEventContext>? {

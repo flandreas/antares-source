@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.edit
 
+import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.InputEventHandler
@@ -26,6 +27,7 @@ class ComponentMockBuilder {
         visible()
 	    withInteractionHandler(InputEventHandlerAdapter())
 	    withSelectionDrawingStrategy(SelectionDrawingStrategy.REPLACE)
+		withTooltip(null)
     }
 
     fun withId(id: Int): ComponentMockBuilder {
@@ -69,6 +71,11 @@ class ComponentMockBuilder {
 
 	fun withSelectionDrawingStrategy(strategy: SelectionDrawingStrategy): ComponentMockBuilder {
 		every { component.preferredSelectionDrawingStrategy } returns strategy
+		return this
+	}
+
+	fun withTooltip(tooltip: Tooltip?): ComponentMockBuilder {
+		every { component.getTooltip(any()) } returns tooltip
 		return this
 	}
 

@@ -274,10 +274,10 @@ abstract class AbstractVerticeView<T : Vertice>(
 			return bbox
 		}
 
-	override fun getTooltip(x: Double, y: Double, editable: Boolean): Tooltip? {
-		val portView = getPortViewAt(x, y)
+	override fun <T: InputEventContext> getTooltip(context: T): Tooltip? {
+		val portView = getPortViewAt(context.x, context.y)
 		if (portView != null) {
-			return portView.getTooltip(x, y)
+			return portView.getTooltip(context)
 		}
 		return tooltip.value?.also { it.sourceRect = plainBoundingBox }
 	}
@@ -330,8 +330,8 @@ abstract class AbstractVerticeView<T : Vertice>(
 
 	/** ---- [ActorView] interface */
 
-	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? {
-		val portTooltip = getPortViewAtConnectionPoint(x, y)?.getExecutionTooltip(x, y)
+	override fun <T: InputEventContext> getExecutionTooltip(context: T): Tooltip? {
+		val portTooltip = getPortViewAtConnectionPoint(context.location)?.getExecutionTooltip(context)
 		if (portTooltip != null) {
 			return portTooltip
 		}

@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.drawable.*
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.*
@@ -185,7 +186,7 @@ class ControlViewComponent(
 
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler = controlView.getActorInteractionHandler(context)
 
-	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? = controlView.getExecutionTooltip(x, y)
+	override fun <T: InputEventContext> getExecutionTooltip(context: T): Tooltip? = controlView.getExecutionTooltip(context)
 
 	override fun executionStarted(signalHandler: SignalHandler) {
 		controlView.executionStarted(signalHandler)

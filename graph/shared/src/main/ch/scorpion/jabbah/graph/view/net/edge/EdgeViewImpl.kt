@@ -64,6 +64,12 @@ open class EdgeViewImpl<T : Any>(
 		private val TYPE get() = Translations.getString("graph.component.edge")
 		private val NO_OP_ACTOR_HANDLER = InputEventHandlerAdapter<ActorInteractionContext>()
 
+		private val EDIT_TIP_TOOLTIP: Tooltip? = if (BaseModule.properties.getBoolean(PROP_BEGINNER_HELP_TOOLTIP)) {
+			Tooltip(Translations.getString("graph.action.splitEdgeView.tip", EdgeToPortOrEdgeConnector.SPLIT_EDGE_VIEW_MODIFIER.label), Rectangle2D.ZERO)
+		} else {
+			null
+		}
+
 		private val MIN_LENGTH = BaseModule.properties.getInt(PROP_MIN_EDGE_VIEW_LENGTH)
 
 		val DEF_EDGE_TO_PORT_CONNECTOR_SUPPLIER = { GraphViewModule.edgeToPortOrEdgeConnector }
@@ -96,7 +102,7 @@ open class EdgeViewImpl<T : Any>(
 		private set
 
 	/** The tooltip displayed when not in execution mode.*/
-	private val nonExecutionTooltip = resettableLazy { createNonExecutionTooltip() }
+	private val designErrorTooltip = resettableLazy { createDesignErrorTooltip() }
 
 	init {
 		modelExchanged(null)
@@ -131,7 +137,7 @@ open class EdgeViewImpl<T : Any>(
 
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler = NO_OP_ACTOR_HANDLER
 
-	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? {
+	override fun <T: InputEventContext> getExecutionTooltip(context: T): Tooltip? {
 		val content = StringBuilder(StringUtils.orEmpty(model.description.value))
 		if (content.isNotEmpty()) {
 			content.appendLine()
@@ -141,7 +147,7 @@ open class EdgeViewImpl<T : Any>(
 			content.append(it)
 		} ?: content.append(getExecutionTooltipContent())
 
-		return Tooltip(content.toString(), x, y)
+		return Tooltip(content.toString(), context.x, context.y)
 	}
 
 	protected open fun getExecutionTooltipContent(): String =
@@ -706,9 +712,17 @@ open class EdgeViewImpl<T : Any>(
 		return polyline.findSegment(x, y) != null
 	}
 
-	override fun getTooltip(x: Double, y: Double, editable: Boolean): Tooltip? =
-		if (editable) {
-			nonExecutionTooltip.value?.also { it.sourceRect = Rectangle2D.pointLike(Point2D(x, y)) }
+	override fun <T: InputEventContext> getTooltip(context: T): Tooltip? =
+		if (!context.readonly) {
+			if (designErrorTooltip.value != null) {
+				designErrorTooltip.value.also { it!!.sourceRect = Rectangle2D.pointLike(context.location) }
+			} else {
+				if (EDIT_TIP_TOOLTIP != null && !context.mouseEvent!!.hasModifier(EdgeToPortOrEdgeConnector.SPLIT_EDGE_VIEW_MODIFIER)) {
+					EDIT_TIP_TOOLTIP.also { it.sourceRect = Rectangle2D.pointLike(context.location) }
+				} else {
+					null
+				}
+			}
 		} else {
 			null
 		}
@@ -906,7 +920,7 @@ open class EdgeViewImpl<T : Any>(
 		}
 		super.handleStateChanged(event)
 		if (event.signalHandler != null) {
-			nonExecutionTooltip.reset()
+			designErrorTooltip.reset()
 		}
 	}
 
@@ -944,28 +958,11 @@ open class EdgeViewImpl<T : Any>(
 	private fun checkDestinationSegmentLength(): Boolean =
 		destination?.port == null || polyline.getSegmentLength(polyline.pointsCount - 2) >= destination!!.portView!!.minSegmentLength
 
-	private fun createNonExecutionTooltip(): Tooltip? {
+	private fun createDesignErrorTooltip(): Tooltip? {
 		if (model.designError != null) {
 			return Tooltip(model.designError!!.description, Rectangle2D.ZERO)
 		}
-
-		val text = StringBuilder()
-		if (StringUtils.isNotEmpty(model.description.value)) {
-			text.append(model.description.value!!)
-		}
-
-		if (BaseModule.properties.getBoolean(PROP_BEGINNER_HELP_TOOLTIP)) {
-			if (text.isNotEmpty()) {
-				text.appendLine().appendLine()
-			}
-			text.append(Translations.getString("graph.action.splitEdgeView.tip", EdgeToPortOrEdgeConnector.SPLIT_EDGE_VIEW_MODIFIER.label))
-		}
-
-		return if (text.isEmpty()) {
-			null
-		} else {
-			Tooltip(text.toString(), Rectangle2D.ZERO)
-		}
+		return null
 	}
 
 	/** Draws a small indicator for the begin Connection. Only used while developing. */

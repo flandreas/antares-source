@@ -86,7 +86,7 @@ class GraphViewExecutionHandler(
 			if (actorViewAt == null) {
 				view.setCursor(Cursor.DEFAULT)
 			}
-			tooltipHandler.handle(view, view.drawing, p.x, p.y)
+			tooltipHandler.handle(view, view.drawing, context)
 		}
 
 		override fun mousePressed(e: MouseEvent) {

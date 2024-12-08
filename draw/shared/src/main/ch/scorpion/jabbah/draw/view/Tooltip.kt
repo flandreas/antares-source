@@ -114,7 +114,7 @@ private data class TooltipEvent(
 class TooltipHandler(
 	private val eventBus: EventBus,
 	private val drawableRetriever: (DrawableContainer<*>, Double, Double) -> Drawable? = { c, x, y -> c.getDrawableAt(x, y)},
-	private val tooltipAccessor: (Drawable, Double, Double, editable: Boolean) -> Tooltip? = { d, x, y, e -> d.getTooltip(x, y, e) },
+	private val tooltipAccessor: (Drawable, InputEventContext) -> Tooltip? = { d, context -> d.getTooltip(context) },
 	private val explanationAccessor: (Drawable, Double, Double) -> DrawableExplanation<RectangularDrawable>? = { d, x, y -> d.getExplanation(x, y) }
 ) {
 
@@ -159,8 +159,8 @@ class TooltipHandler(
 	 * or hiding as appropriate. Called by the client of the tooltip system in its event handling methods
 	 * if none of its [Drawable]s is interested in handling a mouse moved event.
 	 */
-	fun handle(view: View<*>, container: DrawableContainer<*>, x: Double, y: Double, editable: Boolean = true) {
-		val drawable = drawableRetriever.invoke(container, x, y)
+	fun handle(view: View<*>, container: DrawableContainer<*>, context: InputEventContext) {
+		val drawable = drawableRetriever.invoke(container, context.x, context.y)
 
 		if (drawable == null) {
 			if (lastTooltipDrawable != null) {
@@ -170,8 +170,8 @@ class TooltipHandler(
 			return
 		}
 
-		val tooltip = getTooltip(drawable, x, y, editable)
-		val explanation = getExplanation(drawable, x, y)
+		val tooltip = getTooltip(drawable, context)
+		val explanation = getExplanation(drawable, context.x, context.y)
 
 		if (StringUtils.isBlank(tooltip?.text) && explanation == null) {
 			if (lastTooltipDrawable != null || lastExplanation != null) {
@@ -191,9 +191,9 @@ class TooltipHandler(
 		}
 	}
 
-	private fun getTooltip(drawable: Drawable, x: Double, y: Double, editable: Boolean): Tooltip? =
+	private fun getTooltip(drawable: Drawable, context: InputEventContext): Tooltip? =
 		if (tooltipsEnabled) {
-			tooltipAccessor(drawable, x, y, editable)
+			tooltipAccessor(drawable, context)
 		} else null
 
 	private fun getExplanation(drawable: Drawable, x: Double, y: Double): DrawableExplanation<RectangularDrawable>? =

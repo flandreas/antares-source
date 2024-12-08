@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.base.geom.Rotation.*
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.drawable.Rotatable
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -187,9 +188,9 @@ class ClockView(
 		return frequencyText
 	}
 
-	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? {
+	override fun <T: InputEventContext> getExecutionTooltip(context: T): Tooltip? {
 		executionTooltip.reset()
-		return super<BoxGateView>.getExecutionTooltip(x, y)
+		return super<BoxGateView>.getExecutionTooltip(context)
 	}
 
 	/** ---- [ControlViewSource] */

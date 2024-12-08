@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.view.port
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
+import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.edit.SnappableX
 import ch.scorpion.jabbah.edit.SnappableY
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
@@ -118,7 +119,7 @@ class AbstractPortViewTest {
 		assertFalse(pv1.accept(pv2 as SnappableY))
 	}
 
-	private fun tooltipText(portView: TestPortView<*>): String? = portView.getTooltip(0.0, 0.0)?.text
+	private fun tooltipText(portView: TestPortView<*>): String? = portView.getTooltip(InputEventContext(mock()))?.text
 
 	@Test
 	fun testSimpleInputTooltip() {

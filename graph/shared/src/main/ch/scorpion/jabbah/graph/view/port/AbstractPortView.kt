@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.resettableLazy
 import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.drawable.Mirrorable
 import ch.scorpion.jabbah.edit.Cloneable
@@ -149,7 +150,7 @@ abstract class AbstractPortView<T : Any>(
 		location = Point2D(x, y)
 	}
 
-	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? {
+	override fun <T: InputEventContext> getExecutionTooltip(context: T): Tooltip? {
 		val valueText = when (port.portType) {
 			PortType.INPUT -> (port as InputPort<*>).incomingSignalDescription
 			PortType.OUTPUT -> (port as OutputPort<*>).outgoingSignalDescription
@@ -264,7 +265,7 @@ abstract class AbstractPortView<T : Any>(
 
 	/** ---- [Drawable] interface */
 
-	override fun getTooltip(x: Double, y: Double, editable: Boolean): Tooltip? =
+	override fun <T: InputEventContext> getTooltip(context: T): Tooltip? =
 		if (coincidenceWarning) {
 			Tooltip("Warning: Pin coincides with other pin without\nconnection", Rectangle2D.pointLike(owner!!.getPortConnectionPoint(port)))
 		} else {

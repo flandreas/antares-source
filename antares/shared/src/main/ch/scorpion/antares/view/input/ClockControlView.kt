@@ -2,7 +2,6 @@ package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.model.input.Clock
 import ch.scorpion.jabbah.base.LongValueImpl
-import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -97,8 +96,6 @@ class ClockControlView(
 	override val mirrorHeight: Double get() = -height
 
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler = iconButton.getActorInteractionHandler(context)
-
-	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? = null
 
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
 		_model = link.getLinkedObject(startGraph) as Clock

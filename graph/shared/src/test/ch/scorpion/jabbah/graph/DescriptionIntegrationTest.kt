@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph
 
+import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.graph.library.*
@@ -9,6 +10,7 @@ import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
+import dev.mokkery.mock
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -84,7 +86,9 @@ class DescriptionIntegrationTest {
 	}
 
 	private fun tooltipText(vv: VerticeView<*>): String =
-		vv.getTooltip(vv.boundingBox.centerX, vv.boundingBox.centerY)!!.text
+		vv.getTooltip(
+			InputEventContext(mock(), x = vv.boundingBox.centerX, y = vv.boundingBox.centerY)
+		)!!.text
 
 	private fun createMetaGraph(desc: String): ContainerLibraryElement {
 		val library = LibraryModule.libraryHolder.library

@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.drawable.DrawableButton
 import ch.scorpion.jabbah.draw.drawable.IconDrawableButtonRenderer
 import ch.scorpion.jabbah.draw.graphics.Color
@@ -13,10 +14,8 @@ import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.ReferenceColor
 import ch.scorpion.jabbah.draw.graphics.RemoveIcon
 import ch.scorpion.jabbah.draw.style.StyleType
-import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.execution.actor.ActorViewContainer
-import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.app.oscilloscope.OscilloscopeViewService
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView.Companion.DRAWER_X
 
@@ -108,11 +107,11 @@ class OscilloscopeSignalRowView(
 
 	private var tooltipLocation = Rectangle2D()
 
-	override fun getExecutionTooltip(x: Double, y: Double): Tooltip {
-		val time = oscilloscopeView.scaleRowView.timelineView.getTime(x)
+	override fun <T: InputEventContext> getExecutionTooltip(context: T): Tooltip {
+		val time = oscilloscopeView.scaleRowView.timelineView.getTime(context.x)
 		val entry = oscilloscopeView.model.getSignalHistory(name)!!.getEntryAt(time.absoluteTime)
 
-		val absMouse = toAbsoluteLocation(x, y)
+		val absMouse = toAbsoluteLocation(context.location)
 		tooltipLocation.x = absMouse.x
 		tooltipLocation.y = absMouse.y
 

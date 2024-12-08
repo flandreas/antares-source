@@ -127,7 +127,7 @@ interface Drawable {
 	 * @return the [Tooltip] of this [Drawable], or `null`if this [Drawable] doesn't want to display a
 	 *      text at the specified location.
 	 */
-	fun getTooltip(x: Double, y: Double, editable: Boolean = true): Tooltip?
+	fun <T : InputEventContext> getTooltip(context: T): Tooltip?
 
 	/**
 	 * Returns an epic, graphical explanation of this [Drawable] to be displayed when the user hovers over

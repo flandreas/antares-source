@@ -109,17 +109,18 @@ class SelectionToolImpl(
 			LOG.trace("mouseMoved to $x,$y")
 		}
 
+		val context = mouseEventContext(e, x, y)
 		if (target != null) {
-			target = target?.mouseMoved(mouseEventContext(e, x, y))
+			target = target?.mouseMoved(context)
 			if (target != null) {
 				return
 			}
 		}
-		target = editor.view.getInputEventHandler(e).mouseMoved(mouseEventContext(e, x, y))
+		target = editor.view.getInputEventHandler(e).mouseMoved(context)
 		if (target == null) {
 			updateCursor(editor.drawing.getDrawableAt(x, y))
 		}
-		tooltipHandler.handle(editor.view, editor.drawing, x, y, editor.view.editable)
+		tooltipHandler.handle(editor.view, editor.drawing, context)
 	}
 
 	override fun mousePressed(e: MouseEvent, x: Double, y: Double) {
@@ -251,7 +252,7 @@ class SelectionToolImpl(
 		EditInputEventContext(editor = editor, keyEvent = e)
 
 	private fun mouseEventContext(e: MouseEvent, x: Double, y: Double): EditInputEventContext =
-		EditInputEventContext(editor = editor, mouseEvent = e, x = x, y = y)
+		EditInputEventContext(editor = editor, mouseEvent = e, x = x, y = y, readonly = !editor.view.editable)
 
 	private fun updateCursor(component: Drawable?) {
 		if (component == null) {

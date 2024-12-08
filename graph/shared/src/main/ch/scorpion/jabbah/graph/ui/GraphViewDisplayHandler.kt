@@ -86,7 +86,7 @@ class GraphViewDisplayHandler(
 			val p = view.viewToModel(e.location)
 
 			val drawable = view.drawing.getDrawableAt(p)
-			tooltipHandler.handle(view, view.drawing, p.x, p.y, view.editable)
+			tooltipHandler.handle(view, view.drawing, mouseEventContext(e, p.x, p.y, !view.editable))
 
 			if (drawable != null /*&& drawable is SubGraphVerticeView<*>*/) {
 				view.setCursor(Cursor.CLICK)
@@ -106,16 +106,20 @@ class GraphViewDisplayHandler(
 			val p = view.viewToModel(e.location)
 
 			val drawable = view.drawing.getDrawableAt(p)
-			if (drawable != null /*&& drawable is SubGraphVerticeView*/) {
-				val context = InputEventContext(
-					view = view,
-					mouseEvent = e,
-					x = p.x,
-					y = p.y,
-					readonly = true)
+			if (drawable != null) {
+				val context = mouseEventContext(e, p.x, p.y, true)
 				drawable.getInputEventHandler(context).mouseClicked(context)
 				view.drawing.validate()
 			}
+		}
+
+		private fun mouseEventContext(e: MouseEvent, x: Double, y: Double, readonly: Boolean): InputEventContext {
+			return InputEventContext(
+				view = view,
+				mouseEvent = e,
+				x = x,
+				y = y,
+				readonly = readonly)
 		}
 	}
 }

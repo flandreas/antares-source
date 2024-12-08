@@ -67,7 +67,7 @@ class DrawableMockBuilder {
     }
 
     fun tooltip(s: String): DrawableMockBuilder {
-	    every { drawable.getTooltip(any(), any()) } returns Tooltip(s, 0.0, 0.0)
+	    every { drawable.getTooltip(any()) } returns Tooltip(s, 0.0, 0.0)
         return this
     }
 

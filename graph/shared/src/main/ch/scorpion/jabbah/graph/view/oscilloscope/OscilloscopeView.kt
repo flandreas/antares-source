@@ -191,8 +191,8 @@ class OscilloscopeView(
 	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> =
 		container.getInputEventHandler(context)
 
-	override fun getTooltip(x: Double, y: Double, editable: Boolean): Tooltip? =
-		container.getTooltip(x, y) ?: super.getTooltip(x, y, editable)
+	override fun <T: InputEventContext> getTooltip(context: T): Tooltip? =
+		container.getTooltip(context) ?: super.getTooltip(context)
 
 	override fun <T : Drawable> handleAdded(container: DrawableContainer<T>) {
 		super.handleAdded(container)
@@ -212,8 +212,8 @@ class OscilloscopeView(
 
 	/** ---- [AbstractVerticeView] */
 
-	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? =
-		container.getExecutionTooltip(x, y) ?: super.getExecutionTooltip(x, y)
+	override fun <T: InputEventContext> getExecutionTooltip(context: T): Tooltip? =
+		container.getExecutionTooltip(context) ?: super.getExecutionTooltip(context)
 
 	override fun handleStateChanged(event: GraphElementEvent) {
 		if (event.signalHandler != null && event.reason == Oscilloscope.SIGNAL_RECEIVED) {

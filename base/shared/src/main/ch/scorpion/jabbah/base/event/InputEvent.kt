@@ -4,9 +4,10 @@ import kotlin.js.JsExport
 
 /**
  * These masks are the same as in the corresponding JDK class. Note that [mask] is writable
- * in order to adjusted for the current platform, particularly "meta", which is "CMD" on MacOS
+ * in order to adjust for the current platform, particularly "meta", which is "CMD" on macOS
  * and "CTRL" on Windows, both with different masks.
  */
+@JsExport
 enum class Modifier(val label: String, var mask: Int) {
 	Shift("Shift", 1.shl(6)),
 	Ctrl("Ctrl", 1.shl(7)),

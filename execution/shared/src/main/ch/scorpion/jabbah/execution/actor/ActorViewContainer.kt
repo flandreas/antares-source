@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.execution.actor
 import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.container.DrawableContainerImpl
 import ch.scorpion.jabbah.draw.container.DrawableBagInputEventHandler
@@ -22,12 +23,12 @@ open class ActorViewContainer<T: Drawable>(
 		return handler
 	}
 
-	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? {
-		val p = Point2D(x, y)
+	override fun <T: InputEventContext> getExecutionTooltip(context: T): Tooltip? {
+		val p = context.location
 		if (useLocation) {
-			return getActorViewAt(p)?.getExecutionTooltip(p.subtract(this.location))
+			return getActorViewAt(p)?.getExecutionTooltip(context.withXY(p.subtract(this.location)))
 		}
-		return getActorViewAt(p)?.getExecutionTooltip(p)
+		return getActorViewAt(p)?.getExecutionTooltip(context)
 	}
 
 	override fun executionStarted(signalHandler: SignalHandler) {

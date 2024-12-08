@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.drawable.TransparentImpl
 import ch.scorpion.jabbah.draw.graphics.Color
@@ -194,8 +195,8 @@ abstract class RectangularComponent(
 		}
 	}
 
-	override fun getTooltip(x: Double, y: Double, editable: Boolean): Tooltip? {
-		if (text.isNotEmpty && label.contains(Point2D(x, y).subtract(location))) {
+	override fun <T: InputEventContext> getTooltip(context: T): Tooltip? {
+		if (text.isNotEmpty && label.contains(context.location.subtract(location))) {
 			return buildToolTipText(title = null, text = description.value, subText = null)?.let {
 				Tooltip(it, Rectangle2D(label.boundingBox).moveBy(location))
 			}

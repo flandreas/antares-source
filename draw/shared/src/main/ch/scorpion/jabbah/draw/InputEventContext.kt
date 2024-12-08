@@ -21,7 +21,7 @@ open class InputEventContext(
 	val y: Double = 0.0,
 	val readonly: Boolean = false
 ) {
-	val location: Point2D get() = Point2D(x, y)
+	val location: Point2D = Point2D(x, y)
 
 	fun withXY(p: Point2D): InputEventContext = withXY(p.x, p.y)
 

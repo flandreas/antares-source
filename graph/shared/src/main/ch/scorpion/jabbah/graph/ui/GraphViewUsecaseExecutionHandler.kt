@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.app.ApplicationMode.EXEC_USECASE
@@ -27,7 +28,7 @@ class GraphViewUsecaseExecutionHandler(
 
 		override fun mouseMoved(e: MouseEvent) {
 			val p = view.viewToModel(e.location)
-			tooltipHandler.handle(view, view.drawing, p.x, p.y)
+			tooltipHandler.handle(view, view.drawing, InputEventContext(view, e, x = p.x, y = p.y, readonly = true))
 		}
 	}
 

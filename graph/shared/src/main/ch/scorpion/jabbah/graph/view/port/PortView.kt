@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.drawable.Mirrorable
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.edit.Cloneable
@@ -184,7 +185,7 @@ interface PortView<T : Any> : Drawable, Storable, Mirrorable, SnappableX, Snappa
 	 * @param y the y-coordinate of the mouse position
 	 * @return the tool tip text of this [PortView].
 	 */
-	fun getExecutionTooltip(x: Double, y: Double): Tooltip?
+	fun <T: InputEventContext> getExecutionTooltip(context: T): Tooltip?
 
 	/**
 	 * Draws all parts of this [PortView] that have to appear above the owning [VerticeView].

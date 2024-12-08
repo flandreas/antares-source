@@ -18,10 +18,10 @@ import ch.scorpion.jabbah.draw.view.TooltipManager
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
+import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import kotlin.math.*
@@ -328,7 +328,7 @@ class KnobView(
 
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler = handler
 
-	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? = null
+	override fun <T: InputEventContext> getExecutionTooltip(context: T): Tooltip? = null
 
 	override fun executionStarted(signalHandler: SignalHandler) { }
 

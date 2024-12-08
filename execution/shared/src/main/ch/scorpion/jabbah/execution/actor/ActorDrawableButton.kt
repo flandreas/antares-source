@@ -36,7 +36,7 @@ open class ActorDrawableButton<C: InputEventContext>(
 
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler = actorInteractionHandler
 
-	override fun getExecutionTooltip(x: Double, y: Double): Tooltip? = getTooltip(x, y)
+	override fun <T: InputEventContext> getExecutionTooltip(context: T): Tooltip? = getTooltip(context)
 
 	protected open fun createActorInteractionHandler(): ActorInteractionHandler = ActorHandler()
 
