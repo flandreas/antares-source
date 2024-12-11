@@ -548,7 +548,7 @@ class LibraryService(
 
 	private fun ensureImage(library: Library, element: ImageLibraryElement, loadAlways: Boolean = false) {
 		if (loadAlways || element.image == null) {
-			val image = persister(library.isSystem).loadImage(library, element.imageId.uuid, element.imageId.imageType)
+			val image = persister(library.isSystem).loadImage(library, element.storable.uuid, element.storable.imageType)
 			element.image = image
 		}
 	}

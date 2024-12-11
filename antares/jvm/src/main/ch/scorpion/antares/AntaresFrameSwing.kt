@@ -21,6 +21,8 @@ import ch.scorpion.jabbah.base.swing.SidebarPaneContentImpl
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.view.ContentViewManager
+import ch.scorpion.jabbah.graph.model.image.ImageGraphDesktopItemSwing
+import ch.scorpion.jabbah.graph.model.image.ImageLibraryElement
 import ch.scorpion.jabbah.graph.ui.GraphFrame
 import ch.scorpion.jabbah.graph.ui.GraphFrameActions
 import ch.scorpion.jabbah.graph.ui.GraphFrameController
@@ -94,6 +96,9 @@ class AntaresFrameSwing(
 
 	override fun createMemoryStorableGraphDesktopViewItem(item: MemoryLibraryItem): GraphDesktopViewItem =
 		MemoryStorableGraphDesktopItemSwing(item, application.controller, controller.applicationContextHolder, editor.commandManager)
+
+	override fun createImageGraphDesktopViewItem(element: ImageLibraryElement): GraphDesktopViewItem =
+		ImageGraphDesktopItemSwing(element, application.controller)
 
 	override fun showMemoryContents(request: OpenMemoryContentsRequest) {
 		AddressableContentsPanel.showAsDialog(

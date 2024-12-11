@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.graph.model.image.ImageLibraryElement
+import ch.scorpion.jabbah.graph.model.image.OpenImageAction
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.project.*
 import ch.scorpion.jabbah.graph.ui.CalculatePropagationDelayAction
@@ -53,6 +54,7 @@ open class LibraryTreeViewActionsSwing(
 	private val duplicateLibraryGraphAction = register(DuplicateGraphAction(controller, libraryOperationTarget))
 	private val importLibraryMetaGraphAction = register(ImportMetaGraphAction(controller, libraryOperationTarget))
 	private val importImageAction = register(ImportImageAction(controller, libraryOperationTarget))
+	private val openImageAction = register(OpenImageAction(application.controller as GraphDataViewController, controller))
 	private val renameLibraryMetaGraphAction = register(RenameMetaGraphAction(controller, libraryOperationTarget))
 	private val closeLibraryAction = register(CloseLibraryAction())
 
@@ -81,11 +83,13 @@ open class LibraryTreeViewActionsSwing(
 	private val projectContainerPopupMenu = JPopupMenu()
 	protected val projectRootMenu = JPopupMenu()
 	private val projectBasePopupMenu = JPopupMenu()
+	private val projectImagePopupMenu = JPopupMenu()
 
 	protected val libraryDirectoryPopupMenu = JPopupMenu()
 	private val libraryContainerPopupMenu = JPopupMenu()
 	protected val libraryRootMenu = JPopupMenu()
 	private val libraryBasePopupMenu = JPopupMenu()
+	private val libraryImagePopupMenu = JPopupMenu()
 
 	protected var isFilled = false
 		private set
@@ -128,9 +132,9 @@ open class LibraryTreeViewActionsSwing(
 			}
 			is ImageLibraryElement -> {
 				if ((treeNode.userObject as ImageLibraryElement).library is Project) {
-					projectBasePopupMenu
+					projectImagePopupMenu
 				} else {
-					libraryBasePopupMenu
+					libraryImagePopupMenu
 				}
 			}
 			is String -> desktopPopupMenu
@@ -280,6 +284,12 @@ open class LibraryTreeViewActionsSwing(
 
 		libraryBasePopupMenu.add(ActionWrapperSwing(deleteLibraryItemAction))
 		libraryBasePopupMenu.add(ActionWrapperSwing(helpLibraryItemAction))
+
+		projectImagePopupMenu.add(ActionWrapperSwing(openImageAction))
+		projectImagePopupMenu.add(ActionWrapperSwing(deleteProjectItemAction))
+
+		libraryImagePopupMenu.add(ActionWrapperSwing(openImageAction))
+		libraryImagePopupMenu.add(ActionWrapperSwing(deleteLibraryItemAction))
 	}
 
 	private fun fillCompositionSource() {

@@ -458,7 +458,7 @@ open class LibraryImpl(
 		}
 
 		override fun visit(node: Any): Boolean {
-			if (node is ImageLibraryElement && node.imageId.uuid == uuid) {
+			if (node is ImageLibraryElement && node.storable.uuid == uuid) {
 				result = node
 				return false
 			}
@@ -471,7 +471,7 @@ open class LibraryImpl(
 
 		override fun visit(node: Any): Boolean {
 			if (node is ImageLibraryElement) {
-				imageIds.add(node.imageId)
+				imageIds.add(node.storable)
 			}
 			return true
 		}

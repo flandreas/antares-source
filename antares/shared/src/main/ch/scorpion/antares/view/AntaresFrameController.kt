@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import ch.scorpion.jabbah.graph.model.image.ImageLibraryElement
 import ch.scorpion.jabbah.graph.ui.GraphFrame
 import ch.scorpion.jabbah.graph.ui.GraphFrameController
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
@@ -26,6 +27,8 @@ interface AntaresFrame : GraphFrame {
 	fun createBooleanExpressionDesktopViewItem(item: BooleanExpressionLibraryItem): GraphDesktopViewItem
 
 	fun createMemoryStorableGraphDesktopViewItem(item: MemoryLibraryItem): GraphDesktopViewItem
+
+	fun createImageGraphDesktopViewItem(element: ImageLibraryElement): GraphDesktopViewItem
 
 	fun showMemoryContents(request: OpenMemoryContentsRequest)
 
@@ -75,6 +78,7 @@ class AntaresFrameController(
 			is TruthTableLibraryItem -> handleTruthTableLibraryItem(event.newData!!.content as TruthTableLibraryItem)
 			is BooleanExpressionLibraryItem -> handleBooleanExpressionLibraryItem(event.newData!!.content as BooleanExpressionLibraryItem)
 			is MemoryLibraryItem -> handleMemoryLibraryItem(event.newData!!.content as MemoryLibraryItem)
+			is ImageLibraryElement -> handleImageLibraryElement(event.newData!!.content as ImageLibraryElement)
 		}
 	}
 
@@ -104,6 +108,16 @@ class AntaresFrameController(
 			if (mainDesktopViewItem == null || !mainDesktopViewItem!!.displays(newItem)) {
 				LOG.debug("Create new MemoryStorableDesktopViewItem")
 				graphPanelViewController.desktopController.show(view.createMemoryStorableGraphDesktopViewItem(newItem))
+			}
+		}
+	}
+
+	private fun handleImageLibraryElement(newElement: ImageLibraryElement) {
+		with(graphPanelViewController.desktopController.view) {
+			// Avoid creation of new view in "Close with 'Want to save changes?' = Yes" scenario
+			if (mainDesktopViewItem == null || !mainDesktopViewItem!!.displays(newElement)) {
+				LOG.debug("Create new ImageGraphDesktopViewItem")
+				graphPanelViewController.desktopController.show(view.createImageGraphDesktopViewItem(newElement))
 			}
 		}
 	}

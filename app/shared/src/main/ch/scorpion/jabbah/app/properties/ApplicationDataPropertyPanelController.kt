@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanelController
+import ch.scorpion.jabbah.edit.properties.applicationDataBeanProvider
 
 /**
  * Sets the current [ApplicationData]'s bean as [defaultBean].

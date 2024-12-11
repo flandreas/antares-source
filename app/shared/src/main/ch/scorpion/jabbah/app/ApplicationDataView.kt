@@ -2,7 +2,7 @@ package ch.scorpion.jabbah.app
 
 import ch.scorpion.jabbah.app.SaveUnchangedDataDecision.*
 import ch.scorpion.jabbah.app.action.SaveFileAction
-import ch.scorpion.jabbah.app.properties.applicationDataBeanProvider
+import ch.scorpion.jabbah.edit.properties.applicationDataBeanProvider
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.PropertyOwner

@@ -1,4 +1,4 @@
-package ch.scorpion.jabbah.app.properties
+package ch.scorpion.jabbah.edit.properties
 
 import ch.scorpion.jabbah.edit.BeanProvider
 

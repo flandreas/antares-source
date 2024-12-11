@@ -2,15 +2,18 @@ package ch.scorpion.jabbah.edit.model.image
 
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.draw.graphics.ImageType
+import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.edit.model.text.description.Name
+import ch.scorpion.jabbah.edit.model.text.description.observableName
 import ch.scorpion.jabbah.io.*
 
 class ImageIdentification(
     uuid: UUID = UUID("undefined"),
     imageType: ImageType = ImageType.SVG,
     name: Name = Name(TranslatableText())
-): AbstractStorable() {
+): AbstractStorable(), Bean, Namable {
 
     var uuid: UUID = uuid
         private set
@@ -18,8 +21,7 @@ class ImageIdentification(
     var imageType: ImageType = imageType
         private set
 
-    var name: Name = name
-        private set
+    override var name: Name by observableName(name)
 
     /** ---- [Storable] */
 

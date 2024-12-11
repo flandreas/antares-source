@@ -1,6 +1,6 @@
 package ch.scorpion.antares.model.truthtable
 
-import ch.scorpion.jabbah.app.properties.applicationDataBeanProvider
+import ch.scorpion.jabbah.edit.properties.applicationDataBeanProvider
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.edit.properties.AbstractBeanInfo

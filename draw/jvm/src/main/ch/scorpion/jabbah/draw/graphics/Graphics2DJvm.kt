@@ -88,6 +88,15 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
 			    LineJoin.BEVEL -> BasicStroke.JOIN_BEVEL
 		    }
 	    }
+
+        fun drawImage(g: java.awt.Graphics2D, image: Image, x: Int, y: Int) {
+            when (image) {
+                is ResourceImageJvm -> g.drawImage(image.imageIcon.image, x, y, null)
+                is RasterImageJvm -> g.drawImage(image.jvmImage, x, y, null)
+                is SvgImageJvm -> image.draw(g)
+                else -> throw IllegalArgumentException("unsupported image type ${image::class.simpleName}")
+            }
+        }
     }
 
     /** ---- [Graphics2D] interface */
@@ -309,12 +318,7 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
     }
 
     override fun drawImage(image: Image, x: Int, y: Int) {
-	    when (image) {
-			is ResourceImageJvm -> g.drawImage(image.imageIcon.image, x, y, null)
-		    is RasterImageJvm -> g.drawImage(image.jvmImage, x, y, null)
-            is SvgImageJvm -> image.draw(g)
-		    else -> throw IllegalArgumentException("unsupported image type ${image::class.simpleName}")
-		}
+        Companion.drawImage(g, image, x, y)
     }
 
     /** ---- [Graphics2DJvm] */
