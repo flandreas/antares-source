@@ -1,10 +1,9 @@
 package ch.scorpion.jabbah.base.richtext
 
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.dsl.SyntaxError
 import ch.scorpion.jabbah.base.dsl.assertAST
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.*
 
 class RichTextParserTest {
 
@@ -501,5 +500,13 @@ class RichTextParserTest {
 			-- -
 			--- Input/Output
 		""".trimIndent())
+	}
+
+	/** Regression test bug #850. */
+	@Test
+	fun shouldThrowSyntaxErrorWithTrailingExclamationMark() {
+		assertFailsWith(SyntaxError::class) {
+			RichTextParser("Hallo!").parse()
+		}
 	}
 }

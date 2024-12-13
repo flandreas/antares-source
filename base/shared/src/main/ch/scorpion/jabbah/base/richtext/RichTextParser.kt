@@ -232,6 +232,9 @@ class RichTextParser(lexer: RichTextLexer) : AbstractParser(lexer) {
 
 	private fun text(): StyledText {
 		lexer.location.let { location ->
+			if (currentToken!!.type != TEXT) {
+				throw SyntaxError(location, Translations.getString("base.dsl.unexpectedToken.msg", currentToken!!.type.id))
+			}
 			var text = currentToken!!.value as String
 			eat(TEXT)
 			return StyledText(lexer.location, listOf(StyledChunk(location, text, style)))
