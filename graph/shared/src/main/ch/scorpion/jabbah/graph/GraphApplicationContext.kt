@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
+import ch.scorpion.jabbah.graph.view.scenario.ScenarioBreakpoints
 
 /**
  * A graph application sets an instance of [GraphApplicationContext] as the application context
@@ -42,7 +43,8 @@ class GraphApplicationContextHolder(
 	val eventBus: EventBus = BaseModule.eventBus,
 	val systemSpeed: SystemSpeed = SystemSpeed(eventBus = eventBus),
 	val currentSystemSpeedCategory: CurrentSystemSpeedCategory = CurrentSystemSpeedCategory(systemSpeed),
-	val animator: Animator = AnimatorImpl(systemSpeed)
+	val animator: Animator = AnimatorImpl(systemSpeed),
+	val scenarioBreakpoints: ScenarioBreakpoints = ScenarioBreakpoints(eventBus)
 ) : ApplicationContextHolder() {
 
 	val signalHandlerIfActive: SignalHandler? get() = if (scheduler.isActive) scheduler else null

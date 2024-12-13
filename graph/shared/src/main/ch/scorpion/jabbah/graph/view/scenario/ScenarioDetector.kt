@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.drawable.FlexibleTextView
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.execution.scheduler.BreakEvent
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.execution.scheduler.SchedulerEvent
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
@@ -47,24 +48,34 @@ class ScenarioDetector(
 	}
 
 	private val schedulerEventHandler: EventHandler<SchedulerEvent> = {
-		val doDetect = if (it.scheduler === applicationContextHolder.scheduler && it.type == SchedulerEvent.Type.DONE) {
-			when (it.source) {
-				is GraphElement -> {
-					view.drawing.graph!!.contains(it.source as GraphElement)
-				}
-				is GraphView -> {
-					view.drawing === it.source
-				}
-				else -> false
-			}
-		} else {
-			false
-		}
+		if (isAfterStartupDuration()) {
+			val doDetect =
+				if (it.scheduler === applicationContextHolder.scheduler && it.type == SchedulerEvent.Type.DONE) {
+					when (it.source) {
+						is GraphElement -> {
+							view.drawing.graph!!.contains(it.source as GraphElement)
+						}
 
-		if (doDetect) {
-			detect()
+						is GraphView -> {
+							view.drawing === it.source
+						}
+
+						else -> false
+					}
+				} else {
+					false
+				}
+
+			if (doDetect) {
+				detect()
+			}
 		}
 	}
+
+	private fun isAfterStartupDuration(): Boolean =
+		view.drawing.graph?.startupTime?.let {
+			applicationContextHolder.scheduler.executionTime >= it
+		} ?: true
 
 	private val systemSpeedCategoryHandler: EventHandler<SystemSpeedCategoryEvent> = {
 		if (it.source === applicationContextHolder.currentSystemSpeedCategory) {
@@ -91,11 +102,17 @@ class ScenarioDetector(
 			it.oldStep?.passivate(view)
 			unhighlightScenarioStep()
 			hideScenarioStepDesc()
-			it.newStep?.let { step ->
-				displayScenarioStepDesc(step)
-				highlightScenarioStep(step)
+
+			it.newStep?.let { newStep ->
+				displayScenarioStepDesc(newStep)
+				highlightScenarioStep(newStep)
+				newStep.activate(view)
+				if (applicationContextHolder.scenarioBreakpoints.enabled) {
+					LOG.trace("Breaking at scenario step ${newStep.name.getTranslation()}")
+					eventBus.post(BreakEvent())
+				}
 			}
-			it.newStep?.activate(view)
+
 			view.repaint()
 		}
 	}
@@ -166,11 +183,11 @@ class ScenarioDetector(
 	}
 
 	private fun setCurrentScenarioStep(scenarioStep: ScenarioStep?) {
-		if (isActive) {
+		if (isActive && scenarioStep !== view.drawing.currentScenarioStep) {
 			if (scenarioStep == null) {
-				LOG.trace("no current ScenarioStep")
+				LOG.trace("No current ScenarioStep")
 			} else {
-				LOG.trace("detected ScenarioStep '${scenarioStep.name}'")
+				LOG.trace("${applicationContextHolder.scheduler.executionTime} ns: Detected ScenarioStep '${scenarioStep.name}'")
 			}
 			view.drawing.currentScenarioStep = scenarioStep
 		}

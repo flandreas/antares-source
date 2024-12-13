@@ -30,6 +30,7 @@ import ch.scorpion.jabbah.graph.ui.scenario.DeleteScenarioAction
 import ch.scorpion.jabbah.graph.ui.scenario.DeleteScenarioStepAction
 import ch.scorpion.jabbah.graph.ui.usecase.*
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeVisibilityAction
+import ch.scorpion.jabbah.graph.view.scenario.ScenarioBreakpointAction
 import org.apache.commons.lang3.SystemUtils
 import javax.swing.JCheckBoxMenuItem
 import javax.swing.JMenu
@@ -140,6 +141,7 @@ open class GraphMenuBarBuilder(
 		menu.add(JMenuItem(ActionWrapperSwing(AddScenarioStepAction(frame.application, graphFrame.controller.applicationModeHolder))))
 		menu.add(JMenuItem(ActionWrapperSwing(DeleteScenarioAction(frame.application, graphFrame.controller.applicationModeHolder))))
 		menu.add(JMenuItem(ActionWrapperSwing(DeleteScenarioStepAction(frame.application, graphFrame.controller.applicationModeHolder))))
+		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ScenarioBreakpointAction(graphFrame.controller.applicationContextHolder.scenarioBreakpoints))))
 		return menu
 	}
 
