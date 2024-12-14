@@ -43,7 +43,7 @@ interface ScenarioStep : Namable, Describable, Storable {
 	 * client classes that evaluate the return condition. Hence, it's not necessary that the returned condition contains
 	 * terms that check the [Scenario] condition as well.
 	 */
-	val condition: (DrawingView<GraphView>) -> Boolean
+	val condition: (SignalHandler, DrawingView<GraphView>) -> Boolean
 
 	fun dispose()
 

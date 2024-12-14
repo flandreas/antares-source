@@ -43,7 +43,7 @@ interface Scenario : Namable, Describable, Storable {
 	 * Returns the condition that determines whether this [Scenario] is triggered depending on the current state
 	 * of a [DrawingView] and its GraphView.
 	 */
-	val condition: (DrawingView<GraphView>) -> Boolean
+	val condition: (SignalHandler, DrawingView<GraphView>) -> Boolean
 
 	/** Returns the [ScenarioStep]s of this [Scenario].*/
 	fun getScenarioSteps(): ImmutableList<ScenarioStep>

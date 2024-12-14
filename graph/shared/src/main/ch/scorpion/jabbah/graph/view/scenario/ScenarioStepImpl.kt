@@ -149,12 +149,12 @@ class ScenarioStepImpl(
 			}
 		}
 
-	override val condition: (DrawingView<GraphView>) -> Boolean get() = { view ->
+	override val condition: (SignalHandler, DrawingView<GraphView>) -> Boolean get() = { signalHandler, view ->
 		val scriptMetaData = ScriptMetaData(
 			Translations.getString("scenarioStep.issueOrigin.name", name.value),
 			Translations.getString("graph.property.scenario.condition.name")
 		)
-		GraphDslModule.scenarioExternalFunctions.bind(view.drawing, scriptMetaData.origin, scriptMetaData.context)
+		GraphDslModule.scenarioExternalFunctions.bind(signalHandler, view.drawing, scriptMetaData.origin, scriptMetaData.context)
 		conditionInterpreter?.let {
 			it.interpretCatching(scriptMetaData, view.drawing.graph!!) != 0L
 		} ?: false

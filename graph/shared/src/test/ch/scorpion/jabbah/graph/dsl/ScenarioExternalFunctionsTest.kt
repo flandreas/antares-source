@@ -6,8 +6,12 @@ import ch.scorpion.jabbah.edit.model.text.ScriptProperty
 import ch.scorpion.jabbah.execution.issue.IssueCollector
 import ch.scorpion.jabbah.graph.AbstractGraphViewExecutionTest
 import ch.scorpion.jabbah.graph.DrawingViewMockBuilder
+import ch.scorpion.jabbah.graph.model.StoringGraphActorData
+import ch.scorpion.jabbah.graph.model.TestVertice
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
+import ch.scorpion.jabbah.graph.view.Scenario
+import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.scenario.ScenarioImpl
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import kotlin.test.Test
@@ -20,41 +24,61 @@ class ScenarioExternalFunctionsTest : AbstractGraphViewExecutionTest() {
     private val builder: GraphViewBuilder<Boolean> = GraphViewBuilder()
     private val drawingView = DrawingViewMockBuilder()
 
+    private lateinit var testVerticeView: VerticeView<TestVertice>
+
     override fun getGraphView(): GraphView = builder.graphView
 
     override fun setup() {
         super.setup()
-        builder.addVerticeView(TestVerticeView())
+        testVerticeView = TestVerticeView()
+        builder.addVerticeView(testVerticeView)
         drawingView.withDrawing(builder.graphView)
         issueCollector.clear()
     }
 
     @Test
     fun shouldAllHaveStateIdle() {
-        val result = callAllHaveState(0)
+        val scenario = createScenario("haveAllState(0)")
 
-        assertEquals(0, issueCollector.size)
+        startSimulation()
+        proceedUntilQueueIsEmpty()
+        val result = scenario.condition.invoke(scheduler, drawingView.build<Component>() as DrawingView<GraphView>)
+
         assertTrue(result)
+        assertEquals(0, issueCollector.size)
     }
 
     @Test
     fun shouldFailAllHaveStateIdleWithIllegalState() {
-        callAllHaveState(42)
+        val scenario = createScenario("haveAllState(42)")
+        startSimulation()
+        proceedUntilQueueIsEmpty()
+
+        scenario.condition.invoke(scheduler, drawingView.build<Component>() as DrawingView<GraphView>)
 
         assertEquals(1, issueCollector.size)
     }
 
-    private fun callAllHaveState(state: Int): Boolean {
+    private fun createScenario(condition: String): Scenario {
         val scenario = ScenarioImpl()
         scenario.graphView = builder.graphView
-        scenario.conditionProperty = ScriptProperty("haveAllState($state)")
+        scenario.conditionProperty = ScriptProperty(condition)
         getGraphView().scenarios.add(scenario)
+        return scenario
+    }
+
+    @Test
+    fun shouldYieldSimulationTime() {
+        val scenario = createScenario("simulationTime() == 100")
 
         startSimulation()
         proceedUntilQueueIsEmpty()
+        scheduler.requestActingAfter(testVerticeView.model, 100, StoringGraphActorData(null, null))
+        proceedUntilQueueIsEmpty()
 
-        val result = scenario.condition.invoke(drawingView.build<Component>() as DrawingView<GraphView>)
+        val result = scenario.condition.invoke(scheduler, drawingView.build<Component>() as DrawingView<GraphView>)
 
-        return result
+        assertTrue(result)
+        assertEquals(0, issueCollector.size)
     }
 }

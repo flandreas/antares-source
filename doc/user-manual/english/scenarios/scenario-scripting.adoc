@@ -13,10 +13,19 @@ In addition to the standard ways of accessing signal values of inputs, outputs, 
 ----
 /**
  * Checks if all graph elements have a particular simulation state.
+ * Example: "In == 0 and haveAllState(0)"
  *
  * @param state the required state with the following supported values:
  * - 0: Idle
  * @return 1 if all graph elements have state [state], 0 otherwise
  */
-private fun haveAllState(state: Long): Long
+fun haveAllState(state: Long): Long
+
+/**
+ * Returns the current simulation time (in ns).
+ * Example: "In == 0 and simulationTime() > 1000"
+ *
+ * @return the current simulation time (in ns)
+ */
+fun simulationTime(): Long
 ----

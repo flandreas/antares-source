@@ -149,7 +149,7 @@ class ScenarioDetector(
 	private fun detect() {
 		if (isActive) {
 			val detectedScenario = view.drawing.scenarios.getScenarios().firstOrNull {
-				it.condition.invoke(view)
+				it.condition.invoke(applicationContextHolder.scheduler, view)
 			}
 			setCurrentScenario(detectedScenario)
 		}
@@ -159,7 +159,7 @@ class ScenarioDetector(
 			val scenario = view.drawing.currentScenario
 			if (scenario != null) {
 				setCurrentScenarioStep(scenario.getScenarioSteps().firstOrNull {
-					it.condition.invoke(view)
+					it.condition.invoke(applicationContextHolder.scheduler, view)
 				})
 			} else {
 				setCurrentScenarioStep(null)

@@ -113,7 +113,7 @@ class ScenarioImplTest {
 		scenario.conditionProperty = ScriptProperty("I == 42")
 		scenario.executionStart(graphView, signalHandler)
 
-		val result = scenario.condition(drawingView as DrawingView<GraphView>)
+		val result = scenario.condition(signalHandler, drawingView as DrawingView<GraphView>)
 
 		assertTrue(result)
 	}
@@ -132,7 +132,7 @@ class ScenarioImplTest {
 		scenario.graphView = graphView
 		scenario.conditionProperty = ScriptProperty("I == 42")
 
-		val result = scenario.condition(drawingView as DrawingView<GraphView>)
+		val result = scenario.condition(signalHandler, drawingView as DrawingView<GraphView>)
 
 		assertFalse(result)
 	}
