@@ -109,6 +109,7 @@ class ScenarioImplTest {
 		(graphPortView.model as GraphInput).setIncomingSignal(42L, signalHandler)
 
 		val scenario = ScenarioImpl()
+		scenario.graphView = graphView
 		scenario.conditionProperty = ScriptProperty("I == 42")
 		scenario.executionStart(graphView, signalHandler)
 
@@ -128,6 +129,7 @@ class ScenarioImplTest {
 		(graphPortView.model as GraphInput).setIncomingSignal(99L, signalHandler)
 
 		val scenario = ScenarioImpl()
+		scenario.graphView = graphView
 		scenario.conditionProperty = ScriptProperty("I == 42")
 
 		val result = scenario.condition(drawingView as DrawingView<GraphView>)

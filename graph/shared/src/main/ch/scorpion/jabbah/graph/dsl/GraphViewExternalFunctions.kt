@@ -29,7 +29,8 @@ open class GraphViewExternalFunctions : DslExternalFunctions {
 		private val LOG by logger(GraphViewExternalFunctions::class)
 	}
 
-	private lateinit var graphView: GraphView
+	lateinit var graphView: GraphView
+		private set
 	private lateinit var origin: String
 	private lateinit var context: String
 	private lateinit var eventBus: EventBus

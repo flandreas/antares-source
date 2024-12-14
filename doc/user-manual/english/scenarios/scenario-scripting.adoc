@@ -1,0 +1,22 @@
+= Scripting in Scenarios
+include::../../page-variables.txt[]
+:page-permalink: /user-manual/english/scenarios/scenario-scripting
+:icons: font
+
+This chapter describes in detail how scripting can be used in link:{{site.basedir}}/user-manual/english/scenarios/scenarios[scenarios].
+
+Scripting in use cases uses the link:{{site.basedir}}/user-manual/english/scripting/scripting-dsl[_Antares DSL_] programming language.
+
+In addition to the standard ways of accessing signal values of inputs, outputs, or any ports of components, you can use the following standard scripting functions to achieve more fine-tuned scenario conditions.
+
+[source,javascript]
+----
+/**
+ * Checks if all graph elements have a particular simulation state.
+ *
+ * @param state the required state with the following supported values:
+ * - 0: Idle
+ * @return 1 if all graph elements have state [state], 0 otherwise
+ */
+private fun haveAllState(state: Long): Long
+----

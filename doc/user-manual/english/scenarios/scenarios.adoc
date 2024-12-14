@@ -34,6 +34,8 @@ The explanation text of an active scenario is displayed in a text box above the 
 
 Scenarios and their scenario steps are always saved together with the open circuit.
 
+See link:{{site.basedir}}/user-manual/english/scenarios/scenario-scripting[Scripting in Scenarios] for an in-depth explanation of how to use scripting for scenarios.
+
 == Configuration
 
 Scenarios of the currently open circuit are configured in the "Scenarios" sidebar on the right side of the Antares window.

@@ -8,6 +8,7 @@ object GraphDslModule : AbstractModule() {
 	var graphViewExternalFunctionsFactory: () -> GraphViewExternalFunctions = { GraphViewExternalFunctions() }
 	var usecaseActionExternalFunctions: UsecaseActionExternalFunctions = GraphUsecaseActionExternalFunctions
 	var usecaseTestExternalFunctions: UsecaseTestExternalFunctions = GraphUsecaseTestExternalFunctions
+	var scenarioExternalFunctions: ScenarioExternalFunctions = GraphScenarioExternalFunctions
 
 	override fun initialize() {
 		BaseModule.require()

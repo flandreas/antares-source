@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.base.parser.Parser
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.*
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.ActorState
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.Graph.Companion.PROP_DESCRIPTION
@@ -288,6 +289,9 @@ open class GraphImpl(
 				vRef.handleTypeChanged()
 			}
 	}
+
+	override fun allElementHaveState(state: ActorState): Boolean =
+		_elements.all { it.state == state }
 
 	/** ---- [Storable] interface */
 

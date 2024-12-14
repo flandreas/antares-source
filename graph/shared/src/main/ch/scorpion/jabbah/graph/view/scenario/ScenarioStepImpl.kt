@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.ScriptProperty
 import ch.scorpion.jabbah.edit.model.text.description.*
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.dsl.GraphDslModule
 import ch.scorpion.jabbah.graph.model.graph.GraphActivationRecord
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.ScenarioStep
@@ -135,12 +136,13 @@ class ScenarioStepImpl(
 		}
 
 	override val condition: (DrawingView<GraphView>) -> Boolean get() = { view ->
+		val scriptMetaData = ScriptMetaData(
+			Translations.getString("scenarioStep.issueOrigin.name", name.value),
+			Translations.getString("graph.property.scenario.condition.name")
+		)
+		GraphDslModule.scenarioExternalFunctions.bind(view.drawing, scriptMetaData.origin, scriptMetaData.context)
 		conditionInterpreter?.let {
-			it.interpretCatching(
-				ScriptMetaData(
-					Translations.getString("scenarioStep.issueOrigin.name", name.value),
-					Translations.getString("graph.property.scenario.condition.name")),
-				view.drawing.graph!!) != 0L
+			it.interpretCatching(scriptMetaData, view.drawing.graph!!) != 0L
 		} ?: false
 	}
 
@@ -225,10 +227,21 @@ class ScenarioStepImpl(
 
 	/** ---- [ScenarioStepImpl] */
 
+	@Suppress("UNUSED_PARAMETER")
 	fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): Parser =
-		graphView?.graph?.createParser(program, semanticAnalyser)
-			?: BaseModule.parserFactory(program, semanticAnalyser)
+		BaseModule.parserFactory(program, BaseModule.semanticAnalyserFactory(createSymbolTable()))
 
 	private fun createInterpreter(graphView: GraphView, ast: Node): Interpreter =
 		BaseModule.interpreterFactory(ast, Memory(GraphActivationRecord(graphView.graph!!)))
+
+	private fun createSymbolTable(): SymbolTable {
+		val portSymbolTable = graphView!!.graph!!.symbolTable
+		return ScopedSymbolTable(
+			name = "ExternalFunctions",
+			scopeLevel = portSymbolTable.scopeLevel,
+			enclosingScope = portSymbolTable
+		).also {
+			GraphDslModule.scenarioExternalFunctions.defineIn(it)
+		}
+	}
 }

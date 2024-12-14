@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.execution.actor.ActorState
 import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.nonvolatile.NonVolatileStorable
@@ -187,6 +188,11 @@ interface Graph : GraphPortOwner, Namable, Describable, Storable, Bean, Property
 	 * calculated tooltips.
 	 */
 	fun handleSubGraphNameChanged(uuid: UUID)
+
+	/**
+	 * Returns `true` if all [GraphElement] are in the specified [ActorState].
+	 */
+	fun allElementHaveState(state: ActorState): Boolean
 }
 
 class GraphElementAddedEvent(val graph: Graph, val element: GraphElement)
