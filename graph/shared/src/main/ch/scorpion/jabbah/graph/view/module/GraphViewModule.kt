@@ -62,7 +62,6 @@ import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.port.PortViewFactory
 import ch.scorpion.jabbah.graph.view.port.PortViewStorable
 import ch.scorpion.jabbah.graph.view.port.UndefinedPortViewFactory
-import ch.scorpion.jabbah.graph.view.scenario.ScenarioBreakpoints
 import ch.scorpion.jabbah.graph.view.scenario.ScenarioDetector
 import ch.scorpion.jabbah.graph.view.scenario.ScenarioImpl
 import ch.scorpion.jabbah.graph.view.scenario.ScenarioStepImpl
@@ -204,7 +203,6 @@ object GraphViewModule : AbstractModule() {
 		properties.set(OrthoEdgeViewLayouter.PROP_ADVANCED_LAYOUT, true)
 
 		properties.set(ScenarioDetector.PROP_LIMIT_SYSTEM_SPEED_CATEGORY, SystemSpeedCategory.Observe.customName)
-		properties.set(ScenarioBreakpoints.PROP_ENABLED, false)
 		properties.set(SchedulerImpl.PROP_SCHEDULER_EVENT_SYSTEM_SPEED_LIMIT, SystemSpeedCategory.Observe.customName)
 		properties.set(ContainerEditor.PROP_DEFAULT_ZOOM_FACTOR, 2.0f)
 

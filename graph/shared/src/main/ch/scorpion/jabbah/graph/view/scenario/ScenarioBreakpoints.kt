@@ -8,7 +8,7 @@ class ScenarioBreakpoints(
 ) {
 
     companion object {
-        const val PROP_ENABLED = "jabbah.graph.ScenarioBreakpoints"
+        private const val SETTING_ENABLED = "jabbah.graph.ScenarioBreakpoints"
     }
 
 
@@ -16,13 +16,13 @@ class ScenarioBreakpoints(
         set(value) {
             if (field != value) {
                 field = value
-                BaseModule.properties.set(PROP_ENABLED, field)
+                BaseModule.settings.set(SETTING_ENABLED, field)
                 eventBus.post(ScenarioBreakpointEnablingEvent(this))
             }
         }
 
     init {
-        enabled = BaseModule.properties.getBoolean(PROP_ENABLED)
+        enabled = BaseModule.settings.getBoolean(SETTING_ENABLED, false)
     }
 }
 
