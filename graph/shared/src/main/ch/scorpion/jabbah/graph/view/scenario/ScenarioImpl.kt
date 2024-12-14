@@ -49,10 +49,14 @@ class ScenarioImpl(
 
 	private val conditionScriptASTCache = resettableLazy {
 		LOG.trace("Parsing condition script of '${name.value}'")
-		createParser(conditionScript, null)
-			.parseCatching(ScriptMetaData(
-				Translations.getString("scenario.issueOrigin.name", name.value),
-				Translations.getString("graph.property.scenario.condition.name")))
+		createParser(conditionScript, null).parseCatching(scriptMetaData.value)
+	}
+
+	private val scriptMetaData = resettableLazy {
+		ScriptMetaData(
+			Translations.getString("scenario.issueOrigin.name", name.value),
+			Translations.getString("graph.property.scenario.condition.name")
+		)
 	}
 
 	private var interpreter: Interpreter? = null
@@ -63,7 +67,10 @@ class ScenarioImpl(
 
 	/** ---- [Namable], [Describable] interfaces */
 
-	override var name: Name by observableName(Name(initialName))
+	override var name: Name by observableName(Name(initialName)) {
+		// MetaData depends on name
+		scriptMetaData.reset()
+	}
 
 	override var description: Description by observableDescription(Description(""))
 

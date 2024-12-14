@@ -42,11 +42,14 @@ class ScenarioStepImpl(
 	private val conditionScriptASTCache = resettableLazy {
 		conditionScript?.let {
 			LOG.trace("Parsing condition script of '${name.value}'")
-			createParser(it, null)
-				.parseCatching(ScriptMetaData(
-					Translations.getString("scenarioStep.issueOrigin.name", name.value),
-					Translations.getString("graph.property.scenario.condition.name")))
+			createParser(it, null).parseCatching(conditionScriptMetaData.value)
 		}
+	}
+
+	private val conditionScriptMetaData = resettableLazy {
+		ScriptMetaData(
+			Translations.getString("scenarioStep.issueOrigin.name", name.value),
+			Translations.getString("graph.property.scenario.condition.name"))
 	}
 
 	private var conditionInterpreter: Interpreter? = null
@@ -61,11 +64,14 @@ class ScenarioStepImpl(
 	private val onEntryScriptASTCache = resettableLazy {
 		onEntryScript?.let {
 			LOG.trace("Parsing onEntry script of '${name.value}'")
-			createParser(it, null)
-				.parseCatching(ScriptMetaData(
-					Translations.getString("scenarioStep.issueOrigin.name", name.value),
-					Translations.getString("graph.property.scenario.onEntry.name")))
+			createParser(it, null).parseCatching(onEntryScriptMetaData.value)
 		}
+	}
+
+	private val onEntryScriptMetaData = resettableLazy {
+		ScriptMetaData(
+			Translations.getString("scenarioStep.issueOrigin.name", name.value),
+			Translations.getString("graph.property.scenario.onEntry.name"))
 	}
 
 	private var onEntryInterpreter: Interpreter? = null
@@ -76,11 +82,14 @@ class ScenarioStepImpl(
 	private val onExitScriptASTCache = resettableLazy {
 		onExitScript?.let {
 			LOG.trace("Parsing onExit script of '${name.value}'")
-			createParser(it, null)
-				.parseCatching(ScriptMetaData(
-					Translations.getString("scenarioStep.issueOrigin.name", name.value),
-					Translations.getString("graph.property.scenario.onExit.name")))
+			createParser(it, null).parseCatching(onExitScriptMetaData.value)
 		}
+	}
+
+	private val onExitScriptMetaData = resettableLazy {
+		ScriptMetaData(
+			Translations.getString("scenarioStep.issueOrigin.name", name.value),
+			Translations.getString("graph.property.scenario.onExit.name"))
 	}
 
 	private var onExitInterpreter: Interpreter? = null
@@ -94,7 +103,12 @@ class ScenarioStepImpl(
 
 		/** ---- [Namable] interface */
 
-	override var name: Name by observableName(Name(initialName))
+	override var name: Name by observableName(Name(initialName)) {
+		// MetaData depend on name
+		conditionScriptMetaData.reset()
+		onEntryScriptMetaData.reset()
+		onExitScriptMetaData.reset()
+	}
 
 	override var description: Description by observableDescription(Description(""))
 
