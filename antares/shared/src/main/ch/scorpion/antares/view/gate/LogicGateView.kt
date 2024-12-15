@@ -135,6 +135,10 @@ class LogicGateView(
 		set(value) {
 			invalidate()
 			model.gateType = value
+
+			tooltip.reset()
+			explanation.reset()
+
 			invalidate()
 			update()
 		}
