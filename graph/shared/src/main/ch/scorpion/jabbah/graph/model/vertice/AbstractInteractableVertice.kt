@@ -25,12 +25,16 @@ import ch.scorpion.jabbah.graph.view.GraphView
  */
 interface InteractableVertice<S: Any> : Vertice {
 
+	companion object {
+		const val BASE_KEY_INTERACTIVE_PROPAGATION_DELAY = "graph.property.interactivePropagationDelay"
+	}
+
 	val enabled: Boolean
 
 	val disabled: Boolean get() = !enabled
 
 	/** The propagation delay to be applied with user interactions such as mouse clicks.*/
-	val interactivePropagationDelay: Long
+	var interactivePropagationDelay: Long
 
 	/**
 	 * Determines whether views of this [InteractableVertice] should draw themselves

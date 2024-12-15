@@ -134,7 +134,7 @@ class DigitalCircuitInOutImpl(
 
 	/** ---- [InteractableVertice] interface */
 
-	override val interactivePropagationDelay: Long get() = Switch.DEF_PROP_DELAY.value
+	override var interactivePropagationDelay: Long = Switch.DEF_PROP_DELAY.value
 
 	/** ---- [Vertice] */
 
@@ -206,6 +206,9 @@ class DigitalCircuitInOutImpl(
 		if (startValue != null) {
 			writer.writeULong("startValue", startValue!!.getValue())
 		}
+		if (interactivePropagationDelay != Switch.DEF_PROP_DELAY.value) {
+			writer.writeLong("interactivePropagationDelay", interactivePropagationDelay)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
@@ -213,6 +216,9 @@ class DigitalCircuitInOutImpl(
 		bitWidth = BitWidth.read("bitWidth", reader)
 		if (reader.hasAttribute("startValue")) {
 			startValue = DigitalSignalFactory.of(bitWidth, reader.readULong("startValue"))
+		}
+		if (reader.hasAttribute("interactivePropagationDelay")) {
+			interactivePropagationDelay = reader.readLong("interactivePropagationDelay")
 		}
 	}
 

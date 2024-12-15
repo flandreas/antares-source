@@ -48,7 +48,7 @@ abstract class AbstractGraphPort<T : Any>(
 
 	/** ---- [InteractableVertice] interface */
 
-	override val interactivePropagationDelay: Long get() = 1_000
+	override var interactivePropagationDelay: Long = 1_000
 
 	/** ---- [Vertice] interface */
 

@@ -52,7 +52,10 @@ class AnalogSwitch(
 
 	/** ---- [InteractableVertice] interface */
 
-	override val interactivePropagationDelay: Long get() = propagationDelay.value
+	override var interactivePropagationDelay: Long = propagationDelay.value
+		set(value) {
+			propagationDelay = LongValueImpl(value)
+		}
 
 	/** ---- [AnalogElement] */
 

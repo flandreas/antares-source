@@ -21,6 +21,7 @@ class DigitalCircuitInOutViewBeanInfo : AbstractCircuitInOutViewBeanInfo<Digital
 	    private val canBeUndefined = AntaresProperties.canBeUndefined()
 	    private val description = EditProperties.description()
 		private val startValue = GraphProperties.graphPortStartValue()
+		private val interactivePropagationDelay = GraphProperties.interactivePropagationDelay()
     }
 
     override fun addProperties(bean: DigitalCircuitInOutView, editor: Editor, properties: MutableList<Property>) {
@@ -31,6 +32,7 @@ class DigitalCircuitInOutViewBeanInfo : AbstractCircuitInOutViewBeanInfo<Digital
 	    if (bean.model.portType.isInput) {
 		    properties.add(toggle.bind(editor, beanIdProvider(bean.id)))
 			properties.add(startValue.bind(editor, beanIdProvider(bean.id), optional = true))
+			properties.add(interactivePropagationDelay.bind(editor, beanIdProvider(bean.id)))
 	    }
 	    if (bean.model.portType == PortType.OUTPUT) {
 			properties.add(canBeUndefined.bind(editor, beanIdProvider(bean.id)))

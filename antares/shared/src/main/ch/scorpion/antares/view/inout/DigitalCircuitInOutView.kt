@@ -105,6 +105,13 @@ class DigitalCircuitInOutView(
 			}
 		}
 
+	@Suppress("unused") // Reflection
+	var interactivePropagationDelay: Long
+		get() = model.interactivePropagationDelay
+		set(value) {
+			model.interactivePropagationDelay = value
+		}
+
 	init {
 		modelExchanged(null)
 	}

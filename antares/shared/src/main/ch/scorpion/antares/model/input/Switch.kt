@@ -3,6 +3,7 @@ package ch.scorpion.antares.model.input
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphActorData
@@ -65,7 +66,10 @@ class Switch : AbstractSwitch<Switch>(CALCULATOR) {
 
 	/** ---- [InteractableVertice] interface */
 
-	override val interactivePropagationDelay: Long get() = propagationDelay.value
+	override var interactivePropagationDelay: Long = propagationDelay.value
+		set(value) {
+			propagationDelay = LongValueImpl(value)
+		}
 
 	/** ---- [Storable] interface */
 

@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoriesType
 import ch.scorpion.jabbah.graph.model.param.ExpressionPropertySwing
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
+import ch.scorpion.jabbah.graph.model.vertice.InteractableVertice
 import ch.scorpion.jabbah.graph.view.net.edge.LayoutType
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
@@ -34,6 +35,9 @@ object GraphProperties {
 
 	fun overallPropagationDelay(name: String ="overallPropagationDelay", beanProvider: BeanProvider = componentBeanProvider) =
 		CommandPropertySwing(name, AbstractGraphElementView.BASE_KEY_PROPAGATION_DELAY, Long::class.java, beanProvider)
+
+	fun interactivePropagationDelay(name: String = "interactivePropagationDelay", beanProvider: BeanProvider = componentBeanProvider) =
+		CommandPropertySwing(name, InteractableVertice.BASE_KEY_INTERACTIVE_PROPAGATION_DELAY, Long::class.java, beanProvider)
 
 	fun startupTime(beanProvider: BeanProvider = drawingBeanProvider): CommandPropertySwing<Long> =
 		CommandPropertySwing("graph.startupTime", "graph.property.startupTime", Long::class.java, beanProvider)

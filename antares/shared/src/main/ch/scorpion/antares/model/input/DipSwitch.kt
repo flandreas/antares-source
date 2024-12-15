@@ -83,7 +83,7 @@ class DipSwitch(
 
 	/** ---- [InteractableVertice] */
 
-	override val interactivePropagationDelay: Long get() = Switch.DEF_PROP_DELAY.value
+	override var interactivePropagationDelay: Long = Switch.DEF_PROP_DELAY.value
 
 	/** ---- [GraphElement] */
 
