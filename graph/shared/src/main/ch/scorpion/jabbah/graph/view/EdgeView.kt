@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawableListener
 import ch.scorpion.jabbah.draw.graphics.Stroke
+import ch.scorpion.jabbah.draw.polyline.ArrowHead
 import ch.scorpion.jabbah.draw.polyline.Polyline
 import ch.scorpion.jabbah.draw.polyline.PolylineShape
 import ch.scorpion.jabbah.edit.SnapManager
@@ -86,7 +87,7 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
     /** Encapsulates all aspects of an [EdgeView] that is related with its layout.*/
 	val layout: EdgeViewLayout
 
-    /** Determines whether this [EdgeView] displays an arrow head at its destination. */
+    /** Determines whether this [EdgeView] displays an [ArrowHead] at its destination. */
     var isArrow: Boolean
 
     /** Returns the destination [EdgeEndpointView] of this [EdgeView].*/

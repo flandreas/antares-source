@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.drawable.Mirrorable
 import ch.scorpion.jabbah.draw.drawable.RotationDirection
 import ch.scorpion.jabbah.draw.drawable.Transparent
+import ch.scorpion.jabbah.draw.polyline.ArrowHead
 import ch.scorpion.jabbah.draw.polyline.Polyline
 import ch.scorpion.jabbah.draw.polyline.PolylineDrawable
 import ch.scorpion.jabbah.edit.*
@@ -26,8 +27,22 @@ class PolylineComponent(
 ) : AbstractComponent(polyline), Polyline by polyline, Transparent, Figure, Mirrorable {
 
 	companion object {
+		const val BASE_KEY_ARROW = "draw.property.polyline.arrow"
 		private val TYPE = Translations.getString("edit.component.polyline")
 	}
+
+	/** Determines whether this [PolylineComponent] displays an [ArrowHead] at its destination. */
+	@Suppress("MemberVisibilityCanBePrivate") // Reflection
+	var isArrow: Boolean = false
+		set(value) {
+			if (field != value) {
+				invalidate()
+				field = value
+				updateEndLineTerminator()
+				invalidate()
+				update()
+			}
+		}
 
 	init {
 		DrawableOwner(this, polyline)
@@ -105,14 +120,30 @@ class PolylineComponent(
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
 		writer.writePoints("points", polyline.getPoints(0, polyline.pointsCount))
+		if (isArrow) {
+			writer.writeBoolean("arrow", isArrow)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		polyline.setPoints(reader.readPoints("points"))
+		if (reader.hasAttribute("arrow")) {
+			isArrow = reader.readBoolean("arrow")
+		}
 	}
 
 	override fun rotate(direction: RotationDirection, pivot: Point2D?) {
 		polyline.rotate(direction, pivot)
+	}
+
+	/** ---- [PolylineComponent] */
+
+	private fun updateEndLineTerminator() {
+		if (isArrow) {
+			polyline.endLineTerminator = ArrowHead.createDefault()
+		} else {
+			polyline.endLineTerminator = null
+		}
 	}
 }
