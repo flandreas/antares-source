@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.graph.ui.usecase
 
-import ch.scorpion.jabbah.app.Application
+import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
@@ -24,11 +24,11 @@ import javax.swing.JOptionPane
 
 abstract class AbstractUsecaseAction(
 	baseName: String,
-	application: Application,
+	applicationDataHolder: ApplicationDataHolder,
 	applicationModeHolder: ApplicationModeHolder,
 	protected val service: UsecaseAppService = GraphViewModule.usecaseAppService,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractApplicationDataEditModeAction(baseName, application, applicationModeHolder, eventBus) {
+) : AbstractApplicationDataEditModeAction(baseName, applicationDataHolder, applicationModeHolder, eventBus) {
 
 	protected var usecase: Usecase? = null
 
@@ -47,16 +47,16 @@ abstract class AbstractUsecaseAction(
 	}
 
 	protected val graphView: GraphView? get() =
-		(application.controller.data!!.content as? MetaGraph)?.graph?.graphView
+		(applicationDataHolder.data!!.content as? MetaGraph)?.graph?.graphView
 }
 
 /** Asks the user for the name of a new [Usecase] and adds it to the current [GraphView].*/
 class AddUsecaseAction(
-	application: Application,
+	applicationDataHolder: ApplicationDataHolder,
 	applicationModeHolder: ApplicationModeHolder,
 	service: UsecaseAppService = GraphViewModule.usecaseAppService,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractUsecaseAction("usecases.action.addUsecase", application, applicationModeHolder, service, eventBus) {
+) : AbstractUsecaseAction("usecases.action.addUsecase", applicationDataHolder, applicationModeHolder, service, eventBus) {
 
 	override fun execute(event: ActionEvent) {
 		val name = JOptionPane.showInputDialog(
@@ -69,7 +69,7 @@ class AddUsecaseAction(
 			return
 		}
 
-		service.addUsecase(application, UsecaseImpl(name))
+		service.addUsecase(applicationDataHolder, UsecaseImpl(name))
 	}
 
 	override fun calculateEnabled(): Boolean =
@@ -78,11 +78,11 @@ class AddUsecaseAction(
 
 /** Deletes the currently selected [Usecase].*/
 class DeleteUsecaseAction(
-	application: Application,
+	applicationDataHolder: ApplicationDataHolder,
 	applicationModeHolder: ApplicationModeHolder,
 	service: UsecaseAppService = GraphViewModule.usecaseAppService,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractUsecaseAction("usecases.action.deleteUsecase", application, applicationModeHolder, service, eventBus) {
+) : AbstractUsecaseAction("usecases.action.deleteUsecase", applicationDataHolder, applicationModeHolder, service, eventBus) {
 
 	override fun execute(event: ActionEvent) {
 		if (JOptionPane.showConfirmDialog(
@@ -92,7 +92,7 @@ class DeleteUsecaseAction(
 				JOptionPane.YES_NO_OPTION,
 				JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION)
 		{
-			service.deleteUsecase(application, usecase!!.id)
+			service.deleteUsecase(applicationDataHolder, usecase!!.id)
 		}
 	}
 
@@ -101,12 +101,12 @@ class DeleteUsecaseAction(
 }
 
 class RunUsecaseAction(
-	application: Application,
+	applicationDataHolder: ApplicationDataHolder,
 	private val scheduler: Scheduler,
 	service: UsecaseAppService = GraphViewModule.usecaseAppService,
 	eventBus: EventBus = BaseModule.eventBus,
 	applicationModeHolder: ApplicationModeHolder
-) : AbstractUsecaseAction("usecases.action.runUsecase", application, applicationModeHolder, service, eventBus) {
+) : AbstractUsecaseAction("usecases.action.runUsecase", applicationDataHolder, applicationModeHolder, service, eventBus) {
 
 	override fun execute(event: ActionEvent) {
 		usecase?.let {
@@ -120,12 +120,12 @@ class RunUsecaseAction(
 
 /** Executes the test script of the currently selected [Usecase].*/
 class RunSingleUsecaseTestAction(
-	application: Application,
+	applicationDataHolder: ApplicationDataHolder,
 	private val scheduler: Scheduler,
 	service: UsecaseAppService = GraphViewModule.usecaseAppService,
 	eventBus: EventBus = BaseModule.eventBus,
 	applicationModeHolder: ApplicationModeHolder
-) : AbstractUsecaseAction("usecaseTest.action.runSingleTest", application, applicationModeHolder, service, eventBus) {
+) : AbstractUsecaseAction("usecaseTest.action.runSingleTest", applicationDataHolder, applicationModeHolder, service, eventBus) {
 
 	override fun execute(event: ActionEvent) {
 		usecase?.let {
@@ -138,12 +138,12 @@ class RunSingleUsecaseTestAction(
 }
 
 class RunAllTestsAction(
-	application: Application,
+	applicationDataHolder: ApplicationDataHolder,
 	private val scheduler: Scheduler,
 	service: UsecaseAppService = GraphViewModule.usecaseAppService,
 	eventBus: EventBus = BaseModule.eventBus,
 	applicationModeHolder: ApplicationModeHolder
-) : AbstractUsecaseAction("usecaseTest.action.runAllTests", application, applicationModeHolder, service, eventBus) {
+) : AbstractUsecaseAction("usecaseTest.action.runAllTests", applicationDataHolder, applicationModeHolder, service, eventBus) {
 
 	override fun execute(event: ActionEvent) {
 		UsecaseTestRunner(graphView!!.usecases.withTests(), graphView!!, scheduler, applicationModeHolder).run()
@@ -154,17 +154,17 @@ class RunAllTestsAction(
 }
 
 class RecordUsecaseAction(
-	application: Application,
+	applicationDataHolder: ApplicationDataHolder,
 	applicationModeHolder: ApplicationModeHolder,
 	private val graphAppContextHolder: GraphApplicationContextHolder,
 	service: UsecaseAppService = GraphViewModule.usecaseAppService,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractUsecaseAction("usecase.action.record", application, applicationModeHolder, service, eventBus) {
+) : AbstractUsecaseAction("usecase.action.record", applicationDataHolder, applicationModeHolder, service, eventBus) {
 
 	override fun calculateEnabled(): Boolean =
 		super.calculateEnabled() && usecase != null
 
 	override fun execute(event: ActionEvent) {
-		RecordUsecasePanel.showAsDialog(usecase!!, application, applicationModeHolder, graphAppContextHolder, service)
+		RecordUsecasePanel.showAsDialog(usecase!!, applicationDataHolder, applicationModeHolder, graphAppContextHolder, service)
 	}
 }

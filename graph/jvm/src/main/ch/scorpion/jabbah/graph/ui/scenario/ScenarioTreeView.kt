@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.graph.ui.scenario
 
-import ch.scorpion.jabbah.app.Application
+import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
@@ -15,8 +15,6 @@ import ch.scorpion.jabbah.draw.richtext.RichTextLabel
 import ch.scorpion.jabbah.edit.model.text.NamableTreeNode
 import ch.scorpion.jabbah.edit.model.text.description.NameChangedEvent
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
-import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
-import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.ui.MetaGraphIconProvider
 import ch.scorpion.jabbah.graph.view.*
@@ -42,9 +40,8 @@ import javax.swing.tree.TreeSelectionModel
  * Supports moving [ScenarioStep]s within the same [Scenario] using drag & drop.
  */
 class ScenarioTreeView(
-	private val application: Application,
-	private val applicationContextHolder: GraphApplicationContextHolder,
-	applicationModeHolder: ApplicationModeHolder,
+	private val applicationDataHolder: ApplicationDataHolder,
+	private val controller: ScenarioViewController,
 	private val service: ScenarioAppService = GraphViewModule.scenarioAppService,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : JTree() {
@@ -102,7 +99,7 @@ class ScenarioTreeView(
 
 	// Disables this [ScenarioTreeView] when the [Scheduler] is active.
 	private val activationStateHandler: EventHandler<SchedulerActivationStateEvent> = {
-		if (it.scheduler === applicationContextHolder.scheduler) {
+		if (it.scheduler === controller.applicationContextHolder.scheduler) {
 			if (it.scheduler.isActive) {
 				selectionModel.clearSelection()
 			}
@@ -141,10 +138,10 @@ class ScenarioTreeView(
 		eventBus.register(SchedulerActivationStateEvent::class, activationStateHandler)
 		eventBus.register(NameChangedEvent::class, nameChangedHandler)
 
-		graphViewPopupMenu.add(ActionWrapperSwing(AddScenarioAction(application, applicationModeHolder)))
-		scenarioPopupMenu.add(ActionWrapperSwing(AddScenarioStepAction(application, applicationModeHolder)))
-		scenarioPopupMenu.add(ActionWrapperSwing(DeleteScenarioAction(application, applicationModeHolder)))
-		scenarioStepPopupMenu.add(ActionWrapperSwing(DeleteScenarioStepAction(application, applicationModeHolder)))
+		graphViewPopupMenu.add(ActionWrapperSwing(AddScenarioAction(applicationDataHolder, controller.applicationModeHolder)))
+		scenarioPopupMenu.add(ActionWrapperSwing(AddScenarioStepAction(applicationDataHolder, controller.applicationModeHolder)))
+		scenarioPopupMenu.add(ActionWrapperSwing(DeleteScenarioAction(applicationDataHolder, controller.applicationModeHolder)))
+		scenarioStepPopupMenu.add(ActionWrapperSwing(DeleteScenarioStepAction(applicationDataHolder, controller.applicationModeHolder)))
 	}
 
 	fun dispose() {
@@ -276,7 +273,7 @@ class ScenarioTreeView(
 			val dropLoc = support.dropLocation as JTree.DropLocation
 
 			service.moveScenarioStep(
-				application.controller,
+				applicationDataHolder,
 				((dropLoc.path.lastPathComponent as DefaultMutableTreeNode).userObject as Scenario).id,
 				(scenarioStepNode.userObject as ScenarioStep).id,
 				dropLoc.childIndex

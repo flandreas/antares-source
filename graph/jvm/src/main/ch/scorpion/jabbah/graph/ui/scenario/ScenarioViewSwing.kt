@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.graph.ui.scenario
 
-import ch.scorpion.jabbah.app.Application
+import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
@@ -20,14 +20,14 @@ import javax.swing.JSplitPane
  */
 class ScenarioViewSwing(
 	controller: ScenarioViewController,
-	application: Application,
+	applicationDataHolder: ApplicationDataHolder,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	sheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory
 ) : JPanel(), ScenarioView {
 
 	private val splitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
 
-	private val treeView = ScenarioTreeView(application, controller.applicationContextHolder, controller.applicationModeHolder)
+	private val treeView = ScenarioTreeView(applicationDataHolder, controller)
 
 	private val propertyPanel = ScenarioPropertyPanelSwing(controller.propertyPanelController, sheetFactory)
 

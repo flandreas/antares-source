@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.graph.ui.scenario
 
-import ch.scorpion.jabbah.app.Application
+import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
@@ -21,11 +21,11 @@ import javax.swing.JOptionPane
 
 abstract class AbstractScenarioAction(
 	baseName: String,
-	application: Application,
+	applicationDataHolder: ApplicationDataHolder,
 	applicationModeHolder: ApplicationModeHolder,
 	protected val service: ScenarioAppService = GraphViewModule.scenarioAppService,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractApplicationDataEditModeAction(baseName, application, applicationModeHolder, eventBus) {
+) : AbstractApplicationDataEditModeAction(baseName, applicationDataHolder, applicationModeHolder, eventBus) {
 
 	protected var scenario: Scenario? = null
 	protected var scenarioStep: ScenarioStep? = null
@@ -50,11 +50,11 @@ abstract class AbstractScenarioAction(
  * Asks the user for the name of a new [Scenario] and adds it to the current [GraphView].
  */
 class AddScenarioAction(
-	application: Application,
+	applicationDataHolder: ApplicationDataHolder,
 	applicationModeHolder: ApplicationModeHolder,
 	service: ScenarioAppService = GraphViewModule.scenarioAppService,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractScenarioAction("scenarios.action.addScenario", application, applicationModeHolder, service, eventBus) {
+) : AbstractScenarioAction("scenarios.action.addScenario", applicationDataHolder, applicationModeHolder, service, eventBus) {
 
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 		val name = JOptionPane.showInputDialog(
@@ -67,7 +67,7 @@ class AddScenarioAction(
 			return
 		}
 
-		service.addScenario(application.controller, ScenarioImpl(name))
+		service.addScenario(applicationDataHolder, ScenarioImpl(name))
 	}
 
 	override fun calculateEnabled(): Boolean =
@@ -78,11 +78,11 @@ class AddScenarioAction(
  * Asks the user for the name of a new [ScenarioStep] and adds it to the current [Scenario].
  */
 class AddScenarioStepAction(
-	application: Application,
+	applicationDataHolder: ApplicationDataHolder,
 	applicationModeHolder: ApplicationModeHolder,
 	service: ScenarioAppService = GraphViewModule.scenarioAppService,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractScenarioAction("scenarios.action.addScenarioStep", application, applicationModeHolder, service, eventBus) {
+) : AbstractScenarioAction("scenarios.action.addScenarioStep", applicationDataHolder, applicationModeHolder, service, eventBus) {
 
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 		val name = JOptionPane.showInputDialog(
@@ -94,7 +94,7 @@ class AddScenarioStepAction(
 		if (StringUtils.isEmpty(name)) {
 			return
 		}
-		service.addScenarioStep(application.controller, scenario!!.id, ScenarioStepImpl(initialName = name))
+		service.addScenarioStep(applicationDataHolder, scenario!!.id, ScenarioStepImpl(initialName = name))
 	}
 
 	override fun calculateEnabled(): Boolean =
@@ -103,11 +103,11 @@ class AddScenarioStepAction(
 
 /** Deletes the currently selected [Scenario]. */
 class DeleteScenarioAction(
-	application: Application,
+	applicationDataHolder: ApplicationDataHolder,
 	applicationModeHolder: ApplicationModeHolder,
 	service: ScenarioAppService = GraphViewModule.scenarioAppService,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractScenarioAction("scenarios.action.deleteScenario", application, applicationModeHolder, service, eventBus) {
+) : AbstractScenarioAction("scenarios.action.deleteScenario", applicationDataHolder, applicationModeHolder, service, eventBus) {
 
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 		if (JOptionPane.showConfirmDialog(
@@ -117,7 +117,7 @@ class DeleteScenarioAction(
 				JOptionPane.YES_NO_OPTION,
 				JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION)
 		{
-			service.deleteScenario(application.controller, scenario!!.id)
+			service.deleteScenario(applicationDataHolder, scenario!!.id)
 		}
 	}
 
@@ -127,11 +127,11 @@ class DeleteScenarioAction(
 
 /** Deletes the currently selected [ScenarioStep]. */
 class DeleteScenarioStepAction(
-	application: Application,
+	applicationDataHolder: ApplicationDataHolder,
 	applicationModeHolder: ApplicationModeHolder,
 	service: ScenarioAppService = GraphViewModule.scenarioAppService,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractScenarioAction("scenarios.action.deleteScenarioStep", application, applicationModeHolder, service, eventBus) {
+) : AbstractScenarioAction("scenarios.action.deleteScenarioStep", applicationDataHolder, applicationModeHolder, service, eventBus) {
 
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 		if (JOptionPane.showConfirmDialog(
@@ -141,7 +141,7 @@ class DeleteScenarioStepAction(
 				JOptionPane.YES_NO_OPTION,
 				JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION)
 		{
-			service.deleteScenarioStep(application.controller, scenario!!.id, scenarioStep!!.id)
+			service.deleteScenarioStep(applicationDataHolder, scenario!!.id, scenarioStep!!.id)
 		}
 	}
 

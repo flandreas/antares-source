@@ -26,7 +26,7 @@ class ScenarioViewControllerTest {
 	private val eventBus = EventBusImpl()
 	private val graphView = GraphViewBuilder<Boolean>().build()
 	private val editor = TestEditorBuilder().withDrawing(graphView).build()
-	private val controller = ScenarioViewController(editor, GraphApplicationContextHolder(mock(MockMode.autofill)), ConstantApplicationModeHolder(ApplicationMode.EDIT), eventBus)
+	private val controller = ScenarioViewController(editor, mock(MockMode.autofill), GraphApplicationContextHolder(mock(MockMode.autofill)), ConstantApplicationModeHolder(ApplicationMode.EDIT), eventBus)
 
 	init {
 		ScenarioViewMockBuilder(controller)

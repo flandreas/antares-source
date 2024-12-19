@@ -33,7 +33,11 @@ class GraphEditViewSwing(
 		contextBorderColor = null)
 ) : JPanel(), GraphEditView, GraphDesktopViewItem by graphNavigationView {
 
-	private val scenarioView = ScenarioViewSwing(controller.scenarioViewController, application, eventBus, propertySheetFactory)
+	private val scenarioView = ScenarioViewSwing(
+		controller.scenarioViewController,
+		application.controller,
+		eventBus,
+		propertySheetFactory)
 
 	private val usecaseView = UsecaseViewSwing(
 		controller.usecaseViewController,
@@ -50,7 +54,8 @@ class GraphEditViewSwing(
 			SidebarPaneContentImpl(
 				Translations.getString("graph.scenarios.title"),
 				UiUtil.themedIcon("/img/scenarios-16.png"),
-				scenarioView),
+				scenarioView,
+				listOf(controller.scenarioViewController.addAction)),
 			SidebarPaneContentImpl(
 				Translations.getString("graph.usecases.title"),
 				UiUtil.themedIcon("/img/usecase-16.png"),

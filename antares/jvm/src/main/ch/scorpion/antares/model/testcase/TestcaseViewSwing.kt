@@ -1,7 +1,7 @@
 package ch.scorpion.antares.model.testcase
 
 import ch.scorpion.antares.model.DigitalGraph
-import ch.scorpion.jabbah.app.Application
+import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.ActionEvent
@@ -23,7 +23,7 @@ import javax.swing.JSplitPane
  */
 class TestcaseViewSwing(
 	controller: TestcaseViewController,
-	application: Application,
+	applicationDataHolder: ApplicationDataHolder,
 	applicationModeHolder: ApplicationModeHolder,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	sheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory
@@ -35,7 +35,7 @@ class TestcaseViewSwing(
 
 	private val splitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
 
-	private val treeView = TestcaseTreeView(application, applicationModeHolder, controller.applicationContextHolder, eventBus)
+	private val treeView = TestcaseTreeView(applicationDataHolder, applicationModeHolder, controller.applicationContextHolder, eventBus)
 
 	private val propertyPanel = TestcasePropertyPanelSwing(controller.propertyPanelController, sheetFactory)
 

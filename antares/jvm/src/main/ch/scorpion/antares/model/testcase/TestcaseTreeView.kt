@@ -1,7 +1,7 @@
 package ch.scorpion.antares.model.testcase
 
 import ch.scorpion.antares.model.DigitalGraph
-import ch.scorpion.jabbah.app.Application
+import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.StringUtils
@@ -36,7 +36,7 @@ import javax.swing.tree.TreeSelectionModel
  * TODO Similarities with UsecaseTreeView (and ScenarioTreeView): Extract commonalities?
  */
 class TestcaseTreeView(
-	application: Application,
+	applicationDataHolder: ApplicationDataHolder,
 	applicationModeHolder: ApplicationModeHolder,
 	applicationContextHolder: GraphApplicationContextHolder,
 	private val eventBus: EventBus = BaseModule.eventBus
@@ -100,8 +100,8 @@ class TestcaseTreeView(
 			return null
 		}
 
-	val runSelectedTestcaseAction: Action = RunTestcaseAction(application, applicationModeHolder)
-	val runAllTestcasesAction: Action = RunCircuitTestcasesAction(application, applicationModeHolder)
+	val runSelectedTestcaseAction: Action = RunTestcaseAction(applicationDataHolder, applicationModeHolder)
+	val runAllTestcasesAction: Action = RunCircuitTestcasesAction(applicationDataHolder, applicationModeHolder)
 
 	init {
 		selectionModel.selectionMode = TreeSelectionModel.SINGLE_TREE_SELECTION
@@ -115,10 +115,10 @@ class TestcaseTreeView(
 		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
 		eventBus.register(NameChangedEvent::class, nameChangeHandler)
 
-		graphPopupMenu.add(ActionWrapperSwing(AddTestcaseAction(application, applicationModeHolder)))
+		graphPopupMenu.add(ActionWrapperSwing(AddTestcaseAction(applicationDataHolder, applicationModeHolder)))
 		graphPopupMenu.add(ActionWrapperSwing(runAllTestcasesAction))
 
-		testcasePopupMenu.add(ActionWrapperSwing(DeleteTestcaseAction(application, applicationModeHolder)))
+		testcasePopupMenu.add(ActionWrapperSwing(DeleteTestcaseAction(applicationDataHolder, applicationModeHolder)))
 		testcasePopupMenu.add(ActionWrapperSwing(runSelectedTestcaseAction))
 	}
 

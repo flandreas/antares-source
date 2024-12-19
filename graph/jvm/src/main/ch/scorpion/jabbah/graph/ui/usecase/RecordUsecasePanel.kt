@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.graph.ui.usecase
 
-import ch.scorpion.jabbah.app.Application
+import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
@@ -33,7 +33,7 @@ import javax.swing.text.NumberFormatter
 
 class RecordUsecasePanel(
 	private val usecaseId: Int,
-	private val application: Application,
+	private val applicationDataHolder: ApplicationDataHolder,
 	applicationModeHolder: ApplicationModeHolder,
 	graphAppContextHolder: GraphApplicationContextHolder,
 	private val service: UsecaseAppService,
@@ -50,13 +50,13 @@ class RecordUsecasePanel(
 
 		fun showAsDialog(
 			usecase: Usecase,
-			application: Application,
+			applicationDataHolder: ApplicationDataHolder,
 			applicationModeHolder: ApplicationModeHolder,
 			graphAppContextHolder: GraphApplicationContextHolder,
 			service: UsecaseAppService,
 			parent: Frame = Frame.getFrames()[0]
 		) {
-			val panel = RecordUsecasePanel(usecase.id, application, applicationModeHolder, graphAppContextHolder, service)
+			val panel = RecordUsecasePanel(usecase.id, applicationDataHolder, applicationModeHolder, graphAppContextHolder, service)
 			DialogBuilder<RecordUsecasePanel>(parent, modal = true)
 				.content { dialog ->
 					panel.dialog = dialog
@@ -354,7 +354,7 @@ class RecordUsecasePanel(
 
 	private inner class OKAction : AbstractAction("base.action.ok") {
 		override fun execute(event: ActionEvent) {
-			service.recordUsecase(application, usecaseId, log.toString())
+			service.recordUsecase(applicationDataHolder, usecaseId, log.toString())
 			closeHandler.invoke()
 		}
 	}

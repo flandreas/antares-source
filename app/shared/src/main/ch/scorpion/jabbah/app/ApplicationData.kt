@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.PropertyOwner
 import ch.scorpion.jabbah.base.event.PropertyOwnerImpl
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.UndoableDataHolder
 import ch.scorpion.jabbah.io.Storable
 
 /**
@@ -52,7 +53,7 @@ class ApplicationData(
  * The object holding the current [ApplicationData].
  * Posts an [ApplicationDataEvent] and a [CurrentSavableEvent] on [EventBus] when it has changed.
  */
-interface ApplicationDataHolder {
+interface ApplicationDataHolder : UndoableDataHolder {
 	var data: ApplicationData?
 }
 

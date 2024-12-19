@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.graph.view.app
 
-import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.ApplicationData
+import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.module.EditModule
@@ -19,37 +19,37 @@ class UsecaseAppService(
 		private val LOG by logger(UsecaseAppService::class)
 	}
 
-	private fun graphView(application: Application): GraphView = (application.controller.data!!.content as MetaGraph).graph.graphView
+	private fun graphView(dataHolder: ApplicationDataHolder): GraphView = (dataHolder.data!!.content as MetaGraph).graph.graphView
 
 	/**
 	 * Creates a clone of [usecase] and adds it to the [GraphView] in the [ApplicationData] of [application].
 	 * @return the ID of the cloned [Usecase]
 	 */
-	fun addUsecase(application: Application, usecase: Usecase): Int {
-		LOG.userTrail("Add new Usecase to GraphView ${graphView(application).graph?.uuid}")
-		val command = AddUsecaseCommand(application.controller, usecase)
+	fun addUsecase(dataHolder: ApplicationDataHolder, usecase: Usecase): Int {
+		LOG.userTrail("Add new Usecase to GraphView ${graphView(dataHolder).graph?.uuid}")
+		val command = AddUsecaseCommand(dataHolder, usecase)
 		commandManager.execute(command)
 		return command.addedUsecaseId
 	}
 
 	/** Deletes the [Usecase] with the specified ID from the [GraphView] in the [ApplicationData] of [application]. */
-	fun deleteUsecase(application: Application, usecaseId: Int) {
-		LOG.userTrail("Delete Usecase $usecaseId from GraphView ${graphView(application).graph?.uuid}")
-		commandManager.execute(DeleteUsecaseCommand(application.controller, usecaseId))
+	fun deleteUsecase(dataHolder: ApplicationDataHolder, usecaseId: Int) {
+		LOG.userTrail("Delete Usecase $usecaseId from GraphView ${graphView(dataHolder).graph?.uuid}")
+		commandManager.execute(DeleteUsecaseCommand(dataHolder, usecaseId))
 	}
 
 	/** Duplicates the [Usecase] with the specified ID from the [GraphView] in the [ApplicationData] of [application]. */
-	fun duplicateUsecase(application: Application, usecaseId: Int, newName: String): Int {
-		LOG.userTrail("Duplicate Usecase in GraphView ${graphView(application).graph?.uuid}")
-		val duplicate = graphView(application).usecases.get(usecaseId).duplicate(newName)
-		val command = AddUsecaseCommand(application.controller, duplicate)
+	fun duplicateUsecase(dataHolder: ApplicationDataHolder, usecaseId: Int, newName: String): Int {
+		LOG.userTrail("Duplicate Usecase in GraphView ${graphView(dataHolder).graph?.uuid}")
+		val duplicate = graphView(dataHolder).usecases.get(usecaseId).duplicate(newName)
+		val command = AddUsecaseCommand(dataHolder, duplicate)
 		commandManager.execute(command)
 		return command.addedUsecaseId
 	}
 
-	fun recordUsecase(application: Application, usecaseId: Int, script: String) {
-		LOG.userTrail("Record usecase in GraphView ${graphView(application).graph?.uuid}")
-		val command = RecordUsecaseCommand(application.controller, usecaseId, script)
+	fun recordUsecase(dataHolder: ApplicationDataHolder, usecaseId: Int, script: String) {
+		LOG.userTrail("Record usecase in GraphView ${graphView(dataHolder).graph?.uuid}")
+		val command = RecordUsecaseCommand(dataHolder, usecaseId, script)
 		commandManager.execute(command)
 	}
 }

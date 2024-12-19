@@ -1,9 +1,7 @@
 package ch.scorpion.antares.model.testcase
 
 import ch.scorpion.antares.model.module.AntaresModelModule
-import ch.scorpion.antares.model.testcase.Testcase
-import ch.scorpion.antares.model.testcase.TestcaseAppService
-import ch.scorpion.jabbah.app.Application
+import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
@@ -17,11 +15,11 @@ import javax.swing.JOptionPane
 
 abstract class AbstractTestcaseAction(
 	baseName: String,
-	application: Application,
+	applicationDataHolder: ApplicationDataHolder,
 	applicationModeHolder: ApplicationModeHolder,
 	protected val service: TestcaseAppService = AntaresModelModule.testcaseAppService,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractApplicationDataEditModeAction(baseName, application, applicationModeHolder, eventBus) {
+) : AbstractApplicationDataEditModeAction(baseName, applicationDataHolder, applicationModeHolder, eventBus) {
 
 	protected var testcase: Testcase? = null
 
@@ -41,11 +39,11 @@ abstract class AbstractTestcaseAction(
 }
 
 class AddTestcaseAction(
-	application: Application,
+	applicationDataHolder: ApplicationDataHolder,
 	applicationModeHolder: ApplicationModeHolder,
 	service: TestcaseAppService = AntaresModelModule.testcaseAppService,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractTestcaseAction("antares.testcase.action.add", application, applicationModeHolder, service, eventBus) {
+) : AbstractTestcaseAction("antares.testcase.action.add", applicationDataHolder, applicationModeHolder, service, eventBus) {
 
 	override fun execute(event: ActionEvent) {
 		val name = JOptionPane.showInputDialog(
@@ -62,7 +60,7 @@ class AddTestcaseAction(
 			return
 		}
 
-		service.addTestcase(application, Testcase(name!!))
+		service.addTestcase(applicationDataHolder, Testcase(name!!))
 	}
 
 	override fun calculateEnabled(): Boolean =
@@ -70,11 +68,11 @@ class AddTestcaseAction(
 }
 
 class DeleteTestcaseAction(
-	application: Application,
+	applicationDataHolder: ApplicationDataHolder,
 	applicationModeHolder: ApplicationModeHolder,
 	service: TestcaseAppService = AntaresModelModule.testcaseAppService,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractTestcaseAction("antares.testcase.action.delete", application, applicationModeHolder, service, eventBus) {
+) : AbstractTestcaseAction("antares.testcase.action.delete", applicationDataHolder, applicationModeHolder, service, eventBus) {
 
 	override fun execute(event: ActionEvent) {
 		if (JOptionPane.showConfirmDialog(
@@ -84,7 +82,7 @@ class DeleteTestcaseAction(
 				JOptionPane.YES_NO_OPTION,
 				JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION)
 		{
-			service.deleteTestcase(application, testcase!!.id)
+			service.deleteTestcase(applicationDataHolder, testcase!!.id)
 		}
 	}
 }

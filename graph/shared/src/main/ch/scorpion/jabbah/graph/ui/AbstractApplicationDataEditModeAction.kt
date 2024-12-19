@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.graph.ui
 
-import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.ApplicationData
+import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.app.action.AbstractApplicationDataEditAction
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.EventBus
@@ -17,10 +17,10 @@ import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
  */
 abstract class AbstractApplicationDataEditModeAction(
 	baseName: String,
-	application: Application,
+	applicationDataHolder: ApplicationDataHolder,
 	protected val applicationModeHolder: ApplicationModeHolder,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractApplicationDataEditAction(baseName, application, eventBus) {
+) : AbstractApplicationDataEditAction(baseName, applicationDataHolder, eventBus) {
 
 	private val applicationModeHandler: EventHandler<ApplicationModeEvent> = {
 		if (it.source === applicationModeHolder) {

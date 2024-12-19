@@ -137,24 +137,24 @@ open class GraphMenuBarBuilder(
 	}
 
 	protected open fun fillScenariosMenu(menu: JMenu): JMenu {
-		menu.add(JMenuItem(ActionWrapperSwing(AddScenarioAction(frame.application, graphFrame.controller.applicationModeHolder))))
-		menu.add(JMenuItem(ActionWrapperSwing(AddScenarioStepAction(frame.application, graphFrame.controller.applicationModeHolder))))
-		menu.add(JMenuItem(ActionWrapperSwing(DeleteScenarioAction(frame.application, graphFrame.controller.applicationModeHolder))))
-		menu.add(JMenuItem(ActionWrapperSwing(DeleteScenarioStepAction(frame.application, graphFrame.controller.applicationModeHolder))))
+		menu.add(JMenuItem(ActionWrapperSwing(AddScenarioAction(frame.application.controller, graphFrame.controller.applicationModeHolder))))
+		menu.add(JMenuItem(ActionWrapperSwing(AddScenarioStepAction(frame.application.controller, graphFrame.controller.applicationModeHolder))))
+		menu.add(JMenuItem(ActionWrapperSwing(DeleteScenarioAction(frame.application.controller, graphFrame.controller.applicationModeHolder))))
+		menu.add(JMenuItem(ActionWrapperSwing(DeleteScenarioStepAction(frame.application.controller, graphFrame.controller.applicationModeHolder))))
 		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ScenarioBreakpointAction(graphFrame.controller.applicationContextHolder.scenarioBreakpoints))))
 		return menu
 	}
 
 	protected open fun fillUsecasesMenu(menu: JMenu): JMenu {
 		val applicationModeHolder = graphFrame.controller.applicationModeHolder
-		menu.add(JMenuItem(ActionWrapperSwing(AddUsecaseAction(frame.application, graphFrame.controller.applicationModeHolder))))
-		menu.add(JMenuItem(ActionWrapperSwing(DeleteUsecaseAction(frame.application, graphFrame.controller.applicationModeHolder))))
-		menu.add(JMenuItem(ActionWrapperSwing(DuplicateUsecaseAction(frame.application, graphFrame.controller.applicationModeHolder))))
-		menu.add(JMenuItem(ActionWrapperSwing(RecordUsecaseAction(frame.application, graphFrame.controller.applicationModeHolder, graphFrame.controller.applicationContextHolder))))
+		menu.add(JMenuItem(ActionWrapperSwing(AddUsecaseAction(frame.application.controller, graphFrame.controller.applicationModeHolder))))
+		menu.add(JMenuItem(ActionWrapperSwing(DeleteUsecaseAction(frame.application.controller, graphFrame.controller.applicationModeHolder))))
+		menu.add(JMenuItem(ActionWrapperSwing(DuplicateUsecaseAction(frame.application.controller, graphFrame.controller.applicationModeHolder))))
+		menu.add(JMenuItem(ActionWrapperSwing(RecordUsecaseAction(frame.application.controller, graphFrame.controller.applicationModeHolder, graphFrame.controller.applicationContextHolder))))
 		menu.addSeparator()
-		menu.add(JMenuItem(ActionWrapperSwing(RunUsecaseAction(frame.application, applicationModeHolder = applicationModeHolder, scheduler = scheduler))))
-		menu.add(JMenuItem(ActionWrapperSwing(RunSingleUsecaseTestAction(frame.application, applicationModeHolder = applicationModeHolder, scheduler = scheduler))))
-		menu.add(JMenuItem(ActionWrapperSwing(RunAllTestsAction(frame.application, applicationModeHolder = applicationModeHolder, scheduler = scheduler))))
+		menu.add(JMenuItem(ActionWrapperSwing(RunUsecaseAction(frame.application.controller, applicationModeHolder = applicationModeHolder, scheduler = scheduler))))
+		menu.add(JMenuItem(ActionWrapperSwing(RunSingleUsecaseTestAction(frame.application.controller, applicationModeHolder = applicationModeHolder, scheduler = scheduler))))
+		menu.add(JMenuItem(ActionWrapperSwing(RunAllTestsAction(frame.application.controller, applicationModeHolder = applicationModeHolder, scheduler = scheduler))))
 		return menu
 	}
 

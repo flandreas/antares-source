@@ -89,16 +89,16 @@ class UsecaseTreeView(
 		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
 		eventBus.register(NameChangedEvent::class, nameChangedHandler)
 
-		graphViewPopupMenu.add(ActionWrapperSwing(AddUsecaseAction(application, applicationModeHolder)))
+		graphViewPopupMenu.add(ActionWrapperSwing(AddUsecaseAction(application.controller, applicationModeHolder)))
 		graphViewPopupMenu.addSeparator()
-		graphViewPopupMenu.add(ActionWrapperSwing(RunAllTestsAction(application, applicationContextHolder.scheduler, applicationModeHolder = applicationModeHolder)))
+		graphViewPopupMenu.add(ActionWrapperSwing(RunAllTestsAction(application.controller, applicationContextHolder.scheduler, applicationModeHolder = applicationModeHolder)))
 
-		usecasePopupMenu.add(ActionWrapperSwing(DeleteUsecaseAction(application, applicationModeHolder)))
-		usecasePopupMenu.add(ActionWrapperSwing(DuplicateUsecaseAction(application, applicationModeHolder)))
-		usecasePopupMenu.add(ActionWrapperSwing(RecordUsecaseAction(application, applicationModeHolder, applicationContextHolder)))
+		usecasePopupMenu.add(ActionWrapperSwing(DeleteUsecaseAction(application.controller, applicationModeHolder)))
+		usecasePopupMenu.add(ActionWrapperSwing(DuplicateUsecaseAction(application.controller, applicationModeHolder)))
+		usecasePopupMenu.add(ActionWrapperSwing(RecordUsecaseAction(application.controller, applicationModeHolder, applicationContextHolder)))
 		usecasePopupMenu.addSeparator()
-		usecasePopupMenu.add(ActionWrapperSwing(RunUsecaseAction(application, applicationContextHolder.scheduler, applicationModeHolder = applicationModeHolder)))
-		usecasePopupMenu.add(ActionWrapperSwing(RunSingleUsecaseTestAction(application, applicationContextHolder.scheduler, applicationModeHolder = applicationModeHolder)))
+		usecasePopupMenu.add(ActionWrapperSwing(RunUsecaseAction(application.controller, applicationContextHolder.scheduler, applicationModeHolder = applicationModeHolder)))
+		usecasePopupMenu.add(ActionWrapperSwing(RunSingleUsecaseTestAction(application.controller, applicationContextHolder.scheduler, applicationModeHolder = applicationModeHolder)))
 	}
 
 	fun dispose() {

@@ -2,7 +2,7 @@ package ch.scorpion.antares.model.testcase
 
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.module.AntaresModelModule
-import ch.scorpion.jabbah.app.Application
+import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
@@ -17,11 +17,11 @@ import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
  * Runs all [Testcase]s of the selected [DigitalGraph] and posts [DisplayTestRunResults] on the [EventBus].
  */
 class RunCircuitTestcasesAction(
-	application: Application,
+	applicationDataHolder: ApplicationDataHolder,
 	applicationModeHolder: ApplicationModeHolder,
 	service: TestcaseAppService = AntaresModelModule.testcaseAppService,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractTestcaseAction("antares.testcase.action.runAll", application, applicationModeHolder, service, eventBus) {
+) : AbstractTestcaseAction("antares.testcase.action.runAll", applicationDataHolder, applicationModeHolder, service, eventBus) {
 
 	companion object {
 		private val LOG by logger(RunCircuitTestcasesAction::class)
@@ -31,7 +31,7 @@ class RunCircuitTestcasesAction(
 
 	override fun execute(event: ActionEvent) {
 		InvocationHandler.invoke {
-			val metaGraph = application.controller.data!!.content as MetaGraph
+			val metaGraph = applicationDataHolder.data!!.content as MetaGraph
 			val circuit = metaGraph.graph.model as DigitalGraph
 
 			LOG.userTrail("Run all tests in circuit '${circuit.name.value}'")

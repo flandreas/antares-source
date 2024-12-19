@@ -44,7 +44,7 @@ class AntaresFrameSwing(
 		controller.applicationContextHolder,
 		controller.applicationModeHolder)
 
-	private val testcasesView = TestcaseViewSwing(testcaseViewController, application, controller.applicationModeHolder)
+	private val testcasesView = TestcaseViewSwing(testcaseViewController, application.controller, controller.applicationModeHolder)
 
 	private val testResultsPanel =  TestRunResultsPanel()
 

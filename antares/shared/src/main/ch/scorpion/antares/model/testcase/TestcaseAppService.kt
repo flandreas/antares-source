@@ -1,6 +1,6 @@
 package ch.scorpion.antares.model.testcase
 
-import ch.scorpion.jabbah.app.Application
+import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.module.EditModule
@@ -15,17 +15,17 @@ class TestcaseAppService(
 		private val LOG by logger(TestcaseAppService::class)
 	}
 
-	private fun graphView(application: Application): GraphView = (application.controller.data!!.content as MetaGraph).graph.graphView
+	private fun graphView(applicationDataHolder: ApplicationDataHolder): GraphView = (applicationDataHolder.data!!.content as MetaGraph).graph.graphView
 
-	fun addTestcase(application: Application, testcase: Testcase): Int {
-		LOG.userTrail("Add new Testcase to Graph ${graphView(application).graph?.uuid}")
-		val command = AddTestcaseCommand(application.controller, testcase)
+	fun addTestcase(dataHolder: ApplicationDataHolder, testcase: Testcase): Int {
+		LOG.userTrail("Add new Testcase to Graph ${graphView(dataHolder).graph?.uuid}")
+		val command = AddTestcaseCommand(dataHolder, testcase)
 		commandManager.execute(command)
 		return command.addedTestcaseId
 	}
 
-	fun deleteTestcase(application: Application, testcaseId: Int) {
-		LOG.userTrail("Delete Testcase $testcaseId from Graph ${graphView(application).graph?.uuid}")
-		commandManager.execute(DeleteTestcaseCommand(application.controller, testcaseId))
+	fun deleteTestcase(dataHolder: ApplicationDataHolder, testcaseId: Int) {
+		LOG.userTrail("Delete Testcase $testcaseId from Graph ${graphView(dataHolder).graph?.uuid}")
+		commandManager.execute(DeleteTestcaseCommand(dataHolder, testcaseId))
 	}
 }

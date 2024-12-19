@@ -1,10 +1,14 @@
 package ch.scorpion.jabbah.graph.ui.scenario
 
+import ch.scorpion.jabbah.app.ApplicationDataHolder
+import ch.scorpion.jabbah.base.AbstractAction
+import ch.scorpion.jabbah.base.Action
+import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.ui.AbstractUIController
-import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.ui.AbstractUIController
+import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
@@ -44,6 +48,7 @@ interface ScenarioView : UIView {
  */
 class ScenarioViewController(
 	editor: Editor,
+	applicationDataHolder: ApplicationDataHolder,
 	val applicationContextHolder: GraphApplicationContextHolder,
 	val applicationModeHolder: ApplicationModeHolder,
 	private val eventBus: EventBus = BaseModule.eventBus
@@ -60,6 +65,8 @@ class ScenarioViewController(
 			}
 		}
 
+	val addAction: Action = AddAction()
+
 	private val scenarioSelectionEventHandler: EventHandler<ScenarioSelectionEvent> = {
 		event -> graphView?.let {
 			if (event.graphView === graphView) {
@@ -70,6 +77,7 @@ class ScenarioViewController(
 	}
 
 	init {
+		addAction.enabled = false
 		eventBus.register(ScenarioSelectionEvent::class, scenarioSelectionEventHandler)
 	}
 
@@ -77,6 +85,12 @@ class ScenarioViewController(
 		super.dispose()
 		eventBus.unregister(scenarioSelectionEventHandler)
 		propertyPanelController.dispose()
+	}
+
+	private class AddAction : AbstractAction("scenarios.action.addScenario", "/img/plus-18.png") {
+		override fun execute(event: ActionEvent) {
+			// TODO
+		}
 	}
 }
 

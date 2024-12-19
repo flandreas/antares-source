@@ -114,7 +114,13 @@ class GraphPanelViewController(
 
 	val propertyPanelController = ApplicationDataPropertyPanelController(editor, eventBus)
 	val libraryPanelController = LibraryPanelController(applicationModeHolder, libraryHolder, eventBus)
-	val editViewController = GraphEditViewController(editor, applicationModeHolder, applicationContextHolder, applicationDataHolder.data?.savable, eventBus)
+	val editViewController = GraphEditViewController(
+		editor,
+		applicationDataHolder,
+		applicationModeHolder,
+		applicationContextHolder,
+		applicationDataHolder.data?.savable,
+		eventBus)
 	val desktopController = GraphDesktopViewController(applicationContextHolder, eventBus = eventBus)
 	val issuesViewController = IssuesViewController(eventBus = eventBus)
 	val logViewController = LogViewController(applicationContextHolder, eventBus)

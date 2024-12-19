@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -28,6 +29,7 @@ interface GraphEditView : UIView, GraphDesktopViewItem {
 
 class GraphEditViewController(
 	val editor: Editor,
+	val applicationDataHolder: ApplicationDataHolder,
 	val applicationModeHolder: ApplicationModeHolder,
 	val applicationContextHolder: GraphApplicationContextHolder,
 	initialSavable: Savable? = null,
@@ -39,7 +41,7 @@ class GraphEditViewController(
 		editor.view as DrawingView<GraphView>,
 		initialSavable,
 		eventBus = eventBus)
-	val scenarioViewController = ScenarioViewController(editor, applicationContextHolder, applicationModeHolder, eventBus)
+	val scenarioViewController = ScenarioViewController(editor, applicationDataHolder, applicationContextHolder, applicationModeHolder, eventBus)
 	val usecaseViewController = UsecaseViewController(editor, applicationContextHolder, applicationModeHolder, eventBus)
 
 	override fun onViewInitialized() {
