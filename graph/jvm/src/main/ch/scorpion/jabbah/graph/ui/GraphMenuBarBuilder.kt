@@ -1,11 +1,11 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.MenuBarBuilder
-import ch.scorpion.jabbah.app.workspace.OpenWorkspaceAction
 import ch.scorpion.jabbah.app.action.AboutAction
 import ch.scorpion.jabbah.app.action.ExportLogfileAction
 import ch.scorpion.jabbah.app.action.QuitApplicationAction
 import ch.scorpion.jabbah.app.rating.RatingAction
+import ch.scorpion.jabbah.app.workspace.OpenWorkspaceAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
@@ -24,10 +24,6 @@ import ch.scorpion.jabbah.graph.library.ShowLibrariesDialogAction
 import ch.scorpion.jabbah.graph.model.net.SignalConflictBehaviourMenu
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.project.ShowProjectsDialogAction
-import ch.scorpion.jabbah.graph.ui.scenario.AddScenarioAction
-import ch.scorpion.jabbah.graph.ui.scenario.AddScenarioStepAction
-import ch.scorpion.jabbah.graph.ui.scenario.DeleteScenarioAction
-import ch.scorpion.jabbah.graph.ui.scenario.DeleteScenarioStepAction
 import ch.scorpion.jabbah.graph.ui.usecase.*
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeVisibilityAction
 import ch.scorpion.jabbah.graph.view.scenario.ScenarioBreakpointAction
@@ -137,10 +133,12 @@ open class GraphMenuBarBuilder(
 	}
 
 	protected open fun fillScenariosMenu(menu: JMenu): JMenu {
-		menu.add(JMenuItem(ActionWrapperSwing(AddScenarioAction(frame.application.controller, graphFrame.controller.applicationModeHolder))))
-		menu.add(JMenuItem(ActionWrapperSwing(AddScenarioStepAction(frame.application.controller, graphFrame.controller.applicationModeHolder))))
-		menu.add(JMenuItem(ActionWrapperSwing(DeleteScenarioAction(frame.application.controller, graphFrame.controller.applicationModeHolder))))
-		menu.add(JMenuItem(ActionWrapperSwing(DeleteScenarioStepAction(frame.application.controller, graphFrame.controller.applicationModeHolder))))
+		with(graphFrame.controller.graphPanelViewController.editViewController.scenarioViewController) {
+			menu.add(JMenuItem(ActionWrapperSwing(addScenarioAction)))
+			menu.add(JMenuItem(ActionWrapperSwing(addScenarioStepAction)))
+			menu.add(JMenuItem(ActionWrapperSwing(deleteScenarioAction)))
+			menu.add(JMenuItem(ActionWrapperSwing(deleteScenarioStepAction)))
+		}
 		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ScenarioBreakpointAction(graphFrame.controller.applicationContextHolder.scenarioBreakpoints))))
 		return menu
 	}

@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.base.swing
 
 import ch.scorpion.jabbah.base.AbstractAction
+import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -226,7 +227,7 @@ class SidebarPane(
 			headerPanel.background = UiUtil.getBackgroundDivertColor(this@SidebarPane)
 
 			content.actions.forEach {
-				headerPanel.add(UiUtil.createToolBarButton(it))
+				headerPanel.add(UiUtil.createToolBarButton(ActionWrapperSwing(it), false))
 				headerPanel.add(Box.createHorizontalStrut(5))
 			}
 			headerPanel.add(UiUtil.createToolBarButton(collapseAction))

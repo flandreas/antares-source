@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.graph.app.ApplicationModeHolderImpl
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
+import dev.mokkery.MockMode
 import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertSame
@@ -41,7 +42,7 @@ class GraphEditViewControllerTest {
 	private val applicationModeHolder = ApplicationModeHolderImpl(editor, scheduler).also {
 		applicationContextHolder.applicationModeHolder = it
 	}
-	private val controller = GraphEditViewController(editor, mock(), applicationModeHolder, applicationContextHolder, eventBus = eventBus)
+	private val controller = GraphEditViewController(editor, mock(MockMode.autofill), applicationModeHolder, applicationContextHolder, eventBus = eventBus)
 
 	init {
 		drawingView.canvas = CanvasMockBuilder().build()

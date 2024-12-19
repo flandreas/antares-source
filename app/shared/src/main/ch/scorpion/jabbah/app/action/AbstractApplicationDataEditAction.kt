@@ -28,7 +28,7 @@ abstract class AbstractApplicationDataEditAction(
 		eventBus.unregister(applicationDataHandler)
 	}
 
-	protected fun updateEnabled() {
+	fun updateEnabled() {
 		enabled = calculateEnabled()
 	}
 

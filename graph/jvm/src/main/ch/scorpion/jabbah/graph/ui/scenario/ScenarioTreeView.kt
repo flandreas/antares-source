@@ -138,10 +138,10 @@ class ScenarioTreeView(
 		eventBus.register(SchedulerActivationStateEvent::class, activationStateHandler)
 		eventBus.register(NameChangedEvent::class, nameChangedHandler)
 
-		graphViewPopupMenu.add(ActionWrapperSwing(AddScenarioAction(applicationDataHolder, controller.applicationModeHolder)))
-		scenarioPopupMenu.add(ActionWrapperSwing(AddScenarioStepAction(applicationDataHolder, controller.applicationModeHolder)))
-		scenarioPopupMenu.add(ActionWrapperSwing(DeleteScenarioAction(applicationDataHolder, controller.applicationModeHolder)))
-		scenarioStepPopupMenu.add(ActionWrapperSwing(DeleteScenarioStepAction(applicationDataHolder, controller.applicationModeHolder)))
+		graphViewPopupMenu.add(ActionWrapperSwing(controller.addScenarioAction))
+		scenarioPopupMenu.add(ActionWrapperSwing(controller.addScenarioStepAction))
+		scenarioPopupMenu.add(ActionWrapperSwing(controller.deleteScenarioAction))
+		scenarioStepPopupMenu.add(ActionWrapperSwing(controller.addScenarioStepAction))
 	}
 
 	fun dispose() {
