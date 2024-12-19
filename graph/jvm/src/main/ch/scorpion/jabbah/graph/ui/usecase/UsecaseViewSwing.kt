@@ -1,29 +1,29 @@
 package ch.scorpion.jabbah.graph.ui.usecase
 
-import ch.scorpion.jabbah.app.Application
+import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
-import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import java.awt.Dimension
+import java.awt.Frame
+import javax.swing.JOptionPane
 import javax.swing.JPanel
 import javax.swing.JScrollPane
 import javax.swing.JSplitPane
 
 class UsecaseViewSwing(
 	controller: UsecaseViewController,
-	application: Application,
-	applicationModeHolder: ApplicationModeHolder,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	sheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory
 ) : JPanel(), UsecaseView {
 
 	private val splitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
 
-	private val treeView = UsecaseTreeView(application, applicationModeHolder, controller.applicationContextHolder, eventBus)
+	private val treeView = UsecaseTreeView(controller, eventBus)
 
 	private val propertyPanel = UsecasePropertyPanelSwing(controller.propertyPanelController, sheetFactory)
 
@@ -51,6 +51,23 @@ class UsecaseViewSwing(
 		treeView.dispose()
 		propertyPanel.dispose()
 	}
+
+	/** ---- [UsecaseView] */
+
+	override fun getNewUsecaseName(): String? {
+		val name = JOptionPane.showInputDialog(
+			Frame.getFrames()[0],
+			Translations.getString("usecases.action.addUsecase.question"),
+			Translations.getString("usecases.action.addUsecase.name"),
+			JOptionPane.QUESTION_MESSAGE
+		)
+		if (StringUtils.isEmpty(name)) {
+			return null
+		}
+		return name
+	}
+
+	/** ---- [UsecaseViewSwing] */
 
 	fun clearSelection() {
 		treeView.selectionModel.clearSelection()

@@ -9,7 +9,6 @@ import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
-import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.ui.graphpanel.EditedGraphViewEvent
 
 /**
@@ -30,7 +29,6 @@ interface TestcaseView : UIView {
 class TestcaseViewController(
 	editor: Editor,
 	val applicationContextHolder: GraphApplicationContextHolder,
-	val applicationModeHolder: ApplicationModeHolder,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<TestcaseView>() {
 

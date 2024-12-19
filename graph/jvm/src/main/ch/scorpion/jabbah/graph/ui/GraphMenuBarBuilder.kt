@@ -144,15 +144,16 @@ open class GraphMenuBarBuilder(
 	}
 
 	protected open fun fillUsecasesMenu(menu: JMenu): JMenu {
-		val applicationModeHolder = graphFrame.controller.applicationModeHolder
-		menu.add(JMenuItem(ActionWrapperSwing(AddUsecaseAction(frame.application.controller, graphFrame.controller.applicationModeHolder))))
-		menu.add(JMenuItem(ActionWrapperSwing(DeleteUsecaseAction(frame.application.controller, graphFrame.controller.applicationModeHolder))))
-		menu.add(JMenuItem(ActionWrapperSwing(DuplicateUsecaseAction(frame.application.controller, graphFrame.controller.applicationModeHolder))))
-		menu.add(JMenuItem(ActionWrapperSwing(RecordUsecaseAction(frame.application.controller, graphFrame.controller.applicationModeHolder, graphFrame.controller.applicationContextHolder))))
-		menu.addSeparator()
-		menu.add(JMenuItem(ActionWrapperSwing(RunUsecaseAction(frame.application.controller, applicationModeHolder = applicationModeHolder, scheduler = scheduler))))
-		menu.add(JMenuItem(ActionWrapperSwing(RunSingleUsecaseTestAction(frame.application.controller, applicationModeHolder = applicationModeHolder, scheduler = scheduler))))
-		menu.add(JMenuItem(ActionWrapperSwing(RunAllTestsAction(frame.application.controller, applicationModeHolder = applicationModeHolder, scheduler = scheduler))))
+		with(graphFrame.controller.graphPanelViewController.editViewController) {
+			menu.add(JMenuItem(ActionWrapperSwing(usecaseViewController.addUsecaseAction)))
+			menu.add(JMenuItem(ActionWrapperSwing(DeleteUsecaseAction(usecaseViewController))))
+			menu.add(JMenuItem(ActionWrapperSwing(DuplicateUsecaseAction(usecaseViewController))))
+			menu.add(JMenuItem(ActionWrapperSwing(RecordUsecaseAction(usecaseViewController))))
+			menu.addSeparator()
+			menu.add(JMenuItem(ActionWrapperSwing(RunUsecaseAction(usecaseViewController))))
+			menu.add(JMenuItem(ActionWrapperSwing(RunSingleUsecaseTestAction(usecaseViewController))))
+			menu.add(JMenuItem(ActionWrapperSwing(RunAllTestsAction(usecaseViewController))))
+		}
 		return menu
 	}
 

@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.ui
 
-import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -17,11 +16,10 @@ import javax.swing.JPanel
 
 /**
  * A [javax.swing] implementation of [GraphEditView] using a [SidebarPane] for displaying
- * a [ScenarioViewSwing] and a [UsecaseViewSwing] at the right side of the view.
+ * a [ScenarioViewSwing] and a [UsecaseViewSwing] to the right side of the view.
  */
 class GraphEditViewSwing(
 	controller: GraphEditViewController,
-	application: Application,
 	viewManager: ContentViewManager,
 	propertySheetFactory: PropertySheetPanelFactory,
 	eventBus: EventBus = BaseModule.eventBus,
@@ -35,14 +33,11 @@ class GraphEditViewSwing(
 
 	private val scenarioView = ScenarioViewSwing(
 		controller.scenarioViewController,
-		application.controller,
 		eventBus,
 		propertySheetFactory)
 
 	private val usecaseView = UsecaseViewSwing(
 		controller.usecaseViewController,
-		application,
-		controller.applicationModeHolder,
 		eventBus,
 		propertySheetFactory)
 
@@ -59,7 +54,8 @@ class GraphEditViewSwing(
 			SidebarPaneContentImpl(
 				Translations.getString("graph.usecases.title"),
 				UiUtil.themedIcon("/img/usecase-16.png"),
-				usecaseView)
+				usecaseView,
+				listOf(controller.usecaseViewController.metaAddAction))
 		)) {
 		scenarioView.clearSelection()
 		usecaseView.clearSelection()

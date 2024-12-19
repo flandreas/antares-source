@@ -42,7 +42,7 @@ class GraphEditViewController(
 		initialSavable,
 		eventBus = eventBus)
 	val scenarioViewController = ScenarioViewController(editor, applicationDataHolder, applicationContextHolder, applicationModeHolder, eventBus)
-	val usecaseViewController = UsecaseViewController(editor, applicationContextHolder, applicationModeHolder, eventBus)
+	val usecaseViewController = UsecaseViewController(editor, applicationDataHolder, applicationContextHolder, applicationModeHolder, eventBus)
 
 	override fun onViewInitialized() {
 		graphNavigationViewController.closeTarget = view

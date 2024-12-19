@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.ui.usecase
 
-import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
@@ -14,8 +13,6 @@ import ch.scorpion.jabbah.draw.richtext.RichTextLabel
 import ch.scorpion.jabbah.edit.model.text.NamableTreeNode
 import ch.scorpion.jabbah.edit.model.text.description.NameChangedEvent
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
-import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
-import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.ui.MetaGraphIconProvider
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Usecase
@@ -33,9 +30,7 @@ import javax.swing.tree.TreeSelectionModel
 
 /** Displays the tree of [Usecase]s of a [GraphView].*/
 class UsecaseTreeView(
-	application: Application,
-	applicationModeHolder: ApplicationModeHolder,
-	applicationContextHolder: GraphApplicationContextHolder,
+	private val controller: UsecaseViewController,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : JTree() {
 
@@ -61,7 +56,7 @@ class UsecaseTreeView(
 	}
 
 	private val schedulerActivationStateHandler: EventHandler<SchedulerActivationStateEvent> = {
-		if (it.scheduler === applicationContextHolder.scheduler) {
+		if (it.scheduler === controller.applicationContextHolder.scheduler) {
 			if (it.scheduler.isActive) {
 				selectionModel.clearSelection()
 			}
@@ -89,16 +84,16 @@ class UsecaseTreeView(
 		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
 		eventBus.register(NameChangedEvent::class, nameChangedHandler)
 
-		graphViewPopupMenu.add(ActionWrapperSwing(AddUsecaseAction(application.controller, applicationModeHolder)))
+		graphViewPopupMenu.add(ActionWrapperSwing(AddUsecaseAction(controller)))
 		graphViewPopupMenu.addSeparator()
-		graphViewPopupMenu.add(ActionWrapperSwing(RunAllTestsAction(application.controller, applicationContextHolder.scheduler, applicationModeHolder = applicationModeHolder)))
+		graphViewPopupMenu.add(ActionWrapperSwing(RunAllTestsAction(controller)))
 
-		usecasePopupMenu.add(ActionWrapperSwing(DeleteUsecaseAction(application.controller, applicationModeHolder)))
-		usecasePopupMenu.add(ActionWrapperSwing(DuplicateUsecaseAction(application.controller, applicationModeHolder)))
-		usecasePopupMenu.add(ActionWrapperSwing(RecordUsecaseAction(application.controller, applicationModeHolder, applicationContextHolder)))
+		usecasePopupMenu.add(ActionWrapperSwing(DeleteUsecaseAction(controller)))
+		usecasePopupMenu.add(ActionWrapperSwing(DuplicateUsecaseAction(controller)))
+		usecasePopupMenu.add(ActionWrapperSwing(RecordUsecaseAction(controller)))
 		usecasePopupMenu.addSeparator()
-		usecasePopupMenu.add(ActionWrapperSwing(RunUsecaseAction(application.controller, applicationContextHolder.scheduler, applicationModeHolder = applicationModeHolder)))
-		usecasePopupMenu.add(ActionWrapperSwing(RunSingleUsecaseTestAction(application.controller, applicationContextHolder.scheduler, applicationModeHolder = applicationModeHolder)))
+		usecasePopupMenu.add(ActionWrapperSwing(RunUsecaseAction(controller)))
+		usecasePopupMenu.add(ActionWrapperSwing(RunSingleUsecaseTestAction(controller)))
 	}
 
 	fun dispose() {

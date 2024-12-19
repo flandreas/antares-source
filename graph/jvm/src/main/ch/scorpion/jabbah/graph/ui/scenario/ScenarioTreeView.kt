@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.ui.scenario
 
-import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
@@ -40,7 +39,6 @@ import javax.swing.tree.TreeSelectionModel
  * Supports moving [ScenarioStep]s within the same [Scenario] using drag & drop.
  */
 class ScenarioTreeView(
-	private val applicationDataHolder: ApplicationDataHolder,
 	private val controller: ScenarioViewController,
 	private val service: ScenarioAppService = GraphViewModule.scenarioAppService,
 	private val eventBus: EventBus = BaseModule.eventBus
@@ -273,7 +271,7 @@ class ScenarioTreeView(
 			val dropLoc = support.dropLocation as JTree.DropLocation
 
 			service.moveScenarioStep(
-				applicationDataHolder,
+				controller.applicationDataHolder,
 				((dropLoc.path.lastPathComponent as DefaultMutableTreeNode).userObject as Scenario).id,
 				(scenarioStepNode.userObject as ScenarioStep).id,
 				dropLoc.childIndex
