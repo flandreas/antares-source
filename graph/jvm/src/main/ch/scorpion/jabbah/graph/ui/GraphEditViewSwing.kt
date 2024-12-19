@@ -50,12 +50,12 @@ class GraphEditViewSwing(
 				Translations.getString("graph.scenarios.title"),
 				UiUtil.themedIcon("/img/scenarios-16.png"),
 				scenarioView,
-				listOf(controller.scenarioViewController.metaAddAction)),
+				listOf(controller.scenarioViewController.metaAddAction, ScenarioViewSwing.helpAction)),
 			SidebarPaneContentImpl(
 				Translations.getString("graph.usecases.title"),
 				UiUtil.themedIcon("/img/usecase-16.png"),
 				usecaseView,
-				listOf(controller.usecaseViewController.metaAddAction))
+				listOf(controller.usecaseViewController.metaAddAction, UsecaseViewSwing.helpAction))
 		)) {
 		scenarioView.clearSelection()
 		usecaseView.clearSelection()

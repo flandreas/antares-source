@@ -2,6 +2,8 @@ package ch.scorpion.jabbah.graph.view.module
 
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.help.HelpSource
+import ch.scorpion.jabbah.base.help.HelpSourceRegistry
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.preferences.*
@@ -31,6 +33,8 @@ import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoriesType
 import ch.scorpion.jabbah.graph.model.port.InconsistentNetError
 import ch.scorpion.jabbah.graph.ui.GraphFrameController
 import ch.scorpion.jabbah.graph.ui.GraphNavigationViewController
+import ch.scorpion.jabbah.graph.ui.scenario.ScenarioViewSwing
+import ch.scorpion.jabbah.graph.ui.usecase.UsecaseViewSwing
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.graph.GraphViewCopyPasteService
 import ch.scorpion.jabbah.graph.view.net.edge.LayoutType
@@ -75,6 +79,8 @@ object GraphViewModuleJvm : AbstractModule() {
 		configurePropertyEditors(EditModuleJvm.propertyEditorRegistry)
 
 		buildPreferencesTree(BaseModuleJvm.preferencesTree)
+
+		registerHelpResources()
 	}
 
 	private fun fillProperties(properties: Properties) {
@@ -135,5 +141,10 @@ object GraphViewModuleJvm : AbstractModule() {
 			nameKey = "graph.preferences.Oscilloscope.useRefColors",
 			needsRestart = true
 		))
+	}
+
+	private fun registerHelpResources() {
+		HelpSourceRegistry.register(ScenarioViewSwing.HELP_ID, HelpSource("/scenarios/scenarios"))
+		HelpSourceRegistry.register(UsecaseViewSwing.HELP_ID, HelpSource("/usecases/usecases"))
 	}
 }

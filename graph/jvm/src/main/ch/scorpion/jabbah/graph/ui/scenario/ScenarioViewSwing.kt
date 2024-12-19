@@ -1,9 +1,12 @@
 package ch.scorpion.jabbah.graph.ui.scenario
 
+import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.help.HelpId
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.ui.HelpAction
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -26,6 +29,11 @@ class ScenarioViewSwing(
 	private val eventBus: EventBus = BaseModule.eventBus,
 	sheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory
 ) : JPanel(), ScenarioView {
+
+	companion object {
+		val HELP_ID = HelpId("scenariosView")
+		val helpAction: Action = HelpAction.withSmallImage(HELP_ID)
+	}
 
 	private val splitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
 
