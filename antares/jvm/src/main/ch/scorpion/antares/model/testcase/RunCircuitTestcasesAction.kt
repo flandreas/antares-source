@@ -1,8 +1,6 @@
 package ch.scorpion.antares.model.testcase
 
 import ch.scorpion.antares.model.DigitalGraph
-import ch.scorpion.antares.model.module.AntaresModelModule
-import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
@@ -11,27 +9,24 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.graph.MetaGraph
-import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 
 /**
  * Runs all [Testcase]s of the selected [DigitalGraph] and posts [DisplayTestRunResults] on the [EventBus].
  */
 class RunCircuitTestcasesAction(
-	applicationDataHolder: ApplicationDataHolder,
-	applicationModeHolder: ApplicationModeHolder,
-	service: TestcaseAppService = AntaresModelModule.testcaseAppService,
+	controller: TestcaseViewController,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractTestcaseAction("antares.testcase.action.runAll", applicationDataHolder, applicationModeHolder, service, eventBus) {
+) : AbstractTestcaseAction(controller, "antares.testcase.action.runAll", eventBus) {
 
 	companion object {
 		private val LOG by logger(RunCircuitTestcasesAction::class)
 	}
 
-	override fun calculateEnabled(): Boolean = super.calculateEnabled() && testcase == null
+	override fun calculateEnabled(): Boolean = super.calculateEnabled() && controller.testcase == null
 
 	override fun execute(event: ActionEvent) {
 		InvocationHandler.invoke {
-			val metaGraph = applicationDataHolder.data!!.content as MetaGraph
+			val metaGraph = controller.applicationDataHolder.data!!.content as MetaGraph
 			val circuit = metaGraph.graph.model as DigitalGraph
 
 			LOG.userTrail("Run all tests in circuit '${circuit.name.value}'")

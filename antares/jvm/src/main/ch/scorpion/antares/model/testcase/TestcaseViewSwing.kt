@@ -1,9 +1,10 @@
 package ch.scorpion.antares.model.testcase
 
 import ch.scorpion.antares.model.DigitalGraph
-import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
+import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.help.HelpId
@@ -11,9 +12,10 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.HelpAction
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
-import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import java.awt.BorderLayout
 import java.awt.Dimension
+import java.awt.Frame
+import javax.swing.JOptionPane
 import javax.swing.JPanel
 import javax.swing.JScrollPane
 import javax.swing.JSplitPane
@@ -22,9 +24,7 @@ import javax.swing.JSplitPane
  * Displays a tree of [Testcase]s of a [DigitalGraph].
  */
 class TestcaseViewSwing(
-	controller: TestcaseViewController,
-	applicationDataHolder: ApplicationDataHolder,
-	applicationModeHolder: ApplicationModeHolder,
+	val controller: TestcaseViewController,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	sheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory
 ) : JPanel(), TestcaseView {
@@ -35,7 +35,7 @@ class TestcaseViewSwing(
 
 	private val splitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
 
-	private val treeView = TestcaseTreeView(applicationDataHolder, applicationModeHolder, controller.applicationContextHolder, eventBus)
+	private val treeView = TestcaseTreeView(controller, eventBus)
 
 	private val propertyPanel = TestcasePropertyPanelSwing(controller.propertyPanelController, sheetFactory)
 
@@ -75,6 +75,34 @@ class TestcaseViewSwing(
 		propertyPanel.dispose()
 	}
 
+	/** ---- [TestcaseView] */
+
+	override fun getNewTestcaseName(): String? {
+		val name = JOptionPane.showInputDialog(
+			Frame.getFrames()[0],
+			Translations.getString("antares.testcase.action.add.question"),
+			Translations.getString("antares.testcase.action.add.name"),
+			JOptionPane.QUESTION_MESSAGE,
+			null,
+			null,
+			"Test"
+		) as String?
+		if (StringUtils.isEmpty(name)) {
+			return null
+		}
+		return name
+	}
+
+	override fun confirmDeleteTestcase(): Boolean =
+		JOptionPane.showConfirmDialog(
+			Frame.getFrames()[0],
+			Translations.getString("antares.testcase.action.delete.question", controller.testcase!!.name.value),
+			Translations.getString("antares.testcase.action.delete.name"),
+			JOptionPane.YES_NO_OPTION,
+			JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION
+
+	/** ---- [TestcaseViewSwing] */
+
 	private fun buildUI() {
 		layout = BorderLayout()
 
@@ -102,9 +130,9 @@ class TestcaseViewSwing(
 
 		override fun execute(event: ActionEvent) {
 			if (treeView.selectedTestcase != null) {
-				treeView.runSelectedTestcaseAction.execute(event)
+				treeView.controller.runSelectedTestcaseAction.execute(event)
 			} else {
-				treeView.runAllTestcasesAction.execute(event)
+				treeView.controller.runAllTestcasesAction.execute(event)
 			}
 		}
 	}

@@ -1,8 +1,6 @@
 package ch.scorpion.antares.model.testcase
 
 import ch.scorpion.antares.model.DigitalGraph
-import ch.scorpion.jabbah.app.ApplicationDataHolder
-import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
@@ -16,8 +14,6 @@ import ch.scorpion.jabbah.draw.richtext.RichTextLabel
 import ch.scorpion.jabbah.edit.model.text.NamableTreeNode
 import ch.scorpion.jabbah.edit.model.text.description.NameChangedEvent
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
-import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
-import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.ui.MetaGraphIconProvider
 import java.awt.Component
@@ -36,9 +32,7 @@ import javax.swing.tree.TreeSelectionModel
  * TODO Similarities with UsecaseTreeView (and ScenarioTreeView): Extract commonalities?
  */
 class TestcaseTreeView(
-	applicationDataHolder: ApplicationDataHolder,
-	applicationModeHolder: ApplicationModeHolder,
-	applicationContextHolder: GraphApplicationContextHolder,
+	val controller: TestcaseViewController,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : JTree(TestcaseTreeModel(null, null)) {
 
@@ -65,7 +59,7 @@ class TestcaseTreeView(
 	}
 
 	private val schedulerActivationStateHandler: EventHandler<SchedulerActivationStateEvent> = {
-		if (it.scheduler === applicationContextHolder.scheduler) {
+		if (it.scheduler === controller.applicationContextHolder.scheduler) {
 			if (it.scheduler.isActive) {
 				selectionModel.clearSelection()
 			}
@@ -100,9 +94,6 @@ class TestcaseTreeView(
 			return null
 		}
 
-	val runSelectedTestcaseAction: Action = RunTestcaseAction(applicationDataHolder, applicationModeHolder)
-	val runAllTestcasesAction: Action = RunCircuitTestcasesAction(applicationDataHolder, applicationModeHolder)
-
 	init {
 		selectionModel.selectionMode = TreeSelectionModel.SINGLE_TREE_SELECTION
 		addMouseListener(rightMouseListener)
@@ -115,11 +106,11 @@ class TestcaseTreeView(
 		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
 		eventBus.register(NameChangedEvent::class, nameChangeHandler)
 
-		graphPopupMenu.add(ActionWrapperSwing(AddTestcaseAction(applicationDataHolder, applicationModeHolder)))
-		graphPopupMenu.add(ActionWrapperSwing(runAllTestcasesAction))
+		graphPopupMenu.add(ActionWrapperSwing(controller.addAction))
+		graphPopupMenu.add(ActionWrapperSwing(controller.runAllTestcasesAction))
 
-		testcasePopupMenu.add(ActionWrapperSwing(DeleteTestcaseAction(applicationDataHolder, applicationModeHolder)))
-		testcasePopupMenu.add(ActionWrapperSwing(runSelectedTestcaseAction))
+		testcasePopupMenu.add(ActionWrapperSwing(controller.deleteAction))
+		testcasePopupMenu.add(ActionWrapperSwing(controller.runSelectedTestcaseAction))
 	}
 
 	fun dispose() {

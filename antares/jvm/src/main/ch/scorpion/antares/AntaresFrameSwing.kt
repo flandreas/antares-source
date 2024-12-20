@@ -41,15 +41,17 @@ class AntaresFrameSwing(
 
 	private val testcaseViewController = TestcaseViewController(
 		controller.graphPanelViewController.editor,
-		controller.applicationContextHolder)
+		application.controller,
+		controller.applicationContextHolder,
+		controller.applicationModeHolder)
 
-	private val testcasesView = TestcaseViewSwing(testcaseViewController, application.controller, controller.applicationModeHolder)
+	private val testcasesView = TestcaseViewSwing(testcaseViewController)
 
 	private val testResultsPanel =  TestRunResultsPanel()
 
 	init {
 		iconImage = Toolkit.getDefaultToolkit().createImage(ClassLoader.getSystemResource(AntaresSwing.ICON_PATH))
-		addTestcaseView(application)
+		addTestcaseView()
 		addTestRunResultsView()
 	}
 
@@ -59,13 +61,13 @@ class AntaresFrameSwing(
 		testResultsPanel.dispose()
 	}
 
-	private fun addTestcaseView(application: Application) {
+	private fun addTestcaseView() {
 		graphPanel.graphEditView.add(
 			SidebarPaneContentImpl(
 				Translations.getString("antares.testcases.title"),
 				UiUtil.themedIcon("/img/testcase.png"),
 				testcasesView,
-				listOf(testcasesView.runAction, testcasesView.helpAction)))
+				listOf(testcasesView.runAction, testcasesView.controller.metaAddAction, testcasesView.helpAction)))
 	}
 
 	private fun addTestRunResultsView() {
