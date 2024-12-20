@@ -154,6 +154,9 @@ class TestcaseTreeView(
 		}
 
 		fun updateGraphName() {
+			if (graphNode is NamableTreeNode) {
+				(graphNode as NamableTreeNode).richTextName.reset()
+			}
 			nodeChanged(graphNode)
 		}
 

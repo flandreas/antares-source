@@ -304,6 +304,9 @@ class ScenarioTreeView(
 		}
 
 		fun updateGraphName() {
+			if (graphViewNode is NamableTreeNode) {
+				(graphViewNode as NamableTreeNode).richTextName.reset()
+			}
 			nodeChanged(graphViewNode)
 		}
 
