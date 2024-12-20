@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.draw.drawable
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.Icon
 import ch.scorpion.jabbah.draw.style.DrawTheme
 import ch.scorpion.jabbah.draw.style.Themes
@@ -12,33 +13,30 @@ interface DrawableButtonRenderer {
 	fun draw(button: DrawableButton<*>, context: DrawContext)
 }
 
-abstract class AbstractIconDrawableButtonRenderer : DrawableButtonRenderer {
+abstract class AbstractDrawableButtonRenderer : DrawableButtonRenderer {
 
-	/** Establishes in [DrawContext.color] the color for drawing [button] depending on its state (enabled, hovering). */
-	fun establishColor(button: DrawableButton<*>, context: DrawContext) {
-		if (button.isHovering) {
-			context.color = Themes.get<DrawTheme>().hover
+	protected fun effectiveColor(button: DrawableButton<*>): CompositeColor {
+		return if (button.isHovering) {
+			Themes.get<DrawTheme>().hover
 		} else if (!button.enabled) {
-			context.color = button.buttonColor.withAlpha(128)
+			button.buttonColor.withAlpha(128)
 		} else {
-			context.color = button.buttonColor
+			button.buttonColor
 		}
 	}
 }
 
-class IconDrawableButtonRenderer(val icon: Icon) : AbstractIconDrawableButtonRenderer() {
+class IconDrawableButtonRenderer(val icon: Icon) : AbstractDrawableButtonRenderer() {
 
 	override val dimension: Dimension2D get() = icon.dim
 
 	override fun draw(button: DrawableButton<*>, context: DrawContext) {
-		val oldUseContextColors = context.useContextColors
-		context.useContextColors = true
-
-		establishColor(button, context)
-
+		val color = if (context.useContextColors) {
+			context.color!!
+		} else {
+			effectiveColor(button)
+		}
 		context.g.stroke = button.style.stroke
-		icon.draw(context, Point2D(button.x, button.y))
-
-		context.useContextColors = oldUseContextColors
+		icon.draw(context, Point2D(button.x, button.y), color)
 	}
 }

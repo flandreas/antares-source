@@ -62,15 +62,16 @@ class OscilloscopeProbeViewIcon(
 
 	override val dim: Dimension2D = Dimension2D(SIZE, SIZE)
 
-	override fun draw(context: DrawContext, location: Point2D) {
+	override fun draw(context: DrawContext, location: Point2D, color: CompositeColor) {
+		// Parameter 'color' not used. Use this.color instead.
 		context.translated(location) {
 			if (filled) {
-				setColor(it.g, it.choose(color).backgroundColor)
+				setColor(it.g, it.choose(this.color).backgroundColor)
 				it.g.fill(PATH)
 			}
-			setColor(it.g, it.choose(color).foregroundColor)
+			setColor(it.g, it.choose(this.color).foregroundColor)
 			it.g.draw(PATH)
-			setColor(it.g, it.choose(color).textColor)
+			setColor(it.g, it.choose(this.color).textColor)
 			label.draw(it)
 		}
 	}
