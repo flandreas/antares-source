@@ -27,6 +27,23 @@ abstract class AbstractRectangularComponent(
     val shape: MutableRectangularShape = Rectangle2D()
 ) : AbstractComponent(styleProvider, styleType), MutableRectangularShape by shape, Mirrorable {
 
+    companion object {
+        fun createBoundingBox(c: Component, shape: RectangularShape): RectangularShape {
+            val bb = Rectangle2D(shape.boundingBox)
+            val lw = c.stroke.width
+            bb.setFrame(
+                bb.x - lw,
+                bb.y - lw,
+                bb.width + 2 * lw,
+                bb.height + 2 * lw
+            )
+            if (c.shadow) {
+                DropShadow.expand(bb, c.rotation)
+            }
+            return bb
+        }
+    }
+
     open val shapeToDraw: Shape get() = shape
 
     /**
@@ -62,21 +79,7 @@ abstract class AbstractRectangularComponent(
 
     /** ---- [Drawable] interface */
 
-    override val boundingBox: RectangularShape
-        get() {
-            val bb = Rectangle2D(shape.boundingBox)
-            val lw = stroke.width
-            bb.setFrame(
-                bb.x - lw,
-                bb.y - lw,
-                bb.width + 2 * lw,
-                bb.height + 2 * lw
-            )
-            if (shadow) {
-                DropShadow.expand(bb, rotation)
-            }
-            return bb
-        }
+    override val boundingBox: RectangularShape get() = createBoundingBox(this, shape)
 
     override fun contains(x: Double, y: Double): Boolean = shape.contains(x, y)
 

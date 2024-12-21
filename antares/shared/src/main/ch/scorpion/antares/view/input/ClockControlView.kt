@@ -6,10 +6,12 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
 import ch.scorpion.jabbah.draw.drawable.IconDrawableButtonRenderer
+import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.drawable.TransparentImpl
 import ch.scorpion.jabbah.draw.graphics.KnobIcon
@@ -27,9 +29,12 @@ import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.ui.KnobLauncher
 import ch.scorpion.jabbah.graph.ui.KnobLauncherImpl
+import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
+import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
+import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
@@ -38,7 +43,7 @@ class ClockControlView(
 	styleType: StyleType = StyleType.FIGURE,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	var knobLauncher: KnobLauncher = KnobLauncherImpl
-) : AbstractRectangularComponent(styleType, styleProvider, Rectangle2D(0, 0, ICON_BUTTON_SIZE, ICON_BUTTON_SIZE)), ControlView<Clock> {
+) : AbstractGraphElementView<Clock>(styleProvider, styleType, initModel), ControlView<Clock> {
 
 	companion object {
 		const val ICON_BUTTON_SIZE = 20
@@ -46,22 +51,53 @@ class ClockControlView(
 
 	private val iconButton = IconButton(Point2D())
 
+	private val shape =  Rectangle2D(0, 0, ICON_BUTTON_SIZE, ICON_BUTTON_SIZE)
+
 	init {
 		DrawableOwner(this, iconButton)
 	}
 
+	/** ---- [Locatable] interface */
+
+	override var location: Point2D
+		get() = shape.topLeft
+		set(value) {
+			setFrame(value.x, value.y, shape.width, shape.height)
+		}
+
+	private fun setFrame(x: Double, y: Double, width: Double, height: Double) {
+		invalidate()
+		shape.setFrame(x, y, width, height)
+		iconButton.location = Point2D(x, y)
+		invalidate()
+		update()
+	}
+
+	/** ---- [Storable] interface */
+
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		writer.writeDouble("x", shape.x)
+		writer.writeDouble("y", shape.y)
+	}
+
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+		location = Point2D(
+			reader.readDouble("x"),
+			reader.readDouble("y"))
+	}
+
+
 	/** ---- [Drawable] */
+
+	override val boundingBox: RectangularShape get() = AbstractRectangularComponent.createBoundingBox(this, shape)
 
 	override fun draw(context: DrawContext) {
 		iconButton.draw(context)
 	}
 
-	/** ---- [AbstractRectangularComponent] */
-
-	override fun setFrame(x: Double, y: Double, width: Double, height: Double) {
-		super.setFrame(x, y, width, height)
-		iconButton.location = Point2D(x, y)
-	}
+	override fun contains(x: Double, y: Double): Boolean = shape.contains(x, y)
 
 	/** ---- [Component] */
 
@@ -75,13 +111,13 @@ class ClockControlView(
 		get() = transparent.transparency
 		set(value) { transparent.transparency = value }
 
+	/** ---- [GraphElementView] */
+
+	override val isFullyConnected: Boolean get() = true
+
 	/** ---- [ControlView] */
 
 	private var subGraphVerticeView: SubGraphVerticeView<*>? = null
-
-	private var _model: Clock = initModel
-
-	override val model: Clock get() = _model
 
 	override val controlId: String get() = "clock:${model.id}"
 
@@ -91,14 +127,14 @@ class ClockControlView(
 
 	override var isActiveControlView: Boolean = false
 
-	override val mirrorWidth: Double get() = width
+	override val mirrorWidth: Double get() = shape.width
 
-	override val mirrorHeight: Double get() = -height
+	override val mirrorHeight: Double get() = -shape.height
 
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler = iconButton.getActorInteractionHandler(context)
 
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
-		_model = link.getLinkedObject(startGraph) as Clock
+		model = link.getLinkedObject(startGraph) as Clock
 		this.subGraphVerticeView = subGraphVerticeView
 	}
 
@@ -111,6 +147,8 @@ class ClockControlView(
 	override fun writeModelProperties(writer: StoreWriter) { }
 
 	override fun readModelProperties(reader: StoreReader) { }
+
+	/** ---- [ClockControlView] */
 
 	private inner class IconButton(
 		location: Point2D

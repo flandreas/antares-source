@@ -16,19 +16,17 @@ import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
 /**
- * A [Component] that is created by a [ControlViewSource] and used to be added to a [SubGraphVerticeView].
+ * A [GraphElementView] that is created by a [ControlViewSource] and used to be added to a [SubGraphVerticeView].
  * Cannot just be a [Drawable] because it needs to be selectable when editing it within a [ContainerDrawing].
+ * Cannot just be a [Component] because its model must be cloned correctly when added to a [ContainerDrawing].
  * @param <T> the type of the model
  */
-interface ControlView<T : Vertice> : Component, Transparent, ActorView {
+interface ControlView<T : Vertice> : GraphElementView<T>, Transparent, ActorView {
 
     val controlId: String?
 
 	/** Returns a translated text that identifies this [ControlView] to the user.*/
 	val controlName: String
-
-	/** The [Vertice] displayed by this [ControlView]. */
-	val model: T
 
 	/**
 	 * Used by [ControlView] that share implementation with [VerticeView]. Called by wrapping objects
