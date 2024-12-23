@@ -72,6 +72,13 @@ class ScenarioTreeView(
 		}
 	}
 
+	private val scenarioMovedHandler: EventHandler<ScenarioMovedEvent> = {
+		if (it.graphView === this.graphView) {
+			val stepNode = scenarioTreeModel.moveScenario(it.scenario, it.index)
+			selectionPath = JTreeUtil.getPath(stepNode)
+		}
+	}
+
 	// Adds an added [ScenarioStep] to this [ScenarioTreeView]
 	private val scenarioStepAddedHandler: EventHandler<ScenarioStepAddedEvent> = {
 		if (it.graphView === this.graphView) {
@@ -134,6 +141,7 @@ class ScenarioTreeView(
 		eventBus.register(ScenarioStepRemovedEvent::class, scenarioStepRemovedHandler)
 		eventBus.register(ScenarioStepMovedEvent::class, scenarioStepMovedHandler)
 		eventBus.register(SchedulerActivationStateEvent::class, activationStateHandler)
+		eventBus.register(ScenarioMovedEvent::class, scenarioMovedHandler)
 		eventBus.register(NameChangedEvent::class, nameChangedHandler)
 
 		graphViewPopupMenu.add(ActionWrapperSwing(controller.addScenarioAction))
@@ -145,6 +153,7 @@ class ScenarioTreeView(
 	fun dispose() {
 		eventBus.unregister(scenarioAddedHandler)
 		eventBus.unregister(scenarioRemovedHandler)
+		eventBus.unregister(scenarioMovedHandler)
 		eventBus.unregister(scenarioStepAddedHandler)
 		eventBus.unregister(scenarioStepRemovedHandler)
 		eventBus.unregister(scenarioStepMovedHandler)
@@ -246,13 +255,19 @@ class ScenarioTreeView(
 				return false
 			}
 
-			val scenarioStepNode = support.transferable.getTransferData(ScenarioTransferable.FLAVOR) as DefaultMutableTreeNode
+			val node = support.transferable.getTransferData(ScenarioTransferable.FLAVOR) as DefaultMutableTreeNode
 			val dropLoc = support.dropLocation as JTree.DropLocation
-			LOG.trace("ScenarioTreeView dropLoc: $dropLoc")
 
-			// ScenarioStep can only be moved within its Scenario
-			if (dropLoc.path == null || scenarioStepNode.parent != dropLoc.path.lastPathComponent || dropLoc.childIndex < 0) {
-				return false
+			if (node.userObject is ScenarioStep) {
+				// ScenarioStep can only be moved within its Scenario
+				if (dropLoc.path == null || node.parent != dropLoc.path.lastPathComponent || dropLoc.childIndex < 0) {
+					return false
+				}
+			} else if (node.userObject is Scenario) {
+				// Scenario can only be moved within the first level
+				if (dropLoc.path == null || dropLoc.path.pathCount > 1) {
+					return false
+				}
 			}
 
 			return true
@@ -267,15 +282,26 @@ class ScenarioTreeView(
 			}
 
 			LOG.trace("importData")
-			val scenarioStepNode = support.transferable.getTransferData(ScenarioTransferable.FLAVOR) as DefaultMutableTreeNode
+			val node = support.transferable.getTransferData(ScenarioTransferable.FLAVOR) as DefaultMutableTreeNode
 			val dropLoc = support.dropLocation as JTree.DropLocation
 
-			service.moveScenarioStep(
-				controller.applicationDataHolder,
-				((dropLoc.path.lastPathComponent as DefaultMutableTreeNode).userObject as Scenario).id,
-				(scenarioStepNode.userObject as ScenarioStep).id,
-				dropLoc.childIndex
-			)
+			if (node.userObject is ScenarioStep) {
+				service.moveScenarioStep(
+					controller.applicationDataHolder,
+					((dropLoc.path.lastPathComponent as DefaultMutableTreeNode).userObject as Scenario).id,
+					(node.userObject as ScenarioStep).id,
+					dropLoc.childIndex
+				)
+			} else if (node.userObject is Scenario) {
+				service.moveScenario(
+					controller.applicationDataHolder,
+					(node.userObject as Scenario).id,
+					dropLoc.childIndex
+				)
+			} else {
+				return false
+			}
+
 
 			return true
 		}
@@ -283,10 +309,12 @@ class ScenarioTreeView(
 		override fun createTransferable(c: JComponent?): Transferable? {
 			val tree = c as JTree
 			val treeNode = tree.selectionPath.lastPathComponent as DefaultMutableTreeNode
-			if (treeNode.userObject !is ScenarioStep) {
-				return null
+
+			return when (treeNode.userObject) {
+				is ScenarioStep -> ScenarioTransferable(treeNode)
+				is Scenario -> ScenarioTransferable(treeNode)
+				else -> null
 			}
-			return ScenarioTransferable(treeNode)
 		}
 	}
 
@@ -359,12 +387,21 @@ class ScenarioTreeView(
 			val scenarioNode = findScenarioNode(scenario)
 			val scenarioStepNode = findScenarioStepNode(scenarioStep)
 			val oldIndex = getScenarioStepIndex(scenarioNode!!, scenarioStep)
-			if (index >= 0) {
-				scenarioNode.remove(oldIndex)
-				scenarioNode.insert(scenarioStepNode, index)
-				nodeStructureChanged(scenarioNode)
-			}
+			val effIndex = if (oldIndex <= index) index - 1 else index
+			scenarioNode.remove(oldIndex)
+			scenarioNode.insert(scenarioStepNode, effIndex)
+			nodeStructureChanged(scenarioNode)
 			return scenarioStepNode!!
+		}
+
+		fun moveScenario(scenario: Scenario, index: Int): TreeNode {
+			val scenarioNode = findScenarioNode(scenario)
+			val oldIndex = getScenarioIndex(scenario)
+			val effIndex = if (oldIndex <= index) index - 1 else index
+			(root as DefaultMutableTreeNode).remove(oldIndex)
+			(root as DefaultMutableTreeNode).insert(scenarioNode, effIndex)
+			nodeStructureChanged(root)
+			return scenarioNode!!
 		}
 
 		private fun findScenarioNode(scenario: Scenario): DefaultMutableTreeNode? {

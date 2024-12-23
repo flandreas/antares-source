@@ -106,3 +106,21 @@ class MoveScenarioStepCommand(
 		graphView.scenarios.moveStep(scenarioId, scenarioStepId, oldIndex)
 	}
 }
+
+class MoveScenarioCommand(
+	private val dataHolder: UndoableDataHolder,
+	private val scenarioId: Int,
+	private val newIndex: Int
+) : AbstractCommand("scenario.command.scenario.move"), Undoable {
+
+	private val graphView: GraphView get() = (dataHolder.getUndoableState() as MetaGraph).graph.graphView
+	private val oldIndex: Int = graphView.scenarios.indexOfScenario(scenarioId)
+
+	override fun execute() {
+		graphView.scenarios.move(scenarioId, newIndex)
+	}
+
+	override fun undo() {
+		graphView.scenarios.move(scenarioId, oldIndex)
+	}
+}

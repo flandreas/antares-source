@@ -68,6 +68,15 @@ class ScenariosImpl(
 		remove(get(scenarioId))
 	}
 
+	override fun move(scenarioId: Int, index: Int) {
+		val scenario = get(scenarioId)
+		val oldIndex = indexOfScenario(scenarioId)
+		val effIndex = if (oldIndex <= index) index - 1 else index
+		scenarios.remove(scenario)
+		scenarios.add(effIndex, scenario)
+		eventBus.post(ScenarioMovedEvent(graphView!!, scenario, index))
+	}
+
 	override fun addStep(scenario: Scenario, step: ScenarioStep) {
 		addStep(scenario, step, scenario.stepCount)
 	}

@@ -137,8 +137,9 @@ class ScenarioImpl(
 		if (oldIndex < 0 || newIndex == oldIndex) {
 			return
 		}
+		val effIndex = if (oldIndex <= newIndex) newIndex - 1 else newIndex
 		steps.remove(step)
-		steps.add(newIndex, step)
+		steps.add(effIndex, step)
 	}
 
 	override fun indexOf(step: ScenarioStep): Int = steps.indexOf(step)

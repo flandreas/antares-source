@@ -65,4 +65,9 @@ class ScenarioAppService(
 		LOG.trace("Move ScenarioStep $scenarioStepId in Scenario $scenarioId to new index $newIndex in GraphView ${graphView(dataHolder).graph?.uuid}")
 		commandManager.execute(MoveScenarioStepCommand(dataHolder, scenarioId, scenarioStepId, newIndex))
 	}
+
+	fun moveScenario(dataHolder: UndoableDataHolder, scenarioId: Int, newIndex: Int) {
+		LOG.trace("Move Scenario $scenarioId to new index $newIndex in GraphView ${graphView(dataHolder).graph?.uuid}")
+		commandManager.execute(MoveScenarioCommand(dataHolder, scenarioId, newIndex))
+	}
 }
