@@ -19,6 +19,7 @@
                 <baseLibraryElement _id='11' id='AnalogPower' type='analog'/>
                 <baseLibraryElement _id='12' id='CurrentSource' type='analog'/>
                 <baseLibraryElement _id='13' id='Capacitor' type='analog'/>
+                <baseLibraryElement _id='14' id='Inductor' type='analog'/>
             </items>
         </libraryFolder>
     </folder>

@@ -175,6 +175,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val ANALOG_OUTPUT = "AnalogOutput"
 	private const val ANALOG_POWER = "AnalogPower"
 	private const val CAPACITOR = "Capacitor"
+	private const val INDUCTOR = "Inductor"
 
 	val currentSymbolStyle: CurrentSymbolStyle by lazy {CurrentSymbolStyle() }
 
@@ -391,7 +392,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("analogTransistorView", AnalogTransistorView::class)
 		typeMap.register("analogCircuitInOutView", AnalogCircuitInOutView::class)
 		typeMap.register("analogPowerView", AnalogPowerView::class)
-		typeMap.register("analogPushButtonView", AnalogPushButtonSwitchView::class)
+		typeMap.register("inductorView", InductorView::class)
 	}
 
 	private fun configureSelectionModels(factory: SelectionModelFactory) {
@@ -470,6 +471,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogCircuitInOutView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogPowerView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogPushButtonSwitchView::class) { RectangularVerticeViewSelectionModel(it as AnalogPushButtonSwitchView) }
+		factory.register(SelectionDrawingStrategy.REPLACE, InductorView::class) { SelectedColorSelectionModel(it) }
 	}
 
 	private fun configureHighlightModels(factory: SelectionModelFactory) {
@@ -633,6 +635,7 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(LIGHT_BULB, "library.element.LightBulb", { BaseModule.properties.getString(LightBulbView.PROP_ICON_PATH) }, LightBulbView::class)
 		repository.register(BATTERY, "library.element.Battery", { "/img/battery.png" }, BatteryView::class)
 		repository.register(CAPACITOR, "library.element.Capacitor", { "/img/capacitor.png" }, CapacitorView::class)
+		repository.register(INDUCTOR, "library.element.Inductor", { "/img/capacitor.png" }, InductorView::class)
 		repository.register(CURRENT_SOURCE, "library.element.CurrentSource", { "/img/current-source.png" }, CurrentSourceView::class)
 		repository.register(RESISTOR,
 			"library.element.Resistor",
@@ -745,6 +748,9 @@ object AntaresViewModule : AbstractModule() {
 		addLibraryItem(library, BaseLibraryElement(Analog, ANALOG_INPUT), analog)
 		addLibraryItem(library, BaseLibraryElement(Analog, ANALOG_OUTPUT), analog)
 		addLibraryItem(library, BaseLibraryElement(Analog, ANALOG_POWER), analog)
+		addLibraryItem(library, BaseLibraryElement(Analog, CURRENT_SOURCE), analog)
+		addLibraryItem(library, BaseLibraryElement(Analog, CAPACITOR), analog)
+		addLibraryItem(library, BaseLibraryElement(Analog, INDUCTOR), analog)
 	}
 
 	private fun addLibraryItem(library: Library, item: LibraryItem, directory: LibraryDirectory) {

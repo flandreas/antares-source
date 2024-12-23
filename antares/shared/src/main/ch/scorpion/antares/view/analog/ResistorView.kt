@@ -1,6 +1,5 @@
 package ch.scorpion.antares.view.analog
 
-import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.model.analog.Resistor
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
@@ -10,7 +9,6 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.InputEventHandler
-import ch.scorpion.jabbah.draw.graphics.LinearColorGradient
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.DrawingView
@@ -91,19 +89,6 @@ class ResistorView(
 	/** ---- [AbstractAnalogVerticeView] */
 
 	override val mainPropertyValue: String get() = "${Thousands.convert(model.resistance.toLong(), " ")}Ω"
-
-	private fun getColorGradient(context: DrawContext): LinearColorGradient? {
-		if (context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
-			val color1 = model.getPort<AnalogSignal>(1).net?.signal?.color?.foregroundColor ?: foregroundColor
-			val color2 = model.getPort<AnalogSignal>(2).net?.signal?.color?.foregroundColor ?: foregroundColor
-			return LinearColorGradient(
-				bounds.centerLeft,
-				transparent.applyTo(color2),
-				bounds.centerRight,
-				transparent.applyTo(color1))
-		}
-		return null
-	}
 
 	/** ---- [ResistorView] */
 

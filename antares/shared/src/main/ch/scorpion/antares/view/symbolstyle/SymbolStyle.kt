@@ -5,7 +5,7 @@ import ch.scorpion.antares.view.Look.SCALE
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.gate.BoxGateView
 import ch.scorpion.antares.view.gate.CustomShapeContent
-import ch.scorpion.antares.view.port.AbstractAntaresPortView
+import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
 import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.System
@@ -69,7 +69,7 @@ enum class SymbolStyle(
 			if (resistor.shadow) {
 				DropShadow.draw(context, transparency = resistor.transparency) {
 					context.g.fillRect(
-						-AbstractAntaresPortView.LENGTH.toDouble() - RESISTOR_WIDTH, -RESISTER_HEIGHT_HALF,
+						-LENGTH.toDouble() - RESISTOR_WIDTH, -RESISTER_HEIGHT_HALF,
 						RESISTOR_WIDTH, 2 * RESISTER_HEIGHT_HALF
 					)
 				}
@@ -77,20 +77,47 @@ enum class SymbolStyle(
 
 			context.g.color = context.chooseBackground(if (Look.FILL_BASIC_COMPONENTS) backgroundColor else DrawStyleModule.styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor)
 			context.g.fillRect(
-				-AbstractAntaresPortView.LENGTH.toDouble() - RESISTOR_WIDTH, -RESISTER_HEIGHT_HALF,
+				-LENGTH.toDouble() - RESISTOR_WIDTH, -RESISTER_HEIGHT_HALF,
 				RESISTOR_WIDTH, 2 * RESISTER_HEIGHT_HALF
 			)
 
 			context.g.paint = context.chooseForeground(resistor.foregroundColor)
 			context.g.stroke = DrawStyleModule.styleProvider.getStyle(StyleType.FIGURE).stroke
 			context.g.drawRect(
-				-AbstractAntaresPortView.LENGTH.toDouble() - RESISTOR_WIDTH, -RESISTER_HEIGHT_HALF,
+				-LENGTH.toDouble() - RESISTOR_WIDTH, -RESISTER_HEIGHT_HALF,
 				RESISTOR_WIDTH, 2 * RESISTER_HEIGHT_HALF
 			)
 
 			if (isVariable) {
 				drawVariableResistorArrow(context)
 			}
+		}
+
+		override fun drawInductor(
+			inductor: OrientableRectangularVerticeView<*>,
+			context: DrawContext,
+			foregroundColor: Paint,
+			backgroundColor: Color,
+			stroke: Stroke
+		) {
+			if (inductor.shadow) {
+				DropShadow.draw(context, transparency = inductor.transparency) {
+					context.g.fillRect(
+						-LENGTH.toDouble() - INDUCTOR_WIDTH, -INDUCTOR_HEIGHT_HALF,
+						INDUCTOR_WIDTH, 2 * INDUCTOR_HEIGHT_HALF
+					)
+				}
+			}
+
+			if (context.useContextColors) {
+				context.g.color = context.chooseForeground(backgroundColor)
+			} else {
+				context.g.paint = foregroundColor
+			}
+			context.g.fillRect(
+				-LENGTH.toDouble() - INDUCTOR_WIDTH, -INDUCTOR_HEIGHT_HALF,
+				INDUCTOR_WIDTH, 2 * INDUCTOR_HEIGHT_HALF
+			)
 		}
 	},
 
@@ -101,6 +128,13 @@ enum class SymbolStyle(
 
 		private fun getResistorStroke(clientStroke: Stroke): Stroke =
 			resistorStrokes.getOrPut(clientStroke.width) {
+				Stroke(clientStroke.width, LineCap.BUTT, LineJoin.MITER)
+			}
+
+		private val inductorStrokes = mutableMapOf<Float, Stroke>()
+
+		private fun getInductorStroke(clientStroke: Stroke): Stroke =
+			inductorStrokes.getOrPut(clientStroke.width) {
 				Stroke(clientStroke.width, LineCap.BUTT, LineJoin.MITER)
 			}
 
@@ -145,6 +179,18 @@ enum class SymbolStyle(
 				context.g.color = context.chooseForeground(resistor.foregroundColor)
 				drawVariableResistorArrow(context)
 			}
+		}
+
+		override fun drawInductor(
+			inductor: OrientableRectangularVerticeView<*>,
+			context: DrawContext,
+			foregroundColor: Paint,
+			backgroundColor: Color,
+			stroke: Stroke
+		) {
+			context.g.paint = foregroundColor
+			context.g.stroke = getInductorStroke(inductor.stroke)
+			context.g.draw(INDUCTOR_PATH)
 		}
 
 		override val orShapeConnectedPortViewLength: Int get() = (2 * SCALE * 0.35).toInt()
@@ -199,6 +245,16 @@ enum class SymbolStyle(
 
 		override fun drawResistor(resistor: OrientableRectangularVerticeView<*>, isVariable: Boolean, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke) {
 			EUROPEAN.drawResistor(resistor, isVariable, context, foregroundColor, backgroundColor, stroke)
+		}
+
+		override fun drawInductor(
+			inductor: OrientableRectangularVerticeView<*>,
+			context: DrawContext,
+			foregroundColor: Paint,
+			backgroundColor: Color,
+			stroke: Stroke
+		) {
+			EUROPEAN.drawInductor(inductor, context, foregroundColor, backgroundColor, stroke)
 		}
 	};
 
@@ -261,20 +317,30 @@ enum class SymbolStyle(
 		const val RESISTOR_WIDTH = 6.0 * SCALE.toDouble()
 		const val RESISTER_HEIGHT_HALF = SCALE.toDouble()
 		private val RESISTOR_PATH = System.createPath()
-			.moveTo(-AbstractAntaresPortView.LENGTH, 0)
-			.lineTo(-AbstractAntaresPortView.LENGTH - 0.5 * SCALE, RESISTER_HEIGHT_HALF)
-			.lineTo(-AbstractAntaresPortView.LENGTH - 1.5 * SCALE, -RESISTER_HEIGHT_HALF)
-			.lineTo(-AbstractAntaresPortView.LENGTH - 2.5 * SCALE, RESISTER_HEIGHT_HALF)
-			.lineTo(-AbstractAntaresPortView.LENGTH - 3.5 * SCALE, -RESISTER_HEIGHT_HALF)
-			.lineTo(-AbstractAntaresPortView.LENGTH - 4.5 * SCALE, RESISTER_HEIGHT_HALF)
-			.lineTo(-AbstractAntaresPortView.LENGTH - 5.5 * SCALE, -RESISTER_HEIGHT_HALF)
-			.lineTo(-AbstractAntaresPortView.LENGTH - 6.0 * SCALE, 0.0)
+			.moveTo(-LENGTH, 0)
+			.lineTo(-LENGTH - 0.5 * SCALE, RESISTER_HEIGHT_HALF)
+			.lineTo(-LENGTH - 1.5 * SCALE, -RESISTER_HEIGHT_HALF)
+			.lineTo(-LENGTH - 2.5 * SCALE, RESISTER_HEIGHT_HALF)
+			.lineTo(-LENGTH - 3.5 * SCALE, -RESISTER_HEIGHT_HALF)
+			.lineTo(-LENGTH - 4.5 * SCALE, RESISTER_HEIGHT_HALF)
+			.lineTo(-LENGTH - 5.5 * SCALE, -RESISTER_HEIGHT_HALF)
+			.lineTo(-LENGTH - 6.0 * SCALE, 0.0)
 
 		val RESISTOR_STROKE = Stroke(
 			Themes.get<GraphTheme>().figure.stroke.width,
 			cap = LineCap.BUTT,
 			join = LineJoin.MITER
 		)
+
+
+		const val INDUCTOR_WIDTH = 6.0 * SCALE.toDouble()
+		const val INDUCTOR_HEIGHT_HALF = SCALE.toDouble()
+		val INDUCTOR_STROKE = RESISTOR_STROKE
+		private val INDUCTOR_PATH = System.createPath()
+			.moveTo(-LENGTH, 0)
+			.curveTo(-LENGTH.toDouble(), -1.5 * INDUCTOR_HEIGHT_HALF, -LENGTH - 2.0 * SCALE, -1.5 * INDUCTOR_HEIGHT_HALF, -LENGTH - 2.0 * SCALE, 0.0)
+			.curveTo(-LENGTH.toDouble() - 2.0 * SCALE, -1.5 * INDUCTOR_HEIGHT_HALF, -LENGTH - 4.0 * SCALE, -1.5 * INDUCTOR_HEIGHT_HALF, -LENGTH - 4.0 * SCALE, 0.0)
+			.curveTo(-LENGTH.toDouble() - 4.0 * SCALE, -1.5 * INDUCTOR_HEIGHT_HALF, -LENGTH - 6.0 * SCALE, -1.5 * INDUCTOR_HEIGHT_HALF, -LENGTH - 6.0 * SCALE, 0.0)
 
 		private val VARIABLE_RESISTOR_ARROW_PATH = System.createPath()
 			.moveTo(0, -3 * SCALE)
@@ -331,12 +397,12 @@ enum class SymbolStyle(
 		}
 
 		private fun drawVariableResistorArrow(context: DrawContext) {
-			context.g.translate(-AbstractAntaresPortView.LENGTH - 3.0 * SCALE, 0.0)
+			context.g.translate(-LENGTH - 3.0 * SCALE, 0.0)
 			context.g.rotate(0.46)
 			context.g.fill(VARIABLE_RESISTOR_ARROW_PATH)
 			context.g.drawLine(0.0, -2.0 * SCALE, 0.0, 2.0 * SCALE)
 			context.g.rotate(-0.46)
-			context.g.translate(-(-AbstractAntaresPortView.LENGTH - 3.0 * SCALE), 0.0)
+			context.g.translate(-(-LENGTH - 3.0 * SCALE), 0.0)
 		}
 	}
 
@@ -373,5 +439,7 @@ enum class SymbolStyle(
 	abstract fun drawBufferGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
 
 	abstract fun drawResistor(resistor: OrientableRectangularVerticeView<*>, isVariable: Boolean, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke)
+
+	abstract fun drawInductor(inductor: OrientableRectangularVerticeView<*>, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke)
 
 }
