@@ -11,6 +11,7 @@
                 <baseLibraryElement _id='3' id='Battery' type='analog'/>
                 <baseLibraryElement _id='4' id='Resistor' type='analog'/>
                 <baseLibraryElement _id='5' id='AnalogSwitch' type='analog'/>
+                <baseLibraryElement _id='15' id='AnalogDoubleThrowSwitch' type='analog'/>
                 <baseLibraryElement _id='6' id='AnalogGround' type='analog'/>
                 <baseLibraryElement _id='7' id='AnalogTransistorN' type='analog'/>
                 <baseLibraryElement _id='8' id='AnalogTransistorP' type='analog'/>

@@ -1,17 +1,20 @@
 package ch.scorpion.antares.view.analog
 
 import ch.scorpion.antares.model.analog.AbstractAnalogVertice
+import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.analog.engine.AnalogElement
 import ch.scorpion.antares.view.analog.engine.AnalogElementProxy
 import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
+import ch.scorpion.jabbah.draw.graphics.LinearColorGradient
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.edit.model.text.HorizontalLabel
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 
@@ -102,5 +105,18 @@ abstract class AbstractAnalogVerticeView<T: AbstractAnalogVertice<*>>(
 				(parent as AnalogGraphView).recalculate(event.signalHandler!!, true)
 			}
 		}
+	}
+
+	protected fun getColorGradient(context: DrawContext): LinearColorGradient? {
+		if (context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
+			val color1 = model.getPort<AnalogSignal>(1).net?.signal?.color?.foregroundColor ?: foregroundColor
+			val color2 = model.getPort<AnalogSignal>(2).net?.signal?.color?.foregroundColor ?: foregroundColor
+			return LinearColorGradient(
+				bounds.centerLeft,
+				transparent.applyTo(color2),
+				bounds.centerRight,
+				transparent.applyTo(color1))
+		}
+		return null
 	}
 }

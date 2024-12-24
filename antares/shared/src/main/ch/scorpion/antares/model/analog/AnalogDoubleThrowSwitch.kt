@@ -1,0 +1,81 @@
+package ch.scorpion.antares.model.analog
+
+import ch.scorpion.antares.model.input.AbstractSwitch
+import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
+import ch.scorpion.antares.view.analog.engine.AnalogElement
+import ch.scorpion.antares.view.analog.engine.AnalogElementMixin
+import ch.scorpion.jabbah.base.LongValueImpl
+import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.model.GraphActorData
+import ch.scorpion.jabbah.graph.model.Port
+import ch.scorpion.jabbah.graph.model.vertice.InteractableVertice
+
+/**
+ * An interactive switch with three bidirectional [AnalogPort]s.
+ *
+ * [Port] 1 is the single [Port] at one side, and [Ports][Port] 2 and 3 are the two on the other side.
+ * Interprets property [AbstractSwitch.isOn] as `true` if [Port] 2 is active, and as `false`
+ * if [Port] 3 is active.
+ */
+
+class AnalogDoubleThrowSwitch(
+    private val analogElement: AnalogElementMixin = AnalogElementMixin(postCount = 3)
+) : AbstractSwitch<AnalogDoubleThrowSwitch>(CALCULATOR),
+    AnalogVertice,
+    AnalogElement by analogElement
+{
+    companion object {
+        private const val BASE_RESOURCE_KEY = "library.element.AnalogDoubleThrowSwitch"
+
+        private val CALCULATOR = Calculator()
+
+        private class Calculator : AbstractSwitch.Companion.AbstractSwitchCalculator<AnalogDoubleThrowSwitch>() {
+            override fun calculate(vertice: AnalogDoubleThrowSwitch, data: GraphActorData, signalHandler: SignalHandler) {
+                super.calculate(vertice, data, signalHandler)
+                vertice.requestAnalogGraphReanalization(signalHandler)
+            }
+        }
+    }
+
+    override val type: String get() = Translations.getString("${BASE_RESOURCE_KEY}.name")
+
+    override val typeDesc: String? get() = Translations.getOptionalString("${BASE_RESOURCE_KEY}.desc")
+
+    init {
+        analogElement.bindAnalogElement(this)
+        addPort(AnalogPort())
+        addPort(AnalogPort())
+        addPort(AnalogPort())
+        propagationDelay = LongValueImpl.ZERO
+    }
+
+    /** ---- [InteractableVertice] interface */
+
+    override var interactivePropagationDelay: Long = propagationDelay.value
+        set(value) {
+            propagationDelay = LongValueImpl(value)
+        }
+
+    /** ---- [AnalogDoubleThrowSwitch] */
+
+
+    private fun requestAnalogGraphReanalization(signalHandler: SignalHandler) {
+        stateChanged(signalHandler, AbstractAnalogVertice.REQUEST_REANALYZE)
+    }
+
+    /** ---- [AnalogElement] */
+
+    override val voltageSourceCount: Int get() = 1
+
+    override fun stamp(analysis: AnalogCircuitAnalysis) {
+        println("--- stamp(): isOn = $isOn")
+        analysis.stampVoltageSource(
+            analogElement.nodes[0],
+            if (isOn) analogElement.nodes[1] else analogElement.nodes[2],
+            analogElement.voltageSource,
+            0.0)
+    }
+
+    override fun calculateCurrent() { }
+}

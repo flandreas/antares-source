@@ -54,8 +54,6 @@ class AnalogSwitchView(
 
 	/** ---- [AbstractSwitchView] */
 
-	override val circleRadius: Double get() = DEF_CIRCLE_RADIUS
-
 	override fun updateLabels() {
 		invalidate()
 		label.text = name ?: ""

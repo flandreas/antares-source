@@ -17,7 +17,7 @@ import ch.scorpion.jabbah.graph.model.net.NetCombiner
 import ch.scorpion.jabbah.graph.model.port.PortImpl
 
 /**
- * An interactive switch with two bi-directional [DigitalPort]s.
+ * An interactive switch with three bidirectional [DigitalPort]s.
  *
  * [Port] 1 is the single [Port] at one side, and [Ports][Port] 2 and 3 are the two on the other side.
  * Interprets property [AbstractSwitch.isOn] as `true` if [Port] 2 is active, and as `false`

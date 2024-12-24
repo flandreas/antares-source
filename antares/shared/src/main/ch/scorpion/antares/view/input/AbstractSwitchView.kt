@@ -2,6 +2,7 @@ package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.model.input.AbstractSwitch
 import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.Look.SCALE
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.style.AntaresTheme
@@ -155,6 +156,32 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 		context.g.fillCircle(bounds.maxX - w(1.0), 0.0, circleRadius)
 
 		// Focus
+		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+			drawFocus(context)
+		}
+	}
+
+	protected fun drawThreePortRealSwitchShape(context: DrawContext) {
+		// Port 1
+		(getPortView(model.getPort(1)) as AbstractAntaresPortView).prepareConnectionDrawContext(context)
+		context.g.drawLine(bounds.minX, 0.0, bounds.minX + 1 * SCALE, 0.0)
+		if (model.isOn) {
+			context.g.drawLine(bounds.minX + 1 * SCALE, 0.0, bounds.maxX - 1 * SCALE, -2.0 * SCALE)
+		} else {
+			context.g.drawLine(bounds.minX + 1 * SCALE, 0.0, bounds.maxX - 1 * SCALE, 2.0 * SCALE)
+		}
+		context.g.fillCircle(bounds.minX + 1 * SCALE, 0.0, circleRadius)
+
+		// Port 2
+		(getPortView(model.getPort(2)) as AbstractAntaresPortView).prepareConnectionDrawContext(context)
+		context.g.drawLine(bounds.maxX - 1 * SCALE, -2.0 * SCALE, bounds.maxX, -2.0 * SCALE)
+		context.g.fillCircle(bounds.maxX - 1 * SCALE, -2.0 * SCALE, circleRadius)
+
+		// Port 3
+		(getPortView(model.getPort(3)) as AbstractAntaresPortView).prepareConnectionDrawContext(context)
+		context.g.drawLine(bounds.maxX - 1 * SCALE, 2.0 * SCALE, bounds.maxX,2.0 * SCALE)
+		context.g.fillCircle(bounds.maxX - 1 * SCALE, 2.0 * SCALE, circleRadius)
+
 		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 			drawFocus(context)
 		}

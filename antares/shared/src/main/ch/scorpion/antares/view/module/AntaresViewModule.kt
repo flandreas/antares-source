@@ -168,6 +168,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val CURRENT_SOURCE = "CurrentSource"
 	private const val RESISTOR = "Resistor"
 	private const val ANALOG_SWITCH = "AnalogSwitch"
+	private const val ANALOG_DOUBLE_THROW_SWITCH = "AnalogDoubleThrowSwitch"
 	private const val ANALOG_GROUND = "AnalogGround"
 	private const val ANALOG_TRANSISTOR_N = "AnalogTransistorN"
 	private const val ANALOG_TRANSISTOR_P = "AnalogTransistorP"
@@ -297,6 +298,7 @@ object AntaresViewModule : AbstractModule() {
 
 		properties.set(LightBulbView.PROP_ICON_PATH, "/img/light-bulb.png")
 		properties.set(AnalogSwitchView.PROP_ICON_PATH, "/img/real-switch.png")
+		properties.set(AnalogDoubleThrowSwitchView.PROP_ICON_PATH, "/img/double-throw-switch.png")
 
 		properties.set(LogicGateView.PROP_DATA_FLOW_ENABLED, true)
 		properties.set(AbstractTransistorView.PROP_TRANSISTOR_CIRCLE, true)
@@ -387,6 +389,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("currentSourceView", CurrentSourceView::class)
 		typeMap.register("resistorView", ResistorView::class)
 		typeMap.register("analogSwitchView", AnalogSwitchView::class)
+		typeMap.register("analogDoubleThrowSwitchView", AnalogDoubleThrowSwitchView::class)
 		typeMap.register("analogNodeView", AnalogNodeView::class)
 		typeMap.register("analogGroundView", AnalogGroundView::class)
 		typeMap.register("analogTransistorView", AnalogTransistorView::class)
@@ -466,6 +469,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, CurrentSourceView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, ResistorView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogSwitchView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, AnalogDoubleThrowSwitchView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogGroundView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogTransistorView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogCircuitInOutView::class) { SelectedColorSelectionModel(it) }
@@ -645,7 +649,16 @@ object AntaresViewModule : AbstractModule() {
 				SymbolStyle.VERBOSE to "/img/and-iec.png"
 			))::evaluate,
 			ResistorView::class)
-		repository.register(ANALOG_SWITCH, "library.element.AnalogSwitch", { BaseModule.properties.getString(AnalogSwitchView.PROP_ICON_PATH) }, AnalogSwitchView::class)
+		repository.register(
+			ANALOG_SWITCH,
+			"library.element.AnalogSwitch",
+			{ BaseModule.properties.getString(AnalogSwitchView.PROP_ICON_PATH) },
+			AnalogSwitchView::class)
+		repository.register(
+			ANALOG_DOUBLE_THROW_SWITCH,
+			"library.element.AnalogDoubleThrowSwitch",
+			{ BaseModule.properties.getString(AnalogDoubleThrowSwitchView.PROP_ICON_PATH) },
+			AnalogDoubleThrowSwitchView::class)
 		repository.register(ANALOG_GROUND, "library.element.AnalogGround", { "/img/signal-ground.png" }, AnalogGroundView::class)
 		repository.register(ANALOG_TRANSISTOR_N, "library.element.AnalogTransistor.nType", { "/img/transistor.png" }, HelpId(AbstractTransistorView::class.simpleName!!)) {
 			AnalogTransistorView(TransistorType.N)
