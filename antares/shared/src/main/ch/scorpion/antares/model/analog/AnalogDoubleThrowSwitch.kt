@@ -69,7 +69,6 @@ class AnalogDoubleThrowSwitch(
     override val voltageSourceCount: Int get() = 1
 
     override fun stamp(analysis: AnalogCircuitAnalysis) {
-        println("--- stamp(): isOn = $isOn")
         analysis.stampVoltageSource(
             analogElement.nodes[0],
             if (isOn) analogElement.nodes[1] else analogElement.nodes[2],

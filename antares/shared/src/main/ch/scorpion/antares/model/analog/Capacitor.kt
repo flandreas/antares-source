@@ -43,12 +43,12 @@ class Capacitor(
 
     override fun read(reader: StoreReader) {
         super.read(reader)
-        capacitance = reader.readDouble("capacitance")
+        capacitance = reader.readString("capacitance").toDouble()
     }
 
     override fun write(writer: StoreWriter) {
         super.write(writer)
-        writer.writeDouble("capacitance", capacitance)
+        writer.writeString("capacitance", capacitance.toString())
     }
 
     /** ---- [AnalogElement] */

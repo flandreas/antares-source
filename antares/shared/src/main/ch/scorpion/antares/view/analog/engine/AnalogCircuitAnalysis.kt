@@ -23,7 +23,7 @@ class AnalogCircuitAnalysis(
 		/** The default value of the [PROP_TIME_STEP] property.*/
 		const val DEF_TIME_STEP = 1E-2F
 
-		const val MIN_TIME_STEP = 1E-3F
+		const val MIN_TIME_STEP = 1E-5F
 		const val MAX_TIME_STEP = 1E-1F
 
 		/**
