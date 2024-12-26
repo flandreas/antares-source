@@ -8,12 +8,19 @@ import kotlin.math.abs
 
 /**
  * Contains the pure inductor logic to be used in various [AnalogVertices][AnalogVertice].
+ * @property postBase the index in [analogElem]'s posts where this [InductorLogic]'s post start
  */
 class InductorLogic(
-    private val analogElem: AnalogElement
+    private val analogElem: AnalogElement,
+    private val postBase: Int = 0
 ) {
     companion object {
         private val LOG by logger(InductorLogic::class)
+
+        /** The default inductance for new [Inductor]s (in microhenry). */
+        const val DEF_INDUCTANCE = 10.0
+
+        const val DEF_TRAPEZOIDAL = true
 
         /** The minimum voltage difference between the two [AnalogPort] for which recalculation is done.*/
         private const val VOLTAGE_LIMIT = 0.01
@@ -25,13 +32,13 @@ class InductorLogic(
 
     private var current: Double = 0.0
 
-    private var isTrapezoidal: Boolean = false
+    private var isTrapezoidal: Boolean = DEF_TRAPEZOIDAL
 
     private var resistance: Double = 0.0
 
     private var curSourceValue: Double = 0.0
 
-    private val voltDiff: Double get() = analogElem.getNodeVoltage(0) - analogElem.getNodeVoltage(1)
+    private val voltDiff: Double get() = analogElem.getNodeVoltage(postBase) - analogElem.getNodeVoltage(postBase + 1)
 
     fun setup(inductance: Double, current: Double, isTrapezoidal: Boolean) {
         this.inductance = inductance
@@ -49,9 +56,9 @@ class InductorLogic(
         } else {
             inductance * 1e-6 / analysis.timeStep
         }
-        analysis.stampResistor(analogElem.getNode(0), analogElem.getNode(1), resistance)
-        analysis.stampRightSide(analogElem.getNode(0))
-        analysis.stampRightSide(analogElem.getNode(1))
+        analysis.stampResistor(analogElem.getNode(postBase), analogElem.getNode(postBase + 1), resistance)
+        analysis.stampRightSide(analogElem.getNode(postBase))
+        analysis.stampRightSide(analogElem.getNode(postBase + 1))
     }
 
     fun startIteration() {
@@ -64,7 +71,7 @@ class InductorLogic(
 
     fun calculateCurrent() {
         if (resistance > 0.0) {
-            analogElem.setInternalCurrent(0, voltDiff / resistance + curSourceValue)
+            analogElem.setInternalCurrent(postBase, voltDiff / resistance + curSourceValue)
         }
     }
 
@@ -73,7 +80,7 @@ class InductorLogic(
             LOG.trace("voltDiff = $voltDiff")
         }
 
-        analysis.stampCurrentSource(analogElem.getNode(0), analogElem.getNode(1), curSourceValue)
+        analysis.stampCurrentSource(analogElem.getNode(postBase), analogElem.getNode(postBase + 1), curSourceValue)
 
         if (abs(voltDiff) >= VOLTAGE_LIMIT) {
             return true

@@ -33,7 +33,7 @@ class AnalogSwitch(
 		}
 	}
 
-	private val logic = AnalogSwitchLogic(this, this::isOn)
+	private val logic = AnalogSwitchLogic(this, 0, ::isOn)
 
 	override val type: String get() = Translations.getString("${BASE_RESOURCE_KEY}.name")
 

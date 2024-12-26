@@ -9,28 +9,32 @@ import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
-class Inductor(
+class AnalogRelay(
     inductance: Double = InductorLogic.DEF_INDUCTANCE
-) : AbstractAnalogTwoPortVertice<Inductor>(
+) : AbstractAnalogVertice<AnalogRelay>(
     EmptyVerticeCalculator,
-    "library.element.Inductor",
-    AnalogElementMixin(true)
+    "library.element.AnalogRelay",
+    AnalogElementMixin(true, 5)
 ) {
+    // TODO: Dynamic
+    private var isOn: Boolean = false
 
-    private val logic = InductorLogic(this)
+    private val inductorLogic = InductorLogic(this, 0)
 
-    /** The inductance of this [Inductor] in microhenry.*/
+    private val switchLogic = AnalogSwitchLogic(this, 2, ::isOn)
+
+    /** The inductance of this [AnalogRelay] in microhenry.*/
     var inductance: Double
-        get() = logic.inductance
+        get() = inductorLogic.inductance
         set(value) {
-            if (logic.inductance != value) {
-                logic.setup(value, getInternalCurrent(), InductorLogic.DEF_TRAPEZOIDAL)
-                stateChanged(reason = MAIN_PROPERTY_STATE)
+            if (inductorLogic.inductance != value) {
+                inductorLogic.setup(value, 0.0, InductorLogic.DEF_TRAPEZOIDAL)
             }
         }
 
     init {
-        logic.setup(inductance, getInternalCurrent(), true)
+        (1..4).forEach { _ -> addPort(AnalogPort()) }
+        inductorLogic.setup(inductance, 0.0, InductorLogic.DEF_TRAPEZOIDAL)
     }
 
     /** ---- [Storable] interface */
@@ -50,23 +54,26 @@ class Inductor(
     override fun reset() {
         super.reset()
         analogElem.reset()
-        logic.reset()
+        inductorLogic.reset()
     }
 
+    override val voltageSourceCount: Int get() = switchLogic.voltageSourceCount
+
     override fun stamp(analysis: AnalogCircuitAnalysis) {
-        logic.stamp(analysis)
+        inductorLogic.stamp(analysis)
+        switchLogic.stamp(analysis)
     }
 
     override fun startIteration() {
-        logic.startIteration()
+        inductorLogic.startIteration()
     }
 
     override fun calculateCurrent() {
-        logic.calculateCurrent()
+        inductorLogic.calculateCurrent()
     }
 
     override fun doStep(analysis: AnalogCircuitAnalysis, signalHandler: SignalHandler) {
-        if (logic.doStepRequiresRecalculation(analysis, signalHandler)) {
+        if (inductorLogic.doStepRequiresRecalculation(analysis, signalHandler)) {
             requestAnalogGraphRecalculation(signalHandler)
         }
     }
