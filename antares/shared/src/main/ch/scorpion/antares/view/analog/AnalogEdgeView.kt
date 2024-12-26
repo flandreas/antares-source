@@ -170,6 +170,8 @@ class AnalogEdgeView(
 		analogNet.setNode(id, postId, nodeId)
 	}
 
+	override fun getNode(postId: Int): Int = analogNet.getNode(id, postId)
+
 	override fun setNodeVoltage(postId: Int, voltage: Double) {
 		analogNet.setNodeVoltage(id, postId, voltage)
 		calculateCurrent()
@@ -187,6 +189,8 @@ class AnalogEdgeView(
 	override fun setVoltageSource(index: Int, sourceId: Int) {
 		// voltageSourceCount is 0, so this is not needed
 	}
+
+	override fun getVoltageSource(index: Int): Int = 0
 
 	override fun stamp(analysis: AnalogCircuitAnalysis) {
 		analysis.stampResistor(

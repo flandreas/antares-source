@@ -29,7 +29,11 @@ interface AnalogElement {
 	/** Associates a [postId] (smaller than [postCount]) with the ID of the node voltage variable in the matrix. */
 	fun setNode(postId: Int, nodeId: Int)
 
+	fun getNode(postId: Int): Int
+
 	fun setVoltageSource(index: Int, sourceId: Int)
+
+	fun getVoltageSource(index: Int): Int
 
 	fun getPost(elem: GraphElementView<*>, postId: Int): Connection<*>?
 
@@ -93,10 +97,14 @@ class AnalogElementMixin(
 		nodes[postId] = nodeId
 	}
 
+	override fun getNode(postId: Int): Int = nodes[postId]
+
 	override fun setVoltageSource(index: Int, sourceId: Int) {
 		// Currently only 1 supported
 		voltageSource = sourceId
 	}
+
+	override fun getVoltageSource(index: Int): Int = voltageSource
 
 	override fun setNodeVoltage(postId: Int, voltage: Double) {
 		voltages[postId] = voltage
@@ -153,9 +161,13 @@ class AnalogElementProxy : AnalogElement {
 		model.setNode(postId, nodeId)
 	}
 
+	override fun getNode(postId: Int): Int = model.getNode(postId)
+
 	override fun setVoltageSource(index: Int, sourceId: Int) {
 		model.setVoltageSource(index, sourceId)
 	}
+
+	override fun getVoltageSource(index: Int): Int = model.getVoltageSource(index)
 
 	override fun getPost(elem: GraphElementView<*>, postId: Int): Connection<*>? = model.getPost(elem, postId)
 

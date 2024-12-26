@@ -33,11 +33,13 @@ class AnalogSwitch(
 		}
 	}
 
+	private val logic = AnalogSwitchLogic(this, this::isOn)
+
 	override val type: String get() = Translations.getString("${BASE_RESOURCE_KEY}.name")
 
 	override val typeDesc: String? get() = Translations.getOptionalString("${BASE_RESOURCE_KEY}.desc")
 
-	override val resistance: Double get() = if (isOn) 0.0 else 100_000_000.0
+	override val resistance: Double get() = logic.resistance
 
 	init {
 		analogElement.bindAnalogElement(this)
@@ -59,12 +61,10 @@ class AnalogSwitch(
 
 	/** ---- [AnalogElement] */
 
-	override val voltageSourceCount: Int get() = if (isOn) 1 else 0
+	override val voltageSourceCount: Int get() = logic.voltageSourceCount
 
 	override fun stamp(analysis: AnalogCircuitAnalysis) {
-		if (isOn) {
-			analysis.stampVoltageSource(analogElement.nodes[0], analogElement.nodes[1], analogElement.voltageSource, 0.0)
-		}
+		logic.stamp(analysis)
 	}
 
 	override fun calculateCurrent() { }
