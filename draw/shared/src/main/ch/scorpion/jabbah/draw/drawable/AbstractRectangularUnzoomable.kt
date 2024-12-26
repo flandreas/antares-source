@@ -42,6 +42,8 @@ abstract class AbstractRectangularUnzoomable(
 	val width: Double get() = 2 * halfSize
 	val height: Double get() = 2 * halfSize
 
+	val viewLocation: Point2D get() = zoomPan!!.transform.modelToView(location).divide(zoomPan!!.devicePixelRatio())
+
 	/** Holds the bounding box in model coordinate space. */
 	private val bboxModel = Rectangle2D()
 
@@ -68,7 +70,7 @@ abstract class AbstractRectangularUnzoomable(
 
 	/** Returns the rectangle in view coordinate space.*/
 	protected fun getViewRectangle(): Rectangle2D {
-		val p = zoomPan!!.transform.modelToView(location).divide(zoomPan!!.devicePixelRatio())
+		val p = viewLocation
 		return Rectangle2D(p.x - halfSize, p.y - halfSize, 2 * halfSize, 2 * halfSize)
 	}
 }

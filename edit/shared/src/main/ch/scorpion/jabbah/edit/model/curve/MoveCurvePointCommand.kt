@@ -5,9 +5,9 @@ import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.command.AbstractDrawingViewCommand
 
 /**
- * A [Command] for moving an individual point of a [QuadCurveComponent].
+ * A [Command] for moving an individual point of an [AbstractCurveComponent].
  */
-class MoveQuadCurvePointCommand(
+class MoveCurvePointCommand(
 	val drawingView: DrawingView<*>,
 	val curveId: Int,
 	val index: Int,
@@ -15,7 +15,7 @@ class MoveQuadCurvePointCommand(
 	val newLocation: Point2D
 ) : AbstractDrawingViewCommand("edit.model.polyline.movePoint", drawingView), Undoable {
 
-	private val curve: QuadCurveComponent get() = drawingView.drawing.getWithId(curveId)!!.selectableComponent as QuadCurveComponent
+	private val curve: AbstractCurveComponent get() = drawingView.drawing.getWithId(curveId)!!.selectableComponent as AbstractCurveComponent
 
 	override fun execute() {
 		curve.setPointAt(index, newLocation)

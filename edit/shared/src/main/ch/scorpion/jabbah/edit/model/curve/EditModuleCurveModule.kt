@@ -7,12 +7,18 @@ import ch.scorpion.jabbah.edit.select.EditSelectModule
 /**
  * Module definitions for the [ch.scorpion.jabbah.edit.model.curve] package.
  */
-object EditModuleQuadCurveModule : AbstractModule() {
+object EditModuleCurveModule : AbstractModule() {
 
 	override fun initialize() {
 		EditSelectModule.selectionModelFactory.register(
 			SelectionDrawingStrategy.ABOVE,
 			QuadCurveComponent::class
 		) { QuadCurveReplaceSelectionModel(it as QuadCurveComponent) }
+
+		EditSelectModule.selectionModelFactory.register(
+			SelectionDrawingStrategy.ABOVE,
+			CubicCurveComponent::class
+		) { CubicCurveReplaceSelectionModel(it as CubicCurveComponent) }
+
 	}
 }

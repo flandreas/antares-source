@@ -51,6 +51,8 @@ interface Graphics2D {
     /** Draws a line between the points (x1, y1) and (x2, y2) in this [Graphics2D]'s current coordinate system.*/
     fun drawLine(x1: Double, y1: Double, x2: Double, y2: Double)
 
+    fun drawLine(p1: Point2D, p2: Point2D) = drawLine(p1.x, p1.y, p2.x, p2.y)
+
     fun drawRect(x: Int, y: Int, w: Int, h: Int)
 
     fun drawRect(x: Double, y: Double, w: Double, h: Double)

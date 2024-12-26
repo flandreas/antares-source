@@ -19,7 +19,9 @@ import ch.scorpion.jabbah.edit.app.ComponentSnapAction
 import ch.scorpion.jabbah.edit.app.GridSnapAction
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
-import ch.scorpion.jabbah.edit.model.QuadCurveTool
+import ch.scorpion.jabbah.edit.model.curve.CubicCurveTool
+import ch.scorpion.jabbah.edit.model.curve.CubicCurveComponent
+import ch.scorpion.jabbah.edit.model.curve.QuadCurveTool
 import ch.scorpion.jabbah.edit.model.curve.QuadCurveComponent
 import ch.scorpion.jabbah.edit.model.polyline.PolylineComponent
 import ch.scorpion.jabbah.edit.model.polyline.PolylineTool
@@ -147,6 +149,7 @@ class GraphPanelViewController(
 	val ellipseTool: Tool = RectangleTool(editor, factory = { EllipseComponent() }, adder = { GraphElementViewWrapper(it) })
 	val polylineTool: Tool = PolylineTool(editor, factory = { PolylineComponent() }, adder = { GraphElementViewWrapper(it) })
 	val quadCurveTool: Tool = QuadCurveTool(editor, factory = { QuadCurveComponent() }, adder = { GraphElementViewWrapper(it) })
+	val cubicCurveTool: Tool = CubicCurveTool(editor, factory = { CubicCurveComponent() }, adder = { GraphElementViewWrapper(it) })
 	val textTool: Tool = TextTool(editor, factory = { EditModelTextModule.textComponentFactory.create(TranslatableText("Text"))}, adder = { GraphElementViewWrapper(it) })
 
 	private val applicationModeBeginHandler: EventHandler<ApplicationModeBeginEvent> = { handle(it) }

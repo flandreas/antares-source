@@ -67,7 +67,7 @@ abstract class AbstractGraphics2D : Graphics2D {
 
 	abstract fun quadraticCurveTo(xc: Double, yc: Double, x1: Double, y1: Double)
 
-	abstract fun bezierCurveTo(xc1: Double, yc1: Double, xc2: Double, yc2: Double, x1: Double, y1: Double)
+	abstract fun cubicCurveTo(xc1: Double, yc1: Double, xc2: Double, yc2: Double, x1: Double, y1: Double)
 
 	abstract fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean = false)
 
@@ -173,10 +173,10 @@ abstract class AbstractGraphics2D : Graphics2D {
 		val ym = y + h / 2
 
 		moveTo(x, ym)
-		bezierCurveTo(x, ym - oy, xm - ox, y, xm, y)
-		bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym)
-		bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye)
-		bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym)
+		cubicCurveTo(x, ym - oy, xm - ox, y, xm, y)
+		cubicCurveTo(xm + ox, y, xe, ym - oy, xe, ym)
+		cubicCurveTo(xe, ym + oy, xm + ox, ye, xm, ye)
+		cubicCurveTo(xm - ox, ye, x, ym + oy, x, ym)
 	}
 
 	protected fun playRing(x: Double, y: Double, w: Double, h: Double, thickness: Double) {

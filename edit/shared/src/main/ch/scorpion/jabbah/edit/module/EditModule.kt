@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.draw.graphics.Image
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.CommandManager
@@ -22,7 +21,8 @@ import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.find.DrawingViewSearch
 import ch.scorpion.jabbah.edit.model.CopyPasteService
 import ch.scorpion.jabbah.edit.model.DrawingImpl
-import ch.scorpion.jabbah.edit.model.curve.EditModuleQuadCurveModule
+import ch.scorpion.jabbah.edit.model.curve.CubicCurveComponent
+import ch.scorpion.jabbah.edit.model.curve.EditModuleCurveModule
 import ch.scorpion.jabbah.edit.model.curve.QuadCurveComponent
 import ch.scorpion.jabbah.edit.model.group.EditModelGroupModule
 import ch.scorpion.jabbah.edit.model.group.GroupComponent
@@ -84,7 +84,7 @@ object EditModule : AbstractModule() {
         EditModelPolylineModule.require()
         EditModelTextModule.require()
 	    EditModelGroupModule.require()
-		EditModuleQuadCurveModule.require()
+		EditModuleCurveModule.require()
         EditSnapModule.require()
 	    EditDragModule.require()
         EditSelectModule.require()
@@ -109,6 +109,7 @@ object EditModule : AbstractModule() {
         typeMap.register("text", SimpleTextComponent::class)
         typeMap.register("group", GroupComponent::class)
         typeMap.register("quadCurve", QuadCurveComponent::class)
+        typeMap.register("cubicCurve", CubicCurveComponent::class)
 	    typeMap.register("translation", Translation::class)
         typeMap.register("image", ImageComponent::class)
     }

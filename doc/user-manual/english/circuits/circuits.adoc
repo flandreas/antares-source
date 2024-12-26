@@ -151,7 +151,9 @@ image:user-manual/circuits/ellipse.png[Ellipse] **Ellipse** Click the left mouse
 
 image:user-manual/circuits/polyline.gif[Polyline] **Polyline** Click the left mouse button to set the points of a polyline. A double click terminates the creation of the polyline. To add further points later, you can select the polyline and double-click on a segment of the polyline. If you move an intermediate point to another intermediate point, the two points will be merged into a single point.
 
-image:user-manual/circuits/curve-20.png[Curve] **Curve** Click with the mouse at three points to define the three points of a curve. The three points are the support points of a square Bézier curve.
+image:user-manual/circuits/curve-20.png[Quadradic Curve] **Quadratic Curve** Click with the mouse at three points to define the three points of a quadratic curve. The three points are the defining points of a quadratic Bézier curve.
+
+image:user-manual/circuits/curve-20.png[Cubic Curve] **Cubic Curve** Click with the mouse at four points to define the four points of a cubic curve. The four points are the defining points of a cubic Bézier curve.
 
 image:user-manual/circuits/text.gif[Text] **Text** A click with the left mouse button creates a text component with a standard text. Double-click on the text to change the text or use the "Text" attribute in the Antares properties window. The text can contain several lines. The horizontal alignment of the text can be changed in the properties. Change the size of the text box by editing it like a rectangle.
 

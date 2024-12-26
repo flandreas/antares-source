@@ -59,7 +59,7 @@ class Graphics2DJs(
 		ctx.quadraticCurveTo(xc, yc, x1, y1)
 	}
 
-	override fun bezierCurveTo(xc1: Double, yc1: Double, xc2: Double, yc2: Double, x1: Double, y1: Double) {
+	override fun cubicCurveTo(xc1: Double, yc1: Double, xc2: Double, yc2: Double, x1: Double, y1: Double) {
 		ctx.bezierCurveTo(xc1, yc1, xc2, yc2, x1, y1)
 	}
 
