@@ -177,6 +177,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val ANALOG_POWER = "AnalogPower"
 	private const val CAPACITOR = "Capacitor"
 	private const val INDUCTOR = "Inductor"
+	private const val ANALOG_RELAY = "AnalogRelay"
 
 	val currentSymbolStyle: CurrentSymbolStyle by lazy {CurrentSymbolStyle() }
 
@@ -396,6 +397,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("analogCircuitInOutView", AnalogCircuitInOutView::class)
 		typeMap.register("analogPowerView", AnalogPowerView::class)
 		typeMap.register("inductorView", InductorView::class)
+		typeMap.register("analogRelayView", AnalogRelayView::class)
 	}
 
 	private fun configureSelectionModels(factory: SelectionModelFactory) {
@@ -476,6 +478,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogPowerView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogPushButtonSwitchView::class) { RectangularVerticeViewSelectionModel(it as AnalogPushButtonSwitchView) }
 		factory.register(SelectionDrawingStrategy.REPLACE, InductorView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, AnalogRelayView::class) { SelectedColorSelectionModel(it) }
 	}
 
 	private fun configureHighlightModels(factory: SelectionModelFactory) {
@@ -673,6 +676,8 @@ object AntaresViewModule : AbstractModule() {
 			AnalogCircuitInOutView(model = AnalogCircuitInOut(portType = PortType.OUTPUT))
 		}
 		repository.register(ANALOG_POWER, "library.element.AnalogPower", { "/img/power.png" }, AnalogPowerView::class)
+		// TODO Icon by Janis
+		repository.register(ANALOG_RELAY, "library.element.AnalogRelay", { "/img/power.png" }, AnalogRelayView::class)
 	}
 
 	fun fillBaseElementLibrary(library: Library) {
@@ -764,6 +769,7 @@ object AntaresViewModule : AbstractModule() {
 		addLibraryItem(library, BaseLibraryElement(Analog, CURRENT_SOURCE), analog)
 		addLibraryItem(library, BaseLibraryElement(Analog, CAPACITOR), analog)
 		addLibraryItem(library, BaseLibraryElement(Analog, INDUCTOR), analog)
+		addLibraryItem(library, BaseLibraryElement(Analog, ANALOG_RELAY), analog)
 	}
 
 	private fun addLibraryItem(library: Library, item: LibraryItem, directory: LibraryDirectory) {

@@ -186,7 +186,7 @@ abstract class AbstractFileLibraryPersistenceService(
 		try {
 			return loadLibrary(inputStream)
 		} catch (e: Throwable) {
-			LOG.error("Error while loading Library $${libraryId.uuid}: ${e.message}")
+			LOG.error("Error while loading Library ${libraryId.uuid}: ${e.message}")
 			throw LibraryPersistenceServiceException(e.message)
 		}
 	}

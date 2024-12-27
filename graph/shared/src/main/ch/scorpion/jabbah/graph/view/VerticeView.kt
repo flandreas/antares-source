@@ -57,4 +57,7 @@ interface VerticeView<T : Vertice>
 	 * information flow from the [InputPort] with name [inputName] to the [OutputPort] with name [outputName].
 	 */
 	fun drawDataFlow(inputName: String, outputName: String, context: DrawContext)
+
+	fun drawFocus(context: DrawContext) {}
+
 }

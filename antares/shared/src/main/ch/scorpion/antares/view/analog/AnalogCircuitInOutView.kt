@@ -157,7 +157,7 @@ class AnalogCircuitInOutView(
 			arrowPath!!.path.boundingBox.center.addY(ArrowPath.ARROW_SIZE / 2)
 		}
 
-	private fun drawFocus(context: DrawContext) {
+	override fun drawFocus(context: DrawContext) {
 		if (isFocusOwner) {
 			context.g.color = transparent.applyTo(Themes.get<AntaresTheme>().focus.color.foregroundColor)
 			context.g.stroke = Themes.get<AntaresTheme>().focus.stroke

@@ -161,7 +161,7 @@ class JoystickView(
 		context.g.fillCircle(bounds.centerX + knobPosition.x, bounds.centerY + knobPosition.y, KNOB_RADIUS)
 	}
 
-	private fun drawFocus(context: DrawContext) {
+	override fun drawFocus(context: DrawContext) {
 		if (isFocusOwner) {
 			context.g.color = transparent.applyTo(Themes.get<AntaresTheme>().focus.color.foregroundColor)
 			context.g.stroke = Themes.get<AntaresTheme>().focus.stroke

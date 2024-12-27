@@ -1,7 +1,6 @@
 package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.model.input.AbstractSwitch
-import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.Look.SCALE
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
@@ -23,6 +22,7 @@ import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapte
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
+import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -38,13 +38,60 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 		private val PUSH_DASHED_STROKE = Stroke(1f, LineCap.BUTT, LineJoin.MITER, 1.0f, floatArrayOf(2.0f, 2.0f), 0.0f)
 
 		@JvmStatic
-		protected val REAL_SWITCH_WIDTH = 6 * Look.SCALE
+		protected val REAL_SWITCH_WIDTH = 6 * SCALE
 
 		@JvmStatic
-		protected val REAL_SWITCH_HEIGHT_ABOVE = 4 * Look.SCALE
+		protected val REAL_SWITCH_HEIGHT_ABOVE = 4 * SCALE
 
 		@JvmStatic
-		protected val REAL_SWITCH_HEIGHT_BELOW = 1 * Look.SCALE
+		protected val REAL_SWITCH_HEIGHT_BELOW = 1 * SCALE
+
+		fun drawTwoPortRealSwitchShape(
+			verticeView: VerticeView<*>,
+			portBase: Int,
+			isOn: Boolean,
+			context: DrawContext,
+			minX: Double,
+			circleRadius: Double,
+			drawHandle: Boolean = true
+		) {
+			// Push annotation
+			context.g.stroke = Themes.get<AntaresTheme>().figure.stroke
+			context.g.color = context.chooseForeground(verticeView.foregroundColor)
+			if (isOn) {
+				if (drawHandle) {
+					context.g.drawLine(minX + w(1.75), h(-2.0), minX + w(4.25), h(-2.0))
+				}
+				context.g.stroke = PUSH_DASHED_STROKE
+				context.g.drawLine(minX + w(3), h(-2.0), minX + w(3), 0.0)
+			} else {
+				if (drawHandle) {
+					context.g.drawLine(minX + w(1.75), h(-3.5), minX + w(4.25), h(-3.5))
+				}
+				context.g.stroke = PUSH_DASHED_STROKE
+				context.g.drawLine(minX + w(3), h(-3.5), minX + w(3), h(-1.25))
+			}
+
+			// Side of port 1
+			(verticeView.getPortView(verticeView.model.getPort(portBase)) as AbstractAntaresPortView).prepareConnectionDrawContext(context)
+			context.g.drawLine(minX, 0.0, minX + w(1.0), 0.0)
+			if (isOn) {
+				context.g.drawLine(minX + w(1.0), 0.0, minX + REAL_SWITCH_WIDTH - w(1.0), 0.0)
+			} else {
+				context.g.drawLine(minX + w(1.0), 0.0, minX + REAL_SWITCH_WIDTH - w(1.5), h(-2.0))
+			}
+			context.g.fillCircle(minX + w(1.0), 0.0, circleRadius)
+
+			// Side of port 2
+			(verticeView.getPortView(verticeView.model.getPort(portBase + 1)) as AbstractAntaresPortView).prepareConnectionDrawContext(context)
+			context.g.drawLine(minX + REAL_SWITCH_WIDTH - w(1.0), 0.0, minX + REAL_SWITCH_WIDTH, 0.0)
+			context.g.fillCircle(minX + REAL_SWITCH_WIDTH - w(1.0), 0.0, circleRadius)
+
+			// Focus
+			if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+				verticeView.drawFocus(context)
+			}
+		}
 	}
 
 	/** Handles mouse interactions during execution*/
@@ -118,7 +165,7 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 
 	protected open val circleRadius: Double get() = DEF_CIRCLE_RADIUS
 
-	protected open fun drawFocus(context: DrawContext) {
+	override fun drawFocus(context: DrawContext) {
 		if (isFocusOwner) {
 			context.g.color = transparent.applyTo(Themes.get<AntaresTheme>().focus.color.foregroundColor)
 			context.g.stroke = Themes.get<AntaresTheme>().focus.stroke
@@ -127,38 +174,7 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 	}
 
 	protected fun drawTwoPortRealSwitchShape(context: DrawContext) {
-		// Push annotation
-		context.g.stroke = Themes.get<AntaresTheme>().figure.stroke
-		context.g.color = context.chooseForeground(foregroundColor)
-		if (model.isOn) {
-			context.g.drawLine(bounds.minX + w(1.75), h(-2.0), bounds.minX + w(4.25), h(-2.0))
-			context.g.stroke = PUSH_DASHED_STROKE
-			context.g.drawLine(bounds.minX + w(3), h(-2.0), bounds.minX + w(3), 0.0)
-		} else {
-			context.g.drawLine(bounds.minX + w(1.75), h(-3.5), bounds.minX + w(4.25), h(-3.5))
-			context.g.stroke = PUSH_DASHED_STROKE
-			context.g.drawLine(bounds.minX + w(3), h(-3.5), bounds.minX + w(3), h(-1.25))
-		}
-
-		// Side of port 1
-		(getPortView(model.getPort(1)) as AbstractAntaresPortView).prepareConnectionDrawContext(context)
-		context.g.drawLine(bounds.minX, 0.0, bounds.minX + w(1.0), 0.0)
-		if (model.isOn) {
-			context.g.drawLine(bounds.minX + w(1.0), 0.0, bounds.maxX - w(1.0), 0.0)
-		} else {
-			context.g.drawLine(bounds.minX + w(1.0), 0.0, bounds.maxX - w(1.5), h(-2.0))
-		}
-		context.g.fillCircle(bounds.minX + w(1.0), 0.0, circleRadius)
-
-		// Side of port 2
-		(getPortView(model.getPort(2)) as AbstractAntaresPortView).prepareConnectionDrawContext(context)
-		context.g.drawLine(bounds.maxX - w(1.0), 0.0, bounds.maxX, 0.0)
-		context.g.fillCircle(bounds.maxX - w(1.0), 0.0, circleRadius)
-
-		// Focus
-		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-			drawFocus(context)
-		}
+		drawTwoPortRealSwitchShape(this, 1, model.isOn, context, bounds.minX, circleRadius)
 	}
 
 	protected fun drawThreePortRealSwitchShape(context: DrawContext) {

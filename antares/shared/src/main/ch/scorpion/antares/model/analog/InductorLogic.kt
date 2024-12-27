@@ -69,10 +69,11 @@ class InductorLogic(
         }
     }
 
-    fun calculateCurrent() {
+    fun calculateCurrent(): Double {
         if (resistance > 0.0) {
             analogElem.setInternalCurrent(postBase, voltDiff / resistance + curSourceValue)
         }
+        return analogElem.getInternalCurrent()
     }
 
     fun doStepRequiresRecalculation(analysis: AnalogCircuitAnalysis, signalHandler: SignalHandler): Boolean {
