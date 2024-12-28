@@ -95,6 +95,7 @@ enum class SymbolStyle(
 
 		override fun drawInductor(
 			inductor: OrientableRectangularVerticeView<*>,
+			up: Boolean,
 			context: DrawContext,
 			foregroundColor: Paint,
 			backgroundColor: Color,
@@ -103,7 +104,7 @@ enum class SymbolStyle(
 			if (inductor.shadow) {
 				DropShadow.draw(context, transparency = inductor.transparency) {
 					context.g.fillRect(
-						-LENGTH.toDouble() - INDUCTOR_WIDTH, -INDUCTOR_HEIGHT_HALF,
+						LENGTH.toDouble() + INDUCTOR_WIDTH, -INDUCTOR_HEIGHT_HALF,
 						INDUCTOR_WIDTH, 2 * INDUCTOR_HEIGHT_HALF
 					)
 				}
@@ -115,7 +116,7 @@ enum class SymbolStyle(
 				context.g.paint = foregroundColor
 			}
 			context.g.fillRect(
-				-LENGTH.toDouble() - INDUCTOR_WIDTH, -INDUCTOR_HEIGHT_HALF,
+				LENGTH.toDouble() + INDUCTOR_WIDTH, -INDUCTOR_HEIGHT_HALF,
 				INDUCTOR_WIDTH, 2 * INDUCTOR_HEIGHT_HALF
 			)
 		}
@@ -183,6 +184,7 @@ enum class SymbolStyle(
 
 		override fun drawInductor(
 			inductor: OrientableRectangularVerticeView<*>,
+			up: Boolean,
 			context: DrawContext,
 			foregroundColor: Paint,
 			backgroundColor: Color,
@@ -190,7 +192,7 @@ enum class SymbolStyle(
 		) {
 			context.g.paint = foregroundColor
 			context.g.stroke = getInductorStroke(inductor.stroke)
-			context.g.draw(INDUCTOR_PATH)
+			context.g.draw(if (up) INDUCTOR_PATH_UP else INDUCTOR_PATH_DOWN)
 		}
 
 		override val orShapeConnectedPortViewLength: Int get() = (2 * SCALE * 0.35).toInt()
@@ -249,12 +251,13 @@ enum class SymbolStyle(
 
 		override fun drawInductor(
 			inductor: OrientableRectangularVerticeView<*>,
+			up: Boolean,
 			context: DrawContext,
 			foregroundColor: Paint,
 			backgroundColor: Color,
 			stroke: Stroke
 		) {
-			EUROPEAN.drawInductor(inductor, context, foregroundColor, backgroundColor, stroke)
+			EUROPEAN.drawInductor(inductor, true, context, foregroundColor, backgroundColor, stroke)
 		}
 	};
 
@@ -332,21 +335,24 @@ enum class SymbolStyle(
 			join = LineJoin.MITER
 		)
 
-
-		const val INDUCTOR_WIDTH = 6.0 * SCALE.toDouble()
-		const val INDUCTOR_HEIGHT_HALF = SCALE.toDouble()
-		val INDUCTOR_STROKE = RESISTOR_STROKE
-		private val INDUCTOR_PATH = System.createPath()
-			.moveTo(-LENGTH, 0)
-			.curveTo(-LENGTH.toDouble(), -1.5 * INDUCTOR_HEIGHT_HALF, -LENGTH - 2.0 * SCALE, -1.5 * INDUCTOR_HEIGHT_HALF, -LENGTH - 2.0 * SCALE, 0.0)
-			.curveTo(-LENGTH.toDouble() - 2.0 * SCALE, -1.5 * INDUCTOR_HEIGHT_HALF, -LENGTH - 4.0 * SCALE, -1.5 * INDUCTOR_HEIGHT_HALF, -LENGTH - 4.0 * SCALE, 0.0)
-			.curveTo(-LENGTH.toDouble() - 4.0 * SCALE, -1.5 * INDUCTOR_HEIGHT_HALF, -LENGTH - 6.0 * SCALE, -1.5 * INDUCTOR_HEIGHT_HALF, -LENGTH - 6.0 * SCALE, 0.0)
-
 		private val VARIABLE_RESISTOR_ARROW_PATH = System.createPath()
 			.moveTo(0, -3 * SCALE)
 			.lineTo(0.5 * SCALE, -2.0 * SCALE)
 			.lineTo(-0.5 * SCALE, -2.0 * SCALE)
 			.close()
+
+		const val INDUCTOR_WIDTH = 6.0 * SCALE.toDouble()
+		const val INDUCTOR_HEIGHT_HALF = SCALE.toDouble()
+		val INDUCTOR_STROKE = RESISTOR_STROKE
+		private val INDUCTOR_PATH_UP = createInductorPath(1.0)
+		private val INDUCTOR_PATH_DOWN = createInductorPath(-1.0)
+
+		private fun createInductorPath(yf: Double): Path =
+			System.createPath()
+				.moveTo(LENGTH, 0)
+				.curveTo(LENGTH.toDouble(), -1.5 * yf * INDUCTOR_HEIGHT_HALF, LENGTH + 2.0 * SCALE, -1.5 * yf * INDUCTOR_HEIGHT_HALF, LENGTH + 2.0 * SCALE, 0.0)
+				.curveTo(LENGTH.toDouble() + 2.0 * SCALE, -1.5 * yf * INDUCTOR_HEIGHT_HALF, LENGTH + 4.0 * SCALE, -1.5 * yf * INDUCTOR_HEIGHT_HALF, LENGTH + 4.0 * SCALE, 0.0)
+				.curveTo(LENGTH.toDouble() + 4.0 * SCALE, -1.5 * yf * INDUCTOR_HEIGHT_HALF, LENGTH + 6.0 * SCALE, -1.5 * yf * INDUCTOR_HEIGHT_HALF, LENGTH + 6.0 * SCALE, 0.0)
 
 		fun drawAmericanGate(gate: BoxGateView<*>, path: Path, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 			drawAmericanGate(gate, gate.x, gate.y, gate.bounds.height, path, context, foregroundColor, backgroundColor, stroke, false, gate.transparency)
@@ -440,6 +446,6 @@ enum class SymbolStyle(
 
 	abstract fun drawResistor(resistor: OrientableRectangularVerticeView<*>, isVariable: Boolean, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke)
 
-	abstract fun drawInductor(inductor: OrientableRectangularVerticeView<*>, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke)
+	abstract fun drawInductor(inductor: OrientableRectangularVerticeView<*>, up: Boolean, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke)
 
 }

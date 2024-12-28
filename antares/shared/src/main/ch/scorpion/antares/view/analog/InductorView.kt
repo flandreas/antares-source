@@ -29,11 +29,11 @@ class InductorView(
 
     override fun modelExchanged(oldModel: Inductor?) {
         super.modelExchanged(oldModel)
-        addPortView(AnalogPortView(styleProvider, model.getPort(1), -LENGTH, 0, Direction.EAST))
-        addPortView(AnalogPortView(styleProvider, model.getPort(2), -LENGTH - SymbolStyle.INDUCTOR_WIDTH.toInt(), 0, Direction.WEST))
+        addPortView(AnalogPortView(styleProvider, model.getPort(1), LENGTH, 0, Direction.WEST))
+        addPortView(AnalogPortView(styleProvider, model.getPort(2), LENGTH + SymbolStyle.INDUCTOR_WIDTH.toInt(), 0, Direction.EAST))
         setBounds(
-            -LENGTH.toDouble() - SymbolStyle.INDUCTOR_WIDTH, -SymbolStyle.INDUCTOR_HEIGHT_HALF,
-            SymbolStyle.INDUCTOR_WIDTH, 2 * SymbolStyle.INDUCTOR_HEIGHT_HALF)
+            LENGTH.toDouble(), -SymbolStyle.INDUCTOR_HEIGHT_HALF,
+            LENGTH.toDouble() + SymbolStyle.INDUCTOR_WIDTH, 2 * SymbolStyle.INDUCTOR_HEIGHT_HALF)
         updateLabel()
     }
 
@@ -51,6 +51,7 @@ class InductorView(
 
         AntaresViewModule.currentSymbolStyle.symbolStyle.drawInductor(
             this,
+            true,
             context,
             applicableForegroundColor,
             context.chooseBackground(backgroundColor),

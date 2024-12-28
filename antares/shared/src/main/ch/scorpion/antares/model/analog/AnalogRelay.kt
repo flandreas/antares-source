@@ -87,11 +87,12 @@ class AnalogRelay(
         inductorLogic.startIteration()
 
         // Calculate switch on/off
-        isOn = abs(coilCurrent) >= onCurrent
+        isOn = coilCurrent >= onCurrent
     }
 
     override fun calculateCurrent() {
         coilCurrent = inductorLogic.calculateCurrent()
+        println("coilCurrent $coilCurrent")
     }
 
     override fun doStep(analysis: AnalogCircuitAnalysis, signalHandler: SignalHandler) {
