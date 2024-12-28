@@ -18,7 +18,6 @@ import ch.scorpion.jabbah.graph.model.vertice.InteractableVertice
  * Interprets property [AbstractSwitch.isOn] as `true` if [Port] 2 is active, and as `false`
  * if [Port] 3 is active.
  */
-
 class AnalogDoubleThrowSwitch(
     private val analogElement: AnalogElementMixin = AnalogElementMixin(postCount = 3)
 ) : AbstractSwitch<AnalogDoubleThrowSwitch>(CALCULATOR),
@@ -37,6 +36,8 @@ class AnalogDoubleThrowSwitch(
             }
         }
     }
+
+    private val logic = AnalogDoubleThrowSwitchLogic(this, 0, ::isOn)
 
     override val type: String get() = Translations.getString("${BASE_RESOURCE_KEY}.name")
 
@@ -59,21 +60,16 @@ class AnalogDoubleThrowSwitch(
 
     /** ---- [AnalogDoubleThrowSwitch] */
 
-
     private fun requestAnalogGraphReanalization(signalHandler: SignalHandler) {
         stateChanged(signalHandler, AbstractAnalogVertice.REQUEST_REANALYZE)
     }
 
     /** ---- [AnalogElement] */
 
-    override val voltageSourceCount: Int get() = 1
+    override val voltageSourceCount: Int get() = logic.voltageSourceCount
 
     override fun stamp(analysis: AnalogCircuitAnalysis) {
-        analysis.stampVoltageSource(
-            analogElement.nodes[0],
-            if (isOn) analogElement.nodes[1] else analogElement.nodes[2],
-            analogElement.voltageSource,
-            0.0)
+        logic.stamp(analysis)
     }
 
     override fun calculateCurrent() { }

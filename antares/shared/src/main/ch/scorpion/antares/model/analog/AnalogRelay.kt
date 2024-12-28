@@ -11,12 +11,15 @@ import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import kotlin.math.abs
 
+/**
+ * A relay with single-pole SPDT ports.
+ */
 class AnalogRelay(
     inductance: Double = InductorLogic.DEF_INDUCTANCE
 ) : AbstractAnalogVertice<AnalogRelay>(
     EmptyVerticeCalculator,
     "library.element.AnalogRelay",
-    AnalogElementMixin(true, 4)
+    AnalogElementMixin(true, 5)
 ) {
     companion object {
         private const val DEF_ON_CURRENT = 0.02
@@ -27,7 +30,7 @@ class AnalogRelay(
 
     private val inductorLogic = InductorLogic(this, 0)
 
-    private val switchLogic = AnalogSwitchLogic(this, 2, ::isOn)
+    private val switchLogic = AnalogDoubleThrowSwitchLogic(this, 2, ::isOn)
 
     private var coilCurrent: Double = 0.0
 
@@ -48,7 +51,7 @@ class AnalogRelay(
         }
 
     init {
-        (1..4).forEach { _ -> addPort(AnalogPort()) }
+        (1..5).forEach { _ -> addPort(AnalogPort()) }
         inductorLogic.setup(inductance, 0.0, InductorLogic.DEF_TRAPEZOIDAL)
     }
 
@@ -76,7 +79,7 @@ class AnalogRelay(
         inductorLogic.reset()
     }
 
-    override val voltageSourceCount: Int get() = switchLogic.voltageSourceCount
+    //override val voltageSourceCount: Int get() = switchLogic.voltageSourceCount
 
     override fun stamp(analysis: AnalogCircuitAnalysis) {
         inductorLogic.stamp(analysis)
@@ -87,12 +90,11 @@ class AnalogRelay(
         inductorLogic.startIteration()
 
         // Calculate switch on/off
-        isOn = coilCurrent >= onCurrent
+        isOn = abs(coilCurrent) >= onCurrent
     }
 
     override fun calculateCurrent() {
         coilCurrent = inductorLogic.calculateCurrent()
-        println("coilCurrent $coilCurrent")
     }
 
     override fun doStep(analysis: AnalogCircuitAnalysis, signalHandler: SignalHandler) {

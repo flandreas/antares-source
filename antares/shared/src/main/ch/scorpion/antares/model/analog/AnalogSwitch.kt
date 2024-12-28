@@ -16,7 +16,7 @@ import ch.scorpion.jabbah.graph.model.vertice.InteractableVertice
 class AnalogSwitch(
 	private val analogElement: AnalogElementMixin = AnalogElementMixin()
 ) : AbstractSwitch<AnalogSwitch>(CALCULATOR),
-	ResistingAnalogVertice,
+	AnalogVertice,
 	AnalogTwoPortVertice,
 	AnalogElement by analogElement
 {
@@ -38,8 +38,6 @@ class AnalogSwitch(
 	override val type: String get() = Translations.getString("${BASE_RESOURCE_KEY}.name")
 
 	override val typeDesc: String? get() = Translations.getOptionalString("${BASE_RESOURCE_KEY}.desc")
-
-	override val resistance: Double get() = logic.resistance
 
 	init {
 		analogElement.bindAnalogElement(this)

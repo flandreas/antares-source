@@ -44,9 +44,10 @@ class AnalogRelayView(
         addPortView(AnalogPortView(styleProvider, model.getPort(1), LENGTH, 0, Direction.WEST))
         addPortView(AnalogPortView(styleProvider, model.getPort(2), LENGTH + INDUCTOR_WIDTH.toInt(), 0, Direction.EAST))
         addPortView(AnalogPortView(styleProvider, model.getPort(3), LENGTH, 5 * Look.SCALE, Direction.WEST))
-        addPortView(AnalogPortView(styleProvider, model.getPort(4), LENGTH + INDUCTOR_WIDTH.toInt(), 5 * Look.SCALE, Direction.EAST))
+        addPortView(AnalogPortView(styleProvider, model.getPort(4), LENGTH + INDUCTOR_WIDTH.toInt(), 3 * Look.SCALE, Direction.EAST))
+        addPortView(AnalogPortView(styleProvider, model.getPort(5), LENGTH + INDUCTOR_WIDTH.toInt(), 7 * Look.SCALE, Direction.EAST))
 
-        setBounds(LENGTH.toDouble(), -INDUCTOR_HEIGHT_HALF, LENGTH + INDUCTOR_WIDTH, 7.0 * Look.SCALE)
+        setBounds(LENGTH.toDouble(), -INDUCTOR_HEIGHT_HALF, LENGTH + INDUCTOR_WIDTH, 8.0 * Look.SCALE)
     }
 
     override fun drawImpl(context: DrawContext) {
@@ -73,7 +74,7 @@ class AnalogRelayView(
         )
 
         context.translated(0.0, 5.0 * Look.SCALE) {
-            AbstractSwitchView.drawTwoPortRealSwitchShape(this, 3, model.isOn, context, bounds.minX, DEF_CIRCLE_RADIUS, false)
+            AbstractSwitchView.drawThreePortRealSwitchShape(this, 3, model.isOn, context, bounds.minX, DEF_CIRCLE_RADIUS)
         }
 
         if (AntaresViewModule.currentSymbolStyle.symbolStyle == SymbolStyle.AMERICAN) {

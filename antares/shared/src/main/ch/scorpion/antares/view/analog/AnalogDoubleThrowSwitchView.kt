@@ -65,6 +65,4 @@ class AnalogDoubleThrowSwitchView(
             }
         }
     }
-
-    /** ---- [AnalogDoubleThrowSwitchView] */
 }

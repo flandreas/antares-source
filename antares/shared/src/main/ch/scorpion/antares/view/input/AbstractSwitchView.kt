@@ -92,6 +92,40 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 				verticeView.drawFocus(context)
 			}
 		}
+
+		fun drawThreePortRealSwitchShape(
+			verticeView: VerticeView<*>,
+			portBase: Int,
+			isOn: Boolean,
+			context: DrawContext,
+			minX: Double,
+			circleRadius: Double
+		) {
+			val maxX = minX + REAL_SWITCH_WIDTH
+			// Port 1
+			(verticeView.getPortView(verticeView.model.getPort(portBase)) as AbstractAntaresPortView).prepareConnectionDrawContext(context)
+			context.g.drawLine(minX, 0.0, minX + 1 * SCALE, 0.0)
+			if (isOn) {
+				context.g.drawLine(minX + 1 * SCALE, 0.0, maxX - 1 * SCALE, -2.0 * SCALE)
+			} else {
+				context.g.drawLine(minX + 1 * SCALE, 0.0, maxX - 1 * SCALE, 2.0 * SCALE)
+			}
+			context.g.fillCircle(minX + 1 * SCALE, 0.0, circleRadius)
+
+			// Port 2
+			(verticeView.getPortView(verticeView.model.getPort(portBase + 1)) as AbstractAntaresPortView).prepareConnectionDrawContext(context)
+			context.g.drawLine(maxX - 1 * SCALE, -2.0 * SCALE, maxX, -2.0 * SCALE)
+			context.g.fillCircle(maxX - 1 * SCALE, -2.0 * SCALE, circleRadius)
+
+			// Port 3
+			(verticeView.getPortView(verticeView.model.getPort(portBase + 2)) as AbstractAntaresPortView).prepareConnectionDrawContext(context)
+			context.g.drawLine(maxX - 1 * SCALE, 2.0 * SCALE, minX + REAL_SWITCH_WIDTH,2.0 * SCALE)
+			context.g.fillCircle(maxX - 1 * SCALE, 2.0 * SCALE, circleRadius)
+
+			if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+				verticeView.drawFocus(context)
+			}
+		}
 	}
 
 	/** Handles mouse interactions during execution*/
@@ -178,29 +212,7 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 	}
 
 	protected fun drawThreePortRealSwitchShape(context: DrawContext) {
-		// Port 1
-		(getPortView(model.getPort(1)) as AbstractAntaresPortView).prepareConnectionDrawContext(context)
-		context.g.drawLine(bounds.minX, 0.0, bounds.minX + 1 * SCALE, 0.0)
-		if (model.isOn) {
-			context.g.drawLine(bounds.minX + 1 * SCALE, 0.0, bounds.maxX - 1 * SCALE, -2.0 * SCALE)
-		} else {
-			context.g.drawLine(bounds.minX + 1 * SCALE, 0.0, bounds.maxX - 1 * SCALE, 2.0 * SCALE)
-		}
-		context.g.fillCircle(bounds.minX + 1 * SCALE, 0.0, circleRadius)
-
-		// Port 2
-		(getPortView(model.getPort(2)) as AbstractAntaresPortView).prepareConnectionDrawContext(context)
-		context.g.drawLine(bounds.maxX - 1 * SCALE, -2.0 * SCALE, bounds.maxX, -2.0 * SCALE)
-		context.g.fillCircle(bounds.maxX - 1 * SCALE, -2.0 * SCALE, circleRadius)
-
-		// Port 3
-		(getPortView(model.getPort(3)) as AbstractAntaresPortView).prepareConnectionDrawContext(context)
-		context.g.drawLine(bounds.maxX - 1 * SCALE, 2.0 * SCALE, bounds.maxX,2.0 * SCALE)
-		context.g.fillCircle(bounds.maxX - 1 * SCALE, 2.0 * SCALE, circleRadius)
-
-		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-			drawFocus(context)
-		}
+		Companion.drawThreePortRealSwitchShape(this, 1, model.isOn, context, bounds.minX, circleRadius)
 	}
 
 	private inner class InteractionHandler : ClickableActorInteractionHandlerAdapter() {
