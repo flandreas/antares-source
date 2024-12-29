@@ -107,10 +107,10 @@ abstract class AbstractAnalogVerticeView<T: AbstractAnalogVertice<*>>(
 		}
 	}
 
-	protected fun getColorGradient(context: DrawContext): LinearColorGradient? {
+	protected fun getColorGradient(context: DrawContext, portId1: Int = 1, portId2: Int = 2): LinearColorGradient? {
 		if (context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
-			val color1 = model.getPort<AnalogSignal>(1).net?.signal?.color?.foregroundColor ?: foregroundColor
-			val color2 = model.getPort<AnalogSignal>(2).net?.signal?.color?.foregroundColor ?: foregroundColor
+			val color1 = model.getPort<AnalogSignal>(portId1).net?.signal?.color?.foregroundColor ?: foregroundColor
+			val color2 = model.getPort<AnalogSignal>(portId2).net?.signal?.color?.foregroundColor ?: foregroundColor
 			return LinearColorGradient(
 				bounds.centerLeft,
 				transparent.applyTo(color2),

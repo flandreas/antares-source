@@ -495,6 +495,16 @@ class AnalogCircuitAnalysis(
 			}
 			i++
 		}
+		/*
+		for (i in 0 until matrixSize) {
+			origRightSide[i] = circuitRightSide[i]
+		}
+		for (i in 0 until matrixSize) {
+			for (j in 0 until matrixSize) {
+				origMatrix[i][j] = circuitMatrix[i][j]
+			}
+		}
+		*/
 
 		circuitNeedsMap = true
 

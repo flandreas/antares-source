@@ -68,7 +68,7 @@ class AnalogCircuitAnalyzer(private val circuitView: AnalogGraphView) {
 			}
 		}
 
-		// If no ground, the the voltage element's first port is ground
+		// If no ground, the voltage element's first port is ground
 		if (!gotGround && batteryView != null) {
 			nodeList.add(CircuitNode(Connection(batteryView, batteryView.model.negativePort)))
 		} else {
@@ -107,7 +107,6 @@ class AnalogCircuitAnalyzer(private val circuitView: AnalogGraphView) {
 			} else {
 				it.connection?.connectableView === connectableView && it. connection.port === port
 			}
-			//it.connection?.connectableView === connectableView && it. connection.port === port
 		}
 
 		if (nodeIndex == null) {

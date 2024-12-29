@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import kotlin.math.abs
+import kotlin.math.sqrt
 
 /**
  * A relay with single-pole SPDT ports.
@@ -23,16 +24,24 @@ class AnalogRelay(
 ) {
     companion object {
         private const val DEF_ON_CURRENT = 0.02
+
+        private const val ON_RESISTANCE = 0.05
+        private const val OFF_RESISTANCE = 1E6
+
     }
 
     var isOn: Boolean = false
         private set
 
+    private val poleCount = 1
+
     private val inductorLogic = InductorLogic(this, 0)
 
-    private val switchLogic = AnalogDoubleThrowSwitchLogic(this, 2, ::isOn)
-
     private var coilCurrent: Double = 0.0
+
+    private val nSwitch0 = 2
+    private val nSwitch1 = 3
+    private val nSwitch2 = 4
 
     /** The inductance of this [AnalogRelay] in microhenry.*/
     var inductance: Double
@@ -73,33 +82,77 @@ class AnalogRelay(
 
     override fun reset() {
         super.reset()
-        isOn = false
-        coilCurrent = 0.0
         analogElem.reset()
         inductorLogic.reset()
+        isOn = false
+        coilCurrent = 0.0
     }
-
-    //override val voltageSourceCount: Int get() = switchLogic.voltageSourceCount
 
     override fun stamp(analysis: AnalogCircuitAnalysis) {
         inductorLogic.stamp(analysis)
-        switchLogic.stamp(analysis)
+        // No inductor resistor
+
+        analysis.stampNonLinear(analogElem.getNode(nSwitch0))
+        analysis.stampNonLinear(analogElem.getNode(nSwitch1))
+        analysis.stampNonLinear(analogElem.getNode(nSwitch2))
     }
 
     override fun startIteration() {
         inductorLogic.startIteration()
 
-        // Calculate switch on/off
-        isOn = abs(coilCurrent) >= onCurrent
+        // This would be able to calculate intermediate switch positions, but is
+        // currently not used
+        val magic = 1.3
+        val pmult = sqrt(magic + 1)
+        val p = coilCurrent * pmult / onCurrent
+        var dPos = abs(p * p) - 1.3
+
+        if (dPos < 0) {
+            dPos = 0.0
+        }
+        if (dPos > 1) {
+           dPos = 1.0
+        }
+
+        val newIsOn = if (dPos < 0.1) {
+            //iPos = 0
+            false
+        } else if (dPos > 0.9) {
+            //iPos = 1
+            true
+        } else {
+            //iPos = 2
+            false
+        }
+
+        if (newIsOn != isOn) {
+            isOn = newIsOn
+            stateChanged()
+        }
+    }
+
+    override fun doStep(analysis: AnalogCircuitAnalysis, signalHandler: SignalHandler) {
+        val requireRecalculation = inductorLogic.doStepRequiresRecalculation(analysis, signalHandler)
+
+        for (p in 0 until  3 * poleCount step 3) {
+            analysis.stampResistor(
+                analogElem.getNode(nSwitch0 + p),
+                analogElem.getNode(nSwitch1 + p),
+                if (isOn) ON_RESISTANCE else OFF_RESISTANCE
+            )
+            analysis.stampResistor(
+                analogElem.getNode(nSwitch0 + p),
+                analogElem.getNode(nSwitch2 + p),
+                if (!isOn) ON_RESISTANCE else OFF_RESISTANCE
+            )
+        }
+
+        if (requireRecalculation) {
+            requestAnalogGraphRecalculation(signalHandler)
+        }
     }
 
     override fun calculateCurrent() {
         coilCurrent = inductorLogic.calculateCurrent()
-    }
-
-    override fun doStep(analysis: AnalogCircuitAnalysis, signalHandler: SignalHandler) {
-        if (inductorLogic.doStepRequiresRecalculation(analysis, signalHandler)) {
-            requestAnalogGraphRecalculation(signalHandler)
-        }
     }
 }

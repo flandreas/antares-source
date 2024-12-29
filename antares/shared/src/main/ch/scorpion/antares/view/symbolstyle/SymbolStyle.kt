@@ -104,7 +104,7 @@ enum class SymbolStyle(
 			if (inductor.shadow) {
 				DropShadow.draw(context, transparency = inductor.transparency) {
 					context.g.fillRect(
-						LENGTH.toDouble() + INDUCTOR_WIDTH, -INDUCTOR_HEIGHT_HALF,
+						LENGTH.toDouble(), -INDUCTOR_HEIGHT_HALF,
 						INDUCTOR_WIDTH, 2 * INDUCTOR_HEIGHT_HALF
 					)
 				}
@@ -116,7 +116,7 @@ enum class SymbolStyle(
 				context.g.paint = foregroundColor
 			}
 			context.g.fillRect(
-				LENGTH.toDouble() + INDUCTOR_WIDTH, -INDUCTOR_HEIGHT_HALF,
+				LENGTH.toDouble(), -INDUCTOR_HEIGHT_HALF,
 				INDUCTOR_WIDTH, 2 * INDUCTOR_HEIGHT_HALF
 			)
 		}

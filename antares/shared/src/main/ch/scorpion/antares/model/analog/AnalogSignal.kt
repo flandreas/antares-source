@@ -12,6 +12,8 @@ data class AnalogSignal(val voltage: Double): Comparable<AnalogSignal> {
 		val HIGH = AnalogSignal(5.0)
 		val UNDEFINED: AnalogSignal? = null
 
+		const val VOLTAGE_SIGMA = 0.005
+
 		private fun roundValue(v: Double, f: Int): String = (((v * f).roundToInt()) / f.toDouble()).toString()
 
 		fun roundVoltage(v: Double, f: Int = 10): String = roundValue(v, f)

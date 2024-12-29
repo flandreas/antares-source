@@ -62,7 +62,7 @@ class Inductor(
     }
 
     override fun calculateCurrent() {
-        logic.calculateCurrent()
+        analogElem.setInternalCurrent(0, logic.calculateCurrent())
     }
 
     override fun doStep(analysis: AnalogCircuitAnalysis, signalHandler: SignalHandler) {

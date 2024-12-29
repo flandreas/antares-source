@@ -23,7 +23,7 @@ class InductorLogic(
         const val DEF_TRAPEZOIDAL = true
 
         /** The minimum voltage difference between the two [AnalogPort] for which recalculation is done.*/
-        private const val VOLTAGE_LIMIT = 0.01
+        private const val VOLTAGE_LIMIT = AnalogSignal.VOLTAGE_SIGMA
     }
 
     /** The inductance of this [InductorLogic] in microhenry.*/
@@ -63,17 +63,17 @@ class InductorLogic(
 
     fun startIteration() {
         curSourceValue = if (isTrapezoidal) {
-            voltDiff / resistance + analogElem.getInternalCurrent()
+            voltDiff / resistance + current
         } else {
-            analogElem.getInternalCurrent()
+            current
         }
     }
 
     fun calculateCurrent(): Double {
         if (resistance > 0.0) {
-            analogElem.setInternalCurrent(postBase, voltDiff / resistance + curSourceValue)
+            current = voltDiff / resistance + curSourceValue
         }
-        return analogElem.getInternalCurrent()
+        return current
     }
 
     fun doStepRequiresRecalculation(analysis: AnalogCircuitAnalysis, signalHandler: SignalHandler): Boolean {
