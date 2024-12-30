@@ -9,7 +9,6 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
-import ch.scorpion.jabbah.io.Storable
 
 class DoubleThrowSwitchView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
@@ -19,13 +18,13 @@ class DoubleThrowSwitchView(
 	companion object {
 		const val PROP_ICON_PATH = "ch.scorpion.antares.view.input.RealSwitchView.iconPath"
 		const val WIDTH = 6 * SCALE
-		const val HEIGHT = 5 * SCALE
+		const val HEIGHT = 6 * SCALE
 	}
 
 	init {
 		isFocusable = true
 		modelExchanged(null)
-		setBounds(AbstractAntaresPortView.LENGTH, -HEIGHT / 2, WIDTH, HEIGHT)
+		setBounds(AbstractAntaresPortView.LENGTH, h(-3.5).toInt(), WIDTH, HEIGHT)
 	}
 
 	override fun modelExchanged(oldModel: DoubleThrowSwitch?) {

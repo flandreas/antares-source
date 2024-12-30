@@ -74,7 +74,7 @@ class AnalogRelayView(
         )
 
         context.translated(0.0, 5.0 * Look.SCALE) {
-            AbstractSwitchView.drawThreePortRealSwitchShape(this, 3, model.isOn, context, bounds.minX, DEF_CIRCLE_RADIUS)
+            AbstractSwitchView.drawThreePortRealSwitchShape(this, 3, model.isOn, context, bounds.minX, DEF_CIRCLE_RADIUS, false)
         }
 
         if (AntaresViewModule.currentSymbolStyle.symbolStyle == SymbolStyle.AMERICAN) {

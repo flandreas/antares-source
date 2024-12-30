@@ -37,8 +37,6 @@ class AnalogRelay(
 
     private val inductorLogic = InductorLogic(this, 0)
 
-    private var coilCurrent: Double = 0.0
-
     private val nSwitch0 = 2
     private val nSwitch1 = 3
     private val nSwitch2 = 4
@@ -64,6 +62,16 @@ class AnalogRelay(
         inductorLogic.setup(inductance, 0.0, InductorLogic.DEF_TRAPEZOIDAL)
     }
 
+    /** ---- [AbstractAnalogVertice] */
+
+    override fun executionInitialize(signalHandler: SignalHandler) {
+        isOn = false
+    }
+
+    override fun executionStopped(signalHandler: SignalHandler) {
+        isOn = false
+    }
+
     /** ---- [Storable] interface */
 
     override fun read(reader: StoreReader) {
@@ -85,7 +93,6 @@ class AnalogRelay(
         analogElem.reset()
         inductorLogic.reset()
         isOn = false
-        coilCurrent = 0.0
     }
 
     override fun stamp(analysis: AnalogCircuitAnalysis) {
@@ -100,21 +107,31 @@ class AnalogRelay(
     override fun startIteration() {
         inductorLogic.startIteration()
 
+        val newIsOn = shouldBeOn()
+
+        if (newIsOn != isOn) {
+            isOn = newIsOn
+            stateChanged()
+        }
+    }
+
+    private fun shouldBeOn(): Boolean {
         // This would be able to calculate intermediate switch positions, but is
         // currently not used
         val magic = 1.3
         val pmult = sqrt(magic + 1)
-        val p = coilCurrent * pmult / onCurrent
+        //val p = coilCurrent * pmult / onCurrent
+        val p = analogElem.getInternalCurrent() * pmult / onCurrent
         var dPos = abs(p * p) - 1.3
 
         if (dPos < 0) {
             dPos = 0.0
         }
         if (dPos > 1) {
-           dPos = 1.0
+            dPos = 1.0
         }
 
-        val newIsOn = if (dPos < 0.1) {
+        return if (dPos < 0.1) {
             //iPos = 0
             false
         } else if (dPos > 0.9) {
@@ -123,11 +140,6 @@ class AnalogRelay(
         } else {
             //iPos = 2
             false
-        }
-
-        if (newIsOn != isOn) {
-            isOn = newIsOn
-            stateChanged()
         }
     }
 
@@ -147,12 +159,12 @@ class AnalogRelay(
             )
         }
 
-        if (requireRecalculation) {
+        if (requireRecalculation || isOn != shouldBeOn()) {
             requestAnalogGraphRecalculation(signalHandler)
         }
     }
 
     override fun calculateCurrent() {
-        coilCurrent = inductorLogic.calculateCurrent()
+        setInternalCurrent(0, inductorLogic.calculateCurrent())
     }
 }

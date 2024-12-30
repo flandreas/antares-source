@@ -30,7 +30,7 @@ class AnalogDoubleThrowSwitchView(
     init {
         isFocusable = true
         modelExchanged(null)
-        setBounds(LENGTH, -HEIGHT / 2, WIDTH, HEIGHT)
+        setBounds(LENGTH, h(-3.5).toInt(), WIDTH, HEIGHT)
     }
 
     override fun modelExchanged(oldModel: AnalogDoubleThrowSwitch?) {

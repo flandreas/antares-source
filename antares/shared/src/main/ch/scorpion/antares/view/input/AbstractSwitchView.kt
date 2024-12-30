@@ -63,7 +63,7 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 					context.g.drawLine(minX + w(1.75), h(-2.0), minX + w(4.25), h(-2.0))
 				}
 				context.g.stroke = PUSH_DASHED_STROKE
-				context.g.drawLine(minX + w(3), h(-2.0), minX + w(3), 0.0)
+				context.g.drawLine(minX + w(3), h(-1.0), minX + w(3), 0.0)
 			} else {
 				if (drawHandle) {
 					context.g.drawLine(minX + w(1.75), h(-3.5), minX + w(4.25), h(-3.5))
@@ -99,9 +99,28 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 			isOn: Boolean,
 			context: DrawContext,
 			minX: Double,
-			circleRadius: Double
+			circleRadius: Double,
+			drawHandle: Boolean = true
 		) {
 			val maxX = minX + REAL_SWITCH_WIDTH
+
+			// Push annotation
+			context.g.stroke = Themes.get<AntaresTheme>().figure.stroke
+			context.g.color = context.chooseForeground(verticeView.foregroundColor)
+			if (isOn) {
+				if (drawHandle) {
+					context.g.drawLine(minX + w(1.75), h(-3.0), minX + w(4.25), h(-3.0))
+				}
+				context.g.stroke = PUSH_DASHED_STROKE
+				context.g.drawLine(minX + w(3), h(-3.0), minX + w(3), h(-1.0))
+			} else {
+				if (drawHandle) {
+					context.g.drawLine(minX + w(1.75), h(-1.0), minX + w(4.25), h(-1.0))
+				}
+				context.g.stroke = PUSH_DASHED_STROKE
+				context.g.drawLine(minX + w(3), h(-1.0), minX + w(3), h(1.0))
+			}
+
 			// Port 1
 			(verticeView.getPortView(verticeView.model.getPort(portBase)) as AbstractAntaresPortView).prepareConnectionDrawContext(context)
 			context.g.drawLine(minX, 0.0, minX + 1 * SCALE, 0.0)
