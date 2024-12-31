@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.dsl.*
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventBusImpl
 import ch.scorpion.jabbah.base.help.HelpProvider
+import ch.scorpion.jabbah.base.sound.SoundEffects
 import ch.scorpion.jabbah.base.time.ControlledTimeService
 import ch.scorpion.jabbah.base.time.TimeService
 
@@ -50,5 +51,7 @@ object BaseModule : AbstractModule() {
 		properties.set(PROP_BEGINNER_HELP_TOOLTIP, true)
 		properties.set(DataLocation.PROP_DATA_LOCATION, DataLocation.Local.customName)
 		properties.set(PROP_CONNECTION_TIMEOUT, 10)
+		properties.set(SoundEffects.PROP_ENABLE_SOUND_EFFECTS, true)
+		SoundEffects.initialize(eventBus)
 	}
 }

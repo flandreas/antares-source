@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.base.invocation.InteractiveErrorHandler
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.invocation.SwingInvocationHandler
 import ch.scorpion.jabbah.base.preferences.*
+import ch.scorpion.jabbah.base.sound.SoundEffects
 import ch.scorpion.jabbah.base.time.RealTimeServiceJvm
 import java.awt.Toolkit
 
@@ -102,7 +103,7 @@ object BaseModuleJvm : AbstractModule() {
 		root.getGroup(PREF_TREE_GENERAL).add(EnumPreference(
 			id = Language.PROP_LANGUAGE,
 			nameKey = "base.preferences.language",
-			values = Language.values(),
+			values = Language.entries.toTypedArray(),
 			withName = Language::withCode,
 			needsRestart = true
 		))
@@ -125,6 +126,11 @@ object BaseModuleJvm : AbstractModule() {
 			needsRestart = true))
 
 		root.getGroup(PREF_TREE_RENDERING).add(FontIdentificationPreference())
+
+		root.getGroup(PREF_TREE_RENDERING).add(BooleanPreference(
+			id = SoundEffects.PROP_ENABLE_SOUND_EFFECTS,
+			nameKey = "base.preferences.soundEffects"
+		))
 	}
 
 	private fun registerHelpSources() {

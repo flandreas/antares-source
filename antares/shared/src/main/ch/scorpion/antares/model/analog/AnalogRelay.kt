@@ -4,6 +4,8 @@ import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.antares.view.analog.engine.AnalogElement
 import ch.scorpion.antares.view.analog.engine.AnalogElementMixin
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.sound.SoundClipFactory
+import ch.scorpion.jabbah.base.sound.SoundEffects
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.vertice.EmptyVerticeCalculator
 import ch.scorpion.jabbah.io.Storable
@@ -28,6 +30,7 @@ class AnalogRelay(
         private const val ON_RESISTANCE = 0.05
         private const val OFF_RESISTANCE = 1E6
 
+        private val soundClip by lazy { SoundClipFactory.create("/sound/relay.wav") }
     }
 
     var isOn: Boolean = false
@@ -112,6 +115,9 @@ class AnalogRelay(
         if (newIsOn != isOn) {
             isOn = newIsOn
             stateChanged()
+            if (SoundEffects.ENABLED) {
+                soundClip.play()
+            }
         }
     }
 
