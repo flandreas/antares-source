@@ -28,7 +28,7 @@ class AnalogRelay(
         private const val DEF_ON_CURRENT = 0.02
 
         private const val ON_RESISTANCE = 0.05
-        private const val OFF_RESISTANCE = 1E6
+        private const val OFF_RESISTANCE = 1E8
 
         private val soundClip by lazy { SoundClipFactory.create("/sound/relay.wav") }
     }
