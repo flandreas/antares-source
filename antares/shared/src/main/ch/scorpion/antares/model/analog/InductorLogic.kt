@@ -26,7 +26,7 @@ class InductorLogic(
         private const val VOLTAGE_LIMIT = AnalogSignal.VOLTAGE_SIGMA
     }
 
-    /** The inductance of this [InductorLogic] in microhenry.*/
+    /** The inductance of this [InductorLogic] in Henry.*/
     var inductance: Double = 0.0
         private set
 
@@ -52,9 +52,9 @@ class InductorLogic(
 
     fun stamp(analysis: AnalogCircuitAnalysis) {
         resistance = if (isTrapezoidal) {
-            2.0 * inductance * 1e-6 / analysis.timeStep
+            2.0 * inductance / analysis.timeStep
         } else {
-            inductance * 1e-6 / analysis.timeStep
+            inductance / analysis.timeStep
         }
         analysis.stampResistor(analogElem.getNode(postBase), analogElem.getNode(postBase + 1), resistance)
         analysis.stampRightSide(analogElem.getNode(postBase))

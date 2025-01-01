@@ -60,6 +60,6 @@ class InductorView(
 
     /** ---- [AbstractAnalogVerticeView] */
 
-    override val mainPropertyValue: String get() = "${Thousands.convert(model.inductance / 1_000_000.0, " ")}H"
+    override val mainPropertyValue: String get() = "${Thousands.convert(model.inductance, " ")}H"
 
 }

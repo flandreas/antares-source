@@ -44,7 +44,7 @@ class AnalogRelay(
     private val nSwitch1 = 3
     private val nSwitch2 = 4
 
-    /** The inductance of this [AnalogRelay] in microhenry.*/
+    /** The inductance of this [AnalogRelay] in Henry.*/
     var inductance: Double
         get() = inductorLogic.inductance
         set(value) {
