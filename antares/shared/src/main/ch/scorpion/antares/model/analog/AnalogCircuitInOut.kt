@@ -105,6 +105,8 @@ class AnalogCircuitInOut(
 	override fun stamp(analysis: AnalogCircuitAnalysis) {
 		if (isInput) {
 			analysis.stampVoltageSource(0, analogElement.nodes[0], analogElement.voltageSource, signal?.voltage ?: AnalogSignal.ZERO.voltage)
+		} else if (portType == PortType.OUTPUT) {
+			analysis.stampResistor(analogElement.nodes[0], 0, 1e6)
 		}
 	}
 
