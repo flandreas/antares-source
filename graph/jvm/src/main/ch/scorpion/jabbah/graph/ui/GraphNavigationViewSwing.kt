@@ -39,7 +39,7 @@ class GraphNavigationViewSwing(
 	override val drawingView: DrawingView<GraphView>,
 	private val viewManager: ContentViewManager,
 	reusable: Boolean,
-	contextBorderColor: CompositeColor? = null,
+	private val contextBorderColor: CompositeColor? = null,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	allowCloseInHeader: Boolean = true,
 ) : AbstractGraphDesktopViewItemSwing(reusable), GraphNavigationView {
@@ -74,21 +74,22 @@ class GraphNavigationViewSwing(
 
 	private val canvas = CanvasJvm(drawingView)
 
-	private var borderColor: Color? = null
-
-	private var header: JPanel? = null
+	private var header: JPanel? = GraphModuleJvm.graphNavigationViewHeaderFactory.createHeader(drawingView.drawing)
 
 	override val showsNavigationRoot: Boolean get() = navigationStack.size == 1
 
 	init {
 		controller.view = this
 		eventBus.register(SearchInMetaGraphRequest::class, searchInMetaGraphHandler)
-		buildUI()
+		buildUI(contextBorderColor)
 
 		drawingView.addPropertyChangeListener { event ->
-			if (event.name == DrawingView.PROP_DRAWING) {
-				header = GraphModuleJvm.graphNavigationViewHeaderFactory.createHeader(drawingView.drawing)
-				updateMainPanel(borderColor)
+			if (event.source === drawingView && event.name == DrawingView.PROP_DRAWING) {
+				ch.scorpion.jabbah.base.System.invokeLater {
+					header = GraphModuleJvm.graphNavigationViewHeaderFactory.createHeader(drawingView.drawing)
+					updateMainPanel(contextBorderColor?.foregroundColor)
+					refresh()
+				}
 			}
 		}
 	}
@@ -101,7 +102,7 @@ class GraphNavigationViewSwing(
 		}
 	}
 
-	private fun buildUI() {
+	private fun buildUI(contextColor: CompositeColor?) {
 		mainPanel.layout = BoxLayout(mainPanel, BoxLayout.PAGE_AXIS)
 
 		updateMainPanel(contextColor?.foregroundColor)
@@ -111,7 +112,6 @@ class GraphNavigationViewSwing(
 	}
 
 	private fun updateMainPanel(borderColor: Color?) {
-		this.borderColor = borderColor
 		mainPanel.removeAll()
 		mainPanel.add(headerPanel)
 		if (header != null) {
