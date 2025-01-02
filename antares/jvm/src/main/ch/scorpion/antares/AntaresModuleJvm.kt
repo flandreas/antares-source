@@ -16,6 +16,7 @@ import ch.scorpion.antares.view.*
 import ch.scorpion.antares.view.addressable.MemoryStorableIdentificationEditor
 import ch.scorpion.antares.view.addressable.MemoryStorableIdentificationRenderer
 import ch.scorpion.antares.view.analog.AnalogEdgeView
+import ch.scorpion.antares.view.analog.CurrentFlowAnimationSpeedSlider
 import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.antares.view.container.DigitalContainerEditor
 import ch.scorpion.antares.view.container.DigitalContainerToolBarBuilder
@@ -80,13 +81,16 @@ import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.project.ProjectAkrabClientServiceJvm
 import ch.scorpion.jabbah.graph.project.ProjectManagementService
 import ch.scorpion.jabbah.graph.project.ProjectModule
+import ch.scorpion.jabbah.graph.ui.GraphNavigationViewHeaderFactory
 import ch.scorpion.jabbah.graph.ui.MetaGraphIconProvider
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
 import ch.scorpion.jabbah.graph.view.oscilloscope.AbstractSignalHistoryDrawer
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.TypeMap
 import java.net.URL
+import javax.swing.*
 import javax.swing.table.DefaultTableCellRenderer
 
 /**
@@ -201,6 +205,22 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 					serverUrl,
 					ProjectModule.projectLibraryPersistenceService as FileLibraryPersistenceService
 				)
+			}
+		}
+
+		GraphModuleJvm.graphNavigationViewHeaderFactory = object : GraphNavigationViewHeaderFactory {
+			override fun createHeader(graphView: GraphView): JPanel? {
+				if (graphView.graph?.type == AntaresGraphTypes.Analog) {
+					val header = JPanel()
+					header.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
+					header.layout = BoxLayout(header, BoxLayout.X_AXIS)
+
+					header.add(CurrentFlowAnimationSpeedSlider())
+					header.add(Box.createGlue())
+
+					return header
+				}
+				return null
 			}
 		}
 

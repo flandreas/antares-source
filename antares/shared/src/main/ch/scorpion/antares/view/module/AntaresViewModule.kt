@@ -313,6 +313,7 @@ object AntaresViewModule : AbstractModule() {
 		properties.set(TransistorViewSymbol.PROP_TRANSISTOR_SYMBOL, TransistorViewSymbol.Bulk.customName)
 
 		properties.set(AnalogEdgeView.PREF_SPEED, AnalogEdgeView.DEF_SPEED)
+		properties.set(CurrentFlowAnimationSpeed.PROP_SPEED, CurrentFlowAnimationSpeed.DEF_SPEED)
 	}
 
 	private fun configureTypeMap(typeMap: TypeMap) {

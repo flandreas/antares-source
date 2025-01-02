@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.base.Disposable
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.event.KeyEvent
@@ -20,6 +21,7 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.SearchInMetaGraphRequest
+import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.ui.desktop.AbstractGraphDesktopViewItemSwing
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopItemHeaderPanelSwing
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
@@ -72,20 +74,34 @@ class GraphNavigationViewSwing(
 
 	private val canvas = CanvasJvm(drawingView)
 
+	private var borderColor: Color? = null
+
+	private var header: JPanel? = null
+
 	override val showsNavigationRoot: Boolean get() = navigationStack.size == 1
 
 	init {
 		controller.view = this
 		eventBus.register(SearchInMetaGraphRequest::class, searchInMetaGraphHandler)
-		buildUI(contextBorderColor)
+		buildUI()
+
+		drawingView.addPropertyChangeListener { event ->
+			if (event.name == DrawingView.PROP_DRAWING) {
+				header = GraphModuleJvm.graphNavigationViewHeaderFactory.createHeader(drawingView.drawing)
+				updateMainPanel(borderColor)
+			}
+		}
 	}
 
 	override fun dispose() {
 		canvas.dispose()
 		eventBus.unregister(searchInMetaGraphHandler)
+		if (header is Disposable) {
+			(header as Disposable).dispose()
+		}
 	}
 
-	private fun buildUI(contextColor: CompositeColor?) {
+	private fun buildUI() {
 		mainPanel.layout = BoxLayout(mainPanel, BoxLayout.PAGE_AXIS)
 
 		updateMainPanel(contextColor?.foregroundColor)
@@ -95,8 +111,12 @@ class GraphNavigationViewSwing(
 	}
 
 	private fun updateMainPanel(borderColor: Color?) {
+		this.borderColor = borderColor
 		mainPanel.removeAll()
 		mainPanel.add(headerPanel)
+		if (header != null) {
+			mainPanel.add(header)
+		}
 		if (searchBarShown) {
 			mainPanel.add(searchBar)
 		}
