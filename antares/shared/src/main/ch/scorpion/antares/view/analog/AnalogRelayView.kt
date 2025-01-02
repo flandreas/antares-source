@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.analog
 
 import ch.scorpion.antares.model.analog.AnalogRelay
+import ch.scorpion.antares.model.input.SwitchConfiguration
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.input.AbstractSwitchView
 import ch.scorpion.antares.view.input.AbstractSwitchView.Companion.DEF_CIRCLE_RADIUS
@@ -23,6 +24,19 @@ class AnalogRelayView(
 ) : AbstractAnalogVerticeView<AnalogRelay>(styleProvider, model) {
 
     @Suppress("unused") // Reflection
+    var switchConfiguration: SwitchConfiguration
+        get() = model.switchConfiguration
+        set(value) {
+            if (value != model.switchConfiguration) {
+                invalidate()
+                model.switchConfiguration = value
+                modelExchanged(model)
+                invalidate()
+                update()
+            }
+        }
+
+    @Suppress("unused") // Reflection
     var inductance: Double
         get() = model.inductance
         set(value) {
@@ -41,13 +55,25 @@ class AnalogRelayView(
     override fun modelExchanged(oldModel: AnalogRelay?) {
         super.modelExchanged(oldModel)
 
+        // Coil
         addPortView(AnalogPortView(styleProvider, model.getPort(1), LENGTH, 0, Direction.WEST))
         addPortView(AnalogPortView(styleProvider, model.getPort(2), LENGTH + INDUCTOR_WIDTH.toInt(), 0, Direction.EAST))
-        addPortView(AnalogPortView(styleProvider, model.getPort(3), LENGTH, 5 * Look.SCALE, Direction.WEST))
-        addPortView(AnalogPortView(styleProvider, model.getPort(4), LENGTH + INDUCTOR_WIDTH.toInt(), 3 * Look.SCALE, Direction.EAST))
-        addPortView(AnalogPortView(styleProvider, model.getPort(5), LENGTH + INDUCTOR_WIDTH.toInt(), 7 * Look.SCALE, Direction.EAST))
 
-        setBounds(LENGTH.toDouble(), -INDUCTOR_HEIGHT_HALF, LENGTH + INDUCTOR_WIDTH, 8.0 * Look.SCALE)
+        when (model.switchConfiguration) {
+            SwitchConfiguration.SPST -> {
+                // Single-throw switch
+                addPortView(AnalogPortView(styleProvider, model.getPort(3), LENGTH, 4 * Look.SCALE, Direction.WEST))
+                addPortView(AnalogPortView(styleProvider, model.getPort(4), LENGTH + INDUCTOR_WIDTH.toInt(), 4 * Look.SCALE, Direction.EAST))
+                setBounds(LENGTH.toDouble(), -INDUCTOR_HEIGHT_HALF, LENGTH + INDUCTOR_WIDTH, 8.0 * Look.SCALE)
+            }
+            SwitchConfiguration.SPDT -> {
+                // Double-throw switch
+                addPortView(AnalogPortView(styleProvider, model.getPort(3), LENGTH, 5 * Look.SCALE, Direction.WEST))
+                addPortView(AnalogPortView(styleProvider, model.getPort(4), LENGTH + INDUCTOR_WIDTH.toInt(), 3 * Look.SCALE, Direction.EAST))
+                addPortView(AnalogPortView(styleProvider, model.getPort(5), LENGTH + INDUCTOR_WIDTH.toInt(), 7 * Look.SCALE, Direction.EAST))
+                setBounds(LENGTH.toDouble(), -INDUCTOR_HEIGHT_HALF, LENGTH + INDUCTOR_WIDTH, 9.0 * Look.SCALE)
+            }
+        }
     }
 
     override fun drawImpl(context: DrawContext) {
@@ -73,8 +99,17 @@ class AnalogRelayView(
             SymbolStyle.INDUCTOR_STROKE
         )
 
-        context.translated(0.0, 5.0 * Look.SCALE) {
-            AbstractSwitchView.drawThreePortRealSwitchShape(this, 3, model.isOn, context, bounds.minX, DEF_CIRCLE_RADIUS, false)
+        when (model.switchConfiguration) {
+            SwitchConfiguration.SPST -> {
+                context.translated(0.0, 4.0 * Look.SCALE) {
+                    AbstractSwitchView.drawTwoPortRealSwitchShape(this, 3, model.isOn, context, bounds.minX, DEF_CIRCLE_RADIUS, false, leftHanded = false)
+                }
+            }
+            SwitchConfiguration.SPDT -> {
+                context.translated(0.0, 5.0 * Look.SCALE) {
+                    AbstractSwitchView.drawThreePortRealSwitchShape(this, 3, model.isOn, context, bounds.minX, DEF_CIRCLE_RADIUS, false)
+                }
+            }
         }
 
         if (AntaresViewModule.currentSymbolStyle.symbolStyle == SymbolStyle.AMERICAN) {

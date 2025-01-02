@@ -59,7 +59,7 @@ interface AnalogElement {
  */
 class AnalogElementMixin(
 	override val isNonLinear: Boolean = false,
-	override val postCount: Int = 2
+	override var postCount: Int = 2
 ) : AnalogElement {
 
 	private lateinit var vertice: AnalogVertice

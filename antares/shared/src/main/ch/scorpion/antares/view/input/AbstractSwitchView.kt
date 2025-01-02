@@ -53,23 +53,33 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 			context: DrawContext,
 			minX: Double,
 			circleRadius: Double,
-			drawHandle: Boolean = true
+			drawHandle: Boolean = true,
+			leftHanded: Boolean = true
 		) {
 			// Push annotation
 			context.g.stroke = Themes.get<AntaresTheme>().figure.stroke
 			context.g.color = context.chooseForeground(verticeView.foregroundColor)
+
 			if (isOn) {
 				if (drawHandle) {
 					context.g.drawLine(minX + w(1.75), h(-2.0), minX + w(4.25), h(-2.0))
 				}
 				context.g.stroke = PUSH_DASHED_STROKE
-				context.g.drawLine(minX + w(3), h(-1.0), minX + w(3), 0.0)
+				context.g.drawLine(minX + w(3), h(-2.0), minX + w(3), 0.0)
 			} else {
 				if (drawHandle) {
-					context.g.drawLine(minX + w(1.75), h(-3.5), minX + w(4.25), h(-3.5))
+					if (leftHanded) {
+						context.g.drawLine(minX + w(1.75), h(-3.5), minX + w(4.25), h(-3.5))
+					} else {
+						context.g.drawLine(minX + w(1.75), h(-1.5), minX + w(4.25), h(-1.5))
+					}
 				}
 				context.g.stroke = PUSH_DASHED_STROKE
-				context.g.drawLine(minX + w(3), h(-3.5), minX + w(3), h(-1.25))
+				if (leftHanded) {
+					context.g.drawLine(minX + w(3), h(-3.5), minX + w(3), h(-1.25))
+				} else {
+					context.g.drawLine(minX + w(3), h(1.0), minX + w(3), h(-1.25))
+				}
 			}
 
 			// Side of port 1
@@ -78,7 +88,8 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 			if (isOn) {
 				context.g.drawLine(minX + w(1.0), 0.0, minX + REAL_SWITCH_WIDTH - w(1.0), 0.0)
 			} else {
-				context.g.drawLine(minX + w(1.0), 0.0, minX + REAL_SWITCH_WIDTH - w(1.5), h(-2.0))
+				val switchEndY = if (leftHanded) h(-2.0) else h(2.0)
+				context.g.drawLine(minX + w(1.0), 0.0, minX + REAL_SWITCH_WIDTH - w(1.5), switchEndY)
 			}
 			context.g.fillCircle(minX + w(1.0), 0.0, circleRadius)
 

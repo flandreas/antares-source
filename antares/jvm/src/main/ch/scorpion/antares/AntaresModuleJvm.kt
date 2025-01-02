@@ -8,6 +8,7 @@ import ch.scorpion.antares.model.expression.BooleanExpressionNotation
 import ch.scorpion.antares.model.gate.CurrentDefaultPropagationDelay
 import ch.scorpion.antares.model.gate.UndefinedGateInputBehavior
 import ch.scorpion.antares.model.input.CurrentSwitchPropagationDelay
+import ch.scorpion.antares.model.input.SwitchConfiguration
 import ch.scorpion.antares.model.net.*
 import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
 import ch.scorpion.antares.model.signal.*
@@ -293,6 +294,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerRenderer(TunnelName::class.java, DefaultTableCellRenderer::class.java)
 		registry.registerRenderer(EnterBehavior::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(MemoryStorableIdentification::class.java, MemoryStorableIdentificationRenderer::class.java)
+		registry.registerRenderer(SwitchConfiguration::class.java, EnumRenderer::class.java)
 	}
 
 	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
@@ -319,6 +321,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.register(TunnelName::class.java) { TunnelNameEditor((it as TunnelNameProperty).graph) }
 		registry.registerEditor(EnterBehavior::class.java, EnterBehaviorEditor::class.java)
 		registry.registerEditor(MemoryStorableIdentification::class.java, MemoryStorableIdentificationEditor::class.java)
+		registry.registerEditor(SwitchConfiguration::class.java, SwitchConfigurationEditor::class.java)
 
 		registry.register(BitWidth::class.java) { prop ->
 			BitWidthEditor(

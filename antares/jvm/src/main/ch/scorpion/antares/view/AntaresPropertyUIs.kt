@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view
 
 import ch.scorpion.antares.model.*
+import ch.scorpion.antares.model.input.SwitchConfiguration
 import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.net.NetSignalApplierStrategy
 import ch.scorpion.antares.model.net.PullDirection
@@ -191,5 +192,12 @@ class NetSignalApplierChoiceEditor : ComboBoxPropertyEditor() {
 	init {
 		setAvailableValues(NetSignalApplierStrategy.entries.toTypedArray())
 		(editor as JComboBox<NetSignalApplierStrategy>).renderer = EnumRenderer()
+	}
+}
+
+class SwitchConfigurationEditor : ComboBoxPropertyEditor() {
+	init {
+		setAvailableValues(SwitchConfiguration.entries.toTypedArray())
+		(editor as JComboBox<SwitchConfiguration>).renderer = EnumRenderer()
 	}
 }

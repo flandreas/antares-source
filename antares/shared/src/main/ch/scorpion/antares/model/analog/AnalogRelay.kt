@@ -1,6 +1,7 @@
 package ch.scorpion.antares.model.analog
 
 import ch.scorpion.antares.model.input.Switch
+import ch.scorpion.antares.model.input.SwitchConfiguration
 import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.antares.view.analog.engine.AnalogElement
 import ch.scorpion.antares.view.analog.engine.AnalogElementMixin
@@ -42,8 +43,15 @@ class AnalogRelay(
     private val inductorLogic = InductorLogic(this, 0)
 
     private val nSwitch0 = 2
-    private val nSwitch1 = 3
-    private val nSwitch2 = 4
+
+    var switchConfiguration: SwitchConfiguration = SwitchConfiguration.SPDT
+        set(value) {
+            if (field != value) {
+                field = value
+                analogElem.postCount = 2 + value.portCount
+                updatePorts()
+            }
+        }
 
     /** The inductance of this [AnalogRelay] in Henry.*/
     var inductance: Double
@@ -63,8 +71,13 @@ class AnalogRelay(
 
     init {
         propagationDelay = Switch.DEF_PROP_DELAY
-        (1..5).forEach { _ -> addPort(AnalogPort()) }
+        updatePorts()
         inductorLogic.setup(inductance, 0.0, InductorLogic.DEF_TRAPEZOIDAL)
+    }
+
+    private fun updatePorts() {
+        clearPorts()
+        (1..2 + switchConfiguration.portCount).forEach { _ -> addPort(AnalogPort()) }
     }
 
     /** ---- [AbstractAnalogVertice] */
@@ -83,12 +96,16 @@ class AnalogRelay(
         super.read(reader)
         inductance = reader.readString("inductance").toDouble()
         onCurrent = reader.readString("onCurrent").toDouble()
+        if (reader.hasAttribute("switchConfig")) {
+            switchConfiguration = SwitchConfiguration.withName(reader.readString("switchConfig"))
+        }
     }
 
     override fun write(writer: StoreWriter) {
         super.write(writer)
         writer.writeString("inductance", inductance.toString())
         writer.writeString("onCurrent", onCurrent.toString())
+        writer.writeString("switchConfig", switchConfiguration.customName)
     }
 
     /** ---- [AnalogElement] */
@@ -104,9 +121,9 @@ class AnalogRelay(
         inductorLogic.stamp(analysis)
         // No inductor resistor
 
-        analysis.stampNonLinear(analogElem.getNode(nSwitch0))
-        analysis.stampNonLinear(analogElem.getNode(nSwitch1))
-        analysis.stampNonLinear(analogElem.getNode(nSwitch2))
+        for (i in 0 until switchConfiguration.portCount) {
+            analysis.stampNonLinear(analogElem.getNode(nSwitch0 + i))
+        }
     }
 
     override fun startIteration() {
@@ -157,14 +174,16 @@ class AnalogRelay(
         for (p in 0 until  3 * poleCount step 3) {
             analysis.stampResistor(
                 analogElem.getNode(nSwitch0 + p),
-                analogElem.getNode(nSwitch1 + p),
+                analogElem.getNode(nSwitch0 + 1 + p),
                 if (isOn) ON_RESISTANCE else OFF_RESISTANCE
             )
-            analysis.stampResistor(
-                analogElem.getNode(nSwitch0 + p),
-                analogElem.getNode(nSwitch2 + p),
-                if (!isOn) ON_RESISTANCE else OFF_RESISTANCE
-            )
+            if (switchConfiguration.portCount > 2) {
+                analysis.stampResistor(
+                    analogElem.getNode(nSwitch0 + p),
+                    analogElem.getNode(nSwitch0 + 2 + p),
+                    if (!isOn) ON_RESISTANCE else OFF_RESISTANCE
+                )
+            }
         }
 
         if (requireRecalculation || isOn != shouldBeOn()) {
