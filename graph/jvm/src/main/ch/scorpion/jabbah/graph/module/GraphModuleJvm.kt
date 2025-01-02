@@ -30,6 +30,7 @@ import ch.scorpion.jabbah.graph.login.LoginServiceJvm
 import ch.scorpion.jabbah.graph.model.param.*
 import ch.scorpion.jabbah.graph.model.port.InconsistentNetError
 import ch.scorpion.jabbah.graph.project.ProjectAkrabClientServiceJvm
+import ch.scorpion.jabbah.graph.ui.GraphNavigationViewHeaderFactory
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
 import ch.scorpion.jabbah.graph.view.net.edge.OrthoEdgeViewLayouter
@@ -55,6 +56,8 @@ object GraphModuleJvm : AbstractModule() {
 	val loginService: LoginService by lazy {
 		LoginServiceJvm(URL(BaseModule.properties.getString(DataLocation.PROP_SERVER_URL)))
 	}
+
+	var graphNavigationViewHeaderFactory: GraphNavigationViewHeaderFactory = GraphNavigationViewHeaderFactory { null }
 
 	override fun initialize() {
 		BaseModuleJvm.require()
