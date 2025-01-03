@@ -172,7 +172,7 @@ interface View<C : InputEventContext> : ContentView<C>, ViewToModelTransform {
 	 * Request for asynchronous repainting the entire [View].
 	 *
 	 * Concrete [View] implementations should not immediately paint the specified region, but should delegate it to the
-	 * repainting thread, depending of the current target platform.
+	 * repainting thread, depending on the current target platform.
 	 *
 	 * This function is typically called by a [ViewPainter] that keeps track of the dirty region.
 	 */

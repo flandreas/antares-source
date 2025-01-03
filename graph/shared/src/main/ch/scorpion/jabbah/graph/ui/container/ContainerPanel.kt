@@ -46,8 +46,7 @@ class ContainerPanelController(
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<ContainerPanelView>() {
 
-	val drawingView =
-		EditModule.drawingViewFactory.create(ContainerDrawing(), applicationContextHolder, displayGlobalMessages)
+	val drawingView = EditModule.drawingViewFactory.create(ContainerDrawing(), applicationContextHolder, displayGlobalMessages)
 
 	val editor = GraphViewModule.containerEditorFactory(drawingView)
 
@@ -57,6 +56,8 @@ class ContainerPanelController(
 
 	var editable: Boolean = true
 		private set
+
+	val symbolComparatorController = SymbolComparatorController(drawingView)
 
 	private val applicationDataEventHandler: EventHandler<ApplicationDataEvent> = { handle(it) }
 
@@ -109,6 +110,7 @@ class ContainerPanelController(
 		eventBus.unregister(commandHandler)
 		editor.dispose()
 		propertyPanelController.dispose()
+		symbolComparatorController.dispose()
 	}
 
 	/** ---- [ContainerPanelController] */

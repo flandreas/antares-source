@@ -47,7 +47,9 @@ class LibraryTreePanelSwing(
 		libraryTreeView.model = LibraryTreeModelBuilderSwing(
 			controller.libraryTreeViewController.library,
 			filter
-		).build(Graphics2DJvm.fromAwtFont(font))
+		).withFont((Graphics2DJvm.fromAwtFont(font)))
+		.build()
+
 		SwingUtilities.invokeLater {
 			if (filter == null) {
 				JTreeUtil.collapseAll(libraryTreeView)

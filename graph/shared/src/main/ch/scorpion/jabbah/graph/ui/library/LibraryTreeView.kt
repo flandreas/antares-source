@@ -1,15 +1,9 @@
 package ch.scorpion.jabbah.graph.ui.library
 
-import ch.scorpion.jabbah.app.CurrentSavableEvent
-import ch.scorpion.jabbah.app.Savable
-import ch.scorpion.jabbah.base.PreferencesChangedEvent
-import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.ui.AbstractUIController
-import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
@@ -17,7 +11,6 @@ import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.image.ImageLibraryElement
-import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.graph.view.GraphElementView
 
 enum class LibraryTreeViewType {
@@ -27,35 +20,11 @@ enum class LibraryTreeViewType {
 }
 
 /** Posted on a [LibraryTreeViewController]'s [EventBus] if the current selection in its [LibraryTreeView] has changed.*/
-data class LibrarySelectionChangedEvent(val controller: LibraryTreeViewController)
+data class LibrarySelectionChangedEvent(val controller: BasicLibraryTreeViewController<*>)
 
-interface LibraryTreeView : UIView {
+interface LibraryTreeView : BasicLibraryTreeView {
 
 	val folderOfSelectedItem: LibraryDirectory?
-
-	fun refresh()
-
-	/**
-	 * Expand the tree to the node that contains the opened [ContainerLibraryElement].
-	 * This is primarily needed when the request originates from opening a [Project].
-	 */
-	fun expandTo(element: ContainerLibraryElement)
-
-	/**
-	 * Expands the tree to (and inclusive) the [LibraryFolder] with the specified english name.
-	 * Does nothing if the displayed [Library] doesn't contain such a folder.
-	 */
-	fun expandFolder(folderName: String)
-
-	fun expandToCurrentSavable()
-
-	fun expandAllFromSelection()
-
-	fun collapseAtSelection()
-
-	fun openMainLibrary(library: Library)
-
-	fun closeMainLibrary()
 
 	fun handle(event: LibraryItemAddedEvent)
 
@@ -77,17 +46,11 @@ interface LibraryTreeView : UIView {
  * - A [LibrarySelectionChangedEvent] when the user selects a [LibraryItem]
  */
 class LibraryTreeViewController (
-	val type: LibraryTreeViewType,
+	type: LibraryTreeViewType,
 	library: Library?,
 	val applicationModeHolder: ApplicationModeHolder,
-	val eventBus: EventBus = BaseModule.eventBus
-) : AbstractUIController<LibraryTreeView>() {
-
-	companion object {
-		private val LOG by logger(LibraryTreeViewController::class)
-	}
-
-	private val preferencesChangedHandler: EventHandler<PreferencesChangedEvent> = { view.refresh() }
+	eventBus: EventBus = BaseModule.eventBus
+) : BasicLibraryTreeViewController<LibraryTreeView>(type, library, eventBus) {
 
 	private val libraryItemAddedHandler: EventHandler<LibraryItemAddedEvent> = {
 		if (displaysLibrary(it.item.library)) { view.handle(it) }
@@ -107,14 +70,6 @@ class LibraryTreeViewController (
 
 	private val openContainerLibraryElementHandler: EventHandler<OpenContainerLibraryElementRequest> = {
 		if (displaysLibrary(it.element.library)) { view.expandTo(it.element) }
-	}
-
-	private val currentSavableHandler: EventHandler<CurrentSavableEvent> = {
-		currentSavable = if (it.savable is AbstractLibraryItemSavable) {
-			it.savable
-		} else {
-			null
-		}
 	}
 
 	private val applicationModeHandler: EventHandler<ApplicationModeEvent> = {
@@ -137,60 +92,25 @@ class LibraryTreeViewController (
 			}
 		}
 
-	/** Holds the [Library] to display.*/
-	var library: Library? = library
-		set(value) {
-			if (field !== value) {
-				field = value
-				if (field != null) {
-					view.openMainLibrary(value!!)
-				} else {
-					view.closeMainLibrary()
-				}
-			}
-		}
-
-	var currentSavable: Savable? = null
-		private set(value) {
-			if (field != value) {
-				field = value
-				view.refresh()
-			}
-		}
-
-	/** Set by [LibraryTreeView] whenever the selection has changed. */
-	var selectedItem: LibraryItem? = null
-		set(value) {
-			if (field !== value) {
-				field = value
-				LOG.trace("Selected TreeNode '${field.toString()}'")
-				eventBus.post(LibrarySelectionChangedEvent(this))
-			}
-		}
-
 	init {
-		eventBus.register(PreferencesChangedEvent::class, preferencesChangedHandler)
 		eventBus.register(LibraryItemAddedEvent::class, libraryItemAddedHandler)
 		eventBus.register(LibraryItemRemovedEvent::class, libraryItemRemovedHandler)
 		eventBus.register(LibraryItemUpdatedEvent::class, libraryItemUpdatedHandler)
 		eventBus.register(LibraryItemMovedEvent::class, libraryItemMovedHandler)
 		eventBus.register(LibraryImportsEvent::class, libraryImportsHandler)
 
-		eventBus.register(CurrentSavableEvent::class, currentSavableHandler)
 		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
 		eventBus.register(OpenContainerLibraryElementRequest::class, openContainerLibraryElementHandler)
 	}
 
 	override fun dispose() {
 		super.dispose()
-		eventBus.unregister(preferencesChangedHandler)
 		eventBus.unregister(libraryItemAddedHandler)
 		eventBus.unregister(libraryItemRemovedHandler)
 		eventBus.unregister(libraryItemUpdatedHandler)
 		eventBus.unregister(libraryItemMovedHandler)
 		eventBus.unregister(libraryImportsHandler)
 
-		eventBus.unregister(currentSavableHandler)
 		eventBus.unregister(applicationModeHandler)
 		eventBus.unregister(openContainerLibraryElementHandler)
 	}
@@ -202,12 +122,6 @@ class LibraryTreeViewController (
 	private fun updateActive() {
 		active = applicationModeHolder.currentMode.isEdit()
 	}
-
-	fun isCurrentItem(item: LibraryItem): Boolean =
-		currentSavable is AbstractLibraryItemSavable && (currentSavable as AbstractLibraryItemSavable).item == item
-
-	fun isDefaultElement(element: ContainerLibraryElement): Boolean =
-		element.library?.defaultElementUUID == element.uuid
 
 	fun allowMove(item: LibraryItem, destination: LibraryDirectory): Boolean {
 		if (!canEdit(destination.library!!) || !canEdit(item.library!!)) {
@@ -244,14 +158,5 @@ class LibraryTreeViewController (
 		}
 		return (selectedItem as LibraryElement).getNewInstance()
 	}
-
-	fun expandTo(metaGraph: UUID) {
-		LibraryModule.libraryHolder.getContainerLibraryElement(metaGraph)?.let {
-			view.expandTo(it)
-		}
-	}
-
-	private fun displaysLibrary(library: Library?): Boolean =
-		library != null && this.library?.expandedImports?.contains(library.uuid) == true
 }
 

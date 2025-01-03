@@ -6,6 +6,10 @@ import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.swing.SidebarPane
+import ch.scorpion.jabbah.base.swing.SidebarPaneContentImpl
+import ch.scorpion.jabbah.base.swing.SidebarSplitPane
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.draw.view.DrawViewModule
@@ -20,6 +24,7 @@ import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.ui.container.ContainerPanelController
 import ch.scorpion.jabbah.graph.ui.container.ContainerPanelView
+import ch.scorpion.jabbah.graph.ui.container.SymbolComparatorViewSwing
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
 import java.awt.BorderLayout
@@ -63,6 +68,20 @@ class ContainerPanelSwing(
 
 	private val canvas = CanvasJvm(controller.drawingView)
 
+	private val rightSidebarPane = SidebarSplitPane(
+		location = SidebarPane.Location.Right,
+		mainContent = mainSplitPane,
+		settingBaseName = "containerPanel.rightSidebar",
+		contents = listOf(
+			SidebarPaneContentImpl(
+				Translations.getString("graph.container.symbolComparison.name"),
+				UiUtil.themedIcon("/img/compass-16.png"),
+				SymbolComparatorViewSwing(controller.symbolComparatorController),
+				listOf(controller.symbolComparatorController.refreshAction, SymbolComparatorViewSwing.helpAction)
+			)
+		)
+	)
+
 	val toolbars = GraphViewModuleJvm.containerToolBarBuilderFactory().buildToolBars(application, controller.editor, separator = true)
 
 	init {
@@ -81,6 +100,7 @@ class ContainerPanelSwing(
 	override fun dispose() {
 		treeView.dispose()
 		canvas.dispose()
+		rightSidebarPane.dispose()
 
 		BaseModule.settings.set(PROP_MAIN_SPLIT_POS, mainSplitPane.dividerLocation)
 		BaseModule.settings.set(PROP_LEFT_SPLIT_POS, leftSplitPane.dividerLocation)
@@ -188,6 +208,6 @@ class ContainerPanelSwing(
 		mainSplitPane.add(leftSplitPane)
 		mainSplitPane.add(FocusPanel(controller.drawingView.canvas as JComponent, controller.drawingView, controller.drawingView.canvas as JComponent, viewManager))
 
-		add(mainSplitPane)
+		add(rightSidebarPane)
 	}
 }
