@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.*
+import ch.scorpion.jabbah.base.ui.TitleBar
 import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
@@ -184,6 +185,7 @@ class GraphPanelViewSwing(
 		bottomSidebarPane.add(issuesContent)
 		bottomSidebarPane.add(logContent)
 
+		add(TitleBar(Translations.getString("graph.desktop.title")), BorderLayout.NORTH)
 		add(leftSidebarPane, BorderLayout.CENTER)
 		add(bottomSidebarPane, BorderLayout.SOUTH)
 	}

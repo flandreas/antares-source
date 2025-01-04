@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.base.swing.SidebarPane
 import ch.scorpion.jabbah.base.swing.SidebarPaneContentImpl
 import ch.scorpion.jabbah.base.swing.SidebarSplitPane
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.base.ui.TitleBar
 import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.draw.view.DrawViewModule
@@ -208,6 +209,7 @@ class ContainerPanelSwing(
 		mainSplitPane.add(leftSplitPane)
 		mainSplitPane.add(FocusPanel(controller.drawingView.canvas as JComponent, controller.drawingView, controller.drawingView.canvas as JComponent, viewManager))
 
-		add(rightSidebarPane)
+		add(TitleBar(Translations.getString("graph.container.title")), BorderLayout.NORTH)
+		add(rightSidebarPane, BorderLayout.CENTER)
 	}
 }
