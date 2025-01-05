@@ -55,14 +55,19 @@ class SymbolComparatorViewSwing(
 
     private fun buildContent(): JComponent {
         val content = JPanel(BorderLayout(0, 8 ))
+
         val text = JTextArea(Translations.getString("graph.container.symbolComparison.explanation"))
         text.border = null
         text.isEditable = false
         text.lineWrap = true
         text.wrapStyleWord = true
-        content.add(text, BorderLayout.NORTH)
+        val descriptionScroll = JScrollPane(text, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER)
+        descriptionScroll.border = null
+        content.add(descriptionScroll, BorderLayout.NORTH)
+
         val treeScrollPane = JScrollPane(libraryTreeView)
         content.add(treeScrollPane, BorderLayout.CENTER)
+
         return content
     }
 
