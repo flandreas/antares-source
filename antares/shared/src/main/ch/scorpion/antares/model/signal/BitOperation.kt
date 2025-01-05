@@ -137,6 +137,12 @@ object BitOperation {
 		binary.toULong(2)
 	}
 
+	fun octalToLong(octal: String): ULong = if (octal.isEmpty()) {
+		0UL
+	} else {
+		octal.toULong(8)
+	}
+
     /**
      * Returns the specified hexadecimal character as a [DigitalSignal] of the specified [BitWidth], or `null` if [hex]
      * contains a non-hexadecimal character.
@@ -256,4 +262,6 @@ object BitOperation {
 		}
 		return result.toString()
 	}
+
+	fun longToOctal(value: ULong): String = value.toString(8)
 }

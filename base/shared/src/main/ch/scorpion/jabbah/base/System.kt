@@ -13,6 +13,8 @@ expect object System {
 	 */
 	var invoker: (() -> Unit) -> Unit
 
+	fun beep()
+
     /** Returns the current system time in milliseconds.*/
     fun currentTimeMillis(): Long
 

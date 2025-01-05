@@ -110,10 +110,12 @@ class RowHeaderTable(
         revalidate()
     }
 
-    open class RowHeaderRenderer : DefaultTableCellRenderer() {
+    open class RowHeaderRenderer(
+        alignment: Int = JLabel.CENTER
+    ) : DefaultTableCellRenderer() {
 
         init {
-            horizontalAlignment = JLabel.CENTER
+            horizontalAlignment = alignment
         }
 
         override fun getTableCellRendererComponent(table: JTable?, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {

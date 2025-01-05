@@ -28,6 +28,10 @@ actual object System {
 
 	actual var invoker: (() -> Unit) -> Unit = { it.invoke() }
 
+	actual fun beep() {
+		// Not yet implemented
+	}
+
 	actual fun currentTimeMillis(): Long {
 		return Date().getTime().toLong()
 	}

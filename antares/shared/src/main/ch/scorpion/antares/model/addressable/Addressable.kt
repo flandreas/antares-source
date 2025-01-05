@@ -85,7 +85,7 @@ interface Addressable {
 	/** Clears all content in this [Addressable].*/
 	fun clear()
 
-	/** Called if the underlying data of this [Addressable] has changed*/
+	/** Called if the underlying data of this [Addressable] has changed. */
 	fun update()
 
 	/** Returns the data at the specified address.*/

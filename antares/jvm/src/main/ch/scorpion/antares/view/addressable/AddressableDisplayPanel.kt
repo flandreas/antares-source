@@ -1,17 +1,18 @@
 package ch.scorpion.antares.view.addressable
 
 import ch.scorpion.antares.model.addressable.*
-import ch.scorpion.antares.model.signal.BitOperation
+import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.jabbah.base.Settings
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.FocusJTable
 import ch.scorpion.jabbah.base.swing.RowHeaderTable
+import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import java.awt.BorderLayout
-import java.awt.FlowLayout
+import java.awt.Dimension
 import java.awt.Font
 import java.awt.event.FocusListener
 import javax.swing.*
@@ -39,16 +40,17 @@ class AddressableDisplayPanel(
 	}
 
 	private val layouts = arrayOf<AddressableDisplayLayout>(
-		FixedWidthLayout(1, addressableRef, editable, applicationContextHolder.scheduler),
-		FixedWidthLayout(4, addressableRef, editable, applicationContextHolder.scheduler),
-		FixedWidthLayout(8, addressableRef, editable, applicationContextHolder.scheduler),
-		FixedWidthLayout(16, addressableRef, editable, applicationContextHolder.scheduler)
+		FixedWidthLayout(1, addressableRef, editable, ::converter, applicationContextHolder.scheduler),
+		FixedWidthLayout(4, addressableRef, editable, ::converter, applicationContextHolder.scheduler),
+		FixedWidthLayout(8, addressableRef, editable, ::converter, applicationContextHolder.scheduler),
+		FixedWidthLayout(16, addressableRef, editable, ::converter, applicationContextHolder.scheduler)
 	)
 
-    private val table = FocusJTable(layouts[1].createTableModel())
-	private val scrollPane = JScrollPane(table)
 	private val layoutComboBox = JComboBox(layouts)
 	private val addressableDisplayLayout: AddressableDisplayLayout get() = layoutComboBox.selectedItem as AddressableDisplayLayout
+	private val converterComboBox = JComboBox(AddressableValueConverter.entries.toTypedArray())
+	private val table = FocusJTable(layouts[1].createTableModel())
+	private val scrollPane = JScrollPane(table)
 
     init {
 		val cellsPerRow = settings.getInt(SETTING_LAYOUT, DEF_LAYOUT)
@@ -58,12 +60,23 @@ class AddressableDisplayPanel(
 
         buildUI()
 	    layoutComboBox.addActionListener { updateMemoryDisplayLayout(addressableDisplayLayout) }
+		converterComboBox.addActionListener {
+			if (table.isEditing) {
+				table.cellEditor.stopCellEditing()
+			}
+			updateColumnHeaders()
+			table.invalidate()
+			revalidate()
+			repaint()
+		}
 	    updateMemoryDisplayLayout(addressableDisplayLayout)
     }
 
 	fun dispose() {
 		storeSettings()
 	}
+
+	private val converter: AddressableValueConverter get() = converterComboBox.selectedItem as AddressableValueConverter
 
 	fun refresh() {
 		table.invalidate()
@@ -82,13 +95,37 @@ class AddressableDisplayPanel(
 	    table.tableHeader.reorderingAllowed = false
 	    table.autoResizeMode = JTable.AUTO_RESIZE_OFF
 
-	    val memoryLayoutPanel = JPanel(FlowLayout(FlowLayout.LEFT))
-	    memoryLayoutPanel.add(JLabel(Translations.getString("antares.memory.layout.selector.name")))
-	    memoryLayoutPanel.add(layoutComboBox)
-
-	    add(memoryLayoutPanel, BorderLayout.NORTH)
+	    add(buildHeaderPanel(), BorderLayout.NORTH)
         add(scrollPane, BorderLayout.CENTER)
     }
+
+	private fun updateColumnHeaders() {
+		for (i in 0 until table.columnCount) {
+			table.columnModel.getColumn(i).headerValue = converter.render(i.toULong(), BitWidth.BW_4)
+		}
+	}
+
+	private fun buildHeaderPanel(): JPanel {
+		val panel = JPanel()
+		panel.border = BorderFactory.createEmptyBorder(5, 5, 5, 5)
+		panel.layout = BoxLayout(panel, BoxLayout.LINE_AXIS)
+
+		layoutComboBox.maximumSize = Dimension(layoutComboBox.preferredSize.width, layoutComboBox.preferredSize.height)
+		panel.add(JLabel(Translations.getString("antares.memory.layout.selector.name") + ":"))
+		panel.add(Box.createHorizontalStrut(UIBasics.LABEL_GAP))
+		panel.add(layoutComboBox)
+
+		panel.add(Box.createHorizontalStrut(15))
+
+		converterComboBox.maximumSize = Dimension(converterComboBox.preferredSize.width, converterComboBox.preferredSize.height)
+		panel.add(JLabel(Translations.getString("antares.addressableValueConverter.name") + ":"))
+		panel.add(Box.createHorizontalStrut(UIBasics.LABEL_GAP))
+		panel.add(converterComboBox)
+
+		panel.add(Box.createHorizontalGlue())
+
+		return panel
+	}
 
 	fun addViewActivationFocusListener(focusListener: FocusListener) {
 		layoutComboBox.addFocusListener(focusListener)
@@ -101,8 +138,12 @@ class AddressableDisplayPanel(
 		val tableModel = addressableDisplayLayout.createTableModel()
 		table.model = tableModel
 
-		val rowHeaderTable = RowHeaderTable(table) {
-			BitOperation.longToHexPadded(it.toULong() * addressableDisplayLayout.cellsPerRow.toUInt(), addressableRef.addressable.addressWidth)
+		val rowHeaderTable = RowHeaderTable(
+			table,
+			preferredWidth = 80,
+			renderer = RowHeaderTable.RowHeaderRenderer(JLabel.RIGHT)
+		) {
+			converter.render(it.toULong() * addressableDisplayLayout.cellsPerRow.toUInt(), addressableRef.addressable.addressWidth)
 		}
 		scrollPane.setRowHeaderView(rowHeaderTable)
 		scrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, rowHeaderTable.tableHeader)
@@ -114,7 +155,9 @@ class AddressableDisplayPanel(
 				column.cellEditor = AddressableCommentEditor(addressableRef, addressableDisplayLayout, ::consumeCommentChange)
 				column.preferredWidth = settings.getInt(SETTING_COMMENT_COLUMN_WIDTH, DEF_COMMENT_COLUMN_WIDTH)
 			} else {
-				column.cellEditor = AddressableValueEditor(addressableRef, addressableDisplayLayout, ::consumeValueChange)
+				column.cellEditor = AddressableValueEditor(addressableRef, addressableDisplayLayout, ::converter, ::consumeValueChange).apply {
+					font = table.font
+				}
 				column.preferredWidth = DEF_VALUE_COLUMN_WIDTH
 			}
 

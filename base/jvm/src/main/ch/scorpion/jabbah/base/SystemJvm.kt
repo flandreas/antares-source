@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.time.Timer
 import org.apache.commons.lang3.SystemUtils
 import java.awt.Desktop
 import java.awt.Frame
+import java.awt.Toolkit
 import java.net.URI
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -23,6 +24,8 @@ actual object System {
 	/** ---- [System] interface */
 
 	actual var invoker: (() -> Unit) -> Unit = { invocable -> SwingUtilities.invokeLater { invocable.invoke() } }
+
+	actual fun beep() = Toolkit.getDefaultToolkit().beep()
 
 	actual fun createTimer(): Timer = RealTimeTimerJvm()
 

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.base.ui
 
+import ch.scorpion.jabbah.base.System
 import java.awt.Toolkit
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.StringSelection
@@ -9,7 +10,7 @@ actual object Clipboard {
 	actual fun getStringContents(): String? {
 		val transferable = Toolkit.getDefaultToolkit().systemClipboard.getContents(null)
 		if (transferable == null) {
-			Toolkit.getDefaultToolkit().beep()
+			System.beep()
 			return null
 		}
 		return transferable.getTransferData(DataFlavor.stringFlavor) as String

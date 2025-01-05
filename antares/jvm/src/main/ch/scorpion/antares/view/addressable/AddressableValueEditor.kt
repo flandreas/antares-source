@@ -3,7 +3,7 @@ package ch.scorpion.antares.view.addressable
 import ch.scorpion.antares.model.addressable.AddressableCellChange
 import ch.scorpion.antares.model.addressable.AddressableReference
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.antares.model.signal.BitOperation
+import ch.scorpion.jabbah.base.System
 import java.awt.Component
 import java.awt.event.FocusAdapter
 import java.awt.event.FocusEvent
@@ -12,6 +12,7 @@ import javax.swing.*
 class AddressableValueEditor(
 	private val addressableRef: AddressableReference,
 	private val addressableDisplayLayout: AddressableDisplayLayout,
+	private val converterProvider: () -> AddressableValueConverter,
 	private val addressableCellChangeConsumer: (AddressableCellChange) -> Unit
 ) : DefaultCellEditor(JTextField()) {
 
@@ -65,8 +66,13 @@ class AddressableValueEditor(
 
 	private inner class HexHumberInputVerifier : InputVerifier() {
 
-		override fun verify(input: JComponent?): Boolean =
-			BitOperation.normalizeHex(textComponent.text.trim(), addressableRef.addressable.dataWidth) != null
+		override fun verify(input: JComponent?): Boolean {
+			val valid = converterProvider().parse(textComponent.text.trim(), addressableRef.addressable.dataWidth) != null
+			if (!valid) {
+				System.beep()
+			}
+			return valid
+		}
 	}
 }
 
