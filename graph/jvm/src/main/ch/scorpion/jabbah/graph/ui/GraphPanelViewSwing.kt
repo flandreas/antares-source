@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.ToolBar
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.*
 import ch.scorpion.jabbah.base.ui.TitleBar
@@ -13,6 +14,8 @@ import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanelSwing
 import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
 import ch.scorpion.jabbah.execution.IssuesViewSwing
+import ch.scorpion.jabbah.graph.app.ApplicationMode
+import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.library.LibraryPanelSwing
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewSwing
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelView
@@ -31,9 +34,9 @@ import javax.swing.*
  * A [javax.swing] implementation of [GraphPanelView]
  */
 class GraphPanelViewSwing(
-	controller: GraphPanelViewController,
+	private val controller: GraphPanelViewController,
 	private val graphViewAppService: GraphViewAppService = GraphViewModule.graphViewAppService,
-	eventBus: EventBus = BaseModule.eventBus,
+	private val eventBus: EventBus = BaseModule.eventBus,
 	viewManager: ContentViewManager,
 	application: Application,
 	propertySheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory
@@ -122,6 +125,10 @@ class GraphPanelViewSwing(
 
 	val showsNavigationRoot: Boolean get() = graphEditView.graphNavigationView.showsNavigationRoot
 
+	private val titleBar = TitleBar("")
+
+	private val applicationModeHandler: EventHandler<ApplicationModeEvent> = { updateTitle() }
+
 	init {
 		controller.view = this
 
@@ -129,9 +136,13 @@ class GraphPanelViewSwing(
 
 		buildUI()
 		controller.editViewController.setGraphView(controller.editor.drawing as GraphView, true)
+
+		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
+		updateTitle()
 	}
 
 	override fun dispose() {
+		eventBus.unregister(applicationModeHandler)
 		BaseModule.settings.set(BOTTOM_SPLIT_POS, bottomSidebarSplitPane.dividerLocation)
 		leftSidebarPane.dispose()
 		issuesPanel.dispose()
@@ -141,6 +152,13 @@ class GraphPanelViewSwing(
 		bottomSidebarPane.dispose()
 
 		BaseModule.settings.set("graphPanel.librarySplitPos", explorerSplitPane.dividerLocation)
+	}
+
+	private fun updateTitle() {
+		when (controller.applicationModeHolder.currentMode) {
+			ApplicationMode.EDIT -> titleBar.text = Translations.getString("graph.desktop.title")
+			ApplicationMode.EXECUTE, ApplicationMode.EXEC_USECASE -> titleBar.text = Translations.getString("graph.simulator.title")
+		}
 	}
 
 	override var issuesSummary: IssuesSummary? = null
@@ -185,7 +203,7 @@ class GraphPanelViewSwing(
 		bottomSidebarPane.add(issuesContent)
 		bottomSidebarPane.add(logContent)
 
-		add(TitleBar(Translations.getString("graph.desktop.title")), BorderLayout.NORTH)
+		add(titleBar, BorderLayout.NORTH)
 		add(leftSidebarPane, BorderLayout.CENTER)
 		add(bottomSidebarPane, BorderLayout.SOUTH)
 	}
