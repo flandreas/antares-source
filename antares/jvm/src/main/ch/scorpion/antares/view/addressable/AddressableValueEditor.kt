@@ -2,7 +2,6 @@ package ch.scorpion.antares.view.addressable
 
 import ch.scorpion.antares.model.addressable.AddressableCellChange
 import ch.scorpion.antares.model.addressable.AddressableReference
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.System
 import java.awt.Component
 import java.awt.event.FocusAdapter
@@ -15,10 +14,6 @@ class AddressableValueEditor(
 	private val converterProvider: () -> AddressableValueConverter,
 	private val addressableCellChangeConsumer: (AddressableCellChange) -> Unit
 ) : DefaultCellEditor(JTextField()) {
-
-	companion object {
-		private val LOG by logger(AddressableValueEditor::class)
-	}
 
 	private var oldValue: ULong = 0UL
 	private var row: Int = 0
@@ -58,7 +53,6 @@ class AddressableValueEditor(
 
 	private fun handleFocusLost() {
 		val newValue = retrieveCurrentValue()
-		LOG.trace("Changed $row,$col from $oldValue to $newValue")
 		if (newValue != oldValue) {
 			addressableCellChangeConsumer(AddressableCellChange(addressableDisplayLayout.getCellAddress(row, col), oldValue, newValue))
 		}

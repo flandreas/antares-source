@@ -1,10 +1,14 @@
 package ch.scorpion.jabbah.graph.model
 
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.Undoable
+import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.Vertice.Companion.STATE_CHANGE_NAME
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.io.Storable
 
 /**
@@ -53,6 +57,24 @@ data class GraphPortCanBeUndefinedChanged<out T : Any>(
 	val graphPort: GraphPort<T>,
 	val value: Boolean
 )
+
+class GraphPortNameCommand(
+	editor: Editor,
+	private val graphPortId: Int,
+	private val oldName: String?,
+	private val newName: String?
+) : AbstractCommand("graph.command.portName", editor), Undoable {
+
+	private val graphPort: GraphPort<*> get() = (editor!!.drawing as GraphView).graph!!.withId(graphPortId) as GraphPort<*>
+
+	override fun execute() {
+		graphPort.name = newName
+	}
+
+	override fun undo() {
+		graphPort.name = oldName
+	}
+}
 
 /**
  * A [GraphInput] is a special [GraphPort] that can feed a signal from outside into a [Graph].
