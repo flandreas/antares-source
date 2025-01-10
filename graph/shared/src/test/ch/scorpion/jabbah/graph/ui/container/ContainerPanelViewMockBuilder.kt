@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.ui.container
 import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanel
 import ch.scorpion.jabbah.graph.CanvasMockBuilder
 import ch.scorpion.jabbah.graph.ui.ComponentPropertyPanelMockBuilder
+import ch.scorpion.jabbah.graph.ui.SymbolComparatorViewMockBuilder
 import dev.mokkery.MockMode
 import dev.mokkery.mock
 
@@ -14,10 +15,16 @@ class ContainerPanelViewMockBuilder(private val controller: ContainerPanelContro
 		controller.view = containerPanelView
 		controller.drawingView.canvas = CanvasMockBuilder().build()
 		withPropertyPanel(ComponentPropertyPanelMockBuilder(controller.propertyPanelController).build())
+		withSymbolComparatorView(SymbolComparatorViewMockBuilder(controller.symbolComparatorController).build())
 	}
 
 	fun withPropertyPanel(view: ComponentPropertyPanel): ContainerPanelViewMockBuilder {
 		controller.propertyPanelController.view = view
+		return this
+	}
+
+	fun withSymbolComparatorView(view: SymbolComparatorView): ContainerPanelViewMockBuilder {
+		controller.symbolComparatorController.view = view
 		return this
 	}
 
