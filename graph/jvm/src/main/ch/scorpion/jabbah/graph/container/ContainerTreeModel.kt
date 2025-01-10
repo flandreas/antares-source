@@ -57,8 +57,8 @@ class ContainerTreeModel(
 	private var imagesNode: DynamicTreeNode
 
 	init {
-		fillGraphPortViews(graphView, containerDrawing)
-		fillControlViewSources(graphView, containerDrawing)
+		fillGraphPortViews(graphView)
+		fillControlViewSources(graphView)
 		(treeModel.root as DefaultMutableTreeNode).add(portsNode)
 		(treeModel.root as DefaultMutableTreeNode).add(controlsNode)
 		subGraphsNode = DynamicTreeNode(SubGraphsFolderItem(graphView, DeepVerticeLink()), initializer, treeModel)
@@ -120,7 +120,7 @@ class ContainerTreeModel(
 	/**
 	 * Adds all toplevel [GraphPortView]s that are not contained in the [ContainerDrawing] to the [TreeModel].
 	 */
-	private fun fillGraphPortViews(graphView: GraphView, containerDrawing: ContainerDrawing) {
+	private fun fillGraphPortViews(graphView: GraphView) {
 		graphView.getGraphPortViews()
 			.filter { containerDrawing.getPortViewComponent(it.model.name!!) == null }
 			.reversed()
@@ -228,9 +228,9 @@ class ContainerTreeModel(
 	/**
 	 * Adds all toplevel [ControlViewSource]s that are not contained in the [ContainerDrawing] to the [TreeModel].
 	 */
-	private fun fillControlViewSources(graphView: GraphView, containerDrawing: ContainerDrawing) {
+	private fun fillControlViewSources(graphView: GraphView) {
 		graphView.getControlViewSources()
-			.filter { containerDrawing.getControlViewComponent(it.controlId) == null }
+			.filter { containerDrawing.getControlViewComponent(DeepVerticeLink(it.model.id)) == null }
 			.forEach { addControlViewSource(it) }
 	}
 

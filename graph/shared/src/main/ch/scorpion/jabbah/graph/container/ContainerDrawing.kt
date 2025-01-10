@@ -173,11 +173,6 @@ class ContainerDrawing(
 		return getPortViewComponents().firstOrNull { it.portView!!.port.name == portName }
 	}
 
-	@Deprecated("Use querying with DeepVerticeLink")
-	fun getControlViewComponent(controlId: String): ControlViewComponent? {
-		return getControlViewComponents().firstOrNull { it.controlView.controlId == controlId }
-	}
-
 	fun getControlViewComponent(link: DeepVerticeLink): ControlViewComponent? {
 		return getControlViewComponents().firstOrNull { it.controlModelLink == link }
 	}
