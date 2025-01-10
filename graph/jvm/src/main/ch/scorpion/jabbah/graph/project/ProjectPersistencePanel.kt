@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.project
 
+import ch.scorpion.jabbah.app.ApplicationTooOldException
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
@@ -142,8 +143,20 @@ class ProjectPersistencePanel(
 			selectedLibrary?.let {
 				LOG.userTrail("Open project '${it.uuid}'")
 				InvocationHandler.invoke {
-					managementService.open(getLibraryIdentity(it.uuid))
-					closeHandler.invoke()
+					try {
+						managementService.open(getLibraryIdentity(it.uuid))
+						closeHandler.invoke()
+					} catch (e: ApplicationTooOldException) {
+						JOptionPane.showConfirmDialog(
+							this@ProjectPersistencePanel,
+							e.message,
+							name,
+							JOptionPane.DEFAULT_OPTION,
+							JOptionPane.ERROR_MESSAGE
+						)
+					} catch (e: Throwable) {
+						throw e
+					}
 				}
 			}
 		}

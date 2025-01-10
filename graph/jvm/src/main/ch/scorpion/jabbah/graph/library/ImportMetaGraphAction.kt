@@ -52,11 +52,12 @@ class ImportMetaGraphAction(
 			var repeat = false
 			LOG.userTrail("Import bundle '$bundleName', replace if UUID exists = $replaceIfUuidExists")
 
-			when (service.importMetaGraphBundle(path, bundleName, destination, replaceIfUuidExists, LibraryModule.libraryHolder)) {
-				Success -> handleSuccessfulImport()
-				Invalid -> handleInvalidImportFile(bundleName)
-				StaleLibraryReference -> handleStaleLibraryReference(bundleName)
-				UuidAlreadyExists -> {
+			val result = service.importMetaGraphBundle(path, bundleName, destination, replaceIfUuidExists, LibraryModule.libraryHolder)
+			when (result.type) {
+				MetaGraphBundleImportResultType.Success -> handleSuccessfulImport()
+				MetaGraphBundleImportResultType.Invalid -> handleInvalidImportFile(bundleName)
+				MetaGraphBundleImportResultType.StaleLibraryReference -> handleStaleLibraryReference(bundleName)
+				MetaGraphBundleImportResultType.UuidAlreadyExists -> {
 					replaceIfUuidExists = when (handleReplaceMetaGraphsByImport()) {
 						true -> true
 						false -> false
@@ -64,6 +65,7 @@ class ImportMetaGraphAction(
 					}
 					repeat = replaceIfUuidExists
 				}
+				MetaGraphBundleImportResultType.ApplicationTooOld -> handleApplicationTooOld(result.param!!)
 			}
 
 		} while (repeat)
@@ -112,5 +114,14 @@ class ImportMetaGraphAction(
 			JOptionPane.NO_OPTION -> false
 			else -> null
 		}
+	}
+
+	private fun handleApplicationTooOld(msg: String) {
+		JOptionPane.showConfirmDialog(
+			Frame.getFrames()[0],
+			msg,
+			title,
+			JOptionPane.DEFAULT_OPTION,
+			JOptionPane.ERROR_MESSAGE)
 	}
 }

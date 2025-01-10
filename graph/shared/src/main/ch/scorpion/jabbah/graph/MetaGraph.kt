@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph
 
+import ch.scorpion.jabbah.app.CurrentApplicationVersion
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
@@ -100,6 +101,7 @@ class MetaGraph(
 		// GraphParamDefinitions might have been changed by Graph
 		parameterDefinitions = graph.model!!.parameterDefinitions
 
+		CurrentApplicationVersion.write(writer)
 		if (parameterDefinitions.isNotEmpty) {
 			writer.writeStorable("params", parameterDefinitions)
 		}
@@ -107,6 +109,8 @@ class MetaGraph(
 	}
 
 	override fun read(reader: StoreReader) {
+		CurrentApplicationVersion.check(reader)
+
 		val aGraph = reader.readStorable("graph") as GraphStorable
 		val globalGraphId = reader.getGlobalId(aGraph)
 		reader.requestResolution(this, Reference(

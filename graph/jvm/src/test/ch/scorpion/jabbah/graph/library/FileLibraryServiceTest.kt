@@ -63,6 +63,6 @@ class FileLibraryServiceTest {
 			replaceIfUuidExists = true,
 			LibraryModule.libraryHolder)
 
-		assertEquals(MetaGraphBundleImportResult.Success, importResult)
+		assertEquals(MetaGraphBundleImportResultType.Success, importResult.type)
 	}
 }

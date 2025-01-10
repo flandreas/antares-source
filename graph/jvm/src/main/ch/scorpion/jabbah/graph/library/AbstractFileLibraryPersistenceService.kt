@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.app.ApplicationTooOldException
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.io.ZipUtil
 import ch.scorpion.jabbah.base.logger
@@ -75,6 +76,9 @@ abstract class AbstractFileLibraryPersistenceService(
 				val metaGraph = storeReader.readStorable() as MetaGraph
 				LOG.trace("loaded MetaGraph '$uuid' with ID ${metaGraph.hashCode()}")
 				return metaGraph
+			} catch (e: ApplicationTooOldException) {
+				// Pass on to higher layers for interpretation
+				throw e
 			} catch (e: Throwable) {
 				LOG.error("Error while loading MetaGraph $uuid", e)
 				throw LibraryPersistenceServiceException()
@@ -173,6 +177,9 @@ abstract class AbstractFileLibraryPersistenceService(
 		FileInputStream(bundleFilePath.toString()).use { input ->
 			try {
 				return StoreXmlReader(ElectricXmlReader(input)).readStorable()
+			} catch (e: ApplicationTooOldException) {
+				// Pass on to higher layers for interpretation
+				throw e
 			} catch (e: Exception) {
 				LOG.trace("Could not read bundle file, possibly not a valid bundle")
 				throw IllegalArgumentException("Could not read bundle file")
@@ -185,6 +192,9 @@ abstract class AbstractFileLibraryPersistenceService(
 	protected fun loadLibrary(libraryId: LibraryIdentification, inputStream: InputStream): Library {
 		try {
 			return loadLibrary(inputStream)
+		} catch (e: ApplicationTooOldException) {
+			// Pass on to higher layers for interpretation
+			throw e
 		} catch (e: Throwable) {
 			LOG.error("Error while loading Library ${libraryId.uuid}: ${e.message}")
 			throw LibraryPersistenceServiceException(e.message)

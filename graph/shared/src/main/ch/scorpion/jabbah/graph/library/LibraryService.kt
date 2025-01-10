@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.app.ApplicationTooOldException
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -55,12 +56,20 @@ data class LibraryRenamedEvent(
 	val oldName: TranslatableText
 )
 
-enum class MetaGraphBundleImportResult {
+enum class MetaGraphBundleImportResultType {
 	Success,
 	Invalid,
 	StaleLibraryReference,
-	UuidAlreadyExists
+	UuidAlreadyExists,
+	ApplicationTooOld;
+
+	fun result(param: String? = null) = MetaGraphBundleImportResult(this, param)
 }
+
+data class MetaGraphBundleImportResult(
+	val type: MetaGraphBundleImportResultType,
+	val param: String? = null
+)
 
 /**
  * Called by [LibraryService] in various situations.
@@ -397,18 +406,20 @@ class LibraryService(
 
 		try {
 			bundle = userLibraryPersister.importMetaGraphBundle(inputPath)
+		} catch (e: ApplicationTooOldException) {
+			return MetaGraphBundleImportResultType.ApplicationTooOld.result(e.message)
 		} catch (e: Throwable) {
 			LOG.error("Error while importing bundle", e)
-			return MetaGraphBundleImportResult.Invalid
+			return MetaGraphBundleImportResultType.Invalid.result()
 		}
 
 		if (!checkBundleLibrary(bundle, destination.library!!)) {
-			return MetaGraphBundleImportResult.StaleLibraryReference
+			return MetaGraphBundleImportResultType.StaleLibraryReference.result()
 		}
 
 		val conflict = anyBundleUuidExists(bundle, metaGraphRepository)
 		if (conflict && !replaceIfUuidExists) {
-			return MetaGraphBundleImportResult.UuidAlreadyExists
+			return MetaGraphBundleImportResultType.UuidAlreadyExists.result()
 		}
 
 		if (conflict) {
@@ -418,7 +429,7 @@ class LibraryService(
 
 		importMetaGraphBundle(bundle, bundleName, destination)
 
-		return MetaGraphBundleImportResult.Success
+		return MetaGraphBundleImportResultType.Success.result()
 	}
 
 	/**

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.app.CurrentApplicationVersion
 import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.collection.ImmutableList
@@ -238,6 +239,8 @@ open class LibraryImpl(
 	/** ---- [Storable] interface */
 
 	override fun write(writer: StoreWriter) {
+		CurrentApplicationVersion.write(writer)
+
 		if (defaultElementUUID != null) {
 			writer.writeString("defaultElement", defaultElementUUID.toString())
 		}
@@ -260,6 +263,8 @@ open class LibraryImpl(
 	}
 
 	override fun read(reader: StoreReader) {
+		CurrentApplicationVersion.check(reader)
+
 		if (reader.hasAttribute("defaultElement")) {
 			defaultElementUUID = UUID(reader.readString("defaultElement"))
 		}

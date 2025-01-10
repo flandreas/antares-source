@@ -10,7 +10,7 @@ class StorableClonerTest {
     companion object {
         private val DATA = """
             <?xml version='1.0' encoding='UTF-8'?>
-            <project _id='0' defaultElement='022e819f-445a-4c1e-8deb-2ce0149e2b62' uuid='4346eb30-7da5-40b1-8614-e55ae794c89c' author='5ecf330b-e395-4e17-88b0-0883834b384a' imports='6707f981-110d-4629-a0bf-c35a4688025c' visibility='public'>
+            <project _id='0' appVersion='0.0.0' defaultElement='022e819f-445a-4c1e-8deb-2ce0149e2b62' uuid='4346eb30-7da5-40b1-8614-e55ae794c89c' author='5ecf330b-e395-4e17-88b0-0883834b384a' imports='6707f981-110d-4629-a0bf-c35a4688025c' visibility='public'>
               <folder>
                 <libraryFolder _id='1'>
                   <name>

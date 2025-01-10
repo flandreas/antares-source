@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph
 
+import ch.scorpion.jabbah.app.CurrentApplicationVersion
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
@@ -40,6 +41,7 @@ class MetaGraphBundle(
 	/** ---- [Storable] interface */
 
 	override fun write(writer: StoreWriter) {
+		CurrentApplicationVersion.write(writer)
 		if (referencedSystemLibraryIds.isNotEmpty()) {
 			writer.writeUuids("systemLibs", referencedSystemLibraryIds)
 		}
@@ -47,6 +49,8 @@ class MetaGraphBundle(
 	}
 
 	override fun read(reader: StoreReader) {
+		CurrentApplicationVersion.check(reader)
+
 		_metaGraphs.clear()
 		if (reader.hasAttribute("systemLib")) {
 			// Backward compatibility

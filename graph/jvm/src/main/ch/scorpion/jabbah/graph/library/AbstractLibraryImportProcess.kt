@@ -83,6 +83,7 @@ abstract class AbstractLibraryImportProcess(
 					repeat = replaceIfUuidExists
 				}
 				QuotaExceeded -> handleQuotaExceeded(result.param!!)
+				ApplicationTooOld -> handleApplicationTooOld(result.param!!)
 			}
 		} while (repeat)
 	}
@@ -139,6 +140,15 @@ abstract class AbstractLibraryImportProcess(
 	}
 
 	private fun handleQuotaExceeded(msg: String) {
+		JOptionPane.showConfirmDialog(
+			parentComponent,
+			msg,
+			dialogTitle,
+			JOptionPane.DEFAULT_OPTION,
+			JOptionPane.ERROR_MESSAGE)
+	}
+
+	private fun handleApplicationTooOld(msg: String) {
 		JOptionPane.showConfirmDialog(
 			parentComponent,
 			msg,

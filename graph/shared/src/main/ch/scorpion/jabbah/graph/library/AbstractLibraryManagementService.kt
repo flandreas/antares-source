@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.app.ApplicationTooOldException
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
@@ -17,7 +18,8 @@ enum class LibraryImportResultType {
 	Invalid,
 	StaleLibraryReference,
 	UuidAlreadyExists,
-	QuotaExceeded;
+	QuotaExceeded,
+	ApplicationTooOld;
 
 	fun result(param: String? = null, library: Library? = null): LibraryImportResult = LibraryImportResult(this, param, library)
 }
@@ -75,6 +77,8 @@ abstract class AbstractLibraryManagementService(
 			}
 		} catch (e: GraphQuotaException) {
 			return QuotaExceeded.result(e.translatedMsg)
+		} catch (e: ApplicationTooOldException) {
+			return ApplicationTooOld.result(e.message)
 		} catch (e: Throwable) {
 			LOG.error("Error while importing library", e)
 			return Invalid.result()

@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.app.ApplicationTooOldException
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.io.ZipUtil
@@ -110,6 +111,9 @@ abstract class AbstractLibraryImporter(
 		val library = createLibraryFileInputStream(libraryFilePath).use {
 			try {
 				AbstractFileLibraryPersistenceService.loadLibrary(it)
+			} catch (e: ApplicationTooOldException) {
+				// Pass on to higher layers for interpretation
+				throw e
 			} catch (e: Exception) {
 				LOG.trace("Could not read library file, possibly not an Graph library")
 				throw IllegalArgumentException("Could not read library file", e)

@@ -116,7 +116,11 @@ class GraphDataViewController(
 	}
 
 	fun openProject(identification: LibraryIdentification) {
-		ProjectModule.projectManagementService.open(identification)
+		try {
+			ProjectModule.projectManagementService.open(identification)
+		} catch (e: ApplicationTooOldException) {
+			handle(Translations.getString("project.action.open.name"), e)
+		}
 	}
 
 	fun openAsSavable(element: ContainerLibraryElement, actionName: String) {
@@ -134,20 +138,32 @@ class GraphDataViewController(
 				 */
 				ApplicationData(StorableCloner.clone(element.storable!!), library.createSavable(element), eventBus)
 			}
+		} catch (e: ApplicationTooOldException) {
+			handle(actionName, e)
 		} catch (e: Throwable) {
-			LOG.error("Error while loading ${element.uuid}: ${e.message}")
+			val msg = e.message ?: Translations.getString("graph.action.load.error.general.desc")
+			LOG.error("Error while loading ${element.uuid}: $msg")
 			view.showModalMessage(
 				ModalMessageType.Error,
 				actionName,
-				Translations.getString("graph.action.load.error.general.desc"))
+				msg)
 		}
 	}
 
+	private fun handle(actionName: String, e: ApplicationTooOldException) {
+		view.showModalMessage(
+			ModalMessageType.Error,
+			actionName,
+			e.message!!)
+	}
+
+	/*
 	fun openAsStorable(content: Storable, savable: Savable) {
 		open {
 			ApplicationData(content, savable)
 		}
 	}
+	*/
 
 	/**
 	 * Opens the contents of the general [LibraryItem], which complements the earlier, more specialized version

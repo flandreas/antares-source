@@ -144,10 +144,14 @@ abstract class AbstractDesktopApplication(
 
 	override val appDataDirectoryPath: Path = determineAppDataDirectoryPath(commandLine, systemName)
 
+	override val version: ApplicationVersion by lazy { readVersion() }
+
 	init {
-		LOG.info("Starting $displayName version ${readVersion()}")
+		LOG.info("Starting $displayName version $version")
 		LOG.info("Using Java ${Runtime.version()}")
 		LOG.info(("Using app data directory $appDataDirectoryPath"))
+
+		CurrentApplicationVersion.version = version
 
 		consumeCommandLine(commandLine)
 		loadSettings()
@@ -168,8 +172,6 @@ abstract class AbstractDesktopApplication(
 	/** ---- [DesktopApplication] */
 
 	override val environment: Environment = determineEnvironment(commandLine)
-
-	override val version: ApplicationVersion by lazy { readVersion() }
 
 	override fun quit(): Boolean {
 		if (controller.canReplaceSavable("file.action.quit.name")) {

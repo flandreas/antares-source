@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.PreferencesChangedEvent
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -19,6 +18,9 @@ import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.ui.MultilineTextDisplayJvm
 import ch.scorpion.jabbah.draw.view.buildToolTipText
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.model.text.EditModelTextModule
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.style.EditStyleType
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.GraphElement
@@ -27,7 +29,6 @@ import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import java.awt.*
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
-import java.io.FileNotFoundException
 import javax.swing.*
 import kotlin.math.min
 
@@ -65,6 +66,8 @@ class LibraryPreviewPanel(
 	private val libraryItemUpdatedHandler: EventHandler<LibraryItemUpdatedEvent> = { map.remove(it.item) }
 
 	private val preferencesChangedHandler: EventHandler<PreferencesChangedEvent> = { componentDisplay.repaint() }
+
+	private val errorComponent = EditModelTextModule.textComponentFactory.create(TranslatableText("Error"), styleType = EditStyleType.MESSAGE_ERROR)
 
 	init {
 		helpAction.enabled = false
@@ -158,17 +161,8 @@ class LibraryPreviewPanel(
 	}
 
 	private fun handleLoadError(e: Throwable) {
-		LOG.error("Error when loading preview", e)
-		val msgKey = when(e) {
-			is FileNotFoundException -> "graph.action.load.error.fileNotFound.desc"
-			else -> "graph.action.load.error.general.desc"
-		}
-		JOptionPane.showConfirmDialog(
-			JFrame.getFrames()[0],
-			Translations.getString(msgKey),
-			Translations.getString("graph.preview.name"),
-			JOptionPane.DEFAULT_OPTION,
-			JOptionPane.ERROR_MESSAGE)
+		selection = errorComponent
+		descriptionDisplay.plainText = e.message
 	}
 
 	private fun updateSelectionImpl(component: Component) {
