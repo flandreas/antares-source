@@ -1,0 +1,117 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' appVersion='1.17.0' manualContainer='false'>
+  <graph>
+    <graphStorable _id='1'>
+      <model>
+        <analogGraph _id='2' type='analog' propDelay='10' timeStep='0.02'>
+          <elements>
+            <battery _id='3' id='1' voltage='5.0'/>
+            <diode _id='4' id='2'/>
+            <diode _id='5' id='3'/>
+            <resistor _id='6' id='7' resistance='20.0' variable='false'/>
+            <analogNet _id='7' id='10' delay='0'>
+              <ports>
+                <netPortRef _id='8' verticeId='4' portId='1'/>
+                <netPortRef _id='9' verticeId='5' portId='2'/>
+                <netPortRef _id='10' verticeId='6' portId='1'/>
+              </ports>
+            </analogNet>
+            <analogNet _id='11' id='11' delay='0'>
+              <ports>
+                <netPortRef _id='12' verticeId='4' portId='2'/>
+                <netPortRef _id='13' verticeId='5' portId='1'/>
+                <netPortRef _id='14' verticeId='3' portId='1'/>
+              </ports>
+            </analogNet>
+            <analogNet _id='15' id='12' delay='0'>
+              <ports>
+                <netPortRef _id='16' verticeId='6' portId='2'/>
+                <netPortRef _id='17' verticeId='3' portId='2'/>
+              </ports>
+            </analogNet>
+          </elements>
+        </analogGraph>
+      </model>
+      <view>
+        <analogGraphView _id='18'>
+          <netViews>
+            <netView _id='19' modelId='7' style='line'/>
+            <netView _id='20' modelId='11' style='line'/>
+            <netView _id='21' modelId='15' style='line'/>
+          </netViews>
+          <components>
+            <batteryView _id='22' id='1' rot='270' filled='true' stroked='true' modelId='3' x='-147.0' y='-140.0'/>
+            <diodeView _id='23' id='2' rot='90' filled='true' stroked='true' modelId='4' x='0.0' y='-84.0'/>
+            <diodeView _id='24' id='3' rot='270' filled='true' stroked='true' modelId='5' x='77.0' y='-140.0'/>
+            <analogEdgeView _id='25' id='11' filled='true' stroked='true' modelId='7' layout='ortho' orig='23' origPort='1' origPortOutput='true' dest='26' adjusted='false'>
+              <shape>
+                <polylineShape points='0.0,-98.0 0.0,-49.0'/>
+              </shape>
+            </analogEdgeView>
+            <resistorView _id='27' id='12' rot='0' filled='true' stroked='true' modelId='6' x='-35.0' y='-49.0'/>
+            <analogEdgeView _id='28' id='15' filled='true' stroked='true' modelId='11' layout='ortho' orig='23' origPort='2' origPortOutput='true' dest='29' adjusted='false'>
+              <shape>
+                <polylineShape points='0.0,-126.0 0.0,-168.0'/>
+              </shape>
+            </analogEdgeView>
+            <analogNodeView _id='29' id='16' filled='true' stroked='true' modelId='11'>
+              <location>
+                <point x='0.0' y='-168.0'/>
+              </location>
+            </analogNodeView>
+            <analogEdgeView _id='30' id='17' filled='true' stroked='true' modelId='11' layout='ortho' orig='29' dest='24' destPort='1' destPortOutput='true' adjusted='true'>
+              <shape>
+                <polylineShape points='0.0,-168.0 77.0,-168.0 77.0,-126.0'/>
+              </shape>
+            </analogEdgeView>
+            <analogEdgeView _id='31' id='18' filled='true' stroked='true' modelId='11' layout='ortho' orig='29' dest='22' destPort='1' destPortOutput='true' adjusted='false'>
+              <shape>
+                <polylineShape points='0.0,-168.0 -147.0,-168.0 -147.0,-126.0'/>
+              </shape>
+            </analogEdgeView>
+            <analogEdgeView _id='32' id='19' filled='true' stroked='true' modelId='15' layout='ortho' orig='27' origPort='2' origPortOutput='true' dest='22' destPort='2' destPortOutput='true' adjusted='false'>
+              <shape>
+                <polylineShape points='-91.0,-49.0 -147.0,-49.0 -147.0,-98.0'/>
+              </shape>
+            </analogEdgeView>
+            <analogNodeView _id='26' id='20' filled='true' stroked='true' modelId='7'>
+              <location>
+                <point x='0.0' y='-49.0'/>
+              </location>
+            </analogNodeView>
+            <analogEdgeView _id='33' id='21' filled='true' stroked='true' modelId='7' layout='ortho' orig='26' dest='24' destPort='2' destPortOutput='true' adjusted='true'>
+              <shape>
+                <polylineShape points='0.0,-49.0 77.0,-49.0 77.0,-98.0'/>
+              </shape>
+            </analogEdgeView>
+            <analogEdgeView _id='34' id='22' filled='true' stroked='true' modelId='7' layout='ortho' orig='26' dest='27' destPort='1' destPortOutput='true' adjusted='false'>
+              <shape>
+                <polylineShape points='0.0,-49.0 -49.0,-49.0'/>
+              </shape>
+            </analogEdgeView>
+          </components>
+        </analogGraphView>
+      </view>
+    </graphStorable>
+  </graph>
+  <container>
+    <containerDrawing _id='35'>
+      <components>
+        <rectangle _id='36' id='1' style='figure' filled='true' stroked='true' x='140.0' y='140.0' w='56.0' h='70.0'/>
+        <originIndicator _id='37' id='2'>
+          <location>
+            <point x='140.0' y='140.0'/>
+          </location>
+        </originIndicator>
+      </components>
+      <model>
+        <subGraphVertice _id='38' id='0' delay='0' uuid='cbfdff1c-2294-4b3e-8876-b98e77f22e3c'>
+          <name>
+            <translation lang='en' text='Diode'/>
+          </name>
+          <ports/>
+        </subGraphVertice>
+      </model>
+    </containerDrawing>
+  </container>
+</metaGraph>

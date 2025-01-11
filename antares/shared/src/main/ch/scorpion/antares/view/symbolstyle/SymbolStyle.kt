@@ -5,6 +5,7 @@ import ch.scorpion.antares.view.Look.SCALE
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.gate.BoxGateView
 import ch.scorpion.antares.view.gate.CustomShapeContent
+import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
 import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.base.Properties
@@ -120,6 +121,10 @@ enum class SymbolStyle(
 				INDUCTOR_WIDTH, 2 * INDUCTOR_HEIGHT_HALF
 			)
 		}
+
+		override fun drawDiode(diode: OrientableRectangularVerticeView<*>, context: DrawContext) {
+			Companion.drawDiode(diode,context, false)
+		}
 	},
 
 	AMERICAN("ANSI") {
@@ -195,6 +200,10 @@ enum class SymbolStyle(
 			context.g.draw(if (up) INDUCTOR_PATH_UP else INDUCTOR_PATH_DOWN)
 		}
 
+		override fun drawDiode(diode: OrientableRectangularVerticeView<*>, context: DrawContext) {
+			Companion.drawDiode(diode, context, true)
+		}
+
 		override val orShapeConnectedPortViewLength: Int get() = (2 * SCALE * 0.35).toInt()
 	},
 
@@ -258,6 +267,13 @@ enum class SymbolStyle(
 			stroke: Stroke
 		) {
 			EUROPEAN.drawInductor(inductor, true, context, foregroundColor, backgroundColor, stroke)
+		}
+
+		override fun drawDiode(
+			diode: OrientableRectangularVerticeView<*>,
+			context: DrawContext
+		) {
+			EUROPEAN.drawDiode(diode, context)
 		}
 	};
 
@@ -347,6 +363,12 @@ enum class SymbolStyle(
 		private val INDUCTOR_PATH_UP = createInductorPath(1.0)
 		private val INDUCTOR_PATH_DOWN = createInductorPath(-1.0)
 
+		private val DIODE_PATH = System.createPath()
+			.moveTo(LENGTH + 3.5 * SCALE, 0.0)
+			.lineTo(LENGTH + 1.0 * SCALE, -1.5 * SCALE)
+			.lineTo(LENGTH + 1.0 * SCALE, 1.5 * SCALE)
+			.close()
+
 		private fun createInductorPath(yf: Double): Path =
 			System.createPath()
 				.moveTo(LENGTH, 0)
@@ -410,6 +432,27 @@ enum class SymbolStyle(
 			context.g.rotate(-0.46)
 			context.g.translate(-(-LENGTH - 3.0 * SCALE), 0.0)
 		}
+
+		protected fun drawDiode(
+			diode: OrientableRectangularVerticeView<*>,
+			context: DrawContext,
+			fill: Boolean
+		) {
+			// Anode
+			(diode.getPortView(diode.model.getPort(1)) as AbstractAntaresPortView<*>).prepareConnectionDrawContext(context)
+			context.g.drawLine(LENGTH.toDouble(), 0.0, LENGTH + 3.5 * SCALE, 0.0)
+			context.g.stroke = diode.stroke
+			if (fill) {
+				context.g.fill(DIODE_PATH)
+			} else {
+				context.g.draw(DIODE_PATH)
+			}
+
+			// Cathode
+			(diode.getPortView(diode.model.getPort(2)) as AbstractAntaresPortView<*>).prepareConnectionDrawContext(context)
+			context.g.drawLine(LENGTH + 3.5 * SCALE, -1.5 * SCALE, LENGTH + 3.5 * SCALE, 1.5 * SCALE)
+			context.g.drawLine(LENGTH + 3.5 * SCALE, 0.0, LENGTH + 4.0 * SCALE, 0.0)
+		}
 	}
 
 	override fun toString(): String {
@@ -447,5 +490,7 @@ enum class SymbolStyle(
 	abstract fun drawResistor(resistor: OrientableRectangularVerticeView<*>, isVariable: Boolean, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke)
 
 	abstract fun drawInductor(inductor: OrientableRectangularVerticeView<*>, up: Boolean, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke)
+
+	abstract fun drawDiode(diode: OrientableRectangularVerticeView<*>, context: DrawContext)
 
 }

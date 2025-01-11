@@ -3,6 +3,8 @@ package ch.scorpion.antares.filebased
 import ch.scorpion.antares.AbstractCircuitTest
 import ch.scorpion.antares.AntaresApplication
 import ch.scorpion.antares.AntaresTestRule
+import ch.scorpion.jabbah.app.AbstractDesktopApplication
+import ch.scorpion.jabbah.app.CurrentApplicationVersion
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.execution.actor.ActorListener
 import ch.scorpion.jabbah.graph.library.*
@@ -24,6 +26,8 @@ abstract class AbstractFileBasedTest : AbstractCircuitTest() {
 
 		@JvmStatic
 		protected fun configure() {
+			CurrentApplicationVersion.version = AbstractDesktopApplication.readVersion()
+
 			val path = Paths.get("jvm/rsc/test").toAbsolutePath()
 			AntaresTestRule.configure()
 			LibraryModule.DEF_LIBRARY_UUID = AntaresApplication.DEF_LIBRARY_UUID

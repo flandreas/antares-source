@@ -178,6 +178,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val CAPACITOR = "Capacitor"
 	private const val INDUCTOR = "Inductor"
 	private const val ANALOG_RELAY = "AnalogRelay"
+	private const val ANALOG_DIODE = "AnalogDiode"
 
 	val currentSymbolStyle: CurrentSymbolStyle by lazy {CurrentSymbolStyle() }
 
@@ -399,6 +400,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("analogPowerView", AnalogPowerView::class)
 		typeMap.register("inductorView", InductorView::class)
 		typeMap.register("analogRelayView", AnalogRelayView::class)
+		typeMap.register("diodeView", DiodeView::class)
 	}
 
 	private fun configureSelectionModels(factory: SelectionModelFactory) {
@@ -480,6 +482,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogPushButtonSwitchView::class) { RectangularVerticeViewSelectionModel(it as AnalogPushButtonSwitchView) }
 		factory.register(SelectionDrawingStrategy.REPLACE, InductorView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogRelayView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, DiodeView::class) { SelectedColorSelectionModel(it) }
 	}
 
 	private fun configureHighlightModels(factory: SelectionModelFactory) {
@@ -677,8 +680,9 @@ object AntaresViewModule : AbstractModule() {
 			AnalogCircuitInOutView(model = AnalogCircuitInOut(portType = PortType.OUTPUT))
 		}
 		repository.register(ANALOG_POWER, "library.element.AnalogPower", { "/img/power.png" }, AnalogPowerView::class)
-		// TODO Icon by Janis
+		// TODO Icons by Janis
 		repository.register(ANALOG_RELAY, "library.element.AnalogRelay", { "/img/power.png" }, AnalogRelayView::class)
+		repository.register(ANALOG_DIODE, "library.element.AnalogDiode", { "/img/power.png" }, DiodeView::class)
 	}
 
 	fun fillBaseElementLibrary(library: Library) {

@@ -17,4 +17,4 @@ The inductor has two bidirectional pins.
 
 == Properties
 
-Inductance:: The inductance of the inductor in microhenry.
+Inductance:: The inductance of the inductor in Henry.

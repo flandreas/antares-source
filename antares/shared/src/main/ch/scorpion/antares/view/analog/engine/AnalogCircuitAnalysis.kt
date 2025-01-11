@@ -239,6 +239,13 @@ class AnalogCircuitAnalysis(
 		stampRightSide(n2, i)
 	}
 
+	fun stampConductance(n1: Int, n2: Int, r0: Double) {
+		stampMatrix(n1, n1, r0)
+		stampMatrix(n2, n2, r0)
+		stampMatrix(n1, n2, -r0)
+		stampMatrix(n2, n1, -r0)
+	}
+
 	/**
 	 * Indicates that the value on the left side of row [i] changes in [AnalogElement.doStep].
 	 */
