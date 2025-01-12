@@ -88,11 +88,11 @@ abstract class AbstractAddressable<T : AddressableVertice>(
 	override fun clear() {
 		memory.clear()
 		update()
-		notifyDataChanged(null, null, null)
 	}
 
 	override fun update() {
 		stateChanged()
+		notifyDataChanged(null, null, null)
 	}
 
 	override fun addListener(listener: AddressableListener) {
