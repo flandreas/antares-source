@@ -799,6 +799,7 @@ object AntaresViewModule : AbstractModule() {
 
 	private fun registerHelpSources() {
 		val base = "/base-library"
+		val analogBase = "/base-library/analog"
 		with (HelpSourceRegistry) {
 			register(HelpId(ConstantView::class.simpleName!!), HelpSource("$base/constant"))
 			register(HelpId(SplitterView::class.simpleName!!), HelpSource("$base/splitter"))
@@ -855,6 +856,22 @@ object AntaresViewModule : AbstractModule() {
 			// Other
 			register(Testcase.SCRIPT_HELP_ID, HelpSource("/circuits/circuit-tests"))
 			register(ch.scorpion.antares.model.addressable.ROM.DISASSEMBLER_HELP_ID, HelpSource("$base/rom#disassembler"))
+
+			// Analog components
+			register(HelpId(BatteryView::class.simpleName!!), HelpSource("$analogBase/battery"))
+			register(HelpId(CapacitorView::class.simpleName!!), HelpSource("$analogBase/capacitor"))
+			register(HelpId(CurrentSourceView::class.simpleName!!), HelpSource("$analogBase/current-source"))
+			register(HelpId(DiodeView::class.simpleName!!), HelpSource("$analogBase/diode"))
+			register(HelpId(AnalogDoubleThrowSwitchView::class.simpleName!!), HelpSource("$analogBase/double-throw-switch"))
+			register(HelpId(InductorView::class.simpleName!!), HelpSource("$analogBase/inductor"))
+			register(HelpId(AnalogCircuitInOutView::class.simpleName!!), HelpSource("$analogBase/inout"))
+			register(HelpId(LightBulbView::class.simpleName!!), HelpSource("$analogBase/light-bulb"))
+			register(HelpId(AbstractTransistorView::class.simpleName!!), HelpSource("$analogBase/mosfet"))
+			register(HelpId(AnalogPowerView::class.simpleName!!), HelpSource("$analogBase/power"))
+			register(HelpId(AnalogRelayView::class.simpleName!!), HelpSource("$analogBase/relay"))
+			register(HelpId(ResistorView::class.simpleName!!), HelpSource("$analogBase/resistor"))
+			register(HelpId(AnalogGroundView::class.simpleName!!), HelpSource("$analogBase/signal-ground"))
+			register(HelpId(AnalogSwitchView::class.simpleName!!), HelpSource("$analogBase/switch"))
 		}
 	}
 }
