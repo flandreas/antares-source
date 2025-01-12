@@ -164,4 +164,20 @@ object EditProperties {
 	): CommandPropertySwing<Boolean> {
 		return CommandPropertySwing(name, baseKey, Boolean::class.java, beanProvider)
 	}
+
+	fun horizontallyMirrored(
+		name: String = "horizontallyMirrored",
+		baseKey: String = "edit.property.mirrorHorizontally",
+		beanProvider: BeanProvider = componentBeanProvider
+	): CommandPropertySwing<Boolean> {
+		return CommandPropertySwing(name, baseKey, Boolean::class.java, beanProvider)
+	}
+
+	fun verticallyMirrored(
+		name: String = "verticallyMirrored",
+		baseKey: String = "edit.property.mirrorVertically",
+		beanProvider: BeanProvider = componentBeanProvider
+	): CommandPropertySwing<Boolean> {
+		return CommandPropertySwing(name, baseKey, Boolean::class.java, beanProvider)
+	}
 }

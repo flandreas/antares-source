@@ -49,6 +49,30 @@ abstract class AbstractCurveComponent(
         setPointsImpl(points)
     }
 
+    /** ---- UI properties */
+
+    @Suppress("MemberVisibilityCanBePrivate") // Reflection
+    var isHorizontallyMirrored: Boolean = false
+        set(value) {
+            if (field != value) {
+                field = value
+                if (!isReading) {
+                    mirrorHorizontally(location.x)
+                }
+            }
+        }
+
+    @Suppress("MemberVisibilityCanBePrivate") // Reflection
+    var isVerticallyMirrored: Boolean = false
+        set(value) {
+            if (field != value) {
+                field = value
+                if (!isReading) {
+                    mirrorVertically(location.y)
+                }
+            }
+        }
+
     /** ---- [Locatable] */
 
     override var location: Point2D
@@ -106,11 +130,23 @@ abstract class AbstractCurveComponent(
         val p = mutableListOf<Point2D>()
         p.addAll(reader.readPoints("points"))
         _points = p
+        if (reader.hasAttribute("mirrorH")) {
+            isHorizontallyMirrored = reader.readBoolean("mirrorH")
+        }
+        if (reader.hasAttribute("mirrorV")) {
+            isVerticallyMirrored = reader.readBoolean("mirrorV")
+        }
     }
 
     override fun write(writer: StoreWriter) {
         super.write(writer)
         writer.writePoints("points", points)
+        if (isHorizontallyMirrored) {
+            writer.writeBoolean("mirrorH", isHorizontallyMirrored)
+        }
+        if (isVerticallyMirrored) {
+            writer.writeBoolean("mirrorV", isVerticallyMirrored)
+        }
     }
 
     /** ---- [Drawable] */

@@ -31,6 +31,30 @@ class PolylineComponent(
 		private val TYPE = Translations.getString("edit.component.polyline")
 	}
 
+	/** ---- UI properties */
+
+	@Suppress("MemberVisibilityCanBePrivate") // Reflection
+	var isHorizontallyMirrored: Boolean = false
+		set(value) {
+			if (field != value) {
+				field = value
+				if (!isReading) {
+					mirrorHorizontally(location.x)
+				}
+			}
+		}
+
+	@Suppress("MemberVisibilityCanBePrivate") // Reflection
+	var isVerticallyMirrored: Boolean = false
+		set(value) {
+			if (field != value) {
+				field = value
+				if (!isReading) {
+					mirrorVertically(location.y)
+				}
+			}
+		}
+
 	/** Determines whether this [PolylineComponent] displays an [ArrowHead] at its destination. */
 	@Suppress("MemberVisibilityCanBePrivate") // Reflection
 	var isArrow: Boolean = false
@@ -123,6 +147,12 @@ class PolylineComponent(
 		if (isArrow) {
 			writer.writeBoolean("arrow", isArrow)
 		}
+		if (isHorizontallyMirrored) {
+			writer.writeBoolean("mirrorH", isHorizontallyMirrored)
+		}
+		if (isVerticallyMirrored) {
+			writer.writeBoolean("mirrorV", isVerticallyMirrored)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
@@ -130,6 +160,12 @@ class PolylineComponent(
 		polyline.setPoints(reader.readPoints("points"))
 		if (reader.hasAttribute("arrow")) {
 			isArrow = reader.readBoolean("arrow")
+		}
+		if (reader.hasAttribute("mirrorH")) {
+			isHorizontallyMirrored = reader.readBoolean("mirrorH")
+		}
+		if (reader.hasAttribute("mirrorV")) {
+			isVerticallyMirrored = reader.readBoolean("mirrorV")
 		}
 	}
 

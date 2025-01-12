@@ -20,6 +20,8 @@ class PolylineComponentBeanInfo : AbstractBeanInfo<PolylineComponent>() {
 	    private val stroke = EditProperties.stroke()
 	    private val shadow = EditProperties.shadow()
 		private val arrow = CommandPropertySwing("arrow", PolylineComponent.BASE_KEY_ARROW, Boolean::class.java, componentBeanProvider)
+		private val mirrorH = EditProperties.horizontallyMirrored()
+		private val mirrorV = EditProperties.verticallyMirrored()
     }
 
     override fun addProperties(bean: PolylineComponent, editor: Editor, properties: MutableList<Property>) {
@@ -31,5 +33,7 @@ class PolylineComponentBeanInfo : AbstractBeanInfo<PolylineComponent>() {
 	    properties.add(stroke.bind(editor, beanIdProvider(bean.id)))
 	    properties.add(shadow.bind(editor, beanIdProvider(bean.id)))
 	    properties.add(arrow.bind(editor, beanIdProvider(bean.id)))
+		properties.add(mirrorH.bind(editor, beanIdProvider(bean.id)))
+		properties.add(mirrorV.bind(editor, beanIdProvider(bean.id)))
     }
 }
