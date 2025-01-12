@@ -112,10 +112,8 @@ class AnalogRelayView(
             }
         }
 
-        if (AntaresViewModule.currentSymbolStyle.symbolStyle == SymbolStyle.AMERICAN) {
-            // Draw iron core
-            context.g.color = context.chooseForeground(foregroundColor)
-            context.g.fillRect(LENGTH.toDouble(), 1.7 * Look.SCALE, INDUCTOR_WIDTH, 0.4 *Look.SCALE)
-        }
+        // Draw iron core
+        context.g.color = context.chooseForeground(foregroundColor)
+        context.g.fillRect(LENGTH.toDouble(), 1.7 * Look.SCALE, INDUCTOR_WIDTH, 0.4 *Look.SCALE)
     }
 }
