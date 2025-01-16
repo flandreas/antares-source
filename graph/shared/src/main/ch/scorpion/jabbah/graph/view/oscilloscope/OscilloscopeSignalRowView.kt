@@ -62,6 +62,11 @@ class OscilloscopeSignalRowView(
 		}
 	}
 
+	override fun dispose() {
+		super.dispose()
+		yAxis?.dispose()
+	}
+
 	var name: String
 		get() = probeView.name
 		set(value) {
@@ -77,9 +82,10 @@ class OscilloscopeSignalRowView(
 		removeButton.enabled = oscilloscopeView.applicationMode.isEdit()
 	}
 
-	fun loadedWith(vertice: OscilloscopeProbeVerticeView<Any>) {
+	fun loadedWith(vertice: OscilloscopeProbeVerticeView<*>) {
 		probeView.verticeView = vertice
 		probeView.verticeView!!.refColor = color.onBackground
+		yAxis?.loadedWith(vertice.model)
 	}
 
 	fun handleProbeViewRemovedFromDrawing() {

@@ -6,7 +6,7 @@ import ch.scorpion.jabbah.edit.model.EditProperties
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
-class OscilloscopeProbeVerticeViewBeanInfo : AbstractComponentBeanInfo<OscilloscopeProbeVerticeView<Any>>() {
+open class OscilloscopeProbeVerticeViewBeanInfo : AbstractComponentBeanInfo<OscilloscopeProbeVerticeView<Any>>() {
 
 	companion object {
 		private val name = EditProperties.untranslatableName()

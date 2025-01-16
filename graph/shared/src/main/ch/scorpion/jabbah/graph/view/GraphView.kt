@@ -57,6 +57,8 @@ interface GraphView : Drawing<GraphElementView<*>> {
 	 */
 	val allowMultipleOutputsPerNet: Boolean
 
+	fun getWithModelId(modelId: Int): GraphElementView<*>?
+
 	/**
 	 * Asks this [GraphView] to make sure that all its [GraphElementView]s are properly bound to their models.
 	 *

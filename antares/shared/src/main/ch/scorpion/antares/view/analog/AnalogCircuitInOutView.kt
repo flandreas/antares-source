@@ -181,8 +181,8 @@ class AnalogCircuitInOutView(
 				when (context.keyEvent?.key) {
 					KeyEvent.VK_ENTER -> toggle(false, context)
 					KeyEvent.VK_Z -> model.setIncomingSignal(AnalogSignal.UNDEFINED, context.signalHandler)
-					KeyEvent.VK_0 -> model.setIncomingSignal(AnalogSignal.ZERO, context.signalHandler)
-					KeyEvent.VK_5 -> model.setIncomingSignal(AnalogSignal.HIGH, context.signalHandler)
+					KeyEvent.VK_0 -> model.setIncomingSignal(AnalogSignal.ZERO_VOLTAGE, context.signalHandler)
+					KeyEvent.VK_5 -> model.setIncomingSignal(AnalogSignal.HIGH_VOLTAGE, context.signalHandler)
 				}
 			}
 			return null

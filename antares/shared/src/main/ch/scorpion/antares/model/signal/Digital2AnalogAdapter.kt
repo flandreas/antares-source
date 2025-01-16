@@ -9,15 +9,15 @@ object Digital2AnalogAdapter : GraphTypeSignalAdapter<AnalogSignal, DigitalSigna
 
 	override fun convertIncomingSignal(signal: DigitalSignal?): AnalogSignal {
 		if (signal == null) {
-			return AnalogSignal.ZERO
+			return AnalogSignal.ZERO_VOLTAGE
 		}
 		if (signal.bitWidth.width > 1) {
-			return AnalogSignal.ZERO
+			return AnalogSignal.ZERO_VOLTAGE
 		}
 		return if (signal.isAllOf(Bit.True)) {
-			AnalogSignal.HIGH
+			AnalogSignal.HIGH_VOLTAGE
 		} else {
-			AnalogSignal.ZERO
+			AnalogSignal.ZERO_VOLTAGE
 		}
 	}
 

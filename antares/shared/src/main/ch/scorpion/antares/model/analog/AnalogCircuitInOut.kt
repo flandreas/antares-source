@@ -30,8 +30,8 @@ class AnalogCircuitInOut(
 	companion object {
 		private val LOG by logger(AnalogCircuitInOut::class)
 
-		private val HIGH_VOLTAGE = AnalogSignal.HIGH
-		private val LOW_VOLTAGE = AnalogSignal.ZERO
+		private val HIGH_VOLTAGE = AnalogSignal.HIGH_VOLTAGE
+		private val LOW_VOLTAGE = AnalogSignal.ZERO_VOLTAGE
 
 		private val CALCULATOR = Calculator()
 
@@ -104,7 +104,7 @@ class AnalogCircuitInOut(
 
 	override fun stamp(analysis: AnalogCircuitAnalysis) {
 		if (isInput) {
-			analysis.stampVoltageSource(0, analogElement.nodes[0], analogElement.voltageSource, signal?.voltage ?: AnalogSignal.ZERO.voltage)
+			analysis.stampVoltageSource(0, analogElement.nodes[0], analogElement.voltageSource, signal?.voltage ?: AnalogSignal.ZERO_VOLTAGE.voltage)
 		} else if (portType == PortType.OUTPUT) {
 			analysis.stampResistor(analogElement.nodes[0], 0, 1e6)
 		}

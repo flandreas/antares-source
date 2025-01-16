@@ -54,13 +54,6 @@ class Oscilloscope(
 	override val type: String get() = TYPE
 	override val typeDesc: String get() = ""
 
-	override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler, force: Boolean) {
-		if (enabled) {
-			signalHistories.storeSignal(input, signalHandler)
-			stateChanged(signalHandler, SIGNAL_RECEIVED)
-		}
-	}
-
 	/** ---- [Storable] */
 
 	override fun write(writer: StoreWriter) {
@@ -109,4 +102,14 @@ class Oscilloscope(
 	val maxTime: Long get() = signalHistories.maxTime
 
 	fun getSignalHistory(name: String): SignalHistory<Any>? = signalHistories.getSignalHistory(name)
+
+	fun storeSignal(name: String, signal: Any, signalHandler: SignalHandler) {
+		signalHistories.storeSignal(name, signal, signalHandler)
+	}
+
+	fun handleSignal(probe: OscilloscopeProbeVertice<*>, signalHandler: SignalHandler) {
+		if (enabled) {
+			stateChanged(signalHandler, "$SIGNAL_RECEIVED:${probe.id}")
+		}
+	}
 }

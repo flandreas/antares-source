@@ -24,7 +24,7 @@ enum class Logic(override val customName: String) : EnumProperty<Logic> {
 	    fun negated(b: Boolean): Logic = if (b) NEGATIVE else POSITIVE
 
         fun withName(customName: String): Logic {
-            for (logic in values()) {
+            for (logic in entries) {
                 if (logic.customName == customName) {
                     return logic
                 }
@@ -33,31 +33,27 @@ enum class Logic(override val customName: String) : EnumProperty<Logic> {
         }
     }
 
-    override fun toString(): String {
-        return when (this) {
-            POSITIVE -> Translations.getString("element.property.logic.positive")
-            NEGATIVE -> Translations.getString("element.property.logic.negative")
+    override fun toString(): String =
+        when (this) {
+            POSITIVE -> Translations.getString("$BASE_KEY.positive")
+            NEGATIVE -> Translations.getString("$BASE_KEY.negative")
         }
-    }
 
-    fun evaluate(bit: Boolean): Boolean {
-        return when (this) {
+    fun evaluate(bit: Boolean): Boolean =
+        when (this) {
             POSITIVE -> bit
             NEGATIVE -> !bit
         }
-    }
 
-	fun evaluate(bit: Bit): Bit {
-		return when (this) {
-			POSITIVE -> bit
-			NEGATIVE -> bit.not()
-		}
-	}
+	fun evaluate(bit: Bit): Bit =
+        when (this) {
+            POSITIVE -> bit
+            NEGATIVE -> bit.not()
+        }
 
-	fun evaluate(signal: DigitalSignal): DigitalSignal {
-		return when (this) {
-			POSITIVE -> signal
-			NEGATIVE -> signal.not()
-		}
-	}
+	fun evaluate(signal: DigitalSignal): DigitalSignal =
+        when (this) {
+            POSITIVE -> signal
+            NEGATIVE -> signal.not()
+        }
 }

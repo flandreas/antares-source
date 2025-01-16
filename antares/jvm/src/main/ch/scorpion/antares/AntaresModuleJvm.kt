@@ -4,6 +4,7 @@ import ch.scorpion.antares.hdl.vhdl.ExportVHDLPanel
 import ch.scorpion.antares.health.SubCircuitPortConsistencyCheck
 import ch.scorpion.antares.model.*
 import ch.scorpion.antares.model.addressable.MemoryStorableIdentification
+import ch.scorpion.antares.model.analog.AnalogOscilloscopeSignalType
 import ch.scorpion.antares.model.expression.BooleanExpressionNotation
 import ch.scorpion.antares.model.gate.CurrentDefaultPropagationDelay
 import ch.scorpion.antares.model.gate.UndefinedGateInputBehavior
@@ -91,7 +92,10 @@ import ch.scorpion.jabbah.graph.view.oscilloscope.AbstractSignalHistoryDrawer
 import ch.scorpion.jabbah.io.IOModule
 import ch.scorpion.jabbah.io.TypeMap
 import java.net.URL
-import javax.swing.*
+import javax.swing.BorderFactory
+import javax.swing.Box
+import javax.swing.BoxLayout
+import javax.swing.JPanel
 import javax.swing.table.DefaultTableCellRenderer
 
 /**
@@ -295,6 +299,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerRenderer(EnterBehavior::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(MemoryStorableIdentification::class.java, MemoryStorableIdentificationRenderer::class.java)
 		registry.registerRenderer(SwitchConfiguration::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(AnalogOscilloscopeSignalType::class.java, EnumRenderer::class.java)
 	}
 
 	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
@@ -322,6 +327,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerEditor(EnterBehavior::class.java, EnterBehaviorEditor::class.java)
 		registry.registerEditor(MemoryStorableIdentification::class.java, MemoryStorableIdentificationEditor::class.java)
 		registry.registerEditor(SwitchConfiguration::class.java, SwitchConfigurationEditor::class.java)
+		registry.registerEditor(AnalogOscilloscopeSignalType::class.java, AnalogOscilloscopeSignalTypeEditor::class.java)
 
 		registry.register(BitWidth::class.java) { prop ->
 			BitWidthEditor(

@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view
 
 import ch.scorpion.antares.model.*
+import ch.scorpion.antares.model.analog.AnalogOscilloscopeSignalType
 import ch.scorpion.antares.model.input.SwitchConfiguration
 import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.net.NetSignalApplierStrategy
@@ -199,5 +200,12 @@ class SwitchConfigurationEditor : ComboBoxPropertyEditor() {
 	init {
 		setAvailableValues(SwitchConfiguration.entries.toTypedArray())
 		(editor as JComboBox<SwitchConfiguration>).renderer = EnumRenderer()
+	}
+}
+
+class AnalogOscilloscopeSignalTypeEditor : ComboBoxPropertyEditor() {
+	init {
+		setAvailableValues(AnalogOscilloscopeSignalType.entries.toTypedArray())
+		(editor as JComboBox<AnalogOscilloscopeSignalType>).renderer = EnumRenderer()
 	}
 }

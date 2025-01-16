@@ -11,18 +11,18 @@ class Analog2DigitalAdapterTest {
 
 	@Test
 	fun shouldConvertDigitalToAnalog() {
-		assertEquals(AnalogSignal.ZERO, convertIncomingSignal(of(false)))
-		assertEquals(AnalogSignal.HIGH, convertIncomingSignal(of(true)))
+		assertEquals(AnalogSignal.ZERO_VOLTAGE, convertIncomingSignal(of(false)))
+		assertEquals(AnalogSignal.HIGH_VOLTAGE, convertIncomingSignal(of(true)))
 	}
 
 	@Test
 	fun shouldConvertAnalogToDigital() {
-		assertEquals(of(false), convertOutgoingSignal(AnalogSignal.ZERO))
-		assertEquals(of(true), convertOutgoingSignal(AnalogSignal.HIGH))
+		assertEquals(of(false), convertOutgoingSignal(AnalogSignal.ZERO_VOLTAGE))
+		assertEquals(of(true), convertOutgoingSignal(AnalogSignal.HIGH_VOLTAGE))
 	}
 
 	@Test
 	fun shouldConvertMultiBitValuesToZeroVolt() {
-		assertEquals(AnalogSignal.ZERO, convertIncomingSignal(of(BitWidth.BW_2, 3)))
+		assertEquals(AnalogSignal.ZERO_VOLTAGE, convertIncomingSignal(of(BitWidth.BW_2, 3)))
 	}
 }

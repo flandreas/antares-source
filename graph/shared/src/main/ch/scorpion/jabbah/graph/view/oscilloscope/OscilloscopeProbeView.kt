@@ -18,6 +18,7 @@ import ch.scorpion.jabbah.draw.style.StylableImpl
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
 /**
  * The probe view that is contained in a row of a [OscilloscopeView]. It contains interaction logic
@@ -143,7 +144,7 @@ class OscilloscopeProbeView(
 		private fun startDraggingOfCreatedVerticeView(context: EditInputEventContext): OscilloscopeProbeVerticeView<Any> {
 			invalidate()
 
-			val vv = OscilloscopeProbeVerticeView<Any>(
+			val vv = GraphViewModule.oscilloscopeViewFactory.createProbeVerticeView<Any>(
 				name = name,
 				graphType = (context.drawingView.drawing as GraphView).graph!!.type,
 				color = probeColor,

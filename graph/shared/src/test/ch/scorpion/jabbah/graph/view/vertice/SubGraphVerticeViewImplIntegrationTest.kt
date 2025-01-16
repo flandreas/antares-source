@@ -3,13 +3,19 @@ package ch.scorpion.jabbah.graph.view.vertice
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.TestLibraryBuilder
-import ch.scorpion.jabbah.graph.library.*
+import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
+import ch.scorpion.jabbah.graph.library.LibraryImpl
+import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.library.MemoryLibraryPersistenceService
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.io.StorableCloner
 import dev.mokkery.MockMode
 import dev.mokkery.mock
-import kotlin.test.*
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 class SubGraphVerticeViewImplIntegrationTest {
 

@@ -36,6 +36,7 @@ import ch.scorpion.antares.view.metagraph.AntaresMetaGraphService
 import ch.scorpion.antares.view.net.*
 import ch.scorpion.antares.view.net.tunnel.TunnelView
 import ch.scorpion.antares.view.net.tunnel.TunnelViewFace
+import ch.scorpion.antares.view.oscilloscope.AnalogOscilloscopeProbeVerticeView
 import ch.scorpion.antares.view.oscilloscope.AntaresOscilloscopeViewFactory
 import ch.scorpion.antares.view.oscilloscope.DigitalOscilloscopeProbeNameStrategy
 import ch.scorpion.antares.view.output.*
@@ -386,6 +387,7 @@ object AntaresViewModule : AbstractModule() {
 
 		typeMap.register("analogGraphView", AnalogGraphView::class)
 		typeMap.register("analogEdgeView", AnalogEdgeView::class)
+		typeMap.register("analogOscilloscopeProbeView", AnalogOscilloscopeProbeVerticeView::class)
 		typeMap.register("lightBulbView", LightBulbView::class)
 		typeMap.register("batteryView", BatteryView::class)
 		typeMap.register("capacitorView", CapacitorView::class)
@@ -467,6 +469,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, NotGateFigure::class) { SelectedColorSelectionModel(it) }
 
 		// Analog
+		factory.register(SelectionDrawingStrategy.REPLACE, AnalogOscilloscopeProbeVerticeView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogNodeView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, LightBulbView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, BatteryView::class) { SelectedColorSelectionModel(it) }

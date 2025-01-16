@@ -51,7 +51,7 @@ interface SignalHistories {
 
 	fun getSignalHistory(name: String): SignalHistory<Any>?
 
-	fun storeSignal(input: InputPort<*>, signalHandler: SignalHandler)
+	fun storeSignal(name: String, signal: Any, signalHandler: SignalHandler)
 }
 
 abstract class AbstractSignalHistories(
@@ -94,9 +94,8 @@ class RealtimeSignalHistories(
 	oscilloscope: Oscilloscope
 ) : AbstractSignalHistories(oscilloscope) {
 
-	override fun storeSignal(input: InputPort<*>, signalHandler: SignalHandler) {
-		val signal = input.getIncomingSignal()!!
-		val history = signalHistories[input.name!!]!!
+	override fun storeSignal(name: String, signal: Any, signalHandler: SignalHandler) {
+		val history = signalHistories[name]!!
 		history.add(SignalHistoryEntry(signal, signalHandler.executionTime))
 		updateMaxTime(signalHandler.executionTime)
 	}
@@ -116,31 +115,25 @@ class ClockedSignalHistories(
 	}
 
 	/** The name of the [InputPort] that corresponds with the "clocked" [SignalHistory]. */
-	private val clockPortName: String?
+	private val clockPortName: String? = oscilloscope.getPorts().firstOrNull()?.name
 
 	/** The current artificial time. */
 	private var time: Long = 0
 
-	init {
-		clockPortName = oscilloscope.getPorts().firstOrNull()?.name
-	}
-
-	override fun storeSignal(input: InputPort<*>, signalHandler: SignalHandler) {
-		val history = signalHistories[input.name!!]!!
-		if (input.name == clockPortName) {
-			val signal = input.getIncomingSignal()!!
+	override fun storeSignal(name: String, signal: Any, signalHandler: SignalHandler) {
+		val history = signalHistories[name]!!
+		if (name == clockPortName) {
 			history.add(SignalHistoryEntry(signal, time))
 
 			// Probe and add all other histories
 			oscilloscope.getInputs()
-				.filter { it !== input }
+				.filter { it.name !== name }
 				.forEach {
 					signalHistories[it.name]!!.add(SignalHistoryEntry(it.getIncomingSignal()!!, time))
 				}
 			time += DELTA_TIME
 			updateMaxTime(time)
 		} else {
-			val signal = input.getIncomingSignal()!!
 			history.add(signal, time)
 		}
 	}

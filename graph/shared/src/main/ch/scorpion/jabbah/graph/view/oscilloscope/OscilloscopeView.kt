@@ -1,8 +1,8 @@
 package ch.scorpion.jabbah.graph.view.oscilloscope
 
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Tooltip
-import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.event.EventBus
@@ -27,6 +27,7 @@ import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.model.GenericGraphType
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.GraphType
+import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoriesType
@@ -155,16 +156,21 @@ class OscilloscopeView(
 
 	val drawerWidth: Double get() = WIDTH - DRAWER_X - ROW_INSET - yAxisWidth
 
+	private val probeVerticeViews: Collection<OscilloscopeProbeVerticeView<*>> get() =
+		parent?.getDrawables { it is OscilloscopeProbeVerticeView<*> }
+			?.map { it as OscilloscopeProbeVerticeView<*> }
+			?: emptyList()
+
 	init {
 		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
 		eventBus.register(OscilloscopeProbeNameEvent::class, probeNameHandler)
 
 		preferredSelectionDrawingStrategy = SelectionDrawingStrategy.BELOW
-
 	}
 
 	override fun dispose() {
 		super.dispose()
+		rows.forEach { it.dispose() }
 		eventBus.unregister(applicationModeHandler)
 		eventBus.unregister(probeNameHandler)
 	}
@@ -216,13 +222,30 @@ class OscilloscopeView(
 		container.getExecutionTooltip(context) ?: super.getExecutionTooltip(context)
 
 	override fun handleStateChanged(event: GraphElementEvent) {
-		if (event.signalHandler != null && event.reason == Oscilloscope.SIGNAL_RECEIVED) {
-			handleSignalReceived()
+		if (event.signalHandler != null && event.reason?.startsWith(Oscilloscope.SIGNAL_RECEIVED) == true) {
+			val probeId = event.reason.split(':')[1].toInt()
+
+			val probeView = probeVerticeViews.firstOrNull { it.model.id == probeId }
+			if (probeView != null) {
+				val inputPort = probeView.model.getInput<Any>()
+				var signal = inputPort.getIncomingSignal()!!
+
+				// Due to an earlier bug, were OscilloscopeProbeVerticeView.edgeView was always null, because it was
+				// never set while editing. In order to support circuit simulation with graphs built earlier,
+				// still handle the signal, but uncompleted (i.e. using the default)
+				if (probeView.edgeView != null) {
+					signal = GraphViewModule.oscilloscopeViewFactory.completeSignal(probeView.model, signal, probeView.edgeView!!)
+				}
+
+				handleSignalReceived(inputPort.name!!, signal, event.signalHandler)
+			}
+		} else {
+			super.handleStateChanged(event)
 		}
-		super.handleStateChanged(event)
 	}
 
-	private fun handleSignalReceived() {
+	private fun handleSignalReceived(name: String, signal: Any, signalHandler: SignalHandler) {
+		model.storeSignal(name, signal, signalHandler)
 		scaleRowView.timelineView.updateGeometry()
 	}
 
@@ -301,20 +324,20 @@ class OscilloscopeView(
 
 		for (port in model.getPorts()) {
 			addPortView(GenericPortView(port))
-			addRowView(port.name!!)
+			addRowView(port)
 		}
 
 		scaleRowView.updateState()
 		adjustSize()
 
-		parent?.getDrawables{ it is OscilloscopeProbeVerticeView<*> }
-			?.map { it as OscilloscopeProbeVerticeView<Any> }
-			?.forEach { rows.find { row -> row.name == it.name }!!.loadedWith(it) }
+		probeVerticeViews.forEach {
+			rows.find { row -> row.name == it.name }!!.loadedWith(it)
+		}
 	}
 
 	/** ---- [OscilloscopeView] */
 
-	fun addRow() {
+	fun addRow(): String {
 		val name = createRowName(null, rows.size + 1)
 
 		val port = portFactory.createOscilloscopeProbePort<Any>(name, model.graphType)
@@ -322,9 +345,11 @@ class OscilloscopeView(
 		addPortView(GenericPortView(port))
 
 		invalidate()
-		addRowView(name)
+		addRowView(port)
 		scaleRowView.updateState()
 		adjustSize()
+
+		return name
 	}
 
 	private fun createRowName(target: OscilloscopeSignalRowView?, prefNameNumber: Int): String {
@@ -374,12 +399,12 @@ class OscilloscopeView(
 		update()
 	}
 
-	private fun addRowView(name: String) {
+	private fun addRowView(port: Port<*>) {
 		val y = TITLE_HEIGHT + rows.size * rowHeight
-		val yAxis = factory.createSignalHistoryYAxis(model.graphType)
+		val yAxis = factory.createSignalHistoryYAxis(model.graphType, port)
 		val rowView = OscilloscopeSignalRowView(
 			this,
-			name,
+			port.name!!,
 			Point2D(0, y),
 			nextProbeColor,
 			service,

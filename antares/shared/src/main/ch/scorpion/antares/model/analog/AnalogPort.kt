@@ -21,5 +21,5 @@ class AnalogPort(
 		}
 	}
 
-	override fun getDefaultSignal(): AnalogSignal = AnalogSignal.ZERO
+	override fun getDefaultSignal(): AnalogSignal = AnalogSignal.ZERO_VOLTAGE
 }

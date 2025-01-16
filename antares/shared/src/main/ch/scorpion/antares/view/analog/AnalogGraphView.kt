@@ -7,9 +7,12 @@ import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.antares.view.analog.engine.AnalogCircuitCalculator
 import ch.scorpion.antares.view.analog.engine.AnalogElement
-import ch.scorpion.jabbah.base.*
+import ch.scorpion.jabbah.base.IssueImpl
+import ch.scorpion.jabbah.base.IssueSeverity
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.SignalHandler

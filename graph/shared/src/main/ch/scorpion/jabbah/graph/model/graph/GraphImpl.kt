@@ -434,8 +434,7 @@ open class GraphImpl(
 		override fun stateChanged(e: GraphElementEvent) {
 			val probePort = (e.element as OscilloscopeProbeVertice<*>).getInput<Any>()
 			if (probePort.getIncomingSignal() != null && e.signalHandler != null) {
-				val oscilloscopePort = getOscilloscope()?.getPort<Any>(probePort.name!!) as InputPort<Any>
-				oscilloscopePort.setIncomingSignal(probePort.getIncomingSignal(), e.signalHandler)
+				getOscilloscope()?.handleSignal(e.element, e.signalHandler)
 			}
 		}
 	}

@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.graph
 
-import ch.scorpion.jabbah.base.math.MILLION
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.math.MILLION
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.ControlledTimeService
 import ch.scorpion.jabbah.base.time.ControlledTimer

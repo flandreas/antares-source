@@ -2,15 +2,28 @@ package ch.scorpion.antares.model.analog
 
 import ch.scorpion.antares.view.analog.AnalogSignalColor
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
+import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
-data class AnalogSignal(val voltage: Double): Comparable<AnalogSignal> {
+/**
+ * An [AnalogSignal] represents first and foremost an electrical [voltage].
+ * For usages in [Oscilloscope], it can optionally be enriched with an electrical [current].
+ * If [current] is set, it is the dominant signal sensed by a [OscilloscopeProbeVertice],
+ * else the [voltage] (default) is the dominant signal.
+ */
+data class AnalogSignal(
+	val voltage: Double,
+	val current: Double? = null
+): Comparable<AnalogSignal> {
 
 	companion object {
-		val ZERO = AnalogSignal(0.0)
-		val HIGH = AnalogSignal(5.0)
+		val ZERO_VOLTAGE = AnalogSignal(0.0)
+		val HIGH_VOLTAGE = AnalogSignal(5.0)
 		val UNDEFINED: AnalogSignal? = null
+
+		val DEFAULT_CURRENT = AnalogSignal(0.0, 0.05)
 
 		const val VOLTAGE_SIGMA = 0.005
 
@@ -18,15 +31,19 @@ data class AnalogSignal(val voltage: Double): Comparable<AnalogSignal> {
 
 		fun roundVoltage(v: Double, f: Int = 10): String = roundValue(v, f)
 
+		fun roundCurrent(v: Double, f: Int = 1000): String = roundValue(v, f)
+
 		fun roundAbsCurrent(c: Double, f: Int = 1000): String = roundValue(abs(c), f)
 	}
 
+	val dominantValue: Double get() = if (current != null) current!! else voltage
+
 	val color: CompositeColor by lazy { AnalogSignalColor.ofSignal(this) }
 
-	override fun toString(): String = "${roundedDesc()} V"
+	override fun toString(): String = if (current != null) "${roundedDesc(1000)} A" else "${roundedDesc()} V"
 
 	override fun compareTo(other: AnalogSignal): Int =
-		this.voltage.compareTo(other.voltage)
+		if (current != null && other.current != null) this.current!!compareTo(other.current!!) else this.voltage.compareTo(other.voltage)
 
-	fun roundedDesc(f: Int = 10): String = roundVoltage(voltage, f)
+	private fun roundedDesc(f: Int = 10): String = if (current != null) roundCurrent(current!!, f) else roundVoltage(voltage, f)
 }

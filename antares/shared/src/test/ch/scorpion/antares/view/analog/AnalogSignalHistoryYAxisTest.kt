@@ -2,6 +2,8 @@ package ch.scorpion.antares.view.analog
 
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.analog.AnalogSignal
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -19,7 +21,7 @@ class AnalogSignalHistoryYAxisTest {
 		}
 	}
 
-	private val yAxis = AnalogSignalHistoryYAxis(INSET, INSET, AnalogSignal.HIGH, DEFAULT_VALUE_INSET)
+	private val yAxis = AnalogSignalHistoryYAxis(mock(MockMode.autofill), INSET, INSET, AnalogSignal.HIGH_VOLTAGE, DEFAULT_VALUE_INSET)
 
 	@BeforeTest
 	fun setup() {
@@ -33,6 +35,6 @@ class AnalogSignalHistoryYAxisTest {
 
 	@Test
 	fun shouldRenderDefaultValueAtDefaultValueTopInset() {
-		assertEquals(HEIGHT - 2 * INSET - DEFAULT_VALUE_INSET, -yAxis.signalY(AnalogSignal.HIGH).toInt())
+		assertEquals(HEIGHT - 2 * INSET - DEFAULT_VALUE_INSET, -yAxis.signalY(AnalogSignal.HIGH_VOLTAGE).toInt())
 	}
 }

@@ -148,7 +148,7 @@ class OscilloscopeViewServiceImpl(
 		val oscilloscopeView = findOscilloscopeView(view.drawing)!!
 		val signalRowView = oscilloscopeView.rowWithName(name)!!
 		val probeVerticeView = if (probeVerticeViewId == null) {
-			OscilloscopeProbeVerticeView<T>(
+			GraphViewModule.oscilloscopeViewFactory.createProbeVerticeView<Any>(
 				signalRowView.name,
 				view.drawing.graph!!.type,
 				signalRowView.color.onBackground
@@ -169,17 +169,19 @@ class OscilloscopeViewServiceImpl(
 		val newEdgeView = view.drawing.getEdgeViews().firstOrNull { it.contains(probeVerticeView.connectionPoint()) }
 		if (probeVerticeView.model.getPort<T>().isConnected) {
 			probeVerticeView.model.getPort<T>().net!!.unconnect(probeVerticeView.model.getPort<T>())
+			probeVerticeView.edgeView = null
 		}
 
 		// Connect to new Net
 		if (newEdgeView != null) {
+			probeVerticeView.edgeView = newEdgeView
 			(newEdgeView.model as Net<T>).connect(probeVerticeView.model.getPort())
 			GraphViewModule.oscilloscopeProbeNameStrategy
 				.getConnectedName(oscilloscopeView.model, newEdgeView)
 				?.let { probeVerticeView.name = it }
 		}
 
-		return probeVerticeView
+		return probeVerticeView as OscilloscopeProbeVerticeView<T>
 	}
 
 	override fun handleOscilloscopeDeleted(view: DrawingView<GraphView>) {

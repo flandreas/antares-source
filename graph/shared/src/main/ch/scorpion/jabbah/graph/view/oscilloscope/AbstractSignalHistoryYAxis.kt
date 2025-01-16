@@ -25,7 +25,7 @@ import kotlin.math.min
 abstract class AbstractSignalHistoryYAxis<T: Any>(
 	private val topInset: Int,
 	private val bottomInset: Int,
-	private val defaultValue: T,
+	defaultValue: T,
 	private val defaultValueTopInset: Int,
 	protected val color: CompositeColor
 ) : AbstractRectangle(), SignalHistoryYAxis<T> {
@@ -45,6 +45,18 @@ abstract class AbstractSignalHistoryYAxis<T: Any>(
 		Themes.get<GraphTheme>().figure.color.textColor,
 		HorizontalAlignment.LEFT,
 		VerticalAlignment.CENTER)
+
+	protected var defaultValue: T = defaultValue
+		set(value) {
+			if (field != value) {
+				invalidate()
+				field = value
+				label.text = field.toString()
+				updateScaling()
+				invalidate()
+				validate()
+			}
+		}
 
 	/** ---- [AbstractRectangle] */
 

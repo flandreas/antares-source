@@ -42,7 +42,7 @@ data class OscilloscopeProbeNameEvent(
  * @param dragGhost `true` when dragging this [OscilloscopeProbeVerticeView] into the drawing, `false` if it already
  * was part of the drawing at the start of a drag operation
  */
-class OscilloscopeProbeVerticeView<T : Any>(
+open class OscilloscopeProbeVerticeView<T : Any>(
 	name: String = "",
 	graphType: GraphType = GenericGraphType,
 	color: CompositeColor = CompositeColor(),
@@ -88,7 +88,7 @@ class OscilloscopeProbeVerticeView<T : Any>(
 	private val icon = OscilloscopeProbeViewIcon(name, color)
 
 	/** The [EdgeView] to which this [OscilloscopeProbeVerticeView] is connected.*/
-	private var edgeView: EdgeView<T>? = null
+	var edgeView: EdgeView<*>? = null
 
 	private val handler = Handler()
 
@@ -202,7 +202,8 @@ class OscilloscopeProbeVerticeView<T : Any>(
 			validate()
 
 			// Sensing EdgeView
-			if (findEdgeView(context) != null) {
+			edgeView = findEdgeView(context)
+			if (edgeView != null) {
 				ConnectionPointHighlighter.displayPortViewHighlight(context.drawingView, connectionPoint())
 			} else {
 				ConnectionPointHighlighter.removePortViewHighlight()
@@ -229,7 +230,7 @@ class OscilloscopeProbeVerticeView<T : Any>(
 			return null
 		}
 
-		private fun findEdgeView(context: EditInputEventContext): EdgeView<*>? =
-			context.drawingView.drawing.getDrawable { it.contains(connectionPoint()) && it is EdgeView<*> } as EdgeView<*>?
+		private fun findEdgeView(context: EditInputEventContext): EdgeView<T>? =
+			context.drawingView.drawing.getDrawable { it.contains(connectionPoint()) && it is EdgeView<*> } as EdgeView<T>?
 	}
 }

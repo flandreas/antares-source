@@ -16,7 +16,7 @@ class AnalogNet : NetImpl<AnalogSignal>() {
 	/** Maps IDs of [AnalogEdgeView]s to the corresponding [Posts]*/
 	private val postMap = mutableMapOf<Int, Posts>()
 
-	override val signal: AnalogSignal get() = super.signal ?: AnalogSignal.ZERO
+	override val signal: AnalogSignal get() = super.signal ?: AnalogSignal.ZERO_VOLTAGE
 
 	override fun cloneEmpty(): Net<AnalogSignal> = AnalogNet()
 

@@ -148,6 +148,8 @@ open class GraphViewImpl(
 			eventBus.post(ScenarioStepEvent(this, oldValue, value))
 		}
 
+	override fun getWithModelId(modelId: Int): GraphElementView<*>? = drawables.firstOrNull { it.model.id == modelId }
+
 	override fun bind(deep: Boolean) {
 		for (graphElementView in drawables) {
 			graphElementView.bind(this, deep)
