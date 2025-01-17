@@ -54,8 +54,7 @@ open class ContainerToolBarBuilder {
 		toolbar.addTool(RectangleTool(editor, factory = { EllipseComponent() }), "/img/oval24.png", Translations.getString("edit.component.ellipse"))
 		toolbar.addTool(PolylineTool(editor, factory = { PolylineComponent() }), "/img/polyline24.png", Translations.getString("edit.component.polyline"))
 		toolbar.addTool(QuadCurveTool(editor, factory = { QuadCurveComponent() }), "/img/curve24.png", Translations.getString("edit.component.quadraticCurve"))
-		// TODO Icon Janis
-		toolbar.addTool(CubicCurveTool(editor, factory = { CubicCurveComponent() }), "/img/curve24.png", Translations.getString("edit.component.cubicCurve"))
+		toolbar.addTool(CubicCurveTool(editor, factory = { CubicCurveComponent() }), "/img/cubic-curve.png", Translations.getString("edit.component.cubicCurve"))
 
 		return toolbar
 	}

@@ -649,7 +649,15 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(LIGHT_BULB, "library.element.LightBulb", { BaseModule.properties.getString(LightBulbView.PROP_ICON_PATH) }, LightBulbView::class)
 		repository.register(BATTERY, "library.element.Battery", { "/img/battery.png" }, BatteryView::class)
 		repository.register(CAPACITOR, "library.element.Capacitor", { "/img/capacitor.png" }, CapacitorView::class)
-		repository.register(INDUCTOR, "library.element.Inductor", { "/img/capacitor.png" }, InductorView::class)
+		repository.register(
+			INDUCTOR,
+			"library.element.Inductor",
+			CurrentSymbolStyleToString(mapOf(
+				SymbolStyle.AMERICAN to "/img/inductor-ieee.png",
+				SymbolStyle.EUROPEAN to "/img/inductor-iec.png",
+				SymbolStyle.VERBOSE to "/img/inductor-iec.png"
+			))::evaluate,
+			InductorView::class)
 		repository.register(CURRENT_SOURCE, "library.element.CurrentSource", { "/img/current-source.png" }, CurrentSourceView::class)
 		repository.register(RESISTOR,
 			"library.element.Resistor",
@@ -683,9 +691,25 @@ object AntaresViewModule : AbstractModule() {
 			AnalogCircuitInOutView(model = AnalogCircuitInOut(portType = PortType.OUTPUT))
 		}
 		repository.register(ANALOG_POWER, "library.element.AnalogPower", { "/img/power.png" }, AnalogPowerView::class)
-		// TODO Icons by Janis
-		repository.register(ANALOG_RELAY, "library.element.AnalogRelay", { "/img/power.png" }, AnalogRelayView::class)
-		repository.register(ANALOG_DIODE, "library.element.AnalogDiode", { "/img/power.png" }, DiodeView::class)
+		repository.register(
+			ANALOG_RELAY,
+			"library.element.AnalogRelay",
+			CurrentSymbolStyleToString(mapOf(
+				SymbolStyle.AMERICAN to "/img/relay-ieee.png",
+				SymbolStyle.EUROPEAN to "/img/relay-iec.png",
+				SymbolStyle.VERBOSE to "/img/and-iec.png"
+			))::evaluate,
+			AnalogRelayView::class)
+		repository.register(
+			ANALOG_DIODE,
+			"library.element.AnalogDiode",
+			//{ "/img/power.png" },
+			CurrentSymbolStyleToString(mapOf(
+				SymbolStyle.AMERICAN to "/img/diode-ieee.png",
+				SymbolStyle.EUROPEAN to "/img/diode-iec.png",
+				SymbolStyle.VERBOSE to "/img/diode-iec.png"
+			))::evaluate,
+			DiodeView::class)
 	}
 
 	fun fillBaseElementLibrary(library: Library) {

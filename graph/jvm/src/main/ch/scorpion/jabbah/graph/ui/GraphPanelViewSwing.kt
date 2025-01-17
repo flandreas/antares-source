@@ -252,8 +252,7 @@ class GraphPanelViewSwing(
 		toolbar.addTool(controller.ellipseTool, "/img/oval24.png", Translations.getString("edit.component.ellipse"))
 		toolbar.addTool(controller.polylineTool, "/img/polyline24.png", Translations.getString("edit.component.polyline"))
 		toolbar.addTool(controller.quadCurveTool, "/img/curve24.png", Translations.getString("edit.component.quadraticCurve"))
-		// TODO Icon by Janis
-		toolbar.addTool(controller.cubicCurveTool, "/img/curve24.png", Translations.getString("edit.component.cubicCurve"))
+		toolbar.addTool(controller.cubicCurveTool, "/img/cubic-curve.png", Translations.getString("edit.component.cubicCurve"))
 		toolbar.addTool(controller.textTool, "/img/text24.png", Translations.getString("edit.component.text"))
 
 		return toolbar
