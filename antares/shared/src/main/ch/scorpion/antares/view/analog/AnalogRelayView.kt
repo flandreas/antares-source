@@ -11,6 +11,7 @@ import ch.scorpion.antares.view.symbolstyle.SymbolStyle
 import ch.scorpion.antares.view.symbolstyle.SymbolStyle.Companion.INDUCTOR_HEIGHT_HALF
 import ch.scorpion.antares.view.symbolstyle.SymbolStyle.Companion.INDUCTOR_WIDTH
 import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -50,6 +51,20 @@ class AnalogRelayView(
             model.onCurrent = value
         }
 
+    @Suppress("unused") // Reflection
+    var normallyOn: Boolean
+        get() = model.normallyOn
+        set(value) {
+            if (value != model.normallyOn) {
+                invalidate()
+                model.normallyOn = value
+                updateSPSTGeometry()
+                invalidate()
+                validate()
+                update()
+            }
+        }
+
     /** ---- [AbstractVerticeView] */
 
     override fun modelExchanged(oldModel: AnalogRelay?) {
@@ -64,6 +79,7 @@ class AnalogRelayView(
                 // Single-throw switch
                 addPortView(AnalogPortView(styleProvider, model.getPort(3), LENGTH, 4 * Look.SCALE, Direction.WEST))
                 addPortView(AnalogPortView(styleProvider, model.getPort(4), LENGTH + INDUCTOR_WIDTH.toInt(), 4 * Look.SCALE, Direction.EAST))
+                updateSPSTGeometry()
                 setBounds(LENGTH.toDouble(), -INDUCTOR_HEIGHT_HALF, LENGTH + INDUCTOR_WIDTH, 8.0 * Look.SCALE)
             }
             SwitchConfiguration.SPDT -> {
@@ -73,6 +89,17 @@ class AnalogRelayView(
                 addPortView(AnalogPortView(styleProvider, model.getPort(5), LENGTH + INDUCTOR_WIDTH.toInt(), 7 * Look.SCALE, Direction.EAST))
                 setBounds(LENGTH.toDouble(), -INDUCTOR_HEIGHT_HALF, LENGTH + INDUCTOR_WIDTH, 9.0 * Look.SCALE)
             }
+        }
+    }
+
+    private fun updateSPSTGeometry() {
+        if (model.switchConfiguration != SwitchConfiguration.SPST) {
+            return
+        }
+        getPortView(model.getPort(4))!!.location = if (normallyOn) {
+            Point2D(LENGTH + INDUCTOR_WIDTH.toInt(), 6 * Look.SCALE)
+        } else {
+            Point2D(LENGTH + INDUCTOR_WIDTH.toInt(), 4 * Look.SCALE)
         }
     }
 
@@ -102,7 +129,11 @@ class AnalogRelayView(
         when (model.switchConfiguration) {
             SwitchConfiguration.SPST -> {
                 context.translated(0.0, 4.0 * Look.SCALE) {
-                    AbstractSwitchView.drawTwoPortRealSwitchShape(this, 3, model.isOn, context, bounds.minX, DEF_CIRCLE_RADIUS, false, leftHanded = false)
+                    if (normallyOn) {
+                        AbstractSwitchView.drawTwoPortRealSwitchNonColinearShape(this, 3, model.isOn, context, bounds.minX, DEF_CIRCLE_RADIUS)
+                    } else {
+                        AbstractSwitchView.drawTwoPortRealSwitchShape(this, 3, model.isOn, context, bounds.minX, DEF_CIRCLE_RADIUS, false, leftHanded = false)
+                    }
                 }
             }
             SwitchConfiguration.SPDT -> {

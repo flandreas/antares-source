@@ -28,3 +28,5 @@ Switch configuration:: Choose between SPST (Single pole, single throw) or SPDT (
 Inductance (H):: The inductance of the coil in Henry.
 
 On Current (A):: The coil current in Ampère above which the switch gets closed (i.e. goes into "On" state). Below that current, the switch is open (i.e. is in "Off" state).
+
+Normally on:: If set, the switch is in "On" state if there is not enough current flowing through the coil. The default is "Normally off", i.e. the switch is in "Off" state if there is not enough current.

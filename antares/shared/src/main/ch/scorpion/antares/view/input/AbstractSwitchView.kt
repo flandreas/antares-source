@@ -60,6 +60,7 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 			context.g.stroke = Themes.get<AntaresTheme>().figure.stroke
 			context.g.color = context.chooseForeground(verticeView.foregroundColor)
 
+			// Movable element
 			if (isOn) {
 				if (drawHandle) {
 					context.g.drawLine(minX + w(1.75), h(-2.0), minX + w(4.25), h(-2.0))
@@ -95,8 +96,51 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 
 			// Side of port 2
 			(verticeView.getPortView(verticeView.model.getPort(portBase + 1)) as AbstractAntaresPortView).prepareConnectionDrawContext(context)
-			context.g.drawLine(minX + REAL_SWITCH_WIDTH - w(1.0), 0.0, minX + REAL_SWITCH_WIDTH, 0.0)
-			context.g.fillCircle(minX + REAL_SWITCH_WIDTH - w(1.0), 0.0, circleRadius)
+			context.g.drawLine(minX + REAL_SWITCH_WIDTH - w(1.5), 0.0, minX + REAL_SWITCH_WIDTH, 0.0)
+			context.g.fillCircle(minX + REAL_SWITCH_WIDTH - w(1.5), 0.0, circleRadius)
+
+			// Focus
+			if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+				verticeView.drawFocus(context)
+			}
+		}
+
+		/**
+		 * Input and output are NOT at the same y coordinate. Always right-handed.
+		 * Never draw handle.
+		 */
+		fun drawTwoPortRealSwitchNonColinearShape(
+			verticeView: VerticeView<*>,
+			portBase: Int,
+			isOn: Boolean,
+			context: DrawContext,
+			minX: Double,
+			circleRadius: Double
+		) {
+
+			// Push annotation
+			context.g.stroke = PUSH_DASHED_STROKE
+			context.g.color = context.chooseForeground(verticeView.foregroundColor)
+			if (isOn) {
+				context.g.drawLine(minX + w(3), h(1.0), minX + w(3), h(-1.25))
+			} else {
+				context.g.drawLine(minX + w(3), h(-2.0), minX + w(3), 0.0)
+			}
+
+			// Side of port 1
+			(verticeView.getPortView(verticeView.model.getPort(portBase)) as AbstractAntaresPortView).prepareConnectionDrawContext(context)
+			context.g.drawLine(minX, 0.0, minX + w(1.0), 0.0)
+			if (isOn) {
+				context.g.drawLine(minX + w(1.0), 0.0, minX + REAL_SWITCH_WIDTH - w(1.5), h(2))
+			} else {
+				context.g.drawLine(minX + w(1.0), 0.0, minX + REAL_SWITCH_WIDTH - w(1), 0.0)
+			}
+			context.g.fillCircle(minX + w(1.0), 0.0, circleRadius)
+
+			// Side of port 2
+			(verticeView.getPortView(verticeView.model.getPort(portBase + 1)) as AbstractAntaresPortView).prepareConnectionDrawContext(context)
+			context.g.drawLine(minX + REAL_SWITCH_WIDTH - w(1.5), w(2), minX + REAL_SWITCH_WIDTH, w(2))
+			context.g.fillCircle(minX + REAL_SWITCH_WIDTH - w(1.5), w(2), circleRadius)
 
 			// Focus
 			if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {

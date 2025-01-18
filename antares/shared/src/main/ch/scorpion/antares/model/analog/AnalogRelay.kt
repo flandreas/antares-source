@@ -35,9 +35,6 @@ class AnalogRelay(
 
     private val soundClip by lazy { SoundClipFactory.create("/sound/relay.wav") }
 
-    var isOn: Boolean = false
-        private set
-
     private val poleCount = 1
 
     private val inductorLogic = InductorLogic(this, 0)
@@ -69,6 +66,19 @@ class AnalogRelay(
             field = value
         }
 
+    /** If set, the switch is in state 'on' if there is no current flowing through the inductor. */
+    var normallyOn: Boolean = false
+        set(value) {
+            if (field != value) {
+                field = value
+                isOn = normallyOn
+                stateChanged()
+            }
+        }
+
+    var isOn: Boolean = normallyOn
+        private set
+
     init {
         propagationDelay = Switch.DEF_PROP_DELAY
         updatePorts()
@@ -83,11 +93,11 @@ class AnalogRelay(
     /** ---- [AbstractAnalogVertice] */
 
     override fun executionInitialize(signalHandler: SignalHandler) {
-        isOn = false
+        isOn = normallyOn
     }
 
     override fun executionStopped(signalHandler: SignalHandler) {
-        isOn = false
+        isOn = normallyOn
     }
 
     /** ---- [Storable] interface */
@@ -99,6 +109,9 @@ class AnalogRelay(
         if (reader.hasAttribute("switchConfig")) {
             switchConfiguration = SwitchConfiguration.withName(reader.readString("switchConfig"))
         }
+        if (reader.hasAttribute("normallyOn")) {
+            normallyOn = reader.readBoolean("normallyOn")
+        }
     }
 
     override fun write(writer: StoreWriter) {
@@ -106,6 +119,9 @@ class AnalogRelay(
         writer.writeString("inductance", inductance.toString())
         writer.writeString("onCurrent", onCurrent.toString())
         writer.writeString("switchConfig", switchConfiguration.customName)
+        if (normallyOn) {
+            writer.writeBoolean("normallyOn", normallyOn)
+        }
     }
 
     /** ---- [AnalogElement] */
@@ -114,7 +130,7 @@ class AnalogRelay(
         super.reset()
         analogElem.reset()
         inductorLogic.reset()
-        isOn = false
+        isOn = normallyOn
     }
 
     override fun stamp(analysis: AnalogCircuitAnalysis) {
@@ -141,6 +157,11 @@ class AnalogRelay(
     }
 
     private fun shouldBeOn(): Boolean {
+        val attracted = shouldBeAttracted()
+        return if (normallyOn) !attracted  else attracted
+    }
+
+    private fun shouldBeAttracted(): Boolean {
         // This would be able to calculate intermediate switch positions, but is
         // currently not used
         val magic = 1.3
