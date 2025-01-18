@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.draw
 
+import ch.scorpion.jabbah.base.Disposable
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -17,7 +18,7 @@ import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
  * contains the [Point2D] (105,105), but does **not** contain the [Point2D] (5,5) in terms of its
  * [contains] methods.
  */
-interface Drawable {
+interface Drawable : Disposable {
 
 	companion object {
 
@@ -50,13 +51,6 @@ interface Drawable {
 
 	/** Accepts a [HierarchyVisitor] to visit this [Drawable] and possible hierarchy children.*/
 	fun accept(visitor: HierarchyVisitor): Boolean
-
-	/**
-	 * Informs this [Drawable] that it is not actively used anymore.
-	 * Implementing classes should release references to other objects, and especially de-register from listening
-	 * to events. However, it might be that a disposed [Drawable] might be re-activated later.
-	 */
-	fun dispose()
 
 	/**
 	 * Returns the [InputEventHandler] that handles input events for this [Drawable].
