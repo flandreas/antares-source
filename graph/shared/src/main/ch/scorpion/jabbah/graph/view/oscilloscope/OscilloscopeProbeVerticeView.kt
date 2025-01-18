@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.EditInputEventContext
+import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.model.GenericGraphType
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
@@ -179,15 +180,23 @@ open class OscilloscopeProbeVerticeView<T : Any>(
 
 	private inner class Handler : InputEventHandlerAdapter<EditInputEventContext>() {
 
+		private var isDragging = false
 		private var moveLastLocation = Point2D.ZERO
 
 		override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
 			LOG.userTrail("Start dragging Oscilloscope probe")
-			moveLastLocation = Point2D(context.location)
+			isDragging = false
+			moveLastLocation = context.location
 			return this
 		}
 
 		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+			if (!isDragging && moveLastLocation.distance(context.location) < Editor.DRAG_THRESHOLD) {
+				return this
+			}
+
+			isDragging = true
+
 			// Snap
 			val dx = context.x - moveLastLocation.x
 			val dy = context.y - moveLastLocation.y
@@ -213,6 +222,10 @@ open class OscilloscopeProbeVerticeView<T : Any>(
 		}
 
 		override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+			if (!isDragging) {
+				return null
+			}
+
 			LOG.userTrail("Drop Oscilloscope probe into graph")
 			ConnectionPointHighlighter.removePortViewHighlight()
 
@@ -226,6 +239,8 @@ open class OscilloscopeProbeVerticeView<T : Any>(
 				connectionPoint(),
 				probeVerticeViewId = if (dragGhost) null else this@OscilloscopeProbeVerticeView.id)
 			EditModule.commandManager.execute(command)
+
+			isDragging = false
 
 			return null
 		}

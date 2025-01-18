@@ -26,10 +26,6 @@ open class EditorImpl(
     @Suppress("unused")
     constructor(view: DrawingView<Drawing<Component>>): this(view, EditModule.commandManager, EditSelectModule.selectionToolFactory)
 
-    companion object {
-        const val DRAG_THRESHOLD = 15
-    }
-
     private val changeSupport = PropertyChangeSupport<Any>(this)
 
     private val componentSnapper = ComponentSnapper(this)
@@ -185,7 +181,7 @@ open class EditorImpl(
         }
 
         override fun mouseDragged(e: MouseEvent) {
-            if (!isDragging && pressedLocation.distance(e.x.toDouble(), e.y.toDouble()) > DRAG_THRESHOLD) {
+            if (!isDragging && pressedLocation.distance(e.x.toDouble(), e.y.toDouble()) > Editor.DRAG_THRESHOLD) {
                isDragging = true
             }
             if (isDragging) {

@@ -11,6 +11,9 @@ interface Editor {
 
     companion object {
 
+        /** The minimum distance (in view space) of a mouse movement necessary to start a drag operation.*/
+        const val DRAG_THRESHOLD = 15
+
         /** The name of the 'tool lock' property in [PropertyChangeEvent]s.*/
         const val PROP_LOCK_TOOL = "lockTool"
 
