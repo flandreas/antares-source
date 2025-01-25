@@ -91,6 +91,13 @@ class AnalogCircuitAnalyzer(private val circuitView: AnalogGraphView) {
 					val connection = elem.getPost(elem as GraphElementView<*>, postId)!!
 					matchNode(elem, postId, connection.connectableView, connection.port)
 				}
+				for (inode in 0 until elem.internalNodeCount) {
+					val cn = CircuitNode(null, internal = true)
+					val cnl = CircuitNodeLink(elem.postCount + inode, elem)
+					cn.links.add(cnl)
+					elem.setNode(cnl.num, nodeList.size)
+					nodeList.add(cn)
+				}
 			}
 
 			vsCount += elem.voltageSourceCount

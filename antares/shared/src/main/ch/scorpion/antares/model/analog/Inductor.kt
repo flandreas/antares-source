@@ -17,7 +17,9 @@ class Inductor(
     AnalogElementMixin(true)
 ) {
 
-    private val logic = InductorLogic(this)
+    private val logic = InductorLogic()
+
+    private val voltDiff: Double get() = analogElem.getNodeVoltage(0) - analogElem.getNodeVoltage(1)
 
     /** The inductance of this [Inductor] in microhenry.*/
     var inductance: Double
@@ -54,19 +56,19 @@ class Inductor(
     }
 
     override fun stamp(analysis: AnalogCircuitAnalysis) {
-        logic.stamp(analysis)
+        logic.stamp(analysis, getNode(0), getNode(1))
     }
 
     override fun startIteration() {
-        logic.startIteration()
+        logic.startIteration(voltDiff)
     }
 
     override fun calculateCurrent() {
-        analogElem.setInternalCurrent(0, logic.calculateCurrent())
+        analogElem.setInternalCurrent(0, logic.calculateCurrent(voltDiff))
     }
 
     override fun doStep(analysis: AnalogCircuitAnalysis, signalHandler: SignalHandler) {
-        if (logic.doStepRequiresRecalculation(analysis, signalHandler)) {
+        if (logic.doStepRequiresRecalculation(voltDiff, analysis)) {
             requestAnalogGraphRecalculation(signalHandler)
         }
     }

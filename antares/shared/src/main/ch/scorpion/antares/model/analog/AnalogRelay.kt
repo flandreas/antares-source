@@ -17,29 +17,47 @@ import kotlin.math.abs
 import kotlin.math.sqrt
 
 /**
- * A relay with single-pole SPDT ports.
+ * A relay with either single-pole SPST ports or single-port SPDT ports.
+
+ * Posts SPST:
+ * - 0: Switch in
+ * - 1: Switch out
+ * - 2, 3: Coil
+ * - 4: End of coil resistor
+ *
+ * Posts SPDT:
+ * - 0: Switch in
+ * - 1, 2: Switch out
+ * - 3, 4: Coil
+ * - 5: End of coil resistor
  */
 class AnalogRelay(
     inductance: Double = InductorLogic.DEF_INDUCTANCE
 ) : AbstractAnalogVertice<AnalogRelay>(
     EmptyVerticeCalculator,
     "library.element.AnalogRelay",
-    AnalogElementMixin(true, 5)
+    AnalogElementMixin(true, 5, internalNodeCount = 1)
 ) {
     companion object {
         private const val DEF_ON_CURRENT = 0.02
-
         private const val ON_RESISTANCE = 0.05
         private const val OFF_RESISTANCE = 1E8
+        private const val COIL_RESISTANCE = 20.0
     }
 
     private val soundClip by lazy { SoundClipFactory.create("/sound/relay.wav") }
 
-    private val poleCount = 1
+    private val inductorLogic = InductorLogic()
 
-    private val inductorLogic = InductorLogic(this, 0)
+    private val nSwitch0 = 0
 
-    private val nSwitch0 = 2
+    private var nCoil1 = 0
+    private var nCoil2 = 0
+    private var nCoil3 = 0
+
+    private var coilCurrent = 0.0
+
+    private val voltDiff: Double get() = analogElem.getNodeVoltage(nCoil1) - analogElem.getNodeVoltage(nCoil3)
 
     var switchConfiguration: SwitchConfiguration = SwitchConfiguration.SPDT
         set(value) {
@@ -49,6 +67,8 @@ class AnalogRelay(
                 updatePorts()
             }
         }
+
+    val coilPortIdBase: Int get() = switchConfiguration.portCount + 1
 
     /** The inductance of this [AnalogRelay] in Henry.*/
     var inductance: Double
@@ -76,16 +96,26 @@ class AnalogRelay(
             }
         }
 
+    /**
+     * This flag is set if the switch is "on", meaning that the circuit between ports 3 and 4 is closed.
+     */
     var isOn: Boolean = normallyOn
         private set
 
     init {
         propagationDelay = Switch.DEF_PROP_DELAY
         updatePorts()
-        inductorLogic.setup(inductance, 0.0, InductorLogic.DEF_TRAPEZOIDAL)
+        inductorLogic.setup(inductance, coilCurrent, InductorLogic.DEF_TRAPEZOIDAL)
+    }
+
+    private fun setupPoles() {
+        nCoil1 = switchConfiguration.portCount
+        nCoil2 = nCoil1 + 1
+        nCoil3 = nCoil1 + 2
     }
 
     private fun updatePorts() {
+        setupPoles()
         clearPorts()
         (1..2 + switchConfiguration.portCount).forEach { _ -> addPort(AnalogPort()) }
     }
@@ -128,14 +158,18 @@ class AnalogRelay(
 
     override fun reset() {
         super.reset()
-        analogElem.reset()
         inductorLogic.reset()
+        analogElem.reset()
+        coilCurrent = 0.0
         isOn = normallyOn
     }
 
     override fun stamp(analysis: AnalogCircuitAnalysis) {
-        inductorLogic.stamp(analysis)
-        // No inductor resistor
+        // Inductor from coil post 1 to internal node
+        inductorLogic.stamp(analysis, analogElem.getNode(nCoil1), analogElem.getNode(nCoil3))
+
+        // Resistor from internal node to coil post 2
+        analysis.stampResistor(analogElem.getNode(nCoil3), analogElem.getNode(nCoil2), COIL_RESISTANCE)
 
         for (i in 0 until switchConfiguration.portCount) {
             analysis.stampNonLinear(analogElem.getNode(nSwitch0 + i))
@@ -143,7 +177,7 @@ class AnalogRelay(
     }
 
     override fun startIteration() {
-        inductorLogic.startIteration()
+        inductorLogic.startIteration(voltDiff)
 
         val newIsOn = shouldBeOn()
 
@@ -166,8 +200,7 @@ class AnalogRelay(
         // currently not used
         val magic = 1.3
         val pmult = sqrt(magic + 1)
-        //val p = coilCurrent * pmult / onCurrent
-        val p = analogElem.getInternalCurrent() * pmult / onCurrent
+        val p = coilCurrent * pmult / onCurrent
         var dPos = abs(p * p) - 1.3
 
         if (dPos < 0) {
@@ -178,21 +211,18 @@ class AnalogRelay(
         }
 
         return if (dPos < 0.1) {
-            //iPos = 0
             false
         } else if (dPos > 0.9) {
-            //iPos = 1
             true
         } else {
-            //iPos = 2
             false
         }
     }
 
     override fun doStep(analysis: AnalogCircuitAnalysis, signalHandler: SignalHandler) {
-        val requireRecalculation = inductorLogic.doStepRequiresRecalculation(analysis, signalHandler)
+        val requireRecalculation = inductorLogic.doStepRequiresRecalculation(voltDiff, analysis)
 
-        for (p in 0 until  3 * poleCount step 3) {
+        for (p in 0 until  3 step 3) {
             analysis.stampResistor(
                 analogElem.getNode(nSwitch0 + p),
                 analogElem.getNode(nSwitch0 + 1 + p),
@@ -213,6 +243,6 @@ class AnalogRelay(
     }
 
     override fun calculateCurrent() {
-        setInternalCurrent(0, inductorLogic.calculateCurrent())
+        coilCurrent = inductorLogic.calculateCurrent(voltDiff)
     }
 }

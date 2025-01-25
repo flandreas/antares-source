@@ -1,24 +1,18 @@
 package ch.scorpion.antares.model.analog
 
 import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
-import ch.scorpion.antares.view.analog.engine.AnalogElement
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.execution.SignalHandler
 import kotlin.math.abs
 
 /**
  * Contains the pure inductor logic to be used in various [AnalogVertices][AnalogVertice].
- * @property postBase the index in [analogElem]'s posts where this [InductorLogic]'s post start
  */
-class InductorLogic(
-    private val analogElem: AnalogElement,
-    private val postBase: Int = 0
-) {
+class InductorLogic {
     companion object {
         private val LOG by logger(InductorLogic::class)
 
-        /** The default inductance for new [Inductor]s (in microhenry). */
-        const val DEF_INDUCTANCE = 10.0
+        /** The default inductance for new [Inductor]s (in Henry). */
+        const val DEF_INDUCTANCE = 0.2
 
         const val DEF_TRAPEZOIDAL = true
 
@@ -38,7 +32,7 @@ class InductorLogic(
 
     private var curSourceValue: Double = 0.0
 
-    private val voltDiff: Double get() = analogElem.getNodeVoltage(postBase) - analogElem.getNodeVoltage(postBase + 1)
+    private val nodes = IntArray(2)
 
     fun setup(inductance: Double, current: Double, isTrapezoidal: Boolean) {
         this.inductance = inductance
@@ -50,18 +44,20 @@ class InductorLogic(
         current = 0.0
     }
 
-    fun stamp(analysis: AnalogCircuitAnalysis) {
+    fun stamp(analysis: AnalogCircuitAnalysis, n0: Int, n1: Int) {
+        nodes[0] = n0
+        nodes[1] = n1
         resistance = if (isTrapezoidal) {
             2.0 * inductance / analysis.timeStep
         } else {
             inductance / analysis.timeStep
         }
-        analysis.stampResistor(analogElem.getNode(postBase), analogElem.getNode(postBase + 1), resistance)
-        analysis.stampRightSide(analogElem.getNode(postBase))
-        analysis.stampRightSide(analogElem.getNode(postBase + 1))
+        analysis.stampResistor(nodes[0], nodes[1], resistance)
+        analysis.stampRightSide(nodes[0])
+        analysis.stampRightSide(nodes[1])
     }
 
-    fun startIteration() {
+    fun startIteration(voltDiff: Double) {
         curSourceValue = if (isTrapezoidal) {
             voltDiff / resistance + current
         } else {
@@ -69,19 +65,19 @@ class InductorLogic(
         }
     }
 
-    fun calculateCurrent(): Double {
+    fun calculateCurrent(voltDiff: Double): Double {
         if (resistance > 0.0) {
             current = voltDiff / resistance + curSourceValue
         }
         return current
     }
 
-    fun doStepRequiresRecalculation(analysis: AnalogCircuitAnalysis, signalHandler: SignalHandler): Boolean {
+    fun doStepRequiresRecalculation(voltDiff: Double, analysis: AnalogCircuitAnalysis): Boolean {
         if (LOG.isTraceEnabled()) {
             LOG.trace("voltDiff = $voltDiff")
         }
 
-        analysis.stampCurrentSource(analogElem.getNode(postBase), analogElem.getNode(postBase + 1), curSourceValue)
+        analysis.stampCurrentSource(nodes[0], nodes[1], curSourceValue)
 
         if (abs(voltDiff) >= VOLTAGE_LIMIT) {
             return true

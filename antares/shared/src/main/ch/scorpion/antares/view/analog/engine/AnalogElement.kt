@@ -17,6 +17,8 @@ interface AnalogElement {
 
 	val postCount: Int
 
+	val internalNodeCount: Int get() = 0
+
 	/** Resets the state of this [AnalogElement] at simulation start.*/
 	fun reset()
 
@@ -59,7 +61,8 @@ interface AnalogElement {
  */
 class AnalogElementMixin(
 	override val isNonLinear: Boolean = false,
-	override var postCount: Int = 2
+	override var postCount: Int = 2,
+	override var internalNodeCount: Int = 0,
 ) : AnalogElement {
 
 	private lateinit var vertice: AnalogVertice
@@ -89,8 +92,8 @@ class AnalogElementMixin(
 	}
 
 	override fun allocateNodes() {
-		nodes = Array(postCount) { 0 }
-		voltages = Array(postCount) { 0.0 }
+		nodes = Array(postCount + internalNodeCount) { 0 }
+		voltages = Array(postCount + internalNodeCount) { 0.0 }
 	}
 
 	override fun setNode(postId: Int, nodeId: Int) {
@@ -148,6 +151,8 @@ class AnalogElementProxy : AnalogElement {
 	override val voltageSourceCount: Int get() = model.voltageSourceCount
 
 	override val postCount: Int get() = model.postCount
+
+	override val internalNodeCount: Int get() = model.internalNodeCount
 
 	override fun reset() {
 		model.reset()

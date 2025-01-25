@@ -70,33 +70,35 @@ class AnalogRelayView(
     override fun modelExchanged(oldModel: AnalogRelay?) {
         super.modelExchanged(oldModel)
 
-        // Coil
-        addPortView(AnalogPortView(styleProvider, model.getPort(1), LENGTH, 0, Direction.WEST))
-        addPortView(AnalogPortView(styleProvider, model.getPort(2), LENGTH + INDUCTOR_WIDTH.toInt(), 0, Direction.EAST))
+        var portId = 1
 
         when (model.switchConfiguration) {
             SwitchConfiguration.SPST -> {
                 // Single-throw switch
-                addPortView(AnalogPortView(styleProvider, model.getPort(3), LENGTH, 4 * Look.SCALE, Direction.WEST))
-                addPortView(AnalogPortView(styleProvider, model.getPort(4), LENGTH + INDUCTOR_WIDTH.toInt(), 4 * Look.SCALE, Direction.EAST))
+                addPortView(AnalogPortView(styleProvider, model.getPort(portId++), LENGTH, 4 * Look.SCALE, Direction.WEST))
+                addPortView(AnalogPortView(styleProvider, model.getPort(portId++), LENGTH + INDUCTOR_WIDTH.toInt(), 4 * Look.SCALE, Direction.EAST))
                 updateSPSTGeometry()
                 setBounds(LENGTH.toDouble(), -INDUCTOR_HEIGHT_HALF, LENGTH + INDUCTOR_WIDTH, 8.0 * Look.SCALE)
             }
             SwitchConfiguration.SPDT -> {
                 // Double-throw switch
-                addPortView(AnalogPortView(styleProvider, model.getPort(3), LENGTH, 5 * Look.SCALE, Direction.WEST))
-                addPortView(AnalogPortView(styleProvider, model.getPort(4), LENGTH + INDUCTOR_WIDTH.toInt(), 3 * Look.SCALE, Direction.EAST))
-                addPortView(AnalogPortView(styleProvider, model.getPort(5), LENGTH + INDUCTOR_WIDTH.toInt(), 7 * Look.SCALE, Direction.EAST))
+                addPortView(AnalogPortView(styleProvider, model.getPort(portId++), LENGTH, 5 * Look.SCALE, Direction.WEST))
+                addPortView(AnalogPortView(styleProvider, model.getPort(portId++), LENGTH + INDUCTOR_WIDTH.toInt(), 3 * Look.SCALE, Direction.EAST))
+                addPortView(AnalogPortView(styleProvider, model.getPort(portId++), LENGTH + INDUCTOR_WIDTH.toInt(), 7 * Look.SCALE, Direction.EAST))
                 setBounds(LENGTH.toDouble(), -INDUCTOR_HEIGHT_HALF, LENGTH + INDUCTOR_WIDTH, 9.0 * Look.SCALE)
             }
         }
+
+        // Coil
+        addPortView(AnalogPortView(styleProvider, model.getPort(portId++), LENGTH, 0, Direction.WEST))
+        addPortView(AnalogPortView(styleProvider, model.getPort(portId), LENGTH + INDUCTOR_WIDTH.toInt(), 0, Direction.EAST))
     }
 
     private fun updateSPSTGeometry() {
         if (model.switchConfiguration != SwitchConfiguration.SPST) {
             return
         }
-        getPortView(model.getPort(4))!!.location = if (normallyOn) {
+        getPortView(model.getPort(2))!!.location = if (normallyOn) {
             Point2D(LENGTH + INDUCTOR_WIDTH.toInt(), 6 * Look.SCALE)
         } else {
             Point2D(LENGTH + INDUCTOR_WIDTH.toInt(), 4 * Look.SCALE)
@@ -107,7 +109,7 @@ class AnalogRelayView(
         super.drawImpl(context)
 
         val applicableForegroundColor = if (context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
-            getColorGradient(context, 2, 1) ?: styleProvider.getStyle(GraphStyleType.EDGE).color.foregroundColor
+            getColorGradient(context, model.coilPortIdBase + 1, model.coilPortIdBase) ?: styleProvider.getStyle(GraphStyleType.EDGE).color.foregroundColor
         } else {
             context.chooseForeground(
                 when (AntaresViewModule.currentSymbolStyle.symbolStyle) {
@@ -130,15 +132,15 @@ class AnalogRelayView(
             SwitchConfiguration.SPST -> {
                 context.translated(0.0, 4.0 * Look.SCALE) {
                     if (normallyOn) {
-                        AbstractSwitchView.drawTwoPortRealSwitchNonColinearShape(this, 3, model.isOn, context, bounds.minX, DEF_CIRCLE_RADIUS)
+                        AbstractSwitchView.drawTwoPortRealSwitchNonColinearShape(this, 1, model.isOn, context, bounds.minX, DEF_CIRCLE_RADIUS)
                     } else {
-                        AbstractSwitchView.drawTwoPortRealSwitchShape(this, 3, model.isOn, context, bounds.minX, DEF_CIRCLE_RADIUS, false, leftHanded = false)
+                        AbstractSwitchView.drawTwoPortRealSwitchShape(this, 1, model.isOn, context, bounds.minX, DEF_CIRCLE_RADIUS, false, leftHanded = false)
                     }
                 }
             }
             SwitchConfiguration.SPDT -> {
                 context.translated(0.0, 5.0 * Look.SCALE) {
-                    AbstractSwitchView.drawThreePortRealSwitchShape(this, 3, model.isOn, context, bounds.minX, DEF_CIRCLE_RADIUS, false)
+                    AbstractSwitchView.drawThreePortRealSwitchShape(this, 1, model.isOn, context, bounds.minX, DEF_CIRCLE_RADIUS, false)
                 }
             }
         }
