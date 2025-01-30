@@ -97,7 +97,7 @@ class AnalogRelay(
         }
 
     /**
-     * This flag is set if the switch is "on", meaning that the circuit between ports 3 and 4 is closed.
+     * This flag is set if the switch is "on", meaning that the circuit between ports 1 and 2 is closed.
      */
     var isOn: Boolean = normallyOn
         private set
@@ -238,7 +238,7 @@ class AnalogRelay(
         }
 
         if (requireRecalculation || isOn != shouldBeOn()) {
-            requestAnalogGraphRecalculation(signalHandler)
+            requestAnalogReanalization(signalHandler)
         }
     }
 

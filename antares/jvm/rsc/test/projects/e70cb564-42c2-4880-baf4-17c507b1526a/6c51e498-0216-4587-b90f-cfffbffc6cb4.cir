@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' appVersion='1.17.0' manualContainer='false'>
+  <graph>
+    <graphStorable _id='1'>
+      <model>
+        <analogGraph _id='2' type='analog' propDelay='10' timeStep='0.1'>
+          <elements>
+            <analogInOut _id='3' id='1' name='I1' type='input'/>
+            <analogSwitch _id='4' id='2' delay='0'/>
+            <analogNet _id='5' id='3' delay='0'>
+              <ports>
+                <netPortRef _id='6' verticeId='3' portId='1'/>
+                <netPortRef _id='7' verticeId='4' portId='1'/>
+              </ports>
+            </analogNet>
+            <inductor _id='8' id='4' inductance='0.2'/>
+            <analogNet _id='9' id='5' delay='0'>
+              <ports>
+                <netPortRef _id='10' verticeId='4' portId='2'/>
+                <netPortRef _id='11' verticeId='8' portId='1'/>
+              </ports>
+            </analogNet>
+            <resistor _id='12' id='6' resistance='100.0' variable='false'/>
+            <analogNet _id='13' id='7' delay='0'>
+              <ports>
+                <netPortRef _id='14' verticeId='8' portId='2'/>
+                <netPortRef _id='15' verticeId='12' portId='1'/>
+              </ports>
+            </analogNet>
+            <analogGround _id='16' id='8'/>
+            <analogNet _id='17' id='9' delay='0'>
+              <ports>
+                <netPortRef _id='18' verticeId='16' portId='1'/>
+                <netPortRef _id='19' verticeId='12' portId='2'/>
+              </ports>
+            </analogNet>
+          </elements>
+        </analogGraph>
+      </model>
+      <view>
+        <analogGraphView _id='20'>
+          <netViews>
+            <netView _id='21' modelId='5' style='line'/>
+            <netView _id='22' modelId='9' style='line'/>
+            <netView _id='23' modelId='13' style='line'/>
+            <netView _id='24' modelId='17' style='line'/>
+          </netViews>
+          <components>
+            <analogCircuitInOutView _id='25' id='1' rot='0' filled='true' stroked='true' modelId='3' orientation='east'>
+              <location>
+                <point x='-182.0' y='-238.0'/>
+              </location>
+            </analogCircuitInOutView>
+            <analogSwitchView _id='26' id='2' rot='0' filled='true' stroked='true' modelId='4' x='-147.0' y='-238.0'/>
+            <analogEdgeView _id='27' id='3' filled='true' stroked='true' modelId='5' layout='ortho' orig='25' origPort='1' origPortOutput='true' dest='26' destPort='1' destPortOutput='true' adjusted='false'>
+              <shape>
+                <polylineShape points='-196.0,-238.0 -133.0,-238.0'/>
+              </shape>
+            </analogEdgeView>
+            <inductorView _id='28' id='4' rot='0' filled='true' stroked='true' modelId='8' x='-21.0' y='-238.0'/>
+            <analogEdgeView _id='29' id='5' filled='true' stroked='true' modelId='9' layout='ortho' orig='26' origPort='2' origPortOutput='true' dest='28' destPort='1' destPortOutput='true' adjusted='false'>
+              <shape>
+                <polylineShape points='-91.0,-238.0 -7.0,-238.0'/>
+              </shape>
+            </analogEdgeView>
+            <resistorView _id='30' id='6' rot='90' filled='true' stroked='true' modelId='12' x='112.0' y='-217.0'/>
+            <analogEdgeView _id='31' id='7' filled='true' stroked='true' modelId='13' layout='ortho' orig='28' origPort='2' origPortOutput='true' dest='30' destPort='1' destPortOutput='true' adjusted='false'>
+              <shape>
+                <polylineShape points='35.0,-238.0 112.0,-238.0 112.0,-203.0'/>
+              </shape>
+            </analogEdgeView>
+            <analogGroundView _id='32' id='8' rot='0' filled='true' stroked='true' modelId='16' x='112.0' y='-140.0'/>
+            <analogEdgeView _id='33' id='9' filled='true' stroked='true' modelId='17' layout='ortho' orig='32' origPort='1' origPortOutput='true' dest='30' destPort='2' destPortOutput='true' adjusted='false'>
+              <shape>
+                <polylineShape points='112.0,-126.0 112.0,-161.0'/>
+              </shape>
+            </analogEdgeView>
+          </components>
+        </analogGraphView>
+      </view>
+    </graphStorable>
+  </graph>
+  <container>
+    <containerDrawing _id='34'>
+      <components>
+        <rectangle _id='35' id='1' style='figure' filled='true' stroked='true' x='0.0' y='-14.0' w='63.0' h='56.0'/>
+        <digitalPortViewComp _id='36' id='2' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+          <portView>
+            <digitalPortView _id='37' x='0.0' y='0.0' dir='west' textPos='internal' portId='38'/>
+          </portView>
+        </digitalPortViewComp>
+        <label _id='39' id='3' rot='0'>
+          <text>
+            <translation lang='en' text='IBS'/>
+          </text>
+          <location>
+            <point x='31.5' y='14.0'/>
+          </location>
+        </label>
+        <originIndicator _id='40' id='4'>
+          <location>
+            <point x='-14.0' y='0.0'/>
+          </location>
+        </originIndicator>
+      </components>
+      <model>
+        <subGraphVertice _id='41' id='0' delay='0' uuid='6c51e498-0216-4587-b90f-cfffbffc6cb4'>
+          <name>
+            <translation lang='en' text='Inductor behind switch'/>
+          </name>
+          <ports>
+            <subCircuitPort _id='38' portId='1' name='I1' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
+          </ports>
+        </subGraphVertice>
+      </model>
+    </containerDrawing>
+  </container>
+</metaGraph>

@@ -69,7 +69,7 @@ class Inductor(
 
     override fun doStep(analysis: AnalogCircuitAnalysis, signalHandler: SignalHandler) {
         if (logic.doStepRequiresRecalculation(voltDiff, analysis)) {
-            requestAnalogGraphRecalculation(signalHandler)
+            requestAnalogReanalization(signalHandler)
         }
     }
 }

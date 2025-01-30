@@ -192,50 +192,60 @@
                 <translation lang='en' text='Diode'/>
               </name>
             </containerLibraryElement>
+            <containerLibraryElement _id='39' uuid='6c51e498-0216-4587-b90f-cfffbffc6cb4' type='analog'>
+              <name>
+                <translation lang='en' text='Inductor behind switch'/>
+              </name>
+            </containerLibraryElement>
+            <containerLibraryElement _id='40' uuid='385cedbe-6bc1-4bda-b301-6845069fc777' type='analog'>
+              <name>
+                <translation lang='en' text='Relay SPST'/>
+              </name>
+            </containerLibraryElement>
           </items>
         </libraryFolder>
-        <libraryFolder _id='39'>
+        <libraryFolder _id='41'>
           <name>
             <translation lang='en' text='VHDL'/>
           </name>
           <items>
-            <containerLibraryElement _id='40' uuid='ee6b64f0-7189-4604-b6a9-e0d063336787' type='digital'>
+            <containerLibraryElement _id='42' uuid='ee6b64f0-7189-4604-b6a9-e0d063336787' type='digital'>
               <name>
                 <translation lang='en' text='NodeView'/>
               </name>
             </containerLibraryElement>
           </items>
         </libraryFolder>
-        <containerLibraryElement _id='41' uuid='63fbd870-9251-4323-b5b0-c87a78104612' type='digital'>
+        <containerLibraryElement _id='43' uuid='63fbd870-9251-4323-b5b0-c87a78104612' type='digital'>
           <name>
             <translation lang='en' text='Global Tunnel Inner'/>
           </name>
         </containerLibraryElement>
-        <containerLibraryElement _id='42' uuid='d9183029-8382-4030-982d-b6b22dcce948' type='digital'>
+        <containerLibraryElement _id='44' uuid='d9183029-8382-4030-982d-b6b22dcce948' type='digital'>
           <name>
             <translation lang='en' text='Global Tunnel Outer'/>
           </name>
         </containerLibraryElement>
-        <containerLibraryElement _id='43' uuid='7ce25d9a-1a45-47fb-9925-69447c0e4f05' type='digital'>
+        <containerLibraryElement _id='45' uuid='7ce25d9a-1a45-47fb-9925-69447c0e4f05' type='digital'>
           <name>
             <translation lang='en' text='NonVolatile Inner'/>
           </name>
         </containerLibraryElement>
-        <containerLibraryElement _id='44' uuid='654d580e-5b1e-4b68-b5c2-61fe32e73236' type='digital'>
+        <containerLibraryElement _id='46' uuid='654d580e-5b1e-4b68-b5c2-61fe32e73236' type='digital'>
           <name>
             <translation lang='en' text='NonVolatile'/>
           </name>
         </containerLibraryElement>
-        <memoryLibraryItem _id='45' uuid='df053d2d-fea0-4580-87cc-d78a910e03c8'>
+        <memoryLibraryItem _id='47' uuid='df053d2d-fea0-4580-87cc-d78a910e03c8'>
           <memory>
-            <memory _id='46' dataBitWidth='8' addressBitWidth='8' content='11 22 33'>
+            <memory _id='48' dataBitWidth='8' addressBitWidth='8' content='11 22 33'>
               <name>
                 <translation lang='en' text='Memory Contents A'/>
               </name>
             </memory>
           </memory>
         </memoryLibraryItem>
-        <containerLibraryElement _id='47' uuid='58fdc6b5-39e7-425d-a91f-8f1899d19f30' type='digital'>
+        <containerLibraryElement _id='49' uuid='58fdc6b5-39e7-425d-a91f-8f1899d19f30' type='digital'>
           <name>
             <translation lang='en' text='ROM with Memory Contents'/>
           </name>

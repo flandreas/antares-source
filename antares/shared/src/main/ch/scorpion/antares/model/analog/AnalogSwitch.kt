@@ -65,5 +65,9 @@ class AnalogSwitch(
 		logic.stamp(analysis)
 	}
 
-	override fun calculateCurrent() { }
+	override fun calculateCurrent() {
+		if (!isOn) {
+			analogElement.setInternalCurrent(0, 0.0)
+		}
+	}
 }

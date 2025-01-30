@@ -12,18 +12,16 @@ class AnalogSwitchLogic(
     private val postBase: Int,
     private val isOn: () -> Boolean
 ) {
-    companion object {
-        private const val ON_RESISTANCE = 0.0
-        private const val OFF_RESISTANCE = 100_000_000.0
-    }
-
-    val resistance: Double get() = if (isOn()) ON_RESISTANCE else OFF_RESISTANCE
-
     val voltageSourceCount: Int get() = if (isOn()) 1 else 0
 
     fun stamp(analysis: AnalogCircuitAnalysis) {
         if (isOn()) {
-            analysis.stampVoltageSource(analogElem.getNode(postBase), analogElem.getNode(postBase + 1), analogElem.getVoltageSource(postBase), 0.0)
+            analysis.stampVoltageSource(
+                analogElem.getNode(postBase),
+                analogElem.getNode(postBase + 1),
+                analogElem.getVoltageSource(postBase),
+                0.0
+            )
         }
     }
 }
