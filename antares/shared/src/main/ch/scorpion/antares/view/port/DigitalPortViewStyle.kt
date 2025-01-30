@@ -33,8 +33,21 @@ enum class DigitalPortViewStyle(val customName: String) {
 			}
 		}
 
-		override fun createBasicBoundingBox(portView: DigitalPortView): Rectangle2D =
-			Rectangle2D(portView.location.xInt, portView.location.yInt, 0, 0)
+		override fun createBasicBoundingBox(portView: DigitalPortView): Rectangle2D {
+			with(portView) {
+				if (showLogicAnnotation && digitalPort.logic == Logic.NEGATIVE) {
+					val logicBox = LOGIC_BOXES[portView.direction]!!
+					val lw = Themes.get<AntaresTheme>().figure.stroke.width
+					return Rectangle2D(
+						portView.location.x + logicBox.x - lw,
+						portView.location.y + logicBox.y - lw,
+						logicBox.width + 2 * lw,
+						logicBox.height + 2 * lw)
+				} else {
+					return Rectangle2D(portView.location.xInt, portView.location.yInt, 0, 0)
+				}
+			}
+		}
 
 		override fun isDrawAccess(portView: DigitalPortView): Boolean = !portView.port.isConnected
 
