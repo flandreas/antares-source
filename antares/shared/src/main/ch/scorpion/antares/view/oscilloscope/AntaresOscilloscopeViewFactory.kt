@@ -13,10 +13,18 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.model.GraphType
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
+import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoriesType
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.oscilloscope.*
 
 class AntaresOscilloscopeViewFactory : OscilloscopeViewFactory {
+
+	override fun getDefaultMode(graphType: GraphType): SignalHistoriesType =
+		when (graphType) {
+			Digital -> SignalHistoriesType.Clocked
+			Analog -> SignalHistoriesType.Realtime
+			else -> throw IllegalArgumentException("unknown GraphType $graphType")
+		}
 
 	override fun getRowHeight(graphType: GraphType): Int =
 		when (graphType) {

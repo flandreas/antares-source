@@ -7,10 +7,14 @@ import ch.scorpion.jabbah.graph.model.GenericGraphType
 import ch.scorpion.jabbah.graph.model.GraphType
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
+import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoriesType
 import ch.scorpion.jabbah.graph.view.EdgeView
 
 /** A factory for creating various objects used by [OscilloscopeView].*/
 interface OscilloscopeViewFactory {
+
+    /** Returns the default [SignalHistoriesType] for new [OscilloscopeViews][OscilloscopeView]. */
+    fun getDefaultMode(graphType: GraphType): SignalHistoriesType
 
     /**
      * Returns the height of the drawing area used by a [SignalHistoryDrawer]
@@ -38,6 +42,8 @@ interface OscilloscopeViewFactory {
 }
 
 class UndefinedOscilloscopeViewFactory : OscilloscopeViewFactory {
+
+    override fun getDefaultMode(graphType: GraphType): SignalHistoriesType = SignalHistoriesType.Clocked
 
 	override fun getRowHeight(graphType: GraphType): Int = 0
 

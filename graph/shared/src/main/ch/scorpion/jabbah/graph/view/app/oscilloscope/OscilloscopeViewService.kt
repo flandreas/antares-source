@@ -204,6 +204,7 @@ class OscilloscopeViewServiceImpl(
 
 	private fun createOscilloscopeView(view: DrawingView<GraphView>) {
 		val ov = OscilloscopeView(view.drawing.graph!!.type)
+		ov.mode = GraphViewModule.oscilloscopeViewFactory.getDefaultMode(view.drawing.graph!!.type)
 		ov.visible = true
 		positionOscilloscope(ov, view.drawing)
 		graphViewAppService.add(ov, view as DrawingView<Drawing<Component>>)
