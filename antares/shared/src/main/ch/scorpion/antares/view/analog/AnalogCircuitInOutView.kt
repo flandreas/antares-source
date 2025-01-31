@@ -177,7 +177,7 @@ class AnalogCircuitInOutView(
 		}
 
 		override fun keyPressed(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
-			if (checkTopLevelKey()) {
+			if (isFocusOwner && checkTopLevelKey()) {
 				when (context.keyEvent?.key) {
 					KeyEvent.VK_ENTER -> toggle(false, context)
 					KeyEvent.VK_Z -> model.setIncomingSignal(AnalogSignal.UNDEFINED, context.signalHandler)

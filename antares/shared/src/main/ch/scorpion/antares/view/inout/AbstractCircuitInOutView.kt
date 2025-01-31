@@ -403,13 +403,7 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 		open fun canConsume(keyEvent: KeyEvent): Boolean = keyEvent.modifiers == 0
 
 		override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler? {
-			if (!model.isToplevel) {
-				eventBus.post(
-					ComponentMessage(
-						type = ComponentMessageType.Error,
-						source = this@AbstractCircuitInOutView,
-						messageKey = "antares.msg.ChildGraphInputManipulation")
-					)
+			if (!checkTopLevelKey()) {
 				return null
 			}
 
