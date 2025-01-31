@@ -207,6 +207,35 @@ class DslParserTest {
 	}
 
 	@Test
+	fun shouldParseComplexLogicExpression() {
+		val parser = DslParser("""
+			var A = 0
+			var B = 1
+			var O = A and not B or not A and B
+		""".trimIndent())
+		assertAST(parser.parse(), """
+			Compound
+			- var
+			-- A
+			-- 0
+			- var
+			-- B
+			-- 1
+			- var
+			-- O
+			-- or
+			--- and
+			---- A
+			---- not
+			----- B
+			--- and
+			---- not
+			----- A
+			---- B
+		""".trimIndent())
+	}
+
+	@Test
 	fun shouldParseUnaryNot() {
 		val parser = DslParser("not 3")
 
