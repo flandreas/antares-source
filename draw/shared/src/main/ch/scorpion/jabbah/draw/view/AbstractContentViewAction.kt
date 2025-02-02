@@ -16,8 +16,15 @@ abstract class AbstractContentViewAction(
 
 	private val activeViewHandler: EventHandler<ActiveContentViewChangedEvent> = { activeViewChanged(it.oldView, it.newView) }
 
+	private val viewPropertyListener = ViewPropertyListener()
+
+	protected val contentView: ContentView<*>? get() = viewManager.activeView
+
+	protected val view: View<*>? get() = viewManager.activeView?.view
+
 	init {
 		eventBus.register(ActiveContentViewChangedEvent::class, activeViewHandler)
+		view?.addPropertyChangeListener(viewPropertyListener)
 		updateEnabled()
 	}
 
@@ -25,12 +32,6 @@ abstract class AbstractContentViewAction(
 		super.dispose()
 		eventBus.unregister(activeViewHandler)
 	}
-
-	private val viewPropertyListener = ViewPropertyListener()
-
-	protected val contentView: ContentView<*>? get() = viewManager.activeView
-
-	protected val view: View<*>? get() = viewManager.activeView?.view
 
 	private inner class ViewPropertyListener : PropertyChangeListener<Any> {
 		override fun propertyChanged(e: PropertyChangeEvent<Any>) {

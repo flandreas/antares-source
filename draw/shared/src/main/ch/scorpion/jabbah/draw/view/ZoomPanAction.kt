@@ -63,6 +63,7 @@ abstract class AbstractZoomPanAction(
 
 	override fun notifyActiveViewChanged() {
 		updateSelected()
+		updateEnabled()
 	}
 
 	protected open fun calculateSelected(): Boolean = viewManager.activeView?.view?.zoomStrategy == zoomStrategy
