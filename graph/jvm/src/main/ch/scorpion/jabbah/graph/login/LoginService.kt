@@ -34,7 +34,7 @@ class LoginServiceJvm(
         }
 
         val loginResponse = response.body<LoginResponse>()
-        Session.establish(SessionData(request.username, loginResponse.token))
+        Session.establish(SessionData(request.username, loginResponse.userNickname))
 
         LOG.info("Successfully logged in to Akrab")
 
@@ -48,6 +48,6 @@ class LoginServiceJvm(
 
     @Serializable
     private data class LoginResponse(
-        val token: String
+        val userNickname: String
     )
 }

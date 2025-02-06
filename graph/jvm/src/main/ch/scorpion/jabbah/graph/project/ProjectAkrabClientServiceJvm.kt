@@ -45,7 +45,6 @@ class ProjectAkrabClientServiceJvm(
 		}
 
 		val response = httpClient.post("$baseUrl/bundle") {
-			bearerAuth(Session.data!!.token)
 			setBody(
 				MultiPartFormDataContent(
 					formData {
