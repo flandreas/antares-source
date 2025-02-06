@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.login
 
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.net.httpClient
 import ch.scorpion.jabbah.base.logger
 import io.ktor.client.call.*
@@ -10,7 +11,16 @@ import kotlinx.serialization.Serializable
 import java.net.URL
 
 interface LoginService {
+
+    /**
+     * Tries to log the user in at the remote backend.
+     *
+     * @return `false` if username or password is wrong
+     * @throws IllegalStateException if a technical error occurred, including if no
+     * connection to the server could be established
+     */
     suspend fun login(request: LoginRequest): Boolean
+
     fun logout()
 }
 
@@ -29,8 +39,12 @@ class LoginServiceJvm(
             contentType(ContentType.Application.Json)
             setBody(request)
         }
-        if (response.status != HttpStatusCode.OK) {
+        if (response.status == HttpStatusCode.BadRequest) {
             return false
+        }
+        if (response.status != HttpStatusCode.OK) {
+            LOG.error("Status ${response.status} received while login")
+            throw IllegalStateException(Translations.getString("base.technicalError.msg.txt", response.status))
         }
 
         val loginResponse = response.body<LoginResponse>()

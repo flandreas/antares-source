@@ -158,6 +158,8 @@ class LoginPanel(
                                 JOptionPane.INFORMATION_MESSAGE
                             )
                         }
+                    } catch (e: IllegalStateException) {
+                        showError(e.message ?: Translations.getString("base.unknownError.txt"))
                     } catch (e: Exception) {
                         val msg = when (e) {
                             is SocketTimeoutException -> "Timeout"
@@ -166,15 +168,19 @@ class LoginPanel(
                                 e.message
                             }
                         }
-                        JOptionPane.showMessageDialog(
-                            Frame.getFrames()[0],
-                            "Error: $msg",
-                            this@LoginAction.name,
-                            JOptionPane.ERROR_MESSAGE
-                        )
+                        showError(msg ?: Translations.getString("base.unknownError.txt"))
                     }
                 }
             }
+        }
+
+        private fun showError(msg: String) {
+            JOptionPane.showMessageDialog(
+                Frame.getFrames()[0],
+                msg,
+                this@LoginAction.name,
+                JOptionPane.ERROR_MESSAGE
+            )
         }
     }
 
