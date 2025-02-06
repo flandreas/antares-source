@@ -245,8 +245,10 @@ class OscilloscopeView(
 	}
 
 	private fun handleSignalReceived(name: String, signal: Any, signalHandler: SignalHandler) {
+		invalidate()
 		model.storeSignal(name, signal, signalHandler)
 		scaleRowView.timelineView.updateGeometry()
+		validate()
 	}
 
 	/** ---- [AbstractRectangularVerticeView] */
