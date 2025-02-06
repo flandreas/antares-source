@@ -37,7 +37,7 @@ class AntaresEditorAppJs(environment: Environment) : AbstractAntaresAppJs(enviro
      */
     @Suppress("unused") // JS app
     fun start(libraryUuid: String, userIdentity: UserIdentity, themeName: String? = null): Promise<AntaresEditorContent> {
-        LOG.info("Starting Antares editor app")
+        LOG.info("Starting Antares editor app for user ${userIdentity.id}")
 
         configure()
 

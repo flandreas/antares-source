@@ -4,6 +4,8 @@ import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.draw.graphics.Image
 import ch.scorpion.jabbah.draw.graphics.ImageType
 import ch.scorpion.jabbah.draw.module.DrawModule
+import ch.scorpion.jabbah.edit.auth.EditAuthModule
+import ch.scorpion.jabbah.edit.auth.UserIdentity
 import ch.scorpion.jabbah.edit.model.image.ImageIdentification
 import ch.scorpion.jabbah.graph.GraphQuota
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -17,7 +19,11 @@ class Akrab2RestProjectPersistenceServiceJs(
         loadLibrary(libraryId, "$baseUrl/project/${libraryId.uuid.id}")
 
     override fun getMetaGraphXMLUrl(library: Library, uuid: UUID): String =
-        "$baseUrl/metaGraph/$uuid/xml"
+        if (EditAuthModule.userHolder.user.identity.id == UserIdentity.ANYBODY.id) {
+            "$baseUrl/metaGraph/$uuid/xml"
+        } else {
+            "$baseUrl/metaGraphProtected/$uuid/xml"
+        }
 
     override fun loadImage(library: Library, imageUuid: UUID, imageType: ImageType): Image {
         return DrawModule.imageLoader.loadUserImage("$baseUrl/image/${imageUuid.id}", imageType)

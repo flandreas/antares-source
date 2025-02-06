@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.module.BaseModuleJs
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.User
 import ch.scorpion.jabbah.edit.auth.UserHolder
+import ch.scorpion.jabbah.edit.auth.UserIdentity
 import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.AbstractAkrab2RestLibraryPersistenceServiceJs
@@ -33,6 +34,9 @@ abstract class AbstractAntaresAppJs(
     companion object {
         private val LOG by logger(AbstractAntaresAppJs::class)
     }
+
+    private val isUserAuthenticated: Boolean get() =
+        EditAuthModule.userHolder.user.identity.id != UserIdentity.ANYBODY.id
 
     /**
      * Configures the application to be able to start calling Akrab REST endpoints, especially
@@ -85,7 +89,11 @@ abstract class AbstractAntaresAppJs(
 
     protected fun loadRepository(libraryUuid: String): Promise<Library> {
         LOG.debug("Loading repository $libraryUuid")
-        val url = "${BaseModule.properties.getString(DataLocation.PROP_SERVER_URL)}/repository/$libraryUuid"
+        val url = if (isUserAuthenticated) {
+            "${BaseModule.properties.getString(DataLocation.PROP_SERVER_URL)}/repositoryProtected/$libraryUuid"
+        } else {
+            "${BaseModule.properties.getString(DataLocation.PROP_SERVER_URL)}/repository/$libraryUuid"
+        }
         val headers = Headers()
         headers.append("Content-Type", "text/xml")
 
