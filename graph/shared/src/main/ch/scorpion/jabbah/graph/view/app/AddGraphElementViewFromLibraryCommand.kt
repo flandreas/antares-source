@@ -32,7 +32,9 @@ class AddGraphElementViewFromLibraryCommand(
 	override fun execute() {
 		val graphElementView = libraryElement.getNewInstance<GraphElement>()
 		graphElementView.location = location
-		graphElementView.rotation = rotation
+		if (graphElementView.useRotation) {
+			graphElementView.rotation = rotation
+		}
 		graphView.add(graphElementView)
 		addedComponentId = graphElementView.id
 		val verticeView = graphView.getWithId(addedComponentId) as Component

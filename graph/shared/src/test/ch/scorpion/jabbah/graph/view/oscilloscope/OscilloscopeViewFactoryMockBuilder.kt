@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.graph.model.GraphType
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
+import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoriesType
 import dev.mokkery.MockMode
 import dev.mokkery.answering.calls
 import dev.mokkery.answering.returns
@@ -33,6 +34,7 @@ class OscilloscopeViewFactoryMockBuilder {
 		every { factory.createSignalHistoryDrawer(any(), any(), any()) } returns signalHistoryDrawer
 		every { factory.createSignalHistoryTimelineView(any()) } returns timelineView
 		every { factory.createSignalHistoryYAxis(any(), any()) } returns yAxis
+		every { factory.getDefaultMode(any()) } returns SignalHistoriesType.Clocked
 
 		every { factory. createProbeVerticeView(
 			capture(nameSlot),
