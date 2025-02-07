@@ -28,7 +28,8 @@ import kotlin.js.Promise
  * in a JavaScript application, and loads [MetaGraph] and [Library] data to be displayed later.
  */
 abstract class AbstractAntaresAppJs(
-    private val environment: Environment
+    private val environment: Environment,
+    private val akrabURL: String
 ) {
 
     companion object {
@@ -44,18 +45,7 @@ abstract class AbstractAntaresAppJs(
      */
     protected fun configure() {
         BaseModuleJs.require()
-
-        when (environment) {
-            Environment.Development -> {
-                BaseModule.properties.set(DataLocation.PROP_SERVER_URL, AntaresApplication.AKRAB_DEV_URL)
-                LOG.info("Using dev Akrab on ${AntaresApplication.AKRAB_DEV_URL}")
-            }
-            Environment.Production -> {
-                LOG.info("Using prod Akrab on ${AntaresApplication.AKRAB_PROD_URL}")
-                BaseModule.properties.set(DataLocation.PROP_SERVER_URL, AntaresApplication.AKRAB_PROD_URL)
-            }
-        }
-
+        BaseModule.properties.set(DataLocation.PROP_SERVER_URL, akrabURL)
         BaseModuleJs.translationService = TranslationServiceJsImpl(BaseModule.properties.getString(DataLocation.PROP_SERVER_URL))
     }
 

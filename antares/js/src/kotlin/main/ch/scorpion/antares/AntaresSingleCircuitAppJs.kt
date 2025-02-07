@@ -14,7 +14,10 @@ import kotlinx.coroutines.promise
 import kotlin.js.Promise
 
 @JsExport
-class AntaresSingleCircuitAppJs(environment: Environment) : AbstractAntaresAppJs(environment) {
+class AntaresSingleCircuitAppJs(
+    environment: Environment,
+    akrabURL: String
+) : AbstractAntaresAppJs(environment, akrabURL) {
 
     companion object {
         private val LOG by logger(AntaresSingleCircuitAppJs::class)

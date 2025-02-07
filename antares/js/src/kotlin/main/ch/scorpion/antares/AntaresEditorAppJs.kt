@@ -23,7 +23,10 @@ data class AntaresEditorContent(
 )
 
 @JsExport
-class AntaresEditorAppJs(environment: Environment) : AbstractAntaresAppJs(environment) {
+class AntaresEditorAppJs(
+    environment: Environment,
+    akrabURL: String
+) : AbstractAntaresAppJs(environment, akrabURL) {
 
     companion object {
         private val LOG by logger(AbstractAntaresAppJs::class)
