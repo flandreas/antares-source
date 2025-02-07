@@ -71,9 +71,12 @@ class CanvasJvm(
 			override fun popupMenuWillBecomeInvisible(e: PopupMenuEvent?) {}
 			override fun popupMenuCanceled(e: PopupMenuEvent?) {}
 			override fun popupMenuWillBecomeVisible(e: PopupMenuEvent?) {
-				val mousePos = view.viewToModel(Point2D(mousePosition.getX(), mousePosition.getY()))
-				DrawModuleJvm.contextMenuProvider.fillContextMenu(view, mousePos.x, mousePos.y, contextMenu)
-				eventBus.post(ch.scorpion.jabbah.draw.PopupMenuEvent(this@CanvasJvm))
+				val viewMousePos = mousePosition
+				if (viewMousePos != null) {
+					val mousePos = view.viewToModel(Point2D(viewMousePos.getX(), viewMousePos.getY()))
+					DrawModuleJvm.contextMenuProvider.fillContextMenu(view, mousePos.x, mousePos.y, contextMenu)
+					eventBus.post(ch.scorpion.jabbah.draw.PopupMenuEvent(this@CanvasJvm))
+				}
 			}
 		})
 
