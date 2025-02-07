@@ -3,7 +3,9 @@ package ch.scorpion.antares
 import ch.scorpion.jabbah.app.Environment
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.edit.auth.AnonymousWebUserHolder
+import ch.scorpion.jabbah.edit.auth.DesktopUser
+import ch.scorpion.jabbah.edit.auth.DesktopUserHolder
+import ch.scorpion.jabbah.edit.auth.UserIdentity
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.graph.project.Project
@@ -37,7 +39,7 @@ class AntaresSingleCircuitAppJs(
         val scope = CoroutineScope(SupervisorJob())
         return scope.promise {
             Promise.all(loadTranslations().toTypedArray()).await()
-            init(AnonymousWebUserHolder, themeName)
+            init(DesktopUserHolder(DesktopUser(UserIdentity.ANYBODY, "", false)), themeName)
             load(libraryUuid, metaGraphUuid)
         }
     }
