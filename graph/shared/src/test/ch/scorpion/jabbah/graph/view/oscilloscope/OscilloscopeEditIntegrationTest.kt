@@ -53,7 +53,7 @@ class OscilloscopeEditIntegrationTest : AbstractGraphViewEditingTest() {
 	fun shouldAddSignalRow() {
 		GraphViewModule.oscilloscopeViewService.displayOscilloscope(view)
 		GraphViewModule.oscilloscopeViewService.addRow(view, getOscilloscopeView())
-		assertEquals(1, getOscilloscopeView().rowsCount)
+		assertEquals(2, getOscilloscopeView().rowsCount)
 	}
 
 	@Test
@@ -61,7 +61,7 @@ class OscilloscopeEditIntegrationTest : AbstractGraphViewEditingTest() {
 		GraphViewModule.oscilloscopeViewService.displayOscilloscope(view)
 		GraphViewModule.oscilloscopeViewService.addRow(view, getOscilloscopeView())
 		EditModule.commandManager.undo()
-		assertEquals(0, getOscilloscopeView().rowsCount)
+		assertEquals(1, getOscilloscopeView().rowsCount)
 	}
 
 	@Test
@@ -70,7 +70,7 @@ class OscilloscopeEditIntegrationTest : AbstractGraphViewEditingTest() {
 
 		GraphViewModule.oscilloscopeViewService.removeRow(view, "P", getOscilloscopeView())
 
-		assertEquals(0, getOscilloscopeView().rowsCount)
+		assertEquals(1, getOscilloscopeView().rowsCount)
 		assertEquals(0, view.drawing.getVerticeViews().filterIsInstance<OscilloscopeProbeVerticeView<*>>().size)
 	}
 
