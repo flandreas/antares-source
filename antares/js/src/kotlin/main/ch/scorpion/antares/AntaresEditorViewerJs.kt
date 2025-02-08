@@ -1,11 +1,14 @@
 package ch.scorpion.antares
 
+import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.richtext.RichText
 import ch.scorpion.jabbah.draw.view.CanvasJs
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.execution.ExecutionControlOutlet
+import ch.scorpion.jabbah.execution.ExecutionDepthAction
+import ch.scorpion.jabbah.execution.SchedulerActions
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.library.AbstractAkrab2RestLibraryPersistenceServiceJs
@@ -20,7 +23,7 @@ import kotlin.js.Promise
 @JsExport
 class AntaresEditorViewerJs(
     private val content: AntaresEditorContent
-) {
+) : SchedulerActions {
 
     companion object {
         private val LOG by logger(AntaresEditorViewerJs::class)
@@ -40,6 +43,8 @@ class AntaresEditorViewerJs(
 
     val executionControlOutlet: ExecutionControlOutlet get() = controller
 
+    override val executionDepthAction: Action
+
     init {
         if (content.metaGraph != null && content.metaGraph !is MetaGraph) {
             LOG.error("Expecting MetaGraph in content, got ${content.metaGraph::class.simpleName}")
@@ -49,6 +54,8 @@ class AntaresEditorViewerJs(
         controller = GraphViewerController(metaGraph?.graph?.graphView, true)
         controller.graphNavigationViewController.enableOpenSubGraphRequests = false
         ViewMocks(controller)
+
+        executionDepthAction = ExecutionDepthAction(controller.applicationContextHolder.scheduler)
 
         // This application has only 1 View, so set this View as the current one right from the start
         DrawViewModule.viewManager.activeView = controller.drawingView

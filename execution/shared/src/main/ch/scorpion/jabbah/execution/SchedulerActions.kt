@@ -7,6 +7,12 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.scheduler.*
+import kotlin.js.JsExport
+
+@JsExport
+interface SchedulerActions {
+	val executionDepthAction: Action
+}
 
 /**
  * Base class for implementing [Action]s for controlling the [Scheduler].
