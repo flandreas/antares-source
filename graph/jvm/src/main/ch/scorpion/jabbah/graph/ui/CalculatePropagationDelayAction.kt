@@ -1,30 +1,46 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.edit.auth.Operation
-import ch.scorpion.jabbah.graph.library.AbstractContainerLibraryElementAction
-import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
+import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.model.graph.GraphPropagationDelayCalculator
-import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import java.awt.Frame
 import javax.swing.JOptionPane
 
 class CalculatePropagationDelayAction(
-    controller: LibraryTreeViewController
-) : AbstractContainerLibraryElementAction(
+    applicationDataHolder: ApplicationDataHolder,
+    applicationModeHolder: ApplicationModeHolder,
+    eventBus: EventBus = BaseModule.eventBus
+) : AbstractApplicationDataEditModeAction(
 "graph.action.calculatePropagationDelay",
-    operation = Operation.View,
-    controller
+    applicationDataHolder,
+    applicationModeHolder,
+    eventBus
 ) {
     override fun execute(event: ActionEvent) {
-        (controller.selectedItem as ContainerLibraryElement).storable?.graph?.model?.let {
-            val propDelay = GraphPropagationDelayCalculator().calculate(it)
-            JOptionPane.showMessageDialog(
-                Frame.getFrames()[0],
-                "${Translations.getString("graph.property.propagationDelay.name")}: $propDelay",
-                name,
-                JOptionPane.INFORMATION_MESSAGE)
+        (applicationDataHolder.data?.content as MetaGraph?)?.let {
+            val propDelay = GraphPropagationDelayCalculator().calculate(it.graph.model!!)
+            if (propDelay < 0L) {
+                JOptionPane.showMessageDialog(
+                    Frame.getFrames()[0],
+                    Translations.getString("graph.action.calculatePropagationDelay.undefined.text"),
+                    Translations.getString("graph.action.calculatePropagationDelay.title"),
+                    JOptionPane.WARNING_MESSAGE)
+            } else {
+                JOptionPane.showMessageDialog(
+                    Frame.getFrames()[0],
+                    "${Translations.getString("graph.property.propagationDelay.name")}: $propDelay",
+                    Translations.getString("graph.action.calculatePropagationDelay.title"),
+                    JOptionPane.INFORMATION_MESSAGE
+                )
+            }
         }
     }
+
+    override fun calculateEnabled(): Boolean =
+        super.calculateEnabled() && applicationDataHolder.data?.content is MetaGraph
 }

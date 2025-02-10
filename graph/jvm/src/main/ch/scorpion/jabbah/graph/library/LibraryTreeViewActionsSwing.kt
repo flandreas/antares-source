@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.graph.model.image.ImageLibraryElement
 import ch.scorpion.jabbah.graph.model.image.OpenImageAction
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.project.*
-import ch.scorpion.jabbah.graph.ui.CalculatePropagationDelayAction
 import ch.scorpion.jabbah.graph.ui.GraphDataViewController
 import ch.scorpion.jabbah.graph.ui.MetaGraphEmbedAction
 import ch.scorpion.jabbah.graph.ui.graphviewer.NewGraphViewerAction
@@ -43,7 +42,6 @@ open class LibraryTreeViewActionsSwing(
 	private val exportMetaGraphAction = register(ExportMetaGraphAction(controller))
 	private val newGraphViewerAction = register(NewGraphViewerAction(application.displayName, controller))
 	private val embedMetaGraphAction = register(MetaGraphEmbedAction(controller))
-	private val calculatePropagationDelayAction = register(CalculatePropagationDelayAction(controller))
 
 	private val libraryPropertiesAction = register(LibraryPropertiesAction(controller))
 	val addLibraryFolderAction = register(AddLibraryFolderAction(controller, libraryOperationTarget))
@@ -246,7 +244,6 @@ open class LibraryTreeViewActionsSwing(
 		projectContainerPopupMenu.add(ActionWrapperSwing(exportMetaGraphAction))
 		projectContainerPopupMenu.add(ActionWrapperSwing(newGraphViewerAction))
 		projectContainerPopupMenu.add(ActionWrapperSwing(showLibraryMetaGraphHistoryAction))
-		projectContainerPopupMenu.add(ActionWrapperSwing(calculatePropagationDelayAction))
 		if (GraphModuleJvm.supportWeb) {
 			projectContainerPopupMenu.add(ActionWrapperSwing(embedMetaGraphAction))
 		}
@@ -260,7 +257,6 @@ open class LibraryTreeViewActionsSwing(
 		libraryContainerPopupMenu.add(ActionWrapperSwing(exportMetaGraphAction))
 		libraryContainerPopupMenu.add(ActionWrapperSwing(newGraphViewerAction))
 		libraryContainerPopupMenu.add(ActionWrapperSwing(showLibraryMetaGraphHistoryAction))
-		libraryContainerPopupMenu.add(ActionWrapperSwing(calculatePropagationDelayAction))
 	}
 
 	protected open fun fillMain() {

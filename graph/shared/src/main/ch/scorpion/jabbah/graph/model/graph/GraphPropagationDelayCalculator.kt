@@ -12,7 +12,7 @@ class GraphPropagationDelayCalculator {
     private val path = Stack<OutputPort<*>>()
 
     fun calculate(graph: Graph): Long =
-        graph.graphInputs.maxOf { calculateFrom(it.getOutput<Any>()) }
+        graph.graphInputs.maxOfOrNull { calculateFrom(it.getOutput<Any>()) } ?: -1L
 
     private fun calculateFrom(outputPort: OutputPort<*>): Long {
         path.push(outputPort)
