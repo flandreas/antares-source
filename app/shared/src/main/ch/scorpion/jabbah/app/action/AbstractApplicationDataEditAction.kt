@@ -9,11 +9,17 @@ import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Command
 
-/** A base class of [Command]s that depend on the entire [ApplicationData]. */
+/**
+ * A base class of [Command]s that depend on the entire [ApplicationData].
+ *
+ * @param requireEditable `true` if the [ApplicationData] needs to be editable in order for this
+ * [AbstractApplicationDataEditAction] to be enabled.
+ */
 abstract class AbstractApplicationDataEditAction(
 	baseName: String,
 	protected val applicationDataHolder: ApplicationDataHolder,
-	protected val eventBus: EventBus = BaseModule.eventBus
+	protected val eventBus: EventBus = BaseModule.eventBus,
+	private val requireEditable: Boolean = true
 ): AbstractAction(baseName) {
 
 	private val applicationDataHandler: EventHandler<ApplicationDataEvent> = { updateEnabled() }
@@ -33,5 +39,5 @@ abstract class AbstractApplicationDataEditAction(
 	}
 
 	protected open fun calculateEnabled(): Boolean =
-		applicationDataHolder.data != null && applicationDataHolder.data!!.savable.editable
+		applicationDataHolder.data != null && (!requireEditable || applicationDataHolder.data!!.savable.editable)
 }

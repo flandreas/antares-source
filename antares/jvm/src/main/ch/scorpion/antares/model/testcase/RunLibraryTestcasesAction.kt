@@ -5,7 +5,6 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
@@ -18,8 +17,7 @@ import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
  * and posts [DisplayTestRunResults] on the [EventBus].
  */
 class RunLibraryTestcasesAction(
-	controller: LibraryTreeViewController,
-	private val eventBus: EventBus = BaseModule.eventBus
+	controller: LibraryTreeViewController
 ) : AbstractLibraryFolderAction(
 	"antares.testcase.action.runAllInLibrary",
 	Operation.View,

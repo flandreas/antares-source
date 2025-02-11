@@ -4,12 +4,15 @@ import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.DataFormPanel
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.swing.PlaceholderTextField
 import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.draw.richtext.RichTextTableCellRenderer
+import ch.scorpion.jabbah.graph.library.AbstractCurrentLibraryAction
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dimension
@@ -20,7 +23,12 @@ import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 import javax.swing.table.AbstractTableModel
 
-class GlobalTunnelAction : AbstractAction("antares.globalTunnels.action") {
+class GlobalTunnelAction(
+    eventBus: EventBus = BaseModule.eventBus
+) : AbstractCurrentLibraryAction(
+    "antares.globalTunnels.action",
+    eventBus
+) {
     override fun execute(event: ActionEvent) {
         InvocationHandler.invoke {
             GlobalTunnelPanelSwing.showAsDialog()

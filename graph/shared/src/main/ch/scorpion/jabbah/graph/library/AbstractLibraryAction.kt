@@ -2,7 +2,9 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.CommandEvent
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.auth.Authorizer
@@ -16,6 +18,33 @@ import ch.scorpion.jabbah.graph.ui.library.LibraryTreeView
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 
 /**
+ * An [AbstractAction] that is only enabled if [LibraryHolder] has an open [Library].
+ */
+abstract class AbstractCurrentLibraryAction(
+	actionBaseName: String,
+	protected val eventBus: EventBus = BaseModule.eventBus
+) : AbstractAction(actionBaseName) {
+
+	private val currentLibraryHandler: EventHandler<CurrentLibraryEvent> = { updateEnabledness() }
+
+	init {
+	    eventBus.register(CurrentLibraryEvent::class, currentLibraryHandler)
+		updateEnabledness()
+	}
+
+	override fun dispose() {
+		super.dispose()
+		eventBus.unregister(currentLibraryHandler)
+	}
+
+	protected fun updateEnabledness() {
+		enabled = calculateEnabledness()
+	}
+
+	protected open fun calculateEnabledness(): Boolean = LibraryModule.libraryHolder.l != null
+}
+
+/**
  * A base class for implementing [Action]s that operate on items of [LibraryTreeView].
  * Listens for [LibrarySelectionChangedEvent]s and remembers the source [LibraryTreeView].
  */
@@ -25,7 +54,7 @@ abstract class AbstractLibraryAction(
 	protected val controller: LibraryTreeViewController,
 	onlyEnabledInEditMode: Boolean = true,
 	private val commandManager: CommandManager = EditModule.commandManager
-) : AbstractAction(actionBaseName) {
+) : AbstractCurrentLibraryAction(actionBaseName, controller.eventBus) {
 
 	companion object {
 		fun isAuthorized(operation: Operation, target: Any?): Boolean =
@@ -47,32 +76,27 @@ abstract class AbstractLibraryAction(
 
 	private val commandEventHandler: EventHandler<CommandEvent> = { updateEnabledness() }
 
-	private val currentLibraryHandler: EventHandler<CurrentLibraryEvent> = { updateEnabledness() }
-
 	protected val selectedItem: LibraryItem? get() = controller.selectedItem
 
 	protected val folderOfSelectedItem: LibraryDirectory? get() = controller.view.folderOfSelectedItem
 
 	init {
-		controller.eventBus.register(LibrarySelectionChangedEvent::class, librarySelectionChangeHandler)
-		controller.eventBus.register(CommandEvent::class, commandEventHandler)
-		controller.eventBus.register(CurrentLibraryEvent::class, currentLibraryHandler)
+		eventBus.register(LibrarySelectionChangedEvent::class, librarySelectionChangeHandler)
+		eventBus.register(CommandEvent::class, commandEventHandler)
 	}
 
 	override fun dispose() {
 		super.dispose()
 		applicationModeObserver?.dispose()
-		controller.eventBus.unregister(librarySelectionChangeHandler)
-		controller.eventBus.unregister(commandEventHandler)
-		controller.eventBus.unregister(currentLibraryHandler)
+		eventBus.unregister(librarySelectionChangeHandler)
+		eventBus.unregister(commandEventHandler)
 	}
 
-	protected fun updateEnabledness() {
-		enabled = calculateEnabledness() && (applicationModeObserver == null || applicationModeObserver.currentMode == EDIT)
-	}
-
-	protected open fun calculateEnabledness(): Boolean =
-		noStateChangeInterference && operationAuthorized
+	override fun calculateEnabledness(): Boolean =
+		super.calculateEnabledness()
+			&& noStateChangeInterference
+			&& operationAuthorized
+			&& (applicationModeObserver == null || applicationModeObserver.currentMode == EDIT)
 
 	protected open val operationAuthorized: Boolean get() = isAuthorized(operation, LibraryModule.libraryHolder.l)
 
