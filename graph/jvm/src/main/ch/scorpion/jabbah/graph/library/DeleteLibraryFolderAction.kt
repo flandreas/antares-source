@@ -28,9 +28,8 @@ class DeleteLibraryFolderAction(
 	override val operationAuthorized: Boolean
 		get() = operationTarget.invoke() != null && Authorizer.isCurrentUserAuthorizedTo(operation, operationTarget.invoke()!!)
 
-	override fun calculateEnabledness(): Boolean {
-		return super.calculateEnabledness() && (selectedItem as LibraryDirectory).isEmpty()
-	}
+	override fun calculateEnabledness(): Boolean =
+		super.calculateEnabledness() && (selectedItem as LibraryDirectory).isEmpty() && selectedItem !is Library
 
 	override fun execute(event: ActionEvent) {
 		val libraryItem = controller.selectedItem
