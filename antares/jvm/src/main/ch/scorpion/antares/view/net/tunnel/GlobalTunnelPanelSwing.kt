@@ -10,7 +10,6 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.DataFormPanel
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.swing.PlaceholderTextField
-import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.draw.richtext.RichTextTableCellRenderer
 import ch.scorpion.jabbah.graph.library.AbstractCurrentLibraryAction
@@ -31,6 +30,10 @@ class GlobalTunnelAction(
     eventBus
 ) {
     override val opensDialog: Boolean get() = true
+
+    init {
+        updateEnabledness()
+    }
 
     override fun execute(event: ActionEvent) {
         InvocationHandler.invoke {
