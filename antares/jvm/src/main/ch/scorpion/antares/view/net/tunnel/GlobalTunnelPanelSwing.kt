@@ -29,6 +29,10 @@ class GlobalTunnelAction(
     "antares.globalTunnels.action",
     eventBus
 ) {
+    init {
+        updateEnabledness()
+    }
+
     override fun execute(event: ActionEvent) {
         InvocationHandler.invoke {
             GlobalTunnelPanelSwing.showAsDialog()

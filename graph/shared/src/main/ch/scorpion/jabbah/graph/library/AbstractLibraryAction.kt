@@ -29,7 +29,7 @@ abstract class AbstractCurrentLibraryAction(
 
 	init {
 	    eventBus.register(CurrentLibraryEvent::class, currentLibraryHandler)
-		updateEnabledness()
+		// Must not call updateEnabledness()
 	}
 
 	override fun dispose() {
@@ -83,6 +83,7 @@ abstract class AbstractLibraryAction(
 	init {
 		eventBus.register(LibrarySelectionChangedEvent::class, librarySelectionChangeHandler)
 		eventBus.register(CommandEvent::class, commandEventHandler)
+		updateEnabledness()
 	}
 
 	override fun dispose() {
