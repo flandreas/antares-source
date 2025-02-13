@@ -19,9 +19,11 @@ class RatingAction(
 	application: Application,
 ) : AbstractApplicationAction("application.rating.action", application) {
 
+	override val opensDialog: Boolean get() = true
+
 	override fun execute(event: ActionEvent) {
 		InvocationHandler.invoke {
-			RatingPanel.showAsDialog(application, cancelable = true, Frame.getFrames()[0])
+			RatingPanel.showAsDialog(name, application, cancelable = true, Frame.getFrames()[0])
 		}
 	}
 }
@@ -37,7 +39,7 @@ class RatingPanel(
 
 		private const val MAX_REMARK_LENGTH = 200
 
-		fun showAsDialog(application: Application, cancelable: Boolean, parent: Frame, service: RatingService = AppModuleJvm.ratingService) {
+		fun showAsDialog(title: String, application: Application, cancelable: Boolean, parent: Frame, service: RatingService = AppModuleJvm.ratingService) {
 			// If this was in an InvocationHandler, dialog would never show up when
 			// called from Application.handleShutDown()
 
@@ -70,7 +72,7 @@ class RatingPanel(
 
 			DialogBuilder<RatingPanel>(parent)
 				.content { dialog -> RatingPanel(application, cancelable, service, closeHandler = { dialog.dispose() }) }
-				.title(Translations.getString("application.rating.dialog.title"))
+				.title(title)
 				.nonResizable()
 				.preventWindowClose(!cancelable)
 				.preferredSize(Dimension(400, 500))

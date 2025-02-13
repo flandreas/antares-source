@@ -12,6 +12,8 @@ class ExportLogfileAction(
 	application: DesktopApplication
 ) : AbstractApplicationAction("file.action.exportLog", application) {
 
+	override val opensDialog: Boolean get() = true
+
 	override fun execute(event: ActionEvent) {
 		val fileChooser = JFileChooser()
 		fileChooser.dialogTitle = name

@@ -24,11 +24,13 @@ class ImportImageAction(
         private val LOG by logger(ImportImageAction::class)
     }
 
+    override val opensDialog: Boolean get() = true
+
     override val operationAuthorized: Boolean
         get() = operationTarget.invoke() != null && Authorizer.isCurrentUserAuthorizedTo(operation, operationTarget.invoke()!!)
 
     override fun execute(event: ActionEvent) {
-        ImportImagePanel.showAsDialog()?.let { params ->
+        ImportImagePanel.showAsDialog(name)?.let { params ->
             LOG.userTrail("Import image in library ${selectedFolder.library!!.uuid}")
 
             InvocationHandler.invoke {

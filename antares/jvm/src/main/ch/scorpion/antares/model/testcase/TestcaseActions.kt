@@ -16,6 +16,8 @@ class AddTestcaseAction(
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractTestcaseAction(controller, "antares.testcase.action.add", eventBus) {
 
+	override val opensDialog: Boolean get() = true
+
 	override fun execute(event: ActionEvent) {
 		controller.view.getNewTestcaseName()?.let {
 			controller.addTestcase(it)
@@ -30,6 +32,8 @@ class DeleteTestcaseAction(
 	controller: TestcaseViewController,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractTestcaseAction(controller, "antares.testcase.action.delete", eventBus) {
+
+	override val opensDialog: Boolean get() = true
 
 	override fun execute(event: ActionEvent) {
 		if (controller.view.confirmDeleteTestcase()) {

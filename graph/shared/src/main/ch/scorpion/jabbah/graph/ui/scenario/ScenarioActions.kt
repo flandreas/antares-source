@@ -23,6 +23,8 @@ class AddScenarioAction(
     eventBus: EventBus = BaseModule.eventBus
 ) : AbstractScenarioAction(controller, "scenarios.action.addScenario", eventBus) {
 
+    override val opensDialog: Boolean get() = true
+
     override fun execute(event: ActionEvent) {
         controller.view.getNewScenarioName()?.let {
             controller.addScenario(it)
@@ -41,6 +43,8 @@ class AddScenarioStepAction(
     eventBus: EventBus = BaseModule.eventBus
 ) : AbstractScenarioAction(controller,"scenarios.action.addScenarioStep", eventBus) {
 
+    override val opensDialog: Boolean get() = true
+
     override fun execute(event: ActionEvent) {
         controller.view.getNewScenarioStepName()?.let {
             controller.addScenarioStep(it)
@@ -57,6 +61,8 @@ class DeleteScenarioAction(
     eventBus: EventBus = BaseModule.eventBus
 ) : AbstractScenarioAction(controller, "scenarios.action.deleteScenario", eventBus) {
 
+    override val opensDialog: Boolean get() = true
+
     override fun execute(event: ActionEvent) {
         if (controller.view.confirmDeleteScenario()) {
             controller.deleteScenario()
@@ -71,6 +77,8 @@ class DeleteScenarioStepAction(
     controller: ScenarioViewController,
     eventBus: EventBus = BaseModule.eventBus
 ) : AbstractScenarioAction(controller, "scenarios.action.deleteScenarioStep", eventBus) {
+
+    override val opensDialog: Boolean get() = true
 
     override fun execute(event: ActionEvent) {
         if (controller.view.confirmDeleteScenarioStep()) {

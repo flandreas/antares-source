@@ -22,8 +22,10 @@ class GraphPortRenamingAction(
     private val editor: Editor
 ) : AbstractViewAction("graph.portRenamingPanel.action") {
 
+    override val opensDialog: Boolean get() = true
+
     override fun execute(event: ActionEvent) {
-        GraphPortRenamingPanelSwing.showAsDialog(editor)
+        GraphPortRenamingPanelSwing.showAsDialog(name, editor)
     }
 }
 
@@ -40,13 +42,14 @@ class GraphPortRenamingPanelSwing(
         private const val SETTING_ZOOM_TO_PORT = "graph.renamingPanel.zoomToPort"
 
         fun showAsDialog(
+            title: String,
             editor: Editor,
             parent: Frame = Frame.getFrames()[0]
         ) {
             val controller = GraphPortRenamingController(editor)
 
             DialogBuilder<GraphPortRenamingPanelSwing>(parent)
-                .title(Translations.getString("graph.portRenamingPanel.title"))
+                .title(title)
                 .content { dialog -> GraphPortRenamingPanelSwing(controller) { dialog.dispose() } }
                 .defaultButton { it.closeButton }
                 .preferredSize(Dimension(600, 400))

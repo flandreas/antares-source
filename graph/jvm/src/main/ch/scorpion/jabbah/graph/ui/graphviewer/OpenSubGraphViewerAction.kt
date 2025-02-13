@@ -20,6 +20,8 @@ class OpenSubGraphViewerAction(
 		private val LOG by logger(OpenSubGraphViewerAction::class)
 	}
 
+	override val opensDialog: Boolean get() = true
+
 	init {
 		updateEnabled()
 	}

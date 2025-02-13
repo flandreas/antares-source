@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.swing.DialogBuilder
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
@@ -136,9 +137,10 @@ class AnalyseCircuitPanel(
 		}
 	}
 
-	private inner class SaveTruthTableAction : AbstractAction("antares.circuitAnalysis.saveTruthTable.action") {
+	private inner class SaveTruthTableAction : AbstractAction("antares.circuitAnalysis.saveTruthTable.action", opensDialog = true) {
+
 		override fun execute(event: ActionEvent) {
-			SaveTruthTablePanel.showAsDialog(Frame.getFrames()[0])
+			SaveTruthTablePanel.showAsDialog(name, Frame.getFrames()[0])
 				?.let {
 					truthTable.name = Name(it)
 					val library = containerLibraryElement.library!!
@@ -150,10 +152,11 @@ class AnalyseCircuitPanel(
 		}
 	}
 
-	private inner class SaveExpressionsAction : AbstractAction("antares.circuitAnalysis.saveExpressions.action") {
+	private inner class SaveExpressionsAction : AbstractAction("antares.circuitAnalysis.saveExpressions.action", opensDialog = true) {
+
 		override fun execute(event: ActionEvent) {
 			NewBooleanExpressionPanel
-				.showAsDialog(Frame.getFrames()[0])
+				.showAsDialog(name, Frame.getFrames()[0])
 				?.let { name ->
 					val library = containerLibraryElement.library!!
 					val directory = library.libraryService.getDirectoryOf(library, containerLibraryElement)

@@ -33,6 +33,8 @@ class DeleteLibraryItemAction(
 		private const val ITEM_RESOURCE_NAME = "graph.action.deleteItem"
 	}
 
+	override val opensDialog: Boolean get() = true
+
 	private val baseName: String
 		get() = when (selectedItem) {
 			is BaseLibraryElement -> BASE_RESOURCE_NAME

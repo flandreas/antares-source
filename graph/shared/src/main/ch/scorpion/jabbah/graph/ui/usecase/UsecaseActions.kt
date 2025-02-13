@@ -45,6 +45,8 @@ class AddUsecaseAction(
     eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUsecaseAction(controller,"usecases.action.addUsecase", service, eventBus) {
 
+    override val opensDialog: Boolean get() = true
+
     override fun execute(event: ActionEvent) {
         controller.view.getNewUsecaseName()?.let {
             controller.addUsecase(it)

@@ -15,6 +15,8 @@ class NewGraphViewerAction(
 	controller,
 	onlyEnabledInEditMode = false
 ) {
+	override val opensDialog: Boolean get() = true
+
 	override fun execute(event: ActionEvent) {
 		val metaGraph = (controller.selectedItem as ContainerLibraryElement).storable
 		GraphViewerFrameSwing(applicationName, metaGraph!!)

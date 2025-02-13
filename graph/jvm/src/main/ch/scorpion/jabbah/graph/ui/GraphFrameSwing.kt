@@ -157,7 +157,7 @@ open class GraphFrameSwing(
 		toolbar.isFloatable = false
 
 		if (GraphModuleJvm.supportWeb) {
-			toolbar.add(JButton(ActionWrapperSwing(loginLogoutAction)))
+			toolbar.add(JButton(ActionWrapperSwing(loginLogoutAction, suppressOpenDialogIndicator = true)))
 		}
 
 		return toolbar

@@ -25,9 +25,11 @@ class GraphStatisticsAction(
 	viewManager: ContentViewManager = DrawViewModule.viewManager
 ) : AbstractViewAction("graph.statistics.action", viewManager = viewManager) {
 
+	override val opensDialog: Boolean get() = true
+
 	override fun execute(event: ActionEvent) {
 		val graphView = (viewManager.activeView!!.view as DrawingView<*>).drawing as GraphView
-		GraphStatisticsPanel.showAsDialog(title = Translations.getString("graph.statistics.title"), graph = graphView.graph!!)
+		GraphStatisticsPanel.showAsDialog(title = name, graph = graphView.graph!!)
 	}
 }
 

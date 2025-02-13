@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.base.preferences
 
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
@@ -19,9 +18,10 @@ import javax.swing.*
 
 
 /** An action for showing [PreferencesDialogPanel] within a dialog.*/
-class PreferencesAction : AbstractAction("base.preferences.action") {
+class PreferencesAction : AbstractAction("base.preferences.action", opensDialog = true) {
+
 	override fun execute(event: ActionEvent) {
-		PreferencesDialogPanel.showAsDialog()
+		PreferencesDialogPanel.showAsDialog(name)
 	}
 }
 
@@ -37,14 +37,14 @@ class PreferencesDialogPanel(
 
 		private val LOG by logger(PreferencesDialogPanel::class)
 
-		fun showAsDialog(parent: Frame = Frame.getFrames()[0]) {
+		fun showAsDialog(title: String, parent: Frame = Frame.getFrames()[0]) {
 			val messageDisplay = MyMessageDisplay()
 			val treePanel = PreferencesTreePanel(messageDisplay)
 			LOG.userTrail("Show preferences")
 			DialogBuilder<PreferencesDialogPanel>(parent)
 				.content { dialog -> PreferencesDialogPanel(messageDisplay, treePanel) { dialog.dispose() } }
 				.defaultButton { it.applyButton }
-				.title(Translations.getString("base.preferences.title.name"))
+				.title(title)
 				.preferredSize(Dimension(800, 600))
 				.resizable()
 				.show()

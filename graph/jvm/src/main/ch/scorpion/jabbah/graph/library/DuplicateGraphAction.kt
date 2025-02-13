@@ -26,6 +26,8 @@ class DuplicateGraphAction(
 	controller
 ) {
 
+	override val opensDialog: Boolean get() = true
+
 	override val operationAuthorized: Boolean
 		get() = operationTarget.invoke() != null && Authorizer.isCurrentUserAuthorizedTo(operation, operationTarget.invoke()!!)
 
@@ -35,7 +37,7 @@ class DuplicateGraphAction(
 		val newGraphName = JOptionPane.showInputDialog(
 			SwingUtilities.getWindowAncestor(controller.view as Component),
 			Translations.getString("library.action.newGraph.question"),
-			Translations.getString("library.action.duplicateGraph.title"),
+			name,
 			JOptionPane.QUESTION_MESSAGE,
 			null,
 			null,

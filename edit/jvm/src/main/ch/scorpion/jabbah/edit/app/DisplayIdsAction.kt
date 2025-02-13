@@ -23,6 +23,8 @@ class DisplayIdsAction(
     private val filter: (Component) -> Boolean = { true },
 ) : AbstractSelectionAwareAction("edit.action.displayIds", eventBus) {
 
+    override val opensDialog: Boolean get() = true
+
     override fun execute(event: ActionEvent) {
         DisplayIdsPanel.showAsDialog(
             selection

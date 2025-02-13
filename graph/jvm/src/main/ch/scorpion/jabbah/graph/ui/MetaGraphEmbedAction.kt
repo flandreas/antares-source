@@ -1,11 +1,8 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
-import ch.scorpion.jabbah.base.ActionWrapperSwing
-import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.Settings
-import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.DialogBuilder
@@ -19,7 +16,6 @@ import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.AbstractContainerLibraryElementAction
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryModule
-import ch.scorpion.jabbah.graph.library.LibraryService
 import ch.scorpion.jabbah.graph.library.LibraryService.Companion.PROP_VIEWER_JS_URL
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import java.awt.BorderLayout
@@ -35,15 +31,16 @@ class MetaGraphEmbedAction(
 	operation = Operation.View,
 	controller
 ) {
+	override val opensDialog: Boolean get() = true
+
 	override fun execute(event: ActionEvent) {
-		MetaGraphEmbedPanel.showAsDialog(uuid = (selectedItem as ContainerLibraryElement).uuid)
+		MetaGraphEmbedPanel.showAsDialog(name, uuid = (selectedItem as ContainerLibraryElement).uuid)
 	}
 }
 
 internal class MetaGraphEmbedPanel(
 	private val uuid: UUID,
-	private val closeHandler: (MetaGraphEmbedPanel) -> Unit,
-	private val libraryService: LibraryService = LibraryModule.libraryService
+	private val closeHandler: (MetaGraphEmbedPanel) -> Unit
 ) : JPanel() {
 
 	companion object {
@@ -52,11 +49,12 @@ internal class MetaGraphEmbedPanel(
 		private const val SETTING_EMBED_THEME = "metaGraphEmbed.theme"
 
 		fun showAsDialog(
+			title: String,
 			parent: Frame = Frame.getFrames()[0],
 			uuid: UUID
 		) {
 			DialogBuilder<MetaGraphEmbedPanel>(parent)
-				.title(Translations.getString("graph.action.embed.title"))
+				.title(title)
 				.content { dialog -> MetaGraphEmbedPanel(uuid, closeHandler = {
 					it.dispose()
 					dialog.dispose() })

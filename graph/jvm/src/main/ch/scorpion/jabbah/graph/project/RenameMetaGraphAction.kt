@@ -26,6 +26,8 @@ class RenameMetaGraphAction(
 	operation = Operation.Change,
 	controller
 ) {
+	override val opensDialog: Boolean get() = true
+
 	override val operationAuthorized: Boolean
 		get() = operationTarget.invoke() != null && Authorizer.isCurrentUserAuthorizedTo(operation, operationTarget.invoke()!!)
 
@@ -35,7 +37,7 @@ class RenameMetaGraphAction(
 		val newName = JOptionPane.showInputDialog(
 			SwingUtilities.getWindowAncestor(controller.view as Component),
 			Translations.getString("library.action.renameMetaGraph.question"),
-			Translations.getString("library.action.renameMetaGraph.title"),
+			name,
 			JOptionPane.QUESTION_MESSAGE,
 			null,
 			null,

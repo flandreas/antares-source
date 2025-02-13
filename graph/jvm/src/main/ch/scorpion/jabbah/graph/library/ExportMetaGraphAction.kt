@@ -29,6 +29,8 @@ class ExportMetaGraphAction(
 		const val EXPORT_FILE_EXTENSION = "zip"
 	}
 
+	override val opensDialog: Boolean get() = true
+
 	override fun execute(event: ActionEvent) {
 		val element = selectedItem as ContainerLibraryElement
 		val service = selectedItem!!.library!!.libraryService

@@ -9,6 +9,8 @@ import javax.swing.JFileChooser
 
 class ExportSvgAction : AbstractViewAction("draw.action.exportSvg") {
 
+	override val opensDialog: Boolean get() = true
+
 	override fun execute(event: ActionEvent) {
 		view?.let {
 			val mainContent = it.mainContent

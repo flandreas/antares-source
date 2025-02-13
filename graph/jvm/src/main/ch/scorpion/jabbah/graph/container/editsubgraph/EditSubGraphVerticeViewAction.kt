@@ -35,6 +35,8 @@ class EditSubGraphVerticeViewAction(
 		private val LOG by logger(EditSubGraphVerticeViewAction::class)
 	}
 
+	override val opensDialog: Boolean get() = true
+
 	override fun calculateEnabled(): Boolean {
 		return super.calculateEnabled() && selectionCount == 1 && singleSelection is SubGraphVerticeView<*>
 	}
@@ -69,6 +71,7 @@ class EditSubGraphVerticeViewAction(
 		}
 
 		val editedContainerDrawing = EditSubGraphVerticeViewPanel.showAsDialog(
+				title = name,
 				metaGraphRepository = metaGraphRepository,
 				containerPanel = containerPanel,
 				subGraphVerticeView = editedVerticeView,

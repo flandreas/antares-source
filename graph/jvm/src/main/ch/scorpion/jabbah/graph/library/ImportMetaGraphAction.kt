@@ -7,7 +7,6 @@ import ch.scorpion.jabbah.base.swing.FileExtensionFilter
 import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.graph.MetaGraphBundle
-import ch.scorpion.jabbah.graph.library.MetaGraphBundleImportResult.*
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import org.apache.commons.io.FilenameUtils
 import java.awt.Frame
@@ -28,15 +27,16 @@ class ImportMetaGraphAction(
 
 	companion object {
 		private val LOG by logger(ImportMetaGraphAction::class)
-		private val title: String by lazy { Translations.getString("library.action.importMetaGraph.title") }
 	}
+
+	override val opensDialog: Boolean get() = true
 
 	override val operationAuthorized: Boolean
 		get() = operationTarget.invoke() != null && Authorizer.isCurrentUserAuthorizedTo(operation, operationTarget.invoke()!!)
 
 	override fun execute(event: ActionEvent) {
 		val fileChooser = JFileChooser()
-		fileChooser.dialogTitle = title
+		fileChooser.dialogTitle = name
 		fileChooser.fileFilter = createFilter()
 		if (fileChooser.showOpenDialog(Frame.getFrames()[0]) == JFileChooser.APPROVE_OPTION) {
 			import(fileChooser.selectedFile.absolutePath)
@@ -78,7 +78,7 @@ class ImportMetaGraphAction(
 		JOptionPane.showConfirmDialog(
 			Frame.getFrames()[0],
 			Translations.getString("library.action.importMetaGraph.success.msg"),
-			title,
+			name,
 			JOptionPane.DEFAULT_OPTION,
 			JOptionPane.INFORMATION_MESSAGE)
 	}
@@ -87,7 +87,7 @@ class ImportMetaGraphAction(
 		JOptionPane.showConfirmDialog(
 			Frame.getFrames()[0],
 			Translations.getString("library.action.importMetaGraph.invalid.msg", bundleName),
-			title,
+			name,
 			JOptionPane.DEFAULT_OPTION,
 			JOptionPane.ERROR_MESSAGE)
 	}
@@ -96,7 +96,7 @@ class ImportMetaGraphAction(
 		JOptionPane.showConfirmDialog(
 			Frame.getFrames()[0],
 			Translations.getString("library.action.importMetaGraph.staleLibraryReference.msg", bundleName),
-			title,
+			name,
 			JOptionPane.DEFAULT_OPTION,
 			JOptionPane.ERROR_MESSAGE)
 	}
@@ -105,7 +105,7 @@ class ImportMetaGraphAction(
 		val result = JOptionPane.showConfirmDialog(
 			Frame.getFrames()[0],
 			Translations.getString("library.action.importMetaGraph.uuidAlreadyExists.msg"),
-			title,
+			name,
 			JOptionPane.YES_NO_CANCEL_OPTION,
 			JOptionPane.QUESTION_MESSAGE)
 
@@ -120,7 +120,7 @@ class ImportMetaGraphAction(
 		JOptionPane.showConfirmDialog(
 			Frame.getFrames()[0],
 			msg,
-			title,
+			name,
 			JOptionPane.DEFAULT_OPTION,
 			JOptionPane.ERROR_MESSAGE)
 	}

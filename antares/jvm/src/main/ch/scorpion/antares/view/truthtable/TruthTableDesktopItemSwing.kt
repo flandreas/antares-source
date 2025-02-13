@@ -183,7 +183,7 @@ class TruthTableDesktopItemSwing(
 	}
 
 	private inner class CreateCircuitAction
-		: ch.scorpion.jabbah.base.AbstractAction("antares.synthesis.createCircuitFromTruthTable.action")
+		: ch.scorpion.jabbah.base.AbstractAction("antares.synthesis.createCircuitFromTruthTable.action", opensDialog = true)
 	{
 		override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 			createCircuit()

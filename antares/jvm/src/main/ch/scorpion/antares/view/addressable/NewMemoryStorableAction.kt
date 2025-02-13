@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.addressable
 
 import ch.scorpion.jabbah.graph.library.LibraryDirectory
+import ch.scorpion.antares.model.addressable.MemoryStorable
 import ch.scorpion.antares.model.addressable.MemoryLibraryItem
 import ch.scorpion.antares.model.addressable.OpenMemoryLibraryItemRequest
 import ch.scorpion.jabbah.base.event.ActionEvent
@@ -23,6 +24,8 @@ class NewMemoryStorableAction(
 ) {
     private val operationTarget: Any? get() = if (selectedItem is LibraryDirectory) selectedFolder.library else null
 
+    override val opensDialog: Boolean get() = true
+
     init {
         updateEnabledness()
     }
@@ -32,7 +35,7 @@ class NewMemoryStorableAction(
 
     override fun execute(event: ActionEvent) {
         NewMemoryStorablePanel
-            .showAsDialog(Frame.getFrames()[0])
+            .showAsDialog(name, Frame.getFrames()[0])
             ?.let {
                 val directory = controller.selectedItem as LibraryDirectory
                 val library = directory.library!!

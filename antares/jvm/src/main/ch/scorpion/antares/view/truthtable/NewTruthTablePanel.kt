@@ -31,10 +31,10 @@ class NewTruthTablePanel(
 		 * Asks the user for parameters of a new [TruthTable].
 		 * @return the newly created [TruthTable], not yet integrated anywhere
 		 */
-		fun showAsDialog(parent: Frame): TruthTable? {
+		fun showAsDialog(title: String, parent: Frame): TruthTable? {
 			val builder = DialogBuilder<NewTruthTablePanel>(parent)
 				.content { dialog -> NewTruthTablePanel(closeHandler = { dialog.dispose() }) }
-				.title(Translations.getString("library.newTruthTable.title"))
+				.title(title)
 				.defaultButton { it.okButton }
 				.nonResizable()
 				.show()

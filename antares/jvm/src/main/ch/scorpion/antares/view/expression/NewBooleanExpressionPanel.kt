@@ -21,10 +21,10 @@ class NewBooleanExpressionPanel(
 ) : JPanel() {
 
 	companion object {
-		fun showAsDialog(parent: Frame): String? {
+		fun showAsDialog(title: String, parent: Frame): String? {
 			val builder = DialogBuilder<NewBooleanExpressionPanel>(parent)
 				.content { dialog -> NewBooleanExpressionPanel { dialog.dispose() } }
-				.title(Translations.getString("library.newBooleanExpression.title"))
+				.title(title)
 				.defaultButton { it.okButton }
 				.nonResizable()
 				.show()

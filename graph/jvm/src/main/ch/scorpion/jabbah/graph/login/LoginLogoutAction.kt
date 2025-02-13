@@ -7,7 +7,7 @@ import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 
-class LoginLogoutAction : AbstractAction("graph.action.login") {
+class LoginLogoutAction : AbstractAction("graph.action.login", opensDialog = true) {
 
     private val sessionListener: EventHandler<SessionEvent> = { update() }
 

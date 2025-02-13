@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.swing.DialogBuilder
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.UIBasics
 import java.awt.BorderLayout
 import java.awt.Component
@@ -18,10 +19,10 @@ class SaveTruthTablePanel(
 ) : JPanel() {
 
 	companion object {
-		fun showAsDialog(parent: Frame): String? {
+		fun showAsDialog(title: String, parent: Frame): String? {
 			val builder = DialogBuilder<SaveTruthTablePanel>(parent)
 				.content { dialog -> SaveTruthTablePanel { dialog.dispose() } }
-				.title(Translations.getString("antares.circuitAnalysis.saveTruthTable.title"))
+				.title(title)
 				.defaultButton { it.okButton }
 				.nonResizable()
 				.show()

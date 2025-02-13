@@ -13,6 +13,8 @@ class ProjectPropertiesAction(
 	baseName = "project.action.properties",
 	controller
 ) {
+	override val opensDialog: Boolean get() = true
+
 	override val dialogTitle: String get() = Translations.getString("project.dialog.properties.title", currentProperties.name.getTranslation())
 
 	override fun exists(newName: TranslatableText): Boolean =

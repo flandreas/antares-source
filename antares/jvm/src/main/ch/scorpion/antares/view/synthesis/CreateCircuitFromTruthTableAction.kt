@@ -16,6 +16,8 @@ class CreateCircuitFromTruthTableAction(
 
 	private val operationTarget: Any? get() = if (selectedItem is TruthTableLibraryItem) selectedItem!!.library else null
 
+	override val opensDialog: Boolean get() = true
+
 	init {
 		updateEnabledness()
 	}

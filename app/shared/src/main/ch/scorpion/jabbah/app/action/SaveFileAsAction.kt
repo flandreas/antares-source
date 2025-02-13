@@ -13,6 +13,8 @@ class SaveFileAsAction(
     application: Application
 ) : AbstractApplicationAction("file.action.saveAs", application) {
 
+    override val opensDialog: Boolean get() = true
+
     override fun execute(event: ActionEvent) {
 	    application.controller.saveAs()
     }

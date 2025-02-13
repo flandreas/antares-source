@@ -336,7 +336,7 @@ class BooleanExpressionDesktopItemSwing(
 	}
 
 	private inner class CreateCircuitAction
-		: AbstractAction("antares.synthesis.createCircuitFromTruthTable.action")
+		: AbstractAction("antares.synthesis.createCircuitFromTruthTable.action", opensDialog = true)
 	{
 		override fun execute(event: ActionEvent) {
 			createCircuit()

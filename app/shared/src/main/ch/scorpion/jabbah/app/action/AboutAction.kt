@@ -11,6 +11,8 @@ class AboutAction(
 	application = application
 ) {
 
+	override val opensDialog: Boolean get() = true
+
 	override fun execute(event: ActionEvent) {
 		application.showAboutInfo()
 	}

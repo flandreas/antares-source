@@ -25,13 +25,15 @@ class NewTruthTableAction(
 
 	private val operationTarget: Any? get() = if (selectedItem is LibraryDirectory) selectedFolder.library else null
 
+	override val opensDialog: Boolean get() = true
+
 	init {
 		updateEnabledness()
 	}
 
 	override fun execute(event: ActionEvent) {
 		NewTruthTablePanel
-			.showAsDialog(Frame.getFrames()[0])
+			.showAsDialog(name, Frame.getFrames()[0])
 			?.let {
 				val directory = controller.selectedItem as LibraryDirectory
 				val library = directory.library!!

@@ -25,6 +25,8 @@ class ShowProjectsDialogAction(
 	private val parent: JFrame
 ) : AbstractApplicationModeEditAction("project.dialog.action", applicationModeHolder) {
 
+	override val opensDialog: Boolean get() = true
+
 	override fun execute(event: ActionEvent) {
 		ProjectPersistencePanel.showAsDialog(parent)
 	}
@@ -49,7 +51,7 @@ class ProjectPersistencePanel(
 		fun showAsDialog(parent: JFrame) {
 			DialogBuilder<ProjectPersistencePanel>(parent)
 				.content { dialog -> ProjectPersistencePanel(closeHandler = { dialog.dispose() }) }
-				.title(Translations.getString("project.dialog.title"))
+				.title(Translations.getString("project.dialog.action.name"))
 				.defaultButton { it.openButton }
 				.nonResizable()
 				.show()

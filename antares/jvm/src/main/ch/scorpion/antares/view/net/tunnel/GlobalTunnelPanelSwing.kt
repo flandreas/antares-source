@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.DataFormPanel
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.swing.PlaceholderTextField
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.draw.richtext.RichTextTableCellRenderer
 import ch.scorpion.jabbah.graph.library.AbstractCurrentLibraryAction
@@ -29,9 +30,11 @@ class GlobalTunnelAction(
     "antares.globalTunnels.action",
     eventBus
 ) {
+    override val opensDialog: Boolean get() = true
+
     override fun execute(event: ActionEvent) {
         InvocationHandler.invoke {
-            GlobalTunnelPanelSwing.showAsDialog()
+            GlobalTunnelPanelSwing.showAsDialog(name)
         }
     }
 }
@@ -43,12 +46,13 @@ class GlobalTunnelPanelSwing(
 
     companion object {
         fun showAsDialog(
+            title: String,
             parent: Frame = Frame.getFrames()[0]
         ) {
             val controller = GlobalTunnelPanelController()
 
             DialogBuilder<GlobalTunnelPanelSwing>(parent, modal = false)
-                .title(Translations.getString("antares.globalTunnels.title"))
+                .title(title)
                 .content { dialog ->
                     GlobalTunnelPanelSwing(controller) {
                         dialog.dispose()

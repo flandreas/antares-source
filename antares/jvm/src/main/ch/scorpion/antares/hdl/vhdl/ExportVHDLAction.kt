@@ -7,6 +7,8 @@ import ch.scorpion.jabbah.draw.view.AbstractViewAction
 
 class ExportVHDLAction : AbstractViewAction("antares.vhdl.action") {
 
+	override val opensDialog: Boolean get() = true
+
 	override fun calculateEnabled(): Boolean {
 		if (!super.calculateEnabled()) {
 			return false
@@ -16,6 +18,6 @@ class ExportVHDLAction : AbstractViewAction("antares.vhdl.action") {
 	}
 
 	override fun execute(event: ActionEvent) {
-		ExportVHDLPanel.showAsDialog((view!!.mainContent.drawable as DigitalGraphView).graph as DigitalGraph)
+		ExportVHDLPanel.showAsDialog(name, (view!!.mainContent.drawable as DigitalGraphView).graph as DigitalGraph)
 	}
 }

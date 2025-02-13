@@ -137,7 +137,7 @@ abstract class AbstractDesktopApplicationSwing(
 		super.handleShutdown()
 		if (ratingService.requiresRating()) {
 			// Cannot use InvocationHandler, App would quit before dialog is shown
-			RatingPanel.showAsDialog(this, cancelable = false, mainFrame)
+			RatingPanel.showAsDialog(Translations.getString("application.rating.action.name"), this, cancelable = false, mainFrame)
 		}
 	}
 
@@ -207,7 +207,7 @@ abstract class AbstractDesktopApplicationSwing(
 
 	private fun installMacOSPreferencesHandler() {
 		Desktop.getDesktop().setPreferencesHandler {
-			PreferencesDialogPanel.showAsDialog(mainFrame)
+			PreferencesDialogPanel.showAsDialog(Translations.getString("base.preferences.action.name"), mainFrame)
 		}
 	}
 }

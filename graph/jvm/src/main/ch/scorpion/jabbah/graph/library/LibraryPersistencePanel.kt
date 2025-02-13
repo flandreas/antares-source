@@ -21,8 +21,10 @@ class ShowLibrariesDialogAction(
 	private val parent: JFrame
 ) : AbstractApplicationModeEditAction("library.dialog.action", applicationModeHolder) {
 
+	override val opensDialog: Boolean get() = true
+
 	override fun execute(event: ActionEvent) {
-		LibraryPersistencePanel.showAsDialog(parent)
+		LibraryPersistencePanel.showAsDialog(name, parent)
 	}
 
 	override fun calculateEnabledness(): Boolean = true
@@ -42,10 +44,10 @@ class LibraryPersistencePanel(
 
 		private val LOG by logger(LibraryPersistencePanel::class)
 
-		fun showAsDialog(parent: JFrame) {
+		fun showAsDialog(title: String, parent: JFrame) {
 			DialogBuilder<LibraryPersistencePanel>(parent)
 				.content { dialog -> LibraryPersistencePanel(closeHandler = { dialog.dispose() }) }
-				.title(Translations.getString("library.dialog.title"))
+				.title(title)
 				.defaultButton { it.openButton }
 				.nonResizable()
 				.show()

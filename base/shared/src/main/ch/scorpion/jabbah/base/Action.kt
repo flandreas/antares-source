@@ -32,6 +32,12 @@ interface Action {
 
 	var imagePath: String?
 
+	/**
+	 * Returns `true` if this [Action] opens a dialog, which is used to expand [name] with "..."
+	 * in menu items or action tooltips for this [Action].
+	 */
+	val opensDialog: Boolean get() = false
+
 	fun dispose()
 
 	fun execute(event: ActionEvent)
@@ -47,7 +53,8 @@ abstract class AbstractAction(
 	accelerator: String?,
 	enabled: Boolean = true,
 	selected: Boolean = false,
-	imagePath: String? = null
+	imagePath: String? = null,
+	override val opensDialog: Boolean = false
 ) : Action {
 
 	companion object {
@@ -56,11 +63,12 @@ abstract class AbstractAction(
 		protected fun translatedAccelerator(baseName: String): String? = Translations.getOptionalString(System.getActionAcceleratorKey(baseName))
 	}
 
-	constructor(baseName: String, imagePath: String? = null) : this(
+	constructor(baseName: String, imagePath: String? = null, opensDialog: Boolean = false) : this(
 		translatedName(baseName),
 		translatedDesc(baseName),
 		translatedAccelerator(baseName),
-		imagePath = imagePath)
+		imagePath = imagePath,
+		opensDialog = opensDialog)
 
 	protected fun setBaseName(baseName: String) {
 		name = translatedName(baseName)

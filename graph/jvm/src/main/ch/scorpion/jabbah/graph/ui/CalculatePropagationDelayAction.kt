@@ -21,6 +21,8 @@ class CalculatePropagationDelayAction(
     applicationModeHolder,
     eventBus
 ) {
+    override val opensDialog: Boolean get() = true
+
     override fun execute(event: ActionEvent) {
         (applicationDataHolder.data?.content as MetaGraph?)?.let {
             val propDelay = GraphPropagationDelayCalculator().calculate(it.graph.model!!)
@@ -28,13 +30,13 @@ class CalculatePropagationDelayAction(
                 JOptionPane.showMessageDialog(
                     Frame.getFrames()[0],
                     Translations.getString("graph.action.calculatePropagationDelay.undefined.text"),
-                    Translations.getString("graph.action.calculatePropagationDelay.title"),
+                    name,
                     JOptionPane.WARNING_MESSAGE)
             } else {
                 JOptionPane.showMessageDialog(
                     Frame.getFrames()[0],
                     "${Translations.getString("graph.property.propagationDelay.name")}: $propDelay",
-                    Translations.getString("graph.action.calculatePropagationDelay.title"),
+                    name,
                     JOptionPane.INFORMATION_MESSAGE
                 )
             }

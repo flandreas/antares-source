@@ -57,6 +57,8 @@ class NewGraphAction(
 		}
 	}
 
+	override val opensDialog: Boolean get() = true
+
 	init {
 		// Always enabled, check enabledness on execution in order to show information dialog
 		enabled = true

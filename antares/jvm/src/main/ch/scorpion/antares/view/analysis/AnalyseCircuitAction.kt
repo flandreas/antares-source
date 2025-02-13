@@ -23,8 +23,9 @@ class AnalyseCircuitAction(
 	operation = Operation.View,
 	controller
 ) {
-	override fun execute(event: ActionEvent) {
+	override val opensDialog: Boolean get() = true
 
+	override fun execute(event: ActionEvent) {
 		InvocationHandler.invoke {
 			try {
 				// Close circuit to git rid of the GraphView acting as ActorListener

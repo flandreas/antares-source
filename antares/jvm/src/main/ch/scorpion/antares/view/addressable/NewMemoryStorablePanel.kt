@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.swing.DialogBuilder
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.UIBasics
 import java.awt.BorderLayout
 import java.awt.Component
@@ -19,10 +20,10 @@ class NewMemoryStorablePanel(
 
     companion object {
 
-        fun showAsDialog(parent: Frame): MemoryStorable? {
+        fun showAsDialog(title: String, parent: Frame): MemoryStorable? {
             val builder = DialogBuilder<NewMemoryStorablePanel>(parent)
                 .content { dialog -> NewMemoryStorablePanel(closeHandler = { dialog.dispose() }) }
-                .title(Translations.getString("library.newMemoryStorable.title"))
+                .title(title)
                 .defaultButton { it.okButton }
                 .nonResizable()
                 .show()

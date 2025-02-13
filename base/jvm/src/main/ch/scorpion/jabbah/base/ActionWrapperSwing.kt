@@ -11,9 +11,14 @@ import javax.swing.KeyStroke
  * Create an instance of this class for every [Action] to be wrapped and use it when creating menu items
  * or buttons. No need for subclassing.
  */
-class ActionWrapperSwing(private val action: Action) : javax.swing.AbstractAction() {
+class ActionWrapperSwing(
+	private val action: Action,
+	private val suppressOpenDialogIndicator: Boolean = false
+) : javax.swing.AbstractAction() {
 
 	companion object {
+		private const val OPEN_DIALOG_INDICATOR = "..."
+
 		fun toJabbahActionEvent(e: ActionEvent): ch.scorpion.jabbah.base.event.ActionEvent =
 			ch.scorpion.jabbah.base.event.ActionEvent(
 				event = e,
@@ -57,7 +62,12 @@ class ActionWrapperSwing(private val action: Action) : javax.swing.AbstractActio
 	}
 
 	private fun update() {
-		putValue(javax.swing.Action.NAME, action.name)
+		val actionName = if (action.opensDialog && !suppressOpenDialogIndicator && !action.name.endsWith(OPEN_DIALOG_INDICATOR)) {
+			"${action.name}$OPEN_DIALOG_INDICATOR"
+		} else {
+			action.name
+		}
+		putValue(javax.swing.Action.NAME, actionName)
 		putValue(javax.swing.Action.SHORT_DESCRIPTION, action.description)
 		if (action.accelerator != null) {
 			putValue(javax.swing.Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(action.accelerator))

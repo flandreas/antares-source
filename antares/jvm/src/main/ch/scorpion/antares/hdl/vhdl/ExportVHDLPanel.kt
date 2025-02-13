@@ -54,11 +54,12 @@ class ExportVHDLPanel(
 		val HELP_ID = HelpId("exportVHDL")
 
 		fun showAsDialog(
+			title: String,
 			digitalGraph: DigitalGraph,
 			parent: Frame = Frame.getFrames()[0]
 		) {
 			DialogBuilder<ExportVHDLPanel>(parent)
-				.title(Translations.getString("antares.vhdl.action.name"))
+				.title(title)
 				.content { dialog -> ExportVHDLPanel(digitalGraph) {
 					it.dispose()
 					dialog.dispose()}

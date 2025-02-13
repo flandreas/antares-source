@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.swing.DialogBuilder
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.graph.library.LibraryItem
 import java.awt.BorderLayout

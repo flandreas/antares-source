@@ -16,6 +16,8 @@ class DuplicateUsecaseAction(
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUsecaseAction(controller, "usecases.action.duplicate", service, eventBus) {
 
+	override val opensDialog: Boolean get() = true
+
 	override fun execute(event: ActionEvent) {
 		val newUsecaseName = JOptionPane.showInputDialog(
 			Frame.getFrames()[0],

@@ -26,8 +26,10 @@ class ExtractMetaGraphAction(
 	eventBus: EventBus = BaseModule.eventBus
 ): AbstractSelectionAwareAction("graph.action.extractMetaGraph", eventBus) {
 
+	override val opensDialog: Boolean get() = true
+
 	override fun execute(event: ActionEvent) {
-		val info = NewGraphAction.requestNewGraphInfo(drawingView!!.canvas as JComponent, Translations.getString("graph.action.extractMetaGraph.title"))
+		val info = NewGraphAction.requestNewGraphInfo(drawingView!!.canvas as JComponent, Translations.getString("graph.action.extractMetaGraph.name"))
 			?: return
 
 		val library = libraryHolder.library

@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.container.editsubgraph
 
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
-import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.ui.UIBasics
@@ -20,7 +19,10 @@ import ch.scorpion.jabbah.io.StorableCloner
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.Frame
-import javax.swing.*
+import javax.swing.Box
+import javax.swing.BoxLayout
+import javax.swing.JButton
+import javax.swing.JPanel
 
 
 /**
@@ -41,6 +43,7 @@ class EditSubGraphVerticeViewPanel(
 		 * @return the edited [ContainerDrawing] if the user closed the dialog with OK, `null` otherwise
 		 */
 		fun showAsDialog(
+			title: String,
 			parent: Frame = Frame.getFrames()[0],
 			metaGraphRepository: MetaGraphRepository,
 			containerPanel: ContainerPanelSwing,
@@ -53,7 +56,7 @@ class EditSubGraphVerticeViewPanel(
 					panel.closeHandler = { dialog.dispose() }
 					panel
 				}
-				.title(Translations.getString("graph.action.editSubGraphVerticeView.title"))
+				.title(title)
 				.defaultButton { it.cancelButton }
 				.menu(panel.menuBar)
 				.resizable()

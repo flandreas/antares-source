@@ -11,6 +11,8 @@ class LibraryPropertiesAction(
 	baseName = "library.action.properties",
 	controller
 ) {
+	override val opensDialog: Boolean get() = true
+
 	override val dialogTitle: String get() = Translations.getString("library.dialog.properties.title", currentProperties.name.getTranslation())
 
 	override fun exists(newName: TranslatableText): Boolean =

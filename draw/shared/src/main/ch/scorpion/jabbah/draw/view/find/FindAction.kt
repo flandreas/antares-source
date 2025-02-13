@@ -17,7 +17,7 @@ import ch.scorpion.jabbah.draw.view.DrawViewModule
 class FindAction(
 	private val eventBus: EventBus = BaseModule.eventBus,
 	private val viewManager: ContentViewManager = DrawViewModule.viewManager
-) : AbstractAction("draw.action.find") {
+) : AbstractAction("draw.action.find", opensDialog = true) {
 
 	private val contentViewHandler: EventHandler<ActiveContentViewChangedEvent> = {
 		if (it.viewManager === viewManager) {

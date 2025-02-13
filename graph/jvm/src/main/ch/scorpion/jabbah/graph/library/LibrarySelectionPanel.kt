@@ -27,10 +27,10 @@ class LibrarySelectionPanel(
 
 	companion object {
 
-		fun showAsDialog(parent: Frame, openActionNameBaseKey: String = "library.dialog.open.action"): UUID? {
+		fun showAsDialog(parent: Frame, openActionNameBaseKey: String = "library.dialog.open.action", title: String): UUID? {
 			val builder = DialogBuilder<LibrarySelectionPanel>(parent)
 				.content { dialog -> LibrarySelectionPanel(openActionNameBaseKey, closeHandler = { dialog.dispose() }) }
-				.title(Translations.getString("library.selectionDialog.title"))
+				.title(title)
 				.defaultButton { it.openButton }
 				.nonResizable()
 				.show()

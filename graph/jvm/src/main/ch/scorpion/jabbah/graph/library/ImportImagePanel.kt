@@ -30,10 +30,11 @@ class ImportImagePanel(
         private const val SETTING_PATH = "graph.image.importDir"
 
         fun showAsDialog(
+            title: String,
             parent: Frame = Frame.getFrames()[0],
         ): ImportImageParameters? {
             val builder = DialogBuilder<ImportImagePanel>(parent)
-                .title(Translations.getString("library.action.importImage.title"))
+                .title(title)
                 .content { dialog -> ImportImagePanel { dialog.dispose()} }
                 .defaultButton { it.importButton }
                 .show()

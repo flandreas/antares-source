@@ -19,6 +19,8 @@ class DeleteUsecaseAction(
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUsecaseAction(controller,"usecases.action.deleteUsecase", service, eventBus) {
 
+	override val opensDialog: Boolean get() = true
+
 	override fun execute(event: ActionEvent) {
 		if (JOptionPane.showConfirmDialog(
 				Frame.getFrames()[0],
@@ -87,6 +89,8 @@ class RecordUsecaseAction(
 	service: UsecaseAppService = GraphViewModule.usecaseAppService,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUsecaseAction(controller, "usecase.action.record", service, eventBus) {
+
+	override val opensDialog: Boolean get() = true
 
 	override fun calculateEnabled(): Boolean =
 		super.calculateEnabled() && usecase != null

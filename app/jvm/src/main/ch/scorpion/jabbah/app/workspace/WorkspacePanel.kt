@@ -24,11 +24,12 @@ class WorkspacePanel(
 
 	companion object {
 		fun showAsDialog(
+			title: String,
 			parent: Frame,
 			service: WorkspaceService = AppModuleJvm.workspaceService
 		) {
 			DialogBuilder<WorkspacePanel>(parent)
-				.title(Translations.getString("application.workspace.dialog.title"))
+				.title(title)
 				.content { dialog -> WorkspacePanel(service)  { dialog.dispose() } }
 				.defaultButton { it.okButton }
 				.preferredSize(Dimension(400, 150))
