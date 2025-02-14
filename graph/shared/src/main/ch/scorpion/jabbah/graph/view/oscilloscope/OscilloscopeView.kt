@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.draw.graphics.ReferenceColorSequenceProvider
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
@@ -214,7 +215,8 @@ class OscilloscopeView(
 
 	override val copyable: Boolean get() = false
 
-	override val deleteBuddies: List<Component> get() = rows.mapNotNull { it.probeView.verticeView }
+	override fun getDeleteBuddies(drawing: Drawing<Component>): List<Component> =
+		rows.mapNotNull { it.probeView.verticeView }
 
 	/** ---- [AbstractVerticeView] */
 

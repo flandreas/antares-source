@@ -5,6 +5,7 @@ import ch.scorpion.antares.view.GraphViewAnimationAction
 import ch.scorpion.antares.view.TestAction
 import ch.scorpion.antares.view.analysis.AnalyseCircuitAction
 import ch.scorpion.antares.view.expression.NewBooleanExpressionAction
+import ch.scorpion.antares.view.fsm.NewFSMAction
 import ch.scorpion.antares.view.gate.GateMnemonicAction
 import ch.scorpion.antares.view.net.tunnel.GlobalTunnelAction
 import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTableAction
@@ -92,6 +93,7 @@ class AntaresMenuBarBuilder(
 			menu.add(JMenuItem(ActionWrapperSwing(CreateCircuitFromTruthTableAction(this))))
 			menu.add(JMenuItem(ActionWrapperSwing(NewBooleanExpressionAction(this))))
 			menu.add(JMenuItem(ActionWrapperSwing(AnalyseCircuitAction(this))))
+			menu.add(JMenuItem(ActionWrapperSwing(NewFSMAction(this))))
 		}
 		return menu
 	}

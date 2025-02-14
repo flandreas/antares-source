@@ -2,6 +2,7 @@ package ch.scorpion.antares.view
 
 import ch.scorpion.antares.model.addressable.MemoryLibraryItem
 import ch.scorpion.antares.model.expression.BooleanExpressionLibraryItem
+import ch.scorpion.antares.model.fsm.FSMLibraryItem
 import ch.scorpion.antares.model.truthtable.TruthTableLibraryItem
 import ch.scorpion.antares.view.addressable.OpenMemoryContentsRequest
 import ch.scorpion.antares.view.app.AntaresGraphViewService
@@ -29,6 +30,8 @@ interface AntaresFrame : GraphFrame {
 	fun createMemoryStorableGraphDesktopViewItem(item: MemoryLibraryItem): GraphDesktopViewItem
 
 	fun createImageGraphDesktopViewItem(element: ImageLibraryElement): GraphDesktopViewItem
+
+	fun createFSMDesktopViewItem(item: FSMLibraryItem): GraphDesktopViewItem
 
 	fun showMemoryContents(request: OpenMemoryContentsRequest)
 
@@ -79,6 +82,7 @@ class AntaresFrameController(
 			is BooleanExpressionLibraryItem -> handleBooleanExpressionLibraryItem(event.newData!!.content as BooleanExpressionLibraryItem)
 			is MemoryLibraryItem -> handleMemoryLibraryItem(event.newData!!.content as MemoryLibraryItem)
 			is ImageLibraryElement -> handleImageLibraryElement(event.newData!!.content as ImageLibraryElement)
+			is FSMLibraryItem -> handleFSMLibraryItem(event.newData!!.content as FSMLibraryItem)
 		}
 	}
 
@@ -98,6 +102,15 @@ class AntaresFrameController(
 			if (mainDesktopViewItem == null || !mainDesktopViewItem!!.displays(newItem)) {
 				LOG.debug("Create new BooleanExpressionDesktopViewItem")
 				graphPanelViewController.desktopController.show(view.createBooleanExpressionDesktopViewItem(newItem))
+			}
+		}
+	}
+
+	private fun handleFSMLibraryItem(newItem: FSMLibraryItem) {
+		with(graphPanelViewController.desktopController.view) {
+			if (mainDesktopViewItem == null || !mainDesktopViewItem!!.displays(newItem)) {
+				LOG.debug("Create new FSMLibraryItem")
+				graphPanelViewController.desktopController.show(view.createFSMDesktopViewItem(newItem))
 			}
 		}
 	}

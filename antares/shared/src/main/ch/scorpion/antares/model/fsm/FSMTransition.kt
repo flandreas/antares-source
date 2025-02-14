@@ -1,0 +1,224 @@
+package ch.scorpion.antares.model.fsm
+
+import ch.scorpion.antares.model.module.AntaresModelModule
+import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.geom.*
+import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.DrawableContainer
+import ch.scorpion.jabbah.draw.polyline.ArrowHead
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.ComponentContainer
+import ch.scorpion.jabbah.edit.Drawing
+import ch.scorpion.jabbah.edit.model.AbstractComponent
+import ch.scorpion.jabbah.edit.model.text.Label
+import ch.scorpion.jabbah.edit.model.text.Labeled
+import ch.scorpion.jabbah.io.Storable
+import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.io.StoreWriter
+
+/**
+ * An [FSMTransition] is a transition between two [FSMStates][FSMState], leading from the "origin" state
+ * to the "destination" state. Uses a quadratic Bézier curve to draw its shape.
+ */
+class FSMTransition(
+    origStateId: Int = 0,
+    destinationStateId: Int = 0
+) : AbstractComponent(), Labeled {
+
+    companion object {
+        private val TYPE: String by lazy { Translations.getString("antares.fsm.transition") }
+
+        private const val STRETCH = 50.0
+
+        private const val SEPARATOR = '/'
+
+        private const val CONTAINS_SENSITIVITY = 2.0
+    }
+
+    /** The condition in terms of input signals that transitions the system to [destinationState].*/
+    var condition: String = ""
+        set(value) {
+            field = value
+            updateLabel()
+        }
+
+    /** The output value(s) of the system when this [FSMTransition] is traversed (Mealy machine). */
+    var output: String = ""
+        set(value) {
+            field = value
+            updateLabel()
+        }
+
+    override val label: Label = Label(condition, font, richText = false, fillBackground = true)
+
+    /** The arrow head drawn at the [destinationPoint]. */
+    private val arrowHead = ArrowHead()
+
+    /** The ID of the [FSMState] where this [FSMTransition] originates.*/
+    var origStateId: Int = origStateId
+        private set
+
+    /** The ID of the [FSMState] where this [FSMTransition] leads to. */
+    var destinationStateId: Int = destinationStateId
+        private set
+
+    /** The [FSMState] where this [FSMTransition] originates. Set when added to [Drawing]. */
+    private var originState: FSMState? = null
+
+    /** The [FSMState] where this [FSMTransition] leads to. Set when added to [Drawing]. */
+    private var destinationState: FSMState? = null
+
+    /** The point on the origin's [FSMState] circle where the Bézier curve starts.*/
+    private var originPoint: Point2D = Point2D.ZERO
+
+    /** The point on the destination's [FSMState] circle where the Bézier curve ends.*/
+    private var destinationPoint: Point2D = Point2D.ZERO
+
+    /** The intermediate "control" point of the Bézier curve.*/
+    private var bezierPoint: Point2D = Point2D.ZERO
+
+    /** The [Path] representing the quadratic Bézier curve. */
+    private var path: Path = System.createPath()
+
+    private val bbox = Rectangle2D()
+
+    /** ---- [AbstractComponent] */
+
+    override val type: String get() = TYPE
+
+    override var location: Point2D = originPoint
+
+    override fun draw(context: DrawContext) {
+        context.g.stroke = stroke
+        context.g.color = context.choose(color).foregroundColor
+        context.g.draw(path)
+        arrowHead.draw(context)
+        label.draw(context)
+    }
+
+    override val boundingBox: RectangularShape get() = Rectangle2D(bbox)
+
+    override fun contains(x: Double, y: Double): Boolean = path.intersects(
+        x - CONTAINS_SENSITIVITY,
+        y - CONTAINS_SENSITIVITY,
+        2 * CONTAINS_SENSITIVITY,
+        2 * CONTAINS_SENSITIVITY)
+
+    /** ---- [Storable] */
+
+    override fun write(writer: StoreWriter) {
+        super.write(writer)
+        writer.writeInt("orig", origStateId)
+        writer.writeInt("dest", destinationStateId)
+        if (StringUtils.isNotBlank(condition)) {
+            writer.writeString("condition", condition)
+        }
+        if (StringUtils.isNotBlank(output)) {
+            writer.writeString("output", output)
+        }
+    }
+
+    override fun read(reader: StoreReader) {
+        super.read(reader)
+        origStateId = reader.readInt("orig")
+        destinationStateId = reader.readInt("dest")
+        if (reader.hasAttribute("condition")) {
+            condition = reader.readString("condition")
+        }
+        if (reader.hasAttribute("output")) {
+            output = reader.readString("output")
+        }
+    }
+
+    /**
+     * [Storable] resolution doesn't work when FSMTransition is cloned during add(), because then
+     * the FSMStates are NOT in scope of the ReferenceResolver. Therefore, we access
+     * the FSMState directly in the parent DrawableContainer
+     */
+    override fun <T : Drawable> handleAdded(container: DrawableContainer<T>) {
+        super.handleAdded(container)
+        originState = (container as ComponentContainer).getWithId(origStateId) as? FSMState
+        destinationState = container.getWithId(destinationStateId) as? FSMState
+        AntaresModelModule.fsmService.handleTransitionAdded(this, container as Drawing<Component>)
+    }
+
+    override fun <T : Drawable> handleRemoved(container: DrawableContainer<T>) {
+        super.handleRemoved(container)
+        AntaresModelModule.fsmService.handleTransitionRemoved(this, container as Drawing<Component>)
+    }
+
+    /** ---- [FSMTransition] */
+
+    fun updateGeometry(level: Int) {
+        invalidate()
+        updateGeometryImpl(level)
+        invalidate()
+        validate()
+    }
+
+    /**
+     * Out of [originState] and [destinationState], returns the one that is NOT [state].
+     * Only defined after this [FSMTransition] has been added to a [Drawing]. Otherwise,
+     * throws [NullPointerException].
+     */
+    fun otherStateThan(state: FSMState): FSMState =
+        if (state.id == origStateId) {
+            destinationState!!
+        } else {
+            originState!!
+        }
+
+    private fun updateGeometryImpl(level: Int) {
+        if (originState != null && destinationState != null) {
+
+            val bezier0 = calculateBezierPoint(originState!!.center, destinationState!!.center,level)
+            originPoint = Geometry.circleLineIntersection(originState!!.center, originState!!.radius, bezier0)
+            destinationPoint = Geometry.circleLineIntersection(destinationState!!.center, destinationState!!.radius, bezier0)
+
+            bezierPoint = calculateBezierPoint(originPoint, destinationPoint, level)
+
+            path = System.createPath()
+            path.moveTo(originPoint.x, originPoint.y)
+            path.quadTo(bezierPoint.x, bezierPoint.y, destinationPoint.x, destinationPoint.y)
+
+            arrowHead.setLocation(destinationPoint, bezierPoint)
+
+            label.location = calculateLabelPoint(level)
+            updateBoundingBox()
+        }
+    }
+
+    private fun calculateBezierPoint(p1: Point2D, p2: Point2D, level: Int): Point2D {
+        var middle = Geometry.middle(p1, p2)
+        val normal = Vector2D(Geometry.normal(p1, p2)).normalize
+        return middle.add(normal.multiply(-level * STRETCH).point)
+    }
+
+    private fun calculateLabelPoint(level: Int): Point2D {
+        val middle = Geometry.middle(originPoint, destinationPoint)
+        val normal = Vector2D(Geometry.normal(originPoint, destinationPoint)).normalize
+        return middle.add(normal.multiply(-level * STRETCH / 2.0).point)
+    }
+
+    private fun updateLabel() {
+        invalidate()
+        val s = StringBuilder(condition)
+        if (StringUtils.isNotBlank(output)) {
+            s.append(SEPARATOR)
+            s.append(output)
+        }
+        label.text = s.toString()
+        updateBoundingBox()
+        invalidate()
+        validate()
+    }
+
+    private fun updateBoundingBox() {
+        bbox.setFrame(path.boundingBox)
+        bbox.add(arrowHead.boundingBox)
+        bbox.add(label.boundingBox)
+    }
+}

@@ -4,10 +4,11 @@ import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.ApplicationDataViewController
 import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.edit.auth.Authorizer
-import ch.scorpion.jabbah.edit.auth.Operation.Change
 import ch.scorpion.jabbah.graph.MetaGraph
-import ch.scorpion.jabbah.graph.library.*
+import ch.scorpion.jabbah.graph.library.AbstractContainerLibraryElementSavable
+import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
+import ch.scorpion.jabbah.graph.library.LibraryDirectory
+import ch.scorpion.jabbah.graph.library.LibraryModule
 
 /**
  * Saves the edited [MetaGraph] of a [ContainerLibraryElement] in the containing [LibraryDirectory].
@@ -34,8 +35,6 @@ class ProjectSavable(
 	/** ---- [Savable] */
 
 	override val description: String get() = "${Translations.getString("project.savable.prefix")} \"${element.name.value}\""
-
-	override val editable: Boolean get() = element.library != null && Authorizer.isCurrentUserAuthorizedTo(Change, project)
 
 	override fun open(application: Application): Boolean {
 		if (element.library == null) {

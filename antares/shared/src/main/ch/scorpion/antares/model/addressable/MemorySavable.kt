@@ -6,8 +6,6 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Bean
-import ch.scorpion.jabbah.edit.auth.Authorizer
-import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.graph.library.AbstractLibraryItemSavable
 import ch.scorpion.jabbah.io.Storable
 
@@ -19,12 +17,6 @@ class MemorySavable(
     private val memoryLibraryItem: MemoryLibraryItem get() = item as MemoryLibraryItem
 
     override val typeName: String get() = Translations.getString("library.element.memory.name")
-
-    override val description: String
-        get() = "${Translations.getString("project.savable.prefix")} \"${memoryLibraryItem.name.getTranslation()}\""
-
-    override val editable: Boolean
-        get() = item.library?.let { Authorizer.isCurrentUserAuthorizedTo(Operation.Change, it) } ?: false
 
     override fun open(application: Application): Boolean {
         eventBus.post(OpenMemoryLibraryItemRequest(memoryLibraryItem))

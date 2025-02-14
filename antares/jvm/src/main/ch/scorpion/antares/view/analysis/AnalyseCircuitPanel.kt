@@ -8,14 +8,13 @@ import ch.scorpion.antares.model.truthtable.TruthTable
 import ch.scorpion.antares.model.truthtable.TruthTableLibraryItem
 import ch.scorpion.antares.model.truthtable.TruthTableReference
 import ch.scorpion.antares.model.truthtable.TruthTableService
-import ch.scorpion.antares.view.expression.NewBooleanExpressionPanel
 import ch.scorpion.antares.view.truthtable.TruthTableTableView
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.swing.DialogBuilder
-import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.base.ui.NewNamePanel
 import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
@@ -155,7 +154,7 @@ class AnalyseCircuitPanel(
 	private inner class SaveExpressionsAction : AbstractAction("antares.circuitAnalysis.saveExpressions.action", opensDialog = true) {
 
 		override fun execute(event: ActionEvent) {
-			NewBooleanExpressionPanel
+			NewNamePanel
 				.showAsDialog(name, Frame.getFrames()[0])
 				?.let { name ->
 					val library = containerLibraryElement.library!!

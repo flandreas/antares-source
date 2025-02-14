@@ -1,8 +1,21 @@
 package ch.scorpion.jabbah.edit
 
 import ch.scorpion.jabbah.base.Action
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
+import ch.scorpion.jabbah.draw.View
+
+
+/**
+ * Posted on the system's [EventBus] when an [Editor] has become the "current" one.
+ * This is used in system with many [Editors][Editor] in different switchable [Views][View],
+ * while some UI elements are always displayed and show information related with the current [Editor],
+ * such as a central property panel.
+ *
+ * The concept "current editor" is not the same as [Editor.active]: The current [Editor] can still be inactive.
+ */
+data class CurrentEditorEvent(val editor: Editor)
 
 /**
  * Represents an editor for interactively editing a [Drawing] within a [DrawingView].

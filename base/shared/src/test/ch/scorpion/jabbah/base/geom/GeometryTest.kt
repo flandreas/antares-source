@@ -1,14 +1,10 @@
 package ch.scorpion.jabbah.base.geom
 
-import ch.scorpion.jabbah.base.math.PI_2
-import ch.scorpion.jabbah.base.math.PI_4
-import ch.scorpion.jabbah.base.math.SIGMA
-import ch.scorpion.jabbah.base.math.TWO_PI
+import ch.scorpion.jabbah.base.math.*
 import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.math.PI
 import kotlin.test.*
 
-/** Unit tests for [Geometry].*/
 class GeometryTest {
 
 	@BeforeTest
@@ -73,5 +69,36 @@ class GeometryTest {
 		assertEquals(0.0, Geometry.sign(0.5 * SIGMA))
 		assertEquals(1.0, Geometry.sign(2.3))
 		assertEquals(-1.0, Geometry.sign(-5.0))
+	}
+
+	@Test
+	fun shouldCalculateCircleLineIntersection() {
+		val center = Point2D(100.0, 100.0)
+		val radius = 10.0
+
+		Geometry.circleLineIntersection(center, radius, Point2D(120.0, 80.0)).let {
+			assertTrue(it.x.near(107.0, 0.1))
+			assertTrue(it.y.near(93.0, 0.1))
+		}
+
+		Geometry.circleLineIntersection(center, radius, Point2D(120.0, 120.0)).let {
+			assertTrue(it.x.near(107.0, 0.1))
+			assertTrue(it.y.near(107.0, 0.1))
+		}
+
+		Geometry.circleLineIntersection(center, radius, Point2D(80.0, 120.0)).let {
+			assertTrue(it.x.near(93.0, 0.1))
+			assertTrue(it.y.near(107.0, 0.1))
+		}
+
+		Geometry.circleLineIntersection(center, radius, Point2D(80.0, 80.0)).let {
+			assertTrue(it.x.near(93.0, 0.1))
+			assertTrue(it.y.near(93.0, 0.1))
+		}
+
+		Geometry.circleLineIntersection(center, radius, Point2D(120.0, 100.0)).let {
+			assertTrue(it.x.near(110.0, 0.1))
+			assertTrue(it.y.near(100.0, 0.1))
+		}
 	}
 }

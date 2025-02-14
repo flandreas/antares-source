@@ -24,8 +24,6 @@ class LibrarySavable(
 
 	override val description: String get() = "${Translations.getString("library.savable.prefix")} \"${element.name.value}\""
 
-	override val editable: Boolean get() = element.library != null && Authorizer.isCurrentUserAuthorizedTo(Change, library)
-
 	override fun open(application: Application): Boolean {
 		if (element.library == null) {
 			// Library has been disposed in the meantime

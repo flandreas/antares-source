@@ -17,5 +17,7 @@ class Vector2D(val x: Double, val y: Double) {
             return Vector2D(x / mag, y / mag)
         }
 
+    val point: Point2D = Point2D(x, y)
+
     fun multiply(s: Double): Vector2D = Vector2D(x * s, y * s)
 }

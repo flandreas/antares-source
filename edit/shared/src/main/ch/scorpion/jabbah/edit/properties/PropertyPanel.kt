@@ -3,10 +3,14 @@ package ch.scorpion.jabbah.edit.properties
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.edit.Command
+import ch.scorpion.jabbah.edit.CurrentEditorEvent
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
 
@@ -22,8 +26,12 @@ interface PropertyPanel : UIView {
  * @param editor the [Editor] used for creating undoable [Command]s when changing properties
  */
 abstract class AbstractPropertyPanelController<T: PropertyPanel>(
-	val editor: Editor
+	editor: Editor,
+	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<T>() {
+
+	var editor: Editor = editor
+		private set
 
 	/** The translated text describing the selected bean to be used as title in [PropertyPanel].*/
 	var title: String = Translations.getString("edit.property.bean.none")
@@ -48,6 +56,16 @@ abstract class AbstractPropertyPanelController<T: PropertyPanel>(
 
 	private lateinit var drawingListener: PropertyChangeListener<Any>
 
+	private val currentEditorHandler: EventHandler<CurrentEditorEvent> = { updateEditor(it.editor) }
+
+	init {
+		eventBus.register(CurrentEditorEvent::class, currentEditorHandler)
+	}
+
+	private fun updateEditor(editor: Editor) {
+		this.editor = editor
+	}
+
 	override fun onViewInitialized() {
 		super.onViewInitialized()
 		activeEditorListener = setupActiveEditorListener()
@@ -56,6 +74,7 @@ abstract class AbstractPropertyPanelController<T: PropertyPanel>(
 
 	override fun dispose() {
 		super.dispose()
+		eventBus.unregister(currentEditorHandler)
 		editor.removePropertyChangeListener(activeEditorListener)
 		editor.removePropertyChangeListener(drawingListener)
 	}

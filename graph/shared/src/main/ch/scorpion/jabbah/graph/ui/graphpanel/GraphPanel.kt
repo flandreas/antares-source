@@ -11,10 +11,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.draw.view.ActiveContentViewChangedEvent
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.Tool
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.app.ComponentSnapAction
 import ch.scorpion.jabbah.edit.app.GridSnapAction
 import ch.scorpion.jabbah.edit.model.ComponentMessage
@@ -254,7 +251,8 @@ class GraphPanelViewController(
 		}
 	}
 
-	fun setGraphViewApplicationData(graphView: GraphView?, editable: Boolean) {
+	private fun setGraphViewApplicationData(graphView: GraphView?, editable: Boolean) {
+		eventBus.post(CurrentEditorEvent(editor))
 		isSavableEditable = editable
 		if (graphView == null) {
 			// Set empty drawing to avoid flickering (i.e. showing the old drawing) when

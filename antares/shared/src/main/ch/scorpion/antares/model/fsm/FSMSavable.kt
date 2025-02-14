@@ -1,4 +1,4 @@
-package ch.scorpion.jabbah.graph.model.image
+package ch.scorpion.antares.model.fsm
 
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.ApplicationDataViewController
@@ -6,27 +6,25 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Bean
-import ch.scorpion.jabbah.edit.auth.Authorizer
-import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.graph.library.AbstractLibraryItemSavable
 import ch.scorpion.jabbah.io.Storable
 
-class ImageIdentificationSavable(
-    element: ImageLibraryElement,
+class FSMSavable(
+    item: FSMLibraryItem,
     private val eventBus: EventBus = BaseModule.eventBus
-) : AbstractLibraryItemSavable(element) {
+) : AbstractLibraryItemSavable(item) {
 
-    private val imageLibraryElement: ImageLibraryElement get() = item as ImageLibraryElement
+    override val typeName: String get() = Translations.getString("library.element.fsm.name")
 
-    override val typeName: String get() = Translations.getString("edit.component.image")
+    private val fsmLibraryItem: FSMLibraryItem get() = item as FSMLibraryItem
 
     override fun open(application: Application): Boolean {
-        eventBus.post(OpenImageLibraryElementRequest(imageLibraryElement))
+        eventBus.post(OpenFSMLibraryItemRequest(fsmLibraryItem))
         return true
     }
 
     override fun save(appDataViewController: ApplicationDataViewController): Boolean {
-        imageLibraryElement.updateStorable((appDataViewController.data!!.content as ImageLibraryElement).storable)
+        fsmLibraryItem.updateStorable((appDataViewController.data!!.content as FSMLibraryItem).storable)
         with (item.library!!) {
             libraryService.updateLibraryItem(this, item)
         }
@@ -34,5 +32,5 @@ class ImageIdentificationSavable(
         return true
     }
 
-    override fun getPropertyBean(storable: Storable): Bean = (storable as ImageLibraryElement).storable
+    override fun getPropertyBean(storable: Storable): Bean? = (storable as FSMLibraryItem).storable
 }

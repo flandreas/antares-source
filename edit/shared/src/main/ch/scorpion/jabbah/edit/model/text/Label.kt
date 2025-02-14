@@ -13,6 +13,8 @@ import ch.scorpion.jabbah.draw.drawable.RichTextDrawable
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Font
 import ch.scorpion.jabbah.draw.module.DrawModule
+import ch.scorpion.jabbah.draw.style.DrawStyleModule
+import ch.scorpion.jabbah.draw.style.StyleType
 
 /**
  * Implemented by classes having a [Label].
@@ -41,7 +43,8 @@ class Label(
 	val rotation: Rotation = Rotation.R0,
 	ownerRotation: Rotation = Rotation.R0,
 	val richText: Boolean = true,
-	displayableText: RichTextDrawable = if (richText) RichTextDrawable.of(text ?: "", font) else RichTextDrawable.asPlain(text ?: "", font)
+	displayableText: RichTextDrawable = if (richText) RichTextDrawable.of(text ?: "", font) else RichTextDrawable.asPlain(text ?: "", font),
+	private val fillBackground: Boolean = false
 ) : AbstractDrawable(), Mirrorable, Locatable {
 
 	companion object {
@@ -169,7 +172,7 @@ class Label(
 		DrawModule.drawDebugBoundingBox(this, context.g, Color.GRAY)
 		DrawModule.drawDebugBoundingBoxLocation(location, context, Color.GREEN)
 
-		context.g.color = if (context.useContextColors) {
+		val foregroundColor = if (context.useContextColors) {
 			if (inverse) {
 				context.color!!.backgroundColor
 			} else {
@@ -180,18 +183,24 @@ class Label(
 		}
 
 		context.g.font = font
-		drawTextRotated(richText, context)
+		drawTextRotated(richText, context, foregroundColor)
 
 		context.g.color = oldColor
 	}
 
-	private fun drawTextRotated(richText: RichTextDrawable, context: DrawContext) {
+	private fun drawTextRotated(richText: RichTextDrawable, context: DrawContext, foregroundColor: Color) {
 		rotationDisplayStrategy.beforeDraw(context, this)
 
 		context.g.translate(location.x, location.y)
 		context.g.rotate(rotation.angle)
 		context.g.translate(-location.x, -location.y)
 
+		if (fillBackground) {
+			context.g.color = DrawStyleModule.styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
+			context.g.fill(bounds)
+		}
+
+		context.g.color = foregroundColor
 		richText.draw(context)
 
 		context.g.translate(location.x, location.y)

@@ -30,6 +30,7 @@ import ch.scorpion.antares.model.testcase.Testcases
 import ch.scorpion.antares.model.truthtable.*
 import ch.scorpion.antares.model.vertice.AntaresSubGraphVerticeRefActivationRecord
 import ch.scorpion.antares.model.addressable.MemoryStorable
+import ch.scorpion.antares.model.fsm.*
 import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.antares.view.port.AntaresPortFactory
 import ch.scorpion.jabbah.base.AbstractModule
@@ -56,6 +57,7 @@ object AntaresModelModule : AbstractModule() {
 	val booleanExpressionService = BooleanExpressionService()
 	val circuitAnalysisService = CircuitAnalysisService()
 	val testcaseAppService = TestcaseAppService()
+	val fsmService: FSMService = FSMServiceImpl()
 
 	override fun initialize() {
 		customizeProperties(BaseModule.properties)
@@ -162,6 +164,11 @@ object AntaresModelModule : AbstractModule() {
 		typeMap.register("expressionLibraryItem", BooleanExpressionLibraryItem::class)
 		typeMap.register("memory", MemoryStorable::class)
 		typeMap.register("memoryLibraryItem", MemoryLibraryItem::class)
+
+		typeMap.register("fsmDrawing", FSMDrawing::class)
+		typeMap.register("fsmLibraryItem", FSMLibraryItem::class)
+		typeMap.register("fsmState", FSMState::class)
+		typeMap.register("fsmTransition", FSMTransition::class)
 
 		// Analog
 		typeMap.register("analogGraph", AnalogGraph::class)

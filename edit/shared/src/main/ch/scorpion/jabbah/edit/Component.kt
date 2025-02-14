@@ -83,9 +83,10 @@ interface Component : Movable, Rotatable, Snappable, Storable, Stylable, Focusab
 	val isDragManager: Boolean get() = false
 
 	/**
-	 * Returns the [Component]s to be deleted as well when this [Component] is deleted.
+	 * Returns the [Component]s to be deleted as well when this [Component] is deleted
+	 * from [drawing].
 	 */
-	val deleteBuddies: List<Component> get() = emptyList()
+	fun getDeleteBuddies(drawing: Drawing<Component>): List<Component> = emptyList()
 
 	/**
 	 * Collects the [Component]s to be selected in addition to this [Component] when selected by mouse

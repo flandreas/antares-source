@@ -2,6 +2,7 @@ package ch.scorpion.antares
 
 import ch.scorpion.antares.model.addressable.MemoryLibraryItem
 import ch.scorpion.antares.model.expression.BooleanExpressionLibraryItem
+import ch.scorpion.antares.model.fsm.FSMLibraryItem
 import ch.scorpion.antares.model.testcase.TestcaseViewController
 import ch.scorpion.antares.model.testcase.TestcaseViewSwing
 import ch.scorpion.antares.model.testcase.result.TestRunResultsPanel
@@ -13,8 +14,8 @@ import ch.scorpion.antares.view.addressable.AddressableContentsPanel
 import ch.scorpion.antares.view.addressable.MemoryStorableGraphDesktopItemSwing
 import ch.scorpion.antares.view.addressable.OpenMemoryContentsRequest
 import ch.scorpion.antares.view.expression.BooleanExpressionDesktopItemSwing
+import ch.scorpion.antares.view.fsm.FSMGraphDesktopItemSwing
 import ch.scorpion.antares.view.truthtable.TruthTableDesktopItemSwing
-import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.DesktopApplication
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.swing.SidebarPaneContentImpl
@@ -100,6 +101,9 @@ class AntaresFrameSwing(
 
 	override fun createImageGraphDesktopViewItem(element: ImageLibraryElement): GraphDesktopViewItem =
 		ImageGraphDesktopItemSwing(element, application.controller)
+
+	override fun createFSMDesktopViewItem(item: FSMLibraryItem): GraphDesktopViewItem =
+		FSMGraphDesktopItemSwing(item, application.controller)
 
 	override fun showMemoryContents(request: OpenMemoryContentsRequest) {
 		AddressableContentsPanel.showAsDialog(
