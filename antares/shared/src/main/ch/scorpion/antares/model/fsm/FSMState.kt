@@ -52,9 +52,20 @@ class FSMState(
             }
         }
 
-    val radius: Double get() = width / 2.0
-
     private val outputLabel = Label("", font)
+
+    /** The unique number of this [FSMState] also used in the generated circuit.*/
+    var stateNumber: Int = 0
+        set(value) {
+            if (field != value) {
+                field = value
+                updateStateNumberLabel()
+            }
+        }
+
+    private val stateNumberLabel = Label("", font)
+
+    val radius: Double get() = width / 2.0
 
     /** ---- [Drawable] */
 
@@ -82,6 +93,7 @@ class FSMState(
 
     override fun write(writer: StoreWriter) {
         super.write(writer)
+        writer.writeInt("stateNumber", stateNumber)
         writer.writeString("type", stateType.customName)
         if (name.isNotEmpty) {
             name.write("name", writer)
@@ -93,6 +105,7 @@ class FSMState(
 
     override fun read(reader: StoreReader) {
         super.read(reader)
+        stateNumber = reader.readInt("stateNumber")
         stateType = FSMStateType.withName(reader.readString("type"))
         if (reader.hasElement("name")) {
             name = Name.read("name", reader)
@@ -123,12 +136,14 @@ class FSMState(
         context.g.color = color.textColor
         context.translated(location) {
             outputLabel.draw(context)
+            stateNumberLabel.draw(context)
         }
     }
 
     override fun setFrame(x: Double, y: Double, width: Double, height: Double) {
         super.setFrame(x, y, width, height)
         updateOutputLabelLocation()
+        updateStateNumberLabelLocation()
     }
 
     /** ---- [FSMState] */
@@ -142,6 +157,7 @@ class FSMState(
         }
         label.color = textColor
         outputLabel.color = textColor
+        stateNumberLabel.color = textColor
         validate()
     }
 
@@ -154,5 +170,16 @@ class FSMState(
 
     private fun updateOutputLabelLocation() {
         outputLabel.location = Point2D(label.location.x, label.location.y + label.font.size / 2 + outputLabel.font.size / 2 + LABEL_DIST_Y)
+    }
+
+    private fun updateStateNumberLabel() {
+        invalidate()
+        stateNumberLabel.text = stateNumber.toString()
+        invalidate()
+        validate()
+    }
+
+    private fun updateStateNumberLabelLocation() {
+        stateNumberLabel.location = Point2D(label.location.x, label.location.y - label.font.size / 2 - stateNumberLabel.font.size / 2 - LABEL_DIST_Y)
     }
 }

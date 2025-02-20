@@ -36,7 +36,7 @@ class FSMGraphDesktopItemSwing(
 
     private val fsm: FSMDrawing get() = (applicationDataHolder.data!!.content as FSMLibraryItem).storable
 
-    private val controller = FSMPanelController(eventBus)
+    private val controller = FSMPanelController(eventBus = eventBus)
 
     private val canvas = CanvasJvm(controller.drawingView)
 
@@ -65,7 +65,7 @@ class FSMGraphDesktopItemSwing(
 
         val toolbar = ToolBar(controller.editor)
         toolbar.addTool(controller.editor.selectionTool, "/img/pointer24.png", Translations.getString("edit.tool.select"))
-        toolbar.addTool(ComponentAtLocationTool(controller.editor, cursor = Cursor.CLICK, factory = { FSMState() } ), "/img/oval24.png", Translations.getString("antares.fsm.state"))
+        toolbar.addTool(controller.stateTool, "/img/oval24.png", Translations.getString("antares.fsm.state"))
         toolbar.addTool(controller.transitionTool, "/img/polyline24.png", Translations.getString("antares.fsm.transition"))
 
         contentPanel.add(toolbar, BorderLayout.NORTH)

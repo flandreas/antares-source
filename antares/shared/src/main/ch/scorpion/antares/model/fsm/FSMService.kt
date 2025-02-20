@@ -18,6 +18,8 @@ interface FSMService {
      * [FSMTransition] accordingly.
      */
     fun handleStateUpdated(fsmState: FSMState, drawing: Drawing<Component>)
+
+    fun freeStateNumber(drawing: Drawing<Component>): Int
 }
 
 class FSMServiceImpl : FSMService {
@@ -42,6 +44,15 @@ class FSMServiceImpl : FSMService {
             .groupBy { it.otherStateThan(fsmState) }
             .entries
             .forEach { updateGeometry(it.value) }
+    }
+
+    override fun freeStateNumber(drawing: Drawing<Component>): Int {
+        val numbers = drawing.drawables.filterIsInstance<FSMState>().map { it.stateNumber }.toSet()
+        var number = 0
+        while (number in numbers) {
+            number++
+        }
+        return number
     }
 
     private fun updateGeometry(transitions: List<FSMTransition>) {
