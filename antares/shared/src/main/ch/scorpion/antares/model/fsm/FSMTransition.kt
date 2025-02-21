@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.*
+import ch.scorpion.jabbah.base.math.PI_6
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawableContainer
@@ -18,6 +19,8 @@ import ch.scorpion.jabbah.edit.model.text.Labeled
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
  * An [FSMTransition] is a transition between two [FSMStates][FSMState], leading from the "origin" state
@@ -36,6 +39,10 @@ class FSMTransition(
         private const val SEPARATOR = '/'
 
         private const val CONTAINS_SENSITIVITY = 2.0
+
+        private const val CUBIC_ANGLE = PI_6
+
+        private const val CUBIC_SIZE = 3.0
     }
 
     /** The condition in terms of input signals that transitions the system to [destinationState].*/
@@ -79,6 +86,9 @@ class FSMTransition(
 
     /** The intermediate "control" point of the Bézier curve.*/
     private var bezierPoint: Point2D = Point2D.ZERO
+
+    /** The second intermediate control point of the Bézier curve. Used only for cubic curve.*/
+    private var bezierPoint2: Point2D = Point2D.ZERO
 
     /** The [Path] representing the quadratic Bézier curve. */
     private var path: Path = System.createPath()
@@ -171,38 +181,6 @@ class FSMTransition(
             originState!!
         }
 
-    private fun updateGeometryImpl(level: Int) {
-        if (originState != null && destinationState != null) {
-
-            val bezier0 = calculateBezierPoint(originState!!.center, destinationState!!.center,level)
-            originPoint = Geometry.circleLineIntersection(originState!!.center, originState!!.radius, bezier0)
-            destinationPoint = Geometry.circleLineIntersection(destinationState!!.center, destinationState!!.radius, bezier0)
-
-            bezierPoint = calculateBezierPoint(originPoint, destinationPoint, level)
-
-            path = System.createPath()
-            path.moveTo(originPoint.x, originPoint.y)
-            path.quadTo(bezierPoint.x, bezierPoint.y, destinationPoint.x, destinationPoint.y)
-
-            arrowHead.setLocation(destinationPoint, bezierPoint)
-
-            label.location = calculateLabelPoint(level)
-            updateBoundingBox()
-        }
-    }
-
-    private fun calculateBezierPoint(p1: Point2D, p2: Point2D, level: Int): Point2D {
-        var middle = Geometry.middle(p1, p2)
-        val normal = Vector2D(Geometry.normal(p1, p2)).normalize
-        return middle.add(normal.multiply(-level * STRETCH).point)
-    }
-
-    private fun calculateLabelPoint(level: Int): Point2D {
-        val middle = Geometry.middle(originPoint, destinationPoint)
-        val normal = Vector2D(Geometry.normal(originPoint, destinationPoint)).normalize
-        return middle.add(normal.multiply(-level * STRETCH / 2.0).point)
-    }
-
     private fun updateLabel() {
         invalidate()
         val s = StringBuilder(condition)
@@ -220,5 +198,72 @@ class FSMTransition(
         bbox.setFrame(path.boundingBox)
         bbox.add(arrowHead.boundingBox)
         bbox.add(label.boundingBox)
+    }
+
+    private fun updateGeometryImpl(level: Int) {
+        if (originState != null && destinationState != null) {
+            if (originState === destinationState) {
+                updateCubicGeometry()
+            } else {
+                updateQuadraticGeometry(level)
+            }
+        }
+    }
+
+    // ---- Quadratic curve for A to B transitions
+
+    private fun updateQuadraticGeometry(level: Int) {
+        val bezier0 = calculateQuadraticBezierPoint(originState!!.center, destinationState!!.center,level)
+        originPoint = Geometry.circleLineIntersection(originState!!.center, originState!!.radius, bezier0)
+        destinationPoint = Geometry.circleLineIntersection(destinationState!!.center, destinationState!!.radius, bezier0)
+
+        bezierPoint = calculateQuadraticBezierPoint(originPoint, destinationPoint, level)
+
+        path = System.createPath()
+        path.moveTo(originPoint.x, originPoint.y)
+        path.quadTo(bezierPoint.x, bezierPoint.y, destinationPoint.x, destinationPoint.y)
+
+        arrowHead.setLocation(destinationPoint, bezierPoint)
+
+        label.location = calculateQuadraticLabelPoint(level)
+        updateBoundingBox()
+    }
+
+    private fun calculateQuadraticBezierPoint(p1: Point2D, p2: Point2D, level: Int): Point2D {
+        var middle = Geometry.middle(p1, p2)
+        val normal = Vector2D(Geometry.normal(p1, p2)).normalize
+        return middle.add(normal.multiply(-level * STRETCH).point)
+    }
+
+    private fun calculateQuadraticLabelPoint(level: Int): Point2D {
+        val middle = Geometry.middle(originPoint, destinationPoint)
+        val normal = Vector2D(Geometry.normal(originPoint, destinationPoint)).normalize
+        return middle.add(normal.multiply(-level * STRETCH / 2.0).point)
+    }
+
+    // ---- Cubic curve for A to A transitions
+
+    private fun updateCubicGeometry() {
+        bezierPoint = Point2D(
+            originState!!.center.x + originState!!.radius * CUBIC_SIZE * cos(CUBIC_ANGLE),
+            originState!!.center.y - originState!!.radius * CUBIC_SIZE * sin(CUBIC_ANGLE))
+        bezierPoint2 = Point2D(
+            bezierPoint.x,
+            originState!!.center.y + originState!!.radius * CUBIC_SIZE * sin(CUBIC_ANGLE))
+        originPoint = Geometry.circleLineIntersection(originState!!.center, originState!!.radius, bezierPoint)
+        destinationPoint = Geometry.circleLineIntersection(originState!!.center, originState!!.radius, bezierPoint2)
+
+        path = System.createPath()
+        path.moveTo(originPoint.x, originPoint.y)
+        path.curveTo(bezierPoint.x, bezierPoint.y, bezierPoint2.x, bezierPoint2.y, destinationPoint.x, destinationPoint.y)
+
+        arrowHead.setLocation(destinationPoint, bezierPoint2)
+
+        label.location = calculateCubicLabelPoint()
+        updateBoundingBox()
+    }
+
+    private fun calculateCubicLabelPoint(): Point2D {
+        return Point2D(originState!!.centerX + originState!!.radius * CUBIC_SIZE * 0.707, originState!!.centerY)
     }
 }
