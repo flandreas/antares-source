@@ -67,6 +67,11 @@ class FSMState(
 
     val radius: Double get() = width / 2.0
 
+    init {
+        updateStateNumberLabel()
+        updateOutputLabel()
+    }
+
     /** ---- [Drawable] */
 
     override fun update() {
@@ -158,6 +163,11 @@ class FSMState(
         label.color = textColor
         outputLabel.color = textColor
         stateNumberLabel.color = textColor
+
+        label.inverse = stateType != FSMStateType.Normal
+        outputLabel.inverse = stateType != FSMStateType.Normal
+        stateNumberLabel.inverse = stateType != FSMStateType.Normal
+
         validate()
     }
 

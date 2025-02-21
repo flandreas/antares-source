@@ -489,7 +489,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogRelayView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, DiodeView::class) { SelectedColorSelectionModel(it) }
 
-		factory.register(SelectionDrawingStrategy.REPLACE, FSMState::class) { RectangularReplaceSelectionModel(it as AbstractRectangularComponent) }
+		factory.register(SelectionDrawingStrategy.REPLACE, FSMState::class) { RectangularReplaceSelectionModel(it as AbstractRectangularComponent, RectangularReplaceSelectionModel.DrawStrategy.COMPONENT) }
 		factory.register(SelectionDrawingStrategy.REPLACE, FSMTransition::class) { SelectedColorSelectionModel(it) }
 	}
 
