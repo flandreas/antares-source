@@ -7,16 +7,15 @@ import ch.scorpion.antares.model.module.AntaresModelModule
 import ch.scorpion.jabbah.app.ApplicationDataContentEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.event.MouseEventImpl
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.draw.graphics.Cursor
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.CurrentEditorEvent
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.model.text.ComponentAtLocationTool
+import ch.scorpion.jabbah.edit.tool.InputEventHandlerTool
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 
 interface FSMPanelView : UIView
@@ -34,7 +33,12 @@ class FSMPanelController(
 
     val stateTool = ComponentAtLocationTool(editor, cursor = Cursor.CLICK, factory = this::createFSMState )
 
-    val transitionTool = FSMTransitionTool(editor)
+    val transitionTool = InputEventHandlerTool(
+        FSMTransitionToolHandler.fsmTransitionToolHandler,
+        editor
+    ) {
+        FSMTransitionToolHandler.use(EditInputEventContext(editor, MouseEventImpl()))
+    }
 
     init {
         eventBus.register(ApplicationDataContentEvent::class, applicationDataContentHandler)
