@@ -29,6 +29,7 @@ class FSMState(
 
     companion object {
         private const val DEF_SIZE = Look.SCALE * 10
+        private const val MIN_SIZE = Look.SCALE * 5
         private const val FINAL_INSET = 5
         private const val LABEL_DIST_Y = 5
         private val TYPE = Translations.getString("antares.fsm.state")
@@ -146,9 +147,11 @@ class FSMState(
     }
 
     override fun setFrame(x: Double, y: Double, width: Double, height: Double) {
-        super.setFrame(x, y, width, height)
-        updateOutputLabelLocation()
-        updateStateNumberLabelLocation()
+        if (width >= MIN_SIZE && height >= MIN_SIZE) {
+            super.setFrame(x, y, width, height)
+            updateOutputLabelLocation()
+            updateStateNumberLabelLocation()
+        }
     }
 
     /** ---- [FSMState] */
