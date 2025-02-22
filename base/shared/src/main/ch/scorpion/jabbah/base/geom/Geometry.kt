@@ -88,6 +88,12 @@ object Geometry {
 		y * cos(angle) + x * sin(angle)
 		)
 
+	fun rotateCentered(x: Double, y: Double, center: Point2D, angle: Double): Point2D =
+		center.add(rotate(x - center.x, y - center.y, angle))
+
+	fun rotateCentered(p: Point2D, center: Point2D, angle: Double): Point2D =
+		rotateCentered(p.x, p.y, center, angle)
+
 	fun circleLineIntersection(center: Point2D, r: Double, p: Point2D): Point2D {
 		val angle = angle(center, p)
 		return Point2D(center.x + r * cos(angle), center.y -r * sin(angle))

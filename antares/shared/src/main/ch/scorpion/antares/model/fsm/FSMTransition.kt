@@ -19,6 +19,7 @@ import ch.scorpion.jabbah.edit.model.text.Labeled
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
+import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -40,7 +41,7 @@ class FSMTransition(
 
         private const val CONTAINS_SENSITIVITY = 2.0
 
-        private const val CUBIC_ANGLE = PI_6
+        private const val CUBIC_OPEN_ANGLE = PI_6
 
         private const val CUBIC_SIZE = 3.0
     }
@@ -92,6 +93,9 @@ class FSMTransition(
 
     /** The [Path] representing the quadratic Bézier curve. */
     private var path: Path = System.createPath()
+
+    /** The rotation angle of cubic curves in radians. */
+    private var cubicAngle = -PI * 3 / 2
 
     private val bbox = Rectangle2D()
 
@@ -203,7 +207,7 @@ class FSMTransition(
     private fun updateGeometryImpl(level: Int) {
         if (originState != null && destinationState != null) {
             if (originState === destinationState) {
-                updateCubicGeometry()
+                updateRotatedCubicGeometry()
             } else {
                 updateQuadraticGeometry(level)
             }
@@ -243,15 +247,25 @@ class FSMTransition(
 
     // ---- Cubic curve for A to A transitions
 
-    private fun updateCubicGeometry() {
-        bezierPoint = Point2D(
-            originState!!.center.x + originState!!.radius * CUBIC_SIZE * cos(CUBIC_ANGLE),
-            originState!!.center.y - originState!!.radius * CUBIC_SIZE * sin(CUBIC_ANGLE))
-        bezierPoint2 = Point2D(
-            bezierPoint.x,
-            originState!!.center.y + originState!!.radius * CUBIC_SIZE * sin(CUBIC_ANGLE))
-        originPoint = Geometry.circleLineIntersection(originState!!.center, originState!!.radius, bezierPoint)
-        destinationPoint = Geometry.circleLineIntersection(originState!!.center, originState!!.radius, bezierPoint2)
+    private fun updateRotatedCubicGeometry() {
+        val bezierPointNormal = Point2D(
+            originState!!.center.x + originState!!.radius * CUBIC_SIZE * cos(CUBIC_OPEN_ANGLE),
+            originState!!.center.y - originState!!.radius * CUBIC_SIZE * sin(CUBIC_OPEN_ANGLE))
+        val bezierPoint2Normal = Point2D(
+            originState!!.center.x + originState!!.radius * CUBIC_SIZE * cos(CUBIC_OPEN_ANGLE),
+            originState!!.center.y + originState!!.radius * CUBIC_SIZE * sin(CUBIC_OPEN_ANGLE))
+
+        bezierPoint = Geometry.rotateCentered(bezierPointNormal, originState!!.center, cubicAngle)
+        bezierPoint2 = Geometry.rotateCentered(bezierPoint2Normal, originState!!.center, cubicAngle)
+
+        originPoint = Geometry.rotateCentered(
+            Geometry.circleLineIntersection(originState!!.center, originState!!.radius, bezierPointNormal),
+            originState!!.center,
+            cubicAngle)
+        destinationPoint = Geometry.rotateCentered(
+            Geometry.circleLineIntersection(originState!!.center, originState!!.radius, bezierPoint2Normal),
+            originState!!.center,
+            cubicAngle)
 
         path = System.createPath()
         path.moveTo(originPoint.x, originPoint.y)
@@ -264,6 +278,9 @@ class FSMTransition(
     }
 
     private fun calculateCubicLabelPoint(): Point2D {
-        return Point2D(originState!!.centerX + originState!!.radius * CUBIC_SIZE * 0.707, originState!!.centerY)
+        return Geometry.rotateCentered(
+            Point2D(originState!!.centerX + originState!!.radius * CUBIC_SIZE * 0.707, originState!!.centerY),
+            originState!!.center,
+            cubicAngle)
     }
 }
