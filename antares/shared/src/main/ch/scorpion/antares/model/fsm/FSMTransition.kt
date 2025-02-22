@@ -6,13 +6,10 @@ import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.base.math.PI_6
-import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.DrawableContainer
+import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.polyline.ArrowHead
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.ComponentContainer
-import ch.scorpion.jabbah.edit.Drawing
+import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.Labeled
@@ -21,6 +18,7 @@ import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import kotlin.math.PI
 import kotlin.math.cos
+import kotlin.math.floor
 import kotlin.math.sin
 
 /**
@@ -44,6 +42,8 @@ class FSMTransition(
         private const val CUBIC_OPEN_ANGLE = PI_6
 
         private const val CUBIC_SIZE = 3.0
+
+        private const val CUBIC_ANGLE_STEP = PI / 12
     }
 
     /** The condition in terms of input signals that transitions the system to [destinationState].*/
@@ -95,9 +95,17 @@ class FSMTransition(
     private var path: Path = System.createPath()
 
     /** The rotation angle of cubic curves in radians. */
-    private var cubicAngle = -PI * 3 / 2
+    var cubicAngle = -PI * 3 / 2
+        set(value) {
+            field = value
+            updateGeometry(0)
+        }
 
     private val bbox = Rectangle2D()
+
+    private val handler: InputEventHandler<EditInputEventContext> by lazy { CubicCurveInputHandler() }
+
+    private val isSelfTransition: Boolean get() = origStateId == destinationStateId
 
     /** ---- [AbstractComponent] */
 
@@ -121,6 +129,13 @@ class FSMTransition(
         2 * CONTAINS_SENSITIVITY,
         2 * CONTAINS_SENSITIVITY)
 
+    override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> =
+        if (isSelfTransition) {
+            handler as InputEventHandler<T>
+        } else {
+            super.getInputEventHandler(context)
+        }
+
     /** ---- [Storable] */
 
     override fun write(writer: StoreWriter) {
@@ -133,6 +148,9 @@ class FSMTransition(
         if (StringUtils.isNotBlank(output)) {
             writer.writeString("output", output)
         }
+        if (isSelfTransition) {
+            writer.writeDouble("cubicAngle", cubicAngle)
+        }
     }
 
     override fun read(reader: StoreReader) {
@@ -144,6 +162,9 @@ class FSMTransition(
         }
         if (reader.hasAttribute("output")) {
             output = reader.readString("output")
+        }
+        if (reader.hasAttribute("cubicAngle")) {
+            cubicAngle = reader.readDouble("cubicAngle")
         }
     }
 
@@ -282,5 +303,46 @@ class FSMTransition(
             Point2D(originState!!.centerX + originState!!.radius * CUBIC_SIZE * 0.707, originState!!.centerY),
             originState!!.center,
             cubicAngle)
+    }
+
+    private inner class CubicCurveInputHandler : InputEventHandlerAdapter<EditInputEventContext>() {
+
+        private var oldAngle = 0.0
+        private var pressedLocation: Point2D = Point2D.ZERO
+
+        override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
+            pressedLocation = context.location
+            oldAngle = cubicAngle
+            return this
+        }
+
+        override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
+            val angle = Geometry.angle(originState!!.center, context.location)
+            cubicAngle = -floor(angle / CUBIC_ANGLE_STEP) * CUBIC_ANGLE_STEP
+            return this
+        }
+
+        override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+            context.editor.commandManager.register(RotateSelfTransitionCommand(context.editor, id, oldAngle, cubicAngle))
+            return null
+        }
+    }
+
+    private class RotateSelfTransitionCommand(
+        editor: Editor,
+        val transitionId: Int,
+        val oldAngle: Double,
+        val newAngle: Double
+    ) : AbstractCommand("antares.fsm.transition.rotate.name", editor), Undoable {
+
+        private val transition: FSMTransition get() = editor!!.drawing.getWithId(transitionId) as FSMTransition
+
+        override fun execute() {
+            transition.cubicAngle = newAngle
+        }
+
+        override fun undo() {
+            transition.cubicAngle = oldAngle
+        }
     }
 }
