@@ -78,6 +78,12 @@ class TruthTable(
 		}
 	}
 
+	fun setColumnValue(column: Int, value: Bit) {
+		for (row in 0 until rowsCount) {
+			setValue(row, column, value)
+		}
+	}
+
 	fun getColumnValues(column: Int): List<Bit> =
 		(0 until rowsCount).map { getValue(it, column) }
 

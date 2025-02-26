@@ -14,6 +14,10 @@ class FSMDrawing(
     initialName: TranslatableText = TranslatableText("")
 ): DrawingImpl<Component>(Name(initialName)) {
 
+    val states: Collection<FSMState> get() = drawables.filterIsInstance<FSMState>()
+
+    val transitions: Collection<FSMTransition> get() = drawables.filterIsInstance<FSMTransition>()
+
     /** Used as title in property panel. */
     override fun toString(): String = Translations.getString("library.element.fsm.name")
 }

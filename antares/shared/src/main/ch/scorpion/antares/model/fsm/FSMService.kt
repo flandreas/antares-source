@@ -6,6 +6,8 @@ import kotlin.math.min
 
 interface FSMService {
 
+    fun createState(drawing: Drawing<Component>): FSMState
+
     /** Returns all [FSMTransitions][FSMTransition] that are either outgoing of or incoming to [fsmState]. */
     fun getTransitions(fsmState: FSMState, drawing: Drawing<Component>): List<FSMTransition>
 
@@ -23,6 +25,9 @@ interface FSMService {
 }
 
 class FSMServiceImpl : FSMService {
+
+    override fun createState(drawing: Drawing<Component>): FSMState =
+        FSMState().also { it.stateNumber = freeStateNumber(drawing) }
 
     override fun getTransitions(fsmState: FSMState, drawing: Drawing<Component>): List<FSMTransition> =
         drawing

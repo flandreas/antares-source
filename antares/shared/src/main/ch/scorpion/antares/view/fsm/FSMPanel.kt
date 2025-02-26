@@ -51,8 +51,7 @@ class FSMPanelController(
         eventBus.unregister(applicationDataContentHandler)
     }
 
-    fun createFSMState(): FSMState =
-        FSMState().also { it.stateNumber = service.freeStateNumber(editor.drawing) }
+    fun createFSMState(): FSMState = service.createState(editor.drawing)
 
     private fun handle(event: ApplicationDataContentEvent) {
        setDrawing(event.data.content as FSMDrawing)

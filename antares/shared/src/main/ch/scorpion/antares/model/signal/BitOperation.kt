@@ -264,4 +264,13 @@ object BitOperation {
 	}
 
 	fun longToOctal(value: ULong): String = value.toString(8)
+
+	/** The required number if bits to represent the specified [value]*/
+	fun bitCount(value: ULong): Int {
+		var n = 1
+		while (1UL.shl(n) <= value) {
+			n++
+		}
+		return n
+	}
 }
