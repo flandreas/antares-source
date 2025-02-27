@@ -1,5 +1,6 @@
 package ch.scorpion.antares.model.expression
 
+import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -56,7 +57,11 @@ class BooleanExpressionLibraryItem(
 		}
 	}
 
+	/** ---- [UndoableStateLibraryItem] */
+
 	override fun updateStorable(storable: BooleanExpressionStorable) {
 		this.storable = storable
 	}
+
+	override fun createSavable(): Savable = BooleanExpressionSavable(this)
 }

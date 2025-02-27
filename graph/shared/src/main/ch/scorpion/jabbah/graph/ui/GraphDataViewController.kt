@@ -157,31 +157,32 @@ class GraphDataViewController(
 			e.message!!)
 	}
 
-	/*
-	fun openAsStorable(content: Storable, savable: Savable) {
-		open {
-			ApplicationData(content, savable)
-		}
-	}
-	*/
-
 	/**
 	 * Opens the contents of the general [LibraryItem], which complements the earlier, more specialized version
-	 * for [ContainerLibraryElement]. This method creates a clone of [libraryItem] and uses it in the returned
-	 * [ApplicationData] to be opened as the new [ApplicationData].
-	 *  The [savable] will typically contain the original, not cloned [libraryItem].
+	 * for [ContainerLibraryElement]. This method creates a clone of [libraryItem]'s [Storable] and uses it in the
+	 * returned [ApplicationData] to be opened as the new [ApplicationData].
+	 *  The created [Savable] will typically contain the original, not cloned [libraryItem].
 	 */
-	fun openLibraryItem(libraryItem: LibraryItem, id: String, actionName: String, savable: Savable) {
+	fun openLibraryItem(libraryItem: UndoableStateLibraryItem<*>, id: String, actionName: String) {
 		try {
+			val savable = libraryItem.createSavable()
+
 			LOG.info("Open ${savable::class.simpleName} '${libraryItem.name.value}'")
 			view.registerKeepAliveUsage()
 
 			open {
 				/**
-				 * Create a copy of the [LibraryItem] as part of the [ApplicationData] that can be safely edited
+				 * Create a copy of the [LibraryItem]'s content as part of the [ApplicationData] that can be safely edited
 				 * without corrupting the instance in the [Library].
 				 */
-				ApplicationData(StorableCloner.clone(libraryItem), savable, eventBus)
+				// Fixed bug #888: Don't clone the LibraryItem itself.
+
+				require(libraryItem.storable != null) {
+					// This scenario must rather use openAsSavable()
+					"GraphDataViewControl.openLibraryItem(): storable must not be null"
+				}
+
+				ApplicationData(StorableCloner.clone(libraryItem.storable!!), savable, eventBus)
 			}
 
 		} catch (e: Throwable) {

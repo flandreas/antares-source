@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.dsl.Node
 import ch.scorpion.jabbah.base.dsl.ScriptMetaData
@@ -144,9 +145,13 @@ class ContainerLibraryElement(
 		return instance as GraphElementView<T>
 	}
 
+	/** ---- [UndoableStateLibraryItem] */
+
 	override fun updateStorable(storable: MetaGraph) {
 		uuid = storable.uuid
 		name = Name(storable.translatableName)
 		this.storable = storable
 	}
+
+	override fun createSavable(): Savable = library!!.createSavable(this)
 }

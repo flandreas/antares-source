@@ -41,6 +41,6 @@ class OpenTruthTableAction(
 		super.calculateEnabledness() && selectedItem is TruthTableLibraryItem
 
 	private fun openAsSavable(item: TruthTableLibraryItem) {
-		graphDataViewController.openLibraryItem(item, "-", this.name, TruthTableSavable(item))
+		graphDataViewController.openLibraryItem(item, "-", this.name)
 	}
 }

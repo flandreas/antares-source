@@ -61,7 +61,7 @@ class BooleanExpressionDesktopItemSwing(
 			"${Translations.getString("library.element.booleanExpression.name")} \"${expression.name.getTranslation()}\""
 	}
 
-	private val ref = BooleanExpressionReference(item)
+	private val ref = BooleanExpressionReference(applicationDataHolder.data!!.content as BooleanExpressionStorable)
 
 	private val singleCharIdentifierCheckbox = JCheckBox(
 		Translations.getString("antares.booleanExpression.singleCharIdentifier"),
@@ -98,11 +98,14 @@ class BooleanExpressionDesktopItemSwing(
 
 	private val createCircuitButton = JButton(ActionWrapperSwing(createCircuitAction))
 
-	private val expressions: BooleanExpressionStorable get() = (applicationDataHolder.data!!.content as BooleanExpressionLibraryItem).storable
+	private val expressions: BooleanExpressionStorable get() = applicationDataHolder.data!!.content as BooleanExpressionStorable
 
 	init {
 		buildUI()
 
+		singleCharIdentifierCheckbox.addActionListener {
+			commandManager.execute(BooleanExpressionsSingleCharCommand(ref, singleCharIdentifierCheckbox.isSelected))
+		}
 		setupViewActivationFocusListener()
 
 		ref.addListener {
@@ -123,7 +126,8 @@ class BooleanExpressionDesktopItemSwing(
 
 	override fun createHeaderText(): String = createTitleText(expressions)
 
-	override fun displays(content: Any?): Boolean = content === item
+	override fun displays(content: Any?): Boolean =
+		applicationDataHolder.data?.content is BooleanExpressionStorable && content === ref.expressions
 
 	private fun setupViewActivationFocusListener() {
 		val focusListener = object : FocusListener {
@@ -299,7 +303,7 @@ class BooleanExpressionDesktopItemSwing(
 	}
 
 	private fun applyChanges() {
-		commandManager.execute(BooleanExpressionCommand(ref, expressionsTextArea.text, singleCharIdentifierCheckbox.isSelected))
+		commandManager.execute(BooleanExpressionsCommand(ref, expressionsTextArea.text))
 		applyAction.enabled = false
 	}
 

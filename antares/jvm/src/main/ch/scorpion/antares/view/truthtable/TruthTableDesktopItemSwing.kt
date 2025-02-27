@@ -55,7 +55,7 @@ class TruthTableDesktopItemSwing(
 			"${Translations.getString("library.element.truthTable.name")} \"${truthTable.name.getTranslation()}\""
 	}
 
-	private val ref = TruthTableReference(item)
+	private val ref = TruthTableReference({ applicationDataHolder.data!!.content as TruthTable })
 
 	private val tableView = TruthTableTableView(ref, commandManager)
 
@@ -155,7 +155,8 @@ class TruthTableDesktopItemSwing(
 		ref.dispose()
 	}
 
-	override fun displays(content: Any?): Boolean = content === item
+	override fun displays(content: Any?): Boolean =
+		applicationDataHolder.data?.content is TruthTable && content === ref.truthTable
 
 	/** ---- [TruthTableDesktopItemSwing] */
 
@@ -169,7 +170,7 @@ class TruthTableDesktopItemSwing(
 	private fun createCircuit() {
 		CreateCircuitFromTruthTablePanel.showAsDialog(
 			Frame.getFrames()[0],
-			item.storable,
+			ref.truthTable,
 			item,
 			createCircuitService)
 	}

@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
+import ch.scorpion.jabbah.edit.model.image.ImageIdentification
 import ch.scorpion.jabbah.graph.library.AbstractLibraryItemSavable
 import ch.scorpion.jabbah.io.Storable
 
@@ -32,7 +33,7 @@ class ImageIdentificationSavable(
     }
 
     override fun save(appDataViewController: ApplicationDataViewController): Boolean {
-        imageLibraryElement.updateStorable((appDataViewController.data!!.content as ImageLibraryElement).storable)
+        imageLibraryElement.updateStorable(appDataViewController.data!!.content as ImageIdentification)
         with (item.library!!) {
             libraryService.updateLibraryItem(this, item)
         }
@@ -40,5 +41,5 @@ class ImageIdentificationSavable(
         return true
     }
 
-    override fun getPropertyBean(storable: Storable): Bean = (storable as ImageLibraryElement).storable
+    override fun getPropertyBean(storable: Storable): Bean = storable as ImageIdentification
 }

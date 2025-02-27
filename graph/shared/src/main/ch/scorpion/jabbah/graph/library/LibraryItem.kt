@@ -56,6 +56,11 @@ interface LibraryItem : Storable, Namable {
  */
 interface UndoableStateLibraryItem<T : Storable> : LibraryItem {
 
+	/**
+	 * The editable (undoable) object held by this [LibraryItem].
+	 * Only `null` in cases where the [LibraryItem] holds a ID reference to the actual data,
+	 * and [storable] is lazily initialized.
+	 */
 	val storable: T?
 
 	/**
@@ -63,4 +68,6 @@ interface UndoableStateLibraryItem<T : Storable> : LibraryItem {
 	 * e.g. as a consequence of recovery from an undoable snapshot.
 	 */
 	fun updateStorable(storable: T)
+
+	fun createSavable(): Savable
 }

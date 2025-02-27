@@ -36,11 +36,12 @@ class ImageGraphDesktopItemSwing(
             "${Translations.getString("edit.component.image")} \"${storable.name.getTranslation()}\""
     }
 
-    private val imageIdentification: ImageIdentification get() = (applicationDataHolder.data!!.content as ImageLibraryElement).storable
+    private val imageIdentification: ImageIdentification get() = applicationDataHolder.data!!.content as ImageIdentification
 
     override fun createHeaderText(): String = createTitleText(imageIdentification)
 
-    override fun displays(content: Any?): Boolean = content === element
+    override fun displays(content: Any?): Boolean =
+        applicationDataHolder.data?.content is ImageIdentification && content === imageIdentification
 
     private val imageData = EditModule.imageRepository.getImage(imageIdentification.uuid)
 
