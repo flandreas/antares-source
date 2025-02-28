@@ -91,6 +91,7 @@ class GraphDesktopViewSwing(
 	override fun closeAll() {
 		slaveGraphDesktopViewItems.clear()
 		sidePanel.removeAll()
+		mainDesktopViewItem = null
 		removeAll()
 		revalidate()
 		repaint()
@@ -132,7 +133,9 @@ class GraphDesktopViewSwing(
 		remove(mainSplitPane)
 		mainSplitPane.remove(mainSplitPane)
 		mainSplitPane.remove(sidePanel)
-		add(mainDesktopViewItem as JComponent)
+		if (mainDesktopViewItem != null) {
+			add(mainDesktopViewItem as JComponent)
+		}
 		SwingUtilities.invokeLater { mainDesktopViewItem?.drawingView?.requestFocus() }
 	}
 

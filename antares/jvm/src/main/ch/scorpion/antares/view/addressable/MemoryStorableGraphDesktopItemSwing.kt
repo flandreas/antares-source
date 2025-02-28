@@ -36,17 +36,18 @@ class MemoryStorableGraphDesktopItemSwing(
             "${Translations.getString("library.element.memory.name")} \"${storable.name.getTranslation()}\""
     }
 
-    private val memoryStorable: MemoryStorable get() = (applicationDataHolder.data!!.content as MemoryLibraryItem).storable
+    private val memoryStorable: MemoryStorable get() = applicationDataHolder.data!!.content as MemoryStorable
 
     override fun createHeaderText(): String = createTitleText(memoryStorable)
 
-    override fun displays(content: Any?): Boolean = content == item
+    override fun displays(content: Any?): Boolean =
+        applicationDataHolder.data?.content is MemoryStorable && content === memoryStorable
 
     private class MemoryStorableLink(
         private val applicationDataHolder: ApplicationDataHolder
     ) : ObjectLink<Addressable> {
 
         override fun getLinkedObject(startGraph: Graph?): Addressable =
-            (applicationDataHolder.data!!.content as MemoryLibraryItem).storable
+            applicationDataHolder.data!!.content as MemoryStorable
     }
 }

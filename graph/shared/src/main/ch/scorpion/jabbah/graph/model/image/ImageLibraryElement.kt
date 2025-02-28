@@ -65,6 +65,8 @@ class ImageLibraryElement(
         this.storable = storable
     }
 
+    override fun createSavable(): Savable = ImageIdentificationSavable(this)
+
     /** ---- [Storable] */
 
     override fun write(writer: StoreWriter) {

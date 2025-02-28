@@ -14,10 +14,6 @@ class TruthTableReference(
 	private val truthTableProvider: () -> TruthTable,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) {
-	constructor(
-		item: TruthTableLibraryItem,
-		eventBus: EventBus = BaseModule.eventBus
-	): this({item.storable}, eventBus)
 
 	lateinit var truthTable: TruthTable
 

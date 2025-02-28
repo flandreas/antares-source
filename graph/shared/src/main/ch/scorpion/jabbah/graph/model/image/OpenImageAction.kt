@@ -42,6 +42,6 @@ class OpenImageAction(
         super.calculateEnabledness() && selectedItem is ImageLibraryElement
 
     private fun openAsSavable(element: ImageLibraryElement) {
-        graphDataViewController.openLibraryItem(element, "-", this.name, ImageIdentificationSavable(element))
+        graphDataViewController.openLibraryItem(element, "-", this.name)
     }
 }

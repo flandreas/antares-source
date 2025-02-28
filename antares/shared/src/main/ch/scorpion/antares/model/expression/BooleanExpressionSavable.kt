@@ -36,7 +36,7 @@ class BooleanExpressionSavable(
 	}
 
 	override fun save(appDataViewController: ApplicationDataViewController): Boolean {
-		expressionLibraryItem.updateStorable((appDataViewController.data!!.content as BooleanExpressionLibraryItem).storable)
+		expressionLibraryItem.updateStorable(appDataViewController.data!!.content as BooleanExpressionStorable)
 		with (item.library!!) {
 			libraryService.updateLibraryItem(this, item)
 		}
@@ -44,5 +44,5 @@ class BooleanExpressionSavable(
 		return true
 	}
 
-	override fun getPropertyBean(storable: Storable): Bean = (storable as BooleanExpressionLibraryItem).storable
+	override fun getPropertyBean(storable: Storable): Bean = storable as BooleanExpressionStorable
 }

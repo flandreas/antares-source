@@ -46,9 +46,13 @@ class TruthTableLibraryItem(
 
 	override fun accept(visitor: HierarchyVisitor): Boolean = visitor.visit(this)
 
+	/** ---- [UndoableStateLibraryItem] */
+
 	override fun updateStorable(storable: TruthTable) {
 		this.storable = storable
 	}
+
+	override fun createSavable(): Savable = TruthTableSavable(this)
 
 	/** ---- [Storable] interface */
 
