@@ -1,30 +1,27 @@
 package ch.scorpion.antares.model.expression
 
+import ch.scorpion.jabbah.app.ApplicationData
 import ch.scorpion.jabbah.app.ApplicationDataContentEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 
 class BooleanExpressionReference(
-	private val item: BooleanExpressionLibraryItem,
+	storable: BooleanExpressionStorable,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) {
 
-	var expressions: BooleanExpressionStorable = item.storable
-		set(value) {
+	var expressions: BooleanExpressionStorable = storable
+		private set(value) {
 			field = value
-			item.updateStorable(expressions)
-			BooleanExpressionEvent(this).also { event ->
-				dataListeners.forEach { it.dataChanged(event) }
-			}
+			notifyUpdate()
 		}
 
 	private val dataListeners = mutableListOf<BooleanExpressionListener>()
 
-	private val applicationDataContentHandler: EventHandler<ApplicationDataContentEvent> = { updateReference() }
+	private val applicationDataContentHandler: EventHandler<ApplicationDataContentEvent> = { updateReference(it.data) }
 
 	init {
-		updateReference()
 		eventBus.register(ApplicationDataContentEvent::class, applicationDataContentHandler)
 	}
 
@@ -42,8 +39,24 @@ class BooleanExpressionReference(
 		dataListeners.remove(l)
 	}
 
-	private fun updateReference() {
-		expressions = item.storable
+	fun updateExpressions(e: String) {
+		expressions.expressions = e
+		notifyUpdate()
+	}
+
+	fun updateSingleChar(b: Boolean) {
+		expressions.singleCharIdentifier = b
+		notifyUpdate()
+	}
+
+	private fun updateReference(appData: ApplicationData) {
+		expressions = appData.content as BooleanExpressionStorable
+	}
+
+	private fun notifyUpdate() {
+		BooleanExpressionEvent(this).also { event ->
+			dataListeners.forEach { it.dataChanged(event) }
+		}
 	}
 }
 

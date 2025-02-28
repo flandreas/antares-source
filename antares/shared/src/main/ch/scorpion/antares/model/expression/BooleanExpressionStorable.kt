@@ -14,7 +14,6 @@ class BooleanExpressionStorable(
 ) : AbstractStorable(), Namable, Bean {
 
 	var expressions: String = initialExpression
-		private set
 
 	var singleCharIdentifier: Boolean = singleCharIdentifier
 

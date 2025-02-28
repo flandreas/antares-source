@@ -150,6 +150,17 @@ class BooleanExpressionParserTest {
 		assertNegatedOutput(ast)
 	}
 
+	@Test
+	fun shouldParseOutputWithDigit() {
+		val ast = BooleanExpressionParser(expectAssignment = true, "O2 = A").parse()
+		assertAST(ast, """
+			Compound
+			- =
+			-- O2
+			-- A
+		""".trimIndent())
+	}
+
 	private fun assertConstantsAST(ast: Node) {
 		assertAST(ast, """
 			Compound

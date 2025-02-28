@@ -54,6 +54,8 @@ class MemoryLibraryItem(
         this.storable = storable
     }
 
+    override fun createSavable(): Savable = MemorySavable(this)
+
     /** ---- [Storable] interface */
 
     override fun write(writer: StoreWriter) {

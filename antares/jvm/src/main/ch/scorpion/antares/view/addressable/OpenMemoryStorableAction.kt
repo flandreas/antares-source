@@ -1,7 +1,6 @@
 package ch.scorpion.antares.view.addressable
 
 import ch.scorpion.antares.model.addressable.MemoryLibraryItem
-import ch.scorpion.antares.model.addressable.MemorySavable
 import ch.scorpion.antares.model.addressable.OpenMemoryLibraryItemRequest
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventHandler
@@ -42,6 +41,6 @@ class OpenMemoryStorableAction(
     }
 
     private fun openAsSavable(item: MemoryLibraryItem) {
-        graphDataViewController.openLibraryItem(item, "-", name, MemorySavable(item))
+        graphDataViewController.openLibraryItem(item, "-", name)
     }
 }

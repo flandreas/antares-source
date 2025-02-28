@@ -1,9 +1,12 @@
 package ch.scorpion.antares.view
 
 import ch.scorpion.antares.model.addressable.MemoryLibraryItem
+import ch.scorpion.antares.model.addressable.MemorySavable
 import ch.scorpion.antares.model.expression.BooleanExpressionLibraryItem
+import ch.scorpion.antares.model.expression.BooleanExpressionSavable
 import ch.scorpion.antares.model.fsm.FSMLibraryItem
 import ch.scorpion.antares.model.truthtable.TruthTableLibraryItem
+import ch.scorpion.antares.model.truthtable.TruthTableSavable
 import ch.scorpion.antares.view.addressable.OpenMemoryContentsRequest
 import ch.scorpion.antares.view.app.AntaresGraphViewService
 import ch.scorpion.jabbah.app.ApplicationDataEvent
@@ -13,6 +16,7 @@ import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import ch.scorpion.jabbah.graph.model.image.ImageIdentificationSavable
 import ch.scorpion.jabbah.graph.model.image.ImageLibraryElement
 import ch.scorpion.jabbah.graph.ui.GraphFrame
 import ch.scorpion.jabbah.graph.ui.GraphFrameController
@@ -77,19 +81,19 @@ class AntaresFrameController(
 	}
 
 	private fun handle(event: ApplicationDataEvent) {
-		when (event.newData?.content) {
-			is TruthTableLibraryItem -> handleTruthTableLibraryItem(event.newData!!.content as TruthTableLibraryItem)
-			is BooleanExpressionLibraryItem -> handleBooleanExpressionLibraryItem(event.newData!!.content as BooleanExpressionLibraryItem)
-			is MemoryLibraryItem -> handleMemoryLibraryItem(event.newData!!.content as MemoryLibraryItem)
-			is ImageLibraryElement -> handleImageLibraryElement(event.newData!!.content as ImageLibraryElement)
-			is FSMLibraryItem -> handleFSMLibraryItem(event.newData!!.content as FSMLibraryItem)
+		when (event.newData?.savable) {
+			is TruthTableSavable -> handleTruthTableLibraryItem((event.newData!!.savable as TruthTableSavable).item as TruthTableLibraryItem)
+			is BooleanExpressionSavable -> handleBooleanExpressionLibraryItem((event.newData!!.savable as BooleanExpressionSavable).item as BooleanExpressionLibraryItem)
+			is MemorySavable -> handleMemoryLibraryItem((event.newData!!.savable as MemorySavable).item as MemoryLibraryItem)
+			is ImageIdentificationSavable -> handleImageLibraryElement((event.newData!!.savable as ImageIdentificationSavable).item as ImageLibraryElement)
+            is FSMLibraryItem -> handleFSMLibraryItem(event.newData!!.content as FSMLibraryItem)
 		}
 	}
 
 	private fun handleTruthTableLibraryItem(newItem: TruthTableLibraryItem) {
 		with(graphPanelViewController.desktopController.view) {
 			// Avoid creation of new view in "Close with 'Want to save changes?' = Yes" scenario
-			if (mainDesktopViewItem == null || !mainDesktopViewItem!!.displays(newItem)) {
+			if (mainDesktopViewItem == null || !mainDesktopViewItem!!.displays(newItem.storable)) {
 				LOG.debug("Create new TruthTableDesktopViewItem")
 				graphPanelViewController.desktopController.show(view.createTruthTableDesktopViewItem(newItem))
 			}
@@ -99,7 +103,7 @@ class AntaresFrameController(
 	private fun handleBooleanExpressionLibraryItem(newItem: BooleanExpressionLibraryItem) {
 		with(graphPanelViewController.desktopController.view) {
 			// Avoid creation of new view in "Close with 'Want to save changes?' = Yes" scenario
-			if (mainDesktopViewItem == null || !mainDesktopViewItem!!.displays(newItem)) {
+			if (mainDesktopViewItem == null || !mainDesktopViewItem!!.displays(newItem.storable)) {
 				LOG.debug("Create new BooleanExpressionDesktopViewItem")
 				graphPanelViewController.desktopController.show(view.createBooleanExpressionDesktopViewItem(newItem))
 			}
@@ -118,7 +122,7 @@ class AntaresFrameController(
 	private fun handleMemoryLibraryItem(newItem: MemoryLibraryItem) {
 		with(graphPanelViewController.desktopController.view) {
 			// Avoid creation of new view in "Close with 'Want to save changes?' = Yes" scenario
-			if (mainDesktopViewItem == null || !mainDesktopViewItem!!.displays(newItem)) {
+			if (mainDesktopViewItem == null || !mainDesktopViewItem!!.displays(newItem.storable)) {
 				LOG.debug("Create new MemoryStorableDesktopViewItem")
 				graphPanelViewController.desktopController.show(view.createMemoryStorableGraphDesktopViewItem(newItem))
 			}
@@ -128,7 +132,7 @@ class AntaresFrameController(
 	private fun handleImageLibraryElement(newElement: ImageLibraryElement) {
 		with(graphPanelViewController.desktopController.view) {
 			// Avoid creation of new view in "Close with 'Want to save changes?' = Yes" scenario
-			if (mainDesktopViewItem == null || !mainDesktopViewItem!!.displays(newElement)) {
+			if (mainDesktopViewItem == null || !mainDesktopViewItem!!.displays(newElement.storable)) {
 				LOG.debug("Create new ImageGraphDesktopViewItem")
 				graphPanelViewController.desktopController.show(view.createImageGraphDesktopViewItem(newElement))
 			}

@@ -160,11 +160,13 @@ subprojects {
 					implementation("commons-codec:commons-codec:$commonsCodecVersion")
 					implementation("l2fprod:l2fprod-common-all:$l2fprodVersion")
 					implementation("exml:exml:7.0")
-					implementation("com.formdev:flatlaf:$flatLafVersion")
+					implementation("com.formdev:flatlaf:$flatLafVersion:no-natives")
 					implementation("com.github.weisj:jsvg:$jsvgVersion")
 					implementation("org.drjekyll:fontchooser:2.4")
 					implementation("org.swinglabs.swingx:swingx-all:1.6.5-1")
-					implementation("com.formdev:flatlaf-swingx:$flatLafVersion")
+					implementation("com.formdev:flatlaf-swingx:$flatLafVersion") {
+						exclude("com.formdev", "flatlaf")
+					}
 					implementation("org.apache.xmlgraphics:batik-anim:$batikVersion")
 					implementation("org.apache.xmlgraphics:batik-awt-util:$batikVersion")
 					implementation("org.apache.xmlgraphics:batik-bridge:$batikVersion")

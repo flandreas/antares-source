@@ -24,7 +24,7 @@ class TruthTableSavable(
 	}
 
 	override fun save(appDataViewController: ApplicationDataViewController): Boolean {
-		truthTableLibraryItem.updateStorable((appDataViewController.data!!.content as TruthTableLibraryItem).storable)
+		truthTableLibraryItem.updateStorable((appDataViewController.data!!.content as TruthTable))
 		with (item.library!!) {
 			libraryService.updateLibraryItem(this, item)
 		}
@@ -32,5 +32,5 @@ class TruthTableSavable(
 		return true
 	}
 
-	override fun getPropertyBean(storable: Storable): Bean = (storable as TruthTableLibraryItem).storable
+	override fun getPropertyBean(storable: Storable): Bean = storable as TruthTable
 }
