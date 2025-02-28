@@ -6,6 +6,8 @@ import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
+import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.io.StoreWriter
 
 /**
  * A [Drawing] representing a finite state machine.
@@ -20,4 +22,14 @@ class FSMDrawing(
 
     /** Used as title in property panel. */
     override fun toString(): String = Translations.getString("library.element.fsm.name")
+
+    override fun write(writer: StoreWriter) {
+        super.write(writer)
+        name.write("name", writer)
+    }
+
+    override fun read(reader: StoreReader) {
+        super.read(reader)
+        name = Name.read("name", reader)
+    }
 }

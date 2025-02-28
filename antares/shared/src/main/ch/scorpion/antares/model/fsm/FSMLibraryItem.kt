@@ -1,5 +1,6 @@
 package ch.scorpion.antares.model.fsm
 
+import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
@@ -46,15 +47,17 @@ class FSMLibraryItem(
 
     override fun write(writer: StoreWriter) {
         writer.writeStorable("fsm", storable)
-        name.write("name", writer)
     }
 
     override fun read(reader: StoreReader) {
         storable = reader.readStorable("fsm")
-        storable.name = Name.read("name", reader)
     }
+
+    /** ---- [UndoableStateLibraryItem] */
 
     override fun updateStorable(storable: FSMDrawing) {
         this.storable = storable
     }
+
+    override fun createSavable(): Savable = FSMSavable(this)
 }

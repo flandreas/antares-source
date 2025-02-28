@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.addressable.MemorySavable
 import ch.scorpion.antares.model.expression.BooleanExpressionLibraryItem
 import ch.scorpion.antares.model.expression.BooleanExpressionSavable
 import ch.scorpion.antares.model.fsm.FSMLibraryItem
+import ch.scorpion.antares.model.fsm.FSMSavable
 import ch.scorpion.antares.model.truthtable.TruthTableLibraryItem
 import ch.scorpion.antares.model.truthtable.TruthTableSavable
 import ch.scorpion.antares.view.addressable.OpenMemoryContentsRequest
@@ -86,7 +87,7 @@ class AntaresFrameController(
 			is BooleanExpressionSavable -> handleBooleanExpressionLibraryItem((event.newData!!.savable as BooleanExpressionSavable).item as BooleanExpressionLibraryItem)
 			is MemorySavable -> handleMemoryLibraryItem((event.newData!!.savable as MemorySavable).item as MemoryLibraryItem)
 			is ImageIdentificationSavable -> handleImageLibraryElement((event.newData!!.savable as ImageIdentificationSavable).item as ImageLibraryElement)
-            is FSMLibraryItem -> handleFSMLibraryItem(event.newData!!.content as FSMLibraryItem)
+            is FSMSavable -> handleFSMLibraryItem((event.newData!!.savable as FSMSavable).item as FSMLibraryItem)
 		}
 	}
 

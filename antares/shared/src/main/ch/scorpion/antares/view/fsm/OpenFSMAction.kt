@@ -1,7 +1,6 @@
 package ch.scorpion.antares.view.fsm
 
 import ch.scorpion.antares.model.fsm.FSMLibraryItem
-import ch.scorpion.antares.model.fsm.FSMSavable
 import ch.scorpion.antares.model.fsm.OpenFSMLibraryItemRequest
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventHandler
@@ -39,6 +38,6 @@ class OpenFSMAction(
     }
 
     private fun openAsSavable(item: FSMLibraryItem) {
-        graphDataViewController.openLibraryItem(item, "-", this.name, FSMSavable(item))
+        graphDataViewController.openLibraryItem(item, "-", this.name)
     }
 }

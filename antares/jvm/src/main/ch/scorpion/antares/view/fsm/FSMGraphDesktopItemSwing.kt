@@ -1,17 +1,16 @@
 package ch.scorpion.antares.view.fsm
 
-import ch.scorpion.antares.model.fsm.*
+import ch.scorpion.antares.model.fsm.FSMDrawing
+import ch.scorpion.antares.model.fsm.FSMLibraryItem
 import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.app.ToolBar
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.FocusPanel
-import ch.scorpion.jabbah.edit.model.text.ComponentAtLocationTool
 import ch.scorpion.jabbah.graph.AbstractTitledGraphDesktopViewItemSwing
 import java.awt.BorderLayout
 import javax.swing.JComponent
@@ -34,7 +33,7 @@ class FSMGraphDesktopItemSwing(
             "${Translations.getString("library.element.fsm.name")} \"${fsm.name.getTranslation()}\""
     }
 
-    private val fsm: FSMDrawing get() = (applicationDataHolder.data!!.content as FSMLibraryItem).storable
+    private val fsm: FSMDrawing get() = applicationDataHolder.data!!.content as FSMDrawing
 
     private val controller = FSMPanelController(eventBus = eventBus)
 
@@ -43,7 +42,7 @@ class FSMGraphDesktopItemSwing(
     init {
         controller.view = this
         buildUI(viewManager)
-        controller.setDrawing(item.storable)
+        controller.setDrawing(fsm)
     }
 
     override fun dispose() {
@@ -75,7 +74,8 @@ class FSMGraphDesktopItemSwing(
 
     override fun createHeaderText(): String = createTitleText(fsm)
 
-    override fun displays(content: Any?): Boolean = content === item
+    override fun displays(content: Any?): Boolean =
+        applicationDataHolder.data?.content is FSMDrawing && content === fsm
 
     /** ---- [FSMPanelView] */
 

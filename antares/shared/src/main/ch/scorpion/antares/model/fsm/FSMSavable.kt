@@ -24,7 +24,7 @@ class FSMSavable(
     }
 
     override fun save(appDataViewController: ApplicationDataViewController): Boolean {
-        fsmLibraryItem.updateStorable((appDataViewController.data!!.content as FSMLibraryItem).storable)
+        fsmLibraryItem.updateStorable(appDataViewController.data!!.content as FSMDrawing)
         with (item.library!!) {
             libraryService.updateLibraryItem(this, item)
         }
@@ -32,5 +32,5 @@ class FSMSavable(
         return true
     }
 
-    override fun getPropertyBean(storable: Storable): Bean? = (storable as FSMLibraryItem).storable
+    override fun getPropertyBean(storable: Storable): Bean = storable as FSMDrawing
 }
