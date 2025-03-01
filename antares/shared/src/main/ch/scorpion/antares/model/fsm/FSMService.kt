@@ -11,6 +11,10 @@ interface FSMService {
     /** Returns all [FSMTransitions][FSMTransition] that are either outgoing of or incoming to [fsmState]. */
     fun getTransitions(fsmState: FSMState, drawing: Drawing<Component>): List<FSMTransition>
 
+    fun getState(id: Int, drawing: Drawing<Component>): FSMState
+
+    fun getOutgoingTransitions(fsmState: FSMState, drawing: Drawing<Component>): List<FSMTransition>
+
     fun handleTransitionAdded(fsmTransition: FSMTransition, drawing: Drawing<Component>)
 
     fun handleTransitionRemoved(fsmTransition: FSMTransition, drawing: Drawing<Component>)
@@ -36,6 +40,13 @@ class FSMServiceImpl : FSMService {
             .filter { it.origStateId == fsmState.id || it.destinationStateId == fsmState.id }
             .toList()
 
+    override fun getOutgoingTransitions(fsmState: FSMState, drawing: Drawing<Component>): List<FSMTransition> =
+        drawing
+            .drawables
+            .filterIsInstance<FSMTransition>()
+            .filter { it.origStateId == fsmState.id}
+            .toList()
+
     override fun handleTransitionAdded(fsmTransition: FSMTransition, drawing: Drawing<Component>) {
         handleStateUpdated(getState(min(fsmTransition.origStateId, fsmTransition.destinationStateId), drawing), drawing)
     }
@@ -59,6 +70,9 @@ class FSMServiceImpl : FSMService {
         }
         return number
     }
+
+    override fun getState(id: Int, drawing: Drawing<Component>): FSMState =
+        drawing.getWithId(id) as FSMState
 
     private fun updateGeometry(transitions: List<FSMTransition>) {
         if (transitions.isEmpty()) {
@@ -92,7 +106,4 @@ class FSMServiceImpl : FSMService {
             }
         }
     }
-
-    private fun getState(id: Int, drawing: Drawing<Component>): FSMState =
-        drawing.getWithId(id) as FSMState
 }
