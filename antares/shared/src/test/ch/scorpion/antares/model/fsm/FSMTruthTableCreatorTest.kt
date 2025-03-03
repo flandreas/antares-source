@@ -34,7 +34,7 @@ class FSMTruthTableCreatorTest {
         assertEquals("Z_0^n", truthTable.getColumnName(1))
         assertEquals("Z_1^n", truthTable.getColumnName(0))
 
-        assertEquals(listOf(False, False, False, True, False, True, Error, Error), truthTable.getColumnValues(5))
+        assertEquals(listOf(False, False, False, False, True, True, Error, Error), truthTable.getColumnValues(5))
         assertEquals(listOf(False, True, False, False, False, False, Error, Error), truthTable.getColumnValues(4))
         assertEquals(listOf(False, False, False, True, False, True, Error, Error), truthTable.getColumnValues(3))
         assertEquals(listOf(False, True, False, True, False, True, False, True), truthTable.getColumnValues(2))

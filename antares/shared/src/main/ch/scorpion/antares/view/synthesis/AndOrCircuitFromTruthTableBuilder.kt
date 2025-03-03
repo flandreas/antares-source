@@ -9,11 +9,17 @@ import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.truthtable.TruthTable
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.gate.LogicGateView
+import ch.scorpion.antares.view.net.tunnel.TunnelFlowDirection
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.GraphStorable
+import ch.scorpion.jabbah.graph.model.InputPort
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
+import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.VerticeView
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 
 class AndOrCircuitFromTruthTableBuilder(
 	truthTable: TruthTable,
@@ -40,13 +46,17 @@ class AndOrCircuitFromTruthTableBuilder(
 	)
 
 	private data class OrTermView(
+		val column: Int,
 		val outputName: String,
 		val andTermViews: MutableList<AndTermView> = mutableListOf(),
 		var yPos: Int = 0,
-		var orView: LogicGateView? = null
+		var orView: LogicGateView? = null,
+		var flipFlopView: SubGraphVerticeView<SubGraphVerticeRef>? = null
 	)
 
 	private var andY = AND_Y
+
+	private var clkX = 0
 
 	override fun build() {
 		val orTerms = mutableListOf<OrTermView>()
@@ -79,7 +89,22 @@ class AndOrCircuitFromTruthTableBuilder(
 			buildOrInputWires(it)
 		}
 
+		clkX = x + OUTPUT_DIST_X / 2
 		x += OUTPUT_DIST_X
+
+		if (truthTable.stateColumnCount > 0) {
+
+			orTerms
+				.filter { truthTable.isStateColumn(it.column) }
+				.forEach { buildFlipFlop(it) }
+
+			x += FLIP_FLOP_DIST_X
+
+			buildClkWires(
+				buildClkAndWire(andY),
+				orTerms
+			)
+		}
 
 		orTerms.forEach { buildOutput(it) }
 	}
@@ -87,7 +112,7 @@ class AndOrCircuitFromTruthTableBuilder(
 	private fun createOrTerm(outputColumn: Int): OrTermView {
 		val dnf = dnfs[outputColumn - truthTable.inputColumnCount]
 		val andTerms = DnfToDigitalGateStructure(dnf).build()
-		return OrTermView(truthTable.getColumnName(outputColumn), andTerms.map { AndTermView(it) }.toMutableList())
+		return OrTermView(outputColumn, truthTable.getColumnName(outputColumn), andTerms.map { AndTermView(it) }.toMutableList())
 	}
 
 	private fun buildAndGates(orTerm: OrTermView) {
@@ -195,19 +220,59 @@ class AndOrCircuitFromTruthTableBuilder(
 		}
 	}
 
-	private fun buildOutput(orTerm: OrTermView) {
-		val outputView = circuitBuilder.addOutput(orTerm.outputName, Point2D(x, orTerm.yPos))
+	private fun buildFlipFlop(orTerm: OrTermView) {
+		val ff = circuitBuilder.addDFlipFlop(Point2D(x, orTerm.yPos))
+			?: throw CircuitFromTruthTableBuilderError("antares.fsm.flipFlopNotFound.error")
 
+		connectOutput(orTerm, ff, ff.model.getInput("D"))
+		orTerm.flipFlopView = ff
+	}
+
+	private fun buildOutput(orTerm: OrTermView) {
+		val outputView = if (truthTable.isStateColumn(orTerm.column)) {
+			// Overwrite n+1 output name with name from input Tunnel
+			val name = truthTable.getColumnName(orTerm.column - truthTable.inputColumnCount)
+			circuitBuilder.addTunnel(name, Point2D(x, orTerm.yPos), Direction.EAST, TunnelFlowDirection.In)
+		} else {
+			circuitBuilder.addOutput(orTerm.outputName, Point2D(x, orTerm.yPos))
+		}
+
+		if (orTerm.flipFlopView != null) {
+			circuitBuilder.connect(orTerm.flipFlopView!!, orTerm.flipFlopView!!.model.getOutput("Q"), outputView)
+		} else {
+			connectOutput(orTerm, outputView, outputView.model.getInput())
+		}
+	}
+
+	private fun buildClkAndWire(endY: Int): EdgeView<DigitalSignal> {
+		val clk = circuitBuilder.addInput("CLK", Point2D(clkX, INPUT_Y), Direction.SOUTH)
+		return circuitBuilder.connectOutputOpen(clk, Point2D(clkX, endY))
+	}
+
+	private fun buildClkWires(clkWire: EdgeView<DigitalSignal>, orTerms: List<OrTermView>) {
+		var edgeView = clkWire
+		orTerms
+			.filter { it.flipFlopView != null }
+			.forEach {
+				val clkPortView = it.flipFlopView!!.getPortView<DigitalSignal>(it.flipFlopView!!.model.getPort("C"))!!
+				val p = Point2D(clkX.toDouble(), it.flipFlopView!!.location.y + clkPortView.connectionPoint.y)
+				edgeView = circuitBuilder
+					.split(edgeView, 0, p, clkPortView)
+					.tailEdgeView
+			}
+	}
+
+	private fun connectOutput(orTerm: OrTermView, outputView: VerticeView<*>, outputViewPort: InputPort<DigitalSignal>) {
 		if (orTerm.orView != null) {
 			// Wire from OR gate to GraphOutput
-			circuitBuilder.connect(orTerm.orView!!, outputView)
+			circuitBuilder.connect(orTerm.orView!!, outputView, outputViewPort)
 		} else if (orTerm.andTermViews[0].verticeView != null) {
 			// Wire from AndGateView or Constant to GraphOutput
-			circuitBuilder.connect(orTerm.andTermViews[0].verticeView!!, outputView)
+			circuitBuilder.connect(orTerm.andTermViews[0].verticeView!!, outputView, outputViewPort)
 		} else {
 			// Wire from input wire to GraphOutput
 			val factor = orTerm.andTermViews[0].andTerm.factors[0]
-			splitInputWire(outputView, 1, factor.inputIndex!!, factor.inverted!!)
+			splitInputWire(outputView, outputViewPort.portId, factor.inputIndex!!, factor.inverted!!)
 		}
 	}
 }

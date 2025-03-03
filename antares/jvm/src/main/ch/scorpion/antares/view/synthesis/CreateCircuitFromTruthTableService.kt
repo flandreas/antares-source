@@ -17,7 +17,7 @@ import ch.scorpion.jabbah.graph.library.LibraryItem
 import ch.scorpion.jabbah.graph.library.OpenContainerLibraryElementRequest
 
 /**
- * Service for creating a combinational circuit from a [TruthTable].
+ * Service for creating a combinational or sequential circuit from a [TruthTable].
  */
 class CreateCircuitFromTruthTableService(
 	private val truthTableService: TruthTableService = AntaresModelModule.truthTableService,

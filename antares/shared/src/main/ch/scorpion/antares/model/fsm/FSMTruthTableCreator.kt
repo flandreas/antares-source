@@ -78,8 +78,8 @@ class FSMTruthTableCreator(
         val truthTable = TruthTable(
             fsm.name.getTranslation(),
             inputColumnNames,
-            outputColumnNames
-        )
+            outputColumnNames,
+            stateBits)
 
         // Set "Don't care" on all output column values
         for (i in 0 until outputColumnNames.size) {
@@ -278,7 +278,7 @@ class FSMTruthTableCreator(
     private fun writeTransition(truthTable: TruthTable, from: FSMState, to: FSMState, inputSignal: Int, transition: FSMTransition?) {
         val row = rowOfStateNumber(from.stateNumber) + inputSignal
         writeDestinationStateNumber(truthTable, row, to.stateNumber)
-        writeOutputSignal(truthTable, row, from, parsedStateOutputs[to]!!, parsedTransitions[transition])
+        writeOutputSignal(truthTable, row, from, parsedStateOutputs[from]!!, parsedTransitions[transition])
     }
 
     private fun writeDestinationStateNumber(truthTable: TruthTable, row: Int, stateNumber: Int) {
