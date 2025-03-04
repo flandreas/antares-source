@@ -35,7 +35,11 @@ class CreateCircuitFromTruthTableService(
 		LOG.userTrail("Create Circuit from TruthTable in directory ${item.name.value}")
 
 		val dnfs = truthTableService.generateDnfs(truthTable)
-		val executionScript = createExecutionScript(truthTable, dnfs)
+		val executionScript = if (truthTable.stateColumnCount == 0) {
+			createExecutionScript(truthTable, dnfs)
+		} else {
+			null
+		}
 
 		val metaGraph = createMetaGraph(truthTable, dnfs, circuitName, circuitType, executionScript)
 		with (item.library!!) {
@@ -65,7 +69,7 @@ class CreateCircuitFromTruthTableService(
 		dnfs: List<DNF>,
 		circuitName: String,
 		circuitType: CircuitSynthesisType,
-		executionScript: String
+		executionScript: String?
 	): MetaGraph {
 		val metaGraph = MetaGraph.create(TranslatableText(circuitName), AntaresGraphTypes.Digital)
 		metaGraph.graph.model!!.script = executionScript
