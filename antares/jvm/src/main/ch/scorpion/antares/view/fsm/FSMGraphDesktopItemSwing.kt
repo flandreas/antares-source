@@ -101,7 +101,7 @@ class FSMGraphDesktopItemSwing(
     }
 
     override fun showValidationError(actionName: String, msg: String) {
-        JOptionPane.showConfirmDialog(
+        JOptionPane.showMessageDialog(
             Frame.getFrames()[0],
             msg,
             actionName,

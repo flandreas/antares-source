@@ -101,13 +101,14 @@ class FSMTruthTableCreator(
     }
 
     private fun calculateStateVariableBits(states: Collection<FSMState>): Int {
-        val numbers = setOf<Int>()
+        val numbers = mutableSetOf<Int>()
         var maxNumber = 0
         for (state in states) {
             maxNumber = max(maxNumber, state.stateNumber)
             if (numbers.contains(state.stateNumber)) {
                 exception("antares.fsm.duplicateStateNumber.error", state.stateNumber)
             }
+            numbers.add(state.stateNumber)
         }
         return BitOperation.bitCount(maxNumber.toULong())
     }
