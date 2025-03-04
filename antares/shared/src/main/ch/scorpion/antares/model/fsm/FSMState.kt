@@ -58,6 +58,7 @@ class FSMState(
     /** The unique number of this [FSMState] also used in the generated circuit.*/
     var stateNumber: Int = 0
         set(value) {
+            require(value >= 0) { "State number must not be negative." }
             if (field != value) {
                 field = value
                 updateStateNumberLabel()

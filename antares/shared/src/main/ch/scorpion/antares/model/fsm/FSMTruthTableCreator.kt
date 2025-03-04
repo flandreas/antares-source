@@ -118,6 +118,9 @@ class FSMTruthTableCreator(
         if (initStates.size != 1) {
             exception("antares.fsm.notOneInitState.error", initStates.size)
         }
+        if (initStates.first().stateNumber != 0) {
+            exception("antares.fsm.initStateMustHaveNumber0.error")
+        }
         return initStates.first()
     }
 
