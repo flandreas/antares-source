@@ -130,7 +130,7 @@ class AndOrCircuitFromTruthTableBuilder(
 					andY += constantView.bounds.heightInt + AND_GAP_Y
 				}
 			} else {
-				if (andTermView.andTerm.factors.size > PortCount.values().last().count) {
+				if (andTermView.andTerm.factors.size > PortCount.entries.last().count) {
 					throw CircuitFromTruthTableBuilderError(Translations.getString("antares.synthesis.maxAndInputCountExceeded.error"))
 				}
 				val andGateView = circuitBuilder.addAnd(PortCount.of(andTermView.andTerm.factors.size), Point2D(x, andY))
@@ -155,7 +155,7 @@ class AndOrCircuitFromTruthTableBuilder(
 	}
 
 	private fun buildOrGate(orTerm: OrTermView) {
-		if (orTerm.andTermViews.size > PortCount.values().last().count) {
+		if (orTerm.andTermViews.size > PortCount.entries.last().count) {
 			throw CircuitFromTruthTableBuilderError(Translations.getString("antares.synthesis.maxOrInputCountExceeded.error"))
 		}
 
@@ -245,7 +245,7 @@ class AndOrCircuitFromTruthTableBuilder(
 	}
 
 	private fun buildClkAndWire(endY: Int): EdgeView<DigitalSignal> {
-		val clk = circuitBuilder.addInput("CLK", Point2D(clkX, INPUT_Y), Direction.SOUTH)
+		val clk = circuitBuilder.addInput(calculateClkName(), Point2D(clkX, INPUT_Y), Direction.SOUTH)
 		return circuitBuilder.connectOutputOpen(clk, Point2D(clkX, endY))
 	}
 
@@ -274,5 +274,20 @@ class AndOrCircuitFromTruthTableBuilder(
 			val factor = orTerm.andTermViews[0].andTerm.factors[0]
 			splitInputWire(outputView, outputViewPort.portId, factor.inputIndex!!, factor.inverted!!)
 		}
+	}
+
+	private fun calculateClkName(): String {
+		if (!truthTable.hasName("CLK")) {
+			return "CLK"
+		}
+		if (!truthTable.hasName("C")) {
+			return "C"
+		}
+		var name = "C"
+		var i = 0
+		while (truthTable.hasName(name)) {
+			name = "$name${i++}"
+		}
+		return name
 	}
 }

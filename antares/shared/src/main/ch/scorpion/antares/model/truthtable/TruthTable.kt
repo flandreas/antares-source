@@ -112,6 +112,8 @@ class TruthTable(
 
 	fun hasOutputName(name: String): Boolean = outputColumns.any { it.name == name }
 
+	fun hasName(name: String): Boolean = hasInputName(name) || hasOutputName(name)
+
 	fun getInputColumn(name: String): Int? =
 		inputColumns.indexOfFirstOrNull { it.name == name }
 
