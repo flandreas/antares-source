@@ -24,6 +24,8 @@ class FSMTruthTableCreator(
 
     companion object {
         const val DEF_STATE_VAR = "Z"
+        const val DEF_INPUT_NAME = "I"
+        const val DEF_OUTPUT_NAME = "O"
     }
 
     private val states: Collection<FSMState> = fsm.states
@@ -59,6 +61,9 @@ class FSMTruthTableCreator(
                 .filter { it.inputName != null }
                 .map { it.inputName as String }
                 .toSet())
+        if (inputSignalNames.isEmpty()) {
+            inputSignalNames.add(DEF_INPUT_NAME)
+        }
         inputColumnNames.addAll(getStateInputColumnNames(stateBits))
         inputColumnNames.addAll(inputSignalNames)
 
@@ -72,6 +77,9 @@ class FSMTruthTableCreator(
                 .filter { it.outputName != null && !outputSignalNames.contains(it.outputName) }
                 .map { it.outputName as String }
                 .toSet())
+        if (outputSignalNames.isEmpty()) {
+            outputSignalNames.add(DEF_OUTPUT_NAME)
+        }
         outputColumnNames.addAll(getStateVariableOutputColumns(stateBits))
         outputColumnNames.addAll(outputSignalNames)
 
