@@ -9,6 +9,7 @@ import ch.scorpion.antares.model.truthtable.TruthTable
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.StringUtils.isBlank
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.logger
 import kotlin.math.max
 
 class FSMException(message: String) : Exception(message)
@@ -23,6 +24,8 @@ class FSMTruthTableCreator(
 ) {
 
     companion object {
+        private val LOG by logger(FSMTruthTableCreator::class)
+
         const val DEF_STATE_VAR = "Z"
         const val DEF_INPUT_NAME = "I"
         const val DEF_OUTPUT_NAME = "O"
@@ -209,7 +212,11 @@ class FSMTruthTableCreator(
 
             } catch (e: NumberFormatException) {
                 exception("antares.fsm.invalidTransitionConditionValue.error", getState(t.origStateId).stateNumber)
+            } catch (e: FSMException) {
+                // Validation: re-throw without logging
+                throw e
             } catch (e: Throwable) {
+                LOG.error("Error when creating FSMTruthTable", e)
                 exception("antares.fsm.generalTransitionError.error", getState(t.origStateId).stateNumber)
             }
         }
@@ -290,7 +297,7 @@ class FSMTruthTableCreator(
     private fun writeTransition(truthTable: TruthTable, from: FSMState, to: FSMState, inputSignal: Int, transition: FSMTransition?) {
         val row = rowOfStateNumber(from.stateNumber) + inputSignal
         writeDestinationStateNumber(truthTable, row, to.stateNumber)
-        writeOutputSignal(truthTable, row, from, parsedStateOutputs[from]!!, parsedTransitions[transition])
+        writeOutputSignal(truthTable, row, from, parsedStateOutputs[from], parsedTransitions[transition]!!)
     }
 
     private fun writeDestinationStateNumber(truthTable: TruthTable, row: Int, stateNumber: Int) {
@@ -301,10 +308,10 @@ class FSMTruthTableCreator(
         }
     }
 
-    private fun writeOutputSignal(truthTable: TruthTable, row: Int, from: FSMState, to: ParsedStateOutput, transition: ParsedTransition?) {
+    private fun writeOutputSignal(truthTable: TruthTable, row: Int, from: FSMState, to: ParsedStateOutput?, transition: ParsedTransition) {
         var fromStateColumnId: Int? = null
         var fromStateSignal: Bit? = null
-        if (to.outputValue != null) {
+        if (to?.outputValue != null) {
             fromStateColumnId = if (isBlank(to.outputName)) {
                 truthTable.columnCount - 1
             } else {
@@ -314,7 +321,7 @@ class FSMTruthTableCreator(
         }
         var fromTransitionColumnId: Int? = null
         var fromTransitionSignal: Bit? = null
-        if (transition?.outputValue != null) {
+        if (transition.outputValue != null) {
             fromTransitionColumnId = if (isBlank(transition.outputName)) {
                 truthTable.columnCount - 1
             } else {
@@ -324,12 +331,12 @@ class FSMTruthTableCreator(
         }
 
         if (fromStateColumnId == null && fromTransitionColumnId == null) {
-            exception("antares.fsm.noOutputSignal.error", from.stateNumber, to.state.stateNumber)
+            exception("antares.fsm.noOutputSignal.error", from.stateNumber, getState(transition.transition.destinationStateId).stateNumber)
         }
 
         if (fromStateColumnId == fromTransitionColumnId) {
             if (fromStateSignal != fromTransitionSignal) {
-                exception("antares.fsm.outputSignalConflict.error", from.stateNumber, to.state.stateNumber)
+                exception("antares.fsm.outputSignalConflict.error", from.stateNumber, getState(transition.transition.destinationStateId).stateNumber)
             }
         }
 
