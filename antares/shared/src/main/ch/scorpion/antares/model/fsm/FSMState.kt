@@ -3,11 +3,15 @@ package ch.scorpion.antares.model.fsm
 import ch.scorpion.antares.model.module.AntaresModelModule
 import ch.scorpion.antares.view.Look
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Ellipse2D
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.resettableLazy
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -15,7 +19,9 @@ import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.model.rectangle.RectangularComponent
+import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.Label
+import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.io.Storable
@@ -67,12 +73,32 @@ class FSMState(
 
     private val stateNumberLabel = Label("", font)
 
+    private val tooltip = resettableLazy { buildTooltipText()?.let {
+        Tooltip(it, Rectangle2D(label.boundingBox).moveBy(location))
+    } }
+
     val radius: Double get() = width / 2.0
 
     init {
         updateStateNumberLabel()
         updateOutputLabel()
     }
+
+    /** ---- [Namable] and [Describable] */
+
+    override var name: Name = Name(name)
+        set(value) {
+            field = value
+            label.text = field.getTranslation()
+            tooltip.reset()
+        }
+
+    override var description: Description
+        get() = super.description
+        set(value) {
+            super.description = value
+            tooltip.reset()
+        }
 
     /** ---- [Drawable] */
 
@@ -83,18 +109,15 @@ class FSMState(
         }
     }
 
+    override fun <T : InputEventContext> getTooltip(context: T): Tooltip? =
+        tooltip.value?.also { it.sourceRect = boundingBox }
+
     /** --- [Component] */
 
     override val type: String get() = TYPE
 
     override fun getDeleteBuddies(drawing: Drawing<Component>): List<Component> =
         AntaresModelModule.fsmService.getTransitions(this, drawing as FSMDrawing)
-
-    override var name: Name = Name(name)
-        set(value) {
-            field = value
-            label.text = field.getTranslation()
-        }
 
     override fun beforePaste(drawing: Drawing<Component>) {
         super.beforePaste(drawing)
@@ -200,5 +223,11 @@ class FSMState(
 
     private fun updateStateNumberLabelLocation() {
         stateNumberLabel.location = Point2D(label.location.x, label.location.y - label.font.size / 2 - stateNumberLabel.font.size / 2 - LABEL_DIST_Y)
+    }
+
+    private fun buildTooltipText(): String? = if (description.isNotEmpty) {
+        buildToolTipText(type, description.value, typeDesc)
+    } else {
+        buildToolTipText(type, typeDesc, null)
     }
 }
