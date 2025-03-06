@@ -175,15 +175,17 @@ class ContainerPanelController(
 	}
 
 	private fun handle(event: ApplicationDataContentEvent) {
-		val metaGraph = event.data.content as MetaGraph
-		containerDrawing = metaGraph.containerDrawing
-		setData(
-			metaGraph.graph.graphView,
-			containerDrawing!!,
-			editable,
-			isManualContainer = metaGraph.isManualContainer,
-			applyZoomStrategy = false
-		)
+		if (event.data.content is MetaGraph) {
+			val metaGraph = event.data.content as MetaGraph
+			containerDrawing = metaGraph.containerDrawing
+			setData(
+				metaGraph.graph.graphView,
+				containerDrawing!!,
+				editable,
+				isManualContainer = metaGraph.isManualContainer,
+				applyZoomStrategy = false
+			)
+		}
 	}
 
 	private fun handle(event: CommandEvent) {

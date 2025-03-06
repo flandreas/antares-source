@@ -270,7 +270,9 @@ class GraphPanelViewController(
 	}
 
 	private fun handle(event: ApplicationDataContentEvent) {
-		setApplicationDataContent((event.data.content as MetaGraph?)?.graph?.graphView)
+		if (event.data.content is MetaGraph) {
+			setApplicationDataContent((event.data.content as MetaGraph?)?.graph?.graphView)
+		}
 	}
 
 	/**
