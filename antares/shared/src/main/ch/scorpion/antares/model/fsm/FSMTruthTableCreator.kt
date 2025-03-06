@@ -174,6 +174,9 @@ class FSMTruthTableCreator(
                 if (inputName != null && parsedTransitions.values.any { pt -> pt.inputName == null }) {
                     exception("antares.fsm.inconsistentTransitionConditionNaming.error")
                 }
+                if (inputValue != null && inputValue > 1) {
+                    exception("antares.fsm.valueOutOfRangeInTransition.error", getState(t.origStateId).stateNumber, getState(t.destinationStateId).stateNumber)
+                }
 
                 // ---- Outputs
 
@@ -242,6 +245,9 @@ class FSMTruthTableCreator(
                     else -> {
                         exception("antares.fsm.invalidTransitionOutput.error")
                     }
+                }
+                if (outputValue != null && outputValue > 1) {
+                    exception("antares.fsm.valueOutOfRangeInState.error", state.stateNumber)
                 }
                 parsedStateOutputs[state] = ParsedStateOutput(state, outputName, outputValue)
             }
@@ -322,6 +328,9 @@ class FSMTruthTableCreator(
         var fromTransitionColumnId: Int? = null
         var fromTransitionSignal: Bit? = null
         if (transition.outputValue != null) {
+            if (transition.outputValue > 1) {
+                exception("antares.fsm.valueOutOfRangeInTransition.error", from.stateNumber, getState(transition.transition.destinationStateId).stateNumber)
+            }
             fromTransitionColumnId = if (isBlank(transition.outputName)) {
                 truthTable.columnCount - 1
             } else {
