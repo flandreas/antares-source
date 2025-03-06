@@ -127,7 +127,10 @@ open class EditorImpl(
 
     override fun toolDone() {
         if (!toolLock) {
-            currentTool = selectionTool
+            // Invoke later so that StatusEvent of SelectionTool is the last one
+            System.invokeLater {
+                currentTool = selectionTool
+            }
         }
     }
 

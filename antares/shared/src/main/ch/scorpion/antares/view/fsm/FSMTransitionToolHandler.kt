@@ -2,6 +2,9 @@ package ch.scorpion.antares.view.fsm
 
 import ch.scorpion.antares.model.fsm.FSMState
 import ch.scorpion.antares.model.fsm.FSMTransition
+import ch.scorpion.jabbah.base.Status
+import ch.scorpion.jabbah.base.StatusType
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.state.UnhandledEventBehaviour
 import ch.scorpion.jabbah.base.state.stateMachine
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler
@@ -27,7 +30,10 @@ object FSMTransitionToolHandler {
         stateMachine<EditInputEventContext>(UnhandledEventBehaviour.Unhandled) {
 
             state("sense") {
-                onEntry { it.view.setCursor(Cursor.DEFAULT) }
+                onEntry {
+                    it.view.setCursor(Cursor.DEFAULT)
+                    Status.set(StatusType.Tool, Translations.getString("antares.fsm.transitionTool.sense"))
+                }
                 transitTo("insideOrigin") {
                     given { mouseMoved(it) && insideState(it) }
                 }
@@ -37,6 +43,7 @@ object FSMTransitionToolHandler {
                 onEntry {
                     displayHighlight(it)
                     it.view.setCursor(Cursor.CROSSHAIR)
+                    Status.set(StatusType.Tool, Translations.getString("antares.fsm.transitionTool.insideOrigin"))
                 }
                 transitTo("sense") {
                     given { mouseMoved(it) && !insideState(it) }
@@ -53,10 +60,14 @@ object FSMTransitionToolHandler {
             }
 
             state("drag") {
+                onEntry {
+                    Status.set(StatusType.Tool, Translations.getString("antares.fsm.transitionTool.drag"))
+                }
                 transitTo("sense") {
                     given { mouseLeftReleased(it) }
                     onTransit {
                         hideTransitionGhost(it)
+                        Status.set(StatusType.Tool, null)
                     }
                 }
                 transitTo("insideDestination") {
@@ -74,6 +85,7 @@ object FSMTransitionToolHandler {
                 onEntry {
                     displayHighlight(it)
                     it.view.setCursor(Cursor.CROSSHAIR)
+                    Status.set(StatusType.Tool, Translations.getString("antares.fsm.transitionTool.insideDestination"))
                     transitionGhost!!.destinationState = insideState
                 }
                 transitTo("drag") {

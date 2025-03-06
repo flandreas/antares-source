@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.edit.tool
 
+import ch.scorpion.jabbah.base.Status
+import ch.scorpion.jabbah.base.StatusType
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.event.MouseEvent
 import ch.scorpion.jabbah.draw.InputEventHandler
@@ -16,7 +18,9 @@ class InputEventHandlerTool(
         activateHandler()
     }
 
-    override fun deactivate() {}
+    override fun deactivate() {
+        Status.set(StatusType.Tool, null)
+    }
 
     override fun mouseClicked(e: MouseEvent, x: Double, y: Double) {
         handler.mouseClicked(mouseEventContext(e, x, y))
