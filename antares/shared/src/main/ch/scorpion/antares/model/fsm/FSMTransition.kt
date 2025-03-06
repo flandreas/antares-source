@@ -113,6 +113,12 @@ class FSMTransition(
 
     override var location: Point2D = originPoint
 
+    /**
+     * Copying currently not supported, as it would lead to [FSMTransition] being connected to
+     * origin [FSMState]s rather than the copied [FSMState]s. Can't be fixed easily.
+     */
+    override val copyable: Boolean get() = false
+
     override fun draw(context: DrawContext) {
         context.g.stroke = stroke
         context.g.color = context.choose(color).foregroundColor
