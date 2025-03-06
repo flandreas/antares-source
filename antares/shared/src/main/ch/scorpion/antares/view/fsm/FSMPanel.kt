@@ -8,6 +8,7 @@ import ch.scorpion.antares.model.truthtable.TruthTableLibraryItem
 import ch.scorpion.jabbah.app.ApplicationDataContentEvent
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
@@ -18,6 +19,8 @@ import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.edit.auth.Authorizer
+import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.model.text.ComponentAtLocationTool
 import ch.scorpion.jabbah.edit.model.text.description.Name
@@ -67,6 +70,14 @@ class FSMPanelController(
     init {
         eventBus.register(ApplicationDataContentEvent::class, applicationDataContentHandler)
         eventBus.post(CurrentEditorEvent(editor))
+
+        val editable = Authorizer.isCurrentUserAuthorizedTo(Operation.Change, libraryItem.library!!)
+        editor.view.editable = editable
+
+        System.invokeLater {
+            editor.active = editable
+            createTruthTableAction.enabled = editor.view.editable
+        }
     }
 
     override fun dispose() {
