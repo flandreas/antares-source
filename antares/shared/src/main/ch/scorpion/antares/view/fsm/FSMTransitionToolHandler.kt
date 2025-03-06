@@ -143,5 +143,6 @@ object FSMTransitionToolHandler {
     private fun addTransition(context: EditInputEventContext) {
         val transition = FSMTransition(originState!!.id, insideState!!.id)
         EditModule.drawingAppService.add(transition, context.editor.view)
+        context.editor.toolDone()
     }
 }

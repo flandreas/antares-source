@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.fsm.FSMDrawing
 import ch.scorpion.antares.model.fsm.FSMLibraryItem
 import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.app.ToolBar
+import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
@@ -12,12 +13,14 @@ import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.FocusPanel
+import ch.scorpion.jabbah.edit.editor.EditorImpl
 import ch.scorpion.jabbah.graph.AbstractTitledGraphDesktopViewItemSwing
 import java.awt.BorderLayout
 import java.awt.Frame
 import javax.swing.JComponent
 import javax.swing.JOptionPane
 import javax.swing.JPanel
+import javax.swing.JToggleButton
 
 class FSMGraphDesktopItemSwing(
     item: FSMLibraryItem,
@@ -67,6 +70,9 @@ class FSMGraphDesktopItemSwing(
 
         val toolbar = ToolBar(controller.editor)
         toolbar.addTool(controller.editor.selectionTool, "/img/pointer24.png", Translations.getString("edit.tool.select"))
+        val toolLockButton = JToggleButton(ActionWrapperSwing((controller.editor as EditorImpl).toolLockAction))
+        toolLockButton.text = null
+        toolbar.add(toolLockButton)
         toolbar.addTool(controller.stateTool, "/img/oval24.png", Translations.getString("antares.fsm.state"))
         toolbar.addTool(controller.transitionTool, "/img/polyline24.png", Translations.getString("antares.fsm.transition"))
         toolbar.addGap()

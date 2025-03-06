@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.edit.editor
 
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.draw.DrawableContainerEvent
 import ch.scorpion.jabbah.draw.container.DrawableContainerAdapter
@@ -12,6 +13,7 @@ import ch.scorpion.jabbah.edit.snap.ComponentSnapper
 import ch.scorpion.jabbah.edit.snap.SnapManagerImpl
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.View
+import ch.scorpion.jabbah.edit.tool.ToolLockAction
 
 /**
  * Standard implementation of the [Editor] interface.
@@ -130,6 +132,8 @@ open class EditorImpl(
     }
 
     /** ---- [EditorImpl] */
+
+    val toolLockAction: Action = ToolLockAction(this)
 
     /**
      * Convenience method being automatically called by this [EditorImpl] whenever a [Component] has
