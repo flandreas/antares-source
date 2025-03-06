@@ -14,6 +14,7 @@ class FSMStateBeanInfo : AbstractComponentBeanInfo<FSMState>() {
         private val stateNumber = CommandPropertySwing("stateNumber", "antares.fsm.state.number", Int::class.java, componentBeanProvider)
         private val stateType = CommandPropertySwing("stateType", "antares.fsm.state.type", FSMStateType::class.java, componentBeanProvider)
         private val name = EditProperties.name()
+        private val description = EditProperties.description()
         private val output = CommandPropertySwing("output", "antares.fsm.state.output", String::class.java, componentBeanProvider)
     }
 
@@ -23,5 +24,6 @@ class FSMStateBeanInfo : AbstractComponentBeanInfo<FSMState>() {
         properties.add(stateNumber.bind(editor, beanIdProvider(bean.id)))
         properties.add(name.bind(editor, beanIdProvider(bean.id)))
         properties.add(output.bind(editor, beanIdProvider(bean.id)))
+        properties.add(description.bind(editor, beanIdProvider(bean.id)))
     }
 }

@@ -13,6 +13,9 @@ import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.Labeled
+import ch.scorpion.jabbah.edit.model.text.description.Describable
+import ch.scorpion.jabbah.edit.model.text.description.Description
+import ch.scorpion.jabbah.edit.model.text.description.observableDescription
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -28,7 +31,7 @@ import kotlin.math.sin
 class FSMTransition(
     origStateId: Int = 0,
     destinationStateId: Int = 0
-) : AbstractComponent(), Labeled {
+) : AbstractComponent(), Labeled, Describable {
 
     companion object {
         private val TYPE: String by lazy { Translations.getString("antares.fsm.transition") }
@@ -61,6 +64,8 @@ class FSMTransition(
         }
 
     override val label: Label = Label(condition, font, richText = false, fillBackground = true)
+
+    override var description: Description by observableDescription(Description(""))
 
     /** The arrow head drawn at the [destinationPoint]. */
     private val arrowHead = ArrowHead()
@@ -157,6 +162,7 @@ class FSMTransition(
         if (isSelfTransition) {
             writer.writeDouble("cubicAngle", cubicAngle)
         }
+        description.write("desc", writer)
     }
 
     override fun read(reader: StoreReader) {
@@ -172,6 +178,7 @@ class FSMTransition(
         if (reader.hasAttribute("cubicAngle")) {
             cubicAngle = reader.readDouble("cubicAngle")
         }
+        description = Description.read("desc", reader)
     }
 
     /**
