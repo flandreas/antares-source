@@ -96,6 +96,11 @@ class FSMState(
             label.text = field.getTranslation()
         }
 
+    override fun beforePaste(drawing: Drawing<Component>) {
+        super.beforePaste(drawing)
+        stateNumber = AntaresModelModule.fsmService.freeStateNumber(drawing)
+    }
+
     /** ---- [Storable] */
 
     override fun write(writer: StoreWriter) {
