@@ -39,14 +39,11 @@ class GraphDesktopViewSwing(
 
 	/** ---- [GraphDesktopView] */
 
-	override var mainDesktopViewItem: GraphDesktopViewItem? = null
-		private set
-
 	override fun addGraphDesktopItem(item: GraphDesktopViewItem) {
 		if (slaveGraphDesktopViewItems.isEmpty()) {
-			remove(mainDesktopViewItem!! as JComponent)
+			remove(controller.mainDesktopViewItem!! as JComponent)
 			sidePanel.add(item as JComponent)
-			mainSplitPane.leftComponent = mainDesktopViewItem as JComponent
+			mainSplitPane.leftComponent = controller.mainDesktopViewItem as JComponent
 			mainSplitPane.rightComponent = sidePanel
 			add(mainSplitPane)
 
@@ -82,7 +79,6 @@ class GraphDesktopViewSwing(
 		sidePanel.removeAll()
 		removeAll()
 
-		mainDesktopViewItem = item
 		establishSingleView()
 		revalidate()
 		repaint()
@@ -91,7 +87,6 @@ class GraphDesktopViewSwing(
 	override fun closeAll() {
 		slaveGraphDesktopViewItems.clear()
 		sidePanel.removeAll()
-		mainDesktopViewItem = null
 		removeAll()
 		revalidate()
 		repaint()
@@ -133,16 +128,16 @@ class GraphDesktopViewSwing(
 		remove(mainSplitPane)
 		mainSplitPane.remove(mainSplitPane)
 		mainSplitPane.remove(sidePanel)
-		if (mainDesktopViewItem != null) {
-			add(mainDesktopViewItem as JComponent)
+		if (controller.mainDesktopViewItem != null) {
+			add(controller.mainDesktopViewItem as JComponent)
 		}
-		SwingUtilities.invokeLater { mainDesktopViewItem?.drawingView?.requestFocus() }
+		SwingUtilities.invokeLater { controller.mainDesktopViewItem?.drawingView?.requestFocus() }
 	}
 
 	private fun zoomViews(includeMasterView: Boolean) {
 		SwingUtilities.invokeLater {
 			if (includeMasterView) {
-				mainDesktopViewItem?.drawingView?.navigator?.fitMaxNormal()
+				controller.mainDesktopViewItem?.drawingView?.navigator?.fitMaxNormal()
 			}
 			for (item in slaveGraphDesktopViewItems) {
 				item.drawingView?.navigator?.fitMaxNormal()

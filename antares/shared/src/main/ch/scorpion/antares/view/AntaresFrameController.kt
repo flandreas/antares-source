@@ -92,51 +92,51 @@ class AntaresFrameController(
 	}
 
 	private fun handleTruthTableLibraryItem(newItem: TruthTableLibraryItem) {
-		with(graphPanelViewController.desktopController.view) {
-			// Avoid creation of new view in "Close with 'Want to save changes?' = Yes" scenario
-			if (mainDesktopViewItem == null || !mainDesktopViewItem!!.displays(newItem.storable)) {
-				LOG.debug("Create new TruthTableDesktopViewItem")
-				graphPanelViewController.desktopController.show(view.createTruthTableDesktopViewItem(newItem))
-			}
+		// Avoid creation of new view in "Close with 'Want to save changes?' = Yes" scenario
+		if (graphPanelViewController.desktopController.mainDesktopViewItem == null ||
+			!graphPanelViewController.desktopController.mainDesktopViewItem!!.displays(newItem.storable)
+		) {
+			LOG.debug("Create new TruthTableDesktopViewItem")
+			graphPanelViewController.desktopController.show(view.createTruthTableDesktopViewItem(newItem))
 		}
 	}
 
 	private fun handleBooleanExpressionLibraryItem(newItem: BooleanExpressionLibraryItem) {
-		with(graphPanelViewController.desktopController.view) {
-			// Avoid creation of new view in "Close with 'Want to save changes?' = Yes" scenario
-			if (mainDesktopViewItem == null || !mainDesktopViewItem!!.displays(newItem.storable)) {
-				LOG.debug("Create new BooleanExpressionDesktopViewItem")
-				graphPanelViewController.desktopController.show(view.createBooleanExpressionDesktopViewItem(newItem))
-			}
+		// Avoid creation of new view in "Close with 'Want to save changes?' = Yes" scenario
+		if (graphPanelViewController.desktopController.mainDesktopViewItem == null ||
+			!graphPanelViewController.desktopController.mainDesktopViewItem!!.displays(newItem.storable)
+		) {
+			LOG.debug("Create new BooleanExpressionDesktopViewItem")
+			graphPanelViewController.desktopController.show(view.createBooleanExpressionDesktopViewItem(newItem))
 		}
 	}
 
 	private fun handleFSMLibraryItem(newItem: FSMLibraryItem) {
-		with(graphPanelViewController.desktopController.view) {
-			if (mainDesktopViewItem == null || !mainDesktopViewItem!!.displays(newItem)) {
-				LOG.debug("Create new FSMLibraryItem")
-				graphPanelViewController.desktopController.show(view.createFSMDesktopViewItem(newItem))
-			}
+		if (graphPanelViewController.desktopController.mainDesktopViewItem == null ||
+			!graphPanelViewController.desktopController.mainDesktopViewItem!!.displays(newItem)
+		) {
+			LOG.debug("Create new FSMLibraryItem")
+			graphPanelViewController.desktopController.show(view.createFSMDesktopViewItem(newItem))
 		}
 	}
 
 	private fun handleMemoryLibraryItem(newItem: MemoryLibraryItem) {
-		with(graphPanelViewController.desktopController.view) {
-			// Avoid creation of new view in "Close with 'Want to save changes?' = Yes" scenario
-			if (mainDesktopViewItem == null || !mainDesktopViewItem!!.displays(newItem.storable)) {
-				LOG.debug("Create new MemoryStorableDesktopViewItem")
-				graphPanelViewController.desktopController.show(view.createMemoryStorableGraphDesktopViewItem(newItem))
-			}
+		// Avoid creation of new view in "Close with 'Want to save changes?' = Yes" scenario
+		if (graphPanelViewController.desktopController.mainDesktopViewItem == null ||
+			!graphPanelViewController.desktopController.mainDesktopViewItem!!.displays(newItem.storable)
+		) {
+			LOG.debug("Create new MemoryStorableDesktopViewItem")
+			graphPanelViewController.desktopController.show(view.createMemoryStorableGraphDesktopViewItem(newItem))
 		}
 	}
 
 	private fun handleImageLibraryElement(newElement: ImageLibraryElement) {
-		with(graphPanelViewController.desktopController.view) {
-			// Avoid creation of new view in "Close with 'Want to save changes?' = Yes" scenario
-			if (mainDesktopViewItem == null || !mainDesktopViewItem!!.displays(newElement.storable)) {
-				LOG.debug("Create new ImageGraphDesktopViewItem")
-				graphPanelViewController.desktopController.show(view.createImageGraphDesktopViewItem(newElement))
-			}
+		// Avoid creation of new view in "Close with 'Want to save changes?' = Yes" scenario
+		if (graphPanelViewController.desktopController.mainDesktopViewItem == null ||
+			!graphPanelViewController.desktopController.mainDesktopViewItem!!.displays(newElement.storable)
+		) {
+			LOG.debug("Create new ImageGraphDesktopViewItem")
+			graphPanelViewController.desktopController.show(view.createImageGraphDesktopViewItem(newElement))
 		}
 	}
 
