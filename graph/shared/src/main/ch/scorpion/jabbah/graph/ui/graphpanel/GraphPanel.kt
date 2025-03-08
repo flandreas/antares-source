@@ -82,6 +82,8 @@ data class IssuesSummary(
 interface GraphPanelView : UIView {
 	var issuesSummary: IssuesSummary?
 	val graphEditView: GraphEditView
+
+	fun updateDynamicToolbar()
 }
 
 /**
@@ -173,6 +175,8 @@ class GraphPanelViewController(
 		eventBus.register(IssueCollectorEvent::class, issuesCollectorHandler)
 		eventBus.register(ExecutionStoppedOnIssueEvent::class, executionStoppedOnIssueHandler)
 		eventBus.register(NameChangedEvent::class, containerLibraryElementRenamedHandler)
+
+		desktopController.addPropertyChangeListener { _ -> view.updateDynamicToolbar() }
 	}
 
 	/** ---- [AbstractUIController] */

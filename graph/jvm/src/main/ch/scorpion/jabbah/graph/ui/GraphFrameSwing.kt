@@ -176,7 +176,7 @@ open class GraphFrameSwing(
 		}
 	}
 
-	private fun fillToolbarPanel(toolbars: List<ToolBar>) {
+	private fun fillToolbarPanel(toolbars: List<JComponent>) {
 		toolbarPanel.removeAll()
 		toolbarPanel.add(mainToolBar)
 		toolbars.forEach { toolbarPanel.add(it) }

@@ -4,6 +4,9 @@ import ch.scorpion.jabbah.app.ApplicationDataContentEstablishedEvent
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.event.PropertyChangeEvent
+import ch.scorpion.jabbah.base.event.PropertyOwner
+import ch.scorpion.jabbah.base.event.PropertyOwnerImpl
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -79,16 +82,21 @@ interface GraphDesktopView : UIView {
 class GraphDesktopViewController(
 	val applicationContextHolder: GraphApplicationContextHolder,
 	private val viewManager: ContentViewManager = DrawViewModule.viewManager,
-	private val eventBus: EventBus = BaseModule.eventBus
-) : AbstractUIController<GraphDesktopView>() {
+	private val eventBus: EventBus = BaseModule.eventBus,
+	propertyOwnerImpl: PropertyOwner<Any> = PropertyOwnerImpl(),
+) : AbstractUIController<GraphDesktopView>(), PropertyOwner<Any> by propertyOwnerImpl {
 
 	companion object {
 		private val LOG by logger(GraphDesktopViewController::class)
+
 		private const val REF_COLOR_ALPHA = 144
 
 		private fun displayedReferenceColor(referenceColor: ReferenceColor): CompositeColor {
 			return referenceColor.onBackground.exchange().withAlpha(REF_COLOR_ALPHA)
 		}
+
+		/** The name of [PropertyChangeEvent] sent if [mainDesktopViewItem] changes. */
+		const val PROP_MAIN_DESKTOP_VIEW_ITEM = "mainDesktopViewItem"
 	}
 
 	/**
@@ -123,11 +131,16 @@ class GraphDesktopViewController(
 	private val removeListener = RemoveListener()
 
 	var mainDesktopViewItem: GraphDesktopViewItem? = null
-		private set
+		private set(value) {
+			val oldValue = field
+			field = value
+			fire(PROP_MAIN_DESKTOP_VIEW_ITEM, oldValue, value)
+		}
 
 	val additionalDesktopItems: List<GraphDesktopViewItem> get() = associations.map { it.item }
 
 	init {
+		propertyOwnerImpl.source = this
 		eventBus.register(EditedGraphViewEvent::class, editedGraphViewEventHandler)
 		eventBus.register(GraphDesktopViewItemCloseRequest::class, closeRequestHandler)
 		eventBus.register(OpenSubGraphRequest::class, openRequestHandler)
