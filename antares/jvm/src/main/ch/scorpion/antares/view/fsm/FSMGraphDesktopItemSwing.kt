@@ -15,12 +15,10 @@ import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.FocusPanel
 import ch.scorpion.jabbah.edit.editor.EditorImpl
 import ch.scorpion.jabbah.graph.AbstractTitledGraphDesktopViewItemSwing
+import io.ktor.util.reflect.*
 import java.awt.BorderLayout
 import java.awt.Frame
-import javax.swing.JComponent
-import javax.swing.JOptionPane
-import javax.swing.JPanel
-import javax.swing.JToggleButton
+import javax.swing.*
 
 class FSMGraphDesktopItemSwing(
     item: FSMLibraryItem,
@@ -61,7 +59,7 @@ class FSMGraphDesktopItemSwing(
     override val closeTarget: Any get() = controller.drawingView
 
     private fun buildUI(viewManager: ContentViewManager) {
-        contentPanel.layout = BorderLayout()
+        contentPanel.layout = BorderLayout(5, 5)
         contentPanel.add(
             FocusPanel(
                 controller.drawingView.canvas as JComponent,
@@ -71,6 +69,12 @@ class FSMGraphDesktopItemSwing(
             ),
             BorderLayout.CENTER
         )
+
+        val bottomToolbar = JPanel()
+        bottomToolbar.layout = BoxLayout(bottomToolbar, BoxLayout.LINE_AXIS)
+        bottomToolbar.add(JButton(ActionWrapperSwing(controller.createTruthTableAction)))
+        bottomToolbar.add(Box.createGlue())
+        contentPanel.add(bottomToolbar, BorderLayout.SOUTH)
     }
 
     private fun buildToolbar() {
@@ -84,8 +88,8 @@ class FSMGraphDesktopItemSwing(
         localToolbar.add(toolLockButton)
         localToolbar.addTool(controller.stateTool, "/img/oval24.png", Translations.getString("antares.fsm.state"))
         localToolbar.addTool(controller.transitionTool, "/img/polyline24.png", Translations.getString("antares.fsm.transition"))
-        localToolbar.addGap()
-        localToolbar.addAction(controller.createTruthTableAction)
+        //localToolbar.addGap()
+        //localToolbar.addAction(controller.createTruthTableAction)
     }
 
     /** ---- [AbstractTitledGraphDesktopViewItemSwing] */
