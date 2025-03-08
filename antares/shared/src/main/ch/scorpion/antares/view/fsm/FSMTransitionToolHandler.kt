@@ -5,8 +5,10 @@ import ch.scorpion.antares.model.fsm.FSMTransition
 import ch.scorpion.jabbah.base.Status
 import ch.scorpion.jabbah.base.StatusType
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.state.UnhandledEventBehaviour
 import ch.scorpion.jabbah.base.state.stateMachine
+import ch.scorpion.jabbah.base.state.StateMachine
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseDragged
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeftPressed
@@ -16,7 +18,12 @@ import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.module.EditModule
 
+/**
+ * Provides a [StateMachine] for interactively creating a [FSMTransition].
+ */
 object FSMTransitionToolHandler {
+
+    private val LOG by logger(FSMTransitionToolHandler::class)
 
     private val highlight = FSMStateHighlight()
 

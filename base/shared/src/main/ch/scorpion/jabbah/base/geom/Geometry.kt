@@ -98,4 +98,17 @@ object Geometry {
 		val angle = angle(center, p)
 		return Point2D(center.x + r * cos(angle), center.y -r * sin(angle))
 	}
+
+	/**
+	 * Calculates the distance of [p0] from the line defined by [p1] and [p2].
+	 * The result can be negative, depending on which side of the line [p0] lies.
+	 */
+	fun lineDistance(p1: Point2D, p2: Point2D, p0: Point2D): Double {
+		val divisor = sqrt((p2.y - p1.y).pow(2) + (p2.x - p1.x).pow(2))
+		return if (divisor == 0.0) {
+			0.0
+		} else {
+			((p2.y - p1.y) * p0.x - (p2.x - p1.x) * p0.y + p2.x * p1.y - p2.y * p1.x) / divisor
+		}
+	}
 }

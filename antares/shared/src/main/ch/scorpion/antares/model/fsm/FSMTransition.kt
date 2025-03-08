@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.*
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.math.PI_6
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.polyline.ArrowHead
@@ -16,6 +17,7 @@ import ch.scorpion.jabbah.edit.model.text.Labeled
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.edit.model.text.description.observableDescription
+import ch.scorpion.jabbah.io.Reference
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -26,7 +28,8 @@ import kotlin.math.sin
 
 /**
  * An [FSMTransition] is a transition between two [FSMStates][FSMState], leading from the "origin" state
- * to the "destination" state. Uses a quadratic Bézier curve to draw its shape.
+ * to the "destination" state.
+ * Uses a quadratic Bézier curve to draw its shape. If the transition is to itself, it uses a cubic Bézier curve.
  */
 class FSMTransition(
     origStateId: Int = 0,
@@ -34,6 +37,8 @@ class FSMTransition(
 ) : AbstractComponent(), Labeled, Describable {
 
     companion object {
+        private val LOG by logger(FSMTransition::class)
+
         private val TYPE: String by lazy { Translations.getString("antares.fsm.transition") }
 
         private const val STRETCH = 50.0
@@ -99,8 +104,8 @@ class FSMTransition(
     /** The [Path] representing the quadratic Bézier curve. */
     private var path: Path = System.createPath()
 
-    /** The rotation angle of cubic curves in radians. */
-    var cubicAngle = -PI * 3 / 2
+    /** The rotation angle of cubic curves in radians. Manually set by the user and made persistent. */
+    private var cubicAngle = -PI * 3 / 2
         set(value) {
             field = value
             updateGeometry(0)
@@ -108,9 +113,43 @@ class FSMTransition(
 
     private val bbox = Rectangle2D()
 
-    private val handler: InputEventHandler<EditInputEventContext> by lazy { CubicCurveInputHandler() }
+    private val quadraticHandler: InputEventHandler<EditInputEventContext> by lazy { QuadraticCurveInputHandler() }
+
+    private val cubicHandler: InputEventHandler<EditInputEventContext> by lazy { CubicCurveInputHandler() }
 
     private val isSelfTransition: Boolean get() = origStateId == destinationStateId
+
+    /**
+     * Determines the level of distance between the line connecting the two [FSMState] centers, and the [path]
+     * of this [FSMTransition]. Different levels prevent multiple [FSMTransition]'s between the same two [FSMState]s
+     * from overlapping each other. Can also be manually shaped by the user.
+     */
+    private var level: Double = 0.0
+        set(value) {
+            if (field != value) {
+                if (isReading) {
+                    field = value
+                } else {
+                    invalidate()
+                    field = value
+                    generateQuadraticLayout()
+                    invalidate()
+                    update()
+                }
+            }
+        }
+
+    /**
+     * Set to `true` if the user has manually shaped the Bézier curve by setting [level],
+     * in which case [level] is made persistent. However, if the connected [FSMState] are changed,
+     * the generated layout is used, and [manuallyShaped] is set to `false`.
+     */
+    private var manuallyShaped: Boolean = false
+        set(value) {
+            if (field != value) {
+                field = value
+            }
+        }
 
     /** ---- [AbstractComponent] */
 
@@ -142,44 +181,10 @@ class FSMTransition(
 
     override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> =
         if (isSelfTransition) {
-            handler as InputEventHandler<T>
+            cubicHandler as InputEventHandler<T>
         } else {
-            super.getInputEventHandler(context)
+            quadraticHandler as InputEventHandler<T>
         }
-
-    /** ---- [Storable] */
-
-    override fun write(writer: StoreWriter) {
-        super.write(writer)
-        writer.writeInt("orig", origStateId)
-        writer.writeInt("dest", destinationStateId)
-        if (StringUtils.isNotBlank(condition)) {
-            writer.writeString("condition", condition)
-        }
-        if (StringUtils.isNotBlank(output)) {
-            writer.writeString("output", output)
-        }
-        if (isSelfTransition) {
-            writer.writeDouble("cubicAngle", cubicAngle)
-        }
-        description.write("desc", writer)
-    }
-
-    override fun read(reader: StoreReader) {
-        super.read(reader)
-        origStateId = reader.readInt("orig")
-        destinationStateId = reader.readInt("dest")
-        if (reader.hasAttribute("condition")) {
-            condition = reader.readString("condition")
-        }
-        if (reader.hasAttribute("output")) {
-            output = reader.readString("output")
-        }
-        if (reader.hasAttribute("cubicAngle")) {
-            cubicAngle = reader.readDouble("cubicAngle")
-        }
-        description = Description.read("desc", reader)
-    }
 
     /**
      * [Storable] resolution doesn't work when FSMTransition is cloned during add(), because then
@@ -198,11 +203,66 @@ class FSMTransition(
         AntaresModelModule.fsmService.handleTransitionRemoved(this, container as FSMDrawing)
     }
 
+    /** ---- [Storable] */
+
+    override fun write(writer: StoreWriter) {
+        super.write(writer)
+        writer.writeInt("orig", origStateId)
+        writer.writeInt("dest", destinationStateId)
+        if (StringUtils.isNotBlank(condition)) {
+            writer.writeString("condition", condition)
+        }
+        if (StringUtils.isNotBlank(output)) {
+            writer.writeString("output", output)
+        }
+        if (isSelfTransition) {
+            writer.writeDouble("cubicAngle", cubicAngle)
+        }
+        description.write("desc", writer)
+        if (manuallyShaped) {
+            writer.writeDouble("level", level)
+        }
+    }
+
+    override fun read(reader: StoreReader) {
+        super.read(reader)
+
+        origStateId = reader.readInt("orig")
+        destinationStateId = reader.readInt("dest")
+        if (reader.hasAttribute("condition")) {
+            condition = reader.readString("condition")
+        }
+        if (reader.hasAttribute("output")) {
+            output = reader.readString("output")
+        }
+        if (reader.hasAttribute("cubicAngle")) {
+            cubicAngle = reader.readDouble("cubicAngle")
+        }
+        description = Description.read("desc", reader)
+        if (reader.hasAttribute("level")) {
+            level = reader.readDouble("level")
+            manuallyShaped = true
+        }
+
+        // Dummy request resolution so that allResolutionDone() gets called
+        reader.requestResolution(this, Reference())
+    }
+
+    override fun allResolutionDone() {
+        super.allResolutionDone()
+        if (manuallyShaped) {
+            updateGeometryImpl()
+        }
+    }
+
     /** ---- [FSMTransition] */
 
     fun updateGeometry(level: Int) {
+        if (!manuallyShaped) {
+            this.level = level.toDouble()
+        }
         invalidate()
-        updateGeometryImpl(level)
+        updateGeometryImpl()
         invalidate()
         validate()
     }
@@ -238,42 +298,45 @@ class FSMTransition(
         bbox.add(label.boundingBox)
     }
 
-    private fun updateGeometryImpl(level: Int) {
+    private fun updateGeometryImpl() {
         if (originState != null && destinationState != null) {
             if (originState === destinationState) {
-                updateRotatedCubicGeometry()
+                generateRotatedCubicLayout()
             } else {
-                updateQuadraticGeometry(level)
+                generateQuadraticLayout()
             }
         }
     }
 
     // ---- Quadratic curve for A to B transitions
 
-    private fun updateQuadraticGeometry(level: Int) {
-        val bezier0 = calculateQuadraticBezierPoint(originState!!.center, destinationState!!.center,level)
+    private fun generateQuadraticLayout() {
+        val bezier0 = calculateQuadraticBezierPoint(originState!!.center, destinationState!!.center)
         originPoint = Geometry.circleLineIntersection(originState!!.center, originState!!.radius, bezier0)
         destinationPoint = Geometry.circleLineIntersection(destinationState!!.center, destinationState!!.radius, bezier0)
+        bezierPoint = calculateQuadraticBezierPoint(originPoint, destinationPoint)
 
-        bezierPoint = calculateQuadraticBezierPoint(originPoint, destinationPoint, level)
+        updateQuadraticPath()
+    }
 
+    private fun updateQuadraticPath() {
         path = System.createPath()
         path.moveTo(originPoint.x, originPoint.y)
         path.quadTo(bezierPoint.x, bezierPoint.y, destinationPoint.x, destinationPoint.y)
 
         arrowHead.setLocation(destinationPoint, bezierPoint)
 
-        label.location = calculateQuadraticLabelPoint(level)
+        label.location = calculateQuadraticLabelPoint()
         updateBoundingBox()
     }
 
-    private fun calculateQuadraticBezierPoint(p1: Point2D, p2: Point2D, level: Int): Point2D {
+    private fun calculateQuadraticBezierPoint(p1: Point2D, p2: Point2D): Point2D {
         var middle = Geometry.middle(p1, p2)
         val normal = Vector2D(Geometry.normal(p1, p2)).normalize
         return middle.add(normal.multiply(-level * STRETCH).point)
     }
 
-    private fun calculateQuadraticLabelPoint(level: Int): Point2D {
+    private fun calculateQuadraticLabelPoint(): Point2D {
         val middle = Geometry.middle(originPoint, destinationPoint)
         val normal = Vector2D(Geometry.normal(originPoint, destinationPoint)).normalize
         return middle.add(normal.multiply(-level * STRETCH / 2.0).point)
@@ -281,7 +344,7 @@ class FSMTransition(
 
     // ---- Cubic curve for A to A transitions
 
-    private fun updateRotatedCubicGeometry() {
+    private fun generateRotatedCubicLayout() {
         val bezierPointNormal = Point2D(
             originState!!.center.x + originState!!.radius * CUBIC_SIZE * cos(CUBIC_OPEN_ANGLE),
             originState!!.center.y - originState!!.radius * CUBIC_SIZE * sin(CUBIC_OPEN_ANGLE))
@@ -318,13 +381,49 @@ class FSMTransition(
             cubicAngle)
     }
 
-    private inner class CubicCurveInputHandler : InputEventHandlerAdapter<EditInputEventContext>() {
-
-        private var oldAngle = 0.0
-        private var pressedLocation: Point2D = Point2D.ZERO
+    private open inner class AbstractCurveInputHandler : InputEventHandlerAdapter<EditInputEventContext>() {
+        protected var pressedLocation: Point2D = Point2D.ZERO
 
         override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
             pressedLocation = context.location
+            return this
+        }
+    }
+
+    /** Interactively change [level] to shape the [path] of this [FSMTransition]. */
+    private inner class QuadraticCurveInputHandler : AbstractCurveInputHandler() {
+        private var offset: Point2D = Point2D.ZERO
+        private var oldLevel = 0.0
+
+        override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
+            super.mousePressed(context)
+            offset = pressedLocation.subtract(bezierPoint)
+            oldLevel = level
+            return this
+        }
+
+        override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
+            level = Geometry.lineDistance(originState!!.center, destinationState!!.center, context.location) / STRETCH * 2
+            return this
+        }
+
+        override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+            if (context.location.distance(pressedLocation) >= Editor.DRAG_THRESHOLD) {
+                context.editor.commandManager.execute(ShapeTransitionCommand(context.editor, id, oldLevel, level))
+            } else {
+                level = oldLevel
+            }
+            return null
+        }
+    }
+
+    /** Interactively change [cubicAngle] to rotate a self-transition around its [FSMState]. */
+    private inner class CubicCurveInputHandler : AbstractCurveInputHandler() {
+
+        private var oldAngle = 0.0
+
+        override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
+            super.mousePressed(context)
             oldAngle = cubicAngle
             return this
         }
@@ -356,6 +455,27 @@ class FSMTransition(
 
         override fun undo() {
             transition.cubicAngle = oldAngle
+        }
+    }
+
+    private class ShapeTransitionCommand(
+        editor: Editor,
+        val transitionId: Int,
+        val oldLevel: Double,
+        val level: Double
+    ) : AbstractCommand("antares.fsm.transition.shape.name", editor), Undoable {
+
+        private val transition: FSMTransition get() = editor!!.drawing.getWithId(transitionId) as FSMTransition
+        private val oldManuallyShaped = transition.manuallyShaped
+
+        override fun execute() {
+            transition.level = level
+            transition.manuallyShaped = true
+        }
+
+        override fun undo() {
+            transition.manuallyShaped = oldManuallyShaped
+            transition.level = oldLevel
         }
     }
 }
