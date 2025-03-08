@@ -55,6 +55,8 @@ class FSMGraphDesktopItemSwing(
         canvas.dispose()
     }
 
+    override val closeTarget: Any get() = controller.drawingView
+
     private fun buildUI(viewManager: ContentViewManager) {
         contentPanel.layout = BorderLayout()
 

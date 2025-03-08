@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.UIBasics
+import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.CloseViewRequest
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.edit.DrawingView
@@ -44,6 +45,12 @@ abstract class AbstractTitledGraphDesktopViewItemSwing(
 
     protected abstract fun createHeaderText(): String
 
+    /**
+     * The object referenced by [CloseViewRequest] potentially handled by this object.
+     * Returns typically `this`, but could also be some inner class, such as a [View].
+     */
+    protected open val closeTarget: Any get() = this
+
     init {
         eventBus.register(CloseViewRequest::class, closeViewRequestHandler)
         eventBus.register(NameChangedEvent::class, nameChangedHandler)
@@ -79,7 +86,7 @@ abstract class AbstractTitledGraphDesktopViewItemSwing(
     }
 
     private fun handle(request: CloseViewRequest) {
-        if (request.view === this) {
+        if (request.view === closeTarget) {
             eventBus.postTwoPhase(
                 prepareEvent = GraphDesktopViewItemCloseQuestion(this, isRoot = true),
                 execEvent = GraphDesktopViewItemCloseRequest(this, isRoot = true)
