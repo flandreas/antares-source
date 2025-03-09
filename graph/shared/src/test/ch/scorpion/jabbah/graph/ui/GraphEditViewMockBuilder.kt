@@ -22,6 +22,7 @@ class GraphEditViewMockBuilder(private val controller: GraphEditViewController) 
 
 	private fun withGraphNavigationView(view: GraphNavigationView): GraphEditViewMockBuilder {
 		every { graphEditView.graphNavigationView } returns view
+		every { graphEditView.drawingView } returns view.drawingView
 		controller.graphNavigationViewController.view = view
 		return this
 	}

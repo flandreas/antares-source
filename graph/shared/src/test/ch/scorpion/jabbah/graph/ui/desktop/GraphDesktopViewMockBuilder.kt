@@ -33,7 +33,7 @@ class GraphDesktopViewMockBuilder(private val controller: GraphDesktopViewContro
 	}
 
 	fun withMainViewItem(item: GraphDesktopViewItem): GraphDesktopViewMockBuilder {
-		every { view.mainDesktopViewItem } returns item
+		controller.show(item)
 		return this
 	}
 
