@@ -300,10 +300,16 @@ class FSMTruthTableCreator(
     private fun rowOfStateNumber(stateNumber: Int): Int =
         stateNumber * BitOperation.power(inputSignalNames.size.toByte()).toInt()
 
+    /**
+     * @param transition only `null` for implicit "self" transitions
+     */
     private fun writeTransition(truthTable: TruthTable, from: FSMState, to: FSMState, inputSignal: Int, transition: FSMTransition?) {
         val row = rowOfStateNumber(from.stateNumber) + inputSignal
         writeDestinationStateNumber(truthTable, row, to.stateNumber)
-        writeOutputSignal(truthTable, row, from, parsedStateOutputs[from], parsedTransitions[transition]!!)
+
+        // Caution: The "to" argument intentionally used the "from" state, because the output of the current row of the
+        // truth table represents the output produced in the CURRENT state (which is the "from" state)
+        writeOutputSignal(truthTable, row, from, parsedStateOutputs[from], transition?.let { parsedTransitions[it] })
     }
 
     private fun writeDestinationStateNumber(truthTable: TruthTable, row: Int, stateNumber: Int) {
@@ -314,7 +320,7 @@ class FSMTruthTableCreator(
         }
     }
 
-    private fun writeOutputSignal(truthTable: TruthTable, row: Int, from: FSMState, to: ParsedStateOutput?, transition: ParsedTransition) {
+    private fun writeOutputSignal(truthTable: TruthTable, row: Int, from: FSMState, to: ParsedStateOutput?, transition: ParsedTransition?) {
         var fromStateColumnId: Int? = null
         var fromStateSignal: Bit? = null
         if (to?.outputValue != null) {
@@ -327,7 +333,7 @@ class FSMTruthTableCreator(
         }
         var fromTransitionColumnId: Int? = null
         var fromTransitionSignal: Bit? = null
-        if (transition.outputValue != null) {
+        if (transition?.outputValue != null) {
             if (transition.outputValue > 1) {
                 exception("antares.fsm.valueOutOfRangeInTransition.error", from.stateNumber, getState(transition.transition.destinationStateId).stateNumber)
             }
@@ -340,12 +346,12 @@ class FSMTruthTableCreator(
         }
 
         if (fromStateColumnId == null && fromTransitionColumnId == null) {
-            exception("antares.fsm.noOutputSignal.error", from.stateNumber, getState(transition.transition.destinationStateId).stateNumber)
+            exception("antares.fsm.noOutputSignal.error", from.stateNumber, to?.state?.stateNumber ?: from.stateNumber)
         }
 
         if (fromStateColumnId == fromTransitionColumnId) {
             if (fromStateSignal != fromTransitionSignal) {
-                exception("antares.fsm.outputSignalConflict.error", from.stateNumber, getState(transition.transition.destinationStateId).stateNumber)
+                exception("antares.fsm.outputSignalConflict.error", from.stateNumber, to?.state?.stateNumber ?: from.stateNumber)
             }
         }
 
