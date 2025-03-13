@@ -9,6 +9,7 @@ import ch.scorpion.antares.model.truthtable.TruthTable
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.StringUtils.isBlank
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.dsl.Memory
 import ch.scorpion.jabbah.base.logger
 import kotlin.math.max
 
@@ -20,7 +21,7 @@ class FSMException(message: String) : Exception(message)
 class FSMTruthTableCreator(
     private val fsm: FSMDrawing,
     private val stateVar: String = DEF_STATE_VAR,
-    private val service: FSMService = AntaresModelModule.fsmService
+    private val service: FSMEditorService = AntaresModelModule.fsmEditorService
 ) {
 
     companion object {
@@ -30,6 +31,8 @@ class FSMTruthTableCreator(
         const val DEF_INPUT_NAME = "I"
         const val DEF_OUTPUT_NAME = "O"
     }
+
+    private val memory = Memory()
 
     private val states: Collection<FSMState> = fsm.states
 
@@ -61,8 +64,7 @@ class FSMTruthTableCreator(
     fun create(): TruthTable {
         inputSignalNames.addAll(
             parsedTransitions.values
-                .filter { it.inputName != null }
-                .map { it.inputName as String }
+                .flatMap { it.inputNames }
                 .toSet())
         if (inputSignalNames.isEmpty()) {
             inputSignalNames.add(DEF_INPUT_NAME)
@@ -147,36 +149,33 @@ class FSMTruthTableCreator(
         val parsedTransitions = mutableMapOf<FSMTransition, ParsedTransition>()
         for (t in transitions) {
             try {
+
+                val inputNames: Set<String>
+                val interpreter: FSMTransitionConditionInterpreter
+
                 // ---- Conditions
 
                 if (isBlank(t.condition)) {
                     exception("antares.fsm.emptyTransitionCondition.error", getState(t.origStateId).stateNumber)
                 }
-                var inputName: String? = null
-                var inputValue = 0
-                var terms = t.condition.trim().split("=")
-                when (terms.size) {
-                    1 -> {
-                        inputName = null
-                        inputValue = terms[0].toInt()
-                    }
-                    2 -> {
-                        inputName = terms[0]
-                        inputValue = terms[1].toInt()
-                    }
-                    else -> {
-                        exception("antares.fsm.invalidTransitionCondition.error", getState(t.origStateId).stateNumber)
-                    }
+
+                val result: FSMTransitionConditionParseResult
+
+                try {
+                    result = AntaresModelModule.fsmTransitionService.parseTransitionCondition(t.condition)
+                } catch (e: Throwable) {
+                    exception("antares.fsm.invalidTransitionCondition.error", getState(t.origStateId).stateNumber, e.message ?: "")
                 }
-                if (inputName == null && parsedTransitions.values.any { pt -> pt.inputName != null } ) {
+
+                if (result.variableNames.isEmpty() && parsedTransitions.values.any { pt -> pt.inputNames.isNotEmpty() }) {
                     exception("antares.fsm.inconsistentTransitionConditionNaming.error")
                 }
-                if (inputName != null && parsedTransitions.values.any { pt -> pt.inputName == null }) {
+                if (result.variableNames.isNotEmpty() && parsedTransitions.values.any { t -> t.inputNames.isEmpty() }) {
                     exception("antares.fsm.inconsistentTransitionConditionNaming.error")
                 }
-                if (inputValue != null && inputValue > 1) {
-                    exception("antares.fsm.valueOutOfRangeInTransition.error", getState(t.origStateId).stateNumber, getState(t.destinationStateId).stateNumber)
-                }
+
+                inputNames = result.variableNames
+                interpreter = FSMTransitionConditionInterpreter(result.ast, memory)
 
                 // ---- Outputs
 
@@ -189,7 +188,7 @@ class FSMTruthTableCreator(
                 var outputName: String? = null
                 var outputValue: Int? = null
                 if (StringUtils.isNotBlank(t.output)) {
-                    terms = t.output.trim().split("=")
+                    val terms = t.output.trim().split("=")
                     when (terms.size) {
                         1 -> {
                             outputName = null
@@ -211,7 +210,7 @@ class FSMTruthTableCreator(
                     exception("antares.fsm.inconsistentTransitionOutputNaming.error")
                 }
 
-                parsedTransitions.getOrPut(t) { ParsedTransition(t, inputName, inputValue, outputName, outputValue)}
+                parsedTransitions.getOrPut(t) { ParsedTransition(t, inputNames, interpreter, outputName, outputValue)}
 
             } catch (e: NumberFormatException) {
                 exception("antares.fsm.invalidTransitionConditionValue.error", getState(t.origStateId).stateNumber)
@@ -262,12 +261,10 @@ class FSMTruthTableCreator(
             // Iterate over all input value combinations
             for (inputSignal in 0UL until BitOperation.power(bitWidth.width.toByte())) {
 
-                // Maps an input name to the matching value
-                val inputMap = mutableMapOf<String, Int>()
                 val word = DigitalSignalFactory.of(bitWidth, inputSignal)
                 word.bits.forEachIndexed { index, bit ->
                     val signalName = inputSignalNames.reversed()[index]
-                    inputMap[signalName] = bit.numericalValue
+                    memory.preset(signalName, bit.numericalValue.toLong())
                 }
 
                 // For every input value:
@@ -275,7 +272,7 @@ class FSMTruthTableCreator(
                 var matchingTransition: FSMTransition? = null
                 for (transition in service.getOutgoingTransitions(state, fsm)) {
                     val parsedTransition = parsedTransitions[transition]
-                    val match = parsedTransition?.match(inputMap) ?: false
+                    val match = parsedTransition?.match() ?: false
 
                     // -- If more than one match: Exception
                     if (match) {
@@ -363,7 +360,7 @@ class FSMTruthTableCreator(
         }
     }
 
-    private fun exception(key: String, vararg params: Any) {
+    private fun exception(key: String, vararg params: Any): Nothing {
         throw FSMException(Translations.getString(key, *params))
     }
 
@@ -371,21 +368,30 @@ class FSMTruthTableCreator(
 
     data class ParsedTransition(
         val transition: FSMTransition,
-        val inputName: String? = null,
-        val inputValue: Int,
+        val inputNames: Set<String> = emptySet(),
+        val conditionInterpreter: FSMTransitionConditionInterpreter,
         val outputName: String? = null,
         val outputValue: Int? = null
     ) {
+
         /**
-         * Returns `true` if this [ParsedTransition] is triggered by the specified named values,
-         * i.e. its [inputName] and [inputValue] match the specified inputMap.
+         * Returns `true`if this [ParsedTransition] is triggered by the current values
+         * in the [conditionInterpreter]'s [Memory] (set in calling scope), i.e. if the
+         * expression matches the current input variable values.
          */
-        fun match(inputMap: Map<String, Int>): Boolean {
-            if (inputName == null) {
-                return inputMap.containsValue(inputValue)
+        fun match(): Boolean =
+            if (inputNames.isNotEmpty()) {
+                // If parsing produced variable names, use the interpreter to interpret the expression against the Memory value.
+                conditionInterpreter.interpret(keepMemory = true) == 1L
+            } else {
+                // If parsing didn't produce variable names, the transition condition is an unnamed literal value.
+                // Perform a hand-made comparison of that value against the Memory value.
+                try {
+                    conditionInterpreter.memory.getValue(DEF_INPUT_NAME) == transition.condition.toLong()
+                } catch (e: NumberFormatException) {
+                    false
+                }
             }
-            return inputMap[inputName] == inputValue
-        }
     }
 
     data class ParsedStateOutput(

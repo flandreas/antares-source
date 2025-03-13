@@ -17,7 +17,7 @@ class FSMTruthTableCreatorTest {
         }
     }
 
-    private val service: FSMService get() = AntaresModelModule.fsmService
+    private val service: FSMEditorService get() = AntaresModelModule.fsmEditorService
 
     @Test
     fun shouldCreateMooreTruthTable() {

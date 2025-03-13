@@ -42,7 +42,7 @@ interface FSMPanelView : UIView {
 
 class FSMPanelController(
     private val libraryItem: FSMLibraryItem,
-    private val fsmService: FSMService = AntaresModelModule.fsmService,
+    private val fsmEditorService: FSMEditorService = AntaresModelModule.fsmEditorService,
     private val eventBus: EventBus = BaseModule.eventBus,
 ) : AbstractUIController<FSMPanelView>() {
 
@@ -86,7 +86,7 @@ class FSMPanelController(
         eventBus.unregister(applicationDataContentHandler)
     }
 
-    fun createFSMState(): FSMState = fsmService.createState(editor.drawing as FSMDrawing)
+    fun createFSMState(): FSMState = fsmEditorService.createState(editor.drawing as FSMDrawing)
 
     private fun handle(event: ApplicationDataContentEvent) {
        setDrawing(event.data.content as FSMDrawing)

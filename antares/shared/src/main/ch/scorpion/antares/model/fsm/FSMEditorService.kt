@@ -2,7 +2,10 @@ package ch.scorpion.antares.model.fsm
 
 import kotlin.math.min
 
-interface FSMService {
+/**
+ * A service to support creating and editing [FSMDrawings][FSMDrawing].
+ */
+interface FSMEditorService {
 
     fun createState(drawing: FSMDrawing): FSMState
 
@@ -26,7 +29,7 @@ interface FSMService {
     fun freeStateNumber(drawing: FSMDrawing): Int
 }
 
-class FSMServiceImpl : FSMService {
+class FSMEditorServiceImpl : FSMEditorService {
 
     override fun createState(drawing: FSMDrawing): FSMState =
         FSMState().also { it.stateNumber = freeStateNumber(drawing) }

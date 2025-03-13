@@ -195,12 +195,12 @@ class FSMTransition(
         super.handleAdded(container)
         originState = (container as ComponentContainer).getWithId(origStateId) as? FSMState
         destinationState = container.getWithId(destinationStateId) as? FSMState
-        AntaresModelModule.fsmService.handleTransitionAdded(this, container as FSMDrawing)
+        AntaresModelModule.fsmEditorService.handleTransitionAdded(this, container as FSMDrawing)
     }
 
     override fun <T : Drawable> handleRemoved(container: DrawableContainer<T>) {
         super.handleRemoved(container)
-        AntaresModelModule.fsmService.handleTransitionRemoved(this, container as FSMDrawing)
+        AntaresModelModule.fsmEditorService.handleTransitionRemoved(this, container as FSMDrawing)
     }
 
     /** ---- [Storable] */

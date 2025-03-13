@@ -105,7 +105,7 @@ class FSMState(
     override fun update() {
         super.update()
         parent?.let {
-            AntaresModelModule.fsmService.handleStateUpdated(this, it as FSMDrawing)
+            AntaresModelModule.fsmEditorService.handleStateUpdated(this, it as FSMDrawing)
         }
     }
 
@@ -117,11 +117,11 @@ class FSMState(
     override val type: String get() = TYPE
 
     override fun getDeleteBuddies(drawing: Drawing<Component>): List<Component> =
-        AntaresModelModule.fsmService.getTransitions(this, drawing as FSMDrawing)
+        AntaresModelModule.fsmEditorService.getTransitions(this, drawing as FSMDrawing)
 
     override fun beforePaste(drawing: Drawing<Component>) {
         super.beforePaste(drawing)
-        stateNumber = AntaresModelModule.fsmService.freeStateNumber(drawing as FSMDrawing)
+        stateNumber = AntaresModelModule.fsmEditorService.freeStateNumber(drawing as FSMDrawing)
     }
 
     /** ---- [Storable] */

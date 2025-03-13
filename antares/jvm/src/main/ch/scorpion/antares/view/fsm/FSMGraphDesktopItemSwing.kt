@@ -88,8 +88,6 @@ class FSMGraphDesktopItemSwing(
         localToolbar.add(toolLockButton)
         localToolbar.addTool(controller.stateTool, "/img/oval24.png", Translations.getString("antares.fsm.state"))
         localToolbar.addTool(controller.transitionTool, "/img/polyline24.png", Translations.getString("antares.fsm.transition"))
-        //localToolbar.addGap()
-        //localToolbar.addAction(controller.createTruthTableAction)
     }
 
     /** ---- [AbstractTitledGraphDesktopViewItemSwing] */
@@ -127,7 +125,4 @@ class FSMGraphDesktopItemSwing(
             JOptionPane.ERROR_MESSAGE
         )
     }
-
-    /** ---- [FSMGraphDesktopItemSwing] */
-
 }

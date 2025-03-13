@@ -57,7 +57,8 @@ object AntaresModelModule : AbstractModule() {
 	val booleanExpressionService = BooleanExpressionService()
 	val circuitAnalysisService = CircuitAnalysisService()
 	val testcaseAppService = TestcaseAppService()
-	val fsmService: FSMService = FSMServiceImpl()
+	val fsmEditorService: FSMEditorService = FSMEditorServiceImpl()
+	val fsmTransitionService: FSMTransitionService = FSMTransitionServiceImpl()
 
 	override fun initialize() {
 		customizeProperties(BaseModule.properties)
