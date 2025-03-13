@@ -76,7 +76,8 @@ class FSMTruthTableCreator(
             parsedTransitions.values
                 .filter { it.outputName != null }
                 .map { it.outputName as String }
-                .toSet())
+                .toSet()
+                .sortedDescending())
         outputSignalNames.addAll(
             parsedStateOutputs.values
                 .filter { it.outputName != null && !outputSignalNames.contains(it.outputName) }
@@ -335,7 +336,7 @@ class FSMTruthTableCreator(
             fromTransitionColumnId = if (isBlank(transition.outputName)) {
                 truthTable.columnCount - 1
             } else {
-                truthTable.columnCount - outputSignalNames.indexOf(transition.outputName) - 1
+                truthTable.inputColumnCount + truthTable.stateColumnCount + outputSignalNames.indexOf(transition.outputName)
             }
             fromTransitionSignal = Bit.of(transition.outputValue)
         }
