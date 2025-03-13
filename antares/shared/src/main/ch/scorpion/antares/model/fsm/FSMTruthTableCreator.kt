@@ -179,9 +179,6 @@ class FSMTruthTableCreator(
 
                 // ---- Outputs
 
-                if (isBlank(t.output) && isBlank(getState(t.origStateId).output)) {
-                    exception("antares.fsm.missingOutputInTransition.error", getState(t.origStateId).stateNumber)
-                }
                 if (!isBlank(t.output) && !isBlank(getState(t.origStateId).output)) {
                     exception("antares.fsm.outputInTransitionAndState.error", getState(t.origStateId).stateNumber)
                 }
@@ -206,11 +203,12 @@ class FSMTruthTableCreator(
                 if (outputValue != null && outputName == null && parsedTransitions.values.any { pt -> pt.outputName != null }) {
                     exception("antares.fsm.inconsistentTransitionOutputNaming.error")
                 }
-                if (outputValue != null && outputName != null && parsedTransitions.values.any { pt -> pt.outputName == null }) {
+                val unnamedOutput = parsedTransitions.values.firstOrNull { pt -> pt.outputValue != null && pt.outputName == null }
+                if (outputValue != null && outputName != null && unnamedOutput != null) {
                     exception("antares.fsm.inconsistentTransitionOutputNaming.error")
                 }
 
-                parsedTransitions.getOrPut(t) { ParsedTransition(t, inputNames, interpreter, outputName, outputValue)}
+                parsedTransitions.getOrPut(t) { ParsedTransition(t, inputNames, interpreter, outputName, outputValue) }
 
             } catch (e: NumberFormatException) {
                 exception("antares.fsm.invalidTransitionConditionValue.error", getState(t.origStateId).stateNumber)
@@ -342,14 +340,15 @@ class FSMTruthTableCreator(
             fromTransitionSignal = Bit.of(transition.outputValue)
         }
 
-        if (fromStateColumnId == null && fromTransitionColumnId == null) {
-            exception("antares.fsm.noOutputSignal.error", from.stateNumber, to.stateNumber)
-        }
-
         if (fromStateColumnId == fromTransitionColumnId) {
             if (fromStateSignal != fromTransitionSignal) {
                 exception("antares.fsm.outputSignalConflict.error", from.stateNumber, to.stateNumber)
             }
+        }
+
+        // Set fallback default value
+        for (column in truthTable.columnCount - outputSignalNames.size  until truthTable.columnCount) {
+            truthTable.setValue(row, column, Bit.False)
         }
 
         if (fromStateColumnId != null) {

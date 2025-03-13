@@ -21,23 +21,37 @@ class FSMTruthTableCreatorTest {
 
     @Test
     fun shouldCreateMooreTruthTable() {
-        val fsm = createMooreFSMDrawing(useNames = true)
+        val fsm = createMooreFSMDrawing(useNames = true, produceOutputs = true)
         val truthTable = FSMTruthTableCreator(fsm).create()
         assertMooreStateMachine(truthTable)
     }
 
     @Test
     fun shouldCreateMooreTruthTableWithUnnamedExpressions() {
-        val fsm = createMooreFSMDrawing(useNames = false)
+        val fsm = createMooreFSMDrawing(useNames = false, produceOutputs = true)
         val truthTable = FSMTruthTableCreator(fsm).create()
         assertMooreStateMachine(truthTable)
     }
 
     @Test
+    fun shouldCreateMooreTruthTableWithDefaultOutput() {
+        val fsm = createMooreFSMDrawing(useNames = false, produceOutputs = false)
+        val truthTable = FSMTruthTableCreator(fsm).create()
+        assertMooreStateMachine(truthTable, produceOutputs = false)
+    }
+
+    @Test
     fun shouldCreateMealyTruthTable() {
-        val fsm = createMealyFSMDrawing()
+        val fsm = createMealyFSMDrawing(produceOutputs = true)
         val truthTable = FSMTruthTableCreator(fsm).create()
         assertMealyStateMachine(truthTable)
+    }
+
+    @Test
+    fun shouldCreateMealyTruthTableWithDefaultOutput() {
+        val fsm = createMealyFSMDrawing(produceOutputs = false)
+        val truthTable = FSMTruthTableCreator(fsm).create()
+        assertMealyStateMachine(truthTable, produceOutputs = false)
     }
 
     private fun assertColumnNames(truthTable: TruthTable) {
@@ -52,9 +66,13 @@ class FSMTruthTableCreatorTest {
         assertEquals("Z_1^n", truthTable.getColumnName(0))
     }
 
-    private fun assertMooreStateMachine(truthTable: TruthTable) {
+    private fun assertMooreStateMachine(truthTable: TruthTable, produceOutputs: Boolean = true) {
         assertColumnNames(truthTable)
-        assertEquals(listOf(False, False, False, False, True, True, Error, Error), truthTable.getColumnValues(5))
+        if (produceOutputs) {
+            assertEquals(listOf(False, False, False, False, True, True, Error, Error), truthTable.getColumnValues(5))
+        } else {
+            assertEquals(listOf(False, False, False, False, False, False, Error, Error), truthTable.getColumnValues(5))
+        }
         assertEquals(listOf(False, True, False, False, False, False, Error, Error), truthTable.getColumnValues(4))
         assertEquals(listOf(False, False, False, True, False, True, Error, Error), truthTable.getColumnValues(3))
         assertEquals(listOf(False, True, False, True, False, True, False, True), truthTable.getColumnValues(2))
@@ -62,9 +80,13 @@ class FSMTruthTableCreatorTest {
         assertEquals(listOf(False, False, False, False, True, True, True, True), truthTable.getColumnValues(0))
     }
 
-    private fun assertMealyStateMachine(truthTable: TruthTable) {
+    private fun assertMealyStateMachine(truthTable: TruthTable, produceOutputs: Boolean = true) {
         assertColumnNames(truthTable)
-        assertEquals(listOf(False, False, False, True, False, True, Error, Error), truthTable.getColumnValues(5))
+        if (produceOutputs) {
+            assertEquals(listOf(False, False, False, True, False, True, Error, Error), truthTable.getColumnValues(5))
+        } else {
+            assertEquals(listOf(False, False, False, False, False, False, Error, Error), truthTable.getColumnValues(5))
+        }
         assertEquals(listOf(False, True, False, False, False, False, Error, Error), truthTable.getColumnValues(4))
         assertEquals(listOf(False, False, False, True, False, True, Error, Error), truthTable.getColumnValues(3))
         assertEquals(listOf(False, True, False, True, False, True, False, True), truthTable.getColumnValues(2))
@@ -72,28 +94,34 @@ class FSMTruthTableCreatorTest {
         assertEquals(listOf(False, False, False, False, True, True, True, True), truthTable.getColumnValues(0))
     }
 
-    private fun createMooreFSMDrawing(useNames: Boolean): FSMDrawing {
+    private fun createMooreFSMDrawing(useNames: Boolean, produceOutputs: Boolean): FSMDrawing {
         val fsm = FSMDrawing()
 
         val sx = service.createState(fsm).also {
             it.stateType = FSMStateType.Initial
             it.name = Name("SX")
             it.stateNumber = 0
-            it.output = if (useNames) "O=0" else "0"
+            if (produceOutputs) {
+                it.output = if (useNames) "O=0" else "0"
+            }
             it.location = Point2D(100, 100)
             fsm.add(it)
         }
         val s1 = service.createState(fsm).also {
             it.name = Name("S1")
             it.stateNumber = 1
-            it.output = if (useNames) "O=0" else "0"
+            if (produceOutputs) {
+                it.output = if (useNames) "O=0" else "0"
+            }
             it.location = Point2D(200, 200)
             fsm.add(it)
         }
         val s11 = service.createState(fsm).also {
             it.name = Name("S11")
             it.stateNumber = 2
-            it.output = if (useNames) "O=1" else "1"
+            if (produceOutputs) {
+                it.output = if (useNames) "O=1" else "1"
+            }
             it.location = Point2D(200, 100)
             fsm.add(it)
         }
@@ -126,7 +154,7 @@ class FSMTruthTableCreatorTest {
         return fsm
     }
 
-    private fun createMealyFSMDrawing(): FSMDrawing {
+    private fun createMealyFSMDrawing(produceOutputs: Boolean): FSMDrawing {
         val useNames = true
         val fsm = FSMDrawing()
 
@@ -152,32 +180,44 @@ class FSMTruthTableCreatorTest {
 
         FSMTransition(sx.id, sx.id).also {
             it.condition = if (useNames) "I=0" else "0"
-            it.output = if (useNames) "O=0" else "0"
+            if (produceOutputs) {
+                it.output = if (useNames) "O=0" else "0"
+            }
             fsm.add(it)
         }
         FSMTransition(sx.id, s1.id).also {
             it.condition = if (useNames) "I=1" else "1"
-            it.output = if (useNames) "O=0" else "0"
+            if (produceOutputs) {
+                it.output = if (useNames) "O=0" else "0"
+            }
             fsm.add(it)
         }
         FSMTransition(s1.id, sx.id).also {
             it.condition = if (useNames) "I=0" else "0"
-            it.output = if (useNames) "O=0" else "0"
+            if (produceOutputs) {
+                it.output = if (useNames) "O=0" else "0"
+            }
             fsm.add(it)
         }
         FSMTransition(s1.id, s11.id).also {
             it.condition = if (useNames) "I=1" else "1"
-            it.output = if (useNames) "O=1" else "1"
+            if (produceOutputs) {
+                it.output = if (useNames) "O=1" else "1"
+            }
             fsm.add(it)
         }
         FSMTransition(s11.id, s11.id).also {
             it.condition = if (useNames) "I=1" else "1"
-            it.output = if (useNames) "O=1" else "1"
+            if (produceOutputs) {
+                it.output = if (useNames) "O=1" else "1"
+            }
             fsm.add(it)
         }
         FSMTransition(s11.id, sx.id).also {
             it.condition = if (useNames) "I=0" else "0"
-            it.output = if (useNames) "O=0" else "0"
+            if (produceOutputs) {
+                it.output = if (useNames) "O=0" else "0"
+            }
             fsm.add(it)
         }
 
