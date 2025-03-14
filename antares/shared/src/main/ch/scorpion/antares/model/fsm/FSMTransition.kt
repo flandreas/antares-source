@@ -209,7 +209,9 @@ class FSMTransition(
         super.handleAdded(container)
         originState = (container as ComponentContainer).getWithId(origStateId) as? FSMState
         destinationState = container.getWithId(destinationStateId) as? FSMState
-        AntaresModelModule.fsmEditorService.handleTransitionAdded(this, container as FSMDrawing)
+        if (originState != null && destinationState != null) {
+            AntaresModelModule.fsmEditorService.handleTransitionAdded(this, container as FSMDrawing)
+        }
     }
 
     override fun <T : Drawable> handleRemoved(container: DrawableContainer<T>) {
@@ -264,8 +266,14 @@ class FSMTransition(
 
     override fun allResolutionDone() {
         super.allResolutionDone()
-        if (manuallyShaped) {
-            updateGeometryImpl()
+
+        /**
+         * This is necessary here because if the [FSMTransition] comes in the [FSMDrawing] BEFORE the references
+         * [FMSStates][FSMState], the references cannot be resolved during resolution (which does Container.add()).
+         * This is e.g. the case if the stacking order was changed.
+         */
+        if (parent != null) {
+            handleAdded(parent!!)
         }
     }
 
