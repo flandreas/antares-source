@@ -1,7 +1,9 @@
 package ch.scorpion.antares.view.fsm
 
+import ch.scorpion.antares.model.fsm.FSMDrawing
 import ch.scorpion.antares.model.fsm.FSMState
 import ch.scorpion.antares.model.fsm.FSMTransition
+import ch.scorpion.antares.model.module.AntaresModelModule
 import ch.scorpion.jabbah.base.Status
 import ch.scorpion.jabbah.base.StatusType
 import ch.scorpion.jabbah.base.Translations
@@ -160,7 +162,16 @@ object FSMTransitionToolHandler {
     }
 
     private fun addTransition(context: EditInputEventContext) {
-        val transition = FSMTransition(originState!!.id, insideState!!.id)
+        val transition = if (originState!!.id == insideState!!.id) {
+            FSMTransition(
+                originState!!.id, insideState!!.id,
+                AntaresModelModule.fsmEditorService.optimalSelfTransitionAngle(
+                    originState!!,
+                    context.drawingView.drawing as FSMDrawing)
+            )
+        } else {
+            FSMTransition(originState!!.id, insideState!!.id)
+        }
         EditModule.drawingAppService.add(transition, context.editor.view)
         context.editor.toolDone()
     }

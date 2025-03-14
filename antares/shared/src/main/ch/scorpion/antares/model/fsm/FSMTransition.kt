@@ -30,10 +30,13 @@ import kotlin.math.sin
  * An [FSMTransition] is a transition between two [FSMStates][FSMState], leading from the "origin" state
  * to the "destination" state.
  * Uses a quadratic Bézier curve to draw its shape. If the transition is to itself, it uses a cubic Bézier curve.
+ *
+ * @param cubicAngle the angle of placement in case this [FSMTransition] is a self-transition
  */
 class FSMTransition(
     origStateId: Int = 0,
-    destinationStateId: Int = 0
+    destinationStateId: Int = 0,
+    cubicAngle: Double = DEF_SELF_TRANSITION_ANGLE
 ) : AbstractComponent(), Labeled, Describable {
 
     companion object {
@@ -52,6 +55,8 @@ class FSMTransition(
         private const val CUBIC_SIZE = 3.0
 
         private const val CUBIC_ANGLE_STEP = PI / 12
+
+        const val DEF_SELF_TRANSITION_ANGLE = -PI * 3 / 2
     }
 
     /** The condition in terms of input signals that transitions the system to [destinationState].*/
@@ -67,6 +72,8 @@ class FSMTransition(
             field = value
             updateLabel()
         }
+
+    val isSelfTransition: Boolean get() = origStateId == destinationStateId
 
     override val label: Label = Label(condition, font, richText = false, fillBackground = true)
 
@@ -90,10 +97,12 @@ class FSMTransition(
     private var destinationState: FSMState? = null
 
     /** The point on the origin's [FSMState] circle where the Bézier curve starts.*/
-    private var originPoint: Point2D = Point2D.ZERO
+    var originPoint: Point2D = Point2D.ZERO
+        private set
 
     /** The point on the destination's [FSMState] circle where the Bézier curve ends.*/
-    private var destinationPoint: Point2D = Point2D.ZERO
+    var destinationPoint: Point2D = Point2D.ZERO
+        private set
 
     /** The intermediate "control" point of the Bézier curve.*/
     private var bezierPoint: Point2D = Point2D.ZERO
@@ -104,8 +113,11 @@ class FSMTransition(
     /** The [Path] representing the quadratic Bézier curve. */
     private var path: Path = System.createPath()
 
-    /** The rotation angle of cubic curves in radians. Manually set by the user and made persistent. */
-    private var cubicAngle = -PI * 3 / 2
+    /**
+     * The rotation angle of cubic curves in radians. Manually set by the user and made persistent.
+     * The value is in the range -0.0 ... -2*PI (always negative).
+     */
+    private var cubicAngle = cubicAngle
         set(value) {
             if (field != value) {
                 field = value
@@ -120,8 +132,6 @@ class FSMTransition(
     private val quadraticHandler: InputEventHandler<EditInputEventContext> by lazy { QuadraticCurveInputHandler() }
 
     private val cubicHandler: InputEventHandler<EditInputEventContext> by lazy { CubicCurveInputHandler() }
-
-    private val isSelfTransition: Boolean get() = origStateId == destinationStateId
 
     /**
      * Determines the level of distance between the line connecting the two [FSMState] centers, and the [path]
@@ -281,6 +291,15 @@ class FSMTransition(
             destinationState!!
         } else {
             originState!!
+        }
+
+    fun getConnectionPoint(state: FSMState): Point2D? =
+        if (state === originState) {
+            originPoint
+        } else if (state === destinationState) {
+            destinationPoint
+        } else {
+            null
         }
 
     private fun updateLabel() {

@@ -1,5 +1,7 @@
 package ch.scorpion.antares.model.fsm
 
+import ch.scorpion.jabbah.base.geom.Geometry
+import kotlin.math.PI
 import kotlin.math.min
 
 /**
@@ -27,6 +29,13 @@ interface FSMEditorService {
     fun handleStateUpdated(fsmState: FSMState, drawing: FSMDrawing)
 
     fun freeStateNumber(drawing: FSMDrawing): Int
+
+    /**
+     * Determines the optimal angle (in radians) for a new self-transition on [state].
+     * Considers all [FSMTransitions][FSMTransition] connected to [state], and finds an angle in
+     * the region with the most free space.
+     */
+    fun optimalSelfTransitionAngle(state: FSMState, drawing: FSMDrawing): Double
 }
 
 class FSMEditorServiceImpl : FSMEditorService {
@@ -106,5 +115,46 @@ class FSMEditorServiceImpl : FSMEditorService {
                 factor = 1
             }
         }
+    }
+
+    override fun optimalSelfTransitionAngle(state: FSMState, drawing: FSMDrawing): Double {
+        val angles = collectAngles(state, drawing).sorted()
+        if (angles.isEmpty()) {
+            return FSMTransition.DEF_SELF_TRANSITION_ANGLE
+        }
+        if (angles.size == 1) {
+            return -(angles[0] - PI)
+        }
+
+        var maxRange = 0.0
+        var range0 = 0.0
+        for (i in angles.indices) {
+            val range = if (i < angles.indices.last) {
+                angles[i + 1] - angles[i]
+            } else {
+                // wrap around 0 angle
+                2 * PI + angles[0] - angles[i]
+            }
+            if (range > maxRange) {
+                range0 = angles[i]
+                maxRange = range
+            }
+        }
+
+        return -(range0 + maxRange / 2)
+    }
+
+    private fun collectAngles(state: FSMState, drawing: FSMDrawing): List<Double> {
+        val result = mutableListOf<Double>()
+        getTransitions(state, drawing).forEach { t ->
+            if (t.isSelfTransition) {
+                result.add(Geometry.angle(state.center, t.originPoint))
+            } else {
+                t.getConnectionPoint(state)?.let { cp ->
+                    result.add(Geometry.angle(state.center, cp))
+                }
+            }
+        }
+        return result;
     }
 }
