@@ -75,7 +75,7 @@ abstract class AbstractTitledGraphDesktopViewItemSwing(
 
     override fun findContent(condition: (DrawingViewContent<GraphView>) -> Boolean): DrawingViewContent<*>? = null
 
-    override fun createCloseRequest(): Any = CloseViewRequest(this)
+    override fun createCloseRequest(): Any = CloseViewRequest(closeTarget)
 
     /** ---- [AbstractTitledGraphDesktopViewItemSwing] */
 

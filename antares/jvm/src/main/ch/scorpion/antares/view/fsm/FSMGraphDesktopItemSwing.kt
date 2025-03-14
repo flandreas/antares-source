@@ -15,7 +15,6 @@ import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.FocusPanel
 import ch.scorpion.jabbah.edit.editor.EditorImpl
 import ch.scorpion.jabbah.graph.AbstractTitledGraphDesktopViewItemSwing
-import io.ktor.util.reflect.*
 import java.awt.BorderLayout
 import java.awt.Frame
 import javax.swing.*
