@@ -105,9 +105,9 @@ object FSMTransitionToolHandler {
                 transitTo("sense") {
                     given { mouseLeftReleased(it) }
                     onTransit {
+                        hideTransitionGhost(it)
                         addTransition(it)
                         hideHighlightedState(it)
-                        hideTransitionGhost(it)
                     }
                 }
             }

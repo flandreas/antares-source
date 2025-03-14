@@ -107,8 +107,12 @@ class FSMTransition(
     /** The rotation angle of cubic curves in radians. Manually set by the user and made persistent. */
     private var cubicAngle = -PI * 3 / 2
         set(value) {
-            field = value
-            updateGeometry(0)
+            if (field != value) {
+                field = value
+                if (!isReading) {
+                    updateGeometry(0)
+                }
+            }
         }
 
     private val bbox = Rectangle2D()
@@ -258,7 +262,7 @@ class FSMTransition(
     /** ---- [FSMTransition] */
 
     fun updateGeometry(level: Int) {
-        if (!manuallyShaped) {
+        if (!manuallyShaped && !isSelfTransition) {
             this.level = level.toDouble()
         }
         invalidate()
