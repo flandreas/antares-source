@@ -8,15 +8,19 @@ import ch.scorpion.jabbah.base.Status
 import ch.scorpion.jabbah.base.StatusType
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.state.StateMachine
 import ch.scorpion.jabbah.base.state.UnhandledEventBehaviour
 import ch.scorpion.jabbah.base.state.stateMachine
-import ch.scorpion.jabbah.base.state.StateMachine
+import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.DrawableContainer
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseDragged
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeftPressed
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeftReleased
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseMoved
 import ch.scorpion.jabbah.draw.graphics.Cursor
+import ch.scorpion.jabbah.edit.CommandEvent
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.module.EditModule
 
@@ -34,6 +38,9 @@ object FSMTransitionToolHandler {
     private var originState: FSMState? = null
 
     private var transitionGhost: TransitionGhost? = null
+
+    /** The [DrawableContainer] where [transitionGhost] has been added. */
+    private var transitionGhostContainer: DrawableContainer<Drawable>? = null
 
     val fsmTransitionToolHandler = StateMachineInputEventHandler(
         stateMachine<EditInputEventContext>(UnhandledEventBehaviour.Unhandled) {
@@ -75,7 +82,7 @@ object FSMTransitionToolHandler {
                 transitTo("sense") {
                     given { mouseLeftReleased(it) }
                     onTransit {
-                        hideTransitionGhost(it)
+                        hideTransitionGhost()
                         Status.set(StatusType.Tool, null)
                     }
                 }
@@ -107,7 +114,7 @@ object FSMTransitionToolHandler {
                 transitTo("sense") {
                     given { mouseLeftReleased(it) }
                     onTransit {
-                        hideTransitionGhost(it)
+                        hideTransitionGhost()
                         addTransition(it)
                         hideHighlightedState(it)
                     }
@@ -115,6 +122,10 @@ object FSMTransitionToolHandler {
             }
         }
     )
+
+    init {
+        BaseModule.eventBus.register(CommandEvent::class) { hideTransitionGhost() }
+    }
 
     fun use(context: EditInputEventContext) {
         reset()
@@ -149,15 +160,17 @@ object FSMTransitionToolHandler {
 
     private fun displayTransitionGhost(context: EditInputEventContext) {
         transitionGhost = TransitionGhost(originState!!)
-        context.editor.view.animationContainer.add(transitionGhost!!)
+        transitionGhostContainer = context.editor.view.animationContainer
+        transitionGhostContainer!!.add(transitionGhost!!)
         transitionGhost!!.validate()
     }
 
-    private fun hideTransitionGhost(context: EditInputEventContext) {
-        if (transitionGhost != null) {
-            context.editor.view.animationContainer.remove(transitionGhost!!)
-            context.editor.view.drawing.validate()
+    private fun hideTransitionGhost() {
+        if (transitionGhost != null && transitionGhostContainer != null) {
+            transitionGhostContainer!!.remove(transitionGhost!!)
+            transitionGhostContainer!!.validate()
             transitionGhost = null
+            transitionGhostContainer = null
         }
     }
 
