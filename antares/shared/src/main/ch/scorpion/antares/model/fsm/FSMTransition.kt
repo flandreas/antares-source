@@ -466,7 +466,9 @@ class FSMTransition(
         }
 
         override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-            context.editor.commandManager.register(RotateSelfTransitionCommand(context.editor, id, oldAngle, cubicAngle))
+            if (cubicAngle != oldAngle) {
+                context.editor.commandManager.register(RotateSelfTransitionCommand(context.editor, id, oldAngle, cubicAngle))
+            }
             return null
         }
     }
