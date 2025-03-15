@@ -52,7 +52,7 @@ class FSMPanelController(
 
     private val applicationDataContentHandler: EventHandler<ApplicationDataContentEvent> = { handle(it) }
 
-    val drawingView: DrawingView<FSMDrawing> = DrawingViewImpl(FSMDrawing())
+    val drawingView: DrawingView<FSMDrawing> = DrawingViewImpl(FSMDrawing(), displayGlobalMessages = true)
 
     val editor = EditEditorModule.createEditor(drawingView as DrawingView<Drawing<Component>>)
 
