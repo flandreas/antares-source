@@ -20,7 +20,15 @@ class NewNamePanel(
 ) : JPanel() {
 
     companion object {
-        fun showAsDialog(title: String, parent: Frame): String? {
+
+        /**
+         * Display the [NewNamePanel] as a modal dialog with OK and Cancel button.
+         * @return the entered name, or `null` if the user cancelled the dialog
+         */
+        fun showAsDialog(
+            title: String,
+            parent: Frame = Frame.getFrames()[0]
+        ): String? {
             val builder = DialogBuilder<NewNamePanel>(parent)
                 .content { dialog -> NewNamePanel { dialog.dispose() } }
                 .title(title)
@@ -77,6 +85,12 @@ class NewNamePanel(
         buttonPanel.add(Box.createHorizontalGlue())
         UIBasics.addButtons(buttonPanel, okButton, createButton(cancelAction))
 
+        val iconPanel = JPanel()
+        iconPanel.layout = BoxLayout(iconPanel, BoxLayout.PAGE_AXIS)
+        iconPanel.add(JLabel(UIManager.getIcon("OptionPane.questionIcon")), BorderLayout.WEST)
+        iconPanel.add(Box.createGlue())
+
+        add(iconPanel, BorderLayout.WEST)
         add(contentPanel, BorderLayout.CENTER)
         add(buttonPanel, BorderLayout.SOUTH)
     }
