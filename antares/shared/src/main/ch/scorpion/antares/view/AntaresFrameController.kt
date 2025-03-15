@@ -113,7 +113,7 @@ class AntaresFrameController(
 
 	private fun handleFSMLibraryItem(newItem: FSMLibraryItem) {
 		if (graphPanelViewController.desktopController.mainDesktopViewItem == null ||
-			!graphPanelViewController.desktopController.mainDesktopViewItem!!.displays(newItem)
+			!graphPanelViewController.desktopController.mainDesktopViewItem!!.displays(newItem.storable)
 		) {
 			LOG.debug("Create new FSMLibraryItem")
 			graphPanelViewController.desktopController.show(view.createFSMDesktopViewItem(newItem))
