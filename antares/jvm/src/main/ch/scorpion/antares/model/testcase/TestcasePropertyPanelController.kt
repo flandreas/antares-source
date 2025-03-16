@@ -11,7 +11,7 @@ interface TestcasePropertyPanel : PropertyPanel
 
 class TestcasePropertyPanelController(
 	editor: Editor,
-	private val eventBus: EventBus = BaseModule.eventBus
+	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractPropertyPanelController<TestcasePropertyPanel>(editor) {
 
 	private val testcaseSelectionHandler: EventHandler<TestcaseSelectionEvent> = { bean = it.testcase }

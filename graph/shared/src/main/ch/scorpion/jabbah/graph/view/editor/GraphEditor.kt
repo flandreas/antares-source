@@ -24,8 +24,9 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
  */
 class GraphEditor(
     view: DrawingView<Drawing<Component>>,
+    name: String,
     private val eventBus: EventBus = BaseModule.eventBus
-) : EditorImpl(view) {
+) : EditorImpl(view, name = name) {
 
     private val containerLibraryElementRenamedHandler: EventHandler<NameChangedEvent> = { handle(it) }
 

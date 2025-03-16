@@ -18,7 +18,7 @@ abstract class AbstractInputEventHandlerTest(
 	protected val builder: GraphViewBuilder<Boolean> = GraphViewBuilder(),
 	private val viewMock: DrawingViewMockBuilder = DrawingViewMockBuilder()
 ): InputEventDriver(
-	EditEditorModule.createEditor(viewMock.withDrawing(builder.build()).build()),
+	EditEditorModule.createEditor("", viewMock.withDrawing(builder.build()).build()),
 	handler
 ) {
 	protected val draggedEdgeView get() = builder.graphView.getEdgeViews().first()

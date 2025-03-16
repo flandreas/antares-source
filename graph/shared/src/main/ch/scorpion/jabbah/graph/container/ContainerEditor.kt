@@ -25,7 +25,7 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 open class ContainerEditor(
 	view: DrawingView<Drawing<Component>>,
 	protected val eventBus: EventBus = BaseModule.eventBus
-) : EditorImpl(view) {
+) : EditorImpl(view, name = "containerEditor") {
 
 	companion object {
 		private val LOG by logger(ContainerEditor::class)

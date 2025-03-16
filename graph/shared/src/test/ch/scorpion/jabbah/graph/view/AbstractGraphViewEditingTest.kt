@@ -32,7 +32,7 @@ abstract class AbstractGraphViewEditingTest(
 	}
 	protected val view = EditModule.drawingViewFactory.create(builder.graphView as Drawing<Component>, null, false)
 		as DrawingView<GraphView>
-	protected val editor: Editor = EditEditorModule.createEditor(view as DrawingView<Drawing<Component>>)
+	protected val editor: Editor = EditEditorModule.createEditor("", view as DrawingView<Drawing<Component>>)
 	protected val driver = EditorToolDriver(editor)
 	protected val service = GraphViewModule.graphViewAppService
 

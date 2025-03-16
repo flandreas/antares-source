@@ -17,7 +17,7 @@ interface ScenarioPropertyPanel : PropertyPanel
  */
 class ScenarioPropertyPanelController(
 	editor: Editor,
-	private val eventBus: EventBus = BaseModule.eventBus
+	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractPropertyPanelController<ScenarioPropertyPanel>(editor) {
 
 	private val scenarioSelectionHandler: EventHandler<ScenarioSelectionEvent> = {

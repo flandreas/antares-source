@@ -26,6 +26,7 @@ import ch.scorpion.jabbah.edit.model.text.ComponentAtLocationTool
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.edit.tool.InputEventHandlerTool
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
+import ch.scorpion.jabbah.graph.ui.GraphFrameController
 
 interface FSMPanelView : UIView {
 
@@ -54,7 +55,7 @@ class FSMPanelController(
 
     val drawingView: DrawingView<FSMDrawing> = DrawingViewImpl(FSMDrawing(), displayGlobalMessages = true)
 
-    val editor = EditEditorModule.createEditor(drawingView as DrawingView<Drawing<Component>>)
+    val editor = EditEditorModule.createEditor(GraphFrameController.MAIN_EDITOR_NAME, drawingView as DrawingView<Drawing<Component>>)
 
     val stateTool = ComponentAtLocationTool(editor, cursor = Cursor.CLICK, factory = this::createFSMState )
 

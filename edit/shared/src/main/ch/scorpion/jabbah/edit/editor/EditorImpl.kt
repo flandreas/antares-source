@@ -22,11 +22,13 @@ open class EditorImpl(
     final override val view: DrawingView<Drawing<Component>>,
     final override val commandManager: CommandManager,
     selectionToolFactory: SelectionToolFactory,
+    override val name: String = "",
     dragManagerFactory: DragManagerFactory = EditEditorModule.dragManagerFactory
 ) : Editor {
 
     @Suppress("unused")
-    constructor(view: DrawingView<Drawing<Component>>): this(view, EditModule.commandManager, EditSelectModule.selectionToolFactory)
+    constructor(view: DrawingView<Drawing<Component>>, name: String = ""):
+       this(view, EditModule.commandManager, EditSelectModule.selectionToolFactory, name)
 
     private val changeSupport = PropertyChangeSupport<Any>(this)
 

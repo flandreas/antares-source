@@ -91,7 +91,7 @@ object GraphViewModule : AbstractModule() {
 	/** Must be specified by higher application layers.*/
 	var portViewFactory: PortViewFactory = UndefinedPortViewFactory()
 
-	var graphEditorFactory: (DrawingView<Drawing<Component>>) -> GraphEditor = { GraphEditor(it) }
+	var graphEditorFactory: (String, DrawingView<Drawing<Component>>) -> GraphEditor = { name, view -> GraphEditor(view, name = name) }
 
 	var containerEditorFactory: (DrawingView<Drawing<Component>>) -> ContainerEditor = { ContainerEditor(it) }
 

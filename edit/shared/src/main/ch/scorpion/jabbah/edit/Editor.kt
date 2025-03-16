@@ -46,6 +46,15 @@ interface Editor {
 	    const val PROP_GRID_SNAP = "gridSnap"
     }
 
+    /**
+     * The name of an [Editor] is primarily used to define scopes of [Editor] usages.
+     * For example, if an application consist of many different [Editor], and its UI contains a common UI element
+     * shared sequentially by these [Editor]s, such a UI could react to [CurrentEditorEvent] only from [Editor]
+     * with a name designating such a scope, e.g. "mainEditor".
+     * [Editor] names are optional. If not needed, an empty string can be used.
+     */
+    val name: String
+
     /** Holds the current [Drawing] being edited by this [Editor].*/
     val drawing: Drawing<Component> get() = view.drawing
 
