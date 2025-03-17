@@ -553,7 +553,7 @@ CO = D == 255' startupTime='21'>
             <translation lang='de' text='Inkrementierer 8-Bit'/>
           </name>
           <ports>
-            <subCircuitPort _id='190' portId='1' name='D' logic='positive' bitWidth='8' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='190' portId='1' name='D' logic='positive' bitWidth='8' trigger='level' type='input' representation='hex'/>
             <subCircuitPort _id='193' portId='2' name='O' logic='positive' bitWidth='8' trigger='level' type='output' representation='hex'/>
             <subCircuitPort _id='196' portId='3' name='CO' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
           </ports>

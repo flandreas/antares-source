@@ -52,6 +52,13 @@ class GraphViewExecutionAnimator(
 
 	companion object {
 		private val LOG by logger(GraphViewExecutionAnimator::class)
+
+		/**
+		 * Maps a [Scheduler] to the state whether in a simulation run the first [EdgeView] animation has already
+		 * been requested. Used to avoid that once the first animation was done, inner [GraphView] can't suddenly decide
+		 * that they skip the animation due to start-up time not yet completely over.
+		 */
+		private val edgeViewAnimated = mutableMapOf<Scheduler, Boolean>()
 	}
 
 	data class NetAnimationData(
@@ -73,6 +80,8 @@ class GraphViewExecutionAnimator(
 				applicationContextHolder.animator.stopAllTasks()
 				stopAllVerticeViewActingAnimations()
 				netAnimationMap.clear()
+			} else {
+				edgeViewAnimated.clear()
 			}
 		}
 	}
@@ -164,6 +173,8 @@ class GraphViewExecutionAnimator(
 				scheduler = applicationContextHolder.scheduler,
 				styleProvider = styleProvider)
 		)
+
+		edgeViewAnimated[applicationContextHolder.scheduler] = true
 
 		EditModule.attentionDrawerFactory.invoke(signal).drawAttentionTo(
 			edgeView.getConnectionEndpointType(edgeView.getConnection(changedPort)!!)!!.getLocation(edgeView),
@@ -274,7 +285,7 @@ class GraphViewExecutionAnimator(
 
 	/** Determines whether [EdgeViewNetAnimation] is required based on the current system settings.*/
 	private fun requireEdgeViewAnimation(net: Net<*>): Boolean =
-		applicationContextHolder.scheduler.executionTime > (drawingView.drawing.graph!!.startupTime ?: 0)
+		(edgeViewAnimated[applicationContextHolder.scheduler] == true || applicationContextHolder.scheduler.executionTime > (drawingView.drawing.graph!!.startupTime ?: 0))
 			&& applicationContextHolder.currentSystemSpeedCategory.systemSpeedCategory == SystemSpeedCategory.Explore
 			&& SignalUtil.differ(net.signal, net.signalBuffer)
 
