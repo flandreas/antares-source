@@ -26,7 +26,7 @@ object TestcaseService {
 	}
 
 	/**
-	 * Uses by various types of "Run" methods to run [Testcase] of a particular [MetaGraph].
+	 * Used by various types of "Run" methods to run [Testcase] of a particular [MetaGraph].
 	 * Encapsulates [DigitalGraph] cloning/disposing and setup of [GraphParamValues].
 	 */
 	fun run(metaGraph: MetaGraph, testcases: List<Testcase>): List<CombinedTestRunResult> {

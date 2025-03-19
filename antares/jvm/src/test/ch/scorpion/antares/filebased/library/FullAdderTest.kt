@@ -1,6 +1,5 @@
 package ch.scorpion.antares.filebased.library
 
-import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.Bit.*
 import ch.scorpion.antares.model.signal.DigitalSignalFactory.of
 import ch.scorpion.jabbah.base.UUID
@@ -17,29 +16,23 @@ class FullAdderTest : AbstractSystemLibraryTest() {
 
     @Test
     fun test() {
-        execute(
-            mapOf("A" to of(False), "B" to of(False), "CI" to of(False)),
-            mapOf("S" to of(False), "CO" to of(False)))
-        execute(
-            mapOf("A" to of(False), "B" to of(False), "CI" to of(True)),
-            mapOf("S" to of(True), "CO" to of(False)))
-        execute(
-            mapOf("A" to of(False), "B" to of(True), "CI" to of(False)),
-            mapOf("S" to of(True), "CO" to of(False)))
-        execute(
-            mapOf("A" to of(False), "B" to of(True), "CI" to of(True)),
-            mapOf("S" to of(False), "CO" to of(True)))
-        execute(
-            mapOf("A" to of(True), "B" to of(False), "CI" to of(False)),
-            mapOf("S" to of(True), "CO" to of(False)))
-        execute(
-            mapOf("A" to of(True), "B" to of(False), "CI" to of(True)),
-            mapOf("S" to of(False), "CO" to of(True)))
-        execute(
-            mapOf("A" to of(True), "B" to of(True), "CI" to of(False)),
-            mapOf("S" to of(False), "CO" to of(True)))
-        execute(
-            mapOf("A" to of(True), "B" to of(True), "CI" to of(True)),
-            mapOf("S" to of(True), "CO" to of(True)))
+        execute(listOf(
+            Pair(mapOf("A" to of(False), "B" to of(False), "CI" to of(False)),
+                mapOf("S" to of(False), "CO" to of(False))),
+            Pair(mapOf("A" to of(False), "B" to of(False), "CI" to of(True)),
+                mapOf("S" to of(True), "CO" to of(False))),
+            Pair(mapOf("A" to of(False), "B" to of(True), "CI" to of(False)),
+                mapOf("S" to of(True), "CO" to of(False))),
+            Pair(mapOf("A" to of(False), "B" to of(True), "CI" to of(True)),
+                mapOf("S" to of(False), "CO" to of(True))),
+            Pair(mapOf("A" to of(True), "B" to of(False), "CI" to of(False)),
+                mapOf("S" to of(True), "CO" to of(False))),
+            Pair(mapOf("A" to of(True), "B" to of(False), "CI" to of(True)),
+                mapOf("S" to of(False), "CO" to of(True))),
+            Pair(mapOf("A" to of(True), "B" to of(True), "CI" to of(False)),
+                mapOf("S" to of(False), "CO" to of(True))),
+            Pair(mapOf("A" to of(True), "B" to of(True), "CI" to of(True)),
+                mapOf("S" to of(True), "CO" to of(True)))
+        ))
     }
 }

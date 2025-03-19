@@ -21,11 +21,24 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import java.nio.file.Files
 import kotlin.io.path.absolutePathString
+import kotlin.math.abs
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
+/**
+ * Base class for testing circuits in the standard library, both with deep execution and shallow execution.
+ *
+ * Does not only check output signals for given input signals, but also makes sure that
+ * the configured overall propagation delay used for shallow execution is "near" the measured
+ * maximum real circuit propagation delay. This is for verifying "...the scripted components don't accurately
+ * simulate propagation delays..." claimed in #890 (Fidelity).
+ */
 abstract class AbstractSystemLibraryTest : AbstractCircuitTest() {
 
     companion object {
+
+        /** The maximum accepted deviation factor when comparing real and scripted propagation delay.*/
+        private const val DEVIATION = 0.1
 
         @JvmStatic
         protected fun configure() {
@@ -73,14 +86,42 @@ abstract class AbstractSystemLibraryTest : AbstractCircuitTest() {
         openedCircuitView.add(subGraphVV)
     }
 
-    protected fun execute(inputs: Map<String, DigitalSignal>, outputs: Map<String, DigitalSignal>) {
+    protected fun execute(pairs: List<Pair<Map<String, DigitalSignal>, Map<String, DigitalSignal>>>) {
+
+        // First run: Deep, use real circuit. Measure the maximum execution duration.
+        var maxDuration = 0L
+        pairs.forEach {
+            val duration = executeImpl(it.first, it.second, null, true)
+            maxDuration = maxOf(maxDuration, duration)
+        }
+
+        // Assert that the measured maximum execution time is "near" the configured overall propagation delay
+        // used for shallow scripted execution
+        val propDelayDiff = abs(maxDuration - subGraphVV.model.propagationDelay.value)
+        val delta = DEVIATION * maxDuration
+        assertTrue(
+            propDelayDiff < delta,
+            "Prop delay diff $propDelayDiff is not near enough to $delta")
+
+        // Second run: Shallow, using the configured overall propagation delay
+        pairs.forEach {
+            executeImpl(it.first, it.second, subGraphVV.model.propagationDelay.value, false)
+        }
+    }
+
+    private fun executeImpl(
+        inputs: Map<String, DigitalSignal>,
+        outputs: Map<String, DigitalSignal>,
+        propagationDelay: Long?,
+        deep: Boolean
+    ): Long {
         try {
-            scheduler.isDeepExecution = false
+
+            scheduler.isDeepExecution = deep
             startSimulation()
             proceedUntilQueueIsEmpty()
 
             val executionTime = scheduler.executionTime
-            val propagationDelay = subGraphVV.model.propagationDelay.value
 
             // Capture initial output values
             val initialOutputValues = mutableMapOf<String, DigitalSignal>()
@@ -97,21 +138,30 @@ abstract class AbstractSystemLibraryTest : AbstractCircuitTest() {
 
             // Make sure that outputs are NOT available before propagationDelay is over,
             // i.e. that the initial output values are still present
-            proceedToNanos(executionTime + propagationDelay - 1)
-            subGraphVV.model.getOutputs().forEach {
-                if (it.name != null) {
-                    val initialOutputValue = initialOutputValues[it.name!!]
-                    if (initialOutputValue != null) {
-                        assertEquals(initialOutputValue, it.getOutgoingSignal() as DigitalSignal)
+            if (propagationDelay != null) {
+                proceedToNanos(executionTime + propagationDelay - 1)
+                subGraphVV.model.getOutputs().forEach {
+                    if (it.name != null) {
+                        val initialOutputValue = initialOutputValues[it.name!!]
+                        if (initialOutputValue != null) {
+                            assertEquals(initialOutputValue, it.getOutgoingSignal() as DigitalSignal)
+                        }
                     }
                 }
+                proceedUntilQueueIsEmpty()
             }
 
             // Make sure that outputs are available after propagationDelay is over.
-            proceedToNanos(executionTime + propagationDelay + 1)
+            if (propagationDelay != null) {
+                proceedToNanos(executionTime + propagationDelay + 1)
+            } else {
+                proceedUntilQueueIsEmpty()
+            }
             outputs.forEach { entry ->
                 assertEquals(entry.value, subGraphVV.model.getOutput<DigitalSignal>(entry.key).getOutgoingSignal())
             }
+
+            return scheduler.executionTime - executionTime
 
         } finally {
             scheduler.isActive = false
