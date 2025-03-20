@@ -5,6 +5,8 @@ import ch.scorpion.jabbah.base.LongValueImpl
 import java.text.DecimalFormat
 import javax.swing.JComponent
 import javax.swing.JFormattedTextField
+import javax.swing.event.DocumentEvent
+import javax.swing.event.DocumentListener
 
 class LongValueGraphParamValueEditor : JFormattedTextField(DecimalFormat.getIntegerInstance()), GraphParamValueEditor {
 
@@ -19,7 +21,7 @@ class LongValueGraphParamValueEditor : JFormattedTextField(DecimalFormat.getInte
         set(value) {
             field = value
             if (value != null) {
-                addActionListener { value.invoke() }
+                document.addDocumentListener(documentListener)
             }
         }
 
@@ -30,4 +32,16 @@ class LongValueGraphParamValueEditor : JFormattedTextField(DecimalFormat.getInte
         }
 
     override val editor: JComponent get() = this
+
+    private val documentListener = object : DocumentListener {
+        override fun insertUpdate(e: DocumentEvent?) { update() }
+
+        override fun removeUpdate(e: DocumentEvent?) { update() }
+
+        override fun changedUpdate(e: DocumentEvent?) { update() }
+
+        private fun update() {
+            changeHandler?.invoke()
+        }
+    }
 }
