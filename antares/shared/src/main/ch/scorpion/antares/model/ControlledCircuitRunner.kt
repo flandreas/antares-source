@@ -57,6 +57,7 @@ class ControlledCircuitRunner(
 	 * @param epilogue code to be executed after simulation execution, but before the simulation is stopped.
 	 * Can be used for reading output signals.
 	 * @param context an optional context object to be passed into [prolog] and [epilogue]
+	 * @return the simulation time (in ns) it took to run the [circuit]
 	 * @throws TooManyIterations if the maximum iteration count is reached
 	 */
 	fun run(
@@ -64,9 +65,9 @@ class ControlledCircuitRunner(
 		prolog: (context:Any?) -> Unit = {},
 		epilogue: (context:Any?) -> Unit = {},
 		context: Any? = null
-	) {
+	): Long {
 		try {
-			runImpl(circuit, prolog, epilogue, context, doStart = true, doStop = true)
+			return runImpl(circuit, prolog, epilogue, context, doStart = true, doStop = true)
 		} catch (e: TooManyIterations) {
 			throw e
 		} catch (e: Throwable) {
@@ -82,11 +83,12 @@ class ControlledCircuitRunner(
 		prolog: (context:Any?) -> Unit = {},
 		epilogue: (context:Any?) -> Unit = {},
 		context: Any? = null
-	) {
+	): Long {
 		try {
-			runImpl(circuit, prolog, epilogue, context, doStart = true, doStop = false)
+			return runImpl(circuit, prolog, epilogue, context, doStart = true, doStop = false)
 		} catch (e: Throwable) {
 			stopSimulation(circuit)
+			return 0
 		}
 	}
 
@@ -95,11 +97,12 @@ class ControlledCircuitRunner(
 		prolog: (context:Any?) -> Unit = {},
 		epilogue: (context:Any?) -> Unit = {},
 		context: Any? = null
-	) {
+	): Long {
 		try {
-			runImpl(circuit, prolog, epilogue, context, doStart = false, doStop = false)
+			return runImpl(circuit, prolog, epilogue, context, doStart = false, doStop = false)
 		} catch (e: Throwable) {
 			stopSimulation(circuit)
+			return 0
 		}
 	}
 
@@ -108,14 +111,14 @@ class ControlledCircuitRunner(
 		prolog: (context:Any?) -> Unit = {},
 		epilogue: (context:Any?) -> Unit = {},
 		context: Any? = null
-	) {
+	): Long {
 		try {
-			runImpl(circuit, prolog, epilogue, context, doStart = false, doStop = true)
+			return runImpl(circuit, prolog, epilogue, context, doStart = false, doStop = true)
 		} catch (e: Throwable) {
 			stopSimulation(circuit)
+			return 0
 		}
 	}
-
 
 	private fun runImpl(
 		circuit: DigitalGraph,
@@ -124,19 +127,25 @@ class ControlledCircuitRunner(
 		context: Any? = null,
 		doStart: Boolean,
 		doStop: Boolean
-	) {
+	): Long {
 		if (doStart) {
 			timeService.reset()
 			startSimulation(circuit)
 		}
 
+		val startTime = scheduler.executionTime
+
 		prolog(context)
 		proceedUntilQueueEmpty()
 		epilogue(context)
 
+		val duration = scheduler.executionTime - startTime
+
 		if (doStop) {
 			stopSimulation(circuit)
 		}
+
+		return duration
 	}
 
 	private fun startSimulation(circuit: DigitalGraph) {

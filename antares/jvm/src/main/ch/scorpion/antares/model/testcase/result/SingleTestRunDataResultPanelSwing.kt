@@ -17,9 +17,9 @@ import javax.swing.table.AbstractTableModel
 import javax.swing.table.DefaultTableCellRenderer
 
 /**
- * Displays a single [TestRunResult] as a table.
+ * Displays the data test vector results of a single [TestRunResult] as a table.
  */
-class SingleTestRunResultPanelSwing(
+class SingleTestRunDataResultPanelSwing(
 	private val result: TestRunResult
 ) : JPanel() {
 

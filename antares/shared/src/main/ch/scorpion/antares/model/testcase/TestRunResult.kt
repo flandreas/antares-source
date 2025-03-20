@@ -2,7 +2,12 @@ package ch.scorpion.antares.model.testcase
 
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.event.EventBus
 
+/**
+ * A request posted on [EventBus] to display newly produced test results.
+ * Processed by UI components that display test results.
+ */
 data class DisplayTestRunResults(val results: List<CombinedTestRunResult>)
 
 /**
@@ -14,6 +19,7 @@ data class DisplayTestRunResults(val results: List<CombinedTestRunResult>)
  * @property collector contains the collected [TestVector]s whose output column values
  * have been replaced with [MatchedValue] containing the test result.
  * @property errorMessage the error message if parsing or analysing the [Testcase] failed, `null` otherwise
+ * @property duration the simulation time (in ns) it took to execute [source]
  */
 data class TestRunResult(
 	val source: DigitalGraph,
@@ -22,7 +28,8 @@ data class TestRunResult(
 	val names: List<String>,
 	val isOutput: List<Boolean>,
 	val collector: TestVectorCollector,
-	val errorMessage: String? = null
+	val errorMessage: String? = null,
+	val duration: Long = 0L
 ) {
 	companion object {
 		fun error(source: DigitalGraph, type: Type, testName: String, msg: String): TestRunResult =
@@ -64,13 +71,20 @@ data class TestRunResult(
 	}
 }
 
+/**
+ * The result provided by a [CombinedTestcaseRunner].
+ *
+ * @property propagationDelayDiscrepancy the discrepancy between measured real circuit propagation delay (first pair value)
+ * and the configured propagation delay of the subcircuit (second pair value)
+ */
 data class CombinedTestRunResult(
 	val source: DigitalGraph,
 	val testcase: Testcase,
 	val circuitResults: TestRunResult?,
 	val scriptResults: TestRunResult?,
 	val error: String? = null,
-	val ignored: Boolean = false
+	val ignored: Boolean = false,
+	val propagationDelayDiscrepancy: Pair<Long, Long>? = null
 ) {
 
 	companion object {
@@ -91,7 +105,8 @@ data class CombinedTestRunResult(
 		val scriptFailedCount = scriptResults?.let {
 			if (it.errorMessage != null) 1 else it.failedCount
 		} ?: 0
-		circuitFailedCount + scriptFailedCount
+		val otherFailedCount = if (propagationDelayDiscrepancy != null) 1 else 0
+		circuitFailedCount + scriptFailedCount + otherFailedCount
 	}
 
 	val failed: Boolean get() = totalFailedCount > 0

@@ -1,22 +1,18 @@
 package ch.scorpion.antares.model.testcase.result
 
 import ch.scorpion.antares.model.testcase.CombinedTestRunResult
+import ch.scorpion.antares.model.testcase.CombinedTestcaseRunner
 import ch.scorpion.antares.model.testcase.TestRunResult
-import ch.scorpion.jabbah.base.AbstractAction
-import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.base.swing.DialogBuilder
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.UIBasics
-import java.awt.BorderLayout
+import java.awt.Component
 import java.awt.Dimension
-import java.awt.Frame
 import javax.swing.*
 
 class CombinedTestRunResultPanelSwing(
-	results: CombinedTestRunResult?,
-	private val closeHandler: (() -> Unit)? = null
+	results: CombinedTestRunResult?
 ) : JPanel() {
 
 	companion object {
@@ -24,40 +20,18 @@ class CombinedTestRunResultPanelSwing(
 		val FAILED_ICON = UiUtil.themedIcon("/img/error-16.png")
 		val PASSED_ICON = UiUtil.themedIcon("/img/checkmark.png")
 		val IGNORED_ICON = UiUtil.themedIcon("/img/testcase.png")
-
-		fun showAsDialog(
-			results: CombinedTestRunResult,
-			parent: Frame = Frame.getFrames()[0]
-		) {
-			DialogBuilder<CombinedTestRunResultPanelSwing>(parent)
-				.content { dialog -> CombinedTestRunResultPanelSwing(results) { dialog.dispose()} }
-				.title(Translations.getString("antares.testcase.results.title"))
-				.defaultButton { it.closeButton }
-				.minimumSize(Dimension(200, 200))
-				.preferredSize(Dimension(400, 300))
-				.show()
-		}
 	}
 
 	private val tabbedPane = JTabbedPane()
 	private val summaryLabel = JLabel()
-	private val closeAction = CloseAction()
-	private val closeButton = JButton(ActionWrapperSwing(closeAction))
-	private val buttonPanel = JPanel()
 
 	init {
 		buildUI(results)
 	}
 
 	private fun buildUI(results: CombinedTestRunResult?) {
-		layout = BorderLayout(10, 10)
+		layout = BoxLayout(this, BoxLayout.Y_AXIS)
 		border = BorderFactory.createEmptyBorder(UIBasics.DIALOG_BORDER, UIBasics.DIALOG_BORDER, 0, UIBasics.DIALOG_BORDER)
-
-		if (closeHandler != null) {
-			buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
-			buttonPanel.add(Box.createHorizontalGlue())
-			buttonPanel.add(closeButton)
-		}
 
 		setResults(results)
 	}
@@ -66,29 +40,60 @@ class CombinedTestRunResultPanelSwing(
 		removeAll()
 		tabbedPane.removeAll()
 
-		add(summaryLabel, BorderLayout.NORTH)
+		if (results == null) {
+			invalidate()
+			validate()
+			repaint()
+			return
+		}
 
-		results?.circuitResults?.let {
+		updateSummaryLabel(results)
+
+		results.circuitResults?.let {
 			tabbedPane.addTab(
 				TestRunResult.Type.Circuit.toString(),
 				getResultIcon(it),
-				SingleTestRunResultPanelSwing(it),
+				SingleTestRunDataResultPanelSwing(it),
 				Translations.getString("antares.testcase.result.type.circuit.desc"))
 		}
-		results?.scriptResults?.let {
+		results.scriptResults?.let {
 			tabbedPane.addTab(
 				TestRunResult.Type.Script.toString(),
 				getResultIcon(it),
-				SingleTestRunResultPanelSwing(it),
+				SingleTestRunDataResultPanelSwing(it),
 				Translations.getString("antares.testcase.result.type.script.desc"))
 		}
 
-		add(tabbedPane, BorderLayout.CENTER)
-		updateSummaryLabel(results)
+		summaryLabel.alignmentX = Component.LEFT_ALIGNMENT
+		add(summaryLabel)
+		add(Box.createVerticalStrut(10))
 
-		if (closeHandler != null) {
-			add(buttonPanel, BorderLayout.SOUTH)
+		val generalTestResults = createGeneralTestResults(results)
+
+		if (generalTestResults.isNotEmpty()) {
+			val generalSectionSeparator = JSeparator(JSeparator.HORIZONTAL)
+			generalSectionSeparator.preferredSize = Dimension(Int.MAX_VALUE, 10)
+			generalSectionSeparator.alignmentX = Component.LEFT_ALIGNMENT
+			add(generalSectionSeparator)
+			val generalTitle = JLabel(Translations.getString("antares.testcase.generalTest.results.title"))
+			generalTitle.alignmentX = Component.LEFT_ALIGNMENT
+			add(generalTitle)
+
+			val generalContent = SingleTestRunGeneralResultPanelSwing(generalTestResults)
+			generalContent.alignmentX = Component.LEFT_ALIGNMENT
+			add(generalContent)
 		}
+
+		add(Box.createVerticalStrut(10))
+		val dataSectionSeparator = JSeparator(JSeparator.HORIZONTAL)
+		dataSectionSeparator.preferredSize = Dimension(Int.MAX_VALUE, 10)
+		dataSectionSeparator.alignmentX = Component.LEFT_ALIGNMENT
+		add(dataSectionSeparator)
+		val dataTitle = JLabel(Translations.getString("antares.testcase.dataTest.results.title"))
+		dataTitle.alignmentX = Component.LEFT_ALIGNMENT
+		add(dataTitle)
+		tabbedPane.alignmentX = Component.LEFT_ALIGNMENT
+		add(tabbedPane)
 
 		invalidate()
 		validate()
@@ -119,9 +124,19 @@ class CombinedTestRunResultPanelSwing(
 			PASSED_ICON
 		}
 
-	private inner class CloseAction : AbstractAction("base.action.close") {
-		override fun execute(event: ActionEvent) {
-			closeHandler?.invoke()
+	private fun createGeneralTestResults(results: CombinedTestRunResult): List<GeneralTestResult> {
+		val list = mutableListOf<GeneralTestResult>()
+		if (BaseModule.properties.getBoolean(CombinedTestcaseRunner.PROP_CHECK_PROP_DELAY_CONSISTENCY)) {
+			list.add(createPropagationDelayConsistencyResult(results))
 		}
+		return list
 	}
+
+	private fun createPropagationDelayConsistencyResult(results: CombinedTestRunResult): GeneralTestResult =
+		results.propagationDelayDiscrepancy?.let {
+			GeneralTestResult(
+				true,
+				Translations.getString("antares.testcase.propDelayConsistency.failed", it.first, it.second)
+			)
+		} ?: GeneralTestResult(false, Translations.getString("antares.testcase.propDelayConsistency.passed"))
 }

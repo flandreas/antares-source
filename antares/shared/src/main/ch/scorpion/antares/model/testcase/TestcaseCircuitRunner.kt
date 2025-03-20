@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.base.dsl.SemanticError
 import ch.scorpion.jabbah.base.dsl.SyntaxError
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.model.PortType
+import kotlin.math.max
 
 /**
  * Runs a circuit test script (provided as plain text) on a particular [DigitalGraph].
@@ -49,18 +50,20 @@ class TestcaseCircuitRunner(
 
 			TestcaseInterpreter(testScript, circuit, collector).interpret()
 
+			var maxDuration = 0L
 			for (testVector in collector) {
 				currentTestVector = testVector
 
-				when (testVector.type) {
+				val duration: Long = when (testVector.type) {
 					Top -> circuitRunner.run(circuit, ::setInputs, ::readOutputs)
 					RunFirst -> circuitRunner.runStart(circuit, ::setInputs, ::readOutputs)
 					RunLine -> circuitRunner.runContinue(circuit, ::setInputs, ::readOutputs)
 					RunLast -> circuitRunner.runStop(circuit, ::setInputs, ::readOutputs)
 				}
+				maxDuration = max(duration, maxDuration)
 			}
 
-			return TestRunResult(circuit, Circuit, testName, portNames, determineIsOutput(portNames), collector)
+			return TestRunResult(circuit, Circuit, testName, portNames, determineIsOutput(portNames), collector, null, maxDuration)
 		} catch (e: SyntaxError) {
 			return TestRunResult.error(circuit, TestRunResult.Type.Script, testName, e.message ?: "Error")
 		} catch (e: SemanticError) {
@@ -79,13 +82,12 @@ class TestcaseCircuitRunner(
 		circuitRunner.dispose()
 	}
 
-	override fun setInput(inOut: DigitalCircuitInOut, signal: DigitalSignal) {
-		inOut.setIncomingSignal(signal, circuitRunner.scheduler)
+	override fun setInput(port: DigitalCircuitInOut, signal: DigitalSignal) {
+		port.setIncomingSignal(signal, circuitRunner.scheduler)
 	}
 
-	override fun readOutput(inOut: DigitalCircuitInOut): DigitalSignal? =
-		//(inOut.getPort<DigitalSignal>() as DigitalPort).getIncomingSignal()
-		with(inOut.getPort<DigitalSignal>() as DigitalPort) {
+	override fun readOutput(port: DigitalCircuitInOut): DigitalSignal? =
+		with(port.getPort<DigitalSignal>() as DigitalPort) {
 			if (portType == PortType.INOUT) {
 				getOutgoingSignal()
 			} else {

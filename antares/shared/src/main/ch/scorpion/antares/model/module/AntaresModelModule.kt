@@ -30,6 +30,7 @@ import ch.scorpion.antares.model.testcase.Testcases
 import ch.scorpion.antares.model.truthtable.*
 import ch.scorpion.antares.model.vertice.AntaresSubGraphVerticeRefActivationRecord
 import ch.scorpion.antares.model.addressable.MemoryStorable
+import ch.scorpion.antares.model.testcase.CombinedTestcaseRunner
 import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.antares.view.port.AntaresPortFactory
 import ch.scorpion.jabbah.base.AbstractModule
@@ -95,6 +96,7 @@ object AntaresModelModule : AbstractModule() {
 		properties.set(BooleanExpressionNotation.PROP_AND_PARENTHESIS, false)
 
 		properties.set(AnalogCircuitAnalysis.PROP_TIME_STEP, AnalogCircuitAnalysis.DEF_TIME_STEP)
+		properties.set(CombinedTestcaseRunner.PROP_CHECK_PROP_DELAY_CONSISTENCY, true)
 	}
 
 	private fun configureTypeMap(typeMap: TypeMap) {

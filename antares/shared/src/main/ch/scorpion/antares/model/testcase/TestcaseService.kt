@@ -4,11 +4,13 @@ import ch.scorpion.antares.model.AntaresGraphTypes
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.port.DigitalPort
+import ch.scorpion.jabbah.base.LongValue
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.graph.model.param.GraphParamValues
+import ch.scorpion.jabbah.graph.model.semantic.GraphSemantic
 import ch.scorpion.jabbah.io.StorableCloner
 
 object TestcaseService {
@@ -50,20 +52,30 @@ object TestcaseService {
 				}
 			}
 
+			val subGraphPropagationDelay = getSubGraphVerticePropagationDelay(clone)
+
 			val results = mutableListOf<CombinedTestRunResult>()
 			for (testcase in testcases) {
 				if (testcase.ignored) {
 					results.add(CombinedTestRunResult.ignored(circuit, testcase))
 				} else {
-					results.add(CombinedTestcaseRunner(testcase, clone, execScriptAST) {
-						(metaGraph.containerDrawing.getPortViewComponent(it)?.port as DigitalPort?)?.logic
-							?: Logic.POSITIVE
-					}.run())
+					results.add(
+						CombinedTestcaseRunner(testcase, clone, execScriptAST, subGraphPropagationDelay) {
+							(metaGraph.containerDrawing.getPortViewComponent(it)?.port as DigitalPort?)
+								?.logic ?: Logic.POSITIVE
+						}.run()
+					)
 				}
 			}
 			return results
 		} finally {
 			clone.dispose()
 		}
+	}
+
+	private fun getSubGraphVerticePropagationDelay(circuit: DigitalGraph): Long {
+		return (circuit.parameterValues.firstOrNullWithSemantic(GraphSemantic.PropagationDelay)?.value as LongValue?)?.value
+			?: circuit.overallPropagationDelay
+			?: 0L
 	}
 }

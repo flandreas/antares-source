@@ -13,6 +13,7 @@ import ch.scorpion.antares.model.input.SwitchConfiguration
 import ch.scorpion.antares.model.net.*
 import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
 import ch.scorpion.antares.model.signal.*
+import ch.scorpion.antares.model.testcase.CombinedTestcaseRunner
 import ch.scorpion.antares.model.testcase.TestcaseViewSwing
 import ch.scorpion.antares.view.*
 import ch.scorpion.antares.view.addressable.MemoryStorableIdentificationEditor
@@ -108,6 +109,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		const val PREF_TREE_CIRCUIT_DIGITAL = "antares.preferences.group.circuit.digital"
 		const val PREF_TREE_CIRCUIT_ANALOG = "antares.preferences.group.circuit.analog"
 		const val PREF_TREE_EXPRESSION = "antares.preferences.group.expression"
+		const val PREF_TREE_TEST_CASES = "antares.preferences.group.testcase"
 
 		val createCircuitFromTruthTableService = CreateCircuitFromTruthTableService()
 	}
@@ -388,11 +390,12 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		PreferenceGroup(PREF_TREE_CIRCUIT).apply {
 			add(buildDigitalPreferenceTree())
 			add(buildAnalogPreferenceTree())
+			add(buildTestcasesPreferenceTree())
 
 			add(EnumPreference(
 				id = SymbolStyle.PROP_SYMBOL_STYLE,
 				nameKey = "antares.action.symbolStyle",
-				values = SymbolStyle.values(),
+				values = SymbolStyle.entries.toTypedArray(),
 				withName = SymbolStyle::withName,
 				needsRestart = true
 			))
@@ -400,7 +403,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 			add(EnumPreference(
 				id = ContainerDrawingLayouter.PROP_CONTAINER_DRAWING_LAYOUTER,
 				nameKey = "graph.containerLayout",
-				values = ContainerDrawingLayouter.values(),
+				values = ContainerDrawingLayouter.entries.toTypedArray(),
 				withName = ContainerDrawingLayouter::withName
 			))
 
@@ -414,6 +417,14 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 				id = AbstractTransistorView.PROP_TRANSISTOR_PORT_NAMES,
 				nameKey = "antares.preference.TransistorPortNames",
 				needsRestart = true
+			))
+		}
+
+	private fun buildTestcasesPreferenceTree(): PreferenceGroup =
+		PreferenceGroup(PREF_TREE_TEST_CASES).apply {
+			add(BooleanPreference(
+				id = CombinedTestcaseRunner.PROP_CHECK_PROP_DELAY_CONSISTENCY,
+				nameKey = "antares.preferences.checkPropDelayConsistency.name"
 			))
 		}
 
@@ -432,7 +443,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 			add(EnumPreference(
 				id = UndefinedGateInputBehavior.PROP_UNDEFINED_GATE_INPUT_BEHAVIOR,
 				nameKey = "antares.preference.undefinedGateInputBehavior.name",
-				values = UndefinedGateInputBehavior.values(),
+				values = UndefinedGateInputBehavior.entries.toTypedArray(),
 				withName = UndefinedGateInputBehavior::withName
 			))
 
@@ -441,7 +452,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 			add(EnumPreference(
 				id = DigitalSignalNotation.PROP_DIGITAL_SIGNAL_NOTATION,
 				nameKey = "antares.preferences.DigitalSignalNotation",
-				values = DigitalSignalNotation.values(),
+				values = DigitalSignalNotation.entries.toTypedArray(),
 				withName = DigitalSignalNotation::withName,
 				needsRestart = true
 			))
@@ -449,14 +460,14 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 			add(EnumPreference(
 				id = TunnelViewFace.PROP_TUNNEL_FACE,
 				nameKey = "antares.preference.TunnelViewFace",
-				values = TunnelViewFace.values(),
+				values = TunnelViewFace.entries.toTypedArray(),
 				withName = TunnelViewFace::withName
 			))
 
 			add(EnumPreference(
 				id = TransistorViewSymbol.PROP_TRANSISTOR_SYMBOL,
 				nameKey = "antares.preference.transistorSymbol.name",
-				values = TransistorViewSymbol.values(),
+				values = TransistorViewSymbol.entries.toTypedArray(),
 				withName = TransistorViewSymbol::withName
 			))
 
@@ -483,7 +494,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 			add(EnumPreference(
 				id = BooleanExpressionNotation.PROP_NOTATION,
 				nameKey = "antares.preference.expression.notation",
-				values = BooleanExpressionNotation.values(),
+				values = BooleanExpressionNotation.entries.toTypedArray(),
 				withName = BooleanExpressionNotation::withName
 			))
 			add(BooleanPreference(

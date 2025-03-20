@@ -11,6 +11,8 @@ import ch.scorpion.jabbah.base.dsl.Node
 import ch.scorpion.jabbah.base.dsl.SemanticError
 import ch.scorpion.jabbah.base.dsl.SyntaxError
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
+import kotlin.math.abs
 
 /**
  * A combined runner of [Testcase]s that runs a test script on a [DigitalGraph] and/or
@@ -21,10 +23,16 @@ class CombinedTestcaseRunner(
 	private val testcase: Testcase,
 	private val circuit: DigitalGraph,
 	private val execScriptAST: Node? = null,
+	private val subGraphPropagationDelay: Long = 0,
 	private val inputLogicProvider: (String) -> Logic = { Logic.POSITIVE }
 ) {
 	companion object {
 		private val LOG by logger(CombinedTestcaseRunner::class)
+
+		/** The maximum accepted deviation factor when comparing real and scripted propagation delay.*/
+		private const val PROP_DELAY_DEVIATION = 0.1
+
+		const val PROP_CHECK_PROP_DELAY_CONSISTENCY = "antares.testcase.checkPropDelayConsistency"
 	}
 
 	private var testcaseCircuitRunner: TestcaseCircuitRunner? = null
@@ -33,6 +41,7 @@ class CombinedTestcaseRunner(
 	fun run(): CombinedTestRunResult {
 		var circuitResults: TestRunResult? = null
 		var scriptResults: TestRunResult? = null
+		var propagationDelayDiscrepancy: Pair<Long, Long>? = null
 
 		if (StringUtils.isBlank(testcase.testVectors.script)) {
 			return CombinedTestRunResult.error(circuit, testcase, Translations.getString("antares.testcase.error.empty"))
@@ -50,6 +59,15 @@ class CombinedTestcaseRunner(
 				testcaseScriptRunner = TestcaseScriptRunner(testcase.name.value, testScript, circuit, execScriptAST, inputLogicProvider)
 				scriptResults = testcaseScriptRunner!!.run()
 			}
+
+			if (BaseModule.properties.getBoolean(PROP_CHECK_PROP_DELAY_CONSISTENCY) && circuitResults != null && scriptResults != null) {
+				val propDelayDiff = abs(circuitResults.duration - subGraphPropagationDelay)
+				if (propDelayDiff > PROP_DELAY_DEVIATION * circuitResults.duration) {
+					// Test fail
+					propagationDelayDiscrepancy = Pair(circuitResults.duration, subGraphPropagationDelay)
+				}
+			}
+
 		} catch (e: SemanticError) {
 			return CombinedTestRunResult.error(circuit, testcase, e.message ?: "Error")
 		} catch (e: SyntaxError) {
@@ -62,6 +80,6 @@ class CombinedTestcaseRunner(
 			testcaseScriptRunner?.dispose()
 		}
 
-		return CombinedTestRunResult(circuit, testcase, circuitResults, scriptResults)
+		return CombinedTestRunResult(circuit, testcase, circuitResults, scriptResults, propagationDelayDiscrepancy = propagationDelayDiscrepancy)
 	}
 }

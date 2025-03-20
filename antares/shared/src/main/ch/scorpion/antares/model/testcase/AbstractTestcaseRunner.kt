@@ -37,6 +37,7 @@ abstract class AbstractTestcaseRunner(
 	}
 
 	private fun setInputsFiltered(context: Any?, filter: (Value.Type) -> Boolean) {
+		var inputSet = false
 		portNames.forEachIndexed { index, portName ->
 			val port = circuit.getGraphPort<DigitalSignal>(portName)
 			if (port is DigitalCircuitInOut && port.portType.isInput) {
@@ -44,9 +45,12 @@ abstract class AbstractTestcaseRunner(
 				if (filter(value.type)) {
 					val signal = value.value.ofWidth(port.bitWidth)
 					setInput(port, signal)
-					processInputChanged(context)
+					inputSet = true
 				}
 			}
+		}
+		if (inputSet) {
+			processInputChanged(context)
 		}
 	}
 
