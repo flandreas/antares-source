@@ -41,7 +41,7 @@ class CombinedTestcaseRunner(
 	fun run(): CombinedTestRunResult {
 		var circuitResults: TestRunResult? = null
 		var scriptResults: TestRunResult? = null
-		var propagationDelayDiscrepancy: Pair<Long, Long>? = null
+		val generalTestResults = mutableListOf<GeneralTestResult>()
 
 		if (StringUtils.isBlank(testcase.testVectors.script)) {
 			return CombinedTestRunResult.error(circuit, testcase, Translations.getString("antares.testcase.error.empty"))
@@ -60,11 +60,23 @@ class CombinedTestcaseRunner(
 				scriptResults = testcaseScriptRunner!!.run()
 			}
 
-			if (BaseModule.properties.getBoolean(PROP_CHECK_PROP_DELAY_CONSISTENCY) && circuitResults != null && scriptResults != null) {
+			if (BaseModule.properties.getBoolean(PROP_CHECK_PROP_DELAY_CONSISTENCY)
+				&& !testcase.skipPropDelayConsistenceCheck
+				&& circuitResults != null
+				&& scriptResults != null
+			) {
 				val propDelayDiff = abs(circuitResults.duration - subGraphPropagationDelay)
 				if (propDelayDiff > PROP_DELAY_DEVIATION * circuitResults.duration) {
 					// Test fail
-					propagationDelayDiscrepancy = Pair(circuitResults.duration, subGraphPropagationDelay)
+					generalTestResults.add(
+						GeneralTestResult(
+							true,
+							Translations.getString("antares.testcase.propDelayConsistency.failed", circuitResults.duration, subGraphPropagationDelay))
+					)
+				} else {
+					generalTestResults.add(
+						GeneralTestResult(false, Translations.getString("antares.testcase.propDelayConsistency.passed"))
+					)
 				}
 			}
 
@@ -80,6 +92,6 @@ class CombinedTestcaseRunner(
 			testcaseScriptRunner?.dispose()
 		}
 
-		return CombinedTestRunResult(circuit, testcase, circuitResults, scriptResults, propagationDelayDiscrepancy = propagationDelayDiscrepancy)
+		return CombinedTestRunResult(circuit, testcase, circuitResults, scriptResults, generalTestResults = generalTestResults)
 	}
 }

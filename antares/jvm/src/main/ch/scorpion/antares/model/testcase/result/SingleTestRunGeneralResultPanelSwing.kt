@@ -1,15 +1,11 @@
 package ch.scorpion.antares.model.testcase.result
 
+import ch.scorpion.antares.model.testcase.GeneralTestResult
 import ch.scorpion.jabbah.base.swing.UiUtil
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dimension
 import javax.swing.*
-
-data class GeneralTestResult(
-    val error: Boolean,
-    val description: String
-)
 
 class SingleTestRunGeneralResultPanelSwing(
     private val results: List<GeneralTestResult>

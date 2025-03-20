@@ -10,6 +10,11 @@ import ch.scorpion.jabbah.base.event.EventBus
  */
 data class DisplayTestRunResults(val results: List<CombinedTestRunResult>)
 
+data class GeneralTestResult(
+	val error: Boolean,
+	val description: String
+)
+
 /**
  * The result provided by a [TestcaseCircuitRunner].
  *
@@ -74,7 +79,7 @@ data class TestRunResult(
 /**
  * The result provided by a [CombinedTestcaseRunner].
  *
- * @property propagationDelayDiscrepancy the discrepancy between measured real circuit propagation delay (first pair value)
+ * @property generalTestResults the discrepancy between measured real circuit propagation delay (first pair value)
  * and the configured propagation delay of the subcircuit (second pair value)
  */
 data class CombinedTestRunResult(
@@ -84,7 +89,7 @@ data class CombinedTestRunResult(
 	val scriptResults: TestRunResult?,
 	val error: String? = null,
 	val ignored: Boolean = false,
-	val propagationDelayDiscrepancy: Pair<Long, Long>? = null
+	val generalTestResults: List<GeneralTestResult> = emptyList()
 ) {
 
 	companion object {
@@ -105,8 +110,8 @@ data class CombinedTestRunResult(
 		val scriptFailedCount = scriptResults?.let {
 			if (it.errorMessage != null) 1 else it.failedCount
 		} ?: 0
-		val otherFailedCount = if (propagationDelayDiscrepancy != null) 1 else 0
-		circuitFailedCount + scriptFailedCount + otherFailedCount
+		val generalFailedCount = generalTestResults.count { it.error }
+		circuitFailedCount + scriptFailedCount + generalFailedCount
 	}
 
 	val failed: Boolean get() = totalFailedCount > 0

@@ -1,10 +1,8 @@
 package ch.scorpion.antares.model.testcase.result
 
 import ch.scorpion.antares.model.testcase.CombinedTestRunResult
-import ch.scorpion.antares.model.testcase.CombinedTestcaseRunner
 import ch.scorpion.antares.model.testcase.TestRunResult
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.UIBasics
 import java.awt.Component
@@ -68,9 +66,7 @@ class CombinedTestRunResultPanelSwing(
 		add(summaryLabel)
 		add(Box.createVerticalStrut(10))
 
-		val generalTestResults = createGeneralTestResults(results)
-
-		if (generalTestResults.isNotEmpty()) {
+		if (results.generalTestResults.isNotEmpty()) {
 			val generalSectionSeparator = JSeparator(JSeparator.HORIZONTAL)
 			generalSectionSeparator.preferredSize = Dimension(Int.MAX_VALUE, 10)
 			generalSectionSeparator.alignmentX = Component.LEFT_ALIGNMENT
@@ -79,7 +75,7 @@ class CombinedTestRunResultPanelSwing(
 			generalTitle.alignmentX = Component.LEFT_ALIGNMENT
 			add(generalTitle)
 
-			val generalContent = SingleTestRunGeneralResultPanelSwing(generalTestResults)
+			val generalContent = SingleTestRunGeneralResultPanelSwing(results.generalTestResults)
 			generalContent.alignmentX = Component.LEFT_ALIGNMENT
 			add(generalContent)
 		}
@@ -123,20 +119,4 @@ class CombinedTestRunResultPanelSwing(
 		} else {
 			PASSED_ICON
 		}
-
-	private fun createGeneralTestResults(results: CombinedTestRunResult): List<GeneralTestResult> {
-		val list = mutableListOf<GeneralTestResult>()
-		if (BaseModule.properties.getBoolean(CombinedTestcaseRunner.PROP_CHECK_PROP_DELAY_CONSISTENCY)) {
-			list.add(createPropagationDelayConsistencyResult(results))
-		}
-		return list
-	}
-
-	private fun createPropagationDelayConsistencyResult(results: CombinedTestRunResult): GeneralTestResult =
-		results.propagationDelayDiscrepancy?.let {
-			GeneralTestResult(
-				true,
-				Translations.getString("antares.testcase.propDelayConsistency.failed", it.first, it.second)
-			)
-		} ?: GeneralTestResult(false, Translations.getString("antares.testcase.propDelayConsistency.passed"))
 }

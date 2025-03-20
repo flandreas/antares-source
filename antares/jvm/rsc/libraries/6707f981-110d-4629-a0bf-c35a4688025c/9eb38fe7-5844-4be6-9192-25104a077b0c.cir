@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<metaGraph _id='0' manualContainer='true'>
+<metaGraph _id='0' appVersion='1.17.1' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
@@ -362,7 +362,7 @@
 // Shift left with carry in
 0	x	0	1	0	1	0
 0	x	15	1	0	31	0
-0	x	255	1	1	255	0'>
+0	x	255	1	1	255	0' skipPropDelayConsistenceCheck='true'>
                   <name>
                     <translation lang='en' text='Shift left'/>
                   </name>

@@ -31,6 +31,8 @@ class Testcase(
 
 	var ignored: Boolean = false
 
+	var skipPropDelayConsistenceCheck: Boolean = false
+
 	/**
 	 * Non-persistent reference to the owing [DigitalGraph]. Used only for creating a
 	 * [SemanticAnalyser] when editing [testVectors].
@@ -57,6 +59,9 @@ class Testcase(
 		if (ignored) {
 			writer.writeBoolean("ignored", ignored)
 		}
+		if (skipPropDelayConsistenceCheck) {
+			writer.writeBoolean("skipPropDelayConsistenceCheck", skipPropDelayConsistenceCheck)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
@@ -66,6 +71,9 @@ class Testcase(
 		testVectors = ScriptProperty(reader.readOptionalString("testVectors"))
 		if (reader.hasAttribute("ignored")) {
 			ignored = reader.readBoolean("ignored")
+		}
+		if (reader.hasAttribute("skipPropDelayConsistenceCheck")) {
+			skipPropDelayConsistenceCheck = reader.readBoolean("skipPropDelayConsistenceCheck")
 		}
 	}
 
