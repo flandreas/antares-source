@@ -245,6 +245,14 @@ class SchedulerImpl(
 		queue.elements().forEach { it.print() }
 	}
 
+	override fun resetExecutionTime() {
+		if (!isQueueEmpty) {
+			throw IllegalStateException("Cannot reset execution time on non-empty queue")
+		}
+		relativeTime = 0
+		postSchedulerStateEvent()
+	}
+
 	/** ---- [SignalHandler] interface */
 
 	override var isDeepExecution: Boolean = isDeepExecution

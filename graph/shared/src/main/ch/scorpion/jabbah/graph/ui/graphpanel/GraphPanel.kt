@@ -48,6 +48,7 @@ import ch.scorpion.jabbah.graph.app.ToggleApplicationModeAction
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryHolder
 import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.model.vertice.EnableInteractivePropagationDelayAction
 import ch.scorpion.jabbah.graph.ui.GraphEditView
 import ch.scorpion.jabbah.graph.ui.GraphEditViewController
 import ch.scorpion.jabbah.graph.ui.GraphNavigationView
@@ -144,6 +145,7 @@ class GraphPanelViewController(
 	val stopOnIssueAction = StopOnIssueAction(applicationContextHolder.scheduler, eventBus)
 	val enableSoftBreakpointsAction = EnableSoftBreakpointsAction(applicationContextHolder.scheduler, eventBus)
 	val simulationTimeStatusEnabledAction = SimulationTimeStatusEnabledAction(applicationContextHolder.scheduler, eventBus)
+	val enableInteractivePropagationDelayAction = EnableInteractivePropagationDelayAction()
 
 	val rectangleTool: Tool = RectangleTool(editor, factory = { RectangleComponent() }, adder = { GraphElementViewWrapper(it) })
 	val ellipseTool: Tool = RectangleTool(editor, factory = { EllipseComponent() }, adder = { GraphElementViewWrapper(it) })

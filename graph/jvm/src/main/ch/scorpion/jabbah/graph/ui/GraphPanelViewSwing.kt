@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanelSwing
 import ch.scorpion.jabbah.edit.properties.PropertySheetPanelFactory
 import ch.scorpion.jabbah.execution.IssuesViewSwing
+import ch.scorpion.jabbah.execution.ResetExecutionTimeAction
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.library.LibraryPanelSwing
@@ -128,6 +129,8 @@ class GraphPanelViewSwing(
 	private val titleBar = TitleBar("")
 
 	private val applicationModeHandler: EventHandler<ApplicationModeEvent> = { updateTitle() }
+
+	val resetExecutionTimeAction = ResetExecutionTimeAction(controller.applicationContextHolder.scheduler, eventBus)
 
 	init {
 		controller.view = this

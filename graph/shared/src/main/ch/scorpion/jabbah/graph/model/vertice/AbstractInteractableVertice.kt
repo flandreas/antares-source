@@ -50,6 +50,15 @@ abstract class AbstractInteractableVertice<S: Any>(
 	name: String? = null
 ) : CalculatingVertice(calculator, name), InteractableVertice<S> {
 
+	companion object {
+
+		/**
+		 * A flag to globally enable or disable [interactivePropagationDelay] usage.
+		 * If disabled, propagation delay 0 is applied. Useful when analysing and fine-tuning graph timing behaviour.
+		 */
+		var enableInteractivePropagationDelay: Boolean = true
+	}
+
 	/**
 	 * Holds the current signal that determines the state of this [AbstractInteractableVertice].
 	 * Changes to this property are delayed by storing the new value in [delayedSignal] until
@@ -98,7 +107,11 @@ abstract class AbstractInteractableVertice<S: Any>(
 	}
 
 	protected open fun requestSetSignal(signal: S, signalHandler: SignalHandler) {
-		requestSetSignalAfter(signal, signalHandler, interactivePropagationDelay)
+		if (enableInteractivePropagationDelay) {
+			requestSetSignalAfter(signal, signalHandler, interactivePropagationDelay)
+		} else {
+			requestSetSignalAfter(signal, signalHandler, 0)
+		}
 	}
 
 	protected open fun requestSetSignalAfter(signal: S, signalHandler: SignalHandler, delay: Long) {

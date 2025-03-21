@@ -77,6 +77,12 @@ interface Scheduler : SignalHandler {
 
     /** Prints the pending scheduling request to the INFO log. Should only be used on explicit demand when debugging. */
     fun printSchedule()
+
+	/**
+	 * Resets [executionTime] to 0.
+	 * @throws IllegalStateException if the simulation queue is not empty
+	 */
+	fun resetExecutionTime()
 }
 
 /**

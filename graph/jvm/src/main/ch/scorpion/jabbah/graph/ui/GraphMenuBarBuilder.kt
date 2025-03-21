@@ -128,11 +128,20 @@ open class GraphMenuBarBuilder(
 			menu.add(JCheckBoxMenuItem(ActionWrapperSwing(it.singleStepModeAction)))
 			menu.add(JCheckBoxMenuItem(ActionWrapperSwing(it.executionDepthAction)))
 			menu.add(JCheckBoxMenuItem(ActionWrapperSwing(it.stopOnIssueAction)))
-			menu.add(JCheckBoxMenuItem(ActionWrapperSwing(it.simulationTimeStatusEnabledAction)))
 			menu.add(JCheckBoxMenuItem(ActionWrapperSwing(it.enableSoftBreakpointsAction)))
 		}
 		menu.add(SignalConflictBehaviourMenu())
+		menu.add(simulationAnalysisMenu())
+
 		return menu
+	}
+
+	private fun simulationAnalysisMenu(): JMenu {
+		val analysisMenu = JMenu(Translations.getString("execution.menu.analysisTools"))
+		analysisMenu.add(JMenuItem(ActionWrapperSwing(graphFrame.graphPanel.resetExecutionTimeAction)))
+		analysisMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(graphFrame.controller.graphPanelViewController.simulationTimeStatusEnabledAction)))
+		analysisMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(graphFrame.controller.graphPanelViewController.enableInteractivePropagationDelayAction)))
+		return analysisMenu
 	}
 
 	protected open fun fillScenariosMenu(menu: JMenu): JMenu {
