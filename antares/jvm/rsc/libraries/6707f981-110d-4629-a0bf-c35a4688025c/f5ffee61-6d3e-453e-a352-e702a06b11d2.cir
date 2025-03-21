@@ -31,8 +31,8 @@ if (^C) {
           <elements>
             <circuitInOut _id='3' id='1' name='D' type='input' bitWidth='1'/>
             <circuitInOut _id='4' id='2' name='C' type='input' bitWidth='1'/>
-            <nandGate _id='5' id='3' delay='PD / 5' inputCount='2'/>
-            <nandGate _id='6' id='4' delay='PD / 5' inputCount='2'/>
+            <nandGate _id='5' id='3' delay='PD / 7' inputCount='2'/>
+            <nandGate _id='6' id='4' delay='PD / 7' inputCount='2'/>
             <digitalNet _id='7' id='5' delay='0'>
               <ports>
                 <netPortRef _id='8' verticeId='3' portId='1'/>
@@ -47,8 +47,8 @@ if (^C) {
                 <netPortRef _id='15' verticeId='16' portId='2'/>
               </ports>
             </digitalNet>
-            <nandGate _id='17' id='7' delay='PD / 5 + 2' inputCount='3'/>
-            <nandGate _id='18' id='8' delay='PD / 5' inputCount='3'/>
+            <nandGate _id='17' id='7' delay='PD / 7 + 2' inputCount='3'/>
+            <nandGate _id='18' id='8' delay='PD / 7' inputCount='3'/>
             <digitalNet _id='19' id='9' delay='0'>
               <ports>
                 <netPortRef _id='20' verticeId='5' portId='3'/>
@@ -75,7 +75,7 @@ if (^C) {
                 <netPortRef _id='32' verticeId='18' portId='3'/>
               </ports>
             </digitalNet>
-            <notGate _id='11' id='19' delay='PD / 5'/>
+            <notGate _id='11' id='19' delay='PD / 7'/>
             <digitalNet _id='33' id='20' delay='0'>
               <ports>
                 <netPortRef _id='34' verticeId='11' portId='2'/>
@@ -98,11 +98,11 @@ if (^C) {
                 <netPortRef _id='45' verticeId='17' portId='3'/>
               </ports>
             </digitalNet>
-            <subGraphVerticeRef _id='16' id='25' delay='PD / 5 * 3' uuid='2d7bbd36-5dca-4c71-9a27-19a3bfa81bc5' type='digital'>
+            <subGraphVerticeRef _id='16' id='25' delay='PD / 7 * 4' uuid='2d7bbd36-5dca-4c71-9a27-19a3bfa81bc5' type='digital'>
               <params>
                 <graphParams _id='46'>
                   <values>
-                    <graphParam _id='47' name='PD' type='Long' value='PD / 5 * 3' semantic='propagationDelay'/>
+                    <graphParam _id='47' name='PD' type='Long' value='PD / 7 * 4' semantic='propagationDelay'/>
                   </values>
                 </graphParams>
               </params>
@@ -175,7 +175,7 @@ if (^C) {
               </shape>
             </digitalEdgeView>
             <nandGateView _id='72' id='10' rot='0' filled='true' stroked='true' modelId='17' x='56.0' y='-308.0'/>
-            <nandGateView _id='73' id='11' rot='0' filled='true' stroked='true' modelId='18' x='56.0' y='-154.0'/>
+            <nandGateView _id='73' id='11' rot='0' filled='true' stroked='true' shadow='true' modelId='18' x='56.0' y='-154.0'/>
             <digitalEdgeView _id='74' id='12' filled='true' stroked='true' modelId='19' layout='ortho' orig='66' origPort='3' origPortOutput='true' dest='72' destPort='2' adjusted='false'>
               <shape>
                 <polylineShape points='-77.0,-308.0 0.0,-308.0'/>
@@ -369,7 +369,7 @@ if (^C) {
   <params>
     <graphParamDefs _id='122'>
       <paramDefs>
-        <graphParamDef _id='123' name='PD' type='Long' defaultValue='100' semantic='propagationDelay'/>
+        <graphParamDef _id='123' name='PD' type='Long' defaultValue='110' semantic='propagationDelay'/>
       </paramDefs>
     </graphParamDefs>
   </params>

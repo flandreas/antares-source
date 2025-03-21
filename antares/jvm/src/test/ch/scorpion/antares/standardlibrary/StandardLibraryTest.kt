@@ -3,6 +3,8 @@ package ch.scorpion.antares.standardlibrary
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.testcase.TestcaseService
+import ch.scorpion.jabbah.app.AbstractDesktopApplication
+import ch.scorpion.jabbah.app.CurrentApplicationVersion
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import junit.framework.TestCase.assertTrue
 import kotlin.test.BeforeTest
@@ -13,6 +15,7 @@ class StandardLibraryTest {
 
 	@BeforeTest
 	fun setup() {
+		CurrentApplicationVersion.version = AbstractDesktopApplication.readVersion()
 		AntaresTestRule.configure()
 		AbstractStandardLibraryBasedCircuitTest.setupLibrary()
 	}

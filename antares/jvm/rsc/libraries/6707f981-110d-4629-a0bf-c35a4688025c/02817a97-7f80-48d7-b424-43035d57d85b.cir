@@ -1,25 +1,25 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<metaGraph _id='0' manualContainer='true'>
+<metaGraph _id='0' appVersion='1.17.1' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
         <graph _id='2' type='digital' script='O = I@S'>
           <elements>
             <circuitInOut _id='3' id='1' name='I' type='input' bitWidth='16'/>
-            <subGraphVerticeRef _id='4' id='2' delay='PD/3*2' uuid='d5d282d6-21e9-4f1b-9429-75c882213cb3' type='digital'>
+            <subGraphVerticeRef _id='4' id='2' delay='PD/4*3' uuid='d5d282d6-21e9-4f1b-9429-75c882213cb3' type='digital'>
               <params>
                 <graphParams _id='5'>
                   <values>
-                    <graphParam _id='6' name='PD' type='Long' value='PD/3*2' semantic='propagationDelay'/>
+                    <graphParam _id='6' name='PD' type='Long' value='PD/4*3' semantic='propagationDelay'/>
                   </values>
                 </graphParams>
               </params>
             </subGraphVerticeRef>
-            <subGraphVerticeRef _id='7' id='3' delay='PD/3*2' uuid='d5d282d6-21e9-4f1b-9429-75c882213cb3' type='digital'>
+            <subGraphVerticeRef _id='7' id='3' delay='PD/4*3' uuid='d5d282d6-21e9-4f1b-9429-75c882213cb3' type='digital'>
               <params>
                 <graphParams _id='8'>
                   <values>
-                    <graphParam _id='9' name='PD' type='Long' value='PD/3*2' semantic='propagationDelay'/>
+                    <graphParam _id='9' name='PD' type='Long' value='PD/4*3' semantic='propagationDelay'/>
                   </values>
                 </graphParams>
               </params>
@@ -72,11 +72,11 @@
                 <netPortRef _id='36' verticeId='4' portId='5'/>
               </ports>
             </digitalNet>
-            <subGraphVerticeRef _id='37' id='14' delay='PD/3' uuid='7f483f75-3f41-4d89-aef5-ae07afbaf1f7' type='digital'>
+            <subGraphVerticeRef _id='37' id='14' delay='PD/2' uuid='7f483f75-3f41-4d89-aef5-ae07afbaf1f7' type='digital'>
               <params>
                 <graphParams _id='38'>
                   <values>
-                    <graphParam _id='39' name='PD' type='Long' value='PD/3' semantic='propagationDelay'/>
+                    <graphParam _id='39' name='PD' type='Long' value='PD/2' semantic='propagationDelay'/>
                   </values>
                 </graphParams>
               </params>
@@ -142,7 +142,12 @@
 0x0000	14	0
 0x4000	14	1
 0x0000	15	0
-0x8000	15	1		
+0x8000	15	1
+// Prop delay
+run {
+0x0002	0	0
+0x0002	1	1
+}
 		
 
 '>

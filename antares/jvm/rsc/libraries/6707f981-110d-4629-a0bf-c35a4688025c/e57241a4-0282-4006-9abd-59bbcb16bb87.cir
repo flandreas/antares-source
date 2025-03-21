@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<metaGraph _id='0' manualContainer='true'>
+<metaGraph _id='0' appVersion='1.17.1' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
@@ -24,8 +24,8 @@ if (S) {
 Q = 0
 &apos;!Q&apos; = 1' startupTime='15'>
           <elements>
-            <norGate _id='3' id='1' delay='PD - 2' inputCount='2'/>
-            <norGate _id='4' id='2' delay='PD + 2' inputCount='2'/>
+            <norGate _id='3' id='1' delay='PD / 3 - 1' inputCount='2'/>
+            <norGate _id='4' id='2' delay='PD / 3' inputCount='2'/>
             <circuitInOut _id='5' id='3' name='S' type='input' bitWidth='1'/>
             <circuitInOut _id='6' id='4' name='R' type='input' bitWidth='1'/>
             <circuitInOut _id='7' id='5' name='Q' type='output' bitWidth='1'/>
@@ -322,7 +322,7 @@ run {
   <params>
     <graphParamDefs _id='74'>
       <paramDefs>
-        <graphParamDef _id='75' name='PD' type='Long' defaultValue='20' semantic='propagationDelay'/>
+        <graphParamDef _id='75' name='PD' type='Long' defaultValue='60' semantic='propagationDelay'/>
       </paramDefs>
     </graphParamDefs>
   </params>
