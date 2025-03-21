@@ -309,7 +309,7 @@ run {
   <params>
     <graphParamDefs _id='102'>
       <paramDefs>
-        <graphParamDef _id='103' name='PD' type='Long' defaultValue='145' semantic='propagationDelay'/>
+        <graphParamDef _id='103' name='PD' type='Long' defaultValue='100' semantic='propagationDelay'/>
       </paramDefs>
     </graphParamDefs>
   </params>
