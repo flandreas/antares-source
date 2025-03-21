@@ -189,10 +189,10 @@
             <translation lang='de' text='Transmission-Gate'/>
           </name>
           <ports>
-            <subCircuitPort _id='47' portId='1' name='I' logic='positive' bitWidth='4' trigger='level' type='input' representation='binary'/>
+            <subCircuitPort _id='47' portId='1' name='I' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='50' portId='2' name='S' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='53' portId='3' name='!S' logic='negative' bitWidth='1' trigger='level' type='input' representation='binary'/>
-            <subCircuitPort _id='56' portId='4' name='O' logic='positive' bitWidth='4' trigger='level' type='output' representation='binary'/>
+            <subCircuitPort _id='56' portId='4' name='O' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
           </ports>
         </subGraphVertice>
       </model>
