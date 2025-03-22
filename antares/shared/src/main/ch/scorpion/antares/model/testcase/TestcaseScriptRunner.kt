@@ -128,13 +128,14 @@ class TestcaseScriptRunner(
 			else -> throw RuntimeError(TextLocation.UNDEFINED, Translations.getString("base.dsl.expectedNumber.msg"))
 		}
 
-	override fun processInputChanged(context: Any?) {
+	override fun processInputChanged(context: Any?): Long {
 		// In this environment, SignalHandler is not used and therefore not provided in context.
 		// This means that test scripts using external functions based on SignalHandler won't work
 		(context as AntaresInterpreter).interpret(
 			SubGraphFunctionContext(graphActorData, null, null),
 			keepMemory = true
 		)
+		return 0
 	}
 
 	override fun dispose() { }

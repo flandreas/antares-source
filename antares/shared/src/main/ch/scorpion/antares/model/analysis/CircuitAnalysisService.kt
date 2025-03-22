@@ -9,7 +9,6 @@ import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.truthtable.TruthTable
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.PortType
 
 class CircuitAnalysisError(msg: String): Error(msg)
@@ -58,13 +57,14 @@ class CircuitAnalysisService {
 		return TruthTable("Analysis Result", inputs.map { it.name!! }, outputs.map { it.name!! })
 	}
 
-	private fun setInputs(c: Any?) {
+	private fun setInputs(c: Any?): Long {
 		val context = c as Context
 		(0 until context.truthTable.inputColumnCount).forEach { column ->
 			val inputName = context.truthTable.getColumnName(column)
 			val input = context.circuit.getGraphInput<DigitalSignal>(inputName)
 			input!!.setIncomingSignal(DigitalSignalFactory.of(context.truthTable.getValue(context.row, column)), circuitRunner.scheduler)
 		}
+		return 0
 	}
 
 	private fun readOutputs(c: Any?) {

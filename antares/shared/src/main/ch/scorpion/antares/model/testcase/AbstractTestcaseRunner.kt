@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.inout.DigitalCircuitInOut
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.testcase.parser.TestScript
+import kotlin.math.max
 
 abstract class AbstractTestcaseRunner(
 	protected val testName: String,
@@ -16,7 +17,7 @@ abstract class AbstractTestcaseRunner(
 
 	abstract fun run(): TestRunResult
 
-	abstract fun processInputChanged(context: Any?)
+	abstract fun processInputChanged(context: Any?): Long
 
 	abstract fun dispose()
 
@@ -31,12 +32,13 @@ abstract class AbstractTestcaseRunner(
 		}.toList()
 
 	@Suppress("UNUSED_PARAMETER")
-	protected fun setInputs(context: Any?) {
-		setInputsFiltered(context) { it != Value.Type.CLOCKED }
-		setInputsFiltered(context) { it == Value.Type.CLOCKED }
-	}
+	protected fun setInputs(context: Any?): Long =
+		max(
+			setInputsFiltered(context) { it != Value.Type.CLOCKED },
+			setInputsFiltered(context) { it == Value.Type.CLOCKED }
+		)
 
-	private fun setInputsFiltered(context: Any?, filter: (Value.Type) -> Boolean) {
+	private fun setInputsFiltered(context: Any?, filter: (Value.Type) -> Boolean): Long {
 		var inputSet = false
 		portNames.forEachIndexed { index, portName ->
 			val port = circuit.getGraphPort<DigitalSignal>(portName)
@@ -49,8 +51,10 @@ abstract class AbstractTestcaseRunner(
 				}
 			}
 		}
-		if (inputSet) {
+		return if (inputSet) {
 			processInputChanged(context)
+		} else {
+			0
 		}
 	}
 

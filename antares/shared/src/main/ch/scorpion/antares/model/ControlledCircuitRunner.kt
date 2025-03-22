@@ -53,7 +53,7 @@ class ControlledCircuitRunner(
 	 * and then stops the simulation. Throws a [TooManyIterations] if the maximum iteration count is exceeded.
 	 *
 	 * @param prolog code to be executed after simulation start, but before execution of the [circuit].
-	 * Can be used for setting input signals.
+	 * Can be used for setting input signals. Returns the execution duration.
 	 * @param epilogue code to be executed after simulation execution, but before the simulation is stopped.
 	 * Can be used for reading output signals.
 	 * @param context an optional context object to be passed into [prolog] and [epilogue]
@@ -62,7 +62,7 @@ class ControlledCircuitRunner(
 	 */
 	fun run(
 		circuit: DigitalGraph,
-		prolog: (context:Any?) -> Unit = {},
+		prolog: (context:Any?) -> Long = { 0L },
 		epilogue: (context:Any?) -> Unit = {},
 		context: Any? = null
 	): Long {
@@ -80,7 +80,7 @@ class ControlledCircuitRunner(
 
 	fun runStart(
 		circuit: DigitalGraph,
-		prolog: (context:Any?) -> Unit = {},
+		prolog: (context:Any?) -> Long = { 0L },
 		epilogue: (context:Any?) -> Unit = {},
 		context: Any? = null
 	): Long {
@@ -94,7 +94,7 @@ class ControlledCircuitRunner(
 
 	fun runContinue(
 		circuit: DigitalGraph,
-		prolog: (context:Any?) -> Unit = {},
+		prolog: (context:Any?) -> Long = { 0L },
 		epilogue: (context:Any?) -> Unit = {},
 		context: Any? = null
 	): Long {
@@ -108,7 +108,7 @@ class ControlledCircuitRunner(
 
 	fun runStop(
 		circuit: DigitalGraph,
-		prolog: (context:Any?) -> Unit = {},
+		prolog: (context:Any?) -> Long = { 0L },
 		epilogue: (context:Any?) -> Unit = {},
 		context: Any? = null
 	): Long {
@@ -122,7 +122,7 @@ class ControlledCircuitRunner(
 
 	private fun runImpl(
 		circuit: DigitalGraph,
-		prolog: (context:Any?) -> Unit = {},
+		prolog: (context:Any?) -> Long = { 0L },
 		epilogue: (context:Any?) -> Unit = {},
 		context: Any? = null,
 		doStart: Boolean,
@@ -133,13 +133,14 @@ class ControlledCircuitRunner(
 			startSimulation(circuit)
 		}
 
-		val startTime = scheduler.executionTime
+		val prologTime = prolog(context)
 
-		prolog(context)
+		val startExecutionTime = scheduler.executionTime
 		proceedUntilQueueEmpty()
+
 		epilogue(context)
 
-		val duration = scheduler.executionTime - startTime
+		val duration = prologTime + (scheduler.executionTime - startExecutionTime)
 
 		if (doStop) {
 			stopSimulation(circuit)

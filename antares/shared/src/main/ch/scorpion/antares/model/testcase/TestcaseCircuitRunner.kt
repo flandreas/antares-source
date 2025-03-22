@@ -74,8 +74,10 @@ class TestcaseCircuitRunner(
 		}
 	}
 
-	override fun processInputChanged(context: Any?) {
+	override fun processInputChanged(context: Any?): Long {
+		val t = circuitRunner.scheduler.executionTime
 		circuitRunner.proceedUntilQueueEmpty()
+		return circuitRunner.scheduler.executionTime - t
 	}
 
 	override fun dispose() {

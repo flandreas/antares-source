@@ -13,24 +13,24 @@ if (^C) {
 	&apos;!Q&apos; = not D
 }' propDelay='110' startupTime='45'>
           <elements>
-            <norGate _id='3' id='1' delay='PD / 7' inputCount='2'/>
-            <norGate _id='4' id='2' delay='PD / 7 + 2' inputCount='2'/>
+            <norGate _id='3' id='1' delay='PD / 6' inputCount='2'/>
+            <norGate _id='4' id='2' delay='PD / 6 + 2' inputCount='2'/>
             <circuitInOut _id='5' id='3' name='D' type='input' bitWidth='1'/>
             <circuitInOut _id='6' id='4' name='C' type='input' bitWidth='1'/>
             <circuitInOut _id='7' id='5' name='Q' type='output' bitWidth='1'/>
             <circuitInOut _id='8' id='6' name='!Q' type='output' bitWidth='1'/>
-            <andGate _id='9' id='7' delay='PD / 7' inputCount='2'/>
-            <andGate _id='10' id='8' delay='PD / 7' inputCount='2'/>
-            <subGraphVerticeRef _id='11' id='9' delay='PD / 7 * 4' uuid='2d7bbd36-5dca-4c71-9a27-19a3bfa81bc5' type='digital'>
+            <andGate _id='9' id='7' delay='PD / 6' inputCount='2'/>
+            <andGate _id='10' id='8' delay='PD / 6' inputCount='2'/>
+            <subGraphVerticeRef _id='11' id='9' delay='PD / 6 * 4' uuid='2d7bbd36-5dca-4c71-9a27-19a3bfa81bc5' type='digital'>
               <params>
                 <graphParams _id='12'>
                   <values>
-                    <graphParam _id='13' name='PD' type='Long' value='PD / 7 * 4' semantic='propagationDelay'/>
+                    <graphParam _id='13' name='PD' type='Long' value='PD / 6 * 4' semantic='propagationDelay'/>
                   </values>
                 </graphParams>
               </params>
             </subGraphVerticeRef>
-            <notGate _id='14' id='10' delay='PD / 7'/>
+            <notGate _id='14' id='10' delay='PD / 6'/>
             <digitalNet _id='15' id='11' delay='0'>
               <ports>
                 <netPortRef _id='16' verticeId='5' portId='1'/>
