@@ -13,11 +13,9 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.graph.model.Port
-import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.port.PortViewFactory
-import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -30,7 +28,7 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 open class PortViewComponent<T : Any>(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	var portView: PortView<T>? = null
+	portView: PortView<T>? = null
 ) : AbstractComponent(styleProvider), SnappableX, SnappableY {
 
 	companion object {
@@ -39,7 +37,10 @@ open class PortViewComponent<T : Any>(
 
 	val port: Port<T> get() = portView!!.port
 
-	var drawableOwner: DrawableOwner? = null
+	var portView: PortView<T>? = portView
+		private set
+
+	private var drawableOwner: DrawableOwner? = null
 
 	init {
 		preferredSelectionDrawingStrategy = SelectionDrawingStrategy.REPLACE
