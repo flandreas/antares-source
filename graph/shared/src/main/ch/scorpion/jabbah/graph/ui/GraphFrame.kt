@@ -127,7 +127,7 @@ open class GraphFrameController<T: GraphFrame>(
 	override val viewDesktopAction: Action = ViewDesktopAction(eventBus)
 	override val viewContainerAction: Action = ViewContainerAction(eventBus)
 
-	val containerPanelController = ContainerPanelController(applicationContextHolder, displayGlobalMessages = true)
+	val containerPanelController = ContainerPanelController(applicationContextHolder, displayGlobalMessages = true, drawingView)
 
 	val graphPanelViewController = GraphPanelViewController(
 		editor,

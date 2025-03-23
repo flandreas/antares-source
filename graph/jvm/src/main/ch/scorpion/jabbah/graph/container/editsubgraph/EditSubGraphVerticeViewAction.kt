@@ -7,6 +7,9 @@ import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.CommandManager
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.app.AbstractSelectionAwareAction
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
@@ -20,7 +23,7 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import javax.swing.Action
 
 /**
- * An [Action] for editing the look of a individual [SubGraphVerticeView] by overwriting the standard
+ * An [Action] for editing the look of an individual [SubGraphVerticeView] by overwriting the standard
  * [ContainerDrawing] using a [ContainerEditor] in a dialog.
  */
 class EditSubGraphVerticeViewAction(
@@ -52,7 +55,8 @@ class EditSubGraphVerticeViewAction(
 
 		val containerPanelController = ContainerPanelController(
 			applicationContextHolder,
-			displayGlobalMessages = false
+			displayGlobalMessages = false,
+			viewManager.activeView!!.view as DrawingView<Drawing<Component>>,
 		)
 
 		val containerPanel = ContainerPanelSwing(

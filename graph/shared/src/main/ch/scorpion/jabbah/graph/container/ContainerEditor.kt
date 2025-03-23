@@ -21,9 +21,14 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 
 /**
  * An [Editor] for editing the outside view of a [SubGraphVerticeView] as a [ContainerDrawing].
+ *
+ * @property view the [DrawingView] containing the [ContainerDrawing]
+ * @property mainDrawingView the [DrawingView] containing the main [Drawing] whose symbol is edited by this [ContainerEditor].
+ * Used to check whether received update events are relevant for this [ContainerEditor].
  */
 open class ContainerEditor(
 	view: DrawingView<Drawing<Component>>,
+	protected val mainDrawingView: DrawingView<Drawing<Component>>,
 	protected val eventBus: EventBus = BaseModule.eventBus
 ) : EditorImpl(view) {
 

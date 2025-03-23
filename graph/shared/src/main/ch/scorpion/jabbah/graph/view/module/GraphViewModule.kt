@@ -93,7 +93,7 @@ object GraphViewModule : AbstractModule() {
 
 	var graphEditorFactory: (DrawingView<Drawing<Component>>) -> GraphEditor = { GraphEditor(it) }
 
-	var containerEditorFactory: (DrawingView<Drawing<Component>>) -> ContainerEditor = { ContainerEditor(it) }
+	var containerEditorFactory: (DrawingView<Drawing<Component>>, DrawingView<Drawing<Component>>) -> ContainerEditor = { dv1, dv2 -> ContainerEditor(dv1, dv2) }
 
 	val dragEdgeViewOriginConnector: DragEdgeViewOriginConnector by lazy { DragEdgeViewOriginConnector(graphViewConnectService) }
 	val dragEdgeViewDestinationConnector: DragEdgeViewDestinationConnector by lazy { DragEdgeViewDestinationConnector(graphViewConnectService) }

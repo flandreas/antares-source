@@ -4,7 +4,6 @@ import ch.scorpion.antares.model.inout.DigitalCircuitInOutBitWidthChanged
 import ch.scorpion.antares.model.inout.DigitalCircuitInOutSignalRepresentationChanged
 import ch.scorpion.antares.model.inout.DigitalCircuitInOutStartValueChanged
 import ch.scorpion.antares.model.port.DigitalPort
-import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.logger
@@ -12,48 +11,44 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.auth.EditAuthModule
-import ch.scorpion.jabbah.edit.model.ComponentMessage
-import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.graph.container.ContainerEditor
+import ch.scorpion.jabbah.graph.view.GraphView
 
 class DigitalContainerEditor(
-    view: DrawingView<Drawing<Component>>,
-    eventBus: EventBus = BaseModule.eventBus
-) : ContainerEditor(view, eventBus) {
+	view: DrawingView<Drawing<Component>>,
+	mainDrawingView: DrawingView<Drawing<Component>>,
+	eventBus: EventBus = BaseModule.eventBus
+) : ContainerEditor(view, mainDrawingView, eventBus) {
 
 	companion object {
 		private val LOG by logger(DigitalContainerEditor::class)
 	}
 
-	private val circuitInOutBitWidthHandler: EventHandler<DigitalCircuitInOutBitWidthChanged> = {
-		val portViewComponent = getContainerDrawing().getPortViewComponent(it.circuitInOut.name!!)
-		if (portViewComponent != null) {
-			if (EditAuthModule.userHolder.user.isDeveloper) {
-				LOG.info(">>> Change BitWidth of PortViewComponent (ConsistencyCheck fail cause suspicion")
-				System.printStackTrace()
-				eventBus.post(ComponentMessage(
-					ComponentMessageType.Error,
-					source = null,
-					messageKey = "antares.system.inconsistentSubCircuitPortBitWidth.msg"))
-				System.beep()
+	private val circuitInOutBitWidthHandler: EventHandler<DigitalCircuitInOutBitWidthChanged> = { event ->
+		if ((super.mainDrawingView.drawing as GraphView).graph?.contains(event.circuitInOut) == true) {
+			val portViewComponent = getContainerDrawing().getPortViewComponent(event.circuitInOut.name!!)
+			if (portViewComponent != null) {
+				(portViewComponent.port as DigitalPort).bitWidth = event.newValue
 			}
-			(portViewComponent.port as DigitalPort).bitWidth = it.newValue
 		}
 	}
 
-	private val circuitInOutSignalRepresentationHandler: EventHandler<DigitalCircuitInOutSignalRepresentationChanged> = {
-		val portViewComponent = getContainerDrawing().getPortViewComponent(it.circuitInOut.name!!)
-		if (portViewComponent != null) {
-			(portViewComponent.port as DigitalPort).signalRepresentation = it.newValue
+	private val circuitInOutSignalRepresentationHandler: EventHandler<DigitalCircuitInOutSignalRepresentationChanged> = { event ->
+		if ((super.mainDrawingView.drawing as GraphView).graph?.contains(event.circuitInOut) == true) {
+			val portViewComponent = getContainerDrawing().getPortViewComponent(event.circuitInOut.name!!)
+			if (portViewComponent != null) {
+				(portViewComponent.port as DigitalPort).signalRepresentation = event.newValue
+			}
 		}
 	}
 
-	private val circuitInOutStartValueHandler: EventHandler<DigitalCircuitInOutStartValueChanged> = {
-		val portViewComponent = getContainerDrawing().getPortViewComponent(it.circuitInOut.name!!)
-		if (portViewComponent != null) {
-			if (portViewComponent.port.portType.isInput) {
-				(portViewComponent.port as DigitalPort).unconnectedStartValue = it.newValue
+	private val circuitInOutStartValueHandler: EventHandler<DigitalCircuitInOutStartValueChanged> = { event ->
+		if ((super.mainDrawingView.drawing as GraphView).graph?.contains(event.circuitInOut) == true) {
+			val portViewComponent = getContainerDrawing().getPortViewComponent(event.circuitInOut.name!!)
+			if (portViewComponent != null) {
+				if (portViewComponent.port.portType.isInput) {
+					(portViewComponent.port as DigitalPort).unconnectedStartValue = event.newValue
+				}
 			}
 		}
 	}

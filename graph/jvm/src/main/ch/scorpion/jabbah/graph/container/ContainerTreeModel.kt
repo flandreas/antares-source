@@ -361,7 +361,7 @@ abstract class DraggableTreeItem(
 ) : AbstractContainerTreeItem(type)
 
 class ContainerTreePortItem(
-	private val graphPortView: GraphPortView<*>,
+	val graphPortView: GraphPortView<*>,
 	factory: () -> Component
 ) : DraggableTreeItem(ContainerTreeItemType.Port, factory, graphPortView.iconPath) {
 

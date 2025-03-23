@@ -51,7 +51,7 @@ class ContainerPanelSwing(
 	 * The [ContainerTreeView] containing all objects of the underlying [GraphView]
 	 * that have not yet been added to the [ContainerDrawing].
 	 */
-	private val treeView = GraphModuleJvm.containerTreeViewFactory.invoke()
+	private val treeView = GraphModuleJvm.containerTreeViewFactory.invoke(controller.mainGraphDrawingView)
 
 	private val propertyPanel: ComponentPropertyPanelSwing
 

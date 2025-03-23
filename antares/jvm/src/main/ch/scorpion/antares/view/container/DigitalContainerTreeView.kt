@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.inout.DigitalCircuitInOutBitWidthChanged
 import ch.scorpion.antares.model.inout.DigitalCircuitInOutSignalRepresentationChanged
 import ch.scorpion.antares.model.inout.DigitalCircuitInOutStartValueChanged
 import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -14,32 +15,58 @@ import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.model.port.PortFactory
 import ch.scorpion.jabbah.graph.view.port.PortViewFactory
+import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
+import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.auth.EditAuthModule
+import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.edit.model.ComponentMessageType
+import ch.scorpion.jabbah.graph.container.ContainerTreePortItem
+import ch.scorpion.jabbah.graph.view.GraphView
 
 class DigitalContainerTreeView(
+	mainDrawingView: DrawingView<Drawing<Component>>,
 	portFactory: PortFactory = GraphModelModule.portFactory,
 	portViewFactory: PortViewFactory = GraphViewModule.portViewFactory,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	eventBus: EventBus = BaseModule.eventBus
-) : ContainerTreeView(portFactory, portViewFactory, styleProvider, eventBus) {
+) : ContainerTreeView(mainDrawingView, portFactory, portViewFactory, styleProvider, eventBus) {
 
-	private val bitWidthHandler: EventHandler<DigitalCircuitInOutBitWidthChanged> = {
-		val treeNode = containerTree?.model?.getPortTreeNode(it.circuitInOut.name!!)
-		if (treeNode != null && treeNode.userObject is DigitalCircuitInOutView) {
-			(treeNode.userObject as DigitalCircuitInOutView).bitWidth = it.newValue
+	private val bitWidthHandler: EventHandler<DigitalCircuitInOutBitWidthChanged> = { event ->
+		if ((super.mainDrawingView.drawing as GraphView).graph?.contains(event.circuitInOut) == true) {
+			val treeNode = containerTree?.model?.getPortTreeNode(event.circuitInOut.name!!)
+			if (treeNode != null
+				&& treeNode.userObject is ContainerTreePortItem
+				&& (treeNode.userObject as ContainerTreePortItem).graphPortView is DigitalCircuitInOutView
+			) {
+				((treeNode.userObject as ContainerTreePortItem).graphPortView as DigitalCircuitInOutView).bitWidth = event.newValue
+			}
 		}
 	}
 
-	private val signalRepresentationHandler: EventHandler<DigitalCircuitInOutSignalRepresentationChanged> = {
-		val treeNode = containerTree?.model?.getPortTreeNode(it.circuitInOut.name!!)
-		if (treeNode != null && treeNode.userObject is DigitalCircuitInOutView) {
-			(treeNode.userObject as DigitalCircuitInOutView).signalRepresentation = it.newValue
+	private val signalRepresentationHandler: EventHandler<DigitalCircuitInOutSignalRepresentationChanged> = { event ->
+		if ((super.mainDrawingView.drawing as GraphView).graph?.contains(event.circuitInOut) == true) {
+			val treeNode = containerTree?.model?.getPortTreeNode(event.circuitInOut.name!!)
+			if (treeNode != null
+				&& treeNode.userObject is ContainerTreePortItem
+				&& (treeNode.userObject as ContainerTreePortItem).graphPortView is DigitalCircuitInOutView
+			) {
+				((treeNode.userObject as ContainerTreePortItem).graphPortView as DigitalCircuitInOutView).signalRepresentation = event.newValue
+			}
 		}
 	}
 
-	private val startValueHandler: EventHandler<DigitalCircuitInOutStartValueChanged> = {
-		val treeNode = containerTree?.model?.getPortTreeNode(it.circuitInOut.name!!)
-		if (treeNode != null && treeNode.userObject is DigitalCircuitInOutView) {
-			(treeNode.userObject as DigitalCircuitInOutView).startValue = it.newValue?.getValue()?.toLong()
+	private val startValueHandler: EventHandler<DigitalCircuitInOutStartValueChanged> = { event ->
+		if ((super.mainDrawingView.drawing as GraphView).graph?.contains(event.circuitInOut) == true) {
+			val treeNode = containerTree?.model?.getPortTreeNode(event.circuitInOut.name!!)
+			if (treeNode != null
+				&& treeNode.userObject is ContainerTreePortItem
+				&& (treeNode.userObject as ContainerTreePortItem).graphPortView is DigitalCircuitInOutView
+			) {
+				((treeNode.userObject as ContainerTreePortItem).graphPortView as DigitalCircuitInOutView).startValue =
+					event.newValue?.getValue()?.toLong()
+			}
 		}
 	}
 

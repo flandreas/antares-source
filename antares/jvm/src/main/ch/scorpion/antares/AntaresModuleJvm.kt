@@ -117,10 +117,10 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 	override fun initialize() {
 		LibraryModule.DEF_LIBRARY_UUID = AntaresApplication.DEF_LIBRARY_UUID
 
-		GraphViewModule.containerEditorFactory = { DigitalContainerEditor(it) }
+		GraphViewModule.containerEditorFactory = { dv1, dv2 -> DigitalContainerEditor(dv1, dv2) }
 
 		GraphViewModuleJvm.containerToolBarBuilderFactory = { DigitalContainerToolBarBuilder() }
-		GraphModuleJvm.containerTreeViewFactory = { DigitalContainerTreeView() }
+		GraphModuleJvm.containerTreeViewFactory = { dv -> DigitalContainerTreeView(dv) }
 		GraphModuleJvm.libraryTreeViewActionsProvider = {
 				params -> DigitalLibraryTreeViewActionsSwing(params.controller, params.type, params.application)
 		}

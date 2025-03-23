@@ -10,6 +10,9 @@ import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.draw.richtext.RichTextLabel
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.port.PortFactory
 import ch.scorpion.jabbah.graph.ui.MetaGraphIconProvider
@@ -26,6 +29,7 @@ import javax.swing.tree.TreeModel
  * Displays the objects that can be dragged into a [ContainerDrawing], such as [PortViewComponent]s and controls.
  */
 open class ContainerTreeView(
+	protected val mainDrawingView: DrawingView<Drawing<Component>>,
 	private val portFactory: PortFactory = GraphModelModule.portFactory,
 	private val portViewFactory: PortViewFactory = GraphViewModule.portViewFactory,
 	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider,

@@ -10,8 +10,7 @@ import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
-import ch.scorpion.jabbah.edit.CommandEvent
-import ch.scorpion.jabbah.edit.UndoableDataHolder
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanelController
@@ -43,12 +42,13 @@ interface ContainerPanelView : UIView {
 class ContainerPanelController(
 	applicationContextHolder: GraphApplicationContextHolder,
 	displayGlobalMessages: Boolean = true,
+	val mainGraphDrawingView: DrawingView<Drawing<Component>>,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<ContainerPanelView>() {
 
 	val drawingView = EditModule.drawingViewFactory.create(ContainerDrawing(), applicationContextHolder, displayGlobalMessages)
 
-	val editor = GraphViewModule.containerEditorFactory(drawingView)
+	val editor = GraphViewModule.containerEditorFactory(drawingView, mainGraphDrawingView)
 
 	val propertyPanelController = ComponentPropertyPanelController(editor, eventBus)
 

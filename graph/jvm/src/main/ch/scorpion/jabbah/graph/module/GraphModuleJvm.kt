@@ -11,8 +11,7 @@ import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.preferences.*
 import ch.scorpion.jabbah.base.swing.ToStringRenderer
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
-import ch.scorpion.jabbah.edit.BeanProvider
-import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.module.EditModuleJvm
 import ch.scorpion.jabbah.edit.properties.AbstractReflectionPropertySwing
@@ -43,7 +42,7 @@ object GraphModuleJvm : AbstractModule() {
 
 	val supportWeb: Boolean get() = true
 
-	var containerTreeViewFactory: () -> ContainerTreeView = { ContainerTreeView() }
+	var containerTreeViewFactory: (DrawingView<Drawing<Component>>) -> ContainerTreeView = { ContainerTreeView(it) }
 
 	var projectAkrabClientServiceJvm: () -> ProjectAkrabClientServiceJvm = { throw UnsupportedOperationException() }
 
