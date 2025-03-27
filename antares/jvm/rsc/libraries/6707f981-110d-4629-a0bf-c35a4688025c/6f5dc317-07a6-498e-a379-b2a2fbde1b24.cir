@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<metaGraph _id='0' manualContainer='true'>
+<metaGraph _id='0' appVersion='1.17.1' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
@@ -30,25 +30,41 @@ if (^C) {
               </desc>
             </circuitInOut>
           </elements>
+          <testcases>
+            <testcases _id='6'>
+              <testcases>
+                <testcase _id='7' id='1' testVectors='	C	D	O
+run {
+	0	255	0
+	^1	255	255
+	0	0	255
+}'>
+                  <name>
+                    <translation lang='en' text='Test'/>
+                  </name>
+                </testcase>
+              </testcases>
+            </testcases>
+          </testcases>
         </graph>
       </model>
       <view>
-        <graphView _id='6'>
+        <graphView _id='8'>
           <netViews>
-            <netView _id='7' modelId='8' style='line'/>
+            <netView _id='9' modelId='10' style='line'/>
           </netViews>
           <components>
-            <circuitInOutView _id='9' id='5' rot='0' filled='true' stroked='true' modelId='3' orientation='east' representation='binary'>
+            <circuitInOutView _id='11' id='5' rot='0' filled='true' stroked='true' modelId='3' orientation='east' representation='binary'>
               <location>
                 <point x='518.0' y='238.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='10' id='6' rot='0' filled='true' stroked='true' modelId='4' orientation='east' representation='hex'>
+            <circuitInOutView _id='12' id='6' rot='0' filled='true' stroked='true' modelId='4' orientation='east' representation='hex'>
               <location>
                 <point x='518.0' y='161.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='11' id='8' rot='0' filled='true' stroked='true' modelId='5' orientation='east' representation='hex'>
+            <circuitInOutView _id='13' id='8' rot='0' filled='true' stroked='true' modelId='5' orientation='east' representation='hex'>
               <location>
                 <point x='581.0' y='203.0'/>
               </location>
@@ -59,30 +75,30 @@ if (^C) {
     </graphStorable>
   </graph>
   <container>
-    <containerDrawing _id='12'>
+    <containerDrawing _id='14'>
       <components>
-        <rectangle _id='13' id='1' style='figure' filled='true' stroked='true' x='140.0' y='140.0' w='98.0' h='56.0'/>
-        <originIndicator _id='14' id='7'>
+        <rectangle _id='15' id='1' style='figure' filled='true' stroked='true' x='140.0' y='140.0' w='98.0' h='56.0'/>
+        <originIndicator _id='16' id='7'>
           <location>
             <point x='126.0' y='154.0'/>
           </location>
         </originIndicator>
-        <digitalPortViewComp _id='15' id='3' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='17' id='3' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='16' x='140.0' y='154.0' dir='west' textPos='internal' portId='17'/>
+            <digitalPortView _id='18' x='140.0' y='154.0' dir='west' textPos='internal' portId='19'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='18' id='4' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='20' id='4' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='19' x='140.0' y='182.0' dir='west' textPos='internal' portId='20'/>
+            <digitalPortView _id='21' x='140.0' y='182.0' dir='west' textPos='internal' portId='22'/>
           </portView>
         </digitalPortViewComp>
-        <digitalPortViewComp _id='21' id='5' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
+        <digitalPortViewComp _id='23' id='5' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='22' x='238.0' y='168.0' dir='east' textPos='internal' portId='23'/>
+            <digitalPortView _id='24' x='238.0' y='168.0' dir='east' textPos='internal' portId='25'/>
           </portView>
         </digitalPortViewComp>
-        <label _id='24' id='6' rot='0'>
+        <label _id='26' id='6' rot='0'>
           <text>
             <translation lang='de' text='REG'/>
           </text>
@@ -92,7 +108,7 @@ if (^C) {
         </label>
       </components>
       <model>
-        <subGraphVertice _id='25' id='0' delay='0' uuid='6f5dc317-07a6-498e-a379-b2a2fbde1b24'>
+        <subGraphVertice _id='27' id='0' delay='0' uuid='6f5dc317-07a6-498e-a379-b2a2fbde1b24'>
           <desc>
             <translation lang='de' text='n-Bit-Speicherregister mit positiver Flankensteuerung. Speichert mit ansteigender Taktflanke C die Daten, die am Dateneingang D anliegen, und gibt sie am Datenausgang O aus.'/>
             <translation lang='en' text='n-bit data register with positive edge-triggering. Stores the value at D with a rising edge of C and outputs it at output O.'/>
@@ -101,18 +117,18 @@ if (^C) {
             <translation lang='de' text='Register n Bit'/>
           </name>
           <ports>
-            <subCircuitPort _id='17' portId='1' name='D' logic='positive' bitWidth='8' trigger='level' type='input' representation='hex'/>
-            <subCircuitPort _id='20' portId='2' name='C' logic='positive' bitWidth='1' trigger='edge' type='input' representation='binary'/>
-            <subCircuitPort _id='23' portId='3' name='O' logic='positive' bitWidth='8' trigger='level' type='output' representation='hex'/>
+            <subCircuitPort _id='19' portId='1' name='D' logic='positive' bitWidth='8' trigger='level' type='input' representation='hex'/>
+            <subCircuitPort _id='22' portId='2' name='C' logic='positive' bitWidth='1' trigger='edge' type='input' representation='binary'/>
+            <subCircuitPort _id='25' portId='3' name='O' logic='positive' bitWidth='8' trigger='level' type='output' representation='hex'/>
           </ports>
         </subGraphVertice>
       </model>
     </containerDrawing>
   </container>
   <params>
-    <graphParamDefs _id='26'>
+    <graphParamDefs _id='28'>
       <paramDefs>
-        <graphParamDef _id='27' name='BW' type='bitWidth' defaultValue='8'/>
+        <graphParamDef _id='29' name='BW' type='bitWidth' defaultValue='8'/>
       </paramDefs>
     </graphParamDefs>
   </params>
