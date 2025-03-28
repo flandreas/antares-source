@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 
 abstract class AbstractBaseInterpreter(
 	protected val rootNode: Node,
-	protected val memory: Memory = Memory()
+	val memory: Memory = Memory()
 ) {
 	/** Set by "return" statement to the expression to be returned and immediately quit interpretation.*/
 	protected var returnValue: Any? = null

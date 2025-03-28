@@ -18,6 +18,6 @@ object EditEditorModule : AbstractModule() {
     }
 
     @Suppress("unused")
-    fun createEditor(view: DrawingView<Drawing<Component>>): Editor =
-	    EditorImpl(view, EditModule.commandManager, EditSelectModule.selectionToolFactory)
+    fun createEditor(name: String, view: DrawingView<Drawing<Component>>): Editor =
+	    EditorImpl(view, EditModule.commandManager, EditSelectModule.selectionToolFactory, name)
 }

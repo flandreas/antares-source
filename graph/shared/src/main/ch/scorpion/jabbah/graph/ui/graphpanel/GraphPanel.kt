@@ -11,10 +11,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.draw.view.ActiveContentViewChangedEvent
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.Tool
+import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.app.ComponentSnapAction
 import ch.scorpion.jabbah.edit.app.GridSnapAction
 import ch.scorpion.jabbah.edit.model.ComponentMessage
@@ -86,6 +83,8 @@ data class IssuesSummary(
 interface GraphPanelView : UIView {
 	var issuesSummary: IssuesSummary?
 	val graphEditView: GraphEditView
+
+	fun updateDynamicToolbar()
 }
 
 /**
@@ -115,7 +114,7 @@ class GraphPanelViewController(
 		private val LOG by logger(GraphPanelViewController::class)
 	}
 
-	val propertyPanelController = ApplicationDataPropertyPanelController(editor, eventBus)
+	val propertyPanelController = ApplicationDataPropertyPanelController(editor, eventBus, currentEditorEventFilter = { e -> e.editor.name == editor.name })
 	val libraryPanelController = LibraryPanelController(applicationModeHolder, libraryHolder, eventBus)
 	val editViewController = GraphEditViewController(
 		editor,
@@ -178,6 +177,8 @@ class GraphPanelViewController(
 		eventBus.register(IssueCollectorEvent::class, issuesCollectorHandler)
 		eventBus.register(ExecutionStoppedOnIssueEvent::class, executionStoppedOnIssueHandler)
 		eventBus.register(NameChangedEvent::class, containerLibraryElementRenamedHandler)
+
+		desktopController.addPropertyChangeListener { _ -> view.updateDynamicToolbar() }
 	}
 
 	/** ---- [AbstractUIController] */
@@ -256,7 +257,8 @@ class GraphPanelViewController(
 		}
 	}
 
-	fun setGraphViewApplicationData(graphView: GraphView?, editable: Boolean) {
+	private fun setGraphViewApplicationData(graphView: GraphView?, editable: Boolean) {
+		eventBus.post(CurrentEditorEvent(editor))
 		isSavableEditable = editable
 		if (graphView == null) {
 			// Set empty drawing to avoid flickering (i.e. showing the old drawing) when
@@ -274,7 +276,9 @@ class GraphPanelViewController(
 	}
 
 	private fun handle(event: ApplicationDataContentEvent) {
-		setApplicationDataContent((event.data.content as MetaGraph?)?.graph?.graphView)
+		if (event.data.content is MetaGraph) {
+			setApplicationDataContent((event.data.content as MetaGraph?)?.graph?.graphView)
+		}
 	}
 
 	/**

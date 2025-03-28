@@ -49,7 +49,11 @@ class CreateCircuitFromTruthTablePanel(
 	private val nameField = JTextField(20)
 
 	private val synthesisTypeLabel = JLabel(Translations.getString("antares.synthesis.type.name"))
-	private val synthesisTypeField = JComboBox(CircuitSynthesisType.values())
+	private val synthesisTypeField = JComboBox(CircuitSynthesisType
+		.entries
+		.filter { it.supportFSM }
+		.toTypedArray()
+	)
 
 	init {
 		buildUI()

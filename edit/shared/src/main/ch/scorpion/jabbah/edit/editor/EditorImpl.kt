@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.edit.editor
 
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.draw.DrawableContainerEvent
 import ch.scorpion.jabbah.draw.container.DrawableContainerAdapter
@@ -12,6 +13,7 @@ import ch.scorpion.jabbah.edit.snap.ComponentSnapper
 import ch.scorpion.jabbah.edit.snap.SnapManagerImpl
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.View
+import ch.scorpion.jabbah.edit.tool.ToolLockAction
 
 /**
  * Standard implementation of the [Editor] interface.
@@ -20,11 +22,13 @@ open class EditorImpl(
     final override val view: DrawingView<Drawing<Component>>,
     final override val commandManager: CommandManager,
     selectionToolFactory: SelectionToolFactory,
+    override val name: String = "",
     dragManagerFactory: DragManagerFactory = EditEditorModule.dragManagerFactory
 ) : Editor {
 
     @Suppress("unused")
-    constructor(view: DrawingView<Drawing<Component>>): this(view, EditModule.commandManager, EditSelectModule.selectionToolFactory)
+    constructor(view: DrawingView<Drawing<Component>>, name: String = ""):
+       this(view, EditModule.commandManager, EditSelectModule.selectionToolFactory, name)
 
     private val changeSupport = PropertyChangeSupport<Any>(this)
 
@@ -125,11 +129,16 @@ open class EditorImpl(
 
     override fun toolDone() {
         if (!toolLock) {
-            currentTool = selectionTool
+            // Invoke later so that StatusEvent of SelectionTool is the last one
+            System.invokeLater {
+                currentTool = selectionTool
+            }
         }
     }
 
     /** ---- [EditorImpl] */
+
+    val toolLockAction: Action = ToolLockAction(this)
 
     /**
      * Convenience method being automatically called by this [EditorImpl] whenever a [Component] has

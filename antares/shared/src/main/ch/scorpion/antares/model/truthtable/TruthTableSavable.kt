@@ -6,10 +6,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Bean
-import ch.scorpion.jabbah.edit.auth.Authorizer
-import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.graph.library.AbstractLibraryItemSavable
-import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.io.Storable
 
 class TruthTableSavable(
@@ -20,15 +17,6 @@ class TruthTableSavable(
 	override val typeName: String get() = Translations.getString("library.element.truthTable.name")
 
 	private val truthTableLibraryItem: TruthTableLibraryItem get() = item as TruthTableLibraryItem
-
-	override val description: String get() = if (item.library is Project) {
-		"${Translations.getString("project.savable.prefix")} \"${truthTableLibraryItem.name.getTranslation()}\""
-	} else {
-		"${Translations.getString("library.savable.prefix")} \"${truthTableLibraryItem.name.getTranslation()}\""
-	}
-
-	override val editable: Boolean
-		get() = item.library?.let { Authorizer.isCurrentUserAuthorizedTo(Operation.Change, it) } ?: false
 
 	override fun open(application: Application): Boolean {
 		eventBus.post(OpenTruthTableItemRequest(truthTableLibraryItem))

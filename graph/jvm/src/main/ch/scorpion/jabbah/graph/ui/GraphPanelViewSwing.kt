@@ -62,7 +62,12 @@ class GraphPanelViewSwing(
 	/** Contains UI for selecting components from the current library or the current project.*/
 	val libraryPanel = LibraryPanelSwing(controller.libraryPanelController, application, eventBus)
 
-	private val drawingToolBar = createDrawingToolBar(application, controller)
+	private val defaultDrawingToolBar = createDrawingToolBar(application, controller)
+
+	private val drawingToolBarHolder = ToolBar().also {
+		// Use ToolBar for layout reasons. A Panel with BorderLayout would consume too much space to the right
+		it.add(defaultDrawingToolBar, BorderLayout.NORTH)
+	}
 
 	private val settingsToolBar = createSettingsToolBar(controller)
 
@@ -71,10 +76,14 @@ class GraphPanelViewSwing(
 
 	private val executionToolbar: ExecutionToolbarSwing = createExecutionToolBar(controller)
 
-	val toolbars: List<ToolBar> = listOf(
+	val toolbars: List<JComponent> = listOf(
 		executionToolbar,
-		drawingToolBar,
-		settingsToolBar).onEach { it.isFloatable = false }
+		drawingToolBarHolder,
+		settingsToolBar).onEach {
+			if (it is ToolBar) {
+				it.isFloatable = false
+			}
+		}
 
 	/** The "Explorer" contains [libraryPanel] and [propertyPanel].*/
 	private val explorerSplitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
@@ -142,6 +151,8 @@ class GraphPanelViewSwing(
 
 		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
 		updateTitle()
+
+		updateDynamicToolbar()
 	}
 
 	override fun dispose() {
@@ -155,6 +166,17 @@ class GraphPanelViewSwing(
 		bottomSidebarPane.dispose()
 
 		BaseModule.settings.set("graphPanel.librarySplitPos", explorerSplitPane.dividerLocation)
+	}
+
+	override fun updateDynamicToolbar() {
+		drawingToolBarHolder.removeAll()
+		if (controller.desktopController.mainDesktopViewItem?.toolBar is JComponent) {
+			drawingToolBarHolder.add(controller.desktopController.mainDesktopViewItem!!.toolBar as JComponent)
+		} else {
+			drawingToolBarHolder.add(defaultDrawingToolBar)
+		}
+		drawingToolBarHolder.invalidate()
+		drawingToolBarHolder.validate()
 	}
 
 	private fun updateTitle() {

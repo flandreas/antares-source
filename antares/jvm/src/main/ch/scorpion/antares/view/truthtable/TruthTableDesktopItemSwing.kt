@@ -128,7 +128,7 @@ class TruthTableDesktopItemSwing(
 
 		expressionsTextArea.alignmentX = Component.LEFT_ALIGNMENT
 		expressionsTextArea.isEditable = false
-		expressionsTextArea.rows = max(4, ref.truthTable.outputColumnCount)
+		expressionsTextArea.rows = max(8, ref.truthTable.outputColumnCount)
 
 		val expressionScrollPane = JScrollPane(expressionsTextArea)
 		expressionScrollPane.alignmentX = Component.LEFT_ALIGNMENT

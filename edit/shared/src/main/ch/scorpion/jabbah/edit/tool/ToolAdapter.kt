@@ -12,7 +12,7 @@ import ch.scorpion.jabbah.edit.Editor
  * [ToolAdapter] is an implementation of the [Tool] interface that provides an empty implementation of all
  * interface methods and can be used as a base class for deriving concrete [Tool]s.
  */
-open class ToolAdapter(val editor: Editor) : Tool {
+open class ToolAdapter(editor: Editor) : AbstractTool(editor) {
 
     /** ---- [Tool] interface */
 

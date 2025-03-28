@@ -6,6 +6,8 @@ import ch.scorpion.antares.model.AntaresGraphTypes.Digital
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.analog.AnalogCircuitInOut
 import ch.scorpion.antares.model.analog.AnalogGraph
+import ch.scorpion.antares.model.fsm.FSMState
+import ch.scorpion.antares.model.fsm.FSMTransition
 import ch.scorpion.antares.model.gate.NonUnaryLogicGateType.*
 import ch.scorpion.antares.model.gate.UnaryLogicGateType.Buffer
 import ch.scorpion.antares.model.gate.UnaryLogicGateType.Not
@@ -486,6 +488,9 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, InductorView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogRelayView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, DiodeView::class) { SelectedColorSelectionModel(it) }
+
+		factory.register(SelectionDrawingStrategy.REPLACE, FSMState::class) { RectangularReplaceSelectionModel(it as AbstractRectangularComponent, RectangularReplaceSelectionModel.DrawStrategy.COMPONENT) }
+		factory.register(SelectionDrawingStrategy.REPLACE, FSMTransition::class) { SelectedColorSelectionModel(it) }
 	}
 
 	private fun configureHighlightModels(factory: SelectionModelFactory) {

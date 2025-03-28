@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.*
 import ch.scorpion.antares.model.addressable.MemoryStorableIdentification
 import ch.scorpion.antares.model.analog.AnalogOscilloscopeSignalType
 import ch.scorpion.antares.model.expression.BooleanExpressionNotation
+import ch.scorpion.antares.model.fsm.FSMStateType
 import ch.scorpion.antares.model.gate.CurrentDefaultPropagationDelay
 import ch.scorpion.antares.model.gate.UndefinedGateInputBehavior
 import ch.scorpion.antares.model.input.CurrentSwitchPropagationDelay
@@ -302,6 +303,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerRenderer(MemoryStorableIdentification::class.java, MemoryStorableIdentificationRenderer::class.java)
 		registry.registerRenderer(SwitchConfiguration::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(AnalogOscilloscopeSignalType::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(FSMStateType::class.java, EnumRenderer::class.java)
 	}
 
 	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
@@ -330,6 +332,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerEditor(MemoryStorableIdentification::class.java, MemoryStorableIdentificationEditor::class.java)
 		registry.registerEditor(SwitchConfiguration::class.java, SwitchConfigurationEditor::class.java)
 		registry.registerEditor(AnalogOscilloscopeSignalType::class.java, AnalogOscilloscopeSignalTypeEditor::class.java)
+		registry.registerEditor(FSMStateType::class.java, FSMStateTypeEditor::class.java)
 
 		registry.register(BitWidth::class.java) { prop ->
 			BitWidthEditor(

@@ -1,8 +1,21 @@
 package ch.scorpion.jabbah.edit
 
 import ch.scorpion.jabbah.base.Action
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
+import ch.scorpion.jabbah.draw.View
+
+
+/**
+ * Posted on the system's [EventBus] when an [Editor] has become the "current" one.
+ * This is used in system with many [Editors][Editor] in different switchable [Views][View],
+ * while some UI elements are always displayed and show information related with the current [Editor],
+ * such as a central property panel.
+ *
+ * The concept "current editor" is not the same as [Editor.active]: The current [Editor] can still be inactive.
+ */
+data class CurrentEditorEvent(val editor: Editor)
 
 /**
  * Represents an editor for interactively editing a [Drawing] within a [DrawingView].
@@ -32,6 +45,15 @@ interface Editor {
 	    /** The name of the [PropertyChangeEvent] property that determines whether grid snap is active.*/
 	    const val PROP_GRID_SNAP = "gridSnap"
     }
+
+    /**
+     * The name of an [Editor] is primarily used to define scopes of [Editor] usages.
+     * For example, if an application consist of many different [Editor], and its UI contains a common UI element
+     * shared sequentially by these [Editor]s, such a UI could react to [CurrentEditorEvent] only from [Editor]
+     * with a name designating such a scope, e.g. "mainEditor".
+     * [Editor] names are optional. If not needed, an empty string can be used.
+     */
+    val name: String
 
     /** Holds the current [Drawing] being edited by this [Editor].*/
     val drawing: Drawing<Component> get() = view.drawing

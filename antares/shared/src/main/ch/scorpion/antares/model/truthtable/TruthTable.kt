@@ -25,7 +25,8 @@ import ch.scorpion.jabbah.io.*
 class TruthTable(
 	initialName: String = "",
 	inputColumnNames: List<String> = emptyList(),
-	outputColumnNames: List<String> = emptyList()
+	outputColumnNames: List<String> = emptyList(),
+	stateColumnCount: Int = 0
 ) : AbstractStorable(), Namable, Describable, Bean {
 
 	companion object {
@@ -47,6 +48,13 @@ class TruthTable(
 
 	val allNamesAreSingleChar: Boolean get() = allInputNamesAreSingleChar && outputColumns.all { it.name.length == 1}
 
+	/**
+	 * If [stateColumnCount] is > 0, the first [stateColumnCount] of the input columns represent Zn,
+	 * and the first [stateColumnCount] of the output columns represent Zn+1 of a sequential system's truth table.
+	 */
+	var stateColumnCount: Int = stateColumnCount
+		private set
+
 	private val inputColumns: MutableList<TruthTableInputColumn> =
 		inputColumnNames.map { TruthTableInputColumn(it) }.toMutableList()
 
@@ -61,6 +69,11 @@ class TruthTable(
 	}
 
 	override fun toString(): String = name.getTranslation()
+
+	fun isStateColumn(column: Int): Boolean {
+		return stateColumnCount > 0
+			&& (column in 0 until stateColumnCount || column in inputColumnCount until inputColumnCount + stateColumnCount)
+	}
 
 	fun getValue(row: Int, column: Int): Bit = getColumn(column).getValue(row)
 
@@ -78,6 +91,12 @@ class TruthTable(
 		}
 	}
 
+	fun setColumnValue(column: Int, value: Bit) {
+		for (row in 0 until rowsCount) {
+			setValue(row, column, value)
+		}
+	}
+
 	fun getColumnValues(column: Int): List<Bit> =
 		(0 until rowsCount).map { getValue(it, column) }
 
@@ -92,6 +111,8 @@ class TruthTable(
 	fun hasInputName(name: String): Boolean = inputColumns.any { it.name == name }
 
 	fun hasOutputName(name: String): Boolean = outputColumns.any { it.name == name }
+
+	fun hasName(name: String): Boolean = hasInputName(name) || hasOutputName(name)
 
 	fun getInputColumn(name: String): Int? =
 		inputColumns.indexOfFirstOrNull { it.name == name }
@@ -174,6 +195,9 @@ class TruthTable(
 		description.write("description", writer)
 		writer.writeStorables("inputs", inputColumns.iterator())
 		writer.writeStorables("outputs", outputColumns.iterator())
+		if (stateColumnCount > 0) {
+			writer.writeInt("stateColumnCount", stateColumnCount)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
@@ -186,6 +210,10 @@ class TruthTable(
 
 		outputColumns.clear()
 		outputColumns.addAll(reader.readStorables("outputs"))
+
+		if (reader.hasAttribute("stateColumnCount")) {
+			stateColumnCount = reader.readInt("stateColumnCount")
+		}
 
 		updateRowsCounts()
 		fillInputCells()

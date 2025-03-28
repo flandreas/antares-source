@@ -90,7 +90,7 @@ open class GraphViewAppServiceImpl(
 	override fun delete(components: List<Component>, drawingView: DrawingView<*>, cmdDescriptionKey: String?) {
 		logComponentAction("Delete", components.map { it.id })
 
-		val componentSet = expandDeleteBuddies(components)
+		val componentSet = expandDeleteBuddies(components, drawingView.drawing as Drawing<Component>)
 
 		commandManager.beginTransaction(cmdDescriptionKey ?: "edit.command.delete", drawingView)
 

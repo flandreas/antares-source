@@ -21,12 +21,6 @@ class ImageIdentificationSavable(
 
     override val typeName: String get() = Translations.getString("edit.component.image")
 
-    override val description: String
-        get() = "${Translations.getString("project.savable.prefix")} \"${imageLibraryElement.name.getTranslation()}\""
-
-    override val editable: Boolean get() =
-        item.library?.let { Authorizer.isCurrentUserAuthorizedTo(Operation.Change, it) } ?: false
-
     override fun open(application: Application): Boolean {
         eventBus.post(OpenImageLibraryElementRequest(imageLibraryElement))
         return true

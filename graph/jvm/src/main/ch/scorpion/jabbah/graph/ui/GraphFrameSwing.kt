@@ -84,7 +84,7 @@ open class GraphFrameSwing(
 
 			editor.view.initialize()
 
-			if (controller.graphPanelViewController.desktopController.view.mainDesktopViewItem == null) {
+			if (controller.graphPanelViewController.desktopController.mainDesktopViewItem == null) {
 				viewManager.activeView = null
 				controller.graphPanelViewController.editor.active = false
 			} else {
@@ -176,7 +176,7 @@ open class GraphFrameSwing(
 		}
 	}
 
-	private fun fillToolbarPanel(toolbars: List<ToolBar>) {
+	private fun fillToolbarPanel(toolbars: List<JComponent>) {
 		toolbarPanel.removeAll()
 		toolbarPanel.add(mainToolBar)
 		toolbars.forEach { toolbarPanel.add(it) }

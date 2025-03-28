@@ -12,7 +12,7 @@ interface UsecasePropertyPanel : PropertyPanel
 
 class UsecasePropertyPanelController(
 	editor: Editor,
-	private val eventBus: EventBus = BaseModule.eventBus
+	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractPropertyPanelController<UsecasePropertyPanel>(editor) {
 
 	private val usecaseSelectionHandler: EventHandler<UsecaseSelectionEvent> = { bean = it.usecase }

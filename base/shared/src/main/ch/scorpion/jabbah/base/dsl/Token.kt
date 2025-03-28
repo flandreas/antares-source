@@ -38,6 +38,8 @@ enum class DslTokenType(override val id: String): TokenType {
 	RIGHT_BRACKET("]"),
 	QUESTION_MARK("?"),
 	RETURN("return"),
+	AMPERSAND("&"),
+	VERTICAL_BAR("|"),
 
 	// TokenTypes needed by higher level modules
 	INIT("init"),

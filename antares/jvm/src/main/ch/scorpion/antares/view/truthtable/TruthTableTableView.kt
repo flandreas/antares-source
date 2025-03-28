@@ -20,7 +20,7 @@ class TruthTableTableView(
 
 	companion object {
 		private const val CELL_FONT_SIZE = 18
-		private const val COLUMN_WIDTH = 40
+		private const val COLUMN_WIDTH = 35
 
 		private val FOREGROUND = UIManager.getColor("TextField.foreground")
 		private val BACKGROUND = UIManager.getColor("TextField.background")
@@ -94,7 +94,7 @@ class TruthTableTableView(
 				tableColumn.cellRenderer = OutputCellRenderer()
 				tableColumn.cellEditor = OutputCellEditor(createOutputEditor())
 			}
-			tableColumn.preferredWidth = COLUMN_WIDTH
+			tableColumn.preferredWidth = COLUMN_WIDTH + 5 * ref.truthTable.getColumnName(index).length
 		}
 	}
 

@@ -3,10 +3,14 @@ package ch.scorpion.jabbah.edit.properties
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.edit.Command
+import ch.scorpion.jabbah.edit.CurrentEditorEvent
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
 
@@ -22,8 +26,13 @@ interface PropertyPanel : UIView {
  * @param editor the [Editor] used for creating undoable [Command]s when changing properties
  */
 abstract class AbstractPropertyPanelController<T: PropertyPanel>(
-	val editor: Editor
+	editor: Editor,
+	protected val eventBus: EventBus = BaseModule.eventBus,
+	private val currentEditorEventFilter: ((CurrentEditorEvent) -> Boolean)? = null,
 ) : AbstractUIController<T>() {
+
+	var editor: Editor = editor
+		private set
 
 	/** The translated text describing the selected bean to be used as title in [PropertyPanel].*/
 	var title: String = Translations.getString("edit.property.bean.none")
@@ -44,18 +53,57 @@ abstract class AbstractPropertyPanelController<T: PropertyPanel>(
 	/** The bean to be displayed if no selection exists, such as an entire drawing. */
 	protected open val defaultBean: Any? = null
 
-	private lateinit var activeEditorListener: PropertyChangeListener<Any>
+	private var activeEditorListener: PropertyChangeListener<Any> =
+		PropertyChangeListener { e ->
+			if (e.name == Editor.PROP_ACTIVE) {
+				// Invoke later in order to give the View time to update its enabledness,
+				// because enabledness of the property editors depend on it
+				System.invokeLater {
+					bean = defaultBean
+				}
+			}
+		}
 
-	private lateinit var drawingListener: PropertyChangeListener<Any>
+	private var drawingListener: PropertyChangeListener<Any> =
+		PropertyChangeListener { e ->
+			if (e.name == DrawingView.PROP_DRAWING) {
+				bean = defaultBean
+			}
+		}
+
+	private val currentEditorHandler: EventHandler<CurrentEditorEvent> = { event ->
+		currentEditorEventFilter?.let { filter ->
+			if (filter(event)) {
+				updateEditor(event.editor)
+			}
+		}
+	}
+
+	init {
+		if (currentEditorEventFilter != null) {
+			eventBus.register(CurrentEditorEvent::class, currentEditorHandler)
+		}
+	}
+
+	private fun updateEditor(e: Editor) {
+		e.removePropertyChangeListener(activeEditorListener)
+		e.removePropertyChangeListener(drawingListener)
+
+		this.editor = e
+
+		editor.addPropertyChangeListener(activeEditorListener)
+		editor.addPropertyChangeListener(drawingListener)
+	}
 
 	override fun onViewInitialized() {
 		super.onViewInitialized()
-		activeEditorListener = setupActiveEditorListener()
-		drawingListener = setupDrawingListener()
+		editor.addPropertyChangeListener(activeEditorListener)
+		editor.addPropertyChangeListener(drawingListener)
 	}
 
 	override fun dispose() {
 		super.dispose()
+		eventBus.unregister(currentEditorHandler)
 		editor.removePropertyChangeListener(activeEditorListener)
 		editor.removePropertyChangeListener(drawingListener)
 	}
@@ -89,20 +137,4 @@ abstract class AbstractPropertyPanelController<T: PropertyPanel>(
 
 	protected open fun getDefinedDescription(description: String): String =
 		Translations.getString("edit.property.bean", description)
-
-	private fun setupActiveEditorListener(): PropertyChangeListener<Any> = editor.addPropertyChangeListener { event ->
-		if (event.name == Editor.PROP_ACTIVE) {
-			// Invoke later in order to give the View time to update its enabledness,
-			// because enabledness of the property editors depend on it
-			System.invokeLater {
-				bean = defaultBean
-			}
-		}
-	}
-
-	private fun setupDrawingListener(): PropertyChangeListener<Any> = editor.view.addPropertyChangeListener { event ->
-		if (event.name == DrawingView.PROP_DRAWING) {
-			bean = defaultBean
-		}
-	}
 }

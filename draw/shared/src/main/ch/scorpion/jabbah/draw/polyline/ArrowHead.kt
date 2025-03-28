@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.draw.graphics.Stroke
+import ch.scorpion.jabbah.draw.module.DrawModule
 
 /**
  * A special [LineTerminator] representing an arrow head.
@@ -67,7 +68,7 @@ class ArrowHead(
 	/** ---- [Drawable] */
 
 	override val boundingBox: RectangularShape
-		get() = shape.boundingBox
+		get() = Rectangle2D(shape.boundingBox).expandBy(STROKE.width.toDouble())
 
 	override fun draw(context: DrawContext) {
 		val oldStroke = context.g.stroke
@@ -77,6 +78,8 @@ class ArrowHead(
 			context.g.fill(shape)
 		}
 		context.g.stroke = oldStroke
+
+		DrawModule.drawDebugBoundingBox(this, context.g)
 	}
 
 	override fun contains(x: Double, y: Double): Boolean = shape.contains(x, y)

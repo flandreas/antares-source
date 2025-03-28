@@ -46,7 +46,7 @@ typealias ParserFactory = (program: String, semanticAnalyser: SemanticAnalyser?)
  *     functionCall : identifier "(" { expr ("," expr)* } ")"
  *	   expr: expr1 ("or" expr1)*
  *	   expr1 : expr2 ("and" expr2)*
- *	   expr2 : expr3 (comparisonOperator) expr3)*
+ *	   expr2 : expr3 (comparisonOperator expr3)*
  *	   expr3 : term (("+" | "-" ) term)*
  *     term : factor (("*" | "/" | "%" | "^" | shiftOperator) factor)*
  *     comparisonOperator : "==" | "!=" | "<" | ">" | "<=" | ">="

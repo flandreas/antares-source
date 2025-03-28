@@ -3,6 +3,7 @@ package ch.scorpion.antares.view.expression
 import ch.scorpion.antares.model.expression.BooleanExpressionLibraryItem
 import ch.scorpion.antares.model.expression.OpenBooleanExpressionItemRequest
 import ch.scorpion.jabbah.base.event.ActionEvent
+import ch.scorpion.jabbah.base.ui.NewNamePanel
 import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
@@ -27,7 +28,7 @@ class NewBooleanExpressionAction(
 	}
 
 	override fun execute(event: ActionEvent) {
-		NewBooleanExpressionPanel
+		NewNamePanel
 			.showAsDialog(name, Frame.getFrames()[0])
 			?.let {
 				val directory = controller.selectedItem as LibraryDirectory

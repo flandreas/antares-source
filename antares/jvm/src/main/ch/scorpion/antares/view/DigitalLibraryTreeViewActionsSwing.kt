@@ -3,12 +3,15 @@ package ch.scorpion.antares.view
 import ch.scorpion.antares.model.addressable.MemoryLibraryItem
 import ch.scorpion.antares.model.expression.BooleanExpressionLibraryItem
 import ch.scorpion.antares.model.expression.OpenBooleanExpressionAction
+import ch.scorpion.antares.model.fsm.FSMLibraryItem
+import ch.scorpion.antares.view.fsm.OpenFSMAction
 import ch.scorpion.antares.model.testcase.RunLibraryTestcasesAction
 import ch.scorpion.antares.model.truthtable.OpenTruthTableAction
 import ch.scorpion.antares.model.truthtable.TruthTableLibraryItem
 import ch.scorpion.antares.view.addressable.NewMemoryStorableAction
 import ch.scorpion.antares.view.addressable.OpenMemoryStorableAction
 import ch.scorpion.antares.view.expression.NewBooleanExpressionAction
+import ch.scorpion.antares.view.fsm.NewFSMAction
 import ch.scorpion.antares.view.net.tunnel.GlobalTunnelAction
 import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTableAction
 import ch.scorpion.antares.view.truthtable.NewTruthTableAction
@@ -37,6 +40,9 @@ class DigitalLibraryTreeViewActionsSwing(
 	private val projectMemoryPopup = JPopupMenu()
 	private val libraryMemoryPopup = JPopupMenu()
 
+	private val projectFSMPopupMenu = JPopupMenu()
+	private val libraryFSMPopupMenu = JPopupMenu()
+
 	private val newTruthTableAction = register(NewTruthTableAction(controller))
 	private val openTruthTableAction = register(OpenTruthTableAction(application.controller as GraphDataViewController, controller))
 	private val createCircuitAction = register(CreateCircuitFromTruthTableAction(controller))
@@ -46,12 +52,15 @@ class DigitalLibraryTreeViewActionsSwing(
 	private val globalTunnelAction = register(GlobalTunnelAction())
 	private val newMemoryStorableAction = register(NewMemoryStorableAction(controller))
 	private val openMemoryStorableAction = register(OpenMemoryStorableAction(application.controller as GraphDataViewController, controller))
+	private val newFSMAction = register(NewFSMAction(controller))
+	private val openFSMAction = register(OpenFSMAction(application.controller as GraphDataViewController, controller))
 
 	override fun fillMainProjectDirectoryCreateActions() {
 		super.fillMainProjectDirectoryCreateActions()
 		projectDirectoryPopupMenu.add(ActionWrapperSwing(newTruthTableAction))
 		projectDirectoryPopupMenu.add(ActionWrapperSwing(newBooleanExpressionAction))
 		projectDirectoryPopupMenu.add(ActionWrapperSwing(newMemoryStorableAction))
+		projectDirectoryPopupMenu.add(ActionWrapperSwing(newFSMAction))
 	}
 
 	override fun fillMainProjectRootCreateActions() {
@@ -59,6 +68,7 @@ class DigitalLibraryTreeViewActionsSwing(
 		projectRootMenu.add(ActionWrapperSwing(newTruthTableAction))
 		projectRootMenu.add(ActionWrapperSwing(newBooleanExpressionAction))
 		projectRootMenu.add(ActionWrapperSwing(newMemoryStorableAction))
+		projectRootMenu.add(ActionWrapperSwing(newFSMAction))
 	}
 
 	override fun fillMainProjectRootExecuteActions() {
@@ -71,6 +81,7 @@ class DigitalLibraryTreeViewActionsSwing(
 		libraryDirectoryPopupMenu.add(ActionWrapperSwing(newTruthTableAction))
 		libraryDirectoryPopupMenu.add(ActionWrapperSwing(newBooleanExpressionAction))
 		libraryDirectoryPopupMenu.add(ActionWrapperSwing(newMemoryStorableAction))
+		libraryDirectoryPopupMenu.add(ActionWrapperSwing(newFSMAction))
 	}
 
 	override fun fillMainLibraryRootCreateActions() {
@@ -78,6 +89,7 @@ class DigitalLibraryTreeViewActionsSwing(
 		libraryRootMenu.add(ActionWrapperSwing(newTruthTableAction))
 		libraryRootMenu.add(ActionWrapperSwing(newBooleanExpressionAction))
 		libraryRootMenu.add(ActionWrapperSwing(newMemoryStorableAction))
+		libraryRootMenu.add(ActionWrapperSwing(newFSMAction))
 	}
 
 	override fun fillMainLibraryRootExecuteActions() {
@@ -109,6 +121,13 @@ class DigitalLibraryTreeViewActionsSwing(
 
 		libraryMemoryPopup.add(ActionWrapperSwing(openMemoryStorableAction))
 		libraryMemoryPopup.add(ActionWrapperSwing(deleteLibraryItemAction))
+
+		projectFSMPopupMenu.add(ActionWrapperSwing(openFSMAction))
+		projectFSMPopupMenu.add(ActionWrapperSwing(deleteProjectItemAction))
+
+		libraryFSMPopupMenu.add(ActionWrapperSwing(openFSMAction))
+		libraryFSMPopupMenu.add(ActionWrapperSwing(deleteLibraryItemAction))
+
 	}
 
 	override fun getPopupMenu(treeNode: DefaultMutableTreeNode): JPopupMenu? {
@@ -134,6 +153,13 @@ class DigitalLibraryTreeViewActionsSwing(
 				projectMemoryPopup
 			} else {
 				libraryMemoryPopup
+			}
+		}
+		if (treeNode.userObject is FSMLibraryItem) {
+			return if ((treeNode.userObject as FSMLibraryItem).library is Project) {
+				projectFSMPopupMenu
+			} else {
+				libraryFSMPopupMenu
 			}
 		}
 		return super.getPopupMenu(treeNode)

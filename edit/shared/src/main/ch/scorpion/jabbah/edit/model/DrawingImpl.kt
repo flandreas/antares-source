@@ -7,9 +7,11 @@ import ch.scorpion.jabbah.edit.model.text.description.Name
 /**
  * Standard implementation of the [Drawing] interface.
  */
-open class DrawingImpl<T : Component> : ComponentContainerImpl<T>(), Drawing<T> {
+open class DrawingImpl<T : Component>(
+    name: Name = Name("Drawing")
+) : ComponentContainerImpl<T>(), Drawing<T> {
 
-	override var name: Name = Name("Drawing")
+	override var name: Name = name
 
     override fun dispose() {
         // empty

@@ -6,7 +6,7 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.truthtable.TruthTable
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.gate.LogicGateView
-import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
+import ch.scorpion.antares.view.net.tunnel.TunnelFlowDirection
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.GraphStorable
@@ -35,16 +35,17 @@ abstract class AbstractCircuitFromTruthTableBuilder(
 		const val INPUT_DIST_X = Look.SCALE * 12
 		const val NOT_WIRE_Y = INPUT_Y + Look.SCALE * 2
 		const val NOT_Y = INPUT_Y + Look.SCALE * 14
+		const val FLIP_FLOP_DIST_X = Look.SCALE * 14
 		const val OUTPUT_DIST_X = Look.SCALE * 4
 	}
 
 	protected val circuitBuilder = CircuitBuilder(graphStorable)
 
-	protected val inputViews = mutableListOf<DigitalCircuitInOutView>()
-	protected val inputEdgeViews = mutableListOf<EdgeView<DigitalSignal>>()
+	private val inputViews = mutableListOf<VerticeView<*>>()
+	private val inputEdgeViews = mutableListOf<EdgeView<DigitalSignal>>()
 
-	protected val notViews = mutableListOf<LogicGateView>()
-	protected val notEdgeViews = mutableListOf<EdgeView<DigitalSignal>>()
+	private val notViews = mutableListOf<LogicGateView>()
+	private val notEdgeViews = mutableListOf<EdgeView<DigitalSignal>>()
 
 	protected var x = 0
 
@@ -57,7 +58,11 @@ abstract class AbstractCircuitFromTruthTableBuilder(
 	protected fun buildInputs(addNotViews: Boolean) {
 		with (truthTable) {
 			for (col in 0 until inputColumnCount) {
-				inputViews.add(circuitBuilder.addInput(getColumnName(col), Point2D(x, INPUT_Y), Direction.SOUTH))
+				if (truthTable.isStateColumn(col)) {
+					inputViews.add(circuitBuilder.addTunnel(getColumnName(col), Point2D(x, INPUT_Y), Direction.NORTH, TunnelFlowDirection.Out))
+				} else {
+					inputViews.add(circuitBuilder.addInput(getColumnName(col), Point2D(x, INPUT_Y), Direction.SOUTH))
+				}
 				if (addNotViews) {
 					notViews.add(circuitBuilder.addNot(Point2D(x + INPUT_DIST_X / 2, NOT_Y), Direction.SOUTH))
 				}

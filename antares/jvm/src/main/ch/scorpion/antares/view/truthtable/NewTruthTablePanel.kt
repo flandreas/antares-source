@@ -106,6 +106,12 @@ class NewTruthTablePanel(
 		buttonPanel.add(Box.createHorizontalGlue())
 		UIBasics.addButtons(buttonPanel, okButton, createButton(cancelAction))
 
+		val iconPanel = JPanel()
+		iconPanel.layout = BoxLayout(iconPanel, BoxLayout.PAGE_AXIS)
+		iconPanel.add(JLabel(UIManager.getIcon("OptionPane.questionIcon")), BorderLayout.WEST)
+		iconPanel.add(Box.createGlue())
+
+		add(iconPanel, BorderLayout.WEST)
 		add(contentPanel, BorderLayout.CENTER)
 		add(buttonPanel, BorderLayout.SOUTH)
 	}

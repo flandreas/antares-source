@@ -97,6 +97,8 @@ open class GraphFrameController<T: GraphFrame>(
 		const val EDIT_CONTAINER_TAG = "editContainer"
 
 		const val GENERATE_CONTAINER_TAG = "generateContainer"
+
+		const val MAIN_EDITOR_NAME = "mainEditor"
 	}
 
 	var displayedView: DisplayedView = DisplayedView.Desktop
@@ -117,7 +119,7 @@ open class GraphFrameController<T: GraphFrame>(
 		displayGlobalMessages = true
 	)
 
-	val editor: Editor = GraphViewModule.graphEditorFactory.invoke(drawingView)
+	val editor: Editor = GraphViewModule.graphEditorFactory.invoke(MAIN_EDITOR_NAME, drawingView)
 
 	val applicationModeHolder = ApplicationModeHolderImpl(editor, scheduler).also {
 		// Cyclic dependency

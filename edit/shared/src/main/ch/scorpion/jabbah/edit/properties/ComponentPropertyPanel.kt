@@ -19,12 +19,17 @@ interface ComponentPropertyPanel : PropertyPanel
 /**
  * Displays the properties of the currently selected [Component] and allows the user to edit them.
  * If there is no selection, it displays the current application data property bean as [defaultBean].
+ *
+ *  * @param currentEditorEventFilter determines how this [ComponentPropertyPanelController] should react to
+ *  * [CurrentEditorEvent]s, if at all.
+
  */
 open class ComponentPropertyPanelController(
 	editor: Editor,
-	protected val eventBus: EventBus = BaseModule.eventBus,
+	eventBus: EventBus = BaseModule.eventBus,
+	currentEditorEventFilter: ((CurrentEditorEvent) -> Boolean)? = null,
 	private val properties: Properties = BaseModule.properties
-) : AbstractPropertyPanelController<ComponentPropertyPanel>(editor) {
+) : AbstractPropertyPanelController<ComponentPropertyPanel>(editor, eventBus, currentEditorEventFilter) {
 
 	companion object {
 		const val PROP_MAX_MULTI_SELECT_COUNT = "ComponentPropertyPanelController.maxMultiSelectCount"

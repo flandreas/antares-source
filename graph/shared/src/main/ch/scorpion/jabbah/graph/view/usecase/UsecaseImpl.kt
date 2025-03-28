@@ -22,7 +22,7 @@ class UsecaseImpl(
 	executionScript: String? = null,
 	override var testScript: String? = null,
 	graphView: GraphView? = null,
-) : AbstractStorable(), Usecase, Namable, Describable, Bean {
+) : AbstractStorable(), Usecase, Bean {
 
 	companion object {
 		private val LOG by logger(UsecaseImpl::class)

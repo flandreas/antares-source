@@ -40,6 +40,8 @@ interface GraphDesktopViewItem : ContentView<EditInputEventContext> {
 	 */
 	val isDetached: Boolean
 
+	val toolBar: Any? get() = null
+
 	/**
 	 * Returns `true` if this [GraphDesktopViewItem] displays [content].
 	 * Used by certain implementations to decide whether a new [GraphDesktopViewItem] instance has
