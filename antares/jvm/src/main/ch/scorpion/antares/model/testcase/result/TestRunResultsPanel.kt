@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.base.swing.PopupMenuButton
 import ch.scorpion.jabbah.base.swing.ShowSidebarPaneContentRequest
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.richtext.RichTextLabel
+import ch.scorpion.jabbah.edit.model.text.NamableTreeNode
 import ch.scorpion.jabbah.graph.ui.MetaGraphIconProvider
 import ch.scorpion.jabbah.graph.ui.graphpanel.EditedGraphViewEvent
 import java.awt.BorderLayout
@@ -167,7 +168,7 @@ class TestRunResultsPanel(
 
 		for (result in results) {
 			val circuitNode = map.computeIfAbsent(result.testcase.graph!!) {
-				DefaultMutableTreeNode(result.testcase.graph!!).also { root.add(it) }
+				NamableTreeNode(result.testcase.graph!!).also { root.add(it) }
 			}
 			circuitNode.add(DefaultMutableTreeNode(result))
 		}
@@ -217,7 +218,7 @@ class TestRunResultsPanel(
 			label.richText = null
 			if ((value as DefaultMutableTreeNode).userObject is DigitalGraph) {
 				val circuit = value.userObject as DigitalGraph
-				label.text = circuit.name.getTranslation()
+				label.richText = (value as NamableTreeNode).richTextName.value
 				label.icon = MetaGraphIconProvider.provideIcon(circuit.type, false, circuit.script != null)
 			} else if (value.userObject is CombinedTestRunResult) {
 				val results = value.userObject as CombinedTestRunResult
