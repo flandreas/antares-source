@@ -38,6 +38,7 @@ object TestcaseService {
 		// such as GraphViewExecutionAnimator that listen on Actors of the main circuit
 		val clone = StorableCloner.clone(circuit)
 		clone.name = Name(circuit.name.translation)
+		clone.uuid = circuit.uuid
 
 		try {
 			// Setup parameter values (generics)

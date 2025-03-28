@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.base.swing.PopupMenuButton
@@ -18,6 +19,8 @@ import ch.scorpion.jabbah.base.swing.ShowSidebarPaneContentRequest
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.richtext.RichTextLabel
 import ch.scorpion.jabbah.edit.model.text.NamableTreeNode
+import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.library.OpenContainerLibraryElementRequest
 import ch.scorpion.jabbah.graph.ui.MetaGraphIconProvider
 import ch.scorpion.jabbah.graph.ui.graphpanel.EditedGraphViewEvent
 import java.awt.BorderLayout
@@ -243,10 +246,26 @@ class TestRunResultsPanel(
 		}
 	}
 
+	private fun openSelectedGraph() {
+		val obj = (tree.selectionPath?.lastPathComponent as DefaultMutableTreeNode?)?.userObject
+		if (obj is CombinedTestRunResult) {
+			LibraryModule.libraryHolder.library.getContainerLibraryElement(obj.source.uuid)?.let {
+				InvocationHandler.invoke {
+					eventBus.post(OpenContainerLibraryElementRequest(it))
+				}
+			}
+		}
+	}
+
 	private inner class MouseListener : java.awt.event.MouseAdapter() {
 		override fun mousePressed(e: MouseEvent?) {
-			if (e?.button == MouseEvent.BUTTON3) {
-				showTreePopupMenu(e)
+			when (e?.button) {
+				MouseEvent.BUTTON3 -> showTreePopupMenu(e)
+				MouseEvent.BUTTON1 -> {
+					if (e.clickCount == 2) {
+						openSelectedGraph()
+					}
+				}
 			}
 		}
 	}

@@ -29,17 +29,14 @@ class LibraryTreeViewSwing(
 		private val LOG by logger(LibraryTreeViewSwing::class)
 	}
 
-	private val rightMouseListener = MouseListener()
-	private val keyListener = EnterKeyListener()
-
 	private val controller: LibraryTreeViewController get() = basicController as LibraryTreeViewController
 
 	val actions = GraphModuleJvm.libraryTreeViewActionsProvider(
 		LibraryTreeViewActionsParams(controller, controller.type, application))
 
 	init {
-		addMouseListener(rightMouseListener)
-		addKeyListener(keyListener)
+		addMouseListener(MouseListener())
+		addKeyListener(EnterKeyListener())
 
 		transferHandler = LibraryTreeViewTransferHandler(controller)
 
