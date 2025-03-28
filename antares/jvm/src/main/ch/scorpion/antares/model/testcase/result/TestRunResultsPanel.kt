@@ -255,6 +255,10 @@ class TestRunResultsPanel(
 		"antares.testcase.results.action.clear",
 		"/img/trash-16.png"
 	) {
+		init {
+			description = name
+		}
+
 		override fun execute(event: ActionEvent) {
 			clear()
 		}
