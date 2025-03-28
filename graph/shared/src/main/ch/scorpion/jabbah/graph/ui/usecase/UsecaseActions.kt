@@ -54,5 +54,5 @@ class AddUsecaseAction(
     }
 
     override fun calculateEnabled(): Boolean =
-        super.calculateEnabled() && usecase == null
+        super.calculateEnabled() && applicationDataHolder.data?.content is MetaGraph && usecase == null
 }

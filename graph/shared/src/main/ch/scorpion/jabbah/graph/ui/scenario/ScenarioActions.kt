@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.ui.scenario
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.ui.AbstractApplicationDataEditModeAction
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.Scenario
@@ -32,7 +33,10 @@ class AddScenarioAction(
     }
 
     override fun calculateEnabled(): Boolean =
-        super.calculateEnabled() && controller.scenario == null && controller.scenarioStep == null
+        super.calculateEnabled()
+            && applicationDataHolder.data?.content is MetaGraph
+            && controller.scenario == null
+            && controller.scenarioStep == null
 }
 
 /**
@@ -52,7 +56,9 @@ class AddScenarioStepAction(
     }
 
     override fun calculateEnabled(): Boolean =
-        super.calculateEnabled() && controller.scenario != null && controller.scenarioStep == null
+        super.calculateEnabled()
+            && controller.scenario != null
+            && controller.scenarioStep == null
 }
 
 /** Deletes the currently selected [Scenario]. */
