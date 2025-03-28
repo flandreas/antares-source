@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.edit.Editor
  */
 class ToolLockAction(
     private val editor: Editor
-) : AbstractAction("edit.action.toolLock", imagePath = "/img/locked-16.png") {
+) : AbstractAction("edit.action.toolLock", imagePath = "/img/lock-24.png") {
 
     init {
         selected = editor.toolLock

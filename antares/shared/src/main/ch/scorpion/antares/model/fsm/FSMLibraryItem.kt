@@ -19,8 +19,7 @@ class FSMLibraryItem(
     initialName: TranslatableText = TranslatableText(Translations.getString("antares.fsm.initialName")),
 ) : AbstractLibraryItem(
     initialName,
-    // TODO Icon Janis
-    iconPath = "/img/expression.png"
+    iconPath = "/img/fsm.png"
 ), UndoableStateLibraryItem<FSMDrawing> {
 
     var uuid: UUID = System.createUUID()
@@ -31,8 +30,7 @@ class FSMLibraryItem(
     override var storable: FSMDrawing = FSMDrawing(initialName)
         private set
 
-    // TODO Icon Janis
-    override val activeIconPath: String get() = "/img/expression-active.png"
+    override val activeIconPath: String get() = "/img/fsm-active.png"
 
     override val isFixed: Boolean = false
 

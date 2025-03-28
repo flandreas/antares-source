@@ -85,8 +85,8 @@ class FSMGraphDesktopItemSwing(
         val toolLockButton = JToggleButton(ActionWrapperSwing((controller.editor as EditorImpl).toolLockAction))
         toolLockButton.text = null
         localToolbar.add(toolLockButton)
-        localToolbar.addTool(controller.stateTool, "/img/oval24.png", Translations.getString("antares.fsm.state"))
-        localToolbar.addTool(controller.transitionTool, "/img/polyline24.png", Translations.getString("antares.fsm.transition"))
+        localToolbar.addTool(controller.stateTool, "/img/state.png", Translations.getString("antares.fsm.state"))
+        localToolbar.addTool(controller.transitionTool, "/img/transition.png", Translations.getString("antares.fsm.transition"))
     }
 
     /** ---- [AbstractTitledGraphDesktopViewItemSwing] */
