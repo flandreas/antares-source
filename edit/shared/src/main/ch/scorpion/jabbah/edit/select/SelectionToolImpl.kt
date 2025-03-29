@@ -104,10 +104,6 @@ class SelectionToolImpl(
 			return
 		}
 
-		if (LOG.isTraceEnabled()) {
-			LOG.trace("mouseMoved to $x,$y")
-		}
-
 		val context = mouseEventContext(e, x, y)
 		if (target != null) {
 			target = target?.mouseMoved(context)
