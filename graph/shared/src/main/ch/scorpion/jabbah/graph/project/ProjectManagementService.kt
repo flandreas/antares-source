@@ -131,7 +131,8 @@ class ProjectManagementService(
 		eventBus.post(LibraryPropertiesEvent(project, properties))
 	}
 
-	override fun open(libraryId: LibraryIdentification): Project = load(libraryId).also { open(it) }
+	override fun open(libraryId: LibraryIdentification): Project =
+		load(libraryId).also { open(it) }
 
 	/** Opens the specified [Project] and its default [ContainerLibraryElement].*/
 	fun open(project: Project) {

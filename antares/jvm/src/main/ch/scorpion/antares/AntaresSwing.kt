@@ -22,9 +22,10 @@ import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.auth.UserIdentity
-import ch.scorpion.jabbah.graph.library.AbstractLibraryImportProcess
-import ch.scorpion.jabbah.graph.library.LibraryIdentification
-import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.library.*
+import ch.scorpion.jabbah.graph.library.LibraryModule.libraryHolder
+import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.project.ProjectSavable
 import ch.scorpion.jabbah.graph.ui.GraphDataViewController
@@ -64,7 +65,14 @@ class AntaresSwing(
 
 		private val LOG by lazy { logger(AntaresSwing::class) }
 
+		/** The property in [Settings] storing the UUID of the most recently open project.*/
 		private const val PROP_APPLICATION_PROJECT = "application.project"
+
+		/** The property in [Settings] storing the UUID of the most recently open library.*/
+		private const val PROP_APPLICATION_LIBRARY = "application.library"
+
+		/** The property in [Settings] storing the UUID of the [MetaGraph] in the most recently open project or library.*/
+		private const val PROP_META_GRAPH = "application.metaGraph"
 
 		private const val SYSTEM_LIB_BASE_OPTION = "sl"
 		private const val PROJECT_DIR_OPTION = "p"
@@ -308,10 +316,20 @@ class AntaresSwing(
 	override fun handleShutdown() {
 		super.handleShutdown()
 
-		if (controller.data?.savable is ProjectSavable && (controller.data!!.savable as ProjectSavable).element.library != null) {
-			BaseModule.settings.set(PROP_APPLICATION_PROJECT, (controller.data!!.savable as ProjectSavable).project.uuid.toString())
-		} else {
-			BaseModule.settings.remove(PROP_APPLICATION_PROJECT)
+		BaseModule.settings.remove(PROP_APPLICATION_LIBRARY)
+		BaseModule.settings.remove(PROP_APPLICATION_PROJECT)
+		BaseModule.settings.remove(PROP_META_GRAPH)
+
+		if (libraryHolder.l is Project) {
+			BaseModule.settings.set(PROP_APPLICATION_PROJECT, (libraryHolder.l as Project).uuid.id)
+			if (controller.data?.savable is ProjectSavable) {
+				BaseModule.settings.set(PROP_META_GRAPH, (controller.data!!.savable as ProjectSavable).element.uuid.id)
+			}
+		} else if (libraryHolder.l is Library) {
+			BaseModule.settings.set(PROP_APPLICATION_LIBRARY, (libraryHolder.l as Library).uuid.id)
+			if (controller.data?.savable is LibrarySavable) {
+				BaseModule.settings.set(PROP_META_GRAPH, (controller.data!!.savable as LibrarySavable).element.uuid.id)
+			}
 		}
 	}
 
@@ -329,9 +347,28 @@ class AntaresSwing(
 		val userId = EditAuthModule.userHolder.user.identity
 
 		val dataViewController = (controller as GraphDataViewController)
-		val projectName = BaseModule.settings.getString(PROP_APPLICATION_PROJECT, "")
-		if (StringUtils.isNotEmpty(projectName) && ProjectModule.projectManagementService.contains(UUID(projectName))) {
-			dataViewController.openProject(LibraryIdentification(UUID(projectName), userId))
+
+		val metaGraphUuid = BaseModule.settings.getString(PROP_META_GRAPH, "")
+
+		val projectUuid = BaseModule.settings.getString(PROP_APPLICATION_PROJECT, "")
+		if (StringUtils.isNotEmpty(projectUuid) && ProjectModule.projectManagementService.contains(UUID(projectUuid))) {
+			val projectId = LibraryIdentification(UUID(projectUuid), userId)
+			if (StringUtils.isNotEmpty(metaGraphUuid)) {
+				dataViewController.openProject(projectId, UUID(metaGraphUuid))
+			} else {
+				dataViewController.openProject(projectId)
+			}
+			return
+		}
+
+		val libraryUuid = BaseModule.settings.getString(PROP_APPLICATION_LIBRARY, "")
+		if (StringUtils.isNotEmpty(libraryUuid) && LibraryModule.libraryManagementService.contains(UUID(libraryUuid))) {
+			val libraryId = LibraryIdentification(UUID(libraryUuid), userId)
+			if (StringUtils.isNotEmpty(metaGraphUuid)) {
+				dataViewController.openLibrary(libraryId, UUID(metaGraphUuid))
+			} else {
+				dataViewController.openLibrary(libraryId)
+			}
 			return
 		}
 

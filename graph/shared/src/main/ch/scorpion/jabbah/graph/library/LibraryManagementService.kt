@@ -137,22 +137,46 @@ class LibraryManagementService(
 		libraryService.loadLibrary(libraryId, isSystemLibrary(libraryId.uuid))
 
 	override fun open(libraryId: LibraryIdentification): Library =
-		libraryService.loadLibrary(libraryId, isSystemLibrary(libraryId.uuid))
-			.also { open(it) }
+		loadLibrary(libraryId).also { open(it) }
 
-	/** Opens the specified [Library], while closing a currently open project*/
 	fun open(library: Library) {
-		LOG.trace("open library ${library.uuid}")
 		if (libraryHolder.l == null) {
-			libraryHolder.l = library
+			openImpl(library)
 		} else {
 			eventBus.postVetoable(
 				event = OpenLibraryRequest(library),
 				undoEvent = OpenLibraryRequest(libraryHolder.library),
 				thenHandler = {
-					libraryHolder.l = library
+					openImpl(library)
 				}
 			)
+		}
+	}
+
+	/** Opens the specified [Library], while closing a currently open project*/
+	fun open(libraryId: LibraryIdentification, containerLibraryElement: UUID? = null) {
+		val library = loadLibrary(libraryId)
+		LOG.trace("open library ${library.uuid}")
+		if (libraryHolder.l == null) {
+			//libraryHolder.l = library
+			openImpl(library, containerLibraryElement)
+		} else {
+			eventBus.postVetoable(
+				event = OpenLibraryRequest(library),
+				undoEvent = OpenLibraryRequest(libraryHolder.library),
+				thenHandler = {
+					openImpl(library, containerLibraryElement)
+				}
+			)
+		}
+	}
+
+	private fun openImpl(library: Library, containerLibraryElement: UUID? = null) {
+		libraryHolder.l = library
+		if (containerLibraryElement != null) {
+			library.getContainerLibraryElement(containerLibraryElement)?.let {
+				eventBus.post(OpenContainerLibraryElementRequest(it))
+			}
 		}
 	}
 

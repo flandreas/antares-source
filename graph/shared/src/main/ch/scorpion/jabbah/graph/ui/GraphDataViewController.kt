@@ -115,11 +115,23 @@ class GraphDataViewController(
 		super.open(savable)
 	}
 
-	fun openProject(identification: LibraryIdentification) {
+	fun openProject(identification: LibraryIdentification, containerLibraryElement: UUID? = null) {
 		try {
-			ProjectModule.projectManagementService.open(identification)
+			if (containerLibraryElement != null) {
+				ProjectModule.projectManagementService.open(identification, containerLibraryElement)
+			} else {
+				ProjectModule.projectManagementService.open(identification)
+			}
 		} catch (e: ApplicationTooOldException) {
 			handle(Translations.getString("project.action.open.name"), e)
+		}
+	}
+
+	fun openLibrary(identification: LibraryIdentification, containerLibraryElement: UUID? = null) {
+		try {
+			LibraryModule.libraryManagementService.open(identification, containerLibraryElement)
+		} catch (e: ApplicationTooOldException) {
+			handle(Translations.getString("library.action.open.name"), e)
 		}
 	}
 

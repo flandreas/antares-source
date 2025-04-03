@@ -187,7 +187,8 @@ class LibraryPersistencePanel(
 			LOG.userTrail("creating new library '${info.name.getTranslation()}'")
 			InvocationHandler.invoke {
 				managementService.open(
-					managementService.create(LibraryProperties(info.name), info.importUuid?.let { getLibraryIdentity(it) }),
+					managementService.create(LibraryProperties(info.name),
+					info.importUuid?.let { getLibraryIdentity(it) }),
 				)
 				closeHandler.invoke()
 			}
