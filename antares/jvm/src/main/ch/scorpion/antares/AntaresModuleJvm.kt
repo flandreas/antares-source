@@ -26,6 +26,7 @@ import ch.scorpion.antares.view.container.DigitalContainerEditor
 import ch.scorpion.antares.view.container.DigitalContainerToolBarBuilder
 import ch.scorpion.antares.view.container.DigitalContainerTreeView
 import ch.scorpion.antares.view.expression.BooleanExpressionDesktopItemSwing
+import ch.scorpion.antares.view.fsm.FSMGraphDesktopItemSwing
 import ch.scorpion.antares.view.gate.LogicGateView
 import ch.scorpion.antares.view.graph.AnalogMetaGraphIcon
 import ch.scorpion.antares.view.graph.AntaresMetaGraphIcon
@@ -545,5 +546,6 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		HelpSourceRegistry.register(ExportVHDLPanel.HELP_ID, HelpSource("/circuits/vhdl-export"))
 		HelpSourceRegistry.register(TruthTableDesktopItemSwing.HELP_ID, HelpSource("/circuits/synthesis#chapter-truth-tables"))
 		HelpSourceRegistry.register(BooleanExpressionDesktopItemSwing.HELP_ID, HelpSource("/circuits/synthesis#chapter-boolean-expressions"))
+		HelpSourceRegistry.register(FSMGraphDesktopItemSwing.HELP_ID, HelpSource("/fsm/fsm"))
 	}
 }

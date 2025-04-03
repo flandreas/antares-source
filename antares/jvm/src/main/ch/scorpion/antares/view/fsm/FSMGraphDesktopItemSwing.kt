@@ -2,13 +2,17 @@ package ch.scorpion.antares.view.fsm
 
 import ch.scorpion.antares.model.fsm.FSMDrawing
 import ch.scorpion.antares.model.fsm.FSMLibraryItem
+import ch.scorpion.antares.view.expression.BooleanExpressionDesktopItemSwing
+import ch.scorpion.antares.view.expression.BooleanExpressionDesktopItemSwing.Companion
 import ch.scorpion.jabbah.app.ApplicationDataViewController
 import ch.scorpion.jabbah.app.ToolBar
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.help.HelpId
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.ui.HelpAction
 import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.draw.view.DrawViewModule
@@ -28,10 +32,13 @@ class FSMGraphDesktopItemSwing(
     createTitleText(item.storable),
     JPanel(),
     applicationDataViewController,
-    eventBus
+    eventBus,
+    listOf(HelpAction.withSmallImage(HELP_ID))
 ), FSMPanelView {
 
     companion object {
+        val HELP_ID = HelpId("fsmDesktopItem")
+
         fun createTitleText(fsm: FSMDrawing): String =
             "${Translations.getString("library.element.fsm.name")} \"${fsm.name.getTranslation()}\""
     }

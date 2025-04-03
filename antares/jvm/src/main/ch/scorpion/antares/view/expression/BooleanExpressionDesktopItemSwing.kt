@@ -46,7 +46,7 @@ class BooleanExpressionDesktopItemSwing(
 	JPanel(),
 	applicationDataHolder,
 	eventBus,
-	listOf(HelpAction.withSmallImage(TruthTableDesktopItemSwing.HELP_ID))
+	listOf(HelpAction.withSmallImage(HELP_ID))
 ) {
 
 	companion object {
