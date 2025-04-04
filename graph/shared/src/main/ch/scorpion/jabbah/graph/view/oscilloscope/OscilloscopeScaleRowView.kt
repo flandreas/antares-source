@@ -16,9 +16,8 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorViewContainer
 import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoriesType
-import ch.scorpion.jabbah.graph.ui.KnobLauncherImpl
-import ch.scorpion.jabbah.graph.ui.KnobView
-import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.ui.knob.KnobLauncherImpl
+import ch.scorpion.jabbah.graph.ui.knob.KnobView
 import ch.scorpion.jabbah.graph.view.app.oscilloscope.OscilloscopeViewService
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView.Companion.ICON_BUTTON_SIZE
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView.Companion.MAX_ROW_NUMBER

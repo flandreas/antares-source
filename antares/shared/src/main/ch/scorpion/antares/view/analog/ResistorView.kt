@@ -15,7 +15,7 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.graph.GraphApplicationContext
-import ch.scorpion.jabbah.graph.ui.KnobLauncherImpl
+import ch.scorpion.jabbah.graph.ui.knob.KnobLauncherImpl
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView

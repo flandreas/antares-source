@@ -21,7 +21,7 @@ object Geometry {
 		return kotlin.math.sign(value)
 	}
 
-	/** Wraps an angle in radians to the range 0 .. 2*PI.*/
+	/** Wraps an angle in radians to the range 0 ... 2*PI.*/
 	fun wrapAngle(angle: Double): Double {
 		if (angle < 0) {
 			return TWO_PI - abs(angle % TWO_PI)

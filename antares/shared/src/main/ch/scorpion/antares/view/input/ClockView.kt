@@ -27,8 +27,8 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
-import ch.scorpion.jabbah.graph.ui.KnobLauncherImpl
-import ch.scorpion.jabbah.graph.ui.KnobView
+import ch.scorpion.jabbah.graph.ui.knob.KnobLauncherImpl
+import ch.scorpion.jabbah.graph.ui.knob.KnobView
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource

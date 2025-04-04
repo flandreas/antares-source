@@ -11,7 +11,7 @@ import ch.scorpion.jabbah.graph.container.OriginIndicator
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.vertice.ImmediateVerticeLink
-import ch.scorpion.jabbah.graph.ui.KnobLauncher
+import ch.scorpion.jabbah.graph.ui.knob.KnobLauncher
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
 import dev.mokkery.MockMode
