@@ -49,7 +49,7 @@ class NavigationStackViewSwing(
 			UIManager.getFont("Label.font").size + 2 * V_INSETS)
 
 		/** The fix height of this view.  */
-		private val HEIGHT = OUTER_HEIGHT - 2 * V_INSETS
+		val HEIGHT = OUTER_HEIGHT - 2 * V_INSETS
 
 		/** Horizontal insets between view border and arrow border.*/
 		private const val H_INSETS = 5
@@ -117,6 +117,8 @@ class NavigationStackViewSwing(
 
 	private val hoverListener = HoverListener()
 
+	private val nameChanger = NameChanger()
+
 	private val leftScroll = LeftScroll()
 
 	private val rightScroll = RightScroll()
@@ -146,6 +148,8 @@ class NavigationStackViewSwing(
 				scrollToHeader()
 			}
 		})
+
+		addMouseListener(nameChanger)
 	}
 
 	override fun dispose() {
@@ -163,9 +167,13 @@ class NavigationStackViewSwing(
 			if (value) {
 				addMouseListener(hoverListener)
 				addMouseMotionListener(hoverListener)
+				removeMouseListener(nameChanger)
 			} else {
 				removeMouseListener(hoverListener)
 				removeMouseMotionListener(hoverListener)
+				if (editable) {
+					addMouseListener(nameChanger)
+				}
 			}
 		}
 
@@ -325,6 +333,8 @@ class NavigationStackViewSwing(
 
 		var location: Point2D = Point2D.ZERO
 
+		val font: Font get() = getFont(isHead)
+
 		override val canHover: Boolean get() = !isHead
 
 		override val tooltip: String get() = elementNavigationTooltip
@@ -378,6 +388,22 @@ class NavigationStackViewSwing(
 			} else {
 				e.isControlDown
 			}
+	}
+
+	private inner class NameChanger: MouseAdapter() {
+		override fun mouseClicked(e: MouseEvent?) {
+			if (e?.clickCount == 2) {
+				elements.reversed().firstOrNull { it is Element && it.contains(e.x, e.y) }?.let {
+					NavigationStackViewNameEditor.startEditor(
+						this@NavigationStackViewSwing,
+						(it as Element).entry.content.drawing.graph!!.uuid,
+						it.entry.name,
+						it.location,
+						it.font
+					)
+				}
+			}
+		}
 	}
 
 	/**

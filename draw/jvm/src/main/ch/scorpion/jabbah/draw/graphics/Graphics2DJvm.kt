@@ -97,6 +97,10 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
                 else -> throw IllegalArgumentException("unsupported image type ${image::class.simpleName}")
             }
         }
+
+        fun toAwtPoint(point: ch.scorpion.jabbah.base.geom.Point2D): Point {
+            return Point(point.x.toInt(), point.y.toInt())
+        }
     }
 
     /** ---- [Graphics2D] interface */

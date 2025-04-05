@@ -15,7 +15,7 @@ interface NavigationStackView : UIView {
 
 	/**
 	 * Determines only if the [NavigationStack] head should graphically indicate that
-	 * its content [GraphView] is editable. Doesn't effect editability of the [NavigationStackView] itself.
+	 * its content [GraphView] is editable. Doesn't affect editability of the [NavigationStackView] itself.
 	 */
 	var editable: Boolean
 
