@@ -83,6 +83,25 @@ class UpdateMetaGraphNameUITest {
         assertEquals(NEW_NAME, LibraryModule.libraryHolder.library.getContainerLibraryElement(metaGraphElement.uuid)!!.name.value)
     }
 
+    @Test
+    fun shouldUpdateInNavigationStackView() {
+        val metaGraphElement = createAndOpenNewProjectWithMetaGraph()
+
+        with (application.graphFrameController.graphPanelViewController.editViewController) {
+            graphNavigationViewController.navigationStackViewController
+                .changeName(NEW_NAME)
+
+            // Currently open MetaGraph must be updated
+            assertEquals(NEW_NAME, (editor.drawing as GraphView).name.value)
+
+            // Head in NavigationStackView must be updated
+            assertEquals(NEW_NAME, graphNavigationViewController.navigationStack.rootEntry!!.name)
+
+            // Element in Library must NOT be updated before "Save"
+            assertEquals(OLD_NAME, LibraryModule.libraryHolder.library.getContainerLibraryElement(metaGraphElement.uuid)!!.name.value)
+        }
+    }
+
     private fun createAndOpenNewProjectWithMetaGraph(): ContainerLibraryElement {
         val service = ProjectModule.projectManagementService
         var project = service.create(LibraryProperties(name = TranslatableText("MyProject")))

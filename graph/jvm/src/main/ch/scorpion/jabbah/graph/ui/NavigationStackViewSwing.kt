@@ -36,7 +36,7 @@ import kotlin.math.min
  * A [javax.swing] implementation of a [NavigationStackView].
  */
 class NavigationStackViewSwing(
-	controller: NavigationStackViewController
+	override val controller: NavigationStackViewController
 ) : JPanel(), NavigationStackView {
 
 	companion object {
@@ -167,13 +167,11 @@ class NavigationStackViewSwing(
 			if (value) {
 				addMouseListener(hoverListener)
 				addMouseMotionListener(hoverListener)
-				removeMouseListener(nameChanger)
+				addMouseListener(nameChanger)
 			} else {
 				removeMouseListener(hoverListener)
 				removeMouseMotionListener(hoverListener)
-				if (editable) {
-					addMouseListener(nameChanger)
-				}
+				removeMouseListener(nameChanger)
 			}
 		}
 
@@ -394,6 +392,9 @@ class NavigationStackViewSwing(
 		override fun mouseClicked(e: MouseEvent?) {
 			if (e?.clickCount == 2) {
 				elements.reversed().firstOrNull { it is Element && it.contains(e.x, e.y) }?.let {
+					if (!((it as Element).entry.content.drawingView.editable)) {
+						return
+					}
 					NavigationStackViewNameEditor.startEditor(
 						this@NavigationStackViewSwing,
 						(it as Element).entry.content.drawing.graph!!.uuid,
