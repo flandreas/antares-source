@@ -20,7 +20,9 @@ import ch.scorpion.jabbah.draw.ViewTransformation
 import ch.scorpion.jabbah.draw.view.ZoomedPointTranslation
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
+import ch.scorpion.jabbah.edit.model.text.description.NameChangedEvent
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItemCloseQuestion
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItemCloseRequest
@@ -89,6 +91,7 @@ class GraphNavigationViewController(
 	private val currentSavableHandler: (CurrentSavableEvent) -> Unit = { handle(it) }
 	private val scenarioEventHandler: (ScenarioEvent) -> Unit = { handle(it) }
 	private val closeViewRequestHandler: (CloseViewRequest) -> Unit = { handle(it) }
+	private val nameChangedHandler: (NameChangedEvent) -> Unit = { handle(it) }
 
 	private val rootEntry: NavigationStackEntry<GraphView>? get() = navigationStackViewController.navigationStack.rootEntry
 
@@ -123,6 +126,7 @@ class GraphNavigationViewController(
 		eventBus.register(CurrentSavableEvent::class, currentSavableHandler)
 		eventBus.register(ScenarioEvent::class, scenarioEventHandler)
 		eventBus.register(CloseViewRequest::class, closeViewRequestHandler)
+		eventBus.register(NameChangedEvent::class, nameChangedHandler)
 
 		drawingView.addPropertyChangeListener(viewCanvasListener)
 	}
@@ -150,6 +154,7 @@ class GraphNavigationViewController(
 		eventBus.unregister(CurrentSavableEvent::class, currentSavableHandler)
 		eventBus.unregister(ScenarioEvent::class, scenarioEventHandler)
 		eventBus.unregister(CloseViewRequest::class, closeViewRequestHandler)
+		eventBus.unregister(NameChangedEvent::class, nameChangedHandler)
 
 		extension.dispose(this)
 	}
@@ -235,6 +240,14 @@ class GraphNavigationViewController(
 			descendIntoSubGraphWithAnimation(request.subGraphVerticeView)
 		} else {
 			descendIntoSubGraphWithoutAnimation(request.subGraphVerticeView)
+		}
+	}
+
+	private fun handle(event: NameChangedEvent) {
+		if (event.owner is Graph && (event.owner as Graph).uuid == drawingView.drawing.graph?.uuid) {
+			if (event.name !== drawingView.drawing.graph!!.name) {
+				drawingView.drawing.graph!!.name = event.name
+			}
 		}
 	}
 

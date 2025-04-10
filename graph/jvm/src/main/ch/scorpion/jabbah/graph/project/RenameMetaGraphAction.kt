@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
-import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.AbstractContainerLibraryElementAction
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
@@ -48,6 +47,6 @@ class RenameMetaGraphAction(
 			return
 		}
 
-		element.library!!.libraryService.renameContainerLibraryElement(element, TranslatableText(newName!!))
+		controller.renameContainerLibraryElement(element, newName!!)
 	}
 }

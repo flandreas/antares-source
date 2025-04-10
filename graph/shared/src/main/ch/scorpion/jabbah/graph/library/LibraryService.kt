@@ -334,6 +334,8 @@ class LibraryService(
 
 		persister(element.library!!.isSystem).storeMetaGraph(element.library!!, element.storable!!)
 		storeLibrary(element.library!!)
+
+		eventBus.post(LibraryItemUpdatedEvent(element.library!!, element))
 	}
 
 	/**

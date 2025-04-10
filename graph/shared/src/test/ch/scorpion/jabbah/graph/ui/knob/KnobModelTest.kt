@@ -22,7 +22,7 @@ class KnobModelTest {
         assertEquals(0.0, KnobModel(1).asAngle)
         assertEquals(0.0, KnobModel(10).asAngle)
 
-        assertEquals(PI / 2, KnobModel(315).asAngle)
+        assertEquals(PI / 2, KnobModel(325).asAngle)
 
         assertEquals(0.0, KnobModel(100).asAngle)
         assertEquals(PI, KnobModel(550).asAngle)

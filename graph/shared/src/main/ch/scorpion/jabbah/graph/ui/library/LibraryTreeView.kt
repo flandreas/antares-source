@@ -2,10 +2,10 @@ package ch.scorpion.jabbah.graph.ui.library
 
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.library.*
@@ -157,6 +157,10 @@ class LibraryTreeViewController (
 			return null
 		}
 		return (selectedItem as LibraryElement).getNewInstance()
+	}
+
+	fun renameContainerLibraryElement(element: ContainerLibraryElement, newName: String) {
+		element.library!!.libraryService.renameContainerLibraryElement(element, TranslatableText(newName))
 	}
 }
 
