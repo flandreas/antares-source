@@ -1,10 +1,8 @@
 package ch.scorpion.antares.model.fsm
 
 import ch.scorpion.antares.model.module.AntaresModelModule
-import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.signal.BitOperation
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.antares.model.signal.*
+import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.model.truthtable.TruthTable
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.StringUtils.isBlank
@@ -30,6 +28,9 @@ class FSMTruthTableCreator(
         const val DEF_STATE_VAR = "Z"
         const val DEF_INPUT_NAME = "I"
         const val DEF_OUTPUT_NAME = "O"
+
+        /** The max. number of bits in output values. Corresponds with max. number of output ports.*/
+        private const val MAX_OUTPUT_BITS = 8
     }
 
     private val memory = Memory()
@@ -41,12 +42,10 @@ class FSMTruthTableCreator(
     /** The number of bits required to address all [FSMState]s. */
     private val stateBits: Int = calculateStateVariableBits(states)
 
-    private val initState: FSMState = getInitState(states)
-
     private val parsedTransitions: MutableMap<FSMTransition, ParsedTransition> =
         parseTransitions()
 
-    private val parsedStateOutputs: MutableMap<FSMState, ParsedStateOutput> =
+    private val parsedStateOutputs: MutableMap<FSMState, MutableList<ParsedStateOutput>> =
         parseStateOutputs()
 
     private val inputSignalNames = mutableListOf<String>()
@@ -56,6 +55,10 @@ class FSMTruthTableCreator(
     private val inputColumnNames = mutableListOf<String>()
 
     private val outputColumnNames = mutableListOf<String>()
+
+    init {
+        getInitState(states)
+    }
 
     /**
      * Creates a [TruthTable] representing the logic of [fsm].
@@ -74,14 +77,14 @@ class FSMTruthTableCreator(
 
         outputSignalNames.addAll(
             parsedTransitions.values
-                .filter { it.outputName != null }
-                .map { it.outputName as String }
+                .flatMap { it.outputs }
+                .map { it.name }
                 .toSet()
                 .sortedDescending())
         outputSignalNames.addAll(
-            parsedStateOutputs.values
-                .filter { it.outputName != null && !outputSignalNames.contains(it.outputName) }
-                .map { it.outputName as String }
+            parsedStateOutputs.flatMap { it.value }
+                .filter { !outputSignalNames.contains(it.output.name) }
+                .map { it.output.name }
                 .toSet())
         if (outputSignalNames.isEmpty()) {
             outputSignalNames.add(DEF_OUTPUT_NAME)
@@ -171,46 +174,46 @@ class FSMTruthTableCreator(
                 if (result.variableNames.isEmpty() && parsedTransitions.values.any { pt -> pt.inputNames.isNotEmpty() }) {
                     exception("antares.fsm.inconsistentTransitionConditionNaming.error")
                 }
-                if (result.variableNames.isNotEmpty() && parsedTransitions.values.any { t -> t.inputNames.isEmpty() }) {
+                if (result.variableNames.isNotEmpty() && parsedTransitions.values.any { it.inputNames.isEmpty() }) {
                     exception("antares.fsm.inconsistentTransitionConditionNaming.error")
+                }
+                if (result.maxValue > 1) {
+                    exception("antares.fsm.valueOutOfRangeInTransition.error", getState(t.origStateId).stateNumber, getState(t.destinationStateId).stateNumber)
                 }
 
                 inputNames = result.variableNames
                 interpreter = FSMTransitionConditionInterpreter(result.ast, memory)
 
+                val parsedTransition = ParsedTransition(t, inputNames, interpreter)
+                parsedTransitions.getOrPut(t) { parsedTransition }
+
                 // ---- Outputs
 
                 if (!isBlank(t.output) && !isBlank(getState(t.origStateId).output)) {
-                    exception("antares.fsm.outputInTransitionAndState.error", getState(t.origStateId).stateNumber)
+                    exception("antares.fsm.valueOutOfRangeInTransition.error", getState(t.origStateId).stateNumber)
                 }
-                var outputName: String? = null
-                var outputValue: Int? = null
+
                 if (StringUtils.isNotBlank(t.output)) {
-                    val terms = t.output.trim().split("=")
-                    when (terms.size) {
-                        1 -> {
-                            outputName = null
-                            outputValue = terms[0].toInt()
+                    for (pair in parseOutputList(t.output, "antares.fsm.invalidTransitionOutput.error", getState(t.origStateId).stateNumber)) {
+                        val (name, value) = pair
+                        if (value > BitWidth.of(MAX_OUTPUT_BITS).maxValue.toInt()) {
+                            exception("antares.fsm.valueOutOfRangeInState.error", getState(t.origStateId).stateNumber, getState(t.destinationStateId).stateNumber)
                         }
-                        2 -> {
-                            outputName = terms[0]
-                            outputValue = terms[1].toInt()
-                        }
-                        else -> {
-                            exception("antares.fsm.invalidTransitionOutput.error")
+
+                        val bitWidth = BitWidth.smallest(value.toULong())
+                            ?: exception("antares.fsm.valueOutOfRangeInTransition.error", getState(t.origStateId).stateNumber, getState(t.destinationStateId).stateNumber)
+                        val bitValue = Word.of(bitWidth, value.toULong())
+
+                        for (i in bitWidth.width - 1 downTo 0) {
+                            val effName = if (bitWidth == BitWidth.BW_1) {
+                                name
+                            } else {
+                                "$name$i"
+                            }
+                            parsedTransition.outputs.add(ParsedOutput(effName, bitValue.bits[i].isSet))
                         }
                     }
                 }
-                if (outputValue != null && outputName == null && parsedTransitions.values.any { pt -> pt.outputName != null }) {
-                    exception("antares.fsm.inconsistentTransitionOutputNaming.error")
-                }
-                val unnamedOutput = parsedTransitions.values.firstOrNull { pt -> pt.outputValue != null && pt.outputName == null }
-                if (outputValue != null && outputName != null && unnamedOutput != null) {
-                    exception("antares.fsm.inconsistentTransitionOutputNaming.error")
-                }
-
-                parsedTransitions.getOrPut(t) { ParsedTransition(t, inputNames, interpreter, outputName, outputValue) }
-
             } catch (e: NumberFormatException) {
                 exception("antares.fsm.invalidTransitionConditionValue.error", getState(t.origStateId).stateNumber)
             } catch (e: FSMException) {
@@ -224,33 +227,77 @@ class FSMTruthTableCreator(
         return parsedTransitions
     }
 
-    private fun parseStateOutputs(): MutableMap<FSMState, ParsedStateOutput> {
-        val parsedStateOutputs = mutableMapOf<FSMState, ParsedStateOutput>()
+    private fun parseStateOutputs(): MutableMap<FSMState, MutableList<ParsedStateOutput>> {
+        val parsedStateOutputs = mutableMapOf<FSMState, MutableList<ParsedStateOutput>>()
         for (state in states) {
-            var outputName: String? = null
-            var outputValue: Int? = null
             if (StringUtils.isNotBlank(state.output)) {
-                val terms = state.output.trim().split("=")
-                when (terms.size) {
-                    1 -> {
-                        outputName = null
-                        outputValue = terms[0].toInt()
+                for (pair in parseOutputList(state.output, "antares.fsm.invalidStateOutput.error", state.stateNumber)) {
+                    val (outputName, outputValue) = pair
+
+                    if (outputValue > BitWidth.of(MAX_OUTPUT_BITS).maxValue.toInt()) {
+                        exception("antares.fsm.valueOutOfRangeInState.error", state.stateNumber)
                     }
-                    2 -> {
-                        outputName = terms[0]
-                        outputValue = terms[1].toInt()
-                    }
-                    else -> {
-                        exception("antares.fsm.invalidTransitionOutput.error")
+
+                    val bitWidth = BitWidth.smallest(outputValue.toULong())
+                        ?: exception("antares.fsm.valueOutOfRangeInState.error", state.stateNumber)
+                    val bitValue = Word.of(bitWidth, outputValue.toULong())
+
+                    for (i in bitWidth.width - 1 downTo 0) {
+                        val name = if (bitWidth == BitWidth.BW_1) {
+                            outputName
+                        } else {
+                            "$outputName$i"
+                        }
+                        val value = bitValue.bits[i].isSet
+                        parsedStateOutputs.getOrPut(state) { mutableListOf() }
+                            .add(ParsedStateOutput(state, ParsedOutput(name, value)))
                     }
                 }
-                if (outputValue != null && outputValue > 1) {
-                    exception("antares.fsm.valueOutOfRangeInState.error", state.stateNumber)
-                }
-                parsedStateOutputs[state] = ParsedStateOutput(state, outputName, outputValue)
             }
         }
         return parsedStateOutputs
+    }
+
+    private fun parseOutputList(output: String, errorKey: String, vararg params: Any): List<Pair<String, Int>> = output
+        .split(",")
+        .map { parseOutput(it, errorKey, params) }
+        .toList()
+
+    private fun parseOutput(output: String, errorKey: String, vararg params: Any): Pair<String, Int> {
+        val outputName: String?
+        val outputValue: Int?
+        val terms = output.trim().split("=")
+        try {
+            when (terms.size) {
+                1 -> {
+                    outputName = null
+                    outputValue = parseOutputValue(terms[0])
+                }
+
+                2 -> {
+                    outputName = terms[0]
+                    outputValue = parseOutputValue(terms[1])
+                }
+
+                else -> {
+                    exception(errorKey, params)
+                }
+            }
+            return Pair(StringUtils.orElse(outputName, DEF_OUTPUT_NAME), outputValue)
+        } catch (x: NumberFormatException) {
+            exception(errorKey, params)
+        }
+    }
+
+    private fun parseOutputValue(value: String): Int {
+        val uppercaseValue = value.trim().uppercase()
+        return if (uppercaseValue.startsWith("0X")) {
+            uppercaseValue.substring(2).toInt(16)
+        } else if (uppercaseValue.startsWith("0B")) {
+            uppercaseValue.substring(2).toInt(2)
+        } else {
+            uppercaseValue.toInt()
+        }
     }
 
     private fun fillLogic(truthTable: TruthTable) {
@@ -303,9 +350,31 @@ class FSMTruthTableCreator(
         val row = rowOfStateNumber(from.stateNumber) + inputSignal
         writeDestinationStateNumber(truthTable, row, to.stateNumber)
 
-        // Caution: The "to" argument intentionally used the "from" state, because the output of the current row of the
+        // Set fallback default value
+        for (column in truthTable.columnCount - outputSignalNames.size  until truthTable.columnCount) {
+            truthTable.setValue(row, column, Bit.False)
+        }
+
+        // Caution: The "to" argument intentionally uses the "from" state, because the output of the current row of the
         // truth table represents the output produced in the CURRENT state (which is the "from" state)
-        writeOutputSignal(truthTable, row, from, parsedStateOutputs[from], to, transition?.let { parsedTransitions[it] })
+
+        val stateOutputs = parsedStateOutputs[from]
+        if (stateOutputs != null) {
+            stateOutputs.forEach { pso ->
+                val transitionOutput =
+                    transition?.let { t -> parsedTransitions[t] }?.outputs?.firstOrNull { it.name == pso.output.name }
+                writeOutputSignal(truthTable, row, from, pso, to, transitionOutput)
+            }
+        } else {
+            val transitionsOutputs = parsedTransitions[transition]?.outputs
+            if (transitionsOutputs?.isNotEmpty() == true) {
+                transitionsOutputs.forEach {
+                    writeOutputSignal(truthTable, row, from, null, to, it)
+                }
+            } else {
+                writeOutputSignal(truthTable, row, from, null, to, null)
+            }
+        }
     }
 
     private fun writeDestinationStateNumber(truthTable: TruthTable, row: Int, stateNumber: Int) {
@@ -316,40 +385,26 @@ class FSMTruthTableCreator(
         }
     }
 
-    private fun writeOutputSignal(truthTable: TruthTable, row: Int, from: FSMState, fromOutput: ParsedStateOutput?, to: FSMState, transition: ParsedTransition?) {
+    private fun writeOutputSignal(truthTable: TruthTable, row: Int, from: FSMState, fromOutput: ParsedStateOutput?,
+        to: FSMState, transitionOutput: ParsedOutput?
+    ) {
         var fromStateColumnId: Int? = null
         var fromStateSignal: Bit? = null
-        if (fromOutput?.outputValue != null) {
-            fromStateColumnId = if (isBlank(fromOutput.outputName)) {
-                truthTable.columnCount - 1
-            } else {
-                truthTable.columnCount - outputSignalNames.indexOf(fromOutput.outputName) - 1
-            }
-            fromStateSignal = Bit.of(fromOutput.outputValue)
+        if (fromOutput != null) {
+            fromStateColumnId = truthTable.columnCount - outputSignalNames.indexOf(fromOutput.output.name) - 1
+            fromStateSignal = Bit.of(fromOutput.output.value)
         }
         var fromTransitionColumnId: Int? = null
         var fromTransitionSignal: Bit? = null
-        if (transition?.outputValue != null) {
-            if (transition.outputValue > 1) {
-                exception("antares.fsm.valueOutOfRangeInTransition.error", from.stateNumber, to.stateNumber)
-            }
-            fromTransitionColumnId = if (isBlank(transition.outputName)) {
-                truthTable.columnCount - 1
-            } else {
-                truthTable.inputColumnCount + truthTable.stateColumnCount + outputSignalNames.indexOf(transition.outputName)
-            }
-            fromTransitionSignal = Bit.of(transition.outputValue)
+        if (transitionOutput != null) {
+            fromTransitionColumnId = truthTable.inputColumnCount + truthTable.stateColumnCount + outputSignalNames.indexOf(transitionOutput.name)
+            fromTransitionSignal = Bit.of(transitionOutput.value)
         }
 
         if (fromStateColumnId == fromTransitionColumnId) {
             if (fromStateSignal != fromTransitionSignal) {
                 exception("antares.fsm.outputSignalConflict.error", from.stateNumber, to.stateNumber)
             }
-        }
-
-        // Set fallback default value
-        for (column in truthTable.columnCount - outputSignalNames.size  until truthTable.columnCount) {
-            truthTable.setValue(row, column, Bit.False)
         }
 
         if (fromStateColumnId != null) {
@@ -370,12 +425,11 @@ class FSMTruthTableCreator(
         val transition: FSMTransition,
         val inputNames: Set<String> = emptySet(),
         val conditionInterpreter: FSMTransitionConditionInterpreter,
-        val outputName: String? = null,
-        val outputValue: Int? = null
+        val outputs: MutableList<ParsedOutput> = mutableListOf()
     ) {
 
         /**
-         * Returns `true`if this [ParsedTransition] is triggered by the current values
+         * Returns `true` if this [ParsedTransition] is triggered by the current values
          * in the [conditionInterpreter]'s [Memory] (set in calling scope), i.e. if the
          * expression matches the current input variable values.
          */
@@ -396,7 +450,11 @@ class FSMTruthTableCreator(
 
     data class ParsedStateOutput(
         val state: FSMState,
-        val outputName: String? = null,
-        val outputValue: Int? = null
+        val output: ParsedOutput
+    )
+
+    data class ParsedOutput(
+        val name: String,
+        val value: Boolean
     )
 }
