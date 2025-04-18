@@ -30,6 +30,8 @@ import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.project.ProjectSavable
 import ch.scorpion.jabbah.graph.ui.GraphDataViewController
 import ch.scorpion.jabbah.graph.ui.GraphFrameSwing
+import ch.scorpion.jabbah.io.ElectricXmlReader
+import ch.scorpion.jabbah.io.StoreXmlReader
 import com.formdev.flatlaf.FlatDarkLaf
 import com.formdev.flatlaf.FlatLightLaf
 import kotlinx.coroutines.runBlocking
@@ -382,12 +384,23 @@ class AntaresSwing(
 
 	private fun createHelloProject(userId: UserIdentity) {
 		ProjectModule.projectManagementService
-			.createHelloProject(LibraryModule.DEF_LIBRARY_UUID)
+			.createHelloProject(LibraryModule.DEF_LIBRARY_UUID, loadHelloCircuit())
 			.also {
 				(controller as GraphDataViewController).openProject(LibraryIdentification(it.uuid, userId))
 				(mainFrame as AntaresFrameSwing).controller.graphPanelViewController.libraryPanelController
 					.libraryTreeViewController.view.expandFolder(AntaresApplication.FREQUENTLY_USED_FOLDER_NAME_EN)
 			}
+	}
+
+	private fun loadHelloCircuit(): MetaGraph {
+		try {
+			AntaresSwing::class.java.getResourceAsStream("/my-first-circuit.cir").use { input ->
+				return StoreXmlReader(ElectricXmlReader(input!!)).readStorable()
+			}
+		} catch (e: Exception) {
+			LOG.value.error("Error while loading my-first-circuit.cir", e)
+			throw e
+		}
 	}
 
 	private fun handleCommandLineArgument(path: String) {

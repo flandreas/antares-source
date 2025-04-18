@@ -1,0 +1,181 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' appVersion='1.18.0' manualContainer='false'>
+  <graph>
+    <graphStorable _id='1'>
+      <model>
+        <graph _id='2' type='digital'>
+          <elements>
+            <graphElementWrapper _id='3' id='1' delay='0'/>
+            <switch _id='4' id='2' delay='1000'/>
+            <andGate _id='5' id='3' delay='20' inputCount='2'/>
+            <switch _id='6' id='4' delay='1000'/>
+            <digitalNet _id='7' id='5' delay='0'>
+              <ports>
+                <netPortRef _id='8' verticeId='4' portId='1'/>
+                <netPortRef _id='9' verticeId='5' portId='1'/>
+              </ports>
+            </digitalNet>
+            <digitalNet _id='10' id='6' delay='0'>
+              <ports>
+                <netPortRef _id='11' verticeId='6' portId='1'/>
+                <netPortRef _id='12' verticeId='5' portId='2'/>
+              </ports>
+            </digitalNet>
+            <led _id='13' id='7' delay='0'/>
+            <digitalNet _id='14' id='8' delay='0'>
+              <ports>
+                <netPortRef _id='15' verticeId='5' portId='3'/>
+                <netPortRef _id='16' verticeId='13' portId='1'/>
+              </ports>
+            </digitalNet>
+            <graphElementWrapper _id='17' id='9' delay='0'/>
+            <graphElementWrapper _id='18' id='10' delay='0'/>
+            <switch _id='19' id='11' delay='1000'/>
+            <graphElementWrapper _id='20' id='12' delay='0'/>
+            <graphElementWrapper _id='21' id='13' delay='0'/>
+            <graphElementWrapper _id='22' id='14' delay='0'/>
+            <graphElementWrapper _id='23' id='15' delay='0'/>
+            <graphElementWrapper _id='24' id='16' delay='0'/>
+            <graphElementWrapper _id='25' id='17' delay='0'/>
+          </elements>
+        </graph>
+      </model>
+      <view>
+        <graphView _id='26'>
+          <netViews>
+            <netView _id='27' modelId='7' style='line'/>
+            <netView _id='28' modelId='10' style='line'/>
+            <netView _id='29' modelId='14' style='line'/>
+          </netViews>
+          <components>
+            <graphElement _id='30' modelId='24' id='16'>
+              <component>
+                <rectangle _id='31' id='16' style='subsystem' filled='true' stroked='true' x='-56.0' y='238.0' w='238.0' h='140.0' vAlign='top'>
+                  <text>
+                    <translation lang='en' text='Drop the LED here\!'/>
+                  </text>
+                </rectangle>
+              </component>
+            </graphElement>
+            <graphElement _id='32' modelId='3' id='1'>
+              <component>
+                <text _id='33' id='1' style='figure' filled='false' stroked='false' x='-161.0' y='-203.0' w='189.0' h='42.0' hAlign='left'>
+                  <text>
+                    <translation lang='en' text='Welcome to Antares!'/>
+                  </text>
+                </text>
+              </component>
+            </graphElement>
+            <switchView _id='34' id='2' rot='0' filled='true' stroked='true' modelId='4' x='-21.0' y='-56.0'/>
+            <andGateView _id='35' id='3' rot='0' filled='true' stroked='true' modelId='5' x='84.0' y='-14.0'/>
+            <switchView _id='36' id='4' rot='0' filled='true' stroked='true' modelId='6' x='-21.0' y='28.0'/>
+            <digitalEdgeView _id='37' id='5' filled='true' stroked='true' modelId='7' layout='ortho' orig='34' origPort='1' origPortOutput='true' dest='35' destPort='1' adjusted='false'>
+              <shape>
+                <polylineShape points='-35.0,-56.0 0.0,-56.0 0.0,-28.0 28.0,-28.0'/>
+              </shape>
+            </digitalEdgeView>
+            <digitalEdgeView _id='38' id='6' filled='true' stroked='true' modelId='10' layout='ortho' orig='36' origPort='1' origPortOutput='true' dest='35' destPort='2' adjusted='false'>
+              <shape>
+                <polylineShape points='-35.0,28.0 0.0,28.0 0.0,0.0 28.0,0.0'/>
+              </shape>
+            </digitalEdgeView>
+            <ledView _id='39' id='7' rot='0' filled='true' stroked='true' modelId='13' x='105.0' y='-14.0' size='large' lightColor='red'/>
+            <digitalEdgeView _id='40' id='8' filled='true' stroked='true' modelId='14' layout='ortho' orig='35' origPort='3' origPortOutput='true' dest='39' destPort='1' adjusted='false'>
+              <shape>
+                <polylineShape points='70.0,-14.0 119.0,-14.0'/>
+              </shape>
+            </digitalEdgeView>
+            <graphElement _id='41' modelId='17' id='9'>
+              <component>
+                <text _id='42' id='9' style='figure' filled='false' stroked='false' x='-161.0' y='-154.0' w='413.0' h='84.0' hAlign='left'>
+                  <text>
+                    <translation lang='en' text='Click on the &quot;Start simulation&quot; button in the toolbar. Then click on the switches in the circuit below.'/>
+                  </text>
+                </text>
+              </component>
+            </graphElement>
+            <graphElement _id='43' modelId='18' id='10'>
+              <component>
+                <text _id='44' id='10' style='figure' filled='false' stroked='false' x='-154.0' y='63.0' w='413.0' h='84.0' hAlign='left'>
+                  <text>
+                    <translation lang='en' text='To stop the simulation and start editing, click on &quot;Stop simulation&quot; (the same button in the toolbar).'/>
+                  </text>
+                </text>
+              </component>
+            </graphElement>
+            <switchView _id='45' id='11' rot='0' filled='true' stroked='true' modelId='19' x='-98.0' y='315.0'/>
+            <graphElement _id='46' modelId='20' id='12'>
+              <component>
+                <text _id='47' id='12' style='figure' filled='false' stroked='false' x='-154.0' y='126.0' w='413.0' h='84.0' hAlign='left'>
+                  <text>
+                    <translation lang='en' text='Add an LED by dragging&amp;dropping it from the library  in the &quot;Explorer&quot; window on the left into this circuit, e.g. in the rectangle &quot;Drop the LED here!&quot; below. You find the LED in the folder &quot;Frequently used&quot;.'/>
+                  </text>
+                </text>
+              </component>
+            </graphElement>
+            <graphElement _id='48' modelId='21' id='13'>
+              <component>
+                <text _id='49' id='13' style='figure' filled='false' stroked='false' x='-154.0' y='392.0' w='413.0' h='84.0' hAlign='left'>
+                  <text>
+                    <translation lang='en' text='Connect the switch and the LED by pressing/holding the mouse button on the switch&apos;s pin, then dragging  the mouse to the LED&apos;s pin, and releasing the mouse button.'/>
+                  </text>
+                </text>
+              </component>
+            </graphElement>
+            <graphElement _id='50' modelId='22' id='14'>
+              <component>
+                <text _id='51' id='14' style='figure' filled='false' stroked='false' x='-154.0' y='497.0' w='413.0' h='42.0' hAlign='left'>
+                  <text>
+                    <translation lang='en' text='Save your changes by pressing &quot;Save&quot; in the toolbar.'/>
+                  </text>
+                </text>
+              </component>
+            </graphElement>
+            <graphElement _id='52' modelId='23' id='15'>
+              <component>
+                <text _id='53' id='15' style='figure' filled='false' stroked='false' x='-154.0' y='539.0' w='413.0' h='70.0' hAlign='left'>
+                  <text>
+                    <translation lang='en' text='Create a new circuit by selecting the project in the &quot;Explorer&quot; tree and select menu File -&gt; New Circuit...'/>
+                  </text>
+                </text>
+              </component>
+            </graphElement>
+            <graphElement _id='54' modelId='25' id='17'>
+              <component>
+                <polyline _id='55' id='17' style='figure' filled='true' stroked='true' points='-147.0,-161.0 224.0,-161.0'/>
+              </component>
+            </graphElement>
+          </components>
+        </graphView>
+      </view>
+    </graphStorable>
+  </graph>
+  <container>
+    <containerDrawing _id='56'>
+      <components>
+        <rectangle _id='57' id='1' style='figure' filled='true' stroked='true' x='0.0' y='-14.0' w='56.0' h='56.0'/>
+        <label _id='58' id='2' rot='0'>
+          <text>
+            <translation lang='en' text='MFC'/>
+          </text>
+          <location>
+            <point x='28.0' y='14.0'/>
+          </location>
+        </label>
+        <originIndicator _id='59' id='3'>
+          <location>
+            <point x='-14.0' y='0.0'/>
+          </location>
+        </originIndicator>
+      </components>
+      <model>
+        <subGraphVertice _id='60' id='0' delay='0' uuid='f6ce9dfe-3eeb-40b3-8a0a-d0ee9af1e847'>
+          <name>
+            <translation lang='en' text='My first circuit'/>
+          </name>
+          <ports/>
+        </subGraphVertice>
+      </model>
+    </containerDrawing>
+  </container>
+</metaGraph>

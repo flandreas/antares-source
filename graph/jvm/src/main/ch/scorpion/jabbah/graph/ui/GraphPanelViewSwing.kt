@@ -216,11 +216,10 @@ class GraphPanelViewSwing(
 
 		explorerSplitPane.border = null
 		libraryPanel.minimumSize = Dimension(libraryPanel.minimumSize.width, 300)
+		libraryPanel.preferredSize = Dimension(libraryPanel.preferredSize.width, 700)
 		explorerSplitPane.add(libraryPanel)
 		explorerSplitPane.add(propertyPanel)
-		if (BaseModule.settings.containsKey("graphPanel.librarySplitPos")) {
-			explorerSplitPane.dividerLocation = BaseModule.settings.getInt("graphPanel.librarySplitPos", 0)
-		}
+		explorerSplitPane.dividerLocation = BaseModule.settings.getInt("graphPanel.librarySplitPos", 700)
 
 		bottomSidebarSplitPane.border = null
 		bottomSidebarSplitPane.resizeWeight = 1.0

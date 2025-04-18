@@ -62,18 +62,16 @@ class ProjectManagementService(
 
 	/**
 	 * Creates a new [Project] with the given name and stores it in persistent store.
+	 * @param metaGraph the initial [MetaGraph] to add to the new [Project]
 	 * @return the created [Project]
 	 * @throws IllegalArgumentException if [properties] are not consistent, e.g. if a [Project]
 	 * with the specified name already exists
 	 */
-	fun create(properties: LibraryProperties): Project {
+	fun create(properties: LibraryProperties, metaGraph: MetaGraph): Project {
 		if (existsName(properties.name)) {
 			throw IllegalArgumentException("project name '${properties.name.getTranslation()}' already exists")
 		}
 		LOG.trace("creating new project '${properties.name.getTranslation()}'")
-
-		val metaGraph = MetaGraph()
-		metaGraph.graph.model!!.name = Name(Translations.getString(newMetaGraphNameTranslationKey))
 
 		val project = projectFactory.invoke(properties.name)
 		project.description = Description(properties.description)
@@ -92,12 +90,21 @@ class ProjectManagementService(
 		return project
 	}
 
+	fun create(properties: LibraryProperties): Project {
+		val metaGraph = MetaGraph()
+		metaGraph.graph.model!!.name = Name(Translations.getString(newMetaGraphNameTranslationKey))
+		return create(properties, metaGraph)
+	}
+
 	/** Creates and stores a new [Project], which can be used when the user starts the application the very first time.*/
-	fun createHelloProject(library: UUID?): Project =
-		create(LibraryProperties(
-			TranslatableText(Translations.getString("project.hello.name")),
-			importUuid = library
-		))
+	fun createHelloProject(library: UUID?, metaGraph: MetaGraph): Project =
+		create(
+			LibraryProperties(
+				TranslatableText(Translations.getString("project.hello.name")),
+				importUuid = library
+			),
+			metaGraph
+		)
 
 	/**
 	 * Updates the currently open [Project] with the specified properties and stores it in persistent store.
