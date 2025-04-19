@@ -127,6 +127,9 @@ class GraphViewExecutionController(
 					graphViewsProvider.invoke().forEach {
 						it.executionStart(event.scheduler)
 					}
+					graphViewsProvider.invoke().forEach {
+						it.executionStartDone(event.scheduler)
+					}
 				} else {
 					graphViewsProvider.invoke().forEach {
 						it.executionStop(event.scheduler)

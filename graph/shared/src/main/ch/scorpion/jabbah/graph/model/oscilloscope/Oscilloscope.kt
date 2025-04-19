@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.model.oscilloscope
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.*
@@ -28,6 +29,8 @@ class Oscilloscope(
 ) : AbstractVertice() {
 
 	companion object {
+		private val LOG by logger(Oscilloscope::class)
+
 		private val TYPE get() = Translations.getString("graph.component.oscilloscope.name")
 
 		/** The reason in [GraphElementEvent] sent to [GraphElementListener]s if a new signal has arrived. */
@@ -105,6 +108,10 @@ class Oscilloscope(
 
 	fun storeSignal(name: String, signal: Any, signalHandler: SignalHandler) {
 		signalHistories.storeSignal(name, signal, signalHandler)
+		if (LOG.isTraceEnabled()) {
+			LOG.trace("--- Store signal $name with value $signal: SignalHistory content ---")
+			signalHistories.logContent()
+		}
 	}
 
 	fun handleSignal(probe: OscilloscopeProbeVertice<*>, signalHandler: SignalHandler) {

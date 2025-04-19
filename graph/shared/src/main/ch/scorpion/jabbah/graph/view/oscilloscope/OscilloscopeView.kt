@@ -229,28 +229,37 @@ class OscilloscopeView(
 
 			val probeView = probeVerticeViews.firstOrNull { it.model.id == probeId }
 			if (probeView != null) {
-				val inputPort = probeView.model.getInput<Any>()
-				var signal = inputPort.getIncomingSignal()!!
-
-				// Due to an earlier bug, were OscilloscopeProbeVerticeView.edgeView was always null, because it was
-				// never set while editing. In order to support circuit simulation with graphs built earlier,
-				// still handle the signal, but uncompleted (i.e. using the default)
-				if (probeView.edgeView != null) {
-					signal = GraphViewModule.oscilloscopeViewFactory.completeSignal(probeView.model, signal, probeView.edgeView!!)
-				}
-
-				handleSignalReceived(inputPort.name!!, signal, event.signalHandler)
+				invalidate()
+				readProbeView(probeView, event.signalHandler)
+				scaleRowView.timelineView.updateGeometry()
+				validate()
 			}
 		} else {
 			super.handleStateChanged(event)
 		}
 	}
 
-	private fun handleSignalReceived(name: String, signal: Any, signalHandler: SignalHandler) {
+	private fun readSignalsOnStart(signalHandler: SignalHandler) {
 		invalidate()
-		model.storeSignal(name, signal, signalHandler)
+		probeVerticeViews.forEach { probeView ->
+			readProbeView(probeView, signalHandler)
+		}
 		scaleRowView.timelineView.updateGeometry()
 		validate()
+	}
+
+	private fun readProbeView(probeView: OscilloscopeProbeVerticeView<*>, signalHandler: SignalHandler) {
+		val inputPort = probeView.model.getInput<Any>()
+		var signal = inputPort.getIncomingSignal()!!
+
+		// Due to an earlier bug, were OscilloscopeProbeVerticeView.edgeView was always null, because it was
+		// never set while editing. In order to support circuit simulation with graphs built earlier,
+		// still handle the signal, but uncompleted (i.e. using the default)
+		if (probeView.edgeView != null) {
+			signal = GraphViewModule.oscilloscopeViewFactory.completeSignal(probeView.model, signal, probeView.edgeView!!)
+		}
+
+		model.storeSignal(inputPort.name!!, signal, signalHandler)
 	}
 
 	/** ---- [AbstractRectangularVerticeView] */
@@ -297,6 +306,11 @@ class OscilloscopeView(
 			rows.forEach { it.bindDrawer() }
 			scaleRowView.bindDrawer()
 		}
+	}
+
+	override fun executionStartDone(signalHandler: SignalHandler) {
+		super.executionStartDone(signalHandler)
+		readSignalsOnStart(signalHandler)
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {

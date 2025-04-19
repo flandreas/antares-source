@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.app.module.AppModule
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.help.HelpId
 import ch.scorpion.jabbah.base.help.HelpSource
 import ch.scorpion.jabbah.base.help.HelpSourceRegistry
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -238,6 +239,7 @@ object GraphViewModule : AbstractModule() {
 	)
 
 	private fun registerHelpSources() {
+		HelpSourceRegistry.register(HelpId(OscilloscopeView::class.simpleName!!), HelpSource("/oscilloscope/oscilloscope"))
 		HelpSourceRegistry.register(UsecaseRecorder.HELP_ID, HelpSource("/usecases/usecases#recording"))
 		HelpSourceRegistry.register(GraphViewImpl.SCRIPT_HELP_ID, HelpSource("/circuits/circuit-scripting"))
 		HelpSourceRegistry.register(ContainerDrawing.SCRIPT_HELP_ID, HelpSource("/subcircuits/subcircuits#representation"))

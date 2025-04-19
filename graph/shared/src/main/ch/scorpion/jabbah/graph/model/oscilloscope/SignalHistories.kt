@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.model.oscilloscope
 
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.InputPort
@@ -52,6 +53,8 @@ interface SignalHistories {
 	fun getSignalHistory(name: String): SignalHistory<Any>?
 
 	fun storeSignal(name: String, signal: Any, signalHandler: SignalHandler)
+
+	fun logContent()
 }
 
 abstract class AbstractSignalHistories(
@@ -59,6 +62,7 @@ abstract class AbstractSignalHistories(
 ) : SignalHistories {
 
 	companion object {
+		private val LOG by logger(AbstractSignalHistories::class)
 		private val bufferSize: Int get() = BaseModule.properties.getInt(PROP_BUFFER_SIZE)
 	}
 
@@ -84,6 +88,13 @@ abstract class AbstractSignalHistories(
 
 	protected fun updateMaxTime(now: Long) {
 		maxTime = max(maxTime, now)
+	}
+
+	override fun logContent() {
+		for (e in signalHistories.entries) {
+			LOG.trace("Signal ${e.key}:")
+			e.value.logContent()
+		}
 	}
 }
 
@@ -124,13 +135,6 @@ class ClockedSignalHistories(
 		val history = signalHistories[name]!!
 		if (name == clockPortName) {
 			history.add(SignalHistoryEntry(signal, time))
-
-			// Probe and add all other histories
-			oscilloscope.getInputs()
-				.filter { it.name !== name }
-				.forEach {
-					signalHistories[it.name]!!.add(SignalHistoryEntry(it.getIncomingSignal()!!, time))
-				}
 			time += DELTA_TIME
 			updateMaxTime(time)
 		} else {

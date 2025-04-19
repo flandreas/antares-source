@@ -162,6 +162,10 @@ open class GraphViewImpl(
 		usecases.executionStart(this, signalHandler)
 	}
 
+	override fun executionStartDone(signalHandler: SignalHandler) {
+		drawables.filterIsInstance<ActorView>().forEach { it.executionStartDone(signalHandler) }
+	}
+
 	override fun executionStop(signalHandler: SignalHandler) {
 		drawables.filterIsInstance<ActorView>().forEach { it.executionStopped(signalHandler) }
 	}

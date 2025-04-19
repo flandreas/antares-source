@@ -75,6 +75,8 @@ interface GraphView : Drawing<GraphElementView<*>> {
 	 */
 	fun executionStart(signalHandler: SignalHandler)
 
+	fun executionStartDone(signalHandler: SignalHandler)
+
 	/**
 	 * Called when execution on this [GraphView] has been stopped.
 	 */

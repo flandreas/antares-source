@@ -21,7 +21,7 @@ class AntaresOscilloscopeViewFactory : OscilloscopeViewFactory {
 
 	override fun getDefaultMode(graphType: GraphType): SignalHistoriesType =
 		when (graphType) {
-			Digital -> SignalHistoriesType.Clocked
+			Digital -> SignalHistoriesType.Realtime
 			Analog -> SignalHistoriesType.Realtime
 			else -> throw IllegalArgumentException("unknown GraphType $graphType")
 		}

@@ -49,7 +49,7 @@ class TestGraphApplication : AbstractApplication(GraphDataViewController()) {
 
 		if (!ProjectModule.projectManagementService.directoryExists) {
 			ProjectModule.projectManagementService
-				.createHelloProject(null)
+				.createHelloProject(null, ProjectModule.projectManagementService.createNewMetaGraph())
 				.also { dataViewController.openProject(it.identification) }
 			return
 		}

@@ -91,9 +91,13 @@ class ProjectManagementService(
 	}
 
 	fun create(properties: LibraryProperties): Project {
+		return create(properties, createNewMetaGraph())
+	}
+
+	fun createNewMetaGraph(): MetaGraph {
 		val metaGraph = MetaGraph()
 		metaGraph.graph.model!!.name = Name(Translations.getString(newMetaGraphNameTranslationKey))
-		return create(properties, metaGraph)
+		return metaGraph
 	}
 
 	/** Creates and stores a new [Project], which can be used when the user starts the application the very first time.*/

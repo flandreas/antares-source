@@ -31,6 +31,8 @@ interface ActorView {
 
 	fun executionStarted(signalHandler: SignalHandler) {}
 
+	fun executionStartDone(signalHandler: SignalHandler) {}
+
 	fun executionStopped(signalHandler: SignalHandler) {}
 }
 

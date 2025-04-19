@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.model.oscilloscope
 
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.graph.model.Graph
 
 /**
@@ -17,6 +18,10 @@ data class SignalHistoryEntry<out T : Any>(val signal: T, val time: Long)
  * in ascending time order.
  */
 class SignalHistory<T : Any>(private val bufferSize: Int) {
+
+	companion object {
+		private val LOG by logger(SignalHistory::class)
+	}
 
 	/** Holds the entries of this [SignalHistory], having the newest entry as the last position.*/
 	private val entries = mutableListOf<SignalHistoryEntry<T>>()
@@ -94,6 +99,12 @@ class SignalHistory<T : Any>(private val bufferSize: Int) {
 					updateMinMax(entry)
 				}
 			}
+		}
+	}
+
+	fun logContent() {
+		for (e in entries) {
+			LOG.trace("- ${e.time}: ${e.signal}")
 		}
 	}
 
