@@ -49,7 +49,7 @@ class LibraryHolderImpl(
 
 	override fun getMetaGraphUnwrapped(uuid: UUID): MetaGraph = library.getMetaGraphUnwrapped(uuid)
 
-	override fun getOptionalMetaGraph(uuid: UUID): MetaGraph? = library.getOptionalMetaGraph(uuid)
+	override fun getOptionalMetaGraph(uuid: UUID): MetaGraph? = l?.getOptionalMetaGraph(uuid)
 
 	override fun containsMetaGraph(uuid: UUID): Boolean = library.containsMetaGraph(uuid)
 

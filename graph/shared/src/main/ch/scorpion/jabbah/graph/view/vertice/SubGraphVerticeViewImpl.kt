@@ -166,10 +166,10 @@ class SubGraphVerticeViewImpl(
 	private val effectiveLabelText: Translatable? get() = _label ?: defaultLabelText
 
 	private val defaultLabelText: Translatable? get() = repository
-		.getMetaGraph(model.graphUUID!!)
-		.containerDrawing.drawables.filterIsInstance<LabelComponent>()
+		.getOptionalMetaGraph(model.graphUUID!!)
+		?.containerDrawing?.drawables?.filterIsInstance<LabelComponent>()
 		// the last one is the first one added (i.e. the bottom-most in the stacking order)
-		.lastOrNull()?.text
+		?.lastOrNull()?.text
 
 	private fun updateLabelComponent(label: Translatable?) {
 		getLabelComponent()?.let { labelComponent ->
