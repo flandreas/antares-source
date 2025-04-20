@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.model.text.Translatable
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.Translation
+import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import kotlin.properties.ObservableProperty
@@ -32,7 +33,9 @@ fun observableDescription(initialValue: Description = Description(""), changeHan
 		override fun setValue(thisRef: Any?, property: KProperty<*>, value: Description) {
 			val oldValue = getValue(thisRef, property)
 			super.setValue(thisRef, property, value)
-			BaseModule.eventBus.post(DescriptionChangedEvent(thisRef as Describable, value, oldValue))
+			if (thisRef !is Storable || !thisRef.isReading ) {
+				BaseModule.eventBus.post(DescriptionChangedEvent(thisRef as Describable, value, oldValue))
+			}
 			changeHandler.invoke(value)
 		}
 	}

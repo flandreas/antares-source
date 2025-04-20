@@ -14,7 +14,7 @@ interface Storable {
 	/**
 	 * Signals whether this [Storable] is currently in its [read] methods.
 	 * Can be used by implementations to avoid unnecessary event broadcasting etc. while
-	 * being deserialized from persistent store.
+	 * being deserialized from persistent storage.
 	 * */
 	var isReading: Boolean
 
@@ -29,7 +29,7 @@ interface Storable {
 
     /**
      * This method is called by a [ReferenceResolver] after all resolutions have been done. A [Storable] implementation
-     * can overwrite this method in order to implement logic that depends on the existence of the entire object tree.
+     * can overwrite this method to implement logic that depends on the existence of the entire object tree.
      */
     fun resolutionDone() {
         // empty
@@ -37,7 +37,7 @@ interface Storable {
 
 	/**
 	 * This method is called by a [ReferenceResolver] after all [Storable.resolutionDone]s have been called.
-	 * A [Storable] implementation can overwrite this method in order to implement logic that depends on completed
+	 * A [Storable] implementation can overwrite this method to implement logic that depends on completed
 	 * resolution of the entire object tree.
 	 */
 	fun allResolutionDone() {

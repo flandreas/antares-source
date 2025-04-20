@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.model.text.Translatable
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.Translation
+import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import kotlin.properties.ObservableProperty
@@ -26,14 +27,18 @@ data class NameChangedEvent(
 	val name: Name,
 	val oldValue: Name)
 
-/** Creates a delegate property that posts a [NameChangedEvent] on the system's [EventBus]. */
-fun observableName(initialValue: Name, handler: (Name) -> Unit = {}): ReadWriteProperty<Any?, Name> =
+/**
+ * Creates a delegate property that posts a [NameChangedEvent] on the system's [EventBus].
+ */
+fun observableName(initialValue: Name, handler: (Name) -> Unit = { }): ReadWriteProperty<Any?, Name> =
 	object : ObservableProperty<Name>(initialValue) {
 		override fun setValue(thisRef: Any?, property: KProperty<*>, value: Name) {
 			val oldValue = getValue(thisRef, property)
 			super.setValue(thisRef, property, value)
 			handler(value)
-			BaseModule.eventBus.post(NameChangedEvent(thisRef as Namable, value, oldValue))
+			if (thisRef !is Storable || !thisRef.isReading ) {
+				BaseModule.eventBus.post(NameChangedEvent(thisRef as Namable, value, oldValue))
+			}
 		}
 	}
 

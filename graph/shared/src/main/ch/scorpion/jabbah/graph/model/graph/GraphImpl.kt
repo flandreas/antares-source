@@ -64,6 +64,7 @@ open class GraphImpl(
 			throw IllegalArgumentException(Translations.getString("edit.property.name.empty.error"))
 		}
 		propertyOwner.fire(PROP_NAME, null, it)
+		!isReading
 	}
 
 	override var description: Description by observableDescription(Description("")) {
