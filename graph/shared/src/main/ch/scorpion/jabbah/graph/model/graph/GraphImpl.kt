@@ -79,6 +79,20 @@ open class GraphImpl(
 
 	override var overallPropagationDelay: Long? = null
 
+	override var calculatedPropagationDelay: Long? = null
+
+	override var effectivePropagationDelay: Long
+		get() = overallPropagationDelay ?: calculatedPropagationDelay ?: 0L
+		set(value) {
+			overallPropagationDelay = if (value == 0L) {
+				LOG.debug("Setting overallPropagationDelay to null")
+				null
+			} else {
+				LOG.debug("Setting overallPropagationDelay to $value")
+				value
+			}
+		}
+
 	override var startupTime: Long? = null
 		set(value) {
 			field = if (value == 0L) {
@@ -307,6 +321,7 @@ open class GraphImpl(
 			writer.writeBoolean("purelyScripted", purelyScripted)
 		}
 		overallPropagationDelay?.let { writer.writeLong("propDelay", it) }
+		calculatedPropagationDelay?.let { writer.writeLong("calculatedDelay", it) }
 		writer.writeStorables("elements", _elements.iterator())
 		startupTime?.let {
 			if (it > 0) {
@@ -327,6 +342,9 @@ open class GraphImpl(
 		}
 		if (reader.hasAttribute("propDelay")) {
 			overallPropagationDelay = reader.readLong("propDelay")
+		}
+		if (reader.hasAttribute("calculatedDelay")) {
+			calculatedPropagationDelay = reader.readLong("calculatedDelay")
 		}
 		if (reader.hasAttribute("startupTime")) {
 			startupTime = reader.readLong("startupTime")

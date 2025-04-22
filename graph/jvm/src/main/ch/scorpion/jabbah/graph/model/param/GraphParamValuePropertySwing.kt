@@ -27,7 +27,8 @@ open class ExpressionPropertySwing<T>(
 	interactive: Boolean = true,
 	displayName: String? = null,
 	baseKeyParams: Array<Any> = emptyArray(),
-	val supportExpressions: Boolean = true
+	val supportExpressions: Boolean = true,
+	private val _editable: Boolean = true
 ) : CommandPropertySwing<T>(
 	propertyName,
 	baseKey,
@@ -42,7 +43,7 @@ open class ExpressionPropertySwing<T>(
 	 */
 	var dslError: DslError? = null
 
-	override fun isEditable(): Boolean = true
+	override fun isEditable(): Boolean = _editable
 
 	override fun writeToBeans(force: Boolean) {
 		dslError?.let { throw it }

@@ -93,6 +93,13 @@ open class GraphViewImpl(
 			}
 		}
 
+	@Suppress("unused") // Reflection
+	var effectivePropagationDelay: Long
+		get() = graph!!.effectivePropagationDelay
+		set(value) {
+			graph!!.effectivePropagationDelay = value
+		}
+
 	var script: ScriptProperty
 		get() = ScriptProperty(graph!!.script)
 		set(value) {

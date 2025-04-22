@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.PreferencesChangedEvent
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -67,7 +68,7 @@ class LibraryPreviewPanel(
 
 	private val preferencesChangedHandler: EventHandler<PreferencesChangedEvent> = { componentDisplay.repaint() }
 
-	private val errorComponent = EditModelTextModule.textComponentFactory.create(TranslatableText("Error"), styleType = EditStyleType.MESSAGE_ERROR)
+	private val errorComponent = EditModelTextModule.textComponentFactory.create(TranslatableText(Translations.getString("base.error.txt")), styleType = EditStyleType.MESSAGE_ERROR)
 
 	init {
 		helpAction.enabled = false

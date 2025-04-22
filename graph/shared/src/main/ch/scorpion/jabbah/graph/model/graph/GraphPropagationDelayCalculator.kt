@@ -11,6 +11,9 @@ class GraphPropagationDelayCalculator {
 
     private val path = Stack<OutputPort<*>>()
 
+    /**
+     * @return -1 if no [InputPort]s exist in the [Graph].
+     */
     fun calculate(graph: Graph): Long =
         graph.graphInputs.maxOfOrNull { calculateFrom(it.getOutput<Any>()) } ?: -1L
 

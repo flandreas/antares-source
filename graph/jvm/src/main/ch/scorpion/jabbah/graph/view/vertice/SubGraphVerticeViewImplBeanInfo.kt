@@ -16,7 +16,7 @@ class SubGraphVerticeViewImplBeanInfo : AbstractComponentBeanInfo<SubGraphVertic
 
     companion object {
 	    private val modelId = GraphProperties.modelId()
-	    private val propDelay = GraphProperties.propagationDelay()
+	    private val propDelay = GraphProperties.propagationDelay(editable = false)
 	    private val color = EditProperties.color()
 	    private val orientation = EditProperties.orientation()
 	    private val mirrorH = CommandPropertySwing("horizontallyMirrored", "graph.property.mirrorHorizontally", Boolean::class.java, componentBeanProvider)

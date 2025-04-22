@@ -76,7 +76,6 @@ object TestcaseService {
 
 	private fun getSubGraphVerticePropagationDelay(circuit: DigitalGraph): Long {
 		return (circuit.parameterValues.firstOrNullWithSemantic(GraphSemantic.PropagationDelay)?.value as LongValue?)?.value
-			?: circuit.overallPropagationDelay
-			?: 0L
+			?: circuit.effectivePropagationDelay
 	}
 }

@@ -62,9 +62,22 @@ interface Graph : GraphPortOwner, Namable, Describable, Storable, Bean, Property
 
     /**
      * The overall estimated propagation delay of this [Graph] in nanoseconds, i.e. the estimated time it
-     * takes to calculate new output values when an input has changed.
+     * takes to calculate new output values when an input has changed. Indirectly set by the user.
      */
     var overallPropagationDelay: Long?
+
+	/**
+	 * Similar to [overallPropagationDelay], but automatically calculated by the system whenever the [Graph] is stored.
+	 * Is used for shallow simulation if [overallPropagationDelay] is not set.
+	 * Introduced with release 1.19, therefore empty for [Graph]s created before that.
+	 */
+	var calculatedPropagationDelay: Long?
+
+	/**
+	 * The effective propagation delay to be used. Either [overallPropagationDelay] or [calculatedPropagationDelay]
+	 * is used, depending on whether it is set or not. Directly set by the user via the bean info.
+	 */
+	var effectivePropagationDelay: Long
 
 	/**
 	 * The optional time (in nanoseconds) until this [Graph] has reached a stable state after starting execution.

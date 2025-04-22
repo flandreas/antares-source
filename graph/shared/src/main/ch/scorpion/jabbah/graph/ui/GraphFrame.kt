@@ -30,6 +30,7 @@ import ch.scorpion.jabbah.graph.container.isManualContainer
 import ch.scorpion.jabbah.graph.library.AbstractContainerLibraryElementSavable
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.library.LibraryServiceCallbackAdapter
+import ch.scorpion.jabbah.graph.model.graph.GraphPropagationDelayCalculator
 import ch.scorpion.jabbah.graph.ui.container.ContainerPanelController
 import ch.scorpion.jabbah.graph.ui.container.ContainerPanelView
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelView
@@ -142,12 +143,15 @@ open class GraphFrameController<T: GraphFrame>(
 
 	private val customSymbolHandler = CustomSymbolHandler()
 
+	private val propagationDelayCalculator = PropagationDelayCalculator()
+
 	private val applicationModeHandler: EventHandler<ApplicationModeEvent> = { handle(it) }
 
 	override fun onViewInitialized() {
 		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
 		registerZoomEventHandlers()
 		LibraryModule.libraryServiceCallbacks.add(customSymbolHandler)
+		LibraryModule.libraryServiceCallbacks.add(propagationDelayCalculator)
 		showDesktop()
 	}
 
@@ -160,6 +164,7 @@ open class GraphFrameController<T: GraphFrame>(
 		applicationContextHolder.dispose()
 		unregisterZoomEventHandlers()
 		LibraryModule.libraryServiceCallbacks.remove(customSymbolHandler)
+		LibraryModule.libraryServiceCallbacks.remove(propagationDelayCalculator)
 	}
 
 	private fun showDesktop() {
@@ -297,6 +302,21 @@ open class GraphFrameController<T: GraphFrame>(
 			if (isManualContainer(metaGraph.isManualContainer, editor.commandManager)) {
 				LOG.userTrail("Container (Symbol) has been customized manually")
 				metaGraph.isManualContainer = true
+			}
+		}
+	}
+
+	private inner class PropagationDelayCalculator : LibraryServiceCallbackAdapter() {
+		override fun beforeStoreMetaGraph(metaGraph: MetaGraph) {
+			val model = metaGraph.graph.model ?: return
+			if (model.overallPropagationDelay == null) {
+				val delay = GraphPropagationDelayCalculator().calculate(model)
+				model.calculatedPropagationDelay = if (delay >= 0) {
+					LOG.debug("Calculated Graph propagation delay to $delay ns")
+					delay
+				} else {
+					null
+				}
 			}
 		}
 	}

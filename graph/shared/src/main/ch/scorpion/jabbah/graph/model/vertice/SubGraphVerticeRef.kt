@@ -257,6 +257,8 @@ class SubGraphVerticeRef(
 
 				if (metaGraph.graph.model!!.overallPropagationDelay != null) {
 					propagationDelay = LongValueImpl(metaGraph.graph.model!!.overallPropagationDelay!!)
+				} else if (metaGraph.graph.model!!.calculatedPropagationDelay != null) {
+					propagationDelay = LongValueImpl(metaGraph.graph.model!!.calculatedPropagationDelay!!)
 				}
 			} else {
 				// Broken reference to library component
