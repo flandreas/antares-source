@@ -55,13 +55,11 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
 	    fun fromAwtColor(color: java.awt.Color): Color =
 		    Color(color.red, color.green, color.blue, color.alpha)
 
-        fun toAwtFont(font: Font): java.awt.Font {
-            return Font(font.family.fontName, fromFontStyle(font), font.size)
-        }
+        fun toAwtFont(font: Font): java.awt.Font =
+            Font(font.family.fontName, fromFontStyle(font), font.size)
 
-	    fun fromAwtFont(font: java.awt.Font): Font {
-	    	return FontImpl(LogicalFontFamily.fromJavaName(font.fontName), toFontStyle(font), font.size)
-	    }
+	    fun fromAwtFont(font: java.awt.Font): Font =
+            FontImpl(PhysicalFontFamily(font.fontName), toFontStyle(font), font.size)
 
 	    fun toAwtStroke(stroke: Stroke): java.awt.Stroke {
 		    return BasicStroke(
