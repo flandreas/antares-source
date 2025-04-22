@@ -24,13 +24,14 @@ data class NewMetaGraphInfo(
 /**
  * A [JPanel] for collecting the input used for creating a new [MetaGraph].
  */
-class NewMetaGraphPanel : JPanel() {
+class NewMetaGraphPanel(name: TranslatableText? = null) : JPanel() {
 
 	companion object {
 		fun showAsDialog(
-			parent: Component = Frame.getFrames()[0]
+			parent: Component = Frame.getFrames()[0],
+			name: TranslatableText? = null
 		): NewMetaGraphInfo? {
-			val panel = NewMetaGraphPanel()
+			val panel = NewMetaGraphPanel(name)
 			return when (
 				JOptionPane.showConfirmDialog(
 					parent,
@@ -53,6 +54,7 @@ class NewMetaGraphPanel : JPanel() {
 
 	init {
 		fillGraphTypes()
+		name?.let { nameField.value = it }
 		buildUI()
 		requestFocusInNameField()
 	}

@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.project
 
 import ch.scorpion.jabbah.base.Action
-import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.edit.auth.Authorizer
@@ -33,20 +32,41 @@ class RenameMetaGraphAction(
 	override fun execute(event: ActionEvent) {
 		val element = selectedItem as ContainerLibraryElement
 
-		val newName = JOptionPane.showInputDialog(
-			SwingUtilities.getWindowAncestor(controller.view as Component),
-			Translations.getString("library.action.renameMetaGraph.question"),
-			name,
-			JOptionPane.QUESTION_MESSAGE,
-			null,
-			null,
-			element.name
-		) as String?
+		val newName = requestNewName(element.name.value)
+			?: return
 
-		if (StringUtils.isEmpty(newName)) {
-			return
+		controller.renameContainerLibraryElement(element, newName)
+	}
+
+	private fun requestNewName(name: String): String? {
+		var oldName = name
+		while (true) {
+			val newName = JOptionPane.showInputDialog(
+				SwingUtilities.getWindowAncestor(controller.view as Component),
+				Translations.getString("library.action.renameMetaGraph.question"),
+				name,
+				JOptionPane.QUESTION_MESSAGE,
+				null,
+				null,
+				oldName
+			) as String? ?: return null
+
+			oldName = newName
+
+			try {
+				MetaGraph.validateName(newName)
+				return newName
+			} catch (e: IllegalArgumentException) {
+				if (JOptionPane.showConfirmDialog(
+					SwingUtilities.getWindowAncestor(controller.view as Component),
+					e.message,
+					name,
+					JOptionPane.OK_CANCEL_OPTION,
+					JOptionPane.ERROR_MESSAGE
+				) == JOptionPane.CANCEL_OPTION) {
+					return null
+				}
+			}
 		}
-
-		controller.renameContainerLibraryElement(element, newName!!)
 	}
 }

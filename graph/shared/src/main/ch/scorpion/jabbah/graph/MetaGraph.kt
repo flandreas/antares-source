@@ -2,8 +2,10 @@ package ch.scorpion.jabbah.graph
 
 import ch.scorpion.jabbah.app.CurrentApplicationVersion
 import ch.scorpion.jabbah.base.*
+import ch.scorpion.jabbah.base.dsl.SyntaxError
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
+import ch.scorpion.jabbah.base.richtext.RichTextParser
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.edit.model.text.description.Name
@@ -33,6 +35,31 @@ class MetaGraph(
 			metaGraph.graph.model!!.name = Name(name)
 			metaGraph.containerDrawing.model.name = name.getTranslation()
 			return metaGraph
+		}
+
+		/**
+		 * [MetaGraph] names contain rich-text. This method validates all translations in [name] for
+		 * correct rich-text syntax.
+		 * @throws [IllegalArgumentException] with a translated message saying why the name is invalid
+		 */
+		fun validateName(name: TranslatableText) {
+			if (name.isEmpty) {
+				throw IllegalArgumentException(Translations.getString("library.action.newGraph.emptyName.msg"))
+			}
+			for (t in name.allTranslations()) {
+				validateName(t.text)
+			}
+		}
+
+		fun validateName(name: String) {
+			if (name.isEmpty()) {
+				throw IllegalArgumentException(Translations.getString("library.action.newGraph.emptyName.msg"))
+			}
+			try {
+				RichTextParser(name).parse()
+			} catch (e: SyntaxError) {
+				throw IllegalArgumentException(e.message)
+			}
 		}
 
 		private fun copyGraphDataFromContainerModel(graph: Graph, containerDrawing: ContainerDrawing) {

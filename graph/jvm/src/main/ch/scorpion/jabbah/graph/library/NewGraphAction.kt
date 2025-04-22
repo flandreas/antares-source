@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.auth.Operation
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
@@ -34,22 +35,25 @@ class NewGraphAction(
 		 */
 		fun requestNewGraphInfo(parent: Component, title: String): NewMetaGraphInfo? {
 			var info: NewMetaGraphInfo
+			var oldName: TranslatableText? = null
 
 			while (true) {
-				info = NewMetaGraphPanel.showAsDialog() ?: return null
+				info = NewMetaGraphPanel.showAsDialog(name = oldName) ?: return null
+				oldName = info.name
 
-				if (info.name.isEmpty) {
+				try {
+					MetaGraph.validateName(info.name)
+					break
+				} catch (e: IllegalArgumentException) {
 					if (JOptionPane.showConfirmDialog(
-							parent,
-							Translations.getString("library.action.newGraph.emptyName.msg"),
-							title,
-							JOptionPane.OK_CANCEL_OPTION,
-							JOptionPane.ERROR_MESSAGE
-						) == JOptionPane.CANCEL_OPTION) {
+						parent,
+						e.message,
+						title,
+						JOptionPane.OK_CANCEL_OPTION,
+						JOptionPane.ERROR_MESSAGE
+					) == JOptionPane.CANCEL_OPTION) {
 						return null
 					}
-				} else {
-					break
 				}
 			}
 
@@ -68,10 +72,10 @@ class NewGraphAction(
 		if (checkEnabledness()) {
 			var info = requestNewGraphInfo(Frame.getFrames()[0], name) ?: return
 
-			LOG.info("$name '${info.name.getTranslation()}'")
-
 			val directory = controller.selectedItem as LibraryDirectory
 			val library = directory.library!!
+			LOG.info("$name '${info.name.getTranslation()}'")
+
 			val metaGraph = MetaGraph.create(info.name, info.type)
 
 			val newElement = library.libraryService.addContainerLibraryElement(library, metaGraph, directory)

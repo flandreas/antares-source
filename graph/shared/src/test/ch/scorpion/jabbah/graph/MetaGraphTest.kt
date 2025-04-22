@@ -1,26 +1,20 @@
 package ch.scorpion.jabbah.graph
 
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.PortViewComponent
 import ch.scorpion.jabbah.graph.model.GenericGraphType
 import ch.scorpion.jabbah.graph.model.GraphPort
-import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
-import ch.scorpion.jabbah.graph.model.vertice.GraphInputImpl
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import ch.scorpion.jabbah.graph.view.TestGraphPortView
-import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import ch.scorpion.jabbah.io.StorableCloner
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
-import kotlin.test.assertNotSame
+import kotlin.test.*
 
 class MetaGraphTest {
 
@@ -83,5 +77,19 @@ class MetaGraphTest {
 		val clonedModel = metaGraph.cloneGraphModel()
 
 		assertNotSame(metaGraph.graph.model, clonedModel)
+	}
+
+	@Test
+	fun shouldRejectEmptyName() {
+		assertFailsWith<IllegalArgumentException>(Translations.getString("library.action.newGraph.emptyName.msg")) {
+			MetaGraph.validateName(TranslatableText(""))
+		}
+	}
+
+	@Test
+	fun shouldRejectNameWithInvalidRichTextSyntax() {
+		assertFailsWith<IllegalArgumentException>() {
+			MetaGraph.validateName(TranslatableText("Circuit /2"))
+		}
 	}
 }
