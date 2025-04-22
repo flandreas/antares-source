@@ -138,7 +138,12 @@ class ExportVHDLPanel(
 		val panel = JPanel(EGBL.getLayout())
 
 		waitTimeTextField.preferredSize = Dimension(100, waitTimeTextField.preferredSize.height)
-		waitTimeTextField.text = circuit.overallPropagationDelay?.toString() ?: DEF_WAIT_TIME.toString()
+		val propDelay = circuit.effectivePropagationDelay
+		waitTimeTextField.text = if (propDelay > 0) {
+			propDelay.toString()
+		} else {
+			DEF_WAIT_TIME.toString()
+		}
 
 		fileNameTextField.preferredSize = Dimension(200, fileNameTextField.preferredSize.height)
 		fileNameTextField.text = VHDLRenaming().checkName(StringUtils.simplify(RichText.stripToPlainText(circuit.name.value)))

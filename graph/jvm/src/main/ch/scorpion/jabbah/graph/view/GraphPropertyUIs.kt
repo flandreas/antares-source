@@ -30,8 +30,8 @@ object GraphProperties {
 		beanProvider: BeanProvider = componentBeanProvider
 	): CommandPropertySwing<Int> = CommandPropertySwing(name, baseKey, Int::class.java, beanProvider)
 
-	fun propagationDelay(name: String = "propagationDelay", beanProvider: BeanProvider = componentBeanProvider) =
-		ExpressionPropertySwing(name, AbstractGraphElementView.BASE_KEY_PROPAGATION_DELAY, LongValue::class.java, beanProvider)
+	fun propagationDelay(name: String = "propagationDelay", editable: Boolean = true, beanProvider: BeanProvider = componentBeanProvider) =
+		ExpressionPropertySwing(name, AbstractGraphElementView.BASE_KEY_PROPAGATION_DELAY, LongValue::class.java, beanProvider, _editable = editable)
 
 	fun overallPropagationDelay(name: String ="overallPropagationDelay", beanProvider: BeanProvider = componentBeanProvider) =
 		CommandPropertySwing(name, AbstractGraphElementView.BASE_KEY_PROPAGATION_DELAY, Long::class.java, beanProvider)

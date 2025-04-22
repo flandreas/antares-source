@@ -140,6 +140,8 @@ class ContainerLibraryElement(
 		val instance = storable!!.containerDrawing.createSubGraphVerticeView(graphType)
 		if (storable!!.graph.model!!.overallPropagationDelay != null) {
 			instance.model.propagationDelay = LongValueImpl(storable!!.graph.model!!.overallPropagationDelay!!)
+		} else if (storable!!.graph.model!!.calculatedPropagationDelay != null) {
+			instance.model.propagationDelay = LongValueImpl(storable!!.graph.model!!.calculatedPropagationDelay!!)
 		}
 		@Suppress("UNCHECKED_CAST")
 		return instance as GraphElementView<T>
