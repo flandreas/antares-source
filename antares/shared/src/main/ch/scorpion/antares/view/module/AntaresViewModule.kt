@@ -234,6 +234,7 @@ object AntaresViewModule : AbstractModule() {
 		GraphViewModule.graphNavigationViewControllerExtension = { AntaresGraphNavigationViewControllerExtension(it) }
 		GraphViewModule.graphViewExecutionAnimationFactory = AntaresExecutionAnimationFactory()
 		GraphViewModule.metaGraphService = AntaresMetaGraphService()
+		GraphViewModule.netViewElementColorProvider = DigitalNetViewElementColorProvider
 
 		GraphModule.require()
 		AnimationModule.require()

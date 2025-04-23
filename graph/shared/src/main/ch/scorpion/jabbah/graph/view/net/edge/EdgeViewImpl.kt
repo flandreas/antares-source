@@ -40,6 +40,7 @@ import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType.DESTINATION
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType.ORIGIN
 import ch.scorpion.jabbah.graph.view.net.netview.AbstractNetViewElement
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
+import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyling
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewTraversal
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.io.*
@@ -98,8 +99,7 @@ open class EdgeViewImpl<T : Any>(
 		{ GraphViewModule.dragEdgeViewDestinationConnector }
 	)
 
-	protected var styling: EdgeViewStyling = NetViewStyle.LINE.createEdgeViewStyling(styleProvider, this)
-		private set
+	override var styling: NetViewStyling = NetViewStyle.LINE.createEdgeViewStyling(styleProvider, this)
 
 	/** The tooltip displayed when not in execution mode.*/
 	private val designErrorTooltip = resettableLazy { createDesignErrorTooltip() }
@@ -201,7 +201,7 @@ open class EdgeViewImpl<T : Any>(
 
 	override val segmentPointCount: Int get() = polyline.pointsCount
 
-	override val width: Int get() = styling.width
+	override val width: Int get() = (styling as EdgeViewStyling).width
 
 	override var isArrow: Boolean = false
 		set(value) {

@@ -4,16 +4,13 @@ import ch.scorpion.antares.model.net.DigitalNet
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.net.tunnel.TunnelView
-import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.graph.GraphApplicationContext
@@ -21,17 +18,14 @@ import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.connect.DragEdgeViewDestinationConnector
 import ch.scorpion.jabbah.graph.view.connect.DragEdgeViewOriginConnector
 import ch.scorpion.jabbah.graph.view.connect.EdgeToPortOrEdgeConnector
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewImpl
-import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.style.EdgeStyle
 
 
 /**
  * Extends [EdgeViewImpl] in order to apply a digital-specific [EdgeView] rendering, i.e. colors that show the
  * value of the [DigitalSignal], and painting large [BitWidth]s with wider strokes.
- *
- * TODO Refactor: Similar code for determining color as in [DigitalNodeView]. Why subclassing?
- * Try to inject the aspect of varying color and stroke into [EdgeView] and [NodeView].
  */
 class DigitalEdgeView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
@@ -81,20 +75,7 @@ class DigitalEdgeView(
 		val oldCompositeColor = context.color
 		val graphAppContext = context.castedAppContext<GraphApplicationContext>()!!
 
-		context.color = if (graphAppContext.showNetState) {
-			if (model.isError) {
-				Themes.get<AntaresTheme>().error
-			} else {
-				val signalColor = model.signal!!.color
-				if (styling.isArea) {
-					CompositeColor(signalColor.foregroundColor, Themes.get<AntaresTheme>().word.backgroundColor)
-				} else {
-					signalColor
-				}
-			}
-		} else {
-			context.choose(color)
-		}
+		GraphViewModule.getTypedNetViewElementColorProvider<DigitalSignal>().setColor(context, this)
 
 		context.g.stroke = getStroke(
 			style as EdgeStyle,

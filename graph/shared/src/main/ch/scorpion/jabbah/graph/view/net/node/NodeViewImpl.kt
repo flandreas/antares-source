@@ -22,6 +22,7 @@ import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewConnectionGeometry
 import ch.scorpion.jabbah.graph.view.net.netview.AbstractNetViewElement
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
+import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyling
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewTraversal
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.io.Storable
@@ -44,8 +45,7 @@ open class NodeViewImpl<T : Any>(
 		private const val TYPE = "Node"
 	}
 
-	protected var styling: NodeViewStyling = NetViewStyle.LINE.createNodeViewStyling(styleProvider, this)
-		private set
+	override var styling: NetViewStyling = NetViewStyle.LINE.createNodeViewStyling(styleProvider, this)
 
 	init {
 		if (netViewStyle != null) {

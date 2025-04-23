@@ -54,6 +54,8 @@ import ch.scorpion.jabbah.graph.view.editor.GraphEditor
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.jabbah.graph.view.metagraph.MetaGraphService
 import ch.scorpion.jabbah.graph.view.net.edge.*
+import ch.scorpion.jabbah.graph.view.net.netview.GraphNetViewElementColorProvider
+import ch.scorpion.jabbah.graph.view.net.netview.NetViewElementColorProvider
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewImpl
 import ch.scorpion.jabbah.graph.view.net.node.NodeViewFactory
 import ch.scorpion.jabbah.graph.view.net.node.NodeViewFactoryImpl
@@ -135,6 +137,10 @@ object GraphViewModule : AbstractModule() {
 	var graphViewExecutionAnimationFactory: GraphViewExecutionAnimationFactory = UndefinedGraphViewExecutionAnimationFactory()
 
 	var metaGraphService = MetaGraphService()
+
+	var netViewElementColorProvider: NetViewElementColorProvider<*> = GraphNetViewElementColorProvider
+
+	fun <T: Any> getTypedNetViewElementColorProvider(): NetViewElementColorProvider<T> = netViewElementColorProvider as NetViewElementColorProvider<T>
 
 	override fun initialize() {
 		EditModule.require()

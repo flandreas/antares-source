@@ -2,26 +2,16 @@ package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.model.net.DigitalNet
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.draw.style.Themes
-import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.Net
-import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
-import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.net.node.NodeViewImpl
 
 
-/**
- * Overwritten in order to draw in signal-specific color.
- *
- * TODO Refactor: Similar code for determining color as in [DigitalEdgeView]. Why sublassing?
- * Try to inject the aspect of varying color and stroke into [EdgeView] and [NodeView].
- */
+/** Overwritten to draw in signal-specific color. */
 class DigitalNodeView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	net: Net<DigitalSignal> = DigitalNet(),
@@ -31,22 +21,8 @@ class DigitalNodeView(
 	override fun draw(context: DrawContext) {
 		val oldColor = context.g.color
 		val oldCompositeColor = context.color
-		val graphAppContext = context.castedAppContext<GraphApplicationContext>()!!
 
-		context.color = if (graphAppContext.showNetState) {
-			if (model.isError) {
-				Themes.get<AntaresTheme>().error
-			} else {
-				val signalColor = model.signal!!.color
-				if (styling.isArea) {
-					CompositeColor(signalColor.foregroundColor, Themes.get<AntaresTheme>().word.backgroundColor)
-				} else {
-					signalColor
-				}
-			}
-		} else {
-			context.choose(color)
-		}
+		GraphViewModule.getTypedNetViewElementColorProvider<DigitalSignal>().setColor(context, this)
 
 		super.draw(context)
 
