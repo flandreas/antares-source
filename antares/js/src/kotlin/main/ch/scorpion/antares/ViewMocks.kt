@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.graph.ui.GraphNavigationView
 import ch.scorpion.jabbah.graph.ui.NavigationStackEntry
 import ch.scorpion.jabbah.graph.ui.NavigationStackView
+import ch.scorpion.jabbah.graph.ui.NavigationStackViewController
 import ch.scorpion.jabbah.graph.ui.graphviewer.GraphViewerController
 import ch.scorpion.jabbah.graph.ui.graphviewer.GraphViewerView
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -16,16 +17,19 @@ import ch.scorpion.jabbah.graph.view.GraphView
  * Without this, "access to uninitialized view property" would result.
  */
 internal class ViewMocks(
-    private val controller: GraphViewerController
+    private val graphViewerController: GraphViewerController
 ) : GraphViewerView, GraphNavigationView, NavigationStackView {
 
     init {
-        controller.view = this
-        controller.graphNavigationViewController.view = this
-        controller.graphNavigationViewController.navigationStackViewController.view = this
-        controller.graphNavigationViewController.navigationStackViewController.navigationStack.rootEntry =
-            NavigationStackEntry(content = controller.drawingView.content)
+        graphViewerController.view = this
+        graphViewerController.graphNavigationViewController.view = this
+        graphViewerController.graphNavigationViewController.navigationStackViewController.view = this
+        graphViewerController.graphNavigationViewController.navigationStackViewController.navigationStack.rootEntry =
+            NavigationStackEntry(content = graphViewerController.drawingView.content)
     }
+
+    override val controller: NavigationStackViewController
+        get() = graphViewerController.graphNavigationViewController.navigationStackViewController
 
     /** ---- [GraphViewerView] */
 
@@ -33,11 +37,11 @@ internal class ViewMocks(
 
     /** ---- [GraphNavigationView] */
 
-    override val graphView: GraphView get() = controller.drawingView.drawing
+    override val graphView: GraphView get() = graphViewerController.drawingView.drawing
     override val reusable: Boolean get() = false
     override val showsNavigationRoot: Boolean get() = true
     override fun refresh() {}
-    override val drawingView: DrawingView<GraphView> get() = controller.drawingView
+    override val drawingView: DrawingView<GraphView> get() = graphViewerController.drawingView
     override var contextColor: CompositeColor? = null
     override val isDetached: Boolean = false
     override fun disposeItem() {}
