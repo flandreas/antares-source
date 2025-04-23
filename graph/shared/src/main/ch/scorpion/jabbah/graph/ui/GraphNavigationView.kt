@@ -327,6 +327,8 @@ class GraphNavigationViewController(
 	}
 
 	private fun ascendFrom(entries: List<NavigationStackEntry<*>>) {
+		LOG.userTrail("Ascending from SubGraphVerticeView in depth ${entries.size}")
+
 		drawingView.userZoomEnabled = false
 		navigationStackViewController.view.active = false
 		DescendAnimationManager(animator).ascendFrom(
