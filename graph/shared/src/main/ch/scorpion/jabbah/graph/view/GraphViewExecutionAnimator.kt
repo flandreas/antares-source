@@ -281,6 +281,9 @@ class GraphViewExecutionAnimator(
 	private fun unregisterAnimation(net: Net<*>, animation: EdgeViewNetAnimation) {
 		applicationContextHolder.scheduler.logActorTrace(net) { "unregister net animation" }
 		netAnimationMap[net]?.animations?.remove(animation)
+		if (netAnimationMap[net]?.animations.isNullOrEmpty()) {
+			netAnimationMap.remove(net)
+		}
 	}
 
 	/** Determines whether [EdgeViewNetAnimation] is required based on the current system settings.*/
