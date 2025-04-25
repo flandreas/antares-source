@@ -9,6 +9,7 @@ import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.inout.DigitalKeyboard
 import ch.scorpion.antares.view.net.DigitalEdgeView
+import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.*
@@ -194,14 +195,20 @@ class DigitalPortView(
 	override fun setupColor(context: DrawContext) {
 		val appContext = context.castedAppContext<GraphApplicationContext>()!!
 
-		if (appContext.showNetState) {
-			context.g.color = transparent.applyTo(when (port.portType) {
-				PortType.INOUT -> drawableInOutSignal.color.foregroundColor
-				PortType.INPUT -> digitalPort.getIncomingSignal()!!.color.foregroundColor
-				PortType.OUTPUT -> digitalPort.getOutgoingSignal()!!.color.foregroundColor
-			})
+		context.g.color = if (appContext.showNetState) {
+			if (digitalPort.net?.executionError != null) {
+				transparent.applyTo(Themes.get<AntaresTheme>().error.foregroundColor)
+			} else {
+				transparent.applyTo(
+					when (port.portType) {
+						PortType.INOUT -> drawableInOutSignal.color.foregroundColor
+						PortType.INPUT -> digitalPort.getIncomingSignal()!!.color.foregroundColor
+						PortType.OUTPUT -> digitalPort.getOutgoingSignal()!!.color.foregroundColor
+					}
+				)
+			}
 		} else {
-			context.g.color = context.choose(styleProvider.getStyle(GraphStyleType.EDGE).color).foregroundColor
+			context.choose(styleProvider.getStyle(GraphStyleType.EDGE).color).foregroundColor
 		}
 	}
 
