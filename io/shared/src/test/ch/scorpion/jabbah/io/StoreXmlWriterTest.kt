@@ -73,5 +73,9 @@ class StoreXmlWriterTest {
 		override fun setAttributeValue(name: String, value: String) {
 			attributes[name] = value
 		}
+
+		override fun setText(name: String, text: String) {
+			throw UnsupportedOperationException("Not yet implemented")
+		}
 	}
 }

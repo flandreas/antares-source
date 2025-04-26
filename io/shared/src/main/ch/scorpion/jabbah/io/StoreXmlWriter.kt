@@ -6,8 +6,8 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.math.formatRounded
 
 /**
- * An implementation of a [StoreReader] that writes a hierarchical [Storable] object tree to an XML document (DOM).
- * Since the XML DOM object is different on each supported platform, access to it is encapsulated by [XmlReader].
+ * An implementation of a [StoreWriter] that writes a hierarchical [Storable] object tree to an XML document (DOM).
+ * Since the XML DOM object is different on each supported platform, access to it is encapsulated by [XmlWriter].
  */
 class StoreXmlWriter(
 	private val xmlWriter: XmlWriter,
@@ -149,5 +149,9 @@ class StoreXmlWriter(
 		if (uuids.isNotEmpty()) {
 			writeString(name, uuids.joinToString(","))
 		}
+	}
+
+	override fun writeText(name: String, text: String) {
+		xmlWriter.setText(name, "\n$text\n")
 	}
 }

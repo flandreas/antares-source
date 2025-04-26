@@ -9,7 +9,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * An integration tests that tests the interaction of various classes of the [ch.scorpion.jabbah.io] package.
+ * An integration test that tests the interaction of various classes of the [ch.scorpion.jabbah.io] package.
  */
 class IOIntegrationTest {
 
@@ -68,7 +68,7 @@ class IOIntegrationTest {
         val buffer = ByteArrayOutputStream()
         val xmlWriter = ElectricXmlWriter(buffer)
 
-        val storeXmlWriter = StoreXmlWriter(xmlWriter, typeMap, GlobalIdentityCreator()) { _,_ -> true}
+        val storeXmlWriter = StoreXmlWriter(xmlWriter, typeMap, GlobalIdentityCreator())
 	    storeXmlWriter.writeStorable(document)
 
         // Read in order to check

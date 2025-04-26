@@ -206,6 +206,8 @@ class StoreXmlReader(
 	override fun readUuids(name: String): Set<UUID> =
 		xmlReader.getAttributeValue(name).split(",").map { UUID(it) }.toSet()
 
+	override fun readText(name: String): String = xmlReader.getText(name)
+
 	/** ---- [StoreXmlReader] */
 
 	private fun <T: Storable> readStorableImpl(): T {

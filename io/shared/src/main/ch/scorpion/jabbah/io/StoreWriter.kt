@@ -99,4 +99,7 @@ interface StoreWriter : GlobalIdentityProvider {
 	fun writeIntegers(name: String, integers: List<Int>)
 
 	fun writeUuids(name: String, uuids: Set<UUID>)
+
+    /** Writes [text] as content of an element [name].*/
+    fun writeText(name: String, text: String)
 }

@@ -72,4 +72,6 @@ class ElectricXmlReader(inputStream: InputStream) : XmlReader {
         }
         return names
     }
+
+    override fun getText(name: String): String = stack.peek().getString(name)
 }

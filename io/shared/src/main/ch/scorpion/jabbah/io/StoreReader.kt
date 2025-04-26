@@ -107,4 +107,7 @@ interface StoreReader {
     fun readIntegers(name: String): List<Int>
 
 	fun readUuids(name: String): Set<UUID>
+
+    /** Reads the current element's content as text.*/
+    fun readText(name: String): String
 }

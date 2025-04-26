@@ -69,4 +69,6 @@ class DomXmlReader(document: Document) : XmlReader {
     override fun ascend() {
         stack.pop()
     }
+
+    override fun getText(name: String): String = getChildElement(name)!!.textContent!!
 }

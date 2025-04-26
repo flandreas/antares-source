@@ -15,7 +15,7 @@ interface XmlReader {
     /** Checks whether the current element has a child element with the specified name.*/
     fun hasElement(name: String): Boolean
 
-    /** Returns the number of child elements of the current element.*/
+    /** Returns the number of child elements in the current element.*/
     fun getElementsCount(): Int
 
     /**
@@ -35,4 +35,7 @@ interface XmlReader {
 
     /** Ascends from the current element and makes its parent the new current element.*/
     fun ascend()
+
+    /** Returns the content of the child element with name [name].*/
+    fun getText(name: String): String
 }

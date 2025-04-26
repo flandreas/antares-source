@@ -38,4 +38,8 @@ class ElectricXmlWriter(private val outputStream: OutputStream) : XmlWriter {
     override fun setAttributeValue(name: String, value: String) {
         stack.peek().setAttribute(name, value)
     }
+
+    override fun setText(name: String, text: String) {
+        stack.peek().setText(name, text)
+    }
 }

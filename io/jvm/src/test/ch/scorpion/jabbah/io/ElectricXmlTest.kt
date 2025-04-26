@@ -33,7 +33,7 @@ class ElectricXmlTest {
     }
 
     /**
-     * This tests demonstrates that newlines in attributes cannot be represented
+     * This test demonstrates that newlines in attributes cannot be represented
      * by '&xA;' because the ampersand is encoded separately instead of recognized as part of an encoding.
      */
     @Test

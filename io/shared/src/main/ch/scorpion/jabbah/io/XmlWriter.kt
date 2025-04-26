@@ -16,4 +16,7 @@ interface XmlWriter {
     fun flush()
 
     fun setAttributeValue(name: String, value: String)
+
+    /** Adds an element with the specified name and sets [text] as its content.*/
+    fun setText(name: String, text: String)
 }

@@ -125,7 +125,7 @@ class MetaGraph(
 		writer.writeStorable("graph", graph)
 		writer.writeStorable("container", containerDrawing)
 
-		// GraphParamDefinitions might have been changed by Graph
+		// Graph might have changedGraphParamDefinitions
 		parameterDefinitions = graph.model!!.parameterDefinitions
 
 		CurrentApplicationVersion.write(writer)
@@ -160,8 +160,8 @@ class MetaGraph(
 		isManualContainer = if (reader.hasAttribute("manualContainer")) {
 			reader.readBoolean("manualContainer")
 		} else {
-			// The default value is `true` for backward compatibility reasons: Before introduction of this property,
-			// all symbols have been manually edited by the user.
+			// The default value is `true` for backward compatibility reasons: Before this property was introduced,
+			// the user edited all symbols manually
 			true
 		}
 	}
@@ -187,7 +187,7 @@ class MetaGraph(
 	fun duplicate(newName: TranslatableText): MetaGraph {
 		val duplicate = StorableCloner.clone(this)
 
-		duplicate.containerDrawing.model.graphUUID = ch.scorpion.jabbah.base.System.createUUID()
+		duplicate.containerDrawing.model.graphUUID = System.createUUID()
 		duplicate.containerDrawing.model.graphName = Name(newName)
 
 		copyGraphDataFromContainerModel(duplicate.graph.model!!, duplicate.containerDrawing)
@@ -200,7 +200,7 @@ class MetaGraph(
 			.clone(graph)
 			.also {
 				it.model!!.parameterDefinitions = parameterDefinitions
-				Companion.copyGraphDataFromContainerModel(it.graphView.graph!!, containerDrawing)
+				copyGraphDataFromContainerModel(it.graphView.graph!!, containerDrawing)
 			}
 
 	fun cloneGraphModel(): Graph {

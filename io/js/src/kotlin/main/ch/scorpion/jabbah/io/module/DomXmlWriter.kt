@@ -58,4 +58,10 @@ class DomXmlWriter(private val consumer: (String) -> Unit) : XmlWriter {
     override fun setAttributeValue(name: String, value: String) {
         stack.peek().setAttribute(name, value)
     }
+
+    override fun setText(name: String, text: String) {
+        addElementAndDescend(name)
+        stack.peek().textContent = text
+        ascend()
+    }
 }

@@ -1,8 +1,8 @@
 # Antares
 
-Antares is digital circuit learning platform entirely written in Kotlin.
+Antares is a digital circuit learning platform entirely written in Kotlin.
 
-Antares aims for providing tools to create circuits with embedded
+Antares aims to provide tools to create circuits with embedded
  explanations. The current version consists of a Swing-based desktop
   application. Future versions will also be available in the browser.
 
@@ -13,7 +13,7 @@ The Antares application universe currently consists of the following components,
 - **Web circuit viewer**: An Angular app for displaying web-hosted Antares circuits
 - **Akrab**: The server backend used by Shaula and the web circuit viewer
 
-This repository contains only the source code for "Antares Desktop" and the core domain logic used by the other components. Shaula, Akrab and the web circuit viewer are maintained in separate Github projects.
+This repository contains only the source code for "Antares Desktop" and the core domain logic used by the other components. Shaula, Akrab and the web circuit viewer are maintained in separate GitHub projects.
 
 This project is set up as a Kotlin multi-platform project with the following targets:
 - shared
