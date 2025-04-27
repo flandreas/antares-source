@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.container.ContainerPanelSwing
+import ch.scorpion.jabbah.graph.documentation.DocumentationPanelSwing
 import ch.scorpion.jabbah.graph.login.LoginLogoutAction
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import java.awt.BorderLayout
@@ -44,13 +45,15 @@ open class GraphFrameSwing(
 
 	private val containerPanel = ContainerPanelSwing(controller.containerPanelController, application)
 
+	private val documentationPanel = DocumentationPanelSwing()
+
 	val loginLogoutAction = LoginLogoutAction()
 
 	init {
 		controller.view = this
 
 		toolbarPanel.layout = BoxLayout(toolbarPanel, BoxLayout.LINE_AXIS)
-		mainToolBar = createMainToolBar(actions.viewDesktopAction, actions.viewContainerAction)
+		mainToolBar = createMainToolBar(actions.viewDesktopAction, actions.viewContainerAction, actions.viewDocumentationAction)
 		commonToolBar = createCommonToolbar()
 	}
 
@@ -68,6 +71,7 @@ open class GraphFrameSwing(
 		when (controller.displayedView) {
 			GraphFrameController.DisplayedView.Desktop -> showDesktop()
 			GraphFrameController.DisplayedView.Container -> showContainer()
+			GraphFrameController.DisplayedView.Documentation -> showDocumentation()
 		}
 	}
 
@@ -114,6 +118,23 @@ open class GraphFrameSwing(
 		}
 	}
 
+	private fun showDocumentation() {
+		SwingUtilities.invokeLater {
+			contentPane.removeAll()
+			fillToolbarPanel(listOf())
+			contentPane.add(toolbarPanel, BorderLayout.NORTH)
+			contentPane.add(documentationPanel, BorderLayout.CENTER)
+			contentPane.add(statusBar, BorderLayout.SOUTH)
+			invalidate()
+			revalidate()
+			repaint()
+
+			viewManager.activeView = null
+			controller.graphPanelViewController.editor.active = false
+			controller.containerPanelController.active = false
+		}
+	}
+
 	/** ---- [AbstractApplicationFrame] */
 
 	override val editor: Editor get() = controller.graphPanelViewController.editor
@@ -131,7 +152,11 @@ open class GraphFrameSwing(
 
 	/** ---- [GraphFrameSwing] */
 
-	private fun createMainToolBar(viewDesktopAction: Action, viewContainerAction: Action): ToolBar {
+	private fun createMainToolBar(
+		viewDesktopAction: Action,
+		viewContainerAction: Action,
+		viewDocumentationAction: Action
+	): ToolBar {
 		val toolbar = ToolBar()
 		toolbar.isFloatable = false
 
@@ -148,6 +173,13 @@ open class GraphFrameSwing(
 		viewContainerButton.toolTipText = viewContainerAction.name
 		viewContainerButton.addActionListener(MainToolBarActionListener(viewContainerButton, GraphFrameController.DisplayedView.Container))
 		toolbar.add(viewContainerButton)
+
+		val viewDocumentationButton = JToggleButton(ActionWrapperSwing(viewDocumentationAction))
+		viewDocumentationAction.imagePath?.let { viewDocumentationButton.icon = UiUtil.themedIcon(it) }
+		viewDocumentationButton.text = null
+		viewDocumentationButton.toolTipText = viewDocumentationAction.name
+		viewDocumentationButton.addActionListener(MainToolBarActionListener(viewDocumentationButton, GraphFrameController.DisplayedView.Documentation))
+		toolbar.add(viewDocumentationButton)
 
 		return toolbar
 	}

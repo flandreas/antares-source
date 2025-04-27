@@ -11,8 +11,6 @@ import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.ZoomStrategy
-import ch.scorpion.jabbah.draw.view.ContentViewManager
-import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
@@ -67,18 +65,19 @@ data class GraphFrameEvent(
 interface GraphFrameActions {
 	val viewDesktopAction: Action
 	val viewContainerAction: Action
+	val viewDocumentationAction: Action
 }
 
 open class GraphFrameController<T: GraphFrame>(
 	private val appDataViewController: ApplicationDataViewController,
 	private val eventBus: EventBus = BaseModule.eventBus,
-	private val properties: Properties = BaseModule.properties,
-	private val viewManager: ContentViewManager = DrawViewModule.viewManager
+	private val properties: Properties = BaseModule.properties
 ) : AbstractUIController<T>(), GraphFrameActions {
 
 	enum class DisplayedView {
 		Desktop,
-		Container
+		Container,
+		Documentation
 	}
 
 	companion object {
@@ -129,6 +128,7 @@ open class GraphFrameController<T: GraphFrame>(
 
 	override val viewDesktopAction: Action = ViewDesktopAction(eventBus)
 	override val viewContainerAction: Action = ViewContainerAction(eventBus)
+	override val viewDocumentationAction: Action = ViewDocumentationAction(eventBus)
 
 	val containerPanelController = ContainerPanelController(applicationContextHolder, displayGlobalMessages = true, drawingView)
 
@@ -160,6 +160,7 @@ open class GraphFrameController<T: GraphFrame>(
 		eventBus.unregister(applicationModeHandler)
 		viewDesktopAction.dispose()
 		viewContainerAction.dispose()
+		viewDocumentationAction.dispose()
 		graphPanelViewController.dispose()
 		applicationContextHolder.dispose()
 		unregisterZoomEventHandlers()
@@ -180,6 +181,15 @@ open class GraphFrameController<T: GraphFrame>(
 			displayedView = DisplayedView.Container
 			view.notifyDisplayedView()
 			editor.commandManager.addTag(EDIT_CONTAINER_TAG)
+			eventBus.post(GraphFrameEvent(this, displayedView))
+		}
+	}
+
+	private fun showDocumentation() {
+		if (displayedView != DisplayedView.Documentation) {
+			displayedView = DisplayedView.Documentation
+			view.notifyDisplayedView()
+			editor.commandManager.removeTag(EDIT_CONTAINER_TAG)
 			eventBus.post(GraphFrameEvent(this, displayedView))
 		}
 	}
@@ -231,11 +241,13 @@ open class GraphFrameController<T: GraphFrame>(
 		}
 	}
 
-	private inner class ViewDesktopAction(
+	private abstract inner class AbstractViewAction(
+		baseName: String,
 		private val eventBus: EventBus
-	) : AbstractAction("graph.action.showDesktop") {
+	) : AbstractAction(baseName) {
 
 		private val graphFrameHandler: EventHandler<GraphFrameEvent> = { update() }
+		private val applicationDataHandler: EventHandler<ApplicationDataEvent> = { update() }
 
 		private val applicationModeHandler: EventHandler<ApplicationModeEvent> = {
 			if (it.source === applicationModeHolder) {
@@ -244,37 +256,6 @@ open class GraphFrameController<T: GraphFrame>(
 		}
 
 		init {
-			imagePath = "/img/drawing-24.png"
-			eventBus.register(GraphFrameEvent::class, graphFrameHandler)
-			eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
-		}
-
-		override fun dispose() {
-			super.dispose()
-			eventBus.unregister(graphFrameHandler)
-			eventBus.unregister(applicationModeHandler)
-		}
-
-		override fun execute(event: ActionEvent) {
-			showDesktop()
-		}
-
-		private fun update() {
-			selected = displayedView == DisplayedView.Desktop
-			enabled = view.applicationMode.isEdit()
-		}
-	}
-
-	private inner class ViewContainerAction(
-		private val eventBus: EventBus
-	) : AbstractAction("graph.action.showContainer") {
-
-		private val graphFrameHandler: EventHandler<GraphFrameEvent> = { update() }
-		private val applicationModeHandler: EventHandler<ApplicationModeEvent> = { update() }
-		private val applicationDataHandler: EventHandler<ApplicationDataEvent> = { update() }
-
-		init {
-			imagePath = "/img/container-24.png"
 			eventBus.register(GraphFrameEvent::class, graphFrameHandler)
 			eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
 			eventBus.register(ApplicationDataEvent::class, applicationDataHandler)
@@ -283,16 +264,63 @@ open class GraphFrameController<T: GraphFrame>(
 		override fun dispose() {
 			super.dispose()
 			eventBus.unregister(graphFrameHandler)
-			eventBus.unregister(applicationModeHandler)
 			eventBus.unregister(applicationDataHandler)
+		}
+
+		protected abstract fun update()
+	}
+
+	private inner class ViewDesktopAction(
+		eventBus: EventBus
+	) : AbstractViewAction("graph.action.showDesktop", eventBus) {
+
+		init {
+			imagePath = "/img/drawing-24.png"
+		}
+
+		override fun execute(event: ActionEvent) {
+			showDesktop()
+		}
+
+		override fun update() {
+			selected = displayedView == DisplayedView.Desktop
+			enabled = view.applicationMode.isEdit()
+		}
+	}
+
+	private inner class ViewContainerAction(
+		eventBus: EventBus
+	) : AbstractViewAction("graph.action.showContainer", eventBus) {
+
+		init {
+			imagePath = "/img/container-24.png"
 		}
 
 		override fun execute(event: ActionEvent) {
 			showContainer()
 		}
 
-		private fun update() {
+		override fun update() {
 			selected = displayedView == DisplayedView.Container
+			enabled = view.applicationMode.isEdit() && appDataViewController.data?.savable is AbstractContainerLibraryElementSavable
+		}
+	}
+
+	private inner class ViewDocumentationAction(
+		eventBus: EventBus
+	) : AbstractViewAction("graph.action.showDocumentation", eventBus) {
+
+		init {
+			// TODO Icon by Janis
+			imagePath = "/img/container-24.png"
+		}
+
+		override fun execute(event: ActionEvent) {
+			showDocumentation()
+		}
+
+		override fun update() {
+			selected = displayedView == DisplayedView.Documentation
 			enabled = view.applicationMode.isEdit() && appDataViewController.data?.savable is AbstractContainerLibraryElementSavable
 		}
 	}

@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
+import ch.scorpion.jabbah.graph.model.Document
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphType
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
@@ -18,11 +19,13 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.io.*
 
 /**
- * Combines a [GraphStorable] and a [ContainerDrawing] as a [Storable].
+ * Combines a [GraphStorable] (graph's model and view definitions) and a [ContainerDrawing] (the symbol) as a [Storable].
+ * The third part is the optional [Document] containing the textual documentation of the [MetaGraph].
  */
 class MetaGraph(
 	graph: GraphStorable = GraphStorable(TranslatableText(Translations.getString("graph.name.unknown"))),
-	containerDrawing: ContainerDrawing = ContainerDrawing(Translations.getString("graph.name.unknown"))
+	containerDrawing: ContainerDrawing = ContainerDrawing(Translations.getString("graph.name.unknown")),
+	documentation: Document? = null
 ) : AbstractStorable(), Disposable {
 
 	companion object {
@@ -103,6 +106,8 @@ class MetaGraph(
 
 	val translatableName: TranslatableText get() = graph.model!!.name.translation
 
+	var documentation: Document? = documentation
+
 	private val graphListener = GraphPropertyListener()
 
 	init {
@@ -133,6 +138,7 @@ class MetaGraph(
 			writer.writeStorable("params", parameterDefinitions)
 		}
 		writer.writeBoolean("manualContainer", isManualContainer)
+		documentation?.let { writer.writeStorable("documentation", it) }
 	}
 
 	override fun read(reader: StoreReader) {
@@ -163,6 +169,9 @@ class MetaGraph(
 			// The default value is `true` for backward compatibility reasons: Before this property was introduced,
 			// the user edited all symbols manually
 			true
+		}
+		if (reader.hasElement("documentation")) {
+			documentation = reader.readStorable("documentation") as Document
 		}
 	}
 

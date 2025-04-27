@@ -6,6 +6,8 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.PortViewComponent
+import ch.scorpion.jabbah.graph.model.Document
+import ch.scorpion.jabbah.graph.model.DocumentType
 import ch.scorpion.jabbah.graph.model.GenericGraphType
 import ch.scorpion.jabbah.graph.model.GraphPort
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
@@ -91,5 +93,15 @@ class MetaGraphTest {
 		assertFailsWith<IllegalArgumentException>() {
 			MetaGraph.validateName(TranslatableText("Circuit /2"))
 		}
+	}
+
+	@Test
+	fun shouldStoreDocumentation() {
+		val metaGraph = MetaGraph.create(TranslatableText("Test"), GenericGraphType)
+		metaGraph.documentation = Document(DocumentType.Markdown, "#Title")
+
+		val clone = StorableCloner.clone(metaGraph)
+
+		assertEquals("#Title", clone.documentation!!.text)
 	}
 }

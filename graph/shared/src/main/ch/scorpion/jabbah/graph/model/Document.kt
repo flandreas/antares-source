@@ -1,0 +1,38 @@
+package ch.scorpion.jabbah.graph.model
+
+import ch.scorpion.jabbah.base.EnumProperty
+import ch.scorpion.jabbah.io.AbstractStorable
+import ch.scorpion.jabbah.io.Reference
+import ch.scorpion.jabbah.io.ReferenceResolver
+import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.io.StoreWriter
+
+enum class DocumentType(override val customName: String) : EnumProperty<DocumentType> {
+    Markdown("markdown");
+
+    companion object {
+        const val BASE_KEY = "element.property.documentType"
+
+        fun withName(customName: String): DocumentType =
+            DocumentType.entries.find { it.customName == customName }
+                ?: throw IllegalArgumentException("unknown DocumentType $customName)")
+    }
+}
+
+class Document(
+    var type: DocumentType = DocumentType.Markdown,
+    var text: String = ""
+) : AbstractStorable() {
+
+    override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
+
+    override fun write(writer: StoreWriter) {
+        writer.writeString("type", type.customName)
+        writer.writeText("text", text)
+    }
+
+    override fun read(reader: StoreReader) {
+        type = DocumentType.withName(reader.readString("type"))
+        text = reader.readText("text")
+    }
+}

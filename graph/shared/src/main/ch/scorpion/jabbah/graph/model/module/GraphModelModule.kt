@@ -116,6 +116,7 @@ object GraphModelModule : AbstractModule() {
 		typeMap.register("subGraphVerticeRef", SubGraphVerticeRef::class)
 		typeMap.register("oscilloscope", Oscilloscope::class)
 		typeMap.register("oscilloscopeProbe", OscilloscopeProbeVertice::class)
+		typeMap.register("document", Document::class)
 
 		typeMap.register("scenarios", ScenariosImpl::class)
 		typeMap.register("scenario", ScenarioImpl::class)
