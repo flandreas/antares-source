@@ -310,7 +310,9 @@ class OscilloscopeView(
 
 	override fun executionStartDone(signalHandler: SignalHandler) {
 		super.executionStartDone(signalHandler)
-		readSignalsOnStart(signalHandler)
+		if (visible) {
+			readSignalsOnStart(signalHandler)
+		}
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {

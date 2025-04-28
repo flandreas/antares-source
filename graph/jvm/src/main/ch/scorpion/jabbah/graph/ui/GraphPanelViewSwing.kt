@@ -242,12 +242,14 @@ class GraphPanelViewSwing(
 			bottomSidebarSplitPane.add(bottomSidebarPane)
 			bottomSidebarSplitPane.dividerLocation = if (bottomSidebarDividerLocation > 0) bottomSidebarDividerLocation else leftSidebarPane.height - DEF_SIDEBAR_SIZE
 			bottomSidebarDividerLocation = bottomSidebarSplitPane.dividerLocation
+			add(titleBar, BorderLayout.NORTH)
 			add(bottomSidebarSplitPane, BorderLayout.CENTER)
 		} else {
 			bottomSidebarDividerLocation = bottomSidebarSplitPane.dividerLocation
 			removeAll()
 			bottomSidebarSplitPane.remove(leftSidebarPane)
 			bottomSidebarSplitPane.remove(bottomSidebarPane)
+			add(titleBar, BorderLayout.NORTH)
 			add(leftSidebarPane, BorderLayout.CENTER)
 			add(bottomSidebarPane, BorderLayout.SOUTH)
 		}
