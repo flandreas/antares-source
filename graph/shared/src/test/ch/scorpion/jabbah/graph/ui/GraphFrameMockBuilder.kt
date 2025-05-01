@@ -2,8 +2,10 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.graph.app.ApplicationMode
+import ch.scorpion.jabbah.graph.documentation.DocumentationPanelView
 import ch.scorpion.jabbah.graph.ui.container.ContainerPanelView
 import ch.scorpion.jabbah.graph.ui.container.ContainerPanelViewMockBuilder
+import ch.scorpion.jabbah.graph.ui.documentation.DocumentationPanelViewMockBuilder
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelView
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelViewMockBuilder
 import dev.mokkery.MockMode.autofill
@@ -22,6 +24,7 @@ class GraphFrameMockBuilder(private val controller: GraphFrameController<GraphFr
 
 		withGraphPanelView(GraphPanelViewMockBuilder(controller.graphPanelViewController).build())
 		withContainerPanelView(ContainerPanelViewMockBuilder(controller.containerPanelController).build())
+		withDocumentationPanelView(DocumentationPanelViewMockBuilder(controller.documentationPanelController).build())
 		controller.view = view
 	}
 
@@ -32,6 +35,11 @@ class GraphFrameMockBuilder(private val controller: GraphFrameController<GraphFr
 
 	fun withContainerPanelView(view: ContainerPanelView): GraphFrameMockBuilder {
 		controller.containerPanelController.view = view
+		return this
+	}
+
+	fun withDocumentationPanelView(view: DocumentationPanelView): GraphFrameMockBuilder {
+		controller.documentationPanelController.view = view
 		return this
 	}
 

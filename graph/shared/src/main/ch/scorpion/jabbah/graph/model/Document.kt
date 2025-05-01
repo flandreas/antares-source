@@ -20,9 +20,15 @@ enum class DocumentType(override val customName: String) : EnumProperty<Document
 }
 
 class Document(
-    var type: DocumentType = DocumentType.Markdown,
-    var text: String = ""
+    type: DocumentType = DocumentType.Markdown,
+    text: String = ""
 ) : AbstractStorable() {
+
+    var type: DocumentType = type
+        private set
+
+    var text: String = text
+        private set
 
     override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
 
@@ -35,4 +41,6 @@ class Document(
         type = DocumentType.withName(reader.readString("type"))
         text = reader.readText("text")
     }
+
+    fun withText(text: String): Document = Document(type, text)
 }

@@ -282,8 +282,8 @@ class GraphPanelViewController(
 	}
 
 	/**
-	 * This is primarily called when the states is replayed from undoable history,
-	 * and the undoable commands are replayed immediately after the the new [GraphView]
+	 * This is primarily called when the state is replayed from undoable history,
+	 * and the undoable commands are replayed immediately after the new [GraphView]
 	 * has been set, which is why invoking this later would not work.
 	 */
 	private fun setApplicationDataContent(graphView: GraphView?) {

@@ -14,7 +14,7 @@ import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.container.ContainerPanelSwing
-import ch.scorpion.jabbah.graph.documentation.DocumentationPanelSwing
+import ch.scorpion.jabbah.graph.ui.documentation.DocumentationPanelSwing
 import ch.scorpion.jabbah.graph.login.LoginLogoutAction
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import java.awt.BorderLayout
@@ -45,7 +45,7 @@ open class GraphFrameSwing(
 
 	private val containerPanel = ContainerPanelSwing(controller.containerPanelController, application)
 
-	private val documentationPanel = DocumentationPanelSwing()
+	private val documentationPanel = DocumentationPanelSwing(controller.documentationPanelController, application)
 
 	val loginLogoutAction = LoginLogoutAction()
 
@@ -75,16 +75,20 @@ open class GraphFrameSwing(
 		}
 	}
 
+	private fun fillContentPane(toolbars: List<JComponent>, mainPanel: JComponent) {
+		contentPane.removeAll()
+		fillToolbarPanel(toolbars)
+		contentPane.add(toolbarPanel, BorderLayout.NORTH)
+		contentPane.add(mainPanel, BorderLayout.CENTER)
+		contentPane.add(statusBar, BorderLayout.SOUTH)
+		invalidate()
+		revalidate()
+		repaint()
+	}
+
 	private fun showDesktop() {
 		SwingUtilities.invokeLater {
-			contentPane.removeAll()
-			fillToolbarPanel(graphPanel.toolbars)
-			contentPane.add(toolbarPanel, BorderLayout.NORTH)
-			contentPane.add(graphPanel, BorderLayout.CENTER)
-			contentPane.add(statusBar, BorderLayout.SOUTH)
-			invalidate()
-			revalidate()
-			repaint()
+			fillContentPane(graphPanel.toolbars, graphPanel)
 
 			editor.view.initialize()
 
@@ -101,14 +105,7 @@ open class GraphFrameSwing(
 
 	private fun showContainer() {
 		SwingUtilities.invokeLater {
-			contentPane.removeAll()
-			fillToolbarPanel(containerPanel.toolbars)
-			contentPane.add(toolbarPanel, BorderLayout.NORTH)
-			contentPane.add(containerPanel, BorderLayout.CENTER)
-			contentPane.add(statusBar, BorderLayout.SOUTH)
-			invalidate()
-			revalidate()
-			repaint()
+			fillContentPane(containerPanel.toolbars, containerPanel)
 
 			containerPanel.initialize()
 
@@ -120,15 +117,7 @@ open class GraphFrameSwing(
 
 	private fun showDocumentation() {
 		SwingUtilities.invokeLater {
-			contentPane.removeAll()
-			fillToolbarPanel(listOf())
-			contentPane.add(toolbarPanel, BorderLayout.NORTH)
-			contentPane.add(documentationPanel, BorderLayout.CENTER)
-			contentPane.add(statusBar, BorderLayout.SOUTH)
-			invalidate()
-			revalidate()
-			repaint()
-
+			fillContentPane(documentationPanel.toolbars, documentationPanel)
 			viewManager.activeView = null
 			controller.graphPanelViewController.editor.active = false
 			controller.containerPanelController.active = false

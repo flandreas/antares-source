@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.dsl.SyntaxError
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.richtext.RichTextParser
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Description
@@ -17,6 +18,11 @@ import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.io.*
+
+data class MetaGraphDocumentationEvent(
+	val metaGraph: MetaGraph,
+	val oldValue: Document?
+)
 
 /**
  * Combines a [GraphStorable] (graph's model and view definitions) and a [ContainerDrawing] (the symbol) as a [Storable].
@@ -107,6 +113,16 @@ class MetaGraph(
 	val translatableName: TranslatableText get() = graph.model!!.name.translation
 
 	var documentation: Document? = documentation
+		set(value) {
+			val oldValue = field
+			field = value
+			if (!isReading) {
+				if (LOG.isTraceEnabled()) {
+					LOG.trace("Documentation of '${name}' changed to '${value?.text}'")
+				}
+				BaseModule.eventBus.post(MetaGraphDocumentationEvent(this, oldValue))
+			}
+		}
 
 	private val graphListener = GraphPropertyListener()
 

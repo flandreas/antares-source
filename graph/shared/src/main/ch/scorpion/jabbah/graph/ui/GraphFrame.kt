@@ -25,6 +25,7 @@ import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolderImpl
 import ch.scorpion.jabbah.graph.container.isManualContainer
+import ch.scorpion.jabbah.graph.documentation.DocumentationPanelController
 import ch.scorpion.jabbah.graph.library.AbstractContainerLibraryElementSavable
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.library.LibraryServiceCallbackAdapter
@@ -138,6 +139,8 @@ open class GraphFrameController<T: GraphFrame>(
 		applicationContextHolder,
 		applicationModeHolder,
 		eventBus)
+
+	val documentationPanelController = DocumentationPanelController(appDataViewController, eventBus)
 
 	private val zoomEventHandler = ZoomEventHandler()
 
