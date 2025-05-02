@@ -155,10 +155,11 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 		// Tuning: Faster this way than with stream, filter and map
 		for (i in 0 until _ports.size) {
 			val port = _ports[i]
-			if (port.portType.isInput && port !== data.changedPort) {
-				(port as InputPort).setIncomingSignal(signal, signalHandler, data.force)
-			} else if (port.portType.isOutput && port.owner is WeakOutputPortBehaviour<*>) {
+
+			if (port.portType.isOutput && port.owner is WeakOutputPortBehaviour<*> && (port.owner as WeakOutputPortBehaviour<*>).isWeekOutputPortBehaviour) {
 				(port.owner as WeakOutputPortBehaviour<*>).handleNetChanged(signalHandler)
+			} else if (port.portType.isInput && port !== data.changedPort) {
+				(port as InputPort).setIncomingSignal(signal, signalHandler, data.force)
 			}
 		}
 	}

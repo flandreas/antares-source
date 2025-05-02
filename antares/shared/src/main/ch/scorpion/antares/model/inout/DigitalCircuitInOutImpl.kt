@@ -50,6 +50,33 @@ class DigitalCircuitInOutImpl(
 		}
 	}
 
+	/** ---- [WeakOutputPortBehaviour] */
+
+	override val isWeekOutputPortBehaviour: Boolean get() = portType.isOutput && subGraphOutputPort == null
+
+	override fun withdrawWeakOutput(
+		netSignal: DigitalSignal?,
+		port: OutputPort<DigitalSignal>,
+		signalHandler: SignalHandler
+	) {
+		port.setOutgoingSignalBuffered(DigitalSignalFactory.undefined((port as DigitalPort).bitWidth), signalHandler)
+		stateChanged(signalHandler)
+	}
+
+	override fun activateWeakOutput(
+		netSignal: DigitalSignal?,
+		port: OutputPort<DigitalSignal>,
+		signalHandler: SignalHandler
+	): DigitalSignal {
+		withdrawWeakOutput(netSignal, port, signalHandler)
+		return DigitalSignalFactory.undefined((port as DigitalPort).bitWidth)
+	}
+
+	override fun handleNetChanged(signalHandler: SignalHandler) {
+		signal = getPort<DigitalSignal>().net!!.signal
+		stateChanged(signalHandler)
+	}
+
 	/** ---- [DigitalSignalSource] */
 
 	override var fixedPointConfig: FixedPointConfig? = null
