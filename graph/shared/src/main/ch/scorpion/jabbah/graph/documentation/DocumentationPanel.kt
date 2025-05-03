@@ -102,7 +102,14 @@ class DocumentationPanelController(
 
     fun documentChangeEnd() {
         LOG.trace("documentChangeEnd")
-        command?.let { it.newValue = view.viewText }
+        command?.let {
+            val newText = view.viewText
+            // Update MetaGraph
+            val metaGraph: MetaGraph = applicationDataHolder.data!!.content as MetaGraph
+            metaGraph.documentation = metaGraph.documentation?.withText(newText) ?: Document(text = newText)
+            // Update Command
+            it.newValue = newText
+        }
         command = null
     }
 
