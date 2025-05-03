@@ -27,8 +27,11 @@ interface DocumentationPanelView : UIView {
     /** The text currently displayed in the view, possibly after being edited by the user.*/
     val viewText: String
 
-    /** Notifies the view that the model data has changed and the text in the view should be updated.*/
+    /** Notifies this view that the model data has changed and the text in the view should be updated.*/
     fun notifyModelDataChanged()
+
+    /** Notifies this view that the editability has changed. The view should disable the documentation editor.*/
+    fun notifyEditabilityChanged()
 
     fun refreshPreview()
 }
@@ -67,11 +70,20 @@ class DocumentationPanelController(
 
     val refreshAction: Action = RefreshAction()
 
+    var editable: Boolean = false
+       private set(value) {
+           if (field != value) {
+               field = value
+               view.notifyEditabilityChanged()
+           }
+       }
+
     init {
         eventBus.register(ApplicationDataEvent::class, applicationDataHandler)
         eventBus.register(ApplicationDataContentEvent::class, applicationDataContentHandler)
         eventBus.register(MetaGraphDocumentationEvent::class, documentationHandler)
         LibraryModule.libraryServiceCallbacks.add(this)
+        updateEditability(false)
     }
 
     override fun dispose() {
@@ -120,12 +132,18 @@ class DocumentationPanelController(
         command = null
     }
 
+    private fun updateEditability(editable: Boolean) {
+        refreshAction.enabled = editable
+        this.editable = editable
+    }
+
     private fun handle(event: ApplicationDataEvent) {
         if (event.newData?.content is MetaGraph?) {
             consumeTextOfMetaGraph(event.newData?.content as MetaGraph?)
         } else {
             text = null
         }
+        updateEditability(event.newData?.savable?.editable ?: false)
     }
 
     private fun handle(event: ApplicationDataContentEvent) {
@@ -134,13 +152,12 @@ class DocumentationPanelController(
         } else {
             text = null
         }
+        updateEditability(event.data.savable.editable)
     }
 
     private fun handle(event: MetaGraphDocumentationEvent) {
         if (event.metaGraph === applicationDataHolder.data?.content) {
             consumeTextOfMetaGraph(event.metaGraph)
-        } else {
-            text = null
         }
     }
 

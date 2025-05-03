@@ -61,6 +61,8 @@ class DocumentationPanelSwing(
                 controller.documentChangeEnd()
             }
         })
+
+        updateEditability()
     }
 
     private fun handleViewDataChanged() {
@@ -80,6 +82,10 @@ class DocumentationPanelSwing(
         viewDataChanged = false
         textArea.document.addDocumentListener(updateListener)
         refreshPreview()
+    }
+
+    override fun notifyEditabilityChanged() {
+        updateEditability()
     }
 
     override fun refreshPreview() {
@@ -111,6 +117,10 @@ class DocumentationPanelSwing(
             it.flush()
         }
         return file
+    }
+
+    private fun updateEditability() {
+        textArea.isEditable = controller.editable
     }
 
     private inner class UpdateListener : DocumentListener {
