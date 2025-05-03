@@ -121,18 +121,26 @@ class DocumentationPanelController(
     }
 
     private fun handle(event: ApplicationDataEvent) {
-        consumeTextOfMetaGraph(event.newData?.content as MetaGraph?)
+        if (event.newData?.content is MetaGraph?) {
+            consumeTextOfMetaGraph(event.newData?.content as MetaGraph?)
+        } else {
+            text = null
+        }
     }
 
     private fun handle(event: ApplicationDataContentEvent) {
         if (event.data.content is MetaGraph?) {
             consumeTextOfMetaGraph(event.data.content as MetaGraph?)
+        } else {
+            text = null
         }
     }
 
     private fun handle(event: MetaGraphDocumentationEvent) {
         if (event.metaGraph === applicationDataHolder.data?.content) {
             consumeTextOfMetaGraph(event.metaGraph)
+        } else {
+            text = null
         }
     }
 
