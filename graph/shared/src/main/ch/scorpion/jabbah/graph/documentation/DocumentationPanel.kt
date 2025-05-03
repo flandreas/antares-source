@@ -5,6 +5,9 @@ import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.app.ApplicationDataHolder
+import ch.scorpion.jabbah.base.AbstractAction
+import ch.scorpion.jabbah.base.Action
+import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.logger
@@ -26,6 +29,8 @@ interface DocumentationPanelView : UIView {
 
     /** Notifies the view that the model data has changed and the text in the view should be updated.*/
     fun notifyModelDataChanged()
+
+    fun refreshPreview()
 }
 
 /**
@@ -56,9 +61,11 @@ class DocumentationPanelController(
         private set(value) {
             field = value
             if (!inDocumentChangeBegin) {
-            view.notifyModelDataChanged()
+                view.notifyModelDataChanged()
             }
         }
+
+    val refreshAction: Action = RefreshAction()
 
     init {
         eventBus.register(ApplicationDataEvent::class, applicationDataHandler)
@@ -153,6 +160,12 @@ class DocumentationPanelController(
             } else {
                 metaGraph.documentation = null
             }
+        }
+    }
+
+    private inner class RefreshAction : AbstractAction("graph.documentation.refresh") {
+        override fun execute(event: ActionEvent) {
+            view.refreshPreview()
         }
     }
 }

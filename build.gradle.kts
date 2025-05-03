@@ -181,6 +181,16 @@ subprojects {
 					implementation("org.apache.xmlgraphics:batik-transcoder:$batikVersion")
 					implementation("org.apache.xmlgraphics:batik-util:$batikVersion")
 					implementation("org.apache.xmlgraphics:batik-xml:$batikVersion")
+
+					// Markdown HTML renderer and Swing viewer
+					implementation(":jmdviewer:0.8")
+					implementation("org.commonmark:commonmark:0.18.0")
+					implementation("org.commonmark:commonmark-ext-gfm-tables:0.18.0")
+					implementation("org.commonmark:commonmark-ext-yaml-front-matter:0.18.0")
+					implementation("org.commonmark:commonmark-ext-autolink:0.19.0")
+
+					// Markdown syntax highlighting
+					implementation("com.fifesoft:rsyntaxtextarea:3.6.0")
 				}
 
 				// Workaround for bug in Gradle > 7.0 complaining about duplicate translation resources in generated JAR

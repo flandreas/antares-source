@@ -7,12 +7,19 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.ui.TitleBar
 import ch.scorpion.jabbah.graph.documentation.DocumentationPanelController
 import ch.scorpion.jabbah.graph.documentation.DocumentationPanelView
+import org.jmarkdownviewer.jmdviewer.HtmlPane
 import java.awt.BorderLayout
 import java.awt.event.FocusAdapter
 import java.awt.event.FocusEvent
-import javax.swing.*
+import java.io.File
+import java.io.FileOutputStream
+import javax.swing.JPanel
+import javax.swing.JScrollPane
+import javax.swing.JSplitPane
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
+import org.fife.ui.rsyntaxtextarea.*
+import org.fife.ui.rtextarea.RTextScrollPane
 
 class DocumentationPanelSwing(
     private val controller: DocumentationPanelController,
@@ -23,9 +30,16 @@ class DocumentationPanelSwing(
         private val LOG by logger(DocumentationPanelSwing::class)
     }
 
-    private val textArea = JTextArea()
-    private val previewPanel = JPanel()
-    private val splitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT, JScrollPane(textArea), previewPanel)
+    private val textArea = RSyntaxTextArea(20, 60).apply {
+        syntaxEditingStyle = SyntaxConstants.SYNTAX_STYLE_MARKDOWN
+        isCodeFoldingEnabled = true
+    }
+    private val previewPane = HtmlPane()
+    private val splitPane = JSplitPane(
+        JSplitPane.HORIZONTAL_SPLIT,
+        RTextScrollPane(textArea),
+        JScrollPane(previewPane)
+    )
 
     private val updateListener = UpdateListener()
 
@@ -65,6 +79,13 @@ class DocumentationPanelSwing(
         textArea.text = controller.text
         viewDataChanged = false
         textArea.document.addDocumentListener(updateListener)
+        refreshPreview()
+    }
+
+    override fun refreshPreview() {
+        val file = storeInTempFile()
+        previewPane.load(file)
+        file.delete()
     }
 
     /** ---- [DocumentationPanelSwing] */
@@ -72,6 +93,7 @@ class DocumentationPanelSwing(
     private fun buildToolBar(application: Application): ToolBar {
         val toolbar = ToolBar()
         toolbar.addAction(application.controller.saveAction)
+        toolbar.addAction(controller.refreshAction)
         return toolbar
     }
 
@@ -80,9 +102,15 @@ class DocumentationPanelSwing(
         add(splitPane, BorderLayout.CENTER)
         textArea.lineWrap = true
         textArea.wrapStyleWord = true
+    }
 
-        previewPanel.layout = BorderLayout()
-        previewPanel.add(JLabel("TODO: Preview", null, SwingConstants.CENTER), BorderLayout.CENTER)
+    private fun storeInTempFile(): File {
+        val file = File.createTempFile("antares-doc", ".md")
+        FileOutputStream(file).use {
+            it.write(textArea.text.toByteArray())
+            it.flush()
+        }
+        return file
     }
 
     private inner class UpdateListener : DocumentListener {
