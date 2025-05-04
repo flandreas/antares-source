@@ -149,28 +149,20 @@ open class GraphFrameSwing(
 		val toolbar = ToolBar()
 		toolbar.isFloatable = false
 
-		val viewDesktopButton = JToggleButton(ActionWrapperSwing(viewDesktopAction))
-		viewDesktopAction.imagePath?.let { viewDesktopButton.icon = UiUtil.themedIcon(it) }
-		viewDesktopButton.text = null
-		viewDesktopButton.toolTipText = viewDesktopAction.name
-		viewDesktopButton.addActionListener(MainToolBarActionListener(viewDesktopButton, GraphFrameController.DisplayedView.Desktop))
-		toolbar.add(viewDesktopButton)
-
-		val viewContainerButton = JToggleButton(ActionWrapperSwing(viewContainerAction))
-		viewContainerAction.imagePath?.let { viewContainerButton.icon = UiUtil.themedIcon(it) }
-		viewContainerButton.text = null
-		viewContainerButton.toolTipText = viewContainerAction.name
-		viewContainerButton.addActionListener(MainToolBarActionListener(viewContainerButton, GraphFrameController.DisplayedView.Container))
-		toolbar.add(viewContainerButton)
-
-		val viewDocumentationButton = JToggleButton(ActionWrapperSwing(viewDocumentationAction))
-		viewDocumentationAction.imagePath?.let { viewDocumentationButton.icon = UiUtil.themedIcon(it) }
-		viewDocumentationButton.text = null
-		viewDocumentationButton.toolTipText = viewDocumentationAction.name
-		viewDocumentationButton.addActionListener(MainToolBarActionListener(viewDocumentationButton, GraphFrameController.DisplayedView.Documentation))
-		toolbar.add(viewDocumentationButton)
+		addToolBarButton(toolbar, viewDesktopAction, GraphFrameController.DisplayedView.Desktop)
+		addToolBarButton(toolbar, viewContainerAction, GraphFrameController.DisplayedView.Container)
+		addToolBarButton(toolbar, viewDocumentationAction, GraphFrameController.DisplayedView.Documentation)
 
 		return toolbar
+	}
+
+	private fun addToolBarButton(toolbar: ToolBar, action: Action, displayedView: GraphFrameController.DisplayedView) {
+		val button = JToggleButton(ActionWrapperSwing(action))
+		action.imagePath?.let { button.icon = UiUtil.themedIcon(it) }
+		button.text = null
+		button.toolTipText = action.name
+		button.addActionListener(MainToolBarActionListener(button, displayedView))
+		toolbar.add(button)
 	}
 
 	private fun createCommonToolbar(): ToolBar {
