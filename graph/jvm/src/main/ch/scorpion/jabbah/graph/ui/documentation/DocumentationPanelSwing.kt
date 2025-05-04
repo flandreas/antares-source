@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.app.ToolBar
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.ui.TitleBar
+import ch.scorpion.jabbah.base.ui.UI
 import ch.scorpion.jabbah.graph.documentation.DocumentationPanelController
 import ch.scorpion.jabbah.graph.documentation.DocumentationPanelView
 import org.jmarkdownviewer.jmdviewer.HtmlPane
@@ -34,7 +35,7 @@ class DocumentationPanelSwing(
         syntaxEditingStyle = SyntaxConstants.SYNTAX_STYLE_MARKDOWN
         isCodeFoldingEnabled = true
     }
-    private val previewPane = HtmlPane()
+    private val previewPane = HtmlPane(UI.isDark)
     private val splitPane = JSplitPane(
         JSplitPane.HORIZONTAL_SPLIT,
         RTextScrollPane(textArea),
@@ -54,6 +55,10 @@ class DocumentationPanelSwing(
         layout = BorderLayout()
         buildUI()
 
+        if (UI.isDark) {
+            loadDarkRSTATheme()
+        }
+
         textArea.document.addDocumentListener(updateListener)
 
         textArea.addFocusListener(object : FocusAdapter() {
@@ -63,6 +68,16 @@ class DocumentationPanelSwing(
         })
 
         updateEditability()
+    }
+
+    private fun loadDarkRSTATheme() {
+        try {
+            Theme.load(javaClass.getResourceAsStream("/org/fife/ui/rsyntaxtextarea/themes/dark.xml")).apply {
+                apply(textArea)
+            }
+        } catch (e: Exception) {
+            LOG.error("Failed to load RSTA dark theme", e)
+        }
     }
 
     private fun handleViewDataChanged() {
