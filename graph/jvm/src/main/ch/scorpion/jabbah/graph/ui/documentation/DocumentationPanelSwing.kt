@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.ToolBar
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.TitleBar
 import ch.scorpion.jabbah.base.ui.UI
 import ch.scorpion.jabbah.graph.documentation.DocumentationPanelController
@@ -29,9 +30,10 @@ class DocumentationPanelSwing(
 
     companion object {
         private val LOG by logger(DocumentationPanelSwing::class)
+        private const val PROP_SPLIT_POS = "documentationPanel.splitPos"
     }
 
-    private val textArea = RSyntaxTextArea(20, 60).apply {
+    private val textArea = RSyntaxTextArea(20, 80).apply {
         syntaxEditingStyle = SyntaxConstants.SYNTAX_STYLE_MARKDOWN
         isCodeFoldingEnabled = true
     }
@@ -89,7 +91,9 @@ class DocumentationPanelSwing(
 
     /** ---- [DocumentationPanelView] interface */
 
-    override fun dispose() {}
+    override fun dispose() {
+        BaseModule.settings.set(PROP_SPLIT_POS, splitPane.dividerLocation)
+    }
 
     override fun notifyModelDataChanged() {
         textArea.document.removeDocumentListener(updateListener)
@@ -123,6 +127,7 @@ class DocumentationPanelSwing(
         add(splitPane, BorderLayout.CENTER)
         textArea.lineWrap = true
         textArea.wrapStyleWord = true
+        splitPane.dividerLocation = BaseModule.settings.getInt(PROP_SPLIT_POS, -1)
     }
 
     private fun storeInTempFile(): File {

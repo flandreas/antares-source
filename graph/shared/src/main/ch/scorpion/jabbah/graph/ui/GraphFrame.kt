@@ -165,6 +165,7 @@ open class GraphFrameController<T: GraphFrame>(
 		viewContainerAction.dispose()
 		viewDocumentationAction.dispose()
 		graphPanelViewController.dispose()
+		documentationPanelController.dispose()
 		applicationContextHolder.dispose()
 		unregisterZoomEventHandlers()
 		LibraryModule.libraryServiceCallbacks.remove(customSymbolHandler)
