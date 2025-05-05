@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.ui.documentation
 
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.ToolBar
+import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -9,19 +10,20 @@ import ch.scorpion.jabbah.base.ui.TitleBar
 import ch.scorpion.jabbah.base.ui.UI
 import ch.scorpion.jabbah.graph.documentation.DocumentationPanelController
 import ch.scorpion.jabbah.graph.documentation.DocumentationPanelView
+import ch.scorpion.jabbah.graph.documentation.DocumentationPanelViewMode
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants
+import org.fife.ui.rsyntaxtextarea.Theme
+import org.fife.ui.rtextarea.RTextScrollPane
 import org.jmarkdownviewer.jmdviewer.HtmlPane
 import java.awt.BorderLayout
 import java.awt.event.FocusAdapter
 import java.awt.event.FocusEvent
 import java.io.File
 import java.io.FileOutputStream
-import javax.swing.JPanel
-import javax.swing.JScrollPane
-import javax.swing.JSplitPane
+import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
-import org.fife.ui.rsyntaxtextarea.*
-import org.fife.ui.rtextarea.RTextScrollPane
 
 class DocumentationPanelSwing(
     private val controller: DocumentationPanelController,
@@ -33,16 +35,24 @@ class DocumentationPanelSwing(
         private const val PROP_SPLIT_POS = "documentationPanel.splitPos"
     }
 
+    private val contentPanel = JPanel(BorderLayout())
+
     private val textArea = RSyntaxTextArea(20, 80).apply {
         syntaxEditingStyle = SyntaxConstants.SYNTAX_STYLE_MARKDOWN
         isCodeFoldingEnabled = true
     }
+
+    private val textAreaScrollPane = RTextScrollPane(textArea)
+
     private val previewPane = HtmlPane(UI.isDark)
-    private val splitPane = JSplitPane(
-        JSplitPane.HORIZONTAL_SPLIT,
-        RTextScrollPane(textArea),
-        JScrollPane(previewPane)
-    )
+
+    private val previewScrollPane = JScrollPane(previewPane)
+
+    private val splitLeftPanel = JPanel(BorderLayout())
+
+    private val splitRightPanel = JPanel(BorderLayout())
+
+    private val splitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT, splitLeftPanel, splitRightPanel)
 
     private val updateListener = UpdateListener()
 
@@ -113,21 +123,53 @@ class DocumentationPanelSwing(
         file.delete()
     }
 
+    override fun notifyModeChanged() {
+        updateUIForMode()
+    }
+
     /** ---- [DocumentationPanelSwing] */
 
     private fun buildToolBar(application: Application): ToolBar {
         val toolbar = ToolBar()
         toolbar.addAction(application.controller.saveAction)
         toolbar.addAction(controller.refreshAction)
+        toolbar.addSeparator()
+
+        val buttonGroup = ButtonGroup()
+        toolbar.add(JToggleButton(ActionWrapperSwing(controller.editOnlyAction)).also { buttonGroup.add(it) })
+        toolbar.add(JToggleButton(ActionWrapperSwing(controller.editAndPreviewAction)).also { buttonGroup.add(it) })
+        toolbar.add(JToggleButton(ActionWrapperSwing(controller.previewOnlyAction)).also { buttonGroup.add(it) })
         return toolbar
     }
 
     private fun buildUI() {
         add(TitleBar(Translations.getString("graph.documentation.title")), BorderLayout.NORTH)
-        add(splitPane, BorderLayout.CENTER)
+        add(contentPanel, BorderLayout.CENTER)
+        updateUIForMode()
         textArea.lineWrap = true
         textArea.wrapStyleWord = true
         splitPane.dividerLocation = BaseModule.settings.getInt(PROP_SPLIT_POS, -1)
+    }
+
+    private fun updateUIForMode() {
+        contentPanel.removeAll()
+        when (controller.mode) {
+            DocumentationPanelViewMode.EditOnly -> {
+                contentPanel.add(textAreaScrollPane, BorderLayout.CENTER)
+            }
+            DocumentationPanelViewMode.EditAndPreview -> {
+                splitLeftPanel.add(textAreaScrollPane, BorderLayout.CENTER)
+                splitRightPanel.add(previewScrollPane, BorderLayout.CENTER)
+                contentPanel.add(splitPane, BorderLayout.CENTER)
+            }
+            DocumentationPanelViewMode.PreviewOnly -> {
+                contentPanel.add(previewScrollPane, BorderLayout.CENTER)
+            }
+        }
+
+        contentPanel.invalidate()
+        contentPanel.validate()
+        repaint()
     }
 
     private fun storeInTempFile(): File {

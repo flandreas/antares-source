@@ -18,6 +18,9 @@ import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphDocumentationEvent
+import ch.scorpion.jabbah.graph.documentation.DocumentationPanelViewMode.EditAndPreview
+import ch.scorpion.jabbah.graph.documentation.DocumentationPanelViewMode.EditOnly
+import ch.scorpion.jabbah.graph.documentation.DocumentationPanelViewMode.PreviewOnly
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.library.LibraryServiceCallback
 import ch.scorpion.jabbah.graph.model.Document
@@ -33,7 +36,21 @@ interface DocumentationPanelView : UIView {
     /** Notifies this view that the editability has changed. The view should disable the documentation editor.*/
     fun notifyEditabilityChanged()
 
+    /** Notifies this view that */
+    fun notifyModeChanged()
+
     fun refreshPreview()
+}
+
+enum class DocumentationPanelViewMode(val customName: String) {
+    EditOnly("edit"),
+    EditAndPreview("editAndPreview"),
+    PreviewOnly("preview");
+
+    companion object {
+        fun withName(name: String): DocumentationPanelViewMode =
+            DocumentationPanelViewMode.entries.firstOrNull { it.customName == name } ?: EditAndPreview
+    }
 }
 
 /**
@@ -44,10 +61,16 @@ class DocumentationPanelController(
     private val applicationDataHolder: ApplicationDataHolder,
     private val eventBus: EventBus = BaseModule.eventBus,
     private val commandManager: CommandManager = EditModule.commandManager,
+    mode: DocumentationPanelViewMode = determineMode()
 ) : AbstractUIController<DocumentationPanelView>(), LibraryServiceCallback {
 
     companion object {
         private val LOG by logger(DocumentationPanelController::class)
+
+        private const val PROP_MODE = "documentationPanelController.mode"
+
+        private fun determineMode(): DocumentationPanelViewMode =
+            DocumentationPanelViewMode.withName(BaseModule.settings.getString(PROP_MODE, EditAndPreview.customName))
     }
 
     private val applicationDataHandler: EventHandler<ApplicationDataEvent> = { handle(it) }
@@ -78,12 +101,30 @@ class DocumentationPanelController(
            }
        }
 
+    var mode: DocumentationPanelViewMode = mode
+        private set(value) {
+            if (field != value) {
+                field = value
+                view.notifyModeChanged()
+            }
+        }
+
+    val editOnlyAction: Action = ModeAction(EditOnly, "graph.documentation.mode.editOnly")
+    val editAndPreviewAction: Action = ModeAction(EditAndPreview, "graph.documentation.mode.editAndPreview")
+    val previewOnlyAction: Action = ModeAction(PreviewOnly, "graph.documentation.mode.previewOnly")
+
     init {
         eventBus.register(ApplicationDataEvent::class, applicationDataHandler)
         eventBus.register(ApplicationDataContentEvent::class, applicationDataContentHandler)
         eventBus.register(MetaGraphDocumentationEvent::class, documentationHandler)
         LibraryModule.libraryServiceCallbacks.add(this)
         updateEditability(false)
+
+        when (mode) {
+            EditOnly -> editOnlyAction.selected = true
+            EditAndPreview -> editAndPreviewAction.selected = true
+            PreviewOnly -> previewOnlyAction.selected = true
+        }
     }
 
     override fun dispose() {
@@ -92,6 +133,7 @@ class DocumentationPanelController(
         eventBus.unregister(applicationDataContentHandler)
         eventBus.unregister(documentationHandler)
         LibraryModule.libraryServiceCallbacks.remove(this)
+        BaseModule.settings.set(PROP_MODE, mode.customName)
     }
 
     /** ---- [LibraryServiceCallback] ---- */
@@ -191,6 +233,13 @@ class DocumentationPanelController(
     private inner class RefreshAction : AbstractAction("graph.documentation.refresh") {
         override fun execute(event: ActionEvent) {
             view.refreshPreview()
+        }
+    }
+
+    private inner class ModeAction(private val mode: DocumentationPanelViewMode, baseName: String) : AbstractAction(baseName) {
+        override fun execute(event: ActionEvent) {
+            this@DocumentationPanelController.mode = this@ModeAction.mode
+            selected = this@DocumentationPanelController.mode == this@ModeAction.mode
         }
     }
 }
