@@ -131,6 +131,7 @@ class DocumentationPanelSwing(
 
     private fun buildToolBar(application: Application): ToolBar {
         val toolbar = ToolBar()
+        toolbar.addSeparator()
         toolbar.addAction(application.controller.saveAction)
         toolbar.addAction(controller.refreshAction)
         toolbar.addSeparator()
