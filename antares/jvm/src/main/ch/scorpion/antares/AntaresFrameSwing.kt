@@ -22,6 +22,7 @@ import ch.scorpion.jabbah.base.swing.SidebarPaneContentImpl
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.view.ContentViewManager
+import ch.scorpion.jabbah.graph.model.Document
 import ch.scorpion.jabbah.graph.model.image.ImageGraphDesktopItemSwing
 import ch.scorpion.jabbah.graph.model.image.ImageLibraryElement
 import ch.scorpion.jabbah.graph.ui.GraphFrame
@@ -29,6 +30,7 @@ import ch.scorpion.jabbah.graph.ui.GraphFrameActions
 import ch.scorpion.jabbah.graph.ui.GraphFrameController
 import ch.scorpion.jabbah.graph.ui.GraphFrameSwing
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
+import ch.scorpion.jabbah.graph.ui.documentation.DocumentationDesktopViewItemSwing
 import java.awt.Frame
 import java.awt.Toolkit
 import javax.swing.JOptionPane
@@ -104,6 +106,9 @@ class AntaresFrameSwing(
 
 	override fun createFSMDesktopViewItem(item: FSMLibraryItem): GraphDesktopViewItem =
 		FSMGraphDesktopItemSwing(item, application.controller)
+
+	override fun createDocumentationDesktopViewItem(documentation: Document): GraphDesktopViewItem =
+        DocumentationDesktopViewItemSwing(documentation)
 
 	override fun showMemoryContents(request: OpenMemoryContentsRequest) {
 		AddressableContentsPanel.showAsDialog(

@@ -24,6 +24,7 @@ import ch.scorpion.jabbah.graph.library.ShowLibrariesDialogAction
 import ch.scorpion.jabbah.graph.model.net.SignalConflictBehaviourMenu
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.project.ShowProjectsDialogAction
+import ch.scorpion.jabbah.graph.ui.documentation.OpenDocumentationAction
 import ch.scorpion.jabbah.graph.ui.portrenaming.GraphPortRenamingAction
 import ch.scorpion.jabbah.graph.ui.usecase.*
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeVisibilityAction
@@ -119,6 +120,7 @@ open class GraphMenuBarBuilder(
 		menu.addSeparator()
 		super.fillViewMenu(menu)
 		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(OscilloscopeVisibilityAction(DrawViewModule.viewManager, eventBus))))
+		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(OpenDocumentationAction(DrawViewModule.viewManager, eventBus))))
 	}
 
 	protected open fun fillExecutionMenu(menu: JMenu): JMenu {

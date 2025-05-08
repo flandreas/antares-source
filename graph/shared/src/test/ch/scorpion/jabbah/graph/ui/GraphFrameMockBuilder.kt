@@ -2,7 +2,7 @@ package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.graph.app.ApplicationMode
-import ch.scorpion.jabbah.graph.documentation.DocumentationPanelView
+import ch.scorpion.jabbah.graph.ui.documentation.DocumentationPanelView
 import ch.scorpion.jabbah.graph.ui.container.ContainerPanelView
 import ch.scorpion.jabbah.graph.ui.container.ContainerPanelViewMockBuilder
 import ch.scorpion.jabbah.graph.ui.documentation.DocumentationPanelViewMockBuilder

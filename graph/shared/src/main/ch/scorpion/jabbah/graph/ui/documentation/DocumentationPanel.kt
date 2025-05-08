@@ -1,4 +1,4 @@
-package ch.scorpion.jabbah.graph.documentation
+package ch.scorpion.jabbah.graph.ui.documentation
 
 import ch.scorpion.jabbah.app.ApplicationDataContentEvent
 import ch.scorpion.jabbah.app.ApplicationDataEvent
@@ -18,9 +18,9 @@ import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.MetaGraphDocumentationEvent
-import ch.scorpion.jabbah.graph.documentation.DocumentationPanelViewMode.EditAndPreview
-import ch.scorpion.jabbah.graph.documentation.DocumentationPanelViewMode.EditOnly
-import ch.scorpion.jabbah.graph.documentation.DocumentationPanelViewMode.PreviewOnly
+import ch.scorpion.jabbah.graph.ui.documentation.DocumentationPanelViewMode.EditAndPreview
+import ch.scorpion.jabbah.graph.ui.documentation.DocumentationPanelViewMode.EditOnly
+import ch.scorpion.jabbah.graph.ui.documentation.DocumentationPanelViewMode.PreviewOnly
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.library.LibraryServiceCallback
 import ch.scorpion.jabbah.graph.model.Document
@@ -108,6 +108,8 @@ class DocumentationPanelController(
                 view.notifyModeChanged()
             }
         }
+
+    val content: MetaGraph? get() = applicationDataHolder.data?.content as? MetaGraph?
 
     val editOnlyAction: Action = ModeAction(EditOnly, "graph.documentation.mode.editOnly")
     val editAndPreviewAction: Action = ModeAction(EditAndPreview, "graph.documentation.mode.editAndPreview")

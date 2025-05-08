@@ -20,12 +20,12 @@ import ch.scorpion.jabbah.base.event.EventBus
  * listen for such changes and then ask the [UIView] to update accordingly. This eliminates the
  * need to implement this kind of logic in all [UIView] implementations on the different platforms.
  * However, this is only a rule of thumb. A [UIView] might decide to observe the model by itself
- * in order to implement more fine-grained update or refresh scenarios.
+ * to implement more fine-grained update or refresh scenarios.
  */
 interface UIView {
 
 	/**
-	 * Called by the owning [UIController] when this [UIView] is not used any more.
+	 * Called by the owning [UIController] when this [UIView] is not used anymore.
 	 * Typical implementations will unregister any [EventBus] registrations.
 	 */
 	fun dispose()

@@ -8,7 +8,6 @@ import ch.scorpion.antares.model.truthtable.TruthTableReference
 import ch.scorpion.antares.model.truthtable.TruthTableService
 import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTablePanel
 import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTableService
-import ch.scorpion.antares.view.truthtable.TruthTableDesktopItemSwing
 import ch.scorpion.antares.view.truthtable.TruthTableTableView
 import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.base.AbstractAction
@@ -46,7 +45,7 @@ class BooleanExpressionDesktopItemSwing(
 	JPanel(),
 	applicationDataHolder,
 	eventBus,
-	listOf(HelpAction.withSmallImage(HELP_ID))
+	actions = listOf(HelpAction.withSmallImage(HELP_ID))
 ) {
 
 	companion object {

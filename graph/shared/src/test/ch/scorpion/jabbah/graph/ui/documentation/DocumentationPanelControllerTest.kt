@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.app.ApplicationData
 import ch.scorpion.jabbah.app.DefaultSavable
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.MetaGraph
-import ch.scorpion.jabbah.graph.documentation.DocumentationPanelController
 import ch.scorpion.jabbah.graph.model.Document
 import ch.scorpion.jabbah.graph.ui.GraphDataViewController
 import ch.scorpion.jabbah.graph.ui.GraphDataViewMockBuilder

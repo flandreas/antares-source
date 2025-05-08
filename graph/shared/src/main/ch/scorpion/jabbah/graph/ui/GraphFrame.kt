@@ -25,7 +25,7 @@ import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolderImpl
 import ch.scorpion.jabbah.graph.container.isManualContainer
-import ch.scorpion.jabbah.graph.documentation.DocumentationPanelController
+import ch.scorpion.jabbah.graph.ui.documentation.DocumentationPanelController
 import ch.scorpion.jabbah.graph.library.AbstractContainerLibraryElementSavable
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.library.LibraryServiceCallbackAdapter

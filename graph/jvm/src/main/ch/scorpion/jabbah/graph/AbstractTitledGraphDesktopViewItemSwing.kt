@@ -30,8 +30,9 @@ import javax.swing.JPanel
 abstract class AbstractTitledGraphDesktopViewItemSwing(
     initialTitle: String,
     protected val contentPanel: JPanel,
-    private val applicationDataHolder: ApplicationDataHolder,
+    private val applicationDataHolder: ApplicationDataHolder?,
     private val eventBus: EventBus = BaseModule.eventBus,
+    private val isRoot: Boolean = true,
     actions: List<Action> = emptyList()
 ) : AbstractGraphDesktopViewItemSwing(reusable = false) {
 
@@ -88,14 +89,14 @@ abstract class AbstractTitledGraphDesktopViewItemSwing(
     private fun handle(request: CloseViewRequest) {
         if (request.view === closeTarget) {
             eventBus.postTwoPhase(
-                prepareEvent = GraphDesktopViewItemCloseQuestion(this, isRoot = true),
-                execEvent = GraphDesktopViewItemCloseRequest(this, isRoot = true)
+                prepareEvent = GraphDesktopViewItemCloseQuestion(this, isRoot = isRoot),
+                execEvent = GraphDesktopViewItemCloseRequest(this, isRoot = isRoot),
             )
         }
     }
 
     private fun handle(event: NameChangedEvent) {
-        val content = applicationDataHolder.data?.content
+        val content = applicationDataHolder?.data?.content
         if (content is UndoableStateLibraryItem<*> && content.storable === event.owner) {
             headerLabel.text = createHeaderText()
         }

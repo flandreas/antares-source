@@ -43,7 +43,7 @@ class TruthTableDesktopItemSwing(
 	JPanel(),
 	applicationDataHolder,
 	eventBus,
-	listOf(HelpAction.withSmallImage(HELP_ID))
+	actions = listOf(HelpAction.withSmallImage(HELP_ID))
 ) {
 
 	companion object {

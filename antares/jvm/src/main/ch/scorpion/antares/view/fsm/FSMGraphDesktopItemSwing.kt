@@ -2,8 +2,6 @@ package ch.scorpion.antares.view.fsm
 
 import ch.scorpion.antares.model.fsm.FSMDrawing
 import ch.scorpion.antares.model.fsm.FSMLibraryItem
-import ch.scorpion.antares.view.expression.BooleanExpressionDesktopItemSwing
-import ch.scorpion.antares.view.expression.BooleanExpressionDesktopItemSwing.Companion
 import ch.scorpion.jabbah.app.ApplicationDataViewController
 import ch.scorpion.jabbah.app.ToolBar
 import ch.scorpion.jabbah.base.ActionWrapperSwing
@@ -33,7 +31,7 @@ class FSMGraphDesktopItemSwing(
     JPanel(),
     applicationDataViewController,
     eventBus,
-    listOf(HelpAction.withSmallImage(HELP_ID))
+    actions =listOf(HelpAction.withSmallImage(HELP_ID))
 ), FSMPanelView {
 
     companion object {

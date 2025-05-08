@@ -1,34 +1,31 @@
 package ch.scorpion.jabbah.graph.ui.documentation
 
-import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.ToolBar
+import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.TitleBar
 import ch.scorpion.jabbah.base.ui.UI
-import ch.scorpion.jabbah.graph.documentation.DocumentationPanelController
-import ch.scorpion.jabbah.graph.documentation.DocumentationPanelView
-import ch.scorpion.jabbah.graph.documentation.DocumentationPanelViewMode
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants
 import org.fife.ui.rsyntaxtextarea.Theme
 import org.fife.ui.rtextarea.RTextScrollPane
-import org.jmarkdownviewer.jmdviewer.HtmlPane
 import java.awt.BorderLayout
 import java.awt.event.FocusAdapter
 import java.awt.event.FocusEvent
-import java.io.File
-import java.io.FileOutputStream
-import javax.swing.*
+import javax.swing.ButtonGroup
+import javax.swing.JPanel
+import javax.swing.JSplitPane
+import javax.swing.JToggleButton
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 
 class DocumentationPanelSwing(
-    private val controller: DocumentationPanelController,
-    application: Application
-) : JPanel(), DocumentationPanelView {
+    val controller: DocumentationPanelController,
+    saveAction: Action? = null
+) : AbstractDocumentationPanelSwing(), DocumentationPanelView {
 
     companion object {
         private val LOG by logger(DocumentationPanelSwing::class)
@@ -44,10 +41,6 @@ class DocumentationPanelSwing(
 
     private val textAreaScrollPane = RTextScrollPane(textArea)
 
-    private val previewPane = HtmlPane(UI.isDark)
-
-    private val previewScrollPane = JScrollPane(previewPane)
-
     private val splitLeftPanel = JPanel(BorderLayout())
 
     private val splitRightPanel = JPanel(BorderLayout())
@@ -56,7 +49,7 @@ class DocumentationPanelSwing(
 
     private val updateListener = UpdateListener()
 
-    val toolbars: List<ToolBar> = listOf(buildToolBar(application))
+    val toolbars: List<ToolBar> = listOf(buildToolBar(saveAction))
 
     private var viewDataChanged: Boolean = false
 
@@ -118,9 +111,7 @@ class DocumentationPanelSwing(
     }
 
     override fun refreshPreview() {
-        val file = storeInTempFile()
-        previewPane.load(file)
-        file.delete()
+        refreshPreviewPane(textArea.text)
     }
 
     override fun notifyModeChanged() {
@@ -129,10 +120,12 @@ class DocumentationPanelSwing(
 
     /** ---- [DocumentationPanelSwing] */
 
-    private fun buildToolBar(application: Application): ToolBar {
+    private fun buildToolBar(saveAction: Action?): ToolBar {
         val toolbar = ToolBar()
         toolbar.addSeparator()
-        toolbar.addAction(application.controller.saveAction)
+        if (saveAction != null) {
+            toolbar.addAction(saveAction)
+        }
         toolbar.addAction(controller.refreshAction)
         toolbar.addSeparator()
 
@@ -171,15 +164,6 @@ class DocumentationPanelSwing(
         contentPanel.invalidate()
         contentPanel.validate()
         repaint()
-    }
-
-    private fun storeInTempFile(): File {
-        val file = File.createTempFile("antares-doc", ".md")
-        FileOutputStream(file).use {
-            it.write(textArea.text.toByteArray())
-            it.flush()
-        }
-        return file
     }
 
     private fun updateEditability() {

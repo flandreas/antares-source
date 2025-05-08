@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.container.ResetSubGraphVerticeViewAction
 import ch.scorpion.jabbah.graph.container.editsubgraph.EditSubGraphVerticeViewAction
+import ch.scorpion.jabbah.graph.ui.documentation.OpenDocumentationAction
 import ch.scorpion.jabbah.graph.ui.graphviewer.OpenSubGraphViewerAction
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -24,6 +25,7 @@ open class GraphContextMenuProvider(
 		private val openGraphActionWrapper by lazy { ActionWrapperSwing(openGraphAction) }
 		private val resetSubGraphAction by lazy { ActionWrapperSwing(ResetSubGraphVerticeViewAction()) }
 		private val displayIdsAction by lazy { ActionWrapperSwing(DisplayIdsAction() { it !is NodeView<*>})  }
+		private val openDocumentationAction by lazy { ActionWrapperSwing(OpenDocumentationAction()) }
 	}
 
 	private val extractMetaGraphAction = ActionWrapperSwing(ExtractMetaGraphAction(application.controller))
@@ -53,6 +55,7 @@ open class GraphContextMenuProvider(
 		popupMenu.add(extractMetaGraphAction)
 		addApplicationSpecificActions(view, popupMenu)
 		popupMenu.addSeparator()
+		popupMenu.add(openDocumentationAction)
 		popupMenu.add(helpAction)
 	}
 

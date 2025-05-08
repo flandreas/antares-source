@@ -17,11 +17,13 @@ import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import ch.scorpion.jabbah.graph.model.Document
 import ch.scorpion.jabbah.graph.model.image.ImageIdentificationSavable
 import ch.scorpion.jabbah.graph.model.image.ImageLibraryElement
 import ch.scorpion.jabbah.graph.ui.GraphFrame
 import ch.scorpion.jabbah.graph.ui.GraphFrameController
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
+import ch.scorpion.jabbah.graph.ui.documentation.OpenDocumentationRequest
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
 interface AntaresFrame : GraphFrame {
@@ -37,6 +39,8 @@ interface AntaresFrame : GraphFrame {
 	fun createImageGraphDesktopViewItem(element: ImageLibraryElement): GraphDesktopViewItem
 
 	fun createFSMDesktopViewItem(item: FSMLibraryItem): GraphDesktopViewItem
+
+	fun createDocumentationDesktopViewItem(documentation: Document): GraphDesktopViewItem
 
 	fun showMemoryContents(request: OpenMemoryContentsRequest)
 
@@ -55,6 +59,7 @@ class AntaresFrameController(
 	}
 
 	private val openMemoryContentsRequestHandler: EventHandler<OpenMemoryContentsRequest> = { handle(it) }
+	private val openDocumentationRequestHandler: EventHandler<OpenDocumentationRequest> = { handle(it) }
 	private val defaultLightColorHandler: EventHandler<DefaultLightColorEvent> = { handle(it) }
 	private val applicationDataHandler: EventHandler<ApplicationDataEvent> = { handle(it) }
 
@@ -62,6 +67,7 @@ class AntaresFrameController(
 		eventBus.register(ApplicationDataEvent::class, applicationDataHandler)
 		eventBus.register(OpenMemoryContentsRequest::class, openMemoryContentsRequestHandler)
 		eventBus.register(DefaultLightColorEvent::class, defaultLightColorHandler)
+		eventBus.register(OpenDocumentationRequest::class, openDocumentationRequestHandler)
 	}
 
 	override fun dispose() {
@@ -69,6 +75,7 @@ class AntaresFrameController(
 		eventBus.unregister(applicationDataHandler)
 		eventBus.unregister(openMemoryContentsRequestHandler)
 		eventBus.unregister(defaultLightColorHandler)
+		eventBus.unregister(openDocumentationRequestHandler)
 	}
 
 	private fun handle(event: OpenMemoryContentsRequest) {
@@ -78,6 +85,12 @@ class AntaresFrameController(
 			}
 		} else {
 			view.showMemoryContents(event)
+		}
+	}
+
+	private fun handle(event: OpenDocumentationRequest) {
+		graphPanelViewController.desktopController.openVerticeView(event.subGraphVerticeView) { color,_ ->
+			view.createDocumentationDesktopViewItem(event.documentation)
 		}
 	}
 

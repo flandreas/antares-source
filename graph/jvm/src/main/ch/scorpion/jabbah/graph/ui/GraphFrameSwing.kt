@@ -45,7 +45,7 @@ open class GraphFrameSwing(
 
 	private val containerPanel = ContainerPanelSwing(controller.containerPanelController, application)
 
-	private val documentationPanel = DocumentationPanelSwing(controller.documentationPanelController, application)
+	private val documentationPanel = DocumentationPanelSwing(controller.documentationPanelController, application.controller.saveAction)
 
 	val loginLogoutAction = LoginLogoutAction()
 

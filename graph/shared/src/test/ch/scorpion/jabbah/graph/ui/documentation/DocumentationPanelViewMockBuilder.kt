@@ -1,7 +1,5 @@
 package ch.scorpion.jabbah.graph.ui.documentation
 
-import ch.scorpion.jabbah.graph.documentation.DocumentationPanelController
-import ch.scorpion.jabbah.graph.documentation.DocumentationPanelView
 import dev.mokkery.MockMode
 import dev.mokkery.answering.returns
 import dev.mokkery.every
