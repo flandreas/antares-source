@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.project.*
 import ch.scorpion.jabbah.graph.ui.GraphDataViewController
 import ch.scorpion.jabbah.graph.ui.MetaGraphEmbedAction
+import ch.scorpion.jabbah.graph.ui.documentation.OpenDocumentationViewerAction
 import ch.scorpion.jabbah.graph.ui.graphviewer.NewGraphViewerAction
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewActions
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
@@ -42,6 +43,7 @@ open class LibraryTreeViewActionsSwing(
 	private val exportMetaGraphAction = register(ExportMetaGraphAction(controller))
 	private val newGraphViewerAction = register(NewGraphViewerAction(application.displayName, controller))
 	private val embedMetaGraphAction = register(MetaGraphEmbedAction(controller))
+	private val openDocumentationViewerAction = register(OpenDocumentationViewerAction(application.displayName, controller))
 
 	private val libraryPropertiesAction = register(LibraryPropertiesAction(controller))
 	val addLibraryFolderAction = register(AddLibraryFolderAction(controller, libraryOperationTarget))
@@ -244,6 +246,7 @@ open class LibraryTreeViewActionsSwing(
 		projectContainerPopupMenu.add(ActionWrapperSwing(exportMetaGraphAction))
 		projectContainerPopupMenu.add(ActionWrapperSwing(newGraphViewerAction))
 		projectContainerPopupMenu.add(ActionWrapperSwing(showLibraryMetaGraphHistoryAction))
+		projectContainerPopupMenu.add(ActionWrapperSwing(openDocumentationViewerAction))
 		if (GraphModuleJvm.supportWeb) {
 			projectContainerPopupMenu.add(ActionWrapperSwing(embedMetaGraphAction))
 		}
@@ -256,6 +259,7 @@ open class LibraryTreeViewActionsSwing(
 		libraryContainerPopupMenu.add(ActionWrapperSwing(duplicateLibraryGraphAction))
 		libraryContainerPopupMenu.add(ActionWrapperSwing(exportMetaGraphAction))
 		libraryContainerPopupMenu.add(ActionWrapperSwing(newGraphViewerAction))
+		libraryContainerPopupMenu.add(ActionWrapperSwing(openDocumentationViewerAction))
 		libraryContainerPopupMenu.add(ActionWrapperSwing(showLibraryMetaGraphHistoryAction))
 	}
 
