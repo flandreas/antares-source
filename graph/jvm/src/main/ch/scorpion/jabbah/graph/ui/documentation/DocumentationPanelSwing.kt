@@ -15,14 +15,9 @@ import org.fife.ui.rsyntaxtextarea.SyntaxConstants
 import org.fife.ui.rsyntaxtextarea.Theme
 import org.fife.ui.rtextarea.RTextScrollPane
 import java.awt.BorderLayout
-import java.awt.Component
 import java.awt.event.FocusAdapter
 import java.awt.event.FocusEvent
-import javax.swing.ButtonGroup
-import javax.swing.JPanel
-import javax.swing.JSplitPane
-import javax.swing.JToggleButton
-import javax.swing.SwingUtilities
+import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 
