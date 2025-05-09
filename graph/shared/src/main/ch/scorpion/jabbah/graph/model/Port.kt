@@ -137,11 +137,14 @@ interface InputPort<T : Any> : Port<T> {
 
 interface WeakOutputPortBehaviour<T : Any> {
 
+	/** Used in situations where the behaviour of implementing classes depend on their state.*/
+	val isWeekOutputPortBehaviour: Boolean
+
 	/**
 	 * Withdraws the defined value from a weak [OutputPort]'s output and replaces it with "undefined".
 	 *
 	 * @param netSignal the signal about to become active on the net. If a signal in the using application
-	 * support multi-part signals, this method withdraws only those parts [port]'s outgoing signal that
+	 * supports multipart signals, this method withdraws only those parts of [port]'s outgoing signal that
 	 * correspond with parts of [netSignal] that are not "undefined".
 	 */
 	fun withdrawWeakOutput(netSignal: T?, port: OutputPort<T>, signalHandler: SignalHandler)

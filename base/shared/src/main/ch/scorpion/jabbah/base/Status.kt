@@ -20,8 +20,12 @@ object Status {
 		}
 	}
 
-	fun get(type: StatusType): String? {
-		return values[type]
+	operator fun get(type: StatusType): String? = values[type]
+
+	fun replace(type: StatusType, value: String?): String? {
+		val oldValue = values[type]
+		set(type, value)
+		return oldValue
 	}
 }
 

@@ -324,6 +324,10 @@ class GraphDesktopViewController(
 			freeItem(mainDesktopViewItem!!)
 		}
 		deassociateAdditional()
+
+		associations.clear()
+		referenceColorSequence.reset()
+
 		mainDesktopViewItem = null
 		view.closeAll()
 		viewManager.activeView = null

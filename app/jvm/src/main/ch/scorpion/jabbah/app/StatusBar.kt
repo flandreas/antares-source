@@ -26,8 +26,8 @@ class StatusBar(
 		smallLabel.preferredSize = Dimension(200, smallLabel.preferredSize.height)
 
 		SwingUtilities.invokeLater {
-			largeLabel.text = Status.get(StatusType.Large)
-			smallLabel.text = Status.get(StatusType.Small)
+			largeLabel.text = Status[StatusType.Large]
+			smallLabel.text = Status[StatusType.Small]
 		}
 	}
 
