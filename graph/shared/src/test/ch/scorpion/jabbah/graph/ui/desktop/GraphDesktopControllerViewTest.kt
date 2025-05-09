@@ -24,8 +24,9 @@ import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
-class GraphDesktopControllerTest {
+class GraphDesktopControllerViewTest {
 
 	companion object {
 		init {
@@ -71,9 +72,7 @@ class GraphDesktopControllerTest {
 	@Test
 	fun shouldCloseSubGraphOnRequest() {
 		openSubGraph()
-		val item = controller.additionalDesktopItems.first()
-		viewItemMock.withFindContent(item.drawingView!!.content)
-		eventBus.post(GraphDesktopViewItemCloseRequest(item, false))
+		closeSubGraph()
 		assertEquals(0, controller.additionalDesktopItems.size)
 	}
 
@@ -86,9 +85,31 @@ class GraphDesktopControllerTest {
 		assertEquals(0, controller.additionalDesktopItems.size)
 	}
 
+	@Test
+	fun shouldAlsoCloseSubGraphWhenClosingMainGraph() {
+		viewMock.withCreatedSubGraphDesktopItem(viewItemMock.build())
+		viewItemMock.withFindContent(drawingView.content as DrawingViewContent<GraphView>)
+		openSubGraph()
+
+		closeMainGraph()
+
+		assertNull(controller.mainDesktopViewItem)
+		assertEquals(0, controller.additionalDesktopItems.size)
+	}
+
 	private fun openSubGraph() {
 		eventBus.post(EditedGraphViewEvent(oldGraphView = null, newGraphView = graphViewBuilder.graphView))
 		eventBus.post(OpenSubGraphRequest(vv, newView = true, quickMode = true))
+	}
+
+	private fun closeSubGraph() {
+		val item = controller.additionalDesktopItems.first()
+		viewItemMock.withFindContent(item.drawingView!!.content)
+		eventBus.post(GraphDesktopViewItemCloseRequest(item, false))
+	}
+
+	private fun closeMainGraph() {
+		eventBus.post(GraphDesktopViewItemCloseRequest(controller.mainDesktopViewItem!!, true))
 	}
 
 	private fun createSubGraphVerticeView(): SubGraphVerticeView<*> {

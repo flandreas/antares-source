@@ -73,6 +73,8 @@ interface ReferenceColorSequence {
 	 * The next call of [next] will again fetch this freed [ReferenceColor].
 	 */
 	fun free(color: ReferenceColor)
+
+	fun reset()
 }
 
 /**
@@ -102,6 +104,10 @@ class ReferenceColorSequenceImpl(private val colors: List<ReferenceColor>) : Ref
 	override fun free(color: ReferenceColor) {
 		val usage = usages.find { it.color == color && it.count > 0 } ?: throw IllegalStateException("nothing to free")
 		usage.count--
+	}
+
+	override fun reset() {
+		usages.forEach { it.count = 0 }
 	}
 }
 
@@ -133,6 +139,10 @@ class FlexibleReferenceColorSequenceImpl : ReferenceColorSequence {
 		val index = ReferenceColorSequenceProvider.indexOf(color)
 		val usage = usages.find { it.index == index && it.count > 0 } ?: throw IllegalStateException("nothing to free")
 		usage.count--
+	}
+
+	override fun reset() {
+		usages.forEach { it.count = 0 }
 	}
 }
 
