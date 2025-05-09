@@ -29,11 +29,10 @@ class OpenDocumentationAction(
     }
 
     override fun execute(event: ActionEvent) {
-        val documentation = LibraryModule.libraryHolder
+        val metaGraph = LibraryModule.libraryHolder
             .getMetaGraph((singleSelection as SubGraphVerticeView<*>).model.graphUUID!!)
-            .documentation
 
-        if (documentation == null) {
+        if (metaGraph.documentation == null) {
             eventBus.post(ComponentMessage(
                 source = singleSelection!!,
                 messageKey = "graph.action.noDocumentation.text"
@@ -42,7 +41,8 @@ class OpenDocumentationAction(
             eventBus.post(OpenDocumentationRequest(
                 viewManager.activeView!!.view as DrawingView<GraphView>,
                 singleSelection as SubGraphVerticeView<*>,
-                documentation
+                metaGraph.documentation!!,
+                metaGraph.name
             ))
         }
     }

@@ -12,5 +12,6 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 data class OpenDocumentationRequest(
     val drawingView: DrawingView<GraphView>,
     val subGraphVerticeView: SubGraphVerticeView<*>,
-    val documentation: Document
+    val documentation: Document,
+    val metaGraphName: String
 )

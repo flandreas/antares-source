@@ -107,8 +107,8 @@ class AntaresFrameSwing(
 	override fun createFSMDesktopViewItem(item: FSMLibraryItem): GraphDesktopViewItem =
 		FSMGraphDesktopItemSwing(item, application.controller)
 
-	override fun createDocumentationDesktopViewItem(documentation: Document): GraphDesktopViewItem =
-        DocumentationDesktopViewItemSwing(documentation)
+	override fun createDocumentationDesktopViewItem(documentation: Document, metaGraphName: String): GraphDesktopViewItem =
+        DocumentationDesktopViewItemSwing(documentation, metaGraphName = metaGraphName)
 
 	override fun showMemoryContents(request: OpenMemoryContentsRequest) {
 		AddressableContentsPanel.showAsDialog(

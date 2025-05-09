@@ -16,12 +16,18 @@ import javax.swing.JPanel
 class DocumentationDesktopViewItemSwing(
     documentation: Document,
     isRoot: Boolean = false,
+    private val metaGraphName: String
 ) : AbstractTitledGraphDesktopViewItemSwing(
-    Translations.getString("graph.documentation.title"),
+    createTitleText(metaGraphName),
     JPanel(),
     null,
     isRoot = isRoot
 ), DocumentationDesktopViewItem {
+
+    companion object {
+        fun createTitleText(metaGraphName: String): String =
+            Translations.getString("graph.documentation.desktopItem.title", metaGraphName)
+    }
 
     private val controller = DocumentationDesktopViewItemController(documentation)
 
@@ -43,7 +49,7 @@ class DocumentationDesktopViewItemSwing(
 
     /** ---- [AbstractTitledGraphDesktopViewItemSwing] */
 
-    override fun createHeaderText(): String = Translations.getString("graph.documentation.title")
+    override fun createHeaderText(): String = createTitleText(metaGraphName)
 
     /** ---- [GraphDesktopViewItem] */
 

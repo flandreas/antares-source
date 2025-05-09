@@ -40,7 +40,7 @@ interface AntaresFrame : GraphFrame {
 
 	fun createFSMDesktopViewItem(item: FSMLibraryItem): GraphDesktopViewItem
 
-	fun createDocumentationDesktopViewItem(documentation: Document): GraphDesktopViewItem
+	fun createDocumentationDesktopViewItem(documentation: Document, metaGraphName: String): GraphDesktopViewItem
 
 	fun showMemoryContents(request: OpenMemoryContentsRequest)
 
@@ -90,7 +90,7 @@ class AntaresFrameController(
 
 	private fun handle(event: OpenDocumentationRequest) {
 		graphPanelViewController.desktopController.openVerticeView(event.subGraphVerticeView) { color,_ ->
-			view.createDocumentationDesktopViewItem(event.documentation)
+			view.createDocumentationDesktopViewItem(event.documentation, event.metaGraphName)
 		}
 	}
 
