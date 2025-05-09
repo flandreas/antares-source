@@ -121,6 +121,7 @@ open class GraphFrameSwing(
 			viewManager.activeView = null
 			controller.graphPanelViewController.editor.active = false
 			controller.containerPanelController.active = false
+			documentationPanel.notifyActivated()
 		}
 	}
 

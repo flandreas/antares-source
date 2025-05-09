@@ -8,17 +8,21 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.TitleBar
 import ch.scorpion.jabbah.base.ui.UI
+import ch.scorpion.jabbah.graph.ui.documentation.DocumentationPanelViewMode.EditAndPreview
+import ch.scorpion.jabbah.graph.ui.documentation.DocumentationPanelViewMode.EditOnly
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants
 import org.fife.ui.rsyntaxtextarea.Theme
 import org.fife.ui.rtextarea.RTextScrollPane
 import java.awt.BorderLayout
+import java.awt.Component
 import java.awt.event.FocusAdapter
 import java.awt.event.FocusEvent
 import javax.swing.ButtonGroup
 import javax.swing.JPanel
 import javax.swing.JSplitPane
 import javax.swing.JToggleButton
+import javax.swing.SwingUtilities
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 
@@ -49,6 +53,8 @@ class DocumentationPanelSwing(
 
     private val updateListener = UpdateListener()
 
+    private val documentTypeChooser = DocumentTypeChooser()
+
     val toolbars: List<ToolBar> = listOf(buildToolBar(saveAction))
 
     private var viewDataChanged: Boolean = false
@@ -73,6 +79,15 @@ class DocumentationPanelSwing(
         })
 
         updateEditability()
+    }
+
+    fun notifyActivated() {
+        if (controller.mode == EditOnly || controller.mode == EditAndPreview) {
+            SwingUtilities.invokeLater {
+                textArea.caretPosition = 0
+                textArea.requestFocusInWindow()
+            }
+        }
     }
 
     private fun loadDarkRSTATheme() {
@@ -123,6 +138,9 @@ class DocumentationPanelSwing(
     private fun buildToolBar(saveAction: Action?): ToolBar {
         val toolbar = ToolBar()
         toolbar.addSeparator()
+        documentTypeChooser.alignmentX = LEFT_ALIGNMENT
+        toolbar.add(documentTypeChooser)
+
         if (saveAction != null) {
             toolbar.addAction(saveAction)
         }
@@ -148,10 +166,10 @@ class DocumentationPanelSwing(
     private fun updateUIForMode() {
         contentPanel.removeAll()
         when (controller.mode) {
-            DocumentationPanelViewMode.EditOnly -> {
+            EditOnly -> {
                 contentPanel.add(textAreaScrollPane, BorderLayout.CENTER)
             }
-            DocumentationPanelViewMode.EditAndPreview -> {
+            EditAndPreview -> {
                 splitLeftPanel.add(textAreaScrollPane, BorderLayout.CENTER)
                 splitRightPanel.add(previewScrollPane, BorderLayout.CENTER)
                 contentPanel.add(splitPane, BorderLayout.CENTER)

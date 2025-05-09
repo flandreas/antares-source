@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.model
 
 import ch.scorpion.jabbah.base.EnumProperty
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.io.AbstractStorable
 import ch.scorpion.jabbah.io.Reference
 import ch.scorpion.jabbah.io.ReferenceResolver
@@ -17,6 +18,11 @@ enum class DocumentType(override val customName: String) : EnumProperty<Document
             DocumentType.entries.find { it.customName == customName }
                 ?: throw IllegalArgumentException("unknown DocumentType $customName)")
     }
+
+    override fun toString(): String =
+        when (this) {
+            Markdown -> Translations.getString("$BASE_KEY.markdown")
+        }
 }
 
 class Document(
