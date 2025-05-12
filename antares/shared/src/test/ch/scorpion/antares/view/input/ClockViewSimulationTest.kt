@@ -83,4 +83,61 @@ class ClockViewSimulationTest : AbstractCircuitTest() {
 
 		assertEquals(DigitalSignalFactory.of(false), clockView.model.getOutput<DigitalSignal>().getOutgoingSignal())
 	}
+
+	@Test
+	fun shouldApplyOffPercentage() {
+		clockView.offPercentage = 20.0
+		startSimulation()
+
+		proceedToMillis(19L)
+		assertEquals(DigitalSignalFactory.of(false), clockView.model.getOutput<DigitalSignal>().getOutgoingSignal())
+
+		proceedToMillis(20L)
+		assertEquals(DigitalSignalFactory.of(true), clockView.model.getOutput<DigitalSignal>().getOutgoingSignal())
+
+		proceedToMillis(100L)
+		assertEquals(DigitalSignalFactory.of(false), clockView.model.getOutput<DigitalSignal>().getOutgoingSignal())
+
+		proceedToMillis(119L)
+		assertEquals(DigitalSignalFactory.of(false), clockView.model.getOutput<DigitalSignal>().getOutgoingSignal())
+
+		proceedToMillis(120L)
+		assertEquals(DigitalSignalFactory.of(true), clockView.model.getOutput<DigitalSignal>().getOutgoingSignal())
+
+		proceedToMillis(199L)
+		assertEquals(DigitalSignalFactory.of(true), clockView.model.getOutput<DigitalSignal>().getOutgoingSignal())
+
+		proceedToMillis(200L)
+		assertEquals(DigitalSignalFactory.of(false), clockView.model.getOutput<DigitalSignal>().getOutgoingSignal())
+	}
+
+	@Test
+	fun shouldStayOffWithHundredOffPercent() {
+		clockView.offPercentage = 100.0
+		startSimulation()
+
+		proceedToMillis(50L)
+		assertEquals(DigitalSignalFactory.of(false), clockView.model.getOutput<DigitalSignal>().getOutgoingSignal())
+
+		proceedToMillis(150L)
+		assertEquals(DigitalSignalFactory.of(false), clockView.model.getOutput<DigitalSignal>().getOutgoingSignal())
+
+		proceedToMillis(250L)
+		assertEquals(DigitalSignalFactory.of(false), clockView.model.getOutput<DigitalSignal>().getOutgoingSignal())
+	}
+
+	@Test
+	fun shouldStayOnWithZeroOffPercent() {
+		clockView.offPercentage = 0.0
+		startSimulation()
+
+		proceedToMillis(50L)
+		assertEquals(DigitalSignalFactory.of(true), clockView.model.getOutput<DigitalSignal>().getOutgoingSignal())
+
+		proceedToMillis(150L)
+		assertEquals(DigitalSignalFactory.of(true), clockView.model.getOutput<DigitalSignal>().getOutgoingSignal())
+
+		proceedToMillis(250L)
+		assertEquals(DigitalSignalFactory.of(true), clockView.model.getOutput<DigitalSignal>().getOutgoingSignal())
+	}
 }

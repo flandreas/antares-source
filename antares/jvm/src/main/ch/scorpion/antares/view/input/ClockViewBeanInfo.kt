@@ -15,6 +15,7 @@ class ClockViewBeanInfo : DigitalComponentViewBeanInfo<ClockView>() {
 	    private val periodOrFrequency = CommandPropertySwing("periodOrFrequency", "element.property.ClockView.periodOrFrequency", String::class.java, componentBeanProvider)
 	    private val enabled = CommandPropertySwing("enabled", "element.property.ClockView.enabled", Boolean::class.java, componentBeanProvider)
 	    private val knobEnabled = CommandPropertySwing("knobEnabled", "element.property.ClockView.knobEnabled", Boolean::class.java, componentBeanProvider)
+		private val offPercentage = CommandPropertySwing("offPercentage", "element.property.ClockView.offPercentage", Double::class.java, componentBeanProvider)
     }
 
     override fun addProperties(bean: ClockView, editor: Editor, properties: MutableList<Property>) {
@@ -22,6 +23,7 @@ class ClockViewBeanInfo : DigitalComponentViewBeanInfo<ClockView>() {
 
 	    properties.add(name.bind(editor, beanIdProvider(bean.id)))
 	    properties.add(periodOrFrequency.bind(editor, beanIdProvider(bean.id)))
+		properties.add(offPercentage.bind(editor, beanIdProvider(bean.id)))
 	    properties.add(enabled.bind(editor, beanIdProvider(bean.id)))
 	    properties.add(knobEnabled.bind(editor, beanIdProvider(bean.id)))
     }

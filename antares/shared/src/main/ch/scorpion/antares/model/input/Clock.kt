@@ -62,10 +62,20 @@ class Clock(name: String? = null) : CalculatingVertice(CALCULATOR, name) {
 
 	var periodOrFrequency: PeriodOrFrequency = PeriodOrFrequency(1_000_000_000, Nanosecond)
 		set(value) {
-			// Set propagationDelay even if periodOrFrequency hasn't changed in order to restore
+			// Set propagationDelay even if periodOrFrequency hasn't changed to restore
 			// propagationDelay that might have changed during simulation
 			propagationDelay = LongValueImpl(value.asNanoseconds.value)
 			if (field != value) {
+				field = value
+				stateChanged()
+			}
+		}
+
+	/** The percentage of [periodOrFrequency] during which the output is OFF.*/
+	var offPercentage: Double = 50.0
+		set(value) {
+			if (field != value) {
+				require(value in 0.0..100.0) { "Percentage must be between 0 and 100" }
 				field = value
 				stateChanged()
 			}
@@ -89,6 +99,7 @@ class Clock(name: String? = null) : CalculatingVertice(CALCULATOR, name) {
 		if (periodOrFrequency.unit != Nanosecond) {
 			writer.writeString("unit", periodOrFrequency.unit.customName)
 		}
+		writer.writeDouble("offPercentage", offPercentage)
 	}
 
 	override fun read(reader: StoreReader) {
@@ -105,6 +116,9 @@ class Clock(name: String? = null) : CalculatingVertice(CALCULATOR, name) {
 				propagationDelay.value,
 				Nanosecond)
 		}
+		if (reader.hasAttribute("offPercentage")) {
+			offPercentage = reader.readDouble("offPercentage")
+		}
 	}
 
 	/** ---- [Actor] interface */
@@ -115,13 +129,14 @@ class Clock(name: String? = null) : CalculatingVertice(CALCULATOR, name) {
 		cycleCount = 0
 		periodOrFrequencyBuffer = periodOrFrequency.copy()
 		isOn = false
-		getOutput<DigitalSignal>().setOutgoingSignalBuffered(DigitalSignalFactory.of(this.isOn), signalHandler)
+		getOutput<DigitalSignal>().setOutgoingSignalBuffered(DigitalSignalFactory.of(isOn), signalHandler)
 	}
 
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
-		requestActingAfter(signalHandler, propagationDelay.value / 2, createActorData(null))
-		setOn(signalHandler, false)
+		if (offPercentage < 100) {
+			requestActingAfter(signalHandler, offTime, createActorData(null))
+		}
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {
@@ -133,14 +148,20 @@ class Clock(name: String? = null) : CalculatingVertice(CALCULATOR, name) {
 
 	/** ---- [Clock] */
 
-	fun setOn(signalHandler: SignalHandler, on: Boolean) {
-		if (this.isOn != on) {
+	private val offTime: Long get() = (propagationDelay.value / 100.0 * offPercentage).toLong()
+
+	private val onTime: Long get() = propagationDelay.value / 100 * (100.0 - offPercentage).toLong()
+
+	private fun setOn(signalHandler: SignalHandler, on: Boolean) {
+		if (isOn != on) {
 			cycleCount++
-			this.isOn = on
-			getOutput<DigitalSignal>().setOutgoingSignalBuffered(DigitalSignalFactory.of(this.isOn), signalHandler)
+			isOn = on
+			getOutput<DigitalSignal>().setOutgoingSignalBuffered(DigitalSignalFactory.of(isOn), signalHandler)
 			stateChanged(signalHandler)
 			if (isEnabled) {
-				requestActingAfter(signalHandler, propagationDelay.value / 2, createActorData(null))
+				if (isOn && offPercentage > 0.0 || !isOn && offPercentage < 100.0) {
+					requestActingAfter(signalHandler, if (isOn) onTime else offTime, createActorData(null))
+				}
 			}
 		}
 	}

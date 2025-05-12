@@ -97,6 +97,13 @@ class ClockView(
 			model.periodOrFrequency = PeriodOrFrequencyParser.parse(value)
 		}
 
+	@Suppress("unused") // Reflection
+	var offPercentage: Double
+		get() = model.offPercentage
+		set(value) {
+			model.offPercentage = value
+		}
+
 	var isEnabled: Boolean
 		get() = model.isEnabled
 		set(value) {
