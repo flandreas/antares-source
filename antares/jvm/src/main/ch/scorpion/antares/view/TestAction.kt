@@ -14,7 +14,8 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.command.SourcingCommandManager
-import ch.scorpion.jabbah.graph.model.GraphPortNameChanged
+import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
@@ -38,7 +39,7 @@ class TestAction(
 	private var eventBusStatistic: EventBusStatistics? = null
 
 	override fun execute(event: ActionEvent) {
-		printEventBusStatistic()
+		showComponentMessage()
 	}
 
 	private fun printEventBusStatistic() {
@@ -55,6 +56,12 @@ class TestAction(
 
 	private fun showToast() {
 		Toast.show("Hallo Antares!")
+	}
+
+	private fun showComponentMessage() {
+		BaseModule.eventBus.post(
+			ComponentMessage(ComponentMessageType.Info, null, "element.property.transistorSymbol.desc")
+		)
 	}
 
 	private fun createCommandSnapshot() {

@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.animation.AnimationTask
 import ch.scorpion.jabbah.animation.AnimationTaskAdapter
 import ch.scorpion.jabbah.animation.Animator
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.ui.DisplayDuration
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.Frame
@@ -19,7 +20,6 @@ import javax.swing.text.StyleConstants
 
 actual object Toast {
 
-	private const val SHOW_DURATION_MS = 2000
 	private const val FADE_DURATION_MS = 600.0
 	private const val BOTTOM_DIST = 70
 	private const val POSITION_CENTER = true
@@ -35,7 +35,7 @@ actual object Toast {
 
 		System
 			.createTimer()
-			.initialize(SHOW_DURATION_MS, repeats = false) {
+			.initialize(DisplayDuration.calculateMilliseconds(message), repeats = false) {
 				val fadeOut = OpacityAnimation.fadeOut(frame, FADE_DURATION_MS).apply {
 					addListener(object : AnimationTaskAdapter() {
 						override fun ended(task: AnimationTask) {

@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.ui.DisplayDuration
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawableContainer
 import ch.scorpion.jabbah.draw.View
@@ -38,6 +39,10 @@ class ComponentMessageDisplayer<T : Drawing<Component>>(
 
 		/** The inset in view coordinates to apply when making [Drawable]s visible.*/
 		private const val MAKE_VISIBLE_INSET = 10.0
+
+		private const val FADE_IN_DURATION_MS = 300
+
+		private const val FADE_OUT_DURATION_MS = 600
 	}
 
 	init {
@@ -61,6 +66,7 @@ class ComponentMessageDisplayer<T : Drawing<Component>>(
 		} else {
 			Translations.getString(msg.messageKey, msg.messageParam)
 		}
+
 		val messageView = FlexibleTextView(
 			text = text,
 			anchor = calculateAnchorPoint(msg),
@@ -78,7 +84,12 @@ class ComponentMessageDisplayer<T : Drawing<Component>>(
 		container.add(messageView)
 		container.validate()
 
-		TransparentAnimation.fadeInOut(messageView, container, 300, 2_000, 600, animator)
+		TransparentAnimation.fadeInOut(
+			messageView,
+			container,
+			FADE_IN_DURATION_MS,
+			DisplayDuration.calculateMilliseconds(text),
+			FADE_OUT_DURATION_MS, animator)
 	}
 
 	private fun calculateAnchorPoint(msg: ComponentMessage): Point2D {
