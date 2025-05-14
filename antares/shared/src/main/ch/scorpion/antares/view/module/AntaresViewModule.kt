@@ -609,10 +609,10 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(TRISTATE_BUFFER, "library.element.TriStateBuffer", { "/img/tristate-buffer.png" }, TriStateBufferGateView::class)
 		repository.register(DELAY, "library.element.Delay", { "/img/delay.png" }, DelayGateView::class)
 		repository.register(INPUT, "library.element.GraphInput", { "/img/input.png" }, HelpId(DigitalCircuitInOutView::class.simpleName!!)) {
-			DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(portType = PortType.INPUT))
+			DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "I", portType = PortType.INPUT))
 		}
 		repository.register(INPUT_OUTPUT, "library.element.GraphInOut", { "/img/inout.png" }, HelpId(DigitalCircuitInOutView::class.simpleName!!)) {
-			val inoutView = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(portType = PortType.INOUT))
+			val inoutView = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "IO", portType = PortType.INOUT))
 			inoutView.orientation = Direction.WEST
 			inoutView
 		}
@@ -625,7 +625,7 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(TERMINAL, "library.element.Terminal", { "/img/terminal.png" }, TerminalView::class)
 		repository.register(VIDEO_RAM, "library.element.VideoRam", { "/img/videoram.png" }, VideoRamView::class)
 		repository.register(OUTPUT, "library.element.GraphOutput", { "/img/output.png" }, HelpId(DigitalCircuitInOutView::class.simpleName!!)) {
-			DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(portType = PortType.OUTPUT))
+			DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "O", portType = PortType.OUTPUT))
 		}
 		repository.register(OUTPUT_INPUT, "library.element.GraphInOut", { "/img/inout.png" }, HelpId(DigitalCircuitInOutView::class.simpleName!!)) {
 			val inoutView = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(portType = PortType.INOUT))
