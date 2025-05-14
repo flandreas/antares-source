@@ -158,7 +158,10 @@ subprojects {
 					implementation("org.apache.commons:commons-lang3:$commonsLang3Version")
 					implementation("org.apache.commons:commons-math3:$commonsMathVersion")
 					implementation("commons-codec:commons-codec:$commonsCodecVersion")
+
 					implementation("l2fprod:l2fprod-common-all:$l2fprodVersion")
+					//implementation(":l2fprod:")
+
 					implementation("exml:exml:7.0")
 					implementation("com.formdev:flatlaf:$flatLafVersion:no-natives")
 					implementation("com.github.weisj:jsvg:$jsvgVersion")
