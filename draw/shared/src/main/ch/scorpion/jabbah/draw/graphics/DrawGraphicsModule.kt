@@ -14,7 +14,7 @@ object DrawGraphicsModule : AbstractModule() {
 	val RED_ON_DARK = CompositeColor(Color(236, 35, 46), Color(90, 3, 7), Color(255, 204, 204))
 
     val BLUE = CompositeColor.withDarkerText(Color(72, 186, 233), Color(185, 223, 245))
-	val BLUE_ON_DARK = CompositeColor.withBrighterText(Color(72, 186, 233), Color(3, 16, 139))
+	val BLUE_ON_DARK = CompositeColor.withBrighterText(Color(44, 116, 179), Color(20,66,114))
 
     val GREEN = CompositeColor.withDarkerText(Color(115, 191, 91), Color(198, 226, 184))
 	val GREEN_ON_DARK = CompositeColor.withBrighterText(Color(115, 191, 91), Color(7, 87, 9))
