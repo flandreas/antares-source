@@ -1,15 +1,15 @@
 package ch.scorpion.jabbah.draw.module
 
 import ch.scorpion.jabbah.base.AbstractModule
-import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
+import ch.scorpion.jabbah.base.module.BaseModuleJvm.PREF_TREE_VIEW
 import ch.scorpion.jabbah.base.preferences.*
 import ch.scorpion.jabbah.draw.ThemePreference
 import ch.scorpion.jabbah.draw.View
-import ch.scorpion.jabbah.draw.graphics.RasterImageJvm
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.graphics.ImageLoaderJvm
+import ch.scorpion.jabbah.draw.graphics.RasterImageJvm
 import ch.scorpion.jabbah.draw.view.*
 import org.apache.commons.lang3.SystemUtils
 import javax.swing.JPopupMenu
@@ -19,7 +19,6 @@ import javax.swing.JPopupMenu
  */
 object DrawModuleJvm : AbstractModule() {
 
-	const val PREF_TREE_VIEW = "draw.preferences.group.view"
 	const val PREF_TREE_VIEW_ZOOM_PAN = "draw.preferences.group.view.zoomPan"
 	const val PREF_TREE_VIEW_NAVIGATION = "draw.preferences.group.view.navigation"
 
@@ -52,8 +51,6 @@ object DrawModuleJvm : AbstractModule() {
     }
 
 	private fun buildPreferencesTree(root: PreferenceGroup) {
-
-		root.add(PreferenceGroup(PREF_TREE_VIEW))
 		root.getGroup(PREF_TREE_VIEW).add(PreferenceGroup(PREF_TREE_VIEW_ZOOM_PAN))
 		root.getGroup(PREF_TREE_VIEW).add(PreferenceGroup(PREF_TREE_VIEW_NAVIGATION))
 

@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.base.ui.UIBasics.PROP_TREE_SHOW_ROOT_HANDLES
 import ch.scorpion.jabbah.draw.graphics.Font
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.draw.richtext.RichTextLabel
@@ -95,6 +96,7 @@ class TestcaseTreeView(
 		}
 
 	init {
+		setShowsRootHandles(BaseModule.properties.getBoolean(PROP_TREE_SHOW_ROOT_HANDLES))
 		selectionModel.selectionMode = TreeSelectionModel.SINGLE_TREE_SELECTION
 		addMouseListener(rightMouseListener)
 

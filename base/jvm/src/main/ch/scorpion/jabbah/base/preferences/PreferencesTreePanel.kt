@@ -99,6 +99,7 @@ class PreferencesTreePanel(
 		tree.cellRenderer = TreeCellRenderer()
 		tree.model = PreferencesTreeModelBuilder().build()
 		tree.isRootVisible = false
+		// Don't use the user setting, always show root handles
 		tree.showsRootHandles = true
 		tree.addTreeSelectionListener { updateGroup() }
 		tree.border = BorderFactory.createEmptyBorder(5, 5, 5, 5)

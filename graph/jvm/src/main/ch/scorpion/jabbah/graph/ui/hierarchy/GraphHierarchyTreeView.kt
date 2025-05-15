@@ -1,7 +1,9 @@
 package ch.scorpion.jabbah.graph.ui.hierarchy
 
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
+import ch.scorpion.jabbah.base.ui.UIBasics.PROP_TREE_SHOW_ROOT_HANDLES
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.draw.richtext.RichTextLabel
 import ch.scorpion.jabbah.graph.model.Graph
@@ -27,7 +29,7 @@ class GraphHierarchyTreeView : JTree(DefaultTreeModel(DefaultMutableTreeNode("Em
 
 	init {
 		rootVisible = true
-		showsRootHandles = true
+		setShowsRootHandles(BaseModule.properties.getBoolean(PROP_TREE_SHOW_ROOT_HANDLES))
 		setCellRenderer(Renderer())
 	}
 

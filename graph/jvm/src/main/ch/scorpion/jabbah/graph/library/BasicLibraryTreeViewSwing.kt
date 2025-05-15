@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.base.swing.JTreeUtil.findTreeNode
 import ch.scorpion.jabbah.base.swing.JTreeUtil.getPath
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.base.ui.UIBasics.PROP_TREE_SHOW_ROOT_HANDLES
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.draw.richtext.RichTextLabel
 import ch.scorpion.jabbah.edit.model.text.NamableTreeNode
@@ -43,7 +44,7 @@ open class BasicLibraryTreeViewSwing<T: BasicLibraryTreeView>(
         selectionModel.selectionMode = TreeSelectionModel.SINGLE_TREE_SELECTION
 
         isRootVisible = showWorkspaceNode
-        showsRootHandles = true
+        setShowsRootHandles(BaseModule.properties.getBoolean(PROP_TREE_SHOW_ROOT_HANDLES))
 
         setCellRenderer(Renderer())
         addTreeSelectionListener { basicController.selectedItem = getSelectedItem() }

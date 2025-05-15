@@ -117,15 +117,15 @@ object GraphViewModuleJvm : AbstractModule() {
 	}
 
 	private fun buildPreferencesTree(root: PreferenceGroup) {
-		root.getGroup(DrawModuleJvm.PREF_TREE_VIEW).getGroup(DrawModuleJvm.PREF_TREE_VIEW_NAVIGATION).add(BooleanPreference(
+		root.getGroup(BaseModuleJvm.PREF_TREE_VIEW).getGroup(DrawModuleJvm.PREF_TREE_VIEW_NAVIGATION).add(BooleanPreference(
 			id = GraphNavigationViewController.PROP_DIVE_ANIMATION,
 			nameKey = "graph.preferences.GraphNavigationPanel.diveAnimation"
 		))
-		root.getGroup(DrawModuleJvm.PREF_TREE_VIEW).getGroup(DrawModuleJvm.PREF_TREE_VIEW_NAVIGATION).add(BooleanPreference(
+		root.getGroup(BaseModuleJvm.PREF_TREE_VIEW).getGroup(DrawModuleJvm.PREF_TREE_VIEW_NAVIGATION).add(BooleanPreference(
 			id = GraphFrameController.PROP_AUTO_SWITCH,
 			nameKey = "graph.preferences.GraphFrame.autoSwitch"
 		))
-		root.getGroup(DrawModuleJvm.PREF_TREE_VIEW).getGroup(PREF_TREE_VIEW_ZOOM_PAN).add(FloatPreference(
+		root.getGroup(BaseModuleJvm.PREF_TREE_VIEW).getGroup(PREF_TREE_VIEW_ZOOM_PAN).add(FloatPreference(
 			id = ContainerEditor.PROP_DEFAULT_ZOOM_FACTOR,
 			nameKey = "graph.preferences.ContainerEditor.defaultZoomFactor"
 		))

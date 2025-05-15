@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.base.invocation.SwingInvocationHandler
 import ch.scorpion.jabbah.base.preferences.*
 import ch.scorpion.jabbah.base.sound.SoundEffects
 import ch.scorpion.jabbah.base.time.RealTimeServiceJvm
+import ch.scorpion.jabbah.base.ui.UIBasics
 import java.awt.Toolkit
 
 /**
@@ -19,6 +20,7 @@ import java.awt.Toolkit
  */
 object BaseModuleJvm : AbstractModule() {
 
+	const val PREF_TREE_VIEW = "base.preferences.group.view"
 	private const val PREF_TREE_ROOT = "base.preferences.group.root"
 	const val PREF_TREE_GENERAL = "base.preferences.group.general"
 	const val PREF_TREE_NETWORK = "base.preferences.group.network"
@@ -42,6 +44,7 @@ object BaseModuleJvm : AbstractModule() {
 	}
 
 	private fun fillProperties(properties: Properties) {
+		properties.set(UIBasics.PROP_TREE_SHOW_ROOT_HANDLES, true)
 		properties.set(InteractiveErrorHandler.PROP_SHOW_UNEXPECTED_ERROR, true)
 		properties.set(FontIdentification.PROP_FONT_IDENTIFICATION, "")
 	}
@@ -99,6 +102,7 @@ object BaseModuleJvm : AbstractModule() {
 		root.add(PreferenceGroup(PREF_TREE_GENERAL))
 		root.add(PreferenceGroup(PREF_TREE_NETWORK))
 		root.add(PreferenceGroup(PREF_TREE_RENDERING))
+		root.add(PreferenceGroup(PREF_TREE_VIEW))
 
 		root.getGroup(PREF_TREE_GENERAL).add(EnumPreference(
 			id = Language.PROP_LANGUAGE,
@@ -131,6 +135,11 @@ object BaseModuleJvm : AbstractModule() {
 			id = SoundEffects.PROP_ENABLE_SOUND_EFFECTS,
 			nameKey = "base.preferences.soundEffects"
 		))
+
+		root.getGroup(PREF_TREE_VIEW).add(BooleanPreference(
+			id = UIBasics.PROP_TREE_SHOW_ROOT_HANDLES,
+			nameKey = "base.preference.treeRootHandles",
+			needsRestart = true))
 	}
 
 	private fun registerHelpSources() {

@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.base.swing.JTreeUtil
 import ch.scorpion.jabbah.base.swing.PopupMenuButton
 import ch.scorpion.jabbah.base.swing.ShowSidebarPaneContentRequest
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.base.ui.UIBasics.PROP_TREE_SHOW_ROOT_HANDLES
 import ch.scorpion.jabbah.draw.richtext.RichTextLabel
 import ch.scorpion.jabbah.edit.model.text.NamableTreeNode
 import ch.scorpion.jabbah.graph.library.LibraryModule
@@ -86,7 +87,7 @@ class TestRunResultsPanel(
 
 		tree.cellRenderer = TreeRenderer()
 		tree.rowHeight = 24
-		tree.showsRootHandles = true
+		tree.setShowsRootHandles(BaseModule.properties.getBoolean(PROP_TREE_SHOW_ROOT_HANDLES))
 		tree.addTreeSelectionListener { handleTreeSelection() }
 		tree.addMouseListener(MouseListener())
 

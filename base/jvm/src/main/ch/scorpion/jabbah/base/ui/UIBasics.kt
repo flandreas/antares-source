@@ -8,6 +8,8 @@ import javax.swing.border.Border
 
 object UIBasics {
 
+	const val PROP_TREE_SHOW_ROOT_HANDLES = "base.showTreeRootHandles"
+
 	val TITLE_FONT: Font = UIManager.getFont("Label.font").let {
 		it.deriveFont(Font.BOLD, it.size + 4f)!!
 	}
