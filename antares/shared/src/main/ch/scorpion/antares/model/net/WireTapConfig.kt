@@ -82,7 +82,7 @@ class WireTapConfig(
 			tapPositions.mapIndexed { i: Int, p: Int -> if (i == index) pos else p})
 
 	fun withAddedNarrowPorts(count: Int): WireTapConfig {
-		if (narrowPortCount.count + count >= MAX_TAP_COUNT) {
+		if (narrowPortCount.count + count > MAX_TAP_COUNT) {
 			throw IllegalArgumentException("Max. $MAX_TAP_COUNT output ports allowed in WireTap")
 		}
 		return withDefaultTapPositions(wideSideBitWidth, narrowSideBitWidth, PortCount.of(narrowPortCount.count + count))
