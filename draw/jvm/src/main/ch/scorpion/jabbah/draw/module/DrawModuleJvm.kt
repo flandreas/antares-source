@@ -73,7 +73,7 @@ object DrawModuleJvm : AbstractModule() {
 		root.getGroup(BaseModuleJvm.PREF_TREE_RENDERING).add(BooleanPreference(
 			id = DropShadow.PROP_SHADOW,
 			nameKey = "draw.preferences.DropShadow.enable",
-			needsRestart = true))
+			needsRestart = false))
 
 		root.getGroup(BaseModuleJvm.PREF_TREE_RENDERING).add(IntPreference(
 			id = DropShadow.PROP_OFFSET,

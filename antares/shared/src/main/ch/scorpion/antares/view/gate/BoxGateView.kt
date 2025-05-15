@@ -2,24 +2,15 @@ package ch.scorpion.antares.view.gate
 
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.Look
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
+import ch.scorpion.antares.view.OrientableLabeledRectangularVerticeView
 import ch.scorpion.antares.view.port.DigitalPortView
-import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.geom.Direction
-import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
-import ch.scorpion.jabbah.draw.graphics.Font
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
-import ch.scorpion.jabbah.edit.model.text.Label
-import ch.scorpion.jabbah.edit.model.text.RotationDisplayStrategy
-import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.view.VerticeView
@@ -43,54 +34,7 @@ open class BoxGateView<T : Vertice>(
 	text: String,
 	vertice: T,
 	private val minWidth: Int = DEF_MIN_WIDTH
-) : OrientableRectangularVerticeView<T>(styleProvider, vertice) {
-
-	/** Represents the supported styles for the [Label] of a [BoxGateView].*/
-	enum class LabelStyle {
-
-		/**
-		 * Positions the [Label] within the box by centering it horizontally and placing it at one-third of the
-		 * height.
-		 */
-		LARGE_CENTERED {
-			override fun updateLabel(box: BoxGateView<*>) {
-				box.internalLabel?.let {
-					it.font = box.symbolFont
-					it.ownerRotation = box.rotation
-					it.horizontalAlignment = HorizontalAlignment.CENTER
-					it.verticalAlignment = VerticalAlignment.CENTER
-					it.location = when (box.rotation) {
-						Rotation.R0 -> Point2D(box.x + box.width / 2, box.y + box.height / 3)
-						Rotation.R180 -> Point2D(box.x + box.width / 2, box.y + 2 * box.height / 3)
-						Rotation.R90 -> Point2D(box.x + 2 * box.width / 3, box.y + box.height / 2)
-						Rotation.R270 -> Point2D(box.x + box.width / 3, box.y + box.height / 2)
-					}
-				}
-			}
-		},
-
-		SMALL_UPPER_LEFT {
-			override fun updateLabel(box: BoxGateView<*>) {
-				box.internalLabel?.let {
-					it.font = deriveFont(box)
-					it.ownerRotation = box.rotation
-					it.horizontalAlignment = HorizontalAlignment.RIGHT
-					it.verticalAlignment = VerticalAlignment.TOP
-					it.location = Point2D(box.bounds.maxX - SMALL_LABEL_INSET, box.bounds.minY + SMALL_LABEL_INSET)
-				}
-			}
-		};
-
-		companion object {
-			const val SMALL_LABEL_INSET = 3
-			const val FONT_SIZE_FACTOR = 0.6
-		}
-
-		abstract fun updateLabel(box: BoxGateView<*>)
-
-		fun deriveFont(box: BoxGateView<*>): Font =
-			box.font.deriveFont((box.font.size * FONT_SIZE_FACTOR).toInt())
-	}
+) : OrientableLabeledRectangularVerticeView<T>(styleProvider, text,vertice) {
 
 	companion object {
 		private const val DEF_MIN_WIDTH = 6
@@ -102,32 +46,6 @@ open class BoxGateView<T : Vertice>(
 
 		/** The distance between [Port]s if the number of [Port]s is bigger than two. */
 		const val SMALL_PORT_DISTANCE = 2
-	}
-
-	/** Holds the current [LabelStyle] used for positioning and sizing the label of this [BoxGateView].*/
-	var labelStyle: LabelStyle = LabelStyle.LARGE_CENTERED
-		set(value) {
-			if (field == value) {
-				return
-			}
-			invalidate()
-			field = value
-			field.updateLabel(this)
-			invalidate()
-			validate()
-		}
-
-	/** The text displayed inside the box representing the name of the [Vertice]. */
-	protected val internalLabel: Label? = if (StringUtils.isNotEmpty(text)) {
-		Label(
-			text = text,
-			font = font,
-			horizontalAlignment = HorizontalAlignment.CENTER,
-			verticalAlignment = VerticalAlignment.CENTER,
-			location = Point2D.ZERO,
-			rotationDisplayStrategy = RotationDisplayStrategy.KEEP_HORIZONTAL)
-	} else {
-		null
 	}
 
 	/** ---- [Drawable] interface */
@@ -168,43 +86,14 @@ open class BoxGateView<T : Vertice>(
 		context.g.stroke = stroke
 		context.g.drawRect(xInt, yInt, widthInt, heightInt)
 
-		if (internalLabel != null) {
-			if (text != null) {
-				if (internalLabel.text != text) {
-					internalLabel.text = text
-				}
-			}
-			internalLabel.draw(context)
-		}
+		drawLabelText(context, text)
 	}
-
-	/** ---- [Component] */
-
-	override var rotation: Rotation
-		get() = super.rotation
-		set(value) {
-			super.rotation = value
-			labelStyle.updateLabel(this)
-		}
 
 	/** ---- [AbstractRectangularVerticeView] */
 
 	override val storeSize: Boolean get() = false
 
 	/** ---- [BoxGateView] */
-
-	open val symbolFont: Font get() = font
-
-	var labelText: String?
-		get() = internalLabel?.text
-		set(value) {
-			internalLabel?.let {
-				invalidate()
-				internalLabel.text = value ?: ""
-				invalidate()
-				validate()
-			}
-		}
 
 	open fun createInputPortView(inputPort: Port<DigitalSignal>, portLabelPosition: PortLabelPosition = PortLabelPosition.INTERNAL): DigitalPortView =
 		DigitalPortView(

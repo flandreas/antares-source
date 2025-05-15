@@ -5,9 +5,11 @@ import ch.scorpion.antares.model.gate.effectiveGateInputBit
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.Handedness
 import ch.scorpion.antares.view.Look
+import ch.scorpion.antares.view.OrientableLabeledRectangularVerticeView
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
+import ch.scorpion.antares.view.gate.GateMnemonic.enabled
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.geom.AffineTransform
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -497,15 +499,15 @@ object GateMnemonic {
 			&& isDisplayableFor(context.g.transform)
 			&& isDisplayableFor(graphApplicationContext.mode, graphApplicationContext.systemSpeedCategory.systemSpeedCategory)
 		) {
-			if (gateView is BoxGateView<*>) {
-				gateView.labelStyle = BoxGateView.LabelStyle.SMALL_UPPER_LEFT
+			if (gateView is OrientableLabeledRectangularVerticeView<*>) {
+				gateView.labelStyle = OrientableLabeledRectangularVerticeView.LabelStyle.SMALL_UPPER_LEFT
 			}
 			context.g.translate(gateView.x, gateView.y)
 			return true
 		}
-		if (gateView is BoxGateView<*>) {
+		if (gateView is OrientableLabeledRectangularVerticeView<*>) {
 			// TODO Remember old labelStyle and re-establish in [end]
-			gateView.labelStyle = BoxGateView.LabelStyle.LARGE_CENTERED
+			gateView.labelStyle = OrientableLabeledRectangularVerticeView.LabelStyle.LARGE_CENTERED
 		}
 		return false
 	}

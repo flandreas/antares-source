@@ -422,6 +422,12 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 				nameKey = "antares.preference.TransistorPortNames",
 				needsRestart = true
 			))
+
+			add(BooleanPreference(
+				id = SymbolStyle.PROP_TRI_STATE_ALWAYS_TRIANGLE,
+				nameKey = "antares.preference.TriStateAlwaysTriangle",
+				needsRestart = true
+			))
 		}
 
 	private fun buildTestcasesPreferenceTree(): PreferenceGroup =

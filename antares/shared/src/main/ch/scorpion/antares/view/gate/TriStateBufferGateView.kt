@@ -1,11 +1,14 @@
 package ch.scorpion.antares.view.gate
 
 import ch.scorpion.antares.model.Logic
+import ch.scorpion.antares.model.OutputAnnotation
 import ch.scorpion.antares.model.gate.TriStateBufferGate
+import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.Handedness
+import ch.scorpion.antares.view.OrientableLabeledRectangularVerticeView
+import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.symbolstyle.SymbolStyle
@@ -28,10 +31,10 @@ import ch.scorpion.jabbah.io.StoreWriter
 class TriStateBufferGateView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: TriStateBufferGate = TriStateBufferGate()
-) : OrientableRectangularVerticeView<TriStateBufferGate>(styleProvider, model) {
+) : OrientableLabeledRectangularVerticeView<TriStateBufferGate>(styleProvider, "1", model) {
 
 	companion object {
-		private const val controlPortViewOffsetY = (AbstractAntaresPortView.LENGTH * 0.75).toInt()
+		private const val CONTROL_PORT_VIEW_OFFSET_Y = (AbstractAntaresPortView.LENGTH * 0.75).toInt()
 	}
 
 	var handedness: Handedness = Handedness.RIGHT
@@ -45,6 +48,7 @@ class TriStateBufferGateView(
 			}
 		}
 
+	@Suppress("unused") // Reflection
 	var inputPortName: String?
 		get() = model.getPort<DigitalSignal>(1).name
 		set(value) {
@@ -54,6 +58,7 @@ class TriStateBufferGateView(
 			}
 		}
 
+	@Suppress("unused") // Reflection
 	var outputPortName: String?
 		get() = model.getOutput<DigitalSignal>().name
 		set(value) {
@@ -95,9 +100,14 @@ class TriStateBufferGateView(
 			direction = directionOfHandedness,
 			portLabelPosition = PortLabelPosition.HIDE,
 			x = (inputPortView.unconnectedLength + bounds.width / 2).toInt(),
-			y = if (handedness == Handedness.RIGHT) controlPortViewOffsetY else -controlPortViewOffsetY,
+			y = if (handedness == Handedness.RIGHT) CONTROL_PORT_VIEW_OFFSET_Y else -CONTROL_PORT_VIEW_OFFSET_Y,
 			length = AbstractAntaresPortView.LENGTH - (AbstractAntaresPortView.LENGTH * 0.25).toInt()))
 
+		if (AntaresViewModule.currentSymbolStyle.symbolStyle == SymbolStyle.EUROPEAN && !SymbolStyle.triStateAlwaysTriangle) {
+			(model.getPort<DigitalSignal>(3) as DigitalPort).outputAnnotation = OutputAnnotation.TRI_STATE
+		}
+
+		// These bounds must fit both the American style (triangle) and the European style (rectangle)
 		setBounds(
 			AbstractAntaresPortView.LENGTH.toDouble(), -SymbolStyle.NOT_PATH.boundingBox.height / 2,
 			SymbolStyle.NOT_PATH.boundingBox.width, SymbolStyle.NOT_PATH.boundingBox.height)
@@ -121,13 +131,14 @@ class TriStateBufferGateView(
 
 	override fun drawImpl(context: DrawContext) {
 		val oldColor = context.g.color
-		val bounds = SymbolStyle.NOT_PATH.boundingBox
 
-		super.drawImpl(context)
+		drawImplBeforeBorder(context)
 
-		SymbolStyle.drawAmericanGate(this, x, y, bounds.height, SymbolStyle.NOT_PATH, context,
-			getApplicableForegroundColor(context), getApplicableBackgroundColor(context), stroke, false, transparency)
+		AntaresViewModule.currentSymbolStyle.symbolStyle.drawTriStateBufferGate(
+			this, context, getApplicableForegroundColor(context), getApplicableBackgroundColor(context), stroke)
 		GateMnemonic.drawTriStateBuffer(this, context, getApplicableForegroundColor(context))
+
+		drawImplAfterBorder(context)
 
 		context.g.color = oldColor
 	}
@@ -159,7 +170,7 @@ class TriStateBufferGateView(
 		val enablePortView = getPortView(model.getEnablePort())!!
 		enablePortView.location = Point2D(
 			x = (inputPortView.unconnectedLength + bounds.width / 2).toInt(),
-			y = if (handedness == Handedness.RIGHT) controlPortViewOffsetY else -controlPortViewOffsetY
+			y = if (handedness == Handedness.RIGHT) CONTROL_PORT_VIEW_OFFSET_Y else -CONTROL_PORT_VIEW_OFFSET_Y
 		)
 		enablePortView.direction = directionOfHandedness
 	}

@@ -2,16 +2,19 @@ package ch.scorpion.antares.view.symbolstyle
 
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.Look.SCALE
+import ch.scorpion.antares.view.OrientableLabeledRectangularVerticeView
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.gate.BoxGateView
 import ch.scorpion.antares.view.gate.CustomShapeContent
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
+import ch.scorpion.antares.view.gate.TriStateBufferGateView
 import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Path
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -64,6 +67,30 @@ enum class SymbolStyle(
 
 		override fun drawBufferGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke)
+		}
+
+		override fun drawTriStateBufferGate(gate: OrientableLabeledRectangularVerticeView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+			if (triStateAlwaysTriangle) {
+				AMERICAN.drawTriStateBufferGate(gate, context, foregroundColor, backgroundColor, stroke)
+				return
+			}
+
+			val h = gate.heightInt - 1.5 * SCALE
+
+			if (gate.shadow) {
+				DropShadow.draw(context, gate.transparency) {
+					context.g.fillRect(gate.xInt, gate.yInt, gate.widthInt, h.toInt())
+				}
+			}
+
+			context.g.color = backgroundColor
+			context.g.fillRect(gate.x, gate.y, gate.bounds.width, h)
+
+			context.g.color = foregroundColor
+			context.g.stroke = stroke
+			context.g.drawRect(gate.x, gate.y, gate.bounds.width, h)
+
+			gate.drawLabelText(context)
 		}
 
 		override fun drawResistor(resistor: OrientableRectangularVerticeView<*>, isVariable: Boolean, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke) {
@@ -176,6 +203,12 @@ enum class SymbolStyle(
 			drawAmericanGate(gate, NOT_PATH, context, foregroundColor, backgroundColor, stroke)
 		}
 
+		override fun drawTriStateBufferGate(gate: OrientableLabeledRectangularVerticeView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+			val bounds = SymbolStyle.NOT_PATH.boundingBox
+			drawAmericanGate(gate, gate.x, gate.y, bounds.height, SymbolStyle.NOT_PATH, context,
+				foregroundColor, backgroundColor, stroke, false, gate.transparency)
+		}
+
 		override fun drawResistor(resistor: OrientableRectangularVerticeView<*>, isVariable: Boolean, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke) {
 			context.g.paint = foregroundColor
 			context.g.stroke = getResistorStroke(resistor.stroke)
@@ -254,6 +287,10 @@ enum class SymbolStyle(
 			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke, bufferText)
 		}
 
+		override fun drawTriStateBufferGate(gate: OrientableLabeledRectangularVerticeView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+			AMERICAN.drawTriStateBufferGate(gate, context, foregroundColor, backgroundColor, stroke)
+		}
+
 		override fun drawResistor(resistor: OrientableRectangularVerticeView<*>, isVariable: Boolean, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke) {
 			EUROPEAN.drawResistor(resistor, isVariable, context, foregroundColor, backgroundColor, stroke)
 		}
@@ -282,6 +319,9 @@ enum class SymbolStyle(
 		/** The name of the [String] property in [Properties] designating the [SymbolStyle]'s name. */
 		const val PROP_SYMBOL_STYLE = "ch.scorpion.antares.view.symbolStyle"
 
+		/** The name of the [Boolean] property in [Properties] controlling whether [TriStateBufferGateView] is always drawn as triangle shape*/
+		const val PROP_TRI_STATE_ALWAYS_TRIANGLE = "ch.scorpion.antares.view.triStateAlwaysTriangle"
+
 		private const val EXCLUSIVE_OFFSET = 6.0
 
 		fun withName(customName: String): SymbolStyle {
@@ -291,6 +331,10 @@ enum class SymbolStyle(
 				}
 			}
 			throw IllegalArgumentException("Unknown SymbolStyle $customName")
+		}
+
+		val triStateAlwaysTriangle: Boolean by lazy {
+			BaseModule.properties.getBoolean(PROP_TRI_STATE_ALWAYS_TRIANGLE)
 		}
 
 		val AND_PATH = System.createPath()
@@ -486,6 +530,8 @@ enum class SymbolStyle(
 	abstract fun drawNotGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
 
 	abstract fun drawBufferGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
+
+	abstract fun drawTriStateBufferGate(gate: OrientableLabeledRectangularVerticeView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
 
 	abstract fun drawResistor(resistor: OrientableRectangularVerticeView<*>, isVariable: Boolean, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke)
 

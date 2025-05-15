@@ -316,6 +316,7 @@ object AntaresViewModule : AbstractModule() {
 
 		properties.set(AbstractSignalHistoryDrawer.PROP_FILL_SIGNAL, true)
 		properties.set(SymbolStyle.PROP_SYMBOL_STYLE, SymbolStyle.AMERICAN.customName)
+		properties.set(SymbolStyle.PROP_TRI_STATE_ALWAYS_TRIANGLE, false)
 		properties.set(TransistorViewSymbol.PROP_TRANSISTOR_SYMBOL, TransistorViewSymbol.Bulk.customName)
 
 		properties.set(AnalogEdgeView.PREF_SPEED, AnalogEdgeView.DEF_SPEED)
