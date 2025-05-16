@@ -1,4 +1,4 @@
-import org.asciidoctor.gradle.AsciidoctorTask
+//import org.asciidoctor.gradle.AsciidoctorTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.gradle.internal.os.OperatingSystem
 
@@ -16,7 +16,7 @@ val kotlinVersion: String by extra
 plugins {
 	kotlin("multiplatform") version "2.0.0" apply false
 	kotlin("plugin.serialization") version "1.9.23" apply false
-	id("org.asciidoctor.convert") version "1.5.9.2"
+	id("org.asciidoctor.jvm.convert") version "3.2.0"
 	id("maven-publish")
 	id("dev.mokkery") version "2.0.0" apply false
 }
@@ -34,9 +34,6 @@ allprojects {
 		maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-js-wrappers")
 		maven("https://jitpack.io")
 		mavenCentral()
-		flatDir {
-			dirs("../lib")
-		}
 
 		// Publish Jabbah core libraries to Bytesave, so that Akrab can fetch from Bytesave
 		maven {
@@ -160,7 +157,6 @@ subprojects {
 					implementation("commons-codec:commons-codec:$commonsCodecVersion")
 
 					implementation("l2fprod:l2fprod-common-all:$l2fprodVersion")
-					//implementation(":l2fprod:")
 
 					implementation("exml:exml:7.0")
 					implementation("com.formdev:flatlaf:$flatLafVersion:no-natives")
@@ -186,7 +182,7 @@ subprojects {
 					implementation("org.apache.xmlgraphics:batik-xml:$batikVersion")
 
 					// Markdown HTML renderer and Swing viewer
-					implementation(":jmdviewer:0.8")
+					implementation("io.antarescircuit:jmdadocviewer:1.0")
 					implementation("org.commonmark:commonmark:0.18.0")
 					implementation("org.commonmark:commonmark-ext-gfm-tables:0.18.0")
 					implementation("org.commonmark:commonmark-ext-yaml-front-matter:0.18.0")
@@ -273,11 +269,13 @@ tasks {
 		into("build/doc/user-manual/html5")
 	}
 
-	"asciidoctor"(AsciidoctorTask::class) {
+	/*
+	"asciidoctor"(org.asciidoctor.gradle.AsciidoctorTask::class) {
 		dependsOn(getByName("copyImages"))
 		sourceDir = file("doc/user-manual")
 		outputDir = file("build/doc/user-manual")
 	}
+	*/
 }
 
 if (OperatingSystem.current().isMacOsX) {
