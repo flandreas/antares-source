@@ -244,10 +244,10 @@ class SubGraphVerticeViewImpl(
 		drawImplBeforeBorder(context)
 
 		drawableBag.drawables
-			.filter { controlViewVisibility.drawFilter(it, context) }
+			.filter { it !is ControlViewComponent && controlViewVisibility.drawFilter(it, context) }
 			.forEach { it.draw(context) }
 
-		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute /*&& StringUtils.isNotEmpty(drawExecScript)*/) {
+		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 			drawExecScriptInterpreter?.let {
 				DrawExecSymbolFunctions.bind(this, context)
 				try {
@@ -259,6 +259,11 @@ class SubGraphVerticeViewImpl(
 				}
 			}
 		}
+
+		// Makes sure that ControlViewComponents are drawn ABOVE the graphics produced by drawExecScriptInterpreter
+		drawableBag.drawables
+			.filter { it is ControlViewComponent && controlViewVisibility.drawFilter(it, context) }
+			.forEach { it.draw(context) }
 
 		drawImplAfterBorder(context)
 	}
