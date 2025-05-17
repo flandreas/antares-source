@@ -5,9 +5,14 @@ import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.ui.Clipboard
 import ch.scorpion.jabbah.base.ui.UIBasics
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.apache.commons.io.output.StringBuilderWriter
 import java.awt.BorderLayout
 import java.awt.Component
@@ -41,6 +46,7 @@ class UnexpectedErrorPanel(
 
 	init {
 		buildUI()
+		sendToBackend()
 	}
 
 	private fun buildUI() {
@@ -99,6 +105,14 @@ class UnexpectedErrorPanel(
 		writer.append(UserActionTrail.toString())
 		writer.append(stackTrace)
 		return writer.toString()
+	}
+
+	@OptIn(DelicateCoroutinesApi::class)
+    private fun sendToBackend() {
+		val description = buildClipboardInfo()
+		GlobalScope.launch(Dispatchers.IO) {
+			BaseModuleJvm.unexpectedErrorService.sendUnexpectedError(description)
+		}
 	}
 
 	private inner class OkAction : AbstractAction("base.action.ok") {

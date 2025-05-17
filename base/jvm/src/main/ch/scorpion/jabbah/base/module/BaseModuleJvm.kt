@@ -9,11 +9,14 @@ import ch.scorpion.jabbah.base.help.HelpSourceRegistry
 import ch.scorpion.jabbah.base.invocation.InteractiveErrorHandler
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.invocation.SwingInvocationHandler
+import ch.scorpion.jabbah.base.invocation.UnexpectedErrorService
+import ch.scorpion.jabbah.base.invocation.UnexpectedErrorServiceImpl
 import ch.scorpion.jabbah.base.preferences.*
 import ch.scorpion.jabbah.base.sound.SoundEffects
 import ch.scorpion.jabbah.base.time.RealTimeServiceJvm
 import ch.scorpion.jabbah.base.ui.UIBasics
 import java.awt.Toolkit
+import java.net.URL
 
 /**
  * Setup of the [ch.scorpion.jabbah.base] module for the JVM target.
@@ -27,6 +30,10 @@ object BaseModuleJvm : AbstractModule() {
 	const val PREF_TREE_RENDERING = "base.preferences.group.rendering"
 
 	val preferencesTree: PreferenceGroup = PreferenceGroup(PREF_TREE_ROOT)
+
+	val unexpectedErrorService: UnexpectedErrorService by lazy {
+		UnexpectedErrorServiceImpl(URL(BaseModule.properties.getString(DataLocation.PROP_SERVER_URL))
+	) }
 
 	override fun initialize() {
 		defineKeyCodes()
