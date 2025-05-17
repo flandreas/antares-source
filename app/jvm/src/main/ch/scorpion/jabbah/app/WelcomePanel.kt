@@ -2,15 +2,14 @@ package ch.scorpion.jabbah.app
 
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
-import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.swing.DialogBuilder
+import ch.scorpion.jabbah.base.swing.UiUtil
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.Frame
 import javax.swing.*
-import javax.swing.event.HyperlinkEvent
 
 class WelcomePanel(
 	private val closeHandler: () -> Unit
@@ -47,17 +46,9 @@ class WelcomePanel(
 	}
 
 	private fun addTextPane(@Suppress("SameParameterValue") constraints: Any) {
-		val textPane = JEditorPane()
-		textPane.border = null
-		textPane.contentType = "text/html"
-		textPane.isEditable = false
-		textPane.text = Translations.getString("application.welcome.text")
-		textPane.addHyperlinkListener {
-			if (HyperlinkEvent.EventType.ACTIVATED == it.eventType) {
-				System.browse(it.url.toString(), Translations.getString("application.welcome.action.name"))
-			}
-		}
-
+		val textPane = UiUtil.createHtmlEditorPane(
+			Translations.getString("application.welcome.text"),
+			"application.welcome.action.name")
 		add(textPane, constraints)
 	}
 

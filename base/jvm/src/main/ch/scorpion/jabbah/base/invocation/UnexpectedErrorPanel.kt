@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.swing.DialogBuilder
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.Clipboard
 import ch.scorpion.jabbah.base.ui.UIBasics
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -18,7 +19,6 @@ import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dimension
 import javax.swing.*
-import javax.swing.event.HyperlinkEvent
 
 class UnexpectedErrorPanel(
 	private val versionId: String,
@@ -41,7 +41,9 @@ class UnexpectedErrorPanel(
 	private val okAction = OkAction()
 	val okButton = createButton(okAction)
 	private val copyToClipboardAction = CopyToClipboardAction()
-	private val textField = JEditorPane()
+	private val textField = UiUtil.createHtmlEditorPane(
+		Translations.getString("base.unexpectedError.text"),
+		"base.unexpectedError.title")
 	private val ignoreCheckbox = JCheckBox(Translations.getString("base.action.doNotShowAgain.text"))
 
 	init {
@@ -62,15 +64,7 @@ class UnexpectedErrorPanel(
 		val contentPanel = JPanel()
 		contentPanel.layout = BoxLayout(contentPanel, BoxLayout.PAGE_AXIS)
 
-		textField.isEditable = false
-		textField.contentType = "text/html"
-		textField.text = Translations.getString("base.unexpectedError.text")
-		textField.addHyperlinkListener {
-			if (HyperlinkEvent.EventType.ACTIVATED == it.eventType) {
-				System.browse(it.url.toString(), Translations.getString("base.unexpectedError.title"))
-			}
-		}
-		textField.alignmentX = Component.LEFT_ALIGNMENT
+		textField.alignmentX = LEFT_ALIGNMENT
 
 		contentPanel.add(textField)
 		contentPanel.add(Box.createVerticalStrut(10))

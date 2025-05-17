@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.swing.DialogBuilder
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.UIBasics
 import java.awt.BorderLayout
 import java.awt.Component
@@ -16,7 +17,6 @@ import java.awt.Frame
 import java.io.File
 import java.nio.file.Path
 import javax.swing.*
-import javax.swing.event.HyperlinkEvent
 
 /** Displays a dialog upon receiving a [SystemMalfunctionEvent].*/
 class SystemMalfunctionPanel(
@@ -55,7 +55,9 @@ class SystemMalfunctionPanel(
 	private val closeAction = CloseAction()
 	private val exportAction = ExportAction()
 	private val closeButton = JButton(ActionWrapperSwing(closeAction))
-	private val textField = JEditorPane()
+	private val textField = UiUtil.createHtmlEditorPane(
+		Translations.getString("application.systemMalfunction.text", application.displayName),
+		"application.systemMalfunction.title")
 
 	init {
 		buildUI()
@@ -74,15 +76,7 @@ class SystemMalfunctionPanel(
 		val contentPanel = JPanel()
 		contentPanel.layout = BoxLayout(contentPanel, BoxLayout.PAGE_AXIS)
 
-		textField.isEditable = false
-		textField.contentType = "text/html"
-		textField.text = Translations.getString("application.systemMalfunction.text", application.displayName)
-		textField.addHyperlinkListener {
-			if (HyperlinkEvent.EventType.ACTIVATED == it.eventType) {
-				System.browse(it.url.toString(), Translations.getString("application.systemMalfunction.title"))
-			}
-		}
-		textField.alignmentX = Component.LEFT_ALIGNMENT
+		textField.alignmentX = LEFT_ALIGNMENT
 
 		contentPanel.add(textField)
 		contentPanel.add(Box.createVerticalStrut(10))

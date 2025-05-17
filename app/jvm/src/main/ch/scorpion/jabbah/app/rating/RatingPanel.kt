@@ -116,16 +116,9 @@ class RatingPanel(
 		val contentPanel = JPanel()
 		contentPanel.layout = BoxLayout(contentPanel, BoxLayout.PAGE_AXIS)
 
-		val welcomeText = JEditorPane()
-		welcomeText.border = null
-		welcomeText.contentType = "text/html"
-		welcomeText.text = Translations.getString("application.rating.welcome.text", application.displayName)
-		welcomeText.addHyperlinkListener {
-			if (HyperlinkEvent.EventType.ACTIVATED == it.eventType) {
-				System.browse(it.url.toString(), Translations.getString("application.rating.action.name"))
-			}
-		}
-		welcomeText.isEditable = false
+		val welcomeText = UiUtil.createHtmlEditorPane(
+			Translations.getString("application.rating.welcome.text", application.displayName),
+			"application.rating.action.name")
 		welcomeText.alignmentX = Component.LEFT_ALIGNMENT
 		welcomeText.maximumSize = welcomeText.preferredSize
 		contentPanel.add(welcomeText)

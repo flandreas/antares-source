@@ -2,6 +2,8 @@ package ch.scorpion.jabbah.base.swing
 
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.ActionWrapperSwing
+import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.ui.UI
 import java.awt.Color
@@ -11,8 +13,10 @@ import java.awt.event.FocusEvent
 import java.awt.image.BaseMultiResolutionImage
 import java.lang.reflect.InvocationTargetException
 import javax.swing.*
+import javax.swing.event.HyperlinkEvent
 import javax.swing.plaf.FontUIResource
 import javax.swing.text.JTextComponent
+import javax.swing.text.html.HTMLEditorKit
 import kotlin.math.max
 import kotlin.math.min
 
@@ -205,6 +209,31 @@ object UiUtil {
 	/** Configures a [JTextComponent] to select all text when it receives the focus.*/
 	fun selectAllOnFocusGained(c: JTextComponent) {
 		c.addFocusListener(focusGainedHandler)
+	}
+
+	fun createHtmlEditorPane(text: String, actionNameKey: String?): JEditorPane {
+		val editorPane = JEditorPane()
+
+		if (UI.isDark) {
+			val htmlKit = HTMLEditorKit()
+			htmlKit.styleSheet.addRule("a { color: rgb(40,123,222); }")
+			editorPane.editorKit = htmlKit
+		}
+
+		editorPane.contentType = "text/html"
+		editorPane.isEditable = false
+		editorPane.border = null
+		editorPane.text = text
+
+		if (actionNameKey != null) {
+			editorPane.addHyperlinkListener {
+				if (HyperlinkEvent.EventType.ACTIVATED == it.eventType) {
+					System.browse(it.url.toString(), Translations.getString(actionNameKey))
+				}
+			}
+		}
+
+		return editorPane
 	}
 
 	private fun isDark(color: Color): Boolean =

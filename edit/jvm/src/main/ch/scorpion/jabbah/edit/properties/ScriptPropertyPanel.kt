@@ -104,11 +104,7 @@ class ScriptPropertyPanel(
 	private fun buildDocumentationComponent(variables: Iterator<String>): JComponent {
 		val builder = StringBuilder("${Translations.getString("edit.property.variables.text")}: <br><br>")
 		variables.forEach { builder.append("$it<br>") }
-		val textPane = JEditorPane()
-		textPane.border = null
-		textPane.contentType = "text/html"
-		textPane.isEditable = false
-		textPane.text = builder.toString()
+		val textPane = UiUtil.createHtmlEditorPane(builder.toString(), null)
 
 		val scrollPane = JScrollPane(textPane)
 		scrollPane.horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_NEVER

@@ -4,15 +4,14 @@ import ch.scorpion.jabbah.app.module.AppModuleJvm
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.ActionWrapperSwing
-import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.swing.DialogBuilder
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.UIBasics
 import java.awt.BorderLayout
 import java.awt.Component
 import javax.swing.*
-import javax.swing.event.HyperlinkEvent
 
 class NewVersionPanel(
 	private val newVersion: ApplicationVersion,
@@ -37,7 +36,9 @@ class NewVersionPanel(
 
 	private val okAction = OkAction()
 	private val okButton = createButton(okAction)
-	private val textField = JEditorPane()
+	private val textField = UiUtil.createHtmlEditorPane(
+		Translations.getString("application.newVersion.text", newVersion.toString()),
+			"application.newVersion.title")
 	private val ignoreCheckbox = JCheckBox(Translations.getString("application.newVersion.ignore"))
 
 	init {
@@ -54,14 +55,6 @@ class NewVersionPanel(
 		iconPanel.add(Box.createVerticalGlue())
 		add(iconPanel, BorderLayout.WEST)
 
-		textField.isEditable = false
-		textField.contentType = "text/html"
-		textField.text = Translations.getString("application.newVersion.text", newVersion.toString())
-		textField.addHyperlinkListener {
-			if (HyperlinkEvent.EventType.ACTIVATED == it.eventType) {
-				System.browse(it.url.toString(), Translations.getString("application.newVersion.title"))
-			}
-		}
 		textField.alignmentX = Component.LEFT_ALIGNMENT
 		add(textField, BorderLayout.CENTER)
 
