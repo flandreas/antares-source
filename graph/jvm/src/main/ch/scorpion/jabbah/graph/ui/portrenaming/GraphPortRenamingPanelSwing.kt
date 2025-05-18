@@ -81,6 +81,8 @@ class GraphPortRenamingPanelSwing(
         Translations.getString("graph.portRenamingPanel.zoomToPort"),
         BaseModule.settings.getBoolean(SETTING_ZOOM_TO_PORT, true))
 
+    private val editable: Boolean get() = controller.editor.view.editable
+
     init {
         controller.view = this
         buildUI()
@@ -177,7 +179,7 @@ class GraphPortRenamingPanelSwing(
                 else -> throw IllegalArgumentException("invalid column index: $column")
             }
 
-        override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean = columnIndex == 0
+        override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean = editable && columnIndex == 0
     }
 
     private inner class CloseAction : AbstractAction(Translations.getString("base.action.close.name")) {
