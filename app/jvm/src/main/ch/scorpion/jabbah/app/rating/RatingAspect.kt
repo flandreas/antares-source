@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.app.rating
 
-import ch.scorpion.jabbah.edit.Bean
+import ch.scorpion.jabbah.base.Bean
 import kotlinx.serialization.Serializable
 
 /**

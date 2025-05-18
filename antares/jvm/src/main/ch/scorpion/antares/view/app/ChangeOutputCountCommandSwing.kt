@@ -3,6 +3,7 @@ package ch.scorpion.antares.view.app
 import ch.scorpion.antares.model.PortCount
 import ch.scorpion.antares.model.net.WireTap
 import ch.scorpion.antares.view.net.WireTapView
+import ch.scorpion.jabbah.base.Bean
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.properties.PropertyCommandSwing

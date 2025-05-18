@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.graph.model
 
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.edit.Bean
+import ch.scorpion.jabbah.base.Bean
 import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 

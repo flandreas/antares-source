@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.edit.properties
 
+import ch.scorpion.jabbah.base.Bean
 import ch.scorpion.jabbah.edit.*
 import org.apache.commons.beanutils.PropertyUtils
 

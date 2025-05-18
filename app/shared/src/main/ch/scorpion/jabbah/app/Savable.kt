@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.app
 
-import ch.scorpion.jabbah.edit.Bean
+import ch.scorpion.jabbah.base.Bean
 import ch.scorpion.jabbah.io.Storable
 
 /**

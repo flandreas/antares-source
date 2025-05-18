@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.model.param
 
+import ch.scorpion.jabbah.base.Bean
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeViewImpl

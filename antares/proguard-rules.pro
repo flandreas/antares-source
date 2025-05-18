@@ -35,3 +35,11 @@
 -keepclasseswithmembers class ch.scorpion.jabbah.graph.project.** {
     kotlinx.serialization.KSerializer serializer(...);
 }
+
+-keep,includedescriptorclasses class ch.scorpion.jabbah.base.invocation.**$$serializer { *; }
+-keepclassmembers class ch.scorpion.jabbah.base.invocation.** {
+    *** Companion;
+}
+-keepclasseswithmembers class ch.scorpion.jabbah.base.invocation.** {
+    kotlinx.serialization.KSerializer serializer(...);
+}
