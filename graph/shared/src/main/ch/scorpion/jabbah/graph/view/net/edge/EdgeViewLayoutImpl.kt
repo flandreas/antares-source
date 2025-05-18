@@ -3,9 +3,9 @@ package ch.scorpion.jabbah.graph.view.net.edge
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.Bean
 import ch.scorpion.jabbah.draw.DrawableEvent
 import ch.scorpion.jabbah.draw.DrawableListener
-import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.graph.view.ConnectableView
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.EdgeViewLayout

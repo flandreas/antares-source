@@ -3,8 +3,8 @@ package ch.scorpion.jabbah.edit.properties
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
+import ch.scorpion.jabbah.base.Bean
 import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import kotlin.reflect.KClass

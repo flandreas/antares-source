@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.edit
 
+import ch.scorpion.jabbah.base.Bean
 import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.edit.model.text.description.Name
 

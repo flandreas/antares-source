@@ -1,15 +1,8 @@
 package ch.scorpion.jabbah.edit
 
+import ch.scorpion.jabbah.base.Bean
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.edit.command.AbstractCommand
-
-/**
- * Marker interface to be implemented by classes with an associated bean info class.
- * Used to prevent such classes from obfuscation when used on the JVM platform.
- */
-interface Bean {
-	// empty
-}
 
 /**
  * Used to set a [Bean]'s property if reflection is not possible.

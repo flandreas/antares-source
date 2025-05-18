@@ -10,7 +10,6 @@ import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawableContainer
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.container.DrawableBagInputEventHandler
-import ch.scorpion.jabbah.edit.Bean
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.Snapper
 import ch.scorpion.jabbah.edit.model.DrawingImpl

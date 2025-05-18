@@ -2,7 +2,7 @@ package ch.scorpion.antares.model.addressable
 
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.edit.Bean
+import ch.scorpion.jabbah.base.Bean
 import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.edit.model.text.description.observableName

@@ -1,4 +1,3 @@
-//import org.asciidoctor.gradle.AsciidoctorTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.gradle.internal.os.OperatingSystem
 
@@ -16,7 +15,6 @@ val kotlinVersion: String by extra
 plugins {
 	kotlin("multiplatform") version "2.0.0" apply false
 	kotlin("plugin.serialization") version "1.9.23" apply false
-	id("org.asciidoctor.jvm.convert") version "3.2.0"
 	id("maven-publish")
 	id("dev.mokkery") version "2.0.0" apply false
 }
@@ -259,23 +257,6 @@ subprojects {
 			}
 		}
 	}
-}
-
-tasks {
-	register("copyImages", Copy::class) {
-		from("doc/user-manual") {
-		include("**/*.png")
-		}
-		into("build/doc/user-manual/html5")
-	}
-
-	/*
-	"asciidoctor"(org.asciidoctor.gradle.AsciidoctorTask::class) {
-		dependsOn(getByName("copyImages"))
-		sourceDir = file("doc/user-manual")
-		outputDir = file("build/doc/user-manual")
-	}
-	*/
 }
 
 if (OperatingSystem.current().isMacOsX) {

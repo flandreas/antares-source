@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.edit.command
 
-import ch.scorpion.jabbah.edit.Bean
+import ch.scorpion.jabbah.base.Bean
 import ch.scorpion.jabbah.edit.Undoable
 import ch.scorpion.jabbah.edit.UndoableDataHolder
 import ch.scorpion.jabbah.io.*

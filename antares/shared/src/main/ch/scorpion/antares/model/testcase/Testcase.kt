@@ -5,7 +5,7 @@ import ch.scorpion.antares.model.testcase.parser.TestcaseAnalyser
 import ch.scorpion.antares.model.testcase.parser.TestcaseParser
 import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
 import ch.scorpion.jabbah.base.help.HelpId
-import ch.scorpion.jabbah.edit.Bean
+import ch.scorpion.jabbah.base.Bean
 import ch.scorpion.jabbah.edit.model.text.ScriptProperty
 import ch.scorpion.jabbah.edit.model.text.description.*
 import ch.scorpion.jabbah.io.*

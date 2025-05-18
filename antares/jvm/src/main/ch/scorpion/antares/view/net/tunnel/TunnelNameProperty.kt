@@ -6,7 +6,7 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.richtext.RichText
 import ch.scorpion.jabbah.edit.AbstractPropertyCommand
-import ch.scorpion.jabbah.edit.Bean
+import ch.scorpion.jabbah.base.Bean
 import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing

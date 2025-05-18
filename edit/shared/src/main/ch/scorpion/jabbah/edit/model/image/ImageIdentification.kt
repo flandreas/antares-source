@@ -2,7 +2,7 @@ package ch.scorpion.jabbah.edit.model.image
 
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.draw.graphics.ImageType
-import ch.scorpion.jabbah.edit.Bean
+import ch.scorpion.jabbah.base.Bean
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Namable
 import ch.scorpion.jabbah.edit.model.text.description.Name

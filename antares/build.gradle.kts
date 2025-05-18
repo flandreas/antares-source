@@ -121,6 +121,11 @@ tasks {
 		keep("class org.jdesktop.** { *; }")
 		keep("class com.github.weisj.jsvg.** { *; }")
 
+		keep("class org.jmarkdownviewer.** { *; }")
+		keep("class org.fife.** { *; }")
+		keep("class org.nibor.** { *; }")
+		keep("class org.xml.** { *; }")
+
 		// Reflection in OsThemeDetector
 		keep("class com.sun.** { *; }")
 		keep("class net.java.dev.** { *; }")
@@ -133,8 +138,8 @@ tasks {
 		keep("enum ch.scorpion.jabbah.base.LogLevel { *; }")
 
 		// JavaBeans introspection used for PropertyPanels
-		keep("interface ch.scorpion.jabbah.edit.Bean { *; }")
-		keep("class * implements ch.scorpion.jabbah.edit.Bean { *; }")
+		keep("interface ch.scorpion.jabbah.base.Bean { *; }")
+		keep("class * implements ch.scorpion.jabbah.base.Bean { *; }")
 		keep("class ch.scorpion.**.*BeanInfo { *; }")
 
 		// Script DSL
@@ -147,6 +152,8 @@ tasks {
 		keep("class kotlin.coroutines.Continuation { *; }")
 		keep("class ch.scorpion.jabbah.app.rating.RatingService { *; }")
 		keep("class ch.scorpion.jabbah.app.rating.RailwayRatingService { *; }")
+		keep("class ch.scorpion.jabbah.base.invocation.UnexpectedErrorService { *; }")
+		keep("class ch.scorpion.jabbah.base.invocation.UnexpectedErrorServiceImpl { *; }")
 		keepattributes("Signature")
 
 		// Required by ResourceLibraryPersistenceService to copy standard library from JAR

@@ -7,7 +7,7 @@ import ch.scorpion.jabbah.base.net.httpClient
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.time.TimeService
-import ch.scorpion.jabbah.edit.Bean
+import ch.scorpion.jabbah.base.Bean
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import io.ktor.client.call.*
 import io.ktor.client.request.*

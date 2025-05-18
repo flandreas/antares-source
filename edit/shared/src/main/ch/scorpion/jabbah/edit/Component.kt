@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.edit
 
+import ch.scorpion.jabbah.base.Bean
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.Focusable
 import ch.scorpion.jabbah.draw.InputEventHandler

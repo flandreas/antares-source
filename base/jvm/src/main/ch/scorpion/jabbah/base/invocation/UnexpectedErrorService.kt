@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.base.invocation
 
+import ch.scorpion.jabbah.base.Bean
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.net.httpClient
 import io.ktor.client.request.post
@@ -38,7 +39,7 @@ class UnexpectedErrorServiceImpl(
 }
 
 @Serializable
-private data class UnexpectedErrorRequest(
+data class UnexpectedErrorRequest(
     val apiKey: String,
     val description: String
-)
+) : Bean
