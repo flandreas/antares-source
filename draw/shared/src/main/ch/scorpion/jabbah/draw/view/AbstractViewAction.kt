@@ -19,7 +19,9 @@ abstract class AbstractViewAction(
 	viewManager: ContentViewManager = DrawViewModule.viewManager
 ) : AbstractContentViewAction(baseName, eventBus, viewManager) {
 
-	override fun calculateEnabled(): Boolean =
+	override fun calculateEnabled(): Boolean = calculateViewActionEnabled()
+
+	protected fun calculateViewActionEnabled(): Boolean =
 		viewManager.activeView != null && viewManager.activeView!!.view != null
 }
 

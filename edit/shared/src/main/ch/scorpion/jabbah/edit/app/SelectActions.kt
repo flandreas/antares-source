@@ -4,16 +4,26 @@ import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.draw.view.ContentViewManager
+import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
+
+
+abstract class AbstractSelectionAction(
+	baseName: String,
+	eventBus: EventBus = BaseModule.eventBus,
+	viewManager: ContentViewManager = DrawViewModule.viewManager
+) : AbstractEditAction(baseName, eventBus, viewManager) {
+
+	override fun calculateEnabled(): Boolean = calculateViewActionEnabled()
+}
 
 /** An [Action] for selecting all [Component]s in a [Drawing].*/
 class SelectAllAction(
 	eventBus: EventBus = BaseModule.eventBus,
 	viewManager: ContentViewManager = DrawViewModule.viewManager
-) : AbstractEditAction("edit.action.selectAll", eventBus, viewManager) {
+) : AbstractSelectionAction("edit.action.selectAll", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
 		drawingView!!.selectionManager.selectAll()
@@ -25,7 +35,7 @@ class SelectAllAction(
 class SelectNextAction(
 	eventBus: EventBus = BaseModule.eventBus,
 	viewManager: ContentViewManager = DrawViewModule.viewManager
-) : AbstractEditAction("edit.action.selectNext", eventBus, viewManager) {
+) : AbstractSelectionAction("edit.action.selectNext", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
 		drawingView!!.selectionManager.selectNext()
@@ -37,7 +47,7 @@ class SelectNextAction(
 class SelectPreviousAction(
 	eventBus: EventBus = BaseModule.eventBus,
 	viewManager: ContentViewManager = DrawViewModule.viewManager
-) : AbstractEditAction("edit.action.selectPrevious", eventBus, viewManager) {
+) : AbstractSelectionAction("edit.action.selectPrevious", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
 		drawingView!!.selectionManager.selectPrevious()

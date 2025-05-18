@@ -31,7 +31,8 @@ abstract class AbstractEditAction(
 		}
 	}
 
-	override fun calculateEnabled(): Boolean {
-		return super.calculateEnabled() && drawingView?.editable ?: false
-	}
+	override fun calculateEnabled(): Boolean = calculateEditActionEnabled()
+
+	protected fun calculateEditActionEnabled(): Boolean =
+		super.calculateEnabled() && drawingView?.editable ?: false
 }
