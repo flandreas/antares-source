@@ -97,7 +97,7 @@ class LightBulbView(
 
 		if (shadow) {
 			DropShadow.draw(context, transparency) {
-				context.g.fillRect(xInt, yInt, widthInt, heightInt)
+				context.g.fillOval(xInt, yInt, widthInt, heightInt)
 			}
 		}
 

@@ -175,7 +175,7 @@ abstract class RectangularComponent(
 		drawStroke(context, shapeToDraw, strokeColor, stroke)
 	}
 
-	private fun drawShadow(context: DrawContext, strokeColor: Color?, fillColor: Color?) {
+	protected open fun drawShadow(context: DrawContext, strokeColor: Color?, fillColor: Color?) {
 		if (shadow) {
 			DropShadow.draw(context, transparency) {
 				if (fillColor != null) {

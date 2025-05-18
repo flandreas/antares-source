@@ -95,6 +95,10 @@ class ImageComponent(
         }
     }
 
+    override fun drawShadow(context: DrawContext, strokeColor: Color?, fillColor: Color?) {
+        // Don't draw any shadow
+    }
+
     /** Used when [ImageComponent] is drawn within a selected outer [Component]*/
     fun drawSelected(context: DrawContext) {
         context.g.color = context.color!!.foregroundColor
