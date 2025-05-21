@@ -5,23 +5,27 @@ import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.scheduler.BreakEvent
-import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.GraphActorData
+import ch.scorpion.jabbah.graph.model.GraphElement
+import ch.scorpion.jabbah.graph.model.SignalUtil
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
+import ch.scorpion.jabbah.execution.actor.Actor
 
 
 class Break(
-	logic: Logic = Logic.POSITIVE,
+	bitWidth: BitWidth = BitWidth.BW_1,
+	value: DigitalSignal = DigitalSignalFactory.falseValue(bitWidth),
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : CalculatingVertice(CALCULATOR) {
 
@@ -41,17 +45,28 @@ class Break(
 	}
 
 	init {
-		addPort(DigitalPortImpl.createInOut(logic, null, BitWidth.BW_1))
+		addPort(DigitalPortImpl.createInOut(Logic.POSITIVE, null, bitWidth))
 	}
 
-	var logic: Logic = logic
+	var value: DigitalSignal = value
 		set(value) {
 			if (field != value) {
 				field = value
-				(getInput<DigitalSignal>() as DigitalPort).logic = field
 				stateChanged()
 			}
 		}
+
+	var bitWidth: BitWidth
+		get() = (getInput<DigitalSignal>() as DigitalPort).bitWidth
+		set(value) {
+			if (value != bitWidth) {
+				(getInput<DigitalSignal>() as DigitalPort).bitWidth = value
+				stateChanged()
+			}
+		}
+
+	var isTriggered = false
+		private set
 
 	/** ---- [GraphElement] interface */
 
@@ -63,34 +78,50 @@ class Break(
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
-		writer.writeString("logic", logic.customName)
+		if (bitWidth.width > 1) {
+			bitWidth.write("bitWidth", writer)
+		}
+		writer.writeULong("value", value.getValue())
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
-		logic = Logic.withName(reader.readString("logic"))
+		if (reader.hasAttribute("bitWidth")) {
+			bitWidth = BitWidth.read("bitWidth", reader)
+		}
+		if (reader.hasAttribute("logic")) {
+			val logic = Logic.withName(reader.readString("logic"))
+			value = when (logic) {
+                Logic.POSITIVE -> DigitalSignalFactory.of(true)
+                Logic.NEGATIVE -> DigitalSignalFactory.of(false)
+            }
+		}
+		if (reader.hasAttribute("value")) {
+			value = DigitalSignalFactory.of(bitWidth, reader.readULong("value"))
+		}
+	}
+
+	/** ---- [Actor] */
+
+	override fun executionStart(signalHandler: SignalHandler) {
+		super.executionStart(signalHandler)
+		isTriggered = false
 	}
 
 	/** ---- [Break] */
 
-	val inputSignal: DigitalSignal? get() = getInput<DigitalSignal>().getIncomingSignal()
-
-	val inputSignalSet: Boolean get() = inputSignal?.bitAt(0)?.isSet ?: false
-
 	private fun handleInputChanged(data: GraphActorData, signalHandler: SignalHandler) {
 		if (isTriggered(data)) {
+			isTriggered = true
 			issueBreak(signalHandler)
 			stateChanged(signalHandler)
+		} else {
+			isTriggered = false
 		}
-	}
+	 }
 
-	private fun isTriggered(data: GraphActorData): Boolean {
-		val signal = data.getSignal<DigitalSignal>(1)!!.bitAt(0)
-		return when (logic) {
-			Logic.POSITIVE -> signal.isSet
-			Logic.NEGATIVE -> signal.isNotSet
-		}
-	}
+	private fun isTriggered(data: GraphActorData): Boolean =
+		SignalUtil.equals(value, data.getSignal(1))
 
 	private fun issueBreak(signalHandler: SignalHandler) {
 		LOG.trace("Break at ${signalHandler.executionTime} ns")

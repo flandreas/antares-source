@@ -1,13 +1,12 @@
 package ch.scorpion.antares.view.net
 
-import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.net.Break
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
+import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.view.Look.SCALE
-import ch.scorpion.antares.view.port.AbstractAntaresPortView
+import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
 import ch.scorpion.antares.view.port.DigitalPortView
-import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.DrawContext
@@ -17,6 +16,7 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 
 class BreakView(
@@ -40,10 +40,18 @@ class BreakView(
 
 	/** ---- UI properties] */
 
-	var logic: Logic
-		get() = model.logic
+	var bitWidth: BitWidth
+		get() = model.bitWidth
 		set(value) {
-			model.logic = value
+			invalidate()
+			model.bitWidth = value
+		}
+
+	var value: Long
+		get() = model.value.getValue().toLong()
+		set(newValue) {
+			invalidate()
+			model.value = DigitalSignalFactory.of(bitWidth, newValue)
 		}
 
 	/** ---- [AbstractVerticeView] */
@@ -96,22 +104,22 @@ class BreakView(
 	}
 
 	private fun getFillColor(context: DrawContext): Color =
-		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-			transparent.applyTo(model.inputSignal!!.color.foregroundColor)
+		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute && model.isTriggered) {
+			transparent.applyTo(Themes.get<GraphTheme>().error.backgroundColor)
 		} else {
 			getApplicableBackgroundColor(context)
 		}
 
 	private fun getBorderColor(context: DrawContext): Color =
-		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-			transparent.applyTo(model.inputSignal!!.color.backgroundColor)
+		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute && model.isTriggered) {
+			transparent.applyTo(Themes.get<GraphTheme>().error.foregroundColor)
 		} else {
 			getApplicableForegroundColor(context)
 		}
 
 	private fun getSymbolColor(context: DrawContext): Color =
-		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-			transparent.applyTo(if (model.inputSignalSet) Themes.get<AntaresTheme>().one.textColor else Themes.get<AntaresTheme>().zero.textColor)
+		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute && model.isTriggered) {
+			transparent.applyTo(Themes.get<GraphTheme>().error.textColor)
 		} else {
 			getApplicableForegroundColor(context)
 		}
