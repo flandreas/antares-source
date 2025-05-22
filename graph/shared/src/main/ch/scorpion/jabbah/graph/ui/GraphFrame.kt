@@ -315,8 +315,7 @@ open class GraphFrameController<T: GraphFrame>(
 	) : AbstractViewAction("graph.action.showDocumentation", eventBus) {
 
 		init {
-			// TODO Icon by Janis
-			imagePath = "/img/container-24.png"
+			imagePath = "/img/documentation.png"
 		}
 
 		override fun execute(event: ActionEvent) {
