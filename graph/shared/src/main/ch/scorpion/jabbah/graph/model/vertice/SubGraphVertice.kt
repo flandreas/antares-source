@@ -16,7 +16,7 @@ import ch.scorpion.jabbah.graph.model.*
  * signals from the corresponding [GraphOutput]s of the contained [Graph], which they forward to the outer
  * [Graph] through the connected [Net]s.
  */
-interface SubGraphVertice : Vertice, Describable {
+interface SubGraphVertice : Vertice {
 
     /** Holds the [UUID] of the [Graph] that this [SubGraphVertice] contains.*/
     var graphUUID: UUID?
