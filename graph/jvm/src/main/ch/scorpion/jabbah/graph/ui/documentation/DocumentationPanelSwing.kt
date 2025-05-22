@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.TitleBar
 import ch.scorpion.jabbah.base.ui.UI
 import ch.scorpion.jabbah.graph.ui.documentation.DocumentationPanelViewMode.EditAndPreview
@@ -147,6 +148,14 @@ class DocumentationPanelSwing(
         toolbar.add(createToolBarButton(controller.editAndPreviewAction).also { buttonGroup.add(it) })
         toolbar.add(createToolBarButton(controller.previewOnlyAction).also { buttonGroup.add(it) })
         return toolbar
+    }
+
+    private fun createToolBarButton(action: Action): JToggleButton {
+        val button = JToggleButton(ActionWrapperSwing(action))
+        action.imagePath?.let { button.icon = UiUtil.themedIcon(it) }
+        button.text = null
+        button.toolTipText = action.name
+        return button
     }
 
     private fun buildUI() {
