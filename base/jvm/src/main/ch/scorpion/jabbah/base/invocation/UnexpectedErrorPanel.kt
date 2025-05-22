@@ -1,8 +1,9 @@
 package ch.scorpion.jabbah.base.invocation
 
-import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
+import ch.scorpion.jabbah.base.ActionWrapperSwing
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
@@ -10,13 +11,7 @@ import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.Clipboard
 import ch.scorpion.jabbah.base.ui.UIBasics
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import org.apache.commons.io.output.StringBuilderWriter
 import java.awt.BorderLayout
-import java.awt.Component
 import java.awt.Dimension
 import javax.swing.*
 
@@ -48,7 +43,6 @@ class UnexpectedErrorPanel(
 
 	init {
 		buildUI()
-		sendToBackend()
 	}
 
 	private fun buildUI() {
@@ -91,24 +85,6 @@ class UnexpectedErrorPanel(
 	private fun createButton(action: Action): JButton =
 		JButton(ActionWrapperSwing(action))
 
-	private fun buildClipboardInfo(): String {
-		val writer = StringBuilderWriter()
-		if (versionId.isNotBlank()) {
-			writer.appendLine("Version: $versionId")
-		}
-		writer.append(UserActionTrail.toString())
-		writer.append(stackTrace)
-		return writer.toString()
-	}
-
-	@OptIn(DelicateCoroutinesApi::class)
-    private fun sendToBackend() {
-		val description = buildClipboardInfo()
-		GlobalScope.launch(Dispatchers.IO) {
-			BaseModuleJvm.unexpectedErrorService.sendUnexpectedError(description)
-		}
-	}
-
 	private inner class OkAction : AbstractAction("base.action.ok") {
 		override fun execute(event: ActionEvent) {
 			if (ignoreCheckbox.isSelected) {
@@ -120,7 +96,7 @@ class UnexpectedErrorPanel(
 
 	private inner class CopyToClipboardAction : AbstractAction("base.action.copyToClipboard") {
 		override fun execute(event: ActionEvent) {
-			Clipboard.setStringContents(buildClipboardInfo())
+			Clipboard.setStringContents(BaseModuleJvm.unexpectedErrorService.buildDescription(versionId, stackTrace))
 		}
 	}
 }

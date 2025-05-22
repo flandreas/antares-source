@@ -39,7 +39,11 @@ class TestAction(
 	private var eventBusStatistic: EventBusStatistics? = null
 
 	override fun execute(event: ActionEvent) {
-		showComponentMessage()
+		throwException()
+	}
+
+	private fun throwException() {
+		throw Exception("Test Exception")
 	}
 
 	private fun printEventBusStatistic() {

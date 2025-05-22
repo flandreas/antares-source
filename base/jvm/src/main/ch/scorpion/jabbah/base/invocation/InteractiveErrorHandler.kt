@@ -4,6 +4,11 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.module.BaseModuleJvm
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.awt.Dimension
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
@@ -32,11 +37,14 @@ object InteractiveErrorHandler : ErrorHandler() {
 
     override fun exceptionImpl(x: Throwable) {
 	    LOG.error("Unexpected error: ${x.message}", x)
+		val stackTrace = renderStackTrace(x)
+
+		sendToBackend(stackTrace)
 
         if (parentFrame != null && !isHandling) {
 	        isHandling = true
             if (isDeveloper) {
-	            showDeveloperDialog(x)
+	            showDeveloperDialog(stackTrace)
             } else {
                 showUserDialog(x)
             }
@@ -44,16 +52,24 @@ object InteractiveErrorHandler : ErrorHandler() {
         }
     }
 
+	@OptIn(DelicateCoroutinesApi::class)
+	private fun sendToBackend(stackTrace: String) {
+		val description = BaseModuleJvm.unexpectedErrorService.buildDescription(versionId, stackTrace)
+		GlobalScope.launch(Dispatchers.IO) {
+			BaseModuleJvm.unexpectedErrorService.sendUnexpectedError(description)
+		}
+	}
+
 	private fun renderStackTrace(x: Throwable): String =
 		ByteArrayOutputStream().use {
 			x.printStackTrace(PrintStream(it))
 			it.toString()
 		}
 
-	private fun showDeveloperDialog(x: Throwable) {
+	private fun showDeveloperDialog(stackTrace: String) {
 		val ta = JTextArea()
 		ta.isEditable = false
-		ta.text = renderStackTrace(x)
+		ta.text = stackTrace
 
 		val sp = JScrollPane(ta)
 		sp.preferredSize = Dimension(400, 300)
