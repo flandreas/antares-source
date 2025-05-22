@@ -86,7 +86,7 @@ class SchedulerImpl(
 	private val breakListener: EventHandler<BreakEvent> = {
 		hardBreakpointReceived = true
 		if (isSingleStepMode) {
-			currentSystemSpeedCategory.systemSpeed.pause()
+			isInBreakpoint = true
 		}
 	}
 
@@ -361,6 +361,7 @@ class SchedulerImpl(
 		accumulatedPauseTime += (timeService.nowNanos() - pauseTime)
 		executeImpl(resume = true)
 		hardBreakpointReceived = false
+		isInBreakpoint = false
 		startTaskIfNeeded()
 	}
 

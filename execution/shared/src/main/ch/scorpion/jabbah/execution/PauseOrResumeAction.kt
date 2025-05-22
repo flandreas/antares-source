@@ -83,8 +83,16 @@ class PauseOrResumeActionImpl(
 
     private fun updateSelected() {
         selected = scheduler.isActive && scheduler.systemSpeedCategory.systemSpeed.isPaused
+        updateDescription()
+    }
+
+    private fun updateDescription() {
         description = if (selected) {
-            Translations.getString("execution.action.resume.desc")
+            if (inBreakpoint) {
+                Translations.getString("execution.action.resumeFromBreakpoint.desc")
+            } else {
+                Translations.getString("execution.action.resume.desc")
+            }
         } else {
             Translations.getString("execution.action.pause.desc")
         }
@@ -96,5 +104,6 @@ class PauseOrResumeActionImpl(
 
     private fun updateInBreakpoint() {
         inBreakpoint = scheduler.isInBreakpoint
+        updateDescription()
     }
 }
