@@ -111,9 +111,9 @@ class DocumentationPanelController(
 
     val content: MetaGraph? get() = applicationDataHolder.data?.content as? MetaGraph?
 
-    val editOnlyAction: Action = ModeAction(EditOnly, "graph.documentation.mode.editOnly")
-    val editAndPreviewAction: Action = ModeAction(EditAndPreview, "graph.documentation.mode.editAndPreview")
-    val previewOnlyAction: Action = ModeAction(PreviewOnly, "graph.documentation.mode.previewOnly")
+    val editOnlyAction: Action = ModeAction(EditOnly, "graph.documentation.mode.editOnly", "/img/edit-only.png")
+    val editAndPreviewAction: Action = ModeAction(EditAndPreview, "graph.documentation.mode.editAndPreview", "/img/edit-preview.png")
+    val previewOnlyAction: Action = ModeAction(PreviewOnly, "graph.documentation.mode.previewOnly", "/img/preview-only.png")
 
     init {
         eventBus.register(ApplicationDataEvent::class, applicationDataHandler)
@@ -238,7 +238,7 @@ class DocumentationPanelController(
         }
     }
 
-    private inner class ModeAction(private val mode: DocumentationPanelViewMode, baseName: String) : AbstractAction(baseName) {
+    private inner class ModeAction(private val mode: DocumentationPanelViewMode, baseName: String, imagePath: String) : AbstractAction(baseName, imagePath = imagePath) {
         override fun execute(event: ActionEvent) {
             this@DocumentationPanelController.mode = this@ModeAction.mode
             selected = this@DocumentationPanelController.mode == this@ModeAction.mode
