@@ -4,8 +4,10 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.BitWidthGraphParamType
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBusStatistics
+import ch.scorpion.jabbah.base.invocation.UnexpectedErrorServiceImpl
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.draw.ui.Toast
 import ch.scorpion.jabbah.draw.view.AbstractViewAction
 import ch.scorpion.jabbah.edit.Component
@@ -25,6 +27,7 @@ import org.drjekyll.fontchooser.FontDialog
 import java.awt.Dimension
 import java.awt.Frame
 import java.awt.Point
+import java.net.URL
 import javax.swing.JOptionPane
 import javax.swing.WindowConstants
 
@@ -39,6 +42,7 @@ class TestAction(
 	private var eventBusStatistic: EventBusStatistics? = null
 
 	override fun execute(event: ActionEvent) {
+		(BaseModuleJvm.unexpectedErrorService as UnexpectedErrorServiceImpl).baseUrl = URL("https://api.antarescircuit.io/api")
 		throwException()
 	}
 

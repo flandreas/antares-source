@@ -21,7 +21,7 @@ interface UnexpectedErrorService {
 }
 
 class UnexpectedErrorServiceImpl(
-    private val baseUrl: URL
+    var baseUrl: URL
 ) : UnexpectedErrorService {
 
     companion object {
