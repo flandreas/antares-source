@@ -180,11 +180,10 @@ subprojects {
 					implementation("org.apache.xmlgraphics:batik-xml:$batikVersion")
 
 					// Markdown HTML renderer and Swing viewer
-					implementation("io.antarescircuit:jmdadocviewer:1.0")
-					implementation("org.commonmark:commonmark:0.18.0")
-					implementation("org.commonmark:commonmark-ext-gfm-tables:0.18.0")
-					implementation("org.commonmark:commonmark-ext-yaml-front-matter:0.18.0")
-					implementation("org.commonmark:commonmark-ext-autolink:0.19.0")
+					implementation("io.antarescircuit:jmdadocviewer:1.1")
+					api("org.commonmark:commonmark:0.17.1")
+					api("org.commonmark:commonmark-ext-gfm-tables:0.17.1")
+					api("commons-cli:commons-cli:1.4")
 
 					// Markdown syntax highlighting
 					implementation("com.fifesoft:rsyntaxtextarea:3.6.0")
