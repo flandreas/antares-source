@@ -5,9 +5,9 @@ import ch.scorpion.antares.model.AntaresGraphTypes.Digital
 import ch.scorpion.antares.model.inout.AbstractCircuitInOut
 import ch.scorpion.antares.model.inout.CircuitInOut
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.antares.view.analog.engine.AnalogElement
 import ch.scorpion.antares.view.analog.engine.AnalogElementMixin
-import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -16,6 +16,9 @@ import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
+import ch.scorpion.jabbah.io.Storable
+import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.io.StoreWriter
 
 class AnalogCircuitInOut(
 	name: String? = null,
@@ -44,8 +47,41 @@ class AnalogCircuitInOut(
 
 	private val isInput: Boolean get() = getPort<AnalogSignal>().portType.isOutput
 
+	/**
+	 * The optional output resistance if this [AnalogCircuitInOut] is operating as output. If `null`, the
+	 * output resistance is treated as infinite during simulation (open output).
+	 * Non-open outputs can be used for educational purposes to see current flowing out of a circuit,
+	 * i.e. a MOS NAND gate when one input is high and the other is low.
+	 * Use [Long] so that the already existing 'LongOptionalPropertyEditor' on the JVM platform can be used.
+	 */
+	var outputResistance: Long? = null
+		set(value) {
+			if (field != value) {
+				field = value
+				stateChanged()
+			}
+		}
+
 	init {
 		analogElement.bindAnalogElement(this)
+	}
+
+	/** ---- [Storable] */
+
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		if (outputResistance != null) {
+			writer.writeLong("outputResistance", outputResistance!!)
+		}
+	}
+
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+		outputResistance = if (reader.hasAttribute("outputResistance")) {
+			reader.readLong("outputResistance")
+		} else {
+			null
+		}
 	}
 
 	/** ---- [GraphPort] */
@@ -106,7 +142,11 @@ class AnalogCircuitInOut(
 		if (isInput) {
 			analysis.stampVoltageSource(0, analogElement.nodes[0], analogElement.voltageSource, signal?.voltage ?: AnalogSignal.ZERO_VOLTAGE.voltage)
 		} else if (portType == PortType.OUTPUT) {
-			analysis.stampResistor(analogElement.nodes[0], 0, 1e6)
+			if (!isToplevel || outputResistance == null) {
+				analysis.stampResistor(analogElement.nodes[0], 0, 1e6)
+			} else {
+				analysis.stampResistor(analogElement.nodes[0], 0, outputResistance!!.toDouble())
+			}
 		}
 	}
 

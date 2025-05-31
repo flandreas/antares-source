@@ -51,6 +51,15 @@ class AnalogCircuitInOutView(
 		VerticalAlignment.CENTER,
 		richText = false)
 
+	/** ----  UI properties */
+
+	@Suppress("unused") // Reflection
+	var outputResistance: Long?
+		get() = model.outputResistance
+		set(value) {
+			model.outputResistance = value
+		}
+
 	init {
 		modelExchanged(null)
 	}
