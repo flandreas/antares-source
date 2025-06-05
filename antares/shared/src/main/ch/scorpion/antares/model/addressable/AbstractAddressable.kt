@@ -1,7 +1,9 @@
 package ch.scorpion.antares.model.addressable
 
+import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.vertice.AdjustableBitWidth
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -13,7 +15,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 
 abstract class AbstractAddressable<T : AddressableVertice>(
 	calculator: VerticeCalculator<T>
-) : CalculatingVertice(calculator), AddressableVertice {
+) : CalculatingVertice(calculator), AddressableVertice, AdjustableBitWidth {
 
 	companion object {
 		fun validateDataBitWidth(memory: Memory, bitWidth: BitWidth) {
@@ -105,6 +107,19 @@ abstract class AbstractAddressable<T : AddressableVertice>(
 		dataListeners.remove(listener)
 	}
 
+	/** ---- [AdjustableBitWidth] */
+
+	override fun adjustBitWidth(port: DigitalPort, bitWidth: BitWidth): Boolean {
+		if (port === getAddressInput()) {
+			addressWidth = bitWidth
+			return true
+		} else if (port === getDataPort()) {
+			dataWidth = bitWidth
+			return true
+		}
+		return false
+	}
+
 	/** ---- [AbstractAddressable] */
 
 	protected fun notifyDataChanged(address: Int?, oldValue: ULong?, newValue: ULong?) {
@@ -123,7 +138,7 @@ abstract class AbstractAddressable<T : AddressableVertice>(
 	}
 
 	override fun validateDataBitWidth(bitWidth: BitWidth) {
-		Companion.validateDataBitWidth(memory, bitWidth)
+		validateDataBitWidth(memory, bitWidth)
 	}
 
 	/** ---- [Storable] */

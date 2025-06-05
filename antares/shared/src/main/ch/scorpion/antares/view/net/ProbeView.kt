@@ -88,6 +88,9 @@ class ProbeView(
 	override fun handleStateChanged(event: GraphElementEvent) {
 		invalidate()
 		if (event.signalHandler == null) {
+			if (model.bitWidth != numberView?.bitWidth) {
+				updateBitWidth(model.bitWidth)
+			}
 			updateBoxes()
 			updateLabel()
 		}
@@ -188,13 +191,17 @@ class ProbeView(
 		get() = model.bitWidth
 		set(value) {
 			if (value != bitWidth) {
-				clear()
-				model.bitWidth = value
-				createInnerView()
-				updateView()
-				postControlViewSourceChangeEvent(eventBus)
+				updateBitWidth(value)
 			}
 		}
+
+	private fun updateBitWidth(newBitWidth: BitWidth) {
+		clear()
+		model.bitWidth = newBitWidth
+		createInnerView()
+		updateView()
+		postControlViewSourceChangeEvent(eventBus)
+	}
 
 	override var signalRepresentation: DigitalSignalRepresentation
 		get() = super.signalRepresentation

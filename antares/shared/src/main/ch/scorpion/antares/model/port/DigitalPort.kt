@@ -3,10 +3,13 @@ package ch.scorpion.antares.model.port
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.OutputAnnotation
 import ch.scorpion.antares.model.Trigger
+import ch.scorpion.antares.model.net.DigitalNet
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
+import ch.scorpion.antares.model.vertice.AdjustableBitWidth
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 
@@ -16,6 +19,13 @@ import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 interface DigitalPort : BidirectionalPort<DigitalSignal> {
 
 	companion object {
+
+		/**
+		 * The name of the [Boolean] property in [Properties] determining whether [AdjustableBitWidth] are asked to adjust
+		 * their [BitWidth] when being connected to a [DigitalNet] with differing [BitWidth].
+		 */
+		const val PROP_ADJUST_BIT_WIDTH = "antares.port.adjustBitWidth"
+
 		const val PROP_LOGIC = "logic"
 		const val PROP_BIT_WIDTH = "bitWidth"
 		const val PROP_SIGNAL_REPRESENTATION = "signalRepresentation"

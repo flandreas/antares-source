@@ -99,8 +99,6 @@ class ConstantView(
 		updateView()
 	}
 
-
-
 	override fun drawImpl(context: DrawContext) {
 		super.drawImpl(context)
 

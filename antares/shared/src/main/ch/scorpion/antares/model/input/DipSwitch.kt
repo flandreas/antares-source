@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
+import ch.scorpion.antares.model.vertice.AdjustableBitWidth
 import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -26,7 +27,7 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 class DipSwitch(
 	bitWidth: BitWidth = BitWidth.BW_4
-) : AbstractInteractableVertice<DigitalSignal>(CALCULATOR) {
+) : AbstractInteractableVertice<DigitalSignal>(CALCULATOR), AdjustableBitWidth {
 
 	companion object {
 
@@ -84,6 +85,13 @@ class DipSwitch(
 	/** ---- [InteractableVertice] */
 
 	override var interactivePropagationDelay: Long = Switch.DEF_PROP_DELAY.value
+
+	/** ---- [AdjustableBitWidth] */
+
+	override fun adjustBitWidth(port: DigitalPort, bitWidth: BitWidth): Boolean {
+		this.bitWidth = bitWidth
+		return true
+	}
 
 	/** ---- [GraphElement] */
 

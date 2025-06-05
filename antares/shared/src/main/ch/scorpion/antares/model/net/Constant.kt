@@ -3,6 +3,7 @@ package ch.scorpion.antares.model.net
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
+import ch.scorpion.antares.model.vertice.AdjustableBitWidth
 import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -19,7 +20,7 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 class Constant(
 	value: DigitalSignal = DigitalSignalFactory.of(Bit.False)
-) : CalculatingVertice(CALCULATOR) {
+) : CalculatingVertice(CALCULATOR), AdjustableBitWidth {
 
 	init {
 		addPort(DigitalPortImpl(portType = PortType.OUTPUT, bitWidth = value.bitWidth))
@@ -88,5 +89,12 @@ class Constant(
 		super.read(reader)
 		bitWidth = BitWidth.read("bitWidth", reader)
 		value = DigitalSignalFactory.of(bitWidth, reader.readULong("value"))
+	}
+
+	/** ---- [AdjustableBitWidth] */
+
+	override fun adjustBitWidth(port: DigitalPort, bitWidth: BitWidth): Boolean {
+		this.bitWidth = bitWidth
+		return true
 	}
 }

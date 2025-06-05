@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.input.Switch
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
+import ch.scorpion.antares.model.vertice.AdjustableBitWidth
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -80,6 +81,14 @@ class DigitalCircuitInOutImpl(
 	/** ---- [DigitalSignalSource] */
 
 	override var fixedPointConfig: FixedPointConfig? = null
+
+	/** ---- [AdjustableBitWidth] */
+
+	override fun adjustBitWidth(port: DigitalPort, bitWidth: BitWidth): Boolean {
+		this.bitWidth = bitWidth
+		stateChanged()
+		return true
+	}
 
 	/** ---- [GraphElement] */
 

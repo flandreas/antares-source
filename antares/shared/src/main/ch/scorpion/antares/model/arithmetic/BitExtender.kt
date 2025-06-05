@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.gate.AbstractLogicGate
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
+import ch.scorpion.antares.model.vertice.AdjustableBitWidth
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
@@ -25,7 +26,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 class BitExtender(
 	inputBitWidth: BitWidth = BitWidth.BW_1,
 	outputBitWidth: BitWidth = BitWidth.BW_8
-) : CalculatingVertice(CALCULATOR) {
+) : CalculatingVertice(CALCULATOR), AdjustableBitWidth {
 
 	companion object {
 		private const val BASE_RESOURCE_KEY = "library.element.BitExtender"
@@ -85,12 +86,30 @@ class BitExtender(
 		super.executionStart(signalHandler)
 		requestActingAfter(signalHandler, propagationDelay.value / 2, createActorData(null))
 	}
+
 	/** ---- [GraphElement] */
 
 	override fun graphParamsChanged(graph: Graph) {
 		super.graphParamsChanged(graph)
 		(inputBitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> inputBitWidth = bw } }
 		(outputBitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> outputBitWidth = bw } }
+	}
+
+	/** ---- [AdjustableBitWidth] */
+
+	override fun adjustBitWidth(port: DigitalPort, bitWidth: BitWidth): Boolean {
+		if (port === digitalInput) {
+			if (bitWidth.width <= outputBitWidth.width) {
+				inputBitWidth = bitWidth
+				return true
+			}
+		} else if (port === digitalOutput) {
+			if (bitWidth.width >= inputBitWidth.width) {
+				outputBitWidth = bitWidth
+				return true
+			}
+		}
+		return false
 	}
 
 	/** ---- [Storable] interface */

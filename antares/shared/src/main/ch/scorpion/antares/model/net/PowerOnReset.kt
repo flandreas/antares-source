@@ -8,6 +8,7 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.BitWidthExpression
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.antares.model.vertice.AdjustableBitWidth
 import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -30,7 +31,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 class PowerOnReset(
 	bitWidth: BitWidth = BitWidth.BW_1,
 	logic: Logic = Logic.POSITIVE
-) : CalculatingVertice(CALCULATOR) {
+) : CalculatingVertice(CALCULATOR), AdjustableBitWidth {
 
 	companion object {
 
@@ -95,6 +96,13 @@ class PowerOnReset(
 	override fun graphParamsChanged(graph: Graph) {
 		super.graphParamsChanged(graph)
 		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
+	}
+
+	/** ---- [AdjustableBitWidth] */
+
+	override fun adjustBitWidth(port: DigitalPort, bitWidth: BitWidth): Boolean {
+		this.bitWidth = bitWidth
+		return true
 	}
 
 	/** ---- [Actor] interface */

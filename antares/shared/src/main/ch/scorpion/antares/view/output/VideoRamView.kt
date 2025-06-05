@@ -163,6 +163,8 @@ class VideoRamView(
 		model.type = Translations.getString("library.element.VideoRam.name")
 		model.typeDesc = Translations.getOptionalString("library.element.VideoRam.desc")
 
+		model.isAdjustableBitWidth = false
+
 		addPortView(
 			DigitalPortView(
 			styleProvider = styleProvider,

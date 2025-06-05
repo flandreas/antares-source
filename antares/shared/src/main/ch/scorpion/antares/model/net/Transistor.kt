@@ -9,6 +9,7 @@ import ch.scorpion.antares.model.net.TransistorIF.Companion.SOURCE_PORT_ID
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
+import ch.scorpion.antares.model.vertice.AdjustableBitWidth
 import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.Translation
@@ -58,7 +59,7 @@ class TransistorCalculator : VerticeCalculator<Transistor> {
 class Transistor(
 	transistorType: TransistorType = DEFAULT_TRANSISTOR_TYPE,
 	bitWidth: BitWidth = BitWidth.BW_1
-) : CalculatingVertice(CALCULATOR), TransistorIF<DigitalSignal> {
+) : CalculatingVertice(CALCULATOR), TransistorIF<DigitalSignal>, AdjustableBitWidth {
 
 	companion object {
 		private val CALCULATOR = TransistorCalculator()
@@ -98,7 +99,7 @@ class Transistor(
 		propagationDelay = LongValueImpl(10)
 
 		addPort(DigitalPortImpl(PortType.INPUT, "S", bitWidth = bitWidth, description = SOURCE_DESC))
-		addPort(DigitalPortImpl(PortType.INPUT, "G", bitWidth = bitWidth, description = GATE_DESC))
+		addPort(DigitalPortImpl(PortType.INPUT, "G", bitWidth = BitWidth.BW_1, description = GATE_DESC))
 		addPort(DigitalPortImpl(PortType.OUTPUT, "D", bitWidth = bitWidth, description = DRAIN_DESC, canBeUndefined = true))
 	}
 
@@ -107,6 +108,20 @@ class Transistor(
 	override fun graphParamsChanged(graph: Graph) {
 		super.graphParamsChanged(graph)
 		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
+	}
+
+	/** ---- [AdjustableBitWidth] */
+
+	override fun adjustBitWidth(port: DigitalPort, bitWidth: BitWidth): Boolean {
+		if (port.portId == GATE_PORT_ID) {
+			return false
+		}
+		if (!isConnected) {
+			this.bitWidth = bitWidth
+			return true
+		} else {
+			return false
+		}
 	}
 
 	/** ---- [Storable] interface */

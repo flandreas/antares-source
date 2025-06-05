@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.net.PullDirection.LOW
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
+import ch.scorpion.antares.model.vertice.AdjustableBitWidth
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
@@ -18,7 +19,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 class PullResistor(
 	bitWidth: BitWidth = BitWidth.BW_1,
 	pullDirection: PullDirection = LOW
-) : CalculatingVertice(CALCULATOR), WeakOutputPortBehaviour<DigitalSignal> {
+) : CalculatingVertice(CALCULATOR), WeakOutputPortBehaviour<DigitalSignal>, AdjustableBitWidth {
 
 	companion object{
 
@@ -100,6 +101,13 @@ class PullResistor(
 	override fun graphParamsChanged(graph: Graph) {
 		super.graphParamsChanged(graph)
 		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
+	}
+
+	/** ---- [AdjustableBitWidth] */
+
+	override fun adjustBitWidth(port: DigitalPort, bitWidth: BitWidth): Boolean {
+		this.bitWidth = bitWidth
+		return true
 	}
 
 	/** ---- [WeakOutputPortBehaviour] interface */

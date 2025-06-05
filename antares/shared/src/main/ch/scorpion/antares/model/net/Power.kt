@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.BitWidthExpression
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.antares.model.vertice.AdjustableBitWidth
 import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -22,7 +23,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 
 class Power(
 	bitWidth: BitWidth = BitWidth.BW_1
-) : CalculatingVertice(CALCULATOR) {
+) : CalculatingVertice(CALCULATOR), AdjustableBitWidth {
 
 	companion object {
 
@@ -54,6 +55,13 @@ class Power(
 	init {
 		addPort(DigitalPortImpl(portType = PortType.OUTPUT, bitWidth = bitWidth))
 		propagationDelay = LongValueImpl.ONE
+	}
+
+	/** ---- [AdjustableBitWidth] */
+
+	override fun adjustBitWidth(port: DigitalPort, bitWidth: BitWidth): Boolean {
+		this.bitWidth = bitWidth
+		return true
 	}
 
 	/** ---- [GraphElement] */

@@ -1,11 +1,11 @@
 package ch.scorpion.antares.model.signal
 
-import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.antares.model.vertice.AdjustableBitWidth
 
 /**
  * A source of a single [DigitalSignal] whose [BitWidth] can be chosen.
  */
-interface DigitalSignalSource : Vertice {
+interface DigitalSignalSource : AdjustableBitWidth {
 
     var bitWidth: BitWidth
 

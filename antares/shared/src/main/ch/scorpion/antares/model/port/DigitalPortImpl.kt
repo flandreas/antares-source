@@ -11,6 +11,9 @@ import ch.scorpion.antares.model.port.DigitalPort.Companion.PROP_OUTPUT_ANNOTATI
 import ch.scorpion.antares.model.port.DigitalPort.Companion.PROP_SIGNAL_REPRESENTATION
 import ch.scorpion.antares.model.port.DigitalPort.Companion.PROP_TRIGGER
 import ch.scorpion.antares.model.signal.*
+import ch.scorpion.antares.model.vertice.AdjustableBitWidth
+import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.*
@@ -34,6 +37,8 @@ open class DigitalPortImpl(
 ) : PortImpl<DigitalSignal>(portType, name, description, canBeUndefined, weakBehaviour), DigitalPort {
 
 	companion object {
+
+		private val LOG by logger(DigitalPortImpl::class)
 
 		private fun defaultSignalRepresentation(bitWidth: BitWidth): DigitalSignalRepresentation =
 			if (bitWidth.width > 4) DigitalSignalRepresentation.HEXADECIMAL else DigitalSignalRepresentation.BINARY
@@ -245,8 +250,34 @@ open class DigitalPortImpl(
 	}
 
 	override fun connectTo(net: Net<DigitalSignal>) {
+		adjustBitWidthIfNecessary(net)
 		super.connectTo(net)
 		(net as DigitalNet?)?.checkBitWidthCompatibility()
+	}
+
+	private fun adjustBitWidthIfNecessary(net: Net<DigitalSignal>) {
+		val netBitWidth = (net as DigitalNet).establishedBitWidthBesidesPort(this)
+		if (netBitWidth != null && this.bitWidth != netBitWidth && BaseModule.properties.getBoolean(DigitalPort.PROP_ADJUST_BIT_WIDTH)) {
+			// Note: This Port has already been added to [net]
+			val youngestPort = net.youngestAdjustablePortBesides(this)
+			val adjustedPort = if (youngestPort != null && youngestPort.owner!!.id > owner!!.id) {
+				youngestPort
+			} else if (owner is AdjustableBitWidth) {
+				this
+			} else {
+				null
+			}
+			if (adjustedPort != null) {
+				val newBitWidth = if (adjustedPort == this) {
+					netBitWidth
+				} else {
+					this.bitWidth
+				}
+				if ((adjustedPort.owner as AdjustableBitWidth).adjustBitWidth(adjustedPort, newBitWidth)) {
+					LOG.debug("Adjusted bitWidth of $portId in ${adjustedPort.owner!!::class.simpleName} to $newBitWidth")
+				}
+			}
+		}
 	}
 
 	override fun disconnect() {

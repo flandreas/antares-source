@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.signal
 
+import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.*
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
@@ -153,6 +154,9 @@ class DigitalSignalSourceControlView<T : DigitalSignalSource>(
 			set(value) {
 				// empty
 			}
-	}
 
+		override fun adjustBitWidth(port: DigitalPort, bitWidth: BitWidth): Boolean {
+			return false
+		}
+	}
 }

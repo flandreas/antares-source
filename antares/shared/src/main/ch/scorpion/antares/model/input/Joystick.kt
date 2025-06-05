@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.gate.AbstractLogicGate
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
+import ch.scorpion.antares.model.vertice.AdjustableBitWidth
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -18,7 +19,7 @@ import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
-class Joystick(bitWidth: BitWidth = BitWidth.BW_2) : CalculatingVertice(CALCULATOR) {
+class Joystick(bitWidth: BitWidth = BitWidth.BW_2) : CalculatingVertice(CALCULATOR), AdjustableBitWidth {
 
 	companion object {
 		private const val BASE_RESOURCE_KEY = "library.element.Joystick"
@@ -41,7 +42,7 @@ class Joystick(bitWidth: BitWidth = BitWidth.BW_2) : CalculatingVertice(CALCULAT
 
 	/**
 	 * The position of the knob that determines the x and y output signals.
-	 * Neutral position is at (0,0). Has to be normalized to be in range -1 .. +1 for both coordinates.
+	 * Neutral position is at (0,0). Has to be normalized to be in range -1 ... +1 for both coordinates.
 	 */
 	var knobPosition: Point2D = Point2D.ZERO
 
@@ -64,6 +65,13 @@ class Joystick(bitWidth: BitWidth = BitWidth.BW_2) : CalculatingVertice(CALCULAT
 	fun setKnobPosition(position: Point2D, signalHandler: SignalHandler) {
 		knobPosition = position
 		requestActingAfter(signalHandler, propagationDelay.value, createActorData(null))
+	}
+
+	/** ---- [AdjustableBitWidth] */
+
+	override fun adjustBitWidth(port: DigitalPort, bitWidth: BitWidth): Boolean {
+		this.bitWidth = bitWidth
+		return true
 	}
 
 	/** ---- [GraphElement] */
