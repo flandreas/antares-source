@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<metaGraph _id='0' manualContainer='true'>
+<metaGraph _id='0' appVersion='1.20.0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' type='digital' startupTime='25000000'>
+        <graph _id='2' type='digital' calculatedDelay='340' startupTime='25000000'>
           <elements>
             <constant _id='3' id='1' delay='1' bitWidth='1' value='1'/>
             <subGraphVerticeRef _id='4' id='2' delay='40' uuid='4a1729f4-06ee-4683-a65d-ebaef1271d92' type='digital'>
@@ -22,7 +22,7 @@
               </ports>
             </digitalNet>
             <ledMatrix _id='10' id='4' delay='0' columnWidth='8' rowWidth='8' afterglow='500'/>
-            <clock _id='11' id='5' delay='50000000' enabled='false'/>
+            <clock _id='11' id='5' delay='50000000' offPercentage='50.0'/>
             <subGraphVerticeRef _id='12' id='6' delay='0' uuid='2be67615-ff7b-4f4b-a2e1-3fd9ff1d1d97' type='digital'/>
             <digitalNet _id='13' id='7' delay='0'>
               <ports>
