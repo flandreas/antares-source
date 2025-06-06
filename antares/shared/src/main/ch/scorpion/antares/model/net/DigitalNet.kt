@@ -2,6 +2,7 @@ package ch.scorpion.antares.model.net
 
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.*
+import ch.scorpion.antares.model.vertice.AdjustableBitWidth
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -78,7 +79,23 @@ open class DigitalNet : NetImpl<DigitalSignal>() {
 			return ports.map { it as DigitalPort }.first().bitWidth
 		}
 
-	private fun getOccurringBitWidths(): Set<Int> =
+	fun establishedBitWidthBesidesPort(port: DigitalPort): BitWidth? {
+		if (bitWidthCompatibilityError != null) {
+			return null
+		}
+		if (portsCount == 0) {
+			return null
+		}
+		return (ports.firstOrNull { it !== port } as DigitalPort?)?.bitWidth
+	}
+
+	fun youngestAdjustablePortBesides(port: DigitalPort): DigitalPort? {
+		return ports
+			.filter { it !== port && it.owner is AdjustableBitWidth }
+			.maxByOrNull { it.owner!!.id } as DigitalPort?
+	}
+
+    private fun getOccurringBitWidths(): Set<Int> =
 		ports.map { it as DigitalPort }.filter { !it.isAdaptive }.map { it.bitWidth.width }.toSet()
 
 	fun checkBitWidthCompatibility() {

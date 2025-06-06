@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.model.DigitalGraph
+import ch.scorpion.antares.model.vertice.AdjustableBitWidth
 import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -35,7 +36,7 @@ data class TunnelName(val name: String) {
  */
 class Tunnel(
 	name: String? = null
-) : CalculatingVertice(CALCULATOR), NetCombiner {
+) : CalculatingVertice(CALCULATOR), NetCombiner, AdjustableBitWidth {
 
 	companion object {
 
@@ -106,6 +107,11 @@ class Tunnel(
 	override fun graphParamsChanged(graph: Graph) {
 		super.graphParamsChanged(graph)
 		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
+	}
+
+	override fun adjustBitWidth(port: DigitalPort, bitWidth: BitWidth): Boolean {
+		this.bitWidth = bitWidth
+		return true
 	}
 
 	/** ---- [Storable] interface */

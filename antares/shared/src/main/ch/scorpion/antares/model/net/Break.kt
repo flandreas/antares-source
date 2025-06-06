@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.antares.model.vertice.AdjustableBitWidth
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
@@ -27,7 +28,7 @@ class Break(
 	bitWidth: BitWidth = BitWidth.BW_1,
 	value: DigitalSignal = DigitalSignalFactory.falseValue(bitWidth),
 	private val eventBus: EventBus = BaseModule.eventBus
-) : CalculatingVertice(CALCULATOR) {
+) : CalculatingVertice(CALCULATOR), AdjustableBitWidth {
 
 	companion object {
 		private val LOG by logger(Break::class)
@@ -73,6 +74,11 @@ class Break(
 	override val type: String get() = TYPE
 
 	override val typeDesc: String? get() = TYPE_DESC
+
+	override fun adjustBitWidth(port: DigitalPort, bitWidth: BitWidth): Boolean {
+		this.bitWidth = bitWidth
+		return true
+	}
 
 	/** ---- [Storable] interface */
 

@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.model.signal.Bit.Error
 import ch.scorpion.antares.model.signal.Bit.Undefined
+import ch.scorpion.antares.model.vertice.AdjustableBitWidth
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -49,7 +50,7 @@ class TriStateBufferCalculator : VerticeCalculator<TriStateBufferGate> {
 open class TriStateBufferGate(
     bitWidth: BitWidth = BitWidth.BW_1,
     enableLogic: Logic = Logic.POSITIVE
-) : CalculatingVertice(CALCULATOR) {
+) : CalculatingVertice(CALCULATOR), AdjustableBitWidth {
 
     companion object {
 	    private const val BASE_RESOURCE_KEY = "library.element.TriStateBuffer"
@@ -137,6 +138,16 @@ open class TriStateBufferGate(
         super.executionStart(signalHandler)
         requestActingAfter(signalHandler, propagationDelay.value / 2, createActorData(null))
     }
+
+	/** --- [AdjustableBitWidth] */
+
+	override fun adjustBitWidth(port: DigitalPort, bitWidth: BitWidth): Boolean {
+		if (port.portId == 2) {
+			return false
+		}
+		this.bitWidth = bitWidth
+		return true
+	}
 
     /** ---- [TriStateBufferGate] */
 

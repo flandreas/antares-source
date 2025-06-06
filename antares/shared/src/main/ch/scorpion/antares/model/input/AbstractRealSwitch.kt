@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.BitWidthExpression
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.vertice.AdjustableBitWidth
 import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -26,7 +27,7 @@ abstract class AbstractRealSwitch<T : AbstractSwitch<T>>(
 	calculator: VerticeCalculator<T>,
 	portCount: Int,
 	bitWidth: BitWidth = BitWidth.BW_1
-) : AbstractSwitch<T>(calculator), NetCombiner, NetTopologyChanger {
+) : AbstractSwitch<T>(calculator), NetCombiner, NetTopologyChanger, AdjustableBitWidth {
 
 	companion object {
 		private val LOG by logger(AbstractRealSwitch::class)
@@ -68,6 +69,13 @@ abstract class AbstractRealSwitch<T : AbstractSwitch<T>>(
 	override fun graphParamsChanged(graph: Graph) {
 		super.graphParamsChanged(graph)
 		(bitWidth as? BitWidthExpression)?.let { it.evaluateIn(graph)?.let { bw -> bitWidth = bw } }
+	}
+
+	/** ---- [AdjustableBitWidth] */
+
+	override fun adjustBitWidth(port: DigitalPort, bitWidth: BitWidth): Boolean {
+		this.bitWidth = bitWidth
+		return true
 	}
 
 	/** ---- [NetTopologyChanger] interface */

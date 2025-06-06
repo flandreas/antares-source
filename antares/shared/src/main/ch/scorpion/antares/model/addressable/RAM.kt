@@ -1,5 +1,6 @@
 package ch.scorpion.antares.model.addressable
 
+import ch.scorpion.antares.model.vertice.AdjustableBitWidth
 import ch.scorpion.antares.model.Trigger
 import ch.scorpion.antares.model.addressable.AddressableVertice.Companion.ADDRESS_PORT_NAME
 import ch.scorpion.antares.model.addressable.AddressableVertice.Companion.CHIP_SELECT_PORT_NAME
@@ -80,6 +81,12 @@ class RAM(
 	 * Can be used for displaying the "current" (i.e. last) selected address.
 	 */
 	var currentSelectedAddress: Int = 0
+
+	/**
+	 * Allows application of [RAM] to disable the [AdjustableBitWidth] property. Used e.g. by the Video RAM,
+	 * whose [BitWidth] for the data and address ports are determined by other properties.
+	 */
+	var isAdjustableBitWidth: Boolean = true
 
 	val isWrite: Boolean get() = getWriteInput().getIncomingSignal() == DigitalSignalFactory.of(true)
 	val isRead: Boolean get() = getWriteInput().getIncomingSignal() == DigitalSignalFactory.of(false)
@@ -169,6 +176,13 @@ class RAM(
 			super.flush(signalHandler, data)
 		}
 	}
+
+	override fun adjustBitWidth(port: DigitalPort, bitWidth: BitWidth): Boolean =
+		if (isAdjustableBitWidth) {
+			super.adjustBitWidth(port, bitWidth)
+		} else {
+			false
+		}
 
 	/** ---- [RAM] */
 

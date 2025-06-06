@@ -8,6 +8,7 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.BitWidthExpression
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.truthtable.TruthTableModel
+import ch.scorpion.antares.model.vertice.AdjustableBitWidth
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -29,7 +30,7 @@ abstract class AbstractLogicGate(
 	bitWidth: BitWidth = BitWidth.BW_1,
 	val minInputCount: PortCount = DEF_MIN_INPUT_COUNT,
 	val maxInputCount: PortCount = DEF_MAX_INPUT_COUNT
-) : CalculatingVertice(gateType.calculator), MultiSignalSource<DigitalSignal> {
+) : CalculatingVertice(gateType.calculator), MultiSignalSource<DigitalSignal>, AdjustableBitWidth {
 
     companion object {
         val LOG by logger(AbstractLogicGate::class)
@@ -141,6 +142,18 @@ abstract class AbstractLogicGate(
 	override fun getSignal(id: Int): DigitalSignal {
 		val inputPort = getInput<DigitalSignal>(id) as DigitalPort
 		return inputPort.logic.evaluate(inputPort.getIncomingSignal()!!)
+	}
+
+	/** ---- [AdjustableBitWidth] */
+
+	override fun adjustBitWidth(port: DigitalPort, bitWidth: BitWidth): Boolean {
+		if (!isConnected) {
+			this.bitWidth = bitWidth
+			return true
+		} else {
+			// If already connected, other ports might require another BitWidth
+			return false
+		}
 	}
 
     /** ---- [Actor] interface */

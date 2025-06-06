@@ -12,6 +12,7 @@ import ch.scorpion.antares.model.expression.BooleanExpressionLibraryItem
 import ch.scorpion.antares.model.expression.BooleanExpressionNotation
 import ch.scorpion.antares.model.expression.BooleanExpressionService
 import ch.scorpion.antares.model.expression.BooleanExpressionStorable
+import ch.scorpion.antares.model.fsm.*
 import ch.scorpion.antares.model.gate.*
 import ch.scorpion.antares.model.gate.NonUnaryLogicGateType.*
 import ch.scorpion.antares.model.gate.UnaryLogicGateType.Buffer
@@ -20,18 +21,17 @@ import ch.scorpion.antares.model.inout.DigitalCircuitInOutImpl
 import ch.scorpion.antares.model.input.*
 import ch.scorpion.antares.model.net.*
 import ch.scorpion.antares.model.output.*
+import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.SubCircuitPort
 import ch.scorpion.antares.model.signal.BitWidthGraphParamType
 import ch.scorpion.antares.model.signal.DigitalSignalColor
 import ch.scorpion.antares.model.signal.FixedPointConfig
+import ch.scorpion.antares.model.testcase.CombinedTestcaseRunner
 import ch.scorpion.antares.model.testcase.Testcase
 import ch.scorpion.antares.model.testcase.TestcaseAppService
 import ch.scorpion.antares.model.testcase.Testcases
 import ch.scorpion.antares.model.truthtable.*
 import ch.scorpion.antares.model.vertice.AntaresSubGraphVerticeRefActivationRecord
-import ch.scorpion.antares.model.addressable.MemoryStorable
-import ch.scorpion.antares.model.testcase.CombinedTestcaseRunner
-import ch.scorpion.antares.model.fsm.*
 import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.antares.view.port.AntaresPortFactory
 import ch.scorpion.jabbah.base.AbstractModule
@@ -100,6 +100,7 @@ object AntaresModelModule : AbstractModule() {
 
 		properties.set(AnalogCircuitAnalysis.PROP_TIME_STEP, AnalogCircuitAnalysis.DEF_TIME_STEP)
 		properties.set(CombinedTestcaseRunner.PROP_CHECK_PROP_DELAY_CONSISTENCY, true)
+		properties.set(DigitalPort.PROP_ADJUST_BIT_WIDTH, true)
 	}
 
 	private fun configureTypeMap(typeMap: TypeMap) {

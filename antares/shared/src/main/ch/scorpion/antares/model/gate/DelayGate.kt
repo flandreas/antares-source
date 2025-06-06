@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.BitWidthExpression
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.vertice.AdjustableBitWidth
 import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -14,6 +15,7 @@ import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.StoringGraphActorData
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
+import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
@@ -26,7 +28,7 @@ class DelayGateCalculator : VerticeCalculator<DelayGate> {
     }
 }
 
-class DelayGate : CalculatingVertice(CALCULATOR) {
+class DelayGate : CalculatingVertice(CALCULATOR), AdjustableBitWidth {
 
     companion object {
 	    private const val BASE_RESOURCE_KEY = "library.element.Delay"
@@ -74,6 +76,16 @@ class DelayGate : CalculatingVertice(CALCULATOR) {
 
 	override fun createActorData(inputPort: InputPort<*>?, force: Boolean, signal: Any?): GraphActorData =
 		StoringGraphActorData(inputPort, getInput<DigitalSignal>().getIncomingSignal(), true, force = force)
+
+	/** ---- [AdjustableBitWidth] */
+
+	override fun adjustBitWidth(port: DigitalPort, bitWidth: BitWidth): Boolean {
+		this.bitWidth = bitWidth
+		stateChanged()
+		return true
+	}
+
+	/** ---- [Storable] */
 
     override fun write(writer: StoreWriter) {
         super.write(writer)

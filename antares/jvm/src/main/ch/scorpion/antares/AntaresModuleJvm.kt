@@ -13,6 +13,7 @@ import ch.scorpion.antares.model.input.CurrentSwitchPropagationDelay
 import ch.scorpion.antares.model.input.SwitchConfiguration
 import ch.scorpion.antares.model.net.*
 import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
+import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.model.testcase.CombinedTestcaseRunner
 import ch.scorpion.antares.model.testcase.TestcaseViewSwing
@@ -427,6 +428,10 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 				id = SymbolStyle.PROP_TRI_STATE_ALWAYS_TRIANGLE,
 				nameKey = "antares.preference.TriStateAlwaysTriangle",
 				needsRestart = true
+			))
+			add(BooleanPreference(
+				id = DigitalPort.PROP_ADJUST_BIT_WIDTH,
+				nameKey = "antares.preference.adjustBitWidth"
 			))
 		}
 

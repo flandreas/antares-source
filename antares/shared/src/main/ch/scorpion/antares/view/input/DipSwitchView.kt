@@ -125,15 +125,19 @@ class DipSwitchView(
 		get() = model.bitWidth
 		set(value) {
 			if (value != bitWidth) {
-				invalidate()
-				clear()
-				model.bitWidth = value
-				updateView()
-				postControlViewSourceChangeEvent(BaseModule.eventBus)
-				invalidate()
-				validate()
+				handleBitWidthChanged(value)
 			}
 		}
+
+	private fun handleBitWidthChanged(bitWidth: BitWidth) {
+		invalidate()
+		clear()
+		model.bitWidth = bitWidth
+		updateView()
+		postControlViewSourceChangeEvent(BaseModule.eventBus)
+		invalidate()
+		validate()
+	}
 
 	@Suppress("unused") // Reflection
 	var initialValue: Long
@@ -188,6 +192,9 @@ class DipSwitchView(
 	/** ---- [AbstractGraphElementView] */
 
 	override fun handleStateChanged(event: GraphElementEvent) {
+		if (model.bitWidth.width != bitViews.size) {
+			handleBitWidthChanged(model.bitWidth)
+		}
 		invalidate()
 		for ((i, view) in bitViews.withIndex()) {
 			view.bit = model.signal!!.bitAt(i)
