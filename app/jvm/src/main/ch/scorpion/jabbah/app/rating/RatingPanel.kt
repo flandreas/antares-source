@@ -3,17 +3,21 @@ package ch.scorpion.jabbah.app.rating
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.action.AbstractApplicationAction
 import ch.scorpion.jabbah.app.module.AppModuleJvm
-import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.AbstractAction
+import ch.scorpion.jabbah.base.ActionWrapperSwing
+import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.UIBasics
 import kotlinx.coroutines.runBlocking
-import java.awt.*
+import java.awt.BorderLayout
+import java.awt.Component
+import java.awt.Dimension
+import java.awt.Frame
 import javax.swing.*
-import javax.swing.event.HyperlinkEvent
 
 class RatingAction(
 	application: Application,
@@ -218,7 +222,7 @@ class RatingPanel(
 		JOptionPane.showConfirmDialog(
 			this@RatingPanel,
 			Translations.getString("application.rating.loadError.text"),
-			Translations.getString("application.rating.dialog.title"),
+			Translations.getString("application.rating.action.name"),
 			JOptionPane.DEFAULT_OPTION,
 			JOptionPane.ERROR_MESSAGE)
 	}
