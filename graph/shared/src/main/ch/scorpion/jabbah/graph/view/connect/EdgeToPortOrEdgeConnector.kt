@@ -174,7 +174,7 @@ class EdgeToPortOrEdgeConnector(
 	private fun beginConnecting(context: EditInputEventContext) {
 		val snapLocation = ConnectionPointHighlighter.portViewHighlight!!.location
 		createEdgeView(context.drawingView as DrawingView<GraphView>, snapLocation, branchedEdgeView!!.netView as NetView<Any>)
-		LOG.userTrail("Start creating junction of EdgeView ${edgeView?.id}")
+		LOG.userTrail("Start creating junction from EdgeView ${branchedEdgeView!!.id} with new EdgeView ${edgeView?.id}")
 
 		// Re-snap to the PortView connection point to retrieve the optimal segment index
 		// (avoid bug #627: wire distortion when splitting at EdgeView corner)

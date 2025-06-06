@@ -153,6 +153,9 @@ enum class LayoutType(
 		if (edgeView.isDegenerated) {
 			return null
 		}
+		if (segmentIndex < 0 || segmentIndex >= edgeView.segmentPointCount - 1) {
+			return null
+		}
 		if (!edgeView.polyline.isSegmentOrthogonal(segmentIndex)) {
 			return null
 		}
