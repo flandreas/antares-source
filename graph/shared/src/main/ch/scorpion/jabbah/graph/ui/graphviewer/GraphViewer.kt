@@ -58,7 +58,9 @@ class GraphViewerController(
 	val drawingView = EditModule.drawingViewFactory.create(
 		(graphView ?: GraphViewModule.graphViewFactory.create(null)) as Drawing<Component>,
 		applicationContextHolder,
-		displayGlobalMessages) as DrawingView<GraphView>
+		displayGlobalMessages,
+		""
+	) as DrawingView<GraphView>
 
 	val graphNavigationViewController = GraphNavigationViewController(isRoot = true, drawingView)
 

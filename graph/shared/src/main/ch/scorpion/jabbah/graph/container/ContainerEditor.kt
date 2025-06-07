@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.editor.EditorImpl
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.vertice.DeepVerticeLink
+import ch.scorpion.jabbah.graph.ui.GraphFrameController
 import ch.scorpion.jabbah.graph.view.ControlViewSourceEvent
 import ch.scorpion.jabbah.graph.view.editor.GraphPortViewEvent
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -30,7 +31,7 @@ open class ContainerEditor(
 	view: DrawingView<Drawing<Component>>,
 	protected val mainDrawingView: DrawingView<Drawing<Component>>,
 	protected val eventBus: EventBus = BaseModule.eventBus
-) : EditorImpl(view, name = "containerEditor") {
+) : EditorImpl(view, name = GraphFrameController.CONTAINER_EDITOR_NAME) {
 
 	companion object {
 		private val LOG by logger(ContainerEditor::class)

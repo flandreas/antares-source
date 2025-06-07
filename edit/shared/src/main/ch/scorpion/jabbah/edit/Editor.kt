@@ -48,7 +48,7 @@ interface Editor {
 
     /**
      * The name of an [Editor] is primarily used to define scopes of [Editor] usages.
-     * For example, if an application consist of many different [Editor], and its UI contains a common UI element
+     * For example, if an application consists of many different [Editor], and its UI contains a common UI element
      * shared sequentially by these [Editor]s, such a UI could react to [CurrentEditorEvent] only from [Editor]
      * with a name designating such a scope, e.g. "mainEditor".
      * [Editor] names are optional. If not needed, an empty string can be used.
@@ -62,7 +62,7 @@ interface Editor {
     val view: DrawingView<Drawing<Component>>
 
     /**
-     * Determines whether this [Editor] is active or not. This affect primarily whether events are forwarded
+     * Determines whether this [Editor] is active or not. This affects primarily whether events are forwarded
      * to the current [Tool] or not. An [Editor] is set 'inactive' if interaction with the [Drawing] is completely
      * controlled by other logic, such as when the [Drawing] is being simulated.
      *
@@ -119,5 +119,4 @@ interface Editor {
      * [toolLock] property.
      */
     fun toolDone()
-
 }

@@ -26,7 +26,7 @@ class SelectionToolImplTest {
 		}
 	}
 
-	private val canvas = CanvasJvm(EditModule.drawingViewFactory.create(DrawingImpl(), null, false))
+	private val canvas = CanvasJvm(EditModule.drawingViewFactory.create(DrawingImpl(), null, false, ""))
 	private val editor = EditorImpl(canvas.view as DrawingView<Drawing<Component>>)
 	private val toolUtil = ToolTestUtil(editor.selectionTool, editor)
 	private val rect1 = RectangleComponent(shape = Rectangle2D(100, 100, 100, 100))

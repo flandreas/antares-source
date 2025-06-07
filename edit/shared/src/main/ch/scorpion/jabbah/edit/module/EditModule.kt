@@ -57,8 +57,8 @@ object EditModule : AbstractModule() {
 
     var commandManager: CommandManager = SourcingCommandManager()
 
-	var drawingViewFactory: DrawingViewFactory<Drawing<Component>> = DrawingViewFactory { drawing, contextHolder, displayGlobalMessages ->
-		DrawingViewImpl(drawing, applicationContextHolder = contextHolder, displayGlobalMessages = displayGlobalMessages)
+	var drawingViewFactory: DrawingViewFactory<Drawing<Component>> = DrawingViewFactory { drawing, contextHolder, displayGlobalMessages, name ->
+		DrawingViewImpl(drawing, applicationContextHolder = contextHolder, displayGlobalMessages = displayGlobalMessages, name = name)
 	}
 
 	var drawingViewSearchFactory: () -> DrawingViewSearch = { DrawingViewSearch() }

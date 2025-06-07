@@ -28,7 +28,7 @@ class DigitalGraphViewSearchTest {
 
 	private val builder = TestCircuitBuilder("test")
 
-	private val view = EditModule.drawingViewFactory.create(builder.graphView as Drawing<Component>, null, false)
+	private val view = EditModule.drawingViewFactory.create(builder.graphView as Drawing<Component>, null, false, "")
 
 	init {
 		view.canvas = createCanvas()

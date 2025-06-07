@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.geom.AffineTransform
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.*
+import ch.scorpion.jabbah.draw.container.DrawableContainerDrawer
 import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
 import ch.scorpion.jabbah.draw.style.DrawTheme
 import ch.scorpion.jabbah.draw.style.Themes
@@ -17,7 +18,6 @@ import ch.scorpion.jabbah.edit.DrawingView.Companion.PROP_EDITABLE
 import ch.scorpion.jabbah.edit.DrawingView.Companion.PROP_SHOW_GRID
 import ch.scorpion.jabbah.edit.highlight.EditHighlightModule
 import ch.scorpion.jabbah.edit.model.ComponentMessage
-import ch.scorpion.jabbah.draw.container.DrawableContainerDrawer
 import ch.scorpion.jabbah.edit.select.EditSelectModule
 import ch.scorpion.jabbah.edit.snap.GridImpl
 
@@ -36,8 +36,9 @@ class DrawingViewImpl<T: Drawing<Component>>(
     private val highlighterFactory: HighlighterFactory = EditHighlightModule.highlighterFactory,
     eventBus: EventBus = BaseModule.eventBus,
     viewPainterFactory: ViewPainterFactory<EditInputEventContext> = { InvalidatableViewPainter(it) },
-    editable: Boolean = true
-) : ViewImpl<EditInputEventContext>(transformFactory, applicationContextHolder, eventBus, viewPainterFactory), DrawingView<T> {
+    editable: Boolean = true,
+    name: String = ""
+) : ViewImpl<EditInputEventContext>(transformFactory, applicationContextHolder, eventBus, name, viewPainterFactory), DrawingView<T> {
 
 	companion object {
 		private val LOG by logger(DrawingViewImpl::class)

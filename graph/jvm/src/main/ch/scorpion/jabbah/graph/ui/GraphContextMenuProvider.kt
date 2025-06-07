@@ -46,16 +46,20 @@ open class GraphContextMenuProvider(
 		super.addActions(view, popupMenu)
 		popupMenu.addSeparator()
 		popupMenu.add(displayIdsAction)
-		popupMenu.add(openGraphActionWrapper)
-		getGraphApplicationContextHolder(view)?.let {
-			popupMenu.add(ActionWrapperSwing(OpenSubGraphViewerAction(applicationName, it)))
-			popupMenu.add(ActionWrapperSwing(EditSubGraphVerticeViewAction(it)))
+		if (view.name == GraphFrameController.MAIN_EDITOR_NAME) {
+			popupMenu.add(openGraphActionWrapper)
+			getGraphApplicationContextHolder(view)?.let {
+				popupMenu.add(ActionWrapperSwing(OpenSubGraphViewerAction(applicationName, it)))
+				popupMenu.add(ActionWrapperSwing(EditSubGraphVerticeViewAction(it)))
+			}
+			popupMenu.add(resetSubGraphAction)
+			popupMenu.add(extractMetaGraphAction)
+			addApplicationSpecificActions(view, popupMenu)
 		}
-		popupMenu.add(resetSubGraphAction)
-		popupMenu.add(extractMetaGraphAction)
-		addApplicationSpecificActions(view, popupMenu)
 		popupMenu.addSeparator()
-		popupMenu.add(openDocumentationAction)
+		if (view.name == GraphFrameController.MAIN_EDITOR_NAME) {
+			popupMenu.add(openDocumentationAction)
+		}
 		popupMenu.add(helpAction)
 	}
 

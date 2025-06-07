@@ -46,7 +46,8 @@ class ContainerPanelController(
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<ContainerPanelView>() {
 
-	val drawingView = EditModule.drawingViewFactory.create(ContainerDrawing(), applicationContextHolder, displayGlobalMessages)
+	val drawingView = EditModule.drawingViewFactory.create(ContainerDrawing(), applicationContextHolder, displayGlobalMessages,
+		GraphFrameController.CONTAINER_EDITOR_NAME)
 
 	val editor = GraphViewModule.containerEditorFactory(drawingView, mainGraphDrawingView)
 

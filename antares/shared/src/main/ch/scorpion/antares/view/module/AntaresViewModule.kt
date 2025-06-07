@@ -188,9 +188,9 @@ object AntaresViewModule : AbstractModule() {
 	override fun initialize() {
 		Translations.addBundle("antares")
 
-		// Overwritten in order to change the [DrawableDrawer]
-		EditModule.drawingViewFactory = DrawingViewFactory { drawing, contextHolder, displayGlobalMessages ->
-			val drawingView = DrawingViewImpl(drawing, applicationContextHolder = contextHolder, displayGlobalMessages = displayGlobalMessages)
+		// Overwritten to change the [DrawableDrawer]
+		EditModule.drawingViewFactory = DrawingViewFactory { drawing, contextHolder, displayGlobalMessages, name ->
+			val drawingView = DrawingViewImpl(drawing, applicationContextHolder = contextHolder, displayGlobalMessages = displayGlobalMessages, name = name)
 			drawingView.addDrawableDrawer(DigitalComponentViewDrawer())
 			drawingView
 		}

@@ -26,7 +26,8 @@ class SubGraphViewerController(
 	val drawingView = EditModule.drawingViewFactory.create(
 		graphView as Drawing<Component>,
 		applicationContextHolder,
-		displayGlobalMessages = false
+		displayGlobalMessages = false,
+		""
 	) as DrawingView<GraphView>
 
 	val graphNavigationViewController = GraphNavigationViewController(isRoot = false, drawingView)

@@ -81,7 +81,12 @@ class MetaGraphHistoryPanel(
 
 	private val historyList = JList(loadEntries())
 
-	private val preview = CanvasJvm(EditModule.drawingViewFactory.create(GraphViewImpl() as Drawing<ch.scorpion.jabbah.edit.Component>, null, displayGlobalMessages = false))
+	private val preview = CanvasJvm(EditModule.drawingViewFactory.create(
+		GraphViewImpl() as Drawing<ch.scorpion.jabbah.edit.Component>,
+		null,
+		displayGlobalMessages = false,
+		name = ""
+	))
 
 	init {
 		buildUI()

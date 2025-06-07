@@ -23,6 +23,7 @@ open class ViewImpl<C : InputEventContext>(
 	private val affineTransformFactory: () -> AffineTransform,
 	applicationContextHolder: ApplicationContextHolder?,
 	protected val eventBus: EventBus = BaseModule.eventBus,
+	override val name: String = "",
 	viewPainterFactory: ViewPainterFactory<C> = { InvalidatableViewPainter(it) }
 ) : View<C> {
 

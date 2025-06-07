@@ -22,7 +22,7 @@ abstract class AbstractEditIntegrationTest {
 	}
 
 	private val drawing = DrawingImpl<Component>()
-	protected val view = EditModule.drawingViewFactory.create(drawing, contextHolder = null, displayGlobalMessages = true)
+	protected val view = EditModule.drawingViewFactory.create(drawing, contextHolder = null, displayGlobalMessages = true, "")
 	private val canvas = createCanvas()
 	protected val editor = EditorImpl(view)
 

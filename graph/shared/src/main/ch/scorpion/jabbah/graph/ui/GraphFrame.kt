@@ -100,6 +100,8 @@ open class GraphFrameController<T: GraphFrame>(
 		const val GENERATE_CONTAINER_TAG = "generateContainer"
 
 		const val MAIN_EDITOR_NAME = "mainEditor"
+
+		const val CONTAINER_EDITOR_NAME = "containerEditor"
 	}
 
 	var displayedView: DisplayedView = DisplayedView.Desktop
@@ -117,7 +119,8 @@ open class GraphFrameController<T: GraphFrame>(
 	private val drawingView = EditModule.drawingViewFactory.create(
 		GraphViewModule.graphViewFactory.create(null) as Drawing<Component>,
 		applicationContextHolder,
-		displayGlobalMessages = true
+		displayGlobalMessages = true,
+		name = MAIN_EDITOR_NAME
 	)
 
 	val editor: Editor = GraphViewModule.graphEditorFactory.invoke(MAIN_EDITOR_NAME, drawingView)

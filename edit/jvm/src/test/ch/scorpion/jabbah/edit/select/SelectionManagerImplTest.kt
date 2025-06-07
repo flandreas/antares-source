@@ -23,7 +23,7 @@ class SelectionManagerImplTest {
 
 	private val eventBus = EventBusImpl()
 	private val drawing = DrawingImpl<Component>()
-	private val canvas = CanvasJvm(EditModule.drawingViewFactory.create(drawing, null, false))
+	private val canvas = CanvasJvm(EditModule.drawingViewFactory.create(drawing, null, false, ""))
 	private var selectionManager: SelectionManagerImpl
 	private val rect = RectangleComponent(styleProvider = StyleRepository.INSTANCE, shape = Rectangle2D(200, 200, 200, 100))
 

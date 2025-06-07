@@ -25,7 +25,7 @@ class DrawingViewSearchTest {
 
 	private val drawing = DrawingImpl<Component>()
 
-	private val view = EditModule.drawingViewFactory.create(drawing, null, false)
+	private val view = EditModule.drawingViewFactory.create(drawing, null, false, "")
 
 	init {
 		view.canvas = createCanvas()

@@ -14,7 +14,8 @@ fun interface DrawingViewFactory<T : Drawing<*>> {
 	fun create(
 		drawing: T,
 		contextHolder: ApplicationContextHolder?,
-		displayGlobalMessages: Boolean
+		displayGlobalMessages: Boolean,
+		name: String
 	): DrawingView<T>
 }
 

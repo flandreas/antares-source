@@ -74,6 +74,14 @@ interface View<C : InputEventContext> : ContentView<C>, ViewToModelTransform {
 	}
 
 	/**
+	 * The name of a [View] is primarily used to define scopes of [View] usages.
+	 * For example, if an application consists of many different [Views][View],
+	 * common logic classes can distinguish between these [Views][View].
+	 * [View] names are optional. If not needed, an empty string can be used.
+	 */
+	val name: String
+
+	/**
 	 * The [Canvas] that renders this [View]. Late binding with this [View].
 	 * Clients that need to perform logic NOT BEFORE the [Canvas] is bound can listen to the [PropertyChangeEvent].
 	 */
