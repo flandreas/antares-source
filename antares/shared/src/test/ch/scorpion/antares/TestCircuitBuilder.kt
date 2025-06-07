@@ -69,9 +69,9 @@ class TestCircuitBuilder(
      * If [notView] is `null`, an elementary NOT gate is used.
      */
     fun buildCustomNAND(notView: SubGraphVerticeView<*>?, bitWidth: BitWidth = BitWidth.BW_1): GraphView {
-	    val effNotView: VerticeView<*> = notView ?: LogicGateView.notGateView(bitWidth)
+	    val effNotView: VerticeView<*> = notView ?: LogicGateView.notGateView(bitWidth).also { it.bitWidth = bitWidth }
         graphView.add(effNotView)
-        val andView = addVerticeView(LogicGateView.andGateView())
+        val andView = addVerticeView(LogicGateView.andGateView().also { it.bitWidth = bitWidth })
 
         connect(addInput(bitWidth = bitWidth), andView, andView.vertice.getInput(1))
         connect(addInput(bitWidth = bitWidth), andView, andView.vertice.getInput(2))
