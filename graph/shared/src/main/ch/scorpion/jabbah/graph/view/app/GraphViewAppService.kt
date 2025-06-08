@@ -131,8 +131,6 @@ open class GraphViewAppServiceImpl(
 		editor: Editor,
 		customizer: ComponentCustomizer?
 	): Component {
-		LOG.userTrail("Add Component '${libraryElement.name}' from library/project at $location")
-
 		val command = AddGraphElementViewFromLibraryCommand(
 			editor,
 			libraryElement,
@@ -143,6 +141,8 @@ open class GraphViewAppServiceImpl(
 
 		commandManager.execute(command)
 		val component = editor.view.drawing.getWithId(command.addedComponentId) as Component
+
+		LOG.userTrail("Add Component ${command.addedComponentId} '${libraryElement.name}' from library/project at $location")
 
 		editor.view.selectionManager.deselectAll()
 		editor.view.selectionManager.select(component)

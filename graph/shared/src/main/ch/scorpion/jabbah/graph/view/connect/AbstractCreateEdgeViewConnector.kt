@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
@@ -18,6 +19,10 @@ abstract class AbstractCreateEdgeViewConnector(
 	private val edgeViewFactory: EdgeViewFactory,
 	draggedEndpointType: EdgeViewEndpointType
 ) : AbstractConnector(draggedEndpointType) {
+
+	companion object {
+		private val LOG by logger(AbstractCreateEdgeViewConnector::class)
+	}
 
 	protected val isValidEdgeView: Boolean get() = edgeView != null && edgeView!!.isSufficientlyLarge
 
@@ -44,6 +49,7 @@ abstract class AbstractCreateEdgeViewConnector(
 	}
 
 	protected open fun cancel(editor: Editor) {
+		LOG.userTrail("Creation of EdgeView cancelled")
 		edgeView?.let {
 			it.unconnectFromOrigin()
 			it.unconnectFromDestination()
