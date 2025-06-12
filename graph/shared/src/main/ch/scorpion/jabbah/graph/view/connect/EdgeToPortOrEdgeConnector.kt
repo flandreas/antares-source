@@ -231,6 +231,17 @@ class EdgeToPortOrEdgeConnector(
 	}
 
 	private fun completeConnectingToEdgeView(context: EditInputEventContext) {
+		if (targetEdgeView == null) {
+			LOG.warn("IllegalState: targetEdgeView in completeConnectingToEdgeView is null")
+			cancel(context.editor)
+			return
+		}
+		if (targetEdgeViewSegmentIndex == null) {
+			LOG.warn("IllegalState: targetEdgeViewSegmentIndex in completeConnectingToEdgeView is null")
+			cancel(context.editor)
+			return
+		}
+
 		logConnect()
 
 		edgeView?.underConstruction = false
