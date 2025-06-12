@@ -40,7 +40,7 @@ class ApplicationDataViewSwing(
 			JOptionPane.NO_OPTION -> {
 				SaveUnchangedDataDecision.No
 			}
-			JOptionPane.CANCEL_OPTION -> SaveUnchangedDataDecision.Cancel
+			JOptionPane.CANCEL_OPTION, JOptionPane.CLOSED_OPTION -> SaveUnchangedDataDecision.Cancel
 			JOptionPane.YES_OPTION -> SaveUnchangedDataDecision.Yes
 			else -> throw IllegalStateException("unsupported answer")
 		}
