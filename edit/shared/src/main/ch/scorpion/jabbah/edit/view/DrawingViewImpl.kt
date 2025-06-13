@@ -86,6 +86,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
             field = value
 	        field.drawing.setDrawableDrawer(drawableDrawer)
             firePropertyChange(DrawingView.PROP_DRAWING, oldDrawing, field.drawing)
+            field.drawing.notifyEditable(editable)
 
 	        content.selectionManager.activate()
         }
@@ -97,6 +98,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
                 field = value
                 showGridIfNeeded()
                 firePropertyChange(PROP_EDITABLE, !field, field)
+                content.drawing.notifyEditable(editable)
             }
         }
 

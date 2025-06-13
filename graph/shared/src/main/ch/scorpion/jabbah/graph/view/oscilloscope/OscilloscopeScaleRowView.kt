@@ -59,11 +59,14 @@ class OscilloscopeScaleRowView(
 		add(addButton)
 		add(scaleButton)
 		add(timelineView)
+		updateState()
 	}
 
 	fun updateState() {
 		scaleButton.enabled = oscilloscopeView.applicationMode.isExecute()
-		addButton.enabled = oscilloscopeView.applicationMode.isEdit() && oscilloscopeView.signalRowViews.size < MAX_ROW_NUMBER
+		addButton.enabled = oscilloscopeView.applicationMode.isEdit()
+			&& oscilloscopeView.editable
+			&& oscilloscopeView.signalRowViews.size < MAX_ROW_NUMBER
 		addButton.tooltipKey = if (addButton.enabled) "graph.action.oscilloscope.addRow.name" else "graph.action.oscilloscope.addRow.limit"
 	}
 

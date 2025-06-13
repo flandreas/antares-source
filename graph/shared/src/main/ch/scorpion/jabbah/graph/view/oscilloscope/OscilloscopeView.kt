@@ -162,6 +162,9 @@ class OscilloscopeView(
 			?.map { it as OscilloscopeProbeVerticeView<*> }
 			?: emptyList()
 
+	var editable = true
+		private set
+
 	init {
 		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
 		eventBus.register(OscilloscopeProbeNameEvent::class, probeNameHandler)
@@ -217,6 +220,12 @@ class OscilloscopeView(
 
 	override fun getDeleteBuddies(drawing: Drawing<Component>): List<Component> =
 		rows.mapNotNull { it.probeView.verticeView }
+
+	override fun notifyEditable(editable: Boolean) {
+		this.editable = editable
+		scaleRowView.updateState()
+		rows.forEach { it.updateState() }
+	}
 
 	/** ---- [AbstractVerticeView] */
 

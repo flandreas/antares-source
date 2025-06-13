@@ -103,4 +103,12 @@ interface Component : Movable, Rotatable, Snappable, Storable, Stylable, Focusab
 	 * a chance to adjust any of its properties, e.g. changing its name "Hello" to "Hello (2)".
 	 */
 	fun beforePaste(drawing: Drawing<Component>) {}
+
+	/**
+	 * Notifies this [Component] that the editability of its context (e.g. the view in which it is displayed)
+	 * has changed. Most [Component] won't be interested in this, because editing tools are usually managed by an editor
+	 * and not by [Components][Component]. However, there are cases like the oscilloscope in the Antares project
+	 * that displays [Components][Component] representing buttons that a user can only click if the context is editable.
+	 */
+	fun notifyEditable(editable: Boolean) {}
 }

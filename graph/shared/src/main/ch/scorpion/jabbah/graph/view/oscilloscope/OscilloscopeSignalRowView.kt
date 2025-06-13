@@ -60,6 +60,7 @@ class OscilloscopeSignalRowView(
 		if (yAxis != null) {
 			add(yAxis)
 		}
+		updateState()
 	}
 
 	override fun dispose() {
@@ -79,7 +80,10 @@ class OscilloscopeSignalRowView(
 	}
 
 	fun updateState() {
-		removeButton.enabled = oscilloscopeView.applicationMode.isEdit()
+		(oscilloscopeView.applicationMode.isEdit() && oscilloscopeView.editable).let {
+			removeButton.enabled = it
+			probeView.enabled = it
+		}
 	}
 
 	fun loadedWith(vertice: OscilloscopeProbeVerticeView<*>) {
