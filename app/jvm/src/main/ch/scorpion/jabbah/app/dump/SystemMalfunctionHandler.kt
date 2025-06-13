@@ -14,6 +14,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.apache.commons.io.output.StringBuilderWriter
 import java.awt.Frame
+import java.io.File
 
 /** Handles [SystemMalfunctionEvent]s posted on the system [EventBus] by any code. */
 object SystemMalfunctionHandler {
@@ -40,13 +41,12 @@ object SystemMalfunctionHandler {
 
 	private fun handle() {
 		LOG.userTrail("Handling system malfunction: ${currentEvent!!.description}")
-		sendToBackend()
+		uploadErrorDump()
 		SystemMalfunctionPanel.showAsDialog(application, currentEvent!!, Frame.getFrames()[0])
 		currentEvent = null
 	}
 
-	@OptIn(DelicateCoroutinesApi::class)
-    private fun sendToBackend() {
+	private suspend fun sendError() {
 		val versionId = application.aboutInfo.version.toString()
 		val writer = StringBuilderWriter()
 		if (versionId.isNotBlank()) {
@@ -54,9 +54,26 @@ object SystemMalfunctionHandler {
 		}
 		writer.append(UserActionTrail.toString())
 		writer.append(currentEvent!!.description)
+		BaseModuleJvm.unexpectedErrorService.sendUnexpectedError(writer.toString())
+	}
 
+	@OptIn(DelicateCoroutinesApi::class)
+	private fun uploadErrorDump() {
 		GlobalScope.launch(Dispatchers.IO) {
-			BaseModuleJvm.unexpectedErrorService.sendUnexpectedError(writer.toString())
+			val path = storeDumpFile()
+			if (!BaseModuleJvm.unexpectedErrorService.sendErrorDump(path)) {
+				// Uploading error dump can fail if dump is too large
+				sendError()
+			}
 		}
+	}
+
+	private fun storeDumpFile(): String {
+		val file = File.createTempFile("dump", ".zip")
+		file.deleteOnExit()
+
+		SystemDumpService().createDump(application, file.toPath(), false)
+
+		return file.absolutePath
 	}
 }

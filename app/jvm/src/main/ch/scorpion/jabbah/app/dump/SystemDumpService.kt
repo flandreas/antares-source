@@ -23,10 +23,12 @@ import kotlin.io.path.name
 class SystemDumpService {
 
 	/** Creates a system dump and stores it in the local [destination].*/
-	fun createDump(application: DesktopApplication, destination: Path) {
+	fun createDump(application: DesktopApplication, destination: Path, includeWorkspace: Boolean = true) {
 		val tempDir = Files.createTempDirectory(null)
 
-		copyWorkspace(tempDir)
+		if (includeWorkspace) {
+			copyWorkspace(tempDir)
+		}
 		copyLogfile(application, tempDir)
 		copyCurrentStorable(application, tempDir)
 

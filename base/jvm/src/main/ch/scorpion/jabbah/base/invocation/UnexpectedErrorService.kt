@@ -4,13 +4,13 @@ import ch.scorpion.jabbah.base.Bean
 import ch.scorpion.jabbah.base.UserActionTrail
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.net.httpClient
-import io.ktor.client.request.post
-import io.ktor.client.request.setBody
-import io.ktor.client.statement.HttpResponse
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
+import io.ktor.client.request.*
+import io.ktor.client.request.forms.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import kotlinx.serialization.Serializable
 import org.apache.commons.io.output.StringBuilderWriter
+import java.io.File
 import java.net.URL
 
 interface UnexpectedErrorService {
@@ -18,6 +18,8 @@ interface UnexpectedErrorService {
     fun buildDescription(versionId: String, stackTrace: String): String
 
     suspend fun sendUnexpectedError(description: String)
+
+    suspend fun sendErrorDump(path: String): Boolean
 }
 
 class UnexpectedErrorServiceImpl(
@@ -50,6 +52,34 @@ class UnexpectedErrorServiceImpl(
         }
 
         LOG.info("=> Response: ${response.status}")
+    }
+
+    override suspend fun sendErrorDump(path: String): Boolean {
+        try {
+            val url = "$baseUrl/system/errorDump"
+            LOG.info("Uploading error dump to $url")
+            val file = File(path)
+
+            val response = httpClient.post(url) {
+                setBody(
+                    MultiPartFormDataContent(
+                        formData {
+                            append("apiKey", API_KEY)
+                            append("dump", file.readBytes(), Headers.build {
+                                append(HttpHeaders.ContentType, "application/zip")
+                                append(HttpHeaders.ContentDisposition, "filename=\"dump.zip\"")
+                            })
+                        }
+                    )
+                )
+            }
+
+            LOG.info("Upload: Status = ${response.status}")
+            return true
+        } catch (e: Exception) {
+            LOG.error("Error while uploading error dump", e)
+            return false
+        }
     }
 }
 
