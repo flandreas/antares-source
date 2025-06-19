@@ -261,7 +261,8 @@ class GraphViewExecutionAnimator(
 	}
 
 	private fun interruptAllNetActingAnimations() {
-		netAnimationMap.entries.forEach { entry ->
+		// Copy set to avoid ConcurrentModificationException
+		netAnimationMap.entries.toSet().forEach { entry ->
 			val net = entry.key
 			val actorData = netAnimationMap[net]!!.actorData
 			// Stopping the animation leads to deregister in the animation list. Create a copy of the List to avoid ConcurrentModificationException.
