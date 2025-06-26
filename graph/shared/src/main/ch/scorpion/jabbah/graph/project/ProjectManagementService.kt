@@ -22,9 +22,17 @@ class ProjectManagementService(
 	private val newMetaGraphNameTranslationKey: String = "project.dialog.metaGraph.name",
 	libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	projectDictionaryService: LibraryDictionaryService = ProjectModule.projectDictionaryService,
+	userLibraryDictionaryService: LibraryDictionaryService = LibraryModule.userLibraryDictionaryService,
 	systemDictionaryService: LibraryDictionaryService = LibraryModule.systemLibraryDictionaryService,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractLibraryManagementService(libraryHolder, libraryService, projectDictionaryService, systemDictionaryService,  eventBus) {
+) : AbstractLibraryManagementService(
+	libraryHolder,
+	libraryService,
+	projectDictionaryService,
+	userLibraryDictionaryService,
+	systemDictionaryService,
+	eventBus
+) {
 
 	companion object {
 		private val LOG by logger(ProjectManagementService::class)

@@ -42,6 +42,7 @@ abstract class AbstractLibraryManagementService(
 	protected val libraryHolder: LibraryHolder,
 	protected val libraryService: LibraryService,
 	protected val userDictionaryService: LibraryDictionaryService,
+	protected val userLibraryDictionaryService: LibraryDictionaryService,
 	protected val systemDictionaryService: LibraryDictionaryService,
 	protected val eventBus: EventBus
 ) {
@@ -115,7 +116,7 @@ abstract class AbstractLibraryManagementService(
 	/** Checks whether [library] to be imported references another non-existing [Library]. */
 	private fun hasStaleImportReferences(library: Library): Boolean =
 		library.importedLibraryIds.any {
-			!userDictionaryService.contains(it) && !systemDictionaryService.contains(it)
+			!userLibraryDictionaryService.contains(it) && !systemDictionaryService.contains(it)
 		}
 
 	/** Closes the currently open [Library].*/
