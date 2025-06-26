@@ -47,6 +47,9 @@ class OscilloscopeVisibilityAction(
 		updateState()
 	}
 
+	override fun calculateEnabled(): Boolean =
+		super.calculateEnabled() && viewManager.activeView?.view is DrawingView<*> && (viewManager.activeView?.view as DrawingView<*>).editable
+
 	private fun updateState() {
 		selected = viewManager.activeView?.view is DrawingView<*>
 			&& (viewManager.activeView!!.view as DrawingView<*>).drawing is GraphView
