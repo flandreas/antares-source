@@ -81,7 +81,7 @@ abstract class AbstractFileLibraryPersistenceService(
 				throw e
 			} catch (e: Throwable) {
 				LOG.error("Error while loading MetaGraph $uuid", e)
-				throw LibraryPersistenceServiceException()
+				throw LibraryPersistenceServiceException(e.message)
 			}
 		}
 	}
