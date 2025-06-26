@@ -57,7 +57,13 @@ class FSMGraphDesktopItemSwing(
     }
 
     override fun dispose() {
+        /** Empty, handled by [disposeItem]. */
+    }
+
+    override fun disposeItem() {
+        super.disposeItem()
         canvas.dispose()
+        controller.dispose()
     }
 
     override val closeTarget: Any get() = controller.drawingView
