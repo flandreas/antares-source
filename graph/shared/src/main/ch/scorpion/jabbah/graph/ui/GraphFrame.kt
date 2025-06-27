@@ -157,7 +157,9 @@ open class GraphFrameController<T: GraphFrame>(
 		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
 		registerZoomEventHandlers()
 		LibraryModule.libraryServiceCallbacks.add(customSymbolHandler)
-		LibraryModule.libraryServiceCallbacks.add(propagationDelayCalculator)
+		if (BaseModule.properties.getBoolean(GraphPropagationDelayCalculator.PROP_CALCULATE_ON_SAVE)) {
+			LibraryModule.libraryServiceCallbacks.add(propagationDelayCalculator)
+		}
 		showDesktop()
 	}
 

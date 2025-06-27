@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.model.graph
 
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.collection.Stack
 import ch.scorpion.jabbah.graph.model.*
 
@@ -9,29 +10,46 @@ import ch.scorpion.jabbah.graph.model.*
  */
 class GraphPropagationDelayCalculator {
 
-    private val path = Stack<OutputPort<*>>()
+    companion object {
+        /** The name of the [Boolean] property in [Properties] calculation upon save.*/
+        const val PROP_CALCULATE_ON_SAVE = "graph.model.graph.calculatePropDelayOnSave"
+    }
 
     /**
      * @return -1 if no [InputPort]s exist in the [Graph].
      */
-    fun calculate(graph: Graph): Long =
-        graph.graphInputs.maxOfOrNull { calculateFrom(it.getOutput<Any>()) } ?: -1L
-
-    private fun calculateFrom(outputPort: OutputPort<*>): Long {
-        path.push(outputPort)
-        val value = outputPort.net?.ports
-            ?.filter { it.portType.isInput }
-            ?.filter { it.owner !is GraphPort<*> }
-            ?.maxOfOrNull { calculateFrom(it.owner!!) }
-            ?: 0L
-        path.pop()
-        return value
+    fun calculate(graph: Graph): Long {
+        val propDelay = graph.graphOutputs
+            .filter { it.getPort<Any>().net != null }
+            .maxOfOrNull {
+                calculateBackwardsFromVertice(it, Stack())
+            } ?: -1L
+        return propDelay
     }
 
-    private fun calculateFrom(vertice: Vertice): Long {
-        return vertice.getOutputs()
-            .filter { !path.contains(it) }
-            .maxOfOrNull { vertice.propagationDelay.value + calculateFrom(it) }
+    private fun calculateBackwardsFromInputPort(vertice: Vertice, inputPort: Port<*>, path: Stack<Vertice>): Long {
+        val propDelay = vertice.propagationDelay.value
+        if (inputPort.net != null && !path.contains(vertice)) {
+            path.push(vertice)
+            val maxValue = inputPort.net?.ports
+                ?.filter { it.portType.isOutput }
+                ?.filter { it.owner !is GraphPort<*> }
+                ?.maxOfOrNull {
+                    calculateBackwardsFromVertice(it.owner!!, path)
+                }
+                ?: 0L
+            path.pop()
+            return propDelay + maxValue
+        } else {
+            return 0
+        }
+    }
+
+    private fun calculateBackwardsFromVertice(vertice: Vertice, path: Stack<Vertice>): Long {
+        val result = vertice.getInputs()
+            .maxOfOrNull { calculateBackwardsFromInputPort(vertice, it, path) }
             ?: 0L
+
+        return result
     }
 }

@@ -80,6 +80,7 @@ import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.library.dictionary.FileLibraryDictionaryPersistenceService
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
 import ch.scorpion.jabbah.graph.library.dictionary.ResourceLibraryDictionaryPersistenceService
+import ch.scorpion.jabbah.graph.model.graph.GraphPropagationDelayCalculator
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.model.nonvolatile.NonVolatileServiceJvm
 import ch.scorpion.jabbah.graph.model.param.*
@@ -432,6 +433,12 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 			add(BooleanPreference(
 				id = DigitalPort.PROP_ADJUST_BIT_WIDTH,
 				nameKey = "antares.preference.adjustBitWidth"
+			))
+
+			add(BooleanPreference(
+				id = GraphPropagationDelayCalculator.PROP_CALCULATE_ON_SAVE,
+				nameKey = "graph.preferences.calculatePropDelayUponSave",
+				needsRestart = true
 			))
 		}
 

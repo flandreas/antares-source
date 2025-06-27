@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.graph.model.graph.GraphImpl
 import ch.scorpion.jabbah.edit.model.image.ImageIdentification
 import ch.scorpion.jabbah.edit.semantic.SemanticRegistry
 import ch.scorpion.jabbah.graph.library.LibraryPreferences
+import ch.scorpion.jabbah.graph.model.graph.GraphPropagationDelayCalculator
 import ch.scorpion.jabbah.graph.model.net.NetImpl
 import ch.scorpion.jabbah.graph.model.net.SignalConflictBehaviour
 import ch.scorpion.jabbah.graph.model.net.SignalConflictBehaviourHolder
@@ -135,5 +136,6 @@ object GraphModelModule : AbstractModule() {
 		properties.set(SignalConflictBehaviour.PROP_SIGNAL_CONFLICT_BEHAVIOUR, SignalConflictBehaviour.IGNORE.customName)
 		properties.set(InconsistentNetError.PROP_ALLOWED_DURATION, InconsistentNetError.DEF_ALLOWED_DURATION)
 		properties.set(SignalHistories.PROP_BUFFER_SIZE, 50)
+		properties.set(GraphPropagationDelayCalculator.PROP_CALCULATE_ON_SAVE, true)
 	}
 }
