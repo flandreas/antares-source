@@ -358,7 +358,7 @@ class SourcingCommandManager(
 	private fun addableSnapshot(): Snapshot {
 		if (state.snapshots.empty || maxSnapshotSizeReached) {
 			if (maxSnapshotSizeReached) {
-				LOG.userTrail("Max snapshot size reached. Create new snapshot.")
+				LOG.userTrail("Max snapshot size $maxCommandCountPerSnapshot reached. Create new snapshot.")
 			}
 			addSnapshot()
 		}

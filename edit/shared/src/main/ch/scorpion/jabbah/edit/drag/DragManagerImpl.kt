@@ -169,10 +169,11 @@ class DragManagerImpl(
 
 			if (additionalCommands.isNotEmpty() || moveStartLocation != movedReferenceComponent?.location) {
 				try {
-					logMove("mouse")
+					val offset = movedReferenceComponent!!.location.subtract(moveStartLocation)
+					logMove("mouse", offset)
 					drawingAppService.move(
 						selection,
-						movedReferenceComponent!!.location.subtract(moveStartLocation),
+						offset,
 						editor,
 						register = true,
 						additionalCommands = additionalCommands
@@ -231,10 +232,11 @@ class DragManagerImpl(
 		}
 
 	override fun moveByKeyEvent(event: KeyEvent) {
-		logMove("key")
+		val offset = getKeyMoveDirection(event).toPoint2D().multiply(editor.view.grid.distance)
+		logMove("key", offset)
 		drawingAppService.move(
 			movables = editor.view.selectionManager.selection,
-			offset = getKeyMoveDirection(event).toPoint2D().multiply(editor.view.grid.distance),
+			offset = offset,
 			editor,
 			register = false
 		)
@@ -266,10 +268,10 @@ class DragManagerImpl(
 
 	/** ---- [DragManagerImpl] */
 
-	private fun logMove(action: String) {
+	private fun logMove(action: String, offset: Point2D) {
 		val selection = editor.view.selectionManager.selection
 		if (selection.size == 1) {
-			LOG.userTrail("Move component '${selection.first().type}' with ID ${selection.first().id} by $action")
+			LOG.userTrail("Move component '${selection.first().type}' with ID ${selection.first().id} with $action by $offset")
 		} else {
 			LOG.userTrail("Move ${selection.size} components by $action")
 		}
