@@ -96,7 +96,7 @@ open class DrawingAppServiceImpl(
 
 	override fun delete(components: List<Component>, drawingView: DrawingView<*>, cmdDescriptionKey: String?) {
 		val componentSet = expandDeleteBuddies(components, drawingView.drawing as Drawing<Component>)
-		logComponentAction("Delete", componentSet.map { it.id })
+		logComponentAction("Delete", componentSet.map { it.id }, drawingView)
 		commandManager.execute(DeleteCommand(drawingView, componentSet.map { it.id }))
 	}
 
@@ -137,7 +137,7 @@ open class DrawingAppServiceImpl(
 
 	override fun cut(drawingView: DrawingView<*>) {
 		val components = drawingView.selectionManager.selection
-		logComponentAction("Cut", components.map { it.id })
+		logComponentAction("Cut", components.map { it.id }, drawingView)
 
 		val componentsToDelete = components.filter { it.deletable }.toList()
 		if (componentsToDelete.isNotEmpty()) {
@@ -158,16 +158,18 @@ open class DrawingAppServiceImpl(
 	}
 
 	override fun copy(drawingView: DrawingView<*>) {
-		logComponentAction("Copy", drawingView.selectionManager.selection.map { it.id })
+		logComponentAction("Copy", drawingView.selectionManager.selection.map { it.id }, drawingView)
 		Clipboard.setStringContents(copyImpl(drawingView))
 	}
 
 	private fun copyImpl(drawingView: DrawingView<*>): String
 		= copyPasteService.copy(drawingView.selectionManager.selection.map { it.id }, drawingView.drawing)
 
-	protected fun logComponentAction(action: String, componentIds: Collection<Int>) {
+	protected fun logComponentAction(action: String, componentIds: Collection<Int>, drawingView: DrawingView<*>) {
 		if (componentIds.size == 1) {
-			LOG.userTrail("$action component with ID ${componentIds.first()}")
+			val component = drawingView.drawing.getWithId(componentIds.first())?.let {
+				LOG.userTrail("$action component '${it.type}' with ID ${it.id}")
+			}
 		} else {
 			LOG.userTrail("$action ${componentIds.size} components")
 		}
@@ -178,7 +180,7 @@ open class DrawingAppServiceImpl(
 			LOG.userTrail("Preparing paste from clipboard")
 			try {
 				val pasteInfo = copyPasteService.paste(it, drawingView)
-				logComponentAction("Paste", pasteInfo.componentIds)
+				logComponentAction("Paste", pasteInfo.componentIds, drawingView)
 				commandManager.register(PasteCommand(drawingView, it, pasteInfo, copyPasteService))
 				drawingView.selectionManager.deselectAll()
 				val components = pasteInfo.componentIds.map { id -> drawingView.drawing.getWithId(id) as Component }
@@ -193,7 +195,7 @@ open class DrawingAppServiceImpl(
 	}
 
 	override fun duplicate(drawingView: DrawingView<Drawing<Component>>) {
-		logComponentAction("Duplicate", drawingView.selectionManager.selection.map { it.id })
+		logComponentAction("Duplicate", drawingView.selectionManager.selection.map { it.id }, drawingView)
 		val content = copyImpl(drawingView)
 		val pasteInfo = copyPasteService.paste(content, drawingView)
 		commandManager.register(DuplicateCommand(drawingView, content, pasteInfo, copyPasteService))
