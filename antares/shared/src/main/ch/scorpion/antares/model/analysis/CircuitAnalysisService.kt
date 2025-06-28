@@ -30,8 +30,12 @@ class CircuitAnalysisService {
 		LOG.userTrail("Analyzing circuit ${circuit.name.value}")
 		val truthTable = buildEmptyTruthTable(circuit)
 
-		(0 until truthTable.rowsCount).forEach { row ->
-			circuitRunner.run(circuit, ::setInputs, ::readOutputs, Context(row, circuit, truthTable))
+		try {
+			(0 until truthTable.rowsCount).forEach { row ->
+				circuitRunner.run(circuit, ::setInputs, ::readOutputs, Context(row, circuit, truthTable))
+			}
+		} catch (e: ControlledCircuitRunner.TooManyIterations) {
+			throw CircuitAnalysisError(Translations.getString("antares.circuitAnalysis.oscillation.msg", circuitRunner.maxIteration))
 		}
 
 		return  truthTable

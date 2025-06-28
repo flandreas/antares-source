@@ -16,7 +16,7 @@ import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
  * e.g. to fill a truth table or to run user-provided tests on [DigitalGraph]s.
  */
 class ControlledCircuitRunner(
-	private val maxIteration: Int = DEF_MAX_ITERATIONS,
+	val maxIteration: Int = DEF_MAX_ITERATIONS,
 	private val iterationStepNs: Int = DEF_ITERATION_STEP_NS
 ) {
 
