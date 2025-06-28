@@ -22,7 +22,7 @@ class DragEdgeViewDestinationConnector(
 	}
 
 	override fun completeDragOpen(context: EditInputEventContext) {
-		LOG.userTrail("Move EdgeView ${edgeView?.id} endpoint open-ended")
+		LOG.userTrail("Move EdgeView ${edgeView?.id} destination endpoint open-ended to ${edgeView!!.destinationEndpointView.location}")
 		context.editor.commandManager.beginTransaction(createMoveCommand(context))
 		context.editor.commandManager.commitTransaction()
 	}
