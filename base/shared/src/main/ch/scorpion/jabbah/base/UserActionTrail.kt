@@ -6,7 +6,7 @@ package ch.scorpion.jabbah.base
  */
 object UserActionTrail {
 
-	private const val SIZE = 20
+	private const val SIZE = 100
 
 	private val entries = mutableListOf<String>()
 

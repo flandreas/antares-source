@@ -64,7 +64,7 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 		get() = _ports.filterIsInstance<OutputPort<T>>().filter { it.weakBehaviour != null }
 
 	override fun connect(port: Port<T>) {
-		check(!_ports.contains(port)) { "Net already connected to specified Port" }
+		check(!_ports.contains(port)) { "Net $id already connected to port ${port.portId} of ${port.owner?.id}" }
 		LOG.trace("connect ${port.portId}")
 		_ports.add(port)
 		port.connectTo(this)
@@ -74,7 +74,10 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 	}
 
 	override fun unconnect(port: Port<*>) {
-		check(_ports.contains(port)) { "Net not connected with specified Port" }
+		if (!_ports.contains(port)) {
+			// Make sure this appears in the info uploaded with the UnexpectedErrorService (which doesn't send the entire log)
+			LOG.userTrail("### ERROR (Consistency): Net $id not connected to port ${port.portId} of ${port.owner?.id} ###")
+		}
 		LOG.trace("unconnect ${port.portId}")
 		_ports.remove(port)
 		port.disconnect()
