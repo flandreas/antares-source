@@ -47,7 +47,7 @@ class OutputToInputOrEdgeConnector(
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("Connect from ${startPortView?.owner?.getUnconnectedPortConnectionPoint(startPortView!!.port)} to ${targetPortView?.owner?.getUnconnectedPortConnectionPoint(targetPortView!!.port)}")
 			}
-			LOG.userTrail("Connect output ${startPortView?.port?.portId} of ${startPortView?.owner?.id} with input ${targetPortView?.port?.portId} of ${targetPortView?.owner?.id}")
+			LOG.userTrail("Connect output ${startPortView?.port?.portId} of ${startPortView?.owner?.type} ${startPortView?.owner?.id} with input ${targetPortView?.port?.portId} of ${targetPortView?.owner?.type} ${targetPortView?.owner?.id}")
 		} else {
 			LOG.userTrail("Connect output of ${startPortView?.owner?.type} ${startPortView?.owner?.id} open-ended")
 		}

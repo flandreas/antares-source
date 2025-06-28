@@ -174,7 +174,7 @@ class EdgeToPortOrEdgeConnector(
 	private fun beginConnecting(context: EditInputEventContext) {
 		val snapLocation = ConnectionPointHighlighter.portViewHighlight!!.location
 		createEdgeView(context.drawingView as DrawingView<GraphView>, snapLocation, branchedEdgeView!!.netView as NetView<Any>)
-		LOG.userTrail("Start creating junction from EdgeView ${branchedEdgeView!!.id} with new EdgeView ${edgeView?.id}")
+		LOG.userTrail("Start creating junction from EdgeView ${branchedEdgeView!!.id} on Net ${branchedEdgeView!!.model.id} with new EdgeView ${edgeView?.id}")
 
 		// Re-snap to the PortView connection point to retrieve the optimal segment index
 		// (avoid bug #627: wire distortion when splitting at EdgeView corner)
@@ -208,7 +208,7 @@ class EdgeToPortOrEdgeConnector(
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("Create junction from ${EdgeViewEndpointType.ORIGIN.getLocation(edgeView!!)} to ${targetPortView?.owner?.getUnconnectedPortConnectionPoint(targetPortView!!.port)}")
 			}
-			LOG.userTrail("Create junction from EdgeView ${branchedEdgeView?.id} to port ${targetPortView?.port?.portId} of ${targetPortView?.owner?.id}")
+			LOG.userTrail("Create junction from EdgeView ${branchedEdgeView?.id} to port ${targetPortView?.port?.portId} of ${targetPortView?.owner?.type} with ID ${targetPortView?.owner?.id}")
 		} else if (targetEdgeView != null) {
 			LOG.userTrail("Create junction from EdgeView ${branchedEdgeView?.id} to new junction in EdgeView ${targetEdgeView?.id}")
 		} else {

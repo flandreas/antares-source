@@ -402,7 +402,7 @@ abstract class AbstractPortViewStartConnector(
 
 	private fun beginConnecting(context: EditInputEventContext) {
 		createEdgeView(context.drawingView as DrawingView<GraphView>, startVerticeView!!.getPortConnectionPoint(startPortView!!.port), null)
-		LOG.userTrail("Start creating new EdgeView ${edgeView!!.id} at Port ${startPortView!!.port.portId} of VerticeView ${startVerticeView!!.id}")
+		LOG.userTrail("Start creating new EdgeView ${edgeView!!.id} on Net ${edgeView!!.model.id} at Port ${startPortView!!.port.portId} of ${startVerticeView!!.type} ${startVerticeView!!.id}")
 		edgeView!!.model.connect(startPortView!!.port as Port<Any>)
 		connectEdgeViewToStartPort()
 	}
