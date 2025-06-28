@@ -12,7 +12,7 @@ import ch.scorpion.jabbah.edit.editor.EditorImpl
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
 import ch.scorpion.jabbah.edit.module.EditModule
-import ch.scorpion.jabbah.edit.tool.ToolTestUtil
+import ch.scorpion.jabbah.edit.ToolTestUtil
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

@@ -7,7 +7,7 @@ import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.editor.EditorImpl
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.module.EditModule
-import ch.scorpion.jabbah.edit.tool.ToolTestUtil
+import ch.scorpion.jabbah.edit.ToolTestUtil
 import dev.mokkery.matcher.any
 import org.junit.Test
 import dev.mokkery.verify

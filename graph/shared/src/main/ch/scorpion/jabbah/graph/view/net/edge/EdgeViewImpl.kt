@@ -930,6 +930,9 @@ open class EdgeViewImpl<T : Any>(
 
 	override val deletable: Boolean get() = !underConstruction && super.deletable
 
+	// DragManager must not be involved when moving segments
+	override val isDragManager: Boolean get() = canNotTransform()
+
 	/** ---- [EdgeViewImpl] */
 
 	/**

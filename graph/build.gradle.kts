@@ -20,6 +20,12 @@ kotlin {
 			}
 		}
 
+		val commonTest by getting {
+			dependencies {
+				implementation(project(":edit-test-util"))
+			}
+		}
+
 		val jvmMain by getting {
 			dependencies {
 				implementation("commons-cli:commons-cli:1.3.1")

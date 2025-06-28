@@ -78,8 +78,9 @@ interface Component : Movable, Rotatable, Snappable, Storable, Stylable, Focusab
 	var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
 
 	/**
-	 * Determines whether the [InputEventHandler] of this [Component] handles dragging by itself,
-	 * rather than letting it be done by the [DragManager] controlled by the [SelectionTool].
+	 * Returns `true` if the [InputEventHandler] of this [Component] handles dragging by itself,
+	 * i.e. if this [Component] is itself a "drag manager".
+	 * Returns `false`if dragging should be done by the [DragManager] controlled by the [SelectionTool].
 	 */
 	val isDragManager: Boolean get() = false
 

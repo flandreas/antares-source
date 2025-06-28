@@ -1,12 +1,8 @@
-package ch.scorpion.jabbah.edit.tool
+package ch.scorpion.jabbah.edit
 
-import ch.scorpion.jabbah.base.event.InputEvent
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.edit.EventTestUtil
-import ch.scorpion.jabbah.edit.Tool
 
-/** Test utility for sending [InputEvent]s to a [Tool] under test.*/
+/** Test utility for sending [ch.scorpion.jabbah.base.event.InputEvent]s to a [Tool] under test.*/
 class ToolTestUtil(val tool: Tool, private val editor: Editor) {
 
 	fun moveMouseTo(x: Int, y: Int, modifiers: Int = 0) {
