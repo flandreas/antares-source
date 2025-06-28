@@ -102,17 +102,19 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 
 	private val segmentIndices: IntRange get() = 0 until pointsCount - 1
 
+	private var _boundingBox = Rectangle2D()
+
 	init {
 		if (pts != null) {
 			points.addAll(pts)
 		}
+		updateBoundingBox()
 	}
 
 	override fun getPointList(): List<Point2D> = points
 
 	/** ---- [Shape] interface */
 
-	private var _boundingBox = Rectangle2D()
 	override val boundingBox: RectangularShape get() = _boundingBox
 
 	private fun updateBoundingBox() {

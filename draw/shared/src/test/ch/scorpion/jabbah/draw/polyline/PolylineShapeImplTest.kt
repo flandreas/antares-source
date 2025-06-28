@@ -226,4 +226,19 @@ class PolylineShapeImplTest {
 		assertEquals(2, interference.intersectionCount)
 		assertEquals(1, interference.overlappingCount)
 	}
+
+	@Test
+	fun shouldUpdateBoundingBox() {
+		val polyline = PolylineShapeImpl(listOf(
+			Point2D(-252, -28),
+			Point2D(-420, -28),
+			Point2D(-420, -182),
+			Point2D(-336, -182)
+		))
+
+		assertEquals(-420.0, polyline.boundingBox.x)
+		assertEquals(-182.0, polyline.boundingBox.y)
+		assertEquals(420.0 - 252.0, polyline.boundingBox.width)
+		assertEquals(182.0 - 28.0, polyline.boundingBox.height)
+	}
 }
