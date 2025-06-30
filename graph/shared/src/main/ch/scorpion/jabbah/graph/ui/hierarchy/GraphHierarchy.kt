@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
+import ch.scorpion.jabbah.graph.library.CurrentLibraryEvent
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.editor.SubGraphVerticeViewEvent
@@ -44,14 +45,20 @@ class GraphHierarchyController(
 		}
 	}
 
+	private val currentLibraryHandler: EventHandler<CurrentLibraryEvent> = {
+		setRootGraphView(null)
+	}
+
 	init {
 		eventBus.register(SubGraphVerticeViewEvent::class, deleteHandler)
+		eventBus.register(CurrentLibraryEvent::class, currentLibraryHandler)
 		updateActions()
 	}
 
 	override fun dispose() {
 		super.dispose()
 		eventBus.unregister(deleteHandler)
+		eventBus.unregister(currentLibraryHandler)
 		refreshAction.dispose()
 	}
 
