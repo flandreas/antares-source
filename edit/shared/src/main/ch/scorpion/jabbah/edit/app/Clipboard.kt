@@ -9,6 +9,8 @@ import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.command.AbstractDrawingViewCommand
+import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.model.CopyPasteService
 import ch.scorpion.jabbah.edit.model.PasteInfo
 import ch.scorpion.jabbah.edit.module.EditModule
@@ -85,7 +87,13 @@ class DuplicateAction(
 ) : AbstractSelectionAwareAction("edit.action.duplicate", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
-		service.duplicate(drawingView!!)
+		if (service.duplicate(drawingView!!) != drawingView!!.selectionManager.selection.size) {
+			eventBus.post(ComponentMessage(
+				ComponentMessageType.Info,
+				null,
+				"edit.action.duplicate.notAllDuplicated.msg")
+			)
+		}
 	}
 }
 

@@ -45,7 +45,7 @@ open class PortViewComponent<T : Any>(
 	init {
 		preferredSelectionDrawingStrategy = SelectionDrawingStrategy.REPLACE
 		if (portView != null) {
-			drawableOwner = DrawableOwner(this, portView!!)
+			drawableOwner = DrawableOwner(this, portView)
 		}
 	}
 
@@ -65,6 +65,8 @@ open class PortViewComponent<T : Any>(
 	/** ---- [Component] */
 
 	override val type: String get() = TYPE
+
+	override val copyable: Boolean get() = false
 
 	override fun isRotatableWith(selection: Collection<*>): Boolean = true
 

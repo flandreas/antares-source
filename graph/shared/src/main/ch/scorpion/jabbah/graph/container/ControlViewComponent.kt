@@ -169,6 +169,8 @@ class ControlViewComponent(
 
 	override val selectableComponent: Component get() = controlView
 
+	override val copyable: Boolean get() = false
+
 	override var preferredSelectionDrawingStrategy: SelectionDrawingStrategy?
 		get() = controlView.preferredSelectionDrawingStrategy
 		set(value) {

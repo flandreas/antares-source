@@ -53,8 +53,11 @@ interface DrawingAppService : ComponentCustomizer {
 	 */
 	fun paste(drawingView: DrawingView<Drawing<Component>>)
 
-	/** Duplicates the currently selected [Component]s without using the system clipboard.*/
-	fun duplicate(drawingView: DrawingView<Drawing<Component>>)
+	/**
+	 * Duplicates the currently selected [Component]s without using the system clipboard.
+	 * @return the number of duplicated [Component]s
+	 */
+	fun duplicate(drawingView: DrawingView<Drawing<Component>>): Int
 
 	/**
 	 * Moves the specified [Movable]s by a given offset.
@@ -181,11 +184,13 @@ open class DrawingAppServiceImpl(
 			try {
 				val pasteInfo = copyPasteService.paste(it, drawingView)
 				logComponentAction("Paste", pasteInfo.componentIds, drawingView)
-				commandManager.register(PasteCommand(drawingView, it, pasteInfo, copyPasteService))
-				drawingView.selectionManager.deselectAll()
-				val components = pasteInfo.componentIds.map { id -> drawingView.drawing.getWithId(id) as Component }
-				drawingView.selectionManager.select(components)
-				FocusDrawablePlayer.ensureVisible(components, drawingView)
+				if (pasteInfo.componentIds.isNotEmpty()) {
+					commandManager.register(PasteCommand(drawingView, it, pasteInfo, copyPasteService))
+					drawingView.selectionManager.deselectAll()
+					val components = pasteInfo.componentIds.map { id -> drawingView.drawing.getWithId(id) as Component }
+					drawingView.selectionManager.select(components)
+					FocusDrawablePlayer.ensureVisible(components, drawingView)
+				}
 			} catch (e: Throwable) {
 				LOG.debug("Error in paste: $e")
 				// View layers might want to give feedback to the user
@@ -194,13 +199,16 @@ open class DrawingAppServiceImpl(
 		}
 	}
 
-	override fun duplicate(drawingView: DrawingView<Drawing<Component>>) {
+	override fun duplicate(drawingView: DrawingView<Drawing<Component>>): Int {
 		logComponentAction("Duplicate", drawingView.selectionManager.selection.map { it.id }, drawingView)
 		val content = copyImpl(drawingView)
 		val pasteInfo = copyPasteService.paste(content, drawingView)
-		commandManager.register(DuplicateCommand(drawingView, content, pasteInfo, copyPasteService))
-		drawingView.selectionManager.deselectAll()
-		drawingView.selectionManager.select(pasteInfo.componentIds.map { drawingView.drawing.getWithId(it) as Component })
+		if (pasteInfo.componentIds.isNotEmpty()) {
+			commandManager.register(DuplicateCommand(drawingView, content, pasteInfo, copyPasteService))
+			drawingView.selectionManager.deselectAll()
+			drawingView.selectionManager.select(pasteInfo.componentIds.map { drawingView.drawing.getWithId(it) as Component })
+		}
+		return pasteInfo.componentIds.size
 	}
 
 	override fun move(
