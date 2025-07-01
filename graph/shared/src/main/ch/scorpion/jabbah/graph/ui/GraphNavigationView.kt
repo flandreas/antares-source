@@ -23,6 +23,7 @@ import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.model.text.description.NameChangedEvent
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItemCloseQuestion
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItemCloseRequest
@@ -233,7 +234,7 @@ class GraphNavigationViewController(
 			return
 		}
 
-		LOG.userTrail("Descending into SubGraphVerticeView")
+		LOG.userTrail("Descending into SubGraphVerticeView ${(request.subGraphVerticeView.model as SubGraphVerticeRef).graphUUID}")
 
 		rememberZoomPanOfCurrentNavigationStack()
 		if (isDescendAnimationRequired(request)) {
