@@ -251,7 +251,7 @@ abstract class AbstractAddressableView<T : AddressableVertice>(
 
 	override fun handleStateChanged(event: GraphElementEvent) {
 		if (event.signalHandler == null) {
-			label.text = if (text == null) buildLabelText() else text!!.getTranslation()
+			label.text = if (text == null || text!!.isEmpty) buildLabelText() else text!!.getTranslation()
 		}
 		if (model.isSelected) {
 			contentsView.handleCurrentAddressChanged()
