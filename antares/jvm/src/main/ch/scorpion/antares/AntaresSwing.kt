@@ -131,6 +131,7 @@ class AntaresSwing(
 			val locale = Locale(lang)
 			Locale.setDefault(locale)
 			JOptionPane.setDefaultLocale(locale)
+			LOG.value.userTrail("Using language '$lang'")
 		}
 
 		/**
