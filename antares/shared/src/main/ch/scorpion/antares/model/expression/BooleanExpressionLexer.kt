@@ -92,7 +92,7 @@ class BooleanExpressionLexer(
 
 	private fun singleCharId(state: State): Token<String> {
 		val id = peekNextToken() as Token<String>
-		return if (getReservedKeyword(id.value!!) != null) {
+		return if (id.value != null && getReservedKeyword(id.value!!) != null) {
 			super.id(state)
 		} else {
 			val token = idToken(state.currentChar.toString())
