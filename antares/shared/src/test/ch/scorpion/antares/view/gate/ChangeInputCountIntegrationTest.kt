@@ -76,6 +76,9 @@ class ChangeInputCountIntegrationTest : AbstractCircuitTest() {
 	fun shouldDecreaseInputCount() {
 		(GraphViewModule.graphViewAppService as AntaresGraphViewService).changeInputCount(andGateView, PortCount.TWO, drawingView)
 
+		assertEquals(2, andGateView.model.inputCount)
+		assertEquals(1, andGateView.model.outputCount)
+		assertEquals(3, andGateView.model.getOutput<DigitalSignal>().portId)
 		assertTrue(evIn1.model.isConnectedWith(andGateView.model.getInput(1)))
 		assertTrue(evIn2.model.isConnectedWith(andGateView.model.getInput(2)))
 		assertEquals(1, evIn3.net!!.portsCount)
