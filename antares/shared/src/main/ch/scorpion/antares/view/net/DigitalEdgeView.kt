@@ -67,6 +67,9 @@ class DigitalEdgeView(
 		}
 	}
 
+	override fun getEffectiveStroke(isExecution: Boolean): Stroke =
+        getStroke(style as EdgeStyle, (model as DigitalNet).bitWidth, isExecution)
+
 	override val executionStroke: Stroke get() =
 		getExecutionStroke(style as EdgeStyle, (model as DigitalNet).bitWidth)
 
@@ -77,10 +80,7 @@ class DigitalEdgeView(
 
 		GraphViewModule.getTypedNetViewElementColorProvider<DigitalSignal>().setColor(context, this)
 
-		context.g.stroke = getStroke(
-			style as EdgeStyle,
-			(model as DigitalNet).bitWidth,
-			context.castedAppContext<GraphApplicationContext>()!!.isExecute)
+		context.g.stroke = getEffectiveStroke(context.castedAppContext<GraphApplicationContext>()!!.isExecute)
 
 		super.draw(context)
 

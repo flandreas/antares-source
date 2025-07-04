@@ -62,8 +62,10 @@ class EdgeViewLineStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling {
 			_boundingBox.add(edgeView.destination!!.connectableView.boundingBox)
 		}
 		_boundingBox.setFrame(
-			_boundingBox.x - edgeView.stroke.width, _boundingBox.y - edgeView.stroke.width,
-			_boundingBox.width + 2 * edgeView.stroke.width, _boundingBox.height + 2 * edgeView.stroke.width)
+			_boundingBox.x - edgeView.stroke.width - 1,
+			_boundingBox.y - edgeView.stroke.width - 1,
+			_boundingBox.width + 2 * edgeView.stroke.width + 2,
+			_boundingBox.height + 2 * edgeView.stroke.width + 2)
 	}
 
 	/** ---- [EdgeViewLineStyling]  */

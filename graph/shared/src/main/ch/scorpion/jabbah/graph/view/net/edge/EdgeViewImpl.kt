@@ -935,6 +935,8 @@ open class EdgeViewImpl<T : Any>(
 
 	/** ---- [EdgeViewImpl] */
 
+	open fun getEffectiveStroke(isExecution: Boolean): Stroke = stroke
+
 	/**
 	 * Updates the locations of both [EdgeEndpointView]s.
 	 * Doesn't call update bounding box of styling, since that is the responsibility of the caller.

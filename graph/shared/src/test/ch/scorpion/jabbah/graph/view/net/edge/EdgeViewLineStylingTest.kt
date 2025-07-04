@@ -21,9 +21,9 @@ class EdgeViewLineStylingTest {
             .addSegmentPoint(Point2D(-420, -182))
             .addSegmentPoint(Point2D(-336, -182))
 
-        assertEquals(-420.0 - ev.stroke.width, ev.boundingBox.x)
-        assertEquals(-182.0 - EdgeEndpointView.SIZE_HALF - ev.stroke.width, ev.boundingBox.y)
-        assertEquals(420.0 - 252.0 + EdgeEndpointView.SIZE_HALF + ev.stroke.width + ev.originEndpointView.stroke.width, ev.boundingBox.width)
-        assertEquals(182.0 - 28.0 + 2 * EdgeEndpointView.SIZE_HALF + 2 * ev.originEndpointView.stroke.width, ev.boundingBox.height)
+        assertEquals(-420.0 - ev.stroke.width - 1, ev.boundingBox.x)
+        assertEquals(-182.0 - EdgeEndpointView.SIZE_HALF - ev.stroke.width - 1, ev.boundingBox.y)
+        assertEquals(420.0 - 252.0 + 2 + EdgeEndpointView.SIZE_HALF + ev.stroke.width + ev.originEndpointView.stroke.width, ev.boundingBox.width)
+        assertEquals(182.0 - 28.0 + 2 + 2 * EdgeEndpointView.SIZE_HALF + 2 * ev.originEndpointView.stroke.width, ev.boundingBox.height)
     }
 }
