@@ -12,6 +12,8 @@ import kotlinx.serialization.Serializable
 import org.apache.commons.io.output.StringBuilderWriter
 import java.io.File
 import java.net.URL
+import java.time.Duration
+import java.time.LocalDateTime
 
 interface UnexpectedErrorService {
 
@@ -28,8 +30,15 @@ class UnexpectedErrorServiceImpl(
 
     companion object {
         private val LOG by logger(UnexpectedErrorServiceImpl::class)
+
         private const val API_KEY = "heyAPI"
+
+        /** The [Duration] since the last unexpected error in which new errors are ignored (without restart). */
+        private val MIN_DURATION = Duration.ofHours(12)
     }
+
+    /** The time when the last unexpected error occurred. Used to avoid uploading the same error multiple times. */
+    private var lastDateTime: LocalDateTime? = null
 
     override fun buildDescription(versionId: String, stackTrace: String): String {
         val writer = StringBuilderWriter()
@@ -42,6 +51,10 @@ class UnexpectedErrorServiceImpl(
     }
 
     override suspend fun sendUnexpectedError(description: String) {
+        if (lastDateTime != null && Duration.between(lastDateTime, LocalDateTime.now()) < MIN_DURATION) {
+            return
+        }
+
         val url = "$baseUrl/system/error"
         LOG.info("Sending unexpected error report to $url")
         val request = UnexpectedErrorRequest(API_KEY, description)
@@ -52,6 +65,8 @@ class UnexpectedErrorServiceImpl(
         }
 
         LOG.info("=> Response: ${response.status}")
+
+        lastDateTime = LocalDateTime.now()
     }
 
     override suspend fun sendErrorDump(path: String): Boolean {
