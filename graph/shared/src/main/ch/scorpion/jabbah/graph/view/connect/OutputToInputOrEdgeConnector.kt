@@ -49,7 +49,7 @@ class OutputToInputOrEdgeConnector(
 			}
 			LOG.userTrail("Connect output ${startPortView?.port?.portId} of ${startPortView?.owner?.type} ${startPortView?.owner?.id} with input ${targetPortView?.port?.portId} of ${targetPortView?.owner?.type} ${targetPortView?.owner?.id}")
 		} else {
-			LOG.userTrail("Connect output of ${startPortView?.owner?.type} ${startPortView?.owner?.id} open-ended")
+			LOG.userTrail("Connect output of ${startPortView?.owner?.type} ${startPortView?.owner?.id} open-ended at ${edgeView?.polyline?.getLastPoint()}")
 		}
 	}
 
