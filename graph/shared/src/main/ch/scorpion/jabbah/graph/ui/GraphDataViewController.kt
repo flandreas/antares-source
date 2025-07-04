@@ -250,7 +250,7 @@ class GraphDataViewController(
 
 	private fun handle(@Suppress("UNUSED_PARAMETER") event: CurrentWorkspaceEvent) {
 		if (event.isPrepare) {
-			if (!canReplaceSavable("application.workspace.dialog.title")) {
+			if (!canReplaceSavable("file.action.openWorkspace.name")) {
 				throw VetoException(Translations.getString("application.replaceSavableVeto.msg"))
 			}
 			return
