@@ -32,6 +32,9 @@ class SelectionToolImpl(
 	/** Gateway to the tooltip system.*/
 	private val tooltipHandler: TooltipHandler = TooltipHandler(eventBus)
 
+	/** Used to re-establish [CommandManager.active] after being disabled during drag operations.*/
+	private var commandManagerWasActive = false
+
 	init {
 		eventBus.register(PreferencesChangedEvent::class) {
 			System.invokeLater {
@@ -132,6 +135,11 @@ class SelectionToolImpl(
 
 		LOG.trace("mousePressed at $x,$y")
 
+		// Deactivate undo/redo during drag actions to prevent the Drawing from being changed
+		// while tools are operating on the Drawing
+		commandManagerWasActive = editor.commandManager.active
+		editor.commandManager.active = false
+
 		if (target != null) {
 			target = target?.mousePressed(mouseEventContext(e, x, y))
 			if (target != null) {
@@ -224,6 +232,8 @@ class SelectionToolImpl(
 		}
 
 		LOG.trace("mouseReleased at $x,$y")
+
+		editor.commandManager.active = commandManagerWasActive
 
 		val context = mouseEventContext(e, x, y)
 		if (target != null) {
