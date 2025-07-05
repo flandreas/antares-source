@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.view.connect
 import ch.scorpion.jabbah.base.event.Modifier
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.health.GraphViewConsistencyCheck
+import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import ch.scorpion.jabbah.io.StorableCloner
@@ -27,6 +28,8 @@ class UndoSplitEdgeViewIntegrationTest: AbstractGraphViewEditingTest() {
 		driver.dragMouseTo(190, 100)
 		driver.releaseMouseAt(190, 100)
 		assertEquals(1, builder.graphView.getEdgeViews().size)
+		assertEquals(1, builder.graphView.netViewsCount)
+		assertEquals(1, builder.graphView.graph!!.elements.filter { it is Net<*> }.size)
 
 		// Split to v4
 		driver.mouseMoveTo(150, 100, modifiers = Modifier.Alt.mask)
@@ -34,6 +37,8 @@ class UndoSplitEdgeViewIntegrationTest: AbstractGraphViewEditingTest() {
 		driver.dragMouseTo(190, 200)
 		driver.releaseMouseAt(190, 200)
 		assertEquals(3, builder.graphView.getEdgeViews().size)
+		assertEquals(1, builder.graphView.netViewsCount)
+		assertEquals(1, builder.graphView.graph!!.elements.filter { it is Net<*> }.size)
 
 		// Undo split
 		StorableCloner.clone(builder.graphStorable)

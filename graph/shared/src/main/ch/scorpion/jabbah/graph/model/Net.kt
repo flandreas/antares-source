@@ -53,7 +53,7 @@ interface Net<T: Any> : GraphElement {
      */
     fun setSignal(signal: T?, origin: OutputPort<T>, immediatePort: OutputPort<T>, signalHandler: SignalHandler, force: Boolean)
 
-    /** Creates a new [Net] of the same type like this [Net] without copying all the [Port]s.*/
+    /** Creates a new [Net] of the same type as this [Net] without copying all the [Port]s.*/
     fun cloneEmpty(): Net<T>
 
 	/**
