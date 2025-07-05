@@ -20,6 +20,9 @@ class JoinEdgeViewEndpointsCommand<T : Any>(
 	private val movedEdgeView get() = editor!!.drawing.getWithId(movedEdgeViewId) as EdgeView<T>
 	private val joinedEdgeView get() = editor!!.drawing.getWithId(joinedEdgeViewId) as EdgeView<T>
 
+	override fun getDetailedDescription(): String =
+		"${super.getDetailedDescription()} type:$movedEndpointType movedId:$movedEdgeViewId joinedId:$joinedEdgeViewId"
+
 	override fun execute() {
 		connectService.join(graphView, movedEdgeView, movedEndpointType, location, joinedEdgeView)
 	}

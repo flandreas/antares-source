@@ -92,6 +92,15 @@ abstract class AbstractPropertyCommand<V>(
 
 	override fun getDescription(): String = Translations.getString("$propertyBaseKey.name", *baseKeyParams)
 
+	override fun getDetailedDescription(): String =
+		if (beanIds.size == 1) {
+			val id = beanIds.first()
+			val bean = beans.first()
+			"${super.getDetailedDescription()} ${bean::class.simpleName} $id"
+		} else {
+			"${super.getDetailedDescription()} ${beanIds.size} components"
+		}
+
 	override fun execute() {
 		if (oldValues == null) {
 			establishOldValues()

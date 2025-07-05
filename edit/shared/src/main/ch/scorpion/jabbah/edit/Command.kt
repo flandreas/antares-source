@@ -45,6 +45,14 @@ interface Command {
      */
     fun getDescription(): String
 
+	/**
+	 * Returns a detailed description of that this [Command] does, including
+	 * the ID of the changed object, and the values applied in the change.
+	 * Used for logging and debugging.
+	 * Can in general only be called AFTER [execute].
+	 */
+	fun getDetailedDescription(): String = this::class.simpleName ?: getDescription()
+
     /**
      * Executes the change of a [Drawing]'s state that is associated with this [Command].
      *

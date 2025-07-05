@@ -25,6 +25,9 @@ class AutoConnectCommand(
 	private val originVerticeView: VerticeView<*> get() = editor!!.drawing.getWithId(originVerticeViewId) as VerticeView<*>
 	private val destinationVerticeView: VerticeView<*> get() = editor!!.drawing.getWithId(destinationVerticeViewId) as VerticeView<*>
 
+	override fun getDetailedDescription(): String =
+		"${super.getDetailedDescription()} origin=$originVerticeViewId:$originPortId destination=$destinationVerticeViewId:$destinationPortId"
+
 	override fun execute() {
 		service.addConnection(
 			editor!!.drawing as GraphView,

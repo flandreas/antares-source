@@ -18,6 +18,9 @@ class MoveOriginEndpointCommand(
 
 	private val edgeView: EdgeView<*> get() = editor!!.drawing.getWithId(edgeViewId) as EdgeView<*>
 
+	override fun getDetailedDescription(): String =
+		"${super.getDetailedDescription()} $edgeViewId"
+
 	override fun execute() {
 		edgeView.moveOriginEndPoint(newLocation.x, newLocation.y)
 	}

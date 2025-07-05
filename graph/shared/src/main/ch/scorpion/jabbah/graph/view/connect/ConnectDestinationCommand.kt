@@ -24,6 +24,9 @@ class ConnectDestinationCommand(
 	private val destConnectableView get() = editor!!.drawing.getWithId(destConnectableViewId) as ConnectableView
 	private val destPort: Port<*> get() = destConnectableView.getPort(destPortId)!!
 
+	override fun getDetailedDescription(): String =
+		"${super.getDetailedDescription()} $edgeViewId dest:$destConnectableViewId:$destPortId"
+
 	override fun execute() {
 		service.connectToDestination(edgeView as EdgeView<Any>, Connection(destConnectableView, destPort as Port<Any>))
 	}

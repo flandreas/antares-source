@@ -23,6 +23,9 @@ class ConnectOriginCommand(
 	private val origConnectableView get() = editor!!.drawing.getWithId(origConnectableViewId) as ConnectableView
 	private val origPort: Port<*> get() = origConnectableView.getPort(origPortId)!!
 
+	override fun getDetailedDescription(): String =
+		"${super.getDetailedDescription()} $edgeViewId orig:$origConnectableViewId:$origPortId"
+
 	override fun execute() {
 		service.connectToOrigin(edgeView as EdgeView<Any>, Connection(origConnectableView, origPort as Port<Any>))
 	}

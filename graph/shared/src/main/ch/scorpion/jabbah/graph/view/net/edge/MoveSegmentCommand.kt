@@ -21,6 +21,9 @@ class MoveSegmentCommand(
 
 	private val edgeView get() = editor!!.drawing.getWithId(edgeViewId) as EdgeView<*>
 
+	override fun getDetailedDescription(): String =
+		"${super.getDetailedDescription()} $edgeViewId segmentIndex:$segmentIndex offset:$offset"
+
 	override fun execute() {
 		edgeView.moveSegment(segmentIndex, offset)
 	}

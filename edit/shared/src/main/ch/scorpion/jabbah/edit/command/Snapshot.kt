@@ -68,17 +68,30 @@ internal class Snapshot(
 		undoStack.items.any { it.hasTag(name) }
 
 	private fun replayFromSnapshot() {
-		val clonedData = StorableCloner.clone(data)
-		LOG.trace("Clone snapshot and set as new undoable data $clonedData")
+		// Calculate before executing the Commands, as their properties may become invalid
+		// upon execution of the next Commands
+		val undoStackWriter = TransactionStackWriter("Undo stack")
 
-		undoableDataHolder.setUndoableState(clonedData)
+		try {
+			val clonedData = StorableCloner.clone(data)
+			LOG.trace("Clone snapshot and set as new undoable data $clonedData")
 
-		LOG.trace("Replaying")
-		undoStack.items.forEach {
-			LOG.trace(".. replaying transaction ${it.headCommand.getDescription()}")
-			it.execute()
+			undoableDataHolder.setUndoableState(clonedData)
+
+			LOG.trace("Replaying")
+			undoStack.items.forEach {
+				LOG.trace(".. replaying transaction ${it.headCommand.getDescription()}")
+				it.execute()
+				undoStackWriter.write(it)
+			}
+
+			undoableDataHolder.undoableStateEstablished(clonedData)
+		} catch (e: Throwable) {
+			LOG.error("Error in replaying snapshot for undo", e)
+			LOG.error(undoStackWriter.toString())
+			// Add to user trail so this gets uploaded and notified to developers
+			LOG.userTrail(undoStackWriter.toString())
+			throw e
 		}
-
-		undoableDataHolder.undoableStateEstablished(clonedData)
 	}
 }

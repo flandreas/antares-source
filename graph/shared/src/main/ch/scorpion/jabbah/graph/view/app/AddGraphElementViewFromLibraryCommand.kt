@@ -29,6 +29,11 @@ class AddGraphElementViewFromLibraryCommand(
 	var addedComponentId: Int = 0
 		private set
 
+	override fun getDetailedDescription(): String {
+		val component = graphView.getWithId(addedComponentId)!!
+		return "${super.getDetailedDescription()} ${component::class.simpleName} $addedComponentId"
+	}
+
 	override fun execute() {
 		val graphElementView = libraryElement.getNewInstance<GraphElement>()
 		graphElementView.location = location

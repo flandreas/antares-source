@@ -18,6 +18,9 @@ class AddCommand(
 	var addedComponentId: Int = 0
 		private set
 
+	override fun getDetailedDescription(): String =
+		"${super.getDetailedDescription()} ${component::class.simpleName} $addedComponentId"
+
     override fun execute() {
 	    val clone = component.doClone()
 		(view as DrawingView<Drawing<in Component>>).drawing.add(clone)

@@ -64,6 +64,9 @@ class SplitEdgeViewCommand(
 	lateinit var result: SplitEdgeViewResult<Any>
 	lateinit var addedNewEdgeView: EdgeView<Any>
 
+	override fun getDetailedDescription(): String =
+		"${super.getDetailedDescription()} edgeViewId:$splitEdgeViewId segmentIndex:$segmentIndex target:$targetConnectableViewId:$targetPortId"
+
 	override fun execute() {
 		LOG.trace("Execute on GraphView ${graphView.hashCode().toString(16)}")
 

@@ -13,6 +13,16 @@ class MoveCommand(
 	private val children: List<Command> = emptyList()
 ) : AbstractCommand("edit.command.move", editor) {
 
+	override fun getDetailedDescription(): String {
+		return if (componentIds.size == 1) {
+			val id = componentIds.first()
+			val component = editor!!.drawing.getWithId(id)!!
+			"${super.getDetailedDescription()} ${component::class.simpleName} $id childrenSize:${children.size}"
+		} else {
+			super.getDetailedDescription()
+		}
+	}
+
 	override fun execute() {
 		Movable.moveBy(
 			componentIds.map { editor!!.drawing.getWithId(it)!! }.toList(),

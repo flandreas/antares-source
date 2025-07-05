@@ -191,6 +191,8 @@ private class UnconnectEdgeViewCommand(
 	private val edgeViewId: Int
 ) : AbstractGraphViewCommand("graph.command.unconnectEdgeView", drawingView) {
 
+	override fun getDetailedDescription(): String = "${super.getDetailedDescription()} $edgeViewId"
+
 	private val edgeView get() = drawingView.drawing.getWithId(edgeViewId) as EdgeView<Any>
 
 	override fun execute() {
@@ -206,6 +208,8 @@ private class UnconnectEdgeViewOriginCommand(
 
 	private val edgeView get() = drawingView.drawing.getWithId(edgeViewId) as EdgeView<Any>
 
+	override fun getDetailedDescription(): String = "${super.getDetailedDescription()} $edgeViewId"
+
 	override fun execute() {
 		connectService.unconnectEdgeViewOrigin(edgeView)
 	}
@@ -218,6 +222,8 @@ private class UnconnectEdgeViewDestinationCommand(
 ) : AbstractGraphViewCommand("graph.command.unconnectEdgeViewDestination", drawingView) {
 
 	private val edgeView get() = drawingView.drawing.getWithId(edgeViewId) as EdgeView<Any>
+
+	override fun getDetailedDescription(): String = "${super.getDetailedDescription()} $edgeViewId"
 
 	override fun execute() {
 		connectService.unconnectEdgeViewDestination(edgeView)

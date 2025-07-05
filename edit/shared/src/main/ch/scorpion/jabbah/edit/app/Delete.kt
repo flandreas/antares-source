@@ -64,6 +64,15 @@ class DeleteCommand(
 
 	constructor(drawingView: DrawingView<*>, component: Component) : this(drawingView, mutableListOf(component.id))
 
+	override fun getDetailedDescription(): String =
+		if (componentIds.size == 1) {
+			val id = componentIds.first()
+			val component = view.drawing.getWithId(id)!!
+			"${super.getDetailedDescription()} ${component::class.simpleName} $id"
+		} else {
+			"${super.getDetailedDescription()} ${componentIds.size} components"
+		}
+
 	override fun execute() {
 		view.drawing.remove(componentIds)
 	}

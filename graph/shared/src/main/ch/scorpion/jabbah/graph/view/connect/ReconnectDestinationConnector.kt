@@ -91,6 +91,13 @@ private class ReconnectDestinationCommand(
 
 	private val edgeView: EdgeView<*> get() = editor!!.drawing.getWithId(edgeViewId) as EdgeView<*>
 
+	override fun getDetailedDescription(): String =
+		if (newConnectionRef != null) {
+			"${super.getDetailedDescription()} $edgeViewId  to ${newConnectionRef.connectableViewId}:${newConnectionRef.portId}"
+		} else {
+			"${super.getDetailedDescription()} $edgeViewId open"
+		}
+
 	override fun execute() {
 		service.unconnectFromDestination(edgeView)
 		if (newConnectionRef != null) {
