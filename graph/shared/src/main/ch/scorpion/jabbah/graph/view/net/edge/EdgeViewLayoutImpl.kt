@@ -101,6 +101,11 @@ class EdgeViewLayoutImpl(
 
 	private fun layoutOriginImpl(destPointIndex: Int, origDir: Direction?, origLocation: Point2D?, compact: Boolean) {
 		if (origLocation != null) {
+			// Fixed BUG #963: destPointIndex outOfBounds
+			if (destPointIndex < 0 || destPointIndex >= edgeView.polyline.pointsCount) {
+				return
+			}
+
 			val destLocation = Point2D(edgeView.polyline.getPointAt(destPointIndex))
 			val originDirs = if (origDir == null) getOriginDirections(destLocation) else setOf(origDir)
 			val destDir = type.getSegmentDirection(edgeView, destPointIndex - 1)
@@ -143,6 +148,11 @@ class EdgeViewLayoutImpl(
 
 	private fun layoutDestinationImpl(origPointIndex: Int, destDir: Direction?, destLocation: Point2D?, compact: Boolean) {
 		if (destLocation != null) {
+			// Fixed BUG #963: origPointIndex outOfBounds
+			if (origPointIndex < 0 || origPointIndex >= edgeView.polyline.pointsCount) {
+				return
+			}
+
 			val origLocation = Point2D(edgeView.polyline.getPointAt(origPointIndex))
 			val destDirs = if (destDir == null) getDestinationDirections(origLocation) else setOf(destDir)
 			val origDir = type.getSegmentDirection(edgeView, origPointIndex)

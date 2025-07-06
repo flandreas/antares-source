@@ -157,8 +157,10 @@ class SimpleEdgeViewAdjustmentView(
 	override val boundingBox: RectangularShape get() = Rectangle2D(bbox)
 
 	override fun draw(context: DrawContext) {
-		context.g.color = context.selectionColor!!.foregroundColor
-		model.edgePointIterator().forEach { context.g.fill(it.toRect(HALF_SIZE)) }
+		if (model.size > 0) {
+			context.g.color = context.selectionColor!!.foregroundColor
+			model.edgePointIterator().forEach { context.g.fill(it.toRect(HALF_SIZE)) }
+		}
 	}
 
 	override fun contains(x: Double, y: Double): Boolean = false
