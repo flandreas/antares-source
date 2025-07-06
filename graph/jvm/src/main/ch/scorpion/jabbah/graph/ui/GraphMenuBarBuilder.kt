@@ -119,7 +119,7 @@ open class GraphMenuBarBuilder(
 		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(graphFrame.actions.viewContainerAction)))
 		menu.addSeparator()
 		super.fillViewMenu(menu)
-		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(OscilloscopeVisibilityAction(DrawViewModule.viewManager, eventBus))))
+		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(OscilloscopeVisibilityAction(graphFrame.controller.applicationContextHolder, DrawViewModule.viewManager, eventBus))))
 		menu.add(JCheckBoxMenuItem(ActionWrapperSwing(OpenDocumentationAction(DrawViewModule.viewManager, eventBus))))
 	}
 
