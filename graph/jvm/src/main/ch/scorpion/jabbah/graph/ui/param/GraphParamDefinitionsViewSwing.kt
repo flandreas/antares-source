@@ -171,13 +171,20 @@ class GraphParamDefinitionsViewSwing(
 		nameField.requestFocusInWindow()
 	}
 
-	override fun <T: Any> getEditedDefinition(): GraphParamDefinition<T> =
-		GraphParamDefinition.create(
+	override fun <T: Any> getEditedDefinition(): GraphParamDefinition<T>? {
+		try {
+			defaultValueEditor!!.paramValue
+		} catch (e: NullPointerException) {
+			errorMessage(Translations.getString("graph.paramDefs.dialog.error.defaultValue"))
+			return null
+		}
+		return GraphParamDefinition.create(
 			nameField.text,
 			typeField.selectedItem as GraphParamType<T>,
 			defaultValueEditor!!.paramValue as T,
 			semanticField.selectedItem as Semantic?
 		)
+	}
 
 	override fun valueChanged() {
 		table.model = TableModel()

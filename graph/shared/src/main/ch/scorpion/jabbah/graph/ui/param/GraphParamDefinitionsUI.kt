@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.ui.param
 
 import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.ui.AbstractUIController
@@ -13,7 +14,7 @@ import ch.scorpion.jabbah.graph.model.param.GraphParamDefinitions
 interface GraphParamDefinitionsView : UIView {
 	fun valueChanged()
 	fun startAdding(name: String)
-	fun <T: Any> getEditedDefinition(): GraphParamDefinition<T>
+	fun <T: Any> getEditedDefinition(): GraphParamDefinition<T>?
 	fun errorMessage(msg: String?)
 	fun close()
 }
@@ -81,6 +82,9 @@ class GraphParamDefinitionsController(
 		} else if (graph.getGraphPort<Any>(def.name) != null) {
 			view.errorMessage(Translations.getString("graph.paramDefs.dialog.error.usedForPort"))
 			false
+		} else if (StringUtils.isBlank(def.name)) {
+			view.errorMessage(Translations.getString("graph.paramDefs.dialog.error.emptyName"))
+			false
 		} else {
 			view.errorMessage(null)
 			true
@@ -118,12 +122,12 @@ class GraphParamDefinitionsController(
 	private inner class ApplyAction : AbstractAction("graph.paramDefs.dialog.apply") {
 		override fun execute(event: ActionEvent) {
 			val editedDef = view.getEditedDefinition<Any>()
-			if (validate(editedDef)) {
+			if (editedDef != null && validate(editedDef)) {
 				isAdding = false
 				value = if (selectedDefinition != null) {
 					value.withReplacedDefinition(selectedDefinition!!.name, editedDef)
 				} else {
-					value.withDefinition(view.getEditedDefinition<Any>())
+					value.withDefinition(editedDef)
 				}
 			}
 		}
