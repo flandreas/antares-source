@@ -15,9 +15,14 @@ class MoveCommand(
 
 	override fun getDetailedDescription(): String {
 		return if (componentIds.size == 1) {
+			val out = StringBuilder()
 			val id = componentIds.first()
 			val component = editor!!.drawing.getWithId(id)!!
-			"${super.getDetailedDescription()} ${component::class.simpleName} $id childrenSize:${children.size}"
+			out.appendLine("${super.getDetailedDescription()} ${component::class.simpleName} $id childrenSize:${children.size}")
+			children.forEach {
+				child -> out.appendLine("- child: ${child.getDetailedDescription()}")
+			}
+			out.toString()
 		} else {
 			super.getDetailedDescription()
 		}
