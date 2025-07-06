@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.edit.model.text
 
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.*
@@ -381,9 +382,19 @@ open class TextComponentJvm(
 
 		private fun stopEditing() {
 			LOG.trace("stop editing")
-			if (text.getTranslation() != TEXT_EDITOR.text) {
-				editor!!.commandManager.execute(
-					TextChangeCommand(editor!!, this@TextComponentJvm.id, text, text.withTranslation(TEXT_EDITOR.text)))
+			val oldText = text.getTranslation()
+			val newText = TEXT_EDITOR.text
+			if (oldText != newText) {
+				if (StringUtils.isNotEmpty(newText)) {
+					editor!!.commandManager.execute(
+					TextChangeCommand(
+						editor!!,
+						this@TextComponentJvm.id,
+						text,
+						text.withTranslation(newText)))
+				} else {
+					TEXT_EDITOR.text = oldText
+				}
 			}
 
 			TEXT_EDITOR.document.removeDocumentListener(this)
