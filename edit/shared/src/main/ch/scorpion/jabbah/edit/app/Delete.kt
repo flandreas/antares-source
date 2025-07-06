@@ -67,8 +67,7 @@ class DeleteCommand(
 	override fun getDetailedDescription(): String =
 		if (componentIds.size == 1) {
 			val id = componentIds.first()
-			val component = view.drawing.getWithId(id)!!
-			"${super.getDetailedDescription()} ${component::class.simpleName} $id"
+			"${super.getDetailedDescription()} $id"
 		} else {
 			"${super.getDetailedDescription()} ${componentIds.size} components"
 		}
