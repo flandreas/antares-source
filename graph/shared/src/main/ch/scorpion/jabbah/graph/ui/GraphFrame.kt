@@ -336,8 +336,10 @@ open class GraphFrameController<T: GraphFrame>(
 	private inner class CustomSymbolHandler : LibraryServiceCallbackAdapter() {
 		override fun beforeStoreMetaGraph(metaGraph: MetaGraph) {
 			if (isManualContainer(metaGraph.isManualContainer, editor.commandManager)) {
-				LOG.userTrail("Container (Symbol) has been customized manually")
-				metaGraph.isManualContainer = true
+				if (!metaGraph.isManualContainer) {
+					LOG.userTrail("Container (Symbol) has been customized manually")
+					metaGraph.isManualContainer = true
+				}
 			}
 		}
 	}
