@@ -49,6 +49,7 @@ import java.util.*
 import javax.swing.JOptionPane
 import javax.swing.UIManager
 import javax.swing.plaf.FontUIResource
+import kotlin.system.exitProcess
 
 
 /**
@@ -376,7 +377,19 @@ class AntaresSwing(
 		}
 
 		if (isFirstUsage) {
-			createHelloProject(userId)
+			try {
+				createHelloProject(EditAuthModule.userHolder.user.identity)
+			} catch (e: Exception) {
+				LOG.value.error("Error in creating data dir / hello project. Shutting down...", e)
+				val msg = Translations.getString("antares.createDataDir.error.msg", e.message ?: "", getDefaultAppDataDirectory())
+				JOptionPane.showMessageDialog(
+					Frame.getFrames()[0],
+					msg,
+					Translations.getString("antares.createDataDir.title"),
+					JOptionPane.ERROR_MESSAGE
+				)
+				exitProcess(-1)
+			}
 			return
 		}
 

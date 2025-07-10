@@ -122,7 +122,7 @@ abstract class AbstractDesktopApplication(
 			}
 		}
 
-		private fun getDefaultAppDataDirectory(): String =
+		fun getDefaultAppDataDirectory(): String =
 			when {
 				SystemUtils.IS_OS_MAC -> System.getProperty("user.home") + "/Library/Application Support"
 				SystemUtils.IS_OS_WINDOWS -> System.getenv("APPDATA")
