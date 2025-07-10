@@ -20,6 +20,8 @@ import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.UIBasics.PROP_TREE_SHOW_ROOT_HANDLES
 import ch.scorpion.jabbah.draw.richtext.RichTextLabel
 import ch.scorpion.jabbah.edit.model.text.NamableTreeNode
+import ch.scorpion.jabbah.graph.library.CurrentLibraryEvent
+import ch.scorpion.jabbah.graph.library.LibraryHolder
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.library.OpenContainerLibraryElementRequest
 import ch.scorpion.jabbah.graph.ui.MetaGraphIconProvider
@@ -39,7 +41,8 @@ import kotlin.math.max
  * in a [CombinedTestRunResultPanelSwing] on the right.
  */
 class TestRunResultsPanel(
-	private val eventBus: EventBus = BaseModule.eventBus
+	private val eventBus: EventBus = BaseModule.eventBus,
+	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder
 ) : JPanel() {
 
 	private val displayTestRunHandler: EventHandler<DisplayTestRunResults> = { update(it.results) }
@@ -50,6 +53,12 @@ class TestRunResultsPanel(
 			if (it.newGraphView == null || it.newGraphView!!.graph?.uuid != it.oldGraphView!!.graph?.uuid) {
 				update(listOf() )
 			}
+		}
+	}
+
+	private val currentLibraryHandler: EventHandler<CurrentLibraryEvent> = {
+		if (libraryHolder.l == null) {
+			clear()
 		}
 	}
 
@@ -97,6 +106,7 @@ class TestRunResultsPanel(
 
 		eventBus.register(DisplayTestRunResults::class, displayTestRunHandler)
 		eventBus.register(EditedGraphViewEvent::class, editedGraphViewHandler)
+		eventBus.register(CurrentLibraryEvent::class, currentLibraryHandler)
 
 		update(emptyList())
 
@@ -107,6 +117,7 @@ class TestRunResultsPanel(
 		BaseModule.settings.set("testRunResultsPanel.splitPos", splitPane.dividerLocation)
 		eventBus.unregister(displayTestRunHandler)
 		eventBus.unregister(editedGraphViewHandler)
+		eventBus.unregister(currentLibraryHandler)
 	}
 
 	private fun buildUI() {
@@ -250,7 +261,7 @@ class TestRunResultsPanel(
 	private fun openSelectedGraph() {
 		val obj = (tree.selectionPath?.lastPathComponent as DefaultMutableTreeNode?)?.userObject
 		if (obj is CombinedTestRunResult) {
-			LibraryModule.libraryHolder.library.getContainerLibraryElement(obj.source.uuid)?.let {
+			libraryHolder.l?.getContainerLibraryElement(obj.source.uuid)?.let {
 				InvocationHandler.invoke {
 					eventBus.post(OpenContainerLibraryElementRequest(it))
 				}
