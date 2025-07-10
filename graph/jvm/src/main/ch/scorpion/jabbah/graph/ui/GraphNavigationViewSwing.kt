@@ -25,7 +25,10 @@ import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.ui.desktop.AbstractGraphDesktopViewItemSwing
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopItemHeaderPanelSwing
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
+import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItemElementDepthRef
+import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItemElementRef
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.VerticeView
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.event.ActionEvent
@@ -191,6 +194,24 @@ class GraphNavigationViewSwing(
 	}
 
 	override fun createCloseRequest(): Any = CloseViewRequest(controller.closeTarget)
+
+	override fun createElementRef(verticeViewId: Int): GraphDesktopViewItemElementRef {
+		return GraphDesktopViewItemElementDepthRef(verticeViewId, navigationStack.size - 1)
+	}
+
+	override fun findElementWithRef(ref: GraphDesktopViewItemElementRef): VerticeView<*>? {
+		if (ref !is GraphDesktopViewItemElementDepthRef) {
+			return null
+		}
+		if (ref.depth < 0 || ref.depth > navigationStack.size) {
+			return null
+		}
+		val element = navigationStack.entry(ref.depth)?.content?.drawing?.getWithId(ref.verticeViewId)
+		if (element !is VerticeView<*>) {
+			return null
+		}
+		return element
+	}
 
 	/** ---- [Searchable]*/
 

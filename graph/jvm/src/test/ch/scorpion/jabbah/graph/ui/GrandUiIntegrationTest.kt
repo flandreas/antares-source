@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.graph.library.OpenContainerLibraryElementRequest
 import ch.scorpion.jabbah.graph.model.GenericGraphType
 import ch.scorpion.jabbah.graph.project.Project
 import ch.scorpion.jabbah.graph.project.ProjectModule
+import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItemElementDepthRef
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -68,7 +69,7 @@ class GrandUiIntegrationTest {
 	fun shouldDetachFromModelsWhenClosingSecondView() {
 		TempFileLibraryTestRule.createAndEstablishCurrentLibrary("Lib2")
 		application = TestGraphApplication()
-		GraphFrameMockBuilder(application.graphFrameController)
+		val graphFrameBuilder = GraphFrameMockBuilder(application.graphFrameController)
 		application.start()
 
 		createAndOpenNewProject("Test2")
@@ -77,6 +78,8 @@ class GrandUiIntegrationTest {
 		val metaGraphUuid = save()
 		createAndOpenNewMetaGraph()
 		val subGraphVV = useContainerLibraryElement(metaGraphUuid)
+		graphFrameBuilder.graphPanelViewBuilder.graphEditViewBuilder.withCreatedElementRef(
+			GraphDesktopViewItemElementDepthRef(subGraphVV.id, 0))
 		openSubGraphVerticeView(subGraphVV, newView = true)
 
 		application.startSimulation()

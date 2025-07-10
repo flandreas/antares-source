@@ -185,7 +185,8 @@ class GraphDesktopViewController(
 			val refColor = referenceColorSequence.next()
 			val displayedColor = displayedReferenceColor(refColor)
 			val newItem = itemFactory.invoke(displayedColor, it.isDetached)
-			associations.add(Association(it, vv.id, newItem, refColor))
+			val elementRef = it.createElementRef(vv.id)
+			associations.add(Association(it, elementRef, newItem, refColor))
 
 			view.addGraphDesktopItem(newItem)
 			newItem.view?.view?.requestFocus()
@@ -201,7 +202,7 @@ class GraphDesktopViewController(
 				associations
 					.filter { it.sourceItem == item }
 					.forEach { assoc ->
-						val component = item.drawingView?.drawing?.getWithId(assoc.refId)
+						val component = item.findElementWithRef(assoc.sourceElementRef)
 						if (component != null && assoc.refColor != null) {
 							item.drawingView?.highlighter?.highlight(component, displayedReferenceColor(assoc.refColor))
 						}
@@ -213,7 +214,7 @@ class GraphDesktopViewController(
 	private fun openHierarchySubGraph(subGraphVerticeView: SubGraphVerticeView<*>, rootGraphView: GraphView) {
 		if (mainDesktopViewItem?.drawingView?.drawing === rootGraphView) {
 			val newItem = view.createSubGraphDesktopItem(subGraphVerticeView, null, false, viewManager)
-			associations.add(Association(null, subGraphVerticeView.id, newItem, null))
+			associations.add(Association(null, GraphDesktopViewItemElementDepthRef(subGraphVerticeView.id, 0), newItem, null))
 			view.addGraphDesktopItem(newItem)
 		}
 	}
@@ -347,7 +348,10 @@ class GraphDesktopViewController(
 	 */
 	private fun deassociate(item: GraphDesktopViewItem) {
 		associationOf(item)?.let { assoc ->
-			val content = assoc.sourceItem?.findContent { assoc.verticeView != null && it.drawing.contains(assoc.verticeView!!) }
+			val content = assoc.sourceItem?.findContent {
+				val vv = assoc.verticeView
+				vv != null && it.drawing.contains(vv)
+			}
 			if (content != null) {
 				deassociate(assoc, content, assoc.verticeView)
 			}
@@ -380,7 +384,7 @@ class GraphDesktopViewController(
 	private inner class RemoveListener : DrawableContainerAdapter<GraphElementView<*>>() {
 		override fun drawableRemoved(event: DrawableContainerEvent<GraphElementView<*>>) {
 			if (event.child is VerticeView<*>) {
-				associations.firstOrNull { it.refId == (event.child as VerticeView<*>).id }?.let { assoc ->
+				associations.firstOrNull { it.sourceElementRef.verticeViewId == (event.child as VerticeView<*>).id }?.let { assoc ->
 
 					// Explicitly call deassociate() with Content because deassociate() in close() wouldn't
 					// find the Content, because the VerticeView has already been deleted
@@ -400,11 +404,11 @@ class GraphDesktopViewController(
 	 */
 	private data class Association(
 		val sourceItem: GraphDesktopViewItem?,
-		val refId: Int,
+		val sourceElementRef: GraphDesktopViewItemElementRef,
 		val item: GraphDesktopViewItem,
 		val refColor: ReferenceColor?
 	) {
-		val verticeView: VerticeView<*>? get() = sourceItem?.drawingView?.drawing?.getWithId(refId) as VerticeView<*>?
+		val verticeView: VerticeView<*>? get() = sourceItem?.findElementWithRef(sourceElementRef)
 
 		fun contains(verticeView: VerticeView<*>): Boolean = this.verticeView == verticeView
 	}

@@ -47,12 +47,14 @@ class GraphDesktopControllerViewTest {
 	private val vv = createSubGraphVerticeView()
 	private val viewItemMock = GraphDesktopViewItemMockBuilder()
 		.withDrawingView(drawingView as DrawingView<GraphView>)
+		.withFindElementWithRef(vv)
 	private val viewMock = GraphDesktopViewMockBuilder(controller)
 		.withMainViewItem(viewItemMock.build())
 
 	init {
 		drawingView.canvas = CanvasMockBuilder().withView(drawingView).build()
 		graphViewBuilder.addVerticeView(vv)
+		viewItemMock.withElementRef(GraphDesktopViewItemElementDepthRef(vv.id, 0))
 	}
 
 	@Test

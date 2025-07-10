@@ -17,12 +17,14 @@ class GraphFrameMockBuilder(private val controller: GraphFrameController<GraphFr
 
 	private val view = mock<GraphFrame>(autofill)
 
+	val graphPanelViewBuilder = GraphPanelViewMockBuilder(controller.graphPanelViewController)
+
 	init {
 		every { view.desktopView } returns mock<View<*>>(autofill)
 		every { view.containerView } returns mock<View<*>>(autofill)
 		every { view.applicationMode } returns ApplicationMode.EDIT
 
-		withGraphPanelView(GraphPanelViewMockBuilder(controller.graphPanelViewController).build())
+		withGraphPanelView(graphPanelViewBuilder.build())
 		withContainerPanelView(ContainerPanelViewMockBuilder(controller.containerPanelController).build())
 		withDocumentationPanelView(DocumentationPanelViewMockBuilder(controller.documentationPanelController).build())
 		controller.view = view

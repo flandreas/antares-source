@@ -22,11 +22,13 @@ class GraphPanelViewMockBuilder(private val controller: GraphPanelViewController
 
 	private val graphPanelView = mock<GraphPanelView>(MockMode.autofill)
 
+	val graphEditViewBuilder = GraphEditViewMockBuilder(controller.editViewController)
+
 	init {
 		controller.view = graphPanelView
 		withLibraryPanel(LibraryPanelViewMockBuilder(controller.libraryPanelController).build())
 
-		val editView = GraphEditViewMockBuilder(controller.editViewController).build()
+		val editView = graphEditViewBuilder.build()
 		withGraphEditView(editView)
 		withGraphDesktopView(GraphDesktopViewMockBuilder(controller.desktopController)
 			.withMainViewItem(editView.graphNavigationView)

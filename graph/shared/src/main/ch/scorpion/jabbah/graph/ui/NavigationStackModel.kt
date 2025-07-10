@@ -139,6 +139,13 @@ class NavigationStack<T : GraphView>(
 		entries.forEach { action.invoke(it.content as DrawingViewContent<Drawing<*>>) }
 	}
 
+	fun entry(index: Int): NavigationStackEntry<T>? {
+		if (index < 0 || index >= entries.size) {
+			return null
+		}
+		return entries[index]
+	}
+
 	private fun removeHead(): NavigationStackEntry<T> {
 		val entry = peek()
 		entries.removeAt(entries.size - 1)

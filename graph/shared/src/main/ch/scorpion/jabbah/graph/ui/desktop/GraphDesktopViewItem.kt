@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.VerticeView
 
 /**
  * Displays content to be opened as a separate view in [GraphDesktopView]
@@ -55,6 +56,11 @@ interface GraphDesktopViewItem : ContentView<EditInputEventContext> {
 	/** Only has to be provided by implementations that also have a [drawingView]. Others might return `null`.*/
 	fun findContent(condition: (DrawingViewContent<GraphView>) -> Boolean): DrawingViewContent<*>?
 
+	fun createElementRef(verticeViewId: Int): GraphDesktopViewItemElementRef
+		= GraphDesktopViewItemElementDepthRef(verticeViewId, 0)
+
+	fun findElementWithRef(ref: GraphDesktopViewItemElementRef): VerticeView<*>? = null
+
 	fun createCloseRequest(): Any
 
 	override val view: View<out EditInputEventContext>? get() = drawingView
@@ -82,3 +88,16 @@ data class GraphDesktopViewItemCloseRequest(
 	val item: GraphDesktopViewItem,
 	val isRoot: Boolean
 )
+
+/**
+ * References an element within a [GraphDesktopViewItem] that can be
+ * opened in a separate [GraphDesktopViewItem].
+ */
+interface GraphDesktopViewItemElementRef{
+	val verticeViewId: Int
+}
+
+data class GraphDesktopViewItemElementDepthRef(
+	override val verticeViewId: Int,
+	val depth: Int
+) : GraphDesktopViewItemElementRef

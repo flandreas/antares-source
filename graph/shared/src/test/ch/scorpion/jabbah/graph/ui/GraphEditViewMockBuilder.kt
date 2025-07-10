@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItemElementRef
 import ch.scorpion.jabbah.graph.ui.scenario.ScenarioView
 import ch.scorpion.jabbah.graph.ui.scenario.ScenarioViewMockBuilder
 import ch.scorpion.jabbah.graph.ui.usecase.UsecaseView
@@ -7,6 +8,7 @@ import ch.scorpion.jabbah.graph.ui.usecase.UsecaseViewMockBuilder
 import dev.mokkery.MockMode
 import dev.mokkery.answering.returns
 import dev.mokkery.every
+import dev.mokkery.matcher.any
 import dev.mokkery.mock
 
 class GraphEditViewMockBuilder(private val controller: GraphEditViewController) {
@@ -18,6 +20,11 @@ class GraphEditViewMockBuilder(private val controller: GraphEditViewController) 
 		withGraphNavigationView(GraphNavigationViewMockBuilder(controller.graphNavigationViewController).build())
 		withScenarioView(ScenarioViewMockBuilder(controller.scenarioViewController).build())
 		withUsecaseView(UsecaseViewMockBuilder(controller.usecaseViewController).build())
+	}
+
+	fun withCreatedElementRef(ref: GraphDesktopViewItemElementRef): GraphEditViewMockBuilder {
+		every { graphEditView.createElementRef(any())} returns ref
+		return this
 	}
 
 	private fun withGraphNavigationView(view: GraphNavigationView): GraphEditViewMockBuilder {
