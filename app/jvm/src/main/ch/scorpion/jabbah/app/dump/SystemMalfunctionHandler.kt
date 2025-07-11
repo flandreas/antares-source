@@ -15,14 +15,22 @@ import kotlinx.coroutines.launch
 import org.apache.commons.io.output.StringBuilderWriter
 import java.awt.Frame
 import java.io.File
+import java.time.Duration
+import java.time.LocalDateTime
 
 /** Handles [SystemMalfunctionEvent]s posted on the system [EventBus] by any code. */
 object SystemMalfunctionHandler {
 
 	private val LOG by logger(SystemMalfunctionHandler::class)
 
+	/** The [Duration] since the last dump upload in which new malfunctions are ignored (without restart). */
+	private val MIN_DURATION = Duration.ofHours(12)
+
 	private lateinit var application: DesktopApplication
 	private var currentEvent: SystemMalfunctionEvent? = null
+
+	/** The time when the last dump upload occurred. Used to avoid uploading the same dump multiple times. */
+	private var lastDateTime: LocalDateTime? = null
 
 	fun initialize(application: DesktopApplication) {
 		SystemMalfunctionHandler.application = application
@@ -41,7 +49,11 @@ object SystemMalfunctionHandler {
 
 	private fun handle() {
 		LOG.userTrail("Handling system malfunction: ${currentEvent!!.description}")
-		uploadErrorDump()
+
+		if (lastDateTime == null || Duration.between(lastDateTime, LocalDateTime.now()) >= MIN_DURATION) {
+			uploadErrorDump()
+		}
+
 		SystemMalfunctionPanel.showAsDialog(application, currentEvent!!, Frame.getFrames()[0])
 		currentEvent = null
 	}
