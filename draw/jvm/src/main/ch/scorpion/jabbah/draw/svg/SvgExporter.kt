@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.draw.module.DrawModule
 import org.apache.batik.dom.GenericDOMImplementation
 import org.apache.batik.svggen.SVGGraphics2D
 import java.awt.Dimension
+import java.awt.RenderingHints
 import java.io.FileWriter
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -30,7 +31,13 @@ object SvgExporter {
 		svgGenerator.svgCanvasSize = Dimension(content.drawable.boundingBox.widthInt, content.drawable.boundingBox.heightInt)
 
 		// Draw
-		val drawContext = DrawModule.drawContextFactory(Graphics2DJvm(svgGenerator), null, null)
+		val g = Graphics2DJvm(svgGenerator)
+
+		// Remove rendering hints not supported for rendering raster images
+		g.antialiasing = false
+		g.g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE)
+
+		val drawContext = DrawModule.drawContextFactory(g, null, null)
 		content.drawable.drawStandalone(drawContext)
 
 		// Getting the root clears the contents of the SVGGenerator

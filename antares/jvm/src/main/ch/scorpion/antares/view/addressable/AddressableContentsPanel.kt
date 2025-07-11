@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.addressable.*
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.io.WriteFileWrapper
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.DialogBuilder
@@ -223,11 +224,9 @@ class AddressableContentsPanel(
 		override fun actionPerformed(e: ActionEvent?) {
 			val fileChooser = JFileChooser()
 			if (fileChooser.showSaveDialog(this@AddressableContentsPanel) == JFileChooser.APPROVE_OPTION) {
+				WriteFileWrapper.wrap(name) {
 				val contents = MemoryDump.write(addressableRef.addressable.memory, addressableRef.addressable.dataWidth)
-				try {
 					Files.write(Paths.get(fileChooser.selectedFile.absolutePath), contents.toByteArray())
-				} catch (e: Throwable) {
-					LOG.error("Error while exporting memory to '${fileChooser.selectedFile.absolutePath}'")
 				}
 			}
 		}

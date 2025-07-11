@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.ActionEvent
+import ch.scorpion.jabbah.base.io.WriteFileWrapper
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.richtext.RichText
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
@@ -63,13 +64,16 @@ abstract class AbstractLibraryPersistencePanel(
 				if (fileChooser.showSaveDialog(this@AbstractLibraryPersistencePanel) == JFileChooser.APPROVE_OPTION) {
 					LOG.userTrail("Export $logName ${it.uuid}")
 
-					managementService.export(getLibraryIdentity(it.uuid), fileChooser.selectedFile.absolutePath)
-					JOptionPane.showConfirmDialog(
-						this@AbstractLibraryPersistencePanel,
-						getExportSuccessMsg(it),
-						name,
-						JOptionPane.DEFAULT_OPTION,
-						JOptionPane.INFORMATION_MESSAGE)
+					WriteFileWrapper.wrap(name) {
+						managementService.export(getLibraryIdentity(it.uuid), fileChooser.selectedFile.absolutePath)
+						JOptionPane.showConfirmDialog(
+							this@AbstractLibraryPersistencePanel,
+							getExportSuccessMsg(it),
+							name,
+							JOptionPane.DEFAULT_OPTION,
+							JOptionPane.INFORMATION_MESSAGE
+						)
+					}
 				}
 			}
 		}

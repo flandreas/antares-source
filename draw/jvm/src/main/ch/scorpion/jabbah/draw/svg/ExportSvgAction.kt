@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.draw.svg
 
 import ch.scorpion.jabbah.base.event.ActionEvent
+import ch.scorpion.jabbah.base.io.WriteFileWrapper
 import ch.scorpion.jabbah.base.richtext.RichText
 import ch.scorpion.jabbah.draw.view.AbstractViewAction
 import java.awt.Frame
@@ -19,7 +20,9 @@ class ExportSvgAction : AbstractViewAction("draw.action.exportSvg") {
 			fileChooser.selectedFile = File("${RichText.stripToPlainText(mainContent.name)}.svg")
 
 			if (fileChooser.showSaveDialog(Frame.getFrames()[0]) == JFileChooser.APPROVE_OPTION) {
-				SvgExporter.export(mainContent, fileChooser.selectedFile.absolutePath)
+				WriteFileWrapper.wrap(name) {
+					SvgExporter.export(mainContent, fileChooser.selectedFile.absolutePath)
+				}
 			}
 		}
 	}
