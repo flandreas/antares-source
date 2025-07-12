@@ -71,6 +71,10 @@ class UnexpectedErrorServiceImpl(
 
     override suspend fun sendErrorDump(path: String): Boolean {
         try {
+            if (lastDateTime != null && Duration.between(lastDateTime, LocalDateTime.now()) < MIN_DURATION) {
+                return true
+            }
+
             val url = "$baseUrl/system/errorDump"
             LOG.info("Uploading error dump to $url")
             val file = File(path)
@@ -88,8 +92,10 @@ class UnexpectedErrorServiceImpl(
                     )
                 )
             }
+            lastDateTime = LocalDateTime.now()
 
             LOG.info("Upload: Status = ${response.status}")
+
             return true
         } catch (e: Exception) {
             LOG.error("Error while uploading error dump", e)
