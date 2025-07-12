@@ -84,6 +84,7 @@ class AntaresFrameController(
 				view.createMemoryContentsDesktopViewItem(event, color)
 			}
 		} else {
+			LOG.userTrail("Showing contents of '${event.verticeView.type}' ${event.verticeView.id} in dialog")
 			view.showMemoryContents(event)
 		}
 	}

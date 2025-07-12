@@ -182,6 +182,8 @@ class GraphDesktopViewController(
 		// If no GraphDesktopViewItem found, the VerticeView is contained in another top-level view
 		// and doesn't need to be opened in this GraphDesktopView
 		itemContaining(vv)?.let {
+			LOG.userTrail("Open '${vv.type}' ${vv.id} in new desktop item")
+
 			val refColor = referenceColorSequence.next()
 			val displayedColor = displayedReferenceColor(refColor)
 			val newItem = itemFactory.invoke(displayedColor, it.isDetached)
@@ -282,7 +284,7 @@ class GraphDesktopViewController(
 	private fun openSubGraphVerticeView(verticeView: SubGraphVerticeView<*>) {
 		openVerticeView(verticeView) { color, isParentDetached ->
 			view.createSubGraphDesktopItem(verticeView, color, isParentDetached, viewManager) }
-		LOG.userTrail("Open '${verticeView.model.getGraphIfPresent()?.name?.value}' in new desktop item")
+		LOG.userTrail("Open '${verticeView.model.getGraphIfPresent()?.name?.value}' ${verticeView.id} in new desktop item")
 	}
 
 	/**
@@ -290,7 +292,7 @@ class GraphDesktopViewController(
 	 * closed as well.
 	 */
 	fun closeItem(item: GraphDesktopViewItem) {
-		LOG.userTrail("Close single desktop item")
+		LOG.userTrail("Close desktop item ${item::class.qualifiedName}")
 		if (item === mainDesktopViewItem) {
 			closeAll()
 		} else {
