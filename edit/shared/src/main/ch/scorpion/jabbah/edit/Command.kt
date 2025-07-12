@@ -51,7 +51,7 @@ interface Command {
 	 * Used for logging and debugging.
 	 * Can in general only be called AFTER [execute].
 	 */
-	fun getDetailedDescription(): String = this::class.simpleName ?: getDescription()
+	fun getDetailedDescription(): String = this::class.qualifiedName ?: getDescription()
 
     /**
      * Executes the change of a [Drawing]'s state that is associated with this [Command].
