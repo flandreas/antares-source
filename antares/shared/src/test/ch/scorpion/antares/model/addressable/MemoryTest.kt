@@ -204,6 +204,18 @@ class MemoryTest {
 		assertEquals(1000, memory.addressWithValueLargerThan(255UL))
 	}
 
+	@Test
+	fun shouldClearNonExistingComment() {
+		val memory = Memory()
+		// Make sure that segment exists
+		memory.write(0, 15UL)
+		// Call to clear comment (although the cell doesn't exist yet): Bug #969
+		memory.writeComment(4, null)
+
+		assertEquals(15UL, memory.read(0))
+		assertNull(memory.readComment(4))
+	}
+
 	/** ---- Regression tests */
 
 	@Test

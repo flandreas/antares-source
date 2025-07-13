@@ -146,8 +146,8 @@ class Memory(private val segmentSize: Int) {
 		    if (comment == null) {
 			    if (cell != null && cell.value == 0UL) {
 				    data.remove(address)
-			    } else {
-				    data[address] = CellData(cell!!.value, comment)
+			    } else if (cell != null) {
+				    data[address] = CellData(cell.value, comment)
 			    }
 		    } else {
 			    data[address] = CellData(cell?.value ?: 0UL, comment)
