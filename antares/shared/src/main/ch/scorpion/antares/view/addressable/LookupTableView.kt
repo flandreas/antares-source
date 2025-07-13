@@ -122,6 +122,13 @@ class LookupTableView(
 		externalLabel.draw(context)
 	}
 
+	override var location: Point2D
+		get() = super.location
+		set(value) {
+			super.location = value
+			updateExternalLabelPosition()
+		}
+
 	/** ---- [AbstractVerticeView] */
 
 	override var rotation: Rotation
