@@ -244,8 +244,9 @@ open class GraphImpl(
 		val hasChildIssues = _elements
 			.filterIsInstance<SubGraphVerticeRef>()
 			.map {
-				if (it.isDeepExecution(signalHandler.isDeepExecution)) {
-					it.getGraph()
+				val graph = it.getGraphIfNotBroken()
+				if (graph != null && it.isDeepExecution(signalHandler.isDeepExecution)) {
+					graph
 				} else {
 					null
 				}

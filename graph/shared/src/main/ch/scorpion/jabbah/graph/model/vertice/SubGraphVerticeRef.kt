@@ -263,7 +263,7 @@ class SubGraphVerticeRef(
 			} else {
 				// Broken reference to library component
 				LOG.warn("broken reference $graphUUID")
-				_designError = DesignError("graph.designError.brokenSubGraphRef.text")
+				_designError = DesignError(Translations.getString("graph.designError.brokenSubGraphRef.text"))
 				graphReference = GraphReference.broken()
 			}
 		}
