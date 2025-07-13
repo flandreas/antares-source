@@ -116,12 +116,26 @@ class DialogBuilder<T: JComponent>(
 
 	private fun setupWindowListener() {
 		dialog.addWindowListener(object : WindowAdapter() {
+
+			private var deregistered = false
+
 			override fun windowOpened(e: WindowEvent?) {
 				this@DialogBuilder.onWindowOpened(content)
 			}
 			override fun windowClosed(e: WindowEvent?) {
-				this@DialogBuilder.onWindowClosed(content)
-				BusyHandler.deregister(dialog)
+				if (!deregistered) {
+					this@DialogBuilder.onWindowClosed(content)
+					BusyHandler.deregister(dialog)
+					deregistered = true
+				}
+			}
+
+			override fun windowClosing(e: WindowEvent?) {
+				if (!deregistered) {
+					this@DialogBuilder.onWindowClosed(content)
+					BusyHandler.deregister(dialog)
+					deregistered = true
+				}
 			}
 		})
 	}
