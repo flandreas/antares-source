@@ -50,8 +50,10 @@ interface Command {
 	 * the ID of the changed object, and the values applied in the change.
 	 * Used for logging and debugging.
 	 * Can in general only be called AFTER [execute].
+	 * Would have wanted to use [kotlin.reflect.KClass.qualifiedName], but this is not yet supported by Kotlin JS.
+	 * [kotlin.reflect.KClass.simpleName] doesn't scale well with obfuscation.
 	 */
-	fun getDetailedDescription(): String = this::class.qualifiedName ?: getDescription()
+	fun getDetailedDescription(): String = getDescription()
 
     /**
      * Executes the change of a [Drawing]'s state that is associated with this [Command].

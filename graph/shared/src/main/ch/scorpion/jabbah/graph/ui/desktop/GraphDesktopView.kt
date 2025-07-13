@@ -292,7 +292,7 @@ class GraphDesktopViewController(
 	 * closed as well.
 	 */
 	fun closeItem(item: GraphDesktopViewItem) {
-		LOG.userTrail("Close desktop item ${item::class.qualifiedName}")
+		LOG.userTrail("Close desktop item ${item::class.simpleName}")
 		if (item === mainDesktopViewItem) {
 			closeAll()
 		} else {
