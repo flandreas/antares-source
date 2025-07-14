@@ -2,8 +2,12 @@ package ch.scorpion.antares.model.truthtable
 
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.jabbah.edit.Undoable
+import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 
+/**
+ * A [Command] for setting an individual [Bit] in an output cell of a [TruthTable].
+ */
 class TruthTableCommand(
 	private val ref: TruthTableReference,
 	private val row: Int,

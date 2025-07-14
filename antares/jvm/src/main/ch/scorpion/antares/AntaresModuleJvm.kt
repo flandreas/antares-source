@@ -17,6 +17,8 @@ import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.model.testcase.CombinedTestcaseRunner
 import ch.scorpion.antares.model.testcase.TestcaseViewSwing
+import ch.scorpion.antares.model.truthtable.TruthTableServiceJvm
+import ch.scorpion.antares.model.truthtable.TruthTableServiceJvmImpl
 import ch.scorpion.antares.view.*
 import ch.scorpion.antares.view.addressable.MemoryStorableIdentificationEditor
 import ch.scorpion.antares.view.addressable.MemoryStorableIdentificationRenderer
@@ -116,6 +118,8 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		const val PREF_TREE_TEST_CASES = "antares.preferences.group.testcase"
 
 		val createCircuitFromTruthTableService = CreateCircuitFromTruthTableService()
+
+		val truthTableServiceJvm: TruthTableServiceJvm = TruthTableServiceJvmImpl()
 	}
 
 	override fun initialize() {

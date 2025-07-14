@@ -128,6 +128,26 @@ class TruthTableTest {
 		assertFalse(info.isNegated)
 	}
 
+	@Test
+	fun shouldClone() {
+		val truthTable = create2to1TruthTable()
+		truthTable.setValue(0, 2, True)
+		truthTable.setValue(1, 2, Error)
+		truthTable.setValue(2, 2, False)
+		truthTable.setValue(3, 2, True)
+
+		val clone: TruthTable = truthTable.doClone()
+
+		assertEquals(3, clone.columnCount)
+		assertEquals(4, clone.rowsCount)
+		assertEquals("A", clone.getColumnName(0))
+		assertEquals("B", clone.getColumnName(1))
+		assertEquals("O", clone.getColumnName(2))
+		assertEquals(True, clone.getValue(0, 2))
+		assertEquals(Error, clone.getValue(1, 2))
+		assertEquals(False, clone.getValue(2, 2))
+		assertEquals(True, clone.getValue(3, 2))
+	}
 
 	private fun create2to1TruthTable(): TruthTable =
 		TruthTable(inputColumnNames = listOf("A", "B"), outputColumnNames = listOf("O"))

@@ -34,7 +34,7 @@ open class DataFormPanel(
 		)
 	}
 
-	fun addRow(row: JComponent) {
+	fun addRow(row: JComponent, fill: Boolean = false) {
 		EGBL.add(
 			this,
 			row,
@@ -42,13 +42,13 @@ open class DataFormPanel(
 			EGBL.REMAINDER , 1,	// width, height
 			0.0, 0.0,	// weightX, weightY
 			EGBL.WEST,	// anchor
-			EGBL.NONE,	// fill
+			if (fill) EGBL.HORIZONTAL else EGBL.NONE,	// fill
 			rowTopInset, leftInset, UIBasics.ROW_GAP, 0
 		)
 		gridy++
 	}
 
-	fun addLabeledRow(label: String, row: JComponent) {
+	fun addLabeledRow(label: String, row: JComponent, fill: Boolean = false) {
 		EGBL.add(
 			this,
 			JLabel("$label:"),
@@ -56,7 +56,7 @@ open class DataFormPanel(
 			1, 1,	// width, height
 			0.0, 0.0,	// weightX, weightY
 			EGBL.WEST,	// anchor
-			EGBL.NONE,	// fill
+			if (fill) EGBL.HORIZONTAL else EGBL.NONE,	// fill
 			rowTopInset, leftInset, UIBasics.ROW_GAP, 0
 		)
 

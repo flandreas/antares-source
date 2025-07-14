@@ -10,18 +10,20 @@ import ch.scorpion.antares.model.truthtable.TruthTableService
 import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTablePanel
 import ch.scorpion.antares.view.synthesis.CreateCircuitFromTruthTableService
 import ch.scorpion.jabbah.app.ApplicationDataHolder
+import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.help.HelpId
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.HelpAction
+import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.graph.AbstractTitledGraphDesktopViewItemSwing
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
 import java.awt.BorderLayout
-import java.awt.Component
 import java.awt.Font
 import java.awt.Frame
 import java.awt.event.FocusEvent
@@ -61,11 +63,15 @@ class TruthTableDesktopItemSwing(
 
 	private val generateExpressionsAction = GenerateExpressionsAction()
 
+	private val importCSVAction = ImportCSVAction()
+
 	private val createCircuitAction = CreateCircuitAction()
 
 	private val expressionsTextArea = JTextArea()
 
 	private val expressionsButton = JButton(ActionWrapperSwing(generateExpressionsAction))
+
+	private val importCSVButton = JButton(ActionWrapperSwing(importCSVAction))
 
 	private val createCircuitButton = JButton(ActionWrapperSwing(createCircuitAction))
 
@@ -126,20 +132,26 @@ class TruthTableDesktopItemSwing(
 		val panel = JPanel()
 		panel.layout = BoxLayout(panel, BoxLayout.PAGE_AXIS)
 
-		expressionsTextArea.alignmentX = Component.LEFT_ALIGNMENT
+		expressionsTextArea.alignmentX = LEFT_ALIGNMENT
 		expressionsTextArea.isEditable = false
 		expressionsTextArea.rows = max(8, ref.truthTable.outputColumnCount)
 
 		val expressionScrollPane = JScrollPane(expressionsTextArea)
-		expressionScrollPane.alignmentX = Component.LEFT_ALIGNMENT
+		expressionScrollPane.alignmentX = LEFT_ALIGNMENT
 		expressionScrollPane.horizontalScrollBarPolicy = HORIZONTAL_SCROLLBAR_AS_NEEDED
 		expressionScrollPane.verticalScrollBarPolicy = VERTICAL_SCROLLBAR_AS_NEEDED
 
-		expressionsButton.alignmentX = Component.LEFT_ALIGNMENT
+		val expressionsButtonPanel = JPanel()
+		expressionsButtonPanel.layout = BoxLayout(expressionsButtonPanel, BoxLayout.LINE_AXIS)
+		expressionsButtonPanel.alignmentX = LEFT_ALIGNMENT
+		expressionsButtonPanel.add(importCSVButton)
+		expressionsButtonPanel.add(Box.createHorizontalStrut(UIBasics.BUTTON_GAP))
+		expressionsButtonPanel.add(expressionsButton)
+		expressionsButtonPanel.add(Box.createHorizontalGlue())
 
-		createCircuitButton.alignmentX = Component.LEFT_ALIGNMENT
+		createCircuitButton.alignmentX = LEFT_ALIGNMENT
 
-		panel.add(expressionsButton)
+		panel.add(expressionsButtonPanel)
 		panel.add(Box.createVerticalStrut(5))
 		panel.add(expressionScrollPane)
 		panel.add(Box.createVerticalStrut(5))
@@ -175,19 +187,27 @@ class TruthTableDesktopItemSwing(
 			createCircuitService)
 	}
 
-	private inner class GenerateExpressionsAction
-		: ch.scorpion.jabbah.base.AbstractAction("antares.action.truthTable.expressions")
-	{
-		override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+	private fun importCSV() {
+		ImportCSVPanel.showAsDialog(Frame.getFrames()[0], ref)
+	}
+
+	private inner class GenerateExpressionsAction : AbstractAction("antares.action.truthTable.expressions") {
+		override fun execute(event: ActionEvent) {
 			generateExpressions()
 		}
 	}
 
 	private inner class CreateCircuitAction
-		: ch.scorpion.jabbah.base.AbstractAction("antares.synthesis.createCircuitFromTruthTable.action", opensDialog = true)
+		: AbstractAction("antares.synthesis.createCircuitFromTruthTable.action", opensDialog = true)
 	{
-		override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
+		override fun execute(event: ActionEvent) {
 			createCircuit()
+		}
+	}
+
+	private inner class ImportCSVAction : AbstractAction("antares.truthTable.csv.import", opensDialog = true) {
+		override fun execute(event: ActionEvent) {
+			importCSV()
 		}
 	}
 }

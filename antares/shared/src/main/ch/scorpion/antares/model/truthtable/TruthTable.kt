@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.collection.indexOfFirstOrNull
 import ch.scorpion.jabbah.base.Bean
 import ch.scorpion.jabbah.edit.model.text.description.*
 import ch.scorpion.jabbah.io.*
+import ch.scorpion.jabbah.edit.Cloneable
 
 /**
  * The model of a user-editable truth table used for circuit synthesis.
@@ -27,7 +28,7 @@ class TruthTable(
 	inputColumnNames: List<String> = emptyList(),
 	outputColumnNames: List<String> = emptyList(),
 	stateColumnCount: Int = 0
-) : AbstractStorable(), Namable, Describable, Bean {
+) : AbstractStorable(), Namable, Describable, Bean, Cloneable<TruthTable> {
 
 	companion object {
 		private val outputRegex = listOf(
@@ -217,6 +218,29 @@ class TruthTable(
 
 		updateRowsCounts()
 		fillInputCells()
+	}
+
+	/** ---- [Cloneable] */
+
+	override fun doClone(): TruthTable {
+		val clone = TruthTable(
+			name.value,
+			inputColumns.map { it.name}.toList(),
+			outputColumns.map { it.name }.toList(),
+			stateColumnCount
+		)
+
+		clone.applyValues(this)
+
+		return clone
+	}
+
+	fun applyValues(source: TruthTable) {
+		for (row in 0 until rowsCount) {
+			for (column in inputColumnCount until columnCount) {
+				setValue(row, column, source.getValue(row, column))
+			}
+		}
 	}
 }
 

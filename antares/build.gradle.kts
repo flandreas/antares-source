@@ -55,6 +55,7 @@ kotlin {
 		val jvmMain by getting {
 			dependencies {
 				implementation("commons-cli:commons-cli:1.3.1")
+				implementation("org.apache.commons:commons-csv:1.14.0")
 			}
 		}
 	}
