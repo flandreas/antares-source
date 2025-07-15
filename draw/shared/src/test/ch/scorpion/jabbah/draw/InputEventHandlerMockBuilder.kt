@@ -9,7 +9,6 @@ import dev.mokkery.matcher.capture.capture
 import dev.mokkery.matcher.capture.get
 import dev.mokkery.mock
 
-
 class InputEventHandlerMockBuilder {
 
 	private val handler = mock<InputEventHandler<InputEventContext>>(MockMode.autofill)

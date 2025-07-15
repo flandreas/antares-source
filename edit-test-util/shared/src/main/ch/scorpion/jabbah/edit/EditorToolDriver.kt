@@ -1,6 +1,12 @@
 package ch.scorpion.jabbah.edit
 
-import ch.scorpion.jabbah.base.event.*
+import ch.scorpion.jabbah.base.event.Button
+import ch.scorpion.jabbah.base.event.KeyEvent
+import ch.scorpion.jabbah.base.event.KeyEventImpl
+import ch.scorpion.jabbah.base.event.KeyEventType
+import ch.scorpion.jabbah.base.event.MouseEvent
+import ch.scorpion.jabbah.base.event.MouseEventImpl
+import ch.scorpion.jabbah.base.event.MouseEventType
 import ch.scorpion.jabbah.base.geom.Point2D
 
 /**
@@ -15,6 +21,12 @@ class EditorToolDriver(
 		return this
 	}
 
+	fun moveMouseAndPressAt(x: Int, y: Int, modifiers: Int = 0): EditorToolDriver {
+		mouseMoveTo(x, y, modifiers)
+		pressMouseAt(x, y, modifiers)
+		return this
+	}
+
 	fun pressMouseAt(x: Int, y: Int, modifiers: Int = 0): EditorToolDriver {
 		editor.currentTool.mousePressed(event(MouseEventType.PRESSED, x, y, modifiers), Point2D(x, y))
 		return this
@@ -22,6 +34,12 @@ class EditorToolDriver(
 
 	fun dragMouseTo(x: Int, y: Int, modifiers: Int = 0): EditorToolDriver {
 		editor.currentTool.mouseDragged(event(MouseEventType.DRAGGED, x, y, modifiers), Point2D(x, y))
+		return this
+	}
+
+	fun dragMouseAndReleaseAt(x: Int, y: Int, modifiers: Int = 0): EditorToolDriver {
+		dragMouseTo(x, y, modifiers)
+		releaseMouseAt(x, y, modifiers)
 		return this
 	}
 
@@ -49,8 +67,8 @@ class EditorToolDriver(
 	}
 
 	private fun event(type: MouseEventType, x: Int, y: Int, modifiers: Int = 0): MouseEvent =
-		MouseEventImpl(type, x, y, button = Button.BUTTON1, modifiers = modifiers)
+        MouseEventImpl(type, x, y, button = Button.BUTTON1, modifiers = modifiers)
 
 	private fun event(type: KeyEventType, keyCode: Int): KeyEvent =
-		KeyEventImpl(type, key = keyCode, keyChar = ' ')
+        KeyEventImpl(type, key = keyCode, keyChar = ' ')
 }

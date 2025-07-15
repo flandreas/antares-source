@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.app
 
+import dev.mokkery.MockMode
 import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.matcher.any
@@ -7,7 +8,7 @@ import dev.mokkery.mock
 
 class ApplicationDataViewMockBuilder(controller: ApplicationDataViewController) {
 
-	private val view = mock<ApplicationDataView>()
+	private val view = mock<ApplicationDataView>(MockMode.autofill)
 
 	init {
 		controller.view = view

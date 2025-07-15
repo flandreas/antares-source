@@ -24,6 +24,5 @@ kotlin {
 				implementation(project(":edit-test-util"))
 			}
 		}
-
 	}
 }

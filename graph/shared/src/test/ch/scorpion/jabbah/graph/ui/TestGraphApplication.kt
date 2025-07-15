@@ -3,7 +3,7 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.app.AbstractApplication
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.edit.Editor
-import ch.scorpion.jabbah.graph.VirtualCanvas
+import ch.scorpion.jabbah.draw.VirtualCanvas
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewActions

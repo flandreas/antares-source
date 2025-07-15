@@ -1,18 +1,23 @@
-package ch.scorpion.jabbah.graph
+package ch.scorpion.jabbah.draw
 
-import ch.scorpion.jabbah.base.event.*
+import ch.scorpion.jabbah.base.event.Button
+import ch.scorpion.jabbah.base.event.InputEvent
+import ch.scorpion.jabbah.base.event.KeyListener
+import ch.scorpion.jabbah.base.event.MouseEventImpl
+import ch.scorpion.jabbah.base.event.MouseEventType
+import ch.scorpion.jabbah.base.event.MouseListener
+import ch.scorpion.jabbah.base.event.MouseMotionListener
+import ch.scorpion.jabbah.base.event.MouseWheelListener
+import ch.scorpion.jabbah.base.event.PropertyOwner
+import ch.scorpion.jabbah.base.event.PropertyOwnerImpl
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.draw.Canvas
-import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Cursor
 
 /**
  * A [Canvas] implementation used for testing event processing features in common modules.
  * Contains an API for sending events to the [View] without bridging platform events to [ch.scorpion.jabbah] events.
- *
- * TODO: Move to draw package once test utility classes can be shared between Kotlin MPP gradle modules (KT-35073).
  */
 class VirtualCanvas(
 	override val view: View<*>,
@@ -30,9 +35,9 @@ class VirtualCanvas(
 
 	override val dimension: Dimension2D = Dimension2D(1000, 1000)
 
-	override var backgroundColor: Color = Color.WHITE
+	override var backgroundColor: Color = Color.Companion.WHITE
 
-	override var mouseLocation: Point2D = Point2D.ZERO
+	override var mouseLocation: Point2D = Point2D.Companion.ZERO
 		private set
 
 	override val initialLayout: Boolean get() = true
@@ -115,52 +120,57 @@ class VirtualCanvas(
 	private fun moveEvent(x: Int, y: Int, modifiers: Int): MouseEventImpl {
 		mouseLocation = toViewCoordinates(x, y)
 		return MouseEventImpl(
-			type = MouseEventType.MOVED,
-			button = Button.BUTTON1,
-			x = mouseLocation.x.toInt(),
-			y = mouseLocation.y.toInt(),
-			modifiers = modifiers)
+            type = MouseEventType.MOVED,
+            button = Button.BUTTON1,
+            x = mouseLocation.x.toInt(),
+            y = mouseLocation.y.toInt(),
+            modifiers = modifiers
+        )
 	}
 
 	private fun pressEvent(x: Int, y: Int, modifiers: Int): MouseEventImpl {
 		mouseLocation = toViewCoordinates(x, y)
 		return MouseEventImpl(
-			type = MouseEventType.PRESSED,
-			button = Button.BUTTON1,
-			x = mouseLocation.x.toInt(),
-			y = mouseLocation.y.toInt(),
-			modifiers = modifiers)
+            type = MouseEventType.PRESSED,
+            button = Button.BUTTON1,
+            x = mouseLocation.x.toInt(),
+            y = mouseLocation.y.toInt(),
+            modifiers = modifiers
+        )
 	}
 
 	private fun dragEvent(x: Int, y: Int, modifiers: Int): MouseEventImpl {
 		mouseLocation = toViewCoordinates(x, y)
 		return MouseEventImpl(
-			type = MouseEventType.DRAGGED,
-			button = Button.BUTTON1,
-			x = mouseLocation.x.toInt(),
-			y = mouseLocation.y.toInt(),
-			modifiers = modifiers)
+            type = MouseEventType.DRAGGED,
+            button = Button.BUTTON1,
+            x = mouseLocation.x.toInt(),
+            y = mouseLocation.y.toInt(),
+            modifiers = modifiers
+        )
 	}
 
 	private fun releaseEvent(x: Int, y: Int, modifiers: Int): MouseEventImpl {
 		mouseLocation = toViewCoordinates(x, y)
 		return MouseEventImpl(
-			type = MouseEventType.RELEASED,
-			button = Button.BUTTON1,
-			x = mouseLocation.x.toInt(),
-			y = mouseLocation.y.toInt(),
-			modifiers = modifiers)
+            type = MouseEventType.RELEASED,
+            button = Button.BUTTON1,
+            x = mouseLocation.x.toInt(),
+            y = mouseLocation.y.toInt(),
+            modifiers = modifiers
+        )
 	}
 
 	private fun clickEvent(x: Int, y: Int, modifiers: Int, clickCount: Int = 1): MouseEventImpl {
 		mouseLocation = toViewCoordinates(x, y)
 		return MouseEventImpl(
-			type = MouseEventType.CLICKED,
-			button = Button.BUTTON1,
-			x = mouseLocation.x.toInt(),
-			y = mouseLocation.y.toInt(),
-			modifiers = modifiers,
-			clickCount = clickCount)
+            type = MouseEventType.CLICKED,
+            button = Button.BUTTON1,
+            x = mouseLocation.x.toInt(),
+            y = mouseLocation.y.toInt(),
+            modifiers = modifiers,
+            clickCount = clickCount
+        )
 	}
 
 

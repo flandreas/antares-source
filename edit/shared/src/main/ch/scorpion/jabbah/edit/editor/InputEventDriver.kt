@@ -8,9 +8,6 @@ import ch.scorpion.jabbah.edit.Editor
 /**
  * A wrapper around [InputEventHandler] that provides a convenient interface for creating events for
  * the wrapped [InputEventHandler]. Mainly used for testing purposes, but potentially useful for other applications.
- *
- * TODO: Partial Copy/Paste from corresponding class in ch.scorpion.jabbah.draw test package
- * due to missing Kotlin MPP feature KT-35073.
  */
 open class InputEventDriver(
 	protected open val editor: Editor,
