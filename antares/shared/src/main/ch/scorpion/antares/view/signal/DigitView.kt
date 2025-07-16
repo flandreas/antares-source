@@ -7,13 +7,9 @@ import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.richtext.RichTextParser
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.*
-import ch.scorpion.jabbah.draw.graphics.CompositeColor
-import ch.scorpion.jabbah.draw.graphics.FontImpl
-import ch.scorpion.jabbah.draw.graphics.FontStyle
-import ch.scorpion.jabbah.draw.graphics.LogicalFontFamily
+import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
@@ -88,7 +84,11 @@ class DigitView(
         draw(context, isOn = true, inactive = false)
     }
 
-    fun draw(context: DrawContext, isOn: Boolean, inactive: Boolean) {
+    /**
+     * @param textColor enforces the text color from the outside context in special situations,
+     * else uses the default coloring depending on the signal
+     */
+    fun draw(context: DrawContext, isOn: Boolean, inactive: Boolean, textColor: Color? = null) {
         val oldColor = context.g.color
 		val oldStroke = context.g.stroke
 
@@ -108,11 +108,13 @@ class DigitView(
                 context.g.drawRect(xInt + 1, yInt, WIDTH - 2, HEIGHT - 1)
             }
         }
-        label.color = transparent.applyTo(when {
-            isOn -> signalDigit.color.textColor
-            context.useContextColors -> context.color!!.textColor
-            else -> oldColor
-        })
+
+        label.color = textColor
+            ?: transparent.applyTo(when {
+                isOn -> signalDigit.color.textColor
+                context.useContextColors -> context.color!!.textColor
+                else -> oldColor
+            })
 
 	    if (isOn && inactive) {
 		    label.draw(INACTIVE_TEXT, context)

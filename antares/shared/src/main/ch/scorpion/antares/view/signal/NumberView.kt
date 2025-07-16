@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.drawable.TransparentImpl
+import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment.LEFT
@@ -82,10 +83,14 @@ class NumberView(
 		draw(context, true)
 	}
 
-	fun draw(context: DrawContext, isOn: Boolean, inactive: Boolean = false) {
+	/**
+	 * @param textColor enforces the text color from the outside context in special situations,
+	 * else uses the default coloring depending on the signal
+	 */
+	fun draw(context: DrawContext, isOn: Boolean, inactive: Boolean = false, textColor: Color? = null) {
 		context.translated(location) {
 			for (digitView in digitViews) {
-				digitView.draw(it, isOn, inactive)
+				digitView.draw(it, isOn, inactive, textColor)
 			}
 			drawByteIndexLabels(it)
 

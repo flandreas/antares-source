@@ -20,6 +20,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.ShakeLocatableAnimation
 import ch.scorpion.jabbah.draw.drawable.Transparent
+import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
@@ -222,18 +223,22 @@ class DigitalCircuitInOutView(
 	/** ---- [AbstractCircuitInOutView] */
 
 	override fun drawSimulated(context: DrawContext) {
+		// BUG #973: Enforce signal text color if bitWidth==1, even with representation != binary
+		var textColor: Color? = null
+
 		if (model.signal!!.bitWidth.width > 1) {
 			drawEdited(context,
 				transparent.applyTo(model.signal!!.color.foregroundColor),
 				transparent.applyTo(propertiesBackgroundColor))
 		} else {
+			textColor = transparent.applyTo(model.signal!!.color.textColor)
 			drawEdited(context,
 				transparent.applyTo(model.signal!!.color.backgroundColor),
 				transparent.applyTo(model.signal!!.color.foregroundColor))
 		}
 
 		context.translated(getArrowPathTranslation()) {
-			numberView!!.draw(it)
+			numberView!!.draw(it, isOn = true, inactive = false, textColor = textColor)
 			drawDisabled(it)
 		}
 	}
