@@ -19,17 +19,18 @@ object DigitalNetViewElementColorProvider : NetViewElementColorProvider<DigitalS
         val graphAppContext = context.castedAppContext<GraphApplicationContext>()!!
 
         context.color = if (graphAppContext.showNetState) {
-            if (element.model.isError) {
+            val signalColor = if (element.model.isError) {
                 Themes.get<AntaresTheme>().error
             } else {
-                val signalColor = element.model.signal!!.color
-                if (element.styling.isArea) {
-                    areaColorMap.getOrPut(signalColor.foregroundColor) {
-                        CompositeColor(signalColor.foregroundColor, Themes.get<AntaresTheme>().word.backgroundColor)
-                    }
-                } else {
-                    signalColor
+                element.model.signal!!.color
+            }
+
+            if (element.styling.isArea) {
+                areaColorMap.getOrPut(signalColor.foregroundColor) {
+                    CompositeColor(signalColor.foregroundColor, Themes.get<AntaresTheme>().word.backgroundColor)
                 }
+            } else {
+                signalColor
             }
         } else {
             context.choose(element.color)
