@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.AbstractUIController
@@ -342,7 +343,25 @@ class GraphNavigationViewController(
 					navigationStackViewController.navigationStack.peek()
 				}
 				drawingView.content = outerEntry.content as DrawingViewContent<GraphView>
-				outerEntry.voyageOrigin!!
+
+				// Issue #975 (NPE when accessing outerEntry.voyageOrigin)
+				// Reason unknown. Implement a defensive strategy for determining the target ZoomedPointTranslation
+				if (outerEntry.voyageOrigin != null) {
+					outerEntry.voyageOrigin!!
+				} else if (outerEntry.subGraphVerticeView != null) {
+					ZoomedPointTranslation(
+						outerEntry.subGraphVerticeView.boundingBox.center,
+						drawingView.modelToView(outerEntry.subGraphVerticeView.boundingBox.center),
+						1.0
+					)
+				} else {
+					LOG.debug("No voyageOrigin when ascending from SubGraphVerticeView (possible bug)")
+					ZoomedPointTranslation(
+						Point2D.ZERO,
+						drawingView.modelToView(Point2D.ZERO),
+						1.0
+					)
+				}
 			},
 			terminator = if (entries.size == 1) {
 				{
