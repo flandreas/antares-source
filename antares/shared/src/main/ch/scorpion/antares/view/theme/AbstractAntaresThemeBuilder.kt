@@ -41,9 +41,9 @@ abstract class AbstractAntaresThemeBuilder(val name: String) {
 		val SUBSYSTEM_STROKE = Stroke(1.0f, LineCap.BUTT, LineJoin.MITER, 5.0f, floatArrayOf(5.0f), 0.0f)
 
 		val ERROR_COLOR = CompositeColor(
-			foregroundColor = Color.RED,
+			foregroundColor = Color(244, 67, 54),
 			backgroundColor = Color(255, 214, 214),
-			textColor = Color.BLACK)
+			textColor = Color.WHITE)
 
 		val FOCUS_STROKE = Stroke(0.8f, LineCap.BUTT, LineJoin.MITER, 1.0f, floatArrayOf(2.0f, 1.0f), 0.0f)
 
