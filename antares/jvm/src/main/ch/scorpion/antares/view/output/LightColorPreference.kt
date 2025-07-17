@@ -17,6 +17,12 @@ class LightColorPreference : AbstractPreference(
 
 	private val combobox: JComboBox<*> get() = editor.customEditor as JComboBox<*>
 
+	override var editable: Boolean = true
+		set(value) {
+			field = value
+			combobox.isEnabled = value
+		}
+
 	init {
 		(editor.customEditor as JComboBox<*>).addActionListener {
 			if (panel != null && combobox.selectedItem != null) {

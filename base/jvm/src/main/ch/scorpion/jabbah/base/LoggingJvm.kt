@@ -136,6 +136,12 @@ class LogLevelPreference(
 
 	private val value: LogLevel get() = valueOf(panel!!.preferences.getString(id))
 
+	override var editable: Boolean = true
+		set(value) {
+			field = value
+			editor.isEnabled = value
+		}
+
 	init {
 		values().forEach { editor.addItem(it) }
 		editor.addActionListener {

@@ -113,7 +113,8 @@ class LibraryPropertiesPanel(
 		{ GraphViewModuleJvm.libraryPreferencesProvider().iterator() },
 		preferences,
 		preferenceMessageDisplay,
-		addFiller = false
+		addFiller = false,
+		editable = editable
 	)
 
 	init {

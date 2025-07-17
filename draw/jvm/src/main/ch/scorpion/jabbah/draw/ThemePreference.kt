@@ -16,6 +16,12 @@ class ThemePreference : AbstractPreference(
 
 	private val value: Theme get() = Themes.get(panel!!.preferences.getString(id))!!
 
+	override var editable: Boolean = true
+		set(value) {
+			field = value
+			editor.isEnabled = value
+		}
+
 	init {
 		editor.addActionListener {
 			panel?.preferences?.customize(this, (editor.selectedItem as Theme).name)

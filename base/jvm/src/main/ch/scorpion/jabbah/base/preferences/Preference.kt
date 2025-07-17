@@ -69,6 +69,8 @@ interface Preference {
 	/** Determines whether the program has to be restarted if a change of this [Preference] should have an effect.*/
 	val needsRestart: Boolean
 
+	var editable: Boolean
+
 	/** Adds the editor for editing the value of this [Preference] to the specified [PreferencesPanel].*/
 	fun addToPanel(panel: PreferencesPanel)
 
@@ -119,6 +121,12 @@ class BooleanPreference(
 
 	private val value: Boolean get() = panel!!.preferences.getBoolean(id)
 
+	override var editable: Boolean = true
+		set(value) {
+			field = value
+			editor.isEnabled = value
+		}
+
 	init {
 		editor.addItemListener {
 			if (editor.isSelected != value) {
@@ -151,6 +159,12 @@ class IntPreference(
 	private val editor: MessagingFormattedTextField
 
 	private val value: Int get() = panel!!.preferences.getInt(id)
+
+	override var editable: Boolean = true
+		set(value) {
+			field = value
+			editor.isEnabled = value
+		}
 
 	init {
 		val numberFormatter = NumberFormatter(DecimalFormat.getIntegerInstance())
@@ -190,6 +204,12 @@ class FloatPreference(
 
 	private val editor: MessagingFormattedTextField
 
+	override var editable: Boolean = true
+		set(value) {
+			field = value
+			editor.isEnabled = value
+		}
+
 	init {
 		val numberFormatter = NumberFormatter(DecimalFormat.getInstance())
 		numberFormatter.minimum = minValue
@@ -226,6 +246,12 @@ class StringPreference(
 ) : AbstractPreference(id, nameKey, needsRestart) {
 
 	private val editor = JTextField(columns)
+
+	override var editable: Boolean = true
+		set(value) {
+			field = value
+			editor.isEnabled = value
+		}
 
 	init {
 		registerEditor(editor)

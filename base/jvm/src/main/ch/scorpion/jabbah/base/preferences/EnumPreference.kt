@@ -13,6 +13,12 @@ class EnumPreference<T : EnumProperty<*>>(
 
 	private val editor = JComboBox<EnumProperty<*>>()
 
+	override var editable: Boolean = true
+		set(value) {
+			field = value
+			editor.isEnabled = value
+		}
+
 	init {
 		values.forEach { editor.addItem(it) }
 		editor.addActionListener {

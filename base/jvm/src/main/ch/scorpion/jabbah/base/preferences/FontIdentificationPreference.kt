@@ -37,6 +37,12 @@ class FontIdentificationPreference : AbstractPreference(
 
 	private val value: FontIdentification get() = FontIdentification.parse(panel!!.preferences.getString(id))
 
+	override var editable: Boolean = true
+		set(value) {
+			field = value
+			editor.isEnabled = value
+		}
+
 	init {
 		editor.renderer = FontIdentificationRenderer()
 		editor.addActionListener {

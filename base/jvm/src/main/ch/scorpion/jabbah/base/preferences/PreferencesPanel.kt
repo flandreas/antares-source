@@ -7,7 +7,8 @@ class PreferencesPanel(
 	private val displayedPreferences: () -> Iterator<Preference>,
 	val preferences: Preferences,
 	val messageDisplay: PreferencesMessageDisplay,
-	addFiller: Boolean = true
+	addFiller: Boolean = true,
+	editable: Boolean = true
 ) : DataFormPanel() {
 
 	constructor(
@@ -17,12 +18,13 @@ class PreferencesPanel(
 	): this({ group.preferences}, preferences, messageDisplay)
 
 	init {
-		buildUI(addFiller)
+		buildUI(addFiller, editable)
 	}
 
-	private fun buildUI(addFiller: Boolean) {
+	private fun buildUI(addFiller: Boolean, editable: Boolean) {
 		for (preference in displayedPreferences()) {
 			preference.addToPanel(this)
+			preference.editable = editable
 		}
 
 		if (addFiller) {
