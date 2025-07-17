@@ -37,7 +37,7 @@ abstract class AbstractCurrentLibraryAction(
 		eventBus.unregister(currentLibraryHandler)
 	}
 
-	protected fun updateEnabledness() {
+	fun updateEnabledness() {
 		enabled = calculateEnabledness()
 	}
 
@@ -83,7 +83,7 @@ abstract class AbstractLibraryAction(
 	init {
 		eventBus.register(LibrarySelectionChangedEvent::class, librarySelectionChangeHandler)
 		eventBus.register(CommandEvent::class, commandEventHandler)
-		updateEnabledness()
+		// Bug #976: Don't call from constructor. Implementations will use properties that are not yet initialized.
 	}
 
 	override fun dispose() {
