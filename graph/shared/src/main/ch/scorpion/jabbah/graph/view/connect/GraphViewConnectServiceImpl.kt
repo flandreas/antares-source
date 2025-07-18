@@ -268,14 +268,14 @@ class GraphViewConnectServiceImpl(
 		edgeView1.origin?.let { conn ->
 			conn.port?.let { port ->
 				if (!port.isConnected) {
-					port.connectTo(edgeView1.net!!)
+					edgeView1.model.connect(port)
 				}
 			}
 		}
 		edgeView1.destination?.let { conn ->
 			conn.port?.let { port ->
 				if (!port.isConnected) {
-					port.connectTo(edgeView1.net!!)
+					edgeView1.model.connect(port)
 				}
 			}
 		}

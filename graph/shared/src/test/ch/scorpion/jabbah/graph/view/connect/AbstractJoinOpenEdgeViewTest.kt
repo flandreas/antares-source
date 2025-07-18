@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
+import kotlin.test.assertTrue
 
 abstract class AbstractJoinOpenEdgeViewTest(
     handler: InputEventHandler<EditInputEventContext>
@@ -40,6 +41,9 @@ abstract class AbstractJoinOpenEdgeViewTest(
         assertEquals(1, builder.graph.elements.count { it is Net<*> })
         assertSame(edgeViews[0].net, effV1.model.getOutput<Boolean>().net)
         assertSame(edgeViews[0].net, effV3.model.getInput<Boolean>().net)
+
+        assertTrue(edgeViews[0].net!!.ports.contains(effV1.model.getOutput()))
+        assertTrue(edgeViews[0].net!!.ports.contains(effV3.model.getInput()))
 
         // Check view geometry
         assertEquals(Point2D(120, 100), edgeViews[0].polyline.getPointAt(0))
