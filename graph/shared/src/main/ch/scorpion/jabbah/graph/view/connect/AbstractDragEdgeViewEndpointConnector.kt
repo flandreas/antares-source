@@ -285,6 +285,12 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 			return
 		}
 
+		val type = when (draggedEndpointType) {
+            EdgeViewEndpointType.ORIGIN -> "Origin"
+            EdgeViewEndpointType.DESTINATION -> "Destination"
+        }
+		LOG.userTrail("Join EdgeView ${edgeView!!.id} ($type) with EdgeView ${targetEndpointView!!.edgeView.id} at ${targetEndpointView!!.location}")
+
 		context.editor.commandManager.execute(JoinEdgeViewEndpointsCommand<Any>(
 			context.editor,
 			connectService,
