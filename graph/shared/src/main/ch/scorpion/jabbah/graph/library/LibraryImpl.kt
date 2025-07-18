@@ -19,6 +19,7 @@ import ch.scorpion.jabbah.graph.MetaGraphRepository
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.element.ContainerLibraryElementCollector
 import ch.scorpion.jabbah.graph.model.image.ImageLibraryElement
+import ch.scorpion.jabbah.graph.model.vertice.BrokenReferenceException
 import ch.scorpion.jabbah.graph.repository.SubGraphVerticeLocator
 import ch.scorpion.jabbah.io.*
 
@@ -213,7 +214,11 @@ open class LibraryImpl(
 						if (sourceSystemLib != null) {
 							systemLibReferences.add(sourceSystemLib)
 						} else {
-							bundle.add(getMetaGraph(metaGraphId))
+							try {
+								bundle.add(getMetaGraph(metaGraphId))
+							} catch (_: Exception) {
+								throw BrokenReferenceException()
+							}
 						}
 					}
 				bundle.referencedSystemLibraryIds.addAll(systemLibReferences)

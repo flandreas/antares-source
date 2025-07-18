@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.richtext.RichText
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.model.vertice.BrokenReferenceException
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import java.awt.Frame
 import java.io.File
@@ -46,14 +47,22 @@ class ExportMetaGraphAction(
 			val path = fileChooser.selectedFile.absolutePath
 
 			WriteFileWrapper.wrap(name) {
-				service.exportMetaGraphBundle(element, LibraryModule.libraryHolder, path)
-				JOptionPane.showConfirmDialog(
-					Frame.getFrames()[0],
-					Translations.getString("library.action.exportMetaGraph.success.msg", metaGraph.name, path),
-					name,
-					JOptionPane.DEFAULT_OPTION,
-					JOptionPane.INFORMATION_MESSAGE
-				)
+				try {
+					service.exportMetaGraphBundle(element, LibraryModule.libraryHolder, path)
+					JOptionPane.showConfirmDialog(
+						Frame.getFrames()[0],
+						Translations.getString("library.action.exportMetaGraph.success.msg", metaGraph.name, path),
+						name,
+						JOptionPane.DEFAULT_OPTION,
+						JOptionPane.INFORMATION_MESSAGE
+					)
+				} catch (_: BrokenReferenceException) {
+					JOptionPane.showMessageDialog(
+						Frame.getFrames()[0],
+						Translations.getString("library.action.exportMetaGraph.brokenRef.msg"),
+						name,
+						JOptionPane.ERROR_MESSAGE)
+				}
 			}
 		}
 	}

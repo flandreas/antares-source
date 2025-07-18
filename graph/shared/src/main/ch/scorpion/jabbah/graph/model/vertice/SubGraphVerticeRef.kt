@@ -76,6 +76,12 @@ data class SubGraphFunctionContext(
 )
 
 /**
+ * Thrown by [SubGraphVerticeRef] when accessing the [Graph] it referenced,
+ * but that [Graph] doesn't exist, because it has been deleted.
+ */
+class BrokenReferenceException : RuntimeException("Broken reference to subgraph")
+
+/**
  * A [SubGraphVertice] implementation that is part of one [Graph] and references another [Graph] in the [Library].
  */
 class SubGraphVerticeRef(
@@ -416,7 +422,7 @@ class SubGraphVerticeRef(
 		}
 
 		if (graphReference.state == BROKEN) {
-			throw IllegalStateException("broken SubGraphVerticeRef")
+			throw BrokenReferenceException()
 		}
 
 		val subMetaGraph = repository.getMetaGraph(graphUUID!!)
@@ -491,8 +497,12 @@ class SubGraphVerticeRef(
 	}
 
 	fun isDeepExecution(deepExecution: Boolean): Boolean {
-		return (graphReference.graph ?: repository.getMetaGraph(graphUUID!!).graph.model!!).let {
-			!it.purelyScripted && deepExecution || StringUtils.isEmpty(it.script)
+		try {
+			return (graphReference.graph ?: repository.getMetaGraph(graphUUID!!).graph.model!!).let {
+				!it.purelyScripted && deepExecution || StringUtils.isEmpty(it.script)
+			}
+		} catch (_: IllegalArgumentException) {
+			throw BrokenReferenceException()
 		}
 	}
 
