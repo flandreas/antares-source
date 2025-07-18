@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<metaGraph _id='0' manualContainer='true'>
+<metaGraph _id='0' appVersion='1.25.0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
@@ -22,7 +22,7 @@ C = A and B
             <circuitInOut _id='5' id='3' name='B' type='input' bitWidth='1'>
               <desc>
                 <translation lang='de' text='Zweites Summand-Bit'/>
-                <translation lang='en' text='Seconds Summand-Bit'/>
+                <translation lang='en' text='Second summand bit'/>
               </desc>
             </circuitInOut>
             <andGate _id='6' id='4' delay='PD' inputCount='2'>

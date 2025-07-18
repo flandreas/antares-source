@@ -134,12 +134,12 @@ class AbstractPortViewTest {
 
 	@Test
 	fun testNamedInputTooltip() {
-		assertEquals("*(Input 'Bla')", tooltipText(portView(PortType.INPUT, name = "Bla")))
+		assertEquals("*(Input 'Bla') \nPort ID: 0", tooltipText(portView(PortType.INPUT, name = "Bla")))
 	}
 
 	@Test
 	fun testNamedDescInputTooltip() {
-		assertEquals("*(Input 'Bla':) Desc", tooltipText(portView(PortType.INPUT, name = "Bla", desc = TranslatableText("Desc"))))
+		assertEquals("*(Input 'Bla':) Desc\nPort ID: 0", tooltipText(portView(PortType.INPUT, name = "Bla", desc = TranslatableText("Desc"))))
 	}
 
 	@Test

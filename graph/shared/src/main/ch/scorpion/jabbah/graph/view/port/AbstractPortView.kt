@@ -358,10 +358,8 @@ abstract class AbstractPortView<T : Any>(
 
 	protected open fun buildToolTipContent(): String {
 		val content = StringBuilder(StringUtils.orEmpty(port.description.value))
-		if (StringUtils.isEmpty(port.name)) {
-			content.appendLine()
-			content.append("${Translations.getString("graph.property.PortId.name")}: ${port.portId}")
-		}
+		content.appendLine()
+		content.append("${Translations.getString("graph.property.PortId.name")}: ${port.portId}")
 		return content.toString()
 	}
 
