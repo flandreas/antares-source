@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.graph.health.GraphViewConsistencyCheck
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
+import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView

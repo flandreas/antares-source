@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.connect.*
+import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
 /**

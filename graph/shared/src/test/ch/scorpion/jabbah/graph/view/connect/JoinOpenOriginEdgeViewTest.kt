@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import kotlin.test.Test
 import kotlin.test.assertEquals

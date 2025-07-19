@@ -7,8 +7,8 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.VerticeView
-import ch.scorpion.jabbah.graph.view.connect.ConnectionPointHighlight.Companion.SIZE_HALF
-import ch.scorpion.jabbah.graph.view.connect.ConnectionPointHighlightCircle
+import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlight.Companion.SIZE_HALF
+import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlightCircle
 
 /**
  * Highlights the connection points of a [VerticeView] that will automatically connect to open

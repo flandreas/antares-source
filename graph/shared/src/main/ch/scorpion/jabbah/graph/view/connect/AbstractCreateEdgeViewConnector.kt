@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.NetView
+import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewFactory
 import ch.scorpion.jabbah.graph.view.port.PortView

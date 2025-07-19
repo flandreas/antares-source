@@ -7,7 +7,8 @@ import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
-import ch.scorpion.jabbah.graph.view.connect.ConnectionPointHighlighter.displayPortViewHighlight
+import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter
+import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter.displayPortViewHighlight
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.port.PortView
 

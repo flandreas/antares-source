@@ -24,7 +24,7 @@ import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.app.oscilloscope.DropOscilloscopeProbeCommand
-import ch.scorpion.jabbah.graph.view.connect.ConnectionPointHighlighter
+import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter
 import ch.scorpion.jabbah.graph.view.port.GenericPortView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 import ch.scorpion.jabbah.io.*

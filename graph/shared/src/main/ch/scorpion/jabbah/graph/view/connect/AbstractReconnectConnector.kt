@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.port.PortView

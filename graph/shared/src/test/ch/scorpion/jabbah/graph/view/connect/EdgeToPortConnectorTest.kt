@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.TestVertice
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
+import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.graph.view.net.node.NodeView

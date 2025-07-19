@@ -8,7 +8,7 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
-import ch.scorpion.jabbah.graph.view.connect.ConnectionPointHighlight
+import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlight
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 
 /**

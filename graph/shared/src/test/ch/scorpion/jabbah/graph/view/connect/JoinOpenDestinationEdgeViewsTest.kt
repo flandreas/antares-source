@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
+import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeEndpointView
 import kotlin.test.Test

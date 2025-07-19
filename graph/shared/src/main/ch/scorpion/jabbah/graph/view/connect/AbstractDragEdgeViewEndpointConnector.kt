@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeEndpointView
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType

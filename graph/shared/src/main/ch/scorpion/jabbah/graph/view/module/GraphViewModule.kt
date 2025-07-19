@@ -49,6 +49,9 @@ import ch.scorpion.jabbah.graph.view.app.UsecaseAppService
 import ch.scorpion.jabbah.graph.view.app.oscilloscope.OscilloscopeViewService
 import ch.scorpion.jabbah.graph.view.app.oscilloscope.OscilloscopeViewServiceImpl
 import ch.scorpion.jabbah.graph.view.connect.*
+import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlight
+import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlightCircle
+import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointReconnect
 import ch.scorpion.jabbah.graph.view.editor.AutoConnector
 import ch.scorpion.jabbah.graph.view.editor.GraphEditor
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
