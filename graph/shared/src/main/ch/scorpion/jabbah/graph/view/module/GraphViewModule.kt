@@ -49,6 +49,7 @@ import ch.scorpion.jabbah.graph.view.app.UsecaseAppService
 import ch.scorpion.jabbah.graph.view.app.oscilloscope.OscilloscopeViewService
 import ch.scorpion.jabbah.graph.view.app.oscilloscope.OscilloscopeViewServiceImpl
 import ch.scorpion.jabbah.graph.view.connect.*
+import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointDenialCross
 import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlight
 import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlightCircle
 import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointReconnect
@@ -203,6 +204,7 @@ object GraphViewModule : AbstractModule() {
 		properties.set(PortView.PROP_SENSITIVE_AREA, 10)
 		properties.set(PortView.PROP_HIGHLIGHT, ConnectionPointHighlightCircle())
 		properties.set(PortView.PROP_HIGHLIGHT_RECONNECT, ConnectionPointReconnect())
+		properties.set(PortView.PROP_CONNECT_DENY, ConnectionPointDenialCross())
 		properties.set(DragEdgePointHighlight.PROP_COLOR, Color.BLACK)
 		properties.set(DragEdgePointHighlight.PROP_HALF_SIZE, 6)
 		properties.set(ConnectionPointHighlight.PROP_COLOR, Themes.get<EditTheme>().snap.color.foregroundColor)

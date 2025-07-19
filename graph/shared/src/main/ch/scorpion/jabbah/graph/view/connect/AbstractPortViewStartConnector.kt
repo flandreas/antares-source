@@ -139,14 +139,17 @@ abstract class AbstractPortViewStartConnector(
 						onExit {
 							Status.set(StatusType.Tool, oldStatus)
 						}
-						stayIf({ mouseDragged(it) && !insideTargetPortView(draggedEndpointType, it) && (!allowEdgeViewAsTarget || !insideTargetEdgeView(draggedEndpointType, it)) }) {
-							onTransit { moveEdgeViewEndpoint(it) }
-						}
 						transitTo("insideTargetPortView") {
 							given { mouseDragged(it) && insideTargetPortView(draggedEndpointType, it) }
 						}
 						transitTo("insideTargetEdgeView") {
 							given { mouseDragged(it) && allowEdgeViewAsTarget && insideTargetEdgeView(draggedEndpointType, it) }
+						}
+						transitTo("insideDenyingPortView") {
+							given { mouseDragged(it) && insideDenyingPortView(draggedEndpointType, it) }
+						}
+						transitTo("insideDenyingEdgeView") {
+							given { mouseDragged(it) && allowEdgeViewAsTarget && insideDenyingEdgeView(draggedEndpointType, it) }
 						}
 						transitTo("connected") {
 							given { mouseLeftReleased(it) && isValidEdgeView }
@@ -157,7 +160,9 @@ abstract class AbstractPortViewStartConnector(
 						transitTo("cancelled") {
 							given { escapePressed(it) }
 						}
-						stayOtherwise()
+						stayOtherwise {
+							onTransit { moveEdgeViewEndpoint(it) }
+						}
 					}
 
 					state("insideTargetPortView") {
@@ -186,6 +191,32 @@ abstract class AbstractPortViewStartConnector(
 						}
 					}
 
+					state("insideDenyingPortView") {
+						onEntry {
+							snapToDenyingPortView(it)
+							oldStatus = Status.replace(StatusType.Tool, Translations.getString("graph.tool.connector.drag.insideDenyingPortView.stateTip"))
+						}
+						onExit {
+							removePortViewHighlight(it)
+							Status.set(StatusType.Tool, oldStatus)
+						}
+						transitTo("insideDenyingPortView") {
+							given { mouseDragged(it) && insideDenyingPortView(draggedEndpointType, it) }
+							onTransit {
+								snapToDenyingPortView(it)
+							}
+						}
+						transitTo("drag") {
+							given { mouseDragged(it) && !insideDenyingPortView(draggedEndpointType, it) }
+						}
+						transitTo("cancelled") {
+							given { mouseLeftReleased(it) }
+						}
+						transitTo("cancelled") {
+							given { escapePressed(it) }
+						}
+					}
+
 					state("insideTargetEdgeView") {
 						onEntry {
 							snapToTargetEdgeView(it)
@@ -194,9 +225,6 @@ abstract class AbstractPortViewStartConnector(
 						onExit {
 							removePortViewHighlight(it)
 							Status.set(StatusType.Tool, oldStatus)
-						}
-						stayIf({ mouseDragged(it) && insideTargetEdgeView(draggedEndpointType, it) }) {
-							onTransit { snapToTargetEdgeView(it) }
 						}
 						transitTo("drag") {
 							given { mouseDragged(it) && !insideTargetEdgeView(draggedEndpointType, it) }
@@ -207,7 +235,32 @@ abstract class AbstractPortViewStartConnector(
 						transitTo("cancelled") {
 							given { escapePressed(it) }
 						}
-						stayOtherwise()
+						stayOtherwise {
+							onTransit { snapToTargetEdgeView(it) }
+						}
+					}
+
+					state("insideDenyingEdgeView") {
+						onEntry {
+							snapToDenyingEdgeView(it)
+							oldStatus = Status.replace(StatusType.Tool, Translations.getString("graph.tool.connector.drag.insideDenyingEdgeView.stateTip"))
+						}
+						onExit {
+							removePortViewHighlight(it)
+							Status.set(StatusType.Tool, oldStatus)
+						}
+						transitTo("drag") {
+							given { mouseDragged(it) && !insideDenyingEdgeView(draggedEndpointType, it) }
+						}
+						transitTo("cancelled") {
+							given { mouseLeftReleased(it) }
+						}
+						transitTo("cancelled") {
+							given { escapePressed(it) }
+						}
+						stayOtherwise {
+							onTransit { snapToDenyingEdgeView(it) }
+						}
 					}
 
 					state("connected") {

@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.graph.health.GraphViewConsistencyCheck
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
+import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointDenialCross
 import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
@@ -146,15 +147,6 @@ class DragEdgeViewDestinationConnectorTest
 		assertConnectedToEdgeView()
 	}
 
-	@Test
-	fun shouldNotConnectToEdgeViewWithPresentOutputPort() {
-		prepareConnection(outputCanBeUndefined = false)
-		mouseMoveTo(150, 100)
-		pressMouseAt(150, 100)
-		dragMouseTo(150, 200)
-		assertFalse(ConnectionPointHighlighter.hasPortViewHighlight)
-	}
-
 	private fun prepareConnection(outputCanBeUndefined: Boolean) {
 		v2.location = Point2D(200, 200)
 		val v3 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v3", 100, 200))
@@ -189,6 +181,23 @@ class DragEdgeViewDestinationConnectorTest
 		editor.commandManager.redo()
 
 		assertConnectedToEdgeView()
+	}
+
+	@Test
+	fun shouldDenyConnectToAnotherOutput() {
+		builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v3", 100, 200))
+
+		mouseMoveTo(150, 100)
+		pressMouseAt(150, 100)
+		dragMouseTo(130, 200)
+
+		assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
+		assertIs<ConnectionPointDenialCross>(ConnectionPointHighlighter.portViewHighlight)
+
+		releaseMouseAt(130, 200)
+
+		assertFalse(ConnectionPointHighlighter.hasPortViewHighlight)
+		assertOriginal()
 	}
 
 	private fun assertBeforeConnectToEdgeView() {

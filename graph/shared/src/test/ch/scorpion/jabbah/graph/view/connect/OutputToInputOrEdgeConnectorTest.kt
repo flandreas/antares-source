@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.graph.health.GraphViewConsistencyCheck
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
+import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointDenialCross
 import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
@@ -285,13 +286,37 @@ class OutputToInputOrEdgeConnectorTest
 	}
 
 	@Test
-	fun shouldNotConnectToEdgeViewWithPresentOutputPort() {
+	fun shouldDenyConnectToAnotherOutput() {
+		builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v3", 100, 200))
+
+		mouseMoveTo(130, 100)
+		pressMouseAt(130, 100)
+		dragMouseTo(130, 200)
+
+		assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
+		assertIs<ConnectionPointDenialCross>(ConnectionPointHighlighter.portViewHighlight)
+
+		releaseMouseAt(130, 200)
+
+		assertFalse(ConnectionPointHighlighter.hasPortViewHighlight)
+		assertEquals(0, builder.graphView.getEdgeViews().size)
+	}
+
+	@Test
+	fun shouldDenyConnectionToEdgeViewWithPresentOutputPort() {
 		prepareConnection(outputCanBeUndefined = false)
 
 		mouseMoveTo(130, 200)
 		pressMouseAt(130, 200)
 		dragMouseTo(150, 100)
+
+		assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
+		assertIs<ConnectionPointDenialCross>(ConnectionPointHighlighter.portViewHighlight)
+
+		releaseMouseAt(130, 200)
+
 		assertFalse(ConnectionPointHighlighter.hasPortViewHighlight)
+		assertEquals(1, builder.graphView.getEdgeViews().size)
 	}
 
 	private fun prepareConnection(outputCanBeUndefined: Boolean) {
@@ -299,7 +324,6 @@ class OutputToInputOrEdgeConnectorTest
 		GraphViewModule.graphViewConnectService.addConnection<Boolean>(builder.graphView, v1, v2)
 		builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v3", 100, 200))
 		editor.commandManager.reset()
-
 	}
 
 	private fun connectToEdgeView() {

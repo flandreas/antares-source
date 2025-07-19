@@ -83,6 +83,12 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 				transitTo("insideTargetEdgeView") {
 					given { mouseDragged(it) && insideTargetEdgeView(draggedEndpointType, it) }
 				}
+				transitTo("insideDenyingPortView") {
+					given { mouseDragged(it) && insideDenyingPortView(draggedEndpointType, it) }
+				}
+				transitTo("insideDenyingEdgeView") {
+					given { mouseDragged(it) && insideDenyingEdgeView(draggedEndpointType, it) }
+				}
 				transitTo("drag") {
 					given { mouseDragged(it) && !insideTargetPortView(draggedEndpointType, it)}
 					onTransit { moveEdgeViewEndpoint(it) }
@@ -119,6 +125,26 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 				}
 			}
 
+			state("insideDenyingPortView") {
+				onEntry { snapToDenyingPortView(it) }
+				onExit { removePortViewHighlight(it) }
+				transitTo("insideDenyingPortView") {
+					given { mouseDragged(it) && insideDenyingPortView(draggedEndpointType, it) }
+					onTransit {
+						snapToDenyingPortView(it)
+					}
+				}
+				transitTo("drag") {
+					given { mouseDragged(it) && !insideDenyingPortView(draggedEndpointType, it) }
+				}
+				transitTo("cancelled") {
+					given { mouseLeftReleased(it) }
+				}
+				transitTo("cancelled") {
+					given { escapePressed(it) }
+				}
+			}
+
 			state("insideTargetEdgeView") {
 				onEntry { snapToTargetEdgeView(it) }
 				onExit { removePortViewHighlight(it) }
@@ -135,6 +161,23 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 					given { escapePressed(it) }
 				}
 				stayOtherwise()
+			}
+
+			state("insideDenyingEdgeView") {
+				onEntry { snapToDenyingEdgeView(it) }
+				onExit { removePortViewHighlight(it) }
+				transitTo("drag") {
+					given { mouseDragged(it) && !insideDenyingEdgeView(draggedEndpointType, it) }
+				}
+				transitTo("cancelled") {
+					given { mouseLeftReleased(it) }
+				}
+				transitTo("cancelled") {
+					given { escapePressed(it) }
+				}
+				stayOtherwise {
+					onTransit { snapToDenyingEdgeView(it) }
+				}
 			}
 
 			state("insideTargetEndpoint") {

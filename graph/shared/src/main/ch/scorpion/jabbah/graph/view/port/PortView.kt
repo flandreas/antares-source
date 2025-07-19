@@ -46,6 +46,12 @@ interface PortView<T : Any> : Drawable, Storable, Mirrorable, SnappableX, Snappa
 
 		/** The name of the property in [Properties] of the object to be used for highlighting reconnection points.*/
 		const val PROP_HIGHLIGHT_RECONNECT = "graph.view.portView.highlightReconnect"
+
+		/**
+		 * The name of the property in [Properties] that designates the object to be used for highlighting
+		 * that the current [PortView] denies a connection.
+		 */
+		const val PROP_CONNECT_DENY = "graph.view.portView.connectDeny"
 	}
 
 	/** The [Port] that this [PortView] displays. Must be one of the [Port]s of the [owner]'s [Vertice].*/

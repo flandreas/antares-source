@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.view.connect
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler
 import ch.scorpion.jabbah.draw.graphics.Cursor
+import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -75,6 +76,24 @@ abstract class AbstractConnector(
 		return true
 	}
 
+	protected fun insideDenyingPortView(type: EdgeViewEndpointType, context: EditInputEventContext): Boolean {
+		val destVerticeView = context.drawingView.drawing.getDrawable { it.contains(context.location) && it !== edgeView }
+		if (destVerticeView == null || destVerticeView !is VerticeView<*>) {
+			clearTargetPortView()
+			return false
+		}
+
+		val pv = (destVerticeView).getPortViewAtConnectionPoint(context.x, context.y)
+		if (pv == null || pv.port.isConnected || type.canConnectTo(pv.port, edgeView!!.net!!, context.drawingView.drawing as GraphView)) {
+			clearTargetPortView()
+			return false
+		}
+
+		targetPortView = pv
+
+		return true
+	}
+
 	protected fun snapToTargetPortView(context: EditInputEventContext) {
 		// Start highlighting current destination PortView
 		val connPointAbs = targetPortView!!.owner!!.getPortConnectionPoint(targetPortView!!.port)
@@ -88,6 +107,16 @@ abstract class AbstractConnector(
 		draggedEndpointType.layout(edgeView!!, direction)
 
 		edgeView?.validate()
+	}
+
+	protected fun snapToDenyingPortView(context: EditInputEventContext) {
+		val connPointAbs = targetPortView!!.owner!!.getPortConnectionPoint(targetPortView!!.port)
+		displayPortViewHighlight(context.drawingView, connPointAbs, highlight = DrawModule.properties.get(PortView.PROP_CONNECT_DENY))
+
+		// Snap EdgeView end to connection point
+		draggedEndpointType.moveTo(edgeView!!, Point2D(connPointAbs.x, connPointAbs.y))
+
+		// Don't layout EdgeView
 	}
 
 	protected fun clearTargetPortView() {
@@ -118,6 +147,28 @@ abstract class AbstractConnector(
 			draggedEndpointType.moveTo(edgeView!!, snapResult.location)
 			draggedEndpointType.layout(edgeView!!, null)
 			edgeView!!.layout
+		}
+	}
+
+	protected fun insideDenyingEdgeView(type: EdgeViewEndpointType, context: EditInputEventContext): Boolean {
+		val destDrawable = context.drawingView.drawing.getDrawable { it !== edgeView && it.contains(context.location) }
+		if (destDrawable == null || destDrawable !is EdgeView<*> || canConnectTo(type, destDrawable, context.drawingView.drawing as GraphView)) {
+			clearTargetEdgeView()
+			return false
+		}
+
+		clearTargetPortView()
+		targetEdgeView = destDrawable
+
+		return true
+	}
+
+	protected fun snapToDenyingEdgeView(context: EditInputEventContext) {
+		targetEdgeView!!.snap(context.x, context.y, context.editor.snapManager)?.let { snapResult ->
+			targetEdgeViewSegmentIndex = snapResult.segmentIndex
+			displayPortViewHighlight(context.drawingView, snapResult.location, highlight = DrawModule.properties.get(PortView.PROP_CONNECT_DENY))
+			draggedEndpointType.moveTo(edgeView!!, snapResult.location)
+			// Don't layout EdgeView
 		}
 	}
 
