@@ -6,6 +6,8 @@ import ch.scorpion.jabbah.graph.view.Connection
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType.DESTINATION
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType.ORIGIN
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import kotlin.test.Test
@@ -131,7 +133,7 @@ class EdgeViewSplitterJoinerTest {
 		val vv = TestVerticeView()
 		ev2.connectToDestination(Connection(vv, vv.model.getInput()))
 
-		EdgeViewSplitterJoiner.join(ev1, ev2)
+		EdgeViewSplitterJoiner.join(ev1, DESTINATION, ev2, ORIGIN)
 
 		assertEquals(2, ev1.segmentPointCount)
 		assertEquals(Point2D(0, 0), ev1.getSegmentPoint(0))
@@ -156,7 +158,7 @@ class EdgeViewSplitterJoinerTest {
 		val vv = TestVerticeView()
 		ev1.connectToOrigin(Connection(vv, vv.model.getOutput()))
 
-		EdgeViewSplitterJoiner.join(ev2, ev1)
+		EdgeViewSplitterJoiner.join(ev2, ORIGIN, ev1, DESTINATION)
 
 		assertEquals(2, ev2.segmentPointCount)
 		assertEquals(Point2D(0, 0), ev2.getSegmentPoint(0))
@@ -184,7 +186,7 @@ class EdgeViewSplitterJoinerTest {
 		val vv2 = TestVerticeView()
 		ev2.connectToDestination(Connection(vv2, vv2.model.getOutput()))
 
-		EdgeViewSplitterJoiner.join(ev1, ev2)
+		EdgeViewSplitterJoiner.join(ev1, ORIGIN, ev2, ORIGIN)
 
 		assertEquals(2, ev1.segmentPointCount)
 		assertEquals(Point2D(-100, 0), ev1.getSegmentPoint(0))
@@ -212,7 +214,7 @@ class EdgeViewSplitterJoinerTest {
 		val vv2 = TestVerticeView()
 		ev2.connectToOrigin(Connection(vv2, vv2.model.getOutput()))
 
-		EdgeViewSplitterJoiner.join(ev1, ev2)
+		EdgeViewSplitterJoiner.join(ev1, DESTINATION, ev2, DESTINATION)
 
 		assertEquals(2, ev1.segmentPointCount)
 		assertEquals(Point2D(0, 0), ev1.getSegmentPoint(0))

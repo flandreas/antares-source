@@ -285,11 +285,11 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
      * Joins this [EdgeView] with another adjacent [EdgeView].
      * Adds all segment point of the adjacent [EdgeView] either at the head or the tail of this [EdgeView].
      * Connects itself to the [ConnectableView] to the corresponding end of the adjacent [EdgeView]
-     * @param edgeView the [EdgeView] to join. Must be adjacent.
+     * @param other the [EdgeView] to join. Must be adjacent.
      * @return the remaining [EdgeView]
      * @throws IllegalArgumentException if `edgeView` is not adjacent
      */
-    fun join(edgeView: EdgeView<T>): EdgeView<*>
+	fun join(endpointType: EdgeViewEndpointType, other: EdgeView<T>, otherEndpointType: EdgeViewEndpointType): EdgeView<*>
 
 	/**
 	 * Snaps the point given by [x] and [y] to the location on this [EdgeView] that is nearest to any of

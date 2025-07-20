@@ -261,6 +261,9 @@ class PolylineShapeImpl(pts: List<Point2D>? = mutableListOf()) : PolylineShape {
 			if (canCompactPoint(i)) {
 				changed = true
 				points.removeAt(i)
+				if (i > 1) {
+					i--
+				}
 			} else {
 				i++
 			}

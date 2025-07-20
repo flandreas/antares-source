@@ -84,6 +84,7 @@ class GridImpl(
 	}
 
 	init {
+		LOG.userTrail("Snap to grid enabled=${BaseModule.settings.getBoolean(PROP_SNAP_ENABLED, true)}")
 		eventBus.register(PreferencesChangedEvent::class, preferencesHandler)
 		updateGridPainterProperties()
 	}
