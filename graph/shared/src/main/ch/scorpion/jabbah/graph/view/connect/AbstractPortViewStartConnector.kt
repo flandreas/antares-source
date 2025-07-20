@@ -471,7 +471,7 @@ abstract class AbstractPortViewStartConnector(
 			return
 		}
 
-		LOG.userTrail("Connect to EdgeView ${targetEdgeView!!.id}")
+		LOG.userTrail("Connect to EdgeView ${targetEdgeView!!.id} at ${draggedEndpointType.getLocation(edgeView!!)}")
 
 		connectService.unconnect(edgeView!!)
 		context.drawingView.drawing.remove(edgeView!!)
