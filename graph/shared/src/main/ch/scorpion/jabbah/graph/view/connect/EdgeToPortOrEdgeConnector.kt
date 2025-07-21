@@ -29,9 +29,19 @@ class EdgeToPortOrEdgeConnector(
 	draggedEndpointType = EdgeViewEndpointType.DESTINATION
 ) {
 
+	@Suppress("ConstPropertyName")
 	companion object {
 		val SPLIT_EDGE_VIEW_MODIFIER = Modifier.Alt
 		private val LOG by logger(EdgeToPortOrEdgeConnector::class)
+
+		private const val sense = "sense"
+		private const val insideEdge = "insideEdge"
+		private const val drag = "drag"
+		private const val insideTargetPortView = "insideTargetPortView"
+		private const val insideTargetEdgeView = "insideTargetEdgeView"
+		private const val connected = "connected"
+		private const val cancelled = "cancelled"
+		private const val connectedToEdge = "connectedToEdge"
 	}
 
 	/** The [EdgeView] from which a new [EdgeView] is branched by this connector. */
@@ -46,24 +56,24 @@ class EdgeToPortOrEdgeConnector(
 
 			ignoreEvent { it.keyEvent != null }
 
-			state("sense") {
+			state(sense) {
 				onEntry { it.view.setCursor(Cursor.DEFAULT) }
-				transitTo("insideEdge") {
+				transitTo(insideEdge) {
 					given { mouseMoved(it) && snap(it) != null }
 				}
 			}
 
-			state("insideEdge") {
+			state(insideEdge) {
 				onEntry { displayPortViewHighlight(it, snap(it)!!.location) }
-				transitTo("insideEdge") {
+				transitTo(insideEdge) {
 					given { mouseMoved(it) && snap(it) != null }
 					onTransit { displayPortViewHighlight(it, snap(it)!!.location) }
 				}
-				transitTo("sense") {
+				transitTo(sense) {
 					given { mouseMoved(it) && snap(it) == null }
 					onTransit { removePortViewHighlight(it) }
 				}
-				transitTo("drag") {
+				transitTo(drag) {
 					given { mouseLeftPressed(it) && snap(it) != null }
 					onTransit {
 						beginConnecting(it)
@@ -72,78 +82,78 @@ class EdgeToPortOrEdgeConnector(
 				}
 			}
 
-			state("drag") {
-				transitTo("sense") {
+			state(drag) {
+				transitTo(sense) {
 					// Connecting has been interrupted in beginConnecting() because snap was not valid
 					// Transaction has not yet been started, so we can't cancel(), which would rollback
 					given { edgeView == null }
 				}
-				transitTo("insideTargetPortView") {
+				transitTo(insideTargetPortView) {
 					given { mouseDragged(it) && insideTargetPortView(draggedEndpointType, it) }
 				}
-				transitTo("insideTargetEdgeView") {
+				transitTo(insideTargetEdgeView) {
 					given { mouseDragged(it) && insideTargetEdgeView(draggedEndpointType, it) }
 				}
-				transitTo("drag") {
+				transitTo(drag) {
 					given { mouseDragged(it) && !insideTargetPortView(draggedEndpointType, it) }
 					onTransit { moveEdgeViewEndpoint(it) }
 				}
-				transitTo("connected") {
+				transitTo(connected) {
 					given { mouseLeftReleased(it) && isValidEdgeView }
 				}
-				transitTo("cancelled") {
+				transitTo(cancelled) {
 					given { mouseLeftReleased(it) && !isValidEdgeView }
 				}
-				transitTo("cancelled") {
+				transitTo(cancelled) {
 					given { escapePressed(it) }
 				}
 			}
 
 			// This is exactly the same code as in AbstractPortViewStartConnector. However, if we would use
 			// a common State builder for this State, we would loose the insight in the entire StateMachine here.
-			state("insideTargetPortView") {
+			state(insideTargetPortView) {
 				onEntry { snapToTargetPortView(it) }
 				onExit { removePortViewHighlight(it) }
-				transitTo("insideTargetPortView") {
+				transitTo(insideTargetPortView) {
 					given { mouseDragged(it) && insideTargetPortView(draggedEndpointType, it) }
 				}
-				transitTo("drag") {
+				transitTo(drag) {
 					given { mouseDragged(it) && !insideTargetPortView(draggedEndpointType, it) }
 				}
-				transitTo("connected") {
+				transitTo(connected) {
 					given { mouseLeftReleased(it) }
 				}
-				transitTo("cancelled") {
+				transitTo(cancelled) {
 					given { escapePressed(it) }
 				}
 			}
 
-			state("insideTargetEdgeView") {
+			state(insideTargetEdgeView) {
 				onEntry { snapToTargetEdgeView(it) }
 				onExit { removePortViewHighlight(it) }
 				stayIf({ mouseDragged(it) && insideTargetEdgeView(draggedEndpointType, it) }) {
 					onTransit { snapToTargetEdgeView(it) }
 				}
-				transitTo("drag") {
+				transitTo(drag) {
 					given { mouseDragged(it) && !insideTargetEdgeView(draggedEndpointType, it) }
 				}
-				transitTo("connectedToEdge") {
+				transitTo(connectedToEdge) {
 					given { mouseLeftReleased(it) }
 				}
-				transitTo("cancelled") {
+				transitTo(cancelled) {
 					given { escapePressed(it) }
 				}
 				stayOtherwise()
 			}
 
-			state("connected") {
+			state(connected) {
 				onEntry {
 					completeConnecting(it)
 					reset()
 				}
 			}
 
-			state("connectedToEdge") {
+			state(connectedToEdge) {
 				onEntry {
 					edgeView?.underConstruction = false
 					completeConnectingToEdgeView(it)
@@ -151,7 +161,7 @@ class EdgeToPortOrEdgeConnector(
 				}
 			}
 
-			state("cancelled") {
+			state(cancelled) {
 				onEntry { cancel(it.editor) }
 			}
 		}

@@ -81,7 +81,13 @@ class DragManagerImpl(
 			return null
 		}
 
-		dragSnapped(selection, context.x, context.y, orthogonal = context.mouseEvent?.isShiftDown == true, doSnap = context.mouseEvent?.isAltDown != true)
+		drag(
+			selection,
+			context.x,
+			context.y,
+			orthogonal = context.mouseEvent?.isShiftDown == true,
+			doSnap = context.mouseEvent?.isAltDown != true
+		)
 
 		if (selection.size == 1) {
 			involvePluginsDragged(selection.first())
@@ -91,7 +97,7 @@ class DragManagerImpl(
 		return null
 	}
 
-	private fun dragSnapped(components: Collection<Component>, x: Double, y: Double, orthogonal: Boolean, doSnap: Boolean) {
+	private fun drag(components: Collection<Component>, x: Double, y: Double, orthogonal: Boolean, doSnap: Boolean) {
 		if (components.isEmpty() || movedReferenceComponent == null) {
 			return
 		}
@@ -196,7 +202,7 @@ class DragManagerImpl(
 			if (selection.size == 1 && selection.first().isDragManager) {
 				return null
 			}
-			dragSnapped(selection, moveLastLocation.x, moveLastLocation.y, orthogonal = true, doSnap = true)
+			drag(selection, moveLastLocation.x, moveLastLocation.y, orthogonal = true, doSnap = true)
 		}
 		return null
 	}
@@ -207,7 +213,7 @@ class DragManagerImpl(
 			if (selection.size == 1 && selection.first().isDragManager) {
 				return null
 			}
-			dragSnapped(selection, moveLastLocation.x, moveLastLocation.y, orthogonal = false, doSnap = true)
+			drag(selection, moveLastLocation.x, moveLastLocation.y, orthogonal = false, doSnap = true)
 		}
 		return null
 	}
@@ -245,7 +251,7 @@ class DragManagerImpl(
 	override fun setDropComponent(component: Component?, location: Point2D?) {
 		if (component != null) {
 			if (dropComponent != null) {
-				dragSnapped(listOf(component), location!!.x, location.y, orthogonal = false, doSnap = true)
+				drag(listOf(component), location!!.x, location.y, orthogonal = false, doSnap = true)
 				involvePluginsDragged(component)
 			} else {
 				component.location = location!!
