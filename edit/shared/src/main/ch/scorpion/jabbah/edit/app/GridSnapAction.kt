@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.Grid
 
@@ -12,6 +13,10 @@ import ch.scorpion.jabbah.edit.Grid
  * An [Action] for toggling the [Grid] snap functionality for the given [Editor].
  */
 class GridSnapAction(private val editor: Editor) : AbstractAction("edit.action.grid.snap") {
+
+	companion object {
+		private val LOG by logger(GridSnapAction::class)
+	}
 
 	private val propertyChangeHandler = EditorPropertyListener()
 
@@ -27,6 +32,7 @@ class GridSnapAction(private val editor: Editor) : AbstractAction("edit.action.g
 
 	override fun execute(event: ActionEvent) {
 		editor.gridSnap = !editor.gridSnap
+		LOG.userTrail("Grid snap set to ${editor.gridSnap}")
 	}
 
 	private fun updateState() {

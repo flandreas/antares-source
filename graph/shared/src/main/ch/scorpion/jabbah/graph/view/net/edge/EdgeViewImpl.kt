@@ -619,8 +619,12 @@ open class EdgeViewImpl<T : Any>(
 	override fun split(index: Int, splitLocation: Point2D, edgeViewCreator: (NetView<T>) -> EdgeView<T>): EdgeView<T> =
 		EdgeViewSplitterJoiner.split(this, index, splitLocation, edgeViewCreator)
 
-	override fun join(edgeView: EdgeView<T>): EdgeView<*> =
-		EdgeViewSplitterJoiner.join(this, edgeView)
+	override fun join(
+		endpointType: EdgeViewEndpointType,
+		other: EdgeView<T>,
+		otherEndpointType: EdgeViewEndpointType
+	): EdgeView<*> =
+		EdgeViewSplitterJoiner.join(this, endpointType, other, otherEndpointType)
 
 	override fun snap(x: Double, y: Double, snapManager: SnapManager?): EdgeViewSnapLocatorResult? =
 		EdgeViewSnapLocator.snap(this, x, y, snapManager)

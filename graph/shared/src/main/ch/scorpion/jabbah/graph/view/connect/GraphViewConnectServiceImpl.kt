@@ -214,12 +214,23 @@ class GraphViewConnectServiceImpl(
 				val nodeEdgeViews = nodeView.getEdgeViews()
 
 				val joinedEdgeView = nodeEdgeViews[0]
+				val joinedEndpointType = if (nodeView.getOutgoingEdgeViews().contains(joinedEdgeView)) {
+					EdgeViewEndpointType.ORIGIN
+				} else {
+					EdgeViewEndpointType.DESTINATION
+				}
+
 				val otherEdgeView = nodeEdgeViews[1]
+				val otherEndpointType = if (nodeView.getOutgoingEdgeViews().contains(otherEdgeView)) {
+					EdgeViewEndpointType.ORIGIN
+				} else {
+					EdgeViewEndpointType.DESTINATION
+				}
 
 				unconnectEdgeViewFromNodeView(nodeView, joinedEdgeView)
 				unconnectEdgeViewFromNodeView(nodeView, otherEdgeView)
 
-				joinedEdgeView.join(otherEdgeView)
+				joinedEdgeView.join(joinedEndpointType,otherEdgeView, otherEndpointType)
 				graphView.remove(otherEdgeView)
 			}
 			1 -> {
@@ -242,17 +253,17 @@ class GraphViewConnectServiceImpl(
 		graphView: GraphView,
 		edgeView1: EdgeView<T>,
 		endpointType1: EdgeViewEndpointType,
-		location: Point2D,
 		edgeView2: EdgeView<T>,
+		endpointType2: EdgeViewEndpointType
 	) {
-		endpointType1.moveTo(edgeView1, location)
+		endpointType1.moveTo(edgeView1, endpointType2.getEndpoint(edgeView2).location)
 
 		/** Remember the [Connection]s being reset in [EdgeView.join].*/
 		val oldOrigin2 = edgeView2.origin
 		val oldDestination2 = edgeView2.destination
 
 		/** This joins the [EdgeView]s only on the view layer. Requires cleaning up the model layer afterward. */
-		edgeView1.join(edgeView2)
+		edgeView1.join(endpointType1, edgeView2, endpointType2)
 
 		oldOrigin2?.let { conn ->
 			conn.port?.let { port ->

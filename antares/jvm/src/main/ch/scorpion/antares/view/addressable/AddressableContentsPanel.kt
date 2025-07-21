@@ -224,7 +224,7 @@ class AddressableContentsPanel(
 		override fun actionPerformed(e: ActionEvent?) {
 			val fileChooser = JFileChooser()
 			if (fileChooser.showSaveDialog(this@AddressableContentsPanel) == JFileChooser.APPROVE_OPTION) {
-				WriteFileWrapper.wrap(name) {
+				WriteFileWrapper.wrap(getValue(NAME) as String) {
 				val contents = MemoryDump.write(addressableRef.addressable.memory, addressableRef.addressable.dataWidth)
 					Files.write(Paths.get(fileChooser.selectedFile.absolutePath), contents.toByteArray())
 				}

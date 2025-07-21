@@ -328,6 +328,11 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 			cancel(context.editor)
 			return
 		}
+		val targetEndpointType = targetEndpointView!!.edgeView.getEndpointType(targetEndpointView!!)
+		if (targetEndpointType == null) {
+			cancel(context.editor)
+			return
+		}
 
 		val type = when (draggedEndpointType) {
             EdgeViewEndpointType.ORIGIN -> "Origin"
@@ -340,8 +345,8 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 			connectService,
 			edgeView!!.id,
 			draggedEndpointType,
-			targetEndpointView!!.location,
 			targetEndpointView!!.edgeView.id,
+			targetEndpointType
 		))
 	}
 }

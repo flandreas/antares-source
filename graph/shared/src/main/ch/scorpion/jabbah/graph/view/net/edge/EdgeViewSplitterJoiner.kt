@@ -4,6 +4,8 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.view.ConnectableView
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.NetView
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType.DESTINATION
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType.ORIGIN
 
 /**
  * A utility object for splitting and joining [EdgeView]s.
@@ -50,14 +52,19 @@ object EdgeViewSplitterJoiner {
 		return tail
 	}
 
-	fun <T: Any> join(edgeView: EdgeView<T>, other: EdgeView<T>): EdgeView<*> {
-		return when {
-			edgeView.polyline.getLastPoint() == other.polyline.getFirstPoint() -> joinOtherHeadWithTail(edgeView, other)
-			edgeView.polyline.getFirstPoint() == other.polyline.getLastPoint() -> joinOtherTailWithHead(edgeView, other)
-			edgeView.polyline.getFirstPoint() == other.polyline.getFirstPoint() -> joinOtherHeadWithHead(edgeView, other)
-			edgeView.polyline.getLastPoint() == other.polyline.getLastPoint() -> joinOtherTailWithTail(edgeView, other)
-			else -> throw IllegalArgumentException("unsupported join scenario")
-		}
+	fun <T: Any> join(edgeView: EdgeView<T>, endpointType: EdgeViewEndpointType, other: EdgeView<T>, otherEndpointType: EdgeViewEndpointType): EdgeView<*> {
+		return when (endpointType) {
+            ORIGIN -> {
+				when (otherEndpointType) {
+                    ORIGIN -> joinOtherHeadWithHead(edgeView, other)
+                    DESTINATION -> joinOtherTailWithHead(edgeView, other)
+                }
+			}
+            DESTINATION -> when (otherEndpointType) {
+				ORIGIN -> joinOtherHeadWithTail(edgeView, other)
+				DESTINATION -> joinOtherTailWithTail(edgeView, other)
+			}
+        }
 	}
 
 	/**

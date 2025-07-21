@@ -146,14 +146,14 @@ interface GraphViewConnectService {
 	/**
 	 * Joins [edgeView1] with the [Point2D]s of [edgeView2] and removes [edgeView2] from [graphView],
 	 * including all the necessary reconnecting. The point of join is defined my moving
-	 * [endpointType1] of [edgeView1] to [location].
+	 * [endpointType1] of [edgeView1] to [endpointType2] of [edgeView2].
 	 */
 	fun <T : Any> join(
 		graphView: GraphView,
 		edgeView1: EdgeView<T>,
 		endpointType1: EdgeViewEndpointType,
-		location: Point2D,
 		edgeView2: EdgeView<T>,
+		endpointType2: EdgeViewEndpointType
 	)
 }
 

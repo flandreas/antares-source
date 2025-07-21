@@ -103,6 +103,21 @@ class PolylineShapeImplTest {
 	}
 
 	@Test
+	fun shouldCompactReturningSegments() {
+		val polyline = PolylineShapeImpl(listOf(
+			Point2D(0, 0),
+			Point2D(100, 0),
+			Point2D(100, 100),
+			Point2D(100, 0),
+			Point2D(200, 0)
+		))
+		
+		polyline.compact()
+
+		assertEquals(2, polyline.pointsCount)
+	}
+
+	@Test
 	fun shouldRotateCounterClockwise() {
 		val polyline = PolylineShapeImpl(listOf(
 			Point2D(0, 0),
