@@ -39,6 +39,8 @@ class EdgeToPortOrEdgeConnector(
 		private const val drag = "drag"
 		private const val insideTargetPortView = "insideTargetPortView"
 		private const val insideTargetEdgeView = "insideTargetEdgeView"
+		private const val insideDenyingPortView = "insideDenyingPortView"
+		private const val insideDenyingEdgeView = "insideDenyingEdgeView"
 		private const val connected = "connected"
 		private const val cancelled = "cancelled"
 		private const val connectedToEdge = "connectedToEdge"
@@ -94,6 +96,12 @@ class EdgeToPortOrEdgeConnector(
 				transitTo(insideTargetEdgeView) {
 					given { mouseDragged(it) && insideTargetEdgeView(draggedEndpointType, it) }
 				}
+				transitTo(insideDenyingPortView) {
+					given { mouseDragged(it) && insideDenyingPortView(draggedEndpointType, it) }
+				}
+				transitTo(insideDenyingEdgeView) {
+					given { mouseDragged(it) && insideDenyingEdgeView(draggedEndpointType, it) }
+				}
 				transitTo(drag) {
 					given { mouseDragged(it) && !insideTargetPortView(draggedEndpointType, it) }
 					onTransit { moveEdgeViewEndpoint(it) }
@@ -144,6 +152,47 @@ class EdgeToPortOrEdgeConnector(
 					given { escapePressed(it) }
 				}
 				stayOtherwise()
+			}
+
+			state(insideDenyingPortView) {
+				onEntry {
+					snapToDenyingPortView(it)
+				}
+				onExit {
+					removePortViewHighlight(it)
+				}
+				transitTo(insideDenyingPortView) {
+					given { mouseDragged(it) && insideDenyingPortView(draggedEndpointType, it) }
+					onTransit {
+						snapToDenyingPortView(it)
+					}
+				}
+				transitTo(drag) {
+					given { mouseDragged(it) && !insideDenyingPortView(draggedEndpointType, it) }
+				}
+				transitTo(cancelled)  {
+					given { mouseLeftReleased(it) }
+				}
+				transitTo(cancelled) {
+					given { escapePressed(it) }
+				}
+			}
+
+			state(insideDenyingEdgeView) {
+				onEntry { snapToDenyingEdgeView(it) }
+				onExit { removePortViewHighlight(it) }
+				transitTo(drag) {
+					given { mouseDragged(it) && !insideDenyingEdgeView(draggedEndpointType, it) }
+				}
+				transitTo(cancelled) {
+					given { mouseLeftReleased(it) }
+				}
+				transitTo(cancelled) {
+					given { escapePressed(it) }
+				}
+				stayOtherwise {
+					onTransit { snapToDenyingPortView(it) }
+				}
 			}
 
 			state(connected) {
