@@ -168,6 +168,7 @@ object GraphViewModule : AbstractModule() {
 				DragManagerImpl(editor)
 			}
 		}
+		EditModule.drawingService = GraphViewServiceImpl()
 		EditModule.drawingAppService = graphViewAppService
 
 		GraphAuthorizations.define()

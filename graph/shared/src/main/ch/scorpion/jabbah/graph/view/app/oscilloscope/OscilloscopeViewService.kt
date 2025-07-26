@@ -68,7 +68,7 @@ interface OscilloscopeViewService {
 	/**
 	 * Called when an [OscilloscopeView] has been deleted from a [DrawingView].
 	 */
-	fun handleOscilloscopeDeleted(view: DrawingView<GraphView>)
+	fun handleOscilloscopeDeleted(graphView: GraphView)
 }
 
 /**
@@ -184,8 +184,8 @@ class OscilloscopeViewServiceImpl(
 		return probeVerticeView as OscilloscopeProbeVerticeView<T>
 	}
 
-	override fun handleOscilloscopeDeleted(view: DrawingView<GraphView>) {
-		eventBus.post(OscilloscopeDisplayEvent(view.drawing))
+	override fun handleOscilloscopeDeleted(graphView: GraphView) {
+		eventBus.post(OscilloscopeDisplayEvent(graphView))
 	}
 
 	/** ---- [OscilloscopeViewServiceImpl] */

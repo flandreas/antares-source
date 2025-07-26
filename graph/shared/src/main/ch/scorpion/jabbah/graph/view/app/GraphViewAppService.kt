@@ -5,21 +5,25 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.*
-import ch.scorpion.jabbah.edit.app.*
+import ch.scorpion.jabbah.edit.app.ComponentCustomizer
+import ch.scorpion.jabbah.edit.app.ComponentCustomizerPair
+import ch.scorpion.jabbah.edit.app.DrawingAppService
+import ch.scorpion.jabbah.edit.app.DrawingAppServiceImpl
 import ch.scorpion.jabbah.edit.model.CopyPasteService
 import ch.scorpion.jabbah.edit.model.group.GroupComponent
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.module.EditModule
-import ch.scorpion.jabbah.graph.library.LibraryDirectory
-import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.app.AbstractGraphViewCommand
+import ch.scorpion.jabbah.graph.library.LibraryDirectory
+import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.model.GraphType
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
-import ch.scorpion.jabbah.graph.view.*
+import ch.scorpion.jabbah.graph.view.GraphElementView
+import ch.scorpion.jabbah.graph.view.GraphElementViewWrapper
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.connect.GraphViewConnectService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.StorableCloner
 
@@ -87,37 +91,6 @@ open class GraphViewAppServiceImpl(
 		}
 	}
 
-	override fun delete(components: List<Component>, drawingView: DrawingView<*>, cmdDescriptionKey: String?) {
-		logComponentAction("Delete", components.map { it.id }, drawingView)
-
-		val componentSet = expandDeleteBuddies(components, drawingView.drawing as Drawing<Component>)
-
-		commandManager.beginTransaction(cmdDescriptionKey ?: "edit.command.delete", drawingView)
-
-		for (component in componentSet) {
-			if (component is VerticeView<*>) {
-				unconnectDeletedVerticeView(component, drawingView as DrawingView<GraphView>)
-			} else if (component is EdgeView<*>) {
-				if (drawingView.drawing.contains(component)) {
-					// Might have been joined away by a previous removal of another EdgeView
-					unconnectDeletedEdgeView(component as EdgeView<Any>, drawingView as DrawingView<GraphView>)
-				}
-			}
-		}
-
-		commandManager.execute(DeleteCommand(
-			drawingView,
-			componentSet
-				.filter { drawingView.drawing.contains(it) }
-				.map { possibleWrapper(it, drawingView.drawing).id }))
-
-		commandManager.commitTransaction()
-
-		if (componentSet.any { it is OscilloscopeView }) {
-			GraphViewModule.oscilloscopeViewService.handleOscilloscopeDeleted(drawingView as DrawingView<GraphView>)
-		}
-	}
-
 	override fun ungroup(component: GroupComponent, drawingView: DrawingView<Drawing<Component>>) {
 		ungroupImpl(component, possibleWrapper(component, drawingView.drawing), drawingView)
 	}
@@ -158,21 +131,6 @@ open class GraphViewAppServiceImpl(
 
 	/** ---- [GraphViewAppServiceImpl] */
 
-	private fun unconnectDeletedVerticeView(verticeView: VerticeView<*>, drawingView: DrawingView<GraphView>) {
-		LOG.trace("unconnectDeletedVerticeView for verticeView ${verticeView.id}")
-		drawingView.drawing.getEdgeViews()
-			.filter { ev -> ev.origin?.connectableView === verticeView }
-			.forEach { ev -> commandManager.execute(UnconnectEdgeViewOriginCommand(drawingView, connectService, ev.id)) }
-		drawingView.drawing.getEdgeViews()
-			.filter { ev -> ev.destination?.connectableView === verticeView }
-			.forEach { ev -> commandManager.execute(UnconnectEdgeViewDestinationCommand(drawingView, connectService, ev.id)) }
-	}
-
-	private fun unconnectDeletedEdgeView(edgeView: EdgeView<Any>, drawingView: DrawingView<GraphView>) {
-		LOG.trace("unconnectDeletedEdgeView for verticeView ${edgeView.id}")
-		commandManager.execute(UnconnectEdgeViewCommand(drawingView, connectService, edgeView.id))
-	}
-
 	private fun getWrapperOf(component: Component, drawing: Drawing<*>): GraphElementViewWrapper? {
 		return drawing.drawables
 			.filter { it is GraphElementViewWrapper && it.component === component }
@@ -182,51 +140,6 @@ open class GraphViewAppServiceImpl(
 
 	private fun possibleWrapper(component: Component, drawing: Drawing<*>): Component {
 		return getWrapperOf(component, drawing) ?: component
-	}
-}
-
-private class UnconnectEdgeViewCommand(
-	drawingView: DrawingView<GraphView>,
-	private val connectService: GraphViewConnectService,
-	private val edgeViewId: Int
-) : AbstractGraphViewCommand("graph.command.unconnectEdgeView", drawingView) {
-
-	override fun getDetailedDescription(): String = "${super.getDetailedDescription()} $edgeViewId"
-
-	private val edgeView get() = drawingView.drawing.getWithId(edgeViewId) as EdgeView<Any>
-
-	override fun execute() {
-		connectService.unconnect(edgeView)
-	}
-}
-
-private class UnconnectEdgeViewOriginCommand(
-	drawingView: DrawingView<GraphView>,
-	private val connectService: GraphViewConnectService,
-	private val edgeViewId: Int
-) : AbstractGraphViewCommand("graph.command.unconnectEdgeViewOrigin", drawingView) {
-
-	private val edgeView get() = drawingView.drawing.getWithId(edgeViewId) as EdgeView<Any>
-
-	override fun getDetailedDescription(): String = "${super.getDetailedDescription()} $edgeViewId"
-
-	override fun execute() {
-		connectService.unconnectEdgeViewOrigin(edgeView)
-	}
-}
-
-private class UnconnectEdgeViewDestinationCommand(
-	drawingView: DrawingView<GraphView>,
-	private val connectService: GraphViewConnectService,
-	private val edgeViewId: Int
-) : AbstractGraphViewCommand("graph.command.unconnectEdgeViewDestination", drawingView) {
-
-	private val edgeView get() = drawingView.drawing.getWithId(edgeViewId) as EdgeView<Any>
-
-	override fun getDetailedDescription(): String = "${super.getDetailedDescription()} $edgeViewId"
-
-	override fun execute() {
-		connectService.unconnectEdgeViewDestination(edgeView)
 	}
 }
 
