@@ -21,6 +21,8 @@ import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.find.DrawingViewSearch
 import ch.scorpion.jabbah.edit.model.CopyPasteService
 import ch.scorpion.jabbah.edit.model.DrawingImpl
+import ch.scorpion.jabbah.edit.model.DrawingService
+import ch.scorpion.jabbah.edit.model.DrawingServiceImpl
 import ch.scorpion.jabbah.edit.model.curve.CubicCurveComponent
 import ch.scorpion.jabbah.edit.model.curve.EditModuleCurveModule
 import ch.scorpion.jabbah.edit.model.curve.QuadCurveComponent
@@ -70,6 +72,8 @@ object EditModule : AbstractModule() {
     var attentionDrawerFactory: (Any?) -> AttentionDrawer = { AttentionDrawerImpl() }
 
 	var copyPasteService = CopyPasteService()
+
+    var drawingService: DrawingService = DrawingServiceImpl()
 
     var drawingAppService: DrawingAppService = DrawingAppServiceImpl()
 

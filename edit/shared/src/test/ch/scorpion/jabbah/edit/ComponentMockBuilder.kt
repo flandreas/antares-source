@@ -28,6 +28,7 @@ class ComponentMockBuilder {
 	    withInteractionHandler(InputEventHandlerAdapter())
 	    withSelectionDrawingStrategy(SelectionDrawingStrategy.REPLACE)
 		withTooltip(null)
+		withDeleteBuddies(emptyList())
     }
 
     fun withId(id: Int): ComponentMockBuilder {
@@ -76,6 +77,11 @@ class ComponentMockBuilder {
 
 	fun withTooltip(tooltip: Tooltip?): ComponentMockBuilder {
 		every { component.getTooltip(any()) } returns tooltip
+		return this
+	}
+
+	fun withDeleteBuddies(buddies: List<Component>): ComponentMockBuilder {
+		every { component.getDeleteBuddies(any()) } returns buddies
 		return this
 	}
 
