@@ -31,7 +31,7 @@ class ExtractMetaGraphIntegrationTest : AbstractJvmCircuitTest()  {
 	companion object {
 		init {
 			AntaresTestRule.configure()
-			GraphViewModule.metaGraphService = AntaresMetaGraphService(GraphViewCopyPasteService())
+			GraphViewModule.metaGraphService = AntaresMetaGraphService(copyPasteService = GraphViewCopyPasteService())
 			BaseModule.properties.set(ContainerDrawingLayouter.PROP_CONTAINER_DRAWING_LAYOUTER, ContainerDrawingLayouter.Narrow.customName)
 		}
 	}

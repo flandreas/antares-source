@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.CopyPasteService
+import ch.scorpion.jabbah.edit.model.DrawingService
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -20,6 +21,7 @@ import ch.scorpion.jabbah.graph.view.GraphView
 
 /** Domain services for [MetaGraph]. */
 open class MetaGraphService(
+	private val drawingService: DrawingService = EditModule.drawingService,
 	private val copyPasteService: CopyPasteService = EditModule.copyPasteService
 ) {
 
@@ -64,7 +66,9 @@ open class MetaGraphService(
 
 	private fun replaceComponents(drawing: GraphView, componentIds: Collection<Int>, elem: ContainerLibraryElement) {
 		val bbox = Drawable.combinedBoundingBox(drawing.getWidthIds(componentIds))
-		drawing.remove(componentIds)
+
+		val components = drawing.getWidthIds(componentIds)
+		drawingService.delete(components.toList(), drawing)
 
 		val subGraphVV = elem.getNewInstance<GraphElement>()
 		subGraphVV.location = bbox.center

@@ -8,6 +8,7 @@ import ch.scorpion.antares.view.output.LEDView
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.getDrawableInstances
 import ch.scorpion.jabbah.edit.model.CopyPasteService
+import ch.scorpion.jabbah.edit.model.DrawingService
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.model.PortType
@@ -19,9 +20,10 @@ import ch.scorpion.jabbah.graph.view.metagraph.MetaGraphService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 
 class AntaresMetaGraphService(
+	drawingService: DrawingService = EditModule.drawingService,
 	copyPasteService: CopyPasteService = EditModule.copyPasteService,
 	private val connectService: GraphViewConnectService = GraphViewModule.graphViewConnectService
-) : MetaGraphService(copyPasteService) {
+) : MetaGraphService(drawingService, copyPasteService) {
 
 	override fun tailorMetaGraph(metaGraph: MetaGraph) {
 		replaceSwitches(metaGraph)
