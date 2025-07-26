@@ -98,11 +98,13 @@ open class DrawingAppServiceImpl(
 	}
 
 	override fun delete(components: List<Component>, drawingView: DrawingView<*>, cmdDescriptionKey: String?) {
-		val componentSet = expandDeleteBuddies(components, drawingView.drawing as Drawing<Component>)
-		logComponentAction("Delete", componentSet.map { it.id }, drawingView)
-		commandManager.execute(DeleteCommand(drawingView, componentSet.map { it.id }))
+		val componentIds = components.map { it.id }
+		logComponentAction("Delete", componentIds, drawingView)
+		commandManager.execute(DeleteCommand(drawingView, componentIds))
 	}
 
+	// TODO Remove
+	@Deprecated("Replaced by DrawingService")
 	protected fun expandDeleteBuddies(components: Collection<Component>, drawing: Drawing<Component>): Collection<Component> {
 		val componentSet: MutableSet<Component> = mutableSetOf()
 		componentSet.addAll(components)

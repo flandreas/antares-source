@@ -218,7 +218,7 @@ class OscilloscopeView(
 
 	override val copyable: Boolean get() = false
 
-	override fun getDeleteBuddies(drawing: Drawing<Component>): List<Component> =
+	override fun getDeleteBuddies(drawing: Drawing<*>): List<Component> =
 		rows.mapNotNull { it.probeView.verticeView }
 
 	override fun notifyEditable(editable: Boolean) {

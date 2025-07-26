@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.command.AbstractDrawingViewCommand
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
+import ch.scorpion.jabbah.edit.model.DrawingService
 import ch.scorpion.jabbah.edit.module.EditModule
 
 /**
@@ -59,7 +60,8 @@ class DeleteAction(
  */
 class DeleteCommand(
 	drawingView: DrawingView<*>,
-	private val componentIds: List<Int>
+	private val componentIds: List<Int>,
+	private val drawingService: DrawingService = EditModule.drawingService
 ) : AbstractDrawingViewCommand("edit.command.delete", drawingView) {
 
 	constructor(drawingView: DrawingView<*>, component: Component) : this(drawingView, mutableListOf(component.id))
@@ -73,6 +75,6 @@ class DeleteCommand(
 		}
 
 	override fun execute() {
-		view.drawing.remove(componentIds)
+		drawingService.delete(view.drawing.getWidthIds(componentIds).toList(), view.drawing)
 	}
 }

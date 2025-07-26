@@ -116,7 +116,7 @@ class FSMState(
 
     override val type: String get() = TYPE
 
-    override fun getDeleteBuddies(drawing: Drawing<Component>): List<Component> =
+    override fun getDeleteBuddies(drawing: Drawing<*>): List<Component> =
         AntaresModelModule.fsmEditorService.getTransitions(this, drawing as FSMDrawing)
 
     override fun beforePaste(drawing: Drawing<Component>) {
