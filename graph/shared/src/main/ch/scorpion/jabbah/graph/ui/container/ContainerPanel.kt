@@ -81,7 +81,7 @@ class ContainerPanelController(
 
 	/** The current "manual Container" property, i.e. after symbol has possibly been changed by the user. */
 	private var isManualContainerCurrent: Boolean = false
-		private set(value) {
+		set(value) {
 			field = value
 			view.updateIsManualContainer(field)
 		}
@@ -142,6 +142,17 @@ class ContainerPanelController(
 		notifyViewUpdate()
 	}
 
+	private fun clearData() {
+		editable = false
+		isManualContainerOrig = false
+		// Make sure the former ContainerDrawing is gone
+		editor.view.setDrawing(ContainerDrawing(), false)
+		graphView = null
+		containerDrawing = null
+
+		notifyViewUpdate()
+	}
+
 	/**
 	 * Similar to [setData], but used in the context of [UndoableDataHolder].
 	 */
@@ -156,10 +167,7 @@ class ContainerPanelController(
 
 	private fun handle(event: ApplicationDataEvent) {
 		if (event.newData == null) {
-			graphView = null
-			containerDrawing = null
-			editable = false
-			notifyViewUpdate()
+			clearData()
 
 		} else if (event.newData?.content is MetaGraph) {
 			val metaGraph = event.newData!!.content as MetaGraph
@@ -178,10 +186,9 @@ class ContainerPanelController(
 	private fun handle(event: ApplicationDataContentEvent) {
 		if (event.data.content is MetaGraph) {
 			val metaGraph = event.data.content as MetaGraph
-			containerDrawing = metaGraph.containerDrawing
 			setData(
 				metaGraph.graph.graphView,
-				containerDrawing!!,
+				metaGraph.containerDrawing,
 				editable,
 				isManualContainer = metaGraph.isManualContainer,
 				applyZoomStrategy = false
