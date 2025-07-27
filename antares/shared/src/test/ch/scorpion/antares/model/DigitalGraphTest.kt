@@ -1,6 +1,7 @@
 package ch.scorpion.antares.model
 
 import ch.scorpion.antares.AntaresTestRule
+import ch.scorpion.antares.model.inout.DigitalCircuitInOutImpl
 import ch.scorpion.antares.model.net.DigitalNet
 import ch.scorpion.antares.model.net.Tunnel
 import ch.scorpion.antares.model.signal.DigitalSignal
@@ -8,9 +9,11 @@ import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.Net
 import dev.mokkery.mock
 import kotlin.test.Test
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertSame
+import kotlin.test.assertTrue
 
 class DigitalGraphTest {
 
@@ -46,6 +49,18 @@ class DigitalGraphTest {
 		assertNull(net)
 		assertNull(tunnel1.getPort<DigitalSignal>(2).net)
 		assertNull(tunnel2.getPort<DigitalSignal>(2).net)
+	}
+
+	@Test
+	fun shouldNotContainDifferentInOutInstanceWithSameName() {
+		val graph = DigitalGraph()
+		val inst1 = DigitalCircuitInOutImpl(name = "addr")
+		val inst2 = DigitalCircuitInOutImpl(name = "addr")
+
+		graph.add(inst1)
+
+		assertTrue(graph.contains(inst1))
+		assertFalse(graph.contains(inst2))
 	}
 
 	private fun createGraphWithTunnels(): DigitalGraph {

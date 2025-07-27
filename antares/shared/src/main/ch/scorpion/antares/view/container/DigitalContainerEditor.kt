@@ -1,12 +1,12 @@
 package ch.scorpion.antares.view.container
 
+import ch.scorpion.antares.model.inout.DigitalCircuitInOut
 import ch.scorpion.antares.model.inout.DigitalCircuitInOutBitWidthChanged
 import ch.scorpion.antares.model.inout.DigitalCircuitInOutSignalRepresentationChanged
 import ch.scorpion.antares.model.inout.DigitalCircuitInOutStartValueChanged
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
@@ -20,35 +20,22 @@ class DigitalContainerEditor(
 	eventBus: EventBus = BaseModule.eventBus
 ) : ContainerEditor(view, mainDrawingView, eventBus) {
 
-	companion object {
-		private val LOG by logger(DigitalContainerEditor::class)
-	}
-
 	private val circuitInOutBitWidthHandler: EventHandler<DigitalCircuitInOutBitWidthChanged> = { event ->
-		if ((super.mainDrawingView.drawing as GraphView).graph?.contains(event.circuitInOut) == true) {
-			val portViewComponent = getContainerDrawing().getPortViewComponent(event.circuitInOut.name!!)
-			if (portViewComponent != null) {
-				(portViewComponent.port as DigitalPort).bitWidth = event.newValue
-			}
+		getDigitalPort(event.circuitInOut)?.let {
+			it.bitWidth = event.newValue
 		}
 	}
 
 	private val circuitInOutSignalRepresentationHandler: EventHandler<DigitalCircuitInOutSignalRepresentationChanged> = { event ->
-		if ((super.mainDrawingView.drawing as GraphView).graph?.contains(event.circuitInOut) == true) {
-			val portViewComponent = getContainerDrawing().getPortViewComponent(event.circuitInOut.name!!)
-			if (portViewComponent != null) {
-				(portViewComponent.port as DigitalPort).signalRepresentation = event.newValue
-			}
+		getDigitalPort(event.circuitInOut)?.let {
+			it.signalRepresentation = event.newValue
 		}
 	}
 
 	private val circuitInOutStartValueHandler: EventHandler<DigitalCircuitInOutStartValueChanged> = { event ->
-		if ((super.mainDrawingView.drawing as GraphView).graph?.contains(event.circuitInOut) == true) {
-			val portViewComponent = getContainerDrawing().getPortViewComponent(event.circuitInOut.name!!)
-			if (portViewComponent != null) {
-				if (portViewComponent.port.portType.isInput) {
-					(portViewComponent.port as DigitalPort).unconnectedStartValue = event.newValue
-				}
+		getDigitalPort(event.circuitInOut)?.let {
+			if (it.portType.isInput) {
+				it.unconnectedStartValue = event.newValue
 			}
 		}
 	}
@@ -64,4 +51,16 @@ class DigitalContainerEditor(
 		eventBus.unregister(circuitInOutSignalRepresentationHandler)
 		eventBus.unregister(circuitInOutStartValueHandler)
 	}
+
+	private fun getDigitalPort(circuitInOut: DigitalCircuitInOut): DigitalPort? =
+		if ((super.mainDrawingView.drawing as GraphView).graph?.contains(circuitInOut) == true) {
+			val portViewComponent = getContainerDrawing().getPortViewComponent(circuitInOut.name!!)
+			if (portViewComponent != null && portViewComponent.port is DigitalPort) {
+				(portViewComponent.port as DigitalPort)
+			} else {
+				null
+			}
+		} else {
+			null
+		}
 }
