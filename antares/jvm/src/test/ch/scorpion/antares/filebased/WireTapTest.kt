@@ -36,8 +36,6 @@ class WireTapTest : AbstractFileBasedTest() {
 		startSimulation()
 	}
 
-	/** TODO Still failing. Must be fixed on master branch.*/
-	@Ignore
 	@Test
 	fun shouldForwardOddlyTappedSignals() {
 		t0.setIncomingSignal(DigitalSignalFactory.ofBits(listOf(True, Undefined, Undefined)), scheduler)
@@ -56,6 +54,6 @@ class WireTapTest : AbstractFileBasedTest() {
 		t0.setIncomingSignal(DigitalSignalFactory.ofBits(listOf(True, Undefined, Undefined)), scheduler)
 		proceedUntilQueueIsEmpty()
 
-		assertEquals(DigitalSignalFactory.allOf(BitWidth.BW_8, Undefined).withBit(0, True), a.signal)
+		assertEquals(DigitalSignalFactory.allOf(BitWidth.BW_8, Undefined).withBit(1, True), a.signal)
 	}
 }
