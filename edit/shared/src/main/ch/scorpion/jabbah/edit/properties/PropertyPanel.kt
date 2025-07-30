@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
+import ch.scorpion.jabbah.base.Bean
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.CurrentEditorEvent
 import ch.scorpion.jabbah.edit.DrawingView
@@ -20,6 +21,18 @@ interface PropertyPanel : UIView {
 	/** Called by [AbstractPropertyPanelController] when [AbstractPropertyPanelController.bean] has been replaced.*/
 	fun handleBeanReplaced()
 }
+
+/**
+ * Thrown by [PropertyPanel] if setting a new value on the current [Bean] lead to a validation failure.
+ *
+ * @property msg displayed in the error field of [PropertyPanel]
+ * @property event the event to be posted on the system's [EventBus] to initiate further actions, such
+ * as displaying a dialog
+ */
+class PropertyValueException(
+	msg: String,
+	val event: Any
+) : IllegalArgumentException(msg)
 
 /**
  * Controls displaying and editing the properties of arbitrary objects.

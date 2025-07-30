@@ -60,6 +60,13 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 	override val ports: ImmutableList<Port<T>>
 		get() = ImmutableList(_ports)
 
+	override val hasConflictingOutputs: Boolean
+		get() = _ports
+			.filter { it.portType == PortType.OUTPUT }
+			.filterIsInstance<OutputPort<*>>()
+			.filter { !it.customCanBeUndefined && !it.canBeUndefined }
+			.size > 1
+
 	override val weakOutputPorts: Collection<OutputPort<T>>
 		get() = _ports.filterIsInstance<OutputPort<T>>().filter { it.weakBehaviour != null }
 

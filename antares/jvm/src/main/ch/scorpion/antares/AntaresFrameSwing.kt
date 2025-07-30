@@ -1,5 +1,6 @@
 package ch.scorpion.antares
 
+import ch.scorpion.antares.model.NetSignalApplierFailure
 import ch.scorpion.antares.model.addressable.MemoryLibraryItem
 import ch.scorpion.antares.model.expression.BooleanExpressionLibraryItem
 import ch.scorpion.antares.model.fsm.FSMLibraryItem
@@ -18,6 +19,9 @@ import ch.scorpion.antares.view.fsm.FSMGraphDesktopItemSwing
 import ch.scorpion.antares.view.truthtable.TruthTableDesktopItemSwing
 import ch.scorpion.jabbah.app.DesktopApplication
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.SidebarPaneContentImpl
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
@@ -31,6 +35,7 @@ import ch.scorpion.jabbah.graph.ui.GraphFrameController
 import ch.scorpion.jabbah.graph.ui.GraphFrameSwing
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewItem
 import ch.scorpion.jabbah.graph.ui.documentation.DocumentationDesktopViewItemSwing
+import ch.scorpion.jabbah.graph.view.GraphView
 import java.awt.Frame
 import java.awt.Toolkit
 import javax.swing.JOptionPane
@@ -39,7 +44,8 @@ class AntaresFrameSwing(
 	controller: AntaresFrameController,
 	application: DesktopApplication,
 	viewManager: ContentViewManager,
-	actions: GraphFrameActions
+	actions: GraphFrameActions,
+	private val eventBus: EventBus = BaseModule.eventBus
 ) : GraphFrameSwing(controller as GraphFrameController<GraphFrame>, application, viewManager, actions), AntaresFrame {
 
 	private val testcaseViewController = TestcaseViewController(
@@ -52,14 +58,18 @@ class AntaresFrameSwing(
 
 	private val testResultsPanel =  TestRunResultsPanel()
 
+	private val netSignalApplierFailureHandler: EventHandler<NetSignalApplierFailure> = { handle(it) }
+
 	init {
 		iconImage = Toolkit.getDefaultToolkit().createImage(ClassLoader.getSystemResource(AntaresSwing.ICON_PATH))
+		eventBus.register(NetSignalApplierFailure::class, netSignalApplierFailureHandler)
 		addTestcaseView()
 		addTestRunResultsView()
 	}
 
 	override fun dispose() {
 		super.dispose()
+		eventBus.unregister(netSignalApplierFailureHandler)
 		testcasesView.dispose()
 		testResultsPanel.dispose()
 	}
@@ -127,5 +137,20 @@ class AntaresFrameSwing(
 			Translations.getString("antares.action.replaceLightColor.name"),
 			JOptionPane.YES_NO_OPTION,
 			JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION
+	}
+
+	private fun handle(failure: NetSignalApplierFailure) {
+		if (JOptionPane.showConfirmDialog(
+			this,
+				Translations.getString("antares.netSignalApplierFailure.msg"),
+			Translations.getString("antares.netSignalApplierFailure.title"),
+			JOptionPane.OK_CANCEL_OPTION,
+			JOptionPane.ERROR_MESSAGE
+		) == JOptionPane.OK_OPTION) {
+			val edgeViews = (controller.editor.drawing as GraphView).getEdgeViews()
+				.filter { failure.nets.contains(it.net) }
+				.toList()
+			controller.editor.view.content.selectionManager.select(edgeViews)
+		}
 	}
 }

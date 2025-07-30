@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.properties.PropertyValueException
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.GraphExecutionContext
 import ch.scorpion.jabbah.graph.model.Net
@@ -32,6 +33,20 @@ class DigitalGraph(
 	}
 
 	var netSignalApplierStrategy: NetSignalApplierStrategy = DEF_NET_SIGNAL_APPLIER_STRATEGY
+		set(value) {
+			if (!isReading && value == NetSignalApplierStrategy.Conflict) {
+				val conflicts = elements
+					.filterIsInstance<Net<*>>()
+					.filter { it.hasConflictingOutputs }
+					.toSet()
+				if (conflicts.isNotEmpty()) {
+                	throw PropertyValueException(
+						Translations.getString("element.property.netSignalApplierStrategy.error"),
+						NetSignalApplierFailure(conflicts))
+				}
+			}
+			field = value
+		}
 
 	var testcases: Testcases = Testcases(this, eventBus)
 		private set

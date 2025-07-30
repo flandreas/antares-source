@@ -36,6 +36,8 @@ interface Net<T: Any> : GraphElement {
     /** Returns all [Port]s of [ports] with [WeakOutputPortBehaviour]*/
     val weakOutputPorts: Collection<OutputPort<T>>
 
+	val hasConflictingOutputs: Boolean
+
     /** Connects the specified [Port] with this [Net]. */
     fun connect(port: Port<T>)
 

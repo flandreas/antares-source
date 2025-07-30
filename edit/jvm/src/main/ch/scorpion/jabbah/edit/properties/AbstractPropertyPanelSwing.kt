@@ -161,6 +161,9 @@ abstract class AbstractPropertyPanelSwing(
 			property.writeToBeans()
 			controller.editor.view.drawing.validate()
 			hideMessage()
+		} catch (e: PropertyValueException) {
+			e.message?.let { showMessage(it) }
+			BaseModule.eventBus.post(e.event)
 		} catch (e: Throwable) {
 			e.message?.let { showMessage(it) }
 		} finally {
