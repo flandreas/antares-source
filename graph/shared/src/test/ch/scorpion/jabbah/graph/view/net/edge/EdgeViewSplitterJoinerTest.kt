@@ -88,6 +88,21 @@ class EdgeViewSplitterJoinerTest {
 		assertEquals(Point2D(200, 50), newEV.getSegmentPoint(2))
 	}
 
+	/** Regression test bug #988. */
+	@Test
+	fun shouldSplitAtEndOfSegment() {
+		val ev = edgeViewFactory.createEdgeView<Boolean>(gv)
+		gv.add(ev)
+
+		ev.addSegmentPoint(Point2D(0, 0))
+		ev.addSegmentPoint(Point2D(100, 0))
+
+		val newEV = EdgeViewSplitterJoiner.split(ev, 0, Point2D(100, 0)) { edgeViewFactory.createEdgeView(gv, it) }
+
+		assertEquals(2, ev.segmentPointCount)
+		assertEquals(2, newEV.segmentPointCount)
+	}
+
 	@Test
 	fun shouldUnconnectOutInWhenSplitting() {
 		val vv1 = TestVerticeView(name = "1", loc = Point2D(0, 0))

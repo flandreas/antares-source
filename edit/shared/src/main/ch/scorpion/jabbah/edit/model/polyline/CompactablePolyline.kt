@@ -70,6 +70,9 @@ class CompactablePolyline(points: List<Point2D>) {
 
 	/** Removes all intermediate points that lie between two collinear segments */
 	fun compact() {
+		if (_points.size <= 2) {
+			return
+		}
 		var i = 1
 		while (i < _points.size) {
 			if (canCompactPoint(i)) {

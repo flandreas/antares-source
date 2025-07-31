@@ -369,7 +369,11 @@ open class EdgeViewImpl<T : Any>(
 
 	override fun setLaidOutPoints(points: List<Point2D>, compact: Boolean) {
 		invalidate()
-		polyline.setPoints(points)
+		if (points.size == 1) {
+			polyline.setPoints(listOf(points[0], points[0]))
+		} else {
+			polyline.setPoints(points)
+		}
 
 		updateEndpointViews()
 		styling.updateBoundingBox()

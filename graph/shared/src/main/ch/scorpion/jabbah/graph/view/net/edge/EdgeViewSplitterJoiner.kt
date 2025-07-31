@@ -26,9 +26,20 @@ object EdgeViewSplitterJoiner {
 			tail.isArrow = true
 			edgeView.isArrow = false
 		}
+
+		var lastPoint: Point2D? = null
+		if (edgeView.segmentPointCount > 0) {
+			lastPoint = edgeView.polyline.getLastPoint()
+		}
+
 		while (edgeView.segmentPointCount - 1 > index) {
 			tail.addSegmentPoint(0, edgeView.getSegmentPoint(edgeView.segmentPointCount - 1))
 			edgeView.polyline.removePoint(edgeView.segmentPointCount - 1)
+		}
+
+		// Bug #988
+		if (tail.segmentPointCount == 0 && lastPoint != null) {
+			tail.addSegmentPoint(lastPoint)
 		}
 
 		if (splitLocation != edgeView.polyline.getLastPoint()) {
@@ -36,6 +47,11 @@ object EdgeViewSplitterJoiner {
 		}
 		if (splitLocation != tail.getSegmentPoint(0)) {
 			tail.addSegmentPoint(0, Point2D(splitLocation))
+		}
+
+		// Bug #988
+		if (tail.segmentPointCount == 1) {
+			tail.addSegmentPoint(splitLocation)
 		}
 
 		tail.layout.type = edgeView.layout.type

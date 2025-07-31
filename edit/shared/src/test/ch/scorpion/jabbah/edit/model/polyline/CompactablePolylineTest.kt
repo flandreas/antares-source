@@ -39,6 +39,18 @@ class CompactablePolylineTest {
     }
 
     @Test
+    fun shouldNotCompactDegeneratedLine() {
+        val polyline = CompactablePolyline()
+
+        polyline.add(Point2D(100, 0))
+        polyline.add(Point2D(100, 0))
+
+        polyline.compact()
+
+        assertEquals(2, polyline.size)
+    }
+
+    @Test
     fun shouldCompactCollinearPoint() {
         val polyline = CompactablePolyline()
         polyline

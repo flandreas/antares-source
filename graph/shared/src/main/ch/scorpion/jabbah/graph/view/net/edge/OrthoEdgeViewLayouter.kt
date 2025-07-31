@@ -21,7 +21,7 @@ import kotlin.math.sign
 object OrthoEdgeViewLayouter : EdgeViewLayouter {
 
 	/** The name of the [Boolean] property that controls whether advanced layout is to be applied. */
-	public val PROP_ADVANCED_LAYOUT = "graph.advancedEdgeViewLayout"
+	const val PROP_ADVANCED_LAYOUT = "graph.advancedEdgeViewLayout"
 
 	private val LOG by logger(OrthoEdgeViewLayouter::class)
 
