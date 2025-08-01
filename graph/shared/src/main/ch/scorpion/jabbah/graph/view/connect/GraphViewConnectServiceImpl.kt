@@ -291,6 +291,10 @@ class GraphViewConnectServiceImpl(
 			}
 		}
 
+		if (edgeView1.model !== edgeView2.model) {
+			combineNetViews(graphView, edgeView1.netView!!, edgeView2.netView!!)
+		}
+
 		graphView.remove(edgeView2)
 	}
 

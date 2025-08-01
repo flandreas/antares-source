@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.CommandEvent
+import ch.scorpion.jabbah.edit.CommandEventType
 
 /**
  * Implements any logic for checking the system's health, such as
@@ -29,7 +30,11 @@ object SystemHealthChecker {
 
 	private val checks = mutableListOf<SystemHealthCheck>()
 
-	private val commandListener: EventHandler<CommandEvent> = { handle(it) }
+	private val commandListener: EventHandler<CommandEvent> = {
+		if (it.type != CommandEventType.RESET) {
+			handle(it)
+		}
+	}
 
 	private lateinit var applicationDataHolder: ApplicationDataHolder
 
