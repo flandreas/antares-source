@@ -1,15 +1,10 @@
-package ch.scorpion.jabbah.graph
+package ch.scorpion.jabbah.edit
 
-import ch.scorpion.jabbah.edit.CommandManager
 import dev.mokkery.MockMode
 import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.mock
 
-/**
- * TODO Copy/paste of corresponding class in app module.
- * Resolve once test helpers can be reused from other modules with Kotlin MPP/gradle.
- */
 class CommandManagerMock {
 
 	private val commandManager = mock<CommandManager>(MockMode.autofill)

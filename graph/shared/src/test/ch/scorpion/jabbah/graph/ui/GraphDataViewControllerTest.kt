@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.app.ApplicationData
-import ch.scorpion.jabbah.graph.CommandManagerMock
+import ch.scorpion.jabbah.edit.CommandManagerMock
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.project.Project

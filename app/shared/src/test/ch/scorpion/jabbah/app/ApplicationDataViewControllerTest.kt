@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.app
 
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventBusImpl
+import ch.scorpion.jabbah.edit.CommandManagerMock
 import ch.scorpion.jabbah.io.Storable
 import dev.mokkery.MockMode
 import dev.mokkery.matcher.any
