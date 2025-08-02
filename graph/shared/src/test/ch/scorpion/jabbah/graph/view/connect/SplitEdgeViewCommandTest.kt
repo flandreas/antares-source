@@ -2,7 +2,7 @@ package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.graph.TestEditorBuilder
+import ch.scorpion.jabbah.graph.GraphEditorMockBuilder
 import ch.scorpion.jabbah.graph.health.GraphViewConsistencyCheck
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.TestGraphView
@@ -25,7 +25,7 @@ class SplitEdgeViewCommandTest {
 
 	private val service = GraphViewModule.graphViewConnectService
 	private val edgeViewFactory = GraphViewModule.getEdgeViewFactory()
-	private val editorBuilder = TestEditorBuilder()
+	private val editorBuilder = GraphEditorMockBuilder()
 	private lateinit var testGraphView: TestGraphView
 
 	@BeforeTest

@@ -2,7 +2,7 @@ package ch.scorpion.jabbah.graph.ui.scenario
 
 import ch.scorpion.jabbah.base.event.EventBusImpl
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
-import ch.scorpion.jabbah.graph.TestEditorBuilder
+import ch.scorpion.jabbah.graph.GraphEditorMockBuilder
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ConstantApplicationModeHolder
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
@@ -25,7 +25,7 @@ class ScenarioViewControllerTest {
 
 	private val eventBus = EventBusImpl()
 	private val graphView = GraphViewBuilder<Boolean>().build()
-	private val editor = TestEditorBuilder().withDrawing(graphView).build()
+	private val editor = GraphEditorMockBuilder().withDrawing(graphView).build()
 	private val controller = ScenarioViewController(editor, mock(MockMode.autofill), GraphApplicationContextHolder(mock(MockMode.autofill)), ConstantApplicationModeHolder(ApplicationMode.EDIT), eventBus)
 
 	init {

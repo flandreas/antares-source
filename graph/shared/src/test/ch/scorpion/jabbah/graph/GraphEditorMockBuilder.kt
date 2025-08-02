@@ -10,9 +10,8 @@ import dev.mokkery.mock
 
 /**
  * Builds test mocks for [Editor].
- * TODO Copy/Paste of corresponding class in edit package. Wasn't able to reuse it with gradle.
  */
-class TestEditorBuilder {
+class GraphEditorMockBuilder {
 
 	val editor: Editor = mock(MockMode.autofill)
 	private val view: DrawingView<GraphView> = mock(MockMode.autofill)
@@ -22,30 +21,30 @@ class TestEditorBuilder {
 		every { editor.view } returns view as DrawingView<Drawing<Component>>
 	}
 
-	fun withDrawingView(view: DrawingView<GraphView>): TestEditorBuilder {
+	fun withDrawingView(view: DrawingView<GraphView>): GraphEditorMockBuilder {
 		every { editor.view } returns (view as DrawingView<Drawing<Component>>)
 		return this
 	}
 
-	fun withDrawing(graphView: GraphView): TestEditorBuilder {
+	fun withDrawing(graphView: GraphView): GraphEditorMockBuilder {
 		every { editor.drawing } returns (graphView as Drawing<Component>)
 		every { view.drawing } returns graphView
 		return this
 	}
 
-	fun withGrid(grid: Grid): TestEditorBuilder {
+	fun withGrid(grid: Grid): GraphEditorMockBuilder {
 		every { view.grid } returns grid
 		return this
 	}
 
-	fun withGridDistance(distance: Double): TestEditorBuilder {
+	fun withGridDistance(distance: Double): GraphEditorMockBuilder {
 		val grid: Grid = mock()
 		every { grid.distance } returns distance
 		every { view.grid } returns grid
 		return this
 	}
 
-	fun withSelectionManager(): TestEditorBuilder {
+	fun withSelectionManager(): GraphEditorMockBuilder {
 		every { view.selectionManager } returns mock()
 		return this
 	}

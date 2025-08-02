@@ -43,7 +43,7 @@ class GraphPanelViewControllerTest {
 	private val graphViewBuilder = GraphViewBuilder<Boolean>()
 	private val applicationContextHolder = GraphApplicationContextHolder(scheduler, eventBus, systemSpeed, currentSystemSpeedCategory)
 	private val drawingView = DrawingViewImpl(graphViewBuilder.graphView as Drawing<Component>, applicationContextHolder = applicationContextHolder, eventBus = eventBus)
-	private val editor = TestEditorBuilder().withDrawingView(drawingView as DrawingView<GraphView>).build()
+	private val editor = GraphEditorMockBuilder().withDrawingView(drawingView as DrawingView<GraphView>).build()
 	private val applicationModeHolder = ApplicationModeHolderImpl(editor, scheduler).also {
 		applicationContextHolder.applicationModeHolder = it
 	}

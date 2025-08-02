@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
-import ch.scorpion.jabbah.graph.TestEditorBuilder
+import ch.scorpion.jabbah.graph.GraphEditorMockBuilder
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolderImpl
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
@@ -38,7 +38,7 @@ class GraphEditViewControllerTest {
 		graphViewBuilder.graphView as Drawing<Component>,
 		applicationContextHolder = applicationContextHolder,
 		eventBus = eventBus)
-	private val editor = TestEditorBuilder().withDrawingView(drawingView as DrawingView<GraphView>).build()
+	private val editor = GraphEditorMockBuilder().withDrawingView(drawingView as DrawingView<GraphView>).build()
 	private val applicationModeHolder = ApplicationModeHolderImpl(editor, scheduler).also {
 		applicationContextHolder.applicationModeHolder = it
 	}
