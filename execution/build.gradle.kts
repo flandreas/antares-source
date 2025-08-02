@@ -14,5 +14,17 @@ kotlin {
 				implementation(project(":draw"))
 			}
 		}
+
+		val commonTest by getting {
+			dependencies {
+				implementation(project(":execution-test-util"))
+			}
+		}
+
+		val jvmTest by getting {
+			dependencies {
+				implementation(project(":execution-test-util"))
+			}
+		}
 	}
 }

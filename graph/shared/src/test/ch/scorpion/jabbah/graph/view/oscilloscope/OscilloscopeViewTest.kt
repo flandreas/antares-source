@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.graph.view.oscilloscope
 
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.graph.SignalHandlerMockBuilder
+import ch.scorpion.jabbah.execution.SignalHandlerMockBuilder
 import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistories
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl

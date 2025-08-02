@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.graph.view.oscilloscope
 
-import ch.scorpion.jabbah.graph.SignalHandlerMockBuilder
+import ch.scorpion.jabbah.execution.SignalHandlerMockBuilder
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.oscilloscope.Oscilloscope
 import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistoriesType
