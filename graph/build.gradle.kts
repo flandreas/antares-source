@@ -25,6 +25,7 @@ kotlin {
 				implementation(project(":draw-test-util"))
 				implementation(project(":edit-test-util"))
 				implementation(project(":execution-test-util"))
+				implementation(project(":app-test-util"))
 			}
 		}
 
