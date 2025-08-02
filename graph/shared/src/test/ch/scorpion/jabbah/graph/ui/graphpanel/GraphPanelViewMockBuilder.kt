@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.ui.graphpanel
 import ch.scorpion.jabbah.edit.ComponentPropertyPanelMockBuilder
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanel
+import ch.scorpion.jabbah.execution.IssuesViewMockBuilder
 import ch.scorpion.jabbah.execution.issue.IssuesView
 import ch.scorpion.jabbah.graph.ui.*
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopView
