@@ -24,6 +24,7 @@ class CanvasMockBuilder {
 			propertyChangeListeners.add(propertyChangeSlot.get())
 		}
 		withDevicePixelRatio(1.0)
+		withDimension(Dimension2D(0, 0))
 	}
 
 	fun withDevicePixelRatio(devicePixelRatio: Double): CanvasMockBuilder {

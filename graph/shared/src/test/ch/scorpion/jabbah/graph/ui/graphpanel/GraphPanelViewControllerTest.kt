@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.app.ApplicationDataEvent
 import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.event.EventBusImpl
 import ch.scorpion.jabbah.base.time.SystemSpeed
+import ch.scorpion.jabbah.draw.CanvasMockBuilder
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView

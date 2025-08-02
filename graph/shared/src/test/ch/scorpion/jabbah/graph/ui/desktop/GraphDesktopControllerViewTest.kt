@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.ui.desktop
 import ch.scorpion.jabbah.base.event.EventBusImpl
 import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.draw.drawable.Colorable
+import ch.scorpion.jabbah.draw.CanvasMockBuilder
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
@@ -11,7 +12,6 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
-import ch.scorpion.jabbah.graph.CanvasMockBuilder
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.TestLibraryBuilder
 import ch.scorpion.jabbah.graph.library.*
