@@ -2,7 +2,7 @@ package ch.scorpion.jabbah.graph.ui.container
 
 import ch.scorpion.jabbah.edit.properties.ComponentPropertyPanel
 import ch.scorpion.jabbah.draw.CanvasMockBuilder
-import ch.scorpion.jabbah.graph.ui.ComponentPropertyPanelMockBuilder
+import ch.scorpion.jabbah.edit.ComponentPropertyPanelMockBuilder
 import ch.scorpion.jabbah.graph.ui.SymbolComparatorViewMockBuilder
 import dev.mokkery.MockMode
 import dev.mokkery.mock
