@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.edit.select
 
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.InputEventHandlerMockBuilder
 import ch.scorpion.jabbah.draw.view.CanvasJvm
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.editor.EditorImpl

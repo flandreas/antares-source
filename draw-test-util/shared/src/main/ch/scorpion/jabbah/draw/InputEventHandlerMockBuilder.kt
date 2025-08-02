@@ -13,12 +13,12 @@ class InputEventHandlerMockBuilder {
 
 	private val handler = mock<InputEventHandler<InputEventContext>>(MockMode.autofill)
 
-	private val context = Capture.slot<InputEventContext>()
+	private val context = Capture.Companion.slot<InputEventContext>()
 
 	val eventLocation: Point2D get() = context.get().location
 
 	fun withMouseMoved(handle: Boolean): InputEventHandlerMockBuilder {
-		every { handler.mouseMoved(capture(context)) } returns(if (handle) handler else null)
+		every { handler.mouseMoved(capture(context)) } returns (if (handle) handler else null)
 		return this
 	}
 

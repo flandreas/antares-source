@@ -21,6 +21,7 @@ kotlin {
 
 		val commonTest by getting {
 			dependencies {
+				implementation(project(":draw-test-util"))
 				implementation(project(":edit-test-util"))
 			}
 		}
