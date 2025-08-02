@@ -14,12 +14,13 @@ class TestGraphApplication : AbstractApplication(GraphDataViewController()) {
 
 	val graphFrameController = GraphFrameController<GraphFrame>(controller)
 
-	// Required to create an instance of OpenContainerLibraryElementAction
-	private val actions = LibraryTreeViewActions(
-		graphFrameController.graphPanelViewController.libraryPanelController.libraryTreeViewController,
-		this)
 
 	init {
+		// Required to create an instance of OpenContainerLibraryElementAction
+		LibraryTreeViewActions(
+			graphFrameController.graphPanelViewController.libraryPanelController.libraryTreeViewController,
+			this
+		)
 		VirtualCanvas(graphFrameController.editor.view)
 	}
 

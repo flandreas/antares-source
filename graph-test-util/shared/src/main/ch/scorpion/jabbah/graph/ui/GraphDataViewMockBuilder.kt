@@ -4,7 +4,7 @@ import ch.scorpion.jabbah.app.ApplicationDataView
 import dev.mokkery.MockMode
 import dev.mokkery.mock
 
-class GraphDataViewMockBuilder(private val controller: GraphDataViewController) {
+class GraphDataViewMockBuilder(controller: GraphDataViewController) {
 
 	private val view = mock<ApplicationDataView>(MockMode.autofill)
 
