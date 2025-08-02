@@ -16,7 +16,7 @@ plugins {
 	kotlin("multiplatform") version "2.0.0" apply false
 	kotlin("plugin.serialization") version "1.9.23" apply false
 	id("maven-publish")
-	id("dev.mokkery") version "2.0.0" apply false
+	id("dev.mokkery") version "2.5.1" apply false
 }
 
 val version_project: String by project
