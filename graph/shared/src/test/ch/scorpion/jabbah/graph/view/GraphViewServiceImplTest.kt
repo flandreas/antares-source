@@ -4,7 +4,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.graph.DrawingViewMockBuilder
+import ch.scorpion.jabbah.edit.DrawingViewMockBuilder
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.connect.SplitEdgeViewResult
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView

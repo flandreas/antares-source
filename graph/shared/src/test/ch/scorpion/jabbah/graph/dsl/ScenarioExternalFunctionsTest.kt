@@ -3,9 +3,9 @@ package ch.scorpion.jabbah.graph.dsl
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.ScriptProperty
+import ch.scorpion.jabbah.edit.DrawingViewMockBuilder
 import ch.scorpion.jabbah.execution.issue.IssueCollector
 import ch.scorpion.jabbah.graph.AbstractGraphViewExecutionTest
-import ch.scorpion.jabbah.graph.DrawingViewMockBuilder
 import ch.scorpion.jabbah.graph.model.StoringGraphActorData
 import ch.scorpion.jabbah.graph.model.TestVertice
 import ch.scorpion.jabbah.graph.view.GraphView

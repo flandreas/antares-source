@@ -32,5 +32,11 @@ kotlin {
 				implementation("commons-cli:commons-cli:1.3.1")
 			}
 		}
+
+		val jvmTest by getting {
+			dependencies {
+				implementation(project(":edit-test-util"))
+			}
+		}
 	}
 }

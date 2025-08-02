@@ -2,7 +2,7 @@ package ch.scorpion.jabbah.graph.view.net
 
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.edit.module.EditModule
-import ch.scorpion.jabbah.graph.DrawingViewMockBuilder
+import ch.scorpion.jabbah.edit.DrawingViewMockBuilder
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule

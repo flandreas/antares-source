@@ -1,11 +1,8 @@
 package ch.scorpion.jabbah.graph.view.net
 
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.module.EditModule
-import ch.scorpion.jabbah.graph.DrawingViewMockBuilder
+import ch.scorpion.jabbah.edit.DrawingViewMockBuilder
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.*

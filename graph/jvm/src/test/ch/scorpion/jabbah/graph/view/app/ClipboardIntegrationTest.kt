@@ -8,7 +8,7 @@ import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.command.SourcingCommandManager
 import ch.scorpion.jabbah.edit.editor.EditorImpl
 import ch.scorpion.jabbah.edit.select.EditSelectModule
-import ch.scorpion.jabbah.graph.DrawingViewMockBuilder
+import ch.scorpion.jabbah.edit.DrawingViewMockBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.graph.GraphViewCopyPasteService

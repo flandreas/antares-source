@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph
 import ch.scorpion.jabbah.base.Bean
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
+import ch.scorpion.jabbah.edit.DrawingViewMockBuilder
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.properties.AbstractBeanInfo
 import ch.scorpion.jabbah.graph.container.ContainerDrawing

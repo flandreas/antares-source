@@ -4,8 +4,8 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.text.ScriptProperty
+import ch.scorpion.jabbah.edit.DrawingViewMockBuilder
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.graph.DrawingViewMockBuilder
 import ch.scorpion.jabbah.graph.model.GraphInput
 import ch.scorpion.jabbah.graph.model.vertice.GraphInputImpl
 import ch.scorpion.jabbah.graph.view.GraphView

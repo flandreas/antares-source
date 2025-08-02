@@ -6,7 +6,7 @@ import ch.scorpion.jabbah.draw.graphics.PredefinedColorRepository
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
 import ch.scorpion.jabbah.edit.model.text.LabelComponent
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
-import ch.scorpion.jabbah.graph.DrawingViewMockBuilder
+import ch.scorpion.jabbah.edit.DrawingViewMockBuilder
 import ch.scorpion.jabbah.graph.TestLibraryBuilder
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.OriginIndicator

@@ -7,9 +7,9 @@ import ch.scorpion.jabbah.draw.drawable.RotationDirection
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.model.text.LabelComponent
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.DrawingViewMockBuilder
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
-import ch.scorpion.jabbah.graph.DrawingViewMockBuilder
 import ch.scorpion.jabbah.graph.TestLibraryBuilder
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.container.ControlViewComponent

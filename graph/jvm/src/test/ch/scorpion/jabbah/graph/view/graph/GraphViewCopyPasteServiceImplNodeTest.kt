@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.graph.view.graph
 
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.graph.DrawingViewMockBuilder
+import ch.scorpion.jabbah.edit.DrawingViewMockBuilder
 import ch.scorpion.jabbah.graph.GraphStorable
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule

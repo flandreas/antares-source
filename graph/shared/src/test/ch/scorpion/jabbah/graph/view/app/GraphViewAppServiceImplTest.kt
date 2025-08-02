@@ -7,7 +7,7 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
 import ch.scorpion.jabbah.edit.module.EditModule
-import ch.scorpion.jabbah.graph.DrawingViewMockBuilder
+import ch.scorpion.jabbah.edit.DrawingViewMockBuilder
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.connect.SplitEdgeViewResult
 import ch.scorpion.jabbah.graph.view.net.node.NodeView

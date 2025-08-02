@@ -5,7 +5,6 @@ import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.editor.InputEventDriver
-import ch.scorpion.jabbah.graph.DrawingViewMockBuilder
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 
