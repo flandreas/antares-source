@@ -1,18 +1,20 @@
 package ch.scorpion.jabbah.base.swing
 
+import ch.scorpion.jabbah.base.logger
 import java.awt.*
 import javax.swing.*
 import javax.swing.plaf.basic.BasicLabelUI
 import kotlin.math.PI
 
 class VerticalLabel(
-	text: String = "",
-	icon: Icon? = null,
-	horizontalAlignment: Int = SwingConstants.LEFT,
-	val clockwise: Boolean
+    text: String = "",
+    icon: Icon? = null,
+    horizontalAlignment: Int = LEFT,
+    val clockwise: Boolean
 ) : JLabel(text, icon, horizontalAlignment) {
 
     companion object {
+        private val LOG by logger(VerticalLabel::class)
 		const val UI_CLASS_ID = "VerticalLabelUI"
     }
 
@@ -28,7 +30,7 @@ class VerticalLabel(
 		if (UIManager.get(uiClassID) != null) {
 			setUI(UIManager.getUI(this) as VerticalLabelUI)
 		} else {
-			throw IllegalStateException("Could not set VerticalLabelUI")
+            LOG.error("Could not set VerticalLabelUI")
 		}
 	}
 }

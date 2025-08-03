@@ -18,6 +18,7 @@ import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolderImpl
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
 import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.ui.GraphPanelViewMockBuilder
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder

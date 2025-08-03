@@ -210,7 +210,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		}
 
 		if (app.dataLocation == DataLocation.Local) {
-			GraphModuleJvm.projectAkrabClientServiceJvm = {
+			GraphModuleJvm.projectAkrabClientService = {
 				val serverUrl = try {
 					URL(BaseModule.properties.getString(DataLocation.PROP_SERVER_URL))
 				} catch (e: Exception) {

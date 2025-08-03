@@ -13,16 +13,7 @@ import java.net.URL
 import java.nio.file.Files
 import kotlin.io.path.absolutePathString
 
-/**
- * A client-side (JVM) service for calling Akrab REST endpoints of [Project].
- */
-class ProjectAkrabClientServiceJvm(
-	private val baseUrl: URL,
-	private val persistenceService: FileLibraryPersistenceService
-) {
-	companion object {
-		private val LOG by logger(ProjectAkrabClientServiceJvm::class)
-	}
+interface ProjectAkrabClientService {
 
 	/**
 	 * Creates a ZIP file with all [Project] data and uploads it to the Akrab server for storing
@@ -31,7 +22,21 @@ class ProjectAkrabClientServiceJvm(
 	 *
 	 * @throws AkrabApiException containing an [AkrabApiError] in case of an error
 	 */
-	suspend fun upload(project: Project) {
+	suspend fun upload(project: Project)
+}
+
+/**
+ * A client-side (JVM) service for calling Akrab REST endpoints of [Project].
+ */
+class ProjectAkrabClientServiceJvm(
+	private val baseUrl: URL,
+	private val persistenceService: FileLibraryPersistenceService
+) : ProjectAkrabClientService {
+	companion object {
+		private val LOG by logger(ProjectAkrabClientServiceJvm::class)
+	}
+
+	override suspend fun upload(project: Project) {
 		LOG.userTrail("Uploading project ${project.uuid}")
 
 		if (!Session.exists) {

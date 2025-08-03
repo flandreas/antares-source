@@ -24,8 +24,8 @@ class UpdateMetaGraphNameUITest {
         private const val NEW_NAME = "NewName"
     }
 
-    private lateinit var application: TestGraphApplication
-    private lateinit var graphFrame: GraphFrameMockBuilder
+    private lateinit var application: TestGraphApplication<GraphFrame>
+    private lateinit var graphFrame: GraphFrameMockBuilder<GraphFrame>
 
     @BeforeTest
     fun setup() {

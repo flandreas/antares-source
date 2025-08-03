@@ -30,7 +30,7 @@ class GrandUiIntegrationTest {
 		}
 	}
 
-	private lateinit var application: TestGraphApplication
+	private lateinit var application: TestGraphApplication<GraphFrame>
 
 	@BeforeTest
 	fun beforeTest() {
@@ -68,7 +68,7 @@ class GrandUiIntegrationTest {
 	@Test
 	fun shouldDetachFromModelsWhenClosingSecondView() {
 		TempFileLibraryTestRule.createAndEstablishCurrentLibrary("Lib2")
-		application = TestGraphApplication()
+		application = TestGraphApplication<GraphFrame>()
 		val graphFrameBuilder = GraphFrameMockBuilder(application.graphFrameController)
 		application.start()
 
