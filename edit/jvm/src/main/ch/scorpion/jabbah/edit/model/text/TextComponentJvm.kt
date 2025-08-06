@@ -25,6 +25,7 @@ import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 import javax.swing.text.SimpleAttributeSet
 import javax.swing.text.StyleConstants
+import kotlin.math.min
 
 /** Implements [TextComponentFactory] on the JVM platform. */
 class TextComponentFactoryJvm : TextComponentFactory {
@@ -386,6 +387,7 @@ open class TextComponentJvm(
 			val newText = TEXT_EDITOR.text
 			if (oldText != newText) {
 				if (StringUtils.isNotEmpty(newText)) {
+					LOG.userTrail("Change text of ${this@TextComponentJvm.id} to '${StringUtils.limit(newText, 30)}'")
 					editor!!.commandManager.execute(
 					TextChangeCommand(
 						editor!!,

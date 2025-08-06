@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.edit.model.rectangle
 import ch.scorpion.jabbah.base.Status
 import ch.scorpion.jabbah.base.StatusType
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.math.SIGMA
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
@@ -25,6 +26,10 @@ import kotlin.math.min
 class RectangularHandleSelectionModel(
 	component: AbstractRectangularComponent
 ) : AbstractHandleSelectionModel<AbstractRectangularComponent>(component) {
+
+	companion object {
+		private val LOG by logger(RectangularHandleSelectionModel::class)
+	}
 
 	/** ---- State  */
 
@@ -117,8 +122,14 @@ class RectangularHandleSelectionModel(
 
 		override fun dragHandleEnd(context: EditInputEventContext) {
 			if (oldBounds!! != component.shape) {
+				LOG.userTrail("Resize '${component.type}' ${component.id} to ${component.shape}")
 				context.editor.commandManager.register(
-					ResizeRectangleCommand(context.editor, component.id, Rectangle2D(oldBounds!!), Rectangle2D(component.shape)))
+					ResizeRectangleCommand(
+						context.editor,
+						component.id,
+						Rectangle2D(oldBounds!!),
+						Rectangle2D(component.shape))
+				)
 			}
 		}
 	}

@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.edit.model.curve
 
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
 import ch.scorpion.jabbah.draw.View
@@ -21,6 +22,8 @@ abstract class AbstractCurveHandleSelectionModel<T: AbstractCurveComponent>(
 ) : AbstractHandleSelectionModel<T>(c) {
 
     companion object {
+        private val LOG by logger(AbstractCurveHandleSelectionModel::class)
+
         @JvmStatic
         protected val TANGENT_STROKE = Stroke(0.5f, dash = floatArrayOf(2.0f, 4.0f))
     }
@@ -60,6 +63,7 @@ abstract class AbstractCurveHandleSelectionModel<T: AbstractCurveComponent>(
         override fun dragHandleEnd(context: EditInputEventContext) {
             val index = getIndexOf(focusHandle!!)
             val newLocation = component.getPointAt(index)
+            LOG.userTrail("Move point $index of '${component.type}' ${component.id} to $newLocation")
             context.editor.commandManager.register(
                 MoveCurvePointCommand(context.editor.view, component.id, index, oldLocation, newLocation))
         }

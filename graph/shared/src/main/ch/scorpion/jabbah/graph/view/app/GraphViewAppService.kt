@@ -76,9 +76,13 @@ open class GraphViewAppServiceImpl(
 		customizer: ComponentCustomizer?
 	): Component {
 		return if (drawingView.drawing !is GraphView || component is GraphElementView<*>) {
-			super.add(component, drawingView, customizer)
+			val addedComponent = super.add(component, drawingView, customizer)
+			LOG.userTrail("Add '${addedComponent.type}' ${addedComponent.id} at ${component.location}")
+			addedComponent
 		} else {
-			super.add(GraphElementViewWrapper(component), drawingView, customizer)
+			val addedComponent = super.add(GraphElementViewWrapper(component), drawingView, customizer)
+			LOG.userTrail("Add '${(addedComponent as GraphElementViewWrapper).component?.type}' ${addedComponent.id} at ${component.location}")
+			addedComponent
 		}
 	}
 

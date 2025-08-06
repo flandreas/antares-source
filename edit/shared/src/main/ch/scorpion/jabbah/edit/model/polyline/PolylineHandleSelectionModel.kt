@@ -74,8 +74,10 @@ class PolylineHandleSelectionModel(c: PolylineComponent) : AbstractHandleSelecti
 	        component.compact()
 
 	        val command: Command = if (component.pointsCount != oldPointsCount) {
+                LOG.userTrail("Join point $index of polyline ${component.id} at $oldLocation")
 		        JoinPolylinePointsCommand(context.editor, component.id, index, oldLocation)
 	        } else {
+                LOG.userTrail("Move point $index of polyline ${component.id} to $oldLocation")
 		        MovePolylinePointCommand.forOldLocation(context.editor, component, index, oldLocation)
 	        }
 
@@ -88,8 +90,10 @@ class PolylineHandleSelectionModel(c: PolylineComponent) : AbstractHandleSelecti
                 component.findSegment(context.x, context.y, 10)?.let {
                     LOG.trace("Add handle $it")
                     val snap = context.editor.snapManager.snap(context.x, context.y)
+                    val location = snap.add(context.location)
+                    LOG.userTrail("Add point ${it + 1} to polyline ${component.id} at $location")
                     context.editor.commandManager.execute(
-                        AddPolylinePointCommand(context.editor, component.id, it + 1, snap.add(context.location)))
+                        AddPolylinePointCommand(context.editor, component.id, it + 1, location))
                 }
             }
             return null
