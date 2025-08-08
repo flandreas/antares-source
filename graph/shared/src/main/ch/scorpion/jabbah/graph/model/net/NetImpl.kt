@@ -210,15 +210,6 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 
 			val portId = (reference.additionalInfo as PortRef<T>).portId
 
-			// TEST BEGIN
-			// Simulate port reference problem (possible cause of bug #584)
-			/*
-			if (vertice != null && vertice.id == 2 && portId == 1) {
-				vertice = null
-			}
-			*/
-			// TEST END
-
 			if (vertice == null) {
 				LOG.warn("Couldn't resolve Vertice ${reference.referenceId} to connect to Net")
 				brokenRefDesignError = Net.BROKEN_REF_DESIGN_ERROR

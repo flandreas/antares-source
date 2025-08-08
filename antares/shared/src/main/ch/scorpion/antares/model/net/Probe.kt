@@ -119,7 +119,7 @@ class Probe(
 
 	/** ---- [AdjustableBitWidth] */
 
-	override fun adjustBitWidth(port: DigitalPort, bitWidth: BitWidth): Boolean {
+	override fun adjustBitWidth(portId: Int, bitWidth: BitWidth): Boolean {
 		this.bitWidth = bitWidth
 		return true
 	}

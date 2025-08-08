@@ -141,8 +141,8 @@ open class TriStateBufferGate(
 
 	/** --- [AdjustableBitWidth] */
 
-	override fun adjustBitWidth(port: DigitalPort, bitWidth: BitWidth): Boolean {
-		if (port.portId == 2) {
+	override fun adjustBitWidth(portId: Int, bitWidth: BitWidth): Boolean {
+		if (portId == 2) {
 			return false
 		}
 		this.bitWidth = bitWidth

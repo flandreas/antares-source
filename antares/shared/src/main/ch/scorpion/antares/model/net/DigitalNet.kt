@@ -80,9 +80,6 @@ open class DigitalNet : NetImpl<DigitalSignal>() {
 		}
 
 	fun establishedBitWidthBesidesPort(port: DigitalPort): BitWidth? {
-		if (bitWidthCompatibilityError != null) {
-			return null
-		}
 		if (portsCount == 0) {
 			return null
 		}

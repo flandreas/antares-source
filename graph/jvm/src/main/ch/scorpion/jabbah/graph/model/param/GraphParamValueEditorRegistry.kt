@@ -25,9 +25,6 @@ object GraphParamValueEditorRegistry {
 	private val factories = mutableMapOf<GraphParamType<*>, GraphParamValueEditorFactory>()
 
 	fun register(type: GraphParamType<*>, factory: GraphParamValueEditorFactory) {
-		if (factories.containsKey(type)) {
-			throw IllegalArgumentException("factory already registered")
-		}
 		factories[type] = factory
 	}
 

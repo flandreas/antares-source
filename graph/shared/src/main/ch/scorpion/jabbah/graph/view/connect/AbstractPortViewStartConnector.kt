@@ -544,6 +544,8 @@ abstract class AbstractPortViewStartConnector(
 		connectService.unconnect(edgeView!!)
 		context.drawingView.drawing.remove(edgeView!!)
 
+		context.editor.commandManager.beginTransaction("graph.command.connect", context.drawingView)
+
 		context.editor.commandManager.execute(
 			SplitEdgeViewCommand(
 				editor = context.editor,
@@ -557,5 +559,11 @@ abstract class AbstractPortViewStartConnector(
 				targetPortId = startPortView!!.port.portId
 			)
 		)
+
+		GraphViewModule.connectionEstablishedHandler?.handle(context.editor, startPortView!!.port)?.let {
+			context.editor.commandManager.execute(it)
+		}
+
+		context.editor.commandManager.commitTransaction()
 	}
 }

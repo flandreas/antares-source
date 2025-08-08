@@ -13,7 +13,8 @@ interface AdjustableBitWidth : Vertice {
      * Asks this [AdjustableBitWidth] to change the [BitWidth] of the specified [DigitalPort]
      * to [bitWidth] while the [DigitalPort] is about to be connected to a [DigitalNet] with an
      * already established [BitWidth]
+     *
      * @return `true` if the [BitWidth] was changed
      */
-    fun adjustBitWidth(port: DigitalPort, bitWidth: BitWidth): Boolean
+    fun adjustBitWidth(portId: Int, bitWidth: BitWidth): Boolean
 }

@@ -155,7 +155,7 @@ class DigitalSignalSourceControlView<T : DigitalSignalSource>(
 				// empty
 			}
 
-		override fun adjustBitWidth(port: DigitalPort, bitWidth: BitWidth): Boolean {
+		override fun adjustBitWidth(portId: Int, bitWidth: BitWidth): Boolean {
 			return false
 		}
 	}

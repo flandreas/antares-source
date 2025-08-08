@@ -97,7 +97,8 @@ class BitExtender(
 
 	/** ---- [AdjustableBitWidth] */
 
-	override fun adjustBitWidth(port: DigitalPort, bitWidth: BitWidth): Boolean {
+	override fun adjustBitWidth(portId: Int, bitWidth: BitWidth): Boolean {
+		val port = getPort<DigitalSignal>(portId)
 		if (port === digitalInput) {
 			if (bitWidth.width <= outputBitWidth.width) {
 				inputBitWidth = bitWidth

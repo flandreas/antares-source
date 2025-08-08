@@ -88,7 +88,7 @@ class DipSwitch(
 
 	/** ---- [AdjustableBitWidth] */
 
-	override fun adjustBitWidth(port: DigitalPort, bitWidth: BitWidth): Boolean {
+	override fun adjustBitWidth(portInt: Int, bitWidth: BitWidth): Boolean {
 		this.bitWidth = bitWidth
 		return true
 	}

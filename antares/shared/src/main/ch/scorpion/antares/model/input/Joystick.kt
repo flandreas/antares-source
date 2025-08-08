@@ -69,7 +69,7 @@ class Joystick(bitWidth: BitWidth = BitWidth.BW_2) : CalculatingVertice(CALCULAT
 
 	/** ---- [AdjustableBitWidth] */
 
-	override fun adjustBitWidth(port: DigitalPort, bitWidth: BitWidth): Boolean {
+	override fun adjustBitWidth(portInt: Int, bitWidth: BitWidth): Boolean {
 		this.bitWidth = bitWidth
 		return true
 	}
