@@ -66,22 +66,27 @@ class LibraryPropertiesPanel(
 				override fun ancestorMoved(event: AncestorEvent?) { }
 			})
 
-			return when (
-				JOptionPane.showConfirmDialog(
-					parent,
-					panel,
-					title,
-					JOptionPane.OK_CANCEL_OPTION,
-					JOptionPane.PLAIN_MESSAGE)
-			) {
-				JOptionPane.OK_OPTION -> LibraryProperties(
+			val answer = JOptionPane.showConfirmDialog(
+				parent,
+				panel,
+				title,
+				JOptionPane.OK_CANCEL_OPTION,
+				JOptionPane.PLAIN_MESSAGE)
+
+			if (!editable) {
+				return null
+			}
+
+			return if (answer == JOptionPane.OK_OPTION) {
+				LibraryProperties(
 					panel.nameField.value as TranslatableText,
 					panel.descField.value as TranslatableText,
 					panel.visibilityField.value as LibraryVisibility,
 					if (panel.ownedByMeField.isSelected) EditAuthModule.userHolder.user.identity else panel.oldAuthor,
 					importUuid = (panel.importField.selectedItem as LibraryDictionaryEntry?)?.uuid
 				)
-				else -> null
+			} else {
+				null
 			}
 		}
 	}
