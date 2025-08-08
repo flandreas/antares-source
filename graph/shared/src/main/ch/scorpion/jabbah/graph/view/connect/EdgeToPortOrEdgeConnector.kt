@@ -283,6 +283,9 @@ class EdgeToPortOrEdgeConnector(
 
 		if (targetPortView != null) {
 			context.editor.commandManager.execute(createConnectDestinationCommand(context.editor))
+			GraphViewModule.connectionEstablishedHandler?.handle(context.editor, targetPortView!!.port)?.let {
+				context.editor.commandManager.execute(it)
+			}
 		} else {
 			context.editor.commandManager.register(createMoveDestinationCommand(context.editor))
 		}

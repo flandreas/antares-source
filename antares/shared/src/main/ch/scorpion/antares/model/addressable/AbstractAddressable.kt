@@ -1,8 +1,8 @@
 package ch.scorpion.antares.model.addressable
 
-import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.vertice.AdjustableBitWidth
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
@@ -109,7 +109,8 @@ abstract class AbstractAddressable<T : AddressableVertice>(
 
 	/** ---- [AdjustableBitWidth] */
 
-	override fun adjustBitWidth(port: DigitalPort, bitWidth: BitWidth): Boolean {
+	override fun adjustBitWidth(portId: Int, bitWidth: BitWidth): Boolean {
+		val port = getPort<DigitalSignal>(portId)
 		if (port === getAddressInput()) {
 			addressWidth = bitWidth
 			return true

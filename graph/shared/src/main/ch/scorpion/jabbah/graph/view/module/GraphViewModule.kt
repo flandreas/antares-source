@@ -144,6 +144,8 @@ object GraphViewModule : AbstractModule() {
 
 	var netViewElementColorProvider: NetViewElementColorProvider<*> = GraphNetViewElementColorProvider
 
+	var connectionEstablishedHandler: ConnectionEstablishedHandler? = null
+
 	fun <T: Any> getTypedNetViewElementColorProvider(): NetViewElementColorProvider<T> = netViewElementColorProvider as NetViewElementColorProvider<T>
 
 	override fun initialize() {

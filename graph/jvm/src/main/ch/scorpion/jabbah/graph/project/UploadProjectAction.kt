@@ -22,7 +22,7 @@ import javax.swing.SwingUtilities
 class UploadProjectAction(
 	controller: LibraryTreeViewController,
 	private val operationTarget: () -> Any?,
-	private val service: ProjectAkrabClientServiceJvm = GraphModuleJvm.projectAkrabClientServiceJvm()
+	private val service: ProjectAkrabClientService = GraphModuleJvm.projectAkrabClientService()
 ) : AbstractLibraryFolderAction(
 	"project.action.upload",
 	Operation.Change,

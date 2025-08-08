@@ -28,6 +28,7 @@ import ch.scorpion.jabbah.graph.login.LoginService
 import ch.scorpion.jabbah.graph.login.LoginServiceJvm
 import ch.scorpion.jabbah.graph.model.param.*
 import ch.scorpion.jabbah.graph.model.port.InconsistentNetError
+import ch.scorpion.jabbah.graph.project.ProjectAkrabClientService
 import ch.scorpion.jabbah.graph.project.ProjectAkrabClientServiceJvm
 import ch.scorpion.jabbah.graph.ui.GraphNavigationViewHeaderFactory
 import ch.scorpion.jabbah.graph.view.GraphView
@@ -44,7 +45,7 @@ object GraphModuleJvm : AbstractModule() {
 
 	var containerTreeViewFactory: (DrawingView<Drawing<Component>>) -> ContainerTreeView = { ContainerTreeView(it) }
 
-	var projectAkrabClientServiceJvm: () -> ProjectAkrabClientServiceJvm = { throw UnsupportedOperationException() }
+	var projectAkrabClientService: () -> ProjectAkrabClientService = { throw UnsupportedOperationException() }
 
 	// Tried a function interface, but the Java obfuscator didn't like it
 	var libraryTreeViewActionsProvider: (LibraryTreeViewActionsParams) -> LibraryTreeViewActionsSwing =

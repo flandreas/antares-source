@@ -82,6 +82,9 @@ class OutputToInputOrEdgeConnector(
 					targetPortView!!.owner!!.id,
 					targetPortView!!.port.portId)
 			)
+			GraphViewModule.connectionEstablishedHandler?.handle(context.editor, targetPortView!!.port)?.let {
+				context.editor.commandManager.execute(it)
+			}
 		} else {
 			context.editor.commandManager.execute(
 				MoveDestinationEndpointCommand(

@@ -10,12 +10,12 @@ import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewActions
 
 
 /** A test [Application] implementation used for integration testing. */
-class TestGraphApplication : AbstractApplication(GraphDataViewController()) {
+class TestGraphApplication<T: GraphFrame>(
+    graphDataViewController: GraphDataViewController = GraphDataViewController(),
+    val graphFrameController: GraphFrameController<T> = GraphFrameController(graphDataViewController),
+) : AbstractApplication(graphDataViewController) {
 
-	val graphFrameController = GraphFrameController<GraphFrame>(controller)
-
-
-	init {
+    init {
 		// Required to create an instance of OpenContainerLibraryElementAction
 		LibraryTreeViewActions(
 			graphFrameController.graphPanelViewController.libraryPanelController.libraryTreeViewController,

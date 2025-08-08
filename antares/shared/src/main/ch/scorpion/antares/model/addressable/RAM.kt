@@ -177,9 +177,9 @@ class RAM(
 		}
 	}
 
-	override fun adjustBitWidth(port: DigitalPort, bitWidth: BitWidth): Boolean =
+	override fun adjustBitWidth(portId: Int, bitWidth: BitWidth): Boolean =
 		if (isAdjustableBitWidth) {
-			super.adjustBitWidth(port, bitWidth)
+			super.adjustBitWidth(portId, bitWidth)
 		} else {
 			false
 		}

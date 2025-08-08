@@ -23,6 +23,7 @@ import ch.scorpion.antares.view.addressable.RAMView
 import ch.scorpion.antares.view.addressable.ROMView
 import ch.scorpion.antares.view.analog.*
 import ch.scorpion.antares.view.app.AntaresGraphViewService
+import ch.scorpion.antares.view.app.AutoAdjustBitWidth
 import ch.scorpion.antares.view.arithmetic.BitExtenderView
 import ch.scorpion.antares.view.arithmetic.RandomView
 import ch.scorpion.antares.view.container.DigitalPortViewComponent
@@ -235,6 +236,7 @@ object AntaresViewModule : AbstractModule() {
 		GraphViewModule.graphViewExecutionAnimationFactory = AntaresExecutionAnimationFactory()
 		GraphViewModule.metaGraphService = AntaresMetaGraphService()
 		GraphViewModule.netViewElementColorProvider = DigitalNetViewElementColorProvider
+		GraphViewModule.connectionEstablishedHandler = AutoAdjustBitWidth
 
 		GraphModule.require()
 		AnimationModule.require()

@@ -86,6 +86,10 @@ class InputToOutputOrEdgeConnector(
 				startPortView!!.port.portId)
 		)
 
+		GraphViewModule.connectionEstablishedHandler?.handle(context.editor, startPortView!!.port)?.let {
+			context.editor.commandManager.execute(it)
+		}
+
 		context.editor.commandManager.commitTransaction()
 
 		context.drawingView.selectionManager.select(

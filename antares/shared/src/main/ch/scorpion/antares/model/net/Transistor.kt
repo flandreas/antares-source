@@ -112,8 +112,8 @@ class Transistor(
 
 	/** ---- [AdjustableBitWidth] */
 
-	override fun adjustBitWidth(port: DigitalPort, bitWidth: BitWidth): Boolean {
-		if (port.portId == GATE_PORT_ID) {
+	override fun adjustBitWidth(portId: Int, bitWidth: BitWidth): Boolean {
+		if (portId == GATE_PORT_ID) {
 			return false
 		}
 		if (!isConnected) {

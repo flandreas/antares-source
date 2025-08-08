@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.GraphEditorMockBuilder
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ConstantApplicationModeHolder
+import ch.scorpion.jabbah.graph.ui.ScenarioViewMockBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.scenario.ScenarioImpl
@@ -29,7 +30,7 @@ class ScenarioViewControllerTest {
 	private val controller = ScenarioViewController(editor, mock(MockMode.autofill), GraphApplicationContextHolder(mock(MockMode.autofill)), ConstantApplicationModeHolder(ApplicationMode.EDIT), eventBus)
 
 	init {
-		ScenarioViewMockBuilder(controller)
+        ScenarioViewMockBuilder(controller)
 		controller.graphView = graphView
 	}
 
