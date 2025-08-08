@@ -47,6 +47,7 @@ class DigitalContainerEditor(
     }
 
 	override fun dispose() {
+		super.dispose()
 		eventBus.unregister(circuitInOutBitWidthHandler)
 		eventBus.unregister(circuitInOutSignalRepresentationHandler)
 		eventBus.unregister(circuitInOutStartValueHandler)
