@@ -66,6 +66,7 @@ class ContainerPanelController(
 
 	private val commandHandler: EventHandler<CommandEvent> = { handle(it) }
 
+	// TODO: This is always the GraphView within mainGraphDrawingView. Why the property?
 	var graphView: GraphView? = null
 		private set
 

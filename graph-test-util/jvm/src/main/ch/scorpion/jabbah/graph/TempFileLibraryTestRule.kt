@@ -12,7 +12,6 @@ import ch.scorpion.jabbah.graph.library.dictionary.FileLibraryDictionaryPersiste
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
 import ch.scorpion.jabbah.graph.project.ProjectManagementService
 import ch.scorpion.jabbah.graph.project.ProjectModule
-import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import java.nio.file.Files
 import kotlin.io.path.absolutePathString
 
@@ -22,7 +21,7 @@ import kotlin.io.path.absolutePathString
 object TempFileLibraryTestRule {
 
 	fun configure() {
-		GraphViewTestRule.configure()
+		//GraphViewTestRule.configure()
 
 		val tempDir = Files.createTempDirectory(null)
 
