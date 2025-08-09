@@ -203,7 +203,7 @@ class ControlViewComponent(
 	fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, graph: Graph) {
 		try {
 			controlView.bindControlView(subGraphVerticeView, controlModelLink, graph)
-		} catch (e: IllegalArgumentException) {
+		} catch (_: RuntimeException) {
 			invalidate()
 			brokenView = BrokenDeepLinkView(styleProvider, controlView.boundingBox)
 			invalidate()
