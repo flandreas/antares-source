@@ -48,7 +48,7 @@ class RectangleTool<T : RectangularComponent>(
 	}
 
 	/** Holds the instantiated rectangle. Initialized in [mousePressed].*/
-	private var instance by Delegates.notNull<T>()
+	private var instance: T? = null
 
 	/** The [Component] that is added to the [Drawing]. */
 	private var addedComponent by Delegates.notNull<Component>()
@@ -70,10 +70,10 @@ class RectangleTool<T : RectangularComponent>(
 
 		val offset = editor.snapManager.snap(x, y)
 		anchorLocation = Point2D(x + offset.x, y + offset.y)
-		instance.setFrame(anchorLocation.x, anchorLocation.y, 0.0, 0.0)
+		instance!!.setFrame(anchorLocation.x, anchorLocation.y, 0.0, 0.0)
 
 		editor.view.selectionManager.deselectAll()
-		addedComponent = getAddedComponent(instance)
+		addedComponent = getAddedComponent(instance!!)
 		editor.drawing.add(addedComponent)
 		editor.view.selectionManager.select(addedComponent)
 
@@ -93,14 +93,14 @@ class RectangleTool<T : RectangularComponent>(
 			height = size
 		}
 
-		instance.setFrame(
+		instance!!.setFrame(
 			min(anchorLocation.x, anchorLocation.x + width),
 			min(anchorLocation.y, anchorLocation.y + height),
 			abs(width),
 			abs(height)
 		)
 
-		instance.validate()
+		instance!!.validate()
 
 		reportSize()
 	}
@@ -108,24 +108,32 @@ class RectangleTool<T : RectangularComponent>(
 	override fun mouseReleased(e: MouseEvent, x: Double, y: Double) {
 		super.mouseReleased(e, x, y)
 
-		if (instance.width < MINIMAL_SIZE || instance.height < MINIMAL_SIZE) {
-			instance.setFrame(anchorLocation.x, anchorLocation.y, defaultWidth, defaultHeight)
+		if (instance!!.width < MINIMAL_SIZE || instance!!.height < MINIMAL_SIZE) {
+			instance!!.setFrame(anchorLocation.x, anchorLocation.y, defaultWidth, defaultHeight)
 		}
 
 		addComponent(addedComponent)
 
 		editor.toolDone()
+		instance = null
 	}
 
 	override fun keyPressed(e: KeyEvent) {
 		if (e.key == KeyEvent.VK_ESCAPE) {
-			editor.drawing.remove(addedComponent)
-			editor.drawing.validate()
-			editor.toolDone()
+			cancel()
 		}
 	}
 
+	private fun cancel() {
+		if (instance != null) {
+			instance = null
+			editor.drawing.remove(addedComponent)
+			editor.drawing.validate()
+		}
+		editor.toolDone()
+	}
+
 	private fun reportSize() {
-		Status.set(StatusType.Small, "w=${instance.width.toInt()}, h=${instance.height.toInt()}")
+		Status.set(StatusType.Small, "w=${instance!!.width.toInt()}, h=${instance!!.height.toInt()}")
 	}
 }

@@ -92,9 +92,11 @@ class PolylineTool(
 	}
 
 	private fun cancel() {
-		instance = null
-		editor.drawing.remove(addedComponent)
-		editor.drawing.validate()
+		if (instance != null) {
+			instance = null
+			editor.drawing.remove(addedComponent)
+			editor.drawing.validate()
+		}
 		editor.toolDone()
 	}
 }
