@@ -186,7 +186,6 @@ class DragManagerImpl(
 					)
 				} catch (e: Throwable) {
 					LOG.error("mouseReleased: error '${e.message}'")
-					editor.commandManager.rollbackTransaction()
 					throw e
 				}
 			}
