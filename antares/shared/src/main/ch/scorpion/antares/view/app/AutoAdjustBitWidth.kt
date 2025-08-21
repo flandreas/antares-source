@@ -3,7 +3,6 @@ package ch.scorpion.antares.view.app
 import ch.scorpion.antares.model.net.DigitalNet
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.vertice.AdjustableBitWidth
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.Editor
@@ -12,8 +11,6 @@ import ch.scorpion.jabbah.graph.view.connect.ConnectionEstablishedHandler
 
 object AutoAdjustBitWidth : ConnectionEstablishedHandler {
 
-    private val LOG by logger(AutoAdjustBitWidth::class)
-
     override fun handle(editor: Editor, port: Port<*>): Command? {
         if (port.net == null) {
             return null
@@ -21,9 +18,12 @@ object AutoAdjustBitWidth : ConnectionEstablishedHandler {
         if (!BaseModule.properties.getBoolean(DigitalPort.PROP_ADJUST_BIT_WIDTH)) {
             return null
         }
+        if (port !is DigitalPort || port.net !is DigitalNet) {
+            return null
+        }
 
         val net = port.net as DigitalNet
-        val netBitWidth = net.establishedBitWidthBesidesPort(port as DigitalPort)
+        val netBitWidth = net.establishedBitWidthBesidesPort(port)
         if (netBitWidth != null && port.bitWidth != netBitWidth) {
             // Note: This Port has already been added to [net]
             val youngestPort = net.youngestAdjustablePortBesides(port)
