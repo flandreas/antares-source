@@ -30,6 +30,10 @@ abstract class AbstractResistingAnalogVertice<T: CalculatingVertice>(
 	/** ---- [AnalogElement] */
 
 	override fun stamp(analysis: AnalogCircuitAnalysis) {
-		analysis.stampResistor(analogElem.nodes[0], analogElem.nodes[1], resistance)
+		try {
+			analysis.stampResistor(analogElem.nodes[0], analogElem.nodes[1], resistance)
+		} catch (e: IllegalArgumentException) {
+			throw IllegalStateException(e.message)
+		}
 	}
 }
