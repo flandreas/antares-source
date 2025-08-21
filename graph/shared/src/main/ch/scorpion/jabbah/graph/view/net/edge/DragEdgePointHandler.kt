@@ -74,6 +74,7 @@ class DragEdgePointHandler : EdgeViewInputEventHandler() {
     override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
         if (oldLocation != null) {
             val newLocation = edgeView!!.getSegmentPoint(highlight!!.pointIndex!!)
+            LOG.userTrail("Move point ${highlight!!.pointIndex!!} of EdgeView ${edgeView!!.id} to $newLocation")
             context.editor.commandManager.register(MoveEdgePointCommand(
                     context.editor, edgeView!!.id, highlight!!.pointIndex!!, newLocation.subtract(oldLocation!!)))
         }
