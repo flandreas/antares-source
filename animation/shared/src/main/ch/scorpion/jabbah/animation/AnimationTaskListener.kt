@@ -12,7 +12,7 @@ interface AnimationTaskListener {
     fun started(task: AnimationTask)
 
     /** Notifies this [AnimationTaskListener] that [task] has been ended in an [Animator].*/
-    fun ended(task: AnimationTask)
+    fun ended(task: AnimationTask, canceled: Boolean = false)
 }
 
 /**
@@ -25,6 +25,5 @@ open class AnimationTaskAdapter : AnimationTaskListener {
 
     override fun started(task: AnimationTask) {}
 
-    override fun ended(task: AnimationTask) {}
-
+    override fun ended(task: AnimationTask, canceled: Boolean) {}
 }

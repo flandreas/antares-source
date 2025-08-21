@@ -55,7 +55,7 @@ class AttentionDrawerImpl(
 			duration = properties.getFloat(PROP_DURATION).toDouble()
 		)
 		animation.addListener(object : AnimationTaskAdapter() {
-			override fun ended(task: AnimationTask) {
+			override fun ended(task: AnimationTask, canceled: Boolean) {
 				container(view).remove(ring)
 				container(view).validate()
 			}

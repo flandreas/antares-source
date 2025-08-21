@@ -9,6 +9,8 @@ import ch.scorpion.jabbah.base.time.ControlledTimeService
 import ch.scorpion.jabbah.base.time.ControlledTimer
 import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.base.time.Timer
+import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.DrawableContainer
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.DrawingView
@@ -66,6 +68,7 @@ abstract class AbstractCircuitTest {
 
 		val drawingView = mock<DrawingView<GraphView>>(MockMode.autofill)
 		every { drawingView.drawing } calls { getCircuitView() }
+		every { drawingView.animationContainer } returns mock<DrawableContainer<Drawable>>(MockMode.autofill)
 		val graphViewUI = mock<GraphViewUI>(MockMode.autofill)
 		every { graphViewUI.drawingView } returns drawingView
 

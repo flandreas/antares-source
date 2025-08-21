@@ -39,13 +39,29 @@ interface AnimationTask {
     /** Removes [listener] to stop being informed about life cycle changed of this [AnimationTask].*/
     fun removeListener(listener: AnimationTaskListener)
 
-    /** Starts the animation that is represented by this [AnimationTask].*/
+    /**
+     * Starts the animation that is represented by this [AnimationTask].
+     * Presumes that this [AnimationTask] has been scheduled with an [Animator] before.
+     * Registered [AnimationTaskListener] are notified with [AnimationTaskListener.started].
+     */
     fun start()
 
-    /** Stops the animation that is represented by this [AnimationTask].*/
+    /**
+     * Stops the animation that is represented by this [AnimationTask].
+     * Called when an [AnimationTask] has regularly completed its job, and other [AnimationTasks][AnimationTask]
+     * might be started as a follow-up.
+     * Registered [AnimationTaskListener] are notified with [AnimationTaskListener.ended].
+     */
     fun stop()
 
-    /** Performs a single animation step by pushing the animation value further by the specifed distance.*/
+    /**
+     * Cancels the animation represented by this [AnimationTask].
+     * Called when animation has been interrupted by the user. In contrast to [stop], other [AnimationTasks][AnimationTask]
+     * depending on this one are NOT started as a follow-up.
+     */
+    fun cancel()
+
+    /** Performs a single animation step by pushing the animation value further by the specified distance.*/
     fun animate(distance: Double)
 
     /**

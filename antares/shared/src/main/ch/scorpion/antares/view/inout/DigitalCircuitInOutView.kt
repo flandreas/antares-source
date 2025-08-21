@@ -364,7 +364,7 @@ class DigitalCircuitInOutView(
 			contextHolder.animator
 				.schedule(ShakeLocatableAnimation(numberView!!))
 				.addListener(object : AnimationTaskAdapter() {
-					override fun ended(task: AnimationTask) {
+					override fun ended(task: AnimationTask, canceled: Boolean) {
 						isShaking = false
 					}
 				})

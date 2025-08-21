@@ -88,6 +88,10 @@ class AnimatorImpl(
 		jobs.toList().forEach { it.task.stop() }
 	}
 
+	override fun cancelAllTasks() {
+		jobs.toList().forEach { it.task.cancel() }
+	}
+
 	/** ---- [AnimatorImpl] */
 
 	private fun handle(event: SystemSpeedPauseEvent) {
@@ -154,7 +158,7 @@ class AnimatorImpl(
 			startTimerIfNeeded()
 		}
 
-		override fun ended(task: AnimationTask) {
+		override fun ended(task: AnimationTask, canceled: Boolean) {
 			findJob(task).end()
 			task.removeListener(taskListener)
 			removeEndedJobs()

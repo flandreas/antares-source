@@ -42,6 +42,11 @@ abstract class AbstractAnimationTask<T>(
 	    listeners.toList().forEach { it.ended(this) }
     }
 
+    override fun cancel() {
+        handleStopped()
+        listeners.toList().forEach { it.ended(this, canceled = true) }
+    }
+
     override fun animate(distance: Double) {
 		sequence.getNext(distance)?.let { consumer.invoke(it) } ?: stop()
     }

@@ -153,9 +153,14 @@ class DigitalEdgeViewNetAnimation(
 	 */
 	private inner class AnimationSplitter : AnimationTaskAdapter() {
 
-		override fun ended(task: AnimationTask) {
+		override fun ended(task: AnimationTask, canceled: Boolean) {
 			task.removeListener(this)
 			val animationView = task.target as DigitalEdgeAnimationView
+
+			if (canceled) {
+				drawingView.animationContainer.remove(animationView)
+				return
+			}
 
 			if (animationView.reverseDirection) {
 				if (animationView.edgeView.origin?.connectableView is NodeView<*>) {

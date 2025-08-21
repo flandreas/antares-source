@@ -157,6 +157,10 @@ class AnimatorImplTest {
 			listener!!.ended(outerTask)
 		}
 
+		override fun cancel() {
+			listener!!.ended(outerTask, true)
+		}
+
 		override fun addListener(listener: AnimationTaskListener): AnimationTask {
 			this.listener = listener
 			return this

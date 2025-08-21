@@ -38,7 +38,7 @@ actual object Toast {
 			.initialize(DisplayDuration.calculateMilliseconds(message), repeats = false) {
 				val fadeOut = OpacityAnimation.fadeOut(frame, FADE_DURATION_MS).apply {
 					addListener(object : AnimationTaskAdapter() {
-						override fun ended(task: AnimationTask) {
+						override fun ended(task: AnimationTask, canceled: Boolean) {
 							frame.isVisible = false
 							frame.dispose()
 						}

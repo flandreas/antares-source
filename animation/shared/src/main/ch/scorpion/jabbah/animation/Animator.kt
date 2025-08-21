@@ -41,4 +41,6 @@ interface Animator {
 
     /** Stops all currently running [AnimationTask]s.*/
     fun stopAllTasks()
+
+    fun cancelAllTasks()
 }

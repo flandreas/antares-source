@@ -76,7 +76,7 @@ abstract class AbstractGraphViewExecutionAnimationFactory : GraphViewExecutionAn
 		if (verticeView is Transparent) {
 			val glowAnimation = TransparentAnimation.glow(verticeView, key = key)
 			glowAnimation.addListener(object : AnimationTaskAdapter() {
-				override fun ended(task: AnimationTask) {
+				override fun ended(task: AnimationTask, canceled: Boolean) {
 					verticeView.transparency = Transparent.FULLY_OPAQUE
 					verticeView.validate()
 				}

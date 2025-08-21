@@ -49,7 +49,7 @@ class DescendAnimationManager(
 		    ZoomedPointTranslation(drawingView.drawing.boundingBox.center, drawingView.center, drawingView.navigator.calculateFixMaxNormalZoomFactor()))
 
         animation.addListener(object: AnimationTaskAdapter() {
-            override fun ended(task: AnimationTask) {
+            override fun ended(task: AnimationTask, canceled: Boolean) {
                 terminator.invoke()
             }
         })
@@ -69,7 +69,7 @@ class DescendAnimationManager(
 
         /** Starts the inner animation after the outer animation has ended. */
         animation.addListener(object: AnimationTaskAdapter() {
-            override fun ended(task: AnimationTask) {
+            override fun ended(task: AnimationTask, canceled: Boolean) {
 	            descender.invoke(subGraphVerticeView)
                 drawingView.navigator.panCenter(INNER_START_ZOOM_FACTOR)
                 val innerAnimation = createInnerDescendAnimation(drawingView, terminator)
@@ -113,7 +113,7 @@ class DescendAnimationManager(
 			ZOOM_DURATION,
 			ZoomedPointTranslation(drawingView.drawing.boundingBox.center, drawingView.center, INNER_START_ZOOM_FACTOR))
 		animation.addListener(object: AnimationTaskAdapter() {
-			override fun ended(task: AnimationTask) {
+			override fun ended(task: AnimationTask, canceled: Boolean) {
 				val destination = ascender.invoke(subGraphVerticeView)
 				drawingView.navigator.panCenter(OUTER_END_ZOOM_FACTOR)
 				val outerAnimation = createOuterAscendAnimation(drawingView, destination, terminator)
@@ -135,7 +135,7 @@ class DescendAnimationManager(
 			destination)
 
 		animation.addListener(object: AnimationTaskAdapter() {
-			override fun ended(task: AnimationTask) {
+			override fun ended(task: AnimationTask, canceled: Boolean) {
 				terminator.invoke()
 			}
 		})

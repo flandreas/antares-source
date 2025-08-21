@@ -77,9 +77,12 @@ class GraphViewExecutionAnimator(
 		if (it.scheduler === applicationContextHolder.scheduler) {
 			if (!it.scheduler.isActive) {
 				// TODO Should stop only animations related to this GraphViewAnimator
-				applicationContextHolder.animator.stopAllTasks()
+				applicationContextHolder.animator.cancelAllTasks()
 				stopAllVerticeViewActingAnimations()
 				netAnimationMap.clear()
+
+				// Make sure that all animation objects are really gone
+				drawingView.animationContainer.clear()
 			} else {
 				edgeViewAnimated.clear()
 			}
@@ -209,7 +212,7 @@ class GraphViewExecutionAnimator(
 			applicationContextHolder.scheduler.logActorTrace(net) { "Starting EdgeViewNetAnimation" }
 			val task = it.start()
 			task.addListener(object : AnimationTaskAdapter() {
-				override fun ended(task: AnimationTask) {
+				override fun ended(task: AnimationTask, canceled: Boolean) {
 					data.changedPort?.resetTemporarySignal()
 					unregisterAnimation(net, it)
 				}
