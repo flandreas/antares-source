@@ -1,14 +1,9 @@
 package ch.scorpion.jabbah.base.invocation
 
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.module.BaseModuleJvm
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import java.awt.Dimension
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
@@ -29,6 +24,8 @@ object InteractiveErrorHandler : ErrorHandler() {
 	private var isDeveloper = false
 	private var isHandling = false
 
+	private val plugins: MutableList<ErrorHandlerPlugin> = mutableListOf()
+
     override fun initializeImpl(parentFrame: JFrame, versionId: String, isDeveloper: Boolean) {
         this.parentFrame = parentFrame
 	    this.versionId = versionId
@@ -39,7 +36,7 @@ object InteractiveErrorHandler : ErrorHandler() {
 	    LOG.error("Unexpected error: ${x.message}", x)
 		val stackTrace = renderStackTrace(x)
 
-		sendToBackend(stackTrace)
+		involvePlugins(x)
 
         if (parentFrame != null && !isHandling) {
 	        isHandling = true
@@ -52,11 +49,13 @@ object InteractiveErrorHandler : ErrorHandler() {
         }
     }
 
-	@OptIn(DelicateCoroutinesApi::class)
-	private fun sendToBackend(stackTrace: String) {
-		val description = BaseModuleJvm.unexpectedErrorService.buildDescription(versionId, stackTrace)
-		GlobalScope.launch(Dispatchers.IO) {
-			BaseModuleJvm.unexpectedErrorService.sendUnexpectedError(description)
+	fun registerPlugin(plugin: ErrorHandlerPlugin) {
+		plugins.add(plugin)
+	}
+
+	private fun involvePlugins(x: Throwable) {
+		plugins.forEach {
+			it.handleError(x)
 		}
 	}
 

@@ -11,7 +11,7 @@ abstract class ErrorHandler {
 	companion object {
 		private val LOG by logger(Companion::class)
 
-		val implementation: ErrorHandler = InteractiveErrorHandler
+		val implementation: ErrorHandler get() = InteractiveErrorHandler
 
 		fun initialize(parentFrame: JFrame, versionId: String, isDeveloper: Boolean = false) {
 			implementation.initializeImpl(parentFrame, versionId, isDeveloper)

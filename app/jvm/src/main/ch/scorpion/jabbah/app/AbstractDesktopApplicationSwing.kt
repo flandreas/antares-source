@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.app
 
+import ch.scorpion.jabbah.app.dump.ErrorUploader
 import ch.scorpion.jabbah.app.dump.SystemMalfunctionHandler
 import ch.scorpion.jabbah.app.health.SystemHealthChecker
 import ch.scorpion.jabbah.app.module.AppModuleJvm
@@ -68,6 +69,8 @@ abstract class AbstractDesktopApplicationSwing(
 		registerApplicationUsage()
 
 		SystemMalfunctionHandler.initialize(this)
+		ErrorUploader.initialize(this)
+
 		SystemHealthChecker.start(controller)
 
 		ApplicationDataViewSwing(controller, fileExtension, displayName)
