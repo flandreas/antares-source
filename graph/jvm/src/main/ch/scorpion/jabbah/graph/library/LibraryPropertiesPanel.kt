@@ -73,7 +73,7 @@ class LibraryPropertiesPanel(
 				JOptionPane.OK_CANCEL_OPTION,
 				JOptionPane.PLAIN_MESSAGE)
 
-			if (!editable) {
+			if (!editable && !panel.ownedByMeField.isSelected) {
 				return null
 			}
 
