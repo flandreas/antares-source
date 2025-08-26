@@ -87,6 +87,6 @@ abstract class AbstractLibraryPropertiesAction(
 			}
 
 		}
-		update(properties!!)
+		update(properties)
 	}
 }

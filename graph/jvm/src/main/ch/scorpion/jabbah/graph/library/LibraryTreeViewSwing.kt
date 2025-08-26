@@ -101,6 +101,12 @@ class LibraryTreeViewSwing(
 		}
 	}
 
+	override fun handle(event: LibraryRenamedEvent) {
+		findOptionalTreeNode(event.library)?.let {
+			(model as DefaultTreeModel).nodeChanged(it)
+		}
+	}
+
 	/** ---- [LibraryTreeViewSwing] */
 
 	private fun openSelectedItem() {

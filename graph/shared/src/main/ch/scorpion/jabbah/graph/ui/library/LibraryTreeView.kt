@@ -37,6 +37,8 @@ interface LibraryTreeView : BasicLibraryTreeView {
 	fun handle(event: LibraryItemUpdatedEvent)
 
 	fun handle(event: LibraryItemMovedEvent)
+
+	fun handle(event: LibraryRenamedEvent)
 }
 
 /**
@@ -84,6 +86,12 @@ class LibraryTreeViewController (
 		}
 	}
 
+	private val libraryRenamedHandler: EventHandler<LibraryRenamedEvent> = {
+		if (displaysLibrary(it.library)) {
+			view.handle(it)
+		}
+	}
+
 	var active: Boolean = applicationModeHolder.currentMode.isEdit()
 		private set(value) {
 			if (field != value) {
@@ -98,6 +106,7 @@ class LibraryTreeViewController (
 		eventBus.register(LibraryItemUpdatedEvent::class, libraryItemUpdatedHandler)
 		eventBus.register(LibraryItemMovedEvent::class, libraryItemMovedHandler)
 		eventBus.register(LibraryImportsEvent::class, libraryImportsHandler)
+		eventBus.register(LibraryRenamedEvent::class, libraryRenamedHandler)
 
 		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
 		eventBus.register(OpenContainerLibraryElementRequest::class, openContainerLibraryElementHandler)
@@ -110,6 +119,7 @@ class LibraryTreeViewController (
 		eventBus.unregister(libraryItemUpdatedHandler)
 		eventBus.unregister(libraryItemMovedHandler)
 		eventBus.unregister(libraryImportsHandler)
+		eventBus.unregister(libraryRenamedHandler)
 
 		eventBus.unregister(applicationModeHandler)
 		eventBus.unregister(openContainerLibraryElementHandler)

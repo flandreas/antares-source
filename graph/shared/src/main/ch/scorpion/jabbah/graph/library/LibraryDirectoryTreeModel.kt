@@ -35,7 +35,7 @@ class LibraryDirectoryTreeModelBuilder(
 				if (item is LibraryDirectory) {
 					addItems(node, item)
 				}
-				if (filter == null || (item !is LibraryFolder) || node.children.size > 0) {
+				if (filter == null || (item !is LibraryFolder) || node.children.isNotEmpty()) {
 					parent.children.add(node)
 				}
 			}
