@@ -720,8 +720,14 @@ open class EdgeViewImpl<T : Any>(
 		return polyline.findSegment(x, y) != null
 	}
 
-	override fun <T: InputEventContext> getTooltip(context: T): Tooltip? =
-		if (!context.readonly) {
+	override fun <T: InputEventContext> getTooltip(context: T): Tooltip? {
+		if (origin == null && originEndpointView.contains(context.location)) {
+			return originEndpointView.getTooltip(context)
+		}
+		if (destination == null && destinationEndpointView.contains(context.location)) {
+			return destinationEndpointView.getTooltip(context)
+		}
+		return if (!context.readonly) {
 			if (designErrorTooltip.value != null) {
 				designErrorTooltip.value.also { it!!.sourceRect = Rectangle2D.pointLike(context.location) }
 			} else {
@@ -734,6 +740,7 @@ open class EdgeViewImpl<T : Any>(
 		} else {
 			null
 		}
+	}
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		return visitor.visit(this)
