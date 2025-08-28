@@ -179,11 +179,13 @@ class GraphViewExecutionAnimator(
 
 		edgeViewAnimated[applicationContextHolder.scheduler] = true
 
-		EditModule.attentionDrawerFactory.invoke(signal).drawAttentionTo(
-			edgeView.getConnectionEndpointType(edgeView.getConnection(changedPort)!!)!!.getLocation(edgeView),
-			drawingView,
-			AnimationModule.constantSpeedAnimator
-		)
+		if (applicationContextHolder.scheduler.isSingleStepMode) {
+			EditModule.attentionDrawerFactory.invoke(signal).drawAttentionTo(
+				edgeView.getConnectionEndpointType(edgeView.getConnection(changedPort)!!)!!.getLocation(edgeView),
+				drawingView,
+				AnimationModule.constantSpeedAnimator
+			)
+		}
 
 		applicationContextHolder.scheduler.logActorTrace(edgeView.model) { "Registered EdgeView animation for EdgeView '${edgeView.id}'" }
 	}
