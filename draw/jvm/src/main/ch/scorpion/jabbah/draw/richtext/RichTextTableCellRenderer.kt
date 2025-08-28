@@ -7,7 +7,6 @@ import java.awt.Dimension
 import java.awt.Graphics
 import java.awt.Graphics2D
 import javax.swing.Icon
-import javax.swing.JLabel
 import javax.swing.table.DefaultTableCellRenderer
 import kotlin.math.max
 
@@ -57,8 +56,8 @@ open class RichTextTableCellRenderer(
 		super.paintComponent(g)
 
 		var x = when (horizontalAlignment) {
-			JLabel.CENTER -> insets.left + (width - _preferredSize.width) / 2
-			JLabel.RIGHT -> width - _preferredSize.width - insets.right
+			CENTER -> insets.left + (width - _preferredSize.width) / 2
+			RIGHT -> width - _preferredSize.width - insets.right
 			else -> insets.left
 		}
 

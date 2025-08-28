@@ -180,10 +180,10 @@ class SingleTestRunDataResultPanelSwing(
 
 			renderer.border = COLUMN_HEADER_BORDER
 			if (column == 0) {
-				renderer.horizontalAlignment = JLabel.LEFT
+				renderer.horizontalAlignment = LEFT
 				renderer.richText = null
 			} else {
-				renderer.horizontalAlignment = JLabel.CENTER
+				renderer.horizontalAlignment = CENTER
 				renderer.richText = richTextPortNames[column - 1]
 			}
 			return renderer

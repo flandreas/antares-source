@@ -4,9 +4,13 @@ import ch.scorpion.jabbah.base.Settings
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.drawable.RichTextDrawable
+import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
+import ch.scorpion.jabbah.draw.richtext.RichTextTableCellRenderer
 import ch.scorpion.jabbah.graph.ui.logview.LogView
 import ch.scorpion.jabbah.graph.ui.logview.LogViewController
 import java.awt.BorderLayout
+import java.awt.Component
 import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JScrollPane
@@ -34,9 +38,12 @@ class LogViewSwing(
 
 	private val table = JTable(LogEventTableModel())
 
+	private var richTextColumnNames: List<RichTextDrawable> = emptyList()
+
 	init {
 		controller.view = this
 		rightAlignedRenderer.horizontalAlignment = JLabel.RIGHT
+		createRichTextColumnNames()
 		buildUI()
 	}
 
@@ -52,14 +59,25 @@ class LogViewSwing(
 				table.columnModel.getColumn(index).cellRenderer = rightAlignedRenderer
 			}
 			setColumnWidths()
+			createRichTextColumnNames()
 		}
 
 		(table.model as LogEventTableModel).fireTableDataChanged()
 		table.scrollRectToVisible(table.getCellRect(eventHistory.rowsCount - 1, 0, true))
 	}
 
+	private fun createRichTextColumnNames() {
+		val columNames = mutableListOf<RichTextDrawable>()
+		val font = Graphics2DJvm.fromAwtFont(table.font)
+		for (index in 0 until table.columnModel.columnCount) {
+			columNames.add(RichTextDrawable.of((table.model as LogEventTableModel).getColumnName(index), font))
+		}
+		richTextColumnNames = columNames
+	}
+
 	private fun buildUI() {
 		table.autoResizeMode = JTable.AUTO_RESIZE_OFF
+		table.tableHeader.defaultRenderer = TableColumnRenderer()
 		layout = BorderLayout()
 		val scrollPane = JScrollPane(table)
 		add(scrollPane, BorderLayout.CENTER)
@@ -93,6 +111,22 @@ class LogViewSwing(
 				0 -> StringUtils.formatLong(eventHistory.getTime(rowIndex))
 				else -> eventHistory.getValue(rowIndex, columnIndex - 1)
 			}
+		}
+	}
+
+	private inner class TableColumnRenderer : RichTextTableCellRenderer() {
+		override fun getTableCellRendererComponent(
+			table: JTable?,
+			value: Any?,
+			isSelected: Boolean,
+			hasFocus: Boolean,
+			row: Int,
+			column: Int
+		): Component? {
+			val renderer = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column) as RichTextTableCellRenderer
+			renderer.horizontalAlignment = RIGHT
+			renderer.richText = richTextColumnNames[column]
+			return renderer
 		}
 	}
 }
