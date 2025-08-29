@@ -118,7 +118,7 @@ class EdgeToPortOrEdgeConnector(
 			}
 
 			// This is exactly the same code as in AbstractPortViewStartConnector. However, if we would use
-			// a common State builder for this State, we would loose the insight in the entire StateMachine here.
+			// a common State builder for this State, we would lose the insight in the entire StateMachine here.
 			state(insideTargetPortView) {
 				onEntry { snapToTargetPortView(it) }
 				onExit { removePortViewHighlight(it) }
@@ -191,7 +191,7 @@ class EdgeToPortOrEdgeConnector(
 					given { escapePressed(it) }
 				}
 				stayOtherwise {
-					onTransit { snapToDenyingPortView(it) }
+					onTransit { snapToDenyingEdgeView(it) }
 				}
 			}
 
@@ -256,6 +256,9 @@ class EdgeToPortOrEdgeConnector(
 			context.drawingView.selectionManager.select(edgeView!!)
 		}
 	}
+
+	override fun canConnectTo(type: EdgeViewEndpointType, edgeView: EdgeView<out Any>, graphView: GraphView): Boolean =
+        type.canConnectTo(edgeView.net!!, edgeView.getConnection(type.opposite)?.port, graphView)
 
 	override fun cancel(editor: Editor) {
 		editor.commandManager.rollbackTransaction()
