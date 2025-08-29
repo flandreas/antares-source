@@ -1,8 +1,9 @@
-<metaGraph _id='0'>
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' appVersion='1.28.0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' script='' propDelay='0' startupTime='80'>
+        <graph _id='2' type='digital' script='' propDelay='0' startupTime='80'>
           <elements>
             <circuitInOut _id='3' id='1' name='A' type='inout' bitWidth='BW'>
               <desc>
@@ -102,22 +103,22 @@
             <netView _id='49' modelId='38' style='line'/>
           </netViews>
           <components>
-            <circuitInOutView _id='50' id='1' rot='0' filled='true' stroked='true' modelId='3' representation='hex' orientation='west'>
+            <circuitInOutView _id='50' id='1' rot='0' filled='true' stroked='true' modelId='3' orientation='west' representation='hex'>
               <location>
                 <point x='-266.0' y='-112.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='51' id='2' rot='0' filled='true' stroked='true' modelId='4' representation='hex' orientation='east'>
+            <circuitInOutView _id='51' id='2' rot='0' filled='true' stroked='true' modelId='4' orientation='east' representation='hex'>
               <location>
                 <point x='210.0' y='-70.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='52' id='7' rot='0' filled='true' stroked='true' modelId='5' representation='binary' orientation='east'>
+            <circuitInOutView _id='52' id='7' rot='0' filled='true' stroked='true' modelId='5' orientation='east' representation='binary'>
               <location>
                 <point x='-266.0' y='-252.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='53' id='8' rot='0' filled='true' stroked='true' modelId='6' representation='binary' orientation='west'>
+            <circuitInOutView _id='53' id='8' rot='0' filled='true' stroked='true' modelId='6' orientation='west' representation='binary'>
               <location>
                 <point x='210.0' y='-182.0'/>
               </location>
@@ -234,10 +235,15 @@
     </graphStorable>
   </graph>
   <container>
-    <containerDrawing _id='80'>
+    <containerDrawing _id='80' execDrawScript='when (DIR) {
+	0bZ : setLabel(&quot;&lt;&gt;&quot;)
+	0 : setLabel(&quot;&lt;-&quot;)
+	1 : setLabel(&quot;-&gt;&quot;)
+	else : setLabel(&quot;&lt;&gt;&quot;)
+}'>
       <components>
         <rectangle _id='81' id='1' style='figure' filled='true' stroked='true' x='140.0' y='140.0' w='56.0' h='70.0'/>
-        <originIndicator _id='82'>
+        <originIndicator _id='82' id='7'>
           <location>
             <point x='126.0' y='154.0'/>
           </location>
@@ -262,7 +268,7 @@
             <digitalPortView _id='93' x='196.0' y='196.0' dir='east' textPos='internal' portId='94'/>
           </portView>
         </digitalPortViewComp>
-        <label _id='95' rot='0'>
+        <label _id='95' id='6' rot='0'>
           <text>
             <translation lang='en' text='&lt;&gt;'/>
           </text>
