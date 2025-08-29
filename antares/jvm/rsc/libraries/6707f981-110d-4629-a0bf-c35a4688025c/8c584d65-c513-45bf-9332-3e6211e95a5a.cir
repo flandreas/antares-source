@@ -3,10 +3,10 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' type='digital' startupTime='80'>
+        <graph _id='2' type='digital' propDelay='80' startupTime='80'>
           <elements>
-            <subGraphVerticeRef _id='3' id='1' delay='0' uuid='39c2c9c7-f461-4800-baaf-8d1f7d575577' type='digital'/>
-            <subGraphVerticeRef _id='4' id='2' delay='0' uuid='39c2c9c7-f461-4800-baaf-8d1f7d575577' type='digital'/>
+            <subGraphVerticeRef _id='3' id='1' delay='80' uuid='39c2c9c7-f461-4800-baaf-8d1f7d575577' type='digital'/>
+            <subGraphVerticeRef _id='4' id='2' delay='80' uuid='39c2c9c7-f461-4800-baaf-8d1f7d575577' type='digital'/>
             <circuitInOut _id='5' id='3' name='DIR' type='input' bitWidth='1'>
               <desc>
                 <translation lang='de' text='Datenfluss-Richtung: 0 = B nach A, 1 = A nach B.'/>
