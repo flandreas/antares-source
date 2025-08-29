@@ -19,7 +19,8 @@ class GraphPropagationDelayCalculator {
      * @return -1 if no [InputPort]s exist in the [Graph].
      */
     fun calculate(graph: Graph): Long {
-        val propDelay = graph.graphOutputs
+        val propDelay = graph.graphPorts
+            .filter { it.portType.isOutput }
             .filter { it.getPort<Any>().net != null }
             .maxOfOrNull {
                 calculateBackwardsFromVertice(it, Stack())
