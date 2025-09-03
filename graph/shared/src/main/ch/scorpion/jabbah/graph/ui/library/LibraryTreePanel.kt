@@ -26,11 +26,11 @@ class LibraryTreePanelController(
 	val libraryTreeViewController: LibraryTreeViewController
 ): AbstractUIController<LibraryTreePanel>() {
 
-	val locateActiveMetaGraphAction: Action = LocateActiveMetaGraphAction(this)
+	val locateMetaGraphAction: Action = LocateMetaGraphAction(this)
 
 	override fun dispose() {
 		super.dispose()
-		locateActiveMetaGraphAction.dispose()
+		locateMetaGraphAction.dispose()
 	}
 
 	/**
