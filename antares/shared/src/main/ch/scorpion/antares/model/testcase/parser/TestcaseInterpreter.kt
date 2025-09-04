@@ -33,7 +33,7 @@ class TestcaseInterpreter(
 	}
 
 	private fun testScript(testScript: TestScript): Any {
-		val portNames: List<String> = testScript.portNames.names.map { it.value!! }
+		val portNames: List<String> = testScript.portNames.names.map { it.name.value!! }
 		for (statement in testScript.children) {
 			when (statement) {
 				is RunNode -> run(statement, portNames)

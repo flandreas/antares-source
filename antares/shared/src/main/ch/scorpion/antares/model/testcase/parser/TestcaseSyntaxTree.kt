@@ -1,6 +1,7 @@
 package ch.scorpion.antares.model.testcase.parser
 
 import ch.scorpion.antares.model.testcase.Value
+import ch.scorpion.antares.model.testcase.parser.PortNameType.*
 import ch.scorpion.jabbah.base.HierarchyVisitor
 import ch.scorpion.jabbah.base.dsl.AbstractNode
 import ch.scorpion.jabbah.base.dsl.Compound
@@ -29,12 +30,32 @@ class TestScript(
 	}
 }
 
-class PortNames(
+enum class PortNameType {
+	DEFAULT,
+	INPUT,
+	OUTPUT
+}
+
+class PortName(
 	location: TextLocation,
-	val names: List<Token<String>>
+	val name: Token<String>,
+	val type: PortNameType
 ) : AbstractNode(location) {
 
-	override fun toString(): String = names.map { it.value }.joinToString(",")
+	override fun toString(): String =
+		when (type) {
+			DEFAULT -> name.value!!
+			INPUT -> ">${name.value}"
+			OUTPUT -> "<${name.value}"
+		}
+}
+
+class PortNames(
+	location: TextLocation,
+	val names: List<PortName>
+) : AbstractNode(location) {
+
+	override fun toString(): String = names.joinToString(",") { it.toString() }
 }
 
 class RunNode(

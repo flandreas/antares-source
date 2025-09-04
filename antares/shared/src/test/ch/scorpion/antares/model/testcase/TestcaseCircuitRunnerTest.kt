@@ -67,6 +67,28 @@ class TestcaseCircuitRunnerTest {
 	}
 
 	@Test
+	fun shouldUseInOutAnnotationInAndGate() {
+		buildAndGateCircuit()
+		val testScript = """
+			>A >B <O
+			0 0 0
+			0 1 0
+			1 0 0
+			1 1 1
+		""".trimIndent()
+
+		val result = TestcaseCircuitRunner("test", testScript, circuit.graph as DigitalGraph).run()
+
+		assertEquals(3, result.names.size)
+		assertEquals(4, result.collector.size)
+
+		for (vector in result.collector) {
+			// Check state only for output columns
+			assertEquals(Value.State.PASSED, vector.getValue(2).state)
+		}
+	}
+
+	@Test
 	fun shouldAcceptDontCareOutput() {
 		buildAndGateCircuit()
 		val testScript = """

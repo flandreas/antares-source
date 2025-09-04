@@ -212,4 +212,28 @@ class TestcaseParserTest {
 			--- 1
 		""".trimIndent())
 	}
+
+	@Test
+	fun shouldParseInOutAsInput() {
+		val parser = TestcaseParser("""
+			I >IO O
+		""".trimIndent())
+
+		assertAST(parser.parse(), """
+			TestScript
+			- I,>IO,O
+		""".trimIndent())
+	}
+
+	@Test
+	fun shouldParseInOutAsOutput() {
+		val parser = TestcaseParser("""
+			I <IO O
+		""".trimIndent())
+
+		assertAST(parser.parse(), """
+			TestScript
+			- I,<IO,O
+		""".trimIndent())
+	}
 }

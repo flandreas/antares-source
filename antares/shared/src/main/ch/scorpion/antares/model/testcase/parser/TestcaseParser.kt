@@ -19,7 +19,9 @@ import ch.scorpion.jabbah.base.parser.Token
  * <pre>
  *     testScript : portNames { statement }
  *     portNames : portName portName { portName } EOL
- *     portName : ID
+ *     portName : ID | inputPortName | outputPortName
+ *     inputPortName : ">" ID
+ *     outputPortName : "<" ID
  *     statement : testVector | block
  *     block : "run" "{“ { testVector } "}"
  *     testVector : value value { value } EOL
@@ -50,24 +52,35 @@ class TestcaseParser(
 	}
 
 	private fun portNames(): PortNames {
-		val list = mutableListOf<Token<String>>()
+		val list = mutableListOf<PortName>()
 		list.add(portName())
 		list.add(portName())
-		while (currentToken!!.type == ID) {
+		while(currentToken!!.type != EOL && currentToken!!.type != EOF) {
 			list.add(portName())
-		}
-		when (currentToken!!.type) {
-			EOL -> eat(EOL)
-			EOF -> eat(EOF)
 		}
 		return PortNames(lexer.location, list)
 	}
 
-	private fun portName(): Token<String> {
-		val name = currentToken as Token<String>
-		eat(ID)
-		return name
-	}
+	private fun portName(): PortName =
+		when (currentToken!!.type) {
+			GREATER -> {
+				eat(GREATER)
+				val name = currentToken as Token<String>
+				eat(ID)
+				PortName(lexer.location, name, PortNameType.INPUT)
+			}
+			SMALLER -> {
+				eat(SMALLER)
+				val name = currentToken as Token<String>
+				eat(ID)
+				PortName(lexer.location, name, PortNameType.OUTPUT)
+			}
+			else -> {
+				val name = currentToken as Token<String>
+				eat(ID)
+				PortName(lexer.location, name, PortNameType.DEFAULT)
+			}
+    }
 
 	private fun statementList(): List<Node> {
 		val list = mutableListOf<Node>()

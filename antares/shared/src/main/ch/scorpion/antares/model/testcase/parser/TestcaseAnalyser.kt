@@ -15,7 +15,7 @@ class TestcaseAnalyser(
 
 	override fun analyse(program: Node) {
 		val script = program as TestScript
-		val portNames = script.portNames.names.map { it.value!! }
+		val portNames = script.portNames.names.map { it.name.value!! }
 
 		ensurePortsExist(portNames)
 		ensureAtLeastOneInput(portNames)

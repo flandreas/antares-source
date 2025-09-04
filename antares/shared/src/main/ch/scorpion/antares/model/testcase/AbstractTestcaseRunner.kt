@@ -3,7 +3,10 @@ package ch.scorpion.antares.model.testcase
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.inout.DigitalCircuitInOut
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.testcase.parser.PortName
+import ch.scorpion.antares.model.testcase.parser.PortNameType
 import ch.scorpion.antares.model.testcase.parser.TestScript
+import ch.scorpion.jabbah.graph.model.PortType
 import kotlin.math.max
 
 abstract class AbstractTestcaseRunner(
@@ -12,7 +15,7 @@ abstract class AbstractTestcaseRunner(
 	protected val circuit: DigitalGraph
 ) {
 
-	protected lateinit var portNames: List<String>
+	protected lateinit var portNames: List<PortName>
 	protected lateinit var currentTestVector: TestVector
 
 	abstract fun run(): TestRunResult
@@ -21,15 +24,21 @@ abstract class AbstractTestcaseRunner(
 
 	abstract fun dispose()
 
-	protected abstract fun setInput(port: DigitalCircuitInOut, signal: DigitalSignal)
+	protected abstract fun setInput(input: DigitalCircuitInOut, signal: DigitalSignal)
 
-	protected abstract fun readOutput(port: DigitalCircuitInOut): DigitalSignal?
+	protected abstract fun readOutput(output: DigitalCircuitInOut): DigitalSignal?
 
-	protected fun determineIsOutput(portNames: List<String>): List<Boolean> =
-		portNames.map {
-			val port = circuit.getGraphPort<DigitalSignal>(it)
-			port is DigitalCircuitInOut && port.portType.isOutput
-		}.toList()
+	protected fun determineIsOutput(): List<Boolean> = portNames.map { isDigitalCircuitOutput(it) }.toList()
+
+	private fun isDigitalCircuitInput(portName: PortName): Boolean {
+		val port = circuit.getGraphPort<DigitalSignal>(portName.name.value!!)
+		return portName.type == PortNameType.INPUT || port is DigitalCircuitInOut && port.portType == PortType.INPUT
+	}
+
+	private fun isDigitalCircuitOutput(portName: PortName): Boolean {
+		val port = circuit.getGraphPort<DigitalSignal>(portName.name.value!!)
+		return portName.type == PortNameType.OUTPUT || port is DigitalCircuitInOut && port.portType == PortType.OUTPUT
+	}
 
 	@Suppress("UNUSED_PARAMETER")
 	protected fun setInputs(context: Any?): Long =
@@ -41,11 +50,11 @@ abstract class AbstractTestcaseRunner(
 	private fun setInputsFiltered(context: Any?, filter: (Value.Type) -> Boolean): Long {
 		var inputSet = false
 		portNames.forEachIndexed { index, portName ->
-			val port = circuit.getGraphPort<DigitalSignal>(portName)
-			if (port is DigitalCircuitInOut && port.portType.isInput) {
+			val port = circuit.getGraphPort<DigitalSignal>(portName.name.value!!)
+			if (isDigitalCircuitInput(portName)) {
 				val value = currentTestVector.getValue(index)
 				if (filter(value.type)) {
-					val signal = value.value.ofWidth(port.bitWidth)
+					val signal = value.value.ofWidth((port as DigitalCircuitInOut).bitWidth)
 					setInput(port, signal)
 					inputSet = true
 				}
@@ -61,10 +70,10 @@ abstract class AbstractTestcaseRunner(
 	@Suppress("UNUSED_PARAMETER")
 	protected fun readOutputs(context: Any?) {
 		portNames.forEachIndexed { index, portName ->
-			val port = circuit.getGraphPort<DigitalSignal>(portName)
-			if (port is DigitalCircuitInOut && port.portType.isOutput) {
+			val port = circuit.getGraphPort<DigitalSignal>(portName.name.value!!)
+			if (isDigitalCircuitOutput(portName)) {
 				val expected = currentTestVector.getValue(index)
-				val outputValue = readOutput(port)
+				val outputValue = readOutput(port as DigitalCircuitInOut)
 				val matchedValue = MatchedValue(
 					expected.withValue(expected.value.ofWidth(port.bitWidth)),
 					outputValue!!.ofWidth(port.bitWidth)

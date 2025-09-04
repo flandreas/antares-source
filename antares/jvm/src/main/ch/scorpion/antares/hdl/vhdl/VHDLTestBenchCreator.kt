@@ -4,10 +4,8 @@ import ch.scorpion.antares.hdl.HDLExportTestBenchParams
 import ch.scorpion.antares.hdl.HDLModel
 import ch.scorpion.antares.hdl.HDLPort
 import ch.scorpion.antares.model.port.DigitalPort
-import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.testcase.TestVector
 import ch.scorpion.antares.model.testcase.TestVectorConsumer
 import ch.scorpion.antares.model.testcase.Testcase
@@ -17,8 +15,8 @@ import ch.scorpion.antares.model.testcase.parser.TestcaseAnalyser
 import ch.scorpion.antares.model.testcase.parser.TestcaseInterpreter
 import ch.scorpion.antares.model.testcase.parser.TestcaseParser
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.dsl.SyntaxError
 import ch.scorpion.jabbah.base.dsl.SemanticError
+import ch.scorpion.jabbah.base.dsl.SyntaxError
 import ch.scorpion.jabbah.base.io.CodePrinter
 import ch.scorpion.jabbah.base.io.Separator
 import ch.scorpion.jabbah.base.parser.TextLocation
@@ -110,7 +108,7 @@ class VHDLTestBenchCreator(
 	private fun printTypePattern(): List<HDLPort> {
 		val portOrder = mutableListOf<HDLPort>()
 		out.println("type test_data_type is record").inc()
-		testScript.portNames.names.map { it.value!! }.forEach { portName ->
+		testScript.portNames.names.map { it.name.value!! }.forEach { portName ->
 			val saveName = params.renaming.checkName(portName)
 			val port = model.main.getPort(saveName) ?:
 				throw SemanticError(TextLocation.UNDEFINED, Translations.getString("antares.vhdl.portNameNotFound.error.text", saveName))

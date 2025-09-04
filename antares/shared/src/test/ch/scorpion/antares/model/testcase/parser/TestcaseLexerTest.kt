@@ -2,13 +2,20 @@ package ch.scorpion.antares.model.testcase.parser
 
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.BaseTokenType
 import ch.scorpion.jabbah.base.parser.AbstractLexer
 import ch.scorpion.jabbah.base.parser.TokenType
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class TestcaseLexerTest {
+
+	@BeforeTest
+	fun setup() {
+		Translations.withAnyKey()
+	}
 
 	@Test
 	fun shouldScanRun() {
@@ -27,6 +34,32 @@ class TestcaseLexerTest {
 		assertToken(TestcaseTokenType.RCURLEY, lexer)
 	}
 
+	@Test
+	fun shouldParseIdentifiers() {
+		val lexer = TestcaseLexer("I1 I2 O")
+		assertId("I1", lexer)
+		assertId("I2", lexer)
+		assertId("O", lexer)
+	}
+
+	@Test
+	fun shouldParseInOutAsInput() {
+		val lexer = TestcaseLexer("I1 >IO O")
+		assertId("I1", lexer)
+		assertToken(TestcaseTokenType.GREATER, lexer)
+		assertId("IO", lexer)
+		assertId("O", lexer)
+	}
+
+	@Test
+	fun shouldParseInOutAsOutput() {
+		val lexer = TestcaseLexer("I1 <IO O")
+		assertId("I1", lexer)
+		assertToken(TestcaseTokenType.SMALLER, lexer)
+		assertId("IO", lexer)
+		assertId("O", lexer)
+	}
+
 	private fun assertToken(type: TokenType, lexer: AbstractLexer) {
 		assertEquals(type, lexer.nextToken().type)
 	}
@@ -36,4 +69,11 @@ class TestcaseLexerTest {
 		assertEquals(TestcaseTokenType.DECIMAL_LITERAL, token.type)
 		assertEquals(DigitalSignalFactory.of(BitWidth.BW_1, value), token.value)
 	}
+
+	private fun assertId(name: String, lexer: AbstractLexer) {
+		val token = lexer.nextToken()
+		assertEquals(BaseTokenType.ID, token.type)
+		assertEquals(name, token.value)
+	}
+
 }

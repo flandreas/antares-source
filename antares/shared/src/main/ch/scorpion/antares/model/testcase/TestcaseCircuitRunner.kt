@@ -46,7 +46,7 @@ class TestcaseCircuitRunner(
 	override fun run(): TestRunResult {
 		try {
 			val collector = TestVectorCollector()
-			portNames = testScript.portNames.names.map { it.value!! }
+			portNames = testScript.portNames.names
 
 			TestcaseInterpreter(testScript, circuit, collector).interpret()
 
@@ -63,7 +63,7 @@ class TestcaseCircuitRunner(
 				maxDuration = max(duration, maxDuration)
 			}
 
-			return TestRunResult(circuit, Circuit, testName, portNames, determineIsOutput(portNames), collector, null, maxDuration)
+			return TestRunResult(circuit, Circuit, testName, portNames.map { it.name.value!! }, determineIsOutput(), collector, null, maxDuration)
 		} catch (e: SyntaxError) {
 			return TestRunResult.error(circuit, TestRunResult.Type.Script, testName, e.message ?: "Error")
 		} catch (e: SemanticError) {
@@ -84,16 +84,9 @@ class TestcaseCircuitRunner(
 		circuitRunner.dispose()
 	}
 
-	override fun setInput(port: DigitalCircuitInOut, signal: DigitalSignal) {
-		port.setIncomingSignal(signal, circuitRunner.scheduler)
+	override fun setInput(input: DigitalCircuitInOut, signal: DigitalSignal) {
+		input.setIncomingSignal(signal, circuitRunner.scheduler)
 	}
 
-	override fun readOutput(port: DigitalCircuitInOut): DigitalSignal? =
-		with(port.getPort<DigitalSignal>() as DigitalPort) {
-			if (portType == PortType.INOUT) {
-				getOutgoingSignal()
-			} else {
-				getIncomingSignal()
-			}
-		}
+	override fun readOutput(output: DigitalCircuitInOut): DigitalSignal? = output.signal
 }

@@ -73,7 +73,7 @@ class TestcaseScriptRunner(
 	override fun run(): TestRunResult {
 		try {
 			val collector = TestVectorCollector()
-			portNames = testScript.portNames.names.map { it.value!! }
+			portNames = testScript.portNames.names
 			TestcaseInterpreter(testScript, circuit, collector).interpret()
 
 			val execScriptInterpreter = BaseModule.interpreterFactory(execScriptAST, memory) as AntaresInterpreter
@@ -85,7 +85,7 @@ class TestcaseScriptRunner(
 				runImpl(execScriptInterpreter, doStart)
 			}
 
-			return TestRunResult(circuit, Script, testName, portNames, determineIsOutput(portNames), collector)
+			return TestRunResult(circuit, Script, testName, portNames.map { it.name.value!! }, determineIsOutput(), collector)
 		} catch (e: SyntaxError) {
 			return TestRunResult.error(circuit, Script, testName, e.toString())
 		} catch (e: SemanticError) {
@@ -110,7 +110,7 @@ class TestcaseScriptRunner(
 	private fun defineMemory() {
 		memory.reset()
 		for (portName in portNames) {
-			memory.preset(portName, 0L)
+			memory.preset(portName.name.value!!, 0L)
 		}
 	}
 

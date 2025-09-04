@@ -20,7 +20,9 @@ enum class TestcaseTokenType(override val id: String) : TokenType {
 	RCURLEY("}"),
 	DECIMAL_LITERAL("0d"),
 	BINARY_LITERAL("0b"),
-	HEX_LITERAL("0x")
+	HEX_LITERAL("0x"),
+	GREATER(">"),
+	SMALLER("<")
 }
 
 class TestcaseLexer(text: String) : BaseLexer(text) {
@@ -32,6 +34,8 @@ class TestcaseLexer(text: String) : BaseLexer(text) {
 		private val RUN_TOKEN = Token<String>(RUN)
 		private val LCURLEY_TOKEN = Token<Unit>(LCURLEY)
 		private val RCURLEY_TOKEN = Token<Unit>(RCURLEY)
+		private val GREATER_TOKEN = Token<Unit>(GREATER)
+		private val SMALLER_TOKEN = Token<Unit>(SMALLER)
 
 		val RESERVED_KEYWORDS = mapOf(
 			"run" to RUN_TOKEN
@@ -53,6 +57,8 @@ class TestcaseLexer(text: String) : BaseLexer(text) {
 			'Z', 'z' -> return advanceWith(state, UNDEFINED_TOKEN)
 			'{' -> return advanceWith(state, LCURLEY_TOKEN)
 			'}' -> return advanceWith(state, RCURLEY_TOKEN)
+			'>' -> return advanceWith(state, GREATER_TOKEN)
+			'<' -> return advanceWith(state, SMALLER_TOKEN)
 		}
 
 		return super.nextTokenImpl(state)
