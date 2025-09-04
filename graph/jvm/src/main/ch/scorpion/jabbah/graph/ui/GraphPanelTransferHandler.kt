@@ -3,8 +3,10 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.draw.drawable.Orientable
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.ComponentTransferHandler
 import ch.scorpion.jabbah.edit.Editor
@@ -93,7 +95,14 @@ class GraphPanelTransferHandler(
 		transferable: Transferable
 	): Component {
 		val data = transferable.getTransferData(GraphElementViewTransferable.FLAVOR) as GraphElementViewTransferableData
-		return service.addGraphElementViewFromLibrary(data.libraryElement, dropComponent.location, dropComponent.rotation, editor, data.customizer)
+		val rotation = if (dropComponent.useRotation) {
+			dropComponent.rotation
+		} else if (dropComponent is Orientable && dropComponent.useOrientation) {
+			dropComponent.orientation.rotation
+		} else {
+			Rotation.R0
+		}
+		return service.addGraphElementViewFromLibrary(data.libraryElement, dropComponent.location, rotation, editor, data.customizer)
 	}
 
 	private fun checkEditability(): Boolean {

@@ -1,7 +1,9 @@
 package ch.scorpion.jabbah.graph.view.app
 
+import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
+import ch.scorpion.jabbah.draw.drawable.Orientable
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.DragManager
@@ -39,6 +41,8 @@ class AddGraphElementViewFromLibraryCommand(
 		graphElementView.location = location
 		if (graphElementView.useRotation) {
 			graphElementView.rotation = rotation
+		} else if (graphElementView is Orientable && graphElementView.useOrientation) {
+			graphElementView.orientation = Direction.of(rotation)
 		}
 		graphView.add(graphElementView)
 		addedComponentId = graphElementView.id

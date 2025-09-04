@@ -14,13 +14,16 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.Focusable
+import ch.scorpion.jabbah.draw.drawable.Orientable
 import ch.scorpion.jabbah.draw.drawable.RotationDirection
+import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.draw.drawable.Rotatable
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
@@ -54,7 +57,7 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 	model: T,
 	protected val eventBus: EventBus = BaseModule.eventBus,
 	orientation: Direction = Direction.EAST
-) : AbstractVerticeView<T>(styleProvider, model), GraphPortView<T>, Labeled {
+) : AbstractVerticeView<T>(styleProvider, model), GraphPortView<T>, Labeled, Orientable {
 
 	companion object {
 		const val PROP_INPUT_ICON_PATH = "ch.scorpion.antares.view.inout.CircuitInOut.inputIcon"
@@ -68,7 +71,11 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 
 	private val actorInteractionHandler: ToggleInteractionHandler = createActorInteractionHandler()
 
-	var orientation: Direction = orientation
+	/** ---- [Orientable] */
+
+	override val useOrientation: Boolean get() = true
+
+	override var orientation: Direction = orientation
 		set(value) {
 			if (field != value) {
 				invalidate()
@@ -76,6 +83,8 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 				updateView()
 			}
 		}
+
+	/** ---- [Locatable] */
 
 	override var location: Point2D = Point2D.ZERO
 		set(value) {
@@ -160,6 +169,10 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 
 	override fun isRotatableWith(selection: Collection<*>): Boolean = true
 
+	/** ---- [Rotatable] */
+
+	override val useRotation: Boolean get() = false
+
 	override fun rotate(direction: RotationDirection, pivot: Point2D?) {
 		orientation = when (direction) {
 			RotationDirection.Clockwise -> Direction.of(orientation.rotation.previous())
@@ -169,6 +182,7 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 			location = direction.rotation.rotatePointAround(it, location)
 		}
 	}
+
 
 	/** ---- [AbstractGraphElementView] */
 
