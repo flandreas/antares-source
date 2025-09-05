@@ -5,7 +5,7 @@ import ch.scorpion.jabbah.graph.model.GraphTypeSignalAdapter
 
 object Digital2AnalogAdapter : GraphTypeSignalAdapter<AnalogSignal, DigitalSignal> {
 
-	private const val MIN_HIGH_VOLTAGE = 2.0
+	const val MIN_HIGH_VOLTAGE = 2.0
 
 	override fun convertIncomingSignal(signal: DigitalSignal?): AnalogSignal {
 		if (signal == null) {

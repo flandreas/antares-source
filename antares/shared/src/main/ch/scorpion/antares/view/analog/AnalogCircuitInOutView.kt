@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.analog.AbstractAnalogVertice
 import ch.scorpion.antares.model.analog.AnalogCircuitInOut
 import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.model.signal.Bit
+import ch.scorpion.antares.model.signal.Digital2AnalogAdapter
 import ch.scorpion.antares.view.analog.engine.AnalogElement
 import ch.scorpion.antares.view.analog.engine.AnalogElementProxy
 import ch.scorpion.antares.view.inout.AbstractCircuitInOutView
@@ -46,7 +47,7 @@ class AnalogCircuitInOutView(
 	val voltageLabel = Label(
 		"0.0 V",
 		styleProvider.getStyle(StyleType.ANNOTATION).font,
-		textColor,
+		null,
 		HorizontalAlignment.CENTER,
 		VerticalAlignment.CENTER,
 		richText = false)
@@ -121,6 +122,7 @@ class AnalogCircuitInOutView(
 	}
 
 	override fun drawSimulated(context: DrawContext) {
+		val digitalSignal = Digital2AnalogAdapter.convertOutgoingSignal(model.signal)
 		if (model.signal == null) {
 			drawEdited(
 				context,
@@ -130,15 +132,14 @@ class AnalogCircuitInOutView(
 		} else {
 			drawEdited(
 				context,
-				transparent.applyTo(foregroundColor),
-				transparent.applyTo(backgroundColor)
-			)
+				transparent.applyTo(digitalSignal.color.backgroundColor),
+				transparent.applyTo(digitalSignal.color.foregroundColor))
 		}
 
 		if (model.signal == null) {
 			context.g.color = Bit.Undefined.color.textColor
 		} else {
-			context.g.color = textColor
+			context.g.color = digitalSignal.color.textColor
 		}
 		context.translated(getArrowPathTranslation()) {
 			voltageLabel.draw(context)
