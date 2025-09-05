@@ -43,10 +43,6 @@ class SchedulerImpl(
 ) : Scheduler, ExecutionErrorHandler by executionErrorHandler {
 
 	companion object {
-
-		/** The custom name [String] of the limit [SystemSpeedCategory] in [Properties] for sending [SchedulerEvent]s.*/
-		const val PROP_SCHEDULER_EVENT_SYSTEM_SPEED_LIMIT = "execution.scheduler.eventSystemSpeedLimit"
-
 		private val LOG by logger(SchedulerImpl::class)
 		private const val SETTING_STOP_ON_ISSUE = "execution.scheduler.stopOnIssue"
 		const val SETTING_ENABLE_SOFT_BREAKPOINTS = "execution.scheduler.enableSoftBreakpoints"
@@ -113,6 +109,8 @@ class SchedulerImpl(
 
 	private val displaySimulationTime: Boolean get() =
 		isSingleStepMode || isSimulationTimeStatusEnabled && currentSystemSpeedCategory.systemSpeedCategory >= SystemSpeedCategory.Observe
+
+	private val schedulerListeners = mutableListOf<SchedulerListener>()
 
 	init {
 		task.bind(this)
@@ -224,6 +222,21 @@ class SchedulerImpl(
 		}
 
 	override var softBreakpointsArmTime: Long = 0
+
+	override fun addListener(listener: SchedulerListener) {
+		if (!schedulerListeners.contains(listener)) {
+			schedulerListeners.add(listener)
+		}
+	}
+
+	override fun removeListener(listener: SchedulerListener) {
+		schedulerListeners.remove(listener)
+	}
+
+	override fun notifyListeners(source: Any) {
+		val event = SchedulerEvent(this, source)
+		schedulerListeners.forEach { it.handle(event) }
+	}
 
 	override fun execute(): ExecutionStepResult {
 		return executeImpl(resume = false)
@@ -343,8 +356,6 @@ class SchedulerImpl(
 			postSchedulerStateEvent()
 		}
 		startTaskIfNeeded()
-
-		postSchedulerEvent(actor, SchedulerEvent.Type.REQUESTED)
 	}
 
 	/** ---- [SchedulerImpl] */
@@ -392,11 +403,9 @@ class SchedulerImpl(
 		}
 	}
 
-	private fun postSchedulerEvent(actor: Actor, type: SchedulerEvent.Type) {
-		// Is only active when exploring the system. For performance reasons, we therefore avoid sending
-		// unnecessary (and costly) events.
-		if (isActive && currentSystemSpeedCategory.systemSpeedCategory >= SystemSpeedCategory.withName(BaseModule.properties.getString(PROP_SCHEDULER_EVENT_SYSTEM_SPEED_LIMIT))) {
-			eventBus.post(SchedulerEvent(type, this, actor))
+	private fun postSchedulerEvent(actor: Actor) {
+		if (isActive) {
+			notifyListeners(actor)
 		}
 	}
 
@@ -622,7 +631,7 @@ class SchedulerImpl(
 			request?.let {
 				logActorTrace(actor) { "Actor is done " }
 				requests.remove(it.actor)
-				postSchedulerEvent(actor, SchedulerEvent.Type.DONE)
+				postSchedulerEvent(actor)
 			}
 		}
 

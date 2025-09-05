@@ -7,13 +7,13 @@ import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.drawable.FlexibleTextView
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.execution.scheduler.BreakEvent
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.execution.scheduler.SchedulerEvent
+import ch.scorpion.jabbah.execution.scheduler.SchedulerListener
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategoryEvent
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
@@ -47,27 +47,30 @@ class ScenarioDetector(
 		private const val DESC_UNZOOMABLE = false
 	}
 
-	private val schedulerEventHandler: EventHandler<SchedulerEvent> = {
-		if (isAfterStartupDuration()) {
-			val doDetect =
-				if (it.scheduler === applicationContextHolder.scheduler && it.type == SchedulerEvent.Type.DONE) {
-					when (it.source) {
-						is GraphElement -> {
-							view.drawing.graph!!.contains(it.source as GraphElement)
-						}
+	// Using functional interface doesn't work when removing listener from Scheduler
+	private val schedulerListener = object : SchedulerListener {
+		override fun handle(event: SchedulerEvent) {
+			if (isAfterStartupDuration()) {
+				val doDetect =
+					if (event.scheduler === applicationContextHolder.scheduler) {
+						when (event.source) {
+							is GraphElement -> {
+								view.drawing.graph!!.contains(event.source as GraphElement)
+							}
 
-						is GraphView -> {
-							view.drawing === it.source
-						}
+							is GraphView -> {
+								view.drawing === event.source
+							}
 
-						else -> false
+							else -> false
+						}
+					} else {
+						false
 					}
-				} else {
-					false
-				}
 
-			if (doDetect) {
-				detect()
+				if (doDetect) {
+					detect()
+				}
 			}
 		}
 	}
@@ -117,6 +120,10 @@ class ScenarioDetector(
 		}
 	}
 
+	private val scenarioModeHandler: EventHandler<CurrentScenarioModeEvent> = {
+		updateActive()
+	}
+
 	private var isActive: Boolean = false
 
 	/** The currently displayed description of a [Scenario], if any.*/
@@ -130,20 +137,21 @@ class ScenarioDetector(
 
 	init {
 		eventBus.register(SystemSpeedCategoryEvent::class, systemSpeedCategoryHandler)
-		eventBus.register(SchedulerEvent::class, schedulerEventHandler)
 		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivateStateHandler)
 		eventBus.register(ScenarioEvent::class, scenarioEventHandler)
 		eventBus.register(ScenarioStepEvent::class, scenarioStepEventHandler)
+		eventBus.register(CurrentScenarioModeEvent::class, scenarioModeHandler)
 
 		updateActive()
 	}
 
 	fun dispose() {
 		eventBus.unregister(SystemSpeedCategoryEvent::class, systemSpeedCategoryHandler)
-		eventBus.unregister(SchedulerEvent::class, schedulerEventHandler)
+		applicationContextHolder.scheduler.removeListener(schedulerListener)
 		eventBus.unregister(SchedulerActivationStateEvent::class, schedulerActivateStateHandler)
 		eventBus.unregister(ScenarioStepEvent::class, scenarioStepEventHandler)
 		eventBus.unregister(ScenarioEvent::class, scenarioEventHandler)
+		eventBus.unregister(CurrentScenarioModeEvent::class, scenarioModeHandler)
 	}
 
 	private fun detect() {
@@ -170,11 +178,17 @@ class ScenarioDetector(
 	private fun updateActive() {
 		val oldValue = isActive
 		isActive = applicationContextHolder.scheduler.isActive
-			&& applicationContextHolder.currentSystemSpeedCategory.systemSpeedCategory >= SystemSpeedCategory.withName(BaseModule.properties.getString(PROP_LIMIT_SYSTEM_SPEED_CATEGORY))
+			&& CurrentScenarioMode.displayTextForSpeedCategory(applicationContextHolder.currentSystemSpeedCategory.systemSpeedCategory)
 		if (isActive != oldValue) {
 			LOG.trace("active = '$isActive'")
 			view.drawing.currentScenario = null
 			view.drawing.currentScenarioStep = null
+
+			if (isActive) {
+				applicationContextHolder.scheduler.addListener(schedulerListener)
+			} else {
+				applicationContextHolder.scheduler.removeListener(schedulerListener)
+			}
 		}
 	}
 

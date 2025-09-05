@@ -14,9 +14,9 @@ import javax.swing.JRadioButtonMenuItem
 
 /** A [JMenu] containing [Action]s for all available [NoiseGenerator]s.*/
 class NoiseMenu(
-        noiseGenerators: List<NoiseGenerator>,
-        holder: NoiseGeneratorHolder = ExecutionModule.noiseGeneratorHolder,
-        eventBus: EventBus = BaseModule.eventBus
+    noiseGenerators: List<NoiseGenerator>,
+    holder: NoiseGeneratorHolder = ExecutionModule.noiseGeneratorHolder,
+    eventBus: EventBus = BaseModule.eventBus
 ) : JMenu(Translations.getString("execution.menu.noise")) {
 
     init {

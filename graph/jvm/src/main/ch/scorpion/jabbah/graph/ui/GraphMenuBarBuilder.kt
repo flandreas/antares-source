@@ -29,6 +29,7 @@ import ch.scorpion.jabbah.graph.ui.portrenaming.GraphPortRenamingAction
 import ch.scorpion.jabbah.graph.ui.usecase.*
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeVisibilityAction
 import ch.scorpion.jabbah.graph.view.scenario.ScenarioBreakpointAction
+import ch.scorpion.jabbah.graph.view.scenario.ScenarioModeMenu
 import org.apache.commons.lang3.SystemUtils
 import javax.swing.JCheckBoxMenuItem
 import javax.swing.JMenu
@@ -134,6 +135,7 @@ open class GraphMenuBarBuilder(
 		}
 		menu.add(SignalConflictBehaviourMenu())
 		menu.add(simulationAnalysisMenu())
+		menu.add(ScenarioModeMenu())
 
 		return menu
 	}

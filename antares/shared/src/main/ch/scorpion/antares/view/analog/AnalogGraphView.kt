@@ -192,7 +192,7 @@ class AnalogGraphView(
 
 				if (signalHandler is Scheduler) {
 					/** Required e.g. by [ScenarioDetector]*/
-					eventBus.post(SchedulerEvent(SchedulerEvent.Type.DONE, signalHandler, this@AnalogGraphView))
+					eventBus.post(SchedulerEvent(signalHandler, this@AnalogGraphView))
 				}
 			} catch (e: Throwable) {
 				LOG.debug("Error while analyzing: ${e.message}")

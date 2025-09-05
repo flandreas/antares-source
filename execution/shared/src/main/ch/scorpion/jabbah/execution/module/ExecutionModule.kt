@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.execution.issue.IssueCollector
 import ch.scorpion.jabbah.execution.noise.NoNoiseGenerator
 import ch.scorpion.jabbah.execution.noise.NoiseGeneratorHolder
 import ch.scorpion.jabbah.execution.noise.RandomNoiseGenerator
-import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
+import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.scheduler.SchedulerTask
 import ch.scorpion.jabbah.execution.scheduler.TimedSchedulerTask
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
@@ -37,7 +37,7 @@ object ExecutionModule : AbstractModule() {
 	}
 
 	private fun fillProperties(properties: Properties) {
-		properties.set(SchedulerImpl.PROP_SCHEDULER_EVENT_SYSTEM_SPEED_LIMIT, SystemSpeedCategory.Observe.customName)
+		properties.set(Scheduler.PROP_SCHEDULER_EVENT_SYSTEM_SPEED_LIMIT, SystemSpeedCategory.Observe.customName)
 		properties.set(IssueCollector.PROP_MAX_ISSUES_COUNT, 100)
 		properties.set(TimedSchedulerTask.PROP_SLOWDOWN_FACTOR, TimedSchedulerTask.DEF_SLOWDOWN_FACTOR)
 	}

@@ -30,7 +30,7 @@ import ch.scorpion.jabbah.edit.select.SelectedColorSelectionModel
 import ch.scorpion.jabbah.edit.select.SelectionModelFactory
 import ch.scorpion.jabbah.edit.style.EditStyleType
 import ch.scorpion.jabbah.edit.style.EditTheme
-import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
+import ch.scorpion.jabbah.execution.scheduler.Scheduler
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphAuthorizations
 import ch.scorpion.jabbah.graph.container.*
@@ -71,6 +71,7 @@ import ch.scorpion.jabbah.graph.view.port.PortViewStorable
 import ch.scorpion.jabbah.graph.view.port.UndefinedPortViewFactory
 import ch.scorpion.jabbah.graph.view.scenario.ScenarioDetector
 import ch.scorpion.jabbah.graph.view.scenario.ScenarioImpl
+import ch.scorpion.jabbah.graph.view.scenario.ScenarioMode
 import ch.scorpion.jabbah.graph.view.scenario.ScenarioStepImpl
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
@@ -218,8 +219,9 @@ object GraphViewModule : AbstractModule() {
 		properties.set(OrthoEdgeViewLayouter.PROP_ADVANCED_LAYOUT, true)
 
 		properties.set(ScenarioDetector.PROP_LIMIT_SYSTEM_SPEED_CATEGORY, SystemSpeedCategory.Observe.customName)
-		properties.set(SchedulerImpl.PROP_SCHEDULER_EVENT_SYSTEM_SPEED_LIMIT, SystemSpeedCategory.Observe.customName)
+		properties.set(Scheduler.PROP_SCHEDULER_EVENT_SYSTEM_SPEED_LIMIT, SystemSpeedCategory.Observe.customName)
 		properties.set(ContainerEditor.PROP_DEFAULT_ZOOM_FACTOR, 2.0f)
+		properties.set(ScenarioMode.PROP_SCENARIO_MODE, ScenarioMode.SpeedLimitOrSlower.customName)
 
 		properties.set(OscilloscopeView.PROP_INDIVIDUAL_PROBE_COLORS, true)
 		properties.set(UsecaseRecorder.PROP_DEF_DELAY_MS, 2)

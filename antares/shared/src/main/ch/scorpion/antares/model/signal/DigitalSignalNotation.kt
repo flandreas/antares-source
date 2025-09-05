@@ -73,10 +73,9 @@ enum class DigitalSignalNotation(
 		// The code of the Unicode subscript character for the digit 0
 		private const val SUBSCRIPT_UNICODE_BASE = 0x2080
 
-		fun withName(customName: String): DigitalSignalNotation {
-			return values().firstOrNull { it.customName == customName }
-				?: throw IllegalArgumentException("unknown DigitalSignalNotation '$customName'")
-		}
+		fun withName(customName: String): DigitalSignalNotation =
+			DigitalSignalNotation.entries.firstOrNull { it.customName == customName }
+            	?: throw IllegalArgumentException("unknown DigitalSignalNotation '$customName'")
 	}
 
 	abstract fun notate(representation: DigitalSignalRepresentation): String

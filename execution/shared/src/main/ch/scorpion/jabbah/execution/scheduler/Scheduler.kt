@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.execution.scheduler
 
 import ch.scorpion.jabbah.base.Issue
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Status
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.time.SystemSpeed
@@ -23,6 +24,11 @@ import ch.scorpion.jabbah.execution.ExecutionError
  * - Hard breakpoints: Explicit breakpoints produced by special [Actor]s that send a [BreakEvent]
  */
 interface Scheduler : SignalHandler {
+
+	companion object {
+		/** The custom name [String] of the limit [SystemSpeedCategory] in [Properties] for sending [SchedulerEvent]s.*/
+		const val PROP_SCHEDULER_EVENT_SYSTEM_SPEED_LIMIT = "execution.scheduler.eventSystemSpeedLimit"
+	}
 
     val numberOfRemainingSlots: Int
 
@@ -65,6 +71,12 @@ interface Scheduler : SignalHandler {
 
 	fun dispose()
 
+	fun addListener(listener: SchedulerListener)
+
+	fun removeListener(listener: SchedulerListener)
+
+	fun notifyListeners(source: Any)
+
 	/** Repeatedly called by a [SchedulerTask] to drive the execution. */
 	fun execute(): ExecutionStepResult
 
@@ -100,18 +112,12 @@ data class ExecutionStepResult(val recalculated: Boolean, val breakpoint: Boolea
 
 /** Posted by a [Scheduler] during execution phase.*/
 class SchedulerEvent(
-	val type: Type,
 	val scheduler: Scheduler,
 	val source: Any
-) {
+)
 
-    enum class Type {
-        /** An event of this type is sent after an [Actor] has requested scheduling*/
-        REQUESTED,
-
-        /** An event of this type is sent after acting has been done.*/
-        DONE
-    }
+fun interface SchedulerListener {
+	fun handle(event: SchedulerEvent)
 }
 
 /**
