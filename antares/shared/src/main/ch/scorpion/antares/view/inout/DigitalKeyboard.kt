@@ -189,9 +189,9 @@ object DigitalKeyboard : ActorViewContainer<Drawable>(useLocation = true), Focus
 	private fun updateUI() {
 		digitButtons.forEachIndexed { index, button ->
 			button.enabled = when (target!!.signalRepresentation) {
-				DigitalSignalRepresentation.BINARY -> index < 2
-				DigitalSignalRepresentation.OCTAL -> index < 8
-				DigitalSignalRepresentation.DECIMAL -> index < 10
+				DigitalSignalRepresentation.BINARY -> index < 2 || index >= 16
+				DigitalSignalRepresentation.OCTAL -> index < 8 || index >= 16
+				DigitalSignalRepresentation.DECIMAL -> index < 10 || index >= 16
 				DigitalSignalRepresentation.HEXADECIMAL -> true
 				else -> false
 			}

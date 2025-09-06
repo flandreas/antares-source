@@ -90,13 +90,8 @@ class DigitalSignalRepresentationTest {
 	}
 
 	@Test
-	fun shouldNotReplaceDecimalUndefinedDigit() {
-		assertNull(DECIMAL.withDigit(of(BW_8, 123L), allOf(BW_4, Bit.Undefined), 0))
-	}
-
-	@Test
-	fun shouldNotReplaceDecimalErrorDigit() {
-		assertNull(DECIMAL.withDigit(of(BW_8, 123L), allOf(BW_4, Bit.Error), 0))
+	fun shouldReplaceDecimalUndefinedSubWord() {
+		assertEquals(DigitalSignalFactory.undefined(BW_2), DECIMAL.withDigit(of(BW_2, 0), DigitalSignalFactory.undefined(BW_4), 0))
 	}
 
 	@Test

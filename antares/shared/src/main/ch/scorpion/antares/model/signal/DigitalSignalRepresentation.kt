@@ -58,6 +58,12 @@ enum class DigitalSignalRepresentation(override val customName: String) : EnumPr
 		override fun digitToWord(bitWidth: BitWidth, digit: Char): DigitalSignal? = BitOperation.decimalDigitToWord(bitWidth, digit)
 		override fun withDigit(word: DigitalSignal, digitWord: DigitalSignal, index: Int): DigitalSignal? {
 			return try {
+				if (digitWord.hasError) {
+					return DigitalSignalFactory.error(word.bitWidth)
+				}
+				if (digitWord.isPartiallyUndefined) {
+					return DigitalSignalFactory.undefined(word.bitWidth)
+				}
 				var s = word.getValue().toString().padStart(index + 1, '0')
 				val sIndex = s.length - 1 - index
 				s = StringBuilder(s).also { it[sIndex] = digitWord.getValue().toString()[0] }.toString()
@@ -67,7 +73,7 @@ enum class DigitalSignalRepresentation(override val customName: String) : EnumPr
 				} else {
 					null
 				}
-			} catch (e: Throwable) {
+			} catch (_: Throwable) {
 				// overflow or invalid
 				null
 			}
