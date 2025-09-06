@@ -56,7 +56,7 @@ abstract class AbstractSelectedColorWrappingSelectionModel<T : Component>(compon
 	protected abstract fun createInnerSelectionModel(component: T): AbstractHandleSelectionModel<T>
 
 	private fun displayHandles(view: DrawingView<*>) {
-		if (!handlesDisplayed) {
+		if (view.editable && !handlesDisplayed) {
 			view.ghostContainer.add(handleSelectionModel)
 			handlesDisplayed = true
 		}
