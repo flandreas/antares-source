@@ -128,7 +128,7 @@ class BitWidthExpression(
 	}
 
 	override fun toString(): String =
-		"${GraphParamType.EXPRESSION_OP}${StringUtils.limit(expression, 10)}"
+		"${GraphParamType.EXPRESSION_OP}${StringUtils.limit(expression, 20)}"
 
 	override fun equals(other: Any?): Boolean {
 		if (other !is BitWidthExpression) {

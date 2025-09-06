@@ -31,7 +31,7 @@ class LongValueExpression(
     override val value: Long get() = longValue.value
 
     override fun toString(): String =
-        "${GraphParamType.EXPRESSION_OP}${StringUtils.limit(expression, 10)}"
+        "${GraphParamType.EXPRESSION_OP}${StringUtils.limit(expression, 20)}"
 
     fun write(name: String, writer: StoreWriter) {
         writer.writeString(name, expression)
