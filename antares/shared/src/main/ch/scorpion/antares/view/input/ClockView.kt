@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.drawable.Rotatable
+import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
@@ -250,7 +251,12 @@ class ClockView(
 
 		override fun mouseMoved(context: ActorInteractionContext): ActorInteractionHandler? {
 
-			if (!isEnabled || !isKnobEnabled) {
+			if (!isEnabled) {
+				context.view.setCursor(Cursor.CLICK)
+				return null
+			}
+
+			if (!isKnobEnabled) {
 				return null
 			}
 
@@ -270,7 +276,12 @@ class ClockView(
 
 		override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
 
-			if (!isEnabled || !isKnobEnabled) {
+			if (!isEnabled) {
+				model.toggle(context.signalHandler)
+				return null
+			}
+
+			if (!isKnobEnabled) {
 				return null
 			}
 

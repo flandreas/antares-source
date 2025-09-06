@@ -152,15 +152,25 @@ class Clock(name: String? = null) : CalculatingVertice(CALCULATOR, name) {
 
 	private val onTime: Long get() = propagationDelay.value / 100 * (100.0 - offPercentage).toLong()
 
-	private fun setOn(signalHandler: SignalHandler, on: Boolean) {
+	fun toggle(signalHandler: SignalHandler) {
+		if (!isEnabled) {
+			setOn(signalHandler, !isOn, true)
+		}
+	}
+
+	private fun setOn(signalHandler: SignalHandler, on: Boolean, isToggled: Boolean = false) {
 		if (isOn != on) {
 			cycleCount++
 			isOn = on
 			getOutput<DigitalSignal>().setOutgoingSignalBuffered(DigitalSignalFactory.of(isOn), signalHandler)
 			stateChanged(signalHandler)
-			if (isEnabled) {
+			if (isEnabled || isToggled) {
 				if (isOn && offPercentage > 0.0 || !isOn && offPercentage < 100.0) {
-					requestActingAfter(signalHandler, if (isOn) onTime else offTime, createActorData(null))
+					val delay = if (isToggled) {1
+					} else {
+						if (isOn) onTime else offTime
+					}
+					requestActingAfter(signalHandler, delay, createActorData(null))
 				}
 			}
 		}
