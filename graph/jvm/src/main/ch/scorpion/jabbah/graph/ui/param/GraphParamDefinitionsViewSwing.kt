@@ -17,6 +17,7 @@ import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 import javax.swing.table.AbstractTableModel
+import javax.swing.table.DefaultTableCellRenderer
 
 /**
  * A UI for managing the [GraphParamDefinitions] of a [Graph].
@@ -84,6 +85,7 @@ class GraphParamDefinitionsViewSwing(
 			controller.formChanged()
 		}
 
+		(table.tableHeader.defaultRenderer as DefaultTableCellRenderer).horizontalAlignment = SwingConstants.LEFT
 		table.selectionModel.addListSelectionListener {
 			val newSelection = if (table.selectionModel.selectedItemsCount > 0) {
 				controller.value.get(table.selectedRow)
@@ -218,8 +220,6 @@ class GraphParamDefinitionsViewSwing(
 		tableButtonPanel.add(createButton(controller.addAction))
 		tableButtonPanel.add(Box.createHorizontalStrut(buttonDist))
 		tableButtonPanel.add(createButton(controller.removeAction))
-		tableButtonPanel.add(Box.createHorizontalStrut(buttonDist))
-		tableButtonPanel.add(createButton(controller.applyAction))
 		tableButtonPanel.add(Box.createHorizontalGlue())
 		southPanel.add(tableButtonPanel)
 
@@ -229,6 +229,14 @@ class GraphParamDefinitionsViewSwing(
 		form.addLabeledRow(Translations.getString("graph.paramDefs.dialog.semantic"), semanticField)
 		southPanel.add(Box.createVerticalStrut(10))
 		southPanel.add(form)
+
+		southPanel.add(Box.createVerticalStrut(5))
+		val applyButton = createButton(controller.applyAction)
+		val applyButtonPanel = JPanel()
+		applyButtonPanel.layout = BoxLayout(applyButtonPanel, BoxLayout.LINE_AXIS)
+		applyButtonPanel.add(applyButton)
+		applyButtonPanel.add(Box.createHorizontalGlue())
+		southPanel.add(applyButtonPanel)
 
 		southPanel.add(Box.createVerticalStrut(5))
 		val messagePanel = JPanel(BorderLayout())
