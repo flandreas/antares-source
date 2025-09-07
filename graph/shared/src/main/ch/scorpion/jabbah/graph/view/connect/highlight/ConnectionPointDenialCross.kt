@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.connect.highlight
 
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangularUnzoomable
 import ch.scorpion.jabbah.draw.graphics.Stroke
@@ -15,17 +16,19 @@ class ConnectionPointDenialCross: AbstractRectangularUnzoomable(ConnectionPointH
     companion object {
         private val STROKE = Stroke(3.0f)
         private const val SIZE_HALF = 10
+
+        fun drawAt(location: Point2D, context: DrawContext) {
+            context.g.color = Themes.get<GraphTheme>().error.foregroundColor
+            context.g.stroke = STROKE
+            context.g.drawLine(location.x - SIZE_HALF, location.y - SIZE_HALF, location.x + SIZE_HALF, location.y + SIZE_HALF)
+            context.g.drawLine(location.x + SIZE_HALF, location.y - SIZE_HALF, location.x - SIZE_HALF, location.y + SIZE_HALF)
+        }
     }
 
     override val lineWidth: Double get() = STROKE.width.toDouble()
 
     override fun draw(context: DrawContext) {
-        context.g.color = Themes.get<GraphTheme>().error.foregroundColor
-        context.g.stroke = STROKE
-        with (getViewRectangle()) {
-            context.g.drawLine(centerX - SIZE_HALF, centerY - SIZE_HALF, centerX + SIZE_HALF, centerY + SIZE_HALF)
-            context.g.drawLine(centerX + SIZE_HALF, centerY - SIZE_HALF, centerX - SIZE_HALF, centerY + SIZE_HALF)
-        }
+        drawAt(getViewRectangle().center, context)
     }
 
     override var alternativeView: Boolean = false

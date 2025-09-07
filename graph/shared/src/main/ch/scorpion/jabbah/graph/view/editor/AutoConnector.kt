@@ -27,6 +27,9 @@ object AutoConnector : DragManagerPlugin {
 	/** Contains the [Point2D]s where a connection is currently possible.*/
 	private val points = mutableListOf<Point2D>()
 
+	/** Contains the [Point2D]s where a connection is currently not possible, i.e. denied.*/
+	private val denyPoints = mutableListOf<Point2D>()
+
 	private val commands = mutableListOf<Command>()
 
 	private var lastMatchLocation: Point2D? = null
@@ -68,9 +71,9 @@ object AutoConnector : DragManagerPlugin {
 
 		matchPoints(editor.drawing as GraphView, verticeView)
 
-		if (points.size > 0) {
+		if (points.isNotEmpty() || denyPoints.isNotEmpty()) {
 			if (!isHighlightDisplayed) {
-				highlight.setPoints(points)
+				highlight.setPoints(points, denyPoints)
 				addHighlight(editor.view)
 			}
 		} else {
@@ -87,6 +90,7 @@ object AutoConnector : DragManagerPlugin {
 	private fun matchPoints(graphView: GraphView, verticeView: VerticeView<*>) {
 		mode = Mode.Points
 		points.clear()
+		denyPoints.clear()
 		graphView.getDrawableIntersection(verticeView).forEach {
 			matchOtherDrawable(verticeView, it, graphView)
 		}
@@ -123,6 +127,9 @@ object AutoConnector : DragManagerPlugin {
 		if (ev.origin == null && p == ev.originEndpointView.location) {
 			ev.net?.let { net ->
 				if (!ORIGIN.canConnectTo(portView.port, net, graphView)) {
+					if (mode == Mode.Points) {
+						denyPoints.add(p)
+					}
 					return
 				}
 			}
@@ -135,6 +142,9 @@ object AutoConnector : DragManagerPlugin {
 		if (ev.destination == null && p == ev.destinationEndpointView.location) {
 			ev.net?.let { net ->
 				if (!DESTINATION.canConnectTo(portView.port, net, graphView)) {
+					if (mode == Mode.Points) {
+						denyPoints.add(p)
+					}
 					return
 				}
 			}
@@ -158,6 +168,10 @@ object AutoConnector : DragManagerPlugin {
 							Mode.Points -> points.add(portView.owner!!.getPortConnectionPoint(portView.port))
 							Mode.Commands -> commands.add(
 								AutoConnectCommand(editor, verticeView.id, portView.port.portId, otherVerticeView.id, it.port.portId))
+						}
+					} else {
+						if (mode == Mode.Points) {
+							denyPoints.add(portView.owner!!.getPortConnectionPoint(portView.port))
 						}
 					}
 				}
