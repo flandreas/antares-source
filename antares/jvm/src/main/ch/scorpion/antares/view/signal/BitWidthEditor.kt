@@ -90,7 +90,8 @@ class BitWidthEditor(
 	override fun showDialog() {
 		val script = when (comboBox.editor.item) {
 			is BitWidthExpression -> (comboBox.editor.item as BitWidthExpression).expression
-			else -> (comboBox.editor.item as BitWidth).width.toString()
+			is BitWidth -> (comboBox.editor.item as BitWidth).width.toString()
+			else -> (comboBox.editor.item).toString()
 		}
 		ScriptPropertyPanel.showAsDialog(
 			script = script,
