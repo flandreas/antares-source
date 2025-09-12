@@ -26,3 +26,14 @@ class BitAccess(location: TextLocation, token: Token<String>, val index: Node): 
 		return visitor.visitLeave(this)
 	}
 }
+
+class LengthCast(location: TextLocation, token: Token<String>, val length: Node): Variable(location, token) {
+	override fun toString(): String = "${super.toString()}$"
+
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		if (visitor.visitEnter(this)) {
+			length.accept(visitor)
+		}
+		return visitor.visitLeave(this)
+	}
+}

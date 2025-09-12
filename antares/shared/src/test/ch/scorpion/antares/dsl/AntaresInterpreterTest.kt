@@ -4,6 +4,7 @@ import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.gate.CurrentUndefinedGateInputBehavior
 import ch.scorpion.antares.model.gate.UndefinedGateInputBehavior
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -133,5 +134,15 @@ class AntaresInterpreterTest {
 
 	private fun shouldBeFalse(exp: String) {
 		assertEquals(0L, AntaresInterpreter(exp).interpret())
+	}
+
+	@Test
+	fun shouldCastLength() {
+		val result = AntaresInterpreter("""
+			var l = 16
+			var a = 0x?8
+			a${'$'}l
+		""".trimIndent()).interpret()
+		assertEquals(BitWidth.BW_16, (result as DigitalSignal).bitWidth)
 	}
 }

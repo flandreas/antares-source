@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.gate.CurrentUndefinedGateInputBehavior
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitOperation
+import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.Translations
@@ -48,6 +49,7 @@ class AntaresInterpreter(
 	override fun loadValue(variable: Variable): Any =
 		when (variable) {
 			is BitAccess -> getBit(variable)
+			is LengthCast -> getLengthCastedValue(variable)
 			else -> super.loadValue(variable)
 		}
 
@@ -57,6 +59,33 @@ class AntaresInterpreter(
 			is DigitalSignal -> key.toLong()?.toLong() ?: throw RuntimeError(variable.location, Translations.getString("antares.dsl.arrayIndexNotFullyDefined.msg"))
 			else -> super.interpretAssocArrayKey(variable)
 		}
+	}
+
+	private fun getLengthCastedValue(lengthCast: LengthCast): Any {
+		val value = memory.getValue(lengthCast)
+		val length = getLengthCastLength(lengthCast)
+		if (length > BitWidth.MAX) {
+			throw RuntimeError(lengthCast.location, Translations.getString("antares.dsl.lengthCastLengthTooLarge.msg", BitWidth.MAX.toString()))
+		}
+		return when (value) {
+			is DigitalSignal -> {
+				value.ofWidth(BitWidth.of(length))
+			}
+			is Long -> value // nothing to cast
+			else ->  throw RuntimeError(lengthCast.location, Translations.getString("antares.dsl.lengthCastNotSupportedByType.msg"))
+		}
+	}
+
+	private fun getLengthCastLength(lengthCast : LengthCast): Int {
+		val length = interpret(lengthCast.length)
+		return when (length) {
+			is Long -> length.toInt()
+			is DigitalSignal -> {
+				signalToLong(length).toInt()
+			}
+			else -> throw RuntimeError(lengthCast.location, Translations.getString("antares.dsl.lengthCastNotSupportedByType.msg"))
+		}
+
 	}
 
 	private fun getBit(bitAccess: BitAccess): Any {

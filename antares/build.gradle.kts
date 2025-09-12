@@ -54,6 +54,7 @@ kotlin {
 
 		val commonTest by getting {
 			dependencies {
+				implementation(project(":base-test-util"))
 				implementation(project(":edit-test-util"))
 				implementation(project(":graph-test-util"))
 			}

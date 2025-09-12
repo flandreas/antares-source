@@ -5,13 +5,20 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.BaseTokenType
 import ch.scorpion.jabbah.base.dsl.DslLexer
 import ch.scorpion.jabbah.base.dsl.DslTokenType
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class AntaresLexerTest {
+
+	@BeforeTest
+	fun setup() {
+		Translations.withAnyKey()
+	}
 
 	@Test
 	fun shouldScanHexLiteral() {
@@ -39,6 +46,16 @@ class AntaresLexerTest {
 
 		assertDigitalSignalLiteral(Word(listOf(False, Undefined)), "0bZ0")
 		assertDigitalSignalLiteral(Word(listOf(True, False, False, False, False, False, False, Undefined)), "0bZ0000001")
+	}
+
+	@Test
+	fun shouldScanLengthCast() {
+		val lexer = AntaresLexer("A$16")
+		assertId("A", lexer)
+		assertToken(DslTokenType.DOLLAR, lexer)
+		val token = lexer.nextToken()
+		assertEquals(BaseTokenType.LITERAL, token.type)
+		assertEquals(16L, token.value)
 	}
 
 	private fun assertNumberLiteral(expected: Long, literal: String) {

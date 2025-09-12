@@ -40,6 +40,7 @@ enum class DslTokenType(override val id: String): TokenType {
 	RETURN("return"),
 	AMPERSAND("&"),
 	VERTICAL_BAR("|"),
+	DOLLAR("$"),
 
 	// TokenTypes needed by higher level modules
 	INIT("init"),

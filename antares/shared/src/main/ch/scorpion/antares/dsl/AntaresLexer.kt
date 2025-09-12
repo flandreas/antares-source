@@ -3,10 +3,22 @@ package ch.scorpion.antares.dsl
 import ch.scorpion.antares.model.signal.*
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.DslLexer
+import ch.scorpion.jabbah.base.dsl.DslTokenType
 import ch.scorpion.jabbah.base.dsl.SyntaxError
 import ch.scorpion.jabbah.base.parser.Token
 
 class AntaresLexer(text: String) : DslLexer(text) {
+
+	companion object {
+		private val LENGTH_CAST = Token<Unit>(DslTokenType.DOLLAR)
+	}
+
+	override fun nextTokenImpl(state: State): Token<Any> {
+		when (state.currentChar!!) {
+			'$' -> return advanceWith(state, LENGTH_CAST)
+		}
+		return super.nextTokenImpl(state)
+	}
 
 	override fun isLiteral(state: State): Boolean =
 		super.isLiteral(state) || isUndefinedHexLiteral(state)

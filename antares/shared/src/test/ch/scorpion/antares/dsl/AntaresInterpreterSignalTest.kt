@@ -7,6 +7,7 @@ import ch.scorpion.antares.model.gate.UndefinedGateInputBehavior
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_1
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_2
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_4
+import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_8
 import ch.scorpion.antares.model.signal.DigitalLiteral
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
@@ -665,5 +666,34 @@ class AntaresInterpreterSignalTest {
 	fun shouldInterpretAnalogSignal() {
 		// Ensure that AnalogSignals are generally converted to Float. No need to check all kind of operations.
 		assertEquals(1L, operation("A > B", AnalogSignal(3.5), 2.5F))
+	}
+
+	@Test
+	fun shouldMultiplyWithLengthCast() {
+		val parser = AntaresParser(AntaresLexer("A$8 * B$8"))
+		val memory = Memory()
+		val interpreter = AntaresInterpreter(parser.parse(), memory)
+		memory.preset("A", DigitalSignalFactory.of(BW_4, 15L))
+		memory.preset("B", DigitalSignalFactory.of(BW_4, 15L))
+
+		val result = interpreter.interpret()
+
+		assertEquals(DigitalSignalFactory.of(BW_8, 225L), result)
+	}
+
+	@Test
+	fun shouldMultiplyWithVarLengthCast() {
+		val parser = AntaresParser(AntaresLexer("""
+			var BW=8
+			A${'$'}BW * B${'$'}BW
+		""".trimIndent()))
+		val memory = Memory()
+		val interpreter = AntaresInterpreter(parser.parse(), memory)
+		memory.preset("A", DigitalSignalFactory.of(BW_4, 15L))
+		memory.preset("B", DigitalSignalFactory.of(BW_4, 15L))
+
+		val result = interpreter.interpret()
+
+		assertEquals(DigitalSignalFactory.of(BW_8, 225L), result)
 	}
 }

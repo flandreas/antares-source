@@ -16,7 +16,9 @@ import ch.scorpion.jabbah.graph.dsl.GraphDslParser
  *     raisedInput : "^" variable
  *     variable : super.variable
  *            | bitAccess
- *     bitAccess : scalarVariable "@" factor
+ *            | lengthCast
+ *     bitAccess : identifier "@" factor
+ *     lengthCast : identifier "$" factor
  *     literal : super.literal
  *             | hexLiteral
  *             | binaryLiteral
@@ -51,6 +53,7 @@ class AntaresParser(
 	override fun variable(): Variable {
 		return when (lexer.peekNextToken().type) {
 			AT -> bitAccess()
+			DOLLAR -> lengthCast()
 			else -> super.variable()
 		}
 	}
@@ -60,6 +63,14 @@ class AntaresParser(
 			val variable = identifier()
 			eat(AT)
 			return BitAccess(location, variable, factor())
+		}
+	}
+
+	private fun lengthCast(): Variable {
+		lexer.location.let { location ->
+			val variable = identifier()
+			eat(DOLLAR)
+			return LengthCast(location, variable, factor())
 		}
 	}
 
