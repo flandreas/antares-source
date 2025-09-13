@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.edit.select
 
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.Unzoomable
 import ch.scorpion.jabbah.base.geom.Rectangle2D
@@ -160,7 +161,7 @@ abstract class AbstractHandleSelectionModel<T : Component>(
 
 		/**
 		 * Gets called by this [EventHandler] in [.mouseReleased]. This
-		 * implementation is empty. Extending classes can overwrite this method in order to creating undoable
+		 * implementation is empty. Extending classes can overwrite this method in order to create undoable
 		 * [Command]s.
 		 *
 		 * When this method gets called, the focus handle is still set to the [Handle] that has been manipulated.
@@ -200,7 +201,10 @@ abstract class AbstractHandleSelectionModel<T : Component>(
 			if (focusHandle == null) {
 				return null
 			}
-			val snap = context.editor.snapManager.snap(context.x, context.y)
+			var snap = Point2D.ZERO
+			if (context.mouseEvent?.isAltDown != true) {
+				snap = context.editor.snapManager.snap(context.x, context.y)
+			}
 			focusHandle?.getInputEventHandler(context)?.mouseDragged(
 				context.withXY(context.x + snap.x, context.y + snap.y))
 			return this
