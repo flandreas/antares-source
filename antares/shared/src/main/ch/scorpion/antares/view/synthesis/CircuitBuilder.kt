@@ -20,6 +20,7 @@ import ch.scorpion.antares.view.net.ConcentratorView
 import ch.scorpion.antares.view.net.ConstantView
 import ch.scorpion.antares.view.net.tunnel.TunnelFlowDirection
 import ch.scorpion.antares.view.net.tunnel.TunnelView
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Direction
@@ -82,7 +83,7 @@ class CircuitBuilder(
 		value: DigitalSignal,
 		location: Point2D = Point2D.ZERO,
 		orientation: Direction = Direction.EAST
-	) : ConstantView = ConstantView(styleProvider, Constant(value)).also {
+	) : ConstantView = ConstantView(styleProvider, Constant(LongValueImpl(value.getValue().toLong()))).also {
 		it.orientation = orientation
 		addVerticeView(it, location)
 	}

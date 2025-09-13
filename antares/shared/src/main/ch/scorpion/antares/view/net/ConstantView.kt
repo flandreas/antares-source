@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
+import ch.scorpion.jabbah.base.LongValue
 import ch.scorpion.jabbah.base.PreferencesChangedEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
@@ -43,7 +44,7 @@ class ConstantView(
 	}
 
 	constructor(
-		value: DigitalSignal,
+		value: LongValue,
 		styleProvider: StyleProvider = DrawStyleModule.styleProvider
 	) : this(styleProvider, Constant(value))
 
@@ -122,11 +123,11 @@ class ConstantView(
 
 	/** ---- UI properties */
 
-	var value: Long
-		get() = model.value.getValue().toLong()
+	var value: LongValue
+		get() = model.value
 		set(newValue) {
 			invalidate()
-			model.value = DigitalSignalFactory.of(bitWidth, newValue)
+			model.value = newValue
 			updateView()
 		}
 
@@ -216,7 +217,7 @@ class ConstantView(
 	}
 
 	private fun updateLabel() {
-		label.text = CurrentDigitalSignalNotation.notation.notate(model.value, signalRepresentation)
+		label.text = CurrentDigitalSignalNotation.notation.notate(model.valueSignal, signalRepresentation)
 		label.alignment = Alignment.forOrientation(orientation)
 		label.location = labelLocation
 	}

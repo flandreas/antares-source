@@ -4,7 +4,6 @@ import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.TestLibraryBuilder
 import ch.scorpion.antares.hdl.vhdl.HDLException
 import ch.scorpion.antares.hdl.vhdl.VHDLGenerator
-import ch.scorpion.antares.hdl.vhdl.VHDLRenaming
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.gate.AbstractLogicGate
 import ch.scorpion.antares.model.input.Clock
@@ -16,6 +15,7 @@ import ch.scorpion.antares.view.input.DipSwitchView
 import ch.scorpion.antares.view.net.ConstantView
 import ch.scorpion.antares.view.net.GroundView
 import ch.scorpion.antares.view.net.PowerView
+import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
@@ -276,7 +276,7 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 	fun testConstant() {
 		val builder = TestCircuitBuilder("test")
 		val output = builder.addOutput("O")
-		val constantView = builder.addVerticeView(ConstantView(DigitalSignalFactory.of(true)))
+		val constantView = builder.addVerticeView(ConstantView(LongValueImpl(1)))
 		builder.connect(constantView, output)
 
 		VHDLGenerator(testParams()).generateHDL(printer, builder.graph as DigitalGraph)

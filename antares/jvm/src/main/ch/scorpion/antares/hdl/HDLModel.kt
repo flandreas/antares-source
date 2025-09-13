@@ -112,7 +112,7 @@ class HDLModel(
 			}
 			is Constant -> {
 				createExpression(vertice, parent).also {
-					it.expression = ConstantExpression(vertice.value)
+					it.expression = ConstantExpression(vertice.valueSignal)
 				}
 			}
 			is DipSwitch -> {
