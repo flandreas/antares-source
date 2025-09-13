@@ -223,9 +223,9 @@ object DigitalKeyboard : ActorViewContainer<Drawable>(useLocation = true), Focus
 			return this
 		}
 
-		override fun mouseClicked(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext> {
+		override fun mousePressed(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext> {
 			// Delegate to possible buttons, but keep "modal" control
-			parent(context).mouseClicked(context)
+			parent(context).mousePressed(context)
 			return this
 		}
 	}

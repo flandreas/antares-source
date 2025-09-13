@@ -45,7 +45,7 @@ open class ActorDrawableButton<C: InputEventContext>(
 		override fun mouseMoved(context: ActorInteractionContext): ActorInteractionHandler? =
 			if (keepMouseMoved(context.location)) this else null
 
-		override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
+		override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (enabled) {
 				actorAction.execute(context)
 			}
