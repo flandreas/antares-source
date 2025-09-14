@@ -33,6 +33,7 @@ import ch.scorpion.antares.model.testcase.Testcases
 import ch.scorpion.antares.model.truthtable.*
 import ch.scorpion.antares.model.vertice.AntaresSubGraphVerticeRefActivationRecord
 import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
+import ch.scorpion.antares.view.output.LightColorGraphParamType
 import ch.scorpion.antares.view.port.AntaresPortFactory
 import ch.scorpion.jabbah.base.AbstractModule
 import ch.scorpion.jabbah.base.Properties
@@ -196,6 +197,7 @@ object AntaresModelModule : AbstractModule() {
 
 	private fun registerGraphParamTypes() {
 		GraphParamTypeRegistry.register(BitWidthGraphParamType.name) { BitWidthGraphParamType }
+		GraphParamTypeRegistry.register(LightColorGraphParamType.name) { LightColorGraphParamType }
 	}
 
 	private fun registerGraphTypes() {
