@@ -1,7 +1,7 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.graph.model.image.ImageLibraryElement
 import ch.scorpion.jabbah.graph.repository.LibraryDependencyException
@@ -108,30 +108,32 @@ class LibraryTreeViewTransferHandler(
 			return try {
 				when (item) {
 					is ContainerLibraryElement -> {
-						InvocationHandler.invoke { repositoryService.move(item, it.directory, it.index) }
+						repositoryService.move(item, it.directory, it.index)
 						true
 					}
 					is ImageLibraryElement -> {
-						InvocationHandler.invoke { item.library!!.libraryService.move(item.library!!, item, it.directory, it.index) }
+						item.library!!.libraryService.move(item.library!!, item, it.directory, it.index)
 						true
 					}
 					is LibraryFolder -> {
-						InvocationHandler.invoke { item.library!!.libraryService.move(item.library!!, item, it.directory, it.index) }
+						item.library!!.libraryService.move(item.library!!, item, it.directory, it.index)
 						true
 					}
 					is UndoableStateLibraryItem<*> -> {
-						InvocationHandler.invoke { item.library!!.libraryService.move(item.library!!, item, it.directory, it.index) }
+						item.library!!.libraryService.move(item.library!!, item, it.directory, it.index)
 						true
 					}
 					else -> false
 				}
 			} catch (e: LibraryDependencyException) {
-				JOptionPane.showConfirmDialog(
-					Frame.getFrames()[0],
-					Translations.getString("repository.move.dependencyError.msg", e.subGraphVertice.name!!),
-					Translations.getString("repository.move.action.name"),
-					JOptionPane.DEFAULT_OPTION,
-					JOptionPane.ERROR_MESSAGE)
+				System.invokeLater {
+					JOptionPane.showConfirmDialog(
+						Frame.getFrames()[0],
+						Translations.getString("repository.move.dependencyError.msg", e.subGraphVertice.name!!),
+						Translations.getString("repository.move.action.name"),
+						JOptionPane.DEFAULT_OPTION,
+						JOptionPane.ERROR_MESSAGE)
+				}
 				false
 			}
 		}
