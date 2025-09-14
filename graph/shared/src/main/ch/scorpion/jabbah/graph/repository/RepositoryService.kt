@@ -92,7 +92,9 @@ class RepositoryServiceImpl(
 	private fun checkLibraryDependency(elem: ContainerLibraryElement) {
 		val projectSubGraphVertice = elem.storable!!.graph.model!!.elements
 			.filterIsInstance<SubGraphVertice>()
-			.firstOrNull { elem.library!!.containsMetaGraph(it.graphUUID!!) }
+			.firstOrNull {
+				elem.library!!.containsMetaGraphLocally(it.graphUUID!!)
+			}
 		if (projectSubGraphVertice != null) {
 			throw LibraryDependencyException(projectSubGraphVertice)
 		}

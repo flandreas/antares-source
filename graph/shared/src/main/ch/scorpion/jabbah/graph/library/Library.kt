@@ -99,6 +99,12 @@ interface Library : MetaGraphRepository, ImageRepository, Storable, Namable, Des
 	fun getDefaultElement(): ContainerLibraryElement?
 
 	/**
+	 * Checks whether a [MetaGraph] with [uuid] exists locally in this [Library].
+	 * This is in contrast to [MetaGraphRepository.containsMetaGraph], which also checks imported [Library Libraries].
+	 */
+	fun containsMetaGraphLocally(uuid: UUID): Boolean
+
+	/**
 	 * Determines whether this [Library] contains [ContainerLibraryElement] for all [Graph]s
 	 * recursively referenced in the specified [Graph].
 	 */

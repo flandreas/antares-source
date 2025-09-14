@@ -169,17 +169,20 @@ open class LibraryImpl(
 	}
 
 	override fun containsMetaGraph(uuid: UUID): Boolean =
-		repositoryWrapper?.containsMetaGraph(uuid) ?: containsMetaGraphImpl(uuid)
+		repositoryWrapper?.containsMetaGraph(uuid) ?: containsMetaGraphImpl(uuid, false)
 
-	private fun containsMetaGraphImpl(uuid: UUID): Boolean {
-		return findContainerLibraryElementFor(uuid) != null
+	override fun containsMetaGraphLocally(uuid: UUID): Boolean =
+        repositoryWrapper?.containsMetaGraph(uuid) ?: containsMetaGraphImpl(uuid, true)
+
+	private fun containsMetaGraphImpl(uuid: UUID, locally: Boolean): Boolean {
+		return findContainerLibraryElementFor(uuid, locally) != null
 	}
 
 	override fun getContainingLibrary(uuid: UUID): Library? =
-		repositoryWrapper?.getContainingLibrary(uuid) ?: getContainingLibraryImpl(uuid)
+		repositoryWrapper?.getContainingLibrary(uuid) ?: getContainingLibraryImpl(uuid, false)
 
-	private fun getContainingLibraryImpl(uuid: UUID): Library? =
-		findContainerLibraryElementFor(uuid)?.library
+	private fun getContainingLibraryImpl(uuid: UUID, locally: Boolean): Library? =
+		findContainerLibraryElementFor(uuid, locally)?.library
 
 	override fun graphContainsRecursively(graphUUID: UUID, graphElementUUID: UUID): Boolean =
 		repositoryWrapper?.graphContainsRecursively(graphUUID, graphElementUUID)
@@ -407,8 +410,8 @@ open class LibraryImpl(
 	/**
 	 * Finds the [ContainerLibraryElement] in this [Library] which contains the [Graph] with the specified [UUID].
 	 */
-	private fun findContainerLibraryElementFor(uuid: UUID): ContainerLibraryElement? {
-		if (importedLibraryIds.isEmpty()) {
+	private fun findContainerLibraryElementFor(uuid: UUID, locally: Boolean = false): ContainerLibraryElement? {
+		if (importedLibraryIds.isEmpty() || locally) {
 			return findContainerLibraryElement(directory, uuid)
 		}
 		return expandedImports
