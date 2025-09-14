@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.graph.model.param
 
 import ch.scorpion.jabbah.base.help.HelpId
+import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.edit.semantic.Semantic
 import ch.scorpion.jabbah.edit.semantic.SemanticRegistry
 import ch.scorpion.jabbah.io.*
@@ -17,12 +19,14 @@ class GraphParamDefinition<T : Any>(
 			name: String,
 			type: GraphParamType<T>,
 			defaultValue: T,
-			semantic: Semantic? = null
+			semantic: Semantic? = null,
+			description: Description = Description("")
 		) : GraphParamDefinition<T> {
 			val definition = GraphParamDefinition<T>(name)
 			definition.type = type
 			definition.defaultValue = defaultValue
 			definition.semantic = semantic
+			definition.description = description
 			return definition
 		}
 	}
@@ -36,6 +40,8 @@ class GraphParamDefinition<T : Any>(
 	var semantic: Semantic? = null
 
 	val hasSemantic: Boolean get() = semantic != null
+
+	var description: Description = Description(TranslatableText())
 
 	fun createDefaultValue(): GraphParamValue<T> = type.createValue(name, defaultValue, semantic)
 
@@ -52,6 +58,7 @@ class GraphParamDefinition<T : Any>(
 		if (semantic != null) {
 			writer.writeString("semantic", semantic!!.customName)
 		}
+		description.write("desc", writer)
 	}
 
 	override fun read(reader: StoreReader) {
@@ -60,6 +67,9 @@ class GraphParamDefinition<T : Any>(
 		defaultValue = type.readValue("defaultValue", reader)
 		if (reader.hasAttribute("semantic")) {
 			semantic = SemanticRegistry.withCustomName(reader.readString("semantic"))
+		}
+		if (reader.hasElement("desc")) {
+			description = Description.read("desc", reader)
 		}
 	}
 }

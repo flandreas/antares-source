@@ -8,11 +8,15 @@ import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.HelpAction
 import ch.scorpion.jabbah.base.ui.UIBasics
+import ch.scorpion.jabbah.edit.model.text.description.Description
+import ch.scorpion.jabbah.edit.properties.TranslatablePropertyEditor
 import ch.scorpion.jabbah.edit.semantic.Semantic
 import ch.scorpion.jabbah.edit.semantic.createSemanticComboBox
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.param.*
-import java.awt.*
+import java.awt.BorderLayout
+import java.awt.Dimension
+import java.awt.Frame
 import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
@@ -42,7 +46,7 @@ class GraphParamDefinitionsViewSwing(
 			DialogBuilder<GraphParamDefinitionsViewSwing>(parent)
 				.content { dialog -> GraphParamDefinitionsViewSwing(controller, closeHandler = { dialog.dispose() }) }
 				.title(Translations.getString("graph.paramDefs.dialog.title"))
-				.preferredSize(Dimension(500, 400))
+				.preferredSize(Dimension(500, 500))
 				.show()
 
 			return controller.definitionsToReturn
@@ -57,7 +61,13 @@ class GraphParamDefinitionsViewSwing(
 	private val typeField = createTypeEditor()
 	private val defaultValueFieldHolder = JPanel()
 	private var defaultValueEditor: GraphParamValueEditor? = null
+	private val descriptionField = TranslatablePropertyEditor(
+		Translations.getString("graph.paramDefs.dialog.desc.name"),
+		multiline = { true},
+		rows = 4,
+		editable = true)
 	private val semanticField: JComboBox<Semantic> = createSemanticComboBox(Translations.getString("graph.paramDefs.dialog.semantic.none"))
+
 	private val errorMessageLabel = JLabel(" ", SwingConstants.LEADING)
 
 	private val documentListener = object : DocumentListener {
@@ -70,7 +80,7 @@ class GraphParamDefinitionsViewSwing(
 		controller.view = this
 
 		errorMessageLabel.foreground = UiUtil.errorTextColor
-		errorMessageLabel.alignmentX = Component.LEFT_ALIGNMENT
+		errorMessageLabel.alignmentX = LEFT_ALIGNMENT
 
 		buildUI()
 
@@ -107,6 +117,7 @@ class GraphParamDefinitionsViewSwing(
 		nameField.text = ""
 		typeField.selectedIndex = 0
 		semanticField.selectedItem = null
+		descriptionField.value = Description("")
 		setDefaultValueEditor(typeField.selectedItem as GraphParamType<*>)
 
 		updateFormEnabledness()
@@ -122,6 +133,7 @@ class GraphParamDefinitionsViewSwing(
 		nameField.text = def.name
 		typeField.selectedItem = def.type
 		semanticField.selectedItem = def.semantic
+		descriptionField.value = def.description
 		setDefaultValueEditor(def.type, def.defaultValue)
 
 		updateFormEnabledness()
@@ -139,6 +151,7 @@ class GraphParamDefinitionsViewSwing(
 			typeField.isEnabled = it
 			defaultValueEditor?.editorEnabled = it
 			semanticField.isEnabled = it
+			descriptionField.textComponent.isEditable = it
 		}
 	}
 
@@ -170,13 +183,14 @@ class GraphParamDefinitionsViewSwing(
 		typeField.selectedItem = typeField.getItemAt(0)
 		setDefaultValueEditor(typeField.selectedItem as GraphParamType<*>)
 		semanticField.selectedItem = null
+		descriptionField.value = Description("")
 		nameField.requestFocusInWindow()
 	}
 
 	override fun <T: Any> getEditedDefinition(): GraphParamDefinition<T>? {
 		try {
 			defaultValueEditor!!.paramValue
-		} catch (e: NullPointerException) {
+		} catch (_: NullPointerException) {
 			errorMessage(Translations.getString("graph.paramDefs.dialog.error.defaultValue"))
 			return null
 		}
@@ -184,7 +198,8 @@ class GraphParamDefinitionsViewSwing(
 			nameField.text,
 			typeField.selectedItem as GraphParamType<T>,
 			defaultValueEditor!!.paramValue as T,
-			semanticField.selectedItem as Semantic?
+			semanticField.selectedItem as Semantic?,
+			descriptionField.value as Description
 		)
 	}
 
@@ -227,6 +242,7 @@ class GraphParamDefinitionsViewSwing(
 		form.addLabeledRow(Translations.getString("graph.paramDefs.dialog.type"), typeField)
 		form.addLabeledRow(Translations.getString("graph.paramDefs.dialog.defaultValue"), defaultValueFieldHolder)
 		form.addLabeledRow(Translations.getString("graph.paramDefs.dialog.semantic"), semanticField)
+		form.addLabeledRow(Translations.getString("graph.paramDefs.dialog.desc.name"), descriptionField.customEditor as JComponent)
 		southPanel.add(Box.createVerticalStrut(10))
 		southPanel.add(form)
 

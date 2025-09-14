@@ -51,7 +51,6 @@ class SubGraphVerticeViewImplBeanInfo : AbstractComponentBeanInfo<SubGraphVertic
 	    bean.label?.let {
 	        properties.add(label.bind(editor, beanIdProvider(bean.id), filter = { false }))
 	    }
-	    properties.add(description.bind(editor, beanIdProvider(bean.id)))
 
 	    paramDefs?.let { defs ->
 			for (def in defs.iterator()) {
@@ -59,5 +58,7 @@ class SubGraphVerticeViewImplBeanInfo : AbstractComponentBeanInfo<SubGraphVertic
 				properties.add(property.bind(editor, beanIdProvider(bean.id)))
 			}
 		}
+
+		properties.add(description.bind(editor, beanIdProvider(bean.id)))
     }
 }
