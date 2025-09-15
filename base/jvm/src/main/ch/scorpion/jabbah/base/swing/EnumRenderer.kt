@@ -10,7 +10,7 @@ import javax.swing.table.TableCellRenderer
 /**
  * A [TableCellRenderer] implementation for rendering enum values as a list.
  */
-open class EnumRenderer<T : Enum<T>> : DefaultTableCellRenderer(), ListCellRenderer<T> {
+open class EnumRenderer<T> : DefaultTableCellRenderer(), ListCellRenderer<T> {
 
     override fun getListCellRendererComponent(list: JList<out T>, value: T?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
         setValue(value)
@@ -41,7 +41,13 @@ open class EnumRenderer<T : Enum<T>> : DefaultTableCellRenderer(), ListCellRende
 		return this
     }
 
+	/*
     protected open fun setValue(value: T?) {
 		text = value?.toString() ?: ""
     }
+	*/
+
+	override fun setValue(value: Any?) {
+		text = value?.toString() ?: ""
+	}
 }

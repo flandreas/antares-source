@@ -29,7 +29,8 @@ object LightColorGraphParamType : GraphParamType<LightColor> {
     override fun createValue(name: String, value: LightColor, semantic: Semantic?): GraphParamValue<LightColor> =
         GraphParamValue.create(name, this, value, semantic)
 
-    override fun toDslValue(value: LightColor): Any = value.ordinal.toLong()
+    // TODO What is the correct implementation of this? DSL doesn't support Strings yet..
+    override fun toDslValue(value: LightColor): Any = 0L
 
     override fun evaluateIn(graph: Graph, value: LightColor): LightColor = value
 }

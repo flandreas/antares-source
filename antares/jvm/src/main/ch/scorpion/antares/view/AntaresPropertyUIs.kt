@@ -33,11 +33,11 @@ open class LightColorRenderer : EnumRenderer<LightColor>() {
 
     private val icon = ColorIcon()
 
-    override fun setValue(value: LightColor?) {
+    override fun setValue(value: Any?) {
 	    if (value == null) {
 		    icon.backgroundColor = Graphics2DJvm.toAwtColor(LightColor.getSystemDefault().executeColor(true))
 		    text = Translations.getString("element.color.none")
-	    } else {
+	    } else if (value is LightColor) {
 		    icon.backgroundColor = Graphics2DJvm.toAwtColor(value.executeColor(true))
 		    text = value.toString()
 	    }
@@ -51,7 +51,7 @@ class LightColorEditor(optional: Boolean = false) : ComboBoxPropertyEditor() {
 	    if (optional) {
 		    list.add(null)
 	    }
-	    list.addAll(LightColor.entries.toTypedArray())
+	    list.addAll(LightColor.PREDEFINED.toTypedArray())
         setAvailableValues(list.toTypedArray())
         (editor as JComboBox<LightColor>).renderer = LightColorRenderer()
     }
