@@ -29,7 +29,7 @@ object AntaresProperties {
 		CommandPropertySwing(name, baseKey, Handedness::class.java, componentBeanProvider)
 
 	fun lightColor(name: String = "lightColor", baseKey: String = "element.property.LEDColor"): CommandPropertySwing<LightColor> =
-		CommandPropertySwing(name, baseKey, LightColor::class.java, componentBeanProvider)
+		ExpressionPropertySwing(name, baseKey, LightColor::class.java, componentBeanProvider)
 
 	fun pullDirection(name: String = "pullDirection", baseKey: String = "element.property.PullDirection"): CommandPropertySwing<PullDirection> =
 		CommandPropertySwing(name, baseKey, PullDirection::class.java, componentBeanProvider)

@@ -8,7 +8,10 @@ import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.ColorGradient
 import ch.scorpion.jabbah.draw.style.DrawTheme
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.param.GraphParamType
+import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.io.StoreWriter
 
 /**
  * A visible object that can emit light.
@@ -105,6 +108,15 @@ interface LightColor {
 
         fun getSystemDefault(properties: Properties = BaseModule.properties): LightColor =
             withName(properties.getString(PROP_DEFAULT_LIGHT_COLOR))
+
+        fun read(name: String, reader: StoreReader): LightColor {
+            val value = reader.readString(name)
+            return if (PREDEFINED.any { it.customName == value }) {
+                withName(value)
+            } else {
+                LightColorExpression(value)
+            }
+        }
     }
 
     /** Used for handling in Antares DSL.*/
@@ -124,6 +136,8 @@ interface LightColor {
 
     /** A [ColorGradient] from [offColor] to [onColor].*/
     val gradient: ColorGradient
+
+    fun write(name: String, writer: StoreWriter)
 }
 
 class LightColorImpl(
@@ -149,6 +163,10 @@ class LightColorImpl(
     override val gradient by lazy { ColorGradient(offColor, onColor) }
 
     override fun toString(): String = Translations.getString(translationKey)
+
+    override fun write(name: String, writer: StoreWriter) {
+        writer.writeString(name, customName)
+    }
 }
 
 class LightColorExpression(
@@ -172,6 +190,10 @@ class LightColorExpression(
 
     override val gradient: ColorGradient get() = value.gradient
 
+    override fun write(name: String, writer: StoreWriter) {
+        writer.writeString(name, expression)
+    }
+
     /** ---- [Any] */
 
     override fun toString(): String =
@@ -193,5 +215,13 @@ class LightColorExpression(
         var result = expression.hashCode()
         result = 31 * result + value.customName.hashCode()
         return result
+    }
+
+    fun evaluateIn(graph: Graph): LightColor? {
+        val newValue = LightColorGraphParamType.evaluateIn(graph, this)
+        if (newValue === this) {
+            return null
+        }
+        return newValue
     }
 }

@@ -42,6 +42,7 @@ import ch.scorpion.antares.view.net.tunnel.TunnelNameEditor
 import ch.scorpion.antares.view.net.tunnel.TunnelNameProperty
 import ch.scorpion.antares.view.net.tunnel.TunnelViewFace
 import ch.scorpion.antares.view.output.LightColor
+import ch.scorpion.antares.view.output.LightColorExpressionEditor
 import ch.scorpion.antares.view.output.LightColorGraphParamType
 import ch.scorpion.antares.view.output.LightColorGraphParamValueEditor
 import ch.scorpion.antares.view.output.LightColorPreference
@@ -352,6 +353,16 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 				errorCallback = { prop.dslError = it },
 				filter = prop.filter )
 		}
+
+		registry.register(LightColor::class.java) { prop ->
+			LightColorExpressionEditor(
+				propertyName = prop.displayName,
+				editable = (prop as ExpressionPropertySwing<LightColor>).editable,
+				supportExpressions = prop.supportExpressions,
+				graphEditor = prop.editor,
+				errorCallback = { prop.dslError = it },
+				filter = prop.filter )
+		}
 	}
 
 	private fun configureGraphParamValueProperties() {
@@ -367,6 +378,24 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 						paramDefinition = def as GraphParamDefinition<BitWidth>,
 						propertyName = "BitWidth", // only used for logging
 						BitWidth::class.java,
+						beanProvider
+					)
+				}
+			}
+		)
+
+		GraphParamValuePropertyFactoryRegistry.register(
+			LightColorGraphParamType,
+			object : GraphParamValuePropertyFactory {
+				override fun create(
+					def: GraphParamDefinition<*>,
+					editor: Editor,
+					beanProvider: BeanProvider
+				): AbstractReflectionPropertySwing<*> {
+					return GraphParamValuePropertySwing(
+						paramDefinition = def as GraphParamDefinition<LightColor>,
+						propertyName = "LightColor",
+						LightColor::class.java,
 						beanProvider
 					)
 				}
