@@ -42,6 +42,8 @@ import ch.scorpion.antares.view.net.tunnel.TunnelNameEditor
 import ch.scorpion.antares.view.net.tunnel.TunnelNameProperty
 import ch.scorpion.antares.view.net.tunnel.TunnelViewFace
 import ch.scorpion.antares.view.output.LightColor
+import ch.scorpion.antares.view.output.LightColorGraphParamType
+import ch.scorpion.antares.view.output.LightColorGraphParamValueEditor
 import ch.scorpion.antares.view.output.LightColorPreference
 import ch.scorpion.antares.view.output.VideoRamColorModel
 import ch.scorpion.antares.view.port.DigitalPortViewStyle
@@ -374,6 +376,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 	private fun configureGraphParamValueEditors() {
 		GraphParamValueEditorRegistry.register(BitWidthGraphParamType) { BitWidthGraphParamValueEditor() }
+		GraphParamValueEditorRegistry.register(LightColorGraphParamType) { LightColorGraphParamValueEditor() }
 	}
 
 	private fun buildPreferencesTree(root: PreferenceGroup) {
