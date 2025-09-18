@@ -21,7 +21,7 @@ class LightColorExpressionEditor(
     supportExpressions: Boolean,
     errorCallback: (DslError) -> Unit,
     filter: (LightColor) -> Boolean = { _ -> true }
-) : ExpressionPropertyEditor<LightColor>(propertyName, editable, supportExpressions, errorCallback) {
+) : ExpressionPropertyEditor<LightColor>(propertyName, editable, supportExpressions && (graphEditor?.drawing is GraphView), errorCallback) {
 
     companion object {
         private val LOG by logger(LightColorExpressionEditor::class)
@@ -30,7 +30,7 @@ class LightColorExpressionEditor(
     private val comboBoxEditor = ComboBoxPropertyEditor()
     private val comboBox: JComboBox<LightColor> get() = comboBoxEditor.customEditor as JComboBox<LightColor>
 
-    private val graph = (graphEditor?.drawing as GraphView?)?.graph
+    private val graph = (graphEditor?.drawing as? GraphView?)?.graph
     private val parserFactory = if (graph != null) graph::createParser else null
 
     init {
@@ -91,7 +91,7 @@ class LightColorExpressionEditor(
             editable = editable,
             propertyName = propertyName,
             variables = graph?.symbolTable?.names(),
-            parserFactory = parserFactory!!
+            parserFactory = parserFactory
         )?.let {
             // The script is evaluated when the editor loses focus
             comboBox.editor.item = LightColorExpression(it)
