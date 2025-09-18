@@ -226,19 +226,22 @@ class DigitalCircuitInOutView(
 		// BUG #973: Enforce signal text color if bitWidth==1, even with representation != binary
 		var textColor: Color? = null
 
+		var focusColor: Color? = null
+
 		if (model.signal!!.bitWidth.width > 1) {
 			drawEdited(context,
 				transparent.applyTo(model.signal!!.color.foregroundColor),
 				transparent.applyTo(propertiesBackgroundColor))
 		} else {
 			textColor = transparent.applyTo(model.signal!!.color.textColor)
+			focusColor = textColor
 			drawEdited(context,
 				transparent.applyTo(model.signal!!.color.backgroundColor),
 				transparent.applyTo(model.signal!!.color.foregroundColor))
 		}
 
 		context.translated(getArrowPathTranslation()) {
-			numberView!!.draw(it, isOn = true, inactive = false, textColor = textColor)
+			numberView!!.draw(it, isOn = true, inactive = false, textColor = textColor, focusColor = focusColor)
 			drawDisabled(it)
 		}
 	}

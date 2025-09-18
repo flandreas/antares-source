@@ -87,10 +87,10 @@ class NumberView(
 	 * @param textColor enforces the text color from the outside context in special situations,
 	 * else uses the default coloring depending on the signal
 	 */
-	fun draw(context: DrawContext, isOn: Boolean, inactive: Boolean = false, textColor: Color? = null) {
+	fun draw(context: DrawContext, isOn: Boolean, inactive: Boolean = false, textColor: Color? = null, focusColor: Color? = null) {
 		context.translated(location) {
 			for (digitView in digitViews) {
-				digitView.draw(it, isOn, inactive, textColor)
+				digitView.draw(it, isOn, inactive, textColor, focusColor)
 			}
 			drawByteIndexLabels(it)
 

@@ -88,7 +88,7 @@ class DigitView(
      * @param textColor enforces the text color from the outside context in special situations,
      * else uses the default coloring depending on the signal
      */
-    fun draw(context: DrawContext, isOn: Boolean, inactive: Boolean, textColor: Color? = null) {
+    fun draw(context: DrawContext, isOn: Boolean, inactive: Boolean, textColor: Color? = null, focusColor: Color? = null) {
         val oldColor = context.g.color
 		val oldStroke = context.g.stroke
 
@@ -123,7 +123,7 @@ class DigitView(
 	    }
 
         if (hasFocus) {
-            drawFocus(context)
+            drawFocus(context, focusColor)
         }
 
 		context.g.color = oldColor
@@ -142,8 +142,8 @@ class DigitView(
 		context.g.fillRect(xInt + 1, yInt, WIDTH - 2, HEIGHT - 1)
 	}
 
-    private fun drawFocus(context: DrawContext) {
-        context.g.color = transparent.applyTo(Themes.get<AntaresTheme>().focus.color.foregroundColor)
+    private fun drawFocus(context: DrawContext, focusColor: Color?) {
+        context.g.color = focusColor ?: transparent.applyTo(Themes.get<AntaresTheme>().focus.color.foregroundColor)
         context.g.stroke = Themes.get<AntaresTheme>().focus.stroke
         context.g.drawRect(xInt, yInt - 1, WIDTH, HEIGHT + 1)
     }
