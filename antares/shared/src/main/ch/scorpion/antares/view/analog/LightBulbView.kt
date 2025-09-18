@@ -3,7 +3,9 @@ package ch.scorpion.antares.view.analog
 import ch.scorpion.antares.model.analog.AnalogPort
 import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.model.analog.LightBulb
+import ch.scorpion.antares.model.output.LightEmitterModel
 import ch.scorpion.antares.view.output.LightColor
+import ch.scorpion.antares.view.output.LightColorExpression
 import ch.scorpion.antares.view.output.LightEmitter
 import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
 import ch.scorpion.jabbah.base.Translations
@@ -17,9 +19,12 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
+import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.Storable
@@ -108,7 +113,7 @@ class LightBulbView(
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
-		lightColor = LightColor.withName(reader.readString("lightColor"))
+		lightColor = LightColor.read("lightColor", reader)
 		if (reader.hasAttribute("minCurrent")) {
 			minCurrent = reader.readDouble("minCurrent")
 		}
@@ -119,7 +124,7 @@ class LightBulbView(
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
-		writer.writeString("lightColor", lightColor.customName)
+		lightColor.write("lightColor", writer)
 		writer.writeDouble("minCurrent", minCurrent)
 		writer.writeDouble("maxCurrent", maxCurrent)
 	}
@@ -165,6 +170,24 @@ class LightBulbView(
 	private fun copyControlViewProperties(source: LightBulbView, dest: LightBulbView) {
 		dest.lightColor = source.lightColor
 		dest.orientation = source.orientation
+	}
+
+	/** ---- [AbstractGraphElementView] */
+
+	override fun bind(graphView: GraphView, deep: Boolean) {
+		super.bind(graphView, deep)
+		graphParamsChanged(graphView.graph!!)
+	}
+
+	override fun handleStateChanged(event: GraphElementEvent) {
+		super.handleStateChanged(event)
+		if (event.reason == LightEmitterModel.REASON_GRAPH_PARAM_CHANGED && event.argument is Graph) {
+			graphParamsChanged(event.argument as Graph)
+		}
+	}
+
+	private fun graphParamsChanged(graph: Graph) {
+		(lightColor as? LightColorExpression)?.let { it.evaluateIn(graph)?.let { lc -> lightColor = lc } }
 	}
 
 	/** ---- [LightBulbView] */
