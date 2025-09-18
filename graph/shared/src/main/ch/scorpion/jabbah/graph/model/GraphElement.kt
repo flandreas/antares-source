@@ -117,7 +117,8 @@ interface GraphElement : Storable, Actor, Describable {
 open class GraphElementEvent(
 	val element: GraphElement,
 	val signalHandler: SignalHandler? = null,
-	val reason: String? = null
+	val reason: String? = null,
+	val argument: Any? = null
 )
 
 /** Listens for [GraphElementEvent]s from [GraphElement]s.*/
