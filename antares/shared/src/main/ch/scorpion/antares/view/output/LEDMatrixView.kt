@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.output
 
 import ch.scorpion.antares.model.output.LEDMatrix
+import ch.scorpion.antares.model.output.LightEmitterModel
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
@@ -23,11 +24,14 @@ import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.edit.select.AbstractSelectionModel
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
+import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.ControlViewSourceGeometryProperty
 import ch.scorpion.jabbah.graph.view.ControlViewSourceProperty
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -36,9 +40,6 @@ import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import kotlin.math.ceil
 
-/**
- * A view of a [LEDMatrix].
- */
 class LEDMatrixView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: LEDMatrix = LEDMatrix(),
@@ -55,6 +56,7 @@ class LEDMatrixView(
 		private const val DOT_SIZE = Look.SCALE
 	}
 
+	// Cannot extract to delegate because of dependency on ControlViewSource
 	override var lightColor: LightColor by ControlViewSourceProperty(lightColor)
 
 	var size: Size by ControlViewSourceGeometryProperty(DEFAULT_SIZE, eventBus, ::updateGeometry)
@@ -207,7 +209,7 @@ class LEDMatrixView(
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
-		writer.writeString("lightColor", lightColor.customName)
+		lightColor.write("lightColor", writer)
 		writer.writeString("size", size.customName)
 		if (isCircleDots) {
 			writer.writeBoolean("circle", true)
@@ -219,7 +221,7 @@ class LEDMatrixView(
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
-		lightColor = LightColor.withName(reader.readString("lightColor"))
+		lightColor = LightColor.read("lightColor", reader)
 		size = Size.withName(reader.readString("size"))
 		isCircleDots = reader.hasAttribute("circle")
 		isDebug = reader.hasAttribute("debug")
@@ -232,6 +234,24 @@ class LEDMatrixView(
 		set(value) {
 			super.preferredSelectionDrawingStrategy = value
 		}
+
+	/** ---- [AbstractGraphElementView] */
+
+	override fun bind(graphView: GraphView, deep: Boolean) {
+		super.bind(graphView, deep)
+		graphParamsChanged(graphView.graph!!)
+	}
+
+	override fun handleStateChanged(event: GraphElementEvent) {
+		super.handleStateChanged(event)
+		if (event.reason == LightEmitterModel.REASON_GRAPH_PARAM_CHANGED && event.argument is Graph) {
+			graphParamsChanged(event.argument as Graph)
+		}
+	}
+
+	private fun graphParamsChanged(graph: Graph) {
+		(lightColor as? LightColorExpression)?.let { it.evaluateIn(graph)?.let { lc -> lightColor = lc } }
+	}
 
 	/** ---- [AbstractVerticeView] */
 
