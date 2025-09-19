@@ -89,7 +89,11 @@ class PointRange(
 	}
 
 	private fun calculateNextXY(distance: Double) {
-		require(distance >= 0) { "distance must not be negative" }
+		val effDist = if (distance <= 0.0) {
+			SIGMA
+		} else {
+			distance
+		}
 
 		if (size <= SIGMA) {
 			nextX = null
@@ -97,8 +101,8 @@ class PointRange(
 			return
 		}
 
-		val dx = (end.x - begin.x) / size * distance
-		val dy = (end.y - begin.y) / size * distance
+		val dx = (end.x - begin.x) / size * effDist
+		val dy = (end.y - begin.y) / size * effDist
 
 		nextX = valueX!! + dx
 		nextY = valueY!! + dy
