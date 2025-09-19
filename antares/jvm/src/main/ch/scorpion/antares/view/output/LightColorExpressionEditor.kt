@@ -1,8 +1,8 @@
 package ch.scorpion.antares.view.output
 
+import ch.scorpion.antares.view.LightColorRenderer
 import ch.scorpion.jabbah.base.dsl.DslError
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.swing.ToStringRenderer
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.properties.ScriptPropertyPanel
 import ch.scorpion.jabbah.graph.model.param.ExpressionPropertyEditor
@@ -25,6 +25,7 @@ class LightColorExpressionEditor(
 
     companion object {
         private val LOG by logger(LightColorExpressionEditor::class)
+        private val RENDERER = LightColorRenderer()
     }
 
     private val comboBoxEditor = ComboBoxPropertyEditor()
@@ -34,7 +35,7 @@ class LightColorExpressionEditor(
     private val parserFactory = if (graph != null) graph::createParser else null
 
     init {
-        comboBox.renderer = ToStringRenderer<LightColor>()
+        comboBox.renderer = RENDERER
         comboBox.isEnabled = editable
         comboBox.isEditable = editable
 
@@ -78,6 +79,10 @@ class LightColorExpressionEditor(
         } else {
             lightColor
         }
+    }
+
+    override fun setValue(value: Any?) {
+        comboBox.editor.item = value
     }
 
     override fun showDialog() {
