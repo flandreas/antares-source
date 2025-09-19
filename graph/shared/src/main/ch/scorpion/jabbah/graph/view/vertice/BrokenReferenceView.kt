@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
+import ch.scorpion.jabbah.draw.drawable.Mirrorable
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Font
 import ch.scorpion.jabbah.draw.graphics.Stroke
@@ -22,7 +23,7 @@ import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 class BrokenReferenceView(
 	ownerRotation: Rotation = Rotation.R0,
 	private val styleProvider: StyleProvider
-) : AbstractRectangle(1.5 * EXPECTED_PORT_VIEW_SIZE, -EXPECTED_VERTICAL_INSET, SIZE, SIZE), Labeled {
+) : AbstractRectangle(1.5 * EXPECTED_PORT_VIEW_SIZE, -EXPECTED_VERTICAL_INSET, SIZE, SIZE), Labeled, Mirrorable {
 
 	companion object {
 		private const val SIZE = 40.0
@@ -64,4 +65,14 @@ class BrokenReferenceView(
 	}
 
 	override val lineWidth: Double get() = stroke.width.toDouble()
+
+	/** ---- [Mirrorable] interface */
+
+	override fun mirrorHorizontally(x: Double) {
+		setBounds(Point2D(this.x + width, this.y).mirrorHorizontally(x).x, this.y, width, height)
+	}
+
+	override fun mirrorVertically(y: Double) {
+		setBounds(this.x, Point2D(this.x, this.y + height).mirrorVertically(y).y, width, height)
+	}
 }
