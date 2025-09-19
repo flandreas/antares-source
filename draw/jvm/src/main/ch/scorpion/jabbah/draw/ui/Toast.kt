@@ -5,10 +5,8 @@ import ch.scorpion.jabbah.animation.AnimationTaskAdapter
 import ch.scorpion.jabbah.animation.Animator
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.ui.DisplayDuration
-import java.awt.BorderLayout
-import java.awt.Dimension
-import java.awt.Frame
-import java.awt.Point
+import java.awt.*
+import java.awt.GraphicsDevice.WindowTranslucency.TRANSLUCENT
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
 import java.awt.geom.RoundRectangle2D
@@ -24,28 +22,38 @@ actual object Toast {
 	private const val BOTTOM_DIST = 70
 	private const val POSITION_CENTER = true
 
+	private val TRANSLUCENCY_SUPPORTED by lazy {
+		GraphicsEnvironment.getLocalGraphicsEnvironment().defaultScreenDevice.isWindowTranslucencySupported(TRANSLUCENT)
+	}
+
 	actual fun show(message: String, animator: Animator) {
 		val frame = ToastFrame(message)
 
 		frame.isFocusable = false
 		frame.focusableWindowState = false
 		frame.isAlwaysOnTop = true
-		frame.opacity = 1f
+		if (TRANSLUCENCY_SUPPORTED) {
+			frame.opacity = 1f
+		}
 		frame.isVisible = true
 
 		System
 			.createTimer()
 			.initialize(DisplayDuration.calculateMilliseconds(message), repeats = false) {
-				val fadeOut = OpacityAnimation.fadeOut(frame, FADE_DURATION_MS).apply {
-					addListener(object : AnimationTaskAdapter() {
-						override fun ended(task: AnimationTask, canceled: Boolean) {
-							frame.isVisible = false
-							frame.dispose()
-						}
-					})
+				if (TRANSLUCENCY_SUPPORTED) {
+					val fadeOut = OpacityAnimation.fadeOut(frame, FADE_DURATION_MS).apply {
+						addListener(object : AnimationTaskAdapter() {
+							override fun ended(task: AnimationTask, canceled: Boolean) {
+								frame.isVisible = false
+								frame.dispose()
+							}
+						})
+					}
+					animator.schedule(fadeOut)
+					fadeOut.start()
+				} else {
+					frame.dispose()
 				}
-				animator.schedule(fadeOut)
-				fadeOut.start()
 			}
 			.start()
 	}
