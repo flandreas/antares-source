@@ -9,6 +9,7 @@ import ch.scorpion.antares.view.output.LightColorExpression
 import ch.scorpion.antares.view.output.LightEmitter
 import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -24,6 +25,7 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
+import ch.scorpion.jabbah.graph.view.ControlViewSourceProperty
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -38,7 +40,8 @@ import kotlin.math.sin
 class LightBulbView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: LightBulb = LightBulb(),
-	lightColor: LightColor = DEFAULT_LIGHT_COLOR
+	lightColor: LightColor = DEFAULT_LIGHT_COLOR,
+	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractAnalogVerticeView<LightBulb>(styleProvider, model),
 	LightEmitter,
 	ControlViewSource<LightBulb>,
@@ -131,7 +134,7 @@ class LightBulbView(
 
 	/** ---- [LightEmitter]  */
 
-	override var lightColor: LightColor = lightColor
+	override var lightColor: LightColor by ControlViewSourceProperty(lightColor, eventBus)
 
 	override val hasGraphParameter: Boolean get() = lightColor is LightColorExpression
 
