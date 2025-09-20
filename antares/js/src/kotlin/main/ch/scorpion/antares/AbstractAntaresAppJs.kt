@@ -2,6 +2,8 @@ package ch.scorpion.antares
 
 import ch.scorpion.antares.module.AntaresModuleJs
 import ch.scorpion.antares.view.theme.AntaresThemes
+import ch.scorpion.jabbah.app.ApplicationVersion
+import ch.scorpion.jabbah.app.CurrentApplicationVersion
 import ch.scorpion.jabbah.app.Environment
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -34,6 +36,9 @@ abstract class AbstractAntaresAppJs(
 
     companion object {
         private val LOG by logger(AbstractAntaresAppJs::class)
+
+        // TODO: Find a way to make this dynamic, i.e. read from version.txt also on JS platform
+        private val VERSION = ApplicationVersion("1.28.0")
     }
 
     private val isUserAuthenticated: Boolean get() =
@@ -60,6 +65,7 @@ abstract class AbstractAntaresAppJs(
         AntaresModuleJs.require()
         BaseModule.settings.set(SchedulerImpl.SETTING_ENABLE_SOFT_BREAKPOINTS, true)
 
+        CurrentApplicationVersion.version = VERSION
         LogSystem.level = LogLevel.Info
 
         AntaresThemes.install(themeName)
