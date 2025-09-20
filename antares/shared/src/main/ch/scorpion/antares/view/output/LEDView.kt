@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.output
 
 import ch.scorpion.antares.model.output.LED
+import ch.scorpion.antares.model.output.LightEmitterModel
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -12,16 +13,17 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.DrawTheme
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.ControlViewSourceProperty
+import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
-/**
- * A view of an [LED].
- */
 class LEDView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     model: LED = LED(),
@@ -37,7 +39,10 @@ class LEDView(
 
 	/** ---- [LightEmitter]  */
 
+    // Cannot extract to delegate because of dependency on ControlViewSource
 	override var lightColor: LightColor by ControlViewSourceProperty(lightColor, eventBus)
+
+    override val hasGraphParameter: Boolean get() = lightColor is LightColorExpression
 
     /** ---- [ControlView] */
 
@@ -71,12 +76,30 @@ class LEDView(
 
     override fun write(writer: StoreWriter) {
         super.write(writer)
-        writer.writeString("lightColor", lightColor.customName)
+        lightColor.write("lightColor", writer)
     }
 
     override fun read(reader: StoreReader) {
         super.read(reader)
-        lightColor = LightColor.withName(reader.readString("lightColor"))
+        lightColor = LightColor.read("lightColor", reader)
+    }
+
+    /** ---- [AbstractGraphElementView] */
+
+    override fun bind(graphView: GraphView, deep: Boolean) {
+        super.bind(graphView, deep)
+        graphParamsChanged(graphView.graph!!)
+    }
+
+    override fun handleStateChanged(event: GraphElementEvent) {
+        super.handleStateChanged(event)
+        if (event.reason == LightEmitterModel.REASON_GRAPH_PARAM_CHANGED && event.argument is Graph) {
+            graphParamsChanged(event.argument as Graph)
+        }
+    }
+
+    override fun graphParamsChanged(graph: Graph) {
+        (lightColor as? LightColorExpression)?.let { it.evaluateIn(graph)?.let { lc -> lightColor = lc } }
     }
 
     /** ---- [AbstractLEDView] */

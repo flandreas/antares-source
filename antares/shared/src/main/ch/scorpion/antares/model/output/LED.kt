@@ -7,15 +7,17 @@ import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
+import ch.scorpion.jabbah.graph.model.element.AbstractGraphElement
 
 /**
  * A light emitting [Vertice] that turns on with [Bit.True].
  */
-class LED : CalculatingVertice(CALCULATOR) {
+class LED : CalculatingVertice(CALCULATOR), LightEmitterModel {
 
 	companion object {
 
@@ -53,5 +55,12 @@ class LED : CalculatingVertice(CALCULATOR) {
 	override fun executionStopped(signalHandler: SignalHandler) {
 		super.executionStopped(signalHandler)
 		isOn = false
+	}
+
+	/** ---- [AbstractGraphElement] */
+
+	override fun graphParamsChanged(graph: Graph) {
+		super.graphParamsChanged(graph)
+		stateChanged(null, LightEmitterModel.REASON_GRAPH_PARAM_CHANGED, graph)
 	}
 }

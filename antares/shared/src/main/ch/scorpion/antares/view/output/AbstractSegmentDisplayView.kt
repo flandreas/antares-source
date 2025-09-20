@@ -2,6 +2,7 @@ package ch.scorpion.antares.view.output
 
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.output.AbstractSegmentDisplay
+import ch.scorpion.antares.model.output.LightEmitterModel
 import ch.scorpion.antares.model.output.SixteenSegmentDisplay
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
@@ -24,11 +25,14 @@ import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
+import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.ControlViewSourceGeometryProperty
 import ch.scorpion.jabbah.graph.view.ControlViewSourceProperty
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -100,20 +104,23 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 
 	/** ---- [LightEmitter] interface */
 
+	// Cannot extract to delegate because of dependency on ControlViewSource
 	override var lightColor: LightColor by ControlViewSourceProperty(lightColor, eventBus)
+
+	override val hasGraphParameter: Boolean get() = lightColor is LightColorExpression
 
 	/** ---- [Storable] */
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
-		writer.writeString("lightColor", lightColor.customName)
+		lightColor.write("lightColor", writer)
 		writer.writeString("size", size.customName)
 		writer.writeBoolean("hasBorder", hasBorder)
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
-		lightColor = LightColor.withName(reader.readString("lightColor"))
+		lightColor = LightColor.read("lightColor", reader)
 		size = Size.withName(reader.readString("size"))
 		hasBorder = if (reader.hasAttribute("hasBorder")) {
 			reader.readBoolean("hasBorder")
@@ -163,6 +170,24 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 		set(value) {
 			super.preferredSelectionDrawingStrategy = value
 		}
+
+	/** ---- [AbstractGraphElementView] */
+
+	override fun bind(graphView: GraphView, deep: Boolean) {
+		super.bind(graphView, deep)
+		graphParamsChanged(graphView.graph!!)
+	}
+
+	override fun handleStateChanged(event: GraphElementEvent) {
+		super.handleStateChanged(event)
+		if (event.reason == LightEmitterModel.REASON_GRAPH_PARAM_CHANGED && event.argument is Graph) {
+			graphParamsChanged(event.argument as Graph)
+		}
+	}
+
+	override fun graphParamsChanged(graph: Graph) {
+		(lightColor as? LightColorExpression)?.let { it.evaluateIn(graph)?.let { lc -> lightColor = lc } }
+	}
 
 	/** ---- [AbstractVerticeView] */
 

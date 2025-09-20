@@ -415,6 +415,23 @@ class SubGraphVerticeViewImpl(
 		if (_label != null) {
 			label = _label
 		}
+
+		if (dependOnGraphParams) {
+			applyGraphParams(getGraph())
+		}
+	}
+
+	private val dependOnGraphParams: Boolean get() =
+		drawableBag.drawables
+			.filterIsInstance<ControlViewComponent>()
+			.any { it.controlView.hasGraphParameter }
+
+	private fun applyGraphParams(graph: Graph) {
+		drawableBag.drawables.forEach {
+			if (it is ControlViewComponent) {
+				it.controlView.graphParamsChanged(graph)
+			}
+		}
 	}
 
 	override fun allResolutionDone() {
@@ -496,6 +513,10 @@ class SubGraphVerticeViewImpl(
 		super.handleStateChanged(event)
 		if (event.reason == Vertice.STATE_CHANGE_TYPE) {
 			tooltip.reset()
+		} else if (event.reason == SubGraphVerticeRef.REASON_GRAPH_PARAM_CHANGED) {
+			if (!model.isBroken) {
+				applyGraphParams(getGraph())
+			}
 		}
 	}
 

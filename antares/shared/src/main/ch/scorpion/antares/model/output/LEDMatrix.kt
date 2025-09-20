@@ -11,9 +11,11 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.Translation
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.PortType
+import ch.scorpion.jabbah.graph.model.element.AbstractGraphElement
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
 import ch.scorpion.jabbah.io.Storable
@@ -31,7 +33,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 class LEDMatrix(
 	columnWidth: BitWidth = DEF_COLUMN_WIDTH,
 	rowWidth: BitWidth = DEF_ROW_WIDTH
-) : CalculatingVertice(CALCULATOR) {
+) : CalculatingVertice(CALCULATOR), LightEmitterModel {
 
 	companion object {
 
@@ -118,6 +120,13 @@ class LEDMatrix(
 	override fun executionStopped(signalHandler: SignalHandler) {
 		super.executionStopped(signalHandler)
 		clear()
+	}
+
+	/** ---- [AbstractGraphElement] */
+
+	override fun graphParamsChanged(graph: Graph) {
+		super.graphParamsChanged(graph)
+		stateChanged(null, LightEmitterModel.REASON_GRAPH_PARAM_CHANGED, graph)
 	}
 
 	/** ---- [LEDMatrix] */

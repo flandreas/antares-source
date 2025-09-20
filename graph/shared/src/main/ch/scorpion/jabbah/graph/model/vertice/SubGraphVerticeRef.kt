@@ -96,6 +96,8 @@ class SubGraphVerticeRef(
 
 		private val BROKEN_REFERENCE_NAME = Name(BrokenReferenceView.NAME)
 
+		const val REASON_GRAPH_PARAM_CHANGED = "graphParamChanged"
+
 		val CALCULATOR = object : VerticeCalculator<SubGraphVerticeRef> {
 			override fun calculate(vertice: SubGraphVerticeRef, data: GraphActorData, signalHandler: SignalHandler) {
 				if (data.isInput && !vertice.isDeepExecution(signalHandler.isDeepExecution)) {
@@ -139,7 +141,7 @@ class SubGraphVerticeRef(
 				it.parameterValues = field
 			}
 			synchronizePorts()
-			stateChanged(null)
+			stateChanged(null, REASON_GRAPH_PARAM_CHANGED)
 		}
 
 	private val executionMetaData by lazy {

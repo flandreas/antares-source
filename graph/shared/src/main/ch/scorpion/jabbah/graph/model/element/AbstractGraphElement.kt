@@ -98,10 +98,11 @@ abstract class AbstractGraphElement : ActorImpl(), GraphElement, Describable {
 	 * Notifies all registered [GraphElementListener]s that the state of this [GraphElement] has changed.
 	 * @param signalHandler the [SignalHandler] if the change occurred during simulation
 	 * @param reason indicates the kind of change so listeners can take appropriate action
+	 * @param argument optional context object that might be used by the view object to handle the state change (e.g. the Graph)
 	 */
-	protected fun stateChanged(signalHandler: SignalHandler? = null, reason: String? = null) {
+	protected fun stateChanged(signalHandler: SignalHandler? = null, reason: String? = null, argument: Any? = null) {
 		if (listeners != null) {
-			val event = GraphElementEvent(this, signalHandler, reason)
+			val event = GraphElementEvent(this, signalHandler, reason, argument)
 			listeners!!.toList().forEach { it.stateChanged(event) }
 		}
 	}
