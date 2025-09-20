@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<metaGraph _id='0' appVersion='1.28.0' manualContainer='true'>
+<metaGraph _id='0' appVersion='1.29.0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
@@ -278,8 +278,8 @@
       <model>
         <subGraphVertice _id='103' id='0' delay='0' uuid='f82aa618-870b-4972-8373-d3f5371160b6'>
           <desc>
-            <translation lang='de' text='Kombiniert eine rote 7-Segment-Anzeige mittlerer Grösse mit einem Dekodierer. Mit dem Parameter &apos;Decoder&apos; kann entweder dezimal (0) oder hexadezimal (1) gewählt werden.'/>
-            <translation lang='en' text='Combines a red 7-segment display of medium size with a decoder. The parameter &apos;Decoder&apos; can be used to choose between decimal (0) or hexadecimal (1).'/>
+            <translation lang='de' text='Kombiniert eine 7-Segment-Anzeige mittlerer Grösse mit einem Dekodierer. Mit dem Parameter &apos;Decoder&apos; kann entweder dezimal (0) oder hexadezimal (1) gewählt werden.'/>
+            <translation lang='en' text='Combines a 7-segment display of medium size with a decoder. The parameter &apos;Decoder&apos; can be used to choose between decimal (0) or hexadecimal (1).'/>
           </desc>
           <name>
             <translation lang='en' text='7-Segment with Decoder'/>
