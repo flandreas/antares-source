@@ -107,6 +107,8 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 	// Cannot extract to delegate because of dependency on ControlViewSource
 	override var lightColor: LightColor by ControlViewSourceProperty(lightColor, eventBus)
 
+	override val hasGraphParameter: Boolean get() = lightColor is LightColorExpression
+
 	/** ---- [Storable] */
 
 	override fun write(writer: StoreWriter) {
@@ -183,7 +185,7 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 		}
 	}
 
-	private fun graphParamsChanged(graph: Graph) {
+	override fun graphParamsChanged(graph: Graph) {
 		(lightColor as? LightColorExpression)?.let { it.evaluateIn(graph)?.let { lc -> lightColor = lc } }
 	}
 

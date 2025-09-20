@@ -133,6 +133,8 @@ class LightBulbView(
 
 	override var lightColor: LightColor = lightColor
 
+	override val hasGraphParameter: Boolean get() = lightColor is LightColorExpression
+
 	/** ---- [ControlViewSource] */
 
 	override val controlId: String get() = "lightBulb:${model.id}"
@@ -186,7 +188,7 @@ class LightBulbView(
 		}
 	}
 
-	private fun graphParamsChanged(graph: Graph) {
+	override fun graphParamsChanged(graph: Graph) {
 		(lightColor as? LightColorExpression)?.let { it.evaluateIn(graph)?.let { lc -> lightColor = lc } }
 	}
 

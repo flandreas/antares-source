@@ -59,6 +59,8 @@ class LEDMatrixView(
 	// Cannot extract to delegate because of dependency on ControlViewSource
 	override var lightColor: LightColor by ControlViewSourceProperty(lightColor)
 
+	override val hasGraphParameter: Boolean get() = lightColor is LightColorExpression
+
 	var size: Size by ControlViewSourceGeometryProperty(DEFAULT_SIZE, eventBus, ::updateGeometry)
 
 	/** `true` if the dots are drawn as circles, `false` if they are drawn as squares .*/
@@ -249,7 +251,7 @@ class LEDMatrixView(
 		}
 	}
 
-	private fun graphParamsChanged(graph: Graph) {
+	override fun graphParamsChanged(graph: Graph) {
 		(lightColor as? LightColorExpression)?.let { it.evaluateIn(graph)?.let { lc -> lightColor = lc } }
 	}
 

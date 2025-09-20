@@ -42,6 +42,8 @@ class LEDView(
     // Cannot extract to delegate because of dependency on ControlViewSource
 	override var lightColor: LightColor by ControlViewSourceProperty(lightColor, eventBus)
 
+    override val hasGraphParameter: Boolean get() = lightColor is LightColorExpression
+
     /** ---- [ControlView] */
 
 	override val controlId: String
@@ -96,7 +98,7 @@ class LEDView(
         }
     }
 
-    private fun graphParamsChanged(graph: Graph) {
+    override fun graphParamsChanged(graph: Graph) {
         (lightColor as? LightColorExpression)?.let { it.evaluateIn(graph)?.let { lc -> lightColor = lc } }
     }
 
