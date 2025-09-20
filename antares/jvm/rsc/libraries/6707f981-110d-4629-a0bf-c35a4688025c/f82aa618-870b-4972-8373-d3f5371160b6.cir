@@ -138,7 +138,7 @@
                 <polylineShape points='-70.0,-532.0 -140.0,-532.0'/>
               </shape>
             </digitalEdgeView>
-            <sevenSegmentDisplayView _id='69' id='9' rot='0' filled='true' stroked='true' modelId='22' x='-196.0' y='-714.0' lightColor='red' size='medium' hasBorder='true'/>
+            <sevenSegmentDisplayView _id='69' id='9' rot='0' filled='true' stroked='true' modelId='22' x='-196.0' y='-714.0' lightColor='LC' size='medium' hasBorder='true'/>
             <digitalEdgeView _id='70' id='10' filled='true' stroked='true' modelId='23' layout='ortho' orig='63' origPort='4' origPortOutput='true' dest='69' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='-182.0,-560.0 -182.0,-630.0'/>
@@ -271,7 +271,7 @@
         <rectangle _id='100' id='7' style='figure' filled='true' stroked='true' x='0.0' y='-40.488' w='49.0' h='12.488'/>
         <controlViewComponent _id='101' id='8' style='figure' filled='true' stroked='true' controlModelId='9' portScheme='combined'>
           <controlView>
-            <sevenSegmentDisplayView _id='102' id='9' rot='0' filled='true' stroked='true' modelId='22' x='0.0' y='-126.0' lightColor='red' size='medium' hasBorder='true'/>
+            <sevenSegmentDisplayView _id='102' id='9' rot='0' filled='true' stroked='true' modelId='22' x='0.0' y='-126.0' lightColor='LC' size='medium' hasBorder='true'/>
           </controlView>
         </controlViewComponent>
       </components>
@@ -302,6 +302,7 @@
             <translation lang='de' text='0: Dezimal. 1: Hexadezimal.'/>
           </desc>
         </graphParamDef>
+        <graphParamDef _id='106' name='LC' type='lightColor' defaultValue='red'/>
       </paramDefs>
     </graphParamDefs>
   </params>
