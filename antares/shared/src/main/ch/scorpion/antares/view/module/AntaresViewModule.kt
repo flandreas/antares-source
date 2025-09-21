@@ -409,6 +409,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("inductorView", InductorView::class)
 		typeMap.register("analogRelayView", AnalogRelayView::class)
 		typeMap.register("diodeView", DiodeView::class)
+		typeMap.register("analogPushButtonSwitchView", AnalogPushButtonSwitchView::class)
 	}
 
 	private fun configureSelectionModels(factory: SelectionModelFactory) {
