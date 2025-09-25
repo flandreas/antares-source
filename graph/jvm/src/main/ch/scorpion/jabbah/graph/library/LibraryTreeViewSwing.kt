@@ -22,8 +22,9 @@ import kotlin.math.min
 class LibraryTreeViewSwing(
 	controller: LibraryTreeViewController,
 	application: Application,
-	showWorkspaceNode: Boolean = true
-) : BasicLibraryTreeViewSwing<LibraryTreeView>(controller, showWorkspaceNode), LibraryTreeView {
+	showWorkspaceNode: Boolean = true,
+	includeImports: Boolean = true
+) : BasicLibraryTreeViewSwing<LibraryTreeView>(controller, showWorkspaceNode, includeImports), LibraryTreeView {
 
 	companion object {
 		private val LOG by logger(LibraryTreeViewSwing::class)

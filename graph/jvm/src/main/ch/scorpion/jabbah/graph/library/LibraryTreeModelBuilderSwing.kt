@@ -13,7 +13,8 @@ import javax.swing.tree.TreeModel
 /** Builds the [TreeModel] for displaying a [Library] and an optional [Project] as a tree.*/
 class LibraryTreeModelBuilderSwing(
 	private val library: Library?,
-	private val filter: LibraryFilter? =  null
+	private val filter: LibraryFilter? =  null,
+	private val includeImports: Boolean = true
 ) {
 	companion object {
 
@@ -24,7 +25,7 @@ class LibraryTreeModelBuilderSwing(
 		) {
 			for (node in parentNode.children) {
 				val swingNode = NamableTreeNode(node.item, font)
-				if (node.children.size > 0) {
+				if (node.children.isNotEmpty()) {
 					addItems(swingNode, node, font)
 				}
 				parentSwingNode.add(swingNode)
@@ -52,9 +53,15 @@ class LibraryTreeModelBuilderSwing(
 		val root = DefaultMutableTreeNode(Translations.getString("graph.desktop.name"))
 
 		if (library != null) {
-			for (l in library.expandedImports.libraries) {
-				val node = NamableTreeNode(l, font)
-				addLibrary(node, font, l, filter)
+			if (includeImports) {
+				for (l in library.expandedImports.libraries) {
+					val node = NamableTreeNode(l, font)
+					addLibrary(node, font, l, filter)
+					root.add(node)
+				}
+			} else {
+				val node = NamableTreeNode(library, font)
+				addLibrary(node, font, library, filter)
 				root.add(node)
 			}
 		}

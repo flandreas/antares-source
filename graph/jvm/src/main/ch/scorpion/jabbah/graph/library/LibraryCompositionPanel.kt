@@ -34,12 +34,14 @@ class EditLibraryAction(
 	operation = Change,
 	controller
 ) {
+	override val opensDialog: Boolean get() = true
+
 	override fun execute(event: ActionEvent) {
 		LibraryCompositionPanel.showAsDialog(controller.library!!, Frame.getFrames()[0], application, controller.eventBus)
 	}
 
 	override fun calculateEnabledness(): Boolean =
-		super.calculateEnabledness() && controller.library != null
+		super.calculateEnabledness() && controller.selectedItem === controller.library
 }
 
 /**
@@ -80,7 +82,8 @@ class LibraryCompositionPanel(
 	private val destinationTreeView = LibraryTreeViewSwing(
 		destinationTreeController,
 		application = application,
-		showWorkspaceNode = false)
+		showWorkspaceNode = false,
+		includeImports = false)
 
 	private val copyAction = CopyAction()
 
@@ -93,7 +96,9 @@ class LibraryCompositionPanel(
 	private val selectedSourceLibraryId: LibraryIdentification get() = (sourceLibraries.selectedItem as LibraryDictionaryEntry).identification
 
 	private val librarySelectionListener = TreeSelectionListener {
-		copyAction.enabled = isSourceElementSelected && isDestinationFolderSelected
+		UiUtil.invokeLater {
+			copyAction.enabled = isSourceElementSelected && isDestinationFolderSelected
+		}
 	}
 
 	val closeButton = JButton(ActionWrapperSwing(CancelAction()))
@@ -108,7 +113,7 @@ class LibraryCompositionPanel(
 			eventBus = eventBus
 		)
 
-		// TODO With showWorkshopNode = false, Tree is empty after current Library has been changed?
+		// TODO With showWorkspaceNode = false, Tree is empty after current Library has been changed?
 		sourceTreeView = LibraryTreeViewSwing(
 			sourceTreeController,
 			application = application,
@@ -176,10 +181,12 @@ class LibraryCompositionPanel(
 
 		val addButton = JButton(ActionWrapperSwing(destinationTreeView.actions.addLibraryFolderAction))
 		addButton.text = null
+		addButton.toolTipText = destinationTreeView.actions.addLibraryFolderAction.name
 		addButton.icon = UiUtil.themedIcon("/img/plus-18.png")
 
 		val removeButton = JButton(ActionWrapperSwing(destinationTreeView.actions.deleteLibraryFolderAction))
 		removeButton.text = null
+		removeButton.toolTipText = destinationTreeView.actions.deleteLibraryFolderAction.name
 		removeButton.icon = UiUtil.themedIcon("/img/minus-18.png")
 
 		layout.setHorizontalGroup(

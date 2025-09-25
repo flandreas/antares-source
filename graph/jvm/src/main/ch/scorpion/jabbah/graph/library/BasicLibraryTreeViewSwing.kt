@@ -26,9 +26,10 @@ import javax.swing.tree.TreeSelectionModel
 
 open class BasicLibraryTreeViewSwing<T: BasicLibraryTreeView>(
     protected var basicController: BasicLibraryTreeViewController<T>,
-    showWorkspaceNode: Boolean = true
+    showWorkspaceNode: Boolean = true,
+    includeImports: Boolean = true
 ) : JTree(
-    LibraryTreeModelBuilderSwing(basicController.library).build()),
+    LibraryTreeModelBuilderSwing(basicController.library, includeImports = includeImports).build()),
     BasicLibraryTreeView
 {
     private val showBeginnerTips = BaseModule.properties.getBoolean(PROP_BEGINNER_HELP_TOOLTIP)

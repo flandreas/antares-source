@@ -135,8 +135,17 @@ class LibraryPersistencePanel(
 			selectedLibrary?.let {
 				LOG.userTrail("open library '${it.uuid}'")
 				InvocationHandler.invoke {
-					managementService.open(getLibraryIdentity(it.uuid))
-					closeHandler.invoke()
+					try {
+						managementService.open(getLibraryIdentity(it.uuid))
+						closeHandler.invoke()
+					} catch (e: Exception) {
+						LOG.error("Error when opening library '${it.uuid}'", e)
+						JOptionPane.showMessageDialog(
+							this@LibraryPersistencePanel,
+							Translations.getString("library.dialog.open.error", e.message ?: "Unknown"),
+							this.name,
+							JOptionPane.ERROR_MESSAGE)
+					}
 				}
 			}
 		}
