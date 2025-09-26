@@ -70,7 +70,7 @@ abstract class AbstractLibraryManagementService(
 				try {
 					library =
 						libraryService.importLibrary(inputPath, userDictionaryService.entriesCount, GraphQuota.UNLIMITED)
-				} catch (e: Throwable) {
+				} catch (_: Throwable) {
 					return Invalid.result()
 				}
 			} else {
@@ -126,6 +126,7 @@ abstract class AbstractLibraryManagementService(
 
 	protected fun closeImpl(additionalThenHandler: () -> Unit) {
 		libraryHolder.l?.let { library ->
+			LOG.userTrail("Close main library/project")
 			eventBus.postVetoable(
 				event = CloseLibraryRequest(),
 				undoEvent = OpenLibraryRequest(library),

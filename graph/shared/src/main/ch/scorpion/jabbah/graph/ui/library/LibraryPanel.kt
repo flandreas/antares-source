@@ -31,7 +31,9 @@ class LibraryPanelController(
 	val libraryTreePanelController = LibraryTreePanelController(libraryTreeViewController)
 
 	private val themeHandler: EventHandler<ThemeEvent> = { view.refresh() }
-	private val currentLibraryHandler: EventHandler<CurrentLibraryEvent> = { libraryTreeViewController.library = it.library }
+	private val currentLibraryHandler: EventHandler<CurrentLibraryEvent> = {
+		libraryTreeViewController.library = it.library
+	}
 
 	init {
 		eventBus.register(ThemeEvent::class, themeHandler)

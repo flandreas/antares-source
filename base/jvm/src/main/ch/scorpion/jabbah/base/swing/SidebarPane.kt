@@ -5,7 +5,6 @@ import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.swing.SidebarPane.Location
 import ch.scorpion.jabbah.base.ui.UIBasics
 import java.awt.*
 import java.awt.event.MouseAdapter
@@ -242,8 +241,11 @@ class SidebarPane(
 	private fun getEntry(label: JLabel): Entry = entries.first { it.label === label }
 
 	private fun activate(entry: Entry?) {
-		LOG.userTrail(entry?.let { "Open SideBarPane '${it.name}'" } ?: "Close SideBarPane '${current?.name}'")
 		val oldOpen = isOpen
+
+		if (isOpen && entry == null) {
+			LOG.userTrail("Close SideBarPane '${current!!.name}'")
+		}
 
 		current?.also {
 			contentPanel.remove(it.headerPanel)
@@ -253,6 +255,7 @@ class SidebarPane(
 		current = entry
 
 		current?.also {
+			LOG.userTrail("Open SideBarPane '${it.name}'")
 			it.update()
 			contentPanel.add(it.headerPanel, BorderLayout.NORTH)
 			contentPanel.add(it.component, BorderLayout.CENTER)
@@ -268,7 +271,6 @@ class SidebarPane(
 	}
 
 	private fun collapse() {
-		LOG.userTrail("Collapse SideBarPane")
 		activate(null)
 	}
 

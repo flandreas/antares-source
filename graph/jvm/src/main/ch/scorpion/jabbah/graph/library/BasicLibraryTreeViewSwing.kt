@@ -120,8 +120,6 @@ open class BasicLibraryTreeViewSwing<T: BasicLibraryTreeView>(
     }
 
     override fun openMainLibrary(library: Library) {
-        LOG.userTrail("Open main Library/Project '${library.name}'")
-
         model = LibraryTreeModelBuilderSwing(library).withFont(Graphics2DJvm.fromAwtFont(font)).build()
         expandRow(0)
 
@@ -148,7 +146,6 @@ open class BasicLibraryTreeViewSwing<T: BasicLibraryTreeView>(
     }
 
     override fun closeMainLibrary() {
-        LOG.userTrail("Close main Library/Project")
         val root = model.root as DefaultMutableTreeNode
         root.removeAllChildren()
         (model as DefaultTreeModel).nodeStructureChanged(root)

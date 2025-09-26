@@ -133,7 +133,6 @@ class LibraryPersistencePanel(
 	private inner class OpenAction : AbstractAction("library.dialog.open.action") {
 		override fun execute(event: ActionEvent) {
 			selectedLibrary?.let {
-				LOG.userTrail("open library '${it.uuid}'")
 				InvocationHandler.invoke {
 					try {
 						managementService.open(getLibraryIdentity(it.uuid))

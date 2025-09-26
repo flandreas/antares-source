@@ -185,7 +185,7 @@ class ProjectManagementService(
 	}
 
 	private fun openImpl(project: Project, elementUUID: UUID?) {
-		LOG.trace("open project ${project.uuid} with default element $elementUUID")
+		LOG.userTrail("Open project '${project.name}' (${project.uuid}) with default element $elementUUID")
 		libraryHolder.l = project
 		if (elementUUID != null) {
 			val element = project.getContainerLibraryElement(elementUUID)

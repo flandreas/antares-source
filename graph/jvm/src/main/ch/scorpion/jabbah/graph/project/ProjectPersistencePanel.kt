@@ -143,7 +143,6 @@ class ProjectPersistencePanel(
 	private inner class OpenAction : AbstractAction("project.dialog.open.action") {
 		override fun execute(event: ActionEvent) {
 			selectedLibrary?.let {
-				LOG.userTrail("Open project '${it.uuid}'")
 				InvocationHandler.invoke {
 					try {
 						managementService.open(getLibraryIdentity(it.uuid))

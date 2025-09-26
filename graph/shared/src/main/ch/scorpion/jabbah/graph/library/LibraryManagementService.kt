@@ -178,6 +178,7 @@ class LibraryManagementService(
 	}
 
 	private fun openImpl(library: Library, containerLibraryElement: UUID? = null) {
+		LOG.userTrail("Open main library '${library.name}' (${library.uuid})")
 		libraryHolder.l = library
 		if (containerLibraryElement != null) {
 			library.getContainerLibraryElement(containerLibraryElement)?.let {
