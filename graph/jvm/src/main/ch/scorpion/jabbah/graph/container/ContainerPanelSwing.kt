@@ -119,7 +119,7 @@ class ContainerPanelSwing(
 			removeAll()
 		} else {
 			if (componentCount == 0) {
-				add(mainSplitPane)
+				add(rightSidebarPane, BorderLayout.CENTER)
 			}
 			treeView.update(
 				controller.graphView!!,
