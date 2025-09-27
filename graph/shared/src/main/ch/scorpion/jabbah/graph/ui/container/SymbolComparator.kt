@@ -64,7 +64,7 @@ class SymbolComparatorController(
             if (field != value) {
                 LOG.debug("Setting active=$value")
                 field = value
-                updateLibrary()
+                updateState()
             }
         }
 
@@ -75,15 +75,13 @@ class SymbolComparatorController(
         null
     )
 
-    //private var open: Boolean = false
-
     private val viewPropertyListener = PropertyChangeListener<Any> { e ->
         when (e.name) {
             DrawingView.PROP_DRAWING -> clear()
         }
     }
 
-    private val currentLibraryHandler: EventHandler<CurrentLibraryEvent> = { updateLibrary() }
+    private val currentLibraryHandler: EventHandler<CurrentLibraryEvent> = { updateState() }
 
     private val librarySelectionChangedHandler: EventHandler<LibrarySelectionChangedEvent> = {
         if (it.controller === libraryTreeViewController && active) {
@@ -142,9 +140,11 @@ class SymbolComparatorController(
         view.reset()
     }
 
-    private fun updateLibrary() {
+    private fun updateState() {
         if (active) {
             libraryTreeViewController.library = LibraryModule.libraryHolder.l
+        } else {
+            hideComparisonSymbol()
         }
     }
 
@@ -156,13 +156,17 @@ class SymbolComparatorController(
         }
     }
 
-    private fun handleContainerLibraryElementChanged() {
-        drawingView.animationContainer.setDrawableDrawer(comparisonSymbolDrawer)
-
+    private fun hideComparisonSymbol() {
         if (comparisonSymbol != null) {
             drawingView.animationContainer.remove(comparisonSymbol!!)
             comparisonSymbol = null
         }
+    }
+
+    private fun handleContainerLibraryElementChanged() {
+        drawingView.animationContainer.setDrawableDrawer(comparisonSymbolDrawer)
+
+        hideComparisonSymbol()
 
         libraryElement?.let {
             val entry = cache[it]
