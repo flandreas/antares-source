@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
@@ -28,6 +29,7 @@ import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.SnapResult
 import ch.scorpion.jabbah.graph.library.CurrentLibraryEvent
 import ch.scorpion.jabbah.graph.library.LibraryElement
+import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.ui.library.BasicLibraryTreeView
 import ch.scorpion.jabbah.graph.ui.library.BasicLibraryTreeViewController
@@ -43,7 +45,10 @@ class SymbolComparatorController(
     private val drawingView: DrawingView<Drawing<Component>>,
     private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<SymbolComparatorView>() {
+
     companion object {
+
+        private val LOG by logger(SymbolComparatorController::class)
 
         /** The inset (in view coordinates) between teh compare symbol and the view border.*/
         private const val INSET = 50
@@ -54,6 +59,15 @@ class SymbolComparatorController(
         private const val ALPHA_VALUE = 40
     }
 
+    var active: Boolean = false
+        set(value) {
+            if (field != value) {
+                LOG.debug("Setting active=$value")
+                field = value
+                updateLibrary()
+            }
+        }
+
     val refreshAction: Action = RefreshAction()
 
     val libraryTreeViewController = BasicLibraryTreeViewController<BasicLibraryTreeView>(
@@ -61,16 +75,18 @@ class SymbolComparatorController(
         null
     )
 
+    //private var open: Boolean = false
+
     private val viewPropertyListener = PropertyChangeListener<Any> { e ->
         when (e.name) {
             DrawingView.PROP_DRAWING -> clear()
         }
     }
 
-    private val currentLibraryHandler: EventHandler<CurrentLibraryEvent> = { libraryTreeViewController.library = it.library }
+    private val currentLibraryHandler: EventHandler<CurrentLibraryEvent> = { updateLibrary() }
 
     private val librarySelectionChangedHandler: EventHandler<LibrarySelectionChangedEvent> = {
-        if (it.controller === libraryTreeViewController) {
+        if (it.controller === libraryTreeViewController && active) {
             handle(it)
         }
     }
@@ -126,7 +142,13 @@ class SymbolComparatorController(
         view.reset()
     }
 
-    private fun handle(event: LibrarySelectionChangedEvent) {
+    private fun updateLibrary() {
+        if (active) {
+            libraryTreeViewController.library = LibraryModule.libraryHolder.l
+        }
+    }
+
+    private fun handle(@Suppress("unused") event: LibrarySelectionChangedEvent) {
         libraryElement = if (libraryTreeViewController.selectedItem is LibraryElement) {
             libraryTreeViewController.selectedItem as LibraryElement
         } else {

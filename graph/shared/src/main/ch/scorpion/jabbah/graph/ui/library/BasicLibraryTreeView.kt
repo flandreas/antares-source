@@ -74,6 +74,7 @@ open class BasicLibraryTreeViewController<T: BasicLibraryTreeView>(
     var library: Library? = library
         set(value) {
             if (field !== value) {
+                LOG.debug("Set library")
                 field = value
                 if (field != null) {
                     view.openMainLibrary(value!!)

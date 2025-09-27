@@ -1,8 +1,7 @@
 package ch.scorpion.jabbah.base.swing
 
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.Settings
-import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import java.awt.BorderLayout
 import javax.swing.JComponent
 import javax.swing.JPanel
@@ -22,8 +21,6 @@ class SidebarSplitPane(
 ) : JPanel() {
 
 	companion object {
-
-		private val LOG by logger(SidebarSplitPane::class)
 
 		/** The name in [Settings] (extending `propertyBaseName`) of the [JSplitPane] divider position.*/
 		private const val SPLIT_POS = "splitPos"
@@ -62,6 +59,8 @@ class SidebarSplitPane(
 	private var sidebarDividerLocation: Int = BaseModule.settings.getInt(dividerLocationSettingName, -1)
 
 	private var initialOpenIndex: Int = if (providedInitialOpenIndex >= 0) providedInitialOpenIndex else BaseModule.settings.getInt(openIndexSettingName, -1)
+
+	val isOpen: Boolean get() = sidebarPane.isOpen
 
 	init {
 		buildUI()

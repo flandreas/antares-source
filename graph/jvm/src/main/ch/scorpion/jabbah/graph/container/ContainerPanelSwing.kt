@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.app.ToolBar
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.SidebarPane
 import ch.scorpion.jabbah.base.swing.SidebarPaneContentImpl
@@ -69,7 +70,9 @@ class ContainerPanelSwing(
 
 	private val canvas = CanvasJvm(controller.drawingView)
 
-	private val rightSidebarPane = SidebarSplitPane(
+	private val symbolComparatorView = SymbolComparatorViewSwing(controller.symbolComparatorController)
+
+	private val rightSidebarPane: SidebarSplitPane = SidebarSplitPane(
 		location = SidebarPane.Location.Right,
 		mainContent = mainSplitPane,
 		settingBaseName = "containerPanel.rightSidebar",
@@ -77,13 +80,17 @@ class ContainerPanelSwing(
 			SidebarPaneContentImpl(
 				Translations.getString("graph.container.symbolComparison.name"),
 				UiUtil.themedIcon("/img/compass-16.png"),
-				SymbolComparatorViewSwing(controller.symbolComparatorController),
+				symbolComparatorView,
 				listOf(controller.symbolComparatorController.refreshAction, SymbolComparatorViewSwing.helpAction)
 			)
 		)
-	)
+	) {
+		controller.handleRightSidebarOpen(rightSidebarPane.isOpen)
+	}
 
 	val toolbars = GraphViewModuleJvm.containerToolBarBuilderFactory().buildToolBars(application, controller.editor, separator = true)
+
+	override val rightSidebarOpen: Boolean get() = rightSidebarPane.isOpen
 
 	init {
 		controller.view = this

@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
@@ -28,6 +29,8 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
  */
 interface ContainerPanelView : UIView {
 
+	val rightSidebarOpen: Boolean
+
 	fun dataChanged()
 
 	fun updateIsManualContainer(isManualContainer: Boolean)
@@ -45,6 +48,10 @@ class ContainerPanelController(
 	val mainGraphDrawingView: DrawingView<Drawing<Component>>,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<ContainerPanelView>() {
+
+	companion object {
+		private val LOG by logger(ContainerPanelController::class)
+	}
 
 	val drawingView = EditModule.drawingViewFactory.create(ContainerDrawing(), applicationContextHolder, displayGlobalMessages,
 		GraphFrameController.CONTAINER_EDITOR_NAME)
@@ -89,6 +96,7 @@ class ContainerPanelController(
 
 	var active: Boolean = false
 		set(value) {
+			LOG.debug("Setting ContainerPanel to active=$value")
 			if (field != value) {
 				field = value
 				// Update the UI of the JTree in order to recalculate the width of the TreeRenderer's JLabels,
@@ -96,6 +104,7 @@ class ContainerPanelController(
 				// and these names might have been changed while the ContainerPanel wasn't active
 				view.activeChanged()
 				editor.active = value && editable
+				updateSymbolComparatorActiveness()
 			}
 		}
 
@@ -164,6 +173,15 @@ class ContainerPanelController(
 	fun generateContainerDrawing() {
 		view.generateContainerDrawing()
 		isManualContainerCurrent = false
+	}
+
+	fun handleRightSidebarOpen(open: Boolean) {
+		LOG.debug("rightSidebarPane changed to open = $open")
+		updateSymbolComparatorActiveness()
+	}
+
+	private fun updateSymbolComparatorActiveness() {
+		symbolComparatorController.active = view.rightSidebarOpen && active
 	}
 
 	private fun handle(event: ApplicationDataEvent) {
