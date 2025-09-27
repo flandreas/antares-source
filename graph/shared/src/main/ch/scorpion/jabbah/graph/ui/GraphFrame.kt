@@ -27,6 +27,7 @@ import ch.scorpion.jabbah.graph.app.ApplicationModeHolderImpl
 import ch.scorpion.jabbah.graph.container.isManualContainer
 import ch.scorpion.jabbah.graph.ui.documentation.DocumentationPanelController
 import ch.scorpion.jabbah.graph.library.AbstractContainerLibraryElementSavable
+import ch.scorpion.jabbah.graph.library.CurrentLibraryEvent
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.library.LibraryServiceCallbackAdapter
 import ch.scorpion.jabbah.graph.model.graph.GraphPropagationDelayCalculator
@@ -153,8 +154,11 @@ open class GraphFrameController<T: GraphFrame>(
 
 	private val applicationModeHandler: EventHandler<ApplicationModeEvent> = { handle(it) }
 
+	private val currentLibraryHandler: EventHandler<CurrentLibraryEvent> = { handle(it) }
+
 	override fun onViewInitialized() {
 		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
+		eventBus.register(CurrentLibraryEvent::class, currentLibraryHandler)
 		registerZoomEventHandlers()
 		LibraryModule.libraryServiceCallbacks.add(customSymbolHandler)
 		if (BaseModule.properties.getBoolean(GraphPropagationDelayCalculator.PROP_CALCULATE_ON_SAVE)) {
@@ -166,6 +170,7 @@ open class GraphFrameController<T: GraphFrame>(
 	override fun dispose() {
 		super.dispose()
 		eventBus.unregister(applicationModeHandler)
+		eventBus.unregister(currentLibraryHandler)
 		viewDesktopAction.dispose()
 		viewContainerAction.dispose()
 		viewDocumentationAction.dispose()
@@ -216,6 +221,14 @@ open class GraphFrameController<T: GraphFrame>(
 	private fun handle(event: ApplicationModeEvent) {
 		if (event.source === applicationModeHolder) {
 			appDataViewController.isSavable = applicationModeHolder.currentMode == ApplicationMode.EDIT
+		}
+	}
+
+	private fun handle(@Suppress("unused") event: CurrentLibraryEvent) {
+		System.invokeLater {
+			(viewContainerAction as GraphFrameController<*>.AbstractViewAction).update()
+			(viewDocumentationAction as GraphFrameController<*>.AbstractViewAction).update()
+			showDesktop()
 		}
 	}
 
@@ -276,7 +289,7 @@ open class GraphFrameController<T: GraphFrame>(
 			eventBus.unregister(applicationDataHandler)
 		}
 
-		protected abstract fun update()
+		abstract fun update()
 	}
 
 	private inner class ViewDesktopAction(
@@ -311,7 +324,8 @@ open class GraphFrameController<T: GraphFrame>(
 
 		override fun update() {
 			selected = displayedView == DisplayedView.Container
-			enabled = view.applicationMode.isEdit() && appDataViewController.data?.savable is AbstractContainerLibraryElementSavable
+			enabled = view.applicationMode.isEdit()
+				&& appDataViewController.data?.savable is AbstractContainerLibraryElementSavable
 		}
 	}
 

@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.app.action.SaveFileAction
 import ch.scorpion.jabbah.edit.properties.applicationDataBeanProvider
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.event.PropertyOwner
 import ch.scorpion.jabbah.base.event.PropertyOwnerImpl
 import ch.scorpion.jabbah.base.logger
@@ -73,9 +74,14 @@ open class ApplicationDataViewController(
 		const val PROP_SAVABLE = "appDataView.savable"
 	}
 
+	private val closeAppDataRequestHandler: EventHandler<CloseApplicationDataRequest> = {
+		data = null
+	}
+
 	override fun dispose() {
 		super.dispose()
 		saveAction.dispose()
+		eventBus.unregister(closeAppDataRequestHandler)
 	}
 
 	val saveAction by lazy { SaveFileAction(this, eventBus, commandManager) }
@@ -111,6 +117,7 @@ open class ApplicationDataViewController(
 		source = this
 		commandManager.bindDataHolder(this)
 		applicationDataBeanProvider = this.applicationDataViewBeanProvider
+		eventBus.register(CloseApplicationDataRequest::class, closeAppDataRequestHandler)
 	}
 
 	/** ---- [UndoableDataHolder] interface */

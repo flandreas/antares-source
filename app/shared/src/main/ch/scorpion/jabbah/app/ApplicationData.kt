@@ -71,6 +71,13 @@ data class ApplicationDataContentEvent(
 )
 
 /**
+ * Posted by client classes on [EventBus] to request immediate closing of the current [ApplicationData].
+ * Handled by [ApplicationDataHolder] unconditionally. It is up to the requester to make sure
+ * that unsaved data is saved before issuing this request.
+ */
+class CloseApplicationDataRequest
+
+/**
  * Posted on an [EventBus] after an [ApplicationData]'s content has been completely established.
  */
 data class ApplicationDataContentEstablishedEvent(

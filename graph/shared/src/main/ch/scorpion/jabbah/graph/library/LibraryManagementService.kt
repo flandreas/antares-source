@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
+import ch.scorpion.jabbah.app.CloseApplicationDataRequest
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.base.collection.toImmutableList
@@ -164,7 +165,6 @@ class LibraryManagementService(
 		val library = loadLibrary(libraryId)
 		LOG.trace("open library ${library.uuid}")
 		if (libraryHolder.l == null) {
-			//libraryHolder.l = library
 			openImpl(library, containerLibraryElement)
 		} else {
 			eventBus.postVetoable(
@@ -184,6 +184,8 @@ class LibraryManagementService(
 			library.getContainerLibraryElement(containerLibraryElement)?.let {
 				eventBus.post(OpenContainerLibraryElementRequest(it))
 			}
+		} else {
+			eventBus.post(CloseApplicationDataRequest())
 		}
 	}
 
