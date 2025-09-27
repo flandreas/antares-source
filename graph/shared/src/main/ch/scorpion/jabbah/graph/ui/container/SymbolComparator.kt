@@ -19,7 +19,9 @@ import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.View
+import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawableDrawer
+import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleType
@@ -27,6 +29,7 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.SnapResult
+import ch.scorpion.jabbah.graph.container.OriginIndicator
 import ch.scorpion.jabbah.graph.library.CurrentLibraryEvent
 import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.library.LibraryModule
@@ -90,17 +93,17 @@ class SymbolComparatorController(
     }
 
     /** The currently displayed 'ghost' symbol of the selected [libraryElement]. */
-    private var comparisonSymbol: Component? = null
+    private var comparisonSymbol: ComparisonSymbol? = null
 
     private val comparisonSymbolDrawer by lazy { GrayingDrawableDrawer() }
 
     /** Used for snapping to the grid while placing [comparisonSymbol]. */
     private val snapResult = SnapResult()
 
-    private data class CacheEntry(val bbox: RectangularShape, val symbol: Component)
+    //private data class CacheEntry(val bbox: RectangularShape, val symbol: Component)
 
     /** Maps a [LibraryElement] to the instantiated [comparisonSymbol] and its original bounding box. */
-    private val cache: MutableMap<LibraryElement, CacheEntry> = mutableMapOf()
+    private val cache: MutableMap<LibraryElement, ComparisonSymbol> = mutableMapOf()
 
     /** The direction relative to the [View] where the [comparisonSymbol] is displayed.*/
     var direction: Direction = EAST
@@ -174,7 +177,8 @@ class SymbolComparatorController(
                 InvocationHandler.invoke {
                     try {
                         val component = it.getNewInstance<GraphElement>()
-                        val entry = CacheEntry(Rectangle2D(component.boundingBox), component)
+                        //val entry = CacheEntry(Rectangle2D(component.boundingBox), component)
+                        val entry = ComparisonSymbol(component)
                         cache[it] = entry
                         updateSelection(entry)
                     } catch (e: Throwable) {
@@ -189,19 +193,19 @@ class SymbolComparatorController(
         drawingView.drawing.validate()
     }
 
-    private fun updateSelection(entry: CacheEntry) {
-        comparisonSymbol = entry.symbol
+    private fun updateSelection(entry: ComparisonSymbol) {
+        comparisonSymbol = entry
         placeNearby(entry)
         drawingView.animationContainer.add(comparisonSymbol!!)
         drawingView.drawing.validate()
     }
 
-    private fun placeNearby(entry: CacheEntry) {
+    private fun placeNearby(entry: ComparisonSymbol) {
         if (comparisonSymbol == null) {
             return
         }
 
-        val origBBox = entry.bbox
+        val origBBox = entry.boundingBox
         val bbox = drawingView.drawing.boundingBox
 
         when (direction) {
@@ -247,5 +251,33 @@ class SymbolComparatorController(
             view.refresh()
             cache.clear()
         }
+    }
+
+    private class ComparisonSymbol(
+        private val component: Component
+    ) : AbstractDrawable(), Locatable {
+
+        companion object {
+            private val ORIGIN_INDICATOR = OriginIndicator()
+        }
+
+        override val boundingBox: RectangularShape = Rectangle2D(component.boundingBox).add(ORIGIN_INDICATOR.boundingBox)
+
+        override var location: Point2D = Point2D.ZERO
+            set(value) {
+                invalidate()
+                field = value
+                invalidate()
+                update()
+            }
+
+        override fun draw(context: DrawContext) {
+            context.translated(location.x, location.y) {
+                component.draw(context)
+                ORIGIN_INDICATOR.draw(context)
+            }
+        }
+
+        override fun contains(x: Double, y: Double): Boolean = boundingBox.contains(x, y)
     }
 }

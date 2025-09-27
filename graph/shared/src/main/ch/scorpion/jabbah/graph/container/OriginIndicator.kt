@@ -67,7 +67,7 @@ class OriginIndicator(
 
 	override fun draw(context: DrawContext) {
 		val oldColor = context.g.color
-		context.g.color = DrawModule.properties.getColor(PROP_COLOR)
+		context.g.color = context.chooseForeground(DrawModule.properties.getColor(PROP_COLOR))
 		drawImpl(context)
 		context.g.color = oldColor
 	}
