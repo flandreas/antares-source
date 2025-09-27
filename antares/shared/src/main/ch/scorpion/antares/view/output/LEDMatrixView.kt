@@ -274,7 +274,7 @@ class LEDMatrixView(
 		context.g.color = if (isExecute) {
 			Themes.get<AntaresTheme>().screen.backgroundColor
 		} else {
-			backgroundColor
+			context.chooseBackground(backgroundColor)
 		}
 		context.g.fillRect(0, 0, width.toInt(), height.toInt())
 
@@ -286,7 +286,7 @@ class LEDMatrixView(
 				context.g.color = if (isExecute) {
 					lightColor.executeColor(model.isOn(column, row))
 				} else {
-					foregroundColor
+					context.chooseForeground(foregroundColor)
 				}
 
 				if (isCircleDots) {

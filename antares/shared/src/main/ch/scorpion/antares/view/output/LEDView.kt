@@ -112,7 +112,7 @@ class LEDView(
         if (!Themes.get<DrawTheme>().dark) {
             // Special case: Blend the edit color with its alpha into the circuit's light background color
             // to give it a pastell-like look
-            drawBulb(context, transparent.applyTo(Themes.get<AntaresTheme>().background.color.backgroundColor))
+            drawBulb(context, context.chooseBackground(transparent.applyTo(Themes.get<AntaresTheme>().background.color.backgroundColor)))
         }
         super.drawBulbEdited(context)
     }

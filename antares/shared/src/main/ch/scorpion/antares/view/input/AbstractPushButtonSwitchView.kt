@@ -205,7 +205,7 @@ abstract class AbstractPushButtonSwitchView<T: AbstractSwitch<T>>(
 	}
 
 	private fun drawBorder(context: DrawContext) {
-		context.g.color = transparent.applyTo(color.foregroundColor)
+		context.g.color = context.chooseForeground(transparent.applyTo(color.foregroundColor))
 		context.g.stroke = stroke
 		context.g.drawRect(xInt, yInt, widthInt, heightInt)
 	}
@@ -319,7 +319,7 @@ abstract class AbstractPushButtonSwitchView<T: AbstractSwitch<T>>(
 
 		fun drawEdited(context: DrawContext) {
 			drawBackground(context)
-			context.g.color = transparent.applyTo(color.foregroundColor)
+			context.g.color = context.chooseForeground(transparent.applyTo(color.foregroundColor))
 			drawContent(context)
 		}
 
@@ -341,7 +341,7 @@ abstract class AbstractPushButtonSwitchView<T: AbstractSwitch<T>>(
 		}
 
 		private fun drawBackground(context: DrawContext) {
-			context.g.color = transparent.applyTo(propertiesBackgroundColor)
+			context.g.color = context.chooseBackground(transparent.applyTo(propertiesBackgroundColor))
 			context.g.fillRect(xInt, yInt, widthInt, heightInt)
 		}
 
