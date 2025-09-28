@@ -196,6 +196,9 @@ class DragManagerImpl(
 	}
 
 	override fun keyPressed(context: InputEventContext): InputEventHandler<InputEventContext>? {
+		if (context.keyEvent?.key == KeyEvent.VK_ALT) {
+			return this
+		}
 		if (movedReferenceComponent != null && context.keyEvent?.key == KeyEvent.VK_SHIFT) {
 			val selection = editor.view.selectionManager.selection
 			if (selection.size == 1 && selection.first().isDragManager) {
@@ -232,12 +235,16 @@ class DragManagerImpl(
 
 	override fun isMoveKey(event: KeyEvent): Boolean =
 		when(event.key) {
-			KeyEvent.VK_RIGHT, KeyEvent.VK_LEFT, KeyEvent.VK_UP, KeyEvent.VK_DOWN -> event.modifiers == 0
+			KeyEvent.VK_RIGHT, KeyEvent.VK_LEFT, KeyEvent.VK_UP, KeyEvent.VK_DOWN -> event.modifiers == 0 || event.isAltDown
 			else -> false
 		}
 
 	override fun moveByKeyEvent(event: KeyEvent) {
-		val offset = getKeyMoveDirection(event).toPoint2D().multiply(editor.view.grid.distance)
+		val offset = if (event.isAltDown) {
+			getKeyMoveDirection(event).toPoint2D()
+		} else {
+			getKeyMoveDirection(event).toPoint2D().multiply(editor.view.grid.distance)
+		}
 		logMove("key", offset)
 		drawingAppService.move(
 			movables = editor.view.selectionManager.selection,
