@@ -72,7 +72,7 @@ open class GraphMenuBarBuilder(
 		menu.add(JMenuItem(ActionWrapperSwing(frame.application.controller.saveAction)))
 		menu.addSeparator()
 
-		menu.add(JMenuItem(ActionWrapperSwing(OpenWorkspaceAction())))
+		menu.add(JMenuItem(ActionWrapperSwing(OpenWorkspaceAction(frame.application))))
 		menu.add(JMenuItem(ActionWrapperSwing(ShowProjectsDialogAction(graphFrame.controller.applicationModeHolder, frame))))
 		menu.add(JMenuItem(ActionWrapperSwing(ShowLibrariesDialogAction(graphFrame.controller.applicationModeHolder, frame))))
 		menu.addSeparator()

@@ -56,7 +56,7 @@ open class DataFormPanel(
 			1, 1,	// width, height
 			0.0, 0.0,	// weightX, weightY
 			EGBL.WEST,	// anchor
-			if (fill) EGBL.HORIZONTAL else EGBL.NONE,	// fill
+			EGBL.NONE,
 			rowTopInset, leftInset, UIBasics.ROW_GAP, 0
 		)
 
@@ -67,7 +67,7 @@ open class DataFormPanel(
 			EGBL.REMAINDER, 1,	// width, height
 			1.0, 0.0,	// weightX, weightY
 			EGBL.WEST,	// anchor
-			EGBL.NONE,	// fill
+			if (fill) EGBL.HORIZONTAL else EGBL.NONE,	// fill
 			rowTopInset, UIBasics.LABEL_GAP, UIBasics.ROW_GAP, 0
 		)
 

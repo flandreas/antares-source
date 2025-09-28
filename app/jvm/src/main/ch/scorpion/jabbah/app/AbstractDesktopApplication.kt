@@ -103,12 +103,15 @@ abstract class AbstractDesktopApplication(
 			val path = if (commandLine.hasOption(APP_DATA_DIR_OPTION)) {
 				FileSystems.getDefault().getPath(commandLine.getOptionValue(APP_DATA_DIR_OPTION))
 			} else {
-				FileSystems.getDefault().getPath(getDefaultAppDataDirectory(), systemName)
+				determineDefaultUserDataDirectoryPath(systemName)
 			}
 			val absolutePath = path.toAbsolutePath().toString()
 			System.setProperty(PROP_LOGFILE_PATH, Paths.get(absolutePath, calculateLogfileName(systemName)).toString())
 			return path
 		}
+
+		private fun determineDefaultUserDataDirectoryPath(systemName: String): Path =
+            FileSystems.getDefault().getPath(getDefaultAppDataDirectory(), systemName)
 
 		private fun determineEnvironment(commandLine: CommandLine): Environment {
 			if (!commandLine.hasOption(ENVIRONMENT_OPTION)) {
@@ -172,6 +175,8 @@ abstract class AbstractDesktopApplication(
 	/** ---- [DesktopApplication] */
 
 	override val environment: Environment = determineEnvironment(commandLine)
+
+	override val defaultUserDataDirectoryPath: Path get() = determineDefaultUserDataDirectoryPath(systemName)
 
 	override fun quit(): Boolean {
 		if (controller.canReplaceSavable("file.action.quit.name")) {

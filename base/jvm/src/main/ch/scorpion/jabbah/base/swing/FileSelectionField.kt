@@ -41,7 +41,17 @@ class FileSelectionField(
 	private val selectAction = SelectAction()
 
 	/** Returns the selected path as a String. */
-	val path: String get() = textField.text
+	var path: String
+		get() = textField.text
+		set(value) { textField.text = value }
+
+	var selectionEnabled: Boolean = true
+		set(value) {
+			if (value != field) {
+				field = value
+				selectAction.isEnabled = value
+			}
+		}
 
 	init {
 		buildUI()

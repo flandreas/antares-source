@@ -18,6 +18,14 @@ interface DesktopApplication : Application {
 	/** The [Path] to the directory where this [DesktopApplication] stores config and log files.*/
 	val appDataDirectoryPath: Path
 
+	/**
+	 * The [Path] to the directory where this [DesktopApplication] stores config and log files by default.
+	 * This is chosen when the application is installed, and its location depends on the OS.
+	 * Event if the concrete [DesktopApplication] offers a feature where the user can overwrite this location,
+	 * this property always returns the system default. Can be used to reset the user setting to the default.
+	 */
+	val defaultUserDataDirectoryPath: Path
+
 	/** The name of the [Application]'s log file. */
 	val logFileName: String
 
