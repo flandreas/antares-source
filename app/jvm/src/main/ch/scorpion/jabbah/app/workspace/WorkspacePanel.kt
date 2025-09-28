@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.base.ui.UIBasics
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.Frame
+import java.io.IOException
 import java.nio.file.Paths
 import javax.swing.*
 
@@ -104,10 +105,23 @@ class WorkspacePanel(
 	private fun createButton(action: Action): JButton =
 		JButton(ActionWrapperSwing(action))
 
+	private fun open(path: String) {
+		try {
+			service.openWorkspace(Paths.get(path))
+			closeHandler()
+		} catch (e: IOException) {
+			JOptionPane.showMessageDialog(
+				this@WorkspacePanel,
+				Translations.getString("application.openWorkspace.error", e.message ?: e.toString()),
+				Translations.getString("file.action.openWorkspace.name"),
+				JOptionPane.ERROR_MESSAGE
+			)
+		}
+	}
+
 	private inner class OkAction : AbstractAction("base.action.ok") {
 		override fun execute(event: ActionEvent) {
-			service.openWorkspace(Paths.get(directorySelectionField.path))
-			closeHandler()
+			open(directorySelectionField.path)
 		}
 	}
 
