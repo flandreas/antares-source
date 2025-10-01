@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.base.event.VetoException
 import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.*
@@ -12,6 +13,19 @@ import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.model.DrawingService
 import ch.scorpion.jabbah.edit.module.EditModule
+
+/**
+ * Posted by [DeleteAction] on its [EventBus] to ask if anybody wants to forbid deletion of any [Component] in [components].
+ * Note that differs from the context [Component.deletable], which depends on the type or state of the [Component],
+ * while [DeleteQuestion] is rather answers by higher-level objects like controllers.
+ *
+ * A forbidding object should throw a [VetoException] and indicate the first [Component] for which deletion is
+ * to be denied. This is used for targeting the resulting [ComponentMessage] posted by [DeleteAction]
+ */
+data class DeleteQuestion(
+	val components: Collection<Component>,
+	val drawingView: DrawingView<*>,
+)
 
 /**
  * An [Action] for deleting the selected [Component]s in a [Drawing].
@@ -34,22 +48,39 @@ class DeleteAction(
 		val drawingView = viewManager.activeView!!.view as DrawingView<*>
 		val selection = drawingView.selectionManager.selection
 		val components = getComponentsToDelete(selection)
+
+		eventBus.postTwoPhase(
+			DeleteQuestion(components, drawingView),
+			thenHandler = {
+				executeImpl(components, drawingView)
+			},
+			elseHandler = {
+				postUndeleteableMessage(it.source as? Component)
+			}
+		)
+	}
+
+	private fun executeImpl(components: List<Component>, drawingView: DrawingView<*>) {
 		if (components.isNotEmpty()) {
 			service.delete(
 				components,
 				drawingView)
 		}
 
-		// Don't do 'components.size != selection.size for checking whether everything has been deleted,
+		// Don't do components.size != selection.size for checking whether everything has been deleted,
 		// because non-deletable (by user selection!) Components might have been deleted as a side effect
 		// of deleting other Components.
 		if (selection.any { drawingView.drawing.contains(it) }) {
-			eventBus.post(ComponentMessage(
-				ComponentMessageType.Info,
-				null,
-				"edit.action.undeletable.msg"
-			))
+			postUndeleteableMessage()
 		}
+	}
+
+	private fun postUndeleteableMessage(source: Component? = null) {
+		eventBus.post(ComponentMessage(
+			ComponentMessageType.Info,
+			source = source,
+			"edit.action.undeletable.msg"
+		))
 	}
 }
 

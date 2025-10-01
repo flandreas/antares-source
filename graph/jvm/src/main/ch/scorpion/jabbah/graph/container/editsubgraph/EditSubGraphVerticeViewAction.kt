@@ -58,6 +58,7 @@ class EditSubGraphVerticeViewAction(
 			displayGlobalMessages = false,
 			viewManager.activeView!!.view as DrawingView<Drawing<Component>>,
 		)
+		containerPanelController.editor.preventDeletingPortViewComponents = true
 
 		val containerPanel = ContainerPanelSwing(
 			containerPanelController,

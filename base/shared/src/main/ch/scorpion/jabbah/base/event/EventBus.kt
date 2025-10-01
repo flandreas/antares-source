@@ -10,8 +10,12 @@ typealias VetoHandler<T> = (T) -> Unit
 /**
  * Represents a veto for a particular action.
  * @param msg an internationalized message to be displayed, if necessary.
+ * @param source the option object that caused the veto
  */
-class VetoException(msg: String): Throwable(msg)
+class VetoException(
+    msg: String,
+    val source: Any? = null
+): Throwable(msg)
 
 /**
  * A central event dispatcher according to the whiteboard pattern.
@@ -46,7 +50,7 @@ interface EventBus {
 
 	fun postTwoPhase(prepareEvent: Any, execEvent: Any, thenHandler: (() -> Unit)? = null)
 
-	fun postTwoPhase(prepareEvent: Any, thenHandler: () -> Unit)
+	fun postTwoPhase(prepareEvent: Any, thenHandler: () -> Unit, elseHandler: VetoHandler<VetoException>? = null)
 
 	/** Unregisters all [EventHandler]s. Primarily for integration testing.*/
 	fun clear()
@@ -123,14 +127,14 @@ class EventBusImpl : EventBus {
 		}
 	}
 
-	override fun postTwoPhase(prepareEvent: Any, thenHandler: () -> Unit) {
+	override fun postTwoPhase(prepareEvent: Any, thenHandler: () -> Unit, elseHandler: VetoHandler<VetoException>?) {
 		try {
 			registrations[getEventClassName(prepareEvent)]?.forEach {
 				it.invoke(prepareEvent)
 			}
 			thenHandler()
 		} catch (e: VetoException) {
-			// do nothing, operation vetoed
+            elseHandler?.invoke(e)
 		}
 	}
 

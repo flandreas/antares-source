@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.PreferencesChangedEvent
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
+import ch.scorpion.jabbah.base.event.VetoException
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.ZoomStrategy
@@ -12,6 +13,7 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.app.DeleteQuestion
 import ch.scorpion.jabbah.edit.editor.EditorImpl
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.vertice.DeepVerticeLink
@@ -40,6 +42,8 @@ open class ContainerEditor(
 		const val PROP_DEFAULT_ZOOM_FACTOR = "graph.container.defaultZoomFactor"
 	}
 
+	var preventDeletingPortViewComponents = false
+
 	private val graphPortViewHandler: EventHandler<GraphPortViewEvent> = {
 		if (it.type == GraphPortViewEvent.Type.REMOVE) {
 			removePortViewComponent(it.graphPortView.model.name!!)
@@ -64,6 +68,14 @@ open class ContainerEditor(
 		}
 	}
 
+	private val deleteQuestionHandler: EventHandler<DeleteQuestion> = { question ->
+		if (preventDeletingPortViewComponents) {
+			question.components.firstOrNull { c -> c is PortViewComponent<*> }?.let { source ->
+				throw VetoException("", source)
+			}
+		}
+	}
+
 	private val preferencesChangedHandler: EventHandler<PreferencesChangedEvent> = { configureDefaultZoomFactor() }
 
 	init {
@@ -72,6 +84,7 @@ open class ContainerEditor(
 		eventBus.register(GraphPortViewEvent::class, graphPortViewHandler)
 		eventBus.register(ControlViewSourceEvent::class, controlViewSourceHandler)
 		eventBus.register(PreferencesChangedEvent::class, preferencesChangedHandler)
+		eventBus.register(DeleteQuestion::class, deleteQuestionHandler)
 	}
 
 	override fun dispose() {
@@ -79,6 +92,7 @@ open class ContainerEditor(
 		eventBus.unregister(graphPortViewHandler)
 		eventBus.unregister(controlViewSourceHandler)
 		eventBus.unregister(preferencesChangedHandler)
+		eventBus.unregister(deleteQuestionHandler)
 	}
 
 	private fun configureDefaultZoomFactor() {

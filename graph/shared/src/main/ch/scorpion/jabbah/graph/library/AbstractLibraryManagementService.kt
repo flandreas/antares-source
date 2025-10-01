@@ -153,10 +153,11 @@ abstract class AbstractLibraryManagementService(
 			throw IllegalStateException("no Library to remove an import from")
 		}
 		eventBus.postTwoPhase(
-			LibraryImportRemoveQuestion(libraryHolder.library, libraryId)
-		) {
+			LibraryImportRemoveQuestion(libraryHolder.library, libraryId),
+		 	thenHandler = {
 			LOG.userTrail("Un-import library $libraryId from ${libraryHolder.library.uuid}")
 			libraryHolder.library.libraryService.removeImport(libraryHolder.library, libraryId, replacingSystemLibraries)
-		}
+			}
+		)
 	}
 }
