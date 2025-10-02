@@ -1,10 +1,7 @@
 package ch.scorpion.jabbah.base.swing
 
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.Action
-import ch.scorpion.jabbah.base.ActionWrapperSwing
-import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.ui.UI
 import java.awt.Color
 import java.awt.EventQueue
@@ -228,7 +225,16 @@ object UiUtil {
 		if (actionNameKey != null) {
 			editorPane.addHyperlinkListener {
 				if (HyperlinkEvent.EventType.ACTIVATED == it.eventType) {
-					System.browse(it.url.toString(), Translations.getString(actionNameKey))
+					try {
+						System.browse(it.url.toString(), Translations.getString(actionNameKey))
+					} catch (e: Throwable) {
+						JOptionPane.showMessageDialog(
+							editorPane,
+							Translations.getString("base.browse.error.msg", e.message ?: "?"),
+							Translations.getString(actionNameKey),
+							JOptionPane.ERROR_MESSAGE
+						)
+					}
 				}
 			}
 		}

@@ -2,6 +2,8 @@ package ch.scorpion.antares.view
 
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.BitWidthGraphParamType
+import ch.scorpion.jabbah.app.Application
+import ch.scorpion.jabbah.app.WelcomePanel
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBusStatistics
 import ch.scorpion.jabbah.base.invocation.UnexpectedErrorServiceImpl
@@ -32,6 +34,7 @@ import javax.swing.JOptionPane
 import javax.swing.WindowConstants
 
 class TestAction(
+	private val application: Application,
 	private val editor: Editor
 ) : AbstractViewAction("view.action.test") {
 
@@ -44,6 +47,10 @@ class TestAction(
 	override fun execute(event: ActionEvent) {
 		(BaseModuleJvm.unexpectedErrorService as UnexpectedErrorServiceImpl).baseUrl = URL("https://api.antarescircuit.io/api")
 		throwException()
+	}
+
+	private fun showWelcomeMessage() {
+		WelcomePanel.showAsDialog(application)
 	}
 
 	private fun throwException() {
