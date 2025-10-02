@@ -6,6 +6,7 @@ import java.awt.BorderLayout
 import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.JSplitPane
+import javax.swing.SwingUtilities
 
 /**
  * Combines a [SidebarPane] with a [JSplitPane] to allow the user to distribute space between the open
@@ -17,7 +18,7 @@ class SidebarSplitPane(
 	settingBaseName: String,
 	providedInitialOpenIndex: Int = -1,
 	contents: List<SidebarPaneContent>,
-	private val isOpenChangeHandler: (() -> Unit)? = null
+	private val isOpenChangeHandler: ((isOpen:Boolean) -> Unit)? = null
 ) : JPanel() {
 
 	companion object {
@@ -138,11 +139,13 @@ class SidebarSplitPane(
 			add(sidebarPane, getSidebarDirection(location))
 		}
 
+		revalidate()
+		repaint()
+
 		if (isOpenChangeHandler != null) {
-			isOpenChangeHandler.invoke()
-		} else {
-			revalidate()
-			repaint()
+			SwingUtilities.invokeLater {
+				isOpenChangeHandler.invoke(sidebarPane.isOpen)
+			}
 		}
 	}
 }

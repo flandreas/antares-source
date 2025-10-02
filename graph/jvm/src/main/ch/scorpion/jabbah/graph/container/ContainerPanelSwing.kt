@@ -5,7 +5,6 @@ import ch.scorpion.jabbah.app.ToolBar
 import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.SidebarPane
 import ch.scorpion.jabbah.base.swing.SidebarPaneContentImpl
@@ -85,7 +84,7 @@ class ContainerPanelSwing(
 			)
 		)
 	) {
-		controller.handleRightSidebarOpen(rightSidebarPane.isOpen)
+		controller.handleRightSidebarOpen(it)
 	}
 
 	val toolbars = GraphViewModuleJvm.containerToolBarBuilderFactory().buildToolBars(application, controller.editor, separator = true)
