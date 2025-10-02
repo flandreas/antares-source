@@ -11,11 +11,10 @@ import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.swing.DataFormPanel
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.swing.FileSelectionField
+import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.UIBasics
 import java.awt.BorderLayout
-import java.awt.Dimension
 import java.awt.Frame
-import java.io.IOException
 import java.nio.file.Paths
 import javax.swing.*
 
@@ -23,23 +22,32 @@ import javax.swing.*
 class WorkspacePanel(
 	private val application: DesktopApplication,
 	private val service: WorkspaceService,
+	private val userDataDirectoryPath: String,
+	private val initMode: Boolean,
+	introText: String? = null,
+	initialStatus: String? = null,
 	private val closeHandler: () -> Unit
 ): JPanel() {
 
 	companion object {
 		fun showAsDialog(
 			title: String,
-			parent: Frame,
+			parent: Frame?,
 			application: DesktopApplication,
-			service: WorkspaceService = AppModuleJvm.workspaceService
-		) {
-			DialogBuilder<WorkspacePanel>(parent)
+			service: WorkspaceService = AppModuleJvm.workspaceService,
+			userDataDirectoryPath: String = AppModuleJvm.workspaceHolder.userDataDirectoryPath,
+			initMode: Boolean = false,
+			introText: String? = null,
+			initialStatus: String? = null
+		): Boolean {
+			val builder = DialogBuilder<WorkspacePanel>(parent)
 				.title(title)
-				.content { dialog -> WorkspacePanel(application, service)  { dialog.dispose() } }
+				.content { dialog -> WorkspacePanel(application, service, userDataDirectoryPath, initMode, introText, initialStatus)  { dialog.dispose() } }
 				.defaultButton { it.okButton }
-				.preferredSize(Dimension(500, 150))
 				.nonResizable()
 				.show()
+
+			return builder.content.okPressed
 		}
 	}
 
@@ -48,32 +56,58 @@ class WorkspacePanel(
 	private val cancelAction = CancelAction()
 
 	private val directorySelectionField = FileSelectionField(
-		text = AppModuleJvm.workspaceHolder.userDataDirectoryPath,
+		text = userDataDirectoryPath,
 		labelText = null
-	)
+	) {
+		setStatus(null)
+	}
 
 	private val defaultCheckBox = JCheckBox()
 
+	private val statusField = JLabel(" ", SwingConstants.LEADING)
+
+	private var okPressed = false
+
 	init {
-		buildUI()
+		buildUI(introText)
+		setStatus(initialStatus)
 		defaultCheckBox.addActionListener { handleDefaultCheckbox() }
 	}
 
-	private fun buildUI() {
-		layout = BorderLayout(10, 10)
+	private fun buildUI(introText: String?) {
+		layout = BorderLayout(10, 20)
 		border = UIBasics.createDialogBorder()
 
-		add(buildContentPanel(), BorderLayout.NORTH)
+		introText?.let {
+			add(buildIntroComponent(it), BorderLayout.NORTH)
+		}
+		add(buildContentPanel(), BorderLayout.CENTER)
 		add(buildButtonPanel(), BorderLayout.SOUTH)
 	}
 
+	private fun buildIntroComponent(text: String): JComponent {
+		val textArea = JTextArea(text)
+		textArea.border = BorderFactory.createEmptyBorder(5, DataFormPanel.DEF_INSET, 0, 0)
+		textArea.isEditable = false
+		textArea.lineWrap = true
+		textArea.wrapStyleWord = true
+		return textArea
+	}
+
 	private fun buildContentPanel(): JPanel {
-		val panel = DataFormPanel()
+		val contentPanel = JPanel(BorderLayout())
+		val dataFormPanel = DataFormPanel()
 
-		panel.addLabeledRow(Translations.getString("application.workspace.defaultLocation"), defaultCheckBox)
-		panel.addLabeledRow(Translations.getString("application.workspace.label"), directorySelectionField, true)
+		dataFormPanel.addLabeledRow(Translations.getString("application.workspace.defaultLocation"), defaultCheckBox)
+		dataFormPanel.addLabeledRow(Translations.getString("application.workspace.label"), directorySelectionField, true)
 
-		return panel
+		contentPanel.add(dataFormPanel, BorderLayout.CENTER)
+
+		statusField.border = BorderFactory.createEmptyBorder(10, dataFormPanel.leftInset, 0, 0)
+		statusField.foreground = UiUtil.errorTextColor
+		contentPanel.add(statusField, BorderLayout.SOUTH)
+
+		return contentPanel
 	}
 
 	private fun buildButtonPanel(): JPanel {
@@ -90,8 +124,9 @@ class WorkspacePanel(
 			directorySelectionField.path = application.defaultUserDataDirectoryPath.toAbsolutePath().toString()
 		} else {
 			setNonDefault()
-			directorySelectionField.path = AppModuleJvm.workspaceHolder.userDataDirectoryPath
+			directorySelectionField.path = userDataDirectoryPath
 		}
+		setStatus(null)
 	}
 
 	private fun setDefault() {
@@ -102,31 +137,42 @@ class WorkspacePanel(
 		directorySelectionField.selectionEnabled = true
 	}
 
+	private fun setStatus(status: String?) {
+		if (status != null) {
+			statusField.text = status
+			okAction.enabled = false
+		} else {
+			statusField.text = ""
+			okAction.enabled = true
+		}
+	}
+
 	private fun createButton(action: Action): JButton =
 		JButton(ActionWrapperSwing(action))
 
 	private fun open(path: String) {
 		try {
-			service.openWorkspace(Paths.get(path))
+			if (initMode) {
+				service.initializeWorkspace(Paths.get(path))
+			} else {
+				service.setWorkspace(Paths.get(path))
+			}
 			closeHandler()
-		} catch (e: IOException) {
-			JOptionPane.showMessageDialog(
-				this@WorkspacePanel,
-				Translations.getString("application.openWorkspace.error", e.message ?: e.toString()),
-				Translations.getString("file.action.openWorkspace.name"),
-				JOptionPane.ERROR_MESSAGE
-			)
+		} catch (e: java.lang.Exception) {
+			setStatus(e.message)
 		}
 	}
 
 	private inner class OkAction : AbstractAction("base.action.ok") {
 		override fun execute(event: ActionEvent) {
+			okPressed = true
 			open(directorySelectionField.path)
 		}
 	}
 
 	private inner class CancelAction : AbstractAction("base.action.cancel") {
 		override fun execute(event: ActionEvent) {
+			okPressed = false
 			closeHandler()
 		}
 	}

@@ -41,6 +41,9 @@ class FileLibraryDictionaryPersistenceService(
 		if (!Files.exists(Paths.get(directoryPath))) {
 			return LibraryDictionary()
 		}
+		if (!Files.exists(Paths.get(filePath))) {
+			return LibraryDictionary()
+		}
 
 		try {
 			createInputStream().use {

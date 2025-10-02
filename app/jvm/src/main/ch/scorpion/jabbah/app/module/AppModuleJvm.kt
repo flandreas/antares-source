@@ -19,7 +19,7 @@ object AppModuleJvm : AbstractModule() {
 	val ratingService: RatingService = RailwayRatingService()
 	var systemDumpService: SystemDumpService = SystemDumpService()
 
-	lateinit var workspaceHolder: WorkspaceHolder
+	val workspaceHolder = WorkspaceHolder()
 	val workspaceService = WorkspaceService()
 
 	override fun initialize() {

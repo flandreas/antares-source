@@ -19,7 +19,7 @@ import javax.swing.*
  * @param T the type of the content
  */
 class DialogBuilder<T: JComponent>(
-	private val parent: Frame,
+	private val parent: Frame?,
 	modal: Boolean = true
 ) {
 

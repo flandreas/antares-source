@@ -18,7 +18,6 @@ data class Workspace(
  * Posts [CurrentWorkspaceEvent] on the system [EventBus] when changed.
  */
 class WorkspaceHolder(
-	workspace: Workspace,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	private val settings: Settings = BaseModule.settings
 ) {
@@ -32,22 +31,40 @@ class WorkspaceHolder(
 
 	val userDataDirectoryPath: String get() = workspace.userDataDirectoryPath
 
-	var workspace: Workspace = workspace
-		set(value) {
-			if (field != value) {
-				eventBus.postTwoPhase(
-					CurrentWorkspaceEvent(value, isPrepare = true),
-					CurrentWorkspaceEvent(value, isPrepare = false)
-				) {
-					field = value
-					writeLog()
-					settings.set(PROP_WORKSPACE, field.userDataDirectoryPath)
-				}
-			}
-		}
+	// Initially invalid Workspace by intention. The application boot-strap process must install
+	// a valid Workspace.
+	private var _workspace: Workspace = Workspace("")
+
+	val workspace: Workspace get() = _workspace
 
 	init {
+		storeSettings()
 		writeLog()
+	}
+
+	fun initializeWorkspace(workspace: Workspace) {
+		updateWorkspace(workspace)
+	}
+
+	fun setWorkspace(workspace: Workspace) {
+		if (_workspace != workspace) {
+			eventBus.postTwoPhase(
+				CurrentWorkspaceEvent(workspace, isPrepare = true),
+				CurrentWorkspaceEvent(workspace, isPrepare = false)
+			) {
+				updateWorkspace(workspace)
+			}
+		}
+	}
+
+	private fun updateWorkspace(workspace: Workspace) {
+		_workspace = workspace
+		writeLog()
+		storeSettings()
+	}
+
+	private fun storeSettings() {
+		settings.set(PROP_WORKSPACE, workspace.userDataDirectoryPath)
 	}
 
 	private fun writeLog() {

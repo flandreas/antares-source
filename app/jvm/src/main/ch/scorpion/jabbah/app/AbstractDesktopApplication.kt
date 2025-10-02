@@ -1,6 +1,8 @@
 package ch.scorpion.jabbah.app
 
+import ch.scorpion.jabbah.app.AbstractDesktopApplication.Companion.APP_DATA_DIR_OPTION
 import ch.scorpion.jabbah.app.module.AppModuleJvm
+import ch.scorpion.jabbah.app.workspace.WorkspacePanel
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.io.ZipUtil
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -20,6 +22,17 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.zip.ZipOutputStream
+import kotlin.Array
+import kotlin.Boolean
+import kotlin.Exception
+import kotlin.IllegalArgumentException
+import kotlin.String
+import kotlin.Suppress
+import kotlin.Throwable
+import kotlin.collections.iterator
+import kotlin.collections.set
+import kotlin.getValue
+import kotlin.lazy
 import kotlin.system.exitProcess
 
 /** Abstract base implementation of the [DesktopApplication] interface. */
@@ -156,8 +169,8 @@ abstract class AbstractDesktopApplication(
 
 		CurrentApplicationVersion.version = version
 
-		consumeCommandLine(commandLine)
-		loadSettings()
+		val settingsEntries = consumeCommandLine(commandLine)
+		loadSettings(settingsEntries)
 	}
 
 	/** ---- [AbstractApplication] */
@@ -220,10 +233,17 @@ abstract class AbstractDesktopApplication(
 	/**
 	 * Called by this [AbstractDesktopApplication] after the options have been parsed.
 	 * Subclasses can overwrite this method in order to consume and use the provided [Options].
+	 *
+	 * @return [Settings] entries determined by interpreting the command line and returned explicitly,
+	 * because the [Settings] are read by the [DesktopApplication] AFTER this call. In particular,
+	 * the [WorkspaceHolder.PROP_WORKSPACE] setting is retrieved by asking the user if the registered
+	 * setting is not valid (anymore).
 	 */
-	protected open fun consumeCommandLine(commandLine: CommandLine) {
+	protected open fun consumeCommandLine(commandLine: CommandLine): Map<String, Any> {
 		consumeDeveloperOption(commandLine)
-		determineUserDataDirectoryPath(commandLine)
+
+		val path = determineUserDataDirectoryPath(commandLine)
+		return mapOf(WorkspaceHolder.PROP_WORKSPACE to path)
 	}
 
 	private fun consumeDeveloperOption(commandLine: CommandLine) {
@@ -235,18 +255,47 @@ abstract class AbstractDesktopApplication(
 		}
 	}
 
-	private fun determineUserDataDirectoryPath(commandLine: CommandLine) {
+	/**
+	 * Determines path to the directory where the user data is located.
+	 * If not provided on the [CommandLine], it is taken from stored user [Settings], and if that one is not valid,
+	 * determined by asking the user for a valid directory.
+	 */
+	private fun determineUserDataDirectoryPath(commandLine: CommandLine): String {
 		val path = if (commandLine.hasOption(USER_DATA_DIR_OPTION)) {
 			FileSystems.getDefault().getPath(commandLine.getOptionValue(USER_DATA_DIR_OPTION))
 		} else {
-			loadSettings()
+			loadSettings(emptyMap())
 			if (BaseModule.settings.containsKey(WorkspaceHolder.PROP_WORKSPACE)) {
 				Paths.get(BaseModule.settings.get(WorkspaceHolder.PROP_WORKSPACE))
 			} else {
 				determineAppDataDirectoryPath(commandLine, systemName)
 			}
 		}
-		AppModuleJvm.workspaceHolder = WorkspaceHolder(Workspace(path.toAbsolutePath().toString()))
+
+		installWorkspace(path)
+		return BaseModule.settings.get(WorkspaceHolder.PROP_WORKSPACE)
+	}
+
+	/**
+	 * Installs the [Workspace] using the specified [Path]. If that one is not valid, the user is asked
+	 * to provide a valid path. If he cancels the dialog, the application quits.
+	 */
+	private fun installWorkspace(path: Path) {
+		try {
+			AppModuleJvm.workspaceService.initializeWorkspace(path)
+		} catch (e: Exception) {
+			if (!WorkspacePanel.showAsDialog(
+					title = systemName,
+					parent = null,
+					application = this,
+					userDataDirectoryPath = path.toAbsolutePath().toString(),
+					initMode = true,
+					introText = Translations.getString("application.openWorkspace.notAvailable.text", systemName),
+					initialStatus = e.message ?: "Error")
+				) {
+                exitProcess(1)
+			}
+		}
 	}
 
 	private fun getSettingsPath(): Path =
@@ -264,7 +313,11 @@ abstract class AbstractDesktopApplication(
 		}
 	}
 
-	private fun loadSettings() {
+	/**
+	 * Loads the user [Settings] from persistent storage and sets [cmdLineSettings] which were provided
+	 * by the command line.
+	 */
+	private fun loadSettings(cmdLineSettings: Map<String, Any>) {
 		val path = getSettingsPath()
 		LOG.debug("Loading settings from '$path'")
 		try {
@@ -275,11 +328,15 @@ abstract class AbstractDesktopApplication(
 					for (key in settings.keys) {
 						BaseModule.settings.set(key as String, settings[key]!!)
 					}
+
+					for (entry in cmdLineSettings.entries) {
+						BaseModule.settings.set(entry.key, entry.value)
+					}
 				} catch (x: Throwable) {
 					LOG.error("Error while loading settings: ${x.message}")
 				}
 			}
-		} catch (x: FileNotFoundException) {
+		} catch (_: FileNotFoundException) {
 			// empty
 		}
 	}

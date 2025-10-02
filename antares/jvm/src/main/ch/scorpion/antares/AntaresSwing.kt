@@ -2,8 +2,8 @@ package ch.scorpion.antares
 
 import ch.scorpion.antares.ui.AntaresContextMenuProvider
 import ch.scorpion.antares.view.AntaresFrameController
-import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.DigitalComponentViewDrawer
+import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.theme.AntaresThemes
 import ch.scorpion.jabbah.app.*
 import ch.scorpion.jabbah.app.module.AppModuleJvm
@@ -11,7 +11,6 @@ import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.invocation.ErrorHandler
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.module.BaseModuleJvm
 import ch.scorpion.jabbah.base.preferences.FontIdentification
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.swing.VerticalLabel
@@ -207,7 +206,8 @@ class AntaresSwing(
 			establishTheme(preferences)
 			establishUiFont(preferences)
 
-			BaseModuleJvm.require()
+			// BaseModuleJmv is not enough. Also need app texts for WorkspacePanel.
+			AppModuleJvm.require()
 
 			AntaresSwing(commandLine).start()
 		}
@@ -274,8 +274,8 @@ class AntaresSwing(
 		(mainFrame as AntaresFrameSwing).controller.dispose()
 	}
 
-	override fun consumeCommandLine(commandLine: CommandLine) {
-		super.consumeCommandLine(commandLine)
+	override fun consumeCommandLine(commandLine: CommandLine): Map<String, Any> {
+		val settingsEntries = super.consumeCommandLine(commandLine)
 		if (commandLine.hasOption(SYSTEM_LIB_BASE_OPTION)) {
 			consumeSystemLibraryBasePath(commandLine.getOptionValue(SYSTEM_LIB_BASE_OPTION))
 		}
@@ -285,6 +285,7 @@ class AntaresSwing(
 		if (commandLine.hasOption(USER_LIBRARY_DIR_OPTION)) {
 			consumeUserLibraryDirectoryName(USER_LIBRARY_DIR_OPTION)
 		}
+		return settingsEntries
 	}
 
 	private fun consumeSystemLibraryBasePath(path: String) {
