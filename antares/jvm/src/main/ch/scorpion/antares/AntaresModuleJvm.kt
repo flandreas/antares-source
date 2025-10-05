@@ -355,13 +355,23 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		}
 
 		registry.register(LightColor::class.java) { prop ->
-			LightColorExpressionEditor(
-				propertyName = prop.displayName,
-				editable = (prop as ExpressionPropertySwing<LightColor>).editable,
-				supportExpressions = prop.supportExpressions,
-				graphEditor = prop.editor,
-				errorCallback = { prop.dslError = it },
-				filter = prop.filter )
+			if (prop is ExpressionPropertySwing<*>) {
+				LightColorExpressionEditor(
+					propertyName = prop.displayName,
+					editable = (prop as ExpressionPropertySwing<LightColor>).editable,
+					supportExpressions = prop.supportExpressions,
+					graphEditor = prop.editor,
+					errorCallback = { prop.dslError = it },
+					filter = prop.filter)
+			} else {
+				LightColorExpressionEditor(
+					propertyName = prop.displayName,
+					editable = (prop as CommandPropertySwing<LightColor>).editable,
+					supportExpressions = false,
+					graphEditor = prop.editor,
+					errorCallback = { },
+					filter = prop.filter)
+			}
 		}
 	}
 
