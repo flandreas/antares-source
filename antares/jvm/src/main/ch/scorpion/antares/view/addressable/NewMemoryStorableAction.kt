@@ -1,13 +1,12 @@
 package ch.scorpion.antares.view.addressable
 
-import ch.scorpion.jabbah.graph.library.LibraryDirectory
-import ch.scorpion.antares.model.addressable.MemoryStorable
 import ch.scorpion.antares.model.addressable.MemoryLibraryItem
+import ch.scorpion.antares.model.addressable.MemoryStorable
 import ch.scorpion.antares.model.addressable.OpenMemoryLibraryItemRequest
 import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
-import ch.scorpion.jabbah.graph.library.AbstractLibraryFolderAction
+import ch.scorpion.jabbah.graph.library.AbstractLibraryDirectoryAction
+import ch.scorpion.jabbah.graph.library.LibraryDirectory
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import java.awt.Frame
 
@@ -17,21 +16,16 @@ import java.awt.Frame
  */
 class NewMemoryStorableAction(
     controller: LibraryTreeViewController
-) : AbstractLibraryFolderAction(
+) : AbstractLibraryDirectoryAction(
     actionBaseName = "library.action.newMemoryStorable",
     operation = Operation.Change,
     controller
 ) {
-    private val operationTarget: Any? get() = if (selectedItem is LibraryDirectory) selectedFolder.library else null
-
     override val opensDialog: Boolean get() = true
 
     init {
         updateEnabledness()
     }
-
-    override val operationAuthorized: Boolean
-        get() = operationTarget != null && Authorizer.isCurrentUserAuthorizedTo(operation, operationTarget!!)
 
     override fun execute(event: ActionEvent) {
         NewMemoryStorablePanel

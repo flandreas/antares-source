@@ -1,9 +1,6 @@
 package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.edit.auth.Operation.Change
 import ch.scorpion.jabbah.edit.auth.Operation.View
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 
@@ -32,7 +29,7 @@ class CollapseAllAction(
 	controller: LibraryTreeViewController
 ) : AbstractLibraryAction(
 	"library.action.collapseAll",
-	operation = Change,
+	operation = View,
 	controller
 ) {
 

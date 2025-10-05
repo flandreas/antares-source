@@ -99,7 +99,15 @@ abstract class AbstractLibraryAction(
 			&& operationAuthorized
 			&& (applicationModeObserver == null || applicationModeObserver.currentMode == EDIT)
 
-	protected open val operationAuthorized: Boolean get() = isAuthorized(operation, LibraryModule.libraryHolder.l)
+	protected open val authorizationTarget: Any? get() = selectedItem
+
+	/**
+	 * [ch.scorpion.jabbah.graph.GraphAuthorizations] are done on ownership of [ch.scorpion.jabbah.graph.project.Project]
+	 * and [Library], so provide the [Library]
+	 */
+	protected open val operationAuthorized: Boolean get() = authorizationTarget?.let {
+		if (it is LibraryItem) isAuthorized(operation, it.library) else false
+	} ?: false
 
 	private val noStateChangeInterference: Boolean get() =
 		operation != Change || !commandManager.canUndo()
@@ -115,7 +123,7 @@ abstract class AbstractLibraryAction(
 }
 
 /** An [Action] that is only enabled if the selected item is a [LibraryDirectory].*/
-abstract class AbstractLibraryFolderAction(
+abstract class AbstractLibraryDirectoryAction(
 	actionBaseName: String,
 	operation: Operation,
 	controller: LibraryTreeViewController

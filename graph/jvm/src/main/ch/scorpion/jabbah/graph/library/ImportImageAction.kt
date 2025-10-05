@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 
@@ -13,8 +12,7 @@ import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
  */
 class ImportImageAction(
     controller: LibraryTreeViewController,
-    private val operationTarget: () -> Any?
-) : AbstractLibraryFolderAction(
+) : AbstractLibraryDirectoryAction(
     "library.action.importImage",
     Operation.Change,
     controller
@@ -25,9 +23,6 @@ class ImportImageAction(
     }
 
     override val opensDialog: Boolean get() = true
-
-    override val operationAuthorized: Boolean
-        get() = operationTarget.invoke() != null && Authorizer.isCurrentUserAuthorizedTo(operation, operationTarget.invoke()!!)
 
     override fun execute(event: ActionEvent) {
         ImportImagePanel.showAsDialog(name)?.let { params ->

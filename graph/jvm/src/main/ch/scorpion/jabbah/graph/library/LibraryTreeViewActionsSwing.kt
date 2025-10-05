@@ -29,9 +29,6 @@ open class LibraryTreeViewActionsSwing(
 	application: Application
 ) : LibraryTreeViewActions(controller, application) {
 
-	protected val libraryOperationTarget: () -> Any? = { LibraryModule.libraryHolder.l }
-	protected val projectOperationTarget: () -> Any? = { LibraryModule.libraryHolder.l }
-
 	private val helpLibraryItemAction = register(HelpLibraryItemAction(controller))
 
 	private val showLibraryMetaGraphHistoryAction = register(ShowMetaGraphHistoryAction(application.controller as GraphDataViewController, controller))
@@ -46,32 +43,32 @@ open class LibraryTreeViewActionsSwing(
 	private val openDocumentationViewerAction = register(OpenDocumentationViewerAction(application.displayName, controller))
 
 	private val libraryPropertiesAction = register(LibraryPropertiesAction(controller))
-	val addLibraryFolderAction = register(AddLibraryFolderAction(controller, libraryOperationTarget))
-	val deleteLibraryFolderAction = register(DeleteLibraryFolderAction(controller, libraryOperationTarget))
+	val addLibraryFolderAction = register(AddLibraryFolderAction(controller))
+	val deleteLibraryFolderAction = register(DeleteLibraryFolderAction(controller))
 	private val newLibraryGraphAction = register(NewGraphAction(controller))
-	private val libraryFolderPropertiesAction = register(LibraryFolderPropertiesAction(controller, libraryOperationTarget))
-	protected val deleteLibraryItemAction = register(DeleteLibraryItemAction(controller, libraryOperationTarget))
-	private val duplicateLibraryGraphAction = register(DuplicateGraphAction(controller, libraryOperationTarget))
-	private val importLibraryMetaGraphAction = register(ImportMetaGraphAction(controller, libraryOperationTarget))
-	private val importImageAction = register(ImportImageAction(controller, libraryOperationTarget))
+	private val libraryFolderPropertiesAction = register(LibraryFolderPropertiesAction(controller))
+	protected val deleteLibraryItemAction = register(DeleteLibraryItemAction(controller))
+	private val duplicateLibraryGraphAction = register(DuplicateGraphAction(controller))
+	private val importLibraryMetaGraphAction = register(ImportMetaGraphAction(controller))
+	private val importImageAction = register(ImportImageAction(controller))
 	private val openImageAction = register(OpenImageAction(application.controller as GraphDataViewController, controller))
-	private val renameLibraryMetaGraphAction = register(RenameMetaGraphAction(controller, libraryOperationTarget))
-	private val closeLibraryAction = register(CloseLibraryAction())
+	private val renameLibraryMetaGraphAction = register(RenameMetaGraphAction(controller))
+	private val closeLibraryAction = register(CloseLibraryAction(controller = controller))
 
 	private val projectPropertiesAction = register(ProjectPropertiesAction(controller))
-	private val addProjectFolderAction = register(AddLibraryFolderAction(controller, projectOperationTarget))
-	private val deleteProjectFolderAction = register(DeleteLibraryFolderAction(controller, projectOperationTarget))
+	private val addProjectFolderAction = register(AddLibraryFolderAction(controller))
+	private val deleteProjectFolderAction = register(DeleteLibraryFolderAction(controller))
 	private val newProjectGraphAction = register(NewGraphAction(controller))
-	private val projectFolderPropertiesAction = register(LibraryFolderPropertiesAction(controller, projectOperationTarget))
-	protected val deleteProjectItemAction = register(DeleteLibraryItemAction(controller, projectOperationTarget))
-	private val defaultProjectElementAction = register(DefaultContainerLibraryElementAction(controller, projectOperationTarget))
-	private val duplicateProjectGraphAction = register(DuplicateGraphAction(controller, projectOperationTarget))
-	private val importProjectMetaGraphAction = register(ImportMetaGraphAction(controller, projectOperationTarget))
-	private val renameProjectMetaGraphAction = register(RenameMetaGraphAction(controller, projectOperationTarget))
+	private val projectFolderPropertiesAction = register(LibraryFolderPropertiesAction(controller))
+	protected val deleteProjectItemAction = register(DeleteLibraryItemAction(controller))
+	private val defaultProjectElementAction = register(DefaultContainerLibraryElementAction(controller))
+	private val duplicateProjectGraphAction = register(DuplicateGraphAction(controller))
+	private val importProjectMetaGraphAction = register(ImportMetaGraphAction(controller))
+	private val renameProjectMetaGraphAction = register(RenameMetaGraphAction(controller))
 
-	private val closeProjectAction = register(CloseProjectAction())
+	private val closeProjectAction = register(CloseProjectAction(controller = controller))
 	private val uploadProjectAction = if (GraphModuleJvm.supportWeb) {
-		register(UploadProjectAction(controller, projectOperationTarget))
+		register(UploadProjectAction(controller))
 	} else {
 		null
 	}

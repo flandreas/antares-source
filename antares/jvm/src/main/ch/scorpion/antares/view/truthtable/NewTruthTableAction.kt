@@ -4,9 +4,8 @@ import ch.scorpion.antares.model.truthtable.OpenTruthTableItemRequest
 import ch.scorpion.antares.model.truthtable.TruthTable
 import ch.scorpion.antares.model.truthtable.TruthTableLibraryItem
 import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
-import ch.scorpion.jabbah.graph.library.AbstractLibraryFolderAction
+import ch.scorpion.jabbah.graph.library.AbstractLibraryDirectoryAction
 import ch.scorpion.jabbah.graph.library.LibraryDirectory
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import java.awt.Frame
@@ -17,15 +16,11 @@ import java.awt.Frame
  */
 class NewTruthTableAction(
 	controller: LibraryTreeViewController,
-) : AbstractLibraryFolderAction(
+) : AbstractLibraryDirectoryAction(
 	actionBaseName = "library.action.newTruthTable",
 	operation = Operation.Change,
 	controller
 ) {
-
-	private val operationTarget: Any? get() = if (selectedItem is LibraryDirectory) selectedFolder.library else null
-
-	override val opensDialog: Boolean get() = true
 
 	init {
 		updateEnabledness()
@@ -43,7 +38,4 @@ class NewTruthTableAction(
 				controller.eventBus.post(OpenTruthTableItemRequest(truthTableItem))
 			}
 	}
-
-	override val operationAuthorized: Boolean
-		get() = operationTarget != null && Authorizer.isCurrentUserAuthorizedTo(operation, operationTarget!!)
 }

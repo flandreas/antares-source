@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.FileExtensionFilter
-import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.graph.MetaGraphBundle
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
@@ -18,8 +17,7 @@ import javax.swing.JOptionPane
  */
 class ImportMetaGraphAction(
 	controller: LibraryTreeViewController,
-	private val operationTarget: () -> Any?
-) : AbstractLibraryFolderAction(
+) : AbstractLibraryDirectoryAction(
 	"library.action.importMetaGraph",
 	Operation.Change,
 	controller
@@ -30,9 +28,6 @@ class ImportMetaGraphAction(
 	}
 
 	override val opensDialog: Boolean get() = true
-
-	override val operationAuthorized: Boolean
-		get() = operationTarget.invoke() != null && Authorizer.isCurrentUserAuthorizedTo(operation, operationTarget.invoke()!!)
 
 	override fun execute(event: ActionEvent) {
 		val fileChooser = JFileChooser()

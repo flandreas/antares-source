@@ -4,9 +4,8 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
-import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
-import ch.scorpion.jabbah.graph.library.AbstractLibraryFolderAction
+import ch.scorpion.jabbah.graph.library.AbstractLibraryDirectoryAction
 import ch.scorpion.jabbah.graph.library.LibraryVisibility
 import ch.scorpion.jabbah.graph.login.Session
 import ch.scorpion.jabbah.graph.login.SessionEvent
@@ -21,9 +20,8 @@ import javax.swing.SwingUtilities
 
 class UploadProjectAction(
 	controller: LibraryTreeViewController,
-	private val operationTarget: () -> Any?,
 	private val service: ProjectAkrabClientService = GraphModuleJvm.projectAkrabClientService()
-) : AbstractLibraryFolderAction(
+) : AbstractLibraryDirectoryAction(
 	"project.action.upload",
 	Operation.Change,
 	controller
@@ -41,10 +39,6 @@ class UploadProjectAction(
 		super.dispose()
 		controller.eventBus.unregister(sessionHandler)
 	}
-
-	// TODO: Shouldn't this be in the base class?
-	override val operationAuthorized: Boolean
-		get() = operationTarget.invoke()?.let { Authorizer.isCurrentUserAuthorizedTo(Operation.Change, it) } ?: false
 
 	override fun calculateEnabledness(): Boolean =
 		super.calculateEnabledness() && Session.exists

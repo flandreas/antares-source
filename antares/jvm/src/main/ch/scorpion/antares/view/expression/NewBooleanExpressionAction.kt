@@ -4,23 +4,20 @@ import ch.scorpion.antares.model.expression.BooleanExpressionLibraryItem
 import ch.scorpion.antares.model.expression.OpenBooleanExpressionItemRequest
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.ui.NewNamePanel
-import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
-import ch.scorpion.jabbah.graph.library.AbstractLibraryFolderAction
+import ch.scorpion.jabbah.graph.library.AbstractLibraryDirectoryAction
 import ch.scorpion.jabbah.graph.library.LibraryDirectory
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import java.awt.Frame
 
 class NewBooleanExpressionAction(
 	controller: LibraryTreeViewController
-) : AbstractLibraryFolderAction(
+) : AbstractLibraryDirectoryAction(
 	actionBaseName = "library.action.newBooleanExpression",
 	operation = Operation.Change,
 	controller
 ) {
-	private val operationTarget: Any? get() = if (selectedItem is LibraryDirectory) selectedFolder.library else null
-
 	override val opensDialog: Boolean get() = true
 
 	init {
@@ -39,7 +36,4 @@ class NewBooleanExpressionAction(
 				controller.eventBus.post(OpenBooleanExpressionItemRequest(item))
 			}
 	}
-
-	override val operationAuthorized: Boolean
-		get() = operationTarget != null && Authorizer.isCurrentUserAuthorizedTo(operation, operationTarget!!)
 }

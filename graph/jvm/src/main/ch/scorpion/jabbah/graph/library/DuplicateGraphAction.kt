@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.MetaGraph
@@ -19,7 +18,6 @@ import javax.swing.SwingUtilities
  */
 class DuplicateGraphAction(
 	controller: LibraryTreeViewController,
-	private val operationTarget: () -> Any?
 ) : AbstractContainerLibraryElementAction(
 	actionBaseName = "library.action.duplicateGraph",
 	operation = Operation.Change,
@@ -27,9 +25,6 @@ class DuplicateGraphAction(
 ) {
 
 	override val opensDialog: Boolean get() = true
-
-	override val operationAuthorized: Boolean
-		get() = operationTarget.invoke() != null && Authorizer.isCurrentUserAuthorizedTo(operation, operationTarget.invoke()!!)
 
 	override fun execute(event: ActionEvent) {
 		val element = selectedItem as ContainerLibraryElement

@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation.Change
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import java.awt.Component
@@ -13,9 +12,8 @@ import javax.swing.SwingUtilities
 
 /** An [Action] for deleting the currently selected [LibraryDirectory].*/
 class DeleteLibraryFolderAction(
-	controller: LibraryTreeViewController,
-	private val operationTarget: () -> Any?
-) : AbstractLibraryFolderAction(
+	controller: LibraryTreeViewController
+) : AbstractLibraryDirectoryAction(
 	actionBaseName = "graph.action.deleteLibraryDirectory",
 	operation = Change,
 	controller
@@ -24,9 +22,6 @@ class DeleteLibraryFolderAction(
 	companion object {
 		private val LOG by logger(DeleteLibraryItemAction::class)
 	}
-
-	override val operationAuthorized: Boolean
-		get() = operationTarget.invoke() != null && Authorizer.isCurrentUserAuthorizedTo(operation, operationTarget.invoke()!!)
 
 	override fun calculateEnabledness(): Boolean =
 		super.calculateEnabledness() && (selectedItem as LibraryDirectory).isEmpty() && selectedItem !is Library

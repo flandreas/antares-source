@@ -19,11 +19,11 @@ object Authorizer {
 		return AuthorizationBuilder()
 	}
 
-	fun isCurrentUserAuthorizedTo(operation: Operation, data: Any): Boolean {
+	fun isCurrentUserAuthorizedTo(operation: Operation, data: Any?): Boolean {
 		return authorizations.firstOrNull {
 			it.userCondition.invoke(EditAuthModule.userHolder.user)
 				&& it.operation == operation
-				&& it.dataCondition.invoke(data)
+				&& data != null && it.dataCondition.invoke(data)
 		} != null
 	}
 

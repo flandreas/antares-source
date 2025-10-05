@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.ui.NewNamePanel
-import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation.Change
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
@@ -12,16 +11,15 @@ import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
  * the currently selected [LibraryDirectory].
  */
 class AddLibraryFolderAction(
-	controller: LibraryTreeViewController,
-	private val operationTarget: () -> Any?
-) : AbstractLibraryFolderAction(
+	controller: LibraryTreeViewController
+) : AbstractLibraryDirectoryAction(
 	actionBaseName = "library.action.addFolder",
 	operation = Change,
 	controller
 ) {
-
-	override val operationAuthorized: Boolean
-		get() = operationTarget.invoke() != null && Authorizer.isCurrentUserAuthorizedTo(operation, operationTarget.invoke()!!)
+	init {
+		updateEnabledness()
+	}
 
 	override fun execute(event: ActionEvent) {
 		NewNamePanel.showAsDialog(name)?.let {

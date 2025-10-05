@@ -1,10 +1,9 @@
 package ch.scorpion.jabbah.graph.library
 
-import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
-import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.auth.Operation
+import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 
 /**
  * Closes the currently open [Library]
@@ -13,8 +12,8 @@ open class CloseLibraryAction(
 	baseName: String = "library.action.close",
 	private val managementService: AbstractLibraryManagementService = LibraryModule.libraryManagementService,
 	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
-	private val eventBus: EventBus = BaseModule.eventBus
-) : AbstractAction(baseName) {
+	controller: LibraryTreeViewController,
+) : AbstractLibraryAction(baseName, Operation.View, controller) {
 
 	private val currentLibraryHandler: EventHandler<CurrentLibraryEvent> = { updateEnabledness() }
 
@@ -28,9 +27,8 @@ open class CloseLibraryAction(
 		eventBus.unregister(currentLibraryHandler)
 	}
 
-	private fun updateEnabledness() {
-		enabled = libraryHolder.l != null
-	}
+	override fun calculateEnabledness(): Boolean =
+		super.calculateEnabledness() && selectedItem === libraryHolder.l
 
 	override fun execute(event: ActionEvent) {
 		managementService.close()

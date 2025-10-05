@@ -8,7 +8,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.model.ComponentMessageType
-import ch.scorpion.jabbah.graph.library.AbstractLibraryFolderAction
+import ch.scorpion.jabbah.graph.library.AbstractLibraryDirectoryAction
 import ch.scorpion.jabbah.graph.library.Library
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 
@@ -18,7 +18,7 @@ import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
  */
 class RunLibraryTestcasesAction(
 	controller: LibraryTreeViewController
-) : AbstractLibraryFolderAction(
+) : AbstractLibraryDirectoryAction(
 	"antares.testcase.action.runAllInLibrary",
 	Operation.View,
 	controller

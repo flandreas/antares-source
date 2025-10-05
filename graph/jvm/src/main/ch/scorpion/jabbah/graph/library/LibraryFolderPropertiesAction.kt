@@ -16,15 +16,11 @@ import javax.swing.*
 /** An [Action] for editing the properties of a [LibraryFolder], which is currently only its translatable name.*/
 class LibraryFolderPropertiesAction(
 	controller: LibraryTreeViewController,
-	private val operationTarget: () -> Any?
-) : AbstractLibraryFolderAction(
+) : AbstractLibraryDirectoryAction(
 	actionBaseName = "library.action.editFolderProperties",
 	operation = Operation.View,
 	controller
 ) {
-
-	override val operationAuthorized: Boolean
-		get() = operationTarget.invoke()?.let { Authorizer.isCurrentUserAuthorizedTo(Operation.View, it) } ?: false
 
 	override fun execute(event: ActionEvent) {
 		val title = Translations.getString("library.action.editFolderProperties.name")
@@ -34,7 +30,7 @@ class LibraryFolderPropertiesAction(
 				parent = SwingUtilities.getWindowAncestor(controller.view as Component),
 				title = title,
 				name = selectedFolder.name.translation,
-				editable = operationTarget.invoke()?.let { Authorizer.isCurrentUserAuthorizedTo(Operation.Change, it) } ?: false
+				editable = Authorizer.isCurrentUserAuthorizedTo(Operation.Change, authorizationTarget)
 			)
 			if (text == null) {
 				return
@@ -53,7 +49,7 @@ class LibraryFolderPropertiesAction(
 				break
 			}
 		}
-		selectedFolder.library!!.libraryService.renameDirectory(selectedFolder, text!!)
+		selectedFolder.library!!.libraryService.renameDirectory(selectedFolder, text)
 	}
 }
 

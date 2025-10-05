@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.project
 
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.graph.library.AbstractContainerLibraryElementAction
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
@@ -14,15 +13,11 @@ import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
  */
 class DefaultContainerLibraryElementAction(
 	controller: LibraryTreeViewController,
-	private val operationTarget: () -> Any?
 ) : AbstractContainerLibraryElementAction(
 	actionBaseName = "library.action.setDefaultElement",
 	operation = Operation.Change,
 	controller
 ) {
-
-	override val operationAuthorized: Boolean
-		get() = operationTarget.invoke() != null && Authorizer.isCurrentUserAuthorizedTo(operation, operationTarget.invoke()!!)
 
 	override fun execute(event: ActionEvent) {
 		val elem = controller.selectedItem as ContainerLibraryElement

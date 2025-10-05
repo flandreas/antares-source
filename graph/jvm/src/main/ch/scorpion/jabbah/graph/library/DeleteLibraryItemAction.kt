@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.graph.library
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.graph.model.image.ImageLibraryElement
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
@@ -17,7 +16,6 @@ import javax.swing.SwingUtilities
  */
 class DeleteLibraryItemAction(
 	controller: LibraryTreeViewController,
-	private val operationTarget: () -> Any?
 ) : AbstractLibraryAction(
 	BASE_RESOURCE_NAME,
 	operation = Operation.Change,
@@ -43,9 +41,6 @@ class DeleteLibraryItemAction(
 			is LibraryDirectory -> DIRECTORY_RESOURCE_NAME
 			else -> ITEM_RESOURCE_NAME
 		}
-
-	override val operationAuthorized: Boolean
-		get() = operationTarget.invoke() != null && Authorizer.isCurrentUserAuthorizedTo(operation, operationTarget.invoke()!!)
 
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
 		val libraryItem = controller.selectedItem
