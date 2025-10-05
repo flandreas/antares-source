@@ -316,7 +316,7 @@ class SubGraphVerticeViewImpl(
 			writer.writeBoolean("mirrorV", isVerticallyMirrored)
 		}
 		if (_label != null) {
-			writer.writeStorables("label", label!!.allTranslations())
+			writer.writeStorables("label", _label!!.allTranslations())
 		}
 		if (customizedContainerDrawing != null) {
 			writer.writeStorable("container", customizedContainerDrawing!!)
