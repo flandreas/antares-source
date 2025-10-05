@@ -68,7 +68,9 @@ class WorkspaceHolder(
 	}
 
 	private fun writeLog() {
-		LOG.userTrail("Using workspace $userDataDirectoryPath")
+		if (userDataDirectoryPath.isNotBlank()) {
+			LOG.userTrail("Using workspace $userDataDirectoryPath")
+		}
 	}
 }
 
