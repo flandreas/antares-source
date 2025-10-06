@@ -1,10 +1,12 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.app.AbstractSelectionAwareAction
+import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopView
 import ch.scorpion.jabbah.graph.view.vertice.OpenSubGraphRequest
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -20,8 +22,19 @@ class OpenGraphNavigationAction(
 	var subGraphVerticeView: SubGraphVerticeView<*>? = null
 ) : AbstractSelectionAwareAction("graph.action.openSubGraph", eventBus, viewManager) {
 
-	init {
+	private val schedulerActivationStateHandler: EventHandler<SchedulerActivationStateEvent> = {
+		subGraphVerticeView = null
 		updateEnabled()
+	}
+
+	init {
+		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
+		updateEnabled()
+	}
+
+	override fun dispose() {
+		super.dispose()
+		eventBus.unregister(schedulerActivationStateHandler)
 	}
 
 	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
