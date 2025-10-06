@@ -3,7 +3,9 @@ package ch.scorpion.antares.view.addressable
 import ch.scorpion.antares.model.addressable.*
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.jabbah.base.Settings
+import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.FocusJTable
 import ch.scorpion.jabbah.base.swing.RowHeaderTable
@@ -32,6 +34,7 @@ class AddressableDisplayPanel(
 ) : JPanel() {
 
 	companion object {
+		private val LOG by logger(AddressableDisplayPanel::class)
 		private const val SETTING_COMMENT_COLUMN_WIDTH = "addressable.commentWidth"
 		private const val DEF_VALUE_COLUMN_WIDTH = 50
 		private const val DEF_COMMENT_COLUMN_WIDTH = 200
@@ -52,6 +55,30 @@ class AddressableDisplayPanel(
 	private val table = FocusJTable(layouts[1].createTableModel())
 	private val scrollPane = JScrollPane(table)
 
+	private val addressableListener = object : AddressableListener {
+		override fun dataChanged(event: AddressableDataEvent) {
+			if (event.address != null && event.oldValue != null && event.newValue != null) {
+				if (event.oldValue != event.newValue) {
+					LOG.debug("Data changed at ${event.address} from ${event.oldValue} to ${event.newValue}")
+					consumeValueChange(AddressableCellChange(event.address, event.oldValue, event.newValue))
+				}
+			}
+		}
+
+		override fun commentChanged(event: AddressableCommentEvent) {
+			if (event.oldValue == null && StringUtils.isBlank(event.newValue)) {
+				return
+			}
+			if (event.oldValue == event.newValue) {
+				return
+			}
+			LOG.debug("Comment changed at ${event.address} from '${event.oldValue}' to '${event.newValue}'")
+			consumeCommentChange(AddressableCommentChange(event.address, event.oldValue, event.newValue))
+		}
+
+		override fun bitWidthChanged(event: AddressableBitWidthEvent) {}
+	}
+
     init {
 		val cellsPerRow = settings.getInt(SETTING_LAYOUT, DEF_LAYOUT)
 		layouts.firstOrNull { it.cellsPerRow == cellsPerRow }.let {
@@ -70,9 +97,12 @@ class AddressableDisplayPanel(
 			repaint()
 		}
 	    updateMemoryDisplayLayout(addressableDisplayLayout)
+
+		addressableRef.addListener(addressableListener)
     }
 
 	fun dispose() {
+		addressableRef.removeListener(addressableListener)
 		storeSettings()
 	}
 
@@ -152,10 +182,10 @@ class AddressableDisplayPanel(
 			val column = table.columnModel.getColumn(i)
 
 			if (tableModel.isCommentColumn(i)) {
-				column.cellEditor = AddressableCommentEditor(addressableRef, addressableDisplayLayout, ::consumeCommentChange)
+				column.cellEditor = AddressableCommentEditor()
 				column.preferredWidth = settings.getInt(SETTING_COMMENT_COLUMN_WIDTH, DEF_COMMENT_COLUMN_WIDTH)
 			} else {
-				column.cellEditor = AddressableValueEditor(addressableRef, addressableDisplayLayout, ::converter, ::consumeValueChange).apply {
+				column.cellEditor = AddressableValueEditor(addressableRef, /*addressableDisplayLayout,*/ ::converter, /*::consumeValueChange*/).apply {
 					font = table.font
 				}
 				column.preferredWidth = DEF_VALUE_COLUMN_WIDTH

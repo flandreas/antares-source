@@ -1,23 +1,15 @@
 package ch.scorpion.antares.view.addressable
 
-import ch.scorpion.antares.model.addressable.AddressableCellChange
 import ch.scorpion.antares.model.addressable.AddressableReference
 import ch.scorpion.jabbah.base.System
-import java.awt.Component
 import java.awt.event.FocusAdapter
 import java.awt.event.FocusEvent
 import javax.swing.*
 
 class AddressableValueEditor(
 	private val addressableRef: AddressableReference,
-	private val addressableDisplayLayout: AddressableDisplayLayout,
 	private val converterProvider: () -> AddressableValueConverter,
-	private val addressableCellChangeConsumer: (AddressableCellChange) -> Unit
 ) : DefaultCellEditor(JTextField()) {
-
-	private var oldValue: ULong = 0UL
-	private var row: Int = 0
-	private var col: Int = 0
 
 	private val textComponent: JTextField get() = component as JTextField
 
@@ -30,32 +22,11 @@ class AddressableValueEditor(
 			override fun focusGained(e: FocusEvent?) {
 				with (textComponent) {
 					selectAll()
-					oldValue = retrieveCurrentValue()
 				}
-			}
-
-			override fun focusLost(e: FocusEvent?) {
-				handleFocusLost()
 			}
 		})
 
 		textComponent.inputVerifier = HexHumberInputVerifier()
-	}
-
-	override fun getTableCellEditorComponent(table: JTable?, value: Any?, isSelected: Boolean, row: Int, column: Int): Component {
-		this.row = row
-		this.col = column
-		return super.getTableCellEditorComponent(table, value, isSelected, row, column)
-	}
-
-	private fun retrieveCurrentValue(): ULong =
-		addressableRef.addressable.dataAt(addressableDisplayLayout.getCellAddress(row, col))
-
-	private fun handleFocusLost() {
-		val newValue = retrieveCurrentValue()
-		if (newValue != oldValue) {
-			addressableCellChangeConsumer(AddressableCellChange(addressableDisplayLayout.getCellAddress(row, col), oldValue, newValue))
-		}
 	}
 
 	private inner class HexHumberInputVerifier : InputVerifier() {
