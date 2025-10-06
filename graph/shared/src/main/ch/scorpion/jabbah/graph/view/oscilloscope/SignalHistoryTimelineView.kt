@@ -145,8 +145,13 @@ class SignalHistoryTimelineViewImpl(
 	 */
 	private fun updateMinDisplayableTime() {
 		var time = timeline!!.maxTime
-		val entries = gridSignalHistory!!.getReverseEntriesUntil(0)
 
+		if (gridSignalHistory == null) {
+			minDisplayableTime = time
+			return
+		}
+
+		val entries = gridSignalHistory!!.getReverseEntriesUntil(0)
 		if (!entries.hasNext()) {
 			minDisplayableTime = time
 			return
