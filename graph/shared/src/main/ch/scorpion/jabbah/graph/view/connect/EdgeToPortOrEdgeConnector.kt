@@ -284,16 +284,23 @@ class EdgeToPortOrEdgeConnector(
 
 		edgeView?.underConstruction = false
 
-		if (targetPortView != null) {
-			context.editor.commandManager.execute(createConnectDestinationCommand(context.editor))
-			GraphViewModule.connectionEstablishedHandler?.handle(context.editor, targetPortView!!.port)?.let {
-				context.editor.commandManager.execute(it)
+		try {
+			if (targetPortView != null) {
+				context.editor.commandManager.execute(createConnectDestinationCommand(context.editor))
+				GraphViewModule.connectionEstablishedHandler?.handle(context.editor, targetPortView!!.port)?.let {
+					context.editor.commandManager.execute(it)
+				}
+			} else {
+				context.editor.commandManager.register(createMoveDestinationCommand(context.editor))
 			}
-		} else {
-			context.editor.commandManager.register(createMoveDestinationCommand(context.editor))
-		}
 
-		context.editor.commandManager.commitTransaction()
+			context.editor.commandManager.commitTransaction()
+		} catch (e: Exception) {
+			if (context.editor.commandManager.isInTransaction) {
+				context.editor.commandManager.rollbackTransaction()
+			}
+			postConnectorErrorMessage(e)
+		}
 	}
 
 	private fun completeConnectingToEdgeView(context: EditInputEventContext) {

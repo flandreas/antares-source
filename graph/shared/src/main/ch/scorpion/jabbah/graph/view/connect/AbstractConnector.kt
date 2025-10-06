@@ -1,10 +1,13 @@
 package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.edit.EditInputEventContext
+import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
@@ -174,5 +177,16 @@ abstract class AbstractConnector(
 
 	private fun clearTargetEdgeView() {
 		targetEdgeView = null
+	}
+
+	protected fun postConnectorErrorMessage(e: Exception) {
+		BaseModule.eventBus.post(
+			ComponentMessage(
+				ComponentMessageType.Error,
+				null,
+				"graph.tool.connector.error.text",
+				e.message ?: e::class.simpleName
+			)
+		)
 	}
 }

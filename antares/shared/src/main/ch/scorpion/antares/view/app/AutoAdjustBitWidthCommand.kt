@@ -2,6 +2,7 @@ package ch.scorpion.antares.view.app
 
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.vertice.AdjustableBitWidth
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.Undoable
 import ch.scorpion.jabbah.edit.command.AbstractCommand
@@ -21,6 +22,10 @@ class AutoAdjustBitWidthCommand(
     private val adjustableBitWidth: AdjustableBitWidth get() = (editor!!.drawing as GraphView).graph!!.withId(targetId) as AdjustableBitWidth
 
     override fun execute() {
-        adjustableBitWidth.adjustBitWidth(portId, bitWidth)
+        try {
+            adjustableBitWidth.adjustBitWidth(portId, bitWidth)
+        } catch (e: Exception) {
+            throw IllegalArgumentException("${Translations.getString("antares.autoAdjustBitWidth.command.name")} - ${e.message ?: ""}", e)
+        }
     }
 }

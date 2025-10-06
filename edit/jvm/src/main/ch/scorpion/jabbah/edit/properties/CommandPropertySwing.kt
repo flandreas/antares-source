@@ -42,13 +42,13 @@ open class CommandPropertySwing<V>(
 				editor!!.commandManager.beginTransaction(command)
 				editor!!.commandManager.commitTransaction()
 			} catch (t: InvocationTargetException) {
-				LOG.error("Error in invoking bean setter '$setterPropertyName': ${t.targetException.message}")
+				LOG.debug("Error in invoking bean setter '$setterPropertyName': ${t.targetException.message}")
 				if (editor!!.commandManager.isInTransaction) {
 					editor!!.commandManager.rollbackTransaction()
 				}
 				throw t.targetException
 			} catch (t: Throwable) {
-				LOG.error("Error in invoking bean setter '$setterPropertyName': ${t.message}")
+				LOG.debug("Error in invoking bean setter '$setterPropertyName': ${t.message}")
 				if (editor!!.commandManager.isInTransaction) {
 					editor!!.commandManager.rollbackTransaction()
 				}

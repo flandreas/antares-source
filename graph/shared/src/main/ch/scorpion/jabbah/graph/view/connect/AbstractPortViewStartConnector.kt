@@ -544,26 +544,33 @@ abstract class AbstractPortViewStartConnector(
 		connectService.unconnect(edgeView!!)
 		context.drawingView.drawing.remove(edgeView!!)
 
-		context.editor.commandManager.beginTransaction("graph.command.connect", context.drawingView)
+		try {
+			context.editor.commandManager.beginTransaction("graph.command.connect", context.drawingView)
 
-		context.editor.commandManager.execute(
-			SplitEdgeViewCommand(
-				editor = context.editor,
-				connectService = connectService,
-				splitEdgeViewId = targetEdgeView!!.id,
-				splitLocation = draggedEndpointType.getLocation(edgeView!!),
-				segmentIndex = targetEdgeViewSegmentIndex!!,
-				newEdgeViewProvider = NewEdgeViewAtSplitCloneProvider(edgeView!!),
-				newEdgeViewEndpointType = draggedEndpointType,
-				targetConnectableViewId = startPortView!!.owner!!.id,
-				targetPortId = startPortView!!.port.portId
+			context.editor.commandManager.execute(
+				SplitEdgeViewCommand(
+					editor = context.editor,
+					connectService = connectService,
+					splitEdgeViewId = targetEdgeView!!.id,
+					splitLocation = draggedEndpointType.getLocation(edgeView!!),
+					segmentIndex = targetEdgeViewSegmentIndex!!,
+					newEdgeViewProvider = NewEdgeViewAtSplitCloneProvider(edgeView!!),
+					newEdgeViewEndpointType = draggedEndpointType,
+					targetConnectableViewId = startPortView!!.owner!!.id,
+					targetPortId = startPortView!!.port.portId
+				)
 			)
-		)
 
-		GraphViewModule.connectionEstablishedHandler?.handle(context.editor, startPortView!!.port)?.let {
-			context.editor.commandManager.execute(it)
+			GraphViewModule.connectionEstablishedHandler?.handle(context.editor, startPortView!!.port)?.let {
+				context.editor.commandManager.execute(it)
+			}
+
+			context.editor.commandManager.commitTransaction()
+		} catch (e: Exception) {
+			if (context.editor.commandManager.isInTransaction) {
+				context.editor.commandManager.rollbackTransaction()
+			}
+			postConnectorErrorMessage(e)
 		}
-
-		context.editor.commandManager.commitTransaction()
 	}
 }

@@ -55,44 +55,57 @@ class InputToOutputOrEdgeConnector(
 		connectService.unconnect(edgeView!!)
 		context.drawingView.drawing.remove(edgeView!!)
 
-		context.editor.commandManager.beginTransaction("graph.command.connect", context.drawingView)
+		try {
+			context.editor.commandManager.beginTransaction("graph.command.connect", context.drawingView)
 
-		val addCommand = AddCommand(context.editor, edgeView!!)
-		context.editor.commandManager.execute(addCommand)
+			val addCommand = AddCommand(context.editor, edgeView!!)
+			context.editor.commandManager.execute(addCommand)
 
-		if (targetPortView != null) {
+			if (targetPortView != null) {
+				context.editor.commandManager.execute(
+					ConnectOriginCommand(
+						context.editor,
+						connectService,
+						addCommand.addedComponentId,
+						targetPortView!!.owner!!.id,
+						targetPortView!!.port.portId
+					)
+				)
+			} else {
+				context.editor.commandManager.execute(
+					MoveOriginEndpointCommand(
+						context.editor,
+						addCommand.addedComponentId,
+						startPortView!!.location,
+						edgeView!!.polyline.getFirstPoint()
+					)
+				)
+			}
+
 			context.editor.commandManager.execute(
-				ConnectOriginCommand(
+				ConnectDestinationCommand(
 					context.editor,
 					connectService,
 					addCommand.addedComponentId,
-					targetPortView!!.owner!!.id,
-					targetPortView!!.port.portId))
-		} else {
-			context.editor.commandManager.execute(
-				MoveOriginEndpointCommand(
-					context.editor,
-					addCommand.addedComponentId,
-					startPortView!!.location,
-					edgeView!!.polyline.getFirstPoint()))
+					startPortView!!.owner!!.id,
+					startPortView!!.port.portId
+				)
+			)
+
+			GraphViewModule.connectionEstablishedHandler?.handle(context.editor, startPortView!!.port)?.let {
+				context.editor.commandManager.execute(it)
+			}
+
+			context.editor.commandManager.commitTransaction()
+
+			context.drawingView.selectionManager.select(
+				context.drawingView.drawing.getWithId(addCommand.addedComponentId)!!
+			)
+		} catch (e: Exception) {
+			if (context.editor.commandManager.isInTransaction) {
+				context.editor.commandManager.rollbackTransaction()
+			}
+			postConnectorErrorMessage(e)
 		}
-
-		context.editor.commandManager.execute(
-			ConnectDestinationCommand(
-				context.editor,
-				connectService,
-				addCommand.addedComponentId,
-				startPortView!!.owner!!.id,
-				startPortView!!.port.portId)
-		)
-
-		GraphViewModule.connectionEstablishedHandler?.handle(context.editor, startPortView!!.port)?.let {
-			context.editor.commandManager.execute(it)
-		}
-
-		context.editor.commandManager.commitTransaction()
-
-		context.drawingView.selectionManager.select(
-			context.drawingView.drawing.getWithId(addCommand.addedComponentId)!!)
 	}
 }
