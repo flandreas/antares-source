@@ -130,15 +130,6 @@ class AntaresFrameSwing(
 			cmdManager = controller.graphPanelViewController.editor.commandManager)
 	}
 
-	override fun shouldReplaceLightColor(): Boolean {
-		return JOptionPane.showConfirmDialog(
-			Frame.getFrames()[0],
-			Translations.getString("antares.action.replaceLightColor.question"),
-			Translations.getString("antares.action.replaceLightColor.name"),
-			JOptionPane.YES_NO_OPTION,
-			JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION
-	}
-
 	private fun handle(failure: NetSignalApplierFailure) {
 		if (JOptionPane.showConfirmDialog(
 			this,

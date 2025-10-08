@@ -1,7 +1,6 @@
 package ch.scorpion.antares.view
 
 import ch.scorpion.antares.model.net.NetSignalApplierStrategy
-import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.drawingBeanProvider
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
@@ -12,7 +11,7 @@ import com.l2fprod.common.propertysheet.Property
 class DigitalGraphViewBeanInfo : GraphViewImplBeanInfo<DigitalGraphView>() {
 
 	companion object {
-		private val defaultLightColor = CommandPropertySwing("defaultLightColor", "element.property.DigitalGraphView.lightColor", LightColor::class.java, drawingBeanProvider)
+		private val defaultLightColor = DefaultLightColorProperty()
 		private val netSignalApplierStrategy = CommandPropertySwing("netSignalApplierStrategy", NetSignalApplierStrategy.BASE_KEY, NetSignalApplierStrategy::class.java, drawingBeanProvider)
 	}
 

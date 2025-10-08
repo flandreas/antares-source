@@ -43,8 +43,6 @@ interface AntaresFrame : GraphFrame {
 	fun createDocumentationDesktopViewItem(documentation: Document, metaGraphName: String): GraphDesktopViewItem
 
 	fun showMemoryContents(request: OpenMemoryContentsRequest)
-
-	fun shouldReplaceLightColor(): Boolean
 }
 
 class AntaresFrameController(
@@ -60,13 +58,11 @@ class AntaresFrameController(
 
 	private val openMemoryContentsRequestHandler: EventHandler<OpenMemoryContentsRequest> = { handle(it) }
 	private val openDocumentationRequestHandler: EventHandler<OpenDocumentationRequest> = { handle(it) }
-	private val defaultLightColorHandler: EventHandler<DefaultLightColorEvent> = { handle(it) }
 	private val applicationDataHandler: EventHandler<ApplicationDataEvent> = { handle(it) }
 
 	init {
 		eventBus.register(ApplicationDataEvent::class, applicationDataHandler)
 		eventBus.register(OpenMemoryContentsRequest::class, openMemoryContentsRequestHandler)
-		eventBus.register(DefaultLightColorEvent::class, defaultLightColorHandler)
 		eventBus.register(OpenDocumentationRequest::class, openDocumentationRequestHandler)
 	}
 
@@ -74,7 +70,6 @@ class AntaresFrameController(
 		super.dispose()
 		eventBus.unregister(applicationDataHandler)
 		eventBus.unregister(openMemoryContentsRequestHandler)
-		eventBus.unregister(defaultLightColorHandler)
 		eventBus.unregister(openDocumentationRequestHandler)
 	}
 
@@ -151,12 +146,6 @@ class AntaresFrameController(
 		) {
 			LOG.debug("Create new ImageGraphDesktopViewItem")
 			graphPanelViewController.desktopController.show(view.createImageGraphDesktopViewItem(newElement))
-		}
-	}
-
-	private fun handle(event: DefaultLightColorEvent) {
-		if (event.graphView.defaultLightColor != null && view.shouldReplaceLightColor()) {
-			(GraphViewModule.graphViewAppService as AntaresGraphViewService).replaceLightColor(event.graphView)
 		}
 	}
 }
