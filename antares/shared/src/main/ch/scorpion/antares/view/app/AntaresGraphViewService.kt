@@ -16,11 +16,15 @@ import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.model.CopyPasteService
 import ch.scorpion.jabbah.edit.module.EditModule
+import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
+import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.app.GraphViewAppServiceImpl
 import ch.scorpion.jabbah.graph.view.connect.GraphViewConnectService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.PortView
+import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 
 class AntaresGraphViewService(
 	copyPasteService: CopyPasteService = EditModule.copyPasteService,
@@ -35,8 +39,12 @@ class AntaresGraphViewService(
 
 	override fun customizeAddedComponent(component: Component, drawing: Drawing<*>) {
 		super.customizeAddedComponent(component, drawing)
-		if (component is LightEmitter && component.parent is DigitalGraphView) {
-			component.lightColor = determineLightColor(component.parent as DigitalGraphView)
+		if (component.parent is DigitalGraphView) {
+			val lightColor = determineLightColor(component.parent as DigitalGraphView)
+			when (component) {
+				is LightEmitter -> component.lightColor = lightColor
+				is SubGraphVerticeView<*> -> applyDefaultLightColor(component as SubGraphVerticeView<SubGraphVerticeRef>, lightColor)
+			}
 		}
 	}
 
@@ -44,10 +52,27 @@ class AntaresGraphViewService(
 		graphView.defaultLightColor?.let { defaultLightColor ->
 			LOG.info("Replace LightColor")
 			graphView
-				.getDrawables { it is LightEmitter }
-				.map { it as LightEmitter }
-				.forEach { it.lightColor = defaultLightColor }
+				.getDrawables { it is LightEmitter || it is SubGraphVerticeView<*> }
+				.forEach {
+					if (it is LightEmitter) {
+						it.lightColor = defaultLightColor
+					} else if (it is SubGraphVerticeView<*>) {
+						applyDefaultLightColor(it as SubGraphVerticeView<SubGraphVerticeRef>, defaultLightColor)
+					}
+				}
 		}
+	}
+
+	private fun applyDefaultLightColor(subGraphVV: SubGraphVerticeView<SubGraphVerticeRef>, defaultLightColor: LightColor) {
+		val paramDefs = subGraphVV.model.graphUUID?.let {
+			LibraryModule.libraryHolder.getMetaGraph(it).graph.model?.parameterDefinitions
+		}
+		paramDefs?.definitions
+			?.filter { it.type.valueClass == LightColor::class }
+			?.map { it as GraphParamDefinition<LightColor> }
+			?.forEach { paramDef ->
+				subGraphVV.model.setParamValue(paramDef.createValue(defaultLightColor))
+			}
 	}
 
 	private fun determineLightColor(graphView: DigitalGraphView): LightColor =
