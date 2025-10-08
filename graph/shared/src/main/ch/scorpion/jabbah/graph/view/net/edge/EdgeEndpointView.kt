@@ -13,7 +13,6 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.graph.view.EdgeView
-import ch.scorpion.jabbah.graph.view.connect.AbstractDragEdgeViewEndpointConnector
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 
 /**
@@ -22,7 +21,7 @@ import ch.scorpion.jabbah.graph.view.style.GraphStyleType
  */
 class EdgeEndpointView(
 	val edgeView: EdgeView<*>,
-	private val connectorSupplier: () -> AbstractDragEdgeViewEndpointConnector,
+	private val type: EdgeViewEndpointType,
 	styleProvider: StyleProvider
 ) : AbstractStyledDrawable(GraphStyleType.EDGE, styleProvider), Locatable {
 
@@ -54,8 +53,10 @@ class EdgeEndpointView(
 	/** ---- [Drawable] interface */
 
 	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
-		connectorSupplier.invoke().useFor(edgeView, context as EditInputEventContext)
-		return connectorSupplier.invoke().handler as InputEventHandler<T>
+		with (type.dragConnector) {
+			useFor(edgeView, context as EditInputEventContext)
+			return handler as InputEventHandler<T>
+		}
 	}
 
 	override fun draw(context: DrawContext) {

@@ -3,7 +3,6 @@ package ch.scorpion.antares.view.analog
 import ch.scorpion.antares.model.analog.AnalogNet
 import ch.scorpion.antares.model.analog.AnalogPort
 import ch.scorpion.antares.model.analog.AnalogSignal
-import ch.scorpion.antares.model.analog.AnalogVertice
 import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.antares.view.analog.engine.AnalogElement
 import ch.scorpion.antares.view.style.AntaresTheme
@@ -30,15 +29,7 @@ import kotlin.math.abs
 class AnalogEdgeView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	net: AnalogNet = AnalogNet()
-) : EdgeViewImpl<AnalogSignal>(
-		styleProvider,
-		DEF_EDGE_TO_PORT_CONNECTOR_SUPPLIER,
-		DEF_ORIG_ENDPOINT_CONNECTOR_SUPPLIER,
-		DEF_DEST_ENDPOINT_CONNECTOR_SUPPLIER,
-		net
-	),
-	AnalogElement
-{
+) : EdgeViewImpl<AnalogSignal>(styleProvider, net), AnalogElement {
 
 	companion object {
 

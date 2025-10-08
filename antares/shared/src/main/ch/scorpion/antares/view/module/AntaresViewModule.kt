@@ -224,12 +224,7 @@ object AntaresViewModule : AbstractModule() {
 		GraphViewModule.portViewFactory = DigitalPortViewFactory(DrawStyleModule.styleProvider)
 		GraphViewModule.oscilloscopeViewFactory = AntaresOscilloscopeViewFactory()
 		GraphViewModule.oscilloscopeProbeNameStrategy = DigitalOscilloscopeProbeNameStrategy()
-		val edgeViewFactory = AntaresEdgeViewFactory(
-			DrawStyleModule.styleProvider,
-			{ GraphViewModule.edgeToPortOrEdgeConnector },
-			{ GraphViewModule.dragEdgeViewOriginConnector },
-			{ GraphViewModule.dragEdgeViewDestinationConnector })
-		GraphViewModule.setEdgeViewFactory(edgeViewFactory)
+		GraphViewModule.setEdgeViewFactory(AntaresEdgeViewFactory(DrawStyleModule.styleProvider))
 		GraphViewModule.setNodeViewFactory(AntaresNodeViewFactory(
 			DrawStyleModule.styleProvider))
 		GraphViewModule.graphNavigationViewControllerExtension = { AntaresGraphNavigationViewControllerExtension(it) }

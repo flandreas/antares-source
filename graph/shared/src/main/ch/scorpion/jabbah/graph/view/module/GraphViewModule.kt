@@ -247,12 +247,7 @@ object GraphViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.BELOW, OscilloscopeView::class) { BoundingBoxBelowSelectionModel(it, styleType = EditStyleType.HIGHLIGHT, outset = 3) }
 	}
 
-	private var edgeViewFactoryImpl: EdgeViewFactory = EdgeViewFactoryImpl(
-		DrawStyleModule.styleProvider,
-		{ edgeToPortOrEdgeConnector },
-		{ dragEdgeViewOriginConnector },
-		{ dragEdgeViewDestinationConnector }
-	)
+	private var edgeViewFactoryImpl: EdgeViewFactory = EdgeViewFactoryImpl(DrawStyleModule.styleProvider)
 
 	private fun registerHelpSources() {
 		HelpSourceRegistry.register(HelpId(OscilloscopeView::class.simpleName!!), HelpSource("/oscilloscope/oscilloscope"))

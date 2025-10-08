@@ -9,6 +9,8 @@ import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.connect.AbstractDragEdgeViewEndpointConnector
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.port.PortView
 
 /**
@@ -17,6 +19,9 @@ import ch.scorpion.jabbah.graph.view.port.PortView
 enum class EdgeViewEndpointType {
 
     ORIGIN {
+
+        override val dragConnector: AbstractDragEdgeViewEndpointConnector get() =
+            GraphViewModule.dragEdgeViewOriginConnector
 
         override fun canConnectTo(port: Port<out Any>, net: Net<out Any>?, graphView: GraphView): Boolean {
         	return graphView.allowMultipleOutputsPerNet || port.portType.isOutput
@@ -59,6 +64,9 @@ enum class EdgeViewEndpointType {
     },
 
     DESTINATION {
+
+        override val dragConnector: AbstractDragEdgeViewEndpointConnector get() =
+            GraphViewModule.dragEdgeViewDestinationConnector
 
         override fun canConnectTo(port: Port<out Any>, net: Net<out Any>?, graphView: GraphView): Boolean =
 	        port.portType.isInput || (port is OutputPort && net != null && port.canConnectToNet(net, graphView))
@@ -104,6 +112,8 @@ enum class EdgeViewEndpointType {
 			ORIGIN -> DESTINATION
 			DESTINATION -> ORIGIN
 		}
+
+    abstract val dragConnector: AbstractDragEdgeViewEndpointConnector
 
     /**
      * Determines whether an endpoint of this type can connect to the specified [Port].

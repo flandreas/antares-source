@@ -32,8 +32,6 @@ import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.net.NetImpl
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.EdgeView.Companion.PROP_MIN_EDGE_VIEW_LENGTH
-import ch.scorpion.jabbah.graph.view.connect.DragEdgeViewDestinationConnector
-import ch.scorpion.jabbah.graph.view.connect.DragEdgeViewOriginConnector
 import ch.scorpion.jabbah.graph.view.connect.EdgeToPortOrEdgeConnector
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType.DESTINATION
@@ -52,9 +50,6 @@ import kotlin.reflect.KClass
  */
 open class EdgeViewImpl<T : Any>(
 	styleProvider: StyleProvider,
-	override val edgeToPortOrEdgeConnectorSupplier: () -> EdgeToPortOrEdgeConnector,
-	origEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector,
-	destEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector,
 	net: Net<T>,
 	netViewStyle: NetViewStyle? = null
 ) : AbstractNetViewElement<T>(styleProvider, net), EdgeView<T> {
@@ -72,32 +67,12 @@ open class EdgeViewImpl<T : Any>(
 		}
 
 		private val MIN_LENGTH = BaseModule.properties.getInt(PROP_MIN_EDGE_VIEW_LENGTH)
-
-		val DEF_EDGE_TO_PORT_CONNECTOR_SUPPLIER = { GraphViewModule.edgeToPortOrEdgeConnector }
-		val DEF_ORIG_ENDPOINT_CONNECTOR_SUPPLIER = { GraphViewModule.dragEdgeViewOriginConnector }
-		val DEF_DEST_ENDPOINT_CONNECTOR_SUPPLIER = { GraphViewModule.dragEdgeViewDestinationConnector }
 	}
 
-	constructor(
-		styleProvider: StyleProvider,
-		edgeToPortOrEdgeConnectorSupplier: () -> EdgeToPortOrEdgeConnector,
-		origEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector,
-		destEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector
-	) : this(
-		styleProvider,
-		edgeToPortOrEdgeConnectorSupplier,
-		origEndpointConnectorSupplier,
-		destEndpointConnectorSupplier,
-		NetImpl<T>()
-	)
+	constructor(styleProvider: StyleProvider) : this(styleProvider, NetImpl<T>())
 
 	@Suppress("unused")
-	constructor() : this(
-		DrawStyleModule.styleProvider,
-		{ GraphViewModule.edgeToPortOrEdgeConnector },
-		{ GraphViewModule.dragEdgeViewOriginConnector },
-		{ GraphViewModule.dragEdgeViewDestinationConnector }
-	)
+	constructor() : this(DrawStyleModule.styleProvider)
 
 	override var styling: NetViewStyling = NetViewStyle.LINE.createEdgeViewStyling(styleProvider, this)
 
@@ -163,6 +138,8 @@ open class EdgeViewImpl<T : Any>(
 
 	/** ---- [EdgeView] interface */
 
+	override val edgeToPortOrEdgeConnector: EdgeToPortOrEdgeConnector get() = GraphViewModule.edgeToPortOrEdgeConnector
+
 	override var underConstruction: Boolean = false
 
 	override val layout: EdgeViewLayout = EdgeViewLayoutImpl(this)
@@ -195,9 +172,9 @@ open class EdgeViewImpl<T : Any>(
 			}
 		}
 
-	override val originEndpointView: EdgeEndpointView = EdgeEndpointView(this, origEndpointConnectorSupplier, styleProvider)
+	override val originEndpointView: EdgeEndpointView = EdgeEndpointView(this, ORIGIN, styleProvider)
 
-	override val destinationEndpointView: EdgeEndpointView = EdgeEndpointView(this, destEndpointConnectorSupplier, styleProvider)
+	override val destinationEndpointView: EdgeEndpointView = EdgeEndpointView(this, DESTINATION, styleProvider)
 
 	override val segmentPointCount: Int get() = polyline.pointsCount
 

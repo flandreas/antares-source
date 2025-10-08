@@ -99,7 +99,7 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
     /** Holds the [Point2D]s (in absolute coordinates) that define the segments of this [EdgeView].*/
     val polyline: PolylineShape
 
-	val edgeToPortOrEdgeConnectorSupplier: () -> EdgeToPortOrEdgeConnector
+	val edgeToPortOrEdgeConnector: EdgeToPortOrEdgeConnector
 
 	/**
 	 * Can be set for [EdgeView]s during interactive creation by the user, especially to avoid

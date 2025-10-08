@@ -15,9 +15,6 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.EdgeView
-import ch.scorpion.jabbah.graph.view.connect.DragEdgeViewDestinationConnector
-import ch.scorpion.jabbah.graph.view.connect.DragEdgeViewOriginConnector
-import ch.scorpion.jabbah.graph.view.connect.EdgeToPortOrEdgeConnector
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewImpl
 import ch.scorpion.jabbah.graph.view.style.EdgeStyle
@@ -29,17 +26,8 @@ import ch.scorpion.jabbah.graph.view.style.EdgeStyle
  */
 class DigitalEdgeView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	edgeToPortOrEdgeConnectorSupplier: () -> EdgeToPortOrEdgeConnector = DEF_EDGE_TO_PORT_CONNECTOR_SUPPLIER,
-	origEndpointConnectorSupplier: () -> DragEdgeViewOriginConnector = DEF_ORIG_ENDPOINT_CONNECTOR_SUPPLIER,
-	destEndpointConnectorSupplier: () -> DragEdgeViewDestinationConnector = DEF_DEST_ENDPOINT_CONNECTOR_SUPPLIER,
 	net: DigitalNet = DigitalNet()
-) : EdgeViewImpl<DigitalSignal>(
-	styleProvider,
-	edgeToPortOrEdgeConnectorSupplier,
-	origEndpointConnectorSupplier,
-	destEndpointConnectorSupplier,
-	net
-) {
+) : EdgeViewImpl<DigitalSignal>(styleProvider, net) {
 
 	companion object {
 

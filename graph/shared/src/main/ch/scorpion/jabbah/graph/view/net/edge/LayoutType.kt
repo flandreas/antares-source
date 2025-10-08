@@ -125,8 +125,10 @@ enum class LayoutType(
 				return edgeView.originEndpointView.getInputEventHandler(context)
 			}
 			if (context.mouseEvent?.hasModifier(EdgeToPortOrEdgeConnector.SPLIT_EDGE_VIEW_MODIFIER) == true) {
-				edgeView.edgeToPortOrEdgeConnectorSupplier.invoke().useFor(edgeView, context as EditInputEventContext)
-				return edgeView.edgeToPortOrEdgeConnectorSupplier.invoke().handler as InputEventHandler<T>
+				with (edgeView.edgeToPortOrEdgeConnector) {
+					useFor(edgeView, context as EditInputEventContext)
+					return handler as InputEventHandler<T>
+				}
 			}
 		}
 
