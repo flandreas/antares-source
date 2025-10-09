@@ -78,6 +78,7 @@ class ContainerPanelSwing(
 		contents = listOf(
 			SidebarPaneContentImpl(
 				Translations.getString("graph.container.symbolComparison.name"),
+				Translations.getString("graph.container.symbolComparison.desc"),
 				UiUtil.themedIcon("/img/compass-16.png"),
 				symbolComparatorView,
 				listOf(controller.symbolComparatorController.refreshAction, SymbolComparatorViewSwing.helpAction)

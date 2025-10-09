@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.base.swing
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.event.PropertyChangeSupport
+import ch.scorpion.jabbah.base.swing.SidebarPaneContent.Companion.DESC_PROPERTY
 import ch.scorpion.jabbah.base.swing.SidebarPaneContent.Companion.ICON_PROPERTY
 import ch.scorpion.jabbah.base.swing.SidebarPaneContent.Companion.NAME_PROPERTY
 import javax.swing.Icon
@@ -12,10 +13,13 @@ interface SidebarPaneContent {
 
 	companion object {
 		const val NAME_PROPERTY = "name"
+		const val DESC_PROPERTY = "desc"
 		const val ICON_PROPERTY = "icon"
 	}
 
 	val name: String
+
+	val description: String? get() = null
 
 	val icon: Icon
 
@@ -38,6 +42,7 @@ data class ShowSidebarPaneContentRequest(val component: JComponent)
 
 class SidebarPaneContentImpl(
 	name: String,
+	description: String,
 	icon: Icon,
 	override val component: JComponent,
 	override val actions: List<Action> = listOf()
@@ -60,6 +65,15 @@ class SidebarPaneContentImpl(
 				val oldValue = field
 				field = value
 				support.fire(ICON_PROPERTY, oldValue, value)
+			}
+		}
+
+	override var description: String? = description
+		set(value) {
+			if (value != field) {
+				val oldValue = field
+				field = value
+				support.fire(DESC_PROPERTY, oldValue, value)
 			}
 		}
 

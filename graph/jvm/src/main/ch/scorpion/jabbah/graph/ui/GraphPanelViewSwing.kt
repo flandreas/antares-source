@@ -102,11 +102,13 @@ class GraphPanelViewSwing(
 		contents = listOf(
 			SidebarPaneContentImpl(
 				Translations.getString("graph.explorer.name"),
+				Translations.getString("graph.explorer.desc"),
 				UiUtil.themedIcon("/img/compass-16.png"),
 				explorerSplitPane,
 				listOf(controller.libraryPanelController.libraryTreePanelController.locateMetaGraphAction)),
 			SidebarPaneContentImpl(
 				Translations.getString("graph.hierarchy.name"),
+				Translations.getString("graph.hierarchy.desc"),
 				UiUtil.themedIcon("/img/category.png"),
 				graphHierarchyPanel)
 		))
@@ -121,6 +123,7 @@ class GraphPanelViewSwing(
 
 	private val issuesContent = SidebarPaneContentImpl(
 		Translations.getString("graph.issues.title"),
+		Translations.getString("graph.issues.desc"),
 		UiUtil.themedIcon("/img/issue-16.png"),
 		issuesPanel,
 		listOf(controller.issuesViewController.clearAction))
@@ -129,6 +132,7 @@ class GraphPanelViewSwing(
 
 	private val logContent = SidebarPaneContentImpl(
 		Translations.getString("graph.log.title"),
+		Translations.getString("graph.log.desc"),
 		UiUtil.themedIcon("/img/log-16.png"),
 		logPanel,
 		listOf(controller.logViewController.clearAction))

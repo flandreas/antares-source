@@ -78,6 +78,7 @@ class AntaresFrameSwing(
 		graphPanel.graphEditView.add(
 			SidebarPaneContentImpl(
 				Translations.getString("antares.testcases.title"),
+				Translations.getString("antares.testcases.desc"),
 				UiUtil.themedIcon("/img/testcase.png"),
 				testcasesView,
 				listOf(testcasesView.runAction, testcasesView.controller.metaAddAction, testcasesView.helpAction)))
@@ -87,6 +88,7 @@ class AntaresFrameSwing(
 		graphPanel.addBottom(
 			SidebarPaneContentImpl(
 				Translations.getString("antares.testcase.results.title"),
+				Translations.getString("antares.testcase.results.desc"),
 				UiUtil.themedIcon("/img/testcase.png"),
 				testResultsPanel,
 				listOf(testResultsPanel.clearAction))

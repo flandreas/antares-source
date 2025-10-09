@@ -48,11 +48,13 @@ class GraphEditViewSwing(
 		contents = listOf(
 			SidebarPaneContentImpl(
 				Translations.getString("graph.scenarios.title"),
+				Translations.getString("graph.scenarios.desc"),
 				UiUtil.themedIcon("/img/scenarios-16.png"),
 				scenarioView,
 				listOf(controller.scenarioViewController.metaAddAction, ScenarioViewSwing.helpAction)),
 			SidebarPaneContentImpl(
 				Translations.getString("graph.usecases.title"),
+				Translations.getString("graph.usecases.desc"),
 				UiUtil.themedIcon("/img/usecase-16.png"),
 				usecaseView,
 				listOf(controller.usecaseViewController.metaAddAction, UsecaseViewSwing.helpAction))

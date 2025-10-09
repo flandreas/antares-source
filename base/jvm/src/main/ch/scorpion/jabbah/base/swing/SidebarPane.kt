@@ -91,7 +91,7 @@ class SidebarPane(
 	/** Returns the index of the currently open content, of -1 if none is open.*/
 	val openIndex: Int get() = current?.let { entries.indexOf(it) } ?: -1
 
-	/** The [JPanel] at the right side (or top side) containing the vertical (or horizontal) [JLabel]s. */
+	/** The [JPanel] on the right side (or top side) containing the vertical (or horizontal) [JLabel]s. */
 	private val labelPanel = JPanel()
 
 	/** Contains the content of the current [Entry] in the center and the title bar in the north. */
@@ -196,6 +196,8 @@ class SidebarPane(
 
 		val name: String get() = content.name
 
+		val description: String? get() = content.description
+
 		val component: JComponent get() = content.component
 
 		/** Displays the name of the current content in the title bar.*/
@@ -208,6 +210,7 @@ class SidebarPane(
 			label.border = BorderFactory.createEmptyBorder(5, 10, 5, 10)
 			label.isOpaque = true
 			label.verticalAlignment = SwingConstants.CENTER
+			label.toolTipText = description
 
 			fillHeaderPanel()
 
