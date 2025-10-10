@@ -29,7 +29,7 @@ class SevenSegmentDisplayView(
 	lightColor: LightColor = DEFAULT_LIGHT_COLOR,
 	size: Size = DEFAULT_SIZE,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractSegmentDisplayView<SevenSegmentDisplay>(styleProvider, model, lightColor, size, eventBus),
+) : AbstractSegmentDisplayView<SevenSegmentDisplay>(styleProvider, model, lightColor, size, false, eventBus),
 	ControlView<SevenSegmentDisplay> {
 
 	companion object {

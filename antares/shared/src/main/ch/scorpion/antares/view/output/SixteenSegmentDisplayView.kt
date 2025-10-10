@@ -18,7 +18,7 @@ class SixteenSegmentDisplayView(
 	lightColor: LightColor = DEFAULT_LIGHT_COLOR,
 	size: Size = DEFAULT_SIZE,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractSegmentDisplayView<SixteenSegmentDisplay>(styleProvider, model, lightColor, size, eventBus) {
+) : AbstractSegmentDisplayView<SixteenSegmentDisplay>(styleProvider, model, lightColor, size, true, eventBus) {
 
 	companion object {
 		const val PROP_ICON_PATH = "ch.scorpion.antares.view.output.SixteenSegmentDisplayView.iconPath"

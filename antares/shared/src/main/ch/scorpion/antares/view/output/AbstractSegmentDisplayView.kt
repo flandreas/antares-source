@@ -48,6 +48,7 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 	model: T,
 	lightColor: LightColor = DEFAULT_LIGHT_COLOR,
 	size: Size = DEFAULT_SIZE,
+	private val narrowSegments: Boolean = false,
 	protected val eventBus: EventBus = BaseModule.eventBus
 ) : OrientableRectangularVerticeView<T>(styleProvider, model), LightEmitter, ControlViewSource<T>, ControlView<T> {
 
@@ -61,10 +62,16 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 
 		protected const val DEFAULT_HAS_BORDER = true
 
-		protected val geometries = mapOf(
+		protected val wideGeometries = mapOf(
 			Size.SMALL to Geometry(factor = 1f),
 			Size.MEDIUM to Geometry(factor = 1.5f),
 			Size.LARGE to Geometry(factor = 2.0f)
+		)
+
+		protected val narrowGeometries = mapOf(
+			Size.SMALL to Geometry(factor = 1f, segmentInset = 0.5f),
+			Size.MEDIUM to Geometry(factor = 1.5f, segmentInset = 0.5f),
+			Size.LARGE to Geometry(factor = 2.0f, segmentInset = 0.5f)
 		)
 	}
 
@@ -77,7 +84,11 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 	var hasBorder: Boolean by DrawableProperty(DEFAULT_HAS_BORDER)
 
 	/** Returns the [Geometry] of the current [SevenSegmentDisplayView] size.*/
-	protected val geom: Geometry get() = geometries.getValue(size)
+	protected val geom: Geometry get() = if (narrowSegments) {
+		narrowGeometries.getValue(size)
+	} else {
+		wideGeometries.getValue(size)
+	}
 
 	init {
 		modelExchanged(null)
@@ -295,27 +306,38 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 	}
 
 	protected fun drawB(context: DrawContext) {
-		drawVerticalSegment(context, model.inputValueOf("b"),
-			0.5f * geom.snappedScaledFactor + geom.segLength + geom.segHalfWidth,
-			geom.snappedScaledFactor + geom.segHalfWidth)
+		with (geom) {
+			drawVerticalSegment(context, model.inputValueOf("b"),
+				0.5f * snappedScaledFactor + segLength + segHalfWidth,
+				snappedScaledFactor + segHalfWidth)
+		}
 	}
 
 	protected fun drawC(context: DrawContext) {
-		drawVerticalSegment(context, model.inputValueOf("c"),
-			0.5f * geom.snappedScaledFactor + geom.segLength + geom.segHalfWidth,
-			4 * geom.snappedScaledFactor + geom.segHalfWidth)
+		with (geom) {
+			drawVerticalSegment(
+				context, model.inputValueOf("c"),
+				0.5f * snappedScaledFactor + segLength + segHalfWidth,
+				4 * snappedScaledFactor + segHalfWidth
+			)
+		}
 	}
 
 	protected fun drawE(context: DrawContext) {
+		with (geom) {
 		drawVerticalSegment(context, model.inputValueOf("e"),
-			0.5f * geom.snappedScaledFactor + geom.segHalfWidth,
-			4 * geom.snappedScaledFactor + geom.segHalfWidth)
+			0.5f * snappedScaledFactor + segHalfWidth,
+			4 * snappedScaledFactor + segHalfWidth)}
 	}
 
 	protected fun drawF(context: DrawContext) {
-		drawVerticalSegment(context, model.inputValueOf("f"),
-			0.5f * geom.snappedScaledFactor + geom.segHalfWidth,
-			1 * geom.snappedScaledFactor + geom.segHalfWidth)
+		with (geom) {
+			drawVerticalSegment(
+				context, model.inputValueOf("f"),
+				0.5f * snappedScaledFactor + segHalfWidth,
+				1 * snappedScaledFactor + segHalfWidth
+			)
+		}
 	}
 
 	private fun updateGeometry() {
@@ -324,7 +346,7 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 		modelExchanged(model)
 	}
 
-	class Geometry(val factor: Float) {
+	class Geometry(val factor: Float, segmentInset: Float = 1.0f) {
 		val snappedScaledFactor: Float = floor(factor * Look.SCALE)
 		// Width and height must snap to SCALE
 		val width: Int = ((5 * factor * Look.SCALE) / Look.SCALE).toInt() * Look.SCALE
@@ -332,7 +354,7 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 		val segLength: Float = 3 * snappedScaledFactor
 		val segHalfWidth: Float = 0.25f * factor * Look.SCALE
 
-		private val segInset: Float = 1f * factor
+		private val segInset: Float = segmentInset * factor
 		private val diagW = 0.325f * snappedScaledFactor - segInset
 		private val diagH = 0.75f * snappedScaledFactor - segInset
 		val dotSize: Int = (4 * factor).toInt()
