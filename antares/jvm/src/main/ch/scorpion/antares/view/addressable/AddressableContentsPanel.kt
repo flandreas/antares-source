@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view.addressable
 
 import ch.scorpion.antares.model.addressable.*
+import ch.scorpion.jabbah.base.Disposable
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
@@ -38,7 +39,7 @@ class AddressableContentsPanel(
 	private val cmdManager: CommandManager,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	private val closeHandler: ((AddressableContentsPanel) -> Unit)? = null
-) : JPanel() {
+) : JPanel(), Disposable {
 
 	companion object {
 		private val LOG by logger(AddressableContentsPanel::class)
@@ -114,7 +115,9 @@ class AddressableContentsPanel(
 		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
 	}
 
-	fun dispose() {
+	/** ---- [Disposable] */
+
+	override fun dispose() {
 		eventBus.unregister(applicationModeHandler)
 		addressableRef.removeListener(addressableListener)
 		addressableRef.dispose()
