@@ -205,17 +205,17 @@ class SymbolComparatorController(
             return
         }
 
-        val origBBox = entry.boundingBox
-        val bbox = drawingView.drawing.boundingBox
+        val entryBBox = entry.boundingBox
+        val drawingBBox = drawingView.drawing.boundingBox
 
         when (direction) {
-            EAST -> placeAt(bbox.maxX + DIST - origBBox.minX, bbox.minY - origBBox.minY)
-            NORTH -> placeAt(bbox.minX - origBBox.minX, bbox.minY - INSET - origBBox.height - origBBox.minY)
-            WEST -> placeAt(bbox.minX - DIST - origBBox.width - origBBox.minX, bbox.minY - origBBox.minY)
-            SOUTH -> placeAt(bbox.minX - origBBox.minX, bbox.maxY + INSET - origBBox.minY)
+            EAST -> placeAt(drawingBBox.maxX + DIST + (entryBBox.minX - entry.location.x), drawingBBox.minY + (entry.location.y - entryBBox.minY))
+            NORTH -> placeAt(drawingBBox.minX + (entry.location.x - entryBBox.minX), drawingBBox.minY - DIST - (entryBBox.maxY - entry.location.y))
+            WEST -> placeAt(drawingBBox.minX - DIST - entryBBox.width - (entryBBox.minX - entry.location.x), drawingBBox.minY + (entry.location.y - entryBBox.minY))
+            SOUTH -> placeAt(drawingBBox.minX + (entry.location.x - entryBBox.minX), drawingBBox.maxY + DIST + (entry.location.y - entryBBox.minY))
         }
 
-        drawingView.drawing.validate()
+        drawingView.animationContainer.validate()
     }
 
     /** Places [comparisonSymbol] to the specified model coordinates while snapping to the grid.*/
@@ -261,21 +261,26 @@ class SymbolComparatorController(
             private val ORIGIN_INDICATOR = OriginIndicator()
         }
 
-        override val boundingBox: RectangularShape = Rectangle2D(component.boundingBox).add(ORIGIN_INDICATOR.boundingBox)
+        override val boundingBox: RectangularShape get() =
+            Rectangle2D(component.boundingBox)
+                .add(ORIGIN_INDICATOR.boundingBox)
 
         override var location: Point2D = Point2D.ZERO
             set(value) {
                 invalidate()
+
                 field = value
+                component.location = value
+                ORIGIN_INDICATOR.location = value
+
                 invalidate()
                 update()
+                validate()
             }
 
         override fun draw(context: DrawContext) {
-            context.translated(location.x, location.y) {
-                component.draw(context)
-                ORIGIN_INDICATOR.draw(context)
-            }
+            component.draw(context)
+            ORIGIN_INDICATOR.draw(context)
         }
 
         override fun contains(x: Double, y: Double): Boolean = boundingBox.contains(x, y)
