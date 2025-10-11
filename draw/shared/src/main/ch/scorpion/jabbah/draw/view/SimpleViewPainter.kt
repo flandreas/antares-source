@@ -15,6 +15,8 @@ import ch.scorpion.jabbah.base.geom.RectangularShape
  */
 class SimpleViewPainter(val view: View<out InputEventContext>) : ViewPainter {
 
+    override fun dispose() {}
+
     override fun repaintView() {
         view.repaint()
     }

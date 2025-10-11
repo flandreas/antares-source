@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.draw
 
+import ch.scorpion.jabbah.base.Disposable
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.*
@@ -47,7 +48,7 @@ data class ViewTransformation(
 
  * [View]s are platform independent. Adoption to platform-specifics is provided by [Canvas].
  */
-interface View<C : InputEventContext> : ContentView<C>, ViewToModelTransform {
+interface View<C : InputEventContext> : ContentView<C>, ViewToModelTransform, Disposable {
 
 	companion object {
 
@@ -109,8 +110,6 @@ interface View<C : InputEventContext> : ContentView<C>, ViewToModelTransform {
 	 */
 	fun initialize()
 
-	fun dispose()
-
 	/** ----  Geometry */
 
 	/** The width of this [View] in view coordinates.*/
@@ -130,7 +129,7 @@ interface View<C : InputEventContext> : ContentView<C>, ViewToModelTransform {
 	/** The [Color] to be used for filling the entire [View] over its content, if any.*/
 	var overlayColor: Color?
 
-	/** Controls whether this [View] uses anti-aliasing for painting.*/
+	/** Controls whether this [View] uses antialiasing for painting.*/
 	var antialiasing: Boolean
 
 	/**
@@ -159,7 +158,7 @@ interface View<C : InputEventContext> : ContentView<C>, ViewToModelTransform {
 	/**
 	 * Draws this [View] onto the specified graphics context.
 	 *
-	 * Since classes that implement this [View] interface will setup themselves to get notified when it is
+	 * Since classes that implement this [View] interface will set up themselves to get notified when it is
 	 * necessary to redraw parts or all of a drawing, this method is typically called by [ViewPainter]s that
 	 * repaint the view on behalf of [View]s.
 	 *
@@ -172,7 +171,7 @@ interface View<C : InputEventContext> : ContentView<C>, ViewToModelTransform {
 	 * Request for asynchronous repainting the entire [View].
 	 *
 	 * Concrete [View] implementations should not immediately paint the specified region, but should delegate it to the
-	 * repainting thread, depending of the current target platform.
+	 * repainting thread, depending on the current target platform.
 	 */
 	fun repaint()
 

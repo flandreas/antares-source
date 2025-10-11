@@ -1,6 +1,6 @@
 package ch.scorpion.jabbah.draw
 
-import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.Disposable
 import ch.scorpion.jabbah.base.geom.RectangularShape
 
 /**
@@ -11,7 +11,7 @@ import ch.scorpion.jabbah.base.geom.RectangularShape
  * strategy would require to keep track of every invalidated region. Even more efficient strategies could use buffers
  * for regions that didn't have changed, but need to be redrawn.
  */
-interface ViewPainter {
+interface ViewPainter : Disposable {
 
     /**
      * Initiates a repaint of the [View] that this [ViewPainter] is painting.

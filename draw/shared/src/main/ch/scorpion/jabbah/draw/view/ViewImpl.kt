@@ -100,7 +100,10 @@ open class ViewImpl<C : InputEventContext>(
 
 	override fun dispose() {
 		eventBus.unregister(ThemeEvent::class, themeListener)
-		_canvas?.removePropertyChangeListener(propertyChangeHandler)
+		_canvas?.let {
+			it.removePropertyChangeListener(propertyChangeHandler)
+			painter.dispose()
+		}
 		space.removePropertyChangeListener(propertyChangeHandler)
 		contentBounds.removePropertyChangeListener(propertyChangeHandler)
 		controller.dispose()

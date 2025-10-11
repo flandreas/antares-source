@@ -1,11 +1,12 @@
 package ch.scorpion.jabbah.draw.view
 
 import ch.scorpion.jabbah.base.System
+import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.time.Timer
+import ch.scorpion.jabbah.draw.Canvas
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.draw.ViewPainter
@@ -18,8 +19,6 @@ import kotlin.math.floor
 class InvalidatableViewPainter(val view: View<*>) : ViewPainter {
 
 	companion object {
-		private val LOG by logger(InvalidatableViewPainter::class)
-
 		/** The number of repaints per second.*/
 		private const val REPAINT_FREQUENCY = 40
 	}
@@ -33,13 +32,37 @@ class InvalidatableViewPainter(val view: View<*>) : ViewPainter {
 
 	private val timer: Timer = System.createTimer()
 
+	/**
+	 * Kept and updated on every view size change to avoid instantiation in every repaint cycle.
+	 */
+	private var viewBottomRight: Point2D = Point2D(view.width, view.height)
+
+	private val viewDimensionListener: PropertyChangeListener<Any> = PropertyChangeListener {
+		if (it.name == Canvas.PROP_DIMENSION) {
+			viewBottomRight = Point2D(view.width, view.height)
+		}
+	}
+
+	private val viewListener = PropertyChangeListener<Any> {
+		if (it.name == View.PROP_CANVAS) {
+			view.canvas.addPropertyChangeListener(viewDimensionListener)
+		}
+	}
+
 	init {
+		view.addPropertyChangeListener(viewListener)
+
 		timer.initialize(1000 / REPAINT_FREQUENCY, repeats = false) {
 			timer.stop()
 			System.invokeLater {
 				repaintDirtyRegion()
 			}
 		}
+	}
+
+	override fun dispose() {
+		view.removePropertyChangeListener(viewListener)
+		view.canvas.removePropertyChangeListener(viewDimensionListener)
 	}
 
 	/** ---- [ViewPainter] interface */
@@ -55,13 +78,9 @@ class InvalidatableViewPainter(val view: View<*>) : ViewPainter {
 	override fun invalidateRegion(region: RectangularShape?) {
 		if (region == null) {
 			dirtyView = true
-			if (LOG.isTraceEnabled()) {
-				LOG.trace("invalidated entire view")
-			}
 		} else {
 			if (!dirtyView) {
 				dirtyRegion = dirtyRegion?.add(region) as Rectangle2D? ?: Rectangle2D(region)
-				LOG.trace("Expanded dirty region to $dirtyRegion")
 			}
 		}
 	}
@@ -72,11 +91,8 @@ class InvalidatableViewPainter(val view: View<*>) : ViewPainter {
 		if (dirtyView) {
 			view.repaint(0, 0, view.width, view.height)
 		} else {
-			if (LOG.isTraceEnabled()) {
-				LOG.trace("Repainting dirty region")
-			}
 			val p1 = if (dirtyRegion != null) view.modelToView(Point2D(dirtyRegion!!.minX, dirtyRegion!!.minY)) else Point2D.ZERO
-			val p2 = if (dirtyRegion != null) view.modelToView(Point2D(dirtyRegion!!.maxX, dirtyRegion!!.maxY)) else Point2D(view.width, view.height)
+			val p2 = if (dirtyRegion != null) view.modelToView(Point2D(dirtyRegion!!.maxX, dirtyRegion!!.maxY)) else viewBottomRight
 			val x1 = floor(p1.x).toInt()
 			val y1 = floor(p1.y).toInt()
 			val x2 = ceil(p2.x).toInt()
