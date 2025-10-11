@@ -53,9 +53,6 @@ class SymbolComparatorController(
 
         private val LOG by logger(SymbolComparatorController::class)
 
-        /** The inset (in view coordinates) between teh compare symbol and the view border.*/
-        private const val INSET = 50
-
         private const val DIST = 70
 
         /** The alpha channel value for grayed-out rendering of [comparisonSymbol]. */

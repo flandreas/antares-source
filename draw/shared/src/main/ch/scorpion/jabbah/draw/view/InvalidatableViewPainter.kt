@@ -55,7 +55,6 @@ class InvalidatableViewPainter(val view: View<*>) : ViewPainter {
 	override fun invalidateRegion(region: RectangularShape?) {
 		if (region == null) {
 			dirtyView = true
-			RepaintingObserver.invalidated(Rectangle2D(0, 0, view.width, view.height))
 			if (LOG.isTraceEnabled()) {
 				LOG.trace("invalidated entire view")
 			}
@@ -64,7 +63,6 @@ class InvalidatableViewPainter(val view: View<*>) : ViewPainter {
 				dirtyRegion = dirtyRegion?.add(region) as Rectangle2D? ?: Rectangle2D(region)
 				LOG.trace("Expanded dirty region to $dirtyRegion")
 			}
-			RepaintingObserver.invalidated(region)
 		}
 	}
 
