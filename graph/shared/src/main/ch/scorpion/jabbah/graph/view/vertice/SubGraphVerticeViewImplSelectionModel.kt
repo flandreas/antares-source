@@ -40,7 +40,7 @@ class SubGraphVerticeViewImplSelectionModel(
 		context.color = context.selectionColor
 		component.drawWithDrawableDrawer(context) {
 			when (it) {
-				is ControlViewComponent -> selectionModels[it]!!.draw(context)
+				is ControlViewComponent -> getControlViewSelectionModel(it).draw(context)
 				is ImageComponent -> it.drawSelected(context)
 				else -> it.draw(context)
 			}
@@ -64,6 +64,9 @@ class SubGraphVerticeViewImplSelectionModel(
 			selectionModels.values.forEach { it.componentUpdated() }
 		}
 	}
+
+	private fun getControlViewSelectionModel(c: ControlViewComponent): SelectionModel<Component> =
+        selectionModels.getOrPut(c) { provider.provideFor(c.controlView, SelectionDrawingStrategy.REPLACE)!! }
 
 	/** ---- [SubGraphVerticeViewImplSelectionModel] */
 
