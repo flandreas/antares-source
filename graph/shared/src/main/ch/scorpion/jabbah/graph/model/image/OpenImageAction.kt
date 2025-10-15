@@ -38,8 +38,8 @@ class OpenImageAction(
         openAsSavable(controller.selectedItem as ImageLibraryElement)
     }
 
-    override fun calculateEnabledness(): Boolean =
-        super.calculateEnabledness() && selectedItem is ImageLibraryElement
+    override fun calculateEnabled(): Boolean =
+        super.calculateEnabled() && selectedItem is ImageLibraryElement
 
     private fun openAsSavable(element: ImageLibraryElement) {
         graphDataViewController.openLibraryItem(element, "-", this.name)

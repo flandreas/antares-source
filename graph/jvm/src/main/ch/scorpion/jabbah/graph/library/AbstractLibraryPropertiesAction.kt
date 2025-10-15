@@ -19,8 +19,8 @@ abstract class AbstractLibraryPropertiesAction(
 
 	/** ---- [AbstractLibraryAction] */
 
-	override fun calculateEnabledness(): Boolean =
-		super.calculateEnabledness() && selectedItem is Library
+	override fun calculateEnabled(): Boolean =
+		super.calculateEnabled() && selectedItem is Library
 
 	/** ---- [AbstractLibraryPropertiesAction] */
 

@@ -18,7 +18,7 @@ class CreateCircuitFromTruthTableAction(
 	override val opensDialog: Boolean get() = true
 
 	init {
-		updateEnabledness()
+		updateEnabled()
 	}
 
 	override fun execute(event: ActionEvent) {
@@ -30,6 +30,6 @@ class CreateCircuitFromTruthTableAction(
 			service)
 	}
 
-	override fun calculateEnabledness(): Boolean =
-		super.calculateEnabledness() && selectedItem is TruthTableLibraryItem
+	override fun calculateEnabled(): Boolean =
+		super.calculateEnabled() && selectedItem is TruthTableLibraryItem
 }

@@ -29,7 +29,7 @@ class UploadProjectAction(
 
 	private val scope = MainScope()
 
-	private val sessionHandler: EventHandler<SessionEvent> = { updateEnabledness() }
+	private val sessionHandler: EventHandler<SessionEvent> = { updateEnabled() }
 
 	init {
 		controller.eventBus.register(SessionEvent::class, sessionHandler)
@@ -40,8 +40,8 @@ class UploadProjectAction(
 		controller.eventBus.unregister(sessionHandler)
 	}
 
-	override fun calculateEnabledness(): Boolean =
-		super.calculateEnabledness() && Session.exists
+	override fun calculateEnabled(): Boolean =
+		super.calculateEnabled() && Session.exists
 
 	override fun execute(event: ActionEvent) {
 		val project = selectedFolder as Project

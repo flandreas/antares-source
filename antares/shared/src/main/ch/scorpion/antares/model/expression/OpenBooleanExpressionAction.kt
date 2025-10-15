@@ -35,8 +35,8 @@ class OpenBooleanExpressionAction(
 		openAsSavable(controller.selectedItem as BooleanExpressionLibraryItem)
 	}
 
-	override fun calculateEnabledness(): Boolean =
-		super.calculateEnabledness() && selectedItem is BooleanExpressionLibraryItem
+	override fun calculateEnabled(): Boolean =
+		super.calculateEnabled() && selectedItem is BooleanExpressionLibraryItem
 
 	private fun openAsSavable(item: BooleanExpressionLibraryItem) {
 		graphDataViewController.openLibraryItem(item, "-", this.name)

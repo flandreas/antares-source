@@ -31,7 +31,7 @@ class ShowProjectsDialogAction(
 		ProjectPersistencePanel.showAsDialog(parent)
 	}
 
-	override fun calculateEnabledness(): Boolean = true
+	override fun calculateEnabled(): Boolean = true
 }
 
 /**

@@ -11,7 +11,8 @@ class HelpLibraryItemAction(
 	controller: LibraryTreeViewController
 ) : AbstractLibraryAction("base.action.help", Operation.View, controller) {
 
-	override fun calculateEnabledness(): Boolean = super.calculateEnabledness() && selectedItem is HelpIdProvider
+	override fun calculateEnabled(): Boolean =
+		super.calculateEnabled() && selectedItem is HelpIdProvider
 
 	override fun execute(event: ActionEvent) {
 		BaseModule.helpProvider.provideHelpFor((selectedItem as HelpIdProvider).helpId)

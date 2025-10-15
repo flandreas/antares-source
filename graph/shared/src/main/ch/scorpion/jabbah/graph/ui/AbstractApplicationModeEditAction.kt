@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.ui
 
 import ch.scorpion.jabbah.base.AbstractAction
-import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.app.ApplicationMode
@@ -16,7 +15,7 @@ abstract class AbstractApplicationModeEditAction(
 ) : AbstractAction(actionBaseName) {
 
 	private val applicationModeObserver = ApplicationModeObserver(applicationModeHolder, eventBus) {
-		updateEnabledness()
+		updateEnabled()
 	}
 
 	init {
@@ -28,10 +27,6 @@ abstract class AbstractApplicationModeEditAction(
 		applicationModeObserver.dispose()
 	}
 
-	protected fun updateEnabledness() {
-		enabled = applicationModeHolder.currentMode.isEdit() && calculateEnabledness()
-	}
-
-	/** Implemented by subclasses to further decide whether this [Action] should be enabled. */
-	protected abstract fun calculateEnabledness(): Boolean
+	override fun calculateEnabled(): Boolean =
+		super.calculateEnabled() && applicationModeHolder.currentMode.isEdit()
 }

@@ -21,13 +21,13 @@ class FindAction(
 
 	private val contentViewHandler: EventHandler<ActiveContentViewChangedEvent> = {
 		if (it.viewManager === viewManager) {
-			updateEnabledness()
+			updateEnabled()
 		}
 	}
 
 	init {
 		eventBus.register(ActiveContentViewChangedEvent::class, contentViewHandler)
-		updateEnabledness()
+		updateEnabled()
 	}
 
 	override fun dispose() {
@@ -38,7 +38,5 @@ class FindAction(
 		viewManager.activeView?.showSearchBar()
 	}
 
-	private fun updateEnabledness() {
-		enabled = viewManager.activeView?.canSearch == true
-	}
+	override fun calculateEnabled(): Boolean = viewManager.activeView?.canSearch == true
 }

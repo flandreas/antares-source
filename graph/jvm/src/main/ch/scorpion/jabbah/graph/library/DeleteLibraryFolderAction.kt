@@ -23,8 +23,8 @@ class DeleteLibraryFolderAction(
 		private val LOG by logger(DeleteLibraryItemAction::class)
 	}
 
-	override fun calculateEnabledness(): Boolean =
-		super.calculateEnabledness() && (selectedItem as LibraryDirectory).isEmpty() && selectedItem !is Library
+	override fun calculateEnabled(): Boolean =
+		super.calculateEnabled() && (selectedItem as LibraryDirectory).isEmpty() && selectedItem !is Library
 
 	override fun execute(event: ActionEvent) {
 		val libraryItem = controller.selectedItem

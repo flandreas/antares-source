@@ -40,6 +40,9 @@ interface Action {
 
 	fun dispose()
 
+	/** Asks this [Action] to update its "enabled" state. */
+	fun updateEnabled()
+
 	fun execute(event: ActionEvent)
 
 	fun addPropertyChangeListener(l: PropertyChangeListener<Any>)
@@ -76,6 +79,12 @@ abstract class AbstractAction(
 		accelerator = translatedAccelerator(baseName)
 	}
 
+	/**
+	 * Overwritten by subclasses to calculate whether this [AbstractAction] is currently enabled.
+	 * Automatically called by [updateEnabled].
+	 */
+	protected open fun calculateEnabled(): Boolean = true
+
 	override var name: String by Delegates.observable(name) { _, old, new -> changeSupport.fire(ActionProperty.PROP_NAME, old, new) }
 
 	override var description: String? by Delegates.observable(description) { _, old, new -> changeSupport.fire(ActionProperty.PROP_DESCRIPTION, old, new) }
@@ -91,6 +100,10 @@ abstract class AbstractAction(
 	protected val changeSupport = PropertyChangeSupport<Any>(this)
 
 	override fun dispose() { }
+
+	override fun updateEnabled() {
+		enabled = calculateEnabled()
+	}
 
 	override fun addPropertyChangeListener(l: PropertyChangeListener<Any>) {
 		changeSupport.add(l)

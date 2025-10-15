@@ -40,8 +40,8 @@ class EditLibraryAction(
 		LibraryCompositionPanel.showAsDialog(controller.library!!, Frame.getFrames()[0], application, controller.eventBus)
 	}
 
-	override fun calculateEnabledness(): Boolean =
-		super.calculateEnabledness() && controller.selectedItem === controller.library
+	override fun calculateEnabled(): Boolean =
+		super.calculateEnabled() && controller.selectedItem === controller.library
 }
 
 /**

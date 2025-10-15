@@ -18,7 +18,7 @@ class AddLibraryFolderAction(
 	controller
 ) {
 	init {
-		updateEnabledness()
+		updateEnabled()
 	}
 
 	override fun execute(event: ActionEvent) {

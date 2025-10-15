@@ -15,16 +15,14 @@ class ResetExecutionTimeAction(
     eventBus: EventBus = BaseModule.eventBus
 ) : AbstractSchedulerAction("execution.action.resetExecutionTime", eventBus) {
 
-    private val schedulerStateHandler: EventHandler<SchedulerActivationStateEvent> = { updateEnabledness() }
+    private val schedulerStateHandler: EventHandler<SchedulerActivationStateEvent> = { updateEnabled() }
 
     init {
         eventBus.register(SchedulerActivationStateEvent::class, schedulerStateHandler)
-        updateEnabledness()
+        updateEnabled()
     }
 
-    private fun updateEnabledness() {
-        enabled = scheduler.isActive
-    }
+    override fun calculateEnabled(): Boolean = scheduler.isActive
 
     override fun dispose() {
         super.dispose()

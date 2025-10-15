@@ -17,8 +17,8 @@ class OpenDocumentationViewerAction(
 ) {
     override val opensDialog: Boolean get() = true
 
-    override fun calculateEnabledness(): Boolean =
-        super.calculateEnabledness() && (controller.selectedItem as ContainerLibraryElement).storable?.documentation != null
+    override fun calculateEnabled(): Boolean =
+        super.calculateEnabled() && (controller.selectedItem as ContainerLibraryElement).storable?.documentation != null
 
     override fun execute(event: ActionEvent) {
         val metaGraph = (controller.selectedItem as ContainerLibraryElement).storable!!

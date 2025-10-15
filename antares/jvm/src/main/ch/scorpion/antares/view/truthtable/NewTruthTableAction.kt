@@ -23,7 +23,7 @@ class NewTruthTableAction(
 ) {
 
 	init {
-		updateEnabledness()
+		updateEnabled()
 	}
 
 	override fun execute(event: ActionEvent) {

@@ -19,8 +19,8 @@ class RemoveLibraryAction(
 	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder
 ) : AbstractLibraryAction("library.removeImport.action", Operation.Change, controller) {
 
-	override fun calculateEnabledness(): Boolean =
-		super.calculateEnabledness()
+	override fun calculateEnabled(): Boolean =
+		super.calculateEnabled()
 			&& selectedItem is Library
 			&& (selectedItem!!.library!!.isBrokenImport || libraryHolder.library.importedLibraryIds.contains(selectedItem!!.library!!.uuid))
 

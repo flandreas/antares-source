@@ -22,7 +22,7 @@ class NewFSMAction(
     override val opensDialog: Boolean get() = true
 
     init {
-        updateEnabledness()
+        updateEnabled()
     }
 
     override fun execute(event: ActionEvent) {

@@ -25,7 +25,7 @@ abstract class AbstractContentViewAction(
 	init {
 		eventBus.register(ActiveContentViewChangedEvent::class, activeViewHandler)
 		view?.addPropertyChangeListener(viewPropertyListener)
-		updateEnabled()
+		enabled = false
 	}
 
 	override fun dispose() {
@@ -50,11 +50,7 @@ abstract class AbstractContentViewAction(
 		notifyActiveViewChanged()
 	}
 
-	protected fun updateEnabled() {
-		enabled = calculateEnabled()
-	}
-
-	protected open fun calculateEnabled(): Boolean = viewManager.activeView != null
+	override fun calculateEnabled(): Boolean = viewManager.activeView != null
 
 	protected open fun notifyActiveViewChanged() {
 		// empty

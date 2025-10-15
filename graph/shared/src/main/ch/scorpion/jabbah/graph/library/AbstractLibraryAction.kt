@@ -25,11 +25,11 @@ abstract class AbstractCurrentLibraryAction(
 	protected val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractAction(actionBaseName) {
 
-	private val currentLibraryHandler: EventHandler<CurrentLibraryEvent> = { updateEnabledness() }
+	private val currentLibraryHandler: EventHandler<CurrentLibraryEvent> = { updateEnabled() }
 
 	init {
 	    eventBus.register(CurrentLibraryEvent::class, currentLibraryHandler)
-		// Must not call updateEnabledness()
+		// Must not call updateEnabled()
 	}
 
 	override fun dispose() {
@@ -37,11 +37,7 @@ abstract class AbstractCurrentLibraryAction(
 		eventBus.unregister(currentLibraryHandler)
 	}
 
-	fun updateEnabledness() {
-		enabled = calculateEnabledness()
-	}
-
-	protected open fun calculateEnabledness(): Boolean = LibraryModule.libraryHolder.l != null
+	override fun calculateEnabled(): Boolean = LibraryModule.libraryHolder.l != null
 }
 
 /**
@@ -63,18 +59,18 @@ abstract class AbstractLibraryAction(
 
 	private val applicationModeObserver: ApplicationModeObserver? = if (onlyEnabledInEditMode) {
 		ApplicationModeObserver(controller.applicationModeHolder, controller.eventBus) {
-			updateEnabledness()
+			updateEnabled()
 		}
 	} else null
 
 	private val librarySelectionChangeHandler: EventHandler<LibrarySelectionChangedEvent> = {
 		if (it.controller === controller) {
-			updateEnabledness()
+			updateEnabled()
 			handleSelectionChanged()
 		}
 	}
 
-	private val commandEventHandler: EventHandler<CommandEvent> = { updateEnabledness() }
+	private val commandEventHandler: EventHandler<CommandEvent> = { updateEnabled() }
 
 	protected val selectedItem: LibraryItem? get() = controller.selectedItem
 
@@ -93,8 +89,8 @@ abstract class AbstractLibraryAction(
 		eventBus.unregister(commandEventHandler)
 	}
 
-	override fun calculateEnabledness(): Boolean =
-		super.calculateEnabledness()
+	override fun calculateEnabled(): Boolean =
+		super.calculateEnabled()
 			&& noStateChangeInterference
 			&& operationAuthorized
 			&& (applicationModeObserver == null || applicationModeObserver.currentMode == EDIT)
@@ -113,7 +109,7 @@ abstract class AbstractLibraryAction(
 		operation != Change || !commandManager.canUndo()
 
 	/**
-	 * Called by [AbstractLibraryAction] when the selection in [LibraryTreeViewSwing] has changed.
+	 * Called by [AbstractLibraryAction] when the selection in [LibraryTreeView] has changed.
 	 * Subclasses can overwrite this method in order to update their state, such as their selection state.
 	 * This implementation is empty.
 	 */
@@ -131,7 +127,7 @@ abstract class AbstractLibraryDirectoryAction(
 
 	val selectedFolder: LibraryDirectory get() = selectedItem as LibraryDirectory
 
-	override fun calculateEnabledness(): Boolean = super.calculateEnabledness() && selectedItem is LibraryDirectory
+	override fun calculateEnabled(): Boolean = super.calculateEnabled() && selectedItem is LibraryDirectory
 }
 
 /** An [Action] that is only enabled if the selected item is a [ContainerLibraryElement].*/
@@ -142,5 +138,5 @@ abstract class AbstractContainerLibraryElementAction(
 	onlyEnabledInEditMode: Boolean = true
 ) : AbstractLibraryAction(actionBaseName, operation, controller, onlyEnabledInEditMode) {
 
-	override fun calculateEnabledness(): Boolean = super.calculateEnabledness() && selectedItem is ContainerLibraryElement
+	override fun calculateEnabled(): Boolean = super.calculateEnabled() && selectedItem is ContainerLibraryElement
 }

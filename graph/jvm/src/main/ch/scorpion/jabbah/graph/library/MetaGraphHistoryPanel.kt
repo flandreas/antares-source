@@ -44,8 +44,8 @@ class ShowMetaGraphHistoryAction(
 		MetaGraphHistoryPanel.showAsDialog(Frame.getFrames()[0], graphDataViewController, selectedItem as ContainerLibraryElement)
 	}
 
-	override fun calculateEnabledness(): Boolean =
-		super.calculateEnabledness() && BaseModule.properties.getBoolean(FileMetaGraphHistoryService.PREF_META_GRAPH_HISTORY)
+	override fun calculateEnabled(): Boolean =
+		super.calculateEnabled() && BaseModule.properties.getBoolean(FileMetaGraphHistoryService.PREF_META_GRAPH_HISTORY)
 }
 
 /**

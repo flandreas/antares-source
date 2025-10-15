@@ -34,10 +34,8 @@ abstract class AbstractApplicationDataEditAction(
 		eventBus.unregister(applicationDataHandler)
 	}
 
-	fun updateEnabled() {
-		enabled = calculateEnabled()
-	}
-
-	protected open fun calculateEnabled(): Boolean =
-		applicationDataHolder.data != null && (!requireEditable || applicationDataHolder.data!!.savable.editable)
+	override fun calculateEnabled(): Boolean =
+		super.calculateEnabled()
+			&& applicationDataHolder.data != null
+			&& (!requireEditable || applicationDataHolder.data!!.savable.editable)
 }

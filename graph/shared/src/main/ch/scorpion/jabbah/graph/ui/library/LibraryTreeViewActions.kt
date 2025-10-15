@@ -22,7 +22,7 @@ open class LibraryTreeViewActions(
 		actions.add(action)
 		if (action is AbstractLibraryAction) {
 			// Must not be called from constructor
-			action.updateEnabledness()
+			action.updateEnabled()
 		}
 		return action
 	}

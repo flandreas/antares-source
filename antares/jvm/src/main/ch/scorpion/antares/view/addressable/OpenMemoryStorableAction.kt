@@ -33,8 +33,8 @@ class OpenMemoryStorableAction(
         controller.eventBus.unregister(openHandler)
     }
 
-    override fun calculateEnabledness(): Boolean =
-        super.calculateEnabledness() && selectedItem is MemoryLibraryItem
+    override fun calculateEnabled(): Boolean =
+        super.calculateEnabled() && selectedItem is MemoryLibraryItem
 
     override fun execute(event: ActionEvent) {
         openAsSavable(controller.selectedItem as MemoryLibraryItem)

@@ -13,8 +13,8 @@ class ExpandAllAction(
 	controller
 ) {
 
-	override fun calculateEnabledness(): Boolean {
-		return super.calculateEnabledness() &&
+	override fun calculateEnabled(): Boolean {
+		return super.calculateEnabled() &&
 			controller.selectedItem is LibraryDirectory &&
 			!(controller.selectedItem as LibraryDirectory).isEmpty()
 	}
@@ -33,8 +33,8 @@ class CollapseAllAction(
 	controller
 ) {
 
-	override fun calculateEnabledness(): Boolean {
-		return super.calculateEnabledness() &&
+	override fun calculateEnabled(): Boolean {
+		return super.calculateEnabled() &&
 			controller.selectedItem is LibraryDirectory &&
 			!(controller.selectedItem as LibraryDirectory).isEmpty()
 	}

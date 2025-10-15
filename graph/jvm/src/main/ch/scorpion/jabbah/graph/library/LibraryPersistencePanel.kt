@@ -27,7 +27,7 @@ class ShowLibrariesDialogAction(
 		LibraryPersistencePanel.showAsDialog(name, parent)
 	}
 
-	override fun calculateEnabledness(): Boolean = true
+	override fun calculateEnabled(): Boolean = true
 }
 
 /**

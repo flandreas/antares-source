@@ -55,9 +55,9 @@ class DeleteLibraryItemAction(
 		}
 	}
 
-	override fun calculateEnabledness(): Boolean {
+	override fun calculateEnabled(): Boolean {
 		// Deletion of directories is handled by a separate Action
-		return super.calculateEnabledness() && (
+		return super.calculateEnabled() && (
 			controller.type == LibraryTreeViewType.CompositionDestination && selectedItem is BaseLibraryElement
 				|| selectedItem is UndoableStateLibraryItem<*>
 				|| selectedItem is ImageLibraryElement

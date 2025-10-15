@@ -15,11 +15,11 @@ open class CloseLibraryAction(
 	controller: LibraryTreeViewController,
 ) : AbstractLibraryAction(baseName, Operation.View, controller) {
 
-	private val currentLibraryHandler: EventHandler<CurrentLibraryEvent> = { updateEnabledness() }
+	private val currentLibraryHandler: EventHandler<CurrentLibraryEvent> = { updateEnabled() }
 
 	init {
 		eventBus.register(CurrentLibraryEvent::class, currentLibraryHandler)
-		updateEnabledness()
+		updateEnabled()
 	}
 
 	override fun dispose() {
@@ -27,8 +27,8 @@ open class CloseLibraryAction(
 		eventBus.unregister(currentLibraryHandler)
 	}
 
-	override fun calculateEnabledness(): Boolean =
-		super.calculateEnabledness() && selectedItem === libraryHolder.l
+	override fun calculateEnabled(): Boolean =
+		super.calculateEnabled() && selectedItem === libraryHolder.l
 
 	override fun execute(event: ActionEvent) {
 		managementService.close()
