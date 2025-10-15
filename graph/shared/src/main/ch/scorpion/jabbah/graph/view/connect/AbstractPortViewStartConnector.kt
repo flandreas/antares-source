@@ -176,7 +176,12 @@ abstract class AbstractPortViewStartConnector(
 							given { escapePressed(it) }
 						}
 						stayOtherwise {
-							onTransit { moveEdgeViewEndpoint(it) }
+							onTransit {
+								if (it.mouseEvent != null) {
+									// Bug #1066: Could also be a KeyEvent, where (x,y) is zero
+									moveEdgeViewEndpoint(it)
+								}
+							}
 						}
 					}
 
@@ -251,7 +256,11 @@ abstract class AbstractPortViewStartConnector(
 							given { escapePressed(it) }
 						}
 						stayOtherwise {
-							onTransit { snapToTargetEdgeView(it) }
+							onTransit {
+								if (it.mouseEvent != null) {
+									snapToTargetEdgeView(it)
+								}
+							}
 						}
 					}
 
@@ -274,7 +283,11 @@ abstract class AbstractPortViewStartConnector(
 							given { escapePressed(it) }
 						}
 						stayOtherwise {
-							onTransit { snapToDenyingEdgeView(it) }
+							onTransit {
+								if (it.mouseEvent != null) {
+									snapToDenyingEdgeView(it)
+								}
+							}
 						}
 					}
 

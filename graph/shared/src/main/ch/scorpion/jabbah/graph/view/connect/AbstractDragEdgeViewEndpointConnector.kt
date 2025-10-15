@@ -191,7 +191,11 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 					given { escapePressed(it) }
 				}
 				stayOtherwise {
-					onTransit { snapToDenyingEdgeView(it) }
+					onTransit {
+						if (it.mouseEvent != null) {
+							snapToDenyingEdgeView(it)
+						}
+					}
 				}
 			}
 
