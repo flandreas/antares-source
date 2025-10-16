@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.edit.figure
 
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.swing.FixedGridLayout
+import ch.scorpion.jabbah.base.swing.taskpane.JabbahTaskPaneContainer
 import ch.scorpion.jabbah.draw.drawable.DefaultDrawableDrawer
 import ch.scorpion.jabbah.draw.drawable.DrawableDrawer
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
@@ -9,7 +10,6 @@ import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.ComponentTransferable
 import org.jdesktop.swingx.JXTaskPane
-import org.jdesktop.swingx.JXTaskPaneContainer
 import java.awt.Graphics
 import java.awt.Graphics2D
 import java.awt.Point
@@ -28,7 +28,7 @@ import kotlin.math.min
  * Displays all registered [ShapeGroups][FigureGroup] as expandable containers that
  * contain a draggable prototype [Figure] for every registered [Figure].
  */
-class FigureGroupsPanel : JXTaskPaneContainer() {
+class FigureGroupsPanel : JabbahTaskPaneContainer() {
 
 	init {
 		buildUI()

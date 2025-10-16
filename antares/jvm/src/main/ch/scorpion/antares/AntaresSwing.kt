@@ -14,6 +14,9 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.preferences.FontIdentification
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.swing.VerticalLabel
+import ch.scorpion.jabbah.base.swing.VerticalLabelUI
+import ch.scorpion.jabbah.base.swing.taskpane.JabbahTaskPaneContainer
+import ch.scorpion.jabbah.base.swing.taskpane.JabbahTaskPaneContainerUI
 import ch.scorpion.jabbah.base.ui.UI
 import ch.scorpion.jabbah.draw.module.DrawModuleJvm
 import ch.scorpion.jabbah.draw.style.Themes
@@ -196,7 +199,8 @@ class AntaresSwing(
 			val commandLine = parseCommandLine(args, defineOptions(Options()), AntaresApplication.SYSTEM_NAME)
 			val appDataDirectoryPath = determineAppDataDirectoryPath(commandLine, AntaresApplication.SYSTEM_NAME)
 
-			UIManager.getDefaults()[VerticalLabel.UI_CLASS_ID] = "ch.scorpion.jabbah.base.swing.VerticalLabelUI"
+			UIManager.getDefaults()[VerticalLabel.UI_CLASS_ID] = VerticalLabelUI::class.qualifiedName
+			UIManager.getDefaults()[JabbahTaskPaneContainer.UI_CLASS_ID] = JabbahTaskPaneContainerUI::class.qualifiedName
 			UIManager.put("Table.intercellSpacing", Dimension(1, 1))
 			UIManager.put("TaskPane.contentInsets", Insets(0, 0, 0, 0))
 			UIManager.put("TaskPane.roundHeight", 0)
