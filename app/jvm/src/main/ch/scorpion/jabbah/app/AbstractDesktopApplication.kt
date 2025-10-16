@@ -164,6 +164,7 @@ abstract class AbstractDesktopApplication(
 
 	init {
 		LOG.info("Starting $displayName version $version")
+		LOG.info("Running on ${SystemUtils.OS_NAME} ${SystemUtils.OS_VERSION}")
 		LOG.info("Using Java ${Runtime.version()}")
 		LOG.info(("Using app data directory $appDataDirectoryPath"))
 
