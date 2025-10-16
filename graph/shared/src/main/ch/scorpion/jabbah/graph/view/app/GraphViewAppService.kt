@@ -9,6 +9,8 @@ import ch.scorpion.jabbah.edit.app.ComponentCustomizer
 import ch.scorpion.jabbah.edit.app.ComponentCustomizerPair
 import ch.scorpion.jabbah.edit.app.DrawingAppService
 import ch.scorpion.jabbah.edit.app.DrawingAppServiceImpl
+import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.model.CopyPasteService
 import ch.scorpion.jabbah.edit.model.group.GroupComponent
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
@@ -94,6 +96,25 @@ open class GraphViewAppServiceImpl(
 			}
 		}
 	}
+
+	/**
+	 * Overwritten to reject grouping of non-graphical [Component Components] like [VerticeView VerticeViews],
+	 * because it's not clear how to deal with the models in a group, and the base grouping implementation
+	 * unconnects grouped [EdgeView EdgeViews].
+	 */
+	override fun group(components: List<Component>, drawingView: DrawingView<Drawing<Component>>) {
+		if (components.any { !canGroup(it) }) {
+			eventBus.post(ComponentMessage(
+				ComponentMessageType.Error,
+				components.first(),
+				"graph.action.group.denied.msg"
+			))
+			return
+		}
+		return super.group(components, drawingView)
+	}
+
+	private fun canGroup(component: Component): Boolean = component is GraphElementViewWrapper
 
 	override fun ungroup(component: GroupComponent, drawingView: DrawingView<Drawing<Component>>) {
 		ungroupImpl(component, possibleWrapper(component, drawingView.drawing), drawingView)

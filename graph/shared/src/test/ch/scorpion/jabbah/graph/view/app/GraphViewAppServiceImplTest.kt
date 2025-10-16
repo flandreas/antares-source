@@ -4,10 +4,10 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.DrawingViewMockBuilder
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
 import ch.scorpion.jabbah.edit.module.EditModule
-import ch.scorpion.jabbah.edit.DrawingViewMockBuilder
 import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.connect.SplitEdgeViewResult
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
@@ -132,7 +132,6 @@ class GraphViewAppServiceImplTest {
 
 	@Test
 	fun shouldDeleteWrappedComponent() {
-		val drawingView: DrawingView<Drawing<Component>> = DrawingViewMockBuilder().withDrawing(builder.graphView).build()
 		val addedComponent = service.add(RectangleComponent(), drawingView)
 
 		service.delete(listOf(addedComponent), drawingView)
@@ -142,7 +141,6 @@ class GraphViewAppServiceImplTest {
 
 	@Test
 	fun shouldUndoDeleteWrappedComponent() {
-		val drawingView: DrawingView<Drawing<Component>> = DrawingViewMockBuilder().withDrawing(builder.graphView).build()
 		val addedComponent = service.add(RectangleComponent(), drawingView)
 		EditModule.commandManager.reset()
 
@@ -156,7 +154,6 @@ class GraphViewAppServiceImplTest {
 
 	@Test
 	fun shouldRedoDeleteWrappedComponent() {
-		val drawingView: DrawingView<Drawing<Component>> = DrawingViewMockBuilder().withDrawing(builder.graphView).build()
 		EditModule.commandManager.reset()
 		val addedComponent = service.add(RectangleComponent(), drawingView)
 
