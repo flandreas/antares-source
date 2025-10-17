@@ -231,12 +231,12 @@ class DigitalPortView(
 	}
 
 	override fun drawAboveOwnerImpl(context: DrawContext) {
-		if (bitWidthAnnotation != null && showBitWidthAnnotation && !hideBitWidthAnnotation) {
-			bitWidthAnnotation!!.draw(context)
-		}
 		portViewStyle.drawLogic(this, context, styleProvider, transparent)
 
 		context.g.color = transparent.applyTo(context.choose(context.styleColor(styleProvider.getStyle(GraphStyleType.VERTICE).color)).foregroundColor)
+		if (bitWidthAnnotation != null && showBitWidthAnnotation && !hideBitWidthAnnotation) {
+			bitWidthAnnotation!!.draw(context)
+		}
 		if (hasInternalInputAnnotation) {
 			drawInternalInputAnnotation(context)
 		}
