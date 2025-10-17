@@ -4,6 +4,9 @@ import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.auth.DesktopUser
+import ch.scorpion.jabbah.edit.auth.DesktopUserHolder
+import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.TempFileLibraryTestRule
@@ -27,6 +30,7 @@ class GrandUiIntegrationTest {
 	companion object {
 		init {
 			TempFileLibraryTestRule.configure()
+			EditAuthModule.userHolder = DesktopUserHolder(DesktopUser.Companion.developer)
 		}
 	}
 
