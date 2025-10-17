@@ -39,6 +39,7 @@ class FigureGroupsPanel : JabbahTaskPaneContainer() {
 			val view = FigureGroupView(it)
 			val pane = JXTaskPane(it.name)
 			pane.isCollapsed = true
+			pane.isAnimated = false
 			pane.add(view)
 			add(pane)
 		}
