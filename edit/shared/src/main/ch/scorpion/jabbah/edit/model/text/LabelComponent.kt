@@ -57,7 +57,7 @@ class LabelComponent(
 	 * The optional width and height of this [LabelComponent]. Overrides the default bounding box determined
 	 * by the size of the text. Typically used along [inverse] to choose the size of the "background" box.
 	 */
-	var dimension: Dimension2D? = null
+	var labelDimension: Dimension2D? = null
 
 	init {
 		DrawableOwner(this, label)
@@ -107,10 +107,10 @@ class LabelComponent(
 	/** ---- [Drawable] */
 
 	override val boundingBox: RectangularShape get() {
-		val bbox = if (dimension == null) {
+		val bbox = if (labelDimension == null) {
 			label.boundingBox
 		} else {
-			Rectangle2D.withCenter(location, dimension!!.width, dimension!!.height).expandBy(stroke.width / 2.0) as Rectangle2D
+			Rectangle2D.withCenter(location, labelDimension!!.width, labelDimension!!.height).expandBy(stroke.width / 2.0) as Rectangle2D
 		}
 		return if (rotation == Rotation.R0 || rotation == Rotation.R180) {
 			bbox
@@ -131,20 +131,20 @@ class LabelComponent(
 		context.g.translate(-location.x, -location.y)
 
 
-		if (inverse && dimension != null) {
+		if (inverse && labelDimension != null) {
 			context.g.color = if (context.useContextColors) {
 				context.color!!.foregroundColor
 			} else {
 				transparent.applyTo(foregroundColor)
 			}
-			val rect = Rectangle2D.withCenter(location, dimension!!.width, dimension!!.height)
+			val rect = Rectangle2D.withCenter(location, labelDimension!!.width, labelDimension!!.height)
 			context.g.fill(rect)
 			context.g.stroke = stroke
 			context.g.draw(rect)
 		}
 
 		if (!context.useContextColors) {
-			context.g.color = if (inverse && dimension != null) {
+			context.g.color = if (inverse && labelDimension != null) {
 				transparent.applyTo(backgroundColor)
 			} else {
 				transparent.applyTo(foregroundColor)
@@ -186,7 +186,7 @@ class LabelComponent(
 		if (inverse) {
 			writer.writeBoolean("inverse", inverse)
 		}
-		dimension?.let {
+		labelDimension?.let {
 			writer.writeDouble("w", it.width)
 			writer.writeDouble("h", it.height)
 		}
@@ -215,7 +215,7 @@ class LabelComponent(
 			inverse = reader.readBoolean("inverse")
 		}
 		if (reader.hasAttribute("w") && reader.hasAttribute("h")) {
-			dimension = Dimension2D(reader.readDouble("w"), reader.readDouble("h"))
+			labelDimension = Dimension2D(reader.readDouble("w"), reader.readDouble("h"))
 		}
 		if (reader.hasAttribute("color")) {
 			customColor = styleProvider.predefinedColorProvider.withIdName(reader.readString("color"))

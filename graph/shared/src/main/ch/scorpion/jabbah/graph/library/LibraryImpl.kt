@@ -493,10 +493,14 @@ open class LibraryImpl(
 	private class ItemCollector(private val exp: (LibraryItem) -> Boolean) : EmptyHierarchyVisitor() {
 		val items = mutableListOf<LibraryItem>()
 
-		override fun visit(node: Any): Boolean {
-			if (node is LibraryItem && exp(node)) {
+		override fun visitEnter(node: Any): Boolean {
+			if (exp(node as LibraryItem)) {
 				items.add(node)
 			}
+			return node is LibraryDirectory
+		}
+
+		override fun visit(node: Any): Boolean {
 			return true
 		}
 	}

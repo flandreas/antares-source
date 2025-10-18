@@ -162,6 +162,13 @@ class Rectangle2DTest {
 	}
 
 	@Test
+	fun shouldExpandInward() {
+		val rect = Rectangle2D(100, 100, 100, 100)
+		rect.expandBy(-10.0)
+		assertEquals(Rectangle2D(110, 110, 80, 80), rect)
+	}
+
+	@Test
 	fun shouldAddPathWithClose() {
 		val rect = Rectangle2D()
 		rect.add(0, 0)

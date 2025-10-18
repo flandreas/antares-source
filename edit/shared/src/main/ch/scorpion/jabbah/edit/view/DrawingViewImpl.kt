@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.PreferencesChangedEvent
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.AffineTransform
+import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.*
@@ -112,6 +113,8 @@ class DrawingViewImpl<T: Drawing<Component>>(
 
     override val highlightContainer get() = content.highlightContainer
 
+    override val backgroundContainer: DrawableContainer<Drawable> get() = content.backgroundContainer
+
     override val drawing: T get() = content.drawing
 
     override var showGrid: Boolean = false
@@ -167,11 +170,18 @@ class DrawingViewImpl<T: Drawing<Component>>(
 	/** ---- [View] interface */
 
 	override val mainContent: MainContent get() = MainContent(
-		drawing.toString(),
+		drawing.name.value,
 		drawing,
 		Themes.get<DrawTheme>().background.color.backgroundColor)
 
-	override fun createViewContentBounds(): ViewContentBounds = ViewContentBounds { drawing.boundingBox }
+    /** Used to avoid object creation in [createViewContentBounds].*/
+    private val viewContentBoundsRect = Rectangle2D()
+
+	override fun createViewContentBounds(): ViewContentBounds = ViewContentBounds {
+        viewContentBoundsRect.setFrame(drawing.boundingBox)
+        viewContentBoundsRect.add(backgroundContainer.boundingBox)
+        viewContentBoundsRect
+    }
 
 	override fun removeDrawable(drawable: Drawable) {
         // DrawingViewImpl has a fixed set of DrawableContainers
@@ -195,6 +205,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
         super.addDrawable(content.zoomableSelectionContainerFor(SelectionDrawingStrategy.BELOW)!!)
         super.addDrawable(highlightContainer)
         super.addDrawable(content.backdropDrawer)
+        super.addDrawable(content.backgroundContainer)
     }
 
     private fun replaceContent(newContent: DrawingViewContent<T>) {
@@ -207,6 +218,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
         replaceDrawable(content.zoomableSelectionContainerFor(SelectionDrawingStrategy.BELOW)!!, newContent.zoomableSelectionContainerFor(SelectionDrawingStrategy.BELOW)!!)
         replaceDrawable(content.highlightContainer, newContent.highlightContainer)
         replaceDrawable(content.backdropDrawer, newContent.backdropDrawer)
+        replaceDrawable(content.backgroundContainer, newContent.backgroundContainer)
         transformation = newContent.transformation
         repaint()
     }

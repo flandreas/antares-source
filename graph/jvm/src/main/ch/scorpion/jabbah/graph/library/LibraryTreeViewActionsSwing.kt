@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.graph.model.image.ImageLibraryElement
 import ch.scorpion.jabbah.graph.model.image.OpenImageAction
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
+import ch.scorpion.jabbah.graph.poster.CreatePosterAction
 import ch.scorpion.jabbah.graph.project.*
 import ch.scorpion.jabbah.graph.ui.GraphDataViewController
 import ch.scorpion.jabbah.graph.ui.MetaGraphEmbedAction
@@ -72,6 +73,7 @@ open class LibraryTreeViewActionsSwing(
 	} else {
 		null
 	}
+	private val createPosterAction = register(CreatePosterAction(application.displayName, controller))
 
 	private val editLibraryAction = register(EditLibraryAction(controller, application))
 
@@ -178,6 +180,7 @@ open class LibraryTreeViewActionsSwing(
 		if (uploadProjectAction != null) {
 			projectRootMenu.add(ActionWrapperSwing(uploadProjectAction))
 		}
+		projectRootMenu.add(ActionWrapperSwing(createPosterAction))
 		projectRootMenu.add(ActionWrapperSwing(closeProjectAction))
 	}
 

@@ -85,6 +85,12 @@ interface DrawingView<T : Drawing<*>> : View<EditInputEventContext> {
 	val highlightContainer: DrawableContainer<Drawable>
 
 	/**
+	 * Draws non-[Component] zoomed [Drawables][Drawable] beneath everything else, e.g. A4 page borders to signal
+	 * available space for [drawing].
+	 */
+	val backgroundContainer: DrawableContainer<Drawable>
+
+	/**
 	 * Sets the current [Drawing] by creating a new [DrawingViewContent] for the new [Drawing] and sending
 	 * a [PropertyChangeEvent] for [DrawingView.PROP_DRAWING]
 	 * @param drawing the new [Drawing] to set
@@ -139,6 +145,12 @@ interface DrawingViewContent<T : Drawing<*>> {
 
 	/** Draws all [Components][Component] in [drawing] with [StyleType.isBackdrop] is `true`.*/
 	val backdropDrawer: Drawable
+
+	/**
+	 * Draws non-[Component] zoomed [Drawables][Drawable] beneath everything else, e.g. A4 page borders to signal
+	 * available space for [drawing].
+	 */
+	val backgroundContainer: DrawableContainer<Drawable>
 
 	/** Frees this [DrawingViewContent] from usage and disposes all inner objects, including the [Drawing].*/
 	fun dispose()

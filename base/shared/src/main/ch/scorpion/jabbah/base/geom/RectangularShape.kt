@@ -73,4 +73,6 @@ interface RectangularShape : Shape {
 	val centerLeft: Point2D get() = Point2D(minX, centerY)
 
 	val centerRight: Point2D get() = Point2D(maxX, centerY)
+
+    val dimension: Dimension2D get() = Dimension2D(width, height)
 }

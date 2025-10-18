@@ -214,7 +214,7 @@ class WideContainerDrawingFiller(
 		// CAUTION: labelHeight is derived from the label's boundingBox, which in turn depends on the dimension, if set.
 		// Therefore, first request the pure labelHeight (without dimension), then set the dimension using labelHeight
 		val height = labelHeight
-		label.dimension = Dimension2D(rectangle.width, height.toDouble())
+		label.labelDimension = Dimension2D(rectangle.width, height.toDouble())
 		label.location = Point2D(rectangle.centerX, rectangle.maxY - height / 2)
 	}
 }

@@ -55,6 +55,8 @@ class DrawingViewContentImpl<T : Drawing<Component>>(
 
 	override val backdropDrawer: Drawable = BackdropDrawer()
 
+	override val backgroundContainer: DrawableContainer<Drawable> = DrawableContainerImpl()
+
 	override fun dispose() {
 		drawing.removeDrawableContainerListener(componentRemoveListener)
 		drawing.dispose()

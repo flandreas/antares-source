@@ -6,6 +6,8 @@ import ch.scorpion.jabbah.base.Settings
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
+import ch.scorpion.jabbah.base.geom.Dimension2D
+import ch.scorpion.jabbah.base.geom.Margin
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.swing.EGBL
@@ -13,7 +15,12 @@ import ch.scorpion.jabbah.base.swing.FileSelectionField
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.UIBasics
 import ch.scorpion.jabbah.draw.MainContent
+import ch.scorpion.jabbah.draw.drawable.Page
+import ch.scorpion.jabbah.draw.drawable.PageOrientation
+import ch.scorpion.jabbah.draw.drawable.PageSize
+import ch.scorpion.jabbah.draw.drawable.Resolution
 import ch.scorpion.jabbah.draw.graphics.ImageType
+import ch.scorpion.jabbah.draw.rasterimg.RasterImageExporter.IMAGE_INSET
 import org.apache.commons.lang3.SystemUtils
 import java.awt.BorderLayout
 import java.awt.Dimension
@@ -28,6 +35,8 @@ import kotlin.io.path.exists
 
 class ExportRasterImagePanel(
     private val mainContent: MainContent,
+    private val page: Page? = null,
+    private val resolution: Resolution? = null,
     private val closeHandler: () -> Unit
 ) : JPanel() {
 
@@ -43,12 +52,18 @@ class ExportRasterImagePanel(
 
         private val title: String get() = Translations.getString("draw.action.exportImage.title")
 
+        /**
+         * Asks the user to enter parameters that control exporting [mainContent] to an image.
+         * @param page if provided, the user cannot change width and height of the generated image.
+         */
         fun showAsDialog(
             mainContent: MainContent,
+            page: Page?,
+            resolution: Resolution? = null,
             parent: Frame = Frame.getFrames()[0]
         ) {
             DialogBuilder<ExportRasterImagePanel>(parent)
-                .content { dialog -> ExportRasterImagePanel(mainContent) { dialog.dispose() } }
+                .content { dialog -> ExportRasterImagePanel(mainContent, page, resolution) { dialog.dispose() } }
                 .title(title)
                 .nonResizable()
                 .defaultButton { it.okButton }
@@ -81,8 +96,24 @@ class ExportRasterImagePanel(
         imageTypeComboBox.addActionListener {
             fileNameField.text = buildFileName()
         }
-        widthField.text = DEF_IMAGE_WIDTH.toString()
-        heightField.text = DEF_IMAGE_HEIGHT.toString()
+        val width = if (page != null && resolution != null) {
+            resolution.millimeterToPixel(page.width).toString()
+        } else {
+            DEF_IMAGE_WIDTH.toString()
+        }
+        widthField.text = width
+        widthField.isEditable = page == null
+        widthField.isEnabled = page == null
+
+        val height = if (page != null && resolution != null) {
+            resolution.millimeterToPixel(page.height).toString()
+        } else {
+            DEF_IMAGE_HEIGHT.toString()
+        }
+        heightField.text = height
+        heightField.isEditable = page == null
+        heightField.isEnabled = page == null
+
         errorLabel.foreground = UiUtil.errorTextColor
     }
 
@@ -251,12 +282,18 @@ class ExportRasterImagePanel(
                 }
             }
 
+            val effPage = page ?: Page(
+                PageSize("any", Dimension2D(widthField.value as Int, heightField.value as Int)),
+                PageOrientation.PORTRAIT,
+                Margin.allOf(IMAGE_INSET)
+            )
+
             RasterImageExporter.exportToFile(
                 mainContent,
                 imageTypeComboBox.selectedItem as ImageType,
                 path.absolutePathString(),
-                width = widthField.value as Int,
-                height = heightField.value as Int
+                effPage,
+                resolution
             )
         } catch (e: IOException) {
             JOptionPane.showMessageDialog(
@@ -282,7 +319,6 @@ class ExportRasterImagePanel(
                         JOptionPane.DEFAULT_OPTION,
                         JOptionPane.INFORMATION_MESSAGE
                     )
-
                 }
             }
         }
