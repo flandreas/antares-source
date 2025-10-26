@@ -170,9 +170,10 @@ tasks {
 		keeppackagenames("ch.scorpion.jabbah.graph.library,ch.scorpion.jabbah.graph.library.ResourceLibraryPersistenceService")
 		keepdirectories("libraries/**,ch/scorpion/jabbah/graph/library,ch/scorpion/jabbah/graph/library/ResourceLibraryPersistenceService")
 
-
 		// Other reflective classes
 		keep("class ch.scorpion.jabbah.base.swing.VerticalLabelUI { *; }")
+		keep("class ch.scorpion.jabbah.base.swing.taskpane.JabbahTaskPaneContainer { *; }")
+		keep("class ch.scorpion.jabbah.base.swing.taskpane.JabbahTaskPaneContainerUI { *; }")
 
 		printmapping("$buildDir/libs/antares-${version_project}-proguard.map")
 		renamesourcefileattribute("SourceFile")
