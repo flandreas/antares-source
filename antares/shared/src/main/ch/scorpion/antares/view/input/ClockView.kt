@@ -186,7 +186,7 @@ class ClockView(
 	/** ---- [ActorView] */
 
 	override val executionTooltipSubtext: String get() {
-		val durationMillis = System.currentTimeMillis() - model.realStartTime
+		val durationMillis = System.currentTimeMillis() - model.cycleCountStartTime
 		val frequency = model.cycleCount / max(1, durationMillis / 1_000) / 2
 		val frequencyText = Translations.getString("antares.clock.frequency.text", StringUtils.formatLong(frequency, '\'')) + " Hz"
 		val subtext = super.executionTooltipSubtext

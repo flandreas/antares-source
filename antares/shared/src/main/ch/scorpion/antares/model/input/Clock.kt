@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.input.PeriodOrFrequencyUnit.Nanosecond
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.jabbah.base.LongValue
 import ch.scorpion.jabbah.base.LongValueImpl
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
@@ -49,6 +50,12 @@ class Clock(name: String? = null) : CalculatingVertice(CALCULATOR, name) {
 	var cycleCount: Long = 0
 		private set
 
+	var cycleCountStartTime: Long = 0
+		private set
+
+	/** The system speed for which [cycleCount] is valid. [cycleCount] is reset if the speed changes.*/
+	private var cycleCountSpeed: Int = 0
+
 	var isOn: Boolean = false
 		private set
 
@@ -83,6 +90,13 @@ class Clock(name: String? = null) : CalculatingVertice(CALCULATOR, name) {
 
 	/** Used for restoring [periodOrFrequency] after the simulation has ended. */
 	private lateinit var periodOrFrequencyBuffer: PeriodOrFrequency
+
+	override var propagationDelay: LongValue
+		get() = super.propagationDelay
+		set(value) {
+			super.propagationDelay = value
+			resetCycleCount()
+		}
 
 	init {
 		propagationDelay = LongValueImpl(periodOrFrequency.asNanoseconds.value)
@@ -137,11 +151,12 @@ class Clock(name: String? = null) : CalculatingVertice(CALCULATOR, name) {
 		if (offPercentage < 100) {
 			requestActingAfter(signalHandler, offTime, createActorData(null))
 		}
+		cycleCountSpeed = signalHandler.systemSpeedCategory.systemSpeed.speed
+		resetCycleCount()
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {
 		realStartTime = 0
-		cycleCount = 0
 		super.executionStopped(signalHandler)
 		periodOrFrequency = periodOrFrequencyBuffer
 	}
@@ -160,6 +175,10 @@ class Clock(name: String? = null) : CalculatingVertice(CALCULATOR, name) {
 
 	private fun setOn(signalHandler: SignalHandler, on: Boolean, isToggled: Boolean = false) {
 		if (isOn != on) {
+			if (signalHandler.systemSpeedCategory.systemSpeed.speed != cycleCountSpeed) {
+				cycleCountSpeed = signalHandler.systemSpeedCategory.systemSpeed.speed
+				resetCycleCount()
+			}
 			cycleCount++
 			isOn = on
 			getOutput<DigitalSignal>().setOutgoingSignalBuffered(DigitalSignalFactory.of(isOn), signalHandler)
@@ -174,5 +193,10 @@ class Clock(name: String? = null) : CalculatingVertice(CALCULATOR, name) {
 				}
 			}
 		}
+	}
+
+	private fun resetCycleCount() {
+		cycleCount = 0
+		cycleCountStartTime = System.currentTimeMillis()
 	}
 }

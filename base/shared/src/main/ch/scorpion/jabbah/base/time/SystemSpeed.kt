@@ -25,7 +25,7 @@ class SystemSpeed(
 		const val MAX_SPEED: Int = 100
 	}
 
-	var speed = speed
+	var speed: Int = speed
 		set(value) {
 			require(speed in MIN_SPEED..MAX_SPEED) { "SystemSpeed must be between $MIN_SPEED and $MAX_SPEED" }
 			BaseModule.settings.set(SETTING_SPEED, value)
