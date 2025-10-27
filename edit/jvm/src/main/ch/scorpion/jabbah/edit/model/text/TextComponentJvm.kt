@@ -1,7 +1,9 @@
 package ch.scorpion.jabbah.edit.model.text
 
 import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.base.geom.*
+import ch.scorpion.jabbah.base.geom.Dimension2D
+import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.Transparent
@@ -15,6 +17,7 @@ import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.SnappableX
 import ch.scorpion.jabbah.edit.SnappableXCoordinate
+import ch.scorpion.jabbah.edit.model.text.TextComponentJvm.Companion.TEXT_PAINTER
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -25,7 +28,6 @@ import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 import javax.swing.text.SimpleAttributeSet
 import javax.swing.text.StyleConstants
-import kotlin.math.min
 
 /** Implements [TextComponentFactory] on the JVM platform. */
 class TextComponentFactoryJvm : TextComponentFactory {
@@ -363,6 +365,7 @@ open class TextComponentJvm(
 		private fun startEditing(editor: Editor) {
 			LOG.trace("start editing")
 			this.editor = editor
+			this.editor!!.commandManager.active = false
 			editing = true
 
 			setupTextEditor(editor.view.zoomFactor)
@@ -383,17 +386,20 @@ open class TextComponentJvm(
 
 		private fun stopEditing() {
 			LOG.trace("stop editing")
+			editor!!.commandManager.active = true
 			val oldText = text.getTranslation()
 			val newText = TEXT_EDITOR.text
 			if (oldText != newText) {
 				if (StringUtils.isNotEmpty(newText)) {
 					LOG.userTrail("Change text of ${this@TextComponentJvm.id} to '${StringUtils.limit(newText, 30)}'")
 					editor!!.commandManager.execute(
-					TextChangeCommand(
-						editor!!,
-						this@TextComponentJvm.id,
-						text,
-						text.withTranslation(newText)))
+						TextChangeCommand(
+							editor!!,
+							this@TextComponentJvm.id,
+							text,
+							text.withTranslation(newText)
+						)
+					)
 				} else {
 					TEXT_EDITOR.text = oldText
 				}

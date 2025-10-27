@@ -137,6 +137,7 @@ class SelectionToolImpl(
 
 		// Deactivate undo/redo during drag actions to prevent the Drawing from being changed
 		// while tools are operating on the Drawing
+
 		commandManagerWasActive = editor.commandManager.active
 		editor.commandManager.active = false
 
@@ -146,6 +147,8 @@ class SelectionToolImpl(
 				return
 			}
 		}
+
+		commandManagerWasActive = true
 
 		// Try to forward event to an interested [Drawable] in the [View]
 		target = editor.view.getInputEventHandler(e).mousePressed(mouseEventContext(e, x, y))
