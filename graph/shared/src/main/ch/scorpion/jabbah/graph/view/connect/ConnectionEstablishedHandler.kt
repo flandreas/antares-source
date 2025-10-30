@@ -19,4 +19,10 @@ interface ConnectionEstablishedHandler {
      * @return the [Command] containing the additional logic, or `null` if no such logic is required
      */
     fun handle(editor: Editor, port: Port<*>): Command?
+
+    /**
+     * Same as [handle], but used in scenarios where 2 [Ports][Port] are directory connected,
+     * and the [Net] between them doesn't yet exist.
+     */
+    fun handle(editor: Editor, port: Port<*>, otherPort: Port<*>): Command?
 }

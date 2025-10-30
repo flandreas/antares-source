@@ -135,8 +135,12 @@ object AutoConnector : DragManagerPlugin {
 			}
 			when (mode) {
 				Mode.Points -> points.add(p)
-				Mode.Commands -> commands.add(
-					ConnectOriginCommand(editor, connectService, ev.id, verticeView.id, portView.port.portId))
+				Mode.Commands -> {
+					commands.add(ConnectOriginCommand(editor, connectService, ev.id, verticeView.id, portView.port.portId))
+					GraphViewModule.connectionEstablishedHandler?.handle(editor, portView.port)?.let { cmd ->
+						commands.add(cmd)
+					}
+				}
 			}
 		}
 		if (ev.destination == null && p == ev.destinationEndpointView.location) {
@@ -150,8 +154,12 @@ object AutoConnector : DragManagerPlugin {
 			}
 			when (mode) {
 				Mode.Points -> points.add(p)
-				Mode.Commands -> commands.add(
-					ConnectDestinationCommand(editor, connectService, ev.id, verticeView.id, portView.port.portId))
+				Mode.Commands -> {
+					commands.add(ConnectDestinationCommand(editor, connectService, ev.id, verticeView.id, portView.port.portId))
+					GraphViewModule.connectionEstablishedHandler?.handle(editor, portView.port)?.let { cmd ->
+						commands.add(cmd)
+					}
+				}
 			}
 		}
 	}
@@ -166,8 +174,12 @@ object AutoConnector : DragManagerPlugin {
 					) {
 						when (mode) {
 							Mode.Points -> points.add(portView.owner!!.getPortConnectionPoint(portView.port))
-							Mode.Commands -> commands.add(
-								AutoConnectCommand(editor, verticeView.id, portView.port.portId, otherVerticeView.id, it.port.portId))
+							Mode.Commands -> {
+								commands.add(AutoConnectCommand(editor, verticeView.id, portView.port.portId, otherVerticeView.id, it.port.portId))
+								GraphViewModule.connectionEstablishedHandler?.handle(editor, portView.port, it.port)?.let { cmd ->
+									commands.add(cmd)
+								}
+							}
 						}
 					} else {
 						if (mode == Mode.Points) {
