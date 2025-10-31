@@ -183,6 +183,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val INDUCTOR = "Inductor"
 	private const val ANALOG_RELAY = "AnalogRelay"
 	private const val ANALOG_DIODE = "AnalogDiode"
+	private const val ANALOG_LED = "AnalogLED"
 
 	val currentSymbolStyle: CurrentSymbolStyle by lazy {CurrentSymbolStyle() }
 
@@ -404,6 +405,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("inductorView", InductorView::class)
 		typeMap.register("analogRelayView", AnalogRelayView::class)
 		typeMap.register("diodeView", DiodeView::class)
+		typeMap.register("analogLEDView", AnalogLEDView::class)
 		typeMap.register("analogPushButtonSwitchView", AnalogPushButtonSwitchView::class)
 	}
 
@@ -488,6 +490,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, InductorView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogRelayView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, DiodeView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, AnalogLEDView::class) { SelectedColorSelectionModel(it) }
 
 		factory.register(SelectionDrawingStrategy.REPLACE, FSMState::class) { RectangularReplaceSelectionModel(it as AbstractRectangularComponent, RectangularReplaceSelectionModel.DrawStrategy.COMPONENT) }
 		factory.register(SelectionDrawingStrategy.REPLACE, FSMTransition::class) { SelectedColorSelectionModel(it) }
@@ -708,13 +711,21 @@ object AntaresViewModule : AbstractModule() {
 		repository.register(
 			ANALOG_DIODE,
 			"library.element.AnalogDiode",
-			//{ "/img/power.png" },
 			CurrentSymbolStyleToString(mapOf(
 				SymbolStyle.AMERICAN to "/img/diode-ieee.png",
 				SymbolStyle.EUROPEAN to "/img/diode-iec.png",
 				SymbolStyle.VERBOSE to "/img/diode-iec.png"
 			))::evaluate,
 			DiodeView::class)
+		repository.register(
+			ANALOG_LED,
+			"library.element.AnalogLED",
+			CurrentSymbolStyleToString(mapOf(
+				SymbolStyle.AMERICAN to "/img/diode-ieee.png",
+				SymbolStyle.EUROPEAN to "/img/diode-iec.png",
+				SymbolStyle.VERBOSE to "/img/diode-iec.png"
+			))::evaluate,
+			AnalogLEDView::class)
 	}
 
 	fun fillBaseElementLibrary(library: Library) {
@@ -894,6 +905,7 @@ object AntaresViewModule : AbstractModule() {
 			register(HelpId(CapacitorView::class.simpleName!!), HelpSource("$analogBase/capacitor"))
 			register(HelpId(CurrentSourceView::class.simpleName!!), HelpSource("$analogBase/current-source"))
 			register(HelpId(DiodeView::class.simpleName!!), HelpSource("$analogBase/diode"))
+			register(HelpId(AnalogLEDView::class.simpleName!!), HelpSource("$analogBase/LED"))
 			register(HelpId(AnalogDoubleThrowSwitchView::class.simpleName!!), HelpSource("$analogBase/double-throw-switch"))
 			register(HelpId(InductorView::class.simpleName!!), HelpSource("$analogBase/inductor"))
 			register(HelpId(AnalogCircuitInOutView::class.simpleName!!), HelpSource("$analogBase/inout"))

@@ -6,7 +6,7 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 
-class DiodeView(
+class AnalogLEDView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     model: Diode = Diode()
 ) : AbstractDiodeView(styleProvider, model) {
