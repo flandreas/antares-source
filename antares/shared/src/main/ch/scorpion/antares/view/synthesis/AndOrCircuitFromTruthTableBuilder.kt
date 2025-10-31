@@ -185,9 +185,11 @@ class AndOrCircuitFromTruthTableBuilder(
 			}
 
 			var lowerX = firstPort.x - OR_WIRE_DIST
-			for (i in orTerm.andTermViews.size downTo orTerm.andTermViews.size / 2) {
-				buildOrInputWire(orTerm, i, lowerX)
+			var portId = orTerm.andTermViews.size
+			while (orTerm.orView!!.model.getPort<DigitalSignal>(portId).net == null) {
+				buildOrInputWire(orTerm, portId, lowerX)
 				lowerX -= OR_WIRE_DIST
+				portId--
 			}
 		}
 	}

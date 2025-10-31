@@ -124,4 +124,25 @@ class AndOrCircuitFromTruthTableBuilderTest {
 		val outputY = metaGraph.graph.model!!.getGraphOutput<DigitalSignal>("Y")!!
 		assertSame(inputA.getOutput<DigitalSignal>().net, outputY.getInput<DigitalSignal>().net)
 	}
+
+	/**
+	 * Regression test for GitHub #1077.
+	 */
+	@Test
+	fun shouldBuildSubjunction() {
+		// O = A' + B
+		val truthTable = TruthTable(inputColumnNames = listOf("A", "B"), outputColumnNames = listOf("O"))
+		truthTable.setColumnValues(2, True, True, False, True)
+
+		val metaGraph = MetaGraph.create(TranslatableText("Test"), AntaresGraphTypes.Digital)
+		AndOrCircuitFromTruthTableBuilder(truthTable, truthTableService.generateDnfs(truthTable), metaGraph.graph).build()
+
+		assertEquals(3, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<DigitalCircuitInOutView>().size)
+		assertEquals(2, getLogicGateViews(metaGraph, Not).size)
+		assertEquals(0, getLogicGateViews(metaGraph, And).size)
+		assertEquals(1, getLogicGateViews(metaGraph, Or).size)
+
+		assertEquals(4, metaGraph.graph.graphView.getNodeViews().size)
+		assertEquals(13, metaGraph.graph.graphView.getEdgeViews().size)
+	}
 }
