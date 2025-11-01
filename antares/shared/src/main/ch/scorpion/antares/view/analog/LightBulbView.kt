@@ -58,10 +58,16 @@ class LightBulbView(
 		private val DEFAULT_LIGHT_COLOR = LightColor.WHITE
 
 		/** The current (A) at which the [LightBulbView] starts glowing. */
-		private const val DEF_MIN_GLOW_CURRENT = 0.0
+		private const val DEF_MIN_GLOW_CURRENT = 0.005
 
 		/** The current (A) at which the [LightBulbView] reaches its maximum brightness. */
-		private const val DEF_MAX_GLOW_CURRENT = 0.1
+		private const val DEF_MAX_GLOW_CURRENT = 0.02
+
+		fun getExecutionLightFactor(
+			current: Double,
+			minCurrent: Double,
+			maxCurrent: Double
+		): Float = ((abs(current) - minCurrent).coerceAtLeast(0.0) / maxCurrent).coerceIn(0.0..1.0).toFloat()
 	}
 
 	@Suppress("MemberVisibilityCanBePrivate") // Bean Reflection
@@ -220,8 +226,7 @@ class LightBulbView(
 	}
 
 	@Suppress("MemberVisibilityCanBePrivate") // For testing
-	val executionLightFactor: Float get() = ((abs((model.getPort<AnalogSignal>() as AnalogPort).current) - minCurrent).coerceAtLeast(0.0) / maxCurrent)
-		.coerceIn(0.0..1.0).toFloat()
+	val executionLightFactor: Float get() = getExecutionLightFactor((model.getPort<AnalogSignal>() as AnalogPort).current, minCurrent, maxCurrent)
 
 	private val executionBulbColor: Color get() = lightColor.gradient.at(executionLightFactor)
 }

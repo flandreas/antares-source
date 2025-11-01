@@ -4,6 +4,7 @@ import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.Look.SCALE
 import ch.scorpion.antares.view.OrientableLabeledRectangularVerticeView
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
+import ch.scorpion.antares.view.analog.AnalogLEDView
 import ch.scorpion.antares.view.gate.BoxGateView
 import ch.scorpion.antares.view.gate.CustomShapeContent
 import ch.scorpion.antares.view.gate.TriStateBufferGateView
@@ -22,6 +23,7 @@ import ch.scorpion.jabbah.draw.style.Style
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import kotlin.math.PI
@@ -154,8 +156,8 @@ enum class SymbolStyle(
 			Companion.drawDiode(diode, context, false)
 		}
 
-		override fun drawAnalogLED(led: OrientableRectangularVerticeView<*>, context: DrawContext) {
-			Companion.drawDiode(led, context, fill = false, led = true)
+		override fun drawAnalogLED(led: AnalogLEDView, context: DrawContext) {
+			Companion.drawAnalogLED(led, context, fill = false)
 		}
 	},
 
@@ -242,8 +244,8 @@ enum class SymbolStyle(
 			Companion.drawDiode(diode, context, true)
 		}
 
-		override fun drawAnalogLED(led: OrientableRectangularVerticeView<*>, context: DrawContext) {
-			Companion.drawDiode(led, context, fill = true, led = true)
+		override fun drawAnalogLED(led: AnalogLEDView, context: DrawContext) {
+			Companion.drawAnalogLED(led, context, fill = true)
 		}
 
 		override val orShapeConnectedPortViewLength: Int get() = (2 * SCALE * 0.35).toInt()
@@ -322,7 +324,7 @@ enum class SymbolStyle(
 			EUROPEAN.drawDiode(diode, context)
 		}
 
-		override fun drawAnalogLED(led: OrientableRectangularVerticeView<*>, context: DrawContext) {
+		override fun drawAnalogLED(led: AnalogLEDView, context: DrawContext) {
 			EUROPEAN.drawAnalogLED(led, context)
 		}
 	};
@@ -500,8 +502,7 @@ enum class SymbolStyle(
 		protected fun drawDiode(
 			diode: OrientableRectangularVerticeView<*>,
 			context: DrawContext,
-			fill: Boolean,
-			led: Boolean = false
+			fill: Boolean
 		) {
 			// Anode
 			(diode.getPortView(diode.model.getPort(1)) as AbstractAntaresPortView<*>).prepareConnectionDrawContext(context)
@@ -517,12 +518,39 @@ enum class SymbolStyle(
 			(diode.getPortView(diode.model.getPort(2)) as AbstractAntaresPortView<*>).prepareConnectionDrawContext(context)
 			context.g.drawLine(LENGTH + 3.5 * SCALE, -1.5 * SCALE, LENGTH + 3.5 * SCALE, 1.5 * SCALE)
 			context.g.drawLine(LENGTH + 3.5 * SCALE, 0.0, LENGTH + 4.0 * SCALE, 0.0)
+		}
 
-			// LED
-			if (led) {
-				drawLEDArrow(context, LENGTH + 2.5 * SCALE, -1.25 * SCALE)
-				drawLEDArrow(context, LENGTH + 1.5 * SCALE, -2.0 * SCALE)
+		protected fun drawAnalogLED(
+			led: AnalogLEDView,
+			context: DrawContext,
+			fill: Boolean
+		) {
+			// Anode
+			//(led.getPortView(led.model.getPort(1)) as AbstractAntaresPortView<*>).prepareConnectionDrawContext(context)
+			context.g.color = context.choose(led.style.color).foregroundColor
+			context.g.drawLine(LENGTH.toDouble(), 0.0, LENGTH + 3.5 * SCALE, 0.0)
+			context.g.stroke = led.stroke
+
+			if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+				context.g.color = led.executionLEDColor
+				context.g.fill(DIODE_PATH)
+				context.g.color = led.foregroundColor
+				context.g.draw(DIODE_PATH)
+			} else {
+				if (fill) {
+					context.g.fill(DIODE_PATH)
+				} else {
+					context.g.draw(DIODE_PATH)
+				}
 			}
+
+			// Cathode
+			context.g.drawLine(LENGTH + 3.5 * SCALE, -1.5 * SCALE, LENGTH + 3.5 * SCALE, 1.5 * SCALE)
+			context.g.drawLine(LENGTH + 3.5 * SCALE, 0.0, LENGTH + 4.0 * SCALE, 0.0)
+
+			// Arrows
+			drawLEDArrow(context, LENGTH + 2.5 * SCALE, -1.25 * SCALE)
+			drawLEDArrow(context, LENGTH + 1.5 * SCALE, -2.0 * SCALE)
 		}
 
 		private fun drawLEDArrow(context: DrawContext, x: Double, y: Double) {
@@ -576,6 +604,6 @@ enum class SymbolStyle(
 
 	abstract fun drawDiode(diode: OrientableRectangularVerticeView<*>, context: DrawContext)
 
-	abstract fun drawAnalogLED(led: OrientableRectangularVerticeView<*>, context: DrawContext)
+	abstract fun drawAnalogLED(led: AnalogLEDView, context: DrawContext)
 
 }

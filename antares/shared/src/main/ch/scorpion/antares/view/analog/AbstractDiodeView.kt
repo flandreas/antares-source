@@ -17,6 +17,10 @@ abstract class AbstractDiodeView(
         protected val SIZE = wInt(4)
     }
 
+    init {
+        modelExchanged(null)
+    }
+
     override fun modelExchanged(oldModel: Diode?) {
         super.modelExchanged(oldModel)
         addPortView(AnalogPortView(styleProvider, model.getPort(1), LENGTH, 0, Direction.WEST))
