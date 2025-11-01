@@ -6,9 +6,9 @@ import ch.scorpion.antares.view.OrientableLabeledRectangularVerticeView
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.gate.BoxGateView
 import ch.scorpion.antares.view.gate.CustomShapeContent
+import ch.scorpion.antares.view.gate.TriStateBufferGateView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
-import ch.scorpion.antares.view.gate.TriStateBufferGateView
 import ch.scorpion.jabbah.base.EnumProperty
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.System
@@ -24,6 +24,7 @@ import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
+import kotlin.math.PI
 
 /**
  * [SymbolStyle] represents international standards for drawing digital gates.
@@ -150,7 +151,11 @@ enum class SymbolStyle(
 		}
 
 		override fun drawDiode(diode: OrientableRectangularVerticeView<*>, context: DrawContext) {
-			Companion.drawDiode(diode,context, false)
+			Companion.drawDiode(diode, context, false)
+		}
+
+		override fun drawAnalogLED(led: OrientableRectangularVerticeView<*>, context: DrawContext) {
+			Companion.drawDiode(led, context, fill = false, led = true)
 		}
 	},
 
@@ -237,6 +242,10 @@ enum class SymbolStyle(
 			Companion.drawDiode(diode, context, true)
 		}
 
+		override fun drawAnalogLED(led: OrientableRectangularVerticeView<*>, context: DrawContext) {
+			Companion.drawDiode(led, context, fill = true, led = true)
+		}
+
 		override val orShapeConnectedPortViewLength: Int get() = (2 * SCALE * 0.35).toInt()
 	},
 
@@ -311,6 +320,10 @@ enum class SymbolStyle(
 			context: DrawContext
 		) {
 			EUROPEAN.drawDiode(diode, context)
+		}
+
+		override fun drawAnalogLED(led: OrientableRectangularVerticeView<*>, context: DrawContext) {
+			EUROPEAN.drawAnalogLED(led, context)
 		}
 	};
 
@@ -401,6 +414,13 @@ enum class SymbolStyle(
 			.lineTo(-0.5 * SCALE, -2.0 * SCALE)
 			.close()
 
+		private val LED_ARROW_PATH = System.createPath()
+			.moveTo(1.5 * SCALE, 0.0)
+			.lineTo(1.5 * SCALE, -0.35 * SCALE)
+			.lineTo(2.25 * SCALE, 0.0)
+			.lineTo(1.5 * SCALE, 0.35 * SCALE)
+			.close()
+
 		const val INDUCTOR_WIDTH = 6.0 * SCALE.toDouble()
 		const val INDUCTOR_HEIGHT_HALF = SCALE.toDouble()
 		val INDUCTOR_STROKE = RESISTOR_STROKE
@@ -480,7 +500,8 @@ enum class SymbolStyle(
 		protected fun drawDiode(
 			diode: OrientableRectangularVerticeView<*>,
 			context: DrawContext,
-			fill: Boolean
+			fill: Boolean,
+			led: Boolean = false
 		) {
 			// Anode
 			(diode.getPortView(diode.model.getPort(1)) as AbstractAntaresPortView<*>).prepareConnectionDrawContext(context)
@@ -496,6 +517,22 @@ enum class SymbolStyle(
 			(diode.getPortView(diode.model.getPort(2)) as AbstractAntaresPortView<*>).prepareConnectionDrawContext(context)
 			context.g.drawLine(LENGTH + 3.5 * SCALE, -1.5 * SCALE, LENGTH + 3.5 * SCALE, 1.5 * SCALE)
 			context.g.drawLine(LENGTH + 3.5 * SCALE, 0.0, LENGTH + 4.0 * SCALE, 0.0)
+
+			// LED
+			if (led) {
+				drawLEDArrow(context, LENGTH + 2.5 * SCALE, -1.25 * SCALE)
+				drawLEDArrow(context, LENGTH + 1.5 * SCALE, -2.0 * SCALE)
+			}
+		}
+
+		private fun drawLEDArrow(context: DrawContext, x: Double, y: Double) {
+			context.g.stroke = DrawStyleModule.styleProvider.getStyle(StyleType.ANNOTATION).stroke
+			context.translated(x, y) {
+				context.g.rotate(-PI * 5 / 16)
+				context.g.drawLine(0.0, 0.0, 1.5 * SCALE, 0.0)
+				context.g.fill(LED_ARROW_PATH)
+				context.g.rotate(PI * 5 / 16)
+			}
 		}
 	}
 
@@ -538,5 +575,7 @@ enum class SymbolStyle(
 	abstract fun drawInductor(inductor: OrientableRectangularVerticeView<*>, up: Boolean, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke)
 
 	abstract fun drawDiode(diode: OrientableRectangularVerticeView<*>, context: DrawContext)
+
+	abstract fun drawAnalogLED(led: OrientableRectangularVerticeView<*>, context: DrawContext)
 
 }

@@ -5,6 +5,7 @@ import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import kotlin.jvm.JvmStatic
 
 abstract class AbstractDiodeView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
@@ -12,7 +13,8 @@ abstract class AbstractDiodeView(
 ) : AbstractAnalogVerticeView<Diode>(styleProvider, model) {
 
     companion object {
-        private val SIZE = wInt(4)
+        @JvmStatic
+        protected val SIZE = wInt(4)
     }
 
     override fun modelExchanged(oldModel: Diode?) {
