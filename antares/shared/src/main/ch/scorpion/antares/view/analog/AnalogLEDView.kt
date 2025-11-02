@@ -49,10 +49,10 @@ class AnalogLEDView(
         private val DEFAULT_LIGHT_COLOR = LightColor.RED
 
         /** The current (A) at which the [AnalogLEDView] starts glowing. */
-        private const val DEF_MIN_GLOW_CURRENT = 0.0
+        private const val DEF_MIN_GLOW_CURRENT = 0.005
 
         /** The current (A) at which the [AnalogLEDView] reaches its maximum brightness. */
-        private const val DEF_MAX_GLOW_CURRENT = 0.1
+        private const val DEF_MAX_GLOW_CURRENT = 0.02
 
         /** The radius of the color gradient drawn as halo during simulation.*/
         val GRADIENT_RADIUS = 3.0 * SIZE / 4.0

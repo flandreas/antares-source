@@ -549,7 +549,7 @@ enum class SymbolStyle(
 			}
 
 			// Cathode
-			context.g.color = led.foregroundColor
+			context.g.color = context.choose(led.style.color).foregroundColor
 			context.g.drawLine(LENGTH + 3.5 * SCALE, -1.5 * SCALE, LENGTH + 3.5 * SCALE, 1.5 * SCALE)
 			context.g.drawLine(LENGTH + 3.5 * SCALE, 0.0, LENGTH + 4.0 * SCALE, 0.0)
 
