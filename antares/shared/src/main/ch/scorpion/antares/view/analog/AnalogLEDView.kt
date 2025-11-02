@@ -63,6 +63,7 @@ class AnalogLEDView(
         set(value) {
             require(value in 0.0..maxCurrent) { Translations.getString("library.element.LightBulb.minCurrent.error") }
             field = value
+            postControlViewSourceChangeEvent()
         }
 
     @Suppress("MemberVisibilityCanBePrivate") // Bean Reflection
@@ -70,6 +71,7 @@ class AnalogLEDView(
         set(value) {
             require(value > minCurrent) { Translations.getString("library.element.LightBulb.maxCurrent.error") }
             field = value
+            postControlViewSourceChangeEvent()
         }
 
     val executionLEDColor: Color get() = lightColor.gradient.at(

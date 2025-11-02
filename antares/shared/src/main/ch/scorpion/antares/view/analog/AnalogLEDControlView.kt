@@ -89,6 +89,7 @@ class AnalogLEDControlView(
         )
 
     override fun sourcePropertiesChanged(source: ControlViewSource<Diode>) {
+        super.sourcePropertiesChanged(source)
         if (source is AnalogLEDView) {
             copyControlViewProperties(source, this)
         }
@@ -102,5 +103,7 @@ class AnalogLEDControlView(
 
     private fun copyControlViewProperties(source: AnalogLEDView, dest: AnalogLEDControlView) {
         dest.lightColor = source.lightColor
+        dest.minCurrent = source.minCurrent
+        dest.maxCurrent = source.maxCurrent
     }
 }
