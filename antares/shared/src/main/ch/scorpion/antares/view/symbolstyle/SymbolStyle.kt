@@ -5,6 +5,7 @@ import ch.scorpion.antares.view.Look.SCALE
 import ch.scorpion.antares.view.OrientableLabeledRectangularVerticeView
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.analog.AnalogLEDView
+import ch.scorpion.antares.view.analog.AnalogLEDView.Companion.GRADIENT_RADIUS
 import ch.scorpion.antares.view.gate.BoxGateView
 import ch.scorpion.antares.view.gate.CustomShapeContent
 import ch.scorpion.antares.view.gate.TriStateBufferGateView
@@ -536,6 +537,9 @@ enum class SymbolStyle(
 				context.g.fill(DIODE_PATH)
 				context.g.color = led.foregroundColor
 				context.g.draw(DIODE_PATH)
+
+				context.g.paint = led.radialColorGradient
+				context.g.fillCircle(LENGTH + 2.0 * SCALE, 0.0, GRADIENT_RADIUS)
 			} else {
 				if (fill) {
 					context.g.fill(DIODE_PATH)
@@ -545,6 +549,7 @@ enum class SymbolStyle(
 			}
 
 			// Cathode
+			context.g.color = led.foregroundColor
 			context.g.drawLine(LENGTH + 3.5 * SCALE, -1.5 * SCALE, LENGTH + 3.5 * SCALE, 1.5 * SCALE)
 			context.g.drawLine(LENGTH + 3.5 * SCALE, 0.0, LENGTH + 4.0 * SCALE, 0.0)
 

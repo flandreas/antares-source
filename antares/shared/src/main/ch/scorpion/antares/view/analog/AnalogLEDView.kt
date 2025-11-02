@@ -3,9 +3,11 @@ package ch.scorpion.antares.view.analog
 import ch.scorpion.antares.model.analog.AnalogPort
 import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.model.analog.Diode
+import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.output.LightColorExpression
+import ch.scorpion.antares.view.output.LightColorRadialGradientCache
 import ch.scorpion.antares.view.output.LightEmitter
 import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
 import ch.scorpion.jabbah.base.Translations
@@ -14,14 +16,15 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.graphics.RadialColorGradient
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
-import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.ControlViewSourceProperty
+import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -50,6 +53,13 @@ class AnalogLEDView(
 
         /** The current (A) at which the [AnalogLEDView] reaches its maximum brightness. */
         private const val DEF_MAX_GLOW_CURRENT = 0.1
+
+        /** The radius of the color gradient drawn as halo during simulation.*/
+        val GRADIENT_RADIUS = 3.0 * SIZE / 4.0
+
+        private val GRADIENT_CACHE = LightColorRadialGradientCache(
+            Point2D(4.0 * Look.SCALE, 0.0),
+            GRADIENT_RADIUS)
     }
 
     @Suppress("MemberVisibilityCanBePrivate") // Bean Reflection
@@ -79,6 +89,9 @@ class AnalogLEDView(
     }
 
     /** ---- [AbstractVerticeView] */
+
+    val radialColorGradient: RadialColorGradient get() =
+        GRADIENT_CACHE.forLightColor(lightColor).forCenterColor(executionLEDColor)
 
     override fun drawImpl(context: DrawContext) {
         super.drawImpl(context)

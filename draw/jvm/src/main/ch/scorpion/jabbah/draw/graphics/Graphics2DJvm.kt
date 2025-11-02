@@ -383,13 +383,37 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
 
 	private fun toAwtPaint(paint: Paint): java.awt.Paint {
 		return when (paint) {
-			is Color -> toAwtColor(paint)
-			is LinearColorGradient -> GradientPaint(
-				Point2D.Float(paint.p1.x.toFloat(), paint.p1.y.toFloat()),
-				toAwtColor(paint.color1),
-				Point2D.Float(paint.p2.x.toFloat(), paint.p2.y.toFloat()),
-				toAwtColor(paint.color2))
-			else -> throw IllegalArgumentException("unsupported paint ${paint::class.simpleName}")
+			is Color -> {
+                toAwtColor(paint)
+            }
+			is LinearColorGradient -> {
+                GradientPaint(
+                    Point2D.Float(paint.p1.x.toFloat(), paint.p1.y.toFloat()),
+                    toAwtColor(paint.color1),
+                    Point2D.Float(paint.p2.x.toFloat(), paint.p2.y.toFloat()),
+                    toAwtColor(paint.color2))
+            }
+            is RadialColorGradient -> {
+                val fractions = FloatArray(2)
+                fractions[0] = 0.0f
+                fractions[1] = 1.0f
+                val colors: Array<java.awt.Color> = Array(2) {
+                    when (it) {
+                        0 -> toAwtColor(paint.centerColor)
+                        else -> toAwtColor(paint.perimeterColor)
+                    }
+                }
+                RadialGradientPaint(
+                    paint.center.x.toFloat(),
+                    paint.center.y.toFloat(),
+                    paint.radius.toFloat(),
+                    fractions,
+                    colors
+                )
+            }
+			else -> {
+                throw IllegalArgumentException("unsupported paint ${paint::class.simpleName}")
+            }
 		}
 	}
 
@@ -401,6 +425,12 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
 				color1 = fromAwtColor(paint.color1),
 				p2 = Point2D(paint.point2.x, paint.point2.y),
 				color2 = fromAwtColor(paint.color2))
+            is RadialGradientPaint -> RadialColorGradient(
+                Point2D(paint.centerPoint.x, paint.centerPoint.y),
+                paint.radius.toDouble(),
+                fromAwtColor(paint.colors[0]),
+                fromAwtColor(paint.colors[1])
+            )
 			else -> throw java.lang.IllegalArgumentException("unsupported AWT paint ${paint::class.simpleName}")
 		}
 	}
