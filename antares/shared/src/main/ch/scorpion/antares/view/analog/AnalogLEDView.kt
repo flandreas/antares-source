@@ -19,13 +19,10 @@ import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.RadialColorGradient
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.ControlViewSourceProperty
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
-import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -37,8 +34,7 @@ class AnalogLEDView(
     eventBus: EventBus = BaseModule.eventBus
 ) : AbstractDiodeView(styleProvider, model),
     LightEmitter,
-    ControlViewSource<Diode>,
-    ControlView<Diode>
+    ControlViewSource<Diode>
 {
 
     companion object {
@@ -49,10 +45,10 @@ class AnalogLEDView(
         private val DEFAULT_LIGHT_COLOR = LightColor.RED
 
         /** The current (A) at which the [AnalogLEDView] starts glowing. */
-        private const val DEF_MIN_GLOW_CURRENT = 0.005
+        const val DEF_MIN_GLOW_CURRENT = 0.005
 
         /** The current (A) at which the [AnalogLEDView] reaches its maximum brightness. */
-        private const val DEF_MAX_GLOW_CURRENT = 0.02
+        const val DEF_MAX_GLOW_CURRENT = 0.02
 
         /** The radius of the color gradient drawn as halo during simulation.*/
         val GRADIENT_RADIUS = 3.0 * SIZE / 4.0
@@ -123,40 +119,10 @@ class AnalogLEDView(
 
     override val controlId: String get() = "analogLED:${model.id}"
 
-    override val controlName: String get() = super.controlName
-
     override val iconPath: String get() = BaseModule.properties.getString(PROP_ICON_PATH)
 
-    override fun createControlView(): ControlView<Diode> {
-        val clone = AnalogLEDView(styleProvider, model, lightColor)
-        clone.isShowPortViews = false
-        clone.location = Point2D.ZERO
-        copyControlViewProperties(this, clone)
-        return clone
-    }
-
-    /** --- [ControlView] */
-
-    override var isActiveControlView: Boolean = false
-
-    override fun writeModelProperties(writer: StoreWriter) { }
-
-    override fun readModelProperties(reader: StoreReader) { }
-
-    override fun sourcePropertiesChanged(source: ControlViewSource<Diode>) {
-        if (source is AnalogLEDView) {
-            copyControlViewProperties(source, this)
-        }
-    }
-
-    override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
-        this.model = link.getLinkedObject(startGraph) as Diode
-    }
-
-    private fun copyControlViewProperties(source: AnalogLEDView, dest: AnalogLEDView) {
-        dest.lightColor = source.lightColor
-        dest.orientation = source.orientation
-    }
+    override fun createControlView(): ControlView<Diode> =
+        AnalogLEDControlView(styleProvider, model, lightColor, minCurrent, maxCurrent)
 
     /** ---- [LightEmitter]  */
 

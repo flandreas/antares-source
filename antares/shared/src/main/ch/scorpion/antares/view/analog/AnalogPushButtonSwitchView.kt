@@ -6,7 +6,7 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 
 class AnalogPushButtonSwitchView(
-	override var styleProvider: StyleProvider =  DrawStyleModule.styleProvider,
+	styleProvider: StyleProvider =  DrawStyleModule.styleProvider,
 	model: AnalogSwitch = AnalogSwitch()
 ) : AbstractPushButtonSwitchView<AnalogSwitch>(styleProvider, model) {
 

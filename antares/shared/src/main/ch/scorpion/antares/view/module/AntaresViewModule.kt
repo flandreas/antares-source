@@ -407,6 +407,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("analogRelayView", AnalogRelayView::class)
 		typeMap.register("diodeView", DiodeView::class)
 		typeMap.register("analogLEDView", AnalogLEDView::class)
+		typeMap.register("analogLEDControlView", AnalogLEDControlView::class)
 		typeMap.register("analogPushButtonSwitchView", AnalogPushButtonSwitchView::class)
 	}
 
@@ -492,6 +493,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogRelayView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, DiodeView::class) { SelectedColorSelectionModel(it) }
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogLEDView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, AnalogLEDControlView::class) { LEDViewSelectionModel(it as AnalogLEDControlView) }
 
 		factory.register(SelectionDrawingStrategy.REPLACE, FSMState::class) { RectangularReplaceSelectionModel(it as AbstractRectangularComponent, RectangularReplaceSelectionModel.DrawStrategy.COMPONENT) }
 		factory.register(SelectionDrawingStrategy.REPLACE, FSMTransition::class) { SelectedColorSelectionModel(it) }

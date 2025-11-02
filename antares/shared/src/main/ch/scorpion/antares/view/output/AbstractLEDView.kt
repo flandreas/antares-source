@@ -32,6 +32,7 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.ControlViewSourceProperty
+import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -45,8 +46,11 @@ abstract class AbstractLEDView<T: Vertice>(
 	model: T,
 	square: Boolean = false,
 	private val eventBus: EventBus = BaseModule.eventBus
-) : OrientableRectangularVerticeView<T>(styleProvider, model), ControlView<T>, ControlViewSource<T>, Labeled {
-
+) : OrientableRectangularVerticeView<T>(styleProvider, model),
+	ControlView<T>,
+	ControlViewSource<T>,
+	Labeled
+{
 	companion object {
 		const val LABEL_DIST = Look.SCALE
 		private val DEFAULT_SIZE = Size.LARGE
@@ -104,14 +108,18 @@ abstract class AbstractLEDView<T: Vertice>(
 
 	override fun modelExchanged(oldModel: T?) {
 		super.modelExchanged(oldModel)
-		val portView = DigitalPortView(
+		createPortView().let {
+            it.setLocation(it.unconnectedLength, 0)
+            addPortView(it)
+        }
+		updateLabel()
+	}
+
+	protected open fun createPortView(): PortView<*> =
+		DigitalPortView(
 			styleProvider = styleProvider,
 			port = model.getInput(),
 			direction = Direction.WEST)
-		portView.setLocation(portView.unconnectedLength, 0)
-		addPortView(portView)
-		updateLabel()
-	}
 
 	/** ---- [Labeled] */
 
@@ -171,9 +179,7 @@ abstract class AbstractLEDView<T: Vertice>(
 		}
 	}
 
-	override val controlName: String get() = super.controlName
-
-	protected fun copyControlViewProperties(source: AbstractLEDView<*>, dest: AbstractLEDView<*>) {
+	protected open fun copyControlViewProperties(source: AbstractLEDView<*>, dest: AbstractLEDView<*>) {
 		dest.name = source.name
 		dest.square = source.square
 		dest.size = source.size
