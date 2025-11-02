@@ -1,5 +1,7 @@
 package ch.scorpion.antares.view.symbolstyle
 
+import ch.scorpion.antares.model.analog.AnalogPort
+import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.Look.SCALE
 import ch.scorpion.antares.view.OrientableLabeledRectangularVerticeView
@@ -527,7 +529,6 @@ enum class SymbolStyle(
 			fill: Boolean
 		) {
 			// Anode
-			//(led.getPortView(led.model.getPort(1)) as AbstractAntaresPortView<*>).prepareConnectionDrawContext(context)
 			context.g.color = context.choose(led.style.color).foregroundColor
 			context.g.drawLine(LENGTH.toDouble(), 0.0, LENGTH + 3.5 * SCALE, 0.0)
 			context.g.stroke = led.stroke
@@ -538,8 +539,10 @@ enum class SymbolStyle(
 				context.g.color = led.foregroundColor
 				context.g.draw(DIODE_PATH)
 
-				context.g.paint = led.radialColorGradient
-				context.g.fillCircle(LENGTH + 2.0 * SCALE, 0.0, GRADIENT_RADIUS)
+				if ((led.model.getPort<AnalogSignal>() as AnalogPort).current >= led.minCurrent) {
+					context.g.paint = led.radialColorGradient
+					context.g.fillCircle(LENGTH + 2.0 * SCALE, 0.0, GRADIENT_RADIUS)
+				}
 			} else {
 				if (fill) {
 					context.g.fill(DIODE_PATH)

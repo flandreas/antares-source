@@ -4,6 +4,8 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.graphics.RadialColorGradientCache
 import ch.scorpion.jabbah.draw.graphics.RadialColorGradient
 import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.style.DrawStyleModule
+import ch.scorpion.jabbah.draw.style.StyleType
 
 /**
  * A cache that yields a [RadialColorGradientCache] for a [LightColor].
@@ -13,8 +15,9 @@ import ch.scorpion.jabbah.draw.graphics.Color
  * to render a halo, so every type of component will maintain its own instance of [LightColorRadialGradientCache].
  */
 class LightColorRadialGradientCache(
-    val center: Point2D,
-    val radius: Double,
+    private val center: Point2D,
+    private val radius: Double,
+    private val backgroundColor: Color = DrawStyleModule.styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
 ) {
     private val gradientCaches = mutableMapOf<LightColor, RadialColorGradientCache>()
 
@@ -29,7 +32,7 @@ class LightColorRadialGradientCache(
             RadialColorGradientCache(
                 center,
                 radius,
-                lightColor.gradient.at(0.0f).withAlpha(0)
+                backgroundColor.withAlpha(0)
             )
         }
 }
