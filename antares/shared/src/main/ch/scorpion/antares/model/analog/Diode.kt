@@ -7,6 +7,7 @@ import ch.scorpion.antares.view.analog.engine.AnalogElementMixin
 import ch.scorpion.jabbah.base.math.near
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.element.AbstractGraphElement
 import ch.scorpion.jabbah.graph.model.vertice.EmptyVerticeCalculator
 import kotlin.math.*
@@ -20,6 +21,17 @@ class Diode : AbstractAnalogTwoPortVertice<Diode>(
     "library.element.AnalogDiode",
     AnalogElementMixin(true)
 ), LightEmitterModel {
+
+    companion object {
+
+        /**
+         * The [GraphElementEvent.reason] sent when this [Diode]'s current has changed.
+         * Used in application like LED views of this [Diode] that need to update their color
+         * depending on the current.
+         */
+        const val REASON_CURRENT = "DiodeCurrent"
+    }
+
     private val zVoltage = 0.0
     private val leakage = 1e-14
     private val fwDrop = 0.80
@@ -29,6 +41,11 @@ class Diode : AbstractAnalogTwoPortVertice<Diode>(
     private val vCrit = vt * ln(vt / (sqrt(2.0) * leakage))
 
     private var lastVoltDiff = 0.0
+
+    override fun setInternalCurrent(index: Int, current: Double) {
+        super.setInternalCurrent(index, current)
+        stateChanged(null, REASON_CURRENT)
+    }
 
     /** ---- [AbstractGraphElement] */
 

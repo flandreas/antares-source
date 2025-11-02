@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.port.PortView
@@ -36,6 +37,15 @@ class AnalogLEDControlView(
 
     init {
         isShowPortViews = false
+    }
+
+    override fun handleStateChanged(event: GraphElementEvent) {
+        if (event.reason == Diode.REASON_CURRENT) {
+            invalidate()
+            validate()
+        } else {
+            super.handleStateChanged(event)
+        }
     }
 
     /** ---- [Storable] */
