@@ -7,10 +7,10 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import kotlin.jvm.JvmStatic
 
-abstract class AbstractDiodeView(
+abstract class AbstractDiodeView<T: Diode>(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-    model: Diode = Diode()
-) : AbstractAnalogVerticeView<Diode>(styleProvider, model) {
+    model: T
+) : AbstractAnalogVerticeView<T>(styleProvider, model) {
 
     companion object {
         @JvmStatic
@@ -21,7 +21,7 @@ abstract class AbstractDiodeView(
         modelExchanged(null)
     }
 
-    override fun modelExchanged(oldModel: Diode?) {
+    override fun modelExchanged(oldModel: T?) {
         super.modelExchanged(oldModel)
         addPortView(AnalogPortView(styleProvider, model.getPort(1), LENGTH, 0, Direction.WEST))
         addPortView(AnalogPortView(styleProvider, model.getPort(2), LENGTH + SIZE, 0, Direction.EAST))

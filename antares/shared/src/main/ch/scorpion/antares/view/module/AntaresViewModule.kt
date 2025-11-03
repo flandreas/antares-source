@@ -304,6 +304,7 @@ object AntaresViewModule : AbstractModule() {
 		properties.set(AnalogSwitchView.PROP_ICON_PATH, "/img/real-switch.png")
 		properties.set(AnalogDoubleThrowSwitchView.PROP_ICON_PATH, "/img/double-throw-switch.png")
 		properties.set(AnalogLEDView.PROP_ICON_PATH, "/img/light-bulb.png") // TODO: Icon Janis
+		properties.set(AnalogLEDView.PROP_DRAW_HALO, true)
 
 		properties.set(LogicGateView.PROP_DATA_FLOW_ENABLED, true)
 		properties.set(AbstractTransistorView.PROP_TRANSISTOR_CIRCLE, true)

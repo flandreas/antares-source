@@ -1,8 +1,8 @@
 package ch.scorpion.antares.view.analog
 
+import ch.scorpion.antares.model.analog.AnalogLED
 import ch.scorpion.antares.model.analog.AnalogPort
 import ch.scorpion.antares.model.analog.AnalogSignal
-import ch.scorpion.antares.model.analog.Diode
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.output.LightColor
@@ -10,6 +10,7 @@ import ch.scorpion.antares.view.output.LightColorExpression
 import ch.scorpion.antares.view.output.LightColorRadialGradientCache
 import ch.scorpion.antares.view.output.LightEmitter
 import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -29,16 +30,20 @@ import ch.scorpion.jabbah.io.StoreWriter
 
 class AnalogLEDView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-    model: Diode = Diode(),
+    model: AnalogLED = AnalogLED(),
     lightColor: LightColor = DEFAULT_LIGHT_COLOR,
     eventBus: EventBus = BaseModule.eventBus
-) : AbstractDiodeView(styleProvider, model),
+) : AbstractDiodeView<AnalogLED>(styleProvider, model),
     LightEmitter,
-    ControlViewSource<Diode>
+    ControlViewSource<AnalogLED>
 {
 
     companion object {
+
         const val PROP_ICON_PATH = "ch.scorpion.antares.view.analog.AnalogLEDView.iconPath"
+
+        /** The name of the [Boolean] property in [Properties] that determines whether the halo around the LED bulb is drawn. */
+        const val PROP_DRAW_HALO = "antares.view.AnalogLEDView.drawHalo"
 
         private val NEGATIVE_HEIGHT = hInt(4)
 
@@ -80,7 +85,7 @@ class AnalogLEDView(
             minCurrent,
             maxCurrent))
 
-    override fun modelExchanged(oldModel: Diode?) {
+    override fun modelExchanged(oldModel: AnalogLED?) {
         super.modelExchanged(oldModel)
         // Overwrite bounds to incorporate LED arrows
         setBounds(LENGTH, -NEGATIVE_HEIGHT, SIZE, SIZE / 2 + NEGATIVE_HEIGHT)
@@ -123,7 +128,7 @@ class AnalogLEDView(
 
     override val iconPath: String get() = BaseModule.properties.getString(PROP_ICON_PATH)
 
-    override fun createControlView(): ControlView<Diode> =
+    override fun createControlView(): ControlView<AnalogLED> =
         AnalogLEDControlView(styleProvider, model, lightColor, minCurrent, maxCurrent)
 
     /** ---- [LightEmitter]  */

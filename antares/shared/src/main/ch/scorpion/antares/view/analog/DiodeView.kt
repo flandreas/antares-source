@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 class DiodeView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     model: Diode = Diode()
-) : AbstractDiodeView(styleProvider, model) {
+) : AbstractDiodeView<Diode>(styleProvider, model) {
 
     override fun drawImpl(context: DrawContext) {
         super.drawImpl(context)

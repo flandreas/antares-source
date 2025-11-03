@@ -539,7 +539,9 @@ enum class SymbolStyle(
 				context.g.color = led.foregroundColor
 				context.g.draw(DIODE_PATH)
 
-				if ((led.model.getPort<AnalogSignal>() as AnalogPort).current >= led.minCurrent) {
+				if ((led.model.getPort<AnalogSignal>() as AnalogPort).current >= led.minCurrent
+					&& BaseModule.properties.getBoolean(AnalogLEDView.PROP_DRAW_HALO)
+				) {
 					context.g.paint = led.radialColorGradient
 					context.g.fillCircle(LENGTH + 2.0 * SCALE, 0.0, GRADIENT_RADIUS)
 				}

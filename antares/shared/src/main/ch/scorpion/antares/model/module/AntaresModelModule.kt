@@ -193,6 +193,7 @@ object AntaresModelModule : AbstractModule() {
 		typeMap.register("analogDTS", AnalogDoubleThrowSwitch::class)
 		typeMap.register("analogRelay", AnalogRelay::class)
 		typeMap.register("diode", Diode::class)
+		typeMap.register("analogLED", AnalogLED::class)
 	}
 
 	private fun registerGraphParamTypes() {

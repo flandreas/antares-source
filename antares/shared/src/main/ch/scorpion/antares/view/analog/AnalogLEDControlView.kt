@@ -1,8 +1,8 @@
 package ch.scorpion.antares.view.analog
 
+import ch.scorpion.antares.model.analog.AnalogLED
 import ch.scorpion.antares.model.analog.AnalogPort
 import ch.scorpion.antares.model.analog.AnalogSignal
-import ch.scorpion.antares.model.analog.Diode
 import ch.scorpion.antares.view.output.AbstractLEDView
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.jabbah.base.geom.Direction
@@ -23,24 +23,18 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 class AnalogLEDControlView(
     styleProvider: StyleProvider =  DrawStyleModule.styleProvider,
-    model: Diode = Diode(),
-    lightColor: LightColor = LightColor.RED,
-    minCurrent: Double = AnalogLEDView.DEF_MIN_GLOW_CURRENT,
-    maxCurrent: Double = AnalogLEDView.DEF_MAX_GLOW_CURRENT
-) : AbstractLEDView<Diode>(styleProvider, model) {
-
-    private var lightColor: LightColor = lightColor
-
-    private var minCurrent: Double = minCurrent
-
-    private var maxCurrent: Double = maxCurrent
+    model: AnalogLED = AnalogLED(),
+    private var lightColor: LightColor = LightColor.RED,
+    private var minCurrent: Double = AnalogLEDView.DEF_MIN_GLOW_CURRENT,
+    private var maxCurrent: Double = AnalogLEDView.DEF_MAX_GLOW_CURRENT
+) : AbstractLEDView<AnalogLED>(styleProvider, model) {
 
     init {
         isShowPortViews = false
     }
 
     override fun handleStateChanged(event: GraphElementEvent) {
-        if (event.reason == Diode.REASON_CURRENT) {
+        if (event.reason == AnalogLED.REASON_CURRENT) {
             invalidate()
             validate()
         } else {
@@ -74,7 +68,7 @@ class AnalogLEDControlView(
 
     override val iconPath: String get() = BaseModule.properties.getString(AnalogLEDView.PROP_ICON_PATH)
 
-    override fun createControlView(): ControlView<Diode> {
+    override fun createControlView(): ControlView<AnalogLED> {
         throw UnsupportedOperationException()
     }
 
@@ -88,7 +82,7 @@ class AnalogLEDControlView(
                 maxCurrent)
         )
 
-    override fun sourcePropertiesChanged(source: ControlViewSource<Diode>) {
+    override fun sourcePropertiesChanged(source: ControlViewSource<AnalogLED>) {
         super.sourcePropertiesChanged(source)
         if (source is AnalogLEDView) {
             copyControlViewProperties(source, this)
