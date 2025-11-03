@@ -23,6 +23,7 @@ import ch.scorpion.antares.view.*
 import ch.scorpion.antares.view.addressable.MemoryStorableIdentificationEditor
 import ch.scorpion.antares.view.addressable.MemoryStorableIdentificationRenderer
 import ch.scorpion.antares.view.analog.AnalogEdgeView
+import ch.scorpion.antares.view.analog.AnalogLEDView
 import ch.scorpion.antares.view.analog.CurrentFlowAnimationSpeedSlider
 import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.antares.view.container.DigitalContainerEditor
@@ -584,13 +585,17 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 				minValue = AnalogEdgeView.MIN_SPEED,
 				maxValue = AnalogEdgeView.MAX_SPEED))
 
-			add(
-				FloatPreference(
+			add(FloatPreference(
 				id = AnalogCircuitAnalysis.PROP_TIME_STEP,
 				nameKey = "antares.analog.timeStep.name",
 				minValue = AnalogCircuitAnalysis.MIN_TIME_STEP,
 				maxValue = AnalogCircuitAnalysis.MAX_TIME_STEP)
 			)
+
+			add(BooleanPreference(
+				id = AnalogLEDView.PROP_DRAW_HALO,
+				nameKey = "antares.preference.analogLED.drawHalo"
+			))
 		}
 
 	private fun configureMetaGraphIcons() {
