@@ -32,7 +32,7 @@ class LightColorRadialGradientCache(
             RadialColorGradientCache(
                 center,
                 radius,
-                backgroundColor.withAlpha(0)
+                backgroundColor
             )
         }
 }

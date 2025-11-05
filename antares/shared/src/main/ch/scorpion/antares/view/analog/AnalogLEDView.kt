@@ -17,7 +17,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.draw.graphics.RadialColorGradient
+import ch.scorpion.jabbah.draw.graphics.Paint
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.view.ControlView
@@ -93,10 +93,20 @@ class AnalogLEDView(
 
     /** ---- [AbstractVerticeView] */
 
-    val radialColorGradient: RadialColorGradient get() =
-        GRADIENT_CACHE.forLightColor(lightColor).forCenterColor(executionLEDColor)
+    /**
+     * The [Paint] for drawing a halo around this [AnalogLEDView]. This is typically some
+     * gradient [Paint] based on the current [executionLEDColor].
+     */
+    val haloPaint: Paint get() {
+        val factor = LightBulbView.getExecutionLightFactor(
+            (model.getPort<AnalogSignal>() as AnalogPort).current,
+            minCurrent,
+            maxCurrent
+        )
+        return GRADIENT_CACHE.forLightColor(lightColor).forFactoredColorGradient(lightColor.gradient, factor)
+    }
 
-    override fun drawImpl(context: DrawContext) {
+        override fun drawImpl(context: DrawContext) {
         super.drawImpl(context)
 
         AntaresViewModule.currentSymbolStyle.symbolStyle.drawAnalogLED(this, context)

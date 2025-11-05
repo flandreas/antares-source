@@ -63,6 +63,11 @@ class LightBulbView(
 		/** The current (A) at which the [LightBulbView] reaches its maximum brightness. */
 		private const val DEF_MAX_GLOW_CURRENT = 0.02
 
+		/**
+		 * A value between 0.0 and 1.0 indicating where [current] lies in relation to [minCurrent] and [maxCurrent].
+		 * If 0.0 is returned, [current] is [minCurrent] or smaller. If 1.0 is returned, [current] is [maxCurrent] or larger.
+		 * Can be used for creating a color gradient for painting the [LightBulbView] (or similar devices) during execution.
+		 */
 		fun getExecutionLightFactor(
 			current: Double,
 			minCurrent: Double,

@@ -19,17 +19,23 @@ data class RadialColorGradient(
 class RadialColorGradientCache(
     val center: Point2D,
     val radius: Double,
-    val perimeterColor: Color
+    val backgroundColor: Color
 ) {
-    private val gradients = mutableMapOf<Color, RadialColorGradient>()
+    private val cache = mutableMapOf<Int, Paint>()
 
-    fun forCenterColor(centerColor: Color): RadialColorGradient =
-        gradients.getOrPut(centerColor) {
+    private val backgroundWithAlphaColor = backgroundColor.withAlpha(0)
+
+    fun forFactoredColorGradient(gradient: ColorGradient, factor: Float): Paint {
+        val factorInt = (factor * 100).toInt()
+        val alpha = (factor * 255).toInt()
+        return cache.getOrPut(factorInt) {
+            val centerColor = gradient.at(1.0f)
             RadialColorGradient(
                 center,
                 radius,
-                centerColor,
-                perimeterColor
+                centerColor.withAlpha(alpha),
+                backgroundWithAlphaColor
             )
         }
+    }
 }
