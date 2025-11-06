@@ -538,13 +538,6 @@ enum class SymbolStyle(
 				context.g.fill(DIODE_PATH)
 				context.g.color = led.foregroundColor
 				context.g.draw(DIODE_PATH)
-
-				if ((led.model.getPort<AnalogSignal>() as AnalogPort).current >= led.minCurrent
-					&& BaseModule.properties.getBoolean(AnalogLEDView.PROP_DRAW_HALO)
-				) {
-					context.g.paint = led.haloPaint
-					context.g.fillCircle(LENGTH + 2.0 * SCALE, 0.0, GRADIENT_RADIUS)
-				}
 			} else {
 				if (fill) {
 					context.g.fill(DIODE_PATH)
@@ -561,6 +554,16 @@ enum class SymbolStyle(
 			// Arrows
 			drawLEDArrow(context, LENGTH + 2.5 * SCALE, -1.25 * SCALE)
 			drawLEDArrow(context, LENGTH + 1.5 * SCALE, -2.0 * SCALE)
+
+			if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+				// Halo
+				if ((led.model.getPort<AnalogSignal>() as AnalogPort).current >= led.minCurrent
+					&& BaseModule.properties.getBoolean(AnalogLEDView.PROP_DRAW_HALO)
+				) {
+					context.g.paint = led.haloPaint
+					context.g.fillCircle(LENGTH + 2.0 * SCALE, 0.0, GRADIENT_RADIUS)
+				}
+			}
 		}
 
 		private fun drawLEDArrow(context: DrawContext, x: Double, y: Double) {

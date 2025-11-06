@@ -411,6 +411,15 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
                     colors
                 )
             }
+            is MultiRadialColorGradient -> {
+                RadialGradientPaint(
+                    paint.center.x.toFloat(),
+                    paint.center.y.toFloat(),
+                    paint.radius.toFloat(),
+                    paint.fractions,
+                    paint.colors.map { toAwtColor(it) }.toTypedArray()
+                )
+            }
 			else -> {
                 throw IllegalArgumentException("unsupported paint ${paint::class.simpleName}")
             }
