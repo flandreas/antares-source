@@ -482,19 +482,30 @@ enum class SymbolStyle(
 			context: DrawContext,
 			fill: Boolean
 		) {
+			if (diode.shadow) {
+				DropShadow.draw(context, diode.transparency) {
+					context.g.fill(DIODE_PATH)
+				}
+			}
+
 			// Anode
 			(diode.getPortView(diode.model.getPort(1)) as AbstractAntaresPortView<*>).prepareConnectionDrawContext(context)
 			context.g.drawLine(LENGTH.toDouble(), 0.0, LENGTH + 3.5 * SCALE, 0.0)
 			context.g.stroke = diode.stroke
 			if (fill) {
+				context.g.color = context.chooseForeground(diode.color.foregroundColor)
 				context.g.fill(DIODE_PATH)
 			} else {
+				context.g.color = context.chooseBackground(DrawStyleModule.styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor)
+				context.g.fill(DIODE_PATH)
+				context.g.color = context.chooseForeground(diode.color.foregroundColor)
 				context.g.draw(DIODE_PATH)
 			}
 
 			// Cathode
-			(diode.getPortView(diode.model.getPort(2)) as AbstractAntaresPortView<*>).prepareConnectionDrawContext(context)
+			context.g.stroke = diode.stroke
 			context.g.drawLine(LENGTH + 3.5 * SCALE, -1.5 * SCALE, LENGTH + 3.5 * SCALE, 1.5 * SCALE)
+			(diode.getPortView(diode.model.getPort(2)) as AbstractAntaresPortView<*>).prepareConnectionDrawContext(context)
 			context.g.drawLine(LENGTH + 3.5 * SCALE, 0.0, LENGTH + 4.0 * SCALE, 0.0)
 		}
 	}
