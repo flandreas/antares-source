@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.event.MouseEvent
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.polyline.Polyline
 import ch.scorpion.jabbah.edit.Component
@@ -14,6 +15,7 @@ import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.Tool
 import ch.scorpion.jabbah.edit.app.DrawingAppService
 import ch.scorpion.jabbah.edit.model.AbstractComponentTool
+import ch.scorpion.jabbah.edit.model.ComponentMessage
 import ch.scorpion.jabbah.edit.module.EditModule
 import kotlin.properties.Delegates
 
@@ -67,12 +69,28 @@ class PolylineTool(
 			// add the dangling point that will be moved around
 			instance!!.addPoint(x + offset.x, y + offset.y)
 		} else if (e.clickCount == 2) {
-			instance!!.removePoint(instance!!.pointsCount - 1)
+			if (instance == null) {
+				// GitHub #1079 (NPE). Scenario not reproducible.
+				cancel()
+			} else {
+				instance!!.removePoint(instance!!.pointsCount - 1)
 
-			addComponent((addedComponent))
+				if (instance!!.pointsCount == 1) {
+					// The user double-clicked right away. Don't add a 1-point polyline to the drawing.
+					// Instead, post a message to instruct the user.
+					BaseModule.eventBus.post(
+						ComponentMessage(
+							source = null,
+							messageKey = "edit.tool.polyline.empty.error.text"
+						)
+					)
+				} else {
+					addComponent(addedComponent)
+				}
 
-			editor.toolDone()
-			instance = null
+				editor.toolDone()
+				instance = null
+			}
 		}
 	}
 

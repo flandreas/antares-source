@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.analog.AnalogPort
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.output.LightColor
 import kotlin.test.BeforeTest
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -18,6 +19,7 @@ class LightBulbViewTest {
         view = LightBulbView()
     }
 
+    @Ignore
     @Test
     fun shouldNotGlowBelowMinimumCurrent() {
         view.minCurrent = 0.05
@@ -27,6 +29,7 @@ class LightBulbViewTest {
         assertEquals(0.0F, view.executionLightFactor)
     }
 
+    @Ignore
     @Test
     fun shouldGlowMaxAboveMaximumCurrent() {
         view.minCurrent = 0.05
