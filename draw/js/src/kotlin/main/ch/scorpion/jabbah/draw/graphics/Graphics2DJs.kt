@@ -26,7 +26,7 @@ class Graphics2DJs(
 		}
 
 		private fun toJsFontName(font: Font): String {
-			return LogicalFontFamily.values()
+			return LogicalFontFamily.entries
 				.firstOrNull { it.name == font.family.fontName }
 				?.javaName
 				?: LogicalFontFamily.SANS_SERIF.jsName
@@ -124,7 +124,14 @@ class Graphics2DJs(
 				is Color -> color = value
 				is LinearColorGradient -> {
 					field = value
-					toJsGradient(value).also {
+					toLinearJsGradient(value).also {
+						ctx.fillStyle = it
+						ctx.strokeStyle = it
+					}
+				}
+				is RadialColorGradient -> {
+					field = value
+					toRadialJsGradient(value).also {
 						ctx.fillStyle = it
 						ctx.strokeStyle = it
 					}
@@ -305,10 +312,17 @@ class Graphics2DJs(
 
 	/** ---- [Graphics2DJs] */
 
-	private fun toJsGradient(gradient: LinearColorGradient): CanvasGradient {
+	private fun toLinearJsGradient(gradient: LinearColorGradient): CanvasGradient {
 		val jsGradient = ctx.createLinearGradient(gradient.p1.x, gradient.p1.y, gradient.p2.x, gradient.p2.y)
 		jsGradient.addColorStop(0.0, toJsColor(gradient.color1))
 		jsGradient.addColorStop(1.0, toJsColor(gradient.color2))
+		return jsGradient
+	}
+
+	private fun toRadialJsGradient(gradient: RadialColorGradient): CanvasGradient {
+		val jsGradient = ctx.createRadialGradient(gradient.center.x, gradient.center.y, 0.0, gradient.center.x, gradient.center.y, gradient.radius)
+		jsGradient.addColorStop(0.0, toJsColor(gradient.centerColor))
+		jsGradient.addColorStop(1.0, toJsColor(gradient.perimeterColor))
 		return jsGradient
 	}
 
