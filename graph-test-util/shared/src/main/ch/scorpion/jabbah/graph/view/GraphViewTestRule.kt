@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.edit.auth.DesktopUserHolder
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.select.EditSelectModule
 import ch.scorpion.jabbah.edit.select.SelectedColorSelectionModel
+import ch.scorpion.jabbah.edit.select.selectedColorSelectionModelFactory
 import ch.scorpion.jabbah.graph.container.PortViewComponent
 import ch.scorpion.jabbah.graph.model.TestControlVertice
 import ch.scorpion.jabbah.graph.model.TestVertice
@@ -56,11 +57,7 @@ object GraphViewTestRule {
 		IOModule.typeMap.register("portViewComponent", PortViewComponent::class)
 		IOModule.typeMap.register("subGraphPortImpl", SubGraphPortImpl::class)
 
-		EditSelectModule.selectionModelFactory.register(SelectionDrawingStrategy.REPLACE, TestVerticeView::class) {
-            SelectedColorSelectionModel(
-                it
-            )
-        }
+		EditSelectModule.selectionModelFactory.register(SelectionDrawingStrategy.REPLACE, TestVerticeView::class, selectedColorSelectionModelFactory)
 
 		EditAuthModule.userHolder = DesktopUserHolder(DesktopUser.Companion.developer)
 

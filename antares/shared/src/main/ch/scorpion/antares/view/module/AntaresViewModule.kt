@@ -413,91 +413,91 @@ object AntaresViewModule : AbstractModule() {
 	}
 
 	private fun configureSelectionModels(factory: SelectionModelFactory) {
-		factory.register(SelectionDrawingStrategy.REPLACE, DigitalNodeView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, DigitalPortViewComponent::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, DigitalSignalSourceControlView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, DigitalNodeView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, DigitalPortViewComponent::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, DigitalSignalSourceControlView::class, selectedColorSelectionModelFactory)
 
-		factory.register(SelectionDrawingStrategy.REPLACE, LabelComponent::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, LabelComponent::class, selectedColorSelectionModelFactory)
 		factory.register(SelectionDrawingStrategy.REPLACE, DigitalEdgeView::class) { EdgeViewReplaceSelectionModel(it as EdgeView<*>) }
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogEdgeView::class) { EdgeViewReplaceSelectionModel(it as EdgeView<*>) }
 
-		factory.register(SelectionDrawingStrategy.REPLACE, BidirectionalSplitterView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, SplitterView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, ConcentratorView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, ProbeView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, ConstantView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, TunnelView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, BreakView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, PullResistorView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, TransistorView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, GroundView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, PowerView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, WireTapView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, PowerOnResetView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, BidirectionalSplitterView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, SplitterView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, ConcentratorView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, ProbeView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, ConstantView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, TunnelView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, BreakView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, PullResistorView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, TransistorView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, GroundView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, PowerView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, WireTapView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, PowerOnResetView::class, selectedColorSelectionModelFactory)
 
-		factory.register(SelectionDrawingStrategy.REPLACE, LogicGateView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, TriStateBufferGateView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, DelayGateView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, LogicGateView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, TriStateBufferGateView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, DelayGateView::class, selectedColorSelectionModelFactory)
 
 		factory.register(SelectionDrawingStrategy.REPLACE, SwitchView::class) { RectangularVerticeViewSelectionModel(it as SwitchView) }
 		factory.register(SelectionDrawingStrategy.REPLACE, ImageSwitchView::class) { RectangularVerticeViewSelectionModel(it as ImageSwitchView) }
-		factory.register(SelectionDrawingStrategy.REPLACE, DipSwitchView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, ClockView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, ClockControlView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, DigitalCircuitInOutView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, KeyboardView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, TerminalView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, JoystickView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, RealSwitchView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, VideoRamView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, DoubleThrowSwitchView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, DipSwitchView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, ClockView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, ClockControlView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, DigitalCircuitInOutView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, KeyboardView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, TerminalView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, JoystickView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, RealSwitchView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, VideoRamView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, DoubleThrowSwitchView::class, selectedColorSelectionModelFactory)
 
 		factory.register(SelectionDrawingStrategy.REPLACE, LEDView::class) { LEDViewSelectionModel(it as LEDView) }
 		factory.register(SelectionDrawingStrategy.REPLACE, RgbLEDView::class) { LEDViewSelectionModel(it as RgbLEDView) }
-		factory.register(SelectionDrawingStrategy.REPLACE, SevenSegmentDisplayView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, SixteenSegmentDisplayView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, SevenSegmentDisplayView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, SixteenSegmentDisplayView::class, selectedColorSelectionModelFactory)
 		factory.register(SelectionDrawingStrategy.REPLACE, LEDMatrixView::class) { LEDMatrixViewSelectionModel(it as LEDMatrixView) }
-		factory.register(SelectionDrawingStrategy.REPLACE, BuzzerView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, BuzzerView::class, selectedColorSelectionModelFactory)
 
-		factory.register(SelectionDrawingStrategy.REPLACE, ROMView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, RAMView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, LookupTableView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, ROMView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, RAMView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, LookupTableView::class, selectedColorSelectionModelFactory)
 
-		factory.register(SelectionDrawingStrategy.REPLACE, RandomView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, BitExtenderView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, RandomView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, BitExtenderView::class, selectedColorSelectionModelFactory)
 
 		factory.register(SelectionDrawingStrategy.BELOW, DilCase::class) { RectangularBelowSelectionModel(it as AbstractRectangularComponent) }
 		factory.register(SelectionDrawingStrategy.ABOVE, DilCase::class) { RectangularHandleSelectionModel(it as AbstractRectangularComponent) }
 		factory.register(SelectionDrawingStrategy.REPLACE, DilCase::class) { RectangularReplaceSelectionModel(it as AbstractRectangularComponent) }
 
-		factory.register(SelectionDrawingStrategy.REPLACE, AndGateFigure::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, OrGateFigure::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, XorGateFigure::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, NotGateFigure::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, AndGateFigure::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, OrGateFigure::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, XorGateFigure::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, NotGateFigure::class, selectedColorSelectionModelFactory)
 
 		// Analog
-		factory.register(SelectionDrawingStrategy.REPLACE, AnalogOscilloscopeProbeVerticeView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, AnalogNodeView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, LightBulbView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, BatteryView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, CapacitorView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, CurrentSourceView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, ResistorView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, AnalogSwitchView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, AnalogDoubleThrowSwitchView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, AnalogGroundView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, AnalogTransistorView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, AnalogCircuitInOutView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, AnalogPowerView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, AnalogOscilloscopeProbeVerticeView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, AnalogNodeView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, LightBulbView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, BatteryView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, CapacitorView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, CurrentSourceView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, ResistorView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, AnalogSwitchView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, AnalogDoubleThrowSwitchView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, AnalogGroundView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, AnalogTransistorView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, AnalogCircuitInOutView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, AnalogPowerView::class, selectedColorSelectionModelFactory)
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogPushButtonSwitchView::class) { RectangularVerticeViewSelectionModel(it as AnalogPushButtonSwitchView) }
-		factory.register(SelectionDrawingStrategy.REPLACE, InductorView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, AnalogRelayView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, DiodeView::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, AnalogLEDView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, InductorView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, AnalogRelayView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, DiodeView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, AnalogLEDView::class, selectedColorSelectionModelFactory)
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogLEDControlView::class) { LEDViewSelectionModel(it as AnalogLEDControlView) }
 
 		factory.register(SelectionDrawingStrategy.REPLACE, FSMState::class) { RectangularReplaceSelectionModel(it as AbstractRectangularComponent, RectangularReplaceSelectionModel.DrawStrategy.COMPONENT) }
-		factory.register(SelectionDrawingStrategy.REPLACE, FSMTransition::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, FSMTransition::class, selectedColorSelectionModelFactory)
 	}
 
 	private fun configureHighlightModels(factory: SelectionModelFactory) {

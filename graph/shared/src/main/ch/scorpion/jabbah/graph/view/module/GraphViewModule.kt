@@ -28,6 +28,7 @@ import ch.scorpion.jabbah.edit.select.BoundingBoxBelowSelectionModel
 import ch.scorpion.jabbah.edit.select.EditSelectModule
 import ch.scorpion.jabbah.edit.select.SelectedColorSelectionModel
 import ch.scorpion.jabbah.edit.select.SelectionModelFactory
+import ch.scorpion.jabbah.edit.select.selectedColorSelectionModelFactory
 import ch.scorpion.jabbah.edit.style.EditStyleType
 import ch.scorpion.jabbah.edit.style.EditTheme
 import ch.scorpion.jabbah.execution.scheduler.Scheduler
@@ -232,9 +233,9 @@ object GraphViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, EdgeViewImpl::class) { EdgeViewReplaceSelectionModel(it as EdgeView<*>) }
 		factory.register(SelectionDrawingStrategy.REPLACE, SubGraphVerticeViewImpl::class) { SubGraphVerticeViewImplSelectionModel(it as SubGraphVerticeViewImpl, EditSelectModule.selectionModelProvider) }
 		factory.register(SelectionDrawingStrategy.REPLACE, OriginIndicator::class) { OriginIndicatorSelectionModel(it as OriginIndicator) }
-		factory.register(SelectionDrawingStrategy.REPLACE, PortViewComponent::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, ControlViewComponent::class) { SelectedColorSelectionModel(it) }
-		factory.register(SelectionDrawingStrategy.REPLACE, OscilloscopeProbeVerticeView::class) { SelectedColorSelectionModel(it) }
+		factory.register(SelectionDrawingStrategy.REPLACE, PortViewComponent::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, ControlViewComponent::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, OscilloscopeProbeVerticeView::class, selectedColorSelectionModelFactory)
 
 		factory.register(SelectionDrawingStrategy.BELOW, EdgeViewImpl::class) { EdgeViewBelowSelectionModel(it as EdgeView<*>) }
 		factory.register(SelectionDrawingStrategy.BELOW, SubGraphVerticeViewImpl::class) { BoundingBoxBelowSelectionModel(it) }

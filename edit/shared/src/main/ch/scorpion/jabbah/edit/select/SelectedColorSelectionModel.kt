@@ -7,6 +7,8 @@ import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.SelectionModel
 import ch.scorpion.jabbah.edit.style.EditTheme
 
+val selectedColorSelectionModelFactory: (Component) -> SelectionModel<Component> = { SelectedColorSelectionModel(it) }
+
 /**
  * A [SelectionModel] that renders a [Component] in the selection color as of [EditTheme.selection].
  */
