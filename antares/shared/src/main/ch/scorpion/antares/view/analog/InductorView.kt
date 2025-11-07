@@ -43,10 +43,7 @@ class InductorView(
         val applicableForegroundColor = if (context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
             getColorGradient(context, 2, 1) ?: styleProvider.getStyle(GraphStyleType.EDGE).color.foregroundColor
         } else {
-            context.chooseForeground(when (AntaresViewModule.currentSymbolStyle.symbolStyle) {
-                SymbolStyle.EUROPEAN,SymbolStyle.VERBOSE  -> foregroundColor
-                SymbolStyle.AMERICAN -> styleProvider.getStyle(GraphStyleType.EDGE).color.foregroundColor
-            })
+            context.chooseForeground(foregroundColor)
         }
 
         AntaresViewModule.currentSymbolStyle.symbolStyle.drawInductor(
