@@ -3,16 +3,22 @@ package ch.scorpion.antares.view.analog
 import ch.scorpion.antares.model.analog.AnalogLED
 import ch.scorpion.antares.model.analog.AnalogPort
 import ch.scorpion.antares.model.analog.AnalogSignal
+import ch.scorpion.antares.model.output.LightEmitterModel
 import ch.scorpion.antares.view.output.AbstractLEDView
 import ch.scorpion.antares.view.output.LightColor
+import ch.scorpion.antares.view.output.LightColorExpression
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
+import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
+import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -31,15 +37,6 @@ class AnalogLEDControlView(
 
     init {
         isShowPortViews = false
-    }
-
-    override fun handleStateChanged(event: GraphElementEvent) {
-        if (event.reason == AnalogLED.REASON_CURRENT) {
-            invalidate()
-            validate()
-        } else {
-            super.handleStateChanged(event)
-        }
     }
 
     /** ---- [Storable] */
@@ -70,6 +67,30 @@ class AnalogLEDControlView(
 
     override fun createControlView(): ControlView<AnalogLED> {
         throw UnsupportedOperationException()
+    }
+
+    /** ---- [AbstractGraphElementView] */
+
+    override fun bind(graphView: GraphView, deep: Boolean) {
+        super.bind(graphView, deep)
+        graphParamsChanged(graphView.graph!!)
+    }
+
+    override fun graphParamsChanged(graph: Graph) {
+        (lightColor as? LightColorExpression)?.let { it.evaluateIn(graph)?.let { lc -> lightColor = lc } }
+    }
+
+    /** ---- [AbstractVerticeView] */
+
+    override fun handleStateChanged(event: GraphElementEvent) {
+        if (event.reason == AnalogLED.REASON_CURRENT) {
+            invalidate()
+            validate()
+        } else if (event.reason == LightEmitterModel.REASON_GRAPH_PARAM_CHANGED && event.argument is Graph) {
+            graphParamsChanged(event.argument as Graph)
+        } else {
+            super.handleStateChanged(event)
+        }
     }
 
     /** ---- [AbstractLEDView] */

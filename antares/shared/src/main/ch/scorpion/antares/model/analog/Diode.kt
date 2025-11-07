@@ -1,13 +1,10 @@
 package ch.scorpion.antares.model.analog
 
-import ch.scorpion.antares.model.output.LightEmitterModel
 import ch.scorpion.antares.view.analog.engine.AnalogCircuitAnalysis
 import ch.scorpion.antares.view.analog.engine.AnalogElement
 import ch.scorpion.antares.view.analog.engine.AnalogElementMixin
 import ch.scorpion.jabbah.base.math.near
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.model.element.AbstractGraphElement
 import ch.scorpion.jabbah.graph.model.vertice.EmptyVerticeCalculator
 import kotlin.math.*
 
@@ -32,13 +29,6 @@ open class Diode(
     private val vCrit = vt * ln(vt / (sqrt(2.0) * leakage))
 
     private var lastVoltDiff = 0.0
-
-    /** ---- [AbstractGraphElement] */
-
-    override fun graphParamsChanged(graph: Graph) {
-        super.graphParamsChanged(graph)
-        stateChanged(null, LightEmitterModel.REASON_GRAPH_PARAM_CHANGED, graph)
-    }
 
     /** ---- [AnalogElement] */
 

@@ -3,6 +3,7 @@ package ch.scorpion.antares.view.analog
 import ch.scorpion.antares.model.analog.AnalogLED
 import ch.scorpion.antares.model.analog.AnalogPort
 import ch.scorpion.antares.model.analog.AnalogSignal
+import ch.scorpion.antares.model.output.LightEmitterModel
 import ch.scorpion.antares.view.Look
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.output.LightColor
@@ -20,10 +21,14 @@ import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Paint
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.graph.model.Graph
+import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.ControlViewSourceProperty
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
+import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -146,4 +151,22 @@ class AnalogLEDView(
     override var lightColor: LightColor by ControlViewSourceProperty(lightColor, eventBus)
 
     override val hasGraphParameter: Boolean get() = lightColor is LightColorExpression
+
+    /** ---- [AbstractGraphElementView] */
+
+    override fun bind(graphView: GraphView, deep: Boolean) {
+        super.bind(graphView, deep)
+        graphParamsChanged(graphView.graph!!)
+    }
+
+    override fun handleStateChanged(event: GraphElementEvent) {
+        super.handleStateChanged(event)
+        if (event.reason == LightEmitterModel.REASON_GRAPH_PARAM_CHANGED && event.argument is Graph) {
+            graphParamsChanged(event.argument as Graph)
+        }
+    }
+
+    override fun graphParamsChanged(graph: Graph) {
+        (lightColor as? LightColorExpression)?.let { it.evaluateIn(graph)?.let { lc -> lightColor = lc } }
+    }
 }
