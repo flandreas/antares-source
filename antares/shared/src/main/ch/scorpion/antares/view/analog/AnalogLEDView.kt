@@ -23,12 +23,8 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
-import ch.scorpion.jabbah.graph.view.ControlView
-import ch.scorpion.jabbah.graph.view.ControlViewSource
-import ch.scorpion.jabbah.graph.view.ControlViewSourceProperty
+import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
-import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
-import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -90,10 +86,19 @@ class AnalogLEDView(
             minCurrent,
             maxCurrent))
 
+    var name: String?
+        get() = model.name
+        set(value) {
+            if (value != model.name) {
+                model.name = value
+            }
+        }
+
     override fun modelExchanged(oldModel: AnalogLED?) {
         super.modelExchanged(oldModel)
         // Overwrite bounds to incorporate LED arrows
         setBounds(LENGTH, -NEGATIVE_HEIGHT, SIZE, SIZE / 2 + NEGATIVE_HEIGHT)
+        updateLabel()
     }
 
     /** ---- [AbstractVerticeView] */
@@ -161,6 +166,9 @@ class AnalogLEDView(
 
     override fun handleStateChanged(event: GraphElementEvent) {
         super.handleStateChanged(event)
+        if (event.signalHandler == null) {
+            updateLabel()
+        }
         if (event.reason == LightEmitterModel.REASON_GRAPH_PARAM_CHANGED && event.argument is Graph) {
             graphParamsChanged(event.argument as Graph)
         }
@@ -169,4 +177,9 @@ class AnalogLEDView(
     override fun graphParamsChanged(graph: Graph) {
         (lightColor as? LightColorExpression)?.let { it.evaluateIn(graph)?.let { lc -> lightColor = lc } }
     }
+
+    /** ---- [AbstractAnalogVerticeView] */
+
+    override val mainPropertyValue: String get() = model.name ?: ""
+
 }
