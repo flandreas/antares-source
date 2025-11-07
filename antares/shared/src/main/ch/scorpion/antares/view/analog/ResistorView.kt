@@ -59,10 +59,7 @@ class ResistorView(
 		val applicableForegroundColor = if (context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
 			getColorGradient(context) ?: styleProvider.getStyle(GraphStyleType.EDGE).color.foregroundColor
 		} else {
-			context.chooseForeground(when (AntaresViewModule.currentSymbolStyle.symbolStyle) {
-				SymbolStyle.EUROPEAN,SymbolStyle.VERBOSE  -> foregroundColor
-				SymbolStyle.AMERICAN -> styleProvider.getStyle(GraphStyleType.EDGE).color.foregroundColor
-			})
+			context.chooseForeground(foregroundColor)
 		}
 
 		AntaresViewModule.currentSymbolStyle.symbolStyle.drawResistor(
