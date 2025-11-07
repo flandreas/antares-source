@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 
@@ -49,11 +50,14 @@ class BatteryView(
 
 		// Plus bar
 		(getPortView(model.getPort(1)) as AbstractAntaresPortView<*>).prepareConnectionDrawContext(context)
-		context.g.stroke = stroke
-		context.g.drawLine(x + SIZE / 2, y, x + SIZE / 2, y + SIZE)
-
 		context.g.stroke = styleProvider.getStyle(GraphStyleType.EDGE).stroke
 		context.g.drawLine(x, 0.0, x + SIZE / 2, 0.0)
+
+		if (!context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+			context.g.color = context.chooseForeground(color.foregroundColor)
+		}
+		context.g.stroke = stroke
+		context.g.drawLine(x + SIZE / 2, y, x + SIZE / 2, y + SIZE)
 
 		// Plus sign
 		context.g.stroke = styleProvider.getStyle(GraphStyleType.EDGE).stroke
@@ -62,11 +66,13 @@ class BatteryView(
 
 		// Minus bar
 		(getPortView(model.getPort(2)) as AbstractAntaresPortView<*>).prepareConnectionDrawContext(context)
-		context.g.stroke = MINUS_STROKE
-		context.g.drawLine(x + SIZE / 2 + w(1), y + h(1), x + SIZE / 2 + w(1), y + SIZE - h(1))
-
 		context.g.stroke = styleProvider.getStyle(GraphStyleType.EDGE).stroke
 		context.g.drawLine(x + SIZE, 0.0, x + SIZE / 2 + w(1), 0.0)
+		if (!context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+			context.g.color = context.chooseForeground(color.foregroundColor)
+		}
+		context.g.stroke = MINUS_STROKE
+		context.g.drawLine(x + SIZE / 2 + w(1), y + h(1), x + SIZE / 2 + w(1), y + SIZE - h(1))
 	}
 
 	/** ---- [AbstractAnalogVerticeView] */
