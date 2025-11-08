@@ -303,7 +303,8 @@ object AntaresViewModule : AbstractModule() {
 		properties.set(LightBulbView.PROP_ICON_PATH, "/img/light-bulb.png")
 		properties.set(AnalogSwitchView.PROP_ICON_PATH, "/img/real-switch.png")
 		properties.set(AnalogDoubleThrowSwitchView.PROP_ICON_PATH, "/img/double-throw-switch.png")
-		properties.set(AnalogLEDView.PROP_ICON_PATH, "/img/light-bulb.png") // TODO: Icon Janis
+		//properties.set(AnalogLEDView.PROP_ICON_PATH, "/img/analog-led-ieee.png")
+		properties.set(AnalogLEDView.PROP_ICON_PATH, "/img/analog-led-ieee.png")
 		properties.set(AnalogLEDView.PROP_DRAW_HALO, true)
 
 		properties.set(LogicGateView.PROP_DATA_FLOW_ENABLED, true)
@@ -725,9 +726,9 @@ object AntaresViewModule : AbstractModule() {
 			ANALOG_LED,
 			"library.element.AnalogLED",
 			CurrentSymbolStyleToString(mapOf(
-				SymbolStyle.AMERICAN to "/img/diode-ieee.png",
-				SymbolStyle.EUROPEAN to "/img/diode-iec.png",
-				SymbolStyle.VERBOSE to "/img/diode-iec.png"
+				SymbolStyle.AMERICAN to "/img/analog-led-ieee.png",
+				SymbolStyle.EUROPEAN to "/img/analog-led-iec.png",
+				SymbolStyle.VERBOSE to "/img/analog-led-iec.png"
 			))::evaluate,
 			AnalogLEDView::class)
 	}
