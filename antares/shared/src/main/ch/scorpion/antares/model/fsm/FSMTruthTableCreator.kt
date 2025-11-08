@@ -8,6 +8,7 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.StringUtils.isBlank
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.Memory
+import ch.scorpion.jabbah.base.dsl.RuntimeError
 import ch.scorpion.jabbah.base.logger
 import kotlin.math.max
 
@@ -317,15 +318,19 @@ class FSMTruthTableCreator(
                 // - Find the matching outgoing transition, and fill truthTable for it
                 var matchingTransition: FSMTransition? = null
                 for (transition in service.getOutgoingTransitions(state, fsm)) {
-                    val parsedTransition = parsedTransitions[transition]
-                    val match = parsedTransition?.match() ?: false
+                    try {
+                        val parsedTransition = parsedTransitions[transition]
+                        val match = parsedTransition?.match() ?: false
 
-                    // -- If more than one match: Exception
-                    if (match) {
-                        if (matchingTransition != null) {
-                            exception("antares.fsm.multiTransitionMatch.error", state.stateNumber)
+                        // -- If more than one match: Exception
+                        if (match) {
+                            if (matchingTransition != null) {
+                                exception("antares.fsm.multiTransitionMatch.error", state.stateNumber)
+                            }
+                            matchingTransition = transition
                         }
-                        matchingTransition = transition
+                    } catch (e: RuntimeError) {
+                        exception("antares.fsm.invalidTransitionCondition.error", state.stateNumber, e.message ?: "Error")
                     }
                 }
 
