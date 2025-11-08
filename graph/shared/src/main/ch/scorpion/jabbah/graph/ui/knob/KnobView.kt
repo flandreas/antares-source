@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.base.geom.Geometry
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.InputEventHandler
@@ -43,6 +44,8 @@ class KnobView(
 
     companion object {
 
+        private val LOG by logger(KnobView::class)
+
         const val OUTER_SIZE = 120.0
         private val OUTER_COLOR = Color(196, 196, 196, 228)
 
@@ -51,6 +54,7 @@ class KnobView(
         private const val INNER_SIZE = OUTER_SIZE - 50
         private val INNER_COLOR = Color(32, 32, 32, 128)
 
+        // Points to the east, origin at arrow tip at the east
         private const val TRIANGLE_SIZE = 10
         private val TRIANGLE_PATH = System.createPath()
             .moveTo(0, 0)
@@ -79,8 +83,10 @@ class KnobView(
 
     private val handler = Handler()
 
-    /** The current angle (angle) in radians, expressed in terms of [Graphics2D], i.e. clockwise.*/
-    private val angle: Double get() = -(ONE_ANGLE - model.asAngle)
+    /**
+     * The angle at which the [TRIANGLE_PATH] has to be rotated in terms of [Graphics2D to point to the current value.
+     */
+    private val triangleAngle: Double get() = -(ONE_ANGLE - model.asAngle)
 
     /** Used as a stamp to draw the scale numbers.*/
     private val scaleLabel = Label(font = Themes.get<GraphTheme>().explanation.font, text = "")
@@ -113,11 +119,9 @@ class KnobView(
 
         context.g.fillOval(-INNER_SIZE / 2, -INNER_SIZE / 2, INNER_SIZE, INNER_SIZE)
 
-        val currAngle = angle
-
-        context.g.rotate(currAngle)
-        context.translated(INNER_SIZE / 2 + TRIANGLE_SIZE, 0.0) { it.g.fill(TRIANGLE_PATH) }
-        context.g.rotate(-currAngle)
+        context.rotatedAndTranslated(INNER_SIZE / 2 + TRIANGLE_SIZE, 0.0, triangleAngle) {
+            it.g.fill(TRIANGLE_PATH)
+        }
 
         var text = Thousands.convert(model.value)
         if (StringUtils.isNotEmpty(unit)) {
@@ -143,6 +147,9 @@ class KnobView(
 
     override fun contains(x: Double, y: Double): Boolean =
         boundingBox.center.distance(x, y) <= OUTER_SIZE / 2 / zoomPan!!.zoomFactor * zoomPan!!.devicePixelRatio()
+
+    private fun isWithinScale(p: Point2D): Boolean =
+        boundingBox.center.distance(p) >= INNER_SIZE / 2 / zoomPan!!.zoomFactor * zoomPan!!.devicePixelRatio()
 
     /** ---- [ActorView] */
 
@@ -170,11 +177,8 @@ class KnobView(
         }
 
         override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler {
+            LOG.trace("mousePressed")
             if (context.mouseEvent?.button != Button.BUTTON1) {
-                return this
-            }
-            if (context.mouseEvent?.clickCount == 2) {
-                value = defaultValue
                 return this
             }
 
@@ -186,6 +190,7 @@ class KnobView(
         }
 
         override fun mouseDragged(context: ActorInteractionContext): ActorInteractionHandler {
+            LOG.trace("mouseDragged")
             val newAngle = Geometry.angle(boundingBox.center, context.location)
             if (newAngle != oldAngle) {
                 val oldValue = value
@@ -201,6 +206,7 @@ class KnobView(
         }
 
         override fun mouseReleased(context: ActorInteractionContext): ActorInteractionHandler? {
+            LOG.trace("mouseReleased")
             if (!this@KnobView.contains(context.x, context.y)) {
                 KnobLauncherImpl.hide()
                 return null
@@ -209,9 +215,26 @@ class KnobView(
         }
 
         override fun mouseClicked(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
-            val angle = Geometry.angle(boundingBox.center, context.location)
-            model.clickToAngle(Geometry.wrapAngle(-angle + PI / 2))
-            return null;
+            LOG.trace("mouseClicked, click count = ${context.mouseEvent?.clickCount}")
+
+            if (context.mouseEvent?.button != Button.BUTTON1) {
+                return null
+            }
+
+            // Double-click to reset to default (on center knob)
+            if (context.mouseEvent?.clickCount == 2 && boundingBox.center.distance(context.location) < INNER_SIZE / 2) {
+                value = defaultValue
+                return null
+            }
+
+            // Single-click to set angle (on outer scale)
+            // Bug: Distance depends on zoom factor, because KnobView is Unzoomable
+            if (context.mouseEvent?.clickCount == 1 && isWithinScale(context.location)) {
+                val angle = Geometry.angle(boundingBox.center, context.location)
+                model.clickToAngle(Geometry.wrapAngle(-angle + PI / 2))
+            }
+
+            return null
         }
     }
 }

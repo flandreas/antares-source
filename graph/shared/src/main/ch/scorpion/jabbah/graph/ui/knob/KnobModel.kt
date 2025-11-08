@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.event.PropertyOwner
 import ch.scorpion.jabbah.base.event.PropertyOwnerImpl
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.math.TWO_PI
 import kotlin.math.PI
 import kotlin.math.log10
@@ -32,7 +33,7 @@ class KnobModel(
         propertyOwner.source = this
     }
 
-    /** Returns the current value of this [KnobModel] as an angle (in radians, zero east, anti-clockwise).*/
+    /** Returns the current value of this [KnobModel] as an angle (in radians, zero north, clockwise).*/
     val asAngle: Double get() = asAngle(value)
 
     /**
@@ -92,7 +93,7 @@ class KnobModel(
         } else decrementAngleTo(newAngle)
 
     fun clickToAngle(newAngle: Double) {
-        value = (baseValue + (9 * baseValue * (newAngle / 2 / PI))).toLong()
+        value = (baseValue + (9 * baseValue * (newAngle / TWO_PI))).toLong()
     }
 
     /** Returns the specified value of this [KnobModel] as an angle (in radians, zero east, anti-clockwise).*/
