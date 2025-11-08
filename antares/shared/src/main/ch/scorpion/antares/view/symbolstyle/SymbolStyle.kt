@@ -564,6 +564,7 @@ enum class SymbolStyle(
 			context.g.drawLine(LENGTH + 3.5 * SCALE, 0.0, LENGTH + 4.0 * SCALE, 0.0)
 
 			// Arrows
+			context.g.color = context.choose(led.style.color).foregroundColor
 			drawLEDArrow(context, LENGTH + 2.5 * SCALE, -1.25 * SCALE)
 			drawLEDArrow(context, LENGTH + 1.5 * SCALE, -2.0 * SCALE)
 
