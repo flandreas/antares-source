@@ -21,6 +21,7 @@ import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.Connection
 import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewImpl
+import ch.scorpion.jabbah.graph.view.style.EdgeStyle
 import kotlin.math.abs
 
 /**
@@ -115,7 +116,11 @@ class AnalogEdgeView(
 				context.choose(color)
 			}
 
-		context.g.stroke = stroke
+		context.g.stroke = if (graphAppContext.isExecute) {
+			(style as EdgeStyle).executionStroke
+		} else {
+			style.stroke
+		}
 
 		super.draw(context)
 

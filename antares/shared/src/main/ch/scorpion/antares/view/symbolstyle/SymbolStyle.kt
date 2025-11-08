@@ -558,8 +558,9 @@ enum class SymbolStyle(
 			}
 
 			// Cathode
-			context.g.color = context.choose(led.style.color).foregroundColor
+			context.g.stroke = led.stroke
 			context.g.drawLine(LENGTH + 3.5 * SCALE, -1.5 * SCALE, LENGTH + 3.5 * SCALE, 1.5 * SCALE)
+			(led.getPortView(led.model.getPort(2)) as AbstractAntaresPortView<*>).prepareConnectionDrawContext(context)
 			context.g.drawLine(LENGTH + 3.5 * SCALE, 0.0, LENGTH + 4.0 * SCALE, 0.0)
 
 			// Arrows
