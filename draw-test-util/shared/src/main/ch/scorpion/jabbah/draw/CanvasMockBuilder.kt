@@ -25,6 +25,7 @@ class CanvasMockBuilder {
 		}
 		withDevicePixelRatio(1.0)
 		withDimension(Dimension2D(0, 0))
+		withFocus(true)
 	}
 
 	fun withDevicePixelRatio(devicePixelRatio: Double): CanvasMockBuilder {
@@ -44,6 +45,11 @@ class CanvasMockBuilder {
 	fun withDimension(dimension: Dimension2D): CanvasMockBuilder {
 		this.dimension = dimension
 		every { canvas.dimension } returns dimension
+		return this
+	}
+
+	fun withFocus(hasFocus: Boolean): CanvasMockBuilder {
+		every { canvas.hasFocus } returns hasFocus
 		return this
 	}
 

@@ -42,6 +42,8 @@ class VirtualCanvas(
 
 	override val initialLayout: Boolean get() = true
 
+	override val hasFocus: Boolean get() = false
+
 	override fun requestViewFocus() { }
 
 	override fun setCursor(cursor: Cursor) { }

@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.edit
 
 import ch.scorpion.jabbah.base.geom.RectangularShape
+import ch.scorpion.jabbah.draw.Canvas
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.DrawableContainer
 import ch.scorpion.jabbah.draw.container.UnzoomableContainerIF
@@ -19,6 +20,7 @@ class DrawingViewMockBuilder {
     private val grid = mock<Grid>(MockMode.autofill)
     private val ghostContainer = mock<UnzoomableContainerIF<Unzoomable>>(MockMode.autofill)
     private val animationContainer = mock<DrawableContainer<Drawable>>(MockMode.autofill)
+    private val canvas = mock<Canvas>(MockMode.autofill)
 
     init {
         every { grid.distance } returns 10.0
@@ -27,6 +29,9 @@ class DrawingViewMockBuilder {
         every { drawingView.editable } returns true
         every { drawingView.ghostContainer } returns ghostContainer
         every { drawingView.animationContainer } returns animationContainer
+
+        every { canvas.hasFocus } returns true
+        every { drawingView.canvas } returns canvas
     }
 
     fun withDrawing(drawing: Drawing<*>): DrawingViewMockBuilder {
