@@ -55,6 +55,10 @@ class CanvasJs(
 
     override val initialLayout: Boolean get() = true
 
+    override val hasFocus: Boolean
+        // TODO Not yet implemented
+        get() = false
+
     var dragTargetHandler: DragTargetHandler? = null
         set(value) {
             // Using canvas.addEventListener() seems not to work

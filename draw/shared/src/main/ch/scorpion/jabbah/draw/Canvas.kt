@@ -58,6 +58,12 @@ interface Canvas : PropertyOwner<Any> {
 	 */
 	val initialLayout: Boolean
 
+    /**
+     * Returns `true` if this [Canvas] (i.e. its platform-specific implementation) currently has
+     * the event focus.
+     */
+    val hasFocus: Boolean
+
     /** Request the event focus from the window system for this [View] in order to receive key events.*/
     fun requestViewFocus()
 

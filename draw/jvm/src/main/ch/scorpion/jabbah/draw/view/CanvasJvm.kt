@@ -115,6 +115,8 @@ class CanvasJvm(
 
 	override val initialLayout: Boolean get() = false
 
+	override val hasFocus: Boolean get() = isFocusOwner
+
 	override fun requestViewFocus() {
 		super.requestFocusInWindow()
 	}
