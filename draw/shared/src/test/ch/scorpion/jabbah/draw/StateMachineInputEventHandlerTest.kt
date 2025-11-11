@@ -7,16 +7,11 @@ import ch.scorpion.jabbah.base.state.stateMachine
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import dev.mokkery.MockMode
 import dev.mokkery.mock
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class StateMachineInputEventHandlerTest {
-
-	companion object {
-		init {
-			DrawTestRule.configure()
-		}
-	}
 
 	private val rectangle = TestRectangle(0, 0, 100, 100)
 	private val view = mock<View<*>>(MockMode.autofill)
@@ -70,6 +65,11 @@ class StateMachineInputEventHandlerTest {
 
 	init {
 		test.handler.sm.start(context(MouseEventType.MOVED, 0, 0))
+	}
+
+	@BeforeTest
+	fun setup() {
+		DrawTestRule.configure()
 	}
 
 	@Test

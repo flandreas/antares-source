@@ -2,16 +2,17 @@ package ch.scorpion.jabbah.draw.container
 
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.draw.DrawTestRule
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.InputEventDriver
 import ch.scorpion.jabbah.draw.InputEventHandlerMockBuilder
 import ch.scorpion.jabbah.draw.drawable.DrawableMockBuilder
-import ch.scorpion.jabbah.draw.module.DrawModule
 import dev.mokkery.MockMode
 import dev.mokkery.matcher.any
 import dev.mokkery.mock
 import dev.mokkery.verify
 import dev.mokkery.verify.VerifyMode.Companion.exactly
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -19,12 +20,6 @@ import kotlin.test.assertEquals
  * Testing [DrawableBagInputEventHandler] that is created by [DrawableContainerImpl] by default.
  */
 class DrawableBagInputEventHandlerTest {
-
-	companion object {
-		init {
-			DrawModule.require()
-		}
-	}
 
 	private val container = DrawableContainerImpl<Drawable>(useLocation = true)
 	private val driver = InputEventDriver(view = mock(MockMode.autofill), container)
@@ -35,6 +30,11 @@ class DrawableBagInputEventHandlerTest {
 
 	init {
 		container.add(drawable.build())
+	}
+
+	@BeforeTest
+	fun setup() {
+		DrawTestRule.configure()
 	}
 
 	@Test
