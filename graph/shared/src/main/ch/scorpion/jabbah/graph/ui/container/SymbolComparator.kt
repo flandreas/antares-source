@@ -97,8 +97,6 @@ class SymbolComparatorController(
     /** Used for snapping to the grid while placing [comparisonSymbol]. */
     private val snapResult = SnapResult()
 
-    //private data class CacheEntry(val bbox: RectangularShape, val symbol: Component)
-
     /** Maps a [LibraryElement] to the instantiated [comparisonSymbol] and its original bounding box. */
     private val cache: MutableMap<LibraryElement, ComparisonSymbol> = mutableMapOf()
 
@@ -174,11 +172,14 @@ class SymbolComparatorController(
                 InvocationHandler.invoke {
                     try {
                         val component = it.getNewInstance<GraphElement>()
-                        //val entry = CacheEntry(Rectangle2D(component.boundingBox), component)
                         val entry = ComparisonSymbol(component)
+
+                        // Force initialization of geometry
+                        entry.location = Point2D.ZERO
+
                         cache[it] = entry
                         updateSelection(entry)
-                    } catch (e: Throwable) {
+                    } catch (_: Throwable) {
                         // Ignore
                     }
                 }
@@ -203,13 +204,14 @@ class SymbolComparatorController(
         }
 
         val entryBBox = entry.boundingBox
+        val entryRelLocation = Point2D(entry.location.x - entryBBox.minX, entry.location.y - entryBBox.minY)
         val drawingBBox = drawingView.drawing.boundingBox
 
         when (direction) {
-            EAST -> placeAt(drawingBBox.maxX + DIST + (entryBBox.minX - entry.location.x), drawingBBox.minY + (entry.location.y - entryBBox.minY))
-            NORTH -> placeAt(drawingBBox.minX + (entry.location.x - entryBBox.minX), drawingBBox.minY - DIST - (entryBBox.maxY - entry.location.y))
-            WEST -> placeAt(drawingBBox.minX - DIST - entryBBox.width - (entryBBox.minX - entry.location.x), drawingBBox.minY + (entry.location.y - entryBBox.minY))
-            SOUTH -> placeAt(drawingBBox.minX + (entry.location.x - entryBBox.minX), drawingBBox.maxY + DIST + (entry.location.y - entryBBox.minY))
+            EAST -> placeAt(drawingBBox.maxX + DIST + entryRelLocation.x, drawingBBox.minY + entryRelLocation.y)
+            WEST -> placeAt(drawingBBox.minX - DIST - (entryBBox.width - entryRelLocation.x), drawingBBox.minY + entryRelLocation.y)
+            SOUTH -> placeAt(drawingBBox.minX + entryRelLocation.x, drawingBBox.maxY + DIST + entryRelLocation.y)
+            NORTH -> placeAt(drawingBBox.minX + entryRelLocation.x, drawingBBox.minY - DIST - (entryBBox.height - entryRelLocation.y))
         }
 
         drawingView.animationContainer.validate()
@@ -258,9 +260,9 @@ class SymbolComparatorController(
             private val ORIGIN_INDICATOR = OriginIndicator()
         }
 
-        override val boundingBox: RectangularShape get() =
-            Rectangle2D(component.boundingBox)
-                .add(ORIGIN_INDICATOR.boundingBox)
+        private lateinit var _boundingBox: RectangularShape
+
+        override val boundingBox: RectangularShape get() = Rectangle2D(_boundingBox)
 
         override var location: Point2D = Point2D.ZERO
             set(value) {
@@ -270,10 +272,21 @@ class SymbolComparatorController(
                 component.location = value
                 ORIGIN_INDICATOR.location = value
 
+                updateBoundingBox()
+
                 invalidate()
                 update()
                 validate()
             }
+
+        init {
+            updateBoundingBox()
+        }
+
+        private fun updateBoundingBox() {
+            _boundingBox = Rectangle2D(component.boundingBox)
+                .add(ORIGIN_INDICATOR.boundingBox)
+        }
 
         override fun draw(context: DrawContext) {
             component.draw(context)
