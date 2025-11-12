@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.edit.model.polyline
 
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.geom.MutableRectangularShape
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.DrawContext
@@ -9,6 +10,7 @@ import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.drawable.Mirrorable
 import ch.scorpion.jabbah.draw.drawable.RotationDirection
 import ch.scorpion.jabbah.draw.drawable.Transparent
+import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.polyline.ArrowHead
 import ch.scorpion.jabbah.draw.polyline.Polyline
 import ch.scorpion.jabbah.draw.polyline.PolylineDrawable
@@ -91,7 +93,13 @@ class PolylineComponent(
 	/** ---- [Drawable] interface */
 
 	override val boundingBox: RectangularShape
-		get() = polyline.boundingBox
+		get() {
+			val bb = polyline.boundingBox
+			if (shadow && bb is MutableRectangularShape) {
+				DropShadow.expand(bb, rotation)
+			}
+			return bb
+		}
 
 	override fun draw(context: DrawContext) {
 		polyline.draw(context)
