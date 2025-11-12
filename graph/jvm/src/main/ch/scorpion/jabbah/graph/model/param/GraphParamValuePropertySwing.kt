@@ -83,9 +83,8 @@ class GraphParamValuePropertySwing<V : Any>(
 	override fun createCommand(newValue: V?): AbstractPropertyCommand<V> =
 		GraphParamValueCommand(paramDefinition, editor!!, baseKey, baseKeyParams, beanProvider, beanIds, newValue)
 
-	override fun getShortDescription(): String? {
-		return paramDefinition.description.value
-	}
+	override fun getShortDescription(): String? =
+		paramDefinition.description.value ?: super.getShortDescription()
 }
 
 abstract class ExpressionPropertyEditor<T>(
