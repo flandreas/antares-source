@@ -2,7 +2,6 @@ package ch.scorpion.jabbah.graph.library
 
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.swing.JTreeUtil.getPath
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import ch.scorpion.jabbah.edit.model.text.NamableTreeNode
@@ -25,10 +24,6 @@ class LibraryTreeViewSwing(
 	showWorkspaceNode: Boolean = true,
 	includeImports: Boolean = true
 ) : BasicLibraryTreeViewSwing<LibraryTreeView>(controller, showWorkspaceNode, includeImports), LibraryTreeView {
-
-	companion object {
-		private val LOG by logger(LibraryTreeViewSwing::class)
-	}
 
 	private val controller: LibraryTreeViewController get() = basicController as LibraryTreeViewController
 
@@ -63,8 +58,12 @@ class LibraryTreeViewSwing(
 	override fun handle(event: LibraryItemAddedEvent) {
 		findOptionalTreeNode(event.parent)?.let {
 			val newNode = NamableTreeNode(event.item, Graphics2DJvm.fromAwtFont(font))
-			it.add(newNode)
-			(model as DefaultTreeModel).nodesWereInserted(it, intArrayOf(it.childCount - 1))
+			var index = event.parent.indexOf(event.item)
+			if (index < 0) {
+				index = event.parent.size - 1
+			}
+			it.insert(newNode, index)
+			(model as DefaultTreeModel).nodesWereInserted(it, intArrayOf(index))
 			expandPath(getPath(it))
 			scrollPathToVisible(getPath(newNode))
 		}
