@@ -360,25 +360,45 @@ class AntaresSwing(
 		val metaGraphUuid = BaseModule.settings.getString(PROP_META_GRAPH, "")
 
 		val projectUuid = BaseModule.settings.getString(PROP_APPLICATION_PROJECT, "")
-		if (StringUtils.isNotEmpty(projectUuid) && ProjectModule.projectManagementService.contains(UUID(projectUuid))) {
-			val projectId = LibraryIdentification(UUID(projectUuid), userId)
-			if (StringUtils.isNotEmpty(metaGraphUuid)) {
-				dataViewController.openProject(projectId, UUID(metaGraphUuid))
-			} else {
-				dataViewController.openProject(projectId)
+		try {
+			if (StringUtils.isNotEmpty(projectUuid) && ProjectModule.projectManagementService.contains(UUID(projectUuid))) {
+				val projectId = LibraryIdentification(UUID(projectUuid), userId)
+				if (StringUtils.isNotEmpty(metaGraphUuid)) {
+					dataViewController.openProject(projectId, UUID(metaGraphUuid))
+				} else {
+					dataViewController.openProject(projectId)
+				}
+				return
 			}
-			return
+		} catch (x: Exception) {
+			LOG.value.error("Error opening initial savable $projectUuid", x)
+			JOptionPane.showMessageDialog(
+				Frame.getFrames()[0],
+				Translations.getString("antares.openInitialSavable.error.msg", x.message ?: ""),
+				Translations.getString("base.error.txt"),
+				JOptionPane.ERROR_MESSAGE
+			)
 		}
 
 		val libraryUuid = BaseModule.settings.getString(PROP_APPLICATION_LIBRARY, "")
-		if (StringUtils.isNotEmpty(libraryUuid) && LibraryModule.libraryManagementService.contains(UUID(libraryUuid))) {
-			val libraryId = LibraryIdentification(UUID(libraryUuid), userId)
-			if (StringUtils.isNotEmpty(metaGraphUuid)) {
-				dataViewController.openLibrary(libraryId, UUID(metaGraphUuid))
-			} else {
-				dataViewController.openLibrary(libraryId)
+		try {
+			if (StringUtils.isNotEmpty(libraryUuid) && LibraryModule.libraryManagementService.contains(UUID(libraryUuid))) {
+				val libraryId = LibraryIdentification(UUID(libraryUuid), userId)
+				if (StringUtils.isNotEmpty(metaGraphUuid)) {
+					dataViewController.openLibrary(libraryId, UUID(metaGraphUuid))
+				} else {
+					dataViewController.openLibrary(libraryId)
+				}
+				return
 			}
-			return
+		} catch (x: Exception) {
+			LOG.value.error("Error opening initial library $projectUuid", x)
+			JOptionPane.showMessageDialog(
+				Frame.getFrames()[0],
+				Translations.getString("antares.openInitialSavable.error.msg", x.message ?: ""),
+				Translations.getString("base.error.txt"),
+				JOptionPane.ERROR_MESSAGE
+			)
 		}
 
 		if (isFirstUsage) {

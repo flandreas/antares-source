@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import ch.scorpion.jabbah.graph.ui.AbstractApplicationModeEditAction
 import java.awt.BorderLayout
+import java.awt.Frame
 import javax.swing.*
 
 /** An [Action] that opens a dialog containing [LibraryPersistencePanel].*/
@@ -21,10 +22,24 @@ class ShowLibrariesDialogAction(
 	private val parent: JFrame
 ) : AbstractApplicationModeEditAction("library.dialog.action", applicationModeHolder) {
 
+	companion object {
+		private val LOG by logger(ShowLibrariesDialogAction::class)
+	}
+
 	override val opensDialog: Boolean get() = true
 
 	override fun execute(event: ActionEvent) {
-		LibraryPersistencePanel.showAsDialog(name, parent)
+		try {
+			LibraryPersistencePanel.showAsDialog(name, parent)
+		}  catch (x: Exception) {
+			LOG.error("Error while reading library files", x)
+			JOptionPane.showMessageDialog(
+				Frame.getFrames()[0],
+				Translations.getString("base.readFile.ioError.msg", x.message ?: ""),
+				name,
+				JOptionPane.ERROR_MESSAGE
+			)
+		}
 	}
 
 	override fun calculateEnabled(): Boolean = true
@@ -137,7 +152,7 @@ class LibraryPersistencePanel(
 					try {
 						managementService.open(getLibraryIdentity(it.uuid))
 						closeHandler.invoke()
-					} catch (e: Exception) {
+					} catch (e: Throwable) {
 						LOG.error("Error when opening library '${it.uuid}'", e)
 						JOptionPane.showMessageDialog(
 							this@LibraryPersistencePanel,

@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import ch.scorpion.jabbah.graph.ui.AbstractApplicationModeEditAction
 import java.awt.BorderLayout
+import java.awt.Frame
 import javax.swing.*
 
 /** Opens and shows the [ProjectPersistencePanel] in a modal dialog.*/
@@ -25,10 +26,24 @@ class ShowProjectsDialogAction(
 	private val parent: JFrame
 ) : AbstractApplicationModeEditAction("project.dialog.action", applicationModeHolder) {
 
+	companion object {
+		private val LOG by logger(ShowProjectsDialogAction::class)
+	}
+
 	override val opensDialog: Boolean get() = true
 
 	override fun execute(event: ActionEvent) {
-		ProjectPersistencePanel.showAsDialog(parent)
+		try {
+			ProjectPersistencePanel.showAsDialog(parent)
+		} catch (x: Exception) {
+			LOG.error("Error while reading project files", x)
+			JOptionPane.showMessageDialog(
+				Frame.getFrames()[0],
+				Translations.getString("base.readFile.ioError.msg", x.message ?: ""),
+				name,
+				JOptionPane.ERROR_MESSAGE
+			)
+		}
 	}
 
 	override fun calculateEnabled(): Boolean = true
@@ -156,7 +171,13 @@ class ProjectPersistencePanel(
 							JOptionPane.ERROR_MESSAGE
 						)
 					} catch (e: Throwable) {
-						throw e
+						LOG.error("Error when opening project '${it.uuid}'", e)
+						JOptionPane.showMessageDialog(
+							Frame.getFrames()[0],
+							Translations.getString("base.readFile.ioError.msg", e.message ?: ""),
+							name,
+							JOptionPane.ERROR_MESSAGE
+						)
 					}
 				}
 			}
