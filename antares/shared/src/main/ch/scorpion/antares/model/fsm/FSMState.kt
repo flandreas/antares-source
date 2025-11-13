@@ -1,7 +1,7 @@
 package ch.scorpion.antares.model.fsm
 
 import ch.scorpion.antares.model.module.AntaresModelModule
-import ch.scorpion.antares.view.Look
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Tooltip
 import ch.scorpion.jabbah.base.Translations

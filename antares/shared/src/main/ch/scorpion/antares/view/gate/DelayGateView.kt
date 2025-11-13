@@ -2,7 +2,7 @@ package ch.scorpion.antares.view.gate
 
 import ch.scorpion.antares.model.gate.DelayGate
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.view.Look
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.jabbah.base.Thousands
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule

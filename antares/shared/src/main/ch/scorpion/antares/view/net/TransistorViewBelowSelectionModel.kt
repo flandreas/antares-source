@@ -1,6 +1,6 @@
 package ch.scorpion.antares.view.net
 
-import ch.scorpion.antares.view.Look
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.jabbah.base.geom.Ellipse2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.DrawContext

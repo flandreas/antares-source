@@ -1,7 +1,7 @@
 package ch.scorpion.antares.view.gate
 
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.view.Look
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.antares.view.OrientableLabeledRectangularVerticeView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.geom.Direction

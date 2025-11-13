@@ -1,6 +1,6 @@
 package ch.scorpion.antares
 
-import ch.scorpion.antares.view.Look
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.antares.view.gate.LogicGateView
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D

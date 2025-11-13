@@ -2,7 +2,7 @@ package ch.scorpion.antares.view.output
 
 import ch.scorpion.antares.model.output.SevenSegmentDisplay
 import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
-import ch.scorpion.antares.view.Look
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Direction

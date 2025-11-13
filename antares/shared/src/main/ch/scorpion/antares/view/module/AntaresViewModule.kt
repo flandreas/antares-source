@@ -64,6 +64,7 @@ import ch.scorpion.jabbah.draw.style.Style
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.DrawingViewFactory
 import ch.scorpion.jabbah.edit.Grid
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.drag.DragDestinationHighlightFactoryRegistry
 import ch.scorpion.jabbah.edit.drag.EditDragModule

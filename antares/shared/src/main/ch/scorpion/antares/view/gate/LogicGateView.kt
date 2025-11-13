@@ -6,7 +6,7 @@ import ch.scorpion.antares.model.gate.*
 import ch.scorpion.antares.model.gate.NonUnaryLogicGateType.*
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.view.Look.SCALE
+import ch.scorpion.jabbah.edit.Look.SCALE
 import ch.scorpion.antares.view.app.AntaresGraphViewService
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.port.DigitalPortView

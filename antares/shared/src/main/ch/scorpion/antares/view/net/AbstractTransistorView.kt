@@ -5,8 +5,8 @@ import ch.scorpion.antares.model.net.TransistorType
 import ch.scorpion.antares.view.Handedness
 import ch.scorpion.antares.view.Handedness.LEFT
 import ch.scorpion.antares.view.Handedness.RIGHT
-import ch.scorpion.antares.view.Look
-import ch.scorpion.antares.view.Look.SCALE
+import ch.scorpion.jabbah.edit.Look
+import ch.scorpion.jabbah.edit.Look.SCALE
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
 import ch.scorpion.antares.view.port.ExternalPortLabelDistance

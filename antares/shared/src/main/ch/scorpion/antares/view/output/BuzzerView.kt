@@ -2,7 +2,7 @@ package ch.scorpion.antares.view.output
 
 import ch.scorpion.antares.model.output.Buzzer
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
-import ch.scorpion.antares.view.Look.SCALE
+import ch.scorpion.jabbah.edit.Look.SCALE
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.geom.Direction

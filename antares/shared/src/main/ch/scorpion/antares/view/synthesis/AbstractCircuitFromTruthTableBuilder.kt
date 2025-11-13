@@ -4,7 +4,7 @@ import ch.scorpion.antares.model.expression.BooleanExpression
 import ch.scorpion.antares.model.quinemccluskey.DNF
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.truthtable.TruthTable
-import ch.scorpion.antares.view.Look
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.antares.view.gate.LogicGateView
 import ch.scorpion.antares.view.net.tunnel.TunnelFlowDirection
 import ch.scorpion.jabbah.base.geom.Direction

@@ -1,9 +1,10 @@
 package ch.scorpion.antares.view
 
-import ch.scorpion.antares.view.Look.SCALE
+import ch.scorpion.jabbah.edit.Look.SCALE
 import ch.scorpion.jabbah.draw.drawable.Orientable
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 

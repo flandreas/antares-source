@@ -1,11 +1,13 @@
-package ch.scorpion.antares.view
+package ch.scorpion.jabbah.edit
 
-import ch.scorpion.antares.view.style.AntaresTheme
+import ch.scorpion.jabbah.base.PreferencesChangedEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.base.PreferencesChangedEvent
 import ch.scorpion.jabbah.base.ui.UI
-import ch.scorpion.jabbah.draw.graphics.*
+import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.graphics.FontImpl
+import ch.scorpion.jabbah.draw.graphics.FontStyle
+import ch.scorpion.jabbah.draw.graphics.LogicalFontFamily
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.style.EditTheme
 import kotlin.math.ceil
@@ -44,11 +46,11 @@ object Look {
 	}
 
 	/**
-	 * Returns the color of the rectangle drawn over [Vertice]s to indicate that they are disabled,
+	 * Returns the color of the rectangle drawn over [Components][Component] to indicate that they are disabled,
 	 * i.e. while they are being recalculated and not able to receive user input.
 	 */
 	fun disabledColor(): Color {
-		return Themes.get<AntaresTheme>().background.color.backgroundColor.withAlpha(192)
+		return Themes.get<EditTheme>().background.color.backgroundColor.withAlpha(192)
 	}
 
 	/**
@@ -60,7 +62,8 @@ object Look {
 	/**
 	 * Returns the color to be used for highlighting areas using the selection color.
 	 */
-	val highlightWithSelectionColor: Color get() =
+	val highlightWithSelectionColor: Color
+        get() =
 		if (UI.isDark) {
 			Themes.get<EditTheme>().selection.color.foregroundColor.withAlpha(64)
 		} else {

@@ -1,9 +1,10 @@
 package ch.scorpion.antares.view.figure
 
-import ch.scorpion.antares.view.Look.SCALE
+import ch.scorpion.jabbah.edit.Look.SCALE
 import ch.scorpion.antares.view.symbolstyle.SymbolStyle
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.draw.polyline.PolylineDrawable
+import ch.scorpion.jabbah.edit.figure.AbstractPathFigure
 import ch.scorpion.jabbah.edit.figure.Figure
 import ch.scorpion.jabbah.edit.model.polyline.PolylineComponent
 

@@ -4,7 +4,7 @@ import ch.scorpion.antares.model.analog.AnalogLED
 import ch.scorpion.antares.model.analog.AnalogPort
 import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.model.output.LightEmitterModel
-import ch.scorpion.antares.view.Look
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.output.LightColorExpression

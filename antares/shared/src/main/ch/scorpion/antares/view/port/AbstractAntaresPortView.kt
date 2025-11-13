@@ -1,6 +1,6 @@
 package ch.scorpion.antares.view.port
 
-import ch.scorpion.antares.view.Look
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.base.geom.Direction.*
 import ch.scorpion.jabbah.draw.DrawContext

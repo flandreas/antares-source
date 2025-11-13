@@ -2,7 +2,7 @@ package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.model.EnterBehavior
 import ch.scorpion.antares.model.input.Keyboard
-import ch.scorpion.antares.view.Look
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme

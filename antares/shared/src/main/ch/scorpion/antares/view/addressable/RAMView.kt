@@ -1,7 +1,7 @@
 package ch.scorpion.antares.view.addressable
 
 import ch.scorpion.antares.model.addressable.RAM
-import ch.scorpion.antares.view.Look
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Direction

@@ -5,7 +5,7 @@ import ch.scorpion.antares.model.quinemccluskey.DNF
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.truthtable.TruthTable
 import ch.scorpion.antares.view.Handedness
-import ch.scorpion.antares.view.Look
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.antares.view.addressable.LookupTableView
 import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.antares.view.net.ConcentratorView

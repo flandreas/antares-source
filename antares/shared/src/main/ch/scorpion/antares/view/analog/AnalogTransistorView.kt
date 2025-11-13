@@ -3,8 +3,8 @@ package ch.scorpion.antares.view.analog
 import ch.scorpion.antares.model.analog.AnalogTransistor
 import ch.scorpion.antares.model.net.TransistorType
 import ch.scorpion.antares.view.Handedness
-import ch.scorpion.antares.view.Look
-import ch.scorpion.antares.view.Look.SCALE
+import ch.scorpion.jabbah.edit.Look
+import ch.scorpion.jabbah.edit.Look.SCALE
 import ch.scorpion.antares.view.analog.engine.AnalogElement
 import ch.scorpion.antares.view.analog.engine.AnalogElementProxy
 import ch.scorpion.antares.view.net.AbstractTransistorView
@@ -40,7 +40,7 @@ class AnalogTransistorView(
 
 	init {
 		modelExchanged(null)
-		setBounds(AbstractAntaresPortView.LENGTH, -5 * Look.SCALE, WIDTH, HEIGHT)
+		setBounds(AbstractAntaresPortView.LENGTH, -5 * SCALE, WIDTH, HEIGHT)
 	}
 
 	override val drawOnOff: Boolean get() = true

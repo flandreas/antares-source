@@ -2,8 +2,8 @@ package ch.scorpion.antares.view.symbolstyle
 
 import ch.scorpion.antares.model.analog.AnalogPort
 import ch.scorpion.antares.model.analog.AnalogSignal
-import ch.scorpion.antares.view.Look
-import ch.scorpion.antares.view.Look.SCALE
+import ch.scorpion.jabbah.edit.Look
+import ch.scorpion.jabbah.edit.Look.SCALE
 import ch.scorpion.antares.view.OrientableLabeledRectangularVerticeView
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.analog.AnalogLEDView

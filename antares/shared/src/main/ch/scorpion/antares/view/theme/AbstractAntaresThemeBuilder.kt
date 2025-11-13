@@ -1,6 +1,6 @@
 package ch.scorpion.antares.view.theme
 
-import ch.scorpion.antares.view.Look
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.jabbah.draw.style.Theme
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.draw.graphics.*

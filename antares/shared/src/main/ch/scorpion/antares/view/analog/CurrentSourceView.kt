@@ -1,7 +1,7 @@
 package ch.scorpion.antares.view.analog
 
 import ch.scorpion.antares.model.analog.CurrentSource
-import ch.scorpion.antares.view.Look.SCALE
+import ch.scorpion.jabbah.edit.Look.SCALE
 import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.geom.Direction

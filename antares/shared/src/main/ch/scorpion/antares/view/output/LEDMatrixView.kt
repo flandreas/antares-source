@@ -3,7 +3,7 @@ package ch.scorpion.antares.view.output
 import ch.scorpion.antares.model.output.LEDMatrix
 import ch.scorpion.antares.model.output.LightEmitterModel
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.view.Look
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme

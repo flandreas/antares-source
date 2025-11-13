@@ -2,7 +2,7 @@ package ch.scorpion.antares.view.analog
 
 import ch.scorpion.antares.model.analog.AnalogRelay
 import ch.scorpion.antares.model.input.SwitchConfiguration
-import ch.scorpion.antares.view.Look
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.antares.view.input.AbstractSwitchView
 import ch.scorpion.antares.view.input.AbstractSwitchView.Companion.DEF_CIRCLE_RADIUS
 import ch.scorpion.antares.view.module.AntaresViewModule

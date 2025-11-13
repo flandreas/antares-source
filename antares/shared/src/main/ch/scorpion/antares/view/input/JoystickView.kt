@@ -2,7 +2,7 @@ package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.model.input.Joystick
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.view.Look.SCALE
+import ch.scorpion.jabbah.edit.Look.SCALE
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView

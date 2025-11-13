@@ -72,6 +72,7 @@ import ch.scorpion.jabbah.base.swing.EnumRenderer
 import ch.scorpion.jabbah.base.swing.ToStringRenderer
 import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.model.text.TextComponentJvm
 import ch.scorpion.jabbah.edit.module.EditModuleJvm

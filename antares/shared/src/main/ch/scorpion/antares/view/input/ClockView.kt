@@ -2,7 +2,7 @@ package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.model.input.Clock
 import ch.scorpion.antares.model.input.PeriodOrFrequencyParser
-import ch.scorpion.antares.view.Look
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.antares.view.gate.BoxGateView
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.geom.Direction

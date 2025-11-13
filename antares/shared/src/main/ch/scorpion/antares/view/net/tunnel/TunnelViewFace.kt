@@ -1,6 +1,6 @@
 package ch.scorpion.antares.view.net.tunnel
 
-import ch.scorpion.antares.view.Look.SCALE
+import ch.scorpion.jabbah.edit.Look.SCALE
 import ch.scorpion.antares.view.net.tunnel.TunnelView.Companion.SIZE
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.jabbah.base.EnumProperty

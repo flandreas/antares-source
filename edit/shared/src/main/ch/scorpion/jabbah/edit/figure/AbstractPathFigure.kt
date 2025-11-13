@@ -1,31 +1,26 @@
-package ch.scorpion.antares.view.figure
+package ch.scorpion.jabbah.edit.figure
 
-import ch.scorpion.antares.view.Look
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.geom.Path
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.drawable.Mirrorable
-import ch.scorpion.jabbah.draw.drawable.Locatable
 import ch.scorpion.jabbah.draw.drawable.Transparent
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleType
-import ch.scorpion.jabbah.edit.figure.Figure
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.jabbah.edit.model.AbstractComponent
-import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
 abstract class AbstractPathFigure(
-	private val path: Path,
-	override val type: String
+    private val path: Path,
+    override val type: String
 ) : AbstractComponent(), Figure {
 
-	/** ---- [Drawable] */
+	/** ---- [ch.scorpion.jabbah.draw.Drawable] */
 
 	override val boundingBox: RectangularShape
 		get() = Rectangle2D(path.boundingBox).also {
@@ -39,7 +34,7 @@ abstract class AbstractPathFigure(
 		context.g.translate(location.x, location.y)
 
 		if (shadow) {
-			DropShadow.draw(context, Transparent.FULLY_OPAQUE) {
+			DropShadow.draw(context, Transparent.Companion.FULLY_OPAQUE) {
 				context.g.fill(path)
 			}
 		}
@@ -47,7 +42,7 @@ abstract class AbstractPathFigure(
 		context.g.color = if (context.useContextColors) {
 			context.color!!.backgroundColor
 		} else {
-			if (Look.FILL_BASIC_COMPONENTS) backgroundColor else DrawStyleModule.styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
+			if (Look.FILL_BASIC_COMPONENTS) backgroundColor else DrawStyleModule.styleProvider.getStyle(StyleType.Companion.BACKGROUND).color.backgroundColor
 		}
 		context.g.fill(path)
 
@@ -58,9 +53,9 @@ abstract class AbstractPathFigure(
 		context.g.translate(-location.x, -location.y)
 	}
 
-	/** ---- [Locatable] */
+	/** ---- [ch.scorpion.jabbah.draw.drawable.Locatable] */
 
-	override var location: Point2D = Point2D.ZERO
+	override var location: Point2D = Point2D.Companion.ZERO
 		set(value) {
 			invalidate()
 			field = value
@@ -68,7 +63,7 @@ abstract class AbstractPathFigure(
 			update()
 		}
 
-	/** ---- [Storable] */
+	/** ---- [ch.scorpion.jabbah.io.Storable] */
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
@@ -80,7 +75,7 @@ abstract class AbstractPathFigure(
 		location = reader.readPoint("location")
 	}
 
-	/** ---- [Mirrorable] */
+	/** ---- [ch.scorpion.jabbah.draw.drawable.Mirrorable] */
 
 	override fun mirrorHorizontally(x: Double) {
 		val transform = System.createAffineTransform()

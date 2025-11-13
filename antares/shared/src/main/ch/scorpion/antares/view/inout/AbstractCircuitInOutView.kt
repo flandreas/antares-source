@@ -2,7 +2,7 @@ package ch.scorpion.antares.view.inout
 
 import ch.scorpion.antares.model.inout.CircuitInOut
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.view.Look
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.KeyEvent

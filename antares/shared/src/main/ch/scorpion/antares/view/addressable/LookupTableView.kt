@@ -3,7 +3,7 @@ package ch.scorpion.antares.view.addressable
 import ch.scorpion.antares.model.addressable.Addressable
 import ch.scorpion.antares.model.addressable.LookupTable
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.view.Look
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.antares.view.gate.BoxGateView
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus

@@ -1,7 +1,7 @@
 package ch.scorpion.antares.view.output
 
 import ch.scorpion.antares.model.output.LED
-import ch.scorpion.antares.view.Look
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView

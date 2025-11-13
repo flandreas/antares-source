@@ -1,7 +1,7 @@
 package ch.scorpion.antares.view.gate
 
 import ch.scorpion.antares.AntaresTestRule
-import ch.scorpion.antares.view.Look.SCALE
+import ch.scorpion.jabbah.edit.Look.SCALE
 import ch.scorpion.antares.view.gate.BoxGateView.Companion.BIG_PORT_DISTANCE
 import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
 import ch.scorpion.jabbah.base.geom.Direction

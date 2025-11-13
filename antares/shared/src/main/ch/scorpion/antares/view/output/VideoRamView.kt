@@ -2,7 +2,7 @@ package ch.scorpion.antares.view.output
 
 import ch.scorpion.antares.model.addressable.*
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.view.Look
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme

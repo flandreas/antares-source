@@ -1,7 +1,7 @@
 package ch.scorpion.antares.view.signal
 
 import ch.scorpion.antares.model.signal.*
-import ch.scorpion.antares.view.Look
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.event.PropertyOwner
 import ch.scorpion.jabbah.base.event.PropertyOwnerImpl

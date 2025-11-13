@@ -3,7 +3,7 @@ package ch.scorpion.antares.view.arithmetic
 import ch.scorpion.antares.model.arithmetic.BitExtender
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
-import ch.scorpion.antares.view.Look
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.System

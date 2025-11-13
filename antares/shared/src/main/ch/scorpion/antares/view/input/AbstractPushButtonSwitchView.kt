@@ -2,8 +2,8 @@ package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.model.input.AbstractSwitch
 import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.view.Look
-import ch.scorpion.antares.view.Look.SCALE
+import ch.scorpion.jabbah.edit.Look
+import ch.scorpion.jabbah.edit.Look.SCALE
 import ch.scorpion.antares.view.analog.AnalogSwitchView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.style.AntaresTheme

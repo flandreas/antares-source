@@ -1,6 +1,7 @@
 package ch.scorpion.antares.view
 
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.edit.Look
 
 enum class PortViewSpacing(val customName: String, val value: Int) {
 
