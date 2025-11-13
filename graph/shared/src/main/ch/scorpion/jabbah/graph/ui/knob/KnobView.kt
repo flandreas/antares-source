@@ -1,13 +1,9 @@
 package ch.scorpion.jabbah.graph.ui.knob
 
-import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.Thousands
-import ch.scorpion.jabbah.base.Tooltip
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.base.geom.Geometry
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.InputEventHandler
@@ -15,13 +11,13 @@ import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangularUnzoomable
 import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.draw.graphics.Graphics2D
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
+import ch.scorpion.jabbah.graph.ui.knob.KnobView.Companion.TRIANGLE_PATH
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import kotlin.math.PI
 import kotlin.math.cos
@@ -43,8 +39,6 @@ class KnobView(
 ): AbstractRectangularUnzoomable(OUTER_SIZE / 2, location), ActorView {
 
     companion object {
-
-        private val LOG by logger(KnobView::class)
 
         const val OUTER_SIZE = 120.0
         private val OUTER_COLOR = Color(196, 196, 196, 228)
@@ -177,7 +171,6 @@ class KnobView(
         }
 
         override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler {
-            LOG.trace("mousePressed")
             if (context.mouseEvent?.button != Button.BUTTON1) {
                 return this
             }
@@ -190,7 +183,6 @@ class KnobView(
         }
 
         override fun mouseDragged(context: ActorInteractionContext): ActorInteractionHandler {
-            LOG.trace("mouseDragged")
             val newAngle = Geometry.angle(boundingBox.center, context.location)
             if (newAngle != oldAngle) {
                 val oldValue = value
@@ -206,7 +198,6 @@ class KnobView(
         }
 
         override fun mouseReleased(context: ActorInteractionContext): ActorInteractionHandler? {
-            LOG.trace("mouseReleased")
             if (!this@KnobView.contains(context.x, context.y)) {
                 KnobLauncherImpl.hide()
                 return null
@@ -215,8 +206,6 @@ class KnobView(
         }
 
         override fun mouseClicked(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
-            LOG.trace("mouseClicked, click count = ${context.mouseEvent?.clickCount}")
-
             if (context.mouseEvent?.button != Button.BUTTON1) {
                 return null
             }
@@ -228,10 +217,14 @@ class KnobView(
             }
 
             // Single-click to set angle (on outer scale)
-            // Bug: Distance depends on zoom factor, because KnobView is Unzoomable
             if (context.mouseEvent?.clickCount == 1 && isWithinScale(context.location)) {
-                val angle = Geometry.angle(boundingBox.center, context.location)
-                model.clickToAngle(Geometry.wrapAngle(-angle + PI / 2))
+                // Origin east, counter-clockwise (like in math)
+                val newAngle = Geometry.angle(boundingBox.center, context.location)
+
+                // Origin north, clockwise (like the KnobView scale)
+                val wrappedNewAngle = Geometry.wrapAngle(-newAngle + PI / 2)
+
+                model.clickToAngle(wrappedNewAngle)
             }
 
             return null
