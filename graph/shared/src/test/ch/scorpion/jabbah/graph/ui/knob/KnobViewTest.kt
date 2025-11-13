@@ -71,7 +71,7 @@ class KnobViewTest {
 
     private fun doubleClickAt(knobView: KnobView, x: Double, y: Double) {
         val context = contextFor(x, y, clickCount = 2)
-        knobView.getActorInteractionHandler(context).mousePressed(context)
+        knobView.getActorInteractionHandler(context).mouseClicked(context)
     }
 
     private fun contextFor(x: Double, y: Double, clickCount: Int = 0): ActorInteractionContext {

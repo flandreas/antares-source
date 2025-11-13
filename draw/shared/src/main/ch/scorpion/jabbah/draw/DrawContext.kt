@@ -104,4 +104,12 @@ class DrawContext(
 		g.rotate(-angle)
 		g.translate(-d.x, -d.y)
 	}
+
+	inline fun rotatedAndTranslated(dx: Double, dy: Double, angle: Double, body: (DrawContext) -> Unit) {
+		g.rotate(angle)
+		g.translate(dx, dy)
+		body(this)
+		g.translate(-dx, -dy)
+		g.rotate(-angle)
+	}
 }

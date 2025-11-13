@@ -32,7 +32,7 @@ class KnobModel(
         propertyOwner.source = this
     }
 
-    /** Returns the current value of this [KnobModel] as an angle (in radians, zero east, anti-clockwise).*/
+    /** Returns the current value of this [KnobModel] as an angle (in radians, zero north, clockwise).*/
     val asAngle: Double get() = asAngle(value)
 
     /**
@@ -91,8 +91,30 @@ class KnobModel(
             incrementAngleTo(newAngle)
         } else decrementAngleTo(newAngle)
 
+    /**
+     * Sets [value] by clicking on a scale point determined by [newAngle].
+     *
+     * Update the order of magnitude if the new angle is reached by implicitly turning
+     * the knob across the 0 position; if crossed clockwise, magnitude is increased,
+     * and if crossed counter-clockwise, magnitude is decreased.
+     *
+     * @param newAngle origin north, clockwise (like the KnobView scale)
+     */
     fun clickToAngle(newAngle: Double) {
-        value = (baseValue + (9 * baseValue * (newAngle / 2 / PI))).toLong()
+        val oldAngle = asAngle
+
+        if (oldAngle < PI && newAngle > PI &&  TWO_PI - newAngle + oldAngle < PI) {
+            // Decrement base value
+            val newBaseValue = baseValue / 10
+            value = (newBaseValue + (9 * newBaseValue * (newAngle / TWO_PI))).toLong()
+        } else if (newAngle < PI && oldAngle > PI &&  TWO_PI - oldAngle + newAngle < PI) {
+            // Increment base value
+            val newBaseValue = baseValue * 10
+            value = (newBaseValue + (9 * newBaseValue * (newAngle / TWO_PI))).toLong()
+        } else {
+            // Keep base value
+            value = (baseValue + (9 * baseValue * (newAngle / TWO_PI))).toLong()
+        }
     }
 
     /** Returns the specified value of this [KnobModel] as an angle (in radians, zero east, anti-clockwise).*/

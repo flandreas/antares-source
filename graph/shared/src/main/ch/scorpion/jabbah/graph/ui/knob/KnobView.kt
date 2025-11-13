@@ -1,9 +1,6 @@
 package ch.scorpion.jabbah.graph.ui.knob
 
-import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.base.System
-import ch.scorpion.jabbah.base.Thousands
-import ch.scorpion.jabbah.base.Tooltip
+import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.base.geom.Geometry
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -14,13 +11,13 @@ import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangularUnzoomable
 import ch.scorpion.jabbah.draw.graphics.Color
-import ch.scorpion.jabbah.draw.graphics.Graphics2D
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
+import ch.scorpion.jabbah.graph.ui.knob.KnobView.Companion.TRIANGLE_PATH
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import kotlin.math.PI
 import kotlin.math.cos
@@ -51,6 +48,7 @@ class KnobView(
         private const val INNER_SIZE = OUTER_SIZE - 50
         private val INNER_COLOR = Color(32, 32, 32, 128)
 
+        // Points to the east, origin at arrow tip at the east
         private const val TRIANGLE_SIZE = 10
         private val TRIANGLE_PATH = System.createPath()
             .moveTo(0, 0)
@@ -79,8 +77,10 @@ class KnobView(
 
     private val handler = Handler()
 
-    /** The current angle (angle) in radians, expressed in terms of [Graphics2D], i.e. clockwise.*/
-    private val angle: Double get() = -(ONE_ANGLE - model.asAngle)
+    /**
+     * The angle at which the [TRIANGLE_PATH] has to be rotated in terms of [Graphics2D to point to the current value.
+     */
+    private val triangleAngle: Double get() = -(ONE_ANGLE - model.asAngle)
 
     /** Used as a stamp to draw the scale numbers.*/
     private val scaleLabel = Label(font = Themes.get<GraphTheme>().explanation.font, text = "")
@@ -113,11 +113,9 @@ class KnobView(
 
         context.g.fillOval(-INNER_SIZE / 2, -INNER_SIZE / 2, INNER_SIZE, INNER_SIZE)
 
-        val currAngle = angle
-
-        context.g.rotate(currAngle)
-        context.translated(INNER_SIZE / 2 + TRIANGLE_SIZE, 0.0) { it.g.fill(TRIANGLE_PATH) }
-        context.g.rotate(-currAngle)
+        context.rotatedAndTranslated(INNER_SIZE / 2 + TRIANGLE_SIZE, 0.0, triangleAngle) {
+            it.g.fill(TRIANGLE_PATH)
+        }
 
         var text = Thousands.convert(model.value)
         if (StringUtils.isNotEmpty(unit)) {
@@ -143,6 +141,9 @@ class KnobView(
 
     override fun contains(x: Double, y: Double): Boolean =
         boundingBox.center.distance(x, y) <= OUTER_SIZE / 2 / zoomPan!!.zoomFactor * zoomPan!!.devicePixelRatio()
+
+    private fun isWithinScale(p: Point2D): Boolean =
+        boundingBox.center.distance(p) >= INNER_SIZE / 2 / zoomPan!!.zoomFactor * zoomPan!!.devicePixelRatio()
 
     /** ---- [ActorView] */
 
@@ -171,10 +172,6 @@ class KnobView(
 
         override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler {
             if (context.mouseEvent?.button != Button.BUTTON1) {
-                return this
-            }
-            if (context.mouseEvent?.clickCount == 2) {
-                value = defaultValue
                 return this
             }
 
@@ -209,9 +206,28 @@ class KnobView(
         }
 
         override fun mouseClicked(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
-            val angle = Geometry.angle(boundingBox.center, context.location)
-            model.clickToAngle(Geometry.wrapAngle(-angle + PI / 2))
-            return null;
+            if (context.mouseEvent?.button != Button.BUTTON1) {
+                return null
+            }
+
+            // Double-click to reset to default (on center knob)
+            if (context.mouseEvent?.clickCount == 2 && boundingBox.center.distance(context.location) < INNER_SIZE / 2) {
+                value = defaultValue
+                return null
+            }
+
+            // Single-click to set angle (on outer scale)
+            if (context.mouseEvent?.clickCount == 1 && isWithinScale(context.location)) {
+                // Origin east, counter-clockwise (like in math)
+                val newAngle = Geometry.angle(boundingBox.center, context.location)
+
+                // Origin north, clockwise (like the KnobView scale)
+                val wrappedNewAngle = Geometry.wrapAngle(-newAngle + PI / 2)
+
+                model.clickToAngle(wrappedNewAngle)
+            }
+
+            return null
         }
     }
 }
