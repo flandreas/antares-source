@@ -44,7 +44,10 @@ abstract class CalculatingVertice(
 
 	protected open fun flush(signalHandler: SignalHandler, data: ActorData) {
 		// Tuning: Faster than with streams
-		for (port in getPorts()) {
+		// Tuning: Faster than with (port in getPorts())
+		val cnt = portsCount
+		for (i in 0 until cnt) {
+			val port = getPortAtIndex<Any>(i)
 			if (port.portType.isOutput && port !== (data as GraphActorData).changedPort) {
 				// Don't flush OutputPorts that triggered execution to avoid shooting back signals
 				(port as OutputPort<*>).flush(signalHandler, (data as GraphActorData).force)

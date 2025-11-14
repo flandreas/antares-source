@@ -89,6 +89,9 @@ interface Vertice : GraphElement, Describable {
      */
     fun <T: Any> getPort(): Port<T>
 
+    /** Returns the [Port] at [index] (0 until [portsCount]).*/
+    fun <T: Any> getPortAtIndex(index: Int): Port<T>
+
     /** Returns all [Port]s of this [Vertice].*/
     fun getPorts(): List<Port<*>>
 

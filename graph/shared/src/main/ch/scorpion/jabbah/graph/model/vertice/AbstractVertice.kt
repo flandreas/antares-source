@@ -96,6 +96,9 @@ abstract class AbstractVertice(
 	override fun <T : Any> getPort(id: Int): Port<T> =
 		ports.first { it.portId == id } as Port<T>
 
+	override fun <T : Any> getPortAtIndex(index: Int): Port<T> =
+		ports[index] as Port<T>
+
 	override fun hasInput(name: String?): Boolean =
 		ports.any { it.portType.isInput && name != null && it.name == name }
 
