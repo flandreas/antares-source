@@ -304,7 +304,7 @@ class SchedulerImpl(
 	}
 
 	override fun actingDone(actor: Actor, data: ActorData?) {
-		logActorTrace(actor) { "Acting done" }
+		//logActorTrace(actor) { "Acting done" }
 		var slot = queue.peek()
 		if (slot != null) {
 			var request = slot.findRequest(actor)
@@ -644,7 +644,7 @@ class SchedulerImpl(
 		}
 
 		private fun addRequest(request: Request) {
-			logActorTrace(request.actor) { "Add actor to slot ${StringUtils.formatLong(relativeTime)} ns" }
+			//logActorTrace(request.actor) { "Add actor to slot ${StringUtils.formatLong(relativeTime)} ns" }
 			requests[request.actor] = request
 		}
 	}
