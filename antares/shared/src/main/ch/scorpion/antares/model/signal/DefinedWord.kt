@@ -92,7 +92,7 @@ class DefinedWord(
 
 	override val hasError: Boolean get() = false
 
-	override val bits: List<Bit> by lazy {
+	override val bits: List<Bit> by lazy(LazyThreadSafetyMode.NONE) {
 		val bits = mutableListOf<Bit>()
 		var v = longValue
 		for (i in 0 until bitWidth.width) {
@@ -102,15 +102,15 @@ class DefinedWord(
 		bits
 	}
 
-	override val hexString: String by lazy { BitOperation.longToHexPadded(longValue, bitWidth) }
+	override val hexString: String by lazy(LazyThreadSafetyMode.NONE) { BitOperation.longToHexPadded(longValue, bitWidth) }
 
-	override val binaryString: String by lazy { BitOperation.longToBinaryPadded(longValue, bitWidth) }
+	override val binaryString: String by lazy(LazyThreadSafetyMode.NONE) { BitOperation.longToBinaryPadded(longValue, bitWidth) }
 
-	override val octalString: String by lazy { longValue.toString(8) }
+	override val octalString: String by lazy(LazyThreadSafetyMode.NONE) { longValue.toString(8) }
 
-	override val decimalString: String by lazy { longValue.toString() }
+	override val decimalString: String by lazy(LazyThreadSafetyMode.NONE) { longValue.toString() }
 
-	override val color: CompositeColor by lazy { DigitalSignalColor.ofSignal(this) }
+	override val color: CompositeColor by lazy(LazyThreadSafetyMode.NONE) { DigitalSignalColor.ofSignal(this) }
 
 	override fun not(): DigitalSignal = DefinedWord(bitWidth, longValue.inv())
 
