@@ -101,9 +101,14 @@ abstract class AbstractGraphElement : ActorImpl(), GraphElement, Describable {
 	 * @param argument optional context object that might be used by the view object to handle the state change (e.g. the Graph)
 	 */
 	protected fun stateChanged(signalHandler: SignalHandler? = null, reason: String? = null, argument: Any? = null) {
-		if (listeners != null) {
+		if (listeners != null && listeners!!.isNotEmpty()) {
 			val event = GraphElementEvent(this, signalHandler, reason, argument)
-			listeners!!.toList().forEach { it.stateChanged(event) }
+			// Tuning: Faster than: listeners!!.toList().forEach { it.stateChanged(event) }
+			var i = 0
+			while (i < listeners!!.size) {
+				listeners!![i].stateChanged(event)
+				i++
+			}
 		}
 	}
 
