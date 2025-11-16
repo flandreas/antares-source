@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<metaGraph _id='0' appVersion='1.31.0' manualContainer='false'>
+  <graph>
+    <graphStorable _id='1'>
+      <model>
+        <graph _id='2' type='digital'>
+          <elements>
+            <subGraphVerticeRef _id='3' id='1' delay='0' uuid='eb7e5d83-f697-42b0-aec0-343c344e9589' type='digital'/>
+            <switch _id='4' id='2' delay='1000'/>
+            <digitalNet _id='5' id='3' delay='0'>
+              <ports>
+                <netPortRef _id='6' verticeId='4' portId='1'/>
+                <netPortRef _id='7' verticeId='3' portId='1'/>
+              </ports>
+            </digitalNet>
+            <led _id='8' id='4' delay='0'/>
+            <digitalNet _id='9' id='5' delay='0'>
+              <ports>
+                <netPortRef _id='10' verticeId='8' portId='1'/>
+                <netPortRef _id='11' verticeId='3' portId='2'/>
+              </ports>
+            </digitalNet>
+          </elements>
+        </graph>
+      </model>
+      <view>
+        <graphView _id='12'>
+          <netViews>
+            <netView _id='13' modelId='5' style='line'/>
+            <netView _id='14' modelId='9' style='line'/>
+          </netViews>
+          <components>
+            <subGraphVerticeViewRef _id='15' id='1' rot='0' filled='true' stroked='true' modelId='3' x='-77.0' y='-70.0' controlViewVisibility='simulation'/>
+            <switchView _id='16' id='2' rot='0' filled='true' stroked='true' modelId='4' x='-77.0' y='-70.0'/>
+            <digitalEdgeView _id='17' id='3' filled='true' stroked='true' modelId='5' layout='ortho' orig='16' origPort='1' origPortOutput='true' dest='15' destPort='1' adjusted='false'>
+              <shape>
+                <polylineShape points='-91.0,-70.0 -63.0,-70.0'/>
+              </shape>
+            </digitalEdgeView>
+            <ledView _id='18' id='4' rot='0' filled='true' stroked='true' modelId='8' x='14.0' y='-70.0' size='large' lightColor='red'/>
+            <digitalEdgeView _id='19' id='5' filled='true' stroked='true' modelId='9' layout='ortho' orig='18' origPort='1' dest='15' destPort='2' destPortOutput='true' adjusted='false'>
+              <shape>
+                <polylineShape points='28.0,-70.0 0.0,-70.0'/>
+              </shape>
+            </digitalEdgeView>
+          </components>
+        </graphView>
+      </view>
+    </graphStorable>
+  </graph>
+  <container>
+    <containerDrawing _id='20'>
+      <components>
+        <rectangle _id='21' id='1' style='figure' filled='true' stroked='true' x='140.0' y='140.0' w='56.0' h='70.0'/>
+        <originIndicator _id='22' id='2'>
+          <location>
+            <point x='140.0' y='140.0'/>
+          </location>
+        </originIndicator>
+      </components>
+      <model>
+        <subGraphVertice _id='23' id='0' delay='0' uuid='cd644a81-7452-4de1-ac8d-a6b40753fa12'>
+          <name>
+            <translation lang='en' text='BiDi sub output outer'/>
+          </name>
+          <ports/>
+        </subGraphVertice>
+      </model>
+    </containerDrawing>
+  </container>
+</metaGraph>

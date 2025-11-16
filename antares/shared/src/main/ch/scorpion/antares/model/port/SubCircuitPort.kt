@@ -33,6 +33,19 @@ class SubCircuitPort(
 		}
 	}
 
+	/** ---- [DigitalPortImpl] */
+
+	override fun executionStarted(signalHandler: SignalHandler) {
+		if (graphInput != null) {
+			// Embedded circuits must not pre-set their signal at start-up, otherwise they
+			// might not be properly replaced from outside (bug #1089)
+			storeIncomingSignal(null)
+			storeOutgoingSignal(null)
+		} else {
+			super.executionStarted(signalHandler)
+		}
+	}
+
 	/** ---- [SubGraphInputPort] interface */
 
 	/** Holds the link to the [GraphInput] of the inner [Graph]. Is explicitly set during the execution binding process. */

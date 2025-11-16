@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<project _id='0' appVersion='1.17.0' defaultElement='5a9cd188-59fd-4c63-90d2-c1678c1c7cbe' uuid='e70cb564-42c2-4880-baf4-17c507b1526a' author='5ecf330b-e395-4e17-88b0-0883834b384a' imports='6707f981-110d-4629-a0bf-c35a4688025c,b3a5e306-f0c8-11ed-a05b-0242ac120003'>
+<project _id='0' appVersion='1.31.0' defaultElement='5a9cd188-59fd-4c63-90d2-c1678c1c7cbe' uuid='e70cb564-42c2-4880-baf4-17c507b1526a' author='5ecf330b-e395-4e17-88b0-0883834b384a' imports='6707f981-110d-4629-a0bf-c35a4688025c,b3a5e306-f0c8-11ed-a05b-0242ac120003'>
   <folder>
     <libraryFolder _id='1'>
       <name>
@@ -248,6 +248,26 @@
         <containerLibraryElement _id='49' uuid='58fdc6b5-39e7-425d-a91f-8f1899d19f30' type='digital'>
           <name>
             <translation lang='en' text='ROM with Memory Contents'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='50' uuid='eb7e5d83-f697-42b0-aec0-343c344e9589' type='digital'>
+          <name>
+            <translation lang='en' text='BiDi sub output inner'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='51' uuid='cd644a81-7452-4de1-ac8d-a6b40753fa12' type='digital'>
+          <name>
+            <translation lang='en' text='BiDi sub output outer'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='52' uuid='24fc6a35-d75e-4cc7-b83a-11cb67b292ab' type='digital'>
+          <name>
+            <translation lang='en' text='UniDi sub output inner'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='53' uuid='6fac3421-27fe-43d8-aad9-a8b635431173' type='digital'>
+          <name>
+            <translation lang='en' text='UniDi sub output outer'/>
           </name>
         </containerLibraryElement>
       </items>

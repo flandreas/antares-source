@@ -193,7 +193,14 @@ class DigitalCircuitInOutImpl(
 		signal = if (startValue != null) {
 			startValue
 		} else {
-			getDigitalPort().dominantSignal
+			if (subGraphInputPort != null) {
+				// Embedded subcircuits should not pre-set their signal, because if the would,
+				// the initial signal might not be propagated if set from outside,
+				// e.g. if the Port is 0, the net is undefined, and a 0 is set from outside (bug #1089)
+				null
+			} else {
+				getDigitalPort().dominantSignal
+			}
 		}
 		stateChanged(signalHandler)
 	}

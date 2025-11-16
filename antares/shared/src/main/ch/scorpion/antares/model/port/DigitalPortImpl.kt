@@ -11,9 +11,7 @@ import ch.scorpion.antares.model.port.DigitalPort.Companion.PROP_OUTPUT_ANNOTATI
 import ch.scorpion.antares.model.port.DigitalPort.Companion.PROP_SIGNAL_REPRESENTATION
 import ch.scorpion.antares.model.port.DigitalPort.Companion.PROP_TRIGGER
 import ch.scorpion.antares.model.signal.*
-import ch.scorpion.antares.model.vertice.AdjustableBitWidth
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.*
@@ -207,7 +205,6 @@ open class DigitalPortImpl(
 		}
 
 	override fun executionStarted(signalHandler: SignalHandler) {
-		super.executionStarted(signalHandler)
 		storeIncomingSignal(defaultDigitalSignal)
 		storeOutgoingSignal(defaultDigitalSignal)
 	}
