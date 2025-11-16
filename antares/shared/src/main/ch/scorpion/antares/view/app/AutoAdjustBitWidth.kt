@@ -46,7 +46,7 @@ object AutoAdjustBitWidth : ConnectionEstablishedHandler {
     }
 
     private fun handleImpl(editor: Editor, port: DigitalPort, otherPort: DigitalPort?, netBitWidth: BitWidth): Command? {
-        val adjustedPort = if (otherPort != null && otherPort.owner!!.id > port.owner!!.id) {
+        val adjustedPort = if (otherPort != null && otherPort.owner is AdjustableBitWidth && otherPort.owner!!.id > port.owner!!.id) {
             otherPort
         } else if (port.owner is AdjustableBitWidth) {
             port
