@@ -143,7 +143,7 @@ class TranslatableText(translations: Collection<Translation>? = null) : Translat
 
 	/** ---- [Any] */
 
-	override fun toString(): String = getOptionalTranslation() ?: super.toString()
+	override fun toString(): String = getOptionalTranslation() ?: ""
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true

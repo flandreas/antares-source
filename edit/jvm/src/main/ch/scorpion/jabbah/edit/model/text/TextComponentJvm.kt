@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.edit.model.text
 
 import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
@@ -22,6 +23,9 @@ import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 import java.awt.*
+import java.awt.event.FocusAdapter
+import java.awt.event.FocusEvent
+import java.awt.event.FocusListener
 import javax.swing.JTextPane
 import javax.swing.border.LineBorder
 import javax.swing.event.DocumentEvent
@@ -127,6 +131,9 @@ open class TextComponentJvm(
 	override var text: Translatable = text
 		set(value) {
 			if (value != field) {
+				if (value.isEmpty) {
+					throw IllegalArgumentException(Translations.getString("edit.property.text.empty.error"))
+				}
 				invalidate()
 				field = value
 				invalidate()
@@ -320,7 +327,7 @@ open class TextComponentJvm(
 		}
 	}
 
-	private inner class EventHandler : InputEventHandlerAdapter<EditInputEventContext>(), DocumentListener {
+	private inner class EventHandler : InputEventHandlerAdapter<EditInputEventContext>(), DocumentListener, FocusListener {
 
 		private var editor: Editor? = null
 		private var editing: Boolean = false
@@ -344,6 +351,12 @@ open class TextComponentJvm(
 				return this
 			}
 			return null
+		}
+
+		override fun focusGained(e: FocusEvent?) {}
+
+		override fun focusLost(e: FocusEvent?) {
+			stopEditing()
 		}
 
 		/** ---- [DocumentListener] */
@@ -378,8 +391,11 @@ open class TextComponentJvm(
 			// request focus and position caret within the text
 			TEXT_EDITOR.requestFocusInWindow()
 
-			// listen for text changes in order to adjust the editors size
+			// listen for text changes to adjust the editor's size
 			TEXT_EDITOR.document.addDocumentListener(this)
+
+			// listen for focus lost to stop editing
+			TEXT_EDITOR.addFocusListener(this)
 
 			editor.view.setCursor(Cursor.DEFAULT)
 		}
@@ -406,6 +422,7 @@ open class TextComponentJvm(
 			}
 
 			TEXT_EDITOR.document.removeDocumentListener(this)
+			TEXT_EDITOR.removeFocusListener(this)
 
 			(editor!!.view.canvas as Container).remove(TEXT_EDITOR)
 			(editor!!.view.canvas as Container).revalidate()
