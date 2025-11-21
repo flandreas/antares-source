@@ -227,6 +227,8 @@ object GraphViewModule : AbstractModule() {
 		properties.set(OscilloscopeView.PROP_INDIVIDUAL_PROBE_COLORS, true)
 		properties.set(UsecaseRecorder.PROP_DEF_DELAY_MS, 2)
 		properties.set(UsecaseRecorder.PROP_DEF_TIME_BETWEEN_CLICKS_MS, 100)
+
+		properties.set(ConnectMethod.PROP_CONNECT_METHOD, ConnectMethod.AutoLayout.customName)
 	}
 
 	private fun configureSelectionModels(factory: SelectionModelFactory) {

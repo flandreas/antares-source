@@ -94,8 +94,13 @@ Selection box scope:: Determines how components are selected with the selection 
 - **Completely contained**: Selects only components that are completely contained in the selection box.
 - **Partially contained**: Selects also components that are only partially contained in the selection box.
 
-
 Save history:: If enabled, Antares saves a copy of the previous version whenever a circuit is saved, which allows you to view the save history using menu:Popup[Show History..] and to restore old versions of a circuit.
+
+Advanced wire layout (Experimental):: This mode for laying out wires tries to avoid overlapping segments of different wires.
+
+Connect method:: The method used when creating new wires.
+- **Auto-layout**: Press/hold the left mouse button on a pin or wire and drag the mouse onto a target pin or wire. Antares applies an orthogonal layout algorithm for the created wire.
+- **Set points manually**: Click on a pin, click on intermediate points, and click on a target pin or wire. Antares does not apply any layout for the created wire.
 
 == Oscilloscope
 

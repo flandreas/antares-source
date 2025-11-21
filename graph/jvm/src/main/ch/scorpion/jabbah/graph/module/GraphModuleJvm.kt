@@ -29,9 +29,9 @@ import ch.scorpion.jabbah.graph.login.LoginServiceJvm
 import ch.scorpion.jabbah.graph.model.param.*
 import ch.scorpion.jabbah.graph.model.port.InconsistentNetError
 import ch.scorpion.jabbah.graph.project.ProjectAkrabClientService
-import ch.scorpion.jabbah.graph.project.ProjectAkrabClientServiceJvm
 import ch.scorpion.jabbah.graph.ui.GraphNavigationViewHeaderFactory
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.connect.ConnectMethod
 import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
 import ch.scorpion.jabbah.graph.view.net.edge.OrthoEdgeViewLayouter
 import java.net.URL
@@ -162,7 +162,7 @@ object GraphModuleJvm : AbstractModule() {
 			root.getGroup(BaseModuleJvm.PREF_TREE_GENERAL).add(EnumPreference(
 				id = DataLocation.PROP_DATA_LOCATION,
 				nameKey = "base.preferences.dataLocation",
-				values = DataLocation.values(),
+				values = DataLocation.entries.toTypedArray(),
 				withName = DataLocation::withName,
 				needsRestart = true
 			))
@@ -190,6 +190,14 @@ object GraphModuleJvm : AbstractModule() {
 			id = OrthoEdgeViewLayouter.PROP_ADVANCED_LAYOUT,
 			nameKey = "graph.edgeView.advancedLayout.name",
 			needsRestart = true
+		))
+
+		root.getGroup(EditModuleJvm.PREF_TREE_EDITOR).add(EnumPreference(
+			id = ConnectMethod.PROP_CONNECT_METHOD,
+			nameKey = "graph.connectMethod",
+			values = ConnectMethod.entries.toTypedArray(),
+			withName = ConnectMethod::withName,
+			needsRestart = false
 		))
 	}
 }

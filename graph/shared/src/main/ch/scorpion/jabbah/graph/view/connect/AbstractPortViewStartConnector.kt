@@ -87,10 +87,10 @@ abstract class AbstractPortViewStartConnector(
 
 			state(sense) {
 				transitTo(insideStartDrag) {
-					given { it.mouseEvent?.isAltDown != true && mouseMoved(it) && insideStartPortView(it.location) }
+					given { it.mouseEvent != null && CurrentConnectMethod.isAutoLayout(it.mouseEvent!!) && mouseMoved(it) && insideStartPortView(it.location) }
 				}
 				transitTo(insideStartAdjust) {
-					given { it.mouseEvent?.isAltDown == true && mouseMoved(it) && insideStartPortView(it.location) }
+					given { it.mouseEvent != null && CurrentConnectMethod.isSetPointsMethod(it.mouseEvent!!) && mouseMoved(it) && insideStartPortView(it.location) }
 				}
 			}
 
