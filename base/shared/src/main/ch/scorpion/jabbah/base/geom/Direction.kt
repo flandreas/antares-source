@@ -20,6 +20,13 @@ enum class Direction(
 
         val ALL: Set<Direction> = setOf(EAST, NORTH, WEST, SOUTH)
 
+        private val ORTHOGONAL: Map<Direction, Set<Direction>> = mapOf(
+            EAST to setOf(NORTH, SOUTH),
+            NORTH to setOf(EAST, WEST),
+            WEST to setOf(NORTH, SOUTH),
+            SOUTH to setOf(EAST, WEST)
+        )
+
         /** Returns the [Direction] with the specified custom name.*/
         fun withName(name: String): Direction {
             for (dir in values()) {
@@ -146,4 +153,6 @@ enum class Direction(
 
 	/** Returns the [Point2D] that represents the normalized vector pointing to this [Direction].*/
 	fun toPoint2D(): Point2D = Point2D(dx, dy)
+
+    fun orthogonalSet(): Set<Direction> = ORTHOGONAL[this]!!
 }

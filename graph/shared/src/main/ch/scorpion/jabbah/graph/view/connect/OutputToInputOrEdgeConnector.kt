@@ -32,9 +32,8 @@ class OutputToInputOrEdgeConnector(
 		private val LOG by logger(OutputToInputOrEdgeConnector::class)
 	}
 
-	override fun createAdjustment(): EdgeViewAdjustmentView {
-		return SimpleEdgeViewAdjustmentView.forDestinationAdjustmentOf(edgeView!!)
-	}
+	override fun createAdjustment(): EdgeViewAdjustmentView =
+		SimpleEdgeViewAdjustmentView.forDestinationAdjustmentOf(edgeView!!)
 
 	override fun connectEdgeViewToStartPort() {
 		edgeView!!.connectToOrigin(Connection(startPortView!!.owner!!, startPortView!!.port as Port<Any>))

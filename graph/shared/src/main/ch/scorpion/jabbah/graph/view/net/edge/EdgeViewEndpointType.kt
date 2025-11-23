@@ -51,8 +51,8 @@ enum class EdgeViewEndpointType {
             return portView.relativeDirection
         }
 
-	    override fun adjustTo(edgeView: EdgeView<*>, layoutIndex: Int, direction: Direction?, location: Point2D) {
-		    edgeView.layout.adjustOrigin(layoutIndex, direction, location)
+	    override fun adjustTo(edgeView: EdgeView<*>, layoutIndex: Int, location: Point2D, origDirs: Set<Direction>?, destDir: Direction?) {
+		    edgeView.layout.adjustOrigin(layoutIndex, location, destDir)
 	    }
 
 	    override fun remove(edgeView: EdgeView<*>) {
@@ -95,8 +95,8 @@ enum class EdgeViewEndpointType {
             return portView.relativeDirection.opposite()
         }
 
-	    override fun adjustTo(edgeView: EdgeView<*>, layoutIndex: Int, direction: Direction?, location: Point2D) {
-		    edgeView.layout.adjustDestination(layoutIndex, direction, location)
+	    override fun adjustTo(edgeView: EdgeView<*>, layoutIndex: Int, location: Point2D, origDirs: Set<Direction>?, destDir: Direction?) {
+		    edgeView.layout.adjustDestination(layoutIndex, location, origDirs, destDir)
 	    }
 
 	    override fun remove(edgeView: EdgeView<*>) {
@@ -136,7 +136,7 @@ enum class EdgeViewEndpointType {
     abstract fun moveTo(edgeView: EdgeView<*>, point: Point2D)
 
 	/** Adjusts this endpoint of an [EdgeView] to the specified location, restricting layout the [EdgeView] point with index [layoutIndex].*/
-	abstract fun adjustTo(edgeView: EdgeView<*>, layoutIndex: Int, direction: Direction? = null, location: Point2D)
+	abstract fun adjustTo(edgeView: EdgeView<*>, layoutIndex: Int, location: Point2D, origDirs: Set<Direction>?, destDir: Direction? = null)
 
     /** Layouts the [EdgeView] at this endpoint with the preferred [Direction] at the endpoint. */
     abstract fun layout(edgeView: EdgeView<*>, direction: Direction?)

@@ -40,6 +40,7 @@ class EdgeToPortConnectorTest
 	@BeforeTest
 	fun initialize() {
 		editor.commandManager.reset()
+		CurrentConnectMethod.defaultMethod = ConnectMethod.AutoLayout
 	}
 
 	@Test

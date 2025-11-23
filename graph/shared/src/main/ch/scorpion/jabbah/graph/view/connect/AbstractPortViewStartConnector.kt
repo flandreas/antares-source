@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.graph.view.connect
 import ch.scorpion.jabbah.base.Status
 import ch.scorpion.jabbah.base.StatusType
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.collection.Stack
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.state.UnhandledEventBehaviour.Unhandled
@@ -12,13 +11,13 @@ import ch.scorpion.jabbah.draw.StateMachineInputEventHandler
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.altPressed
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.altReleased
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.escapePressed
+import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseDragged
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeftClicked
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeftDoubleClicked
-import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseDragged
-import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseMoved
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeftPressed
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeftReleased
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeftSingleClicked
+import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseMoved
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.EditInputEventContext
@@ -27,7 +26,6 @@ import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
-import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewFactory
@@ -69,12 +67,6 @@ abstract class AbstractPortViewStartConnector(
 	/** The [PortView] in [startVerticeView] from which the new connection originates.  */
 	protected var startPortView: PortView<*>? = null
 		private set
-
-	/**
-	 * The indices of the points in [edgeView] that have been manually set (i.e. adjusted) by the user.
-	 * Organized as a [Stack] to support repetitive unrollment by pressing ESC.
-	 */
-	private var adjustment: EdgeViewAdjustmentView? = null
 
 	private var oldStatus: String? = null
 
@@ -341,7 +333,7 @@ abstract class AbstractPortViewStartConnector(
 							given { mouseLeftDoubleClicked(it) }
 						}
 						transitTo(cancelled) {
-							given { escapePressed(it) && isLastUndo() }
+							given { escapePressed(it) && isLastUndoAfterRemovingLastPoint() }
 						}
 						stayOtherwise()
 					}
@@ -359,12 +351,11 @@ abstract class AbstractPortViewStartConnector(
 						transitTo(move) {
 							given { mouseMoved(it) && !insideTargetPortView(draggedEndpointType, it) }
 						}
-
 						transitTo(connected) {
 							given { mouseLeftPressed(it) }
 						}
 						transitTo(cancelled) {
-							given { escapePressed(it) && isLastUndo() }
+							given { escapePressed(it) && isLastUndoAfterRemovingLastPoint() }
 						}
 						stayOtherwise()
 					}
@@ -389,7 +380,7 @@ abstract class AbstractPortViewStartConnector(
 							given { mouseLeftPressed(it) }
 						}
 						transitTo(cancelled) {
-							given { escapePressed(it) && isLastUndo() }
+							given { escapePressed(it) && isLastUndoAfterRemovingLastPoint() }
 						}
 
 						stayOtherwise()
@@ -426,8 +417,6 @@ abstract class AbstractPortViewStartConnector(
 
 	protected abstract fun completeConnectingToEndPortOrOpen(context: EditInputEventContext)
 
-	protected abstract fun createAdjustment(): EdgeViewAdjustmentView
-
 	/**
 	 * Prepares this [AbstractPortViewStartConnector] to be used to create [EdgeView]s that the user
 	 * starts in the specified [VerticeView].
@@ -445,7 +434,6 @@ abstract class AbstractPortViewStartConnector(
 		super.reset()
 		startVerticeView = null
 		startPortView = null
-		adjustment = null
 	}
 
 	override fun canConnectTo(type: EdgeViewEndpointType, edgeView: EdgeView<out Any>, graphView: GraphView): Boolean =
@@ -472,72 +460,11 @@ abstract class AbstractPortViewStartConnector(
 		displayPortViewHighlight(context, alternativeView = true)
 	}
 
-	private fun beginAdjustment(context: EditInputEventContext) {
-		adjustment = createAdjustment()
-		context.drawingView.animationContainer.add(adjustment!!)
-		context.drawingView.animationContainer.validate()
-	}
-
-	private fun endAdjustment(context: EditInputEventContext) {
-		context.drawingView.animationContainer.remove(adjustment!!)
-	}
-
 	private fun beginConnecting(context: EditInputEventContext) {
 		createEdgeView(context.drawingView as DrawingView<GraphView>, startVerticeView!!.getPortConnectionPoint(startPortView!!.port), null)
 		LOG.userTrail("Start creating new EdgeView ${edgeView!!.id} on Net ${edgeView!!.model.id} at Port ${startPortView!!.port.portId} of ${startVerticeView!!.type} ${startVerticeView!!.id}")
 		edgeView!!.model.connect(startPortView!!.port as Port<Any>)
 		connectEdgeViewToStartPort()
-	}
-
-	private fun moveAdjustedPoint(context: EditInputEventContext) {
-		draggedEndpointType.adjustTo(
-			edgeView = edgeView!!,
-			layoutIndex = adjustment!!.model.current,
-			location = context.location.add(context.editor.snapManager.snap(context.x, context.y)))
-	}
-
-	private fun addAdjustedPoint(context: EditInputEventContext) {
-		draggedEndpointType.adjustTo(
-			edgeView = edgeView!!,
-			layoutIndex = adjustment!!.model.current,
-			location = context.location.add(context.editor.snapManager.snap(context.x, context.y)))
-
-		adjustment!!.model.add()
-		edgeView!!.validate()
-	}
-
-	private fun adjustToTargetPortView(context: EditInputEventContext) {
-		// Start highlighting current destination PortView
-		val connPointAbs = targetPortView!!.owner!!.getPortConnectionPoint(targetPortView!!.port)
-		ConnectionPointHighlighter.displayPortViewHighlight(context.drawingView, connPointAbs)
-
-		// Layout EdgeView
-		val direction = draggedEndpointType.getDirectionForPortView(targetPortView!!)
-		draggedEndpointType.adjustTo(
-			edgeView = edgeView!!,
-			layoutIndex = adjustment!!.model.current,
-			direction = direction,
-			location = connPointAbs)
-
-		edgeView?.validate()
-	}
-
-	private fun isLastUndo(): Boolean {
-		if (adjustment!!.model.size == 1) {
-			return true
-		}
-
-		val currentLocation = draggedEndpointType.getLocation(edgeView!!)
-		draggedEndpointType.remove(edgeView!!)
-
-		adjustment!!.model.undo()
-		draggedEndpointType.adjustTo(
-			edgeView = edgeView!!,
-			layoutIndex = adjustment!!.model.current,
-			location = currentLocation)
-		edgeView!!.validate()
-
-		return false
 	}
 
 	private fun completeConnectingToEdge(context: EditInputEventContext) {
