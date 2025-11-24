@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.analysis
 
+import ch.scorpion.antares.model.AntaresGraphTypes
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.analysis.CircuitAnalysisError
 import ch.scorpion.antares.model.analysis.CircuitAnalysisService
@@ -25,11 +26,24 @@ class AnalyseCircuitAction(
 ) {
 	override val opensDialog: Boolean get() = true
 
+	init {
+	    updateEnabled()
+	}
+
+	override fun calculateEnabled(): Boolean =
+		super.calculateEnabled()
+			&& (selectedItem as ContainerLibraryElement).graphType == AntaresGraphTypes.Digital
+
 	override fun execute(event: ActionEvent) {
 		InvocationHandler.invoke {
 			try {
 				// Close circuit to git rid of the GraphView acting as ActorListener
 				val element = selectedItem as ContainerLibraryElement
+
+				if (element.storable!!.graph.model !is DigitalGraph) {
+					throw CircuitAnalysisError(Translations.getString("antares.circuitAnalysis.onlyDigital.msg"))
+				}
+
 				val clone = StorableCloner.clone(element.storable!!.graph.model as DigitalGraph)
 				val truthTable = service.analyse(clone)
 
