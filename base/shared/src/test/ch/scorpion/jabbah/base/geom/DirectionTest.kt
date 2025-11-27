@@ -100,4 +100,13 @@ class DirectionTest {
 	fun shouldAcceptFloats() {
 		assertEquals(Direction.WEST, Direction.of(Point2D(-364.0, -294.0), Point2D(-364.5, -294.0)))
 	}
+
+	@Test
+	fun shouldGetOrthogonal() {
+		Direction.WEST.orthogonalSet().also {
+			assertEquals(2, it.size)
+			assertTrue(it.contains(Direction.NORTH))
+			assertTrue(it.contains(Direction.SOUTH))
+		}
+	}
 }

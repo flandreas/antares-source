@@ -49,7 +49,8 @@ class SplitEdgeViewCommand(
 	private val newEdgeViewProvider: NewEdgeViewAtSplitProvider,
 	private val newEdgeViewEndpointType: EdgeViewEndpointType,
 	private val targetConnectableViewId: Int?,
-	private val targetPortId: Int?
+	private val targetPortId: Int?,
+	var points: List<Point2D>? = null
 ) : AbstractCommand(baseKey, editor) {
 
 	companion object {
@@ -80,5 +81,10 @@ class SplitEdgeViewCommand(
 			addedNewEdgeView,
 			newEdgeViewEndpointType,
 			targetPortView as PortView<Any>?)
+
+		points?.let {
+			addedNewEdgeView.setLaidOutPoints(it, false)
+			addedNewEdgeView.layout.isAdjusted = true
+		}
 	}
 }
