@@ -413,7 +413,7 @@ class EdgeToPortOrEdgeConnector(
 		if (branchedEdgeView != null && layoutIndex == 0) {
             return edgeView!!.layout.type.getSegmentDirection(branchedEdgeView!!, 0)?.orthogonalSet()
 		}
-		return null
+		return super.getMoveAdjustedPointOrigDirs(layoutIndex)
 	}
 
 	override fun createAdjustment(): EdgeViewAdjustmentView =

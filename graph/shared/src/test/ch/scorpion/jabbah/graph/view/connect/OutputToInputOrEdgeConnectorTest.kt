@@ -25,6 +25,10 @@ class OutputToInputOrEdgeConnectorTest
 		}
 	}
 
+	init {
+		CurrentConnectMethod.defaultMethod = ConnectMethod.AutoLayout
+	}
+
 	@Test
 	fun shouldConnectToInput() {
 		mouseMoveTo(130, 100)
@@ -317,6 +321,18 @@ class OutputToInputOrEdgeConnectorTest
 
 		assertFalse(ConnectionPointHighlighter.hasPortViewHighlight)
 		assertEquals(1, builder.graphView.getEdgeViews().size)
+	}
+
+	@Test
+	fun shouldAdjustLayoutOrthogonalToLastSegment() {
+		mouseMoveTo(130, 100)
+		clickMouseAt(130, 100, modifiers = Modifier.Alt.mask)
+		clickMouseAt(170, 100)
+
+		mouseMoveTo(150, 200)
+
+		assertEquals(Point2D(170, 200), draggedEdgeView.getSegmentPoint(2))
+		assertEquals(Point2D(170, 100), draggedEdgeView.getSegmentPoint(1))
 	}
 
 	private fun prepareConnection(outputCanBeUndefined: Boolean) {

@@ -55,6 +55,10 @@ abstract class AbstractCreateEdgeViewConnector(
 	}
 
 	protected open fun getMoveAdjustedPointOrigDirs(layoutIndex: Int): Set<Direction>? {
+		if (layoutIndex > 0) {
+			// The last segment should preferably be orthogonal to the second-to-last one
+			return edgeView!!.layout.type.getSegmentDirection(edgeView!!, layoutIndex - 1)?.orthogonalSet()
+		}
 		return null
 	}
 

@@ -152,7 +152,7 @@ enum class LayoutType(
 	}
 
 	open fun getSegmentDirection(edgeView: EdgeView<*>, segmentIndex: Int): Direction? {
-		if (edgeView.isDegenerated) {
+		if (edgeView.isSegmentDegenerated(segmentIndex)) {
 			return null
 		}
 		if (segmentIndex < 0 || segmentIndex >= edgeView.segmentPointCount - 1) {

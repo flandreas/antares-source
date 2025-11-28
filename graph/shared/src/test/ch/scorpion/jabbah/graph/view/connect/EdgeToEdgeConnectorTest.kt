@@ -31,6 +31,7 @@ class EdgeToEdgeConnectorTest : AbstractInputEventHandlerTest(GraphViewModule.ed
 		EditModule.drawingAppService.delete(listOf(ev1), editor.view)
 
 		editor.commandManager.reset()
+		CurrentConnectMethod.defaultMethod = ConnectMethod.AutoLayout
 	}
 
 	private fun connect() {

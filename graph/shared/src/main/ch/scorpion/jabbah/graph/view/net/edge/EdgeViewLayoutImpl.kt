@@ -215,7 +215,7 @@ class EdgeViewLayoutImpl(
 		if (edgeView.origin != null) {
 			return edgeView.origin!!.getPortConnectionLayoutDirections(edgeView, refPoint)
 		}
-		return setOf(Direction.EAST)
+		return Direction.ALL
 	}
 
 	private fun getLayoutDestinationPoint(): Point2D? {

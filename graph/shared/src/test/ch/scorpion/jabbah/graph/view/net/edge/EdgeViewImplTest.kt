@@ -69,6 +69,16 @@ class EdgeViewImplTest {
 		ev.addSegmentPoint(Point2D(20, 10))
 		assertTrue(ev.isDegenerated)
 	}
+	@Test
+	fun testSegmentDegeneration() {
+		val ev = edgeViewFactory.createEdgeView<Boolean>(graphView)
+		ev.addSegmentPoint(Point2D(0, 0))
+		ev.addSegmentPoint(Point2D(100, 0))
+		ev.addSegmentPoint(Point2D(100, 0))
+
+		assertFalse(ev.isSegmentDegenerated(0))
+		assertTrue(ev.isSegmentDegenerated(1))
+	}
 
 	@Test
 	fun shouldCompactEqualPoints() {

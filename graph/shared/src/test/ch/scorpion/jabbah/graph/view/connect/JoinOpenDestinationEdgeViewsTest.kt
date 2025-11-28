@@ -23,6 +23,10 @@ class JoinOpenDestinationEdgeViewsTest
 		}
 	}
 
+	init {
+		CurrentConnectMethod.defaultMethod = ConnectMethod.AutoLayout
+	}
+
 	@Test
 	fun shouldHighlight() {
 		mouseMoveTo(150, 100)

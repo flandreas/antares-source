@@ -20,6 +20,10 @@ class UndoSplitEdgeViewIntegrationTest: AbstractGraphViewEditingTest() {
 		builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v4", 200, 200))
 	}
 
+	init {
+		CurrentConnectMethod.defaultMethod = ConnectMethod.AutoLayout
+	}
+
 	@Test
 	fun test() {
 		// Connect v1 and v2

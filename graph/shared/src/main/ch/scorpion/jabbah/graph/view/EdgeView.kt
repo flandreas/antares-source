@@ -259,6 +259,8 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
      */
     fun getSegmentDirection(segmentIndex: Int): Direction?
 
+	fun isSegmentDegenerated(segmentIndex: Int): Boolean
+
     /**
      * Calculates the length of the longest [EdgeView] path starting with this [EdgeView].
      * Traverses the entire net built by [NodeView] and their outgoing [EdgeView] that is reachable by this

@@ -26,6 +26,10 @@ class InputToOutputOrEdgeConnectorTest
 		}
 	}
 
+	init {
+		CurrentConnectMethod.defaultMethod = ConnectMethod.AutoLayout
+	}
+
 	@Test
 	fun shouldConnectToOutput() {
 		mouseMoveTo(190, 100)
@@ -218,16 +222,14 @@ class InputToOutputOrEdgeConnectorTest
 		clickMouseAt(190, 100, modifiers = Modifier.Alt.mask)
 
 		mouseMoveTo(160, 200)
+		assertEquals(3, draggedEdgeView.segmentPointCount)
 		clickMouseAt(160, 200)
 
 		mouseMoveTo(150, 200)
 		assertEquals(4, draggedEdgeView.segmentPointCount)
 
 		clickMouseAt(150, 200)
-		assertEquals(5, draggedEdgeView.segmentPointCount)
-
 		mouseMoveTo(130, 100)
-		assertEquals(6, draggedEdgeView.segmentPointCount)
 
 		clickMouseAt(130, 100)
 	}

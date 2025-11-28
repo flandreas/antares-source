@@ -123,7 +123,7 @@ actual class Logger(private val slf4jLogger: org.slf4j.Logger) {
 		}
 	}
 
-	actual fun isTraceEnabled(): Boolean = LogSystem.level.ordinal >= Debug.ordinal
+	actual fun isTraceEnabled(): Boolean = LogSystem.level.ordinal >= Trace.ordinal
 
 	actual fun isDebugEnabled(): Boolean = LogSystem.level.ordinal >= Debug.ordinal
 }

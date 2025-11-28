@@ -26,6 +26,7 @@ class ReconnectDestinationConnectorTest
 	}
 
 	init {
+		CurrentConnectMethod.defaultMethod = ConnectMethod.AutoLayout
 		GraphViewModule.graphViewConnectService.addConnection<Boolean>(builder.graphView, v1, v2)
 		builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v3", 200, 200))
 	}

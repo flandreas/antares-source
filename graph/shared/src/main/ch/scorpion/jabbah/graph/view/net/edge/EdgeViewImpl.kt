@@ -597,6 +597,9 @@ open class EdgeViewImpl<T : Any>(
 	private fun isDestinationDegenerated(): Boolean =
 		polyline.getPointAt(polyline.pointsCount - 1) == polyline.getPointAt(polyline.pointsCount - 2)
 
+	override fun isSegmentDegenerated(segmentIndex: Int): Boolean =
+		segmentPointCount < 2 || segmentIndex > segmentPointCount - 1 || polyline.getPointAt(segmentIndex) == polyline.getPointAt(segmentIndex + 1)
+
 	override fun split(index: Int, splitLocation: Point2D, edgeViewCreator: (NetView<T>) -> EdgeView<T>): EdgeView<T> =
 		EdgeViewSplitterJoiner.split(this, index, splitLocation, edgeViewCreator)
 

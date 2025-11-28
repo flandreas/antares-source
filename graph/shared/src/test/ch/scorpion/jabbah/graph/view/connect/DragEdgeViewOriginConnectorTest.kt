@@ -25,6 +25,7 @@ class DragEdgeViewOriginConnectorTest
 	init {
 		builder.connectInputOpen(v2, Point2D(150, 100))
 		editor.commandManager.reset()
+		CurrentConnectMethod.defaultMethod = ConnectMethod.AutoLayout
 	}
 
 	@Test

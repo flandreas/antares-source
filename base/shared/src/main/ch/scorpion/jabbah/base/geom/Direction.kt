@@ -20,6 +20,10 @@ enum class Direction(
 
         val ALL: Set<Direction> = setOf(EAST, NORTH, WEST, SOUTH)
 
+        val HORIZONTAL: Set<Direction> = setOf(EAST, WEST)
+
+        val VERTICAL: Set<Direction> = setOf(NORTH, SOUTH)
+
         private val ORTHOGONAL: Map<Direction, Set<Direction>> = mapOf(
             EAST to setOf(NORTH, SOUTH),
             NORTH to setOf(EAST, WEST),

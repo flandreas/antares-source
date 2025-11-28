@@ -28,6 +28,7 @@ abstract class AbstractJoinOpenEdgeViewTest(
         builder.connectOutputOpen(v1, Point2D(150, 100))
         builder.connectInputOpen(v3, Point2D(150, 200))
         editor.commandManager.reset()
+        CurrentConnectMethod.defaultMethod = ConnectMethod.AutoLayout
     }
 
     protected fun assertJoined() {

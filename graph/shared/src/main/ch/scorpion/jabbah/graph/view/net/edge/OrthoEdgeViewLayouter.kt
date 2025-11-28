@@ -36,6 +36,12 @@ object OrthoEdgeViewLayouter : EdgeViewLayouter {
 	 */
 	private const val DISPLACEMENT = 7
 
+	private fun checkDirections(boundary: LayoutBoundary, directions: Set<Direction>): Boolean {
+		return boundary.isPort
+			|| boundary.directions.isEmpty()
+			|| boundary.directions.any { directions.contains(it) }
+	}
+
 	fun layout(edgeView: EdgeView<*>?, graphView: GraphView, begin: LayoutBoundary, end: LayoutBoundary): List<Point2D> {
 		if (begin.point == end.point) {
 			return listOf(begin.point, end.point)
@@ -47,18 +53,27 @@ object OrthoEdgeViewLayouter : EdgeViewLayouter {
 		val otherEdgeViews = graphView.getEdgeViews().filter { edgeView == null || it !== edgeView }
 
 		// Create possible solutions by first creating a Point list that only contains the first and last segments,
-		// and by then completing these list in all possible ways, which yields the different solutions.
-		createSolutions(solutions, begin, end) { a, b -> createD(a, b, graphView, otherEdgeViews) }
-		createSolutions(solutions, begin, end) { a, b -> createC(a, b, graphView, otherEdgeViews) }
-		createSolutions(solutions, begin, end) { a, b -> createB(a, b) }
-		createSolutions(solutions, begin, end) { a, b -> createA(a, b) }
+		// and by then completing these lists in all possible ways, which yields the different solutions.
+
+		if (checkDirections(begin, beginDirectionsD) && checkDirections(end, endDirectionsD)) {
+			createSolutions(solutions, begin, end) { a, b -> createD(a, b, graphView, otherEdgeViews) }
+		}
+		if (checkDirections(begin, beginDirectionsC) && checkDirections(end, endDirectionsC)) {
+			createSolutions(solutions, begin, end) { a, b -> createC(a, b, graphView, otherEdgeViews) }
+		}
+		if (checkDirections(begin, beginDirectionsB) && checkDirections(end, endDirectionsB)) {
+			createSolutions(solutions, begin, end) { a, b -> createB(a, b) }
+		}
+		if (checkDirections(begin, beginDirectionsA) && checkDirections(end, endDirectionsA)) {
+			createSolutions(solutions, begin, end) { a, b -> createA(a, b) }
+		}
 
 		if (LOG.isTraceEnabled()) {
 			LOG.trace("solutions:")
 			solutions.forEach { LOG.trace("- ${it.polyline}") }
 		}
 
-		if (solutions.size == 0) {
+		if (solutions.isEmpty()) {
 			// begin and end must both be collinear and counter-directive
 			LOG.trace("using fallback solution")
 			return createFallbackSolution(begin.point, end.point)
@@ -203,11 +218,20 @@ object OrthoEdgeViewLayouter : EdgeViewLayouter {
 			}
 	}
 
+	private val beginDirectionsA: Set<Direction> get() = Direction.VERTICAL
+	private val endDirectionsA: Set<Direction> get() = Direction.HORIZONTAL
+
 	/** Lower left corner. */
 	private fun createA(p1: Point2D, p2: Point2D): Collection<List<Point2D>> = listOf(listOf(Point2D(p1.x, p2.y)))
 
+	private val beginDirectionsB: Set<Direction> get() = Direction.HORIZONTAL
+	private val endDirectionsB: Set<Direction> get() = Direction.VERTICAL
+
 	/** Upper right corner. */
 	private fun createB(p1: Point2D, p2: Point2D): Collection<List<Point2D>> = listOf(listOf(Point2D(p2.x, p1.y)))
+
+	private val beginDirectionsC: Set<Direction> get() = Direction.VERTICAL
+	private val endDirectionsC: Set<Direction> get() = Direction.VERTICAL
 
 	/** Horizontally in the middle of the two points. */
 	private fun createC(p1: Point2D, p2: Point2D, graphView: GraphView, otherEdgeViews: List<EdgeView<*>>): Collection<List<Point2D>> {
@@ -267,6 +291,9 @@ object OrthoEdgeViewLayouter : EdgeViewLayouter {
 			add(snapY(snapper, Point2D(p1.x, p1.y + dy)))
 			add(snapY(snapper, Point2D(p2.x, p1.y + dy)))
 		}
+
+	private val beginDirectionsD: Set<Direction> get() = Direction.HORIZONTAL
+	private val endDirectionsD: Set<Direction> get() = Direction.HORIZONTAL
 
 	/** Vertically in the middle of the two points.*/
 	private fun createD(p1: Point2D, p2: Point2D, graphView: GraphView, otherEdgeViews: List<EdgeView<*>>): Collection<List<Point2D>> {

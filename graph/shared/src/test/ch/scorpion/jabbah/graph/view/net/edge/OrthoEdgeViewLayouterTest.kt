@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.graph.view.net.edge
 
+import ch.scorpion.jabbah.base.LogLevel
+import ch.scorpion.jabbah.base.LogSystem
 import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -106,7 +108,7 @@ class OrthoEdgeViewLayouterTest {
 				directions = setOf(Direction.WEST),
 				isPort = false))
 
-		assertEquals(3, points.size)
+		assertEquals(4, points.size)
 	}
 
 	@Test
@@ -129,21 +131,26 @@ class OrthoEdgeViewLayouterTest {
 		assertEquals(4, points.size)
 	}
 
+	// #1097
 	@Test
-	fun shouldCreateFallbackSolution() {
+	fun shouldRespectBeginDirection() {
+		LogSystem.level = LogLevel.Trace
 		val points = OrthoEdgeViewLayouter.layout(
 			null,
 			graphView,
 			LayoutBoundary(
-				point = Point2D(0, 0),
-				directions = setOf(Direction.NORTH),
+				point = Point2D(170, 100),
+				directions = setOf(Direction.SOUTH),
 				isPort = false),
 			LayoutBoundary(
-				point = Point2D(100, 100),
-				directions = setOf(Direction.SOUTH),
+				point = Point2D(150, 200),
+				directions = emptySet(),
 				isPort = false))
 
 		assertTrue(CompactablePolyline(points).isOrthogonal)
 		assertEquals(3, points.size)
+		assertEquals(Point2D(170, 100), points[0])
+		assertEquals(Point2D(170, 200), points[1])
+		assertEquals(Point2D(150, 200), points[2])
 	}
 }
