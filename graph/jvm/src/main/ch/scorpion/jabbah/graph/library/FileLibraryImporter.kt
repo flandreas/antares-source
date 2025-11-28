@@ -5,7 +5,6 @@ import org.apache.commons.io.FileUtils
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.nio.file.StandardCopyOption
 
 /**
  * Imports a [Library] from a ZIP file into a file store.
@@ -34,6 +33,6 @@ class FileLibraryImporter(
 		if (exists) {
 			FileUtils.deleteDirectory(newDirectory.toFile())
 		}
-		Files.move(sourceLibraryDir.toPath(), newDirectory, StandardCopyOption.REPLACE_EXISTING)
+		FileUtils.copyDirectory(sourceLibraryDir, newDirectory.toFile())
 	}
 }
