@@ -108,7 +108,7 @@ abstract class AbstractPortViewStartConnector(
 					onTransit { beginConnecting(it) }
 				}
 				transitTo(drag) {
-					given { mouseLeftPressed(it) && it.mouseEvent?.isAltDown != true }
+					given { CurrentConnectMethod.isStartConnectEvent(it.mouseEvent) }
 					onTransit { beginConnecting(it) }
 				}
 			}

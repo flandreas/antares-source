@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.base.PreferencesChangedEvent
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.MouseEvent
+import ch.scorpion.jabbah.base.event.MouseEventType
 import ch.scorpion.jabbah.base.module.BaseModule
 
 enum class ConnectMethod(
@@ -54,6 +55,24 @@ object CurrentConnectMethod {
             defaultMethod === ConnectMethod.AutoLayout
         } else {
             defaultMethod === ConnectMethod.SetPoints
+        }
+
+    fun isStartConnectEvent(event: MouseEvent?): Boolean =
+        event?.isLeftButtonDown == true && when (defaultMethod) {
+            ConnectMethod.AutoLayout -> {
+                if (event.isAltDown) {
+                    event.type == MouseEventType.CLICKED
+                } else {
+                    event.type == MouseEventType.PRESSED
+                }
+            }
+            ConnectMethod.SetPoints -> {
+                if (event.isAltDown) {
+                    event.type == MouseEventType.PRESSED
+                } else {
+                    event.type == MouseEventType.CLICKED
+                }
+            }
         }
 
     private val connectMethodFromProperties: ConnectMethod get() =

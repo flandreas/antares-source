@@ -335,6 +335,18 @@ class OutputToInputOrEdgeConnectorTest
 		assertEquals(Point2D(170, 100), draggedEdgeView.getSegmentPoint(1))
 	}
 
+	@Test
+	fun shouldSwitchFromAdjustToAutoLayoutWithALT() {
+		CurrentConnectMethod.defaultMethod = ConnectMethod.SetPoints
+
+		mouseMoveTo(130, 100, modifiers = Modifier.Alt.mask)
+		pressMouseAt(130, 100, modifiers = Modifier.Alt.mask)
+		dragMouseTo(190, 100)
+		clickMouseAt(190, 100)
+
+		assertConnected()
+	}
+
 	private fun prepareConnection(outputCanBeUndefined: Boolean) {
 		v1.model.getOutput<Boolean>().customCanBeUndefined = outputCanBeUndefined
 		GraphViewModule.graphViewConnectService.addConnection<Boolean>(builder.graphView, v1, v2)
