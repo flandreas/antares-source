@@ -336,6 +336,25 @@ class OutputToInputOrEdgeConnectorTest
 	}
 
 	@Test
+	fun shouldDenyAdjustToAnotherOutput() {
+		val v3 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v3", 100, 200))
+
+		mouseMoveTo(130, 100, Modifier.Alt.mask)
+		clickMouseAt(130, 100, modifiers = Modifier.Alt.mask)
+		mouseMoveTo(130, 200)
+
+		assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
+		assertIs<ConnectionPointDenialCross>(ConnectionPointHighlighter.portViewHighlight)
+
+		// Connect attempt to be rejected. Also, no intermediate point to be set.
+		clickMouseAt(130, 200)
+
+		assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
+		assertIs<ConnectionPointDenialCross>(ConnectionPointHighlighter.portViewHighlight)
+		assertFalse(v3.model.isConnected)
+	}
+
+	@Test
 	fun shouldSwitchFromAdjustToAutoLayoutWithALT() {
 		CurrentConnectMethod.defaultMethod = ConnectMethod.SetPoints
 

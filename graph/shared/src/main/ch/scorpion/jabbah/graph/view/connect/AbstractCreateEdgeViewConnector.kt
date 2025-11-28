@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.collection.Stack
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.EditInputEventContext
@@ -100,6 +101,22 @@ abstract class AbstractCreateEdgeViewConnector(
 			destDir = direction)
 
 		edgeView?.validate()
+	}
+
+	protected fun adjustToDenyingPortView(context: EditInputEventContext) {
+		val connPointAbs = targetPortView!!.owner!!.getPortConnectionPoint(targetPortView!!.port)
+		ConnectionPointHighlighter.displayPortViewHighlight(context.drawingView, connPointAbs, highlight = DrawModule.properties.get(PortView.PROP_CONNECT_DENY))
+
+		// Layout EdgeView
+		val direction = draggedEndpointType.getDirectionForPortView(targetPortView!!)
+		draggedEndpointType.adjustTo(
+			edgeView = edgeView!!,
+			layoutIndex = adjustment!!.model.current,
+			location = connPointAbs,
+			origDirs = null,
+			destDir = direction)
+
+		// Don't layout EdgeView
 	}
 
 	protected fun isLastUndoAfterRemovingLastPoint(): Boolean {

@@ -323,6 +323,9 @@ abstract class AbstractPortViewStartConnector(
 						transitTo(insideTargetEdgeView) {
 							given { mouseMoved(it) && insideTargetEdgeView(draggedEndpointType, it) }
 						}
+						transitTo(insideDenyingPortView) {
+							given { mouseMoved(it) && insideDenyingPortView(draggedEndpointType, it) }
+						}
 						stayIf({ mouseMoved(it) }) {
 							onTransit { moveAdjustedPoint(it) }
 						}
@@ -358,6 +361,25 @@ abstract class AbstractPortViewStartConnector(
 							given { escapePressed(it) && isLastUndoAfterRemovingLastPoint() }
 						}
 						stayOtherwise()
+					}
+
+					state(insideDenyingPortView) {
+						onEntry {
+							adjustToDenyingPortView(it)
+							oldStatus = Status.replace(StatusType.Tool, Translations.getString("graph.tool.connector.drag.insideDenyingPortView.stateTip"))
+						}
+						onExit {
+							removePortViewHighlight(it)
+							Status.set(StatusType.Tool, oldStatus)
+						}
+						stayIf { mouseMoved(it) && insideDenyingPortView(draggedEndpointType, it) }
+						stayIf { mouseLeftClicked(it) }
+						transitTo(move) {
+							given { mouseMoved(it) && !insideDenyingPortView(draggedEndpointType, it) }
+						}
+						transitTo(cancelled) {
+							given { escapePressed(it) && isLastUndoAfterRemovingLastPoint() }
+						}
 					}
 
 					state(insideTargetEdgeView) {

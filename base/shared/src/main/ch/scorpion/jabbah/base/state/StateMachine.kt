@@ -129,12 +129,13 @@ class StateMachine<T>(val behaviour: UnhandledEventBehaviour = Strict) {
 
 		transition.transit(event)
 
+		val stateType = currentState::class.simpleName
 		if (destinationState !== currentState) {
-			LOG.trace("Transferring to state '${destinationState.name}'")
+			LOG.trace("Transferring to $stateType '${destinationState.name}'")
 			enter(destinationState, event)
 		} else {
 			if (LOG.isTraceEnabled()) {
-				LOG.trace("Stay in state '${destinationState.name}' with event $event")
+				LOG.trace("Stay in $stateType '${destinationState.name}' with event $event")
 			}
 		}
 	}
