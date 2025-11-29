@@ -229,7 +229,11 @@ class SidebarPane(
 			headerPanel.background = UiUtil.getBackgroundDivertColor(this@SidebarPane)
 
 			content.actions.forEach {
-				headerPanel.add(UiUtil.createToolBarButton(ActionWrapperSwing(it), false))
+				val button = UiUtil.createToolBarButton(ActionWrapperSwing(it), false)
+				headerPanel.add(button)
+				if (it.requestFocusOnClick) {
+					button.setFocusable(true)
+				}
 				headerPanel.add(Box.createHorizontalStrut(5))
 			}
 			headerPanel.add(UiUtil.createToolBarButton(collapseAction))

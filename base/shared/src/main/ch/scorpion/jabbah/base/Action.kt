@@ -38,6 +38,15 @@ interface Action {
 	 */
 	val opensDialog: Boolean get() = false
 
+	/**
+	 * Primarily used for FlatLaf JToolBar actions, which don't request the focus when pressed.
+	 * Overwriting this property with `true` can be useful for [Actions][Action] depending on the
+	 * system's state only valid after all editing components have committed their changes, which
+	 * is usually achieved by them losing the focus.
+	 * See https://github.com/JFormDesigner/FlatLaf/issues/346 for the FlatLaf discussion.
+	 */
+	val requestFocusOnClick: Boolean get() = false
+
 	fun dispose()
 
 	/** Asks this [Action] to update its "enabled" state. */

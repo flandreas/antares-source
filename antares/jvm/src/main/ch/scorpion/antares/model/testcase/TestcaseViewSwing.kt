@@ -128,9 +128,12 @@ class TestcaseViewSwing(
 		"/img/run-16.png"
 	) {
 
+		override val requestFocusOnClick: Boolean get() = true
+
 		init {
 		    description = name
 		}
+
 		override fun execute(event: ActionEvent) {
 			if (treeView.selectedTestcase != null) {
 				treeView.controller.runSelectedTestcaseAction.execute(event)

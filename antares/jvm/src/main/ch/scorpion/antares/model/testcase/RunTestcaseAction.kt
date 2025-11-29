@@ -22,6 +22,8 @@ class RunTestcaseAction(
 		private val LOG by logger(RunTestcaseAction::class)
 	}
 
+	override val requestFocusOnClick: Boolean get() = true
+
 	override fun execute(event: ActionEvent) {
 		InvocationHandler.invoke {
 			val metaGraph = controller.applicationDataHolder.data!!.content as MetaGraph
