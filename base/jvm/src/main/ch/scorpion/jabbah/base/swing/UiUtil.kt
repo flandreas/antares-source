@@ -23,9 +23,9 @@ import kotlin.math.min
  */
 object UiUtil {
 
-	private val LOG by lazy { logger(UiUtil::class) }
+	/** The default amount of RGB color level (0..255) to apply to a color to divert from another color.*/
+	const val DEF_DIVERT = 24
 
-	private const val DIVERT = 24
 	private val VARIANT_QUALIFIERS = listOf("", "@125pct", "@150pct", "@2x")
 
 	/**
@@ -136,20 +136,15 @@ object UiUtil {
 		return scroll
 	}
 
-	fun getBackgroundDivertColor(parent: JComponent): Color =
-		getBackgroundDivertColor(parent.background)
+	fun getBackgroundDivertColor(parent: JComponent, divert: Int = DEF_DIVERT): Color =
+		getBackgroundDivertColor(parent.background, divert)
 
-	fun getBackgroundDivertColor(bg: Color): Color =
+	fun getBackgroundDivertColor(bg: Color, divert: Int = DEF_DIVERT): Color =
 		if (isDark(bg)) {
-			Color(min(255, bg.red + DIVERT), min(255, bg.green + DIVERT), min(255, bg.blue + DIVERT))
+			Color(min(255, bg.red + divert), min(255, bg.green + divert), min(255, bg.blue + divert))
 		} else {
-			Color(max(0, bg.red - DIVERT), max(0, bg.green - DIVERT), max(0, bg.blue - DIVERT))
+			Color(max(0, bg.red - divert), max(0, bg.green - divert), max(0, bg.blue - divert))
 		}
-
-	fun getButtonPressColor(parent: JComponent): Color {
-		val bg = parent.background
-		return Color(bg.red - 40, bg.green - 40, bg.blue - 40)
-	}
 
 	fun createToolBarButton(action: Action, toggle: Boolean = false): AbstractButton {
 		val button = createToolBarButton(ActionWrapperSwing(action), toggle)
