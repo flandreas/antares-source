@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<metaGraph _id='0' manualContainer='true'>
+<metaGraph _id='0' appVersion='1.31.0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
@@ -23,7 +23,7 @@ if (WR) {
 }
 
 DO = reg
-'>
+' calculatedDelay='150'>
           <elements>
             <circuitInOut _id='3' id='1' name='D' type='inout' bitWidth='16'/>
             <subGraphVerticeRef _id='4' id='2' delay='110' uuid='2578848c-f03a-40d6-a7c4-6febf588e408' type='digital'/>
@@ -95,7 +95,7 @@ DO = reg
 run {
 	^1	1	0	0	42	Z	42
 	0	0	0	0	0	Z	42
-}'>
+}' skipPropDelayConsistenceCheck='true'>
                   <name>
                     <translation lang='en' text='Load'/>
                   </name>
@@ -107,7 +107,7 @@ run {
 	0	0	0	0	0	Z	42
 // Write
 	0	0	0	1	66	42	42
-}'>
+}' skipPropDelayConsistenceCheck='true'>
                   <name>
                     <translation lang='en' text='Write'/>
                   </name>
@@ -116,7 +116,7 @@ run {
 run {
 	^1	0	1	0	66	42	42
 	0	0	0	0	66	42	42
-}'>
+}' skipPropDelayConsistenceCheck='true'>
                   <name>
                     <translation lang='en' text='Read'/>
                   </name>
@@ -139,7 +139,7 @@ run {
             <netView _id='53' modelId='12' style='line'/>
           </netViews>
           <components>
-            <circuitInOutView _id='54' id='1' rot='0' filled='true' stroked='true' modelId='3' orientation='west' representation='hex'>
+            <circuitInOutView _id='54' id='1' filled='true' stroked='true' modelId='3' orientation='west' representation='hex'>
               <location>
                 <point x='238.0' y='280.0'/>
               </location>
@@ -149,7 +149,7 @@ run {
                 <translation lang='en' text='REG'/>
               </label>
             </subGraphVerticeViewRef>
-            <circuitInOutView _id='56' id='3' rot='0' filled='true' stroked='true' modelId='5' orientation='east' representation='hex'>
+            <circuitInOutView _id='56' id='3' filled='true' stroked='true' modelId='5' orientation='east' representation='hex'>
               <location>
                 <point x='840.0' y='336.0'/>
               </location>
@@ -181,7 +181,7 @@ run {
                 <polylineShape points='441.0,322.0 511.0,322.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='65' id='11' rot='0' filled='true' stroked='true' modelId='17' orientation='north' representation='binary'>
+            <circuitInOutView _id='65' id='11' filled='true' stroked='true' modelId='17' orientation='north' representation='binary'>
               <location>
                 <point x='623.0' y='525.0'/>
               </location>
@@ -211,7 +211,7 @@ run {
                 <polylineShape points='798.0,336.0 798.0,238.0 441.0,238.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='71' id='17' rot='0' filled='true' stroked='true' modelId='25' orientation='north' representation='hex'>
+            <circuitInOutView _id='71' id='17' filled='true' stroked='true' modelId='25' orientation='north' representation='hex'>
               <location>
                 <point x='511.0' y='553.0'/>
               </location>
@@ -237,17 +237,17 @@ run {
                 <polylineShape points='511.0,322.0 511.0,441.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='76' id='27' rot='0' filled='true' stroked='true' modelId='29' orientation='east' representation='binary'>
+            <circuitInOutView _id='76' id='27' filled='true' stroked='true' modelId='29' orientation='east' representation='binary'>
               <location>
                 <point x='245.0' y='462.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='77' id='28' rot='0' filled='true' stroked='true' modelId='30' orientation='east' representation='binary'>
+            <circuitInOutView _id='77' id='28' filled='true' stroked='true' modelId='30' orientation='east' representation='binary'>
               <location>
                 <point x='238.0' y='385.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='78' id='36' rot='0' filled='true' stroked='true' modelId='31' orientation='east' representation='binary'>
+            <circuitInOutView _id='78' id='36' filled='true' stroked='true' modelId='31' orientation='east' representation='binary'>
               <location>
                 <point x='231.0' y='175.0'/>
               </location>
