@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<metaGraph _id='0' appVersion='1.17.1' manualContainer='true'>
+<metaGraph _id='0' appVersion='1.31.0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
@@ -53,12 +53,12 @@
           </netViews>
           <components>
             <andGateView _id='23' id='1' rot='0' filled='true' stroked='true' modelId='3' x='483.0' y='112.0'/>
-            <circuitInOutView _id='24' id='2' rot='0' filled='true' stroked='true' modelId='4' orientation='east' representation='binary'>
+            <circuitInOutView _id='24' id='2' filled='true' stroked='true' modelId='4' orientation='east' representation='binary'>
               <location>
                 <point x='217.0' y='98.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='25' id='3' rot='0' filled='true' stroked='true' modelId='5' orientation='east' representation='binary'>
+            <circuitInOutView _id='25' id='3' filled='true' stroked='true' modelId='5' orientation='east' representation='binary'>
               <location>
                 <point x='504.0' y='112.0'/>
               </location>
@@ -122,6 +122,10 @@
       </components>
       <model>
         <subGraphVertice _id='43' id='0' delay='0' uuid='2d7bbd36-5dca-4c71-9a27-19a3bfa81bc5'>
+          <desc>
+            <translation lang='de' text='Erzeugt eine kurze steigende Flanke'/>
+            <translation lang='en' text='Produces a short ascending edge'/>
+          </desc>
           <name>
             <translation lang='en' text='Pulse Generator'/>
             <translation lang='de' text='Impulsglied'/>
