@@ -14,7 +14,6 @@ import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.escapePre
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseDragged
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeftClicked
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeftDoubleClicked
-import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeftPressed
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeftReleased
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeftSingleClicked
 import ch.scorpion.jabbah.draw.StateMachineInputEventHandler.Companion.mouseMoved
@@ -355,7 +354,7 @@ abstract class AbstractPortViewStartConnector(
 							given { mouseMoved(it) && !insideTargetPortView(draggedEndpointType, it) }
 						}
 						transitTo(connected) {
-							given { mouseLeftPressed(it) }
+							given { mouseLeftClicked(it) }
 						}
 						transitTo(cancelled) {
 							given { escapePressed(it) && isLastUndoAfterRemovingLastPoint() }
@@ -399,7 +398,7 @@ abstract class AbstractPortViewStartConnector(
 						}
 
 						transitTo(connectedToEdgeView) {
-							given { mouseLeftPressed(it) }
+							given { mouseLeftClicked(it) }
 						}
 						transitTo(cancelled) {
 							given { escapePressed(it) && isLastUndoAfterRemovingLastPoint() }

@@ -49,10 +49,12 @@ abstract class AbstractCreateEdgeViewConnector(
 		adjustment = createAdjustment()
 		context.drawingView.animationContainer.add(adjustment!!)
 		context.drawingView.animationContainer.validate()
+		context.editor.commandManager.active = false
 	}
 
 	protected fun endAdjustment(context: EditInputEventContext) {
 		context.drawingView.animationContainer.remove(adjustment!!)
+		context.editor.commandManager.active = true
 	}
 
 	protected open fun getMoveAdjustedPointOrigDirs(layoutIndex: Int): Set<Direction>? {

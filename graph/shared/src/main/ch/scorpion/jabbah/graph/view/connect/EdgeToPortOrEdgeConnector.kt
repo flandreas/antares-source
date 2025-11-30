@@ -310,7 +310,7 @@ class EdgeToPortOrEdgeConnector(
 							given { mouseMoved(it) && !insideTargetPortView(draggedEndpointType, it) }
 						}
 						transitTo(connected) {
-							given { mouseLeftPressed(it) }
+							given { mouseLeftClicked(it) }
 						}
 						transitTo(cancelled) {
 							given { escapePressed(it) && isLastUndoAfterRemovingLastPoint() }
