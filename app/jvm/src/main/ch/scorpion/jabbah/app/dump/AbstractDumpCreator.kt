@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.app.dump
 import ch.scorpion.jabbah.app.DesktopApplication
 import ch.scorpion.jabbah.base.UserActionTrail
 import ch.scorpion.jabbah.base.module.BaseModuleJvm
+import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -31,6 +32,10 @@ abstract class AbstractDumpCreator {
 
     @OptIn(DelicateCoroutinesApi::class)
     protected fun uploadErrorDump(description: String, includeWorkspace: Boolean) {
+        if (EditAuthModule.userHolder.user.isDeveloper) {
+            return
+        }
+
         GlobalScope.launch(Dispatchers.IO) {
             val path = storeDumpFile(includeWorkspace)
             if (!BaseModuleJvm.unexpectedErrorService.sendErrorDump(path)) {
