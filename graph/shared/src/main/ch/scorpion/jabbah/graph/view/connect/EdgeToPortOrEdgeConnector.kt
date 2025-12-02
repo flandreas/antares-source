@@ -331,7 +331,7 @@ class EdgeToPortOrEdgeConnector(
 								snapToDenyingPortView(it)
 							}
 						}
-						transitTo(drag) {
+						transitTo(move) {
 							given { mouseMoved(it) && !insideDenyingPortView(draggedEndpointType, it) }
 						}
 						transitTo(cancelled) {
