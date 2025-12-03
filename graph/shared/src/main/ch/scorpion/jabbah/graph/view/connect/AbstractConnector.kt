@@ -127,8 +127,8 @@ abstract class AbstractConnector(
 	}
 
 	protected fun insideTargetEdgeView(type: EdgeViewEndpointType, context: EditInputEventContext): Boolean {
-		val destDrawable = context.drawingView.drawing.getDrawable { it !== edgeView && it.contains(context.location) }
-		if (destDrawable == null || destDrawable !is EdgeView<*> || !canConnectTo(type, destDrawable, context.drawingView.drawing as GraphView)) {
+		val destDrawable = context.drawingView.drawing.getDrawable { it is EdgeView<*> && it.model !== edgeView?.model && it.contains(context.location) }
+		if (destDrawable == null || !canConnectTo(type, destDrawable as EdgeView<*>, context.drawingView.drawing as GraphView)) {
 			clearTargetEdgeView()
 			return false
 		}
@@ -154,8 +154,8 @@ abstract class AbstractConnector(
 	}
 
 	protected fun insideDenyingEdgeView(type: EdgeViewEndpointType, context: EditInputEventContext): Boolean {
-		val destDrawable = context.drawingView.drawing.getDrawable { it !== edgeView && it.contains(context.location) }
-		if (destDrawable == null || destDrawable !is EdgeView<*> || canConnectTo(type, destDrawable, context.drawingView.drawing as GraphView)) {
+		val destDrawable = context.drawingView.drawing.getDrawable { it is EdgeView<*> && it.model !== edgeView?.model && it.contains(context.location) }
+		if (destDrawable == null || canConnectTo(type, destDrawable as EdgeView<*>, context.drawingView.drawing as GraphView)) {
 			clearTargetEdgeView()
 			return false
 		}
