@@ -389,8 +389,10 @@ class EdgeToPortOrEdgeConnector(
 
 					state(cancelled) {
 						onEntry {
-							endAdjustment(it)
 							cancel(it.editor)
+							// Must be done AFTER CommandManager transaction was canceled in cancel(),
+							// otherwise UndoAction won't be re-enabled
+							endAdjustment(it)
 						}
 					}
 				}

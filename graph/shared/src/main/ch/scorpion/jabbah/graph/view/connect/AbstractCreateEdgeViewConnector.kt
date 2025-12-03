@@ -40,11 +40,6 @@ abstract class AbstractCreateEdgeViewConnector(
 
 	protected abstract fun createAdjustment(): EdgeViewAdjustmentView
 
-	override fun reset() {
-		super.reset()
-		adjustment = null
-	}
-
 	protected fun beginAdjustment(context: EditInputEventContext) {
 		adjustment = createAdjustment()
 		context.drawingView.animationContainer.add(adjustment!!)
@@ -54,6 +49,7 @@ abstract class AbstractCreateEdgeViewConnector(
 
 	protected fun endAdjustment(context: EditInputEventContext) {
 		context.drawingView.animationContainer.remove(adjustment!!)
+		adjustment = null
 		context.editor.commandManager.active = true
 	}
 
