@@ -514,7 +514,7 @@
             <translation lang='en' text='REG'/>
           </text>
           <location>
-            <point x='63.0' y='7.0'/>
+            <point x='63.0' y='-5.0'/>
           </location>
         </label>
         <originIndicator _id='167' id='9'>
@@ -522,9 +522,14 @@
             <point x='-14.0' y='0.0'/>
           </location>
         </originIndicator>
+        <controlViewComponent _id='168' id='10' style='figure' filled='true' stroked='true' controlModelId='10' name='Ausgang: O'>
+          <controlView>
+            <digitalSignalSourceCV _id='169' id='10' filled='true' stroked='true' modelId='11' x='14.0' y='12.0' representation='hex' orientation='east' controlId='circuitInOut:10' bitWidth='16' name='Ausgang: O'/>
+          </controlView>
+        </controlViewComponent>
       </components>
       <model>
-        <subGraphVertice _id='168' id='0' delay='0' uuid='243dfe78-61a6-466d-b27b-2c29b5cae010'>
+        <subGraphVertice _id='170' id='0' delay='0' uuid='243dfe78-61a6-466d-b27b-2c29b5cae010'>
           <desc>
             <translation lang='en' text='16-bit tri-state output register with load enable  and asynchronous clear.'/>
             <translation lang='de' text='16-Bit Tri-State-Register mit Schreib-Enable und asynchronem Löschen.'/>

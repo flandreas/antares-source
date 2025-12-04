@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<metaGraph _id='0' appVersion='1.17.1' manualContainer='true'>
+<metaGraph _id='0' appVersion='1.31.0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
@@ -192,18 +192,18 @@ run {
             <subGraphVerticeViewRef _id='73' id='2' rot='0' filled='true' stroked='true' modelId='6' x='406.0' y='210.0' controlViewVisibility='simulation'/>
             <subGraphVerticeViewRef _id='74' id='3' rot='0' filled='true' stroked='true' modelId='9' x='553.0' y='210.0' controlViewVisibility='simulation'/>
             <subGraphVerticeViewRef _id='75' id='4' rot='0' filled='true' stroked='true' modelId='12' x='686.0' y='210.0' controlViewVisibility='simulation'/>
-            <circuitInOutView _id='76' id='5' rot='0' filled='true' stroked='true' modelId='15' orientation='east' representation='binary'>
+            <circuitInOutView _id='76' id='5' filled='true' stroked='true' modelId='15' orientation='east' representation='binary'>
               <location>
                 <point x='168.0' y='308.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='77' id='6' rot='0' filled='true' stroked='true' modelId='16' orientation='east' representation='hex'>
+            <circuitInOutView _id='77' id='6' filled='true' stroked='true' modelId='16' orientation='east' representation='hex'>
               <location>
                 <point x='168.0' y='161.0'/>
               </location>
             </circuitInOutView>
             <splitterView _id='78' id='7' rot='0' filled='true' stroked='true' modelId='17' x='203.0' y='161.0' handedness='right'/>
-            <circuitInOutView _id='79' id='8' rot='0' filled='true' stroked='true' modelId='18' orientation='east' representation='hex'>
+            <circuitInOutView _id='79' id='8' filled='true' stroked='true' modelId='18' orientation='east' representation='hex'>
               <location>
                 <point x='868.0' y='357.0'/>
               </location>
@@ -343,12 +343,17 @@ run {
             <translation lang='de' text='REG'/>
           </text>
           <location>
-            <point x='189.0' y='161.0'/>
+            <point x='189.0' y='154.0'/>
           </location>
         </label>
+        <controlViewComponent _id='114' id='8' style='figure' filled='true' stroked='true' controlModelId='8' name='Ausgang: O'>
+          <controlView>
+            <digitalSignalSourceCV _id='115' id='8' filled='true' stroked='true' modelId='18' x='175.0' y='175.0' representation='hex' orientation='east' controlId='circuitInOut:8' bitWidth='4' name='Ausgang: O'/>
+          </controlView>
+        </controlViewComponent>
       </components>
       <model>
-        <subGraphVertice _id='114' id='0' delay='0' uuid='e802fb9c-82dc-4196-b266-79fa023fb12e'>
+        <subGraphVertice _id='116' id='0' delay='0' uuid='e802fb9c-82dc-4196-b266-79fa023fb12e'>
           <desc>
             <translation lang='de' text='4-Bit-Speicherregister mit positiver Flankensteuerung. Speichert mit ansteigender Taktflanke C die Daten, die am Dateneingang D anliegen, und gibt sie am Datenausgang O aus.'/>
             <translation lang='en' text='4-bit data register with positive edge-triggering. Stores the value at D with a rising edge of C and outputs it at output O.'/>

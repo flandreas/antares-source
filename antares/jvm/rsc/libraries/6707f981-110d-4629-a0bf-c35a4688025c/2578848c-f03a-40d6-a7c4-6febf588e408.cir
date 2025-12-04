@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<metaGraph _id='0' appVersion='1.17.1' manualContainer='true'>
+<metaGraph _id='0' appVersion='1.31.0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
@@ -164,7 +164,7 @@ run {
                 <translation lang='de' text='REG'/>
               </label>
             </subGraphVerticeViewRef>
-            <circuitInOutView _id='63' id='2' rot='0' filled='true' stroked='true' modelId='4' orientation='east' representation='hex'>
+            <circuitInOutView _id='63' id='2' filled='true' stroked='true' modelId='4' orientation='east' representation='hex'>
               <location>
                 <point x='203.0' y='147.0'/>
               </location>
@@ -190,13 +190,13 @@ run {
                 <polylineShape points='189.0,147.0 238.0,147.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='69' id='8' rot='0' filled='true' stroked='true' modelId='12' orientation='east' representation='hex'>
+            <circuitInOutView _id='69' id='8' filled='true' stroked='true' modelId='12' orientation='east' representation='hex'>
               <location>
                 <point x='665.0' y='273.0'/>
               </location>
             </circuitInOutView>
             <concentratorView _id='70' id='9' rot='0' filled='true' stroked='true' modelId='13' x='644.0' y='273.0' handedness='left'/>
-            <circuitInOutView _id='71' id='11' rot='0' filled='true' stroked='true' modelId='14' orientation='east' representation='binary'>
+            <circuitInOutView _id='71' id='11' filled='true' stroked='true' modelId='14' orientation='east' representation='binary'>
               <location>
                 <point x='196.0' y='406.0'/>
               </location>
@@ -304,7 +304,7 @@ run {
   <container>
     <containerDrawing _id='91'>
       <components>
-        <rectangle _id='92' id='1' style='figure' filled='true' stroked='true' x='140.0' y='140.0' w='98.0' h='56.0'/>
+        <rectangle _id='92' id='1' style='figure' filled='true' stroked='true' x='140.0' y='140.0' w='126.0' h='56.0'/>
         <originIndicator _id='93' id='7'>
           <location>
             <point x='126.0' y='154.0'/>
@@ -322,7 +322,7 @@ run {
         </digitalPortViewComp>
         <digitalPortViewComp _id='100' id='5' style='figure' filled='true' stroked='true' showBitWidthAnnotation='true'>
           <portView>
-            <digitalPortView _id='101' x='238.0' y='168.0' dir='east' textPos='internal' portId='102'/>
+            <digitalPortView _id='101' x='266.0' y='168.0' dir='east' textPos='internal' portId='102'/>
           </portView>
         </digitalPortViewComp>
         <label _id='103' id='6' rot='0'>
@@ -330,12 +330,17 @@ run {
             <translation lang='de' text='REG'/>
           </text>
           <location>
-            <point x='189.0' y='161.0'/>
+            <point x='203.0' y='154.0'/>
           </location>
         </label>
+        <controlViewComponent _id='104' id='8' style='figure' filled='true' stroked='true' controlModelId='8' name='Ausgang: O'>
+          <controlView>
+            <digitalSignalSourceCV _id='105' id='8' filled='true' stroked='true' modelId='12' x='161.0' y='175.0' representation='hex' orientation='east' controlId='circuitInOut:8' bitWidth='16' name='Ausgang: O'/>
+          </controlView>
+        </controlViewComponent>
       </components>
       <model>
-        <subGraphVertice _id='104' id='0' delay='0' uuid='2578848c-f03a-40d6-a7c4-6febf588e408'>
+        <subGraphVertice _id='106' id='0' delay='0' uuid='2578848c-f03a-40d6-a7c4-6febf588e408'>
           <desc>
             <translation lang='de' text='16-Bit-Speicherregister mit positiver Flankensteuerung. Speichert mit ansteigender Taktflanke C die Daten, die am Dateneingang D anliegen, und gibt sie am Datenausgang O aus.'/>
             <translation lang='en' text='16-bit data register with positive edge-triggering. Stores the value at D with a rising edge of C and outputs it at output O.'/>
