@@ -12,11 +12,7 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import dev.mokkery.verify
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class EdgeToPortAdjustConnectorTest : AbstractInputEventHandlerTest(GraphViewModule.edgeToPortOrEdgeConnector.handler) {
 
@@ -90,6 +86,22 @@ class EdgeToPortAdjustConnectorTest : AbstractInputEventHandlerTest(GraphViewMod
         // Now move vertically below the starting point
         mouseMoveTo(150, 200)
 
+        val ev = builder.graphView.getEdgeViews().first()
+        assertEquals(2, ev.segmentPointCount)
+    }
+
+    @Test
+    fun shouldPreferSimplestSolutionAtCorner() {
+        // Create an EdgeView with a corner
+        val v4 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v4", 100, 200))
+        builder.connectOutputOpen(v4, Point2D(150, 300))
+
+        // Connect the corner to v3
+        mouseMoveTo(150, 200, modifiers = Modifier.Alt.mask)
+        clickMouseAt(150, 200, modifiers = Modifier.Alt.mask)
+        mouseMoveTo(190, 200)
+
+        //assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
         val ev = builder.graphView.getEdgeViews().first()
         assertEquals(2, ev.segmentPointCount)
     }

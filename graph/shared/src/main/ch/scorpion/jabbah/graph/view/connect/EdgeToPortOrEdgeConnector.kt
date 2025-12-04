@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.base.event.Modifier
 import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.state.UnhandledEventBehaviour.Unhandled
 import ch.scorpion.jabbah.base.state.stateMachine
@@ -51,6 +52,21 @@ class EdgeToPortOrEdgeConnector(
 		private const val cancelled = "cancelled"
 		private const val connectedToEdge = "connectedToEdge"
 		private const val move = "move"
+
+		// Visible for testing
+		fun calculateFreeNodeDirections(nodePos: Point2D, inEVPos: Point2D, outEVPos: Point2D): Set<Direction> {
+			return if (inEVPos.x < nodePos.x && outEVPos.y > nodePos.y || outEVPos.x < nodePos.x && inEVPos.y > nodePos.y) {
+				Direction.NORTH_EAST
+			} else if (inEVPos.x < nodePos.x && outEVPos.y < nodePos.y || outEVPos.x < nodePos.x && inEVPos.y < nodePos.y) {
+				Direction.SOUTH_EAST
+			} else if (inEVPos.x > nodePos.x && outEVPos.y < nodePos.y || outEVPos.x > nodePos.x && inEVPos.y < nodePos.y) {
+				Direction.SOUTH_WEST
+			} else if (inEVPos.x > nodePos.x && outEVPos.y > nodePos.y || outEVPos.x > nodePos.x && inEVPos.y > nodePos.y) {
+				Direction.NORTH_WEST
+			} else {
+				Direction.ALL
+			}
+		}
 	}
 
 	/** The [EdgeView] from which a new [EdgeView] is branched by this connector. */
@@ -64,6 +80,11 @@ class EdgeToPortOrEdgeConnector(
 	 * Remembered to set the list of manually clicked points to re-establish them in redo after undo.
 	 */
 	private var splitEdgeViewCommand: SplitEdgeViewCommand? = null
+
+	/**
+	 * Caches the result of [calculateMoveAdjustedPointOrigDirs].
+	 */
+	private var moveAdjustedPointOrigDirs: Set<Direction>? = null
 
 	override val handler = StateMachineInputEventHandler(
 
@@ -409,11 +430,33 @@ class EdgeToPortOrEdgeConnector(
 	override fun reset() {
 		super.reset()
 		splitEdgeViewCommand = null
+		moveAdjustedPointOrigDirs = null
 	}
 
 	override fun getMoveAdjustedPointOrigDirs(layoutIndex: Int): Set<Direction>? {
+		if (moveAdjustedPointOrigDirs == null) {
+			moveAdjustedPointOrigDirs = calculateMoveAdjustedPointOrigDirs(layoutIndex)
+		}
+		return moveAdjustedPointOrigDirs
+	}
+
+	private fun calculateMoveAdjustedPointOrigDirs(layoutIndex: Int): Set<Direction>? {
 		if (branchedEdgeView != null && layoutIndex == 0) {
-            return edgeView!!.layout.type.getSegmentDirection(branchedEdgeView!!, 0)?.orthogonalSet()
+			val incomingNodeEV = branchedEdgeView!!
+			val outgoingNodeEV = splitEdgeViewCommand!!.result.tailEdgeView
+
+			// If branching at an EdgeView corner, continuing in the direction of the branchedEdgeView is also valid
+			return if (incomingNodeEV.polyline.isSegmentOrthogonalTo(incomingNodeEV.segmentPointCount - 2, 0, outgoingNodeEV.polyline.getPointList())) {
+				// Splitting at EdgeView corner
+				calculateFreeNodeDirections(
+					splitEdgeViewCommand!!.result.nodeView.location,
+					incomingNodeEV.getSegmentPoint(incomingNodeEV.segmentPointCount - 2),
+					outgoingNodeEV.getSegmentPoint(1)
+				)
+			} else {
+				// Splitting inside EdgeView
+				edgeView!!.layout.type.getSegmentDirection(branchedEdgeView!!, 0)?.orthogonalSet()
+			}
 		}
 		return super.getMoveAdjustedPointOrigDirs(layoutIndex)
 	}
