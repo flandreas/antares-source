@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<metaGraph _id='0' manualContainer='true'>
+<metaGraph _id='0' appVersion='1.31.0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' type='digital'>
+        <graph _id='2' type='digital' calculatedDelay='190'>
           <elements>
-            <subGraphVerticeRef _id='3' id='1' delay='0' uuid='112591d4-c0dd-48b1-96d9-8b9a98fce1a1' type='digital'/>
-            <subGraphVerticeRef _id='4' id='2' delay='0' uuid='112591d4-c0dd-48b1-96d9-8b9a98fce1a1' type='digital'/>
+            <subGraphVerticeRef _id='3' id='1' delay='190' uuid='112591d4-c0dd-48b1-96d9-8b9a98fce1a1' type='digital'/>
+            <subGraphVerticeRef _id='4' id='2' delay='190' uuid='112591d4-c0dd-48b1-96d9-8b9a98fce1a1' type='digital'/>
             <circuitInOut _id='5' id='3' name='D' type='input' bitWidth='8'>
               <desc>
                 <translation lang='de' text='Dateineingang'/>
@@ -129,15 +129,15 @@
           <components>
             <subGraphVerticeViewRef _id='58' id='1' rot='0' filled='true' stroked='true' modelId='3' x='-196.0' y='-112.0' controlViewVisibility='simulation'>
               <label>
-                <translation lang='en' text='REG 0..3'/>
+                <translation lang='en' text='REG 4..7'/>
               </label>
             </subGraphVerticeViewRef>
             <subGraphVerticeViewRef _id='59' id='2' rot='0' filled='true' stroked='true' modelId='4' x='35.0' y='-112.0' controlViewVisibility='simulation'>
               <label>
-                <translation lang='en' text='REG 4..7'/>
+                <translation lang='en' text='REG 0..3'/>
               </label>
             </subGraphVerticeViewRef>
-            <circuitInOutView _id='60' id='3' rot='0' filled='true' stroked='true' modelId='5' orientation='south' representation='hex'>
+            <circuitInOutView _id='60' id='3' filled='true' stroked='true' modelId='5' orientation='south' representation='hex'>
               <location>
                 <point x='-14.0' y='-231.0'/>
               </location>
@@ -148,27 +148,27 @@
                 <polylineShape points='-14.0,-203.0 -14.0,-245.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='63' id='6' rot='0' filled='true' stroked='true' modelId='10' orientation='east' representation='binary'>
+            <circuitInOutView _id='63' id='6' filled='true' stroked='true' modelId='10' orientation='east' representation='binary'>
               <location>
                 <point x='-280.0' y='-28.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='64' id='7' rot='0' filled='true' stroked='true' modelId='11' orientation='east' representation='binary'>
+            <circuitInOutView _id='64' id='7' filled='true' stroked='true' modelId='11' orientation='east' representation='binary'>
               <location>
                 <point x='-280.0' y='14.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='65' id='8' rot='0' filled='true' stroked='true' modelId='12' orientation='east' representation='binary'>
+            <circuitInOutView _id='65' id='8' filled='true' stroked='true' modelId='12' orientation='east' representation='binary'>
               <location>
                 <point x='-280.0' y='56.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='66' id='9' rot='0' filled='true' stroked='true' modelId='13' orientation='east' representation='binary'>
+            <circuitInOutView _id='66' id='9' filled='true' stroked='true' modelId='13' orientation='east' representation='binary'>
               <location>
                 <point x='-280.0' y='98.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='67' id='10' rot='0' filled='true' stroked='true' modelId='14' orientation='south' representation='hex'>
+            <circuitInOutView _id='67' id='10' filled='true' stroked='true' modelId='14' orientation='south' representation='hex'>
               <location>
                 <point x='-14.0' y='203.0'/>
               </location>
