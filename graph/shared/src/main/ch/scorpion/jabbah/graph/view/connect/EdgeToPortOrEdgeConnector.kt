@@ -455,7 +455,7 @@ class EdgeToPortOrEdgeConnector(
 				)
 			} else {
 				// Splitting inside EdgeView
-				edgeView!!.layout.type.getSegmentDirection(branchedEdgeView!!, 0)?.orthogonalSet()
+				edgeView!!.layout.type.getSegmentDirection(incomingNodeEV, incomingNodeEV.segmentPointCount - 2)?.orthogonalSet()
 			}
 		}
 		return super.getMoveAdjustedPointOrigDirs(layoutIndex)

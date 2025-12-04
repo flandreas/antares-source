@@ -13,7 +13,7 @@ import kotlin.test.assertTrue
 /**
  * Tests of static members in [EdgeToPortOrEdgeConnector].
  */
-class EdgeToPointOrEdgeConnectorTest {
+class EdgeToPortOrEdgeConnectorTest {
 
     // Scenario "Incoming horizontal, outgoing vertical"
 

@@ -101,7 +101,21 @@ class EdgeToPortAdjustConnectorTest : AbstractInputEventHandlerTest(GraphViewMod
         clickMouseAt(150, 200, modifiers = Modifier.Alt.mask)
         mouseMoveTo(190, 200)
 
-        //assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
+        val ev = builder.graphView.getEdgeViews().first()
+        assertEquals(2, ev.segmentPointCount)
+    }
+
+    @Test
+    fun shouldPreferSimplestSolutionInsideSegment() {
+        // Create an EdgeView with a second, vertical segment
+        val v4 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v4", 100, 150))
+        builder.connectOutputOpen(v4, Point2D(150, 300))
+
+        // Connect the segment to v3
+        mouseMoveTo(150, 200, modifiers = Modifier.Alt.mask)
+        clickMouseAt(150, 200, modifiers = Modifier.Alt.mask)
+        mouseMoveTo(190, 200)
+
         val ev = builder.graphView.getEdgeViews().first()
         assertEquals(2, ev.segmentPointCount)
     }
