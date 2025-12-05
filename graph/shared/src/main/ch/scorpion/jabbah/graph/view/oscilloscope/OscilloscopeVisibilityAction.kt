@@ -65,6 +65,7 @@ class OscilloscopeVisibilityAction(
 	override fun calculateEnabled(): Boolean =
 		super.calculateEnabled()
 			&& viewManager.activeView?.view is DrawingView<*>
+			&& (viewManager.activeView?.view as DrawingView<*>).drawing is GraphView
 			&& (viewManager.activeView?.view as DrawingView<*>).editable
 			&& !applicationContextHolder.scheduler.isActive
 
