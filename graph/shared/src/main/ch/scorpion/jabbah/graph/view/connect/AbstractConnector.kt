@@ -94,6 +94,8 @@ abstract class AbstractConnector(
 
 		targetPortView = pv
 
+		type.canConnectTo(pv.port, edgeView!!.net!!, context.drawingView.drawing as GraphView)
+
 		return true
 	}
 

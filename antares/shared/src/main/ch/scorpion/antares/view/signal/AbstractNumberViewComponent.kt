@@ -3,6 +3,7 @@ package ch.scorpion.antares.view.signal
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
+import ch.scorpion.antares.model.signal.DigitalSignalRepresenter
 import ch.scorpion.antares.model.signal.DigitalSignalSource
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.jabbah.edit.Look
@@ -40,7 +41,7 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
 	orientation: Direction,
 	signalRepresentation: DigitalSignalRepresentation = DigitalSignalRepresentation.BINARY,
 	private val drawDigitBorder: Boolean = true
-) : OrientableRectangularVerticeView<T>(styleProvider, model) {
+) : OrientableRectangularVerticeView<T>(styleProvider, model), DigitalSignalRepresenter {
 
 	companion object {
 		const val DEFAULT_INSETS = Look.SCALE
@@ -57,7 +58,7 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
 			}
 		}
 
-	open var signalRepresentation: DigitalSignalRepresentation = signalRepresentation
+	override var signalRepresentation: DigitalSignalRepresentation = signalRepresentation
 		set(value) {
 			if (value != field) {
 				field = value

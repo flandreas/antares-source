@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.net.BranchCount
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
+import ch.scorpion.antares.model.signal.DigitalSignalRepresenter
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.Handedness
 import ch.scorpion.jabbah.edit.Look
@@ -32,7 +33,7 @@ abstract class AbstractBranchCountSplitterView<T : AbstractBranchCountSplitter>(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: T,
 	handedness: Handedness = Handedness.RIGHT
-) : OrientableRectangularVerticeView<T>(styleProvider, model) {
+) : OrientableRectangularVerticeView<T>(styleProvider, model), DigitalSignalRepresenter {
 
 	companion object {
 		const val WIDTH = 2 * Look.GRID
@@ -82,7 +83,7 @@ abstract class AbstractBranchCountSplitterView<T : AbstractBranchCountSplitter>(
 			}
 		}
 
-	var signalRepresentation: DigitalSignalRepresentation
+	override var signalRepresentation: DigitalSignalRepresentation
 		get() = model.signalRepresentation
 		set(value) {
 			model.signalRepresentation = value

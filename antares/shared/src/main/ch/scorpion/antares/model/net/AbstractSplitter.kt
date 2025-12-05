@@ -23,11 +23,11 @@ import ch.scorpion.jabbah.io.StoreWriter
  */
 abstract class AbstractSplitter(
 	calculator: VerticeCalculator<AbstractSplitter>
-) : CalculatingVertice(calculator), NetCombiner {
+) : CalculatingVertice(calculator), NetCombiner, DigitalSignalRepresenter {
 
 	abstract var bitWidth: BitWidth
 
-	var signalRepresentation = DigitalSignalRepresentation.BINARY
+	override var signalRepresentation = DigitalSignalRepresentation.getSystemDefault()
 		set(value) {
 			if (field != value) {
 				field = value

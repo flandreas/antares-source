@@ -4,14 +4,18 @@ import ch.scorpion.antares.model.input.Switch
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
+import ch.scorpion.antares.model.signal.DigitalSignalRepresenter
 import ch.scorpion.antares.model.signal.DigitalSignalSource
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.WeakOutputPortBehaviour
 import ch.scorpion.jabbah.graph.view.GraphView
 
-interface DigitalCircuitInOut : CircuitInOut<DigitalSignal>, DigitalSignalSource, WeakOutputPortBehaviour<DigitalSignal> {
-
-    var signalRepresentation: DigitalSignalRepresentation
+interface DigitalCircuitInOut :
+	CircuitInOut<DigitalSignal>,
+	DigitalSignalSource,
+	WeakOutputPortBehaviour<DigitalSignal>,
+	DigitalSignalRepresenter
+{
 
 	/**
 	 * Toggles the bit at the specified index.

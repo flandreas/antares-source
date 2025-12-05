@@ -36,11 +36,6 @@ open class DigitalPortImpl(
 
 	companion object {
 
-		private val LOG by logger(DigitalPortImpl::class)
-
-		private fun defaultSignalRepresentation(bitWidth: BitWidth): DigitalSignalRepresentation =
-			if (bitWidth.width > 4) DigitalSignalRepresentation.HEXADECIMAL else DigitalSignalRepresentation.BINARY
-
 		fun createPort(portType: PortType): DigitalPort {
 			return DigitalPortImpl(portType)
 		}
@@ -156,19 +151,13 @@ open class DigitalPortImpl(
 			}
 		}
 
-	private var dynamicSignalRepresentation: Boolean = signalRepresentation == null
-
-	override var signalRepresentation: DigitalSignalRepresentation = signalRepresentation ?: defaultSignalRepresentation(bitWidth)
-		get() = if (dynamicSignalRepresentation) {
-			defaultSignalRepresentation(bitWidth)
-		} else {
-			field
-		}
+	override var signalRepresentation: DigitalSignalRepresentation = signalRepresentation ?: DigitalSignalRepresentation.getSystemDefault()
 		set(value) {
-			val oldValue = field
-			field = value
-			dynamicSignalRepresentation = false
-			changeSupport.fire(PROP_SIGNAL_REPRESENTATION, oldValue, field)
+			if (field != value) {
+				val oldValue = field
+				field = value
+				changeSupport.fire(PROP_SIGNAL_REPRESENTATION, oldValue, field)
+			}
 		}
 
 	override fun getDefaultSignal(): DigitalSignal? = defaultDigitalSignal

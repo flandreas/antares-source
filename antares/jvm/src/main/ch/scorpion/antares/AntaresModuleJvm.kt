@@ -297,7 +297,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerRenderer(Trigger::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(BranchCount::class.java, ToStringRenderer::class.java)
 		registry.registerRenderer(BitWidth::class.java, ToStringRenderer::class.java)
-		registry.registerRenderer(DigitalSignalRepresentation::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(DigitalSignalRepresentation::class.java, DigitalSignalRepresentationRenderer::class.java)
 		registry.registerRenderer(SevenSegmentDisplayScheme::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(OutputAnnotation::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(PullDirection::class.java, EnumRenderer::class.java)
@@ -326,7 +326,11 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerEditor(Logic::class.java, LogicEditor::class.java)
 		registry.registerEditor(Trigger::class.java, TriggerEditor::class.java)
 		registry.register(BranchCount::class.java) { BranchCountEditor((it as CommandPropertySwing<BranchCount>).filter) }
-		registry.register(DigitalSignalRepresentation::class.java) { DigitalSignalRepresentationEditor((it as CommandPropertySwing<DigitalSignalRepresentation>).filter)}
+		registry.register(DigitalSignalRepresentation::class.java) {
+			DigitalSignalRepresentationEditor(
+				(it as CommandPropertySwing<DigitalSignalRepresentation>).optional,
+				(it as CommandPropertySwing<DigitalSignalRepresentation>).filter)
+		}
 		registry.registerEditor(SevenSegmentDisplayScheme::class.java, SevenSegmentDisplaySchemeEditor::class.java)
 		registry.registerEditor(OutputAnnotation::class.java, OutputAnnotationEditor::class.java)
 		registry.registerEditor(PullDirection::class.java, PullDirectionEditor::class.java)
@@ -518,6 +522,14 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 			))
 
 			add(LightColorPreference())
+
+			add(EnumPreference(
+				id = DigitalSignalRepresentation.PROP_DEFAULT_SIGNAL_REPRESENTATION,
+				nameKey = "antares.preferences.SignalRepresentation",
+				values = DigitalSignalRepresentation.entries.toTypedArray(),
+				withName = DigitalSignalRepresentation::withName,
+				needsRestart = true
+			))
 
 			add(EnumPreference(
 				id = DigitalSignalNotation.PROP_DIGITAL_SIGNAL_NOTATION,

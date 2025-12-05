@@ -114,10 +114,24 @@ class TriggerEditor : ComboBoxPropertyEditor() {
     }
 }
 
-class DigitalSignalRepresentationEditor(filter: (DigitalSignalRepresentation) -> Boolean = { true }) : ComboBoxPropertyEditor() {
+class DigitalSignalRepresentationRenderer : EnumRenderer<DigitalSignalRepresentation>() {
+	override fun setValue(value: Any?) {
+		text = value?.toString() ?: Translations.getString("element.property.DigitalSignalRepresentation.none")
+	}
+}
+
+class DigitalSignalRepresentationEditor(
+	optional: Boolean = false,
+	filter: (DigitalSignalRepresentation) -> Boolean = { true }
+) : ComboBoxPropertyEditor() {
     init {
-        setAvailableValues(DigitalSignalRepresentation.entries.filter { filter.invoke(it)}.toTypedArray())
-        (editor as JComboBox<DigitalSignalRepresentation>).renderer = EnumRenderer()
+		val list = mutableListOf<DigitalSignalRepresentation?>()
+		if (optional) {
+			list.add(null)
+		}
+		list.addAll(DigitalSignalRepresentation.entries.filter { filter.invoke(it)})
+        setAvailableValues(list.toTypedArray())
+        (editor as JComboBox<DigitalSignalRepresentation>).renderer = DigitalSignalRepresentationRenderer()
     }
 }
 

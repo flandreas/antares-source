@@ -25,6 +25,7 @@ import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.SubCircuitPort
 import ch.scorpion.antares.model.signal.BitWidthGraphParamType
 import ch.scorpion.antares.model.signal.DigitalSignalColor
+import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.model.signal.FixedPointConfig
 import ch.scorpion.antares.model.testcase.CombinedTestcaseRunner
 import ch.scorpion.antares.model.testcase.Testcase
@@ -102,6 +103,8 @@ object AntaresModelModule : AbstractModule() {
 		properties.set(AnalogCircuitAnalysis.PROP_TIME_STEP, AnalogCircuitAnalysis.DEF_TIME_STEP)
 		properties.set(CombinedTestcaseRunner.PROP_CHECK_PROP_DELAY_CONSISTENCY, true)
 		properties.set(DigitalPort.PROP_ADJUST_BIT_WIDTH, true)
+
+		properties.set(DigitalSignalRepresentation.PROP_DEFAULT_SIGNAL_REPRESENTATION, DigitalSignalRepresentation.HEXADECIMAL.customName)
 	}
 
 	private fun configureTypeMap(typeMap: TypeMap) {

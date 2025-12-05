@@ -8,6 +8,7 @@ import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -38,8 +39,10 @@ class WireTapViewIntegrationTest : AbstractCircuitTest() {
 
 		inoutView4A = builder.addVerticeView(DigitalCircuitInOutView(orientation = Direction.WEST, model = DigitalCircuitInOutImpl(portType = PortType.INOUT, bitWidth = BitWidth.BW_4)))
 		inoutView4A.location = Point2D(0, 0)
+		inoutView4A.signalRepresentation = DigitalSignalRepresentation.BINARY
 		inoutView4B = builder.addVerticeView(DigitalCircuitInOutView(orientation = Direction.EAST, model = DigitalCircuitInOutImpl(portType = PortType.INOUT, bitWidth = BitWidth.BW_4)))
 		inoutView4B.location = Point2D(200, 0)
+		inoutView4B.signalRepresentation = DigitalSignalRepresentation.BINARY
 
 		wireTapView = builder.addVerticeView(WireTapView(model = WireTap(narrowBitWidth = BitWidth.BW_1, bitWidth = BitWidth.BW_4, narrowPortCount = PortCount.TWO)))
 		wireTapView.model.setTapPosition(1, 1)

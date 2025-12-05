@@ -3,6 +3,7 @@ package ch.scorpion.antares.view
 import ch.scorpion.antares.model.AntaresGraphTypes
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.net.NetSignalApplierStrategy
+import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.output.LightEmitter
 import ch.scorpion.jabbah.base.System
@@ -41,6 +42,8 @@ class DigitalGraphView(
 			}
 		}
 
+	var defaultSignalRepresentation: DigitalSignalRepresentation? = null
+
 	@Suppress("unused") // Reflection
 	var netSignalApplierStrategy: NetSignalApplierStrategy
 		get() = (graph as DigitalGraph).netSignalApplierStrategy
@@ -59,12 +62,16 @@ class DigitalGraphView(
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
 		defaultLightColor?.let { writer.writeString("lightColor", it.customName) }
+		defaultSignalRepresentation?.let { writer.writeString("signalRepresentation", it.customName) }
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		if (reader.hasAttribute("lightColor")) {
 			defaultLightColor = LightColor.withName(reader.readString("lightColor"))
+		}
+		if (reader.hasAttribute("signalRepresentation")) {
+			defaultSignalRepresentation = DigitalSignalRepresentation.withName(reader.readString("signalRepresentation"))
 		}
 	}
 }

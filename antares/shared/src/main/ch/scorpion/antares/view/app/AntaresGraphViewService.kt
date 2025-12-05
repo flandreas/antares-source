@@ -2,6 +2,8 @@ package ch.scorpion.antares.view.app
 
 import ch.scorpion.antares.model.PortCount
 import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
+import ch.scorpion.antares.model.signal.DigitalSignalRepresenter
 import ch.scorpion.antares.view.DigitalGraphView
 import ch.scorpion.antares.view.gate.LogicGateView
 import ch.scorpion.antares.view.net.WireTapView
@@ -19,6 +21,7 @@ import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.model.param.GraphParamDefinition
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
+import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.app.GraphViewAppServiceImpl
 import ch.scorpion.jabbah.graph.view.connect.GraphViewConnectService
@@ -41,9 +44,17 @@ class AntaresGraphViewService(
 		super.customizeAddedComponent(component, drawing)
 		if (component.parent is DigitalGraphView) {
 			val lightColor = determineLightColor(component.parent as DigitalGraphView)
-			when (component) {
-				is LightEmitter -> component.lightColor = lightColor
-				is SubGraphVerticeView<*> -> applyDefaultLightColor(component as SubGraphVerticeView<SubGraphVerticeRef>, lightColor)
+			val signalRepresentation = determineSignalRepresentation(component.parent as DigitalGraphView)
+			if (component is LightEmitter) {
+				component.lightColor = lightColor
+			}
+			if (component is DigitalSignalRepresenter) {
+				component.signalRepresentation = signalRepresentation
+			} else if (component is GraphElementView<*> && component.model is DigitalSignalRepresenter) {
+				(component.model as DigitalSignalRepresenter).signalRepresentation = signalRepresentation
+			}
+			if (component is SubGraphVerticeView<*>) {
+				applyDefaultLightColor(component as SubGraphVerticeView<SubGraphVerticeRef>, lightColor)
 			}
 		}
 	}
@@ -77,6 +88,9 @@ class AntaresGraphViewService(
 
 	private fun determineLightColor(graphView: DigitalGraphView): LightColor =
 		graphView.defaultLightColor ?: LightColor.getSystemDefault(properties)
+
+	private fun determineSignalRepresentation(graphView: DigitalGraphView): DigitalSignalRepresentation =
+		graphView.defaultSignalRepresentation ?: DigitalSignalRepresentation.getSystemDefault(properties)
 
 	/**
 	 * Changes the [PortCount] of an [LogicGateView] (undoable), which might involve

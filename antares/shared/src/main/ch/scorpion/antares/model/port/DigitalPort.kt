@@ -7,16 +7,17 @@ import ch.scorpion.antares.model.net.DigitalNet
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
+import ch.scorpion.antares.model.signal.DigitalSignalRepresenter
 import ch.scorpion.antares.model.vertice.AdjustableBitWidth
 import ch.scorpion.jabbah.base.Properties
-import ch.scorpion.jabbah.graph.model.*
+import ch.scorpion.jabbah.graph.model.BidirectionalPort
+import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 
 /**
  * Represents a [Port] that produces or consumes [DigitalSignal]s.
  */
-interface DigitalPort : BidirectionalPort<DigitalSignal> {
+interface DigitalPort : BidirectionalPort<DigitalSignal>, DigitalSignalRepresenter {
 
 	companion object {
 
@@ -40,8 +41,6 @@ interface DigitalPort : BidirectionalPort<DigitalSignal> {
 	var bitWidth: BitWidth
 
 	var trigger: Trigger
-
-	var signalRepresentation: DigitalSignalRepresentation
 
 	var outputAnnotation: OutputAnnotation
 

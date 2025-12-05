@@ -1,9 +1,16 @@
 package ch.scorpion.antares.model.signal
 
 import ch.scorpion.jabbah.base.EnumProperty
+import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.math.ceil
 
+interface DigitalSignalRepresenter {
+
+	/** Defines the [DigitalSignalRepresentation] in which a [DigitalSignalRepresenter] represents a [DigitalSignal]. */
+	var signalRepresentation: DigitalSignalRepresentation
+}
 
 enum class DigitalSignalRepresentation(override val customName: String) : EnumProperty<DigitalSignalRepresentation> {
 
@@ -128,6 +135,8 @@ enum class DigitalSignalRepresentation(override val customName: String) : EnumPr
 
 	    const val BASE_KEY = "element.property.DigitalSignalRepresentation"
 
+		const val PROP_DEFAULT_SIGNAL_REPRESENTATION = "antares.model.signal.defaultRepresentation"
+
         fun withName(customName: String): DigitalSignalRepresentation {
             for (r in values()) {
                 if (r.customName == customName) {
@@ -136,6 +145,9 @@ enum class DigitalSignalRepresentation(override val customName: String) : EnumPr
             }
             throw IllegalArgumentException("unknown DigitalSignalRepresentation $customName")
         }
+
+		fun getSystemDefault(properties: Properties = BaseModule.properties): DigitalSignalRepresentation =
+			withName(properties.getString(PROP_DEFAULT_SIGNAL_REPRESENTATION))
     }
 
 	abstract val prefix: String

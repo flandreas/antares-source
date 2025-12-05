@@ -52,9 +52,9 @@ class DigitalCircuitInOutView(
 		val LOG by logger(DigitalCircuitInOutView::class)
 	}
 
-	override var signalRepresentation: DigitalSignalRepresentation = DigitalSignalRepresentation.BINARY
+	override var signalRepresentation: DigitalSignalRepresentation
+		get() = model.signalRepresentation
 		set(value) {
-			field = value
 			model.signalRepresentation = value
 			updateView()
 		}
@@ -396,7 +396,7 @@ class DigitalCircuitInOutView(
 		var handler: ActorInteractionHandler? = null
 		val digitIndex = getDigitIndexAt(context.x, context.y)
 		if (digitIndex != null) {
-			if (signalRepresentation == DigitalSignalRepresentation.BINARY) {
+			if (signalRepresentation == DigitalSignalRepresentation.BINARY || bitWidth === BitWidth.BW_1) {
 				model.toggleBit(digitIndex, undefine, context.signalHandler, (context.view as DrawingView<*>).drawing as GraphView)
 			} else {
 				if (context.view is DrawingView<*>) {

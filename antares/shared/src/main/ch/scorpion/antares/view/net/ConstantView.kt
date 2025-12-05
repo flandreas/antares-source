@@ -35,7 +35,7 @@ class ConstantView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: Constant = Constant(),
 	private val eventBus: EventBus = BaseModule.eventBus
-) : OrientableRectangularVerticeView<Constant>(styleProvider, model) {
+) : OrientableRectangularVerticeView<Constant>(styleProvider, model), DigitalSignalRepresenter {
 
 	companion object {
 		private const val VERTICAL_INSET = 2
@@ -56,7 +56,7 @@ class ConstantView(
 			}
 		}
 
-	var signalRepresentation: DigitalSignalRepresentation = DigitalSignalRepresentation.BINARY
+	override var signalRepresentation: DigitalSignalRepresentation = DigitalSignalRepresentation.BINARY
 		set(value) {
 			if (value != field) {
 				field = value
