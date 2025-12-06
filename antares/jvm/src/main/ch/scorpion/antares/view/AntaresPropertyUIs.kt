@@ -14,44 +14,14 @@ import ch.scorpion.antares.view.input.JoystickDeflection
 import ch.scorpion.antares.view.net.TransistorViewSymbol
 import ch.scorpion.antares.view.net.tunnel.TunnelFlowDirection
 import ch.scorpion.antares.view.output.LightColor
-import ch.scorpion.antares.view.output.LightColorExpression
 import ch.scorpion.antares.view.output.VideoRamColorModel
 import ch.scorpion.antares.view.port.DigitalPortViewStyle
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.sound.WaveformType
-import ch.scorpion.jabbah.base.swing.ColorIcon
 import ch.scorpion.jabbah.base.swing.EnumRenderer
 import ch.scorpion.jabbah.base.swing.ToStringRenderer
-import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
 import com.l2fprod.common.beans.editor.ComboBoxPropertyEditor
 import javax.swing.JComboBox
-import javax.swing.JList
-
-/**
- * Renders a [LightColor] in a [JList].
- */
-class LightColorRenderer : EnumRenderer<LightColor>() {
-
-    private val icon = ColorIcon()
-
-    override fun setValue(value: Any?) {
-	    if (value == null) {
-			icon.backgroundColor = Graphics2DJvm.toAwtColor(LightColor.getSystemDefault().executeColor(true))
-			text = Translations.getString("element.color.none")
-			setIcon(icon)
-		} else if (value is LightColorExpression) {
-			text = value.toString()
-			setIcon(null)
-	    } else if (value is LightColor) {
-		    icon.backgroundColor = Graphics2DJvm.toAwtColor(value.executeColor(true))
-		    text = value.toString()
-			setIcon(icon)
-	    } else {
-			text = value.toString()
-			setIcon(null)
-		}
-    }
-}
 
 class LightColorEditor(optional: Boolean = false) : ComboBoxPropertyEditor() {
     init {
