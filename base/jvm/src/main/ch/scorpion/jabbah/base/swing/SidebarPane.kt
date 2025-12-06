@@ -262,7 +262,9 @@ class SidebarPane(
 		current = entry
 
 		current?.also {
-			LOG.userTrail("Open SideBarPane '${it.name}'")
+			if (!oldOpen) {
+				LOG.userTrail("Open SideBarPane '${it.name}'")
+			}
 			it.update()
 			contentPanel.add(it.headerPanel, BorderLayout.NORTH)
 			contentPanel.add(it.component, BorderLayout.CENTER)

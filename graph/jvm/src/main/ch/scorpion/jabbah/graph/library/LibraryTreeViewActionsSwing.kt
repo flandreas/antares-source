@@ -14,6 +14,8 @@ import ch.scorpion.jabbah.graph.ui.graphviewer.NewGraphViewerAction
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewActions
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewType
+import ch.scorpion.jabbah.graph.view.connect.unconnected.FindUnconnectPortsInLibraryAction
+import ch.scorpion.jabbah.graph.view.connect.unconnected.FindUnconnectedPortsAction
 import javax.swing.JCheckBoxMenuItem
 import javax.swing.JPopupMenu
 import javax.swing.tree.DefaultMutableTreeNode
@@ -33,6 +35,8 @@ open class LibraryTreeViewActionsSwing(
 	private val helpLibraryItemAction = register(HelpLibraryItemAction(controller))
 
 	private val showLibraryMetaGraphHistoryAction = register(ShowMetaGraphHistoryAction(application.controller as GraphDataViewController, controller))
+	private val findUnconnectedPortsAction = register(FindUnconnectedPortsAction(controller))
+	private val findUnconnectedPortsInLibraryAction = register(FindUnconnectPortsInLibraryAction(controller))
 
 	private val addLibraryToDesktopAction = register(AddLibraryToDesktopAction(controller))
 	private val removeLibraryAction = register(RemoveLibraryAction(controller))
@@ -192,6 +196,7 @@ open class LibraryTreeViewActionsSwing(
 	protected open fun fillMainProjectRootExecuteActions() {
 		projectRootMenu.add(ActionWrapperSwing(importProjectMetaGraphAction))
 		projectRootMenu.add(ActionWrapperSwing(importImageAction))
+		projectRootMenu.add(ActionWrapperSwing(findUnconnectedPortsInLibraryAction))
 	}
 
 	private fun fillMainLibraryDirectoryPopupMenu() {
@@ -235,6 +240,7 @@ open class LibraryTreeViewActionsSwing(
 		libraryRootMenu.add(ActionWrapperSwing(importLibraryMetaGraphAction))
 		libraryRootMenu.add(ActionWrapperSwing(removeLibraryAction))
 		libraryRootMenu.add(ActionWrapperSwing(importImageAction))
+		libraryRootMenu.add(ActionWrapperSwing(findUnconnectedPortsInLibraryAction))
 	}
 
 	private fun fillMainProjectContainerPopupMenu() {
@@ -247,6 +253,7 @@ open class LibraryTreeViewActionsSwing(
 		projectContainerPopupMenu.add(ActionWrapperSwing(newGraphViewerAction))
 		projectContainerPopupMenu.add(ActionWrapperSwing(showLibraryMetaGraphHistoryAction))
 		projectContainerPopupMenu.add(ActionWrapperSwing(openDocumentationViewerAction))
+		projectContainerPopupMenu.add(ActionWrapperSwing(findUnconnectedPortsAction))
 		if (GraphModuleJvm.supportWeb) {
 			projectContainerPopupMenu.add(ActionWrapperSwing(embedMetaGraphAction))
 		}
@@ -261,6 +268,7 @@ open class LibraryTreeViewActionsSwing(
 		libraryContainerPopupMenu.add(ActionWrapperSwing(newGraphViewerAction))
 		libraryContainerPopupMenu.add(ActionWrapperSwing(openDocumentationViewerAction))
 		libraryContainerPopupMenu.add(ActionWrapperSwing(showLibraryMetaGraphHistoryAction))
+		libraryContainerPopupMenu.add(ActionWrapperSwing(findUnconnectedPortsAction))
 	}
 
 	protected open fun fillMain() {
