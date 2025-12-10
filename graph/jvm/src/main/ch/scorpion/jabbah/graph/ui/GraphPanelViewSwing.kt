@@ -126,7 +126,7 @@ class GraphPanelViewSwing(
 		Translations.getString("graph.issues.desc"),
 		UiUtil.themedIcon("/img/issue-16.png"),
 		issuesPanel,
-		listOf(controller.issuesViewController.clearAction))
+		listOf(controller.issuesViewController.openAction, controller.issuesViewController.clearAction))
 
 	private val logPanel = LogViewSwing(controller.logViewController)
 

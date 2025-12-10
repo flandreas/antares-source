@@ -17,6 +17,7 @@ import javax.swing.JOptionPane
 import javax.swing.JPanel
 import javax.swing.JScrollPane
 import javax.swing.JTable
+import javax.swing.ListSelectionModel
 import javax.swing.table.AbstractTableModel
 import javax.swing.table.DefaultTableCellRenderer
 
@@ -50,6 +51,7 @@ class IssuesViewSwing(
 
 	override fun refresh() {
 		(table.model as IssueTableModel).fireTableDataChanged()
+		updateSelectedIssue()
 	}
 
 	override fun notifyNewIssues() {
@@ -57,8 +59,18 @@ class IssuesViewSwing(
 		controller.eventBus.post(ShowSidebarPaneContentRequest(this))
 	}
 
+	override fun showCannotOpenMessage() {
+		JOptionPane.showMessageDialog(
+			Frame.getFrames()[0],
+			Translations.getString("graph.issues.action.open.noContent"),
+			Translations.getString("graph.issues.action.open.title"),
+			JOptionPane.INFORMATION_MESSAGE
+		)
+	}
+
 	private fun buildUI() {
 		table.autoResizeMode = JTable.AUTO_RESIZE_OFF
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION)
 
 		table.columnModel.getColumn(0).preferredWidth = BaseModule.settings.getInt("$SETTING_COLUMN_WIDTHS.name", 200)
 		table.columnModel.getColumn(1).preferredWidth = BaseModule.settings.getInt("$SETTING_COLUMN_WIDTHS.origin", 200)
@@ -66,10 +78,12 @@ class IssuesViewSwing(
 		table.columnModel.getColumn(3).preferredWidth = BaseModule.settings.getInt("$SETTING_COLUMN_WIDTHS.description", 200)
 		table.columnModel.getColumn(0).cellRenderer = NameCellRenderer()
 
+		table.selectionModel.addListSelectionListener { updateSelectedIssue() }
+
 		table.addMouseListener(object : MouseAdapter() {
 			override fun mouseClicked(e: MouseEvent?) {
 				if (e?.button == MouseEvent.BUTTON1 && e.clickCount == 2) {
-					handleDoubleClick(issueCollector.getIssue(table.selectedRow))
+					controller.openSelectedIssue()
 				}
 			}
 		})
@@ -79,24 +93,19 @@ class IssuesViewSwing(
 		add(scrollPane, BorderLayout.CENTER)
 	}
 
+	private fun updateSelectedIssue() {
+		controller.selectedIssue = if (table.selectedRow >= 0) {
+			issueCollector.getIssue(table.selectedRow)
+		} else {
+			null
+		}
+	}
+
 	private fun storeColumnsWidths() {
 		BaseModule.settings.set("$SETTING_COLUMN_WIDTHS.name", table.columnModel.getColumn(0).width)
 		BaseModule.settings.set("$SETTING_COLUMN_WIDTHS.origin", table.columnModel.getColumn(1).width)
 		BaseModule.settings.set("$SETTING_COLUMN_WIDTHS.context", table.columnModel.getColumn(2).width)
 		BaseModule.settings.set("$SETTING_COLUMN_WIDTHS.description", table.columnModel.getColumn(3).width)
-	}
-
-	private fun handleDoubleClick(issue: Issue) {
-		if (issue.actionHandler == null) {
-			JOptionPane.showMessageDialog(
-				Frame.getFrames()[0],
-				Translations.getString("graph.issues.action.open.noContent"),
-				Translations.getString("graph.issues.action.open.title"),
-				JOptionPane.INFORMATION_MESSAGE
-			)
-		} else {
-			issue.actionHandler!!.invoke(issue)
-		}
 	}
 
 	private inner class IssueTableModel : AbstractTableModel() {
@@ -124,7 +133,7 @@ class IssuesViewSwing(
 
 		private var currentRow: Int = 0
 
-		/** Overridden in order to capture the current row index. */
+		/** Overridden to capture the current row index. */
 		override fun getTableCellRendererComponent(table: JTable?, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
 			currentRow = row
 			return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column)
