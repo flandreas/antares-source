@@ -1,12 +1,16 @@
 package ch.scorpion.jabbah.graph.view.connect.unconnected
 
+import ch.scorpion.jabbah.base.Issue
 import ch.scorpion.jabbah.base.IssueImpl
 import ch.scorpion.jabbah.base.IssueSeverity
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.Library
+import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.library.OpenContainerLibraryElementRequest
 import ch.scorpion.jabbah.graph.view.connect.unconnected.FindUnconnectedPortsType.All
 import ch.scorpion.jabbah.graph.view.connect.unconnected.FindUnconnectedPortsType.Inputs
 import ch.scorpion.jabbah.graph.view.connect.unconnected.FindUnconnectedPortsType.Outputs
@@ -90,8 +94,17 @@ object FindUnconnectedPortsService {
                     "Port ${up.portIds.joinToString(",")}",
                     up.metaGraphName,
                     "${up.verticeViewDescription} ${up.verticeViewId}",
+                    up.metaGraphId,
+                    this::handleIssue
                 )
             )
+        }
+    }
+
+    private fun handleIssue(issue: Issue) {
+        val uuid = issue.data as UUID
+        LibraryModule.libraryHolder.library.getContainerLibraryElement(uuid)?.let {
+            BaseModule.eventBus.post(OpenContainerLibraryElementRequest(it))
         }
     }
 }

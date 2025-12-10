@@ -5,7 +5,7 @@ import ch.scorpion.jabbah.base.event.EventBus
 /**
  * An [Issue] represents a situation that requires the attention of the user.
  * For example, this could be an error that occurs during execution due to a buggy JavaScript snippet.
- * [Issue]s are raised by posting them on [EventBus], on which interested consumer listen for them.
+ * [Issue]s are raised by posting them on [EventBus], on which interested consumers listen for them.
  */
 interface Issue {
 
@@ -30,6 +30,22 @@ interface Issue {
 	 * can indicate whether the error is in the condition, in the entry script or in the exit script.
 	 */
 	val context: String?
+
+	/**
+	 * The optional generic data object associated with this [Issue]. While the above fields are
+	 * descriptive and primarily used for displaying [Issues][Issue] e.g. in a UI table, this property
+	 * is typically used by [actionHandler] e.g. to open a view displaying the object from
+	 * which this [Issue] originates.
+	 * Also avoids subclassing [Issue] implementations, albeit at the cost of class-casting [data]
+	 * in [actionHandler].
+	 */
+	val data: Any?
+
+	/**
+	 * The optional handler called when the user wants to work on the cause of an [Issue].
+	 */
+	val actionHandler: ((Issue) -> Unit)?
+
 }
 
 /**
@@ -42,7 +58,9 @@ data class IssueImpl(
 	override val name: String,
 	override val description: String?,
 	override val origin: String,
-	override val context: String?
+	override val context: String?,
+	override val data: Any? = null,
+	override val actionHandler: ((Issue) -> Unit)? = null
 ) : Issue
 
 enum class IssueSeverity {

@@ -1,13 +1,19 @@
 package ch.scorpion.jabbah.execution
 
+import ch.scorpion.jabbah.base.Issue
 import ch.scorpion.jabbah.base.IssueSeverity
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.ShowSidebarPaneContentRequest
 import ch.scorpion.jabbah.base.swing.UiUtil
-import ch.scorpion.jabbah.execution.issue.*
+import ch.scorpion.jabbah.execution.issue.IssuesView
+import ch.scorpion.jabbah.execution.issue.IssuesViewController
 import java.awt.BorderLayout
 import java.awt.Component
+import java.awt.Frame
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
+import javax.swing.JOptionPane
 import javax.swing.JPanel
 import javax.swing.JScrollPane
 import javax.swing.JTable
@@ -58,9 +64,15 @@ class IssuesViewSwing(
 		table.columnModel.getColumn(1).preferredWidth = BaseModule.settings.getInt("$SETTING_COLUMN_WIDTHS.origin", 200)
 		table.columnModel.getColumn(2).preferredWidth = BaseModule.settings.getInt("$SETTING_COLUMN_WIDTHS.context", 200)
 		table.columnModel.getColumn(3).preferredWidth = BaseModule.settings.getInt("$SETTING_COLUMN_WIDTHS.description", 200)
-
-
 		table.columnModel.getColumn(0).cellRenderer = NameCellRenderer()
+
+		table.addMouseListener(object : MouseAdapter() {
+			override fun mouseClicked(e: MouseEvent?) {
+				if (e?.button == MouseEvent.BUTTON1 && e.clickCount == 2) {
+					handleDoubleClick(issueCollector.getIssue(table.selectedRow))
+				}
+			}
+		})
 
 		layout = BorderLayout()
 		val scrollPane = JScrollPane(table)
@@ -72,6 +84,19 @@ class IssuesViewSwing(
 		BaseModule.settings.set("$SETTING_COLUMN_WIDTHS.origin", table.columnModel.getColumn(1).width)
 		BaseModule.settings.set("$SETTING_COLUMN_WIDTHS.context", table.columnModel.getColumn(2).width)
 		BaseModule.settings.set("$SETTING_COLUMN_WIDTHS.description", table.columnModel.getColumn(3).width)
+	}
+
+	private fun handleDoubleClick(issue: Issue) {
+		if (issue.actionHandler == null) {
+			JOptionPane.showMessageDialog(
+				Frame.getFrames()[0],
+				Translations.getString("graph.issues.action.open.noContent"),
+				Translations.getString("graph.issues.action.open.title"),
+				JOptionPane.INFORMATION_MESSAGE
+			)
+		} else {
+			issue.actionHandler!!.invoke(issue)
+		}
 	}
 
 	private inner class IssueTableModel : AbstractTableModel() {
