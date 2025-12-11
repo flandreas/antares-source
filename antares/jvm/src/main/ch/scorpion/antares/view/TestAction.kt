@@ -4,6 +4,8 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.BitWidthGraphParamType
 import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.app.WelcomePanel
+import ch.scorpion.jabbah.base.IssueImpl
+import ch.scorpion.jabbah.base.IssueSeverity
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBusStatistics
 import ch.scorpion.jabbah.base.invocation.UnexpectedErrorServiceImpl
@@ -45,11 +47,21 @@ class TestAction(
 	private var eventBusStatistic: EventBusStatistics? = null
 
 	override fun execute(event: ActionEvent) {
-		(BaseModuleJvm.unexpectedErrorService as UnexpectedErrorServiceImpl).baseUrl = URL("https://api.antarescircuit.io/api")
 		throwException()
 	}
 
+	private fun postIssue() {
+		BaseModule.eventBus.post(IssueImpl(
+			IssueSeverity.Warning,
+			"Name",
+			"Description",
+			"Origin",
+			"Context"
+		))
+	}
+
 	private fun showWelcomeMessage() {
+		(BaseModuleJvm.unexpectedErrorService as UnexpectedErrorServiceImpl).baseUrl = URL("https://api.antarescircuit.io/api")
 		WelcomePanel.showAsDialog(application)
 	}
 

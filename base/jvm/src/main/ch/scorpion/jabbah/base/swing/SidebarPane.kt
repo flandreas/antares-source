@@ -242,6 +242,7 @@ class SidebarPane(
 		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
 			label.icon = content.icon
 			label.text = content.name
+			update()
 		}
 	}
 
