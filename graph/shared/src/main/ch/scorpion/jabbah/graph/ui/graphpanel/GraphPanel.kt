@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.draw.view.ActiveContentViewChangedEvent
+import ch.scorpion.jabbah.draw.view.FocusDrawablePlayer
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.app.ComponentSnapAction
 import ch.scorpion.jabbah.edit.app.GridSnapAction
@@ -244,9 +245,12 @@ class GraphPanelViewController(
 		val editable = event.newData?.savable?.editable ?: false
 
 		if (event.newData?.content == null) {
-			setGraphViewApplicationData(null, editable)
+			setGraphViewApplicationData(null, editable, null)
 		} else if (event.newData?.content is MetaGraph) {
-			setGraphViewApplicationData((event.newData?.content as MetaGraph?)?.graph?.graphView, editable)
+			setGraphViewApplicationData(
+				(event.newData?.content as MetaGraph?)?.graph?.graphView,
+				editable,
+				event.newData?.focusItem as Int?)
 			LOG.trace("Set MetaGraph with ID ${(event.newData?.content as MetaGraph?)?.hashCode()} for editing")
 		}
 	}
@@ -257,7 +261,7 @@ class GraphPanelViewController(
 		}
 	}
 
-	private fun setGraphViewApplicationData(graphView: GraphView?, editable: Boolean) {
+	private fun setGraphViewApplicationData(graphView: GraphView?, editable: Boolean, focusVerticeViewId: Int?) {
 		eventBus.post(CurrentEditorEvent(editor))
 		isSavableEditable = editable
 		if (graphView == null) {
@@ -270,7 +274,7 @@ class GraphPanelViewController(
 			desktopController.show(view.graphEditView)
 			System.invokeLater {
 				// This will apply the Zoom strategy, which requires that the main Swing UI has already been laid out
-				setRootGraphView(graphView, applyZoomStrategy = true)
+				setRootGraphView(graphView, applyZoomStrategy = true, focusVerticeViewId)
 			}
 		}
 	}
@@ -288,18 +292,27 @@ class GraphPanelViewController(
 	 */
 	private fun setApplicationDataContent(graphView: GraphView?) {
 		if (rootGraphView != graphView) {
-			setRootGraphView(graphView, applyZoomStrategy = false)
+			setRootGraphView(graphView, applyZoomStrategy = false, null)
 		}
 	}
 
-	private fun setRootGraphView(graphView: GraphView?, applyZoomStrategy: Boolean) {
+	private fun setRootGraphView(graphView: GraphView?, applyZoomStrategy: Boolean, focusVerticeViewId: Int?) {
 		val oldValue = rootGraphView
 		graphView?.let {
 			editViewController.setGraphView(it, isSavableEditable, applyZoomStrategy)
 			it.snapper = editor.view.grid
+			focusVerticeViewId?.let { id -> focusVerticeView(id) }
 		}
 		graphHierarchyController.setRootGraphView(graphView)
 		eventBus.post(EditedGraphViewEvent(oldValue, graphView))
 		applicationModeHolder.updateEditorEditability()
+	}
+
+	private fun focusVerticeView(id: Int) {
+		editor.view.drawing.getWithId(id)?.let {
+			editor.view.selectionManager.deselectAll()
+			editor.view.selectionManager.select(it)
+			FocusDrawablePlayer.playFocus(it, editor.view)
+		}
 	}
 }

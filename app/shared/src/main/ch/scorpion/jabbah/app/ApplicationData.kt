@@ -9,12 +9,16 @@ import ch.scorpion.jabbah.io.Storable
 
 /**
  * The data being held by an [Application] and possibly being edited by the user.
+ *
+ * @property focusItem the optional item withing [content] to be focused (i.e. bring to the user's attention)
+ * when [content] is opened.
  */
 class ApplicationData(
 	content: Storable,
 	val savable: Savable,
 	private val eventBus: EventBus = BaseModule.eventBus,
-	private val propertyOwner: PropertyOwner<Storable> = PropertyOwnerImpl()
+	private val propertyOwner: PropertyOwner<Storable> = PropertyOwnerImpl(),
+	val focusItem: Any? = null
 ): PropertyOwner<Storable> by propertyOwner {
 
 	companion object {

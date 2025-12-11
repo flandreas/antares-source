@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.GraphType
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.GraphElementView
+import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -24,8 +25,13 @@ import ch.scorpion.jabbah.io.StoreWriter
  * [MetaGraph] of the selected [ContainerLibraryElement] is to be presented to the user.
  *
  * @property element the [ContainerLibraryElement] whose [MetaGraph] is to be opened
+ * @property focusVerticeViewId the ID of the [VerticeView] to focus on (bring to the user's attention)
+ * after having opened [element]
  */
-data class OpenContainerLibraryElementRequest(val element: ContainerLibraryElement)
+data class OpenContainerLibraryElementRequest(
+	val element: ContainerLibraryElement,
+	val focusVerticeViewId: Int? = null
+)
 
 /**
  * A [LibraryElement] that contains a [MetaGraph].

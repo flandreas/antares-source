@@ -28,7 +28,7 @@ class OpenContainerLibraryElementAction(
 		if (!controller.applicationModeHolder.currentMode.isEdit()) {
 			controller.eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = null, messageKey = "graph.action.cannotOpenWhileExecuting.msg"))
 		} else {
-			openAsSavable(it.element)
+			openAsSavable(it.element, it.focusVerticeViewId)
 		}
 	}
 
@@ -49,10 +49,10 @@ class OpenContainerLibraryElementAction(
 	 * Opens the currently selected [ContainerLibraryElement] as the current [Savable] in the application.
 	 */
 	private fun openAsSavable() {
-		openAsSavable(controller.selectedItem as ContainerLibraryElement)
+		openAsSavable(controller.selectedItem as ContainerLibraryElement, null)
 	}
 
-	private fun openAsSavable(element: ContainerLibraryElement) {
-		graphDataViewController.openAsSavable(element, name)
+	private fun openAsSavable(element: ContainerLibraryElement, focusVerticeViewId: Int?) {
+		graphDataViewController.openAsSavable(element, name, focusVerticeViewId)
 	}
 }

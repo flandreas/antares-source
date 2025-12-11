@@ -135,7 +135,7 @@ class GraphDataViewController(
 		}
 	}
 
-	fun openAsSavable(element: ContainerLibraryElement, actionName: String) {
+	fun openAsSavable(element: ContainerLibraryElement, actionName: String, focusVerticeViewId: Int? = null) {
 		try {
 			LOG.info("Open '${element.name.value}' ${element.uuid.id}")
 			view.registerKeepAliveUsage()
@@ -148,7 +148,12 @@ class GraphDataViewController(
 				 * Create a copy of the [MetaGraph] as part of the [ApplicationData] that can be safely edited
 				 * without corrupting the instance in the [Library].
 				 */
-				ApplicationData(StorableCloner.clone(element.storable!!), library.createSavable(element), eventBus)
+				ApplicationData(
+					StorableCloner.clone(element.storable!!),
+					library.createSavable(element),
+					eventBus,
+					focusItem = focusVerticeViewId
+				)
 			}
 		} catch (e: ApplicationTooOldException) {
 			handle(actionName, e)
