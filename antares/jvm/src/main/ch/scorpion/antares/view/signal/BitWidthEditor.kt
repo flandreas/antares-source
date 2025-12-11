@@ -16,6 +16,7 @@ import java.awt.event.FocusAdapter
 import java.awt.event.FocusEvent
 import javax.swing.JComboBox
 import javax.swing.JComponent
+import javax.swing.JTextField
 
 class BitWidthEditor(
 	propertyName: String,
@@ -52,6 +53,7 @@ class BitWidthEditor(
 					comboBox.editor.selectAll()
 				}
 			})
+			(comboBox.editor.editorComponent as JTextField).addActionListener { comboBox.editor.editorComponent.transferFocus() }
 		}
 	}
 

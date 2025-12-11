@@ -117,6 +117,7 @@ abstract class ExpressionPropertyEditor<T>(
 			button.icon = UiUtil.themedIcon(TextPropertyEditor.ICON_PATH)
 			button.border = BorderFactory.createEmptyBorder(0, 0, 0, 0)
 			button.toolTipText = Translations.getString("edit.action.editScript.tooltip")
+			button.isFocusable = false
 			button.addActionListener { showDialog() }
 			panel.add(button, BorderLayout.EAST)
 		}
