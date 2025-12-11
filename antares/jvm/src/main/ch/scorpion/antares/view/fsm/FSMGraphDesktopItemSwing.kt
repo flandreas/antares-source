@@ -54,6 +54,10 @@ class FSMGraphDesktopItemSwing(
         buildToolbar()
         buildUI(viewManager)
         controller.setDrawing(fsm)
+
+        SwingUtilities.invokeLater {
+            controller.drawingView.canvas.requestViewFocus()
+        }
     }
 
     override fun dispose() {

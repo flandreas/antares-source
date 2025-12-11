@@ -200,6 +200,10 @@ class GraphNavigationViewController(
 		scenarioDetector = ScenarioDetector(drawingView, graphApplicationContextHolder, eventBus)
 
 		graphViewExecutionController.updateDetachedUI()
+
+		System.invokeLater {
+			drawingView.canvas.requestViewFocus()
+		}
 	}
 
 	private fun handle(request: CloseViewRequest) {

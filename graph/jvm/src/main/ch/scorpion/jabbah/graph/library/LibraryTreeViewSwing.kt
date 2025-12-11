@@ -120,15 +120,27 @@ class LibraryTreeViewSwing(
 	}
 
 	private inner class MouseListener : MouseAdapter() {
+
 		override fun mousePressed(e: MouseEvent?) {
+			when (e?.button) {
+				MouseEvent.BUTTON3 -> {
+					showPopupMenu(e)
+				}
+			}
+		}
+
+		/**
+		 * Deliberately opening selected item in [mouseClicked] instead of [mousePressed],
+		 * because [mousePressed] leads to regaining focus after the second press. But we want
+		 * to let the view that displays the opened item to request the focus.
+		 */
+		override fun mouseClicked(e: MouseEvent?) {
 			when (e?.button) {
 				MouseEvent.BUTTON1 -> {
 					if (e.clickCount == 2) {
 						openSelectedItem()
 					}
-				}
-				MouseEvent.BUTTON3 -> {
-					showPopupMenu(e)
+					e.consume()
 				}
 			}
 		}
