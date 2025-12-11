@@ -81,8 +81,7 @@ object FindUnconnectedPortsService {
                 IssueImpl(
                     IssueSeverity.Warning,
                     Translations.getString("element.unconnectedPort.name"),
-                    // TODO I18N
-                    "Port ${up.portIds.joinToString(",")}",
+                    Translations.getString("graph.action.findUnconnectedPorts.issueDesc", up.portIds.joinToString(",")),
                     up.metaGraphName,
                     "${up.verticeViewDescription} ${up.verticeViewId}",
                     up,
