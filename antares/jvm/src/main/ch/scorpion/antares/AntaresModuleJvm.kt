@@ -369,6 +369,8 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 					graphEditor = prop.editor,
 					errorCallback = { prop.dslError = it },
 					filter = prop.filter)
+			} else if (prop is DefaultLightColorProperty) {
+				LightColorEditor(optional = true)
 			} else {
 				LightColorExpressionEditor(
 					propertyName = prop.displayName,

@@ -13,6 +13,14 @@ class LightColorRenderer : EnumRenderer<LightColor>() {
 
     private val icon = ColorIcon()
 
+    private val systemDefaultIcon: ColorIcon by lazy {
+        var color = LightColor.getSystemDefault().executeColor(true)
+        if (UI.isDark) {
+           color = color.darker()
+        }
+        ColorIcon(Graphics2DJvm.toAwtColor(color))
+    }
+
     private val colorCache = mutableMapOf<LightColor, Color>()
 
     private fun getColor(lightColor: LightColor): Color =
@@ -27,9 +35,8 @@ class LightColorRenderer : EnumRenderer<LightColor>() {
     override fun setValue(value: Any?) {
         when (value) {
             null -> {
-                icon.backgroundColor = Graphics2DJvm.toAwtColor(LightColor.getSystemDefault().executeColor(true))
                 text = Translations.getString("element.color.none")
-                setIcon(icon)
+                setIcon(systemDefaultIcon)
             }
             is LightColorExpression -> {
                 text = value.toString()

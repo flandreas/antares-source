@@ -33,20 +33,20 @@ class DefaultLightColorProperty : CommandPropertySwing<LightColor>(
             JOptionPane.YES_NO_OPTION,
             JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION
 
-        return ChangeLightColorsCommandSwing(
+        return ChangeDefaultLightColorCommandSwing(
             editor!!,
             beanProvider,
             beanIds,
-            newValue!!,
+            newValue,
             applyToExistingComponents)
     }
 }
 
-class ChangeLightColorsCommandSwing(
+class ChangeDefaultLightColorCommandSwing(
     editor: Editor,
     beanProvider: BeanProvider,
     beanIds: Collection<String>,
-    newValue: LightColor,
+    newValue: LightColor?,
     private val applyToExistingComponents: Boolean,
     private val service: AntaresGraphViewService = GraphViewModule.graphViewAppService as AntaresGraphViewService
 ) : PropertyCommandSwing<LightColor>(
