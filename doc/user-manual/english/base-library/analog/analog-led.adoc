@@ -1,6 +1,6 @@
 = Analog LED
 include::../../../page-variables.txt[]
-:page-permalink: /user-manual/english/base-library/analog/led
+:page-permalink: /user-manual/english/base-library/analog/analog-led
 
 == Appearance
 
