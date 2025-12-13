@@ -6,12 +6,12 @@ import ch.scorpion.antares.model.gate.*
 import ch.scorpion.antares.model.gate.NonUnaryLogicGateType.*
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.jabbah.edit.Look.SCALE
 import ch.scorpion.antares.view.app.AntaresGraphViewService
+import ch.scorpion.antares.view.gate.LogicGateSize.LARGE
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.symbolstyle.CurrentSymbolStyle
-import ch.scorpion.antares.view.symbolstyle.SymbolStyle.*
+import ch.scorpion.antares.view.symbolstyle.SymbolStyle.AMERICAN
 import ch.scorpion.antares.view.truthtable.TruthTableView
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.help.HelpId
@@ -25,9 +25,11 @@ import ch.scorpion.jabbah.draw.graphics.Font
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.edit.Look.SCALE
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
+import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -53,6 +55,15 @@ class LogicGateView(
 		const val PROP_DATA_FLOW_ENABLED = "antares.andGate.dataFlow"
 
 		val isDataFlowEnabled: Boolean get() = BaseModule.properties.getBoolean(PROP_DATA_FLOW_ENABLED)
+
+		private val SYMBOL_FONT_CACHE = mutableMapOf<LogicGateSize, Font>()
+
+		private fun getSymbolFont(size: LogicGateSize, font: Font): Font =
+			SYMBOL_FONT_CACHE.getOrPut(size) {
+				val font = AntaresViewModule.currentSymbolStyle.symbolStyle.getFont(font)
+				val f = if (size != LARGE) 1.2f else 1.0f
+				return font.deriveFont((font.size * size.factor * f).toInt())
+			}
 
 		fun andGateView(): LogicGateView = LogicGateView(gate = NonUnaryLogicGate.andGate())
 		fun nandGateView(): LogicGateView = LogicGateView(gate = NonUnaryLogicGate.nandGate())
@@ -96,6 +107,7 @@ class LogicGateView(
 	/** Use [AntaresGraphViewService] for changing this value.*/
 	val chosenInputCount: PortCount get() = model.chosenInputCount
 
+	@Suppress("unused") // Reflection
 	var outputPortName: String?
 		get() = model.getOutput<DigitalSignal>().name
 		set(value) {
@@ -143,6 +155,17 @@ class LogicGateView(
 			update()
 		}
 
+	var size: LogicGateSize = LARGE
+		set(value) {
+			if (field != value) {
+				invalidate()
+				field = value
+				labelStyle.updateLabel(this)
+				invalidate()
+				updateLayout()
+			}
+		}
+
 	private val explanation = resettableLazy {
 		if (model.inputCount <= 2) {
 			val truthTableView = TruthTableView(model.calculateTruthTable(), model, passive = model.bitWidth.width > 1)
@@ -150,38 +173,47 @@ class LogicGateView(
 		} else null
 	}
 
-	override val symbolFont: Font get() = currentSymbolStyle.symbolStyle.getFont(font)
+
+	override val symbolFont: Font get() = getSymbolFont(size, font)
 
 	// Explicit properties needed for reflective Commands on the JVM platform
 
+	@Suppress("unused") // Reflection
 	var negateInput1: Boolean
 		get() = model.getNegateInput(1)
 		set(value) = setInputNegation(1, value)
 
+	@Suppress("unused") // Reflection
 	var negateInput2: Boolean
 		get() = model.getNegateInput(2)
 		set(value) = setInputNegation(2, value)
 
+	@Suppress("unused") // Reflection
 	var negateInput3: Boolean
 		get() = model.getNegateInput(3)
 		set(value) = setInputNegation(3, value)
 
+	@Suppress("unused") // Reflection
 	var negateInput4: Boolean
 		get() = model.getNegateInput(4)
 		set(value) = setInputNegation(4, value)
 
+	@Suppress("unused") // Reflection
 	var negateInput5: Boolean
 		get() = model.getNegateInput(5)
 		set(value) = setInputNegation(5, value)
 
+	@Suppress("unused") // Reflection
 	var negateInput6: Boolean
 		get() = model.getNegateInput(6)
 		set(value) = setInputNegation(6, value)
 
+	@Suppress("unused") // Reflection
 	var negateInput7: Boolean
 		get() = model.getNegateInput(7)
 		set(value) = setInputNegation(7, value)
 
+	@Suppress("unused") // Reflection
 	var negateInput8: Boolean
 		get() = model.getNegateInput(8)
 		set(value) = setInputNegation(8, value)
@@ -195,36 +227,45 @@ class LogicGateView(
 		}
 	}
 
+	@Suppress("unused") // Reflection
 	fun getInputNegation(portId: Int): Boolean = model.getNegateInput(portId)
 
+	@Suppress("unused") // Reflection
 	var inputPortName1: String?
 		get() = getInputPortName(1)
 		set(value) { setInputPortName(1, value) }
 
+	@Suppress("unused") // Reflection
 	var inputPortName2: String?
 		get() = getInputPortName(2)
 		set(value) { setInputPortName(2, value) }
 
+	@Suppress("unused") // Reflection
 	var inputPortName3: String?
 		get() = getInputPortName(3)
 		set(value) { setInputPortName(3, value) }
 
+	@Suppress("unused") // Reflection
 	var inputPortName4: String?
 		get() = getInputPortName(4)
 		set(value) { setInputPortName(4, value) }
 
+	@Suppress("unused") // Reflection
 	var inputPortName5: String?
 		get() = getInputPortName(5)
 		set(value) { setInputPortName(5, value) }
 
+	@Suppress("unused") // Reflection
 	var inputPortName6: String?
 		get() = getInputPortName(6)
 		set(value) { setInputPortName(6, value) }
 
+	@Suppress("unused") // Reflection
 	var inputPortName7: String?
 		get() = getInputPortName(7)
 		set(value) { setInputPortName(7, value) }
 
+	@Suppress("unused") // Reflection
 	var inputPortName8: String?
 		get() = getInputPortName(8)
 		set(value) { setInputPortName(8, value) }
@@ -242,12 +283,16 @@ class LogicGateView(
 		modelExchanged(null)
 	}
 
+	override val scale: Float get() = size.factor
+
 	override fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 		getRenderer(model.gateType).drawShape(this, context, foregroundColor, backgroundColor, stroke)
 	}
 
 	override fun drawCustomShapeContent(context: DrawContext, foregroundColor: Color, backgroundColor: Color) {
-		getRenderer(model.gateType).drawMnemonics(this, context, foregroundColor, backgroundColor)
+		if (size == LARGE) {
+			getRenderer(model.gateType).drawMnemonics(this, context, foregroundColor, backgroundColor)
+		}
 	}
 
 	override fun getExplanation(x: Double, y: Double): DrawableExplanation<*>? =
@@ -273,12 +318,18 @@ class LogicGateView(
 		if (model.gateType == And && dataPort != InputPortNumber.NONE) {
 			writer.writeInt("dataPort", dataPort.id)
 		}
+		if (size !== LARGE) {
+			writer.writeString("size", size.customName)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		if (reader.hasAttribute("dataPort")) {
 			dataPort = InputPortNumber.withId(reader.readInt("dataPort"))
+		}
+		if (reader.hasAttribute("size")) {
+			size = LogicGateSize.withName(reader.readString("size"))
 		}
 	}
 
@@ -307,13 +358,13 @@ class LogicGateView(
 		}
 	}
 
-	/** ---- [LogicGateView] */
+	/** ---- [AbstractRectangularVerticeView] */
 
 	override val outsetLeft: Int get() =
 		when (model.gateType) {
 			Or, Nor, Xor, Xnor -> {
 				when (currentSymbolStyle.symbolStyle) {
-					AMERICAN -> 2 * SCALE
+					AMERICAN -> (2 * SCALE * scale).toInt()
 					else -> 0
 				}
 			}
@@ -324,7 +375,7 @@ class LogicGateView(
 		when (model.gateType) {
 			And, Nand, Or, Nor, Xor, Xnor -> {
 				when (currentSymbolStyle.symbolStyle) {
-					AMERICAN -> -SCALE
+					AMERICAN -> -(SCALE * scale).toInt()
 					else -> 0
 				}
 			}
@@ -335,7 +386,7 @@ class LogicGateView(
 		when (model.gateType) {
 			And, Nand -> {
 				when (currentSymbolStyle.symbolStyle) {
-					AMERICAN -> -SCALE
+					AMERICAN -> -(SCALE * scale).toInt()
 					else -> 0
 				}
 			}

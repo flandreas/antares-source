@@ -40,7 +40,9 @@ class LogicGateViewBeanInfo  : BoxGateViewBeanInfo<LogicGateView>() {
 			)
 		}
 
-		val dataPort = CommandPropertySwing("dataPort", LogicGateView.BASE_KEY_DATA_PORT, InputPortNumber::class.java, componentBeanProvider)
+		private val dataPort = CommandPropertySwing("dataPort", LogicGateView.BASE_KEY_DATA_PORT, InputPortNumber::class.java, componentBeanProvider)
+
+		private val size = AntaresProperties.logicGateSize()
 	}
 
 	override fun addProperties(bean: LogicGateView, editor: Editor, properties: MutableList<Property>) {
@@ -49,6 +51,7 @@ class LogicGateViewBeanInfo  : BoxGateViewBeanInfo<LogicGateView>() {
 		if (bean.model.maxInputCount.count > 1) {
 			properties.add(inputCount.bind(editor, beanIdProvider(bean.id), editable = true, filter = { it.ordinal >= 2 }))
 		}
+		properties.add(size.bind(editor, beanIdProvider(bean.id)))
 		properties.add(bitWidth.bind(editor, beanIdProvider(bean.id)))
 		properties.add(outputPortName.bind(editor, beanIdProvider(bean.id)))
 

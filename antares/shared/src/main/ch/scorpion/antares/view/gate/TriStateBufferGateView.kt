@@ -76,7 +76,7 @@ class TriStateBufferGateView(
 	override fun modelExchanged(oldModel: TriStateBufferGate?) {
 		super.modelExchanged(oldModel)
 
-		val bounds = SymbolStyle.NOT_PATH.boundingBox
+		val bounds = SymbolStyle.NOT_PATHS[LogicGateSize.LARGE]!!.boundingBox
 
 		val inputPortView = DigitalPortView(
 			styleProvider = styleProvider,
@@ -108,9 +108,14 @@ class TriStateBufferGateView(
 		}
 
 		// These bounds must fit both the American style (triangle) and the European style (rectangle)
-		setBounds(
-			AbstractAntaresPortView.LENGTH.toDouble(), -SymbolStyle.NOT_PATH.boundingBox.height / 2,
-			SymbolStyle.NOT_PATH.boundingBox.width, SymbolStyle.NOT_PATH.boundingBox.height)
+		with(SymbolStyle.NOT_PATHS[LogicGateSize.LARGE]!!) {
+			setBounds(
+				AbstractAntaresPortView.LENGTH.toDouble(),
+				-boundingBox.height / 2,
+				boundingBox.width,
+				boundingBox.height
+			)
+		}
 	}
 
 	/** ---- [Storable] interface */

@@ -29,6 +29,7 @@ open class OrientableRectangularVerticeView<T : Vertice>(
 		 */
 		fun w(value: Int): Double = (value * SCALE).toDouble()
 		fun w(value: Double): Double = value * SCALE
+		fun w(value: Float): Double = (value * SCALE).toDouble()
 
 		fun wInt(value: Int): Int = value * SCALE
 
@@ -39,6 +40,7 @@ open class OrientableRectangularVerticeView<T : Vertice>(
 		 */
 		fun h(value: Int): Double = (value * SCALE).toDouble()
 		fun h(value: Double): Double = value * SCALE
+		fun h(value: Float): Double = (value * SCALE).toDouble()
 
 		fun hInt(value: Int): Int = value * SCALE
 	}

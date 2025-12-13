@@ -17,6 +17,7 @@ import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
+import kotlin.math.floor
 import kotlin.math.max
 
 /**
@@ -47,6 +48,12 @@ open class BoxGateView<T : Vertice>(
 		/** The distance between [Port]s if the number of [Port]s is bigger than two. */
 		const val SMALL_PORT_DISTANCE = 2
 	}
+
+	private val effMinWidth: Float get() = minWidth * scale
+
+	private val effMinHeight: Float get() = MIN_HEIGHT * scale
+
+	private val effPinInset: Float get() = PIN_INSET * scale
 
 	/** ---- [Drawable] interface */
 
@@ -122,36 +129,35 @@ open class BoxGateView<T : Vertice>(
 		val southPins = getPortViewsOfDirection(Direction.SOUTH)
 
 		val vPinCount = max(northPins.size, southPins.size)
-		val boxWidth = max(2 * PIN_INSET + max(0, (vPinCount - 1)) * portDistance(vPinCount), minWidth)
+		val vPinArea: Float = if (vPinCount == 0) 0f else (2 * effPinInset).toInt() + max(0, (vPinCount - 1)) * portDistance(vPinCount)
+		val boxWidth: Float = max(vPinArea, effMinWidth)
 
 		val hPinCount = max(westPins.size, eastPins.size)
-		val boxHeight = max(2 * PIN_INSET + max(0, (hPinCount - 1)) * portDistance(hPinCount), MIN_HEIGHT)
+		val hPinArea = 2 * effPinInset + max(0, (hPinCount - 1)) * portDistance(hPinCount)
+		val boxHeight: Float = max(hPinArea, effMinHeight)
 
-		// Layout PortViews relative to the upper left corner of the box
+        // Layout PortViews relative to the upper left corner of the box
 
-		var pinY: Int
-
-		pinY = if (westPins.size == 1) boxHeight / 2 else PIN_INSET
+        var pinY: Float = if (westPins.size == 1) boxHeight / 2 else effPinInset
 		for (westPin in westPins) {
 			westPin.setLocation(0.0, h(pinY))
 			pinY += portDistance(westPins.size)
 		}
 
-		pinY = if (eastPins.size == 1) boxHeight / 2 else PIN_INSET
+		pinY = if (eastPins.size == 1) boxHeight / 2 else effPinInset
 		for (eastPin in eastPins) {
 			eastPin.setLocation(w(boxWidth), h(pinY))
 			pinY += portDistance(eastPins.size)
 		}
 
-		var pinX: Int
-
-		pinX = if (northPins.size == 1) boxWidth / 2 else PIN_INSET
+        var pinX: Float = if (northPins.size == 1) boxWidth / 2 else effPinInset
 		for (northPin in northPins) {
 			northPin.setLocation(w(pinX), 0.0)
 			pinX += portDistance(northPins.size)
 		}
 
-		pinX = if (southPins.size == 1) boxHeight / 2 else PIN_INSET
+		// TODO: Should this be boxWidth below?
+		pinX = if (southPins.size == 1) boxHeight / 2 else effPinInset
 		for (southPin in southPins) {
 			southPin.setLocation(w(pinX), h(boxHeight))
 			pinX += portDistance(southPins.size)
@@ -160,7 +166,7 @@ open class BoxGateView<T : Vertice>(
 		// Translate the box and all PortViews relative to the first eastern PortView
 		// TODO This strategy doesn't work if there is no east pin at all
 		val origin = eastPins[0].location.add(eastPins[0].unconnectedLength.toDouble(), 0.0)
-		setBounds(-origin.x, -origin.y, w(boxWidth), h(boxHeight))
+		setBounds(-origin.x, -origin.y, floor(w(boxWidth)), floor(h(boxHeight)))
 		for (portView in getPortViews()) {
 			portView.location = portView.location.subtract(origin)
 		}
@@ -173,10 +179,10 @@ open class BoxGateView<T : Vertice>(
 		update()
 	}
 
-	private fun portDistance(portCount: Int): Int {
+	private fun portDistance(portCount: Int): Float {
 		if (portCount <= 2) {
-			return BIG_PORT_DISTANCE
+			return BIG_PORT_DISTANCE * scale
 		}
-		return SMALL_PORT_DISTANCE
+		return SMALL_PORT_DISTANCE * scale
 	}
 }

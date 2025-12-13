@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.net.PullDirection
 import ch.scorpion.antares.model.net.TransistorType
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
+import ch.scorpion.antares.view.gate.LogicGateSize
 import ch.scorpion.antares.view.gate.LogicGateView
 import ch.scorpion.antares.view.net.TransistorViewSymbol
 import ch.scorpion.antares.view.net.tunnel.TunnelFlowDirection
@@ -69,4 +70,7 @@ object AntaresProperties {
 
 	fun outputPortName(name: String = "outputPortName"): CommandPropertySwing<String> =
 		CommandPropertySwing(name, LogicGateView.BASE_KEY_OUTPUT_PORT_NAME, String::class.java, componentBeanProvider)
+
+	fun logicGateSize(name: String = "size", baseKey: String = LogicGateSize.BASE_KEY): CommandPropertySwing<LogicGateSize> =
+		CommandPropertySwing(name, baseKey, LogicGateSize::class.java, componentBeanProvider)
 }

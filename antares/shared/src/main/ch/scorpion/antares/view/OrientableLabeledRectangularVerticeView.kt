@@ -111,6 +111,8 @@ open class OrientableLabeledRectangularVerticeView<T: Vertice>(
 
     open val symbolFont: Font get() = font
 
+    open val scale: Float = 1f
+
     /** ---- [Component] */
 
     override var rotation: Rotation

@@ -56,6 +56,9 @@ class AntaresGraphViewService(
 			if (component is SubGraphVerticeView<*>) {
 				applyDefaultLightColor(component as SubGraphVerticeView<SubGraphVerticeRef>, lightColor)
 			}
+			if (component is LogicGateView) {
+				component.size = (component.parent as DigitalGraphView).defaultLogicGateSize
+			}
 		}
 	}
 

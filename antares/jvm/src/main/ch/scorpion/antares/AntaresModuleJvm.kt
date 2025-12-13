@@ -31,6 +31,7 @@ import ch.scorpion.antares.view.container.DigitalContainerToolBarBuilder
 import ch.scorpion.antares.view.container.DigitalContainerTreeView
 import ch.scorpion.antares.view.expression.BooleanExpressionDesktopItemSwing
 import ch.scorpion.antares.view.fsm.FSMGraphDesktopItemSwing
+import ch.scorpion.antares.view.gate.LogicGateSize
 import ch.scorpion.antares.view.gate.LogicGateView
 import ch.scorpion.antares.view.graph.AnalogMetaGraphIcon
 import ch.scorpion.antares.view.graph.AntaresMetaGraphIcon
@@ -316,6 +317,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerRenderer(SwitchConfiguration::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(AnalogOscilloscopeSignalType::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(FSMStateType::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(LogicGateSize::class.java, EnumRenderer::class.java)
 	}
 
 	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
@@ -349,6 +351,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerEditor(SwitchConfiguration::class.java, SwitchConfigurationEditor::class.java)
 		registry.registerEditor(AnalogOscilloscopeSignalType::class.java, AnalogOscilloscopeSignalTypeEditor::class.java)
 		registry.registerEditor(FSMStateType::class.java, FSMStateTypeEditor::class.java)
+		registry.registerEditor(LogicGateSize::class.java, LogicGateSizeEditor::class.java)
 
 		registry.register(BitWidth::class.java) { prop ->
 			BitWidthEditor(

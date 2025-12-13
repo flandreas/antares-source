@@ -2,15 +2,14 @@ package ch.scorpion.antares.view.symbolstyle
 
 import ch.scorpion.antares.model.analog.AnalogPort
 import ch.scorpion.antares.model.analog.AnalogSignal
-import ch.scorpion.jabbah.edit.Look
-import ch.scorpion.jabbah.edit.Look.SCALE
 import ch.scorpion.antares.view.OrientableLabeledRectangularVerticeView
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.analog.AnalogLEDView
 import ch.scorpion.antares.view.analog.AnalogLEDView.Companion.GRADIENT_RADIUS
-import ch.scorpion.antares.view.gate.BoxGateView
-import ch.scorpion.antares.view.gate.CustomShapeContent
-import ch.scorpion.antares.view.gate.TriStateBufferGateView
+import ch.scorpion.antares.view.gate.*
+import ch.scorpion.antares.view.gate.LogicGateSize.LARGE
+import ch.scorpion.antares.view.gate.LogicGateSize.MEDIUM
+import ch.scorpion.antares.view.gate.LogicGateSize.SMALL
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
 import ch.scorpion.jabbah.base.EnumProperty
@@ -25,7 +24,8 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.Style
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.Themes
-import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Look
+import ch.scorpion.jabbah.edit.Look.SCALE
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
@@ -43,35 +43,35 @@ enum class SymbolStyle(
 
 		override val orShapeConnectedPortViewLength: Int get() = 0
 
-		override fun drawAndGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+		override fun drawAndGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke)
 		}
 
-		override fun drawNandGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+		override fun drawNandGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke)
 		}
 
-		override fun drawOrGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+		override fun drawOrGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke)
 		}
 
-		override fun drawNorGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+		override fun drawNorGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke)
 		}
 
-		override fun drawXorGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+		override fun drawXorGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke)
 		}
 
-		override fun drawXnorGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+		override fun drawXnorGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke)
 		}
 
-		override fun drawNotGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+		override fun drawNotGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke)
 		}
 
-		override fun drawBufferGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+		override fun drawBufferGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke)
 		}
 
@@ -181,41 +181,43 @@ enum class SymbolStyle(
 				Stroke(clientStroke.width, LineCap.BUTT, LineJoin.MITER)
 			}
 
-		override fun drawAndGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-			drawAmericanGate(gate, AND_PATH, context, foregroundColor, backgroundColor, stroke)
+		override fun drawAndGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+			drawAmericanGate(gate, gate.size, AND_PATHS[gate.size]!!, context, foregroundColor, backgroundColor, stroke)
 		}
 
-		override fun drawNandGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-			drawAmericanGate(gate, AND_PATH, context, foregroundColor, backgroundColor, stroke)
+		override fun drawNandGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+			drawAmericanGate(gate, gate.size, AND_PATHS[gate.size]!!, context, foregroundColor, backgroundColor, stroke)
 		}
 
-		override fun drawOrGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-			drawAmericanGate(gate, OR_PATH, context, foregroundColor, backgroundColor, stroke)
+		override fun drawOrGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+			drawAmericanGate(gate, gate.size, OR_PATHS[gate.size]!!, context, foregroundColor, backgroundColor, stroke)
 		}
 
-		override fun drawNorGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-			drawAmericanGate(gate, OR_PATH, context, foregroundColor, backgroundColor, stroke)
+		override fun drawNorGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+			drawAmericanGate(gate, gate.size, OR_PATHS[gate.size]!!, context, foregroundColor, backgroundColor, stroke)
 		}
 
-		override fun drawXorGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-			drawAmericanGate(gate, gate.x, gate.y, gate.bounds.height, OR_PATH, context, foregroundColor, backgroundColor, stroke, true, gate.transparency)
+		override fun drawXorGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+			drawAmericanGate(gate, gate.size, gate.x, gate.y, gate.bounds.height, OR_PATHS[gate.size]!!, context,
+				foregroundColor, backgroundColor, stroke, true, gate.transparency)
 		}
 
-		override fun drawXnorGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-			drawAmericanGate(gate, gate.x, gate.y, gate.bounds.height, OR_PATH, context, foregroundColor, backgroundColor, stroke, true, gate.transparency)
+		override fun drawXnorGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+			drawAmericanGate(gate, gate.size, gate.x, gate.y, gate.bounds.height, OR_PATHS[gate.size]!!, context,
+				foregroundColor, backgroundColor, stroke, true, gate.transparency)
 		}
 
-		override fun drawNotGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-			drawAmericanGate(gate, NOT_PATH, context, foregroundColor, backgroundColor, stroke)
+		override fun drawNotGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+			drawAmericanGate(gate, gate.size, NOT_PATHS[gate.size]!!, context, foregroundColor, backgroundColor, stroke)
 		}
 
-		override fun drawBufferGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-			drawAmericanGate(gate, NOT_PATH, context, foregroundColor, backgroundColor, stroke)
+		override fun drawBufferGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+			drawAmericanGate(gate, gate.size, NOT_PATHS[gate.size]!!, context, foregroundColor, backgroundColor, stroke)
 		}
 
 		override fun drawTriStateBufferGate(gate: OrientableLabeledRectangularVerticeView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-			val bounds = SymbolStyle.NOT_PATH.boundingBox
-			drawAmericanGate(gate, gate.x, gate.y, bounds.height, SymbolStyle.NOT_PATH, context,
+			val bounds = SymbolStyle.NOT_PATHS[LARGE]!!.boundingBox
+			drawAmericanGate(gate, LARGE, gate.x, gate.y, bounds.height, SymbolStyle.NOT_PATHS[LARGE]!!, context,
 				foregroundColor, backgroundColor, stroke, false, gate.transparency)
 		}
 
@@ -269,35 +271,35 @@ enum class SymbolStyle(
 
 		override val orShapeConnectedPortViewLength: Int get() = 0
 
-		override fun drawAndGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+		override fun drawAndGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke, andText)
 		}
 
-		override fun drawNandGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+		override fun drawNandGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke, nandText)
 		}
 
-		override fun drawOrGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+		override fun drawOrGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke, orText)
 		}
 
-		override fun drawNorGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+		override fun drawNorGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke, norText)
 		}
 
-		override fun drawXorGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+		override fun drawXorGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke, xorText)
 		}
 
-		override fun drawXnorGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+		override fun drawXnorGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke, xnorText)
 		}
 
-		override fun drawNotGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+		override fun drawNotGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke, notText)
 		}
 
-		override fun drawBufferGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+		override fun drawBufferGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke, bufferText)
 		}
 
@@ -355,45 +357,83 @@ enum class SymbolStyle(
 			BaseModule.properties.getBoolean(PROP_TRI_STATE_ALWAYS_TRIANGLE)
 		}
 
-		val AND_PATH = System.createPath()
-			.moveTo(0, SCALE)
-			.lineTo(3 * SCALE, SCALE)
-			.quadTo(6 * SCALE, SCALE, 6 * SCALE, 4 * SCALE)
-			.quadTo(6 * SCALE, 7 * SCALE, 3 * SCALE, 7 * SCALE)
-			.lineTo(0, 7 * SCALE)
-			.close()
+		val AND_PATHS = mapOf(
+			SMALL to createAndPath(SMALL.factor),
+			MEDIUM to createAndPath(MEDIUM.factor),
+			LARGE to createAndPath(LARGE.factor)
+		)
 
-		val OR_PATH = System.createPath()
-			.moveTo(-SCALE, SCALE)
-			.lineTo(SCALE, SCALE)
-			.quadTo(4 * SCALE, SCALE, 6 * SCALE, 4 * SCALE)
-			.quadTo(4 * SCALE, 7 * SCALE, SCALE, 7 * SCALE)
-			.lineTo(-SCALE, 7 * SCALE)
-			.quadTo(0.5 * SCALE, 4.0 * SCALE, -SCALE.toDouble(), SCALE.toDouble())
-			.close()
+		private fun createAndPath(f: Float): Path {
+			return System.createPath()
+				.moveTo(0f, f * SCALE)
+				.lineTo(3f * f * SCALE, f * SCALE)
+				.quadTo(6f * f * SCALE, f * SCALE, 6 * f * SCALE, 4 * f * SCALE)
+				.quadTo(6 * f * SCALE, 7 * f * SCALE, 3 * f * SCALE, 7 * f * SCALE)
+				.lineTo(0f, 7 * f * SCALE)
+				.close()
+		}
 
-		val XOR_PATH = System.createPath()
-			.moveTo(-SCALE, SCALE)
-			.lineTo(SCALE, SCALE)
-			.quadTo(4 * SCALE, SCALE, 6 * SCALE, 4 * SCALE)
-			.quadTo(4 * SCALE, 7 * SCALE, SCALE, 7 * SCALE)
-			.lineTo(-SCALE, 7 * SCALE)
-			.quadTo(0.5 * SCALE, 4.0 * SCALE, -SCALE.toDouble(), SCALE.toDouble())
-			.close()
-			.moveTo(-SCALE - EXCLUSIVE_OFFSET, 7 * SCALE.toDouble())
-			.quadTo(0.5 * SCALE - EXCLUSIVE_OFFSET, 4.0 * SCALE, -SCALE - EXCLUSIVE_OFFSET, SCALE.toDouble())
-			.quadTo(0.5 * SCALE - EXCLUSIVE_OFFSET, 4.0 * SCALE, -SCALE - EXCLUSIVE_OFFSET, 7 * SCALE.toDouble())
+		val OR_PATHS = mapOf(
+			SMALL to createOrPath(SMALL.factor),
+			MEDIUM to createOrPath(MEDIUM.factor),
+			LARGE to createOrPath(LARGE.factor)
+		)
 
-		private val EXCLUSIVE_PATH = System.createPath()
-			.moveTo(-SCALE - EXCLUSIVE_OFFSET, 7 * SCALE.toDouble())
-			.quadTo(0.5 * SCALE - EXCLUSIVE_OFFSET, 4.0 * SCALE, -SCALE - EXCLUSIVE_OFFSET, SCALE.toDouble())
+		private fun createOrPath(f: Float): Path {
+			return System.createPath()
+				.moveTo(-f * SCALE, f * SCALE)
+				.lineTo(f * SCALE, f * SCALE)
+				.quadTo(4 * f * SCALE, f * SCALE, 6 * f * SCALE, 4 * f * SCALE)
+				.quadTo(4 * f * SCALE, 7 * f * SCALE, f * SCALE, 7 * f * SCALE)
+				.lineTo(-f * SCALE, 7 * f * SCALE)
+				.quadTo(0.5 * f * SCALE, 4.0 * f * SCALE, -f * SCALE.toDouble(), f * SCALE.toDouble())
+				.close()
+		}
 
-		val NOT_PATH = System.createPath()
-			.moveTo(0, SCALE)
-			.lineTo(6 * SCALE, 4 * SCALE)
-			.lineTo(0, 7 * SCALE)
-			.lineTo(0, SCALE)
-			.close()
+		val XOR_PATHS = mapOf(
+			SMALL to createXorPath(SMALL.factor),
+			MEDIUM to createXorPath(MEDIUM.factor),
+			LARGE to createXorPath(LARGE.factor)
+		)
+
+		private fun createXorPath(f: Float): Path {
+			return System.createPath()
+				.moveTo(-f * SCALE, f * SCALE)
+				.lineTo(f * SCALE, f *SCALE)
+				.quadTo(4 * f * SCALE, f * SCALE, 6 * f * SCALE, 4 * f * SCALE)
+				.quadTo(4 * f * SCALE, 7 * f * SCALE, f * SCALE, 7 * f * SCALE)
+				.lineTo(-f * SCALE, 7 * f * SCALE)
+				.quadTo(0.5 * f * SCALE, 4.0 * f * SCALE, -f * SCALE.toDouble(), f * SCALE.toDouble())
+				.close()
+				.moveTo(-f * SCALE - f * EXCLUSIVE_OFFSET, 7 * f * SCALE.toDouble())
+				.quadTo(0.5 * f * SCALE - f * EXCLUSIVE_OFFSET, 4.0 * f * SCALE, -f * SCALE - f * EXCLUSIVE_OFFSET, f * SCALE.toDouble())
+				.quadTo(0.5 * f * SCALE - f * EXCLUSIVE_OFFSET, 4.0 * f * SCALE, -f * SCALE - f * EXCLUSIVE_OFFSET, 7 * f * SCALE.toDouble())
+		}
+
+		private val EXCLUSIVE_PATHS = mapOf(
+			SMALL to createExclusivePath(SMALL.factor),
+			MEDIUM to createExclusivePath(MEDIUM.factor),
+			LARGE to createExclusivePath(LARGE.factor)
+		)
+
+		private fun createExclusivePath(f: Float): Path {
+			return System.createPath()
+				.moveTo(-f * SCALE - f * EXCLUSIVE_OFFSET, 7 * f * SCALE.toDouble())
+				.quadTo(0.5 * f * SCALE - f * EXCLUSIVE_OFFSET, 4.0 * f * SCALE, -f * SCALE - f * EXCLUSIVE_OFFSET, f * SCALE.toDouble())
+		}
+
+		val NOT_PATHS = mapOf(
+			SMALL to createNotPath(SMALL.factor),
+			MEDIUM to createNotPath(MEDIUM.factor),
+			LARGE to createNotPath(LARGE.factor)
+		)
+
+        private fun createNotPath(f: Float): Path =
+			System.createPath()
+				.moveTo(0f, f * SCALE)
+				.lineTo(f * 6 * SCALE, f * 4 * SCALE)
+				.lineTo(0f, f * 7 * SCALE)
+				.close()
 
 		const val RESISTOR_WIDTH = 6.0 * SCALE.toDouble()
 		const val RESISTER_HEIGHT_HALF = SCALE.toDouble()
@@ -445,16 +485,39 @@ enum class SymbolStyle(
 				.curveTo(LENGTH.toDouble() + 2.0 * SCALE, -1.5 * yf * INDUCTOR_HEIGHT_HALF, LENGTH + 4.0 * SCALE, -1.5 * yf * INDUCTOR_HEIGHT_HALF, LENGTH + 4.0 * SCALE, 0.0)
 				.curveTo(LENGTH.toDouble() + 4.0 * SCALE, -1.5 * yf * INDUCTOR_HEIGHT_HALF, LENGTH + 6.0 * SCALE, -1.5 * yf * INDUCTOR_HEIGHT_HALF, LENGTH + 6.0 * SCALE, 0.0)
 
-		fun drawAmericanGate(gate: BoxGateView<*>, path: Path, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-			drawAmericanGate(gate, gate.x, gate.y, gate.bounds.height, path, context, foregroundColor, backgroundColor, stroke, false, gate.transparency)
+		private fun drawAmericanGate(
+			gate: OrientableLabeledRectangularVerticeView<*>,
+			size: LogicGateSize,
+			path: Path,
+			context: DrawContext,
+			foregroundColor: Color,
+			backgroundColor: Color,
+			stroke: Stroke
+		) {
+			drawAmericanGate(gate, size, gate.x, gate.y, gate.bounds.height, path, context,
+				foregroundColor, backgroundColor, stroke, false, gate.transparency)
 		}
 
-		fun drawAmericanGate(comp: Component, x: Double, y: Double, height: Double, path: Path, context: DrawContext, foregroundColor: Color,
-		                     backgroundColor: Color, stroke: Stroke, exclusive: Boolean, transparency: Int) {
+		private fun drawAmericanGate(
+			comp: OrientableLabeledRectangularVerticeView<*>,
+			size: LogicGateSize,
+			x: Double,
+			y: Double,
+			height: Double,
+			path: Path,
+			context: DrawContext,
+			foregroundColor: Color,
+			 backgroundColor: Color,
+			stroke: Stroke,
+			exclusive: Boolean,
+			transparency: Int
+		) {
 
-			val vOffset = (height - 2 * SCALE - path.boundingBox.height) / 2
+			val vOffset = (height - 2 * comp.scale * SCALE - path.boundingBox.height) / 2
 
 			if (vOffset > 0) {
+				// Draw the extension line at the input's side
+				// TODO: Only necessary with more than 3 Inputs.
 				context.g.color = foregroundColor
 				context.g.drawLine(
 					x.toInt(), (y + SCALE).toInt(),
@@ -483,7 +546,7 @@ enum class SymbolStyle(
 			context.g.draw(path)
 
 			if (exclusive) {
-				context.g.draw(EXCLUSIVE_PATH)
+				context.g.draw(EXCLUSIVE_PATHS[size]!!)
 			}
 
 			context.g.translate(-x, -y - vOffset)
@@ -606,21 +669,21 @@ enum class SymbolStyle(
 	 */
 	abstract val orShapeConnectedPortViewLength: Int
 
-	abstract fun drawAndGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
+	abstract fun drawAndGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
 
-	abstract fun drawNandGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
+	abstract fun drawNandGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
 
-	abstract fun drawOrGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
+	abstract fun drawOrGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
 
-	abstract fun drawNorGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
+	abstract fun drawNorGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
 
-	abstract fun drawXorGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
+	abstract fun drawXorGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
 
-	abstract fun drawXnorGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
+	abstract fun drawXnorGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
 
-	abstract fun drawNotGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
+	abstract fun drawNotGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
 
-	abstract fun drawBufferGate(gate: BoxGateView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
+	abstract fun drawBufferGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
 
 	abstract fun drawTriStateBufferGate(gate: OrientableLabeledRectangularVerticeView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
 
