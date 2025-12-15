@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.ui
 
+import ch.scorpion.jabbah.draw.CanvasMockBuilder
 import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
@@ -53,6 +54,7 @@ class GraphDesktopViewMockBuilder(private val controller: GraphDesktopViewContro
 	private fun createGraphNavigationViewDesktopItem(verticeView: SubGraphVerticeView<*>, isParentDetached: Boolean): GraphDesktopViewItem {
 		val subGraphView = verticeView.createSubGraphView(null)
 		val drawingView = EditModule.drawingViewFactory.create(subGraphView as Drawing<Component>, controller.applicationContextHolder, false, "") as DrawingView<GraphView>
+		drawingView.canvas = CanvasMockBuilder().build()
 
 		val controller = GraphNavigationViewController(
 			isRoot = false,
