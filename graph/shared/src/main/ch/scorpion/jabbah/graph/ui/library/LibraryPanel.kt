@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 import ch.scorpion.jabbah.base.ui.UIView
 import ch.scorpion.jabbah.draw.style.ThemeEvent
+import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.project.Project
@@ -23,11 +24,12 @@ interface LibraryPanelView : UIView {
  */
 class LibraryPanelController(
 	applicationModeHolder: ApplicationModeHolder,
+	editor: Editor? = null,
 	libraryHolder: LibraryHolder = LibraryModule.libraryHolder,
 	val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<LibraryPanelView>() {
 
-	val libraryTreeViewController = LibraryTreeViewController(LibraryTreeViewType.Main, libraryHolder.l, applicationModeHolder, eventBus)
+	val libraryTreeViewController = LibraryTreeViewController(LibraryTreeViewType.Main, libraryHolder.l, applicationModeHolder, editor, eventBus)
 	val libraryTreePanelController = LibraryTreePanelController(libraryTreeViewController)
 
 	private val themeHandler: EventHandler<ThemeEvent> = { view.refresh() }

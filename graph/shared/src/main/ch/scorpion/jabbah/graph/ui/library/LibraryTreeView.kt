@@ -3,9 +3,11 @@ package ch.scorpion.jabbah.graph.ui.library
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.auth.Authorizer
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
+import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
 import ch.scorpion.jabbah.graph.library.*
@@ -51,6 +53,7 @@ class LibraryTreeViewController (
 	type: LibraryTreeViewType,
 	library: Library?,
 	val applicationModeHolder: ApplicationModeHolder,
+	private val editor: Editor? = null,
 	eventBus: EventBus = BaseModule.eventBus
 ) : BasicLibraryTreeViewController<LibraryTreeView>(type, library, eventBus) {
 
@@ -166,7 +169,13 @@ class LibraryTreeViewController (
 		if (selectedItem == null || selectedItem !is LibraryElement) {
 			return null
 		}
-		return (selectedItem as LibraryElement).getNewInstance()
+		val newInstance: GraphElementView<GraphElement>? = (selectedItem as LibraryElement).getNewInstance()
+		newInstance?.let {
+			if (editor != null) {
+				EditModule.drawingAppService.customizeAddedComponent(it, editor.view.drawing)
+			}
+		}
+		return newInstance
 	}
 
 	fun renameContainerLibraryElement(element: ContainerLibraryElement, newName: String) {

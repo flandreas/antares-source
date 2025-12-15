@@ -116,7 +116,7 @@ class GraphPanelViewController(
 	}
 
 	val propertyPanelController = ApplicationDataPropertyPanelController(editor, eventBus, currentEditorEventFilter = { e -> e.editor.name == editor.name })
-	val libraryPanelController = LibraryPanelController(applicationModeHolder, libraryHolder, eventBus)
+	val libraryPanelController = LibraryPanelController(applicationModeHolder, editor, libraryHolder, eventBus)
 	val editViewController = GraphEditViewController(
 		editor,
 		applicationDataHolder,

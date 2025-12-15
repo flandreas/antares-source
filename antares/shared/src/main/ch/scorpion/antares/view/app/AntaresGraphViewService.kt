@@ -42,9 +42,9 @@ class AntaresGraphViewService(
 
 	override fun customizeAddedComponent(component: Component, drawing: Drawing<*>) {
 		super.customizeAddedComponent(component, drawing)
-		if (component.parent is DigitalGraphView) {
-			val lightColor = determineLightColor(component.parent as DigitalGraphView)
-			val signalRepresentation = determineSignalRepresentation(component.parent as DigitalGraphView)
+		if (drawing is DigitalGraphView) {
+			val lightColor = determineLightColor(drawing)
+			val signalRepresentation = determineSignalRepresentation(drawing)
 			if (component is LightEmitter) {
 				component.lightColor = lightColor
 			}
@@ -57,7 +57,7 @@ class AntaresGraphViewService(
 				applyDefaultLightColor(component as SubGraphVerticeView<SubGraphVerticeRef>, lightColor)
 			}
 			if (component is LogicGateView) {
-				component.size = (component.parent as DigitalGraphView).defaultLogicGateSize
+				component.size = drawing.defaultLogicGateSize
 			}
 		}
 	}
