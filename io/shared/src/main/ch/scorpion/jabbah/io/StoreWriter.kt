@@ -48,6 +48,8 @@ interface StoreWriter : GlobalIdentityProvider {
      */
     fun writeDouble(name: String, value: Double)
 
+    fun writePreciseDouble(name: String, value: Double)
+
     /**
      * Writes the specified [String] attribute under the given name.
      * @param name the name of the attribute.

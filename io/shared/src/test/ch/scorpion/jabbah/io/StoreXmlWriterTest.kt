@@ -25,6 +25,12 @@ class StoreXmlWriterTest {
 	}
 
 	@Test
+	fun shouldWritePreciseDouble() {
+		storeXmlWriter.writePreciseDouble("test", 1E-7)
+		assertEquals("1.0E-7", xmlWriter.attributes["test"])
+	}
+
+	@Test
 	fun shouldRoundPoint() {
 		storeXmlWriter.writePoint("test", Point2D(8.25, 0.0000001))
 

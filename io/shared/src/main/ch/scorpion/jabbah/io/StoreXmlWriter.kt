@@ -16,6 +16,10 @@ class StoreXmlWriter(
 	private val filter: (s: Storable, isToplevel: Boolean) -> Boolean = { _, _ -> true }
 ) : StoreWriter {
 
+	companion object {
+		private const val DOUBLE_ROUND_PRECISION = 10_000_000.0
+	}
+
 	private var level: Int = 0
 
 	@Suppress("unused")
@@ -90,6 +94,10 @@ class StoreXmlWriter(
 
 	override fun writeDouble(name: String, value: Double) {
 		xmlWriter.setAttributeValue(name, value.formatRounded())
+	}
+
+	override fun writePreciseDouble(name: String, value: Double) {
+		xmlWriter.setAttributeValue(name, value.formatRounded(DOUBLE_ROUND_PRECISION))
 	}
 
 	override fun writeString(name: String, value: String) {

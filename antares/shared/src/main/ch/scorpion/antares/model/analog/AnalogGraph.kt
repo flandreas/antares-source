@@ -48,6 +48,6 @@ class AnalogGraph(
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
-		writer.writeDouble("timeStep", timeStep)
+		writer.writePreciseDouble("timeStep", timeStep)
 	}
 }
