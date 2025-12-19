@@ -7,14 +7,14 @@ import ch.scorpion.jabbah.base.geom.Point2D
  */
 data class RadialColorGradient(
     val center: Point2D,
-    val radius: Double,
+    val radius: Int,
     val centerColor: Color,
     val perimeterColor: Color
 ) : Paint
 
 class MultiRadialColorGradient(
     val center: Point2D,
-    val radius: Double,
+    val radius: Int,
     val fractions: FloatArray,
     val colors: Array<Color>
 ) : Paint
@@ -25,7 +25,7 @@ class MultiRadialColorGradient(
  */
 class RadialColorGradientCache(
     val center: Point2D,
-    val radius: Double,
+    val radius: Int,
     val backgroundColor: Color
 ) {
     private val cache = mutableMapOf<Int, Paint>()

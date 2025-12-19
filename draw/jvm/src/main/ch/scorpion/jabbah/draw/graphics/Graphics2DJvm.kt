@@ -25,7 +25,9 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
         private val ELLIPSE = java.awt.geom.Ellipse2D.Double()
         private val ROUND_RECT = java.awt.geom.RoundRectangle2D.Double()
 
-        val stack: Stack<java.awt.Graphics2D> by lazy { Stack() }
+        private val stack: Stack<java.awt.Graphics2D> by lazy { Stack() }
+
+        private val radialGradientPaintCache = mutableMapOf<RadialColorGradient, RadialGradientPaint>()
 
         fun toFontStyle(awtFont: java.awt.Font): Int {
             var fontStyle = FontStyle.PLAIN.value
@@ -86,6 +88,72 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
 			    LineJoin.BEVEL -> BasicStroke.JOIN_BEVEL
 		    }
 	    }
+
+        private fun toAwtPaint(paint: Paint): java.awt.Paint {
+            return when (paint) {
+                is Color -> {
+                    toAwtColor(paint)
+                }
+                is LinearColorGradient -> {
+                    GradientPaint(
+                        Point2D.Float(paint.p1.x.toFloat(), paint.p1.y.toFloat()),
+                        toAwtColor(paint.color1),
+                        Point2D.Float(paint.p2.x.toFloat(), paint.p2.y.toFloat()),
+                        toAwtColor(paint.color2))
+                }
+                is RadialColorGradient -> {
+                    radialGradientPaintCache.getOrPut(paint) {
+                        val fractions = FloatArray(2)
+                        fractions[0] = 0.0f
+                        fractions[1] = 1.0f
+                        val colors: Array<java.awt.Color> = Array(2) {
+                            when (it) {
+                                0 -> toAwtColor(paint.centerColor)
+                                else -> toAwtColor(paint.perimeterColor)
+                            }
+                        }
+                        println("Create new RadialColorGradient")
+                        RadialGradientPaint(
+                            paint.center.x.toFloat(),
+                            paint.center.y.toFloat(),
+                            paint.radius.toFloat(),
+                            fractions,
+                            colors
+                        )
+                    }
+                }
+                is MultiRadialColorGradient -> {
+                    RadialGradientPaint(
+                        paint.center.x.toFloat(),
+                        paint.center.y.toFloat(),
+                        paint.radius.toFloat(),
+                        paint.fractions,
+                        paint.colors.map { toAwtColor(it) }.toTypedArray()
+                    )
+                }
+                else -> {
+                    throw IllegalArgumentException("unsupported paint ${paint::class.simpleName}")
+                }
+            }
+        }
+
+        private fun fromAwtPaint(paint: java.awt.Paint): Paint {
+            return when (paint) {
+                is java.awt.Color -> fromAwtColor(paint)
+                is GradientPaint -> LinearColorGradient(
+                    p1 = Point2D(paint.point1.x, paint.point1.y),
+                    color1 = fromAwtColor(paint.color1),
+                    p2 = Point2D(paint.point2.x, paint.point2.y),
+                    color2 = fromAwtColor(paint.color2))
+                is RadialGradientPaint -> RadialColorGradient(
+                    Point2D(paint.centerPoint.x, paint.centerPoint.y),
+                    paint.radius.toInt(),
+                    fromAwtColor(paint.colors[0]),
+                    fromAwtColor(paint.colors[1])
+                )
+                else -> throw java.lang.IllegalArgumentException("unsupported AWT paint ${paint::class.simpleName}")
+            }
+        }
 
         fun drawImage(g: java.awt.Graphics2D, image: Image, x: Int, y: Int) {
             when (image) {
@@ -320,7 +388,7 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
     }
 
     override fun drawImage(image: Image, x: Int, y: Int) {
-        Companion.drawImage(g, image, x, y)
+        drawImage(g, image, x, y)
     }
 
     /** ---- [Graphics2DJvm] */
@@ -380,67 +448,4 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
         area.subtract(Area(inner))
         g.fill(area)
     }
-
-	private fun toAwtPaint(paint: Paint): java.awt.Paint {
-		return when (paint) {
-			is Color -> {
-                toAwtColor(paint)
-            }
-			is LinearColorGradient -> {
-                GradientPaint(
-                    Point2D.Float(paint.p1.x.toFloat(), paint.p1.y.toFloat()),
-                    toAwtColor(paint.color1),
-                    Point2D.Float(paint.p2.x.toFloat(), paint.p2.y.toFloat()),
-                    toAwtColor(paint.color2))
-            }
-            is RadialColorGradient -> {
-                val fractions = FloatArray(2)
-                fractions[0] = 0.0f
-                fractions[1] = 1.0f
-                val colors: Array<java.awt.Color> = Array(2) {
-                    when (it) {
-                        0 -> toAwtColor(paint.centerColor)
-                        else -> toAwtColor(paint.perimeterColor)
-                    }
-                }
-                RadialGradientPaint(
-                    paint.center.x.toFloat(),
-                    paint.center.y.toFloat(),
-                    paint.radius.toFloat(),
-                    fractions,
-                    colors
-                )
-            }
-            is MultiRadialColorGradient -> {
-                RadialGradientPaint(
-                    paint.center.x.toFloat(),
-                    paint.center.y.toFloat(),
-                    paint.radius.toFloat(),
-                    paint.fractions,
-                    paint.colors.map { toAwtColor(it) }.toTypedArray()
-                )
-            }
-			else -> {
-                throw IllegalArgumentException("unsupported paint ${paint::class.simpleName}")
-            }
-		}
-	}
-
-	private fun fromAwtPaint(paint: java.awt.Paint): Paint {
-		return when (paint) {
-			is java.awt.Color -> fromAwtColor(paint)
-			is GradientPaint -> LinearColorGradient(
-				p1 = Point2D(paint.point1.x, paint.point1.y),
-				color1 = fromAwtColor(paint.color1),
-				p2 = Point2D(paint.point2.x, paint.point2.y),
-				color2 = fromAwtColor(paint.color2))
-            is RadialGradientPaint -> RadialColorGradient(
-                Point2D(paint.centerPoint.x, paint.centerPoint.y),
-                paint.radius.toDouble(),
-                fromAwtColor(paint.colors[0]),
-                fromAwtColor(paint.colors[1])
-            )
-			else -> throw java.lang.IllegalArgumentException("unsupported AWT paint ${paint::class.simpleName}")
-		}
-	}
 }

@@ -16,7 +16,7 @@ import ch.scorpion.jabbah.draw.style.StyleType
  */
 class LightColorRadialGradientCache(
     private val center: Point2D,
-    private val radius: Double,
+    private val radius: Int,
     private val backgroundColor: Color = DrawStyleModule.styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
 ) {
     private val gradientCaches = mutableMapOf<LightColor, RadialColorGradientCache>()

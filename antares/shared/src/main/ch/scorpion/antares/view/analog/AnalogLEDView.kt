@@ -57,7 +57,7 @@ class AnalogLEDView(
         const val DEF_MAX_GLOW_CURRENT = 0.02
 
         /** The radius of the color gradient drawn as halo during simulation.*/
-        val GRADIENT_RADIUS = 3.0 * SIZE / 4.0
+        val GRADIENT_RADIUS = (3.0 * SIZE / 4.0).toInt()
 
         private val GRADIENT_CACHE = LightColorRadialGradientCache(
             Point2D(4.0 * Look.SCALE, 0.0),

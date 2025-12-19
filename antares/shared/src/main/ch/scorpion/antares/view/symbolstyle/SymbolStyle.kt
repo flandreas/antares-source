@@ -638,7 +638,7 @@ enum class SymbolStyle(
 					&& BaseModule.properties.getBoolean(AnalogLEDView.PROP_DRAW_HALO)
 				) {
 					context.g.paint = led.haloPaint
-					context.g.fillCircle(LENGTH + 2.0 * SCALE, 0.0, GRADIENT_RADIUS)
+					context.g.fillCircle(LENGTH + 2.0 * SCALE, 0.0, GRADIENT_RADIUS.toDouble())
 				}
 			}
 		}
