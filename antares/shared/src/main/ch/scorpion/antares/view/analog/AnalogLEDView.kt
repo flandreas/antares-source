@@ -116,7 +116,7 @@ class AnalogLEDView(
         return GRADIENT_CACHE.forLightColor(lightColor).forFactoredColorGradient(lightColor.gradient, factor)
     }
 
-        override fun drawImpl(context: DrawContext) {
+    override fun drawImpl(context: DrawContext) {
         super.drawImpl(context)
 
         AntaresViewModule.currentSymbolStyle.symbolStyle.drawAnalogLED(this, context)

@@ -23,9 +23,9 @@ class LightColorRadialGradientCache(
 
     /**
      * Returns a [RadialColorGradientCache] that can then be accessed for various center [Color],
-     * e.g. when the center color of an LED various due to changing current.
+     * e.g. when the center color of an LED varies due to changing current.
      *
-     * Note that the returned [RadialColorGradientCache] has a perimeter color with an alpha component 0
+     * Note that the returned [RadialColorGradientCache] has a perimeter color with alpha value 0
      */
     fun forLightColor(lightColor: LightColor): RadialColorGradientCache =
         gradientCaches.getOrPut(lightColor) {

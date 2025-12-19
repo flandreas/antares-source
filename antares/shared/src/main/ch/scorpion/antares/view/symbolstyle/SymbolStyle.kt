@@ -30,6 +30,7 @@ import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import kotlin.math.PI
+import kotlin.math.abs
 
 /**
  * [SymbolStyle] represents international standards for drawing digital gates.
@@ -633,7 +634,7 @@ enum class SymbolStyle(
 
 			if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 				// Halo
-				if ((led.model.getPort<AnalogSignal>() as AnalogPort).current >= led.minCurrent
+				if (abs((led.model.getPort<AnalogSignal>() as AnalogPort).current) >= led.minCurrent
 					&& BaseModule.properties.getBoolean(AnalogLEDView.PROP_DRAW_HALO)
 				) {
 					context.g.paint = led.haloPaint
