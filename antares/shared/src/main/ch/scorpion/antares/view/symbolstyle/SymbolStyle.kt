@@ -76,11 +76,13 @@ enum class SymbolStyle(
 			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke)
 		}
 
-		override fun drawTriStateBufferGate(gate: OrientableLabeledRectangularVerticeView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+		override fun drawTriStateBufferGate(gate: TriStateBufferGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 			if (triStateAlwaysTriangle) {
 				AMERICAN.drawTriStateBufferGate(gate, context, foregroundColor, backgroundColor, stroke)
 				return
 			}
+
+			// TODO Adjust to size
 
 			val h = gate.heightInt - 1.5 * SCALE
 
@@ -216,9 +218,9 @@ enum class SymbolStyle(
 			drawAmericanGate(gate, gate.size, NOT_PATHS[gate.size]!!, context, foregroundColor, backgroundColor, stroke)
 		}
 
-		override fun drawTriStateBufferGate(gate: OrientableLabeledRectangularVerticeView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
-			val bounds = SymbolStyle.NOT_PATHS[LARGE]!!.boundingBox
-			drawAmericanGate(gate, LARGE, gate.x, gate.y, bounds.height, SymbolStyle.NOT_PATHS[LARGE]!!, context,
+		override fun drawTriStateBufferGate(gate: TriStateBufferGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+			val bounds = SymbolStyle.NOT_PATHS[gate.size]!!.boundingBox
+			drawAmericanGate(gate, gate.size, gate.x, gate.y + SCALE, bounds.height, SymbolStyle.NOT_PATHS[gate.size]!!, context,
 				foregroundColor, backgroundColor, stroke, false, gate.transparency)
 		}
 
@@ -304,7 +306,7 @@ enum class SymbolStyle(
 			drawEuropeanGate(gate, context, foregroundColor, backgroundColor, stroke, bufferText)
 		}
 
-		override fun drawTriStateBufferGate(gate: OrientableLabeledRectangularVerticeView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
+		override fun drawTriStateBufferGate(gate: TriStateBufferGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 			AMERICAN.drawTriStateBufferGate(gate, context, foregroundColor, backgroundColor, stroke)
 		}
 
@@ -686,7 +688,7 @@ enum class SymbolStyle(
 
 	abstract fun drawBufferGate(gate: LogicGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
 
-	abstract fun drawTriStateBufferGate(gate: OrientableLabeledRectangularVerticeView<*>, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
+	abstract fun drawTriStateBufferGate(gate: TriStateBufferGateView, context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke)
 
 	abstract fun drawResistor(resistor: OrientableRectangularVerticeView<*>, isVariable: Boolean, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke)
 

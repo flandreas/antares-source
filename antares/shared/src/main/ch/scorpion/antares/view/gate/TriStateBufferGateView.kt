@@ -8,6 +8,7 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.Handedness
 import ch.scorpion.antares.view.OrientableLabeledRectangularVerticeView
+import ch.scorpion.antares.view.gate.LogicGateSize.LARGE
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
@@ -17,6 +18,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.edit.Look.SCALE
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
@@ -24,10 +26,6 @@ import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
-
-/**
- * A view of a [TriStateBufferGate]
- */
 class TriStateBufferGateView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: TriStateBufferGate = TriStateBufferGate()
@@ -67,6 +65,18 @@ class TriStateBufferGateView(
 			invalidate()
 		}
 
+	@Suppress("unused") // Reflection
+	var size: LogicGateSize = LARGE
+		set(value) {
+			if (field != value) {
+				invalidate()
+				field = value
+				labelStyle.updateLabel(this)
+				updateLayout()
+				validate()
+			}
+		}
+
 	init {
 		modelExchanged(null)
 	}
@@ -76,14 +86,11 @@ class TriStateBufferGateView(
 	override fun modelExchanged(oldModel: TriStateBufferGate?) {
 		super.modelExchanged(oldModel)
 
-		val bounds = SymbolStyle.NOT_PATHS[LogicGateSize.LARGE]!!.boundingBox
-
 		val inputPortView = DigitalPortView(
 			styleProvider = styleProvider,
 			port = model.getInput(),
 			direction = Direction.WEST,
 			portLabelPosition = PortLabelPosition.EXTERNAL)
-		inputPortView.setLocation(inputPortView.unconnectedLength.toDouble(), 0.0)
 		addPortView(inputPortView)
 
 		addPortView(DigitalPortView(
@@ -91,31 +98,50 @@ class TriStateBufferGateView(
 			port = model.getOutput(),
 			direction = Direction.EAST,
 			portLabelPosition = PortLabelPosition.EXTERNAL,
-			x = inputPortView.unconnectedLength + bounds.width.toInt(),
-			y = 0))
+		))
 
 		addPortView(DigitalPortView(
 			styleProvider = styleProvider,
 			port = model.getInput(2),
 			direction = directionOfHandedness,
 			portLabelPosition = PortLabelPosition.HIDE,
-			x = (inputPortView.unconnectedLength + bounds.width / 2).toInt(),
-			y = if (handedness == Handedness.RIGHT) CONTROL_PORT_VIEW_OFFSET_Y else -CONTROL_PORT_VIEW_OFFSET_Y,
 			length = AbstractAntaresPortView.LENGTH - (AbstractAntaresPortView.LENGTH * 0.25).toInt()))
 
 		if (AntaresViewModule.currentSymbolStyle.symbolStyle == SymbolStyle.EUROPEAN && !SymbolStyle.triStateAlwaysTriangle) {
 			(model.getPort<DigitalSignal>(3) as DigitalPort).outputAnnotation = OutputAnnotation.TRI_STATE
 		}
 
-		// These bounds must fit both the American style (triangle) and the European style (rectangle)
-		with(SymbolStyle.NOT_PATHS[LogicGateSize.LARGE]!!) {
-			setBounds(
-				AbstractAntaresPortView.LENGTH.toDouble(),
-				-boundingBox.height / 2,
-				boundingBox.width,
-				boundingBox.height
+		updateLayout()
+	}
+
+	private fun updateLayout() {
+		invalidate()
+
+		val f = size.factor.toDouble()
+		val effWidth = 6.0 * f * SCALE
+		val effHeight = 8.0 * f * SCALE
+
+		getPortView(model.getInputPort())!!.apply {
+			setLocation(unconnectedLength.toDouble(), 0.0)
+		}
+		getPortView(model.getOutputPort())!!.apply {
+			setLocation(unconnectedLength + effWidth.toInt(), 0)
+		}
+		getPortView(model.getEnablePort())!!.apply {
+			setLocation(
+				(unconnectedLength + effWidth / 2).toInt(),
+				if (handedness == Handedness.RIGHT) (CONTROL_PORT_VIEW_OFFSET_Y * f).toInt() else -(CONTROL_PORT_VIEW_OFFSET_Y * f).toInt(),
 			)
 		}
+
+		// These bounds must fit both the American style (triangle) and the European style (rectangle)
+		setBounds(
+			AbstractAntaresPortView.LENGTH.toDouble(),
+			- 4.0 * f * SCALE,
+			effWidth,
+			effHeight)
+
+		invalidate()
 	}
 
 	/** ---- [Storable] interface */
@@ -123,12 +149,18 @@ class TriStateBufferGateView(
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
 		writer.writeString("controlOrientation", handedness.customName)
+		if (size != LARGE) {
+			writer.writeString("size", size.customName)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		if (reader.hasAttribute("controlOrientation")) {
 			handedness = Handedness.withName(reader.readString("controlOrientation"))
+		}
+		if (reader.hasAttribute("size")) {
+			size = LogicGateSize.withName(reader.readString("size"))
 		}
 	}
 
@@ -175,7 +207,7 @@ class TriStateBufferGateView(
 		val enablePortView = getPortView(model.getEnablePort())!!
 		enablePortView.location = Point2D(
 			x = (inputPortView.unconnectedLength + bounds.width / 2).toInt(),
-			y = if (handedness == Handedness.RIGHT) CONTROL_PORT_VIEW_OFFSET_Y else -CONTROL_PORT_VIEW_OFFSET_Y
+			y = if (handedness == Handedness.RIGHT) (CONTROL_PORT_VIEW_OFFSET_Y * size.factor).toInt() else -(CONTROL_PORT_VIEW_OFFSET_Y * size.factor).toInt()
 		)
 		enablePortView.direction = directionOfHandedness
 	}

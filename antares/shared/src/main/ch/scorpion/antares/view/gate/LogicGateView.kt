@@ -161,7 +161,6 @@ class LogicGateView(
 				invalidate()
 				field = value
 				labelStyle.updateLabel(this)
-				invalidate()
 				updateLayout()
 			}
 		}
