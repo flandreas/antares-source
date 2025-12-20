@@ -82,22 +82,18 @@ enum class SymbolStyle(
 				return
 			}
 
-			// TODO Adjust to size
-
-			val h = gate.heightInt - 1.5 * SCALE
-
 			if (gate.shadow) {
 				DropShadow.draw(context, gate.transparency) {
-					context.g.fillRect(gate.xInt, gate.yInt, gate.widthInt, h.toInt())
+					context.g.fillRect(gate.xInt, gate.yInt, gate.widthInt, gate.heightInt)
 				}
 			}
 
 			context.g.color = backgroundColor
-			context.g.fillRect(gate.x, gate.y, gate.bounds.width, h)
+			context.g.fillRect(gate.x, gate.y, gate.bounds.width, gate.bounds.height)
 
 			context.g.color = foregroundColor
 			context.g.stroke = stroke
-			context.g.drawRect(gate.x, gate.y, gate.bounds.width, h)
+			context.g.drawRect(gate.x, gate.y, gate.bounds.width, gate.bounds.height)
 
 			gate.drawLabelText(context)
 		}

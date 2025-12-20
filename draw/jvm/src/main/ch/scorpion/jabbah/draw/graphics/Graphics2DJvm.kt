@@ -112,7 +112,6 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
                                 else -> toAwtColor(paint.perimeterColor)
                             }
                         }
-                        println("Create new RadialColorGradient")
                         RadialGradientPaint(
                             paint.center.x.toFloat(),
                             paint.center.y.toFloat(),

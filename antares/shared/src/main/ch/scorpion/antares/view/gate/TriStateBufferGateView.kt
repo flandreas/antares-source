@@ -7,6 +7,7 @@ import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.Handedness
+import ch.scorpion.antares.view.Handedness.*
 import ch.scorpion.antares.view.OrientableLabeledRectangularVerticeView
 import ch.scorpion.antares.view.gate.LogicGateSize.LARGE
 import ch.scorpion.antares.view.module.AntaresViewModule
@@ -14,7 +15,6 @@ import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.symbolstyle.SymbolStyle
 import ch.scorpion.jabbah.base.geom.Direction
-import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -35,13 +35,12 @@ class TriStateBufferGateView(
 		private const val CONTROL_PORT_VIEW_OFFSET_Y = (AbstractAntaresPortView.LENGTH * 0.75).toInt()
 	}
 
-	var handedness: Handedness = Handedness.RIGHT
+	var handedness: Handedness = RIGHT
 		set(value) {
 			if (field != value) {
 				invalidate()
 				field = value
-				updateEnablePortViewForHandedness()
-				invalidate()
+				updateLayout()
 				update()
 			}
 		}
@@ -71,7 +70,6 @@ class TriStateBufferGateView(
 			if (field != value) {
 				invalidate()
 				field = value
-				labelStyle.updateLabel(this)
 				updateLayout()
 				validate()
 			}
@@ -117,29 +115,57 @@ class TriStateBufferGateView(
 	private fun updateLayout() {
 		invalidate()
 
-		val f = size.factor.toDouble()
-		val effWidth = 6.0 * f * SCALE
-		val effHeight = 8.0 * f * SCALE
+		val inputPortView = getPortView(model.getInputPort())!!
+		val outputPortView = getPortView(model.getOutputPort())!!
+		val enablePortView = getPortView(model.getEnablePort())!!
 
-		getPortView(model.getInputPort())!!.apply {
-			setLocation(unconnectedLength.toDouble(), 0.0)
-		}
-		getPortView(model.getOutputPort())!!.apply {
-			setLocation(unconnectedLength + effWidth.toInt(), 0)
-		}
-		getPortView(model.getEnablePort())!!.apply {
-			setLocation(
-				(unconnectedLength + effWidth / 2).toInt(),
-				if (handedness == Handedness.RIGHT) (CONTROL_PORT_VIEW_OFFSET_Y * f).toInt() else -(CONTROL_PORT_VIEW_OFFSET_Y * f).toInt(),
-			)
-		}
+		val f = size.factor.toDouble()
+		val effWidth = w(6.0) * f
+
+		inputPortView.setLocation(inputPortView.unconnectedLength.toDouble(), 0.0)
+		outputPortView.setLocation(outputPortView.unconnectedLength + effWidth.toInt(), 0)
+		enablePortView.setLocation(
+			(enablePortView.unconnectedLength + effWidth / 2).toInt(),
+			if (handedness == RIGHT) (CONTROL_PORT_VIEW_OFFSET_Y * f).toInt() else -(CONTROL_PORT_VIEW_OFFSET_Y * f).toInt(),
+		)
+		enablePortView.direction = directionOfHandedness
 
 		// These bounds must fit both the American style (triangle) and the European style (rectangle)
-		setBounds(
-			AbstractAntaresPortView.LENGTH.toDouble(),
-			- 4.0 * f * SCALE,
-			effWidth,
-			effHeight)
+
+		if (AntaresViewModule.currentSymbolStyle.symbolStyle == SymbolStyle.AMERICAN || SymbolStyle.triStateAlwaysTriangle) {
+			// Layout for the standard triangle-shape
+			val effHeight = 8.0 * f * SCALE
+			setBounds(
+				AbstractAntaresPortView.LENGTH.toDouble(),
+				-h(4.0 * f),
+				effWidth,
+				effHeight
+			)
+		} else {
+			// Layout for the european box-shape, but with reduced height due to the "enable" port.
+			// Position and height of the box depend on the "handedness" property.
+			val effHeight = (h(4) + CONTROL_PORT_VIEW_OFFSET_Y) * f
+			when (handedness) {
+                RIGHT -> {
+					setBounds(
+						AbstractAntaresPortView.LENGTH.toDouble(),
+						-h(4.0 * f),
+						effWidth,
+						effHeight
+					)
+				}
+                LEFT -> {
+					setBounds(
+						AbstractAntaresPortView.LENGTH.toDouble(),
+						-CONTROL_PORT_VIEW_OFFSET_Y * f,
+						effWidth,
+						effHeight
+					)
+				}
+            }
+		}
+
+		labelStyle.updateLabel(this)
 
 		invalidate()
 	}
@@ -198,17 +224,7 @@ class TriStateBufferGateView(
 
 	private val directionOfHandedness: Direction get() =
 		when (handedness) {
-			Handedness.RIGHT -> Direction.SOUTH
-			Handedness.LEFT -> Direction.NORTH
+			RIGHT -> Direction.SOUTH
+			LEFT -> Direction.NORTH
 		}
-
-	private fun updateEnablePortViewForHandedness() {
-		val inputPortView = getPortView(model.getInputPort())!!
-		val enablePortView = getPortView(model.getEnablePort())!!
-		enablePortView.location = Point2D(
-			x = (inputPortView.unconnectedLength + bounds.width / 2).toInt(),
-			y = if (handedness == Handedness.RIGHT) (CONTROL_PORT_VIEW_OFFSET_Y * size.factor).toInt() else -(CONTROL_PORT_VIEW_OFFSET_Y * size.factor).toInt()
-		)
-		enablePortView.direction = directionOfHandedness
-	}
 }
