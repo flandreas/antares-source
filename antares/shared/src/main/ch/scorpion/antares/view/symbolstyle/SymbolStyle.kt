@@ -7,9 +7,6 @@ import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.analog.AnalogLEDView
 import ch.scorpion.antares.view.analog.AnalogLEDView.Companion.GRADIENT_RADIUS
 import ch.scorpion.antares.view.gate.*
-import ch.scorpion.antares.view.gate.LogicGateSize.LARGE
-import ch.scorpion.antares.view.gate.LogicGateSize.MEDIUM
-import ch.scorpion.antares.view.gate.LogicGateSize.SMALL
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
 import ch.scorpion.jabbah.base.EnumProperty
@@ -26,6 +23,10 @@ import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.jabbah.edit.Look.SCALE
+import ch.scorpion.jabbah.edit.model.Size
+import ch.scorpion.jabbah.edit.model.Size.LARGE
+import ch.scorpion.jabbah.edit.model.Size.MEDIUM
+import ch.scorpion.jabbah.edit.model.Size.SMALL
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
@@ -486,7 +487,7 @@ enum class SymbolStyle(
 
 		private fun drawAmericanGate(
 			gate: OrientableLabeledRectangularVerticeView<*>,
-			size: LogicGateSize,
+			size: Size,
 			path: Path,
 			context: DrawContext,
 			foregroundColor: Color,
@@ -499,7 +500,7 @@ enum class SymbolStyle(
 
 		private fun drawAmericanGate(
 			comp: OrientableLabeledRectangularVerticeView<*>,
-			size: LogicGateSize,
+			size: Size,
 			x: Double,
 			y: Double,
 			height: Double,

@@ -1,32 +1,24 @@
 package ch.scorpion.jabbah.edit.model
 
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.Component
 
 /**
  * Models a three-level size property that can be used by [Component]s that support various sizes.
  */
-enum class Size(val customName: String) {
+enum class Size(val customName: String, val factor: Float) {
 
-    SMALL("small"),
-    MEDIUM("medium"),
-    LARGE("large");
+    SMALL("small", 0.5f),
+    MEDIUM("medium", 0.7f),
+    LARGE("large", 1.0f);
 
     companion object {
 
-        private val LOG by logger(Size::class)
 	    const val BASE_KEY_SIZE = "edit.property.size"
 
-        fun withName(name: String): Size {
-            for (size in values()) {
-                if (size.customName == name) {
-                    return size
-                }
-            }
-            LOG.error("unknown Size '$name'")
-            throw IllegalArgumentException("unknown Size '$name'")
-        }
+        fun withName(name: String): Size =
+            entries.firstOrNull { it.customName == name }
+                ?: throw IllegalArgumentException("unknown Size '$name'")
     }
 
     override fun toString(): String {

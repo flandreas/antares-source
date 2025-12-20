@@ -4,13 +4,13 @@ import ch.scorpion.antares.model.AntaresGraphTypes
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.net.NetSignalApplierStrategy
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
-import ch.scorpion.antares.view.gate.LogicGateSize
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.output.LightEmitter
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
@@ -45,7 +45,7 @@ class DigitalGraphView(
 
 	var defaultSignalRepresentation: DigitalSignalRepresentation? = null
 
-	var defaultLogicGateSize: LogicGateSize = LogicGateSize.LARGE
+	var defaultLogicGateSize: Size = Size.LARGE
 
 	@Suppress("unused") // Reflection
 	var netSignalApplierStrategy: NetSignalApplierStrategy
@@ -66,7 +66,7 @@ class DigitalGraphView(
 		super.write(writer)
 		defaultLightColor?.let { writer.writeString("lightColor", it.customName) }
 		defaultSignalRepresentation?.let { writer.writeString("signalRepresentation", it.customName) }
-		if (defaultLogicGateSize != LogicGateSize.LARGE) {
+		if (defaultLogicGateSize != Size.LARGE) {
 			writer.writeString("logicGateSize", defaultLogicGateSize.customName)
 		}
 	}
@@ -80,7 +80,7 @@ class DigitalGraphView(
 			defaultSignalRepresentation = DigitalSignalRepresentation.withName(reader.readString("signalRepresentation"))
 		}
 		if (reader.hasAttribute("logicGateSize")) {
-			defaultLogicGateSize = LogicGateSize.withName(reader.readString("logicGateSize"))
+			defaultLogicGateSize = Size.withName(reader.readString("logicGateSize"))
 		}
 	}
 }

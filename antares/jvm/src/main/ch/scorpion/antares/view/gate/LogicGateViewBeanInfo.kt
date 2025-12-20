@@ -6,6 +6,7 @@ import ch.scorpion.antares.view.AntaresProperties
 import ch.scorpion.antares.view.app.InputCountPropertySwing
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
+import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import com.l2fprod.common.propertysheet.Property
 
@@ -42,7 +43,7 @@ class LogicGateViewBeanInfo  : BoxGateViewBeanInfo<LogicGateView>() {
 
 		private val dataPort = CommandPropertySwing("dataPort", LogicGateView.BASE_KEY_DATA_PORT, InputPortNumber::class.java, componentBeanProvider)
 
-		private val size = AntaresProperties.logicGateSize()
+		private val size = EditProperties.size()
 	}
 
 	override fun addProperties(bean: LogicGateView, editor: Editor, properties: MutableList<Property>) {

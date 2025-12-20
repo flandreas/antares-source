@@ -39,7 +39,7 @@ class TriStateBufferGateViewBeanInfo : DigitalComponentViewBeanInfo<TriStateBuff
 		val handedness = AntaresProperties.handedness(baseKey = Handedness.BASE_KEY)
 		private val inputPortName = AntaresProperties.inputPortName(portId = 1)
 		private val outputPortName = AntaresProperties.outputPortName()
-		private val size = AntaresProperties.logicGateSize()
+		private val size = EditProperties.size()
 	}
 
 	override fun addProperties(bean: TriStateBufferGateView, editor: Editor, properties: MutableList<Property>) {

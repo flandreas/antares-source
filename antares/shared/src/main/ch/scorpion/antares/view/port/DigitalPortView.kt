@@ -6,10 +6,6 @@ import ch.scorpion.antares.model.Trigger
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
-import ch.scorpion.antares.model.signal.Word
-import ch.scorpion.antares.view.gate.LogicGateSize.LARGE
-import ch.scorpion.antares.view.gate.LogicGateSize.MEDIUM
-import ch.scorpion.antares.view.gate.LogicGateSize.SMALL
 import ch.scorpion.antares.view.gate.TriStateBufferGateView
 import ch.scorpion.antares.view.inout.DigitalKeyboard
 import ch.scorpion.antares.view.net.DigitalEdgeView
@@ -25,6 +21,7 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.model.Size.*
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder

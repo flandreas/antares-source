@@ -1,9 +1,9 @@
 package ch.scorpion.antares.view
 
 import ch.scorpion.antares.model.net.NetSignalApplierStrategy
-import ch.scorpion.antares.view.gate.LogicGateSize
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.drawingBeanProvider
+import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImplBeanInfo
 import com.l2fprod.common.propertysheet.Property
@@ -16,7 +16,7 @@ class DigitalGraphViewBeanInfo : GraphViewImplBeanInfo<DigitalGraphView>() {
 		private val defaultSignalRepresentation = DefaultDigitalSignalRepresentationProperty()
 		private val netSignalApplierStrategy = CommandPropertySwing("netSignalApplierStrategy", NetSignalApplierStrategy.BASE_KEY, NetSignalApplierStrategy::class.java, drawingBeanProvider)
 		private val defaultLogicGateSize = CommandPropertySwing("defaultLogicGateSize", "element.property.defaultLogicGateSize",
-			LogicGateSize::class.java, drawingBeanProvider)
+			Size::class.java, drawingBeanProvider)
 	}
 
 	override fun addProperties(bean: DigitalGraphView, editor: Editor, properties: MutableList<Property>) {

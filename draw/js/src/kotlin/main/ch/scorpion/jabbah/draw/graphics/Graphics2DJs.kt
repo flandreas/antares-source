@@ -320,7 +320,7 @@ class Graphics2DJs(
 	}
 
 	private fun toRadialJsGradient(gradient: RadialColorGradient): CanvasGradient {
-		val jsGradient = ctx.createRadialGradient(gradient.center.x, gradient.center.y, 0.0, gradient.center.x, gradient.center.y, gradient.radius)
+		val jsGradient = ctx.createRadialGradient(gradient.center.x, gradient.center.y, 0.0, gradient.center.x, gradient.center.y, gradient.radius.toDouble())
 		jsGradient.addColorStop(0.0, toJsColor(gradient.centerColor))
 		jsGradient.addColorStop(1.0, toJsColor(gradient.perimeterColor))
 		return jsGradient

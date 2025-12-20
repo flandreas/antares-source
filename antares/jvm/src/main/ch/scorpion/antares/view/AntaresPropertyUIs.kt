@@ -10,7 +10,6 @@ import ch.scorpion.antares.model.net.PullDirection
 import ch.scorpion.antares.model.net.TransistorType
 import ch.scorpion.antares.model.output.SevenSegmentDisplayScheme
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
-import ch.scorpion.antares.view.gate.LogicGateSize
 import ch.scorpion.antares.view.input.JoystickDeflection
 import ch.scorpion.antares.view.net.TransistorViewSymbol
 import ch.scorpion.antares.view.net.tunnel.TunnelFlowDirection
@@ -208,12 +207,5 @@ class FSMStateTypeEditor : ComboBoxPropertyEditor() {
 	init {
 		setAvailableValues(FSMStateType.entries.toTypedArray())
 		(editor as JComboBox<FSMStateType>).renderer = EnumRenderer()
-	}
-}
-
-class LogicGateSizeEditor : ComboBoxPropertyEditor() {
-	init {
-		setAvailableValues(LogicGateSize.entries.toTypedArray())
-		(editor as JComboBox<LogicGateSize>).renderer = EnumRenderer()
 	}
 }

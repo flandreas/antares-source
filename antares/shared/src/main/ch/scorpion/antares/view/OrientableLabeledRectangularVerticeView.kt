@@ -1,7 +1,6 @@
 package ch.scorpion.antares.view
 
 import ch.scorpion.antares.view.gate.BoxGateView
-import ch.scorpion.antares.view.gate.LogicGateSize
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -14,6 +13,7 @@ import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Font
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.RotationDisplayStrategy.KEEP_HORIZONTAL
@@ -28,12 +28,12 @@ open class OrientableLabeledRectangularVerticeView<T: Vertice>(
 
     companion object {
 
-        private val SYMBOL_FONT_CACHE = mutableMapOf<LogicGateSize, Font>()
+        private val SYMBOL_FONT_CACHE = mutableMapOf<Size, Font>()
 
-        fun getSymbolFont(size: LogicGateSize, font: Font): Font =
+        fun getSymbolFont(size: Size, font: Font): Font =
             SYMBOL_FONT_CACHE.getOrPut(size) {
                 val font = AntaresViewModule.currentSymbolStyle.symbolStyle.getFont(font)
-                val f = if (size != LogicGateSize.LARGE) 1.2f else 1.0f
+                val f = if (size != Size.LARGE) 1.2f else 1.0f
                 return font.deriveFont((font.size * size.factor * f).toInt())
             }
 

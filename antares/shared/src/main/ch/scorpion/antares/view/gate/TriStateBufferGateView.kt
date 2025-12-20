@@ -9,7 +9,6 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.Handedness
 import ch.scorpion.antares.view.Handedness.*
 import ch.scorpion.antares.view.OrientableLabeledRectangularVerticeView
-import ch.scorpion.antares.view.gate.LogicGateSize.LARGE
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
@@ -20,6 +19,8 @@ import ch.scorpion.jabbah.draw.graphics.Font
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Look.SCALE
+import ch.scorpion.jabbah.edit.model.Size
+import ch.scorpion.jabbah.edit.model.Size.LARGE
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
@@ -67,7 +68,7 @@ class TriStateBufferGateView(
 		}
 
 	@Suppress("unused") // Reflection
-	var size: LogicGateSize = LARGE
+	var size: Size = LARGE
 		set(value) {
 			if (field != value) {
 				invalidate()
@@ -190,7 +191,7 @@ class TriStateBufferGateView(
 			handedness = Handedness.withName(reader.readString("controlOrientation"))
 		}
 		if (reader.hasAttribute("size")) {
-			size = LogicGateSize.withName(reader.readString("size"))
+			size = Size.withName(reader.readString("size"))
 		}
 	}
 

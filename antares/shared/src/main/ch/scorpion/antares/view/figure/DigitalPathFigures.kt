@@ -1,12 +1,12 @@
 package ch.scorpion.antares.view.figure
 
-import ch.scorpion.antares.view.gate.LogicGateSize
 import ch.scorpion.antares.view.symbolstyle.SymbolStyle
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.draw.polyline.PolylineDrawable
 import ch.scorpion.jabbah.edit.Look.SCALE
 import ch.scorpion.jabbah.edit.figure.AbstractPathFigure
 import ch.scorpion.jabbah.edit.figure.Figure
+import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.edit.model.polyline.PolylineComponent
 
 /**
@@ -14,25 +14,25 @@ import ch.scorpion.jabbah.edit.model.polyline.PolylineComponent
  * which involves mirroring the paths.
  */
 
-class AndGateFigure : AbstractPathFigure(SymbolStyle.AND_PATHS[LogicGateSize.LARGE]!!.clone(), TYPE) {
+class AndGateFigure : AbstractPathFigure(SymbolStyle.AND_PATHS[Size.LARGE]!!.clone(), TYPE) {
 	companion object {
 		val TYPE: String by lazy { Translations.getString("antares.figure.andShape") }
 	}
 }
 
-class OrGateFigure : AbstractPathFigure(SymbolStyle.OR_PATHS[LogicGateSize.LARGE]!!.clone(), TYPE) {
+class OrGateFigure : AbstractPathFigure(SymbolStyle.OR_PATHS[Size.LARGE]!!.clone(), TYPE) {
 	companion object {
 		val TYPE: String by lazy { Translations.getString("antares.figure.orShape") }
 	}
 }
 
-class XorGateFigure : AbstractPathFigure(SymbolStyle.XOR_PATHS[LogicGateSize.LARGE]!!.clone(), TYPE) {
+class XorGateFigure : AbstractPathFigure(SymbolStyle.XOR_PATHS[Size.LARGE]!!.clone(), TYPE) {
 	companion object {
 		val TYPE: String by lazy { Translations.getString("antares.figure.xorShape") }
 	}
 }
 
-class NotGateFigure : AbstractPathFigure(SymbolStyle.NOT_PATHS[LogicGateSize.LARGE]!!.clone(), TYPE) {
+class NotGateFigure : AbstractPathFigure(SymbolStyle.NOT_PATHS[Size.LARGE]!!.clone(), TYPE) {
 	companion object {
 		val TYPE: String by lazy { Translations.getString("antares.figure.notShape") }
 	}

@@ -4,13 +4,13 @@ import ch.scorpion.antares.model.net.PullDirection
 import ch.scorpion.antares.model.net.TransistorType
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
-import ch.scorpion.antares.view.gate.LogicGateSize
 import ch.scorpion.antares.view.gate.LogicGateView
 import ch.scorpion.antares.view.net.TransistorViewSymbol
 import ch.scorpion.antares.view.net.tunnel.TunnelFlowDirection
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.componentBeanProvider
+import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.param.ExpressionPropertySwing
@@ -71,6 +71,6 @@ object AntaresProperties {
 	fun outputPortName(name: String = "outputPortName"): CommandPropertySwing<String> =
 		CommandPropertySwing(name, LogicGateView.BASE_KEY_OUTPUT_PORT_NAME, String::class.java, componentBeanProvider)
 
-	fun logicGateSize(name: String = "size", baseKey: String = LogicGateSize.BASE_KEY): CommandPropertySwing<LogicGateSize> =
-		CommandPropertySwing(name, baseKey, LogicGateSize::class.java, componentBeanProvider)
+	fun defaultLogicGateSize(name: String = "size"): CommandPropertySwing<Size> =
+		CommandPropertySwing(name, "element.property.logicGateSize", Size::class.java, componentBeanProvider)
 }

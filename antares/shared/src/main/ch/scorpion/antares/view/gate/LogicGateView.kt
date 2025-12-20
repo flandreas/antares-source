@@ -7,7 +7,6 @@ import ch.scorpion.antares.model.gate.NonUnaryLogicGateType.*
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.app.AntaresGraphViewService
-import ch.scorpion.antares.view.gate.LogicGateSize.LARGE
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.symbolstyle.CurrentSymbolStyle
@@ -26,6 +25,8 @@ import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Look.SCALE
+import ch.scorpion.jabbah.edit.model.Size
+import ch.scorpion.jabbah.edit.model.Size.LARGE
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
@@ -146,7 +147,7 @@ class LogicGateView(
 			update()
 		}
 
-	var size: LogicGateSize = LARGE
+	var size: Size = LARGE
 		set(value) {
 			if (field != value) {
 				invalidate()
@@ -318,7 +319,7 @@ class LogicGateView(
 			dataPort = InputPortNumber.withId(reader.readInt("dataPort"))
 		}
 		if (reader.hasAttribute("size")) {
-			size = LogicGateSize.withName(reader.readString("size"))
+			size = Size.withName(reader.readString("size"))
 		}
 	}
 
