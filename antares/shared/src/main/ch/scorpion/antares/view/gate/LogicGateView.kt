@@ -56,15 +56,6 @@ class LogicGateView(
 
 		val isDataFlowEnabled: Boolean get() = BaseModule.properties.getBoolean(PROP_DATA_FLOW_ENABLED)
 
-		private val SYMBOL_FONT_CACHE = mutableMapOf<LogicGateSize, Font>()
-
-		private fun getSymbolFont(size: LogicGateSize, font: Font): Font =
-			SYMBOL_FONT_CACHE.getOrPut(size) {
-				val font = AntaresViewModule.currentSymbolStyle.symbolStyle.getFont(font)
-				val f = if (size != LARGE) 1.2f else 1.0f
-				return font.deriveFont((font.size * size.factor * f).toInt())
-			}
-
 		fun andGateView(): LogicGateView = LogicGateView(gate = NonUnaryLogicGate.andGate())
 		fun nandGateView(): LogicGateView = LogicGateView(gate = NonUnaryLogicGate.nandGate())
 		fun orGateView(): LogicGateView = LogicGateView(gate = NonUnaryLogicGate.orGate())
@@ -171,7 +162,6 @@ class LogicGateView(
 			DrawableExplanation(truthTableView, boundingBox)
 		} else null
 	}
-
 
 	override val symbolFont: Font get() = getSymbolFont(size, font)
 

@@ -6,6 +6,7 @@ import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.model.signal.DigitalSignalRepresenter
 import ch.scorpion.antares.view.DigitalGraphView
 import ch.scorpion.antares.view.gate.LogicGateView
+import ch.scorpion.antares.view.gate.TriStateBufferGateView
 import ch.scorpion.antares.view.net.WireTapView
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.output.LightEmitter
@@ -57,6 +58,8 @@ class AntaresGraphViewService(
 				applyDefaultLightColor(component as SubGraphVerticeView<SubGraphVerticeRef>, lightColor)
 			}
 			if (component is LogicGateView) {
+				component.size = drawing.defaultLogicGateSize
+			} else if (component is TriStateBufferGateView) {
 				component.size = drawing.defaultLogicGateSize
 			}
 		}

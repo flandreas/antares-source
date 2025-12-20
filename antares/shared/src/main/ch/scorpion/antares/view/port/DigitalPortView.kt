@@ -7,6 +7,10 @@ import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.*
 import ch.scorpion.antares.model.signal.Word
+import ch.scorpion.antares.view.gate.LogicGateSize.LARGE
+import ch.scorpion.antares.view.gate.LogicGateSize.MEDIUM
+import ch.scorpion.antares.view.gate.LogicGateSize.SMALL
+import ch.scorpion.antares.view.gate.TriStateBufferGateView
 import ch.scorpion.antares.view.inout.DigitalKeyboard
 import ch.scorpion.antares.view.net.DigitalEdgeView
 import ch.scorpion.antares.view.style.AntaresTheme
@@ -77,21 +81,29 @@ class DigitalPortView(
 	companion object {
 		private const val MIN_EDGE_VIEW_LENGTH_FOR_BIT_WIDTH_ANNOTATION = 100
 
-		val EDGE_TRIGGER_PATH: Path = System.createPath()
+		private val EDGE_TRIGGER_PATH: Path = System.createPath()
 			.moveTo(0.0, -INTERNAL_ANNOTATION_SIZE / 2.0)
 			.lineTo(-INTERNAL_ANNOTATION_SIZE, 0)
 			.lineTo(0, INTERNAL_ANNOTATION_SIZE / 2)
 
-		val MASTER_SLAVE_PATH: Path = System.createPath()
+		private val MASTER_SLAVE_PATH: Path = System.createPath()
 			.moveTo(-INTERNAL_ANNOTATION_SIZE, -INTERNAL_ANNOTATION_SIZE / 2 + 1)
 			.lineTo(-INTERNAL_ANNOTATION_SIZE / 2, -INTERNAL_ANNOTATION_SIZE / 2 + 1)
 			.lineTo(-INTERNAL_ANNOTATION_SIZE / 2, INTERNAL_ANNOTATION_SIZE / 2 - 1)
 
-		val TRI_STATE_PATH: Path = System.createPath()
-			.moveTo(-INTERNAL_ANNOTATION_SIZE, -INTERNAL_ANNOTATION_SIZE / 2 + 1)
-			.lineTo(-3, -INTERNAL_ANNOTATION_SIZE / 2 + 1)
-			.lineTo(-INTERNAL_ANNOTATION_SIZE / 2 - 1.5, INTERNAL_ANNOTATION_SIZE / 2 - 1.0)
-			.close()
+		private val TRI_STATE_PATHS = mapOf(
+			SMALL to createTriStatePath(SMALL.factor),
+			MEDIUM to createTriStatePath(MEDIUM.factor),
+			LARGE to createTriStatePath(LARGE.factor),
+		)
+
+		private fun createTriStatePath(f: Float): Path {
+			return System.createPath()
+				.moveTo(-INTERNAL_ANNOTATION_SIZE * f, (-INTERNAL_ANNOTATION_SIZE / 2 + 1) * f)
+				.lineTo(-3 * f, (-INTERNAL_ANNOTATION_SIZE / 2 + 1) * f)
+				.lineTo((-INTERNAL_ANNOTATION_SIZE / 2 - 1.5) * f, (INTERNAL_ANNOTATION_SIZE / 2 - 1.0) * f)
+				.close()
+		}
 	}
 
 	var portViewStyle: DigitalPortViewStyle = style
@@ -466,10 +478,19 @@ class DigitalPortView(
 		return null
 	}
 
-	private fun getOutputAnnotationPath(): Path? =
-		when ((port as DigitalPort).outputAnnotation) {
-			OutputAnnotation.TRI_STATE -> TRI_STATE_PATH
-			OutputAnnotation.MASTER_SLAVE -> MASTER_SLAVE_PATH
-			else -> null
-		}
+	private fun getOutputAnnotationPath(): Path? {
+		return when ((port as DigitalPort).outputAnnotation) {
+            OutputAnnotation.TRI_STATE -> {
+                val size = if (owner is TriStateBufferGateView) {
+                    (owner as TriStateBufferGateView).size
+                } else {
+                    LARGE
+                }
+				TRI_STATE_PATHS[size]
+            }
+
+            OutputAnnotation.MASTER_SLAVE -> MASTER_SLAVE_PATH
+            else -> null
+        }
+	}
 }

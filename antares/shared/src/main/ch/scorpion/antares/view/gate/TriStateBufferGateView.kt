@@ -16,6 +16,7 @@ import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.symbolstyle.SymbolStyle
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.graphics.Font
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Look.SCALE
@@ -25,6 +26,7 @@ import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
+import kotlin.math.floor
 
 class TriStateBufferGateView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
@@ -74,6 +76,8 @@ class TriStateBufferGateView(
 				validate()
 			}
 		}
+
+	override val symbolFont: Font get() = getSymbolFont(size, font)
 
 	init {
 		modelExchanged(null)
@@ -144,7 +148,7 @@ class TriStateBufferGateView(
 		} else {
 			// Layout for the european box-shape, but with reduced height due to the "enable" port.
 			// Position and height of the box depend on the "handedness" property.
-			val effHeight = (h(4) + CONTROL_PORT_VIEW_OFFSET_Y) * f
+			val effHeight = floor((h(4) + CONTROL_PORT_VIEW_OFFSET_Y) * f)
 			when (handedness) {
                 RIGHT -> {
 					setBounds(
@@ -199,7 +203,10 @@ class TriStateBufferGateView(
 
 		AntaresViewModule.currentSymbolStyle.symbolStyle.drawTriStateBufferGate(
 			this, context, getApplicableForegroundColor(context), getApplicableBackgroundColor(context), stroke)
-		GateMnemonic.drawTriStateBuffer(this, context, getApplicableForegroundColor(context))
+
+		if (size == LARGE) {
+			GateMnemonic.drawTriStateBuffer(this, context, getApplicableForegroundColor(context))
+		}
 
 		drawImplAfterBorder(context)
 

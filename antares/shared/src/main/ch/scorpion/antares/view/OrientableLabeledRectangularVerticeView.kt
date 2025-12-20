@@ -1,6 +1,8 @@
 package ch.scorpion.antares.view
 
 import ch.scorpion.antares.view.gate.BoxGateView
+import ch.scorpion.antares.view.gate.LogicGateSize
+import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
@@ -23,6 +25,19 @@ open class OrientableLabeledRectangularVerticeView<T: Vertice>(
     text: String,
     model: T,
 ) : OrientableRectangularVerticeView<T>(styleProvider, model) {
+
+    companion object {
+
+        private val SYMBOL_FONT_CACHE = mutableMapOf<LogicGateSize, Font>()
+
+        fun getSymbolFont(size: LogicGateSize, font: Font): Font =
+            SYMBOL_FONT_CACHE.getOrPut(size) {
+                val font = AntaresViewModule.currentSymbolStyle.symbolStyle.getFont(font)
+                val f = if (size != LogicGateSize.LARGE) 1.2f else 1.0f
+                return font.deriveFont((font.size * size.factor * f).toInt())
+            }
+
+    }
 
     /** Represents the supported styles for the [Label] of an [OrientableLabeledRectangularVerticeView].*/
     enum class LabelStyle {
