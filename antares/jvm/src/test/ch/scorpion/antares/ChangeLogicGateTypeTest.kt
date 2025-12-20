@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.gate.NonUnaryLogicGateType
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.gate.LogicGateView
+import ch.scorpion.antares.view.gate.LogicGateViewRenderers
 import ch.scorpion.antares.view.input.SwitchView
 import ch.scorpion.antares.view.output.LEDView
 import ch.scorpion.jabbah.execution.actor.ActorListener
@@ -55,6 +56,7 @@ class ChangeLogicGateTypeTest : AbstractJvmCircuitTest() {
 		gateView.logicGateType = NonUnaryLogicGateType.Nor
 
 		assertEquals(Logic.NEGATIVE, (gateView.model.getOutput<DigitalSignal>() as DigitalPort).logic)
+		assertEquals(LogicGateViewRenderers.Nor.text, gateView.labelText)
 
 		startSimulation()
 		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)

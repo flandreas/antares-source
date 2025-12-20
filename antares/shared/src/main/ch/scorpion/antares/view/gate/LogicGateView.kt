@@ -138,7 +138,9 @@ class LogicGateView(
 		get() = model.gateType
 		set(value) {
 			invalidate()
+
 			model.gateType = value
+			labelText = getRenderer(value).text
 
 			tooltip.reset()
 			explanation.reset()
