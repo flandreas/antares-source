@@ -35,7 +35,8 @@ abstract class AbstractCreateEdgeViewConnector(
 	 * The indices of the points in [edgeView] that have been manually set (i.e. adjusted) by the user.
 	 * Organized as a [Stack] to support repetitive unrollment by pressing ESC.
 	 */
-	protected var adjustment: EdgeViewAdjustmentView? = null
+	// Visible for testing
+	var adjustment: EdgeViewAdjustmentView? = null
 		private set
 
 	protected abstract fun createAdjustment(): EdgeViewAdjustmentView
@@ -49,6 +50,7 @@ abstract class AbstractCreateEdgeViewConnector(
 
 	protected fun endAdjustment(context: EditInputEventContext) {
 		context.drawingView.animationContainer.remove(adjustment!!)
+		adjustment!!.dispose()
 		adjustment = null
 		context.editor.commandManager.active = true
 	}

@@ -404,6 +404,7 @@ class EdgeToPortOrEdgeConnector(
 						onEntry {
 							edgeView?.underConstruction = false
 							completeConnectingToEdgeView(it)
+							endAdjustment(it)
 							reset()
 						}
 					}

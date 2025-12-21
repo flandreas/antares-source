@@ -10,7 +10,6 @@ import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistory
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeViewTimeline
 import dev.mokkery.MockMode
 import dev.mokkery.answering.calls
-import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.matcher.capture.Capture
 import dev.mokkery.matcher.capture.capture

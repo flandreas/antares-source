@@ -6,7 +6,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.drawable.DrawableMockBuilder
-import ch.scorpion.jabbah.draw.graphics.Graphics2DMockBuilder
+import ch.scorpion.jabbah.graphics.Graphics2DMockBuilder
 import ch.scorpion.jabbah.draw.module.DrawModule
 import kotlin.test.BeforeTest
 import kotlin.test.Test

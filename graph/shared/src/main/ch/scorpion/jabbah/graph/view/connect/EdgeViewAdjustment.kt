@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.connect
 
+import ch.scorpion.jabbah.base.Disposable
 import ch.scorpion.jabbah.base.collection.Stack
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
@@ -10,14 +11,17 @@ import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
+import ch.scorpion.jabbah.draw.DrawableAdapter
+import ch.scorpion.jabbah.draw.DrawableEvent
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
+import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.graph.view.EdgeView
 
 /**
  * Manages indices of [EdgeView] points that have been adjusted (i.e. manually set by the user)
  * in a way in which they can be repetitively undone.
  */
-interface EdgeViewAdjustmentModel {
+interface EdgeViewAdjustmentModel : Disposable {
 
 	/** The index of the [EdgeView] point that serves as layout counterpart.*/
 	val current: Int
@@ -40,8 +44,26 @@ private abstract class AbstractEdgeViewAdjustmentModel(val edgeView: EdgeView<An
 
 	protected val pointIndices = Stack<Int>()
 
+	private val edgeViewListener = object : DrawableAdapter() {
+		override fun drawableUpdated(event: DrawableEvent) {
+			var changed = false
+			while (!pointIndices.empty && pointIndices.peek() > edgeView.segmentPointCount - 1) {
+				pointIndices.pop()
+				changed = true
+			}
+			if (changed) {
+				fireChangeEvent()
+			}
+		}
+	}
+
 	init {
+		edgeView.addDrawableListener(edgeViewListener)
 		pointIndices.push(0)
+	}
+
+	override fun dispose() {
+		edgeView.removeDrawableListener(edgeViewListener)
 	}
 
 	@Suppress("LeakingThis")
@@ -150,6 +172,11 @@ class SimpleEdgeViewAdjustmentView(
 		}
 	}
 
+	override fun dispose() {
+		super.dispose()
+		model.dispose()
+	}
+
 	private var bbox: MutableRectangularShape = Rectangle2D()
 
 	/** ---- [Drawable] interface */
@@ -158,7 +185,7 @@ class SimpleEdgeViewAdjustmentView(
 
 	override fun draw(context: DrawContext) {
 		if (model.size > 0) {
-			context.g.color = context.selectionColor!!.foregroundColor
+			context.g.color = context.selectionColor?.foregroundColor ?: Color.BLACK
 			model.edgePointIterator().forEach { context.g.fill(it.toRect(HALF_SIZE)) }
 		}
 	}
