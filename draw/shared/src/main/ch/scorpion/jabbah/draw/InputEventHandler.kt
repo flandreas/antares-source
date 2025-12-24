@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.draw
 
+import ch.scorpion.jabbah.base.event.Button
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.event.KeyEventType
 import ch.scorpion.jabbah.base.event.MouseEventType
@@ -104,6 +105,10 @@ class StateMachineInputEventHandler<T : InputEventContext>(
 	}
 
 	override fun mouseClicked(context: T): InputEventHandler<T>? {
+		if (context.mouseEvent?.button != Button.BUTTON1) {
+			// Especially ignore left-mouse clicks (open context menu) while StateMachines are active
+			return this
+		}
 		return if (sm.handle(context)) this else successor?.mouseClicked(context)
 	}
 
