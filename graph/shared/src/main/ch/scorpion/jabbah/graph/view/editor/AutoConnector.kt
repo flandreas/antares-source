@@ -169,8 +169,8 @@ object AutoConnector : DragManagerPlugin {
 			.filter { !it.port.isConnected }
 			.forEach {
 				if (portView.owner!!.getPortConnectionPoint(portView.port) == it.owner!!.getPortConnectionPoint(it.port)) {
-					if (ORIGIN.canConnectTo(portView.port, null, graphView) && DESTINATION.canConnectTo(it.port, null, graphView)
-						|| DESTINATION.canConnectTo(portView.port, null, graphView) && ORIGIN.canConnectTo(it.port, null, graphView)
+					if (ORIGIN.canConnectTo(portView.port) && DESTINATION.canConnectTo(it.port)
+						|| DESTINATION.canConnectTo(portView.port) && ORIGIN.canConnectTo(it.port)
 					) {
 						when (mode) {
 							Mode.Points -> points.add(portView.owner!!.getPortConnectionPoint(portView.port))

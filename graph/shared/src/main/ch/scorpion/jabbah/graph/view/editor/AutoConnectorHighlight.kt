@@ -20,10 +20,10 @@ import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlightC
 class AutoConnectorHighlight : AbstractDrawable() {
 
     /** Holds the currently highlighted points when connection is accepted.*/
-    private val points = mutableListOf<Point2D>()
+    val points = mutableListOf<Point2D>()
 
     /** Holds the currently highlighted points when connection is denied.*/
-    private val denyPoints = mutableListOf<Point2D>()
+    val denyPoints = mutableListOf<Point2D>()
 
     /** Holds the bounding box in model coordinate space.*/
     private val bboxModel = Rectangle2D()

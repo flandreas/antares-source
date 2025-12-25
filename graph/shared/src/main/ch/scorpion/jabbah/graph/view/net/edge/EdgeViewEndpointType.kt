@@ -23,8 +23,8 @@ enum class EdgeViewEndpointType {
         override val dragConnector: AbstractDragEdgeViewEndpointConnector get() =
             GraphViewModule.dragEdgeViewOriginConnector
 
-        override fun canConnectTo(port: Port<out Any>, net: Net<out Any>?, graphView: GraphView): Boolean {
-        	return graphView.allowMultipleOutputsPerNet || port.portType.isOutput
+        override fun canConnectTo(port: Port<out Any>): Boolean {
+            return port.portType.isOutput
         }
 
         override fun moveTo(edgeView: EdgeView<*>, point: Point2D) {
@@ -68,8 +68,9 @@ enum class EdgeViewEndpointType {
         override val dragConnector: AbstractDragEdgeViewEndpointConnector get() =
             GraphViewModule.dragEdgeViewDestinationConnector
 
-        override fun canConnectTo(port: Port<out Any>, net: Net<out Any>?, graphView: GraphView): Boolean =
-	        port.portType.isInput || (port is OutputPort && net != null && port.canConnectToNet(net, graphView))
+        override fun canConnectTo(port: Port<out Any>): Boolean {
+            return port.portType.isInput
+        }
 
         override fun moveTo(edgeView: EdgeView<*>, point: Point2D) {
             edgeView.moveDestinationEndPoint(point.x, point.y)
@@ -120,7 +121,10 @@ enum class EdgeViewEndpointType {
      * @param port the [Port] to connect to
      * @param net the [Net] to which [port] is supposed to be connected, if already existing
      */
-    abstract fun canConnectTo(port: Port<out Any>, net: Net<out Any>?, graphView: GraphView): Boolean
+    fun canConnectTo(port: Port<out Any>, net: Net<out Any>?, graphView: GraphView): Boolean =
+        port.portType.isInput || (port is OutputPort && net != null && port.canConnectToNet(net, graphView))
+
+    abstract fun canConnectTo(port: Port<out Any>): Boolean
 
 	/**
 	 * Determines whether an endpoint of this type can connect to the specified [Net]
