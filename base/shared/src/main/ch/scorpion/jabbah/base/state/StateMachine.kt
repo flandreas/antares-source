@@ -8,14 +8,16 @@ typealias Action<T> = (T) -> Unit
 typealias Condition<T> = (T) -> Boolean
 
 /**
- * DSL factory method for creating an defining a [StateMachine].
+ * DSL factory method for creating a defining a [StateMachine].
  *
  * @param T the type of events handled by the created [StateMachine]
  * @param behaviour defines how the created [StateMachine] behaves upon unhandled events
  * @param init the expression that defines the contents of the created [StateMachine]
+ * @param outer set if this [StateMachine] belongs to a [SuperState], whose inner [States][State] delegate back
+ * to a [State] in [outer]
  */
-fun <T> stateMachine(behaviour: UnhandledEventBehaviour = Strict, init: StateMachine<T>.() -> Unit): StateMachine<T> {
-	val sm = StateMachine<T>(behaviour)
+fun <T> stateMachine(behaviour: UnhandledEventBehaviour = Strict, outer: StateMachine<T>? = null, init: StateMachine<T>.() -> Unit): StateMachine<T> {
+	val sm = StateMachine(behaviour, outer)
 	sm.init()
 	return sm
 }
@@ -43,8 +45,13 @@ enum class UnhandledEventBehaviour {
  *
  * @param T the type of events handled by this [StateMachine]
  * @property behaviour defines how this [StateMachine] behaves on unhandled events
+ * @property outer set if this [StateMachine] belongs to a [SuperState], whose inner [States][State] delegate back
+ * to a [State] in [outer]
  */
-class StateMachine<T>(val behaviour: UnhandledEventBehaviour = Strict) {
+class StateMachine<T>(
+	val behaviour: UnhandledEventBehaviour = Strict,
+	private val outer: StateMachine<T>? = null
+) {
 
 	companion object {
 		private val LOG by logger(StateMachine::class)
@@ -60,7 +67,7 @@ class StateMachine<T>(val behaviour: UnhandledEventBehaviour = Strict) {
 
 	/**
 	 * The [State] whose [Transitions][Transition] receive incoming events.
-	 * Typically not used by clients, but only by testing code.
+	 * Typically not used by clients, only by testing code.
 	 */
 	lateinit var currentState: State<T>
 		private set
@@ -105,7 +112,7 @@ class StateMachine<T>(val behaviour: UnhandledEventBehaviour = Strict) {
 				return true
 			}
 		} catch (e: Throwable) {
-			LOG.error("Error when handling event $event in state ${currentState.name}")
+			LOG.error("Error when handling event $event in state ${currentState.name}: ${e::class.qualifiedName}")
 			throw e
 		}
 
@@ -121,21 +128,37 @@ class StateMachine<T>(val behaviour: UnhandledEventBehaviour = Strict) {
 
 	private fun transferAlong(transition: Transition<T>, event: T) {
 		val destinationState = stateWithName(transition.destinationStateName)
-			?: throw IllegalArgumentException("Undefined destination state '${transition.destinationStateName}' in ${currentState.name}")
+
+		if (destinationState == null && outer != null) {
+			// Try to give control back to outer StateMachine
+			val outerDestinationState = outer.stateWithName(transition.destinationStateName)
+			if (outerDestinationState != null) {
+				currentState.exit(event)
+				outer.transitAndEnter(transition, outerDestinationState, event)
+				return
+			}
+		}
+
+		if (destinationState == null) {
+			throw IllegalArgumentException("Undefined destination state '${transition.destinationStateName}' in ${currentState.name}")
+		}
 
 		if (destinationState !== currentState) {
 			currentState.exit(event)
 		}
 
+		transitAndEnter(transition, destinationState, event)
+	}
+
+	private fun transitAndEnter(transition: Transition<T>, destinationState: State<T>, event: T) {
 		transition.transit(event)
 
-		val stateType = currentState::class.simpleName
 		if (destinationState !== currentState) {
-			LOG.trace("Transferring to $stateType '${destinationState.name}'")
+			LOG.trace("Transferring to ${destinationState::class.simpleName} '${destinationState.name}'")
 			enter(destinationState, event)
 		} else {
 			if (LOG.isTraceEnabled()) {
-				LOG.trace("Stay in $stateType '${destinationState.name}' with event $event")
+				LOG.trace("Stay in ${currentState::class.simpleName} '${destinationState.name}' with event $event")
 			}
 		}
 	}
@@ -167,7 +190,7 @@ class StateMachine<T>(val behaviour: UnhandledEventBehaviour = Strict) {
 	fun superstate(name: String, init: (SuperState<T>.() -> Unit)? = null): SuperState<T> {
 		ensureUniqueStateName(name)
 
-		val state = SuperState<T>(name)
+		val state = SuperState<T>(name, this)
 		if (init != null) {
 			state.init()
 		}
@@ -179,136 +202,5 @@ class StateMachine<T>(val behaviour: UnhandledEventBehaviour = Strict) {
 		if (stateWithName(name) != null) {
 			throw IllegalArgumentException("State name $name must be unique")
 		}
-	}
-}
-
-open class State<T>(val name: String) {
-
-	private val transitions = mutableListOf<Transition<T>>()
-	private var entryAction: Action<T> = {}
-	private var exitAction: Action<T> = {}
-
-	/** Called by the [StateMachine] when this [State] is entered.*/
-	open fun enter(event: T) {
-		entryAction.invoke(event)
-	}
-
-	/** Called by the [StateMachine] when this [State] is exited.*/
-	fun exit(event: T) {
-		exitAction.invoke(event)
-	}
-
-	/** Returns the [Transition] whose [Condition] matches the given event, if any.*/
-	fun match(event: T): Transition<T>? {
-		return transitions.firstOrNull { it.condition.invoke(event) }
-	}
-
-	/**
-	 * Asks this [State] to handle the specified event. This method is called by the [StateMachine] if no
-	 * [Transition] of this [State] matched the specified event, which gives this [State] the chance to handle
-	 * the event in any other, possibly subclass-depending way. The default behaviour of this [State] implementation
-	 * is to not handle the event.
-	 *
-	 * @return `true` if [event] was handled by this [State]
-	 */
-	open fun handle(event: T): Boolean {
-		return false
-	}
-
-	/** ---- DSL methods */
-
-	/** DSL method for registering the [Action] to be executed when this [State] is entered. */
-	fun onEntry(action: Action<T>) {
-		entryAction = action
-	}
-
-	/** DSL method for registering the [Action] to be executed when this [State] is existed. */
-	fun onExit(action: Action<T>) {
-		exitAction = action
-	}
-
-	/**
-	 * DSL method for registering a [Transition] that stays in this [State] if the given [Condition] is true.
-	 * @param init the expression for defining the created [Transition], e.g. with an [Action]
-	 */
-	fun stayIf(condition: Condition<T>, init: (Transition<T>.() -> Unit)? = null): Transition<T> =
-		addTransition(Transition(name, condition), init)
-
-	/** DSL method for registering a [Transition] that stays in this [State] if the given [Condition] is true.*/
-	fun stayIf(condition: Condition<T>): Transition<T> = stayIf(condition, init = null)
-
-	/**
-	 * DSL method for registering a [Transition] that always stays in this [State].
-	 * Should only be used as the last [Transition] in a [State], because subsequent ones would be unreachable.
-	 */
-	fun stayOtherwise(init: (Transition<T>.() -> Unit)? = null): Transition<T> =
-		addTransition(Transition(name) { true }, init)
-
-	/**
-	 * DSL method for registering a [Transition] to another [State].
-	 * @param init the expression for defining the created [Transition], e.g. with a [Condition] and an [Action]
-	 */
-	fun transitTo(destinationStateName: String, init: Transition<T>.() -> Unit): Transition<T> =
-		addTransition(Transition(destinationStateName), init)
-
-	private fun addTransition(transition: Transition<T>, init: (Transition<T>.() -> Unit)?): Transition<T> {
-		init?.let { transition.init() }
-		transitions.add(transition)
-		return transition
-	}
-}
-
-/** A [State] that contains an entire inner [StateMachine] to which events are forwarded. */
-class SuperState<T>(name: String) : State<T>(name) {
-
-	lateinit var stateMachine: StateMachine<T>
-		private set
-
-	override fun enter(event: T) {
-		super.enter(event)
-		stateMachine.start(event)
-	}
-
-	override fun handle(event: T): Boolean =
-		stateMachine.handle(event)
-
-	/** ---- DSL methods */
-
-	/** DSL method for defining the inner [StateMachine] of this [SuperState]. */
-	fun stateMachine(behaviour: UnhandledEventBehaviour = Strict, init: StateMachine<T>.() -> Unit) {
-		stateMachine = ch.scorpion.jabbah.base.state.stateMachine(behaviour, init)
-	}
-}
-
-class Transition<T>(
-	val destinationStateName: String,
-	condition: Condition<T>? = null
-) {
-
-	lateinit var condition: Condition<T>
-		private set
-
-	init {
-		if (condition != null) {
-			this.condition = condition
-		}
-	}
-
-	private var action: Action<T> = {}
-
-	fun transit(event: T) {
-		action.invoke(event)
-	}
-
-	/** ---- DSL methods */
-
-	/** DSL method for registering the [Condition] defining whether this [Transition] can be passed for a particular event. */
-	fun given(condition: Condition<T>) {
-		this.condition = condition
-	}
-
-	/** DSL method for registering the [Action] to be executed when this [Transition] gets passed. */
-	fun onTransit(action: Action<T>) {
-		this.action = action
 	}
 }

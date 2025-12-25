@@ -41,6 +41,9 @@ class SuperStateTest {
 						transitTo("substateB") {
 							given { it == "eventSubstateB" }
 						}
+						transitTo("A") {
+							given { it == "eventBack" }
+						}
 					}
 
 					state("substateB") {
@@ -73,5 +76,15 @@ class SuperStateTest {
 
 		assertEquals("substateB", (sm.currentState as SuperState<String>).stateMachine.currentState.name)
 		verify(exactly(1)) { entrySubstateB.invoke(any()) }
+	}
+
+	@Test
+	fun shouldTransitionBackToOuterStateMachine() {
+		val sm = buildStateMachine().start("START")
+		sm.handle("eventSuperstate")
+
+		sm.handle("eventBack")
+
+		assertEquals("A", sm.currentState.name)
 	}
 }
