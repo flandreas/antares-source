@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.graph.health.GraphViewConsistencyCheck
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
+import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlightCircle
 import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
@@ -15,6 +16,7 @@ import dev.mokkery.verify
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 class InputToOutputOrEdgeConnectorTest
@@ -342,5 +344,23 @@ class InputToOutputOrEdgeConnectorTest
 
 		assertConnectedToEdgeView()
 		assertAdjustedToEdgeViewGeometry()
+	}
+
+	@Test
+	fun shouldConnectToOtherInput() {
+		builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v3", 200, 200))
+
+		mouseMoveTo(190, 200)
+		pressMouseAt(190, 200)
+		dragMouseTo(190, 100)
+		assertIs<ConnectionPointHighlightCircle>(ConnectionPointHighlighter.portViewHighlight)
+
+		releaseMouseAt(190, 100)
+
+		val newEv = builder.graphView.getEdgeViews().first()
+		val newV2 = builder.graphView.getVerticeView("v2")!!
+		val newV3 = builder.graphView.getVerticeView("v3")!!
+		assertTrue(newEv.model.isConnectedWith(newV2.model.getInput()))
+		assertTrue(newEv.model.isConnectedWith(newV3.model.getInput()))
 	}
 }
