@@ -121,7 +121,7 @@ class StateMachine<T>(val behaviour: UnhandledEventBehaviour = Strict) {
 
 	private fun transferAlong(transition: Transition<T>, event: T) {
 		val destinationState = stateWithName(transition.destinationStateName)
-			?: throw IllegalArgumentException("Undefined state '${transition.destinationStateName}'")
+			?: throw IllegalArgumentException("Undefined destination state '${transition.destinationStateName}' in ${currentState.name}")
 
 		if (destinationState !== currentState) {
 			currentState.exit(event)
