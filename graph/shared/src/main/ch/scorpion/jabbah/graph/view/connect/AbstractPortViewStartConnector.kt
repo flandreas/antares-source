@@ -104,11 +104,11 @@ abstract class AbstractPortViewStartConnector(
 				stayIf { mouseLeftReleased(it) && it.mouseEvent?.isAltDown == true }
 				transitTo(adjust) {
 					given { mouseLeftClicked(it) && it.mouseEvent?.isAltDown == true }
-					onTransit { beginConnecting(it) }
+					onTransit { beginConnecting(it, adjust = true) }
 				}
 				transitTo(drag) {
 					given { CurrentConnectMethod.isStartConnectEvent(it.mouseEvent) }
-					onTransit { beginConnecting(it) }
+					onTransit { beginConnecting(it, adjust = false) }
 				}
 			}
 
@@ -130,7 +130,7 @@ abstract class AbstractPortViewStartConnector(
 				}
 				transitTo(adjust) {
 					given { mouseLeftClicked(it) }
-					onTransit { beginConnecting(it) }
+					onTransit { beginConnecting(it, adjust = true) }
 				}
 				stayOtherwise()
 			}
@@ -481,9 +481,9 @@ abstract class AbstractPortViewStartConnector(
 		displayPortViewHighlight(context, alternativeView = true)
 	}
 
-	private fun beginConnecting(context: EditInputEventContext) {
+	private fun beginConnecting(context: EditInputEventContext, adjust: Boolean) {
 		createEdgeView(context.drawingView as DrawingView<GraphView>, startVerticeView!!.getPortConnectionPoint(startPortView!!.port), null)
-		LOG.userTrail("Start creating new EdgeView ${edgeView!!.id} on Net ${edgeView!!.model.id} at Port ${startPortView!!.port.portId} of ${startVerticeView!!.type} ${startVerticeView!!.id}")
+		LOG.userTrail("Start creating new EdgeView ${edgeView!!.id} on Net ${edgeView!!.model.id} at Port ${startPortView!!.port.portId} of ${startVerticeView!!.type} ${startVerticeView!!.id}, adjust=$adjust")
 		edgeView!!.model.connect(startPortView!!.port as Port<Any>)
 		connectEdgeViewToStartPort()
 	}
