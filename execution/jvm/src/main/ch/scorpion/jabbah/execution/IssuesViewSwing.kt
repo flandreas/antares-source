@@ -6,6 +6,9 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.ShowSidebarPaneContentRequest
 import ch.scorpion.jabbah.base.swing.UiUtil
+import ch.scorpion.jabbah.draw.drawable.RichTextDrawable
+import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
+import ch.scorpion.jabbah.draw.richtext.RichTextTableCellRenderer
 import ch.scorpion.jabbah.execution.issue.IssuesView
 import ch.scorpion.jabbah.execution.issue.IssuesViewController
 import java.awt.BorderLayout
@@ -40,6 +43,10 @@ class IssuesViewSwing(
 	private val issueCollector = controller.issueCollector
 	private val table = JTable(IssueTableModel())
 
+	private val richTextFont = Graphics2DJvm.fromAwtFont(table.font)
+	private val originRichText = mutableMapOf<Issue, RichTextDrawable>()
+	private val contextRichText = mutableMapOf<Issue, RichTextDrawable>()
+
 	init {
 		controller.view = this
 		buildUI()
@@ -50,6 +57,8 @@ class IssuesViewSwing(
 	}
 
 	override fun refresh() {
+		originRichText.clear()
+		contextRichText.clear()
 		(table.model as IssueTableModel).fireTableDataChanged()
 		updateSelectedIssue()
 	}
@@ -77,6 +86,8 @@ class IssuesViewSwing(
 		table.columnModel.getColumn(2).preferredWidth = BaseModule.settings.getInt("$SETTING_COLUMN_WIDTHS.context", 200)
 		table.columnModel.getColumn(3).preferredWidth = BaseModule.settings.getInt("$SETTING_COLUMN_WIDTHS.description", 200)
 		table.columnModel.getColumn(0).cellRenderer = NameCellRenderer()
+		table.columnModel.getColumn(1).cellRenderer = OriginRenderer()
+		table.columnModel.getColumn(2).cellRenderer = ContextRenderer()
 
 		table.selectionModel.addListSelectionListener { updateSelectedIssue() }
 
@@ -148,4 +159,27 @@ class IssuesViewSwing(
 			}
 		}
 	}
+
+	private inner class OriginRenderer : RichTextTableCellRenderer() {
+		override fun getTableCellRendererComponent(table: JTable?, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component? {
+			val renderer =  super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column) as RichTextTableCellRenderer
+			val issue = issueCollector.getIssue(row)
+			renderer.richText = (issue.origin)?.let {
+				originRichText.getOrPut(issue) { RichTextDrawable.of(it, richTextFont) }
+			}
+			return renderer
+		}
+	}
+
+	private inner class ContextRenderer : RichTextTableCellRenderer() {
+		override fun getTableCellRendererComponent(table: JTable?, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component? {
+			val renderer =  super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column) as RichTextTableCellRenderer
+			val issue = issueCollector.getIssue(row)
+			renderer.richText = (issue.context)?.let {
+				contextRichText.getOrPut(issue) { RichTextDrawable.of(it, richTextFont) }
+			}
+			return renderer
+		}
+	}
+
 }
