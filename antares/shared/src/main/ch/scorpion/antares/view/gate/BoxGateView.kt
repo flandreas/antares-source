@@ -140,26 +140,26 @@ open class BoxGateView<T : Vertice>(
 
         var pinY: Float = if (westPins.size == 1) boxHeight / 2 else effPinInset
 		for (westPin in westPins) {
-			westPin.setLocation(0.0, h(pinY))
+			westPin.setLocation(0.0, floor(h(pinY)))
 			pinY += portDistance(westPins.size)
 		}
 
 		pinY = if (eastPins.size == 1) boxHeight / 2 else effPinInset
 		for (eastPin in eastPins) {
-			eastPin.setLocation(w(boxWidth), h(pinY))
+			eastPin.setLocation(floor(w(boxWidth)), floor(h(pinY)))
 			pinY += portDistance(eastPins.size)
 		}
 
         var pinX: Float = if (northPins.size == 1) boxWidth / 2 else effPinInset
 		for (northPin in northPins) {
-			northPin.setLocation(w(pinX), 0.0)
+			northPin.setLocation(floor(w(pinX)), 0.0)
 			pinX += portDistance(northPins.size)
 		}
 
 		// TODO: Should this be boxWidth below?
 		pinX = if (southPins.size == 1) boxHeight / 2 else effPinInset
 		for (southPin in southPins) {
-			southPin.setLocation(w(pinX), h(boxHeight))
+			southPin.setLocation(floor(w(pinX)), h(boxHeight))
 			pinX += portDistance(southPins.size)
 		}
 

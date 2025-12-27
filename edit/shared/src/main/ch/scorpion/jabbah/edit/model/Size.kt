@@ -9,7 +9,7 @@ import ch.scorpion.jabbah.edit.Component
 enum class Size(val customName: String, val factor: Float) {
 
     SMALL("small", 0.5f),
-    MEDIUM("medium", 0.7f),
+    MEDIUM("medium", 0.75f),
     LARGE("large", 1.0f);
 
     companion object {
