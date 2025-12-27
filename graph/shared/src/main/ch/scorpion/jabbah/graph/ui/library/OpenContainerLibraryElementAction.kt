@@ -53,6 +53,10 @@ class OpenContainerLibraryElementAction(
 	}
 
 	private fun openAsSavable(element: ContainerLibraryElement, focusVerticeViewId: Int?) {
+		if (graphDataViewController.metaGraph?.uuid == element.uuid) {
+			controller.eventBus.post(ComponentMessage(type = ComponentMessageType.Info, source = null, messageKey = "graph.action.open.alreadyOpen.msg"))
+			return
+		}
 		graphDataViewController.openAsSavable(element, name, focusVerticeViewId)
 	}
 }

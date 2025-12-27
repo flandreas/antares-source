@@ -4,6 +4,8 @@ import ch.scorpion.jabbah.app.Application
 import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.base.swing.JTreeUtil.getPath
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
+import ch.scorpion.jabbah.edit.model.ComponentMessage
+import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.model.text.NamableTreeNode
 import ch.scorpion.jabbah.graph.module.GraphModuleJvm
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeView
@@ -115,6 +117,14 @@ class LibraryTreeViewSwing(
 				InvocationHandler.invoke {
 					(controller.selectedItem as LibraryItem).open(controller.eventBus)
 				}
+			} else {
+				controller.eventBus.post(
+					ComponentMessage(
+						type = ComponentMessageType.Info,
+						source = null,
+						messageKey = "graph.action.open.alreadyOpen.msg"
+					)
+				)
 			}
 		}
 	}
