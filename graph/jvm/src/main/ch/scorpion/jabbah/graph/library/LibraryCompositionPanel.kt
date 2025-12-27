@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.DialogBuilder
 import ch.scorpion.jabbah.base.swing.UiUtil
@@ -34,10 +35,17 @@ class EditLibraryAction(
 	operation = Change,
 	controller
 ) {
+	companion object {
+		private val LOG by logger(EditLibraryAction::class)
+	}
+
 	override val opensDialog: Boolean get() = true
 
 	override fun execute(event: ActionEvent) {
-		LibraryCompositionPanel.showAsDialog(controller.library!!, Frame.getFrames()[0], application, controller.eventBus)
+		with(controller.library!!) {
+			LOG.userTrail("Edit library '${name.value}' ($uuid)")
+			LibraryCompositionPanel.showAsDialog(this, Frame.getFrames()[0], application, controller.eventBus)
+		}
 	}
 
 	override fun calculateEnabled(): Boolean =
@@ -53,14 +61,17 @@ class LibraryCompositionPanel(
 	private val libraryManagementService: LibraryManagementService = LibraryModule.libraryManagementService,
 	eventBus: EventBus = BaseModule.eventBus,
 	application: Application,
-	private val closeHandler: () -> Unit
+	private val closeHandler: (LibraryCompositionPanel) -> Unit
 ) : JPanel() {
 
 	companion object {
+		private val LOG by logger(LibraryCompositionPanel::class)
+
 		fun showAsDialog(library: Library, parent: Frame, application: Application, eventBus: EventBus) {
 			DialogBuilder<LibraryCompositionPanel>(parent)
 				.title(Translations.getString("library.composition.title"))
 				.content { dialog -> LibraryCompositionPanel(destinationLibrary = library, application = application, eventBus = eventBus) {
+					it.dispose()
 					dialog.dispose()
 				} }
 				.defaultButton { it.closeButton }
@@ -258,7 +269,8 @@ class LibraryCompositionPanel(
 
 	private inner class CancelAction : AbstractAction("library.composition.close.action") {
 		override fun execute(event: ActionEvent) {
-			closeHandler.invoke()
+			LOG.userTrail("End editing library")
+			closeHandler.invoke(this@LibraryCompositionPanel)
 		}
 	}
 }
