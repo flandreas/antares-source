@@ -53,7 +53,13 @@ class GraphNavigationViewSwing(
 
 	private val navigationStackView = NavigationStackViewSwing(controller.navigationStackViewController)
 
-	private val headerPanel = GraphDesktopItemHeaderPanelSwing(this, navigationStackView, eventBus, allowClose = allowCloseInHeader)
+	private val headerPanel = GraphDesktopItemHeaderPanelSwing(
+		this,
+		navigationStackView,
+		{ navigationStack.entry(0)?.name ?: "<Unknown>" },
+		eventBus,
+		allowClose = allowCloseInHeader
+	)
 
 	private val searchBar: SearchBarSwing by lazy {
 		val bar = SearchBarSwing(this)

@@ -14,6 +14,10 @@ interface MutableRectangularShape : RectangularShape {
     /** Sets the location and size of the outer bounds of this [MutableRectangularShape].*/
     fun setFrame(x: Double, y: Double, width: Double, height: Double)
 
+    fun setFrame(x: Int, y: Int, width: Int, height: Int) {
+        setFrame(x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble())
+    }
+
     /** Sets the location and size of this [MutableRectangularShape] to those of the specified [MutableRectangularShape].*/
     fun setFrame(rect: RectangularShape) {
         setFrame(rect.x, rect.y, rect.width, rect.height)

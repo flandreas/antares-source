@@ -42,7 +42,7 @@ abstract class AbstractTitledGraphDesktopViewItemSwing(
 
     private val headerLabel = UIBasics.createHeaderLabel(initialTitle)
 
-    private val headerPanel = GraphDesktopItemHeaderPanelSwing(this, headerLabel, allowClose = true, actions = actions)
+    private val headerPanel = GraphDesktopItemHeaderPanelSwing(this, headerLabel, { headerLabel.text }, allowClose = true, actions = actions)
 
     protected abstract fun createHeaderText(): String
 

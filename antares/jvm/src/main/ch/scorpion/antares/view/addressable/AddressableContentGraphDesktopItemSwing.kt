@@ -34,7 +34,9 @@ class AddressableContentGraphDesktopItemSwing(
 
 	private val memoryContentPanel = AddressableContentsPanel(drawingView, applicationContextHolder, link, cmdManager)
 
-	private val headerPanel = GraphDesktopItemHeaderPanelSwing(this, UIBasics.createHeaderLabel(title), allowClose = true)
+	private val headerLabel = UIBasics.createHeaderLabel(title)
+
+	private val headerPanel = GraphDesktopItemHeaderPanelSwing(this, headerLabel, { headerLabel.text },  allowClose = true)
 
 	private val closeViewRequestHandler: EventHandler<CloseViewRequest> = { handle(it) }
 

@@ -27,6 +27,9 @@ interface RectangularShape : Shape {
     val width: Double
     val height: Double
 
+    val xInt: Int get() = x.toInt()
+    val yInt: Int get() = y.toInt()
+
 	val widthInt: Int get() = width.toInt()
 	val heightInt: Int get() = height.toInt()
 
