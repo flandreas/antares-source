@@ -92,8 +92,9 @@ class DeleteAction(
 class DeleteCommand(
 	drawingView: DrawingView<*>,
 	private val componentIds: List<Int>,
+	cmdDescriptionKey: String? = null,
 	private val drawingService: DrawingService = EditModule.drawingService
-) : AbstractDrawingViewCommand("edit.command.delete", drawingView) {
+) : AbstractDrawingViewCommand(cmdDescriptionKey ?: "edit.command.delete", drawingView) {
 
 	constructor(drawingView: DrawingView<*>, component: Component) : this(drawingView, mutableListOf(component.id))
 
