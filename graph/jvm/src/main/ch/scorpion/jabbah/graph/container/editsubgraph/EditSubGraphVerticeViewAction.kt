@@ -1,5 +1,7 @@
 package ch.scorpion.jabbah.graph.container.editsubgraph
 
+import ch.scorpion.jabbah.base.Action
+import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -20,7 +22,6 @@ import ch.scorpion.jabbah.graph.container.ContainerPanelSwing
 import ch.scorpion.jabbah.graph.library.LibraryModule
 import ch.scorpion.jabbah.graph.ui.container.ContainerPanelController
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
-import javax.swing.Action
 
 /**
  * An [Action] for editing the look of an individual [SubGraphVerticeView] by overwriting the standard
@@ -44,11 +45,11 @@ class EditSubGraphVerticeViewAction(
 		return super.calculateEnabled() && selectionCount == 1 && singleSelection is SubGraphVerticeView<*>
 	}
 
-	override fun execute(event: ch.scorpion.jabbah.base.event.ActionEvent) {
-		LOG.userTrail("opening EditSubGraphVerticeViewPanel")
-
+	override fun execute(event: ActionEvent) {
 		val editedVerticeView = singleSelection as SubGraphVerticeView<*>
 		val editedDrawingView = drawingView
+
+		LOG.userTrail("Edit symbol of SubGraphVerticeView ${editedVerticeView.id} with MetaGraph '${editedVerticeView.subGraphVertice?.name}' ${editedVerticeView.model.graphUUID}")
 
 		editedDrawingView!!.selectionManager.deselect(editedVerticeView)
 		editedVerticeView.invalidate()
@@ -76,16 +77,17 @@ class EditSubGraphVerticeViewAction(
 		}
 
 		val editedContainerDrawing = EditSubGraphVerticeViewPanel.showAsDialog(
-				title = name,
-				metaGraphRepository = metaGraphRepository,
-				containerPanel = containerPanel,
-				subGraphVerticeView = editedVerticeView,
-				commandManager = commandManager
-			)
+			title = name,
+			metaGraphRepository = metaGraphRepository,
+			containerPanel = containerPanel,
+			subGraphVerticeView = editedVerticeView,
+			commandManager = commandManager
+		)
 
 		editedContainerDrawing?.let {
+			LOG.userTrail("Commit changes of symbol")
 			commandManager.execute(EditSubGraphVerticeViewCommand(editedDrawingView, editedVerticeView.id, it))
-		}
+		} ?: LOG.userTrail("Cancelled editing symbol")
 
 		viewManager.activeView = oldActiveView
 
