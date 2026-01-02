@@ -1,6 +1,7 @@
 package ch.scorpion.antares.model.analog
 
 import ch.scorpion.antares.model.output.LightEmitterModel
+import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.element.AbstractGraphElement
 import ch.scorpion.jabbah.graph.model.vertice.EmptyVerticeCalculator
@@ -8,7 +9,7 @@ import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
 /**
- * Treating [LightBulb] as element with constant resistance, i.e. independent of changing
+ * Treating [LightBulb] as an element with constant resistance, i.e. independent of changing
  * temperature when the current increases.
  */
 class LightBulb : AbstractResistingAnalogVertice<LightBulb>(
@@ -42,4 +43,12 @@ class LightBulb : AbstractResistingAnalogVertice<LightBulb>(
 		super.graphParamsChanged(graph)
 		stateChanged(null, LightEmitterModel.REASON_GRAPH_PARAM_CHANGED, graph)
 	}
+
+	/** ---- [AnalogVertice] */
+
+	override fun handleAnalogPortChanged(port: AnalogPort, signalHandler: SignalHandler) {
+		super.handleAnalogPortChanged(port, signalHandler)
+		stateChanged(signalHandler)
+	}
+
 }
