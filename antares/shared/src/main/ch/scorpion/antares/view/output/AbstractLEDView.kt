@@ -1,8 +1,8 @@
 package ch.scorpion.antares.view.output
 
 import ch.scorpion.antares.model.output.LED
-import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.antares.view.OrientableRectangularVerticeView
+import ch.scorpion.antares.view.output.LEDShape.*
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
@@ -18,6 +18,7 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.edit.model.Size
@@ -44,7 +45,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 abstract class AbstractLEDView<T: Vertice>(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: T,
-	square: Boolean = false,
+	ledShape: LEDShape = Circle,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : OrientableRectangularVerticeView<T>(styleProvider, model),
 	ControlView<T>,
@@ -68,17 +69,35 @@ abstract class AbstractLEDView<T: Vertice>(
 		}
 
 	/** Determines the shape in which the LED is drawn. Default is circular.*/
-	var square: Boolean by ControlViewSourceProperty(square, eventBus)
+	var ledShape: LEDShape by ControlViewSourceProperty(ledShape, eventBus, ::updateGeometry)
 
 	var size: Size by ControlViewSourceProperty(DEFAULT_SIZE, eventBus, ::updateGeometry)
 
 	@Suppress("MemberVisibilityCanBePrivate") // Reflection
 	var hasBorder: Boolean by ControlViewSourceProperty(DEFAULT_HAS_BORDER, eventBus)
 
+	private val widthOfShape: Int get() = when (ledShape) {
+        Circle -> Look.SCALE
+        Square -> Look.SCALE
+        Striped -> 3 * Look.SCALE
+    }
+
+	private val heightOfShape: Int get() = when (ledShape) {
+        Circle -> Look.SCALE
+        Square -> Look.SCALE
+        Striped -> Look.SCALE / 2
+    }
+
 	private val widthOfSize: Int get() = when (size) {
-		Size.SMALL -> 2 * Look.SCALE
-		Size.MEDIUM -> 3 * Look.SCALE
-		Size.LARGE -> 4 * Look.SCALE
+		Size.SMALL -> 2 * widthOfShape
+		Size.MEDIUM -> 3 * widthOfShape
+		Size.LARGE -> 4 * widthOfShape
+	}
+
+	private val heightOfSize: Int get() = when (size) {
+		Size.SMALL -> 2 * heightOfShape
+		Size.MEDIUM -> 3 * heightOfShape
+		Size.LARGE -> 4 * heightOfShape
 	}
 
 	private val borderOfSize: Int get() {
@@ -97,7 +116,7 @@ abstract class AbstractLEDView<T: Vertice>(
 		font = font)
 
 	private fun updateGeometry() {
-		setBounds(getInput().unconnectedLength, -widthOfSize / 2, widthOfSize, widthOfSize)
+		setBounds(getInput().unconnectedLength, -heightOfSize / 2, widthOfSize, heightOfSize)
 		horizontalLabel.relLocation = Point2D(widthOfSize + AbstractAntaresPortView.LENGTH + LABEL_DIST, 0)
 	}
 
@@ -129,9 +148,7 @@ abstract class AbstractLEDView<T: Vertice>(
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
-		if (square) {
-			writer.writeBoolean("square", square)
-		}
+		writer.writeString("shape", ledShape.customName)
 		writer.writeString("size", size.customName)
 		if (!hasBorder) {
 			writer.writeBoolean("hasBorder", hasBorder)
@@ -141,7 +158,14 @@ abstract class AbstractLEDView<T: Vertice>(
 	override fun read(reader: StoreReader) {
 		super.read(reader)
 		if (reader.hasAttribute("square")) {
-			square = reader.readBoolean("square")
+			// backward compatibility
+			ledShape = if (reader.readBoolean("square")) {
+				Square
+			} else {
+				Circle
+			}
+		} else if (reader.hasAttribute("shape")) {
+			ledShape = LEDShape.withName(reader.readString("shape"))
 		}
 		if (reader.hasAttribute("size")) {
 			size = Size.withName(reader.readString("size"))
@@ -181,7 +205,7 @@ abstract class AbstractLEDView<T: Vertice>(
 
 	protected open fun copyControlViewProperties(source: AbstractLEDView<*>, dest: AbstractLEDView<*>) {
 		dest.name = source.name
-		dest.square = source.square
+		dest.ledShape = source.ledShape
 		dest.size = source.size
 		dest.hasBorder = source.hasBorder
 	}
@@ -231,20 +255,20 @@ abstract class AbstractLEDView<T: Vertice>(
 		draw(context) { c ->
 			super.drawImpl(c)
 			context.g.stroke = stroke
-			if (square) {
-				context.g.drawRect(xInt, yInt, widthOfSize, widthOfSize)
+			if (ledShape.oval) {
+				context.g.drawOval(xInt, yInt, widthOfSize, heightOfSize)
 			} else {
-				context.g.drawOval(xInt, yInt, widthOfSize, widthOfSize)
+				context.g.drawRect(xInt, yInt, widthOfSize, heightOfSize)
 			}
 			context.g.stroke = Themes.get<AntaresTheme>().annotation.stroke
-			if (square) {
-				context.g.drawRect(
-					xInt + borderOfSize, yInt + borderOfSize,
-					widthOfSize - 2 * borderOfSize, widthOfSize - 2 * borderOfSize)
-			} else {
+			if (ledShape.oval) {
 				context.g.drawOval(
 					xInt + borderOfSize, yInt + borderOfSize,
-					widthOfSize - 2 * borderOfSize, widthOfSize - 2 * borderOfSize)
+					widthOfSize - 2 * borderOfSize, heightOfSize - 2 * borderOfSize)
+			} else {
+				context.g.drawRect(
+					xInt + borderOfSize, yInt + borderOfSize,
+					widthOfSize - 2 * borderOfSize, heightOfSize - 2 * borderOfSize)
 			}
 		}
 		horizontalLabel.draw(context)
@@ -273,12 +297,12 @@ abstract class AbstractLEDView<T: Vertice>(
 	/** Draws the bulb using the specified [Color].*/
 	protected fun drawBulb(context: DrawContext, color: Color) {
 		context.g.color = color
-		if (square) {
-			context.g.fillRect(xInt + borderOfSize, yInt + borderOfSize,
-				widthOfSize - 2 * borderOfSize, widthOfSize - 2 * borderOfSize)
-		} else {
+		if (ledShape.oval) {
 			context.g.fillOval(xInt + borderOfSize, yInt + borderOfSize,
-				widthOfSize - 2 * borderOfSize, widthOfSize - 2 * borderOfSize)
+				widthOfSize - 2 * borderOfSize, heightOfSize - 2 * borderOfSize)
+		} else {
+			context.g.fillRect(xInt + borderOfSize, yInt + borderOfSize,
+				widthOfSize - 2 * borderOfSize, heightOfSize - 2 * borderOfSize)
 		}
 	}
 
@@ -293,28 +317,28 @@ abstract class AbstractLEDView<T: Vertice>(
 	private fun drawBody(context: DrawContext) {
 		if (shadow) {
 			DropShadow.draw(context, transparency) {
-				if (square) {
-					context.g.fillRect(xInt, yInt, widthOfSize, widthOfSize)
+				if (ledShape.oval) {
+					context.g.fillOval(xInt, yInt, widthOfSize, heightOfSize)
 				} else {
-					context.g.fillOval(xInt, yInt, widthOfSize, widthOfSize)
+					context.g.fillRect(xInt, yInt, widthOfSize, heightOfSize)
 				}
 			}
 		}
 		context.g.color = Themes.get<AntaresTheme>().screen.foregroundColor
 		context.g.stroke = stroke
-		if (square) {
-			context.g.fillRect(xInt, yInt, widthOfSize, widthOfSize)
+		if (ledShape.oval) {
+			context.g.fillOval(xInt, yInt, widthOfSize, heightOfSize)
 		} else {
-			context.g.fillOval(xInt, yInt, widthOfSize, widthOfSize)
+			context.g.fillRect(xInt, yInt, widthOfSize, heightOfSize)
 		}
 		drawBulb(context)
 
 		if (model.inactive && context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 			context.g.color = Look.inactiveColor
-			if (square) {
-				context.g.fillRect(xInt, yInt, widthOfSize, widthOfSize)
+			if (ledShape.oval) {
+				context.g.fillOval(xInt, yInt, widthOfSize, heightOfSize)
 			} else {
-				context.g.fillOval(xInt, yInt, widthOfSize, widthOfSize)
+				context.g.fillRect(xInt, yInt, widthOfSize, heightOfSize)
 			}
 		}
 	}

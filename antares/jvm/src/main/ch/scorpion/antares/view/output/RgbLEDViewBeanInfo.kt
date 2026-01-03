@@ -11,7 +11,7 @@ class RgbLEDViewBeanInfo : DigitalComponentViewBeanInfo<RgbLEDView>() {
 
 	companion object {
 		private val name = EditProperties.untranslatableName()
-		private val square = AntaresProperties.ledSquare()
+		private val shape = AntaresProperties.ledShape()
 		private val size = EditProperties.size()
 		private val hasBorder = EditProperties.border()
 	}
@@ -19,7 +19,7 @@ class RgbLEDViewBeanInfo : DigitalComponentViewBeanInfo<RgbLEDView>() {
 	override fun addProperties(bean: RgbLEDView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 		properties.add(name.bind(editor, beanIdProvider(bean.id)))
-		properties.add(square.bind(editor, beanIdProvider(bean.id)))
+		properties.add(shape.bind(editor, beanIdProvider(bean.id)))
 		properties.add(size.bind(editor, beanIdProvider(bean.id)))
 		properties.add(hasBorder.bind(editor, beanIdProvider(bean.id)))
 	}

@@ -7,6 +7,7 @@ import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.gate.LogicGateView
 import ch.scorpion.antares.view.net.TransistorViewSymbol
 import ch.scorpion.antares.view.net.tunnel.TunnelFlowDirection
+import ch.scorpion.antares.view.output.LEDShape
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.jabbah.edit.BeanProvider
 import ch.scorpion.jabbah.edit.componentBeanProvider
@@ -41,8 +42,8 @@ object AntaresProperties {
 	fun transistorSymbol(name: String = "symbol", baseKey: String = "element.property.transistorSymbol"): CommandPropertySwing<TransistorViewSymbol> =
 		CommandPropertySwing(name, baseKey, TransistorViewSymbol::class.java, componentBeanProvider)
 
-	fun ledSquare(name: String = "square", baseKey: String = "element.property.LED.square"): CommandPropertySwing<Boolean> =
-		CommandPropertySwing(name, baseKey, Boolean::class.java, componentBeanProvider)
+	fun ledShape(name: String = "ledShape", baseKey: String = LEDShape.BASE_KEY): CommandPropertySwing<LEDShape> =
+		CommandPropertySwing(name, baseKey, LEDShape::class.java, componentBeanProvider)
 
 	fun joystickDeflection(name: String = "deflection", baseKey: String = "element.property.joystickDeflection"): CommandPropertySwing<JoystickDeflectionEditor> =
 		CommandPropertySwing(name, baseKey, JoystickDeflectionEditor::class.java, componentBeanProvider)
