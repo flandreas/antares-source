@@ -9,18 +9,17 @@ import kotlin.test.*
 /** Unit tests for [SourcingCommandManager]. */
 class SourcingCommandManagerTest {
 
-	companion object {
-		init {
-			Translations.withAnyKey()
-			EditTestRule.configure()
-			IOModule.typeMap.register("storableString", StorableString::class)
-		}
-	}
-
-	private var app = ApplicationDummy()
-	private var cmdManager = SourcingCommandManager()
+	private val app: ApplicationDummy
+	private var cmdManager: SourcingCommandManager
 
 	init {
+		Translations.withAnyKey()
+		EditTestRule.configure()
+		IOModule.typeMap.register("storableString", StorableString::class)
+
+		app = ApplicationDummy()
+		cmdManager = SourcingCommandManager()
+
 		cmdManager.bindDataHolder(app)
 	}
 

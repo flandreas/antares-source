@@ -19,12 +19,6 @@ import kotlin.test.assertTrue
 
 class BelowSmHighlighterTest {
 
-	companion object {
-		init {
-			EditTestRule.configure()
-		}
-	}
-
 	private val selectionModelProvider = mock<SelectionModelProvider>(MockMode.autofill)
 
 	private val highlighterFactory = object : HighlighterFactory {
@@ -33,21 +27,28 @@ class BelowSmHighlighterTest {
 		}
 	}
 
-	private val drawingView = DrawingViewImpl(mock(MockMode.autofill))
+	private val drawingView: DrawingViewImpl<Drawing<Component>>
 
-	private val content = DrawingViewContentImpl(
-		drawingView = drawingView,
-		drawing = drawingView.drawing,
-		selectionManagerFactory = { mock(MockMode.autofill) },
-		highlighterFactory = highlighterFactory)
+	private val content: DrawingViewContentImpl<Drawing<Component>>
 
-	private val highlightColor = CompositeColor(backgroundColor = Color.YELLOW)
+	private val highlightColor: CompositeColor
 
-	private val rect = RectangleComponent()
+	private val rect: RectangleComponent
 
-	private val highlight = BoundingBoxBelowSelectionModel(rect)
+	private val highlight: BoundingBoxBelowSelectionModel
 
 	init {
+		EditTestRule.configure()
+		drawingView = DrawingViewImpl(mock(MockMode.autofill))
+		content = DrawingViewContentImpl(
+			drawingView = drawingView,
+			drawing = drawingView.drawing,
+			selectionManagerFactory = { mock(MockMode.autofill) },
+			highlighterFactory = highlighterFactory)
+		highlightColor = CompositeColor(backgroundColor = Color.YELLOW)
+		rect = RectangleComponent()
+		highlight = BoundingBoxBelowSelectionModel(rect)
+
 		every { selectionModelProvider.provideFor(any(), any()) } calls { highlight }
 	}
 

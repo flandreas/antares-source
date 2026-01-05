@@ -2,7 +2,8 @@ package ch.scorpion.jabbah.edit.model.rectangle
 
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.edit.AbstractEditIntegrationTest
-import ch.scorpion.jabbah.edit.EditorToolDriver
+import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
+import ch.scorpion.jabbah.edit.model.image.ImageComponent
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.select.EditSelectModule
 import ch.scorpion.jabbah.edit.select.SelectionModelFactoryImpl
@@ -10,17 +11,19 @@ import ch.scorpion.jabbah.edit.select.SimpleSelectionModelProvider
 
 abstract class AbstractRectangularHandleSelectionModelTest : AbstractEditIntegrationTest() {
 
-    companion object {
-        init {
-            EditSelectModule.selectionModelFactory = SelectionModelFactoryImpl()
-            EditSelectModule.selectionModelProvider = SimpleSelectionModelProvider(EditSelectModule.selectionModelFactory)
+    override fun createEnvironment() {
+        EditSelectModule.selectionModelFactory = SelectionModelFactoryImpl()
+        EditSelectModule.selectionModelProvider = SimpleSelectionModelProvider(EditSelectModule.selectionModelFactory)
 
-            EditModelRectangleModule.reset()
-            EditModelRectangleModule.require()
-        }
+        EditSelectModule.selectionModelFactory.register(
+            SelectionDrawingStrategy.REPLACE,
+            RectangleComponent::class
+        ) { RectangularReplaceSelectionModel(it as AbstractRectangularComponent) }
+
+        EditSelectModule.selectionModelFactory.register(SelectionDrawingStrategy.REPLACE, ImageComponent::class) { RectangularReplaceSelectionModel(it as AbstractRectangularComponent) }
+
+        super.createEnvironment()
     }
-
-    protected val driver = EditorToolDriver(editor)
 
     protected fun addSelectedRect(x: Int, y: Int, width: Int, height: Int): RectangleComponent {
         val rect = EditModule.drawingAppService.add(

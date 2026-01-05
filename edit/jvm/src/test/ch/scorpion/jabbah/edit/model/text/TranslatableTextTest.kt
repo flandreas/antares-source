@@ -92,10 +92,8 @@ class TranslatableTextTest {
 			Translation(German, "Meer"),
 			Translation(English, "Sea")
 		)))
-		val typeMap = TypeMapImpl()
-		typeMap.register("foo", ClassUsingTranslatable::class)
-		typeMap.register("translation", Translation::class)
-		IOModule.typeMap = typeMap
+		IOModule.typeMap.register("foo", ClassUsingTranslatable::class)
+		IOModule.typeMap.register("translation", Translation::class)
 
 		val clone = StorableCloner.clone(obj)
 

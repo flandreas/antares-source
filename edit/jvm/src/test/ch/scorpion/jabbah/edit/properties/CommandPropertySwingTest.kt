@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.edit.properties
 
 import ch.scorpion.jabbah.base.Translations
-import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.command.AppendCommand
 import ch.scorpion.jabbah.edit.command.ApplicationDummy
@@ -18,14 +17,6 @@ import kotlin.test.assertTrue
 
 class CommandPropertySwingTest {
 
-	companion object {
-		init {
-			Translations.withAnyKey()
-			EditTestRule.configure()
-			IOModule.typeMap.register("storableString", StorableString::class)
-		}
-	}
-
 	private var app = ApplicationDummy()
 
 	private var cmdManager = SourcingCommandManager()
@@ -41,6 +32,10 @@ class CommandPropertySwingTest {
 		beanProvider)
 
 	init {
+		Translations.withAnyKey()
+		EditTestRule.configure()
+		IOModule.typeMap.register("storableString", StorableString::class)
+
 		cmdManager.bindDataHolder(app)
 		property.bind(editor, listOf("0"))
 	}

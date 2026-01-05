@@ -13,26 +13,23 @@ import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-/**
- * Unit tests for [OneDownCommand].
- */
 class OneDownCommandTest {
-
-	companion object {
-		init {
-			EditTestRule.configure()
-		}
-	}
 
     private val drawing = DrawingImpl<Component>()
 	private val drawingView = mock<DrawingView<Drawing<Component>>>()
-    private val c1 = RectangleComponent()
-    private val c2 = RectangleComponent()
-    private val c3 = RectangleComponent()
-    private val c4 = RectangleComponent()
+    private val c1: RectangleComponent
+    private val c2: RectangleComponent
+    private val c3: RectangleComponent
+    private val c4: RectangleComponent
 
 	init {
-		every { drawingView.drawing } returns drawing
+        EditTestRule.configure()
+        c1 = RectangleComponent()
+        c2 = RectangleComponent()
+        c3 = RectangleComponent()
+        c4 = RectangleComponent()
+
+        every { drawingView.drawing } returns drawing
 		drawing.add(c4).add(c3).add(c2).add(c1)
 	}
 

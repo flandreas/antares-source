@@ -10,9 +10,11 @@ import kotlin.test.assertTrue
 class RubberBandHandlerDelayTest : AbstractRubberBandHandlerTest() {
 
 	private val timeService = ControlledTimeService()
-	private val timer = ControlledTimer(timeService)
+	private lateinit var timer: ControlledTimer
 
-	init {
+	override fun setup() {
+		super.setup()
+		timer = ControlledTimer(timeService)
 		setTimer(timer)
 	}
 

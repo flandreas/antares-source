@@ -8,14 +8,9 @@ import kotlin.test.assertTrue
 
 class AuthorizerTest {
 
-	companion object {
-		init {
-			// The current user is the developer
-			EditTestRule.configure()
-		}
-	}
-
 	init {
+		// The current user is the developer
+		EditTestRule.configure()
 		Authorizer.reset()
 	}
 

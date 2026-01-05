@@ -2,20 +2,12 @@ package ch.scorpion.jabbah.edit.view
 
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.edit.AbstractEditIntegrationTest
-import ch.scorpion.jabbah.edit.EditTestRule
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
 import ch.scorpion.jabbah.edit.module.EditModule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ZoomPanIntegrationTest : AbstractEditIntegrationTest() {
-
-	companion object {
-		init {
-			EditModule.reset()
-			EditTestRule.configure()
-		}
-	}
 
 	@Test
 	fun shouldNotChangeZoomPanOnUndo() {

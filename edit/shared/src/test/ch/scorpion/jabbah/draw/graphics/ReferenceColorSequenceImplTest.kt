@@ -5,21 +5,17 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-/**
- * Unit tests for [ReferenceColorSequenceImpl].
- */
 class ReferenceColorSequenceImplTest {
 
-	companion object {
-		init {
-			EditTestRule.configure()
-		}
-	}
+	private val sequence: ReferenceColorSequenceImpl
 
-	private val sequence = ReferenceColorSequenceImpl(listOf(
-		ReferenceColor(CompositeColor(foregroundColor = Color.BLACK)),
-		ReferenceColor(CompositeColor(foregroundColor = Color.WHITE)))
-	)
+	init {
+		EditTestRule.configure()
+		sequence = ReferenceColorSequenceImpl(listOf(
+			ReferenceColor(CompositeColor(foregroundColor = Color.BLACK)),
+			ReferenceColor(CompositeColor(foregroundColor = Color.WHITE)))
+		)
+	}
 
 	@Test
 	fun shouldFetchNext() {

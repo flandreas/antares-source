@@ -16,21 +16,20 @@ import dev.mokkery.verify.VerifyMode.Companion.exactly
 
 class SelectionToolImplEventDelegationTest {
 
-	companion object {
-		init {
-			EditTestRule.configure()
-		}
-	}
-
-	private val canvas = CanvasJvm(EditModule.drawingViewFactory.create(DrawingImpl(), null, false, ""))
-	private val editor = EditorImpl(canvas.view as DrawingView<Drawing<Component>>)
-	private val toolUtil = ToolTestUtil(SelectionToolImpl(editor, RubberBandHandler(RectangularRubberBand()), BaseModule.eventBus), editor)
+	private val canvas: CanvasJvm
+	private val editor: EditorImpl
+	private val toolUtil: ToolTestUtil
 	private val handler = InputEventHandlerMockBuilder()
 	private val component = ComponentMockBuilder()
 		.withBoundingBox(Rectangle2D(100, 100, 100, 100))
 		.withInteractionHandler(handler.build())
 
 	init {
+		EditTestRule.configure()
+		canvas = CanvasJvm(EditModule.drawingViewFactory.create(DrawingImpl(), null, false, ""))
+		editor = EditorImpl(canvas.view as DrawingView<Drawing<Component>>)
+		toolUtil = ToolTestUtil(SelectionToolImpl(editor, RubberBandHandler(RectangularRubberBand()), BaseModule.eventBus), editor)
+
 		editor.drawing.add(component.build())
 		toolUtil.tool.activate()
 	}
