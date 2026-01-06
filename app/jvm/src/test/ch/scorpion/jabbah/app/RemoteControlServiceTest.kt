@@ -15,18 +15,13 @@ import kotlin.test.assertNull
 
 class RemoteControlServiceTest {
 
-	companion object {
-		init {
-			AppTestRule.configure()
-			AppModuleJvm.require()
-		}
-	}
-
 	private val newVersionReader = mock<(String) -> String>()
 	private val properties = Properties()
 	private val service = RemoteControlService(properties, newVersionReader)
 
 	init {
+		AppTestRule.configure()
+		AppModuleJvm.require()
 		AppModuleJvm.remotePropertiesUrl = "bla"
 	}
 

@@ -14,12 +14,6 @@ import kotlin.test.*
 
 class ApplicationDataViewControllerTest {
 
-	companion object {
-		init {
-			AppTestRule.configure()
-		}
-	}
-
 	private val commandManagerMock = CommandManagerMock()
 	private val eventBus: EventBus = EventBusImpl()
 	private val storableProvider = NewStorableProvider()
@@ -30,6 +24,7 @@ class ApplicationDataViewControllerTest {
 	private var currentSavableEvent: CurrentSavableEvent? = null
 
 	init {
+		AppTestRule.configure()
 		eventBus.register(ApplicationDataEvent::class) { applicationDataEvent = it }
 		eventBus.register(CurrentSavableEvent::class) { currentSavableEvent = it }
 	}

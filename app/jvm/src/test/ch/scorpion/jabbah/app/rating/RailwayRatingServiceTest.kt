@@ -16,18 +16,13 @@ import kotlin.test.assertTrue
 
 class RailwayRatingServiceTest {
 
-	companion object {
-		init {
-			BaseModuleJvm.require()
-			AppTestRule.configure()
-		}
-	}
-
 	private val timeService = ControlledTimeService()
 	private val service = RailwayRatingService(timeService = timeService)
 
 	@BeforeTest
 	fun setup() {
+		BaseModuleJvm.require()
+		AppTestRule.configure()
 		EditAuthModule.userHolder = DesktopUserHolder(DesktopUser.anybody)
 
 		// Set now
