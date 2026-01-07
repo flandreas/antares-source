@@ -17,12 +17,6 @@ import kotlin.test.*
  */
 class NodeViewImplTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
-
 	private lateinit var builder: GraphViewBuilder<Boolean>
 	private lateinit var v1: VerticeView<out Vertice>
 	private lateinit var v2: VerticeView<out Vertice>
@@ -32,6 +26,7 @@ class NodeViewImplTest {
 
 	@BeforeTest
 	fun setup() {
+		GraphViewTestRule.configure()
 		Translations.withAnyKey()
 		builder = GraphViewBuilder()
 		v1 = builder.addVerticeView(TestVerticeView(loc = Point2D(100, 100)))

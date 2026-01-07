@@ -14,13 +14,11 @@ import kotlin.test.assertNull
 
 class EdgeViewSnapLocatorTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
-
 	private val ev = GraphViewModule.getEdgeViewFactory().createEdgeView<Boolean>(mock())
+
+	init {
+		GraphViewTestRule.configure()
+	}
 
 	@Test
 	fun shouldSnapOnEdgeView() {

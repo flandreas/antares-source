@@ -9,6 +9,7 @@ import ch.scorpion.jabbah.edit.command.SourcingCommandManager
 import ch.scorpion.jabbah.edit.editor.EditorImpl
 import ch.scorpion.jabbah.edit.select.EditSelectModule
 import ch.scorpion.jabbah.edit.DrawingViewMockBuilder
+import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.graph.GraphViewCopyPasteService
@@ -20,25 +21,19 @@ import kotlin.test.assertEquals
 /** Unit tests for clipboard methods of [GraphViewAppService]. */
 class ClipboardIntegrationTest {
 
-	companion object {
-		init {
-			GraphViewModuleJvm.require()
-			GraphViewTestRule.configure()
-		}
-	}
 
 	// Since GraphViewCopyPasteService is stateful, make sure that its instance is under control
-	private val commandManager = SourcingCommandManager()
-	private val cpService = GraphViewCopyPasteService()
-	private val service = GraphViewAppServiceImpl(cpService, commandManager)
+	private val commandManager: SourcingCommandManager
+	private val cpService: GraphViewCopyPasteService
+	private val service: GraphViewAppServiceImpl
 
-	private val builder: GraphViewBuilder<Boolean> = GraphViewBuilder()
-	private val _view = DrawingViewMockBuilder().withDrawing(builder.build()).withSize(800, 600)
-	private val _editor = EditorImpl(view, commandManager, EditSelectModule.selectionToolFactory)
+	private val builder: GraphViewBuilder<Boolean>
+	private val _view: DrawingViewMockBuilder
+	private val _editor: Editor
 
-	private val v1 = builder.addVerticeView(createEastOutputVerticeView("v1", 100, 100))
-	private val v2 = builder.addVerticeView(createEastOutputVerticeView("v2", 200, 100))
-	private val ev = builder.connect(v1, v2)
+	private val v1: TestVerticeView
+	private val v2: TestVerticeView
+	private val ev: EdgeView<Boolean>
 
 	private val view get() = _view.build<Component>()
 
@@ -49,15 +44,31 @@ class ClipboardIntegrationTest {
 		return _editor
 	}
 
-	private fun createEastOutputVerticeView(name: String, x: Int, y: Int): TestVerticeView {
-		return TestVerticeView(name = name, loc = Point2D(x, y), inputDirection = Direction.WEST, outputDirection = Direction.EAST, width = 20)
-	}
-
 	init {
+		GraphViewModuleJvm.require()
+		GraphViewTestRule.configure()
+
+		commandManager = SourcingCommandManager()
+		cpService = GraphViewCopyPasteService()
+		service = GraphViewAppServiceImpl(cpService, commandManager)
+
+		builder = GraphViewBuilder()
+		_view = DrawingViewMockBuilder().withDrawing(builder.build()).withSize(800, 600)
+		_editor = EditorImpl(view, commandManager, EditSelectModule.selectionToolFactory)
+
+		v1 = builder.addVerticeView(createEastOutputVerticeView("v1", 100, 100))
+		v2 = builder.addVerticeView(createEastOutputVerticeView("v2", 200, 100))
+		ev = builder.connect(v1, v2)
+
+
 		_view.withModelToView(Rectangle2D(0, 0, 800, 600))
 		_editor.commandManager.bindDataHolder(builder)
 		editor.commandManager.reset()
 		cpService.reset()
+	}
+
+	private fun createEastOutputVerticeView(name: String, x: Int, y: Int): TestVerticeView {
+		return TestVerticeView(name = name, loc = Point2D(x, y), inputDirection = Direction.WEST, outputDirection = Direction.EAST, width = 20)
 	}
 
 	@Test

@@ -7,15 +7,15 @@ import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.mock
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class KnobViewTest {
 
-    companion object {
-        init {
-            GraphViewTestRule.configure()
-        }
+    @BeforeTest
+    fun setup() {
+        GraphViewTestRule.configure()
     }
 
     @Test

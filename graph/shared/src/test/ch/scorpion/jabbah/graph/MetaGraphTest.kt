@@ -5,25 +5,20 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.description.Name
 import ch.scorpion.jabbah.graph.container.ContainerDrawing
-import ch.scorpion.jabbah.graph.container.PortViewComponent
 import ch.scorpion.jabbah.graph.model.Document
 import ch.scorpion.jabbah.graph.model.DocumentType
 import ch.scorpion.jabbah.graph.model.GenericGraphType
-import ch.scorpion.jabbah.graph.model.GraphPort
-import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
-import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import ch.scorpion.jabbah.io.StorableCloner
 import kotlin.test.*
 
 class MetaGraphTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
+	@BeforeTest
+	fun setup() {
+		GraphViewTestRule.configure()
 	}
 
 	@Test
@@ -58,12 +53,6 @@ class MetaGraphTest {
 		assertNotEquals(orig.uuid, duplicate.uuid)
 		assertEquals("Duplicate", duplicate.name)
 		assertEquals("Original", orig.name)
-	}
-
-	private fun createPortViewComponent(graphPort: GraphPort<*>): PortViewComponent<*> {
-		return GraphViewModule.portViewFactory.createPortViewComponent(
-			GraphViewModule.portViewFactory.createPortView(
-				GraphModelModule.portFactory.createSubGraphPort(graphPort, GenericGraphType)))
 	}
 
 	@Test

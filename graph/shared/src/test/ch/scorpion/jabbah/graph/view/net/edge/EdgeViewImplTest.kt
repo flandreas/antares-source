@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.graph.view.Connection
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
@@ -12,19 +13,15 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-/**
- * Unit tests for [EdgeViewImpl].
- */
 class EdgeViewImplTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
-
 	private val edgeViewFactory = GraphViewModule.getEdgeViewFactory()
-	private val graphView = GraphViewModule.graphViewFactory.create(null)
+	private val graphView: GraphView
+
+	init {
+		GraphViewTestRule.configure()
+		graphView = GraphViewModule.graphViewFactory.create(null)
+	}
 
 	@Test
 	fun shouldUpdateBoundingBox() {

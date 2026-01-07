@@ -4,16 +4,15 @@ import ch.scorpion.jabbah.base.math.PI_2
 import ch.scorpion.jabbah.base.math.TWO_PI
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import kotlin.math.PI
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-/** Unit tests for [KnobModel]. */
 class KnobModelTest {
 
-    companion object {
-        init {
-            GraphViewTestRule.configure()
-        }
+    @BeforeTest
+    fun setup() {
+        GraphViewTestRule.configure()
     }
 
     @Test

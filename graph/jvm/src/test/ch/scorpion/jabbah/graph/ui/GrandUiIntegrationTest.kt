@@ -27,17 +27,12 @@ import kotlin.test.*
 
 class GrandUiIntegrationTest {
 
-	companion object {
-		init {
-			TempFileLibraryTestRule.configure()
-			EditAuthModule.userHolder = DesktopUserHolder(DesktopUser.Companion.developer)
-		}
-	}
-
 	private lateinit var application: TestGraphApplication<GraphFrame>
 
 	@BeforeTest
 	fun beforeTest() {
+		TempFileLibraryTestRule.configure()
+		EditAuthModule.userHolder = DesktopUserHolder(DesktopUser.Companion.developer)
 		BaseModule.eventBus.clear()
 	}
 

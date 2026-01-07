@@ -5,6 +5,8 @@ import ch.scorpion.jabbah.edit.CommandManagerMock
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.project.Project
+import ch.scorpion.jabbah.graph.project.ProjectManagementService
+import ch.scorpion.jabbah.graph.project.ProjectModule
 import ch.scorpion.jabbah.graph.project.ProjectSavable
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import dev.mokkery.mock
@@ -13,20 +15,20 @@ import kotlin.test.assertSame
 
 class GraphDataViewControllerTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-			//ProjectModule.projectManagementService = mock()
-		}
-	}
-
 	private val commandManagerMock = CommandManagerMock()
-	private val controller = GraphDataViewController(commandManagerMock.build())
-	private val metaGraph = MetaGraph()
-	private val containerLibraryElement = ContainerLibraryElement()
-	private val projectSavable = ProjectSavable(containerLibraryElement)
+	private val controller: GraphDataViewController
+	private val metaGraph: MetaGraph
+	private val containerLibraryElement: ContainerLibraryElement
+	private val projectSavable: ProjectSavable
 
 	init {
+		GraphViewTestRule.configure()
+		ProjectModule.projectManagementService = ProjectManagementService()
+
+		controller = GraphDataViewController(commandManagerMock.build())
+		metaGraph = MetaGraph()
+		containerLibraryElement = ContainerLibraryElement()
+		projectSavable = ProjectSavable(containerLibraryElement)
 		containerLibraryElement.bindTo(mock<Project>())
 		containerLibraryElement.updateStorable(metaGraph)
 	}

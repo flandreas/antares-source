@@ -6,26 +6,29 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.TestGraphPortView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ContainerDrawingFillerTest {
 
-    companion object {
-        init {
-            GraphViewTestRule.configure()
-        }
-    }
-
-    private val containerDrawing = GraphViewModule.createContainerDrawing()
-    private val graphView = createGraphView()
-    private val filler = NarrowContainerDrawingFiller(graphView, containerDrawing, addLabel = true)
+    private lateinit var containerDrawing: ContainerDrawing
+    private lateinit var graphView: GraphView
+    private lateinit var filler: NarrowContainerDrawingFiller
 
     private fun createGraphView(): GraphView =
         GraphViewModule.graphViewFactory.create(null).apply {
             add(TestGraphPortView.input<Boolean>("I"))
             add(TestGraphPortView.output<Boolean>("O"))
         }
+
+    @BeforeTest
+    fun setup() {
+        GraphViewTestRule.configure()
+        containerDrawing = GraphViewModule.createContainerDrawing()
+        graphView = createGraphView()
+        filler = NarrowContainerDrawingFiller(graphView, containerDrawing, addLabel = true)
+    }
 
     @Test
     fun shouldFill() {

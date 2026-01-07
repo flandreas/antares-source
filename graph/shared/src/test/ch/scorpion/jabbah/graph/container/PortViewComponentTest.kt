@@ -4,15 +4,15 @@ import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.model.port.SubGraphPortImpl
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.port.TestPortView
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class PortViewComponentTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
+	@BeforeTest
+	fun setup() {
+		GraphViewTestRule.configure()
 	}
 
 	@Test

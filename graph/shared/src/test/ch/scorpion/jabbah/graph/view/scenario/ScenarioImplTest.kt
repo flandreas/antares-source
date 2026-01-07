@@ -16,17 +16,11 @@ import dev.mokkery.MockMode
 import dev.mokkery.mock
 import kotlin.test.*
 
-/** Unit tests for [ScenarioImpl]. */
 class ScenarioImplTest {
-
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
 
 	@BeforeTest
 	fun setup() {
+		GraphViewTestRule.configure()
 		Translations.withAnyKey()
 	}
 

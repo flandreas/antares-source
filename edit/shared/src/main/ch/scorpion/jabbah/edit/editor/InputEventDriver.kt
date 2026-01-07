@@ -10,9 +10,9 @@ import ch.scorpion.jabbah.edit.Editor
  * the wrapped [InputEventHandler]. Mainly used for testing purposes, but potentially useful for other applications.
  */
 open class InputEventDriver(
-	protected open val editor: Editor,
-	protected val handler: InputEventHandler<EditInputEventContext>
 ) {
+	protected open lateinit var editor: Editor
+	protected lateinit var handler: InputEventHandler<EditInputEventContext>
 
 	open fun mouseMoveTo(x: Int, y: Int, modifiers: Int = 0): InputEventDriver {
 		handler.mouseMoved(context(MouseEventType.MOVED, x, y, modifiers))

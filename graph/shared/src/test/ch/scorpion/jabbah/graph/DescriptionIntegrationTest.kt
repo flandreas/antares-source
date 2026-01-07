@@ -17,14 +17,9 @@ import kotlin.test.assertEquals
 
 class DescriptionIntegrationTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
-
 	@BeforeTest
 	fun setup() {
+		GraphViewTestRule.configure()
 		LibraryModule.userLibraryPersistenceService = MemoryLibraryPersistenceService()
 		LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"))
 	}

@@ -17,13 +17,12 @@ import kotlin.test.assertTrue
  */
 class MoveSegmentIntegrationTest {
 
-    companion object {
-	    init {
-		    GraphViewTestRule.configure()
-	    }
-    }
+    private val builder: GraphViewBuilder<Boolean>
 
-    private val builder: GraphViewBuilder<Boolean> = GraphViewBuilder()
+    init {
+        GraphViewTestRule.configure()
+        builder = GraphViewBuilder()
+    }
 
     @Test
     fun shouldMoveSegmentUp() {

@@ -19,16 +19,11 @@ import kotlin.test.assertFalse
 
 class SubGraphVerticeViewImplIntegrationTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
-
 	private val signalHandler = mock<SignalHandler>(MockMode.autofill)
 
 	@BeforeTest
 	fun setup() {
+		GraphViewTestRule.configure()
 		LibraryModule.userLibraryPersistenceService = MemoryLibraryPersistenceService()
 		LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"))
 	}

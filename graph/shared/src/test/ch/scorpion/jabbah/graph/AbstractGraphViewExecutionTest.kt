@@ -29,12 +29,6 @@ import kotlin.test.BeforeTest
  */
 abstract class AbstractGraphViewExecutionTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
-
 	protected lateinit var currentSystemSpeedCategory: CurrentSystemSpeedCategory
 	protected lateinit var styleProvider: StyleProvider
 	protected lateinit var eventBus: EventBus
@@ -45,6 +39,7 @@ abstract class AbstractGraphViewExecutionTest {
 
 	@BeforeTest
 	open fun setup() {
+		GraphViewTestRule.configure()
 		styleProvider = DrawStyleModule.styleProvider
 		eventBus = BaseModule.eventBus
 		currentSystemSpeedCategory = CurrentSystemSpeedCategory(SystemSpeed(eventBus = eventBus), eventBus)

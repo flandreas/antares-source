@@ -13,12 +13,6 @@ import kotlin.test.*
 
 class RepositoryServiceImplTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
-
 	private val libraryBuilder: LibraryBuilder
 
 	private val projectBuilder: LibraryBuilder
@@ -27,6 +21,7 @@ class RepositoryServiceImplTest {
 
 
 	init {
+		GraphViewTestRule.configure()
 		LibraryModule.userLibraryPersistenceService = MemoryLibraryPersistenceService()
 		libraryBuilder = LibraryBuilder(name = "Library")
 		LibraryModule.libraryHolder.l = libraryBuilder.library

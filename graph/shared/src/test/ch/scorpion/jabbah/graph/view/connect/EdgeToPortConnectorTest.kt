@@ -14,7 +14,7 @@ import ch.scorpion.jabbah.graph.health.GraphViewConsistencyCheck
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.TestVertice
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
-import ch.scorpion.jabbah.graph.view.GraphViewTestRule
+import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.netview.NetViewStyle
@@ -25,20 +25,17 @@ import dev.mokkery.mock
 import dev.mokkery.verify
 import kotlin.test.*
 
-class EdgeToPortConnectorTest
-	: AbstractInputEventHandlerTest(GraphViewModule.edgeToPortOrEdgeConnector.handler) {
+class EdgeToPortConnectorTest : AbstractInputEventHandlerTest() {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
-
-	private val ev = GraphViewModule.graphViewConnectService.addConnection<Boolean>(builder.graphView, v1, v2)
-	private val v3 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v3", 200, 200))
+	private lateinit var ev: EdgeView<*>
+	private lateinit var v3: TestVerticeView
 
 	@BeforeTest
 	fun initialize() {
+		handler = GraphViewModule.edgeToPortOrEdgeConnector.handler
+		ev = GraphViewModule.graphViewConnectService.addConnection<Boolean>(builder.graphView, v1, v2)
+		v3 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v3", 200, 200))
+
 		editor.commandManager.reset()
 		CurrentConnectMethod.defaultMethod = ConnectMethod.AutoLayout
 	}

@@ -38,33 +38,32 @@ import kotlin.test.*
 
 class GraphNavigationViewControllerTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-
-			LibraryModule.userLibraryPersistenceService = MemoryLibraryPersistenceService()
-			LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"))
-		}
-	}
-
 	private val scheduler = mock<Scheduler>(MockMode.autofill)
 	private val eventBus = EventBusImpl()
 	private val systemSpeed = SystemSpeed(eventBus = eventBus)
 	private val currentSystemSpeedCategory = CurrentSystemSpeedCategory(systemSpeed, eventBus)
-	private val graphViewBuilder = GraphViewBuilder<Boolean>()
-	private val applicationContextHolder = GraphApplicationContextHolder(scheduler, eventBus, systemSpeed, currentSystemSpeedCategory)
-	private val applicationModeHolder = mock<ApplicationModeHolder>().also {
-		applicationContextHolder.applicationModeHolder = it
-		every { it.currentMode } returns ApplicationMode.EDIT
-	}
-	private val drawingView = DrawingViewImpl(
-		drawing = graphViewBuilder.graphView as Drawing<Component>,
-		applicationContextHolder = applicationContextHolder,
-		eventBus = eventBus)
-	private val vv = createSubGraphVerticeView()
-	private val controller = GraphNavigationViewController(isRoot = true, drawingView as DrawingView<GraphView>, eventBus = eventBus)
+	private val graphViewBuilder: GraphViewBuilder<Boolean>
+	private val applicationContextHolder: GraphApplicationContextHolder
+	private val applicationModeHolder = mock<ApplicationModeHolder>()
+	private val drawingView: DrawingViewImpl<Drawing<Component>>
+	private val vv: SubGraphVerticeView<*>
+	private val controller: GraphNavigationViewController
 
 	init {
+		GraphViewTestRule.configure()
+		LibraryModule.userLibraryPersistenceService = MemoryLibraryPersistenceService()
+		LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"))
+		graphViewBuilder = GraphViewBuilder<Boolean>()
+		applicationContextHolder = GraphApplicationContextHolder(scheduler, eventBus, systemSpeed, currentSystemSpeedCategory)
+		applicationContextHolder.applicationModeHolder = applicationModeHolder
+		every { applicationModeHolder.currentMode } returns ApplicationMode.EDIT
+		drawingView = DrawingViewImpl(
+			drawing = graphViewBuilder.graphView as Drawing<Component>,
+			applicationContextHolder = applicationContextHolder,
+			eventBus = eventBus)
+		vv = createSubGraphVerticeView()
+		controller = GraphNavigationViewController(isRoot = true, drawingView as DrawingView<GraphView>, eventBus = eventBus)
+
 		val canvas = mock<Canvas>(MockMode.autofill)
 		every { canvas.dimension } returns Dimension2D(0, 0)
 		every { canvas.view } returns drawingView

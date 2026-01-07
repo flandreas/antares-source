@@ -9,18 +9,13 @@ import kotlin.test.*
 
 class LibraryServiceImportLibraryTest {
 
-	companion object {
-		init {
-			TempFileLibraryTestRule.configure()
-		}
-	}
-
 	private var libraryImportEventSent: Boolean = false
 
 	private val libraryImportsHandler: EventHandler<LibraryImportsEvent> = { libraryImportEventSent = true }
 
 	@BeforeTest
 	fun setup() {
+		TempFileLibraryTestRule.configure()
 		BaseModule.eventBus.register(LibraryImportsEvent::class, libraryImportsHandler)
 		libraryImportEventSent = false
 	}

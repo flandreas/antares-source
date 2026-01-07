@@ -2,24 +2,19 @@ package ch.scorpion.jabbah.graph.view.net
 
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
-import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.net.edge.DragEdgeSegmentHandler
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewInputEventHandler
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class DragEdgeSegmentHandlerTest : AbstractInputEventHandlerTest(DragEdgeSegmentHandler()) {
+class DragEdgeSegmentHandlerTest : AbstractInputEventHandlerTest() {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
-
-	private val v3 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v2", 200, 200))
+	private val v3: TestVerticeView
 
 	init {
+		handler = DragEdgeSegmentHandler()
+		v3 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v2", 200, 200))
 		builder.connect(v1, v3)
 		editor.commandManager.reset()
 		edgeViewInputEventHandler.edgeView = builder.graphView.getEdgeViews().first()

@@ -8,14 +8,11 @@ import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import ch.scorpion.jabbah.io.StorableCloner
 import kotlin.test.*
 
-
-/** Unit tests for [GraphStorable].*/
 class GraphStorableTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
+	@BeforeTest
+	fun setup() {
+		GraphViewTestRule.configure()
 	}
 
 	@Test

@@ -6,6 +6,7 @@ import ch.scorpion.jabbah.edit.DrawingViewMockBuilder
 import ch.scorpion.jabbah.graph.model.GraphElement
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.*
+import ch.scorpion.jabbah.graph.view.connect.SplitEdgeViewResult
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
@@ -16,23 +17,28 @@ import kotlin.test.*
  */
 class DivideNetTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
-
-	private val builder: GraphViewBuilder<Boolean> = GraphViewBuilder()
-	private val drawingViewBuilder = DrawingViewMockBuilder().withDrawing(builder.build())
-	private val vv1 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("vv1", 100, 100))
-	private val vv2 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("vv2", 200, 100))
-	private val vv3 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("vv3", 200, 200))
-	private val vv4 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("vv4", 200, 300))
-	private val ev12 = builder.connect(vv1, vv2)
-	private val split3 = builder.split(ev12, 0, Point2D(150, 100), vv3)
-	private val split4 = builder.split(split3.newEdgeView, 0, Point2D(150, 200), vv4)
+	private val builder: GraphViewBuilder<Boolean>
+	private val drawingViewBuilder: DrawingViewMockBuilder
+	private val vv1: TestVerticeView
+	private val vv2: TestVerticeView
+	private val vv3: TestVerticeView
+	private val vv4: TestVerticeView
+	private val ev12: EdgeView<*>
+	private val split3: SplitEdgeViewResult<*>
+	private val split4: SplitEdgeViewResult<*>
 
 	init {
+		GraphViewTestRule.configure()
+		builder = GraphViewBuilder()
+		drawingViewBuilder = DrawingViewMockBuilder().withDrawing(builder.build())
+		vv1 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("vv1", 100, 100))
+		vv2 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("vv2", 200, 100))
+		vv3 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("vv3", 200, 200))
+		vv4 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("vv4", 200, 300))
+		ev12 = builder.connect(vv1, vv2)
+		split3 = builder.split(ev12, 0, Point2D(150, 100), vv3)
+		split4 = builder.split(split3.newEdgeView, 0, Point2D(150, 200), vv4)
+
 		EditModule.commandManager.bindDataHolder(builder)
 	}
 

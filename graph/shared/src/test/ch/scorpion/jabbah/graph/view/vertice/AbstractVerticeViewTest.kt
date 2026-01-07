@@ -7,10 +7,8 @@ import kotlin.test.assertEquals
 /** Unit tests for functionality in [AbstractVerticeView].*/
 class AbstractVerticeViewTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
+	init {
+		GraphViewTestRule.configure()
 	}
 
 	@Test

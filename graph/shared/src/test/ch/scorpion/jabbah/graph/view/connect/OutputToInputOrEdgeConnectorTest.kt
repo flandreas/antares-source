@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.graph.health.GraphViewConsistencyCheck
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
 import ch.scorpion.jabbah.graph.view.EdgeView
-import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointDenialCross
 import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -16,16 +15,10 @@ import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import dev.mokkery.verify
 import kotlin.test.*
 
-class OutputToInputOrEdgeConnectorTest
-	: AbstractInputEventHandlerTest(GraphViewModule.outputToInputOrEdgeConnector.handler) {
-
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
+class OutputToInputOrEdgeConnectorTest : AbstractInputEventHandlerTest() {
 
 	init {
+		handler = GraphViewModule.outputToInputOrEdgeConnector.handler
 		CurrentConnectMethod.defaultMethod = ConnectMethod.AutoLayout
 	}
 

@@ -4,18 +4,18 @@ import ch.scorpion.jabbah.graph.model.LogEvent
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import dev.mokkery.mock
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class LogEventHistoryTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
-
 	private val history = LogEventHistory()
+
+	@BeforeTest
+	fun setup() {
+		GraphViewTestRule.configure()
+	}
 
 	@Test
 	fun shouldInitiallyHaveNoEventColumns() {

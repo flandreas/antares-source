@@ -17,7 +17,7 @@ import kotlin.test.assertFailsWith
 class UsecaseTestExternalFunctionsTest : AbstractGraphViewExecutionTest() {
 
 	private val issueCollector = IssueCollector()
-	private val builder: GraphViewBuilder<Boolean> = GraphViewBuilder()
+	private lateinit var builder: GraphViewBuilder<Boolean>
 	private val appModeHolder = DummyApplicationModeHolder()
 	private lateinit var input: TestGraphPortView<Long>
 	private lateinit var output: TestGraphPortView<Long>
@@ -25,6 +25,7 @@ class UsecaseTestExternalFunctionsTest : AbstractGraphViewExecutionTest() {
 	override fun setup() {
 		super.setup()
 
+		builder= GraphViewBuilder()
 		input = builder.addVerticeView(TestGraphPortView(model = GraphInputImpl(name = "I")))
 		output = builder.addVerticeView(TestGraphPortView(model = GraphOutputImpl(name = "O")))
 		builder.connect(input, output)

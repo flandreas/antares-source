@@ -4,23 +4,18 @@ import ch.scorpion.jabbah.base.event.Modifier
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.InputEventHandlerAdapter
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
-import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import kotlin.test.Test
 import kotlin.test.assertSame
 
-class GraphViewInputEventHandlerTest : AbstractInputEventHandlerTest(InputEventHandlerAdapter()) {
+class GraphViewInputEventHandlerTest : AbstractInputEventHandlerTest() {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
-
-	private val verticeView = TestVerticeView(loc = Point2D(100, 100), width = 200)
+	private val verticeView: TestVerticeView
 
 	init {
+		handler = InputEventHandlerAdapter()
+		verticeView = TestVerticeView(loc = Point2D(100, 100), width = 200)
 		builder.addVerticeView(verticeView)
 	}
 

@@ -6,25 +6,23 @@ import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.health.GraphViewConsistencyCheck
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
-import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import kotlin.test.*
 
-class EdgeToEdgeConnectorTest : AbstractInputEventHandlerTest(GraphViewModule.edgeToPortOrEdgeConnector.handler){
+class EdgeToEdgeConnectorTest : AbstractInputEventHandlerTest(){
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
-
-	private val v3 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v3", 200, 200))
-	private val v4 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v4", 100, 300))
-	private val v5 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v5", 200, 300))
+	private lateinit var v3: TestVerticeView
+	private lateinit var v4: TestVerticeView
+	private lateinit var v5: TestVerticeView
 
 	@BeforeTest
 	fun initialize() {
+		handler = GraphViewModule.edgeToPortOrEdgeConnector.handler
+		v3 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v3", 200, 200))
+		v4 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v4", 100, 300))
+		v5 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v5", 200, 300))
+
 		val ev1 = builder.connect(v1, v2)
 		builder.split(ev1, 0, Point2D(150, 100), v3)
 		builder.connect(v4, v5)

@@ -4,17 +4,11 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import kotlin.test.*
 
-/** Unit tests for [ScenarioStepImpl].*/
 class ScenarioStepImplTest {
-
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
 
 	@BeforeTest
 	fun setup() {
+		GraphViewTestRule.configure()
 		Translations.withAnyKey()
 	}
 

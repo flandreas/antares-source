@@ -14,12 +14,6 @@ import kotlin.test.Test
 
 class GraphViewImplIntegrationTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
-
 	private val builder = GraphViewBuilder<Boolean>("Test")
 	private lateinit var vv1: TestVerticeView
 	private lateinit var vv2: TestVerticeView
@@ -29,6 +23,7 @@ class GraphViewImplIntegrationTest {
 
 	@BeforeTest
 	fun buildGraphView() {
+		GraphViewTestRule.configure()
 		vv1 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("vv1", 0, 0))
 		vv2 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("vv2", 100, 0))
 		vv3 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("vv3", 100, 100))

@@ -20,8 +20,8 @@ import kotlin.test.assertTrue
 
 class ScenarioExternalFunctionsTest : AbstractGraphViewExecutionTest() {
 
-    private val issueCollector = IssueCollector()
-    private val builder: GraphViewBuilder<Boolean> = GraphViewBuilder()
+    private lateinit var issueCollector: IssueCollector
+    private lateinit var builder: GraphViewBuilder<Boolean>
     private val drawingView = DrawingViewMockBuilder()
 
     private lateinit var testVerticeView: VerticeView<TestVertice>
@@ -30,6 +30,8 @@ class ScenarioExternalFunctionsTest : AbstractGraphViewExecutionTest() {
 
     override fun setup() {
         super.setup()
+        issueCollector = IssueCollector()
+        builder = GraphViewBuilder()
         testVerticeView = TestVerticeView()
         builder.addVerticeView(testVerticeView)
         drawingView.withDrawing(builder.graphView)

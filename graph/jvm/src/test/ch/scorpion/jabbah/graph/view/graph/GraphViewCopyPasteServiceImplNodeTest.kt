@@ -11,6 +11,7 @@ import org.junit.Test
 import kotlin.test.assertEquals
 
 import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.connect.SplitEdgeViewResult
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -20,22 +21,31 @@ import kotlin.test.assertTrue
  */
 class GraphViewCopyPasteServiceImplNodeTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
+	private val service: GraphViewCopyPasteService
+	private val builder: GraphViewBuilder<Boolean>
+	private val drawingViewBuilder: DrawingViewMockBuilder
+	private val vv1: TestVerticeView
+	private val vv2: TestVerticeView
+	private val vv3: TestVerticeView
+	private val vv4: TestVerticeView
+	private val ev12: EdgeView<Boolean>
+	private val split3: SplitEdgeViewResult<Boolean>
+	private val split4: SplitEdgeViewResult<Boolean>
 
-	private val service = GraphViewCopyPasteService()
-	private val builder: GraphViewBuilder<Boolean> = GraphViewBuilder()
-	private val drawingViewBuilder = DrawingViewMockBuilder().withDrawing(builder.build())
-	private val vv1 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("vv1", 100, 100))
-	private val vv2 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("vv2", 200, 100))
-	private val vv3 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("vv3", 200, 200))
-	private val vv4 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("vv4", 200, 300))
-	private val ev12 = builder.connect(vv1, vv2)
-	private val split3 = builder.split(ev12, 0, Point2D(150, 100), vv3)
-	private val split4 = builder.split(split3.newEdgeView, 0, Point2D(150, 200), vv4)
+	init {
+		GraphViewTestRule.configure()
+
+		service = GraphViewCopyPasteService()
+		builder = GraphViewBuilder()
+		drawingViewBuilder = DrawingViewMockBuilder().withDrawing(builder.build())
+		vv1 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("vv1", 100, 100))
+		vv2 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("vv2", 200, 100))
+		vv3 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("vv3", 200, 200))
+		vv4 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("vv4", 200, 300))
+		ev12 = builder.connect(vv1, vv2)
+		split3 = builder.split(ev12, 0, Point2D(150, 100), vv3)
+		split4 = builder.split(split3.newEdgeView, 0, Point2D(150, 200), vv4)
+	}
 
 	@Test
 	fun shouldNotPasteNodeViewAtOneEdgeView() {

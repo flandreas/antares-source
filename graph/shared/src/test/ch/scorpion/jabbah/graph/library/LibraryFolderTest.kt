@@ -2,13 +2,11 @@ package ch.scorpion.jabbah.graph.library
 
 import kotlin.test.*
 
-/** Unit tests for [LibraryFolder]. */
 class LibraryFolderTest {
 
-	companion object {
-		init {
-			GraphLibraryTestRule.configure()
-		}
+	@BeforeTest
+	fun setup() {
+		GraphLibraryTestRule.configure()
 	}
 
 	@Test

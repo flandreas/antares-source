@@ -4,16 +4,16 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.drawable.RotationDirection
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.model.curve.QuadCurveComponent
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class GraphElementViewWrapperTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
+	@BeforeTest
+	fun setup() {
+		GraphViewTestRule.configure()
 	}
 
 	@Test

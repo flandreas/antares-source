@@ -24,10 +24,8 @@ import kotlin.test.assertTrue
 /** Unit tests for functionality in [AbstractPortView]. */
 class AbstractPortViewTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
+	init {
+		GraphViewTestRule.configure()
 	}
 
 	private fun portView(

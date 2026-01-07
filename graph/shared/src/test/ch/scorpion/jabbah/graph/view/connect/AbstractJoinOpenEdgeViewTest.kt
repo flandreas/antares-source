@@ -1,30 +1,21 @@
 package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.draw.InputEventHandler
-import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.graph.health.GraphViewConsistencyCheck
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
-import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
-abstract class AbstractJoinOpenEdgeViewTest(
-    handler: InputEventHandler<EditInputEventContext>
-) : AbstractInputEventHandlerTest(handler) {
+abstract class AbstractJoinOpenEdgeViewTest() : AbstractInputEventHandlerTest() {
 
-    companion object {
-        init {
-            GraphViewTestRule.configure()
-        }
-    }
-
-    protected val v3 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v3", 200, 200))
+    protected val v3: TestVerticeView
 
     init {
+        v3 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v3", 200, 200))
+
         builder.connectOutputOpen(v1, Point2D(150, 100))
         builder.connectInputOpen(v3, Point2D(150, 200))
         editor.commandManager.reset()

@@ -8,32 +8,32 @@ import ch.scorpion.jabbah.edit.DrawingViewMockBuilder
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
 import ch.scorpion.jabbah.edit.module.EditModule
-import ch.scorpion.jabbah.graph.view.*
-import ch.scorpion.jabbah.graph.view.connect.SplitEdgeViewResult
+import ch.scorpion.jabbah.graph.view.GraphElementViewWrapper
+import ch.scorpion.jabbah.graph.view.GraphViewBuilder
+import ch.scorpion.jabbah.graph.view.GraphViewTestRule
+import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import kotlin.test.*
 
-/** Unit tests for [GraphViewAppServiceImpl].*/
 class GraphViewAppServiceImplTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
-
 	private val service = GraphViewAppServiceImpl()
-	private val builder = GraphViewBuilder<Boolean>()
-	private val drawingView: DrawingView<Drawing<Component>> = DrawingViewMockBuilder().withDrawing(builder.graphView).build()
-	private val vv1 = builder.addVerticeView(TestVerticeView("vv1", loc = Point2D(100, 100)))
-	private val vv2 = builder.addVerticeView(TestVerticeView("vv2", loc = Point2D(200, 100)))
-	private val vv3 = builder.addVerticeView(TestVerticeView("vv3", loc = Point2D(200, 200)))
-	private lateinit var ev: EdgeView<Boolean>
-	private lateinit var split: SplitEdgeViewResult<Boolean>
+	private val builder: GraphViewBuilder<Boolean>
+	private val drawingView: DrawingView<Drawing<Component>>
+	private val vv1: TestVerticeView
+	private val vv2: TestVerticeView
+	private val vv3: TestVerticeView
 
 	init {
+		GraphViewTestRule.configure()
+		builder = GraphViewBuilder<Boolean>()
+		drawingView = DrawingViewMockBuilder().withDrawing(builder.graphView).build()
+		vv1 = builder.addVerticeView(TestVerticeView("vv1", loc = Point2D(100, 100)))
+		vv2 = builder.addVerticeView(TestVerticeView("vv2", loc = Point2D(200, 100)))
+		vv3 = builder.addVerticeView(TestVerticeView("vv3", loc = Point2D(200, 200)))
+
 		EditModule.commandManager.bindDataHolder(builder)
 	}
 

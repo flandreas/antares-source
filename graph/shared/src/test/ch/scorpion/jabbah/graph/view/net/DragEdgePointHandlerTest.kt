@@ -4,7 +4,6 @@ import ch.scorpion.jabbah.base.event.MouseEventType
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.edit.editor.InputEventDriver
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
-import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.net.edge.DragEdgePointHandler
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewInputEventHandler
 import ch.scorpion.jabbah.graph.view.net.edge.LayoutType
@@ -12,19 +11,16 @@ import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class DragEdgePointHandlerTest : AbstractInputEventHandlerTest(DragEdgePointHandler()) {
+class DragEdgePointHandlerTest : AbstractInputEventHandlerTest() {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
-
-	private val v3 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v2", 200, 200))
+	private val v3: TestVerticeView
 	private val edgeViewInputEventHandler get() = handler as EdgeViewInputEventHandler
 	private val edgeView get() = builder.graphView.getEdgeViews().first()
 
 	init {
+		handler = DragEdgePointHandler()
+		v3 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v2", 200, 200))
+
 		builder.connect(v1, v3)
 		editor.commandManager.reset()
 		edgeView.layout.type = LayoutType.NONE

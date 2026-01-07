@@ -6,7 +6,6 @@ import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
-import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
@@ -14,19 +13,13 @@ import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import dev.mokkery.verify
 import kotlin.test.*
 
-class EdgeToPortAdjustConnectorTest : AbstractInputEventHandlerTest(GraphViewModule.edgeToPortOrEdgeConnector.handler) {
-
-    companion object {
-        init {
-            GraphViewTestRule.configure()
-        }
-    }
-
-    private val ev = GraphViewModule.graphViewConnectService.addConnection<Boolean>(builder.graphView, v1, v2)
-    private val v3 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v3", 200, 200))
+class EdgeToPortAdjustConnectorTest : AbstractInputEventHandlerTest() {
 
     @BeforeTest
     fun initialize() {
+        handler = GraphViewModule.edgeToPortOrEdgeConnector.handler
+        GraphViewModule.graphViewConnectService.addConnection<Boolean>(builder.graphView, v1, v2)
+        builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v3", 200, 200))
         editor.commandManager.reset()
         CurrentConnectMethod.defaultMethod = ConnectMethod.SetPoints
     }

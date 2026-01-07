@@ -30,30 +30,32 @@ import kotlin.test.assertNull
 
 class GraphDesktopControllerViewTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-
-			LibraryModule.userLibraryPersistenceService = MemoryLibraryPersistenceService()
-			LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"))
-		}
-	}
-
 	private val eventBus = EventBusImpl()
 	private val systemSpeed = SystemSpeed(eventBus = eventBus)
 	private val currentSystemSpeedCategory = CurrentSystemSpeedCategory(systemSpeed, eventBus)
-	private val applicationContextHolder = GraphApplicationContextHolder(SchedulerImpl(currentSystemSpeedCategory), eventBus, systemSpeed, currentSystemSpeedCategory)
-	private val graphViewBuilder = GraphViewBuilder<Boolean>()
-	private val drawingView = DrawingViewImpl(graphViewBuilder.graphView as Drawing<Component>, applicationContextHolder = applicationContextHolder, eventBus = eventBus)
-	private val controller = GraphDesktopViewController(applicationContextHolder, eventBus = eventBus)
-	private val vv = createSubGraphVerticeView()
-	private val viewItemMock = GraphDesktopViewItemMockBuilder()
-		.withDrawingView(drawingView as DrawingView<GraphView>)
-		.withFindElementWithRef(vv)
-	private val viewMock = GraphDesktopViewMockBuilder(controller)
-		.withMainViewItem(viewItemMock.build())
+	private val applicationContextHolder: GraphApplicationContextHolder
+	private val graphViewBuilder: GraphViewBuilder<Boolean>
+	private val drawingView: DrawingViewImpl<Drawing<Component>>
+	private val controller: GraphDesktopViewController
+	private val vv: SubGraphVerticeView<*>
+	private val viewItemMock: GraphDesktopViewItemMockBuilder
+	private val viewMock: GraphDesktopViewMockBuilder
 
 	init {
+		GraphViewTestRule.configure()
+		LibraryModule.userLibraryPersistenceService = MemoryLibraryPersistenceService()
+		LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"))
+		applicationContextHolder = GraphApplicationContextHolder(SchedulerImpl(currentSystemSpeedCategory), eventBus, systemSpeed, currentSystemSpeedCategory)
+		graphViewBuilder = GraphViewBuilder<Boolean>()
+		drawingView = DrawingViewImpl(graphViewBuilder.graphView as Drawing<Component>, applicationContextHolder = applicationContextHolder, eventBus = eventBus)
+		controller = GraphDesktopViewController(applicationContextHolder, eventBus = eventBus)
+		vv = createSubGraphVerticeView()
+		viewItemMock = GraphDesktopViewItemMockBuilder()
+			.withDrawingView(drawingView as DrawingView<GraphView>)
+			.withFindElementWithRef(vv)
+		viewMock = GraphDesktopViewMockBuilder(controller)
+			.withMainViewItem(viewItemMock.build())
+
 		drawingView.canvas = CanvasMockBuilder().withView(drawingView).build()
 		graphViewBuilder.addVerticeView(vv)
 		viewItemMock.withElementRef(GraphDesktopViewItemElementDepthRef(vv.id, 0))

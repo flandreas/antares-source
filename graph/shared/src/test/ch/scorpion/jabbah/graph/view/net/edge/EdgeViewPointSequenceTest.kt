@@ -8,16 +8,11 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
-/**
- * Unit tests for [EdgeViewPointSequence].
- */
 class EdgeViewPointSequenceTest {
 
-    companion object {
-	    init {
-		    GraphViewTestRule.configure()
-	    }
-    }
+	init {
+		GraphViewTestRule.configure()
+	}
 
     @Test
     fun shouldBuildSequence() {

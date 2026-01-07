@@ -11,19 +11,13 @@ import kotlin.test.assertEquals
 
 abstract class AbstractForkEdgeViewTest {
 
-    companion object {
-        init {
-            GraphViewTestRule.configure()
-        }
-    }
-
-    protected val builder = GraphViewBuilder<Boolean>()
-    protected val drawingViewBuilder = DrawingViewMockBuilder().withDrawing(builder.build())
-    protected val v1 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v1", 100, 100))
-    protected val v2 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v2", 200, 100))
-    protected val v3 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v3", 200, 200))
-    protected val v4 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v4", 200, 300))
-    protected val v5 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v5", 200, 300))
+    protected val builder: GraphViewBuilder<Boolean>
+    protected val drawingViewBuilder: DrawingViewMockBuilder
+    protected val v1: TestVerticeView
+    protected val v2: TestVerticeView
+    protected val v3: TestVerticeView
+    protected val v4: TestVerticeView
+    protected val v5: TestVerticeView
 
     protected lateinit var ev1: EdgeView<Boolean>
     protected lateinit var ev2: EdgeView<Boolean>
@@ -31,6 +25,15 @@ abstract class AbstractForkEdgeViewTest {
     protected lateinit var ev4: EdgeView<Boolean>
 
     init {
+        GraphViewTestRule.configure()
+        builder = GraphViewBuilder<Boolean>()
+        drawingViewBuilder = DrawingViewMockBuilder().withDrawing(builder.build())
+        v1 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v1", 100, 100))
+        v2 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v2", 200, 100))
+        v3 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v3", 200, 200))
+        v4 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v4", 200, 300))
+        v5 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v5", 200, 300))
+
         EditModule.commandManager.bindDataHolder(builder)
         fillGraphView()
     }

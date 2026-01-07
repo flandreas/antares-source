@@ -13,12 +13,6 @@ import kotlin.test.assertEquals
 
 class OscilloscopeViewTimelineTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
-
 	private lateinit var signalHandler: SignalHandlerMockBuilder
 	private lateinit var oscilloscope: Oscilloscope
 	private lateinit var timeline: OscilloscopeViewTimeline
@@ -26,6 +20,7 @@ class OscilloscopeViewTimelineTest {
 
 	@BeforeTest
 	fun setup() {
+		GraphViewTestRule.configure()
 		signalHandler = SignalHandlerMockBuilder()
 		oscilloscope = Oscilloscope(SignalHistoriesType.Realtime)
 		timeline = OscilloscopeViewTimeline(scale = 1.0) { maxTime }

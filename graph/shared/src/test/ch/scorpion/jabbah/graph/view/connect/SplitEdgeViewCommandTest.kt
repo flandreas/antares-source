@@ -17,20 +17,16 @@ import kotlin.test.assertSame
 
 class SplitEdgeViewCommandTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
-
 	private val service = GraphViewModule.graphViewConnectService
 	private val edgeViewFactory = GraphViewModule.getEdgeViewFactory()
-	private val editorBuilder = GraphEditorMockBuilder()
+	private lateinit var editorBuilder: GraphEditorMockBuilder
 	private lateinit var testGraphView: TestGraphView
 
 	@BeforeTest
 	fun setup() {
+		GraphViewTestRule.configure()
 		Translations.withAnyKey()
+		editorBuilder = GraphEditorMockBuilder()
 		testGraphView = TestGraphView()
 		editorBuilder.withDrawing(testGraphView.graphView)
 	}
