@@ -16,13 +16,22 @@ import ch.scorpion.jabbah.edit.model.PasteInfo
 import ch.scorpion.jabbah.edit.module.EditModule
 
 class CutAction(
-	private val service: DrawingAppService = EditModule.drawingAppService,
+	service: DrawingAppService = EditModule.drawingAppService,
 	eventBus: EventBus = BaseModule.eventBus,
 	viewManager: ContentViewManager = DrawViewModule.viewManager
-) : AbstractSelectionAwareAction("edit.action.cut", eventBus, viewManager) {
+) : AbstractDeleteAction("edit.action.cut", eventBus, viewManager, service) {
 
-	override fun execute(event: ActionEvent) {
-		service.cut(drawingView!!)
+	override fun executeImpl(components: List<Component>, drawingView: DrawingView<*>) {
+		if (components.isNotEmpty()) {
+			service.cut(components, drawingView)
+		}
+
+		// Don't do components.size != selection.size for checking whether everything has been deleted,
+		// because non-deletable (by user selection!) Components might have been deleted as a side effect
+		// of deleting other Components.
+		if (selection.any { drawingView.drawing.contains(it) }) {
+			postUndeleteableMessage()
+		}
 	}
 }
 

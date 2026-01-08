@@ -9,8 +9,6 @@ import ch.scorpion.jabbah.draw.drawable.Movable
 import ch.scorpion.jabbah.draw.view.FocusDrawablePlayer
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.editor.AddCommand
-import ch.scorpion.jabbah.edit.model.ComponentMessage
-import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.model.CopyPasteService
 import ch.scorpion.jabbah.edit.model.group.GroupComponent
 import ch.scorpion.jabbah.edit.module.EditModule
@@ -41,8 +39,8 @@ interface DrawingAppService : ComponentCustomizer {
 	/** Replaces the specified [GroupComponent] in the [DrawingView] with its inner [Component]s.*/
 	fun ungroup(component: GroupComponent, drawingView: DrawingView<Drawing<Component>>)
 
-	/** Cuts the [Component]s that are currently selected in [drawingView] to the system clipboard.*/
-	fun cut(drawingView: DrawingView<*>)
+	/** Cuts the specified [Component] in [drawingView] to the system clipboard.*/
+	fun cut(components: List<Component>, drawingView: DrawingView<*>)
 
 	/** Copies the [Component]s that are currently selected in [drawingView] to the system clipboard.*/
 	fun copy(drawingView: DrawingView<*>)
@@ -136,26 +134,10 @@ open class DrawingAppServiceImpl(
 		drawingView.selectionManager.select(addedComponentIds.map { drawingView.drawing.getWithId(it) as Component })
 	}
 
-	override fun cut(drawingView: DrawingView<*>) {
-		val components = drawingView.selectionManager.selection
+	override fun cut(components: List<Component>, drawingView: DrawingView<*>) {
 		logComponentAction("Cut", components.map { it.id }, drawingView)
-
-		val componentsToDelete = components.filter { it.deletable }.toList()
-		if (componentsToDelete.isNotEmpty()) {
-			copyImpl(drawingView)
-			deleteImpl(componentsToDelete.map { it.id }, drawingView, "edit.command.cut")
-		}
-
-		// Don't do 'components.size != selection.size for checking whether everything has been deleted,
-		// because non-deletable (by user selection!) Components might have been deleted as a side effect
-		// of deleting other Components.
-		if (components.any { drawingView.drawing.contains(it) }) {
-			eventBus.post(ComponentMessage(
-				ComponentMessageType.Info,
-				null,
-				"edit.action.undeletable.msg"
-			))
-		}
+		copyImpl(drawingView)
+		deleteImpl(components.map { it.id }, drawingView, "edit.command.cut")
 	}
 
 	override fun copy(drawingView: DrawingView<*>) {
