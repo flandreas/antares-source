@@ -13,29 +13,27 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import dev.mokkery.MockMode
 import dev.mokkery.mock
 import org.junit.Test
-import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 
 class ConcentratorViewExecutionIntegrationTest : AbstractJvmCircuitTest() {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	private lateinit var circuitView: GraphView
 	private val actorListener = mock<ActorListener>(MockMode.autofill)
 
-	private val circuitOutputView = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(portType = PortType.OUTPUT, bitWidth = BitWidth.BW_2))
-	private val concentratorView = ConcentratorView(model = Concentrator(BitWidth.BW_2, BranchCount.BC_2))
-	private val switchView1 = SwitchView()
-	private val switchView2 = SwitchView()
+	private lateinit var circuitOutputView: DigitalCircuitInOutView
+	private lateinit var concentratorView: ConcentratorView
+	private lateinit var switchView1: SwitchView
+	private lateinit var switchView2: SwitchView
 
 	override fun getCircuitView(): GraphView = circuitView
 
-	@BeforeTest
-	fun setupCircuit() {
+	override fun setup() {
+		super.setup()
+		circuitOutputView = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(portType = PortType.OUTPUT, bitWidth = BitWidth.BW_2))
+		concentratorView = ConcentratorView(model = Concentrator(BitWidth.BW_2, BranchCount.BC_2))
+		switchView1 = SwitchView()
+		switchView2 = SwitchView()
+
 		val builder = TestCircuitBuilder("test", styleProvider, eventBus)
 
 		builder.addVerticeView(switchView1)

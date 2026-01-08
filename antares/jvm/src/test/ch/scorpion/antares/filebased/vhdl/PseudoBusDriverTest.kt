@@ -17,12 +17,6 @@ import kotlin.test.assertEquals
  */
 class PseudoBusDriverTest : AbstractFileBasedTest() {
 
-	companion object {
-		init {
-			configure()
-		}
-	}
-
 	private val printer = StringCodePrinter()
 
 	@BeforeTest

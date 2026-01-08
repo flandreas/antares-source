@@ -6,10 +6,8 @@ import kotlin.test.Test
 
 class FSMTransitionConditionParserTest {
 
-    companion object {
-        init {
-            AntaresTestRule.configure()
-        }
+    init {
+        AntaresTestRule.configure()
     }
 
     @Test

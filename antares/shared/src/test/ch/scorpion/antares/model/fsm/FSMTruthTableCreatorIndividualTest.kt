@@ -9,13 +9,11 @@ import kotlin.test.assertFailsWith
 
 class FSMTruthTableCreatorIndividualTest {
 
-    companion object {
-        init {
-            AntaresTestRule.configure()
-        }
-    }
-
     private val service: FSMEditorService get() = AntaresModelModule.fsmEditorService
+
+    init {
+        AntaresTestRule.configure()
+    }
 
     @Test
     fun shouldCatchInvalidValue() {

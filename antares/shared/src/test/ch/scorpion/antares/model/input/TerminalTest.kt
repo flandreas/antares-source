@@ -15,15 +15,16 @@ class TerminalTest {
 		private const val BACKSPACE = 8.toChar()
 		private const val NEWLINE = 10.toChar()
 		private const val FORM_FEED = 12.toChar()
-
-		init {
-			AntaresTestRule.configure()
-		}
 	}
 
-	val terminal = Terminal()
+	private val terminal: Terminal
 
 	private val signalHandler: SignalHandler = mock(MockMode.autofill)
+
+	init {
+		AntaresTestRule.configure()
+		terminal = Terminal()
+	}
 
 	@Test
 	fun shouldAddCharacterIfEnabled() {

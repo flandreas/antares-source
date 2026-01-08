@@ -2,7 +2,6 @@ package ch.scorpion.antares.filebased.library
 
 import ch.scorpion.antares.AbstractCircuitTest
 import ch.scorpion.antares.AntaresApplication
-import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.jabbah.app.AbstractDesktopApplication
 import ch.scorpion.jabbah.app.CurrentApplicationVersion
@@ -39,34 +38,36 @@ abstract class AbstractSystemLibraryTest : AbstractCircuitTest() {
 
         /** The maximum accepted deviation factor when comparing real and scripted propagation delay.*/
         private const val DEVIATION = 0.1
-
-        @JvmStatic
-        protected fun configure() {
-            CurrentApplicationVersion.version = AbstractDesktopApplication.readVersion()
-
-            AntaresTestRule.configure()
-            LibraryModule.DEF_LIBRARY_UUID = AntaresApplication.DEF_LIBRARY_UUID
-
-            // System library loaded as JVM resources
-            LibraryModule.systemLibraryPersistenceService = ResourceLibraryPersistenceService()
-            LibraryModule.systemLibraryDictionaryService = LibraryDictionaryService(ResourceLibraryDictionaryPersistenceService())
-            LibraryModule.libraryManagementService = LibraryManagementService()
-
-            // User project in temporary files
-            val tempDir = Files.createTempDirectory(null)
-            ProjectModule.projectLibraryPersistenceService = FileLibraryPersistenceService({ tempDir.absolutePathString() }, "projects")
-            ProjectModule.projectLibraryService = LibraryService(userLibraryPersisterProvider = { ProjectModule.projectLibraryPersistenceService } )
-            ProjectModule.projectDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService({ tempDir.absolutePathString() }, "projects"))
-            ProjectModule.projectManagementService = ProjectManagementService()
-
-            //val path = Paths.get("jvm/rsc/test").toAbsolutePath()
-            GraphModelModule.nonVolatileService = NonVolatileServiceJvm({ tempDir.toString() }, "nonVolatile")
-        }
     }
 
     protected lateinit var openedCircuitView: GraphView
 
     protected lateinit var subGraphVV: SubGraphVerticeView<SubGraphVerticeRef>
+
+    override fun setup() {
+        super.setup()
+        configure()
+    }
+
+    protected fun configure() {
+        CurrentApplicationVersion.version = AbstractDesktopApplication.readVersion()
+
+        LibraryModule.DEF_LIBRARY_UUID = AntaresApplication.DEF_LIBRARY_UUID
+
+        // System library loaded as JVM resources
+        LibraryModule.systemLibraryPersistenceService = ResourceLibraryPersistenceService()
+        LibraryModule.systemLibraryDictionaryService = LibraryDictionaryService(ResourceLibraryDictionaryPersistenceService())
+        LibraryModule.libraryManagementService = LibraryManagementService()
+
+        // User project in temporary files
+        val tempDir = Files.createTempDirectory(null)
+        ProjectModule.projectLibraryPersistenceService = FileLibraryPersistenceService({ tempDir.absolutePathString() }, "projects")
+        ProjectModule.projectLibraryService = LibraryService(userLibraryPersisterProvider = { ProjectModule.projectLibraryPersistenceService } )
+        ProjectModule.projectDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService({ tempDir.absolutePathString() }, "projects"))
+        ProjectModule.projectManagementService = ProjectManagementService()
+
+        GraphModelModule.nonVolatileService = NonVolatileServiceJvm({ tempDir.toString() }, "nonVolatile")
+    }
 
     override fun getCircuitView(): GraphView = openedCircuitView
 

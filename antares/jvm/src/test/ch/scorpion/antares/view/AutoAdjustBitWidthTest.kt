@@ -38,13 +38,6 @@ import kotlin.test.assertEquals
 
 class AutoAdjustBitWidthTest {
 
-    companion object {
-        init {
-            AntaresJvmTestRule.configure()
-            GraphModuleJvm.projectAkrabClientService = { mock() }
-        }
-    }
-
     private lateinit var graphDataViewController: GraphDataViewController
 
     private lateinit var application: TestGraphApplication<AntaresFrame>
@@ -59,6 +52,9 @@ class AutoAdjustBitWidthTest {
 
     @BeforeTest
     fun beforeTest() {
+        AntaresJvmTestRule.configure()
+        GraphModuleJvm.projectAkrabClientService = { mock() }
+
         BaseModule.eventBus.clear()
 
         TempFileLibraryTestRule.configure()

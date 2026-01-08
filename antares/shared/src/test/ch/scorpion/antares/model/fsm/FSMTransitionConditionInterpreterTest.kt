@@ -7,10 +7,8 @@ import kotlin.test.assertEquals
 
 class FSMTransitionConditionInterpreterTest {
 
-    companion object {
-        init {
-            AntaresTestRule.configure()
-        }
+    init {
+        AntaresTestRule.configure()
     }
 
     @Test

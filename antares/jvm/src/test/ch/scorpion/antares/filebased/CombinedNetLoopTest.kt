@@ -7,12 +7,6 @@ import kotlin.test.Test
 
 class CombinedNetLoopTest : AbstractFileBasedTest() {
 
-	companion object {
-		init {
-			configure()
-		}
-	}
-
 	private lateinit var a: DigitalCircuitInOut
 
 	@BeforeTest

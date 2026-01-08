@@ -10,16 +10,11 @@ import kotlin.test.assertFailsWith
 
 class TestcaseAnalyserTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	private lateinit var circuit: DigitalGraph
 
 	@BeforeTest
 	fun buildCircuit() {
+		AntaresTestRule.configure()
 		val builder = TestCircuitBuilder("test")
 		builder.addInput("A")
 		builder.addInput("B")

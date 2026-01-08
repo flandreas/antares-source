@@ -37,13 +37,6 @@ import kotlin.test.Ignore
 
 class AntaresBeanInfoTest {
 
-	companion object {
-		init {
-			BaseModuleJvm.require()
-			AntaresTestRule.configure()
-		}
-	}
-
 	private val graph = DigitalGraph()
 	private val drawing = mock<GraphView>(MockMode.autofill)
 	private val commandManager = mock<CommandManager>(MockMode.autofill)
@@ -51,6 +44,9 @@ class AntaresBeanInfoTest {
 	private val editor = mock<Editor>(MockMode.autofill)
 
 	init {
+		BaseModuleJvm.require()
+		AntaresTestRule.configure()
+
 		every { drawing.graph } returns graph
 		every { editor.view } returns view
 		every { editor.active } returns true

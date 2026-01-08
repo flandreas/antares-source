@@ -7,10 +7,8 @@ import kotlin.test.assertEquals
 
 class LightColorTest {
 
-	companion object {
-		init {
-		    AntaresTestRule.configure()
-		}
+	init {
+		AntaresTestRule.configure()
 	}
 
 	@Test

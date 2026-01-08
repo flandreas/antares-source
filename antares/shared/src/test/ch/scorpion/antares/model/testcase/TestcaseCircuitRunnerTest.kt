@@ -17,13 +17,11 @@ import kotlin.test.assertEquals
 
 class TestcaseCircuitRunnerTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	private lateinit var circuit: GraphView
+
+	init {
+		AntaresTestRule.configure()
+	}
 
 	@Test
 	fun shouldPassAndGateCircuitTest() {

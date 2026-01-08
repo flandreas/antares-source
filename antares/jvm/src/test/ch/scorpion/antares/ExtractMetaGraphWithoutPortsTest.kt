@@ -21,7 +21,6 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import dev.mokkery.answering.calls
 import dev.mokkery.every
 import dev.mokkery.mock
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -31,14 +30,6 @@ import kotlin.test.assertTrue
  * Occurred if a single AND gate was extracted to a subcircuit.
  */
 class ExtractMetaGraphWithoutPortsTest : AbstractJvmCircuitTest() {
-
-    companion object {
-        init {
-            AntaresTestRule.configure()
-            GraphViewModule.metaGraphService = AntaresMetaGraphService(copyPasteService = GraphViewCopyPasteService())
-            BaseModule.properties.set(ContainerDrawingLayouter.PROP_CONTAINER_DRAWING_LAYOUTER, ContainerDrawingLayouter.Narrow.customName)
-        }
-    }
 
     private lateinit var sourceMetaGraph: MetaGraph
     private lateinit var input1: DigitalCircuitInOutView
@@ -52,8 +43,11 @@ class ExtractMetaGraphWithoutPortsTest : AbstractJvmCircuitTest() {
 
     override fun getCircuitView(): GraphView = sourceMetaGraph.graph.graphView
 
-    @BeforeTest
-    fun setupCircuit() {
+    override fun setup() {
+        super.setup()
+        GraphViewModule.metaGraphService = AntaresMetaGraphService(copyPasteService = GraphViewCopyPasteService())
+        BaseModule.properties.set(ContainerDrawingLayouter.PROP_CONTAINER_DRAWING_LAYOUTER, ContainerDrawingLayouter.Narrow.customName)
+
         setupLibrary()
         val builder = GraphViewBuilder<DigitalSignal>("test")
 

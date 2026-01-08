@@ -13,7 +13,6 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import dev.mokkery.MockMode
 import dev.mokkery.mock
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -22,23 +21,23 @@ import kotlin.test.assertEquals
  */
 class BidirectionalSplitterViewDefinedTest : AbstractJvmCircuitTest() {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
 
 	private lateinit var circuitView: GraphView
 	private val actorListener = mock<ActorListener>(MockMode.autofill)
-	private val bidiSplitterView = BidirectionalSplitterView(model = BidirectionalSplitter(BitWidth.BW_2, BranchCount.BC_2))
-	private val circuitInputView = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "A", bitWidth = BitWidth.BW_2, portType = PortType.INPUT))
-	private val ledView1 = LEDView()
-	private val ledView2 = LEDView()
+	private lateinit var bidiSplitterView: BidirectionalSplitterView
+	private lateinit var circuitInputView: DigitalCircuitInOutView
+	private lateinit var ledView1: LEDView
+	private lateinit var ledView2: LEDView
 
 	override fun getCircuitView(): GraphView = circuitView
 
-	@BeforeTest
-	fun setupCircuit() {
+	override fun setup() {
+		super.setup()
+		bidiSplitterView = BidirectionalSplitterView(model = BidirectionalSplitter(BitWidth.BW_2, BranchCount.BC_2))
+		circuitInputView = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "A", bitWidth = BitWidth.BW_2, portType = PortType.INPUT))
+		ledView1 = LEDView()
+		ledView2 = LEDView()
+
 		val builder = TestCircuitBuilder("test", styleProvider, eventBus)
 
 		builder.addVerticeView(circuitInputView)

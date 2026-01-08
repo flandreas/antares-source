@@ -9,12 +9,6 @@ import kotlin.test.*
 
 class BidirectionalSplitterBusDriverTest : AbstractFileBasedTest() {
 
-	companion object {
-		init {
-			configure()
-		}
-	}
-
 	private lateinit var dirSwitch: Switch
 	private lateinit var inOutA0: DigitalCircuitInOut
 	private lateinit var inOutA1: DigitalCircuitInOut

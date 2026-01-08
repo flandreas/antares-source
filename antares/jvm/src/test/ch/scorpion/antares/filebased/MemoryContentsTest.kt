@@ -10,12 +10,6 @@ import kotlin.test.assertEquals
 
 class MemoryContentsTest : AbstractFileBasedTest() {
 
-    companion object {
-        init {
-            configure()
-        }
-    }
-
     private lateinit var input: DigitalCircuitInOut
     private lateinit var output: DigitalCircuitInOut
 

@@ -13,34 +13,29 @@ import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
-
 
 /**
  * Integration tests for [SubGraphVerticeRef] working as [NetCombiner].
  */
 class SubGraphVerticeRefNetCombinerTest : AbstractJvmCircuitTest() {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	private lateinit var circuitView: GraphView
 	private val library get() = LibraryModule.libraryHolder.library
 
 	private lateinit var subGraphVV: SubGraphVerticeView<out SubGraphVertice>
-	private val a = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "A", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
-	private val b = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "B", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
+	private lateinit var a: DigitalCircuitInOutView
+	private lateinit var b: DigitalCircuitInOutView
 
 	override fun getCircuitView(): GraphView = circuitView
 
-	@BeforeTest
-	fun setupCircuit() {
+	override fun setup() {
+		super.setup()
+		a = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "A", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
+		b = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "B", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
+
 		setupLibrary()
 
 		TestLibraryBuilder().addInOutToInOut(library)

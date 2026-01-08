@@ -15,6 +15,7 @@ import ch.scorpion.jabbah.edit.command.SourcingCommandManager
 import ch.scorpion.jabbah.edit.editor.EditEditorModule
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.EditorToolDriver
+import ch.scorpion.jabbah.graph.view.app.GraphViewAppService
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import dev.mokkery.MockMode
@@ -30,21 +31,23 @@ abstract class AbstractGraphViewEditingTest(
 	snapshotSize: Int = 2
 ) {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
-	protected val builder: GraphViewBuilder<Boolean> = GraphViewBuilder {
-			builder -> view.setDrawing(builder.graphView as Drawing<Component>)
-	}
-	protected val view = EditModule.drawingViewFactory.create(builder.graphView as Drawing<Component>, null, false, "")
-	protected val editor: Editor = EditEditorModule.createEditor("", view as DrawingView<Drawing<Component>>)
-	protected val driver = EditorToolDriver(editor)
-	protected val service = GraphViewModule.graphViewAppService
+	protected val builder: GraphViewBuilder<Boolean>
+	protected val view: DrawingView<Drawing<Component>>
+	protected val editor: Editor
+	protected val driver: EditorToolDriver
+	protected val service: GraphViewAppService
 
 	init {
+		AntaresTestRule.configure()
+
+		builder = GraphViewBuilder {
+				builder -> view.setDrawing(builder.graphView as Drawing<Component>)
+		}
+		view = EditModule.drawingViewFactory.create(builder.graphView as Drawing<Component>, null, false, "")
+		editor = EditEditorModule.createEditor("", view as DrawingView<Drawing<Component>>)
+		driver = EditorToolDriver(editor)
+		service = GraphViewModule.graphViewAppService
+
 		BaseModule.properties.set(SourcingCommandManager.PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT, snapshotSize)
 
 		val canvas = mock<Canvas>(MockMode.autofill)
@@ -57,7 +60,6 @@ abstract class AbstractGraphViewEditingTest(
 
 		GraphViewImpl.inputEventHandler = null
 		editor.commandManager.bindDataHolder(builder)
-
 	}
 
 	protected abstract fun setupCircuit()

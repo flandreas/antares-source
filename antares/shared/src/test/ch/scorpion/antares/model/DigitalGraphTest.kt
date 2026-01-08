@@ -17,15 +17,13 @@ import kotlin.test.assertTrue
 
 class DigitalGraphTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	private val signalHandler = mock<SignalHandler>()
 	private lateinit var tunnel1: Tunnel
 	private lateinit var tunnel2: Tunnel
+
+	init {
+		AntaresTestRule.configure()
+	}
 
 	@Test
 	fun shouldCreateTunnelNetsDuringNetFormation() {

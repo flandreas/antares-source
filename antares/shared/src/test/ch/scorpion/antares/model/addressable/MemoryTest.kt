@@ -3,15 +3,10 @@ package ch.scorpion.antares.model.addressable
 import ch.scorpion.antares.AntaresTestRule
 import kotlin.test.*
 
-/**
- * Unit tests for [Memory].
- */
 class MemoryTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
+	init {
+		AntaresTestRule.configure()
 	}
 
 	/** ---- Management tests */

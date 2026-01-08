@@ -9,12 +9,6 @@ import kotlin.test.*
 
 class Transceiver8BitTest : AbstractFileBasedTest() {
 
-	companion object {
-		init {
-			configure()
-		}
-	}
-
 	private lateinit var a: DigitalCircuitInOut
 	private lateinit var transceiverA: SubGraphVerticeRef
 	private lateinit var transceiverB: SubGraphVerticeRef

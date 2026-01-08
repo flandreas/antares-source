@@ -14,20 +14,17 @@ import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.execution.ForwardSignalHandler
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
 import ch.scorpion.jabbah.io.StorableCloner
-import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class WireTapTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	private val signalHandler = ForwardSignalHandler(CurrentSystemSpeedCategory(SystemSpeed()))
+
+	init {
+		AntaresTestRule.configure()
+	}
 
 	@Test
 	fun shouldInstantiate() {

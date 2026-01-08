@@ -20,12 +20,6 @@ import kotlin.test.assertEquals
  */
 class Bug606 : AbstractFileBasedTest() {
 
-	companion object {
-		init {
-			configure()
-		}
-	}
-
 	private lateinit var realSwitch: RealSwitch
 	private lateinit var net: DigitalNet
 

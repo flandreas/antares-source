@@ -5,10 +5,8 @@ import kotlin.test.Test
 
 class DipSwitchViewTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
+	init {
+		AntaresTestRule.configure()
 	}
 
 	@Test

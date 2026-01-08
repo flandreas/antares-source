@@ -17,14 +17,13 @@ import kotlin.test.assertTrue
 
 class CircuitInOutImplTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
-	private val inout = DigitalCircuitInOutImpl()
+	private val inout: DigitalCircuitInOutImpl
 	private val signalHandler = mock<SignalHandler>(MockMode.autofill)
+
+	init {
+		AntaresTestRule.configure()
+		inout = DigitalCircuitInOutImpl()
+	}
 
 	@Test
 	fun shouldDelaySwitchOn() {

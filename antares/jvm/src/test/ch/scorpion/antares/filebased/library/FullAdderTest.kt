@@ -9,7 +9,8 @@ import kotlin.test.Test
 class FullAdderTest : AbstractSystemLibraryTest() {
 
     @BeforeTest
-    fun setupCircuit() {
+    override fun setup() {
+        super.setup()
         configure()
         openCircuitWithElement(UUID("08aba425-96c2-4c43-b10b-2e0c72ce8300"))
     }

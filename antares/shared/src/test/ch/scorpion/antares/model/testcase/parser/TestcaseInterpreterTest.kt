@@ -16,12 +16,6 @@ import kotlin.test.assertEquals
 @OptIn(ExperimentalUnsignedTypes::class)
 class TestcaseInterpreterTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	private val inputPort = mock<GraphPort<Any>>()
 	private val outputPort = mock<GraphPort<Any>>()
 
@@ -37,6 +31,7 @@ class TestcaseInterpreterTest {
 	}
 
 	init {
+		AntaresTestRule.configure()
 		every { inputPort.portType } returns PortType.INPUT
 		every { outputPort.portType } returns PortType.OUTPUT
 	}

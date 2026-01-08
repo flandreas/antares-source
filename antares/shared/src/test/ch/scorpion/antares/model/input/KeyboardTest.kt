@@ -11,14 +11,13 @@ import kotlin.test.assertEquals
 
 class KeyboardTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
-	private val keyboard = Keyboard()
+	private val keyboard: Keyboard
 	private val signalHandler: SignalHandler = mock(MockMode.autofill)
+
+	init {
+		AntaresTestRule.configure()
+		keyboard = Keyboard()
+	}
 
 	private fun enter(char: Char) {
 		keyboard.enter(char.code.toByte(), signalHandler)

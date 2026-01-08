@@ -5,19 +5,13 @@ import ch.scorpion.antares.model.signal.BitWidth
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-
-/**
- * Unit tests for [CompressedMemoryDump].
- */
 class CompressedMemoryDumpTest {
 
-    companion object {
-	    init {
-		    AntaresTestRule.configure()
-	    }
+    init {
+        AntaresTestRule.configure()
     }
 
-    /** ---- Write 8 bit tests and common write functionality*/
+    /** ---- Write 8-bit tests and common write functionality*/
 
     @Test
     fun shouldWriteEmptyData() {

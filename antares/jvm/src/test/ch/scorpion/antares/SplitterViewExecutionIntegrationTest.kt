@@ -15,24 +15,23 @@ import kotlin.test.*
 
 class SplitterViewExecutionIntegrationTest : AbstractJvmCircuitTest() {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	private lateinit var circuitView: GraphView
 	private val actorListener = mock<ActorListener>(MockMode.autofill)
 
-	private val circuitInputView = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(bitWidth = BitWidth.BW_2))
-	private val splitterView = SplitterView(model = Splitter(BitWidth.BW_2, BranchCount.BC_2))
-	private val ledView1 = LEDView()
-	private val ledView2 = LEDView()
+	private lateinit var circuitInputView: DigitalCircuitInOutView
+	private lateinit var splitterView: SplitterView
+	private lateinit var ledView1: LEDView
+	private lateinit var ledView2: LEDView
 
 	override fun getCircuitView(): GraphView = circuitView
 
-	@BeforeTest
-	fun setupCircuit() {
+	override fun setup() {
+		super.setup()
+		circuitInputView = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(bitWidth = BitWidth.BW_2))
+		splitterView = SplitterView(model = Splitter(BitWidth.BW_2, BranchCount.BC_2))
+		ledView1 = LEDView()
+		ledView2 = LEDView()
+
 		val builder = TestCircuitBuilder("test", styleProvider, eventBus)
 
 		builder.addVerticeView(circuitInputView)

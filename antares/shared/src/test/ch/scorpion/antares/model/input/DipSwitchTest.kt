@@ -7,7 +7,6 @@ import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_4
 import ch.scorpion.antares.model.signal.DigitalSignalFactory.allOf
 import ch.scorpion.antares.model.signal.DigitalSignalFactory.of
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.graph.view.GraphView
 import dev.mokkery.MockMode
 import dev.mokkery.mock
 import kotlin.test.Test
@@ -17,14 +16,11 @@ import kotlin.test.assertTrue
 
 class DipSwitchTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	private val signalHandler: SignalHandler = mock(MockMode.autofill)
-	private val graphView = mock<GraphView>(MockMode.autofill)
+
+	init {
+		AntaresTestRule.configure()
+	}
 
 	@Test
 	fun shouldDelayChangeInSetBit() {

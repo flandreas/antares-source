@@ -18,13 +18,11 @@ import kotlin.test.assertEquals
 
 class CircuitInOutViewTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	private val signalHandler = mock<SignalHandler>(MockMode.autofill)
+
+	init {
+		AntaresTestRule.configure()
+	}
 
 	@Test
 	fun shouldNotChangeLocationWhenChangingBitWidthWhileConnected() {

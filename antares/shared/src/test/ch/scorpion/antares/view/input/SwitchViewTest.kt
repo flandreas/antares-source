@@ -18,14 +18,13 @@ import kotlin.test.assertTrue
 
 class SwitchViewTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
-	private val switchView = SwitchView()
+	private val switchView: SwitchView
 	private val signalHandler: SignalHandler = mock(MockMode.autofill)
+
+	init {
+		AntaresTestRule.configure()
+		switchView = SwitchView()
+	}
 
 	@Test
 	fun shouldConsumeKeyEventForName() {

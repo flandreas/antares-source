@@ -11,20 +11,16 @@ import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-/**
- * Unit test for [ROM].
- */
 class ROMTest {
 
-    companion object {
-	    init {
-		    AntaresTestRule.configure()
-	    }
-    }
-
-    private val rom = ROM()
+    private val rom: ROM
     private val calculator = ROM.CALCULATOR
     private val signalHandler: SignalHandler = mock(MockMode.autofill)
+
+    init {
+        AntaresTestRule.configure()
+        rom = ROM()
+    }
 
     @Test
     fun shouldReadAndWrite() {

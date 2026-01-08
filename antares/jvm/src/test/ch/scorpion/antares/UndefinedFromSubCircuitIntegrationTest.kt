@@ -4,7 +4,6 @@ import ch.scorpion.antares.model.net.PullDirection
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.antares.model.signal.Word
 import ch.scorpion.antares.view.net.PullResistorView
 import ch.scorpion.antares.view.output.LEDView
 import ch.scorpion.jabbah.base.geom.Point2D
@@ -15,18 +14,11 @@ import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class UndefinedFromSubCircuitIntegrationTest : AbstractJvmCircuitTest() {
-
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
 
 	private val library get() = LibraryModule.libraryHolder.library
 	private val builder = TestCircuitBuilder("test")
@@ -36,8 +28,9 @@ class UndefinedFromSubCircuitIntegrationTest : AbstractJvmCircuitTest() {
 
 	override fun getCircuitView(): GraphView = builder.build()
 
-	@BeforeTest
-	fun setupCircuit() {
+	override fun setup() {
+		super.setup()
+
 		setupLibrary()
 		TestLibraryBuilder().addInOutToInOut(library)
 		subGraphVV = (library.get(TestLibraryBuilder.INOUT_TO_INOUT) as LibraryElement).getNewInstance<SubGraphVerticeRef>()

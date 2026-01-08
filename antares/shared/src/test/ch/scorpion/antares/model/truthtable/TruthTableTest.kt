@@ -7,10 +7,8 @@ import kotlin.test.*
 
 class TruthTableTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
+	init {
+		AntaresTestRule.configure()
 	}
 
 	@Test

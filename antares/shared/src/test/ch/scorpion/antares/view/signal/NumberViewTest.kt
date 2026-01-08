@@ -8,10 +8,8 @@ import kotlin.test.assertEquals
 
 internal class NumberViewTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
+	init {
+		AntaresTestRule.configure()
 	}
 
 	@Test

@@ -9,10 +9,8 @@ import kotlin.test.assertFailsWith
 
 class PeriodOrFrequencyTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
+	init {
+		AntaresTestRule.configure()
 	}
 
 	/** ---- Parsing tests */

@@ -1,22 +1,18 @@
 package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.AbstractCircuitTest
-import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.antares.view.output.LEDView
 import ch.scorpion.jabbah.graph.view.GraphView
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class DoubleThrowSwitchSplittingSimulationTest : AbstractCircuitTest() {
-
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
 
 	private lateinit var circuitView: GraphView
 	private lateinit var doubleThrowSwitchView: DoubleThrowSwitchView
@@ -26,8 +22,8 @@ class DoubleThrowSwitchSplittingSimulationTest : AbstractCircuitTest() {
 
 	override fun getCircuitView(): GraphView = circuitView
 
-	@BeforeTest
-	fun setupCircuit() {
+	override fun setup() {
+		super.setup()
 		val builder = TestCircuitBuilder("test", styleProvider, eventBus)
 		buttonView =  builder.addVerticeView(SwitchView())
 		doubleThrowSwitchView = builder.addVerticeView(DoubleThrowSwitchView())

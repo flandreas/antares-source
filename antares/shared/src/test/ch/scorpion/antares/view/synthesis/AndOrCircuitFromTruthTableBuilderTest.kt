@@ -23,13 +23,11 @@ import kotlin.test.assertTrue
 
 class AndOrCircuitFromTruthTableBuilderTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	private val truthTableService = TruthTableService()
+
+	init {
+		AntaresTestRule.configure()
+	}
 
 	private fun getLogicGateViews(metaGraph: MetaGraph, type: LogicGateType): Collection<VerticeView<*>> =
 		metaGraph.graph.graphView.getVerticeViews().filter { it is LogicGateView && it.model.gateType == type }

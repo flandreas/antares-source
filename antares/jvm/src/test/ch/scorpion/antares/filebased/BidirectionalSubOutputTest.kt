@@ -15,12 +15,6 @@ import kotlin.test.assertEquals
  */
 class BidirectionalSubOutputTest : AbstractFileBasedTest() {
 
-    companion object {
-        init {
-            configure()
-        }
-    }
-
     private lateinit var switch: Switch
     private lateinit var net: DigitalNet
 

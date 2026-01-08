@@ -17,7 +17,6 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import dev.mokkery.MockMode
 import dev.mokkery.mock
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -26,25 +25,21 @@ import kotlin.test.assertEquals
  */
 class InOutToOutExecutionIntegrationTest : AbstractJvmCircuitTest() {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	private lateinit var circuitView: GraphView
 	private val actorListener = mock<ActorListener>(MockMode.autofill)
 	private val library get() = LibraryModule.libraryHolder.library
 
 	private lateinit var subGraphVV: SubGraphVerticeView<out SubGraphVertice>
-	private val switchView = SwitchView()
-
-	private val ledView = LEDView()
+	private lateinit var switchView: SwitchView
+	private lateinit var ledView: LEDView
 
 	override fun getCircuitView(): GraphView = circuitView
 
-	@BeforeTest
-	fun setupCircuit() {
+	override fun setup() {
+		super.setup()
+		switchView = SwitchView()
+		ledView = LEDView()
+
 		setupLibrary()
 
 		TestLibraryBuilder().addInOutToOut(library)

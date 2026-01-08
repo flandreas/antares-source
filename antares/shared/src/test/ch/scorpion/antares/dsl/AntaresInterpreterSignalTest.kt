@@ -23,10 +23,8 @@ import kotlin.test.assertFailsWith
 /** Unit tests for [AntaresInterpreter] using [DigitalSignal] values.*/
 class AntaresInterpreterSignalTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
+	init {
+		AntaresTestRule.configure()
 	}
 
 	@Test

@@ -8,10 +8,8 @@ import kotlin.test.assertTrue
 
 class FSMTransitionServiceTest {
 
-    companion object {
-        init {
-            AntaresTestRule.configure()
-        }
+    init {
+        AntaresTestRule.configure()
     }
 
     @Test

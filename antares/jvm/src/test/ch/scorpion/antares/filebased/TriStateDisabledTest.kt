@@ -14,12 +14,6 @@ import kotlin.test.assertEquals
  */
 class TriStateDisabledTest : AbstractFileBasedTest() {
 
-	companion object {
-		init {
-			configure()
-		}
-	}
-
 	private lateinit var inout1: DigitalCircuitInOutView
 	private lateinit var inout2: DigitalCircuitInOutView
 

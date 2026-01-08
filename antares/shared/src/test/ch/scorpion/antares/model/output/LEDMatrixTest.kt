@@ -10,18 +10,13 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-/**
- * Unit tests for [LEDMatrix].
- */
 class LEDMatrixTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	private val signalHandler = mock<SignalHandler>(MockMode.autofill)
+
+	init {
+		AntaresTestRule.configure()
+	}
 
 	@Test
 	fun shouldBuffer1x1() {

@@ -11,12 +11,6 @@ import kotlin.test.assertEquals
 
 class Combiner4To8To2 : AbstractFileBasedTest() {
 
-	companion object {
-		init {
-			configure()
-		}
-	}
-
 	private lateinit var a0: DigitalCircuitInOut
 	private lateinit var a1: DigitalCircuitInOut
 	private lateinit var b0: DigitalCircuitInOut

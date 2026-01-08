@@ -5,7 +5,7 @@ package ch.scorpion.jabbah.base
  */
 interface Module {
 
-    /** Called by an application or by other [Module]s to indicate that the depend on this [Module].*/
+    /** Called by an application or by other [Module]s to indicate that they depend on this [Module].*/
     fun require()
 }
 
@@ -13,6 +13,14 @@ abstract class AbstractModule : Module {
 
     /** Remember whether this [Module] has already been configured or not. */
     private var configured: Boolean = false
+
+    /**
+     * Used in tests to reset configuration in cases where settings in this [Module] has been overwritten
+     * by settings in other [Module]s.
+     */
+    fun reset() {
+        configured = false
+    }
 
     override fun require() {
         if (!configured) {

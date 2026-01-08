@@ -40,13 +40,6 @@ import kotlin.test.assertEquals
 
 class ContainerUIIntegrationTest {
 
-    companion object {
-        init {
-            AntaresJvmTestRule.configure()
-            GraphModuleJvm.projectAkrabClientService = { mock() }
-        }
-    }
-
     private lateinit var graphDataViewController: GraphDataViewController
 
     private lateinit var application: TestGraphApplication<AntaresFrame>
@@ -57,10 +50,11 @@ class ContainerUIIntegrationTest {
 
     private lateinit var libraryTreeView: LibraryTreeViewSwing
 
-    //private val graphView: GraphView get() = application.editor.drawing as GraphView
-
     @BeforeTest
     fun beforeTest() {
+        AntaresJvmTestRule.configure()
+        GraphModuleJvm.projectAkrabClientService = { mock() }
+
         TempFileLibraryTestRule.configure()
 
         graphDataViewController = GraphDataViewController()

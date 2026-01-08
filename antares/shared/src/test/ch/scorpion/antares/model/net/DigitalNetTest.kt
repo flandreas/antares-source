@@ -8,15 +8,10 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-/**
- * Unit tests for [DigitalNet].
- */
 class DigitalNetTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
+	init {
+		AntaresTestRule.configure()
 	}
 
 	@Test

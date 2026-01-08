@@ -2,7 +2,6 @@ package ch.scorpion.antares.model.input
 
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.jabbah.execution.SignalHandler
-import ch.scorpion.jabbah.graph.view.GraphView
 import dev.mokkery.MockMode
 import dev.mokkery.mock
 import kotlin.test.Test
@@ -11,15 +10,13 @@ import kotlin.test.assertTrue
 
 class SwitchTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
-	private val switch = Switch()
+	private val switch: Switch
 	private val signalHandler: SignalHandler = mock(MockMode.autofill)
-	private val graphView = mock<GraphView>(MockMode.autofill)
+
+	init {
+		AntaresTestRule.configure()
+		switch = Switch()
+	}
 
 	@Test
 	fun shouldDelaySwitchOn() {

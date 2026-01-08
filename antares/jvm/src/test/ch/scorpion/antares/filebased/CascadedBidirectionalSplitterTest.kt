@@ -14,12 +14,6 @@ import kotlin.test.*
 
 class CascadedBidirectionalSplitterTest : AbstractFileBasedTest() {
 
-	companion object {
-		init {
-			configure()
-		}
-	}
-
 	private lateinit var inoutA: DigitalCircuitInOut
 	private lateinit var pullResistor: PullResistor
 	private lateinit var inoutIO1: DigitalCircuitInOut

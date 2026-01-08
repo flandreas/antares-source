@@ -17,12 +17,6 @@ import kotlin.test.assertEquals
  */
 class LegacyFormattedTextTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	private val data = """
 		<?xml version='1.0' encoding='UTF-8'?>
 		<metaGraph _id='0' manualContainer='true'>
@@ -71,6 +65,9 @@ class LegacyFormattedTextTest {
 		</metaGraph>		
 	""".trimIndent()
 
+	init {
+		AntaresTestRule.configure()
+	}
 
 	@Test
 	fun shouldReadLegacyFormat() {

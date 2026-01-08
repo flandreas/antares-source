@@ -9,10 +9,8 @@ import kotlin.test.assertEquals
 
 class ConstantViewTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
+	init {
+		AntaresTestRule.configure()
 	}
 
 	@Test
