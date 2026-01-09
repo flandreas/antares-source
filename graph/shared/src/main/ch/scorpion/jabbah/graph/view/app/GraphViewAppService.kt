@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.graph.view.app
 
-import ch.scorpion.jabbah.base.UUID
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.logger
@@ -16,7 +15,6 @@ import ch.scorpion.jabbah.edit.model.group.GroupComponent
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.MetaGraph
-import ch.scorpion.jabbah.graph.app.AbstractGraphViewCommand
 import ch.scorpion.jabbah.graph.library.LibraryDirectory
 import ch.scorpion.jabbah.graph.library.LibraryElement
 import ch.scorpion.jabbah.graph.model.GraphType
@@ -165,28 +163,5 @@ open class GraphViewAppServiceImpl(
 
 	private fun possibleWrapper(component: Component, drawing: Drawing<*>): Component {
 		return getWrapperOf(component, drawing) ?: component
-	}
-}
-
-class ExtractMetaGraphCommand(
-	private val graphName: TranslatableText,
-	private val type: GraphType,
-	drawingView: DrawingView<GraphView>,
-	private val componentIds: Collection<Int>,
-	private val libraryDirectory: LibraryDirectory
-) : AbstractGraphViewCommand("graph.command.extractMetaGraph", drawingView) {
-
-	private lateinit var uuid: UUID
-
-	override fun execute() {
-		uuid = GraphViewModule.metaGraphService.extractMetaGraph(graphName, type, drawingView, componentIds, libraryDirectory)
-	}
-
-	override fun notifyUndo() {
-		with (libraryDirectory.library!!) {
-			getContainerLibraryElement(this@ExtractMetaGraphCommand.uuid)?.let {
-				libraryService.removeLibraryItem(this, it)
-			}
-		}
 	}
 }
