@@ -33,7 +33,8 @@ class DockingController : AbstractUIController<DockingView>() {
         private const val SENSITIVE_COL_WIDTH = 1.0 / 6.0
     }
 
-    private var startLocation: CurrentDockingLocation? = null
+    var startLocation: CurrentDockingLocation? = null
+        private set
 
     /**
      * Fly-weight object to return results in [mouseDragged]. Avoids creation of lots of objects

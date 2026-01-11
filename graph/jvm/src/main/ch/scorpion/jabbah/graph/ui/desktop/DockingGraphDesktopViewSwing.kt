@@ -38,6 +38,7 @@ class DockingGraphDesktopViewSwing(
 
     private var dockingLocation: NewDockingLocation? = null
     private val dockingTarget = DockingTarget()
+    private val dockingSource = DockingSource()
 
     private val dockingStartedHandler: EventHandler<DockingStartedEvent> = { handle(it) }
     private val dockingFinishedHandler: EventHandler<DockingFinishedEvent> = { handle(it) }
@@ -88,7 +89,13 @@ class DockingGraphDesktopViewSwing(
         } else {
             event.graphDesktopViewItem
         }
-        dockingController.startDragging(getCurrentLocationOf(target))
+        val currentLocation = getCurrentLocationOf(target)
+        dockingController.startDragging(currentLocation)
+
+        with(dockingController.getBounds(currentLocation)) {
+            dockingSource.setBounds(xInt, yInt, widthInt, heightInt)
+        }
+        glassPane.add(dockingSource)
 
         glassPane.isVisible = true
     }
@@ -96,6 +103,7 @@ class DockingGraphDesktopViewSwing(
     private fun handle(event: DockingFinishedEvent) {
         LOG.trace("Docking finished")
         glassPane.isVisible = false
+        glassPane.remove(dockingSource)
     }
 
     fun setDropLocation(dropLocation: Point) {
@@ -320,6 +328,18 @@ class DockingGraphDesktopViewSwing(
             private val COLOR = Color.ORANGE.let {
                 Color(it.red, it.green, it.blue, 24)
             }
+        }
+
+        override fun paintComponent(g: Graphics) {
+            super.paintComponent(g)
+            g.color = COLOR
+            g.fillRect(0, 0, width, height)
+        }
+    }
+
+    private class DockingSource : JComponent() {
+        companion object {
+            private val COLOR = UIManager.getColor("Panel.background").darker()
         }
 
         override fun paintComponent(g: Graphics) {
