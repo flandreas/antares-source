@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.graph.ui.desktop
 
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.ui.AbstractUIController
 
 data class CurrentDockingLocation(
@@ -40,11 +41,45 @@ class DockingController : AbstractUIController<DockingView>() {
      */
     private val newDockingLocation = NewDockingLocation()
 
+    /**
+     * Fly-weight object to return results in [getBounds]. Avoids creation of lots of objects
+     * during mouse dragging.
+     */
+    private val currentLocationBounds = Rectangle2D()
+
+    fun getBounds(loc: CurrentDockingLocation): RectangularShape {
+        var x = 0
+        for (column in 0 until loc.column) {
+            x += view.getColumnWidth(column)
+        }
+        var y = 0
+        for (row in 0 until loc.row) {
+            y += view.getRowHeight(loc.column, row)
+        }
+        currentLocationBounds.setFrame(x, y, view.getColumnWidth(loc.column), view.getRowHeight(loc.column, loc.row))
+        return currentLocationBounds
+    }
+
     fun startDragging(location: CurrentDockingLocation) {
         this.startLocation = location
     }
 
     fun mouseDragged(mx: Int, my: Int): NewDockingLocation? {
+        if (startLocation == null) {
+            return null
+        }
+        val bounds = getBounds(startLocation!!)
+        if (bounds.contains(mx, my)) {
+            with(newDockingLocation) {
+                column.index = startLocation!!.column
+                column.insert = false
+                row.index = startLocation!!.row
+                row.insert = false
+                area.setFrame(bounds)
+            }
+            return newDockingLocation
+        }
+
         // Determine column
         var areaX = 0
         var areaWidth = 0

@@ -25,7 +25,7 @@ class DockingControllerTest {
         dockingViewBuilder.withColumnRows(2)
         controller.startDragging(CurrentDockingLocation(0, 1))
 
-        val newLoc = controller.mouseDragged(900, 900)!!
+        val newLoc = controller.mouseDragged(900, 200)!!
 
         assertEquals(1, newLoc.column.index)
         assertTrue(newLoc.column.insert)
@@ -40,7 +40,7 @@ class DockingControllerTest {
         dockingViewBuilder.withColumnRows(2)
         controller.startDragging(CurrentDockingLocation(0, 1))
 
-        val newLoc = controller.mouseDragged(100, 900)!!
+        val newLoc = controller.mouseDragged(100, 200)!!
 
         assertEquals(0, newLoc.column.index)
         assertTrue(newLoc.column.insert)
@@ -70,7 +70,7 @@ class DockingControllerTest {
         dockingViewBuilder.withColumnRows(1, 2)
         controller.startDragging(CurrentDockingLocation(1, 1))
 
-        val newLoc = controller.mouseDragged(520, 900)!!
+        val newLoc = controller.mouseDragged(520, 200)!!
 
         assertEquals(1, newLoc.column.index)
         assertTrue(newLoc.column.insert)
@@ -107,5 +107,31 @@ class DockingControllerTest {
         assertEquals(1, newLoc.row.index)
         assertTrue(newLoc.row.insert)
         assertEquals(Rectangle2D(0, 500, 500, 500), newLoc.area)
+    }
+
+    @Test
+    fun shouldCalculateBounds() {
+        dockingViewBuilder.withColumnRows(1, 3)
+
+        val bounds = controller.getBounds(CurrentDockingLocation(1, 2))
+        assertEquals(500, bounds.xInt)
+        assertEquals(666, bounds.yInt)
+        assertEquals(500, bounds.widthInt)
+        assertEquals(333, bounds.heightInt)
+    }
+
+    @Test
+    fun shouldNotDivideOriginSpace() {
+        dockingViewBuilder.withColumnRows(1)
+        controller.startDragging(CurrentDockingLocation(0, 0))
+
+        val newLoc = controller.mouseDragged(200, 200)
+
+        assertNotNull(newLoc)
+        assertEquals(0, newLoc.column.index)
+        assertFalse(newLoc.column.insert)
+        assertEquals(0, newLoc.row.index)
+        assertFalse(newLoc.row.insert)
+        assertEquals(Rectangle2D(0, 0, 1000, 1000), newLoc.area)
     }
 }

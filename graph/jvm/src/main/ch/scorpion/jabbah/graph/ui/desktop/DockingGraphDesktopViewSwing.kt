@@ -79,6 +79,17 @@ class DockingGraphDesktopViewSwing(
 
     private fun handle(event: DockingStartedEvent) {
         LOG.trace("Docking started")
+
+        // The main graph is displayed by GraphEditViewSwing, but DockingStartedEvent originates from the
+        // inner GraphNavigationViewSwing's header. getCurrentLocationOf() needs the outer view object,
+        // not the inner GraphNavigationViewSwing.
+        val target = if (event.graphDesktopViewItem is GraphNavigationViewSwing) {
+            event.graphDesktopViewItem.controller.closeTarget
+        } else {
+            event.graphDesktopViewItem
+        }
+        dockingController.startDragging(getCurrentLocationOf(target))
+
         glassPane.isVisible = true
     }
 
@@ -119,6 +130,12 @@ class DockingGraphDesktopViewSwing(
     override fun getRowHeight(column: Int, row: Int): Int {
         // TODO Support multiple rows
         return columnPanels[column].height
+    }
+
+    fun getCurrentLocationOf(item: GraphDesktopViewItem): CurrentDockingLocation {
+        val column = _columns.indexOfFirst { it.contains(item) }
+        val row = _columns[column].indexOfFirst { it === item }
+        return CurrentDockingLocation(column, row)
     }
 
     /** ---- [GraphDesktopView] interface */

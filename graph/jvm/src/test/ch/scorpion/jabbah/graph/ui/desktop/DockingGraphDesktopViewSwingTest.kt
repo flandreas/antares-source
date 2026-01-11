@@ -84,6 +84,24 @@ class DockingGraphDesktopViewSwingTest {
         assertSame(items[2], (splitPane.rightComponent as JPanel).getComponent(1))
     }
 
+    @Test
+    fun shouldGetCurrentLocationOfMain() {
+        val items = showMainWithChildItems(0)
+        with(view.getCurrentLocationOf(items[0])) {
+            assertEquals(0, column)
+            assertEquals(0, row)
+        }
+    }
+
+    @Test
+    fun shouldGetCurrentLocationOfLastInColumn() {
+        val items = showMainWithChildItems(2)
+        with(view.getCurrentLocationOf(items[2])) {
+            assertEquals(1, column)
+            assertEquals(1, row)
+        }
+    }
+
     private class DummyDesktopViewItem(
         private val item: GraphDesktopViewItem
     ) : JPanel(), GraphDesktopViewItem by item {

@@ -38,7 +38,7 @@ import javax.swing.*
  * A [javax.swing] implementation of [GraphNavigationView].
  */
 class GraphNavigationViewSwing(
-	private val controller: GraphNavigationViewController,
+	val controller: GraphNavigationViewController,
 	override val drawingView: DrawingView<GraphView>,
 	private val viewManager: ContentViewManager,
 	reusable: Boolean,
