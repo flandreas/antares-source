@@ -110,6 +110,7 @@ class DockingGraphDesktopViewSwing(
             dockingTarget.setBounds(loc.area.xInt, loc.area.yInt, loc.area.widthInt, loc.area.heightInt)
             if (dockingLocation == null) {
                 glassPane.add(dockingTarget)
+                repaint()
             }
             dockingLocation = loc
         }
