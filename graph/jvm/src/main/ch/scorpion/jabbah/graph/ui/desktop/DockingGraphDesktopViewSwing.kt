@@ -199,6 +199,7 @@ class DockingGraphDesktopViewSwing(
                 _columns.add(mutableListOf(item))
                 // Replace right side of parent SplitPane with a new SplitPane
                 val currentSplitPane = columnPanels[lastColumnIndex].parent as JSplitPane
+                val currentSplitPos = currentSplitPane.dividerLocation
                 val newColumnPanel = createColumnPanel(item)
                 columnPanels.add(newColumnPanel)
 
@@ -208,6 +209,12 @@ class DockingGraphDesktopViewSwing(
                     newColumnPanel,
                 )
                 currentSplitPane.rightComponent = newSplitPane
+                currentSplitPane.setDividerLocation(currentSplitPos)
+
+                SwingUtilities.invokeLater {
+                    newSplitPane.setDividerLocation(.5)
+                    zoomViews(true)
+                }
             }
 
             content.revalidate()
