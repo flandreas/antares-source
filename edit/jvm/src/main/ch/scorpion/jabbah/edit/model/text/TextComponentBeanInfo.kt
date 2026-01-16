@@ -1,18 +1,14 @@
 package ch.scorpion.jabbah.edit.model.text
 
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.model.AbstractComponentBeanInfo
 import ch.scorpion.jabbah.edit.model.EditProperties
-import ch.scorpion.jabbah.edit.properties.AbstractBeanInfo
 import com.l2fprod.common.propertysheet.Property
-import java.beans.BeanInfo
 
-/**
- * A [BeanInfo] for [TextComponent].
- */
 @Suppress("unused")
 abstract class TextComponentBeanInfo<T : TextComponent>(
 	private val fillAndStroke: Boolean = true
-) : AbstractBeanInfo<T>() {
+) : AbstractComponentBeanInfo<T>() {
 
 	companion object {
 		private val filled = EditProperties.filled()

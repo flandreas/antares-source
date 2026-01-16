@@ -1,11 +1,12 @@
 package ch.scorpion.jabbah.edit.model.curve
 
 import ch.scorpion.jabbah.edit.Editor
+import ch.scorpion.jabbah.edit.model.AbstractComponentBeanInfo
 import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.edit.properties.AbstractBeanInfo
 import com.l2fprod.common.propertysheet.Property
 
-abstract class AbstractCurveBeanInfo<T: AbstractCurveComponent> : AbstractBeanInfo<T>() {
+abstract class AbstractCurveBeanInfo<T: AbstractCurveComponent> : AbstractComponentBeanInfo<T>() {
 
     companion object {
         private val filled = EditProperties.filled()
