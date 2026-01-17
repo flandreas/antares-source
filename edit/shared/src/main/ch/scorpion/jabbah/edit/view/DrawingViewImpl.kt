@@ -179,7 +179,9 @@ class DrawingViewImpl<T: Drawing<Component>>(
 
 	override fun createViewContentBounds(): ViewContentBounds = ViewContentBounds {
         viewContentBoundsRect.setFrame(drawing.boundingBox)
-        viewContentBoundsRect.add(backgroundContainer.boundingBox)
+        if (backgroundContainer.visible) {
+            viewContentBoundsRect.add(backgroundContainer.boundingBox)
+        }
         viewContentBoundsRect
     }
 
