@@ -18,6 +18,7 @@ import java.awt.Frame
 import javax.swing.DefaultComboBoxModel
 import javax.swing.JComboBox
 import javax.swing.JOptionPane
+import javax.swing.JTextField
 
 /**
  * If the old [TunnelName] exists in other [TunnelViews][TunnelView] as well, the user is asked
@@ -112,6 +113,7 @@ class TunnelNameEditor(
 		)
 		comboBox.isEditable = true
 		editor = comboBox
+		(comboBox.editor.editorComponent as JTextField).addActionListener { comboBox.editor.editorComponent.transferFocus() }
 	}
 
 	override fun getValue(): Any? {
