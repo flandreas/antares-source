@@ -14,6 +14,12 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
  */
 interface GraphDesktopView : UIView {
 
+	companion object {
+
+		/** The [Boolean] property in [ch.scorpion.jabbah.base.Properties] determining whether the "Docking" feature is active.*/
+		const val PROP_DOCKING = "graph.ui.docking"
+	}
+
 	fun createSubGraphDesktopItem(
 		verticeView: SubGraphVerticeView<*>,
 		referenceColor: CompositeColor?,

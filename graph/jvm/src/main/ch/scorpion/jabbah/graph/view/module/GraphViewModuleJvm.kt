@@ -34,6 +34,7 @@ import ch.scorpion.jabbah.graph.model.port.InconsistentNetError
 import ch.scorpion.jabbah.graph.ui.GraphFrameController
 import ch.scorpion.jabbah.graph.ui.GraphNavigationViewController
 import ch.scorpion.jabbah.graph.ui.container.SymbolComparatorViewSwing
+import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopView
 import ch.scorpion.jabbah.graph.ui.scenario.ScenarioViewSwing
 import ch.scorpion.jabbah.graph.ui.usecase.UsecaseViewSwing
 import ch.scorpion.jabbah.graph.view.*
@@ -86,6 +87,7 @@ object GraphViewModuleJvm : AbstractModule() {
 
 	private fun fillProperties(properties: Properties) {
 		properties.set(GraphFrameController.PROP_AUTO_SWITCH, true)
+		properties.set(GraphDesktopView.PROP_DOCKING, false)
 	}
 
 	private fun configurePropertyRenderer(registry: DynamicPropertyRendererRegistry) {

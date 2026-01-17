@@ -47,7 +47,6 @@ class GraphDesktopItemHeaderPanelSwing(
         val headerBackgroundColor: Color get() = UiUtil.getBackgroundDivertColor(UIManager.getColor("Panel.background"))
     }
 
-    private val dndMouseAdapter = DndMouseAdapter()
 
     init {
         layout = BoxLayout(this, BoxLayout.LINE_AXIS)
@@ -65,13 +64,16 @@ class GraphDesktopItemHeaderPanelSwing(
             add(UiUtil.createToolBarButton(CloseAction()))
         }
 
-        transferHandler = DesktopItemTransferHandler
-        addMouseListener(dndMouseAdapter)
-        addMouseMotionListener(dndMouseAdapter)
+        if (BaseModule.properties.getBoolean(GraphDesktopView.PROP_DOCKING)) {
+            val dndMouseAdapter = DndMouseAdapter()
+            transferHandler = DesktopItemTransferHandler
+            addMouseListener(dndMouseAdapter)
+            addMouseMotionListener(dndMouseAdapter)
 
-        // TODO How does this scale with large NavigationStackViews?
-        title.addMouseListener(dndMouseAdapter)
-        title.addMouseMotionListener(dndMouseAdapter)
+            // TODO How does this scale with large NavigationStackViews?
+            title.addMouseListener(dndMouseAdapter)
+            title.addMouseMotionListener(dndMouseAdapter)
+        }
     }
 
     override fun getPreferredSize(): Dimension =
@@ -106,6 +108,9 @@ class GraphDesktopItemHeaderPanelSwing(
         }
     }
 
+    /**
+     * Handles DnD. Only used with docking feature.
+     */
     private object DesktopItemTransferHandler : TransferHandler() {
 
         override fun getSourceActions(c: JComponent): Int = MOVE
@@ -134,7 +139,7 @@ class GraphDesktopItemHeaderPanelSwing(
 
     /**
      * Listens for mouse events on the header and initiates DnD after the user has dragged
-     * the mouse the configured minimum distance.
+     * the mouse the configured minimum distance. Only used with docking feature.
      */
     private inner class DndMouseAdapter : MouseAdapter() {
 
