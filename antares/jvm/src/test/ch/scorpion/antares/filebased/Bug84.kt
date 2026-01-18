@@ -17,12 +17,6 @@ import kotlin.test.assertEquals
 /** Regression test for github bug issue #84 regarding bi-directional multi-level splitting logic. */
 class Bug84 : AbstractFileBasedTest() {
 
-	companion object {
-		init {
-			configure()
-		}
-	}
-
 	private lateinit var keyboard: Keyboard
 	private lateinit var transceiver8: SubGraphVerticeRef
 	private lateinit var b: DigitalCircuitInOut

@@ -8,13 +8,11 @@ import kotlin.test.assertTrue
 
 class TruthTableServiceTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	private val service = TruthTableService()
+
+	init {
+		AntaresTestRule.configure()
+	}
 
 	@Test
 	fun shouldCreateWithUserInput() {

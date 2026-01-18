@@ -8,10 +8,8 @@ import kotlin.test.assertEquals
 
 class BitWidthGraphParamTypeTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
+	init {
+		AntaresTestRule.configure()
 	}
 
 	@Test

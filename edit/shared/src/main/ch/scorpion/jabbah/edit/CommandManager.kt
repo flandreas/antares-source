@@ -34,8 +34,8 @@ interface UndoableDataHolder {
 	fun setUndoableState(state: Storable)
 
 	/**
-	 * Notifies this [UndoableDataHolder] that the undoable state has been completely establish,
-	 * e.g. after replaying from a snapshot during undo/redo, and its individual elements are now available.
+	 * Notifies this [UndoableDataHolder] that the undoable state has been completely established,
+	 * i.e. after replaying from a snapshot during undo/redo, and its individual elements are now available.
 	 */
 	fun undoableStateEstablished(state: Storable)
 }

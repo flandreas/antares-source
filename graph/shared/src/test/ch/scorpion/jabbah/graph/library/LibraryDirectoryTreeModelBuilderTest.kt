@@ -6,16 +6,11 @@ import dev.mokkery.MockMode
 import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.mock
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class LibraryDirectoryTreeModelBuilderTest {
-
-	companion object {
-		init {
-			GraphLibraryTestRule.configure()
-		}
-	}
 
 	private fun sampleDirectory(): LibraryDirectory {
 		return LibraryFolder("1")
@@ -24,6 +19,11 @@ class LibraryDirectoryTreeModelBuilderTest {
 				.add(item("1.2.1"))
 				.add(item("1.2.2")))
 			.add(item("1.3"))
+	}
+
+	@BeforeTest
+	fun setup() {
+		GraphLibraryTestRule.configure()
 	}
 
 	@Test

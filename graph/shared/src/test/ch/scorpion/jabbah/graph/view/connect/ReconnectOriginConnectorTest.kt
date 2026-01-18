@@ -5,7 +5,6 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.graph.health.GraphViewConsistencyCheck
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
-import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
@@ -15,16 +14,10 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class ReconnectOriginConnectorTest
-	: AbstractInputEventHandlerTest(GraphViewModule.reconnectOriginConnector.handler) {
-
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
+class ReconnectOriginConnectorTest : AbstractInputEventHandlerTest() {
 
 	init {
+		handler = GraphViewModule.reconnectOriginConnector.handler
 		CurrentConnectMethod.defaultMethod = ConnectMethod.AutoLayout
 		GraphViewModule.graphViewConnectService.addConnection<Boolean>(builder.graphView, v1, v2)
 		builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v3", 100, 200))

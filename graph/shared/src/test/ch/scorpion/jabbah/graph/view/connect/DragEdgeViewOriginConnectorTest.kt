@@ -5,7 +5,6 @@ import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.graph.health.GraphViewConsistencyCheck
 import ch.scorpion.jabbah.graph.model.Net
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
-import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
@@ -14,15 +13,10 @@ import dev.mokkery.verify
 import kotlin.test.*
 
 class DragEdgeViewOriginConnectorTest
-	: AbstractInputEventHandlerTest(GraphViewModule.dragEdgeViewOriginConnector.handler) {
-
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
+	: AbstractInputEventHandlerTest() {
 
 	init {
+		handler = GraphViewModule.dragEdgeViewOriginConnector.handler
 		builder.connectInputOpen(v2, Point2D(150, 100))
 		editor.commandManager.reset()
 		CurrentConnectMethod.defaultMethod = ConnectMethod.AutoLayout

@@ -33,6 +33,7 @@ import ch.scorpion.jabbah.graph.ui.knob.KnobView
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
+import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.VerticeViewActorInteractionHandler
 import ch.scorpion.jabbah.io.Storable
@@ -78,7 +79,7 @@ class ClockView(
 
 	override fun modelExchanged(oldModel: Clock?) {
 		super.modelExchanged(oldModel)
-		addPortView(createOutputPortView(model.getOutput()))
+		addPortView(createOutputPortView(model.getOutput(), PortLabelPosition.HIDE))
 		updateLayout()
 		updateLabel()
 	}

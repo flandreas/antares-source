@@ -11,10 +11,8 @@ import kotlin.test.assertEquals
 
 internal class DigitalSignalSourceControlViewTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
+	init {
+		AntaresTestRule.configure()
 	}
 
 	@Test

@@ -15,16 +15,14 @@ class AnalogSignalHistoryYAxisTest {
 		private const val INSET = 10
 		private const val DEFAULT_VALUE_INSET = 20
 		private const val HEIGHT = 100
-
-		init {
-			AntaresTestRule.configure()
-		}
 	}
 
-	private val yAxis = AnalogSignalHistoryYAxis(mock(MockMode.autofill), INSET, INSET, AnalogSignal.HIGH_VOLTAGE, DEFAULT_VALUE_INSET)
+	private lateinit var yAxis: AnalogSignalHistoryYAxis
 
 	@BeforeTest
 	fun setup() {
+		AntaresTestRule.configure()
+		yAxis = AnalogSignalHistoryYAxis(mock(MockMode.autofill), INSET, INSET, AnalogSignal.HIGH_VOLTAGE, DEFAULT_VALUE_INSET)
 		yAxis.setBounds(0, 0, AnalogSignalHistoryYAxis.WIDTH, HEIGHT)
 	}
 

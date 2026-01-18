@@ -10,12 +10,6 @@ import kotlin.test.assertEquals
 
 class NmosNorGateTest : AbstractFileBasedTest() {
 
-	companion object {
-		init {
-			configure()
-		}
-	}
-
 	private lateinit var inputA: DigitalCircuitInOut
 	private lateinit var inputB: DigitalCircuitInOut
 	private lateinit var output: DigitalCircuitInOut

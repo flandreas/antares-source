@@ -15,7 +15,7 @@ class LEDViewBeanInfo : DigitalComponentViewBeanInfo<LEDView>(), ControlViewBean
 	companion object {
 		private val name = EditProperties.untranslatableName()
 		private val lightColor = AntaresProperties.lightColor()
-		private val square = AntaresProperties.ledSquare()
+		private val shape = AntaresProperties.ledShape()
 		private val size = EditProperties.size()
 		private val hasBorder = EditProperties.border()
 
@@ -27,7 +27,7 @@ class LEDViewBeanInfo : DigitalComponentViewBeanInfo<LEDView>(), ControlViewBean
 
 		properties.add(name.bind(editor, beanIdProvider(bean.id)))
 		properties.add(lightColor.bind(editor, beanIdProvider(bean.id)))
-		properties.add(square.bind(editor, beanIdProvider(bean.id)))
+		properties.add(shape.bind(editor, beanIdProvider(bean.id)))
 		properties.add(size.bind(editor,beanIdProvider(bean.id)))
 		properties.add(hasBorder.bind(editor, beanIdProvider(bean.id)))
 	}

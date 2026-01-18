@@ -15,12 +15,6 @@ import kotlin.test.assertTrue
  */
 class UnidirectionalSubOutputTest : AbstractFileBasedTest() {
 
-    companion object {
-        init {
-            configure()
-        }
-    }
-
     private lateinit var switch: Switch
     private lateinit var led: LED
 

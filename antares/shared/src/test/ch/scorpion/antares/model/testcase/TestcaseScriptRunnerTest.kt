@@ -13,13 +13,11 @@ import kotlin.test.assertEquals
 
 class TestcaseScriptRunnerTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	private lateinit var circuit: DigitalGraph
+
+	init {
+		AntaresTestRule.configure()
+	}
 
 	@Test
 	fun testRaisedInput() {

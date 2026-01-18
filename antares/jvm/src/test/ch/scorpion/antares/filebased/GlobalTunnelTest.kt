@@ -9,12 +9,6 @@ import kotlin.test.assertEquals
 
 class GlobalTunnelTest : AbstractFileBasedTest() {
 
-    companion object {
-        init {
-            configure()
-        }
-    }
-
     private lateinit var input: DigitalCircuitInOut
     private lateinit var output: DigitalCircuitInOut
 

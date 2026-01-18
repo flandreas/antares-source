@@ -311,6 +311,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerRenderer(SwitchConfiguration::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(AnalogOscilloscopeSignalType::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(FSMStateType::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(LEDShape::class.java, EnumRenderer::class.java)
 	}
 
 	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
@@ -344,6 +345,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerEditor(SwitchConfiguration::class.java, SwitchConfigurationEditor::class.java)
 		registry.registerEditor(AnalogOscilloscopeSignalType::class.java, AnalogOscilloscopeSignalTypeEditor::class.java)
 		registry.registerEditor(FSMStateType::class.java, FSMStateTypeEditor::class.java)
+		registry.registerEditor(LEDShape::class.java, LEDShapeEditor::class.java)
 
 		registry.register(BitWidth::class.java) { prop ->
 			BitWidthEditor(

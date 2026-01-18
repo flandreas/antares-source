@@ -6,17 +6,12 @@ import kotlin.test.*
 
 class LibraryServiceTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
-
 	private val libraryBuilder: LibraryBuilder
 	private val library: Library get() = libraryBuilder.library
 	private val service: LibraryService get() = LibraryModule.libraryService
 
 	init {
+		GraphViewTestRule.configure()
 		LibraryModule.userLibraryPersistenceService = MemoryLibraryPersistenceService()
 		libraryBuilder = LibraryBuilder(name = "Library")
 	}

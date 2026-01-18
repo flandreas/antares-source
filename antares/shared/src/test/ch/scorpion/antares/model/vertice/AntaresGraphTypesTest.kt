@@ -7,17 +7,12 @@ import ch.scorpion.jabbah.graph.library.BaseLibraryElement
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
 import ch.scorpion.jabbah.graph.model.GenericGraphType
 import ch.scorpion.jabbah.graph.model.GraphType
-import dev.mokkery.answering.returns
-import dev.mokkery.every
-import dev.mokkery.mock
 import kotlin.test.*
 
 class AntaresGraphTypesTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
+	init {
+		AntaresTestRule.configure()
 	}
 
 	@Test

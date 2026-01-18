@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph
 import ch.scorpion.jabbah.base.Bean
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
+import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewMockBuilder
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.properties.AbstractBeanInfo
@@ -29,16 +30,12 @@ import org.junit.Test
 
 class GraphBeanInfoTest {
 
-	companion object {
-		init {
-			GraphUITestRule.configure()
-		}
-	}
-
-	private val view = DrawingViewMockBuilder().build<Component>()
+	private val view: DrawingView<Drawing<Component>>
 	private val editor = mock<Editor>()
 
 	init {
+		GraphUITestRule.configure()
+		view = DrawingViewMockBuilder().build<Component>()
 		every { editor.active } returns true
 		every { editor.view } returns view
 	}

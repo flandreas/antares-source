@@ -9,14 +9,9 @@ import kotlin.test.Test
 
 class TestcaseParserTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	@BeforeTest
 	fun setUp() {
+		AntaresTestRule.configure()
 		CurrentDigitalSignalNotation.notation = DigitalSignalNotation.PREFIX
 	}
 

@@ -26,7 +26,6 @@ import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.select.BoundingBoxBelowSelectionModel
 import ch.scorpion.jabbah.edit.select.EditSelectModule
-import ch.scorpion.jabbah.edit.select.SelectedColorSelectionModel
 import ch.scorpion.jabbah.edit.select.SelectionModelFactory
 import ch.scorpion.jabbah.edit.select.selectedColorSelectionModelFactory
 import ch.scorpion.jabbah.edit.style.EditStyleType
@@ -130,7 +129,7 @@ object GraphViewModule : AbstractModule() {
 
 	val oscilloscopeViewService: OscilloscopeViewService = OscilloscopeViewServiceImpl()
 
-	var oscilloscopeProbeNameStrategy: OscilloscopeProbeNameStrategy = OscilloscopeProbeNameStrategyImpl()
+	var verticeViewNameStrategy: VerticeViewNameStrategy = VerticeViewNameStrategyImpl()
 
 	val scenarioAppService = ScenarioAppService()
 

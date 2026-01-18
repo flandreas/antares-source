@@ -11,13 +11,11 @@ import kotlin.test.assertEquals
 
 class FSMTruthTableCreatorTest {
 
-    companion object {
-        init {
-            AntaresTestRule.configure()
-        }
-    }
-
     private val service: FSMEditorService get() = AntaresModelModule.fsmEditorService
+
+    init {
+        AntaresTestRule.configure()
+    }
 
     @Test
     fun shouldCreateMooreTruthTable() {

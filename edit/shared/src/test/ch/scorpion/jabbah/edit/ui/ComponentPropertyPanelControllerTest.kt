@@ -21,21 +21,21 @@ import kotlin.test.assertSame
 
 class ComponentPropertyPanelControllerTest {
 
-	companion object {
-		init {
-			EditTestRule.configure()
-		}
-	}
-
 	private val selectionModelFactorMockBuilder = SelectionModelFactoryMockBuilder()
 	private val selectionManagerFactory: SelectionManagerFactory = { SelectionManagerImpl(it, SimpleSelectionModelProvider(selectionModelFactorMockBuilder.build())) }
-	private val drawing = DrawingImpl<Component>()
-	private val view = DrawingViewImpl(drawing, selectionManagerFactory = selectionManagerFactory)
-	private val editor = EditorImpl(view as DrawingView<Drawing<Component>>)
-	private val controller = ComponentPropertyPanelController(editor)
+	private val drawing: DrawingImpl<Component>
+	private val view: DrawingViewImpl<Drawing<Component>>
+	private val editor: EditorImpl
+	private val controller: ComponentPropertyPanelController
 	private val component = ComponentMockBuilder().withType("TestType").build()
 
 	init {
+		EditTestRule.configure()
+		drawing = DrawingImpl<Component>()
+		view = DrawingViewImpl(drawing, selectionManagerFactory = selectionManagerFactory)
+		editor = EditorImpl(view as DrawingView<Drawing<Component>>)
+		controller = ComponentPropertyPanelController(editor)
+
 		val canvas = mock<Canvas>(MockMode.autofill)
 		every { canvas.dimension } returns Dimension2D(1000, 1000)
 		every { canvas.devicePixelRatio } returns 1.0

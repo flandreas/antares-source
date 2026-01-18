@@ -29,14 +29,9 @@ import kotlin.test.assertEquals
 
 class SubGraphVerticeViewDslDrawSymbolTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
-
 	@BeforeTest
 	fun setup() {
+		GraphViewTestRule.configure()
 		Translations.withAnyKey()
 		LibraryModule.userLibraryPersistenceService = MemoryLibraryPersistenceService()
 		LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"))

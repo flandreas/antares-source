@@ -2,7 +2,6 @@ package ch.scorpion.antares.filebased
 
 import ch.scorpion.antares.AbstractCircuitTest
 import ch.scorpion.antares.AntaresApplication
-import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.jabbah.app.AbstractDesktopApplication
 import ch.scorpion.jabbah.app.CurrentApplicationVersion
 import ch.scorpion.jabbah.base.UUID
@@ -22,34 +21,35 @@ import java.nio.file.Paths
 
 abstract class AbstractFileBasedTest : AbstractCircuitTest() {
 
-	companion object {
-
-		@JvmStatic
-		protected fun configure() {
-			CurrentApplicationVersion.version = AbstractDesktopApplication.readVersion()
-
-			val path = Paths.get("jvm/rsc/test").toAbsolutePath()
-			AntaresTestRule.configure()
-			LibraryModule.DEF_LIBRARY_UUID = AntaresApplication.DEF_LIBRARY_UUID
-
-			LibraryModule.systemLibraryPersistenceService = ResourceLibraryPersistenceService()
-			LibraryModule.systemLibraryDictionaryService = LibraryDictionaryService(ResourceLibraryDictionaryPersistenceService())
-			LibraryModule.libraryManagementService = LibraryManagementService()
-
-			ProjectModule.projectDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService({ path.toString() }, "projects"))
-			ProjectModule.projectLibraryPersistenceService = FileLibraryPersistenceService({ path.toString() }, "projects")
-			ProjectModule.projectManagementService = ProjectManagementService()
-
-			GraphModelModule.nonVolatileService = NonVolatileServiceJvm({ path.toString() }, "nonVolatile")
-
-			LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(
-				LibraryIdentification(LibraryModule.DEF_LIBRARY_UUID, null), isSystem = true)
-		}
-	}
-
 	protected lateinit var openedCircuitView: GraphView
 
 	protected val actorListener = mock<ActorListener>(MockMode.autofill)
+
+	override fun setup() {
+		super.setup()
+		configure()
+	}
+
+	private fun configure() {
+		CurrentApplicationVersion.version = AbstractDesktopApplication.readVersion()
+
+		val path = Paths.get("jvm/rsc/test").toAbsolutePath()
+		//AntaresTestRule.configure()
+		LibraryModule.DEF_LIBRARY_UUID = AntaresApplication.DEF_LIBRARY_UUID
+
+		LibraryModule.systemLibraryPersistenceService = ResourceLibraryPersistenceService()
+		LibraryModule.systemLibraryDictionaryService = LibraryDictionaryService(ResourceLibraryDictionaryPersistenceService())
+		LibraryModule.libraryManagementService = LibraryManagementService()
+
+		ProjectModule.projectDictionaryService = LibraryDictionaryService(FileLibraryDictionaryPersistenceService({ path.toString() }, "projects"))
+		ProjectModule.projectLibraryPersistenceService = FileLibraryPersistenceService({ path.toString() }, "projects")
+		ProjectModule.projectManagementService = ProjectManagementService()
+
+		GraphModelModule.nonVolatileService = NonVolatileServiceJvm({ path.toString() }, "nonVolatile")
+
+		LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(
+			LibraryIdentification(LibraryModule.DEF_LIBRARY_UUID, null), isSystem = true)
+	}
 
 	override fun getCircuitView(): GraphView = openedCircuitView
 

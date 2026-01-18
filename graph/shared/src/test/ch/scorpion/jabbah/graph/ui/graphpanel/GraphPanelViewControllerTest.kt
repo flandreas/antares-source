@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.draw.CanvasMockBuilder
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.view.DrawingViewImpl
 import ch.scorpion.jabbah.execution.scheduler.SchedulerImpl
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
@@ -31,26 +32,28 @@ import kotlin.test.assertSame
 
 class GraphPanelViewControllerTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
-
 	private val eventBus = EventBusImpl()
 	private val systemSpeed = SystemSpeed(eventBus = eventBus)
 	private val currentSystemSpeedCategory = CurrentSystemSpeedCategory(systemSpeed, eventBus)
-	private val scheduler = SchedulerImpl(currentSystemSpeedCategory)
-	private val graphViewBuilder = GraphViewBuilder<Boolean>()
-	private val applicationContextHolder = GraphApplicationContextHolder(scheduler, eventBus, systemSpeed, currentSystemSpeedCategory)
-	private val drawingView = DrawingViewImpl(graphViewBuilder.graphView as Drawing<Component>, applicationContextHolder = applicationContextHolder, eventBus = eventBus)
-	private val editor = GraphEditorMockBuilder().withDrawingView(drawingView as DrawingView<GraphView>).build()
-	private val applicationModeHolder = ApplicationModeHolderImpl(editor, scheduler).also {
-		applicationContextHolder.applicationModeHolder = it
-	}
+	private val scheduler: SchedulerImpl
+	private val graphViewBuilder: GraphViewBuilder<Boolean>
+	private val applicationContextHolder: GraphApplicationContextHolder
+	private val drawingView: DrawingViewImpl<Drawing<Component>>
+	private val editor: Editor
+	private val applicationModeHolder: ApplicationModeHolderImpl
 	private val controller: GraphPanelViewController
 
 	init {
+		GraphViewTestRule.configure()
+		scheduler = SchedulerImpl(currentSystemSpeedCategory)
+		graphViewBuilder = GraphViewBuilder<Boolean>()
+		applicationContextHolder = GraphApplicationContextHolder(scheduler, eventBus, systemSpeed, currentSystemSpeedCategory)
+		drawingView = DrawingViewImpl(graphViewBuilder.graphView as Drawing<Component>, applicationContextHolder = applicationContextHolder, eventBus = eventBus)
+		editor = GraphEditorMockBuilder().withDrawingView(drawingView as DrawingView<GraphView>).build()
+		applicationModeHolder = ApplicationModeHolderImpl(editor, scheduler).also {
+			applicationContextHolder.applicationModeHolder = it
+		}
+
 		drawingView.canvas = CanvasMockBuilder().build()
 		LibraryModule.libraryHolder.l = mock(MockMode.autofill)
 

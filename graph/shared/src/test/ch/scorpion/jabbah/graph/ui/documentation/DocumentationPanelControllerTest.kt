@@ -7,26 +7,26 @@ import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.model.Document
 import ch.scorpion.jabbah.graph.ui.DocumentationPanelViewMockBuilder
 import ch.scorpion.jabbah.graph.ui.GraphDataViewController
-import ch.scorpion.jabbah.graph.ui.GraphDataViewMockBuilder
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class DocumentationPanelControllerTest {
 
-    companion object {
-        init {
-            GraphViewTestRule.configure()
-        }
-    }
-
     private val graphDataViewController = GraphDataViewController()
-    private val graphDataView = GraphDataViewMockBuilder(graphDataViewController)
-    private val controller = DocumentationPanelController(graphDataViewController)
-    private val view = DocumentationPanelViewMockBuilder(controller)
+    private lateinit var controller: DocumentationPanelController
+    private lateinit var view: DocumentationPanelViewMockBuilder
 
     private val metaGraph: MetaGraph get() = graphDataViewController.data!!.content as MetaGraph
+
+    @BeforeTest
+    fun setup() {
+        GraphViewTestRule.configure()
+        controller = DocumentationPanelController(graphDataViewController)
+        view = DocumentationPanelViewMockBuilder(controller)
+    }
 
     @Test
     fun shouldEnableSaveUponFirstChange() {

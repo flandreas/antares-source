@@ -13,20 +13,15 @@ import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.health.PortViewCoincidenceCheck
-import dev.mokkery.answering.returns
-import dev.mokkery.every
-import dev.mokkery.mock
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import kotlin.test.Test
 
 class PortViewCoincidenceCheckTest {
 
-	companion object {
-		init {
-			BaseModuleJvm.require()
-			AntaresTestRule.configure()
-		}
+	init {
+		BaseModuleJvm.require()
+		AntaresTestRule.configure()
 	}
 
 	@Test

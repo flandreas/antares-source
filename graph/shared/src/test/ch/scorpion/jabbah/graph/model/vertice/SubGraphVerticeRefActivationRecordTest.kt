@@ -31,16 +31,11 @@ import kotlin.test.assertEquals
 
 class SubGraphVerticeRefActivationRecordTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
-
 	private val signalHandler = mock<SignalHandler>(MockMode.autofill)
 
 	@BeforeTest
 	fun setup() {
+		GraphViewTestRule.configure()
 		LibraryModule.userLibraryPersistenceService = MemoryLibraryPersistenceService()
 		LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"))
 	}

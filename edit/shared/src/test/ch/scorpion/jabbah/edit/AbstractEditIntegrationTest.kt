@@ -11,22 +11,29 @@ import dev.mokkery.MockMode
 import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.mock
+import kotlin.test.BeforeTest
 
 abstract class AbstractEditIntegrationTest {
 
-	companion object {
-		init {
-			EditModule.reset()
-			EditTestRule.configure()
-		}
+	private lateinit var drawing: DrawingImpl<Component>
+	protected lateinit var view: DrawingView<Drawing<Component>>
+	private lateinit var canvas: Canvas
+	protected lateinit var editor: Editor
+	protected lateinit var driver: EditorToolDriver
+
+	@BeforeTest
+	open fun setup() {
+		EditTestRule.configure(SelectionModelMockFactory())
+		createEnvironment()
 	}
 
-	private val drawing = DrawingImpl<Component>()
-	protected val view = EditModule.drawingViewFactory.create(drawing, contextHolder = null, displayGlobalMessages = true, "")
-	private val canvas = createCanvas()
-	protected val editor = EditorImpl(view)
+	protected open fun createEnvironment() {
+		drawing = DrawingImpl()
+		view = EditModule.drawingViewFactory.create(drawing, contextHolder = null, displayGlobalMessages = true, "")
+		canvas = createCanvas()
+		editor = EditorImpl(view)
+		driver = EditorToolDriver(editor)
 
-	init {
 		GenericUndoableDataHolder(drawing, editor.commandManager) {
 			view.setDrawing(it as Drawing<Component>, applyDefaultZoomStrategy = false)
 		}

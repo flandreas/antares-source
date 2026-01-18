@@ -36,19 +36,24 @@ open class MetaGraphService(
 		componentIds: Collection<Int>,
 		libraryDirectory: LibraryDirectory
 	): UUID {
-		val library = libraryDirectory.library!!
+		try {
+			val library = libraryDirectory.library!!
 
-		val metaGraph = createMetaGraph(name, type, drawingView, componentIds)
-		tailorMetaGraph(metaGraph)
-		AbstractContainerDrawingFiller.fillStandard(metaGraph, addLabel = true)
+			val metaGraph = createMetaGraph(name, type, drawingView, componentIds)
+			tailorMetaGraph(metaGraph)
+			AbstractContainerDrawingFiller.fillStandard(metaGraph, addLabel = true)
 
-		val element = library.libraryService.addContainerLibraryElement(library, metaGraph, libraryDirectory)
+			val element = library.libraryService.addContainerLibraryElement(library, metaGraph, libraryDirectory)
 
-		replaceComponents(drawingView.drawing, componentIds, element)
+			replaceComponents(drawingView.drawing, componentIds, element)
 
-		LOG.debug("Extracted Components to MetaGraph ${metaGraph.uuid}")
+			LOG.debug("Extracted Components to MetaGraph ${metaGraph.uuid}")
 
-		return metaGraph.uuid
+			return metaGraph.uuid
+		} catch (e: Exception) {
+			LOG.error("Error while extracting MetaGraph", e)
+			throw e
+		}
 	}
 
 	protected open fun tailorMetaGraph(metaGraph: MetaGraph) {

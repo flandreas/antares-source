@@ -8,7 +8,6 @@ import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.antares.view.net.BidirectionalSplitterView
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.GraphView
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -17,24 +16,26 @@ import kotlin.test.assertEquals
  */
 class BidirectionalConcentratorSplitterTest : AbstractJvmCircuitTest() {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	private lateinit var circuitView: GraphView
-	private val concentratorView = BidirectionalSplitterView(model = BidirectionalSplitter(BitWidth.BW_2, BranchCount.BC_2))
-	private val splitterView = BidirectionalSplitterView(model = BidirectionalSplitter(BitWidth.BW_2, BranchCount.BC_2))
-	private val a0 = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "A0", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
-	private val a1 = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "A1", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
-	private val b0 = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "B0", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
-	private val b1 = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "B1", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
+	private lateinit var concentratorView: BidirectionalSplitterView
+	private lateinit var splitterView: BidirectionalSplitterView
+	private lateinit var a0: DigitalCircuitInOutView
+	private lateinit var a1: DigitalCircuitInOutView
+	private lateinit var b0: DigitalCircuitInOutView
+	private lateinit var b1: DigitalCircuitInOutView
 
 	override fun getCircuitView(): GraphView = circuitView
 
-	@BeforeTest
-	fun setupCircuit() {
+	override fun setup() {
+		super.setup()
+
+		concentratorView = BidirectionalSplitterView(model = BidirectionalSplitter(BitWidth.BW_2, BranchCount.BC_2))
+		splitterView = BidirectionalSplitterView(model = BidirectionalSplitter(BitWidth.BW_2, BranchCount.BC_2))
+		a0 = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "A0", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
+		a1 = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "A1", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
+		b0 = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "B0", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
+		b1 = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "B1", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
+
 		val builder = TestCircuitBuilder("test", styleProvider, eventBus)
 
 		builder.addVerticeView(a0)

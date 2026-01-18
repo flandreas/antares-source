@@ -12,12 +12,6 @@ import kotlin.test.assertTrue
 
 class CircuitAnalysisServiceTest : AbstractFileBasedTest() {
 
-	companion object {
-		init {
-			configure()
-		}
-	}
-
 	@BeforeTest
 	fun openCircuit() {
 		openCircuit(UUID("dcdc4da3-90e7-46c7-a4b1-1b9518c44604"))

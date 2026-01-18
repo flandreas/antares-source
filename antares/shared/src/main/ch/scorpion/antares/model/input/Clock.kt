@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
+import ch.scorpion.jabbah.graph.model.vertice.AbstractVertice
 import ch.scorpion.jabbah.graph.model.GraphActorData
 import ch.scorpion.jabbah.graph.model.vertice.CalculatingVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
@@ -20,13 +21,14 @@ import ch.scorpion.jabbah.io.StoreWriter
 /**
  * A digital component that produces a periodically changing [DigitalSignal].
  */
-class Clock(name: String? = null) : CalculatingVertice(CALCULATOR, name) {
+class Clock(name: String? = null) : CalculatingVertice(CALCULATOR, name ?: DEF_NAME) {
 
 	companion object {
 
 		const val BASE_RESOURCE_KEY = "library.element.Clock"
 		private val TYPE get() = Translations.getString("$BASE_RESOURCE_KEY.name")
 		private val TYPE_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
+		private const val DEF_NAME = "CLK"
 
 		private val CALCULATOR = Calculator()
 
@@ -100,7 +102,7 @@ class Clock(name: String? = null) : CalculatingVertice(CALCULATOR, name) {
 
 	init {
 		propagationDelay = LongValueImpl(periodOrFrequency.asNanoseconds.value)
-		addPort(DigitalPortImpl.createOutput())
+		addPort(DigitalPortImpl.createOutput(super.name))
 	}
 
 	/** ---- [Storable] interface */
@@ -160,6 +162,15 @@ class Clock(name: String? = null) : CalculatingVertice(CALCULATOR, name) {
 		super.executionStopped(signalHandler)
 		periodOrFrequency = periodOrFrequencyBuffer
 	}
+
+	/** ---- [AbstractVertice] */
+
+	override var name: String?
+		get() = super.name
+		set(value) {
+			super.name = value
+			getPort<DigitalSignal>().name = value
+		}
 
 	/** ---- [Clock] */
 

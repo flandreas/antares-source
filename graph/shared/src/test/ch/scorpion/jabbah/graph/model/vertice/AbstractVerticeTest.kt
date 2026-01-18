@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.model.vertice
 import ch.scorpion.jabbah.graph.model.GraphModelTestRule
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.port.PortImpl
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -13,12 +14,12 @@ import kotlin.test.assertNull
  */
 class AbstractVerticeTest {
 
-	private val vertice = MyVertice()
+	private lateinit var vertice: MyVertice
 
-	companion object {
-		init {
-			GraphModelTestRule.configure()
-		}
+	@BeforeTest
+	fun setup() {
+		GraphModelTestRule.configure()
+		vertice = MyVertice()
 	}
 
 	@Test

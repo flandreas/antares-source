@@ -10,12 +10,6 @@ import kotlin.test.assertEquals
 
 class DFlipFlopTestcase : AbstractFileBasedTest() {
 
-	companion object {
-		init {
-			configure()
-		}
-	}
-
 	@BeforeTest
 	fun openAndStartCircuit() {
 		openCircuit(UUID("b1089cae-01cc-4c2f-813a-4a61b0cf7c16"))

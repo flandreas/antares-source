@@ -1,7 +1,6 @@
 package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.AbstractCircuitTest
-import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.model.inout.DigitalCircuitInOutImpl
 import ch.scorpion.antares.model.net.BidirectionalSplitter
@@ -12,17 +11,10 @@ import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.antares.view.net.BidirectionalSplitterView
 import ch.scorpion.antares.view.output.LEDView
 import ch.scorpion.jabbah.graph.view.GraphView
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
 class RealSwitchWithBidiSplitterTest : AbstractCircuitTest() {
-
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
 
 	private lateinit var circuitView: GraphView
 	private lateinit var circuitInOutView: DigitalCircuitInOutView
@@ -32,8 +24,8 @@ class RealSwitchWithBidiSplitterTest : AbstractCircuitTest() {
 
 	override fun getCircuitView(): GraphView = circuitView
 
-	@BeforeTest
-	fun setupCircuit() {
+	override fun setup() {
+		super.setup()
 		val builder = TestCircuitBuilder("test", styleProvider, eventBus)
 		circuitInOutView = builder.addVerticeView(DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(bitWidth = BitWidth.BW_2)))
 		bidiSplitterView = builder.addVerticeView(BidirectionalSplitterView(model = BidirectionalSplitter(BitWidth.BW_2, branchCount = BranchCount.BC_2)))

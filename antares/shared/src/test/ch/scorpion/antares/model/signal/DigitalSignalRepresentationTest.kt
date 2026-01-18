@@ -8,7 +8,6 @@ import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_4
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_5
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_6
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_8
-import ch.scorpion.antares.model.signal.DigitalSignalFactory.allOf
 import ch.scorpion.antares.model.signal.DigitalSignalFactory.of
 import ch.scorpion.antares.model.signal.DigitalSignalRepresentation.*
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -16,16 +15,10 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
-
-/**
- * Unit tests for [DigitalSignalRepresentation].
- */
 class DigitalSignalRepresentationTest {
 
-	companion object {
-		init {
-			BaseModule.require()
-		}
+	init {
+		BaseModule.require()
 	}
 
 	@Test

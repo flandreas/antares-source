@@ -16,13 +16,14 @@ import kotlin.test.assertEquals
 class UsecaseActionExternalFunctionsTest : AbstractGraphViewExecutionTest() {
 
 	private val issueCollector = IssueCollector()
-	private val builder: GraphViewBuilder<Boolean> = GraphViewBuilder()
+	private lateinit var builder: GraphViewBuilder<Boolean>
 	private val appModeHolder = DummyApplicationModeHolder()
 	private lateinit var input: TestGraphPortView<Long>
 
 	override fun setup() {
 		super.setup()
 
+		builder = GraphViewBuilder()
 		input = builder.addVerticeView(TestGraphPortView(model = GraphInputImpl(name = "I", clickValue = 1L)))
 		val vv = builder.addVerticeView(TestVerticeView())
 		builder.connect(input, vv)

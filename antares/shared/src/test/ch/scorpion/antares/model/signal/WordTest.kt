@@ -16,15 +16,10 @@ import kotlin.test.*
 
 class WordTest {
 
-	companion object {
-		init {
-			DrawModule.require()
-			AntaresThemes.install()
-		}
-	}
-
 	@BeforeTest
 	fun setup() {
+		DrawModule.require()
+		AntaresThemes.install()
 		BaseModule.properties.set(DigitalSignalColor.PROP_DIFFERENT_NON_ZERO_MULTI_BIT_COLOR, true)
 		DigitalSignalColor.reset()
 	}

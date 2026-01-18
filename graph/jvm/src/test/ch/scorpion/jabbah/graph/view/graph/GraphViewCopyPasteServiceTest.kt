@@ -25,16 +25,11 @@ import kotlin.test.assertEquals
 
 class GraphViewCopyPasteServiceTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
-
 	private val service = GraphViewCopyPasteService()
 
 	@BeforeTest
 	fun setup() {
+		GraphViewTestRule.configure()
 		LibraryModule.userLibraryPersistenceService = MemoryLibraryPersistenceService()
 		LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"))
 	}

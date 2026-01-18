@@ -9,10 +9,8 @@ import kotlin.test.assertTrue
 
 class BooleanExpressionParserTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
+	init {
+		AntaresTestRule.configure()
 	}
 
 	@Test

@@ -15,14 +15,9 @@ import kotlin.test.assertNotNull
  */
 class StaleGraphPortViewTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
-
 	@BeforeTest
 	fun setup() {
+		GraphViewTestRule.configure()
 		LibraryModule.userLibraryPersistenceService = MemoryLibraryPersistenceService()
 		LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"))
 	}

@@ -1,7 +1,6 @@
 package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.AbstractCircuitTest
-import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.TestCircuitBuilder
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
@@ -14,12 +13,6 @@ import kotlin.test.*
 
 class RealSwitchViewSimulationTest : AbstractCircuitTest() {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	private lateinit var circuitView: GraphView
 	private lateinit var realSwitchView: RealSwitchView
 	private lateinit var powerView: PowerView
@@ -27,8 +20,8 @@ class RealSwitchViewSimulationTest : AbstractCircuitTest() {
 
 	override fun getCircuitView(): GraphView = circuitView
 
-	@BeforeTest
-	fun setupCircuit() {
+	override fun setup() {
+		super.setup()
 		val builder = TestCircuitBuilder("test", styleProvider, eventBus)
 		realSwitchView = builder.addVerticeView(RealSwitchView())
 		powerView = builder.addVerticeView(PowerView())

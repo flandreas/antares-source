@@ -22,21 +22,19 @@ import kotlin.test.assertTrue
 
 class AnalogSignalHistoryDrawerTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	private val signalHistory = SignalHistory<AnalogSignal>(100)
 	private val timeline = OscilloscopeViewTimeline(100_000.0, signalHistory::maxTime)
-	private val yAxis = AnalogSignalHistoryYAxis(mock(MockMode.autofill))
-	private val drawer = AnalogSignalHistoryDrawer(0, yAxis)
+	private lateinit var yAxis: AnalogSignalHistoryYAxis
+	private lateinit var drawer: AnalogSignalHistoryDrawer
 	private val lines = mutableListOf<Pair<Point2D, Point2D>>()
 	private val drawContext = createDrawContext()
 
 	@BeforeTest
 	fun setup() {
+		AntaresTestRule.configure()
+		yAxis = AnalogSignalHistoryYAxis(mock(MockMode.autofill))
+		drawer = AnalogSignalHistoryDrawer(0, yAxis)
+
 		drawer.setBounds(0, 0, 1000, 100)
 		yAxis.setBounds(1000, 0, 100, 100)
 		drawer.bind(signalHistory, signalHistory, timeline, DrawGraphicsModule.BLACK)

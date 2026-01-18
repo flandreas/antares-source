@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.base.state
 
+import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.state.UnhandledEventBehaviour.Strict
 
@@ -112,7 +113,7 @@ class StateMachine<T>(
 				return true
 			}
 		} catch (e: Throwable) {
-			LOG.error("Error when handling event $event in state ${currentState.name}: ${e::class.qualifiedName}")
+			LOG.error("Error when handling event $event in state ${currentState.name}: ${System.getClassName(e)}")
 			throw e
 		}
 

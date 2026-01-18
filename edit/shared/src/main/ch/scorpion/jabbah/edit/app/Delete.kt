@@ -33,38 +33,12 @@ data class DeleteQuestion(
 class DeleteAction(
 	eventBus: EventBus = BaseModule.eventBus,
 	viewManager: ContentViewManager = DrawViewModule.viewManager,
-	private val service: DrawingAppService = EditModule.drawingAppService
-) : AbstractSelectionAwareAction("edit.action.delete", eventBus, viewManager) {
+	service: DrawingAppService = EditModule.drawingAppService
+) : AbstractDeleteAction("edit.action.delete", eventBus, viewManager, service) {
 
-	companion object {
-
-		/** Creates a new [List] containing only those [Component] that can really be deleted.*/
-		fun getComponentsToDelete(components: Collection<Component>): List<Component> {
-			return components.filter { it.deletable }.toCollection(mutableListOf())
-		}
-	}
-
-	override fun execute(event: ActionEvent) {
-		val drawingView = viewManager.activeView!!.view as DrawingView<*>
-		val selection = drawingView.selectionManager.selection
-		val components = getComponentsToDelete(selection)
-
-		eventBus.postTwoPhase(
-			DeleteQuestion(components, drawingView),
-			thenHandler = {
-				executeImpl(components, drawingView)
-			},
-			elseHandler = {
-				postUndeleteableMessage(it.source as? Component)
-			}
-		)
-	}
-
-	private fun executeImpl(components: List<Component>, drawingView: DrawingView<*>) {
+	override fun executeImpl(components: List<Component>, drawingView: DrawingView<*>) {
 		if (components.isNotEmpty()) {
-			service.delete(
-				components,
-				drawingView)
+			service.delete(components, drawingView)
 		}
 
 		// Don't do components.size != selection.size for checking whether everything has been deleted,
@@ -73,14 +47,6 @@ class DeleteAction(
 		if (selection.any { drawingView.drawing.contains(it) }) {
 			postUndeleteableMessage()
 		}
-	}
-
-	private fun postUndeleteableMessage(source: Component? = null) {
-		eventBus.post(ComponentMessage(
-			ComponentMessageType.Info,
-			source = source,
-			"edit.action.undeletable.msg"
-		))
 	}
 }
 
@@ -92,8 +58,9 @@ class DeleteAction(
 class DeleteCommand(
 	drawingView: DrawingView<*>,
 	private val componentIds: List<Int>,
+	cmdDescriptionKey: String? = null,
 	private val drawingService: DrawingService = EditModule.drawingService
-) : AbstractDrawingViewCommand("edit.command.delete", drawingView) {
+) : AbstractDrawingViewCommand(cmdDescriptionKey ?: "edit.command.delete", drawingView) {
 
 	constructor(drawingView: DrawingView<*>, component: Component) : this(drawingView, mutableListOf(component.id))
 

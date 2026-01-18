@@ -14,17 +14,12 @@ import kotlin.test.assertEquals
 
 class NoneEdgeViewLayouterTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
-
 	private val edgeViewFactory = GraphViewModule.getEdgeViewFactory()
 	private lateinit var graphView: GraphView
 
 	@BeforeTest
 	fun setup() {
+		GraphViewTestRule.configure()
 		graphView = mock()
 		every { graphView.snapper } returns null
 	}

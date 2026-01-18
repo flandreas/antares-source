@@ -15,17 +15,12 @@ import kotlin.test.assertNotEquals
  */
 class FileLibraryServiceTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
-
 	private val libraryBuilder: LibraryBuilder
 	private val library: Library get() = libraryBuilder.library
 	private val service: LibraryService get() = LibraryModule.libraryService
 
 	init {
+		GraphViewTestRule.configure()
 		val directory = Files.createTempDirectory(null)
 		LibraryModule.userLibraryPersistenceService  = FileLibraryPersistenceService({ directory.parent.absolutePathString() }, directory.name)
 		libraryBuilder = LibraryBuilder(name = "Library")

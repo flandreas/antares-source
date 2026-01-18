@@ -7,10 +7,8 @@ import kotlin.test.assertEquals
 
 class EdgeViewLineStylingTest {
 
-    companion object {
-        init {
-            GraphViewTestRule.configure()
-        }
+    init {
+        GraphViewTestRule.configure()
     }
 
     @Test

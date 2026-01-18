@@ -15,14 +15,9 @@ import kotlin.test.assertEquals
  */
 abstract class AbstractLexerTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	@BeforeTest
 	fun setup() {
+		AntaresTestRule.configure()
 		Translations.withAnyKey()
 	}
 

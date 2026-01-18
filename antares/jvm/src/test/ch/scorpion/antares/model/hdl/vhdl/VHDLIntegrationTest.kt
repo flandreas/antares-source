@@ -425,7 +425,7 @@ class VHDLIntegrationTest : AbstractVHDLTest() {
 	@Test
 	fun shouldRejectClockWithoutName() {
 		assertFailsWith(HDLException::class) {
-			VHDLGenerator(testParams()).generateHDL(printer, buildClockCircuit(null))
+			VHDLGenerator(testParams()).generateHDL(printer, buildClockCircuit(""))
 		}
 	}
 

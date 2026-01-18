@@ -17,14 +17,12 @@ import kotlin.test.*
  */
 class OrthoEdgeViewLayouterIntegrationTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
+	private val builder: GraphViewBuilder<Boolean>
+
+	init {
+		GraphViewTestRule.configure()
+		builder= GraphViewBuilder()
 	}
-
-	private val builder: GraphViewBuilder<Boolean> = GraphViewBuilder()
-
 
 	@Test
 	fun shouldSplitHorizontalEdgeView() {

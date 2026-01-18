@@ -8,30 +8,24 @@ import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.TestVertice
 import ch.scorpion.jabbah.graph.view.Connection
 import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType.ORIGIN
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import kotlin.test.*
 
-/**
- * Unit tests for [GraphViewConnectServiceImpl].
- */
 class GraphViewConnectServiceImplTest {
-
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
 
 	private val service = GraphViewModule.graphViewConnectService
 	private val edgeViewFactory = GraphViewModule.getEdgeViewFactory()
-	private val gv = GraphViewModule.graphViewFactory.create(null)
+	private lateinit var gv: GraphView
 
 	@BeforeTest
 	fun setup() {
+		GraphViewTestRule.configure()
 		Translations.withAnyKey()
+		gv = GraphViewModule.graphViewFactory.create(null)
 	}
 
 	@Test

@@ -10,19 +10,14 @@ import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-/**
- * Unit tests for [RAM].
- */
 class RAMCalculatorTest {
-
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
 
 	private val calculator = RAMCalculator()
 	private val signalHandler: SignalHandler = mock(MockMode.autofill)
+
+	init {
+		AntaresTestRule.configure()
+	}
 
 	/** ---- Clocked tests */
 

@@ -12,22 +12,21 @@ import kotlin.test.*
 
 class BidirectionalSplitterViewExecutionIntegrationTest : AbstractJvmCircuitTest() {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	private lateinit var circuitView: GraphView
-	private val splitterView = BidirectionalSplitterView(model = BidirectionalSplitter(BitWidth.BW_2, BranchCount.BC_2))
-	private val a = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "A", bitWidth = BitWidth.BW_2, portType = PortType.INOUT))
-	private val b1 = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "B1", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
-	private val b2 = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "B2", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
+	private lateinit var splitterView: BidirectionalSplitterView
+	private lateinit var a: DigitalCircuitInOutView
+	private lateinit var b1: DigitalCircuitInOutView
+	private lateinit var b2: DigitalCircuitInOutView
 
 	override fun getCircuitView(): GraphView = circuitView
 
-	@BeforeTest
-	fun setupCircuit() {
+	override fun setup() {
+		super.setup()
+		splitterView = BidirectionalSplitterView(model = BidirectionalSplitter(BitWidth.BW_2, BranchCount.BC_2))
+		a = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "A", bitWidth = BitWidth.BW_2, portType = PortType.INOUT))
+		b1 = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "B1", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
+		b2 = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "B2", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
+
 		val builder = TestCircuitBuilder("test", styleProvider, eventBus)
 
 		builder.addVerticeView(a)

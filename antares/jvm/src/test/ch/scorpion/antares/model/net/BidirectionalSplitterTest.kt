@@ -10,13 +10,11 @@ import kotlin.test.assertEquals
 
 class BidirectionalSplitterTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	private val signalHandler = mock<SignalHandler>(MockMode.autofill)
+
+	init {
+		AntaresTestRule.configure()
+	}
 
 	@Test
 	fun shouldSynchronizeInputSignal() {

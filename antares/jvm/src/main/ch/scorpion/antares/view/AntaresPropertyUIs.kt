@@ -13,6 +13,7 @@ import ch.scorpion.antares.model.signal.DigitalSignalRepresentation
 import ch.scorpion.antares.view.input.JoystickDeflection
 import ch.scorpion.antares.view.net.TransistorViewSymbol
 import ch.scorpion.antares.view.net.tunnel.TunnelFlowDirection
+import ch.scorpion.antares.view.output.LEDShape
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.output.VideoRamColorModel
 import ch.scorpion.antares.view.port.DigitalPortViewStyle
@@ -207,5 +208,12 @@ class FSMStateTypeEditor : ComboBoxPropertyEditor() {
 	init {
 		setAvailableValues(FSMStateType.entries.toTypedArray())
 		(editor as JComboBox<FSMStateType>).renderer = EnumRenderer()
+	}
+}
+
+class LEDShapeEditor : ComboBoxPropertyEditor() {
+	init {
+		setAvailableValues(LEDShape.entries.toTypedArray())
+		(editor as JComboBox<LEDShape>).renderer = EnumRenderer()
 	}
 }

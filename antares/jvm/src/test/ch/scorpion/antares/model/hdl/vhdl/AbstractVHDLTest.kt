@@ -12,9 +12,6 @@ import kotlin.test.BeforeTest
 abstract class AbstractVHDLTest {
 
 	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
 
 		fun testParams(): HDLExportParams =
 			HDLExportParams(VHDLRenaming(), "test", true, Paths.get("/tmp/none"), null)
@@ -25,6 +22,7 @@ abstract class AbstractVHDLTest {
 
 	@BeforeTest
 	fun setup() {
+		AntaresTestRule.configure()
 		AbstractJvmCircuitTest.setupLibrary()
 	}
 }

@@ -44,7 +44,13 @@ enum class SevenSegmentDisplayScheme(val customName: String) {
 				return port.getIncomingSignal()!!.bitAt(0).isSet
 			}
 			val port = display.getInput<DigitalSignal>("s")
-			return port.getIncomingSignal()!!.bitAt(bitName[0].code - 'a'.code).isSet
+			val signal = port.getIncomingSignal()!!
+			val bitIndex = bitName[0].code - 'a'.code
+			return if (bitIndex >= 0 && bitIndex < signal.bits.size) {
+				signal.bitAt(bitIndex).isSet
+			} else {
+				false
+			}
 		}
 	};
 

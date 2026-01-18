@@ -11,10 +11,8 @@ import kotlin.test.assertEquals
 
 class LogicGateViewTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
+	init {
+		AntaresTestRule.configure()
 	}
 
 	@Test

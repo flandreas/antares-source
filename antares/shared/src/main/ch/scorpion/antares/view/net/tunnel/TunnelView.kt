@@ -10,6 +10,7 @@ import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.geom.*
+import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
@@ -22,7 +23,11 @@ import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.edit.model.text.HorizontalLabel
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.Labeled
+import ch.scorpion.jabbah.graph.model.Port
+import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewConnectionGeometry
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -41,6 +46,7 @@ class TunnelView(
 	) : this(styleProvider, Tunnel(name))
 
 	companion object {
+		private val LOG by logger(TunnelView::class)
 		const val SIZE = 4 * 7
 		val face: TunnelViewFace get() = TunnelViewFace.withName(BaseModule.properties.getString(TunnelViewFace.PROP_TUNNEL_FACE))
 	}
@@ -137,6 +143,18 @@ class TunnelView(
 	override fun rotationChanged(newRotation: Rotation) {
 		super.rotationChanged(newRotation)
 		horizontalLabel.rotationChanged()
+	}
+
+	override fun <G : Any> handleConnect(edgeView: EdgeView<G>, port: Port<G>?, geometry: EdgeViewConnectionGeometry) {
+		super.handleConnect(edgeView, port, geometry)
+		if (isNotReading) {
+			if (tunnelName == null) {
+				GraphViewModule.verticeViewNameStrategy.getConnectedName(model, edgeView)?.let {
+					LOG.userTrail("Set name of Tunnel $id to '$it' derived from Net")
+					tunnelName = TunnelName(it)
+				}
+			}
+		}
 	}
 
 	/**

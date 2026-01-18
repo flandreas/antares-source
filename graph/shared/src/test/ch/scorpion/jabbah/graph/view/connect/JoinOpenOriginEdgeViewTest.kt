@@ -7,8 +7,11 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class JoinOpenOriginEdgeViewTest
-    : AbstractJoinOpenEdgeViewTest(GraphViewModule.dragEdgeViewOriginConnector.handler) {
+class JoinOpenOriginEdgeViewTest : AbstractJoinOpenEdgeViewTest() {
+
+    init {
+        handler = GraphViewModule.dragEdgeViewOriginConnector.handler
+    }
 
     /** Joins [EdgeView] at [v3] with [EdgeView] at [v1].*/
     private fun join() {

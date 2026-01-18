@@ -3,7 +3,6 @@ package ch.scorpion.jabbah.graph.view.connect
 import ch.scorpion.jabbah.base.event.Modifier.Alt
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
-import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
@@ -17,21 +16,19 @@ import kotlin.test.Test
  * [EdgeView] segments, which made the [EdgeViewAdjustmentModel] invalid due to indices not existing
  * in the [EdgeView] anymore.
  */
-class EdgeViewAdjustmentTest : AbstractInputEventHandlerTest(GraphViewModule.edgeToPortOrEdgeConnector.handler) {
+class EdgeViewAdjustmentTest : AbstractInputEventHandlerTest() {
 
-    companion object {
-        init {
-            GraphViewTestRule.configure()
-        }
-    }
-
-    private val v3 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v3", 100, 200))
-    private val v4 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v4", 200, 200))
+    private lateinit var v3: TestVerticeView
+    private lateinit var v4: TestVerticeView
 
     private val drawContext = DrawContext(Graphics2DMockBuilder().build())
 
     @BeforeTest
     fun initialize() {
+        handler = GraphViewModule.edgeToPortOrEdgeConnector.handler
+        v3 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v3", 100, 200))
+        v4 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v4", 200, 200))
+
         builder.connect(v1, v2)
         builder.connect(v3, v4)
         CurrentConnectMethod.defaultMethod = ConnectMethod.SetPoints

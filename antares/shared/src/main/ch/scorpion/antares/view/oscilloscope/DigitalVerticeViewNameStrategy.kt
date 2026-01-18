@@ -5,13 +5,14 @@ import ch.scorpion.antares.model.net.Tunnel
 import ch.scorpion.antares.model.output.LED
 import ch.scorpion.antares.model.output.RgbLED
 import ch.scorpion.jabbah.graph.model.Port
-import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeProbeNameStrategyImpl
+import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.view.VerticeViewNameStrategyImpl
 
 /**
- * Overwrites the default strategy in order to provide the [Vertice] name of certain components
+ * Overwrites the default strategy to provide the [Vertice] name of certain components
  * instead of its single [Port]'s name, which is usually not set.
  */
-class DigitalOscilloscopeProbeNameStrategy : OscilloscopeProbeNameStrategyImpl() {
+class DigitalVerticeViewNameStrategy : VerticeViewNameStrategyImpl() {
 
 	override fun portName(port: Port<*>?): String? {
 		return when (port?.owner) {

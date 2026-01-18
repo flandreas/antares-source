@@ -7,20 +7,17 @@ import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.execution.ForwardSignalHandler
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
-import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class RandomTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	private val valueProvider = RandomProvider()
 	private val signalHandler = ForwardSignalHandler(CurrentSystemSpeedCategory(SystemSpeed()))
+
+	init {
+		AntaresTestRule.configure()
+	}
 
 	@Test
 	fun shouldProduceRandom() {

@@ -80,6 +80,7 @@ class PosterViewerController(
     init {
         drawingView.editable = false
         drawingView.defaultZoomStrategy = ZoomStrategy.FIT
+        drawingView.backgroundContainer.visible = true
 
         updateLayout()
     }

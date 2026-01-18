@@ -14,10 +14,8 @@ import kotlin.test.assertSame
 
 class LightColorGraphParamTypeTest {
 
-    companion object {
-        init {
-            AntaresTestRule.configure()
-        }
+    init {
+        AntaresTestRule.configure()
     }
 
     @Test

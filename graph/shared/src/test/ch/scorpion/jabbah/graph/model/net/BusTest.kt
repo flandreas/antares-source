@@ -8,22 +8,21 @@ import ch.scorpion.jabbah.graph.model.port.PortImpl
 import kotlin.test.*
 
 /**
- * Unit tests for bus behaviour, multiple [OutputPort]s that are connected to the same [Net].
+ * Unit tests for bus behavior, multiple [OutputPort]s that are connected to the same [Net].
  */
 class BusTest {
 
-    companion object {
-	    init {
-		    GraphModelTestRule.configure()
-	    }
-    }
-
-    private val signalHandler = ForwardSignalHandler(CurrentSystemSpeedCategory(SystemSpeed()))
-	private var net: Net<Boolean>
-	private val output1 = TestVertice(name = "V1", canBeUndefined = true)
-	private val output2 = TestVertice(name = "V2", canBeUndefined = true)
+    private val signalHandler: ForwardSignalHandler
+	private val net: Net<Boolean>
+	private val output1: TestVertice
+	private val output2: TestVertice
 
     init {
+        GraphModelTestRule.configure()
+        signalHandler = ForwardSignalHandler(CurrentSystemSpeedCategory(SystemSpeed()))
+        output1 = TestVertice(name = "V1", canBeUndefined = true)
+        output2 = TestVertice(name = "V2", canBeUndefined = true)
+
     	val builder = TestGraphBuilder<Boolean>()
 	    builder.addVertice(output1)
 	    builder.addVertice(output2)

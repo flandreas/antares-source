@@ -30,7 +30,6 @@ import kotlin.io.path.absolutePathString
 import kotlin.io.path.name
 import kotlin.test.*
 
-/** Unit tests for [ContainerTree].*/
 class ContainerTreeTest {
 
 	companion object {
@@ -42,15 +41,13 @@ class ContainerTreeTest {
 					&& (it.userObject as DraggableTreeItem).type == type
 			} as DefaultMutableTreeNode?
 		}
-
-		init {
-			GraphUITestRule.configure()
-			BaseModule.properties.set(ContainerDrawingLayouter.PROP_CONTAINER_DRAWING_LAYOUTER, ContainerDrawingLayouter.Narrow.customName)
-		}
 	}
 
 	@BeforeTest
 	fun setup() {
+		GraphUITestRule.configure()
+		BaseModule.properties.set(ContainerDrawingLayouter.PROP_CONTAINER_DRAWING_LAYOUTER, ContainerDrawingLayouter.Narrow.customName)
+
 		val dir = Files.createTempDirectory(null)
 		File.createTempFile("library", ".lib", dir.toFile())
 		LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService({ dir.parent.absolutePathString() }, dir.name)

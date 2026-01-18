@@ -21,16 +21,11 @@ import kotlin.test.assertEquals
 
 class AntaresDslGraphExecutionTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	private val signalHandler = mock<SignalHandler>(MockMode.autofill)
 
 	@BeforeTest
 	fun setup() {
+		AntaresTestRule.configure()
 		val dir = Files.createTempDirectory(null)
 		File.createTempFile("library", ".lib", dir.toFile())
 		LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService({ dir.parent.absolutePathString() }, dir.name)

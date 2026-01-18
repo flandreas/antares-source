@@ -23,12 +23,6 @@ import kotlin.test.assertEquals
 /** An integration test for undoing deletion of [NetView]s.*/
 class UndoDeleteNetViewsTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
-
 	private lateinit var builder: GraphViewBuilder<Boolean>
 
 	private val drawingView = mock<DrawingView<Drawing<Component>>>()
@@ -37,6 +31,7 @@ class UndoDeleteNetViewsTest {
 
 	@BeforeTest
 	fun setup(){
+		GraphViewTestRule.configure()
 		builder = GraphViewBuilder()
 		EditModule.commandManager.bindDataHolder(builder)
 

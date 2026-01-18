@@ -7,12 +7,6 @@ import kotlin.test.assertTrue
 
 abstract class AbstractAnalogFileBasedTest : AbstractFileBasedTest() {
 
-	companion object {
-		init {
-			configure()
-		}
-	}
-
 	protected val analogGraphView: AnalogGraphView get() = openedCircuitView as AnalogGraphView
 
 	protected fun assertCurrent(expected: Double, actual: Double) {

@@ -14,12 +14,6 @@ import kotlin.test.assertSame
 
 class CombinerSplitterTest : AbstractFileBasedTest() {
 
-	companion object {
-		init {
-			configure()
-		}
-	}
-
 	private lateinit var a0: DigitalCircuitInOut
 	private lateinit var a3: DigitalCircuitInOut
 	private lateinit var b0: DigitalCircuitInOut

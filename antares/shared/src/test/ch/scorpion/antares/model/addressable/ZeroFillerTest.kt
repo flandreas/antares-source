@@ -5,15 +5,10 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
-/**
- * Unit tests for [ZeroFiller].
- */
 class ZeroFillerTest {
 
-    companion object {
-	    init {
-		    AntaresTestRule.configure()
-	    }
+    init {
+        AntaresTestRule.configure()
     }
 
     @Test

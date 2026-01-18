@@ -7,17 +7,12 @@ import kotlin.test.assertEquals
 
 class LibraryImplTest {
 
-	companion object {
-		init {
-			GraphLibraryTestRule.configure()
-		}
-	}
-
 	private val libraryBuilder: LibraryBuilder
 
 	private val library: Library get() = libraryBuilder.library
 
 	init {
+		GraphLibraryTestRule.configure()
 		LibraryModule.userLibraryPersistenceService = mock<LibraryPersistenceService>(MockMode.autofill)
 		libraryBuilder = LibraryBuilder(name = "Library")
 	}

@@ -6,31 +6,26 @@ import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewMockBuilder
 import ch.scorpion.jabbah.graph.model.Net
-import ch.scorpion.jabbah.graph.view.connect.SplitEdgeViewResult
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNull
-import kotlin.test.assertSame
+import kotlin.test.*
 
 class GraphViewServiceImplTest {
 
-    companion object {
-        init {
-            GraphViewTestRule.configure()
-        }
-    }
-
     private val service = GraphViewServiceImpl()
+    private val builder: GraphViewBuilder<Boolean>
+    private val drawingView: DrawingView<Drawing<Component>>
+    private val vv1: TestVerticeView
+    private val vv2: TestVerticeView
+    private val vv3: TestVerticeView
 
-    private val builder = GraphViewBuilder<Boolean>()
-    private val drawingView: DrawingView<Drawing<Component>> = DrawingViewMockBuilder().withDrawing(builder.graphView).build()
-    private val vv1 = builder.addVerticeView(TestVerticeView("vv1", loc = Point2D(100, 100)))
-    private val vv2 = builder.addVerticeView(TestVerticeView("vv2", loc = Point2D(200, 100)))
-    private val vv3 = builder.addVerticeView(TestVerticeView("vv3", loc = Point2D(200, 200)))
-    private lateinit var ev: EdgeView<Boolean>
-    private lateinit var split: SplitEdgeViewResult<Boolean>
+    init {
+       GraphViewTestRule.configure()
+       builder = GraphViewBuilder<Boolean>()
+       drawingView = DrawingViewMockBuilder().withDrawing(builder.graphView).build()
+       vv1 = builder.addVerticeView(TestVerticeView("vv1", loc = Point2D(100, 100)))
+       vv2 = builder.addVerticeView(TestVerticeView("vv2", loc = Point2D(200, 100)))
+       vv3 = builder.addVerticeView(TestVerticeView("vv3", loc = Point2D(200, 200)))
+    }
 
     @Test
     fun shouldDeleteConnectedVerticeView() {

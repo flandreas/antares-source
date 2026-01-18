@@ -11,13 +11,11 @@ import kotlin.test.assertTrue
 
 class BooleanExpressionServiceTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	private val service = BooleanExpressionService()
+
+	init {
+		AntaresTestRule.configure()
+	}
 
 	@Test
 	fun shouldParseExpressions() {

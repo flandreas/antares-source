@@ -20,8 +20,6 @@ class NonVolatileTest : AbstractFileBasedTest() {
 
     @BeforeTest
     fun openAndStartCircuit() {
-        configure()
-
         GraphModelModule.nonVolatileService.delete(UUID("654d580e-5b1e-4b68-b5c2-61fe32e73236"))
         openCircuit(UUID("654d580e-5b1e-4b68-b5c2-61fe32e73236"))
 

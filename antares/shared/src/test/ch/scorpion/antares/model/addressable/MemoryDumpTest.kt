@@ -4,16 +4,11 @@ import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.signal.BitWidth
 import kotlin.test.*
 
-/**
- * Unit tests for [MemoryDump].
- */
 class MemoryDumpTest {
 
-    companion object {
-	    init {
-		    AntaresTestRule.configure()
-	    }
-    }
+	init {
+		AntaresTestRule.configure()
+	}
 
 	/** ---- File version tests */
 

@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.view.oscilloscope
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.execution.SignalHandlerMockBuilder
 import ch.scorpion.jabbah.graph.model.oscilloscope.SignalHistories
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.graph.GraphViewImpl
 import kotlin.test.Test
@@ -10,15 +11,15 @@ import kotlin.test.assertEquals
 
 class OscilloscopeViewTest {
 
-    companion object {
-        init {
-            GraphViewTestRule.configure()
-        }
-    }
-
     private val signalHandler = SignalHandlerMockBuilder()
-    private val oscilloscopeView = OscilloscopeView()
-    private val graphView = GraphViewImpl().also { it.add(oscilloscopeView) }
+    private val oscilloscopeView: OscilloscopeView
+    private val graphView: GraphView
+
+    init {
+        GraphViewTestRule.configure()
+        oscilloscopeView = OscilloscopeView()
+        graphView = GraphViewImpl().also { it.add(oscilloscopeView) }
+    }
 
     @Test
     fun shouldUpdateMaxTime() {

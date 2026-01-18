@@ -301,6 +301,7 @@ open class GraphFrameController<T: GraphFrame>(
 		}
 
 		override fun execute(event: ActionEvent) {
+			LOG.userTrail("View desktop")
 			showDesktop()
 		}
 
@@ -319,6 +320,7 @@ open class GraphFrameController<T: GraphFrame>(
 		}
 
 		override fun execute(event: ActionEvent) {
+			LOG.userTrail("View container")
 			showContainer()
 		}
 
@@ -338,6 +340,7 @@ open class GraphFrameController<T: GraphFrame>(
 		}
 
 		override fun execute(event: ActionEvent) {
+			LOG.userTrail("View documentation")
 			showDocumentation()
 		}
 

@@ -1,7 +1,6 @@
 package ch.scorpion.jabbah.graph.view.connect
 
 import ch.scorpion.jabbah.graph.view.EdgeView
-import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeEndpointView
@@ -14,16 +13,10 @@ import kotlin.test.assertTrue
  * Drag the destination [EdgeEndpointView] of an [EdgeView] onto the origin [EdgeEndpointView]
  * of another [EdgeView] to join the two [EdgeView]s.
  */
-class JoinOpenDestinationEdgeViewsTest
-	: AbstractJoinOpenEdgeViewTest(GraphViewModule.dragEdgeViewDestinationConnector.handler) {
-
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
+class JoinOpenDestinationEdgeViewsTest : AbstractJoinOpenEdgeViewTest() {
 
 	init {
+		handler = GraphViewModule.dragEdgeViewDestinationConnector.handler
 		CurrentConnectMethod.defaultMethod = ConnectMethod.AutoLayout
 	}
 

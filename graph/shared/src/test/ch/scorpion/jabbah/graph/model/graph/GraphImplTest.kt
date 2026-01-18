@@ -14,19 +14,11 @@ import dev.mokkery.MockMode
 import dev.mokkery.mock
 import kotlin.test.*
 
-/**
- * Unit tests for [GraphImpl].
- */
 class GraphImplTest {
-
-	companion object {
-		init {
-			GraphModelTestRule.configure()
-		}
-	}
 
 	@BeforeTest
 	fun setup() {
+		GraphModelTestRule.configure()
 		Translations.withAnyKey()
 	}
 

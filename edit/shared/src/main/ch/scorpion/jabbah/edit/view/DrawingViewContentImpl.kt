@@ -55,7 +55,11 @@ class DrawingViewContentImpl<T : Drawing<Component>>(
 
 	override val backdropDrawer: Drawable = BackdropDrawer()
 
-	override val backgroundContainer: DrawableContainer<Drawable> = DrawableContainerImpl()
+	/**
+	 * Initially invisible to not interfere with ZoomStrategy bounding box calculation if the background is empty.
+	 * A visible, empty background would add point 0/0 to the bounding box (bug #1130).
+	 */
+	override val backgroundContainer: DrawableContainer<Drawable> = DrawableContainerImpl(visible = false)
 
 	override fun dispose() {
 		drawing.removeDrawableContainerListener(componentRemoveListener)

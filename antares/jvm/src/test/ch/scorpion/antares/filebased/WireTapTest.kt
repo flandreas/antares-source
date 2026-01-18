@@ -7,17 +7,10 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.UUID
 import kotlin.test.BeforeTest
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class WireTapTest : AbstractFileBasedTest() {
-
-	companion object {
-		init {
-			configure()
-		}
-	}
 
 	private lateinit var a: DigitalCircuitInOut
 	private lateinit var b: DigitalCircuitInOut

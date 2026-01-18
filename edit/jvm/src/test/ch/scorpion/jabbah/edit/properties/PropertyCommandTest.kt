@@ -20,18 +20,13 @@ import dev.mokkery.every
 
 class PropertyCommandTest {
 
-	companion object {
-		init {
-			EditTestRule.configure()
-		}
-
-	}
-
 	private val drawing = DrawingImpl<Component>()
 	private val editor = mock<Editor>()
-	private val rectangle = RectangleComponent()
+	private val rectangle: RectangleComponent
 
 	init {
+		EditTestRule.configure()
+		rectangle = RectangleComponent()
 		every { editor.drawing } returns drawing
 		drawing.add(rectangle)
 	}

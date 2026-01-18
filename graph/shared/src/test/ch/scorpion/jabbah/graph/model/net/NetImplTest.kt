@@ -2,20 +2,17 @@ package ch.scorpion.jabbah.graph.model.net
 
 import ch.scorpion.jabbah.graph.model.GraphModelTestRule
 import ch.scorpion.jabbah.graph.model.TestVertice
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-/**
- * Unit tests for [NetImpl].
- */
 class NetImplTest {
 
-    companion object {
-	    init {
-		    GraphModelTestRule.configure()
-	    }
+    @BeforeTest
+    fun setup() {
+        GraphModelTestRule.configure()
     }
 
     @Test

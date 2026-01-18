@@ -6,29 +6,18 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.graph.health.GraphViewConsistencyCheck
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
-import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlightCircle
 import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.node.NodeView
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import dev.mokkery.verify
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertIs
-import kotlin.test.assertTrue
+import kotlin.test.*
 
-class InputToOutputOrEdgeConnectorTest
-	: AbstractInputEventHandlerTest(GraphViewModule.inputToOutputOrEdgeConnector.handler) {
-
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
+class InputToOutputOrEdgeConnectorTest : AbstractInputEventHandlerTest() {
 
 	init {
+		handler = GraphViewModule.inputToOutputOrEdgeConnector.handler
 		CurrentConnectMethod.defaultMethod = ConnectMethod.AutoLayout
 	}
 

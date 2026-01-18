@@ -10,21 +10,14 @@ import kotlin.test.assertNull
 
 class CurrentSystemSpeedCategoryTest {
 
-    companion object {
-
-        private var event: SystemSpeedCategoryEvent? = null
-
-        init {
-            Translations.withAnyKey()
-            ExecutionTestRule.configure()
-            BaseModule.eventBus.register(SystemSpeedCategoryEvent::class) {
-                event = it
-            }
-        }
-    }
+    private var event: SystemSpeedCategoryEvent? = null
 
     init {
-        event = null
+        Translations.withAnyKey()
+        ExecutionTestRule.configure()
+        BaseModule.eventBus.register(SystemSpeedCategoryEvent::class) {
+            event = it
+        }
     }
 
     @Test

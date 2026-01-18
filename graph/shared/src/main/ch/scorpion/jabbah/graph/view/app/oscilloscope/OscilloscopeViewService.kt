@@ -176,7 +176,7 @@ class OscilloscopeViewServiceImpl(
 		if (newEdgeView != null) {
 			probeVerticeView.edgeView = newEdgeView
 			(newEdgeView.model as Net<T>).connect(probeVerticeView.model.getPort())
-			GraphViewModule.oscilloscopeProbeNameStrategy
+			GraphViewModule.verticeViewNameStrategy
 				.getConnectedName(oscilloscopeView.model, newEdgeView)
 				?.let { probeVerticeView.name = it }
 		}

@@ -9,12 +9,6 @@ import kotlin.test.*
 /** Includes an analog inverter (made from a transistor) in a digital circuit.*/
 class AnalogSubCircuitTest : AbstractFileBasedTest() {
 
-	companion object {
-		init {
-			configure()
-		}
-	}
-
 	private lateinit var switch: SwitchView
 	private lateinit var led: LEDView
 

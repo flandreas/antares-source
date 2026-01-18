@@ -5,15 +5,10 @@ import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-/**
- * Unit tests for [DigitalEdgeViewNetAnimation].
- */
 class DigitalEdgeViewNetAnimationTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
+	init {
+		AntaresTestRule.configure()
 	}
 
 	@Test

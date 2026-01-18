@@ -10,7 +10,8 @@ import kotlin.test.Test
 class Incrementer8BitTest : AbstractSystemLibraryTest() {
 
     @BeforeTest
-    fun setupCircuit() {
+    override fun setup() {
+        super.setup()
         configure()
         openCircuitWithElement(UUID("81e0ad9b-4678-4e79-aeef-8f59b153f2e3"))
     }

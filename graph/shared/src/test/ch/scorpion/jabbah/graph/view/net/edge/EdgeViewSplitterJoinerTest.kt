@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.model.TestVertice
 import ch.scorpion.jabbah.graph.view.Connection
 import ch.scorpion.jabbah.graph.view.EdgeView
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType.DESTINATION
@@ -15,18 +16,16 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertSame
 
-/** Unit tests for [EdgeViewSplitterJoiner]. */
 class EdgeViewSplitterJoinerTest {
-
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
 
 	private val service = GraphViewModule.graphViewConnectService
 	private val edgeViewFactory = GraphViewModule.getEdgeViewFactory()
-	private val gv = GraphViewModule.graphViewFactory.create(null)
+	private val gv: GraphView
+
+	init {
+		GraphViewTestRule.configure()
+		gv = GraphViewModule.graphViewFactory.create(null)
+	}
 
 	@Test
 	fun shouldSplitInMiddleOfSegment() {

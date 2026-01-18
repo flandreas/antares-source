@@ -16,12 +16,6 @@ import kotlin.test.assertEquals
 
 class TriStateOutputTest : AbstractFileBasedTest() {
 
-	companion object {
-		init {
-			configure()
-		}
-	}
-
 	private lateinit var d1: Switch
 	private lateinit var s1: Switch
 	private lateinit var d2: Switch

@@ -8,16 +8,16 @@ import ch.scorpion.jabbah.graph.model.vertice.GraphPortName.createPastedName
 import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.mock
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 class GraphPortNameTest {
 
-	companion object {
-		init {
-			GraphModelTestRule.configure()
-		}
+	@BeforeTest
+	fun setup() {
+		GraphModelTestRule.configure()
 	}
 
 	@Test

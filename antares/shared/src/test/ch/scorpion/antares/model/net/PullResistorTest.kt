@@ -11,13 +11,11 @@ import kotlin.test.assertEquals
 
 class PullResistorTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	private val signalHandler = mock<SignalHandler>()
+
+	init {
+		AntaresTestRule.configure()
+	}
 
 	@Test
 	fun shouldWithdrawWeakOutput() {

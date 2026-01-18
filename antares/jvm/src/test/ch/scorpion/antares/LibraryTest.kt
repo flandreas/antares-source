@@ -22,14 +22,9 @@ import kotlin.test.*
  */
 class LibraryTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	@BeforeTest
 	fun setup() {
+		AntaresTestRule.configure()
 		val dir = Files.createTempDirectory(null)
 		File.createTempFile("library", ".lib", dir.toFile())
 		LibraryModule.userLibraryPersistenceService = FileLibraryPersistenceService({ dir.parent.absolutePathString() }, dir.name)

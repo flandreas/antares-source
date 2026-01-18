@@ -9,18 +9,18 @@ import ch.scorpion.jabbah.graph.model.module.GraphModelModule
 import ch.scorpion.jabbah.graph.view.GraphViewTestRule
 import dev.mokkery.MockMode
 import dev.mokkery.mock
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class GraphDslInterpreterTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
-
 	private val signalHandler = mock<SignalHandler>(MockMode.autofill)
+
+	@BeforeTest
+	fun setup() {
+		GraphViewTestRule.configure()
+	}
 
 	@Test
 	fun shouldInterpretInitStatement() {

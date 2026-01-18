@@ -22,12 +22,6 @@ import kotlin.test.assertEquals
  */
 class Bug227 : AbstractFileBasedTest() {
 
-	companion object {
-		init {
-			configure()
-		}
-	}
-
 	private lateinit var a: Switch
 	private lateinit var i: Switch
 	private lateinit var d: Switch

@@ -22,13 +22,11 @@ import dev.mokkery.mock
  */
 abstract class AbstractAntaresInterpreterPortTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	protected val context = BaseModule.storingActivationRecordFactory("context", null)
+
+	init {
+		AntaresTestRule.configure()
+	}
 
 	protected fun variable(name: String): Variable = Variable(TextLocation(0, 0, 0), Token(ID, name))
 

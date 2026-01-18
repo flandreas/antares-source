@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.auth.Operation.Change
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import java.awt.Component
+import java.awt.Frame
 import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
 
@@ -28,6 +29,9 @@ class DeleteLibraryFolderAction(
 
 	override fun execute(event: ActionEvent) {
 		val libraryItem = controller.selectedItem
+		if (!ensureEmpty(libraryItem as LibraryDirectory)) {
+			return
+		}
 		if (JOptionPane.showConfirmDialog(
 				SwingUtilities.getWindowAncestor(controller.view as Component),
 				Translations.getString("graph.action.deleteLibraryDirectory.question", controller.selectedItem!!),
@@ -37,5 +41,18 @@ class DeleteLibraryFolderAction(
 			LOG.userTrail("Delete folder '${libraryItem.name.getOptionalTranslation()}'")
 			library.libraryService.removeLibraryItem(libraryItem.library!!, libraryItem)
 		}
+	}
+
+	private fun ensureEmpty(directory: LibraryDirectory): Boolean {
+		if (!directory.isEmpty()) {
+			JOptionPane.showMessageDialog(
+				Frame.getFrames()[0],
+				Translations.getString("graph.action.deleteLibraryDirectory.nonEmpty.msg"),
+				this@DeleteLibraryFolderAction.name,
+				JOptionPane.ERROR_MESSAGE
+			)
+			return false
+		}
+		return true
 	}
 }

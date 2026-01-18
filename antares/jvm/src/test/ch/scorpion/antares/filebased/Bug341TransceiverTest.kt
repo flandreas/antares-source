@@ -8,12 +8,6 @@ import kotlin.test.Test
 
 class Bug341TransceiverTest : AbstractFileBasedTest() {
 
-	companion object {
-		init {
-			configure()
-		}
-	}
-
 	private lateinit var inputView: DigitalCircuitInOutView
 	private lateinit var outputView: DigitalCircuitInOutView
 	private lateinit var enableSwitchView: SwitchView

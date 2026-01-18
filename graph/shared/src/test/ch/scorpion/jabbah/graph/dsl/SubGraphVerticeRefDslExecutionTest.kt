@@ -20,17 +20,13 @@ import kotlin.test.assertTrue
  */
 class SubGraphVerticeRefDslExecutionTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
-
 	private val signalHandler = mock<SignalHandler>(MockMode.autofill)
-	private val issueCollector = IssueCollector()
+	private lateinit var issueCollector: IssueCollector
 
 	@BeforeTest
 	fun setup() {
+		GraphViewTestRule.configure()
+		issueCollector = IssueCollector()
 		LibraryModule.userLibraryPersistenceService = MemoryLibraryPersistenceService()
 		LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"))
 	}

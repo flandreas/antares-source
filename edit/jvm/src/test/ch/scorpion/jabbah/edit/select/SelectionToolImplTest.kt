@@ -20,19 +20,20 @@ import kotlin.test.assertTrue
 
 class SelectionToolImplTest {
 
-	companion object {
-		init {
-			EditTestRule.configure()
-		}
-	}
-
-	private val canvas = CanvasJvm(EditModule.drawingViewFactory.create(DrawingImpl(), null, false, ""))
-	private val editor = EditorImpl(canvas.view as DrawingView<Drawing<Component>>)
-	private val toolUtil = ToolTestUtil(editor.selectionTool, editor)
-	private val rect1 = RectangleComponent(shape = Rectangle2D(100, 100, 100, 100))
-	private val rect2 = RectangleComponent(shape = Rectangle2D(300, 300, 100, 100))
+	private val canvas: CanvasJvm
+	private val editor: EditorImpl
+	private val toolUtil: ToolTestUtil
+	private val rect1: RectangleComponent
+	private val rect2: RectangleComponent
 
 	init {
+		EditTestRule.configure()
+		canvas = CanvasJvm(EditModule.drawingViewFactory.create(DrawingImpl(), null, false, ""))
+		editor = EditorImpl(canvas.view as DrawingView<Drawing<Component>>)
+		toolUtil = ToolTestUtil(editor.selectionTool, editor)
+		rect1 = RectangleComponent(shape = Rectangle2D(100, 100, 100, 100))
+		rect2 = RectangleComponent(shape = Rectangle2D(300, 300, 100, 100))
+
 		toolUtil.tool.activate()
 		editor.drawing.add(rect1)
 		editor.drawing.add(rect2)

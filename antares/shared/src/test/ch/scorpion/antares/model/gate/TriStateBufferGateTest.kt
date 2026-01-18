@@ -2,29 +2,28 @@ package ch.scorpion.antares.model.gate
 
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.Logic
-import ch.scorpion.antares.model.signal.*
+import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.Bit.*
+import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.execution.ForwardSignalHandler
 import ch.scorpion.jabbah.execution.speed.CurrentSystemSpeedCategory
-import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-/**
- * Unit tests for [TriStateBufferGate].
- */
 class TriStateBufferGateTest {
 
-    companion object {
-	    init {
-		    AntaresTestRule.configure()
-	    }
-    }
-
     private val signalHandler = ForwardSignalHandler(CurrentSystemSpeedCategory(SystemSpeed()))
-	private val positiveGate = TriStateBufferGate(BitWidth.BW_1, Logic.POSITIVE)
-	private val negativeGate = TriStateBufferGate(BitWidth.BW_1, Logic.NEGATIVE)
+	private val positiveGate: TriStateBufferGate
+	private val negativeGate: TriStateBufferGate
+
+	init {
+		AntaresTestRule.configure()
+		positiveGate = TriStateBufferGate(BitWidth.BW_1, Logic.POSITIVE)
+		negativeGate = TriStateBufferGate(BitWidth.BW_1, Logic.NEGATIVE)
+	}
 
 	private fun assertPositive(control: Bit, data: Bit, result: Bit) {
 		positiveGate.getInput<DigitalSignal>("EN").setIncomingSignal(DigitalSignalFactory.of(control), signalHandler)

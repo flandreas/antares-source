@@ -2,16 +2,13 @@ package ch.scorpion.jabbah.edit.model.polyline
 
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
+import ch.scorpion.jabbah.edit.model.AbstractComponentBeanInfo
 import ch.scorpion.jabbah.edit.model.EditProperties
-import ch.scorpion.jabbah.edit.properties.AbstractBeanInfo
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import com.l2fprod.common.propertysheet.Property
-import java.beans.BeanInfo
 
-
-/** A [BeanInfo] for [PolylineComponent].*/
 @Suppress("unused")
-class PolylineComponentBeanInfo : AbstractBeanInfo<PolylineComponent>() {
+class PolylineComponentBeanInfo : AbstractComponentBeanInfo<PolylineComponent>() {
 
     companion object {
 	    private val filled = EditProperties.filled()

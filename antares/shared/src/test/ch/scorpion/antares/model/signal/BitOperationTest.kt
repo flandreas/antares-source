@@ -3,15 +3,10 @@ package ch.scorpion.antares.model.signal
 import ch.scorpion.jabbah.base.module.BaseModule
 import kotlin.test.*
 
-/**
- * Unit tests for [BitOperation].
- */
 class BitOperationTest {
 
-	companion object {
-		init {
-			BaseModule.require()
-		}
+	init {
+		BaseModule.require()
 	}
 
 	@Test

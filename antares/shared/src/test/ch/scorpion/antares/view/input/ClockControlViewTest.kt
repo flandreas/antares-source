@@ -24,10 +24,8 @@ import kotlin.test.Test
 
 class ClockControlViewTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
+	init {
+		AntaresTestRule.configure()
 	}
 
 	@Test

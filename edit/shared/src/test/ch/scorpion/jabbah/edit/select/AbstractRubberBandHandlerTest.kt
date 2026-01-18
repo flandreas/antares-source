@@ -4,15 +4,10 @@ import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.time.Timer
 import ch.scorpion.jabbah.edit.AbstractEditIntegrationTest
 import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.EditTestRule
-import ch.scorpion.jabbah.edit.EditorToolDriver
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
 import ch.scorpion.jabbah.edit.module.EditModule
-import kotlin.test.BeforeTest
 
 abstract class AbstractRubberBandHandlerTest : AbstractEditIntegrationTest() {
-
-	protected val driver = EditorToolDriver(editor)
 
 	protected lateinit var rectangle: Component
 		private set
@@ -21,11 +16,8 @@ abstract class AbstractRubberBandHandlerTest : AbstractEditIntegrationTest() {
 		editor.selectionTool.rubberBandHandler.delaySelectTimer = timer
 	}
 
-	@BeforeTest
-	fun setup() {
-		EditModule.reset()
-		EditTestRule.configure()
-
+	override fun setup() {
+		super.setup()
 		rectangle = EditModule.drawingAppService.add(
 			RectangleComponent(shape = Rectangle2D(10, 10, 20, 20)),
 			editor.view)

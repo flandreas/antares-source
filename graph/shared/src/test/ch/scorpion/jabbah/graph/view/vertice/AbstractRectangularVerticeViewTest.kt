@@ -12,19 +12,11 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-/**
- * Unit tests for [AbstractRectangularVerticeView].
- */
 class AbstractRectangularVerticeViewTest {
-
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
 
 	@BeforeTest
 	fun setup() {
+		GraphViewTestRule.configure()
 		Translations.withAnyKey()
 	}
 

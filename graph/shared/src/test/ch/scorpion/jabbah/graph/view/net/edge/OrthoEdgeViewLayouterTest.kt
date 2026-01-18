@@ -17,21 +17,13 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-/**
- * Unit tests for [OrthoEdgeViewLayouter].
- */
 class OrthoEdgeViewLayouterTest {
-
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
 
 	private lateinit var graphView: GraphView
 
 	@BeforeTest
 	fun setup() {
+		GraphViewTestRule.configure()
 		graphView = mock()
 		every { graphView.snapper } returns null
 		every { graphView.getEdgeViews()} returns listOf<EdgeView<*>>().toImmutableList()

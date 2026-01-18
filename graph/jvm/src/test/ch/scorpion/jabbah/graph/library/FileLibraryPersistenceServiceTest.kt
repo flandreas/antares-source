@@ -19,17 +19,12 @@ import kotlin.test.*
 
 class FileLibraryPersistenceServiceTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
-
 	private val directory = Files.createTempDirectory(null)
 	private val persistenceService = FileLibraryPersistenceService({ directory.parent.absolutePathString() }, directory.name)
 
 	@BeforeTest
 	fun setup() {
+		GraphViewTestRule.configure()
 		LibraryModule.userLibraryPersistenceService = persistenceService
 		LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"))
 		GraphModelModule.portFactory = TestPortFactory()

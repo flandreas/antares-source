@@ -18,17 +18,13 @@ import org.junit.Test
 
 class DrawBeanInfoTest {
 
-	companion object {
-		init {
-			BaseModuleJvm.require()
-			EditTestRule.configure()
-		}
-	}
-
 	private val view = DrawingViewMockBuilder().build<Component>()
 	private val editor = mock<Editor>()
 
 	init {
+		BaseModuleJvm.require()
+		EditTestRule.configure()
+
 		every { editor.active } returns true
 		every { editor.view } returns view
 	}

@@ -15,16 +15,13 @@ class AbstractSignalHistoryYAxisTest {
 		private const val INSET = 10
 		private const val DEFAULT_VALUE_INSET = 20
 		private const val HEIGHT = 100
-
-		init {
-			GraphViewTestRule.configure()
-		}
 	}
 
 	private val yAxis = LongSignalHistoryYAxis(INSET, INSET, DEFAULT_VALUE, DEFAULT_VALUE_INSET)
 
 	@BeforeTest
 	fun setup() {
+		GraphViewTestRule.configure()
 		yAxis.setBounds(0, 0, 100, HEIGHT)
 	}
 

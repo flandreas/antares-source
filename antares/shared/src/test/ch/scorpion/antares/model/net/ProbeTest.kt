@@ -8,10 +8,8 @@ import kotlin.test.assertFailsWith
 
 class ProbeTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
+	init {
+		AntaresTestRule.configure()
 	}
 
 	@Test

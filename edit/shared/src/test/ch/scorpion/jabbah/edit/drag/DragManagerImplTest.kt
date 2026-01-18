@@ -5,15 +5,12 @@ import ch.scorpion.jabbah.base.event.Modifier
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.edit.AbstractEditIntegrationTest
-import ch.scorpion.jabbah.edit.EditorToolDriver
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
 import ch.scorpion.jabbah.edit.module.EditModule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class DragManagerImplTest : AbstractEditIntegrationTest() {
-
-	private val driver = EditorToolDriver(editor)
 
 	@Test
 	fun shouldDrag() {

@@ -7,10 +7,8 @@ import kotlin.test.assertNull
 
 class MemoryDumpFileVersionTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
+	init {
+		AntaresTestRule.configure()
 	}
 
 	@Test

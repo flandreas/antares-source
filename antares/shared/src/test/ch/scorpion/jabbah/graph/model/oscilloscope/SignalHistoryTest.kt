@@ -8,13 +8,11 @@ import kotlin.test.assertNull
 /** Unit tests for [SignalHistory]. */
 class SignalHistoryTest {
 
-	companion object {
-		init {
-			BaseModule.require()
-		}
-	}
-
 	private var history = SignalHistory<Int>(100)
+
+	init {
+		BaseModule.require()
+	}
 
 	@Test
 	fun shouldNotAddSameSignal() {

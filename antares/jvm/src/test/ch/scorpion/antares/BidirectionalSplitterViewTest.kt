@@ -10,29 +10,27 @@ import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.antares.view.net.BidirectionalSplitterView
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.GraphView
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 class BidirectionalSplitterViewTest : AbstractJvmCircuitTest() {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	private lateinit var circuitView: GraphView
-	private val bidiSplitterView = BidirectionalSplitterView(model = BidirectionalSplitter(BitWidth.BW_2, BranchCount.BC_2))
-	private val a = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "A", bitWidth = BitWidth.BW_2, portType = PortType.INOUT))
-	private val in0 = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "I0", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
-	private val in1 = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "I1", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
+	private lateinit var bidiSplitterView: BidirectionalSplitterView
+	private lateinit var a: DigitalCircuitInOutView
+	private lateinit var in0: DigitalCircuitInOutView
+	private lateinit var in1: DigitalCircuitInOutView
 
 	override fun getCircuitView(): GraphView = circuitView
 
-	@BeforeTest
-	fun setupCircuit() {
+	override fun setup() {
+		super.setup()
+		bidiSplitterView = BidirectionalSplitterView(model = BidirectionalSplitter(BitWidth.BW_2, BranchCount.BC_2))
+		a = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "A", bitWidth = BitWidth.BW_2, portType = PortType.INOUT))
+		in0 = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "I0", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
+		in1 = DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "I1", bitWidth = BitWidth.BW_1, portType = PortType.INOUT))
+
 		val builder = TestCircuitBuilder("test", styleProvider, eventBus)
 
 		builder.addVerticeView(a)

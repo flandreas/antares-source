@@ -29,6 +29,12 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
 
         private val radialGradientPaintCache = mutableMapOf<RadialColorGradient, RadialGradientPaint>()
 
+        private val colorCache = mutableMapOf<Color, java.awt.Color>()
+
+        private val fontCache = mutableMapOf<Font, java.awt.Font>()
+
+        private val strokeCache = mutableMapOf<Stroke, java.awt.Stroke>()
+
         fun toFontStyle(awtFont: java.awt.Font): Int {
             var fontStyle = FontStyle.PLAIN.value
             if (awtFont.isBold) {
@@ -52,26 +58,28 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
         }
 
         fun toAwtColor(color: Color): java.awt.Color =
-	        java.awt.Color(color.red, color.green, color.blue, color.alpha)
+            colorCache.getOrPut(color) { java.awt.Color(color.red, color.green, color.blue, color.alpha) }
 
 	    fun fromAwtColor(color: java.awt.Color): Color =
 		    Color(color.red, color.green, color.blue, color.alpha)
 
         fun toAwtFont(font: Font): java.awt.Font =
-            Font(font.family.fontName, fromFontStyle(font), font.size)
+            fontCache.getOrPut(font) { Font(font.family.fontName, fromFontStyle(font), font.size) }
 
 	    fun fromAwtFont(font: java.awt.Font): Font =
             FontImpl(PhysicalFontFamily(font.fontName), toFontStyle(font), font.size)
 
-	    fun toAwtStroke(stroke: Stroke): java.awt.Stroke {
-		    return BasicStroke(
-			    stroke.width,
-			    fromLineCap(stroke.cap),
-			    fromLineJoin(stroke.join),
-			    stroke.miterLimit,
-			    stroke.dash,
-			    stroke.dashPhase ?: 0f)
-	    }
+	    fun toAwtStroke(stroke: Stroke): java.awt.Stroke =
+            strokeCache.getOrPut(stroke) {
+                BasicStroke(
+                    stroke.width,
+                    fromLineCap(stroke.cap),
+                    fromLineJoin(stroke.join),
+                    stroke.miterLimit,
+                    stroke.dash,
+                    stroke.dashPhase ?: 0f
+                )
+            }
 
 	    private fun fromLineCap(cap: LineCap): Int {
 		    return when (cap) {
@@ -163,9 +171,8 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
             }
         }
 
-        fun toAwtPoint(point: ch.scorpion.jabbah.base.geom.Point2D): Point {
-            return Point(point.x.toInt(), point.y.toInt())
-        }
+        fun toAwtPoint(point: ch.scorpion.jabbah.base.geom.Point2D): Point =
+            Point(point.x.toInt(), point.y.toInt())
     }
 
     /** ---- [Graphics2D] interface */

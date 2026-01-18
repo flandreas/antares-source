@@ -16,17 +16,11 @@ import kotlin.test.assertFailsWith
 
 class TruthTableServiceJvmTest {
 
-    companion object {
-        init {
-            AntaresTestRule.configure()
-        }
-    }
-
     private val commandManager = SourcingCommandManager()
 
     private val service = TruthTableServiceJvmImpl(commandManager)
 
-    private var dummyStorable: Storable = DrawingImpl<Component>()
+    private var dummyStorable: Storable
 
     private val dataHolder = object : UndoableDataHolder {
         override fun getUndoableState(): Storable? = dummyStorable
@@ -37,6 +31,8 @@ class TruthTableServiceJvmTest {
     }
 
     init {
+        AntaresTestRule.configure()
+        dummyStorable = DrawingImpl<Component>()
         commandManager.bindDataHolder(dataHolder)
     }
 

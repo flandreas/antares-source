@@ -12,13 +12,12 @@ import kotlin.test.assertTrue
 
 class GraphViewSymbolTableTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
+	private val builder: GraphViewBuilder<Boolean>
 
-	private val builder = GraphViewBuilder<Boolean>("Test")
+	init {
+		GraphViewTestRule.configure()
+		builder = GraphViewBuilder<Boolean>("Test")
+	}
 
 	@Test
 	fun shouldContainPortNames() {

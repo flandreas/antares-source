@@ -15,19 +15,18 @@ import kotlin.test.*
  */
 class SelectionManagerImplTest {
 
-	companion object {
-		init {
-			EditTestRule.configure()
-		}
-	}
-
 	private val eventBus = EventBusImpl()
-	private val drawing = DrawingImpl<Component>()
-	private val canvas = CanvasJvm(EditModule.drawingViewFactory.create(drawing, null, false, ""))
+	private val drawing: DrawingImpl<Component>
+	private val canvas: CanvasJvm
 	private var selectionManager: SelectionManagerImpl
-	private val rect = RectangleComponent(styleProvider = StyleRepository.INSTANCE, shape = Rectangle2D(200, 200, 200, 100))
+	private val rect: RectangleComponent
 
 	init {
+		EditTestRule.configure()
+		drawing = DrawingImpl<Component>()
+		canvas = CanvasJvm(EditModule.drawingViewFactory.create(drawing, null, false, ""))
+		rect = RectangleComponent(styleProvider = StyleRepository.INSTANCE, shape = Rectangle2D(200, 200, 200, 100))
+
 		rect.preferredSelectionDrawingStrategy = SelectionDrawingStrategy.BELOW
 		val selectionModelProvider = SimpleSelectionModelProvider(EditSelectModule.selectionModelFactory)
 		selectionManager = SelectionManagerImpl(

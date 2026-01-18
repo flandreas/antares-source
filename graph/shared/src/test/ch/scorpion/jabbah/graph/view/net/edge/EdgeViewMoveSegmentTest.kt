@@ -10,13 +10,12 @@ import kotlin.test.assertEquals
 
 class EdgeViewMoveSegmentTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
+	private val builder: GraphViewBuilder<Boolean>
 
-	private val builder: GraphViewBuilder<Boolean> = GraphViewBuilder()
+	init {
+		GraphViewTestRule.configure()
+		builder = GraphViewBuilder()
+	}
 
 	/** Test for fix of bug #48.*/
 	@Test

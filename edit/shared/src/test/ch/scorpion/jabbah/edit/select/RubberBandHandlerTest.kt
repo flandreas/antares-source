@@ -7,7 +7,8 @@ import kotlin.test.assertTrue
 
 class RubberBandHandlerTest : AbstractRubberBandHandlerTest() {
 
-	init {
+	override fun setup() {
+		super.setup()
 		setTimer(null)
 	}
 

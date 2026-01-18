@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.app
 
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -7,10 +8,9 @@ import kotlin.test.assertTrue
 
 class ApplicationVersionTest {
 
-	companion object {
-		init {
-			AppTestRule.configure()
-		}
+	@BeforeTest
+	fun setup() {
+		AppTestRule.configure()
 	}
 
 	@Test

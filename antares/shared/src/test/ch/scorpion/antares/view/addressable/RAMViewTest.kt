@@ -9,13 +9,12 @@ import kotlin.test.assertEquals
 
 class RAMViewTest {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
+	private val ramView: RAMView
 
-	private val ramView = RAMView()
+	init {
+		AntaresTestRule.configure()
+		ramView = RAMView()
+	}
 
 	@Test
 	fun shouldUpdateLabelWhenSettingAddressWidth() {
@@ -43,7 +42,7 @@ class RAMViewTest {
 	fun shouldPersistText() {
 		ramView.text = TranslatableText("Test")
 
-		var clone = StorableCloner.clone(ramView)
+		val clone = StorableCloner.clone(ramView)
 
 		assertEquals("Test", clone.label.text)
 	}

@@ -13,30 +13,28 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import dev.mokkery.MockMode
 import dev.mokkery.mock
 import org.junit.Test
-import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class ChangeLogicGateTypeTest : AbstractJvmCircuitTest() {
 
-	companion object {
-		init {
-			AntaresTestRule.configure()
-		}
-	}
-
 	private lateinit var circuitView: GraphView
 	private val actorListener = mock<ActorListener>(MockMode.autofill)
 
-	private val gateView = LogicGateView.andGateView()
-	private val switchView1 = SwitchView()
-	private val switchView2 = SwitchView()
-	private val ledView = LEDView()
+	private lateinit var gateView: LogicGateView
+	private lateinit var switchView1: SwitchView
+	private lateinit var switchView2: SwitchView
+	private lateinit var ledView: LEDView
 
 	override fun getCircuitView(): GraphView = circuitView
 
-	@BeforeTest
-	fun setupCircuit() {
+	override fun setup() {
+		super.setup()
+		gateView = LogicGateView.andGateView()
+		switchView1 = SwitchView()
+		switchView2 = SwitchView()
+		ledView = LEDView()
+
 		val builder = TestCircuitBuilder("test", styleProvider, eventBus)
 
 		builder.addVerticeView(gateView)

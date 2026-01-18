@@ -9,8 +9,6 @@ import ch.scorpion.jabbah.draw.drawable.Movable
 import ch.scorpion.jabbah.draw.view.FocusDrawablePlayer
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.editor.AddCommand
-import ch.scorpion.jabbah.edit.model.ComponentMessage
-import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.model.CopyPasteService
 import ch.scorpion.jabbah.edit.model.group.GroupComponent
 import ch.scorpion.jabbah.edit.module.EditModule
@@ -41,8 +39,8 @@ interface DrawingAppService : ComponentCustomizer {
 	/** Replaces the specified [GroupComponent] in the [DrawingView] with its inner [Component]s.*/
 	fun ungroup(component: GroupComponent, drawingView: DrawingView<Drawing<Component>>)
 
-	/** Cuts the [Component]s that are currently selected in [drawingView] to the system clipboard.*/
-	fun cut(drawingView: DrawingView<*>)
+	/** Cuts the specified [Component] in [drawingView] to the system clipboard.*/
+	fun cut(components: List<Component>, drawingView: DrawingView<*>)
 
 	/** Copies the [Component]s that are currently selected in [drawingView] to the system clipboard.*/
 	fun copy(drawingView: DrawingView<*>)
@@ -100,7 +98,11 @@ open class DrawingAppServiceImpl(
 	override fun delete(components: List<Component>, drawingView: DrawingView<*>, cmdDescriptionKey: String?) {
 		val componentIds = components.map { it.id }
 		logComponentAction("Delete", componentIds, drawingView)
-		commandManager.execute(DeleteCommand(drawingView, componentIds))
+		deleteImpl(componentIds, drawingView, cmdDescriptionKey)
+	}
+
+	private fun deleteImpl(componentIds: List<Int>, drawingView: DrawingView<*>, cmdDescriptionKey: String?) {
+		commandManager.execute(DeleteCommand(drawingView, componentIds, cmdDescriptionKey))
 	}
 
 	override fun group(components: List<Component>, drawingView: DrawingView<Drawing<Component>>) {
@@ -132,34 +134,22 @@ open class DrawingAppServiceImpl(
 		drawingView.selectionManager.select(addedComponentIds.map { drawingView.drawing.getWithId(it) as Component })
 	}
 
-	override fun cut(drawingView: DrawingView<*>) {
-		val components = drawingView.selectionManager.selection
+	override fun cut(components: List<Component>, drawingView: DrawingView<*>) {
 		logComponentAction("Cut", components.map { it.id }, drawingView)
-
-		val componentsToDelete = components.filter { it.deletable }.toList()
-		if (componentsToDelete.isNotEmpty()) {
-			copy(drawingView)
-			delete(componentsToDelete, drawingView, "edit.command.cut")
-		}
-
-		// Don't do 'components.size != selection.size for checking whether everything has been deleted,
-		// because non-deletable (by user selection!) Components might have been deleted as a side effect
-		// of deleting other Components.
-		if (components.any { drawingView.drawing.contains(it) }) {
-			eventBus.post(ComponentMessage(
-				ComponentMessageType.Info,
-				null,
-				"edit.action.undeletable.msg"
-			))
-		}
+		copyImpl(drawingView)
+		deleteImpl(components.map { it.id }, drawingView, "edit.command.cut")
 	}
 
 	override fun copy(drawingView: DrawingView<*>) {
 		logComponentAction("Copy", drawingView.selectionManager.selection.map { it.id }, drawingView)
-		Clipboard.setStringContents(copyImpl(drawingView))
+		copyImpl(drawingView)
 	}
 
-	private fun copyImpl(drawingView: DrawingView<*>): String
+	private fun copyImpl(drawingView: DrawingView<*>) {
+		Clipboard.setStringContents(doCopy(drawingView))
+	}
+
+	private fun doCopy(drawingView: DrawingView<*>): String
 		= copyPasteService.copy(drawingView.selectionManager.selection.map { it.id }, drawingView.drawing)
 
 	protected fun logComponentAction(action: String, componentIds: Collection<Int>, drawingView: DrawingView<*>) {
@@ -195,7 +185,7 @@ open class DrawingAppServiceImpl(
 
 	override fun duplicate(drawingView: DrawingView<Drawing<Component>>): Int {
 		logComponentAction("Duplicate", drawingView.selectionManager.selection.map { it.id }, drawingView)
-		val content = copyImpl(drawingView)
+		val content = doCopy(drawingView)
 		val pasteInfo = copyPasteService.paste(content, drawingView)
 		if (pasteInfo.componentIds.isNotEmpty()) {
 			commandManager.register(DuplicateCommand(drawingView, content, pasteInfo, copyPasteService))

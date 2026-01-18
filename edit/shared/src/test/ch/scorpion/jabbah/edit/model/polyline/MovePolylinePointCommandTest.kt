@@ -11,19 +11,14 @@ import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-/** Unit test for [MovePolylinePointCommand].*/
 class MovePolylinePointCommandTest {
 
-	companion object {
-		init {
-			EditTestRule.configure()
-		}
-	}
-
-	private val drawing = DrawingImpl<Component>()
+	private val drawing: DrawingImpl<Component>
 	private val editor = mock<Editor>()
 
 	init {
+		EditTestRule.configure()
+		drawing = DrawingImpl<Component>()
 		every { editor.drawing } returns drawing
 	}
 

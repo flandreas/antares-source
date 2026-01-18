@@ -12,18 +12,14 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-/**
- * Unit tests for [GraphViewImpl].
- */
 class GraphViewImplTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
+	private val graphView: GraphView
 
-	private val graphView: GraphView = GraphViewImpl(GraphImpl(), BaseModule.eventBus)
+	init {
+		GraphViewTestRule.configure()
+		graphView = GraphViewImpl(GraphImpl(), BaseModule.eventBus)
+	}
 
 	@Test
 	fun shouldAddToModel() {

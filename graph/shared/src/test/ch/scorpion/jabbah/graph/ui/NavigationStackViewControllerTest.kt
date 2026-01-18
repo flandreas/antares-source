@@ -10,18 +10,20 @@ import dev.mokkery.every
 import dev.mokkery.mock
 import dev.mokkery.verify
 import dev.mokkery.verify.VerifyMode.Companion.exactly
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 class NavigationStackViewControllerTest {
 
-	companion object {
-		init {
-			GraphViewTestRule.configure()
-		}
-	}
+	private lateinit var controller: NavigationStackViewController
+	private lateinit var view: NavigationStackView
 
-	private val controller = NavigationStackViewController()
-	private val view = NavigationStackViewMockBuilder(controller).build()
+	@BeforeTest
+	fun setup() {
+		GraphViewTestRule.configure()
+		controller = NavigationStackViewController()
+		view = NavigationStackViewMockBuilder(controller).build()
+	}
 
 	@Test
 	fun shouldUpdateOnRootNameChange() {
