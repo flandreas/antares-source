@@ -41,7 +41,7 @@ import ch.scorpion.antares.view.net.tunnel.TunnelView
 import ch.scorpion.antares.view.net.tunnel.TunnelViewFace
 import ch.scorpion.antares.view.oscilloscope.AnalogOscilloscopeProbeVerticeView
 import ch.scorpion.antares.view.oscilloscope.AntaresOscilloscopeViewFactory
-import ch.scorpion.antares.view.oscilloscope.DigitalOscilloscopeProbeNameStrategy
+import ch.scorpion.antares.view.oscilloscope.DigitalVerticeViewNameStrategy
 import ch.scorpion.antares.view.output.*
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
@@ -225,7 +225,7 @@ object AntaresViewModule : AbstractModule() {
 		GraphViewModule.graphViewAppService = EditModule.drawingAppService as GraphViewAppService
 		GraphViewModule.portViewFactory = DigitalPortViewFactory(DrawStyleModule.styleProvider)
 		GraphViewModule.oscilloscopeViewFactory = AntaresOscilloscopeViewFactory()
-		GraphViewModule.oscilloscopeProbeNameStrategy = DigitalOscilloscopeProbeNameStrategy()
+		GraphViewModule.verticeViewNameStrategy = DigitalVerticeViewNameStrategy()
 		GraphViewModule.setEdgeViewFactory(AntaresEdgeViewFactory(DrawStyleModule.styleProvider))
 		GraphViewModule.setNodeViewFactory(AntaresNodeViewFactory(
 			DrawStyleModule.styleProvider))
