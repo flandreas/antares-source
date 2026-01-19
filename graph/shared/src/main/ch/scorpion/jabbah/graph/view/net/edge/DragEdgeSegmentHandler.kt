@@ -79,7 +79,7 @@ class DragEdgeSegmentHandler : EdgeViewInputEventHandler() {
 
 	override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
 		if (totalOffset != 0.0) {
-			LOG.userTrail("Move segment ${segmentIndex!!} of EdgeView ${edgeView?.id} by $totalOffset")
+			LOG.userTrail("Move segment ${origSegmentIndex!!} of EdgeView ${edgeView?.id} by $totalOffset")
 			context.editor.commandManager.register(MoveSegmentCommand(context.editor, edgeView!!.id, origSegmentIndex!!, totalOffset))
 		}
 		updateCursor(null, context)
