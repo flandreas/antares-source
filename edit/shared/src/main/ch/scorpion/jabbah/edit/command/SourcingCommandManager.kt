@@ -172,17 +172,21 @@ class SourcingCommandManager(
 		} else {
 			command.setTags(*state.tags.toTypedArray())
 			state.transaction!!.add(command)
-			try {
-				command.execute()
-			} catch (e: Exception) {
-				// Exceptions in Command execution are not necessarily to be considered as errors.
-				// Property Commands e.g. can perform validations which result in displaying an error
-				// message to the user. Therefore, log on Trace and not Error channel.
-				LOG.trace("Exception in CommandManager.execute: ${e.message}")
-				rollbackTransaction()
-				throw e
-			}
+			tryCommandExecution(command)
 			command.validate()
+		}
+	}
+
+	private fun tryCommandExecution(command: Command) {
+		try {
+			command.execute()
+		} catch (e: Throwable) {
+			/** [AbstractPropertyCommand]s throw [IllegalArgumentException] intentionally. No need to log them. */
+			if (command !is AbstractPropertyCommand<*>) {
+				LOG.error("Exception in command execution: ${e.message}")
+			}
+			rollbackTransaction()
+			throw e
 		}
 	}
 
@@ -252,12 +256,7 @@ class SourcingCommandManager(
 			command.setTags(*state.tags.toTypedArray())
 			it.add(command)
 			if (!register) {
-				try {
-					command.execute()
-				} catch (e: Throwable) {
-					rollbackTransaction()
-					throw  e
-				}
+				tryCommandExecution(command)
 				command.validate()
 			}
 		}
