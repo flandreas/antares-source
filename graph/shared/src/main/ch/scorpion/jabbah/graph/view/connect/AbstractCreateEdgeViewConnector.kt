@@ -65,8 +65,8 @@ abstract class AbstractCreateEdgeViewConnector(
 	}
 
 	protected open fun getMoveAdjustedPointDestDirs(layoutIndex: Int): Set<Direction>? {
-		if (layoutIndex < edgeView!!.segmentPointCount - 2) {
-			return edgeView!!.layout.type.getSegmentDirection(edgeView!!, layoutIndex + 1)?.orthogonalSet()
+		if (layoutIndex < edgeView!!.segmentPointCount - 1) {
+			return edgeView!!.layout.type.getSegmentDirection(edgeView!!, layoutIndex)?.orthogonalSet()
 		}
 		return null
 	}

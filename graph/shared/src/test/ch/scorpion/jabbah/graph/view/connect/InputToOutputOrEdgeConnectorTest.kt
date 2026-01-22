@@ -361,4 +361,16 @@ class InputToOutputOrEdgeConnectorTest : AbstractInputEventHandlerTest() {
 		mouseMoveTo(150, 100)
 		assertEquals(2, draggedEdgeView.segmentPointCount)
 	}
+
+	@Test
+	fun shouldNotAdjustToOverlapWithPreviousSegment() {
+		mouseMoveTo(190, 100)
+		clickMouseAt(190, 100, modifiers = Modifier.Alt.mask)
+		mouseMoveTo(150, 100)
+		clickMouseAt(150, 100)
+
+		mouseMoveTo(130, 130)
+
+		assertEquals(Point2D(150, 130), draggedEdgeView.getSegmentPoint(1))
+	}
 }
