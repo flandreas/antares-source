@@ -352,4 +352,13 @@ class InputToOutputOrEdgeConnectorTest : AbstractInputEventHandlerTest() {
 		assertTrue(newEv.model.isConnectedWith(newV2.model.getInput()))
 		assertTrue(newEv.model.isConnectedWith(newV3.model.getInput()))
 	}
+
+	@Test
+	fun shouldNotAdjustWithStrangeCurves() {
+		mouseMoveTo(190, 100)
+		clickMouseAt(190, 100, modifiers = Modifier.Alt.mask)
+
+		mouseMoveTo(150, 100)
+		assertEquals(2, draggedEdgeView.segmentPointCount)
+	}
 }

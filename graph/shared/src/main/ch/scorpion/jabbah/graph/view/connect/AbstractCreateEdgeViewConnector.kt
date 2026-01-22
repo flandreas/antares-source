@@ -80,6 +80,7 @@ abstract class AbstractCreateEdgeViewConnector(
 			edgeView = edgeView!!,
 			layoutIndex = adjustment!!.model.current,
 			location = context.location.add(context.editor.snapManager.snap(context.x, context.y)),
+			null,
 			null
 		)
 
@@ -99,7 +100,7 @@ abstract class AbstractCreateEdgeViewConnector(
 			layoutIndex = adjustment!!.model.current,
 			location = connPointAbs,
 			origDirs = null,
-			destDir = direction)
+			destDir = setOf(direction))
 
 		edgeView?.validate()
 	}
@@ -129,7 +130,7 @@ abstract class AbstractCreateEdgeViewConnector(
 			layoutIndex = adjustment!!.model.current,
 			location = connPointAbs,
 			origDirs = null,
-			destDir = direction)
+			destDir = setOf(direction))
 
 		// Don't layout EdgeView
 	}
@@ -147,6 +148,7 @@ abstract class AbstractCreateEdgeViewConnector(
 			edgeView = edgeView!!,
 			layoutIndex = adjustment!!.model.current,
 			location = currentLocation,
+			null,
 			null)
 		edgeView!!.validate()
 

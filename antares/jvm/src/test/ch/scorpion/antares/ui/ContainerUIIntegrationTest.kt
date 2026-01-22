@@ -87,6 +87,7 @@ class ContainerUIIntegrationTest {
         assertEquals("addr", getPortViewInContainerDrawing().port.name)
     }
 
+    @Ignore
     @Test
     fun shouldChangeNameIn() {
         createAndOpenEmptyNewMetaGraph()

@@ -39,7 +39,7 @@ interface EdgeViewLayout : DrawableListener {
 	 * Layouts the origin part of this [EdgeView] by using the specified origin [Direction].
 	 * This is useful when the [EdgeView] has not yet been connected to a origin [Port], but should
 	 * use a determined origin [Direction], for example while interactively dragging the origin point
-	 * and snapping to a origin [Port].
+	 * and snapping to an origin [Port].
 	 */
 	fun layoutOrigin(direction: Direction?)
 
@@ -56,11 +56,11 @@ interface EdgeViewLayout : DrawableListener {
 	/**
 	 * Adjusts the origin of the [EdgeView] to [origLocation] and updates the layout to the point at [layoutDestIndex].
 	 */
-	fun adjustOrigin(layoutDestIndex: Int, origLocation: Point2D, origDir: Direction? = null)
+	fun adjustOrigin(layoutDestIndex: Int, origLocation: Point2D, origDirs: Set<Direction>? = null, destDirs: Set<Direction>?)
 
 	/**
 	 * Adjusts the destination of the [EdgeView] to [destLocation] and updates the layout from the point at [layoutOrigIndex].
 	 */
-	fun adjustDestination(layoutOrigIndex: Int, destLocation: Point2D, origDirs: Set<Direction>?, destDir: Direction? = null)
+	fun adjustDestination(layoutOrigIndex: Int, destLocation: Point2D, origDirs: Set<Direction>?, destDirs: Set<Direction>? = null)
 
 }

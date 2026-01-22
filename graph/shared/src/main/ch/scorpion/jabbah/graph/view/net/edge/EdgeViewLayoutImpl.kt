@@ -88,18 +88,18 @@ class EdgeViewLayoutImpl(
 			return
 		}
 		val destPointIndex = min(2, edgeView.polyline.pointsCount - 1)
-		layoutOriginImpl(destPointIndex, direction, getLayoutOriginPoint(), compact = true)
+		layoutOriginImpl(destPointIndex, getLayoutOriginPoint(), compact = true, direction?.let { setOf(it) }, null)
 
 		updateAdjusted()
 	}
 
-	override fun adjustOrigin(layoutDestIndex: Int, origLocation: Point2D, origDir: Direction?) {
+	override fun adjustOrigin(layoutDestIndex: Int, origLocation: Point2D, origDirs: Set<Direction>?, destDirs: Set<Direction>?) {
 		val destPointIndex = min(layoutDestIndex, edgeView.polyline.pointsCount - 1)
-		layoutOriginImpl(destPointIndex, origDir, origLocation = origLocation, compact = false)
+		layoutOriginImpl(destPointIndex, origLocation, compact = false, origDirs, destDirs)
 		isAdjusted = true
 	}
 
-	private fun layoutOriginImpl(destPointIndex: Int, origDir: Direction?, origLocation: Point2D?, compact: Boolean) {
+	private fun layoutOriginImpl(destPointIndex: Int, origLocation: Point2D?, compact: Boolean, origDirs: Set<Direction>?, destDirs: Set<Direction>?) {
 		if (origLocation != null) {
 			// Fixed BUG #963: destPointIndex outOfBounds
 			if (destPointIndex < 0 || destPointIndex >= edgeView.polyline.pointsCount) {
@@ -107,19 +107,20 @@ class EdgeViewLayoutImpl(
 			}
 
 			val destLocation = Point2D(edgeView.polyline.getPointAt(destPointIndex))
-			val originDirs = if (origDir == null) getOriginDirections(destLocation) else setOf(origDir)
+			val effOrigDirs = if (origDirs == null) getOriginDirections(destLocation) else origDirs
 			val destDir = type.getSegmentDirection(edgeView, destPointIndex - 1)
+			val effDestDirs = destDirs ?: destDir?.let { setOf(destDir) } ?: Direction.ALL
 
 			type.layoutOrigin(
 				edgeView,
 				edgeView.parent as GraphView,
 				LayoutBoundary(
 					point = origLocation,
-					directions = originDirs,
-					isPort = edgeView.origin != null || origDir != null),
+					directions = effOrigDirs,
+					isPort = edgeView.origin != null || origDirs != null),
 				LayoutBoundary(
 					point = destLocation,
-					directions = destDir?.let { setOf(destDir) } ?: Direction.ALL,
+					directions = effDestDirs,
 					isPort = edgeView.destination != null && destPointIndex == edgeView.polyline.pointsCount - 1),
 				destPointIndex,
 				compact)
@@ -137,16 +138,16 @@ class EdgeViewLayoutImpl(
 			return
 		}
 		val origPointIndex = max(0, edgeView.polyline.pointsCount - 3)
-		layoutDestinationImpl(origPointIndex, getLayoutDestinationPoint(), compact = true, null, direction)
+		layoutDestinationImpl(origPointIndex, getLayoutDestinationPoint(), compact = true, null, direction?.let { setOf(it) })
 		updateAdjusted()
 	}
 
-	override fun adjustDestination(layoutOrigIndex: Int, destLocation: Point2D, origDirs: Set<Direction>?, destDir: Direction?) {
-		layoutDestinationImpl(layoutOrigIndex, destLocation, compact = false, origDirs, destDir)
+	override fun adjustDestination(layoutOrigIndex: Int, destLocation: Point2D, origDirs: Set<Direction>?, destDirs: Set<Direction>?) {
+		layoutDestinationImpl(layoutOrigIndex, destLocation, compact = false, origDirs, destDirs)
 		isAdjusted = true
 	}
 
-	private fun layoutDestinationImpl(origPointIndex: Int, destLocation: Point2D?, compact: Boolean, origDirs: Set<Direction>?, destDir: Direction?) {
+	private fun layoutDestinationImpl(origPointIndex: Int, destLocation: Point2D?, compact: Boolean, origDirs: Set<Direction>?, destDirs: Set<Direction>?) {
 		if (destLocation != null) {
 			// Fixed BUG #963: origPointIndex outOfBounds
 			if (origPointIndex < 0 || origPointIndex >= edgeView.polyline.pointsCount) {
@@ -154,7 +155,7 @@ class EdgeViewLayoutImpl(
 			}
 
 			val origLocation = Point2D(edgeView.polyline.getPointAt(origPointIndex))
-			val destDirs = if (destDir == null) getDestinationDirections(origLocation) else setOf(destDir)
+			val effDestDirs = destDirs ?: getDestinationDirections(origLocation)
 			val origDir = type.getSegmentDirection(edgeView, origPointIndex)
 			val effOrigDirs = origDirs ?: origDir?.let { setOf(origDir) } ?: Direction.ALL
 
@@ -167,8 +168,8 @@ class EdgeViewLayoutImpl(
 					isPort = edgeView.origin != null && origPointIndex == 0),
 				LayoutBoundary(
 					point = destLocation,
-					directions = destDirs,
-					isPort = edgeView.destination != null || destDir != null),
+					directions = effDestDirs,
+					isPort = edgeView.destination != null || destDirs != null),
 				origPointIndex,
 				compact)
 		}
