@@ -64,7 +64,21 @@ abstract class AbstractCreateEdgeViewConnector(
 		return null
 	}
 
+	protected open fun getMoveAdjustedPointDestDirs(layoutIndex: Int): Set<Direction>? {
+		if (layoutIndex < edgeView!!.segmentPointCount - 2) {
+			return edgeView!!.layout.type.getSegmentDirection(edgeView!!, layoutIndex + 1)?.orthogonalSet()
+		}
+		return null
+	}
+
 	protected fun moveAdjustedPoint(context: EditInputEventContext) {
+		when (draggedEndpointType) {
+            EdgeViewEndpointType.ORIGIN -> moveAdjustedOrigPoint(context)
+            EdgeViewEndpointType.DESTINATION -> moveAdjustedDestinationPoint(context)
+        }
+	}
+
+	private fun moveAdjustedDestinationPoint(context: EditInputEventContext) {
 		val p = context.location.add(context.editor.snapManager.snap(context.x, context.y))
 		val layoutIndex = adjustment!!.model.current
 		draggedEndpointType.adjustTo(
@@ -73,6 +87,17 @@ abstract class AbstractCreateEdgeViewConnector(
 			location = p,
 			origDirs = getMoveAdjustedPointOrigDirs(layoutIndex),
 			destDir = null)
+	}
+
+	private fun moveAdjustedOrigPoint(context: EditInputEventContext) {
+		val p = context.location.add(context.editor.snapManager.snap(context.x, context.y))
+		val layoutIndex = adjustment!!.model.current
+		draggedEndpointType.adjustTo(
+			edgeView = edgeView!!,
+			layoutIndex = layoutIndex,
+			location = p,
+			origDirs = null,
+			destDir = getMoveAdjustedPointDestDirs(layoutIndex))
 	}
 
 	protected fun addAdjustedPoint(context: EditInputEventContext) {
