@@ -64,7 +64,8 @@ class LibraryTreeViewSwing(
 			if (index < 0) {
 				index = event.parent.size - 1
 			}
-			it.insert(newNode, min(index, it.childCount))
+			index = min(index, it.childCount)
+			it.insert(newNode, index)
 			(model as DefaultTreeModel).nodesWereInserted(it, intArrayOf(index))
 			expandPath(getPath(it))
 			scrollPathToVisible(getPath(newNode))
