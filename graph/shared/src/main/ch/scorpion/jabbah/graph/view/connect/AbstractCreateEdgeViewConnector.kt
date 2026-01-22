@@ -13,6 +13,7 @@ import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.NetView
 import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter
+import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter.displayPortViewHighlight
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewFactory
 import ch.scorpion.jabbah.graph.view.port.PortView
@@ -89,7 +90,7 @@ abstract class AbstractCreateEdgeViewConnector(
 	protected fun adjustToTargetPortView(context: EditInputEventContext) {
 		// Start highlighting current destination PortView
 		val connPointAbs = targetPortView!!.owner!!.getPortConnectionPoint(targetPortView!!.port)
-		ConnectionPointHighlighter.displayPortViewHighlight(context.drawingView, connPointAbs)
+		displayPortViewHighlight(context.drawingView, connPointAbs)
 
 		// Layout EdgeView
 		val direction = draggedEndpointType.getDirectionForPortView(targetPortView!!)
@@ -103,9 +104,23 @@ abstract class AbstractCreateEdgeViewConnector(
 		edgeView?.validate()
 	}
 
+	protected fun adjustToTargetEdgeView(context: EditInputEventContext) {
+		targetEdgeView?.snap(context.x, context.y, context.editor.snapManager)?.let { snapResult ->
+			targetEdgeViewSegmentIndex = snapResult.segmentIndex
+			displayPortViewHighlight(context.drawingView, snapResult.location)
+			draggedEndpointType.adjustTo(
+				edgeView = edgeView!!,
+				layoutIndex = adjustment!!.model.current,
+				location = snapResult.location,
+				origDirs = null,
+				destDir = null)
+			edgeView?.validate()
+		}
+	}
+
 	protected fun adjustToDenyingPortView(context: EditInputEventContext) {
 		val connPointAbs = targetPortView!!.owner!!.getPortConnectionPoint(targetPortView!!.port)
-		ConnectionPointHighlighter.displayPortViewHighlight(context.drawingView, connPointAbs, highlight = DrawModule.properties.get(PortView.PROP_CONNECT_DENY))
+		displayPortViewHighlight(context.drawingView, connPointAbs, highlight = DrawModule.properties.get(PortView.PROP_CONNECT_DENY))
 
 		// Layout EdgeView
 		val direction = draggedEndpointType.getDirectionForPortView(targetPortView!!)

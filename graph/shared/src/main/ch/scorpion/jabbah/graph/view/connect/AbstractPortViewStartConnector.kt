@@ -383,7 +383,7 @@ abstract class AbstractPortViewStartConnector(
 
 					state(insideTargetEdgeView) {
 						onEntry {
-							snapToTargetEdgeView(it)
+							adjustToTargetEdgeView(it)
 							oldStatus = Status.replace(StatusType.Tool, Translations.getString("graph.tool.connector.adjust.insideTargetEdgeView.stateTip"))
 						}
 						onExit {
@@ -391,7 +391,7 @@ abstract class AbstractPortViewStartConnector(
 							Status.set(StatusType.Tool, oldStatus)
 						}
 						stayIf({ mouseMoved(it) && insideTargetEdgeView(draggedEndpointType, it) }) {
-							onTransit { snapToTargetEdgeView(it) }
+							onTransit { adjustToTargetEdgeView(it) }
 						}
 						transitTo(move) {
 							given { mouseMoved(it) && !insideTargetEdgeView(draggedEndpointType, it) }

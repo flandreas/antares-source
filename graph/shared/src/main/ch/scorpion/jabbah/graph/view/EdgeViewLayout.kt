@@ -54,9 +54,9 @@ interface EdgeViewLayout : DrawableListener {
 	fun layoutDestination(direction: Direction?)
 
 	/**
-	 * Adjusts the destination of the [EdgeView] to [origLocation] and updates the layout to the point at [layoutDestIndex].
+	 * Adjusts the origin of the [EdgeView] to [origLocation] and updates the layout to the point at [layoutDestIndex].
 	 */
-	fun adjustOrigin(layoutDestIndex: Int, origLocation: Point2D, origDirection: Direction? = null)
+	fun adjustOrigin(layoutDestIndex: Int, origLocation: Point2D, origDir: Direction? = null)
 
 	/**
 	 * Adjusts the destination of the [EdgeView] to [destLocation] and updates the layout from the point at [layoutOrigIndex].
