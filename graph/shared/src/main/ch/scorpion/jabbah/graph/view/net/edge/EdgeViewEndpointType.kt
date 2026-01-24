@@ -31,8 +31,8 @@ enum class EdgeViewEndpointType {
             edgeView.moveOriginEndPoint(point.x, point.y)
         }
 
-        override fun layout(edgeView: EdgeView<*>, direction: Direction?) {
-            edgeView.layout.layoutOrigin(direction)
+        override fun layout(edgeView: EdgeView<*>, dirs: Set<Direction>?) {
+            edgeView.layout.layoutOrigin(dirs)
         }
 
         override fun getEndpoint(edgeView: EdgeView<*>): EdgeEndpointView {
@@ -76,8 +76,8 @@ enum class EdgeViewEndpointType {
             edgeView.moveDestinationEndPoint(point.x, point.y)
         }
 
-        override fun layout(edgeView: EdgeView<*>, direction: Direction?) {
-            edgeView.layout.layoutDestination(direction)
+        override fun layout(edgeView: EdgeView<*>, dirs: Set<Direction>?) {
+            edgeView.layout.layoutDestination(dirs)
         }
 
         override fun getEndpoint(edgeView: EdgeView<*>): EdgeEndpointView {
@@ -142,8 +142,8 @@ enum class EdgeViewEndpointType {
 	/** Adjusts this endpoint of an [EdgeView] to the specified location, restricting layout the [EdgeView] point with index [layoutIndex].*/
 	abstract fun adjustTo(edgeView: EdgeView<*>, layoutIndex: Int, location: Point2D, origDirs: Set<Direction>?, destDir: Set<Direction>?)
 
-    /** Layouts the [EdgeView] at this endpoint with the preferred [Direction] at the endpoint. */
-    abstract fun layout(edgeView: EdgeView<*>, direction: Direction?)
+    /** Layouts the [EdgeView] at this endpoint with the preferred [Direction]s at the endpoint. */
+    abstract fun layout(edgeView: EdgeView<*>, dirs: Set<Direction>?)
 
     abstract fun getEndpoint(edgeView: EdgeView<*>): EdgeEndpointView
 

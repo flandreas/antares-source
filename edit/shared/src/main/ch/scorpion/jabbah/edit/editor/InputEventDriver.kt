@@ -74,6 +74,12 @@ open class InputEventDriver(
 		return this
 	}
 
+	fun mouseMoveToAndClickAt(x: Int, y: Int, modifiers: Int = 0): InputEventDriver {
+		mouseMoveTo(x, y, modifiers)
+		clickMouseAt(x, y, modifiers)
+		return this
+	}
+
 	fun context(type: MouseEventType, x: Int, y: Int, modifiers: Int = 0, clickCount: Int = 1): EditInputEventContext {
 		return EditInputEventContext(
 			editor = editor,

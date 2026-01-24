@@ -31,7 +31,7 @@ class GraphViewConnectServiceImpl(
 		connectPortToNet(connection.port, edgeView.model)
 		edgeView.connectToOrigin(connection)
 		if (doLayout) {
-			edgeView.layout.layoutOrigin(direction)
+			edgeView.layout.layoutOrigin(direction?.let { setOf(it) })
 		}
 	}
 
@@ -54,7 +54,7 @@ class GraphViewConnectServiceImpl(
 		connectPortToNet(connection.port, edgeView.model)
 		edgeView.connectToDestination(connection)
 		if (doLayout) {
-			edgeView.layout.layoutDestination(direction)
+			edgeView.layout.layoutDestination(direction?.let { setOf(it) })
 		}
 	}
 

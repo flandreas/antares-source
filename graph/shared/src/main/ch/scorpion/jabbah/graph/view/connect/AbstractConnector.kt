@@ -109,7 +109,7 @@ abstract class AbstractConnector(
 
 		// Layout EdgeView
 		val direction = draggedEndpointType.getDirectionForPortView(targetPortView!!)
-		draggedEndpointType.layout(edgeView!!, direction)
+		draggedEndpointType.layout(edgeView!!, setOf(direction))
 
 		edgeView?.validate()
 	}
@@ -149,8 +149,9 @@ abstract class AbstractConnector(
 		targetEdgeView!!.snap(context.x, context.y, context.editor.snapManager)?.let { snapResult ->
 			targetEdgeViewSegmentIndex = snapResult.segmentIndex
 			displayPortViewHighlight(context.drawingView, snapResult.location)
+			val targetDirs = targetEdgeView!!.getSegmentDirection(targetEdgeViewSegmentIndex!!)?.orthogonalSet()
 			draggedEndpointType.moveTo(edgeView!!, snapResult.location)
-			draggedEndpointType.layout(edgeView!!, null)
+			draggedEndpointType.layout(edgeView!!, targetDirs)
 			edgeView!!.layout
 		}
 	}

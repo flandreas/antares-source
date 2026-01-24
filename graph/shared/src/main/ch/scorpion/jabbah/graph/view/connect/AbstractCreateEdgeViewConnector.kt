@@ -64,7 +64,7 @@ abstract class AbstractCreateEdgeViewConnector(
 		return null
 	}
 
-	protected open fun getMoveAdjustedPointDestDirs(layoutIndex: Int): Set<Direction>? {
+	protected fun getMoveAdjustedPointDestDirs(layoutIndex: Int): Set<Direction>? {
 		if (layoutIndex < edgeView!!.segmentPointCount - 1) {
 			return edgeView!!.layout.type.getSegmentDirection(edgeView!!, layoutIndex)?.orthogonalSet()
 		}
@@ -73,7 +73,7 @@ abstract class AbstractCreateEdgeViewConnector(
 
 	protected fun moveAdjustedPoint(context: EditInputEventContext) {
 		when (draggedEndpointType) {
-            EdgeViewEndpointType.ORIGIN -> moveAdjustedOrigPoint(context)
+            EdgeViewEndpointType.ORIGIN -> moveAdjustedOriginPoint(context)
             EdgeViewEndpointType.DESTINATION -> moveAdjustedDestinationPoint(context)
         }
 	}
@@ -89,7 +89,7 @@ abstract class AbstractCreateEdgeViewConnector(
 			destDir = null)
 	}
 
-	private fun moveAdjustedOrigPoint(context: EditInputEventContext) {
+	private fun moveAdjustedOriginPoint(context: EditInputEventContext) {
 		val p = context.location.add(context.editor.snapManager.snap(context.x, context.y))
 		val layoutIndex = adjustment!!.model.current
 		draggedEndpointType.adjustTo(
@@ -118,32 +118,65 @@ abstract class AbstractCreateEdgeViewConnector(
 		val connPointAbs = targetPortView!!.owner!!.getPortConnectionPoint(targetPortView!!.port)
 		displayPortViewHighlight(context.drawingView, connPointAbs)
 
-		// Layout EdgeView
-		val direction = draggedEndpointType.getDirectionForPortView(targetPortView!!)
+		val ownLayoutIndex = adjustment!!.model.current
+		when (draggedEndpointType) {
+            EdgeViewEndpointType.ORIGIN -> adjustToTargetPortViewImpl(
+				connPointAbs,
+				setOf(draggedEndpointType.getDirectionForPortView(targetPortView!!)),
+				getMoveAdjustedPointDestDirs(ownLayoutIndex)
+			)
+            EdgeViewEndpointType.DESTINATION -> adjustToTargetPortViewImpl(
+				connPointAbs,
+				getMoveAdjustedPointDestDirs(ownLayoutIndex),
+				setOf(draggedEndpointType.getDirectionForPortView(targetPortView!!))
+			)
+        }
+	}
+
+	private fun adjustToTargetPortViewImpl(snapLocation: Point2D, origDirs: Set<Direction>?, destDirs: Set<Direction>?) {
 		draggedEndpointType.adjustTo(
 			edgeView = edgeView!!,
 			layoutIndex = adjustment!!.model.current,
-			location = connPointAbs,
-			origDirs = null,
-			destDir = setOf(direction))
-
+			location = snapLocation,
+			origDirs = origDirs,
+			destDir = destDirs
+		)
 		edgeView?.validate()
 	}
 
 	protected fun adjustToTargetEdgeView(context: EditInputEventContext) {
 		targetEdgeView?.snap(context.x, context.y, context.editor.snapManager)?.let { snapResult ->
 			targetEdgeViewSegmentIndex = snapResult.segmentIndex
-			displayPortViewHighlight(context.drawingView, snapResult.location)
-			draggedEndpointType.adjustTo(
-				edgeView = edgeView!!,
-				layoutIndex = adjustment!!.model.current,
-				location = snapResult.location,
-				origDirs = null,
-				destDir = null)
-			edgeView?.validate()
+			val ownLayoutIndex = adjustment!!.model.current
+			val targetDirs = targetEdgeView!!.getSegmentDirection(targetEdgeViewSegmentIndex!!)?.orthogonalSet()
+			when (draggedEndpointType) {
+				EdgeViewEndpointType.ORIGIN -> adjustToTargetEdgeViewImpl(
+					context,
+					snapResult.location,
+					targetDirs,
+					getMoveAdjustedPointDestDirs(ownLayoutIndex))
+				EdgeViewEndpointType.DESTINATION -> adjustToTargetEdgeViewImpl(
+					context,
+					snapResult.location,
+					getMoveAdjustedPointOrigDirs(ownLayoutIndex),
+					targetDirs)
+			}
 		}
 	}
 
+	private fun adjustToTargetEdgeViewImpl(context: EditInputEventContext, snapLocation: Point2D, origDirs: Set<Direction>?, destDirs: Set<Direction>?) {
+		displayPortViewHighlight(context.drawingView, snapLocation)
+		draggedEndpointType.adjustTo(
+			edgeView = edgeView!!,
+			layoutIndex = adjustment!!.model.current,
+			location = snapLocation,
+			origDirs = origDirs,
+			destDir = destDirs
+		)
+		edgeView?.validate()
+	}
+
+	// TODO: Almost equal to adjustToTargetPortView(), only different PortViewHighlight
 	protected fun adjustToDenyingPortView(context: EditInputEventContext) {
 		val connPointAbs = targetPortView!!.owner!!.getPortConnectionPoint(targetPortView!!.port)
 		displayPortViewHighlight(context.drawingView, connPointAbs, highlight = DrawModule.properties.get(PortView.PROP_CONNECT_DENY))

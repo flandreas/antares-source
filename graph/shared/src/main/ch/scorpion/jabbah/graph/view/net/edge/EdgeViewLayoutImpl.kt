@@ -81,14 +81,14 @@ class EdgeViewLayoutImpl(
 		layoutOrigin(null)
 	}
 
-	override fun layoutOrigin(direction: Direction?) {
+	override fun layoutOrigin(origDirs: Set<Direction>?) {
 		LOG.trace("layoutOrigin")
 		if (!isAdjusted) {
-			layoutAll(direction, null)
+			layoutAll(origDirs, null)
 			return
 		}
 		val destPointIndex = min(2, edgeView.polyline.pointsCount - 1)
-		layoutOriginImpl(destPointIndex, getLayoutOriginPoint(), compact = true, direction?.let { setOf(it) }, null)
+		layoutOriginImpl(destPointIndex, getLayoutOriginPoint(), compact = true, origDirs, null)
 
 		updateAdjusted()
 	}
@@ -131,14 +131,14 @@ class EdgeViewLayoutImpl(
 		layoutDestination(null)
 	}
 
-	override fun layoutDestination(direction: Direction?) {
+	override fun layoutDestination(destDirs: Set<Direction>?) {
 		LOG.trace("layoutDestination")
 		if (!isAdjusted) {
-			layoutAll(null, direction)
+			layoutAll(null, destDirs)
 			return
 		}
 		val origPointIndex = max(0, edgeView.polyline.pointsCount - 3)
-		layoutDestinationImpl(origPointIndex, getLayoutDestinationPoint(), compact = true, null, direction?.let { setOf(it) })
+		layoutDestinationImpl(origPointIndex, getLayoutDestinationPoint(), compact = true, null, destDirs)
 		updateAdjusted()
 	}
 
@@ -175,30 +175,30 @@ class EdgeViewLayoutImpl(
 		}
 	}
 
-	private fun layoutAll(originDir: Direction?, destDir: Direction?) {
+	private fun layoutAll(originDirs: Set<Direction>?, destDirs: Set<Direction>?) {
 		if (LOG.isTraceEnabled()) {
-			LOG.trace("layoutAll, originDir=$originDir, destDir=$destDir")
+			LOG.trace("layoutAll, originDir=$originDirs, destDir=$destDirs")
 		}
 		val originPoint = getLayoutOriginPoint()
-		val originDirs: Set<Direction>
+		val effOriginDirs: Set<Direction>
 		val destPoint = getLayoutDestinationPoint()
-		val destDirs: Set<Direction>
+		val effDestDirs: Set<Direction>
 
 		if (originPoint != null && destPoint != null) {
-			originDirs = if (originDir != null) setOf(originDir) else getOriginDirections(destPoint)
-			destDirs = if (destDir != null) setOf(destDir) else getDestinationDirections(originPoint)
+			effOriginDirs = originDirs ?: getOriginDirections(destPoint)
+			effDestDirs = destDirs?: getDestinationDirections(originPoint)
 
 			type.layoutAll(
 				edgeView,
 				edgeView.parent as GraphView,
 				LayoutBoundary(
 					point = originPoint,
-					directions = originDirs,
-					isPort = edgeView.origin != null || originDir != null),
+					directions = effOriginDirs,
+					isPort = edgeView.origin != null || originDirs != null),
 				LayoutBoundary(
 					point = destPoint,
-					directions = destDirs,
-					isPort = edgeView.destination != null || destDir != null))
+					directions = effDestDirs,
+					isPort = edgeView.destination != null || destDirs != null))
 		}
 	}
 
