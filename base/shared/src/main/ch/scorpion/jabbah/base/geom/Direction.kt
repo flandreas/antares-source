@@ -39,6 +39,13 @@ enum class Direction(
             SOUTH to setOf(EAST, WEST)
         )
 
+        private val ALL_BUT: Map<Direction, Set<Direction>> = mapOf(
+            EAST to setOf(NORTH, SOUTH, WEST),
+            NORTH to setOf(EAST, SOUTH, WEST),
+            WEST to setOf(NORTH, EAST, SOUTH),
+            SOUTH to setOf(NORTH, EAST, WEST)
+        )
+
         /** Returns the [Direction] with the specified custom name.*/
         fun withName(name: String): Direction {
             for (dir in values()) {
@@ -167,4 +174,6 @@ enum class Direction(
 	fun toPoint2D(): Point2D = Point2D(dx, dy)
 
     fun orthogonalSet(): Set<Direction> = ORTHOGONAL[this]!!
+
+    fun allButSet(): Set<Direction> = ALL_BUT[this]!!
 }

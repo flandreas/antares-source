@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view.connect
 
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.graph.view.AbstractInputEventHandlerTest
 import ch.scorpion.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
@@ -37,5 +38,22 @@ class AdjustInputToEdgeTest : AbstractInputEventHandlerTest() {
         assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
         val ev2 = builder.graphView.getEdgeViews().first()
         assertEquals(3, ev2.segmentPointCount)
+    }
+
+    @Test
+    fun shouldAllowToContinueInSameDirectionToEdge() {
+        // Create a target EdgeView with a vertical segment at x=150
+        builder.connectOutputOpen(v1, Point2D(150, 300))
+
+        v2.moveBy(0.0, 50.0)
+        mouseMoveToAndClickAt(190, 150)
+        mouseMoveToAndClickAt(170, 140)
+
+        // This should create an L-shape (continuing North), not a Z-shape
+        mouseMoveTo(150, 130)
+
+        assertTrue(ConnectionPointHighlighter.hasPortViewHighlight)
+        val ev2 = builder.graphView.getEdgeViews().first()
+        assertEquals(5, ev2.segmentPointCount)
     }
 }

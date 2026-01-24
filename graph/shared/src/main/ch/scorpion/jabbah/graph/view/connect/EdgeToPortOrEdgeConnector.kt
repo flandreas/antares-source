@@ -434,14 +434,14 @@ class EdgeToPortOrEdgeConnector(
 		moveAdjustedPointOrigDirs = null
 	}
 
-	override fun getMoveAdjustedPointOrigDirs(layoutIndex: Int): Set<Direction>? {
+	override fun getMoveAdjustedPointOrigDirs(layoutIndex: Int, allowContinuation: Boolean): Set<Direction>? {
 		if (moveAdjustedPointOrigDirs == null) {
-			moveAdjustedPointOrigDirs = calculateMoveAdjustedPointOrigDirs(layoutIndex)
+			moveAdjustedPointOrigDirs = calculateMoveAdjustedPointOrigDirs(layoutIndex, allowContinuation)
 		}
 		return moveAdjustedPointOrigDirs
 	}
 
-	private fun calculateMoveAdjustedPointOrigDirs(layoutIndex: Int): Set<Direction>? {
+	private fun calculateMoveAdjustedPointOrigDirs(layoutIndex: Int, allowContinuation: Boolean): Set<Direction>? {
 		if (branchedEdgeView != null && layoutIndex == 0) {
 			val incomingNodeEV = branchedEdgeView!!
 			val outgoingNodeEV = splitEdgeViewCommand!!.result.tailEdgeView
@@ -459,7 +459,7 @@ class EdgeToPortOrEdgeConnector(
 				edgeView!!.layout.type.getSegmentDirection(incomingNodeEV, incomingNodeEV.segmentPointCount - 2)?.orthogonalSet()
 			}
 		}
-		return super.getMoveAdjustedPointOrigDirs(layoutIndex)
+		return super.getMoveAdjustedPointOrigDirs(layoutIndex, allowContinuation)
 	}
 
 	override fun createAdjustment(): EdgeViewAdjustmentView =

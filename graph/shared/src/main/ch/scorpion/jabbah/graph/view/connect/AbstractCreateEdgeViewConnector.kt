@@ -56,17 +56,26 @@ abstract class AbstractCreateEdgeViewConnector(
 		context.editor.commandManager.active = true
 	}
 
-	protected open fun getMoveAdjustedPointOrigDirs(layoutIndex: Int): Set<Direction>? {
+	protected open fun getMoveAdjustedPointOrigDirs(layoutIndex: Int, allowContinuation: Boolean): Set<Direction>? {
 		if (layoutIndex > 0) {
-			// The last segment should preferably be orthogonal to the second-to-last one
-			return edgeView!!.layout.type.getSegmentDirection(edgeView!!, layoutIndex - 1)?.orthogonalSet()
+			val previousSegmentDir = edgeView!!.layout.type.getSegmentDirection(edgeView!!, layoutIndex - 1)
+			return if (allowContinuation) {
+				previousSegmentDir?.allButSet()
+			} else {
+				previousSegmentDir?.orthogonalSet()
+			}
 		}
 		return null
 	}
 
-	protected fun getMoveAdjustedPointDestDirs(layoutIndex: Int): Set<Direction>? {
+	protected fun getMoveAdjustedPointDestDirs(layoutIndex: Int, allowContinuation: Boolean): Set<Direction>? {
 		if (layoutIndex < edgeView!!.segmentPointCount - 1) {
-			return edgeView!!.layout.type.getSegmentDirection(edgeView!!, layoutIndex)?.orthogonalSet()
+			val previousSegmentDir = edgeView!!.layout.type.getSegmentDirection(edgeView!!, layoutIndex)
+			return if (allowContinuation) {
+				previousSegmentDir?.allButSet()
+			} else {
+				previousSegmentDir?.orthogonalSet()
+			}
 		}
 		return null
 	}
@@ -85,7 +94,7 @@ abstract class AbstractCreateEdgeViewConnector(
 			edgeView = edgeView!!,
 			layoutIndex = layoutIndex,
 			location = p,
-			origDirs = getMoveAdjustedPointOrigDirs(layoutIndex),
+			origDirs = getMoveAdjustedPointOrigDirs(layoutIndex, allowContinuation = false),
 			destDir = null)
 	}
 
@@ -97,7 +106,7 @@ abstract class AbstractCreateEdgeViewConnector(
 			layoutIndex = layoutIndex,
 			location = p,
 			origDirs = null,
-			destDir = getMoveAdjustedPointDestDirs(layoutIndex))
+			destDir = getMoveAdjustedPointDestDirs(layoutIndex, allowContinuation = false))
 	}
 
 	protected fun addAdjustedPoint(context: EditInputEventContext) {
@@ -123,11 +132,11 @@ abstract class AbstractCreateEdgeViewConnector(
             EdgeViewEndpointType.ORIGIN -> adjustToTargetPortViewImpl(
 				connPointAbs,
 				setOf(draggedEndpointType.getDirectionForPortView(targetPortView!!)),
-				getMoveAdjustedPointDestDirs(ownLayoutIndex)
+				getMoveAdjustedPointDestDirs(ownLayoutIndex, allowContinuation = true)
 			)
             EdgeViewEndpointType.DESTINATION -> adjustToTargetPortViewImpl(
 				connPointAbs,
-				getMoveAdjustedPointDestDirs(ownLayoutIndex),
+				getMoveAdjustedPointDestDirs(ownLayoutIndex, allowContinuation = true),
 				setOf(draggedEndpointType.getDirectionForPortView(targetPortView!!))
 			)
         }
@@ -154,11 +163,11 @@ abstract class AbstractCreateEdgeViewConnector(
 					context,
 					snapResult.location,
 					targetDirs,
-					getMoveAdjustedPointDestDirs(ownLayoutIndex))
+					getMoveAdjustedPointDestDirs(ownLayoutIndex, allowContinuation = true))
 				EdgeViewEndpointType.DESTINATION -> adjustToTargetEdgeViewImpl(
 					context,
 					snapResult.location,
-					getMoveAdjustedPointOrigDirs(ownLayoutIndex),
+					getMoveAdjustedPointOrigDirs(ownLayoutIndex, allowContinuation = true),
 					targetDirs)
 			}
 		}
