@@ -229,8 +229,8 @@ class AntaresInterpreterSignalTest {
 	@Test
 	fun shouldCalculateNot() {
 		assertEquals(of(BW_4, 12UL), operation("not A", of(BW_4, 3UL), null as DigitalSignal?))
-		// Result of signed integer calculation
-		assertEquals(-4L, operation("not A", 3L))
+		assertEquals(0L, operation("not A", 3L)) // Applies minimal bit width
+		assertEquals(1L, operation("not A", 2L)) // Applies minimal bit width
 	}
 
 	@Test

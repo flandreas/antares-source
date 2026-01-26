@@ -1,5 +1,6 @@
 package ch.scorpion.antares.model.signal
 
+import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_1
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_4
 import ch.scorpion.antares.model.signal.BitWidth.Companion.BW_8
 import kotlin.test.Test
@@ -22,6 +23,12 @@ class DefinedWordTest {
 	@Test
 	fun shouldNot() {
 		assertEquals(DefinedWord(BW_4, 13UL), DefinedWord(BW_4, 2UL).not())
+	}
+
+	@Test
+	fun shouldNot0() {
+		assertEquals(DefinedWord(BW_1, 1UL), DefinedWord(BW_1, 0UL).not())
+		assertEquals(1UL, DefinedWord(BW_1, 0UL).not().toLong())
 	}
 
 	@Test
@@ -54,6 +61,7 @@ class DefinedWordTest {
 	@Test
 	fun shouldGetDecimalString() {
 		assertEquals("5", DefinedWord(BW_4, 5UL).decimalString)
+		assertEquals("1", DefinedWord(BW_1, 1UL).decimalString)
 	}
 
 	@Test

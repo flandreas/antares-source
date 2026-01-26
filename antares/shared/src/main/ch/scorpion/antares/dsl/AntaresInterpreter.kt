@@ -3,11 +3,7 @@ package ch.scorpion.antares.dsl
 import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.model.gate.CurrentUndefinedGateInputBehavior
 import ch.scorpion.antares.model.port.DigitalPort
-import ch.scorpion.antares.model.signal.Bit
-import ch.scorpion.antares.model.signal.BitOperation
-import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.antares.model.signal.*
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.*
 import ch.scorpion.jabbah.base.dsl.DslTokenType.*
@@ -457,8 +453,21 @@ class AntaresInterpreter(
 
 	override fun not(value: Any, loc: TextLocation): Any =
 		when (value) {
-			is DigitalSignal -> value.not()
-			else -> super.not(value, loc)
+			is DigitalSignal -> {
+				value.not()
+			}
+			is Long -> {
+				// This does a signed bit inversion, resulting in "not 0" equals to "-1"
+				// value.toULong().inv()
+                when (value) {
+                    0L -> 1L
+                    1L -> 0L
+                    else -> DigitalSignalFactory.ofMinimalBitWidth(value.toULong()).not().getValue().toLong()
+                }
+			}
+			else -> {
+				super.not(value, loc)
+			}
 		}
 
 	override fun plus(value: Any, loc: TextLocation): Any =

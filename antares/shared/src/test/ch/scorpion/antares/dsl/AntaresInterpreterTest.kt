@@ -143,4 +143,10 @@ class AntaresInterpreterTest {
 		""".trimIndent()).interpret()
 		assertEquals(BitWidth.BW_16, (result as DigitalSignal).bitWidth)
 	}
+
+	@Test
+	fun shouldNegate() {
+		val result = AntaresInterpreter("not 0").interpret()
+		assertEquals(1L, result)
+	}
 }

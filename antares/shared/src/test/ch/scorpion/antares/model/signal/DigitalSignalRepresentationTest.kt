@@ -115,4 +115,11 @@ class DigitalSignalRepresentationTest {
 		assertEquals(2, HEXADECIMAL.digitCount(BW_5))
 		assertEquals(2, HEXADECIMAL.digitCount(BW_8))
 	}
+
+	/** Regression test for GitHub bug #1143.*/
+	@Test
+	fun test1143() {
+		val signal = DefinedWord(BW_1, 1UL)
+		assertEquals("1", DECIMAL.represent(signal))
+	}
 }

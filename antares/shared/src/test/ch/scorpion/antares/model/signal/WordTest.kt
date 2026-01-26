@@ -210,6 +210,18 @@ class WordTest {
 	}
 
 	@Test
+	fun shouldCalculateNot0() {
+		assertEquals(Word.of(BW_1, 1UL), Word.of(BW_1, 0UL).not())
+		assertEquals(1UL, Word.of(BW_1, 0UL).not().toLong())
+	}
+
+	@Test
+	fun shouldCalculateNot1() {
+		assertEquals(Word.of(BW_1, 0UL), Word.of(BW_1, 1UL).not())
+		assertEquals(0UL, Word.of(BW_1, 1UL).not().toLong())
+	}
+
+	@Test
 	fun shouldCalculateOr() {
 		// Same width
 		assertEquals(Word.of(BW_4, 15UL), Word.of(BW_4, 6UL).or(Word.of(BW_4, 9UL)))
