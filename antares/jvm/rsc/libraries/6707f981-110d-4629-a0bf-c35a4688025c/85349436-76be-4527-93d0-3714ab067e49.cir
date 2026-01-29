@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<metaGraph _id='0' appVersion='1.28.0' manualContainer='true'>
+<metaGraph _id='0' appVersion='1.34.0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
@@ -129,7 +129,7 @@ if (waiting == 0) {
           <components>
             <graphElement _id='74' modelId='57' id='65'>
               <component>
-                <rectangle _id='75' id='65' style='subsystem' filled='true' stroked='true' x='469.0' y='-217.0' w='266.0' h='448.0' vAlign='top'>
+                <rectangle _id='75' id='65' style='subsystem' filled='true' stroked='true' x='315.0' y='-210.0' w='161.0' h='420.0' vAlign='top'>
                   <text>
                     <translation lang='en' text='NOT Gate'/>
                   </text>
@@ -138,83 +138,83 @@ if (waiting == 0) {
             </graphElement>
             <graphElement _id='76' modelId='33' id='40'>
               <component>
-                <rectangle _id='77' id='40' style='subsystem' filled='true' stroked='true' x='-154.0' y='-287.0' w='294.0' h='560.0' vAlign='top'>
+                <rectangle _id='77' id='40' style='subsystem' filled='true' stroked='true' x='-126.0' y='-210.0' w='245.0' h='420.0' vAlign='top'>
                   <text>
                     <translation lang='en' text='NOR Gate'/>
                   </text>
                 </rectangle>
               </component>
             </graphElement>
-            <analogTransistorView _id='78' id='5' rot='0' filled='true' stroked='true' modelId='3' x='-28.0' y='-112.0' symbol='inverterCircle'/>
-            <analogTransistorView _id='79' id='6' rot='0' filled='true' stroked='true' modelId='4' x='-28.0' y='-21.0' symbol='inverterCircle'/>
+            <analogTransistorView _id='78' id='5' rot='0' filled='true' stroked='true' modelId='3' x='-28.0' y='-63.0' symbol='inverterCircle'/>
+            <analogTransistorView _id='79' id='6' rot='0' filled='true' stroked='true' modelId='4' x='-28.0' y='0.0' symbol='inverterCircle'/>
             <analogEdgeView _id='80' id='7' filled='true' stroked='true' modelId='5' layout='ortho' orig='79' origPort='1' origPortOutput='true' dest='78' destPort='3' destPortOutput='true' adjusted='false'>
               <shape>
-                <polylineShape points='14.0,-56.0 14.0,-105.0'/>
+                <polylineShape points='14.0,-35.0 14.0,-56.0'/>
               </shape>
             </analogEdgeView>
-            <analogPowerView _id='81' id='8' rot='270' filled='true' stroked='true' modelId='8' x='14.0' y='-168.0'/>
+            <analogPowerView _id='81' id='8' rot='270' filled='true' stroked='true' modelId='8' x='14.0' y='-98.0'/>
             <analogEdgeView _id='82' id='9' filled='true' stroked='true' modelId='9' layout='ortho' orig='81' origPort='1' origPortOutput='true' dest='78' destPort='1' destPortOutput='true' adjusted='false'>
               <shape>
-                <polylineShape points='14.0,-182.0 14.0,-147.0'/>
+                <polylineShape points='14.0,-112.0 14.0,-98.0'/>
               </shape>
             </analogEdgeView>
             <analogEdgeView _id='83' id='10' filled='true' stroked='true' modelId='12' layout='ortho' orig='84' origPort='1' origPortOutput='true' dest='85' adjusted='false'>
               <shape>
-                <polylineShape points='-217.0,-126.0 -77.0,-126.0'/>
+                <polylineShape points='-168.0,-77.0 -63.0,-77.0'/>
               </shape>
             </analogEdgeView>
             <analogEdgeView _id='86' id='11' filled='true' stroked='true' modelId='50' layout='ortho' orig='87' dest='88' adjusted='false'>
               <shape>
-                <polylineShape points='623.0,28.0 805.0,28.0'/>
+                <polylineShape points='420.0,28.0 525.0,28.0'/>
               </shape>
             </analogEdgeView>
-            <analogTransistorView _id='89' id='12' rot='0' filled='true' stroked='true' modelId='18' x='-98.0' y='175.0' symbol='inverterCircle'/>
-            <analogTransistorView _id='90' id='13' rot='0' filled='true' stroked='true' modelId='15' x='56.0' y='175.0' symbol='inverterCircle'/>
-            <analogGroundView _id='91' id='14' rot='0' filled='true' stroked='true' modelId='19' x='-56.0' y='210.0'/>
+            <analogTransistorView _id='89' id='12' rot='0' filled='true' stroked='true' modelId='18' x='-84.0' y='133.0' symbol='inverterCircle'/>
+            <analogTransistorView _id='90' id='13' rot='0' filled='true' stroked='true' modelId='15' x='28.0' y='133.0' symbol='inverterCircle'/>
+            <analogGroundView _id='91' id='14' rot='0' filled='true' stroked='true' modelId='19' x='-42.0' y='147.0'/>
             <analogEdgeView _id='92' id='15' filled='true' stroked='true' modelId='20' layout='ortho' orig='91' origPort='1' origPortOutput='true' dest='89' destPort='1' destPortOutput='true' adjusted='false'>
               <shape>
-                <polylineShape points='-56.0,224.0 -56.0,182.0'/>
+                <polylineShape points='-42.0,161.0 -42.0,140.0'/>
               </shape>
             </analogEdgeView>
-            <analogGroundView _id='93' id='16' rot='0' filled='true' stroked='true' modelId='23' x='98.0' y='210.0'/>
+            <analogGroundView _id='93' id='16' rot='0' filled='true' stroked='true' modelId='23' x='70.0' y='147.0'/>
             <analogEdgeView _id='94' id='17' filled='true' stroked='true' modelId='24' layout='ortho' orig='93' origPort='1' origPortOutput='true' dest='90' destPort='1' destPortOutput='true' adjusted='false'>
               <shape>
-                <polylineShape points='98.0,224.0 98.0,182.0'/>
+                <polylineShape points='70.0,161.0 70.0,140.0'/>
               </shape>
             </analogEdgeView>
             <analogNodeView _id='85' id='18' filled='true' stroked='true' modelId='12'>
               <location>
-                <point x='-77.0' y='-126.0'/>
+                <point x='-63.0' y='-77.0'/>
               </location>
             </analogNodeView>
             <analogEdgeView _id='95' id='19' filled='true' stroked='true' modelId='12' layout='ortho' orig='85' dest='78' destPort='2' destPortOutput='true' adjusted='false'>
               <shape>
-                <polylineShape points='-77.0,-126.0 -14.0,-126.0'/>
+                <polylineShape points='-63.0,-77.0 -14.0,-77.0'/>
               </shape>
             </analogEdgeView>
             <analogEdgeView _id='96' id='20' filled='true' stroked='true' modelId='12' layout='ortho' orig='85' dest='90' destPort='2' destPortOutput='true' adjusted='true'>
               <shape>
-                <polylineShape points='-77.0,-126.0 -77.0,112.0 14.0,112.0 14.0,161.0 70.0,161.0'/>
+                <polylineShape points='-63.0,-77.0 -63.0,84.0 14.0,84.0 14.0,119.0 42.0,119.0'/>
               </shape>
             </analogEdgeView>
             <analogNodeView _id='97' id='21' filled='true' stroked='true' modelId='50'>
               <location>
-                <point x='-119.0' y='-35.0'/>
+                <point x='-91.0' y='-14.0'/>
               </location>
             </analogNodeView>
             <analogEdgeView _id='98' id='22' filled='true' stroked='true' modelId='50' layout='ortho' orig='97' dest='79' destPort='2' destPortOutput='true' adjusted='false'>
               <shape>
-                <polylineShape points='-119.0,-35.0 -14.0,-35.0'/>
+                <polylineShape points='-91.0,-14.0 -14.0,-14.0'/>
               </shape>
             </analogEdgeView>
-            <analogEdgeView _id='99' id='23' filled='true' stroked='true' modelId='50' layout='ortho' orig='97' dest='89' destPort='2' destPortOutput='true' adjusted='false'>
+            <analogEdgeView _id='99' id='23' filled='true' stroked='true' modelId='50' layout='ortho' orig='97' dest='89' destPort='2' destPortOutput='true' adjusted='true'>
               <shape>
-                <polylineShape points='-119.0,-35.0 -119.0,161.0 -84.0,161.0'/>
+                <polylineShape points='-91.0,-14.0 -91.0,119.0 -70.0,119.0'/>
               </shape>
             </analogEdgeView>
             <analogEdgeView _id='100' id='24' filled='true' stroked='true' modelId='27' layout='ortho' orig='89' origPort='3' origPortOutput='true' dest='101' adjusted='true'>
               <shape>
-                <polylineShape points='-56.0,140.0 -56.0,49.0 14.0,49.0'/>
+                <polylineShape points='-42.0,98.0 -42.0,49.0 14.0,49.0'/>
               </shape>
             </analogEdgeView>
             <analogNodeView _id='101' id='25' filled='true' stroked='true' modelId='27'>
@@ -229,7 +229,7 @@ if (waiting == 0) {
             </analogEdgeView>
             <analogEdgeView _id='104' id='27' filled='true' stroked='true' modelId='27' layout='ortho' orig='101' dest='90' destPort='3' destPortOutput='true' adjusted='false'>
               <shape>
-                <polylineShape points='14.0,49.0 98.0,49.0 98.0,140.0'/>
+                <polylineShape points='14.0,49.0 70.0,49.0 70.0,98.0'/>
               </shape>
             </analogEdgeView>
             <analogNodeView _id='103' id='32' filled='true' stroked='true' modelId='27'>
@@ -239,109 +239,109 @@ if (waiting == 0) {
             </analogNodeView>
             <analogEdgeView _id='105' id='33' filled='true' stroked='true' modelId='27' layout='ortho' orig='103' dest='79' destPort='3' destPortOutput='true' adjusted='false'>
               <shape>
-                <polylineShape points='14.0,28.0 14.0,-14.0'/>
+                <polylineShape points='14.0,28.0 14.0,7.0'/>
               </shape>
             </analogEdgeView>
             <analogEdgeView _id='106' id='36' filled='true' stroked='true' modelId='27' layout='ortho' orig='103' dest='107' destPort='1' destPortOutput='true' adjusted='false'>
               <shape>
-                <polylineShape points='14.0,28.0 231.0,28.0'/>
+                <polylineShape points='14.0,28.0 161.0,28.0'/>
               </shape>
             </analogEdgeView>
-            <analogTransistorView _id='108' id='43' rot='0' filled='true' stroked='true' modelId='34' x='581.0' y='-35.0' symbol='inverterCircle'/>
-            <analogTransistorView _id='109' id='44' rot='0' filled='true' stroked='true' modelId='35' x='581.0' y='119.0' symbol='inverterCircle'/>
+            <analogTransistorView _id='108' id='43' rot='0' filled='true' stroked='true' modelId='34' x='378.0' y='-21.0' symbol='inverterCircle'/>
+            <analogTransistorView _id='109' id='44' rot='0' filled='true' stroked='true' modelId='35' x='378.0' y='91.0' symbol='inverterCircle'/>
             <analogEdgeView _id='110' id='45' filled='true' stroked='true' modelId='36' layout='ortho' orig='107' origPort='2' origPortOutput='true' dest='111' adjusted='false'>
               <shape>
-                <polylineShape points='259.0,28.0 343.0,28.0'/>
+                <polylineShape points='189.0,28.0 224.0,28.0'/>
               </shape>
             </analogEdgeView>
             <analogNodeView _id='112' id='46' filled='true' stroked='true' modelId='36'>
               <location>
-                <point x='532.0' y='28.0'/>
+                <point x='357.0' y='28.0'/>
               </location>
             </analogNodeView>
             <analogEdgeView _id='113' id='47' filled='true' stroked='true' modelId='36' layout='ortho' orig='112' dest='108' destPort='2' destPortOutput='true' adjusted='true'>
               <shape>
-                <polylineShape points='532.0,28.0 532.0,-49.0 595.0,-49.0'/>
+                <polylineShape points='357.0,28.0 357.0,-35.0 392.0,-35.0'/>
               </shape>
             </analogEdgeView>
             <analogEdgeView _id='114' id='48' filled='true' stroked='true' modelId='36' layout='ortho' orig='112' dest='109' destPort='2' destPortOutput='true' adjusted='true'>
               <shape>
-                <polylineShape points='532.0,28.0 532.0,105.0 595.0,105.0'/>
+                <polylineShape points='357.0,28.0 357.0,77.0 392.0,77.0'/>
               </shape>
             </analogEdgeView>
-            <analogPowerView _id='115' id='49' rot='270' filled='true' stroked='true' modelId='42' x='623.0' y='-105.0'/>
+            <analogPowerView _id='115' id='49' rot='270' filled='true' stroked='true' modelId='42' x='420.0' y='-91.0'/>
             <analogEdgeView _id='116' id='50' filled='true' stroked='true' modelId='43' layout='ortho' orig='115' origPort='1' origPortOutput='true' dest='108' destPort='1' destPortOutput='true' adjusted='false'>
               <shape>
-                <polylineShape points='623.0,-119.0 623.0,-70.0'/>
+                <polylineShape points='420.0,-105.0 420.0,-56.0'/>
               </shape>
             </analogEdgeView>
-            <analogGroundView _id='117' id='52' rot='0' filled='true' stroked='true' modelId='46' x='623.0' y='161.0'/>
+            <analogGroundView _id='117' id='52' rot='0' filled='true' stroked='true' modelId='46' x='420.0' y='147.0'/>
             <analogEdgeView _id='118' id='53' filled='true' stroked='true' modelId='47' layout='ortho' orig='109' origPort='1' origPortOutput='true' dest='117' destPort='1' destPortOutput='true' adjusted='false'>
               <shape>
-                <polylineShape points='623.0,126.0 623.0,175.0'/>
+                <polylineShape points='420.0,98.0 420.0,161.0'/>
               </shape>
             </analogEdgeView>
             <analogEdgeView _id='119' id='55' filled='true' stroked='true' modelId='50' layout='ortho' orig='109' origPort='3' origPortOutput='true' dest='87' adjusted='false'>
               <shape>
-                <polylineShape points='623.0,84.0 623.0,28.0'/>
+                <polylineShape points='420.0,56.0 420.0,28.0'/>
               </shape>
             </analogEdgeView>
-            <capacitorView _id='107' id='66' rot='0' filled='true' stroked='true' modelId='32' x='217.0' y='28.0'/>
-            <resistorView _id='120' id='67' rot='90' filled='true' stroked='true' modelId='41' x='343.0' y='-112.0'/>
+            <capacitorView _id='107' id='66' rot='0' filled='true' stroked='true' modelId='32' x='147.0' y='28.0'/>
+            <resistorView _id='120' id='67' rot='90' filled='true' stroked='true' modelId='41' x='224.0' y='-70.0'/>
             <analogNodeView _id='111' id='68' filled='true' stroked='true' modelId='36'>
               <location>
-                <point x='343.0' y='28.0'/>
+                <point x='224.0' y='28.0'/>
               </location>
             </analogNodeView>
             <analogEdgeView _id='121' id='69' filled='true' stroked='true' modelId='36' layout='ortho' orig='111' dest='112' adjusted='false'>
               <shape>
-                <polylineShape points='343.0,28.0 532.0,28.0'/>
+                <polylineShape points='224.0,28.0 357.0,28.0'/>
               </shape>
             </analogEdgeView>
             <analogEdgeView _id='122' id='70' filled='true' stroked='true' modelId='36' layout='ortho' orig='111' dest='120' destPort='2' destPortOutput='true' adjusted='false'>
               <shape>
-                <polylineShape points='343.0,28.0 343.0,-56.0'/>
+                <polylineShape points='224.0,28.0 224.0,-14.0'/>
               </shape>
             </analogEdgeView>
-            <analogPowerView _id='123' id='71' rot='270' filled='true' stroked='true' modelId='58' x='343.0' y='-175.0'/>
+            <analogPowerView _id='123' id='71' rot='270' filled='true' stroked='true' modelId='58' x='224.0' y='-91.0'/>
             <analogEdgeView _id='124' id='72' filled='true' stroked='true' modelId='59' layout='ortho' orig='120' origPort='1' origPortOutput='true' dest='123' destPort='1' destPortOutput='true' adjusted='false'>
               <shape>
-                <polylineShape points='343.0,-98.0 343.0,-189.0'/>
+                <polylineShape points='224.0,-56.0 224.0,-105.0'/>
               </shape>
             </analogEdgeView>
             <analogNodeView _id='87' id='73' filled='true' stroked='true' modelId='50'>
               <location>
-                <point x='623.0' y='28.0'/>
+                <point x='420.0' y='28.0'/>
               </location>
             </analogNodeView>
             <analogEdgeView _id='125' id='74' filled='true' stroked='true' modelId='50' layout='ortho' orig='87' dest='108' destPort='3' destPortOutput='true' adjusted='false'>
               <shape>
-                <polylineShape points='623.0,28.0 623.0,-28.0'/>
+                <polylineShape points='420.0,28.0 420.0,-14.0'/>
               </shape>
             </analogEdgeView>
             <analogCircuitInOutView _id='84' id='75' filled='true' stroked='true' modelId='17' orientation='east'>
               <location>
-                <point x='-203.0' y='-126.0'/>
+                <point x='-154.0' y='-77.0'/>
               </location>
             </analogCircuitInOutView>
             <analogCircuitInOutView _id='126' id='76' filled='true' stroked='true' modelId='56' orientation='east'>
               <location>
-                <point x='840.0' y='28.0'/>
+                <point x='560.0' y='28.0'/>
               </location>
             </analogCircuitInOutView>
             <analogNodeView _id='88' id='77' filled='true' stroked='true' modelId='50'>
               <location>
-                <point x='805.0' y='28.0'/>
+                <point x='525.0' y='28.0'/>
               </location>
             </analogNodeView>
             <analogEdgeView _id='127' id='78' filled='true' stroked='true' modelId='50' layout='ortho' orig='88' dest='97' adjusted='true'>
               <shape>
-                <polylineShape points='805.0,28.0 805.0,329.0 -231.0,329.0 -231.0,-35.0 -119.0,-35.0'/>
+                <polylineShape points='525.0,28.0 525.0,245.0 -161.0,245.0 -161.0,-14.0 -91.0,-14.0'/>
               </shape>
             </analogEdgeView>
             <analogEdgeView _id='128' id='79' filled='true' stroked='true' modelId='50' layout='ortho' orig='88' dest='126' destPort='1' adjusted='false'>
               <shape>
-                <polylineShape points='805.0,28.0 854.0,28.0'/>
+                <polylineShape points='525.0,28.0 574.0,28.0'/>
               </shape>
             </analogEdgeView>
           </components>
