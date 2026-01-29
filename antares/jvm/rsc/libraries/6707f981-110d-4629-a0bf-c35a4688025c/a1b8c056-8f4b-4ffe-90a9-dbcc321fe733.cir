@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<metaGraph _id='0' appVersion='1.17.1' manualContainer='true'>
+<metaGraph _id='0' appVersion='1.34.0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
@@ -168,12 +168,12 @@ if (^C) {
             <netView _id='73' modelId='56' style='line'/>
           </netViews>
           <components>
-            <circuitInOutView _id='74' id='1' rot='0' filled='true' stroked='true' modelId='3' orientation='east' representation='binary'>
+            <circuitInOutView _id='74' id='1' filled='true' stroked='true' modelId='3' orientation='east' representation='binary'>
               <location>
                 <point x='-308.0' y='-322.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='75' id='2' rot='0' filled='true' stroked='true' modelId='4' orientation='east' representation='binary'>
+            <circuitInOutView _id='75' id='2' filled='true' stroked='true' modelId='4' orientation='east' representation='binary'>
               <location>
                 <point x='-308.0' y='-224.0'/>
               </location>
@@ -208,7 +208,7 @@ if (^C) {
                 <polylineShape points='-28.0,-356.0 -28.0,-322.0 0.0,-322.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='88' id='16' rot='0' filled='true' stroked='true' modelId='29' orientation='south' representation='binary'>
+            <circuitInOutView _id='88' id='16' filled='true' stroked='true' modelId='29' orientation='south' representation='binary'>
               <location>
                 <point x='-28.0' y='-420.0'/>
               </location>
@@ -224,7 +224,7 @@ if (^C) {
                 <polylineShape points='-28.0,-106.0 -28.0,-140.0 0.0,-140.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='92' id='20' rot='0' filled='true' stroked='true' modelId='37' orientation='north' representation='binary'>
+            <circuitInOutView _id='92' id='20' filled='true' stroked='true' modelId='37' orientation='north' representation='binary'>
               <location>
                 <point x='-28.0' y='-42.0'/>
               </location>
@@ -255,12 +255,12 @@ if (^C) {
                 <polylineShape points='-294.0,-322.0 -127.0,-322.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='98' id='27' rot='0' filled='true' stroked='true' modelId='44' orientation='east' representation='binary'>
+            <circuitInOutView _id='98' id='27' filled='true' stroked='true' modelId='44' orientation='east' representation='binary'>
               <location>
                 <point x='140.0' y='-308.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='99' id='28' rot='0' filled='true' stroked='true' modelId='45' orientation='east' representation='binary'>
+            <circuitInOutView _id='99' id='28' filled='true' stroked='true' modelId='45' orientation='east' representation='binary'>
               <location>
                 <point x='140.0' y='-154.0'/>
               </location>
@@ -378,6 +378,10 @@ if (^C) {
       </components>
       <model>
         <subGraphVertice _id='135' id='0' delay='0' uuid='a1b8c056-8f4b-4ffe-90a9-dbcc321fe733'>
+          <desc>
+            <translation lang='de' text='Flankengesteuertes D-Flipflop mit asynchronen Setz- und Rücksetzeingängen'/>
+            <translation lang='en' text='Edge-triggered D flip-flop with asynchronous set and reset inputs'/>
+          </desc>
           <name>
             <translation lang='en' text='D Flip-Flop PRE\/CRL'/>
             <translation lang='de' text='D-Flipflop PRE\/CRL'/>

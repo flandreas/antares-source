@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<metaGraph _id='0' appVersion='1.17.1' manualContainer='true'>
+<metaGraph _id='0' appVersion='1.34.0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
@@ -22,7 +22,7 @@ if (S) {
 	return
 }
 Q = 0
-&apos;!Q&apos; = 1' startupTime='15'>
+&apos;!Q&apos; = 1' calculatedDelay='39' startupTime='15'>
           <elements>
             <norGate _id='3' id='1' delay='PD / 3 - 1' inputCount='2'/>
             <norGate _id='4' id='2' delay='PD / 3' inputCount='2'/>
@@ -189,22 +189,22 @@ run {
           <components>
             <norGateView _id='40' id='1' rot='0' filled='true' stroked='true' modelId='3' x='-168.0' y='-364.0'/>
             <norGateView _id='41' id='2' rot='0' filled='true' stroked='true' modelId='4' x='-168.0' y='-238.0'/>
-            <circuitInOutView _id='42' id='3' rot='0' filled='true' stroked='true' modelId='5' orientation='east' representation='binary'>
+            <circuitInOutView _id='42' id='3' filled='true' stroked='true' modelId='5' orientation='east' representation='binary'>
               <location>
                 <point x='-308.0' y='-378.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='43' id='4' rot='0' filled='true' stroked='true' modelId='6' orientation='east' representation='binary'>
+            <circuitInOutView _id='43' id='4' filled='true' stroked='true' modelId='6' orientation='east' representation='binary'>
               <location>
                 <point x='-308.0' y='-224.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='44' id='5' rot='0' filled='true' stroked='true' modelId='7' orientation='east' representation='binary'>
+            <circuitInOutView _id='44' id='5' filled='true' stroked='true' modelId='7' orientation='east' representation='binary'>
               <location>
                 <point x='-28.0' y='-364.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='45' id='6' rot='0' filled='true' stroked='true' modelId='8' orientation='east' representation='binary'>
+            <circuitInOutView _id='45' id='6' filled='true' stroked='true' modelId='8' orientation='east' representation='binary'>
               <location>
                 <point x='-28.0' y='-238.0'/>
               </location>
@@ -303,11 +303,11 @@ run {
         <subGraphVertice _id='73' id='0' delay='0' uuid='e57241a4-0282-4006-9abd-59bbcb16bb87'>
           <desc>
             <translation lang='en' text='Level-triggered NOR latch with set input S and reset input R'/>
-            <translation lang='de' text='Nicht-taktgesteuertes NOR-Latch mit Setzeingang S und Rücksetzeingang R'/>
+            <translation lang='de' text='Pegelgesteuertes NOR-Latch mit Setzeingang S und Rücksetzeingang R'/>
           </desc>
           <name>
             <translation lang='en' text='SR Latch'/>
-            <translation lang='de' text='SR Latch'/>
+            <translation lang='de' text='SR-Latch'/>
           </name>
           <ports>
             <subCircuitPort _id='61' portId='1' name='S' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>

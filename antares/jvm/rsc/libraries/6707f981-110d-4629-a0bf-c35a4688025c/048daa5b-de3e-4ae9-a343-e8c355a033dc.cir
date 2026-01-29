@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<metaGraph _id='0' manualContainer='true'>
+<metaGraph _id='0' appVersion='1.34.0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' type='digital' startupTime='45'>
+        <graph _id='2' type='digital' calculatedDelay='304' startupTime='45'>
           <elements>
             <nandGate _id='3' id='1' delay='PD / 8' inputCount='3'/>
             <circuitInOut _id='4' id='2' name='J' type='input' bitWidth='1'/>
@@ -226,18 +226,18 @@ run {
               </component>
             </graphElement>
             <nandGateView _id='111' id='1' rot='0' filled='true' stroked='true' modelId='3' x='-105.0' y='-266.0'/>
-            <circuitInOutView _id='112' id='2' rot='0' filled='true' stroked='true' modelId='4' orientation='east' representation='binary'>
+            <circuitInOutView _id='112' id='2' filled='true' stroked='true' modelId='4' orientation='east' representation='binary'>
               <location>
                 <point x='-350.0' y='-266.0'/>
               </location>
             </circuitInOutView>
             <nandGateView _id='113' id='3' rot='0' filled='true' stroked='true' modelId='5' x='-105.0' y='-70.0'/>
-            <circuitInOutView _id='114' id='4' rot='0' filled='true' stroked='true' modelId='6' orientation='east' representation='binary'>
+            <circuitInOutView _id='114' id='4' filled='true' stroked='true' modelId='6' orientation='east' representation='binary'>
               <location>
                 <point x='-350.0' y='-70.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='115' id='5' rot='0' filled='true' stroked='true' modelId='7' orientation='east' representation='binary'>
+            <circuitInOutView _id='115' id='5' filled='true' stroked='true' modelId='7' orientation='east' representation='binary'>
               <location>
                 <point x='-350.0' y='-168.0'/>
               </location>
@@ -352,12 +352,12 @@ run {
             </digitalEdgeView>
             <nandGateView _id='146' id='34' rot='0' filled='true' stroked='true' modelId='56' x='336.0' y='-238.0'/>
             <nandGateView _id='147' id='35' rot='0' filled='true' stroked='true' modelId='57' x='336.0' y='-98.0'/>
-            <circuitInOutView _id='148' id='36' rot='0' filled='true' stroked='true' modelId='58' orientation='east' representation='binary'>
+            <circuitInOutView _id='148' id='36' filled='true' stroked='true' modelId='58' orientation='east' representation='binary'>
               <location>
                 <point x='406.0' y='-238.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='149' id='37' rot='0' filled='true' stroked='true' modelId='59' orientation='east' representation='binary'>
+            <circuitInOutView _id='149' id='37' filled='true' stroked='true' modelId='59' orientation='east' representation='binary'>
               <location>
                 <point x='406.0' y='-98.0'/>
               </location>
@@ -442,7 +442,7 @@ run {
                 <polylineShape points='42.0,-70.0 168.0,-70.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='166' id='54' rot='0' filled='true' stroked='true' modelId='76' orientation='south' representation='binary'>
+            <circuitInOutView _id='166' id='54' filled='true' stroked='true' modelId='76' orientation='south' representation='binary'>
               <location>
                 <point x='-70.0' y='-420.0'/>
               </location>
@@ -452,7 +452,7 @@ run {
                 <polylineShape points='-70.0,-434.0 -70.0,-406.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='168' id='56' rot='0' filled='true' stroked='true' modelId='80' orientation='north' representation='binary'>
+            <circuitInOutView _id='168' id='56' filled='true' stroked='true' modelId='80' orientation='north' representation='binary'>
               <location>
                 <point x='-70.0' y='126.0'/>
               </location>
@@ -550,7 +550,7 @@ run {
       <model>
         <subGraphVertice _id='200' id='0' delay='0' uuid='048daa5b-de3e-4ae9-a343-e8c355a033dc'>
           <desc>
-            <translation lang='en' text='JK Master-Slave Flip-Flip with preset and clear input'/>
+            <translation lang='en' text='JK Master-Slave Flip-Flop with preset and clear input'/>
             <translation lang='de' text='JK-Master-Slave-Flipflop mit asynchronem Set- und Rücksetzeingang'/>
           </desc>
           <name>

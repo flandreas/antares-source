@@ -98,21 +98,21 @@ if (^C) {
                 <netPortRef _id='45' verticeId='17' portId='3'/>
               </ports>
             </digitalNet>
-            <subGraphVerticeRef _id='16' id='25' delay='PD / 7 * 4' uuid='2d7bbd36-5dca-4c71-9a27-19a3bfa81bc5' type='digital'>
+            <digitalNet _id='46' id='26' delay='0'>
+              <ports>
+                <netPortRef _id='47' verticeId='4' portId='1'/>
+                <netPortRef _id='48' verticeId='16' portId='1'/>
+              </ports>
+            </digitalNet>
+            <subGraphVerticeRef _id='16' id='27' delay='30' uuid='6b75bce8-f115-4154-a7d8-782b8f4b629a' type='digital'>
               <params>
-                <graphParams _id='46'>
+                <graphParams _id='49'>
                   <values>
-                    <graphParam _id='47' name='PD' type='Long' value='PD / 7 * 4' semantic='propagationDelay'/>
+                    <graphParam _id='50' name='PD' type='Long' value='30' semantic='propagationDelay'/>
                   </values>
                 </graphParams>
               </params>
             </subGraphVerticeRef>
-            <digitalNet _id='48' id='26' delay='0'>
-              <ports>
-                <netPortRef _id='49' verticeId='4' portId='1'/>
-                <netPortRef _id='50' verticeId='16' portId='1'/>
-              </ports>
-            </digitalNet>
           </elements>
           <testcases>
             <testcases _id='51'>
@@ -121,13 +121,21 @@ if (^C) {
 // Operate
 0	0	1			1			0	1
 0	1	1			1			0	1
-^1	1	1			1			1	0
-^1	0	1			1			0	1
+run {
+1	1	1			1			0	1
+^0	1	1			1			1	0
+}
+run {
+1	1	1			1			0	1
+^0	1	1			1			1	0
+1	0	1			1			1	0
+^0	0	1			1			0	1
+}
 // Clear
 1	1	1			0			0	1
 // Preset
 0	x	0			1			1	0	
-'>
+' skipPropDelayConsistenceCheck='true'>
                   <name>
                     <translation lang='en' text='Test'/>
                   </name>
@@ -149,7 +157,7 @@ if (^C) {
             <netView _id='60' modelId='33' style='line'/>
             <netView _id='61' modelId='38' style='line'/>
             <netView _id='62' modelId='42' style='line'/>
-            <netView _id='63' modelId='48' style='line'/>
+            <netView _id='63' modelId='46' style='line'/>
           </netViews>
           <components>
             <circuitInOutView _id='64' id='1' filled='true' stroked='true' modelId='3' orientation='east' representation='binary'>
@@ -277,8 +285,7 @@ if (^C) {
                 <polylineShape points='84.0,-154.0 154.0,-154.0'/>
               </shape>
             </digitalEdgeView>
-            <subGraphVerticeViewRef _id='94' id='37' rot='0' filled='true' stroked='true' modelId='16' x='-273.0' y='-224.0' controlViewVisibility='simulation'/>
-            <digitalEdgeView _id='95' id='38' filled='true' stroked='true' modelId='48' layout='ortho' orig='65' origPort='1' origPortOutput='true' dest='94' destPort='1' adjusted='false'>
+            <digitalEdgeView _id='94' id='38' filled='true' stroked='true' modelId='46' layout='ortho' orig='65' origPort='1' origPortOutput='true' dest='95' destPort='1' adjusted='false'>
               <shape>
                 <polylineShape points='-315.0,-224.0 -259.0,-224.0'/>
               </shape>
@@ -293,11 +300,12 @@ if (^C) {
                 <polylineShape points='-176.0,-224.0 -176.0,-294.0 -127.0,-294.0'/>
               </shape>
             </digitalEdgeView>
-            <digitalEdgeView _id='97' id='41' filled='true' stroked='true' modelId='12' layout='ortho' orig='71' dest='94' destPort='2' destPortOutput='true' adjusted='false'>
+            <digitalEdgeView _id='97' id='41' filled='true' stroked='true' modelId='12' layout='ortho' orig='71' dest='95' destPort='2' destPortOutput='true' adjusted='false'>
               <shape>
-                <polylineShape points='-176.0,-224.0 -203.0,-224.0'/>
+                <polylineShape points='-176.0,-224.0 -195.0,-224.0'/>
               </shape>
             </digitalEdgeView>
+            <subGraphVerticeViewRef _id='95' id='42' rot='0' filled='true' stroked='true' modelId='16' x='-273.0' y='-224.0' controlViewVisibility='simulation'/>
           </components>
         </graphView>
       </view>
@@ -349,18 +357,18 @@ if (^C) {
         </controlViewComponent>
       </components>
       <model>
-        <subGraphVertice _id='121' id='0' delay='0' uuid='f5ffee61-6d3e-453e-a352-e702a06b11d2'>
+        <subGraphVertice _id='121' id='0' delay='0' uuid='3f910ab2-d6e0-4fe2-9835-f98eea045c9f'>
           <desc>
-            <translation lang='de' text='Flankengesteuertes D-Flipflop mit asynchronen invertierten Setz- und Rücksetzeingängen'/>
-            <translation lang='en' text='Edge-triggered D flip-flop with asynchronous inverted set and reset inputs'/>
+            <translation lang='de' text='Negativ-flankengesteuertes D-Flipflop mit asynchronen invertierten Setz- und Rücksetzeingängen'/>
+            <translation lang='en' text='Negative edge-triggered D flip-flop with asynchronous inverted set and reset inputs'/>
           </desc>
           <name>
-            <translation lang='de' text='D-Flipflop !(PRE)\/!(CRL)'/>
-            <translation lang='en' text='D Flip-Flop !(PRE)\/!(CRL)'/>
+            <translation lang='de' text='D-Flipflop !(PRE)\/!(CRL) (Neg)'/>
+            <translation lang='en' text='D Flip-Flop !(PRE)\/!(CRL) (Neg)'/>
           </name>
           <ports>
             <subCircuitPort _id='103' portId='1' name='D' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
-            <subCircuitPort _id='106' portId='2' name='C' logic='positive' bitWidth='1' trigger='edge' type='input' representation='binary'/>
+            <subCircuitPort _id='106' portId='2' name='C' logic='negative' bitWidth='1' trigger='edge' type='input' representation='binary'/>
             <subCircuitPort _id='109' portId='3' name='Q' logic='positive' bitWidth='1' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='112' portId='4' name='!Q' logic='negative' bitWidth='1' trigger='level' type='output' representation='binary'/>
             <subCircuitPort _id='115' portId='5' name='!(PRE)' logic='negative' bitWidth='1' trigger='level' type='input' representation='binary' startValue='1'/>

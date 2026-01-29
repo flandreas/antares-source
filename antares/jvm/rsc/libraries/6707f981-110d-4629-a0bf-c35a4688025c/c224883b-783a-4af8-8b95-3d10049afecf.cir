@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<metaGraph _id='0' manualContainer='true'>
+<metaGraph _id='0' appVersion='1.34.0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' type='digital'>
+        <graph _id='2' type='digital' calculatedDelay='200'>
           <elements>
             <subGraphVerticeRef _id='3' id='1' delay='100' uuid='f5ffee61-6d3e-453e-a352-e702a06b11d2' type='digital'>
               <params>
@@ -148,27 +148,27 @@
           </netViews>
           <components>
             <subGraphVerticeViewRef _id='87' id='1' rot='0' filled='true' stroked='true' modelId='3' x='217.0' y='-308.0' controlViewVisibility='simulation'/>
-            <circuitInOutView _id='88' id='2' rot='0' filled='true' stroked='true' modelId='6' orientation='south' representation='binary'>
+            <circuitInOutView _id='88' id='2' filled='true' stroked='true' modelId='6' orientation='south' representation='binary'>
               <location>
                 <point x='259.0' y='-413.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='89' id='3' rot='0' filled='true' stroked='true' modelId='7' orientation='east' representation='binary'>
+            <circuitInOutView _id='89' id='3' filled='true' stroked='true' modelId='7' orientation='east' representation='binary'>
               <location>
                 <point x='-350.0' y='-252.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='90' id='4' rot='0' filled='true' stroked='true' modelId='8' orientation='east' representation='binary'>
+            <circuitInOutView _id='90' id='4' filled='true' stroked='true' modelId='8' orientation='east' representation='binary'>
               <location>
                 <point x='-350.0' y='-168.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='91' id='5' rot='0' filled='true' stroked='true' modelId='9' orientation='north' representation='binary'>
+            <circuitInOutView _id='91' id='5' filled='true' stroked='true' modelId='9' orientation='north' representation='binary'>
               <location>
                 <point x='259.0' y='-91.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='92' id='6' rot='0' filled='true' stroked='true' modelId='10' orientation='east' representation='binary'>
+            <circuitInOutView _id='92' id='6' filled='true' stroked='true' modelId='10' orientation='east' representation='binary'>
               <location>
                 <point x='-350.0' y='-98.0'/>
               </location>
@@ -226,12 +226,12 @@
                 <polylineShape points='231.0,-308.0 182.0,-308.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='112' id='24' rot='0' filled='true' stroked='true' modelId='48' orientation='east' representation='binary'>
+            <circuitInOutView _id='112' id='24' filled='true' stroked='true' modelId='48' orientation='east' representation='binary'>
               <location>
                 <point x='350.0' y='-308.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='113' id='25' rot='0' filled='true' stroked='true' modelId='49' orientation='east' representation='binary'>
+            <circuitInOutView _id='113' id='25' filled='true' stroked='true' modelId='49' orientation='east' representation='binary'>
               <location>
                 <point x='350.0' y='-252.0'/>
               </location>
@@ -399,7 +399,7 @@
           </desc>
           <name>
             <translation lang='en' text='JK Flip-Flop !(PRE)\/!(CLR)'/>
-            <translation lang='de' text='JK Flip-Flop async !(PRE)\/!(CLR)'/>
+            <translation lang='de' text='JK-Flipflop !(PRE)\/!(CLR)'/>
           </name>
           <ports>
             <subCircuitPort _id='137' portId='1' name='!(PRE)' logic='negative' bitWidth='1' trigger='level' type='input' representation='binary' startValue='1'/>

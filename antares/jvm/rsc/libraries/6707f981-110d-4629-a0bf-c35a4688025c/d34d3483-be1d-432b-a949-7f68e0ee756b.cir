@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<metaGraph _id='0' manualContainer='true'>
+<metaGraph _id='0' appVersion='1.34.0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' type='digital' startupTime='45'>
+        <graph _id='2' type='digital' calculatedDelay='122' startupTime='45'>
           <elements>
             <circuitInOut _id='3' id='1' name='S' type='input' bitWidth='1'/>
             <circuitInOut _id='4' id='2' name='C' type='input' bitWidth='1'/>
@@ -159,17 +159,17 @@ run {
             <netView _id='73' modelId='55' style='line'/>
           </netViews>
           <components>
-            <circuitInOutView _id='74' id='1' rot='0' filled='true' stroked='true' modelId='3' orientation='east' representation='binary'>
+            <circuitInOutView _id='74' id='1' filled='true' stroked='true' modelId='3' orientation='east' representation='binary'>
               <location>
                 <point x='-210.0' y='-196.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='75' id='2' rot='0' filled='true' stroked='true' modelId='4' orientation='east' representation='binary'>
+            <circuitInOutView _id='75' id='2' filled='true' stroked='true' modelId='4' orientation='east' representation='binary'>
               <location>
                 <point x='-210.0' y='-98.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='76' id='3' rot='0' filled='true' stroked='true' modelId='5' orientation='east' representation='binary'>
+            <circuitInOutView _id='76' id='3' filled='true' stroked='true' modelId='5' orientation='east' representation='binary'>
               <location>
                 <point x='-210.0' y='0.0'/>
               </location>
@@ -224,12 +224,12 @@ run {
                 <polylineShape points='22.0,-14.0 126.0,-14.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='91' id='18' rot='0' filled='true' stroked='true' modelId='32' orientation='east' representation='binary'>
+            <circuitInOutView _id='91' id='18' filled='true' stroked='true' modelId='32' orientation='east' representation='binary'>
               <location>
                 <point x='280.0' y='-182.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='92' id='19' rot='0' filled='true' stroked='true' modelId='33' orientation='east' representation='binary'>
+            <circuitInOutView _id='92' id='19' filled='true' stroked='true' modelId='33' orientation='east' representation='binary'>
               <location>
                 <point x='280.0' y='-14.0'/>
               </location>
@@ -274,12 +274,12 @@ run {
                 <polylineShape points='210.0,-14.0 294.0,-14.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='101' id='28' rot='0' filled='true' stroked='true' modelId='42' orientation='south' representation='binary'>
+            <circuitInOutView _id='101' id='28' filled='true' stroked='true' modelId='42' orientation='south' representation='binary'>
               <location>
                 <point x='98.0' y='-301.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='102' id='29' rot='0' filled='true' stroked='true' modelId='43' orientation='north' representation='binary'>
+            <circuitInOutView _id='102' id='29' filled='true' stroked='true' modelId='43' orientation='north' representation='binary'>
               <location>
                 <point x='98.0' y='105.0'/>
               </location>
@@ -364,8 +364,8 @@ run {
       <model>
         <subGraphVertice _id='135' id='0' delay='0' uuid='d34d3483-be1d-432b-a949-7f68e0ee756b'>
           <desc>
-            <translation lang='en' text='SR flip-flop with asanchronous set and reset input'/>
-            <translation lang='de' text='SR-Flipflop mit asynchronem Set- und Rücksetz-Eingang'/>
+            <translation lang='en' text='Edge-triggered SR flip-flop with asynchronous set and reset input'/>
+            <translation lang='de' text='Flankengesteuertes SR-Flipflop mit asynchronem Set- und Rücksetz-Eingang'/>
           </desc>
           <name>
             <translation lang='en' text='SR Flip-Flop PRE\/CLR'/>
