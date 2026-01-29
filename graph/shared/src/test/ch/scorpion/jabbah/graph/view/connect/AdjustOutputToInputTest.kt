@@ -26,4 +26,22 @@ class AdjustOutputToInputTest : AbstractInputEventHandlerTest() {
         val ev = builder.graphView.getEdgeViews().first()
         assertEquals(Direction.EAST, ev.getSegmentDirection(0))
     }
+
+    @Test
+    fun shouldLayoutStraightOnSnapToInput() {
+        mouseMoveToAndClickAt(130, 100)
+        mouseMoveTo(190, 100)
+
+        val ev = builder.graphView.getEdgeViews().first()
+        assertEquals(2, ev.segmentPointCount)
+    }
+
+    @Test
+    fun shouldLayoutStraightOnConnectToInput() {
+        mouseMoveToAndClickAt(130, 100)
+        mouseMoveToAndClickAt(190, 100)
+
+        val ev = builder.graphView.getEdgeViews().first()
+        assertEquals(2, ev.segmentPointCount)
+    }
 }

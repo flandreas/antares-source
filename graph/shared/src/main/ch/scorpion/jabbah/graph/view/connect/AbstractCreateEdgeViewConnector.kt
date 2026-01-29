@@ -136,7 +136,7 @@ abstract class AbstractCreateEdgeViewConnector(
 			)
             EdgeViewEndpointType.DESTINATION -> adjustToTargetPortViewImpl(
 				connPointAbs,
-				getMoveAdjustedPointDestDirs(ownLayoutIndex, allowContinuation = true),
+				getMoveAdjustedPointOrigDirs(ownLayoutIndex, allowContinuation = true),
 				setOf(draggedEndpointType.getDirectionForPortView(targetPortView!!))
 			)
         }
