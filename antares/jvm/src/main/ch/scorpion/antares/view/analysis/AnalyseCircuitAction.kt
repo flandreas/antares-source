@@ -44,8 +44,10 @@ class AnalyseCircuitAction(
 					throw CircuitAnalysisError(Translations.getString("antares.circuitAnalysis.onlyDigital.msg"))
 				}
 
-				val clone = StorableCloner.clone(element.storable!!.graph.model as DigitalGraph)
-				val truthTable = service.analyse(clone)
+				// Clone the entire MetaGraph and not only the DigitalGraph so that propagation delay expressions
+				// get evaluated (GitHub #1146).
+				val clone = StorableCloner.clone(element.storable!!)
+				val truthTable = service.analyse(clone.graph.model as DigitalGraph)
 
 				AnalyseCircuitPanel.showAsDialog(Frame.getFrames()[0], element, truthTable)
 			} catch (e: CircuitAnalysisError) {
