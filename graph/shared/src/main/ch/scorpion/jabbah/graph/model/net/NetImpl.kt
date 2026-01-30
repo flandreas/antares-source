@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorData
 import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.element.AbstractGraphElement
+import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.io.*
 
 /**
@@ -46,7 +47,7 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 
 	/** ---- [Net] interface */
 
-	/** Non-property variable in order to access field while allowing to override getter of [signal] in subclasses.*/
+	/** Non-property variable to access field while allowing to override getter of [signal] in subclasses.*/
 	private var _signal: T? = null
 
 	override val signal: T?
@@ -69,6 +70,10 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 
 	override val weakOutputPorts: Collection<OutputPort<T>>
 		get() = _ports.filterIsInstance<OutputPort<T>>().filter { it.weakBehaviour != null }
+
+	override fun canConnectTo(net: Net<*>, graphView: GraphView): Boolean {
+		return _ports.all { it.portType.isInput || (it is OutputPort<*> && it.canConnectToNet(net, graphView)) }
+	}
 
 	override fun connect(port: Port<T>) {
 		check(!_ports.contains(port)) { "Net $id already connected to port ${port.portId} of ${port.owner?.id}" }

@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.graph.model
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.collection.ImmutableList
 import ch.scorpion.jabbah.execution.SignalHandler
+import ch.scorpion.jabbah.graph.view.GraphView
 
 /**
  * A [Net] is a [GraphElement] that can forward signals between [Port]s of [Vertice]s
@@ -37,6 +38,8 @@ interface Net<T: Any> : GraphElement {
     val weakOutputPorts: Collection<OutputPort<T>>
 
 	val hasConflictingOutputs: Boolean
+
+	fun canConnectTo(net: Net<*>, graphView: GraphView): Boolean
 
     /** Connects the specified [Port] with this [Net]. */
     fun connect(port: Port<T>)

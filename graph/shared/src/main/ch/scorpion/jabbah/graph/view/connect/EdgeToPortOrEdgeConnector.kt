@@ -156,13 +156,13 @@ class EdgeToPortOrEdgeConnector(
 							given { mouseDragged(it) && insideTargetPortView(draggedEndpointType, it) }
 						}
 						transitTo(insideTargetEdgeView) {
-							given { mouseDragged(it) && insideTargetEdgeView(draggedEndpointType, it) }
+							given { mouseDragged(it) && insideTargetEdgeView(it) }
 						}
 						transitTo(insideDenyingPortView) {
 							given { mouseDragged(it) && insideDenyingPortView(draggedEndpointType, it) }
 						}
 						transitTo(insideDenyingEdgeView) {
-							given { mouseDragged(it) && insideDenyingEdgeView(draggedEndpointType, it) }
+							given { mouseDragged(it) && insideDenyingEdgeView(it) }
 						}
 						transitTo(drag) {
 							given { mouseDragged(it) && !insideTargetPortView(draggedEndpointType, it) }
@@ -296,13 +296,13 @@ class EdgeToPortOrEdgeConnector(
 							given { mouseMoved(it) && insideTargetPortView(draggedEndpointType, it) }
 						}
 						transitTo(insideTargetEdgeView) {
-							given { mouseMoved(it) && insideTargetEdgeView(draggedEndpointType, it) }
+							given { mouseMoved(it) && insideTargetEdgeView(it) }
 						}
 						transitTo(insideDenyingPortView) {
 							given { mouseMoved(it) && insideDenyingPortView(draggedEndpointType, it) }
 						}
 						transitTo(insideDenyingEdgeView) {
-							given { mouseMoved(it) && insideDenyingEdgeView(draggedEndpointType, it) }
+							given { mouseMoved(it) && insideDenyingEdgeView(it) }
 						}
 						stayIf({ mouseMoved(it) }) {
 							onTransit { moveAdjustedPoint(it) }
@@ -363,11 +363,11 @@ class EdgeToPortOrEdgeConnector(
 					state(insideTargetEdgeView) {
 						onEntry { adjustToTargetEdgeView(it) }
 						onExit { removePortViewHighlight(it) }
-						stayIf({ mouseMoved(it) && insideTargetEdgeView(draggedEndpointType, it) }) {
+						stayIf({ mouseMoved(it) && insideTargetEdgeView(it) }) {
 							onTransit { adjustToTargetEdgeView(it) }
 						}
 						transitTo(move) {
-							given { mouseMoved(it) && !insideTargetEdgeView(draggedEndpointType, it) }
+							given { mouseMoved(it) && !insideTargetEdgeView(it) }
 						}
 						transitTo(connectedToEdge) {
 							given { mouseLeftPressed(it) }
@@ -382,7 +382,7 @@ class EdgeToPortOrEdgeConnector(
 						onEntry { snapToDenyingEdgeView(it) }
 						onExit { removePortViewHighlight(it) }
 						transitTo(move) {
-							given { mouseMoved(it) && !insideDenyingEdgeView(draggedEndpointType, it) }
+							given { mouseMoved(it) && !insideDenyingEdgeView(it) }
 						}
 						transitTo(cancelled) {
 							given { escapePressed(it) }

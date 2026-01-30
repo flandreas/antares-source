@@ -129,20 +129,37 @@ abstract class AbstractConnector(
 	}
 
 	protected fun insideTargetEdgeView(type: EdgeViewEndpointType, context: EditInputEventContext): Boolean {
-		val destDrawable = context.drawingView.drawing.getDrawable { it is EdgeView<*> && it.model !== edgeView?.model && it.contains(context.location) }
-		if (destDrawable == null || !canConnectTo(type, destDrawable as EdgeView<*>, context.drawingView.drawing as GraphView)) {
+		val destEdgeView = context.drawingView.drawing.getDrawable { it is EdgeView<*> && it.model !== edgeView?.model && it.contains(context.location) }
+		if (destEdgeView == null || !canConnectTo(type, destEdgeView as EdgeView<*>, context.drawingView.drawing as GraphView)) {
 			clearTargetEdgeView()
 			return false
 		}
 
 		clearTargetPortView()
-		targetEdgeView = destDrawable
+		targetEdgeView = destEdgeView
+
+		return true
+	}
+
+	protected fun insideTargetEdgeView(context: EditInputEventContext): Boolean {
+		val destEdgeView = context.drawingView.drawing.getDrawable { it is EdgeView<*> && it.model !== edgeView?.model && it.contains(context.location) }
+		if (destEdgeView == null || !canConnectTo(destEdgeView as EdgeView<*>, context.drawingView.drawing as GraphView)) {
+			clearTargetEdgeView()
+			return false
+		}
+
+		clearTargetPortView()
+		targetEdgeView = destEdgeView
 
 		return true
 	}
 
 	protected open fun canConnectTo(type: EdgeViewEndpointType, edgeView: EdgeView<out Any>, graphView: GraphView): Boolean {
 		return true
+	}
+
+	private fun canConnectTo(edgeView: EdgeView<out Any>, graphView: GraphView): Boolean {
+		return this.edgeView?.net?.canConnectTo(edgeView.net!!, graphView) ?: false
 	}
 
 	protected fun snapToTargetEdgeView(context: EditInputEventContext) {
@@ -157,15 +174,26 @@ abstract class AbstractConnector(
 	}
 
 	protected fun insideDenyingEdgeView(type: EdgeViewEndpointType, context: EditInputEventContext): Boolean {
-		val destDrawable = context.drawingView.drawing.getDrawable { it is EdgeView<*> && it.model !== edgeView?.model && it.contains(context.location) }
-		if (destDrawable == null || canConnectTo(type, destDrawable as EdgeView<*>, context.drawingView.drawing as GraphView)) {
+		val destEdgeView = context.drawingView.drawing.getDrawable { it is EdgeView<*> && it.model !== edgeView?.model && it.contains(context.location) }
+		if (destEdgeView == null || canConnectTo(type, destEdgeView as EdgeView<*>, context.drawingView.drawing as GraphView)) {
 			clearTargetEdgeView()
 			return false
 		}
 
 		clearTargetPortView()
-		targetEdgeView = destDrawable
+		targetEdgeView = destEdgeView
 
+		return true
+	}
+
+	protected fun insideDenyingEdgeView(context: EditInputEventContext): Boolean {
+		val destEdgeView = context.drawingView.drawing.getDrawable { it is EdgeView<*> && it.model !== edgeView?.model && it.contains(context.location) }
+		if (destEdgeView == null || canConnectTo(destEdgeView as EdgeView<*>, context.drawingView.drawing as GraphView)) {
+			clearTargetEdgeView()
+			return false
+		}
+		clearTargetPortView()
+		targetEdgeView = destEdgeView
 		return true
 	}
 
