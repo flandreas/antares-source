@@ -54,11 +54,11 @@ object AntaresUsecaseActionExternalFunctions : UsecaseActionExternalFunctions() 
 	private fun pressButtonAt(time: Long, buttonId: Long) {
 		LOG.trace("pressButton $buttonId at $time")
 		cvDelegate.getButton(buttonId.toInt())?.let { button ->
-			runner.executeAt(time) {
+			runner.executeAt("pressButtonAt/press", time) {
 				button.model.toggle(runner.scheduler)
 				if (!button.toggle) {
 					// TODO BUG: This should not happen before visualization of first toggle has completed!
-					runner.executeAt(time + button.model.propagationDelay.value) { button.model.toggle(runner.scheduler)}
+					runner.executeAt("pressButtonAt/release", time + button.model.propagationDelay.value) { button.model.toggle(runner.scheduler)}
 				}
 			}
 		}

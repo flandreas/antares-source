@@ -66,7 +66,7 @@ open class UsecaseActionExternalFunctions(
 		val convertedSignal = runner.graphView.graph!!.type.literalToSignal(signal)
 		LOG.trace("setInput of '$inputName' to '$convertedSignal' at $time")
 		delegate.getInputGraphPortView(inputName)?.let { graphPortView ->
-			runner.executeAt(time) { graphPortView.model.setIncomingSignal(convertedSignal, runner.scheduler) }
+			runner.executeAt("setInputAt", time) { graphPortView.model.setIncomingSignal(convertedSignal, runner.scheduler) }
 		}
 	}
 
@@ -84,7 +84,7 @@ open class UsecaseActionExternalFunctions(
 	 */
 	private fun pauseAt(time: Long) {
 		LOG.trace("pause at $time")
-		runner.executeAt(time) { runner.scheduler.isSingleStepMode = true }
+		runner.executeAt("pauseAt", time) { runner.scheduler.isSingleStepMode = true }
 	}
 
 	private fun clickMouseAtImpl(params: List<Any>, @Suppress("UNUSED_PARAMETER") context: Any? = null): Any {
@@ -106,8 +106,8 @@ open class UsecaseActionExternalFunctions(
 	 * @param delay the time (in ns) between mouse press and mouse release
 	 */
 	private fun clickMouseAt(time: Long, x: Int, y: Int, delay: Int) {
-		runner.executeAt(time) { runner.pressMouseAt(x, y) }
-		runner.executeAt(time + delay) { runner.releaseMouseAt(x, y) }
+		runner.executeAt("clickMouseAt/press", time) { runner.pressMouseAt(x, y) }
+		runner.executeAt("clickMouseAt/release", time + delay) { runner.releaseMouseAt(x, y) }
 	}
 
 	private fun clickKeyAtImpl(params: List<Any>, @Suppress("UNUSED_PARAMETER") context: Any? = null): Any {
@@ -126,7 +126,7 @@ open class UsecaseActionExternalFunctions(
 	 * @param delay the time (in ns) between key press and key release
 	 */
 	private fun clickKeyAt(time: Long, keyCode: Int, delay: Int) {
-		runner.executeAt(time) { runner.pressKey(keyCode) }
-		runner.executeAt(time + delay) { runner.releaseKey(keyCode) }
+		runner.executeAt("clickKeyAt/press", time) { runner.pressKey(keyCode) }
+		runner.executeAt("clickKeyAt/release", time + delay) { runner.releaseKey(keyCode) }
 	}
 }

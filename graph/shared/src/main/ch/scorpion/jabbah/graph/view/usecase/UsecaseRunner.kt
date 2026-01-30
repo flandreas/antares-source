@@ -1,7 +1,11 @@
 package ch.scorpion.jabbah.graph.view.usecase
 
+import ch.scorpion.jabbah.base.IssueImpl
+import ch.scorpion.jabbah.base.IssueSeverity
+import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.*
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.DrawingView
@@ -65,8 +69,8 @@ class UsecaseRunner(
 	 * Request to execute the specified [action] after [time] nanoseconds.
 	 * This method is typically called by [UsecaseTestExternalFunctions].
 	 */
-	fun executeAt(time: Long, action: () -> Unit) {
-		scheduler.requestActingAfter(UsecaseActor(action), delay(time), SimpleActorData())
+	fun executeAt(name: String, time: Long, action: () -> Unit) {
+		scheduler.requestActingAfter(UsecaseActor(name, time, action), delay(time), SimpleActorData())
 	}
 
 	fun <T : Any> applyOscillation(input: GraphInput<T>, firstValue: T, secondValue: T, period: Long) {
@@ -127,10 +131,25 @@ class UsecaseRunner(
 		return time - scheduler.executionTime
 	}
 
-	private class UsecaseActor(private val action: () -> Unit) : ActorImpl() {
+	private class UsecaseActor(
+		private val name: String,
+		private val time: Long,
+		private val action: () -> Unit
+	) : ActorImpl() {
 		override fun act(signalHandler: SignalHandler, data: ActorData) {
-			action.invoke()
-			super.act(signalHandler, data)
+			try {
+				action.invoke()
+				super.act(signalHandler, data)
+			} catch (e: Exception) {
+				LOG.error("Error in use case execution", e)
+				BaseModule.eventBus.post(IssueImpl(
+					IssueSeverity.Error,
+					name = Translations.getString("usecase.runError.name"),
+					description = e.message ?: e.toString(),
+					origin = name,
+					context = Translations.getString("usecase.runError.time", time),
+				))
+			}
 		}
 	}
 

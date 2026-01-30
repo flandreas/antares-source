@@ -65,6 +65,7 @@ class GraphViewExecutionHandler(
 		super.passivate()
 		FocusManager.resetFocus()
 		view.removeMouseListener(mouseHandler)
+		target = null
 	}
 
 	// TODO Refactoring: Many commonalities with SelectionToolImpl. Unify!

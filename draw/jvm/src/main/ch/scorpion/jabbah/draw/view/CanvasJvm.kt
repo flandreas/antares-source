@@ -212,16 +212,17 @@ class CanvasJvm(
 		if (e.event is java.awt.event.InputEvent) {
 			dispatchEvent(e.event as java.awt.event.InputEvent)
 		} else {
+			// Copy listener lists to avoid ConcurrentModification
 			if (e is MouseEvent) {
 				when (e.type) {
-					MouseEventType.PRESSED -> mouseListeners.forEach { it.listener.mousePressed(e) }
-					MouseEventType.RELEASED -> mouseListeners.forEach { it.listener.mouseReleased(e) }
+					MouseEventType.PRESSED -> mouseListeners.toList().forEach { it.listener.mousePressed(e) }
+					MouseEventType.RELEASED -> mouseListeners.toList().forEach { it.listener.mouseReleased(e) }
 					else -> LOG.warn("dispatchEvent: MouseEvent of type ${e.type} not supported")
 				}
 			} else if (e is KeyEvent) {
 				when (e.type) {
-					KeyEventType.PRESSED -> keyListeners.forEach { it.listener.keyPressed(e) }
-					KeyEventType.RELEASED -> keyListeners.forEach { it.listener.keyReleased(e) }
+					KeyEventType.PRESSED -> keyListeners.toList().forEach { it.listener.keyPressed(e) }
+					KeyEventType.RELEASED -> keyListeners.toList().forEach { it.listener.keyReleased(e) }
 					else -> LOG.warn("dispatchEvent: KeyEvent of type ${e.type} not supported")
 				}
 			}
