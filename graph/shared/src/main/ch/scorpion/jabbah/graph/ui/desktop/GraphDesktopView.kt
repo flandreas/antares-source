@@ -18,6 +18,9 @@ interface GraphDesktopView : UIView {
 
 		/** The [Boolean] property in [ch.scorpion.jabbah.base.Properties] determining whether the "Docking" feature is active.*/
 		const val PROP_DOCKING = "graph.ui.docking"
+
+		/** The [Int] property in [ch.scorpion.jabbah.base.Properties] the number of rows per column when using "Docking". */
+		const val PROP_ROWS_PER_COLUMN = "graph.ui.docking.rowsPerColumn"
 	}
 
 	fun createSubGraphDesktopItem(

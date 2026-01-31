@@ -18,26 +18,33 @@ import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import java.awt.*
 import javax.swing.*
 
+/**
+ * An implementation of [GraphDesktopView] that supports "Docking", meaning that the user can pick
+ * any of its [GraphDesktopViewItem GraphDesktopViewItems] and drag it to another location.
+ */
 class DockingGraphDesktopViewSwing(
     private val controller: GraphDesktopViewController,
-    private val maxRowsCount: Int = DEF_MAX_ROWS_COUNT,
+    maxRowsCount: Int = BaseModule.properties.getInt(GraphDesktopView.PROP_ROWS_PER_COLUMN),
     private val eventBus: EventBus = BaseModule.eventBus
 ) : JLayeredPane(), GraphDesktopView, DockingView {
 
     companion object {
         private val LOG by logger(DockingGraphDesktopViewSwing::class)
-        private const val DEF_MAX_ROWS_COUNT = 2
     }
 
-    private val _columns: MutableList<MutableList<GraphDesktopViewItem>> = mutableListOf()
-    val columns: List<List<GraphDesktopViewItem>> get() = _columns
+    /** Holds the [GraphDesktopViewItem GraphDesktopViewItems] organized in columns. */
+    private val items = DockingGraphDesktopViewItems(maxRowsCount)
 
-    private val columnPanels: MutableList<JPanel> = mutableListOf()
-
+    /** The [JPanel] where the [GraphDesktopViewItem GraphDesktopViewItems] (possibly contained in a [JSplitPane] are added. */
     private val content = JPanel(BorderLayout())
 
+    /** Captures the potential new location of a [GraphDesktopViewItem] in drag operation during drag&drop. */
     private var dockingLocation: NewDockingLocation? = null
+
+    /** Highlights the area where the currently dragged [GraphDesktopViewItem] would be dropped during drag&drop. */
     private val dockingTarget = DockingTarget()
+
+    /** Uses for graphically "deleting" the source area of the currently dragged [GraphDesktopViewItem] by painting over it on the glass pane.*/
     private val dockingSource = DockingSource()
 
     private val dockingStartedHandler: EventHandler<DockingStartedEvent> = { handle(it) }
@@ -45,8 +52,16 @@ class DockingGraphDesktopViewSwing(
 
     private val dockingController = DockingController()
 
+    /**
+     * Holds the list of created [JSplitPane JSplitPanes] for retrieving there current splitter locations
+     * to re-establish them in [rebuildUI].
+     */
+    private val splitPanes = mutableListOf<JSplitPane>()
+
+    /** Used to paint [dockingSource] and [dockingTarget] during drag&drop operations. */
     val glassPane: JPanel = GlassPane()
 
+    // Visible for testing
     val contentComponent: JComponent get() = content.getComponent(0) as JComponent
 
     init {
@@ -100,12 +115,13 @@ class DockingGraphDesktopViewSwing(
         glassPane.isVisible = true
     }
 
-    private fun handle(event: DockingFinishedEvent) {
+    private fun handle(@Suppress("unused") event: DockingFinishedEvent) {
         LOG.trace("Docking finished")
         glassPane.isVisible = false
         glassPane.remove(dockingSource)
     }
 
+    /** Called by the drag&drop handler during drag operations to highlight the possible drop area. */
     fun setDropLocation(dropLocation: Point) {
         val loc = dockingController.mouseDragged(dropLocation.x, dropLocation.y)
 
@@ -117,11 +133,22 @@ class DockingGraphDesktopViewSwing(
         } else {
             dockingTarget.setBounds(loc.area.xInt, loc.area.yInt, loc.area.widthInt, loc.area.heightInt)
             if (dockingLocation == null) {
-                glassPane.add(dockingTarget)
+                // Make sure the dockingTarget gets drawn ABOVE the dockingSource
+                glassPane.add(dockingTarget, 0)
                 repaint()
             }
             dockingLocation = loc
         }
+    }
+
+    /** Moves [item] to the location specified by [dockingLocation]. */
+    fun handleDrop(item: GraphDesktopViewItem) {
+        LOG.debug("handleDrop")
+        if (dockingLocation == null) {
+            return
+        }
+        move(item, dockingLocation!!)
+        dockingLocation = null
     }
 
     /** ---- [DockingView] interface */
@@ -130,158 +157,85 @@ class DockingGraphDesktopViewSwing(
 
     override val viewHeight: Int get() = super.height
 
-    override val columnsCount: Int get() = _columns.size
+    override val columnsCount: Int get() = items.columnsCount
 
-    override fun getRowsCount(column: Int): Int = _columns[column].size
+    override fun getRowsCount(column: Int): Int = items.getRowsCount(column)
 
-    override fun getColumnWidth(column: Int): Int = columnPanels[column].width
+    override fun getColumnWidth(column: Int): Int = items.getColumnWidth(column)
 
-    override fun getRowHeight(column: Int, row: Int): Int {
-        // TODO Support multiple rows
-        return columnPanels[column].height
-    }
+    override fun getRowHeight(column: Int, row: Int): Int = items.getRowHeight(column, row)
 
-    fun getCurrentLocationOf(item: GraphDesktopViewItem): CurrentDockingLocation {
-        val column = _columns.indexOfFirst { it.contains(item) }
-        val row = _columns[column].indexOfFirst { it === item }
-        return CurrentDockingLocation(column, row)
-    }
+    fun getCurrentLocationOf(item: GraphDesktopViewItem): CurrentDockingLocation = items.getCurrentLocationOf(item)
 
     /** ---- [GraphDesktopView] interface */
 
     override fun showMainItem(item: GraphDesktopViewItem) {
         LOG.debug("Showing main item")
-        _columns.clear()
-        _columns.add(mutableListOf(item))
-        content.removeAll()
-        val panel = createColumnPanel(item)
-        columnPanels.add(panel)
-        content.add(panel)
-
-        content.revalidate()
-        repaint()
+        items.addMainItem(item)
+        rebuildUI()
     }
 
     override fun showChildItem(item: GraphDesktopViewItem) {
-        if (_columns.isEmpty()) {
+        if (items.isEmpty) {
             throw IllegalStateException("Adding child without main item")
         }
         LOG.debug("Showing child item")
-
-        if (_columns.size == 1) {
-            // Only the mainItem has been added so far. Always create a child column.
-            LOG.trace("--- Adding first child column, creating JSplitPane")
-            _columns.add(mutableListOf(item))
-            content.removeAll()
-            val rightPanel = createColumnPanel(item)
-            val splitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT, columnPanels[0], rightPanel)
-            columnPanels.add(rightPanel)
-            content.add(splitPane)
-
-            content.invalidate()
-            content.revalidate()
-
-            SwingUtilities.invokeLater {
-                splitPane.setDividerLocation(.5)
-                zoomViews(true)
-            }
-        } else {
-            // Existing child columns
-            val lastColumnIndex = _columns.size - 1
-            val lastColumn = _columns[lastColumnIndex]
-            if (lastColumn.size < maxRowsCount) {
-                // Add item to the last column
-                lastColumn.add(item)
-                val panel = (content.getComponent(0) as JSplitPane).rightComponent as JPanel
-                panel.add(item as JComponent)
-            } else {
-                // The last column is full, create a new one
-                _columns.add(mutableListOf(item))
-                // Replace right side of parent SplitPane with a new SplitPane
-                val currentSplitPane = columnPanels[lastColumnIndex].parent as JSplitPane
-                val currentSplitPos = currentSplitPane.dividerLocation
-                val newColumnPanel = createColumnPanel(item)
-                columnPanels.add(newColumnPanel)
-
-                val newSplitPane = JSplitPane(
-                    JSplitPane.HORIZONTAL_SPLIT,
-                    currentSplitPane.rightComponent,
-                    newColumnPanel,
-                )
-                currentSplitPane.rightComponent = newSplitPane
-                currentSplitPane.setDividerLocation(currentSplitPos)
-
-                SwingUtilities.invokeLater {
-                    newSplitPane.setDividerLocation(.5)
-                    zoomViews(true)
-                }
-            }
-
-            content.revalidate()
-            zoomViews(false)
-        }
+        items.addChildItem(item)
+        rebuildUI()
     }
-
-    private fun createColumnPanel(item: GraphDesktopViewItem): JPanel =
-        JPanel(GridLayout(0, 1)).apply { add(item as JComponent) }
 
     override fun closeChildItem(item: GraphDesktopViewItem) {
         LOG.debug("Closing child item")
-
-        val column = columns.indexOfFirst { it.contains(item) }
-        if (column < 0) {
-            return
-        }
-
-        val columnPanel = columnPanels[column]
-        if (columnPanel.componentCount > 1) {
-            _columns[column].remove(item)
-            columnPanel.remove(item as JComponent)
-        } else {
-            _columns.removeAt(column)
-            if (columnPanel.parent is JSplitPane) {
-                // Replace the SplitPane with the column Panel that does NOT contain the removed item
-                val splitPane = columnPanel.parent as JSplitPane
-                val remainingPanel = if (splitPane.leftComponent === columnPanel) {
-                    splitPane.rightComponent as JPanel
-                } else if (splitPane.rightComponent === columnPanel) {
-                    splitPane.leftComponent as JPanel
-                } else {
-                    throw IllegalStateException("Cannot identify column panel's parent")
-                }
-
-                if (splitPane.parent is JSplitPane) {
-                    val parent = splitPane.parent as JSplitPane
-                    if (parent.leftComponent === splitPane) {
-                        parent.leftComponent = remainingPanel
-                    } else {
-                        parent.rightComponent = remainingPanel
-                    }
-                } else {
-                    val parent = splitPane.parent as JComponent
-                    parent.removeAll()
-                    parent.add(remainingPanel)
-                }
-
-            } else {
-                val parent = columnPanel.parent as JComponent
-                parent.removeAll()
-            }
-        }
-
-        content.revalidate()
-        repaint()
+        items.remove(item)
+        rebuildUI()
     }
 
     override fun closeAll() {
         LOG.debug("Closing all")
 
-        _columns.clear()
-        columnPanels.clear()
-        content.removeAll()
+        closeAllImpl()
+        rebuildUI()
+    }
 
+    private fun closeAllImpl() {
+        items.clear()
+    }
+
+    fun rebuildUI() {
+        // Capture the splitPane's divider location
+        val columnToSplitterLocation = mutableMapOf<Int, Int>()
+        splitPanes.forEachIndexed { index, pane -> columnToSplitterLocation[index] = pane.dividerLocation }
+
+        content.removeAll()
+        splitPanes.clear()
+
+        if (columnsCount > 0) {
+            content.add(buildColumn(0))
+        }
         content.revalidate()
         repaint()
+
+        SwingUtilities.invokeLater {
+            val proportion = 1.0 / items.columnsCount
+            splitPanes.forEachIndexed { index, pane ->
+                columnToSplitterLocation[index]
+                    ?.let { location -> pane.dividerLocation = location }
+                    ?: pane.setDividerLocation(proportion)
+            }
+            zoomViews(true)
+        }
+    }
+
+    private fun buildColumn(column: Int): JComponent {
+        val columnPanel = JPanel(GridLayout(0, 1))
+        items.getRows(column).forEach { row -> columnPanel.add(row as JComponent)}
+        return if (column == columnsCount - 1) {
+            return columnPanel
+        } else {
+            JSplitPane(JSplitPane.HORIZONTAL_SPLIT, columnPanel, buildColumn(column + 1)).also {
+                splitPanes.add(it)
+            }
+        }
     }
 
     // TODO Refactoring: This should probably not be here
@@ -316,12 +270,17 @@ class DockingGraphDesktopViewSwing(
 
     private fun zoomViews(includeMasterView: Boolean) {
         SwingUtilities.invokeLater {
-            _columns.flatten().forEach { item ->
+            items.all.forEach { item ->
                 if (item !== controller.mainDesktopViewItem || includeMasterView) {
                     item.drawingView?.navigator?.fitMaxNormal()
                 }
             }
         }
+    }
+
+    private fun move(item: GraphDesktopViewItem, target: NewDockingLocation) {
+        items.move(item, target)
+        rebuildUI()
     }
 
     private class GlassPane : JPanel() {

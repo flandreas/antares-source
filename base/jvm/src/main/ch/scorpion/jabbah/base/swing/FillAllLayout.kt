@@ -7,6 +7,7 @@ import java.awt.LayoutManager
 class FillAllLayout : LayoutManager {
 
     companion object {
+        private val MIN_DIMENSION = Dimension(0, 0)
         private val MAX_DIMENSION = Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE)
     }
 
@@ -22,7 +23,7 @@ class FillAllLayout : LayoutManager {
 
     override fun minimumLayoutSize(parent: Container): Dimension {
         synchronized(parent.treeLock) {
-            return MAX_DIMENSION
+            return MIN_DIMENSION
         }
     }
 

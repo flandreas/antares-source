@@ -14,6 +14,10 @@ abstract class AbstractGraphDesktopViewItemSwing(
 		private const val BORDER_THICKNESS = 5
 	}
 
+	override val layoutWidth: Int get() = width
+
+	override val layoutHeight: Int get() = height
+
 	override var contextColor: CompositeColor? = null
 		set(value) {
 			if (field == value) {

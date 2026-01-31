@@ -37,6 +37,8 @@ internal class ViewMocks(
 
     /** ---- [GraphNavigationView] */
 
+    override val layoutWidth: Int get() = 0
+    override val layoutHeight: Int get() = 0
     override val graphView: GraphView get() = graphViewerController.drawingView.drawing
     override val reusable: Boolean get() = false
     override val showsNavigationRoot: Boolean get() = true

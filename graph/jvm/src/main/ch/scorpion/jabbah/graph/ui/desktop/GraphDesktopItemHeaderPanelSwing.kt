@@ -26,6 +26,9 @@ import javax.swing.UIManager
 import kotlin.collections.forEach
 import kotlin.math.max
 
+/**
+ * A header above [GraphDesktopViewItem] containing title and actions related with [graphDesktopViewItem].
+ */
 class GraphDesktopItemHeaderPanelSwing(
     private val graphDesktopViewItem: GraphDesktopViewItem,
     private val title: JComponent,
@@ -47,6 +50,19 @@ class GraphDesktopItemHeaderPanelSwing(
         val headerBackgroundColor: Color get() = UiUtil.getBackgroundDivertColor(UIManager.getColor("Panel.background"))
     }
 
+    /**
+     * The instance of [GraphDesktopViewItem] to be taken on drag&drop actions.
+     * This is usually [graphDesktopViewItem], but in case it is wrapped within an outer [GraphDesktopViewItem],
+     * that outer one can be set here.
+     */
+    var draggedGraphDesktopViewItem: GraphDesktopViewItem = graphDesktopViewItem
+
+    /**
+     * The instance of [JComponent] effectively dragged in drag&drop actions. Used for dimension calculation.
+     * This is usually [graphDesktopViewItem], but in case it is wrapped within an outer [GraphDesktopViewItem],
+     * that outer one can be set here.
+     */
+    var draggedComponent: JComponent = graphDesktopViewItem as JComponent
 
     init {
         layout = BoxLayout(this, BoxLayout.LINE_AXIS)
@@ -122,8 +138,8 @@ class GraphDesktopItemHeaderPanelSwing(
                 LOG.trace("createTransferable")
                 dragImage = c.createDnDImage()
                 dragImageOffset = Point(0, 0)
-                BaseModule.eventBus.post(DockingStartedEvent(c.graphDesktopViewItem))
-                return GraphDesktopViewItemTransferable(c.graphDesktopViewItem)
+                BaseModule.eventBus.post(DockingStartedEvent(c.draggedGraphDesktopViewItem))
+                return GraphDesktopViewItemTransferable(c.draggedGraphDesktopViewItem)
             }
             return null
         }
@@ -132,7 +148,7 @@ class GraphDesktopItemHeaderPanelSwing(
             super.exportDone(source, data, action)
             LOG.trace("exportDone")
             if (source is GraphDesktopItemHeaderPanelSwing) {
-                BaseModule.eventBus.post(DockingFinishedEvent(source.graphDesktopViewItem))
+                BaseModule.eventBus.post(DockingFinishedEvent(source.draggedGraphDesktopViewItem))
             }
         }
     }

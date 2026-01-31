@@ -87,7 +87,8 @@ object GraphViewModuleJvm : AbstractModule() {
 
 	private fun fillProperties(properties: Properties) {
 		properties.set(GraphFrameController.PROP_AUTO_SWITCH, true)
-		properties.set(GraphDesktopView.PROP_DOCKING, false)
+		properties.set(GraphDesktopView.PROP_DOCKING, true)
+		properties.set(GraphDesktopView.PROP_ROWS_PER_COLUMN, 2)
 	}
 
 	private fun configurePropertyRenderer(registry: DynamicPropertyRendererRegistry) {
@@ -126,6 +127,18 @@ object GraphViewModuleJvm : AbstractModule() {
 		root.getGroup(BaseModuleJvm.PREF_TREE_VIEW).getGroup(DrawModuleJvm.PREF_TREE_VIEW_NAVIGATION).add(BooleanPreference(
 			id = GraphFrameController.PROP_AUTO_SWITCH,
 			nameKey = "graph.preferences.GraphFrame.autoSwitch"
+		))
+		root.getGroup(BaseModuleJvm.PREF_TREE_VIEW).getGroup(DrawModuleJvm.PREF_TREE_VIEW_NAVIGATION).add(BooleanPreference(
+			id = GraphDesktopView.PROP_DOCKING,
+			nameKey = "graph.preferences.GraphDesktopView.docking",
+			needsRestart = true
+		))
+		root.getGroup(BaseModuleJvm.PREF_TREE_VIEW).getGroup(DrawModuleJvm.PREF_TREE_VIEW_NAVIGATION).add(IntPreference(
+			id = GraphDesktopView.PROP_ROWS_PER_COLUMN,
+			nameKey = "graph.preferences.GraphDesktopView.rowsPerColumn",
+			needsRestart = true,
+			minValue = 1,
+			maxValue = 5
 		))
 		root.getGroup(BaseModuleJvm.PREF_TREE_VIEW).getGroup(PREF_TREE_VIEW_ZOOM_PAN).add(FloatPreference(
 			id = ContainerEditor.PROP_DEFAULT_ZOOM_FACTOR,

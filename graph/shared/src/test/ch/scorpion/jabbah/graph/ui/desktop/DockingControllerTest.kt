@@ -110,6 +110,20 @@ class DockingControllerTest {
     }
 
     @Test
+    fun shouldDragTopToBottomRight() {
+        dockingViewBuilder.withColumnRows(1, 2)
+        controller.startDragging(CurrentDockingLocation(1, 0))
+
+        val newLoc = controller.mouseDragged(750, 900)
+
+        assertNotNull(newLoc)
+        assertEquals(1, newLoc.column.index)
+        assertFalse(newLoc.column.insert)
+        assertEquals(2, newLoc.row.index)
+        assertTrue(newLoc.row.insert)
+    }
+
+    @Test
     fun shouldCalculateBounds() {
         dockingViewBuilder.withColumnRows(1, 3)
 

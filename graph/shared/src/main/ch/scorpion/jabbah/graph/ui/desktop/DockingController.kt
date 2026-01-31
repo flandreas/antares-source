@@ -23,7 +23,22 @@ data class NewDockingLocation(
     val column: NewDockingLocationCell = NewDockingLocationCell(0, false),
     val row: NewDockingLocationCell = NewDockingLocationCell(0, false),
     val area: Rectangle2D = Rectangle2D()
-)
+) {
+    companion object {
+
+        fun newRow(column: Int, row: Int): NewDockingLocation =
+            NewDockingLocation(
+                NewDockingLocationCell(column, false),
+                NewDockingLocationCell(row, true)
+            )
+
+        fun newColumn(column: Int): NewDockingLocation =
+            NewDockingLocation(
+                NewDockingLocationCell(column, true),
+                NewDockingLocationCell(0, true)
+            )
+    }
+}
 
 class DockingController : AbstractUIController<DockingView>() {
 
@@ -145,7 +160,7 @@ class DockingController : AbstractUIController<DockingView>() {
                     areaY = y
                     areaHeight = rowHeight / 2
                     break
-                } else if (my >= y + rowHeight / 2) {
+                } else if (my <= y + rowHeight) {
                     // Bottom half of row
                     newRowIndex = row + 1
                     newRowInsert = true

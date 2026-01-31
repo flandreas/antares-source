@@ -68,6 +68,8 @@ class GraphEditViewSwing(
 	init {
 		controller.view = this
 		buildUI()
+		(graphNavigationView as GraphNavigationViewSwing).draggedGraphDesktopViewItem = this
+		(graphNavigationView as GraphNavigationViewSwing).draggedComponent = this
 	}
 
 	override fun dispose() {
