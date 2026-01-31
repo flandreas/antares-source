@@ -11,6 +11,7 @@ import ch.scorpion.jabbah.base.invocation.InvocationHandler
 import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.graph.library.AbstractContainerLibraryElementAction
 import ch.scorpion.jabbah.graph.library.ContainerLibraryElement
+import ch.scorpion.jabbah.graph.model.graph.FeedbackLoopChecker
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import ch.scorpion.jabbah.io.StorableCloner
 import java.awt.Frame
@@ -35,18 +36,31 @@ class AnalyseCircuitAction(
 			&& (selectedItem as ContainerLibraryElement).graphType == AntaresGraphTypes.Digital
 
 	override fun execute(event: ActionEvent) {
+		val element = selectedItem as ContainerLibraryElement
+
+		if (FeedbackLoopChecker.hasFeedbackLoop(element.storable!!.graph.model!!)) {
+			JOptionPane.showConfirmDialog(
+				Frame.getFrames()[0],
+				Translations.getString("antares.circuitAnalysis.cycles.msg"),
+				name,
+				JOptionPane.DEFAULT_OPTION,
+				JOptionPane.INFORMATION_MESSAGE
+			)
+			return
+		}
+
 		InvocationHandler.invoke {
 			try {
-				// Close circuit to git rid of the GraphView acting as ActorListener
-				val element = selectedItem as ContainerLibraryElement
 
 				if (element.storable!!.graph.model !is DigitalGraph) {
 					throw CircuitAnalysisError(Translations.getString("antares.circuitAnalysis.onlyDigital.msg"))
 				}
 
+				// Clone circuit to git rid of the GraphView acting as ActorListener.
 				// Clone the entire MetaGraph and not only the DigitalGraph so that propagation delay expressions
 				// get evaluated (GitHub #1146).
 				val clone = StorableCloner.clone(element.storable!!)
+
 				val truthTable = service.analyse(clone.graph.model as DigitalGraph)
 
 				AnalyseCircuitPanel.showAsDialog(Frame.getFrames()[0], element, truthTable)
