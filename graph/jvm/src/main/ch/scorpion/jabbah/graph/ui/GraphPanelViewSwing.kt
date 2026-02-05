@@ -18,6 +18,8 @@ import ch.scorpion.jabbah.execution.ResetExecutionTimeAction
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.library.LibraryPanelSwing
+import ch.scorpion.jabbah.graph.ui.desktop.DockingGraphDesktopViewSwing
+import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopView
 import ch.scorpion.jabbah.graph.ui.desktop.GraphDesktopViewSwing
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelView
 import ch.scorpion.jabbah.graph.ui.graphpanel.GraphPanelViewController
@@ -54,7 +56,11 @@ class GraphPanelViewSwing(
 	override val graphEditView: GraphEditViewSwing = GraphEditViewSwing(controller.editViewController, viewManager, propertySheetFactory, eventBus)
 
 	/** Allows opening multiple Graphs.*/
-	private val desktop: GraphDesktopViewSwing = GraphDesktopViewSwing(controller.desktopController)
+	private val desktop: GraphDesktopView = if (BaseModule.properties.getBoolean(GraphDesktopView.PROP_DOCKING)) {
+		DockingGraphDesktopViewSwing(controller.desktopController)
+	} else {
+		GraphDesktopViewSwing(controller.desktopController)
+	}
 
 	/** Displays the properties of the currently selected component in [graphEditView].*/
 	private val propertyPanel = ComponentPropertyPanelSwing(controller.propertyPanelController, "graph", propertySheetFactory)
@@ -96,7 +102,7 @@ class GraphPanelViewSwing(
 	 */
 	private val leftSidebarPane = SidebarSplitPane(
 		location = SidebarPane.Location.Left,
-		mainContent = desktop,
+		mainContent = desktop as JComponent,
 		settingBaseName = "graphPanel.leftSidebar",
 		providedInitialOpenIndex = 0,
 		contents = listOf(

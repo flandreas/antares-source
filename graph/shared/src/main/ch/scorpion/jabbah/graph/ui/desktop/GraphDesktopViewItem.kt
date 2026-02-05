@@ -44,6 +44,18 @@ interface GraphDesktopViewItem : ContentView<EditInputEventContext> {
 	val toolBar: Any? get() = null
 
 	/**
+	 * Returns the current width of this [GraphDesktopViewItem] after being laid out within its UI parent.
+	 * Used for calculating source and target areas during drag&drop actions.
+	 */
+	val layoutWidth: Int
+
+	/**
+	 * Returns the current height of this [GraphDesktopViewItem] after being laid out within its UI parent.
+	 * Used for calculating source and target areas during drag&drop actions.
+	 */
+	val layoutHeight: Int
+
+	/**
 	 * Returns `true` if this [GraphDesktopViewItem] displays [content].
 	 * Used by certain implementations to decide whether a new [GraphDesktopViewItem] instance has
 	 * to be created when opening objects or after saving content.

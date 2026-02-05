@@ -38,7 +38,7 @@ import javax.swing.*
  * A [javax.swing] implementation of [GraphNavigationView].
  */
 class GraphNavigationViewSwing(
-	private val controller: GraphNavigationViewController,
+	val controller: GraphNavigationViewController,
 	override val drawingView: DrawingView<GraphView>,
 	private val viewManager: ContentViewManager,
 	reusable: Boolean,
@@ -53,7 +53,13 @@ class GraphNavigationViewSwing(
 
 	private val navigationStackView = NavigationStackViewSwing(controller.navigationStackViewController)
 
-	private val headerPanel = GraphDesktopItemHeaderPanelSwing(this, navigationStackView, eventBus, allowClose = allowCloseInHeader)
+	private val headerPanel = GraphDesktopItemHeaderPanelSwing(
+		this,
+		navigationStackView,
+		{ navigationStack.entry(0)?.name ?: "<Unknown>" },
+		eventBus,
+		allowClose = allowCloseInHeader
+	)
 
 	private val searchBar: SearchBarSwing by lazy {
 		val bar = SearchBarSwing(this)
@@ -81,9 +87,36 @@ class GraphNavigationViewSwing(
 
 	override val showsNavigationRoot: Boolean get() = navigationStack.size == 1
 
+	/**
+	 * The instance of [GraphDesktopViewItem] to be taken on drag&drop actions.
+	 * This is usually this [GraphNavigationView], but in case it is wrapped within an outer [GraphDesktopViewItem],
+	 * that outer one can be set here.
+	 */
+	var draggedGraphDesktopViewItem: GraphDesktopViewItem = this
+		set(value) {
+			field = value
+			headerPanel.draggedGraphDesktopViewItem = value
+		}
+
+	/**
+	 * The instance of [JComponent] to be taken on drag&drop actions.
+	 * This is usually this [GraphNavigationView], but in case it is wrapped within an outer [JComponent],
+	 * that outer one can be set here.
+	 */
+	var draggedComponent: JComponent = this
+		set(value) {
+			field = value
+			headerPanel.draggedComponent = value
+		}
+
+	override val layoutWidth: Int get() = draggedComponent.width
+
+	override val layoutHeight: Int get() = draggedComponent.height
+
 	init {
 		controller.view = this
 		eventBus.register(SearchInMetaGraphRequest::class, searchInMetaGraphHandler)
+
 		buildUI(contextBorderColor)
 
 		drawingView.addPropertyChangeListener { event ->

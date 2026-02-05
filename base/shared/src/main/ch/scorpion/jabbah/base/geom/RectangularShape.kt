@@ -27,10 +27,16 @@ interface RectangularShape : Shape {
     val width: Double
     val height: Double
 
+    val xInt: Int get() = x.toInt()
+    val yInt: Int get() = y.toInt()
+
 	val widthInt: Int get() = width.toInt()
 	val heightInt: Int get() = height.toInt()
 
-    /** Determines whether this [RectangularShape]'s geometry property are all zero.*/
+    fun contains(x: Int, y: Int): Boolean =
+        x >= this.x && x <= this.x + width && y >= this.y && y <= this.y + height
+
+    /** Determines whether this [RectangularShape]'s geometry properties are all zero.*/
     val isInitial: Boolean get() = isEmpty && x == 0.0 && y == 0.0
 
     /** Determines whether this [RectangularShape] encloses no area.*/

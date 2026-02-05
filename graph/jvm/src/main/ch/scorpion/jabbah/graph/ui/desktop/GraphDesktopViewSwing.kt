@@ -20,7 +20,7 @@ class GraphDesktopViewSwing(
 
 	private val mainSplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
 
-	/** The [JPanel] at the right side containing all slave views, if any. */
+	/** The [JPanel] to the right side containing all slave views, if any. */
 	private val sidePanel = JPanel()
 
 	/** Contains all open [GraphDesktopViewItem]s that are not the main one.*/
@@ -39,7 +39,7 @@ class GraphDesktopViewSwing(
 
 	/** ---- [GraphDesktopView] */
 
-	override fun addGraphDesktopItem(item: GraphDesktopViewItem) {
+	override fun showChildItem(item: GraphDesktopViewItem) {
 		if (slaveGraphDesktopViewItems.isEmpty()) {
 			remove(controller.mainDesktopViewItem!! as JComponent)
 			sidePanel.add(item as JComponent)
@@ -64,7 +64,7 @@ class GraphDesktopViewSwing(
 		slaveGraphDesktopViewItems.add(item)
 	}
 
-	override fun closeItem(item: GraphDesktopViewItem) {
+	override fun closeChildItem(item: GraphDesktopViewItem) {
 		slaveGraphDesktopViewItems.remove(item)
 		sidePanel.remove(item as JComponent)
 		if (slaveGraphDesktopViewItems.isEmpty()) {
@@ -74,7 +74,7 @@ class GraphDesktopViewSwing(
 		repaint()
 	}
 
-	override fun show(item: GraphDesktopViewItem) {
+	override fun showMainItem(item: GraphDesktopViewItem) {
 		slaveGraphDesktopViewItems.clear()
 		sidePanel.removeAll()
 		removeAll()
