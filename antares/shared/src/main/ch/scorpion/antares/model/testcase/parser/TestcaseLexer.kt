@@ -46,15 +46,29 @@ class TestcaseLexer(text: String) : BaseLexer(text) {
 		fun hexLiteralToken(value: DigitalSignal) = Token(HEX_LITERAL, value)
 	}
 
+	/**
+	 * Helps to distinguish whether the lexer scans symbols for the "header" or any of the "statements" rows.
+	 * In headers (port names), "X" and "Z" are to be treated as IDs. In statements, they are to be treated
+	 * as special symbols.
+	 * </p>
+	 * Initialize with `false` because the super class calls [nextTokenImpl] from the constructor, where
+	 * this property is not yet initialized and therefore `false`. Set to `true` when the newline
+	 * completing the header line gets scanned.
+	 */
+	private var statementMode: Boolean = false
+
 	override fun getReservedKeyword(name: String): Token<String>? =
 		RESERVED_KEYWORDS[name] ?: super.getReservedKeyword(name)
 
 	override fun nextTokenImpl(state: State): Token<Any> {
 		when (state.currentChar!!) {
-			'\n' -> return advanceWith(state, EOL_TOKEN)
+			'\n' -> {
+				statementMode = true
+				return advanceWith(state, EOL_TOKEN)
+			}
 			'^' -> return advanceWith(state, CARET_TOKEN)
-			'X','x' -> return advanceWith(state, DONT_CARE_TOKEN)
-			'Z', 'z' -> return advanceWith(state, UNDEFINED_TOKEN)
+			'X','x' -> return if (!statementMode) super.nextTokenImpl(state) else advanceWith(state, DONT_CARE_TOKEN)
+			'Z', 'z' -> return if (!statementMode) super.nextTokenImpl(state) else advanceWith(state, UNDEFINED_TOKEN)
 			'{' -> return advanceWith(state, LCURLEY_TOKEN)
 			'}' -> return advanceWith(state, RCURLEY_TOKEN)
 			'>' -> return advanceWith(state, GREATER_TOKEN)

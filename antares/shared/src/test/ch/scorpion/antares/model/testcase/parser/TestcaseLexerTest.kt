@@ -35,7 +35,7 @@ class TestcaseLexerTest {
 	}
 
 	@Test
-	fun shouldParseIdentifiers() {
+	fun shouldScanIdentifiers() {
 		val lexer = TestcaseLexer("I1 I2 O")
 		assertId("I1", lexer)
 		assertId("I2", lexer)
@@ -43,7 +43,7 @@ class TestcaseLexerTest {
 	}
 
 	@Test
-	fun shouldParseInOutAsInput() {
+	fun shouldScanInOutAsInput() {
 		val lexer = TestcaseLexer("I1 >IO O")
 		assertId("I1", lexer)
 		assertToken(TestcaseTokenType.GREATER, lexer)
@@ -52,12 +52,20 @@ class TestcaseLexerTest {
 	}
 
 	@Test
-	fun shouldParseInOutAsOutput() {
+	fun shouldScanInOutAsOutput() {
 		val lexer = TestcaseLexer("I1 <IO O")
 		assertId("I1", lexer)
 		assertToken(TestcaseTokenType.SMALLER, lexer)
 		assertId("IO", lexer)
 		assertId("O", lexer)
+	}
+
+	@Test
+	fun shouldScanXandZasIdentifiers() {
+		val lexer = TestcaseLexer("X X2 Z")
+		assertId("X", lexer)
+		assertId("X2", lexer)
+		assertId("Z", lexer)
 	}
 
 	private fun assertToken(type: TokenType, lexer: AbstractLexer) {

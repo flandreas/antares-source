@@ -231,4 +231,16 @@ class TestcaseParserTest {
 			- I,<IO,O
 		""".trimIndent())
 	}
+
+	@Test
+	fun shouldAllowXandZasPortNames() {
+		val parser = TestcaseParser("""
+			X X2 Z
+		""".trimIndent())
+
+		assertAST(parser.parse(), """
+			TestScript
+			- X,X2,Z
+		""".trimIndent())
+	}
 }
