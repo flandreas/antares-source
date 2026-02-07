@@ -23,6 +23,7 @@ class TestcaseBeanInfo : AbstractBeanInfo<Testcase>() {
 		private val description = EditProperties.description(beanProvider = testcaseBeanProvider)
 		private val ignored = CommandPropertySwing("ignored", "antares.testcase.ignored", Boolean::class.java, testcaseBeanProvider)
 		private val skipPropDelayConsistenceCheck = CommandPropertySwing("skipPropDelayConsistenceCheck", "antares.testcase.skipPropDelayConsistencyTest", Boolean::class.java, testcaseBeanProvider)
+		private val numberOfIterations = CommandPropertySwing("numberOfIterations", "antares.testcase.numberOfIterations", Integer::class.java, beanProvider = testcaseBeanProvider)
 	}
 
 	override fun addProperties(bean: Testcase, editor: Editor, properties: MutableList<Property>) {
@@ -36,5 +37,6 @@ class TestcaseBeanInfo : AbstractBeanInfo<Testcase>() {
 		properties.add(testVectors.bind(editor, beanIdProvider(bean.id)))
 		properties.add(ignored.bind(editor, beanIdProvider(bean.id)))
 		properties.add(skipPropDelayConsistenceCheck.bind(editor, beanIdProvider(bean.id)))
+		properties.add(numberOfIterations.bind(editor, beanIdProvider(bean.id)))
 	}
 }

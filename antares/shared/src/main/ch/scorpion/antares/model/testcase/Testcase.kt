@@ -20,6 +20,7 @@ class Testcase(
 ) : AbstractStorable(), Namable, Describable, Bean {
 
 	companion object {
+		const val DEF_NUMBER_OF_ITERATIONS = 1_000
 		val SCRIPT_HELP_ID = HelpId("antares.testcase.script")
 	}
 
@@ -32,6 +33,8 @@ class Testcase(
 	var ignored: Boolean = false
 
 	var skipPropDelayConsistenceCheck: Boolean = false
+
+	var numberOfIterations: Int = DEF_NUMBER_OF_ITERATIONS
 
 	/**
 	 * Non-persistent reference to the owing [DigitalGraph]. Used only for creating a
@@ -62,6 +65,9 @@ class Testcase(
 		if (skipPropDelayConsistenceCheck) {
 			writer.writeBoolean("skipPropDelayConsistenceCheck", skipPropDelayConsistenceCheck)
 		}
+		if (numberOfIterations != DEF_NUMBER_OF_ITERATIONS) {
+			writer.writeInt("numberOfIterations", numberOfIterations)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
@@ -74,6 +80,9 @@ class Testcase(
 		}
 		if (reader.hasAttribute("skipPropDelayConsistenceCheck")) {
 			skipPropDelayConsistenceCheck = reader.readBoolean("skipPropDelayConsistenceCheck")
+		}
+		if (reader.hasAttribute("numberOfIterations")) {
+			numberOfIterations = reader.readInt("numberOfIterations")
 		}
 	}
 

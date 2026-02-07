@@ -3,7 +3,6 @@ package ch.scorpion.antares.model.testcase
 import ch.scorpion.antares.model.ControlledCircuitRunner
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.inout.DigitalCircuitInOut
-import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.testcase.TestRunResult.Type.Circuit
 import ch.scorpion.antares.model.testcase.TestVector.Type.*
@@ -15,7 +14,6 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.SemanticError
 import ch.scorpion.jabbah.base.dsl.SyntaxError
 import ch.scorpion.jabbah.base.logger
-import ch.scorpion.jabbah.graph.model.PortType
 import kotlin.math.max
 
 /**
@@ -24,19 +22,27 @@ import kotlin.math.max
 class TestcaseCircuitRunner(
 	testName: String,
 	testScript: TestScript,
-	circuit: DigitalGraph
+	circuit: DigitalGraph,
+	numberOfIterations: Int = Testcase.DEF_NUMBER_OF_ITERATIONS
 ) : AbstractTestcaseRunner(testName, testScript, circuit) {
 
-	constructor(testName: String, text: String, circuit: DigitalGraph): this(
+	constructor(
+		testName: String,
+		text: String,
+		circuit: DigitalGraph,
+		numberOfIterations: Int = Testcase.DEF_NUMBER_OF_ITERATIONS
+	): this(
 		testName,
 		TestcaseParser(text, TestcaseAnalyser(circuit)).parse() as TestScript,
-		circuit)
+		circuit,
+		numberOfIterations
+	)
 
 	companion object {
 		private val LOG by logger(TestcaseCircuitRunner::class)
 	}
 
-	private val circuitRunner = ControlledCircuitRunner()
+	private val circuitRunner = ControlledCircuitRunner(numberOfIterations)
 
 	/**
 	 * Runs the [TestVector]s contained in [testScript] and returns the [TestRunResult],
@@ -68,6 +74,8 @@ class TestcaseCircuitRunner(
 			return TestRunResult.error(circuit, TestRunResult.Type.Script, testName, e.message ?: "Error")
 		} catch (e: SemanticError) {
 			return TestRunResult.error(circuit, TestRunResult.Type.Script, testName, e.message ?: "Error")
+		} catch (_: ControlledCircuitRunner.TooManyIterations) {
+			return TestRunResult.error(circuit, Circuit, testName, Translations.getString("antares.testcase.results.tooManyIterations.txt"))
 		} catch (e: Throwable) {
 			LOG.error("Error while running test '${testName}' for circuit '${circuit.name.value}'", e)
 			return TestRunResult.error(circuit, Circuit, testName, Translations.getString("antares.testcase.action.technical.error.txt"))

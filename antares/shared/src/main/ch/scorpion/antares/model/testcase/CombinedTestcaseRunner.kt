@@ -52,7 +52,7 @@ class CombinedTestcaseRunner(
 				TestcaseParser(testcase.testVectors.script!!, TestcaseAnalyser(circuit)).parse() as TestScript
 
 			if (!circuit.purelyScripted) {
-				testcaseCircuitRunner = TestcaseCircuitRunner(testcase.name.value, testScript, circuit)
+				testcaseCircuitRunner = TestcaseCircuitRunner(testcase.name.value, testScript, circuit, testcase.numberOfIterations)
 				circuitResults = testcaseCircuitRunner!!.run()
 			}
 			if (execScriptAST != null) {

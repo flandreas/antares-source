@@ -150,3 +150,9 @@ DIR   '!(EN)'  >B  <A
 ----
 
 Note:: The order in which the pins appear has no impact on whether they are treated as input or output.
+
+=== Dealing with "Too many iterations"
+
+When you write a test case for a complex circuit or one with sophisticated timing characteristics, you might run into the "Too many iterations" error. By default, Antares executes 1'000 simulation iterations until the circuit is expected to settle into a stable state, where the output values can be safely captured.
+
+If you get the "Too many iterations" error during test case execution, you should check if your circuit is indeed oscillating, which is not supported for test cases. If that's not the case, you can increase the "Number of iterations" property of the test case and then try again.

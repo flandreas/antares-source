@@ -1,6 +1,7 @@
 package ch.scorpion.antares.model.testcase
 
 import ch.scorpion.antares.dsl.AntaresInterpreter
+import ch.scorpion.antares.model.ControlledCircuitRunner
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.inout.DigitalCircuitInOut
@@ -8,6 +9,7 @@ import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
+import ch.scorpion.antares.model.testcase.TestRunResult.Type.Circuit
 import ch.scorpion.antares.model.testcase.TestRunResult.Type.Script
 import ch.scorpion.antares.model.testcase.TestVector.Type.*
 import ch.scorpion.antares.model.testcase.parser.TestScript
@@ -92,7 +94,9 @@ class TestcaseScriptRunner(
 			return TestRunResult.error(circuit, Script, testName, e.toString())
 		} catch (e: RuntimeError) {
 			return TestRunResult.error(circuit, Script, testName, e.toString())
-		} catch (e: Throwable) {
+		} catch (_: ControlledCircuitRunner.TooManyIterations) {
+			return TestRunResult.error(circuit, Circuit, testName, Translations.getString("antares.testcase.results.tooManyIterations.txt"))
+		}	catch (e: Throwable) {
 			LOG.error("Error while running test '${testName}' for circuit '${circuit.name.value}'", e)
 			return TestRunResult.error(circuit, Script, testName, Translations.getString("antares.testcase.action.technical.error.txt"))
 		}
