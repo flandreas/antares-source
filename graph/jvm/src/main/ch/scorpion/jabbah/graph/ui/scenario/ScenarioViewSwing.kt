@@ -57,8 +57,6 @@ class ScenarioViewSwing(
 				treeView.selectedScenarioStep))
 
 		}
-		treeView.preferredSize = Dimension(300, treeView.preferredSize.height)
-		propertyPanel.preferredSize = Dimension(300, propertyPanel.preferredSize.height)
 
 		buildUI()
 	}
@@ -126,6 +124,9 @@ class ScenarioViewSwing(
 			treeView,
 			JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 			JScrollPane.HORIZONTAL_SCROLLBAR_NEVER)
+
+		treeViewScrollPane.preferredSize = Dimension(300, treeView.preferredSize.height)
+		propertyPanel.preferredSize = Dimension(300, propertyPanel.preferredSize.height)
 
 		splitPane.border = null
 		splitPane.add(treeViewScrollPane)
