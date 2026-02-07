@@ -18,7 +18,7 @@ class LibraryFolderPropertiesAction(
 	controller: LibraryTreeViewController,
 ) : AbstractLibraryDirectoryAction(
 	actionBaseName = "library.action.editFolderProperties",
-	operation = Operation.View,
+	operation = Operation.Change,
 	controller
 ) {
 
@@ -51,6 +51,8 @@ class LibraryFolderPropertiesAction(
 		}
 		selectedFolder.library!!.libraryService.renameDirectory(selectedFolder, text)
 	}
+
+	override val authorizationTarget: Any? get() = if(selectedItem is LibraryDirectory) selectedFolder.library else null
 }
 
 private class LibraryFolderPropertiesPanel(
