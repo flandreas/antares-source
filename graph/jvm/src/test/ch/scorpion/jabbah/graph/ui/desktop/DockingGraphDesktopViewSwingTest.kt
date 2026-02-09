@@ -1,18 +1,27 @@
 package ch.scorpion.jabbah.graph.ui.desktop
 
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
+import ch.scorpion.jabbah.graph.view.module.GraphViewModuleJvm
 import dev.mokkery.MockMode.autofill
 import dev.mokkery.mock
 import javax.swing.JPanel
 import javax.swing.JSplitPane
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
 
 class DockingGraphDesktopViewSwingTest {
 
-    private val controller: GraphDesktopViewController = GraphDesktopViewController(GraphApplicationContextHolder(mock(autofill)))
-    private val view: DockingGraphDesktopViewSwing = DockingGraphDesktopViewSwing(controller)
+    private lateinit var controller: GraphDesktopViewController
+    private lateinit var view: DockingGraphDesktopViewSwing
+
+    @BeforeTest
+    fun setup() {
+        GraphViewModuleJvm.require()
+        controller = GraphDesktopViewController(GraphApplicationContextHolder(mock(autofill)))
+        view = DockingGraphDesktopViewSwing(controller)
+    }
 
     @Test
     fun shouldShowMainItemDirectly() {
