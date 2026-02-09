@@ -1,15 +1,25 @@
 package ch.scorpion.antares.model.testcase
 
+import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.module.BaseModule
+import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.ui.AbstractApplicationDataEditModeAction
 
 abstract class AbstractTestcaseAction(
 	protected val controller: TestcaseViewController,
 	baseName: String,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractApplicationDataEditModeAction(baseName, controller.applicationDataHolder, controller.applicationModeHolder, eventBus)
+) : AbstractApplicationDataEditModeAction(baseName, controller.applicationDataHolder, controller.applicationModeHolder, eventBus) {
+
+	override fun calculateEnabled(): Boolean = super.calculateEnabled() && isDigital
+
+	private val isDigital: Boolean get() {
+		val state = controller.applicationDataHolder.getUndoableState()
+		return state is MetaGraph && state.graph.graphView.graph is DigitalGraph
+	}
+}
 
 class AddTestcaseAction(
 	controller: TestcaseViewController,
