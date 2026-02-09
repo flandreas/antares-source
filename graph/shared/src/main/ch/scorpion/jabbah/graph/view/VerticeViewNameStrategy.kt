@@ -17,9 +17,12 @@ interface VerticeViewNameStrategy {
      * Tries to determine a name for a [VerticeView] that has been connected
      * to the specified [EdgeView]
      *
+     * @param portOwner the [Vertice] owning all the [Port Ports] among which the name must be unique.
+     * Often the same as [vertice], but not always
+     * @param vertice the [Vertice] whose name is determined
      * @return the determined name, or `null` if no suitable name could be determined
      */
-    fun getConnectedName(vertice: Vertice, edgeView: EdgeView<*>): String?
+    fun getConnectedName(portOwner: Vertice, vertice: Vertice, edgeView: EdgeView<*>): String?
 }
 
 /**
@@ -33,12 +36,12 @@ interface VerticeViewNameStrategy {
  */
 open class VerticeViewNameStrategyImpl : VerticeViewNameStrategy {
 
-    override fun getConnectedName(vertice: Vertice, edgeView: EdgeView<*>): String? {
-        ifFree(vertice, destPortNameOfEdgeView(edgeView))?.let { return it }
-        ifFree(vertice, origPortNameOfEdgeView(edgeView))?.let { return it }
+    override fun getConnectedName(portOwner: Vertice, vertice: Vertice, edgeView: EdgeView<*>): String? {
+        ifFree(portOwner, vertice, destPortNameOfEdgeView(edgeView))?.let { return it }
+        ifFree(portOwner, vertice, origPortNameOfEdgeView(edgeView))?.let { return it }
 
-        inputPortOfNet(vertice, edgeView)?.let { return it }
-        outputPortOfNet(vertice, edgeView)?.let { return it }
+        inputPortOfNet(portOwner, vertice, edgeView)?.let { return it }
+        outputPortOfNet(portOwner, vertice, edgeView)?.let { return it }
 
         return null
     }
@@ -63,11 +66,11 @@ open class VerticeViewNameStrategyImpl : VerticeViewNameStrategy {
             else -> port?.name
         }
 
-    private fun ifFree(vertice: Vertice, name: String?): String? =
-        if (isFreeAndShortEnough(vertice, name)) name else null
+    private fun ifFree(portOwner: Vertice, vertice: Vertice, name: String?): String? =
+        if (isFreeAndShortEnough(portOwner, vertice, name)) name else null
 
-    private fun isFreeAndShortEnough(vertice: Vertice, name: String?): Boolean =
-        name != null && name.length <= getMaxNameLength(vertice) && !vertice.hasPort(name)
+    private fun isFreeAndShortEnough(portOwner: Vertice, vertice: Vertice, name: String?): Boolean =
+        name != null && name.length <= getMaxNameLength(vertice) && !portOwner.hasPort(name)
 
     private fun destPortNameOfEdgeView(edgeView: EdgeView<*>): String? =
         portName(edgeView.destination?.port)
@@ -75,15 +78,15 @@ open class VerticeViewNameStrategyImpl : VerticeViewNameStrategy {
     private fun origPortNameOfEdgeView(edgeView: EdgeView<*>): String? =
         portName(edgeView.origin?.port)
 
-    private fun inputPortOfNet(vertice: Vertice, edgeView: EdgeView<*>): String? =
-        portTypeOfNet(vertice, edgeView) { it.portType.isInput }
+    private fun inputPortOfNet(portOwner: Vertice, vertice: Vertice, edgeView: EdgeView<*>): String? =
+        portTypeOfNet(portOwner, vertice, edgeView) { it.portType.isInput }
 
-    private fun outputPortOfNet(vertice: Vertice, edgeView: EdgeView<*>): String? =
-        portTypeOfNet(vertice, edgeView) { it.portType.isOutput }
+    private fun outputPortOfNet(portOwner: Vertice, vertice: Vertice, edgeView: EdgeView<*>): String? =
+        portTypeOfNet(portOwner, vertice, edgeView) { it.portType.isOutput }
 
-    private fun portTypeOfNet(vertice: Vertice, edgeView: EdgeView<*>, typeCond: (Port<*>) -> Boolean): String? =
+    private fun portTypeOfNet(portOwner: Vertice, vertice: Vertice, edgeView: EdgeView<*>, typeCond: (Port<*>) -> Boolean): String? =
         edgeView.model.ports
             .filter { typeCond.invoke(it) }
-            .firstOrNull { isFreeAndShortEnough(vertice, portName(it)) }
+            .firstOrNull { isFreeAndShortEnough(portOwner, vertice, portName(it)) }
             ?.name
 }

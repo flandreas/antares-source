@@ -149,7 +149,7 @@ class TunnelView(
 		super.handleConnect(edgeView, port, geometry)
 		if (isNotReading) {
 			if (tunnelName == null) {
-				GraphViewModule.verticeViewNameStrategy.getConnectedName(model, edgeView)?.let {
+				GraphViewModule.verticeViewNameStrategy.getConnectedName(model, model, edgeView)?.let {
 					LOG.userTrail("Set name of Tunnel $id to '$it' derived from Net")
 					tunnelName = TunnelName(it)
 				}
