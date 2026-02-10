@@ -55,6 +55,11 @@ interface DigitalSignal {
 
     fun flip(index: Int): DigitalSignal
 
+	/**
+	 * Returns the subword of this [DigitalSignal] that has [subwordWidth] and is located at [index].
+	 * For example, the 4-bit subword of an 8-bit signal at index 0 are the 4 bits with the least priority,
+	 * i.e. bit 0..3.
+	 */
     fun getSubword(subwordWidth: BitWidth, index: Int): DigitalSignal
 
 	fun getSubwordValue(subwordWidth: BitWidth, index: Int): ULong?

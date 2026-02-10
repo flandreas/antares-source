@@ -146,6 +146,13 @@ class DefinedWordTest {
 	}
 
 	@Test
+	fun shouldGetSubword64() {
+		val signal = DefinedWord(BitWidth.PREDEFINED[63], 12345678UL)
+		assertEquals(64, signal.bitWidth.width)
+		assertEquals(DefinedWord(BitWidth.PREDEFINED[63], 12345678UL), signal.getSubword(BitWidth.PREDEFINED[63], 0))
+	}
+
+	@Test
 	fun shouldSetBit() {
 		assertEquals(DefinedWord(BW_4, 11UL), DefinedWord(BW_4, 3UL).withBit(3, Bit.True))
 		assertEquals(DefinedWord(BW_4, 2UL), DefinedWord(BW_4, 3UL).withBit(0, Bit.False))

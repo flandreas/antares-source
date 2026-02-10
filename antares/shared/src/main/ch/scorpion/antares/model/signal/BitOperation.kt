@@ -93,7 +93,7 @@ object BitOperation {
 	}
 
     fun power(value: Byte): ULong {
-	    require(value <= 63) { "value must not be larger than 64" }
+	    require(value <= 63) { "value $value must not be larger than 63" }
 	    return POWER[value.toInt()]
     }
 

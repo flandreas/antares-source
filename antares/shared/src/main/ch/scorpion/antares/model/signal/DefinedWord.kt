@@ -138,6 +138,9 @@ class DefinedWord(
 	}
 
 	override fun getSubword(subwordWidth: BitWidth, index: Int): DigitalSignal {
+		if (subwordWidth.width == bitWidth.width && index == 0) {
+			return this
+		}
 		val mask = (BitOperation.power(subwordWidth.width.toByte()) - 1UL).shl(subwordWidth.width * index)
 		return DefinedWord(subwordWidth, longValue.and(mask).shr(subwordWidth.width * index))
 	}
