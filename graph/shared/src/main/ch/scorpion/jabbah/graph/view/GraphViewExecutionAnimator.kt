@@ -14,6 +14,7 @@ import ch.scorpion.jabbah.draw.drawable.TransparentAnimation
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
@@ -131,6 +132,14 @@ class GraphViewExecutionAnimator(
 			handleGraphElementActed(actor as GraphElement)
 			actor.actingVisualized(signalHandler, actorListener, data)
 		}
+	}
+
+	/**
+	 * Remove all animation highlighting artifacts from the animation container of the
+	 * specified [DrawingViewContent]. Called after execution has been stopped.
+	 */
+	fun cleanup(content: DrawingViewContent<*>) {
+		content.animationContainer.clear()
 	}
 
 	private fun handleNetActingRequested(net: Net<*>, actorData: GraphActorData) {

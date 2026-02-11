@@ -22,6 +22,7 @@ import ch.scorpion.jabbah.draw.view.ZoomedPointTranslation
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.model.text.description.NameChangedEvent
+import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
@@ -94,6 +95,7 @@ class GraphNavigationViewController(
 	private val scenarioEventHandler: (ScenarioEvent) -> Unit = { handle(it) }
 	private val closeViewRequestHandler: (CloseViewRequest) -> Unit = { handle(it) }
 	private val nameChangedHandler: (NameChangedEvent) -> Unit = { handle(it) }
+	private val schedulerActivationStateHandler: (SchedulerActivationStateEvent) -> Unit = { handle(it) }
 
 	private val rootEntry: NavigationStackEntry<GraphView>? get() = navigationStackViewController.navigationStack.rootEntry
 
@@ -129,6 +131,7 @@ class GraphNavigationViewController(
 		eventBus.register(ScenarioEvent::class, scenarioEventHandler)
 		eventBus.register(CloseViewRequest::class, closeViewRequestHandler)
 		eventBus.register(NameChangedEvent::class, nameChangedHandler)
+		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
 
 		drawingView.addPropertyChangeListener(viewCanvasListener)
 	}
@@ -157,6 +160,7 @@ class GraphNavigationViewController(
 		eventBus.unregister(ScenarioEvent::class, scenarioEventHandler)
 		eventBus.unregister(CloseViewRequest::class, closeViewRequestHandler)
 		eventBus.unregister(NameChangedEvent::class, nameChangedHandler)
+		eventBus.unregister(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
 
 		extension.dispose(this)
 	}
@@ -253,6 +257,14 @@ class GraphNavigationViewController(
 		if (event.owner is Graph && (event.owner as Graph).uuid == drawingView.drawing.graph?.uuid) {
 			if (event.name !== drawingView.drawing.graph!!.name) {
 				drawingView.drawing.graph!!.name = event.name
+			}
+		}
+	}
+
+	private fun handle(event: SchedulerActivationStateEvent) {
+		if (event.scheduler === graphApplicationContextHolder.scheduler) {
+			if (!event.scheduler.isActive) {
+				navigationStack.iterator().forEach { entry -> graphViewExecutionController.cleanup(entry.content) }
 			}
 		}
 	}

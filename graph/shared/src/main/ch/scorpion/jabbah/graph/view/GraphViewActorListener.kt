@@ -28,7 +28,7 @@ class GraphViewActorListener(
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : ActorListener {
 
-	private val executionAnimator = GraphViewExecutionAnimator(this, drawingView, applicationContextHolder)
+	val executionAnimator = GraphViewExecutionAnimator(this, drawingView, applicationContextHolder)
 
 	private val animatorProxy = AnimatorProxy(executionAnimator)
 

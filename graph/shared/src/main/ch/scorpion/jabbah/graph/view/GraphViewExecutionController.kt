@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.ViewDecorator
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.DrawingViewContent
 import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
 import ch.scorpion.jabbah.edit.model.text.Label
 import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
@@ -72,6 +73,14 @@ class GraphViewExecutionController(
 		graphViewDisplayHandler.dispose()
 		graphViewUsecaseExecutionHandler.dispose()
 		actorListener.dispose()
+	}
+
+	/**
+	 * Remove all animation highlighting artifacts from the animation container of the
+	 * specified [DrawingViewContent]. Called after execution has been stopped.
+	 */
+	fun cleanup(content: DrawingViewContent<*>) {
+		actorListener.executionAnimator.cleanup(content)
 	}
 
 	fun updateDrawingViewEditability() {
