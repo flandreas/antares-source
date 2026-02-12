@@ -81,6 +81,14 @@ object GraphModuleJvm : AbstractModule() {
 		SystemHealthChecker.register(PortViewCoincidenceCheck)
 	}
 
+	override fun resetDependencies() {
+		BaseModuleJvm.reset()
+		DrawModuleJvm.reset()
+		ExecutionModuleJvm.reset()
+		AppModuleJvm.reset()
+		GraphViewModuleJvm.reset()
+	}
+
 	private fun configurePropertyRenderer(registry: DynamicPropertyRendererRegistry) {
 		registry.register(GraphParamDefinitions::class.java) { GraphParamDefinitionsPropertyRenderer() }
 		registry.registerRenderer(LongValue::class.java, ToStringRenderer::class.java)

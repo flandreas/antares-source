@@ -19,6 +19,7 @@ object EditModuleCurveModule : AbstractModule() {
 			SelectionDrawingStrategy.ABOVE,
 			CubicCurveComponent::class
 		) { CubicCurveReplaceSelectionModel(it as CubicCurveComponent) }
-
 	}
+
+	override fun resetDependencies() {}
 }

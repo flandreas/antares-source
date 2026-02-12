@@ -178,6 +178,12 @@ object GraphViewModule : AbstractModule() {
 		registerHelpSources()
 	}
 
+	override fun resetDependencies() {
+		EditModule.reset()
+		AppModule.reset()
+		GraphModelModule.reset()
+	}
+
 	private fun configureTypeMap(typeMap: TypeMap) {
 		typeMap.register("graphElement", GraphElementViewWrapper::class)
 		typeMap.register("graphElementWrapper", GraphElementWrapper::class)

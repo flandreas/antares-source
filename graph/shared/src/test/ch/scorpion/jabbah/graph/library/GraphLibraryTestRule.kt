@@ -14,6 +14,8 @@ import ch.scorpion.jabbah.io.IOModule
 object GraphLibraryTestRule {
 
 	fun configure() {
+		GraphViewModule.reset()
+
 		BaseModule.require()
 		IOModule.require()
 		GraphViewModule.require()

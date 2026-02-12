@@ -17,6 +17,8 @@ object AnimationModule : AbstractModule() {
 		configureProperties(BaseModule.properties)
 	}
 
+	override fun resetDependencies() {}
+
 	private fun configureProperties(@Suppress("UNUSED_PARAMETER") properties: Properties) {
 		// empty
 	}

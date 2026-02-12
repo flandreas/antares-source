@@ -15,4 +15,6 @@ object EditModelPolylineModule : AbstractModule() {
 			PolylineComponent::class
 		) { PolylineReplaceSelectionModel(it as PolylineComponent) }
 	}
+
+	override fun resetDependencies() {}
 }

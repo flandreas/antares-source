@@ -10,7 +10,6 @@ import ch.scorpion.jabbah.edit.auth.DesktopUser
 import ch.scorpion.jabbah.edit.auth.DesktopUserHolder
 import ch.scorpion.jabbah.edit.auth.EditAuthModule
 import ch.scorpion.jabbah.edit.select.EditSelectModule
-import ch.scorpion.jabbah.edit.select.SelectedColorSelectionModel
 import ch.scorpion.jabbah.edit.select.selectedColorSelectionModelFactory
 import ch.scorpion.jabbah.graph.container.PortViewComponent
 import ch.scorpion.jabbah.graph.model.TestControlVertice
@@ -24,10 +23,10 @@ import ch.scorpion.jabbah.graph.model.vertice.GraphInputImpl
 import ch.scorpion.jabbah.graph.model.vertice.GraphOutputImpl
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeViewFactoryMockBuilder
-import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import ch.scorpion.jabbah.graph.view.port.TestPortView
 import ch.scorpion.jabbah.graph.view.port.TestPortViewFactory
 import ch.scorpion.jabbah.graph.view.vertice.TestControlVerticeView
+import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import ch.scorpion.jabbah.io.IOModule
 
 /**
@@ -36,6 +35,8 @@ import ch.scorpion.jabbah.io.IOModule
 object GraphViewTestRule {
 
 	fun configure() {
+		GraphViewModule.reset()
+
 		BaseModule.require()
 		BaseModule.eventBus.clear()
 

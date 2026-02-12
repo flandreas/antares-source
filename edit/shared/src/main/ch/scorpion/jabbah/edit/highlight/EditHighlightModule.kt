@@ -24,7 +24,7 @@ object EditHighlightModule : AbstractModule() {
         }
     }
 
-    override fun initialize() {
-        // empty
-    }
+    override fun initialize() {}
+
+    override fun resetDependencies() {}
 }

@@ -7,4 +7,6 @@ object EditDragModule : AbstractModule() {
 	val dragDestinationHighlightFactoryRegistry = DragDestinationHighlightFactoryRegistry()
 
 	override fun initialize() { }
+
+	override fun resetDependencies() { }
 }

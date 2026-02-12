@@ -42,6 +42,8 @@ object EditModelTextModule : AbstractModule() {
 	    fillProperties(DrawModule.properties)
     }
 
+	override fun resetDependencies() {}
+
 	private fun fillProperties(properties: Properties) {
 		properties.set(Grid.PROP_GRID_PAINTER, LineGridPainter.NAME)
 	}

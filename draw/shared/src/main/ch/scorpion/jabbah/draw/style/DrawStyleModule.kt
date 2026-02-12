@@ -21,6 +21,10 @@ object DrawStyleModule : AbstractModule() {
         configureStyleRepository(StyleRepository.INSTANCE)
     }
 
+    override fun resetDependencies() {
+        DrawGraphicsModule.reset()
+    }
+
     /** ---- [DrawStyleModule] */
 
     private fun fillProperties(properties: Properties) {

@@ -257,6 +257,11 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		}
 	}
 
+	override fun resetDependencies() {
+		GraphModuleJvm.reset()
+		AntaresViewModule.reset()
+	}
+
 	@Suppress("SpellCheckingInspection")
 	private fun customizeProperties(properties: Properties) {
 		properties.set(AbstractLibraryImportProcess.PROP_PROJECT_FILE_EXTENSION, "acp") // Antares Circuit Project

@@ -29,6 +29,11 @@ object AppModuleJvm : AbstractModule() {
 		fillProperties(BaseModule.properties)
 	}
 
+	override fun resetDependencies() {
+		EditModuleJvm.reset()
+		AppModule.reset()
+	}
+
 	private fun fillProperties(properties: Properties) {
 		properties.set(RemoteControlService.PROP_IGNORED_VERSION, ApplicationVersion.DUMMY_VERSION_ID)
 	}

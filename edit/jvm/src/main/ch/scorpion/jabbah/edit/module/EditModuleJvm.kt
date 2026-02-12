@@ -68,6 +68,12 @@ object EditModuleJvm : AbstractModule() {
 		buildPreferencesTree(BaseModuleJvm.preferencesTree)
 	}
 
+	override fun resetDependencies() {
+		DrawModuleJvm.reset()
+		IOModuleJvm.reset()
+		EditModule.reset()
+	}
+
 	@Suppress("UNCHECKED_CAST")
 	private fun configurePropertyRenderer(registry: DynamicPropertyRendererRegistry) {
 		registry.registerRenderer(Direction::class.java, EnumRenderer::class.java)

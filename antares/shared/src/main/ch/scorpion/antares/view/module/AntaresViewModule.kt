@@ -254,6 +254,12 @@ object AntaresViewModule : AbstractModule() {
 		AntaresAuthorizations.define()
 	}
 
+	override fun resetDependencies() {
+		GraphModule.reset()
+		AnimationModule.reset()
+		AntaresModelModule.reset()
+	}
+
 	private fun customizeProperties(properties: Properties) {
 		properties.set(Look.PROP_FILL_BASIC_COMPONENTS, true)
 		Look.initialize(BaseModule.eventBus)

@@ -15,6 +15,10 @@ object IOModule : AbstractModule() {
         configureTypeMap(typeMap)
     }
 
+    override fun resetDependencies() {
+        BaseModule.reset()
+    }
+
     private fun configureTypeMap(typeMap: TypeMap) {
         typeMap.register("string", StringStorable::class)
     }

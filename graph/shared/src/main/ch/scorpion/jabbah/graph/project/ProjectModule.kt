@@ -33,6 +33,8 @@ object ProjectModule : AbstractModule() {
 		configureTypeMap(IOModule.typeMap)
 	}
 
+	override fun resetDependencies() {}
+
 	private fun configureTypeMap(typeMap: TypeMap) {
 		typeMap.register("project", ProjectImpl::class)
 	}

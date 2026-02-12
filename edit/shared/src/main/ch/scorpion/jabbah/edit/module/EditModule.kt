@@ -102,6 +102,20 @@ object EditModule : AbstractModule() {
 	    fillProperties(BaseModule.properties)
     }
 
+    override fun resetDependencies() {
+        DrawModule.reset()
+        EditModelRectangleModule.reset()
+        EditModelPolylineModule.reset()
+        EditModelTextModule.reset()
+        EditModelGroupModule.reset()
+        EditModuleCurveModule.reset()
+        EditSnapModule.reset()
+        EditDragModule.reset()
+        EditSelectModule.reset()
+        EditEditorModule.reset()
+        EditAuthModule.reset()
+    }
+
     private fun configureTypeMap(typeMap: TypeMap) {
         typeMap.register("drawing", DrawingImpl::class)
         typeMap.register("rectangle", RectangleComponent::class)

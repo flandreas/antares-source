@@ -19,4 +19,8 @@ object AntaresDslModule : AbstractModule() {
 		BaseModule.interpreterFactory = { n, m -> AntaresInterpreter(n, m) }
 		BaseModule.dslGlobalFunctions = AntaresDslGlobalFunctions()
 	}
+
+	override fun resetDependencies() {
+		GraphDslModule.reset()
+	}
 }

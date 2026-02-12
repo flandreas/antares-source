@@ -20,6 +20,11 @@ object ExecutionModuleJvm : AbstractModule() {
 		buildPreferencesTree(BaseModuleJvm.preferencesTree)
 	}
 
+	override fun resetDependencies() {
+		BaseModuleJvm.reset()
+		ExecutionModule.reset()
+	}
+
 	private fun buildPreferencesTree(root: PreferenceGroup) {
 		root.add(PreferenceGroup(PREF_TREE_EXECUTION))
 

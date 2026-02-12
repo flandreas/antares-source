@@ -44,6 +44,8 @@ object LibraryModule : AbstractModule() {
 		EditModule.imageRepository = libraryHolder
 	}
 
+	override fun resetDependencies() {}
+
 	private fun configureTypeMap(typeMap: TypeMap) {
 		typeMap.register("library", LibraryImpl::class)
 		typeMap.register("baseLibraryElement", BaseLibraryElement::class)

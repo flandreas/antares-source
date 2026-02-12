@@ -18,6 +18,10 @@ object DrawViewModule : AbstractModule() {
         TooltipManager.eventBus = BaseModule.eventBus
     }
 
+	override fun resetDependencies() {
+		BaseModule.reset()
+	}
+
 	private fun fillProperties(properties: Properties) {
 		properties.set(View.PROP_MIN_ZOOM_FACTOR, 0.05f)
 		properties.set(View.PROP_MAX_ZOOM_FACTOR, 20f)

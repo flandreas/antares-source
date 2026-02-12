@@ -17,4 +17,8 @@ object GraphDslModule : AbstractModule() {
 		BaseModule.parserFactory = { p, s -> GraphDslParser(BaseModule.lexerFactory(p), s) }
 		BaseModule.interpreterFactory = { n, m -> GraphDslInterpreter(n, m) }
 	}
+
+	override fun resetDependencies() {
+		BaseModule.reset()
+	}
 }

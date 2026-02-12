@@ -16,6 +16,8 @@ object EditSnapModule : AbstractModule() {
         fillProperties(BaseModule.properties)
     }
 
+    override fun resetDependencies() {}
+
     private fun fillProperties(properties: Properties) {
         properties.set(Grid.PROP_GRID_DEFAULT_DISTANCE, 10)
         properties.set(Grid.PROP_GRID_MIN_DISTANCE, 8)

@@ -50,6 +50,10 @@ object BaseModuleJvm : AbstractModule() {
 		registerHelpSources()
 	}
 
+	override fun resetDependencies() {
+		BaseModule.reset()
+	}
+
 	private fun fillProperties(properties: Properties) {
 		properties.set(UIBasics.PROP_TREE_SHOW_ROOT_HANDLES, true)
 		properties.set(InteractiveErrorHandler.PROP_SHOW_UNEXPECTED_ERROR, true)

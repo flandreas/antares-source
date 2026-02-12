@@ -36,6 +36,10 @@ object ExecutionModule : AbstractModule() {
 		Translations.addBundle("jabbah-execution")
 	}
 
+	override fun resetDependencies() {
+		BaseModule.reset()
+	}
+
 	private fun fillProperties(properties: Properties) {
 		properties.set(Scheduler.PROP_SCHEDULER_EVENT_SYSTEM_SPEED_LIMIT, SystemSpeedCategory.Observe.customName)
 		properties.set(IssueCollector.PROP_MAX_ISSUES_COUNT, 100)

@@ -61,4 +61,6 @@ object EditModelRectangleModule : AbstractModule() {
 		EditSelectModule.selectionModelFactory.register(SelectionDrawingStrategy.ABOVE, ImageComponent::class) { RectangularHandleSelectionModel(it as AbstractRectangularComponent) }
 
 	}
+
+	override fun resetDependencies() {}
 }

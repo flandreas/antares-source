@@ -12,4 +12,9 @@ object IOModuleJvm : AbstractModule() {
         BaseModuleJvm.require()
         IOModule.require()
     }
+
+    override fun resetDependencies() {
+        BaseModuleJvm.reset()
+        IOModule.reset()
+    }
 }

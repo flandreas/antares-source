@@ -13,4 +13,6 @@ object EditModelGroupModule : AbstractModule() {
 			GroupComponent::class
 		) { GroupComponentSelectionModel(it as GroupComponent) }
 	}
+
+	override fun resetDependencies() {}
 }

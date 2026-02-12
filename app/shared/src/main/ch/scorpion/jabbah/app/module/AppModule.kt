@@ -17,4 +17,8 @@ object AppModule : AbstractModule() {
         // something like an "EditApplication" in the edit module.
         EditModule.require()
     }
+
+    override fun resetDependencies() {
+        EditModule.reset()
+    }
 }

@@ -19,6 +19,8 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 object AntaresTestRule {
 
 	fun configure() {
+		AntaresViewModule.reset()
+
 		BaseModule.require()
 		EditAuthModule.userHolder = DesktopUserHolder(DesktopUser.developer)
 

@@ -3,6 +3,7 @@ package ch.scorpion.jabbah.draw
 import ch.scorpion.jabbah.base.event.PropertyChangeEvent
 import ch.scorpion.jabbah.base.event.PropertyChangeListener
 import ch.scorpion.jabbah.base.geom.Dimension2D
+import ch.scorpion.jabbah.base.geom.Point2D
 import dev.mokkery.MockMode
 import dev.mokkery.answering.calls
 import dev.mokkery.answering.returns
@@ -26,6 +27,7 @@ class CanvasMockBuilder {
 		withDevicePixelRatio(1.0)
 		withDimension(Dimension2D(0, 0))
 		withFocus(true)
+		withMouseLocation(Point2D.ZERO)
 	}
 
 	fun withDevicePixelRatio(devicePixelRatio: Double): CanvasMockBuilder {
@@ -50,6 +52,11 @@ class CanvasMockBuilder {
 
 	fun withFocus(hasFocus: Boolean): CanvasMockBuilder {
 		every { canvas.hasFocus } returns hasFocus
+		return this
+	}
+
+	fun withMouseLocation(mouseLocation: Point2D): CanvasMockBuilder {
+		every { canvas.mouseLocation } returns mouseLocation
 		return this
 	}
 

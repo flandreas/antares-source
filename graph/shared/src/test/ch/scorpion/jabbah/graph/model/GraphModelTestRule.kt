@@ -10,6 +10,8 @@ import ch.scorpion.jabbah.io.IOModule
 object GraphModelTestRule {
 
     fun configure() {
+        GraphModelModule.reset()
+
 	    BaseModule.require()
 	    IOModule.require()
         IOModule.typeMap.register("testVertice", TestVertice::class)

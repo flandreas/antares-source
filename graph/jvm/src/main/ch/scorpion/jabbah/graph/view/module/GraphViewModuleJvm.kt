@@ -85,6 +85,12 @@ object GraphViewModuleJvm : AbstractModule() {
 		registerHelpResources()
 	}
 
+	override fun resetDependencies() {
+		IOModuleJvm.reset()
+		DrawModuleJvm.reset()
+		GraphViewModule.reset()
+	}
+
 	private fun fillProperties(properties: Properties) {
 		properties.set(GraphFrameController.PROP_AUTO_SWITCH, true)
 		properties.set(GraphDesktopView.PROP_DOCKING, true)

@@ -50,6 +50,11 @@ object DrawModuleJvm : AbstractModule() {
 	    }
     }
 
+	override fun resetDependencies() {
+		BaseModuleJvm.reset()
+		DrawModule.reset()
+	}
+
 	private fun buildPreferencesTree(root: PreferenceGroup) {
 		root.getGroup(PREF_TREE_VIEW).add(PreferenceGroup(PREF_TREE_VIEW_ZOOM_PAN))
 		root.getGroup(PREF_TREE_VIEW).add(PreferenceGroup(PREF_TREE_VIEW_NAVIGATION))

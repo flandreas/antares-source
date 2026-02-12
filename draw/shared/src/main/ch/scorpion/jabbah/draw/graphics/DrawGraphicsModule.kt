@@ -60,6 +60,10 @@ object DrawGraphicsModule : AbstractModule() {
 	    fillProperties(DrawModule.properties)
     }
 
+	override fun resetDependencies() {
+		BaseModule.reset()
+	}
+
     /** ---- [DrawGraphicsModule] */
 
     private fun fillProperties(properties: Properties) {

@@ -87,6 +87,10 @@ object AntaresModelModule : AbstractModule() {
 		}
 	}
 
+	override fun resetDependencies() {
+		AntaresDslModule.reset()
+	}
+
 	private fun customizeProperties(properties: Properties) {
 		properties.set(CurrentDefaultPropagationDelay.PROP_DEFAULT_PROPAGATION_DELAY, 20)
 		properties.set(CurrentSwitchPropagationDelay.PROP_DEFAULT_DELAY, 1_000)

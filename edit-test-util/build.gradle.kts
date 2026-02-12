@@ -11,6 +11,7 @@ kotlin {
                 implementation(project(":base"))
                 implementation(project(":io"))
                 implementation(project(":draw"))
+                implementation(project(":draw-test-util"))
                 implementation(project(":edit"))
             }
         }

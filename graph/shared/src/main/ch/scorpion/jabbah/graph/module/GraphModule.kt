@@ -23,4 +23,8 @@ object GraphModule : AbstractModule() {
 			}
 		}
 	}
+
+	override fun resetDependencies() {
+		GraphViewModule.reset()
+	}
 }

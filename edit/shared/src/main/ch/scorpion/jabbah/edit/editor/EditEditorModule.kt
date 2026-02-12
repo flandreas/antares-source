@@ -13,9 +13,9 @@ object EditEditorModule : AbstractModule() {
 
 	var dragManagerFactory: DragManagerFactory = { editor -> DragManagerImpl(editor) }
 
-    override fun initialize() {
-        // empty
-    }
+    override fun initialize() { }
+
+    override fun resetDependencies() { }
 
     @Suppress("unused")
     fun createEditor(name: String, view: DrawingView<Drawing<Component>>): Editor =

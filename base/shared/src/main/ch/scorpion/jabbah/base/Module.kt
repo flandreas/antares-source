@@ -19,7 +19,10 @@ abstract class AbstractModule : Module {
      * by settings in other [Module]s.
      */
     fun reset() {
-        configured = false
+        if (!configured) {
+            configured = false
+            resetDependencies()
+        }
     }
 
     override fun require() {
@@ -35,5 +38,7 @@ abstract class AbstractModule : Module {
      * overwrite configurations of lower level modules.
      */
     protected abstract fun initialize()
+
+    protected abstract fun resetDependencies()
 
 }

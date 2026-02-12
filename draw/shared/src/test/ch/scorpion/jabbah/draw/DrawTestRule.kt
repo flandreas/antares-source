@@ -1,6 +1,5 @@
 package ch.scorpion.jabbah.draw
 
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.module.DrawModule
 
 /**
@@ -9,7 +8,9 @@ import ch.scorpion.jabbah.draw.module.DrawModule
 object DrawTestRule {
 
 	fun configure() {
-		BaseModule.require()
+		DrawModule.reset()
+
+		//BaseModule.require()
 		DrawModule.require()
 	}
 }

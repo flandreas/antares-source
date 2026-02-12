@@ -14,6 +14,8 @@ import ch.scorpion.jabbah.edit.select.SimpleSelectionModelProvider
 object EditTestRule  {
 
     fun configure(smFactory: SelectionModelFactory = SelectionModelMockFactory()) {
+        EditModule.reset()
+
         EditModule.require()
 	    EditSelectModule.selectionModelFactory = smFactory
 	    EditSelectModule.selectionModelProvider = SimpleSelectionModelProvider(EditSelectModule.selectionModelFactory)

@@ -3,9 +3,8 @@ package ch.scorpion.jabbah.graph.ui
 import ch.scorpion.jabbah.app.CurrentSavableEvent
 import ch.scorpion.jabbah.app.Savable
 import ch.scorpion.jabbah.base.event.EventBusImpl
-import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.time.SystemSpeed
-import ch.scorpion.jabbah.draw.Canvas
+import ch.scorpion.jabbah.draw.CanvasMockBuilder
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
@@ -21,7 +20,10 @@ import ch.scorpion.jabbah.graph.TestLibraryBuilder
 import ch.scorpion.jabbah.graph.app.ApplicationMode
 import ch.scorpion.jabbah.graph.app.ApplicationModeEvent
 import ch.scorpion.jabbah.graph.app.ApplicationModeHolder
-import ch.scorpion.jabbah.graph.library.*
+import ch.scorpion.jabbah.graph.library.LibraryElement
+import ch.scorpion.jabbah.graph.library.LibraryImpl
+import ch.scorpion.jabbah.graph.library.LibraryModule
+import ch.scorpion.jabbah.graph.library.MemoryLibraryPersistenceService
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVerticeRef
 import ch.scorpion.jabbah.graph.view.*
@@ -63,11 +65,8 @@ class GraphNavigationViewControllerTest {
 			eventBus = eventBus)
 		vv = createSubGraphVerticeView()
 		controller = GraphNavigationViewController(isRoot = true, drawingView as DrawingView<GraphView>, eventBus = eventBus)
+		drawingView.canvas = CanvasMockBuilder().withView(drawingView).build()
 
-		val canvas = mock<Canvas>(MockMode.autofill)
-		every { canvas.dimension } returns Dimension2D(0, 0)
-		every { canvas.view } returns drawingView
-		drawingView.canvas = canvas
 		graphViewBuilder.addVerticeView(vv)
 		GraphNavigationViewMockBuilder(controller)
 	}

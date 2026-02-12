@@ -61,6 +61,14 @@ object DrawModule : AbstractModule() {
 	    fillProperties(properties)
     }
 
+	override fun resetDependencies() {
+		BaseModule.reset()
+		DrawGraphicsModule.reset()
+		DrawStyleModule.reset()
+		DrawViewModule.reset()
+		AnimationModule.reset()
+	}
+
 	private fun fillProperties(properties: Properties) {
 		properties.set(AbstractZoomPanAction.PROP_ZOOM_STEP, 1.5f)
 		properties.set(PanMethod.PROP_PAN_METHOD, PanMethod.MiddleMouseButton.customName)

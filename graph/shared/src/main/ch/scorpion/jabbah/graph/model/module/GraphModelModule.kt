@@ -77,6 +77,14 @@ object GraphModelModule : AbstractModule() {
 		configureTypeMap(IOModule.typeMap)
 	}
 
+	override fun resetDependencies() {
+		BaseModule.reset()
+		IOModule.reset()
+		ExecutionModule.reset()
+		RepositoryModule.reset()
+		GraphDslModule.reset()
+	}
+
 	/** Must be specified by higher application layers.*/
 	var portFactory: PortFactory = UndefinedPortFactory()
 

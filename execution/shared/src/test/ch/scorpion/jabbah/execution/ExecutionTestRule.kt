@@ -10,7 +10,9 @@ import ch.scorpion.jabbah.execution.module.ExecutionModule
 object ExecutionTestRule {
 
 	fun configure() {
-		BaseModule.require()
+		ExecutionModule.reset()
+
+		//BaseModule.require()
 		ExecutionModule.require()
 		Translations.withAnyKey()
 	}

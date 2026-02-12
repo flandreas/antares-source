@@ -27,6 +27,8 @@ object EditSelectModule : AbstractModule() {
         fillProperties(BaseModule.properties)
     }
 
+    override fun resetDependencies() {}
+
     private fun createRubberBand(): RubberBand = RectangularRubberBand()
 
     private fun createRubberBandHandler(): RubberBandHandler = RubberBandHandler(createRubberBand())

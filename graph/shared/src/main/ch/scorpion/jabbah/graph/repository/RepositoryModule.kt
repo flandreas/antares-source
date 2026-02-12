@@ -12,4 +12,9 @@ object RepositoryModule : AbstractModule() {
 		ProjectModule.require()
 		LibraryModule.require()
 	}
+
+	override fun resetDependencies() {
+		ProjectModule.reset()
+		LibraryModule.reset()
+	}
 }
