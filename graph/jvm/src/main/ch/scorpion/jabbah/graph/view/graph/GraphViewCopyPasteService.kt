@@ -2,10 +2,12 @@ package ch.scorpion.jabbah.graph.view.graph
 
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
+import ch.scorpion.jabbah.draw.View
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.draw.drawable.Movable
+import ch.scorpion.jabbah.edit.SnapResult
 import ch.scorpion.jabbah.edit.model.CopyPasteService
 import ch.scorpion.jabbah.edit.model.PasteInfo
 import ch.scorpion.jabbah.graph.GraphStorable
@@ -39,13 +41,19 @@ class GraphViewCopyPasteService(
 	private var origAnchorComponentId: Int? = null
 
 	/**
-	 * he first pasted [Component] after copying [origAnchorComponentId]. Used for locating future pastes from the same
-	 * copy with equal offsets.
+	 * The first pasted [Component] after copying [origAnchorComponentId]. Used for locating future pastes from the same
+	 * copy with equal offsets (aka "Array mode").
 	 */
 	private var pastedAnchorComponentId: Int? = null
 
-	/** Tracks the number of consecutive pasts without an intermediate copy. Used to produce equal dislocations. */
+	/**
+	 * Tracks the number of consecutive pasts without an intermediate copy. Used to produce
+	 * equal dislocations (aka "Array mode").
+	 */
 	private var pasteCount: Int = 0
+
+	/** If set, pasting in "Array mode" is displayed. It gets set after the first paste outside the visible area.*/
+	private var pasteAtMouseLocation: Boolean = false
 
 	override fun reset() {
 		origAnchorComponentId = null
@@ -79,6 +87,7 @@ class GraphViewCopyPasteService(
 				origAnchorComponentId = componentIds.iterator().next()
 				pastedAnchorComponentId = null
 				pasteCount = 1
+				pasteAtMouseLocation = false
 			} catch(e: Exception) {
 				LOG.error("Error while copying Components to clipboard: ${e.message}")
 				throw RuntimeException(e)
@@ -106,13 +115,20 @@ class GraphViewCopyPasteService(
 				DEFAULT_DISTANCE_FACTOR * view.grid.distance)
 		}
 
-		return PasteInfo(paste(contents, view, dislocation).map { it.id }, dislocation)
+		return pasteImpl(contents, view.drawing, dislocation, view, adjustDislocation = true)
 	}
 
-	override fun paste(contents: String, view: DrawingView<Drawing<Component>>, dislocation: Point2D): List<Component> =
-		paste(contents, view.drawing, dislocation)
+	override fun paste(contents: String, drawing: Drawing<Component>, dislocation: Point2D, view: DrawingView<*>): PasteInfo =
+        pasteImpl(contents, drawing, dislocation, view, adjustDislocation = false)
 
-	override fun paste(contents: String, drawing: Drawing<Component>, dislocation: Point2D): List<Component> {
+	private fun pasteImpl(
+		contents: String,
+		drawing: Drawing<Component>,
+		dislocation: Point2D,
+		view: DrawingView<*>,
+		adjustDislocation: Boolean
+	): PasteInfo {
+
 		lateinit var copy: Storable
 		lateinit var copyDrawing: Drawing<Component>
 
@@ -128,7 +144,7 @@ class GraphViewCopyPasteService(
 					is Drawing<*> -> (copy as Drawing<Component>)
 					else -> throw IllegalArgumentException("expecting pasted contents to be of type 'Drawing'")
 				}
-			} catch (e: Exception) {
+			} catch (_: Exception) {
 				throw IllegalArgumentException("expecting pasted contents to be of type 'Drawing'")
 			}
 		}
@@ -153,7 +169,13 @@ class GraphViewCopyPasteService(
 			disconnectVerticesFromNetsWithoutEdgeView(graphView)
 		}
 
-		Movable.moveBy(copyDrawing.drawables, dislocation)
+		val effDislocation = if (adjustDislocation) {
+			effectiveDislocation(copyDrawing, dislocation, view)
+		} else {
+			dislocation
+		}
+
+		Movable.moveBy(copyDrawing.drawables, effDislocation)
 
 		// First pass: Force possible errors before starting to alter Drawing.
 		// If this produces an exception, the Drawing is still left unchanged.
@@ -174,8 +196,56 @@ class GraphViewCopyPasteService(
 			pastedAnchorComponentId = pastedAnchorComponent.id
 		}
 
-		return copyDrawing.drawables
+		return PasteInfo(copyDrawing.drawables.map { it.id }, effDislocation)
 	}
+
+	private fun snap(p: Point2D, drawing: Drawing<Component>, view: DrawingView<*>): Point2D {
+		if (!drawing.drawables.isEmpty()) {
+			val snapResult = SnapResult()
+			with (drawing.drawables.first().location.add(p)) {
+				view.grid.snap(x, y, snapResult)
+			}
+			return p.add(snapResult.dx, snapResult.dy)
+		}
+		return p
+	}
+
+	/** Place pasted components at mouse location if standard dislocation would place them outside the visible area.*/
+    private fun effectiveDislocation(copyDrawing: Drawing<Component>, dislocation: Point2D, view: DrawingView<*>): Point2D {
+        if (copyDrawing.drawables.isEmpty()) {
+            return dislocation
+        }
+
+        if (!pasteAtMouseLocation && viewContains(view.modelToView(copyDrawing.boundingBox.center.add(dislocation)), view)) {
+            // Dislocated content center is inside visible area
+            LOG.debug("Dislocated content center is inside visible area, use standard dislocation")
+            return dislocation
+        }
+
+        // Dislocated content center would be outside visible area: Check other options
+        if (viewContains(view.canvas.mouseLocation, view)) {
+            // Mouse is inside visible view area: Place at mouse location
+            LOG.debug("Mouse is inside visible view area: Place at mouse location")
+			pasteAtMouseLocation = true
+            return snap(
+				view.viewToModel(view.canvas.mouseLocation).subtract(copyDrawing.boundingBox.center),
+				copyDrawing,
+				view
+			)
+        }
+
+        // Mouse is outside visible view area: Place at center of visible area
+        LOG.debug("Mouse is outside visible view area: Place at center of visible area")
+		pasteAtMouseLocation = true
+        return snap(
+			view.viewToModel(view.center).subtract(copyDrawing.boundingBox.center),
+			copyDrawing,
+			view
+		)
+    }
+
+	private fun viewContains(p: Point2D, view: View<*>): Boolean =
+		p.xInt >= 0 && p.yInt >= 0 && p.xInt < view.width && p.yInt < view.height
 
 	private fun getOrigAnchorComponent(drawing: Drawing<Component>): Component? =
 		origAnchorComponentId?.let { drawing.getWithId(it) }

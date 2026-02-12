@@ -4,6 +4,7 @@ import ch.scorpion.antares.view.AbstractGraphViewEditingTest
 import ch.scorpion.antares.view.gate.LogicGateView
 import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.jabbah.base.event.Modifier
+import ch.scorpion.jabbah.base.geom.Dimension2D
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.edit.command.SourcingCommandManager
@@ -34,10 +35,12 @@ class Bug648 : AbstractGraphViewEditingTest(snapshotSize = 5) {
 
 	@Test
 	fun test() {
-		val inOutView = DigitalCircuitInOutView().apply { location = Point2D(-280.0,-245.0) }
-		val notGateView = LogicGateView.notGateView().apply { location = Point2D(-168.0,-147.0) }
+		canvasBuilder.withDimension(Dimension2D(1000, 1000))
+
+		val inOutView = DigitalCircuitInOutView().apply { location = Point2D(220, 255) }
+		val notGateView = LogicGateView.notGateView().apply { location = Point2D(332, 353) }
 		val andGateView = LogicGateView.andGateView().apply {
-			location = Point2D(-21.0,-35.0)
+			location = Point2D(479, 465)
 			orientation = Direction.SOUTH
 		}
 
@@ -47,10 +50,10 @@ class Bug648 : AbstractGraphViewEditingTest(snapshotSize = 5) {
 		(editor.commandManager as SourcingCommandManager).addSnapshot()
 
 		// Move AND gate
-		driver.mouseMoveTo(-25,-79)
-		driver.pressMouseAt(-25,-79)
-		driver.dragMouseTo(-100,-32)
-		driver.releaseMouseAt(-100,-32)
+		driver.mouseMoveTo(475,421)
+		driver.pressMouseAt(475,421)
+		driver.dragMouseTo(400,468)
+		driver.releaseMouseAt(400,468)
 
 		// Copy/Paste AND gate
 		editor.view.selectionManager.select(andGateView)
@@ -58,74 +61,74 @@ class Bug648 : AbstractGraphViewEditingTest(snapshotSize = 5) {
 		EditModule.drawingAppService.paste(editor.view)
 
 		// Move pasted AND gate
-		driver.mouseMoveTo(-79,2)
-		driver.pressMouseAt(-79,2)
-		driver.dragMouseTo(-37,-21)
-		driver.releaseMouseAt(-37,-21)
+		driver.mouseMoveTo(421,502)
+		driver.pressMouseAt(421,502)
+		driver.dragMouseTo(463,479)
+		driver.releaseMouseAt(463,479)
 
 		// Select both AND gates
-		driver.mouseMoveTo(-169, -94)
-		driver.pressMouseAt(-169, -94)
-		driver.dragMouseTo(32, 48)
-		driver.releaseMouseAt(32, 48)
+		driver.mouseMoveTo(331,406)
+		driver.pressMouseAt(331,406)
+		driver.dragMouseTo(532,548)
+		driver.releaseMouseAt(532,548)
 
 		// Copy selected AND gates
 		EditModule.drawingAppService.copy(editor.view)
 		EditModule.drawingAppService.paste(editor.view)
 
 		// Move selected 2 AND gates
-		driver.mouseMoveTo(-78, 0)
-		driver.pressMouseAt(-78, 0)
-		driver.dragMouseTo(68, -24)
-		driver.releaseMouseAt(68, -24)
+		driver.mouseMoveTo(422,500)
+		driver.pressMouseAt(422,500)
+		driver.dragMouseTo(568,476)
+		driver.releaseMouseAt(568,476)
 
 		// Paste 2 AND gates, resulting in 6 AND gates
 		EditModule.drawingAppService.paste(editor.view)
 
 
 		// Connect DigitalCircuitInOutView with NotGateView
-		driver.mouseMoveTo(-280, -245)
-		driver.pressMouseAt(-280, -245)
-		driver.dragMouseTo(-238, -147)
-		driver.releaseMouseAt(-238, -147)
+		driver.mouseMoveTo(220,255)
+		driver.pressMouseAt(220,255)
+		driver.dragMouseTo(262,353)
+		driver.releaseMouseAt(262,353)
 
 		// Connect NotGateView with AND gate 2
-		driver.mouseMoveTo(-168, -147)
-		driver.pressMouseAt(-168, -147)
-		driver.dragMouseTo(-49, -56)
-		driver.releaseMouseAt(-49, -56)
+		driver.mouseMoveTo(332,353)
+		driver.pressMouseAt(332,353)
+		driver.dragMouseTo(451,444)
+		driver.releaseMouseAt(451,444)
 
 		// Junction from NotGateView net to AND gate 4
-		driver.mouseMoveTo(-49, -147, Modifier.Alt.mask)
-		driver.pressMouseAt(-49, -147, Modifier.Alt.mask)
-		driver.dragMouseTo(119, -56)
-		driver.releaseMouseAt(119, -56)
+		driver.mouseMoveTo(451, 353, Modifier.Alt.mask)
+		driver.pressMouseAt(451, 353, Modifier.Alt.mask)
+		driver.dragMouseTo(619, 444)
+		driver.releaseMouseAt(619, 444)
 
 		// Junction from NotGateView net to AND gate 6
 		// In manual test, this created a distorted EdgeView
 		// Here, the error is created
-		driver.mouseMoveTo(-119, -147, Modifier.Alt.mask)
-		driver.pressMouseAt(-119, -147, Modifier.Alt.mask)
-		driver.dragMouseTo(315, -56)
-		driver.releaseMouseAt(315, -56)
+		driver.mouseMoveTo(381, 353, Modifier.Alt.mask)
+		driver.pressMouseAt(381, 353, Modifier.Alt.mask)
+		driver.dragMouseTo(815, 444)
+		driver.releaseMouseAt(815, 444)
 
 		// Junction from CircuitInOutView net to AND gate 1
-		driver.mouseMoveTo(-259, -245, Modifier.Alt.mask)
-		driver.pressMouseAt(-259, -245, Modifier.Alt.mask)
-		driver.dragMouseTo(-112, -56)
-		driver.releaseMouseAt(-112, -56)
+		driver.mouseMoveTo(241, 255, Modifier.Alt.mask)
+		driver.pressMouseAt(241, 255, Modifier.Alt.mask)
+		driver.dragMouseTo(388, 444)
+		driver.releaseMouseAt(388, 444)
 
 		// Junction from CircuitInOutView net to AND gate 3
-		driver.mouseMoveTo(-112, -245, Modifier.Alt.mask)
-		driver.pressMouseAt(-112, -245, Modifier.Alt.mask)
-		driver.dragMouseTo(56, -56)
-		driver.releaseMouseAt(56, -56)
+		driver.mouseMoveTo(388, 255, Modifier.Alt.mask)
+		driver.pressMouseAt(388, 255, Modifier.Alt.mask)
+		driver.dragMouseTo(556, 444)
+		driver.releaseMouseAt(556, 444)
 
 		// Junction from CircuitInOutView net to AND gate 5
-		driver.mouseMoveTo(56, -245, Modifier.Alt.mask)
-		driver.pressMouseAt(56, -245, Modifier.Alt.mask)
-		driver.dragMouseTo(224, -56)
-		driver.releaseMouseAt(224, -56)
+		driver.mouseMoveTo(556, 255, Modifier.Alt.mask)
+		driver.pressMouseAt(556, 255, Modifier.Alt.mask)
+		driver.dragMouseTo(724, 444)
+		driver.releaseMouseAt(724, 444)
 
 		assertEquals(5, builder.graphView.getNodeViews().size)
 		assertEquals(12, builder.graphView.getEdgeViews().size)

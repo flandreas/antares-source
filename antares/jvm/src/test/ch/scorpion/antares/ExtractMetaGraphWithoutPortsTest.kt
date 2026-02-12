@@ -19,7 +19,9 @@ import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.graph.GraphViewCopyPasteService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import dev.mokkery.answering.calls
+import dev.mokkery.answering.returns
 import dev.mokkery.every
+import dev.mokkery.matcher.any
 import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -63,6 +65,9 @@ class ExtractMetaGraphWithoutPortsTest : AbstractJvmCircuitTest() {
         sourceMetaGraph = libraryBuilder.addGraphView(builder.graphView, library)
 
         every { drawingView.drawing } calls { getCircuitView() }
+        every { drawingView.modelToView(any<Point2D>()) } returns Point2D.ZERO
+        every { drawingView.width } returns 1000
+        every { drawingView.height } returns 1000
     }
 
     @Test

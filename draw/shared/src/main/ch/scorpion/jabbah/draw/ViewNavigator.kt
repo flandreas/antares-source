@@ -11,6 +11,12 @@ import ch.scorpion.jabbah.draw.view.ZoomedPointTranslation
  */
 interface ViewNavigator {
 
+    /**
+     * Sets zoom factor and pan such that model coordinates and view coordinates are the same.
+     * Mainly used for testing.
+     */
+    fun reset()
+
 	/**
 	 * Creates a new [ViewTransformation] for the specified zoom factor, using
 	 * the [View]'s current pan offset.

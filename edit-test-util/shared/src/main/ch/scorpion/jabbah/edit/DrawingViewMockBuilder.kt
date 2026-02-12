@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.edit
 
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.draw.CanvasMockBuilder
 import ch.scorpion.jabbah.draw.Drawable
@@ -7,7 +8,9 @@ import ch.scorpion.jabbah.draw.DrawableContainer
 import ch.scorpion.jabbah.draw.container.UnzoomableContainerIF
 import ch.scorpion.jabbah.draw.drawable.Unzoomable
 import dev.mokkery.MockMode
+import dev.mokkery.answering.calls
 import dev.mokkery.answering.returns
+import dev.mokkery.answering.returnsArgAt
 import dev.mokkery.every
 import dev.mokkery.matcher.any
 import dev.mokkery.mock
@@ -30,6 +33,9 @@ class DrawingViewMockBuilder {
         every { drawingView.ghostContainer } returns ghostContainer
         every { drawingView.animationContainer } returns animationContainer
         every { drawingView.canvas } returns canvasBuilder.build()
+        every { drawingView.center } calls { Point2D(drawingView.width / 2, drawingView.height / 2) }
+        every { drawingView.modelToView(any<Point2D>()) } returnsArgAt 0
+        every { drawingView.viewToModel(any()) } returnsArgAt 0
     }
 
     fun withDrawing(drawing: Drawing<*>): DrawingViewMockBuilder {

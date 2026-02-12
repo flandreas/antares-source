@@ -64,7 +64,7 @@ open class MetaGraphService(
 		val metaGraph = MetaGraph.create(name, type)
 
 		val content = copyPasteService.copy(componentIds, drawingView.drawing)
-		copyPasteService.paste(content, metaGraph.graph.graphView as Drawing<Component>, Point2D.ZERO)
+		copyPasteService.paste(content, metaGraph.graph.graphView as Drawing<Component>, Point2D.ZERO, drawingView)
 
 		return metaGraph
 	}

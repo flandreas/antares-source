@@ -28,6 +28,7 @@ abstract class AbstractGraphViewEditingTest(
 	protected val editor: Editor
 	protected val driver: EditorToolDriver
 	protected val service : GraphViewAppService
+	protected val canvasBuilder: CanvasMockBuilder
 
 	init {
 		GraphViewTestRule.configure()
@@ -39,11 +40,12 @@ abstract class AbstractGraphViewEditingTest(
 
 		BaseModule.properties.set(SourcingCommandManager.PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT, snapshotSize)
 
-		view.canvas = CanvasMockBuilder()
+		canvasBuilder = CanvasMockBuilder()
 			.withDimension(Dimension2D(1000, 1000))
 			.withDevicePixelRatio(1.0)
 			.withView(view)
-			.build()
+
+		view.canvas = canvasBuilder.build()
 
 		setupCircuit()
 

@@ -78,9 +78,7 @@ class PasteCommand(
 ) : AbstractDrawingViewCommand("edit.command.paste", drawingView), Undoable {
 
 	override fun execute() {
-		pasteInfo = PasteInfo(
-			service.paste(clipboardContents, view as DrawingView<Drawing<Component>>, pasteInfo.dislocation).map { it.id },
-			pasteInfo.dislocation)
+		pasteInfo = service.paste(clipboardContents, view as DrawingView<Drawing<Component>>, pasteInfo.dislocation)
 	}
 
 	override fun undo() {
@@ -114,9 +112,7 @@ class DuplicateCommand(
 ) : AbstractDrawingViewCommand("edit.action.duplicate.name", drawingView), Undoable {
 
 	override fun execute() {
-		pasteInfo = PasteInfo(
-			service.paste(contents, view as DrawingView<Drawing<Component>>, pasteInfo.dislocation).map { it.id },
-			pasteInfo.dislocation)
+		pasteInfo = service.paste(contents, view as DrawingView<Drawing<Component>>, pasteInfo.dislocation)
 	}
 
 	override fun undo() {

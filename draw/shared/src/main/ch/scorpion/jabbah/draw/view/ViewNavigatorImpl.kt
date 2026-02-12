@@ -41,6 +41,10 @@ class ViewNavigatorImpl(
 
 	/** ---- [ViewNavigator] interface */
 
+	override fun reset() {
+		view.transformation = createTransformation(ZoomPan())
+	}
+
 	override fun createTransformation(zoomFactor: Double): ViewTransformation =
 		createTransformation(ZoomPan(view, zoomFactor, view.zoomPan.panOrigin, view::devicePixelRatio))
 

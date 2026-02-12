@@ -42,6 +42,13 @@ class ViewImplTest {
 	}
 
 	@Test
+	fun shouldResetNavigation() {
+		view.navigator.reset()
+		assertEquals(Point2D(300, 500), view.modelToView(Point2D(300, 500)))
+		assertEquals(Point2D(123, 456), view.viewToModel(Point2D(123, 456)))
+	}
+
+	@Test
 	fun shouldRepaintCanvasWhenValidatingDrawable() {
 		container.invalidate()
 		container.validate()

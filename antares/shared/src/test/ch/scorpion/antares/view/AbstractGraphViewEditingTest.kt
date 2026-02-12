@@ -26,6 +26,7 @@ abstract class AbstractGraphViewEditingTest(
 	protected val editor: Editor
 	protected val driver: EditorToolDriver
 	protected val service: GraphViewAppService
+	protected val canvasBuilder: CanvasMockBuilder
 
 	init {
 		AntaresTestRule.configure()
@@ -40,7 +41,8 @@ abstract class AbstractGraphViewEditingTest(
 
 		BaseModule.properties.set(SourcingCommandManager.PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT, snapshotSize)
 
-		view.canvas = CanvasMockBuilder().withView(view).build()
+		canvasBuilder = CanvasMockBuilder()
+		view.canvas = canvasBuilder.withView(view).build()
 
 		setupCircuit()
 
