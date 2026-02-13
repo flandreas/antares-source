@@ -58,7 +58,7 @@ class AddressableDisplayPanel(
 	private val addressableListener = object : AddressableListener {
 		override fun dataChanged(event: AddressableDataEvent) {
 			if (event.address != null && event.oldValue != null && event.newValue != null) {
-				if (event.oldValue != event.newValue) {
+				if (event.oldValue != event.newValue && addressableRef.addressable.storesCells) {
 					LOG.debug("Data changed at ${event.address} from ${event.oldValue} to ${event.newValue}")
 					consumeValueChange(AddressableCellChange(event.address, event.oldValue, event.newValue))
 				}
@@ -70,6 +70,9 @@ class AddressableDisplayPanel(
 				return
 			}
 			if (event.oldValue == event.newValue) {
+				return
+			}
+			if (!addressableRef.addressable.storesCells) {
 				return
 			}
 			LOG.debug("Comment changed at ${event.address} from '${event.oldValue}' to '${event.newValue}'")
