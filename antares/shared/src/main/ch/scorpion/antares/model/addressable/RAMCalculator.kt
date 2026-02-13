@@ -104,12 +104,14 @@ class RAMCalculator : VerticeCalculator<RAM> {
 	    } else if (data.changedPort === ram.getChipSelectInput()) {
 		    readOrWrite(ram, signalHandler)
 	    } else if (data.changedPort === ram.getWriteInput()) {
-		    if (ram.isRead) {
-			    readOrWrite(ram, signalHandler)
-		    } else {
-			    undefinedOutput(ram, signalHandler)
-		    }
-	    } else if (data.changedPort === null) {
+            if (ram.isRead) {
+                readOrWrite(ram, signalHandler)
+            } else {
+                undefinedOutput(ram, signalHandler)
+            }
+        } else if (ram.separateDataPorts && data.changedPort === ram.getDataInput()) {
+            readOrWrite(ram, signalHandler)
+        } else if (data.changedPort === null) {
 	    	if (ram.isRead) {
 	    		read(ram, signalHandler)
 		    }
@@ -140,14 +142,17 @@ class RAMCalculator : VerticeCalculator<RAM> {
 
     private fun write(ram: RAM, signalHandler: SignalHandler) {
         val address = ram.getAddressInput().getIncomingSignal()
-        val data = ram.getDataPort().getIncomingSignal()
+        val data = ram.getEffectiveDataInput().getIncomingSignal()
 
 	    val addressInt = address!!.toInt()
 	    val dataInt = data!!.toInt()
 
 	    if (addressInt != null && dataInt != null) {
-		    LOG.trace("Writing into RAM: address=$addressInt, value=$dataInt")
+            LOG.trace("Writing into RAM: address=$addressInt, value=$dataInt")
 		    ram.write(addressInt, dataInt.toULong(), signalHandler)
+            if (ram.separateDataPorts) {
+                ram.getDataPort().setOutgoingSignalBuffered(data, signalHandler)
+            }
 	    }
     }
 }

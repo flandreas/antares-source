@@ -56,15 +56,19 @@ abstract class AbstractAddressable<T : AddressableVertice>(
 		set(value) {
 			if (value != dataWidth) {
 				if (!isReading && value.width < dataWidth.width) {
-					Companion.validateDataBitWidth(memory, value)
+					validateDataBitWidth(memory, value)
 				}
 
 				val oldValue = dataWidth
-				getDataPort().bitWidth = value
+				updateDataPortBitWidth(value)
 				stateChanged()
 				notifyBitWidthChanged(false, oldValue, value)
 			}
 		}
+
+	protected open fun updateDataPortBitWidth(bitWidth: BitWidth) {
+		getDataPort().bitWidth = bitWidth
+	}
 
 	override var dataSource: String? = null
 

@@ -14,6 +14,7 @@ import ch.scorpion.antares.model.signal.DigitalSignalFactory
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.model.text.Translation
+import ch.scorpion.jabbah.edit.model.text.description.Description
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorData
@@ -34,7 +35,8 @@ import ch.scorpion.jabbah.io.StringStorable
  * in edit mode.
  */
 class RAM(
-	hasClock: Boolean = true
+	hasClock: Boolean = true,
+	separateDataPorts: Boolean = false
 ) : AbstractAddressable<RAM>(RAMCalculator()), NonVolatile {
 
 	companion object {
@@ -46,10 +48,13 @@ class RAM(
 		private const val WRITE_PORT_NAME = "WR"
 		private const val CLEAR_PORT_NAME = "CLR"
 		private const val CLOCK_PORT_NAME = "CLK"
+		private const val DATA_INPUT_PORT_NAME = "DI"
 
 		private val ADDRESS_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.ram.addressPort.desc"))
 		private val CHIP_SELECT_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.ram.chipSelectPort.desc"))
 		private val DATA_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.ram.dataPort.desc"))
+		private val DATA_INPUT_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.ram.dataInputPort.desc"))
+		private val DATA_OUTPUT_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.ram.dataOutputPort.desc"))
 
 		private val WRITE_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.ram.writePort.desc"))
 		private val CLEAR_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.ram.clearPort.desc"))
@@ -88,6 +93,27 @@ class RAM(
 	 */
 	var isAdjustableBitWidth: Boolean = true
 
+	/**
+	 * If `true`, this [RAM] has two separate uni-directional ports for data input and output.
+	 * If `false`, it has one bidirectional data input/output port.
+	 */
+	var separateDataPorts: Boolean = false
+		set(value) {
+			if (value != field) {
+				field = value
+				if (value) {
+					val dataInputPort = DigitalPortImpl(portType = PortType.INPUT, bitWidth = dataWidth, name = DATA_INPUT_PORT_NAME, description = DATA_INPUT_PORT_DESC)
+					addPort(dataInputPort)
+					getPort<DigitalSignal>(DATA_PORT_NAME).portType = PortType.OUTPUT
+					getPort<DigitalSignal>(DATA_PORT_NAME).description = Description(DATA_OUTPUT_PORT_DESC)
+				} else {
+					removePort(getPort<DigitalSignal>(DATA_INPUT_PORT_NAME))
+					getPort<DigitalSignal>(DATA_PORT_NAME).portType = PortType.INOUT
+					getPort<DigitalSignal>(DATA_PORT_NAME).description = Description(DATA_PORT_DESC)
+				}
+			}
+		}
+
 	val isWrite: Boolean get() = getWriteInput().getIncomingSignal() == DigitalSignalFactory.of(true)
 	val isRead: Boolean get() = getWriteInput().getIncomingSignal() == DigitalSignalFactory.of(false)
 	val isChipSelected: Boolean get() = getChipSelectInput().getIncomingSignal() != DigitalSignalFactory.of(true)
@@ -102,6 +128,7 @@ class RAM(
 		addPort(DigitalPortImpl(portType = PortType.INOUT, name = DATA_PORT_NAME, bitWidth = BitWidth.BW_8, description = DATA_PORT_DESC))
 
 		this.hasClock = hasClock
+		this.separateDataPorts = separateDataPorts
 	}
 
 	/** ---- [Addressable] interface */
@@ -116,6 +143,13 @@ class RAM(
 
 	override fun disassemblyAt(address: Int): String = ""
 
+	override fun updateDataPortBitWidth(bitWidth: BitWidth) {
+		super.updateDataPortBitWidth(bitWidth)
+		if (separateDataPorts) {
+			getDataInput()!!.bitWidth = bitWidth
+		}
+	}
+
 	/** ---- [Storable] */
 
 	override fun write(writer: StoreWriter) {
@@ -126,6 +160,9 @@ class RAM(
 		if (nonVolatile) {
 			writer.writeBoolean("nonVolatile", nonVolatile)
 		}
+		if (separateDataPorts) {
+			writer.writeBoolean("separateDataPorts", separateDataPorts)
+		}
 	}
 
 	override fun read(reader: StoreReader) {
@@ -135,6 +172,9 @@ class RAM(
 		hasClock = reader.readBoolean("clock")
 		if (reader.hasAttribute("nonVolatile")) {
 			nonVolatile = reader.readBoolean("nonVolatile")
+		}
+		if (reader.hasAttribute("separateDataPorts")) {
+			separateDataPorts = reader.readBoolean("separateDataPorts")
 		}
 	}
 
@@ -198,6 +238,21 @@ class RAM(
 			return null
 		}
 		return getPort<DigitalSignal>(CLOCK_PORT_NAME) as DigitalPort
+	}
+
+	fun getDataInput(): DigitalPort? {
+		if (!separateDataPorts) {
+			return null
+		}
+		return getPort<DigitalSignal>(DATA_INPUT_PORT_NAME) as DigitalPort
+	}
+
+	fun getEffectiveDataInput(): DigitalPort {
+		return if (separateDataPorts) {
+			getPort<DigitalSignal>(DATA_INPUT_PORT_NAME) as DigitalPort
+		} else {
+			getPort<DigitalSignal>(DATA_PORT_NAME) as DigitalPort
+		}
 	}
 
 	fun read(address: Int): ULong = memory.read(address)

@@ -53,6 +53,15 @@ class RAMView(
 			addPortView(clockPV)
 		}
 
+		if (model.separateDataPorts) {
+			val dataInputPV = DigitalPortView(
+				styleProvider = styleProvider,
+				port = model.getDataInput()!!,
+				direction = Direction.WEST)
+			dataInputPV.setLocation(dataInputPV.length, 0)
+			addPortView(dataInputPV)
+		}
+
 		val csPV = DigitalPortView(
 			styleProvider = styleProvider,
 			port = model.getChipSelectInput(),
@@ -109,6 +118,20 @@ class RAMView(
 			model.nonVolatile = value
 		}
 
+	@Suppress("unused")
+	var separateDataPorts: Boolean
+		get() = model.separateDataPorts
+		set(value) {
+			if (value != model.separateDataPorts) {
+				invalidate()
+				model.separateDataPorts = value
+				modelExchanged(model)
+				updateGeometry()
+				invalidate()
+				validate()
+			}
+		}
+
 	/** ---- [ControlViewSource] */
 
 	override val controlId: String
@@ -132,6 +155,10 @@ class RAMView(
 	override fun updatePortViewPositions() {
 		if (model.hasClock) {
 			getPortView(model.getClockInput()!!)!!.setLocation(x + CLOCK_PORT_X_FACTOR * Look.GRID.toDouble(), height / 2)
+		}
+		if (model.separateDataPorts) {
+			val pv = getPortView(model.getDataInput()!!)!!
+			pv.setLocation(pv.unconnectedLength, 4 * Look.GRID)
 		}
 		getPortView(model.getChipSelectInput())!!.setLocation(x + CS_PORT_X_FACTOR * Look.GRID.toDouble(), height / 2)
 		getPortView(model.getWriteInput())!!.setLocation(x + WRITE_PORT_X_FACTOR * Look.GRID.toDouble(), height / 2)
