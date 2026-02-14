@@ -212,7 +212,7 @@ class RAM(
 	/** ---- [CalculatingVertice] interface */
 
 	override fun flush(signalHandler: SignalHandler, data: ActorData) {
-		if (isRead) {
+		if (isRead || separateDataPorts) {
 			super.flush(signalHandler, data)
 		}
 	}
