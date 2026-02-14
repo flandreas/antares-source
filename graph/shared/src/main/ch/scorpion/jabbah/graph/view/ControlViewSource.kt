@@ -63,7 +63,14 @@ interface ControlViewSource<T : Vertice> : VerticeView<T> {
 	 * for [ControlView]s created by this [ControlViewSource].
 	 */
 	fun postControlViewSourceChangeEvent(eventBus: EventBus = BaseModule.eventBus) {
-		eventBus.post(ControlViewSourceEvent(ControlViewSourceEvent.Type.CHANGE, this as ControlViewSource<Vertice>))
+		if (isNotReading) {
+			eventBus.post(
+				ControlViewSourceEvent(
+					ControlViewSourceEvent.Type.CHANGE,
+					this as ControlViewSource<Vertice>
+				)
+			)
+		}
 	}
 }
 

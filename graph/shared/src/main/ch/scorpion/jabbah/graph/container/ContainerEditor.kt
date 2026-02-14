@@ -18,6 +18,7 @@ import ch.scorpion.jabbah.edit.editor.EditorImpl
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.vertice.DeepVerticeLink
 import ch.scorpion.jabbah.graph.ui.GraphFrameController
+import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.ControlViewSourceEvent
 import ch.scorpion.jabbah.graph.view.editor.GraphPortViewEvent
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -53,14 +54,16 @@ open class ContainerEditor(
 	private val controlViewSourceHandler: EventHandler<ControlViewSourceEvent> = {
 		when (it.type) {
 			ControlViewSourceEvent.Type.CHANGE -> {
-				val cvc = getControlViewComponent(it.source.model.id)
-				if (cvc != null && it.source !== cvc.controlView) {
-					LOG.trace("ContainerEditor: handling properties of ControlViewSource changed")
-					cvc.controlView.sourcePropertiesChanged(it.source)
+				if (mainDrawingView.drawing.contains(it.source)) {
+					val cvc = getControlViewComponent(it.source)
+					if (cvc != null && it.source !== cvc.controlView) {
+						LOG.trace("ContainerEditor: handling properties of ControlViewSource changed")
+						cvc.controlView.sourcePropertiesChanged(it.source)
+					}
 				}
 			}
 			ControlViewSourceEvent.Type.REMOVE -> {
-				getControlViewComponent(it.source.model.id)?.let { c -> getContainerDrawing().remove(c) }
+				getControlViewComponent(it.source)?.let { c -> getContainerDrawing().remove(c) }
 			}
 			ControlViewSourceEvent.Type.ADD -> {
 				// nothing to do for ADD
@@ -103,9 +106,8 @@ open class ContainerEditor(
 		return drawing as ContainerDrawing
 	}
 
-	private fun getControlViewComponent(verticeId: Int): ControlViewComponent? {
-		return getContainerDrawing().getControlViewComponent(DeepVerticeLink(verticeId))
-	}
+	private fun getControlViewComponent(controlViewSource: ControlViewSource<*>): ControlViewComponent? =
+		getContainerDrawing().getControlViewComponent(DeepVerticeLink(controlViewSource.model.id))
 
 	/** Removes the [PortViewComponent] for the [Port] with the specified name from the [ContainerDrawing].*/
 	private fun removePortViewComponent(name: String) {
