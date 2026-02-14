@@ -1,7 +1,7 @@
 package ch.scorpion.antares.view.signal
 
-import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.*
+import ch.scorpion.antares.view.inout.DigitalCircuitInOutView
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Direction
@@ -95,6 +95,8 @@ class DigitalSignalSourceControlView<T : DigitalSignalSource>(
 	override fun sourcePropertiesChanged(source: ControlViewSource<T>) {
 		if (source is AbstractNumberViewComponent<*>) {
 			copyControlViewProperties(source, this)
+		} else if (source is DigitalCircuitInOutView) {
+			copyControlViewProperties(source, this)
 		}
 	}
 
@@ -116,13 +118,20 @@ class DigitalSignalSourceControlView<T : DigitalSignalSource>(
 		dest.signalRepresentation = source.signalRepresentation
 	}
 
+	private fun copyControlViewProperties(source: DigitalCircuitInOutView, dest: DigitalSignalSourceControlView<*>) {
+		dest.bitWidth = source.bitWidth
+		dest.signalRepresentation = source.signalRepresentation
+	}
+
     /** ---- [AbstractNumberViewComponent] */
 
     override var bitWidth: BitWidth
         get() = model.bitWidth
         set(value) {
-            model.bitWidth = value
-            updateView()
+			clear()
+			model.bitWidth = value
+			createInnerView()
+			updateView()
         }
 
     override val signal: DigitalSignal get() = model.signal!!

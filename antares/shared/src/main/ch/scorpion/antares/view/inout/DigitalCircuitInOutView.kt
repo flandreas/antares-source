@@ -57,6 +57,7 @@ class DigitalCircuitInOutView(
 		set(value) {
 			model.signalRepresentation = value
 			updateView()
+			postControlViewSourceChangeEvent(eventBus)
 		}
 
 	/**
@@ -86,9 +87,12 @@ class DigitalCircuitInOutView(
 	var bitWidth: BitWidth
 		get() = model.bitWidth
 		set(value) {
-			invalidate()
-			model.bitWidth = value
-			updateView()
+			if (value != model.bitWidth) {
+				invalidate()
+				model.bitWidth = value
+				updateView()
+				postControlViewSourceChangeEvent(eventBus)
+			}
 		}
 
 	@Suppress("unused") // Reflection
