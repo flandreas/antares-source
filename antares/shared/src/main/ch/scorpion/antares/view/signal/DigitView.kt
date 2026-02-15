@@ -88,16 +88,25 @@ class DigitView(
      * @param textColor enforces the text color from the outside context in special situations,
      * else uses the default coloring depending on the signal
      */
-    fun draw(context: DrawContext, isOn: Boolean, inactive: Boolean, textColor: Color? = null, focusColor: Color? = null) {
+    fun draw(
+        context: DrawContext,
+        isOn: Boolean,
+        inactive: Boolean,
+        textColor: Color? = null,
+        focusColor: Color? = null,
+        enforceSingleBitColor: Boolean = false
+    ) {
         val oldColor = context.g.color
 		val oldStroke = context.g.stroke
+
+        val signalColor = if (enforceSingleBitColor) signalDigit.bits[0].color else signalDigit.color
 
         if (isOn) {
 	        if (drawBox) {
 		        context.g.color = if (inactive) {
 			        transparent.applyTo(disabledColor.foregroundColor)
 		        } else {
-			        transparent.applyTo(signalDigit.color.foregroundColor)
+			        transparent.applyTo(signalColor.foregroundColor)
 		        }
 		        context.g.fillRect(xInt + 1, yInt, WIDTH - 2, HEIGHT - 1)
 	        }
@@ -111,7 +120,7 @@ class DigitView(
 
         label.color = textColor
             ?: transparent.applyTo(when {
-                isOn -> signalDigit.color.textColor
+                isOn -> signalColor.textColor
                 context.useContextColors -> context.color!!.textColor
                 else -> oldColor
             })

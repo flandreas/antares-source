@@ -90,7 +90,7 @@ class NumberView(
 	fun draw(context: DrawContext, isOn: Boolean, inactive: Boolean = false, textColor: Color? = null, focusColor: Color? = null) {
 		context.translated(location) {
 			for (digitView in digitViews) {
-				digitView.draw(it, isOn, inactive, textColor, focusColor)
+				digitView.draw(it, isOn, inactive, textColor, focusColor, enforceSingleBitColor = bitWidth.width == 1)
 			}
 			drawByteIndexLabels(it)
 
