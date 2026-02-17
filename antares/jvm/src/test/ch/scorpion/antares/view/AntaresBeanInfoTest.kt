@@ -1,11 +1,12 @@
 package ch.scorpion.antares.view
 
-import ch.scorpion.antares.AntaresTestRule
+import ch.scorpion.antares.AntaresJvmTestRule
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.view.addressable.RAMView
 import ch.scorpion.antares.view.addressable.RAMViewBeanInfo
 import ch.scorpion.antares.view.addressable.ROMView
 import ch.scorpion.antares.view.addressable.ROMViewBeanInfo
+import ch.scorpion.antares.view.app.AntaresGraphViewService
 import ch.scorpion.antares.view.arithmetic.RandomView
 import ch.scorpion.antares.view.arithmetic.RandomViewBeanInfo
 import ch.scorpion.antares.view.gate.*
@@ -16,8 +17,9 @@ import ch.scorpion.antares.view.net.*
 import ch.scorpion.antares.view.net.tunnel.TunnelView
 import ch.scorpion.antares.view.net.tunnel.TunnelViewBeanInfo
 import ch.scorpion.antares.view.output.*
-import ch.scorpion.jabbah.base.module.BaseModuleJvm
+import ch.scorpion.jabbah.base.collection.toImmutableList
 import ch.scorpion.jabbah.edit.*
+import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.edit.properties.AbstractBeanInfo
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.graph.view.GraphElementView
@@ -37,18 +39,22 @@ import kotlin.test.Ignore
 
 class AntaresBeanInfoTest {
 
-	private val graph = DigitalGraph()
+	private val graph: DigitalGraph
 	private val drawing = mock<GraphView>(MockMode.autofill)
 	private val commandManager = mock<CommandManager>(MockMode.autofill)
-	private val view = mock<DrawingView<Drawing<Component>>>(MockMode.autofill)
+	private val viewBuilder: DrawingViewMockBuilder
 	private val editor = mock<Editor>(MockMode.autofill)
 
 	init {
-		BaseModuleJvm.require()
-		AntaresTestRule.configure()
+		AntaresJvmTestRule.configure()
+		EditModule.drawingAppService = AntaresGraphViewService()
+
+		graph = DigitalGraph()
+		viewBuilder = DrawingViewMockBuilder().withDrawing(drawing)
 
 		every { drawing.graph } returns graph
-		every { editor.view } returns view
+		every { drawing.getDrawables(any()) } returns emptyList<GraphElementView<*>>().toImmutableList()
+		every { editor.view } returns viewBuilder.build()
 		every { editor.active } returns true
 		every { editor.drawing } returns drawing as Drawing<Component>
 		every { editor.commandManager } returns commandManager

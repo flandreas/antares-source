@@ -42,7 +42,12 @@ class TunnelNameProperty(
 	override fun createCommand(newValue: TunnelName?): AbstractPropertyCommand<TunnelName> {
 		val oldValue = getOldValue()?.name
 		val hasOther = editor!!.drawing
-			.getDrawables { it is TunnelView && StringUtils.isNotEmpty(it.name) && StringUtils.isNotEmpty(oldValue) && it.name == oldValue }
+			.getDrawables {
+				it is TunnelView &&
+				StringUtils.isNotEmpty(it.name) &&
+				StringUtils.isNotEmpty(oldValue) &&
+				it.name == oldValue
+			}
 			.count() > 1
 
 		return if (hasOther && JOptionPane.showConfirmDialog(

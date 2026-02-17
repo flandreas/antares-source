@@ -2,10 +2,10 @@ package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.jabbah.base.event.*
-import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.DrawingViewMockBuilder
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
-import ch.scorpion.jabbah.graph.view.GraphView
 import dev.mokkery.MockMode
 import dev.mokkery.answering.returns
 import dev.mokkery.every
@@ -130,18 +130,10 @@ class SwitchViewTest {
 	private fun contextFor(mouseEvent: MouseEvent? = null, keyEvent: KeyEvent? = null): ActorInteractionContext {
 		return ActorInteractionContext(
 			signalHandler = mock(MockMode.autofill),
-			view = mockDrawingView(),
+			view = DrawingViewMockBuilder().build<Component>(),
 			mouseEvent = mouseEvent,
 			keyEvent = keyEvent,
 			x = 0.0,
 			y = 0.0)
-	}
-
-	private fun mockDrawingView(): DrawingView<*> {
-		val drawingView = mock<DrawingView<*>>(
-			MockMode.autofill
-		)
-		every { drawingView.drawing } returns mock<GraphView>(MockMode.autofill)
-		return drawingView
 	}
 }

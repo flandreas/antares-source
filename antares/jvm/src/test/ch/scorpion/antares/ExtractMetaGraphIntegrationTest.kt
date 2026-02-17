@@ -9,7 +9,9 @@ import ch.scorpion.antares.view.output.LEDView
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.getDrawableInstances
+import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.DrawingViewMockBuilder
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.graph.MetaGraph
 import ch.scorpion.jabbah.graph.container.ContainerDrawingLayouter
@@ -19,11 +21,6 @@ import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
 import ch.scorpion.jabbah.graph.view.graph.GraphViewCopyPasteService
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import dev.mokkery.answering.calls
-import dev.mokkery.answering.returns
-import dev.mokkery.every
-import dev.mokkery.matcher.any
-import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -35,7 +32,9 @@ class ExtractMetaGraphIntegrationTest : AbstractJvmCircuitTest()  {
 	private lateinit var ledView2: LEDView
 	private lateinit var edgeView: EdgeView<DigitalSignal>
 
-	private val drawingView = mock<DrawingView<GraphView>>()
+	private val drawingViewBuilder = DrawingViewMockBuilder()
+		.withSize(1000, 1000)
+		.withDrawingAccessor(::getCircuitView)
 
 	private val library get() = LibraryModule.libraryHolder.library
 
@@ -58,11 +57,6 @@ class ExtractMetaGraphIntegrationTest : AbstractJvmCircuitTest()  {
 
 		val libraryBuilder = TestLibraryBuilder()
 		sourceMetaGraph = libraryBuilder.addGraphView(builder.graphView, library)
-
-		every { drawingView.drawing } calls { getCircuitView() }
-		every { drawingView.modelToView(any<Point2D>()) } returns Point2D.ZERO
-		every { drawingView.width } returns 1000
-		every { drawingView.height } returns 1000
 	}
 
 	@Test
@@ -76,7 +70,12 @@ class ExtractMetaGraphIntegrationTest : AbstractJvmCircuitTest()  {
 	private fun extract(): MetaGraph {
 		val componentIds = listOf(switchView.id, edgeView.id, ledView.id)
 		val uuid = GraphViewModule.metaGraphService.extractMetaGraph(
-			TranslatableText("Extract"), AntaresGraphTypes.Digital, drawingView, componentIds, library)
+			TranslatableText("Extract"),
+			AntaresGraphTypes.Digital,
+			drawingViewBuilder.build<Component>() as DrawingView<GraphView>,
+			componentIds,
+			library
+		)
 		return library.getMetaGraph(uuid)
 	}
 

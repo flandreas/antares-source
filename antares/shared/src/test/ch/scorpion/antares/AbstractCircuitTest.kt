@@ -9,11 +9,11 @@ import ch.scorpion.jabbah.base.time.ControlledTimeService
 import ch.scorpion.jabbah.base.time.ControlledTimer
 import ch.scorpion.jabbah.base.time.SystemSpeed
 import ch.scorpion.jabbah.base.time.Timer
-import ch.scorpion.jabbah.draw.Drawable
-import ch.scorpion.jabbah.draw.DrawableContainer
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.DrawingViewMockBuilder
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.execution.actor.ActorListener
 import ch.scorpion.jabbah.execution.issue.IssueCollector
@@ -29,7 +29,6 @@ import ch.scorpion.jabbah.graph.ui.GraphViewUI
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.GraphViewExecutionController
 import dev.mokkery.MockMode
-import dev.mokkery.answering.calls
 import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.mock
@@ -66,11 +65,9 @@ abstract class AbstractCircuitTest {
 		scheduler = SchedulerImpl(currentSystemSpeedCategory, timeService, eventBus, NoiseGeneratorHolder(NoNoiseGenerator()), task = task)
 		CurrentUndefinedGateInputBehavior.value = UndefinedGateInputBehavior.ReadAs0
 
-		val drawingView = mock<DrawingView<GraphView>>(MockMode.autofill)
-		every { drawingView.drawing } calls { getCircuitView() }
-		every { drawingView.animationContainer } returns mock<DrawableContainer<Drawable>>(MockMode.autofill)
+		val drawingViewBuilder = DrawingViewMockBuilder().withDrawingAccessor(::getCircuitView)
 		val graphViewUI = mock<GraphViewUI>(MockMode.autofill)
-		every { graphViewUI.drawingView } returns drawingView
+		every { graphViewUI.drawingView } returns drawingViewBuilder.build<Component>() as DrawingView<GraphView>
 
 		executionController = GraphViewExecutionController(
 			graphViewUI = graphViewUI,

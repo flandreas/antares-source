@@ -1,16 +1,14 @@
 package ch.scorpion.jabbah.edit.app
 
 import ch.scorpion.jabbah.base.Action
-import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.event.VetoException
+import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.view.ContentViewManager
 import ch.scorpion.jabbah.draw.view.DrawViewModule
 import ch.scorpion.jabbah.edit.*
 import ch.scorpion.jabbah.edit.command.AbstractDrawingViewCommand
 import ch.scorpion.jabbah.edit.model.ComponentMessage
-import ch.scorpion.jabbah.edit.model.ComponentMessageType
 import ch.scorpion.jabbah.edit.model.DrawingService
 import ch.scorpion.jabbah.edit.module.EditModule
 

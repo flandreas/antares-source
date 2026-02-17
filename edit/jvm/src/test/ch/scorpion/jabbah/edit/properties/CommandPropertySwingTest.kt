@@ -75,7 +75,7 @@ class CommandPropertySwingTest {
 		try {
 			property.value = StorableString("throwException")
 			property.writeToBeans()
-		} catch (e: Throwable) {
+		} catch (_: Throwable) {
 			// This emulates the PropertyPanel catching and displaying the exception
 		}
 
@@ -87,7 +87,7 @@ class CommandPropertySwingTest {
 
 	private fun createEditor(): Editor {
 		val editor =  mock<Editor>(MockMode.autofill)
-		val view =  mock<DrawingView<Drawing<Component>>>(MockMode.autofill)
+		val view = DrawingViewMockBuilder().build<Component>()
 		every { editor.commandManager } returns cmdManager
 		every { editor.view } returns view
 		return editor

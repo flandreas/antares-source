@@ -43,6 +43,11 @@ class DrawingViewMockBuilder {
         return this
     }
 
+    fun withDrawingAccessor(accessor: () -> Drawing<*>): DrawingViewMockBuilder {
+        every { drawingView.drawing } calls { accessor() }
+        return this
+    }
+
     fun withSelection(vararg components: Component): DrawingViewMockBuilder {
         every { selectionManager.selection } returns components.toList()
         return this
@@ -56,6 +61,11 @@ class DrawingViewMockBuilder {
 
     fun withModelToView(rectangularShape: RectangularShape): DrawingViewMockBuilder {
         every { drawingView.modelToView(any<RectangularShape>()) } returns rectangularShape
+        return this
+    }
+
+    fun withSelectionManager(sm: SelectionManager): DrawingViewMockBuilder {
+        every { drawingView.selectionManager } returns sm
         return this
     }
 

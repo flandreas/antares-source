@@ -9,13 +9,12 @@ import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.app.AntaresGraphViewService
 import ch.scorpion.antares.view.input.SwitchView
 import ch.scorpion.antares.view.output.LEDView
+import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.DrawingViewMockBuilder
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
-import dev.mokkery.answering.calls
-import dev.mokkery.every
-import dev.mokkery.mock
 import kotlin.test.*
 
 /**
@@ -34,14 +33,14 @@ class ChangeInputCountIntegrationTest : AbstractCircuitTest() {
 	private lateinit var evIn2: EdgeView<DigitalSignal>
 	private lateinit var evIn3: EdgeView<DigitalSignal>
 	private lateinit var evOut: EdgeView<DigitalSignal>
-	private val drawingView = mock<DrawingView<GraphView>>()
+	private val drawingViewBuilder = DrawingViewMockBuilder().withDrawingAccessor(::getCircuitView)
 
 	override fun getCircuitView(): GraphView = builder.graphView
 
+	private val drawingView: DrawingView<GraphView> get() = drawingViewBuilder.build<Component>() as DrawingView<GraphView>
+
 	@BeforeTest
 	fun setupCircuit() {
-		every { drawingView.drawing } calls { getCircuitView() }
-
 		val model = NonUnaryLogicGate(And, PortCount.THREE)
 		builder = TestCircuitBuilder("test", styleProvider, eventBus)
 		andGateView = builder.addVerticeView(LogicGateView(gate = model))

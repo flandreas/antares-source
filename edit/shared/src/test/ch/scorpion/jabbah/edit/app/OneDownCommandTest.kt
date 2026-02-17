@@ -1,22 +1,20 @@
 package ch.scorpion.jabbah.edit.app
 
 import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.DrawingViewMockBuilder
 import ch.scorpion.jabbah.edit.EditTestRule
 import ch.scorpion.jabbah.edit.model.DrawingImpl
 import ch.scorpion.jabbah.edit.model.rectangle.RectangleComponent
 import ch.scorpion.jabbah.io.StorableCloner
 import dev.mokkery.answering.returns
 import dev.mokkery.every
-import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class OneDownCommandTest {
 
     private val drawing = DrawingImpl<Component>()
-	private val drawingView = mock<DrawingView<Drawing<Component>>>()
+    private val drawingView = DrawingViewMockBuilder().withDrawing(drawing).build<Component>()
     private val c1: RectangleComponent
     private val c2: RectangleComponent
     private val c3: RectangleComponent
@@ -29,7 +27,6 @@ class OneDownCommandTest {
         c3 = RectangleComponent()
         c4 = RectangleComponent()
 
-        every { drawingView.drawing } returns drawing
 		drawing.add(c4).add(c3).add(c2).add(c1)
 	}
 

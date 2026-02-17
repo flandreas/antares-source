@@ -3,8 +3,7 @@ package ch.scorpion.jabbah.graph.view.net
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Drawing
-import ch.scorpion.jabbah.edit.DrawingView
+import ch.scorpion.jabbah.edit.DrawingViewMockBuilder
 import ch.scorpion.jabbah.edit.SelectionManager
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.view.GraphViewBuilder
@@ -13,8 +12,6 @@ import ch.scorpion.jabbah.graph.view.NetView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.TestVerticeView
 import dev.mokkery.MockMode
-import dev.mokkery.answering.returns
-import dev.mokkery.every
 import dev.mokkery.mock
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -25,18 +22,18 @@ class UndoDeleteNetViewsTest {
 
 	private lateinit var builder: GraphViewBuilder<Boolean>
 
-	private val drawingView = mock<DrawingView<Drawing<Component>>>()
-
 	private val selectionManager = mock<SelectionManager>(MockMode.autofill)
+
+	private val drawingView = DrawingViewMockBuilder()
+		.withSelectionManager(selectionManager)
+		.withDrawingAccessor { builder.build() }
+		.build<Component>()
 
 	@BeforeTest
 	fun setup(){
 		GraphViewTestRule.configure()
 		builder = GraphViewBuilder()
 		EditModule.commandManager.bindDataHolder(builder)
-
-		every { drawingView.drawing } returns builder.graphView as Drawing<Component>
-		every { drawingView.selectionManager } returns selectionManager
 	}
 
 	@Test
