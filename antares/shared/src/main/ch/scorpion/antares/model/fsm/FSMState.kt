@@ -168,7 +168,7 @@ class FSMState(
                 context.g.fillOval(x + FINAL_INSET, y + FINAL_INSET, width - 2 * FINAL_INSET, height - 2 * FINAL_INSET)
             }
         }
-        context.g.color = color.textColor
+        context.g.color = textColor
         context.translated(location) {
             outputLabel.draw(context)
             stateNumberLabel.draw(context)
@@ -188,9 +188,9 @@ class FSMState(
     private fun updateVisualisation() {
         invalidate()
         val textColor = if (stateType == FSMStateType.Normal) {
-            color.textColor
+            textColor
         } else {
-            color.backgroundColor
+            backgroundColor
         }
         label.color = textColor
         outputLabel.color = textColor

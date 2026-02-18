@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.draw.style
 
 import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.resettableLazy
 import ch.scorpion.jabbah.draw.graphics.*
 
 /**
@@ -86,6 +87,7 @@ class StylableImpl(
                 invalidator?.invoke()
                 field = value
                 invalidator?.invoke()
+                _color.reset()
             }
         }
 
@@ -116,6 +118,7 @@ class StylableImpl(
                 invalidator?.invoke()
 	            customColorIdentity = value?.identity
                 invalidator?.invoke()
+                _color.reset()
             }
         }
 
@@ -148,12 +151,9 @@ class StylableImpl(
 			}
 		}
 
-    /** TODO This method can be used very often while drawing. Find an implementation that performs better.*/
-    override val color: CompositeColor
-        get() = CompositeColor(
-            foregroundColor = foregroundColor,
-            backgroundColor = backgroundColor,
-            textColor =  textColor)
+    private val _color = resettableLazy { CompositeColor(foregroundColor, backgroundColor, textColor) }
+
+    override val color: CompositeColor get() = _color.value
 
     override val foregroundColor: Color get() = customColor?.color?.foregroundColor ?: style.color.foregroundColor
 

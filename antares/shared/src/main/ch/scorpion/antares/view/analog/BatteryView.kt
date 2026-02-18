@@ -54,7 +54,7 @@ class BatteryView(
 		context.g.drawLine(x, 0.0, x + SIZE / 2, 0.0)
 
 		if (!context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-			context.g.color = context.chooseForeground(color.foregroundColor)
+			context.g.color = context.chooseForeground(foregroundColor)
 		}
 		context.g.stroke = stroke
 		context.g.drawLine(x + SIZE / 2, y, x + SIZE / 2, y + SIZE)
@@ -69,7 +69,7 @@ class BatteryView(
 		context.g.stroke = styleProvider.getStyle(GraphStyleType.EDGE).stroke
 		context.g.drawLine(x + SIZE, 0.0, x + SIZE / 2 + w(1), 0.0)
 		if (!context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-			context.g.color = context.chooseForeground(color.foregroundColor)
+			context.g.color = context.chooseForeground(foregroundColor)
 		}
 		context.g.stroke = MINUS_STROKE
 		context.g.drawLine(x + SIZE / 2 + w(1), y + h(1), x + SIZE / 2 + w(1), y + SIZE - h(1))

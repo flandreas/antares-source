@@ -110,13 +110,13 @@ class PowerOnResetView(
 	}
 
 	private fun drawBorder(context: DrawContext) {
-		context.g.color = transparent.applyTo(context.choose(color).foregroundColor)
+		context.g.color = transparent.applyTo(context.chooseForeground(foregroundColor))
 		context.g.stroke = stroke
 		context.g.draw(bounds)
 	}
 
 	private fun drawBackground(context: DrawContext) {
-		context.g.color = transparent.applyTo(context.choose(color).backgroundColor)
+		context.g.color = transparent.applyTo(context.chooseBackground(backgroundColor))
 		context.g.fill(bounds)
 	}
 

@@ -127,10 +127,10 @@ class JoystickView(
 				context.g.fillRect(xInt, yInt, widthInt, heightInt)
 			}
 		}
-		drawBackground(context, transparent.applyTo(if (context.useContextColors) context.choose(color).backgroundColor else propertiesBackgroundColor))
-		deflection.drawDeflection(this, context, transparent.applyTo(context.choose(color).foregroundColor))
+		drawBackground(context, transparent.applyTo(if (context.useContextColors) context.chooseBackground(backgroundColor) else propertiesBackgroundColor))
+		deflection.drawDeflection(this, context, transparent.applyTo(context.chooseForeground(foregroundColor)))
 		drawContent(context)
-		drawBorder(context, transparent.applyTo(context.choose(color).foregroundColor))
+		drawBorder(context, transparent.applyTo(context.chooseForeground(foregroundColor)))
 
 		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 			drawFocus(context)
@@ -157,7 +157,7 @@ class JoystickView(
 		context.g.stroke = stroke
 		context.g.drawLine(bounds.centerX, bounds.centerY, bounds.centerX + knobPosition.x, bounds.centerY + knobPosition.y)
 
-		context.g.color = transparent.applyTo(context.choose(color).foregroundColor)
+		context.g.color = transparent.applyTo(context.chooseForeground(foregroundColor))
 		context.g.fillCircle(bounds.centerX + knobPosition.x, bounds.centerY + knobPosition.y, KNOB_RADIUS)
 	}
 

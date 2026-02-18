@@ -5,7 +5,6 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.*
-import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.math.PI_6
 import ch.scorpion.jabbah.draw.*
 import ch.scorpion.jabbah.draw.polyline.ArrowHead
@@ -40,8 +39,6 @@ class FSMTransition(
 ) : AbstractComponent(), Labeled, Describable {
 
     companion object {
-        private val LOG by logger(FSMTransition::class)
-
         private val TYPE: String by lazy { Translations.getString("antares.fsm.transition") }
 
         private const val STRETCH = 50.0
@@ -179,7 +176,7 @@ class FSMTransition(
 
     override fun draw(context: DrawContext) {
         context.g.stroke = stroke
-        context.g.color = context.choose(color).foregroundColor
+        context.g.color = context.chooseForeground(foregroundColor)
         context.g.draw(path)
         arrowHead.draw(context)
         label.draw(context)

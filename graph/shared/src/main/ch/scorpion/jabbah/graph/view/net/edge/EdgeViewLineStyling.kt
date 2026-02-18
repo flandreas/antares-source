@@ -24,7 +24,7 @@ class EdgeViewLineStyling(private val edgeView: EdgeView<*>) : EdgeViewStyling {
 	override val isArea: Boolean get() = false
 
 	override fun draw(context: DrawContext) {
-		context.g.color = context.color?.foregroundColor ?: edgeView.color.foregroundColor
+		context.g.color = context.color?.foregroundColor ?: edgeView.foregroundColor
 		context.g.draw(edgeView.polyline)
 
 		if (DrawModule.debugGfx) {

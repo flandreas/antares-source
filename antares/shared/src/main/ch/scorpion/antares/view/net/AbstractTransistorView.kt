@@ -261,14 +261,17 @@ abstract class AbstractTransistorView<T: TransistorIF<*>>(
 	private fun drawBody(context: DrawContext) {
 		if (hasCircle) {
 			context.g.stroke = stroke
-			context.g.color = transparent.applyTo(context.choose(
-				if (Look.FILL_BASIC_COMPONENTS) color else DrawStyleModule.styleProvider.getStyle(StyleType.BACKGROUND).color
-			).backgroundColor)
+			context.g.color = transparent.applyTo(
+				context.chooseBackground(
+					if (Look.FILL_BASIC_COMPONENTS) backgroundColor else DrawStyleModule.styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
+				)
+			)
+
 			context.g.fillOval(
 				LENGTH.toDouble(), -5.0 * SCALE,
 				WIDTH.toDouble(), HEIGHT.toDouble())
 
-			context.g.color = transparent.applyTo(context.choose(color).foregroundColor)
+			context.g.color = transparent.applyTo(context.chooseForeground(foregroundColor))
 			context.g.drawOval(
 				LENGTH.toDouble(), -5.0 * SCALE,
 				WIDTH.toDouble(), HEIGHT.toDouble())

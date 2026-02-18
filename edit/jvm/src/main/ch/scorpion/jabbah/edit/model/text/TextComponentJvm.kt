@@ -257,23 +257,23 @@ open class TextComponentJvm(
 		if (filled) {
 			StyleConstants.setForeground(
 				attr, Graphics2DJvm.toAwtColor(
-					if (context.useContextColors) context.color!!.textColor else transparent.applyTo(color.textColor)
+					if (context.useContextColors) context.color!!.textColor else transparent.applyTo(textColor)
 				)
 			)
 			StyleConstants.setBackground(
 				attr, Graphics2DJvm.toAwtColor(
-					if (context.useContextColors) context.color!!.backgroundColor else transparent.applyTo(color.backgroundColor)
+					if (context.useContextColors) context.color!!.backgroundColor else transparent.applyTo(backgroundColor)
 				)
 			)
 		} else {
 			StyleConstants.setForeground(
 				attr, Graphics2DJvm.toAwtColor(
-					if (context.useContextColors) context.color!!.textColor else transparent.applyTo(color.foregroundColor)
+					if (context.useContextColors) context.color!!.textColor else transparent.applyTo(foregroundColor)
 				)
 			)
 			StyleConstants.setBackground(
 				attr, Graphics2DJvm.toAwtColor(
-					if (context.useContextColors) context.color!!.backgroundColor else transparent.applyTo(color.textColor)
+					if (context.useContextColors) context.color!!.backgroundColor else transparent.applyTo(textColor)
 				)
 			)
 		}
@@ -304,7 +304,7 @@ open class TextComponentJvm(
 		StyleConstants.setFontSize(attr, (awtFont.size * zoomFactor).toInt())
 		StyleConstants.setBold(attr, awtFont.isBold)
 		StyleConstants.setItalic(attr, awtFont.isItalic)
-		StyleConstants.setForeground(attr, Graphics2DJvm.toAwtColor(color.textColor))
+		StyleConstants.setForeground(attr, Graphics2DJvm.toAwtColor(textColor))
 		StyleConstants.setAlignment(attr, horizontalAlignmentSwing)
 
 		TEXT_EDITOR.text = ""

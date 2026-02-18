@@ -5,19 +5,18 @@ import ch.scorpion.jabbah.draw.graphics.*
 import ch.scorpion.jabbah.draw.module.DrawModule
 import kotlin.test.*
 
-/**
- * Unit tests for [StylableImpl].
- */
 class StylableImplTest {
 
-	@BeforeTest
-	fun beforeTest() {
-		DrawTestRule.configure()
-	}
+    private val styleColor: CompositeColor
+    private val customColor: PredefinedColor
+    private val specifiedStyle: BasicStyle
 
-    private val styleColor = CompositeColor()
-    private val customColor = PredefinedColorRepository.withIdentity(PredefinedColorIdentity.Black)!!
-    private val specifiedStyle = BasicStyle(color = styleColor)
+    init {
+        DrawTestRule.configure()
+        styleColor = CompositeColor()
+        customColor = PredefinedColorRepository.withIdentity(PredefinedColorIdentity.Black)!!
+        specifiedStyle = BasicStyle(color = styleColor)
+    }
 
     @Test
     fun shouldUseStyleForegroundColor() {
@@ -52,4 +51,40 @@ class StylableImplTest {
 
 		assertFalse(stylable.shadow)
 	}
+
+    @Test
+    fun shouldAvoidUnnecessaryCompositeColorInstantiation() {
+        StyleRepository.INSTANCE.registerStyle(StyleType.FIGURE, specifiedStyle)
+        val stylable = StylableImpl(customColor = null, styleProvider = StyleRepository.INSTANCE, styleType = StyleType.FIGURE)
+
+        val color1 = stylable.color
+        val color2 = stylable.color
+
+        assertSame(color1, color2)
+    }
+
+    @Test
+    fun shouldUpdateColorForCustomColor() {
+        StyleRepository.INSTANCE.registerStyle(StyleType.FIGURE, specifiedStyle)
+        val stylable = StylableImpl(customColor = null, styleProvider = StyleRepository.INSTANCE, styleType = StyleType.FIGURE)
+
+        val color1 = stylable.color
+        stylable.customColor = PredefinedColorRepository.withIdentity(PredefinedColorIdentity.Red)!!
+        val color2 = stylable.color
+
+        assertNotSame(color1, color2)
+        assertEquals(stylable.customColor!!.color.foregroundColor, color2.foregroundColor)
+    }
+
+    @Test
+    fun shouldUpdateColorForStyle() {
+        StyleRepository.INSTANCE.registerStyle(StyleType.FIGURE, specifiedStyle)
+        val stylable = StylableImpl(customColor = null, styleProvider = StyleRepository.INSTANCE, styleType = StyleType.FIGURE)
+
+        val color1 = stylable.color
+        stylable.styleType = StyleType.BACKGROUND
+        val color2 = stylable.color
+
+        assertNotSame(color1, color2)
+    }
 }

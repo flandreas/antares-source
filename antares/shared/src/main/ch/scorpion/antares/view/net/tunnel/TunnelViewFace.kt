@@ -38,7 +38,7 @@ enum class TunnelViewFace(
 			}
 			context.g.fillRect(view.xInt, view.yInt, SIZE, SIZE)
 
-			context.g.color = Transparent.applyTo(view.transparency, context.choose(view.color).foregroundColor)
+			context.g.color = Transparent.applyTo(view.transparency, context.chooseForeground(view.foregroundColor))
 			context.g.stroke = view.stroke
 			context.g.drawRect(view.xInt, view.yInt, SIZE, SIZE)
 
@@ -111,7 +111,7 @@ enum class TunnelViewFace(
 			}
 			context.g.fill(getPath(view))
 
-			context.g.color = Transparent.applyTo(view.transparency, context.choose(view.color).foregroundColor)
+			context.g.color = Transparent.applyTo(view.transparency, context.chooseForeground(view.foregroundColor))
 
 			context.g.stroke = view.stroke
 			context.g.draw(getPath(view))

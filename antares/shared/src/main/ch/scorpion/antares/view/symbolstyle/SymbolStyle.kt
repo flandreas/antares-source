@@ -581,12 +581,12 @@ enum class SymbolStyle(
 			context.g.drawLine(LENGTH.toDouble(), 0.0, LENGTH + 3.5 * SCALE, 0.0)
 			context.g.stroke = diode.stroke
 			if (fill) {
-				context.g.color = context.chooseForeground(diode.color.foregroundColor)
+				context.g.color = context.chooseForeground(diode.foregroundColor)
 				context.g.fill(DIODE_PATH)
 			} else {
 				context.g.color = context.chooseBackground(DrawStyleModule.styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor)
 				context.g.fill(DIODE_PATH)
-				context.g.color = context.chooseForeground(diode.color.foregroundColor)
+				context.g.color = context.chooseForeground(diode.foregroundColor)
 				context.g.draw(DIODE_PATH)
 			}
 

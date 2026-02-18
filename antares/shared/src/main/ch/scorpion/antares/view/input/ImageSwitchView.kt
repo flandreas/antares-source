@@ -226,7 +226,7 @@ class ImageSwitchView(
     }
 
     private fun drawEmpty(context: DrawContext) {
-        context.g.color = context.chooseForeground(transparent.applyTo(color.foregroundColor))
+        context.g.color = context.chooseForeground(transparent.applyTo(foregroundColor))
         context.g.stroke = stroke
         context.g.draw(bounds)
         context.g.drawLine(x, y, x + width, y + height)

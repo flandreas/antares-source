@@ -111,10 +111,10 @@ class ConstantView(
 
 		// Draw background
 		val color = Themes.get<DrawTheme>().background.color.deriveBackgroundTowardsTextColor()
-		context.g.color = transparent.applyTo(context.choose(color).backgroundColor)
+		context.g.color = transparent.applyTo(context.chooseBackground(backgroundColor))
 		context.g.fillRect(xInt, yInt, widthInt, heightInt)
 		context.g.stroke = BORDER_STROKE
-		context.g.color = transparent.applyTo(context.choose(color).foregroundColor)
+		context.g.color = transparent.applyTo(context.chooseForeground(foregroundColor))
 		context.g.drawRect(xInt, yInt, widthInt, heightInt)
 
 		label.color = transparent.applyTo(Themes.get<DrawTheme>().figure.color.textColor)

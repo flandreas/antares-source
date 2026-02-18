@@ -46,7 +46,7 @@ abstract class AbstractPathFigure(
 		}
 		context.g.fill(path)
 
-		context.g.color = context.choose(color).foregroundColor
+		context.g.color = context.chooseForeground(foregroundColor)
 		context.g.stroke = stroke
 		context.g.draw(path)
 

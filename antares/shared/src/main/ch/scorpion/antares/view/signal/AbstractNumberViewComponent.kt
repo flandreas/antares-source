@@ -222,7 +222,7 @@ abstract class AbstractNumberViewComponent<T : Vertice>(
 		val label = Label(
 			"",
 			font,
-			color.textColor,
+			textColor,
 			HorizontalAlignment.LEFT)
 
 		fun adjustBounds(rect: Rectangle2D) {

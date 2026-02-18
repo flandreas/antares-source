@@ -341,7 +341,7 @@ class VideoRamView(
 			}
 		}
 
-		drawFill(context, rectangle, if (context.useContextColors) transparent.applyTo(context.choose(color).backgroundColor) else transparent.applyTo(propertiesBackgroundColor))
+		drawFill(context, rectangle, if (context.useContextColors) transparent.applyTo(context.chooseBackground(backgroundColor)) else transparent.applyTo(propertiesBackgroundColor))
 		drawStroke(context, rectangle, getApplicableForegroundColor(context), stroke)
 	}
 

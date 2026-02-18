@@ -50,6 +50,9 @@ class DrawContext(
 	fun chooseBackground(color: Color): Color =
 		if (useContextColors) this.color!!.backgroundColor else color
 
+	fun chooseText(color: Color): Color =
+		if (useContextColors) this.color!!.textColor else color
+
 	fun <T> castedAppContext(): T? {
 		@Suppress("UNCHECKED_CAST")
 		return appContext as T?

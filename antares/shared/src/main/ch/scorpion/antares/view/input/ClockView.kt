@@ -154,7 +154,7 @@ class ClockView(
 
 		drawIconPath(context)
 
-		context.g.color = context.choose(color).textColor
+		context.g.color = context.chooseText(textColor)
 		label.draw(context)
 
 		context.g.color = oldColor

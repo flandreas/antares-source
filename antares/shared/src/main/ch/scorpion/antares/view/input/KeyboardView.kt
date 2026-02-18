@@ -237,8 +237,8 @@ class KeyboardView(
 			}
 		}
 
-		drawFill(context, bounds, transparent.applyTo(if (context.useContextColors) context.choose(color).backgroundColor else propertiesBackgroundColor))
-		drawStroke(context, bounds, transparent.applyTo(context.choose(color).foregroundColor), stroke)
+		drawFill(context, bounds, transparent.applyTo(if (context.useContextColors) context.chooseBackground(backgroundColor) else propertiesBackgroundColor))
+		drawStroke(context, bounds, transparent.applyTo(context.chooseForeground(foregroundColor)), stroke)
 
 		context.g.color = transparent.applyTo(context.choose(styleProvider.getStyle(StyleType.BACKGROUND).color).backgroundColor)
 		context.g.fillRect(x + INSET, y + INSET, width - INSET - RIGHT_INSET, height - 2 * INSET)

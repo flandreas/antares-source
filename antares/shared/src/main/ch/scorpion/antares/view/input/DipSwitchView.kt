@@ -239,7 +239,7 @@ class DipSwitchView(
 			}
 		}
 
-		context.g.color = context.choose(color).textColor
+		context.g.color = context.chooseText(textColor)
 		label.draw(context)
 	}
 
@@ -500,7 +500,7 @@ class DipSwitchView(
 			if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 				context.g.color = transparent.applyTo(context.choose(bit.color).foregroundColor)
 			} else {
-				context.g.color = context.choose(color).foregroundColor
+				context.g.color = context.chooseForeground(foregroundColor)
 			}
 
 			context.g.fillRect(
@@ -516,7 +516,7 @@ class DipSwitchView(
 					transparent.applyTo(context.choose(styleProvider.getStyle(StyleType.BACKGROUND).color).backgroundColor)
 				}
 			} else {
-				transparent.applyTo(context.choose(this@DipSwitchView.color).textColor)
+				transparent.applyTo(context.chooseText(this@DipSwitchView.textColor))
 			}
 
 			// Draw index label

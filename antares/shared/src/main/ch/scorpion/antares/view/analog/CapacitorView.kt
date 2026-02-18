@@ -50,7 +50,7 @@ class CapacitorView(
             (getPortView(model.getPort(1)) as AbstractAntaresPortView<*>).prepareConnectionDrawContext(context)
             drawLine(x, y + SIZE / 2, x + w(1.25), y + SIZE / 2)
             if (!context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-                context.g.color = context.chooseForeground(this@CapacitorView.color.foregroundColor)
+                context.g.color = context.chooseForeground(this@CapacitorView.foregroundColor)
             }
             fillRect(x + w(1.25), y + SIZE / 2 - BAR_HEIGHT / 2, BAR_WIDTH, BAR_HEIGHT)
 
@@ -59,7 +59,7 @@ class CapacitorView(
             (getPortView(model.getPort(2)) as AbstractAntaresPortView<*>).prepareConnectionDrawContext(context)
             drawLine(x + SIZE, y + SIZE / 2, x + SIZE - w(1.25), y + SIZE / 2)
             if (!context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-                context.g.color = context.chooseForeground(this@CapacitorView.color.foregroundColor)
+                context.g.color = context.chooseForeground(this@CapacitorView.foregroundColor)
             }
             fillRect(x + SIZE - w(1.25) - BAR_WIDTH, y + SIZE / 2 - BAR_HEIGHT / 2, BAR_WIDTH, BAR_HEIGHT)
         }

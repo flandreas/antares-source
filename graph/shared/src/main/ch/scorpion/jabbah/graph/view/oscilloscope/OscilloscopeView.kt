@@ -284,9 +284,9 @@ class OscilloscopeView(
 		super.draw(context)
 
 		context.translated(location) {
-			it.g.color = it.choose(color).backgroundColor
+			it.g.color = it.chooseBackground(backgroundColor)
 			it.g.fill(bounds)
-			it.g.color = it.choose(color).foregroundColor
+			it.g.color = it.chooseForeground(foregroundColor)
 			it.g.stroke = stroke
 			it.g.draw(bounds)
 		}
@@ -295,7 +295,7 @@ class OscilloscopeView(
 
 		// "Clocked" annotation
 		if (rows.size >= 1 && model.mode == SignalHistoriesType.Clocked) {
-			context.g.color = color.foregroundColor
+			context.g.color = foregroundColor
 			context.g.stroke = stroke
 			context.translated(location.x + bounds.width, location.y + TITLE_HEIGHT + rowHeight / 2) {
 				it.g.draw(CLOCKED_ANNOTATION)
