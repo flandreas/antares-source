@@ -2,6 +2,7 @@ package ch.scorpion.jabbah.draw.style
 
 import ch.scorpion.jabbah.draw.DrawTestRule
 import ch.scorpion.jabbah.draw.graphics.*
+import ch.scorpion.jabbah.draw.graphics.DrawGraphicsModule.RED
 import ch.scorpion.jabbah.draw.module.DrawModule
 import kotlin.test.*
 
@@ -69,7 +70,7 @@ class StylableImplTest {
         val stylable = StylableImpl(customColor = null, styleProvider = StyleRepository.INSTANCE, styleType = StyleType.FIGURE)
 
         val color1 = stylable.color
-        stylable.customColor = PredefinedColorRepository.withIdentity(PredefinedColorIdentity.Red)!!
+        stylable.customColor = PredefinedColor(PredefinedColorIdentity.Red, RED)
         val color2 = stylable.color
 
         assertNotSame(color1, color2)
