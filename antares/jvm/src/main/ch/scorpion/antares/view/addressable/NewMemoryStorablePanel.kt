@@ -7,7 +7,6 @@ import ch.scorpion.jabbah.base.ActionWrapperSwing
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
 import ch.scorpion.jabbah.base.swing.DialogBuilder
-import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.UIBasics
 import java.awt.BorderLayout
 import java.awt.Component
@@ -84,8 +83,7 @@ class NewMemoryStorablePanel(
 
     private fun validateInput(): MemoryStorable {
         if (nameField.text.isBlank()) {
-            // TODO I18N
-            throw IllegalArgumentException("Name must not be empty")
+            throw IllegalArgumentException(Translations.getString("edit.property.name.empty.error"))
         }
         return MemoryStorable(nameField.text)
     }

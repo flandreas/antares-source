@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.polyline.PolylineInterference
 import ch.scorpion.jabbah.draw.polyline.PolylineShape
+import ch.scorpion.jabbah.edit.Look
 import kotlin.math.abs
 import kotlin.math.sign
 
@@ -25,16 +26,14 @@ object OrthoEdgeViewLayouter : EdgeViewLayouter {
 
 	private val LOG by logger(OrthoEdgeViewLayouter::class)
 
-	// TODO Make configurable in order to align with GridImpl width
-	private const val END_LENGTH = 14
+	private const val END_LENGTH = 2 * Look.GRID
 
 	private val useAdvancedLayout: Boolean by lazy { BaseModule.properties.getBoolean(PROP_ADVANCED_LAYOUT) }
 
 	/**
 	 * The distance to be applied when displacing segments in order to avoid overlapping.
-	 * TODO Make configurable in order to align with GridImpl width
 	 */
-	private const val DISPLACEMENT = 7
+	private const val DISPLACEMENT = Look.GRID
 
 	private fun checkDirections(boundary: LayoutBoundary, directions: Set<Direction>): Boolean {
 		return boundary.isPort
