@@ -23,7 +23,7 @@ You can create circuit tests for the currently open circuit.
 
 To define test vectors for your test case, select the "Test vectors" property in the properties dialog and click on the "Edit script" button. This opens a dialog with a text area, which is where you write your test vectors.
 
-NOTE:: Test vectors define signals for input and output components in your circuit. Providing inputs for switches, DIP switches etc. and reading output from LEDs etc. is not supported.
+NOTE:: Test vectors define signals for input components, output components and probes in your circuit. Providing input values for switches, DIP switches etc. and reading output values from LEDs etc. is not supported.
 
 A test script consists of two parts:
 
