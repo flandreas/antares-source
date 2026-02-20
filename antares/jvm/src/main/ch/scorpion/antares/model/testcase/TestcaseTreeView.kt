@@ -113,6 +113,7 @@ class TestcaseTreeView(
 
 		testcasePopupMenu.add(ActionWrapperSwing(controller.deleteAction))
 		testcasePopupMenu.add(ActionWrapperSwing(controller.runSelectedTestcaseAction))
+		testcasePopupMenu.add(ActionWrapperSwing(controller.duplicateAction))
 	}
 
 	fun dispose() {

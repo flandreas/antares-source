@@ -10,8 +10,9 @@ import ch.scorpion.jabbah.io.StorableCloner
 
 class AddTestcaseCommand(
 	private val dataHolder: UndoableDataHolder,
-	private val testcase: Testcase
-) : AbstractCommand("antares.testcase.command.add"), Undoable {
+	private val testcase: Testcase,
+	descriptionKey: String = "antares.testcase.command.add"
+) : AbstractCommand(descriptionKey), Undoable {
 
 	private val graphView: GraphView get() = (dataHolder.getUndoableState() as MetaGraph).graph.graphView
 

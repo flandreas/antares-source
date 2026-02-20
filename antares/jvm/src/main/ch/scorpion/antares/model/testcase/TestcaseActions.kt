@@ -51,3 +51,18 @@ class DeleteTestcaseAction(
 		}
 	}
 }
+
+class DuplicateTestcaseAction(
+	controller: TestcaseViewController,
+	eventBus: EventBus = BaseModule.eventBus
+) : AbstractTestcaseAction(controller, "antares.testcase.action.duplicate", eventBus ) {
+
+	override val opensDialog: Boolean get() = true
+
+	override fun execute(event: ActionEvent) {
+		controller.view.getDuplicateTestcaseName()?.let {
+			controller.duplicateTestcase(it)
+		}
+	}
+
+}

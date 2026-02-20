@@ -90,4 +90,10 @@ class Testcase(
 
 	fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): TestcaseParser =
 		TestcaseParser(program, graph?.let { TestcaseAnalyser(it) })
+
+	fun duplicate(newName: String): Testcase {
+		val duplicate = StorableCloner.clone(this)
+		duplicate.name = Name(newName)
+		return duplicate
+	}
 }

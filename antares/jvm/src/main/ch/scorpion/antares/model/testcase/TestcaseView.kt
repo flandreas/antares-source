@@ -36,6 +36,8 @@ interface TestcaseView : UIView {
 	 */
 	fun getNewTestcaseName(): String?
 
+	fun getDuplicateTestcaseName(): String?
+
 	/** Asks the user to confirm deleting the current [Testcase]. */
 	fun confirmDeleteTestcase(): Boolean
 }
@@ -75,6 +77,8 @@ class TestcaseViewController(
 
 	val deleteAction = DeleteTestcaseAction(this)
 
+	val duplicateAction = DuplicateTestcaseAction(this)
+
 	val metaAddAction: Action = MetaAddAction()
 
 	val runSelectedTestcaseAction = RunTestcaseAction(this)
@@ -102,6 +106,10 @@ class TestcaseViewController(
 		service.deleteTestcase(applicationDataHolder, testcase!!.id)
 	}
 
+	fun duplicateTestcase(name: String) {
+		service.duplicateTestcase(applicationDataHolder, testcase!!.id, name)
+	}
+
 	private fun handle(event: TestcaseSelectionEvent) {
 		testcase = event.testcase
 		updateActions()
@@ -110,6 +118,7 @@ class TestcaseViewController(
 	private fun updateActions() {
 		addAction.updateEnabled()
 		deleteAction.updateEnabled()
+		duplicateAction.updateEnabled()
 		runSelectedTestcaseAction.updateEnabled()
 		runAllTestcasesAction.updateEnabled()
 		metaAddAction.enabled = addAction.enabled

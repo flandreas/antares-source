@@ -1,5 +1,6 @@
 package ch.scorpion.antares.model.testcase
 
+import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.jabbah.app.ApplicationDataHolder
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.edit.CommandManager
@@ -27,5 +28,13 @@ class TestcaseAppService(
 	fun deleteTestcase(dataHolder: ApplicationDataHolder, testcaseId: Int) {
 		LOG.userTrail("Delete Testcase $testcaseId from Graph ${graphView(dataHolder).graph?.uuid}")
 		commandManager.execute(DeleteTestcaseCommand(dataHolder, testcaseId))
+	}
+
+	fun duplicateTestcase(dataHolder: ApplicationDataHolder, testcaseId: Int, newName: String): Int {
+		LOG.userTrail("Duplicate Testcase $testcaseId in Graph ${graphView(dataHolder).graph?.uuid}")
+		val duplicate = (graphView(dataHolder).graph as DigitalGraph).testcases.get(testcaseId).duplicate(newName)
+		val command = AddTestcaseCommand(dataHolder, duplicate, "antares.testcase.command.duplicate")
+		commandManager.execute(command)
+		return command.addedTestcaseId
 	}
 }

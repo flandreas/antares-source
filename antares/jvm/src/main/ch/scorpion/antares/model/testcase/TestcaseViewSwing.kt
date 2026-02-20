@@ -98,6 +98,22 @@ class TestcaseViewSwing(
 			JOptionPane.YES_NO_OPTION,
 			JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION
 
+	override fun getDuplicateTestcaseName(): String? {
+		val name = JOptionPane.showInputDialog(
+			Frame.getFrames()[0],
+			Translations.getString("antares.testcase.action.duplicate.nameQuestion"),
+			this@TestcaseViewSwing.name,
+			JOptionPane.QUESTION_MESSAGE,
+			null,
+			null,
+			Translations.getString("antares.testcase.action.duplicate.newName", controller.testcase!!.name.value)
+		) as String?
+		if (StringUtils.isEmpty(name)) {
+			return null
+		}
+		return name
+	}
+
 	/** ---- [TestcaseViewSwing] */
 
 	private fun buildUI() {
