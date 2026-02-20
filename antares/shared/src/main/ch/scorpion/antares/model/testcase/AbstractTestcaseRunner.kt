@@ -2,6 +2,8 @@ package ch.scorpion.antares.model.testcase
 
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.inout.DigitalCircuitInOut
+import ch.scorpion.antares.model.net.Probe
+import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.testcase.parser.PortName
 import ch.scorpion.antares.model.testcase.parser.PortNameType
@@ -28,6 +30,8 @@ abstract class AbstractTestcaseRunner(
 
 	protected abstract fun readOutput(output: DigitalCircuitInOut): DigitalSignal?
 
+	protected abstract fun readOutput(output: Probe): DigitalSignal?
+
 	protected fun determineIsOutput(): List<Boolean> = portNames.map { isDigitalCircuitOutput(it) }.toList()
 
 	private fun isDigitalCircuitInput(portName: PortName): Boolean {
@@ -38,6 +42,10 @@ abstract class AbstractTestcaseRunner(
 	private fun isDigitalCircuitOutput(portName: PortName): Boolean {
 		val port = circuit.getGraphPort<DigitalSignal>(portName.name.value!!)
 		return portName.type == PortNameType.OUTPUT || port is DigitalCircuitInOut && port.portType == PortType.OUTPUT
+	}
+
+	private fun isProbeOutput(portName: PortName): Boolean {
+		return circuit.elements.any { it is Probe && it.name == portName.name.value }
 	}
 
 	@Suppress("UNUSED_PARAMETER")
@@ -70,13 +78,27 @@ abstract class AbstractTestcaseRunner(
 	@Suppress("UNUSED_PARAMETER")
 	protected fun readOutputs(context: Any?) {
 		portNames.forEachIndexed { index, portName ->
-			val port = circuit.getGraphPort<DigitalSignal>(portName.name.value!!)
+			var outputValue: DigitalSignal? = null
+			var bitWidth: BitWidth? = null
+
 			if (isDigitalCircuitOutput(portName)) {
+				val port = circuit.getGraphPort<DigitalSignal>(portName.name.value!!)
+				outputValue = readOutput(port as DigitalCircuitInOut)
+				bitWidth = port.bitWidth
+			} else if (isProbeOutput(portName)) {
+				val probe = circuit.elements.first { it is Probe && it.name == portName.name.value }
+				outputValue = readOutput(probe as Probe)
+				bitWidth = probe.bitWidth
+			} else {
+				null
+			}
+
+			if (outputValue != null && bitWidth != null) {
 				val expected = currentTestVector.getValue(index)
-				val outputValue = readOutput(port as DigitalCircuitInOut)
+
 				val matchedValue = MatchedValue(
-					expected.withValue(expected.value.ofWidth(port.bitWidth)),
-					outputValue!!.ofWidth(port.bitWidth)
+					expected.withValue(expected.value.ofWidth(bitWidth)),
+					outputValue.ofWidth(bitWidth)
 				)
 				currentTestVector.setValue(index, matchedValue)
 			}

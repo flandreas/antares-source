@@ -3,6 +3,7 @@ package ch.scorpion.antares.model.testcase
 import ch.scorpion.antares.model.ControlledCircuitRunner
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.inout.DigitalCircuitInOut
+import ch.scorpion.antares.model.net.Probe
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.testcase.TestRunResult.Type.Circuit
 import ch.scorpion.antares.model.testcase.TestVector.Type.*
@@ -97,4 +98,6 @@ class TestcaseCircuitRunner(
 	}
 
 	override fun readOutput(output: DigitalCircuitInOut): DigitalSignal? = output.signal
+
+	override fun readOutput(output: Probe): DigitalSignal? = output.signal
 }

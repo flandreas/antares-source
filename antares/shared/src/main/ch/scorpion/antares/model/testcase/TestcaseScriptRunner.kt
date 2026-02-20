@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.ControlledCircuitRunner
 import ch.scorpion.antares.model.DigitalGraph
 import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.inout.DigitalCircuitInOut
+import ch.scorpion.antares.model.net.Probe
 import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.DigitalSignal
@@ -126,6 +127,13 @@ class TestcaseScriptRunner(
 	}
 
 	override fun readOutput(output: DigitalCircuitInOut): DigitalSignal =
+		when (val value = memory.getValue(output.name!!)) {
+			is DigitalSignal -> value
+			is Long -> DigitalSignalFactory.of(output.bitWidth, value)
+			else -> throw RuntimeError(TextLocation.UNDEFINED, Translations.getString("base.dsl.expectedNumber.msg"))
+		}
+
+	override fun readOutput(output: Probe): DigitalSignal? =
 		when (val value = memory.getValue(output.name!!)) {
 			is DigitalSignal -> value
 			is Long -> DigitalSignalFactory.of(output.bitWidth, value)

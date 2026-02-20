@@ -1,13 +1,14 @@
 package ch.scorpion.antares.model.testcase.parser
 
 import ch.scorpion.antares.model.DigitalGraph
-import ch.scorpion.antares.model.signal.DigitalSignal
+import ch.scorpion.antares.model.net.Probe
 import ch.scorpion.antares.model.testcase.Value
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.dsl.Node
 import ch.scorpion.jabbah.base.dsl.SemanticAnalyser
 import ch.scorpion.jabbah.base.dsl.SemanticError
 import ch.scorpion.jabbah.base.parser.TextLocation
+import ch.scorpion.jabbah.graph.model.GraphPort
 
 class TestcaseAnalyser(
 	private val circuit: DigitalGraph
@@ -17,7 +18,7 @@ class TestcaseAnalyser(
 		val script = program as TestScript
 		val portNames = script.portNames.names.map { it.name.value!! }
 
-		ensurePortsExist(portNames)
+		ensurePortsExistAndIsUnique(portNames)
 		ensureAtLeastOneInput(portNames)
 		ensureAtLeastOneOutput(portNames)
 		for (child in script.children) {
@@ -39,20 +40,32 @@ class TestcaseAnalyser(
 		throw SemanticError(TextLocation.UNDEFINED, Translations.getString(key, *params))
 	}
 
-	private fun ensurePortsExist(portNames: List<String>) {
-		portNames.firstOrNull { circuit.getGraphPort<DigitalSignal>(it) == null }?.let {
-			throwSemanticError("antares.testcase.error.unknownPort", it)
+	private fun ensurePortsExistAndIsUnique(portNames: List<String>) {
+		for (name in portNames) {
+			val elements = circuit.elements.filter { it is GraphPort<*> && it.name == name || it is Probe && it.name == name }
+			if (elements.isEmpty()) {
+				throwSemanticError("antares.testcase.error.unknownPort", name)
+			} else if (elements.size > 1) {
+				throwSemanticError("antares.testcase.error.ambiguousOutputName", name)
+			}
 		}
 	}
 
 	private fun ensureAtLeastOneInput(portNames: List<String>) {
-		if (portNames.map { circuit.getGraphPort<DigitalSignal>(it)!! }.none { it.portType.isInput }) {
+		val elements = circuit.elements.filter {
+			it is GraphPort<*> && portNames.contains(it.name) && it.portType.isInput
+		}
+		if (elements.isEmpty()) {
 			throwSemanticError("antares.testcase.error.noInput")
 		}
 	}
 
 	private fun ensureAtLeastOneOutput(portNames: List<String>) {
-		if (portNames.map { circuit.getGraphPort<DigitalSignal>(it)!! }.none { it.portType.isOutput }) {
+		val elements = circuit.elements.filter {
+			it is GraphPort<*> && portNames.contains(it.name) && it.portType.isOutput
+				|| it is Probe && portNames.contains(it.name)
+		}
+		if (elements.isEmpty()) {
 			throwSemanticError("antares.testcase.error.noOutput")
 		}
 	}
