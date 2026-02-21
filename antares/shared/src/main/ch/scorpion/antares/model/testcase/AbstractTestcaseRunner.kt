@@ -32,7 +32,7 @@ abstract class AbstractTestcaseRunner(
 
 	protected abstract fun readOutput(output: Probe): DigitalSignal?
 
-	protected fun determineIsOutput(): List<Boolean> = portNames.map { isDigitalCircuitOutput(it) }.toList()
+	protected fun determineIsOutput(): List<Boolean> = portNames.map { isDigitalCircuitOutput(it) || isProbeOutput(it) }.toList()
 
 	private fun isDigitalCircuitInput(portName: PortName): Boolean {
 		val port = circuit.getGraphPort<DigitalSignal>(portName.name.value!!)
