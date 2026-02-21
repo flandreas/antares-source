@@ -37,4 +37,9 @@ class TestcaseAppService(
 		commandManager.execute(command)
 		return command.addedTestcaseId
 	}
+
+	fun moveTestcase(dataHolder: ApplicationDataHolder, testcaseId: Int, newIndex: Int) {
+		LOG.userTrail("Move Testcase $testcaseId to new index $newIndex in Graph ${graphView(dataHolder).graph?.uuid}")
+		commandManager.execute(MoveTestcaseCommand(dataHolder, testcaseId, newIndex))
+	}
 }

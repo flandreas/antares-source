@@ -41,3 +41,23 @@ class DeleteTestcaseCommand(
 		(graphView.graph as DigitalGraph).testcases.remove(testcaseId)
 	}
 }
+
+class MoveTestcaseCommand(
+	private val dataHolder: UndoableDataHolder,
+	private val testcaseId: Int,
+	private val newIndex: Int
+) : AbstractCommand("antares.testcase.command.move"), Undoable {
+
+	private val graphView: GraphView get() = (dataHolder.getUndoableState() as MetaGraph).graph.graphView
+	private val digitalGraph: DigitalGraph get() = graphView.graph as DigitalGraph
+
+	private val oldIndex: Int = digitalGraph.testcases.indexOfTestcase(testcaseId)
+
+	override fun execute() {
+		digitalGraph.testcases.move(testcaseId, newIndex)
+	}
+
+	override fun undo() {
+		digitalGraph.testcases.move(testcaseId, oldIndex)
+	}
+}

@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.io.*
 
 data class TestcaseAddedEvent(val graph: DigitalGraph, val testcase: Testcase)
 data class TestcaseRemovedEvent(val graph: DigitalGraph, val testcase: Testcase)
+data class TestcaseMovedEvent(val graph: DigitalGraph, val testcase: Testcase, val index: Int)
 
 /**
  * A collection of [Testcase]s owned by a [DigitalGraph].
@@ -60,6 +61,17 @@ class Testcases(
 	fun remove(testcaseId: Int) {
 		remove(get(testcaseId))
 	}
+
+	fun move(testcaseId: Int, index: Int) {
+		val testcase = get(testcaseId)
+		val oldIndex = _testcases.indexOf(testcase)
+		val effIndex = if (oldIndex <= index) index - 1 else index
+		_testcases.remove(testcase)
+		_testcases.add(effIndex, testcase)
+		eventBus.post(TestcaseMovedEvent(graph!!, testcase, index))
+	}
+
+	fun indexOfTestcase(testcaseId: Int): Int = testcases.indexOfFirst { it.id == testcaseId }
 
 	private fun getMaxId(): Int {
 		if (testcases.isEmpty()) {

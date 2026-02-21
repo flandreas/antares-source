@@ -1,36 +1,29 @@
 package ch.scorpion.antares.model.testcase
 
 import ch.scorpion.antares.model.DigitalGraph
+import ch.scorpion.antares.model.testcase.TestcaseTreeView.TestcaseTransferable.Companion.FLAVOR
 import ch.scorpion.jabbah.base.ActionWrapperSwing
-import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.base.swing.JTreeUtil
-import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.UIBasics.PROP_TREE_SHOW_ROOT_HANDLES
-import ch.scorpion.jabbah.draw.graphics.Font
 import ch.scorpion.jabbah.draw.graphics.Graphics2DJvm
-import ch.scorpion.jabbah.draw.richtext.RichTextLabel
-import ch.scorpion.jabbah.edit.model.text.NamableTreeNode
 import ch.scorpion.jabbah.edit.model.text.description.NameChangedEvent
 import ch.scorpion.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import ch.scorpion.jabbah.graph.model.Graph
-import ch.scorpion.jabbah.graph.ui.MetaGraphIconProvider
-import java.awt.Component
+import java.awt.datatransfer.DataFlavor
+import java.awt.datatransfer.Transferable
+import java.awt.datatransfer.UnsupportedFlavorException
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
-import javax.swing.JLabel
-import javax.swing.JPopupMenu
-import javax.swing.JTree
+import javax.swing.*
 import javax.swing.tree.DefaultMutableTreeNode
-import javax.swing.tree.DefaultTreeModel
-import javax.swing.tree.TreeNode
 import javax.swing.tree.TreeSelectionModel
 
 /**
  * Displays the tree of [Testcase]s of a [DigitalGraph].
- * TODO Similarities with UsecaseTreeView (and ScenarioTreeView): Extract commonalities?
+ * TODO Similar to UsecaseTreeView (and ScenarioTreeView): Extract commonalities?
  */
 class TestcaseTreeView(
 	val controller: TestcaseViewController,
@@ -56,6 +49,12 @@ class TestcaseTreeView(
 	private val testcaseRemovedHandler: EventHandler<TestcaseRemovedEvent> = {
 		if (it.graph === this.graph) {
 			testcaseTreeModel.removeTestcase(it.testcase)
+		}
+	}
+
+	private val testcaseMovedHandler: EventHandler<TestcaseMovedEvent> = {
+		if (it.graph === this.graph) {
+			testcaseTreeModel.moveTestcase(it.testcase, it.index)
 		}
 	}
 
@@ -103,8 +102,13 @@ class TestcaseTreeView(
 		setCellRenderer(TestcaseTreeRenderer())
 		setRowHeight(24)
 
+		dragEnabled = true
+		dropMode = DropMode.INSERT
+		transferHandler = TestcaseDndTransferHandler()
+
 		eventBus.register(TestcaseAddedEvent::class, testcaseAddedHandler)
 		eventBus.register(TestcaseRemovedEvent::class, testcaseRemovedHandler)
+		eventBus.register(TestcaseMovedEvent::class, testcaseMovedHandler)
 		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
 		eventBus.register(NameChangedEvent::class, nameChangeHandler)
 
@@ -119,6 +123,7 @@ class TestcaseTreeView(
 	fun dispose() {
 		eventBus.unregister(testcaseAddedHandler)
 		eventBus.unregister(testcaseRemovedHandler)
+		eventBus.unregister(testcaseMovedHandler)
 		eventBus.unregister(schedulerActivationStateHandler)
 		eventBus.unregister(nameChangeHandler)
 	}
@@ -144,92 +149,79 @@ class TestcaseTreeView(
 		}
 	}
 
-	private class TestcaseTreeModel(
-		graph: DigitalGraph?,
-		font: Font?
-	) : DefaultTreeModel(graph?.let { NamableTreeNode(graph, font!!) } ?: DefaultMutableTreeNode()) {
+	private class TestcaseTransferable(val node: DefaultMutableTreeNode) : Transferable {
 
-		private val graphNode: DefaultMutableTreeNode get() = root as DefaultMutableTreeNode
-
-		init {
-			graph?.testcases?.testcases?.forEach { addTestcase(it) }
-			nodeStructureChanged(root)
+		companion object {
+			val FLAVOR = DataFlavor("${DataFlavor.javaJVMLocalObjectMimeType};class=\"${String::class.java.name}\"")
 		}
 
-		fun updateGraphName() {
-			if (graphNode is NamableTreeNode) {
-				(graphNode as NamableTreeNode).richTextName.reset()
+		override fun getTransferData(flavor: DataFlavor?): Any {
+			if (flavor != FLAVOR) {
+				throw UnsupportedFlavorException(flavor)
 			}
-			nodeChanged(graphNode)
-		}
-
-		fun updateTestcaseName(testcase: Testcase) {
-			findTestcaseNode(testcase)?.let { nodeChanged(it) }
-		}
-
-		fun addTestcase(testcase: Testcase): TreeNode {
-			val node = DefaultMutableTreeNode(testcase)
-			graphNode.add(node)
-			nodesWereInserted(graphNode, intArrayOf(graphNode.childCount - 1))
 			return node
 		}
 
-		fun removeTestcase(testcase: Testcase) {
-			val testcaseNode = findTestcaseNode(testcase)
-			val index = getTestcaseIndex(testcase)
-			if (index >= 0) {
-				graphNode.remove(index)
-				nodesWereRemoved(graphNode, intArrayOf(index), arrayOf(testcaseNode))
-			}
-		}
+		override fun isDataFlavorSupported(flavor: DataFlavor?): Boolean = flavor == FLAVOR
 
-		private fun findTestcaseNode(testcase: Testcase): TreeNode? {
-			for (e in graphNode.depthFirstEnumeration()) {
-				if ((e as DefaultMutableTreeNode).userObject == testcase) {
-					return e
-				}
-			}
-			return null
-		}
-
-		private fun getTestcaseIndex(testcase: Testcase): Int {
-			for (index in 0 until graphNode.childCount) {
-				val item = (graphNode.getChildAt(index) as DefaultMutableTreeNode).userObject as Testcase
-				if (item == testcase) {
-					return index
-				}
-			}
-			return -1
-		}
+		override fun getTransferDataFlavors(): Array<DataFlavor> = arrayOf(FLAVOR)
 	}
 
-	private class TestcaseTreeRenderer : RichTextLabel() {
+	private inner class TestcaseDndTransferHandler : TransferHandler() {
 
-		companion object {
-			private val testcaseIcon = UiUtil.themedIcon("/img/testcase.png")
+		override fun getSourceActions(c: JComponent?): Int = MOVE
+
+		override fun createTransferable(c: JComponent?): Transferable? {
+			val tree = c as JTree
+			val treeNode = tree.selectionPath.lastPathComponent as DefaultMutableTreeNode
+
+			return if (treeNode.userObject is Testcase) {
+				TestcaseTransferable(treeNode)
+			} else {
+				null
+			}
 		}
 
-		override fun getTreeCellRendererComponent(tree: JTree?, value: Any?, sel: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean): Component {
-			val component = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus) as RichTextLabel
-			component.richText = null
-			component.verticalAlignment = JLabel.CENTER
-
-			when ((value as DefaultMutableTreeNode).userObject) {
-				is Testcase -> {
-					component.icon = testcaseIcon
-					component.disabledIcon = testcaseIcon
-				}
-				is DigitalGraph -> {
-					val icon = (value.userObject as Graph).let {
-						MetaGraphIconProvider.provideIcon(it.type, false, StringUtils.isNotBlank(it.script))
-					}
-					component.richText = (value as NamableTreeNode).richTextName.value
-					component.icon = icon
-					component.disabledIcon = icon
-				}
+		override fun canImport(support: TransferSupport?): Boolean {
+			if (support == null || !support.isDataFlavorSupported(FLAVOR)) {
+				return false
+			}
+			if (!support.isDrop) {
+				return false
 			}
 
-			return component
+			val node = support.transferable.getTransferData(FLAVOR) as DefaultMutableTreeNode
+			val dropLoc = support.dropLocation as JTree.DropLocation
+
+			if (node.userObject is Testcase) {
+				if (dropLoc.path == null || dropLoc.childIndex < 0) {
+					return false
+				}
+			}
+			return true
+		}
+
+		override fun importData(support: TransferSupport?): Boolean {
+			if (support == null || !support.isDataFlavorSupported(FLAVOR)) {
+				return false
+			}
+			if (!support.isDrop) {
+				return false
+			}
+
+			val node = support.transferable.getTransferData(FLAVOR) as DefaultMutableTreeNode
+			val dropLoc = support.dropLocation as JTree.DropLocation
+
+			if (node.userObject is Testcase) {
+				controller.service.moveTestcase(
+					controller.applicationDataHolder,
+					(node.userObject as Testcase).id,
+					dropLoc.childIndex
+				)
+				return true
+			}
+
+			return false
 		}
 	}
 }
