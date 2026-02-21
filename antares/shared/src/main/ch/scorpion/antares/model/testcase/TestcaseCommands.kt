@@ -58,6 +58,7 @@ class MoveTestcaseCommand(
 	}
 
 	override fun undo() {
-		digitalGraph.testcases.move(testcaseId, oldIndex)
+		val effIndex = if (oldIndex > newIndex) oldIndex + 1 else oldIndex
+		digitalGraph.testcases.move(testcaseId, effIndex)
 	}
 }
