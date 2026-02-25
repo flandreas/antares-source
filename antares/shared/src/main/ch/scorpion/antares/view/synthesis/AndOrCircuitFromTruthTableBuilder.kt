@@ -81,6 +81,9 @@ class AndOrCircuitFromTruthTableBuilder(
 
 		// Calculate the location of the OR stack such that there is enough space for
 		// wiring AND outputs to OR inputs
+		if (orTerms.isEmpty()) {
+			throw CircuitFromTruthTableBuilderError(Translations.getString("antares.synthesis.noOrTerms.error"))
+		}
 		val maxOrInputCount = orTerms.maxOf { it.andTermViews.size }
 		x += OR_MIN_DIST_X + maxOrInputCount / 2 * OR_WIRE_DIST
 
