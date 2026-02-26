@@ -14,6 +14,7 @@ class DefinedWord(
 
 	companion object {
 
+		// TODO How is this different from BitWidth.maxValue?
 		private val BIT_WIDTH_MASKS = mutableMapOf<Int, ULong>()
 
 		init {

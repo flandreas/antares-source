@@ -16,6 +16,7 @@ import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.graphics.RasterImage
+import ch.scorpion.jabbah.draw.graphics.RasterImageFactory
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -42,7 +43,8 @@ import kotlin.math.max
 class VideoRamView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	colorModel: VideoRamColorModel = VideoRamColorModel.CGA_16,
-	model: RAM = RAM(hasClock = true)
+	model: RAM = RAM(hasClock = true).also { it.dataWidth = colorModel.dataBitWidth },
+	private val rasterImageFactory: RasterImageFactory = DrawModule.rasterImageFactory
 ) : AbstractRectangularVerticeView<RAM>(
 	styleProvider,
 	model,
@@ -75,6 +77,15 @@ class VideoRamView(
 			Size.SMALL -> 2
 			Size.MEDIUM -> 6
 			Size.LARGE -> 10
+		}
+
+	var dataWidth: BitWidth
+		get() = model.dataWidth
+		set(value) {
+			if (isNotReading) {
+				throwIfInconsistentBitWidths(value, colorModel.dataBitWidth)
+			}
+			model.dataWidth = value
 		}
 
 	var size: Size = Size.MEDIUM
@@ -116,21 +127,30 @@ class VideoRamView(
 
 	var colorModel: VideoRamColorModel = colorModel
 		set(value) {
+			if (isNotReading) {
+				throwIfInconsistentBitWidths(dataWidth, value.dataBitWidth)
+			}
 			field = value
-			model.dataWidth = field.dataBitWidth
 		}
 
 	private lateinit var bufferedImage: RasterImage
+
+	private val pixelPerDataCell: Int get() = dataWidth.width / colorModel.dataBitWidth.width
 
 	private val dataChangeListener = object : AddressableListener {
 
 		override fun dataChanged(event: AddressableDataEvent) {
 			event.address?.let { address ->
-				val value = event.newValue!!
-				val color = colorModel.getColor(value.toInt())
-				val x = address.rem(columnsCount) * pixelSize
-				val y = (address / rowsCount) * pixelSize
-				fillPixel(x, y, color)
+				var value = event.newValue!!
+				for (i in 0 until pixelPerDataCell) {
+					val subValue = value and this@VideoRamView.colorModel.dataBitWidth.maxValue
+					value = value.shr(this@VideoRamView.colorModel.dataBitWidth.width)
+
+					val color = this@VideoRamView.colorModel.getColor(subValue.toInt())
+					val x = (pixelPerDataCell * (address.rem(columnsCount)) + i) * pixelSize
+					val y = (address / (columnsCount * pixelPerDataCell)) * pixelSize
+					fillPixel(x, y, color)
+				}
 			} ?: fillImage()
 
 			invalidate()
@@ -149,7 +169,16 @@ class VideoRamView(
 	}
 
 	private fun createImage() {
-		bufferedImage = DrawModule.rasterImageFactory.invoke(columnsCount * pixelSize, rowsCount * pixelSize)
+		bufferedImage = rasterImageFactory.invoke(columnsCount * pixelSize, rowsCount * pixelSize)
+	}
+
+	private fun throwIfInconsistentBitWidths(dataWidth: BitWidth, colorModelBitWidth: BitWidth) {
+		if (dataWidth.width < colorModelBitWidth.width) {
+			throw IllegalArgumentException(Translations.getString("element.property.VideoRam.dataBitWidth.tooSmall.text"))
+		}
+		if (dataWidth.width % colorModelBitWidth.width != 0) {
+			throw IllegalArgumentException(Translations.getString("element.property.VideoRam.dataBitWidth.notMultiple.text"))
+		}
 	}
 
 	/** ---- [AbstractGraphElementView] */
@@ -352,13 +381,19 @@ class VideoRamView(
 			rectangle.y.toInt() + BORDER_WIDTH + SCREEN_INSET)
 	}
 
-	private fun fillImage() {
+	// Visible for testing
+	fun fillImage() {
+		val f = pixelPerDataCell
 		var y = 0
 		for (row in 0 until rowsCount) {
 			var x = 0
+			val rowBaseAddress = row * columnsCount / f
 			for (col in 0 until columnsCount) {
-				val value = model.read(row * columnsCount + col)
-				val color = colorModel.getColor(value.toInt())
+				val address = rowBaseAddress + col / f
+				val value = model.read(address)
+				val subIndex = col % f
+				val subValue = value.shr(subIndex * this@VideoRamView.colorModel.dataBitWidth.width) and this@VideoRamView.colorModel.dataBitWidth.maxValue
+				val color = colorModel.getColor(subValue.toInt())
 				fillPixel(x, y, color)
 				x += pixelSize
 			}

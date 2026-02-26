@@ -1,5 +1,6 @@
 package ch.scorpion.antares.view.output
 
+import ch.scorpion.antares.view.AntaresProperties
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
 import ch.scorpion.jabbah.edit.model.EditProperties
@@ -11,6 +12,7 @@ import com.l2fprod.common.propertysheet.Property
 class VideoRamViewBeanInfo : VerticeViewBeanInfo<VideoRamView>() {
 
 	companion object {
+		private val dataBitWidth = AntaresProperties.bitWidth("dataWidth", "element.property.dataBitWidth")
 		private val width = CommandPropertySwing("columnsCount", "element.property.VideoRam.width", Int::class.java, beanProvider = componentBeanProvider)
 		private val height = CommandPropertySwing("rowsCount", "element.property.VideoRam.height", Int::class.java, beanProvider = componentBeanProvider)
 		private val pixelSize = EditProperties.size(baseKey = "element.property.VideoRam.pixelSize")
@@ -19,6 +21,7 @@ class VideoRamViewBeanInfo : VerticeViewBeanInfo<VideoRamView>() {
 
 	override fun addProperties(bean: VideoRamView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
+		properties.add(dataBitWidth.bind(editor, beanIdProvider(bean.id)))
 		properties.add(width.bind(editor, beanIdProvider(bean.id)))
 		properties.add(height.bind(editor, beanIdProvider(bean.id)))
 		properties.add(pixelSize.bind(editor, beanIdProvider(bean.id)))

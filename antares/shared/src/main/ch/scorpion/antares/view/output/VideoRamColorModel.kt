@@ -11,6 +11,11 @@ enum class VideoRamColorModel(
 	private val palette: Array<Color>
 ) : EnumProperty<VideoRamColorModel> {
 
+	MONOCHROME("monochrome", BitWidth.BW_1, arrayOf(
+		Color.BLACK,
+		Color.WHITE
+	)),
+
 	CGA_16("cga16", BitWidth.BW_4, arrayOf(
 		Color.BLACK,
 		Color(0, 0, 170), // blue
@@ -34,14 +39,15 @@ enum class VideoRamColorModel(
 		const val BASE_KEY = "element.property.videoRamColorModel"
 
 		fun withName(customName: String): VideoRamColorModel =
-			values().firstOrNull { it.customName == customName }
+			VideoRamColorModel.entries.firstOrNull { it.customName == customName }
 				?: throw IllegalArgumentException("Unknown PullDirection '$customName'")
 	}
 
 	override fun toString(): String =
 		when (this) {
 			CGA_16 -> Translations.getString("$BASE_KEY.cga16")
-		}
+            MONOCHROME -> Translations.getString("$BASE_KEY.monochrome")
+        }
 
 	fun getColor(index: Int): Color =
 		if (index >= palette.size) {
