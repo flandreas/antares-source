@@ -85,6 +85,7 @@ class VideoRamView(
 			if (isNotReading) {
 				throwIfInconsistentBitWidths(value, colorModel.dataBitWidth)
 			}
+			updateAddressBitWidth(rowsCount, columnsCount, value.width, colorModel.dataBitWidth.width)
 			model.dataWidth = value
 		}
 
@@ -103,9 +104,8 @@ class VideoRamView(
 				if (value > MAX_ROWS_COUNT) {
 					throw IllegalArgumentException("Maximum height is $MAX_ROWS_COUNT")
 				}
+				updateAddressBitWidth(value, columnsCount, dataWidth.width, colorModel.dataBitWidth.width)
 				field = value
-				model.getAddressInput().bitWidth = BitWidth.smallest((field * columnsCount).toULong())
-					?: throw IllegalArgumentException("Height too big for address space")
 				updateGeometry()
 				validate()
 			}
@@ -117,9 +117,8 @@ class VideoRamView(
 				if (value > MAX_COLUMNS_COUNT) {
 					throw IllegalArgumentException("Maximum width is $MAX_COLUMNS_COUNT")
 				}
+				updateAddressBitWidth(rowsCount, value, dataWidth.width, colorModel.dataBitWidth.width)
 				field = value
-				model.getAddressInput().bitWidth = BitWidth.smallest((field * rowsCount).toULong())
-					?: throw IllegalArgumentException("Width too big for address space")
 				updateGeometry()
 				validate()
 			}
@@ -130,6 +129,7 @@ class VideoRamView(
 			if (isNotReading) {
 				throwIfInconsistentBitWidths(dataWidth, value.dataBitWidth)
 			}
+			updateAddressBitWidth(rowsCount, columnsCount, dataWidth.width, value.dataBitWidth.width)
 			field = value
 		}
 
@@ -166,6 +166,12 @@ class VideoRamView(
 		modelExchanged(null)
 		model.dataWidth = colorModel.dataBitWidth
 		createImage()
+	}
+
+	private fun updateAddressBitWidth(rows: Int, columns: Int, dataBitWidth: Int, colorModelBitWidth: Int) {
+		val pixelPerDataCell = dataBitWidth / colorModelBitWidth
+		model.getAddressInput().bitWidth = BitWidth.smallest((rows * columns / pixelPerDataCell - 1).toULong())
+			?: throw IllegalArgumentException("Width x height too big for address space")
 	}
 
 	private fun createImage() {

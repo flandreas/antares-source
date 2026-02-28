@@ -1,7 +1,9 @@
 package ch.scorpion.antares.view.output
 
 import ch.scorpion.antares.AntaresTestRule
+import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory.of
 import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.execution.SignalHandler
@@ -120,6 +122,16 @@ class VideoRamViewTest {
         writePixel(2UL, 0UL)
 
         assert1BitMonochromeImage()
+    }
+
+    @Test
+    fun shouldUpdateAddressWidth() {
+        videoRamView.columnsCount = 512
+        videoRamView.rowsCount = 256
+        videoRamView.colorModel = VideoRamColorModel.MONOCHROME
+        videoRamView.dataWidth = BitWidth.BW_16
+
+        assertEquals(13, (videoRamView.model.getInput<DigitalSignal>("A") as DigitalPort).bitWidth.width)
     }
 
     private fun assert1BitMonochromeImage() {
