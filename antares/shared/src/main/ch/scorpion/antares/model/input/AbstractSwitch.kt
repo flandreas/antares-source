@@ -3,10 +3,12 @@ package ch.scorpion.antares.model.input
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.Actor
 import ch.scorpion.jabbah.graph.model.GraphActorData
-import ch.scorpion.jabbah.graph.model.vertice.InteractableVertice
 import ch.scorpion.jabbah.graph.model.vertice.AbstractInteractableVertice
+import ch.scorpion.jabbah.graph.model.vertice.InteractableVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
-import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.io.Storable
+import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.io.StoreWriter
 
 abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 	calculator: VerticeCalculator<T>
@@ -22,6 +24,8 @@ abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 
 	val isOn: Boolean get() = signal ?: false
 
+	var closedOnStart: Boolean = false
+
 	/** ---- [InteractableVertice] interface */
 
 	override var interactivePropagationDelay: Long = Switch.DEF_PROP_DELAY.value
@@ -30,12 +34,12 @@ abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 
 	override fun executionInitialize(signalHandler: SignalHandler) {
 		super.executionInitialize(signalHandler)
-		setSignal(false, signalHandler)
+		setSignal(closedOnStart, signalHandler)
 	}
 
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
-		requestSetSignal(false, signalHandler)
+		requestSetSignal(closedOnStart, signalHandler)
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {
@@ -69,6 +73,22 @@ abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 	protected fun delayedOff(signalHandler: SignalHandler, delayedBy: Long) {
 		if (enabled && isOn) {
 			requestSetSignalAfter(false, signalHandler, delayedBy)
+		}
+	}
+
+	/** ---- [Storable] interface */
+
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		if (closedOnStart) {
+			writer.writeBoolean("closedOnStart", closedOnStart)
+		}
+	}
+
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+		if (reader.hasAttribute("closedOnStart")) {
+			closedOnStart = reader.readBoolean("closedOnStart")
 		}
 	}
 }

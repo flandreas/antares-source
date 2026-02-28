@@ -18,6 +18,7 @@ class SwitchViewBeanInfo : DigitalComponentViewBeanInfo<SwitchView>(), ControlVi
 	    private val name = EditProperties.untranslatableName()
 	    private val toggle = CommandPropertySwing("toggle", SwitchView.BASE_KEY_TOGGLE, Boolean::class.java, componentBeanProvider)
 		private val minOnTime = CommandPropertySwing("minOnTime", SwitchView.MIN_ON_TIME, Long::class.java, componentBeanProvider)
+		private val closedOnStart = CommandPropertySwing("closedOnStart", SwitchView.CLOSED_ON_START, Boolean::class.java, componentBeanProvider)
 	    private val labelPosition = GraphProperties.verticalLabelPosition()
 		private val controlViewLabelPosition = GraphProperties.verticalLabelPosition(name = "${ControlViewComponentBeanInfo.aggregatePropertyName}.labelPosition")
     }
@@ -32,6 +33,7 @@ class SwitchViewBeanInfo : DigitalComponentViewBeanInfo<SwitchView>(), ControlVi
 		if (!bean.toggle) {
 			properties.add(minOnTime.bind(editor, beanIdProvider(bean.id)))
 		}
+		properties.add(closedOnStart.bind(editor, beanIdProvider(bean.id)))
     }
 
 	override fun addControlViewProperties(bean: ControlViewComponent, editor: Editor, properties: MutableList<Property>) {

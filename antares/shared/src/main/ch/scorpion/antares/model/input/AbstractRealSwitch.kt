@@ -127,10 +127,6 @@ abstract class AbstractRealSwitch<T : AbstractSwitch<T>>(
 
 	/** ---- [Actor] interface */
 
-	override fun executionStart(signalHandler: SignalHandler) {
-		// Real switches are passive and don't publish signals at startup
-	}
-
 	override fun executionStopped(signalHandler: SignalHandler) {
 		super.executionStopped(signalHandler)
 		// Make sure that switch is off at start of next simulation run

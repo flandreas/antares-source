@@ -29,6 +29,7 @@ class SwitchView(
 
 		const val BASE_KEY_TOGGLE = "element.property.Switch.toggle"
 		const val MIN_ON_TIME = "element.property.Switch.minOnTime"
+		const val CLOSED_ON_START = "element.property.Switch.closedOnStart"
 
 		private const val TOGGLE_BASE_RESOURCE_KEY = "library.element.Toggle"
 		private val TOGGLE_TYPE get() = Translations.getString("$TOGGLE_BASE_RESOURCE_KEY.name")

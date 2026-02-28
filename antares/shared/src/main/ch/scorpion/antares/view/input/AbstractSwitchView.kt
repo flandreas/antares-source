@@ -227,6 +227,15 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 			}
 		}
 
+	@Suppress("unused") // Reflection
+	var closedOnStart: Boolean
+		get() = model.closedOnStart
+		set(value) {
+			if (value != model.closedOnStart) {
+				model.closedOnStart = value
+			}
+		}
+
 	/** ---- [ActorView] interface */
 
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler =
