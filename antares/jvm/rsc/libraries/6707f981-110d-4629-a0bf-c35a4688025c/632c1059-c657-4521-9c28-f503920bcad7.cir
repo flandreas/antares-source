@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<metaGraph _id='0' appVersion='1.28.0' manualContainer='true'>
+<metaGraph _id='0' appVersion='1.34.0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' type='digital' script='var sum = A$(2*BW) + B$(2*BW) + CI
+        <graph _id='2' type='digital' script='var sum = A$BW + B$BW + CI
 S = sum
-CO = sum &gt; (2^BW - 1)' purelyScripted='true' propDelay='1000'>
+CO = A$(BW + 1) + B$(BW + 1) + CI &gt; (2^BW - 1)' purelyScripted='true' propDelay='1000'>
           <elements>
             <circuitInOut _id='3' id='1' name='A' type='input' bitWidth='BW'>
               <desc>

@@ -2,6 +2,8 @@ package ch.scorpion.antares.standardlibrary
 
 import ch.scorpion.antares.AbstractCircuitTest
 import ch.scorpion.antares.AntaresApplication
+import ch.scorpion.jabbah.app.AbstractDesktopApplication
+import ch.scorpion.jabbah.app.CurrentApplicationVersion
 import ch.scorpion.jabbah.graph.library.*
 import ch.scorpion.jabbah.graph.library.dictionary.LibraryDictionaryService
 import ch.scorpion.jabbah.graph.library.dictionary.ResourceLibraryDictionaryPersistenceService
@@ -15,6 +17,8 @@ abstract class AbstractStandardLibraryBasedCircuitTest : AbstractCircuitTest() {
 
 	companion object {
 		fun setupLibrary() {
+			CurrentApplicationVersion.version = AbstractDesktopApplication.readVersion()
+
 			LibraryModule.DEF_LIBRARY_UUID = AntaresApplication.DEF_LIBRARY_UUID
 			LibraryModule.systemLibraryPersistenceService = ResourceLibraryPersistenceService()
 			LibraryModule.systemLibraryDictionaryService = LibraryDictionaryService(
