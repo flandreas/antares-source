@@ -4,10 +4,13 @@ import ch.scorpion.jabbah.base.Language
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.swing.EGBL
+import ch.scorpion.jabbah.base.swing.RequestFocusListener
 import ch.scorpion.jabbah.base.swing.UiUtil
 import java.awt.Component
 import java.awt.Frame
 import javax.swing.*
+import javax.swing.event.AncestorEvent
+import javax.swing.event.AncestorListener
 import javax.swing.text.JTextComponent
 
 /**
@@ -105,13 +108,15 @@ class TranslatablePanel(
 
 		buildUI()
 
-		// Due to a strange behaviour of JTextArea, longs texts that would need the JScrollPane to display the
+		// Due to some strange behavior of JTextArea, longs texts that would need the JScrollPane to display the
 		// scrollbar result in tiny JTextArea heights.
 		// See https://stackoverflow.com/questions/455753/jtextarea-very-small-size-with-long-text.
 		revalidate()
 		currentLangTextField.size = currentLangTextField.preferredSize
 		alternativeLangTextField.size = alternativeLangTextField.preferredSize
 		revalidate()
+
+		currentLangTextField.addAncestorListener(RequestFocusListener())
 	}
 
 	private val text: Translatable
