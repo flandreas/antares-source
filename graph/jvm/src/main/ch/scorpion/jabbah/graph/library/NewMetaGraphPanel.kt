@@ -23,15 +23,20 @@ data class NewMetaGraphInfo(
 
 /**
  * A [JPanel] for collecting the input used for creating a new [MetaGraph].
+ * @param type the optionally pre-set [GraphType]. If set, the user can't choose it
  */
-class NewMetaGraphPanel(name: TranslatableText? = null) : JPanel() {
+class NewMetaGraphPanel(
+	name: TranslatableText? = null,
+	type: GraphType? = null
+) : JPanel() {
 
 	companion object {
 		fun showAsDialog(
 			parent: Component = Frame.getFrames()[0],
-			name: TranslatableText? = null
+			name: TranslatableText? = null,
+			type: GraphType? = null
 		): NewMetaGraphInfo? {
-			val panel = NewMetaGraphPanel(name)
+			val panel = NewMetaGraphPanel(name, type)
 			return when (
 				JOptionPane.showConfirmDialog(
 					parent,
@@ -55,6 +60,11 @@ class NewMetaGraphPanel(name: TranslatableText? = null) : JPanel() {
 	init {
 		fillGraphTypes()
 		name?.let { nameField.value = it }
+		type?.let {
+			typeField.selectedItem = it
+			typeField.isEnabled = false
+		}
+
 		buildUI()
 		requestFocusInNameField()
 	}

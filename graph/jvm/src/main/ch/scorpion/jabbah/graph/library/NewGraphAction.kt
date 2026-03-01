@@ -10,6 +10,7 @@ import ch.scorpion.jabbah.edit.auth.Operation
 import ch.scorpion.jabbah.edit.model.text.TranslatableText
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.MetaGraph
+import ch.scorpion.jabbah.graph.model.GraphType
 import ch.scorpion.jabbah.graph.ui.library.LibraryTreeViewController
 import java.awt.Component
 import java.awt.Frame
@@ -31,14 +32,15 @@ class NewGraphAction(
 
 		/**
 		 * Requests the info for a new [MetaGraph] from the user by showing a dialog.
-		 * @return the info, or `null` if the user cancelled the action
+		 * @param type the optionally pre-set [GraphType]. If set, the user can't choose it
+		 * @return the info, or `null` if the user canceled the action
 		 */
-		fun requestNewGraphInfo(parent: Component, title: String): NewMetaGraphInfo? {
+		fun requestNewGraphInfo(parent: Component, title: String, type: GraphType? = null): NewMetaGraphInfo? {
 			var info: NewMetaGraphInfo
 			var oldName: TranslatableText? = null
 
 			while (true) {
-				info = NewMetaGraphPanel.showAsDialog(name = oldName) ?: return null
+				info = NewMetaGraphPanel.showAsDialog(name = oldName, type = type) ?: return null
 				oldName = info.name
 
 				try {

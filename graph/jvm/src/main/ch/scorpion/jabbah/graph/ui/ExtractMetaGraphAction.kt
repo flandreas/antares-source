@@ -29,11 +29,15 @@ class ExtractMetaGraphAction(
 	override val opensDialog: Boolean get() = true
 
 	override fun execute(event: ActionEvent) {
-		val info = NewGraphAction.requestNewGraphInfo(drawingView!!.canvas as JComponent, Translations.getString("graph.action.extractMetaGraph.name"))
-			?: return
+		val savable = applicationDataHolder.data!!.savable as AbstractContainerLibraryElementSavable
+
+		val info = NewGraphAction.requestNewGraphInfo(
+			drawingView!!.canvas as JComponent,
+			Translations.getString("graph.action.extractMetaGraph.name"),
+			(drawingView!!.drawing as GraphView).graph!!.type
+		) ?: return
 
 		val library = libraryHolder.library
-		val savable = applicationDataHolder.data!!.savable as AbstractContainerLibraryElementSavable
 
 		service.extractMetaGraph(
 			info.name,
