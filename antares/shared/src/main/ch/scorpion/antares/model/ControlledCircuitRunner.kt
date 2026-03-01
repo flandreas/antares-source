@@ -88,7 +88,7 @@ class ControlledCircuitRunner(
 			return runImpl(circuit, prolog, epilogue, context, doStart = true, doStop = false)
 		} catch (e: Throwable) {
 			stopSimulation(circuit)
-			return 0
+			throw e
 		}
 	}
 
@@ -102,7 +102,7 @@ class ControlledCircuitRunner(
 			return runImpl(circuit, prolog, epilogue, context, doStart = false, doStop = false)
 		} catch (e: Throwable) {
 			stopSimulation(circuit)
-			return 0
+			throw e
 		}
 	}
 
@@ -116,7 +116,7 @@ class ControlledCircuitRunner(
 			return runImpl(circuit, prolog, epilogue, context, doStart = false, doStop = true)
 		} catch (e: Throwable) {
 			stopSimulation(circuit)
-			return 0
+			throw e
 		}
 	}
 
