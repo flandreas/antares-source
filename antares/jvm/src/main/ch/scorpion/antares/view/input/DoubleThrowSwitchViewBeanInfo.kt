@@ -13,13 +13,11 @@ class DoubleThrowSwitchViewBeanInfo : DigitalComponentViewBeanInfo<DoubleThrowSw
 	companion object {
 		private val bitWidth = AntaresProperties.bitWidth()
 		private val toggle = CommandPropertySwing("toggle", SwitchView.BASE_KEY_TOGGLE, Boolean::class.java, componentBeanProvider)
-		private val closedOnStart = CommandPropertySwing("closedOnStart", SwitchView.CLOSED_ON_START, Boolean::class.java, componentBeanProvider)
 	}
 
 	override fun addProperties(bean: DoubleThrowSwitchView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 		properties.add(bitWidth.bind(editor, beanIdProvider(bean.id)))
 		properties.add(toggle.bind(editor, beanIdProvider(bean.id)))
-		properties.add(closedOnStart.bind(editor, beanIdProvider(bean.id)))
 	}
 }
