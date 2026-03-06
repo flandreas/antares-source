@@ -10,7 +10,7 @@ import ch.scorpion.jabbah.graph.model.PortType
  */
 object GraphPortName {
 
-	private val STRUCTURE_REGEX = "^(\\D+)(\\d+)$".toRegex()
+	private val STRUCTURE_REGEX = "^(\\D+)(\\d*)$".toRegex()
 
 	fun defaultName(name: String?, portType: PortType): String {
 		if (StringUtils.isNotEmpty(name)) {
@@ -42,6 +42,10 @@ object GraphPortName {
 		var count = structure.number
 		var newName = name
 		while (graph.graphPorts.any { it.name == newName }) {
+			if (count == -1) {
+				// Original name had no number, e.g. "I". We want to get "I2" instead of "I1"
+				count = 1
+			}
 			count++
 			newName = "${structure.text}$count"
 		}
@@ -50,11 +54,18 @@ object GraphPortName {
 
 	fun createStructure(name: String): GraphPortNameStructure? {
 		val result = STRUCTURE_REGEX.matchEntire(name)
-		return if (result != null && result.groupValues.size == 3) {
-			GraphPortNameStructure(result.groupValues[1], result.groupValues[2].toInt())
-		} else {
+		return if (result != null) {
+			if (result.groupValues.size == 3) {
+				if (StringUtils.isBlank(result.groupValues[2])) {
+					GraphPortNameStructure(result.groupValues[1], -1)
+				} else {
+					GraphPortNameStructure(result.groupValues[1], result.groupValues[2].toInt())
+				}
+			} else {
+				null
+			}
+		} else
 			null
-		}
 	}
 }
 

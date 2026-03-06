@@ -147,11 +147,11 @@ class GraphViewCopyPasteServiceTest {
 
 		service.paste(contents, view.build(), Point2D(10, 10))
 		var newInput = builder.graphView.drawables.first() as TestGraphPortView<*>
-		assertEquals("Test (2)", newInput.model.name)
+		assertEquals("Test2", newInput.model.name)
 
 		service.paste(contents, view.build(), Point2D(10, 10))
 		newInput = builder.graphView.drawables.first() as TestGraphPortView<*>
-		assertEquals("Test (3)", newInput.model.name)
+		assertEquals("Test3", newInput.model.name)
 	}
 
 	private fun createMetaGraph(): ContainerLibraryElement {

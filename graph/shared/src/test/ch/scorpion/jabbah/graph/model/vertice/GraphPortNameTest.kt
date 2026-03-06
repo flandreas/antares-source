@@ -11,7 +11,6 @@ import dev.mokkery.mock
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
 
 class GraphPortNameTest {
 
@@ -23,14 +22,8 @@ class GraphPortNameTest {
 	@Test
 	fun shouldCreateStructure() {
 		assertStructure("Input", 4, GraphPortName.createStructure("Input4"))
-		assertStructure("Input ", 4, GraphPortName.createStructure("Input 4"))
-	}
-
-	@Test
-	fun shouldNotCreateStructure() {
-		assertNull(GraphPortName.createStructure("Bla"))
-		assertNull(GraphPortName.createStructure("3A"))
-		assertNull(GraphPortName.createStructure("A5B"))
+		assertStructure("Input ", 3, GraphPortName.createStructure("Input 3"))
+		assertStructure("Bla", -1, GraphPortName.createStructure("Bla"))
 	}
 
 	private fun assertStructure(text: String, number: Int, structure: GraphPortNameStructure?) {
@@ -39,12 +32,9 @@ class GraphPortNameTest {
 	}
 
 	@Test
-	fun shouldCreateUnqualifiedPastedName() {
-		assertEquals("Test (3)", createPastedName("Test", graph("Test", "Test (2)")))
-	}
-
-	@Test
 	fun shouldCreateQualifiedPastedName() {
+		assertEquals("I2", createPastedName("I", graph("I")))
+		assertEquals("I2", createPastedName("I1", graph("I1")))
 		assertEquals("I6", createPastedName("I4", graph("I4", "I5")))
 		assertEquals("Out 2", createPastedName("Out 1", graph("Out 1")))
 	}
