@@ -90,15 +90,16 @@ class GraphViewExecutionController(
 			&& graphViewUI.isEditable
 	}
 
+	private val isDetached: Boolean get() = graphViewUI.isDetached
+			&& applicationContextHolder.scheduler.isActive
+			&& (!applicationContextHolder.scheduler.isDeepExecution || graphViewUI.drawingView.drawing.graph!!.purelyScripted)
+
 	/**
 	 * Updates the [DrawingView] in order to display whether the displayed [GraphView] is detached,
 	 * i.e. whether it doesn't show accurate signal states due to shallow execution.
 	 */
 	fun updateDetachedUI() {
-		if (graphViewUI.isDetached
-			&& applicationContextHolder.scheduler.isActive
-			&& (!applicationContextHolder.scheduler.isDeepExecution || graphViewUI.drawingView.drawing.graph!!.purelyScripted)
-		) {
+		if (isDetached) {
 			graphViewUI.drawingView.overlayColor = Themes.get<GraphTheme>().overlay
 			if (BaseModule.properties.getBoolean(PROP_BEGINNER_HELP_TOOLTIP)) {
 				graphViewUI.drawingView.decorator.topCentered = Label(
@@ -113,6 +114,7 @@ class GraphViewExecutionController(
 			graphViewUI.drawingView.overlayColor = null
 			graphViewUI.drawingView.decorator.topCentered = null
 		}
+		graphViewUI.drawingView.drawing.handleDetached(isDetached)
 	}
 
 	private fun handle(event: SchedulerActivationStateEvent) {

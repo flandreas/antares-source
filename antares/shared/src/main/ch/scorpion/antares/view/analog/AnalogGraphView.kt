@@ -122,6 +122,12 @@ class AnalogGraphView(
 		return true
 	}
 
+	override fun handleDetached(detached: Boolean) {
+		if (detached) {
+			CurrentFlowAnimator.unregister(this)
+		}
+	}
+
 	/** ---- [AnalogGraphView] */
 
 	val analogElementViews: List<AnalogElement> get() =

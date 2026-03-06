@@ -233,6 +233,8 @@ open class GraphViewImpl(
 		return getDrawables { it is SubGraphVerticeView<*> }.map { it as SubGraphVerticeView<*> }.toImmutableList()
 	}
 
+	override fun handleDetached(detached: Boolean) { }
+
 	/** ---- [Storable] interface */
 
 	override fun write(writer: StoreWriter) {

@@ -137,4 +137,12 @@ interface GraphView : Drawing<GraphElementView<*>> {
 	 */
 	fun removeNetView(netView: NetView<*>)
 
+	/**
+	 * Informs this [GraphView] whether it is detached or not, where "detached" means that it is simulated
+	 * as a non-root [GraphView], that the non-deep simulation uses its execution script, and that its content
+	 * might not show accurate signals. Implementations can react accordingly on the UI, e.g. NOT running
+	 * any unnecessary signal flow animations.
+	 */
+	fun handleDetached(detached: Boolean)
+
 }
