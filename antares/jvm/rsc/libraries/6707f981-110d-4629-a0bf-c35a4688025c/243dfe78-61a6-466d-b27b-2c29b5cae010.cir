@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<metaGraph _id='0' appVersion='1.31.0' manualContainer='true'>
+<metaGraph _id='0' appVersion='1.34.0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
@@ -167,13 +167,13 @@
           <components>
             <subGraphVerticeViewRef _id='84' id='1' rot='0' filled='true' stroked='true' modelId='3' x='-196.0' y='-112.0' controlViewVisibility='simulation'>
               <label>
-                <translation lang='en' text='REG 0..3'/>
+                <translation lang='en' text='REG 12..15'/>
                 <translation lang='de' text='REG 12..15'/>
               </label>
             </subGraphVerticeViewRef>
             <subGraphVerticeViewRef _id='85' id='2' rot='0' filled='true' stroked='true' modelId='4' x='35.0' y='-112.0' controlViewVisibility='simulation'>
               <label>
-                <translation lang='en' text='REG 4..7'/>
+                <translation lang='en' text='REG 8..1'/>
                 <translation lang='de' text='REG 8..11'/>
               </label>
             </subGraphVerticeViewRef>
@@ -292,11 +292,12 @@
             <subGraphVerticeViewRef _id='114' id='31' rot='0' filled='true' stroked='true' modelId='18' x='252.0' y='-112.0' controlViewVisibility='simulation'>
               <label>
                 <translation lang='en' text='REG 4..7'/>
+                <translation lang='de' text='REG 4..7'/>
               </label>
             </subGraphVerticeViewRef>
             <subGraphVerticeViewRef _id='115' id='32' rot='0' filled='true' stroked='true' modelId='20' x='469.0' y='-112.0' controlViewVisibility='simulation'>
               <label>
-                <translation lang='en' text='REG 4..7'/>
+                <translation lang='en' text='REG 0..3'/>
                 <translation lang='de' text='REG 0..3'/>
               </label>
             </subGraphVerticeViewRef>
@@ -536,7 +537,7 @@
           </desc>
           <name>
             <translation lang='de' text='Bus-Register 16 Bit'/>
-            <translation lang='en' text='Bug Register 16 Bit'/>
+            <translation lang='en' text='Bus Register 16 Bit'/>
           </name>
           <ports>
             <subCircuitPort _id='150' portId='1' name='D' logic='positive' bitWidth='16' trigger='level' type='input' representation='hex'/>

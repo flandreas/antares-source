@@ -220,7 +220,7 @@
             <containerLibraryElement _id='81' uuid='243dfe78-61a6-466d-b27b-2c29b5cae010' type='digital'>
               <name>
                 <translation lang='de' text='Bus-Register 16 Bit'/>
-                <translation lang='en' text='Bug Register 16 Bit'/>
+                <translation lang='en' text='Bus Register 16 Bit'/>
               </name>
             </containerLibraryElement>
           </items>
