@@ -112,7 +112,8 @@ class StylableImpl(
         }
 
 	private var customColorIdentity: PredefinedColorIdentity? = customColor?.identity
-    override var customColor: PredefinedColor? get() = if (customColorIdentity != null) PredefinedColorRepository.withIdentity(customColorIdentity!!) else null
+    override var customColor: PredefinedColor?
+        get() = if (customColorIdentity != null) PredefinedColorRepository.withIdentity(customColorIdentity!!) else null
         set(value) {
             if (customColorIdentity != value?.identity) {
                 invalidator?.invoke()
@@ -123,7 +124,8 @@ class StylableImpl(
         }
 
 	private var customStrokeIdentity: PredefinedStrokeIdentity? = customStroke?.identity
-    override var customStroke: PredefinedStroke? get() = if (customStrokeIdentity != null) PredefinedStrokeRepository.withIdentity(customStrokeIdentity!!) else null
+    override var customStroke: PredefinedStroke?
+        get() = if (customStrokeIdentity != null) PredefinedStrokeRepository.withIdentity(customStrokeIdentity!!) else null
         set(value) {
 	        if (customStrokeIdentity != value?.identity) {
 		        invalidator?.invoke()

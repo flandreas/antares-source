@@ -67,14 +67,15 @@ class StylableImplTest {
     @Test
     fun shouldUpdateColorForCustomColor() {
         StyleRepository.INSTANCE.registerStyle(StyleType.FIGURE, specifiedStyle)
+        PredefinedColorRepository.register(PredefinedColor(PredefinedColorIdentity.Red, RED))
         val stylable = StylableImpl(customColor = null, styleProvider = StyleRepository.INSTANCE, styleType = StyleType.FIGURE)
 
         val color1 = stylable.color
-        stylable.customColor = PredefinedColor(PredefinedColorIdentity.Red, RED)
+        stylable.customColor = PredefinedColorRepository.withIdentity(PredefinedColorIdentity.Red)
         val color2 = stylable.color
 
         assertNotSame(color1, color2)
-        assertEquals(stylable.customColor!!.color.foregroundColor, color2.foregroundColor)
+        assertEquals(stylable.customColor?.color?.foregroundColor, color2.foregroundColor)
     }
 
     @Test
