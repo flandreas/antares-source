@@ -121,6 +121,7 @@ class MoveScenarioCommand(
 	}
 
 	override fun undo() {
-		graphView.scenarios.move(scenarioId, oldIndex)
+		val effIndex = if (oldIndex > newIndex) oldIndex + 1 else oldIndex
+		graphView.scenarios.move(scenarioId, effIndex)
 	}
 }
