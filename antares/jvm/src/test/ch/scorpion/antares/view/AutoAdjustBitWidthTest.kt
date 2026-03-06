@@ -32,7 +32,6 @@ import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import dev.mokkery.mock
 import kotlin.test.BeforeTest
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -83,7 +82,6 @@ class AutoAdjustBitWidthTest {
         application.start()
     }
 
-    @Ignore // Currently flaky
     @Test
     fun shouldNotAdjustBitWidthToSubCircuitPortUponOpen() {
         // Create subcircuit with BitWidth 8 input
@@ -92,7 +90,6 @@ class AutoAdjustBitWidthTest {
             DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(name = "addr", bitWidth = BW_8)),
             application.editor.view
         ) as DigitalCircuitInOutView
-        //CurrentContainerDrawingLayouter.value.layout(graphView, containerDrawing)
         val subCircuitUUID = save()
 
         // Create circuit and add SubCircuitRefView
