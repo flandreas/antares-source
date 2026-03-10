@@ -20,7 +20,7 @@ import javax.swing.*
 
 /**
  * An implementation of [GraphDesktopView] that supports "Docking", meaning that the user can pick
- * any of its [GraphDesktopViewItem GraphDesktopViewItems] and drag it to another location.
+ * any of its [GraphDesktopViewItems][GraphDesktopViewItem] and drag it to another location.
  */
 class DockingGraphDesktopViewSwing(
     private val controller: GraphDesktopViewController,
@@ -32,10 +32,10 @@ class DockingGraphDesktopViewSwing(
         private val LOG by logger(DockingGraphDesktopViewSwing::class)
     }
 
-    /** Holds the [GraphDesktopViewItem GraphDesktopViewItems] organized in columns. */
+    /** Holds the [GraphDesktopViewItems][GraphDesktopViewItem] organized in columns. */
     private val items = DockingGraphDesktopViewItems(maxRowsCount)
 
-    /** The [JPanel] where the [GraphDesktopViewItem GraphDesktopViewItems] (possibly contained in a [JSplitPane] are added. */
+    /** The [JPanel] where the [GraphDesktopViewItems][GraphDesktopViewItem] (possibly contained in a [JSplitPane] are added. */
     private val content = JPanel(BorderLayout())
 
     /** Captures the potential new location of a [GraphDesktopViewItem] in drag operation during drag&drop. */
@@ -53,7 +53,7 @@ class DockingGraphDesktopViewSwing(
     private val dockingController = DockingController()
 
     /**
-     * Holds the list of created [JSplitPane JSplitPanes] for retrieving there current splitter locations
+     * Holds the list of created [JSplitPanes][JSplitPane] for retrieving there current splitter locations
      * to re-establish them in [rebuildUI].
      */
     private val splitPanes = mutableListOf<JSplitPane>()
@@ -89,6 +89,10 @@ class DockingGraphDesktopViewSwing(
     override fun dispose() {
         eventBus.unregister(dockingStartedHandler)
         eventBus.unregister(dockingFinishedHandler)
+    }
+
+    override fun isOptimizedDrawingEnabled(): Boolean {
+        return false
     }
 
     /** ---- DnD control interface */
