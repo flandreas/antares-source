@@ -38,7 +38,7 @@ abstract class AbstractAntaresAppJs(
         private val LOG by logger(AbstractAntaresAppJs::class)
 
         // TODO: Find a way to make this dynamic, i.e. read from version.txt also on JS platform
-        private val VERSION = ApplicationVersion("1.34.0")
+        private val VERSION = ApplicationVersion("1.35.0")
     }
 
     private val isUserAuthenticated: Boolean get() =
