@@ -20,6 +20,11 @@ object DrawModuleJs : AbstractModule() {
 		fillProperties(BaseModule.properties)
 	}
 
+	override fun resetDependencies() {
+		BaseModuleJs.reset()
+		DrawModule.reset()
+	}
+
 	private fun fillProperties(properties: Properties) {
 		// Disable textual HTML tooltips in JS until HTML text boxed can be rendered
 		properties.set(TooltipHandler.PROP_TOOLTIPS_ENABLED, true)

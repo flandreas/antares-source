@@ -13,4 +13,9 @@ object IOModuleJs : AbstractModule() {
 		BaseModuleJs.require()
 		IOModule.require()
 	}
+
+	override fun resetDependencies() {
+		BaseModuleJs.reset()
+		IOModule.reset()
+	}
 }

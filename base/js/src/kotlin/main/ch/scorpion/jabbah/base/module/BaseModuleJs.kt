@@ -20,4 +20,8 @@ object BaseModuleJs : AbstractModule() {
 	    InvocationHandler.implementation = InvocationHandlerJs()
 	    BaseModule.timeService = RealTimeServiceJs()
     }
+
+    override fun resetDependencies() {
+        BaseModule.reset()
+    }
 }

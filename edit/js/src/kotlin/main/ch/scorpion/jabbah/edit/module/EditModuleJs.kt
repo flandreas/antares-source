@@ -18,4 +18,10 @@ object EditModuleJs : AbstractModule() {
 
 	    EditModelTextModule.textComponentFactory = TextComponentFactoryJs()
     }
+
+    override fun resetDependencies() {
+        IOModuleJs.reset()
+        DrawModuleJs.reset()
+        EditModule.reset()
+    }
 }

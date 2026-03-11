@@ -59,6 +59,11 @@ object AntaresModuleJs : AbstractModule() {
         loadTranslations()
     }
 
+    override fun resetDependencies() {
+        EditModuleJs.reset()
+        AntaresViewModule.reset()
+    }
+
     /** TODO Work around for missing implementation of [Translations] mechanism for texts used for demo application.*/
     private fun loadTranslations() {
         Translations.addKey("execution.action.execute.name", "Simulate")
