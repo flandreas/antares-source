@@ -319,6 +319,8 @@ tasks {
 			"--java-options", "-splash:\$APPDIR/splash-light.png",
 			"--java-options", "-Dapple.awt.application.name=Antares",
 			"--java-options", "-Dapple.awt.application.appearance=system",
+			"--java-options", "-Dsun.java2d.xrender=false",
+			"--java-options", "-Dsun.java2d.pmoffscreen=true",
 			"--type", "rpm",
 			"--resource-dir", "jvm/rsc/",
 			"--linux-shortcut"
