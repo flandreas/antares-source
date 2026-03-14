@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.addressable.AddressableVertice.Companion.ADDRES
 import ch.scorpion.antares.model.addressable.AddressableVertice.Companion.CHIP_SELECT_PORT_NAME
 import ch.scorpion.antares.model.addressable.AddressableVertice.Companion.DATA_PORT_NAME
 import ch.scorpion.antares.model.gate.AbstractLogicGate
+import ch.scorpion.antares.model.gate.CurrentUndefinedGateInputBehavior
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitOperation
 import ch.scorpion.antares.model.signal.BitWidth
@@ -50,8 +51,11 @@ class ROM(
 		class Calculator : VerticeCalculator<ROM> {
 			override fun calculate(vertice: ROM, data: GraphActorData, signalHandler: SignalHandler) {
 				if (vertice.isSelected) {
-					val address = vertice.getAddressInput().getIncomingSignal()
-					val addressInt = address!!.toInt()
+					var address = vertice.getAddressInput().getIncomingSignal()
+					if (address!!.isPartiallyUndefined) {
+						address = CurrentUndefinedGateInputBehavior.value.definedValue(vertice.addressWidth)
+					}
+					val addressInt = address.toInt()
 					if (addressInt == null) {
 						vertice.getDataPort().setOutgoingSignalBuffered(DigitalSignalFactory.error(vertice.dataWidth), signalHandler)
 					} else {

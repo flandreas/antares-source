@@ -2,6 +2,8 @@ package ch.scorpion.antares.model.addressable
 
 import ch.scorpion.antares.AntaresTestRule
 import ch.scorpion.antares.model.addressable.AddressableVertice.Companion.DATA_PORT_NAME
+import ch.scorpion.antares.model.gate.CurrentUndefinedGateInputBehavior
+import ch.scorpion.antares.model.gate.UndefinedGateInputBehavior
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
@@ -58,15 +60,16 @@ class ROMTest {
     }
 
     @Test
-    fun shouldBeErrorWithUndefinedAddress() {
-        rom.write(1, 99UL)
+    fun shouldUseUndefinedGateInputBehaviorWithUndefinedAddress() {
+        CurrentUndefinedGateInputBehavior.value = UndefinedGateInputBehavior.ReadAs0
+        rom.write(0, 99UL)
         rom.getAddressInput().setIncomingSignal(DigitalSignalFactory.undefined(BitWidth.BW_8), signalHandler)
         rom.getChipSelectInput().setIncomingSignal(DigitalSignalFactory.of(BitWidth.BW_1, 1L), signalHandler)
 
         calculator.calculate(rom, rom.createActorData(rom.getChipSelectInput()), signalHandler)
 
         val dataOutput = rom.getOutput<DigitalSignal>(DATA_PORT_NAME)
-        assertEquals(DigitalSignalFactory.error(BitWidth.BW_8), dataOutput.getOutgoingSignal())
+        assertEquals(DigitalSignalFactory.of(BitWidth.BW_8, 99L), dataOutput.getOutgoingSignal())
     }
 
     @Test
