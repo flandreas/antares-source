@@ -14,9 +14,6 @@ import ch.scorpion.jabbah.graph.model.*
 import ch.scorpion.jabbah.graph.model.vertice.SubGraphVertice
 import ch.scorpion.jabbah.io.*
 
-/**
- * TODO Code duplication with SubGraphPortImpl.
- */
 class SubCircuitPort(
 	portType: PortType = PortType.INPUT,
 	name: String? = null
@@ -91,7 +88,7 @@ class SubCircuitPort(
 
 	override fun read(reader: StoreReader) {
 		if (reader.hasAttribute("portId")) {
-			// TODO Legacy file support. In new files, portId has always to be there!
+			// Legacy file support. In new files, portId has always to be there
 			portId = reader.readInt("portId")
 		}
 		if (reader.hasAttribute("name")) {
@@ -106,7 +103,7 @@ class SubCircuitPort(
 		}
 		portType = PortType.withName(reader.readString("type"))
 		if (reader.hasAttribute("representation")) {
-			// TODO Legacy file support. In new files, portId has always to be there!
+			// Legacy file support. In new files, portId has always to be there
 			signalRepresentation = DigitalSignalRepresentation.withName(reader.readString("representation"))
 		}
 		if (reader.hasAttribute("outputAnnotation")) {
