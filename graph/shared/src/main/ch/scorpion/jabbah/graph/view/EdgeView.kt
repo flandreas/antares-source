@@ -31,8 +31,6 @@ import ch.scorpion.jabbah.graph.view.net.node.NodeView
  * reacts to [DrawableListener.drawableUpdated] by initiating a re-layout of itself.
  *
  * @param <T> the type of signal
- *
- * TODO Refactor: Extract the read-only part of the [Polyline] interface and let [EdgeView] implement it
  */
 interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
 
@@ -104,7 +102,7 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
 	/**
 	 * Can be set for [EdgeView]s during interactive creation by the user, especially to avoid
 	 * that the [EdgeView] "under construction" gets deleted while being created, which would lead to
-	 * all kind of difficult state problems. Not persistent.
+	 * all kinds of challenging state problems. Not persistent.
 	 */
 	var underConstruction: Boolean
 
@@ -113,9 +111,6 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
 	 * Used by other objects that have to draw [EdgeView] alike overlays.
 	 */
 	val executionStroke: Stroke
-
-	val isConnectedWithNodeView: Boolean get() =
-		origin?.connectableView is NodeView<*> || destination?.connectableView is NodeView<*>
 
 	/**
 	 * Returns `true` if either [Connection] is connected to a [ConnectableView], but its
@@ -140,9 +135,6 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
 	fun getOppositeConnection(connectableView: ConnectableView): Connection<T>?
 
 	fun getOppositeConnection(port: Port<*>): Connection<T>?
-
-	fun getOppositeConnection(connection: Connection<*>): Connection<T>? =
-		if (origin?.connectableView === connection.connectableView) destination else origin
 
 	/**
 	 * Returns the [EdgeViewEndpointType] that represents the specified [Connection], or `null` if
@@ -285,7 +277,7 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
 
     /**
      * Joins this [EdgeView] with another adjacent [EdgeView].
-     * Adds all segment point of the adjacent [EdgeView] either at the head or the tail of this [EdgeView].
+     * Adds all segment points of the adjacent [EdgeView] either at the head or the tail of this [EdgeView].
      * Connects itself to the [ConnectableView] to the corresponding end of the adjacent [EdgeView]
      * @param other the [EdgeView] to join. Must be adjacent.
      * @return the remaining [EdgeView]
