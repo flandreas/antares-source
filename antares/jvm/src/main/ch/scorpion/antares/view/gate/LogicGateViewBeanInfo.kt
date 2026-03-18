@@ -2,6 +2,7 @@ package ch.scorpion.antares.view.gate
 
 import ch.scorpion.antares.model.InputPortNumber
 import ch.scorpion.antares.model.gate.NonUnaryLogicGateType
+import ch.scorpion.antares.model.PortCount // Added this import
 import ch.scorpion.antares.view.AntaresProperties
 import ch.scorpion.antares.view.app.InputCountPropertySwing
 import ch.scorpion.jabbah.edit.Editor
@@ -21,7 +22,8 @@ class LogicGateViewBeanInfo  : BoxGateViewBeanInfo<LogicGateView>() {
 
 		private val outputPortName = AntaresProperties.outputPortName()
 
-		private val negateInput = Array(8) { portId ->
+		// Replaced hardcoded 8 with dynamic max count
+		private val negateInput = Array(PortCount.entries.last().count) { portId ->
 			CommandPropertySwing(
 				"negateInput${portId + 1}",
 				LogicGateView.BASE_KEY_NEGATE_INPUT,
@@ -31,7 +33,8 @@ class LogicGateViewBeanInfo  : BoxGateViewBeanInfo<LogicGateView>() {
 			)
 		}
 
-		private val inputPortName = Array(8) { portId ->
+		// Replaced hardcoded 8 with dynamic max count
+		private val inputPortName = Array(PortCount.entries.last().count) { portId ->
 			CommandPropertySwing(
 				"inputPortName${portId + 1}",
 				LogicGateView.BASE_KEY_INPUT_PORT_NAME,

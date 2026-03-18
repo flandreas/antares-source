@@ -210,6 +210,46 @@ class LogicGateView(
 		get() = model.getNegateInput(8)
 		set(value) = setInputNegation(8, value)
 
+	@Suppress("unused") // Reflection
+	var negateInput9: Boolean
+		get() = model.getNegateInput(9)
+		set(value) { setInputNegation(9, value) }
+
+	@Suppress("unused") // Reflection
+	var negateInput10: Boolean
+		get() = model.getNegateInput(10)
+		set(value) { setInputNegation(10, value) }
+
+	@Suppress("unused") // Reflection
+	var negateInput11: Boolean
+		get() = model.getNegateInput(11)
+		set(value) { setInputNegation(11, value) }
+
+	@Suppress("unused") // Reflection
+	var negateInput12: Boolean
+		get() = model.getNegateInput(12)
+		set(value) { setInputNegation(12, value) }
+
+	@Suppress("unused") // Reflection
+	var negateInput13: Boolean
+		get() = model.getNegateInput(13)
+		set(value) { setInputNegation(13, value) }
+
+	@Suppress("unused") // Reflection
+	var negateInput14: Boolean
+		get() = model.getNegateInput(14)
+		set(value) { setInputNegation(14, value) }
+
+	@Suppress("unused") // Reflection
+	var negateInput15: Boolean
+		get() = model.getNegateInput(15)
+		set(value) { setInputNegation(15, value) }
+
+	@Suppress("unused") // Reflection
+	var negateInput16: Boolean
+		get() = model.getNegateInput(16)
+		set(value) { setInputNegation(16, value) }
+
 	fun setInputNegation(portId: Int, value: Boolean) {
 		if (model.getNegateInput(portId) != value) {
 			model.setNegateInput(portId, value)
@@ -261,6 +301,46 @@ class LogicGateView(
 	var inputPortName8: String?
 		get() = getInputPortName(8)
 		set(value) { setInputPortName(8, value) }
+
+	@Suppress("unused") // Reflection
+	var inputPortName9: String?
+		get() = getInputPortName(9)
+		set(value) { setInputPortName(9, value) }
+
+	@Suppress("unused") // Reflection
+	var inputPortName10: String?
+		get() = getInputPortName(10)
+		set(value) { setInputPortName(10, value) }
+
+	@Suppress("unused") // Reflection
+	var inputPortName11: String?
+		get() = getInputPortName(11)
+		set(value) { setInputPortName(11, value) }
+
+	@Suppress("unused") // Reflection
+	var inputPortName12: String?
+		get() = getInputPortName(12)
+		set(value) { setInputPortName(12, value) }
+
+	@Suppress("unused") // Reflection
+	var inputPortName13: String?
+		get() = getInputPortName(13)
+		set(value) { setInputPortName(13, value) }
+
+	@Suppress("unused") // Reflection
+	var inputPortName14: String?
+		get() = getInputPortName(14)
+		set(value) { setInputPortName(14, value) }
+
+	@Suppress("unused") // Reflection
+	var inputPortName15: String?
+		get() = getInputPortName(15)
+		set(value) { setInputPortName(15, value) }
+
+	@Suppress("unused") // Reflection
+	var inputPortName16: String?
+		get() = getInputPortName(16)
+		set(value) { setInputPortName(16, value) }
 
 	fun setInputPortName(portId: Int, name: String?) {
 		if (model.getPort<DigitalSignal>(portId).name != name) {

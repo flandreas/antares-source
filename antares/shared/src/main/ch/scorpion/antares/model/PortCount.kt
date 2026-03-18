@@ -16,7 +16,15 @@ enum class PortCount(val count: Int) : EnumProperty<PortCount> {
     FIVE(5),
     SIX(6),
     SEVEN(7),
-    EIGHT(8);
+    EIGHT(8),
+    NINE(9),
+    TEN(10),
+    ELEVEN(11),
+    TWELVE(12),
+    THIRTEEN(13),
+    FOURTEEN(14),
+    FIFTEEN(15),
+    SIXTEEN(16);
 
     companion object {
 
