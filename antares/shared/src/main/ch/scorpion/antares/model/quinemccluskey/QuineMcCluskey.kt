@@ -2,71 +2,162 @@ package ch.scorpion.antares.model.quinemccluskey
 
 internal fun getPrimeImplicants(
 	minTerms: List<MinTerm>,
-	dontCares: List<MinTerm> = emptyList(),
-	n: Int
+	dontCares: List<MinTerm> = emptyList()
 ): List<Implicant> {
-	require(n >= 1)
+	var currentLevel = (minTerms + dontCares).distinct().map { Implicant(it) }
+	val allPrimes = mutableSetOf<Implicant>()
 
-	val initialGroups: List<MutableSet<Implicant>> = List(n + 1) { mutableSetOf() }
-	for (m in minTerms + dontCares) {
-		val numberOf1s = m.toString(2).count { it == '1' }
-		initialGroups[numberOf1s].add(Implicant.minTerm(m, n = n))
-	}
-	var groups: List<Set<Implicant>> = initialGroups
-	val primeImplicants: MutableSet<Implicant> = mutableSetOf()
+	while (currentLevel.isNotEmpty()) {
+		val nextLevel = mutableMapOf<Pair<Int, Int>, Implicant>()
 
-	while (groups.isNotEmpty()) {
-		val newGroups = mutableListOf<Set<Implicant>>()
+		// Optimization: Partition by Mask first, then PopCount
+		val maskGroups = currentLevel.groupBy { it.mask }
 
-		for ((group1, group2) in groups.zipWithNext()) {
-			val newGroup = mutableSetOf<Implicant>()
-			for (term1 in group1)
-				for (term2 in group2) {
-					term1.combine(term2)?.let { combined ->
-						term1.mark()
-						term2.mark()
-						newGroup.add(combined)
+		for (maskGroup in maskGroups.values) {
+			val popCountGroups = maskGroup.groupBy { it.value.countOneBits() }
+
+			for ((count, groupA) in popCountGroups) {
+				val groupB = popCountGroups[count + 1] ?: continue
+
+				for (termA in groupA) {
+					for (termB in groupB) {
+						val combined = termA.tryCombine(termB)
+						if (combined != null) {
+							termA.isCombined = true
+							termB.isCombined = true
+							nextLevel[combined.value to combined.mask] = combined
+						}
 					}
 				}
-			newGroups.add(newGroup)
+			}
 		}
 
-		groups.flatten().filter { !it.marked }.toCollection(primeImplicants)
-		groups = newGroups
+		currentLevel.filter { !it.isCombined }.forEach { allPrimes.add(it) }
+		currentLevel = nextLevel.values.toList()
 	}
 
-	return primeImplicants.toList()
+	return allPrimes.toList()
 }
 
-internal fun getEssentialPrimeImplicants(
-	primeImplicants: List<Implicant>,
-	minTerms: List<MinTerm>
+internal fun solveSetCover(
+	pis: List<Implicant>,
+	mintermsToCover: List<MinTerm>
 ): List<Implicant> {
-	val essentialPrimeImplicants: MutableList<Implicant> = mutableListOf()
-	val pis: MutableList<Implicant> = primeImplicants.toMutableList()
-	val ms: MutableList<MinTerm> = minTerms.toMutableList()
+	val solution = mutableListOf<Implicant>()
+	val availablePIs = pis.toMutableList()
+	val uncoveredMinterms = mintermsToCover.toMutableList()
 
-	while (pis.isNotEmpty() && ms.isNotEmpty()) {
-		// Extract EPIs from the prime implicant chart
-		val epis = getEssentialPrimeImplicantsStep(pis, ms)
-		if (epis.isEmpty()) break
-		essentialPrimeImplicants += epis
+	var chartChanged = true
 
-		// Reduce the prime implicant chart
-		pis -= epis.toSet()
-		ms -= epis.flatMap { it.minTerms }.toSet()
-		// TODO: eliminate redundant prime implicants
+	while (chartChanged && uncoveredMinterms.isNotEmpty()) {
+		chartChanged = false
+
+		// 1. Extract Essential Prime Implicants
+		val currentMinterms = uncoveredMinterms.toList()
+		for (m in currentMinterms) {
+			if (!uncoveredMinterms.contains(m)) continue
+
+			val coveringPIs = availablePIs.filter { it.coversMinterm(m) }
+			if (coveringPIs.size == 1) {
+				val epi = coveringPIs[0]
+				solution.add(epi)
+				uncoveredMinterms.removeAll { epi.coversMinterm(it) }
+				availablePIs.remove(epi)
+				chartChanged = true
+			}
+		}
+
+		// 2. Reduce Chart via Dominance to prevent deep recursion
+		if (uncoveredMinterms.isNotEmpty()) {
+			if (applyDominance(availablePIs, uncoveredMinterms)) {
+				chartChanged = true
+			}
+		}
 	}
 
-	return essentialPrimeImplicants
+	// 3. Branch and Bound for any remaining cyclic core
+	if (uncoveredMinterms.isNotEmpty()) {
+		val additionalCover = findMinimumCover(availablePIs, uncoveredMinterms)
+		if (additionalCover != null) {
+			solution.addAll(additionalCover)
+		}
+	}
+
+	return solution
 }
 
-private fun getEssentialPrimeImplicantsStep(
-	primeImplicants: List<Implicant>,
-	minterms: List<MinTerm>
-): List<Implicant> =
-	minterms
-		.map { m -> primeImplicants.filter { m in it.minTerms } }
-		.filter { it.size == 1 }
-		.flatten()
-		.distinct()
+private fun applyDominance(
+	availablePIs: MutableList<Implicant>,
+	uncoveredMinterms: MutableList<MinTerm>
+): Boolean {
+	var changed = false
+
+	// Column Dominance (Minterm Dominance)
+	val mintermsToRemove = mutableSetOf<MinTerm>()
+	for (m1 in uncoveredMinterms) {
+		if (mintermsToRemove.contains(m1)) continue
+		for (m2 in uncoveredMinterms) {
+			if (m1 == m2 || mintermsToRemove.contains(m2)) continue
+			val pM1 = availablePIs.filter { it.coversMinterm(m1) }
+			val pM2 = availablePIs.filter { it.coversMinterm(m2) }
+
+			if (pM1.isNotEmpty() && pM1.all { pM2.contains(it) }) {
+				mintermsToRemove.add(m2)
+			}
+		}
+	}
+	if (mintermsToRemove.isNotEmpty()) {
+		uncoveredMinterms.removeAll(mintermsToRemove)
+		changed = true
+	}
+
+	// Row Dominance (PI Dominance)
+	val pisToRemove = mutableSetOf<Implicant>()
+	for (p1 in availablePIs) {
+		if (pisToRemove.contains(p1)) continue
+		for (p2 in availablePIs) {
+			if (p1 == p2 || pisToRemove.contains(p2)) continue
+			val mP1 = uncoveredMinterms.filter { p1.coversMinterm(it) }
+			val mP2 = uncoveredMinterms.filter { p2.coversMinterm(it) }
+
+			if (mP2.isNotEmpty() && mP2.all { mP1.contains(it) }) {
+				pisToRemove.add(p2)
+			}
+		}
+	}
+	if (pisToRemove.isNotEmpty()) {
+		availablePIs.removeAll(pisToRemove)
+		changed = true
+	}
+
+	return changed
+}
+
+private fun findMinimumCover(
+	availablePIs: List<Implicant>,
+	mintermsToCover: List<MinTerm>
+): List<Implicant>? {
+	if (mintermsToCover.isEmpty()) return emptyList()
+	if (availablePIs.isEmpty()) return null
+
+	val targetMinterm = mintermsToCover.first()
+	val candidates = availablePIs.filter { it.coversMinterm(targetMinterm) }
+
+	var bestSubSolution: List<Implicant>? = null
+
+	for (candidate in candidates) {
+		val newAvailable = availablePIs - candidate
+		val newMintermsToCover = mintermsToCover.filter { !candidate.coversMinterm(it) }
+
+		val subSolution = findMinimumCover(newAvailable, newMintermsToCover)?.toMutableList()
+
+		if (subSolution != null) {
+			subSolution.add(candidate)
+			if (bestSubSolution == null || subSolution.size < bestSubSolution.size) {
+				bestSubSolution = subSolution
+			}
+		}
+	}
+
+	return bestSubSolution
+}

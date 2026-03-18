@@ -3,23 +3,18 @@ package ch.scorpion.antares.model.quinemccluskey
 typealias DNF = List<List<Literal>>
 
 /**
- * Source: https://github.com/Lipen/kotlin-quine-mccluskey.
- * Copies because GitHub project doesn't support Kotlin multiplatform code.
+ * Optimized Quine-McCluskey implementation using bitwise operations,
+ * mask-partitioning, and exact branch-and-bound set cover.
  */
 fun minimizeToDNF(
 	minTerms: List<MinTerm>,
 	dontCares: List<MinTerm> = emptyList(),
 	n: Int
 ): DNF {
-	val primeImplicants = getPrimeImplicants(minTerms, dontCares, n)
-	val essentialPrimeImplicants = getEssentialPrimeImplicants(primeImplicants, minTerms)
-	val uncoveredMinTerms = minTerms - essentialPrimeImplicants.flatMap { it.minTerms }.toSet()
-	val additionalPrimeImplicants =
-		getAdditionalCoveringPrimeImplicants(
-			primeImplicants = primeImplicants - essentialPrimeImplicants.toSet(),
-			minTerms = uncoveredMinTerms
-		)
-	val coveringPrimeImplicants = essentialPrimeImplicants + additionalPrimeImplicants
+	if (minTerms.isEmpty()) return emptyList()
 
-	return coveringPrimeImplicants.map { it.literals }
+	val primeImplicants = getPrimeImplicants(minTerms, dontCares)
+	val coveringPrimeImplicants = solveSetCover(primeImplicants, minTerms)
+
+	return coveringPrimeImplicants.map { it.toLiterals(n) }
 }
