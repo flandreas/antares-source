@@ -1,38 +1,30 @@
 package ch.scorpion.jabbah.edit.app
 
-import ch.scorpion.jabbah.base.AbstractAction
 import ch.scorpion.jabbah.base.Action
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.ActionEvent
-import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.event.EventHandler
-import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.edit.Command
 import ch.scorpion.jabbah.edit.CommandEvent
 import ch.scorpion.jabbah.edit.CommandManager
 import ch.scorpion.jabbah.edit.module.EditModule
 
 /**
- * An [Action] for undoing the las [Command] transaction in a [CommandManager].
+ * An [Action] for undoing the last [Command] transaction in a [CommandManager].
  */
 class UndoAction(
-	private val eventBus: EventBus = BaseModule.eventBus,
 	private val commandManager: CommandManager = EditModule.commandManager
-) : AbstractAction("edit.action.undo") {
+) : AbstractEditAction("edit.action.undo") {
 
 	private val commandHandler: EventHandler<CommandEvent> = { update(it) }
 
-	private val disableWithInactiveCommandManager = ActiveCommandManagerAction(this, commandManager, eventBus)
-
 	init {
-		enabled = false
 		eventBus.register(CommandEvent::class, commandHandler)
 	}
 
 	override fun dispose() {
 		super.dispose()
 		eventBus.unregister(commandHandler)
-		disableWithInactiveCommandManager.dispose()
 	}
 
 	override fun execute(event: ActionEvent) {
@@ -52,28 +44,26 @@ class UndoAction(
 		}
 	}
 
-	override fun calculateEnabled(): Boolean = disableWithInactiveCommandManager.enabled
+	override fun calculateEnabled(): Boolean = super.calculateEnabled()
 		&& commandManager.canUndo()
 }
 
+/**
+ * An [Action] for redoing the last undone [Command] transaction in a [CommandManager].
+ */
 class RedoAction(
-	private val eventBus: EventBus = BaseModule.eventBus,
 	private val commandManager: CommandManager = EditModule.commandManager
-) : AbstractAction("edit.action.redo") {
+) : AbstractEditAction("edit.action.redo") {
 
 	private val commandHandler: EventHandler<CommandEvent> = { update(it) }
 
-	private val disableWithInactiveCommandManager = ActiveCommandManagerAction(this, commandManager, eventBus)
-
 	init {
-		enabled = false
 		eventBus.register(CommandEvent::class, commandHandler)
 	}
 
 	override fun dispose() {
 		super.dispose()
 		eventBus.unregister(commandHandler)
-		disableWithInactiveCommandManager.dispose()
 	}
 
 	override fun execute(event: ActionEvent) {
@@ -93,6 +83,6 @@ class RedoAction(
 		}
 	}
 
-	override fun calculateEnabled(): Boolean = disableWithInactiveCommandManager.enabled
+	override fun calculateEnabled(): Boolean = super.calculateEnabled()
 		&& commandManager.canRedo()
 }
