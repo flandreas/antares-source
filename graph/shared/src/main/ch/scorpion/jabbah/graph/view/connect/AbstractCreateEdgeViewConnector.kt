@@ -125,7 +125,7 @@ abstract class AbstractCreateEdgeViewConnector(
 	protected fun adjustToTargetPortView(context: EditInputEventContext) {
 		// Start highlighting current destination PortView
 		val connPointAbs = targetPortView!!.owner!!.getPortConnectionPoint(targetPortView!!.port)
-		displayPortViewHighlight(context.drawingView, connPointAbs)
+		displayPortViewHighlight(context.drawingView, connPointAbs, alternativeView = true)
 
 		val ownLayoutIndex = adjustment!!.model.current
 		when (draggedEndpointType) {
@@ -174,7 +174,7 @@ abstract class AbstractCreateEdgeViewConnector(
 	}
 
 	private fun adjustToTargetEdgeViewImpl(context: EditInputEventContext, snapLocation: Point2D, origDirs: Set<Direction>?, destDirs: Set<Direction>?) {
-		displayPortViewHighlight(context.drawingView, snapLocation)
+		displayPortViewHighlight(context.drawingView, snapLocation, alternativeView = true)
 		draggedEndpointType.adjustTo(
 			edgeView = edgeView!!,
 			layoutIndex = adjustment!!.model.current,

@@ -9,9 +9,12 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 
 /**
- * Draws a [ConnectionPointHighlight] as a circle.
+ * Draws a [ConnectionPointHighlight] as a circle as "normal" view and as a rectangle as "alternative" view.
  */
-class ConnectionPointHighlightCircle : AbstractRectangularUnzoomable(ConnectionPointHighlight.Companion.SIZE_HALF), ConnectionPointHighlight {
+class ConnectionPointHighlightCircle :
+	AbstractRectangularUnzoomable(ConnectionPointHighlight.Companion.SIZE_HALF),
+	ConnectionPointHighlight
+{
 
 	companion object {
 
