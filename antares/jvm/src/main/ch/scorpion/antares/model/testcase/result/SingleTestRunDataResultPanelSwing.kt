@@ -5,6 +5,7 @@ import ch.scorpion.antares.model.testcase.TestRunResult
 import ch.scorpion.antares.model.testcase.TestVector.Type.*
 import ch.scorpion.antares.model.testcase.Value
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.swing.ColumnsAutoSizer
 import ch.scorpion.jabbah.base.swing.RowHeaderTable
 import ch.scorpion.jabbah.base.swing.UiUtil
 import ch.scorpion.jabbah.base.ui.UIBasics
@@ -28,7 +29,6 @@ class SingleTestRunDataResultPanelSwing(
 		private val DESCRIPTION_CELL_RENDERER = DescriptionCellRenderer()
 		private val INPUT_CELL_RENDERER = InputCellRenderer()
 		private val OUTPUT_CELL_RENDERER = OutputCellRenderer()
-		private const val COLUMN_WIDTH = 100
 
 		private val ICON_COLOR = UIManager.getColor("Label.foreground")
 		private val ICON_STROKE: Stroke = BasicStroke(2.0f)
@@ -63,6 +63,8 @@ class SingleTestRunDataResultPanelSwing(
 		table.columnModel.columnMargin = 1
 		table.tableHeader.defaultRenderer = TableColumnRenderer()
 
+		ColumnsAutoSizer.sizeColumnsToFit(table, 15)
+
 		add(summaryLabel, BorderLayout.NORTH)
 		add(scrollPane, BorderLayout.CENTER)
 	}
@@ -89,7 +91,6 @@ class SingleTestRunDataResultPanelSwing(
 			} else {
 				INPUT_CELL_RENDERER
 			}
-			tableColumn.preferredWidth = COLUMN_WIDTH
 		}
 	}
 
