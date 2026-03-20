@@ -38,7 +38,7 @@ abstract class AbstractLogicGate(
 		val DEFAULT_PROPAGATION_DELAY get() = CurrentDefaultPropagationDelay.value
 
         val DEF_MIN_INPUT_COUNT = PortCount.TWO
-        val DEF_MAX_INPUT_COUNT = PortCount.EIGHT
+        val DEF_MAX_INPUT_COUNT = PortCount.SIXTEEN
     }
 
 	var gateType: LogicGateType = gateType

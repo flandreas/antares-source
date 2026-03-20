@@ -4,49 +4,44 @@ typealias MinTerm = Int
 typealias Literal = Int
 
 internal data class Implicant(
-	val minTerms: Set<MinTerm>,
-	val binary: String
+	val value: Int,
+	val mask: Int = 0
 ) {
-	val literals: List<Literal> = binary.mapIndexedNotNull { i, c ->
-		when (c) {
-			'1' -> i + 1
-			'0' -> -(i + 1)
-			'-' -> null
-			else -> error("Bad character in binary string: '$c'")
+	// Excluded from primary constructor so it doesn't affect equals/hashCode in Sets
+	var isCombined: Boolean = false
+
+	fun coversMinterm(minTerm: MinTerm): Boolean {
+		// Fast O(1) bitwise check
+		return (minTerm and mask.inv()) == value
+	}
+
+	fun tryCombine(other: Implicant): Implicant? {
+		if (this.mask != other.mask) return null
+
+		val diff = this.value xor other.value
+
+		// Check if they differ by exactly ONE bit (lightning-fast power of 2 check)
+		if (diff != 0 && (diff and (diff - 1)) == 0) {
+			return Implicant(this.value and diff.inv(), this.mask or diff)
 		}
+		return null
 	}
 
-	var marked: Boolean = false
-		private set
+	fun toLiterals(n: Int): List<Literal> {
+		val literals = mutableListOf<Literal>()
+		for (i in 0 until n) {
+			val bitPos = (n - 1) - i
+			val bitMask = 1 shl bitPos
 
-	fun mark() {
-		marked = true
-	}
-
-	fun combine(other: Implicant): Implicant? {
-		if (binary == other.binary || minTerms == other.minTerms) return null
-
-		var result = ""
-		var difference = 0
-
-		for ((c1, c2) in binary.zip(other.binary)) {
-			if (c1 != c2) {
-				result += '-'
-				difference++
-			} else {
-				result += c1
+			// If the bit is NOT a don't care (not in the mask)
+			if ((mask and bitMask) == 0) {
+				if ((value and bitMask) != 0) {
+					literals.add(i + 1) // '1' yields positive literal
+				} else {
+					literals.add(-(i + 1)) // '0' yields negative literal
+				}
 			}
-
-			if (difference > 1) return null
 		}
-
-		return Implicant(minTerms + other.minTerms, result)
-	}
-
-	override fun toString(): String = "Implicant(${minTerms.sorted()}, '$binary')"
-
-	companion object {
-		fun minTerm(minTerm: MinTerm, n: Int): Implicant =
-			Implicant(setOf(minTerm), minTerm.toBinary(n))
+		return literals
 	}
 }
