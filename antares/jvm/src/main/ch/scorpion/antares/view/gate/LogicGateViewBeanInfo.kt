@@ -1,8 +1,8 @@
 package ch.scorpion.antares.view.gate
 
 import ch.scorpion.antares.model.InputPortNumber
+import ch.scorpion.antares.model.PortCount
 import ch.scorpion.antares.model.gate.NonUnaryLogicGateType
-import ch.scorpion.antares.model.PortCount // Added this import
 import ch.scorpion.antares.view.AntaresProperties
 import ch.scorpion.antares.view.app.InputCountPropertySwing
 import ch.scorpion.jabbah.edit.Editor

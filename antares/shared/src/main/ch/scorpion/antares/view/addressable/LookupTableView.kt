@@ -3,22 +3,17 @@ package ch.scorpion.antares.view.addressable
 import ch.scorpion.antares.model.addressable.Addressable
 import ch.scorpion.antares.model.addressable.LookupTable
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.antares.view.gate.BoxGateView
-import ch.scorpion.jabbah.base.StringUtils
+import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.jabbah.base.event.EventBus
+import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.geom.RectangularShape
-import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.module.BaseModule
-import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.InputEventContext
 import ch.scorpion.jabbah.draw.InputEventHandler
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.edit.model.text.*
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
@@ -31,11 +26,13 @@ class LookupTableView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: LookupTable = LookupTable(),
 	eventBus: EventBus = BaseModule.eventBus
-) : BoxGateView<LookupTable>(styleProvider, "LUT", model, minWidth = 10), Labeled {
+) : BoxGateView<LookupTable>(styleProvider, "LUT", model, minWidth = 10) {
 
+	/*
 	companion object {
 		private const val LABEL_DIST = Look.SCALE
 	}
+	*/
 
 	private val inputEventHandler = AddressableInputEventHandler(
 		eventBus,
@@ -49,14 +46,17 @@ class LookupTableView(
 		)
 	}
 
+	/*
 	private val externalLabel = Label(
 		model.name,
 		font,
 		rotationDisplayStrategy = RotationDisplayStrategy.IGNORE)
+	 */
 
-	override val label: Label get() = externalLabel
+	//override val label: Label get() = externalLabel
 
 	init {
+		initExternalLabel(Direction.NORTH)
 		modelExchanged(null)
 	}
 
@@ -68,8 +68,11 @@ class LookupTableView(
 			addPortView(it)
 		}
 		updateLayout()
-		updateExternalLabel()
+		//updateExternalLabel()
 	}
+
+	override val relativeExternalLabelLocation: Point2D
+		get() = Point2D(-AbstractAntaresPortView.LENGTH - width / 2, -height / 2 - LABEL_DIST)
 
 	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> =
 		inputEventHandler.getInputEventHandler()
@@ -79,6 +82,7 @@ class LookupTableView(
 
 	/** ---- UI properties */
 
+	/*
 	var name: String?
 		get() = model.name
 		set(value) {
@@ -89,6 +93,7 @@ class LookupTableView(
 				validate()
 			}
 		}
+	 */
 
 	var addressWidth: BitWidth
 		get() = model.addressWidth
@@ -110,6 +115,7 @@ class LookupTableView(
 
 	/** ---- [AbstractDrawable] */
 
+	/*
 	override val boundingBox: RectangularShape
 		get() {
 			val bb = Rectangle2D(super.boundingBox)
@@ -121,22 +127,27 @@ class LookupTableView(
 		super.draw(context)
 		externalLabel.draw(context)
 	}
+	*/
 
+	/*
 	override var location: Point2D
 		get() = super.location
 		set(value) {
 			super.location = value
 			updateExternalLabelPosition()
 		}
+	 */
 
 	/** ---- [AbstractVerticeView] */
 
+	/*
 	override var rotation: Rotation
 		get() = super.rotation
 		set(value) {
 			super.rotation = value
 			updateExternalLabel()
 		}
+	 */
 
 	override fun handleStateChanged(event: GraphElementEvent) {
 		if (event.signalHandler == null) {
@@ -148,6 +159,7 @@ class LookupTableView(
 
 	/** ---- [LookupTableView] */
 
+	/*
 	private fun updateExternalLabel() {
 		externalLabel.text = StringUtils.orEmpty(model.name)
 		updateExternalLabelPosition()
@@ -164,4 +176,5 @@ class LookupTableView(
 		}
 		externalLabel.ownerRotation = rotation
 	}
+	 */
 }

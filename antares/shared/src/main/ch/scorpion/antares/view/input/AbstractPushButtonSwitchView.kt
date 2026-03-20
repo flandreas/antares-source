@@ -263,7 +263,7 @@ abstract class AbstractPushButtonSwitchView<T: AbstractSwitch<T>>(
 			internalLabel.text = StringUtils.orEmpty(name)
 		} else {
 			externalLabel.text = StringUtils.orEmpty(name)
-			externalLabel.rotationChanged()
+			externalLabel.update()
 		}
 		setBounds(calculateBounds())
 		updateLabelGeometries()

@@ -2,7 +2,7 @@ package ch.scorpion.antares.view.net
 
 import ch.scorpion.antares.model.net.Power
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
+import ch.scorpion.jabbah.graph.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.geom.Direction

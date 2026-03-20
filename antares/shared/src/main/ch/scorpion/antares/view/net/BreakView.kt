@@ -3,26 +3,27 @@ package ch.scorpion.antares.view.net
 import ch.scorpion.antares.model.net.Break
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.jabbah.edit.Look.SCALE
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.Look.SCALE
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.view.LabeledRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 
 class BreakView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: Break = Break()
-) : OrientableRectangularVerticeView<Break>(styleProvider, model) {
+) : LabeledRectangularVerticeView<Break>(styleProvider, model) {
 
 	companion object {
 		private const val SIZE = 4 * SCALE
@@ -34,9 +35,12 @@ class BreakView(
 	}
 
 	init {
+		initExternalLabel()
 		modelExchanged(null)
 		setBounds(getInput().unconnectedLength, -SIZE / 2, SIZE, SIZE)
 	}
+
+	override val relativeExternalLabelLocation: Point2D get() = Point2D(SIZE + LENGTH + LABEL_DIST, 0)
 
 	/** ---- UI properties] */
 

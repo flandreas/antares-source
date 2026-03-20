@@ -2,11 +2,13 @@ package ch.scorpion.antares.view.symbolstyle
 
 import ch.scorpion.antares.model.analog.AnalogPort
 import ch.scorpion.antares.model.analog.AnalogSignal
-import ch.scorpion.antares.view.OrientableLabeledRectangularVerticeView
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.analog.AnalogLEDView
 import ch.scorpion.antares.view.analog.AnalogLEDView.Companion.GRADIENT_RADIUS
-import ch.scorpion.antares.view.gate.*
+import ch.scorpion.antares.view.gate.BoxGateView
+import ch.scorpion.antares.view.gate.CustomShapeContent
+import ch.scorpion.antares.view.gate.LogicGateView
+import ch.scorpion.antares.view.gate.TriStateBufferGateView
+import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
 import ch.scorpion.jabbah.base.EnumProperty
@@ -24,10 +26,10 @@ import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.jabbah.edit.Look.SCALE
 import ch.scorpion.jabbah.edit.model.Size
-import ch.scorpion.jabbah.edit.model.Size.LARGE
-import ch.scorpion.jabbah.edit.model.Size.MEDIUM
-import ch.scorpion.jabbah.edit.model.Size.SMALL
+import ch.scorpion.jabbah.edit.model.Size.*
 import ch.scorpion.jabbah.graph.GraphApplicationContext
+import ch.scorpion.jabbah.graph.view.LabeledRectangularVerticeView
+import ch.scorpion.jabbah.graph.view.OrientableRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 import kotlin.math.PI
@@ -96,7 +98,7 @@ enum class SymbolStyle(
 			context.g.stroke = stroke
 			context.g.drawRect(gate.x, gate.y, gate.bounds.width, gate.bounds.height)
 
-			gate.drawLabelText(context)
+			gate.drawInternalLabel(context)
 		}
 
 		override fun drawResistor(resistor: OrientableRectangularVerticeView<*>, isVariable: Boolean, context: DrawContext, foregroundColor: Paint, backgroundColor: Color, stroke: Stroke) {
@@ -344,6 +346,15 @@ enum class SymbolStyle(
 
 		private const val EXCLUSIVE_OFFSET = 6.0
 
+		private val SYMBOL_FONT_CACHE = mutableMapOf<Size, Font>()
+
+		fun getSymbolFont(size: Size, font: Font): Font =
+			SYMBOL_FONT_CACHE.getOrPut(size) {
+				val font = AntaresViewModule.currentSymbolStyle.symbolStyle.getFont(font)
+				val f = if (size != Size.LARGE) 1.2f else 1.0f
+				return font.deriveFont((font.size * size.factor * f).toInt())
+			}
+
 		fun withName(customName: String): SymbolStyle {
 			for (symbolStyle in values()) {
 				if (symbolStyle.customName == customName) {
@@ -486,7 +497,7 @@ enum class SymbolStyle(
 				.curveTo(LENGTH.toDouble() + 4.0 * SCALE, -1.5 * yf * INDUCTOR_HEIGHT_HALF, LENGTH + 6.0 * SCALE, -1.5 * yf * INDUCTOR_HEIGHT_HALF, LENGTH + 6.0 * SCALE, 0.0)
 
 		private fun drawAmericanGate(
-			gate: OrientableLabeledRectangularVerticeView<*>,
+			gate: LabeledRectangularVerticeView<*>,
 			size: Size,
 			path: Path,
 			context: DrawContext,
@@ -499,7 +510,7 @@ enum class SymbolStyle(
 		}
 
 		private fun drawAmericanGate(
-			comp: OrientableLabeledRectangularVerticeView<*>,
+			comp: LabeledRectangularVerticeView<*>,
 			size: Size,
 			x: Double,
 			y: Double,
@@ -507,13 +518,13 @@ enum class SymbolStyle(
 			path: Path,
 			context: DrawContext,
 			foregroundColor: Color,
-			 backgroundColor: Color,
+			backgroundColor: Color,
 			stroke: Stroke,
 			exclusive: Boolean,
 			transparency: Int
 		) {
 
-			val vOffset = (height - 2 * comp.scale * SCALE - path.boundingBox.height) / 2
+			val vOffset = (height - 2 * comp.labelScale * SCALE - path.boundingBox.height) / 2
 
 			if (vOffset > 0) {
 				// Draw the extension line at the input's side

@@ -8,11 +8,15 @@ import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.app.AntaresGraphViewService
 import ch.scorpion.antares.view.module.AntaresViewModule
+import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.symbolstyle.CurrentSymbolStyle
+import ch.scorpion.antares.view.symbolstyle.SymbolStyle
 import ch.scorpion.antares.view.symbolstyle.SymbolStyle.AMERICAN
 import ch.scorpion.antares.view.truthtable.TruthTableView
 import ch.scorpion.jabbah.base.Properties
+import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.help.HelpId
 import ch.scorpion.jabbah.base.help.HelpProvider
 import ch.scorpion.jabbah.base.module.BaseModule
@@ -29,6 +33,7 @@ import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.edit.model.Size.LARGE
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.Port
+import ch.scorpion.jabbah.graph.view.InternalLabelStyle
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
@@ -129,7 +134,7 @@ class LogicGateView(
 			require(value.id <= model.chosenInputCount.count) { "InputPortNumber must not be larger than InputCount" }
 			invalidate()
 			field = value
-			labelStyle = if (dataPort == InputPortNumber.NONE) LabelStyle.LARGE_CENTERED else LabelStyle.SMALL_UPPER_LEFT
+			internalLabelStyle = if (dataPort == InputPortNumber.NONE) InternalLabelStyle.LARGE_CENTERED else InternalLabelStyle.SMALL_UPPER_LEFT
 			invalidate()
 			update()
 		}
@@ -140,7 +145,7 @@ class LogicGateView(
 			invalidate()
 
 			model.gateType = value
-			labelText = getRenderer(value).text
+			internalLabelText = getRenderer(value).text
 
 			tooltip.reset()
 			explanation.reset()
@@ -154,7 +159,7 @@ class LogicGateView(
 			if (field != value) {
 				invalidate()
 				field = value
-				labelStyle.updateLabel(this)
+				internalLabelStyle?.updateLabel(this)
 				updateLayout()
 			}
 		}
@@ -165,8 +170,6 @@ class LogicGateView(
 			DrawableExplanation(truthTableView, boundingBox)
 		} else null
 	}
-
-	override val symbolFont: Font get() = getSymbolFont(size, font)
 
 	// Explicit properties needed for reflective Commands on the JVM platform
 
@@ -352,10 +355,17 @@ class LogicGateView(
 	fun getInputPortName(portId: Int): String? = model.getPort<DigitalSignal>(portId).name
 
 	init {
+		initExternalLabel(Direction.NORTH)
 		modelExchanged(null)
+		internalLabel?.font = internalLabelFont
 	}
 
-	override val scale: Float get() = size.factor
+	override val internalLabelFont: Font get() = SymbolStyle.getSymbolFont(size, font)
+
+	override val relativeExternalLabelLocation: Point2D get() =
+		Point2D(-AbstractAntaresPortView.LENGTH - width / 2, -height / 2 - LABEL_DIST)
+
+	override val labelScale: Float get() = size.factor
 
 	override fun drawShape(context: DrawContext, foregroundColor: Color, backgroundColor: Color, stroke: Stroke) {
 		getRenderer(model.gateType).drawShape(this, context, foregroundColor, backgroundColor, stroke)
@@ -436,7 +446,7 @@ class LogicGateView(
 		when (model.gateType) {
 			Or, Nor, Xor, Xnor -> {
 				when (currentSymbolStyle.symbolStyle) {
-					AMERICAN -> (2 * SCALE * scale).toInt()
+					AMERICAN -> (2 * SCALE * labelScale).toInt()
 					else -> 0
 				}
 			}
@@ -447,7 +457,7 @@ class LogicGateView(
 		when (model.gateType) {
 			And, Nand, Or, Nor, Xor, Xnor -> {
 				when (currentSymbolStyle.symbolStyle) {
-					AMERICAN -> -(SCALE * scale).toInt()
+					AMERICAN -> -(SCALE * labelScale).toInt()
 					else -> 0
 				}
 			}
@@ -458,7 +468,7 @@ class LogicGateView(
 		when (model.gateType) {
 			And, Nand -> {
 				when (currentSymbolStyle.symbolStyle) {
-					AMERICAN -> -(SCALE * scale).toInt()
+					AMERICAN -> -(SCALE * labelScale).toInt()
 					else -> 0
 				}
 			}

@@ -5,8 +5,6 @@ import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
-import ch.scorpion.jabbah.edit.Look
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
@@ -14,22 +12,21 @@ import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.drawable.AbstractRectangle
-import ch.scorpion.jabbah.draw.drawable.RotationDirection
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.Themes
-import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.jabbah.edit.model.AbstractComponent
-import ch.scorpion.jabbah.edit.model.text.*
+import ch.scorpion.jabbah.edit.model.text.HorizontalAlignment
+import ch.scorpion.jabbah.edit.model.text.Label
+import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
@@ -42,22 +39,30 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
+import ch.scorpion.jabbah.graph.view.OrientableExternallyLabeledRectangularVerticeView
+import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
-/** A view representation of a [DipSwitch].*/
+/**
+ * A view representation of a [DipSwitch].
+ *
+ * The [orientation] property determines the [Direction] into which the single [PortView] points.
+ */
 class DipSwitchView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: DipSwitch = DipSwitch(),
 	orientation: Direction = Direction.NORTH
-) : OrientableRectangularVerticeView<DipSwitch>(styleProvider, model), ControlViewSource<DipSwitch>, ControlView<DipSwitch>, Labeled {
+) : OrientableExternallyLabeledRectangularVerticeView<DipSwitch>(styleProvider, model, orientation),
+	ControlViewSource<DipSwitch>,
+	ControlView<DipSwitch>
+{
 
 	companion object {
 		private val LOG by logger(DipSwitchView::class)
 		const val PROP_ICON_PATH = "ch.scorpion.antares.view.input.DipSwitchView.iconPath"
-		private const val LABEL_DIST = Look.SCALE
 
 		private const val KNOB_HEIGHT = 5.0 * Look.SCALE
 		private const val KNOB_WIDTH = 2.0 * Look.SCALE
@@ -81,21 +86,6 @@ class DipSwitchView(
 		horizontalAlignment = HorizontalAlignment.CENTER,
 		verticalAlignment = VerticalAlignment.TOP)
 
-	/** The [Label] that displays the name of this [DipSwitchView].*/
-	override val label = Label(
-		font = font,
-		text = model.name)
-
-	override var orientation: Direction = orientation
-		set(value) {
-			if (value != field) {
-				invalidate()
-				field = value
-				updateView()
-				invalidate()
-				validate()
-			}
-		}
 
 	private val bitsCount: Int get() = model.bitWidth.width
 
@@ -114,12 +104,6 @@ class DipSwitchView(
 	}
 
 	/** ---- UI properties */
-
-	var name: String?
-		get() = model.name
-		set(value) {
-			model.name = value
-		}
 
 	var bitWidth: BitWidth
 		get() = model.bitWidth
@@ -158,30 +142,6 @@ class DipSwitchView(
 				model.retainValue = value
 			}
 		}
-
-	/** ---- [Component] */
-
-	override val useOrientation: Boolean get() = true
-
-	override val boundingBox: RectangularShape
-		get() {
-			var bb = super.boundingBox
-			if (StringUtils.isNotEmpty(label.text)) {
-				val lbb = Rectangle2D(label.boundingBox).moveBy(location)
-				bb = Rectangle2D(bb).add(lbb)
-			}
-			return bb
-		}
-
-	override fun rotate(direction: RotationDirection, pivot: Point2D?) {
-		orientation = when (direction) {
-			RotationDirection.Clockwise -> Direction.of(orientation.rotation.previous())
-			RotationDirection.CounterClockwise -> Direction.of(orientation.rotation.next())
-		}
-		pivot?.let {
-			location = direction.rotation.rotatePointAround(it, location)
-		}
-	}
 
 	/** ---- [ActorView] */
 
@@ -252,12 +212,12 @@ class DipSwitchView(
 
 	override fun focusGained() {
 		updateFocusIndex(bitsCount - 1)
-		super<OrientableRectangularVerticeView>.focusGained()
+		super<OrientableExternallyLabeledRectangularVerticeView>.focusGained()
 	}
 
 	override fun focusLost() {
 		updateFocusIndex(null)
-		super<OrientableRectangularVerticeView>.focusLost()
+		super<OrientableExternallyLabeledRectangularVerticeView>.focusLost()
 	}
 
 	fun transferFocusRight() {
@@ -340,22 +300,9 @@ class DipSwitchView(
 		dest.bitWidth = source.bitWidth
 	}
 
-	/** ---- [DipSwitchView] */
+	/** ---- [OrientableExternallyLabeledRectangularVerticeView] */
 
-	private fun clear() {
-		bitViews.clear()
-		focusIndex = null
-	}
-
-	private val upperLeftBoundsEdge: Point2D
-		get() = when (orientation) {
-			Direction.WEST -> Point2D(getOutput().length.toDouble(), -KNOB_HEIGHT / 2)
-			Direction.SOUTH -> Point2D(-calculateWidth() / 2, -getOutput().length.toDouble() - KNOB_HEIGHT)
-			Direction.EAST -> Point2D(-getOutput().length.toDouble() - calculateWidth(), -KNOB_HEIGHT / 2)
-			Direction.NORTH -> Point2D(-calculateWidth() / 2, getOutput().length.toDouble())
-		}
-
-	private fun updateView() {
+	override fun updateViewImpl() {
 		val edge = upperLeftBoundsEdge
 		setBounds(edge.x, edge.y, calculateWidth(), KNOB_HEIGHT)
 
@@ -372,6 +319,21 @@ class DipSwitchView(
 		updateLabel()
 	}
 
+	/** ---- [DipSwitchView] */
+
+	private fun clear() {
+		bitViews.clear()
+		focusIndex = null
+	}
+
+	private val upperLeftBoundsEdge: Point2D
+		get() = when (orientation) {
+			Direction.WEST -> Point2D(getOutput().length.toDouble(), -KNOB_HEIGHT / 2)
+			Direction.SOUTH -> Point2D(-calculateWidth() / 2, -getOutput().length.toDouble() - KNOB_HEIGHT)
+			Direction.EAST -> Point2D(-getOutput().length.toDouble() - calculateWidth(), -KNOB_HEIGHT / 2)
+			Direction.NORTH -> Point2D(-calculateWidth() / 2, getOutput().length.toDouble())
+		}
+
 	private fun calculateWidth(): Double = model.bitWidth.width * KNOB_WIDTH
 
 	/**
@@ -386,22 +348,7 @@ class DipSwitchView(
 		return null
 	}
 
-	/**
-	 * Updates the text, the location and the alignments of the external [Label] depending
-	 * on the orientation of this [DipSwitchView].
-	 */
-	private fun updateLabel() {
-		label.text = StringUtils.orEmpty(model.name)
-		label.alignment = Alignment.forOrientation(orientation)
-		label.location = when (orientation) {
-			Direction.EAST -> Point2D(-getOutput().length - bounds.width - LABEL_DIST, 0.0)
-			Direction.NORTH -> Point2D(0.0, getOutput().length + bounds.height + LABEL_DIST)
-			Direction.WEST -> Point2D(getOutput().length + bounds.width + LABEL_DIST, 0.0)
-			Direction.SOUTH -> Point2D(0.0, -getOutput().length - bounds.height - LABEL_DIST)
-		}
-	}
-
-	/** Allows to toggle individual [BitView]s during execution.*/
+	/** Allows toggling individual [BitView]s during execution.*/
 	private inner class InteractionHandler : ClickableActorInteractionHandlerAdapter() {
 
 		override fun mousePressed(context: ActorInteractionContext): ActorInteractionHandler? {

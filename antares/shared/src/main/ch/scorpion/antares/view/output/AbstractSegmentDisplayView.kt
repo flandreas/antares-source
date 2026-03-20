@@ -4,14 +4,14 @@ import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.output.AbstractSegmentDisplay
 import ch.scorpion.antares.model.output.LightEmitterModel
 import ch.scorpion.antares.model.output.SixteenSegmentDisplay
-import ch.scorpion.jabbah.edit.Look
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
+import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.container.DrawableProperty
@@ -21,18 +21,14 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
-import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
-import ch.scorpion.jabbah.graph.view.ControlView
-import ch.scorpion.jabbah.graph.view.ControlViewSource
-import ch.scorpion.jabbah.graph.view.ControlViewSourceGeometryProperty
-import ch.scorpion.jabbah.graph.view.ControlViewSourceProperty
-import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -50,7 +46,11 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 	size: Size = DEFAULT_SIZE,
 	private val narrowSegments: Boolean = false,
 	protected val eventBus: EventBus = BaseModule.eventBus
-) : OrientableRectangularVerticeView<T>(styleProvider, model), LightEmitter, ControlViewSource<T>, ControlView<T> {
+) : LabeledRectangularVerticeView<T>(styleProvider, model),
+	LightEmitter,
+	ControlViewSource<T>,
+	ControlView<T>
+{
 
 	companion object {
 
@@ -91,21 +91,15 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 	}
 
 	init {
+		initExternalLabel(Direction.NORTH)
 		modelExchanged(null)
 		width = geom.width.toDouble()
 		height = geom.height.toDouble()
 	}
 
-	/** ---- UI properties */
+	override val relativeExternalLabelLocation: Point2D get() = Point2D(geom.width / 2, - AbstractAntaresPortView.LENGTH)
 
-	var name: String?
-		get() = model.name
-		set(value) {
-			if (value != name) {
-				model.name = value
-				postControlViewSourceChangeEvent(eventBus)
-			}
-		}
+	/** ---- UI properties */
 
 	var logic: Logic
 		get() = model.logic
@@ -162,7 +156,7 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 	}
 
 	override fun readModelProperties(reader: StoreReader) {
-		// conditional access in order to support backward compatibility
+		// conditional access to support backward compatibility
 		if (reader.hasAttribute("name")) {
 			name = reader.readString("name")
 		}
@@ -340,10 +334,11 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 		}
 	}
 
-	private fun updateGeometry() {
+	override fun updateGeometry() {
 		width = geom.width.toDouble()
 		height = geom.height.toDouble()
 		modelExchanged(model)
+		super.updateGeometry()
 	}
 
 	class Geometry(val factor: Float, segmentInset: Float = 1.0f) {

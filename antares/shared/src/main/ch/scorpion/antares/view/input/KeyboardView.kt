@@ -9,6 +9,7 @@ import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
@@ -32,9 +33,9 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
+import ch.scorpion.jabbah.graph.view.LabeledRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
-import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.StoreReader
@@ -44,11 +45,10 @@ import ch.scorpion.jabbah.io.StoreWriter
 class KeyboardView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: Keyboard = Keyboard()
-) : AbstractRectangularVerticeView<Keyboard>(
+) : LabeledRectangularVerticeView<Keyboard>(
 	styleProvider,
 	model,
-	x = AbstractAntaresPortView.LENGTH.toDouble(),
-	y = -HEIGHT / 2.0
+	Rectangle2D(AbstractAntaresPortView.LENGTH, -HEIGHT / 2, 0, 0)
 ), ControlView<Keyboard>, ControlViewSource<Keyboard> {
 
 	companion object {
@@ -64,7 +64,8 @@ class KeyboardView(
 
 	private val actorInteractionHandler = InteractionHandler()
 
-	private val label = Label(
+	/** The [Label] used for outputting the entered characters. */
+	private val outputLabel = Label(
 		text = "Test",
 		font = font.deriveFont(LogicalFontFamily.MONOSPACED),
 		color = styleProvider.getStyle(StyleType.BACKGROUND).color.textColor,
@@ -73,14 +74,16 @@ class KeyboardView(
 		location = Point2D(AbstractAntaresPortView.LENGTH + INSET + TEXT_INSET, 0),
 		richText = false)
 
-	private val propertiesBackgroundColor get() = if (Look.FILL_BASIC_COMPONENTS) backgroundColor else styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
-
 	init {
+		initExternalLabel(Direction.NORTH)
 		isFocusable = true
 		modelExchanged(null)
 		width = WIDTH.toDouble()
 		height = HEIGHT.toDouble()
 	}
+
+	override val relativeExternalLabelLocation: Point2D get() =
+		Point2D(AbstractAntaresPortView.LENGTH + WIDTH / 2.0, bounds.minY - LABEL_DIST)
 
 	/** ---- UI properties */
 
@@ -94,6 +97,7 @@ class KeyboardView(
 			}
 		}
 
+	@Suppress("unused") // Reflection
 	var enterBehavior: EnterBehavior
 		get() = model.enterBehavior
 		set(value) {
@@ -153,7 +157,7 @@ class KeyboardView(
 
 	override fun handleStateChanged(event: GraphElementEvent) {
 		invalidate()
-		label.text = buildDisplayedText()
+		outputLabel.text = buildDisplayedText()
 		validate()
 	}
 
@@ -267,8 +271,8 @@ class KeyboardView(
 	private fun drawBuffer(context: DrawContext) {
 		val oldClip = context.g.getClipBounds()
 		context.g.setClipBounds((x + INSET).toInt(), (y + INSET).toInt(), (width - INSET - RIGHT_INSET).toInt(), (height - 2 * INSET).toInt())
-		label.color = transparent.applyTo(styleProvider.getStyle(StyleType.BACKGROUND).color.textColor)
-		label.draw(context)
+		outputLabel.color = transparent.applyTo(styleProvider.getStyle(StyleType.BACKGROUND).color.textColor)
+		outputLabel.draw(context)
 		context.g.setClipBounds(oldClip)
 	}
 
@@ -286,7 +290,7 @@ class KeyboardView(
 			val keyChar = context.keyEvent!!.keyChar
 			LOG.trace("keyPressed '$keyChar'")
 			if (KeyHandler.acceptKey(keyChar.code)) {
-				var code = when (keyChar.code) {
+				val code = when (keyChar.code) {
 					KeyEvent.VK_ESCAPE -> KeyHandler.ESCAPE
 					'\n'.code -> if (model.enterBehavior == EnterBehavior.CR) '\r'.code.toByte() else '\n'.code.toByte()
 					else -> keyChar.code

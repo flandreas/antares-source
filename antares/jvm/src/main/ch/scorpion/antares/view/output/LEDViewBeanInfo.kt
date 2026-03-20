@@ -13,7 +13,6 @@ import com.l2fprod.common.propertysheet.Property
 class LEDViewBeanInfo : DigitalComponentViewBeanInfo<LEDView>(), ControlViewBeanInfo {
 
 	companion object {
-		private val name = EditProperties.untranslatableName()
 		private val lightColor = AntaresProperties.lightColor()
 		private val shape = AntaresProperties.ledShape()
 		private val size = EditProperties.size()
@@ -25,7 +24,6 @@ class LEDViewBeanInfo : DigitalComponentViewBeanInfo<LEDView>(), ControlViewBean
 	override fun addProperties(bean: LEDView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 
-		properties.add(name.bind(editor, beanIdProvider(bean.id)))
 		properties.add(lightColor.bind(editor, beanIdProvider(bean.id)))
 		properties.add(shape.bind(editor, beanIdProvider(bean.id)))
 		properties.add(size.bind(editor,beanIdProvider(bean.id)))

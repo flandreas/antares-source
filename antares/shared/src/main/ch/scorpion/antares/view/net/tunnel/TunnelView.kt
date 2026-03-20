@@ -4,28 +4,24 @@ import ch.scorpion.antares.model.net.Tunnel
 import ch.scorpion.antares.model.net.TunnelName
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.DigitalGraphView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
-import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.base.geom.*
+import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.logger
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.Component
 import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.model.AbstractComponent
-import ch.scorpion.jabbah.edit.model.text.HorizontalLabel
-import ch.scorpion.jabbah.edit.model.text.Label
-import ch.scorpion.jabbah.edit.model.text.Labeled
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.LabeledRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewConnectionGeometry
 import ch.scorpion.jabbah.io.Storable
@@ -38,7 +34,7 @@ import ch.scorpion.jabbah.io.StoreWriter
 class TunnelView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: Tunnel = Tunnel()
-) : OrientableRectangularVerticeView<Tunnel>(styleProvider, model), Labeled {
+) : LabeledRectangularVerticeView<Tunnel>(styleProvider, model) {
 
 	constructor(
 		name: String,
@@ -51,16 +47,14 @@ class TunnelView(
 		val face: TunnelViewFace get() = TunnelViewFace.withName(BaseModule.properties.getString(TunnelViewFace.PROP_TUNNEL_FACE))
 	}
 
-	private val horizontalLabel = HorizontalLabel(
-		owner = this,
-		relLocation = Point2D(SIZE / 2 + (AbstractAntaresPortView.LENGTH + SIZE / 2) + face.labelDist, 0),
-		font = font
-	)
-
 	init {
+		initExternalLabel()
 		modelExchanged(null)
 		setBounds(getInput().unconnectedLength, -SIZE / 2, SIZE, SIZE)
 	}
+
+	override val relativeExternalLabelLocation: Point2D get() =
+		Point2D(SIZE / 2 + (AbstractAntaresPortView.LENGTH + SIZE / 2) + face.labelDist, 0)
 
 	override fun modelExchanged(oldModel: Tunnel?) {
 		super.modelExchanged(oldModel)
@@ -71,17 +65,10 @@ class TunnelView(
 		portView.setLocation(portView.length.toDouble(), 0.0)
 		addPortView(portView)
 
-		updateLabel()
+		updateExternalLabel()
 	}
 
 	/** ---- UI properties */
-
-	var name: String?
-		get() = model.name
-		set(value) {
-			model.name = value
-			updateLabel()
-		}
 
 	var bitWidth: BitWidth
 		get() = model.bitWidth
@@ -96,7 +83,7 @@ class TunnelView(
 		get() = model.tunnelName
 		set(value) {
 			model.tunnelName = value
-			updateLabel()
+			updateExternalLabel()
 		}
 
 	/** Defaults to [TunnelFlowDirection.Undefined] due to backward compatibility. */
@@ -114,36 +101,13 @@ class TunnelView(
 
 	/** ---- [AbstractDrawable] */
 
-	override fun draw(context: DrawContext) {
-		super.draw(context)
-		context.g.color = context.choose(styleProvider.getStyle(StyleType.BACKGROUND).color).textColor
-		horizontalLabel.draw(context)
-	}
-
 	override fun drawImpl(context: DrawContext) {
 		face.drawShadow(this, context)
 		super.drawImpl(context)
 		face.draw(this, context, propertiesBackgroundColor)
 	}
 
-	override val boundingBox: RectangularShape
-		get() {
-			val bb = Rectangle2D(super.boundingBox)
-			val lbb = Rectangle2D(horizontalLabel.boundingBox).moveBy(location)
-			bb.add(lbb)
-			return bb
-		}
-
-	/** ---- [Labeled] */
-
-	override val label: Label get() = horizontalLabel.label
-
 	/** ---- [AbstractComponent] */
-
-	override fun rotationChanged(newRotation: Rotation) {
-		super.rotationChanged(newRotation)
-		horizontalLabel.rotationChanged()
-	}
 
 	override fun <G : Any> handleConnect(edgeView: EdgeView<G>, port: Port<G>?, geometry: EdgeViewConnectionGeometry) {
 		super.handleConnect(edgeView, port, geometry)
@@ -159,7 +123,7 @@ class TunnelView(
 
 	/**
 	 * Collects all other [TunnelViews][TunnelView] with the same name, and
-	 * the [DigitalEdgeView] connected to this [TunnelView], if any, along with
+	 * the [EdgeView] connected to this [TunnelView], if any, along with
 	 * their select buddies.
 	 */
 	override fun collectSelectBuddies(drawing: Drawing<Component>, buddies: MutableSet<Component>) {
@@ -178,15 +142,6 @@ class TunnelView(
 				it.collectSelectBuddies(drawing, buddies)
 			}
 		}
-	}
-
-	/** ---- [TunnelView] */
-
-	private fun updateLabel() {
-		invalidate()
-		horizontalLabel.text = StringUtils.orEmpty(name)
-		horizontalLabel.rotationChanged()
-		invalidate()
 	}
 
 	/** ---- [Storable] interface */

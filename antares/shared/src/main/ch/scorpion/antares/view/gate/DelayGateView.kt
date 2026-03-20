@@ -2,8 +2,11 @@ package ch.scorpion.antares.view.gate
 
 import ch.scorpion.antares.model.gate.DelayGate
 import ch.scorpion.antares.model.signal.BitWidth
+import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
 import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.jabbah.base.Thousands
+import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -18,9 +21,12 @@ class DelayGateView(
 ) : BoxGateView<DelayGate>(styleProvider, delayGate.delay.toString(), delayGate) {
 
     init {
+        initExternalLabel(Direction.NORTH)
         customFont = Look.ANNOTATION_FONT
         modelExchanged(null)
     }
+
+    override val relativeExternalLabelLocation: Point2D get() = Point2D(-LENGTH - width / 2, -height / 2 - LABEL_DIST)
 
     var delay: Long
         get() = model.delay
@@ -55,21 +61,23 @@ class DelayGateView(
         val oldColor = context.g.color
         super.drawImpl(context)
 
-        if (context.useContextColors) {
-            context.g.color = context.color!!.foregroundColor
-        } else {
-            context.g.color = foregroundColor
-        }
-        context.g.stroke = styleProvider.getStyle(StyleType.ANNOTATION).stroke
-
         val sizeHalf = 12
-        context.translatedAndRotated(bounds.centerX, 0.0, -rotation.angle) {
-            it.g.drawLine(-sizeHalf, 0, sizeHalf, 0)
-            it.g.drawLine(-sizeHalf, -3, -sizeHalf, 3)
-            it.g.drawLine(sizeHalf, -3, sizeHalf, 3)
-        }
+        with(context) {
+            if (useContextColors) {
+                g.color = color!!.foregroundColor
+            } else {
+                g.color = foregroundColor
+            }
+            g.stroke = styleProvider.getStyle(StyleType.ANNOTATION).stroke
 
-        context.g.color = oldColor
+            translated(bounds.centerX, 0.0) {
+                it.g.drawLine(-sizeHalf, 0, sizeHalf, 0)
+                it.g.drawLine(-sizeHalf, -3, -sizeHalf, 3)
+                it.g.drawLine(sizeHalf, -3, sizeHalf, 3)
+            }
+
+            g.color = oldColor
+        }
     }
 
 	private fun updateText() {
@@ -77,6 +85,6 @@ class DelayGateView(
 		if (value.length < 5) {
 			value += " ns"
 		}
-		labelText = value
+		internalLabelText = value
 	}
 }

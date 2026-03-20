@@ -1,6 +1,7 @@
-package ch.scorpion.antares.view
+package ch.scorpion.jabbah.graph.view
 
-import ch.scorpion.jabbah.edit.Look.SCALE
+import ch.scorpion.jabbah.base.geom.MutableRectangularShape
+import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.drawable.Orientable
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
@@ -13,12 +14,13 @@ import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
  *
  * The geometry of digital component views is organized by a basic model grid, which is scaled to view coordinates for
  * rendering. The geometry is therefore expressed by units of this grid instead of view coordinates.
- * @param T the type of [Vertice] displayed by this view
+ * @param T the type of [ch.scorpion.jabbah.graph.model.Vertice] displayed by this view
  */
 open class OrientableRectangularVerticeView<T : Vertice>(
     styleProvider: StyleProvider,
-    model: T
-) : AbstractRectangularVerticeView<T>(styleProvider, model), Orientable {
+    model: T,
+	rectangle: MutableRectangularShape = Rectangle2D()
+) : AbstractRectangularVerticeView<T>(styleProvider, model, rectangle), Orientable {
 
 	companion object {
 
@@ -27,26 +29,26 @@ open class OrientableRectangularVerticeView<T : Vertice>(
 		 * @param value the value in basic model grid coordinates
 		 * @return the transformed width in view coordinates.
 		 */
-		fun w(value: Int): Double = (value * SCALE).toDouble()
-		fun w(value: Double): Double = value * SCALE
-		fun w(value: Float): Double = (value * SCALE).toDouble()
+		fun w(value: Int): Double = (value * Look.SCALE).toDouble()
+		fun w(value: Double): Double = value * Look.SCALE
+		fun w(value: Float): Double = (value * Look.SCALE).toDouble()
 
-		fun wInt(value: Int): Int = value * SCALE
+		fun wInt(value: Int): Int = value * Look.SCALE
 
 		/**
 		 * Transforms a height in basic model grid coordinates to view coordinates.
 		 * @param value the value in basic model grid coordinates
 		 * @return the transformed height in view coordinates.
 		 */
-		fun h(value: Int): Double = (value * SCALE).toDouble()
-		fun h(value: Double): Double = value * SCALE
-		fun h(value: Float): Double = (value * SCALE).toDouble()
+		fun h(value: Int): Double = (value * Look.SCALE).toDouble()
+		fun h(value: Double): Double = value * Look.SCALE
+		fun h(value: Float): Double = (value * Look.SCALE).toDouble()
 
-		fun hInt(value: Int): Int = value * SCALE
+		fun hInt(value: Int): Int = value * Look.SCALE
 	}
 
 	protected val propertiesBackgroundColor
 		get() = if (Look.FILL_BASIC_COMPONENTS) backgroundColor else styleProvider.getStyle(
-			StyleType.BACKGROUND
+			StyleType.Companion.BACKGROUND
 		).color.backgroundColor
 }

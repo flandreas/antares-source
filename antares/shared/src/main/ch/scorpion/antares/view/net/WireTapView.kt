@@ -4,7 +4,7 @@ import ch.scorpion.antares.model.PortCount
 import ch.scorpion.antares.model.net.WireTap
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
+import ch.scorpion.jabbah.graph.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.Handedness
 import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.antares.view.PortViewSpacing

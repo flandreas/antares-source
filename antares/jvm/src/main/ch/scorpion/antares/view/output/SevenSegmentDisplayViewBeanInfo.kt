@@ -18,7 +18,6 @@ import com.l2fprod.common.propertysheet.Property
 class SevenSegmentDisplayViewBeanInfo : VerticeViewBeanInfo<SevenSegmentDisplayView>(), ControlViewBeanInfo {
 
     companion object {
-	    private val name = EditProperties.untranslatableName()
 	    private val lightColor = AntaresProperties.lightColor()
 	    private val portScheme = CommandPropertySwing("portScheme", "element.property.SevenSegmentDisplayScheme", SevenSegmentDisplayScheme::class.java, componentBeanProvider)
 	    private val logic = CommandPropertySwing("logic", "element.property.segmentDisplay.logic", Logic::class.java, componentBeanProvider)
@@ -37,7 +36,6 @@ class SevenSegmentDisplayViewBeanInfo : VerticeViewBeanInfo<SevenSegmentDisplayV
 
         val connected = bean.model.isConnected
 
-	    properties.add(name.bind(editor, beanIdProvider(bean.id)))
 	    properties.add(lightColor.bind(editor, beanIdProvider(bean.id)))
 	    if (bean.size == Size.LARGE) {
 		    properties.add(portScheme.bind(editor, beanIdProvider(bean.id), editable = !connected))

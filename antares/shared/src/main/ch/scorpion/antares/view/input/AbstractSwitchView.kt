@@ -2,7 +2,7 @@ package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.model.input.AbstractSwitch
 import ch.scorpion.jabbah.edit.Look.SCALE
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
+import ch.scorpion.jabbah.graph.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.event.Button

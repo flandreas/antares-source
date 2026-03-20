@@ -26,7 +26,8 @@ class HorizontalLabel(
 	orientation: Direction? = Direction.EAST,
 	text: String? = null,
 	font: Font,
-	color: Color? = null) {
+	color: Color? = null
+) {
 
 	val label = Label(location = relLocation, text = text, font = font, color = color)
 
@@ -55,11 +56,10 @@ class HorizontalLabel(
 		}
 
 	init {
-		updateLocation()
-		updateAlignment()
+		update()
 	}
 
-	fun rotationChanged() {
+	fun update() {
 		updateLocation()
 		updateAlignment()
 	}

@@ -4,6 +4,7 @@ import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.model.AbstractComponentBeanInfo
 import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.graph.view.GraphProperties
+import ch.scorpion.jabbah.graph.view.LabeledRectangularVerticeView
 import com.l2fprod.common.propertysheet.Property
 import java.beans.BeanInfo
 
@@ -14,12 +15,14 @@ open class VerticeViewBeanInfo<T : AbstractVerticeView<*>> : AbstractComponentBe
 		private val modelId = GraphProperties.modelId()
 		private val propDelay = GraphProperties.propagationDelay()
 		private val color = EditProperties.color()
+		private val name = EditProperties.untranslatableName()
 		private val description = EditProperties.description()
 		private val shadow = EditProperties.shadow()
 	}
 
 	protected open val isShowPropagationDelay: Boolean = true
 	protected open var isShowColor: Boolean = true
+	protected open val isShowName: Boolean = true
 
 	override fun addProperties(bean: T, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
@@ -31,6 +34,9 @@ open class VerticeViewBeanInfo<T : AbstractVerticeView<*>> : AbstractComponentBe
 		properties.add(shadow.bind(editor, beanIdProvider(bean.id)))
 		if (isShowColor) {
 			properties.add(color.bind(editor, beanIdProvider(bean.id)))
+		}
+		if (isShowName && bean is LabeledRectangularVerticeView<*>) {
+			properties.add(name.bind(editor, beanIdProvider(bean.id)))
 		}
 		properties.add(description.bind(editor, beanIdProvider(bean.id)))
 	}

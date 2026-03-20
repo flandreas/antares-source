@@ -3,7 +3,6 @@ package ch.scorpion.antares.view.output
 import ch.scorpion.antares.model.input.Terminal
 import ch.scorpion.antares.model.input.TerminalRow
 import ch.scorpion.antares.view.Handedness
-import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
@@ -18,18 +17,14 @@ import ch.scorpion.jabbah.draw.graphics.LogicalFontFamily
 import ch.scorpion.jabbah.draw.graphics.TextRenderInfoFactory
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
-import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
-import ch.scorpion.jabbah.graph.view.ControlView
-import ch.scorpion.jabbah.graph.view.ControlViewSource
-import ch.scorpion.jabbah.graph.view.ControlViewSourceProperty
+import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
-import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.Storable
@@ -45,7 +40,7 @@ class TerminalView(
 	lightColor: LightColor? = null,
 	handedness: Handedness = Handedness.LEFT,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractRectangularVerticeView<Terminal>(
+) : LabeledRectangularVerticeView<Terminal>(
 	styleProvider,
 	model,
 	RoundRectangle2D(0.0, 0.0, 100.0, 100.0, ROUND_ARC.toDouble(), ROUND_ARC.toDouble())
@@ -83,11 +78,13 @@ class TerminalView(
 			}
 		}
 
-	private val propertiesBackgroundColor get() = if (Look.FILL_BASIC_COMPONENTS) backgroundColor else styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
-
 	init {
+		initExternalLabel(orientation = Direction.NORTH)
 		modelExchanged(null)
 	}
+
+	override val relativeExternalLabelLocation: Point2D
+		get() = Point2D(AbstractAntaresPortView.LENGTH + calculatedWidth / 2, y - LABEL_DIST)
 
 	private val sizeFactor: Float
 		get() = when (size) {
@@ -181,7 +178,7 @@ class TerminalView(
 		updateGeometry()
 	}
 
-	private fun updateGeometry() {
+	override fun updateGeometry() {
 		invalidate()
 		setBounds(
 			x = AbstractAntaresPortView.LENGTH.toDouble(),
@@ -228,6 +225,7 @@ class TerminalView(
 				}
 			}
 		}
+		super.updateGeometry()
 	}
 
 	/** ---- [AbstractVerticeView] */

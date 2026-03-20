@@ -1,8 +1,6 @@
 package ch.scorpion.antares.view.gate
 
 import ch.scorpion.antares.model.signal.DigitalSignal
-import ch.scorpion.jabbah.edit.Look
-import ch.scorpion.antares.view.OrientableLabeledRectangularVerticeView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.DrawContext
@@ -11,8 +9,10 @@ import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.Vertice
+import ch.scorpion.jabbah.graph.view.LabeledRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.port.PortView
@@ -30,12 +30,12 @@ import kotlin.math.max
  *
  * @property minWidth the minimum width in [Look.SCALE] units
  */
-open class BoxGateView<T : Vertice>(
+abstract class BoxGateView<T : Vertice>(
 	styleProvider: StyleProvider,
 	text: String,
 	vertice: T,
 	private val minWidth: Int = DEF_MIN_WIDTH
-) : OrientableLabeledRectangularVerticeView<T>(styleProvider, text,vertice) {
+) : LabeledRectangularVerticeView<T>(styleProvider, vertice, internalLabelText = text) {
 
 	companion object {
 		private const val DEF_MIN_WIDTH = 6
@@ -49,11 +49,11 @@ open class BoxGateView<T : Vertice>(
 		const val SMALL_PORT_DISTANCE = 2
 	}
 
-	private val effMinWidth: Float get() = minWidth * scale
+	private val effMinWidth: Float get() = minWidth * labelScale
 
-	private val effMinHeight: Float get() = MIN_HEIGHT * scale
+	private val effMinHeight: Float get() = MIN_HEIGHT * labelScale
 
-	private val effPinInset: Float get() = PIN_INSET * scale
+	private val effPinInset: Float get() = PIN_INSET * labelScale
 
 	/** ---- [Drawable] interface */
 
@@ -93,7 +93,7 @@ open class BoxGateView<T : Vertice>(
 		context.g.stroke = stroke
 		context.g.drawRect(xInt, yInt, widthInt, heightInt)
 
-		drawLabelText(context, text)
+		drawInternalLabel(context, text)
 	}
 
 	/** ---- [AbstractRectangularVerticeView] */
@@ -171,18 +171,18 @@ open class BoxGateView<T : Vertice>(
 			portView.location = portView.location.subtract(origin)
 		}
 
-		labelStyle.updateLabel(this)
+		updateGeometry()
+		internalLabelStyle?.updateLabel(this)
 
 		updateBoxes()
 		invalidate()
-
 		update()
 	}
 
 	private fun portDistance(portCount: Int): Float {
 		if (portCount <= 2) {
-			return BIG_PORT_DISTANCE * scale
+			return BIG_PORT_DISTANCE * labelScale
 		}
-		return SMALL_PORT_DISTANCE * scale
+		return SMALL_PORT_DISTANCE * labelScale
 	}
 }

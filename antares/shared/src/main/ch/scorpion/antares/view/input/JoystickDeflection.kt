@@ -1,6 +1,6 @@
 package ch.scorpion.antares.view.input
 
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
+import ch.scorpion.jabbah.graph.view.OrientableRectangularVerticeView
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.geom.Geometry
 import ch.scorpion.jabbah.base.geom.Point2D

@@ -54,7 +54,7 @@ class ChangeLogicGateTypeTest : AbstractJvmCircuitTest() {
 		gateView.logicGateType = NonUnaryLogicGateType.Nor
 
 		assertEquals(Logic.NEGATIVE, (gateView.model.getOutput<DigitalSignal>() as DigitalPort).logic)
-		assertEquals(LogicGateViewRenderers.Nor.text, gateView.labelText)
+		assertEquals(LogicGateViewRenderers.Nor.text, gateView.internalLabelText)
 
 		startSimulation()
 		scheduler.proceedUntilQueueIsEmpty(timeService, actorListener)

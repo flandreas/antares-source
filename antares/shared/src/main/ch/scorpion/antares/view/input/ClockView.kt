@@ -2,39 +2,30 @@ package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.model.input.Clock
 import ch.scorpion.antares.model.input.PeriodOrFrequencyParser
-import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.antares.view.gate.BoxGateView
+import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.jabbah.base.*
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.base.geom.Rectangle2D
-import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.base.geom.Rotation.*
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.Drawable
 import ch.scorpion.jabbah.draw.InputEventContext
-import ch.scorpion.jabbah.draw.drawable.Rotatable
 import ch.scorpion.jabbah.draw.graphics.Cursor
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.DrawingView
-import ch.scorpion.jabbah.edit.model.text.Alignment
-import ch.scorpion.jabbah.edit.model.text.Label
-import ch.scorpion.jabbah.edit.model.text.Labeled
-import ch.scorpion.jabbah.edit.model.text.RotationDisplayStrategy
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
-import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.ui.knob.KnobLauncherImpl
 import ch.scorpion.jabbah.graph.ui.knob.KnobView
-import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
-import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.VerticeViewActorInteractionHandler
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -47,13 +38,11 @@ import kotlin.math.max
 class ClockView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: Clock = Clock()
-) : BoxGateView<Clock>(styleProvider, "", model), ControlViewSource<Clock>, Labeled {
+) : BoxGateView<Clock>(styleProvider, "", model), ControlViewSource<Clock> {
 
 	companion object {
 
 		const val PROP_ICON_PATH = "ch.scorpion.antares.view.input.ClockView.iconPath"
-
-		private const val LABEL_DIST = Look.SCALE
 
 		private const val SEG_X = Look.SCALE.toDouble()
 		private const val SEG_Y_HALF = SEG_X * 3 / 4
@@ -68,12 +57,8 @@ class ClockView(
 
 	private val actorInteractionHandler = ClockViewActorInteractionHandler()
 
-	override val label = Label(
-		font = font,
-		text = model.name,
-		rotationDisplayStrategy = RotationDisplayStrategy.KEEP_HORIZONTAL)
-
 	init {
+		initExternalLabel(Direction.WEST)
 		modelExchanged(null)
 	}
 
@@ -81,16 +66,12 @@ class ClockView(
 		super.modelExchanged(oldModel)
 		addPortView(createOutputPortView(model.getOutput(), PortLabelPosition.HIDE))
 		updateLayout()
-		updateLabel()
 	}
 
-	/** ---- UI Properties */
+	override val relativeExternalLabelLocation: Point2D get() =
+		Point2D(-AbstractAntaresPortView.LENGTH - width - LABEL_DIST, 0.0)
 
-	var name: String?
-		get() = model.name
-		set(value) {
-			model.name = value
-		}
+	/** ---- UI Properties */
 
 	@Suppress("unused") // Reflection
 	var periodOrFrequency: String
@@ -114,20 +95,6 @@ class ClockView(
 
 	/** Determines whether the [KnobView] can be displayed during simulation for changing the propagation delay.*/
 	var isKnobEnabled: Boolean = true
-
-	/** ---- [Rotatable] */
-
-	override var rotation: Rotation
-		get() = super.rotation
-		set(value) {
-			if (value != super.rotation) {
-				super.rotation = value
-				invalidate()
-				label.ownerRotation = value
-				invalidate()
-				validate()
-			}
-		}
 
 	/** ---- [Storable] interface */
 
@@ -154,12 +121,8 @@ class ClockView(
 
 		drawIconPath(context)
 
-		context.g.color = context.chooseText(textColor)
-		label.draw(context)
-
 		context.g.color = oldColor
 	}
-
 
 	private fun drawIconPath(context: DrawContext) {
 		val dx = when (rotation) {
@@ -210,43 +173,7 @@ class ClockView(
 
 	override fun createControlView(): ControlView<Clock> = ClockControlView(model)
 
-	/** ---- [AbstractGraphElementView] */
-
-	override fun handleStateChanged(event: GraphElementEvent) {
-		if (label.text != model.name) {
-			invalidate()
-			label.text = StringUtils.orEmpty(model.name)
-		}
-		super.handleStateChanged(event)
-	}
-
-	/** ---- [AbstractVerticeView] */
-
-	override fun getBoundingBoxImpl(): Rectangle2D {
-		val bb = super.getBoundingBoxImpl()
-		if (StringUtils.isNotEmpty(label.text)) {
-			val lbb = Rectangle2D(label.boundingBox).moveBy(location)
-			bb.add(lbb)
-		}
-		return bb
-	}
-
 	/** ---- [ClockView] */
-
-	/**
-	 * Updates the text, the location and the alignments of the external [Label] depending
-	 * on the orientation of this [ClockView].
-	 */
-	private fun updateLabel() {
-		label.text = StringUtils.orEmpty(model.name)
-		label.alignment = Alignment.forOrientation(orientation)
-		label.location = when (orientation) {
-			Direction.EAST -> Point2D(-getOutput().length - bounds.width - LABEL_DIST, 0.0)
-			Direction.NORTH -> Point2D(0.0, getOutput().length + bounds.height + LABEL_DIST)
-			Direction.WEST -> Point2D(getOutput().length + bounds.width + LABEL_DIST, 0.0)
-			Direction.SOUTH -> Point2D(0.0, -getOutput().length - bounds.height - LABEL_DIST)
-		}
-	}
 
 	private inner class ClockViewActorInteractionHandler : VerticeViewActorInteractionHandler() {
 

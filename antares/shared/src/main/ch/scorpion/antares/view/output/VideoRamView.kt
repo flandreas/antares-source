@@ -2,7 +2,6 @@ package ch.scorpion.antares.view.output
 
 import ch.scorpion.antares.model.addressable.*
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
@@ -20,8 +19,8 @@ import ch.scorpion.jabbah.draw.graphics.RasterImageFactory
 import ch.scorpion.jabbah.draw.module.DrawModule
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.graph.GraphApplicationContext
@@ -30,8 +29,8 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
+import ch.scorpion.jabbah.graph.view.LabeledRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
-import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
 import ch.scorpion.jabbah.io.Storable
@@ -45,7 +44,7 @@ class VideoRamView(
 	colorModel: VideoRamColorModel = VideoRamColorModel.CGA_16,
 	model: RAM = RAM(hasClock = true).also { it.dataWidth = colorModel.dataBitWidth },
 	private val rasterImageFactory: RasterImageFactory = DrawModule.rasterImageFactory
-) : AbstractRectangularVerticeView<RAM>(
+) : LabeledRectangularVerticeView<RAM>(
 	styleProvider,
 	model,
 	RoundRectangle2D(0.0, 0.0, 0.0, 0.0, ROUND_ARC.toDouble(), ROUND_ARC.toDouble())
@@ -64,9 +63,6 @@ class VideoRamView(
 		private const val MAX_COLUMNS_COUNT = 600
 		private const val MAX_ROWS_COUNT = 400
 	}
-
-	private val propertiesBackgroundColor get() = if (Look.FILL_BASIC_COMPONENTS) backgroundColor else styleProvider.getStyle(
-		StyleType.BACKGROUND).color.backgroundColor
 
 	private val calculatedWidth get() = max(MIN_WIDTH, BORDER_WIDTH + SCREEN_INSET + columnsCount * pixelSize + SCREEN_INSET + BORDER_WIDTH)
 
@@ -163,10 +159,14 @@ class VideoRamView(
 	}
 
 	init {
+		initExternalLabel(Direction.NORTH)
 		modelExchanged(null)
 		model.dataWidth = colorModel.dataBitWidth
 		createImage()
 	}
+
+	override val relativeExternalLabelLocation: Point2D get() =
+		Point2D(bounds.centerX, bounds.minY - LABEL_DIST)
 
 	private fun updateAddressBitWidth(rows: Int, columns: Int, dataBitWidth: Int, colorModelBitWidth: Int) {
 		val pixelPerDataCell = dataBitWidth / colorModelBitWidth
@@ -254,7 +254,7 @@ class VideoRamView(
 		updateGeometry()
 	}
 
-	private fun updateGeometry() {
+	override fun updateGeometry() {
 		invalidate()
 		setBounds(
 			x = AbstractAntaresPortView.LENGTH.toDouble(),
@@ -262,6 +262,8 @@ class VideoRamView(
 			w = calculatedWidth.toDouble(),
 			h = calculatedHeight.toDouble())
 		createImage()
+
+		super.updateGeometry()
 	}
 
 	/** ---- [RectangularDrawable] */

@@ -1,7 +1,7 @@
 package ch.scorpion.antares.view.analog
 
 import ch.scorpion.antares.model.analog.AnalogGround
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
+import ch.scorpion.jabbah.graph.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
 import ch.scorpion.jabbah.base.System

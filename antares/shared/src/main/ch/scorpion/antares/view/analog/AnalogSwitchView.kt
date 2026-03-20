@@ -57,7 +57,7 @@ class AnalogSwitchView(
 	override fun updateLabels() {
 		invalidate()
 		label.text = name ?: ""
-		label.rotationChanged()
+		label.update()
 		invalidate()
 		update()
 	}
@@ -74,7 +74,7 @@ class AnalogSwitchView(
 
 	override fun rotationChanged(newRotation: Rotation) {
 		super.rotationChanged(newRotation)
-		label.rotationChanged()
+		label.update()
 	}
 
 	override fun draw(context: DrawContext) {

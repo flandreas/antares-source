@@ -6,9 +6,9 @@ import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.Bit
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.Handedness
+import ch.scorpion.jabbah.graph.view.InternalLabelStyle
 import ch.scorpion.jabbah.edit.Look
-import ch.scorpion.antares.view.OrientableLabeledRectangularVerticeView
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
+import ch.scorpion.jabbah.graph.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.gate.GateMnemonic.enabled
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.geom.AffineTransform
@@ -22,6 +22,7 @@ import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.app.ApplicationMode
+import ch.scorpion.jabbah.graph.view.LabeledRectangularVerticeView
 
 class GateMnemonicsEvent
 
@@ -499,15 +500,15 @@ object GateMnemonic {
 			&& isDisplayableFor(context.g.transform)
 			&& isDisplayableFor(graphApplicationContext.mode, graphApplicationContext.systemSpeedCategory.systemSpeedCategory)
 		) {
-			if (gateView is OrientableLabeledRectangularVerticeView<*>) {
-				gateView.labelStyle = OrientableLabeledRectangularVerticeView.LabelStyle.SMALL_UPPER_LEFT
+			if (gateView is LabeledRectangularVerticeView) {
+				gateView.internalLabelStyle = InternalLabelStyle.SMALL_UPPER_LEFT
 			}
 			context.g.translate(gateView.x, gateView.y)
 			return true
 		}
-		if (gateView is OrientableLabeledRectangularVerticeView<*>) {
+		if (gateView is LabeledRectangularVerticeView) {
 			// TODO Remember old labelStyle and re-establish in [end]
-			gateView.labelStyle = OrientableLabeledRectangularVerticeView.LabelStyle.LARGE_CENTERED
+			gateView.internalLabelStyle = InternalLabelStyle.LARGE_CENTERED
 		}
 		return false
 	}

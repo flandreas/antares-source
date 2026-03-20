@@ -2,7 +2,7 @@ package ch.scorpion.antares.view.analog
 
 import ch.scorpion.antares.model.analog.AbstractAnalogVertice
 import ch.scorpion.antares.model.analog.AnalogSignal
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
+import ch.scorpion.jabbah.graph.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.analog.engine.AnalogElement
 import ch.scorpion.antares.view.analog.engine.AnalogElementProxy
 import ch.scorpion.jabbah.base.geom.*
@@ -55,7 +55,7 @@ abstract class AbstractAnalogVerticeView<T: AbstractAnalogVertice<*>>(
 
 	override fun rotationChanged(newRotation: Rotation) {
 		super.rotationChanged(newRotation)
-		mainPropertyLabel.rotationChanged()
+		mainPropertyLabel.update()
 	}
 
 	/** ---- [AbstractVerticeView] */
@@ -87,7 +87,7 @@ abstract class AbstractAnalogVerticeView<T: AbstractAnalogVertice<*>>(
 		invalidate()
 		mainPropertyLabel.text = mainPropertyValue ?: ""
 		mainPropertyLabel.relLocation = labelLocation
-		mainPropertyLabel.rotationChanged()
+		mainPropertyLabel.update()
 		invalidate()
 		update()
 	}
