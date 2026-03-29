@@ -10,12 +10,11 @@ import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.graph.container.ControlViewComponent
 import ch.scorpion.jabbah.graph.container.ControlViewComponentBeanInfo
-import ch.scorpion.jabbah.graph.view.ControlViewBeanInfo
 import ch.scorpion.jabbah.graph.view.vertice.VerticeViewBeanInfo
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
-class SevenSegmentDisplayViewBeanInfo : VerticeViewBeanInfo<SevenSegmentDisplayView>(), ControlViewBeanInfo {
+class SevenSegmentDisplayViewBeanInfo : VerticeViewBeanInfo<SevenSegmentDisplayView>() {
 
     companion object {
 	    private val lightColor = AntaresProperties.lightColor()
@@ -46,6 +45,7 @@ class SevenSegmentDisplayViewBeanInfo : VerticeViewBeanInfo<SevenSegmentDisplayV
     }
 
 	override fun addControlViewProperties(bean: ControlViewComponent, editor: Editor, properties: MutableList<Property>) {
+		super.addControlViewProperties(bean, editor, properties)
 		properties.add(controlViewLightColor.bind(editor, beanIdProvider(bean.id)))
 	}
 }

@@ -18,6 +18,9 @@ import ch.scorpion.jabbah.edit.model.text.VerticalAlignment
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
+import ch.scorpion.jabbah.io.Storable
+import ch.scorpion.jabbah.io.StoreReader
+import ch.scorpion.jabbah.io.StoreWriter
 
 /**
  * Base class for implementing [VerticeView]s with an external label and an optional internal label.
@@ -74,6 +77,17 @@ abstract class LabeledRectangularVerticeView<T : Vertice>(
      * Must be re-evaluated every time this [VerticeView] changes its geometry, but NOT if it is only rotated.
      */
     protected abstract val relativeExternalLabelLocation: Point2D
+
+    /** UI property for showing/hiding the external label. Primarily used for [ControlView]s. */
+    var showExternalLabel: Boolean = true
+        set(value) {
+            if (field != value) {
+                invalidate()
+                field = value
+                invalidate()
+                update()
+            }
+        }
 
     /** Must be called by the subclass constructor to initialize the instance of external [HorizontalLabel]. */
     protected fun initExternalLabel(
@@ -146,15 +160,21 @@ abstract class LabeledRectangularVerticeView<T : Vertice>(
 
     override val boundingBox: RectangularShape
         get() {
-            val bb = Rectangle2D(super.boundingBox)
-            val lbb = Rectangle2D(externalLabel.boundingBox).moveBy(location)
-            bb.add(lbb)
-            return bb
+            if (showExternalLabel) {
+                val bb = Rectangle2D(super.boundingBox)
+                val lbb = Rectangle2D(externalLabel.boundingBox).moveBy(location)
+                bb.add(lbb)
+                return bb
+            } else {
+                return super.boundingBox
+            }
         }
 
     override fun draw(context: DrawContext) {
         super.draw(context)
-        drawExternalLabel(context)
+        if (showExternalLabel) {
+            drawExternalLabel(context)
+        }
     }
 
     private fun drawExternalLabel(context: DrawContext) {
@@ -182,6 +202,24 @@ abstract class LabeledRectangularVerticeView<T : Vertice>(
     }
 
     override fun drawSelected(context: DrawContext) {
-        externalLabel.draw(context)
+        if (showExternalLabel) {
+            externalLabel.draw(context)
+        }
+    }
+
+    /** ---- [Storable] interface */
+
+    override fun read(reader: StoreReader) {
+        super.read(reader)
+        if (reader.hasAttribute("showExternalLabel")) {
+            showExternalLabel = reader.readBoolean("showExternalLabel")
+        }
+    }
+
+    override fun write(writer: StoreWriter) {
+        super.write(writer)
+        if (!showExternalLabel) {
+            writer.writeBoolean("showExternalLabel", showExternalLabel)
+        }
     }
 }

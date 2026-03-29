@@ -6,11 +6,10 @@ import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.graph.container.ControlViewComponent
 import ch.scorpion.jabbah.graph.container.ControlViewComponentBeanInfo
-import ch.scorpion.jabbah.graph.view.ControlViewBeanInfo
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
-class LEDViewBeanInfo : DigitalComponentViewBeanInfo<LEDView>(), ControlViewBeanInfo {
+class LEDViewBeanInfo : DigitalComponentViewBeanInfo<LEDView>() {
 
 	companion object {
 		private val lightColor = AntaresProperties.lightColor()
@@ -31,6 +30,7 @@ class LEDViewBeanInfo : DigitalComponentViewBeanInfo<LEDView>(), ControlViewBean
 	}
 
 	override fun addControlViewProperties(bean: ControlViewComponent, editor: Editor, properties: MutableList<Property>) {
+		super.addControlViewProperties(bean, editor, properties)
 		properties.add(controlViewLightColor.bind(editor, beanIdProvider(bean.id)))
 	}
 
