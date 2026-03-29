@@ -3,6 +3,7 @@ package ch.scorpion.antares.model.addressable
 import ch.scorpion.antares.model.addressable.AddressableVertice.Companion.ADDRESS_PORT_NAME
 import ch.scorpion.antares.model.addressable.AddressableVertice.Companion.DATA_PORT_NAME
 import ch.scorpion.antares.model.gate.AbstractLogicGate
+import ch.scorpion.antares.model.gate.CurrentUndefinedGateInputBehavior
 import ch.scorpion.antares.model.port.DigitalPortImpl
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignalFactory
@@ -34,12 +35,15 @@ class LookupTable(
 		private val ADDRESS_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("library.element.LookupTable.addressPort.desc"))
 		private val DATA_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("library.element.LookupTable.dataPort.desc"))
 
-		private val CALCULATOR = Calculator()
+		val CALCULATOR = Calculator()
 
 		class Calculator : VerticeCalculator<LookupTable> {
 			override fun calculate(vertice: LookupTable, data: GraphActorData, signalHandler: SignalHandler) {
-				val address = vertice.getAddressInput().getIncomingSignal()
-				val addressInt = address!!.toInt()
+				var address = vertice.getAddressInput().getIncomingSignal()
+				if (address!!.isPartiallyUndefined) {
+					address = CurrentUndefinedGateInputBehavior.value.definedValue(vertice.addressWidth)
+				}
+				val addressInt = address.toInt()
 				if (addressInt == null) {
 					vertice.getDataPort().setOutgoingSignalBuffered(DigitalSignalFactory.error(vertice.dataWidth), signalHandler)
 				} else {
