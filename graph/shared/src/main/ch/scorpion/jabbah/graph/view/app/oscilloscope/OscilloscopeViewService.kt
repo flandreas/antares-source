@@ -58,12 +58,19 @@ interface OscilloscopeViewService {
 	 */
 	fun setOscilloscopeViewVisibility(view: DrawingView<GraphView>, visible: Boolean)
 
+	/**
+	 * Drops a newly detached [OscilloscopeProbeVerticeView] into a [GraphView], or moves an
+	 * already existing one within the [GraphView].
+	 *
+	 * @return the ID of the [ch.scorpion.jabbah.graph.view.EdgeView] to which the [OscilloscopeProbeVerticeView]
+	 * got connected, if any
+	 */
 	fun <T : Any> dropProbe(
 		view: DrawingView<GraphView>,
 		name: String,
 		location: Point2D,
 		probeVerticeViewId: Int?
-	): OscilloscopeProbeVerticeView<T>
+	): Int?
 
 	/**
 	 * Called when an [OscilloscopeView] has been deleted from a [DrawingView].
@@ -144,7 +151,7 @@ class OscilloscopeViewServiceImpl(
 		name: String,
 		location: Point2D,
 		probeVerticeViewId: Int?
-	): OscilloscopeProbeVerticeView<T> {
+	): Int? {
 		val oscilloscopeView = findOscilloscopeView(view.drawing)!!
 		val signalRowView = oscilloscopeView.rowWithName(name)!!
 		val probeVerticeView = if (probeVerticeViewId == null) {
@@ -181,7 +188,7 @@ class OscilloscopeViewServiceImpl(
 			}
 		}
 
-		return probeVerticeView as OscilloscopeProbeVerticeView<T>
+		return newEdgeView?.id
 	}
 
 	override fun handleOscilloscopeDeleted(graphView: GraphView) {

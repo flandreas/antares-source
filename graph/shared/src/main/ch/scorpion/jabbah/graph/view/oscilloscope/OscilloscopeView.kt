@@ -489,7 +489,7 @@ class OscilloscopeView(
 		rows.any { it.probeView.verticeView === pvv }
 
 	/**
-	 * Listens for removals of [OscilloscopeProbeVerticeView]s in order to put them back in the list.
+	 * Listens for removals of [OscilloscopeProbeVerticeView]s to put them back in the list.
 	 * This is only necessary if the [OscilloscopeProbeVerticeView] has been directly removed in the [GraphView]
 	 * and not indirectly by removing an [OscilloscopeProbeView] from this [OscilloscopeView].
 	 */
@@ -498,8 +498,8 @@ class OscilloscopeView(
 		override fun drawableRemoved(event: DrawableContainerEvent<Drawable>) {
 			super.drawableRemoved(event)
 			if (event.child is OscilloscopeProbeVerticeView<*> && !(event.child as OscilloscopeProbeVerticeView<*>).dragGhost) {
-				LOG.userTrail("Delete Oscilloscope probe from graph")
 				val comp = event.child as OscilloscopeProbeVerticeView<*>
+				LOG.userTrail("Deleted Oscilloscope probe '${comp.name}' from GraphView")
 				rowWithName(comp.name)?.apply {
 					val oldName = name
 					val newName = createRowName(this, rows.indexOf(this) + 1)

@@ -1,6 +1,7 @@
 package ch.scorpion.jabbah.graph.view.oscilloscope
 
 import ch.scorpion.jabbah.base.Translations
+import ch.scorpion.jabbah.base.event.KeyEvent
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
@@ -12,6 +13,7 @@ import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.EditInputEventContext
 import ch.scorpion.jabbah.edit.Editor
@@ -48,7 +50,7 @@ open class OscilloscopeProbeVerticeView<T : Any>(
 	graphType: GraphType = GenericGraphType,
 	color: CompositeColor = CompositeColor(),
 	model: OscilloscopeProbeVertice<T> = OscilloscopeProbeVertice.create(name, graphType),
-	val dragGhost: Boolean = false,
+	dragGhost: Boolean = false,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : AbstractRectangularVerticeView<OscilloscopeProbeVertice<T>>(styleProvider, model) {
 
@@ -85,6 +87,9 @@ open class OscilloscopeProbeVerticeView<T : Any>(
 		set(value) {
 			icon.color = value
 		}
+
+	var dragGhost: Boolean = dragGhost
+		private set
 
 	private val icon = OscilloscopeProbeViewIcon(name, color)
 
@@ -180,13 +185,34 @@ open class OscilloscopeProbeVerticeView<T : Any>(
 
 	private inner class Handler : InputEventHandlerAdapter<EditInputEventContext>() {
 
+		private var isMouseDown = false
 		private var isDragging = false
 		private var moveLastLocation = Point2D.ZERO
 
+		override fun keyPressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+			if (!isMouseDown) {
+				return null
+			}
+
+			if (context.keyEvent?.key == KeyEvent.VK_ESCAPE) {
+				cancelDrag(context.drawingView.drawing)
+				return null
+			}
+
+			return this
+		}
+
 		override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
-			LOG.userTrail("Start dragging Oscilloscope probe")
-			isDragging = false
-			moveLastLocation = context.location
+			if (!isMouseDown) {
+				if (dragGhost) {
+					LOG.userTrail("Start dragging Oscilloscope probe $id '$name' into GraphView")
+				} else {
+					LOG.userTrail("Start moving Oscilloscope probe $id '$name' within GraphView")
+				}
+				isMouseDown = true
+				isDragging = false
+				moveLastLocation = context.location
+			}
 			return this
 		}
 
@@ -222,11 +248,12 @@ open class OscilloscopeProbeVerticeView<T : Any>(
 		}
 
 		override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+			isMouseDown = false
 			if (!isDragging) {
+				cancelDrag(context.drawingView.drawing)
 				return null
 			}
 
-			LOG.userTrail("Drop Oscilloscope probe into graph")
 			ConnectionPointHighlighter.removePortViewHighlight()
 
 			if (dragGhost) {
@@ -237,12 +264,36 @@ open class OscilloscopeProbeVerticeView<T : Any>(
 				context.drawingView as DrawingView<GraphView>,
 				name,
 				connectionPoint(),
-				probeVerticeViewId = if (dragGhost) null else this@OscilloscopeProbeVerticeView.id)
+				probeVerticeViewId = if (dragGhost) null else this@OscilloscopeProbeVerticeView.id
+			)
 			EditModule.commandManager.execute(command)
+
+			if (command.connectedEdgeViewId == null) {
+				if (dragGhost) {
+					LOG.userTrail("Dropped Oscilloscope probe '$name' into graph")
+				} else {
+					LOG.userTrail("Moved Oscilloscope probe '$name' within graph")
+				}
+			} else {
+				if (dragGhost) {
+					LOG.userTrail("Dropped Oscilloscope probe '$name' in graph, connected to EdgeView ${command.connectedEdgeViewId}")
+				} else {
+					LOG.userTrail("Moved Oscilloscope probe '$name' within graph, connected to EdgeView ${command.connectedEdgeViewId}")
+				}
+			}
 
 			isDragging = false
 
 			return null
+		}
+
+		private fun cancelDrag(drawing: Drawing<*>) {
+			if (dragGhost) {
+				// Unset dragGhost so that OscilloscopeView recognizes that it must re-establish the
+				// probe in its origin row
+				dragGhost = false
+				drawing.remove(this@OscilloscopeProbeVerticeView)
+			}
 		}
 
 		private fun findEdgeView(context: EditInputEventContext): EdgeView<T>? =

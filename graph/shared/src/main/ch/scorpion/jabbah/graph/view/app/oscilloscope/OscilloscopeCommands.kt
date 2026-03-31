@@ -1,15 +1,15 @@
 package ch.scorpion.jabbah.graph.view.app.oscilloscope
 
 import ch.scorpion.jabbah.base.geom.Point2D
-import ch.scorpion.jabbah.edit.Component
-import ch.scorpion.jabbah.edit.Drawing
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.Undoable
 import ch.scorpion.jabbah.edit.command.AbstractCommand
 import ch.scorpion.jabbah.edit.command.AbstractDrawingViewCommand
 import ch.scorpion.jabbah.graph.app.AbstractGraphViewCommand
+import ch.scorpion.jabbah.graph.view.EdgeView
 import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.module.GraphViewModule
+import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeProbeVerticeView
 import ch.scorpion.jabbah.graph.view.oscilloscope.OscilloscopeView
 
 internal class AddOscilloscopeRowCommand(
@@ -69,7 +69,12 @@ internal class DropOscilloscopeProbeCommand<T : Any>(
 	private val service: OscilloscopeViewService = GraphViewModule.oscilloscopeViewService
 ) : AbstractGraphViewCommand("graph.command.dropOscilloscopeProbe", drawingView) {
 
+	/**
+	 * The ID of the [EdgeView] to which the [OscilloscopeProbeVerticeView] was connected, if any.
+	 */
+	var connectedEdgeViewId: Int? = null
+
 	override fun execute() {
-		service.dropProbe<T>(drawingView, name, location, probeVerticeViewId)
+		connectedEdgeViewId = service.dropProbe<T>(drawingView, name, location, probeVerticeViewId)
 	}
 }
