@@ -20,8 +20,8 @@ enum class InternalLabelStyle {
                 it.ownerRotation = box.rotation
                 it.horizontalAlignment = HorizontalAlignment.CENTER
                 it.verticalAlignment = VerticalAlignment.CENTER
-                it.location = Point2D(box.x + box.width / 2, box.y + box.height / 3)
             }
+            box.setInternalLabelLocation(Point2D(box.x + box.width / 2, box.y + box.height / 3))
         }
     },
 
@@ -32,8 +32,8 @@ enum class InternalLabelStyle {
                 it.ownerRotation = box.rotation
                 it.horizontalAlignment = HorizontalAlignment.RIGHT
                 it.verticalAlignment = VerticalAlignment.TOP
-                it.location = Point2D(box.bounds.maxX - SMALL_LABEL_INSET, box.bounds.minY + SMALL_LABEL_INSET)
             }
+            box.setInternalLabelLocation(Point2D(box.bounds.maxX - SMALL_LABEL_INSET, box.bounds.minY + SMALL_LABEL_INSET))
         }
     };
 

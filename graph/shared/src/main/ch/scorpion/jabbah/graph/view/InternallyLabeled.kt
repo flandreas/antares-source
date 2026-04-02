@@ -1,5 +1,6 @@
 package ch.scorpion.jabbah.graph.view
 
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rotation
 import ch.scorpion.jabbah.draw.drawable.RectangularDrawable
 import ch.scorpion.jabbah.draw.graphics.Font
@@ -13,4 +14,8 @@ interface InternallyLabeled : RectangularDrawable {
     val internalLabel: Label?
     val internalLabelFont: Font
     val rotation: Rotation
+
+    fun setInternalLabelLocation(location: Point2D) {
+        internalLabel?.location = location
+    }
 }

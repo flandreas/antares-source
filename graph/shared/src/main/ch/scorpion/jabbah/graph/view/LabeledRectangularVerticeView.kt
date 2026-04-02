@@ -48,7 +48,7 @@ abstract class LabeledRectangularVerticeView<T : Vertice>(
         set(value) {
             if (value != name) {
                 model.name = value
-                updateExternalLabel()
+                updateLabels()
                 if (this is ControlViewSource<*>) {
                     postControlViewSourceChangeEvent(eventBus)
                 }
@@ -57,7 +57,19 @@ abstract class LabeledRectangularVerticeView<T : Vertice>(
 
     override fun modelExchanged(oldModel: T?) {
         super.modelExchanged(oldModel)
+        updateLabels()
+    }
+
+    /** ---- Common label management */
+
+    protected fun updateLabels() {
+        invalidate()
+
         updateExternalLabel()
+        updateInternalLabel()
+
+        invalidate()
+        update()
     }
 
     /** ---- [Labeled] interface and external label management */
@@ -97,7 +109,7 @@ abstract class LabeledRectangularVerticeView<T : Vertice>(
         externalLabel = HorizontalLabel(this, relativeExternalLabelLocation, orientation, text, font)
     }
 
-    protected fun updateExternalLabel() {
+    private fun updateExternalLabel() {
         invalidate()
         externalLabel.text = StringUtils.orEmpty(name)
         externalLabel.update()
@@ -146,6 +158,11 @@ abstract class LabeledRectangularVerticeView<T : Vertice>(
 
     override val internalLabelFont: Font get() = font
 
+    protected open fun updateInternalLabel() {
+        // By default, the internal label is static and doesn't need to be updated and doesn't change the geometry.
+        // Subclasses whose internal label displays the name can override this method
+    }
+
     /** ---- [LabeledRectangularVerticeView] */
 
     /**
@@ -177,12 +194,12 @@ abstract class LabeledRectangularVerticeView<T : Vertice>(
         }
     }
 
-    private fun drawExternalLabel(context: DrawContext) {
+    protected open fun drawExternalLabel(context: DrawContext) {
         context.g.color = styleProvider.getStyle(StyleType.BACKGROUND).color.textColor
         externalLabel.draw(context)
     }
 
-    fun drawInternalLabel(context: DrawContext, text: String? = null) {
+    open fun drawInternalLabel(context: DrawContext, text: String? = null) {
         internalLabel?.let { label ->
             if (text != null) {
                 if (label.text != text) {

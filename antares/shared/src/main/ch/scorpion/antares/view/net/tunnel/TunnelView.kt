@@ -65,7 +65,7 @@ class TunnelView(
 		portView.setLocation(portView.length.toDouble(), 0.0)
 		addPortView(portView)
 
-		updateExternalLabel()
+		updateLabels()
 	}
 
 	/** ---- UI properties */
@@ -83,7 +83,7 @@ class TunnelView(
 		get() = model.tunnelName
 		set(value) {
 			model.tunnelName = value
-			updateExternalLabel()
+			updateLabels()
 		}
 
 	/** Defaults to [TunnelFlowDirection.Undefined] due to backward compatibility. */

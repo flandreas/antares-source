@@ -1,7 +1,6 @@
 package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.model.input.Switch
-import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.Translations
@@ -19,6 +18,7 @@ import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.graphics.Image
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.jabbah.edit.model.image.ImageIdentification
 import ch.scorpion.jabbah.edit.module.EditModule
 import ch.scorpion.jabbah.graph.GraphApplicationContext
@@ -148,9 +148,12 @@ class ImageSwitchView(
         }
 
     init {
+        initExternalLabel(NORTH)
         isFocusable = true
         modelExchanged(null)
     }
+
+    override val relativeExternalLabelLocation: Point2D get() = Point2D(-LENGTH - effWidth / 2, -effHeight / 2 - LABEL_DIST)
 
     override fun modelExchanged(oldModel: Switch?) {
         super.modelExchanged(oldModel)
@@ -170,10 +173,6 @@ class ImageSwitchView(
             context.g.draw(bounds)
         }
     }
-
-    /** ---- [AbstractSwitchView] */
-
-    override fun updateLabels() {}
 
     /** ---- [Storable] */
 
@@ -308,7 +307,7 @@ class ImageSwitchView(
             max(scale * onImageData.value!!.image.height, scale * offImageData.value!!.image.height)
         }
 
-    private fun updateGeometry() {
+    override fun updateGeometry() {
         invalidate()
         getPortView(model.getPort())?.let {
             it.direction = portDirection
@@ -320,6 +319,7 @@ class ImageSwitchView(
             }
         }
         setBounds(calculateBounds())
+        super.updateGeometry()
         invalidate()
     }
 
