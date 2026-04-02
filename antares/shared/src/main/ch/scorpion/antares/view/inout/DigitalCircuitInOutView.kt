@@ -134,8 +134,8 @@ class DigitalCircuitInOutView(
 
 	override val keyboardTargetBoundingBox: RectangularShape get() = boundingBox
 
-	override fun consumeKey(key: Int, contextHolder: GraphApplicationContextHolder, graphView: GraphView?) {
-		consumeKey(key, contextHolder, null, false, graphView)
+	override fun consumeKey(key: Int, contextHolder: GraphApplicationContextHolder) {
+		consumeKey(key, contextHolder, null, false)
 	}
 
 	override fun clear(contextHolder: GraphApplicationContextHolder) {
@@ -315,7 +315,7 @@ class DigitalCircuitInOutView(
 	}
 
 	/** Consumes a key the user pressed during simulation while this [DigitalCircuitInOutView] has focus.*/
-	fun consumeKey(key: Int, contextHolder: GraphApplicationContextHolder, keyEvent: KeyEvent? = null, skipAnimation: Boolean = false, graphView: GraphView? = null) {
+	fun consumeKey(key: Int, contextHolder: GraphApplicationContextHolder, keyEvent: KeyEvent? = null, skipAnimation: Boolean = false) {
 		invalidate()
 		if (keyEvent != null && keyEvent.modifiers != 0) {
 			// Ignore everything that should be handled by MenuItem accelerators
@@ -332,7 +332,7 @@ class DigitalCircuitInOutView(
 			numberView!!.transferFocusRight()
 		} else if (key == KeyEvent.VK_ENTER && checkTopLevelKey()) {
 			if (signalRepresentation == DigitalSignalRepresentation.BINARY) {
-				toggleFocusBitWithEnter(contextHolder.scheduler, graphView)
+				toggleFocusBitWithEnter(contextHolder.scheduler)
 			}
 		} else if (key == KeyEvent.VK_DELETE && portType == PortType.INOUT && checkTopLevelKey()) {
 			consumeSignal(
@@ -379,8 +379,8 @@ class DigitalCircuitInOutView(
 		}
 	}
 
-	private fun toggleFocusBitWithEnter(signalHandler: SignalHandler, graphView: GraphView?) {
-		model.toggleBit(numberView!!.focusIndex!!, false, signalHandler, graphView)
+	private fun toggleFocusBitWithEnter(signalHandler: SignalHandler) {
+		model.toggleBit(numberView!!.focusIndex!!, false, signalHandler)
 	}
 
 	private fun displayKeyboard(context: ActorInteractionContext): ActorInteractionHandler {
@@ -401,7 +401,7 @@ class DigitalCircuitInOutView(
 		val digitIndex = getDigitIndexAt(context.x, context.y)
 		if (digitIndex != null) {
 			if (signalRepresentation == DigitalSignalRepresentation.BINARY || bitWidth === BitWidth.BW_1) {
-				model.toggleBit(digitIndex, undefine, context.signalHandler, (context.view as DrawingView<*>).drawing as GraphView)
+				model.toggleBit(digitIndex, undefine, context.signalHandler)
 			} else {
 				if (context.view is DrawingView<*>) {
 					context.mouseEvent?.consumeEvent()
@@ -449,8 +449,11 @@ class DigitalCircuitInOutView(
 
 		override fun keyPressed(context: ActorInteractionContext): ActorInteractionHandler? {
 			if (numberView!!.focusIndex != null) {
-				consumeKey(context.keyEvent!!.key, context.view.applicationContextHolder as GraphApplicationContextHolder,
-					context.keyEvent, graphView = (context.view as DrawingView<*>).drawing as GraphView)
+				consumeKey(
+					context.keyEvent!!.key,
+					context.view.applicationContextHolder as GraphApplicationContextHolder,
+					context.keyEvent
+				)
 			}
 			return null
 		}
@@ -461,7 +464,7 @@ class DigitalCircuitInOutView(
 			}
 			if (numberView!!.focusIndex != null) {
 				if (context.keyEvent?.key == KeyEvent.VK_ENTER && checkTopLevelKey()) {
-					toggleFocusBitWithEnter(context.signalHandler, (context.view as DrawingView<*>).drawing as GraphView)
+					toggleFocusBitWithEnter(context.signalHandler)
 				}
 			}
 			return null

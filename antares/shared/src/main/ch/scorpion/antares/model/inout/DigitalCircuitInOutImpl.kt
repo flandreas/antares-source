@@ -16,7 +16,6 @@ import ch.scorpion.jabbah.graph.model.net.CombinedNet
 import ch.scorpion.jabbah.graph.model.net.NetCombiner
 import ch.scorpion.jabbah.graph.model.vertice.InteractableVertice
 import ch.scorpion.jabbah.graph.model.vertice.VerticeCalculator
-import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
@@ -299,7 +298,7 @@ class DigitalCircuitInOutImpl(
 			}
 		}
 
-	override fun toggleBit(index: Int, undefine: Boolean, signalHandler: SignalHandler, graphView: GraphView?) {
+	override fun toggleBit(index: Int, undefine: Boolean, signalHandler: SignalHandler) {
 		var s = signal
 		if (s == null) {
 			s = DigitalSignalFactory.allOf(bitWidth, Bit.Undefined)

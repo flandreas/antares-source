@@ -27,7 +27,7 @@ class CircuitInOutImplTest {
 
 	@Test
 	fun shouldDelaySwitchOn() {
-		inout.toggleBit(0, false, signalHandler, mock(MockMode.autofill))
+		inout.toggleBit(0, false, signalHandler)
 		assertEquals(DigitalSignalFactory.undefined(BitWidth.BW_1), inout.signal)
 		assertFalse(inout.enabled)
 

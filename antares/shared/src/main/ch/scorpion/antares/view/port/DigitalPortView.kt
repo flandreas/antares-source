@@ -29,7 +29,6 @@ import ch.scorpion.jabbah.graph.container.InternalLabelOrientation
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.model.PortType
 import ch.scorpion.jabbah.graph.view.EdgeView
-import ch.scorpion.jabbah.graph.view.GraphView
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewConnectionGeometry
 import ch.scorpion.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import ch.scorpion.jabbah.graph.view.port.AbstractPortView
@@ -297,7 +296,7 @@ class DigitalPortView(
 
 	/** ---- [DigitalKeyboard.Target] */
 
-	override fun consumeKey(key: Int, contextHolder: GraphApplicationContextHolder, graphView: GraphView?) {
+	override fun consumeKey(key: Int, contextHolder: GraphApplicationContextHolder) {
 		signalRepresentation.digitToWord(BitWidth.of(signalRepresentation.bitCount), key.toChar())?.let { signal ->
 			val newSignal = digitalPort.getIncomingSignal()?.let { incomingSignal ->
 				signalRepresentation.withDigit(incomingSignal, signal, keyboardDigitIndex)

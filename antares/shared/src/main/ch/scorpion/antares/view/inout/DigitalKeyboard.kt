@@ -16,14 +16,12 @@ import ch.scorpion.jabbah.draw.drawable.DrawableAttendantPositioner
 import ch.scorpion.jabbah.draw.style.*
 import ch.scorpion.jabbah.edit.DrawingView
 import ch.scorpion.jabbah.edit.EditInputEventContext
-import ch.scorpion.jabbah.draw.Focusable
 import ch.scorpion.jabbah.edit.model.text.TextDrawableButtonRenderer
 import ch.scorpion.jabbah.execution.actor.ActorDrawableButton
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorViewContainer
 import ch.scorpion.jabbah.graph.GraphApplicationContextHolder
-import ch.scorpion.jabbah.graph.view.GraphView
 
 /**
  * Displays a keyboard for entering digits into a digital target object during simulation.
@@ -37,7 +35,7 @@ object DigitalKeyboard : ActorViewContainer<Drawable>(useLocation = true), Focus
 	interface Target {
 		val keyboardTargetBoundingBox: RectangularShape
 		val signalRepresentation: DigitalSignalRepresentation
-		fun consumeKey(key: Int, contextHolder: GraphApplicationContextHolder, graphView: GraphView?)
+		fun consumeKey(key: Int, contextHolder: GraphApplicationContextHolder)
 		fun clear(contextHolder: GraphApplicationContextHolder)
 	}
 
@@ -161,7 +159,7 @@ object DigitalKeyboard : ActorViewContainer<Drawable>(useLocation = true), Focus
 					text = BitOperation.HEX_CHAR[i - 1].toString(),
 					dimension = Dimension2D(BUTTON_SIZE, BUTTON_SIZE),
 					style = styleProvider.getStyle(styleType)),
-				actorAction = { buttonClickHandler(BitOperation.HEX_KEY[i - 1], null) },
+				actorAction = { buttonClickHandler(BitOperation.HEX_KEY[i - 1]) },
 				round = true
 			)
 			digitButtons.add(button)
@@ -198,12 +196,16 @@ object DigitalKeyboard : ActorViewContainer<Drawable>(useLocation = true), Focus
 		}
 	}
 
-	private fun buttonClickHandler(key: Int, graphView: GraphView?) {
-		target!!.consumeKey(key, contextHolder!!, graphView = graphView)
+	private fun buttonClickHandler(key: Int) {
+		if (contextHolder != null) {
+			target?.consumeKey(key, contextHolder!!)
+		}
 	}
 
 	private fun clearHandler() {
-		target!!.clear(contextHolder!!)
+		if (contextHolder != null) {
+			target?.clear(contextHolder!!)
+		}
 	}
 
 	private class Handler(
