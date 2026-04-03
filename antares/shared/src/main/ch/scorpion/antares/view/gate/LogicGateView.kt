@@ -28,9 +28,11 @@ import ch.scorpion.jabbah.draw.graphics.Font
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.Look.SCALE
 import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.edit.model.Size.LARGE
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.InternalLabelStyle
@@ -429,6 +431,20 @@ class LogicGateView(
 		updateLayout()
 
 		dataPort = InputPortNumber.withId(min(dataPort.id, model.chosenInputCount.count))
+	}
+
+	override fun getApplicableBackgroundColor(context: DrawContext): Color {
+		return if (context.castedAppContext<GraphApplicationContext>()!!.isExecute && GateMnemonic.require(this, context)) {
+			// Don't draw the custom LogicGateView background; it could make the GateMnemonic unreadable
+			if (context.useContextColors) {
+				transparent.applyTo(context.color!!.backgroundColor)
+			} else {
+				transparent.applyTo(styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor)
+			}
+			styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
+		} else {
+			super.getApplicableBackgroundColor(context)
+		}
 	}
 
 	fun updateInputBitWidthAnnotations() {

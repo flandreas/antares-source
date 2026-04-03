@@ -485,7 +485,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 		}
 	}
 
-	protected fun getApplicableBackgroundColor(context: DrawContext): Color {
+	protected open fun getApplicableBackgroundColor(context: DrawContext): Color {
 		return if (context.useContextColors) {
 			transparent.applyTo(context.color!!.backgroundColor)
 		} else {

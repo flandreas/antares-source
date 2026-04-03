@@ -489,17 +489,20 @@ object GateMnemonic {
 		context.g.drawCircle(s(1.0), s(4.0), s(0.25))
 	}
 
+	fun require(gateView: OrientableRectangularVerticeView<*>, context: DrawContext): Boolean {
+		val graphApplicationContext = context.castedAppContext<GraphApplicationContext>()!!
+		return gateView.model.inputCount <= 2
+			&& isDisplayableFor(context.g.transform)
+			&& isDisplayableFor(graphApplicationContext.mode, graphApplicationContext.systemSpeedCategory.systemSpeedCategory)
+	}
+
 	/**
 	 * Determines whether gate mnemonics have to be drawn (depending on the [PortCount], the zoom level,
-	 * the [ApplicationMode]) and the general enabledness, and prepares drawing by setting up the
+	 * the [ApplicationMode]) and the general enabledness, and prepares to draw by setting up the
 	 * coordinate system origin if drawing is required.
 	 */
 	private fun begin(gateView: OrientableRectangularVerticeView<*>, context: DrawContext): Boolean {
-		val graphApplicationContext = context.castedAppContext<GraphApplicationContext>()!!
-		if (gateView.model.inputCount <= 2
-			&& isDisplayableFor(context.g.transform)
-			&& isDisplayableFor(graphApplicationContext.mode, graphApplicationContext.systemSpeedCategory.systemSpeedCategory)
-		) {
+		if (require(gateView, context)) {
 			if (gateView is LabeledRectangularVerticeView) {
 				gateView.internalLabelStyle = InternalLabelStyle.SMALL_UPPER_LEFT
 			}
