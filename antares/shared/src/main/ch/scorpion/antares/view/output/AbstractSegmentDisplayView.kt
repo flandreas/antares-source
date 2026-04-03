@@ -4,7 +4,6 @@ import ch.scorpion.antares.model.Logic
 import ch.scorpion.antares.model.output.AbstractSegmentDisplay
 import ch.scorpion.antares.model.output.LightEmitterModel
 import ch.scorpion.antares.model.output.SixteenSegmentDisplay
-import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.StringUtils
@@ -97,7 +96,7 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 		height = geom.height.toDouble()
 	}
 
-	override val relativeExternalLabelLocation: Point2D get() = Point2D(geom.width / 2, - AbstractAntaresPortView.LENGTH)
+	override val relativeExternalLabelLocation: Point2D get() = Point2D(geom.width / 2, - LABEL_DIST)
 
 	/** ---- UI properties */
 
