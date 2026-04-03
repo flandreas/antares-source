@@ -2,7 +2,10 @@ package ch.scorpion.antares.view.analog
 
 import ch.scorpion.antares.model.analog.Battery
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
+import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
 import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -17,7 +20,12 @@ import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 class BatteryView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: Battery = Battery()
-) : AbstractAnalogVerticeView<Battery>(styleProvider, model) {
+) : AbstractAnalogVerticeView<Battery>(
+	styleProvider,
+	model,
+	Direction.NORTH,
+	Rectangle2D(LENGTH, -SIZE / 2, SIZE, SIZE)
+) {
 
 	companion object {
 		private val SIZE = wInt(4)
@@ -35,14 +43,15 @@ class BatteryView(
 		orientation = Direction.SOUTH
 	}
 
+	override val relativeExternalLabelLocation: Point2D get() = Point2D(LENGTH + SIZE / 2, -SIZE / 2 - LABEL_DIST)
+
 	/** ---- [AbstractVerticeView] */
 
 	override fun modelExchanged(oldModel: Battery?) {
 		super.modelExchanged(oldModel)
-		addPortView(AnalogPortView(styleProvider, model.getPort(1), AbstractAntaresPortView.LENGTH, 0, Direction.WEST))
-		addPortView(AnalogPortView(styleProvider, model.getPort(2), AbstractAntaresPortView.LENGTH + SIZE, 0, Direction.EAST))
-		setBounds(AbstractAntaresPortView.LENGTH, -SIZE / 2, SIZE, SIZE)
-		updateLabel()
+		addPortView(AnalogPortView(styleProvider, model.getPort(1), LENGTH, 0, Direction.WEST))
+		addPortView(AnalogPortView(styleProvider, model.getPort(2), LENGTH + SIZE, 0, Direction.EAST))
+		updateGeometry()
 	}
 
 	override fun drawImpl(context: DrawContext) {

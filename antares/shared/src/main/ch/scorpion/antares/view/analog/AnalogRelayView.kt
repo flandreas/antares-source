@@ -12,6 +12,7 @@ import ch.scorpion.antares.view.symbolstyle.SymbolStyle.Companion.INDUCTOR_HEIGH
 import ch.scorpion.antares.view.symbolstyle.SymbolStyle.Companion.INDUCTOR_WIDTH
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -22,7 +23,7 @@ import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 class AnalogRelayView(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     model: AnalogRelay = AnalogRelay()
-) : AbstractAnalogVerticeView<AnalogRelay>(styleProvider, model) {
+) : AbstractAnalogVerticeView<AnalogRelay>(styleProvider, model, Direction.NORTH, Rectangle2D()) {
 
     @Suppress("unused") // Reflection
     var switchConfiguration: SwitchConfiguration
@@ -65,6 +66,9 @@ class AnalogRelayView(
             }
         }
 
+    override val relativeExternalLabelLocation: Point2D
+        get() = Point2D(bounds.centerX, bounds.minY - LABEL_DIST)
+
     /** ---- [AbstractVerticeView] */
 
     override fun modelExchanged(oldModel: AnalogRelay?) {
@@ -92,6 +96,9 @@ class AnalogRelayView(
         // Coil
         addPortView(AnalogPortView(styleProvider, model.getPort(portId++), LENGTH, 0, Direction.WEST))
         addPortView(AnalogPortView(styleProvider, model.getPort(portId), LENGTH + INDUCTOR_WIDTH.toInt(), 0, Direction.EAST))
+
+        updateGeometry()
+        updateMainPropertyLabel()
     }
 
     private fun updateSPSTGeometry() {
@@ -103,6 +110,7 @@ class AnalogRelayView(
         } else {
             Point2D(LENGTH + INDUCTOR_WIDTH.toInt(), 4 * Look.SCALE)
         }
+        updateGeometry()
     }
 
     override fun drawImpl(context: DrawContext) {
