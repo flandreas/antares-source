@@ -2,8 +2,6 @@ package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.model.input.Joystick
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.jabbah.edit.Look.SCALE
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
@@ -22,6 +20,7 @@ import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.Look.SCALE
 import ch.scorpion.jabbah.execution.SignalHandler
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
@@ -32,6 +31,7 @@ import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
+import ch.scorpion.jabbah.graph.view.LabeledRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -43,7 +43,7 @@ import kotlin.math.abs
 class JoystickView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: Joystick = Joystick()
-) : OrientableRectangularVerticeView<Joystick>(styleProvider, model), ControlView<Joystick>, ControlViewSource<Joystick> {
+) : LabeledRectangularVerticeView<Joystick>(styleProvider, model), ControlView<Joystick>, ControlViewSource<Joystick> {
 
 	companion object {
 		const val PROP_ICON_PATH = "ch.scorpion.antares.view.input.JoystickView.iconPath"
@@ -65,9 +65,13 @@ class JoystickView(
 	private val actorInteractionHandler = InteractionHandler()
 
 	init {
+		initExternalLabel(orientation = Direction.WEST)
 		modelExchanged(null)
 		setBounds(calculateBounds())
 	}
+
+	override val relativeExternalLabelLocation: Point2D get() =
+		Point2D(-AbstractAntaresPortView.LENGTH - w(SIZE) - LABEL_DIST, -h(2) + w(SIZE) / 2)
 
 	override fun modelExchanged(oldModel: Joystick?) {
 		super.modelExchanged(oldModel)

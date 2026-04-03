@@ -5,15 +5,15 @@ import ch.scorpion.antares.model.net.TransistorType
 import ch.scorpion.antares.view.Handedness
 import ch.scorpion.antares.view.Handedness.LEFT
 import ch.scorpion.antares.view.Handedness.RIGHT
-import ch.scorpion.jabbah.edit.Look
-import ch.scorpion.jabbah.edit.Look.SCALE
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
 import ch.scorpion.antares.view.port.ExternalPortLabelDistance
 import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.StringUtils
-import ch.scorpion.jabbah.base.geom.*
+import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Direction.SOUTH
+import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
@@ -21,8 +21,9 @@ import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
-import ch.scorpion.jabbah.edit.model.AbstractComponent
-import ch.scorpion.jabbah.edit.model.text.HorizontalLabel
+import ch.scorpion.jabbah.edit.Look
+import ch.scorpion.jabbah.edit.Look.SCALE
+import ch.scorpion.jabbah.graph.view.LabeledRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
@@ -35,7 +36,7 @@ abstract class AbstractTransistorView<T: TransistorIF<*>>(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: T,
 	handedness: Handedness = DEFAULT_HANDEDNESS
-) : OrientableRectangularVerticeView<T>(styleProvider, model) {
+) : LabeledRectangularVerticeView<T>(styleProvider, model) {
 
 	companion object {
 
@@ -53,7 +54,7 @@ abstract class AbstractTransistorView<T: TransistorIF<*>>(
 		/** The name of the [Boolean] property in [Properties] defining whether transistors are drawn with a circle. */
 		const val PROP_TRANSISTOR_CIRCLE = "antares.transistor.circle"
 
-		/** The name of the [Boolean] property in [Properties] defining whether transistor display port names.*/
+		/** The name of the [Boolean] property in [Properties] defining whether transistors display port names.*/
 		const val PROP_TRANSISTOR_PORT_NAMES = "antares.transistor.portNames"
 
 		val portLabelPosition get() = if (showPortNames) {
@@ -68,22 +69,6 @@ abstract class AbstractTransistorView<T: TransistorIF<*>>(
 			ExternalPortLabelDistance.None
 		}
 	}
-
-	/** Displays [name]. */
-	private val label = HorizontalLabel(
-		owner = this,
-		relLocation = Point2D.ZERO,
-		font = font)
-
-	var name: String?
-		get() = model.name
-		set(value) {
-			if (value != name) {
-				model.name = value
-				updateLabel()
-			}
-		}
-
 
 	/** [Handedness.RIGHT] means that gate and source are in [Direction.SOUTH].*/
 	var handedness: Handedness = handedness
@@ -123,6 +108,18 @@ abstract class AbstractTransistorView<T: TransistorIF<*>>(
 			}
 		}
 
+	init {
+		initExternalLabel()
+	}
+
+	override val relativeExternalLabelLocation: Point2D get() =
+		Point2D(
+			LENGTH + WIDTH + LABEL_DIST,
+			when (handedness) {
+				RIGHT -> -2 * SCALE
+				LEFT -> 2 * SCALE
+			})
+
 	/** ---- [Storable] interface */
 
 	override fun write(writer: StoreWriter) {
@@ -157,19 +154,7 @@ abstract class AbstractTransistorView<T: TransistorIF<*>>(
 			return bb
 		}
 
-	/** ---- [AbstractComponent] */
-
-	override fun rotationChanged(newRotation: Rotation) {
-		super.rotationChanged(newRotation)
-		label.rotationChanged()
-	}
-
 	/** ---- [AbstractVerticeView] */
-
-	override fun draw(context: DrawContext) {
-		super.draw(context)
-		drawLabel(context)
-	}
 
 	override fun drawImpl(context: DrawContext) {
 		if (hasCircle && shadow) {
@@ -185,11 +170,6 @@ abstract class AbstractTransistorView<T: TransistorIF<*>>(
 		symbol.render(this, context)
 	}
 
-	private fun drawLabel(context: DrawContext) {
-		context.g.color = styleProvider.getStyle(StyleType.BACKGROUND).color.textColor
-		label.draw(context)
-	}
-
 	/** ---- [TransistorView] */
 
 	/** If `true`, the symbol visualizes the on/off state of this [AbstractTransistorView] (if supported by the symbol style). */
@@ -197,8 +177,8 @@ abstract class AbstractTransistorView<T: TransistorIF<*>>(
 
 	/**
 	 * The displacement (in view coordinates) of the on/off indication. For digital transistors, this will either be
-	 * 0 (if the transistor is "on") or a maximum value (if the transistor is "off". For analog transistors, this will
-	 * be a value that corresponds with the transistors source/drain conductance.
+	 * 0 (if the transistor is "on") or a maximum value (if the transistor is "off"). For analog transistors, this will
+	 * be a value that corresponds with the transistor's source/drain conductance.
 	 */
 	abstract val switchOffDisplacement: Double
 
@@ -228,15 +208,7 @@ abstract class AbstractTransistorView<T: TransistorIF<*>>(
 			}
 		}
 
-	private fun updateLabel() {
-		invalidate()
-		label.text = StringUtils.orEmpty(name)
-		label.rotationChanged()
-		invalidate()
-		update()
-	}
-
-	protected fun updateGeometry() {
+	override fun updateGeometry() {
 		getPortView(model.gatePort)?.apply {
 			setLocation(
 				LENGTH,
@@ -250,12 +222,6 @@ abstract class AbstractTransistorView<T: TransistorIF<*>>(
 			setLocation(LENGTH + 4 * SCALE, SCALE)
 			direction = SOUTH
 		}
-		label.relLocation = Point2D(
-			LENGTH + WIDTH + LABEL_DIST,
-			when (handedness) {
-				RIGHT -> -2 * SCALE
-				LEFT -> 2 * SCALE
-			})
 	}
 
 	private fun drawBody(context: DrawContext) {

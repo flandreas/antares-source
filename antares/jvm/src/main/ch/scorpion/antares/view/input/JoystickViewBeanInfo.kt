@@ -7,6 +7,7 @@ import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
 class JoystickViewBeanInfo : DigitalComponentViewBeanInfo<JoystickView>() {
+
 	companion object {
 		private val bitWidth = AntaresProperties.bitWidth()
 		private val deflection = AntaresProperties.joystickDeflection()

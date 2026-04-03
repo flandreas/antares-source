@@ -4,6 +4,7 @@ import ch.scorpion.antares.model.input.RealSwitch
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -19,6 +20,9 @@ class RealSwitchView(
 		modelExchanged(null)
 		setBounds(AbstractAntaresPortView.LENGTH, -REAL_SWITCH_HEIGHT_ABOVE, REAL_SWITCH_WIDTH, REAL_SWITCH_HEIGHT_ABOVE + REAL_SWITCH_HEIGHT_BELOW)
 	}
+
+	override val relativeExternalLabelLocation: Point2D get() =
+		Point2D(AbstractAntaresPortView.LENGTH + REAL_SWITCH_WIDTH / 2, -REAL_SWITCH_HEIGHT_ABOVE - LABEL_DIST)
 
 	override fun modelExchanged(oldModel: RealSwitch?) {
 		super.modelExchanged(oldModel)

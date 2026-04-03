@@ -4,6 +4,8 @@ import ch.scorpion.antares.model.arithmetic.Random
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.view.gate.BoxGateView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
+import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -21,8 +23,11 @@ class RandomView(
 	}
 
 	init {
+		initExternalLabel(Direction.NORTH)
 		modelExchanged(null)
 	}
+
+	override val relativeExternalLabelLocation: Point2D get() = Point2D(-LENGTH - width / 2, -height / 2 - LABEL_DIST)
 
 	override fun modelExchanged(oldModel: Random?) {
 		super.modelExchanged(oldModel)

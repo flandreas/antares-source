@@ -7,13 +7,14 @@ import ch.scorpion.antares.model.port.DigitalPort
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.antares.model.signal.DigitalSignal
 import ch.scorpion.antares.view.Handedness
-import ch.scorpion.antares.view.Handedness.*
-import ch.scorpion.antares.view.OrientableLabeledRectangularVerticeView
+import ch.scorpion.antares.view.Handedness.LEFT
+import ch.scorpion.antares.view.Handedness.RIGHT
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.symbolstyle.SymbolStyle
 import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Font
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -21,6 +22,7 @@ import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.Look.SCALE
 import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.edit.model.Size.LARGE
+import ch.scorpion.jabbah.graph.view.LabeledRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
@@ -32,7 +34,7 @@ import kotlin.math.floor
 class TriStateBufferGateView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: TriStateBufferGate = TriStateBufferGate()
-) : OrientableLabeledRectangularVerticeView<TriStateBufferGate>(styleProvider, "1", model) {
+) : LabeledRectangularVerticeView<TriStateBufferGate>(styleProvider, model, internalLabelText = "1") {
 
 	companion object {
 		private const val CONTROL_PORT_VIEW_OFFSET_Y = (AbstractAntaresPortView.LENGTH * 0.75).toInt()
@@ -78,9 +80,8 @@ class TriStateBufferGateView(
 			}
 		}
 
-	override val symbolFont: Font get() = getSymbolFont(size, font)
-
 	init {
+		initExternalLabel(Direction.NORTH)
 		modelExchanged(null)
 	}
 
@@ -117,7 +118,7 @@ class TriStateBufferGateView(
 		updateLayout()
 	}
 
-	private fun updateLayout() {
+	fun updateLayout() {
 		invalidate()
 
 		val inputPortView = getPortView(model.getInputPort())!!
@@ -148,7 +149,7 @@ class TriStateBufferGateView(
 			)
 		} else {
 			// Layout for the european box-shape, but with reduced height due to the "enable" port.
-			// Position and height of the box depend on the "handedness" property.
+			// The position and height of the box depend on the "handedness" property.
 			val effHeight = floor((h(4) + CONTROL_PORT_VIEW_OFFSET_Y) * f)
 			when (handedness) {
                 RIGHT -> {
@@ -170,9 +171,31 @@ class TriStateBufferGateView(
             }
 		}
 
-		labelStyle.updateLabel(this)
+		updateGeometry()
+
+		internalLabelStyle?.updateLabel(this)
 
 		invalidate()
+	}
+
+	override val relativeExternalLabelLocation: Point2D get() =
+		// For European symbol style (non-triangle), the origin is NOT vertically centered,
+		// so use minY and maxY instead of height / 2
+		if (handedness == RIGHT) {
+			Point2D(bounds.centerX, bounds.minY - LABEL_DIST)
+		} else {
+			Point2D(bounds.centerX, bounds.maxY + LABEL_DIST)
+		}
+
+	override val internalLabelFont: Font get() = SymbolStyle.getSymbolFont(size, font)
+
+	override fun updateGeometry() {
+		super.updateGeometry()
+		externalLabel.orientation = if (handedness == RIGHT) {
+			Direction.NORTH
+		} else {
+			Direction.SOUTH
+		}
 	}
 
 	/** ---- [Storable] interface */

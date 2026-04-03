@@ -4,7 +4,7 @@ import ch.scorpion.antares.model.addressable.Addressable
 import ch.scorpion.antares.model.addressable.AddressableVertice
 import ch.scorpion.antares.model.signal.BitWidth
 import ch.scorpion.jabbah.edit.Look
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
+import ch.scorpion.jabbah.graph.view.OrientableRectangularVerticeView
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Point2D

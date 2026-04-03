@@ -80,6 +80,12 @@ object GraphProperties {
 		baseKey: String = "graph.property.nonVolatile",
 		beanProvider: BeanProvider = componentBeanProvider
 	): CommandPropertySwing<Boolean> = CommandPropertySwing(name, baseKey, Boolean::class.java, beanProvider)
+
+	fun showExternalLabel(
+		name: String = "showExternalLabel",
+		baseKey: String = "graph.labeledVerticeView.showName",
+		beanProvider: BeanProvider = componentBeanProvider
+	): CommandPropertySwing<Boolean> = CommandPropertySwing(name, baseKey, Boolean::class.java, beanProvider)
 }
 
 class PortTypeEditor : ComboBoxPropertyEditor() {

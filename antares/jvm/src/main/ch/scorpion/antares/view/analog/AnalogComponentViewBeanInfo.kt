@@ -1,6 +1,6 @@
 package ch.scorpion.antares.view.analog
 
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
+import ch.scorpion.jabbah.graph.view.OrientableRectangularVerticeView
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.graph.view.vertice.VerticeViewBeanInfo

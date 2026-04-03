@@ -39,7 +39,7 @@ import kotlin.math.max
 abstract class AbstractPushButtonSwitchView<T: AbstractSwitch<T>>(
 	override var styleProvider: StyleProvider,
 	model: T
-) : AbstractSwitchView<T>(styleProvider, model),
+) : AbstractSwitchView<T>(styleProvider, model, internalLabelText = " "),
 	Labeled,
 	ControlView<T>
 {
@@ -47,28 +47,10 @@ abstract class AbstractPushButtonSwitchView<T: AbstractSwitch<T>>(
 		private const val SIZE = 4 * SCALE
 		private const val BORDER_WIDTH = 3
 		private const val LABEL_INSET = 4.0
-		private const val LABEL_DIST = SCALE
+		//private const val LABEL_DIST = SCALE
 	}
 
 	private val face = AnalogFace()
-
-	/**
-	 * The [Label] that displays the signal for [VerticeLabelPosition.EXTERNAL], or the name of this [SwitchView]
-	 * for [VerticeLabelPosition.INTERNAL].
-	 */
-	private val internalLabel: Label = Label(
-		font = font,
-		text = "",
-		location = Point2D(AbstractAntaresPortView.LENGTH - SIZE / 2.0, 0.0),
-		horizontalAlignment = HorizontalAlignment.CENTER,
-		verticalAlignment = VerticalAlignment.CENTER,
-		rotationDisplayStrategy = RotationDisplayStrategy.KEEP_HORIZONTAL)
-
-	private val externalLabel = HorizontalLabel(
-		owner = this,
-		relLocation = Point2D(-(SIZE + AbstractAntaresPortView.LENGTH + LABEL_DIST), 0),
-		orientation = Direction.WEST,
-		font = font)
 
 	// Individually controlled by ControlView
 	var labelPosition: VerticeLabelPosition = VerticeLabelPosition.EXTERNAL
@@ -76,28 +58,50 @@ abstract class AbstractPushButtonSwitchView<T: AbstractSwitch<T>>(
 			invalidate()
 			field = value
 			setBounds(calculateBounds())
-			updateLabelGeometries()
+			//updateLabelGeometries()
+			updateGeometry()
 			invalidate()
 			update()
 			validate()
 		}
 
 	init {
+		initExternalLabel(Direction.WEST)
 		isFocusable = true
 		modelExchanged(null)
 		setBounds(calculateBounds())
 	}
 
-	override fun modelExchanged(oldModel: T?) {
-		super.modelExchanged(oldModel)
-		updateLabels()
+	override val relativeExternalLabelLocation: Point2D get() =
+		Point2D(-(SIZE + AbstractAntaresPortView.LENGTH + LABEL_DIST), 0)
+
+	override fun setInternalLabelLocation(location: Point2D) {
+		// Ignore location and apply custom positioning
+		updateInternalLabelLocation()
+	}
+
+	private fun updateInternalLabelLocation() {
+		internalLabel?.location = bounds.center
+	}
+
+	override fun updateInternalLabel() {
+		if (labelPosition == VerticeLabelPosition.INTERNAL) {
+			internalLabel?.text = StringUtils.orEmpty(name)
+			setBounds(calculateBounds())
+			updateGeometry()
+		}
+	}
+
+	override fun updateGeometry() {
+		super.updateGeometry()
+		updateInternalLabelLocation()
 	}
 
 	/** ---- [Labeled] interface */
 
 	override val label: Label get() = when (labelPosition) {
-		VerticeLabelPosition.HIDE -> internalLabel
-		VerticeLabelPosition.INTERNAL -> internalLabel
+		VerticeLabelPosition.HIDE -> internalLabel!!
+		VerticeLabelPosition.INTERNAL -> internalLabel!!
 		VerticeLabelPosition.EXTERNAL -> externalLabel.label
 	}
 
@@ -195,12 +199,21 @@ abstract class AbstractPushButtonSwitchView<T: AbstractSwitch<T>>(
 		draw(context) {
 			super.drawImpl(it)
 			face.drawSelected(context)
-			if (labelPosition == VerticeLabelPosition.INTERNAL) {
-				internalLabel.draw(context)
-			}
+			drawInternalLabel(context)
 		}
+		drawExternalLabel(context)
+	}
+
+	override fun drawInternalLabel(context: DrawContext, text: String?) {
+		if (labelPosition == VerticeLabelPosition.INTERNAL) {
+			internalLabel!!.text = StringUtils.orEmpty(model.name)
+			super.drawInternalLabel(context, text)
+		}
+	}
+
+	override fun drawExternalLabel(context: DrawContext) {
 		if (labelPosition == VerticeLabelPosition.EXTERNAL) {
-			externalLabel.draw(context)
+			super.drawExternalLabel(context)
 		}
 	}
 
@@ -222,13 +235,6 @@ abstract class AbstractPushButtonSwitchView<T: AbstractSwitch<T>>(
 		set(@Suppress("UNUSED_PARAMETER") value) {
 			throw UnsupportedOperationException()
 		}
-
-	override fun rotationChanged(newRotation: Rotation) {
-		super.rotationChanged(newRotation)
-		internalLabel.ownerRotation = rotation
-		updateLabels()
-	}
-
 
 	/** ---- [Storable] interface */
 
@@ -257,30 +263,7 @@ abstract class AbstractPushButtonSwitchView<T: AbstractSwitch<T>>(
 		}
 	}
 
-	override fun updateLabels() {
-		invalidate()
-		if (labelPosition == VerticeLabelPosition.INTERNAL) {
-			internalLabel.text = StringUtils.orEmpty(name)
-		} else {
-			externalLabel.text = StringUtils.orEmpty(name)
-			externalLabel.rotationChanged()
-		}
-		setBounds(calculateBounds())
-		updateLabelGeometries()
-		invalidate()
-		update()
-	}
-
 	/** ---- [AbstractPushButtonSwitchView] */
-
-	private fun updateLabelGeometries() {
-		internalLabel.location = Point2D(bounds.centerX, bounds.centerY)
-		if (labelPosition == VerticeLabelPosition.INTERNAL) {
-			internalLabel.rotationDisplayStrategy = RotationDisplayStrategy.ROTATE_HALF
-		} else {
-			internalLabel.rotationDisplayStrategy = RotationDisplayStrategy.KEEP_HORIZONTAL
-		}
-	}
 
 	/**
 	 * Calculates the bounds of this [SwitchView] depending on the [labelPosition] and the
@@ -356,8 +339,7 @@ abstract class AbstractPushButtonSwitchView<T: AbstractSwitch<T>>(
 
 		private fun drawContent(context: DrawContext) {
 			if (labelPosition == VerticeLabelPosition.INTERNAL) {
-				internalLabel.text = StringUtils.orEmpty(model.name)
-				internalLabel.draw(context)
+				drawInternalLabel(context)
 				drawInnerRectangle(context)
 			} else {
 				drawSymbol(context)

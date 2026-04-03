@@ -7,6 +7,7 @@ import ch.scorpion.jabbah.base.System
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Direction.*
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
@@ -17,7 +18,7 @@ import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 class CurrentSourceView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: CurrentSource = CurrentSource()
-) : AbstractAnalogVerticeView<CurrentSource>(styleProvider, model) {
+) : AbstractAnalogVerticeView<CurrentSource>(styleProvider, model, EAST, Rectangle2D(-SIZE / 2, LENGTH, SIZE, SIZE)) {
 
 	companion object {
 		private const val SIZE = 6 * SCALE
@@ -34,14 +35,14 @@ class CurrentSourceView(
 		get() = model.current
 		set(value) { model.current = value }
 
+	override val relativeExternalLabelLocation: Point2D get() = Point2D(bounds.maxX + LABEL_DIST, bounds.centerY)
+
 	/** ---- [AbstractVerticeView] */
 
 	override fun modelExchanged(oldModel: CurrentSource?) {
 		super.modelExchanged(oldModel)
 		addPortView(AnalogPortView(styleProvider, model.getPort(1), 0, LENGTH, NORTH))
 		addPortView(AnalogPortView(styleProvider, model.getPort(2), 0, LENGTH + SIZE, SOUTH))
-		setBounds(-SIZE / 2, LENGTH, SIZE, SIZE)
-		updateLabel()
 	}
 
 	override fun drawImpl(context: DrawContext) {
@@ -70,8 +71,8 @@ class CurrentSourceView(
 
 	override val mainPropertyValue: String get() = "${model.current} A"
 
-	override val labelLocation: Point2D
-		get() = Point2D(bounds.maxX + MAIN_PROPERTY_LABEL_DIST, bounds.centerY)
+	override val mainPropertylabelLocation: Point2D
+		get() = Point2D(bounds.minX - MAIN_PROPERTY_LABEL_DIST, bounds.centerY)
 
-	override val labelOrientation: Direction get() = EAST
+	override val mainPropertylabelOrientation: Direction get() = WEST
 }

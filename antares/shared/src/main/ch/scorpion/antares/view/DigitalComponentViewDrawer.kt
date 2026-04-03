@@ -12,12 +12,12 @@ import ch.scorpion.jabbah.graph.view.GraphElementView
 import ch.scorpion.jabbah.graph.view.style.GraphTheme
 
 /**
- * Establish the default [Color] for drawing [OrientableRectangularVerticeView]s.
+ * Establish the default [Color] for drawing [ch.scorpion.jabbah.graph.view.OrientableRectangularVerticeView]s.
  *
- * The default policy for the drawing logic in [OrientableRectangularVerticeView]s is that they don't establish the default
+ * The default policy for the drawing logic in [ch.scorpion.jabbah.graph.view.OrientableRectangularVerticeView]s is that they don't establish the default
  * color in which they draw themselves. This is needed for the replacement [SelectionModel] that establishes the
- * selection [Color] prior to asking the [OrientableRectangularVerticeView] to draw itself. As a consequence, drawing
- * unselected [OrientableRectangularVerticeView]s must also be preceded by establishing the default drawing color.
+ * selection [Color] prior to asking the [ch.scorpion.jabbah.graph.view.OrientableRectangularVerticeView] to draw itself. As a consequence, drawing
+ * unselected [ch.scorpion.jabbah.graph.view.OrientableRectangularVerticeView]s must also be preceded by establishing the default drawing color.
  */
 class DigitalComponentViewDrawer(successor: DrawableDrawer<Component>?) : AbstractDrawableDrawer<Component>() {
 	constructor() : this(null)

@@ -12,6 +12,7 @@ import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Color
@@ -42,7 +43,8 @@ class LightBulbView(
 	model: LightBulb = LightBulb(),
 	lightColor: LightColor = DEFAULT_LIGHT_COLOR,
 	eventBus: EventBus = BaseModule.eventBus
-) : AbstractAnalogVerticeView<LightBulb>(styleProvider, model),
+) : AbstractAnalogVerticeView<LightBulb>(styleProvider, model, Direction.NORTH, Rectangle2D(LENGTH, -SIZE / 2, SIZE, SIZE)
+),
 	LightEmitter,
 	ControlViewSource<LightBulb>,
 	ControlView<LightBulb>
@@ -89,10 +91,6 @@ class LightBulbView(
 			field = value
 		}
 
-	init {
-		modelExchanged(null)
-	}
-
 	/** ---- UI properties */
 
 	@Suppress("unused") // Reflective bean property
@@ -102,13 +100,15 @@ class LightBulbView(
 			model.resistance = value
 		}
 
+	override val relativeExternalLabelLocation: Point2D get() =
+		Point2D(bounds.centerX, bounds.minY - LABEL_DIST)
+
 	/** ---- [AbstractVerticeView] */
 
 	override fun modelExchanged(oldModel: LightBulb?) {
 		super.modelExchanged(oldModel)
 		addPortView(AnalogPortView(styleProvider, model.getPort(1), LENGTH, 0, Direction.WEST))
 		addPortView(AnalogPortView(styleProvider, model.getPort(2), LENGTH + SIZE, 0, Direction.EAST))
-		setBounds(LENGTH, -SIZE / 2, SIZE, SIZE)
 	}
 
 	override fun drawImpl(context: DrawContext) {

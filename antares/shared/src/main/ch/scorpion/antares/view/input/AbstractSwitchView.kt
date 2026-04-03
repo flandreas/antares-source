@@ -1,8 +1,6 @@
 package ch.scorpion.antares.view.input
 
 import ch.scorpion.antares.model.input.AbstractSwitch
-import ch.scorpion.jabbah.edit.Look.SCALE
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.event.Button
@@ -15,6 +13,7 @@ import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.Look.SCALE
 import ch.scorpion.jabbah.execution.actor.ActorInteractionContext
 import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
@@ -22,6 +21,7 @@ import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapte
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
+import ch.scorpion.jabbah.graph.view.LabeledRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -31,7 +31,8 @@ import kotlin.jvm.JvmStatic
 abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: T,
-) : OrientableRectangularVerticeView<T>(styleProvider, model) {
+	internalLabelText: String? = null
+) : LabeledRectangularVerticeView<T>(styleProvider, model, internalLabelText = internalLabelText) {
 
 	companion object {
 		const val DEF_CIRCLE_RADIUS = 2.0
@@ -207,14 +208,6 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 
 	/** ---- UI properties */
 
-	open var name: String?
-		get() = model.name
-		set(value) {
-			if (value != model.name) {
-				model.name = value
-			}
-		}
-
 	/**
 	 * Controls the interactive behaviour of this [SwitchView]. If set to `true`, the [AbstractSwitchView]
 	 * stays in the new state when the user releases the mouse button. If set to `false`,
@@ -241,16 +234,6 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler =
 		actorInteractionHandler
 
-	/** ---- [AbstractGraphElementView] */
-
-	override fun handleStateChanged(event: GraphElementEvent) {
-		invalidate()
-		if (event.signalHandler == null) {
-			updateLabels()
-		}
-		super.handleStateChanged(event)
-	}
-
 	/** ---- [Storable] interface */
 
 	override fun write(writer: StoreWriter) {
@@ -274,12 +257,6 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 
 	/** ---- [AbstractSwitchView] */
 
-	/**
-	 * Called by this [AbstractSwitchView] to ask subclasses to update the content and geometry
-	 * of their label in edit mode.
-	 */
-	protected abstract fun updateLabels()
-
 	protected open val circleRadius: Double get() = DEF_CIRCLE_RADIUS
 
 	override fun drawFocus(context: DrawContext) {
@@ -295,7 +272,7 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 	}
 
 	protected fun drawThreePortRealSwitchShape(context: DrawContext) {
-		Companion.drawThreePortRealSwitchShape(this, 1, model.isOn, context, bounds.minX, circleRadius)
+		drawThreePortRealSwitchShape(this, 1, model.isOn, context, bounds.minX, circleRadius)
 	}
 
 	private inner class InteractionHandler : ClickableActorInteractionHandlerAdapter() {

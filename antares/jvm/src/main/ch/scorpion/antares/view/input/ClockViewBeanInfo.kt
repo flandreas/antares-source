@@ -3,7 +3,6 @@ package ch.scorpion.antares.view.input
 import ch.scorpion.antares.view.DigitalComponentViewBeanInfo
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
-import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import com.l2fprod.common.propertysheet.Property
 
@@ -11,7 +10,6 @@ import com.l2fprod.common.propertysheet.Property
 class ClockViewBeanInfo : DigitalComponentViewBeanInfo<ClockView>() {
 
     companion object {
-	    private val name = EditProperties.untranslatableName()
 	    private val periodOrFrequency = CommandPropertySwing("periodOrFrequency", "element.property.ClockView.periodOrFrequency", String::class.java, componentBeanProvider)
 	    private val enabled = CommandPropertySwing("enabled", "element.property.ClockView.enabled", Boolean::class.java, componentBeanProvider)
 	    private val knobEnabled = CommandPropertySwing("knobEnabled", "element.property.ClockView.knobEnabled", Boolean::class.java, componentBeanProvider)
@@ -21,7 +19,6 @@ class ClockViewBeanInfo : DigitalComponentViewBeanInfo<ClockView>() {
     override fun addProperties(bean: ClockView, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
-	    properties.add(name.bind(editor, beanIdProvider(bean.id)))
 	    properties.add(periodOrFrequency.bind(editor, beanIdProvider(bean.id)))
 		properties.add(offPercentage.bind(editor, beanIdProvider(bean.id)))
 	    properties.add(enabled.bind(editor, beanIdProvider(bean.id)))

@@ -18,6 +18,9 @@ class TunnelViewBeanInfo : DigitalComponentViewBeanInfo<TunnelView>() {
 		private val isGlobal = AntaresProperties.tunnelIsGlobal()
     }
 
+	// Use special property for tunnel name
+	override val isShowName: Boolean get() = false
+
     override fun addProperties(bean: TunnelView, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 

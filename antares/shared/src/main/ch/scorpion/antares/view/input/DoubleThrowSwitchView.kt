@@ -5,6 +5,7 @@ import ch.scorpion.jabbah.edit.Look.SCALE
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -26,6 +27,9 @@ class DoubleThrowSwitchView(
 		modelExchanged(null)
 		setBounds(AbstractAntaresPortView.LENGTH, h(-3.5).toInt(), WIDTH, HEIGHT)
 	}
+
+	override val relativeExternalLabelLocation: Point2D get() =
+		Point2D(AbstractAntaresPortView.LENGTH + WIDTH / 2, -HEIGHT / 2 - LABEL_DIST)
 
 	override fun modelExchanged(oldModel: DoubleThrowSwitch?) {
 		super.modelExchanged(oldModel)

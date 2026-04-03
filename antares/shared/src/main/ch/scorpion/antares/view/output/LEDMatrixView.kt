@@ -3,8 +3,6 @@ package ch.scorpion.antares.view.output
 import ch.scorpion.antares.model.output.LEDMatrix
 import ch.scorpion.antares.model.output.LightEmitterModel
 import ch.scorpion.antares.model.signal.BitWidth
-import ch.scorpion.jabbah.edit.Look
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.event.EventBus
@@ -19,6 +17,7 @@ import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.Component
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.edit.select.AbstractSelectionModel
@@ -26,12 +25,7 @@ import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
-import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
-import ch.scorpion.jabbah.graph.view.ControlView
-import ch.scorpion.jabbah.graph.view.ControlViewSource
-import ch.scorpion.jabbah.graph.view.ControlViewSourceGeometryProperty
-import ch.scorpion.jabbah.graph.view.ControlViewSourceProperty
-import ch.scorpion.jabbah.graph.view.GraphView
+import ch.scorpion.jabbah.graph.view.*
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -45,8 +39,11 @@ class LEDMatrixView(
 	model: LEDMatrix = LEDMatrix(),
 	lightColor: LightColor = DEFAULT_LIGHT_COLOR,
 	private val eventBus: EventBus = BaseModule.eventBus
-) : OrientableRectangularVerticeView<LEDMatrix>(styleProvider, model), LightEmitter, ControlView<LEDMatrix>, ControlViewSource<LEDMatrix> {
-
+) : LabeledRectangularVerticeView<LEDMatrix>(styleProvider, model),
+	LightEmitter,
+	ControlView<LEDMatrix>,
+	ControlViewSource<LEDMatrix>
+{
 	companion object {
 		const val PROP_ICON_PATH = "ch.scorpion.antares.view.output.LEDMatrixView.iconPath"
 		private val DEBUG_COLUMN_COLOR = Color(255, 255, 0, 128)
@@ -81,8 +78,12 @@ class LEDMatrixView(
 	private val inset = 0.0
 
 	init {
+		initExternalLabel(Direction.NORTH)
 		modelExchanged(null)
 	}
+
+	override val relativeExternalLabelLocation: Point2D get() =
+		Point2D(calculateWidth() / 2, -LABEL_DIST.toDouble())
 
 	/** ---- UI controllable properties */
 
@@ -376,7 +377,7 @@ class LEDMatrixView(
 
 	private fun calculateRowPortPos() = Point2D(calculateWidth() / 2 + 2 * Look.SCALE, calculateHeight())
 
-	private fun updateGeometry() {
+	override fun updateGeometry() {
 		invalidate()
 
 		width = calculateWidth()
@@ -384,7 +385,8 @@ class LEDMatrixView(
 
 		getPortView(model.columnPort)!!.location = calculateColumnPortPos()
 		getPortView(model.rowPort)!!.location = calculateRowPortPos()
-		//modelExchanged(model)
+
+		super.updateGeometry()
 
 		invalidate()
 	}

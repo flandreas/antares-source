@@ -6,20 +6,24 @@ import ch.scorpion.antares.view.DigitalComponentViewBeanInfo
 import ch.scorpion.antares.view.Handedness
 import ch.scorpion.jabbah.edit.Editor
 import ch.scorpion.jabbah.edit.componentBeanProvider
-import ch.scorpion.jabbah.edit.model.AbstractComponentBeanInfo
 import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
+import ch.scorpion.jabbah.graph.view.vertice.VerticeViewBeanInfo
 import com.l2fprod.common.propertysheet.Property
 
 open class BoxGateViewBeanInfo<T : BoxGateView<*>> : DigitalComponentViewBeanInfo<T>()
 
 @Suppress("unused")
-class DelayGateViewBeanInfo : AbstractComponentBeanInfo<DelayGateView>() {
+class DelayGateViewBeanInfo : VerticeViewBeanInfo<DelayGateView>() {
+
 	companion object {
 		private val delay = CommandPropertySwing("delay", "element.property.DelayGate.delay", Long::class.java, componentBeanProvider)
 		private val bitWidth = AntaresProperties.bitWidth()
 		private val orientation = EditProperties.orientation()
 	}
+
+	// Use special "delay" property
+	override val isShowPropagationDelay: Boolean get() = false
 
 	override fun addProperties(bean: DelayGateView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)

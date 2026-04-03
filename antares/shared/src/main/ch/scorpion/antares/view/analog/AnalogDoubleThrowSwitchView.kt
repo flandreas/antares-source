@@ -10,6 +10,7 @@ import ch.scorpion.antares.view.input.DoubleThrowSwitchView.Companion.HEIGHT
 import ch.scorpion.antares.view.input.DoubleThrowSwitchView.Companion.WIDTH
 import ch.scorpion.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
 import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -28,10 +29,14 @@ class AnalogDoubleThrowSwitchView(
     }
 
     init {
+        initExternalLabel(Direction.NORTH)
         isFocusable = true
         modelExchanged(null)
         setBounds(LENGTH, h(-3.5).toInt(), WIDTH, HEIGHT)
     }
+
+    override val relativeExternalLabelLocation: Point2D get() =
+        Point2D(LENGTH + REAL_SWITCH_WIDTH / 2, -REAL_SWITCH_HEIGHT_ABOVE - LABEL_DIST)
 
     override fun modelExchanged(oldModel: AnalogDoubleThrowSwitch?) {
         super.modelExchanged(oldModel)
@@ -40,8 +45,6 @@ class AnalogDoubleThrowSwitchView(
         addPortView(AnalogPortView(styleProvider, model.getPort(1), LENGTH, 0, Direction.WEST))
         addPortView(AnalogPortView(styleProvider, model.getPort(2), LENGTH + WIDTH, -2 * SCALE, Direction.EAST))
         addPortView(AnalogPortView(styleProvider, model.getPort(3), LENGTH + WIDTH, 2 * SCALE, Direction.EAST))
-
-        updateLabels()
     }
 
     /** ---- [AbstractVerticeView] */
@@ -50,10 +53,6 @@ class AnalogDoubleThrowSwitchView(
         super.drawImpl(context)
         drawThreePortRealSwitchShape(context)
     }
-
-    /** ---- [AbstractSwitchView] */
-
-    override fun updateLabels() { }
 
     /** ---- [AnalogSwitchView] */
 

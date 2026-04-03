@@ -1,23 +1,24 @@
 package ch.scorpion.antares.view.output
 
 import ch.scorpion.antares.model.output.Buzzer
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
-import ch.scorpion.jabbah.edit.Look.SCALE
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.sound.WaveformType
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
+import ch.scorpion.jabbah.edit.Look.SCALE
+import ch.scorpion.jabbah.graph.view.LabeledRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 
 class BuzzerView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: Buzzer = Buzzer()
-) : OrientableRectangularVerticeView<Buzzer>(styleProvider, model) {
+) : LabeledRectangularVerticeView<Buzzer>(styleProvider, model) {
 
 	companion object {
 		private const val WIDTH = 6 * SCALE
@@ -26,9 +27,13 @@ class BuzzerView(
 	}
 
 	init {
+		initExternalLabel(Direction.NORTH)
 		modelExchanged(null)
 		setBounds(AbstractAntaresPortView.LENGTH, -2 * SCALE, WIDTH, HEIGHT)
 	}
+
+	override val relativeExternalLabelLocation: Point2D
+		get() = Point2D(AbstractAntaresPortView.LENGTH + WIDTH / 2.0, -2.0 * SCALE - LABEL_DIST)
 
 	override fun modelExchanged(oldModel: Buzzer?) {
 		super.modelExchanged(oldModel)
@@ -57,6 +62,7 @@ class BuzzerView(
 			showBitWidthAnnotation = true))
 	}
 
+	@Suppress("unused") // Reflection
 	var waveformType: WaveformType
 		get() = model.waveformType
 		set(value) {

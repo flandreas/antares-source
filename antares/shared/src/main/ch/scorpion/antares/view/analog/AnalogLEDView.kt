@@ -4,7 +4,6 @@ import ch.scorpion.antares.model.analog.AnalogLED
 import ch.scorpion.antares.model.analog.AnalogPort
 import ch.scorpion.antares.model.analog.AnalogSignal
 import ch.scorpion.antares.model.output.LightEmitterModel
-import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.antares.view.module.AntaresViewModule
 import ch.scorpion.antares.view.output.LightColor
 import ch.scorpion.antares.view.output.LightColorExpression
@@ -15,12 +14,14 @@ import ch.scorpion.jabbah.base.Properties
 import ch.scorpion.jabbah.base.Translations
 import ch.scorpion.jabbah.base.event.EventBus
 import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Paint
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.jabbah.graph.model.Graph
 import ch.scorpion.jabbah.graph.model.GraphElementEvent
 import ch.scorpion.jabbah.graph.view.*
@@ -34,7 +35,7 @@ class AnalogLEDView(
     model: AnalogLED = AnalogLED(),
     lightColor: LightColor = DEFAULT_LIGHT_COLOR,
     eventBus: EventBus = BaseModule.eventBus
-) : AbstractDiodeView<AnalogLED>(styleProvider, model),
+) : AbstractDiodeView<AnalogLED>(styleProvider, model, Rectangle2D(LENGTH, -NEGATIVE_HEIGHT, SIZE, SIZE / 2 + NEGATIVE_HEIGHT)),
     LightEmitter,
     ControlViewSource<AnalogLED>
 {
@@ -86,20 +87,8 @@ class AnalogLEDView(
             minCurrent,
             maxCurrent))
 
-    var name: String?
-        get() = model.name
-        set(value) {
-            if (value != model.name) {
-                model.name = value
-            }
-        }
-
-    override fun modelExchanged(oldModel: AnalogLED?) {
-        super.modelExchanged(oldModel)
-        // Overwrite bounds to incorporate LED arrows
-        setBounds(LENGTH, -NEGATIVE_HEIGHT, SIZE, SIZE / 2 + NEGATIVE_HEIGHT)
-        updateLabel()
-    }
+    override val relativeExternalLabelLocation: Point2D get() =
+        Point2D(LENGTH + SIZE / 2, -NEGATIVE_HEIGHT - LABEL_DIST)
 
     /** ---- [AbstractVerticeView] */
 
@@ -118,7 +107,6 @@ class AnalogLEDView(
 
     override fun drawImpl(context: DrawContext) {
         super.drawImpl(context)
-
         AntaresViewModule.currentSymbolStyle.symbolStyle.drawAnalogLED(this, context)
     }
 
@@ -167,7 +155,7 @@ class AnalogLEDView(
     override fun handleStateChanged(event: GraphElementEvent) {
         super.handleStateChanged(event)
         if (event.signalHandler == null) {
-            updateLabel()
+            updateMainPropertyLabel()
         }
         if (event.reason == LightEmitterModel.REASON_GRAPH_PARAM_CHANGED && event.argument is Graph) {
             graphParamsChanged(event.argument as Graph)
@@ -177,9 +165,4 @@ class AnalogLEDView(
     override fun graphParamsChanged(graph: Graph) {
         (lightColor as? LightColorExpression)?.let { it.evaluateIn(graph)?.let { lc -> lightColor = lc } }
     }
-
-    /** ---- [AbstractAnalogVerticeView] */
-
-    override val mainPropertyValue: String get() = model.name ?: ""
-
 }

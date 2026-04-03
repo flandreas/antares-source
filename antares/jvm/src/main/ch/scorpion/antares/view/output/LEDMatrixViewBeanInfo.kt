@@ -7,12 +7,11 @@ import ch.scorpion.jabbah.edit.model.EditProperties
 import ch.scorpion.jabbah.edit.properties.CommandPropertySwing
 import ch.scorpion.jabbah.graph.container.ControlViewComponent
 import ch.scorpion.jabbah.graph.container.ControlViewComponentBeanInfo
-import ch.scorpion.jabbah.graph.view.ControlViewBeanInfo
 import ch.scorpion.jabbah.graph.view.vertice.VerticeViewBeanInfo
 import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
-class LEDMatrixViewBeanInfo : VerticeViewBeanInfo<LEDMatrixView>(), ControlViewBeanInfo {
+class LEDMatrixViewBeanInfo : VerticeViewBeanInfo<LEDMatrixView>() {
 
     companion object {
 	    private val columnWidth = AntaresProperties.bitWidth("columnWidth", "element.property.columns")
@@ -43,6 +42,7 @@ class LEDMatrixViewBeanInfo : VerticeViewBeanInfo<LEDMatrixView>(), ControlViewB
     }
 
 	override fun addControlViewProperties(bean: ControlViewComponent, editor: Editor, properties: MutableList<Property>) {
+		super.addControlViewProperties(bean, editor, properties)
 		properties.add(controlViewLightColor.bind(editor, beanIdProvider(bean.id)))
 	}
 }

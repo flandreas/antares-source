@@ -1,30 +1,26 @@
 package ch.scorpion.antares.view.output
 
 import ch.scorpion.antares.model.output.LED
-import ch.scorpion.antares.view.OrientableRectangularVerticeView
 import ch.scorpion.antares.view.output.LEDShape.*
 import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.antares.view.style.AntaresTheme
 import ch.scorpion.jabbah.base.StringUtils
 import ch.scorpion.jabbah.base.event.EventBus
-import ch.scorpion.jabbah.base.geom.*
+import ch.scorpion.jabbah.base.geom.Direction
+import ch.scorpion.jabbah.base.geom.Point2D
+import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
-import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
 import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
-import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.draw.style.Themes
 import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.jabbah.edit.SelectionDrawingStrategy
 import ch.scorpion.jabbah.edit.model.AbstractComponent
 import ch.scorpion.jabbah.edit.model.Size
-import ch.scorpion.jabbah.edit.model.text.HorizontalLabel
-import ch.scorpion.jabbah.edit.model.text.Label
-import ch.scorpion.jabbah.edit.model.text.Labeled
 import ch.scorpion.jabbah.edit.select.AbstractSelectionModel
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.Graph
@@ -33,6 +29,7 @@ import ch.scorpion.jabbah.graph.model.vertice.VerticeLink
 import ch.scorpion.jabbah.graph.view.ControlView
 import ch.scorpion.jabbah.graph.view.ControlViewSource
 import ch.scorpion.jabbah.graph.view.ControlViewSourceProperty
+import ch.scorpion.jabbah.graph.view.LabeledRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.port.PortView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
@@ -41,32 +38,22 @@ import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
 import ch.scorpion.jabbah.io.StoreWriter
 
-/** Base class for different LED view implementations.*/
+/**
+ * Base class for different LED view implementations.
+ */
 abstract class AbstractLEDView<T: Vertice>(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: T,
 	ledShape: LEDShape = Circle,
-	private val eventBus: EventBus = BaseModule.eventBus
-) : OrientableRectangularVerticeView<T>(styleProvider, model),
+	eventBus: EventBus = BaseModule.eventBus
+) : LabeledRectangularVerticeView<T>(styleProvider, model, eventBus = eventBus),
 	ControlView<T>,
-	ControlViewSource<T>,
-	Labeled
+	ControlViewSource<T>
 {
 	companion object {
-		const val LABEL_DIST = Look.SCALE
 		private val DEFAULT_SIZE = Size.LARGE
 		private const val DEFAULT_HAS_BORDER = true
 	}
-
-	var name: String?
-		get() = model.name
-		set(value) {
-			if (value != name) {
-				model.name = value
-				updateLabel()
-				postControlViewSourceChangeEvent(eventBus)
-			}
-		}
 
 	/** Determines the shape in which the LED is drawn. Default is circular.*/
 	var ledShape: LEDShape by ControlViewSourceProperty(ledShape, eventBus, ::updateGeometry)
@@ -110,20 +97,13 @@ abstract class AbstractLEDView<T: Vertice>(
 		}
 	}
 
-	private val horizontalLabel = HorizontalLabel(
-		owner = this,
-		relLocation = Point2D(widthOfSize + AbstractAntaresPortView.LENGTH + LABEL_DIST, 0),
-		font = font)
-
-	private fun updateGeometry() {
-		setBounds(getInput().unconnectedLength, -heightOfSize / 2, widthOfSize, heightOfSize)
-		horizontalLabel.relLocation = Point2D(widthOfSize + AbstractAntaresPortView.LENGTH + LABEL_DIST, 0)
-	}
-
 	init {
+		initExternalLabel()
 		modelExchanged(null)
 		updateGeometry()
 	}
+
+	override val relativeExternalLabelLocation: Point2D get() = Point2D(widthOfSize + AbstractAntaresPortView.LENGTH + LABEL_DIST, 0)
 
 	override fun modelExchanged(oldModel: T?) {
 		super.modelExchanged(oldModel)
@@ -131,7 +111,11 @@ abstract class AbstractLEDView<T: Vertice>(
             it.setLocation(it.unconnectedLength, 0)
             addPortView(it)
         }
-		updateLabel()
+	}
+
+	override fun updateGeometry() {
+		setBounds(getInput().unconnectedLength, -heightOfSize / 2, widthOfSize, heightOfSize)
+		super.updateGeometry()
 	}
 
 	protected open fun createPortView(): PortView<*> =
@@ -139,10 +123,6 @@ abstract class AbstractLEDView<T: Vertice>(
 			styleProvider = styleProvider,
 			port = model.getInput(),
 			direction = Direction.WEST)
-
-	/** ---- [Labeled] */
-
-	override val label: Label get() = horizontalLabel.label
 
 	/** ---- [Storable] interface */
 
@@ -216,36 +196,11 @@ abstract class AbstractLEDView<T: Vertice>(
 		get() = SelectionDrawingStrategy.REPLACE
 		set(value) { super.preferredSelectionDrawingStrategy = value }
 
-	override fun rotationChanged(newRotation: Rotation) {
-		super.rotationChanged(newRotation)
-		horizontalLabel.rotationChanged()
-	}
-
-	/** ---- [AbstractDrawable] */
-
-	override val boundingBox: RectangularShape
-		get() {
-			val bb = Rectangle2D(super.boundingBox)
-			val lbb = Rectangle2D(horizontalLabel.boundingBox).moveBy(location)
-			bb.add(lbb)
-			return bb
-		}
-
 	/** ---- [AbstractVerticeView] */
-
-	override fun draw(context: DrawContext) {
-		super.draw(context)
-		drawLabel(context)
-	}
 
 	override fun drawImpl(context: DrawContext) {
 		super.drawImpl(context)
 		drawBody(context)
-	}
-
-	private fun drawLabel(context: DrawContext) {
-		context.g.color = styleProvider.getStyle(StyleType.BACKGROUND).color.textColor
-		horizontalLabel.draw(context)
 	}
 
 	/** ---- [AbstractRectangularVerticeView] */
@@ -271,7 +226,7 @@ abstract class AbstractLEDView<T: Vertice>(
 					widthOfSize - 2 * borderOfSize, heightOfSize - 2 * borderOfSize)
 			}
 		}
-		horizontalLabel.draw(context)
+		super.drawSelected(context)
 	}
 
 	/** ---- [AbstractLEDView] */
@@ -304,14 +259,6 @@ abstract class AbstractLEDView<T: Vertice>(
 			context.g.fillRect(xInt + borderOfSize, yInt + borderOfSize,
 				widthOfSize - 2 * borderOfSize, heightOfSize - 2 * borderOfSize)
 		}
-	}
-
-	private fun updateLabel() {
-		invalidate()
-		horizontalLabel.text = StringUtils.orEmpty(name)
-		horizontalLabel.rotationChanged()
-		invalidate()
-		update()
 	}
 
 	private fun drawBody(context: DrawContext) {
