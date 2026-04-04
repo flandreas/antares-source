@@ -16,12 +16,15 @@ import ch.scorpion.antares.view.symbolstyle.SymbolStyle
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.Font
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.Look.SCALE
 import ch.scorpion.jabbah.edit.model.Size
 import ch.scorpion.jabbah.edit.model.Size.LARGE
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.LabeledRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.vertice.AbstractRectangularVerticeView
@@ -80,6 +83,10 @@ class TriStateBufferGateView(
 			}
 		}
 
+	val isTriangleShape: Boolean get() =
+		AntaresViewModule.currentSymbolStyle.symbolStyle == SymbolStyle.AMERICAN
+		|| SymbolStyle.triStateAlwaysTriangle
+
 	init {
 		initExternalLabel(Direction.NORTH)
 		modelExchanged(null)
@@ -111,7 +118,7 @@ class TriStateBufferGateView(
 			portLabelPosition = PortLabelPosition.HIDE,
 			length = AbstractAntaresPortView.LENGTH - (AbstractAntaresPortView.LENGTH * 0.25).toInt()))
 
-		if (AntaresViewModule.currentSymbolStyle.symbolStyle == SymbolStyle.EUROPEAN && !SymbolStyle.triStateAlwaysTriangle) {
+		if (!isTriangleShape) {
 			(model.getPort<DigitalSignal>(3) as DigitalPort).outputAnnotation = OutputAnnotation.TRI_STATE
 		}
 
@@ -138,7 +145,7 @@ class TriStateBufferGateView(
 
 		// These bounds must fit both the American style (triangle) and the European style (rectangle)
 
-		if (AntaresViewModule.currentSymbolStyle.symbolStyle == SymbolStyle.AMERICAN || SymbolStyle.triStateAlwaysTriangle) {
+		if (isTriangleShape) {
 			// Layout for the standard triangle-shape
 			val effHeight = 8.0 * f * SCALE
 			setBounds(
@@ -235,6 +242,20 @@ class TriStateBufferGateView(
 		drawImplAfterBorder(context)
 
 		context.g.color = oldColor
+	}
+
+	override fun getApplicableBackgroundColor(context: DrawContext): Color {
+		return if (isTriangleShape && context.castedAppContext<GraphApplicationContext>()!!.isExecute && GateMnemonic.require(this, context)) {
+			// Don't draw the custom TriStateBufferGateView background; it could make the GateMnemonic unreadable
+			if (context.useContextColors) {
+				transparent.applyTo(context.color!!.backgroundColor)
+			} else {
+				transparent.applyTo(styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor)
+			}
+			styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
+		} else {
+			super.getApplicableBackgroundColor(context)
+		}
 	}
 
 	/** ---- [TriStateBufferGateView] */

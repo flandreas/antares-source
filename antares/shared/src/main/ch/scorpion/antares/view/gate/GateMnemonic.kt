@@ -19,6 +19,7 @@ import ch.scorpion.jabbah.draw.graphics.Color
 import ch.scorpion.jabbah.draw.graphics.FontImpl
 import ch.scorpion.jabbah.draw.graphics.Stroke
 import ch.scorpion.jabbah.draw.style.Themes
+import ch.scorpion.jabbah.edit.Look.SCALE
 import ch.scorpion.jabbah.execution.speed.SystemSpeedCategory
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.app.ApplicationMode
@@ -122,12 +123,17 @@ object GateMnemonic {
 	}
 
 	fun drawTriStateBuffer(gateView: TriStateBufferGateView, context: DrawContext, foreground: Color) {
+		if (!gateView.isTriangleShape) {
+			return
+		}
 		if (!begin(gateView, context)) {
 			return
 		}
-		when (gateView.handedness) {
-			Handedness.RIGHT -> drawTriStateRight(gateView, context, foreground)
-			Handedness.LEFT -> drawTriStateLeft(gateView, context, foreground)
+		context.translated(0.0, SCALE.toDouble()) {
+			when (gateView.handedness) {
+				Handedness.RIGHT -> drawTriStateRight(gateView, context, foreground)
+				Handedness.LEFT -> drawTriStateLeft(gateView, context, foreground)
+			}
 		}
 		end(gateView, context)
 	}
