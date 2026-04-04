@@ -8,8 +8,10 @@ import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 
 class GroundView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
@@ -27,6 +29,13 @@ class GroundView(
 			context.g.fillRect(x - WIDTH, y - HEIGHT / 2, BAR_WIDTH, HEIGHT)
 		}
 	}
+
+	var bitWidth: BitWidth
+		get() = model.bitWidth
+		set(value) {
+			invalidate()
+			model.bitWidth = value
+		}
 
 	init {
 		modelExchanged(null)
@@ -47,16 +56,15 @@ class GroundView(
 		addPortView(portView)
 	}
 
-	var bitWidth: BitWidth
-		get() = model.bitWidth
-		set(value) {
-			invalidate()
-			model.bitWidth = value
-		}
-
 	override fun drawImpl(context: DrawContext) {
 		super.drawImpl(context)
-		getPortViews().first().prepareConnectionDrawContext(context)
+		getPortView(model.getOutput())!!.prepareConnectionDrawContext(context)
+		if (!context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
+			context.g.color = context.chooseForeground(foregroundColor)
+		}
 		drawBodyAt(-AbstractAntaresPortView.LENGTH.toDouble(), 0.0, context)
 	}
+
+	override fun getEditPortViewColor(styleProvider: StyleProvider): CompositeColor =
+		customColor?.color ?: super.getEditPortViewColor(styleProvider)
 }

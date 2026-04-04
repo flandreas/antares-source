@@ -217,6 +217,7 @@ class DigitalPortView(
 			}
 		} else {
 			context.choose(styleProvider.getStyle(GraphStyleType.EDGE).color).foregroundColor
+			context.choose(owner!!.getEditPortViewColor(styleProvider)).foregroundColor
 		}
 	}
 

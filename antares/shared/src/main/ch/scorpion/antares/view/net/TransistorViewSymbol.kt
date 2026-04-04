@@ -205,6 +205,9 @@ enum class TransistorViewSymbol(
 			val gatePositionY = getGatePositionY(view).toDouble()
 			view.apply {
 				(getPortView(model.gatePort) as AbstractAntaresPortView<*>).prepareConnectionDrawContext(context)
+				if (!context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
+					context.g.color = context.chooseForeground(foregroundColor)
+				}
 				when (model.transistorType) {
 					P -> {
 						context.g.drawOval(AbstractAntaresPortView.LENGTH.toDouble() + SCALE, getGatePositionY(this) - 0.5 * SCALE, circleSize, circleSize)

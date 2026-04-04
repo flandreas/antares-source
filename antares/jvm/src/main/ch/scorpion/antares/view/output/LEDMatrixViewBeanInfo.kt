@@ -25,10 +25,6 @@ class LEDMatrixViewBeanInfo : VerticeViewBeanInfo<LEDMatrixView>() {
 	    private val controlViewLightColor = AntaresProperties.lightColor(name = "${ControlViewComponentBeanInfo.aggregatePropertyName}.lightColor")
     }
 
-	init {
-		isShowColor = false
-	}
-
     override fun addProperties(bean: LEDMatrixView, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 

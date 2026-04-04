@@ -214,11 +214,7 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 
 		if (hasBorder) {
 			context.g.stroke = stroke
-			context.g.color = if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
-				transparent.applyTo(Themes.get<AntaresTheme>().screen.foregroundColor)
-			} else {
-				context.chooseForeground(foregroundColor)
-			}
+			context.g.color = context.chooseForeground(foregroundColor)
 			context.g.drawRect(0, 0, geom.width, geom.height)
 		}
 

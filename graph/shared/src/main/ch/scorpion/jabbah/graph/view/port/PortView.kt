@@ -234,5 +234,4 @@ interface PortView<T : Any> : Drawable, Storable, Mirrorable, SnappableX, Snappa
 	 * geometry of the [EdgeView] to which it is connected, such as []
 	 */
 	fun edgeViewUpdated(edgeView: EdgeView<*>, geometry: EdgeViewConnectionGeometry)
-
 }

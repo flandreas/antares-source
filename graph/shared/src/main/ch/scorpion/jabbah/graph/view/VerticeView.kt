@@ -5,12 +5,15 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.help.HelpId
 import ch.scorpion.jabbah.base.help.HelpIdProvider
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.graphics.CompositeColor
+import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.edit.model.text.description.Describable
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.graph.model.InputPort
 import ch.scorpion.jabbah.graph.model.OutputPort
 import ch.scorpion.jabbah.graph.model.Vertice
 import ch.scorpion.jabbah.graph.view.port.PortView
+import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 
 /**
  * Represents a graphical representation of a [Vertice].
@@ -60,4 +63,12 @@ interface VerticeView<T : Vertice>
 
 	fun drawFocus(context: DrawContext) {}
 
+	/**
+	 * Returns the foreground [CompositeColor] in which to draw a [PortView] during editing (not during execution).
+	 * By default, the color of [GraphStyleType.EDGE] is returned. Implementors can override this
+	 * if they are "wire-type" components that can draw themselves in a custom color, and like
+	 * to apply this color also to their [PortView]s.
+	 */
+	fun getEditPortViewColor(styleProvider: StyleProvider): CompositeColor =
+		styleProvider.getStyle(GraphStyleType.EDGE).color
 }

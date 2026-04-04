@@ -17,12 +17,12 @@ import ch.scorpion.jabbah.base.geom.Point2D
 import ch.scorpion.jabbah.base.geom.Rectangle2D
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.graphics.Color
+import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.model.Port
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
-import ch.scorpion.jabbah.graph.view.style.GraphStyleType
 import ch.scorpion.jabbah.graph.view.vertice.AbstractVerticeView
 import ch.scorpion.jabbah.io.Storable
 import ch.scorpion.jabbah.io.StoreReader
@@ -203,9 +203,12 @@ class WireTapView(
 		if (context.useContextColors) {
 			drawImpl(context, context.color!!.foregroundColor)
 		} else {
-			drawImpl(context, styleProvider.getStyle(GraphStyleType.EDGE).color.foregroundColor)
+			drawImpl(context, foregroundColor)
 		}
 	}
+
+	override fun getEditPortViewColor(styleProvider: StyleProvider): CompositeColor =
+		customColor?.color ?: super.getEditPortViewColor(styleProvider)
 
 	private fun drawImpl(context: DrawContext, lineColor: Color) {
 		for (i in 0 until model.tapCount.count) {

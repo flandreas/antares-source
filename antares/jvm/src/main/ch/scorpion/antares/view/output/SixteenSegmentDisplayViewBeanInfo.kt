@@ -19,10 +19,6 @@ class SixteenSegmentDisplayViewBeanInfo : VerticeViewBeanInfo<SixteenSegmentDisp
 		private val hasBorder = EditProperties.border()
 	}
 
-	init {
-		isShowColor = false
-	}
-
 	override fun addProperties(bean: SixteenSegmentDisplayView, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 

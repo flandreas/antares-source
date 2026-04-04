@@ -19,8 +19,6 @@ import ch.scorpion.jabbah.execution.actor.ActorInteractionHandler
 import ch.scorpion.jabbah.execution.actor.ActorView
 import ch.scorpion.jabbah.execution.actor.ClickableActorInteractionHandlerAdapter
 import ch.scorpion.jabbah.graph.GraphApplicationContext
-import ch.scorpion.jabbah.graph.model.GraphElementEvent
-import ch.scorpion.jabbah.graph.view.AbstractGraphElementView
 import ch.scorpion.jabbah.graph.view.LabeledRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.VerticeView
 import ch.scorpion.jabbah.io.Storable
@@ -86,6 +84,9 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 
 			// Side of port 1
 			(verticeView.getPortView(verticeView.model.getPort(portBase)) as AbstractAntaresPortView).prepareConnectionDrawContext(context)
+			if (!context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
+				context.g.color = context.chooseForeground(verticeView.foregroundColor)
+			}
 			context.g.drawLine(minX, 0.0, minX + w(1.0), 0.0)
 			if (isOn) {
 				context.g.drawLine(minX + w(1.0), 0.0, minX + REAL_SWITCH_WIDTH - w(1.0), 0.0)
@@ -97,6 +98,9 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 
 			// Side of port 2
 			(verticeView.getPortView(verticeView.model.getPort(portBase + 1)) as AbstractAntaresPortView).prepareConnectionDrawContext(context)
+			if (!context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
+				context.g.color = context.chooseForeground(verticeView.foregroundColor)
+			}
 			context.g.drawLine(minX + REAL_SWITCH_WIDTH - w(1.5), 0.0, minX + REAL_SWITCH_WIDTH, 0.0)
 			context.g.fillCircle(minX + REAL_SWITCH_WIDTH - w(1.5), 0.0, circleRadius)
 

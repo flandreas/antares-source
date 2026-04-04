@@ -17,12 +17,14 @@ import ch.scorpion.jabbah.base.geom.RectangularShape
 import ch.scorpion.jabbah.base.module.BaseModule
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
+import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.DropShadow
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
 import ch.scorpion.jabbah.draw.style.StyleType
 import ch.scorpion.jabbah.edit.Look
 import ch.scorpion.jabbah.edit.Look.SCALE
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 import ch.scorpion.jabbah.graph.view.LabeledRectangularVerticeView
 import ch.scorpion.jabbah.graph.view.port.PortLabelPosition
 import ch.scorpion.jabbah.graph.view.port.PortView
@@ -170,6 +172,9 @@ abstract class AbstractTransistorView<T: TransistorIF<*>>(
 		symbol.render(this, context)
 	}
 
+	override fun getEditPortViewColor(styleProvider: StyleProvider): CompositeColor =
+		customColor?.color ?: super.getEditPortViewColor(styleProvider)
+
 	/** ---- [TransistorView] */
 
 	/** If `true`, the symbol visualizes the on/off state of this [AbstractTransistorView] (if supported by the symbol style). */
@@ -227,11 +232,17 @@ abstract class AbstractTransistorView<T: TransistorIF<*>>(
 	private fun drawBody(context: DrawContext) {
 		if (hasCircle) {
 			context.g.stroke = stroke
-			context.g.color = transparent.applyTo(
+
+			val localBackgroundColor = if (context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
+				// During execution, Transistor internals are drawn in signal colors, so use the drawing background
+				// color to make the signal colors more recognizable
+				styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
+			} else {
 				context.chooseBackground(
 					if (Look.FILL_BASIC_COMPONENTS) backgroundColor else DrawStyleModule.styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
 				)
-			)
+			}
+			context.g.color = localBackgroundColor
 
 			context.g.fillOval(
 				LENGTH.toDouble(), -5.0 * SCALE,

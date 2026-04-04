@@ -431,10 +431,14 @@ class DipSwitchView(
 		override val lineWidth: Double get() = 0.0
 
 		override fun draw(context: DrawContext) {
-			context.g.color = transparent.applyTo(context.choose(styleProvider.getStyle(StyleType.BACKGROUND).color).backgroundColor)
+			context.g.color = if (context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
+				transparent.applyTo(context.choose(styleProvider.getStyle(StyleType.BACKGROUND).color).backgroundColor)
+			} else {
+				transparent.applyTo(context.choose(this@DipSwitchView.color).backgroundColor)
+			}
 			context.g.fillRect(x, y, width, height)
 
-			context.g.color = transparent.applyTo(context.choose(styleProvider.getStyle(StyleType.FIGURE).color).foregroundColor)
+			context.g.color = transparent.applyTo(context.choose(this@DipSwitchView.color).foregroundColor)
 			context.g.stroke = styleProvider.getStyle(StyleType.ANNOTATION).stroke
 			context.g.drawRect(x, y, width, height)
 
@@ -460,7 +464,7 @@ class DipSwitchView(
 				if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 					bit.color.textColor
 				} else {
-					transparent.applyTo(context.choose(styleProvider.getStyle(StyleType.BACKGROUND).color).backgroundColor)
+					transparent.applyTo(context.choose(this@DipSwitchView.color).textColor)
 				}
 			} else {
 				transparent.applyTo(context.chooseText(this@DipSwitchView.textColor))

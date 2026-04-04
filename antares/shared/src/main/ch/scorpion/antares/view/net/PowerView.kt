@@ -7,8 +7,10 @@ import ch.scorpion.antares.view.port.AbstractAntaresPortView
 import ch.scorpion.antares.view.port.DigitalPortView
 import ch.scorpion.jabbah.base.geom.Direction
 import ch.scorpion.jabbah.draw.DrawContext
+import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
+import ch.scorpion.jabbah.graph.GraphApplicationContext
 
 class PowerView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
@@ -40,7 +42,13 @@ class PowerView(
 
 	override fun drawImpl(context: DrawContext) {
 		super.drawImpl(context)
-		getPortViews().first().prepareConnectionDrawContext(context)
+		getPortView(model.getOutput())!!.prepareConnectionDrawContext(context)
+		if (!context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
+			context.g.color = context.chooseForeground(foregroundColor)
+		}
 		PowerViewShape.drawBodyAt(-AbstractAntaresPortView.LENGTH.toDouble(), 0.0, context)
 	}
+
+	override fun getEditPortViewColor(styleProvider: StyleProvider): CompositeColor =
+		customColor?.color ?: super.getEditPortViewColor(styleProvider)
 }

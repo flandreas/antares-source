@@ -26,10 +26,6 @@ class SevenSegmentDisplayViewBeanInfo : VerticeViewBeanInfo<SevenSegmentDisplayV
 	    private val controlViewLightColor = AntaresProperties.lightColor(name = "${ControlViewComponentBeanInfo.aggregatePropertyName}.lightColor")
     }
 
-	init {
-		isShowColor = false
-	}
-
     override fun addProperties(bean: SevenSegmentDisplayView, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 
