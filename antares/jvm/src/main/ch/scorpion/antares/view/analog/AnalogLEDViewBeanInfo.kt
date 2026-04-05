@@ -24,10 +24,4 @@ class AnalogLEDViewBeanInfo : AnalogComponentViewBeanInfo<AnalogLEDView>() {
         properties.add(minCurrent.bind(editor, beanIdProvider(bean.id)))
         properties.add(maxCurrent.bind(editor, beanIdProvider(bean.id)))
     }
-
-    override var isShowColor: Boolean
-        get() = false
-        set(value) {
-            super.isShowColor = value
-        }
 }

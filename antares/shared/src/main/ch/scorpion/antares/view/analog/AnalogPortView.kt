@@ -53,10 +53,10 @@ class AnalogPortView(
 
 	override fun setupColor(context: DrawContext) {
 		val appContext = context.castedAppContext<GraphApplicationContext>()!!
-		if (appContext.showNetState) {
-			context.g.color = port.net?.signal?.color?.foregroundColor ?: context.choose(styleProvider.getStyle(GraphStyleType.EDGE).color).foregroundColor
+		context.g.color = if (appContext.showNetState) {
+			port.net?.signal?.color?.foregroundColor ?: context.choose(styleProvider.getStyle(GraphStyleType.EDGE).color).foregroundColor
 		} else {
-			context.g.color = context.choose(styleProvider.getStyle(GraphStyleType.EDGE).color).foregroundColor
+			context.choose(owner!!.getEditPortViewColor(styleProvider)).foregroundColor
 		}
 	}
 

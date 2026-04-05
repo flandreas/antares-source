@@ -613,15 +613,21 @@ enum class SymbolStyle(
 			context: DrawContext,
 			fill: Boolean
 		) {
+			val execLineColor = led.styleProvider.getStyle(StyleType.FIGURE).color
+			val editLineColor = led.customColor?.color ?: led.color
 			// Anode
-			context.g.color = context.choose(led.style.color).foregroundColor
+			context.g.color = if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+				context.choose(execLineColor).foregroundColor
+			} else {
+				context.choose(editLineColor).foregroundColor
+			}
 			context.g.drawLine(LENGTH.toDouble(), 0.0, LENGTH + 3.5 * SCALE, 0.0)
 			context.g.stroke = led.stroke
 
 			if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 				context.g.color = led.executionLEDColor
 				context.g.fill(DIODE_PATH)
-				context.g.color = led.foregroundColor
+				context.g.color = execLineColor.foregroundColor
 				context.g.draw(DIODE_PATH)
 			} else {
 				if (fill) {
@@ -638,7 +644,11 @@ enum class SymbolStyle(
 			context.g.drawLine(LENGTH + 3.5 * SCALE, 0.0, LENGTH + 4.0 * SCALE, 0.0)
 
 			// Arrows
-			context.g.color = context.choose(led.style.color).foregroundColor
+			context.g.color = if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+				context.choose(execLineColor).foregroundColor
+			} else {
+				context.choose(editLineColor).foregroundColor
+			}
 			drawLEDArrow(context, LENGTH + 2.5 * SCALE, -1.25 * SCALE)
 			drawLEDArrow(context, LENGTH + 1.5 * SCALE, -2.0 * SCALE)
 

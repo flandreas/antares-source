@@ -7,6 +7,7 @@ import ch.scorpion.antares.view.analog.engine.AnalogElementProxy
 import ch.scorpion.jabbah.base.geom.*
 import ch.scorpion.jabbah.draw.DrawContext
 import ch.scorpion.jabbah.draw.drawable.AbstractDrawable
+import ch.scorpion.jabbah.draw.graphics.CompositeColor
 import ch.scorpion.jabbah.draw.graphics.LinearColorGradient
 import ch.scorpion.jabbah.draw.style.DrawStyleModule
 import ch.scorpion.jabbah.draw.style.StyleProvider
@@ -79,6 +80,9 @@ abstract class AbstractAnalogVerticeView<T: AbstractAnalogVertice<*>>(
 		context.g.color = styleProvider.getStyle(StyleType.BACKGROUND).color.textColor
 		mainPropertyLabel.draw(context)
 	}
+
+	override fun getEditPortViewColor(styleProvider: StyleProvider): CompositeColor =
+		customColor?.color ?: super.getEditPortViewColor(styleProvider)
 
 	/** ---- [AbstractAnalogVerticeView] */
 

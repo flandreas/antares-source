@@ -23,10 +23,4 @@ class LightBulbViewBeanInfo : AnalogComponentViewBeanInfo<LightBulbView>() {
 		properties.add(minCurrent.bind(editor, beanIdProvider(bean.id)))
 		properties.add(maxCurrent.bind(editor, beanIdProvider(bean.id)))
 	}
-
-	override var isShowColor: Boolean
-		get() = false
-		set(value) {
-			super.isShowColor = value
-		}
 }
