@@ -216,7 +216,11 @@ class DigitalPortView(
 				)
 			}
 		} else {
-			context.choose(owner!!.getEditPortViewColor(styleProvider)).foregroundColor
+			if (owner == null) {
+				context.choose(styleProvider.getStyle(GraphStyleType.EDGE).color).foregroundColor
+			} else {
+				context.choose(owner!!.getEditPortViewColor(styleProvider)).foregroundColor
+			}
 		}
 	}
 
