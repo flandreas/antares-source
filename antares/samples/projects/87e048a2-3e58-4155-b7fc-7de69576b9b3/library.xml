@@ -68,9 +68,9 @@
         <antares.model.undefinedInputBehaviour>
           <string content='readAs0'/>
         </antares.model.undefinedInputBehaviour>
-        <ch.scorpion.antares.model.input.Switch.defaultPropDelay>
+        <io.antarescircuit.antares.model.input.Switch.defaultPropDelay>
           <string content='1000'/>
-        </ch.scorpion.antares.model.input.Switch.defaultPropDelay>
+        </io.antarescircuit.antares.model.input.Switch.defaultPropDelay>
         <graph.model.allowedInconsistentNetDuration>
           <string content='20'/>
         </graph.model.allowedInconsistentNetDuration>

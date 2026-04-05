@@ -1,0 +1,43 @@
+package io.antarescircuit.antares.view.output
+
+import io.antarescircuit.antares.view.LightColorEditor
+import io.antarescircuit.jabbah.base.preferences.AbstractPreference
+import io.antarescircuit.jabbah.base.preferences.PreferencesPanel
+import javax.swing.JComboBox
+import javax.swing.JComponent
+
+class LightColorPreference : AbstractPreference(
+	id = LightColor.PROP_DEFAULT_LIGHT_COLOR,
+	nameKey = "antares.preferences.LightColor"
+) {
+
+	private val editor = LightColorEditor()
+
+	private val value: LightColor get() = LightColor.withName(panel!!.preferences.getString(id))
+
+	private val combobox: JComboBox<*> get() = editor.customEditor as JComboBox<*>
+
+	override var editable: Boolean = true
+		set(value) {
+			field = value
+			combobox.isEnabled = value
+		}
+
+	init {
+		(editor.customEditor as JComboBox<*>).addActionListener {
+			if (panel != null && combobox.selectedItem != null) {
+				panel?.preferences?.customize(this, (combobox.selectedItem as LightColor).customName)
+			}
+		}
+		registerEditor(editor.customEditor as JComponent)
+	}
+
+	override fun addToPanel(panel: PreferencesPanel) {
+		this.panel = panel
+		panel.addLabeledRow(name, combobox)
+	}
+
+	override fun load() {
+		combobox.selectedItem = value
+	}
+}

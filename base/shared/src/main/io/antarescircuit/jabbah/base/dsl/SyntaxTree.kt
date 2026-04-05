@@ -1,0 +1,259 @@
+package io.antarescircuit.jabbah.base.dsl
+
+import io.antarescircuit.jabbah.base.EmptyHierarchyVisitor
+import io.antarescircuit.jabbah.base.HierarchyVisitor
+import io.antarescircuit.jabbah.base.parser.TextLocation
+import io.antarescircuit.jabbah.base.parser.Token
+
+interface Node {
+	val location: TextLocation
+	fun accept(visitor: HierarchyVisitor): Boolean
+}
+
+fun filterNodes(node: Node, condition: (Node) -> Boolean): Collection<Node> {
+	val result = mutableSetOf<Node>()
+
+	node.accept(object : EmptyHierarchyVisitor() {
+
+		override fun visitEnter(node: Any): Boolean {
+			evaluate(node)
+			return true
+		}
+
+		override fun visit(node: Any): Boolean {
+			evaluate(node)
+			return true
+		}
+
+		private fun evaluate(node: Any) {
+			if (node is Node && condition(node)) {
+				result.add(node)
+			}
+		}
+	})
+	return result
+}
+
+abstract class AbstractNode(override val location: TextLocation) : Node {
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		return visitor.visit(this)
+	}
+}
+
+class UnaryOperation(
+	location: TextLocation,
+	val op: Token<Any>,
+	val expr: Node
+) : AbstractNode(location) {
+
+	override fun toString(): String {
+		return when (op.type) {
+			DslTokenType.PLUS -> "Unary +"
+			DslTokenType.MINUS -> "Unary -"
+			DslTokenType.NOT -> "not"
+			else -> throw IllegalStateException("unsupported unary op ${op.type}")
+		}
+	}
+
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		if (visitor.visitEnter(this)) {
+			expr.accept(visitor)
+		}
+		return visitor.visitLeave(this)
+	}
+}
+
+class BinaryOperation(
+	location: TextLocation,
+	val left: Node,
+	val op: Token<Any>,
+	val right: Node
+) : AbstractNode(location) {
+
+	override fun toString(): String = op.type.id
+
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		if (visitor.visitEnter(this)) {
+			left.accept(visitor)
+			visitor.visitInfix(this, left)
+			right.accept(visitor)
+		}
+		return visitor.visitLeave(this)
+	}
+}
+
+class Literal(location: TextLocation, val token: Token<Any>) : AbstractNode(location) {
+	override fun toString(): String = token.value!!.toString()
+}
+
+class NoOp(location: TextLocation) : AbstractNode(location) {
+	override fun toString(): String = "NoOp"
+}
+
+open class Compound<T: Node> (location: TextLocation, val children: List<T>) : AbstractNode(location) {
+
+	override fun toString(): String = "Compound"
+
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		if (visitor.visitEnter(this)) {
+			for (child in children) {
+				if (!child.accept(visitor)) {
+					break
+				}
+			}
+		}
+		return visitor.visitLeave(this)
+	}
+}
+
+class Block(location: TextLocation, children: List<Node>) : Compound<Node>(location, children) {
+	override fun toString(): String = "Block"
+}
+
+open class Variable(location: TextLocation, val token: Token<String>, val negated: Boolean = false) : AbstractNode(location) {
+
+	fun negate(): Variable = Variable(location, token, true)
+
+	override fun toString(): String = token.value!!
+
+	override fun accept(visitor: HierarchyVisitor): Boolean = visitor.visit(this)
+}
+
+class AssocArray(location: TextLocation, token: Token<String>, val key: Node): Variable(location, token) {
+	override fun toString(): String = "${super.toString()}[]"
+
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		if (visitor.visitEnter(this)) {
+			key.accept(visitor)
+		}
+		return visitor.visitLeave(this)
+	}
+}
+
+class Assignment(location: TextLocation, val left: Variable, val right: Node) : AbstractNode(location) {
+
+	override fun toString(): String = "="
+
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		if (visitor.visitEnter(this)) {
+			left.accept(visitor)
+			right.accept(visitor)
+		}
+		return visitor.visitLeave(this)
+	}
+}
+
+class Declaration(location: TextLocation, val left: Variable, val right: Node?, val store: Boolean) : AbstractNode(location) {
+	override fun toString(): String = if (store) "store" else "var"
+
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		if (visitor.visitEnter(this)) {
+			left.accept(visitor)
+			right?.accept(visitor)
+		}
+		return visitor.visitLeave(this)
+	}
+}
+
+class IfStatement(location: TextLocation, val condition: Node, val thenStatement: Node, val elseStatement: Node?) : AbstractNode(location) {
+	override fun toString(): String = "if"
+
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		if (visitor.visitEnter(this)) {
+			condition.accept(visitor)
+			thenStatement.accept(visitor)
+			elseStatement?.accept(visitor)
+		}
+		return visitor.visitLeave(this)
+	}
+}
+
+/**
+ * @property condition `null` only for 'else' case
+ */
+class WhenClause(location: TextLocation, val condition: Node?, val then: Node) : AbstractNode(location) {
+	override fun toString(): String = condition?.let { ":" } ?: "else"
+
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		if (visitor.visitEnter(this)) {
+			condition?.accept(visitor)
+			then.accept(visitor)
+		}
+		return visitor.visitLeave(this)
+	}
+}
+
+class WhenStatement(location: TextLocation, val expression: Node, val clauses: List<WhenClause>) : AbstractNode(location) {
+	override fun toString(): String = "when"
+
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		if (visitor.visitEnter(this)) {
+			expression.accept(visitor)
+			for (clause in clauses) {
+				if (!clause.accept(visitor)) {
+					break
+				}
+			}
+		}
+		return visitor.visitLeave(this)
+	}
+}
+
+class ForStatement(
+	location: TextLocation,
+	val variable: Variable,
+	val inExpr: Node,
+	val toExpr: Node,
+	val statement: Node
+) : AbstractNode(location) {
+	override fun toString(): String = "for"
+
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		if (visitor.visitEnter(this)) {
+			variable.accept(visitor)
+			inExpr.accept(visitor)
+			toExpr.accept(visitor)
+			statement.accept(visitor)
+		}
+		return visitor.visitLeave(this)
+	}
+}
+
+class ReturnStatement(location: TextLocation, val expr: Node?) : AbstractNode(location) {
+	override fun toString(): String = "return"
+
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		if (visitor.visitEnter(this)) {
+			expr?.accept(visitor)
+		}
+		return visitor.visitLeave(this)
+	}
+}
+
+/**
+ * A call of a function defined outside the program being parsed.
+ *
+ * @property function used by [Interpreter] to actually call the function. Set by [SemanticAnalyser].
+ * External functions are defined in the [ScopedSymbolTable] and are resolved by [SemanticAnalyser].
+ * [Interpreter]s that want to call such functions must therefore use an AST that has been processed
+ * by a [SemanticAnalyser].
+ */
+class FunctionCall(
+	location: TextLocation,
+	val name: Token<String>,
+	val params: List<Node>,
+	var function: ExternalFunctionSymbol? = null
+) : AbstractNode(location) {
+	override fun toString(): String = "${name.value}()"
+
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		if (visitor.visitEnter(this)) {
+			for (param in params) {
+				if (!param.accept(visitor)) {
+					break
+				}
+			}
+		}
+		return visitor.visitLeave(this)
+	}
+}

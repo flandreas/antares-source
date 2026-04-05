@@ -1,0 +1,143 @@
+package io.antarescircuit.antares.model.testcase
+
+import io.antarescircuit.antares.model.DigitalGraph
+import io.antarescircuit.antares.model.signal.Bit
+import io.antarescircuit.antares.model.signal.DigitalSignalFactory
+import kotlin.test.Test
+import kotlin.test.assertEquals
+
+class TestcaseCircuitRunnerGraphOutputTest : AbstractTestcaseCircuitRunnerTest(false) {
+
+    @Test
+    fun shouldPassAndGateCircuitTest() {
+        buildAndGateCircuit()
+        val testScript = """
+			A B O
+			0 0 0
+			0 1 0
+			1 0 0
+			1 1 1
+		""".trimIndent()
+
+        val result = TestcaseCircuitRunner("test", testScript, circuit.graph as DigitalGraph).run()
+
+        assertEquals(3, result.names.size)
+        assertEquals(4, result.collector.size)
+
+        for (vector in result.collector) {
+            // Check state only for output columns
+            assertEquals(Value.State.PASSED, vector.getValue(2).state)
+        }
+    }
+
+
+    @Test
+    fun shouldFailAndGateCircuitTest() {
+        buildAndGateCircuit()
+        val testScript = """
+			A B O
+			0 0 0
+			0 1 0
+			1 0 1
+			1 1 1
+		""".trimIndent()
+
+        val result = TestcaseCircuitRunner("test", testScript, circuit.graph as DigitalGraph).run()
+
+        assertEquals(3, result.names.size)
+        assertEquals(4, result.collector.size)
+
+        assertEquals(Value.State.FAILED, result.collector.get(2).getValue(2).state)
+    }
+
+    @Test
+    fun shouldUseInOutAnnotationInAndGate() {
+        buildAndGateCircuit()
+        val testScript = """
+			>A >B <O
+			0 0 0
+			0 1 0
+			1 0 0
+			1 1 1
+		""".trimIndent()
+
+        val result = TestcaseCircuitRunner("test", testScript, circuit.graph as DigitalGraph).run()
+
+        assertEquals(3, result.names.size)
+        assertEquals(4, result.collector.size)
+
+        for (vector in result.collector) {
+            // Check state only for output columns
+            assertEquals(Value.State.PASSED, vector.getValue(2).state)
+        }
+    }
+
+    @Test
+    fun shouldAcceptDontCareOutput() {
+        buildAndGateCircuit()
+        val testScript = """
+			A B O
+			0 0 X
+		""".trimIndent()
+
+        val result = TestcaseCircuitRunner("test", testScript, circuit.graph as DigitalGraph).run()
+
+        assertEquals(3, result.names.size)
+        assertEquals(1, result.collector.size)
+
+        for (vector in result.collector) {
+            assertEquals(Value.State.PASSED, vector.getValue(2).state)
+        }
+    }
+
+    @Test
+    fun shouldPassTriStateBufferCircuitTest() {
+        buildTriStateBufferCircuit()
+        val testScript = """
+			I EN O
+			0 0 Z
+			1 0 Z
+			0 1 0
+			1 1 1
+		""".trimIndent()
+
+        val result = TestcaseCircuitRunner("test", testScript, circuit.graph as DigitalGraph).run()
+        for (vector in result.collector) {
+            assertEquals(Value.State.PASSED, vector.getValue(2).state)
+        }
+    }
+
+    @Test
+    fun shouldFailTriStateBufferCircuitTest() {
+        buildTriStateBufferCircuit()
+        val testScript = """
+			I EN O
+			0 0 Z
+			1 0 1
+		""".trimIndent()
+
+        val result = TestcaseCircuitRunner("test", testScript, circuit.graph as DigitalGraph).run()
+        assertEquals(Value.State.PASSED, result.collector.get(0).getValue(2).state)
+        assertEquals(Value.State.FAILED, result.collector.get(1).getValue(2).state)
+        assertEquals(Value.Z, result.collector.get(1).getValue(2))
+        assertEquals(DigitalSignalFactory.of(Bit.True), (result.collector.get(1).getValue(2) as MatchedValue).expected.value)
+    }
+
+    @Test
+    fun shouldPassMultiBitTest() {
+        buildMultiBitNOPCircuit()
+        val testScript = """
+			I           O
+			0x1         1			
+			15          0xF
+			10          0xA
+			255         0b11111111
+		""".trimIndent()
+
+        val result = TestcaseCircuitRunner("test", testScript, circuit.graph as DigitalGraph).run()
+
+        for (vector in result.collector) {
+            assertEquals(Value.State.PASSED, vector.getValue(1).state)
+        }
+    }
+}

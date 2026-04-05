@@ -1,0 +1,215 @@
+package io.antarescircuit.antares.view.analog
+
+import io.antarescircuit.antares.model.AntaresGraphTypes
+import io.antarescircuit.antares.model.analog.AnalogCalculationRequest
+import io.antarescircuit.antares.model.analog.AnalogGraph
+import io.antarescircuit.antares.model.analog.AnalogSignal
+import io.antarescircuit.antares.view.analog.engine.AnalogCircuitAnalysis
+import io.antarescircuit.antares.view.analog.engine.AnalogCircuitCalculator
+import io.antarescircuit.antares.view.analog.engine.AnalogElement
+import io.antarescircuit.jabbah.base.IssueImpl
+import io.antarescircuit.jabbah.base.IssueSeverity
+import io.antarescircuit.jabbah.base.Translations
+import io.antarescircuit.jabbah.base.event.EventBus
+import io.antarescircuit.jabbah.base.event.EventHandler
+import io.antarescircuit.jabbah.base.logger
+import io.antarescircuit.jabbah.base.module.BaseModule
+import io.antarescircuit.jabbah.edit.model.text.TranslatableText
+import io.antarescircuit.jabbah.execution.SignalHandler
+import io.antarescircuit.jabbah.execution.actor.Actor
+import io.antarescircuit.jabbah.execution.actor.ActorData
+import io.antarescircuit.jabbah.execution.actor.ActorImpl
+import io.antarescircuit.jabbah.execution.scheduler.Scheduler
+import io.antarescircuit.jabbah.execution.scheduler.SchedulerEvent
+import io.antarescircuit.jabbah.execution.speed.CurrentSystemSpeedCategory
+import io.antarescircuit.jabbah.graph.model.GraphActorData
+import io.antarescircuit.jabbah.graph.model.StoringGraphActorData
+import io.antarescircuit.jabbah.graph.model.module.GraphModelModule
+import io.antarescircuit.jabbah.graph.view.graph.GraphViewImpl
+import io.antarescircuit.jabbah.graph.view.oscilloscope.OscilloscopeView
+import io.antarescircuit.jabbah.graph.view.scenario.ScenarioDetector
+
+/**
+ * A [GraphViewImpl] for [AnalogSignal] overridden to implement an animation of the
+ * electrical current flowing along the [AnalogEdgeView]s of this [AnalogGraphView].
+ */
+class AnalogGraphView(
+	graph: AnalogGraph,
+	eventBus: EventBus = BaseModule.eventBus
+) : GraphViewImpl(graph, eventBus) {
+
+	companion object {
+		private val LOG by logger(AnalogGraphView::class)
+		private const val DEF_PROPAGATION_DELAY = 10L
+	}
+
+	private val analogGraph: AnalogGraph get() = (graph as AnalogGraph)
+
+	val isNonLinear: Boolean get() = analogGraph.isNonLinear
+
+	/** Not set before [executionStart]. */
+	private var analysis: AnalogCircuitAnalysis? = null
+
+	private val calculationRequestHandler: EventHandler<AnalogCalculationRequest> = {
+		if (this.graph!!.elements.contains(it.source)) {
+			requestActing(it.signalHandler, it.needAnalysis)
+		}
+	}
+
+	private val actor: Actor = AnalogActor()
+
+	override var overallPropagationDelay: Long?
+		get() = super.overallPropagationDelay
+		set(value) {
+			require(value != null && value > 0) { "Propagation delay must be greater than 0" }
+			super.overallPropagationDelay = value
+		}
+
+	@Suppress("unused") // Reflection
+	var timeStep: Double
+		get() = analogGraph.timeStep
+		set(value) {
+			analogGraph.timeStep = value
+		}
+
+	@Suppress("unused") // Reflection
+	constructor() : this(TranslatableText(Translations.getString("graph.name.unknown")))
+
+	constructor(name: TranslatableText) : this(GraphModelModule.graphFactory.create(name, AntaresGraphTypes.Analog) as AnalogGraph)
+
+	init {
+		overallPropagationDelay = DEF_PROPAGATION_DELAY
+		eventBus.register(AnalogCalculationRequest::class, calculationRequestHandler)
+	}
+
+	override fun dispose() {
+		super.dispose()
+		eventBus.unregister(calculationRequestHandler)
+	}
+
+	/** ---- [GraphViewImpl] */
+
+	override fun executionStart(signalHandler: SignalHandler) {
+		super.executionStart(signalHandler)
+		analysis = null
+		requestActing(signalHandler, true)
+		CurrentFlowAnimator.register(this, signalHandler.systemSpeedCategory)
+	}
+
+	override fun executionStop(signalHandler: SignalHandler) {
+		super.executionStop(signalHandler)
+		CurrentFlowAnimator.unregister(this)
+	}
+
+	override fun checkDesign(signalHandler: SignalHandler, eventBus: EventBus): Boolean {
+		if (!ensureFullyConnected()) {
+			return false
+		}
+
+		try {
+			ensureAnalysis()
+		} catch (e: IllegalStateException) {
+			eventBus.post(IssueImpl(
+				severity = IssueSeverity.Error,
+				name = Translations.getString("graph.designError.name"),
+				description = e.message,
+				origin = name.value,
+				context = null
+			))
+			return false
+		}
+
+		return true
+	}
+
+	override fun handleDetached(detached: Boolean) {
+		if (detached) {
+			CurrentFlowAnimator.unregister(this)
+		}
+	}
+
+	/** ---- [AnalogGraphView] */
+
+	val analogElementViews: List<AnalogElement> get() =
+		drawables.filterIsInstance<AnalogElement>()
+
+	/**
+	 * Resets the current [AnalogCircuitAnalysis] so that it is recalculated in the next
+	 * simulation step. This is required for all actions that change the physics of an [AnalogGraph],
+	 * such as toggling a switch or changing the resistance of a resistor.
+	 */
+	fun requireAnalysis() {
+		analysis = null
+	}
+
+	fun recalculate(signalHandler: SignalHandler, needAnalysis: Boolean) {
+		requestActing(signalHandler, needAnalysis)
+	}
+
+	fun currentFlowAnimationTick(systemSpeedCategory: CurrentSystemSpeedCategory) {
+		getEdgeViews()
+			.map { it as AnalogEdgeView }
+			.forEach { it.currentFlowAnimationTick(systemSpeedCategory.systemSpeed) }
+
+		invalidate()
+		validate()
+	}
+
+	private fun ensureFullyConnected(): Boolean {
+		if (getDrawables { it !is OscilloscopeView }.any { !it.isFullyConnected }) {
+			eventBus.post(IssueImpl(
+				IssueSeverity.Error,
+				Translations.getString("antares.analogCalc.notFullyConnected.error.name"),
+				Translations.getString("antares.analogCalc.notFullyConnected.error.desc"),
+				name.value,
+				"Simulation"
+			))
+			return false
+		}
+		return true
+	}
+
+	fun requestActing(signalHandler: SignalHandler, needAnalysis: Boolean) {
+		signalHandler.requestActingAfter(actor, overallPropagationDelay ?: DEF_PROPAGATION_DELAY, createActorData(needAnalysis))
+	}
+
+	private fun createActorData(needAnalysis: Boolean): GraphActorData =
+		StoringGraphActorData(null, needAnalysis)
+
+	/**
+	 * Analyses this [AnalogGraphView] in case it is not already done.
+	 * @throws IllegalStateException in case this [AnalogGraphView] is invalid
+	 */
+	fun ensureAnalysis(): AnalogCircuitAnalysis {
+		if (analysis == null) {
+			analysis = AnalogCircuitCalculator().analyse(this)
+		}
+		return analysis!!
+	}
+
+	private inner class AnalogActor : ActorImpl() {
+		override fun act(signalHandler: SignalHandler, data: ActorData) {
+			try {
+				if (data is StoringGraphActorData && (data.signal as Boolean) ) {
+					requireAnalysis()
+				}
+				AnalogCircuitCalculator().calculate(ensureAnalysis(), signalHandler)
+				super.act(signalHandler, data)
+
+				if (signalHandler is Scheduler) {
+					/** Required e.g. by [ScenarioDetector]*/
+					eventBus.post(SchedulerEvent(signalHandler, this@AnalogGraphView))
+				}
+			} catch (e: Throwable) {
+				LOG.debug("Error while analyzing: ${e.message}")
+				BaseModule.eventBus.post(IssueImpl(
+					IssueSeverity.Error,
+					Translations.getString("antares.analogCalc.analyse.error.name"),
+					Translations.getString("antares.analogCalc.analyse.error.desc", e.message ?: ""),
+					name.value,
+					"Simulation"
+				))
+			}
+		}
+	}
+}

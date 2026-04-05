@@ -1,0 +1,46 @@
+package io.antarescircuit.jabbah.edit.model.text
+
+import io.antarescircuit.jabbah.base.geom.MutableRectangularShape
+import io.antarescircuit.jabbah.draw.DrawContext
+import io.antarescircuit.jabbah.draw.drawable.TransparentImpl
+import io.antarescircuit.jabbah.base.geom.RectangularShape
+import io.antarescircuit.jabbah.draw.style.Stylable
+
+/** Used to decorate a [TextComponent] for drawing individual look. */
+interface TextComponentDecorator {
+
+    fun drawBackground(component: TextComponent, context: DrawContext)
+
+    fun drawForeground(component: TextComponent, context: DrawContext)
+}
+
+/** A [TextComponentDecorator] that decorates a [TextComponent] with a [RectangularShape]. */
+class RectangularShapeTextComponentDecorator(
+    private val shape: MutableRectangularShape,
+    private val stylable: Stylable,
+    private val transparent: TransparentImpl
+) : TextComponentDecorator {
+
+    /** ---- [TextComponentDecorator] interface */
+
+    override fun drawBackground(component: TextComponent, context: DrawContext) {
+        if (stylable.filled) {
+            adjustShape(component)
+            context.g.color = if (context.useContextColors) context.color!!.backgroundColor else transparent.applyTo(stylable.backgroundColor)
+            context.g.fill(shape)
+        }
+    }
+
+    override fun drawForeground(component: TextComponent, context: DrawContext) {
+        adjustShape(component)
+        context.g.color = if (context.useContextColors) context.color!!.foregroundColor else transparent.applyTo(stylable.foregroundColor)
+        context.g.stroke = stylable.stroke
+        context.g.draw(shape)
+    }
+
+    /** ---- [RectangularShapeTextComponentDecorator] */
+
+    private fun adjustShape(c: TextComponent) {
+        shape.setFrame(c.x, c.y, c.width, c.height)
+    }
+}

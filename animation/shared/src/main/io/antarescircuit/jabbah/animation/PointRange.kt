@@ -1,0 +1,131 @@
+package io.antarescircuit.jabbah.animation
+
+import io.antarescircuit.jabbah.base.math.SIGMA
+import io.antarescircuit.jabbah.base.geom.Point2D
+
+/**
+ * A [PointRange] is a [io.antarescircuit.jabbah.animation.Sequence] of [io.antarescircuit.jabbah.base.geom.Point2D]s between a begin and an end point.
+ *
+ * Also provides the streaming method [forEach] to iterate over a [PointRange]
+ * without instantiating [io.antarescircuit.jabbah.base.geom.Point2D] objects.
+ *
+ * @param returnEndPoint set to `false` only if this [PointRange] is part of a sequence of consecutive
+ * [PointRanges][PointRange], where returning the end point of a segment would be doubled by
+ * the begin point of the following segment
+ * @param initialOffset used if sequencing should not start at [begin], but with the given offset from [begin].
+ * Used with sequences of consecutive [PointRanges][PointRange] in order to regain "speed" on the current segment
+ * that has been lost by a remainder of the previous segment
+ */
+class PointRange(
+    val begin: io.antarescircuit.jabbah.base.geom.Point2D,
+    val end: io.antarescircuit.jabbah.base.geom.Point2D,
+    private val returnEndPoint: Boolean = true,
+    initialOffset: Double? = null
+) : io.antarescircuit.jabbah.animation.Sequence<io.antarescircuit.jabbah.base.geom.Point2D> {
+
+    private val _size: Double = begin.distance(end)
+
+	/** Holds the value to be returned next as individual coordinates.*/
+	private var valueX: Double? = begin.x
+	private var valueY: Double? = begin.y
+
+	/** Holds the results from [calculateNextXY]. */
+	private var nextX: Double? = null
+	private var nextY: Double? = null
+
+	var remainder: Double = 0.0
+		private set
+
+	init {
+		if (initialOffset != null && initialOffset > _root_ide_package_.io.antarescircuit.jabbah.base.math.SIGMA) {
+			calculateNextXY(initialOffset)
+			valueX = nextX
+			valueY = nextY
+		}
+	}
+
+    /** ---- [io.antarescircuit.jabbah.animation.Sequence] interface */
+
+    override val size: Double get() = _size
+
+    private fun hasNext(): Boolean = valueX != null && valueY != null
+
+    override fun getNext(distance: Double): io.antarescircuit.jabbah.base.geom.Point2D? {
+		val oldValueX = valueX
+	    val oldValueY = valueY
+
+	    if (!hasNext()) {
+			return null
+	    }
+	    getNextXY(distance)
+
+	    return _root_ide_package_.io.antarescircuit.jabbah.base.geom.Point2D(oldValueX!!, oldValueY!!)
+    }
+
+    override fun getCurrent(): io.antarescircuit.jabbah.base.geom.Point2D? {
+        if (valueX == null || valueY == null) {
+			return null
+        }
+        return _root_ide_package_.io.antarescircuit.jabbah.base.geom.Point2D(valueX!!, valueY!!)
+    }
+
+	/** ---- [PointRange] sequencing API for avoiding [io.antarescircuit.jabbah.base.geom.Point2D] instantiation */
+
+	fun forEach(distance: Double, handler: (x: Double, y: Double) -> Unit) {
+		while (hasNext()) {
+			val oldValueX = valueX
+			val oldValueY = valueY
+
+			getNextXY(distance)
+			handler(oldValueX!!, oldValueY!!)
+		}
+	}
+
+	private fun getNextXY(distance: Double) {
+		calculateNextXY(distance)
+
+		valueX = nextX
+		valueY = nextY
+	}
+
+	private fun calculateNextXY(distance: Double) {
+		val effDist = if (distance <= 0.0) {
+            _root_ide_package_.io.antarescircuit.jabbah.base.math.SIGMA
+		} else {
+			distance
+		}
+
+		if (size <= _root_ide_package_.io.antarescircuit.jabbah.base.math.SIGMA) {
+			nextX = null
+			nextY = null
+			return
+		}
+
+		val dx = (end.x - begin.x) / size * effDist
+		val dy = (end.y - begin.y) / size * effDist
+
+		nextX = valueX!! + dx
+		nextY = valueY!! + dy
+		val d = begin.distance(nextX!!, nextY!!)
+
+		if (d >= size) {
+			remainder = d - size
+			if (d == size || returnEndPoint) {
+				nextX = end.x
+				nextY = end.y
+			} else {
+				resetNext()
+				return
+			}
+		}
+
+		if (nextX == valueX!! && nextY == valueY!!) {
+			resetNext()
+		}
+	}
+
+	private fun resetNext() {
+		nextX = null
+		nextY = null
+	}
+}

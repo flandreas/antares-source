@@ -1,0 +1,88 @@
+package io.antarescircuit.jabbah.graph.view.net.edge
+
+import io.antarescircuit.jabbah.base.geom.Direction
+import io.antarescircuit.jabbah.base.geom.Point2D
+import io.antarescircuit.jabbah.base.logger
+import io.antarescircuit.jabbah.draw.InputEventHandler
+import io.antarescircuit.jabbah.draw.graphics.Cursor
+import io.antarescircuit.jabbah.edit.EditInputEventContext
+import io.antarescircuit.jabbah.graph.view.EdgeView
+
+/**
+ * Supports dragging individual orthogonal segments of an [EdgeView].
+ */
+class DragEdgeSegmentHandler : EdgeViewInputEventHandler() {
+
+	companion object {
+		private val LOG by logger(DragEdgeSegmentHandler::class)
+	}
+
+	private var lastX: Double = 0.0
+	private var lastY: Double = 0.0
+	private var origSegmentIndex: Int? = null
+	private var segmentIndex: Int? = null
+	private var totalOffset: Double = 0.0
+
+	/** ---- [InputEventHandler] */
+
+	override fun mouseMoved(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+		val segment = edgeView!!.polyline.findSegment(context.x, context.y)
+		if (segment != null) {
+			updateCursor(segment, context)
+			return this
+		}
+		context.view.setCursor(Cursor.DEFAULT)
+		return super.mouseMoved(context)
+	}
+
+	private fun updateCursor(segmentIndex: Int?, context: EditInputEventContext) {
+		if (segmentIndex != null) {
+			when (edgeView!!.getSegmentDirection(segmentIndex)) {
+				Direction.EAST, Direction.WEST -> context.view.setCursor(Cursor.N_RESIZE)
+				Direction.SOUTH, Direction.NORTH -> context.view.setCursor(Cursor.W_RESIZE)
+				else -> context.view.setCursor(Cursor.DEFAULT)
+			}
+		}
+	}
+
+	override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
+		lastX = context.x + context.editor.snapManager.snapX(context.x, context.y)
+		lastY = context.y + context.editor.snapManager.snapY(context.x, context.y)
+		origSegmentIndex = edgeView!!.polyline.findSegment(context.x, context.y)
+		segmentIndex = origSegmentIndex
+		updateCursor(segmentIndex, context)
+		totalOffset = 0.0
+		return this
+	}
+
+	override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
+		val newX = context.x + context.editor.snapManager.snapX(context.x, context.y)
+		val newY = context.y + context.editor.snapManager.snapY(context.x, context.y)
+
+		if (newX != lastX || newY != lastY) {
+			val (segmentIndex1, offset) = edgeView!!.moveSegment(
+				segmentIndex!!,
+				Point2D(lastX, lastY),
+				Point2D(newX, newY))
+			lastX = newX
+			lastY = newY
+
+			segmentIndex = segmentIndex1
+			totalOffset += offset
+
+			updateCursor(segmentIndex, context)
+
+			edgeView?.validate()
+		}
+		return this
+	}
+
+	override fun mouseReleased(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+		if (totalOffset != 0.0) {
+			LOG.userTrail("Move segment ${origSegmentIndex!!} of EdgeView ${edgeView?.id} by $totalOffset")
+			context.editor.commandManager.register(MoveSegmentCommand(context.editor, edgeView!!.id, origSegmentIndex!!, totalOffset))
+		}
+		updateCursor(null, context)
+		return null
+	}
+}

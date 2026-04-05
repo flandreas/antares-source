@@ -1,0 +1,161 @@
+package io.antarescircuit.antares.model.testcase
+
+import io.antarescircuit.antares.model.DigitalGraph
+import io.antarescircuit.jabbah.base.AbstractAction
+import io.antarescircuit.jabbah.base.Action
+import io.antarescircuit.jabbah.base.StringUtils
+import io.antarescircuit.jabbah.base.Translations
+import io.antarescircuit.jabbah.base.event.ActionEvent
+import io.antarescircuit.jabbah.base.event.EventBus
+import io.antarescircuit.jabbah.base.help.HelpId
+import io.antarescircuit.jabbah.base.module.BaseModule
+import io.antarescircuit.jabbah.base.ui.HelpAction
+import io.antarescircuit.jabbah.edit.module.EditModuleJvm
+import io.antarescircuit.jabbah.edit.properties.PropertySheetPanelFactory
+import java.awt.BorderLayout
+import java.awt.Dimension
+import java.awt.Frame
+import javax.swing.JOptionPane
+import javax.swing.JPanel
+import javax.swing.JScrollPane
+import javax.swing.JSplitPane
+
+/**
+ * Displays a tree of [Testcase]s of a [DigitalGraph].
+ */
+class TestcaseViewSwing(
+	val controller: TestcaseViewController,
+	private val eventBus: EventBus = BaseModule.eventBus,
+	sheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory
+) : JPanel(), TestcaseView {
+
+	companion object {
+		val HELP_ID = HelpId("testcaseView")
+	}
+
+	private val splitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
+
+	private val treeView = TestcaseTreeView(controller, eventBus)
+
+	private val propertyPanel = TestcasePropertyPanelSwing(controller.propertyPanelController, sheetFactory)
+
+	/**
+	 * Runs either the selected [Testcase], or all [Testcase]s of the [DigitalGraph], depending on
+	 * the selection in the tree.
+	 */
+	val runAction: Action = RunAction()
+
+	val helpAction: Action = HelpAction.withSmallImage(HELP_ID)
+
+	override var graph: DigitalGraph? = null
+		set(value) {
+			field = value
+			treeView.graph = value
+		}
+
+	init {
+		controller.view = this
+
+		treeView.addTreeSelectionListener {
+			val testcase = treeView.selectedTestcase
+			eventBus.post(TestcaseSelectionEvent(graph!!, testcase))
+			updateAction()
+		}
+
+		buildUI()
+		updateAction()
+	}
+
+	override fun dispose() {
+		BaseModule.settings.set("testcasePanel.splitPos", splitPane.dividerLocation)
+		treeView.dispose()
+		propertyPanel.dispose()
+	}
+
+	/** ---- [TestcaseView] */
+
+	override fun getNewTestcaseName(): String? {
+		val name = JOptionPane.showInputDialog(
+			Frame.getFrames()[0],
+			Translations.getString("antares.testcase.action.add.question"),
+			Translations.getString("antares.testcase.action.add.name"),
+			JOptionPane.QUESTION_MESSAGE,
+			null,
+			null,
+			"Test"
+		) as String?
+		if (StringUtils.isEmpty(name)) {
+			return null
+		}
+		return name
+	}
+
+	override fun confirmDeleteTestcase(): Boolean =
+		JOptionPane.showConfirmDialog(
+			Frame.getFrames()[0],
+			Translations.getString("antares.testcase.action.delete.question", controller.testcase!!.name.value),
+			Translations.getString("antares.testcase.action.delete.name"),
+			JOptionPane.YES_NO_OPTION,
+			JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION
+
+	override fun getDuplicateTestcaseName(): String? {
+		val name = JOptionPane.showInputDialog(
+			Frame.getFrames()[0],
+			Translations.getString("antares.testcase.action.duplicate.nameQuestion"),
+			this@TestcaseViewSwing.name,
+			JOptionPane.QUESTION_MESSAGE,
+			null,
+			null,
+			Translations.getString("antares.testcase.action.duplicate.newName", controller.testcase!!.name.value)
+		) as String?
+		if (StringUtils.isEmpty(name)) {
+			return null
+		}
+		return name
+	}
+
+	/** ---- [TestcaseViewSwing] */
+
+	private fun buildUI() {
+		layout = BorderLayout()
+
+		val treeViewScrollPane = JScrollPane(
+			treeView,
+			JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+			JScrollPane.HORIZONTAL_SCROLLBAR_NEVER)
+
+		treeViewScrollPane.preferredSize = Dimension(300, treeView.preferredSize.height)
+		propertyPanel.preferredSize = Dimension(300, propertyPanel.preferredSize.height)
+
+		splitPane.border = null
+		splitPane.add(treeViewScrollPane)
+		splitPane.add(propertyPanel)
+		splitPane.dividerLocation = BaseModule.settings.getInt("testcasePanel.splitPos", 400)
+
+		add(splitPane, BorderLayout.CENTER)
+	}
+
+	private fun updateAction() {
+		runAction.enabled = treeView.selectionCount > 0
+	}
+
+	private inner class RunAction : AbstractAction(
+		"antares.testcase.action.run",
+		"/img/run-16.png"
+	) {
+
+		override val requestFocusOnClick: Boolean get() = true
+
+		init {
+		    description = name
+		}
+
+		override fun execute(event: ActionEvent) {
+			if (treeView.selectedTestcase != null) {
+				treeView.controller.runSelectedTestcaseAction.execute(event)
+			} else {
+				treeView.controller.runAllTestcasesAction.execute(event)
+			}
+		}
+	}
+}

@@ -1,0 +1,260 @@
+package io.antarescircuit.jabbah.edit.view
+
+import io.antarescircuit.jabbah.base.PreferencesChangedEvent
+import io.antarescircuit.jabbah.base.System
+import io.antarescircuit.jabbah.base.event.EventBus
+import io.antarescircuit.jabbah.base.geom.AffineTransform
+import io.antarescircuit.jabbah.base.geom.Rectangle2D
+import io.antarescircuit.jabbah.base.logger
+import io.antarescircuit.jabbah.base.module.BaseModule
+import io.antarescircuit.jabbah.draw.*
+import io.antarescircuit.jabbah.draw.container.DrawableContainerDrawer
+import io.antarescircuit.jabbah.draw.drawable.DrawableDrawer
+import io.antarescircuit.jabbah.draw.style.DrawTheme
+import io.antarescircuit.jabbah.draw.style.Themes
+import io.antarescircuit.jabbah.draw.view.InvalidatableViewPainter
+import io.antarescircuit.jabbah.draw.view.ViewImpl
+import io.antarescircuit.jabbah.edit.*
+import io.antarescircuit.jabbah.edit.DrawingView.Companion.PROP_EDITABLE
+import io.antarescircuit.jabbah.edit.DrawingView.Companion.PROP_SHOW_GRID
+import io.antarescircuit.jabbah.edit.highlight.EditHighlightModule
+import io.antarescircuit.jabbah.edit.model.ComponentMessage
+import io.antarescircuit.jabbah.edit.select.EditSelectModule
+import io.antarescircuit.jabbah.edit.snap.GridImpl
+
+/**
+ * An implementation of a [View] for displaying and editing [Drawing]s.
+ *
+ * [DrawingViewImpl] has a fixed set of [DrawableContainer]s that are arranged on top of each other to form
+ * a stack of view slides. Therefore, client classes cannot add or remove [Drawable]s by themselves.
+ */
+class DrawingViewImpl<T: Drawing<Component>>(
+    drawing: T,
+    transformFactory: () -> AffineTransform = { System.createAffineTransform() },
+    applicationContextHolder: ApplicationContextHolder? = null,
+    displayGlobalMessages: Boolean = false,
+    private val selectionManagerFactory: SelectionManagerFactory = EditSelectModule.selectionManagerFactory,
+    private val highlighterFactory: HighlighterFactory = EditHighlightModule.highlighterFactory,
+    eventBus: EventBus = BaseModule.eventBus,
+    viewPainterFactory: ViewPainterFactory<EditInputEventContext> = { InvalidatableViewPainter(it) },
+    editable: Boolean = true,
+    name: String = ""
+) : ViewImpl<EditInputEventContext>(transformFactory, applicationContextHolder, eventBus, name, viewPainterFactory), DrawingView<T> {
+
+	companion object {
+		private val LOG by logger(DrawingViewImpl::class)
+	}
+
+	override var canvas: Canvas
+		get() = super.canvas
+		set(value) {
+			val firstTime = super._canvas == null
+			super.canvas = value
+			if (firstTime) {
+				setupContent()
+				grid.view = this
+				showGrid = true
+			}
+		}
+
+    /** The [DrawableDrawer] used for drawing the [Drawing].*/
+    private var drawableDrawer: DrawableDrawer<Component> = DrawingViewDrawer()
+
+    /** Displays [ComponentMessage]s from [Component]s of the current [Drawing]. */
+    private val componentMessageDisplayer = ComponentMessageDisplayer(
+	    drawingView = this, displayGlobalMessages = displayGlobalMessages, eventBus = eventBus)
+
+	private val preferenceChangeHandler: (PreferencesChangedEvent) -> Unit = {
+		invalidate()
+		repaint()
+	}
+
+	private val commandEventHandler: (CommandEvent) -> Unit = {
+		invalidate()
+		repaint()
+	}
+
+    /** ---- [DrawingView] interface */
+
+    override var content: DrawingViewContent<T> = createContent(drawing)
+        set(value) {
+            if (field === value) {
+                return
+            }
+	        // don't dispose old content, as it could be reused later
+            val oldDrawing = field.drawing
+            replaceContent(value)
+            field = value
+	        field.drawing.setDrawableDrawer(drawableDrawer)
+            firePropertyChange(DrawingView.PROP_DRAWING, oldDrawing, field.drawing)
+            field.drawing.notifyEditable(editable)
+
+	        content.selectionManager.activate()
+        }
+
+    override var editable: Boolean = editable
+        set(value) {
+            if (value != field) {
+	            LOG.debug("Setting DrawingView with '$drawing' to editable=$value")
+                field = value
+                showGridIfNeeded()
+                firePropertyChange(PROP_EDITABLE, !field, field)
+                content.drawing.notifyEditable(editable)
+            }
+        }
+
+    override val selectionManager get() = content.selectionManager
+
+    override val highlighter get() = content.highlighter
+
+    override val ghostContainer get() = content.ghostContainer
+
+    override val animationContainer get() = content.animationContainer
+
+    override val highlightContainer get() = content.highlightContainer
+
+    override val backgroundContainer: DrawableContainer<Drawable> get() = content.backgroundContainer
+
+    override val drawing: T get() = content.drawing
+
+    override var showGrid: Boolean = false
+        set(value) {
+            if (value != field) {
+                field = value
+                showGridIfNeeded()
+                repaint()
+                firePropertyChange(PROP_SHOW_GRID, !field, field)
+            }
+        }
+
+    override val grid: Grid = GridImpl()
+
+    override var defaultSelectionDrawingStrategy = SelectionDrawingStrategy.REPLACE
+
+    init {
+	    eventBus.register(PreferencesChangedEvent::class, preferenceChangeHandler)
+	    eventBus.register(CommandEvent::class, commandEventHandler)
+    }
+
+	override fun dispose() {
+		super.dispose()
+		eventBus.unregister(PreferencesChangedEvent::class, preferenceChangeHandler)
+		eventBus.unregister(CommandEvent::class, commandEventHandler)
+		componentMessageDisplayer.dispose()
+		grid.dispose()
+	}
+
+	override fun setDrawing(drawing: T, applyDefaultZoomStrategy: Boolean) {
+		if (drawing !== content.drawing) {
+			content = createContent(drawing)
+			if (applyDefaultZoomStrategy) {
+				applyDefaultZoomStrategy()
+			}
+		}
+	}
+
+	override fun createContent(drawing: T): DrawingViewContent<T> {
+        return DrawingViewContentImpl(this, drawing, selectionManagerFactory, highlighterFactory)
+    }
+
+    override fun addDrawableDrawer(drawableDrawer: DrawableDrawer<Component>) {
+        drawableDrawer.successor = this.drawableDrawer
+        this.drawableDrawer = drawableDrawer
+        drawing.setDrawableDrawer(this.drawableDrawer)
+    }
+
+    override fun getComponentSelectionDrawingStrategy(component: Component): SelectionDrawingStrategy {
+        return component.preferredSelectionDrawingStrategy ?: defaultSelectionDrawingStrategy
+    }
+
+	/** ---- [View] interface */
+
+	override val mainContent: MainContent get() = MainContent(
+		drawing.name.value,
+		drawing,
+		Themes.get<DrawTheme>().background.color.backgroundColor)
+
+    /** Used to avoid object creation in [createViewContentBounds].*/
+    private val viewContentBoundsRect = Rectangle2D()
+
+	override fun createViewContentBounds(): ViewContentBounds = ViewContentBounds {
+        viewContentBoundsRect.setFrame(drawing.boundingBox)
+        if (backgroundContainer.visible) {
+            viewContentBoundsRect.add(backgroundContainer.boundingBox)
+        }
+        viewContentBoundsRect
+    }
+
+	override fun removeDrawable(drawable: Drawable) {
+        // DrawingViewImpl has a fixed set of DrawableContainers
+        throw UnsupportedOperationException("Clients cannot remove Drawable from DrawingViewImpl")
+    }
+
+    override fun addDrawable(drawable: Drawable) {
+        // DrawingViewImpl has a fixed set of DrawableContainers
+        throw UnsupportedOperationException("Clients cannot add Drawable to DrawingViewImpl")
+    }
+
+    /** ---- [DrawingViewImpl] */
+
+    private fun setupContent() {
+        super.addDrawable(ghostContainer)
+        super.addDrawable(animationContainer)
+        super.addDrawable(content.zoomableSelectionContainerFor(SelectionDrawingStrategy.ABOVE)!!)
+        super.addDrawable(content.unzoomableSelectionContainerFor(SelectionDrawingStrategy.ABOVE)!!)
+        super.addDrawable(content.zoomableSelectionContainerFor(SelectionDrawingStrategy.REPLACE)!!)
+        super.addDrawable(drawing)
+        super.addDrawable(content.zoomableSelectionContainerFor(SelectionDrawingStrategy.BELOW)!!)
+        super.addDrawable(highlightContainer)
+        super.addDrawable(content.backdropDrawer)
+        super.addDrawable(content.backgroundContainer)
+    }
+
+    private fun replaceContent(newContent: DrawingViewContent<T>) {
+        replaceDrawable(content.ghostContainer, newContent.ghostContainer)
+        replaceDrawable(content.animationContainer, newContent.animationContainer)
+        replaceDrawable(content.zoomableSelectionContainerFor(SelectionDrawingStrategy.ABOVE)!!, newContent.zoomableSelectionContainerFor(SelectionDrawingStrategy.ABOVE)!!)
+        replaceDrawable(content.unzoomableSelectionContainerFor(SelectionDrawingStrategy.ABOVE)!!, newContent.unzoomableSelectionContainerFor(SelectionDrawingStrategy.ABOVE)!!)
+        replaceDrawable(content.zoomableSelectionContainerFor(SelectionDrawingStrategy.REPLACE)!!, newContent.zoomableSelectionContainerFor(SelectionDrawingStrategy.REPLACE)!!)
+        replaceDrawable(content.drawing, newContent.drawing)
+        replaceDrawable(content.zoomableSelectionContainerFor(SelectionDrawingStrategy.BELOW)!!, newContent.zoomableSelectionContainerFor(SelectionDrawingStrategy.BELOW)!!)
+        replaceDrawable(content.highlightContainer, newContent.highlightContainer)
+        replaceDrawable(content.backdropDrawer, newContent.backdropDrawer)
+        replaceDrawable(content.backgroundContainer, newContent.backgroundContainer)
+        transformation = newContent.transformation
+        repaint()
+    }
+
+    /** Adds or removed the [Grid] depending on the [showGrid] and [editable] properties.*/
+    private fun showGridIfNeeded() {
+        val gridNeeded = showGrid && editable
+        if (gridNeeded) {
+            if (!containsDrawable(grid)) {
+                super.addDrawable(grid)
+            }
+        } else {
+            super.removeDrawable(grid)
+        }
+        repaint()
+    }
+
+    /**
+     * The [DrawableDrawer] used for drawing the [Drawing]. Implements the drawing behaviour used for the
+     * different [SelectionDrawingStrategies][SelectionDrawingStrategy].
+     */
+    private inner class DrawingViewDrawer : DrawableContainerDrawer<Component>() {
+        override fun process(context: DrawContext, drawable: Component) {
+
+	        if (selectionManager.isSelected(drawable)) {
+	        	val replacingSelectionModel = content.getReplacingSelectionModel(drawable)
+		        if (replacingSelectionModel == null) {
+					draw(drawable, context)
+		        }
+	        } else {
+				draw(drawable, context)
+	        }
+
+	        nextProcessor(context, drawable)
+        }
+    }
+}

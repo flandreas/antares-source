@@ -1,0 +1,294 @@
+package io.antarescircuit.jabbah.graph.ui
+
+import io.antarescircuit.jabbah.app.*
+import io.antarescircuit.jabbah.base.System
+import io.antarescircuit.jabbah.base.Translations
+import io.antarescircuit.jabbah.base.UUID
+import io.antarescircuit.jabbah.base.event.EventBus
+import io.antarescircuit.jabbah.base.event.EventHandler
+import io.antarescircuit.jabbah.base.event.VetoException
+import io.antarescircuit.jabbah.base.logger
+import io.antarescircuit.jabbah.base.module.BaseModule
+import io.antarescircuit.jabbah.draw.ui.Toast
+import io.antarescircuit.jabbah.edit.CommandManager
+import io.antarescircuit.jabbah.edit.auth.EditAuthModule
+import io.antarescircuit.jabbah.edit.module.EditModule
+import io.antarescircuit.jabbah.graph.MetaGraph
+import io.antarescircuit.jabbah.graph.library.*
+import io.antarescircuit.jabbah.graph.model.GraphPortCanBeUndefinedChanged
+import io.antarescircuit.jabbah.graph.model.GraphPortNameChanged
+import io.antarescircuit.jabbah.graph.model.GraphPortTypeChanged
+import io.antarescircuit.jabbah.graph.model.OutputPort
+import io.antarescircuit.jabbah.graph.project.Project
+import io.antarescircuit.jabbah.graph.project.ProjectModule
+import io.antarescircuit.jabbah.graph.ui.desktop.GraphDesktopViewItemCloseQuestion
+import io.antarescircuit.jabbah.graph.ui.desktop.GraphDesktopViewItemCloseRequest
+import io.antarescircuit.jabbah.io.Storable
+import io.antarescircuit.jabbah.io.StorableCloner
+
+/**
+ * An [ApplicationDataViewController] that treats [ApplicationData.content] as [MetaGraph]
+ * and [ApplicationData.savable] as [AbstractContainerLibraryElementSavable].
+ */
+class GraphDataViewController(
+	commandManager: CommandManager = EditModule.commandManager,
+	eventBus: EventBus = BaseModule.eventBus
+) : ApplicationDataViewController(
+	commandManager = commandManager,
+	newStorableProvider = { MetaGraph() },
+	repository = UnimplementedApplicationDataRepository(),
+	eventBus = eventBus
+) {
+	companion object {
+		private val LOG by logger(GraphDataViewController::class)
+	}
+
+	private val openLibraryRequestHandler: EventHandler<OpenLibraryRequest> = { handle(it) }
+	private val closeLibraryRequestHandler: EventHandler<CloseLibraryRequest> = { handle(it) }
+	private val currentLibraryEventHandler: EventHandler<CurrentLibraryEvent> = {
+		if (it.library == null) {
+			closeData()
+		}
+	}
+	private val libraryItemRemovedHandler: EventHandler<LibraryItemRemovedEvent> = { handle(it) }
+	private val closeQuestionHandler: EventHandler<GraphDesktopViewItemCloseQuestion> = { handle(it) }
+	private val closeRequestHandler: EventHandler<GraphDesktopViewItemCloseRequest> = { handle(it) }
+	private val libraryImportRemoveQuestionHandler: EventHandler<LibraryImportRemoveQuestion> = { handle(it) }
+	private val libraryImportRemovedHandler: EventHandler<LibraryImportRemovedEvent> = { handle(it) }
+	private val currentWorkspaceHandler: EventHandler<CurrentWorkspaceEvent> = { handle(it) }
+
+	private val graphPortNameHandler: EventHandler<GraphPortNameChanged<*>> = { handle(it) }
+	private val graphPortTypeHandler: EventHandler<GraphPortTypeChanged<*>> = { handle(it) }
+	private val graphPortCanBeUndefinedHandler: EventHandler<GraphPortCanBeUndefinedChanged<*>> = { handle(it) }
+
+	val metaGraph: MetaGraph? get() = data?.content as? MetaGraph?
+
+	init {
+		eventBus.register(OpenLibraryRequest::class, openLibraryRequestHandler)
+		eventBus.register(CloseLibraryRequest::class, closeLibraryRequestHandler)
+		eventBus.register(CurrentLibraryEvent::class, currentLibraryEventHandler)
+		eventBus.register(LibraryItemRemovedEvent::class, libraryItemRemovedHandler)
+		eventBus.register(GraphDesktopViewItemCloseQuestion::class, closeQuestionHandler)
+		eventBus.register(GraphDesktopViewItemCloseRequest::class, closeRequestHandler)
+		eventBus.register(LibraryImportRemoveQuestion::class, libraryImportRemoveQuestionHandler)
+		eventBus.register(LibraryImportRemovedEvent::class, libraryImportRemovedHandler)
+		eventBus.register(CurrentWorkspaceEvent::class, currentWorkspaceHandler)
+		eventBus.register(GraphPortNameChanged::class, graphPortNameHandler)
+		eventBus.register(GraphPortTypeChanged::class, graphPortTypeHandler)
+		eventBus.register(GraphPortCanBeUndefinedChanged::class, graphPortCanBeUndefinedHandler)
+	}
+
+	override fun dispose() {
+		super.dispose()
+		eventBus.unregister(openLibraryRequestHandler)
+		eventBus.unregister(closeLibraryRequestHandler)
+		eventBus.unregister(currentLibraryEventHandler)
+		eventBus.unregister(libraryItemRemovedHandler)
+		eventBus.unregister(closeQuestionHandler)
+		eventBus.unregister(closeRequestHandler)
+		eventBus.unregister(libraryImportRemoveQuestionHandler)
+		eventBus.unregister(libraryImportRemovedHandler)
+		eventBus.unregister(currentWorkspaceHandler)
+		eventBus.unregister(graphPortNameHandler)
+		eventBus.unregister(graphPortTypeHandler)
+		eventBus.unregister(graphPortCanBeUndefinedHandler)
+	}
+
+	override fun setUndoableState(state: Storable) {
+		if (data?.savable is AbstractLibraryItemSavable) {
+			val savable = data!!.savable as AbstractLibraryItemSavable
+			if (savable.item is UndoableStateLibraryItem<*>) {
+				(savable.item as UndoableStateLibraryItem<Storable>).updateStorable(state)
+			}
+		}
+		super.setUndoableState(state)
+	}
+
+	/**
+	 * Implements [ApplicationDataViewController.open] by interpreting the [Savable]'s identification as a [Project] [UUID],
+	 * whose opening results in opening the default [LibraryElement] of the [Project].
+	 * */
+	override fun open(savable: Savable) {
+		if (savable is DefaultSavable) {
+			openProject(LibraryIdentification(UUID(savable.identification!!), EditAuthModule.userHolder.user.identity))
+		}
+		super.open(savable)
+	}
+
+	fun openProject(identification: LibraryIdentification, containerLibraryElement: UUID? = null) {
+		try {
+			if (containerLibraryElement != null) {
+				ProjectModule.projectManagementService.open(identification, containerLibraryElement)
+			} else {
+				ProjectModule.projectManagementService.open(identification)
+			}
+		} catch (e: ApplicationTooOldException) {
+			handle(Translations.getString("project.action.open.name"), e)
+		}
+	}
+
+	fun openLibrary(identification: LibraryIdentification, containerLibraryElement: UUID? = null) {
+		try {
+			LibraryModule.libraryManagementService.open(identification, containerLibraryElement)
+		} catch (e: ApplicationTooOldException) {
+			handle(Translations.getString("library.action.open.name"), e)
+		}
+	}
+
+	fun openAsSavable(element: ContainerLibraryElement, actionName: String, focusVerticeViewId: Int? = null) {
+		try {
+			LOG.info("Open '${element.name.value}' ${element.uuid.id}")
+			view.registerKeepAliveUsage()
+
+			open {
+				val library = element.library!!
+				library.libraryService.loadMetaGraph(library, element, loadAlways = false)
+
+				/**
+				 * Create a copy of the [MetaGraph] as part of the [ApplicationData] that can be safely edited
+				 * without corrupting the instance in the [Library].
+				 */
+				ApplicationData(
+					StorableCloner.clone(element.storable!!),
+					library.createSavable(element),
+					eventBus,
+					focusItem = focusVerticeViewId
+				)
+			}
+		} catch (e: ApplicationTooOldException) {
+			handle(actionName, e)
+		} catch (e: Throwable) {
+			val msg = e.message ?: Translations.getString("graph.action.load.error.general.desc")
+			LOG.error("Error while loading ${element.uuid}: $msg")
+			view.showModalMessage(
+				ModalMessageType.Error,
+				actionName,
+				msg)
+		}
+	}
+
+	private fun handle(actionName: String, e: ApplicationTooOldException) {
+		view.showModalMessage(
+			ModalMessageType.Error,
+			actionName,
+			e.message!!)
+	}
+
+	/**
+	 * Opens the contents of the general [LibraryItem], which complements the earlier, more specialized version
+	 * for [ContainerLibraryElement]. This method creates a clone of [libraryItem]'s [Storable] and uses it in the
+	 * returned [ApplicationData] to be opened as the new [ApplicationData].
+	 *  The created [Savable] will typically contain the original, not cloned [libraryItem].
+	 */
+	fun openLibraryItem(libraryItem: UndoableStateLibraryItem<*>, id: String, actionName: String) {
+		try {
+			val savable = libraryItem.createSavable()
+
+			LOG.info("Open ${savable::class.simpleName} '${libraryItem.name.value}'")
+			view.registerKeepAliveUsage()
+
+			open {
+				/**
+				 * Create a copy of the [LibraryItem]'s content as part of the [ApplicationData] that can be safely edited
+				 * without corrupting the instance in the [Library].
+				 */
+				// Fixed bug #888: Don't clone the LibraryItem itself.
+
+				require(libraryItem.storable != null) {
+					// This scenario must rather use openAsSavable()
+					"GraphDataViewControl.openLibraryItem(): storable must not be null"
+				}
+
+				ApplicationData(StorableCloner.clone(libraryItem.storable!!), savable, eventBus)
+			}
+
+		} catch (e: Throwable) {
+			LOG.error("Error while loading $id: ${e.message}")
+			view.showModalMessage(
+				ModalMessageType.Error,
+				actionName,
+				Translations.getString("graph.action.load.error.general.desc"))
+		}
+	}
+
+	private fun handle(@Suppress("UNUSED_PARAMETER") event: OpenLibraryRequest) {
+		if (!canReplaceSavable("library.action.open.name")) {
+			throw VetoException(Translations.getString("application.replaceSavableVeto.msg"))
+		}
+	}
+
+	private fun handle(@Suppress("UNUSED_PARAMETER") event: CloseLibraryRequest) {
+		if (!canReplaceSavable("project.action.close.name")) {
+			throw VetoException(Translations.getString("application.replaceSavableVeto.msg"))
+		}
+	}
+
+	private fun handle(event: LibraryItemRemovedEvent) {
+		if (event.item is UndoableStateLibraryItem<*> && event.item == (data?.savable as? AbstractLibraryItemSavable?)?.item) {
+			System.invokeLater { closeData() }
+		}
+	}
+
+	private fun handle(event: GraphDesktopViewItemCloseQuestion) {
+		if (event.isRoot && !canReplaceSavable("base.action.close.name")) {
+			throw VetoException(Translations.getString("application.replaceSavableVeto.msg"))
+		}
+	}
+
+	private fun handle(event: GraphDesktopViewItemCloseRequest) {
+		if (event.isRoot) {
+			closeDataAfterConfirmation()
+		}
+	}
+
+	private fun handle(@Suppress("UNUSED_PARAMETER") event: LibraryImportRemoveQuestion) {
+		if (!canReplaceSavable("project.action.close.name")) {
+			throw VetoException(Translations.getString("application.replaceSavableVeto.msg"))
+		}
+	}
+
+	private fun handle(event: LibraryImportRemovedEvent) {
+		if (event.libraryId == (data?.savable as? AbstractLibraryItemSavable)?.item?.library?.uuid) {
+			closeDataAfterConfirmation()
+		}
+	}
+
+	private fun handle(@Suppress("UNUSED_PARAMETER") event: CurrentWorkspaceEvent) {
+		if (event.isPrepare) {
+			if (!canReplaceSavable("file.action.openWorkspace.name")) {
+				throw VetoException(Translations.getString("application.replaceSavableVeto.msg"))
+			}
+			return
+		}
+		if (!event.isPrepare) {
+			LibraryModule.libraryManagementService.close()
+			Toast.show(Translations.getString("graph.workspace.msg"))
+		}
+	}
+
+	private fun handle(event: GraphPortNameChanged<*>) {
+		if (metaGraph?.graph?.graphView?.graph?.contains(event.graphPort) == true) {
+			metaGraph?.containerDrawing?.getPortViewComponent(event.oldName!!)?.let {
+				it.portView!!.setPortName(event.newName!!)
+			}
+		}
+	}
+
+	private fun handle(event: GraphPortTypeChanged<*>) {
+		if (metaGraph?.graph?.graphView?.graph?.contains(event.graphPort) == true) {
+			metaGraph?.containerDrawing?.getPortViewComponent(event.graphPort.name!!)?.let {
+				it.portView!!.port.portType = event.newPortType
+			}
+		}
+	}
+
+	private fun handle(event: GraphPortCanBeUndefinedChanged<*>) {
+		if (metaGraph?.graph?.graphView?.graph?.contains(event.graphPort) == true) {
+			metaGraph?.containerDrawing?.getPortViewComponent(event.graphPort.name!!)?.let {
+				if (it.portView!!.port is OutputPort) {
+					(it.portView!!.port as OutputPort).customCanBeUndefined = event.value
+				}
+			}
+		}
+	}
+}

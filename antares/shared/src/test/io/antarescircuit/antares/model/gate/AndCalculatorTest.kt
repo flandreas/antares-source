@@ -1,0 +1,61 @@
+package io.antarescircuit.antares.model.gate
+
+import io.antarescircuit.antares.model.gate.NonUnaryLogicGateType.And
+import io.antarescircuit.antares.model.signal.Bit.*
+import io.antarescircuit.antares.model.signal.BitWidth
+import io.antarescircuit.antares.model.signal.DefinedWord
+import io.antarescircuit.antares.model.signal.DigitalSignal
+import io.antarescircuit.antares.model.signal.Word
+import kotlin.test.Test
+import kotlin.test.assertEquals
+
+/** Unit tests for [AndCalculator]. */
+class AndCalculatorTest : AbstractGateCalculatorTest(And) {
+
+	@Test
+	fun shouldFulfillTruthTable() {
+		CurrentUndefinedGateInputBehavior.value = UndefinedGateInputBehavior.ReadAs0
+
+		assertTwoInput(False, False, False)
+		assertTwoInput(False, True, False)
+		assertTwoInput(False, Undefined, False)
+		assertTwoInput(False, Error, Error)
+
+		assertTwoInput(True, False, False)
+		assertTwoInput(True, True, True)
+		assertTwoInput(True, Undefined, False)
+		assertTwoInput(True, Error, Error)
+
+		assertTwoInput(Undefined, False, False)
+		assertTwoInput(Undefined, True, False)
+		assertTwoInput(Undefined, Undefined, False)
+		assertTwoInput(Undefined, Error, Error)
+
+		assertTwoInput(Error, False, Error)
+		assertTwoInput(Error, True, Error)
+		assertTwoInput(Error, Undefined, Error)
+		assertTwoInput(Error, Error, Error)
+	}
+
+	@Test
+	fun shouldCalculateSingleBit() {
+		val andGate = NonUnaryLogicGate(And, bitWidth = BitWidth.BW_1)
+		andGate.getInput<DigitalSignal>(1).setIncomingSignal(Word(listOf(False)), signalHandler)
+		andGate.getInput<DigitalSignal>(2).setIncomingSignal(Word(listOf(True)), signalHandler)
+
+		val result = gateType.calculator.calculateSingleBit(andGate)
+
+		assertEquals(DefinedWord.of(false), result)
+	}
+
+	@Test
+	fun shouldCalculateMultiBit() {
+		val andGate = NonUnaryLogicGate(And, bitWidth = BitWidth.BW_2)
+		andGate.getInput<DigitalSignal>(1).setIncomingSignal(Word(listOf(True, False)), signalHandler)
+		andGate.getInput<DigitalSignal>(2).setIncomingSignal(Word(listOf(True, True)), signalHandler)
+
+		val result = gateType.calculator.calculateMultiBit(andGate)
+
+		assertEquals(Word(listOf(True, False)), result)
+	}
+}

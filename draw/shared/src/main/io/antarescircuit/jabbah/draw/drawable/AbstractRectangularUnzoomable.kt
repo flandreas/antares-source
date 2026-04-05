@@ -1,0 +1,76 @@
+package io.antarescircuit.jabbah.draw.drawable
+
+import io.antarescircuit.jabbah.draw.Drawable
+import io.antarescircuit.jabbah.draw.ZoomPan
+import io.antarescircuit.jabbah.base.geom.Point2D
+import io.antarescircuit.jabbah.base.geom.Rectangle2D
+import io.antarescircuit.jabbah.base.geom.RectangularShape
+
+/**
+ * A base class for implementing rectangular [Drawable]s of fixed size that implement the [Unzoomable]
+ * interface.
+ *
+ * The location of an [AbstractRectangularUnzoomable] is its center.
+ */
+abstract class AbstractRectangularUnzoomable(
+	halfSize: Double,
+	location: Point2D = Point2D.ZERO
+) : AbstractDrawable(), Unzoomable {
+
+	override var zoomPan: ZoomPan? = ZoomPan()
+
+	/** Holds the center of the rectangle. */
+	var location: Point2D = location
+		set(value) {
+			invalidate()
+			field = value
+			invalidate()
+			update()
+		}
+
+	var halfSize: Double = halfSize
+		set(value) {
+			invalidate()
+			field = value
+			invalidate()
+			update()
+		}
+
+	val x: Double get() = location.x
+	val y: Double get() = location.y
+
+	val width: Double get() = 2 * halfSize
+	val height: Double get() = 2 * halfSize
+
+	val viewLocation: Point2D get() = zoomPan!!.transform.modelToView(location).divide(zoomPan!!.devicePixelRatio())
+
+	/** Holds the bounding box in model coordinate space. */
+	private val bboxModel = Rectangle2D()
+
+	/** Contains the width of the outline. Used for bounding box calculation. */
+	abstract val lineWidth: Double
+
+	override val boundingBox: RectangularShape
+		get() {
+			bboxModel.setFrame(
+				location.x - halfSize / zoomPan!!.zoomFactor - lineWidth,
+				location.y - halfSize / zoomPan!!.zoomFactor - lineWidth,
+				2 * (halfSize / zoomPan!!.zoomFactor + lineWidth),
+				2 * (halfSize / zoomPan!!.zoomFactor + lineWidth)
+			)
+			return bboxModel
+		}
+
+	override fun contains(x: Double, y: Double): Boolean {
+		return x >= location.x - halfSize / zoomPan!!.zoomFactor
+			&& x <= location.x + halfSize / zoomPan!!.zoomFactor
+			&& y >= location.y - halfSize / zoomPan!!.zoomFactor
+			&& y <= location.y + halfSize / zoomPan!!.zoomFactor
+	}
+
+	/** Returns the rectangle in view coordinate space.*/
+	protected fun getViewRectangle(): Rectangle2D {
+		val p = viewLocation
+		return Rectangle2D(p.x - halfSize, p.y - halfSize, 2 * halfSize, 2 * halfSize)
+	}
+}

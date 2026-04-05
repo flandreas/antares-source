@@ -1,0 +1,162 @@
+package io.antarescircuit.jabbah.graph.library
+
+import io.antarescircuit.jabbah.base.Action
+import io.antarescircuit.jabbah.base.ActionWrapperSwing
+import io.antarescircuit.jabbah.base.Translations
+import io.antarescircuit.jabbah.base.UUID
+import io.antarescircuit.jabbah.base.event.ActionEvent
+import io.antarescircuit.jabbah.base.swing.PlaceholderTextField
+import io.antarescircuit.jabbah.base.swing.UiUtil
+import io.antarescircuit.jabbah.edit.auth.EditAuthModule
+import io.antarescircuit.jabbah.edit.auth.User
+import io.antarescircuit.jabbah.edit.auth.UserHolder
+import io.antarescircuit.jabbah.graph.library.dictionary.LibraryDictionaryEntry
+import java.awt.BorderLayout
+import java.awt.Dimension
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
+import javax.swing.*
+import javax.swing.event.DocumentEvent
+import javax.swing.event.DocumentListener
+
+/**
+ * An abstract [AbstractLibraryPersistencePanel] that displays a list of all existing [Libraries][Library]
+ * and the description of the selected [Library].
+ */
+abstract class AbstractLibrarySelectionPanel(
+	private val userHolder: UserHolder<User> = EditAuthModule.userHolder,
+	protected val isOpen: (entry: LibraryDictionaryEntry) -> Boolean
+) : JPanel() {
+
+	private val libraryDictionaryEntries = JList<LibraryDictionaryEntry>()
+	private val descriptionTextArea = JTextArea()
+
+	/** Contains all loaded, unfiltered [LibraryDirectoryEntries][LibraryDictionaryEntry].*/
+	private var entries = listOf<LibraryDictionaryEntry>()
+
+	val selectedLibrary: LibraryDictionaryEntry? get() = libraryDictionaryEntries.selectedValue
+
+	private val searchField = PlaceholderTextField(
+		placeholder = Translations.getString("draw.search.text"),
+		columns = 20,
+		showClearButton = true)
+
+	init {
+		libraryDictionaryEntries.addListSelectionListener {
+			updateDescription()
+			handleSelectionChanged()
+		}
+		libraryDictionaryEntries.addMouseListener(object: MouseAdapter() {
+			override fun mouseClicked(e: MouseEvent?) {
+				if (e!!.clickCount == 2) {
+					handleListDoubleClick(ActionWrapperSwing.toJabbahActionEvent(e))
+				}
+			}
+		})
+
+		searchField.document.addDocumentListener(object : DocumentListener {
+			override fun insertUpdate(e: DocumentEvent?) { search() }
+			override fun removeUpdate(e: DocumentEvent?) { search() }
+			override fun changedUpdate(e: DocumentEvent?) { search() }
+		})
+		SwingUtilities.invokeLater {
+			searchField.requestFocus()
+		}
+	}
+
+	fun selectLibrary(uuid: UUID) {
+		getLibraryIndex(uuid)?.let { libraryDictionaryEntries.selectedIndex = it }
+	}
+
+	protected fun load() {
+		entries = loadLibraryDirectoryEntries()
+		val model = DefaultListModel<LibraryDictionaryEntry>()
+		model.addAll(entries)
+		libraryDictionaryEntries.model = model
+	}
+
+	private fun search() {
+		val model = DefaultListModel<LibraryDictionaryEntry>()
+		model.addAll(entries.filter { it.name.value.lowercase().contains(searchField.text.lowercase()) })
+		libraryDictionaryEntries.model = model
+	}
+
+	protected fun selectCurrentLibrary(library: Library? = null) {
+		SwingUtilities.invokeLater {
+			library?.let { lib ->
+				getLibraryIndex(lib.uuid)?.let { index ->
+					libraryDictionaryEntries.selectedIndex = index
+					libraryDictionaryEntries.ensureIndexIsVisible(index)
+				}
+			}
+		}
+	}
+
+	protected fun selectFirstLibrary() {
+		libraryDictionaryEntries.requestFocusInWindow()
+		if (libraryDictionaryEntries.model.size > 0) {
+			libraryDictionaryEntries.selectedIndex = 0
+		}
+	}
+
+	protected open fun buildUI() {
+		layout = BorderLayout(0, 10)
+		border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
+
+		descriptionTextArea.lineWrap = true
+		descriptionTextArea.wrapStyleWord = true
+		descriptionTextArea.background = background
+		descriptionTextArea.isEditable = false
+		descriptionTextArea.rows = 6
+		val descriptionScroll = UiUtil.decorateTextArea(descriptionTextArea)
+		descriptionScroll.background = background
+
+		val ldeScroll = JScrollPane(libraryDictionaryEntries)
+		ldeScroll.preferredSize = Dimension(300, 300)
+
+		val contentPanel = JPanel(BorderLayout(0, 2))
+		contentPanel.add(searchField, BorderLayout.NORTH)
+		contentPanel.add(ldeScroll, BorderLayout.CENTER)
+
+		add(contentPanel, BorderLayout.NORTH)
+		add(descriptionScroll, BorderLayout.CENTER)
+
+		libraryDictionaryEntries.cellRenderer = LibraryListRenderer(
+			normalFont = libraryDictionaryEntries.font,
+			isOpen = isOpen,
+			isReadOnly = ::isReadonly,
+			displayIcon = ::needsLockIcon
+		)
+	}
+
+	protected abstract fun loadLibraryDirectoryEntries(): List<LibraryDictionaryEntry>
+
+	protected abstract fun handleListDoubleClick(event: ActionEvent)
+
+	protected abstract fun handleSelectionChanged()
+
+	protected abstract fun currentLibraryIndex(): Int?
+
+	private fun isReadonly(entry: LibraryDictionaryEntry): Boolean =
+		entry.author != userHolder.user.identity
+
+	protected fun getLibraryIndex(uuid: UUID): Int? {
+		if (libraryDictionaryEntries.model.size == 0) {
+			return null
+		}
+		for (index in 0 until libraryDictionaryEntries.model.size) {
+			if (libraryDictionaryEntries.model.getElementAt(index).uuid == uuid) {
+				return index
+			}
+		}
+		return null
+	}
+
+	private fun needsLockIcon(): Boolean = entries.any { isReadonly(it) }
+
+	private fun updateDescription() {
+		descriptionTextArea.text = selectedLibrary?.description?.value ?: ""
+	}
+
+	protected fun createButton(action: Action): JButton = JButton(ActionWrapperSwing(action))
+}

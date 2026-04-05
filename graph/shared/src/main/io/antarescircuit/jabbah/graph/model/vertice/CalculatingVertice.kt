@@ -1,0 +1,57 @@
+package io.antarescircuit.jabbah.graph.model.vertice
+
+import io.antarescircuit.jabbah.execution.SignalHandler
+import io.antarescircuit.jabbah.execution.actor.ActorData
+import io.antarescircuit.jabbah.graph.model.GraphActorData
+import io.antarescircuit.jabbah.graph.model.InputPort
+import io.antarescircuit.jabbah.graph.model.OutputPort
+import io.antarescircuit.jabbah.graph.model.Vertice
+
+/**
+ * Can be plugged into a [CalculatingVertice] to calculate new signals on the [Vertice]' [OutputPort]
+ * whenever a signal has arrived on one of the [Vertice]' [InputPort]s.
+ * @param <T> the type of [CalculatingVertice] that this [VerticeCalculator] calculates.
+ */
+interface VerticeCalculator<in T : Vertice> {
+
+	/** Calculates and sets the [OutputPort]s of a [Vertice]. */
+	fun calculate(vertice: T, data: GraphActorData, signalHandler: SignalHandler)
+}
+
+/** An empty implementation of the [VerticeCalculator] interface that does nothing.*/
+object EmptyVerticeCalculator : VerticeCalculator<CalculatingVertice> {
+
+	override fun calculate(vertice: CalculatingVertice, data: GraphActorData, signalHandler: SignalHandler) {
+		// empty
+	}
+}
+
+abstract class CalculatingVertice(
+	protected open val calculator: VerticeCalculator<*> = EmptyVerticeCalculator,
+	name: String? = null
+) : AbstractVertice(name) {
+
+	override fun act(signalHandler: SignalHandler, data: ActorData) {
+		actImpl(signalHandler, data)
+		super.act(signalHandler, data)
+	}
+
+	protected open fun actImpl(signalHandler: SignalHandler, data: ActorData) {
+		(calculator as VerticeCalculator<CalculatingVertice>).calculate(this, data as GraphActorData, signalHandler)
+		flush(signalHandler, data)
+		stateChanged(signalHandler)
+	}
+
+	protected open fun flush(signalHandler: SignalHandler, data: ActorData) {
+		// Tuning: Faster than with streams
+		// Tuning: Faster than with (port in getPorts())
+		val cnt = portsCount
+		for (i in 0 until cnt) {
+			val port = getPortAtIndex<Any>(i)
+			if (port.portType.isOutput && port !== (data as GraphActorData).changedPort) {
+				// Don't flush OutputPorts that triggered execution to avoid shooting back signals
+				(port as OutputPort<*>).flush(signalHandler, data.force)
+			}
+		}
+	}
+}

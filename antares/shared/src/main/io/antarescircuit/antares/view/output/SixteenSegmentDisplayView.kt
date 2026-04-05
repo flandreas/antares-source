@@ -1,0 +1,176 @@
+package io.antarescircuit.antares.view.output
+
+import io.antarescircuit.antares.model.output.SixteenSegmentDisplay
+import io.antarescircuit.jabbah.base.event.EventBus
+import io.antarescircuit.jabbah.base.geom.Point2D
+import io.antarescircuit.jabbah.base.module.BaseModule
+import io.antarescircuit.jabbah.draw.DrawContext
+import io.antarescircuit.jabbah.draw.style.DrawStyleModule
+import io.antarescircuit.jabbah.draw.style.StyleProvider
+import io.antarescircuit.jabbah.edit.model.Size
+import io.antarescircuit.jabbah.graph.view.ControlView
+import io.antarescircuit.jabbah.graph.view.ControlViewSource
+import io.antarescircuit.jabbah.graph.view.vertice.AbstractVerticeView
+
+class SixteenSegmentDisplayView(
+	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+	model: SixteenSegmentDisplay = SixteenSegmentDisplay(),
+	lightColor: LightColor = DEFAULT_LIGHT_COLOR,
+	size: Size = DEFAULT_SIZE,
+	eventBus: EventBus = BaseModule.eventBus
+) : AbstractSegmentDisplayView<SixteenSegmentDisplay>(styleProvider, model, lightColor, size, true, eventBus) {
+
+	companion object {
+		const val PROP_ICON_PATH = "io.antarescircuit.antares.view.output.SixteenSegmentDisplayView.iconPath"
+	}
+
+	override fun modelExchanged(oldModel: SixteenSegmentDisplay?) {
+		super.modelExchanged(oldModel)
+		createCombinedPortViews()
+	}
+
+	/** ---- [ControlView] */
+
+	override val controlId: String get() = "16seg:" + model.id
+
+	override fun sourcePropertiesChanged(source: ControlViewSource<SixteenSegmentDisplay>) {
+		if (source is SixteenSegmentDisplayView) {
+			copyControlViewProperties(source, this)
+		}
+	}
+
+	/** ---- [ControlViewSource] */
+
+	override val iconPath: String get() = BaseModule.properties.getString(SevenSegmentDisplayView.PROP_ICON_PATH)
+
+	override fun createControlView(): ControlView<SixteenSegmentDisplay> {
+		val clone = SixteenSegmentDisplayView(styleProvider, model, lightColor)
+		clone.isShowPortViews = false
+		clone.location = Point2D(0, 0)
+		return clone
+	}
+
+	/** ---- [AbstractVerticeView] */
+
+	override fun drawImpl(context: DrawContext) {
+		super.drawImpl(context)
+
+		drawA1(context)
+		drawA2(context)
+		drawB(context)
+		drawC(context)
+		drawD1(context)
+		drawD2(context)
+		drawE(context)
+		drawF(context)
+		drawG1(context)
+		drawG2(context)
+		drawH(context)
+		drawI(context)
+		drawJ(context)
+		drawK(context)
+		drawL(context)
+		drawM(context)
+	}
+
+	private fun drawA1(context: DrawContext) {
+		drawHalfHorizontalSegment(
+			context, model.inputValueOf("a1"),
+			0.5f * geom.snappedScaledFactor + geom.segHalfWidth,
+			geom.snappedScaledFactor + geom.segHalfWidth)
+	}
+
+	private fun drawA2(context: DrawContext) {
+		drawHalfHorizontalSegment(
+			context, model.inputValueOf("a2"),
+			0.5f * geom.snappedScaledFactor + geom.segHalfWidth + geom.segLength / 2,
+			geom.snappedScaledFactor + geom.segHalfWidth)
+	}
+
+	private fun drawD1(context: DrawContext) {
+		drawHalfHorizontalSegment(
+			context, model.inputValueOf("d1"),
+			0.5f * geom.snappedScaledFactor + geom.segHalfWidth,
+			7 * geom.snappedScaledFactor + geom.segHalfWidth)
+	}
+
+	private fun drawD2(context: DrawContext) {
+		drawHalfHorizontalSegment(
+			context, model.inputValueOf("d2"),
+			0.5f * geom.snappedScaledFactor + geom.segHalfWidth + geom.segLength / 2,
+			7 * geom.snappedScaledFactor + geom.segHalfWidth
+		)
+	}
+
+	private fun drawG1(context: DrawContext) {
+		drawHalfHorizontalSegment(
+			context, model.inputValueOf("g1"),
+			0.5f * geom.snappedScaledFactor + geom.segHalfWidth,
+			4 * geom.snappedScaledFactor + geom.segHalfWidth)
+	}
+
+	private fun drawG2(context: DrawContext) {
+		drawHalfHorizontalSegment(
+			context, model.inputValueOf("g2"),
+			0.5f * geom.snappedScaledFactor + geom.segHalfWidth + geom.segLength / 2,
+			4 * geom.snappedScaledFactor + geom.segHalfWidth)
+	}
+
+	private fun drawH(context: DrawContext) {
+		drawDiagonalEastSegment(
+			context, model.inputValueOf("h"),
+			0.5f * geom.snappedScaledFactor + geom.segHalfWidth,
+			geom.snappedScaledFactor + geom.segHalfWidth)
+	}
+
+	private fun drawI(context: DrawContext) {
+		drawVerticalSegment(
+			context, model.inputValueOf("i"),
+			0.5f * geom.snappedScaledFactor + geom.segHalfWidth + 0.5f * geom.segLength,
+			1 * geom.snappedScaledFactor + geom.segHalfWidth
+		)
+	}
+
+	private fun drawJ(context: DrawContext) {
+		drawDiagonalWestSegment(
+			context, model.inputValueOf("j"),
+			0.5f * geom.snappedScaledFactor + geom.segLength + geom.segHalfWidth,
+			geom.snappedScaledFactor + geom.segHalfWidth)
+	}
+
+	private fun drawK(context: DrawContext) {
+		drawDiagonalWestSegment(
+			context, model.inputValueOf("k"),
+			0.5f * geom.snappedScaledFactor + geom.segHalfWidth + geom.segLength / 2,
+			4 * geom.snappedScaledFactor + geom.segHalfWidth
+		)
+	}
+
+	private fun drawL(context: DrawContext) {
+		drawVerticalSegment(
+			context, model.inputValueOf("l"),
+			0.5f * geom.snappedScaledFactor + geom.segHalfWidth + 0.5f * geom.segLength,
+			4 * geom.snappedScaledFactor + geom.segHalfWidth)
+	}
+
+	private fun drawM(context: DrawContext) {
+		drawDiagonalEastSegment(
+			context, model.inputValueOf("m"),
+			0.5f * geom.snappedScaledFactor + geom.segHalfWidth + geom.segLength / 2,
+			4 * geom.snappedScaledFactor + geom.segHalfWidth)
+	}
+
+	private fun drawDiagonalEastSegment(context: DrawContext, value: Boolean, relX: Float, relY: Float) {
+		context.translated(relX.toDouble(), relY.toDouble()) {
+			it.g.color = getColor(value, it)
+			it.g.fill(geom.diagonalEastPath)
+		}
+	}
+
+	private fun drawDiagonalWestSegment(context: DrawContext, value: Boolean, relX: Float, relY: Float) {
+		context.translated(relX.toDouble(), relY.toDouble()) {
+			it.g.color = getColor(value, it)
+			it.g.fill(geom.diagonalWestPath)
+		}
+	}
+}

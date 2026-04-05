@@ -1,0 +1,111 @@
+package io.antarescircuit.jabbah.draw.view
+
+import io.antarescircuit.jabbah.base.System
+import io.antarescircuit.jabbah.base.event.PropertyChangeListener
+import io.antarescircuit.jabbah.base.geom.Point2D
+import io.antarescircuit.jabbah.base.geom.Rectangle2D
+import io.antarescircuit.jabbah.base.geom.RectangularShape
+import io.antarescircuit.jabbah.base.time.Timer
+import io.antarescircuit.jabbah.draw.Canvas
+import io.antarescircuit.jabbah.draw.DrawContext
+import io.antarescircuit.jabbah.draw.View
+import io.antarescircuit.jabbah.draw.ViewPainter
+import kotlin.math.ceil
+import kotlin.math.floor
+
+/**
+ * [InvalidatableViewPainter] keeps track of all invalidated areas and repaints only those.
+ */
+class InvalidatableViewPainter(val view: View<*>) : ViewPainter {
+
+	companion object {
+		/** The number of repaints per second.*/
+		private const val REPAINT_FREQUENCY = 40
+	}
+
+	/** Keeps track of the current accumulated invalid region in model coordinate space.*/
+	var dirtyRegion: Rectangle2D? = null
+		private set
+
+	/** If set, indicates that the entire [View] is dirty, in which case [dirtyRegion] is overwritten.*/
+	private var dirtyView: Boolean = false
+
+	private val timer: Timer = System.createTimer()
+
+	/**
+	 * Kept and updated on every view size change to avoid instantiation in every repaint cycle.
+	 */
+	private var viewBottomRight: Point2D = Point2D(view.width, view.height)
+
+	private val viewDimensionListener: PropertyChangeListener<Any> = PropertyChangeListener {
+		if (it.name == Canvas.PROP_DIMENSION) {
+			viewBottomRight = Point2D(view.width, view.height)
+		}
+	}
+
+	private val viewListener = PropertyChangeListener<Any> {
+		if (it.name == View.PROP_CANVAS) {
+			view.canvas.addPropertyChangeListener(viewDimensionListener)
+		}
+	}
+
+	init {
+		view.addPropertyChangeListener(viewListener)
+
+		timer.initialize(1000 / REPAINT_FREQUENCY, repeats = false) {
+			timer.stop()
+			System.invokeLater {
+				repaintDirtyRegion()
+			}
+		}
+	}
+
+	override fun dispose() {
+		view.removePropertyChangeListener(viewListener)
+		view.canvas.removePropertyChangeListener(viewDimensionListener)
+	}
+
+	/** ---- [ViewPainter] interface */
+
+	override fun repaintView() {
+		startTimerIfNeeded()
+	}
+
+	override fun paintView(context: DrawContext) {
+		view.draw(context)
+	}
+
+	override fun invalidateRegion(region: RectangularShape?) {
+		if (region == null) {
+			dirtyView = true
+		} else {
+			if (!dirtyView) {
+				dirtyRegion = dirtyRegion?.add(region) as Rectangle2D? ?: Rectangle2D(region)
+			}
+		}
+	}
+
+	/** ---- [InvalidatableViewPainter] */
+
+	private fun repaintDirtyRegion() {
+		if (dirtyView) {
+			view.repaint(0, 0, view.width, view.height)
+		} else {
+			val p1 = if (dirtyRegion != null) view.modelToView(Point2D(dirtyRegion!!.minX, dirtyRegion!!.minY)) else Point2D.ZERO
+			val p2 = if (dirtyRegion != null) view.modelToView(Point2D(dirtyRegion!!.maxX, dirtyRegion!!.maxY)) else viewBottomRight
+			val x1 = floor(p1.x).toInt()
+			val y1 = floor(p1.y).toInt()
+			val x2 = ceil(p2.x).toInt()
+			val y2 = ceil(p2.y).toInt()
+			view.repaint(x1 - 1, y1 - 1, x2 - x1 + 2, y2 - y1 + 2)
+		}
+		dirtyRegion = null
+		dirtyView = false
+	}
+
+	private fun startTimerIfNeeded() {
+		if (!timer.isRunning()) {
+			timer.start()
+		}
+	}
+}

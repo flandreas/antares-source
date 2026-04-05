@@ -1,0 +1,161 @@
+package io.antarescircuit.antares.view.addressable
+
+import io.antarescircuit.antares.model.addressable.MemoryStorableIdentification
+import io.antarescircuit.antares.model.addressable.ROM
+import io.antarescircuit.antares.view.port.DigitalPortView
+import io.antarescircuit.jabbah.base.event.EventBus
+import io.antarescircuit.jabbah.base.geom.Direction
+import io.antarescircuit.jabbah.base.module.BaseModule
+import io.antarescircuit.jabbah.draw.style.DrawStyleModule
+import io.antarescircuit.jabbah.draw.style.StyleProvider
+import io.antarescircuit.jabbah.edit.model.text.ScriptProperty
+import io.antarescircuit.jabbah.edit.model.text.description.Name
+import io.antarescircuit.jabbah.graph.view.ControlView
+import io.antarescircuit.jabbah.graph.view.ControlViewSource
+import io.antarescircuit.jabbah.io.Storable
+import io.antarescircuit.jabbah.io.StoreReader
+import io.antarescircuit.jabbah.io.StoreWriter
+
+class ROMView(
+	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+	eventBus: EventBus = BaseModule.eventBus,
+	model: ROM = ROM()
+) : AbstractAddressableView<ROM>(styleProvider, eventBus, model),
+	ControlViewSource<ROM>
+{
+	companion object {
+		const val PROP_ICON_PATH = "io.antarescircuit.antares.view.addressable.ROMView.iconPath"
+	}
+
+	override fun modelExchanged(oldModel: ROM?) {
+		super.modelExchanged(oldModel)
+
+		val addressPV = DigitalPortView(
+			styleProvider = styleProvider,
+			port = model.getAddressInput(),
+			direction = Direction.WEST)
+		addressPV.setLocation(addressPV.length, 0)
+		addPortView(addressPV)
+
+		val csPV = DigitalPortView(
+			styleProvider = styleProvider,
+			port = model.getChipSelectInput(),
+			direction = Direction.SOUTH)
+		csPV.setLocation(csPV.length + MIN_WIDTH / 2, MIN_HEIGHT / 2)
+		addPortView(csPV)
+
+		val dataPV = DigitalPortView(
+			styleProvider = styleProvider,
+			port = model.getDataPort(),
+			direction = Direction.EAST)
+		dataPV.setLocation(dataPV.length + MIN_WIDTH, 0)
+		addPortView(dataPV)
+
+		label.text = buildLabelText()
+		contentsView = AddressableContentsView(
+			addressable = model,
+			rowsCount = contentRowsCount,
+			columnsCount = contentColumnsCount,
+			showDisassembler = showDisassembler,
+			highlightCurrentCellWhenNotSelected = highlightCurrentCellWhenNotSelected)
+
+		updateGeometry()
+	}
+
+	init {
+		modelExchanged(null)
+	}
+
+	/** ---- UI properties */
+
+	@Suppress("unused") // Reflection
+	var disassemblerConfig: ScriptProperty
+		get() = ScriptProperty(model.disassemblerConfig)
+		set(value) {
+			model.disassemblerConfig = value.script!!
+		}
+
+	@Suppress("MemberVisibilityCanBePrivate") // Reflection
+	var showDisassembler: Boolean
+		get() = contentsView.showDisassembler
+		set(value) {
+			if (value != showDisassembler) {
+				contentsView.showDisassembler = value
+				updateGeometry()
+				validate()
+			}
+		}
+
+	@Suppress("unused", "MemberVisibilityCanBePrivate") // Reflection
+	var highlightCurrentCellWhenNotSelected: Boolean = true
+		set(value) {
+			if (field != value) {
+				field = value
+				contentsView.highlightCurrentCellWhenNotSelected = field
+				validate()
+			}
+		}
+
+	@Suppress("unused") // Reflection
+	var loadDataSource: Boolean
+		get() = model.loadDataSource
+		set(value) {
+			model.loadDataSource = value
+		}
+
+	@Suppress("unused") // Reflection
+	var memoryStorableId: MemoryStorableIdentification?
+		get() = model.memoryStorableUuid?.let {
+			MemoryStorableIdentification(it, model.findMemoryLibraryItem()?.name ?: Name("undefined"))
+		}
+		set(value) {
+			model.memoryStorableUuid = value?.uuid
+		}
+
+	/** ---- [Storable] interface */
+
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		writer.writeBoolean("showDisassembler", showDisassembler)
+		if (highlightCurrentCellWhenNotSelected) {
+			writer.writeBoolean("highlightCurrentCell", highlightCurrentCellWhenNotSelected)
+		}
+	}
+
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+
+		if (reader.hasAttribute("showDisassembler")) {
+			showDisassembler = reader.readBoolean("showDisassembler")
+		}
+		if (reader.hasAttribute("highlightCurrentCell")) {
+			highlightCurrentCellWhenNotSelected = reader.readBoolean("highlightCurrentCell")
+		}
+	}
+
+	/** ---- [ControlViewSource] */
+
+	override val controlId: String
+		get() {
+			// Don't use GraphElementView#getId() as part of the controlId, because that one might be changed
+			// when ControlViews (event as part of a wrapping Component) are added to a Drawing
+			return "rom:" + model.id
+		}
+
+
+
+	override val iconPath: String get() = BaseModule.properties.getString(PROP_ICON_PATH)
+
+	override fun createControlView(): ControlView<ROM> {
+		val clone = ROMView(styleProvider, model = model)
+		clone.isShowPortViews = false
+		copyControlViewProperties(this, clone)
+		return clone
+	}
+
+	/** ---- [AbstractAddressableView] */
+
+	override fun updatePortViewPositions() {
+		getPortView(model.getChipSelectInput())!!.setLocation(x + width / 2, height / 2)
+	}
+}

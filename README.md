@@ -45,7 +45,7 @@ Use the following JVM program arguments to set up your environment as developer:
 installer. Replace `<dir>` with the path to your local directory, e.g. `/Users/andreas/Antares-dev`.
 - `-sl`: Path to the checked-in standard libraries. Needed when updating standard library circuits. Replace `<projectRoot>` with the absolute path to your cloned project, e.g. `/Users/andreas/Documents/scorpion2/jabbah`.
 
-The main class to be used in run configurations (e.g. in IntelliJ) is `ch.scorpion.antares.AntaresSwing`.
+The main class to be used in run configurations (e.g. in IntelliJ) is `io.antarescircuit.antares.AntaresSwing`.
  
 ## Releasing
  
@@ -63,7 +63,7 @@ Increment the current release number and update it at the following
 * `gradle.properties`
 * `antares/shared/rsc/version.txt`
 * `Info.plist`
-* `ch.scorpion.antares.AbstractAntaresAppJs.VERSION`
+* `io.antarescircuit.antares.AbstractAntaresAppJs.VERSION`
  
 Commit and push to remote repository.
 
@@ -162,13 +162,3 @@ Installation takes a while. Antares is installed in `/opt/antares`. Start it in 
 user's 
 application 
 directory is `/home/<user>/Antares`.
-
-## Support
-
-### Retracing stack traces
-
-Stacktraces from Antares log files contain obfuscated identifiers. Use ProGuard's `retrace.sh
-` and the mapping file (collected after build) to translate a stack trace (which has been stored
- in a text file) into readable form.
- 
-`retrace.sh antares-0.2.0-proguard.map stacktrace.txt`

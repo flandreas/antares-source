@@ -1,0 +1,5 @@
+package io.antarescircuit.jabbah.graph.view.net.node
+
+import io.antarescircuit.jabbah.graph.view.net.netview.NetViewStyling
+
+interface NodeViewStyling : NetViewStyling

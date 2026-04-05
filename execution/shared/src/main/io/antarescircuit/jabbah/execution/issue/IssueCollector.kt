@@ -1,0 +1,86 @@
+package io.antarescircuit.jabbah.execution.issue
+
+import io.antarescircuit.jabbah.base.Properties
+import io.antarescircuit.jabbah.base.Issue
+import io.antarescircuit.jabbah.base.IssueImpl
+import io.antarescircuit.jabbah.base.IssueSeverity
+import io.antarescircuit.jabbah.base.event.EventBus
+import io.antarescircuit.jabbah.base.module.BaseModule
+import io.antarescircuit.jabbah.execution.scheduler.SchedulerActivationStateEvent
+
+/**
+ * Collects [Issue]s posted on [EventBus] to provide them to the rest of the system for displaying and resolving.
+ * Posts an [IssueCollectorEvent] whenever a new [Issue] had been collected, or when the collected [Issue]s
+ * had been cleared.
+ */
+class IssueCollector(
+	clearOnExecutionStart: Boolean = true,
+	private val eventBus: EventBus = BaseModule.eventBus
+) {
+
+	companion object {
+
+		/** The name of the [Int] property in [Properties] representing the maximum number of [Issue]s collected.*/
+		const val PROP_MAX_ISSUES_COUNT = "execution.issues.maxCount"
+	}
+
+	init {
+		if (clearOnExecutionStart) {
+			eventBus.register(SchedulerActivationStateEvent::class) {
+				if (it.scheduler.isActive) {
+					clear()
+				}
+			}
+		}
+		eventBus.register(IssueImpl::class) { handleNewIssue(it) }
+	}
+
+	/** Holds all collected [Issue]s. */
+	private val _issues = mutableListOf<Issue>()
+
+	private val maxIssuesCount: Int get() = BaseModule.properties.getInt(PROP_MAX_ISSUES_COUNT)
+
+	/** Returns the number of collected [Issue]s. */
+	val size: Int get() = _issues.size
+
+	/** Returns the collected [Issue]s in the order they occurred. */
+	val issues: List<Issue> get() = _issues
+
+	var maximumSeverity: IssueSeverity? = null
+		private set
+
+	/** Removes all collected [Issue]s. */
+	fun clear() {
+		_issues.clear()
+		updateMaximumSeverity()
+		eventBus.post(IssueCollectorEvent(this, null))
+	}
+
+	/** Returns the [Issue] at the specified index.*/
+	fun getIssue(index: Int): Issue = _issues.get(index)
+
+	private fun hasIssueWithSeverity(severity: IssueSeverity): Boolean = issues.any { it.severity == severity }
+
+	private fun handleNewIssue(issue: Issue) {
+		if (size < maxIssuesCount) {
+			_issues.add(issue)
+			updateMaximumSeverity()
+		}
+		eventBus.post(IssueCollectorEvent(this, issue))
+	}
+
+	private fun updateMaximumSeverity() {
+		maximumSeverity = when {
+			issues.isEmpty() -> null
+			hasIssueWithSeverity(IssueSeverity.Error) -> IssueSeverity.Error
+			else -> IssueSeverity.Warning
+		}
+	}
+}
+
+/**
+ * Posted by [IssueCollector] on its [EventBus] whenever a new [Issue] had been received,
+ * or when the collected [Issue]s had been cleared (in which case [issue] is `null`.
+ * Gets posted even if the configured maximum [Issue] count has already been reached.
+ */
+data class IssueCollectorEvent(val issueCollector: IssueCollector, val issue: Issue?)

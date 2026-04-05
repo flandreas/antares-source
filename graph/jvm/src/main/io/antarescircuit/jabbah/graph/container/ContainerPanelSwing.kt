@@ -1,0 +1,222 @@
+package io.antarescircuit.jabbah.graph.container
+
+import io.antarescircuit.jabbah.app.Application
+import io.antarescircuit.jabbah.app.ToolBar
+import io.antarescircuit.jabbah.base.ActionWrapperSwing
+import io.antarescircuit.jabbah.base.Translations
+import io.antarescircuit.jabbah.base.event.EventBus
+import io.antarescircuit.jabbah.base.module.BaseModule
+import io.antarescircuit.jabbah.base.swing.SidebarPane
+import io.antarescircuit.jabbah.base.swing.SidebarPaneContentImpl
+import io.antarescircuit.jabbah.base.swing.SidebarSplitPane
+import io.antarescircuit.jabbah.base.swing.UiUtil
+import io.antarescircuit.jabbah.base.ui.TitleBar
+import io.antarescircuit.jabbah.draw.view.CanvasJvm
+import io.antarescircuit.jabbah.draw.view.ContentViewManager
+import io.antarescircuit.jabbah.draw.view.DrawViewModule
+import io.antarescircuit.jabbah.draw.view.FocusPanel
+import io.antarescircuit.jabbah.edit.ComponentTransferHandler
+import io.antarescircuit.jabbah.edit.ComponentTransferable
+import io.antarescircuit.jabbah.edit.DrawingView
+import io.antarescircuit.jabbah.edit.figure.FigureGroupsPanel
+import io.antarescircuit.jabbah.edit.module.EditModuleJvm
+import io.antarescircuit.jabbah.edit.properties.ComponentPropertyPanelSwing
+import io.antarescircuit.jabbah.edit.properties.PropertySheetPanelFactory
+import io.antarescircuit.jabbah.graph.module.GraphModuleJvm
+import io.antarescircuit.jabbah.graph.ui.container.ContainerPanelController
+import io.antarescircuit.jabbah.graph.ui.container.ContainerPanelView
+import io.antarescircuit.jabbah.graph.ui.container.SymbolComparatorViewSwing
+import io.antarescircuit.jabbah.graph.view.GraphView
+import io.antarescircuit.jabbah.graph.view.module.GraphViewModuleJvm
+import java.awt.BorderLayout
+import java.awt.Dimension
+import java.awt.Frame
+import javax.swing.*
+
+class ContainerPanelSwing(
+	val controller: ContainerPanelController,
+	application: Application?,
+	propertySheetFactory: PropertySheetPanelFactory = EditModuleJvm.propertySheetPanelFactory,
+	eventBus: EventBus = BaseModule.eventBus,
+	viewManager: ContentViewManager = DrawViewModule.viewManager
+) : JPanel(), ContainerPanelView {
+
+	companion object {
+		private const val PROP_MAIN_SPLIT_POS = "containerPanel.mainSplitPos"
+		private const val PROP_LEFT_SPLIT_POS = "containerPanel.leftSplitPos"
+		private const val PROP_CONTENT_SPLIT_POS = "containerPanel.contentSplitPos"
+	}
+
+	/**
+	 * The [ContainerTreeView] containing all objects of the underlying [GraphView]
+	 * that have not yet been added to the [ContainerDrawing].
+	 */
+	private val treeView = GraphModuleJvm.containerTreeViewFactory.invoke(controller.mainGraphDrawingView)
+
+	private val propertyPanel: ComponentPropertyPanelSwing
+
+	/** Splits between [treeView] and the [FigureGroupsPanel]. */
+	private val contentSplitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
+
+	/** Splits between [contentSplitPane] and [propertyPanel]. */
+	private val leftSplitPane = JSplitPane(JSplitPane.VERTICAL_SPLIT)
+
+	/** Splits between [leftSplitPane] and the [DrawingView]'s canvas.*/
+	private val mainSplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
+
+	/** Displays the (inverted) value of [ContainerPanelController.isManualContainerCurrent] in the UI.*/
+	private val isGeneratedContainerCheckbox = JCheckBox(Translations.getString("graph.property.ContainerDrawing.generated"))
+
+	private val canvas = CanvasJvm(controller.drawingView)
+
+	private val symbolComparatorView = SymbolComparatorViewSwing(controller.symbolComparatorController)
+
+	private val rightSidebarPane: SidebarSplitPane = SidebarSplitPane(
+		location = SidebarPane.Location.Right,
+		mainContent = mainSplitPane,
+		settingBaseName = "containerPanel.rightSidebar",
+		contents = listOf(
+			SidebarPaneContentImpl(
+				Translations.getString("graph.container.symbolComparison.name"),
+				Translations.getString("graph.container.symbolComparison.desc"),
+				UiUtil.themedIcon("/img/compass-16.png"),
+				symbolComparatorView,
+				listOf(controller.symbolComparatorController.refreshAction, SymbolComparatorViewSwing.helpAction)
+			)
+		)
+	) {
+		controller.handleRightSidebarOpen(it)
+	}
+
+	val toolbars = GraphViewModuleJvm.containerToolBarBuilderFactory().buildToolBars(application, controller.editor, separator = true)
+
+	override val rightSidebarOpen: Boolean get() = rightSidebarPane.isOpen
+
+	init {
+		controller.view = this
+
+		propertyPanel = ComponentPropertyPanelSwing(controller.propertyPanelController, "container", propertySheetFactory)
+
+		treeView.transferHandler = ContainerTransferHandler()
+		(controller.editor.view.canvas as JPanel).transferHandler = ComponentTransferHandler(controller.editor, eventBus, ComponentTransferable.FLAVOR)
+
+		buildUI(viewManager)
+
+		toolbars.add(createMiscellaneousToolbar())
+	}
+
+	override fun dispose() {
+		treeView.dispose()
+		canvas.dispose()
+		rightSidebarPane.dispose()
+
+		BaseModule.settings.set(PROP_MAIN_SPLIT_POS, mainSplitPane.dividerLocation)
+		BaseModule.settings.set(PROP_LEFT_SPLIT_POS, leftSplitPane.dividerLocation)
+		BaseModule.settings.set(PROP_CONTENT_SPLIT_POS, contentSplitPane.dividerLocation)
+	}
+
+	fun initialize() {
+		controller.editor.view.initialize()
+	}
+
+	/** ---- [ContainerPanelView] */
+
+	override fun dataChanged() {
+		if (controller.graphView == null || controller.containerDrawing == null) {
+			removeAll()
+		} else {
+			if (componentCount == 0) {
+				add(rightSidebarPane, BorderLayout.CENTER)
+			}
+			treeView.update(
+				controller.graphView!!,
+				controller.containerDrawing!!,
+				controller.editable
+			)
+		}
+	}
+
+	override fun activeChanged() {
+		treeView.updateUI()
+	}
+
+	override fun updateIsManualContainer(isManualContainer: Boolean) {
+		isGeneratedContainerCheckbox.isSelected = !isManualContainer
+		treeView.isManualContainer = isManualContainer
+	}
+
+	override fun conformGenerateContainerDrawing(): Boolean =
+		JOptionPane.showConfirmDialog(
+			Frame.getFrames()[0],
+			Translations.getString("graph.action.containerLayout.question"),
+			name,
+			JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION
+
+	override fun generateContainerDrawing() {
+		treeView.containerTree?.generateContainerDrawing()
+	}
+
+	/** ---- [ContainerPanelSwing] */
+
+	private fun createMiscellaneousToolbar(): ToolBar {
+		val toolbar = ToolBar(null)
+		toolbar.addSeparator()
+
+		isGeneratedContainerCheckbox.isEnabled = false
+
+		// Create JPanel so that JButton displays a border
+		val panel = JPanel()
+		panel.layout = BoxLayout(panel, BoxLayout.LINE_AXIS)
+		panel.add(isGeneratedContainerCheckbox)
+		panel.add(Box.createHorizontalStrut(10))
+		panel.add(JButton(ActionWrapperSwing(controller.generateContainerAction)))
+		panel.add(Box.createHorizontalGlue())
+		toolbar.add(panel)
+
+		return toolbar
+	}
+
+	private fun buildUI(viewManager: ContentViewManager) {
+		layout = BorderLayout()
+
+		val treeViewScrollPanel = JScrollPane(treeView, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER)
+		treeViewScrollPanel.border = BorderFactory.createCompoundBorder(
+			BorderFactory.createEmptyBorder(1, 2, 0, 0),
+			treeViewScrollPanel.border
+		)
+		treeViewScrollPanel.minimumSize = Dimension(treeViewScrollPanel.minimumSize.width, 200)
+
+		val figuresPanel = FigureGroupsPanel()
+		val figuresScrollPane = JScrollPane(figuresPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER)
+		figuresScrollPane.minimumSize = Dimension(figuresScrollPane.width, 200)
+		figuresScrollPane.border = BorderFactory.createCompoundBorder(
+			BorderFactory.createEmptyBorder(1, 2, 0, 0),
+			figuresScrollPane.border
+		)
+
+		contentSplitPane.border = null
+		if (BaseModule.settings.containsKey(PROP_CONTENT_SPLIT_POS)) {
+			contentSplitPane.dividerLocation = BaseModule.settings.getInt(PROP_CONTENT_SPLIT_POS, 0)
+		}
+		contentSplitPane.add(treeViewScrollPanel)
+		contentSplitPane.add(figuresScrollPane)
+
+		propertyPanel.border = BorderFactory.createEmptyBorder(1, 2, 0, 0)
+
+		leftSplitPane.border = null
+		if (BaseModule.settings.containsKey(PROP_LEFT_SPLIT_POS)) {
+			leftSplitPane.dividerLocation = BaseModule.settings.getInt(PROP_LEFT_SPLIT_POS, 0)
+		}
+		leftSplitPane.add(contentSplitPane)
+		leftSplitPane.add(propertyPanel)
+
+		if (BaseModule.settings.containsKey(PROP_MAIN_SPLIT_POS)) {
+			mainSplitPane.dividerLocation = BaseModule.settings.getInt(PROP_MAIN_SPLIT_POS, 0)
+		}
+		mainSplitPane.add(leftSplitPane)
+		mainSplitPane.add(FocusPanel(controller.drawingView.canvas as JComponent, controller.drawingView, controller.drawingView.canvas as JComponent, viewManager))
+
+		add(TitleBar(Translations.getString("graph.container.title")), BorderLayout.NORTH)
+		add(rightSidebarPane, BorderLayout.CENTER)
+	}
+}

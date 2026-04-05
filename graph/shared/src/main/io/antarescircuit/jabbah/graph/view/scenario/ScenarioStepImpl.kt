@@ -1,0 +1,261 @@
+package io.antarescircuit.jabbah.graph.view.scenario
+
+import io.antarescircuit.jabbah.base.StringUtils
+import io.antarescircuit.jabbah.base.Translations
+import io.antarescircuit.jabbah.base.dsl.*
+import io.antarescircuit.jabbah.base.help.HelpId
+import io.antarescircuit.jabbah.base.logger
+import io.antarescircuit.jabbah.base.module.BaseModule
+import io.antarescircuit.jabbah.base.parser.Parser
+import io.antarescircuit.jabbah.base.resettableLazy
+import io.antarescircuit.jabbah.base.Bean
+import io.antarescircuit.jabbah.edit.DrawingView
+import io.antarescircuit.jabbah.edit.model.text.ScriptProperty
+import io.antarescircuit.jabbah.edit.model.text.description.*
+import io.antarescircuit.jabbah.execution.SignalHandler
+import io.antarescircuit.jabbah.graph.dsl.GraphDslModule
+import io.antarescircuit.jabbah.graph.model.graph.GraphActivationRecord
+import io.antarescircuit.jabbah.graph.view.GraphView
+import io.antarescircuit.jabbah.graph.view.ScenarioStep
+import io.antarescircuit.jabbah.io.*
+
+/**
+ * Standard implementation of the [ScenarioStep] interface.
+ */
+class ScenarioStepImpl(
+	initialName: String = "",
+	graphView: GraphView? = null
+) : AbstractStorable(), ScenarioStep, Namable, Describable, Bean {
+
+	companion object {
+		private val LOG by logger(ScenarioStepImpl::class)
+		val SCRIPTING_HELP_ID = HelpId("graph.scenarioStep.scripting")
+	}
+
+	/** The JavaScript predicate that determines whether this [ScenarioStep] is active. */
+	private var conditionScript: String? = null
+		set(value) {
+			field = value
+			conditionScriptASTCache.reset()
+		}
+
+	private val conditionScriptASTCache = resettableLazy {
+		conditionScript?.let {
+			LOG.trace("Parsing condition script of '${name.value}'")
+			createParser(it, null).parseCatching(conditionScriptMetaData.value)
+		}
+	}
+
+	private val conditionScriptMetaData = resettableLazy {
+		ScriptMetaData(
+			Translations.getString("scenarioStep.issueOrigin.name", name.value),
+			Translations.getString("graph.property.scenario.condition.name"))
+	}
+
+	private var conditionInterpreter: Interpreter? = null
+
+	/** The JavaScript expressions to be executed when this [ScenarioStep] is activated. */
+	private var onEntryScript: String? = null
+		set(value) {
+			field = value
+			onEntryScriptASTCache.reset()
+		}
+
+	private val onEntryScriptASTCache = resettableLazy {
+		onEntryScript?.let {
+			LOG.trace("Parsing onEntry script of '${name.value}'")
+			createParser(it, null).parseCatching(onEntryScriptMetaData.value)
+		}
+	}
+
+	private val onEntryScriptMetaData = resettableLazy {
+		ScriptMetaData(
+			Translations.getString("scenarioStep.issueOrigin.name", name.value),
+			Translations.getString("graph.property.scenario.onEntry.name"))
+	}
+
+	private var onEntryInterpreter: Interpreter? = null
+
+	/** The JavaScript expressions to be executed when this [ScenarioStep] is passivated. */
+	private var onExitScript: String? = null
+
+	private val onExitScriptASTCache = resettableLazy {
+		onExitScript?.let {
+			LOG.trace("Parsing onExit script of '${name.value}'")
+			createParser(it, null).parseCatching(onExitScriptMetaData.value)
+		}
+	}
+
+	private val onExitScriptMetaData = resettableLazy {
+		ScriptMetaData(
+			Translations.getString("scenarioStep.issueOrigin.name", name.value),
+			Translations.getString("graph.property.scenario.onExit.name"))
+	}
+
+	private var onExitInterpreter: Interpreter? = null
+
+	/** Caches the parsed highlight IDs of `highlightIds' as [Int].*/
+	private var highlightIntIdsCache: List<Int>? = null
+
+	/** ---- [Any] */
+
+	override fun toString(): String = name.value
+
+		/** ---- [Namable] interface */
+
+	override var name: Name by observableName(Name(initialName)) {
+		// MetaData depend on name
+		conditionScriptMetaData.reset()
+		onEntryScriptMetaData.reset()
+		onExitScriptMetaData.reset()
+	}
+
+	override var description: Description by observableDescription(Description(""))
+
+	/** ---- UI editable properties */
+
+	@Suppress("unused")
+	var conditionProperty: ScriptProperty
+		get() = ScriptProperty(conditionScript)
+		set(value) {
+			conditionScript = value.script
+		}
+
+	@Suppress("unused")
+	var onEntryProperty: ScriptProperty
+		get() = ScriptProperty(onEntryScript)
+		set(value) {
+			onEntryScript = value.script
+		}
+
+	@Suppress("unused")
+	var onExitProperty: ScriptProperty
+		get() = ScriptProperty(onExitScript)
+		set(value) {
+			onExitScript = value.script
+		}
+
+	/** ---- [ScenarioStep] interface */
+
+	override var id: Int = 0
+
+	override var graphView: GraphView? = graphView
+
+	override var highlightIds: String? = null
+		set(value) {
+			if (field != value) {
+				field = value
+				highlightIntIdsCache = parseHighlightIds(field)
+			}
+		}
+
+	override val condition: (SignalHandler, DrawingView<GraphView>) -> Boolean get() = { signalHandler, view ->
+		val scriptMetaData = ScriptMetaData(
+			Translations.getString("scenarioStep.issueOrigin.name", name.value),
+			Translations.getString("graph.property.scenario.condition.name")
+		)
+		GraphDslModule.scenarioExternalFunctions.bind(signalHandler, view.drawing, scriptMetaData.origin, scriptMetaData.context)
+		conditionInterpreter?.let {
+			it.interpretCatching(scriptMetaData, view.drawing.graph!!) != 0L
+		} ?: false
+	}
+
+	override fun dispose() { }
+
+	override fun executionStart(graphView: GraphView, signalHandler: SignalHandler) {
+		conditionScriptASTCache.value?.let {
+			conditionInterpreter = createInterpreter(graphView, it)
+		}
+		onEntryScriptASTCache.value?.let {
+			onEntryInterpreter = createInterpreter(graphView, it)
+		}
+		onExitScriptASTCache.value?.let {
+			onExitInterpreter = createInterpreter(graphView, it)
+		}
+	}
+
+	override fun activate(view: DrawingView<GraphView>) {
+		onEntryInterpreter?.interpretCatching(
+			ScriptMetaData(
+				Translations.getString("scenarioStep.issueOrigin.name", name.value),
+				Translations.getString("graph.property.scenario.onEntry.name")),
+			view.drawing.graph)
+	}
+
+	override fun passivate(view: DrawingView<GraphView>) {
+		onExitInterpreter?.interpretCatching(
+			ScriptMetaData(
+				Translations.getString("scenarioStep.issueOrigin.name", name.value),
+				Translations.getString("graph.property.scenario.onExit.name")),
+			view.drawing.graph)
+	}
+
+	override val highlightIdsAsInt: List<Int>
+		get() {
+			if (highlightIntIdsCache == null) {
+				highlightIntIdsCache = parseHighlightIds(highlightIds)
+			}
+			return highlightIntIdsCache!!
+		}
+
+	private fun parseHighlightIds(s: String?): List<Int> {
+		try {
+			val result = mutableListOf<Int>()
+			if (StringUtils.isNotEmpty(s)) {
+				s!!
+					.split(',')
+					.map { it.trim().toInt() }
+					.forEach { result.add(it) }
+			}
+			return result
+		} catch (e: Throwable) {
+			throw IllegalArgumentException("Illegal Highlight ID format in '$s'", e)
+		}
+	}
+
+	/** ---- [Storable] interface */
+
+	override fun write(writer: StoreWriter) {
+		writer.writeInt("id", id)
+		name.write("name", writer)
+		description.write("desc", writer)
+		highlightIds?.let { writer.writeString("highlightIds", it) }
+		conditionScript?.let { writer.writeString("condition", conditionScript!!) }
+		onEntryScript?.let { writer.writeString("onEntry", onEntryScript!!) }
+		onExitScript?.let { writer.writeString("onExit", onExitScript!!) }
+	}
+
+	override fun read(reader: StoreReader) {
+		id = reader.readInt("id")
+		name = Name.read("name", reader)
+		description = Description.read("desc", reader)
+		highlightIds = reader.readOptionalString("highlightIds")
+		conditionScript = reader.readOptionalString("condition")
+		onEntryScript = reader.readOptionalString("onEntry")
+		onExitScript = reader.readOptionalString("onExit")
+	}
+
+	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
+		// empty
+	}
+
+	/** ---- [ScenarioStepImpl] */
+
+	@Suppress("UNUSED_PARAMETER")
+	fun createParser(program: String, semanticAnalyser: SemanticAnalyser?): Parser =
+		BaseModule.parserFactory(program, BaseModule.semanticAnalyserFactory(createSymbolTable()))
+
+	private fun createInterpreter(graphView: GraphView, ast: Node): Interpreter =
+		BaseModule.interpreterFactory(ast, Memory(GraphActivationRecord(graphView.graph!!)))
+
+	private fun createSymbolTable(): SymbolTable {
+		val portSymbolTable = graphView!!.graph!!.symbolTable
+		return ScopedSymbolTable(
+			name = "ExternalFunctions",
+			scopeLevel = portSymbolTable.scopeLevel,
+			enclosingScope = portSymbolTable
+		).also {
+			GraphDslModule.scenarioExternalFunctions.defineIn(it)
+		}
+	}
+}

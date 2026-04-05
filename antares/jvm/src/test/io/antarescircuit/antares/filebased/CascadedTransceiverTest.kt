@@ -1,0 +1,19 @@
+package io.antarescircuit.antares.filebased
+
+import io.antarescircuit.jabbah.base.UUID
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+
+class CascadedTransceiverTest : AbstractFileBasedTest() {
+
+	@BeforeTest
+	fun openAndStartCircuit() {
+		openCircuit(UUID("c49c71d6-ba22-49ee-89e5-f59102d0bdba"))
+	}
+
+	@Test
+	fun shouldStart() {
+		startSimulation()
+		proceedUntilQueueIsEmpty()
+	}
+}

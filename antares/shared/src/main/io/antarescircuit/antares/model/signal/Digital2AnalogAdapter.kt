@@ -1,0 +1,35 @@
+package io.antarescircuit.antares.model.signal
+
+import io.antarescircuit.antares.model.analog.AnalogSignal
+import io.antarescircuit.jabbah.graph.model.GraphTypeSignalAdapter
+
+object Digital2AnalogAdapter : GraphTypeSignalAdapter<AnalogSignal, DigitalSignal> {
+
+	const val MIN_HIGH_VOLTAGE = 2.0
+
+	override fun convertIncomingSignal(signal: DigitalSignal?): AnalogSignal {
+		if (signal == null) {
+			return AnalogSignal.ZERO_VOLTAGE
+		}
+		if (signal.bitWidth.width > 1) {
+			return AnalogSignal.ZERO_VOLTAGE
+		}
+		return if (signal.isAllOf(Bit.True)) {
+			AnalogSignal.HIGH_VOLTAGE
+		} else {
+			AnalogSignal.ZERO_VOLTAGE
+		}
+	}
+
+	override fun convertOutgoingSignal(signal: AnalogSignal?): DigitalSignal {
+		if (signal == null) {
+			return DigitalSignalFactory.undefined(BitWidth.BW_1)
+		}
+		return DigitalSignalFactory.of(signal.voltage >= MIN_HIGH_VOLTAGE)
+	}
+}
+
+object Digital2DigitalAdapter : GraphTypeSignalAdapter<DigitalSignal, DigitalSignal> {
+	override fun convertIncomingSignal(signal: DigitalSignal?): DigitalSignal? = signal
+	override fun convertOutgoingSignal(signal: DigitalSignal?): DigitalSignal? = signal
+}

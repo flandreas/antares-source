@@ -1,0 +1,43 @@
+package io.antarescircuit.jabbah.graph.model.vertice
+
+import io.antarescircuit.jabbah.base.UUID
+import io.antarescircuit.jabbah.edit.model.text.description.Describable
+import io.antarescircuit.jabbah.edit.model.text.description.Name
+import io.antarescircuit.jabbah.execution.SignalHandler
+import io.antarescircuit.jabbah.graph.MetaGraphRepository
+import io.antarescircuit.jabbah.graph.model.*
+
+/**
+ * A [Vertice] that contains an inner [Graph], thus enabling recursively nested [Graph] structures.
+ *
+ * A [SubGraphVertice] doesn't perform any calculations by itself. Its [InputPort]s are
+ * [SubGraphInputPort]s that forward an arriving signal immediately to the corresponding [GraphInput] of the
+ * contained [Graph]. Symmetrically, its [OutputPort]s are [SubGraphOutputPort]s that receive their
+ * signals from the corresponding [GraphOutput]s of the contained [Graph], which they forward to the outer
+ * [Graph] through the connected [Net]s.
+ */
+interface SubGraphVertice : Vertice {
+
+    /** Holds the [UUID] of the [Graph] that this [SubGraphVertice] contains.*/
+    var graphUUID: UUID?
+
+	/** Contains the displayable name of the [Graph] represented by this [SubGraphVertice] as various translations.*/
+	var graphName: Name
+
+    /**
+     * Returns the [Graph] this [SubGraphVertice] contains, if already present.
+     * The [Graph] is not present before [GraphElement.bind]
+     */
+    fun getGraphIfPresent(): Graph?
+
+	/**
+	 * Returns the [Graph] this [SubGraphVertice] contains, if the reference is not broken,
+	 * or `null` if the reference is broken.
+	 */
+	fun getGraphIfNotBroken(): Graph?
+
+    /** Returns the contained [Graph] by loading and copying it from its [MetaGraphRepository] if not already loaded.*/
+    fun getGraph(): Graph
+
+    fun <T: Any> propagateOutput(outputPort: SubGraphOutputPort<T>, signal: T, signalHandler: SignalHandler)
+}

@@ -1,0 +1,272 @@
+package io.antarescircuit.antares.view.net.tunnel
+
+import io.antarescircuit.jabbah.base.AbstractAction
+import io.antarescircuit.jabbah.base.ActionWrapperSwing
+import io.antarescircuit.jabbah.base.Translations
+import io.antarescircuit.jabbah.base.event.ActionEvent
+import io.antarescircuit.jabbah.base.event.EventBus
+import io.antarescircuit.jabbah.base.invocation.InvocationHandler
+import io.antarescircuit.jabbah.base.module.BaseModule
+import io.antarescircuit.jabbah.base.swing.DataFormPanel
+import io.antarescircuit.jabbah.base.swing.DialogBuilder
+import io.antarescircuit.jabbah.base.swing.PlaceholderTextField
+import io.antarescircuit.jabbah.base.ui.UIBasics
+import io.antarescircuit.jabbah.draw.richtext.RichTextTableCellRenderer
+import io.antarescircuit.jabbah.graph.library.AbstractCurrentLibraryAction
+import java.awt.BorderLayout
+import java.awt.Component
+import java.awt.Dimension
+import java.awt.Frame
+import java.awt.event.MouseAdapter
+import javax.swing.*
+import javax.swing.event.DocumentEvent
+import javax.swing.event.DocumentListener
+import javax.swing.table.AbstractTableModel
+
+class GlobalTunnelAction(
+    eventBus: EventBus = BaseModule.eventBus
+) : AbstractCurrentLibraryAction(
+    "antares.globalTunnels.action",
+    eventBus
+) {
+    override val opensDialog: Boolean get() = true
+
+    init {
+        updateEnabled()
+    }
+
+    override fun execute(event: ActionEvent) {
+        InvocationHandler.invoke {
+            GlobalTunnelPanelSwing.showAsDialog(name)
+        }
+    }
+}
+
+class GlobalTunnelPanelSwing(
+    private val controller: GlobalTunnelPanelController,
+    private val closeHandler: () -> Unit
+): JPanel(), GlobalTunnelPanel {
+
+    companion object {
+        fun showAsDialog(
+            title: String,
+            parent: Frame = Frame.getFrames()[0]
+        ) {
+            val controller = GlobalTunnelPanelController()
+
+            DialogBuilder<GlobalTunnelPanelSwing>(parent, modal = false)
+                .title(title)
+                .content { dialog ->
+                    GlobalTunnelPanelSwing(controller) {
+                        dialog.dispose()
+                    }.also { it.controller.load() }
+                }
+                .defaultButton { it.closeButton }
+                .preferredSize(Dimension(800, 600))
+                .minimumSize(Dimension(200, 300))
+                .show()
+        }
+    }
+
+    private val closeAction = CloseAction()
+    private val closeButton = JButton(ActionWrapperSwing(closeAction))
+
+    private val tunnelNamesTable = buildTunnelNamesTable()
+    private val usagesTable = buildUsagesTable()
+
+    private val tunnelNameSearchField = PlaceholderTextField(
+        placeholder = Translations.getString("base.action.search.name"),
+        columns = 20,
+        showClearButton = true)
+
+    init {
+        controller.view = this
+        buildUI()
+    }
+
+    /** ---- [GlobalTunnelPanel] interface */
+
+    override fun dispose() {}
+
+    override fun updateTunnelNames() {
+        (tunnelNamesTable.model as AbstractTableModel).fireTableDataChanged()
+        usagesTable.model = UsageTableModel(emptyList())
+    }
+
+    override fun updateUsages() {
+        usagesTable.model = UsageTableModel(controller.getUsages())
+        usagesTable.columnModel.getColumn(0).preferredWidth = 50
+        usagesTable.columnModel.getColumn(1).preferredWidth = 50
+        usagesTable.columnModel.getColumn(2).preferredWidth = 50
+        usagesTable.columnModel.getColumn(3).preferredWidth = 300
+    }
+
+    /** ---- [GlobalTunnelPanelSwing] */
+
+    private fun buildUI() {
+        layout = BorderLayout(10, 20)
+        border = UIBasics.createDialogBorder()
+        add(buildContent(), BorderLayout.CENTER)
+        add(buildButtonPanel(), BorderLayout.SOUTH)
+
+        tunnelNamesTable.selectionModel.addListSelectionListener {
+            controller.selectedTunnelName = if (tunnelNamesTable.selectedRow >= 0) {
+                tunnelNamesTable.model.getValueAt(tunnelNamesTable.selectedRow, 0) as String
+            } else {
+                null
+            }
+        }
+
+        usagesTable.selectionModel.addListSelectionListener {
+            controller.selectedUsage = (usagesTable.model as UsageTableModel).getUsage(usagesTable.selectedRow)
+        }
+
+        usagesTable.addMouseListener(object : MouseAdapter() {
+            override fun mouseClicked(e: java.awt.event.MouseEvent?) {
+                if (e?.clickCount == 2) {
+                    controller.openSelectedUsage()
+                }
+            }
+        })
+
+        tunnelNameSearchField.document.addDocumentListener(object : DocumentListener {
+            override fun insertUpdate(e: DocumentEvent?) { search() }
+            override fun removeUpdate(e: DocumentEvent?) { search() }
+            override fun changedUpdate(e: DocumentEvent?) { search() }
+            private fun search() {
+                controller.filterTunnelNames(tunnelNameSearchField.text)
+            }
+        })
+    }
+
+    private fun buildContent(): JPanel {
+        val panel = JPanel(BorderLayout(0, 5))
+
+        val splitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
+        splitPane.dividerLocation = 150
+        splitPane.add(buildTunnelNamesPanel())
+        splitPane.add(buildUsagesPanel())
+
+        panel.add(buildFilterPanel(), BorderLayout.NORTH)
+        panel.add(splitPane, BorderLayout.CENTER)
+        return panel
+    }
+
+    private fun buildFilterPanel(): JPanel {
+        val form = DataFormPanel()
+        form.addLabeledRow(Translations.getString("antares.globalTunnels.tunnelName.name"), tunnelNameSearchField)
+        return form
+    }
+
+    private fun buildTunnelNamesPanel(): JComponent {
+        val scrollPane = JScrollPane(tunnelNamesTable)
+        scrollPane.horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED
+        scrollPane.verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
+        return scrollPane
+    }
+
+    private fun buildUsagesPanel(): JComponent {
+        val usagesScrollPane = JScrollPane(usagesTable)
+        usagesScrollPane.horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED
+        usagesScrollPane.verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
+        return usagesScrollPane
+    }
+
+    private fun buildButtonPanel(): JPanel {
+        val panel = JPanel()
+        panel.layout = BoxLayout(panel, BoxLayout.LINE_AXIS)
+        panel.add(JButton(ActionWrapperSwing(controller.copyToClipboardAction)))
+        panel.add(Box.createHorizontalGlue())
+        panel.add(JButton(ActionWrapperSwing(controller.openCircuitAction)))
+        panel.add(Box.createHorizontalStrut(UIBasics.BUTTON_GAP))
+        panel.add(closeButton)
+        return panel
+    }
+
+    private fun buildTunnelNamesTable(): JTable {
+        val table = JTable(TunnelNamesTableModel())
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION)
+        table.columnModel.getColumn(0).cellRenderer = TunnelNamesRenderer()
+        table.transferHandler = GlobalTunnelTransferHandler(controller)
+        table.dragEnabled = true
+        return table
+    }
+
+    private inner class TunnelNamesTableModel : AbstractTableModel() {
+
+        override fun getRowCount(): Int = controller.filteredTunnelNames.size
+
+        override fun getColumnCount(): Int = 1
+
+        override fun getColumnName(column: Int): String =
+            when (column) {
+                0 -> Translations.getString("antares.globalTunnels.tunnelName.name")
+                else -> throw IllegalArgumentException("Illegal column $column")
+            }
+
+        override fun getValueAt(rowIndex: Int, columnIndex: Int): Any =
+            when (columnIndex) {
+                0 -> controller.filteredTunnelNames[rowIndex]
+                else -> throw IllegalArgumentException("Illegal column $columnIndex")
+            }
+    }
+
+    private inner class TunnelNamesRenderer : RichTextTableCellRenderer(false) {
+        override fun getTableCellRendererComponent(table: JTable?, value: Any?, isSelected: Boolean, hasFocus: Boolean, row: Int, column: Int): Component {
+            val renderer = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column) as RichTextTableCellRenderer
+            renderer.horizontalAlignment = JLabel.LEFT
+            renderer.richText = controller.allRichTextTunnelNames[value as String]
+            return renderer
+        }
+    }
+
+    private fun buildUsagesTable(): JTable {
+        val table = JTable(UsageTableModel(emptyList()))
+        table.autoResizeMode = JTable.AUTO_RESIZE_OFF
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION)
+        return table
+    }
+
+    private class UsageTableModel(
+        private val usages: List<GlobalTunnelUsage>
+    ): AbstractTableModel() {
+
+        fun getUsage(row: Int): GlobalTunnelUsage? =
+            if (row <0) null else usages[row]
+
+        override fun getRowCount(): Int = usages.size
+
+        override fun getColumnCount(): Int = 4
+
+        override fun getColumnName(column: Int): String =
+            when (column) {
+                0 -> Translations.getString("antares.globalTunnels.flowDirection.out.name")
+                1 -> Translations.getString("antares.globalTunnels.flowDirection.in.name")
+                2 -> Translations.getString("antares.globalTunnels.flowDirection.inOut.name")
+                3 -> Translations.getString("antares.globalTunnels.circuitName.name")
+                else -> throw IllegalArgumentException("Illegal column $column")
+            }
+
+        override fun getValueAt(rowIndex: Int, columnIndex: Int): Any =
+            when (columnIndex) {
+                0 -> usages[rowIndex].outFlowDirection
+                1 -> usages[rowIndex].inFlowDirection
+                2 -> usages[rowIndex].inOutFlowDirection
+                3 -> usages[rowIndex].circuitName
+                else -> throw IllegalArgumentException("Illegal column $columnIndex")
+            }
+
+        override fun getColumnClass(columnIndex: Int): Class<*> =
+            when (columnIndex) {
+                0, 1, 2 -> Boolean::class.java
+                3 -> String::class.java
+                else -> throw IllegalArgumentException("Illegal column $columnIndex")
+        }
+    }
+
+    private inner class CloseAction : AbstractAction("base.action.close") {
+        override fun execute(event: ActionEvent) {
+            closeHandler()
+        }
+    }
+}

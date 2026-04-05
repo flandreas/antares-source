@@ -1,0 +1,263 @@
+package io.antarescircuit.antares.model.addressable
+
+import io.antarescircuit.antares.model.addressable.AddressableVertice.Companion.ADDRESS_PORT_NAME
+import io.antarescircuit.antares.model.addressable.AddressableVertice.Companion.CHIP_SELECT_PORT_NAME
+import io.antarescircuit.antares.model.addressable.AddressableVertice.Companion.DATA_PORT_NAME
+import io.antarescircuit.antares.model.gate.AbstractLogicGate
+import io.antarescircuit.antares.model.gate.CurrentUndefinedGateInputBehavior
+import io.antarescircuit.antares.model.port.DigitalPortImpl
+import io.antarescircuit.antares.model.signal.BitOperation
+import io.antarescircuit.antares.model.signal.BitWidth
+import io.antarescircuit.antares.model.signal.DigitalSignalFactory
+import io.antarescircuit.antares.model.signal.DigitalSignalRepresentation
+import io.antarescircuit.jabbah.base.*
+import io.antarescircuit.jabbah.base.help.HelpId
+import io.antarescircuit.jabbah.base.module.BaseModule
+import io.antarescircuit.jabbah.edit.model.text.TranslatableText
+import io.antarescircuit.jabbah.edit.model.text.Translation
+import io.antarescircuit.jabbah.execution.SignalHandler
+import io.antarescircuit.jabbah.execution.actor.Actor
+import io.antarescircuit.jabbah.graph.library.LibraryHolder
+import io.antarescircuit.jabbah.graph.library.LibraryModule
+import io.antarescircuit.jabbah.graph.model.GraphActorData
+import io.antarescircuit.jabbah.graph.model.PortType
+import io.antarescircuit.jabbah.graph.model.vertice.VerticeCalculator
+import io.antarescircuit.jabbah.io.Storable
+import io.antarescircuit.jabbah.io.StoreReader
+import io.antarescircuit.jabbah.io.StoreWriter
+import kotlin.math.max
+
+/**
+ * A read-only memory whose address width and data width can be specified.
+ */
+class ROM(
+	private val libraryHolder: LibraryHolder = LibraryModule.libraryHolder
+) : AbstractAddressable<ROM>(CALCULATOR) {
+
+	companion object {
+
+		private const val BASE_RESOURCE_KEY = "library.element.ROM"
+		private val TYPE get() = Translations.getString("$BASE_RESOURCE_KEY.name")
+		private val TYPE_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
+
+		private val ADDRESS_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.rom.addressPort.desc"))
+		private val CHIP_SELECT_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.rom.chipSelectPort.desc"))
+		private val DATA_PORT_DESC get() = TranslatableText(Translation.ofStaticKey("antares.rom.dataPort.desc"))
+
+		val DISASSEMBLER_HELP_ID = HelpId("antares.rom.disassembler")
+
+		val CALCULATOR = Calculator()
+
+		class Calculator : VerticeCalculator<ROM> {
+			override fun calculate(vertice: ROM, data: GraphActorData, signalHandler: SignalHandler) {
+				if (vertice.isSelected) {
+					var address = vertice.getAddressInput().getIncomingSignal()
+					if (address!!.isPartiallyUndefined) {
+						address = CurrentUndefinedGateInputBehavior.value.definedValue(vertice.addressWidth)
+					}
+					val addressInt = address.toInt()
+					if (addressInt == null) {
+						vertice.getDataPort().setOutgoingSignalBuffered(DigitalSignalFactory.error(vertice.dataWidth), signalHandler)
+					} else {
+						vertice.currentSelectedAddress = addressInt
+						vertice.getDataPort().setOutgoingSignalBuffered(DigitalSignalFactory.of(vertice.dataWidth, vertice.dataAt(addressInt)), signalHandler)
+					}
+				} else {
+					vertice.getDataPort().setOutgoingSignalBuffered(DigitalSignalFactory.undefined(vertice.dataWidth), signalHandler)
+				}
+			}
+		}
+	}
+
+	override val type: String get() = TYPE
+	override val typeDesc: String? get() = TYPE_DESC
+
+	/**
+	 * A newline-separated list of [Disassembler] configurations consisting of operations in the form "regex=op".
+	 */
+	var disassemblerConfig: String = ""
+		set(value) {
+			field = value
+			resetDisassembler()
+			disassembleAll()
+		}
+
+	/**
+	 * Represents the last value of the address input, but gets only updated when the chip is selected (CS).
+	 * Can be used for displaying the "current" (i.e. last) selected address.
+	 */
+	var currentSelectedAddress: Int = 0
+
+	/**
+	 * If `true`, the data in [dataSource] is loaded every time the simulation is started.
+	 * This eases editing data files with an external tool and eliminates the need to manually
+	 * import data after every change.
+	 * Not used if [memoryStorableUuid] is set.
+	 */
+	var loadDataSource: Boolean = false
+
+	/**
+	 * If set, the contents from the referenced [MemoryStorable] is loaded into [memory] every time
+	 * the simulation is started. Overwrites the property [loadDataSource].
+	 */
+	var memoryStorableUuid: UUID? = null
+
+	private val disassembler = Disassembler()
+
+	/** Maps a memory cell address to its disassembly string.*/
+	private val disassembly = mutableMapOf<Int, String>()
+
+	/** Contains the number of characters of the longest disassembly entry.*/
+	private var _disassemblyWidth: Int = 0
+
+	init {
+		propagationDelay = AbstractLogicGate.DEFAULT_PROPAGATION_DELAY
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = ADDRESS_PORT_NAME, bitWidth = BitWidth.BW_8, description = ADDRESS_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.INPUT, name = CHIP_SELECT_PORT_NAME, description = CHIP_SELECT_PORT_DESC))
+		addPort(DigitalPortImpl(portType = PortType.OUTPUT, name = DATA_PORT_NAME, bitWidth = BitWidth.BW_8,
+			signalRepresentation = DigitalSignalRepresentation.HEXADECIMAL, description = DATA_PORT_DESC, canBeUndefined = true))
+	}
+
+	/** ---- [Addressable] interface */
+
+	override val storesCells: Boolean get() = true
+
+	override val isSelected: Boolean get() = getChipSelectInput().getIncomingSignal() == DigitalSignalFactory.of(true)
+
+	override val currentAddress: Int get() = currentSelectedAddress
+
+	override val disassemblyWidth: Int get() = _disassemblyWidth
+
+	override fun clear() {
+		memory.clear()
+		resetDisassembly()
+		update()
+		notifyDataChanged(null, null, null)
+	}
+
+	override fun update() {
+		disassembleAll()
+		super.update()
+	}
+
+	override fun disassemblyAt(address: Int): String = disassembly.getOrElse(address) { "" }
+
+	/** ---- [Storable] */
+
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		writer.writeString("addressBitWidth", addressWidth.customName)
+		writer.writeString("dataBitWidth", dataWidth.customName)
+		writer.writeString("content", CompressedMemoryDump.write(memory, dataWidth))
+		if (StringUtils.isNotEmpty(disassemblerConfig)) {
+			writer.writeString("disassembler", disassemblerConfig)
+		}
+		writer.writeBoolean("loadDataSource", loadDataSource)
+		if (memoryStorableUuid != null) {
+			writer.writeString("memoryStorable", memoryStorableUuid.toString())
+		}
+	}
+
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+		addressWidth = BitWidth.withName(reader.readString("addressBitWidth"))
+		dataWidth = BitWidth.withName(reader.readString("dataBitWidth"))
+		CompressedMemoryDump.read(memory, reader.readString("content"))
+		disassemblerConfig = reader.readOptionalString("disassembler") ?: ""
+		if (reader.hasAttribute("loadDataSource")) {
+			loadDataSource = reader.readBoolean("loadDataSource")
+		}
+		if (reader.hasAttribute("memoryStorable")) {
+			memoryStorableUuid = UUID(reader.readString("memoryStorable"))
+		}
+	}
+
+	/** --- [Actor] interface */
+
+	override fun executionInitialize(signalHandler: SignalHandler) {
+		super.executionInitialize(signalHandler)
+		try {
+			if (memoryStorableUuid != null) {
+				loadFromMemoryStorable()
+			} else if (loadDataSource && StringUtils.isNotBlank(dataSource)) {
+				loadFromDataSource()
+			}
+		} catch (e: Exception) {
+			BaseModule.eventBus.post(IssueImpl(
+				IssueSeverity.Warning,
+				Translations.getString("ROM.loadDataSource.loadError.txt"),
+				e.message,
+				"ROM (ID $id)",
+				null)
+			)
+		}
+	}
+
+	private fun loadFromDataSource() {
+		System.getFileContents(dataSource!!)?.let {
+			validateData(it)
+			MemoryDump.read(memory, it)
+		}
+	}
+
+	private fun loadFromMemoryStorable() {
+		findMemoryLibraryItem()?.let {
+			val data = MemoryDump.write(it.storable.memory, dataWidth)
+			validateData(data)
+			MemoryDump.read(memory, data)
+		}
+	}
+
+	private fun validateData(data: String) {
+		val tempMemory = Memory()
+		MemoryDump.read(tempMemory, data)
+		validateDataBitWidth(tempMemory, dataWidth)
+	}
+
+	/** ---- [ROM]  */
+
+	fun read(address: Int): ULong = memory.read(address)
+
+	fun write(address: Int, value: ULong) {
+		memory.write(address, value)
+		disassembleCell(address)
+	}
+
+	private fun resetDisassembler() {
+		disassembler.reset()
+		resetDisassembly()
+	}
+
+	private fun resetDisassembly() {
+		_disassemblyWidth = 0
+		disassembly.clear()
+	}
+
+	private fun disassembleAll() {
+		resetDisassembly()
+		if (disassemblerConfig.isBlank()) {
+			return
+		}
+		disassembler.operations(disassemblerConfig)
+		memory.getNonZeroCells().forEach { disassembleCell(it.address) }
+	}
+
+	private fun disassembleCell(address: Int) {
+		val value = BitOperation.longToHex(memory.read(address)).padStart(dataWidth.width / 4, '0')
+		val d = disassembler.disassemble(value)
+		disassembly[address] = d
+		_disassemblyWidth = max(_disassemblyWidth, disassembly[address]!!.length)
+	}
+
+	fun findMemoryLibraryItem(): MemoryLibraryItem? {
+		libraryHolder.library.expandedImports.libraries.forEach { lib ->
+			val elem = lib.firstLocalItemOrNull { elem ->
+				elem is MemoryLibraryItem && elem.uuid.id == memoryStorableUuid!!.toString()
+			}
+			if (elem != null) {
+				return elem as MemoryLibraryItem
+			}
+		}
+		return null
+	}
+}

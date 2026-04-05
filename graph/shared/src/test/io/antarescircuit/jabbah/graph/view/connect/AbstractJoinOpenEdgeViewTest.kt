@@ -1,0 +1,48 @@
+package io.antarescircuit.jabbah.graph.view.connect
+
+import io.antarescircuit.jabbah.base.geom.Point2D
+import io.antarescircuit.jabbah.graph.health.GraphViewConsistencyCheck
+import io.antarescircuit.jabbah.graph.model.Net
+import io.antarescircuit.jabbah.graph.view.AbstractInputEventHandlerTest
+import io.antarescircuit.jabbah.graph.view.vertice.TestVerticeView
+import kotlin.test.assertEquals
+import kotlin.test.assertSame
+import kotlin.test.assertTrue
+
+abstract class AbstractJoinOpenEdgeViewTest() : AbstractInputEventHandlerTest() {
+
+    protected val v3: TestVerticeView
+
+    init {
+        v3 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v3", 200, 200))
+
+        builder.connectOutputOpen(v1, Point2D(150, 100))
+        builder.connectInputOpen(v3, Point2D(150, 200))
+        editor.commandManager.reset()
+        CurrentConnectMethod.defaultMethod = ConnectMethod.AutoLayout
+    }
+
+    protected fun assertJoined() {
+        val effV1 = builder.graphView.getWithId(1) as TestVerticeView
+        val effV3 = builder.graphView.getWithId(3) as TestVerticeView
+        val edgeViews = builder.graphView.getEdgeViews()
+
+        assertEquals(1, edgeViews.size)
+
+        // Check model consistency
+        assertEquals(1, builder.graph.elements.count { it is Net<*> })
+        assertSame(edgeViews[0].net, effV1.model.getOutput<Boolean>().net)
+        assertSame(edgeViews[0].net, effV3.model.getInput<Boolean>().net)
+
+        assertTrue(edgeViews[0].net!!.ports.contains(effV1.model.getOutput()))
+        assertTrue(edgeViews[0].net!!.ports.contains(effV3.model.getInput()))
+
+        // Check view geometry
+        assertEquals(Point2D(120, 100), edgeViews[0].polyline.getPointAt(0))
+        assertEquals(Point2D(150, 100), edgeViews[0].polyline.getPointAt(1))
+        assertEquals(Point2D(150, 200), edgeViews[0].polyline.getPointAt(2))
+        assertEquals(Point2D(200, 200), edgeViews[0].polyline.getPointAt(3))
+
+        GraphViewConsistencyCheck.execute(builder.graphView)
+    }
+}

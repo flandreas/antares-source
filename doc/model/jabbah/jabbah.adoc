@@ -31,7 +31,7 @@ project that uses `jabbah`. Because `jabbah` and `antares` are currently develop
 project for ease of development and integration. Once both modules are enough stable, `antares` will
 be removed from the `jabbah` project and put into its own project.
 
-Candidates star names for additional, future software packages in the `ch.scorpion` domain:
+Candidates star names for additional, future software packages in the `io.antarescircuit` domain:
 
 * Shaula
 * Sargas
@@ -105,24 +105,24 @@ As an example, the structure of the `draw` module is as follows:
    /jvm
       /src
          /demo
-            ch.scorpion.jabbah.draw
+            io.antarescircuit.jabbah.draw
          /main
-            ch.scorpion.jabbah.draw
+            io.antarescircuit.jabbah.draw
    /shared
       /src
          /demo
-            ch.scorpion.draw.hellopgraphics
+            io.antarescircuit.draw.hellopgraphics
          /main
-            ch.scorpion.jabbah.draw
+            io.antarescircuit.jabbah.draw
          /test
-            ch.scorpion.jabbah.draw
+            io.antarescircuit.jabbah.draw
 /draw-web
    /demo
       /hellographics
          /kotlin
-            ch.scorpion.jabbah.draw.hellographics
+            io.antarescircuit.jabbah.draw.hellographics
    /main
       /kotlin
-         ch.scorpion.jabbah.draw
+         io.antarescircuit.jabbah.draw
 ----
 All other modules follow the same structure.

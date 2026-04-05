@@ -1,0 +1,51 @@
+package io.antarescircuit.jabbah.graph.view.scenario
+
+import io.antarescircuit.jabbah.base.Bean
+import io.antarescircuit.jabbah.edit.BeanProvider
+import io.antarescircuit.jabbah.edit.Editor
+import io.antarescircuit.jabbah.edit.model.EditProperties
+import io.antarescircuit.jabbah.edit.properties.AbstractBeanInfo
+import io.antarescircuit.jabbah.edit.properties.CommandPropertySwing
+import io.antarescircuit.jabbah.graph.view.GraphView
+import com.l2fprod.common.propertysheet.Property
+
+
+@Suppress("unused")
+class ScenarioStepImplBeanInfo : AbstractBeanInfo<ScenarioStepImpl>() {
+
+	companion object {
+
+		private const val ID_SEPARATOR = '.'
+
+		private val scenarioStepProvider: BeanProvider = { e, ids ->
+			val intIds = ids.iterator().next().split(ID_SEPARATOR).map { it.toInt() }
+			listOf((e.drawing as GraphView).scenarios.get(intIds[0]).getStep(intIds[1]) as Bean)
+		}
+
+		private val name = EditProperties.name(baseKey = "graph.property.scenario.name", beanProvider = scenarioStepProvider)
+		private val description = EditProperties.description(baseKey = "graph.property.scenarioStep.description", beanProvider = scenarioStepProvider)
+		private val highlightIds = CommandPropertySwing("highlightIds", "graph.property.scenario.highlightIds", String::class.java, scenarioStepProvider)
+	}
+
+	override fun addProperties(bean: ScenarioStepImpl, editor: Editor, properties: MutableList<Property>) {
+		super.addProperties(bean, editor, properties)
+
+		val scenarios = (editor.drawing as GraphView).scenarios
+		val scenario = scenarios.getScenarios().first { it.getScenarioSteps().contains(bean) }
+		val ids = listOf("${scenario.id}$ID_SEPARATOR${bean.id}")
+
+		val condition = EditProperties.script("conditionProperty", "graph.property.scenario.condition",
+			beanProvider = scenarioStepProvider, bean::createParser, ScenarioStepImpl.SCRIPTING_HELP_ID)
+		val onEntry = EditProperties.script("onEntryProperty", "graph.property.scenario.onEntry",
+			beanProvider = scenarioStepProvider, bean::createParser, ScenarioStepImpl.SCRIPTING_HELP_ID)
+		val onExit = EditProperties.script("onExitProperty", "graph.property.scenario.onExit",
+			beanProvider = scenarioStepProvider, bean::createParser, ScenarioStepImpl.SCRIPTING_HELP_ID)
+
+		properties.add(name.bind(editor, ids, filter = { false }))
+		properties.add(description.bind(editor, ids))
+		properties.add(condition.bind(editor, ids))
+		properties.add(highlightIds.bind(editor, ids))
+		properties.add(onEntry.bind(editor, ids))
+		properties.add(onExit.bind(editor, ids))
+	}
+}

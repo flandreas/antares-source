@@ -1,0 +1,39 @@
+package io.antarescircuit.antares.dsl
+
+import io.antarescircuit.jabbah.base.HierarchyVisitor
+import io.antarescircuit.jabbah.base.dsl.*
+import io.antarescircuit.jabbah.base.parser.TextLocation
+import io.antarescircuit.jabbah.base.parser.Token
+
+class RaisedInput(location: TextLocation, var variable: Variable) : AbstractNode(location) {
+	override fun toString(): String = "^"
+
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		if (visitor.visitEnter(this)) {
+			variable.accept(visitor)
+		}
+		return visitor.visitLeave(this)
+	}
+}
+
+class BitAccess(location: TextLocation, token: Token<String>, val index: Node): Variable(location, token) {
+	override fun toString(): String = "${super.toString()}@"
+
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		if (visitor.visitEnter(this)) {
+			index.accept(visitor)
+		}
+		return visitor.visitLeave(this)
+	}
+}
+
+class LengthCast(location: TextLocation, token: Token<String>, val length: Node): Variable(location, token) {
+	override fun toString(): String = "${super.toString()}$"
+
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		if (visitor.visitEnter(this)) {
+			length.accept(visitor)
+		}
+		return visitor.visitLeave(this)
+	}
+}

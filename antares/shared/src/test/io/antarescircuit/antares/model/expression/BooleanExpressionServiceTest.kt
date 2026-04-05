@@ -1,0 +1,93 @@
+package io.antarescircuit.antares.model.expression
+
+import io.antarescircuit.antares.AntaresTestRule
+import io.antarescircuit.antares.model.signal.Bit.False
+import io.antarescircuit.antares.model.signal.Bit.True
+import io.antarescircuit.jabbah.base.dsl.SemanticError
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
+
+class BooleanExpressionServiceTest {
+
+	private val service = BooleanExpressionService()
+
+	init {
+		AntaresTestRule.configure()
+	}
+
+	@Test
+	fun shouldParseExpressions() {
+		val expressions = """
+			X = A * B' + A' * B
+			Y = B + 1
+		""".trimIndent()
+
+		val result = service.parseExpressions(expressions)
+
+		assertEquals(2, result.inputNames.size)
+		assertTrue(result.inputNames.contains("A"))
+		assertTrue(result.inputNames.contains("B"))
+		assertEquals(2, result.outputs.size)
+		assertTrue(result.outputs.keys.any { it.token.value == "X" })
+		assertTrue(result.outputs.keys.any { it.token.value == "Y" })
+	}
+
+	@Test
+	fun shouldRejectOutputAsInput() {
+		val expressions = """
+			X = A * B' + A' * Y
+			Y = B + 1
+		""".trimIndent()
+
+		assertFailsWith(SemanticError::class) {
+			service.parseExpressions(expressions)
+		}
+	}
+
+	@Test
+	fun shouldRejectOutputAsInput2() {
+		val expressions = """
+			X = A * B' + A' * B
+			Y = B + X
+		""".trimIndent()
+
+		assertFailsWith(SemanticError::class) {
+			service.parseExpressions(expressions)
+		}
+	}
+
+	@Test
+	fun shouldCreateTruthTable() {
+		val expressions = """
+			X = A * B' + A' * B
+			Y = B'
+		""".trimIndent()
+		val result = service.parseExpressions(expressions)
+
+		val truthTable = service.createTruthTable(result)
+
+		assertEquals(4, truthTable.rowsCount)
+		assertEquals(2, truthTable.inputColumnCount)
+		assertEquals(2, truthTable.outputColumnCount)
+		assertEquals(listOf(False, False, True, True), truthTable.getColumnValues(0))
+		assertEquals(listOf(False, True, False, True), truthTable.getColumnValues(1))
+		assertEquals(listOf(False, True, True, False), truthTable.getColumnValues(2))
+		assertEquals(listOf(True, False, True, False), truthTable.getColumnValues(3))
+	}
+
+	@Test
+	fun shouldCreateTruthTableWithNegatedOutputColumn() {
+		val expressions = """
+			X = A * B' + A' * B
+			Y' = B
+		""".trimIndent()
+		val result = service.parseExpressions(expressions)
+
+		val truthTable = service.createTruthTable(result)
+
+		assertEquals("X", truthTable.getColumnName(2))
+		assertEquals("!Y", truthTable.getColumnName(3))
+	}
+}

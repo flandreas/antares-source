@@ -1,0 +1,59 @@
+package io.antarescircuit.jabbah.base.module
+
+import io.antarescircuit.jabbah.base.*
+import io.antarescircuit.jabbah.base.dsl.*
+import io.antarescircuit.jabbah.base.event.EventBus
+import io.antarescircuit.jabbah.base.event.EventBusImpl
+import io.antarescircuit.jabbah.base.help.HelpProvider
+import io.antarescircuit.jabbah.base.sound.SoundEffects
+import io.antarescircuit.jabbah.base.time.ControlledTimeService
+import io.antarescircuit.jabbah.base.time.TimeService
+
+/**
+ * Module definitions for the [io.antarescircuit.jabbah.base] package.
+ */
+object BaseModule : AbstractModule() {
+
+	const val PROP_CONNECTION_TIMEOUT = "base.network.connectionTimeout"
+
+	val properties: Properties = Properties()
+
+    var settings: Settings = Settings()
+
+    var eventBus: EventBus = EventBusImpl()
+
+    var timeService: TimeService = ControlledTimeService()
+
+	var lexerFactory: LexerFactory = { program -> DslLexer(program) }
+
+	var semanticAnalyserFactory: SemanticAnalyserFactory = { symbolTable -> DslSemanticAnalyser(symbolTable) }
+
+	var parserFactory: ParserFactory = { program, semanticAnalyser -> DslParser(lexerFactory(program), semanticAnalyser) }
+
+	var storingActivationRecordFactory: ActivationRecordFactory = { name, parent -> StoringActivationRecord(name, parent) }
+
+	var interpreterFactory: InterpreterFactory = { node, memory -> Interpreter(node, memory) }
+
+	var dslGlobalFunctions: DslGlobalFunctions = DslGlobalFunctions()
+
+	var baseDocumentationUrl: (() -> String)? = null
+
+	lateinit var helpProvider: HelpProvider
+
+    override fun initialize() {
+	    Translations.addBundle("jabbah-base")
+	    fillProperties(properties)
+    }
+
+	override fun resetDependencies() {}
+
+	private fun fillProperties(properties: Properties) {
+		properties.set(Language.PROP_LANGUAGE, Language.English.code)
+		properties.set(LogSystem.PROP_LOG_LEVEL, LogLevel.Info.name)
+		properties.set(PROP_BEGINNER_HELP_TOOLTIP, true)
+		properties.set(DataLocation.PROP_DATA_LOCATION, DataLocation.Local.customName)
+		properties.set(PROP_CONNECTION_TIMEOUT, 10)
+		properties.set(SoundEffects.PROP_ENABLE_SOUND_EFFECTS, true)
+		SoundEffects.initialize(eventBus)
+	}
+}

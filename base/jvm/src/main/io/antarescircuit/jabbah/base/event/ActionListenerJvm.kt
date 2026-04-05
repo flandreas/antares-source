@@ -1,0 +1,17 @@
+package io.antarescircuit.jabbah.base.event
+
+import java.awt.event.ActionEvent
+
+/**
+ * An [ActionListener] adapter for the JVM.
+ */
+open class ActionListenerJvm(val handler: (io.antarescircuit.jabbah.base.event.ActionEvent) -> Unit) : java.awt.event.ActionListener {
+
+    /** ---- [java.awt.event.ActionListener] interface */
+
+    override fun actionPerformed(e: ActionEvent?) {
+        if (e != null) {
+            handler(ActionEvent(e, e.source, e.modifiers, e.actionCommand ?: "", e.`when`))
+        }
+    }
+}

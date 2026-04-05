@@ -1,0 +1,35 @@
+package io.antarescircuit.jabbah.graph.view.connect.highlight
+
+import io.antarescircuit.jabbah.base.geom.Point2D
+import io.antarescircuit.jabbah.draw.DrawContext
+import io.antarescircuit.jabbah.draw.drawable.AbstractRectangularUnzoomable
+import io.antarescircuit.jabbah.draw.graphics.Stroke
+import io.antarescircuit.jabbah.draw.style.Themes
+import io.antarescircuit.jabbah.graph.view.style.GraphTheme
+
+/**
+ * Draws a [ConnectionPointHighlight] as a red cross to indicate that the current location is basically
+ * a valid connection point, but the current state doesn't allow to make a connection.
+ */
+class ConnectionPointDenialCross: AbstractRectangularUnzoomable(ConnectionPointHighlight.Companion.SIZE_HALF), ConnectionPointHighlight {
+
+    companion object {
+        private val STROKE = Stroke(3.0f)
+        private const val SIZE_HALF = 10
+
+        fun drawAt(location: Point2D, context: DrawContext) {
+            context.g.color = Themes.get<GraphTheme>().error.foregroundColor
+            context.g.stroke = STROKE
+            context.g.drawLine(location.x - SIZE_HALF, location.y - SIZE_HALF, location.x + SIZE_HALF, location.y + SIZE_HALF)
+            context.g.drawLine(location.x + SIZE_HALF, location.y - SIZE_HALF, location.x - SIZE_HALF, location.y + SIZE_HALF)
+        }
+    }
+
+    override val lineWidth: Double get() = STROKE.width.toDouble()
+
+    override fun draw(context: DrawContext) {
+        drawAt(getViewRectangle().center, context)
+    }
+
+    override var alternativeView: Boolean = false
+}

@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
-
 val mockkVersion: String by extra
 val slf4jVersion: String by extra
 val commonsIoVersion: String by extra

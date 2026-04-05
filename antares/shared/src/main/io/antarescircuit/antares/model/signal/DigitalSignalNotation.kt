@@ -1,0 +1,97 @@
+package io.antarescircuit.antares.model.signal
+
+import io.antarescircuit.jabbah.base.EnumProperty
+import io.antarescircuit.jabbah.base.Properties
+import io.antarescircuit.jabbah.base.Translations
+
+enum class DigitalSignalNotation(
+	override val customName: String,
+	private val translationKey: String
+) : EnumProperty<DigitalSignalNotation> {
+
+	PREFIX("prefix", "element.signal.notation.prefix") {
+
+		override fun notate(representation: DigitalSignalRepresentation): String = representation.prefix
+
+		override fun notate(signal: DigitalSignal, representation: DigitalSignalRepresentation): String {
+			val r = representation.represent(signal)
+			return if (r.length > 1) {
+				"${representation.prefix}$r"
+			} else {
+				r
+			}
+		}
+	},
+
+	BASE_SUBSCRIPT("baseSubscript", "element.signal.notation.baseSubscript") {
+
+		override fun notate(representation: DigitalSignalRepresentation): String = createBaseSubscript(representation.base)
+
+		override fun notate(signal: DigitalSignal, representation: DigitalSignalRepresentation): String {
+			val r = representation.represent(signal)
+			return if (r.length > 1) {
+				"$r${createBaseSubscript(representation.base)}"
+			} else {
+				r
+			}
+		}
+	},
+
+	SUFFIX("suffix", "element.signal.notation.suffix") {
+
+		override fun notate(representation: DigitalSignalRepresentation): String = representation.suffix
+
+		override fun notate(signal: DigitalSignal, representation: DigitalSignalRepresentation): String {
+			val r = representation.represent(signal)
+			return if (r.length > 1) {
+				"$r${representation.suffix}"
+			} else {
+				r
+			}
+		}
+	},
+
+	SUFFIX_UPPERCASE("suffixUppercase", "element.signal.notation.suffixUppercase") {
+
+		override fun notate(representation: DigitalSignalRepresentation): String = representation.suffix.uppercase()
+
+		override fun notate(signal: DigitalSignal, representation: DigitalSignalRepresentation): String {
+			val r = representation.represent(signal)
+			return if (r.length > 1) {
+				"$r${representation.suffix.uppercase()}"
+			} else {
+				r
+			}
+		}
+	};
+
+	companion object {
+
+		/** The name of the [String] property in [Properties] designating the [DigitalSignalNotation]. */
+		const val PROP_DIGITAL_SIGNAL_NOTATION = "io.antarescircuit.antares.model.signal.notation"
+
+		// The code of the Unicode subscript character for the digit 0
+		private const val SUBSCRIPT_UNICODE_BASE = 0x2080
+
+		fun withName(customName: String): DigitalSignalNotation =
+			DigitalSignalNotation.entries.firstOrNull { it.customName == customName }
+            	?: throw IllegalArgumentException("unknown DigitalSignalNotation '$customName'")
+	}
+
+	abstract fun notate(representation: DigitalSignalRepresentation): String
+
+	abstract fun notate(signal: DigitalSignal, representation: DigitalSignalRepresentation): String
+
+	override fun toString(): String = Translations.getString(translationKey)
+
+	protected fun createBaseSubscript(base: Int): String {
+		val subscript = StringBuilder()
+		var b = base
+		do {
+			val digit = b.rem(10)
+			subscript.append((SUBSCRIPT_UNICODE_BASE + digit).toChar())
+			b = b.div(10)
+		} while (b > 0)
+		return subscript.toString().reversed()
+	}
+}

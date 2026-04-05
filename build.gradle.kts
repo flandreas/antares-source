@@ -1,22 +1,24 @@
+@file:OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalDistributionDsl::class)
+
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.gradle.internal.os.OperatingSystem
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDistributionDsl
 
 buildscript {
 	repositories {
 		mavenCentral()
-	}
-	dependencies {
-		classpath("com.guardsquare:proguard-gradle:7.5.0")
 	}
 }
 
 val kotlinVersion: String by extra
 
 plugins {
-	kotlin("multiplatform") version "2.0.0" apply false
+	kotlin("multiplatform") version "2.3.20" apply false
 	kotlin("plugin.serialization") version "1.9.23" apply false
 	id("maven-publish")
-	id("dev.mokkery") version "2.5.1" apply false
+	id("dev.mokkery") version "3.3.0" apply false
 }
 
 val version_project: String by project
@@ -47,7 +49,7 @@ allprojects {
 	group = group_project
 	version = version_project
 
-	buildDir = File(rootProject.projectDir, "build/${project.name}")
+	layout.buildDirectory = File(rootProject.projectDir, "build/${project.name}")
 }
 
 val kotlinWrappersVersion: String by extra
@@ -77,28 +79,34 @@ subprojects {
 	configure<KotlinMultiplatformExtension> {
 		withSourcesJar(publish = false)
 
-		jvm {
-
-			// by default kotlin uses JavaVersion 1.6
-			val main by compilations.getting {
-				kotlinOptions {
-					jvmTarget = JavaVersion.VERSION_1_8.toString()
-					freeCompilerArgs = listOf(
-						// https://youtrack.jetbrains.com/issue/KT-37435
-						"-Xno-optimized-callable-references",
+		targets.configureEach {
+			compilations.configureEach {
+				compileTaskProvider.get().compilerOptions {
+					freeCompilerArgs.addAll(
 						"-Xexpect-actual-classes",
-						"-Xinline-classes")
+						//"-Xes-long-as-bigint"
+					)
 				}
 			}
-			val test by compilations.getting {
-				kotlinOptions {
-					jvmTarget = JavaVersion.VERSION_1_8.toString()
-				}
+		}
+
+		jvm {
+
+			compilerOptions {
+				jvmTarget.set(JvmTarget.JVM_1_8)
+				freeCompilerArgs.addAll(
+					// https://youtrack.jetbrains.com/issue/KT-37435
+					"-Xno-optimized-callable-references"
+				)
 			}
 		}
 
 		if (OperatingSystem.current().isMacOsX) {
 			js(IR) {
+				compilerOptions {
+					freeCompilerArgs.add("-Xes-long-as-bigint")
+				}
+
 				browser {
 					commonWebpackConfig {
 						cssSupport {
@@ -130,7 +138,8 @@ subprojects {
 					implementation("com.soywiz.korlibs.korte:korte:$korteVersion")
 				}
 			}
-			val commonTest by getting {
+
+			commonTest {
 				kotlin.srcDir("shared/src/test")
 				dependencies {
 					implementation(kotlin("test-common"))
@@ -197,7 +206,8 @@ subprojects {
 					}
 				}
 			}
-			val jvmTest by getting {
+
+			jvmTest {
 				kotlin.srcDir("jvm/src/test")
 				dependencies {
 					implementation(kotlin("test"))
@@ -206,11 +216,11 @@ subprojects {
 			}
 
 			if (OperatingSystem.current().isMacOsX) {
-				val jsMain by getting {
+				jsMain {
 					kotlin.srcDir("js/src/kotlin/main")
 					resources.srcDir("js/rsc")
 				}
-				val jsTest by getting {
+				jsTest {
 					kotlin.srcDir("js/src/kotlin/test")
 					dependencies {
 						implementation(kotlin("test-js"))

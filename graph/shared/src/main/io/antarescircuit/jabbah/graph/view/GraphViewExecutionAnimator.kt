@@ -1,0 +1,312 @@
+package io.antarescircuit.jabbah.graph.view
+
+import io.antarescircuit.jabbah.animation.AnimationModule
+import io.antarescircuit.jabbah.animation.AnimationTask
+import io.antarescircuit.jabbah.animation.AnimationTaskAdapter
+import io.antarescircuit.jabbah.base.event.EventBus
+import io.antarescircuit.jabbah.base.event.EventHandler
+import io.antarescircuit.jabbah.base.time.SystemSpeed
+import io.antarescircuit.jabbah.base.logger
+import io.antarescircuit.jabbah.base.module.BaseModule
+import io.antarescircuit.jabbah.draw.drawable.SynchronizedGlowAnimation
+import io.antarescircuit.jabbah.draw.drawable.Transparent
+import io.antarescircuit.jabbah.draw.drawable.TransparentAnimation
+import io.antarescircuit.jabbah.draw.style.DrawStyleModule
+import io.antarescircuit.jabbah.draw.style.StyleProvider
+import io.antarescircuit.jabbah.edit.DrawingView
+import io.antarescircuit.jabbah.edit.DrawingViewContent
+import io.antarescircuit.jabbah.edit.module.EditModule
+import io.antarescircuit.jabbah.execution.SignalHandler
+import io.antarescircuit.jabbah.execution.actor.Actor
+import io.antarescircuit.jabbah.execution.actor.ActorData
+import io.antarescircuit.jabbah.execution.actor.ActorListener
+import io.antarescircuit.jabbah.execution.scheduler.*
+import io.antarescircuit.jabbah.execution.speed.SystemSpeedCategory
+import io.antarescircuit.jabbah.execution.speed.SystemSpeedCategoryEvent
+import io.antarescircuit.jabbah.graph.GraphApplicationContextHolder
+import io.antarescircuit.jabbah.graph.model.*
+import io.antarescircuit.jabbah.graph.view.module.GraphViewModule
+
+/**
+ * Performs animations of [GraphElementView] execution and signal flow across [EdgeView]s.
+ *
+ * [GraphViewExecutionAnimator] registers itself as [ActorListener] on all [GraphElement]s of the current [Graph].
+ * Since this happens only for visible [GraphView]s, soft breakpoints are only active for displayed [Graph]s.
+ *
+ * A [GraphViewExecutionAnimator] is active if either the current [GraphViewAnimationType] is [GraphViewAnimationType.Animation],
+ * which requires signal flow animation, or if [SystemSpeed.isPaused], which requires [TransparentAnimation]
+ * of executing [GraphElement]s.
+ *
+ * This class should be part of the [io.antarescircuit.jabbah.graph] module, but classes needed for signal flow animation
+ * have not yet been generalized.
+ *
+ * @param actorListener the [ActorListener] that has been registered with the [Actor]s
+ */
+class GraphViewExecutionAnimator(
+	private val actorListener: ActorListener,
+	private val drawingView: DrawingView<GraphView>,
+	private val applicationContextHolder: GraphApplicationContextHolder,
+	private val animationFactory: GraphViewExecutionAnimationFactory = GraphViewModule.graphViewExecutionAnimationFactory,
+	private val eventBus: EventBus = BaseModule.eventBus,
+	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
+) {
+
+	companion object {
+		private val LOG by logger(GraphViewExecutionAnimator::class)
+
+		/**
+		 * Maps a [Scheduler] to the state whether in a simulation run the first [EdgeView] animation has already
+		 * been requested. Used to avoid that once the first animation was done, inner [GraphView] can't suddenly decide
+		 * that they skip the animation due to start-up time not yet completely over.
+		 */
+		private val edgeViewAnimated = mutableMapOf<Scheduler, Boolean>()
+	}
+
+	data class NetAnimationData(
+		val actorData: ActorData,
+		val animations: MutableList<EdgeViewNetAnimation> = mutableListOf()
+	)
+
+	/**
+	 * Maps a [Net] to all [EdgeViewNetAnimation]s currently running on it. Note that there can be
+	 * more than one animation for the same [Net] if multiple [OutputPort]s assert their startup values to the same bus.
+	 */
+	private val netAnimationMap = mutableMapOf<Net<*>, NetAnimationData>()
+
+	/** Listens for changes of the [SchedulerActivationState].*/
+	private val schedulerActivationStateHandler: EventHandler<SchedulerActivationStateEvent> = {
+		if (it.scheduler === applicationContextHolder.scheduler) {
+			if (!it.scheduler.isActive) {
+				// TODO Should stop only animations related to this GraphViewAnimator
+				applicationContextHolder.animator.cancelAllTasks()
+				stopAllVerticeViewActingAnimations()
+				netAnimationMap.clear()
+
+				// Make sure that all animation objects are really gone
+				drawingView.animationContainer.clear()
+			} else {
+				edgeViewAnimated.clear()
+			}
+		}
+	}
+
+	private val systemSpeedCategoryHandler: EventHandler<SystemSpeedCategoryEvent> = {
+		if (applicationContextHolder.scheduler.isActive && it.source === applicationContextHolder.currentSystemSpeedCategory) {
+			if (it.oldValue == SystemSpeedCategory.Explore && it.newValue.ordinal < it.oldValue.ordinal) {
+				stopAllVerticeViewActingAnimations()
+				interruptAllNetActingAnimations()
+			}
+		}
+	}
+
+	private val schedulerSingleStepModeHandler: EventHandler<SchedulerSingleStepModeEvent> = {
+		if (it.scheduler === applicationContextHolder.scheduler) {
+			stopAllVerticeViewActingAnimations()
+		}
+	}
+
+	init {
+		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
+		eventBus.register(SchedulerSingleStepModeEvent::class, schedulerSingleStepModeHandler)
+		eventBus.register(SystemSpeedCategoryEvent::class, systemSpeedCategoryHandler)
+	}
+
+	fun dispose() {
+		eventBus.unregister(schedulerActivationStateHandler)
+		eventBus.unregister(schedulerSingleStepModeHandler)
+		eventBus.unregister(systemSpeedCategoryHandler)
+	}
+
+	fun actingRequested(actor: Actor, data: ActorData) {
+		if (actor is Net<*>) {
+			handleNetActingRequested(actor, data as GraphActorData)
+		} else if ((data as GraphActorData).isInput) {
+			handleGraphElementActingRequested(actor as GraphElement)
+		}
+	}
+
+	fun acted(actor: Actor, signalHandler: SignalHandler, data: GraphActorData) {
+		if (actor is Net<*>) {
+			handleNetActed(actor, data)
+		} else {
+			handleGraphElementActed(actor as GraphElement)
+			actor.actingVisualized(signalHandler, actorListener, data)
+		}
+	}
+
+	/**
+	 * Remove all animation highlighting artifacts from the animation container of the
+	 * specified [DrawingViewContent]. Called after execution has been stopped.
+	 */
+	fun cleanup(content: DrawingViewContent<*>) {
+		content.animationContainer.clear()
+	}
+
+	private fun handleNetActingRequested(net: Net<*>, actorData: GraphActorData) {
+		// The acting of a Net has been requested, because an Output of a Vertice has asserted
+		// a signal onto the net (which is still buffered in the Net and not yet forwarded).
+		// Setup an animation of the signal that will flow along the corresponding EdgeView,
+		// if requested by current settings.
+
+		applicationContextHolder.scheduler.logActorTrace(net) { "handleNetActingRequested" }
+
+		val changedPort = actorData.immediatePort!!
+
+		if (!requireEdgeViewAnimation(net)) {
+			return
+		}
+
+		val edgeView = drawingView.drawing.getEdgeView(changedPort)
+			?: return
+
+		val signal = edgeView.model.signalBuffer
+
+		changedPort.captureTemporarySignal()
+
+		// Creating the EdgeViewNetAnimation will make it visible in the View, but the animation
+		// is not started yet. The outgoing EdgeAnimationView waits at the OutputPortView
+		// until the scheduling slot is scheduled by the Scheduler, which will be notified
+		// by receiving a SchedulerEvent.
+		//
+		// Note that it is the responsibility of the EdgeViewNetAnimation to continue
+		// the simulation by calling SignalHandler#actingDone() for the Net after the animation
+		// has finished.
+
+		registerAnimation(
+			net,
+			actorData,
+			animationFactory.createEdgeViewNetAnimation(
+				actorListener = actorListener,
+				actorData = actorData,
+				startEdgeView = edgeView,
+				startPort = changedPort,
+				drawingView = drawingView,
+				animator = applicationContextHolder.animator,
+				scheduler = applicationContextHolder.scheduler,
+				styleProvider = styleProvider)
+		)
+
+		edgeViewAnimated[applicationContextHolder.scheduler] = true
+
+		if (applicationContextHolder.scheduler.isSingleStepMode) {
+			EditModule.attentionDrawerFactory.invoke(signal).drawAttentionTo(
+				edgeView.getConnectionEndpointType(edgeView.getConnection(changedPort)!!)!!.getLocation(edgeView),
+				drawingView,
+				AnimationModule.constantSpeedAnimator
+			)
+		}
+
+		applicationContextHolder.scheduler.logActorTrace(edgeView.model) { "Registered EdgeView animation for EdgeView '${edgeView.id}'" }
+	}
+
+	private fun handleNetActed(net: Net<*>, data: GraphActorData) {
+		// The simulation of a Net has been scheduled by the Scheduler. Lookup all pending net animations
+		// and start them. If there are no pending net animations, the acted Net belongs to a SubVertice
+		// whose views are not displayed by the GraphView managed by this GraphViewAnimator.
+
+		applicationContextHolder.scheduler.logActorTrace(net) { "handleNetActed" }
+
+		if (!requireEdgeViewAnimation(net)) {
+			net.actingVisualized(applicationContextHolder.scheduler, actorListener, data)
+			return
+		}
+
+		// Fixed bug #697: If the Net has started acting in mode "Observe" or "Use", there is no pending
+		// animation, and acted() will be skipped, resulting in the Net never receive actingVisualized.
+		// Therefore, also check for "no animation" in map
+		if (netAnimationMap[net] == null || netAnimationMap[net]?.animations?.isEmpty() == true) {
+			net.actingVisualized(applicationContextHolder.scheduler, actorListener, data)
+			return
+		}
+
+		netAnimationMap[net]?.animations?.forEach {
+			applicationContextHolder.scheduler.logActorTrace(net) { "Starting EdgeViewNetAnimation" }
+			val task = it.start()
+			task.addListener(object : AnimationTaskAdapter() {
+				override fun ended(task: AnimationTask, canceled: Boolean) {
+					data.changedPort?.resetTemporarySignal()
+					unregisterAnimation(net, it)
+				}
+			})
+		}
+	}
+
+	private fun handleGraphElementActingRequested(graphElement: GraphElement) {
+		applicationContextHolder.scheduler.logActorTrace(graphElement) { "handleGraphElementActingRequested" }
+		if (requireVerticeViewGlowAnimation()) {
+			startVerticeViewActingAnimation(graphElement)
+		}
+	}
+
+	private fun handleGraphElementActed(graphElement: GraphElement) {
+		applicationContextHolder.scheduler.logActorTrace(graphElement) { "handleGraphElementActed" }
+		if (requireVerticeViewGlowAnimation()) {
+			stopVerticeViewActingAnimation(graphElement)
+		}
+	}
+
+	/**
+	 * Start an animation indicating that acting has been requested and this [Actor] waits to be scheduled
+	 * by the [Scheduler]
+	 */
+	private fun startVerticeViewActingAnimation(graphElement: GraphElement) {
+		val elementViews = drawingView.drawing.getElementViews(graphElement)
+		if (elementViews.size == 1 && elementViews[0] is VerticeView) {
+			val verticeView = elementViews[0] as VerticeView<*>
+			if (verticeView is Transparent) {
+				LOG.trace("Start VerticeView acting animation on ${verticeView::class.simpleName} with ID ${verticeView.id}")
+				SynchronizedGlowAnimation.add(verticeView)
+			}
+		}
+	}
+
+	private fun stopVerticeViewActingAnimation(graphElement: GraphElement) {
+		val elementViews = drawingView.drawing.getElementViews(graphElement)
+		if (elementViews.size == 1 && elementViews[0] is Transparent) {
+			val verticeView = elementViews[0] as VerticeView<*>
+			if (verticeView is Transparent) {
+				SynchronizedGlowAnimation.remove(verticeView)
+			}
+		}
+	}
+
+	private fun stopAllVerticeViewActingAnimations() {
+		SynchronizedGlowAnimation.removeAll()
+	}
+
+	private fun interruptAllNetActingAnimations() {
+		// Copy set to avoid ConcurrentModificationException
+		netAnimationMap.entries.toSet().forEach { entry ->
+			val net = entry.key
+			val actorData = netAnimationMap[net]!!.actorData
+			// Stopping the animation leads to deregister in the animation list. Create a copy of the List to avoid ConcurrentModificationException.
+			entry.value.animations.toList().forEach { animation ->
+				animation.stop()
+			}
+			net.actingVisualized(applicationContextHolder.scheduler, actorListener, actorData)
+		}
+		netAnimationMap.clear()
+	}
+
+	private fun registerAnimation(net: Net<*>, actorData: ActorData, animation: EdgeViewNetAnimation) {
+		applicationContextHolder.scheduler.logActorTrace(net) { "register net animation" }
+		netAnimationMap.getOrPut(net) { NetAnimationData(actorData) }.animations.add(animation)
+	}
+
+	private fun unregisterAnimation(net: Net<*>, animation: EdgeViewNetAnimation) {
+		applicationContextHolder.scheduler.logActorTrace(net) { "unregister net animation" }
+		netAnimationMap[net]?.animations?.remove(animation)
+		if (netAnimationMap[net]?.animations.isNullOrEmpty()) {
+			netAnimationMap.remove(net)
+		}
+	}
+
+	/** Determines whether [EdgeViewNetAnimation] is required based on the current system settings.*/
+	private fun requireEdgeViewAnimation(net: Net<*>): Boolean =
+		(edgeViewAnimated[applicationContextHolder.scheduler] == true || applicationContextHolder.scheduler.executionTime > (drawingView.drawing.graph!!.startupTime ?: 0))
+			&& applicationContextHolder.currentSystemSpeedCategory.systemSpeedCategory == SystemSpeedCategory.Explore
+			&& SignalUtil.differ(net.signal, net.signalBuffer)
+
+	/** Determines whether an animation is to be shown while [VerticeView]s are calculating. */
+	private fun requireVerticeViewGlowAnimation(): Boolean = applicationContextHolder.scheduler.isSingleStepMode
+}

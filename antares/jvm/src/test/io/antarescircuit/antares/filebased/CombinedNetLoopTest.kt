@@ -1,0 +1,23 @@
+package io.antarescircuit.antares.filebased
+
+import io.antarescircuit.antares.model.inout.DigitalCircuitInOut
+import io.antarescircuit.jabbah.base.UUID
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+
+class CombinedNetLoopTest : AbstractFileBasedTest() {
+
+	private lateinit var a: DigitalCircuitInOut
+
+	@BeforeTest
+	fun openAndStartCircuit() {
+		openCircuit(UUID("cf4af97f-9053-4805-a7d2-9b5f923019bf"))
+
+		a = openedCircuitView.graph!!.withId(4) as DigitalCircuitInOut
+	}
+
+	@Test
+	fun shouldAvoidCombinedNetLoop() {
+		startSimulation()
+	}
+}

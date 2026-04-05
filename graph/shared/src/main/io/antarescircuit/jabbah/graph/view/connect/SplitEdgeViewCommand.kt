@@ -1,0 +1,90 @@
+package io.antarescircuit.jabbah.graph.view.connect
+
+import io.antarescircuit.jabbah.base.geom.Point2D
+import io.antarescircuit.jabbah.base.logger
+import io.antarescircuit.jabbah.edit.Command
+import io.antarescircuit.jabbah.edit.Editor
+import io.antarescircuit.jabbah.edit.command.AbstractCommand
+import io.antarescircuit.jabbah.graph.view.ConnectableView
+import io.antarescircuit.jabbah.graph.view.EdgeView
+import io.antarescircuit.jabbah.graph.view.GraphView
+import io.antarescircuit.jabbah.graph.view.net.edge.EdgeViewEndpointType
+import io.antarescircuit.jabbah.graph.view.net.node.NodeView
+import io.antarescircuit.jabbah.graph.view.port.PortView
+
+interface NewEdgeViewAtSplitProvider {
+	fun provide(): EdgeView<*>
+}
+
+/**
+ * Creates a clone of [newEdgeView] and adds that one to the [GraphView], which is necessary to add the original
+ * value when being re-executed after undo.
+ */
+class NewEdgeViewAtSplitCloneProvider(
+	private val newEdgeView: EdgeView<*>
+) : NewEdgeViewAtSplitProvider {
+	override fun provide(): EdgeView<*> = newEdgeView.doClone() as EdgeView<*>
+}
+
+class NewEdgeViewAtSplitRetrieveProvider(
+	private val editor: Editor,
+	private val newEdgeViewId: Int
+) : NewEdgeViewAtSplitProvider {
+	override fun provide(): EdgeView<*> = editor.drawing.getWithId(newEdgeViewId) as EdgeView<*>
+}
+
+/**
+ * A [Command] that splits an [EdgeView] by inserting a [NodeView], to which an additional
+ * [EdgeView] is connected (which is open-ended).
+ *
+ * Retrieve the effectively added [EdgeView] in [addedNewEdgeView].
+ */
+class SplitEdgeViewCommand(
+	editor: Editor,
+	baseKey: String = "graph.command.splitEdge",
+	private val connectService: GraphViewConnectService,
+	private val splitEdgeViewId: Int,
+	private val segmentIndex: Int,
+	private val splitLocation: Point2D,
+	private val newEdgeViewProvider: NewEdgeViewAtSplitProvider,
+	private val newEdgeViewEndpointType: EdgeViewEndpointType,
+	private val targetConnectableViewId: Int?,
+	private val targetPortId: Int?,
+	var points: List<Point2D>? = null
+) : AbstractCommand(baseKey, editor) {
+
+	companion object {
+		private val LOG by logger(SplitEdgeViewCommand::class)
+	}
+
+	private val graphView: GraphView get() = editor!!.drawing as GraphView
+	private val splitEdgeView: EdgeView<Any> get() = editor!!.drawing.getWithId(splitEdgeViewId) as EdgeView<Any>
+	private val targetConnectableView: ConnectableView? get() = targetConnectableViewId?.let { editor!!.drawing.getWithId(it) as ConnectableView }
+	private val targetPortView: PortView<*>? get() = targetPortId?.let { targetConnectableView!!.getPortView(targetConnectableView!!.getPort(it)!!) }
+
+	lateinit var result: SplitEdgeViewResult<Any>
+	lateinit var addedNewEdgeView: EdgeView<Any>
+
+	override fun getDetailedDescription(): String =
+		"${super.getDetailedDescription()} edgeViewId:$splitEdgeViewId segmentIndex:$segmentIndex target:$targetConnectableViewId:$targetPortId"
+
+	override fun execute() {
+		LOG.trace("Execute on GraphView ${graphView.hashCode().toString(16)}")
+
+		addedNewEdgeView = newEdgeViewProvider.provide() as EdgeView<Any>
+
+		result = connectService.split(
+			graphView,
+			splitEdgeView,
+			segmentIndex,
+			splitLocation,
+			addedNewEdgeView,
+			newEdgeViewEndpointType,
+			targetPortView as PortView<Any>?)
+
+		points?.let {
+			addedNewEdgeView.setLaidOutPoints(it, false)
+			addedNewEdgeView.layout.isAdjusted = true
+		}
+	}
+}

@@ -1,0 +1,45 @@
+package io.antarescircuit.antares.standardlibrary
+
+import io.antarescircuit.antares.AbstractCircuitTest
+import io.antarescircuit.antares.AntaresApplication
+import io.antarescircuit.jabbah.app.AbstractDesktopApplication
+import io.antarescircuit.jabbah.app.CurrentApplicationVersion
+import io.antarescircuit.jabbah.graph.library.*
+import io.antarescircuit.jabbah.graph.library.dictionary.LibraryDictionaryService
+import io.antarescircuit.jabbah.graph.library.dictionary.ResourceLibraryDictionaryPersistenceService
+import io.antarescircuit.jabbah.graph.view.GraphView
+
+/**
+ * Base class for simulation tests of circuits using components from
+ * Antares' standard library.
+ */
+abstract class AbstractStandardLibraryBasedCircuitTest : AbstractCircuitTest() {
+
+	companion object {
+		fun setupLibrary() {
+			CurrentApplicationVersion.version = AbstractDesktopApplication.readVersion()
+
+			LibraryModule.DEF_LIBRARY_UUID = AntaresApplication.DEF_LIBRARY_UUID
+			LibraryModule.systemLibraryPersistenceService = ResourceLibraryPersistenceService()
+			LibraryModule.systemLibraryDictionaryService = LibraryDictionaryService(
+				ResourceLibraryDictionaryPersistenceService()
+			)
+			LibraryModule.libraryManagementService = LibraryManagementService()
+
+			LibraryModule.libraryHolder.l = LibraryModule.libraryService.loadLibrary(
+				LibraryIdentification(LibraryModule.DEF_LIBRARY_UUID, null), isSystem = true)
+		}
+	}
+
+	private lateinit var _circuitView: GraphView
+
+	protected abstract fun createCircuit(): GraphView
+
+	override fun getCircuitView(): GraphView = _circuitView
+
+	override fun setup() {
+		super.setup()
+		setupLibrary()
+		_circuitView = createCircuit()
+	}
+}

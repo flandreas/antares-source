@@ -1,0 +1,344 @@
+package io.antarescircuit.antares.view.output
+
+import io.antarescircuit.antares.model.input.Terminal
+import io.antarescircuit.antares.model.input.TerminalRow
+import io.antarescircuit.antares.view.Handedness
+import io.antarescircuit.antares.view.port.AbstractAntaresPortView
+import io.antarescircuit.antares.view.port.DigitalPortView
+import io.antarescircuit.antares.view.style.AntaresTheme
+import io.antarescircuit.jabbah.base.event.EventBus
+import io.antarescircuit.jabbah.base.geom.Direction
+import io.antarescircuit.jabbah.base.geom.Point2D
+import io.antarescircuit.jabbah.base.geom.RoundRectangle2D
+import io.antarescircuit.jabbah.base.module.BaseModule
+import io.antarescircuit.jabbah.draw.DrawContext
+import io.antarescircuit.jabbah.draw.graphics.DropShadow
+import io.antarescircuit.jabbah.draw.graphics.LogicalFontFamily
+import io.antarescircuit.jabbah.draw.graphics.TextRenderInfoFactory
+import io.antarescircuit.jabbah.draw.style.DrawStyleModule
+import io.antarescircuit.jabbah.draw.style.StyleProvider
+import io.antarescircuit.jabbah.draw.style.Themes
+import io.antarescircuit.jabbah.edit.Look
+import io.antarescircuit.jabbah.edit.model.Size
+import io.antarescircuit.jabbah.graph.GraphApplicationContext
+import io.antarescircuit.jabbah.graph.model.Graph
+import io.antarescircuit.jabbah.graph.model.vertice.VerticeLink
+import io.antarescircuit.jabbah.graph.view.*
+import io.antarescircuit.jabbah.graph.view.port.PortLabelPosition
+import io.antarescircuit.jabbah.graph.view.vertice.AbstractVerticeView
+import io.antarescircuit.jabbah.graph.view.vertice.SubGraphVerticeView
+import io.antarescircuit.jabbah.io.Storable
+import io.antarescircuit.jabbah.io.StoreReader
+import io.antarescircuit.jabbah.io.StoreWriter
+import kotlin.math.abs
+import kotlin.math.round
+
+/** A view representation of a [Terminal].*/
+class TerminalView(
+	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+	model: Terminal = Terminal(),
+	lightColor: LightColor? = null,
+	handedness: Handedness = Handedness.LEFT,
+	eventBus: EventBus = BaseModule.eventBus
+) : LabeledRectangularVerticeView<Terminal>(
+	styleProvider,
+	model,
+	RoundRectangle2D(0.0, 0.0, 100.0, 100.0, ROUND_ARC.toDouble(), ROUND_ARC.toDouble())
+), ControlView<Terminal>, ControlViewSource<Terminal> {
+
+	companion object {
+		const val PROP_ICON_PATH = "io.antarescircuit.antares.view.input.TerminalView.iconPath"
+
+		private val DEFAULT_SIZE = Size.MEDIUM
+
+		private const val BORDER_WIDTH = 2 * Look.SCALE
+		private const val SCREEN_H_INSET = 3
+		private const val ROUND_ARC = 10
+	}
+
+	var size: Size = DEFAULT_SIZE
+		set(value) {
+			if (field != value) {
+				invalidate()
+				field = value
+				updateGeometry()
+			}
+		}
+
+	/** The color used for drawing the text. If `null`, the text color from [AntaresTheme]'s screen property is used.*/
+	var lightColor: LightColor? by ControlViewSourceProperty(lightColor, eventBus)
+
+	var handedness: Handedness = handedness
+		set(value) {
+			if (value != field) {
+				invalidate()
+				field = value
+				updateGeometry()
+				invalidate()
+			}
+		}
+
+	init {
+		initExternalLabel(orientation = Direction.NORTH)
+		modelExchanged(null)
+	}
+
+	override val relativeExternalLabelLocation: Point2D
+		get() = Point2D(AbstractAntaresPortView.LENGTH + calculatedWidth / 2, y - LABEL_DIST)
+
+	private val sizeFactor: Float
+		get() = when (size) {
+			Size.SMALL -> 0.75f
+			Size.MEDIUM -> 1f
+			Size.LARGE -> 1.5f
+		}
+
+	private val textFont get() = font.deriveFont(LogicalFontFamily.MONOSPACED).deriveFont(round(font.size * sizeFactor).toInt())
+
+	private val textRenderInfo get() = TextRenderInfoFactory.measureSingleLineText("A", textFont)
+
+	private val cellHeight get() = textRenderInfo.textBounds.height
+
+	private val cellWidth get() = textRenderInfo.textBounds.width
+
+	private val calculatedWidth get() = BORDER_WIDTH + SCREEN_H_INSET + columnsCount * cellWidth + SCREEN_H_INSET + BORDER_WIDTH
+
+	private val calculatedHeight get() = BORDER_WIDTH + rowsCount * cellHeight + BORDER_WIDTH
+
+	/** ---- UI properties */
+
+	var rowsCount: Int
+		get() = model.rowsCount
+		set(value) {
+			if (value != rowsCount) {
+				invalidate()
+				model.rowsCount = value
+				updateGeometry()
+				invalidate()
+			}
+		}
+
+	var columnsCount: Int
+		get() = model.columnsCount
+		set(value) {
+			if (value != columnsCount) {
+				invalidate()
+				model.columnsCount = value
+				updateGeometry()
+				invalidate()
+			}
+		}
+
+	/** ---- [Storable] */
+
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		writer.writeString("size", size.customName)
+		writer.writeString("handedness", handedness.customName)
+		lightColor?.let { writer.writeString("lightColor", it.customName) }
+	}
+
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+		size = Size.withName(reader.readString("size"))
+		if (reader.hasAttribute("handedness")) {
+			handedness = Handedness.withName(reader.readString("handedness"))
+		}
+		if (reader.hasAttribute("lightColor")) {
+			lightColor = LightColor.withName(reader.readString("lightColor"));
+		}
+	}
+
+	/** ---- [AbstractGraphElementView] */
+
+	override fun modelExchanged(oldModel: Terminal?) {
+		super.modelExchanged(oldModel)
+
+		addPortView(DigitalPortView(
+			styleProvider = styleProvider,
+			port = model.clockInput,
+			portLabelPosition = PortLabelPosition.EXTERNAL))
+
+		addPortView(DigitalPortView(
+			styleProvider = styleProvider,
+			port = model.dataInput,
+			portLabelPosition = PortLabelPosition.EXTERNAL,
+			showBitWidthAnnotation = false))
+
+		addPortView(DigitalPortView(
+			styleProvider = styleProvider,
+			port = model.writeEnableInput,
+			portLabelPosition = PortLabelPosition.EXTERNAL))
+
+		addPortView(DigitalPortView(
+			styleProvider = styleProvider,
+			port = model.clearInput,
+			portLabelPosition = PortLabelPosition.EXTERNAL))
+
+		updateGeometry()
+	}
+
+	override fun updateGeometry() {
+		invalidate()
+		setBounds(
+			x = AbstractAntaresPortView.LENGTH.toDouble(),
+			y = -calculatedHeight + 3 * Look.SCALE.toDouble(),
+			w = calculatedWidth,
+			h = calculatedHeight
+		)
+
+		when (handedness) {
+			Handedness.RIGHT -> {
+				with(getPortView(model.dataInput)!!) {
+					direction = Direction.EAST
+					location = Point2D(AbstractAntaresPortView.LENGTH + width, -4.0 * Look.SCALE)
+				}
+				with(getPortView(model.clockInput)!!) {
+					direction = Direction.EAST
+					location = Point2D(AbstractAntaresPortView.LENGTH + width, 0.0)
+				}
+				with(getPortView(model.writeEnableInput)!!) {
+					direction = Direction.SOUTH
+					location = Point2D(AbstractAntaresPortView.LENGTH + width - 7.0 * Look.SCALE, 3.0 * Look.SCALE)
+				}
+				with(getPortView(model.clearInput)!!) {
+					direction = Direction.SOUTH
+					location = Point2D(AbstractAntaresPortView.LENGTH + width - 3.0 * Look.SCALE, 3.0 * Look.SCALE)
+				}
+			}
+			Handedness.LEFT -> {
+				with(getPortView(model.dataInput)!!) {
+					direction = Direction.WEST
+					location = Point2D(AbstractAntaresPortView.LENGTH, -4 * Look.SCALE)
+				}
+				with(getPortView(model.clockInput)!!) {
+					direction = Direction.WEST
+					location = Point2D(AbstractAntaresPortView.LENGTH, 0)
+				}
+				with(getPortView(model.writeEnableInput)!!) {
+					direction = Direction.SOUTH
+					location = Point2D(AbstractAntaresPortView.LENGTH + 3 * Look.SCALE, 3 * Look.SCALE)
+				}
+				with(getPortView(model.clearInput)!!) {
+					direction = Direction.SOUTH
+					location = Point2D(AbstractAntaresPortView.LENGTH + 7 * Look.SCALE, 3 * Look.SCALE)
+				}
+			}
+		}
+		super.updateGeometry()
+	}
+
+	/** ---- [AbstractVerticeView] */
+
+	override fun drawImpl(context: DrawContext) {
+		val oldStylable = context.stylable
+
+		context.stylable = this
+		drawImplBeforeBorder(context)
+		context.stylable = oldStylable
+
+		drawBody(context)
+		drawScreen(context)
+		drawText(context)
+
+		context.stylable = this
+		drawImplAfterBorder(context)
+		context.stylable = oldStylable
+	}
+
+	private fun drawBody(context: DrawContext) {
+		if (shadow) {
+			DropShadow.draw(context, transparency) {
+				context.g.fillRoundRect(x.toInt(), y.toInt(), width.toInt(), height.toInt(), ROUND_ARC, ROUND_ARC)
+			}
+		}
+
+		drawFill(context, rectangle, if (context.useContextColors) transparent.applyTo(context.chooseBackground(backgroundColor)) else transparent.applyTo(propertiesBackgroundColor))
+		drawStroke(context, rectangle, getApplicableForegroundColor(context), stroke)
+	}
+
+	private fun drawScreen(context: DrawContext) {
+		val contentColor = if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+			Themes.get<AntaresTheme>().screen
+		} else {
+			Themes.get<AntaresTheme>().background.color
+		}
+		context.g.color = transparent.applyTo(context.choose(contentColor).backgroundColor)
+		context.g.fillRect(
+			rectangle.x + BORDER_WIDTH, rectangle.y + BORDER_WIDTH,
+			rectangle.width - 2 * BORDER_WIDTH, rectangle.height - 2 * BORDER_WIDTH)
+
+		context.g.color = getApplicableForegroundColor(context)
+		context.g.drawRect(
+			rectangle.x + BORDER_WIDTH, rectangle.y + BORDER_WIDTH,
+			rectangle.width - 2 * BORDER_WIDTH, rectangle.height - 2 * BORDER_WIDTH)
+	}
+
+	private fun drawText(context: DrawContext) {
+		if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
+			context.g.font = textFont
+			context.g.color = transparent.applyTo(lightColor?.onColor ?: Themes.get<AntaresTheme>().screen.textColor)
+
+			var y = rectangle.minY.toInt() + BORDER_WIDTH + textRenderInfo.ascent
+			for (row in 0 until model.displayedRowsCount) {
+				context.g.drawString(rowToString(model.getRow(row)), BORDER_WIDTH + rectangle.minX.toInt() + SCREEN_H_INSET, y.toInt())
+				y += cellHeight
+			}
+		}
+	}
+
+	private fun rowToString(row: TerminalRow): String {
+		val builder = StringBuilder()
+		row.iterator().forEach { builder.append(it) }
+		return builder.toString()
+	}
+
+	/** ---- [ControlViewSource] */
+
+
+	override val iconPath: String get() = BaseModule.properties.getString(PROP_ICON_PATH)
+
+	override val controlId: String get() = "terminal:" + model.id
+
+	override val controlName: String get() = super.controlName
+
+	override fun createControlView(): ControlView<Terminal> {
+		val clone = TerminalView(styleProvider, model)
+		clone.isShowPortViews = false
+		clone.location = Point2D.ZERO
+		copyControlViewProperties(this, clone)
+		return clone
+	}
+
+	/** ---- [ControlView] */
+
+	override var isActiveControlView: Boolean = false
+
+	override val mirrorWidth: Double get() = 2 * AbstractAntaresPortView.LENGTH + width
+
+	override val mirrorHeight: Double get() = abs(abs(bounds.maxY) - abs(bounds.minY))
+
+	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
+		this.model = link.getLinkedObject(startGraph) as Terminal
+	}
+
+	override fun sourcePropertiesChanged(source: ControlViewSource<Terminal>) {
+		if (source is TerminalView) {
+			copyControlViewProperties(source, this)
+		}
+	}
+
+	override fun writeModelProperties(writer: StoreWriter) {
+		writer.writeInt("rowsCount", rowsCount)
+		writer.writeInt("columnsCount", columnsCount)
+	}
+
+	override fun readModelProperties(reader: StoreReader) {
+		rowsCount = reader.readInt("rowsCount")
+		columnsCount = reader.readInt("columnsCount")
+	}
+
+	private fun copyControlViewProperties(source: TerminalView, dest: TerminalView) {
+		dest.size = source.size
+	}
+}

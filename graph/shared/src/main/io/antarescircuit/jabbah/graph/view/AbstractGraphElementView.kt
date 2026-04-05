@@ -1,0 +1,143 @@
+package io.antarescircuit.jabbah.graph.view
+
+import io.antarescircuit.jabbah.base.LongValue
+import io.antarescircuit.jabbah.draw.style.StyleProvider
+import io.antarescircuit.jabbah.draw.style.StyleType
+import io.antarescircuit.jabbah.edit.Component
+import io.antarescircuit.jabbah.edit.Drawing
+import io.antarescircuit.jabbah.edit.model.AbstractComponent
+import io.antarescircuit.jabbah.graph.model.GraphElement
+import io.antarescircuit.jabbah.graph.model.GraphElementAdapter
+import io.antarescircuit.jabbah.graph.model.GraphElementEvent
+import io.antarescircuit.jabbah.io.*
+
+/**
+ * Abstract base implementation of the [GraphElementView] interface.
+ * @param T the type of the model [GraphElement]
+ */
+abstract class AbstractGraphElementView<T : GraphElement>(
+	styleProvider: StyleProvider,
+	styleType: StyleType,
+	model: T
+) : AbstractComponent(styleProvider, styleType), GraphElementView<T> {
+
+	companion object {
+		const val STORABLE_MODEL_ID = "modelId"
+		const val BASE_KEY_MODEL_ID = "graph.property.modelId"
+		const val BASE_KEY_PROPAGATION_DELAY = "graph.property.propagationDelay"
+	}
+
+	/** Listens for changes of the model [GraphElement] and updates this view accordingly.*/
+	private val modelListener = ModelListener()
+
+	/** Determines whether this [AbstractGraphElementView] is currently resolving persistent references.*/
+	protected var isResolving: Boolean = false
+		private set
+
+	/** ---- [GraphElementView] interface */
+
+	override var model: T = model
+		set(value) {
+			val oldModel = field
+			field = value
+			modelExchanged(oldModel)
+		}
+
+	init {
+		model.addGraphElementListener(modelListener)
+	}
+
+	override fun dispose() {
+		model.removeGraphElementListener(modelListener)
+	}
+
+	/** ---- UI related properties */
+
+	val modelId: Int
+		get() = model.id
+
+	var propagationDelay: LongValue
+		get() = model.propagationDelay
+		set(value) {
+			model.propagationDelay = value
+		}
+
+	/** ---- [Storable] interface */
+
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		writer.writeInt(STORABLE_MODEL_ID, writer.provideIdentity(model))
+	}
+
+	override fun read(reader: StoreReader) {
+		super.read(reader)
+		readModelId(reader)
+	}
+
+	protected fun readModelId(reader: StoreReader) {
+		if (reader.hasAttribute(STORABLE_MODEL_ID)) {
+			val modelId = reader.readInt(STORABLE_MODEL_ID)
+			if (modelId >= 0) {
+				// There are Storables like ControlView wrapped in ControlViewComponent that don't have
+				// a model at design time. They are linked to their Model when execution is started.
+				reader.requestResolution(this, Reference(
+					name = STORABLE_MODEL_ID,
+					referenceId = modelId,
+					resolveAfter = listOf(modelId)
+				))
+			}
+		}
+	}
+
+	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
+		isResolving = true
+		super.resolve(reference, referenceResolver)
+		if (STORABLE_MODEL_ID == reference.name) {
+			val storable: Storable? = referenceResolver.getStorable(reference.referenceId)
+			if (storable is GraphElement) {
+				model = storable as T
+			}
+		}
+		isResolving = false
+	}
+
+	override fun bind(graphView: GraphView, deep: Boolean) { }
+
+	/** ---- [Component] interface */
+
+	override val fixStyleType: Boolean get() = true
+
+	override fun beforePaste(drawing: Drawing<Component>) {
+		super<AbstractComponent>.beforePaste(drawing)
+		if (drawing is GraphView) {
+			drawing.graph?.let {
+				model.beforePaste(it)
+			}
+		}
+	}
+
+	/** ---- [AbstractGraphElementView] */
+
+	/**
+	 * Called by this class whenever the underlying model [GraphElement] has been exchanged, for example during
+	 * deserializing from persistent store (which must use the default constructor).
+	 * @param oldModel the former [GraphElement] model instance.
+	 */
+	protected open fun modelExchanged(oldModel: T?) {
+		oldModel?.removeGraphElementListener(modelListener)
+		model.addGraphElementListener(modelListener)
+	}
+
+	protected open fun handleStateChanged(event: GraphElementEvent) {
+		invalidate()
+		// TODO This leads to a repainting of the entire GraphView.
+		// It should be sufficient to repaint the GraphView after a complete execution cycle
+		validate()
+	}
+
+	private inner class ModelListener : GraphElementAdapter() {
+		override fun stateChanged(e: GraphElementEvent) {
+			handleStateChanged(e)
+		}
+	}
+}

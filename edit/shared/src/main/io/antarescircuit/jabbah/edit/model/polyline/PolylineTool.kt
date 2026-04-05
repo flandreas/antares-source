@@ -1,0 +1,120 @@
+package io.antarescircuit.jabbah.edit.model.polyline
+
+import io.antarescircuit.jabbah.base.Status
+import io.antarescircuit.jabbah.base.StatusType
+import io.antarescircuit.jabbah.base.Translations
+import io.antarescircuit.jabbah.base.event.Button
+import io.antarescircuit.jabbah.base.event.KeyEvent
+import io.antarescircuit.jabbah.base.event.MouseEvent
+import io.antarescircuit.jabbah.base.module.BaseModule
+import io.antarescircuit.jabbah.draw.graphics.Cursor
+import io.antarescircuit.jabbah.draw.polyline.Polyline
+import io.antarescircuit.jabbah.edit.Component
+import io.antarescircuit.jabbah.edit.Drawing
+import io.antarescircuit.jabbah.edit.Editor
+import io.antarescircuit.jabbah.edit.Tool
+import io.antarescircuit.jabbah.edit.app.DrawingAppService
+import io.antarescircuit.jabbah.edit.model.AbstractComponentTool
+import io.antarescircuit.jabbah.edit.model.ComponentMessage
+import io.antarescircuit.jabbah.edit.module.EditModule
+import kotlin.properties.Delegates
+
+@Suppress("unused")
+/**
+ * A [Tool] for interactively creating a [PolylineComponent].
+ *
+ * Each time the user clicks with the mouse, a new point is added to the [PolylineComponent] under construction. A
+ * double click finishes shaping the [PolylineComponent], but at least two points are required to form a valid
+ * [Polyline].
+ */
+class PolylineTool(
+	editor: Editor,
+	service: DrawingAppService = EditModule.drawingAppService,
+	factory: () -> PolylineComponent,
+	adder: (PolylineComponent) -> Component = { it }
+) : AbstractComponentTool<PolylineComponent>(editor, service, factory, adder) {
+
+	/** Holds the instantiated rectangle. Initialized in [mousePressed].*/
+	private var instance: PolylineComponent? = null
+
+	/** The [Component] that is added to the [Drawing]. */
+	private var addedComponent by Delegates.notNull<Component>()
+
+	/** ---- [Tool] interface */
+
+	override fun activate() {
+		editor.view.setCursor(Cursor.CROSSHAIR)
+		Status.set(StatusType.Tool, Translations.getString("edit.tool.polyline.0.text"))
+	}
+
+	override fun mouseClicked(e: MouseEvent, x: Double, y: Double) {
+		super.mouseClicked(e, x, y)
+
+		if (e.button != Button.BUTTON1) {
+			return
+		}
+
+		if (e.clickCount == 1) {
+			val offset = editor.snapManager.snap(x, y)
+			if (instance == null) {
+				instance = createComponent()
+				instance!!.addPoint(x + offset.x, y + offset.y)
+
+				editor.view.selectionManager.deselectAll()
+				addedComponent = getAddedComponent(instance as PolylineComponent)
+				editor.drawing.add(addedComponent)
+				editor.view.selectionManager.select(addedComponent)
+				Status.set(StatusType.Tool, Translations.getString("edit.tool.polyline.1.text"))
+			}
+			// add the dangling point that will be moved around
+			instance!!.addPoint(x + offset.x, y + offset.y)
+		} else if (e.clickCount == 2) {
+			if (instance == null) {
+				// GitHub #1079 (NPE). Scenario not reproducible.
+				cancel()
+			} else {
+				instance!!.removePoint(instance!!.pointsCount - 1)
+
+				if (instance!!.pointsCount == 1) {
+					// The user double-clicked right away. Don't add a 1-point polyline to the drawing.
+					// Instead, post a message to instruct the user.
+					BaseModule.eventBus.post(
+						ComponentMessage(
+							source = null,
+							messageKey = "edit.tool.polyline.empty.error.text"
+						)
+					)
+				} else {
+					addComponent(addedComponent)
+				}
+
+				editor.toolDone()
+				instance = null
+			}
+		}
+	}
+
+	override fun mouseMoved(e: MouseEvent, x: Double, y: Double) {
+		super.mouseMoved(e, x, y)
+		if (instance != null) {
+			val offset = editor.snapManager.snap(x, y)
+			instance!!.setPointAt(instance!!.pointsCount - 1, x + offset.x, y + offset.y)
+			instance!!.validate()
+		}
+	}
+
+	override fun keyPressed(e: KeyEvent) {
+		if (e.key == KeyEvent.VK_ESCAPE) {
+			cancel()
+		}
+	}
+
+	private fun cancel() {
+		if (instance != null) {
+			instance = null
+			editor.drawing.remove(addedComponent)
+			editor.drawing.validate()
+		}
+		editor.toolDone()
+	}
+}

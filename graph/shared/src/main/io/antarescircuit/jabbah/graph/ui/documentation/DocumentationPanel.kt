@@ -1,0 +1,247 @@
+package io.antarescircuit.jabbah.graph.ui.documentation
+
+import io.antarescircuit.jabbah.app.ApplicationDataContentEvent
+import io.antarescircuit.jabbah.app.ApplicationDataEvent
+import io.antarescircuit.jabbah.base.ui.AbstractUIController
+import io.antarescircuit.jabbah.base.ui.UIView
+import io.antarescircuit.jabbah.app.ApplicationDataHolder
+import io.antarescircuit.jabbah.base.AbstractAction
+import io.antarescircuit.jabbah.base.Action
+import io.antarescircuit.jabbah.base.event.ActionEvent
+import io.antarescircuit.jabbah.base.event.EventBus
+import io.antarescircuit.jabbah.base.event.EventHandler
+import io.antarescircuit.jabbah.base.logger
+import io.antarescircuit.jabbah.base.module.BaseModule
+import io.antarescircuit.jabbah.edit.CommandManager
+import io.antarescircuit.jabbah.edit.Undoable
+import io.antarescircuit.jabbah.edit.command.AbstractCommand
+import io.antarescircuit.jabbah.edit.module.EditModule
+import io.antarescircuit.jabbah.graph.MetaGraph
+import io.antarescircuit.jabbah.graph.MetaGraphDocumentationEvent
+import io.antarescircuit.jabbah.graph.ui.documentation.DocumentationPanelViewMode.EditAndPreview
+import io.antarescircuit.jabbah.graph.ui.documentation.DocumentationPanelViewMode.EditOnly
+import io.antarescircuit.jabbah.graph.ui.documentation.DocumentationPanelViewMode.PreviewOnly
+import io.antarescircuit.jabbah.graph.library.LibraryModule
+import io.antarescircuit.jabbah.graph.library.LibraryServiceCallback
+import io.antarescircuit.jabbah.graph.model.Document
+
+interface DocumentationPanelView : UIView {
+
+    /** The text currently displayed in the view, possibly after being edited by the user.*/
+    val viewText: String
+
+    /** Notifies this view that the model data has changed and the text in the view should be updated.*/
+    fun notifyModelDataChanged()
+
+    /** Notifies this view that the editability has changed. The view should disable the documentation editor.*/
+    fun notifyEditabilityChanged()
+
+    /** Notifies this view that */
+    fun notifyModeChanged()
+
+    fun refreshPreview()
+}
+
+enum class DocumentationPanelViewMode(val customName: String) {
+    EditOnly("edit"),
+    EditAndPreview("editAndPreview"),
+    PreviewOnly("preview");
+
+    companion object {
+        fun withName(name: String): DocumentationPanelViewMode =
+            DocumentationPanelViewMode.entries.firstOrNull { it.customName == name } ?: EditAndPreview
+    }
+}
+
+/**
+ * Displays the documentation [Document] of an [ApplicationDataHolder]'s application data interpreted
+ * as [MetaGraph].
+ */
+class DocumentationPanelController(
+    private val applicationDataHolder: ApplicationDataHolder,
+    private val eventBus: EventBus = BaseModule.eventBus,
+    private val commandManager: CommandManager = EditModule.commandManager,
+    mode: DocumentationPanelViewMode = determineMode()
+) : AbstractUIController<DocumentationPanelView>(), LibraryServiceCallback {
+
+    companion object {
+        private val LOG by logger(DocumentationPanelController::class)
+
+        private const val PROP_MODE = "documentationPanelController.mode"
+
+        private fun determineMode(): DocumentationPanelViewMode =
+            DocumentationPanelViewMode.withName(BaseModule.settings.getString(PROP_MODE, EditAndPreview.customName))
+    }
+
+    private val applicationDataHandler: EventHandler<ApplicationDataEvent> = { handle(it) }
+
+    private val applicationDataContentHandler: EventHandler<ApplicationDataContentEvent> = { handle(it) }
+
+    private val documentationHandler: EventHandler<MetaGraphDocumentationEvent> = { handle(it) }
+
+    private var command: DocumentCommand? = null
+
+    private var inDocumentChangeBegin = false
+
+    var text: String? = null
+        private set(value) {
+            field = value
+            if (!inDocumentChangeBegin) {
+                view.notifyModelDataChanged()
+            }
+        }
+
+    val refreshAction: Action = RefreshAction()
+
+    var editable: Boolean = false
+       private set(value) {
+           if (field != value) {
+               field = value
+               view.notifyEditabilityChanged()
+           }
+       }
+
+    var mode: DocumentationPanelViewMode = mode
+        private set(value) {
+            if (field != value) {
+                field = value
+                view.notifyModeChanged()
+            }
+        }
+
+    val content: MetaGraph? get() = applicationDataHolder.data?.content as? MetaGraph?
+
+    val editOnlyAction: Action = ModeAction(EditOnly, "graph.documentation.mode.editOnly", "/img/edit-only.png")
+    val editAndPreviewAction: Action = ModeAction(EditAndPreview, "graph.documentation.mode.editAndPreview", "/img/edit-preview.png")
+    val previewOnlyAction: Action = ModeAction(PreviewOnly, "graph.documentation.mode.previewOnly", "/img/preview-only.png")
+
+    init {
+        eventBus.register(ApplicationDataEvent::class, applicationDataHandler)
+        eventBus.register(ApplicationDataContentEvent::class, applicationDataContentHandler)
+        eventBus.register(MetaGraphDocumentationEvent::class, documentationHandler)
+        LibraryModule.libraryServiceCallbacks.add(this)
+        updateEditability(false)
+
+        when (mode) {
+            EditOnly -> editOnlyAction.selected = true
+            EditAndPreview -> editAndPreviewAction.selected = true
+            PreviewOnly -> previewOnlyAction.selected = true
+        }
+    }
+
+    override fun dispose() {
+        super.dispose()
+        eventBus.unregister(applicationDataHandler)
+        eventBus.unregister(applicationDataContentHandler)
+        eventBus.unregister(documentationHandler)
+        LibraryModule.libraryServiceCallbacks.remove(this)
+        BaseModule.settings.set(PROP_MODE, mode.customName)
+    }
+
+    /** ---- [LibraryServiceCallback] ---- */
+
+    override fun beforeStoreMetaGraph(metaGraph: MetaGraph) {
+        LOG.trace("beforeStoreMetaGraph")
+        metaGraph.documentation = metaGraph.documentation?.withText(view.viewText)
+        command = null
+    }
+
+    /** ---- [DocumentationPanelController] */
+
+    /**
+     * Called by the [DocumentationPanelView] when the user has finished changing the text, and this
+     * [DocumentationPanelController] should update its model accordingly and in an undoable manner.
+     */
+    fun documentChangeBegin() {
+        try {
+            LOG.trace("documentChangeBegin")
+            inDocumentChangeBegin = true
+            command = DocumentCommand(applicationDataHolder, view.viewText, text)
+            commandManager.execute(command!!)
+        } finally {
+            inDocumentChangeBegin = false
+        }
+    }
+
+    fun documentChangeEnd() {
+        LOG.trace("documentChangeEnd")
+        command?.let {
+            val newText = view.viewText
+            // Update MetaGraph
+            val metaGraph: MetaGraph = applicationDataHolder.data!!.content as MetaGraph
+            metaGraph.documentation = metaGraph.documentation?.withText(newText) ?: Document(text = newText)
+            // Update Command
+            it.newValue = newText
+        }
+        command = null
+    }
+
+    private fun updateEditability(editable: Boolean) {
+        refreshAction.enabled = editable
+        this.editable = editable
+    }
+
+    private fun handle(event: ApplicationDataEvent) {
+        if (event.newData?.content is MetaGraph?) {
+            consumeTextOfMetaGraph(event.newData?.content as MetaGraph?)
+        } else {
+            text = null
+        }
+        updateEditability(event.newData?.savable?.editable ?: false)
+    }
+
+    private fun handle(event: ApplicationDataContentEvent) {
+        if (event.data.content is MetaGraph?) {
+            consumeTextOfMetaGraph(event.data.content as MetaGraph?)
+        } else {
+            text = null
+        }
+        updateEditability(event.data.savable.editable)
+    }
+
+    private fun handle(event: MetaGraphDocumentationEvent) {
+        if (event.metaGraph === applicationDataHolder.data?.content) {
+            consumeTextOfMetaGraph(event.metaGraph)
+        }
+    }
+
+    private fun consumeTextOfMetaGraph(metaGraph: MetaGraph?) {
+        text = metaGraph?.documentation?.text
+    }
+
+    private class DocumentCommand(
+        val dataHolder: ApplicationDataHolder,
+        var newValue: String,
+        val oldValue: String? = null
+    ) : AbstractCommand("graph.documentation.title"), Undoable {
+
+        private val metaGraph: MetaGraph get() = dataHolder.data!!.content as MetaGraph
+
+        override fun execute() {
+            metaGraph.documentation = metaGraph.documentation?.withText(newValue)
+                ?: Document(text = newValue)
+        }
+
+        override fun undo() {
+            if (oldValue != null) {
+                metaGraph.documentation = metaGraph.documentation?.withText(oldValue)
+                    ?: Document(text = oldValue)
+            } else {
+                metaGraph.documentation = null
+            }
+        }
+    }
+
+    private inner class RefreshAction : AbstractAction("graph.documentation.refresh") {
+        override fun execute(event: ActionEvent) {
+            view.refreshPreview()
+        }
+    }
+
+    private inner class ModeAction(private val mode: DocumentationPanelViewMode, baseName: String, imagePath: String) : AbstractAction(baseName, imagePath = imagePath) {
+        override fun execute(event: ActionEvent) {
+            this@DocumentationPanelController.mode = this@ModeAction.mode
+            selected = this@DocumentationPanelController.mode == this@ModeAction.mode
+        }
+    }
+}

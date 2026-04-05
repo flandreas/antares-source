@@ -1,0 +1,77 @@
+package io.antarescircuit.jabbah.graph.library
+
+import io.antarescircuit.jabbah.base.System
+import io.antarescircuit.jabbah.base.help.HelpId
+import io.antarescircuit.jabbah.base.logger
+import io.antarescircuit.jabbah.graph.model.GraphElement
+import io.antarescircuit.jabbah.graph.view.GraphElementView
+import kotlin.reflect.KClass
+
+/**
+ * Contains registrable information for building [GraphElementView]s used by [BaseLibraryElement].
+ */
+class BaseLibraryElementRepository {
+
+	companion object {
+		private val LOG by logger(BaseLibraryElementRepository::class)
+	}
+
+	private val entries = mutableMapOf<String,Entry>()
+
+	private fun register(entry: Entry) {
+		if (entries[entry.id] != null) {
+			LOG.warn("entry with ID '${entry.id}' already present, will be replaced")
+		}
+		entries[entry.id] = entry
+	}
+
+	fun register(
+		id: String,
+		translationKey: String,
+		iconPath: () -> String?,
+		clazz: KClass<out GraphElementView<*>>
+	) {
+		register(Entry(id, translationKey, iconPath, HelpId(clazz.simpleName!!), clazz))
+	}
+
+	fun register(
+		id: String,
+		translationKey: String,
+		iconPath: () -> String?,
+		helpId: HelpId?,
+		supplier: () -> GraphElementView<out GraphElement>
+	) {
+		register(Entry(id, translationKey, iconPath, helpId, null, supplier))
+	}
+
+	fun <T : GraphElement> getNewInstance(id: String): GraphElementView<T> {
+		val entry = entries[id]
+		if (entry == null) {
+			LOG.error("attempt to create instance for unknown ID $id")
+			throw IllegalArgumentException("unknown entry ID $id")
+		}
+		if (entry.supplier != null) {
+			return entry.supplier.invoke() as GraphElementView<T>
+		}
+		return System.instantiate(entry.clazz!!) as GraphElementView<T>
+	}
+
+	fun getIconPath(id: String): String? = entries[id]?.iconPath?.invoke()
+
+	fun getTranslationKey(id: String): String? = entries[id]?.translationKey
+
+	fun getHelpId(id: String): HelpId? = entries[id]?.helpId
+
+	private data class Entry(
+		val id: String,
+		val translationKey: String,
+		val iconPath: () -> String?,
+		val helpId: HelpId?,
+		val clazz: KClass<out GraphElementView<*>>?,
+		val supplier: (() -> GraphElementView<out GraphElement>)? = null
+	) {
+		init {
+			check((clazz != null) || supplier != null) { "either StorableCreator/clazz or supplier must be provided" }
+		}
+	}
+}

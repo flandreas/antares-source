@@ -1,0 +1,148 @@
+package io.antarescircuit.antares.view.net
+
+import io.antarescircuit.antares.model.net.PullDirection
+import io.antarescircuit.antares.model.net.PullDirection.HIGH
+import io.antarescircuit.antares.model.net.PullDirection.LOW
+import io.antarescircuit.antares.model.net.PullResistor
+import io.antarescircuit.antares.model.signal.Bit
+import io.antarescircuit.antares.model.signal.BitWidth
+import io.antarescircuit.antares.view.module.AntaresViewModule
+import io.antarescircuit.antares.view.port.AbstractAntaresPortView
+import io.antarescircuit.antares.view.port.DigitalPortView
+import io.antarescircuit.antares.view.symbolstyle.SymbolStyle
+import io.antarescircuit.jabbah.base.geom.Direction
+import io.antarescircuit.jabbah.draw.DrawContext
+import io.antarescircuit.jabbah.draw.graphics.CompositeColor
+import io.antarescircuit.jabbah.draw.graphics.LinearColorGradient
+import io.antarescircuit.jabbah.draw.style.DrawStyleModule
+import io.antarescircuit.jabbah.draw.style.StyleProvider
+import io.antarescircuit.jabbah.edit.Look.SCALE
+import io.antarescircuit.jabbah.graph.GraphApplicationContext
+import io.antarescircuit.jabbah.graph.view.OrientableRectangularVerticeView
+import io.antarescircuit.jabbah.graph.view.VerticeView
+
+class PullResistorView(
+	pullDirection: PullDirection = LOW,
+	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+	model: PullResistor = PullResistor(pullDirection = pullDirection)
+) : OrientableRectangularVerticeView<PullResistor>(styleProvider, model) {
+
+	companion object {
+		private const val PULL_DIRECTION_WIDTH = 2 * SCALE
+	}
+
+	init {
+		modelExchanged(null)
+		setBounds(
+			-AbstractAntaresPortView.LENGTH.toDouble() - SymbolStyle.RESISTOR_WIDTH - PULL_DIRECTION_WIDTH, -SymbolStyle.RESISTER_HEIGHT_HALF,
+			SymbolStyle.RESISTOR_WIDTH + PULL_DIRECTION_WIDTH, 2 * SymbolStyle.RESISTER_HEIGHT_HALF
+		)
+		orientation = when (pullDirection) {
+			LOW -> Direction.NORTH
+			HIGH -> Direction.SOUTH
+		}
+	}
+
+	override fun modelExchanged(oldModel: PullResistor?) {
+		super.modelExchanged(oldModel)
+		val portView = DigitalPortView(
+			styleProvider = styleProvider,
+			port = model.getPort(),
+			direction = Direction.EAST
+		)
+		portView.setLocation(-AbstractAntaresPortView.LENGTH, 0)
+		addPortView(portView)
+	}
+
+	/** ---- UI properties */
+
+	var bitWidth: BitWidth
+		get() = model.bitWidth
+		set(value) {
+			invalidate()
+			model.bitWidth = value
+			invalidate()
+		}
+
+	var pullDirection: PullDirection
+		get() = model.pullDirection
+		set(value) {
+			if (value != model.pullDirection) {
+				model.pullDirection = value
+				tooltip.reset()
+			}
+		}
+
+	/** ---- [VerticeView] */
+
+	override fun drawImpl(context: DrawContext) {
+		super.drawImpl(context)
+		getPortViews().first().prepareConnectionDrawContext(context)
+
+		val portStroke = context.g.stroke
+
+		context.g.color = context.chooseForeground(
+			if (context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
+				transparent.applyTo(pullDirectionExecutionColor.foregroundColor)
+			} else {
+				foregroundColor
+			}
+		)
+
+		drawPullDirection(context)
+
+		val applicableForegroundColor = if (context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
+			getColorGradient(context) ?: transparent.applyTo(pullDirectionExecutionColor.foregroundColor)
+		} else {
+			context.chooseForeground(foregroundColor)
+		}
+
+		AntaresViewModule.currentSymbolStyle.symbolStyle.drawResistor(
+			this,
+			isVariable = false,
+			context,
+			applicableForegroundColor,
+			getApplicableBackgroundColor(context),
+			portStroke)
+	}
+
+	override fun getEditPortViewColor(styleProvider: StyleProvider): CompositeColor =
+		customColor?.color ?: super.getEditPortViewColor(styleProvider)
+
+	/** ---- [PullResistorView] */
+
+	private fun getColorGradient(context: DrawContext): LinearColorGradient? {
+		if (context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
+			return LinearColorGradient(
+				bounds.centerLeft.addX(PULL_DIRECTION_WIDTH.toDouble()),
+				transparent.applyTo(pullDirectionExecutionColor.foregroundColor),
+				bounds.centerRight,
+				transparent.applyTo(netExecutionColor.foregroundColor))
+		}
+		return null
+	}
+
+	private val pullDirectionExecutionColor: CompositeColor get() =
+		when (pullDirection) {
+			LOW -> Bit.False.color
+			HIGH -> Bit.True.color
+		}
+
+	private val netExecutionColor: CompositeColor get() =
+		model.getOutputPort().net?.signal?.color ?: Bit.Undefined.color
+
+	private fun drawPullDirection(context: DrawContext) {
+		when(pullDirection) {
+			LOW -> drawLowPullDirection(context)
+			HIGH -> drawHighPullDirection(context)
+		}
+	}
+
+	private fun drawLowPullDirection(context: DrawContext) {
+		GroundView.drawBodyAt(-AbstractAntaresPortView.LENGTH - SymbolStyle.RESISTOR_WIDTH, 0.0, context)
+	}
+
+	private fun drawHighPullDirection(context: DrawContext) {
+		PowerViewShape.drawBodyAt(-AbstractAntaresPortView.LENGTH - SymbolStyle.RESISTOR_WIDTH, 0.0, context)
+	}
+}

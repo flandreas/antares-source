@@ -1,0 +1,397 @@
+package io.antarescircuit.jabbah.graph.ui
+
+import io.antarescircuit.jabbah.animation.AnimationModule
+import io.antarescircuit.jabbah.animation.Animator
+import io.antarescircuit.jabbah.app.CurrentSavableEvent
+import io.antarescircuit.jabbah.app.Savable
+import io.antarescircuit.jabbah.base.Properties
+import io.antarescircuit.jabbah.base.StringUtils
+import io.antarescircuit.jabbah.base.System
+import io.antarescircuit.jabbah.base.event.EventBus
+import io.antarescircuit.jabbah.base.event.PropertyChangeEvent
+import io.antarescircuit.jabbah.base.event.PropertyChangeListener
+import io.antarescircuit.jabbah.base.geom.Point2D
+import io.antarescircuit.jabbah.base.logger
+import io.antarescircuit.jabbah.base.module.BaseModule
+import io.antarescircuit.jabbah.base.ui.AbstractUIController
+import io.antarescircuit.jabbah.base.ui.UIView
+import io.antarescircuit.jabbah.draw.CloseViewRequest
+import io.antarescircuit.jabbah.draw.View
+import io.antarescircuit.jabbah.draw.ViewTransformation
+import io.antarescircuit.jabbah.draw.view.ZoomedPointTranslation
+import io.antarescircuit.jabbah.edit.DrawingView
+import io.antarescircuit.jabbah.edit.DrawingViewContent
+import io.antarescircuit.jabbah.edit.model.text.description.NameChangedEvent
+import io.antarescircuit.jabbah.execution.scheduler.SchedulerActivationStateEvent
+import io.antarescircuit.jabbah.graph.GraphApplicationContextHolder
+import io.antarescircuit.jabbah.graph.model.Graph
+import io.antarescircuit.jabbah.graph.model.vertice.SubGraphVerticeRef
+import io.antarescircuit.jabbah.graph.ui.desktop.GraphDesktopViewItem
+import io.antarescircuit.jabbah.graph.ui.desktop.GraphDesktopViewItemCloseQuestion
+import io.antarescircuit.jabbah.graph.ui.desktop.GraphDesktopViewItemCloseRequest
+import io.antarescircuit.jabbah.graph.view.GraphView
+import io.antarescircuit.jabbah.graph.view.GraphViewExecutionController
+import io.antarescircuit.jabbah.graph.view.ScenarioEvent
+import io.antarescircuit.jabbah.graph.view.module.GraphViewModule
+import io.antarescircuit.jabbah.graph.view.scenario.ScenarioDetector
+import io.antarescircuit.jabbah.graph.view.vertice.OpenSubGraphRequest
+import io.antarescircuit.jabbah.graph.view.vertice.SubGraphVerticeView
+
+/**
+ * Displays a [GraphView] in a [DrawingView] along with a [NavigationStackView] that allows the user
+ * to navigate within the [GraphView] hierarchy.
+ */
+interface GraphNavigationView : UIView, GraphDesktopViewItem {
+
+	/** The [GraphView] displayed by this [GraphNavigationView]. */
+	val graphView: GraphView
+
+	val showsNavigationRoot: Boolean
+
+	fun refresh()
+}
+
+/**
+ * A controller of a [GraphNavigationView].
+ */
+class GraphNavigationViewController(
+	val isRoot: Boolean,
+	override val drawingView: DrawingView<GraphView>,
+	initialSavable: Savable? = null,
+	private val isParentDetached: Boolean = false,
+	private val animator: Animator = AnimationModule.constantSpeedAnimator,
+	private val eventBus: EventBus = BaseModule.eventBus,
+	extensionFactory: (GraphNavigationViewController) -> GraphNavigationViewControllerExtension = GraphViewModule.graphNavigationViewControllerExtension
+) : AbstractUIController<GraphNavigationView>(), GraphViewUI {
+
+	companion object {
+
+		private val LOG by logger(GraphNavigationViewController::class)
+
+		/**
+		 * The name of the [Boolean] property in [Properties] that controls whether animations are used
+		 * when opening [SubGraphVerticeView]s.
+		 */
+		const val PROP_DIVE_ANIMATION = "graph.GraphNavigationPanel.diveAnimation"
+	}
+
+	/**
+	 * The object to be referenced in [CloseViewRequest] sent by this [GraphNavigationView]. Usually  [drawingView], but can
+	 * be a different one if this object is wrapped by another object that must be the close target.
+	 * */
+	lateinit var closeTarget: GraphDesktopViewItem
+
+	val navigationStackViewController = NavigationStackViewController(eventBus = eventBus)
+	val navigationStack: NavigationStack<GraphView> get() = navigationStackViewController.navigationStack
+
+	private var editable: Boolean = false
+
+	private var currentSavable: Savable? = initialSavable
+	private var scenarioDetector: ScenarioDetector? = null
+
+	private val openSubGraphRequestHandler: (OpenSubGraphRequest) -> Unit = { handle(it) }
+	private val navigationStackEventHandler: (NavigationStackEvent) -> Unit = { handle(it) }
+	private val currentSavableHandler: (CurrentSavableEvent) -> Unit = { handle(it) }
+	private val scenarioEventHandler: (ScenarioEvent) -> Unit = { handle(it) }
+	private val closeViewRequestHandler: (CloseViewRequest) -> Unit = { handle(it) }
+	private val nameChangedHandler: (NameChangedEvent) -> Unit = { handle(it) }
+	private val schedulerActivationStateHandler: (SchedulerActivationStateEvent) -> Unit = { handle(it) }
+
+	private val rootEntry: NavigationStackEntry<GraphView>? get() = navigationStackViewController.navigationStack.rootEntry
+
+	private val extension = extensionFactory.invoke(this)
+
+	private val graphApplicationContextHolder: GraphApplicationContextHolder get() =
+		drawingView.applicationContextHolder as GraphApplicationContextHolder
+
+	private val graphViewExecutionController = GraphViewExecutionController(
+		this,
+		isRoot,
+		rootGraphProvider = { rootEntry?.content?.drawing?.graph },
+		graphViewsProvider = { navigationStack.iterator().asSequence().map { it.content.drawing }.toList() },
+		graphApplicationContextHolder,
+		eventBus = eventBus
+	)
+
+	private val viewCanvasListener: PropertyChangeListener<Any> = object : PropertyChangeListener<Any> {
+		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
+			if (e.name == View.PROP_CANVAS) {
+				graphViewExecutionController.updateDetachedUI()
+				drawingView.removePropertyChangeListener(this)
+			}
+		}
+	}
+
+	var enableOpenSubGraphRequests: Boolean = true
+
+	init {
+		eventBus.register(OpenSubGraphRequest::class, openSubGraphRequestHandler)
+		eventBus.register(NavigationStackEvent::class, navigationStackEventHandler)
+		eventBus.register(CurrentSavableEvent::class, currentSavableHandler)
+		eventBus.register(ScenarioEvent::class, scenarioEventHandler)
+		eventBus.register(CloseViewRequest::class, closeViewRequestHandler)
+		eventBus.register(NameChangedEvent::class, nameChangedHandler)
+		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
+
+		drawingView.addPropertyChangeListener(viewCanvasListener)
+	}
+
+	override fun onViewInitialized() {
+		super.onViewInitialized()
+		closeTarget = view
+	}
+
+	override fun dispose() {
+		super.dispose()
+
+		val graphView = drawingView.drawing
+
+		drawingView.dispose()
+		navigationStackViewController.dispose()
+		graphView.dispose()
+
+		scenarioDetector?.dispose()
+
+		graphViewExecutionController.dispose()
+
+		eventBus.unregister(OpenSubGraphRequest::class, openSubGraphRequestHandler)
+		eventBus.unregister(NavigationStackEvent::class, navigationStackEventHandler)
+		eventBus.unregister(CurrentSavableEvent::class, currentSavableHandler)
+		eventBus.unregister(ScenarioEvent::class, scenarioEventHandler)
+		eventBus.unregister(CloseViewRequest::class, closeViewRequestHandler)
+		eventBus.unregister(NameChangedEvent::class, nameChangedHandler)
+		eventBus.unregister(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
+
+		extension.dispose(this)
+	}
+
+	/** ---- [GraphViewUI] interface */
+
+	/**
+	 * Being 'detached' designates that the displayed [GraphView] isn't explicitly simulated
+	 * because its graph logic is shadowed by an execution script, or it is a child of a detached parent.
+	 */
+	override val isDetached: Boolean get() =
+		isParentDetached ||
+			(!isRoot || navigationStackViewController.navigationStack.size > 1)
+			&& StringUtils.isNotEmpty(drawingView.drawing.graph!!.script)
+
+	override val isEditable: Boolean
+		get() = editable
+			&& navigationStackViewController.navigationStack.size == 1
+			&& (currentSavable?.editable ?: false)
+
+	override fun deselectAll() {
+		navigationStackViewController.navigationStack.rootEntry?.content?.selectionManager?.deselectAll()
+		navigationStackViewController.navigationStack.forAllContents { it.removeAllSelectionModels() }
+	}
+
+	/** ---- [GraphNavigationView] */
+
+	fun setRootGraphView(graphView: GraphView, editable: Boolean, applyZoomStrategy: Boolean = true, originSubGraphVerticeView: SubGraphVerticeView<*>? = null) {
+		this.editable = editable
+
+		// Must be done before the drawing is set, because setting the drawing triggers
+		// updating the PropertyPanel, whose PropertyEditors get enabled based on DrawingView.editable
+		drawingView.editable = editable && isRoot
+
+		drawingView.setDrawing(graphView, applyZoomStrategy)
+
+		navigationStackViewController.view.editable = editable
+		navigationStackViewController.navigationStack.rootEntry = NavigationStackEntry(originSubGraphVerticeView, content = drawingView.content)
+
+		scenarioDetector?.dispose()
+		scenarioDetector = ScenarioDetector(drawingView, graphApplicationContextHolder, eventBus)
+
+		graphViewExecutionController.updateDetachedUI()
+
+		System.invokeLater {
+			drawingView.canvas.requestViewFocus()
+		}
+	}
+
+	private fun handle(request: CloseViewRequest) {
+		if (request.view === view || request.view === closeTarget) {
+			eventBus.postTwoPhase(
+				prepareEvent = GraphDesktopViewItemCloseQuestion(closeTarget, isRoot),
+				execEvent = GraphDesktopViewItemCloseRequest(closeTarget, isRoot)
+			)
+		}
+	}
+
+	private fun handle(event: ScenarioEvent) {
+		if (event.graphView === drawingView.drawing) {
+			drawingView.drawing.invalidate()
+			drawingView.drawing.validate()
+		}
+	}
+
+	private fun handle(event: CurrentSavableEvent) {
+		currentSavable = event.savable
+		graphViewExecutionController.updateDrawingViewEditability()
+	}
+
+	private fun handle(request: OpenSubGraphRequest) {
+		if (!enableOpenSubGraphRequests) {
+			return
+		}
+		if (!shouldDescendFor(request)) {
+			return
+		}
+
+		if (request.notifyIfBroken(eventBus)) {
+			return
+		}
+
+		LOG.userTrail("Descending into SubGraphVerticeView ${(request.subGraphVerticeView.model as SubGraphVerticeRef).graphUUID}")
+
+		rememberZoomPanOfCurrentNavigationStack()
+		if (isDescendAnimationRequired(request)) {
+			descendIntoSubGraphWithAnimation(request.subGraphVerticeView)
+		} else {
+			descendIntoSubGraphWithoutAnimation(request.subGraphVerticeView)
+		}
+	}
+
+	private fun handle(event: NameChangedEvent) {
+		if (event.owner is Graph && (event.owner as Graph).uuid == drawingView.drawing.graph?.uuid) {
+			if (event.name !== drawingView.drawing.graph!!.name) {
+				drawingView.drawing.graph!!.name = event.name
+			}
+		}
+	}
+
+	private fun handle(event: SchedulerActivationStateEvent) {
+		if (event.scheduler === graphApplicationContextHolder.scheduler) {
+			if (!event.scheduler.isActive) {
+				navigationStack.iterator().forEach { entry -> graphViewExecutionController.cleanup(entry.content) }
+			}
+		}
+	}
+
+	private fun shouldDescendFor(request: OpenSubGraphRequest): Boolean {
+		return !request.newView && drawingView.drawing.contains(request.subGraphVerticeView)
+	}
+
+	private fun rememberZoomPanOfCurrentNavigationStack() {
+		navigationStack.peek().content.transformation =
+			ViewTransformation(drawingView.zoomPan, drawingView.transformation.affineTransform.clone())
+	}
+
+	private fun isDescendAnimationRequired(request: OpenSubGraphRequest): Boolean {
+		return BaseModule.properties.getBoolean(PROP_DIVE_ANIMATION) && !request.quickMode
+	}
+
+	private fun rememberVoyageOrigin(vv: SubGraphVerticeView<*>) {
+		navigationStackViewController.navigationStack.peek().voyageOrigin = ZoomedPointTranslation(
+			vv.boundingBox.center,
+			drawingView.modelToView(vv.boundingBox.center),
+			drawingView.zoomFactor)
+	}
+
+	private fun descendIntoSubGraphWithAnimation(vv: SubGraphVerticeView<*>) {
+		drawingView.userZoomEnabled = false
+		navigationStackViewController.view.active = false
+		rememberVoyageOrigin(vv)
+		DescendAnimationManager(animator).descendInto(
+			drawingView,
+			vv,
+			descender = {
+				navigationStackViewController.navigationStack.push(NavigationStackEntry(
+					subGraphVerticeView = vv,
+					content = drawingView.createContent(vv.createSubGraphView(graphApplicationContextHolder.signalHandlerIfActive))))
+			},
+			terminator = {
+				navigationStackViewController.view.active = true
+				drawingView.userZoomEnabled = true
+			}
+		)
+	}
+
+	private fun descendIntoSubGraphWithoutAnimation(vv: SubGraphVerticeView<*>) {
+		rememberVoyageOrigin(vv)
+		System.invokeLater {
+			navigationStackViewController.navigationStack.push(NavigationStackEntry(
+				subGraphVerticeView = vv,
+				content = drawingView.createContent(vv.createSubGraphView(graphApplicationContextHolder.signalHandlerIfActive))))
+			System.invokeLater {
+				drawingView.navigator.fitMaxNormal()
+				navigationStackViewController.view.active = true
+			}
+		}
+	}
+
+	private fun handle(event: NavigationStackEvent) {
+		if (event.navigationStack !== navigationStackViewController.navigationStack) {
+			return
+		}
+		if (navigationStackViewController.navigationStack.peek().content === drawingView.content) {
+			return
+		}
+
+		if (!event.isExpansion && !event.quickMode && BaseModule.properties.getBoolean(PROP_DIVE_ANIMATION) && !event.quickMode) {
+			ascendFrom(event.entries)
+		} else {
+			graphViewExecutionController.updateDrawingViewEditability()
+
+			// This leads to updating the PropertyPanel, which relies on DrawingView.editable
+			// and must therefore be done AFTER updating DrawViewEditability in GraphViewExecutionController
+			drawingView.content = navigationStackViewController.navigationStack.peek().content
+
+			graphViewExecutionController.updateDetachedUI()
+
+			view.refresh()
+		}
+	}
+
+	private fun ascendFrom(entries: List<NavigationStackEntry<*>>) {
+		LOG.userTrail("Ascending from SubGraphVerticeView in depth ${entries.size}")
+
+		drawingView.userZoomEnabled = false
+		navigationStackViewController.view.active = false
+		DescendAnimationManager(animator).ascendFrom(
+			drawingView = drawingView,
+			subGraphVerticeView = entries.last().subGraphVerticeView!!,
+			ascender = {
+				val outerEntry = if (entries.size > 1) {
+					entries[entries.size - 2]
+				} else {
+					navigationStackViewController.navigationStack.peek()
+				}
+				drawingView.content = outerEntry.content as DrawingViewContent<GraphView>
+
+				// Issue #975 (NPE when accessing outerEntry.voyageOrigin)
+				// Reason unknown. Implement a defensive strategy for determining the target ZoomedPointTranslation
+				if (outerEntry.voyageOrigin != null) {
+					outerEntry.voyageOrigin!!
+				} else if (outerEntry.subGraphVerticeView != null) {
+					ZoomedPointTranslation(
+						outerEntry.subGraphVerticeView.boundingBox.center,
+						drawingView.modelToView(outerEntry.subGraphVerticeView.boundingBox.center),
+						1.0
+					)
+				} else {
+					LOG.debug("No voyageOrigin when ascending from SubGraphVerticeView (possible bug)")
+					ZoomedPointTranslation(
+						Point2D.ZERO,
+						drawingView.modelToView(Point2D.ZERO),
+						1.0
+					)
+				}
+			},
+			terminator = if (entries.size == 1) {
+				{
+					graphViewExecutionController.updateDrawingViewEditability()
+					graphViewExecutionController.updateDetachedUI()
+
+					navigationStackViewController.view.active = true
+					drawingView.userZoomEnabled = true
+				}
+			} else {
+				{
+					ascendFrom(entries.subList(0, entries.size - 1))
+				}
+			}
+		)
+	}
+}

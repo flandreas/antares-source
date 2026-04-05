@@ -1,0 +1,287 @@
+package io.antarescircuit.jabbah.edit.editor
+
+import io.antarescircuit.jabbah.base.System
+import io.antarescircuit.jabbah.base.Action
+import io.antarescircuit.jabbah.base.event.*
+import io.antarescircuit.jabbah.draw.DrawableContainerEvent
+import io.antarescircuit.jabbah.draw.container.DrawableContainerAdapter
+import io.antarescircuit.jabbah.edit.*
+import io.antarescircuit.jabbah.edit.module.EditModule
+import io.antarescircuit.jabbah.edit.select.EditSelectModule
+import io.antarescircuit.jabbah.edit.SelectionToolFactory
+import io.antarescircuit.jabbah.edit.snap.ComponentSnapper
+import io.antarescircuit.jabbah.edit.snap.SnapManagerImpl
+import io.antarescircuit.jabbah.base.geom.Point2D
+import io.antarescircuit.jabbah.draw.View
+import io.antarescircuit.jabbah.edit.tool.ToolLockAction
+
+/**
+ * Standard implementation of the [Editor] interface.
+ */
+open class EditorImpl(
+    final override val view: DrawingView<Drawing<Component>>,
+    final override val commandManager: CommandManager,
+    selectionToolFactory: SelectionToolFactory,
+    override val name: String = "",
+    dragManagerFactory: DragManagerFactory = EditEditorModule.dragManagerFactory
+) : Editor {
+
+    @Suppress("unused")
+    constructor(view: DrawingView<Drawing<Component>>, name: String = ""):
+       this(view, EditModule.commandManager, EditSelectModule.selectionToolFactory, name)
+
+    private val changeSupport = PropertyChangeSupport<Any>(this)
+
+    private val componentSnapper = ComponentSnapper(this)
+
+    /** ---- [Editor] interface */
+
+    final override val snapManager: SnapManager = SnapManagerImpl(this)
+
+	final override val dragManager: DragManager = dragManagerFactory(this)
+
+    final override var active: Boolean = false
+        set(value) {
+            if (value == field) {
+                return
+            }
+            val oldValue = field
+            field = value
+
+            if (field) {
+	            view.addMouseListener(mouseEventDelegator)
+	            view.addMouseMotionListener(mouseEventDelegator)
+	            view.addKeyListener(keyEventDelegator)
+	            currentTool.activate()
+            } else {
+	            view.removeMouseListener(mouseEventDelegator)
+	            view.removeMouseMotionListener(mouseEventDelegator)
+	            view.removeKeyListener(keyEventDelegator)
+	            currentTool.deactivate()
+                view.selectionManager.deselectAll()
+            }
+            view.autoPanningEnabled = active
+            changeSupport.fire(Editor.PROP_ACTIVE, oldValue, field)
+        }
+
+    override var toolLock: Boolean = false
+        set(value) {
+            if (value == field) {
+                return
+            }
+            val oldValue = field
+            field = value
+            changeSupport.fire(Editor.PROP_LOCK_TOOL, oldValue, field)
+        }
+
+    final override var selectionTool = selectionToolFactory(this)
+        set(value) {
+            if (value == field) {
+                return
+            }
+            val oldValue = field
+            field = value
+            changeSupport.fire(Editor.PROP_DEFAULT_TOOL, oldValue, field)
+        }
+
+    final override var currentTool: Tool = selectionTool
+        set(value) {
+            val oldValue = field
+            field = value
+	        oldValue.deactivate()
+            field.activate()
+            changeSupport.fire(Editor.PROP_CURRENT_TOOL, oldValue, field)
+        }
+
+    override var componentSnap: Boolean
+        get() = componentSnapper.snapEnabled
+        set(value) {
+            if (value == componentSnap) {
+                return
+            }
+            val oldValue = componentSnap
+            componentSnapper.snapEnabled = value
+            changeSupport.fire(Editor.PROP_COMPONENT_SNAP, oldValue, value)
+        }
+
+	override var gridSnap: Boolean
+		get() = view.grid.snapEnabled
+		set(value) {
+			if (value == gridSnap) {
+				return
+			}
+			val oldValue = gridSnap
+			view.grid.snapEnabled = value
+			changeSupport.fire(Editor.PROP_GRID_SNAP, oldValue, value)
+		}
+
+    override fun addPropertyChangeListener(l: PropertyChangeListener<Any>) {
+        changeSupport.add(l)
+    }
+
+	override fun addPropertyChangeListener(l: (PropertyChangeEvent<Any>) -> Unit): PropertyChangeListener<Any> {
+		return changeSupport.add(l)
+	}
+
+	override fun removePropertyChangeListener(l: PropertyChangeListener<Any>) {
+        changeSupport.remove(l)
+    }
+
+    override fun toolDone() {
+        if (!toolLock) {
+            // Invoke later so that StatusEvent of SelectionTool is the last one
+            System.invokeLater {
+                currentTool = selectionTool
+            }
+        }
+    }
+
+    /** ---- [EditorImpl] */
+
+    val toolLockAction: Action = ToolLockAction(this)
+
+    /**
+     * Convenience method being automatically called by this [EditorImpl] whenever a [Component] has
+     * been added to the current [Drawing].
+     *
+     * This implementation does nothing. Intended to be overridden by subclasses.
+     * @param component the [Component] that has been added.
+     */
+    protected open fun handleComponentAdded(component: Component) {
+        // empty
+    }
+
+    /**
+     * Convenience method being automatically called by this [EditorImpl] whenever a [Component] has
+     * been removed from the current [Drawing].
+     *
+     * This implementation does nothing. Intended to be overridden by subclasses.
+     * @param component the [Component] that has been removed.
+     */
+    protected open fun handleComponentRemoved(component: Component) {
+        // empty
+    }
+
+    /**
+     * Listens for [MouseEvent]s from the [DrawingView], calculates the model coordinates by applying the
+     * current zoom factor and pan origin, and delegates the events to the current [Tool].
+     * Ensures that drag events are only forwarded if [DRAG_THRESHOLD] is exceeded.
+     */
+    // KT-14888 (fixed with Kotlin version 1.1-M04
+    //private val mouseEventDelegator = object : MouseAdapter() {
+    private val mouseEventDelegator = MouseEventDelegator()
+    private inner class MouseEventDelegator : MouseAdapter() {
+
+        private var isDragging = false
+
+        private var pressedLocation = Point2D.ZERO
+
+        override fun mouseMoved(e: MouseEvent) {
+        	currentTool.mouseMoved(e, view.viewToModel(e.location))
+        }
+
+        override fun mouseClicked(e: MouseEvent) {
+        	currentTool.mouseClicked(e, view.viewToModel(e.location))
+        }
+
+        override fun mousePressed(e: MouseEvent) {
+        	pressedLocation = e.location
+	        currentTool.mousePressed(e, view.viewToModel(e.location))
+        }
+
+        override fun mouseDragged(e: MouseEvent) {
+            if (!isDragging && pressedLocation.distance(e.x.toDouble(), e.y.toDouble()) > Editor.DRAG_THRESHOLD) {
+               isDragging = true
+            }
+            if (isDragging) {
+            	currentTool.mouseDragged(e, view.viewToModel(e.location))
+            }
+        }
+
+        override fun mouseReleased(e: MouseEvent) {
+	        currentTool.mouseReleased(e, view.viewToModel(e.location))
+            isDragging = false
+        }
+    }
+
+    /** Forwards [KeyEvent]s to the current [Tool]. */
+    // KT-14888 (fixed with Kotlin version 1.1-M04
+    //private val keyEventDelegator = object : KeyAdapter() {
+    private val keyEventDelegator = KeyEventDelegator()
+    private inner class KeyEventDelegator : KeyAdapter() {
+        override fun keyPressed(e: KeyEvent) {
+            currentTool.keyPressed(e)
+        }
+
+        override fun keyReleased(e: KeyEvent) {
+            currentTool.keyReleased(e)
+        }
+    }
+
+    /**
+     * Listens for an exchange of the current [Drawing] in the [DrawingView] of this [Editor]
+     * in order to register [drawingListener] in it.
+     */
+    // KT-14888 (fixed with Kotlin version 1.1-M04
+    //private val drawingViewListener = object : PropertyChangeListener<Any> {
+    private val drawingViewListener = DrawingViewListener()
+    private inner class DrawingViewListener : PropertyChangeListener<Any> {
+        @Suppress("UNCHECKED_CAST")
+        override fun propertyChanged(e: PropertyChangeEvent<Any>) {
+	        when (e.name) {
+		        DrawingView.PROP_DRAWING -> {
+			        (e.oldValue as Drawing<Component>).addDrawableContainerListener(drawingListener)
+			        (e.newValue as Drawing<Component>).addDrawableContainerListener(drawingListener)
+		        }
+		        View.PROP_CANVAS -> {
+			        active = true
+			        System.invokeLater {
+				        // Invoked later when UI already exists and is able to set its state accordingly
+				        currentTool = selectionTool
+			        }
+		        }
+	        }
+            if (e.name == DrawingView.PROP_DRAWING) {
+                (e.oldValue as Drawing<Component>).addDrawableContainerListener(drawingListener)
+                (e.newValue as Drawing<Component>).addDrawableContainerListener(drawingListener)
+            }
+        }
+    }
+
+    /**
+     * Listens for added and removed [Component]s in the current [Drawing] in order to
+     * call [handleComponentAdded] and [handleComponentRemoved].
+     */
+    // TODO KT-14888 (promised to be fixed with Kotlin version 1.1-M04, but wasn't)
+    //private val drawingListener = object : DrawableContainerAdapter<Component>() {
+    private val drawingListener = DrawingListener()
+    private inner class DrawingListener : DrawableContainerAdapter<Component>() {
+        override fun drawableAdded(event: DrawableContainerEvent<Component>) {
+            if (event.child is Component) {
+	            // Due to Kotlin bug KT-15558, the gradle compiler issues warning "No cast needed"
+                handleComponentAdded(event.child as Component)
+            }
+        }
+
+        override fun drawableRemoved(event: DrawableContainerEvent<Component>) {
+            if (event.child is Component) {
+	            // Due to Kotlin bug KT-15558, the gradle compiler issues warning "No cast needed"
+                handleComponentRemoved(event.child as Component)
+            }
+        }
+    }
+
+    init {
+        snapManager.addSnapper(componentSnapper)
+        snapManager.addSnapper(view.grid)
+
+        view.drawing.addDrawableContainerListener(drawingListener)
+        view.addPropertyChangeListener(drawingViewListener)
+    }
+
+	override fun dispose() {
+		view.drawing.addDrawableContainerListener(drawingListener)
+		view.removePropertyChangeListener(drawingViewListener)
+		selectionTool.dispose()
+	}
+}

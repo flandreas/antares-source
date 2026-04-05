@@ -1,0 +1,103 @@
+package io.antarescircuit.antares.model.testcase
+
+import io.antarescircuit.antares.model.ControlledCircuitRunner
+import io.antarescircuit.antares.model.DigitalGraph
+import io.antarescircuit.antares.model.inout.DigitalCircuitInOut
+import io.antarescircuit.antares.model.net.Probe
+import io.antarescircuit.antares.model.signal.DigitalSignal
+import io.antarescircuit.antares.model.testcase.TestRunResult.Type.Circuit
+import io.antarescircuit.antares.model.testcase.TestVector.Type.*
+import io.antarescircuit.antares.model.testcase.parser.TestScript
+import io.antarescircuit.antares.model.testcase.parser.TestcaseAnalyser
+import io.antarescircuit.antares.model.testcase.parser.TestcaseInterpreter
+import io.antarescircuit.antares.model.testcase.parser.TestcaseParser
+import io.antarescircuit.jabbah.base.Translations
+import io.antarescircuit.jabbah.base.dsl.SemanticError
+import io.antarescircuit.jabbah.base.dsl.SyntaxError
+import io.antarescircuit.jabbah.base.logger
+import kotlin.math.max
+
+/**
+ * Runs a circuit test script (provided as plain text) on a particular [DigitalGraph].
+ */
+class TestcaseCircuitRunner(
+	testName: String,
+	testScript: TestScript,
+	circuit: DigitalGraph,
+	numberOfIterations: Int = Testcase.DEF_NUMBER_OF_ITERATIONS
+) : AbstractTestcaseRunner(testName, testScript, circuit) {
+
+	constructor(
+		testName: String,
+		text: String,
+		circuit: DigitalGraph,
+		numberOfIterations: Int = Testcase.DEF_NUMBER_OF_ITERATIONS
+	): this(
+		testName,
+		TestcaseParser(text, TestcaseAnalyser(circuit)).parse() as TestScript,
+		circuit,
+		numberOfIterations
+	)
+
+	companion object {
+		private val LOG by logger(TestcaseCircuitRunner::class)
+	}
+
+	private val circuitRunner = ControlledCircuitRunner(numberOfIterations)
+
+	/**
+	 * Runs the [TestVector]s contained in [testScript] and returns the [TestRunResult],
+	 * whose [TestVectorCollector] output columns contain [MatchedValue] with the actual
+	 * result values.
+	 */
+	override fun run(): TestRunResult {
+		try {
+			val collector = TestVectorCollector()
+			portNames = testScript.portNames.names
+
+			TestcaseInterpreter(testScript, circuit, collector).interpret()
+
+			var maxDuration = 0L
+			for (testVector in collector) {
+				currentTestVector = testVector
+
+				val duration: Long = when (testVector.type) {
+					Top -> circuitRunner.run(circuit, ::setInputs, ::readOutputs)
+					RunFirst -> circuitRunner.runStart(circuit, ::setInputs, ::readOutputs)
+					RunLine -> circuitRunner.runContinue(circuit, ::setInputs, ::readOutputs)
+					RunLast -> circuitRunner.runStop(circuit, ::setInputs, ::readOutputs)
+				}
+				maxDuration = max(duration, maxDuration)
+			}
+
+			return TestRunResult(circuit, Circuit, testName, portNames.map { it.name.value!! }, determineIsOutput(), collector, null, maxDuration)
+		} catch (e: SyntaxError) {
+			return TestRunResult.error(circuit, TestRunResult.Type.Script, testName, e.message ?: "Error")
+		} catch (e: SemanticError) {
+			return TestRunResult.error(circuit, TestRunResult.Type.Script, testName, e.message ?: "Error")
+		} catch (_: ControlledCircuitRunner.TooManyIterations) {
+			return TestRunResult.error(circuit, Circuit, testName, Translations.getString("antares.testcase.results.tooManyIterations.txt"))
+		} catch (e: Throwable) {
+			LOG.error("Error while running test '${testName}' for circuit '${circuit.name.value}'", e)
+			return TestRunResult.error(circuit, Circuit, testName, Translations.getString("antares.testcase.action.technical.error.txt"))
+		}
+	}
+
+	override fun processInputChanged(context: Any?): Long {
+		val t = circuitRunner.scheduler.executionTime
+		circuitRunner.proceedUntilQueueEmpty()
+		return circuitRunner.scheduler.executionTime - t
+	}
+
+	override fun dispose() {
+		circuitRunner.dispose()
+	}
+
+	override fun setInput(input: DigitalCircuitInOut, signal: DigitalSignal) {
+		input.setIncomingSignal(signal, circuitRunner.scheduler)
+	}
+
+	override fun readOutput(output: DigitalCircuitInOut): DigitalSignal? = output.signal
+
+	override fun readOutput(output: Probe): DigitalSignal? = output.signal
+}

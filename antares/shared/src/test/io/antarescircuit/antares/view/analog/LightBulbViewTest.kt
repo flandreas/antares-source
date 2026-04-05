@@ -1,0 +1,56 @@
+package io.antarescircuit.antares.view.analog
+
+import io.antarescircuit.antares.AntaresTestRule
+import io.antarescircuit.antares.model.analog.AnalogPort
+import io.antarescircuit.antares.model.signal.DigitalSignal
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+
+class LightBulbViewTest {
+
+    private lateinit var view: LightBulbView
+
+    @BeforeTest
+    fun setup() {
+        AntaresTestRule.configure()
+        view = LightBulbView()
+    }
+
+    @Test
+    fun shouldNotGlowBelowMinimumCurrent() {
+        view.maxCurrent = 0.1
+        view.minCurrent = 0.05
+        (view.model.getPort<DigitalSignal>() as AnalogPort).current = 0.04
+
+        assertEquals(0.0F, view.executionLightFactor)
+    }
+
+    @Test
+    fun shouldGlowMaxAboveMaximumCurrent() {
+        view.maxCurrent = 0.1
+        view.minCurrent = 0.05
+        (view.model.getPort<DigitalSignal>() as AnalogPort).current = 0.15
+
+        assertEquals(1.0F, view.executionLightFactor)
+    }
+
+    @Test
+    fun shouldGlowMediumAtMediumCurrent() {
+        view.minCurrent = 0.0
+        view.maxCurrent = 0.1
+        (view.model.getPort<DigitalSignal>() as AnalogPort).current = 0.05
+
+        assertEquals(0.5F, view.executionLightFactor)
+    }
+
+    @Test
+    fun shouldGlowMediumAtNegativeMediumCurrent() {
+        view.minCurrent = 0.0
+        view.maxCurrent = 0.1
+        (view.model.getPort<DigitalSignal>() as AnalogPort).current = -0.05
+
+        assertEquals(0.5F, view.executionLightFactor)
+    }
+
+}

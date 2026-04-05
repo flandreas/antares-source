@@ -1,0 +1,237 @@
+package io.antarescircuit.antares.view.addressable
+
+import io.antarescircuit.antares.model.addressable.*
+import io.antarescircuit.jabbah.base.Disposable
+import io.antarescircuit.jabbah.base.Translations
+import io.antarescircuit.jabbah.base.event.EventBus
+import io.antarescircuit.jabbah.base.event.EventHandler
+import io.antarescircuit.jabbah.base.io.WriteFileWrapper
+import io.antarescircuit.jabbah.base.logger
+import io.antarescircuit.jabbah.base.module.BaseModule
+import io.antarescircuit.jabbah.base.swing.DialogBuilder
+import io.antarescircuit.jabbah.base.ui.UIBasics
+import io.antarescircuit.jabbah.edit.Command
+import io.antarescircuit.jabbah.edit.CommandManager
+import io.antarescircuit.jabbah.edit.DrawingView
+import io.antarescircuit.jabbah.graph.GraphApplicationContextHolder
+import io.antarescircuit.jabbah.graph.app.ApplicationModeEvent
+import io.antarescircuit.jabbah.graph.model.vertice.ObjectLink
+import io.antarescircuit.jabbah.graph.view.GraphView
+import java.awt.BorderLayout
+import java.awt.Dimension
+import java.awt.Frame
+import java.awt.event.ActionEvent
+import java.awt.event.FocusListener
+import java.nio.file.Files
+import java.nio.file.Paths
+import javax.swing.*
+
+/**
+ * Displays the contents of an [Addressable] using a [AddressableDisplayPanel], along with [Action]s for importing,
+ * exporting and resetting the memory contents.
+ *
+ * Must not keep reference to [Addressable] in order to deal with changing snapshots due to [Command] execution.
+ */
+class AddressableContentsPanel(
+	private val view: DrawingView<GraphView>?,
+	private val applicationContextHolder: GraphApplicationContextHolder,
+	link: ObjectLink<Addressable>,
+	private val cmdManager: CommandManager,
+	private val eventBus: EventBus = BaseModule.eventBus,
+	private val closeHandler: ((AddressableContentsPanel) -> Unit)? = null
+) : JPanel(), Disposable {
+
+	companion object {
+		private val LOG by logger(AddressableContentsPanel::class)
+		private const val PREF_WIDTH = 800
+		private const val PREF_HEIGHT = 500
+
+		fun showAsDialog(
+			parent: Frame = Frame.getFrames()[0],
+			view: DrawingView<GraphView>,
+			applicationContextHolder: GraphApplicationContextHolder,
+			name: String,
+			link: ObjectLink<Addressable>,
+			cmdManager: CommandManager
+		) {
+			DialogBuilder<AddressableContentsPanel>(parent)
+				.content { dialog -> AddressableContentsPanel(view, applicationContextHolder, link, cmdManager) { dialog.dispose()} }
+				.title(Translations.getString("antares.action.memory.contents.title", name))
+				.defaultButton { it.closeButton }
+				.resizable()
+				.onWindowClosed { it.dispose() }
+				.show()
+		}
+	}
+
+	val addressableRef = AddressableReference(link, view, eventBus)
+
+	private val memoryDisplayPanel = AddressableDisplayPanel(addressableRef, { editable } , applicationContextHolder)
+
+	private val addressableListener = object : AddressableListener {
+		override fun dataChanged(event: AddressableDataEvent) {
+			handleContentChanged()
+		}
+
+		override fun commentChanged(event: AddressableCommentEvent) {
+			handleContentChanged()
+		}
+
+		override fun bitWidthChanged(event: AddressableBitWidthEvent) {
+			if (event.isAddress) {
+				memoryDisplayPanel.updateAddressWidth()
+			} else {
+				handleContentChanged()
+			}
+		}
+
+		private fun handleContentChanged() {
+			invalidate()
+			repaint()
+		}
+	}
+
+	private val applicationModeHandler: EventHandler<ApplicationModeEvent> = { updateEditable() }
+
+	private val importAction = ImportAction()
+	private val importButton = JButton(importAction)
+
+	private val exportAction = ExportAction()
+	private val exportButton = JButton(exportAction)
+
+	private val clearAction = ClearAction()
+	private val clearButton = JButton(clearAction)
+
+	private val closeAction = CloseAction()
+
+	private var editable: Boolean = false
+
+	var closeButton: JButton? = null
+
+	init {
+		addressableRef.addListener(addressableListener)
+		buildUI()
+		updateEditable()
+		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
+	}
+
+	/** ---- [Disposable] */
+
+	override fun dispose() {
+		eventBus.unregister(applicationModeHandler)
+		addressableRef.removeListener(addressableListener)
+		addressableRef.dispose()
+		memoryDisplayPanel.dispose()
+	}
+
+	/** ---- [AddressableContentsPanel] */
+
+	private fun updateEditable() {
+		editable = if (addressableRef.addressable.storesCells) {
+			(view == null || view.editable) && applicationContextHolder.applicationModeHolder.currentMode.isEdit()
+		} else {
+			applicationContextHolder.applicationModeHolder.currentMode.isExecute()
+		}
+
+		importAction.isEnabled = editable
+		clearAction.isEnabled = editable
+		memoryDisplayPanel.refresh()
+	}
+
+	private fun buildUI() {
+		layout = BorderLayout()
+
+		val contentsView = JPanel(BorderLayout())
+		contentsView.preferredSize = Dimension(PREF_WIDTH, PREF_HEIGHT)
+		contentsView.add(memoryDisplayPanel)
+		add(contentsView, BorderLayout.CENTER)
+
+		val buttonPanel = JPanel()
+		buttonPanel.border = UIBasics.createDialogBorder()
+		buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.LINE_AXIS)
+
+		buttonPanel.add(Box.createHorizontalStrut(UIBasics.BUTTON_GAP))
+		buttonPanel.add(importButton)
+
+		buttonPanel.add(Box.createHorizontalStrut(UIBasics.BUTTON_GAP))
+		buttonPanel.add(exportButton)
+		buttonPanel.add(Box.createHorizontalStrut(UIBasics.BUTTON_GAP))
+		buttonPanel.add(clearButton)
+
+		if (closeHandler != null) {
+			closeButton = JButton(closeAction)
+			buttonPanel.add(Box.createHorizontalGlue())
+			buttonPanel.add(closeButton)
+		}
+
+		add(buttonPanel, BorderLayout.SOUTH)
+	}
+
+	fun addViewActivationFocusListener(focusListener: FocusListener) {
+		memoryDisplayPanel.addViewActivationFocusListener(focusListener)
+		importButton.addFocusListener(focusListener)
+		exportButton.addFocusListener(focusListener)
+		clearButton.addFocusListener(focusListener)
+	}
+
+	private fun executeCommand(command: Command) {
+		if (addressableRef.addressable.storesCells) {
+			cmdManager.execute(command)
+		} else {
+			command.execute()
+		}
+	}
+
+	private inner class CloseAction : AbstractAction(Translations.getString("file.action.close.name")) {
+		override fun actionPerformed(e: ActionEvent?) {
+			closeHandler?.invoke(this@AddressableContentsPanel)
+		}
+	}
+
+	private inner class ImportAction : AbstractAction(Translations.getString("antares.action.memory.import.name")) {
+		override fun actionPerformed(e: ActionEvent?) {
+			val fileChooser = JFileChooser()
+			if (fileChooser.showOpenDialog(this@AddressableContentsPanel) == JFileChooser.APPROVE_OPTION) {
+				try {
+					executeCommand(AddressableContentsCommand(view, addressableRef.link, addressableRef.addressable.dataWidth, fileChooser.selectedFile!!.absolutePath))
+					memoryDisplayPanel.refresh()
+				} catch (e: IllegalArgumentException) {
+					val msg = Translations.getString("antares.memory.invalidData.text") + "\n${e.message}"
+					JOptionPane.showConfirmDialog(
+						JFrame.getFrames()[0],
+						msg,
+						getValue(Action.NAME) as String,
+						JOptionPane.DEFAULT_OPTION,
+						JOptionPane.ERROR_MESSAGE)
+				} catch (e: Throwable) {
+					LOG.error("General error while reading memory file: ${e.message}")
+					JOptionPane.showConfirmDialog(
+						JFrame.getFrames()[0],
+						Translations.getString("antares.memory.cannotReadFile.text"),
+						getValue(Action.NAME) as String,
+						JOptionPane.DEFAULT_OPTION,
+						JOptionPane.ERROR_MESSAGE)
+				}
+			}
+		}
+	}
+
+	private inner class ClearAction : AbstractAction(Translations.getString("antares.action.memory.clear.name")) {
+		override fun actionPerformed(e: ActionEvent?) {
+			executeCommand(AddressableClearCommand(view, addressableRef.link, addressableRef.addressable.dataWidth))
+			memoryDisplayPanel.refresh()
+		}
+	}
+
+	private inner class ExportAction : AbstractAction(Translations.getString("antares.action.memory.export.name")) {
+		override fun actionPerformed(e: ActionEvent?) {
+			val fileChooser = JFileChooser()
+			if (fileChooser.showSaveDialog(this@AddressableContentsPanel) == JFileChooser.APPROVE_OPTION) {
+				WriteFileWrapper.wrap(getValue(NAME) as String) {
+				val contents = MemoryDump.write(addressableRef.addressable.memory, addressableRef.addressable.dataWidth)
+					Files.write(Paths.get(fileChooser.selectedFile.absolutePath), contents.toByteArray())
+				}
+			}
+		}
+	}
+}

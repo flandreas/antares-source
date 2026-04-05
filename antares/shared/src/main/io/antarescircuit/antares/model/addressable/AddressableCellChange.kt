@@ -1,0 +1,31 @@
+package io.antarescircuit.antares.model.addressable
+
+import io.antarescircuit.jabbah.edit.DrawingView
+import io.antarescircuit.jabbah.edit.Undoable
+import io.antarescircuit.jabbah.edit.command.AbstractCommand
+import io.antarescircuit.jabbah.graph.model.vertice.ObjectLink
+import io.antarescircuit.jabbah.graph.view.GraphView
+
+/** Represents the change of the value of an [Addressable] cell by the user.*/
+data class AddressableCellChange(
+	val address: Int,
+	val origValue: ULong,
+	val newValue: ULong
+)
+
+class AddressableCellChangeCommand(
+	private val drawingView: DrawingView<GraphView>?,
+	private val link: ObjectLink<Addressable>,
+	private val changes: Collection<AddressableCellChange>
+) : AbstractCommand("antares.command.memoryContents"), Undoable {
+
+	private val addressable: Addressable get() = link.getLinkedObject(drawingView?.drawing?.graph)
+
+	override fun execute() {
+		changes.forEach { addressable.setDataAt(it.address, it.newValue, null) }
+	}
+
+	override fun undo() {
+		changes.forEach { addressable.setDataAt(it.address, it.origValue, null) }
+	}
+}

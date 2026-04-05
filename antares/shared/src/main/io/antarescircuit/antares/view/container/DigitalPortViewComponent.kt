@@ -1,0 +1,146 @@
+package io.antarescircuit.antares.view.container
+
+import io.antarescircuit.antares.model.Logic
+import io.antarescircuit.antares.model.OutputAnnotation
+import io.antarescircuit.antares.model.Trigger
+import io.antarescircuit.antares.model.port.DigitalPort
+import io.antarescircuit.antares.model.signal.DigitalSignal
+import io.antarescircuit.antares.model.signal.DigitalSignalFactory
+import io.antarescircuit.antares.view.port.DigitalPortView
+import io.antarescircuit.antares.view.port.DigitalPortViewStyle
+import io.antarescircuit.antares.view.port.ExternalPortLabelDistance
+import io.antarescircuit.jabbah.draw.style.DrawStyleModule
+import io.antarescircuit.jabbah.draw.style.StyleProvider
+import io.antarescircuit.jabbah.edit.Cloneable
+import io.antarescircuit.jabbah.edit.Component
+import io.antarescircuit.jabbah.graph.container.InternalLabelOrientation
+import io.antarescircuit.jabbah.graph.container.PortViewComponent
+import io.antarescircuit.jabbah.graph.view.port.PortLabelPosition
+import io.antarescircuit.jabbah.io.Storable
+import io.antarescircuit.jabbah.io.StoreReader
+import io.antarescircuit.jabbah.io.StoreWriter
+
+/**
+ * TODO Invalidation and validation logic shouldn't be here. Instead, Ports should issue events
+ * to which PortViews should listen and invalidate themselves accordingly.
+ */
+class DigitalPortViewComponent(
+    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+    portView: DigitalPortView? = null
+) : PortViewComponent<DigitalSignal>(styleProvider, portView) {
+
+    private val digitalPort: DigitalPort get() = port as DigitalPort
+    private val digitalPortView: DigitalPortView get() = portView as DigitalPortView
+
+	val portId: Int
+		get() = digitalPort.portId
+
+    var logic: Logic
+        get() = digitalPort.logic
+        set(value) {
+            portView!!.invalidate()
+            digitalPort.logic = value
+            portView!!.invalidate()
+            portView!!.validate()
+        }
+
+    var trigger: Trigger
+        get() = digitalPort.trigger
+        set(value) {
+            portView!!.invalidate()
+            digitalPort.trigger = value
+            portView!!.invalidate()
+            portView!!.validate()
+        }
+
+    var showBitWidthAnnotation: Boolean
+        get() = digitalPortView.showBitWidthAnnotation
+        set(value) {
+            portView!!.invalidate()
+            digitalPortView.showBitWidthAnnotation = value
+            portView!!.invalidate()
+            portView!!.validate()
+        }
+
+    var portLabelPosition: PortLabelPosition
+        get() = digitalPortView.portLabelPosition
+        set(value) {
+            portView!!.invalidate()
+            digitalPortView.portLabelPosition = value
+            portView!!.invalidate()
+            portView!!.validate()
+        }
+
+	var internalLabelOrientation: InternalLabelOrientation
+		get() = digitalPortView.internalLabelOrientation
+		set(value) {
+			if (value != digitalPortView.internalLabelOrientation) {
+				portView!!.invalidate()
+				digitalPortView.internalLabelOrientation = value
+				portView!!.invalidate()
+				portView!!.validate()
+			}
+		}
+
+    var outputAnnotation: OutputAnnotation
+        get() = digitalPort.outputAnnotation
+        set(value) {
+            portView!!.invalidate()
+            digitalPort.outputAnnotation = value
+            portView!!.invalidate()
+            portView!!.validate()
+        }
+
+	var portViewStyle: DigitalPortViewStyle
+		get() = digitalPortView.portViewStyle
+		set(value) {
+			portView!!.invalidate()
+			digitalPortView.portViewStyle = value
+			portView!!.invalidate()
+			portView!!.validate()
+		}
+
+    @Suppress("MemberVisibilityCanBePrivate") // Reflection
+    var largeExternalPortLabelDistance: Boolean
+        get() = digitalPortView.externalPortLabelDistance == ExternalPortLabelDistance.Large
+        set(value) {
+            if (value) {
+                digitalPortView.externalPortLabelDistance = ExternalPortLabelDistance.Large
+            } else {
+                digitalPortView.externalPortLabelDistance = ExternalPortLabelDistance.Small
+            }
+        }
+
+    /** ---- [Storable] */
+
+    override fun write(writer: StoreWriter) {
+        super.write(writer)
+        writer.writeBoolean("showBitWidthAnnotation", showBitWidthAnnotation)
+	    if (portViewStyle != DigitalPortViewStyle.Line) {
+	    	writer.writeString("portViewStyle", portViewStyle.customName)
+	    }
+	    if (largeExternalPortLabelDistance) {
+			writer.writeBoolean("largeExtLabelDist", true)
+	    }
+    }
+
+    override fun read(reader: StoreReader) {
+        super.read(reader)
+        showBitWidthAnnotation = reader.readBoolean("showBitWidthAnnotation")
+	    if (reader.hasAttribute("portViewStyle")) {
+	    	portViewStyle = DigitalPortViewStyle.withName(reader.readString("portViewStyle"))
+	    }
+	    if (reader.hasAttribute("largeExtLabelDist")) {
+            largeExternalPortLabelDistance = true
+	    }
+    }
+
+	/** ---- [Cloneable] */
+
+	override fun doClone(): Component {
+		val clone = super.doClone() as DigitalPortViewComponent
+		clone.showBitWidthAnnotation = this.showBitWidthAnnotation
+		clone.portViewStyle = this.portViewStyle
+		return clone
+	}
+}

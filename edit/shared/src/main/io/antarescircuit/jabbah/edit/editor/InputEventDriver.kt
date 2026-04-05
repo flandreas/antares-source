@@ -1,0 +1,94 @@
+package io.antarescircuit.jabbah.edit.editor
+
+import io.antarescircuit.jabbah.base.event.*
+import io.antarescircuit.jabbah.draw.InputEventHandler
+import io.antarescircuit.jabbah.edit.EditInputEventContext
+import io.antarescircuit.jabbah.edit.Editor
+
+/**
+ * A wrapper around [InputEventHandler] that provides a convenient interface for creating events for
+ * the wrapped [InputEventHandler]. Mainly used for testing purposes, but potentially useful for other applications.
+ */
+open class InputEventDriver(
+) {
+	protected open lateinit var editor: Editor
+	protected lateinit var handler: InputEventHandler<EditInputEventContext>
+
+	open fun mouseMoveTo(x: Int, y: Int, modifiers: Int = 0): InputEventDriver {
+		handler.mouseMoved(context(MouseEventType.MOVED, x, y, modifiers))
+		return this
+	}
+
+	fun pressMouseAt(x: Int, y: Int, modifiers: Int = 0): InputEventDriver {
+		handler.mousePressed(context(MouseEventType.PRESSED, x, y, modifiers))
+		return this
+	}
+
+	fun clickMouseAt(x: Int, y: Int, modifiers: Int = 0): InputEventDriver {
+		pressMouseAt(x, y, modifiers)
+		releaseMouseAt(x, y)
+		handler.mouseClicked(context(MouseEventType.CLICKED, x, y, modifiers))
+		return this
+	}
+
+	fun doubleClickMouseAt(x: Int, y: Int, modifiers: Int = 0): InputEventDriver {
+		handler.mouseClicked(context(MouseEventType.CLICKED, x, y, modifiers, clickCount = 2))
+		return this
+	}
+
+	fun dragMouseTo(x: Int, y: Int): InputEventDriver {
+		handler.mouseDragged(context(MouseEventType.DRAGGED, x, y))
+		return this
+	}
+
+	fun releaseMouseAt(x: Int, y: Int): InputEventDriver {
+		handler.mouseReleased(context(MouseEventType.RELEASED, x, y))
+		return this
+	}
+
+	fun pressKey(keyCode: Int): InputEventDriver {
+		handler.keyPressed(context(KeyEventType.PRESSED, keyCode))
+		return this
+	}
+
+	fun releaseKey(keyCode: Int): InputEventDriver {
+		handler.keyReleased(context(KeyEventType.RELEASED, keyCode))
+		return this
+	}
+
+	fun pressEscape(): InputEventDriver {
+		pressKey(KeyEvent.VK_ESCAPE)
+		return this
+	}
+
+	fun pressAlt(): InputEventDriver {
+		pressKey(KeyEvent.VK_ALT)
+		return this
+	}
+	
+	fun pressAndDragTo(x1: Int, y1: Int, x2: Int, y2: Int, modifiers: Int = 0): InputEventDriver {
+		mouseMoveTo(x1, y1, modifiers)
+		pressMouseAt(x1, y1, modifiers)
+		dragMouseTo(x2, y2)
+		releaseMouseAt(x2, y2)
+		return this
+	}
+
+	fun mouseMoveToAndClickAt(x: Int, y: Int, modifiers: Int = 0): InputEventDriver {
+		mouseMoveTo(x, y, modifiers)
+		clickMouseAt(x, y, modifiers)
+		return this
+	}
+
+	fun context(type: MouseEventType, x: Int, y: Int, modifiers: Int = 0, clickCount: Int = 1): EditInputEventContext {
+		return EditInputEventContext(
+			editor = editor,
+			mouseEvent = MouseEventImpl(type, x = x, y = y, button = Button.BUTTON1, modifiers = modifiers, clickCount = clickCount),
+			x = x.toDouble(),
+			y = y.toDouble())
+	}
+
+	fun context(type: KeyEventType, keyCode: Int): EditInputEventContext {
+		return EditInputEventContext(editor, keyEvent = KeyEventImpl(type, key = keyCode, keyChar = ' '))
+	}
+}

@@ -1,0 +1,67 @@
+package io.antarescircuit.jabbah.graph.model.port
+
+import io.antarescircuit.jabbah.edit.model.text.description.Description
+import io.antarescircuit.jabbah.execution.SignalHandler
+import io.antarescircuit.jabbah.graph.model.*
+import io.antarescircuit.jabbah.graph.model.vertice.SubGraphVertice
+import io.antarescircuit.jabbah.io.*
+
+/**
+ * A [SubGraphPortImpl] is used as a [Port] in [SubGraphVertice]s and maintains a named link to the
+ * [GraphPort] of the referenced [Graph].
+ * @param <T> the type of the signal that is processed by this [SubGraphPortImpl].
+ */
+class SubGraphPortImpl<T: Any>(
+	portType: PortType = PortType.INPUT,
+	name: String? = null
+) : PortImpl<T>(portType, name), SubGraphInputPort<T>, SubGraphOutputPort<T> {
+
+    /** ---- [SubGraphInputPort] */
+
+    override var graphInput: GraphInput<T>? = null
+
+    /** ---- [SubGraphOutputPort] */
+
+    override fun propagateSignal(signal: T, signalHandler: SignalHandler) {
+        setOutgoingSignalBuffered(signal, signalHandler)
+        if (owner is SubGraphVertice) {
+            (owner as SubGraphVertice).propagateOutput(this, signal, signalHandler)
+        }
+    }
+
+    /** ---- [PortImpl] */
+
+    override fun setIncomingSignal(signal: T?, signalHandler: SignalHandler, force: Boolean) {
+        super.setIncomingSignal(signal, signalHandler, force)
+        graphInput?.setIncomingSignal(signal, signalHandler, force)
+    }
+
+    // TODO Is this override necessary? Wasn't part of the guugen version
+    override fun setOutgoingSignal(signal: T?, signalHandler: SignalHandler) {
+        super.setOutgoingSignal(signal, signalHandler)
+        owner?.outputChanged(this, signalHandler)
+    }
+
+    override fun setOutgoingSignalBuffered(signal: T?, signalHandler: SignalHandler) {
+        super.setOutgoingSignalBuffered(signal, signalHandler)
+        owner?.outputChanged(this, signalHandler)
+    }
+
+    /** ---- [Storable] interface */
+
+    override var isReading: Boolean = false
+
+    override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
+
+    override fun write(writer: StoreWriter) {
+        writer.writeString("name", name!!)
+        writer.writeString("type", portType.customName)
+	    description.write("desc", writer)
+    }
+
+    override fun read(reader: StoreReader) {
+        name = reader.readString("name")
+        portType = PortType.withName(reader.readString("type"))
+	    description = Description.read("desc", reader)
+    }
+}

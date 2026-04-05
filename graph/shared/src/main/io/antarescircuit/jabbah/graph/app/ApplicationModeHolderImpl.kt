@@ -1,0 +1,116 @@
+package io.antarescircuit.jabbah.graph.app
+
+import io.antarescircuit.jabbah.base.*
+import io.antarescircuit.jabbah.base.event.EventBus
+import io.antarescircuit.jabbah.base.event.PropertyChangeEvent
+import io.antarescircuit.jabbah.base.event.PropertyChangeListener
+import io.antarescircuit.jabbah.base.module.BaseModule
+import io.antarescircuit.jabbah.draw.view.DrawViewModule
+import io.antarescircuit.jabbah.draw.view.ContentViewManager
+import io.antarescircuit.jabbah.draw.view.CurrentPanMethod
+import io.antarescircuit.jabbah.edit.DrawingView
+import io.antarescircuit.jabbah.edit.Editor
+import io.antarescircuit.jabbah.edit.model.ComponentMessage
+import io.antarescircuit.jabbah.edit.model.ComponentMessageType
+import io.antarescircuit.jabbah.execution.scheduler.Scheduler
+import io.antarescircuit.jabbah.graph.view.GraphView
+
+/**
+ * An aggregatable implementation of [ApplicationModeHolder] that disables an associated
+ * [Editor] when [ApplicationMode] is set to [ApplicationMode.EXECUTE].
+ */
+class ApplicationModeHolderImpl(
+	val editor: Editor,
+	private val scheduler: Scheduler,
+	private val viewManager: ContentViewManager = DrawViewModule.viewManager,
+	private val eventBus: EventBus = BaseModule.eventBus
+) : ApplicationModeHolder {
+
+	companion object {
+		private val LOG by logger(ApplicationModeHolderImpl::class)
+	}
+
+	private val rootGraphView: GraphView get() = editor.drawing as GraphView
+
+	private val editorViewListener = EditorViewListener()
+
+	init {
+		editor.view.addPropertyChangeListener(editorViewListener)
+		Status.set(StatusType.Large, Translations.getString("graph.status.edit"))
+	}
+
+	override fun dispose() {
+		editor.view.removePropertyChangeListener(editorViewListener)
+	}
+
+	override var currentMode: ApplicationMode  = ApplicationMode.EDIT
+		private set
+
+	override fun setMode(mode: ApplicationMode, after: () -> Unit) {
+		setMode(mode, init = false, after)
+	}
+
+	override fun updateEditorEditability() {
+		val editable =
+			viewManager.activeView?.view === editor.view
+				&& !scheduler.isActive
+
+		LOG.trace("Setting editor active=$editable")
+		editor.active = editable
+	}
+
+	private fun setMode(mode: ApplicationMode, init: Boolean, after: () -> Unit = {}) {
+		if (mode == currentMode) {
+			return
+		}
+		LOG.trace("Entering mode $mode")
+		when (mode) {
+			ApplicationMode.EDIT -> enterEditMode(init)
+			ApplicationMode.EXECUTE, ApplicationMode.EXEC_USECASE -> enterExecMode(mode, after)
+		}
+	}
+
+	private fun enterEditMode(init: Boolean) {
+		LOG.userTrail("Enter edit mode")
+
+		currentMode = ApplicationMode.EDIT
+		if (!init) {
+			scheduler.isActive = false
+		}
+		updateEditorEditability()
+		eventBus.post(ApplicationModeEvent(this, currentMode))
+		Status.set(StatusType.Large, Translations.getString("graph.status.edit"))
+	}
+
+	private fun enterExecMode(mode: ApplicationMode, after: () -> Unit) {
+		LOG.userTrail("Enter execution mode (deep = ${scheduler.isDeepExecution})")
+
+		eventBus.post(ApplicationModeBeginEvent(this, mode))
+
+		if (rootGraphView.checkDesign(scheduler, eventBus)) {
+			currentMode = mode
+			System.invokeLater {
+				scheduler.isActive = true
+				updateEditorEditability()
+				eventBus.post(ApplicationModeEvent(this, currentMode))
+				Status.set(StatusType.Large, Translations.getString("graph.status.execute"))
+				Status.set(
+					StatusType.Tool,
+					"${Translations.getString("edit.tool.select.zoom.text")}. ${CurrentPanMethod.panMethod.description}"
+				)
+				after.invoke()
+			}
+		} else {
+			eventBus.post(ComponentMessage(type = ComponentMessageType.Error, source = null, messageKey = "graph.designError.msg"))
+			LOG.userTrail("Execution not started due to design errors")
+		}
+	}
+
+	private inner class EditorViewListener : PropertyChangeListener<Any> {
+		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
+			if (e.name == DrawingView.PROP_EDITABLE) {
+				updateEditorEditability()
+			}
+		}
+	}
+}

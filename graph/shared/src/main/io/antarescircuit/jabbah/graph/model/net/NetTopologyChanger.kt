@@ -1,0 +1,54 @@
+package io.antarescircuit.jabbah.graph.model.net
+
+import io.antarescircuit.jabbah.execution.SignalHandler
+import io.antarescircuit.jabbah.graph.model.GraphElement
+import io.antarescircuit.jabbah.graph.model.Net
+import io.antarescircuit.jabbah.graph.model.InputPort
+import io.antarescircuit.jabbah.graph.model.OutputPort
+
+/**
+ * A [GraphElement] that can change the topology of [Net]s at execution time.
+ * A typical example of such a [NetTopologyChanger] is a bi-directional switch connected
+ * to two individual [Net]s.
+ *
+ * [NetTopologyChanger]s are added to [CombinedNet]s during net formation. An [OutputPort]
+ * owing the formed [CombinedNet] will typically register itself as [NetTopologyChangeListener]
+ * on these [NetTopologyChanger]. Upon change, the [OutputPort] will redo its net formation
+ * to generated [CombinedNet]s that incorporate the changed topology.
+ *
+ * When a [NetTopologyChanger] changes the topology of a [Net], it sends a [NetTopologyChangeEvent]
+ * to all registered [NetTopologyChangeListener]s. It must then make sure that [OutputPort]s that contain
+ * that [NetTopologyChanger] in their [CombinedNet] will re-send their outgoing signal to reach possibly
+ * new areas of the [Net] whose topology has changed. A [NetTopologyChanger] can achieve this most easily
+ * by un-defining the values of its [OutputPort]s and request recalculation, which will in turn
+ * result in re-establishing the [Net]'s value using the outgoing value of the dominant [OutputPort],
+ * which is typically the one listing for topology changes.
+ */
+interface NetTopologyChanger {
+	fun addNetTopologyChangeListener(listener: NetTopologyChangeListener)
+	fun removeNetTopologyChangeListener(listener: NetTopologyChangeListener)
+	fun containsNetTopologyChangeListener(listener: NetTopologyChangeListener): Boolean
+}
+
+/** Provided by objects interested in being informed about [Net] topology changes.*/
+interface NetTopologyChangeListener {
+
+	/**
+	 * Notifies this [NetTopologyChangeListener] that a [NetTopologyChanger] has changed the topology of a [Net].
+	 * Typical implementations will rebuild their [CombinedNet]s to reflect the new [Net] topology.
+	 */
+	fun handle(event: NetTopologyChangeEvent)
+
+	/**
+	 * Asks this [NetTopologyChangeEvent] to resend its current signal after the [Net] topology has changed.
+	 * Implementations should use "force" sending signals, because otherwise [InputPort]s along the path
+	 * won't consume the resent signal if it doesn't differ from the current signal.
+	 */
+	fun resendSignal(signalHandler: SignalHandler)
+}
+
+/**
+ * Sent by [NetTopologyChanger] to registered [NetTopologyChangeListener]s after a [Net] topology has
+ * changed during execution.
+ */
+data class NetTopologyChangeEvent(val source: NetTopologyChanger, val signalHandler: SignalHandler)

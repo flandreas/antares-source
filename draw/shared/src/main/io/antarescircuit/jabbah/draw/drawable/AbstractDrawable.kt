@@ -1,0 +1,182 @@
+package io.antarescircuit.jabbah.draw.drawable
+
+import io.antarescircuit.jabbah.base.HierarchyVisitor
+import io.antarescircuit.jabbah.base.Tooltip
+import io.antarescircuit.jabbah.base.geom.Point2D
+import io.antarescircuit.jabbah.base.geom.RectangularShape
+import io.antarescircuit.jabbah.base.geom.Shape
+import io.antarescircuit.jabbah.draw.*
+import io.antarescircuit.jabbah.draw.graphics.Color
+import io.antarescircuit.jabbah.draw.graphics.Stroke
+
+/**
+ * An abstract base implementation of the [Drawable] interface.
+ */
+abstract class AbstractDrawable(visible: Boolean = true) : Drawable {
+
+	private val listeners: MutableList<DrawableListener> by lazy { mutableListOf() }
+
+	/** ---- [Drawable] interface */
+
+	/** The parent [DrawableContainer] that contains this [Drawable].*/
+	private var _parent: DrawableContainer<*>? = null
+	override val parent: DrawableContainer<*>? get() = _parent
+
+	override var visible: Boolean = visible
+		set(value) {
+			if (value != visible) {
+				invalidate()
+				field = value
+				update()
+				validate()
+			}
+		}
+
+	/** Empty implementation.*/
+	override fun dispose() {
+		// empty
+	}
+
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		return visitor.visit(this)
+	}
+
+	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
+		return InputEventHandlerAdapter.EMPTY_HANDLER
+	}
+
+	final override fun addDrawableListener(listener: DrawableListener) {
+		if (!listeners.contains(listener)) {
+			listeners.add(listener)
+		}
+	}
+
+	final override fun removeDrawableListener(listener: DrawableListener) {
+		listeners.remove(listener)
+	}
+
+	override fun invalidate() {
+		invalidate(boundingBox)
+	}
+
+	override fun invalidate(region: RectangularShape) {
+		parent?.handleDrawableInvalidated(this, region)
+		if (listeners.isNotEmpty()) {
+			val event = DrawableEvent(this, region)
+			listeners.forEach { it.drawableInvalidated(event) }
+		}
+	}
+
+	override fun validate() {
+		requestRedraw()
+	}
+
+	override fun <T : Drawable> handleAdded(container: DrawableContainer<T>) {
+		_parent = container
+	}
+
+
+	override fun <T : Drawable> handleRemoved(container: DrawableContainer<T>) {
+		_parent = null
+	}
+
+	override fun <T : InputEventContext> getTooltip(context: T): Tooltip? = null
+
+	override fun getExplanation(x: Double, y: Double): DrawableExplanation<RectangularDrawable>? = null
+
+	/** ---- AbstractDrawable */
+
+	/**
+	 * Notifies all registered [DrawableListener]s and the parent [DrawableContainer] that the geometry
+	 * of this [Drawable] has been updated.
+	 */
+	override fun update() {
+		parent?.handleDrawableUpdated(this)
+		if (listeners.isNotEmpty()) {
+			val event = DrawableEvent(this)
+			listeners.forEach { it.drawableUpdated(event) }
+		}
+	}
+
+	/**
+	 * Notifies all registered [DrawableListener]s and the parent [DrawableContainer] that this [Drawable]
+	 * should be redrawn.
+	 */
+	protected open fun requestRedraw() {
+		parent?.handleDrawableRequestRedraw(this)
+		if (listeners.isNotEmpty()) {
+			val event = DrawableEvent(this)
+			listeners.forEach { it.drawableRequestRedraw(event) }
+		}
+	}
+
+	/** Utility function for filling a [Shape] with the given fill [Color]. */
+	protected fun drawFill(context: DrawContext, shape: Shape, fillColor: Color?) {
+		if (fillColor != null) {
+			context.g.color = fillColor
+			context.g.fill(shape)
+		}
+	}
+
+	/** Utility function for drawing the stroke of a [Shape] with the given stroke [Color]. */
+	protected fun drawStroke(context: DrawContext, shape: Shape, strokeColor: Color?, stroke: Stroke?) {
+		if (stroke != null && strokeColor != null) {
+			context.g.color = strokeColor
+			context.g.stroke = stroke
+			context.g.draw(shape)
+		}
+	}
+
+	protected fun buildToolTipText(title: String?, text: String?, subText: String?): String? =
+		io.antarescircuit.jabbah.draw.view.buildToolTipText(title, text, subText, true)
+
+	/**
+	 * Calculates the absolute (i.e. toplevel) model space coordinate of the specified [Point2D]
+	 * by walking up the [DrawableContainer] hierarchy.
+	 */
+	protected fun toAbsoluteLocation(relativeLocation: Point2D): Point2D =
+		toAbsoluteLocation(relativeLocation.x, relativeLocation.y)
+
+	protected fun toAbsoluteLocation(relX: Double, relY: Double): Point2D {
+		var x = relX
+		var y = relY
+		var p: DrawableContainer<*>? = parent
+		while (p != null) {
+			x += p.location.x
+			y += p.location.y
+			p = p.parent
+		}
+		return Point2D(x, y)
+	}
+
+	/**
+	 * A wrapper class that listens to [DrawableEvent]s from an inner [AbstractDrawable] and that calls handling
+	 * methods of an owner [AbstractDrawable].
+	 * Needs to be inside [AbstractDrawable] in order to call protected methods of [owner].
+	 */
+	class DrawableOwner(val owner: AbstractDrawable, val inner: Drawable) : DrawableListener {
+
+		init {
+			inner.addDrawableListener(this)
+		}
+
+		fun dispose() {
+			inner.removeDrawableListener(this)
+		}
+
+		/** ---- [DrawableListener] interface */
+
+		override fun drawableInvalidated(event: DrawableEvent) {
+			owner.invalidate()
+		}
+
+		override fun drawableRequestRedraw(event: DrawableEvent) {
+			owner.requestRedraw()
+		}
+
+		override fun drawableUpdated(event: DrawableEvent) {
+			owner.update()
+		}
+	}
+}
+

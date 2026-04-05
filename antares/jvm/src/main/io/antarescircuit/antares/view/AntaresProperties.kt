@@ -1,0 +1,77 @@
+package io.antarescircuit.antares.view
+
+import io.antarescircuit.antares.model.net.PullDirection
+import io.antarescircuit.antares.model.net.TransistorType
+import io.antarescircuit.antares.model.signal.BitWidth
+import io.antarescircuit.antares.model.signal.DigitalSignalRepresentation
+import io.antarescircuit.antares.view.gate.LogicGateView
+import io.antarescircuit.antares.view.net.TransistorViewSymbol
+import io.antarescircuit.antares.view.net.tunnel.TunnelFlowDirection
+import io.antarescircuit.antares.view.output.LEDShape
+import io.antarescircuit.antares.view.output.LightColor
+import io.antarescircuit.jabbah.edit.BeanProvider
+import io.antarescircuit.jabbah.edit.componentBeanProvider
+import io.antarescircuit.jabbah.edit.model.Size
+import io.antarescircuit.jabbah.edit.properties.CommandPropertySwing
+import io.antarescircuit.jabbah.graph.model.PortType
+import io.antarescircuit.jabbah.graph.model.param.ExpressionPropertySwing
+
+object AntaresProperties {
+
+	fun bitWidth(name: String = "bitWidth", baseKey: String = BitWidth.BASE_KEY, beanProvider: BeanProvider = componentBeanProvider, supportExpressions: Boolean = true) =
+		ExpressionPropertySwing(name, baseKey, BitWidth::class.java, beanProvider, supportExpressions = supportExpressions)
+
+	fun portType(name: String = "portType"): CommandPropertySwing<PortType> =
+		CommandPropertySwing(name, PortType.BASE_KEY, PortType::class.java, componentBeanProvider)
+
+	fun signalRepresentation(name: String ="signalRepresentation"): CommandPropertySwing<DigitalSignalRepresentation> =
+		CommandPropertySwing(name, DigitalSignalRepresentation.BASE_KEY, DigitalSignalRepresentation::class.java, componentBeanProvider)
+
+	fun handedness(name: String = "handedness", baseKey: String): CommandPropertySwing<Handedness> =
+		CommandPropertySwing(name, baseKey, Handedness::class.java, componentBeanProvider)
+
+	fun lightColor(name: String = "lightColor", baseKey: String = "element.property.LEDColor"): CommandPropertySwing<LightColor> =
+		ExpressionPropertySwing(name, baseKey, LightColor::class.java, componentBeanProvider)
+
+	fun pullDirection(name: String = "pullDirection", baseKey: String = "element.property.PullDirection"): CommandPropertySwing<PullDirection> =
+		CommandPropertySwing(name, baseKey, PullDirection::class.java, componentBeanProvider)
+
+	fun transistorType(name: String = "transistorType", baseKey: String = "element.property.transistorType"): CommandPropertySwing<TransistorType> =
+		CommandPropertySwing(name, baseKey, TransistorType::class.java, componentBeanProvider)
+
+	fun transistorSymbol(name: String = "symbol", baseKey: String = "element.property.transistorSymbol"): CommandPropertySwing<TransistorViewSymbol> =
+		CommandPropertySwing(name, baseKey, TransistorViewSymbol::class.java, componentBeanProvider)
+
+	fun ledShape(name: String = "ledShape", baseKey: String = LEDShape.BASE_KEY): CommandPropertySwing<LEDShape> =
+		CommandPropertySwing(name, baseKey, LEDShape::class.java, componentBeanProvider)
+
+	fun joystickDeflection(name: String = "deflection", baseKey: String = "element.property.joystickDeflection"): CommandPropertySwing<JoystickDeflectionEditor> =
+		CommandPropertySwing(name, baseKey, JoystickDeflectionEditor::class.java, componentBeanProvider)
+
+	fun portViewSpacing(name: String = "portViewSpacing", baseKey: String = "element.property.portViewSpacing"): CommandPropertySwing<PortViewSpacing> =
+		CommandPropertySwing(name, baseKey, PortViewSpacing::class.java, componentBeanProvider)
+
+	fun canBeUndefined(name: String = "customCanBeUndefined", baseKey: String = "element.property.CircuitOutput.triState"): CommandPropertySwing<Boolean> =
+		CommandPropertySwing(name, baseKey, Boolean::class.java, componentBeanProvider)
+
+	fun tunnelFlowDirection(name: String = "flowDirection"): CommandPropertySwing<TunnelFlowDirection> =
+		CommandPropertySwing(name, "element.property.tunnelFlowDirection", TunnelFlowDirection::class.java, componentBeanProvider)
+
+	fun tunnelIsGlobal(name: String = "global"): CommandPropertySwing<Boolean> =
+		CommandPropertySwing(name, "element.property.tunnelIsGlobal", Boolean::class.java, componentBeanProvider)
+
+	fun fixedPointConfigFraction(name: String = "fixedPointFractionSize"): CommandPropertySwing<Int> =
+		CommandPropertySwing(name, "element.property.fixedPointConfig.fractionSize", Int::class.java, componentBeanProvider)
+
+	fun fixedPointConfigSigned(name: String = "fixedPointSigned"): CommandPropertySwing<Boolean> =
+		CommandPropertySwing(name, "element.property.fixedPointConfig.signed", Boolean::class.java, componentBeanProvider)
+
+	fun inputPortName(name: String = "inputPortName", portId: Int): CommandPropertySwing<String> =
+		CommandPropertySwing(name, LogicGateView.BASE_KEY_INPUT_PORT_NAME, String::class.java, componentBeanProvider, baseKeyParams = arrayOf(portId))
+
+	fun outputPortName(name: String = "outputPortName"): CommandPropertySwing<String> =
+		CommandPropertySwing(name, LogicGateView.BASE_KEY_OUTPUT_PORT_NAME, String::class.java, componentBeanProvider)
+
+	fun defaultLogicGateSize(name: String = "size"): CommandPropertySwing<Size> =
+		CommandPropertySwing(name, "element.property.logicGateSize", Size::class.java, componentBeanProvider)
+}
