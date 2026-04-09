@@ -1,29 +1,29 @@
 package io.antarescircuit.jabbah.animation
 
 /**
- * Listens for important lifecycle state changes of an [io.antarescircuit.jabbah.animation.AnimationTask].
+ * Listens for important lifecycle state changes of an [AnimationTask].
  */
 interface AnimationTaskListener {
 
-    /** Notifies this [AnimationTaskListener] that [task] has been scheduled for execution in an [io.antarescircuit.jabbah.animation.Animator].*/
-    fun scheduled(task: io.antarescircuit.jabbah.animation.AnimationTask)
+    /** Notifies this [AnimationTaskListener] that [task] has been scheduled for execution in an [Animator].*/
+    fun scheduled(task: AnimationTask)
 
-    /** Notifies this [AnimationTaskListener] that [task] has been started in an [io.antarescircuit.jabbah.animation.Animator].*/
-    fun started(task: io.antarescircuit.jabbah.animation.AnimationTask)
+    /** Notifies this [AnimationTaskListener] that [task] has been started in an [Animator].*/
+    fun started(task: AnimationTask)
 
-    /** Notifies this [AnimationTaskListener] that [task] has been ended in an [io.antarescircuit.jabbah.animation.Animator].*/
-    fun ended(task: io.antarescircuit.jabbah.animation.AnimationTask, canceled: Boolean = false)
+    /** Notifies this [AnimationTaskListener] that [task] has been ended in an [Animator].*/
+    fun ended(task: AnimationTask, canceled: Boolean = false)
 }
 
 /**
- * Empty implementation of [io.antarescircuit.jabbah.animation.AnimationTaskListener] intended to be subclassed by listeners that
+ * Empty implementation of [AnimationTaskListener] intended to be subclassed by listeners that
  * only need to react to some of the lifecycle events.
  */
-open class AnimationTaskAdapter : io.antarescircuit.jabbah.animation.AnimationTaskListener {
+open class AnimationTaskAdapter : AnimationTaskListener {
 
-    override fun scheduled(task: io.antarescircuit.jabbah.animation.AnimationTask) {}
+    override fun scheduled(task: AnimationTask) {}
 
-    override fun started(task: io.antarescircuit.jabbah.animation.AnimationTask) {}
+    override fun started(task: AnimationTask) {}
 
-    override fun ended(task: io.antarescircuit.jabbah.animation.AnimationTask, canceled: Boolean) {}
+    override fun ended(task: AnimationTask, canceled: Boolean) {}
 }

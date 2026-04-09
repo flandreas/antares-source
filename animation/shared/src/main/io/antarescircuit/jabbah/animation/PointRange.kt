@@ -1,10 +1,10 @@
 package io.antarescircuit.jabbah.animation
 
-import io.antarescircuit.jabbah.base.math.SIGMA
 import io.antarescircuit.jabbah.base.geom.Point2D
+import io.antarescircuit.jabbah.base.math.SIGMA
 
 /**
- * A [PointRange] is a [io.antarescircuit.jabbah.animation.Sequence] of [io.antarescircuit.jabbah.base.geom.Point2D]s between a begin and an end point.
+ * A [PointRange] is a [Sequence] of [Point2D]s between a begin and an end point.
  *
  * Also provides the streaming method [forEach] to iterate over a [PointRange]
  * without instantiating [io.antarescircuit.jabbah.base.geom.Point2D] objects.
@@ -17,11 +17,11 @@ import io.antarescircuit.jabbah.base.geom.Point2D
  * that has been lost by a remainder of the previous segment
  */
 class PointRange(
-    val begin: io.antarescircuit.jabbah.base.geom.Point2D,
-    val end: io.antarescircuit.jabbah.base.geom.Point2D,
+    val begin: Point2D,
+    val end: Point2D,
     private val returnEndPoint: Boolean = true,
     initialOffset: Double? = null
-) : io.antarescircuit.jabbah.animation.Sequence<io.antarescircuit.jabbah.base.geom.Point2D> {
+) : Sequence<Point2D> {
 
     private val _size: Double = begin.distance(end)
 
@@ -37,7 +37,7 @@ class PointRange(
 		private set
 
 	init {
-		if (initialOffset != null && initialOffset > _root_ide_package_.io.antarescircuit.jabbah.base.math.SIGMA) {
+		if (initialOffset != null && initialOffset > SIGMA) {
 			calculateNextXY(initialOffset)
 			valueX = nextX
 			valueY = nextY
@@ -50,7 +50,7 @@ class PointRange(
 
     private fun hasNext(): Boolean = valueX != null && valueY != null
 
-    override fun getNext(distance: Double): io.antarescircuit.jabbah.base.geom.Point2D? {
+    override fun getNext(distance: Double): Point2D? {
 		val oldValueX = valueX
 	    val oldValueY = valueY
 
@@ -59,17 +59,17 @@ class PointRange(
 	    }
 	    getNextXY(distance)
 
-	    return _root_ide_package_.io.antarescircuit.jabbah.base.geom.Point2D(oldValueX!!, oldValueY!!)
+	    return Point2D(oldValueX!!, oldValueY!!)
     }
 
-    override fun getCurrent(): io.antarescircuit.jabbah.base.geom.Point2D? {
+    override fun getCurrent(): Point2D? {
         if (valueX == null || valueY == null) {
 			return null
         }
-        return _root_ide_package_.io.antarescircuit.jabbah.base.geom.Point2D(valueX!!, valueY!!)
+        return Point2D(valueX!!, valueY!!)
     }
 
-	/** ---- [PointRange] sequencing API for avoiding [io.antarescircuit.jabbah.base.geom.Point2D] instantiation */
+	/** ---- [PointRange] sequencing API for avoiding [Point2D] instantiation */
 
 	fun forEach(distance: Double, handler: (x: Double, y: Double) -> Unit) {
 		while (hasNext()) {
@@ -90,12 +90,12 @@ class PointRange(
 
 	private fun calculateNextXY(distance: Double) {
 		val effDist = if (distance <= 0.0) {
-            _root_ide_package_.io.antarescircuit.jabbah.base.math.SIGMA
+			SIGMA
 		} else {
 			distance
 		}
 
-		if (size <= _root_ide_package_.io.antarescircuit.jabbah.base.math.SIGMA) {
+		if (size <= SIGMA) {
 			nextX = null
 			nextY = null
 			return

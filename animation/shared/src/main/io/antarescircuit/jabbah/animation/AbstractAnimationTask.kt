@@ -1,34 +1,34 @@
 package io.antarescircuit.jabbah.animation
 
 /**
- * Base implementation of [io.antarescircuit.jabbah.animation.AnimationTask] to be used for implementing custom types of [io.antarescircuit.jabbah.animation.AnimationTask]s.
+ * Base implementation of [AnimationTask] to be used for implementing custom types of [AnimationTask]s.
  * @param T the type of value that is animated
  */
 abstract class AbstractAnimationTask<T>(
     override val target: Any,
-    private val consumer: io.antarescircuit.jabbah.animation.AnimationTaskConsumer<T>,
-    private val sequence: io.antarescircuit.jabbah.animation.Sequence<T>,
+    private val consumer: AnimationTaskConsumer<T>,
+    private val sequence: Sequence<T>,
     override val duration: Double,
     override val dependsOnSystemSpeed: Boolean = false,
     override val isPausable: Boolean = false,
     override val key: String? = null
-) : io.antarescircuit.jabbah.animation.AnimationTask {
+) : AnimationTask {
 
-    private val listeners: MutableList<io.antarescircuit.jabbah.animation.AnimationTaskListener> by lazy { mutableListOf() }
+    private val listeners: MutableList<AnimationTaskListener> by lazy { mutableListOf() }
 
-    /** ---- [io.antarescircuit.jabbah.animation.AnimationTask] interface */
+    /** ---- [AnimationTask] interface */
 
     override val size: Double
         get() = sequence.size
 
-    override fun addListener(listener: io.antarescircuit.jabbah.animation.AnimationTaskListener): io.antarescircuit.jabbah.animation.AnimationTask {
+    override fun addListener(listener: AnimationTaskListener): AnimationTask {
         if (!listeners.contains(listener)) {
             listeners.add(listener)
         }
 	    return this
     }
 
-    override fun removeListener(listener: io.antarescircuit.jabbah.animation.AnimationTaskListener) {
+    override fun removeListener(listener: AnimationTaskListener) {
         listeners.remove(listener)
     }
 
@@ -64,8 +64,8 @@ abstract class AbstractAnimationTask<T>(
 
 class AnimationTaskImpl<T>(
     target: Any,
-    consumer: io.antarescircuit.jabbah.animation.AnimationTaskConsumer<T>,
-    sequence: io.antarescircuit.jabbah.animation.Sequence<T>,
+    consumer: AnimationTaskConsumer<T>,
+    sequence: Sequence<T>,
     duration: Double,
     dependsOnSystemSpeed: Boolean = false
-) : io.antarescircuit.jabbah.animation.AbstractAnimationTask<T>(target, consumer, sequence, duration, dependsOnSystemSpeed)
+) : AbstractAnimationTask<T>(target, consumer, sequence, duration, dependsOnSystemSpeed)

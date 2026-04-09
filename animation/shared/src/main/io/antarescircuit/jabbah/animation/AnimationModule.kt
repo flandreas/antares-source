@@ -9,20 +9,20 @@ import io.antarescircuit.jabbah.base.time.SystemSpeed
 /**
  * Module definitions for the [io.antarescircuit.jabbah.animation] module.
  */
-object AnimationModule : io.antarescircuit.jabbah.base.AbstractModule() {
+object AnimationModule : AbstractModule() {
 
-	val constantSpeedAnimator = _root_ide_package_.io.antarescircuit.jabbah.animation.AnimatorImpl(
-        _root_ide_package_.io.antarescircuit.jabbah.base.time.SystemSpeed(_root_ide_package_.io.antarescircuit.jabbah.base.time.SystemSpeed.MAX_SPEED),
-        _root_ide_package_.io.antarescircuit.jabbah.base.System.createTimer()
+	val constantSpeedAnimator = AnimatorImpl(
+		SystemSpeed(SystemSpeed.MAX_SPEED),
+        System.createTimer()
     )
 
 	override fun initialize() {
-		configureProperties(_root_ide_package_.io.antarescircuit.jabbah.base.module.BaseModule.properties)
+		configureProperties(BaseModule.properties)
 	}
 
 	override fun resetDependencies() {}
 
-	private fun configureProperties(@Suppress("UNUSED_PARAMETER") properties: io.antarescircuit.jabbah.base.Properties) {
+	private fun configureProperties(@Suppress("UNUSED_PARAMETER") properties: Properties) {
 		// empty
 	}
 }

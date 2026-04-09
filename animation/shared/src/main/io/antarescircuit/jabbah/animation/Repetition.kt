@@ -1,13 +1,13 @@
 package io.antarescircuit.jabbah.animation
 
 /**
- * A [io.antarescircuit.jabbah.animation.Sequence] that repeats forever the specified [io.antarescircuit.jabbah.animation.Sequence].
+ * A [Sequence] that repeats forever the specified [Sequence].
  */
 class Repetition<out T>(
-	sequence: io.antarescircuit.jabbah.animation.CloneableSequence<T>
-) : io.antarescircuit.jabbah.animation.Sequence<T> {
+	sequence: CloneableSequence<T>
+) : Sequence<T> {
 
-	private var currentSequence: io.antarescircuit.jabbah.animation.CloneableSequence<T> = sequence
+	private var currentSequence: CloneableSequence<T> = sequence
 
 	override val size: Double = sequence.size
 

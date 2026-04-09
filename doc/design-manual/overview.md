@@ -27,7 +27,8 @@ The Jabbah framework consists of a strickly layered stack of modules, implemente
 : Allows writing and reading objects graphs from and to persistent storage like XML files, including deferred reference resolution while reading.
 
 [animation](module-animation.md)
-: TODO
+: A simple animation framework that can modify a value according certain patterns in order to produce an animation effect,
+such as changing the alpha value of an RGBA color to produce a glow effect.
 
 [draw](module-draw.md)
 : TODO

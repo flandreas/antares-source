@@ -23,10 +23,10 @@ interface Sequence<out T> {
 }
 
 /**
- * A [io.antarescircuit.jabbah.animation.Sequence] capable of creating a reversed clone of itself. which is used for building
- * oscillating composite [io.antarescircuit.jabbah.animation.Sequence]s.
+ * A [Sequence] capable of creating a reversed clone of itself. which is used for building
+ * oscillating composite [Sequence]s.
  * Created clones must be reset to their initial i.e. start state.
  */
-interface CloneableSequence<out T> : io.antarescircuit.jabbah.animation.Sequence<T> {
+interface CloneableSequence<out T> : Sequence<T> {
 	fun clone(reversed: Boolean): CloneableSequence<T>
 }

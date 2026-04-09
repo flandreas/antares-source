@@ -1,16 +1,16 @@
 package io.antarescircuit.jabbah.animation
 
 /**
- * Combines multiple [io.antarescircuit.jabbah.animation.Sequence]s of the same type into a single one that executes the elements one after another.
+ * Combines multiple [Sequence]s of the same type into a single one that executes the elements one after another.
  * @param T the type of values produced by this [CompositeSequence].
  */
-open class CompositeSequence<out T : Any>(vararg sequences: io.antarescircuit.jabbah.animation.Sequence<T>) :
-    io.antarescircuit.jabbah.animation.Sequence<T> {
+open class CompositeSequence<out T : Any>(vararg sequences: Sequence<T>) :
+    Sequence<T> {
 
     private val sequences = sequences.toList()
     private var currentSequenceIndex: Int = 0
 
-    /** ---- [io.antarescircuit.jabbah.animation.Sequence] interface */
+    /** ---- [Sequence] interface */
 
     override val size: Double get() = sequences.sumOf { it.size }
 

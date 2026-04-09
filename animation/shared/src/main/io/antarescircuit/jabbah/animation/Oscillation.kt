@@ -1,16 +1,16 @@
 package io.antarescircuit.jabbah.animation
 
 /**
- * A [io.antarescircuit.jabbah.animation.Sequence] that loops forever over the specified [sequence] followed by its
- * reversed [io.antarescircuit.jabbah.animation.CloneableSequence].
+ * A [Sequence] that loops forever over the specified [sequence] followed by its
+ * reversed [CloneableSequence].
  * Note that in this implementation, the boundary values are returned twice whenever
  * the direction in the [Oscillation] changes.
  */
 class Oscillation<out T>(
-	sequence: io.antarescircuit.jabbah.animation.CloneableSequence<T>
-) : io.antarescircuit.jabbah.animation.Sequence<T> {
+	sequence: CloneableSequence<T>
+) : Sequence<T> {
 
-	private var currentSequence: io.antarescircuit.jabbah.animation.CloneableSequence<T> = sequence
+	private var currentSequence: CloneableSequence<T> = sequence
 
 	override val size: Double = sequence.size
 

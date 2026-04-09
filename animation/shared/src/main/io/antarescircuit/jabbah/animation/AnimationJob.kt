@@ -6,20 +6,21 @@ import io.antarescircuit.jabbah.base.time.SystemSpeed
 import kotlin.sequences.Sequence
 
 /**
- * Enhances a scheduled [io.antarescircuit.jabbah.animation.AnimationTask]s with runtime information.
- * @property task the [io.antarescircuit.jabbah.animation.AnimationTask] being managed by this [AnimationJob].
+ * Enhances a scheduled [AnimationTask]s with runtime information.
+ *
+ * @property task the [AnimationTask] being managed by this [AnimationJob].
  * @property maxDistance the maximum distance of [Sequence] values to be used if [task] doesn't
- * depend on [io.antarescircuit.jabbah.base.time.SystemSpeed]. If it does, the effectively used distance is shortened according to the
- * [io.antarescircuit.jabbah.base.time.SystemSpeed]'s current value.
+ * depend on [SystemSpeed]. If it does, the effectively used distance is shortened according to the
+ * [SystemSpeed]'s current value.
  */
 class AnimationJob(
-    val task: io.antarescircuit.jabbah.animation.AnimationTask,
+    val task: AnimationTask,
     private val maxDistance: Double,
-    private val systemSpeed: io.antarescircuit.jabbah.base.time.SystemSpeed
+    private val systemSpeed: SystemSpeed
 ) {
 
 	companion object {
-		private val LOG by _root_ide_package_.io.antarescircuit.jabbah.base.logger(AnimationJob::class)
+		private val LOG by logger(AnimationJob::class)
 	}
 
 	enum class State {
@@ -60,7 +61,7 @@ class AnimationJob(
 
 	fun animate() {
 		currentDistance().let {
-			if (it < _root_ide_package_.io.antarescircuit.jabbah.base.math.SIGMA) {
+			if (it < SIGMA) {
 				suspend()
 			} else {
 				task.animate(it)
@@ -68,7 +69,7 @@ class AnimationJob(
 		}
 	}
 
-	/** Calculates the distance to be used for the current animation step. Can depend on [io.antarescircuit.jabbah.base.time.SystemSpeed].*/
+	/** Calculates the distance to be used for the current animation step. Can depend on [SystemSpeed].*/
 	private fun currentDistance(): Double {
 		if (!task.dependsOnSystemSpeed) {
 			return maxDistance

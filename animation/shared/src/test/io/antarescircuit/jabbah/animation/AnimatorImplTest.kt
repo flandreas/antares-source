@@ -1,29 +1,29 @@
 package io.antarescircuit.jabbah.animation
 
-import io.antarescircuit.jabbah.base.module.BaseModule
-import io.antarescircuit.jabbah.base.time.ControlledTimeService
-import io.antarescircuit.jabbah.base.time.ControlledTimer
-import io.antarescircuit.jabbah.base.time.SystemSpeed
 import dev.mokkery.matcher.any
 import dev.mokkery.spy
 import dev.mokkery.verify
 import dev.mokkery.verify.VerifyMode.Companion.exactly
+import io.antarescircuit.jabbah.base.module.BaseModule
+import io.antarescircuit.jabbah.base.time.ControlledTimeService
+import io.antarescircuit.jabbah.base.time.ControlledTimer
+import io.antarescircuit.jabbah.base.time.SystemSpeed
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class AnimatorImplTest {
 
-	private lateinit var timeService: io.antarescircuit.jabbah.base.time.ControlledTimeService
-	private lateinit var animator: io.antarescircuit.jabbah.animation.AnimatorImpl
+	private lateinit var timeService: ControlledTimeService
+	private lateinit var animator: AnimatorImpl
 
 	@BeforeTest
 	fun init() {
-		_root_ide_package_.io.antarescircuit.jabbah.base.module.BaseModule.require()
-		timeService = _root_ide_package_.io.antarescircuit.jabbah.base.time.ControlledTimeService()
-		animator = _root_ide_package_.io.antarescircuit.jabbah.animation.AnimatorImpl(
-            _root_ide_package_.io.antarescircuit.jabbah.base.time.SystemSpeed(),
-            _root_ide_package_.io.antarescircuit.jabbah.base.time.ControlledTimer(timeService),
+		BaseModule.require()
+		timeService = ControlledTimeService()
+		animator = AnimatorImpl(
+			SystemSpeed(),
+			ControlledTimer(timeService),
             100
         )
 	}
@@ -137,9 +137,9 @@ class AnimatorImplTest {
 		verify(exactly(1)) { task.animate(any()) }
 	}
 
-	private fun createTask(duration: Double, size: Double, pausable: Boolean = false): io.antarescircuit.jabbah.animation.AnimationTask {
+	private fun createTask(duration: Double, size: Double, pausable: Boolean = false): AnimationTask {
 		val spiedObject = TestTask(duration, size, pausable)
-		val task = spy<io.antarescircuit.jabbah.animation.AnimationTask>(spiedObject)
+		val task = spy<AnimationTask>(spiedObject)
 		spiedObject.outerTask = task
 
 		return task
@@ -149,9 +149,9 @@ class AnimatorImplTest {
 		override val duration: Double,
 		override val size: Double,
 		override val isPausable: Boolean
-	) : io.antarescircuit.jabbah.animation.AnimationTask {
-		lateinit var outerTask: io.antarescircuit.jabbah.animation.AnimationTask
-		var listener: io.antarescircuit.jabbah.animation.AnimationTaskListener? = null
+	) : AnimationTask {
+		lateinit var outerTask: AnimationTask
+		var listener: AnimationTaskListener? = null
 
 		override fun start() {
 			listener!!.started(outerTask)
@@ -165,12 +165,12 @@ class AnimatorImplTest {
 			listener!!.ended(outerTask, true)
 		}
 
-		override fun addListener(listener: io.antarescircuit.jabbah.animation.AnimationTaskListener): io.antarescircuit.jabbah.animation.AnimationTask {
+		override fun addListener(listener: AnimationTaskListener): AnimationTask {
 			this.listener = listener
 			return this
 		}
 
-		override fun removeListener(listener: io.antarescircuit.jabbah.animation.AnimationTaskListener) {
+		override fun removeListener(listener: AnimationTaskListener) {
 			this.listener = null
 		}
 

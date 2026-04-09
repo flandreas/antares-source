@@ -8,13 +8,13 @@ class OscillationTest {
 
 	@BeforeTest
 	fun init() {
-		_root_ide_package_.io.antarescircuit.jabbah.animation.AnimationModule.require()
+		AnimationModule.require()
 	}
 
 	@Test
 	fun shouldOscillate() {
-		val oscillation = _root_ide_package_.io.antarescircuit.jabbah.animation.Oscillation(
-            _root_ide_package_.io.antarescircuit.jabbah.animation.DoubleRange(
+		val oscillation = Oscillation(
+            DoubleRange(
                 0.0,
                 2.0
             )

@@ -1,10 +1,9 @@
 package io.antarescircuit.jabbah.animation
 
-import io.antarescircuit.jabbah.base.math.SIGMA
 import kotlin.math.abs
 
 /**
- * A [io.antarescircuit.jabbah.animation.Sequence] of [Double] values bound by two boundary values (inclusive).
+ * A [Sequence] of [Double] values bound by two boundary values (inclusive).
  *
  * Kotlin's [Number] class doesn't define arithmetic operations, hence we can't build
  * a generic NumberRange class.
@@ -12,13 +11,13 @@ import kotlin.math.abs
 class DoubleRange(
 	val begin: Double,
 	val end: Double
-) : io.antarescircuit.jabbah.animation.CloneableSequence<Double> {
+) : CloneableSequence<Double> {
 
 	private var value: Double? = begin
 
 	private var lastReached: Boolean = false
 
-	/** ---- [io.antarescircuit.jabbah.animation.Sequence] interface*/
+	/** ---- [Sequence] interface*/
 
 	override val size: Double = abs(begin - end)
 
@@ -33,7 +32,7 @@ class DoubleRange(
 
 	override fun getCurrent(): Double = value ?: throw IllegalStateException("no current value")
 
-	override fun clone(reversed: Boolean): io.antarescircuit.jabbah.animation.CloneableSequence<Double> = if (reversed) {
+	override fun clone(reversed: Boolean): CloneableSequence<Double> = if (reversed) {
 		DoubleRange(end, begin)
 	} else {
 		DoubleRange(begin, end)

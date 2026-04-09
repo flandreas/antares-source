@@ -4,15 +4,15 @@ import io.antarescircuit.jabbah.base.time.SystemSpeed
 import io.antarescircuit.jabbah.base.time.SystemSpeedPauseEvent
 
 /**
- * An [Animator] is the central orchestration point of [io.antarescircuit.jabbah.animation.AnimationTask] animations.
- * Listens for [io.antarescircuit.jabbah.base.time.SystemSpeedPauseEvent]s from the [io.antarescircuit.jabbah.base.time.SystemSpeed] to pause and resume this [Animator].
+ * An [Animator] is the central orchestration point of [AnimationTask] animations.
+ * Listens for [SystemSpeedPauseEvent]s from the [SystemSpeed] to pause and resume this [Animator].
  */
 interface Animator {
 
-	/** The [io.antarescircuit.jabbah.base.time.SystemSpeed] influencing the execution speed of [io.antarescircuit.jabbah.animation.AnimationTask]s animated by this [Animator].*/
-	val systemSpeed: io.antarescircuit.jabbah.base.time.SystemSpeed
+	/** The [SystemSpeed] influencing the execution speed of [AnimationTask]s animated by this [Animator].*/
+	val systemSpeed: SystemSpeed
 
-    /** Holds the number of scheduled [io.antarescircuit.jabbah.animation.AnimationTask]s of this [Animator].*/
+    /** Holds the number of scheduled [AnimationTask]s of this [Animator].*/
     val taskCount: Int
 
     fun dispose()
@@ -20,26 +20,26 @@ interface Animator {
     /**
      * Adds [task] to prepare of its animation.
      * Note that this doesn't start the animation yet. Starting scheduled animations is accomplished by
-     * [io.antarescircuit.jabbah.animation.AnimationTask.start].
+     * [AnimationTask.start].
      * @return the argument [task] to support method chaining
      */
-    fun schedule(task: io.antarescircuit.jabbah.animation.AnimationTask): io.antarescircuit.jabbah.animation.AnimationTask
+    fun schedule(task: AnimationTask): AnimationTask
 
     fun <T> schedule(
         target: Any,
-        consumer: io.antarescircuit.jabbah.animation.AnimationTaskConsumer<T>,
-        sequence: io.antarescircuit.jabbah.animation.Sequence<T>,
+        consumer: AnimationTaskConsumer<T>,
+        sequence: Sequence<T>,
         duration: Double,
         dependsOnSystemSpeed: Boolean = false
-    ): io.antarescircuit.jabbah.animation.AnimationTask
+    ): AnimationTask
 
-    /** Returns all scheduled [io.antarescircuit.jabbah.animation.AnimationTask]s for the specified [target].*/
-    fun getTasksForTarget(target: Any): Collection<io.antarescircuit.jabbah.animation.AnimationTask>
+    /** Returns all scheduled [AnimationTask]s for the specified [target].*/
+    fun getTasksForTarget(target: Any): Collection<AnimationTask>
 
-    /** Returns all scheduled [io.antarescircuit.jabbah.animation.AnimationTask]s with the specified key.*/
-    fun getTasksForKey(key: String): Collection<io.antarescircuit.jabbah.animation.AnimationTask>
+    /** Returns all scheduled [AnimationTask]s with the specified key.*/
+    fun getTasksForKey(key: String): Collection<AnimationTask>
 
-    /** Stops all currently running [io.antarescircuit.jabbah.animation.AnimationTask]s.*/
+    /** Stops all currently running [AnimationTask]s.*/
     fun stopAllTasks()
 
     fun cancelAllTasks()

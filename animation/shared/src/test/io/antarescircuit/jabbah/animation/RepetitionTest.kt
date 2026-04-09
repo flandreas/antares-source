@@ -8,13 +8,13 @@ class RepetitionTest {
 
 	@BeforeTest
 	fun init() {
-		_root_ide_package_.io.antarescircuit.jabbah.animation.AnimationModule.require()
+		AnimationModule.require()
 	}
 
 	@Test
 	fun shouldRepeat() {
-		val repetition = _root_ide_package_.io.antarescircuit.jabbah.animation.Repetition(
-            _root_ide_package_.io.antarescircuit.jabbah.animation.DoubleRange(
+		val repetition = Repetition(
+            DoubleRange(
                 0.0,
                 2.0
             )

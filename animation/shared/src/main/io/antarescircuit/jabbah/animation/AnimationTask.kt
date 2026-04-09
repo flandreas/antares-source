@@ -9,7 +9,7 @@ interface AnimationTask {
 
     /**
      * Holds the object that is being animated.
-     * Only used for retrieving [AnimationTask]s for a particular animated object from the [io.antarescircuit.jabbah.animation.Animator].
+     * Only used for retrieving [AnimationTask]s for a particular animated object from the [Animator].
      */
     val target: Any
 
@@ -18,12 +18,12 @@ interface AnimationTask {
 
     /**
      * Holds the overall size of this [AnimationTask]. The interpretation of "size" depends on the concrete
-     * [AnimationTask] and the [io.antarescircuit.jabbah.animation.Sequence] it used. For example, when object in the (x,y) plane are animated,
+     * [AnimationTask] and the [Sequence] it used. For example, when object in the (x,y) plane are animated,
      * the size corresponds to the distance between the start and end points.*/
     val size: Double
 
     /**
-     * Determines whether the speed of this [AnimationTask] depends on the current value of [io.antarescircuit.jabbah.base.time.SystemSpeed].
+     * Determines whether the speed of this [AnimationTask] depends on the current value of [SystemSpeed].
      */
     val dependsOnSystemSpeed: Boolean
 
@@ -34,15 +34,15 @@ interface AnimationTask {
     val isPausable: Boolean
 
     /** Adds [listener] to be informed about life cycle changed of this [AnimationTask].*/
-    fun addListener(listener: io.antarescircuit.jabbah.animation.AnimationTaskListener): AnimationTask
+    fun addListener(listener: AnimationTaskListener): AnimationTask
 
     /** Removes [listener] to stop being informed about life cycle changed of this [AnimationTask].*/
-    fun removeListener(listener: io.antarescircuit.jabbah.animation.AnimationTaskListener)
+    fun removeListener(listener: AnimationTaskListener)
 
     /**
      * Starts the animation that is represented by this [AnimationTask].
-     * Presumes that this [AnimationTask] has been scheduled with an [io.antarescircuit.jabbah.animation.Animator] before.
-     * Registered [io.antarescircuit.jabbah.animation.AnimationTaskListener] are notified with [io.antarescircuit.jabbah.animation.AnimationTaskListener.started].
+     * Presumes that this [AnimationTask] has been scheduled with an [Animator] before.
+     * Registered [AnimationTaskListener] are notified with [AnimationTaskListener.started].
      */
     fun start()
 
@@ -50,7 +50,7 @@ interface AnimationTask {
      * Stops the animation that is represented by this [AnimationTask].
      * Called when an [AnimationTask] has regularly completed its job, and other [AnimationTasks][AnimationTask]
      * might be started as a follow-up.
-     * Registered [io.antarescircuit.jabbah.animation.AnimationTaskListener] are notified with [io.antarescircuit.jabbah.animation.AnimationTaskListener.ended].
+     * Registered [AnimationTaskListener] are notified with [AnimationTaskListener.ended].
      */
     fun stop()
 
@@ -65,8 +65,8 @@ interface AnimationTask {
     fun animate(distance: Double)
 
     /**
-     * Notifies this [AnimationTask] that it has been scheduled for execution to an [io.antarescircuit.jabbah.animation.Animator].
-     * Typically called by the [io.antarescircuit.jabbah.animation.Animator].*/
+     * Notifies this [AnimationTask] that it has been scheduled for execution to an [Animator].
+     * Typically called by the [Animator].*/
     fun scheduled()
 }
 

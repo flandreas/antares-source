@@ -6,12 +6,12 @@ class DoubleRangeTest {
 
 	@BeforeTest
 	fun init() {
-		_root_ide_package_.io.antarescircuit.jabbah.animation.AnimationModule.require()
+		AnimationModule.require()
 	}
 
 	@Test
 	fun shouldGoForward() {
-		val range = _root_ide_package_.io.antarescircuit.jabbah.animation.DoubleRange(0.0, 2.0)
+		val range = DoubleRange(0.0, 2.0)
 
 		assertEquals(2.0, range.size)
 		assertEquals(0.0, range.getNext(1.0))
@@ -22,7 +22,7 @@ class DoubleRangeTest {
 
 	@Test
 	fun shouldAlwaysReturnEndWhenGoingForward() {
-		val range = _root_ide_package_.io.antarescircuit.jabbah.animation.DoubleRange(0.0, 2.0)
+		val range = DoubleRange(0.0, 2.0)
 
 		assertEquals(0.0, range.getNext(1.5))
 		assertEquals(1.5, range.getNext(1.5))
@@ -32,7 +32,7 @@ class DoubleRangeTest {
 
 	@Test
 	fun shouldGoBackwards() {
-		val range = _root_ide_package_.io.antarescircuit.jabbah.animation.DoubleRange(2.0, 0.0)
+		val range = DoubleRange(2.0, 0.0)
 
 		assertEquals(2.0, range.size)
 		assertEquals(2.0, range.getNext(1.0))
@@ -43,7 +43,7 @@ class DoubleRangeTest {
 
 	@Test
 	fun shouldAlwaysReturnEndWhenGoingBackward() {
-		val range = _root_ide_package_.io.antarescircuit.jabbah.animation.DoubleRange(2.0, 0.0)
+		val range = DoubleRange(2.0, 0.0)
 
 		assertEquals(2.0, range.size)
 		assertEquals(2.0, range.getNext(1.5))
