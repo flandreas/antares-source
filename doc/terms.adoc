@@ -1,64 +1,64 @@
-== Begriffe
+== Terms
 
-Dieses Dokument definiert im Sinne einer "Ubiquitous Language (DDD)" alle wichtigen, nicht trivialen Begriffe, und nennt den entsprechenden Begriff in deutscher Sprache
+This document defines all important, non-trivial terms in the sense of a “Ubiquitous Language (DDD)” and provides the corresponding German terms.
 
-Die erste Version dieser Begriffsliste konzentriert sich auf Begriffe, die in der Benutzerschnittstelle und der Benutzerdokumentation vorkommen. Wenn immer möglich sollen im Programmcode dieselben Begriffe verwendet werden, obwohl es vorkommen kann, dass im Programmcode Unterschiede gemacht werden, die für die Benutzerschnittstelle nicht relevant sind.
+The first version of this glossary focuses on terms that appear in the user interface and user documentation. Whenever possible, the same terms should be used in the program code, although there may be differences in the program code that are not relevant to the user interface.
 
-Die Liste ist alphabetisch aufsteigend nach dem englischen Begriff sortiert.
+The list is sorted alphabetically in ascending order by the English term. The german translation is stated in parentheses.
 
 === Liste
 
-Antares (Antares):: Lernplatform für digitale Schaltungen.
-Author (Autor):: Der Benutzer, dem ein Projekt oder eine Bibliothek gehört und der sie als einziger bearbeiten kann.
-Bit Width (Anzahl Bits):: Die Anzahl von Bits, die an einem Anschluss oder in einem Leitungsbündel gleichzeitig übertragen werden können. Kann auch als "Anzahl Bits" bezeichnet werden.
-Bidirectional (Bidirektional):: Signalrichtung an einem Anschluss, der gleichzeitig Eingang und Ausgang ist.
-Bundle (Bündel):: Ein exportiertes Projekt, das auch die referenzierte Bibliothek enthält.
-Circuit (Schaltung):: Die darstellbare Form einer digitalen Schaltung in `antares`.
-Component (Komponente):: Bestandteil einer Schaltung. Eine Komponente ist entweder elementar oder eine Teilschaltung.
-Connection (Verbindung):: Im Allgemeinen die Verbindung zwischen Anschlüssen von Komponenten. In Antares wird "Wire (Leitung)" verwendet.
-Control (Steuerelemente):: Komponenten einer Teilschaltung, die in das Symbol der Teilschaltung aufgenommen werden. Steuerelemente können interaktiv sein.
-Description Popup (Beschreibungs-Popup):: Wird über einer Komponente angezeigt, nachdem sich die Maus eine gewisse Zeit über der Komponente befunden hat. Enthält den Namen der Komponente sowie eine Beschreibung. Die Beschreibung ist entweder die Standardbeschreibung (durch den Typ der Komponente vorgegeben) oder eine Spezial-Beschreibung, die der Autor für diese Komponenten-Instanz erfasst hat und die den Zweck dieser Komponente in der Schaltung erläutern kann.
-Desktop (Werkbank):: Enthält das geöffnete Projekt und die referenzierte Bibliothek.
-Developer Mode (Entwicklermodus):: `Antares` kann im Entwicklermodus gestartet werden, um Zugriff auf bestimmte Funktionen zu erhalten, die vor allem der Fehlersuche dienen.
-Elementary Component (Elementare Komponente):: Eine Komponente, die keine innere Schaltung enthält.
-Emmerge (Auftauchen):: Nach Eintauchen in eine Teilschaltung in derselben Ansicht wieder zu äusseren Schaltungen zurückkehren.
-Error (Error):: Digitaler Signalwert, der einen Fehlerzustand anzeigt.
-Explorer (Explorer):: Die Seitenleiste, die das geöffnete Projekt und die verwendete Bibliothek sowie Voransicht und Eigenschaftenansicht enthält
-Folder (Verzeichnis):: Eine rekursive Gliederungsstruktur in Projekten und Bibliotheken.
-Graph (Graph):: Generischer Begriff in `graph` für speicherbare Objekte. Statt diesem Begriff sollte im UI von Applikation der ensprechende konkrete Begriff verwendet werden, also z.B. "Circuit" in `antares`.
-Input (Eingang):: Typ von Anschluss, der Daten entgegennehmen kann.
-Immerge (Eintauchen):: Innerhalb derselben View in eine Teilschaltung eintauchen. Die Tiefe wird in der Navigationsleiste angezeigt.
-Issues (Probleme):: Der Name einer Ansicht, in der Probleme angezeigt werden.
-Junction (Abzweigung):: Ein Punkt, an dem sich eine Leitung in zwei weiterführende Leitungen aufteilt
-Library (Bibliothek):: Enthält Schaltungen, die in Projekten referenziert werden können. Bibliotheken sind entweder vordefiniert oder benutzerdefiniert. Bibliotheken können nur durch ihren Autor verändert werden. Ein Projekt kann nur Schaltungen aus einer einzigen Bibiothek referenzieren.
-Label (Beschriftung):: Der Text, der in oder neben einer Komponente angezeigt wird.
-Log (Log):: Der Name einer Ansicht, in der Log-Meldungen angezeigt werden.
-Main View (Hauptansicht):: Die View, welche die Schaltung enthält, die bearbeitet und für welche die Simulation gestartet werden kann. Deren Name wird in der Titelzeile des Fensters angezeigt
-Navigation Bar (Navigationsleiste):: Bestandteil einer Ansicht, die das Navigieren im Teilschaltungs-Baum ermöglicht.
-Output (Ausgang):: Typ von Anschluss, der Daten ausgeben kann.
-Pin (Anschluss):: Nur bei Antares: Ein Anschluss, der im Symbol der Schaltung angezeigt wird.
-Port (Anschluss):: Ein Anschluss ist entweder ein Eingang, ein Ausgang, oder beides gleichzeitig. Er wird in Teilschaltungen verwendet, um Signale von der umgebenden Schaltung zu übernehmen (Eingang) oder an sie weiterzugeben (Ausgang). Bestandteil einer Schaltung. Wenn das äussere Symbol gemeint ist, wird "Pin" verwendet.
+Antares (Antares):: Learning platform for digital circuits.
+Author (Autor):: The user who owns a project or library and is the only one who can edit it.
+Bit Width (Anzahl Bits):: The number of bits that can be transmitted simultaneously over a single connection or through a wire bundle. This may also be referred to as the “number of bits.”
+Bidirectional (Bidirektional):: Signal direction at a port that serves as both an input and an output.
+Bundle (Bündel):: An exported project that also includes the referenced library.
+Circuit (Schaltung):: The representable form of a digital circuit in Antares.
+Component (Komponente):: A component of a circuit. A component is either a basic element or a subcircuit.
+Connection (Verbindung):: Generally, the connection between component ports. In `antares`, the term “Wire” is used.
+Control (Steuerelemente):: Components of a subcircuit that are included in the subcircuit symbol. Control elements can be interactive.
+Description Popup (Beschreibungs-Popup):: Appears above a component after the mouse has hovered over it for a certain amount of time. It includes the component's name and a description. The description is either the default description (determined by the component type) or a custom description that the author has entered for this specific instance of the component, which may explain the component's purpose in the circuit.
+Desktop (Werkbank):: Contains the open project and the referenced library.
+Developer Mode (Entwicklermodus):: Antares can be launched in developer mode to access certain features, primarily for troubleshooting purposes.
+Elementary Component (Elementare Komponente):: A component that does not contain any internal circuitry.
+Emmerge (Auftauchen):: After diving down into a subcircuit, return to the outer circuits in the same view.
+Error (Error):: A digital signal value that indicates an error condition.
+Explorer (Explorer):: The sidebar, which displays the open project and the library being used, as well as the preview and properties view.
+Folder (Verzeichnis):: A recursive organizational structure in projects and libraries.
+Graph (Graph):: Generic term in `graph` for storable objects. Instead of this term, the corresponding specific term should be used in the application's UI, e.g., “Circuit” in `antares`.
+Input (Eingang):: A type of port that can receive data.
+Immerge (Eintauchen):: Drill down into a sub-circuit within the same view. The depth is displayed in the navigation bar.
+Issues (Probleme):: The name of a view that displays issues.
+Junction (Abzweigung):: A point where a connection splits into two separate connections.
+Library (Bibliothek):: Contains circuits that can be referenced in projects. Libraries are either predefined or user-defined. Libraries can only be modified by their author. A project can only reference circuits from a single library.
+Label (Beschriftung):: The text that appears inside or next to a component.
+Log (Log):: The name of a view in which log messages are displayed.
+Main View (Hauptansicht):: The view that contains the circuit being edited and for which the simulation can be started. Its name is displayed in the window's title bar.
+Navigation Bar (Navigationsleiste):: A component of a view that allows navigation within the subcircuit tree.
+Output (Ausgang):: A type of port that can output data.
+Pin (Anschluss):: Only in `antares`: A port displayed in the circuit symbol.
+Port (Anschluss):: A port is either an input, an output, or both at the same time. It is used in subcircuits to receive signals from the surrounding circuit (input) or to transmit signals to it (output). An element of a circuit. When referring to the external symbol, the term “pin” is used.
 Preferences (Einstellungen):: TODO.
-Preview (Vorschau):: Zeigt den Namen, das Symbol und eine kurze Beschreibung der im Explorer ausgewählten Schaltung an.
-Propagation Delay (Schaltverzögerung):: Die Laufzeit von Signalen von einem Eingang zu einem Ausgang einer Basiskomponente oder Teilschaltung.
-Properties (Eigenschaften):: Zeigt die Eigenschaften der in der Hauptansicht ausgewählten Komponente an. Gewisse Eigenschaften können durch den Benutzer verändert werden, andere sind nicht veränderbar.
-Project (Projekt):: Eine durch den Benutzer erstellte Menge von zusammengehörenden Schaltungen.
-Recent (Zuletzt geöffnet):: Ermöglicht es, zuletzt geöffnete Schaltungen erneut zu öffnen
-Style (Stil):: Ein Stil ist ein Name für eine Menge von grafischen Eigenschaften, die einer Komponente gegeben werden können. Beispiel: "Figur" oder "Annotation".
-Signal (Signal):: Synonym von "Wert", wobei "Signal" den Schwerpunkt eher auf der Dynamik hat: Signale sind Werte, die unterwegs sind. Es kann auch der Begriff "Signal value (Signalwert)" verwendet werden, wenn der Schwerpunkt nicht bekannt ist.
-Subcircuit (Teilschaltung):: Eine Komponente, die eine innere Schaltung enthält und damit rekursive Schaltungsstrukturen ermöglicht.
-Subview (Unteransicht):: Eine Ansicht, welche eine geöffnete Teilschaltung anzeigt. Kann nicht bearbeitet werden. Während der Simulation können Werte von Eingängen nicht verändert werden.
-Symbol (Symbol):: Die Aussenansicht einer Teilschaltung, die bei der Verwendung der Teilschaltung in einer übergeordneten Schaltung verwendet wird.
-Symbol Editor (Symboleditor):: Der Editor, mit der das Symbol einer Teilschaltung bearbeitet werden kann.
-Theme (Thema):: Eine Menge von Stilen und anderen grafischen Eigenschaften, die das Aussehen von Graphen beeinflussen.
-Toolbar (Werkzeugleiste):: Enthält Werkzeuge
-User (Benutzer):: Die Person, die die Applikation gestartet hat. Im Moment wird lediglich zwischen "Entwickler" und "Jedermann" unterschieden. In Zukunft wird es identifizierbare Benutzer und einen Anmelde-Dialog geben.
-Unconnected (Unverbunden):: Ein Anschluss ist unverbunden, wenn er nicht mit einer Leitung verbunden ist. Unverbundene Anschlüsse haben immer den Wert 0.
-Undefined (Undefiniert):: Digitaler Signalwert, der von einem bidirektionalen Anschluss ausgegeben werden kann und auf analoger Ebene auch als "hochohmig" bezeichnet wird.
-Use Case (Anwendungsfall):: Ausprogrammierter Anwendungsfall einer Schaltung, den der Benutzer ausführen kann.
-User Language (Benutzersprache):: Die Sprache, in welcher der Benutzer die Texte der Benutzerschnittstelle angezeigt wünscht.
-Value (Wert):: Der Wert, der an einem Eingang anliegt oder an einem Ausgang ausgegeben wird.
-View (Ansicht):: Zeigt eine einzelne Schaltung innerhalb der Workbench an und enthält eine Navigationsleiste. Begriff wird auch für andere Ansichten wie "Issues" oder "Log" verwendet.
-Workbench (Arbeitsfläche):: Enthält die Ansichten von Schaltungen. Ordnet mehrere offenen Ansichten zweispaltig dar, wobei die rechte Spalte aus mehreren vertikal angeordneten Ansichten bestehen kann.
-Wire (Leitung):: Eine Leitung ist eine Verbindung zwischen Komponenten, über die Signale von einer Komponente zur verbundenen Komponente fliessen können.
-Wire Bundle (Leitungsbündel):: Eine Leitung, die aus mehreren schmaleren Leitungen besteht
+Preview (Vorschau):: Displays the name, icon, and a brief description of the circuit selected in Explorer.
+Propagation Delay (Schaltverzögerung):: The propagation time of signals from an input to an output of a basic component or subcircuit.
+Properties (Eigenschaften):: Displays the properties of the component selected in the main view. Some properties can be modified by the user, while others cannot be changed.
+Project (Projekt):: A user-defined set of related circuits.
+Recent (Zuletzt geöffnet):: An action that allows you to reopen recently opened circuits.
+Style (Stil):: A style is a term used to describe a set of graphical properties that can be applied to a component. Example: “Figure” or “Annotation”.
+Signal (Signal):: A synonym for “value,” though ‘signal’ places greater emphasis on dynamics: signals are values in motion. The term “signal value” can also be used when the context is unclear.
+Subcircuit (Teilschaltung):: A component that contains an internal circuit and thus enables recursive circuit structures.
+Subview (Unteransicht):: A view showing an open subcircuit. Cannot be edited. During simulation, input values cannot be changed.
+Symbol (Symbol):: The external view of a subcircuit as it appears when used in a higher-level circuit.
+Symbol Editor (Symboleditor):: The editor used to edit the icon of a subcircuit.
+Theme (Thema):: A set of styles and other graphical properties that affect the appearance of graphs and their elements.
+Toolbar (Werkzeugleiste):: Contains tools.
+User (Benutzer):: The person who launched the application. Currently, the only distinction is between “Developer” and “Everyone.” In the future, there will be identifiable users and a login dialog.
+Unconnected (Unverbunden):: A port is unconnected if it is not connected to a wire. Unconnected terminals always have a value configured by a user preference (0, 1 or random).
+Undefined (Undefiniert):: A digital signal level that can be output from a bidirectional port and is also referred to as “high-impedance” in analog systems.
+Use Case (Anwendungsfall):: A pre-programmed way of using of a circuit that the user can execute.
+User Language (Benutzersprache):: The language in which the user wishes to view the user interface text.
+Value (Wert):: The value present at an input or output.
+View (Ansicht):: Displays a single circuit within the Workbench and includes a navigation bar. The term is also used for other views, such as “Issues” or “Log.”
+Workbench (Arbeitsfläche):: Contains circuit views. Arranges multiple open views in a multi-column layout, where the user can drag & drop a view to a different location ("Docking").
+Wire (Leitung):: A wire is a connection between components through which signals can flow from one component to the other.
+Wire Bundle (Leitungsbündel):: A wire consisting of several smaller (narrower) wires.
