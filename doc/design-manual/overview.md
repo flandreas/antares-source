@@ -24,7 +24,7 @@ The Jabbah framework consists of a strickly layered stack of modules, implemente
 : Besides general purpose functionality like the `collection` package, the main purpose of the `base` module is to provide abstractions that have to be implemented differently on the JVM and JS platform, like the `InputEvent` class in the event package.
 
 [io](module-io.md)
-: TODO
+: Allows writing and reading objects graphs from and to persistent storage like XML files, including deferred reference resolution while reading.
 
 [animation](module-animation.md)
 : TODO
