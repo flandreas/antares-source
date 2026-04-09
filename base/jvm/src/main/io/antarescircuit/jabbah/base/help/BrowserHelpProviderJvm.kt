@@ -11,7 +11,7 @@ import javax.swing.JOptionPane
  * [HelpSource] for [HelpId] as a part of an URL and by opening that
  * URL in an external web browser.
  */
-class BrowserHelpProviderJvm() : HelpProvider {
+class BrowserHelpProviderJvm : HelpProvider {
 
 	override fun provideHelpFor(helpId: HelpId?) {
 		val helpSource = helpId?.let { HelpSourceRegistry.getHelpSource(it) }
