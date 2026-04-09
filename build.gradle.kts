@@ -24,25 +24,14 @@ plugins {
 val version_project: String by project
 val group_project = rootProject.name
 
-// Bytesafe repository: Taken from machine local gradle.properties
-val bytesaveUser: String by extra
-val bytesavePassword: String by extra
-
 allprojects {
 
 	repositories {
 		maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-js-wrappers")
 		maven("https://jitpack.io")
 		mavenCentral()
-
-		// Publish Jabbah core libraries to Bytesave, so that Akrab can fetch from Bytesave
-		maven {
-			name = "bytesafe"
-			url = uri("https://antares.bytesafe.dev/maven/antares/")
-			credentials {
-				username = bytesaveUser
-				password = bytesavePassword
-			}
+		flatDir {
+			dirs("../lib")
 		}
 	}
 
@@ -163,7 +152,8 @@ subprojects {
 					implementation("org.apache.commons:commons-math3:$commonsMathVersion")
 					implementation("commons-codec:commons-codec:$commonsCodecVersion")
 
-					implementation("l2fprod:l2fprod-common-all:$l2fprodVersion")
+					// Bean property sheet: Patched to support dark mode
+					implementation(":l2fprod:$l2fprodVersion")
 
 					implementation("exml:exml:7.0")
 					implementation("com.formdev:flatlaf:$flatLafVersion:no-natives")
@@ -188,8 +178,9 @@ subprojects {
 					implementation("org.apache.xmlgraphics:batik-util:$batikVersion")
 					implementation("org.apache.xmlgraphics:batik-xml:$batikVersion")
 
-					// Markdown HTML renderer and Swing viewer
-					implementation("io.antarescircuit:jmdadocviewer:1.1")
+					// Markdown HTML renderer and Swing viewer: Patched to support dark mode
+					implementation(":jmdviewer:1.1")
+
 					api("org.commonmark:commonmark:0.17.1")
 					api("org.commonmark:commonmark-ext-gfm-tables:0.17.1")
 					api("commons-cli:commons-cli:1.4")
@@ -248,6 +239,11 @@ subprojects {
 	}
 
 	publishing {
+
+		// Bytesafe repository credentials: Taken from machine local gradle.properties
+		val bytesaveUser: String? by extra
+		val bytesavePassword: String? by extra
+
 		publications {
 			create<MavenPublication>("maven") {
 				groupId = group_project
