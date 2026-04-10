@@ -33,7 +33,7 @@ interface Component : Movable, Rotatable, Snappable, Storable, Stylable, Focusab
 	/**
 	 * Holds a short translated description of the type of this [Component].
 	 *
-	 * The type of a [Component] describes the "kind" or the nature of a [Component]. This is in contrast to
+	 * The type of [Component] describes the "kind" or the nature of a [Component]. This is in contrast to
 	 * the name of a [Component], which is often provided by the user and can serve to distinguish two
 	 * [Component]s of the same type. Typically, the type is not persistent, but provided by concrete
 	 * implementation of the [Component] interface. Note that this type description should be internationalized.

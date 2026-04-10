@@ -30,7 +30,8 @@ such as changing the alpha value of an RGBA color to produce a glow effect.
 : Provides everything necessary for displaying 2D graphics, including zooming & panning. It contains a Kotlin-common `Graphics2D` interface with drawing operations that are implemented on the JVM and JS platform for the respective `Canvas` objects, as well as interfaces for commonly used graphics primitive classes like `Color`, `Stroke`, `Font` or `Image`.
 
 [jabbah.edit](module-edit.md)
-: TODO
+: The `edit` module extends the `draw` module to allow a user to edit a `Drawing`, including `Component` selection,
+support for undo/redo using the `Command` pattern, property editing, and a set of standard 2D `Components` like `PolylineComponent` or `TextComponent`.
 
 [jabbah.execution](module-execution.md)
 : TODO

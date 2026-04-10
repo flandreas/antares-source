@@ -1,4 +1,4 @@
-# Module `base`
+# Module "base"
 
 Besides general purpose functionality like the 'collection' package, the main purpose is to provide abstractions that have to be implemented differently on the JVM and JS platform, like the `InputEvent`class in the `event` package.
 
@@ -42,3 +42,7 @@ time
 
 ui
 : Provides Kotlin-common abstractions for common UI functionalities, such as `Clipboard`, a simple MVC system consisting of `UIView` and `UIController`. The JVM-specific package adds many Java Swing extensions and base support for user preference management and editing, as well as for dealing with properties and translations.
+
+## Other concepts
+
+`Actions` are a Kotlin-common abstraction whose implementations encapsulate logic that can be executed by the user, e.g. by clicking a button or selecting a menu item. Example: "Open circuit". Platform-specific UI implementations can bind to an `Action` and get automatically disabled if their `Action` is disabled.

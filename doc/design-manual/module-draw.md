@@ -1,22 +1,22 @@
-# Module `draw`
+# Module "draw"
 
 ## Overview
 
 Provides everything necessary for displaying 2D graphics, including zooming & panning. It contains a Kotlin-common `Graphics2D` interface with drawing operations that are implemented on the JVM and JS platform for the respective `Canvas` objects, as well as interfaces for commonly used graphics primitive classes like `Color`, `Stroke`, `Font` or `Image`.
 
-## Rendering using `Graphics2D`
+## Rendering using`Graphics2D
 
 The `Graphics2D` interface represents a Kotlin-common abstraction of the drawing interfaces known from Java or JavaScript programming. It provides drawing methods like `drawLine` or `fillRect` and transformation operations like `translate` or `rotate`. The goal of the `graphics` package was to enable Kotlin-common code to implement 2D drawing code that can be rendered both on the JVM and the JS platform. To do that, it also has to provide interfaces for graphics primitive classes `Color`, `Stroke`, `Font` or `Image`.
 
-## `Drawable`
+##`Drawable
 
 Classes that can draw themselves typically implement the `Drawable` interface. They are added to a `View`, which calls the `Drawable`'s `draw()` method whenever its region has become invalid and the `View` needs repainting. The provided `DrawContext` contains a reference to the `Graphics2D` objects used to call drawing operations.
 
-The `DrawableContainer` abstraction uses the composite pattern to build containment hierarchies of `Drawable`s. Drawings are typically implemented as a `DrawableContainer`.  The module provides some basic `Drawable` types like `AbstractDrawable` or `AbstractRectangle` that can be used to implement more concrete `Drawable`s.
+The`DrawableContainer abstraction uses the composite pattern to build containment hierarchies of `Drawable`s. Drawings are typically implemented as a `DrawableContainer`.  The module provides some basic `Drawable` types like `AbstractDrawable` or `AbstractRectangle` that can be used to implement more concrete `Drawable`s.
 
 Repainting in the `draw` module is initiated indirectly. Rather that directly requesting a `Graphics2D` and start drawing when a `Drawable`'s state has changed, the `Drawable` declares itself as "invalid". A `View` that displays the `Drawable` detects this and initiates repainting of the invalid region in its `Canvas`.
 
-## `View`
+## View
 
 A `View` displays a `Drawable` (typically a `DrawableContainer`) by rendering it in a `Canvas`, which is provided by the concrete platform (JVM, JavaScript/Browser). Its `ViewNavigator` allows the user to chanage the displayed region by zooming and panning, including predefined actions like "Zoom to fit".
 
