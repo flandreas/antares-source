@@ -478,7 +478,7 @@ open class ViewImpl<C : InputEventContext>(
 
 	override fun modelToDeviceX(x: Double): Double = modelToViewX(x) / canvas.devicePixelRatio
 
-	override fun modelToDeviceY(x: Double): Double = modelToViewY(x) / canvas.devicePixelRatio
+	override fun modelToDeviceY(y: Double): Double = modelToViewY(y) / canvas.devicePixelRatio
 
 	override fun modelToDevice(p: Point2D): Point2D = modelToView(p).multiply(1 / canvas.devicePixelRatio)
 

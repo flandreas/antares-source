@@ -1,5 +1,6 @@
 package io.antarescircuit.jabbah.animation
 
+import io.antarescircuit.jabbah.base.math.SIGMA
 import kotlin.math.abs
 
 /**
@@ -46,7 +47,7 @@ class DoubleRange(
 			return
 		}
 
-		if (size <= _root_ide_package_.io.antarescircuit.jabbah.base.math.SIGMA) {
+		if (size <= SIGMA) {
 			value = null
 			return
 		}
