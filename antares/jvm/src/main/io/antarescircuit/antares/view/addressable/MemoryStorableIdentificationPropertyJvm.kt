@@ -1,59 +1,17 @@
 package io.antarescircuit.antares.view.addressable
 
+import com.l2fprod.common.beans.editor.AbstractPropertyEditor
+import com.l2fprod.common.beans.editor.ComboBoxPropertyEditor
 import io.antarescircuit.antares.model.addressable.MemoryStorableIdentification
 import io.antarescircuit.jabbah.base.StringUtils
 import io.antarescircuit.jabbah.base.Translations
-import com.l2fprod.common.beans.editor.AbstractPropertyEditor
-import com.l2fprod.common.beans.editor.ComboBoxPropertyEditor
-import java.awt.Component
-import javax.swing.*
-import javax.swing.table.DefaultTableCellRenderer
+import io.antarescircuit.jabbah.base.swing.ToStringRenderer
+import javax.swing.DefaultComboBoxModel
+import javax.swing.JComboBox
 
-class MemoryStorableIdentificationRenderer : DefaultTableCellRenderer(), ListCellRenderer<MemoryStorableIdentification> {
-
-    override fun getListCellRendererComponent(
-        list: JList<out MemoryStorableIdentification>,
-        value: MemoryStorableIdentification?,
-        index: Int,
-        isSelected: Boolean,
-        cellHasFocus: Boolean
-    ): Component {
-        text = value?.toString() ?: Translations.getString("element.property.memoryStorable.none.name")
-
-        if (isSelected) {
-            foreground = list.selectionForeground
-            background = list.selectionBackground
-        } else {
-            foreground = list.foreground
-            background = list.background
-        }
-        font = list.font
-
-        return this
-    }
-
-    override fun getTableCellRendererComponent(
-        table: JTable,
-        value: Any?,
-        isSelected: Boolean,
-        hasFocus: Boolean,
-        row: Int,
-        column: Int
-    ): Component {
-        text = value?.toString() ?: Translations.getString("element.property.memoryStorable.none.name")
-
-        if (isSelected) {
-            foreground = table.selectionForeground
-            background = table.selectionBackground
-        } else {
-            foreground = table.foreground
-            background = table.background
-        }
-        font = table.font
-
-        return this
-    }
-}
+class MemoryStorableIdentificationRenderer : ToStringRenderer<MemoryStorableIdentification>(
+    Translations.getString("element.property.memoryStorable.none.name")
+)
 
 class MemoryStorableIdentificationEditor : AbstractPropertyEditor() {
 

@@ -85,11 +85,9 @@ class TriggerEditor : ComboBoxPropertyEditor() {
     }
 }
 
-class DigitalSignalRepresentationRenderer : EnumRenderer<DigitalSignalRepresentation>() {
-	override fun setValue(value: Any?) {
-		text = value?.toString() ?: Translations.getString("element.property.DigitalSignalRepresentation.none")
-	}
-}
+class DigitalSignalRepresentationRenderer : EnumRenderer<DigitalSignalRepresentation>(
+	Translations.getString("element.property.DigitalSignalRepresentation.none")
+)
 
 class DigitalSignalRepresentationEditor(
 	optional: Boolean = false,

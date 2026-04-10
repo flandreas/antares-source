@@ -6,11 +6,13 @@ import javax.swing.JTable
 import javax.swing.ListCellRenderer
 import javax.swing.table.DefaultTableCellRenderer
 
-open class ToStringRenderer<T : Any> : DefaultTableCellRenderer(), ListCellRenderer<Any> {
+open class ToStringRenderer<T : Any>(
+	private val nullText: String = ""
+) : DefaultTableCellRenderer(), ListCellRenderer<T> {
 
-	override fun getListCellRendererComponent(list: JList<*>, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
+	override fun getListCellRendererComponent(list: JList<out T>, value: T?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
 		@Suppress("UNCHECKED_CAST")
-		setValue(value as T?)
+		setValue(value)
 
 		if (isSelected) {
 			foreground = list.selectionForeground
@@ -39,6 +41,6 @@ open class ToStringRenderer<T : Any> : DefaultTableCellRenderer(), ListCellRende
 	}
 
 	override fun setValue(value: Any?) {
-		text = value?.toString() ?: ""
+		text = value?.toString() ?: nullText
 	}
 }
