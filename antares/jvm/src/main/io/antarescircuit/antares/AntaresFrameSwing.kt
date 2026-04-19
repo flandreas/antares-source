@@ -41,29 +41,27 @@ import java.awt.Toolkit
 import javax.swing.JOptionPane
 
 class AntaresFrameSwing(
-    controller: io.antarescircuit.antares.view.AntaresFrameController,
-    application: io.antarescircuit.jabbah.app.DesktopApplication,
-    viewManager: io.antarescircuit.jabbah.draw.view.ContentViewManager,
-    actions: io.antarescircuit.jabbah.graph.ui.GraphFrameActions,
-    private val eventBus: io.antarescircuit.jabbah.base.event.EventBus = _root_ide_package_.io.antarescircuit.jabbah.base.module.BaseModule.eventBus
-) : io.antarescircuit.jabbah.graph.ui.GraphFrameSwing(controller as io.antarescircuit.jabbah.graph.ui.GraphFrameController<io.antarescircuit.jabbah.graph.ui.GraphFrame>, application, viewManager, actions),
-    io.antarescircuit.antares.view.AntaresFrame {
+    controller: AntaresFrameController,
+    application: DesktopApplication,
+    viewManager: ContentViewManager,
+    actions: GraphFrameActions,
+    private val eventBus: EventBus = BaseModule.eventBus
+) : GraphFrameSwing(controller as GraphFrameController<GraphFrame>, application, viewManager, actions),
+    AntaresFrame {
 
 	private val testcaseViewController =
-        _root_ide_package_.io.antarescircuit.antares.model.testcase.TestcaseViewController(
-            controller.graphPanelViewController.editor,
-            application.controller,
-            controller.applicationContextHolder,
-            controller.applicationModeHolder
-        )
+		TestcaseViewController(
+			controller.graphPanelViewController.editor,
+			application.controller,
+			controller.applicationContextHolder,
+			controller.applicationModeHolder
+		)
 
-	private val testcasesView =
-        _root_ide_package_.io.antarescircuit.antares.model.testcase.TestcaseViewSwing(testcaseViewController)
+	private val testcasesView = TestcaseViewSwing(testcaseViewController)
 
-	private val testResultsPanel =
-        _root_ide_package_.io.antarescircuit.antares.model.testcase.result.TestRunResultsPanel()
+	private val testResultsPanel = TestRunResultsPanel()
 
-	private val netSignalApplierFailureHandler: io.antarescircuit.jabbah.base.event.EventHandler<io.antarescircuit.antares.model.NetSignalApplierFailure> = { handle(it) }
+	private val netSignalApplierFailureHandler: EventHandler<NetSignalApplierFailure> = { handle(it) }
 
 	init {
 		iconImage = Toolkit.getDefaultToolkit().createImage(ClassLoader.getSystemResource(AntaresSwing.ICON_PATH))

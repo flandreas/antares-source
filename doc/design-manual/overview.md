@@ -37,7 +37,7 @@ support for undo/redo using the `Command` pattern, property editing, and a set o
 : TODO
 
 [jabbah.app](module-app.md)
-: TODO
+: The "app" module implements a simple application framework. Its central `AbstractDesktopApplication` class on the JVM platform can be started with command line options, loads and stores user preferences, and defines an `ApplicationData` class and various `Actions` like `OpenFileAction` or `SaveFileAction` to make it persistent.
 
 [jabbah.graph](module-graph.md)
 : TODO

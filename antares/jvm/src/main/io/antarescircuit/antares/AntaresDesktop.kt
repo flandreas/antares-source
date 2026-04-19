@@ -15,19 +15,18 @@ import io.antarescircuit.jabbah.app.Environment
 import io.antarescircuit.jabbah.base.DataLocation
 import io.antarescircuit.jabbah.graph.library.Library
 
-interface AntaresDesktop : io.antarescircuit.antares.AntaresApplication,
-    io.antarescircuit.jabbah.app.DesktopApplication {
+interface AntaresDesktop : AntaresApplication, DesktopApplication {
 
 	override val documentationUrl: String? get() =
 		when (environment) {
-			_root_ide_package_.io.antarescircuit.jabbah.app.Environment.Development -> DOC_URL_DEV
-			_root_ide_package_.io.antarescircuit.jabbah.app.Environment.Production -> DOC_URL_PROD
+			Environment.Development -> DOC_URL_DEV
+			Environment.Production -> DOC_URL_PROD
 		}
 
 	override val issuesUrl: String? get() =
 		when (environment) {
-			_root_ide_package_.io.antarescircuit.jabbah.app.Environment.Development -> ISSUES_URL_DEV
-			_root_ide_package_.io.antarescircuit.jabbah.app.Environment.Production -> ISSUES_URL_PROD
+			Environment.Development -> ISSUES_URL_DEV
+			Environment.Production -> ISSUES_URL_PROD
 		}
 
 	override val youtubeChannelUrl: String? get() = YOUTUBE_CHANNEL_URL
@@ -46,12 +45,12 @@ interface AntaresDesktop : io.antarescircuit.antares.AntaresApplication,
 	val nonVolatileDirectoryName: String get() = DEFAULT_NON_VOLATILE_DIRECTORY
 
 	/**
-	 * Returns the optional path to the file system base directory containing the [Libraries][io.antarescircuit.jabbah.graph.library.Library] directory.
-	 * Will be expanded by the default [io.antarescircuit.jabbah.graph.library.Library] directory name.
+	 * Returns the optional path to the file system base directory containing the [Libraries][Library] directory.
+	 * Will be expanded by the default [Library] directory name.
 	 *
-	 * If `null`, the system [Libraries][io.antarescircuit.jabbah.graph.library.Library] are read from the program's resource folder, which is the default
+	 * If `null`, the system [Libraries][Library] are read from the program's resource folder, which is the default
 	 * for user installations. Because the resource folder is read-only, a developer who wants to edit the system
-	 * [Libraries][io.antarescircuit.jabbah.graph.library.Library] with the UI, he can set this property to point to the library directory under
+	 * [Libraries][Library] with the UI, he can set this property to point to the library directory under
 	 * source control (git). The module system will the use the corresponding persistence services that allow to
 	 * edit all relevant system library files.
 	 */
@@ -59,5 +58,5 @@ interface AntaresDesktop : io.antarescircuit.antares.AntaresApplication,
 
 	val libraryFileName: String get() = DEFAULT_LIB_FILENAME
 
-	val dataLocation: io.antarescircuit.jabbah.base.DataLocation
+	val dataLocation: DataLocation
 }

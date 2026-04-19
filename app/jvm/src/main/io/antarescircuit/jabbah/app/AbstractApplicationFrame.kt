@@ -11,7 +11,6 @@ import java.awt.Toolkit
 import javax.swing.BoxLayout
 import javax.swing.JFrame
 import javax.swing.JPanel
-import javax.swing.WindowConstants
 
 /**
  * A standard application [JFrame] that updates its title when the current [Savable] changes
@@ -40,7 +39,7 @@ abstract class AbstractApplicationFrame(
 		    application.aboutInfo.version.toString(),
 		    EditAuthModule.userHolder.user.isDeveloper)
 
-        defaultCloseOperation = WindowConstants.DO_NOTHING_ON_CLOSE
+        defaultCloseOperation = DO_NOTHING_ON_CLOSE
         title = application.displayName
 
         eventBus.register(CurrentSavableEvent::class) { updateTitle() }

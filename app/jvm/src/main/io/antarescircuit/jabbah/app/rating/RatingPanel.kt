@@ -123,29 +123,29 @@ class RatingPanel(
 		val welcomeText = UiUtil.createHtmlEditorPane(
 			Translations.getString("application.rating.welcome.text", application.displayName),
 			"application.rating.action.name")
-		welcomeText.alignmentX = Component.LEFT_ALIGNMENT
+		welcomeText.alignmentX = LEFT_ALIGNMENT
 		welcomeText.maximumSize = welcomeText.preferredSize
 		contentPanel.add(welcomeText)
 		contentPanel.add(Box.createVerticalStrut(20))
 
-		overallRatingPanel.alignmentX = Component.LEFT_ALIGNMENT
+		overallRatingPanel.alignmentX = LEFT_ALIGNMENT
 		contentPanel.add(overallRatingPanel)
 		contentPanel.add(Box.createVerticalGlue())
 		contentPanel.add(Box.createVerticalStrut(30))
 
 		val likeMostText = JLabel(Translations.getString("application.rating.likedMost.text"))
-		likeMostText.alignmentX = Component.LEFT_ALIGNMENT
+		likeMostText.alignmentX = LEFT_ALIGNMENT
 		contentPanel.add(likeMostText)
 		contentPanel.add(Box.createVerticalStrut(4))
-		likeMostComboBox.alignmentX = Component.LEFT_ALIGNMENT
+		likeMostComboBox.alignmentX = LEFT_ALIGNMENT
 		contentPanel.add(likeMostComboBox)
 		contentPanel.add(Box.createVerticalStrut(20))
 
 		val likeLeastText = JLabel(Translations.getString("application.rating.likedLeast.text"))
-		likeLeastText.alignmentX = Component.LEFT_ALIGNMENT
+		likeLeastText.alignmentX = LEFT_ALIGNMENT
 		contentPanel.add(likeLeastText)
 		contentPanel.add(Box.createVerticalStrut(4))
-		likeLeastComboBox.alignmentX = Component.LEFT_ALIGNMENT
+		likeLeastComboBox.alignmentX = LEFT_ALIGNMENT
 		contentPanel.add(likeLeastComboBox)
 		contentPanel.add(Box.createVerticalStrut(20))
 
@@ -156,10 +156,10 @@ class RatingPanel(
 		remarksScrollPane.verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
 		remarksScrollPane.horizontalScrollBarPolicy = JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED
 		remarksScrollPane.minimumSize = remarksScrollPane.preferredSize
-		remarksText.alignmentX = Component.LEFT_ALIGNMENT
+		remarksText.alignmentX = LEFT_ALIGNMENT
 		contentPanel.add(remarksText)
 		contentPanel.add(Box.createVerticalStrut(4))
-		remarksScrollPane.alignmentX = Component.LEFT_ALIGNMENT
+		remarksScrollPane.alignmentX = LEFT_ALIGNMENT
 		contentPanel.add(remarksScrollPane)
 		contentPanel.add(Box.createVerticalStrut(20))
 

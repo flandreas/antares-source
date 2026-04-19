@@ -67,7 +67,7 @@ open class ApplicationDataViewController(
 	private val repository: ApplicationDataRepository<Savable>,
 	val eventBus: EventBus = BaseModule.eventBus,
 	propertyOwnerImpl: PropertyOwner<Any> = PropertyOwnerImpl()
-) : AbstractUIController<ApplicationDataView>(), ApplicationDataHolder, UndoableDataHolder, PropertyOwner<Any> by propertyOwnerImpl {
+) : AbstractUIController<ApplicationDataView>(), ApplicationDataHolder, PropertyOwner<Any> by propertyOwnerImpl {
 
 	companion object {
 		private val LOG by logger(ApplicationDataViewController::class)
