@@ -290,7 +290,11 @@ class ContainerTreeModel(
 			if (index != null) {
 				val child = subGraphsNode.getChildAt(index)
 				subGraphsNode.remove(index)
-				treeModel.nodesWereRemoved(subGraphsNode, intArrayOf(index), arrayOf(child))
+				if (index >= 0 && index < subGraphsNode.childCount) {
+					treeModel.nodesWereRemoved(subGraphsNode, intArrayOf(index), arrayOf(child))
+				} else {
+					treeModel.nodeStructureChanged(subGraphsNode)
+				}
 			}
 		}
 	}
@@ -304,7 +308,7 @@ class ContainerTreeModel(
 	}
 
 	/**
-	 * Finds the index of the [ContainerTreePortItem] with the given name in the toplevel [portsNode].
+	 * Finds the index of the [ContainerTreePortItem] with the given name in the toplevel [subGraphsNode].
 	 * @return `null` if not found
 	 */
 	private fun findSubGraphVerticeViewIndex(id: Int): Int? {
