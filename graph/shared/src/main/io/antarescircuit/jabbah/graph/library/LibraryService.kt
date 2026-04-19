@@ -71,6 +71,8 @@ data class MetaGraphBundleImportResult(
 	val param: String? = null
 )
 
+data class DeleteLibraryItemRequest(val libraryItem: LibraryItem)
+
 /**
  * Called by [LibraryService] in various situations.
  * Register implementations in [LibraryModule.libraryServiceCallbacks].

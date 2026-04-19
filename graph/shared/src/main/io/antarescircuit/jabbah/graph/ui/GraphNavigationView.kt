@@ -7,9 +7,11 @@ import io.antarescircuit.jabbah.app.Savable
 import io.antarescircuit.jabbah.base.Properties
 import io.antarescircuit.jabbah.base.StringUtils
 import io.antarescircuit.jabbah.base.System
+import io.antarescircuit.jabbah.base.Translations
 import io.antarescircuit.jabbah.base.event.EventBus
 import io.antarescircuit.jabbah.base.event.PropertyChangeEvent
 import io.antarescircuit.jabbah.base.event.PropertyChangeListener
+import io.antarescircuit.jabbah.base.event.VetoException
 import io.antarescircuit.jabbah.base.geom.Point2D
 import io.antarescircuit.jabbah.base.logger
 import io.antarescircuit.jabbah.base.module.BaseModule
@@ -24,6 +26,8 @@ import io.antarescircuit.jabbah.edit.DrawingViewContent
 import io.antarescircuit.jabbah.edit.model.text.description.NameChangedEvent
 import io.antarescircuit.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import io.antarescircuit.jabbah.graph.GraphApplicationContextHolder
+import io.antarescircuit.jabbah.graph.library.ContainerLibraryElement
+import io.antarescircuit.jabbah.graph.library.DeleteLibraryItemRequest
 import io.antarescircuit.jabbah.graph.model.Graph
 import io.antarescircuit.jabbah.graph.model.vertice.SubGraphVerticeRef
 import io.antarescircuit.jabbah.graph.ui.desktop.GraphDesktopViewItem
@@ -96,6 +100,7 @@ class GraphNavigationViewController(
 	private val closeViewRequestHandler: (CloseViewRequest) -> Unit = { handle(it) }
 	private val nameChangedHandler: (NameChangedEvent) -> Unit = { handle(it) }
 	private val schedulerActivationStateHandler: (SchedulerActivationStateEvent) -> Unit = { handle(it) }
+	private val deleteLibraryItemRequestHandler: (DeleteLibraryItemRequest) -> Unit = { handle(it) }
 
 	private val rootEntry: NavigationStackEntry<GraphView>? get() = navigationStackViewController.navigationStack.rootEntry
 
@@ -132,6 +137,7 @@ class GraphNavigationViewController(
 		eventBus.register(CloseViewRequest::class, closeViewRequestHandler)
 		eventBus.register(NameChangedEvent::class, nameChangedHandler)
 		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
+		eventBus.register(DeleteLibraryItemRequest::class, deleteLibraryItemRequestHandler)
 
 		drawingView.addPropertyChangeListener(viewCanvasListener)
 	}
@@ -161,6 +167,7 @@ class GraphNavigationViewController(
 		eventBus.unregister(CloseViewRequest::class, closeViewRequestHandler)
 		eventBus.unregister(NameChangedEvent::class, nameChangedHandler)
 		eventBus.unregister(SchedulerActivationStateEvent::class, schedulerActivationStateHandler)
+		eventBus.unregister(DeleteLibraryItemRequest::class, deleteLibraryItemRequestHandler)
 
 		extension.dispose(this)
 	}
@@ -265,6 +272,14 @@ class GraphNavigationViewController(
 		if (event.scheduler === graphApplicationContextHolder.scheduler) {
 			if (!event.scheduler.isActive) {
 				navigationStack.iterator().forEach { entry -> graphViewExecutionController.cleanup(entry.content) }
+			}
+		}
+	}
+
+	private fun handle(event: DeleteLibraryItemRequest) {
+		if (event.libraryItem is ContainerLibraryElement) {
+			navigationStack.graphViewContainingSubGraphVerticeView(event.libraryItem.uuid)?.let {
+				throw VetoException(Translations.getString("graph.action.deleteLibraryItem.rejectUsed.message", it.name.value))
 			}
 		}
 	}

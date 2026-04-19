@@ -8,6 +8,7 @@ import io.antarescircuit.jabbah.graph.model.image.ImageLibraryElement
 import io.antarescircuit.jabbah.graph.ui.library.LibraryTreeViewController
 import io.antarescircuit.jabbah.graph.ui.library.LibraryTreeViewType
 import java.awt.Component
+import java.awt.Frame
 import javax.swing.JOptionPane
 import javax.swing.SwingUtilities
 
@@ -50,8 +51,22 @@ class DeleteLibraryItemAction(
 				name,
 				JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
 			val library = libraryItem!!.library!!
-			LOG.userTrail("Delete library element ${libraryItem.name.getOptionalTranslation()}")
-			library.libraryService.removeLibraryItem(libraryItem.library!!, libraryItem)
+
+			eventBus.postTwoPhase(
+				DeleteLibraryItemRequest(libraryItem),
+				thenHandler = {
+					LOG.userTrail("Delete library element ${libraryItem.name.getOptionalTranslation()}")
+					library.libraryService.removeLibraryItem(libraryItem.library!!, libraryItem)
+				},
+				elseHandler = { exc ->
+					JOptionPane.showMessageDialog(
+						Frame.getFrames()[0],
+						Translations.getString("graph.action.deleteLibraryItem.rejected.message", exc.message ?: ""),
+						name,
+						JOptionPane.INFORMATION_MESSAGE
+					)
+				}
+			)
 		}
 	}
 

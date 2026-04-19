@@ -1,5 +1,6 @@
 package io.antarescircuit.jabbah.graph.ui
 
+import io.antarescircuit.jabbah.base.UUID
 import io.antarescircuit.jabbah.base.event.EventBus
 import io.antarescircuit.jabbah.base.module.BaseModule
 import io.antarescircuit.jabbah.draw.view.ZoomedPointTranslation
@@ -138,6 +139,12 @@ class NavigationStack<T : GraphView>(
 	fun forAllContents(action: (DrawingViewContent<Drawing<*>>) -> Unit) {
 		entries.forEach { action.invoke(it.content as DrawingViewContent<Drawing<*>>) }
 	}
+
+	fun graphViewContainingSubGraphVerticeView(uuid: UUID): GraphView? =
+        entries.firstOrNull { entry ->
+			entry.content.drawing.getSubGraphVerticeViews()
+				.firstOrNull { vv -> vv.subGraphVertice?.graphUUID == uuid } != null
+		}?.content?.drawing
 
 	fun entry(index: Int): NavigationStackEntry<T>? {
 		if (index < 0 || index >= entries.size) {
