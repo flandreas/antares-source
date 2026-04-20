@@ -1,5 +1,6 @@
 package io.antarescircuit.jabbah.graph.view.app
 
+import io.antarescircuit.jabbah.app.ApplicationDataViewController
 import io.antarescircuit.jabbah.base.geom.Point2D
 import io.antarescircuit.jabbah.base.geom.Rotation
 import io.antarescircuit.jabbah.base.logger
@@ -54,7 +55,8 @@ interface GraphViewAppService : DrawingAppService {
 		graphName: TranslatableText,
 		type: GraphType,
 		drawingView: DrawingView<GraphView>,
-		libraryDirectory: LibraryDirectory
+		libraryDirectory: LibraryDirectory,
+		controller: ApplicationDataViewController
 	)
 }
 
@@ -146,10 +148,14 @@ open class GraphViewAppServiceImpl(
 		return component
 	}
 
-	override fun extractMetaGraph(graphName: TranslatableText, type: GraphType, drawingView: DrawingView<GraphView>, libraryDirectory: LibraryDirectory) {
+	override fun extractMetaGraph(graphName: TranslatableText, type: GraphType, drawingView: DrawingView<GraphView>,
+		libraryDirectory: LibraryDirectory, controller: ApplicationDataViewController
+	) {
 		val componentIds = drawingView.selectionManager.selection.map { it.id }
 		LOG.userTrail("Extract ${componentIds.size} Components into new Library MetaGraph '$graphName'")
-		commandManager.execute(ExtractMetaGraphCommand(graphName, type, drawingView, componentIds, libraryDirectory))
+
+		GraphViewModule.metaGraphService.extractMetaGraph(graphName, type, drawingView, componentIds, libraryDirectory)
+		controller.save()
 	}
 
 	/** ---- [GraphViewAppServiceImpl] */
