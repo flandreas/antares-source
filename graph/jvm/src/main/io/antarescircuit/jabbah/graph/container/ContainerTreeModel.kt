@@ -273,8 +273,9 @@ class ContainerTreeModel(
 
 	fun addSubGraphVerticeNodes(item: SubGraphsFolderItem, receiver: DynamicReceiver) {
 		receiver.addChildren(
-			item.graphView.getSubGraphVerticeViews()
-				.map { createSubGraphVerticeViewTreeNode(it, item.link.append(it.model.id)) })
+            item.graphView.getSubGraphVerticeViews()
+                .mapNotNull { createSubGraphVerticeViewTreeNode(it, item.link.append(it.model.id)) }
+        )
 	}
 
 	/** Adds the specified [SubGraphVerticeView] to the [TreeNode] with the top-level [SubGraphsFolderItem]. */
@@ -299,12 +300,14 @@ class ContainerTreeModel(
 		}
 	}
 
-	private fun createSubGraphVerticeViewTreeNode(vv: SubGraphVerticeView<*>, link: DeepVerticeLink): MutableTreeNode {
-		val subGraphView = vv.createSubGraphView(null)
-		val treeNode = DefaultMutableTreeNode(SubGraphVerticeViewFolderItem(subGraphView, vv, link))
-		treeNode.add(DynamicTreeNode(ControlsFolderTreeItem(subGraphView, link), initializer, treeModel, true))
-		treeNode.add(DynamicTreeNode(SubGraphsFolderItem(subGraphView, link), initializer, treeModel, true))
-		return treeNode
+	private fun createSubGraphVerticeViewTreeNode(vv: SubGraphVerticeView<*>, link: DeepVerticeLink): MutableTreeNode? {
+		return vv.subGraphVertice?.getGraphIfNotBroken()?.let {
+			val subGraphView = vv.createSubGraphView(null)
+			val treeNode = DefaultMutableTreeNode(SubGraphVerticeViewFolderItem(subGraphView, vv, link))
+			treeNode.add(DynamicTreeNode(ControlsFolderTreeItem(subGraphView, link), initializer, treeModel, true))
+			treeNode.add(DynamicTreeNode(SubGraphsFolderItem(subGraphView, link), initializer, treeModel, true))
+			treeNode
+		}
 	}
 
 	/**
