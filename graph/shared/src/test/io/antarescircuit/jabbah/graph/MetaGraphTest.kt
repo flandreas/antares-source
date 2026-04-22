@@ -78,13 +78,6 @@ class MetaGraphTest {
 	}
 
 	@Test
-	fun shouldRejectNameWithInvalidRichTextSyntax() {
-		assertFailsWith<IllegalArgumentException>() {
-			MetaGraph.validateName(TranslatableText("Circuit /2"))
-		}
-	}
-
-	@Test
 	fun shouldStoreDocumentation() {
 		val metaGraph = MetaGraph.create(TranslatableText("Test"), GenericGraphType)
 		metaGraph.documentation = Document(DocumentType.Markdown, "#Title")

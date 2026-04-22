@@ -10,6 +10,6 @@ class RichTextTest {
 		assertEquals("JK MS-Flip-Flop PRE CLR", RichText.stripToPlainText("JK MS-Flip-Flop PRE\\/CLR"))
 		assertEquals("Overline", RichText.stripToPlainText("!(Overline)"))
 		assertEquals("Export Import", RichText.stripToPlainText("Export\\/Import"))
-		assertEquals("Export Import", RichText.stripToPlainText("Export/Import"))
+		assertEquals("ExportImport", RichText.stripToPlainText("Export/Import"))
 	}
 }

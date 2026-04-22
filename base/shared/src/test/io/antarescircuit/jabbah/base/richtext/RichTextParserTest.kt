@@ -362,6 +362,18 @@ class RichTextParserTest {
 	}
 
 	@Test
+	fun shouldParseSingleCharBold() {
+		assertAST(
+			RichTextParser("*A").parse(), """
+			Compound
+			- Fragment
+			-- -
+			--- *(A)
+			""".trimIndent()
+		)
+	}
+
+	@Test
 	fun shouldParseBoldOverline() {
 		assertAST(
 			RichTextParser("This is *(bold !(overline))").parse(), """
@@ -405,6 +417,18 @@ class RichTextParserTest {
 			-- -
 			--- /(italic)
 		""".trimIndent())
+	}
+
+	@Test
+	fun shouldParseSingleCharItalic() {
+		assertAST(
+			RichTextParser("/A").parse(), """
+			Compound
+			- Fragment
+			-- -
+			--- /(A)
+			""".trimIndent()
+		)
 	}
 
 	@Test

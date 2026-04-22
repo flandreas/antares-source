@@ -96,7 +96,11 @@ class RichTextParser(lexer: RichTextLexer) : AbstractParser(lexer) {
 	private fun boldText(): RichText {
 		eat(BOLD)
 		style = TextStyle.withBold(style)
-		val richText = eatParen { richText() }
+		val richText = if (currentToken!!.type == LPAREN) {
+			eatParen { richText() }
+		} else {
+			singleCharRichText()
+		}
 		style = TextStyle.withoutBold(style)
 		return richText
 	}
@@ -104,9 +108,19 @@ class RichTextParser(lexer: RichTextLexer) : AbstractParser(lexer) {
 	private fun italicText(): RichText {
 		eat(ITALIC)
 		style = TextStyle.withItalic(style)
-		val richText = eatParen { richText() }
+		val richText = if (currentToken!!.type == LPAREN) {
+			eatParen { richText() }
+		} else {
+			singleCharRichText()
+		}
 		style = TextStyle.withoutItalic(style)
 		return richText
+	}
+
+	private fun singleCharRichText(): RichText {
+		lexer.location.let { location ->
+			return RichText(location, listOf(Fragment(location, FragmentText(location, singleChar()))))
+		}
 	}
 
 	private fun fragment(): Fragment {
@@ -235,7 +249,7 @@ class RichTextParser(lexer: RichTextLexer) : AbstractParser(lexer) {
 			if (currentToken!!.type != TEXT) {
 				throw SyntaxError(location, Translations.getString("base.dsl.unexpectedToken.msg", currentToken!!.type.id))
 			}
-			var text = currentToken!!.value as String
+			val text = currentToken!!.value as String
 			eat(TEXT)
 			return StyledText(lexer.location, listOf(StyledChunk(location, text, style)))
 		}

@@ -32,7 +32,7 @@ class RichText(
 				}
 
 				result.toString()
-			} catch (e: Throwable) {
+			} catch (_: Throwable) {
 				text.replace("/", " ")
 			}
 		}
@@ -60,7 +60,7 @@ class RichText(
 
 	fun getMaxOverlineLevel() =
 		children.maxOfOrNull {
-			it.text.styledText.chunks.maxOfOrNull { it.style.overlineLevel } ?: 0
+			it.text.styledText.chunks.maxOfOrNull { chunk -> chunk.style.overlineLevel } ?: 0
 		} ?: 0
 }
 
@@ -171,9 +171,7 @@ class StyledChunk(
 		if (style.italic) {
 			s.append(RichTextTokenType.ITALIC.id)
 		}
-		for (i in 1 .. style.overlineLevel) {
-			s.append(RichTextTokenType.OVERLINE.id)
-		}
+        (1 .. style.overlineLevel).forEach { _ -> s.append(RichTextTokenType.OVERLINE.id) }
 		if (s.isNotEmpty()) {
 			s.append("($text)")
 		} else {
