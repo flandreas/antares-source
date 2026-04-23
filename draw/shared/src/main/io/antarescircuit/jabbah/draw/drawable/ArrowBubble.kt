@@ -10,6 +10,7 @@ import io.antarescircuit.jabbah.draw.DrawContext
 import io.antarescircuit.jabbah.draw.style.DrawStyleModule
 import io.antarescircuit.jabbah.draw.style.StyleProvider
 import io.antarescircuit.jabbah.draw.style.StyleType
+import kotlin.math.max
 
 /**
  * Defines the position of an [ArrowBubble] relative to its location.
@@ -53,6 +54,8 @@ class ArrowBubble(
 		/** The base width of the arrow tip.*/
 		private const val TIP_WIDTH = 15.0
 
+		private const val MIN_WIDTH = 50.0
+
 		/** The width of the area from the path's narrower edge (left edge in case of [ArrowBubblePosition.rightOfLocation]) to the arrow's tip.*/
 		const val NARROW_WIDTH = TIP_WIDTH / 2 + 20
 	}
@@ -61,7 +64,7 @@ class ArrowBubble(
 	private val path: Path = createPath(position)
 
 	/** The overall width of the path.*/
-	private val width: Double get() = content.width + 2 * INSET
+	private val width: Double get() = max(MIN_WIDTH, content.width + 2 * INSET)
 
 	private val height: Double get() = content.height + 2 * INSET + TIP_HEIGHT
 
