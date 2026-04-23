@@ -144,6 +144,12 @@ class SignalHistoryTimelineViewImpl(
 	 * This is then displayed as "0"", and all subsequent time marks are relative to this one.
 	 */
 	private fun updateMinDisplayableTime() {
+		if (timeline == null) {
+			// timeline is e.g. null when analyzing an Antares circuit that has an Oscilloscope,
+			// because the analyzer operates on the model layer only, and the view is not bound
+			return
+		}
+
 		var time = timeline!!.maxTime
 
 		if (gridSignalHistory == null) {
