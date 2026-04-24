@@ -25,7 +25,7 @@ import io.antarescircuit.jabbah.graph.ui.GraphNavigationViewController
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.module.GraphViewModule
 
-interface GraphViewerView : UIView { }
+interface GraphViewerView : UIView
 
 /**
  * Displays a single [GraphView] and allows the user to start execution of this [GraphView].

@@ -6,8 +6,6 @@ import io.antarescircuit.jabbah.app.Savable
 import io.antarescircuit.jabbah.base.Translations
 import io.antarescircuit.jabbah.base.event.EventBus
 import io.antarescircuit.jabbah.base.module.BaseModule
-import io.antarescircuit.jabbah.edit.auth.Authorizer
-import io.antarescircuit.jabbah.edit.auth.Operation.Change
 import io.antarescircuit.jabbah.graph.MetaGraph
 
 /**

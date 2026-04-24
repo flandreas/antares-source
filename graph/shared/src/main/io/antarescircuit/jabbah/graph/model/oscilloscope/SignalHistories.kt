@@ -23,7 +23,7 @@ enum class SignalHistoriesType(val customName: String) {
 
 	companion object {
 		fun withName(customName: String): SignalHistoriesType =
-			values().firstOrNull { it.customName == customName }
+			entries.firstOrNull { it.customName == customName }
 				?: throw IllegalArgumentException("unknown SignalHistoriesType $customName")
 	}
 

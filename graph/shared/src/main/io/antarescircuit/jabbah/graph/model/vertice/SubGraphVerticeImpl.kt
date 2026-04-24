@@ -33,7 +33,7 @@ class SubGraphVerticeImpl(
 	override val type: String get() = SubGraphVerticeImpl.type
 	override val typeDesc: String? get() = null
 
-	/* ---- [SubGraphVertice] */
+	/** ---- [SubGraphVertice] */
 
 	/** Used when [SubGraphVerticeRef]s are created from this [SubGraphVerticeImpl].*/
 	override var graphUUID: UUID? = null

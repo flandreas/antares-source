@@ -11,7 +11,7 @@ import io.antarescircuit.jabbah.io.*
  * Default constructor must be "empty" in order to be readable as [Storable].
  */
 class GraphParamDefinition<T : Any>(
-	name: String = ""
+    var name: String = ""
 ) : AbstractStorable() {
 
 	companion object {
@@ -31,9 +31,7 @@ class GraphParamDefinition<T : Any>(
 		}
 	}
 
-	var name: String = name
-
-	lateinit var type: GraphParamType<T>
+    lateinit var type: GraphParamType<T>
 
 	lateinit var defaultValue: T
 
