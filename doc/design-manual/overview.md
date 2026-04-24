@@ -34,7 +34,7 @@ such as changing the alpha value of an RGBA color to produce a glow effect.
 support for undo/redo using the `Command` pattern, property editing, and a set of standard 2D `Components` like `PolylineComponent` or `TextComponent`.
 
 [jabbah.execution](module-execution.md)
-: TODO
+: The `execution` module supports aynchronous, time-based execution of arbitrary objects called `Actors`, controlled by a `Scheduler` and driven by `Timer`. The Antares application uses this module to implement digital circuit simulation. 
 
 [jabbah.app](module-app.md)
 : The "app" module implements a simple application framework. Its central `AbstractDesktopApplication` class on the JVM platform can be started with command line options, loads and stores user preferences, and defines an `ApplicationData` class and various `Actions` like `OpenFileAction` or `SaveFileAction` to make it persistent.

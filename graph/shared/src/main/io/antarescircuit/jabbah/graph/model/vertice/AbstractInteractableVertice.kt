@@ -5,7 +5,6 @@ import io.antarescircuit.jabbah.execution.scheduler.Scheduler
 import io.antarescircuit.jabbah.execution.speed.SystemSpeedCategory
 import io.antarescircuit.jabbah.graph.GraphApplicationContext
 import io.antarescircuit.jabbah.graph.model.Vertice
-import io.antarescircuit.jabbah.graph.view.GraphView
 
 /**
  * A [Vertice] whose state can be changed by the user during execution.
