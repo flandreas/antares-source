@@ -74,12 +74,17 @@ class ImportImagePanel(
         buildUI()
     }
 
-    private fun determineImageType(): ImageType? =
+    private fun determineImageType(): ImageType {
+        val extension: String
         try {
-            ImageType.withExtension(FilenameUtils.getExtension(fileSelectionField.path))
-        } catch (e: Throwable) {
-            null
+            extension = FilenameUtils.getExtension(fileSelectionField.path)
+        } catch (_: IllegalArgumentException) {
+            throw IllegalArgumentException(Translations.getString("library.action.importImage.illegalFileName.msg"))
         }
+
+        return ImageType.withExtension(extension)
+            ?: throw IllegalArgumentException(Translations.getString("library.action.importImage.typeNotSupported.msg", extension))
+    }
 
     private fun buildUI() {
         layout = BorderLayout(10, 20)
@@ -171,9 +176,11 @@ class ImportImagePanel(
 
     private inner class ImportAction : AbstractAction("base.action.import") {
         override fun execute(event: ActionEvent) {
-            val imageType = determineImageType()
-            if (imageType == null) {
-                messageLabel.text = Translations.getString("draw.imageType.typeNotSupported.msg")
+            var imageType: ImageType
+            try {
+                imageType = determineImageType()
+            } catch (e: IllegalArgumentException) {
+                messageLabel.text = e.message
                 return
             }
             if (StringUtils.isBlank(nameTextField.text)) {
