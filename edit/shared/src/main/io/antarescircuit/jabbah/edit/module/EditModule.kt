@@ -5,12 +5,14 @@ import io.antarescircuit.jabbah.base.Properties
 import io.antarescircuit.jabbah.base.Translations
 import io.antarescircuit.jabbah.base.UUID
 import io.antarescircuit.jabbah.base.module.BaseModule
+import io.antarescircuit.jabbah.draw.ApplicationContextHolder
 import io.antarescircuit.jabbah.draw.graphics.Color
 import io.antarescircuit.jabbah.draw.module.DrawModule
 import io.antarescircuit.jabbah.draw.style.Themes
 import io.antarescircuit.jabbah.edit.CommandManager
 import io.antarescircuit.jabbah.edit.Component
 import io.antarescircuit.jabbah.edit.Drawing
+import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.edit.DrawingViewFactory
 import io.antarescircuit.jabbah.edit.app.DrawingAppService
 import io.antarescircuit.jabbah.edit.app.DrawingAppServiceImpl
@@ -59,9 +61,21 @@ object EditModule : AbstractModule() {
 
     var commandManager: CommandManager = SourcingCommandManager()
 
-	var drawingViewFactory: DrawingViewFactory<Drawing<Component>> = DrawingViewFactory { drawing, contextHolder, displayGlobalMessages, name ->
-		DrawingViewImpl(drawing, applicationContextHolder = contextHolder, displayGlobalMessages = displayGlobalMessages, name = name)
-	}
+    var drawingViewFactory: DrawingViewFactory = object : DrawingViewFactory {
+        override fun <C : Component, T : Drawing<C>> create(
+            drawing: T,
+            contextHolder: ApplicationContextHolder?,
+            displayGlobalMessages: Boolean,
+            name: String
+        ): DrawingView<C, T> {
+            return DrawingViewImpl(
+                drawing,
+                applicationContextHolder = contextHolder,
+                displayGlobalMessages = displayGlobalMessages,
+                name = name
+            )
+        }
+    }
 
 	var drawingViewSearchFactory: () -> DrawingViewSearch = { DrawingViewSearch() }
 

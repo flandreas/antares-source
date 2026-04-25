@@ -107,7 +107,7 @@ interface CommandManager : Iterable<Command> {
      * @param descriptionKey the translation key of the transaction's description
      * @property drawingView the [DrawingView] to validate, if any
      */
-    fun beginTransaction(descriptionKey: String, drawingView: DrawingView<*>? = null)
+    fun beginTransaction(descriptionKey: String, drawingView: DrawingView<*,*>? = null)
 
     /**
      * Executes the specified [Command] and registers it with the current transaction.

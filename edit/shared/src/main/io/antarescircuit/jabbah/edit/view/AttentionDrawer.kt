@@ -26,7 +26,7 @@ interface AttentionDrawer {
 		const val PROP_COLOR = "edit.view.AttentionDrawer.color"
 	}
 
-	fun drawAttentionTo(location: Point2D, view: DrawingView<*>, animator: Animator)
+	fun drawAttentionTo(location: Point2D, view: DrawingView<*,*>, animator: Animator)
 }
 
 class AttentionDrawerImpl(
@@ -45,7 +45,7 @@ class AttentionDrawerImpl(
 		private val STROKE = Stroke()
 	}
 
-	override fun drawAttentionTo(location: Point2D, view: DrawingView<*>, animator: Animator) {
+	override fun drawAttentionTo(location: Point2D, view: DrawingView<*,*>, animator: Animator) {
 		val maxRadius = properties.getFloat(PROP_MAX_RADIUS).toDouble()
 		val ring = GrowingRing(location, maxRadius, color)
 		val animation = animator.schedule(
@@ -64,7 +64,7 @@ class AttentionDrawerImpl(
 		animation.start()
 	}
 
-	private fun container(view: DrawingView<*>): DrawableContainer<Drawable> {
+	private fun container(view: DrawingView<*,*>): DrawableContainer<Drawable> {
 		return view.animationContainer
 	}
 

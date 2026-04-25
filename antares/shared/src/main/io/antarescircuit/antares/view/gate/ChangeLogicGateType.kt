@@ -14,6 +14,7 @@ import io.antarescircuit.jabbah.edit.Undoable
 import io.antarescircuit.jabbah.edit.app.AbstractSelectionAwareAction
 import io.antarescircuit.jabbah.edit.module.EditModule
 import io.antarescircuit.jabbah.graph.app.AbstractGraphViewCommand
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 
 /**
@@ -30,14 +31,14 @@ class ChangeLogicGateTypeAction(
 		commandManager.execute(ChangeLogicGateTypeCommand(
 			newType,
 			selection.map { it.id },
-			view as DrawingView<GraphView>))
+			view as DrawingView<GraphElementView<*>, GraphView>))
 	}
 }
 
 private class ChangeLogicGateTypeCommand(
 	private val newType: LogicGateType,
 	private val componentIds: Collection<Int>,
-	drawingView: DrawingView<GraphView>
+	drawingView: DrawingView<GraphElementView<*>, GraphView>
 ) : AbstractGraphViewCommand("antares.action.changeLogicGateType.name", drawingView), Undoable {
 
 	private val components: Collection<Component> get() = componentIds.map { drawingView.drawing.getWithId(it)!! }.toList()

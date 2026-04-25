@@ -42,7 +42,7 @@ interface KnobLauncher {
 	): ActorInteractionHandler
 
 	fun launchImmediately(
-		view: DrawingView<*>,
+		view: DrawingView<*,*>,
 		initialValue: Long,
 		location: Point2D,
 		unit: String,
@@ -71,7 +71,7 @@ object KnobLauncherImpl : KnobLauncher {
 	private var timer: Timer? = null
 	private val knobView: KnobView by lazy { KnobView() }
 
-	private var drawingView: DrawingView<*>? = null
+	private var drawingView: DrawingView<*,*>? = null
 	private var initialValue: Long = 0
 	private var location: Point2D = Point2D.ZERO
 	private var unit: String = ""
@@ -107,7 +107,7 @@ object KnobLauncherImpl : KnobLauncher {
 	}
 
 	override fun launchImmediately(
-		view: DrawingView<*>,
+		view: DrawingView<*,*>,
 		initialValue: Long,
 		location: Point2D,
 		unit: String,
@@ -129,7 +129,7 @@ object KnobLauncherImpl : KnobLauncher {
 		return handler
 	}
 
-	private fun startTimerIfNeeded(view: DrawingView<*>) {
+	private fun startTimerIfNeeded(view: DrawingView<*,*>) {
 		if (timer == null) {
 			LOG.trace("starting KnobView timer")
 			drawingView = view
@@ -146,7 +146,7 @@ object KnobLauncherImpl : KnobLauncher {
 		}
 	}
 
-	private fun display(view: DrawingView<*>) {
+	private fun display(view: DrawingView<*,*>) {
 		stopTimer()
 
 		knobView.valueChangeHandler = { valueChangeHandler!!.invoke(it) }
@@ -177,7 +177,7 @@ object KnobLauncherImpl : KnobLauncher {
 
 	private class Handler : InputEventHandlerAdapter<ActorInteractionContext>() {
 		override fun mouseMoved(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
-			val view = context.view as DrawingView<*>
+			val view = context.view as DrawingView<*,*>
 
 			if (view.content.ghostContainer.contains(knobView)) {
 				return null

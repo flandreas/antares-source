@@ -26,7 +26,7 @@ import io.antarescircuit.jabbah.draw.style.StyleType
  *
  * @param T the type of [Drawable]s that this [DrawableContainer] contains
  */
-interface DrawableContainer<T : Drawable> : Drawable, DrawableBag<T>, Locatable {
+interface DrawableContainer<T : Drawable> : Locatable, DrawableBag<T> {
 
 	override fun contains(x: Double, y: Double): Boolean = super<DrawableBag>.contains(x, y)
 

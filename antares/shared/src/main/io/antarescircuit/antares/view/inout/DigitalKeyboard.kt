@@ -55,7 +55,7 @@ object DigitalKeyboard : ActorViewContainer<Drawable>(useLocation = true), Focus
 
 	private var target: Target? = null
 
-	private var view: DrawingView<*>? = null
+	private var view: DrawingView<*,*>? = null
 
 	private var contextHolder: GraphApplicationContextHolder? = null
 
@@ -75,7 +75,7 @@ object DigitalKeyboard : ActorViewContainer<Drawable>(useLocation = true), Focus
 
 	fun show(
 		target: Target,
-		view: DrawingView<*>,
+		view: DrawingView<*,*>,
 		contextHolder: GraphApplicationContextHolder
 	) {
 		hide()

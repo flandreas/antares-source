@@ -78,7 +78,7 @@ class UsecaseRunner(
 	}
 
 	fun pressMouseAt(x: Int, y: Int) {
-		if (viewManager.activeView?.view is DrawingView<*>) {
+		if (viewManager.activeView?.view is DrawingView<*,*>) {
 			val view = viewManager.activeView!!.view!!
 			view.dispatchEvent(
 				MouseEventImpl(
@@ -93,7 +93,7 @@ class UsecaseRunner(
 	}
 
 	fun releaseMouseAt(x: Int, y: Int) {
-		if (viewManager.activeView?.view is DrawingView<*>) {
+		if (viewManager.activeView?.view is DrawingView<*,*>) {
 			val view = viewManager.activeView!!.view!!
 			view.dispatchEvent(MouseEventImpl(
 				MouseEventType.RELEASED,
@@ -106,7 +106,7 @@ class UsecaseRunner(
 	}
 
 	fun pressKey(keyCode: Int) {
-		if (viewManager.activeView?.view is DrawingView<*>) {
+		if (viewManager.activeView?.view is DrawingView<*,*>) {
 			val view = viewManager.activeView!!.view!!
 			view.dispatchEvent(KeyEventImpl(
 				KeyEventType.PRESSED,
@@ -117,7 +117,7 @@ class UsecaseRunner(
 	}
 
 	fun releaseKey(keyCode: Int) {
-		if (viewManager.activeView?.view is DrawingView<*>) {
+		if (viewManager.activeView?.view is DrawingView<*,*>) {
 			val view = viewManager.activeView!!.view!!
 			view.dispatchEvent(KeyEventImpl(
 				KeyEventType.RELEASED,

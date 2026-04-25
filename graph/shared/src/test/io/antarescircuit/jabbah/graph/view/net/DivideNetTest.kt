@@ -1,9 +1,8 @@
 package io.antarescircuit.jabbah.graph.view.net
 
 import io.antarescircuit.jabbah.base.geom.Point2D
-import io.antarescircuit.jabbah.edit.module.EditModule
 import io.antarescircuit.jabbah.edit.DrawingViewMockBuilder
-import io.antarescircuit.jabbah.graph.model.GraphElement
+import io.antarescircuit.jabbah.edit.module.EditModule
 import io.antarescircuit.jabbah.graph.model.Net
 import io.antarescircuit.jabbah.graph.view.*
 import io.antarescircuit.jabbah.graph.view.connect.SplitEdgeViewResult
@@ -46,7 +45,7 @@ class DivideNetTest {
 	fun shouldNotDivideNet() {
 		EditModule.drawingAppService.delete(
 			listOf(ev12),
-			drawingViewBuilder.build<GraphElementView<GraphElement>>())
+			drawingViewBuilder.build<GraphElementView<*>, GraphView>())
 
 		assertSame(vv2.model.getInput<Boolean>().net, vv3.model.getInput<Boolean>().net)
 		assertSame(vv3.model.getInput<Boolean>().net, vv4.model.getInput<Boolean>().net)
@@ -56,7 +55,7 @@ class DivideNetTest {
 	fun shouldDivideNet() {
 		EditModule.drawingAppService.delete(
 			listOf(split3.newEdgeView),
-			drawingViewBuilder.build<GraphElementView<GraphElement>>())
+			drawingViewBuilder.build<GraphElementView<*>, GraphView>())
 
 		assertEquals(6, builder.graph.elementsCount)
 		assertEquals(6, builder.graphView.drawables.size)

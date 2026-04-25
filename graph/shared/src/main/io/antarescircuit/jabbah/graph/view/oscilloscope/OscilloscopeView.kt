@@ -405,7 +405,7 @@ class OscilloscopeView(
 		rows.remove(row)
 		container.remove(row)
 		refColorSequence.free(row.color)
-		findProbeViewInDrawing(row.name)?.let { (parent as DrawableContainer<Component>).remove(it) }
+		findProbeViewInDrawing(row.name)?.let { parent?.remove(it) }
 
 		val port = model.getPort<Any>(name)
 		val portView = getPortView(port)

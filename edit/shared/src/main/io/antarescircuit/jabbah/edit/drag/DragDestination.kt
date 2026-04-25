@@ -30,5 +30,6 @@ class DragDestinationHighlightFactoryRegistry {
 	}
 
 	fun <T : DragDestination> create(destination: T): DragDestinationHighlight? =
+		@Suppress("UNCHECKED_CAST")
 		(registry[System.getClassName(destination)] as DragDestinationHighlightFactory<T>?)?.create(destination)
 }

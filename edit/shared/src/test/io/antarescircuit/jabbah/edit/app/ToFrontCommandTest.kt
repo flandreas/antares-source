@@ -8,13 +8,14 @@ import io.antarescircuit.jabbah.edit.model.rectangle.RectangleComponent
 import io.antarescircuit.jabbah.io.StorableCloner
 import dev.mokkery.answering.returns
 import dev.mokkery.every
+import io.antarescircuit.jabbah.edit.Drawing
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ToFrontCommandTest {
 
     private val drawing = DrawingImpl<Component>()
-    private val drawingView = DrawingViewMockBuilder().withDrawing(drawing).build<Component>()
+    private val drawingView = DrawingViewMockBuilder().withDrawing(drawing).build<Component, Drawing<Component>>()
     private val c1: RectangleComponent
     private val c2: RectangleComponent
     private val c3: RectangleComponent

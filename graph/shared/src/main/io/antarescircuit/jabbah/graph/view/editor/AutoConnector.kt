@@ -190,13 +190,13 @@ object AutoConnector : DragManagerPlugin {
 			}
 	}
 
-	private fun addHighlight(drawingView: DrawingView<*>) {
+	private fun addHighlight(drawingView: DrawingView<*,*>) {
 		drawingView.animationContainer.add(highlight)
 		highlight.validate()
 		isHighlightDisplayed = true
 	}
 
-	private fun removeHighlight(drawingView: DrawingView<*>) {
+	private fun removeHighlight(drawingView: DrawingView<*,*>) {
 		if (drawingView.animationContainer.contains(highlight)) {
 			drawingView.animationContainer.remove(highlight)
 			drawingView.drawing.validate()

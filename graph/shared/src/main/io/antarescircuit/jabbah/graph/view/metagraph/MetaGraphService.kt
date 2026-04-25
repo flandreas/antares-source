@@ -17,6 +17,7 @@ import io.antarescircuit.jabbah.graph.library.ContainerLibraryElement
 import io.antarescircuit.jabbah.graph.library.LibraryDirectory
 import io.antarescircuit.jabbah.graph.model.GraphElement
 import io.antarescircuit.jabbah.graph.model.GraphType
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 
 /** Domain services for [MetaGraph]. */
@@ -32,7 +33,7 @@ open class MetaGraphService(
 	fun extractMetaGraph(
 		name: TranslatableText,
 		type: GraphType,
-		drawingView: DrawingView<GraphView>,
+		drawingView: DrawingView<GraphElementView<*>, GraphView>,
 		componentIds: Collection<Int>,
 		libraryDirectory: LibraryDirectory
 	): UUID {
@@ -60,7 +61,7 @@ open class MetaGraphService(
 		// empty by default
 	}
 
-	private fun createMetaGraph(name: TranslatableText, type: GraphType, drawingView: DrawingView<*>, componentIds: Collection<Int>): MetaGraph {
+	private fun createMetaGraph(name: TranslatableText, type: GraphType, drawingView: DrawingView<*,*>, componentIds: Collection<Int>): MetaGraph {
 		val metaGraph = MetaGraph.create(name, type)
 
 		val content = copyPasteService.copy(componentIds, drawingView.drawing)

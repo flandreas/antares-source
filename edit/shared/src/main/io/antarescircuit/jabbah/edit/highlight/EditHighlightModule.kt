@@ -19,7 +19,7 @@ object EditHighlightModule : AbstractModule() {
 	var highlightModelProvider: SelectionModelProvider = SimpleSelectionModelProvider(highlightModelFactory)
 
     var highlighterFactory = object : HighlighterFactory {
-        override fun create(content: DrawingViewContent<*>): Highlighter {
+        override fun create(content: DrawingViewContent<*,*>): Highlighter {
             return BelowSmHighlighter(content = content)
         }
     }

@@ -125,7 +125,10 @@ open class NodeViewImpl<T : Any>(
 		val edgeViews = (parent as GraphView).getEdgeViews()
 		return edgeViews
 			.filter { it.origin?.connectableView === this }
-			.map { it as EdgeView<T> }
+			.map {
+				@Suppress("UNCHECKED_CAST") // all connected EdgeViews must carry the same type of signal
+				it as EdgeView<T>
+			}
 	}
 
 	override fun getEdgeViews(): List<EdgeView<T>> {
@@ -135,7 +138,10 @@ open class NodeViewImpl<T : Any>(
 		val edgeViews = (parent as GraphView).getEdgeViews()
 		return edgeViews
 			.filter { it.origin?.connectableView === this || it.destination?.connectableView === this }
-			.map { it as EdgeView<T> }
+			.map {
+				@Suppress("UNCHECKED_CAST") // all connected EdgeViews must carry the same type of signal
+				it as EdgeView<T>
+			}
 	}
 
 	override fun getEdgeView(direction: Direction): EdgeView<T>? {
@@ -151,7 +157,10 @@ open class NodeViewImpl<T : Any>(
 		val edgeViews = (parent as GraphView).getEdgeViews()
 		return edgeViews
 			.filter { it.destination?.connectableView === this }
-			.map { it as EdgeView<T> }
+			.map {
+				@Suppress("UNCHECKED_CAST") // all connected EdgeViews must carry the same type of signal
+				it as EdgeView<T>
+			}
 			.firstOrNull()
 	}
 

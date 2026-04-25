@@ -128,9 +128,9 @@ class OscilloscopeScaleRowView(
 				)
 			}
 
-			override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler? {
+			override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler {
 				return KnobLauncherImpl.launchImmediately(
-					view = context.view as DrawingView<*>,
+					view = context.view as DrawingView<*,*>,
 					initialValue = oscilloscopeView.timelineScale.toLong(),
 					location = boundingBox.center
 						.add(oscilloscopeView.location)

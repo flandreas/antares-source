@@ -32,7 +32,7 @@ class DescendAnimationManager(
      * @param terminator the code to be executed when the overall animation has ended
      */
     fun descendInto(
-	    drawingView: DrawingView<*>,
+	    drawingView: DrawingView<*,*>,
         subGraphVerticeView: SubGraphVerticeView<*>,
         descender: (SubGraphVerticeView<*>) -> Unit,
         terminator: () -> Unit
@@ -42,7 +42,7 @@ class DescendAnimationManager(
             .start()
     }
 
-    private fun createInnerDescendAnimation(drawingView: DrawingView<*>, terminator: () -> Unit): AnimationTask {
+    private fun createInnerDescendAnimation(drawingView: DrawingView<*,*>, terminator: () -> Unit): AnimationTask {
 	    val animation = ZoomedPointVoyageAnimation(
 		    drawingView,
 		    ZOOM_DURATION,
@@ -57,7 +57,7 @@ class DescendAnimationManager(
     }
 
     private fun createOuterDescendAnimation(
-        drawingView: DrawingView<*>,
+        drawingView: DrawingView<*,*>,
         subGraphVerticeView: SubGraphVerticeView<*>,
         descender: (SubGraphVerticeView<*>) -> Unit,
         terminator: () -> Unit
@@ -92,7 +92,7 @@ class DescendAnimationManager(
 	 * @param terminator the code to be executed when the overall animation has ended
 	 */
 	fun ascendFrom(
-		drawingView: DrawingView<*>,
+		drawingView: DrawingView<*,*>,
 		subGraphVerticeView: SubGraphVerticeView<*>,
 		ascender: (SubGraphVerticeView<*>) -> ZoomedPointTranslation,
 		terminator: () -> Unit
@@ -103,7 +103,7 @@ class DescendAnimationManager(
 	}
 
 	private fun createInnerAscendAnimation(
-		drawingView: DrawingView<*>,
+		drawingView: DrawingView<*,*>,
 		subGraphVerticeView: SubGraphVerticeView<*>,
 		ascender: (SubGraphVerticeView<*>) -> ZoomedPointTranslation,
 		terminator: () -> Unit
@@ -125,7 +125,7 @@ class DescendAnimationManager(
 	}
 
 	private fun createOuterAscendAnimation(
-		drawingView: DrawingView<*>,
+		drawingView: DrawingView<*,*>,
 		destination: ZoomedPointTranslation,
 		terminator: () -> Unit
 	): AnimationTask {

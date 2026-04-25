@@ -145,8 +145,7 @@ open class DslParser(
 	}
 
 	protected fun identifier(): Token<String> {
-		@Suppress("UNCHECKED_CAST")
-		val identifier = currentToken as Token<String>
+		val identifier = currentToken!!.cast<String>()
 		eat(ID)
 		return identifier
 	}

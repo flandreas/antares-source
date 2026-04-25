@@ -2,9 +2,6 @@ package io.antarescircuit.jabbah.graph.ui.graphviewer
 
 import io.antarescircuit.jabbah.base.ui.AbstractUIController
 import io.antarescircuit.jabbah.base.ui.UIView
-import io.antarescircuit.jabbah.edit.Component
-import io.antarescircuit.jabbah.edit.Drawing
-import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.edit.module.EditModule
 import io.antarescircuit.jabbah.graph.GraphApplicationContextHolder
 import io.antarescircuit.jabbah.graph.app.ApplicationMode
@@ -24,11 +21,10 @@ class SubGraphViewerController(
 ) : AbstractUIController<SubGraphViewerView>() {
 
 	val drawingView = EditModule.drawingViewFactory.create(
-		graphView as Drawing<Component>,
+		graphView,
 		applicationContextHolder,
 		displayGlobalMessages = false,
-		""
-	) as DrawingView<GraphView>
+		"")
 
 	val graphNavigationViewController = GraphNavigationViewController(isRoot = false, drawingView)
 

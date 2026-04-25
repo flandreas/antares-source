@@ -43,7 +43,7 @@ interface ScenarioStep : Namable, Describable, Storable {
 	 * client classes that evaluate the return condition. Hence, it's not necessary that the returned condition contains
 	 * terms that check the [Scenario] condition as well.
 	 */
-	val condition: (SignalHandler, DrawingView<GraphView>) -> Boolean
+	val condition: (SignalHandler, DrawingView<GraphElementView<*>, GraphView>) -> Boolean
 
 	fun dispose()
 
@@ -53,13 +53,13 @@ interface ScenarioStep : Namable, Describable, Storable {
 	 * Notifies this [ScenarioStep] that it has become the active [ScenarioStep] in a [GraphView]'s
 	 * current [Scenario].
 	 */
-	fun activate(view: DrawingView<GraphView>)
+	fun activate(view: DrawingView<GraphElementView<*>, GraphView>)
 
 	/**
 	 * Notifies this [ScenarioStep] that it is no longer the active [ScenarioStep] in a [GraphView]'s
 	 * current [Scenario].
 	 */
-	fun passivate(view: DrawingView<GraphView>)
+	fun passivate(view: DrawingView<GraphElementView<*>, GraphView>)
 
 }
 

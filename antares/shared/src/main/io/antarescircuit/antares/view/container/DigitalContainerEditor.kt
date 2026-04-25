@@ -12,11 +12,12 @@ import io.antarescircuit.jabbah.edit.Component
 import io.antarescircuit.jabbah.edit.Drawing
 import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.graph.container.ContainerEditor
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 
 class DigitalContainerEditor(
-	view: DrawingView<Drawing<Component>>,
-	mainDrawingView: DrawingView<Drawing<Component>>,
+	view: DrawingView<Component, Drawing<Component>>,
+	mainDrawingView: DrawingView<GraphElementView<*>, GraphView>,
 	eventBus: EventBus = BaseModule.eventBus
 ) : ContainerEditor(view, mainDrawingView, eventBus) {
 

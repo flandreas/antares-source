@@ -18,10 +18,10 @@ object ConnectionPointHighlighter {
 	val hasPortViewHighlight: Boolean get() = portViewHighlight != null
 
 	/** The [io.antarescircuit.jabbah.edit.DrawingView] to which [portViewHighlight] has been added (if any). */
-	private var view: DrawingView<*>? = null
+	private var view: DrawingView<*,*>? = null
 
 	fun displayPortViewHighlight(
-        view: DrawingView<*>,
+        view: DrawingView<*,*>,
         location: Point2D,
         alternativeView: Boolean = false,
         highlight: ConnectionPointHighlight = DrawModule.properties.get(PortView.Companion.PROP_HIGHLIGHT)

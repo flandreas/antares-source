@@ -26,8 +26,9 @@ class SelectionToolImplEventDelegationTest {
 
 	init {
 		EditTestRule.configure()
-		canvas = CanvasJvm(EditModule.drawingViewFactory.create(DrawingImpl(), null, false, ""))
-		editor = EditorImpl(canvas.view as DrawingView<Drawing<Component>>)
+		val drawingView: DrawingView<Component, Drawing<Component>> = EditModule.drawingViewFactory.create(DrawingImpl(), null, false, "")
+		canvas = CanvasJvm(drawingView)
+		editor = EditorImpl(drawingView)
 		toolUtil = ToolTestUtil(SelectionToolImpl(editor, RubberBandHandler(RectangularRubberBand()), BaseModule.eventBus), editor)
 
 		editor.drawing.add(component.build())

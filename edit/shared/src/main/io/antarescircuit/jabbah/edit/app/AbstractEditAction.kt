@@ -26,8 +26,9 @@ abstract class AbstractEditAction(
 
 	private val disableWithInactiveCommandManager = ActiveCommandManagerAction(this, commandManager, eventBus)
 
-	@Suppress("UNCHECKED_CAST")
-	protected val drawingView: DrawingView<Drawing<Component>>? get() = viewManager.activeView?.view as? DrawingView<Drawing<Component>>?
+	protected val drawingView: DrawingView<Component, Drawing<Component>>? get() = viewManager.castedActiveView()
+
+	protected fun <T> castedDrawingView(): T? = viewManager.castedActiveView()
 
 	override fun dispose() {
 		super.dispose()

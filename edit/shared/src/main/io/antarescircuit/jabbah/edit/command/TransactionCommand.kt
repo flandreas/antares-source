@@ -13,7 +13,7 @@ import io.antarescircuit.jabbah.edit.Undoable
  */
 internal class TransactionCommand(
 	descriptionKey: String,
-	private val drawingView: DrawingView<*>? = null
+	private val drawingView: DrawingView<*,*>? = null
 ) : AbstractCommand(descriptionKey, null), Undoable {
 
 	override fun execute() {

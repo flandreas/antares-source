@@ -17,7 +17,7 @@ class EdgeViewReplaceSelectionModel<T: EdgeView<*>>(component: T) : SelectedColo
 		return component.layout.type.getInputEventHandler(component, context)
 	}
 
-	override fun notifyRemoved(view: DrawingView<*>) {
+	override fun notifyRemoved(view: DrawingView<*,*>) {
 		component.layout.type.edgeViewInputEventHandler.dismiss(view)
 	}
 }

@@ -8,7 +8,7 @@ import io.antarescircuit.jabbah.edit.command.AbstractDrawingViewCommand
  * A [Command] for adding a [Component] to a [Drawing].
  */
 class AddCommand(
-    drawingView: DrawingView<Drawing<in Component>>,
+    drawingView: DrawingView<Component, Drawing<in Component>>,
     val component: Component,
     private val componentCustomizer: ComponentCustomizer? = null
 ) : AbstractDrawingViewCommand("edit.command.add", drawingView), Undoable {
@@ -23,8 +23,9 @@ class AddCommand(
 
     override fun execute() {
 	    val clone = component.doClone()
-		(view as DrawingView<Drawing<in Component>>).drawing.add(clone)
-	    componentCustomizer?.customizeAddedComponent(clone, view.drawing)
+		@Suppress("UNCHECKED_CAST") // DrawingView type ensured by constructor
+		(view as DrawingView<Component, Drawing<in Component>>).drawing.add(clone)
+		componentCustomizer?.customizeAddedComponent(clone, view.drawing)
 	    addedComponentId = clone.id
     }
 

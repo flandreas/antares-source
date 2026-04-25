@@ -4,12 +4,12 @@ import io.antarescircuit.jabbah.base.Action
 import io.antarescircuit.jabbah.base.event.ActionEvent
 import io.antarescircuit.jabbah.base.event.EventBus
 import io.antarescircuit.jabbah.base.module.BaseModule
-import io.antarescircuit.jabbah.draw.view.DrawViewModule
 import io.antarescircuit.jabbah.draw.view.ContentViewManager
+import io.antarescircuit.jabbah.draw.view.DrawViewModule
 import io.antarescircuit.jabbah.edit.Component
-import io.antarescircuit.jabbah.edit.model.group.GroupComponent
 import io.antarescircuit.jabbah.edit.Drawing
 import io.antarescircuit.jabbah.edit.DrawingView
+import io.antarescircuit.jabbah.edit.model.group.GroupComponent
 import io.antarescircuit.jabbah.edit.module.EditModule
 
 /** An [Action] for grouping the selected [Component]s to a [GroupComponent].*/
@@ -20,7 +20,7 @@ class GroupComponentsAction(
 ) : AbstractSelectionAwareAction("edit.action.group", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
-		val drawingView = viewManager.activeView!!.view as DrawingView<Drawing<Component>>
+		val drawingView = viewManager.castedActiveView<DrawingView<Component, Drawing<Component>>>()!!
 		service.group(
 			drawingView.selectionManager.selection.toCollection(mutableListOf()),
 			drawingView)
@@ -38,7 +38,7 @@ class UngroupComponentsAction(
 ) : AbstractSelectionAwareAction("edit.action.ungroup", eventBus, viewManager) {
 
 	override fun execute(event: ActionEvent) {
-		val drawingView = viewManager.activeView!!.view as DrawingView<Drawing<Component>>
+		val drawingView = viewManager.castedActiveView<DrawingView<Component, Drawing<Component>>>()!!
 		service.ungroup(
 			singleSelection!!.propertyOwner as GroupComponent,
 			drawingView)

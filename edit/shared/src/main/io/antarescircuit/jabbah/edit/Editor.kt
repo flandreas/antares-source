@@ -59,7 +59,7 @@ interface Editor {
     val drawing: Drawing<Component> get() = view.drawing
 
     /** Holds the [DrawingView] used by the user to edit.*/
-    val view: DrawingView<Drawing<Component>>
+    val view: DrawingView<Component, Drawing<Component>>
 
     /**
      * Determines whether this [Editor] is active or not. This affects primarily whether events are forwarded

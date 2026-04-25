@@ -39,6 +39,7 @@ class GraphViewConnectServiceImpl(
 		LOG.trace("unconnectFromOrigin EdgeView: ${edgeView.id}")
 		var origNodeView: NodeView<T>? = null
 		if (edgeView.origin?.connectableView is NodeView<*>) {
+			@Suppress("UNCHECKED_CAST")
 			origNodeView = edgeView.origin?.connectableView as NodeView<T>
 		}
 		unconnectPortFromNet(edgeView.origin?.port, edgeView.model)
@@ -62,6 +63,7 @@ class GraphViewConnectServiceImpl(
 		LOG.trace("unconnectFromDestination EdgeView: ${edgeView.id}")
 		var destNodeView: NodeView<T>? = null
 		if (edgeView.destination?.connectableView is NodeView<*>) {
+			@Suppress("UNCHECKED_CAST")
 			destNodeView = edgeView.destination!!.connectableView as NodeView<T>
 		}
 		unconnectPortFromNet(edgeView.destination?.port, edgeView.model)
@@ -135,6 +137,7 @@ class GraphViewConnectServiceImpl(
 		return edgeView
 	}
 
+	@Suppress("UNCHECKED_CAST")
 	override fun <T : Any> split(
 		graphView: GraphView,
 		splitEdgeView: EdgeView<T>,

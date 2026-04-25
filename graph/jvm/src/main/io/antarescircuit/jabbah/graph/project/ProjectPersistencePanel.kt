@@ -229,7 +229,7 @@ class ProjectPersistencePanel(
 				}
 			}
 
-			LOG.userTrail("Create new project '${properties!!.name.getTranslation()}'")
+			LOG.userTrail("Create new project '${properties.name.getTranslation()}'")
 			val project = managementService.create(properties)
 			LOG.debug("Created new project ${project.uuid}")
 

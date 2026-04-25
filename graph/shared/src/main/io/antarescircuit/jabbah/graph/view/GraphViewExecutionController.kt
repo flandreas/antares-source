@@ -79,7 +79,7 @@ class GraphViewExecutionController(
 	 * Remove all animation highlighting artifacts from the animation container of the
 	 * specified [DrawingViewContent]. Called after execution has been stopped.
 	 */
-	fun cleanup(content: DrawingViewContent<*>) {
+	fun cleanup(content: DrawingViewContent<*,*>) {
 		actorListener.executionAnimator.cleanup(content)
 	}
 

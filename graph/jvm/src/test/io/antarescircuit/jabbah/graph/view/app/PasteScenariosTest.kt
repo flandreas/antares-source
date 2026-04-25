@@ -86,7 +86,7 @@ class PasteScenariosTest : AbstractGraphViewEditingTest() {
         editor.commandManager.reset()
 
         val pasteInfo = copyPasteService.paste(content, editor.view)
-        editor.commandManager.register(PasteCommand(view as DrawingView<Drawing<Component>>, content, pasteInfo, copyPasteService))
+        editor.commandManager.register(PasteCommand(view as DrawingView<Component, Drawing<Component>>, content, pasteInfo, copyPasteService))
         editor.commandManager.undo()
 
         view.navigator.panBy(1000, 1000)

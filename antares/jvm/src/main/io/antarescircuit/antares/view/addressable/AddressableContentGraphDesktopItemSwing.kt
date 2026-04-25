@@ -16,6 +16,7 @@ import io.antarescircuit.jabbah.edit.module.EditModule
 import io.antarescircuit.jabbah.graph.GraphApplicationContextHolder
 import io.antarescircuit.jabbah.graph.model.vertice.ObjectLink
 import io.antarescircuit.jabbah.graph.ui.desktop.*
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import java.awt.event.FocusEvent
@@ -23,7 +24,7 @@ import java.awt.event.FocusListener
 
 /** Wraps a [AddressableContentsPanel] as a [GraphDesktopViewItem] so it can be added to the [GraphDesktopView]. */
 class AddressableContentGraphDesktopItemSwing(
-	drawingView: DrawingView<GraphView>,
+	drawingView: DrawingView<GraphElementView<*>, GraphView>,
 	link: ObjectLink<Addressable>,
 	title: String,
 	applicationContextHolder: GraphApplicationContextHolder,
@@ -67,7 +68,7 @@ class AddressableContentGraphDesktopItemSwing(
 
 	/** ---- [GraphDesktopViewItem] */
 
-	override val drawingView: DrawingView<GraphView>? get() = null
+	override val drawingView: DrawingView<GraphElementView<*>, GraphView>? get() = null
 
 	override fun displays(content: Any?): Boolean = content === memoryContentPanel.addressableRef.addressable
 
@@ -76,7 +77,7 @@ class AddressableContentGraphDesktopItemSwing(
 		eventBus.unregister(closeViewRequestHandler)
 	}
 
-	override fun findContent(condition: (DrawingViewContent<GraphView>) -> Boolean): DrawingViewContent<*>? = null
+	override fun findContent(condition: (DrawingViewContent<GraphElementView<*>, GraphView>) -> Boolean): DrawingViewContent<*,*>? = null
 
 	override fun addContextColorBorder(color: Color) {
 		memoryContentPanel.border = createContextColorBorder(color)

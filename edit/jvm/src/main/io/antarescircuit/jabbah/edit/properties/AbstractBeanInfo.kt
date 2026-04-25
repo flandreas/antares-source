@@ -13,6 +13,8 @@ import java.beans.SimpleBeanInfo
  * The name of concrete [SimpleBeanInfo] classes must adhere to the convention that they
  * extend the bean's class name by "BeanInfo". Example: The [SimpleBeanInfo] class for "LEDView" must be named
  * "LEDViewBeanInfo".
+ *
+ * @param T the type of bean being edited
  */
 abstract class AbstractBeanInfo<in T>(
 	var beanIdProvider: BeanIdProvider = DEFAULT_BEAN_ID_PROVIDER

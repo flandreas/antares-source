@@ -8,14 +8,13 @@ import io.antarescircuit.antares.view.inout.DigitalCircuitInOutView
 import io.antarescircuit.antares.view.metagraph.AntaresMetaGraphService
 import io.antarescircuit.jabbah.base.geom.Point2D
 import io.antarescircuit.jabbah.base.module.BaseModule
-import io.antarescircuit.jabbah.edit.Component
-import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.edit.DrawingViewMockBuilder
 import io.antarescircuit.jabbah.edit.model.text.TranslatableText
 import io.antarescircuit.jabbah.graph.MetaGraph
 import io.antarescircuit.jabbah.graph.container.ContainerDrawingLayouter
 import io.antarescircuit.jabbah.graph.library.LibraryModule
 import io.antarescircuit.jabbah.graph.model.PortType
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.GraphViewBuilder
 import io.antarescircuit.jabbah.graph.view.graph.GraphViewCopyPasteService
@@ -78,7 +77,7 @@ class ExtractMetaGraphWithoutPortsTest : AbstractJvmCircuitTest() {
         val uuid = GraphViewModule.metaGraphService.extractMetaGraph(
             TranslatableText("Extract"),
             AntaresGraphTypes.Digital,
-            drawingViewBuilder.build<Component>() as DrawingView<GraphView>,
+            drawingViewBuilder.build<GraphElementView<*>, GraphView>(),
             componentIds,
             library
         )

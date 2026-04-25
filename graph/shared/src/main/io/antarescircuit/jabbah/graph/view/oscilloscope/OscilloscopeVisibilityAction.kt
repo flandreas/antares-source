@@ -11,6 +11,7 @@ import io.antarescircuit.jabbah.draw.view.DrawViewModule
 import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.execution.scheduler.SchedulerActivationStateEvent
 import io.antarescircuit.jabbah.graph.GraphApplicationContextHolder
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.app.oscilloscope.OscilloscopeDisplayEvent
 import io.antarescircuit.jabbah.graph.view.app.oscilloscope.OscilloscopeViewService
@@ -39,13 +40,14 @@ class OscilloscopeVisibilityAction(
 		eventBus.unregister(activationStateHandler)
 	}
 
+	@Suppress("UNCHECKED_CAST")
 	override fun execute(event: io.antarescircuit.jabbah.base.event.ActionEvent) {
 		val view = viewManager.activeView?.view
-		if (view is DrawingView<*>) {
+		if (view is DrawingView<*,*>) {
 			if (selected) {
-				service.displayOscilloscope(view as DrawingView<GraphView>)
+				service.displayOscilloscope(view as DrawingView<GraphElementView<*>, GraphView>)
 			} else {
-				service.hideOscilloscope(view as DrawingView<GraphView>)
+				service.hideOscilloscope(view as DrawingView<GraphElementView<*>, GraphView>)
 			}
 		}
 	}
@@ -64,14 +66,14 @@ class OscilloscopeVisibilityAction(
 
 	override fun calculateEnabled(): Boolean =
 		super.calculateEnabled()
-			&& viewManager.activeView?.view is DrawingView<*>
-			&& (viewManager.activeView?.view as DrawingView<*>).drawing is GraphView
-			&& (viewManager.activeView?.view as DrawingView<*>).editable
+			&& viewManager.activeView?.view is DrawingView<*,*>
+			&& (viewManager.activeView?.view as DrawingView<*,*>).drawing is GraphView
+			&& (viewManager.activeView?.view as DrawingView<*,*>).editable
 			&& !applicationContextHolder.scheduler.isActive
 
 	private fun updateState() {
-		selected = viewManager.activeView?.view is DrawingView<*>
-			&& (viewManager.activeView!!.view as DrawingView<*>).drawing is GraphView
-			&& service.isOscilloscopeDisplayed((viewManager.activeView!!.view as DrawingView<*>).drawing as GraphView)
+		selected = viewManager.activeView?.view is DrawingView<*,*>
+			&& (viewManager.activeView!!.view as DrawingView<*,*>).drawing is GraphView
+			&& service.isOscilloscopeDisplayed((viewManager.activeView!!.view as DrawingView<*,*>).drawing as GraphView)
 	}
 }

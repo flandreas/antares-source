@@ -19,6 +19,7 @@ import io.antarescircuit.jabbah.draw.graphics.Cursor
 import io.antarescircuit.jabbah.edit.*
 import io.antarescircuit.jabbah.graph.view.EdgeView
 import io.antarescircuit.jabbah.graph.view.EdgeViewSnapLocatorResult
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.NetView
 import io.antarescircuit.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter
@@ -476,7 +477,7 @@ class EdgeToPortOrEdgeConnector(
 
 	private fun beginConnecting(context: EditInputEventContext, adjust: Boolean) {
 		val snapLocation = ConnectionPointHighlighter.portViewHighlight!!.location
-		createEdgeView(context.drawingView as DrawingView<GraphView>, snapLocation, branchedEdgeView!!.netView as NetView<Any>)
+		createEdgeView(context.drawingView as DrawingView<GraphElementView<*>, GraphView>, snapLocation, branchedEdgeView!!.netView as NetView<Any>)
 		edgeView!!.layout.isAdjusted = adjust
 
 		LOG.userTrail("Start creating junction from EdgeView ${branchedEdgeView!!.id} on Net ${branchedEdgeView!!.model.id} with new EdgeView ${edgeView?.id}, adjust=$adjust")

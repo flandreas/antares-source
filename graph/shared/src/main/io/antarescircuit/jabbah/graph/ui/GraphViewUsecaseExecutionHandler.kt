@@ -6,6 +6,7 @@ import io.antarescircuit.jabbah.draw.InputEventContext
 import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.graph.GraphApplicationContextHolder
 import io.antarescircuit.jabbah.graph.app.ApplicationMode.EXEC_USECASE
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.Usecase
 
@@ -13,7 +14,7 @@ import io.antarescircuit.jabbah.graph.view.Usecase
  * Handles input events on a [GraphView] while a [Usecase] is being executed.
  */
 class GraphViewUsecaseExecutionHandler(
-	view: DrawingView<GraphView>,
+	view: DrawingView<GraphElementView<*>, GraphView>,
 	private val applicationContextHolder: GraphApplicationContextHolder,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractGraphViewExecutionHandler(view, eventBus) {

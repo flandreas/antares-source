@@ -11,11 +11,11 @@ import io.antarescircuit.jabbah.draw.View
  *      doesn't contain all currently selected [Component]s, but only the delta.
  */
 data class SelectionChangeEvent(
-	val view: DrawingView<out Drawing<*>>,
+	val view: DrawingView<*, out Drawing<*>>,
 	val type: Type,
 	val components: Collection<Component>
 ) {
-	constructor(view: DrawingView<out Drawing<*>>, components: Collection<Component>, selected: Boolean) :
+	constructor(view: DrawingView<*, out Drawing<*>>, components: Collection<Component>, selected: Boolean) :
 		this(view, if (selected) Type.SELECTED else Type.DESELECTED, components)
 
 	enum class Type {

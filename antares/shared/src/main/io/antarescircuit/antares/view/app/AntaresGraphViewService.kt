@@ -105,7 +105,7 @@ class AntaresGraphViewService(
 	fun changeInputCount(
 		gateView: LogicGateView,
 		newInputCount: PortCount,
-		drawingView: DrawingView<GraphView>
+		drawingView: DrawingView<GraphElementView<*>, GraphView>
 	) {
 		require(newInputCount.count >= gateView.model.minInputCount.count) { "InputCount must not be smaller than minimum ${gateView.model.minInputCount.count}" }
 		require(newInputCount.count <= gateView.model.maxInputCount.count) { "InputCount must not be larger than maximum ${gateView.model.maxInputCount.count}" }
@@ -138,7 +138,7 @@ class AntaresGraphViewService(
 		}
 	}
 
-	private fun decreaseInputCount(gateView: LogicGateView, newInputCount: PortCount, drawingView: DrawingView<GraphView>) {
+	private fun decreaseInputCount(gateView: LogicGateView, newInputCount: PortCount, drawingView: DrawingView<GraphElementView<*>, GraphView>) {
 		gateView.model.apply {
 			val ports = getInputs().sortedBy { it.portId }.toMutableList()
 			for (i in chosenInputCount.count - 1 downTo newInputCount.count) {
@@ -161,7 +161,7 @@ class AntaresGraphViewService(
 	fun changeOutputCount(
 		wireTapView: WireTapView,
 		newOutputCount: PortCount,
-		drawingView: DrawingView<GraphView>
+		drawingView: DrawingView<GraphElementView<*>, GraphView>
 	) {
 		if (newOutputCount.count > wireTapView.tapCount.count) {
 			increaseOutputCount(wireTapView, newOutputCount)
@@ -181,7 +181,7 @@ class AntaresGraphViewService(
 		wireTapView.updateGeometry()
 	}
 
-	private fun decreaseOutputCount(wireTapView: WireTapView, newOutputCount: PortCount, drawingView: DrawingView<GraphView>) {
+	private fun decreaseOutputCount(wireTapView: WireTapView, newOutputCount: PortCount, drawingView: DrawingView<GraphElementView<*>, GraphView>) {
 		wireTapView.model.apply {
 			val ports = getPorts().filter { it.portId > 1 }.sortedBy { it.portId }.toMutableList()
 			for (i in ports.size - 1 downTo newOutputCount.count) {
@@ -197,7 +197,7 @@ class AntaresGraphViewService(
 		}
 	}
 
-	private fun unconnectDeletedPortView(portView: PortView<*>, drawingView: DrawingView<GraphView>) {
+	private fun unconnectDeletedPortView(portView: PortView<*>, drawingView: DrawingView<GraphElementView<*>, GraphView>) {
 		drawingView.drawing.getEdgeViews()
 			.filter { ev -> ev.origin?.portView === portView }
 			.forEach { ev -> connectService.unconnectEdgeViewOrigin(ev) }

@@ -198,7 +198,7 @@ class BooleanExpressionParser(
 	private fun variable(negated: Boolean = false): Variable = Variable(lexer.location, identifier(), negated)
 
 	private fun identifier(): Token<String> {
-		val identifier = currentToken as Token<String>
+		val identifier = currentToken!!.cast<String>()
 		eat(ID)
 		return identifier
 	}

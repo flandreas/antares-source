@@ -14,7 +14,7 @@ import io.antarescircuit.jabbah.edit.*
  * @param eventBus the [EventBus] on which [SelectionChangeEvent]s are posted by this [SelectionManager]
  */
 class SelectionManagerImpl(
-	val content: DrawingViewContent<*>,
+	val content: DrawingViewContent<*,*>,
 	private val selectionModelProvider: SelectionModelProvider = EditSelectModule.selectionModelProvider,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : SelectionManager {

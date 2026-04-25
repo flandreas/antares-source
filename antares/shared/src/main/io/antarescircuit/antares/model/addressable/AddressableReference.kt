@@ -10,6 +10,7 @@ import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.graph.MetaGraph
 import io.antarescircuit.jabbah.graph.model.Graph
 import io.antarescircuit.jabbah.graph.model.vertice.ObjectLink
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 
 /**
@@ -18,7 +19,7 @@ import io.antarescircuit.jabbah.graph.view.GraphView
  */
 class AddressableReference(
 	val link: ObjectLink<Addressable>,
-	val view: DrawingView<GraphView>?,
+	val view: DrawingView<GraphElementView<*>, GraphView>?,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) {
 

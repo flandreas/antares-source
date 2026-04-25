@@ -4,6 +4,7 @@ import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.edit.Undoable
 import io.antarescircuit.jabbah.edit.command.AbstractCommand
 import io.antarescircuit.jabbah.graph.model.vertice.ObjectLink
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 
 data class AddressableCommentChange(
@@ -13,7 +14,7 @@ data class AddressableCommentChange(
 )
 
 class AddressableCommentChangeCommand(
-	private val drawingView: DrawingView<GraphView>?,
+	private val drawingView: DrawingView<GraphElementView<*>, GraphView>?,
 	private val link: ObjectLink<Addressable>,
 	private val changes: Collection<AddressableCommentChange>
 ) : AbstractCommand("antares.command.memoryContents"), Undoable {

@@ -23,14 +23,14 @@ class SelectionManagerImplTest {
 
 	init {
 		EditTestRule.configure()
-		drawing = DrawingImpl<Component>()
+		drawing = DrawingImpl()
 		canvas = CanvasJvm(EditModule.drawingViewFactory.create(drawing, null, false, ""))
 		rect = RectangleComponent(styleProvider = StyleRepository.INSTANCE, shape = Rectangle2D(200, 200, 200, 100))
 
 		rect.preferredSelectionDrawingStrategy = SelectionDrawingStrategy.BELOW
 		val selectionModelProvider = SimpleSelectionModelProvider(EditSelectModule.selectionModelFactory)
 		selectionManager = SelectionManagerImpl(
-			(canvas.view as DrawingView<out Drawing<Component>>).content, selectionModelProvider, eventBus)
+			(canvas.view as DrawingView<*, *>).content, selectionModelProvider, eventBus)
 		drawing.add(rect)
 	}
 

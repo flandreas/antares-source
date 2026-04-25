@@ -41,13 +41,13 @@ abstract class AbstractSelectedColorWrappingSelectionModel<T : Component>(compon
 		validate()
 	}
 
-	override fun notifyAdded(view: DrawingView<*>) {
+	override fun notifyAdded(view: DrawingView<*,*>) {
 		if (contains(view.viewToModel(view.canvas.mouseLocation))) {
 			displayHandles(view)
 		}
 	}
 
-	override fun notifyRemoved(view: DrawingView<*>) {
+	override fun notifyRemoved(view: DrawingView<*,*>) {
 		view.ghostContainer.remove(handleSelectionModel)
 	}
 
@@ -55,14 +55,14 @@ abstract class AbstractSelectedColorWrappingSelectionModel<T : Component>(compon
 
 	protected abstract fun createInnerSelectionModel(component: T): AbstractHandleSelectionModel<T>
 
-	private fun displayHandles(view: DrawingView<*>) {
+	private fun displayHandles(view: DrawingView<*,*>) {
 		if (view.editable && !handlesDisplayed) {
 			view.ghostContainer.add(handleSelectionModel)
 			handlesDisplayed = true
 		}
 	}
 
-	private fun hideHandles(view: DrawingView<*>) {
+	private fun hideHandles(view: DrawingView<*,*>) {
 		if (handlesDisplayed) {
 			view.ghostContainer.remove(handleSelectionModel)
 			view.ghostContainer.validate()

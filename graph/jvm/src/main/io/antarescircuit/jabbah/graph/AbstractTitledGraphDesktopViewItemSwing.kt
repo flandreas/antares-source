@@ -8,14 +8,15 @@ import io.antarescircuit.jabbah.base.event.EventBus
 import io.antarescircuit.jabbah.base.event.EventHandler
 import io.antarescircuit.jabbah.base.module.BaseModule
 import io.antarescircuit.jabbah.base.ui.UIBasics
-import io.antarescircuit.jabbah.draw.View
 import io.antarescircuit.jabbah.draw.CloseViewRequest
+import io.antarescircuit.jabbah.draw.View
 import io.antarescircuit.jabbah.draw.graphics.Color
 import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.edit.DrawingViewContent
 import io.antarescircuit.jabbah.edit.model.text.description.NameChangedEvent
 import io.antarescircuit.jabbah.graph.library.UndoableStateLibraryItem
 import io.antarescircuit.jabbah.graph.ui.desktop.*
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import javax.swing.JPanel
@@ -64,7 +65,7 @@ abstract class AbstractTitledGraphDesktopViewItemSwing(
 
     override fun removeContextColorBorder() {}
 
-    override val drawingView: DrawingView<GraphView>? get() = null
+    override val drawingView: DrawingView<GraphElementView<*>, GraphView>? get() = null
 
     override fun disposeItem() {
         eventBus.unregister(closeViewRequestHandler)
@@ -74,7 +75,7 @@ abstract class AbstractTitledGraphDesktopViewItemSwing(
         }
     }
 
-    override fun findContent(condition: (DrawingViewContent<GraphView>) -> Boolean): DrawingViewContent<*>? = null
+    override fun findContent(condition: (DrawingViewContent<GraphElementView<*>, GraphView>) -> Boolean): DrawingViewContent<*,*>? = null
 
     override fun createCloseRequest(): Any = CloseViewRequest(closeTarget)
 

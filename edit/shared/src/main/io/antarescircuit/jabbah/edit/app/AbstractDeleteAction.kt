@@ -31,10 +31,10 @@ abstract class AbstractDeleteAction(
         }
     }
 
-    protected abstract fun executeImpl(components: List<Component>, drawingView: DrawingView<*>)
+    protected abstract fun executeImpl(components: List<Component>, drawingView: DrawingView<*,*>)
 
     override fun execute(event: ActionEvent) {
-        val drawingView = viewManager.activeView!!.view as DrawingView<*>
+        val drawingView = viewManager.activeView!!.view as DrawingView<*,*>
         val selection = drawingView.selectionManager.selection
         val components = getComponentsToDelete(selection)
 

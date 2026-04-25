@@ -48,5 +48,5 @@ interface Highlighter {
 interface HighlighterFactory {
 
     /** Creates a [Highlighter] that manages highlights of [Component]s in the specified [DrawingViewContent].*/
-    fun create(content: DrawingViewContent<*>): Highlighter
+    fun create(content: DrawingViewContent<*,*>): Highlighter
 }

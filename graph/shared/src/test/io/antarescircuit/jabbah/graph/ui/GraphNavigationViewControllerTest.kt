@@ -1,11 +1,16 @@
 package io.antarescircuit.jabbah.graph.ui
 
+import dev.mokkery.MockMode
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.matcher.any
+import dev.mokkery.mock
+import dev.mokkery.verify
 import io.antarescircuit.jabbah.app.CurrentSavableEvent
 import io.antarescircuit.jabbah.app.Savable
 import io.antarescircuit.jabbah.base.event.EventBusImpl
 import io.antarescircuit.jabbah.base.time.SystemSpeed
 import io.antarescircuit.jabbah.draw.CanvasMockBuilder
-import io.antarescircuit.jabbah.edit.Component
 import io.antarescircuit.jabbah.edit.Drawing
 import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.edit.model.text.TranslatableText
@@ -29,13 +34,6 @@ import io.antarescircuit.jabbah.graph.model.vertice.SubGraphVerticeRef
 import io.antarescircuit.jabbah.graph.view.*
 import io.antarescircuit.jabbah.graph.view.vertice.OpenSubGraphRequest
 import io.antarescircuit.jabbah.graph.view.vertice.SubGraphVerticeView
-import dev.mokkery.MockMode
-import dev.mokkery.answering.returns
-import dev.mokkery.every
-import dev.mokkery.matcher.any
-import dev.mokkery.matcher.eq
-import dev.mokkery.mock
-import dev.mokkery.verify
 import kotlin.test.*
 
 class GraphNavigationViewControllerTest {
@@ -47,7 +45,7 @@ class GraphNavigationViewControllerTest {
 	private val graphViewBuilder: GraphViewBuilder<Boolean>
 	private val applicationContextHolder: GraphApplicationContextHolder
 	private val applicationModeHolder = mock<ApplicationModeHolder>()
-	private val drawingView: DrawingViewImpl<Drawing<Component>>
+	private val drawingView: DrawingViewImpl<GraphElementView<*>, GraphView>
 	private val vv: SubGraphVerticeView<*>
 	private val controller: GraphNavigationViewController
 
@@ -60,11 +58,11 @@ class GraphNavigationViewControllerTest {
 		applicationContextHolder.applicationModeHolder = applicationModeHolder
 		every { applicationModeHolder.currentMode } returns ApplicationMode.EDIT
 		drawingView = DrawingViewImpl(
-			drawing = graphViewBuilder.graphView as Drawing<Component>,
+			drawing = graphViewBuilder.graphView,
 			applicationContextHolder = applicationContextHolder,
 			eventBus = eventBus)
 		vv = createSubGraphVerticeView()
-		controller = GraphNavigationViewController(isRoot = true, drawingView as DrawingView<GraphView>, eventBus = eventBus)
+		controller = GraphNavigationViewController(isRoot = true, drawingView as DrawingView<GraphElementView<*>, GraphView>, eventBus = eventBus)
 		drawingView.canvas = CanvasMockBuilder().withView(drawingView).build()
 
 		graphViewBuilder.addVerticeView(vv)

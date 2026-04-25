@@ -56,7 +56,7 @@ abstract class AbstractHandleSelectionModel<T : Component>(
 
 	/** ---- [AbstractSelectionModel] */
 
-	override fun notifyAdded(view: DrawingView<*>) {
+	override fun notifyAdded(view: DrawingView<*,*>) {
 		componentUpdated()
 		requiredHandlesCount = calculateRequiredHandlesCount()
 	}

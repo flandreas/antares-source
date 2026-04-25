@@ -17,12 +17,13 @@ import io.antarescircuit.jabbah.graph.container.ContainerTreePortItem
 import io.antarescircuit.jabbah.graph.container.ContainerTreeView
 import io.antarescircuit.jabbah.graph.model.module.GraphModelModule
 import io.antarescircuit.jabbah.graph.model.port.PortFactory
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.module.GraphViewModule
 import io.antarescircuit.jabbah.graph.view.port.PortViewFactory
 
 class DigitalContainerTreeView(
-	mainDrawingView: DrawingView<Drawing<Component>>,
+	mainDrawingView: DrawingView<GraphElementView<*>, GraphView>,
 	portFactory: PortFactory = GraphModelModule.portFactory,
 	portViewFactory: PortViewFactory = GraphViewModule.portViewFactory,
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,

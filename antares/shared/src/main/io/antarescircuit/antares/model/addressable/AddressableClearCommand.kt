@@ -6,11 +6,12 @@ import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.edit.Undoable
 import io.antarescircuit.jabbah.edit.command.AbstractCommand
 import io.antarescircuit.jabbah.graph.model.vertice.ObjectLink
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 
 /** A [Command] for clearing the contents of an [Addressable].*/
 class AddressableClearCommand(
-	private val drawingView: DrawingView<GraphView>?,
+	private val drawingView: DrawingView<GraphElementView<*>, GraphView>?,
 	private val link: ObjectLink<Addressable>,
 	private val bitWidth: BitWidth
 ) : AbstractCommand("antares.command.clearMemory"), Undoable {

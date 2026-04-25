@@ -19,5 +19,5 @@ open class EdgeViewInputEventHandler(
 	 * Implementations should cleanup and remove anything from the [DrawingView] they have
 	 * temporarily added, such as [Handles][Handle].
 	 */
-	open fun dismiss(view: DrawingView<*>) {}
+	open fun dismiss(view: DrawingView<*,*>) {}
 }

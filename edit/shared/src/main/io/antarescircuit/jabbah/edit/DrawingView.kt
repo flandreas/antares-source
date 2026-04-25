@@ -10,13 +10,13 @@ import io.antarescircuit.jabbah.draw.drawable.Unzoomable
 import io.antarescircuit.jabbah.edit.module.EditModule
 import io.antarescircuit.jabbah.edit.select.UnzoomableSelectionModel
 
-fun interface DrawingViewFactory<T : Drawing<*>> {
-	fun create(
+interface DrawingViewFactory {
+	fun <C : Component, T : Drawing<C>> create(
 		drawing: T,
 		contextHolder: ApplicationContextHolder?,
 		displayGlobalMessages: Boolean,
 		name: String
-	): DrawingView<T>
+	): DrawingView<C,T>
 }
 
 /**
@@ -25,7 +25,7 @@ fun interface DrawingViewFactory<T : Drawing<*>> {
  * Clients should not instantiate implementations of [DrawingView] by themselves.
  * They should rather use [EditModule.drawingViewFactory] for creating [DrawingView] implementations.
  */
-interface DrawingView<T : Drawing<*>> : View<EditInputEventContext> {
+interface DrawingView<C: Component, T : Drawing<C>> : View<EditInputEventContext> {
 
 	companion object {
 		/** The name of the [Drawing] property in [PropertyChangeEvent]s.*/
@@ -50,7 +50,7 @@ interface DrawingView<T : Drawing<*>> : View<EditInputEventContext> {
 	 * otherwise use [setDrawing] to set a new [Drawing] and to create a new [DrawingViewContent].
 	 * Sends a [PropertyChangeEvent] for [DrawingView.PROP_DRAWING]
 	 */
-	var content: DrawingViewContent<T>
+	var content: DrawingViewContent<C, T>
 
 	/**
 	 * Holds the [Drawing] as the main [ComponentContainer] in this [DrawingView].
@@ -100,13 +100,13 @@ interface DrawingView<T : Drawing<*>> : View<EditInputEventContext> {
 	fun setDrawing(drawing: T, applyDefaultZoomStrategy: Boolean = true)
 
 	/** Creates a new [DrawingViewContent] for the specified [Drawing]*/
-	fun createContent(drawing: T): DrawingViewContent<T>
+	fun createContent(drawing: T): DrawingViewContent<C, T>
 
 	/**
 	 * Adds the specified [DrawableDrawer] at the head of the chain of [DrawableDrawer] responsible for drawing
 	 * the main [Drawing].
 	 */
-	fun addDrawableDrawer(drawableDrawer: DrawableDrawer<Component>)
+	fun addDrawableDrawer(drawableDrawer: DrawableDrawer<C>)
 
 	/**
 	 * Determines the [SelectionDrawingStrategy] of a [Component] in this [DrawingView].
@@ -117,10 +117,10 @@ interface DrawingView<T : Drawing<*>> : View<EditInputEventContext> {
 	fun getComponentSelectionDrawingStrategy(component: Component): SelectionDrawingStrategy
 }
 
-interface DrawingViewContent<T : Drawing<*>> {
+interface DrawingViewContent<C: Component, T : Drawing<C>> {
 
 	/** The [DrawingView] that owns this [DrawingViewContent].*/
-	val drawingView: DrawingView<T>
+	val drawingView: DrawingView<C, T>
 
 	/** Holds the [Drawing] as the main [ComponentContainer] of this [DrawingViewContent].*/
 	val drawing: T

@@ -27,5 +27,5 @@ class EditInputEventContext(
         )
     }
 
-	val drawingView: DrawingView<Drawing<Component>> get() = editor.view
+	val drawingView: DrawingView<Component, Drawing<Component>> get() = editor.view
 }

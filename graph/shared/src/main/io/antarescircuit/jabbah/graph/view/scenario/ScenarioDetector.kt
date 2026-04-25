@@ -28,7 +28,7 @@ import io.antarescircuit.jabbah.graph.view.style.GraphStyleType
  *  a [ScenarioEvent] or a [ScenarioStepEvent] on its [EventBus].
  */
 class ScenarioDetector(
-	private val view: DrawingView<GraphView>,
+	private val view: DrawingView<GraphElementView<*>, GraphView>,
 	private val applicationContextHolder: GraphApplicationContextHolder,
 	private val eventBus: EventBus
 ) {

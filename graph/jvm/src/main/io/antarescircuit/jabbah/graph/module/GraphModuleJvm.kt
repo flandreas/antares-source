@@ -30,6 +30,7 @@ import io.antarescircuit.jabbah.graph.model.param.*
 import io.antarescircuit.jabbah.graph.model.port.InconsistentNetError
 import io.antarescircuit.jabbah.graph.project.ProjectAkrabClientService
 import io.antarescircuit.jabbah.graph.ui.GraphNavigationViewHeaderFactory
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.connect.ConnectMethod
 import io.antarescircuit.jabbah.graph.view.module.GraphViewModuleJvm
@@ -43,7 +44,7 @@ object GraphModuleJvm : AbstractModule() {
 
 	val supportWeb: Boolean get() = true
 
-	var containerTreeViewFactory: (DrawingView<Drawing<Component>>) -> ContainerTreeView = { ContainerTreeView(it) }
+	var containerTreeViewFactory: (DrawingView<GraphElementView<*>, GraphView>) -> ContainerTreeView = { ContainerTreeView(it) }
 
 	var projectAkrabClientService: () -> ProjectAkrabClientService = { throw UnsupportedOperationException() }
 
@@ -94,6 +95,7 @@ object GraphModuleJvm : AbstractModule() {
 		registry.registerRenderer(LongValue::class.java, ToStringRenderer::class.java)
 	}
 
+	@Suppress("UNCHECKED_CAST")
 	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
 		registry.register(GraphParamDefinitions::class.java) {
 			GraphParamDefinitionsPropertyEditor(
@@ -121,6 +123,8 @@ object GraphModuleJvm : AbstractModule() {
 					editor: Editor,
 					beanProvider: BeanProvider
 				): AbstractReflectionPropertySwing<*> {
+
+					@Suppress("UNCHECKED_CAST")
 					return GraphParamValuePropertySwing(
 						def as GraphParamDefinition<LongValue>,
 						"LongValue", // only used for logging
@@ -139,6 +143,8 @@ object GraphModuleJvm : AbstractModule() {
 					editor: Editor,
 					beanProvider: BeanProvider
 				): AbstractReflectionPropertySwing<*> {
+
+					@Suppress("UNCHECKED_CAST")
 					return GraphParamValuePropertySwing(
 						paramDefinition = def as GraphParamDefinition<String>,
 						propertyName = "<notUsed>",

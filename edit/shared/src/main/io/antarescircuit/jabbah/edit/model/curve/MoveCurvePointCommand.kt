@@ -8,7 +8,7 @@ import io.antarescircuit.jabbah.edit.command.AbstractDrawingViewCommand
  * A [Command] for moving an individual point of an [AbstractCurveComponent].
  */
 class MoveCurvePointCommand(
-	val drawingView: DrawingView<*>,
+	val drawingView: DrawingView<*,*>,
 	val curveId: Int,
 	val index: Int,
 	val oldLocation: Point2D,

@@ -7,9 +7,6 @@ import io.antarescircuit.jabbah.base.module.BaseModule
 import io.antarescircuit.jabbah.base.time.SystemSpeed
 import io.antarescircuit.jabbah.base.ui.AbstractUIController
 import io.antarescircuit.jabbah.base.ui.UIView
-import io.antarescircuit.jabbah.edit.Component
-import io.antarescircuit.jabbah.edit.Drawing
-import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.edit.module.EditModule
 import io.antarescircuit.jabbah.execution.ExecutionControlOutlet
 import io.antarescircuit.jabbah.execution.PauseOrResumeActionImpl
@@ -56,11 +53,11 @@ class GraphViewerController(
 		private set
 
 	val drawingView = EditModule.drawingViewFactory.create(
-		(graphView ?: GraphViewModule.graphViewFactory.create(null)) as Drawing<Component>,
+		(graphView ?: GraphViewModule.graphViewFactory.create(null)),
 		applicationContextHolder,
 		displayGlobalMessages,
 		""
-	) as DrawingView<GraphView>
+	)
 
 	val graphNavigationViewController = GraphNavigationViewController(isRoot = true, drawingView)
 

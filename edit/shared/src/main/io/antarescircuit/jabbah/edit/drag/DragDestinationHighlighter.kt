@@ -33,7 +33,7 @@ object DragDestinationHighlighter : DragManagerDestinationPlugin {
 		removeHighlight(editor.view)
 	}
 
-	private fun addHighlightIfAny(drawingView: DrawingView<*>, destination: DragDestination) {
+	private fun addHighlightIfAny(drawingView: DrawingView<*,*>, destination: DragDestination) {
 		createHighlight(destination)?.let {
 			highlight = it
 			highlightedDestination = destination
@@ -42,7 +42,7 @@ object DragDestinationHighlighter : DragManagerDestinationPlugin {
 		}
 	}
 
-	private fun removeHighlight(drawingView: DrawingView<*>) {
+	private fun removeHighlight(drawingView: DrawingView<*,*>) {
 		if (highlight != null) {
 			drawingView.animationContainer.remove(highlight!!)
 			drawingView.drawing.validate()

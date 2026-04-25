@@ -10,6 +10,7 @@ import dev.mokkery.every
 import dev.mokkery.mock
 import dev.mokkery.verify
 import dev.mokkery.verify.VerifyMode.Companion.exactly
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -43,7 +44,7 @@ class NavigationStackViewControllerTest {
 		val graphView = GraphViewBuilder<Boolean>().build()
 		graphView.graph!!.name = Name(name)
 
-		val content = mock<DrawingViewContent<GraphView>>()
+		val content = mock<DrawingViewContent<GraphElementView<*>, GraphView>>()
 		every { content.drawing } returns graphView
 
 		return NavigationStackEntry(subGraphVerticeView = null, content)

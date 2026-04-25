@@ -214,7 +214,7 @@ class ClockView(
 			}
 
 			return KnobLauncherImpl.launchImmediately(
-				view = context.view as DrawingView<*>,
+				view = context.view as DrawingView<*,*>,
 				initialValue = model.propagationDelay.value / 1_000,
 				location = boundingBox.center,
 				unit = "µs",

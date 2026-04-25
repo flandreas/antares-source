@@ -22,7 +22,7 @@ import io.antarescircuit.jabbah.graph.view.module.GraphViewModule
  * This ensures that these [GraphElement]s can operate as breakpoints during execution.
  */
 class GraphViewActorListener(
-	private val drawingView: DrawingView<GraphView>,
+	private val drawingView: DrawingView<GraphElementView<*>, GraphView>,
 	private val applicationContextHolder: GraphApplicationContextHolder,
 	private val currentGraphAnimationType: CurrentGraphViewAnimationType = GraphViewModule.currentGraphViewAnimationType,
 	private val eventBus: EventBus = BaseModule.eventBus

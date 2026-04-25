@@ -20,6 +20,8 @@ import io.antarescircuit.jabbah.graph.model.vertice.DeepVerticeLink
 import io.antarescircuit.jabbah.graph.ui.GraphFrameController
 import io.antarescircuit.jabbah.graph.view.ControlViewSource
 import io.antarescircuit.jabbah.graph.view.ControlViewSourceEvent
+import io.antarescircuit.jabbah.graph.view.GraphElementView
+import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.editor.GraphPortViewEvent
 import io.antarescircuit.jabbah.graph.view.vertice.SubGraphVerticeView
 
@@ -31,8 +33,8 @@ import io.antarescircuit.jabbah.graph.view.vertice.SubGraphVerticeView
  * Used to check whether received update events are relevant for this [ContainerEditor].
  */
 open class ContainerEditor(
-	view: DrawingView<Drawing<Component>>,
-	protected val mainDrawingView: DrawingView<Drawing<Component>>,
+	view: DrawingView<Component, Drawing<Component>>,
+	protected val mainDrawingView: DrawingView<GraphElementView<*>, GraphView>,
 	protected val eventBus: EventBus = BaseModule.eventBus
 ) : EditorImpl(view, name = GraphFrameController.CONTAINER_EDITOR_NAME) {
 

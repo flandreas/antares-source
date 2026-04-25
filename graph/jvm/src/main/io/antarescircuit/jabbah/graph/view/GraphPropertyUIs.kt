@@ -1,3 +1,6 @@
+// Raw generic type of JComboBox in the library
+@file:Suppress("UNCHECKED_CAST")
+
 package io.antarescircuit.jabbah.graph.view
 
 import io.antarescircuit.jabbah.base.LongValue

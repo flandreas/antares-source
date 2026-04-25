@@ -11,12 +11,12 @@ import io.antarescircuit.jabbah.draw.style.StyleType
 import io.antarescircuit.jabbah.edit.*
 import io.antarescircuit.jabbah.edit.select.UnzoomableSelectionModel
 
-class DrawingViewContentImpl<T : Drawing<Component>>(
-	override val drawingView: DrawingView<T>,
+class DrawingViewContentImpl<C : Component, T : Drawing<C>>(
+	override val drawingView: DrawingView<C,T>,
 	override val drawing: T,
 	selectionManagerFactory: SelectionManagerFactory,
 	highlighterFactory: HighlighterFactory
-) : DrawingViewContent<T> {
+) : DrawingViewContent<C,T> {
 
 	/** Holds a [DrawableContainer] for every supported [SelectionDrawingStrategy].*/
 	private val selectionContainers =
@@ -114,10 +114,10 @@ class DrawingViewContentImpl<T : Drawing<Component>>(
 	}
 
 	/** Listens for removals of [Component]s and deselects them (if selected) in order to remove the [SelectionModel].*/
-	private inner class ComponentRemoveListener : DrawableContainerAdapter<Component>() {
-		override fun drawableRemoved(event: DrawableContainerEvent<Component>) {
+	private inner class ComponentRemoveListener : DrawableContainerAdapter<C>() {
+		override fun drawableRemoved(event: DrawableContainerEvent<C>) {
 			if (event.child is Component && selectionManager.isSelected(event.child as Component)) {
-				// Due to Kotlin bug KT-15558, the gradle compiler issues warning "No cast needed"
+				// Due to Kotlin bug KT-15558, the Gradle compiler issues warning "No cast needed"
 				selectionManager.deselect(event.child as Component)
 			}
 		}

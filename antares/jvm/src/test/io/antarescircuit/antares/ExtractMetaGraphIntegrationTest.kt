@@ -9,8 +9,6 @@ import io.antarescircuit.antares.view.output.LEDView
 import io.antarescircuit.jabbah.base.geom.Point2D
 import io.antarescircuit.jabbah.base.module.BaseModule
 import io.antarescircuit.jabbah.draw.getDrawableInstances
-import io.antarescircuit.jabbah.edit.Component
-import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.edit.DrawingViewMockBuilder
 import io.antarescircuit.jabbah.edit.model.text.TranslatableText
 import io.antarescircuit.jabbah.graph.MetaGraph
@@ -72,7 +70,7 @@ class ExtractMetaGraphIntegrationTest : AbstractJvmCircuitTest()  {
 		val uuid = GraphViewModule.metaGraphService.extractMetaGraph(
 			TranslatableText("Extract"),
 			AntaresGraphTypes.Digital,
-			drawingViewBuilder.build<Component>() as DrawingView<GraphView>,
+			drawingViewBuilder.build(),
 			componentIds,
 			library
 		)

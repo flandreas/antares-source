@@ -12,6 +12,8 @@ import io.antarescircuit.jabbah.draw.InputEventContext
 import io.antarescircuit.jabbah.draw.container.DrawableBagInputEventHandler
 import io.antarescircuit.jabbah.edit.Drawing
 import io.antarescircuit.jabbah.edit.Snapper
+import io.antarescircuit.jabbah.edit.Component
+import io.antarescircuit.jabbah.edit.model.rectangle.RectangleComponent
 import io.antarescircuit.jabbah.edit.model.DrawingImpl
 import io.antarescircuit.jabbah.edit.model.text.ScriptProperty
 import io.antarescircuit.jabbah.edit.model.text.TranslatableText
@@ -337,6 +339,7 @@ open class GraphViewImpl(
 				graph?.add(drawable.model)
 			}
 			if (drawable is NetViewElement<*>) {
+				@Suppress("UNCHECKED_CAST")
 				addNetViewElement(drawable as NetViewElement<Any>)
 			}
 			return super.add(drawable, index)
@@ -351,6 +354,7 @@ open class GraphViewImpl(
 				graph!!.remove(drawable.model)
 			}
 			if (drawable is NetViewElement<*>) {
+				@Suppress("UNCHECKED_CAST")
 				removeNetViewElement(drawable as NetViewElement<Any>)
 			}
 			inputEventHandler?.graphElementViewRemoved()
@@ -412,6 +416,7 @@ open class GraphViewImpl(
 						partitionedNetViews.forEach {
 							if (!it.isEmpty) {
 								graph?.add(it.net)
+								@Suppress("UNCHECKED_CAST")
 								addNetView(it as NetView<Any>)
 							}
 						}

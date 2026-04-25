@@ -1,5 +1,7 @@
 package io.antarescircuit.jabbah.graph.ui.graphpanel
 
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 import io.antarescircuit.jabbah.app.ApplicationData
 import io.antarescircuit.jabbah.app.ApplicationDataContentEvent
 import io.antarescircuit.jabbah.app.ApplicationDataEvent
@@ -7,14 +9,15 @@ import io.antarescircuit.jabbah.app.Savable
 import io.antarescircuit.jabbah.base.event.EventBusImpl
 import io.antarescircuit.jabbah.base.time.SystemSpeed
 import io.antarescircuit.jabbah.draw.CanvasMockBuilder
-import io.antarescircuit.jabbah.edit.Component
 import io.antarescircuit.jabbah.edit.Drawing
-import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.edit.Editor
 import io.antarescircuit.jabbah.edit.view.DrawingViewImpl
 import io.antarescircuit.jabbah.execution.scheduler.SchedulerImpl
 import io.antarescircuit.jabbah.execution.speed.CurrentSystemSpeedCategory
-import io.antarescircuit.jabbah.graph.*
+import io.antarescircuit.jabbah.graph.GraphApplicationContextHolder
+import io.antarescircuit.jabbah.graph.GraphEditorMockBuilder
+import io.antarescircuit.jabbah.graph.GraphStorable
+import io.antarescircuit.jabbah.graph.MetaGraph
 import io.antarescircuit.jabbah.graph.app.ApplicationMode
 import io.antarescircuit.jabbah.graph.app.ApplicationModeHolderImpl
 import io.antarescircuit.jabbah.graph.container.ContainerDrawing
@@ -24,8 +27,6 @@ import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.GraphViewBuilder
 import io.antarescircuit.jabbah.graph.view.GraphViewTestRule
-import dev.mokkery.MockMode
-import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
@@ -38,7 +39,7 @@ class GraphPanelViewControllerTest {
 	private val scheduler: SchedulerImpl
 	private val graphViewBuilder: GraphViewBuilder<Boolean>
 	private val applicationContextHolder: GraphApplicationContextHolder
-	private val drawingView: DrawingViewImpl<Drawing<Component>>
+	private val drawingView: DrawingViewImpl<GraphElementView<*>, GraphView>
 	private val editor: Editor
 	private val applicationModeHolder: ApplicationModeHolderImpl
 	private val controller: GraphPanelViewController
@@ -46,10 +47,10 @@ class GraphPanelViewControllerTest {
 	init {
 		GraphViewTestRule.configure()
 		scheduler = SchedulerImpl(currentSystemSpeedCategory)
-		graphViewBuilder = GraphViewBuilder<Boolean>()
+		graphViewBuilder = GraphViewBuilder()
 		applicationContextHolder = GraphApplicationContextHolder(scheduler, eventBus, systemSpeed, currentSystemSpeedCategory)
-		drawingView = DrawingViewImpl(graphViewBuilder.graphView as Drawing<Component>, applicationContextHolder = applicationContextHolder, eventBus = eventBus)
-		editor = GraphEditorMockBuilder().withDrawingView(drawingView as DrawingView<GraphView>).build()
+		drawingView = DrawingViewImpl(graphViewBuilder.graphView, applicationContextHolder = applicationContextHolder, eventBus = eventBus)
+		editor = GraphEditorMockBuilder().withDrawingView(drawingView).build()
 		applicationModeHolder = ApplicationModeHolderImpl(editor, scheduler).also {
 			applicationContextHolder.applicationModeHolder = it
 		}
@@ -57,7 +58,7 @@ class GraphPanelViewControllerTest {
 		drawingView.canvas = CanvasMockBuilder().build()
 		LibraryModule.libraryHolder.l = mock(MockMode.autofill)
 
-		controller = GraphPanelViewController(editor, mock(MockMode.autofill), applicationContextHolder, applicationModeHolder, eventBus = eventBus)
+		controller = GraphPanelViewController(drawingView, editor, mock(MockMode.autofill), applicationContextHolder, applicationModeHolder, eventBus = eventBus)
 		GraphPanelViewMockBuilder(controller)
 	}
 

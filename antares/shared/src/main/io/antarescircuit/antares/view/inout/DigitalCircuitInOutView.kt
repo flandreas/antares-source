@@ -386,7 +386,7 @@ class DigitalCircuitInOutView(
 	private fun displayKeyboard(context: ActorInteractionContext): ActorInteractionHandler {
 		DigitalKeyboard.show(
 			this,
-			context.view as DrawingView<*>,
+			context.view as DrawingView<*,*>,
 			context.view.applicationContextHolder as GraphApplicationContextHolder
 		)
 		return DigitalKeyboard.getActorInteractionHandler(context)
@@ -403,7 +403,7 @@ class DigitalCircuitInOutView(
 			if (signalRepresentation == DigitalSignalRepresentation.BINARY || bitWidth === BitWidth.BW_1) {
 				model.toggleBit(digitIndex, undefine, context.signalHandler)
 			} else {
-				if (context.view is DrawingView<*>) {
+				if (context.view is DrawingView<*,*>) {
 					context.mouseEvent?.consumeEvent()
 					handler = displayKeyboard(context)
 				}

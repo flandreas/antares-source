@@ -28,4 +28,7 @@ data class Token<out T: Any>(
 ) {
 	override fun toString(): String =
 		value?.let { "Token(${type.name}, $it)" } ?: "Token(${type.name})"
+
+	@Suppress("UNCHECKED_CAST")
+	fun <C: Any> cast(): Token<C> = this as Token<C>
 }

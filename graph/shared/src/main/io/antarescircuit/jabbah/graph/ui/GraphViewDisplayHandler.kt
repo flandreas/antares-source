@@ -25,7 +25,7 @@ import io.antarescircuit.jabbah.graph.view.vertice.SubGraphVerticeView
  * - Dive into a [SubGraphVerticeView] when the user double clicks on it
  */
 class GraphViewDisplayHandler(
-	private val view: DrawingView<GraphView>,
+	private val view: DrawingView<GraphElementView<*>, GraphView>,
 	private val applicationContextHolder: GraphApplicationContextHolder,
 	eventBus: EventBus
 ) {

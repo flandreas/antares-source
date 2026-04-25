@@ -7,6 +7,7 @@ import io.antarescircuit.jabbah.edit.*
 import io.antarescircuit.jabbah.edit.command.SourcingCommandManager
 import io.antarescircuit.jabbah.edit.editor.EditEditorModule
 import io.antarescircuit.jabbah.edit.module.EditModule
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.GraphViewBuilder
 import io.antarescircuit.jabbah.graph.view.app.GraphViewAppService
@@ -22,7 +23,7 @@ abstract class AbstractGraphViewEditingTest(
 ) {
 
 	protected val builder: GraphViewBuilder<Boolean>
-	protected val view: DrawingView<Drawing<Component>>
+	protected val view: DrawingView<GraphElementView<*>, GraphView>
 	protected val editor: Editor
 	protected val driver: EditorToolDriver
 	protected val service: GraphViewAppService
@@ -32,10 +33,10 @@ abstract class AbstractGraphViewEditingTest(
 		AntaresTestRule.configure()
 
 		builder = GraphViewBuilder {
-				builder -> view.setDrawing(builder.graphView as Drawing<Component>)
+			builder -> view.setDrawing(builder.graphView)
 		}
-		view = EditModule.drawingViewFactory.create(builder.graphView as Drawing<Component>, null, false, "")
-		editor = EditEditorModule.createEditor("", view)
+		view = EditModule.drawingViewFactory.create(builder.graphView, null, false, "")
+		editor = EditEditorModule.createEditor("", view as DrawingView<Component, Drawing<Component>>)
 		driver = EditorToolDriver(editor)
 		service = GraphViewModule.graphViewAppService
 

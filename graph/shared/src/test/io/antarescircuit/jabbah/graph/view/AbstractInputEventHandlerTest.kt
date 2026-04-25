@@ -34,7 +34,7 @@ abstract class AbstractInputEventHandlerTest(): InputEventDriver() {
 			return super.editor
 		}
 
-	protected val view get() = viewMock.build<Component>()
+	protected val view get() = viewMock.build<Component, Drawing<Component>>()
 
 	init {
 		GraphViewTestRule.configure()

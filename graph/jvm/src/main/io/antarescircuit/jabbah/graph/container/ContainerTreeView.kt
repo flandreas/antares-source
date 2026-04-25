@@ -17,6 +17,7 @@ import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.graph.model.module.GraphModelModule
 import io.antarescircuit.jabbah.graph.model.port.PortFactory
 import io.antarescircuit.jabbah.graph.ui.MetaGraphIconProvider
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.module.GraphViewModule
 import io.antarescircuit.jabbah.graph.view.port.PortViewFactory
@@ -30,7 +31,7 @@ import javax.swing.tree.TreeModel
  * Displays the objects that can be dragged into a [ContainerDrawing], such as [PortViewComponent]s and controls.
  */
 open class ContainerTreeView(
-	protected val mainDrawingView: DrawingView<Drawing<Component>>,
+	protected val mainDrawingView: DrawingView<GraphElementView<*>, GraphView>,
 	private val portFactory: PortFactory = GraphModelModule.portFactory,
 	private val portViewFactory: PortViewFactory = GraphViewModule.portViewFactory,
 	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider,

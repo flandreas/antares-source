@@ -18,7 +18,7 @@ import dev.mokkery.mock
 /** A builder for [DrawingView] mocks*/
 class DrawingViewMockBuilder {
 
-    private val drawingView = mock<DrawingView<Drawing<*>>>(MockMode.autofill)
+    private val drawingView = mock<DrawingView<*, Drawing<*>>>(MockMode.autofill)
     private val selectionManager = mock<SelectionManager>(MockMode.autofill)
     private val grid = mock<Grid>(MockMode.autofill)
     private val ghostContainer = mock<UnzoomableContainerIF<Unzoomable>>(MockMode.autofill)
@@ -69,7 +69,8 @@ class DrawingViewMockBuilder {
         return this
     }
 
-    fun <T: Component> build(): DrawingView<Drawing<T>> {
-        return drawingView as DrawingView<Drawing<T>>
+    fun <C: Component, T : Drawing<C>> build(): DrawingView<C, T> {
+        @Suppress("UNCHECKED_CAST")
+        return drawingView as DrawingView<C, T>
     }
 }

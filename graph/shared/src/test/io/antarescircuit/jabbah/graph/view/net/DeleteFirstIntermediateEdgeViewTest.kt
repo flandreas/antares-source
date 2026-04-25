@@ -4,6 +4,7 @@ import io.antarescircuit.jabbah.graph.health.GraphViewConsistencyCheck
 import io.antarescircuit.jabbah.graph.model.GraphElement
 import io.antarescircuit.jabbah.graph.model.Net
 import io.antarescircuit.jabbah.graph.view.GraphElementView
+import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.module.GraphViewModule
 import kotlin.test.*
 
@@ -13,7 +14,7 @@ class DeleteFirstIntermediateEdgeViewTest : AbstractForkEdgeViewTest() {
     fun shouldDeleteFirstIntermediateEdgeView() {
         GraphViewModule.graphViewAppService.delete(
             listOf(ev2),
-            drawingViewBuilder.build<GraphElementView<GraphElement>>())
+            drawingViewBuilder.build<GraphElementView<*>, GraphView>())
 
         assertViews()
         assertNets()

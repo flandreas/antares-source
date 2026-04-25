@@ -21,7 +21,7 @@ class CutAction(
 	viewManager: ContentViewManager = DrawViewModule.viewManager
 ) : AbstractDeleteAction("edit.action.cut", eventBus, viewManager, service) {
 
-	override fun executeImpl(components: List<Component>, drawingView: DrawingView<*>) {
+	override fun executeImpl(components: List<Component>, drawingView: DrawingView<*,*>) {
 		if (components.isNotEmpty()) {
 			service.cut(components, drawingView)
 		}
@@ -71,14 +71,15 @@ class PasteAction(
  * [CommandManager]. Its [execute] method is only used for undo.
  */
 class PasteCommand(
-	drawingView: DrawingView<Drawing<Component>>,
+	drawingView: DrawingView<Component, Drawing<Component>>,
 	private val clipboardContents: String,
 	private var pasteInfo: PasteInfo,
 	private val service: CopyPasteService = EditModule.copyPasteService
 ) : AbstractDrawingViewCommand("edit.command.paste", drawingView), Undoable {
 
 	override fun execute() {
-		pasteInfo = service.paste(clipboardContents, view as DrawingView<Drawing<Component>>, pasteInfo.dislocation)
+		@Suppress("UNCHECKED_CAST") // DrawingView type ensured by constructor
+		pasteInfo = service.paste(clipboardContents, view as DrawingView<Component, Drawing<Component>>, pasteInfo.dislocation)
 	}
 
 	override fun undo() {
@@ -105,14 +106,15 @@ class DuplicateAction(
 }
 
 class DuplicateCommand(
-	drawingView: DrawingView<Drawing<Component>>,
+	drawingView: DrawingView<Component, Drawing<Component>>,
 	private val contents: String,
 	private var pasteInfo: PasteInfo,
 	private val service: CopyPasteService = EditModule.copyPasteService
 ) : AbstractDrawingViewCommand("edit.action.duplicate.name", drawingView), Undoable {
 
 	override fun execute() {
-		pasteInfo = service.paste(contents, view as DrawingView<Drawing<Component>>, pasteInfo.dislocation)
+		@Suppress("UNCHECKED_CAST") // DrawingView type ensured by constructor
+		pasteInfo = service.paste(contents, view as DrawingView<Component, Drawing<Component>>, pasteInfo.dislocation)
 	}
 
 	override fun undo() {

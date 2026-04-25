@@ -343,7 +343,7 @@ class DigitalPortView(
 				keyboardDigitIndex = signalRepresentation.digitCount(digitalPort.bitWidth) - 1
 				DigitalKeyboard.show(
 					this@DigitalPortView,
-					context.view as DrawingView<*>,
+					context.view as DrawingView<*,*>,
 					context.view.applicationContextHolder as GraphApplicationContextHolder
 				)
 			}

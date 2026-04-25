@@ -5,12 +5,10 @@ import io.antarescircuit.jabbah.base.event.EventBus
 import io.antarescircuit.jabbah.base.module.BaseModule
 import io.antarescircuit.jabbah.base.swing.*
 import io.antarescircuit.jabbah.draw.view.ContentViewManager
-import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.edit.properties.PropertySheetPanelFactory
 import io.antarescircuit.jabbah.graph.ui.desktop.GraphDesktopViewItem
 import io.antarescircuit.jabbah.graph.ui.scenario.ScenarioViewSwing
 import io.antarescircuit.jabbah.graph.ui.usecase.UsecaseViewSwing
-import io.antarescircuit.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import javax.swing.JPanel
 
@@ -25,7 +23,7 @@ class GraphEditViewSwing(
 	eventBus: EventBus = BaseModule.eventBus,
 	override val graphNavigationView: GraphNavigationView = GraphNavigationViewSwing(
 		controller = controller.graphNavigationViewController,
-		drawingView = controller.editor.view as DrawingView<GraphView>,
+		drawingView = controller.drawingView,
 		viewManager = viewManager,
 		reusable = true,
 		contextBorderColor = null)

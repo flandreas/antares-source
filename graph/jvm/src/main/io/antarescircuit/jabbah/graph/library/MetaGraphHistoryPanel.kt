@@ -10,7 +10,6 @@ import io.antarescircuit.jabbah.base.module.BaseModule
 import io.antarescircuit.jabbah.base.swing.DialogBuilder
 import io.antarescircuit.jabbah.base.ui.UIBasics
 import io.antarescircuit.jabbah.draw.view.CanvasJvm
-import io.antarescircuit.jabbah.edit.Drawing
 import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.edit.auth.Authorizer
 import io.antarescircuit.jabbah.edit.auth.Operation
@@ -19,6 +18,7 @@ import io.antarescircuit.jabbah.graph.MetaGraph
 import io.antarescircuit.jabbah.graph.module.GraphModuleJvm
 import io.antarescircuit.jabbah.graph.ui.GraphDataViewController
 import io.antarescircuit.jabbah.graph.ui.library.LibraryTreeViewController
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.graph.GraphViewImpl
 import java.awt.BorderLayout
@@ -81,12 +81,13 @@ class MetaGraphHistoryPanel(
 
 	private val historyList = JList(loadEntries())
 
-	private val preview = CanvasJvm(EditModule.drawingViewFactory.create(
-		GraphViewImpl() as Drawing<io.antarescircuit.jabbah.edit.Component>,
+	private val drawingView: DrawingView<GraphElementView<*>, GraphView> = EditModule.drawingViewFactory.create(
+		GraphViewImpl(),
 		null,
 		displayGlobalMessages = false,
-		name = ""
-	))
+		name = "")
+
+	private val preview = CanvasJvm(drawingView)
 
 	init {
 		buildUI()
@@ -115,7 +116,7 @@ class MetaGraphHistoryPanel(
 		add(scrollPane, BorderLayout.WEST)
 
 		preview.preferredSize = Dimension(300, 300)
-		(preview.view as DrawingView<*>).showGrid = false
+		(preview.view as DrawingView<*,*>).showGrid = false
 		add(preview, BorderLayout.CENTER)
 
 		val buttonPanel = JPanel()
@@ -143,7 +144,7 @@ class MetaGraphHistoryPanel(
 
 	private fun updatePreview(history: MetaGraphHistory) {
 		val metaGraph = historyService.getMetaGraph(element.library!!, element.uuid, history)
-		(preview.view as DrawingView<GraphView>).setDrawing(metaGraph.graph.graphView)
+		drawingView.setDrawing(metaGraph.graph.graphView)
 	}
 
 	private inner class CloseAction : AbstractAction("file.action.close") {

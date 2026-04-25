@@ -22,14 +22,14 @@ class BelowSmHighlighterTest {
 	private val selectionModelProvider = mock<SelectionModelProvider>(MockMode.autofill)
 
 	private val highlighterFactory = object : HighlighterFactory {
-		override fun create(content: DrawingViewContent<*>): Highlighter {
+		override fun create(content: DrawingViewContent<*, *>): Highlighter {
 			return BelowSmHighlighter(highlightModelProvider = selectionModelProvider, content = content)
 		}
 	}
 
-	private val drawingView: DrawingViewImpl<Drawing<Component>>
+	private val drawingView: DrawingViewImpl<Component, Drawing<Component>>
 
-	private val content: DrawingViewContentImpl<Drawing<Component>>
+	private val content: DrawingViewContentImpl<Component, Drawing<Component>>
 
 	private val highlightColor: CompositeColor
 

@@ -44,6 +44,7 @@ class BaseLibraryElementRepository {
 		register(Entry(id, translationKey, iconPath, helpId, null, supplier))
 	}
 
+	@Suppress("UNCHECKED_CAST")
 	fun <T : GraphElement> getNewInstance(id: String): GraphElementView<T> {
 		val entry = entries[id]
 		if (entry == null) {

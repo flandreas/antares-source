@@ -45,7 +45,7 @@ interface SymbolComparatorView : UIView {
 }
 
 class SymbolComparatorController(
-    private val drawingView: DrawingView<Drawing<Component>>,
+    private val drawingView: DrawingView<Component, Drawing<Component>>,
     private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<SymbolComparatorView>() {
 

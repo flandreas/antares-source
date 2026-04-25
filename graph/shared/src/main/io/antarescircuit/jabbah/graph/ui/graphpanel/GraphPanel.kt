@@ -103,6 +103,7 @@ interface GraphPanelView : UIView {
  * (no editing while execution) and the editability of the current [ApplicationData]'s [Savable].
  */
 class GraphPanelViewController(
+	drawingView: DrawingView<GraphElementView<*>, GraphView>,
 	val editor: Editor,
 	applicationDataHolder: ApplicationDataHolder,
 	val applicationContextHolder: GraphApplicationContextHolder,
@@ -118,6 +119,7 @@ class GraphPanelViewController(
 	val propertyPanelController = ApplicationDataPropertyPanelController(editor, eventBus, currentEditorEventFilter = { e -> e.editor.name == editor.name })
 	val libraryPanelController = LibraryPanelController(applicationModeHolder, editor, libraryHolder, eventBus)
 	val editViewController = GraphEditViewController(
+		drawingView,
 		editor,
 		applicationDataHolder,
 		applicationModeHolder,

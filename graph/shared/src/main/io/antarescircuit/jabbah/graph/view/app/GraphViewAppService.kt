@@ -54,7 +54,7 @@ interface GraphViewAppService : DrawingAppService {
 	fun extractMetaGraph(
 		graphName: TranslatableText,
 		type: GraphType,
-		drawingView: DrawingView<GraphView>,
+		drawingView: DrawingView<GraphElementView<*>, GraphView>,
 		libraryDirectory: LibraryDirectory,
 		controller: ApplicationDataViewController
 	)
@@ -74,7 +74,7 @@ open class GraphViewAppServiceImpl(
 
 	override fun add(
 		component: Component,
-		drawingView: DrawingView<Drawing<Component>>,
+		drawingView: DrawingView<Component, Drawing<Component>>,
 		customizer: ComponentCustomizer?
 	): Component {
 		return if (drawingView.drawing !is GraphView || component is GraphElementView<*>) {
@@ -102,7 +102,7 @@ open class GraphViewAppServiceImpl(
 	 * because it's not clear how to deal with the models in a group, and the base grouping implementation
 	 * unconnects grouped [EdgeView EdgeViews].
 	 */
-	override fun group(components: List<Component>, drawingView: DrawingView<Drawing<Component>>) {
+	override fun group(components: List<Component>, drawingView: DrawingView<Component, Drawing<Component>>) {
 		if (components.any { !canGroup(it) }) {
 			eventBus.post(ComponentMessage(
 				ComponentMessageType.Error,
@@ -116,7 +116,7 @@ open class GraphViewAppServiceImpl(
 
 	private fun canGroup(component: Component): Boolean = component is GraphElementViewWrapper
 
-	override fun ungroup(component: GroupComponent, drawingView: DrawingView<Drawing<Component>>) {
+	override fun ungroup(component: GroupComponent, drawingView: DrawingView<Component, Drawing<Component>>) {
 		ungroupImpl(component, possibleWrapper(component, drawingView.drawing), drawingView)
 	}
 
@@ -148,7 +148,7 @@ open class GraphViewAppServiceImpl(
 		return component
 	}
 
-	override fun extractMetaGraph(graphName: TranslatableText, type: GraphType, drawingView: DrawingView<GraphView>,
+	override fun extractMetaGraph(graphName: TranslatableText, type: GraphType, drawingView: DrawingView<GraphElementView<*>, GraphView>,
 		libraryDirectory: LibraryDirectory, controller: ApplicationDataViewController
 	) {
 		val componentIds = drawingView.selectionManager.selection.map { it.id }

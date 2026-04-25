@@ -16,6 +16,7 @@ import dev.mokkery.MockMode
 import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.mock
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 
 class GraphPanelViewMockBuilder(private val controller: GraphPanelViewController) {
 
@@ -35,7 +36,7 @@ class GraphPanelViewMockBuilder(private val controller: GraphPanelViewController
 			.withMainViewItem(editView.graphNavigationView)
 			.withMainViewItem(
 				GraphDesktopViewItemMockBuilder()
-				.withDrawingView(controller.editor.view as DrawingView<GraphView>)
+				.withDrawingView(controller.editor.view as DrawingView<GraphElementView<*>, GraphView>)
 				.build())
 			.build()
 		)

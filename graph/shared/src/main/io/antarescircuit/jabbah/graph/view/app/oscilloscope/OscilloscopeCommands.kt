@@ -7,13 +7,14 @@ import io.antarescircuit.jabbah.edit.command.AbstractCommand
 import io.antarescircuit.jabbah.edit.command.AbstractDrawingViewCommand
 import io.antarescircuit.jabbah.graph.app.AbstractGraphViewCommand
 import io.antarescircuit.jabbah.graph.view.EdgeView
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.module.GraphViewModule
 import io.antarescircuit.jabbah.graph.view.oscilloscope.OscilloscopeProbeVerticeView
 import io.antarescircuit.jabbah.graph.view.oscilloscope.OscilloscopeView
 
 internal class AddOscilloscopeRowCommand(
-	drawingView: DrawingView<*>,
+	drawingView: DrawingView<*,*>,
 	private val oscilloscopeViewId: Int
 ) : AbstractDrawingViewCommand("graph.command.addOscilloscopeRow", drawingView), Undoable {
 
@@ -29,7 +30,7 @@ internal class AddOscilloscopeRowCommand(
 }
 
 internal class RemoveOscilloscopeRowCommand(
-	drawingView: DrawingView<*>,
+	drawingView: DrawingView<*,*>,
 	private val name: String,
 	private val oscilloscopeViewId: Int
 ) : AbstractDrawingViewCommand("graph.command.removeOscilloscopeRow", drawingView), Undoable {
@@ -47,7 +48,7 @@ internal class RemoveOscilloscopeRowCommand(
 }
 
 internal class OscilloscopeVisibilityCommand(
-	private val drawingView: DrawingView<GraphView>,
+	private val drawingView: DrawingView<GraphElementView<*>, GraphView>,
 	private val visible: Boolean,
 	private val service: OscilloscopeViewService = GraphViewModule.oscilloscopeViewService
 ) : AbstractCommand("graph.command.oscilloscopeVisibility"), Undoable {
@@ -62,7 +63,7 @@ internal class OscilloscopeVisibilityCommand(
 }
 
 internal class DropOscilloscopeProbeCommand<T : Any>(
-	drawingView: DrawingView<GraphView>,
+	drawingView: DrawingView<GraphElementView<*>, GraphView>,
 	private var name: String,
 	private val location: Point2D,
 	private val probeVerticeViewId: Int?,

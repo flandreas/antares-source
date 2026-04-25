@@ -5,6 +5,7 @@ import io.antarescircuit.jabbah.graph.model.GraphElement
 import io.antarescircuit.jabbah.graph.model.Net
 import io.antarescircuit.jabbah.graph.view.EdgeView
 import io.antarescircuit.jabbah.graph.view.GraphElementView
+import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.VerticeView
 import io.antarescircuit.jabbah.graph.view.module.GraphViewModule
 import kotlin.test.Test
@@ -33,7 +34,7 @@ class DeleteForkToothEdgeViewTest : AbstractForkEdgeViewTest() {
     private fun assertDeleteToothEdgeView(name: String) {
         GraphViewModule.graphViewAppService.delete(
             listOf(getToothEdgeView(name)),
-            drawingViewBuilder.build<GraphElementView<GraphElement>>())
+            drawingViewBuilder.build<GraphElementView<*>, GraphView>())
 
         assertNets()
         assertNull(GraphViewConsistencyCheck.execute(builder.graphView))
