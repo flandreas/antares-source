@@ -348,7 +348,7 @@ class SubGraphVerticeRef(
 
 	override fun executionStopped(signalHandler: SignalHandler) {
 		super.executionStopped(signalHandler)
-		if (isDeepExecution(signalHandler.isDeepExecution)) {
+		if (graphReference.state != BROKEN && isDeepExecution(signalHandler.isDeepExecution)) {
 			graphReference.graph?.executionStopped(signalHandler)
 		}
 	}

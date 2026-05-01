@@ -74,7 +74,12 @@ class ControlledCircuitRunner(
 			LOG.error("Unexpected error", e)
 			throw e
 		} finally {
-			stopSimulation(circuit)
+			try {
+				stopSimulation(circuit)
+			} catch (_: Throwable) {
+				// If simulation produces e.g. due to BrokenReferenceException wil also created one.
+				// This one can be ignored.
+			}
 		}
 	}
 

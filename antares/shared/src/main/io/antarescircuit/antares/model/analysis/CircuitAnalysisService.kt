@@ -10,6 +10,7 @@ import io.antarescircuit.antares.model.truthtable.TruthTable
 import io.antarescircuit.jabbah.base.Translations
 import io.antarescircuit.jabbah.base.logger
 import io.antarescircuit.jabbah.graph.model.PortType
+import io.antarescircuit.jabbah.graph.model.vertice.BrokenReferenceException
 
 class CircuitAnalysisError(msg: String): Error(msg)
 
@@ -34,8 +35,10 @@ class CircuitAnalysisService {
 			(0 until truthTable.rowsCount).forEach { row ->
 				circuitRunner.run(circuit, ::setInputs, ::readOutputs, Context(row, circuit, truthTable))
 			}
-		} catch (e: ControlledCircuitRunner.TooManyIterations) {
+		} catch (_: ControlledCircuitRunner.TooManyIterations) {
 			throw CircuitAnalysisError(Translations.getString("antares.circuitAnalysis.oscillation.msg", circuitRunner.maxIteration))
+		} catch (_: BrokenReferenceException) {
+			throw CircuitAnalysisError(Translations.getString("antares.circuitAnalysis.brokenSubGraphRef.msg"))
 		}
 
 		return  truthTable
