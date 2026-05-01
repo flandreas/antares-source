@@ -45,7 +45,7 @@ class ProjectSavable(
 			LibraryModule.libraryHolder.getContainerLibraryElement(element.uuid)?.let {
 				projectManagementService.open(LibraryModule.libraryHolder.library.identification, element.uuid)
 				return true
-			} ?: return false
+			}
 		}
 
 		projectManagementService.open(project.identification, element.uuid)

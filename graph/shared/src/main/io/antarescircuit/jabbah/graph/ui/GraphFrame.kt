@@ -3,6 +3,7 @@ package io.antarescircuit.jabbah.graph.ui
 import io.antarescircuit.jabbah.app.Application
 import io.antarescircuit.jabbah.app.ApplicationDataEvent
 import io.antarescircuit.jabbah.app.ApplicationDataViewController
+import io.antarescircuit.jabbah.app.BeforeSaveEvent
 import io.antarescircuit.jabbah.base.*
 import io.antarescircuit.jabbah.base.event.*
 import io.antarescircuit.jabbah.base.module.BaseModule
@@ -14,6 +15,7 @@ import io.antarescircuit.jabbah.draw.ZoomStrategy
 import io.antarescircuit.jabbah.edit.CommandManager
 import io.antarescircuit.jabbah.edit.Editor
 import io.antarescircuit.jabbah.edit.module.EditModule
+import io.antarescircuit.jabbah.execution.actor.Actor
 import io.antarescircuit.jabbah.execution.scheduler.Scheduler
 import io.antarescircuit.jabbah.execution.scheduler.SchedulerImpl
 import io.antarescircuit.jabbah.execution.speed.CurrentSystemSpeedCategory
@@ -154,9 +156,17 @@ open class GraphFrameController<T: GraphFrame>(
 
 	private val currentLibraryHandler: EventHandler<CurrentLibraryEvent> = { handle(it) }
 
+	/**
+	 * Stops possible active execution before saving so that [Actor.executionStopped] gets called
+	 * allowing them to reset non-persistent state they could have changed during execution.
+	 * */
+	private val beforeSaveHandler: EventHandler<BeforeSaveEvent> = { handle(it) }
+
 	override fun onViewInitialized() {
 		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
 		eventBus.register(CurrentLibraryEvent::class, currentLibraryHandler)
+		eventBus.register(BeforeSaveEvent::class, beforeSaveHandler)
+
 		registerZoomEventHandlers()
 		LibraryModule.libraryServiceCallbacks.add(customSymbolHandler)
 		if (BaseModule.properties.getBoolean(GraphPropagationDelayCalculator.PROP_CALCULATE_ON_SAVE)) {
@@ -169,6 +179,8 @@ open class GraphFrameController<T: GraphFrame>(
 		super.dispose()
 		eventBus.unregister(applicationModeHandler)
 		eventBus.unregister(currentLibraryHandler)
+		eventBus.unregister(beforeSaveHandler)
+
 		viewDesktopAction.dispose()
 		viewContainerAction.dispose()
 		viewDocumentationAction.dispose()
@@ -228,6 +240,10 @@ open class GraphFrameController<T: GraphFrame>(
 			(viewDocumentationAction as GraphFrameController<*>.AbstractViewAction).update()
 			showDesktop()
 		}
+	}
+
+	private fun handle(@Suppress("unused") event: BeforeSaveEvent) {
+		scheduler.isActive = false
 	}
 
 	private inner class ZoomEventHandler: PropertyChangeListener<Any> {

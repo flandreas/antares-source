@@ -31,7 +31,7 @@ class LibrarySavable(
 			LibraryModule.libraryHolder.getContainerLibraryElement(element.uuid)?.let {
 				eventBus.post(OpenContainerLibraryElementRequest(it))
 				return true
-			} ?: return false
+			}
 		}
 
 		eventBus.post(OpenContainerLibraryElementRequest(element))

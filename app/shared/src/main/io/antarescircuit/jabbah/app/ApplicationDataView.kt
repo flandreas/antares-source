@@ -31,6 +31,9 @@ enum class ModalMessageType {
 	Error
 }
 
+/** Posted on the system's [EventBus] before [Savable.save] gets called.*/
+data class BeforeSaveEvent(val savable: Savable)
+
 /**
  * Defines operations of the UI of an [Application] that is required for loading and
  * storing [ApplicationData].
@@ -239,6 +242,7 @@ open class ApplicationDataViewController(
 	fun save() {
 		data?.let {
 			LOG.info("Save application data")
+			notifyBeforeSave(it.savable)
 			if (it.savable.save(this)) {
 				// Resetting CommandManager not necessary, already done in setData as a consequence of Savable.save
 				eventBus.post(CurrentSavableEvent(it.savable))
@@ -267,7 +271,7 @@ open class ApplicationDataViewController(
 	/**
 	 * Asks the user to define a [Savable] and uses it to save the current [ApplicationData] according
 	 * to that [Savable].
-	 * @return `false` if the user cancelled the save operation while defining the [Savable]
+	 * @return `false` if the user canceled the save operation while defining the [Savable]
 	 */
 	fun saveAs(): Boolean {
 		return view.defineSavableForStoring(data!!.content, data!!.savable)?.let { newSavable ->
@@ -297,7 +301,17 @@ open class ApplicationDataViewController(
 				true
 			}
 			Cancel -> false
-			Yes -> data?.savable?.save(this) ?: true
+			Yes -> {
+				data?.savable?.let {
+					notifyBeforeSave(it)
+					return it.save(this)
+				}
+				true
+			}
 		}
+	}
+
+	private fun notifyBeforeSave(savable: Savable) {
+		BaseModule.eventBus.post(BeforeSaveEvent(savable))
 	}
 }

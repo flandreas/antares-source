@@ -20,7 +20,7 @@ enum class PeriodOrFrequencyUnit(
 
 	companion object {
 		fun withName(customName: String): PeriodOrFrequencyUnit =
-			values().firstOrNull { it.customName == customName }
+			entries.firstOrNull { it.customName == customName }
 			?: throw IllegalArgumentException("unknown PeriodOrFrequencyUnit '$customName'")
 	}
 }
