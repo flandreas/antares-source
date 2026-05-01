@@ -110,18 +110,18 @@ class ResistorView(
 				location = boundingBox.center,
 				unit = "Ω",
 				mouseMovedCondition = { contains(it.x, it.y) },
-				valueChangeHandler = { model.setState(it.toDouble(), context.signalHandler, (context.view as DrawingView<*>).drawing as AnalogGraphView) },
+				valueChangeHandler = { model.setState(it.toDouble(), context.signalHandler, (context.view as DrawingView<*,*>).drawing as AnalogGraphView) },
 				signalHandler = context.signalHandler
 			)
 
 		override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler =
 			KnobLauncherImpl.launchImmediately(
-				view = context.view as DrawingView<*>,
+				view = context.view as DrawingView<*,*>,
 				initialValue = resistance.toLong(),
 				location = boundingBox.center,
 				unit = "Ω",
 				mouseMovedCondition = { contains(it.x, it.y) },
-				valueChangeHandler = { model.setState(it.toDouble(), context.signalHandler, (context.view as DrawingView<*>).drawing as AnalogGraphView) },
+				valueChangeHandler = { model.setState(it.toDouble(), context.signalHandler, (context.view as DrawingView<*,*>).drawing as AnalogGraphView) },
 				signalHandler = context.signalHandler
 			)
 	}

@@ -11,10 +11,11 @@ import io.antarescircuit.jabbah.graph.GraphApplicationContextHolder
 import io.antarescircuit.jabbah.graph.app.ApplicationMode
 import io.antarescircuit.jabbah.graph.app.ApplicationModeEvent
 import io.antarescircuit.jabbah.graph.app.ApplicationModeHolder
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 
 abstract class AbstractGraphViewExecutionHandler(
-	protected val view: DrawingView<GraphView>,
+	protected val view: DrawingView<GraphElementView<*>, GraphView>,
 	protected val eventBus: EventBus = BaseModule.eventBus
 ) {
 

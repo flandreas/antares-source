@@ -118,8 +118,7 @@ class FSMTransitionConditionParser(lexer: FSMTransitionConditionLexer) : Abstrac
     private fun variable(): Variable = Variable(lexer.location, identifier())
 
     private fun identifier(): Token<String> {
-        @Suppress("UNCHECKED_CAST")
-        val identifier = currentToken as Token<String>
+        val identifier = currentToken!!.cast<String>()
         eat(ID)
         return identifier
     }

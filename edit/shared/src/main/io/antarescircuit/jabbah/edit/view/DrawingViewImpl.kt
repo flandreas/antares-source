@@ -28,7 +28,7 @@ import io.antarescircuit.jabbah.edit.snap.GridImpl
  * [DrawingViewImpl] has a fixed set of [DrawableContainer]s that are arranged on top of each other to form
  * a stack of view slides. Therefore, client classes cannot add or remove [Drawable]s by themselves.
  */
-class DrawingViewImpl<T: Drawing<Component>>(
+class DrawingViewImpl<C: Component, T: Drawing<C>>(
     drawing: T,
     transformFactory: () -> AffineTransform = { System.createAffineTransform() },
     applicationContextHolder: ApplicationContextHolder? = null,
@@ -39,7 +39,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
     viewPainterFactory: ViewPainterFactory<EditInputEventContext> = { InvalidatableViewPainter(it) },
     editable: Boolean = true,
     name: String = ""
-) : ViewImpl<EditInputEventContext>(transformFactory, applicationContextHolder, eventBus, name, viewPainterFactory), DrawingView<T> {
+) : ViewImpl<EditInputEventContext>(transformFactory, applicationContextHolder, eventBus, name, viewPainterFactory), DrawingView<C,T> {
 
 	companion object {
 		private val LOG by logger(DrawingViewImpl::class)
@@ -58,7 +58,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
 		}
 
     /** The [DrawableDrawer] used for drawing the [Drawing].*/
-    private var drawableDrawer: DrawableDrawer<Component> = DrawingViewDrawer()
+    private var drawableDrawer: DrawableDrawer<C> = DrawingViewDrawer()
 
     /** Displays [ComponentMessage]s from [Component]s of the current [Drawing]. */
     private val componentMessageDisplayer = ComponentMessageDisplayer(
@@ -76,7 +76,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
 
     /** ---- [DrawingView] interface */
 
-    override var content: DrawingViewContent<T> = createContent(drawing)
+    override var content: DrawingViewContent<C,T> = createContent(drawing)
         set(value) {
             if (field === value) {
                 return
@@ -153,11 +153,11 @@ class DrawingViewImpl<T: Drawing<Component>>(
 		}
 	}
 
-	override fun createContent(drawing: T): DrawingViewContent<T> {
+	override fun createContent(drawing: T): DrawingViewContent<C,T> {
         return DrawingViewContentImpl(this, drawing, selectionManagerFactory, highlighterFactory)
     }
 
-    override fun addDrawableDrawer(drawableDrawer: DrawableDrawer<Component>) {
+    override fun addDrawableDrawer(drawableDrawer: DrawableDrawer<C>) {
         drawableDrawer.successor = this.drawableDrawer
         this.drawableDrawer = drawableDrawer
         drawing.setDrawableDrawer(this.drawableDrawer)
@@ -210,7 +210,7 @@ class DrawingViewImpl<T: Drawing<Component>>(
         super.addDrawable(content.backgroundContainer)
     }
 
-    private fun replaceContent(newContent: DrawingViewContent<T>) {
+    private fun replaceContent(newContent: DrawingViewContent<C,T>) {
         replaceDrawable(content.ghostContainer, newContent.ghostContainer)
         replaceDrawable(content.animationContainer, newContent.animationContainer)
         replaceDrawable(content.zoomableSelectionContainerFor(SelectionDrawingStrategy.ABOVE)!!, newContent.zoomableSelectionContainerFor(SelectionDrawingStrategy.ABOVE)!!)
@@ -239,11 +239,11 @@ class DrawingViewImpl<T: Drawing<Component>>(
     }
 
     /**
-     * The [DrawableDrawer] used for drawing the [Drawing]. Implements the drawing behaviour used for the
+     * The [DrawableDrawer] used for drawing the [Drawing]. Implements the drawing behavior used for the
      * different [SelectionDrawingStrategies][SelectionDrawingStrategy].
      */
-    private inner class DrawingViewDrawer : DrawableContainerDrawer<Component>() {
-        override fun process(context: DrawContext, drawable: Component) {
+    private inner class DrawingViewDrawer : DrawableContainerDrawer<C>() {
+        override fun process(context: DrawContext, drawable: C) {
 
 	        if (selectionManager.isSelected(drawable)) {
 	        	val replacingSelectionModel = content.getReplacingSelectionModel(drawable)

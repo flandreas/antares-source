@@ -99,9 +99,9 @@ object GraphViewModule : AbstractModule() {
 	/** Must be specified by higher application layers.*/
 	var portViewFactory: PortViewFactory = UndefinedPortViewFactory()
 
-	var graphEditorFactory: (String, DrawingView<Drawing<Component>>) -> GraphEditor = { name, view -> GraphEditor(view, name = name) }
+	var graphEditorFactory: (String, DrawingView<GraphElementView<*>, GraphView>) -> GraphEditor = { name, view -> GraphEditor(view, name = name) }
 
-	var containerEditorFactory: (DrawingView<Drawing<Component>>, DrawingView<Drawing<Component>>) -> ContainerEditor = { dv1, dv2 -> ContainerEditor(dv1, dv2) }
+	var containerEditorFactory: (DrawingView<Component, Drawing<Component>>, DrawingView<GraphElementView<*>, GraphView>) -> ContainerEditor = { dv1, dv2 -> ContainerEditor(dv1, dv2) }
 
 	val dragEdgeViewOriginConnector: DragEdgeViewOriginConnector by lazy { DragEdgeViewOriginConnector(graphViewConnectService) }
 	val dragEdgeViewDestinationConnector: DragEdgeViewDestinationConnector by lazy { DragEdgeViewDestinationConnector(graphViewConnectService) }

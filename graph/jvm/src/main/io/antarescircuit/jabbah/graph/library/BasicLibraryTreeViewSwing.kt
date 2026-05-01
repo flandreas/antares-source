@@ -34,12 +34,10 @@ open class BasicLibraryTreeViewSwing<T: BasicLibraryTreeView>(
 {
     private val showBeginnerTips = BaseModule.properties.getBoolean(PROP_BEGINNER_HELP_TOOLTIP)
 
-    companion object {
-        private val LOG by logger(BasicLibraryTreeViewSwing::class)
-    }
-
     init {
+        @Suppress("UNCHECKED_CAST")
         basicController.view = this as T
+
         minimumSize = Dimension(super.getMinimumSize().width, 200)
 
         selectionModel.selectionMode = TreeSelectionModel.SINGLE_TREE_SELECTION

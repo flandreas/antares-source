@@ -1,8 +1,6 @@
 package io.antarescircuit.jabbah.graph.view
 
 import io.antarescircuit.jabbah.base.geom.Point2D
-import io.antarescircuit.jabbah.edit.Component
-import io.antarescircuit.jabbah.edit.Drawing
 import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.edit.DrawingViewMockBuilder
 import io.antarescircuit.jabbah.graph.model.Net
@@ -13,7 +11,7 @@ class GraphViewServiceImplTest {
 
     private val service = GraphViewServiceImpl()
     private val builder: GraphViewBuilder<Boolean>
-    private val drawingView: DrawingView<Drawing<Component>>
+    private val drawingView: DrawingView<GraphElementView<*>, GraphView>
     private val vv1: TestVerticeView
     private val vv2: TestVerticeView
     private val vv3: TestVerticeView

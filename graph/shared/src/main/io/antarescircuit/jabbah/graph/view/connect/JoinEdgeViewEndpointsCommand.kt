@@ -6,6 +6,7 @@ import io.antarescircuit.jabbah.graph.view.EdgeView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.net.edge.EdgeViewEndpointType
 
+@Suppress("UNCHECKED_CAST")
 class JoinEdgeViewEndpointsCommand<T : Any>(
 	editor: Editor,
 	private val connectService: GraphViewConnectService,

@@ -249,7 +249,7 @@ abstract class AbstractPropertyPanelSwing(
 
 				table.setRowHeight(row, min(60, rowHeight))
 			}
-		} catch (e: ClassCastException) {
+		} catch (_: ClassCastException) {
 			LOG.error("Exception while adjusting PropertySheetTable heights")
 		}
 	}

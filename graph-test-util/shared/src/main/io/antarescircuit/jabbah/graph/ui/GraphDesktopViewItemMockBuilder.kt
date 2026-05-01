@@ -13,6 +13,7 @@ import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.matcher.any
 import dev.mokkery.mock
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 
 class GraphDesktopViewItemMockBuilder {
 
@@ -22,12 +23,12 @@ class GraphDesktopViewItemMockBuilder {
 		withElementRef(GraphDesktopViewItemElementDepthRef(1, 0))
 	}
 
-	fun withDrawingView(drawingView: DrawingView<GraphView>): GraphDesktopViewItemMockBuilder {
+	fun withDrawingView(drawingView: DrawingView<GraphElementView<*>, GraphView>): GraphDesktopViewItemMockBuilder {
 		every { item.drawingView } returns drawingView
 		return this
 	}
 
-	fun withFindContent(content: DrawingViewContent<GraphView>): GraphDesktopViewItemMockBuilder {
+	fun withFindContent(content: DrawingViewContent<GraphElementView<*>, GraphView>): GraphDesktopViewItemMockBuilder {
 		every { item.findContent(any()) } returns content
 		return this
 	}

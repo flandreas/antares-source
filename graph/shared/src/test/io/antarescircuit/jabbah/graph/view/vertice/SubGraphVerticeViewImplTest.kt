@@ -26,6 +26,9 @@ import dev.mokkery.every
 import dev.mokkery.matcher.any
 import dev.mokkery.mock
 import dev.mokkery.verify
+import io.antarescircuit.jabbah.graph.model.Graph
+import io.antarescircuit.jabbah.graph.view.GraphElementView
+import io.antarescircuit.jabbah.graph.view.GraphView
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -90,7 +93,7 @@ class SubGraphVerticeViewImplTest {
 		every { mouseEvent.button} returns Button.BUTTON1
 		return ActorInteractionContext(
 			signalHandler = mock(),
-			view = DrawingViewMockBuilder().withDrawing(GraphViewBuilder<Boolean>().build()).build<Component>(),
+			view = DrawingViewMockBuilder().withDrawing(GraphViewBuilder<Boolean>().build()).build<GraphElementView<*>, GraphView>(),
 			mouseEvent = mouseEvent,
 			keyEvent = mock(),
 			x = x,

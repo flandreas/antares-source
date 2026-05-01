@@ -15,6 +15,7 @@ import io.antarescircuit.jabbah.edit.model.text.description.*
 import io.antarescircuit.jabbah.execution.SignalHandler
 import io.antarescircuit.jabbah.graph.dsl.GraphDslModule
 import io.antarescircuit.jabbah.graph.model.graph.GraphActivationRecord
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.ScenarioStep
 import io.antarescircuit.jabbah.io.*
@@ -149,7 +150,7 @@ class ScenarioStepImpl(
 			}
 		}
 
-	override val condition: (SignalHandler, DrawingView<GraphView>) -> Boolean get() = { signalHandler, view ->
+	override val condition: (SignalHandler, DrawingView<GraphElementView<*>, GraphView>) -> Boolean get() = { signalHandler, view ->
 		val scriptMetaData = ScriptMetaData(
 			Translations.getString("scenarioStep.issueOrigin.name", name.value),
 			Translations.getString("graph.property.scenario.condition.name")
@@ -174,7 +175,7 @@ class ScenarioStepImpl(
 		}
 	}
 
-	override fun activate(view: DrawingView<GraphView>) {
+	override fun activate(view: DrawingView<GraphElementView<*>, GraphView>) {
 		onEntryInterpreter?.interpretCatching(
 			ScriptMetaData(
 				Translations.getString("scenarioStep.issueOrigin.name", name.value),
@@ -182,7 +183,7 @@ class ScenarioStepImpl(
 			view.drawing.graph)
 	}
 
-	override fun passivate(view: DrawingView<GraphView>) {
+	override fun passivate(view: DrawingView<GraphElementView<*>, GraphView>) {
 		onExitInterpreter?.interpretCatching(
 			ScriptMetaData(
 				Translations.getString("scenarioStep.issueOrigin.name", name.value),

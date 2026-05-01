@@ -8,7 +8,7 @@ import io.antarescircuit.jabbah.edit.*
  */
 abstract class AbstractDrawingViewCommand(
     descriptionKey: String,
-    protected val view: DrawingView<*>
+    protected val view: DrawingView<*,*>
 ) : AbstractCommand(descriptionKey) {
 
     override fun validate() {

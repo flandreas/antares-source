@@ -8,6 +8,7 @@ import io.antarescircuit.jabbah.draw.view.ContentView
 import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.edit.DrawingViewContent
 import io.antarescircuit.jabbah.edit.EditInputEventContext
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.VerticeView
 
@@ -26,7 +27,7 @@ interface GraphDesktopViewItem : ContentView<EditInputEventContext> {
 	 * The [DrawingView] displayed by this [GraphDesktopViewItem]. Implementations that don't
 	 * display a drawing can return `null`.
 	 */
-	val drawingView: DrawingView<GraphView>?
+	val drawingView: DrawingView<GraphElementView<*>, GraphView>?
 
 	/**
 	 * The color used as a reference when opening this [GraphDesktopView] from a source object
@@ -66,7 +67,7 @@ interface GraphDesktopViewItem : ContentView<EditInputEventContext> {
 	fun disposeItem()
 
 	/** Only has to be provided by implementations that also have a [drawingView]. Others might return `null`.*/
-	fun findContent(condition: (DrawingViewContent<GraphView>) -> Boolean): DrawingViewContent<*>?
+	fun findContent(condition: (DrawingViewContent<GraphElementView<*>, GraphView>) -> Boolean): DrawingViewContent<*, *>?
 
 	fun createElementRef(verticeViewId: Int): GraphDesktopViewItemElementRef
 		= GraphDesktopViewItemElementDepthRef(verticeViewId, 0)

@@ -39,7 +39,7 @@ interface GraphViewExecutionAnimationFactory {
 		actorData: ActorData,
 		startEdgeView: EdgeView<*>,
 		startPort: Port<*>,
-		drawingView: DrawingView<GraphView>,
+		drawingView: DrawingView<GraphElementView<*>, GraphView>,
 		scheduler: Scheduler,
 		animator: Animator,
 		styleProvider: StyleProvider = DrawStyleModule.styleProvider
@@ -54,7 +54,7 @@ interface GraphViewExecutionAnimationFactory {
 
 class UndefinedGraphViewExecutionAnimationFactory : GraphViewExecutionAnimationFactory {
 
-	override fun createEdgeViewNetAnimation(actorListener: ActorListener, actorData: ActorData, startEdgeView: EdgeView<*>, startPort: Port<*>, drawingView: DrawingView<GraphView>, scheduler: Scheduler, animator: Animator, styleProvider: StyleProvider): EdgeViewNetAnimation {
+	override fun createEdgeViewNetAnimation(actorListener: ActorListener, actorData: ActorData, startEdgeView: EdgeView<*>, startPort: Port<*>, drawingView: DrawingView<GraphElementView<*>, GraphView>, scheduler: Scheduler, animator: Animator, styleProvider: StyleProvider): EdgeViewNetAnimation {
 		throw UnsupportedOperationException("not implemented")
 	}
 

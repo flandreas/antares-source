@@ -13,6 +13,8 @@ import io.antarescircuit.jabbah.graph.view.module.GraphViewModule
 import io.antarescircuit.jabbah.graph.view.vertice.TestVerticeView
 import dev.mokkery.MockMode
 import dev.mokkery.mock
+import io.antarescircuit.jabbah.graph.view.GraphElementView
+import io.antarescircuit.jabbah.graph.view.GraphView
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -27,7 +29,7 @@ class UndoDeleteNetViewsTest {
 	private val drawingView = DrawingViewMockBuilder()
 		.withSelectionManager(selectionManager)
 		.withDrawingAccessor { builder.build() }
-		.build<Component>()
+		.build<GraphElementView<*>, GraphView>()
 
 	@BeforeTest
 	fun setup(){

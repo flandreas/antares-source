@@ -97,7 +97,7 @@ class GraphViewCopyPasteService(
 		}
 	}
 
-	override fun paste(contents: String, view: DrawingView<Drawing<Component>>): PasteInfo {
+	override fun paste(contents: String, view: DrawingView<Component, Drawing<Component>>): PasteInfo {
 		val origAnchorComponent = origAnchorComponentId?.let { view.drawing.getWithId(it) }
 
 		var dislocation: Point2D? = null
@@ -118,14 +118,14 @@ class GraphViewCopyPasteService(
 		return pasteImpl(contents, view.drawing, dislocation, view, adjustDislocation = true)
 	}
 
-	override fun paste(contents: String, drawing: Drawing<Component>, dislocation: Point2D, view: DrawingView<*>): PasteInfo =
+	override fun paste(contents: String, drawing: Drawing<Component>, dislocation: Point2D, view: DrawingView<*,*>): PasteInfo =
         pasteImpl(contents, drawing, dislocation, view, adjustDislocation = false)
 
 	private fun pasteImpl(
 		contents: String,
 		drawing: Drawing<Component>,
 		dislocation: Point2D,
-		view: DrawingView<*>,
+		view: DrawingView<*,*>,
 		adjustDislocation: Boolean
 	): PasteInfo {
 
@@ -199,7 +199,7 @@ class GraphViewCopyPasteService(
 		return PasteInfo(copyDrawing.drawables.map { it.id }, effDislocation)
 	}
 
-	private fun snap(p: Point2D, drawing: Drawing<Component>, view: DrawingView<*>): Point2D {
+	private fun snap(p: Point2D, drawing: Drawing<Component>, view: DrawingView<*,*>): Point2D {
 		if (!drawing.drawables.isEmpty()) {
 			val snapResult = SnapResult()
 			with (drawing.drawables.first().location.add(p)) {
@@ -211,7 +211,7 @@ class GraphViewCopyPasteService(
 	}
 
 	/** Place pasted components at mouse location if standard dislocation would place them outside the visible area.*/
-    private fun effectiveDislocation(copyDrawing: Drawing<Component>, dislocation: Point2D, view: DrawingView<*>): Point2D {
+    private fun effectiveDislocation(copyDrawing: Drawing<Component>, dislocation: Point2D, view: DrawingView<*,*>): Point2D {
         if (copyDrawing.drawables.isEmpty()) {
             return dislocation
         }

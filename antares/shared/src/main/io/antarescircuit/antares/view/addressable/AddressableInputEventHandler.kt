@@ -9,12 +9,13 @@ import io.antarescircuit.jabbah.edit.Component
 import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.execution.actor.ActorInteractionContext
 import io.antarescircuit.jabbah.execution.actor.ActorInteractionHandler
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.vertice.VerticeViewActorInteractionHandler
 
 class AddressableInputEventHandler(
 	private val eventBus: EventBus = BaseModule.eventBus,
-	private val openRequestProvider: (view: DrawingView<GraphView>, newDesktopView: Boolean) -> OpenMemoryContentsRequest,
+	private val openRequestProvider: (view: DrawingView<GraphElementView<*>, GraphView>, newDesktopView: Boolean) -> OpenMemoryContentsRequest,
 ) {
 
 	private val inputEventHandler = DoubleClickHandler()
@@ -27,14 +28,14 @@ class AddressableInputEventHandler(
 		return actorInteractionHandler
 	}
 
-	private fun requestOpenMemoryContents(view: DrawingView<GraphView>, newDesktopView: Boolean) {
+	private fun requestOpenMemoryContents(view: DrawingView<GraphElementView<*>, GraphView>, newDesktopView: Boolean) {
 		eventBus.post(openRequestProvider(view, newDesktopView))
 	}
 
 	private inner class DoubleClickHandler : InputEventHandlerAdapter<InputEventContext>() {
 		override fun mouseClicked(context: InputEventContext): InputEventHandler<InputEventContext>? {
 			if (context.mouseEvent?.clickCount == 2 && context.mouseEvent?.isLeftButtonDown == true) {
-				requestOpenMemoryContents(context.view as DrawingView<GraphView>, context.mouseEvent?.isAltDown == true)
+				requestOpenMemoryContents(context.view as DrawingView<GraphElementView<*>, GraphView>, context.mouseEvent?.isAltDown == true)
 				context.mouseEvent?.consumeEvent()
 				return null
 			}
@@ -44,7 +45,7 @@ class AddressableInputEventHandler(
 
 	private inner class ActorHandler : VerticeViewActorInteractionHandler(openable = true) {
 		override fun handleDoubleClick(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
-			requestOpenMemoryContents(context.view as DrawingView<GraphView>, context.mouseEvent?.isAltDown == true)
+			requestOpenMemoryContents(context.view as DrawingView<GraphElementView<*>, GraphView>, context.mouseEvent?.isAltDown == true)
 			context.mouseEvent?.consumeEvent()
 			return null
 		}

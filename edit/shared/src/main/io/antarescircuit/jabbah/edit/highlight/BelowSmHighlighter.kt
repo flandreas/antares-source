@@ -16,7 +16,7 @@ import io.antarescircuit.jabbah.edit.*
 class BelowSmHighlighter(
 	private val highlightModelProvider: SelectionModelProvider = EditHighlightModule.highlightModelProvider,
 	private val eventBus: EventBus = BaseModule.eventBus,
-	private val content: DrawingViewContent<*>
+	private val content: DrawingViewContent<*,*>
 ) : Highlighter {
 
 	companion object {

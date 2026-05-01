@@ -7,13 +7,9 @@ import io.antarescircuit.jabbah.base.module.BaseModule
 import io.antarescircuit.jabbah.base.swing.FillAllLayout
 import io.antarescircuit.jabbah.draw.graphics.CompositeColor
 import io.antarescircuit.jabbah.draw.view.ContentViewManager
-import io.antarescircuit.jabbah.edit.Component
-import io.antarescircuit.jabbah.edit.Drawing
-import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.edit.module.EditModule
 import io.antarescircuit.jabbah.graph.ui.GraphNavigationViewController
 import io.antarescircuit.jabbah.graph.ui.GraphNavigationViewSwing
-import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.vertice.SubGraphVerticeView
 import java.awt.*
 import javax.swing.*
@@ -250,9 +246,12 @@ class DockingGraphDesktopViewSwing(
         viewManager: ContentViewManager
     ): GraphDesktopViewItem {
         val subGraphView = verticeView.createSubGraphView(controller.applicationContextHolder.signalHandlerIfActive)
+
         val drawingView = EditModule.drawingViewFactory.create(
-            subGraphView as Drawing<Component>, controller.applicationContextHolder, displayGlobalMessages = false, ""
-        ) as DrawingView<GraphView>
+            subGraphView,
+            controller.applicationContextHolder,
+            displayGlobalMessages = false,
+            "")
 
         val controller = GraphNavigationViewController(
             isRoot = false,

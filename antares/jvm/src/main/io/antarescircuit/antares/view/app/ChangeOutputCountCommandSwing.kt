@@ -7,6 +7,7 @@ import io.antarescircuit.jabbah.base.Bean
 import io.antarescircuit.jabbah.edit.*
 import io.antarescircuit.jabbah.edit.module.EditModule
 import io.antarescircuit.jabbah.edit.properties.PropertyCommandSwing
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 
 /**
@@ -38,7 +39,7 @@ class ChangeOutputCountCommandSwing(
 		service.changeOutputCount(
 			bean as WireTapView,
 			value!!,
-			editor!!.view as DrawingView<GraphView>
+			editor!!.view as DrawingView<GraphElementView<*>, GraphView>
 		)
 	}
 }

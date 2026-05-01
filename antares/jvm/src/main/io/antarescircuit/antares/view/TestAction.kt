@@ -154,7 +154,7 @@ class TestAction(
 
 	private class ForceBrokenRefErrorCommand(
 		private val componentId: Int,
-		private val drawingView: DrawingView<Drawing<Component>>
+		private val drawingView: DrawingView<Component, Drawing<Component>>
 	) : AbstractCommand("view.action.test.name") {
 
 		private val edgeView: EdgeView<*> get() = drawingView.drawing.getWithId(componentId) as EdgeView<*>

@@ -69,7 +69,7 @@ open class GraphContextMenuProvider(
 
 	private fun addExecutionActions(view: View<*>, x: Double, y: Double, menu: JPopupMenu) {
 		menu.removeAll()
-		val drawable = (view as DrawingView<*>).drawing.getDrawableAt(x, y)
+		val drawable = (view as DrawingView<*,*>).drawing.getDrawableAt(x, y)
 		if (drawable is ActorView) {
 			addExecutionActions(view, drawable, menu)
 		}

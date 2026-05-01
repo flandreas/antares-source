@@ -65,7 +65,7 @@ class ExtractMetaGraphAction(
 		service.extractMetaGraph(
 			info.name,
 			info.type,
-			drawingView as DrawingView<GraphView>,
+			castedDrawingView<DrawingView<GraphElementView<*>, GraphView>>()!!,
 			library.libraryService.getDirectoryOf(library, savable.item),
 			controller
 		)

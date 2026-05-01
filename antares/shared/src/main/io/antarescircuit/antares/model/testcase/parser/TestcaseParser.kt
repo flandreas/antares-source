@@ -65,18 +65,18 @@ class TestcaseParser(
 		when (currentToken!!.type) {
 			GREATER -> {
 				eat(GREATER)
-				val name = currentToken as Token<String>
+				val name = currentToken!!.cast<String>()
 				eat(ID)
 				PortName(lexer.location, name, PortNameType.INPUT)
 			}
 			SMALLER -> {
 				eat(SMALLER)
-				val name = currentToken as Token<String>
+				val name = currentToken!!.cast<String>()
 				eat(ID)
 				PortName(lexer.location, name, PortNameType.OUTPUT)
 			}
 			else -> {
-				val name = currentToken as Token<String>
+				val name = currentToken!!.cast<String>()
 				eat(ID)
 				PortName(lexer.location, name, PortNameType.DEFAULT)
 			}

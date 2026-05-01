@@ -26,8 +26,8 @@ import kotlin.math.abs
 /**
  * Displays [ComponentMessage]s in a [DrawingView].
  */
-class ComponentMessageDisplayer<T : Drawing<Component>>(
-	private val drawingView: DrawingView<T>,
+class ComponentMessageDisplayer<C : Component, T : Drawing<C>>(
+	private val drawingView: DrawingView<C,T>,
 	private val displayGlobalMessages: Boolean,
 	private val eventBus: EventBus = BaseModule.eventBus,
 	private val animator: Animator = AnimationModule.constantSpeedAnimator

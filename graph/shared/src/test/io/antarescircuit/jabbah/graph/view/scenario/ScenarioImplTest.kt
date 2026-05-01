@@ -1,19 +1,18 @@
 package io.antarescircuit.jabbah.graph.view.scenario
 
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 import io.antarescircuit.jabbah.base.Translations
-import io.antarescircuit.jabbah.edit.Component
-import io.antarescircuit.jabbah.edit.DrawingView
-import io.antarescircuit.jabbah.edit.model.text.ScriptProperty
 import io.antarescircuit.jabbah.edit.DrawingViewMockBuilder
+import io.antarescircuit.jabbah.edit.model.text.ScriptProperty
 import io.antarescircuit.jabbah.execution.SignalHandler
 import io.antarescircuit.jabbah.graph.model.GraphInput
 import io.antarescircuit.jabbah.graph.model.vertice.GraphInputImpl
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.GraphViewTestRule
 import io.antarescircuit.jabbah.graph.view.TestGraphPortView
 import io.antarescircuit.jabbah.graph.view.graph.GraphViewImpl
-import dev.mokkery.MockMode
-import dev.mokkery.mock
 import kotlin.test.*
 
 class ScenarioImplTest {
@@ -114,7 +113,7 @@ class ScenarioImplTest {
 		val signalHandler = mock<SignalHandler>(MockMode.autofill)
 
 		val graphView = GraphViewImpl()
-		val drawingView = DrawingViewMockBuilder().withDrawing(graphView).build<Component>()
+		val drawingView = DrawingViewMockBuilder().withDrawing(graphView).build<GraphElementView<*>, GraphView>()
 		val graphPortView = TestGraphPortView(model = GraphInputImpl(name = "I"))
 		graphView.add(graphPortView)
 		(graphPortView.model as GraphInput).setIncomingSignal(42L, signalHandler)
@@ -124,7 +123,7 @@ class ScenarioImplTest {
 		scenario.conditionProperty = ScriptProperty("I == 42")
 		scenario.executionStart(graphView, signalHandler)
 
-		val result = scenario.condition(signalHandler, drawingView as DrawingView<GraphView>)
+		val result = scenario.condition(signalHandler, drawingView)
 
 		assertTrue(result)
 	}
@@ -134,7 +133,7 @@ class ScenarioImplTest {
 		val signalHandler = mock<SignalHandler>(MockMode.autofill)
 
 		val graphView = GraphViewImpl()
-		val drawingView = DrawingViewMockBuilder().withDrawing(graphView).build<Component>()
+		val drawingView = DrawingViewMockBuilder().withDrawing(graphView).build<GraphElementView<*>, GraphView>()
 		val graphPortView = TestGraphPortView(model = GraphInputImpl(name = "I"))
 		graphView.add(graphPortView)
 		(graphPortView.model as GraphInput).setIncomingSignal(99L, signalHandler)
@@ -143,7 +142,7 @@ class ScenarioImplTest {
 		scenario.graphView = graphView
 		scenario.conditionProperty = ScriptProperty("I == 42")
 
-		val result = scenario.condition(signalHandler, drawingView as DrawingView<GraphView>)
+		val result = scenario.condition(signalHandler, drawingView)
 
 		assertFalse(result)
 	}

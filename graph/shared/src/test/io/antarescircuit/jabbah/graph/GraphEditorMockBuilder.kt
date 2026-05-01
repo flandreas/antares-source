@@ -7,6 +7,8 @@ import dev.mokkery.MockMode
 import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.mock
+import io.antarescircuit.jabbah.edit.DrawingView
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 
 /**
  * Builds test mocks for [Editor].
@@ -14,15 +16,15 @@ import dev.mokkery.mock
 class GraphEditorMockBuilder {
 
 	val editor: Editor = mock(MockMode.autofill)
-	private val view: DrawingView<GraphView> = mock(MockMode.autofill)
+	private val view: DrawingView<GraphElementView<*>, GraphView> = mock(MockMode.autofill)
 
 	init {
 		withDrawing(GraphViewImpl())
-		every { editor.view } returns view as DrawingView<Drawing<Component>>
+		every { editor.view } returns view as DrawingView<Component, Drawing<Component>>
 	}
 
-	fun withDrawingView(view: DrawingView<GraphView>): GraphEditorMockBuilder {
-		every { editor.view } returns (view as DrawingView<Drawing<Component>>)
+	fun withDrawingView(view: DrawingView<GraphElementView<*>, GraphView>): GraphEditorMockBuilder {
+		every { editor.view } returns view as DrawingView<Component, Drawing<Component>>
 		return this
 	}
 

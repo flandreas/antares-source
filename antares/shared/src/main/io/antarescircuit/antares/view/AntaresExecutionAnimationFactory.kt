@@ -13,6 +13,7 @@ import io.antarescircuit.jabbah.graph.model.Port
 import io.antarescircuit.jabbah.graph.view.AbstractGraphViewExecutionAnimationFactory
 import io.antarescircuit.jabbah.graph.view.EdgeView
 import io.antarescircuit.jabbah.graph.view.EdgeViewNetAnimation
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 
 class AntaresExecutionAnimationFactory : AbstractGraphViewExecutionAnimationFactory() {
@@ -22,7 +23,7 @@ class AntaresExecutionAnimationFactory : AbstractGraphViewExecutionAnimationFact
 		actorData: ActorData,
 		startEdgeView: EdgeView<*>,
 		startPort: Port<*>,
-		drawingView: DrawingView<GraphView>,
+		drawingView: DrawingView<GraphElementView<*>, GraphView>,
 		scheduler: Scheduler,
 		animator: Animator,
 		styleProvider: StyleProvider

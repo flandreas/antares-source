@@ -5,7 +5,6 @@ import io.antarescircuit.jabbah.edit.Command
 import io.antarescircuit.jabbah.edit.Editor
 import io.antarescircuit.jabbah.edit.command.AbstractCommand
 import io.antarescircuit.jabbah.base.geom.Point2D
-import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.edit.Undoable
 
 /**

@@ -39,10 +39,11 @@ class ComponentPropertyPanelSwing(
 		return if (bean is MultiSelection) {
 			try {
 				val delegateBeanInfo = createBeanInfo(getBeanInfoClass(bean.commonType))
+				@Suppress("UNCHECKED_CAST")
 				val beanInfo = MultiSelectionBeanInfo(delegateBeanInfo) as AbstractBeanInfo<Any>
 				delegateBeanInfo.beanIdProvider = { bean.selection.map { it.id.toString() } }
 				beanInfo
-			} catch (e: Throwable) {
+			} catch (_: Throwable) {
 				LOG.trace("No BeanInfo found for MultiSelection commonType ${bean.commonType.qualifiedName}")
 				null
 			}

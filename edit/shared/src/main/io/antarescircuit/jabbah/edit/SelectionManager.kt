@@ -93,4 +93,4 @@ interface SelectionManager {
 /**
  * Creates a [SelectionManager] for a particular [DrawingView].
  */
-typealias SelectionManagerFactory = (DrawingViewContent<*>) -> SelectionManager
+typealias SelectionManagerFactory = (DrawingViewContent<*, *>) -> SelectionManager

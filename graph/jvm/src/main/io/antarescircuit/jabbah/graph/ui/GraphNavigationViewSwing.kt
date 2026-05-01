@@ -27,6 +27,7 @@ import io.antarescircuit.jabbah.graph.ui.desktop.GraphDesktopItemHeaderPanelSwin
 import io.antarescircuit.jabbah.graph.ui.desktop.GraphDesktopViewItem
 import io.antarescircuit.jabbah.graph.ui.desktop.GraphDesktopViewItemElementDepthRef
 import io.antarescircuit.jabbah.graph.ui.desktop.GraphDesktopViewItemElementRef
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.VerticeView
 import java.awt.BorderLayout
@@ -39,7 +40,7 @@ import javax.swing.*
  */
 class GraphNavigationViewSwing(
 	val controller: GraphNavigationViewController,
-	override val drawingView: DrawingView<GraphView>,
+	override val drawingView: DrawingView<GraphElementView<*>, GraphView>,
 	private val viewManager: ContentViewManager,
 	reusable: Boolean,
 	private val contextBorderColor: CompositeColor? = null,
@@ -184,7 +185,7 @@ class GraphNavigationViewSwing(
 	}
 
 	override fun execute(request: SearchRequest) {
-		EditModule.drawingViewSearchFactory.invoke().execute(drawingView as DrawingView<Drawing<Component>>, request)
+		EditModule.drawingViewSearchFactory.invoke().execute(drawingView as DrawingView<Component, Drawing<Component>>, request)
 	}
 
 	override fun hideSearchBar() {
@@ -253,7 +254,7 @@ class GraphNavigationViewSwing(
 	/** ---- [GraphNavigationViewSwing] */
 
 	/** Finds the first [DrawingViewContent] in the navigation stack that fulfills the specified condition, if any.*/
-	override fun findContent(condition: (DrawingViewContent<GraphView>) -> Boolean): DrawingViewContent<*>? =
+	override fun findContent(condition: (DrawingViewContent<GraphElementView<*>, GraphView>) -> Boolean): DrawingViewContent<*,*>? =
 		navigationStack.find(condition)
 
 	private inner class HideSearchBarAction : AbstractAction() {

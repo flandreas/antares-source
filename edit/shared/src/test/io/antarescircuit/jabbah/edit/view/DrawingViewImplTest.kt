@@ -26,7 +26,7 @@ class DrawingViewImplTest {
 
 	private val canvas: Canvas = createCanvas()
 
-	private val view = DrawingViewImpl<Drawing<Component>>(
+	private val view = DrawingViewImpl<Component, Drawing<Component>>(
 		drawing = drawing,
 		transformFactory = { AffineTransformImpl() },
 		viewPainterFactory = { SimpleViewPainter(it) }

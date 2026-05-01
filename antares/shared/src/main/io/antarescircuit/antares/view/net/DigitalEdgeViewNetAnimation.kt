@@ -15,6 +15,7 @@ import io.antarescircuit.jabbah.execution.scheduler.Scheduler
 import io.antarescircuit.jabbah.execution.speed.SystemSpeedCategory
 import io.antarescircuit.jabbah.graph.view.ConnectableView
 import io.antarescircuit.jabbah.graph.view.EdgeViewNetAnimation
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.net.edge.EdgeViewEndpointType
 import io.antarescircuit.jabbah.graph.view.net.edge.EdgeViewPointSequence
@@ -39,7 +40,7 @@ class DigitalEdgeViewNetAnimation(
 	private val actorData: ActorData,
 	val startEdgeView: DigitalEdgeView,
 	val startPort: DigitalPort,
-	val drawingView: DrawingView<GraphView>,
+	val drawingView: DrawingView<GraphElementView<*>, GraphView>,
 	val animator: Animator,
 	val scheduler: Scheduler,
 	val styleProvider: StyleProvider = DrawStyleModule.styleProvider

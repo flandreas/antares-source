@@ -7,7 +7,7 @@ import io.antarescircuit.jabbah.graph.view.vertice.SubGraphVerticeView
 import io.antarescircuit.jabbah.io.StorableCloner
 
 class EditSubGraphVerticeViewCommand(
-	drawingView: DrawingView<*>,
+	drawingView: DrawingView<*,*>,
 	private val verticeViewId: Int,
 	private val newDrawing: ContainerDrawing?
 ) : AbstractDrawingViewCommand("graph.command.editSubGraphVerticeView", drawingView) {

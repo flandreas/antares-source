@@ -26,18 +26,20 @@ import io.antarescircuit.jabbah.graph.view.vertice.SubGraphVerticeViewImplBeanIn
 import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.mock
+import io.antarescircuit.jabbah.graph.view.GraphElementView
+import io.antarescircuit.jabbah.graph.view.GraphView
 import org.junit.Test
 
 class GraphBeanInfoTest {
 
-	private val view: DrawingView<Drawing<Component>>
+	private val view: DrawingView<GraphElementView<*>, GraphView>
 	private val editor = mock<Editor>()
 
 	init {
 		GraphUITestRule.configure()
-		view = DrawingViewMockBuilder().build<Component>()
+		view = DrawingViewMockBuilder().build()
 		every { editor.active } returns true
-		every { editor.view } returns view
+		every { editor.view } returns view as DrawingView<Component, Drawing<Component>>
 	}
 
 	private fun <T: Bean> read(bean: T, beanInfo: AbstractBeanInfo<T>) {

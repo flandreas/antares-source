@@ -37,7 +37,7 @@ interface SelectionModel<out T : Component> : Drawable {
      *
      * @param view the [DrawingView] to which this [SelectionModel] has been added.
      */
-    fun notifyAdded(view: DrawingView<*>)
+    fun notifyAdded(view: DrawingView<*,*>)
 
     /**
      * Notifies this [SelectionModel] that it has been removed from the selection container of the specified
@@ -48,7 +48,7 @@ interface SelectionModel<out T : Component> : Drawable {
      *
      * @param view the [DrawingView] from which this [SelectionModel] has been removed.
      */
-    fun notifyRemoved(view: DrawingView<*>)
+    fun notifyRemoved(view: DrawingView<*,*>)
 
 	/**
 	 * This method is automatically called whenever the underlying [Component] geometry has been changed.

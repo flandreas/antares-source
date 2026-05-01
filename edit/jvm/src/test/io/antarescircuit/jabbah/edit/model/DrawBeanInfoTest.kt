@@ -18,7 +18,7 @@ import org.junit.Test
 
 class DrawBeanInfoTest {
 
-	private val view = DrawingViewMockBuilder().build<Component>()
+	private val view = DrawingViewMockBuilder().build<Component, Drawing<Component>>()
 	private val editor = mock<Editor>()
 
 	init {

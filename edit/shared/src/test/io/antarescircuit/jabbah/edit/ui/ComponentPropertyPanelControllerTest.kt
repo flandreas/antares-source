@@ -19,7 +19,7 @@ class ComponentPropertyPanelControllerTest {
 	private val selectionModelFactorMockBuilder = SelectionModelFactoryMockBuilder()
 	private val selectionManagerFactory: SelectionManagerFactory = { SelectionManagerImpl(it, SimpleSelectionModelProvider(selectionModelFactorMockBuilder.build())) }
 	private val drawing: DrawingImpl<Component>
-	private val view: DrawingViewImpl<Drawing<Component>>
+	private val view: DrawingViewImpl<Component, Drawing<Component>>
 	private val editor: EditorImpl
 	private val controller: ComponentPropertyPanelController
 	private val component = ComponentMockBuilder().withType("TestType").build()
@@ -28,7 +28,7 @@ class ComponentPropertyPanelControllerTest {
 		EditTestRule.configure()
 		drawing = DrawingImpl<Component>()
 		view = DrawingViewImpl(drawing, selectionManagerFactory = selectionManagerFactory)
-		editor = EditorImpl(view as DrawingView<Drawing<Component>>)
+		editor = EditorImpl(view as DrawingView<Component, Drawing<Component>>)
 		controller = ComponentPropertyPanelController(editor)
 
 		view.canvas = CanvasMockBuilder().withView(view).build()

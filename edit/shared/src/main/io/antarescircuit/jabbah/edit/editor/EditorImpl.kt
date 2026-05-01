@@ -19,7 +19,7 @@ import io.antarescircuit.jabbah.edit.tool.ToolLockAction
  * Standard implementation of the [Editor] interface.
  */
 open class EditorImpl(
-    final override val view: DrawingView<Drawing<Component>>,
+    final override val view: DrawingView<Component, Drawing<Component>>,
     final override val commandManager: CommandManager,
     selectionToolFactory: SelectionToolFactory,
     override val name: String = "",
@@ -27,7 +27,7 @@ open class EditorImpl(
 ) : Editor {
 
     @Suppress("unused")
-    constructor(view: DrawingView<Drawing<Component>>, name: String = ""):
+    constructor(view: DrawingView<Component, Drawing<Component>>, name: String = ""):
        this(view, EditModule.commandManager, EditSelectModule.selectionToolFactory, name)
 
     private val changeSupport = PropertyChangeSupport<Any>(this)

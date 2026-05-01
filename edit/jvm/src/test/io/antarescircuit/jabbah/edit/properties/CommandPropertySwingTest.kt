@@ -87,7 +87,7 @@ class CommandPropertySwingTest {
 
 	private fun createEditor(): Editor {
 		val editor =  mock<Editor>(MockMode.autofill)
-		val view = DrawingViewMockBuilder().build<Component>()
+		val view = DrawingViewMockBuilder().build<Component, Drawing<Component>>()
 		every { editor.commandManager } returns cmdManager
 		every { editor.view } returns view
 		return editor

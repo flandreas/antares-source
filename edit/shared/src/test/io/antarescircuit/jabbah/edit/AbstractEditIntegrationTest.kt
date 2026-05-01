@@ -16,7 +16,7 @@ import kotlin.test.BeforeTest
 abstract class AbstractEditIntegrationTest {
 
 	private lateinit var drawing: DrawingImpl<Component>
-	protected lateinit var view: DrawingView<Drawing<Component>>
+	protected lateinit var view: DrawingView<Component, Drawing<Component>>
 	private lateinit var canvas: Canvas
 	protected lateinit var editor: Editor
 	protected lateinit var driver: EditorToolDriver
@@ -35,6 +35,7 @@ abstract class AbstractEditIntegrationTest {
 		driver = EditorToolDriver(editor)
 
 		GenericUndoableDataHolder(drawing, editor.commandManager) {
+			@Suppress("UNCHECKED_CAST")
 			view.setDrawing(it as Drawing<Component>, applyDefaultZoomStrategy = false)
 		}
 		view.canvas = canvas

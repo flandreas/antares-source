@@ -16,6 +16,7 @@ import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.graph.GraphApplicationContextHolder
 import io.antarescircuit.jabbah.graph.app.ApplicationModeEvent
 import io.antarescircuit.jabbah.graph.model.vertice.ObjectLink
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import java.awt.Dimension
@@ -33,7 +34,7 @@ import javax.swing.*
  * Must not keep reference to [Addressable] in order to deal with changing snapshots due to [Command] execution.
  */
 class AddressableContentsPanel(
-	private val view: DrawingView<GraphView>?,
+	private val view: DrawingView<GraphElementView<*>, GraphView>?,
 	private val applicationContextHolder: GraphApplicationContextHolder,
 	link: ObjectLink<Addressable>,
 	private val cmdManager: CommandManager,
@@ -48,7 +49,7 @@ class AddressableContentsPanel(
 
 		fun showAsDialog(
 			parent: Frame = Frame.getFrames()[0],
-			view: DrawingView<GraphView>,
+			view: DrawingView<GraphElementView<*>, GraphView>,
 			applicationContextHolder: GraphApplicationContextHolder,
 			name: String,
 			link: ObjectLink<Addressable>,

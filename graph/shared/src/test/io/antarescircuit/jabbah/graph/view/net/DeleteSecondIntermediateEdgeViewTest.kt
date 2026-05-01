@@ -5,6 +5,7 @@ import io.antarescircuit.jabbah.graph.model.GraphElement
 import io.antarescircuit.jabbah.graph.model.Net
 import io.antarescircuit.jabbah.graph.view.EdgeView
 import io.antarescircuit.jabbah.graph.view.GraphElementView
+import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.module.GraphViewModule
 import io.antarescircuit.jabbah.graph.view.net.node.NodeView
 import kotlin.test.*
@@ -19,7 +20,7 @@ class DeleteSecondIntermediateEdgeViewTest : AbstractForkEdgeViewTest() {
     fun shouldDeleteIntermediateEdgeViews() {
         GraphViewModule.graphViewAppService.delete(
             listOf(ev3),
-            drawingViewBuilder.build<GraphElementView<GraphElement>>())
+            drawingViewBuilder.build<GraphElementView<*>, GraphView>())
 
         assertViews()
         assertNets()

@@ -9,10 +9,10 @@ import io.antarescircuit.antares.model.signal.DigitalSignal
 import io.antarescircuit.antares.view.app.AntaresGraphViewService
 import io.antarescircuit.antares.view.input.SwitchView
 import io.antarescircuit.antares.view.output.LEDView
-import io.antarescircuit.jabbah.edit.Component
 import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.edit.DrawingViewMockBuilder
 import io.antarescircuit.jabbah.graph.view.EdgeView
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.module.GraphViewModule
 import kotlin.test.*
@@ -37,7 +37,7 @@ class ChangeInputCountIntegrationTest : AbstractCircuitTest() {
 
 	override fun getCircuitView(): GraphView = builder.graphView
 
-	private val drawingView: DrawingView<GraphView> get() = drawingViewBuilder.build<Component>() as DrawingView<GraphView>
+	private val drawingView: DrawingView<GraphElementView<*>, GraphView> get() = drawingViewBuilder.build()
 
 	@BeforeTest
 	fun setupCircuit() {

@@ -28,7 +28,7 @@ class GridAction(
 
 	override fun execute(event: io.antarescircuit.jabbah.base.event.ActionEvent) {
 		val view = viewManager.activeView?.view
-		if (view is DrawingView<*>) {
+		if (view is DrawingView<*,*>) {
 			view.showGrid = !view.showGrid
 		}
 	}
@@ -38,8 +38,8 @@ class GridAction(
 	}
 
 	private fun updateState() {
-		if (viewManager.activeView?.view is DrawingView<*>) {
-			selected = (viewManager.activeView!!.view as DrawingView<*>).showGrid
+		if (viewManager.activeView?.view is DrawingView<*,*>) {
+			selected = (viewManager.activeView!!.view as DrawingView<*,*>).showGrid
 		}
 	}
 }

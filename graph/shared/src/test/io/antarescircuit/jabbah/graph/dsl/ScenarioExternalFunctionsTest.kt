@@ -1,9 +1,7 @@
 package io.antarescircuit.jabbah.graph.dsl
 
-import io.antarescircuit.jabbah.edit.Component
-import io.antarescircuit.jabbah.edit.DrawingView
-import io.antarescircuit.jabbah.edit.model.text.ScriptProperty
 import io.antarescircuit.jabbah.edit.DrawingViewMockBuilder
+import io.antarescircuit.jabbah.edit.model.text.ScriptProperty
 import io.antarescircuit.jabbah.execution.issue.IssueCollector
 import io.antarescircuit.jabbah.graph.AbstractGraphViewExecutionTest
 import io.antarescircuit.jabbah.graph.model.StoringGraphActorData
@@ -44,7 +42,7 @@ class ScenarioExternalFunctionsTest : AbstractGraphViewExecutionTest() {
 
         startSimulation()
         proceedUntilQueueIsEmpty()
-        val result = scenario.condition.invoke(scheduler, drawingView.build<Component>() as DrawingView<GraphView>)
+        val result = scenario.condition.invoke(scheduler, drawingView.build())
 
         assertTrue(result)
         assertEquals(0, issueCollector.size)
@@ -56,7 +54,7 @@ class ScenarioExternalFunctionsTest : AbstractGraphViewExecutionTest() {
         startSimulation()
         proceedUntilQueueIsEmpty()
 
-        scenario.condition.invoke(scheduler, drawingView.build<Component>() as DrawingView<GraphView>)
+        scenario.condition.invoke(scheduler, drawingView.build())
 
         assertEquals(1, issueCollector.size)
     }
@@ -78,7 +76,7 @@ class ScenarioExternalFunctionsTest : AbstractGraphViewExecutionTest() {
         scheduler.requestActingAfter(testVerticeView.model, 100, StoringGraphActorData(null, null))
         proceedUntilQueueIsEmpty()
 
-        val result = scenario.condition.invoke(scheduler, drawingView.build<Component>() as DrawingView<GraphView>)
+        val result = scenario.condition.invoke(scheduler, drawingView.build())
 
         assertTrue(result)
         assertEquals(0, issueCollector.size)

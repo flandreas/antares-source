@@ -334,7 +334,7 @@ class GraphDesktopViewController(
         }
     }
 
-    private fun deassociate(assoc: Association, content: DrawingViewContent<*>?, verticeView: VerticeView<*>?) {
+    private fun deassociate(assoc: Association, content: DrawingViewContent<*,*>?, verticeView: VerticeView<*>?) {
         content?.let {
             if (verticeView != null) {
                 it.highlighter.unhighlight(verticeView)

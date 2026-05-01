@@ -262,7 +262,7 @@ class SourcingCommandManager(
 		}
 	}
 
-	override fun beginTransaction(descriptionKey: String, drawingView: DrawingView<*>?) {
+	override fun beginTransaction(descriptionKey: String, drawingView: DrawingView<*,*>?) {
 		beginTransaction(TransactionCommand(descriptionKey, drawingView), register = true)
 	}
 

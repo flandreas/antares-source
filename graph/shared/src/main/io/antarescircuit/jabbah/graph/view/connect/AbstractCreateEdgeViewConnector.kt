@@ -10,6 +10,7 @@ import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.edit.EditInputEventContext
 import io.antarescircuit.jabbah.edit.Editor
 import io.antarescircuit.jabbah.graph.view.EdgeView
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.NetView
 import io.antarescircuit.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter
@@ -95,7 +96,7 @@ abstract class AbstractCreateEdgeViewConnector(
 			layoutIndex = layoutIndex,
 			location = p,
 			origDirs = getMoveAdjustedPointOrigDirs(layoutIndex, allowContinuation = false),
-			destDir = null)
+			destDirs = null)
 	}
 
 	private fun moveAdjustedOriginPoint(context: EditInputEventContext) {
@@ -106,7 +107,7 @@ abstract class AbstractCreateEdgeViewConnector(
 			layoutIndex = layoutIndex,
 			location = p,
 			origDirs = null,
-			destDir = getMoveAdjustedPointDestDirs(layoutIndex, allowContinuation = false))
+			destDirs = getMoveAdjustedPointDestDirs(layoutIndex, allowContinuation = false))
 	}
 
 	protected fun addAdjustedPoint(context: EditInputEventContext) {
@@ -148,7 +149,7 @@ abstract class AbstractCreateEdgeViewConnector(
 			layoutIndex = adjustment!!.model.current,
 			location = snapLocation,
 			origDirs = origDirs,
-			destDir = destDirs
+			destDirs = destDirs
 		)
 		edgeView?.validate()
 	}
@@ -180,7 +181,7 @@ abstract class AbstractCreateEdgeViewConnector(
 			layoutIndex = adjustment!!.model.current,
 			location = snapLocation,
 			origDirs = origDirs,
-			destDir = destDirs
+			destDirs = destDirs
 		)
 		edgeView?.validate()
 	}
@@ -197,7 +198,7 @@ abstract class AbstractCreateEdgeViewConnector(
 			layoutIndex = adjustment!!.model.current,
 			location = connPointAbs,
 			origDirs = null,
-			destDir = setOf(direction))
+			destDirs = setOf(direction))
 
 		// Don't layout EdgeView
 	}
@@ -230,7 +231,7 @@ abstract class AbstractCreateEdgeViewConnector(
 	 * @param startPoint the [Point2D] at which the created [EdgeView] starts.
 	 * @param netView the [NetView] of the [EdgeView] to be created
 	 */
-	protected fun createEdgeView(view: DrawingView<GraphView>, startPoint: Point2D, netView: NetView<Any>?) {
+	protected fun createEdgeView(view: DrawingView<GraphElementView<*>, GraphView>, startPoint: Point2D, netView: NetView<Any>?) {
 		(if (netView == null) edgeViewFactory.createEdgeView(view.drawing) else edgeViewFactory.createEdgeView(view.drawing, netView)).also { ev ->
 			this.edgeView = ev
 			ev.underConstruction = true

@@ -15,6 +15,7 @@ import io.antarescircuit.jabbah.graph.ui.scenario.ScenarioView
 import io.antarescircuit.jabbah.graph.ui.scenario.ScenarioViewController
 import io.antarescircuit.jabbah.graph.ui.usecase.UsecaseView
 import io.antarescircuit.jabbah.graph.ui.usecase.UsecaseViewController
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 
 /**
@@ -28,6 +29,7 @@ interface GraphEditView : UIView, GraphDesktopViewItem {
 }
 
 class GraphEditViewController(
+	val drawingView: DrawingView<GraphElementView<*>, GraphView>,
 	val editor: Editor,
 	val applicationDataHolder: ApplicationDataHolder,
 	val applicationModeHolder: ApplicationModeHolder,
@@ -38,7 +40,7 @@ class GraphEditViewController(
 
 	val graphNavigationViewController = GraphNavigationViewController(
 		isRoot = true,
-		editor.view as DrawingView<GraphView>,
+		drawingView,
 		initialSavable,
 		eventBus = eventBus)
 	val scenarioViewController = ScenarioViewController(editor, applicationDataHolder, applicationContextHolder, applicationModeHolder, eventBus)

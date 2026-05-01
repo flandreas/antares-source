@@ -8,7 +8,9 @@ import io.antarescircuit.jabbah.edit.DrawingViewMockBuilder
 import io.antarescircuit.jabbah.edit.model.DrawingImpl
 import io.antarescircuit.jabbah.edit.model.rectangle.RectangleComponent
 import io.antarescircuit.jabbah.edit.module.EditModule
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphElementViewWrapper
+import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.GraphViewBuilder
 import io.antarescircuit.jabbah.graph.view.GraphViewTestRule
 import io.antarescircuit.jabbah.graph.view.VerticeView
@@ -21,14 +23,14 @@ class GraphViewAppServiceImplTest {
 
 	private val service = GraphViewAppServiceImpl()
 	private val builder: GraphViewBuilder<Boolean>
-	private val drawingView: DrawingView<Drawing<Component>>
+	private val drawingView: DrawingView<GraphElementView<*>, GraphView>
 	private val vv1: TestVerticeView
 	private val vv2: TestVerticeView
 	private val vv3: TestVerticeView
 
 	init {
 		GraphViewTestRule.configure()
-		builder = GraphViewBuilder<Boolean>()
+		builder = GraphViewBuilder()
 		drawingView = DrawingViewMockBuilder().withDrawing(builder.graphView).build()
 		vv1 = builder.addVerticeView(TestVerticeView("vv1", loc = Point2D(100, 100)))
 		vv2 = builder.addVerticeView(TestVerticeView("vv2", loc = Point2D(200, 100)))
@@ -97,7 +99,7 @@ class GraphViewAppServiceImplTest {
 		builder.split(ev, 0, Point2D(150, 100), vv3)
 		EditModule.commandManager.reset()
 
-		service.delete(builder.graphView.drawables.toList(), DrawingViewMockBuilder().withDrawing(builder.graphView).build<Component>())
+		service.delete(builder.graphView.drawables.toList(), DrawingViewMockBuilder().withDrawing(builder.graphView).build<GraphElementView<*>, GraphView>())
 
 		EditModule.commandManager.undo()
 
@@ -132,7 +134,7 @@ class GraphViewAppServiceImplTest {
 
 	@Test
 	fun shouldDeleteWrappedComponent() {
-		val addedComponent = service.add(RectangleComponent(), drawingView)
+		val addedComponent = service.add(RectangleComponent(), drawingView as DrawingView<Component, Drawing<Component>>)
 
 		service.delete(listOf(addedComponent), drawingView)
 
@@ -141,7 +143,7 @@ class GraphViewAppServiceImplTest {
 
 	@Test
 	fun shouldUndoDeleteWrappedComponent() {
-		val addedComponent = service.add(RectangleComponent(), drawingView)
+		val addedComponent = service.add(RectangleComponent(), drawingView as DrawingView<Component, Drawing<Component>>)
 		EditModule.commandManager.reset()
 
 		service.delete(listOf(addedComponent), drawingView)
@@ -155,7 +157,7 @@ class GraphViewAppServiceImplTest {
 	@Test
 	fun shouldRedoDeleteWrappedComponent() {
 		EditModule.commandManager.reset()
-		val addedComponent = service.add(RectangleComponent(), drawingView)
+		val addedComponent = service.add(RectangleComponent(), drawingView as DrawingView<Component, Drawing<Component>>)
 
 		service.delete(listOf(addedComponent), drawingView)
 		EditModule.commandManager.undo()

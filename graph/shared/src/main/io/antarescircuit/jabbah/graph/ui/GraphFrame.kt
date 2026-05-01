@@ -12,8 +12,6 @@ import io.antarescircuit.jabbah.base.ui.UIView
 import io.antarescircuit.jabbah.draw.View
 import io.antarescircuit.jabbah.draw.ZoomStrategy
 import io.antarescircuit.jabbah.edit.CommandManager
-import io.antarescircuit.jabbah.edit.Component
-import io.antarescircuit.jabbah.edit.Drawing
 import io.antarescircuit.jabbah.edit.Editor
 import io.antarescircuit.jabbah.edit.module.EditModule
 import io.antarescircuit.jabbah.execution.scheduler.Scheduler
@@ -25,7 +23,6 @@ import io.antarescircuit.jabbah.graph.app.ApplicationMode
 import io.antarescircuit.jabbah.graph.app.ApplicationModeEvent
 import io.antarescircuit.jabbah.graph.app.ApplicationModeHolderImpl
 import io.antarescircuit.jabbah.graph.container.isManualContainer
-import io.antarescircuit.jabbah.graph.ui.documentation.DocumentationPanelController
 import io.antarescircuit.jabbah.graph.library.AbstractContainerLibraryElementSavable
 import io.antarescircuit.jabbah.graph.library.CurrentLibraryEvent
 import io.antarescircuit.jabbah.graph.library.LibraryModule
@@ -33,6 +30,7 @@ import io.antarescircuit.jabbah.graph.library.LibraryServiceCallbackAdapter
 import io.antarescircuit.jabbah.graph.model.graph.GraphPropagationDelayCalculator
 import io.antarescircuit.jabbah.graph.ui.container.ContainerPanelController
 import io.antarescircuit.jabbah.graph.ui.container.ContainerPanelView
+import io.antarescircuit.jabbah.graph.ui.documentation.DocumentationPanelController
 import io.antarescircuit.jabbah.graph.ui.graphpanel.GraphPanelView
 import io.antarescircuit.jabbah.graph.ui.graphpanel.GraphPanelViewController
 import io.antarescircuit.jabbah.graph.view.GraphView
@@ -118,11 +116,10 @@ open class GraphFrameController<T: GraphFrame>(
 	val applicationContextHolder = GraphApplicationContextHolder(scheduler, systemSpeed = systemSpeed, currentSystemSpeedCategory = systemSpeedCategory)
 
 	private val drawingView = EditModule.drawingViewFactory.create(
-		GraphViewModule.graphViewFactory.create(null) as Drawing<Component>,
+		GraphViewModule.graphViewFactory.create(null),
 		applicationContextHolder,
 		displayGlobalMessages = true,
-		name = MAIN_EDITOR_NAME
-	)
+		name = MAIN_EDITOR_NAME)
 
 	val editor: Editor = GraphViewModule.graphEditorFactory.invoke(MAIN_EDITOR_NAME, drawingView)
 
@@ -138,6 +135,7 @@ open class GraphFrameController<T: GraphFrame>(
 	val containerPanelController = ContainerPanelController(applicationContextHolder, displayGlobalMessages = true, drawingView)
 
 	val graphPanelViewController = GraphPanelViewController(
+		drawingView,
 		editor,
 		appDataViewController,
 		applicationContextHolder,

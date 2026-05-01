@@ -9,6 +9,7 @@ import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.edit.Undoable
 import io.antarescircuit.jabbah.edit.command.AbstractCommand
 import io.antarescircuit.jabbah.graph.model.vertice.ObjectLink
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -17,7 +18,7 @@ import java.nio.file.Paths
  * A [Command] for loading the contents of an [Addressable] from a file.
  */
 class AddressableContentsCommand(
-	private val drawingView: DrawingView<GraphView>?,
+	private val drawingView: DrawingView<GraphElementView<*>, GraphView>?,
 	private val link: ObjectLink<Addressable>,
 	private val bitWidth: BitWidth,
 	private val filePath: String

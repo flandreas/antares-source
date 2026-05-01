@@ -4,9 +4,12 @@ import io.antarescircuit.antares.view.AbstractGraphViewEditingTest
 import io.antarescircuit.antares.view.addressable.ROMView
 import io.antarescircuit.antares.view.gate.LogicGateView
 import io.antarescircuit.jabbah.app.ApplicationDataContentEvent
+import io.antarescircuit.jabbah.edit.Component
+import io.antarescircuit.jabbah.edit.Drawing
 import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.graph.model.vertice.ImmediateVerticeLink
 import io.antarescircuit.jabbah.graph.model.vertice.ObjectLink
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import kotlin.test.Test
 
@@ -22,10 +25,10 @@ class AddressableReferenceTest : AbstractGraphViewEditingTest(5) {
     }
 
     private fun prepare() {
-        service.add(LogicGateView.andGateView(), view)
-        service.add(ROMView(), view)
+        service.add(LogicGateView.andGateView(), view as DrawingView<Component, Drawing<Component>>)
+        service.add(ROMView(), view as DrawingView<Component, Drawing<Component>>)
 
-        ref = AddressableReference(ImmediateVerticeLink(romView.modelId) as ObjectLink<Addressable>, view as DrawingView<GraphView>)
+        ref = AddressableReference(ImmediateVerticeLink(romView.modelId) as ObjectLink<Addressable>, view as DrawingView<GraphElementView<*>, GraphView>)
     }
 
     /**

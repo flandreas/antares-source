@@ -12,7 +12,7 @@ interface ContentViewManager {
 	var activeView: ContentView<*>?
 
 	@Suppress("UNCHECKED_CAST")
-	fun <T> castedActiveView(): T? = activeView as T?
+	fun <T> castedActiveView(): T? = activeView?.view as T?
 }
 
 /**

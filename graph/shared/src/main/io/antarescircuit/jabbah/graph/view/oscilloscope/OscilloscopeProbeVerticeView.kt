@@ -24,6 +24,7 @@ import io.antarescircuit.jabbah.graph.model.GraphType
 import io.antarescircuit.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 import io.antarescircuit.jabbah.graph.view.AbstractGraphElementView
 import io.antarescircuit.jabbah.graph.view.EdgeView
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.app.oscilloscope.DropOscilloscopeProbeCommand
 import io.antarescircuit.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter
@@ -202,7 +203,7 @@ open class OscilloscopeProbeVerticeView<T : Any>(
 			return this
 		}
 
-		override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+		override fun mousePressed(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 			if (!isMouseDown) {
 				if (dragGhost) {
 					LOG.userTrail("Start dragging Oscilloscope probe $id '$name' into GraphView")
@@ -216,7 +217,7 @@ open class OscilloscopeProbeVerticeView<T : Any>(
 			return this
 		}
 
-		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext>? {
+		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 			if (!isDragging && moveLastLocation.distance(context.location) < Editor.DRAG_THRESHOLD) {
 				return this
 			}
@@ -261,7 +262,7 @@ open class OscilloscopeProbeVerticeView<T : Any>(
 			}
 
 			val command = DropOscilloscopeProbeCommand<T>(
-				context.drawingView as DrawingView<GraphView>,
+				context.drawingView as DrawingView<GraphElementView<*>, GraphView>,
 				name,
 				connectionPoint(),
 				probeVerticeViewId = if (dragGhost) null else this@OscilloscopeProbeVerticeView.id
@@ -296,7 +297,7 @@ open class OscilloscopeProbeVerticeView<T : Any>(
 			}
 		}
 
-		private fun findEdgeView(context: EditInputEventContext): EdgeView<T>? =
-			context.drawingView.drawing.getDrawable { it.contains(connectionPoint()) && it is EdgeView<*> } as EdgeView<T>?
+		private fun findEdgeView(context: EditInputEventContext): EdgeView<*>? =
+			context.drawingView.drawing.getDrawable { it.contains(connectionPoint()) && it is EdgeView<*> } as EdgeView<*>?
 	}
 }

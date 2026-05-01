@@ -9,7 +9,7 @@ import io.antarescircuit.jabbah.edit.model.text.Labeled
 
 open class DrawingViewSearch {
 
-	fun execute(view: DrawingView<Drawing<Component>>, request: SearchRequest) {
+	fun execute(view: DrawingView<Component, Drawing<Component>>, request: SearchRequest) {
 		view.selectionManager.deselectAll()
 
 		if (request.searchString.isNotBlank()) {

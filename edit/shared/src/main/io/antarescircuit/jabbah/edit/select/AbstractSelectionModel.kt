@@ -37,7 +37,7 @@ abstract class AbstractSelectionModel<T : Component>(
         component.removeDrawableListener(geometryUpdateListener)
     }
 
-    override fun notifyAdded(view: DrawingView<*>) { }
+    override fun notifyAdded(view: DrawingView<*,*>) { }
 
-    override fun notifyRemoved(view: DrawingView<*>) { }
+    override fun notifyRemoved(view: DrawingView<*,*>) { }
 }

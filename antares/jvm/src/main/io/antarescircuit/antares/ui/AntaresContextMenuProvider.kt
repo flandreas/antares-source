@@ -46,7 +46,7 @@ class AntaresContextMenuProvider(
 	}
 
 	override fun addApplicationSpecificActions(view: View<*>, popupMenu: JPopupMenu) {
-		val selection = (view as DrawingView<*>).selectionManager.selection
+		val selection = (view as DrawingView<*,*>).selectionManager.selection
 
 		if (selection.all { it is LogicGateView && it.model.gateType is NonUnaryLogicGateType }) {
 			popupMenu.addSeparator()

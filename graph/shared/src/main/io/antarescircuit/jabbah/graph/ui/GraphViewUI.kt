@@ -5,6 +5,7 @@ import io.antarescircuit.jabbah.edit.Component
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.GraphViewExecutionController
 import io.antarescircuit.jabbah.execution.scheduler.Scheduler
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 
 /**
  * Represents methods to be implemented by a class that displays and simulates
@@ -13,7 +14,7 @@ import io.antarescircuit.jabbah.execution.scheduler.Scheduler
 interface GraphViewUI {
 
 	/** The [DrawingView] that displays the [GraphView].*/
-	val drawingView: DrawingView<GraphView>
+	val drawingView: DrawingView<GraphElementView<*>, GraphView>
 
 	/**
 	 * Determines if the [GraphView] is basically editable. This property is not necessarily supposed to

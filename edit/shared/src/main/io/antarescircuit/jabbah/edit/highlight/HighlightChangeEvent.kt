@@ -7,12 +7,12 @@ import io.antarescircuit.jabbah.edit.*
  * Posted by a [Highlighter] on its [EventBus] whenever the current highlighting in a [DrawingView] has changed.
  */
 data class HighlightChangeEvent(
-    val content: DrawingViewContent<*>,
+    val content: DrawingViewContent<*,*>,
     val highlighter: Highlighter,
     val type: Type,
     val components: Collection<Component>
 ) {
-    constructor(content: DrawingViewContent<*>, highlighter: Highlighter, components: Collection<Component>, highlighted: Boolean):
+    constructor(content: DrawingViewContent<*,*>, highlighter: Highlighter, components: Collection<Component>, highlighted: Boolean):
         this(content, highlighter, if(highlighted) Type.HIGHLIGHTED else Type.UNHIGHLIGHTED, components)
 
     enum class Type {

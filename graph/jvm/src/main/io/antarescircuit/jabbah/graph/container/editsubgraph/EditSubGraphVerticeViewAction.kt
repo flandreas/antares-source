@@ -9,8 +9,6 @@ import io.antarescircuit.jabbah.base.swing.UiUtil
 import io.antarescircuit.jabbah.draw.view.ContentViewManager
 import io.antarescircuit.jabbah.draw.view.DrawViewModule
 import io.antarescircuit.jabbah.edit.CommandManager
-import io.antarescircuit.jabbah.edit.Component
-import io.antarescircuit.jabbah.edit.Drawing
 import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.edit.app.AbstractSelectionAwareAction
 import io.antarescircuit.jabbah.edit.module.EditModule
@@ -21,6 +19,8 @@ import io.antarescircuit.jabbah.graph.container.ContainerEditor
 import io.antarescircuit.jabbah.graph.container.ContainerPanelSwing
 import io.antarescircuit.jabbah.graph.library.LibraryModule
 import io.antarescircuit.jabbah.graph.ui.container.ContainerPanelController
+import io.antarescircuit.jabbah.graph.view.GraphElementView
+import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.vertice.SubGraphVerticeView
 
 /**
@@ -57,7 +57,7 @@ class EditSubGraphVerticeViewAction(
 		val containerPanelController = ContainerPanelController(
 			applicationContextHolder,
 			displayGlobalMessages = false,
-			viewManager.activeView!!.view as DrawingView<Drawing<Component>>,
+			viewManager.activeView!!.view as DrawingView<GraphElementView<*>, GraphView>,
 		)
 		containerPanelController.editor.preventDeletingPortViewComponents = true
 

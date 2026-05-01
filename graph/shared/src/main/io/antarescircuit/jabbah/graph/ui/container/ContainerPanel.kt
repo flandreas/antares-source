@@ -20,6 +20,7 @@ import io.antarescircuit.jabbah.graph.MetaGraph
 import io.antarescircuit.jabbah.graph.container.ContainerDrawing
 import io.antarescircuit.jabbah.graph.container.isManualContainer
 import io.antarescircuit.jabbah.graph.ui.GraphFrameController
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.module.GraphViewModule
 import io.antarescircuit.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -45,7 +46,7 @@ interface ContainerPanelView : UIView {
 class ContainerPanelController(
 	applicationContextHolder: GraphApplicationContextHolder,
 	displayGlobalMessages: Boolean = true,
-	val mainGraphDrawingView: DrawingView<Drawing<Component>>,
+	val mainGraphDrawingView: DrawingView<GraphElementView<*>, GraphView>,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<ContainerPanelView>() {
 
@@ -53,7 +54,10 @@ class ContainerPanelController(
 		private val LOG by logger(ContainerPanelController::class)
 	}
 
-	val drawingView = EditModule.drawingViewFactory.create(ContainerDrawing(), applicationContextHolder, displayGlobalMessages,
+	val drawingView: DrawingView<Component, Drawing<Component>> = EditModule.drawingViewFactory.create(
+		ContainerDrawing(),
+		applicationContextHolder,
+		displayGlobalMessages,
 		GraphFrameController.CONTAINER_EDITOR_NAME)
 
 	val editor = GraphViewModule.containerEditorFactory(drawingView, mainGraphDrawingView)

@@ -15,6 +15,7 @@ import io.antarescircuit.jabbah.graph.model.Vertice
 import io.antarescircuit.jabbah.graph.model.vertice.SubGraphVertice
 import io.antarescircuit.jabbah.graph.view.ControlViewSource
 import io.antarescircuit.jabbah.graph.view.ControlViewSourceEvent
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphPortView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.vertice.SubGraphVerticeView
@@ -23,10 +24,10 @@ import io.antarescircuit.jabbah.graph.view.vertice.SubGraphVerticeView
  * An [Editor] for editing a [GraphView].
  */
 class GraphEditor(
-    view: DrawingView<Drawing<Component>>,
+    view: DrawingView<GraphElementView<*>, GraphView>,
     name: String,
     private val eventBus: EventBus = BaseModule.eventBus
-) : EditorImpl(view, name = name) {
+) : EditorImpl(view as DrawingView<Component, Drawing<Component>>, name = name) {
 
     private val containerLibraryElementRenamedHandler: EventHandler<NameChangedEvent> = { handle(it) }
 
@@ -46,11 +47,13 @@ class GraphEditor(
             eventBus.post(GraphPortViewEvent(GraphPortViewEvent.Type.ADD, component))
         }
         if (component is ControlViewSource<*>) {
+            @Suppress("UNCHECKED_CAST")
             eventBus.post(ControlViewSourceEvent(ControlViewSourceEvent.Type.ADD, component as ControlViewSource<Vertice>))
         }
 	    if (component is SubGraphVerticeView<*>) {
-		    eventBus.post(SubGraphVerticeViewEvent(SubGraphVerticeViewEvent.Type.ADD, component as SubGraphVerticeView<SubGraphVertice>))
-	    }
+            @Suppress("UNCHECKED_CAST")
+            eventBus.post(SubGraphVerticeViewEvent(SubGraphVerticeViewEvent.Type.ADD, component as SubGraphVerticeView<SubGraphVertice>))
+        }
     }
 
     override fun handleComponentRemoved(component: Component) {
@@ -58,11 +61,13 @@ class GraphEditor(
             eventBus.post(GraphPortViewEvent(GraphPortViewEvent.Type.REMOVE, component))
         }
         if (component is ControlViewSource<*>) {
+            @Suppress("UNCHECKED_CAST")
             eventBus.post(ControlViewSourceEvent(ControlViewSourceEvent.Type.REMOVE, component as ControlViewSource<Vertice>))
         }
 	    if (component is SubGraphVerticeView<*>) {
-		    eventBus.post(SubGraphVerticeViewEvent(SubGraphVerticeViewEvent.Type.REMOVE, component as SubGraphVerticeView<SubGraphVertice>))
-	    }
+            @Suppress("UNCHECKED_CAST")
+            eventBus.post(SubGraphVerticeViewEvent(SubGraphVerticeViewEvent.Type.REMOVE, component as SubGraphVerticeView<SubGraphVertice>))
+        }
     }
 
     private fun handle(event: NameChangedEvent) {

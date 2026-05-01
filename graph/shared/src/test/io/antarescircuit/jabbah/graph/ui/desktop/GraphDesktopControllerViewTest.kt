@@ -2,23 +2,24 @@ package io.antarescircuit.jabbah.graph.ui.desktop
 
 import io.antarescircuit.jabbah.base.event.EventBusImpl
 import io.antarescircuit.jabbah.base.time.SystemSpeed
-import io.antarescircuit.jabbah.draw.drawable.Colorable
 import io.antarescircuit.jabbah.draw.CanvasMockBuilder
-import io.antarescircuit.jabbah.edit.Component
-import io.antarescircuit.jabbah.edit.Drawing
+import io.antarescircuit.jabbah.draw.drawable.Colorable
 import io.antarescircuit.jabbah.edit.DrawingView
-import io.antarescircuit.jabbah.edit.DrawingViewContent
 import io.antarescircuit.jabbah.edit.model.text.TranslatableText
 import io.antarescircuit.jabbah.edit.view.DrawingViewImpl
 import io.antarescircuit.jabbah.execution.scheduler.SchedulerImpl
 import io.antarescircuit.jabbah.execution.speed.CurrentSystemSpeedCategory
 import io.antarescircuit.jabbah.graph.GraphApplicationContextHolder
 import io.antarescircuit.jabbah.graph.TestLibraryBuilder
-import io.antarescircuit.jabbah.graph.library.*
+import io.antarescircuit.jabbah.graph.library.LibraryElement
+import io.antarescircuit.jabbah.graph.library.LibraryImpl
+import io.antarescircuit.jabbah.graph.library.LibraryModule
+import io.antarescircuit.jabbah.graph.library.MemoryLibraryPersistenceService
 import io.antarescircuit.jabbah.graph.model.vertice.SubGraphVerticeRef
 import io.antarescircuit.jabbah.graph.ui.GraphDesktopViewItemMockBuilder
 import io.antarescircuit.jabbah.graph.ui.GraphDesktopViewMockBuilder
 import io.antarescircuit.jabbah.graph.ui.graphpanel.EditedGraphViewEvent
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.GraphViewBuilder
 import io.antarescircuit.jabbah.graph.view.GraphViewTestRule
@@ -35,7 +36,7 @@ class GraphDesktopControllerViewTest {
 	private val currentSystemSpeedCategory = CurrentSystemSpeedCategory(systemSpeed, eventBus)
 	private val applicationContextHolder: GraphApplicationContextHolder
 	private val graphViewBuilder: GraphViewBuilder<Boolean>
-	private val drawingView: DrawingViewImpl<Drawing<Component>>
+	private val drawingView: DrawingViewImpl<GraphElementView<*>, GraphView>
 	private val controller: GraphDesktopViewController
 	private val vv: SubGraphVerticeView<*>
 	private val viewItemMock: GraphDesktopViewItemMockBuilder
@@ -46,12 +47,12 @@ class GraphDesktopControllerViewTest {
 		LibraryModule.userLibraryPersistenceService = MemoryLibraryPersistenceService()
 		LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"))
 		applicationContextHolder = GraphApplicationContextHolder(SchedulerImpl(currentSystemSpeedCategory), eventBus, systemSpeed, currentSystemSpeedCategory)
-		graphViewBuilder = GraphViewBuilder<Boolean>()
-		drawingView = DrawingViewImpl(graphViewBuilder.graphView as Drawing<Component>, applicationContextHolder = applicationContextHolder, eventBus = eventBus)
+		graphViewBuilder = GraphViewBuilder()
+		drawingView = DrawingViewImpl(graphViewBuilder.graphView, applicationContextHolder = applicationContextHolder, eventBus = eventBus)
 		controller = GraphDesktopViewController(applicationContextHolder, eventBus = eventBus)
 		vv = createSubGraphVerticeView()
 		viewItemMock = GraphDesktopViewItemMockBuilder()
-			.withDrawingView(drawingView as DrawingView<GraphView>)
+			.withDrawingView(drawingView as DrawingView<GraphElementView<*>, GraphView>)
 			.withFindElementWithRef(vv)
 		viewMock = GraphDesktopViewMockBuilder(controller)
 			.withMainViewItem(viewItemMock.build())
@@ -85,7 +86,7 @@ class GraphDesktopControllerViewTest {
 	@Test
 	fun shouldCloseSubGraphOnDeleteVerticeView() {
 		viewMock.withCreatedSubGraphDesktopItem(viewItemMock.build())
-		viewItemMock.withFindContent(drawingView.content as DrawingViewContent<GraphView>)
+		viewItemMock.withFindContent(drawingView.content)
 		openSubGraph()
 		graphViewBuilder.graphView.remove(vv)
 		assertEquals(0, controller.additionalDesktopItems.size)
@@ -94,7 +95,7 @@ class GraphDesktopControllerViewTest {
 	@Test
 	fun shouldAlsoCloseSubGraphWhenClosingMainGraph() {
 		viewMock.withCreatedSubGraphDesktopItem(viewItemMock.build())
-		viewItemMock.withFindContent(drawingView.content as DrawingViewContent<GraphView>)
+		viewItemMock.withFindContent(drawingView.content)
 		openSubGraph()
 
 		closeMainGraph()

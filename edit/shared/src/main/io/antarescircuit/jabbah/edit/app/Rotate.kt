@@ -53,7 +53,7 @@ class RotateAction(
 /** Rotates a [Component] to the given [Rotation].*/
 class RotateCommand(
 	private val clockwise: Boolean,
-	drawingView: DrawingView<*>,
+	drawingView: DrawingView<*,*>,
 	val componentIds: Collection<Int>,
 	val pivot: Point2D? = null
 ) : AbstractDrawingViewCommand(if (clockwise) "edit.command.rotateClockwise" else "edit.command.rotate", drawingView), Undoable {

@@ -6,6 +6,7 @@ import io.antarescircuit.jabbah.edit.Command
 import io.antarescircuit.jabbah.edit.command.AbstractCommand
 import io.antarescircuit.jabbah.edit.model.text.description.Name
 import io.antarescircuit.jabbah.graph.model.Graph
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 
 /**
@@ -13,7 +14,7 @@ import io.antarescircuit.jabbah.graph.view.GraphView
  * When changed using the property mechanism on Java/Swing, the generic [Command] is used.
  */
 class GraphNameCommand(
-    private val view: DrawingView<GraphView>,
+    private val view: DrawingView<GraphElementView<*>, GraphView>,
     private val oldName: Name,
     private val newName: Name,
 ) : AbstractCommand("graph.property.GraphViewImpl.name"), Undoable {

@@ -33,6 +33,7 @@ import io.antarescircuit.jabbah.graph.model.vertice.SubGraphVerticeRef
 import io.antarescircuit.jabbah.graph.ui.desktop.GraphDesktopViewItem
 import io.antarescircuit.jabbah.graph.ui.desktop.GraphDesktopViewItemCloseQuestion
 import io.antarescircuit.jabbah.graph.ui.desktop.GraphDesktopViewItemCloseRequest
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.GraphViewExecutionController
 import io.antarescircuit.jabbah.graph.view.ScenarioEvent
@@ -60,7 +61,7 @@ interface GraphNavigationView : UIView, GraphDesktopViewItem {
  */
 class GraphNavigationViewController(
 	val isRoot: Boolean,
-	override val drawingView: DrawingView<GraphView>,
+	override val drawingView: DrawingView<GraphElementView<*>, GraphView>,
 	initialSavable: Savable? = null,
 	private val isParentDetached: Boolean = false,
 	private val animator: Animator = AnimationModule.constantSpeedAnimator,
@@ -373,7 +374,7 @@ class GraphNavigationViewController(
 				} else {
 					navigationStackViewController.navigationStack.peek()
 				}
-				drawingView.content = outerEntry.content as DrawingViewContent<GraphView>
+				drawingView.content = outerEntry.content as DrawingViewContent<GraphElementView<*>, GraphView>
 
 				// Issue #975 (NPE when accessing outerEntry.voyageOrigin)
 				// Reason unknown. Implement a defensive strategy for determining the target ZoomedPointTranslation

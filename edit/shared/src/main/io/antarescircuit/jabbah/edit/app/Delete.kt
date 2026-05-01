@@ -22,7 +22,7 @@ import io.antarescircuit.jabbah.edit.module.EditModule
  */
 data class DeleteQuestion(
 	val components: Collection<Component>,
-	val drawingView: DrawingView<*>,
+	val drawingView: DrawingView<*,*>,
 )
 
 /**
@@ -34,7 +34,7 @@ class DeleteAction(
 	service: DrawingAppService = EditModule.drawingAppService
 ) : AbstractDeleteAction("edit.action.delete", eventBus, viewManager, service) {
 
-	override fun executeImpl(components: List<Component>, drawingView: DrawingView<*>) {
+	override fun executeImpl(components: List<Component>, drawingView: DrawingView<*,*>) {
 		if (components.isNotEmpty()) {
 			service.delete(components, drawingView)
 		}
@@ -54,13 +54,13 @@ class DeleteAction(
  * TODO How can we preserve the original stacking order of the removed Components?
  */
 class DeleteCommand(
-	drawingView: DrawingView<*>,
+	drawingView: DrawingView<*,*>,
 	private val componentIds: List<Int>,
 	cmdDescriptionKey: String? = null,
 	private val drawingService: DrawingService = EditModule.drawingService
 ) : AbstractDrawingViewCommand(cmdDescriptionKey ?: "edit.command.delete", drawingView) {
 
-	constructor(drawingView: DrawingView<*>, component: Component) : this(drawingView, mutableListOf(component.id))
+	constructor(drawingView: DrawingView<*,*>, component: Component) : this(drawingView, mutableListOf(component.id))
 
 	override fun getDetailedDescription(): String =
 		if (componentIds.size == 1) {

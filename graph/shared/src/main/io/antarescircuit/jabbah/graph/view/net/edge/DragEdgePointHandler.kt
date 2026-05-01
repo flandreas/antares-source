@@ -23,7 +23,7 @@ class DragEdgePointHandler : EdgeViewInputEventHandler() {
 
 	/** ---- [EdgeViewInputEventHandler] */
 
-	override fun dismiss(view: DrawingView<*>) {
+	override fun dismiss(view: DrawingView<*,*>) {
 		removeHighlight(view)
 	}
 
@@ -84,7 +84,7 @@ class DragEdgePointHandler : EdgeViewInputEventHandler() {
 
     /** ---- [DragEdgePointHandler] */
 
-    private fun displayHighlight(view: DrawingView<*>) {
+    private fun displayHighlight(view: DrawingView<*,*>) {
         LOG.trace("displayHighlight")
         if (highlight == null) {
             highlight = DragEdgePointHighlight(edgeView!!)
@@ -93,7 +93,7 @@ class DragEdgePointHandler : EdgeViewInputEventHandler() {
         highlight?.validate()
     }
 
-    private fun removeHighlight(view: DrawingView<*>) {
+    private fun removeHighlight(view: DrawingView<*,*>) {
         LOG.trace("removeHighlight")
         if (highlight != null) {
             view.ghostContainer.remove(highlight!!)

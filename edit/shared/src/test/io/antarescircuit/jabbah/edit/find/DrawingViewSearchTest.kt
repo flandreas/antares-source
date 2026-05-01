@@ -12,6 +12,8 @@ import dev.mokkery.MockMode
 import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.mock
+import io.antarescircuit.jabbah.edit.Drawing
+import io.antarescircuit.jabbah.edit.DrawingView
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -25,7 +27,7 @@ class DrawingViewSearchTest {
 
 	private val drawing = DrawingImpl<Component>()
 
-	private val view = EditModule.drawingViewFactory.create(drawing, null, false, "")
+	private val view: DrawingView<Component, Drawing<Component>> = EditModule.drawingViewFactory.create(drawing, null, false, "")
 
 	init {
 		view.canvas = createCanvas()

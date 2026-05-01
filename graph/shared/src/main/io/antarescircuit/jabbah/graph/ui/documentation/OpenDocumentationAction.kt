@@ -13,6 +13,7 @@ import io.antarescircuit.jabbah.graph.library.LibraryModule
 import io.antarescircuit.jabbah.graph.model.Document
 import io.antarescircuit.jabbah.graph.view.vertice.SubGraphVerticeView
 import io.antarescircuit.jabbah.graph.ui.desktop.GraphDesktopViewItem
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 
 /**
@@ -39,7 +40,7 @@ class OpenDocumentationAction(
             ))
         } else {
             eventBus.post(OpenDocumentationRequest(
-                viewManager.activeView!!.view as DrawingView<GraphView>,
+                viewManager.activeView!!.view as DrawingView<GraphElementView<*>, GraphView>,
                 singleSelection as SubGraphVerticeView<*>,
                 metaGraph.documentation!!,
                 metaGraph.name

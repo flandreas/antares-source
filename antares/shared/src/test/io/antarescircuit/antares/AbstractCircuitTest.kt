@@ -1,5 +1,9 @@
 package io.antarescircuit.antares
 
+import dev.mokkery.MockMode
+import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.mock
 import io.antarescircuit.antares.model.gate.CurrentUndefinedGateInputBehavior
 import io.antarescircuit.antares.model.gate.UndefinedGateInputBehavior
 import io.antarescircuit.jabbah.base.event.EventBus
@@ -11,8 +15,6 @@ import io.antarescircuit.jabbah.base.time.SystemSpeed
 import io.antarescircuit.jabbah.base.time.Timer
 import io.antarescircuit.jabbah.draw.style.DrawStyleModule
 import io.antarescircuit.jabbah.draw.style.StyleProvider
-import io.antarescircuit.jabbah.edit.Component
-import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.edit.DrawingViewMockBuilder
 import io.antarescircuit.jabbah.execution.actor.Actor
 import io.antarescircuit.jabbah.execution.actor.ActorListener
@@ -28,10 +30,6 @@ import io.antarescircuit.jabbah.graph.library.LibraryModule
 import io.antarescircuit.jabbah.graph.ui.GraphViewUI
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.GraphViewExecutionController
-import dev.mokkery.MockMode
-import dev.mokkery.answering.returns
-import dev.mokkery.every
-import dev.mokkery.mock
 import kotlin.test.BeforeTest
 import kotlin.test.assertTrue
 
@@ -67,7 +65,7 @@ abstract class AbstractCircuitTest {
 
 		val drawingViewBuilder = DrawingViewMockBuilder().withDrawingAccessor(::getCircuitView)
 		val graphViewUI = mock<GraphViewUI>(MockMode.autofill)
-		every { graphViewUI.drawingView } returns drawingViewBuilder.build<Component>() as DrawingView<GraphView>
+		every { graphViewUI.drawingView } returns drawingViewBuilder.build()
 
 		executionController = GraphViewExecutionController(
 			graphViewUI = graphViewUI,

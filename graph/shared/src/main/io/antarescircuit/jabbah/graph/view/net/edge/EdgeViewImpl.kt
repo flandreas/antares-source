@@ -749,12 +749,14 @@ open class EdgeViewImpl<T : Any>(
 		traversal.edgeViews.add(this)
 
 		if (origin?.connectableView is NodeView<*>) {
+			@Suppress("UNCHECKED_CAST")
 			(origin!!.connectableView as NodeView<T>).traverse(traversal)
 		} else if (origin?.port != null) {
 			traversal.ports.add(origin!!.port!!)
 		}
 
 		if (destination?.connectableView is NodeView<*>) {
+			@Suppress("UNCHECKED_CAST")
 			(destination!!.connectableView as NodeView<T>).traverse(traversal)
 		} else if (destination?.port != null) {
 			traversal.ports.add(destination!!.port!!)
@@ -887,7 +889,7 @@ open class EdgeViewImpl<T : Any>(
 			if (ref.portId != null) {
 				try {
 					port = cv.getPort(ref.portId)
-				} catch (e: NoSuchElementException) {
+				} catch (_: NoSuchElementException) {
 					LOG.warn("Couldn't resolve Port ${ref.portId} to connect to EdgeView")
 					return
 				}
@@ -895,8 +897,10 @@ open class EdgeViewImpl<T : Any>(
 
 			if (cv.isConnectable) {
 				if ("orig" == reference.name) {
+					@Suppress("UNCHECKED_CAST")
 					connectToOrigin(Connection(cv, port as Port<T>?))
 				} else {
+					@Suppress("UNCHECKED_CAST")
 					connectToDestination(Connection(cv, port as Port<T>?))
 				}
 			}

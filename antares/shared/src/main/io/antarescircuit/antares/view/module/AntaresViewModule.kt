@@ -17,7 +17,10 @@ import io.antarescircuit.antares.model.net.TransistorType
 import io.antarescircuit.antares.model.signal.DigitalSignal
 import io.antarescircuit.antares.model.signal.DigitalSignalNotation
 import io.antarescircuit.antares.model.testcase.Testcase
-import io.antarescircuit.antares.view.*
+import io.antarescircuit.antares.view.AntaresExecutionAnimationFactory
+import io.antarescircuit.antares.view.AntaresGraphNavigationViewControllerExtension
+import io.antarescircuit.antares.view.DigitalComponentViewDrawer
+import io.antarescircuit.antares.view.DigitalGraphView
 import io.antarescircuit.antares.view.addressable.LookupTableView
 import io.antarescircuit.antares.view.addressable.RAMView
 import io.antarescircuit.antares.view.addressable.ROMView
@@ -59,13 +62,12 @@ import io.antarescircuit.jabbah.base.help.HelpId
 import io.antarescircuit.jabbah.base.help.HelpSource
 import io.antarescircuit.jabbah.base.help.HelpSourceRegistry
 import io.antarescircuit.jabbah.base.module.BaseModule
+import io.antarescircuit.jabbah.draw.ApplicationContextHolder
+import io.antarescircuit.jabbah.draw.drawable.DrawableDrawer
 import io.antarescircuit.jabbah.draw.style.DrawStyleModule
 import io.antarescircuit.jabbah.draw.style.Style
 import io.antarescircuit.jabbah.draw.style.Themes
-import io.antarescircuit.jabbah.edit.DrawingViewFactory
-import io.antarescircuit.jabbah.edit.Grid
-import io.antarescircuit.jabbah.edit.Look
-import io.antarescircuit.jabbah.edit.SelectionDrawingStrategy
+import io.antarescircuit.jabbah.edit.*
 import io.antarescircuit.jabbah.edit.drag.DragDestinationHighlightFactoryRegistry
 import io.antarescircuit.jabbah.edit.drag.EditDragModule
 import io.antarescircuit.jabbah.edit.figure.FigureProvider
@@ -192,11 +194,20 @@ object AntaresViewModule : AbstractModule() {
 		Translations.addBundle("antares")
 
 		// Overwritten to change the [DrawableDrawer]
-		EditModule.drawingViewFactory = DrawingViewFactory { drawing, contextHolder, displayGlobalMessages, name ->
-			val drawingView = DrawingViewImpl(drawing, applicationContextHolder = contextHolder, displayGlobalMessages = displayGlobalMessages, name = name)
-			drawingView.addDrawableDrawer(DigitalComponentViewDrawer())
-			drawingView
+		EditModule.drawingViewFactory = object : DrawingViewFactory {
+			override fun <C : Component, T : Drawing<C>> create(
+				drawing: T,
+				contextHolder: ApplicationContextHolder?,
+				displayGlobalMessages: Boolean,
+				name: String
+			): DrawingView<C, T> {
+				val drawingView = DrawingViewImpl(drawing, applicationContextHolder = contextHolder, displayGlobalMessages = displayGlobalMessages, name = name)
+				@Suppress("UNCHECKED_CAST")
+				drawingView.addDrawableDrawer(DigitalComponentViewDrawer() as DrawableDrawer<C>)
+				return drawingView
+			}
 		}
+
 		EditModule.drawingAppService = AntaresGraphViewService()
 
 		EditModule.attentionDrawerFactory = { signal ->

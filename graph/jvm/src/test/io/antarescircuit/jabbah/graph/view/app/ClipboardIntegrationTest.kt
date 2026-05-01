@@ -4,6 +4,7 @@ import io.antarescircuit.jabbah.base.geom.Direction
 import io.antarescircuit.jabbah.base.geom.Point2D
 import io.antarescircuit.jabbah.base.geom.Rectangle2D
 import io.antarescircuit.jabbah.edit.Component
+import io.antarescircuit.jabbah.edit.Drawing
 import io.antarescircuit.jabbah.edit.Editor
 import io.antarescircuit.jabbah.edit.command.SourcingCommandManager
 import io.antarescircuit.jabbah.edit.editor.EditorImpl
@@ -35,7 +36,7 @@ class ClipboardIntegrationTest {
 	private val v2: TestVerticeView
 	private val ev: EdgeView<Boolean>
 
-	private val view get() = _view.build<Component>()
+	private val view get() = _view.build<Component, Drawing<Component>>()
 
 	private val editor: Editor
 		get() {

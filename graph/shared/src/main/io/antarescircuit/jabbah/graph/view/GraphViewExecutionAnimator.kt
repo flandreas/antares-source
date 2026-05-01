@@ -44,7 +44,7 @@ import io.antarescircuit.jabbah.graph.view.module.GraphViewModule
  */
 class GraphViewExecutionAnimator(
 	private val actorListener: ActorListener,
-	private val drawingView: DrawingView<GraphView>,
+	private val drawingView: DrawingView<GraphElementView<*>, GraphView>,
 	private val applicationContextHolder: GraphApplicationContextHolder,
 	private val animationFactory: GraphViewExecutionAnimationFactory = GraphViewModule.graphViewExecutionAnimationFactory,
 	private val eventBus: EventBus = BaseModule.eventBus,
@@ -138,7 +138,7 @@ class GraphViewExecutionAnimator(
 	 * Remove all animation highlighting artifacts from the animation container of the
 	 * specified [DrawingViewContent]. Called after execution has been stopped.
 	 */
-	fun cleanup(content: DrawingViewContent<*>) {
+	fun cleanup(content: DrawingViewContent<*,*>) {
 		content.animationContainer.clear()
 	}
 

@@ -12,6 +12,9 @@ import dev.mokkery.every
 import dev.mokkery.mock
 import dev.mokkery.verify
 import dev.mokkery.verify.VerifyMode.Companion.exactly
+import io.antarescircuit.jabbah.graph.model.Graph
+import io.antarescircuit.jabbah.graph.view.GraphElementView
+import io.antarescircuit.jabbah.graph.view.GraphView
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -130,7 +133,7 @@ class SwitchViewTest {
 	private fun contextFor(mouseEvent: MouseEvent? = null, keyEvent: KeyEvent? = null): ActorInteractionContext {
 		return ActorInteractionContext(
 			signalHandler = mock(MockMode.autofill),
-			view = DrawingViewMockBuilder().build<Component>(),
+			view = DrawingViewMockBuilder().build<GraphElementView<*>, GraphView>(),
 			mouseEvent = mouseEvent,
 			keyEvent = keyEvent,
 			x = 0.0,

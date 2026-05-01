@@ -4,6 +4,7 @@ import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.edit.Undoable
 import io.antarescircuit.jabbah.edit.command.AbstractCommand
 import io.antarescircuit.jabbah.graph.model.vertice.ObjectLink
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 
 /** Represents the change of the value of an [Addressable] cell by the user.*/
@@ -14,7 +15,7 @@ data class AddressableCellChange(
 )
 
 class AddressableCellChangeCommand(
-	private val drawingView: DrawingView<GraphView>?,
+	private val drawingView: DrawingView<GraphElementView<*>, GraphView>?,
 	private val link: ObjectLink<Addressable>,
 	private val changes: Collection<AddressableCellChange>
 ) : AbstractCommand("antares.command.memoryContents"), Undoable {

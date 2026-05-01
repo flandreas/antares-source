@@ -9,6 +9,7 @@ import io.antarescircuit.jabbah.graph.AbstractTitledGraphDesktopViewItemSwing
 import io.antarescircuit.jabbah.graph.model.Document
 import io.antarescircuit.jabbah.graph.ui.desktop.AbstractGraphDesktopViewItemSwing
 import io.antarescircuit.jabbah.graph.ui.desktop.GraphDesktopViewItem
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import java.awt.BorderLayout
 import javax.swing.JPanel
@@ -53,7 +54,7 @@ class DocumentationDesktopViewItemSwing(
 
     /** ---- [GraphDesktopViewItem] */
 
-    override val drawingView: DrawingView<GraphView>? get() = null
+    override val drawingView: DrawingView<GraphElementView<*>, GraphView>? get() = null
 
     override fun displays(content: Any?): Boolean =
         content === controller.viewerController.documentation
@@ -62,7 +63,7 @@ class DocumentationDesktopViewItemSwing(
         controller.dispose()
     }
 
-    override fun findContent(condition: (DrawingViewContent<GraphView>) -> Boolean): DrawingViewContent<*>? = null
+    override fun findContent(condition: (DrawingViewContent<GraphElementView<*>, GraphView>) -> Boolean): DrawingViewContent<*,*>? = null
 
     override fun createCloseRequest(): Any = CloseViewRequest(this)
 

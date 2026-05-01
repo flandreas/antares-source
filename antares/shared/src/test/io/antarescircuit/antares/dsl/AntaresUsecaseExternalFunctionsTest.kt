@@ -29,13 +29,14 @@ import dev.mokkery.MockMode
 import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.mock
+import io.antarescircuit.jabbah.graph.view.GraphElementView
 import kotlin.test.*
 
 class AntaresUsecaseExternalFunctionsTest : AbstractCircuitTest() {
 
 	private lateinit var circuitView: GraphView
 
-	private lateinit var view: DrawingView<GraphView>
+	private lateinit var view: DrawingView<GraphElementView<*>, GraphView>
 
 	private lateinit var switch: SwitchView
 
@@ -75,7 +76,7 @@ class AntaresUsecaseExternalFunctionsTest : AbstractCircuitTest() {
 		view = DrawingViewImpl(
 			drawing = circuitView as Drawing<Component>,
 			transformFactory = { AffineTransformImpl() },
-		) as DrawingView<GraphView>
+		) as DrawingView<GraphElementView<*>, GraphView>
 		every { canvas.view } returns view
 
 		view.canvas = canvas

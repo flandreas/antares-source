@@ -35,6 +35,7 @@ open class PropertyCommandSwing<V>(
 		}
 	}
 
+	@Suppress("UNCHECKED_CAST") // No generics in beanutils library
 	override fun getValue(bean: Bean): V? {
 		return if (AbstractReflectionPropertySwing.isNested(getterPropertyName)) {
 			PropertyUtils.getNestedProperty(bean, getterPropertyName) as V?

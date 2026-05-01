@@ -213,7 +213,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 			GraphModuleJvm.projectAkrabClientService = {
 				val serverUrl = try {
 					URL(BaseModule.properties.getString(DataLocation.PROP_SERVER_URL))
-				} catch (e: Exception) {
+				} catch (_: Exception) {
 					URL("http://localhost")
 				}
 				ProjectAkrabClientServiceJvm(
@@ -262,7 +262,6 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		AntaresViewModule.reset()
 	}
 
-	@Suppress("SpellCheckingInspection")
 	private fun customizeProperties(properties: Properties) {
 		properties.set(AbstractLibraryImportProcess.PROP_PROJECT_FILE_EXTENSION, "acp") // Antares Circuit Project
 		properties.set(AbstractLibraryImportProcess.PROP_LIBRARY_FILE_EXTENSION, "acl") // Antares Circuit Library
@@ -318,6 +317,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		registry.registerRenderer(LEDShape::class.java, EnumRenderer::class.java)
 	}
 
+	@Suppress("UNCHECKED_CAST")
 	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
 		registry.register(LightColor::class.java) { LightColorEditor((it as CommandPropertySwing<LightColor>).optional) }
 		registry.register(PortCount::class.java) { PortCountEditor((it as CommandPropertySwing<PortCount>).filter) }
@@ -393,6 +393,8 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 					editor: Editor,
 					beanProvider: BeanProvider
 				): AbstractReflectionPropertySwing<*> {
+
+					@Suppress("UNCHECKED_CAST")
 					return GraphParamValuePropertySwing(
 						paramDefinition = def as GraphParamDefinition<BitWidth>,
 						propertyName = "BitWidth", // only used for logging
@@ -411,6 +413,8 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 					editor: Editor,
 					beanProvider: BeanProvider
 				): AbstractReflectionPropertySwing<*> {
+
+					@Suppress("UNCHECKED_CAST")
 					return GraphParamValuePropertySwing(
 						paramDefinition = def as GraphParamDefinition<LightColor>,
 						propertyName = "LightColor",

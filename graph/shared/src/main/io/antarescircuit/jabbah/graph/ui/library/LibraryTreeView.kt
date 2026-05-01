@@ -142,6 +142,7 @@ class LibraryTreeViewController (
 		}
 		if (item is ImageLibraryElement) {
 			// Moving images between Libraries not yet supported
+			@Suppress("EQUALITY_NOT_APPLICABLE_WARNING")
 			return item !== destination && item.library === destination.library
 		}
 		if (item is LibraryElement) {

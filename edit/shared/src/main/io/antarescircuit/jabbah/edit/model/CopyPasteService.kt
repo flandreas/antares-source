@@ -27,7 +27,7 @@ open class CopyPasteService {
 	 * always visible to the user.
 	 * @throws IllegalArgumentException if [contents] could not be parsed, probably not valid content
 	 */
-	open fun paste(contents: String, view: DrawingView<Drawing<Component>>): PasteInfo {
+	open fun paste(contents: String, view: DrawingView<Component, Drawing<Component>>): PasteInfo {
 		throw NotImplementedError()
 	}
 
@@ -36,13 +36,13 @@ open class CopyPasteService {
 	 * [Drawing] of [view]. This implementation is not allowed to adjust the location of pasted components,
 	 * but must always and only use [dislocation].
 	 */
-	open fun paste(contents: String, view: DrawingView<Drawing<Component>>, dislocation: Point2D): PasteInfo =
+	open fun paste(contents: String, view: DrawingView<Component, Drawing<Component>>, dislocation: Point2D): PasteInfo =
         paste(contents, view.drawing, dislocation, view)
 
 	/**
 	 * Pastes [contents] into the specified [Drawing]. Redoable logic should use the other [paste] methods.
 	 */
-	open fun paste(contents: String, drawing: Drawing<Component>, dislocation: Point2D, view: DrawingView<*>): PasteInfo {
+	open fun paste(contents: String, drawing: Drawing<Component>, dislocation: Point2D, view: DrawingView<*,*>): PasteInfo {
 		throw NotImplementedError()
 	}
 

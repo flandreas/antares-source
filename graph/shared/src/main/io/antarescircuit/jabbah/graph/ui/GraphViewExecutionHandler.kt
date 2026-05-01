@@ -36,7 +36,7 @@ import io.antarescircuit.jabbah.graph.view.vertice.SubGraphVerticeView
  * itself when not in execution mode.
  */
 class GraphViewExecutionHandler(
-	view: DrawingView<GraphView>,
+	view: DrawingView<GraphElementView<*>, GraphView>,
 	private val applicationContextHolder: GraphApplicationContextHolder,
 	eventBus: EventBus = BaseModule.eventBus
 ) : AbstractGraphViewExecutionHandler(view, eventBus) {
