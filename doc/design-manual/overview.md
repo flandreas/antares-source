@@ -43,7 +43,7 @@ support for undo/redo using the `Command` pattern, property editing, and a set o
 : The `graph` module contains a framework for editing, drawing and executing arbitrary `Graphs` consisting of `Vertices` connected by `Nets`, while strictly separating model and view layer. The Antares application uses `Graph` and `GraphView` to implement circuits.
 
 [antares](module-antares.md)
-: TODO
+: `antares` is an application module that uses all the Jabbah framework's modules to implement digital (and analog) circuit editing and simulation. Most of the required functionality is already provided by the `graph` module. `antares` extends the set of generic core classes to adapt them to the specific world of digital signals.
 
 ## Cross-cutting aspects
 
