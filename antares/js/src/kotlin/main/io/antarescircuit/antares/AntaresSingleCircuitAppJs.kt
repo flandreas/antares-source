@@ -17,17 +17,17 @@ import kotlin.js.Promise
 
 @JsExport
 class AntaresSingleCircuitAppJs(
-    environment: io.antarescircuit.jabbah.app.Environment,
+    environment: Environment,
     akrabURL: String
-) : io.antarescircuit.antares.AbstractAntaresAppJs(environment, akrabURL) {
+) : AbstractAntaresAppJs(environment, akrabURL) {
 
     companion object {
-        private val LOG by _root_ide_package_.io.antarescircuit.jabbah.base.logger(AntaresSingleCircuitAppJs::class)
+        private val LOG by logger(AntaresSingleCircuitAppJs::class)
     }
 
     /**
-     * Initializes an application context and load the specified [io.antarescircuit.jabbah.graph.library.Library]/[io.antarescircuit.jabbah.graph.project.Project] and [io.antarescircuit.jabbah.graph.MetaGraph].
-     * The result of the returned [Promise] can be cast to [io.antarescircuit.jabbah.graph.MetaGraph], which can't be declared
+     * Initializes an application context and load the specified [Library]/[Project] and [MetaGraph].
+     * The result of the returned [Promise] can be cast to [MetaGraph], which can't be declared
      * explicitly because that would require `@JsExport` for everything.
      */
     @Suppress("unused")
@@ -40,9 +40,9 @@ class AntaresSingleCircuitAppJs(
         return scope.promise {
             Promise.all(loadTranslations().toTypedArray()).await()
             init(
-                _root_ide_package_.io.antarescircuit.jabbah.edit.auth.DesktopUserHolder(
-                    _root_ide_package_.io.antarescircuit.jabbah.edit.auth.DesktopUser(
-                        _root_ide_package_.io.antarescircuit.jabbah.edit.auth.UserIdentity.ANYBODY,
+                DesktopUserHolder(
+                    DesktopUser(
+                        UserIdentity.ANYBODY,
                         "",
                         false
                     )
@@ -51,11 +51,11 @@ class AntaresSingleCircuitAppJs(
         }
     }
 
-    private suspend fun load(libraryUuid: String, metaGraphUuid: String): Promise<io.antarescircuit.jabbah.graph.MetaGraph> {
+    private suspend fun load(libraryUuid: String, metaGraphUuid: String): Promise<MetaGraph> {
         LOG.debug("Loading repository in AntaresSingleCircuitAppLoaderJs")
         val library = loadRepository(libraryUuid).await()
 
         LOG.debug("Repository loaded, start loading MetaGraph")
-        return loadMetaGraph(library, _root_ide_package_.io.antarescircuit.jabbah.base.UUID(metaGraphUuid))
+        return loadMetaGraph(library, UUID(metaGraphUuid))
     }
 }

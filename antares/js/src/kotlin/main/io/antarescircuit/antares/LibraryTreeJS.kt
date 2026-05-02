@@ -18,45 +18,45 @@ enum class LibraryTreeNodeType {
 @JsExport
 data class LibraryTreeNodeJS(
     val name: String,
-    val type: io.antarescircuit.antares.LibraryTreeNodeType,
+    val type: LibraryTreeNodeType,
     val children: Array<LibraryTreeNodeJS>,
     val id: String?,
 )
 
-fun createLibraryTreeJS(library: io.antarescircuit.jabbah.graph.library.Library): io.antarescircuit.antares.LibraryTreeNodeJS =
-    _root_ide_package_.io.antarescircuit.antares.createLibraryTreeNode(
+fun createLibraryTreeJS(library: Library): LibraryTreeNodeJS =
+    createLibraryTreeNode(
         "Desktop",
-        _root_ide_package_.io.antarescircuit.antares.LibraryTreeNodeType.Desktop,
+        LibraryTreeNodeType.Desktop,
         null,
         library.expandedImports.libraries
     )!!
 
-private fun createLibraryTreeNode(item: io.antarescircuit.jabbah.graph.library.LibraryItem): io.antarescircuit.antares.LibraryTreeNodeJS? {
+private fun createLibraryTreeNode(item: LibraryItem): LibraryTreeNodeJS? {
     return when (item) {
-        is io.antarescircuit.jabbah.graph.library.Library -> {
-            _root_ide_package_.io.antarescircuit.antares.createLibraryTreeNode(
+        is Library -> {
+            createLibraryTreeNode(
                 item.name.value,
-                _root_ide_package_.io.antarescircuit.antares.LibraryTreeNodeType.Library,
+                LibraryTreeNodeType.Library,
                 item.uuid.id,
                 item.getItems()
             )
         }
 
-        is io.antarescircuit.jabbah.graph.library.LibraryDirectory -> {
-            _root_ide_package_.io.antarescircuit.antares.createLibraryTreeNode(
+        is LibraryDirectory -> {
+            createLibraryTreeNode(
                 item.name.value,
-                _root_ide_package_.io.antarescircuit.antares.LibraryTreeNodeType.Folder,
+                LibraryTreeNodeType.Folder,
                 null,
                 item.getItems()
             )
         }
 
-        is io.antarescircuit.jabbah.graph.library.ContainerLibraryElement -> {
-            _root_ide_package_.io.antarescircuit.antares.LibraryTreeNodeJS(
-                _root_ide_package_.io.antarescircuit.jabbah.base.richtext.RichText.stripToPlainText(
+        is ContainerLibraryElement -> {
+            LibraryTreeNodeJS(
+                RichText.stripToPlainText(
                     item.name.value
                 ),
-                _root_ide_package_.io.antarescircuit.antares.LibraryTreeNodeType.MetaGraph,
+                LibraryTreeNodeType.MetaGraph,
                 emptyArray(),
                 item.uuid.id
             )
@@ -70,18 +70,18 @@ private fun createLibraryTreeNode(item: io.antarescircuit.jabbah.graph.library.L
 
 private fun createLibraryTreeNode(
     name: String,
-    type: io.antarescircuit.antares.LibraryTreeNodeType,
+    type: LibraryTreeNodeType,
     id: String?,
-    items: List<io.antarescircuit.jabbah.graph.library.LibraryItem>
-): io.antarescircuit.antares.LibraryTreeNodeJS? {
-    val children = items.mapNotNull { _root_ide_package_.io.antarescircuit.antares.createLibraryTreeNode(it) }
-    return if (type == _root_ide_package_.io.antarescircuit.antares.LibraryTreeNodeType.Folder && children.isEmpty()) {
+    items: List<LibraryItem>
+): LibraryTreeNodeJS? {
+    val children = items.mapNotNull { createLibraryTreeNode(it) }
+    return if (type == LibraryTreeNodeType.Folder && children.isEmpty()) {
         null
     } else {
-        _root_ide_package_.io.antarescircuit.antares.LibraryTreeNodeJS(
+        LibraryTreeNodeJS(
             name,
             type,
-            items.mapNotNull { _root_ide_package_.io.antarescircuit.antares.createLibraryTreeNode(it) }.toTypedArray(),
+            items.mapNotNull { createLibraryTreeNode(it) }.toTypedArray(),
             id
         )
     }

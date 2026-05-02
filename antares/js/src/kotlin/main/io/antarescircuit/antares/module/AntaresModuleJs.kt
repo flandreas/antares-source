@@ -21,76 +21,58 @@ import io.antarescircuit.jabbah.graph.project.ProjectModule
 /**
  * Module definition of the [io.antarescircuit.antares] module for the JS platform.
  */
-object AntaresModuleJs : io.antarescircuit.jabbah.base.AbstractModule() {
+object AntaresModuleJs : AbstractModule() {
 
     override fun initialize() {
-        _root_ide_package_.io.antarescircuit.jabbah.edit.module.EditModuleJs.require()
+        EditModuleJs.require()
 
-        _root_ide_package_.io.antarescircuit.jabbah.graph.library.LibraryModule.DEF_LIBRARY_UUID = _root_ide_package_.io.antarescircuit.antares.AntaresApplication.DEF_LIBRARY_UUID
+        LibraryModule.DEF_LIBRARY_UUID = AntaresApplication.DEF_LIBRARY_UUID
 
-        _root_ide_package_.io.antarescircuit.antares.view.module.AntaresViewModule.require()
+        AntaresViewModule.require()
 
-        val akrabUrl = _root_ide_package_.io.antarescircuit.jabbah.base.module.BaseModule.properties.getString(
-            _root_ide_package_.io.antarescircuit.jabbah.base.DataLocation.PROP_SERVER_URL)
+        val akrabUrl = BaseModule.properties.getString(
+            DataLocation.PROP_SERVER_URL)
 
         // TODO Initialize RasterImageFactory as well.
         // Required by Components that build Images programmatically, such as VideoRamView.
 
-        _root_ide_package_.io.antarescircuit.jabbah.draw.module.DrawModule.imageLoader =
-            _root_ide_package_.io.antarescircuit.jabbah.graph.draw.ImageLoaderJs()
+        DrawModule.imageLoader = ImageLoaderJs()
 
-        _root_ide_package_.io.antarescircuit.jabbah.graph.model.module.GraphModelModule.nonVolatileService =
-            _root_ide_package_.io.antarescircuit.jabbah.graph.model.nonvolatile.EmptyNonVolatileService()
+        GraphModelModule.nonVolatileService = EmptyNonVolatileService()
 
-        _root_ide_package_.io.antarescircuit.jabbah.graph.library.LibraryModule.systemLibraryPersistenceService =
-            _root_ide_package_.io.antarescircuit.jabbah.graph.library.Akrab2RestSystemLibraryPersistenceServiceJs(
-                akrabUrl
-            )
-        _root_ide_package_.io.antarescircuit.jabbah.graph.library.LibraryModule.libraryFactory =
-            _root_ide_package_.io.antarescircuit.antares.view.AntaresLibraryFactory()
+        LibraryModule.systemLibraryPersistenceService = Akrab2RestSystemLibraryPersistenceServiceJs(akrabUrl)
+        LibraryModule.libraryFactory = AntaresLibraryFactory()
 
-        _root_ide_package_.io.antarescircuit.jabbah.graph.library.LibraryModule.libraryManagementService =
-            _root_ide_package_.io.antarescircuit.jabbah.graph.library.LibraryManagementService()
+        LibraryModule.libraryManagementService = LibraryManagementService()
 
-        _root_ide_package_.io.antarescircuit.jabbah.graph.library.LibraryModule.systemLibraryDictionaryService =
-            _root_ide_package_.io.antarescircuit.jabbah.graph.library.dictionary.LibraryDictionaryService(
-                _root_ide_package_.io.antarescircuit.jabbah.graph.library.dictionary.Akrab2RestLibraryDictionaryPersistenceService(
-                    akrabUrl
-                )
-            )
+        LibraryModule.systemLibraryDictionaryService = LibraryDictionaryService(Akrab2RestLibraryDictionaryPersistenceService(akrabUrl))
 
-        _root_ide_package_.io.antarescircuit.jabbah.graph.library.LibraryModule.libraryManagementService =
-            _root_ide_package_.io.antarescircuit.jabbah.graph.library.LibraryManagementService()
+        LibraryModule.libraryManagementService = LibraryManagementService()
 
-        _root_ide_package_.io.antarescircuit.jabbah.graph.project.ProjectModule.projectLibraryPersistenceService =
-            _root_ide_package_.io.antarescircuit.jabbah.graph.library.Akrab2RestProjectPersistenceServiceJs(akrabUrl)
+        ProjectModule.projectLibraryPersistenceService = Akrab2RestProjectPersistenceServiceJs(akrabUrl)
 
-        _root_ide_package_.io.antarescircuit.jabbah.graph.project.ProjectModule.projectManagementService =
-            _root_ide_package_.io.antarescircuit.jabbah.graph.project.ProjectManagementService(
-                newMetaGraphNameTranslationKey = "graph.name.unknown"
-            )
-
+        ProjectModule.projectManagementService = ProjectManagementService(newMetaGraphNameTranslationKey = "graph.name.unknown")
 
         loadTranslations()
     }
 
     override fun resetDependencies() {
-        _root_ide_package_.io.antarescircuit.jabbah.edit.module.EditModuleJs.reset()
-        _root_ide_package_.io.antarescircuit.antares.view.module.AntaresViewModule.reset()
+        EditModuleJs.reset()
+        AntaresViewModule.reset()
     }
 
     /** TODO Work around for missing implementation of [io.antarescircuit.jabbah.base.Translations] mechanism for texts used for demo application.*/
     private fun loadTranslations() {
-        _root_ide_package_.io.antarescircuit.jabbah.base.Translations.addKey("execution.action.execute.name", "Simulate")
-        _root_ide_package_.io.antarescircuit.jabbah.base.Translations.addKey("execution.action.start.desc", "Start simulation")
-        _root_ide_package_.io.antarescircuit.jabbah.base.Translations.addKey("execution.action.stop.desc", "Stop simulation")
-        _root_ide_package_.io.antarescircuit.jabbah.base.Translations.addKey("execution.action.speed.name", "Simulation Speed")
-        _root_ide_package_.io.antarescircuit.jabbah.base.Translations.addKey("execution.systemSpeedCategory.use", "Use")
-        _root_ide_package_.io.antarescircuit.jabbah.base.Translations.addKey("execution.systemSpeedCategory.observe", "Observe")
-        _root_ide_package_.io.antarescircuit.jabbah.base.Translations.addKey("execution.systemSpeedCategory.explore", "Explore")
-        _root_ide_package_.io.antarescircuit.jabbah.base.Translations.addKey("graph.desktop.name", "Desktop")
-        _root_ide_package_.io.antarescircuit.jabbah.base.Translations.addKey("library.savable.prefix", "Library Element")
-        _root_ide_package_.io.antarescircuit.jabbah.base.Translations.addKey("library.library.name", "Library")
-        _root_ide_package_.io.antarescircuit.jabbah.base.Translations.addKey("project.project.name", "Project")
+        Translations.addKey("execution.action.execute.name", "Simulate")
+        Translations.addKey("execution.action.start.desc", "Start simulation")
+        Translations.addKey("execution.action.stop.desc", "Stop simulation")
+        Translations.addKey("execution.action.speed.name", "Simulation Speed")
+        Translations.addKey("execution.systemSpeedCategory.use", "Use")
+        Translations.addKey("execution.systemSpeedCategory.observe", "Observe")
+        Translations.addKey("execution.systemSpeedCategory.explore", "Explore")
+        Translations.addKey("graph.desktop.name", "Desktop")
+        Translations.addKey("library.savable.prefix", "Library Element")
+        Translations.addKey("library.library.name", "Library")
+        Translations.addKey("project.project.name", "Project")
     }
 }

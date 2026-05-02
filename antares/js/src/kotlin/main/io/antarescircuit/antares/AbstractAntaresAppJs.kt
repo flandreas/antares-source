@@ -27,34 +27,34 @@ import kotlin.js.Promise
 
 /**
  * Establishes everything in Kotlin code necessary to display a single circuit of a project
- * in a JavaScript application, and loads [io.antarescircuit.jabbah.graph.MetaGraph] and [io.antarescircuit.jabbah.graph.library.Library] data to be displayed later.
+ * in a JavaScript application, and loads [MetaGraph] and [Library] data to be displayed later.
  */
 abstract class AbstractAntaresAppJs(
-    private val environment: io.antarescircuit.jabbah.app.Environment,
+    private val environment: Environment,
     private val akrabURL: String
 ) {
 
     companion object {
-        private val LOG by _root_ide_package_.io.antarescircuit.jabbah.base.logger(AbstractAntaresAppJs::class)
+        private val LOG by logger(AbstractAntaresAppJs::class)
 
         // TODO: Find a way to make this dynamic, i.e. read from version.txt also on JS platform
-        private val VERSION = _root_ide_package_.io.antarescircuit.jabbah.app.ApplicationVersion("2.0.0")
+        private val VERSION = ApplicationVersion("2.0.0")
     }
 
     private val isUserAuthenticated: Boolean get() =
-        _root_ide_package_.io.antarescircuit.jabbah.edit.auth.EditAuthModule.userHolder.user.identity.id != _root_ide_package_.io.antarescircuit.jabbah.edit.auth.UserIdentity.ANYBODY.id
+        EditAuthModule.userHolder.user.identity.id != UserIdentity.ANYBODY.id
 
     /**
      * Configures the application to be able to start calling Akrab REST endpoints, especially
      * the translations, which are fetched first.
      */
     protected fun configure() {
-        _root_ide_package_.io.antarescircuit.jabbah.base.module.BaseModuleJs.require()
-        _root_ide_package_.io.antarescircuit.jabbah.base.module.BaseModule.properties.set(_root_ide_package_.io.antarescircuit.jabbah.base.DataLocation.PROP_SERVER_URL, akrabURL)
-        _root_ide_package_.io.antarescircuit.jabbah.base.module.BaseModuleJs.translationService =
-            _root_ide_package_.io.antarescircuit.jabbah.base.TranslationServiceJsImpl(
-                _root_ide_package_.io.antarescircuit.jabbah.base.module.BaseModule.properties.getString(
-                    _root_ide_package_.io.antarescircuit.jabbah.base.DataLocation.PROP_SERVER_URL
+        BaseModuleJs.require()
+        BaseModule.properties.set(DataLocation.PROP_SERVER_URL, akrabURL)
+        BaseModuleJs.translationService =
+            TranslationServiceJsImpl(
+                BaseModule.properties.getString(
+                    DataLocation.PROP_SERVER_URL
                 )
             )
     }
@@ -63,41 +63,39 @@ abstract class AbstractAntaresAppJs(
      * Initializes the application with a [io.antarescircuit.jabbah.edit.auth.User] and a theme, and some other initializations.
      * After that, the required user data can be fetched.
      */
-    protected fun init(userHolder: io.antarescircuit.jabbah.edit.auth.UserHolder<io.antarescircuit.jabbah.edit.auth.User>, themeName: String?) {
-        _root_ide_package_.io.antarescircuit.jabbah.edit.auth.EditAuthModule.require()
-        _root_ide_package_.io.antarescircuit.jabbah.edit.auth.EditAuthModule.userHolder = userHolder
+    protected fun init(userHolder: UserHolder<User>, themeName: String?) {
+        EditAuthModule.require()
+        EditAuthModule.userHolder = userHolder
 
-        _root_ide_package_.io.antarescircuit.antares.module.AntaresModuleJs.require()
-        _root_ide_package_.io.antarescircuit.jabbah.base.module.BaseModule.settings.set(_root_ide_package_.io.antarescircuit.jabbah.execution.scheduler.SchedulerImpl.SETTING_ENABLE_SOFT_BREAKPOINTS, true)
+        AntaresModuleJs.require()
+        BaseModule.settings.set(SchedulerImpl.SETTING_ENABLE_SOFT_BREAKPOINTS, true)
 
-        _root_ide_package_.io.antarescircuit.jabbah.app.CurrentApplicationVersion.version = VERSION
-        _root_ide_package_.io.antarescircuit.jabbah.base.LogSystem.level = _root_ide_package_.io.antarescircuit.jabbah.base.LogLevel.Info
+        CurrentApplicationVersion.version = VERSION
+        LogSystem.level = LogLevel.Info
 
-        _root_ide_package_.io.antarescircuit.antares.view.theme.AntaresThemes.install(themeName)
+        AntaresThemes.install(themeName)
     }
 
     protected fun loadTranslations(): List<Promise<Unit>> {
         val promises = mutableListOf<Promise<Unit>>()
-        _root_ide_package_.io.antarescircuit.jabbah.base.Translations.addBundleAsync("jabbah-base")?.let { promises.add(it) }
-        _root_ide_package_.io.antarescircuit.jabbah.base.Translations.addBundleAsync("jabbah-draw")?.let { promises.add(it) }
-        _root_ide_package_.io.antarescircuit.jabbah.base.Translations.addBundleAsync("jabbah-edit")?.let { promises.add(it) }
-        _root_ide_package_.io.antarescircuit.jabbah.base.Translations.addBundleAsync("jabbah-execution")?.let { promises.add(it) }
-        _root_ide_package_.io.antarescircuit.jabbah.base.Translations.addBundleAsync("jabbah-app")?.let { promises.add(it) }
-        _root_ide_package_.io.antarescircuit.jabbah.base.Translations.addBundleAsync("jabbah-graph")?.let { promises.add(it) }
-        _root_ide_package_.io.antarescircuit.jabbah.base.Translations.addBundleAsync("antares")?.let { promises.add(it) }
+        Translations.addBundleAsync("jabbah-base")?.let { promises.add(it) }
+        Translations.addBundleAsync("jabbah-draw")?.let { promises.add(it) }
+        Translations.addBundleAsync("jabbah-edit")?.let { promises.add(it) }
+        Translations.addBundleAsync("jabbah-execution")?.let { promises.add(it) }
+        Translations.addBundleAsync("jabbah-app")?.let { promises.add(it) }
+        Translations.addBundleAsync("jabbah-graph")?.let { promises.add(it) }
+        Translations.addBundleAsync("antares")?.let { promises.add(it) }
         return promises
     }
 
-    protected fun loadRepository(libraryUuid: String): Promise<io.antarescircuit.jabbah.graph.library.Library> {
+    protected fun loadRepository(libraryUuid: String): Promise<Library> {
         LOG.debug("Loading repository $libraryUuid")
         val url = if (isUserAuthenticated) {
             "${
-                _root_ide_package_.io.antarescircuit.jabbah.base.module.BaseModule.properties.getString(
-                    _root_ide_package_.io.antarescircuit.jabbah.base.DataLocation.PROP_SERVER_URL)}/repositoryProtected/$libraryUuid"
+                BaseModule.properties.getString(DataLocation.PROP_SERVER_URL)}/repositoryProtected/$libraryUuid"
         } else {
             "${
-                _root_ide_package_.io.antarescircuit.jabbah.base.module.BaseModule.properties.getString(
-                    _root_ide_package_.io.antarescircuit.jabbah.base.DataLocation.PROP_SERVER_URL)}/repository/$libraryUuid"
+                BaseModule.properties.getString(DataLocation.PROP_SERVER_URL)}/repository/$libraryUuid"
         }
         val headers = Headers()
         headers.append("Content-Type", "text/xml")
@@ -112,24 +110,21 @@ abstract class AbstractAntaresAppJs(
                 if (status != 200) {
                     throw Error(it)
                 }
-                val library = _root_ide_package_.io.antarescircuit.jabbah.io.StoreXmlReader(
-                    _root_ide_package_.io.antarescircuit.jabbah.io.DomXmlReader(
-                        it
-                    )
-                ).readStorable() as io.antarescircuit.jabbah.graph.library.Library
+                val library = StoreXmlReader(DomXmlReader(it)
+                ).readStorable() as Library
                 library.bindLibraryItems()
-                _root_ide_package_.io.antarescircuit.jabbah.graph.library.LibraryModule.libraryHolder.l = library
+                LibraryModule.libraryHolder.l = library
                 library
             }
     }
 
-    protected fun loadMetaGraph(library: io.antarescircuit.jabbah.graph.library.Library, uuid: io.antarescircuit.jabbah.base.UUID): Promise<io.antarescircuit.jabbah.graph.MetaGraph> {
+    protected fun loadMetaGraph(library: Library, uuid: UUID): Promise<MetaGraph> {
         LOG.debug("Loading MetaGraph ${uuid.id}")
         val service = if (library.isSystem) {
-            _root_ide_package_.io.antarescircuit.jabbah.graph.library.LibraryModule.systemLibraryPersistenceService
+            LibraryModule.systemLibraryPersistenceService
         } else {
-            _root_ide_package_.io.antarescircuit.jabbah.graph.project.ProjectModule.projectLibraryPersistenceService
+            ProjectModule.projectLibraryPersistenceService
         }
-        return (service as io.antarescircuit.jabbah.graph.library.AbstractAkrab2RestLibraryPersistenceServiceJs).loadMetaGraphAsync(library, uuid)
+        return (service as AbstractAkrab2RestLibraryPersistenceServiceJs).loadMetaGraphAsync(library, uuid)
     }
 }

@@ -19,7 +19,7 @@ import org.w3c.dom.HTMLCanvasElement
  * Uses as little Kotlin classes as possible to be exposed as TypeScript wrappers.
  * This is an application-level class that should be instantiated only once.
  *
- * @throws io.antarescircuit.jabbah.graph.project.AkrabApiException in case of an error
+ * @throws AkrabApiException in case of an error
  */
 @Suppress("unused")
 @JsExport
@@ -28,24 +28,24 @@ class AntaresSingleCircuitViewerJs(
 ) {
 
     companion object {
-        private val LOG by _root_ide_package_.io.antarescircuit.jabbah.base.logger(AntaresSingleCircuitViewerJs::class)
+        private val LOG by logger(AntaresSingleCircuitViewerJs::class)
     }
 
-    private val controller: io.antarescircuit.jabbah.graph.ui.graphviewer.GraphViewerController
+    private val controller: GraphViewerController
 
-    val executionControlOutlet: io.antarescircuit.jabbah.execution.ExecutionControlOutlet get() = controller
+    val executionControlOutlet: ExecutionControlOutlet get() = controller
 
     init {
-        if (data !is io.antarescircuit.jabbah.graph.MetaGraph) {
+        if (data !is MetaGraph) {
             LOG.error("Expecting MetaGraph in app data, but was ${data::class.simpleName}")
         }
-        LOG.debug("Initializing AntaresSingleCircuitViewerJs with MetaGraph ${(data as io.antarescircuit.jabbah.graph.MetaGraph).uuid}")
-        controller = _root_ide_package_.io.antarescircuit.jabbah.graph.ui.graphviewer.GraphViewerController(
+        LOG.debug("Initializing AntaresSingleCircuitViewerJs with MetaGraph ${(data as MetaGraph).uuid}")
+        controller = GraphViewerController(
             data.graph.graphView,
             true
         )
         controller.graphNavigationViewController.enableOpenSubGraphRequests = false
-        _root_ide_package_.io.antarescircuit.antares.ViewMocks(controller)
+        ViewMocks(controller)
 
         // Required to activate ScenarioDetector
         controller.graphNavigationViewController.setRootGraphView(data.graph.graphView, false)
@@ -54,7 +54,7 @@ class AntaresSingleCircuitViewerJs(
     fun bindCanvas(canvas: HTMLCanvasElement) {
         try {
             val canvasJs =
-                _root_ide_package_.io.antarescircuit.jabbah.draw.view.CanvasJs(canvas, controller.drawingView)
+                CanvasJs(canvas, controller.drawingView)
             addWatermark()
 
             canvasJs.repaint()
@@ -66,16 +66,16 @@ class AntaresSingleCircuitViewerJs(
 
     val circuitName: String get() = controller.graphNavigationViewController.drawingView.drawing.name.value
 
-    /** ---- [io.antarescircuit.jabbah.execution.ExecutionControlOutlet] interface */
+    /** ---- [ExecutionControlOutlet] interface */
 
     private fun addWatermark() {
         controller.drawingView.decorator.bottomRight =
-            _root_ide_package_.io.antarescircuit.jabbah.edit.model.text.Label(
+            Label(
                 "Powered by antarescircuit.io",
-                _root_ide_package_.io.antarescircuit.jabbah.draw.ViewDecorator.FONT_ITALIC,
-                _root_ide_package_.io.antarescircuit.jabbah.draw.ViewDecorator.TEXT_COLOR_SUBTLE,
-                horizontalAlignment = _root_ide_package_.io.antarescircuit.jabbah.edit.model.text.HorizontalAlignment.LEFT,
-                verticalAlignment = _root_ide_package_.io.antarescircuit.jabbah.edit.model.text.VerticalAlignment.TOP
+                ViewDecorator.FONT_ITALIC,
+                ViewDecorator.TEXT_COLOR_SUBTLE,
+                horizontalAlignment = HorizontalAlignment.LEFT,
+                verticalAlignment = VerticalAlignment.TOP
             )
     }
 }

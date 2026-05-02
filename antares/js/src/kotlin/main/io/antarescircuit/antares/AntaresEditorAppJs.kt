@@ -18,28 +18,28 @@ import kotlin.js.Promise
 @JsExport
 data class AntaresEditorContent(
     val library: Any,
-    val libraryTree: io.antarescircuit.antares.LibraryTreeNodeJS,
+    val libraryTree: LibraryTreeNodeJS,
     val metaGraph: Any?
 )
 
 @JsExport
 class AntaresEditorAppJs(
-    environment: io.antarescircuit.jabbah.app.Environment,
+    environment: Environment,
     akrabURL: String
-) : io.antarescircuit.antares.AbstractAntaresAppJs(environment, akrabURL) {
+) : AbstractAntaresAppJs(environment, akrabURL) {
 
     companion object {
-        private val LOG by _root_ide_package_.io.antarescircuit.jabbah.base.logger(_root_ide_package_.io.antarescircuit.antares.AbstractAntaresAppJs::class)
+        private val LOG by logger(AbstractAntaresAppJs::class)
     }
 
     /**
-     * Initializes an application context and load the specified [io.antarescircuit.jabbah.graph.library.Library]/[io.antarescircuit.jabbah.graph.project.Project]
-     * and its main [io.antarescircuit.jabbah.graph.MetaGraph], if any.
-     * The result of the returned [Promise] is either [io.antarescircuit.jabbah.graph.MetaGraph], if there is a default circuit in the [io.antarescircuit.jabbah.graph.library.Library],
-     * or the [io.antarescircuit.jabbah.graph.library.Library] itself. Both can't be declared explicitly because that would require `@JsExport` for everything.
+     * Initializes an application context and load the specified [Library]/[Project]
+     * and its main [MetaGraph], if any.
+     * The result of the returned [Promise] is either [MetaGraph], if there is a default circuit in the [Library],
+     * or the [Library] itself. Both can't be declared explicitly because that would require `@JsExport` for everything.
      */
     @Suppress("unused") // JS app
-    fun start(libraryUuid: String, userIdentity: io.antarescircuit.jabbah.edit.auth.UserIdentity, themeName: String? = null): Promise<io.antarescircuit.antares.AntaresEditorContent> {
+    fun start(libraryUuid: String, userIdentity: UserIdentity, themeName: String? = null): Promise<AntaresEditorContent> {
         LOG.info("Starting Antares editor app for user ${userIdentity.id}")
 
         configure()
@@ -48,8 +48,8 @@ class AntaresEditorAppJs(
         return scope.promise {
             Promise.all(loadTranslations().toTypedArray()).await()
             init(
-                _root_ide_package_.io.antarescircuit.jabbah.edit.auth.DesktopUserHolder(
-                    _root_ide_package_.io.antarescircuit.jabbah.edit.auth.DesktopUser(
+                DesktopUserHolder(
+                    DesktopUser(
                         userIdentity,
                         "",
                         false
@@ -63,17 +63,17 @@ class AntaresEditorAppJs(
 
             val library = libraryPromise.await()
 
-            val libraryTree = _root_ide_package_.io.antarescircuit.antares.createLibraryTreeJS(library)
+            val libraryTree = createLibraryTreeJS(library)
 
             if (library.getDefaultElement() != null) {
                 LOG.debug("Repository loaded, start loading MetaGraph")
                 val metaGraphPromise = loadMetaGraph(library,
-                    _root_ide_package_.io.antarescircuit.jabbah.base.UUID(library.getDefaultElement()!!.uuid.toString())
+                    UUID(library.getDefaultElement()!!.uuid.toString())
                 )
                 val metaGraph = metaGraphPromise.await()
-                _root_ide_package_.io.antarescircuit.antares.AntaresEditorContent(library, libraryTree, metaGraph)
+                AntaresEditorContent(library, libraryTree, metaGraph)
             } else {
-                _root_ide_package_.io.antarescircuit.antares.AntaresEditorContent(library, libraryTree, null)
+                AntaresEditorContent(library, libraryTree, null)
             }
         }
     }
