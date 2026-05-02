@@ -9,6 +9,7 @@ import io.antarescircuit.antares.model.port.SubCircuitPort
 import io.antarescircuit.jabbah.graph.model.*
 import io.antarescircuit.jabbah.graph.model.port.PortFactory
 
+@Suppress("UNCHECKED_CAST")
 class AntaresPortFactory : PortFactory {
 
     override fun <T : Any> createSubGraphPort(graphPort: GraphPort<T>, type: GraphType): Port<T> =

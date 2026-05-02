@@ -191,7 +191,9 @@ class GraphNavigationViewController(
 
 	override fun deselectAll() {
 		navigationStackViewController.navigationStack.rootEntry?.content?.selectionManager?.deselectAll()
-		navigationStackViewController.navigationStack.forAllContents { it.removeAllSelectionModels() }
+		navigationStackViewController.navigationStack.iterator().forEach {
+			it.content.removeAllSelectionModels()
+		}
 	}
 
 	/** ---- [GraphNavigationView] */
@@ -374,6 +376,8 @@ class GraphNavigationViewController(
 				} else {
 					navigationStackViewController.navigationStack.peek()
 				}
+
+				@Suppress("UNCHECKED_CAST")
 				drawingView.content = outerEntry.content as DrawingViewContent<GraphElementView<*>, GraphView>
 
 				// Issue #975 (NPE when accessing outerEntry.voyageOrigin)

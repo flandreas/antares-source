@@ -145,6 +145,7 @@ abstract class AbstractSegmentDisplayView<T: AbstractSegmentDisplay<T>>(
 	override val mirrorHeight: Double get() = -height
 
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
+		@Suppress("UNCHECKED_CAST")
 		this.model = link.getLinkedObject(startGraph) as T
 	}
 

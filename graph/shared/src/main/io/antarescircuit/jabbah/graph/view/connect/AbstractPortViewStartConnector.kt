@@ -18,12 +18,10 @@ import io.antarescircuit.jabbah.draw.StateMachineInputEventHandler.Companion.mou
 import io.antarescircuit.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeftSingleClicked
 import io.antarescircuit.jabbah.draw.StateMachineInputEventHandler.Companion.mouseMoved
 import io.antarescircuit.jabbah.draw.graphics.Cursor
-import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.edit.EditInputEventContext
 import io.antarescircuit.jabbah.graph.model.Port
 import io.antarescircuit.jabbah.graph.model.PortType
 import io.antarescircuit.jabbah.graph.view.EdgeView
-import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.VerticeView
 import io.antarescircuit.jabbah.graph.view.module.GraphViewModule
@@ -483,8 +481,10 @@ abstract class AbstractPortViewStartConnector(
 	}
 
 	private fun beginConnecting(context: EditInputEventContext, adjust: Boolean) {
-		createEdgeView(context.drawingView as DrawingView<GraphElementView<*>, GraphView>, startVerticeView!!.getPortConnectionPoint(startPortView!!.port), null)
+		createEdgeView(context.castedView(), startVerticeView!!.getPortConnectionPoint(startPortView!!.port), null)
 		LOG.userTrail("Start creating new EdgeView ${edgeView!!.id} on Net ${edgeView!!.model.id} at Port ${startPortView!!.port.portId} of ${startVerticeView!!.type} ${startVerticeView!!.id}, adjust=$adjust")
+
+		@Suppress("UNCHECKED_CAST")
 		edgeView!!.model.connect(startPortView!!.port as Port<Any>)
 		connectEdgeViewToStartPort()
 	}

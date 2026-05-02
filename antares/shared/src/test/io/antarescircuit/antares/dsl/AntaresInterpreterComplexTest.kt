@@ -59,6 +59,7 @@ class AntaresInterpreterComplexTest : AbstractAntaresInterpreterPortTest() {
 		val fcStore = memory.getValue(variable("fcStore"))
 		assertIs<HashMap<*,*>>(fcStore)
 		assertEquals(2, fcStore.keys.size)
+		@Suppress("UNCHECKED_CAST")
 		assertEquals(0L, (fcStore as Map<Long, Long>)[0])
 		assertEquals(0L, (fcStore)[1])
 

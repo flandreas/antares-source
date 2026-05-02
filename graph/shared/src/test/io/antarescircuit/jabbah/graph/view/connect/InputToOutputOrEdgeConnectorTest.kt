@@ -144,6 +144,7 @@ class InputToOutputOrEdgeConnectorTest : AbstractInputEventHandlerTest() {
 	}
 
 	private fun assertConnectedToEdgeView() {
+		@Suppress("UNCHECKED_CAST")
 		val nodeView = builder.graphView.getDrawable { it is NodeView<*> } as NodeView<Boolean>
 		val newV1 = builder.graphView.getVerticeView("v1")!!
 		val newV2 = builder.graphView.getVerticeView("v2")!!
@@ -158,6 +159,7 @@ class InputToOutputOrEdgeConnectorTest : AbstractInputEventHandlerTest() {
 	}
 
 	private fun assertAutoLayoutGeometry() {
+		@Suppress("UNCHECKED_CAST")
 		val nodeView = builder.graphView.getDrawable { it is NodeView<*> } as NodeView<Boolean>
 		val newEv = nodeView.getEdgeView(Direction.SOUTH)!!
 
@@ -307,6 +309,7 @@ class InputToOutputOrEdgeConnectorTest : AbstractInputEventHandlerTest() {
 	}
 
 	private fun assertAdjustedToEdgeViewGeometry() {
+		@Suppress("UNCHECKED_CAST")
 		val nodeView = builder.graphView.getDrawable { it is NodeView<*> } as NodeView<Boolean>
 		val newEv = nodeView.getEdgeView(Direction.SOUTH)!!
 

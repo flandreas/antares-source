@@ -47,6 +47,7 @@ class EdgeToEdgeConnectorTest : AbstractInputEventHandlerTest() {
 		assertEquals(2, builder.graphView.getNodeViews().size)
 		assertEquals(1, builder.graphView.graph!!.elements.filterIsInstance<Net<*>>().size)
 		assertEquals(5, edgeViews.size)
+		@Suppress("UNCHECKED_CAST")
 		val net = builder.graphView.graph!!.elements.first { it is Net<*> } as Net<Boolean>
 		edgeViews.forEach {
 			assertSame(net, it.model)

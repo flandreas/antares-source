@@ -11,6 +11,6 @@ class TestPortViewFactory : PortViewFactory {
 	override fun <T : Any> createPortView(port: Port<T>, direction: Direction?): PortView<T> =
 		TestPortView(port, direction ?: Direction.WEST, PortLabelPosition.EXTERNAL, 0)
 
-	override fun <T : Any> createPortViewComponent(portView: PortView<T>): PortViewComponent<T> =
+	override fun <T : Any> createPortViewComponent(portView: PortView<T>): PortViewComponent =
         PortViewComponent(DrawStyleModule.styleProvider, portView)
 }

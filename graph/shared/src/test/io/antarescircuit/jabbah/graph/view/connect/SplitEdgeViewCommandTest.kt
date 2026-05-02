@@ -31,6 +31,7 @@ class SplitEdgeViewCommandTest {
 		editorBuilder.withDrawing(testGraphView.graphView)
 	}
 
+	@Suppress("UNCHECKED_CAST")
 	@Test
 	fun shouldSplitEdgeView() {
 		val newEdgeView = edgeViewFactory.createEdgeView(testGraphView.graphView, testGraphView.netView)

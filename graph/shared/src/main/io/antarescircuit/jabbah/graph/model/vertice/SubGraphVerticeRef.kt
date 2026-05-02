@@ -122,7 +122,7 @@ class SubGraphVerticeRef(
 
 	/**
 	 * Instantiated for execution purposes if demanded by [GraphType.needsGraphViewForExecution]
-	 * at the moment when [graph] is instantiated.
+	 * at the moment when [graphReference] is instantiated.
 	 */
 	private var graphView: GraphView? = null
 
@@ -380,7 +380,9 @@ class SubGraphVerticeRef(
 
 	override fun inputChanged(input: InputPort<*>, signalHandler: SignalHandler, force: Boolean) {
 		if (isDeepExecution(signalHandler.isDeepExecution)) {
+			@Suppress("UNCHECKED_CAST")
 			val graphInput = (input as SubGraphInputPort<Any>).graphInput
+
 			signalHandler.logActorTrace(this) {
 				"input port ${input.portId} of SubGraphVertice changed to ${input.getIncomingSignal()}"
 			}
@@ -508,9 +510,11 @@ class SubGraphVerticeRef(
 		}
 	}
 
+	@Suppress("UNCHECKED_CAST")
 	private fun getSubGraphInputPorts(): ImmutableList<SubGraphInputPort<Any>> =
 		getInputs().map { it as SubGraphInputPort<Any> }.toImmutableList()
 
+	@Suppress("UNCHECKED_CAST")
 	private fun getSubGraphOutputPorts(): ImmutableList<SubGraphOutputPort<Any>> =
 		getOutputs().map { it as SubGraphOutputPort<Any> }.toImmutableList()
 

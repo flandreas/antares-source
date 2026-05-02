@@ -34,6 +34,7 @@ class LocateMetaGraphAction(
 		val selection = (contentView as GraphNavigationView).drawingView?.content?.selectionManager?.selection
 		if (selection != null && selection.size == 1) {
 			if (selection.first() is SubGraphVerticeView<*>) {
+				@Suppress("UNCHECKED_CAST")
 				return selection.first() as SubGraphVerticeView<SubGraphVerticeRef>
 			}
 		}

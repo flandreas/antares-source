@@ -84,9 +84,9 @@ enum class LayoutType(
 		const val BASE_KEY = "graph.property.edgeView.layout"
 
 		fun withName(customName: String): LayoutType {
-			for (i in 0 until values().size) {
-				if (values()[i].customName == customName) {
-					return values()[i]
+			for (i in entries.indices) {
+				if (entries[i].customName == customName) {
+					return entries[i]
 				}
 			}
 			LOG.error("Unknown Layout $customName")
@@ -108,6 +108,7 @@ enum class LayoutType(
 	 *
 	 * TODO This is independent of layout and should therefore moved away from here
 	 */
+	@Suppress("UNCHECKED_CAST")
 	fun <T : InputEventContext> getInputEventHandler(
 		edgeView: EdgeView<*>,
 		context: T,

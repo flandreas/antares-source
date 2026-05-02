@@ -39,6 +39,7 @@ class NewEdgeViewAtSplitRetrieveProvider(
  *
  * Retrieve the effectively added [EdgeView] in [addedNewEdgeView].
  */
+@Suppress("UNCHECKED_CAST")
 class SplitEdgeViewCommand(
 	editor: Editor,
 	baseKey: String = "graph.command.splitEdge",

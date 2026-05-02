@@ -96,6 +96,7 @@ abstract class AbstractVertice(
 	override fun <T : Any> getPort(id: Int): Port<T> =
 		ports.first { it.portId == id } as Port<T>
 
+	@Suppress("UNCHECKED_CAST")
 	override fun <T : Any> getPortAtIndex(index: Int): Port<T> =
 		ports[index] as Port<T>
 
@@ -126,6 +127,9 @@ abstract class AbstractVertice(
 
 	override fun getOutputs(): List<OutputPort<*>> =
 		ports.filter { it.portType.isOutput }.map { it as OutputPort<*> }
+
+	@Suppress("UNCHECKED_CAST")
+	override fun <T> getTypedOutputs(): List<T> = ports.filter { it.portType.isOutput }.map { it as T }
 
 	@Suppress("UNCHECKED_CAST")
 	override fun <T : Any> getOutput(name: String): OutputPort<T> =

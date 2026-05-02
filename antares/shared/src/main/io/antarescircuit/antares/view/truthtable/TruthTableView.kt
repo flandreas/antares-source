@@ -165,7 +165,10 @@ class TruthTableView(
 		}
 		val signals = mutableListOf<Bit>()
 		vertice.getInputs()
-			.map { it as InputPort<DigitalSignal> }
+			.map {
+				@Suppress("UNCHECKED_CAST")
+				it as InputPort<DigitalSignal>
+			}
 			.forEach { signals.add(it.getIncomingSignal()!!.bitAt(0)) }
 		return model.rowIndex(Array(signals.size) { signals[it] })
 	}

@@ -25,6 +25,7 @@ class AddCommand(
 	    val clone = component.doClone()
 		@Suppress("UNCHECKED_CAST") // DrawingView type ensured by constructor
 		(view as DrawingView<Component, Drawing<in Component>>).drawing.add(clone)
+
 		componentCustomizer?.customizeAddedComponent(clone, view.drawing)
 	    addedComponentId = clone.id
     }

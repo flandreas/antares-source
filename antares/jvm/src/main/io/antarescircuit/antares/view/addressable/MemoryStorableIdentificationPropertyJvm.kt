@@ -16,7 +16,10 @@ class MemoryStorableIdentificationRenderer : ToStringRenderer<MemoryStorableIden
 class MemoryStorableIdentificationEditor : AbstractPropertyEditor() {
 
     private val comboBoxEditor = ComboBoxPropertyEditor()
-    private val comboBox: JComboBox<MemoryStorableIdentification> get() = comboBoxEditor.customEditor as JComboBox<MemoryStorableIdentification>
+
+    @Suppress("UNCHECKED_CAST")
+    private val comboBox: JComboBox<MemoryStorableIdentification> get() =
+        comboBoxEditor.customEditor as JComboBox<MemoryStorableIdentification>
 
     init {
         comboBox.renderer = MemoryStorableIdentificationRenderer()

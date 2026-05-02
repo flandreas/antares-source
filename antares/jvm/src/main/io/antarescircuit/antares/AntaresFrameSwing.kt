@@ -36,10 +36,10 @@ import io.antarescircuit.jabbah.graph.ui.GraphFrameSwing
 import io.antarescircuit.jabbah.graph.ui.desktop.GraphDesktopViewItem
 import io.antarescircuit.jabbah.graph.ui.documentation.DocumentationDesktopViewItemSwing
 import io.antarescircuit.jabbah.graph.view.GraphView
-import java.awt.Frame
 import java.awt.Toolkit
 import javax.swing.JOptionPane
 
+@Suppress("UNCHECKED_CAST")
 class AntaresFrameSwing(
     controller: AntaresFrameController,
     application: DesktopApplication,
@@ -127,7 +127,7 @@ class AntaresFrameSwing(
 
 	override fun showMemoryContents(request: OpenMemoryContentsRequest) {
 		AddressableContentsPanel.showAsDialog(
-			parent = Frame.getFrames()[0],
+			parent = getFrames()[0],
 			view = request.drawingView,
 			applicationContextHolder = controller.applicationContextHolder,
 			name = request.name,

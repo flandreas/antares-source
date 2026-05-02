@@ -73,7 +73,7 @@ abstract class AbstractRealSwitch<T : AbstractSwitch<T>>(
 
 	/** ---- [AdjustableBitWidth] */
 
-	override fun adjustBitWidth(portInt: Int, bitWidth: BitWidth): Boolean {
+	override fun adjustBitWidth(portId: Int, bitWidth: BitWidth): Boolean {
 		this.bitWidth = bitWidth
 		return true
 	}

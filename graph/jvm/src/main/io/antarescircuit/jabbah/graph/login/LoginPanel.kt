@@ -84,7 +84,8 @@ class LoginPanel(
     }
 
     private fun updateLoginAction() {
-        loginAction.enabled = StringUtils.isNotEmpty(usernameField.text) && StringUtils.isNotEmpty(passwordField.text)
+        val password = passwordField.password
+        loginAction.enabled = StringUtils.isNotEmpty(usernameField.text) && password != null && password.isNotEmpty()
     }
 
     private fun buildUI() {

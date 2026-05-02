@@ -47,6 +47,7 @@ class ReconnectOriginConnector(
 	override fun completeDragConnecting(context: EditInputEventContext) {
 		LOG.userTrail("Reconnect EdgeView ${edgeView?.id} at port of ${oldOrigin?.connectableView?.id}")
 
+		@Suppress("UNCHECKED_CAST")
 		val newConnection = targetPortView?.createConnection() as Connection<Any>?
 
 		if (newConnection != null) {

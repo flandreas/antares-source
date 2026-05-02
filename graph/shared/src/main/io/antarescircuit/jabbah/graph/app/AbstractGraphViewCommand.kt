@@ -10,5 +10,6 @@ abstract class AbstractGraphViewCommand(
     view: DrawingView<GraphElementView<*>, GraphView>
 ) : AbstractDrawingViewCommand(descriptionKey, view as DrawingView<*,*>) {
 
+    @Suppress("UNCHECKED_CAST") // Ensured by constructor
     val drawingView: DrawingView<GraphElementView<*>, GraphView> get() = view as DrawingView<GraphElementView<*>, GraphView>
 }

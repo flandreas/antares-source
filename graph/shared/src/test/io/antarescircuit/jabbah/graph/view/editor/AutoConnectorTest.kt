@@ -21,9 +21,10 @@ class AutoConnectorTest {
 
     init {
         GraphViewTestRule.configure()
-        builder = GraphViewBuilder<Boolean>()
+        builder = GraphViewBuilder()
         v1 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v1", 100, 100))
         v2 = builder.addVerticeView(TestVerticeView.createEastOutputVerticeView("v2", 200, 100))
+        @Suppress("UNCHECKED_CAST")
         editor = EditorImpl(DrawingViewImpl(builder.build() as Drawing<Component>))
     }
 

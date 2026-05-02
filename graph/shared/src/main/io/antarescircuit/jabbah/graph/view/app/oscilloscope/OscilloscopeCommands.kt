@@ -62,7 +62,7 @@ internal class OscilloscopeVisibilityCommand(
 	}
 }
 
-internal class DropOscilloscopeProbeCommand<T : Any>(
+internal class DropOscilloscopeProbeCommand(
 	drawingView: DrawingView<GraphElementView<*>, GraphView>,
 	private var name: String,
 	private val location: Point2D,
@@ -76,6 +76,6 @@ internal class DropOscilloscopeProbeCommand<T : Any>(
 	var connectedEdgeViewId: Int? = null
 
 	override fun execute() {
-		connectedEdgeViewId = service.dropProbe<T>(drawingView, name, location, probeVerticeViewId)
+		connectedEdgeViewId = service.dropProbe(drawingView, name, location, probeVerticeViewId)
 	}
 }

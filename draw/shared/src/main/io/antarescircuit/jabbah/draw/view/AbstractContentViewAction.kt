@@ -33,6 +33,8 @@ abstract class AbstractContentViewAction(
 		eventBus.unregister(activeViewHandler)
 	}
 
+	protected fun <T> castedView(): T = viewManager.castedActiveView()!!
+
 	private inner class ViewPropertyListener : PropertyChangeListener<Any> {
 		override fun propertyChanged(e: PropertyChangeEvent<Any>) {
 			handleViewPropertyChanged(e)

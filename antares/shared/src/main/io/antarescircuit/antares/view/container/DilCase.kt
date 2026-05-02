@@ -47,7 +47,7 @@ class DilCase(
 
 	/** ---- [DragDestination] */
 
-	override fun acceptDrag(component: Component): Boolean = component is PortViewComponent<*>
+	override fun acceptDrag(component: Component): Boolean = component is PortViewComponent
 
 	/** ---- [RectangularComponent] */
 
@@ -89,13 +89,13 @@ class DilCase(
 
 	data class DilPositionX(override val x: Double, val isBorder: Boolean) : SnappableX, PortViewContainer {
 		override fun accept(other: SnappableX): Boolean =
-			other is PortViewComponent<*>
+			other is PortViewComponent
 				&& (isBorder && other.direction.isHorizontal() || !isBorder && other.direction.isVertical())
 	}
 
 	data class DilPositionY(override val y: Double, val isBorder: Boolean) : SnappableY, PortViewContainer {
 		override fun accept(other: SnappableY): Boolean =
-			other is PortViewComponent<*>
+			other is PortViewComponent
 				&& (isBorder && other.direction.isVertical() || !isBorder && other.direction.isHorizontal())
 	}
 

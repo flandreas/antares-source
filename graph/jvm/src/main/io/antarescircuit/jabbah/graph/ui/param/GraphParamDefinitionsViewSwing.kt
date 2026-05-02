@@ -187,17 +187,18 @@ class GraphParamDefinitionsViewSwing(
 		nameField.requestFocusInWindow()
 	}
 
-	override fun <T: Any> getEditedDefinition(): GraphParamDefinition<T>? {
+	override fun getEditedDefinition(): GraphParamDefinition<Any>? {
 		try {
 			defaultValueEditor!!.paramValue
 		} catch (_: NullPointerException) {
 			errorMessage(Translations.getString("graph.paramDefs.dialog.error.defaultValue"))
 			return null
 		}
+		@Suppress("UNCHECKED_CAST")
 		return GraphParamDefinition.create(
 			nameField.text,
-			typeField.selectedItem as GraphParamType<T>,
-			defaultValueEditor!!.paramValue as T,
+			typeField.selectedItem as GraphParamType<Any>,  // JComboBox.selectedItem is not generic
+			defaultValueEditor!!.paramValue,
 			semanticField.selectedItem as Semantic?,
 			descriptionField.value as Description
 		)

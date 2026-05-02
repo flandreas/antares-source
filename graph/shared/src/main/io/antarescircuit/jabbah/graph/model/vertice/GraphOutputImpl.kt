@@ -50,7 +50,12 @@ class GraphOutputImpl<T : Any>(
 
 	/** ---- [NetCombiner] */
 
-	override fun <T : Any> createCombinedNetsFor(outputPort: OutputPort<T>, inputPort: InputPort<T>, signalHandler: SignalHandler): Collection<CombinedNet<T>> {
+	@Suppress("UNCHECKED_CAST")
+	override fun <T : Any> createCombinedNetsFor(
+		outputPort: OutputPort<T>,
+		inputPort: InputPort<T>,
+		signalHandler: SignalHandler
+	): Collection<CombinedNet<T>> {
 		val result = if (subGraphOutputPort == null) {
 			emptyList()
 		} else {

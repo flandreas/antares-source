@@ -75,7 +75,7 @@ open class ContainerEditor(
 
 	private val deleteQuestionHandler: EventHandler<DeleteQuestion> = { question ->
 		if (preventDeletingPortViewComponents) {
-			question.components.firstOrNull { c -> c is PortViewComponent<*> }?.let { source ->
+			question.components.firstOrNull { c -> c is PortViewComponent }?.let { source ->
 				throw VetoException("", source)
 			}
 		}
@@ -114,7 +114,7 @@ open class ContainerEditor(
 	/** Removes the [PortViewComponent] for the [Port] with the specified name from the [ContainerDrawing].*/
 	private fun removePortViewComponent(name: String) {
 		for (c in view.drawing.frontToBackIterator()) {
-			if (c is PortViewComponent<*> && c.port.name == name) {
+			if (c is PortViewComponent && c.port.name == name) {
 				view.drawing.remove(c)
 				view.drawing.validate()
 				return

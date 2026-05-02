@@ -51,6 +51,7 @@ class DivideNetTest {
 		assertSame(vv3.model.getInput<Boolean>().net, vv4.model.getInput<Boolean>().net)
 	}
 
+	@Suppress("UNCHECKED_CAST")
 	@Test
 	fun shouldDivideNet() {
 		EditModule.drawingAppService.delete(

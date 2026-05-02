@@ -11,10 +11,10 @@ import io.antarescircuit.jabbah.edit.model.ComponentMessage
 import io.antarescircuit.jabbah.graph.MetaGraph
 import io.antarescircuit.jabbah.graph.library.LibraryModule
 import io.antarescircuit.jabbah.graph.model.Document
-import io.antarescircuit.jabbah.graph.view.vertice.SubGraphVerticeView
 import io.antarescircuit.jabbah.graph.ui.desktop.GraphDesktopViewItem
 import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
+import io.antarescircuit.jabbah.graph.view.vertice.SubGraphVerticeView
 
 /**
  * Opens the documentation [Document] of the currently selected [SubGraphVerticeView]'s [MetaGraph]
@@ -40,7 +40,7 @@ class OpenDocumentationAction(
             ))
         } else {
             eventBus.post(OpenDocumentationRequest(
-                viewManager.activeView!!.view as DrawingView<GraphElementView<*>, GraphView>,
+                viewManager.castedActiveView<DrawingView<GraphElementView<*>, GraphView>>()!!,
                 singleSelection as SubGraphVerticeView<*>,
                 metaGraph.documentation!!,
                 metaGraph.name

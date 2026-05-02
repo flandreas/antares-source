@@ -50,5 +50,5 @@ class Splitter(
 	override val wideSidePort: DigitalPort get() = getInput<DigitalPort>() as DigitalPort
 
 	// Tuning: Instead of getOutputs().map { it as DigitalPort }
-	override val narrowSidePorts: List<DigitalPort> get() = getOutputs() as List<DigitalPort>
+	override val narrowSidePorts: List<DigitalPort> get() = getTypedOutputs()
 }

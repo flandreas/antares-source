@@ -80,7 +80,7 @@ class ContainerDrawing(
 		if (resolvingFromStore) {
 			return this
 		}
-		if (drawable is PortViewComponent<*>) {
+		if (drawable is PortViewComponent) {
 			model.addPort(drawable.portView!!.port)
 		}
 		return this
@@ -88,7 +88,7 @@ class ContainerDrawing(
 
 	override fun remove(drawable: Drawable): DrawableContainer<Component> {
 		super.remove(drawable)
-		if (drawable is PortViewComponent<*>) {
+		if (drawable is PortViewComponent) {
 			model.removePort(drawable.portView!!.port)
 		}
 		return this
@@ -169,7 +169,7 @@ class ContainerDrawing(
 	 * Returns the [PortViewComponent] with the specified [Port] name.
 	 * @param portName the name of [Port] of the requested [PortViewComponent].
 	 */
-	fun getPortViewComponent(portName: String): PortViewComponent<*>? {
+	fun getPortViewComponent(portName: String): PortViewComponent? {
 		return getPortViewComponents().firstOrNull { it.portView!!.port.name == portName }
 	}
 
@@ -200,17 +200,18 @@ class ContainerDrawing(
 	 * Fills the specified [SubGraphVerticeView] with all visible [Drawable]s of this
 	 * [ContainerDrawing], thus providing the look that has been designed by the library designer.
 	 */
+	@Suppress("UNCHECKED_CAST")
 	fun fillSubGraphVerticeView(view: SubGraphVerticeView<SubGraphVerticeRef>) {
 		LOG.trace("filling SubGraphVerticeViewRef name:${model.name}, uuid:${model.graphUUID}")
 
 		val clonedDrawing = StorableCloner.clone(this)
 		val origin = clonedDrawing.getOriginIndicator().location
-		val stalePorts = mutableListOf<PortViewComponent<*>>()
+		val stalePorts = mutableListOf<PortViewComponent>()
 
 		for (comp in clonedDrawing.drawables) {
 			comp.location = Point2D(comp.location.x - origin.x, comp.location.y - origin.y)
-			if (comp is PortViewComponent<*>) {
-				val portView = comp.portView as PortView<Any>
+			if (comp is PortViewComponent) {
+				val portView = comp.portView!! as PortView<Any>
 				val name = portView.port.name!!
 				if (view.model.hasPort(name)) {
 					view.addPortView(portView)
@@ -256,8 +257,8 @@ class ContainerDrawing(
 		DrawExecSymbolFunctions.defineIn(symbolTable)
 	}
 
-	private fun getPortViewComponents(): ImmutableList<PortViewComponent<*>> {
-		return getDrawables { it is PortViewComponent<*> }.map { it as PortViewComponent<*> }.toImmutableList()
+	private fun getPortViewComponents(): ImmutableList<PortViewComponent> {
+		return getDrawables { it is PortViewComponent }.map { it as PortViewComponent }.toImmutableList()
 	}
 
 	private fun getControlViewComponents(): ImmutableList<ControlViewComponent> {

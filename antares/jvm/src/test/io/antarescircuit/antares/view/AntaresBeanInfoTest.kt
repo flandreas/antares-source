@@ -56,11 +56,12 @@ class AntaresBeanInfoTest {
 		every { drawing.getDrawables(any()) } returns emptyList<GraphElementView<*>>().toImmutableList()
 		every { editor.view } returns viewBuilder.build()
 		every { editor.active } returns true
+		@Suppress("UNCHECKED_CAST")
 		every { editor.drawing } returns drawing as Drawing<Component>
 		every { editor.commandManager } returns commandManager
 
 		val command = Capture.slot<Command>()
-		every { commandManager.beginTransaction(capture<Command>(command)) } calls {
+		every { commandManager.beginTransaction(capture(command)) } calls {
 			command.get().execute()
 		}
 	}

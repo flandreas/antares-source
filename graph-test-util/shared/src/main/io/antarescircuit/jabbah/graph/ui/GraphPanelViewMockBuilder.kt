@@ -32,6 +32,8 @@ class GraphPanelViewMockBuilder(private val controller: GraphPanelViewController
 
 		val editView = graphEditViewBuilder.build()
 		withGraphEditView(editView)
+
+		@Suppress("UNCHECKED_CAST")
 		withGraphDesktopView(GraphDesktopViewMockBuilder(controller.desktopController)
 			.withMainViewItem(editView.graphNavigationView)
 			.withMainViewItem(

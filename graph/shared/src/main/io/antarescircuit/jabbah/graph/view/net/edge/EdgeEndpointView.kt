@@ -55,6 +55,8 @@ class EdgeEndpointView(
 	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> {
 		with (type.dragConnector) {
 			useFor(edgeView, context as EditInputEventContext)
+
+			@Suppress("UNCHECKED_CAST")
 			return handler as InputEventHandler<T>
 		}
 	}

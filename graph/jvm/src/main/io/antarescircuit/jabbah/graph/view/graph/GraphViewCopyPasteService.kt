@@ -3,10 +3,10 @@ package io.antarescircuit.jabbah.graph.view.graph
 import io.antarescircuit.jabbah.base.geom.Point2D
 import io.antarescircuit.jabbah.base.logger
 import io.antarescircuit.jabbah.draw.View
+import io.antarescircuit.jabbah.draw.drawable.Movable
 import io.antarescircuit.jabbah.edit.Component
 import io.antarescircuit.jabbah.edit.Drawing
 import io.antarescircuit.jabbah.edit.DrawingView
-import io.antarescircuit.jabbah.draw.drawable.Movable
 import io.antarescircuit.jabbah.edit.SnapResult
 import io.antarescircuit.jabbah.edit.model.CopyPasteService
 import io.antarescircuit.jabbah.edit.model.PasteInfo
@@ -20,7 +20,6 @@ import io.antarescircuit.jabbah.graph.view.VerticeView
 import io.antarescircuit.jabbah.graph.view.connect.GraphViewConnectService
 import io.antarescircuit.jabbah.graph.view.module.GraphViewModule
 import io.antarescircuit.jabbah.graph.view.net.node.NodeView
-import io.antarescircuit.jabbah.graph.view.port.PortView
 import io.antarescircuit.jabbah.io.*
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -130,7 +129,7 @@ class GraphViewCopyPasteService(
 	): PasteInfo {
 
 		lateinit var copy: Storable
-		lateinit var copyDrawing: Drawing<Component>
+		lateinit var copyDrawing: Drawing<*>
 
 		ByteArrayInputStream(contents.toByteArray()).use {
 			try {
@@ -140,8 +139,8 @@ class GraphViewCopyPasteService(
 				copy = reader.readStorable()
 
 				copyDrawing = when (copy) {
-					is GraphStorable -> copy.graphView as Drawing<Component>
-					is Drawing<*> -> (copy as Drawing<Component>)
+					is GraphStorable -> copy.graphView
+					is Drawing<*> -> copy
 					else -> throw IllegalArgumentException("expecting pasted contents to be of type 'Drawing'")
 				}
 			} catch (_: Exception) {
@@ -199,7 +198,7 @@ class GraphViewCopyPasteService(
 		return PasteInfo(copyDrawing.drawables.map { it.id }, effDislocation)
 	}
 
-	private fun snap(p: Point2D, drawing: Drawing<Component>, view: DrawingView<*,*>): Point2D {
+	private fun snap(p: Point2D, drawing: Drawing<*>, view: DrawingView<*,*>): Point2D {
 		if (!drawing.drawables.isEmpty()) {
 			val snapResult = SnapResult()
 			with (drawing.drawables.first().location.add(p)) {
@@ -211,7 +210,7 @@ class GraphViewCopyPasteService(
 	}
 
 	/** Place pasted components at mouse location if standard dislocation would place them outside the visible area.*/
-    private fun effectiveDislocation(copyDrawing: Drawing<Component>, dislocation: Point2D, view: DrawingView<*,*>): Point2D {
+    private fun effectiveDislocation(copyDrawing: Drawing<*>, dislocation: Point2D, view: DrawingView<*,*>): Point2D {
         if (copyDrawing.drawables.isEmpty()) {
             return dislocation
         }
@@ -274,7 +273,7 @@ class GraphViewCopyPasteService(
 					val edgeViews = graphView.getElementViews(pv.port.net!!)
 					if (edgeViews.isEmpty()) {
 						pv.port.disconnect()
-						(pv as PortView<Any>).handleUnconnect(null)
+						pv.handleUnconnect(null)
 					}
 				}
 			}

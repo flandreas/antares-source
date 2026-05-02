@@ -179,7 +179,10 @@ class AnalogCircuitInOut(
 
 	private fun propagateToSubGraphOutputPort(signal: AnalogSignal, signalHandler: SignalHandler) {
 		val outgoingSignal = Digital.adaptTo<AnalogSignal, DigitalSignal>(Analog).convertOutgoingSignal(signal)!!
+
+		@Suppress("UNCHECKED_CAST")
 		(subGraphOutputPort as SubGraphOutputPort<DigitalSignal>?)?.propagateSignal(outgoingSignal, signalHandler)
+
 		subGraphOutputPort?.flush(signalHandler, false)
 	}
 }

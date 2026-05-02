@@ -64,6 +64,7 @@ class DigitalGraph(
 		destroyGlobalTunnelNets(signalHandler)
 	}
 
+	@Suppress("UNCHECKED_CAST")
 	override fun <T : Any> createGraphExecutionContext(): GraphExecutionContext<T> =
 		GraphExecutionContext(netSignalApplierStrategy.netSignalApplier) as GraphExecutionContext<T>
 

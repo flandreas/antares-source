@@ -37,6 +37,7 @@ abstract class CalculatingVertice(
 	}
 
 	protected open fun actImpl(signalHandler: SignalHandler, data: ActorData) {
+		@Suppress("UNCHECKED_CAST")
 		(calculator as VerticeCalculator<CalculatingVertice>).calculate(this, data as GraphActorData, signalHandler)
 		flush(signalHandler, data)
 		stateChanged(signalHandler)

@@ -55,7 +55,7 @@ class DigitalContainerEditor(
 	}
 
 	private fun getDigitalPort(circuitInOut: DigitalCircuitInOut): DigitalPort? =
-		if ((super.mainDrawingView.drawing as GraphView).graph?.contains(circuitInOut) == true) {
+		if (super.mainDrawingView.drawing.graph?.contains(circuitInOut) == true) {
 			val portViewComponent = getContainerDrawing().getPortViewComponent(circuitInOut.name!!)
 			if (portViewComponent != null && portViewComponent.port is DigitalPort) {
 				(portViewComponent.port as DigitalPort)

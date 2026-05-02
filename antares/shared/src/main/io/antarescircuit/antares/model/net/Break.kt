@@ -75,7 +75,7 @@ class Break(
 
 	override val typeDesc: String? get() = TYPE_DESC
 
-	override fun adjustBitWidth(portInt: Int, bitWidth: BitWidth): Boolean {
+	override fun adjustBitWidth(portId: Int, bitWidth: BitWidth): Boolean {
 		this.bitWidth = bitWidth
 		return true
 	}

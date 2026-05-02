@@ -64,6 +64,7 @@ open class DrawableBagInputEventHandler<T : Drawable, C : InputEventContext> : I
 		return if (drawableBag.location == Point2D.ZERO && drawableBag.rotation == Rotation.R0) {
 			context
 		} else {
+			@Suppress("UNCHECKED_CAST")
 			context.withXY(drawableBag.rotateBack(context.location).subtract(drawableBag.location)) as C
 		}
 	}

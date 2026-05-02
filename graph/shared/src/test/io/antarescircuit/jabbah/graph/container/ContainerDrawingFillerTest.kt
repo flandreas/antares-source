@@ -36,7 +36,7 @@ class ContainerDrawingFillerTest {
 
         assertEquals(1, containerDrawing.drawables.filterIsInstance<LabelComponent>().size)
         assertEquals(1, containerDrawing.drawables.filterIsInstance<OriginIndicator>().size)
-        assertEquals(2, containerDrawing.drawables.filterIsInstance<PortViewComponent<*>>().size)
+        assertEquals(2, containerDrawing.drawables.filterIsInstance<PortViewComponent>().size)
 
         assertPortView("I", 1, Direction.WEST)
         assertPortView("O", 2, Direction.EAST)

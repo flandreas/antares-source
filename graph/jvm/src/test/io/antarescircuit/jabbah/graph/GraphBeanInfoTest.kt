@@ -39,6 +39,8 @@ class GraphBeanInfoTest {
 		GraphUITestRule.configure()
 		view = DrawingViewMockBuilder().build()
 		every { editor.active } returns true
+
+		@Suppress("UNCHECKED_CAST")
 		every { editor.view } returns view as DrawingView<Component, Drawing<Component>>
 	}
 
@@ -87,6 +89,8 @@ class GraphBeanInfoTest {
 		val graphView = GraphViewImpl()
 		val scenario = ScenarioImpl()
 		val scenarioStep = ScenarioStepImpl()
+
+		@Suppress("UNCHECKED_CAST")
 		every { editor.drawing } returns graphView as Drawing<Component>
 
 		graphView.scenarios.add(scenario)

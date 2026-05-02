@@ -86,6 +86,8 @@ abstract class AbstractAddressableView<T : AddressableVertice>(
 		} else {
 			ImmediateVerticeLink(this.model.id)
 		}
+
+		@Suppress("UNCHECKED_CAST")
 		OpenMemoryContentsRequest(
 			view,
 			displayContentVerticeView ?: this,
@@ -336,7 +338,9 @@ abstract class AbstractAddressableView<T : AddressableVertice>(
 		} else {
 			link
 		}
+		@Suppress("UNCHECKED_CAST")
 		this.model = link.getLinkedObject(startGraph) as T
+
 		this.displayContentVerticeView = subGraphVerticeView
 	}
 

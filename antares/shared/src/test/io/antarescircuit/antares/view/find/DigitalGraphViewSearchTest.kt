@@ -28,6 +28,7 @@ class DigitalGraphViewSearchTest {
 
 	private val builder = TestCircuitBuilder("test")
 
+	@Suppress("UNCHECKED_CAST")
 	private val view = EditModule.drawingViewFactory.create(builder.graphView as Drawing<Component>, null, false, "")
 
 	init {

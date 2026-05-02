@@ -53,6 +53,7 @@ class ImageLibraryElement(
 
     override fun <T : GraphElement> getNewInstance(): GraphElementView<T> {
         library!!.libraryService.getImage(library!!, this)
+        @Suppress("UNCHECKED_CAST")
         return GraphElementViewWrapper(ImageComponent(storable.uuid)) as GraphElementView<T>
     }
 

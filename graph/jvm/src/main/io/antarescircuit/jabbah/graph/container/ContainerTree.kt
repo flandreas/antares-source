@@ -183,8 +183,8 @@ class  ContainerTree(
 
 		/** Removes the object that has been added to the [ContainerDrawing] from the [ContainerTreeView].*/
 		override fun drawableAdded(event: DrawableContainerEvent<Component>) {
-			if (event.child is PortViewComponent<*>) {
-				model.removeGraphPortView((event.child as PortViewComponent<*>).port.name!!)
+			if (event.child is PortViewComponent) {
+				model.removeGraphPortView((event.child as PortViewComponent).port.name!!)
 			}
 			if (event.child is ControlViewComponent) {
 				val link = (event.child as ControlViewComponent).controlModelLink
@@ -201,8 +201,8 @@ class  ContainerTree(
 		 * has been removed from the [ContainerDrawing].
 		 */
 		override fun drawableRemoved(event: DrawableContainerEvent<Component>) {
-			if (event.child is PortViewComponent<*>) {
-				val graphPortView = mainGraphView.getGraphPortView((event.child as PortViewComponent<*>).port.name!!)
+			if (event.child is PortViewComponent) {
+				val graphPortView = mainGraphView.getGraphPortView((event.child as PortViewComponent).port.name!!)
 				if (graphPortView != null) {
 					model.addGraphPortView(graphPortView)
 				}

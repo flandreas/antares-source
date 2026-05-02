@@ -21,7 +21,7 @@ open class GraphViewServiceImpl(
             } else if (component is EdgeView<*>) {
                 if (drawing.contains(component)) {
                     // Might have been joined away by a previous removal of another EdgeView
-                    unconnectDeletedEdgeView(component as EdgeView<Any>)
+                    unconnectDeletedEdgeView(component)
                 }
             }
         }

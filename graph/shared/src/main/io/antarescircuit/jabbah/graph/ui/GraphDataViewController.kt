@@ -98,6 +98,7 @@ class GraphDataViewController(
 		if (data?.savable is AbstractLibraryItemSavable) {
 			val savable = data!!.savable as AbstractLibraryItemSavable
 			if (savable.item is UndoableStateLibraryItem<*>) {
+				@Suppress("UNCHECKED_CAST")
 				(savable.item as UndoableStateLibraryItem<Storable>).updateStorable(state)
 			}
 		}

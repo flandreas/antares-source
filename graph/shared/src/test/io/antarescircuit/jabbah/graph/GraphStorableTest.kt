@@ -15,6 +15,7 @@ class GraphStorableTest {
 		GraphViewTestRule.configure()
 	}
 
+	@Suppress("UNCHECKED_CAST")
 	@Test
 	fun shouldBeStorable() {
 		val testGraph = TestGraphView()

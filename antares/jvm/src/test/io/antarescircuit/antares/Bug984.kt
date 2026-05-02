@@ -31,6 +31,7 @@ class Bug984 : AbstractGraphViewEditingTest() {
         editor.selectionTool.rubberBandHandler.delaySelectTimer = null
     }
 
+    @Suppress("UNCHECKED_CAST")
     @Test
     fun test() {
         val y1 = 50.0

@@ -20,7 +20,7 @@ data class GraphElementCollectorResult(
 
 data class GraphElementCollectorResultEntry(
 	val id: Any,
-	val clazz: KClass<GraphElement>,
+	val clazz: KClass<*>,
 	val name: String,
 	val isScripted: Boolean,
 	val graphType: GraphType?,
@@ -83,21 +83,21 @@ class GraphElementCollector(
 		return GraphElementCollectorResult(deepEntries.values, flatEntries.values, immediateEntries.values)
 	}
 
-	private fun countDeep(id: Any, clazz: KClass<GraphElement>, name: String, isScripted: Boolean, graphType: GraphType?) {
+	private fun countDeep(id: Any, clazz: KClass<*>, name: String, isScripted: Boolean, graphType: GraphType?) {
 		count(id, clazz, name, isScripted, graphType, deepEntries)
 	}
 
-	private fun countFlat(id: Any, clazz: KClass<GraphElement>, name: String, isScripted: Boolean, graphType: GraphType?) {
+	private fun countFlat(id: Any, clazz: KClass<*>, name: String, isScripted: Boolean, graphType: GraphType?) {
 		count(id, clazz, name, isScripted, graphType, flatEntries)
 	}
 
-	private fun countImmediate(id: Any, clazz: KClass<GraphElement>, name: String, isScripted: Boolean, graphType: GraphType?) {
+	private fun countImmediate(id: Any, clazz: KClass<*>, name: String, isScripted: Boolean, graphType: GraphType?) {
 		count(id, clazz, name, isScripted, graphType, immediateEntries)
 	}
 
 	private fun count(
 		id: Any,
-		clazz: KClass<GraphElement>,
+		clazz: KClass<*>,
 		name: String,
 		isScripted: Boolean,
 		graphType: GraphType?,
@@ -115,8 +115,8 @@ class GraphElementCollector(
 
 		override fun visitEnter(node: Any): Boolean {
 			if (node is SubGraphVerticeRef) {
-				val graphType = node?.getGraphIfPresent()?.type
-				countDeep(node.graphUUID!!, node::class as KClass<GraphElement>, node.graphName.value, node.getGraphIfPresent()?.script != null, graphType)
+				val graphType = node.getGraphIfPresent()?.type
+				countDeep(node.graphUUID!!, node::class, node.graphName.value, node.getGraphIfPresent()?.script != null, graphType)
 			}
 			return true
 		}
@@ -124,7 +124,7 @@ class GraphElementCollector(
 		override fun visit(node: Any): Boolean {
 			if (node is GraphElement) {
 				val graphType = (node as? SubGraphVerticeRef)?.getGraphIfPresent()?.type
-				countDeep(node.type, node::class as KClass<GraphElement>, node.type, isScripted = false, graphType)
+				countDeep(node.type, node::class, node.type, isScripted = false, graphType)
 			}
 			return true
 		}
@@ -135,7 +135,7 @@ class GraphElementCollector(
 		override fun visitEnter(node: Any): Boolean {
 			if (node is SubGraphVerticeRef) {
 				val graphType = node.getGraphIfPresent()?.type
-				countFlat(node.graphUUID!!, node::class as KClass<GraphElement>, node.graphName.value, node.getGraphIfPresent()?.script != null, graphType)
+				countFlat(node.graphUUID!!, node::class, node.graphName.value, node.getGraphIfPresent()?.script != null, graphType)
 				if (node.getGraphIfPresent()!!.script != null) {
 					return false
 				}
@@ -146,7 +146,7 @@ class GraphElementCollector(
 		override fun visit(node: Any): Boolean {
 			if (node is GraphElement) {
 				val graphType = (node as? SubGraphVerticeRef)?.getGraphIfPresent()?.type
-				countFlat(node.type, node::class as KClass<GraphElement>, node.type, isScripted = false, graphType)
+				countFlat(node.type, node::class, node.type, isScripted = false, graphType)
 			}
 			return true
 		}
@@ -157,7 +157,7 @@ class GraphElementCollector(
 		override fun visitEnter(node: Any): Boolean {
 			if (node is SubGraphVerticeRef) {
 				val graphType = node.getGraphIfPresent()?.type
-				countImmediate(node.graphUUID!!, node::class as KClass<GraphElement>, node.graphName.value, node.getGraphIfPresent()?.script != null, graphType)
+				countImmediate(node.graphUUID!!, node::class, node.graphName.value, node.getGraphIfPresent()?.script != null, graphType)
 				return false
 			}
 			return true
@@ -166,7 +166,7 @@ class GraphElementCollector(
 		override fun visit(node: Any): Boolean {
 			if (node is GraphElement) {
 				val graphType = (node as? SubGraphVerticeRef)?.getGraphIfPresent()?.type
-				countImmediate(node.type, node::class as KClass<GraphElement>, node.type, isScripted = false, graphType)
+				countImmediate(node.type, node::class, node.type, isScripted = false, graphType)
 			}
 			return true
 		}

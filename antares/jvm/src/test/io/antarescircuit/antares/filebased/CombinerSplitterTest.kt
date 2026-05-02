@@ -12,6 +12,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
 
+@Suppress("UNCHECKED_CAST")
 class CombinerSplitterTest : AbstractFileBasedTest() {
 
 	private lateinit var a0: DigitalCircuitInOut

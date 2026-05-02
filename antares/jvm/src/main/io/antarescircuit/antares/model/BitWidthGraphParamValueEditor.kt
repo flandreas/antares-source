@@ -30,5 +30,6 @@ class BitWidthGraphParamValueEditor : JComboBox<BitWidth>(), GraphParamValueEdit
 		get() = isEnabled
 		set(value) { isEnabled = value }
 
+	@Suppress("PROPERTY_HIDES_JAVA_FIELD")
 	override val editor: JComponent get() = this
 }

@@ -42,10 +42,10 @@ interface EventBus {
      * If one of the handlers throws a [VetoException], the specified [undoEvent] is sent to all handlers
      * that have already processed the event, and the specified [elseHandler] is called in order to give
      * the initiator of the event a chance to undo things.
+     *
      * @param thenHandler the code to be executed if no veto occurred
      * @param elseHandler the code to be executed if a veto occurred
      */
-    @Deprecated("Use postTwoPhase")
     fun postVetoable(event: Any, undoEvent: Any, thenHandler: VetoHandler<Any> = {}, elseHandler: VetoHandler<VetoException> = {})
 
 	fun postTwoPhase(prepareEvent: Any, execEvent: Any, thenHandler: (() -> Unit)? = null)

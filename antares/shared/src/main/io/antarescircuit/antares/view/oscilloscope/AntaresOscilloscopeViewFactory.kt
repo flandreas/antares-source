@@ -17,6 +17,7 @@ import io.antarescircuit.jabbah.graph.model.oscilloscope.SignalHistoriesType
 import io.antarescircuit.jabbah.graph.view.EdgeView
 import io.antarescircuit.jabbah.graph.view.oscilloscope.*
 
+@Suppress("UNCHECKED_CAST")
 class AntaresOscilloscopeViewFactory : OscilloscopeViewFactory {
 
 	override fun getDefaultMode(graphType: GraphType): SignalHistoriesType =

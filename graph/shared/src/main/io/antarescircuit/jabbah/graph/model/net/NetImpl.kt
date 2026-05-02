@@ -22,8 +22,7 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 
 	companion object {
 		private val LOG by logger(NetImpl::class)
-		private const val baseResourceKey = "graph.styleType.edge"
-		private val type = Translations.getString("$baseResourceKey.name")
+		private val type = Translations.getString("graph.styleType.edge.name")
 		private val typeDesc = null
 	}
 
@@ -168,9 +167,7 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 		stateChanged(signalHandler, Net.STATE_CHANGE_SIGNAL)
 
 		// Tuning: Faster this way than with stream, filter and map
-		for (i in 0 until _ports.size) {
-			val port = _ports[i]
-
+		for (port in _ports) {
 			if (port.portType.isOutput && port.owner is WeakOutputPortBehaviour<*> && (port.owner as WeakOutputPortBehaviour<*>).isWeekOutputPortBehaviour) {
 				(port.owner as WeakOutputPortBehaviour<*>).handleNetChanged(signalHandler)
 			} else if (port.portType.isInput && port !== data.changedPort) {
@@ -195,7 +192,7 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
-		for (portRef in reader.readStorables<PortRef<*>>("ports")) {
+		for (portRef in reader.readStorables<PortRef>("ports")) {
 			reader.requestResolution(this, Reference(
 				name = "portRef",
 				referenceId = portRef.verticeId,
@@ -211,9 +208,9 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
 		super.resolve(reference, referenceResolver)
 		if (reference.name == "portRef") {
-			var vertice: Vertice? = referenceResolver.getStorable(reference.referenceId)
+			val vertice: Vertice? = referenceResolver.getStorable(reference.referenceId)
 
-			val portId = (reference.additionalInfo as PortRef<T>).portId
+			val portId = (reference.additionalInfo as PortRef).portId
 
 			if (vertice == null) {
 				LOG.warn("Couldn't resolve Vertice ${reference.referenceId} to connect to Net")
@@ -225,7 +222,7 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 				val port = vertice.getPort<T>(portId)
 				_ports.add(port)
 				port.connectTo(this)
-			} catch (e: NoSuchElementException) {
+			} catch (_: NoSuchElementException) {
 				// If vertice has a DesignError, we assume that it is a SubGraphVerticeRef with a broken reference,
 				// and we can't connect this Net that Vertice
 				if (vertice.designError == null) {
@@ -244,14 +241,8 @@ open class NetImpl<T : Any> : AbstractGraphElement(), Net<T> {
 
 	/** ---- [NetImpl] */
 
-	private fun getOutputPorts(): Collection<OutputPort<T>> {
-		return _ports
-			.filter { it.portType.isOutput }
-			.map { it as OutputPort<T> }
-	}
-
 	/** Used for storing references to the [Port]s of a [Net].*/
-	class PortRef<T : Any>(val port: Port<T>? = null) : AbstractStorable() {
+	class PortRef(val port: Port<*>? = null) : AbstractStorable() {
 
 		var verticeId: Int = -1
 		var portId: Int = -1

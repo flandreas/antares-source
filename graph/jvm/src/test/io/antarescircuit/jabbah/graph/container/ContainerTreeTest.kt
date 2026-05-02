@@ -30,6 +30,7 @@ import kotlin.io.path.absolutePathString
 import kotlin.io.path.name
 import kotlin.test.*
 
+@Suppress("UNCHECKED_CAST")
 class ContainerTreeTest {
 
 	companion object {
@@ -296,7 +297,7 @@ class ContainerTreeTest {
 		}
 
 		fun removePortViewFromContainer(): Setup {
-			containerDrawing.remove(containerDrawing.getDrawable { it is PortViewComponent<*> }!!)
+			containerDrawing.remove(containerDrawing.getDrawable { it is PortViewComponent }!!)
 			return this
 		}
 
@@ -322,7 +323,7 @@ class ContainerTreeTest {
 			return this
 		}
 
-		private fun createPortViewComponent(graphPort: GraphPort<*>): PortViewComponent<*> {
+		private fun createPortViewComponent(graphPort: GraphPort<*>): PortViewComponent {
 			return GraphViewModule.portViewFactory.createPortViewComponent(
 				GraphViewModule.portViewFactory.createPortView(
 					GraphModelModule.portFactory.createSubGraphPort(graphPort, graphView.graph!!.type)))

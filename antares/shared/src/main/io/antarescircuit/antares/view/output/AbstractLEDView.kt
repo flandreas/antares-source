@@ -168,6 +168,7 @@ abstract class AbstractLEDView<T: Vertice>(
 	}
 
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
+		@Suppress("UNCHECKED_CAST")
 		this.model = link.getLinkedObject(startGraph) as T
 	}
 

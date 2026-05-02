@@ -91,7 +91,9 @@ class BooleanExpressionLexer(
 		}
 
 	private fun singleCharId(state: State): Token<String> {
+		@Suppress("UNCHECKED_CAST")
 		val id = peekNextToken() as Token<String>
+
 		return if (id.value != null && getReservedKeyword(id.value!!) != null) {
 			super.id(state)
 		} else {

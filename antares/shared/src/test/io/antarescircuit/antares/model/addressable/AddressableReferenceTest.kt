@@ -24,11 +24,15 @@ class AddressableReferenceTest : AbstractGraphViewEditingTest(5) {
         // nothing to do before data holder is bound
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun prepare() {
         service.add(LogicGateView.andGateView(), view as DrawingView<Component, Drawing<Component>>)
         service.add(ROMView(), view as DrawingView<Component, Drawing<Component>>)
 
-        ref = AddressableReference(ImmediateVerticeLink(romView.modelId) as ObjectLink<Addressable>, view as DrawingView<GraphElementView<*>, GraphView>)
+        ref = AddressableReference(
+            ImmediateVerticeLink(romView.modelId) as ObjectLink<Addressable>,
+            view as DrawingView<GraphElementView<*>, GraphView>
+        )
     }
 
     /**

@@ -44,8 +44,6 @@ interface DigitalPort : BidirectionalPort<DigitalSignal>, DigitalSignalRepresent
 
 	var outputAnnotation: OutputAnnotation
 
-	//var triStateOutput: Boolean
-
 	val defaultDigitalSignal: DigitalSignal
 
 	/**

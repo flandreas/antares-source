@@ -13,6 +13,7 @@ import io.antarescircuit.jabbah.graph.view.vertice.TestVerticeView
 import dev.mokkery.verify
 import kotlin.test.*
 
+@Suppress("UNCHECKED_CAST")
 class DragEdgeViewDestinationConnectorTest : AbstractInputEventHandlerTest() {
 
 	init {

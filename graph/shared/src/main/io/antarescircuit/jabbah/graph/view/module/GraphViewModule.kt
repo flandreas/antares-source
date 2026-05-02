@@ -147,7 +147,9 @@ object GraphViewModule : AbstractModule() {
 
 	var connectionEstablishedHandler: ConnectionEstablishedHandler? = null
 
-	fun <T: Any> getTypedNetViewElementColorProvider(): NetViewElementColorProvider<T> = netViewElementColorProvider as NetViewElementColorProvider<T>
+	@Suppress("UNCHECKED_CAST")
+	fun <T: Any> getTypedNetViewElementColorProvider(): NetViewElementColorProvider<T> =
+		netViewElementColorProvider as NetViewElementColorProvider<T>
 
 	override fun initialize() {
 		EditModule.require()
@@ -163,13 +165,11 @@ object GraphViewModule : AbstractModule() {
 		configureHighlightModels(EditHighlightModule.highlightModelFactory)
 
 		EditEditorModule.dragManagerFactory = { editor ->
-			if (editor is GraphEditor) {
-				DragManagerImpl(editor, plugins = setOf(AutoConnector))
-			} else if (editor is ContainerEditor) {
-				DragManagerImpl(editor, plugins = setOf(DragDestinationHighlighter))
-			} else {
-				DragManagerImpl(editor)
-			}
+            when (editor) {
+                is GraphEditor -> DragManagerImpl(editor, plugins = setOf(AutoConnector))
+                is ContainerEditor -> DragManagerImpl(editor, plugins = setOf(DragDestinationHighlighter))
+                else -> DragManagerImpl(editor)
+            }
 		}
 		EditModule.drawingService = GraphViewServiceImpl()
 		EditModule.drawingAppService = graphViewAppService

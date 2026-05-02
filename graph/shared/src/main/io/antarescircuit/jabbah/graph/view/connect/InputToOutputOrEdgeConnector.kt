@@ -37,6 +37,7 @@ class InputToOutputOrEdgeConnector(
 	}
 
 	override fun connectEdgeViewToStartPort() {
+		@Suppress("UNCHECKED_CAST")
 		edgeView!!.connectToDestination(Connection(startPortView!!.owner!!, startPortView!!.port as Port<Any>))
 		edgeView!!.layout.layoutDestination()
 	}

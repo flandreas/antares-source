@@ -23,6 +23,7 @@ import io.antarescircuit.jabbah.graph.view.vertice.SubGraphVerticeView
 /**
  * An [Editor] for editing a [GraphView].
  */
+@Suppress("UNCHECKED_CAST")
 class GraphEditor(
     view: DrawingView<GraphElementView<*>, GraphView>,
     name: String,

@@ -73,10 +73,12 @@ class AntaresUsecaseExternalFunctionsTest : AbstractCircuitTest() {
 		val canvas: Canvas = mock(MockMode.autofill)
 		every { canvas.dimension } returns Dimension2D(100, 100)
 
+		@Suppress("UNCHECKED_CAST")
 		view = DrawingViewImpl(
 			drawing = circuitView as Drawing<Component>,
 			transformFactory = { AffineTransformImpl() },
 		) as DrawingView<GraphElementView<*>, GraphView>
+
 		every { canvas.view } returns view
 
 		view.canvas = canvas

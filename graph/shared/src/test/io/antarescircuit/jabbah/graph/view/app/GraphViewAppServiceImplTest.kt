@@ -19,6 +19,7 @@ import io.antarescircuit.jabbah.graph.view.port.PortView
 import io.antarescircuit.jabbah.graph.view.vertice.TestVerticeView
 import kotlin.test.*
 
+@Suppress("UNCHECKED_CAST")
 class GraphViewAppServiceImplTest {
 
 	private val service = GraphViewAppServiceImpl()

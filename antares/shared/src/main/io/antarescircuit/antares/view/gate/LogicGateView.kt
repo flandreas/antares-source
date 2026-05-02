@@ -423,6 +423,7 @@ class LogicGateView(
 		super.modelExchanged(oldModel)
 
 		for (inputPort in model.getInputs()) {
+			@Suppress("UNCHECKED_CAST")
 			addPortView(createInputPortView(inputPort as Port<DigitalSignal>, portLabelPosition = PortLabelPosition.EXTERNAL))
 		}
 		updateInputBitWidthAnnotations()

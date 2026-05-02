@@ -41,5 +41,6 @@ class StoringGraphActorData(
 
 	override fun dataToString(): String = "${changedPort?.name}:$signal"
 
+	@Suppress("UNCHECKED_CAST")
 	override fun <T : Any> getSignal(portId: Int): T? = signal as T?
 }

@@ -108,6 +108,8 @@ class TunnelNameEditor(
 ) : AbstractPropertyEditor() {
 
 	private val comboBoxEditor = ComboBoxPropertyEditor()
+
+	@Suppress("UNCHECKED_CAST")
 	private val comboBox: JComboBox<TunnelName> get() = comboBoxEditor.customEditor as JComboBox<TunnelName>
 
 	init {

@@ -75,6 +75,7 @@ class SingleNestedExcecutionIntegrationTest : AbstractJvmCircuitTest() {
 		output = nop.model.getGraph().withId(2) as DigitalCircuitInOut
 		output.propagationDelay = LongValueImpl(100 * MILLION)
 		// Set propagation delay of Net
+		@Suppress("UNCHECKED_CAST")
 		innerNet = nop.model.getGraph().withId(3) as Net<DigitalSignal>
 		innerNet.propagationDelay = LongValueImpl(100 * MILLION)
 

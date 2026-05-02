@@ -33,10 +33,11 @@ import io.antarescircuit.jabbah.io.*
  * A standard implementation of the [Graph] interface.
  */
 open class GraphImpl(
-	name: TranslatableText = TranslatableText(Translations.getString("graph.name.unknown")),
-	type: GraphType = GraphModelModule.graphTypeRegistry.default,
-	private val eventBus: EventBus = BaseModule.eventBus,
-	private val propertyOwner: PropertyOwner<Any> = PropertyOwnerImpl()
+    name: TranslatableText = TranslatableText(Translations.getString("graph.name.unknown")),
+    /** ---- [Graph] interface */
+    override var type: GraphType = GraphModelModule.graphTypeRegistry.default,
+    private val eventBus: EventBus = BaseModule.eventBus,
+    private val propertyOwner: PropertyOwner<Any> = PropertyOwnerImpl()
 ) : AbstractStorable(), Graph, Namable, Describable, PropertyOwner<Any> by propertyOwner {
 
 	companion object {
@@ -71,11 +72,7 @@ open class GraphImpl(
 		propertyOwner.fire(PROP_DESCRIPTION, null, it)
 	}
 
-	/** ---- [Graph] interface */
-
-	override var type: GraphType = type
-
-	override var uuid: UUID = System.createUUID()
+    override var uuid: UUID = System.createUUID()
 
 	override var overallPropagationDelay: Long? = null
 
@@ -272,10 +269,11 @@ open class GraphImpl(
 		_elements.forEach { it.executionStoppedNonVolatile(signalHandler, nonVolatileData) }
 	}
 
-	override fun <T : Any> getGraphPort(name: String): GraphPort<T>? {
-		return _elements.firstOrNull { it is GraphPort<*> && it.name == name } as GraphPort<T>?
-	}
+	@Suppress("UNCHECKED_CAST")
+	override fun <T : Any> getGraphPort(name: String): GraphPort<T>? =
+		_elements.firstOrNull { it is GraphPort<*> && it.name == name } as GraphPort<T>?
 
+	@Suppress("UNCHECKED_CAST")
 	override fun <T : Any> getGraphInput(name: String): GraphInput<T>? {
 		val input = graphInputs.firstOrNull { it.name == name }
 		if (input != null) {
@@ -284,6 +282,7 @@ open class GraphImpl(
 		return getGraphInputOutput(name) as GraphInput<T>?
 	}
 
+	@Suppress("UNCHECKED_CAST")
 	override fun <T : Any> getGraphOutput(name: String): GraphOutput<T>? {
 		val output = graphOutputs.firstOrNull { it.name == name }
 		if (output != null) {
@@ -438,7 +437,7 @@ open class GraphImpl(
 	}
 
 	private fun getOscilloscope(): Oscilloscope? {
-		return elements.firstOrNull() { it is Oscilloscope } as Oscilloscope?
+		return elements.firstOrNull { it is Oscilloscope } as Oscilloscope?
 	}
 
 	private inner class GraphElementListener : GraphElementAdapter() {

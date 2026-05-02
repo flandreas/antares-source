@@ -31,5 +31,6 @@ class LightColorGraphParamValueEditor : JComboBox<LightColor>(), GraphParamValue
         get() = editor.isEnabled
         set(value) { editor.isEnabled = value }
 
+    @Suppress("PROPERTY_HIDES_JAVA_FIELD")
     override val editor: JComponent get() = this
 }

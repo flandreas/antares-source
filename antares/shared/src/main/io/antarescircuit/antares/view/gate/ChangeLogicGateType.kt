@@ -31,7 +31,8 @@ class ChangeLogicGateTypeAction(
 		commandManager.execute(ChangeLogicGateTypeCommand(
 			newType,
 			selection.map { it.id },
-			view as DrawingView<GraphElementView<*>, GraphView>))
+			castedView()
+		))
 	}
 }
 

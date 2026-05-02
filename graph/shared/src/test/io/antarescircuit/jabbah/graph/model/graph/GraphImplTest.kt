@@ -50,7 +50,7 @@ class GraphImplTest {
 
 		val v1: Vertice = clone.withId(1)!! as Vertice
 		val v2: Vertice = clone.withId(2)!! as Vertice
-		val net: Net<Boolean> = clone.withId(3)!! as Net<Boolean>
+		val net: Net<*> = clone.withId(3)!! as Net<*>
 		assertEquals(3, v1.getOutput<Boolean>().net!!.id)
 		assertTrue(net.isConnectedWith(v2.getInput()))
 	}

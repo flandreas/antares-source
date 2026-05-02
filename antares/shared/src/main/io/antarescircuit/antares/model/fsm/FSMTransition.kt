@@ -190,6 +190,7 @@ class FSMTransition(
         2 * CONTAINS_SENSITIVITY,
         2 * CONTAINS_SENSITIVITY)
 
+    @Suppress("UNCHECKED_CAST")
     override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> =
         if (isSelfTransition) {
             cubicHandler as InputEventHandler<T>

@@ -189,9 +189,6 @@ open class PortImpl<T : Any>(
 
 	private val _combinedNets = mutableListOf<CombinedNet<T>>()
 
-	/** Created on-demand in [formNet]. Used to redo net formation during execution after net topology has changed.*/
-	private var netTopologyChangeListener: NetTopologyChangeListener? = null
-
 	override val combinedNets: Collection<CombinedNet<T>> get() = _combinedNets
 
 	override fun getOutgoingSignal(): T? {
@@ -360,6 +357,7 @@ open class PortImpl<T : Any>(
 
 	private fun replaceOwnUndefinedSignals(signalHandler: SignalHandler): SignalReplacement<T> =
 		if (signalHandler.executionContext is GraphExecutionContext<*>) {
+			@Suppress("UNCHECKED_CAST")
 			(signalHandler.executionContext as GraphExecutionContext<T>).netSignalApplier
 				.replaceOwnUndefinedSignals(this, _outgoingSignal, signalHandler)
 		} else {

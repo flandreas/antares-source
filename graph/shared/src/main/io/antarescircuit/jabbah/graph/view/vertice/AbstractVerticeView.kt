@@ -83,8 +83,6 @@ abstract class AbstractVerticeView<T : Vertice>(
 				return null
 			}
 		}
-
-		private val CANNOT_OPEN_ACTOR_CLICK_HANDLER = CannotOpenActorClickHandler()
 	}
 
 	/** Holds the graphical representations of all the model's [Port]s.*/
@@ -182,6 +180,7 @@ abstract class AbstractVerticeView<T : Vertice>(
 		return portViews.firstOrNull { it.contains(p) || it.containsConnectionPoint(p) }
 	}
 
+	@Suppress("UNCHECKED_CAST")
 	override fun <G : Any> getPortView(port: Port<G>): PortView<G>? {
 		return portViews.filter { it.port == port }.map { it as PortView<G> }.firstOrNull()
 	}

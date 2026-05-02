@@ -26,18 +26,18 @@ import io.antarescircuit.jabbah.io.StoreWriter
  * Cloning a subclass instance of [PortViewComponent] always creates the type of instance  that is returned by
  * [PortViewFactory].
  */
-open class PortViewComponent<T : Any>(
+open class PortViewComponent(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-	portView: PortView<T>? = null
+	portView: PortView<*>? = null
 ) : AbstractComponent(styleProvider), SnappableX, SnappableY {
 
 	companion object {
 		private val TYPE = Translations.getString("graph.component.port")
 	}
 
-	val port: Port<T> get() = portView!!.port
+	val port: Port<*> get() = portView!!.port
 
-	var portView: PortView<T>? = portView
+	var portView: PortView<*>? = portView
 		private set
 
 	private var drawableOwner: DrawableOwner? = null
@@ -92,7 +92,7 @@ open class PortViewComponent<T : Any>(
 		if (drawableOwner != null) {
 			drawableOwner!!.dispose()
 		}
-		portView = reader.readStorable("portView") as PortView<T>
+		portView = reader.readStorable("portView") as PortView<*>
 		drawableOwner = DrawableOwner(this, portView!!)
 	}
 

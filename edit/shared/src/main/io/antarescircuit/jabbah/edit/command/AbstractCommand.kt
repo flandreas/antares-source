@@ -16,6 +16,9 @@ abstract class AbstractCommand(
 
 	private val tags: MutableSet<String> by lazy { mutableSetOf() }
 
+    @Suppress("UNCHECKED_CAST")
+    fun <T> castedView(): T = editor!!.view as T
+
     /** ---- [Command] interface */
 
     override fun getDescription(): String = _description

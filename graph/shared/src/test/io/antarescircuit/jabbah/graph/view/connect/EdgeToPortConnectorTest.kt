@@ -97,6 +97,7 @@ class EdgeToPortConnectorTest : AbstractInputEventHandlerTest() {
 	// 3 VerticeViews, 1 NodeView, 3 EdgeViews
 	private fun assertEdgeToPortConnected(destPort: Port<out Boolean>, drawablesCount: Int = 7) {
 		// Instances have been recreated while replaying from undo snapshot
+		@Suppress("UNCHECKED_CAST")
 		val nodeView = builder.graphView.getDrawable { it is NodeView<*> } as NodeView<Boolean>
 		val v1 = builder.graphView.getVerticeView("v1")!!
 		val v2 = builder.graphView.getVerticeView("v2")!!
@@ -213,6 +214,7 @@ class EdgeToPortConnectorTest : AbstractInputEventHandlerTest() {
 
 	private fun assertConnectedOpenEnded() {
 		// Instances have been recreated while replaying from undo snapshot
+		@Suppress("UNCHECKED_CAST")
 		val nodeView = builder.graphView.getDrawable { it is NodeView<*> } as NodeView<Boolean>
 		val newV1 = builder.graphView.getVerticeView("v1")!!
 		val newV2 = builder.graphView.getVerticeView("v2")!!

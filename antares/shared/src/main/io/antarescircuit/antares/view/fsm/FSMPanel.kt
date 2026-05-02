@@ -55,6 +55,7 @@ class FSMPanelController(
 
     val drawingView: DrawingView<Component, FSMDrawing> = DrawingViewImpl(FSMDrawing(), displayGlobalMessages = true)
 
+    @Suppress("UNCHECKED_CAST")
     val editor = EditEditorModule.createEditor(GraphFrameController.MAIN_EDITOR_NAME, drawingView as DrawingView<Component, Drawing<Component>>)
 
     val stateTool = ComponentAtLocationTool(editor, cursor = Cursor.CLICK, factory = this::createFSMState )

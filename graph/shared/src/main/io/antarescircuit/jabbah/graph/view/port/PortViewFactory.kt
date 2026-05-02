@@ -11,7 +11,7 @@ interface PortViewFactory {
 
 	fun <T: Any> createPortView(port: Port<T>, direction: Direction? = null): PortView<T>
 
-	fun <T: Any> createPortViewComponent(portView: PortView<T>): PortViewComponent<T>
+	fun <T: Any> createPortViewComponent(portView: PortView<T>): PortViewComponent
 
 }
 
@@ -21,7 +21,7 @@ class UndefinedPortViewFactory : PortViewFactory {
 		throw UnsupportedOperationException("not implemented")
 	}
 
-	override fun <T : Any> createPortViewComponent(portView: PortView<T>): PortViewComponent<T> {
+	override fun <T : Any> createPortViewComponent(portView: PortView<T>): PortViewComponent {
 		throw UnsupportedOperationException("not implemented")
 	}
 }

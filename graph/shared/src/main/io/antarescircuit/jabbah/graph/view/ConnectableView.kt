@@ -72,5 +72,5 @@ interface ConnectableView : Drawable, Storable {
      * @param port the [Port] whose [PortView] is requested.
      * @return the [PortView] of `isPort`.
      */
-    fun <G: Any> getPortView(port: Port<G>):PortView<G>?
+    fun <G: Any> getPortView(port: Port<G>): PortView<G>?
 }

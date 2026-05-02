@@ -71,7 +71,7 @@ class GraphPanelViewControllerTest {
 
 		eventBus.post(ApplicationDataEvent(null, applicationDataFor(content, savable)))
 
-		assertSame(content, controller.editViewController.editor.view.drawing as Drawing<GraphElementView<*>>)
+		assertSame(content, controller.editViewController.editor.view.drawing as Drawing<*>)
 		assertSame(content, event.newGraphView)
 	}
 
@@ -86,7 +86,7 @@ class GraphPanelViewControllerTest {
 			applicationDataFor(content, savable),
 			graphViewBuilder.graphView))
 
-		assertSame(content, controller.editViewController.editor.view.drawing as Drawing<GraphElementView<*>>)
+		assertSame(content, controller.editViewController.editor.view.drawing as Drawing<*>)
 		assertSame(content, event.newGraphView)
 	}
 

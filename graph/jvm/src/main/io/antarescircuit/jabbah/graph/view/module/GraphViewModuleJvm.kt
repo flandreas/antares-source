@@ -109,6 +109,7 @@ object GraphViewModuleJvm : AbstractModule() {
 		registry.registerRenderer(SignalHistoriesType::class.java, EnumRenderer::class.java)
 	}
 
+	@Suppress("UNCHECKED_CAST")
 	private fun configurePropertyEditors(registry: DynamicPropertyEditorRegistry) {
 		registry.register(LayoutType::class.java) { LayoutEditor((it as CommandPropertySwing<LayoutType>).filter) }
 		registry.registerEditor(PortType::class.java, PortTypeEditor::class.java)

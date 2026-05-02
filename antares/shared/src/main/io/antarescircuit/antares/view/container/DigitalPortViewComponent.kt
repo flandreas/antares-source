@@ -27,7 +27,7 @@ import io.antarescircuit.jabbah.io.StoreWriter
 class DigitalPortViewComponent(
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     portView: DigitalPortView? = null
-) : PortViewComponent<DigitalSignal>(styleProvider, portView) {
+) : PortViewComponent(styleProvider, portView) {
 
     private val digitalPort: DigitalPort get() = port as DigitalPort
     private val digitalPortView: DigitalPortView get() = portView as DigitalPortView

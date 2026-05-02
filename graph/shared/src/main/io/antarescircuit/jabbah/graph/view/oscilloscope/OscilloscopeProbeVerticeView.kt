@@ -101,6 +101,7 @@ open class OscilloscopeProbeVerticeView<T : Any>(
 
 	/** ---- [Drawable] interface */
 
+	@Suppress("UNCHECKED_CAST")
 	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> =
 		handler as InputEventHandler<T>
 
@@ -261,7 +262,8 @@ open class OscilloscopeProbeVerticeView<T : Any>(
 				context.drawingView.drawing.remove(this@OscilloscopeProbeVerticeView)
 			}
 
-			val command = DropOscilloscopeProbeCommand<T>(
+			@Suppress("UNCHECKED_CAST")
+			val command = DropOscilloscopeProbeCommand(
 				context.drawingView as DrawingView<GraphElementView<*>, GraphView>,
 				name,
 				connectionPoint(),

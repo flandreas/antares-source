@@ -163,7 +163,7 @@ class AutoAdjustBitWidthTest {
 
     private fun getPortViewInContainerDrawing(): DigitalPortView =
         containerPanel.controller.containerDrawing!!.drawables
-            .filterIsInstance<PortViewComponent<*>>()
+            .filterIsInstance<PortViewComponent>()
             .first()
             .portView as DigitalPortView
 }

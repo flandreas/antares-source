@@ -34,6 +34,7 @@ abstract class AbstractGraphViewEditingTest(
 		GraphViewTestRule.configure()
 		builder = GraphViewBuilder { builder -> view.setDrawing(builder.graphView) }
 		view = EditModule.drawingViewFactory.create(builder.graphView, null, false, "")
+		@Suppress("UNCHECKED_CAST")
 		editor = EditEditorModule.createEditor("", view as DrawingView<Component, Drawing<Component>>)
 		driver = EditorToolDriver(editor)
 		service = GraphViewModule.graphViewAppService

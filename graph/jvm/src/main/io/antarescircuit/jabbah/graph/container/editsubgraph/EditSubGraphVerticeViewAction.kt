@@ -57,7 +57,7 @@ class EditSubGraphVerticeViewAction(
 		val containerPanelController = ContainerPanelController(
 			applicationContextHolder,
 			displayGlobalMessages = false,
-			viewManager.activeView!!.view as DrawingView<GraphElementView<*>, GraphView>,
+			viewManager.castedActiveView<DrawingView<GraphElementView<*>, GraphView>>()!!
 		)
 		containerPanelController.editor.preventDeletingPortViewComponents = true
 

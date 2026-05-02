@@ -30,6 +30,8 @@ class LightColorExpressionEditor(
     }
 
     private val comboBoxEditor = ComboBoxPropertyEditor()
+    @Suppress("UNCHECKED_CAST")
+
     private val comboBox: JComboBox<LightColor> get() = comboBoxEditor.customEditor as JComboBox<LightColor>
 
     private val graph = (graphEditor?.drawing as? GraphView?)?.graph

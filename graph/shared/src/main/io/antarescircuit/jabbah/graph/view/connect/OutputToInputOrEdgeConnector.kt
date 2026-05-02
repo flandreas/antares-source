@@ -36,8 +36,9 @@ class OutputToInputOrEdgeConnector(
 		SimpleEdgeViewAdjustmentView.forDestinationAdjustmentOf(edgeView!!)
 
 	override fun connectEdgeViewToStartPort() {
+		@Suppress("UNCHECKED_CAST")
 		edgeView!!.connectToOrigin(Connection(startPortView!!.owner!!, startPortView!!.port as Port<Any>))
-		// Adapt to PortView that might has reduced its length
+		// Adapt to PortView that might have reduced its length
 		edgeView!!.layout.layoutOrigin()
 	}
 

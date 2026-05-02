@@ -50,7 +50,7 @@ open class GraphViewImpl(
 		val SCRIPT_HELP_ID = HelpId("graph.GraphView.script")
 
 		/** Use the same single [GraphViewInputEventHandler] instance for all [GraphViewImpl]. */
-		var inputEventHandler: GraphViewInputEventHandler<*>? = null
+		var inputEventHandler: GraphViewInputEventHandler<GraphElementView<*>>? = null
 	}
 
 	/** Manages the [NetView]s for all [Net]s of the [Graph].*/
@@ -272,6 +272,7 @@ open class GraphViewImpl(
 
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
 		if (reference.name == "netView") {
+			@Suppress("UNCHECKED_CAST")
 			val resolvedNetView = reference.additionalInfo as NetView<Any>
 
 			// If NetViewElements are resolved BEFORE a NetView, a corresponding dummy NetView already
@@ -327,8 +328,9 @@ open class GraphViewImpl(
 
 	override fun provideInputEventHandler(): DrawableBagInputEventHandler<GraphElementView<*>, InputEventContext> {
 		if (inputEventHandler == null) {
-			inputEventHandler = GraphViewInputEventHandler<GraphElementView<*>>()
+			inputEventHandler = GraphViewInputEventHandler()
 		}
+		@Suppress("UNCHECKED_CAST")
 		return inputEventHandler as DrawableBagInputEventHandler<GraphElementView<*>, InputEventContext>
 	}
 

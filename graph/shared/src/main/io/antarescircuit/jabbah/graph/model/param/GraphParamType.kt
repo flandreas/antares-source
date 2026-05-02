@@ -59,6 +59,7 @@ object GraphParamTypeRegistry {
 		providers[name] = provider
 	}
 
+	@Suppress("UNCHECKED_CAST")
 	fun <T : Any> get(name: String): GraphParamType<T> =
 		(providers[name]?.invoke() as GraphParamType<T>?) ?: throw IllegalArgumentException("no provider for GraphParamType '$name' registered")
 }

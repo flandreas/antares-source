@@ -4,7 +4,6 @@ import io.antarescircuit.jabbah.base.UUID
 import io.antarescircuit.jabbah.base.event.EventBus
 import io.antarescircuit.jabbah.base.module.BaseModule
 import io.antarescircuit.jabbah.draw.view.ZoomedPointTranslation
-import io.antarescircuit.jabbah.edit.Drawing
 import io.antarescircuit.jabbah.edit.DrawingViewContent
 import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
@@ -134,11 +133,6 @@ class NavigationStack<T : GraphView>(
 	/** Finds the first [DrawingViewContent] that fulfills the specified condition, if any.*/
 	fun find(condition: (DrawingViewContent<GraphElementView<*>, T>) -> Boolean): DrawingViewContent<GraphElementView<*>, T>? {
 		return entries.firstOrNull { condition.invoke(it.content) }?.content
-	}
-
-	/** Executes the specified action for all [DrawingViewContent]s.*/
-	fun forAllContents(action: (DrawingViewContent<*, Drawing<*>>) -> Unit) {
-		entries.forEach { action.invoke(it.content as DrawingViewContent<*, Drawing<*>>) }
 	}
 
 	fun graphViewContainingSubGraphVerticeView(uuid: UUID): GraphView? =

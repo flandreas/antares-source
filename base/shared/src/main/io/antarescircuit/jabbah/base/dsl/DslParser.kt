@@ -1,6 +1,8 @@
 package io.antarescircuit.jabbah.base.dsl
 
-import io.antarescircuit.jabbah.base.*
+import io.antarescircuit.jabbah.base.EmptyHierarchyVisitor
+import io.antarescircuit.jabbah.base.HierarchyVisitor
+import io.antarescircuit.jabbah.base.Translations
 import io.antarescircuit.jabbah.base.dsl.BaseTokenType.*
 import io.antarescircuit.jabbah.base.dsl.DslTokenType.*
 import io.antarescircuit.jabbah.base.module.BaseModule

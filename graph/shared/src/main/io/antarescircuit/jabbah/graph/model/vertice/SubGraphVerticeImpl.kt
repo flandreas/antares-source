@@ -26,8 +26,7 @@ class SubGraphVerticeImpl(
 ) : AbstractVertice(name), SubGraphVertice {
 
 	companion object {
-		private const val baseResourceKey = "graph.element.container"
-		private val type = Translations.getString("$baseResourceKey.name")
+		private val type = Translations.getString("graph.element.container.name")
 	}
 
 	override val type: String get() = SubGraphVerticeImpl.type
@@ -103,5 +102,5 @@ class SubGraphVerticeImpl(
 	/** ---- [SubGraphVerticeImpl] */
 
 	fun getSubGraphPorts(): ImmutableList<SubGraphPort<*>> =
-		getPorts().map { it as SubGraphPort<Any> }.toImmutableList()
+		getPorts().map { it as SubGraphPort<*> }.toImmutableList()
 }

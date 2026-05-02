@@ -327,6 +327,7 @@ abstract class AbstractPortView<T : Any>(
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) {
 		if (reference.name == "portRef") {
 			port.removePropertyChangeListener(portListener)
+			@Suppress("UNCHECKED_CAST")
 			_port = referenceResolver.getStorable<Storable>(reference.referenceId)!! as Port<T>
 			port.addPropertyChangeListener(portListener)
 		}

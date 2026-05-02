@@ -269,6 +269,7 @@ class GraphPanelViewController(
 		if (graphView == null) {
 			// Set empty drawing to avoid flickering (i.e. showing the old drawing) when
 			// the subsequent drawing gets displayed
+			@Suppress("UNCHECKED_CAST")
 			editor.view.setDrawing(GraphViewModule.graphViewFactory.create(null) as Drawing<Component>, applyDefaultZoomStrategy = false)
 			graphHierarchyController.setRootGraphView(null)
 			desktopController.closeAll()

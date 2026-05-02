@@ -73,6 +73,7 @@ abstract class AbstractSplitter(
 
 	override fun requiresCombinedNets(signalHandler: SignalHandler): Boolean = false
 
+	@Suppress("UNCHECKED_CAST")
 	override fun <T : Any> createCombinedNetsFor(outputPort: OutputPort<T>, inputPort: InputPort<T>, signalHandler: SignalHandler): Collection<CombinedNet<T>> {
 		return if (inputPort === wideSidePort) {
 			createNarrowCombinedNets(outputPort as OutputPort<DigitalSignal>, signalHandler) as Collection<CombinedNet<T>>
@@ -168,13 +169,13 @@ abstract class AbstractSplitter(
 	private fun flushNarrowSide(signalHandler: SignalHandler, force: Boolean) {
 		narrowSidePorts.forEach {
 			it.flush(signalHandler, force)
-			(it as PortImpl<DigitalSignal>).syncIncomingSignalWithNegotiatedOutgoingSignal()
+			(it as PortImpl<*>).syncIncomingSignalWithNegotiatedOutgoingSignal()
 		}
 	}
 
 	private fun flushWideSide(signalHandler: SignalHandler, force: Boolean) {
 		wideSidePort.flush(signalHandler, force)
-		(wideSidePort as PortImpl<DigitalSignal>).syncIncomingSignalWithNegotiatedOutgoingSignal()
+		(wideSidePort as PortImpl<*>).syncIncomingSignalWithNegotiatedOutgoingSignal()
 	}
 
 	/** ---- [AbstractSplitter] */

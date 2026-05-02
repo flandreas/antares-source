@@ -27,6 +27,7 @@ class ConnectDestinationCommand(
 	override fun getDetailedDescription(): String =
 		"${super.getDetailedDescription()} $edgeViewId dest:$destConnectableViewId:$destPortId"
 
+	@Suppress("UNCHECKED_CAST")
 	override fun execute() {
 		service.connectToDestination(edgeView as EdgeView<Any>, Connection(destConnectableView, destPort as Port<Any>))
 	}

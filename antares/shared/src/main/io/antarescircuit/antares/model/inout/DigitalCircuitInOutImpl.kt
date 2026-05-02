@@ -142,6 +142,7 @@ class DigitalCircuitInOutImpl(
 		portType.isInput && subGraphInputPort == null // Clickable input in top-level Graph
 			|| portType == PortType.OUTPUT && subGraphOutputPort != null
 
+	@Suppress("UNCHECKED_CAST")
 	override fun <T : Any> createCombinedNetsFor(outputPort: OutputPort<T>, inputPort: InputPort<T>, signalHandler: SignalHandler): Collection<CombinedNet<T>> =
 		createCombinedNetsForOutput(outputPort as OutputPort<DigitalSignal>, signalHandler) as Collection<CombinedNet<T>>
 

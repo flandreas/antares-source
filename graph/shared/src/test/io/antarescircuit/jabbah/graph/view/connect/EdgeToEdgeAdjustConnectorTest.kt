@@ -45,7 +45,7 @@ class EdgeToEdgeAdjustConnectorTest : AbstractInputEventHandlerTest() {
         clickMouseAt(150, 200)
 
         // Assert
-        val nodeView = builder.graphView.getDrawable { it is NodeView<*> } as NodeView<Boolean>
+        val nodeView = builder.graphView.getDrawable { it is NodeView<*> } as NodeView<*>
         assertEquals(1, builder.graphView.graph!!.elements.filterIsInstance<Net<*>>().size)
         assertTrue(nodeView.model.isConnectedWith(builder.graphView.getVerticeView("v2")!!.model.getInput()))
         assertTrue(nodeView.model.isConnectedWith(builder.graphView.getVerticeView("v3")!!.model.getInput()))

@@ -26,6 +26,7 @@ class ConnectOriginCommand(
 	override fun getDetailedDescription(): String =
 		"${super.getDetailedDescription()} $edgeViewId orig:$origConnectableViewId:$origPortId"
 
+	@Suppress("UNCHECKED_CAST")
 	override fun execute() {
 		service.connectToOrigin(edgeView as EdgeView<Any>, Connection(origConnectableView, origPort as Port<Any>))
 	}

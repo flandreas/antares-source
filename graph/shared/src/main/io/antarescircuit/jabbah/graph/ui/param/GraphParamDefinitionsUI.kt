@@ -14,7 +14,7 @@ import io.antarescircuit.jabbah.graph.model.param.GraphParamDefinitions
 interface GraphParamDefinitionsView : UIView {
 	fun valueChanged()
 	fun startAdding(name: String)
-	fun <T: Any> getEditedDefinition(): GraphParamDefinition<T>?
+	fun getEditedDefinition(): GraphParamDefinition<Any>?
 	fun errorMessage(msg: String?)
 	fun close()
 }
@@ -121,7 +121,7 @@ class GraphParamDefinitionsController(
 
 	private inner class ApplyAction : AbstractAction("graph.paramDefs.dialog.apply") {
 		override fun execute(event: ActionEvent) {
-			val editedDef = view.getEditedDefinition<Any>()
+			val editedDef = view.getEditedDefinition()
 			if (editedDef != null && validate(editedDef)) {
 				isAdding = false
 				value = if (selectedDefinition != null) {

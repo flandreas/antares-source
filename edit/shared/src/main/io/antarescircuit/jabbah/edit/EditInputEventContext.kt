@@ -28,4 +28,7 @@ class EditInputEventContext(
     }
 
 	val drawingView: DrawingView<Component, Drawing<Component>> get() = editor.view
+
+    @Suppress("UNCHECKED_CAST")
+    fun <T> castedView(): T = editor.view as T
 }

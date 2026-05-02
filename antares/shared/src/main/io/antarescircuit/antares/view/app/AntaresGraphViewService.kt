@@ -55,6 +55,7 @@ class AntaresGraphViewService(
 				(component.model as DigitalSignalRepresenter).signalRepresentation = signalRepresentation
 			}
 			if (component is SubGraphVerticeView<*>) {
+				@Suppress("UNCHECKED_CAST")
 				applyDefaultLightColor(component as SubGraphVerticeView<SubGraphVerticeRef>, lightColor)
 			}
 			if (component is LogicGateView) {
@@ -74,6 +75,7 @@ class AntaresGraphViewService(
 					if (it is LightEmitter) {
 						it.lightColor = defaultLightColor
 					} else if (it is SubGraphVerticeView<*>) {
+						@Suppress("UNCHECKED_CAST")
 						applyDefaultLightColor(it as SubGraphVerticeView<SubGraphVerticeRef>, defaultLightColor)
 					}
 				}
@@ -86,7 +88,10 @@ class AntaresGraphViewService(
 		}
 		paramDefs?.definitions
 			?.filter { it.type.valueClass == LightColor::class }
-			?.map { it as GraphParamDefinition<LightColor> }
+			?.map {
+				@Suppress("UNCHECKED_CAST")
+				it as GraphParamDefinition<LightColor>
+			}
 			?.forEach { paramDef ->
 				subGraphVV.model.setParamValue(paramDef.createValue(defaultLightColor))
 			}

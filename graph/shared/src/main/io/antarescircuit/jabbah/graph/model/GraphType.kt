@@ -51,6 +51,7 @@ object GenericGraphType: GraphType {
 
 	override val isCombiningNets: Boolean get() = true
 
+	@Suppress("UNCHECKED_CAST")
 	override fun <I: Any, O: Any> adaptTo(other: GraphType): GraphTypeSignalAdapter<I, O> =
 		GenericGraphTypeSignalAdapter as GraphTypeSignalAdapter<I, O>
 

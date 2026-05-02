@@ -13,6 +13,7 @@ import io.antarescircuit.jabbah.graph.view.graph.GraphViewImpl
 import io.antarescircuit.jabbah.graph.view.net.edge.EdgeViewFactory
 import io.antarescircuit.jabbah.graph.view.net.edge.EdgeViewImpl
 
+@Suppress("UNCHECKED_CAST")
 class AntaresEdgeViewFactory(
 	private val styleProvider: StyleProvider
 ) : EdgeViewFactory {

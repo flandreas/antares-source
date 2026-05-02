@@ -377,7 +377,7 @@ class OutputToInputOrEdgeConnectorTest : AbstractInputEventHandlerTest() {
 	}
 
 	private fun assertConnectedToEdgeView() {
-		val nodeView = builder.graphView.getDrawable { it is NodeView<*> } as NodeView<Boolean>
+		val nodeView = builder.graphView.getDrawable { it is NodeView<*> } as NodeView<*>
 		val newV1 = builder.graphView.getVerticeView("v1")!!
 		val newV2 = builder.graphView.getVerticeView("v2")!!
 		val newV3 = builder.graphView.getVerticeView("v3")!!

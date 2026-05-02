@@ -18,7 +18,7 @@ class GraphViewServiceImplTest {
 
     init {
        GraphViewTestRule.configure()
-       builder = GraphViewBuilder<Boolean>()
+       builder = GraphViewBuilder()
        drawingView = DrawingViewMockBuilder().withDrawing(builder.graphView).build()
        vv1 = builder.addVerticeView(TestVerticeView("vv1", loc = Point2D(100, 100)))
        vv2 = builder.addVerticeView(TestVerticeView("vv2", loc = Point2D(200, 100)))
@@ -32,7 +32,7 @@ class GraphViewServiceImplTest {
         service.delete(listOf(vv1), drawingView.drawing)
 
         assertFalse(drawingView.drawing.contains(vv1))
-        assertFalse((drawingView.drawing as GraphView).graph!!.contains(vv1.model))
+        assertFalse(drawingView.drawing.graph!!.contains(vv1.model))
 
         assertNull(ev.origin)
         assertNull(vv1.model.getOutput<Boolean>().net)
@@ -48,7 +48,7 @@ class GraphViewServiceImplTest {
 
         assertNull(vv1.model.getOutput<Boolean>().net)
         assertNull(vv2.model.getInput<Boolean>().net)
-        assertEquals(3, (drawingView.drawing as GraphView).graph!!.elementsCount)
-        assertEquals(0, (drawingView.drawing as GraphView).graph!!.elements.filter { it is Net<*> }.size)
+        assertEquals(3, drawingView.drawing.graph!!.elementsCount)
+        assertEquals(0, drawingView.drawing.graph!!.elements.filterIsInstance<Net<*>>().size)
     }
 }

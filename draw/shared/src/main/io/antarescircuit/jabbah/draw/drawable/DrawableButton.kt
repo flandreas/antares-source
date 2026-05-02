@@ -81,6 +81,7 @@ open class DrawableButton<C: InputEventContext>(
 
 	/** ---- [AbstractDrawable] */
 
+	@Suppress("UNCHECKED_CAST")
 	override fun <T : InputEventContext> getInputEventHandler(context: T): InputEventHandler<T> =
 		handler as InputEventHandler<T>
 

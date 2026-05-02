@@ -53,6 +53,7 @@ class LibraryTest {
 		assertEquals("O1", vvr.model.getOutput<DigitalSignal>().name)
 
 		for (portView in vvr.getPortViews()) {
+			@Suppress("UNCHECKED_CAST")
 			assertSame(portView.port as Port<DigitalSignal>, vvr.model.getPort(portView.port.name!!))
 		}
 	}
@@ -77,6 +78,7 @@ class LibraryTest {
 		assertEquals("O1", vvr.model.getOutput<DigitalSignal>().name)
 
 		for (portView in vvr.getPortViews()) {
+			@Suppress("UNCHECKED_CAST")
 			assertSame(portView.port as Port<DigitalSignal>, vvr.model.getPort(portView.port.name!!))
 		}
 	}

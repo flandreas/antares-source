@@ -18,6 +18,7 @@ internal class DigitalSignalSourceControlViewTest {
 	@Test
 	fun shouldMaintainLocationWhenClonedInControlViewComponent() {
 		val inOutView = DigitalCircuitInOutView()
+		@Suppress("UNCHECKED_CAST")
 		val component = ControlViewComponent(source = inOutView as ControlViewSource<Vertice>)
 		component.location = Point2D(100, 50)
 

@@ -57,7 +57,9 @@ class AntaresMetaGraphService(
 		inOutView.location = verticeView.location
 		metaGraph.graph.graphView.add(inOutView)
 
+		@Suppress("UNCHECKED_CAST")
 		val edgeView = metaGraph.graph.graphView.getEdgeView(verticeView.model.getPort<DigitalSignal>()) as EdgeView<DigitalSignal>?
+
 		if (edgeView != null) {
 			val endpointType = edgeView.getConnectionEndpointType(verticeView)!!
 			connectService.unconnectEdgeView(edgeView, endpointType)

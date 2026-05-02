@@ -36,6 +36,7 @@ data class ConnectionReference(
 	fun <T: Any> getConnection(graphView: GraphView): Connection<T> {
 		val connectableView = graphView.getWithId(connectableViewId) as ConnectableView
 		val port = portId?.let { connectableView.getPort(it) }
+		@Suppress("UNCHECKED_CAST")
 		return Connection(connectableView, port) as Connection<T>
 	}
 }

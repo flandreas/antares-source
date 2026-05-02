@@ -64,6 +64,7 @@ interface ControlViewSource<T : Vertice> : VerticeView<T> {
 	 */
 	fun postControlViewSourceChangeEvent(eventBus: EventBus = BaseModule.eventBus) {
 		if (isNotReading) {
+			@Suppress("UNCHECKED_CAST")
 			eventBus.post(
 				ControlViewSourceEvent(
 					ControlViewSourceEvent.Type.CHANGE,

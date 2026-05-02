@@ -12,6 +12,7 @@ import io.antarescircuit.jabbah.graph.view.port.PortViewFactory
 
 class DigitalPortViewFactory(private val styleProvider: StyleProvider) : PortViewFactory {
 
+	@Suppress("UNCHECKED_CAST")
 	override fun <T : Any> createPortView(port: Port<T>, direction: Direction?): PortView<T> =
 		when(port.portType) {
 			PortType.INPUT -> DigitalPortView(
@@ -24,6 +25,6 @@ class DigitalPortViewFactory(private val styleProvider: StyleProvider) : PortVie
 				direction = direction ?: Direction.EAST)
 		} as PortView<T>
 
-	override fun <T : Any> createPortViewComponent(portView: PortView<T>): PortViewComponent<T> =
-		DigitalPortViewComponent(styleProvider, portView as DigitalPortView) as PortViewComponent<T>
+	override fun <T : Any> createPortViewComponent(portView: PortView<T>): PortViewComponent =
+		DigitalPortViewComponent(styleProvider, portView as DigitalPortView) as PortViewComponent
 }

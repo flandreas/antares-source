@@ -21,6 +21,7 @@ enum class AntaresGraphTypes(
 
 	Digital("digital", false, true) {
 
+		@Suppress("UNCHECKED_CAST")
 		override fun <I: Any, O: Any> adaptTo(other: GraphType): GraphTypeSignalAdapter<I, O> =
 			when (other) {
 				Analog -> Digital2AnalogAdapter as GraphTypeSignalAdapter<I, O>
@@ -50,6 +51,7 @@ enum class AntaresGraphTypes(
 				else -> literal
 			}
 
+		@Suppress("UNCHECKED_CAST")
 		override fun <T : Any> createOscilloscopeProbeVertice(name: String?): OscilloscopeProbeVertice<T> =
 			AnalogOscilloscopeProbeVertice() as OscilloscopeProbeVertice<T>
 	};
@@ -68,7 +70,7 @@ enum class AntaresGraphTypes(
 			if (this === Digital && libraryElement.graphType === Digital) {
 				return null
 			}
-			val sourceType = values().firstOrNull { it === libraryElement.graphType }
+			val sourceType = entries.firstOrNull { it === libraryElement.graphType }
 			return if (sourceType == null || this.ordinal != sourceType.ordinal - 1) {
 				Translations.getString("graph.graphTypeError.msg", libraryElement.graphType, this)
 			} else {

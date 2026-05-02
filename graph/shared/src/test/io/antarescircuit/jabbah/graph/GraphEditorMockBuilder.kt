@@ -13,6 +13,7 @@ import io.antarescircuit.jabbah.graph.view.GraphElementView
 /**
  * Builds test mocks for [Editor].
  */
+@Suppress("UNCHECKED_CAST")
 class GraphEditorMockBuilder {
 
 	val editor: Editor = mock(MockMode.autofill)

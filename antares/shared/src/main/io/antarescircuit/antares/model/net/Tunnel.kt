@@ -84,7 +84,7 @@ class Tunnel(
 	var tunnelName: TunnelName?
 		get() = name?.let { TunnelName(it) }
 		set(value) {
-			name = value?.let { it.name }
+			name = value?.name
 		}
 
 	/**
@@ -145,6 +145,7 @@ class Tunnel(
 
 	override fun requiresCombinedNets(signalHandler: SignalHandler): Boolean = false
 
+	@Suppress("UNCHECKED_CAST")
 	override fun <T : Any> createCombinedNetsFor(outputPort: OutputPort<T>, inputPort: InputPort<T>, signalHandler: SignalHandler): Collection<CombinedNet<T>> {
 		val otherPort: OutputPort<DigitalSignal> = if (inputPort === getPort<DigitalSignal>(1)) {
 			getOutput(2)

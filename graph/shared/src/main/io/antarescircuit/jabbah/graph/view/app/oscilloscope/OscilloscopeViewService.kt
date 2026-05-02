@@ -7,7 +7,6 @@ import io.antarescircuit.jabbah.base.logger
 import io.antarescircuit.jabbah.base.module.BaseModule
 import io.antarescircuit.jabbah.edit.*
 import io.antarescircuit.jabbah.edit.module.EditModule
-import io.antarescircuit.jabbah.graph.model.Net
 import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.app.GraphViewAppService
@@ -66,7 +65,7 @@ interface OscilloscopeViewService {
 	 * @return the ID of the [io.antarescircuit.jabbah.graph.view.EdgeView] to which the [OscilloscopeProbeVerticeView]
 	 * got connected, if any
 	 */
-	fun <T : Any> dropProbe(
+	fun dropProbe(
 		view: DrawingView<GraphElementView<*>, GraphView>,
 		name: String,
 		location: Point2D,
@@ -147,7 +146,7 @@ class OscilloscopeViewServiceImpl(
 		commandManager.execute(RemoveOscilloscopeRowCommand(view, name, oscilloscopeView.id))
 	}
 
-	override fun <T : Any> dropProbe(
+	override fun dropProbe(
 		view: DrawingView<GraphElementView<*>, GraphView>,
 		name: String,
 		location: Point2D,
@@ -166,7 +165,7 @@ class OscilloscopeViewServiceImpl(
 				view.drawing.add(it)
 			}
 		} else {
-			view.drawing.getWithId(probeVerticeViewId) as OscilloscopeProbeVerticeView<T>
+			view.drawing.getWithId(probeVerticeViewId) as OscilloscopeProbeVerticeView<*>
 		}
 
 		// Must be done before setting the name, since Name event handling depends on
@@ -175,15 +174,15 @@ class OscilloscopeViewServiceImpl(
 
 		// Unconnect from old Net
 		val newEdgeView = view.drawing.getEdgeViews().firstOrNull { it.contains(probeVerticeView.connectionPoint()) }
-		if (probeVerticeView.model.getPort<T>().isConnected) {
-			probeVerticeView.model.getPort<T>().net!!.unconnect(probeVerticeView.model.getPort<T>())
+		if (probeVerticeView.model.getPort<Any>().isConnected) {
+			probeVerticeView.model.getPort<Any>().net!!.unconnect(probeVerticeView.model.getPort<Any>())
 			probeVerticeView.edgeView = null
 		}
 
 		// Connect to new Net
 		if (newEdgeView != null) {
 			probeVerticeView.edgeView = newEdgeView
-			(newEdgeView.model as Net<T>).connect(probeVerticeView.model.getPort())
+			(newEdgeView.model).connect(probeVerticeView.model.getPort())
 			GraphViewModule.verticeViewNameStrategy.getConnectedName(oscilloscopeView.model, probeVerticeView.model, newEdgeView)?.let {
 				probeVerticeView.name = it
 			}
@@ -216,6 +215,7 @@ class OscilloscopeViewServiceImpl(
 		ov.addRow()
 		ov.visible = true
 		positionOscilloscope(ov, view.drawing)
+		@Suppress("UNCHECKED_CAST")
 		graphViewAppService.add(ov, view as DrawingView<Component, Drawing<Component>>)
 	}
 

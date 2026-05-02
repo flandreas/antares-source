@@ -477,7 +477,8 @@ class EdgeToPortOrEdgeConnector(
 
 	private fun beginConnecting(context: EditInputEventContext, adjust: Boolean) {
 		val snapLocation = ConnectionPointHighlighter.portViewHighlight!!.location
-		createEdgeView(context.drawingView as DrawingView<GraphElementView<*>, GraphView>, snapLocation, branchedEdgeView!!.netView as NetView<Any>)
+		@Suppress("UNCHECKED_CAST")
+		createEdgeView(context.castedView(), snapLocation, branchedEdgeView!!.netView as NetView<Any>)
 		edgeView!!.layout.isAdjusted = adjust
 
 		LOG.userTrail("Start creating junction from EdgeView ${branchedEdgeView!!.id} on Net ${branchedEdgeView!!.model.id} with new EdgeView ${edgeView?.id}, adjust=$adjust")

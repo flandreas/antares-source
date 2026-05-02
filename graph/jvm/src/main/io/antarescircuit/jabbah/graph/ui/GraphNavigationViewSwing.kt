@@ -15,18 +15,12 @@ import io.antarescircuit.jabbah.draw.view.FocusPanel
 import io.antarescircuit.jabbah.draw.view.find.SearchBarSwing
 import io.antarescircuit.jabbah.draw.view.find.SearchRequest
 import io.antarescircuit.jabbah.draw.view.find.Searchable
-import io.antarescircuit.jabbah.edit.Component
-import io.antarescircuit.jabbah.edit.Drawing
 import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.edit.DrawingViewContent
 import io.antarescircuit.jabbah.edit.module.EditModule
 import io.antarescircuit.jabbah.graph.SearchInMetaGraphRequest
 import io.antarescircuit.jabbah.graph.module.GraphModuleJvm
-import io.antarescircuit.jabbah.graph.ui.desktop.AbstractGraphDesktopViewItemSwing
-import io.antarescircuit.jabbah.graph.ui.desktop.GraphDesktopItemHeaderPanelSwing
-import io.antarescircuit.jabbah.graph.ui.desktop.GraphDesktopViewItem
-import io.antarescircuit.jabbah.graph.ui.desktop.GraphDesktopViewItemElementDepthRef
-import io.antarescircuit.jabbah.graph.ui.desktop.GraphDesktopViewItemElementRef
+import io.antarescircuit.jabbah.graph.ui.desktop.*
 import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.VerticeView
@@ -185,7 +179,7 @@ class GraphNavigationViewSwing(
 	}
 
 	override fun execute(request: SearchRequest) {
-		EditModule.drawingViewSearchFactory.invoke().execute(drawingView as DrawingView<Component, Drawing<Component>>, request)
+		EditModule.drawingViewSearchFactory.invoke().execute(drawingView, request)
 	}
 
 	override fun hideSearchBar() {

@@ -18,6 +18,7 @@ class AntaresNodeViewFactory(
 	private val styleProvider: StyleProvider = DrawStyleModule.styleProvider
 ) : NodeViewFactory {
 
+	@Suppress("UNCHECKED_CAST")
 	override fun <T : Any> create(netView: NetView<T>, graphView: GraphView): NodeView<T> {
 		return when (graphView) {
 			is DigitalGraphView -> DigitalNodeView(styleProvider, netView.net as DigitalNet, netView.style) as NodeView<T>

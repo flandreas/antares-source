@@ -34,6 +34,7 @@ class ClockControlViewTest {
 		val controlViewSource = ClockView()
 
 		val containerDrawing = ContainerDrawing()
+		@Suppress("UNCHECKED_CAST")
 		containerDrawing.add(ControlViewComponent(source = controlViewSource as ControlViewSource<Vertice>))
 		containerDrawing.add(OriginIndicator())
 

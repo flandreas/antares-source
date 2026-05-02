@@ -206,11 +206,13 @@ class OscilloscopeView(
 
 	override fun <T : Drawable> handleAdded(container: DrawableContainer<T>) {
 		super.handleAdded(container)
+		@Suppress("UNCHECKED_CAST")
 		container.addDrawableContainerListener(removeListener as DrawableContainerListener<T>)
 	}
 
 	override fun <T : Drawable> handleRemoved(container: DrawableContainer<T>) {
 		super.handleRemoved(container)
+		@Suppress("UNCHECKED_CAST")
 		container.removeDrawableContainerListener(removeListener as DrawableContainerListener<T>)
 	}
 
@@ -294,7 +296,7 @@ class OscilloscopeView(
 		container.draw(context)
 
 		// "Clocked" annotation
-		if (rows.size >= 1 && model.mode == SignalHistoriesType.Clocked) {
+		if (rows.isNotEmpty() && model.mode == SignalHistoriesType.Clocked) {
 			context.g.color = foregroundColor
 			context.g.stroke = stroke
 			context.translated(location.x + bounds.width, location.y + TITLE_HEIGHT + rowHeight / 2) {

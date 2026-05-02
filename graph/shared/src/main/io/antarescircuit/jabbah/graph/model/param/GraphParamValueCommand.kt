@@ -27,6 +27,7 @@ class GraphParamValueCommand<V : Any>(
 	newValue
 ) {
 
+	@Suppress("UNCHECKED_CAST")
 	override fun getValue(bean: Bean): V? =
 		(bean as SubGraphVerticeViewImpl).model.paramValues.getValue(paramDef.name)?.value as V?
 

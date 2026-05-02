@@ -9,7 +9,7 @@ import io.antarescircuit.jabbah.edit.model.text.Labeled
 
 open class DrawingViewSearch {
 
-	fun execute(view: DrawingView<Component, Drawing<Component>>, request: SearchRequest) {
+	fun execute(view: DrawingView<*, *>, request: SearchRequest) {
 		view.selectionManager.deselectAll()
 
 		if (request.searchString.isNotBlank()) {
@@ -17,12 +17,12 @@ open class DrawingViewSearch {
 		}
 	}
 
-	private fun find(drawing: Drawing<Component>, request: SearchRequest): Set<Component> =
+	private fun find(drawing: Drawing<*>, request: SearchRequest): Set<Component> =
 		mutableSetOf<Component>().also {
 			findImpl(drawing, request, it)
 		}
 
-	protected open fun findImpl(drawing: Drawing<Component>, request: SearchRequest, result: MutableSet<Component>) {
+	protected open fun findImpl(drawing: Drawing<*>, request: SearchRequest, result: MutableSet<Component>) {
 		findMatchingId(drawing, request, result)
 		findMatchingType(drawing, request, result)
 		findLabeled(drawing, request, result)
@@ -35,7 +35,7 @@ open class DrawingViewSearch {
 			SearchMatch.EntireWord -> text?.equals(request.searchString, request.ignoreCase) == true
 	}
 
-	private fun findMatchingId(drawing: Drawing<Component>, request: SearchRequest, result: MutableSet<Component>) {
+	private fun findMatchingId(drawing: Drawing<*>, request: SearchRequest, result: MutableSet<Component>) {
 		request.searchString.toIntOrNull()?.let { id ->
 			drawing.getWithId(id)?.let {
 				result.add(it)
@@ -43,11 +43,11 @@ open class DrawingViewSearch {
 		}
 	}
 
-	private fun findMatchingType(drawing: Drawing<Component>, request: SearchRequest, result: MutableSet<Component>) {
+	private fun findMatchingType(drawing: Drawing<*>, request: SearchRequest, result: MutableSet<Component>) {
 		result.addAll(drawing.getDrawables { compare(it.type, request)  })
 	}
 
-	private fun findLabeled(drawing: Drawing<Component>, request: SearchRequest, result: MutableSet<Component>) {
+	private fun findLabeled(drawing: Drawing<*>, request: SearchRequest, result: MutableSet<Component>) {
 		result.addAll(drawing.getDrawables { it is Labeled && compare(it.label.text, request) })
 	}
 }

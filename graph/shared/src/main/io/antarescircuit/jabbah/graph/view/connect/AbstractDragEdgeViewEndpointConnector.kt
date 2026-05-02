@@ -264,6 +264,7 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 	abstract fun cancel(editor: Editor)
 
 	fun useFor(edgeView: EdgeView<*>, context: EditInputEventContext) {
+		@Suppress("UNCHECKED_CAST")
 		this.edgeView = edgeView as EdgeView<Any>
 		handler.sm.start(context)
 	}

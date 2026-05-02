@@ -133,6 +133,7 @@ class AnalogCircuitAnalyzer(private val circuitView: AnalogGraphView) {
 		}
 	}
 
+	@Suppress("UNCHECKED_CAST")
 	private fun createAnalysis(): AnalogCircuitAnalysis =
 		AnalogCircuitAnalysis(circuitView, nodeList, voltageSources as Array<AnalogElement>)
 }

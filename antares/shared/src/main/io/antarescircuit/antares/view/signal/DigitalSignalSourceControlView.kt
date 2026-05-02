@@ -22,11 +22,11 @@ import io.antarescircuit.jabbah.io.StoreReader
 import io.antarescircuit.jabbah.io.StoreWriter
 
 class DigitalSignalSourceControlView<T : DigitalSignalSource>(
-    styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-    override var controlId: String? = null,
-    signalRepresentation: DigitalSignalRepresentation = DigitalSignalRepresentation.BINARY,
-    model: T = DummySignalSource() as T,
-    name: String? = null
+	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
+	override var controlId: String? = null,
+	signalRepresentation: DigitalSignalRepresentation = DigitalSignalRepresentation.BINARY,
+	@Suppress("UNCHECKED_CAST") model: T = DummySignalSource() as T,
+	name: String? = null
 ) : AbstractNumberViewComponent<T>(styleProvider, model, Direction.EAST, signalRepresentation), ControlView<T> {
 
     init {
@@ -88,6 +88,7 @@ class DigitalSignalSourceControlView<T : DigitalSignalSource>(
 		    return "${model.type} \"${model.name}\""
 	    }
 
+	@Suppress("UNCHECKED_CAST")
 	override fun bindControlView(subGraphVerticeView: SubGraphVerticeView<*>, link: VerticeLink, startGraph: Graph) {
 		this.model = link.getLinkedObject(startGraph) as T
 	}

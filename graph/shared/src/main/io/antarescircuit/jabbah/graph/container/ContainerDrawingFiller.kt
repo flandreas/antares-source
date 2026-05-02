@@ -51,7 +51,7 @@ abstract class AbstractContainerDrawingFiller(
 
 	fun fill() {
 		val portIds = mutableMapOf<String, Int>()
-		containerDrawing.drawables.filterIsInstance<PortViewComponent<*>>().forEach {
+		containerDrawing.drawables.filterIsInstance<PortViewComponent>().forEach {
 			portIds[it.port.name!!] = it.port.portId
 		}
 		containerDrawing.drawables.toList().forEach {
@@ -87,8 +87,8 @@ abstract class AbstractContainerDrawingFiller(
 
 		// Create PortViewComponents
 
-		val inputs = mutableListOf<PortViewComponent<*>>()
-		val outputs = mutableListOf<PortViewComponent<*>>()
+		val inputs = mutableListOf<PortViewComponent>()
+		val outputs = mutableListOf<PortViewComponent>()
 
 		var maxInputWidth = 0.0
 		for (pin in inputPortViews) {

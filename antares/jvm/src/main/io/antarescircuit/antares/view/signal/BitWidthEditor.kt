@@ -32,6 +32,8 @@ class BitWidthEditor(
 	}
 
 	private val comboBoxEditor = ComboBoxPropertyEditor()
+
+	@Suppress("UNCHECKED_CAST")
 	private val comboBox: JComboBox<BitWidth> get() = comboBoxEditor.customEditor as JComboBox<BitWidth>
 
 	private val graph = (graphEditor?.drawing as GraphView?)?.graph

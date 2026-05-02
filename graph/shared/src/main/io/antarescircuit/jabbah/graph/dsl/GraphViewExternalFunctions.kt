@@ -23,6 +23,7 @@ import kotlin.reflect.KClass
  * Can be used as delegate by other [DslExternalFunctions] implementations
  * that enhance the DSL with more specific functions.
  */
+@Suppress("UNCHECKED_CAST")
 open class GraphViewExternalFunctions : DslExternalFunctions {
 
 	companion object {
@@ -86,14 +87,14 @@ open class GraphViewExternalFunctions : DslExternalFunctions {
 	}
 
 	fun <T : Component> getComponent(id: Int, clazz: KClass<*>, translatedClassName: String): T? {
-		getComponent(id)?.let { component ->
+		return getComponent(id)?.let { component ->
 			if (component::class != clazz) {
 				LOG.trace("expecting ${clazz.simpleName}, but component with ID $id is of type ${component::class.simpleName}")
 				postTypeIssue(id.toString(), translatedClassName, component.type)
 				return null
 			}
-			return component as T?
-		} ?: return null
+			component as T?
+		}
 	}
 
 	fun postTypeIssue(id: String, expected: String, actual: String) =

@@ -10,8 +10,6 @@ import io.antarescircuit.jabbah.base.event.EventHandler
 import io.antarescircuit.jabbah.base.module.BaseModule
 import io.antarescircuit.jabbah.draw.style.DrawStyleModule
 import io.antarescircuit.jabbah.draw.style.StyleProvider
-import io.antarescircuit.jabbah.edit.Component
-import io.antarescircuit.jabbah.edit.Drawing
 import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.graph.container.ContainerTreePortItem
 import io.antarescircuit.jabbah.graph.container.ContainerTreeView
@@ -62,7 +60,7 @@ class DigitalContainerTreeView(
 	}
 
 	private fun getDigitalCircuitInOutView(circuitInOut: DigitalCircuitInOut): DigitalCircuitInOutView? =
-		if ((super.mainDrawingView.drawing as GraphView).graph?.contains(circuitInOut) == true) {
+		if (super.mainDrawingView.drawing.graph?.contains(circuitInOut) == true) {
 			val treeNode = containerTree?.model?.getPortTreeNode(circuitInOut.name!!)
 			if (treeNode != null
 				&& treeNode.userObject is ContainerTreePortItem

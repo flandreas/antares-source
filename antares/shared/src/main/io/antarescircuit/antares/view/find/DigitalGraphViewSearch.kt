@@ -14,14 +14,15 @@ import io.antarescircuit.jabbah.graph.view.VerticeView
 
 class DigitalGraphViewSearch : DrawingViewSearch() {
 
-	override fun findImpl(drawing: Drawing<Component>, request: SearchRequest, result: MutableSet<Component>) {
+	override fun findImpl(drawing: Drawing<*>, request: SearchRequest, result: MutableSet<Component>) {
 		super.findImpl(drawing, request, result)
 		expandEdgeViews(drawing, result)
 	}
 
-	private fun expandEdgeViews(drawing: Drawing<Component>, result: MutableSet<Component>) {
+	private fun expandEdgeViews(drawing: Drawing<*>, result: MutableSet<Component>) {
 		val expansion = result
-			.filter(::filterExpandable)
+            .asSequence()
+            .filter(::filterExpandable)
 			.map { it as VerticeView<*> }
 			.mapNotNull { (drawing as GraphView).getEdgeView(it.model.getPort<DigitalSignal>()) }
 			.flatMap { it.netView!!.getElements() }

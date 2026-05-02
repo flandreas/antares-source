@@ -48,6 +48,7 @@ class SubGraphVerticeViewImplTest {
 		val controlView = TestControlVerticeView(rectangle = Rectangle2D(0, 0, 100, 100))
 
 		val containerDrawing = ContainerDrawing()
+		@Suppress("UNCHECKED_CAST")
 		containerDrawing.add(ControlViewComponent(source = controlView as ControlViewSource<Vertice>))
 		containerDrawing.add(OriginIndicator())
 

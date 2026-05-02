@@ -80,7 +80,9 @@ class GraphParamValues : AbstractStorable() {
 
 	fun getValue(name: String): GraphParamValue<*>? = values.firstOrNull { it.name == name }
 
-	fun <T : Any> getTypedValue(name: String): GraphParamValue<T>? = values.firstOrNull { it.name == name } as GraphParamValue<T>?
+	@Suppress("UNCHECKED_CAST")
+	fun <T : Any> getTypedValue(name: String): GraphParamValue<T>? =
+		values.firstOrNull { it.name == name } as GraphParamValue<T>?
 
 	fun withValue(value: GraphParamValue<*>): GraphParamValues =
 		GraphParamValues().also { newValues ->

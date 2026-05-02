@@ -30,6 +30,8 @@ class LookupTableView(
 	private val inputEventHandler = AddressableInputEventHandler(
 		eventBus,
 	) { view, newDesktopView ->
+
+		@Suppress("UNCHECKED_CAST")
 		OpenMemoryContentsRequest(
 			view,
 			this,

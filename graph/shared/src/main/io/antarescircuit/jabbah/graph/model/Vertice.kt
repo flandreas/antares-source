@@ -148,6 +148,8 @@ interface Vertice : GraphElement, Describable {
     /** Returns all [OutputPort]s of this [Vertice].*/
     fun getOutputs(): List<OutputPort<*>>
 
+    fun <T> getTypedOutputs(): List<T>
+
     /**
      * Returns the [OutputPort] with the specified name.
      * @throws NoSuchElementException if no [OutputPort] with the specified name was found

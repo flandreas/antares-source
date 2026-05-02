@@ -26,6 +26,7 @@ class DigitalCombinedNetAccess(
 			return true
 		}
 		if (signalHandler.executionContext is GraphExecutionContext<*>) {
+			@Suppress("UNCHECKED_CAST")
 			return (signalHandler.executionContext as GraphExecutionContext<DigitalSignal>)
 				.netSignalApplier.signalsAreConsistent(assertedSignal, signal)
 		}

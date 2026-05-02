@@ -35,6 +35,7 @@ class AddressableInputEventHandler(
 	private inner class DoubleClickHandler : InputEventHandlerAdapter<InputEventContext>() {
 		override fun mouseClicked(context: InputEventContext): InputEventHandler<InputEventContext>? {
 			if (context.mouseEvent?.clickCount == 2 && context.mouseEvent?.isLeftButtonDown == true) {
+				@Suppress("UNCHECKED_CAST")
 				requestOpenMemoryContents(context.view as DrawingView<GraphElementView<*>, GraphView>, context.mouseEvent?.isAltDown == true)
 				context.mouseEvent?.consumeEvent()
 				return null
@@ -45,6 +46,7 @@ class AddressableInputEventHandler(
 
 	private inner class ActorHandler : VerticeViewActorInteractionHandler(openable = true) {
 		override fun handleDoubleClick(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
+			@Suppress("UNCHECKED_CAST")
 			requestOpenMemoryContents(context.view as DrawingView<GraphElementView<*>, GraphView>, context.mouseEvent?.isAltDown == true)
 			context.mouseEvent?.consumeEvent()
 			return null

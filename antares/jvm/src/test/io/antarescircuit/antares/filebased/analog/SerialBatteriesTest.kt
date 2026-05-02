@@ -18,6 +18,6 @@ class SerialBatteriesTest : AbstractAnalogFileBasedTest() {
 		processUntilQueueIsEmpty()
 
 		val net = analogGraphView.graph!!.withId(5) as AnalogNet
-		assertVoltage(10.0, net.signal!!.voltage)
+		assertVoltage(10.0, net.signal.voltage)
 	}
 }

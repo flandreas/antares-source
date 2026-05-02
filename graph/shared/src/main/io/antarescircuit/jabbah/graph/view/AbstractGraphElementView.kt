@@ -95,6 +95,7 @@ abstract class AbstractGraphElementView<T : GraphElement>(
 		if (STORABLE_MODEL_ID == reference.name) {
 			val storable: Storable? = referenceResolver.getStorable(reference.referenceId)
 			if (storable is GraphElement) {
+				@Suppress("UNCHECKED_CAST")
 				model = storable as T
 			}
 		}

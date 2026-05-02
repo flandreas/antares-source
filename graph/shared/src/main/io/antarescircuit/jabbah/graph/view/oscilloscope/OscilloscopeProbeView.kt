@@ -85,6 +85,7 @@ class OscilloscopeProbeView(
 	override fun <T: InputEventContext> getTooltip(context: T): Tooltip? =
 		if (verticeViewPresent) createTooltip(x, y) else null
 
+	@Suppress("UNCHECKED_CAST")
 	override fun createEditInteractionHandler(): InputEventHandler<InputEventContext> =
 		Handler() as InputEventHandler<InputEventContext>
 
