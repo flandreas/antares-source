@@ -22,14 +22,22 @@ The project uses gradle subprojects to separate the individual top-level modules
 
 ## Issue tracking
 
-- Internal issues are tracked in the [private GitHub project](https://github.com/flandreas/antares-source/issues)
-- Enduser-facing issues are tracked in the [public GitHub project](https://github.com/flandreas/antares/issues)
+- Internal issues are tracked in the [developer GitHub project](https://github.com/flandreas/antares-source/issues)
+- Enduser-facing issues are tracked in the [homepage GitHub project](https://github.com/flandreas/antares/issues)
 
-## Building
+When committing changes to the git repository, start your commit comment with "I-" for developer/internal issues, e.g. "I-1234: Fixed compiler warnings".
 
-`gradlew build` currently fails due to a [JS issue with mockk](https://github.com/flandreas/antares-source/issues/2). The DEV workaround is to use `gradlew jvmMainClasses` and `gradlew run` during development.
+## Build
+
+`gradlew build` currently fails due to a [JS issue with mockk](https://github.com/flandreas/antares-source/issues/2). The DEV workaround is to use `gradlew jvmMainClasses` and `gradlew jvmTestClasses` during development.
+
+## Test
+
+`gradlew jvmTest` runs all tests on the JVM platform.
  
-## Developing
+## Run
+
+The Antares Desktop JVM application is run with `io.antarescircuit.antares.AntaresSwing`. 
 
 Use the following JVM program arguments to set up your environment as developer:
 
@@ -38,14 +46,11 @@ Use the following JVM program arguments to set up your environment as developer:
 ```
 
 - `-env env`: Establishes e.g. URLs to use local Akrab instance, if needed
-- `-developer`: Runs Antares in developer mode (e.g. enables the "Developer" menu)
-- `-d`: Path to a application data repository other than the one used by Antares installed with the downloaded
-installer. Replace `<dir>` with the path to your local directory, e.g. `/Users/andreas/Antares-dev`.
+- `-developer`: Runs Antares in developer mode (e.g. enables the "Developer" menu). This enables the "Developer" menu with useful tools, but also avoid sending an email containing the log and a stacktrace to the developer email address if an unexpected error occurs.
+- `-d`: Path to a application data repository other than the one used by Antares installed with the downloaded installer. Replace `<dir>` with the path to your local directory, e.g. `/Users/andreas/Antares-dev`.
 - `-sl`: Path to the checked-in standard libraries. Needed when updating standard library circuits. Replace `<projectRoot>` with the absolute path to your cloned project, e.g. `/Users/andreas/Documents/scorpion2/jabbah`.
 
-The main class to be used in run configurations (e.g. in IntelliJ) is `io.antarescircuit.antares.AntaresSwing`.
-
-## Maintaining
+## Maintain
 
 See the separate [Maintainer documentation](MAINTAINER.md).
  
