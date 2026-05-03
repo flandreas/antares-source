@@ -53,5 +53,5 @@ data class AboutInfo(
 	val name: String,
 	val claim: String,
 	val version: ApplicationVersion,
-	val disclaimer: String = Translations.getString("application.disclaimer.allRightsReserved")
+	val disclaimer: String = Translations.getString("application.disclaimer")
 )
