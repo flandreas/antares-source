@@ -27,6 +27,9 @@ class GraphStatisticsAction(
 
 	override val opensDialog: Boolean get() = true
 
+	override fun calculateEnabled(): Boolean =
+		super.calculateEnabled() && view is DrawingView<*,*> && (view as DrawingView<*, *>).drawing is GraphView
+
 	override fun execute(event: ActionEvent) {
 		val graphView = (viewManager.activeView!!.view as DrawingView<*,*>).drawing as GraphView
 		GraphStatisticsPanel.showAsDialog(title = name, graph = graphView.graph!!)
