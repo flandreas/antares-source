@@ -2,6 +2,8 @@
 
 Antares is a digital circuit learning platform entirely written in Kotlin.
 
+Checkout the [project's home page](https://www.antarescircuit.io) with installers, documentation and examples.
+
 Antares aims to provide tools to create circuits with embedded explanations. The current version consists of a Swing-based desktop application. Future versions will also be available in the browser.
 
 The Antares application universe currently consists of the following components, which are named after stars in the star constellation "Scorpius":
