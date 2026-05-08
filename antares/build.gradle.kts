@@ -173,8 +173,8 @@ tasks {
 		commandLine(
 			"${win_jpackage_home}\\bin\\jpackage",
 			"--name", "Antares",
-			"--input", "${{layout.buildDirectory}}\\libs",
-			"--dest", "${{layout.buildDirectory}}\\distributions",
+			"--input", "${project.layout.buildDirectory.dir("libs").get().asFile}",
+			"--dest", "${project.layout.buildDirectory.dir("distributions").get().asFile}",
 			"--main-jar", "antares-${version_project}-all.jar",
 			"--app-version", version_project,
 			"--copyright", "Copyright (c) 2026 Andreas Fleischmann",
