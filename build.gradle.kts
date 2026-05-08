@@ -82,7 +82,7 @@ subprojects {
 		jvm {
 
 			compilerOptions {
-				jvmTarget.set(JvmTarget.JVM_1_8)
+				jvmTarget.set(JvmTarget.JVM_25)
 				freeCompilerArgs.addAll(
 					// https://youtrack.jetbrains.com/issue/KT-37435
 					"-Xno-optimized-callable-references"
@@ -153,7 +153,7 @@ subprojects {
 					implementation("commons-codec:commons-codec:$commonsCodecVersion")
 
 					// Bean property sheet: Patched to support dark mode
-					implementation(":l2fprod:$l2fprodVersion")
+					implementation(files("../lib/l2fprod-7.7.jar"))
 
 					implementation("exml:exml:7.0")
 					implementation("com.formdev:flatlaf:$flatLafVersion:no-natives")
@@ -179,7 +179,7 @@ subprojects {
 					implementation("org.apache.xmlgraphics:batik-xml:$batikVersion")
 
 					// Markdown HTML renderer and Swing viewer: Patched to support dark mode
-					implementation(":jmdviewer:1.1")
+					implementation(files("../lib/jmdviewer-1.1.jar"))
 
 					api("org.commonmark:commonmark:0.17.1")
 					api("org.commonmark:commonmark-ext-gfm-tables:0.17.1")
@@ -222,14 +222,14 @@ subprojects {
 			// Workaround for bug https://youtrack.jetbrains.com/issue/KT -24463:
 			// Copy all resource files to the build directory used by IDEA run configuration
 			tasks {
-				val deployResources by creating(Copy::class) {
+				val deployResources by registering(Copy::class) {
 					from(listOf(commonMain.resources, jvmMain.resources)) {
 						include("**/*.properties")
 						include("**/libraries/**")
 						include("**/img/*")
 						include("**/version.txt")
 					}
-					into("${buildDir.absolutePath}/classes/kotlin/jvm/main")
+					into("${layout.buildDirectory}/classes/kotlin/jvm/main")
 				}
 				getByName("jvmMainClasses") {
 					dependsOn(deployResources)

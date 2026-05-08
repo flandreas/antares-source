@@ -111,7 +111,4 @@ On Linux/Ubuntu, the .rpm package is installed as follows:
 `sudo alien -i <name of package>.rpm`
 
 Installation takes a while. Antares is installed in `/opt/antares`. Start it in a shell with
-`/opt/antares/bin/Antares`. The
-user's
-application
-directory is `/home/<user>/Antares`.
+`/opt/antares/bin/Antares`. The user's application directory is `/home/<user>/Antares`.

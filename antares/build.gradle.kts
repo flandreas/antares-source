@@ -23,7 +23,7 @@ repositories {
 }
 
 plugins {
-	id("com.github.johnrengelman.shadow") version "5.1.0"
+	id("com.gradleup.shadow") version "9.3.0"
 }
 
 kotlin {
@@ -69,7 +69,7 @@ kotlin {
 
 tasks {
 
-	val shadowCreate by creating(ShadowJar::class) {
+	val shadowCreate by registering(ShadowJar::class) {
 		dependsOn(jvmMainClasses)
 		manifest {
 			attributes["Main-Class"] = "io.antarescircuit.antares.AntaresSwing"
@@ -88,52 +88,61 @@ tasks {
 		into(file("${layout.buildDirectory}/libs"))
 	}
 
-	val run by creating(JavaExec::class) {
+	val run by registering(JavaExec::class) {
 		dependsOn(shadowCreate)
-		classpath = files("$buildDir/libs/antares-${version_project}-all.jar")
+		classpath = files("${layout.buildDirectory}/libs/antares-${version_project}-all.jar")
 		mainClass.set("io.antarescircuit.antares.AntaresSwing")
 	}
 
-	fun distributeMacSteps() {
+	val packageMac by registering(Exec::class) {
+		dependsOn(shadowCreate)
+		dependsOn(copySplash)
 
-		// Packaging and signing
-		exec {
-			workingDir = projectDir
-			// Some of the following parameters are hard-wired in Info.plist
-			commandLine(
-				"${macOS_jpackage_home}/bin/jpackage",
-				"--dest", "${{layout.buildDirectory}}/distributions",
-				"--input", "${{layout.buildDirectory}}/libs",
-				"--name", "Antares",
-				"--main-jar", "antares-${version_project}-all.jar",
-				"--app-version", "$version_project",
-				"--copyright", "Copyright (c) 2026 Andreas Fleischmann",
-				"--vendor", "antarescircuit.io",
-				"--icon", "jvm/rsc/antares.icns",
-				"--java-options", "-splash:\$APPDIR/splash-light.png",
-				"--java-options", "-Dapple.awt.application.name=Antares",
-				"--java-options", "-Dapple.awt.application.appearance=system",
-				"--resource-dir", "jvm/rsc/",
-				"--mac-package-name", "Antares",
-				"--mac-sign",
-				"--mac-package-signing-prefix", "io.antarescircuit.Antares",
-				"--mac-signing-key-user-name", "Andreas Fleischmann (WX94PVQXHK)",
-			)
-		}
+		// Some of the following parameters are hard-wired in Info.plist
+		commandLine(
+			"${macOS_jpackage_home}/bin/jpackage",
+			"--name", "Antares",
+			"--input", "${project.layout.buildDirectory.dir("libs").get().asFile}",
+			"--dest", "${project.layout.buildDirectory.dir("distributions").get().asFile}",
+			"--main-jar", "antares-${version_project}-all.jar",
+			"--app-version", version_project,
+			"--copyright", "Copyright (c) 2026 Andreas Fleischmann",
+			"--vendor", "antarescircuit.io",
+			"--icon", "jvm/rsc/antares.icns",
+			"--java-options", "-splash:\$APPDIR/splash-light.png",
+			"--java-options", "-Dapple.awt.application.name=Antares",
+			"--java-options", "-Dapple.awt.application.appearance=system",
+			"--resource-dir", "jvm/rsc/",
+			"--mac-package-name", "Antares",
+			"--mac-sign",
+			"--mac-package-signing-prefix", "io.antarescircuit.Antares.",
+			"--mac-signing-key-user-name", "Andreas Fleischmann ($appleNotarizationTeamId)",
+		)
+	}
 
-		// Notarization (asynchronous call)
-		exec {
-			workingDir = projectDir
-			commandLine(
-				"xcrun", "notarytool",
-				"submit",
-				"--wait",
-				"--apple-id", appleNotarizationUser,
-				"--team-id", appleNotarizationTeamId,
-				"--password", appleNotarizationPassword,
-				"${{layout.buildDirectory}}/distributions/Antares-$version_project.dmg"
-			)
-		}
+	val signDmgMac by registering(Exec::class) {
+		dependsOn(packageMac)
+		commandLine(
+			"codesign",
+			"--force",
+			"--sign",
+			"Developer ID Application: Andreas Fleischmann ($appleNotarizationTeamId)",
+			"${project.layout.buildDirectory.dir("distributions").get().asFile}/antares-${version_project}.dmg",
+		)
+	}
+
+	val notarizeMac by registering(Exec::class) {
+		dependsOn(signDmgMac)
+		workingDir = projectDir
+		commandLine(
+			"xcrun", "notarytool",
+			"submit",
+			"--wait",
+			"--apple-id", appleNotarizationUser,
+			"--team-id", appleNotarizationTeamId,
+			"--password", appleNotarizationPassword,
+			"${project.layout.buildDirectory.dir("distributions").get().asFile}/Antares-$version_project.dmg"
+		)
 	}
 
 	/**
@@ -143,24 +152,19 @@ tasks {
 	 * Alternative notarization status check:
 	 * xcrun notarytool info --apple-id appleNotarizationUser --team-id appleNotarizationTeamId --password appleNotarizationPassword [ID]
 	 */
-	val stapleMacNotarization by creating(Exec::class) {
+	val stapleMacNotarization by registering(Exec::class) {
 		workingDir = projectDir
 		commandLine(
 			"xcrun", "stapler",
-			"staple", "${{layout.buildDirectory}}/distributions/Antares-$version_project.dmg"
+			"staple", "${project.layout.buildDirectory.dir("distributions").get().asFile}/Antares-$version_project.dmg"
 		)
 	}
 
-	val distributeMac by creating {
-		dependsOn(shadowCreate)
-		dependsOn(copySplash)
-
-		doLast {
-			distributeMacSteps()
-		}
+	val distributeMac by registering {
+		dependsOn(notarizeMac)
 	}
 
-	val distributeWindows by creating(Exec::class) {
+	val distributeWindows by registering(Exec::class) {
 		dependsOn(shadowCreate)
 		dependsOn(copySplash)
 
@@ -184,7 +188,7 @@ tasks {
 		)
 	}
 	
-	val distributeLinux by creating(Exec::class) {
+	val distributeLinux by registering(Exec::class) {
 		dependsOn(shadowCreate)
 		dependsOn(copySplash)
 
