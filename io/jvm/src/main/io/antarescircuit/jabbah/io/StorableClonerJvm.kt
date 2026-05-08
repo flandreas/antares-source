@@ -9,8 +9,10 @@ import java.nio.charset.StandardCharsets
  */
 actual object StorableCloner : AbstractStorableCloner() {
 
-	actual fun serialize(storable: Storable): String =
-		serializeImpl(storable, GlobalIdentityCreator()).data.toString(StandardCharsets.UTF_8)
+	actual fun serialize(storable: Storable): String {
+		val buffer = serializeImpl(storable, GlobalIdentityCreator())
+		return String(buffer.data, 0, buffer.length, StandardCharsets.UTF_8)
+	}
 
 	actual fun deserialize(s: String): Storable {
 		val array = s.toByteArray(StandardCharsets.UTF_8)
