@@ -196,8 +196,8 @@ tasks {
 
 		commandLine(
 			"jpackage",
-			"--dest", "${{layout.buildDirectory}}/distributions",
-			"--input", "${{layout.buildDirectory}}/libs",
+			"--input", "${project.layout.buildDirectory.dir("libs").get().asFile}",
+			"--dest", "${project.layout.buildDirectory.dir("distributions").get().asFile}",
 			"--name", "Antares",
 			"--main-jar", "antares-${version_project}-all.jar",
 			"--app-version", version_project,
