@@ -7,7 +7,7 @@ import io.antarescircuit.jabbah.base.logger
 import io.antarescircuit.jabbah.base.module.BaseModule
 import org.apache.commons.io.IOUtils
 import java.io.StringReader
-import java.net.URL
+import java.net.URI
 import java.nio.charset.StandardCharsets
 
 /**
@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets
  */
 class RemoteControlService(
 	private val configProperties: Properties = BaseModule.properties,
-	private val contentReader: (String) -> String = { IOUtils.toString(URL(it), StandardCharsets.UTF_8) }
+	private val contentReader: (String) -> String = { IOUtils.toString(URI(it), StandardCharsets.UTF_8) }
 ) {
 
 	companion object {

@@ -10,7 +10,7 @@ class LanguageTest {
 
 	@BeforeTest
 	fun setup() {
-		Locale.setDefault(Locale("en", "US"))
+		Locale.setDefault(Locale.of("en", "US"))
 		Translations.addBundle("jabbah-base")
 	}
 

@@ -19,8 +19,8 @@ class TranslationConsistencyTest {
     @Test
     fun shouldHaveConsistentTranslations() {
         for (bundleName in Translations.bundleNames) {
-            val englishKeys = ResourceBundle.getBundle(bundleName, Locale(Language.English.code)).keys.asSequence().toSet()
-            val germanKeys = ResourceBundle.getBundle(bundleName, Locale(Language.German.code)).keys.asSequence().toSet()
+            val englishKeys = ResourceBundle.getBundle(bundleName, Locale.of(Language.English.code)).keys.asSequence().toSet()
+            val germanKeys = ResourceBundle.getBundle(bundleName, Locale.of(Language.German.code)).keys.asSequence().toSet()
 
             for (key in englishKeys) {
                 if (!germanKeys.contains(key)) {

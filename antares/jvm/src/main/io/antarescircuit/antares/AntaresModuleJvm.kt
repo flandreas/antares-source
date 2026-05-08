@@ -98,7 +98,7 @@ import io.antarescircuit.jabbah.graph.view.module.GraphViewModuleJvm
 import io.antarescircuit.jabbah.graph.view.oscilloscope.AbstractSignalHistoryDrawer
 import io.antarescircuit.jabbah.io.IOModule
 import io.antarescircuit.jabbah.io.TypeMap
-import java.net.URL
+import java.net.URI
 import javax.swing.BorderFactory
 import javax.swing.Box
 import javax.swing.BoxLayout
@@ -211,13 +211,13 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 		if (app.dataLocation == DataLocation.Local) {
 			GraphModuleJvm.projectAkrabClientService = {
-				val serverUrl = try {
-					URL(BaseModule.properties.getString(DataLocation.PROP_SERVER_URL))
+				val serverUri = try {
+					URI(BaseModule.properties.getString(DataLocation.PROP_SERVER_URL))
 				} catch (_: Exception) {
-					URL("http://localhost")
+					URI("http://localhost")
 				}
 				ProjectAkrabClientServiceJvm(
-					serverUrl,
+					serverUri.toURL(),
 					ProjectModule.projectLibraryPersistenceService as FileLibraryPersistenceService
 				)
 			}

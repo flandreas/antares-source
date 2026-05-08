@@ -11,7 +11,9 @@ import io.antarescircuit.jabbah.base.module.BaseModuleJvm
 import io.antarescircuit.jabbah.base.preferences.*
 import io.antarescircuit.jabbah.base.swing.ToStringRenderer
 import io.antarescircuit.jabbah.draw.module.DrawModuleJvm
-import io.antarescircuit.jabbah.edit.*
+import io.antarescircuit.jabbah.edit.BeanProvider
+import io.antarescircuit.jabbah.edit.DrawingView
+import io.antarescircuit.jabbah.edit.Editor
 import io.antarescircuit.jabbah.edit.auth.EditAuthModule
 import io.antarescircuit.jabbah.edit.module.EditModuleJvm
 import io.antarescircuit.jabbah.edit.properties.AbstractReflectionPropertySwing
@@ -35,7 +37,7 @@ import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.connect.ConnectMethod
 import io.antarescircuit.jabbah.graph.view.module.GraphViewModuleJvm
 import io.antarescircuit.jabbah.graph.view.net.edge.OrthoEdgeViewLayouter
-import java.net.URL
+import java.net.URI
 
 /**
  * Module definitions for the [io.antarescircuit.jabbah.graph] module on the JVM platform.
@@ -55,7 +57,7 @@ object GraphModuleJvm : AbstractModule() {
 	var metaGraphHistoryService: FileMetaGraphHistoryService = UnimplementedFileMetaGraphHistoryService()
 
 	val loginService: LoginService by lazy {
-		LoginServiceJvm(URL(BaseModule.properties.getString(DataLocation.PROP_SERVER_URL)))
+		LoginServiceJvm(URI(BaseModule.properties.getString(DataLocation.PROP_SERVER_URL)).toURL())
 	}
 
 	var graphNavigationViewHeaderFactory: GraphNavigationViewHeaderFactory = GraphNavigationViewHeaderFactory { null }

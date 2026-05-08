@@ -79,6 +79,6 @@ actual object Translations {
 	private fun handleLanguageChanged(languageCode: String) {
 		java.lang.System.setProperty("user.language", languageCode)
 		bundles.clear()
-		_bundleNames.forEach { addBundle(ResourceBundle.getBundle(it, Locale(languageCode))) }
+		_bundleNames.forEach { addBundle(ResourceBundle.getBundle(it, Locale.of(languageCode))) }
 	}
 }

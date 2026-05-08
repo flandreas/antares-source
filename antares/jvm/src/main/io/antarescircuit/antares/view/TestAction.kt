@@ -25,13 +25,13 @@ import io.antarescircuit.jabbah.edit.model.ComponentMessageType
 import io.antarescircuit.jabbah.graph.model.Net
 import io.antarescircuit.jabbah.graph.model.param.GraphParamDefinition
 import io.antarescircuit.jabbah.graph.model.param.GraphParamDefinitions
-import io.antarescircuit.jabbah.graph.view.GraphProperties
 import io.antarescircuit.jabbah.graph.view.EdgeView
+import io.antarescircuit.jabbah.graph.view.GraphProperties
 import org.drjekyll.fontchooser.FontDialog
 import java.awt.Dimension
 import java.awt.Frame
 import java.awt.Point
-import java.net.URL
+import java.net.URI
 import javax.swing.JOptionPane
 import javax.swing.WindowConstants
 
@@ -61,7 +61,7 @@ class TestAction(
 	}
 
 	private fun showWelcomeMessage() {
-		(BaseModuleJvm.unexpectedErrorService as UnexpectedErrorServiceImpl).baseUrl = URL("https://api.antarescircuit.io/api")
+		(BaseModuleJvm.unexpectedErrorService as UnexpectedErrorServiceImpl).baseUrl = URI("https://api.antarescircuit.io/api").toURL()
 		WelcomePanel.showAsDialog(application)
 	}
 

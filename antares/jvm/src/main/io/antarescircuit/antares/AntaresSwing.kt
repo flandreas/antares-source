@@ -131,7 +131,7 @@ class AntaresSwing(
 		 */
 		private fun establishUserLanguage(preferences: java.util.Properties) {
 			val lang = preferences.getProperty(Language.PROP_LANGUAGE) ?: Language.DEFAULT.code
-			val locale = Locale(lang)
+			val locale = Locale.of(lang)
 			Locale.setDefault(locale)
 			JOptionPane.setDefaultLocale(locale)
 			LOG.value.userTrail("Using language '$lang'")

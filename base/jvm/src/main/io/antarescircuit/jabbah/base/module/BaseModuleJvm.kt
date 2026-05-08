@@ -6,17 +6,13 @@ import io.antarescircuit.jabbah.base.event.Modifier
 import io.antarescircuit.jabbah.base.help.BrowserHelpProviderJvm
 import io.antarescircuit.jabbah.base.help.HelpSource
 import io.antarescircuit.jabbah.base.help.HelpSourceRegistry
-import io.antarescircuit.jabbah.base.invocation.InteractiveErrorHandler
-import io.antarescircuit.jabbah.base.invocation.InvocationHandler
-import io.antarescircuit.jabbah.base.invocation.SwingInvocationHandler
-import io.antarescircuit.jabbah.base.invocation.UnexpectedErrorService
-import io.antarescircuit.jabbah.base.invocation.UnexpectedErrorServiceImpl
+import io.antarescircuit.jabbah.base.invocation.*
 import io.antarescircuit.jabbah.base.preferences.*
 import io.antarescircuit.jabbah.base.sound.SoundEffects
 import io.antarescircuit.jabbah.base.time.RealTimeServiceJvm
 import io.antarescircuit.jabbah.base.ui.UIBasics
 import java.awt.Toolkit
-import java.net.URL
+import java.net.URI
 
 /**
  * Setup of the [io.antarescircuit.jabbah.base] module for the JVM target.
@@ -32,8 +28,7 @@ object BaseModuleJvm : AbstractModule() {
 	val preferencesTree: PreferenceGroup = PreferenceGroup(PREF_TREE_ROOT)
 
 	val unexpectedErrorService: UnexpectedErrorService by lazy {
-		UnexpectedErrorServiceImpl(URL(BaseModule.properties.getString(DataLocation.PROP_SERVER_URL))
-	) }
+		UnexpectedErrorServiceImpl(URI(BaseModule.properties.getString(DataLocation.PROP_SERVER_URL)).toURL()) }
 
 	override fun initialize() {
 		defineKeyCodes()
