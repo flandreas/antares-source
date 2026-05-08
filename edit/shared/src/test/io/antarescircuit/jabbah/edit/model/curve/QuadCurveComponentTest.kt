@@ -96,6 +96,7 @@ class QuadCurveComponentTest {
 
 	private fun createFlatCurve(): QuadCurveComponent = QuadCurveComponent(listOf(
 		Point2D(0, 0),
-		Point2D(100, 0),
-		Point2D(50, 0)))
+		Point2D(50, 0),
+		Point2D(100, 0))
+	)
 }
