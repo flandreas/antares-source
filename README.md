@@ -11,14 +11,14 @@ The Antares application universe currently consists of the following components,
 - **Web circuit viewer**: An Angular app for displaying web-hosted Antares circuits
 - **Akrab**: The server backend used by Shaula and the web circuit viewer
 
-This repository contains only the source code for "Antares Desktop" and the core domain logic used by the other components. Shaula, Akrab and the web circuit viewer are maintained in separate GitHub projects.
+This repository contains only the source code for "Antares Desktop" and the core domain logic used by the other components. Shaula, Akrab and the web circuit viewer are maintained in separate (currently still private) GitHub projects.
 
 This project is set up as a Kotlin multi-platform project with the following targets:
 - shared
 - jvm: Used for Antares Desktop and Akrab
 - js: Used for Shaula and the web circuit viewer
 
-The project uses gradle subprojects to separate the individual top-level modules like "draw", "edit" or "graph".
+The project uses Gradle subprojects to separate the individual top-level modules like "draw", "edit" or "graph".
 
 ## Issue tracking
 
@@ -26,6 +26,10 @@ The project uses gradle subprojects to separate the individual top-level modules
 - Enduser-facing issues are tracked in the [homepage GitHub project](https://github.com/flandreas/antares/issues)
 
 When committing changes to the git repository, start your commit comment with "I-" for developer/internal issues, e.g. "I-1234: Fixed compiler warnings".
+
+## Developing
+
+See the [Design Manual](doc/design-manual/overview.md) for a quick overview of the application's code structures. This is not a comprehensive developer's manual, but rather a list of pointers to the most important packages and domain model classes and interfaces.
 
 ## Build
 
