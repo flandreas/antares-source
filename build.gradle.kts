@@ -218,23 +218,6 @@ subprojects {
 					}
 				}
 			}
-
-			// Workaround for bug https://youtrack.jetbrains.com/issue/KT -24463:
-			// Copy all resource files to the build directory used by IDEA run configuration
-			tasks {
-				val deployResources by registering(Copy::class) {
-					from(listOf(commonMain.resources, jvmMain.resources)) {
-						include("**/*.properties")
-						include("**/libraries/**")
-						include("**/img/*")
-						include("**/version.txt")
-					}
-					into("${layout.buildDirectory}/classes/kotlin/jvm/main")
-				}
-				getByName("jvmMainClasses") {
-					dependsOn(deployResources)
-				}
-			}
 		}
 	}
 
