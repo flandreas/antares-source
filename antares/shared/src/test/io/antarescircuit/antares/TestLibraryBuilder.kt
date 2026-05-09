@@ -15,7 +15,6 @@ import io.antarescircuit.jabbah.graph.view.vertice.SubGraphVerticeViewImpl
 
 /**
  * A test utility class that builds Antares circuits using [TestCircuitBuilder], and adds them to the [Library].
- * TODO Resolve copy/paste from [io.antarescircuit.jabbah.graph.TestLibraryBuilder].
  */
 class TestLibraryBuilder(
 	private val portFactory: PortFactory = GraphModelModule.portFactory,

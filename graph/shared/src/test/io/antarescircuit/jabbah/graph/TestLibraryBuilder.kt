@@ -23,7 +23,7 @@ class TestLibraryBuilder(
 	}
 
 	/**
-	 * Adds a custom component (as of [CompositeTestGraphViewBuilder.buildInnerCustomComponent] to the specified [Library].
+	 * Adds a custom component (as of [CompositeTestGraphViewBuilder.buildInnerCustomComponent]) to the specified [Library].
 	 * @return the created [MetaGraph] that contains the created custom component
 	 */
 	fun addInnerCustomComponent(
@@ -56,6 +56,7 @@ class TestLibraryBuilder(
 		).storable!!
 	}
 
+	@Suppress("SameParameterValue")
 	private fun createSubGraphVerticeView(
 		name: String,
 		libraryDirectory: LibraryDirectory,
