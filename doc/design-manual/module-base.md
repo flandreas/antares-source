@@ -5,7 +5,7 @@ Besides general purpose functionality like the 'collection' package, the main pu
 ## Packages
 
 collection
-: Contains classes currently not provided by the Kotlin library, such as `DirectedGraph`, `Stack` or `PriorityQueue` used in the simulation engine.
+: Contains classes currently not provided by the Kotlin library, such as `DirectedGraph`, `Stack` or `PriorityQueue` used in the `execution` module.
 
 dsl
 : Uses the `parser` package to provide basic structures for building domain-specific languages, such as `Interpreter`, `ActivationRecord` and `SymbolTable`. Used in higher-level layers for building scripting-based features.
@@ -17,10 +17,10 @@ geom
 : Contains many geometrical abstractions like `Point2D`, `Dimension2D`, or `Rectangle2D` used for building the graphical representation of core business objects. Also contains an `AffineTransform` abstraction and a Kotlin-common implementation to be used on the JS platform.
 
 help
-: Implements a simple "Help" system you can use to define `HelpI`s in a application and link them to external documentation, such as URLs of web pages. On the JVM platform, a `HelpProvider` implementation uses the `java.awt.Desktop` class to kick off the system's web browser to browse the external help page, which is in case of the Antares manual its online user manual.
+: Implements a simple "Help" system you can use to define `HelpId`s in an application and link them to external documentation, such as URLs of web pages. On the JVM platform, a `HelpProvider` implementation uses the `java.awt.Desktop` class to kick off the system's web browser to browse the external help page, which is in case of the Antares manual its online user manual.
 
 invocation
-: Defines abstractions for invocating long-lasting actions by the user, which automatically disable the UI and display an hourglass pointer on the JVM platform.
+: Defines abstractions for invoking long-lasting actions by the user, which automatically disable the UI and display an hourglass pointer on the JVM platform.
 
 math
 : Extends the built-in Kotlin math library by certain mathematical functions. 
