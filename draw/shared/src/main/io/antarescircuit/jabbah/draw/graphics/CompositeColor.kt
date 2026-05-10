@@ -2,6 +2,7 @@ package io.antarescircuit.jabbah.draw.graphics
 
 import io.antarescircuit.jabbah.draw.style.DrawTheme
 import io.antarescircuit.jabbah.draw.style.Themes
+import io.antarescircuit.jabbah.draw.View
 import kotlin.math.ceil
 
 /**
@@ -9,7 +10,9 @@ import kotlin.math.ceil
  *
  * @param foregroundColor the [Color] for drawing the border of a graphical object
  * @param backgroundColor the [Color] for drawing the background of a graphical object
- * @param textColor the [Color] for drawing text above the interior of a graphical object
+ * @param textColor the [Color] for drawing text above the interior of a graphical object. This color is
+ * optimized for drawing text above the [backgroundColor]. If a component doesn't draw its background
+ * (i.e the text is drawn directly on the [View]'s background), it is better to use [foregroundColor].
  */
 data class CompositeColor(
 	val foregroundColor: Color = Themes.get<DrawTheme>().figure.color.foregroundColor,

@@ -39,6 +39,9 @@ abstract class AbstractTextComponent(
         protected val INSET_Y = 10
     }
 
+    /** Set to `true` if [text] should be interpreted and drawn as "rich text".*/
+    var isRichText: Boolean = false
+
     /** ---- [Drawable] */
 
     override fun contains(x: Double, y: Double): Boolean = super<AbstractRectangularComponent>.contains(x, y)
@@ -64,6 +67,9 @@ abstract class AbstractTextComponent(
         if (!text.isEmpty) {
             writer.writeStorables("text", text.allTranslations())
         }
+        if (isRichText) {
+            writer.writeBoolean("richText", isRichText)
+        }
     }
 
     override fun read(reader: StoreReader) {
@@ -74,6 +80,9 @@ abstract class AbstractTextComponent(
         }
         if (reader.hasElement("text")) {
             text = TranslatableText(reader.readStorables("text"))
+        }
+        if (reader.hasAttribute("richText")) {
+            isRichText = reader.readBoolean("richText")
         }
     }
 

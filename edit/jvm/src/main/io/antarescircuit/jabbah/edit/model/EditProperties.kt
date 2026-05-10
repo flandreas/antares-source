@@ -104,6 +104,14 @@ object EditProperties {
 		return CommandPropertySwing(name, baseKey, HorizontalAlignment::class.java, beanProvider)
 	}
 
+	fun richText(
+		name: String = "richText",
+		baseKey: String = "edit.property.text.isRichText",
+		beanProvider: BeanProvider = componentBeanProvider
+	): CommandPropertySwing<Boolean> {
+		return CommandPropertySwing(name, baseKey, Boolean::class.java, beanProvider)
+	}
+
 	fun shadow(
 		name: String = "shadow",
 		baseKey: String = Stylable.BASE_KEY_SHADOW,

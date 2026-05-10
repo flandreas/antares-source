@@ -48,11 +48,13 @@ class TextComponentJvmBeanInfo : TextComponentBeanInfo<TextComponentJvm>() {
 	companion object {
 		private val text = EditProperties.translatableText()
 		private val horizontalAlignment = EditProperties.horizontalAlignment()
+		private val richText = EditProperties.richText()
 	}
 
 	override fun addProperties(bean: TextComponentJvm, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 		properties.add(text.bind(editor, beanIdProvider(bean.id), filter = { true }))
 		properties.add(horizontalAlignment.bind(editor, beanIdProvider(bean.id)))
+		properties.add(richText.bind(editor, beanIdProvider(bean.id)))
 	}
 }

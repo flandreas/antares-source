@@ -24,7 +24,7 @@ class SimpleTextComponent(
 	shape = Rectangle2D(location.x, location.y, 100.0, 50.0)
 ), TextComponent, Transparent {
 
-	private companion object {
+	companion object {
 
 		/**
 		 * [TextComponent] were up to now positioned by the user on the JVM platform, where a JTextPane
@@ -32,7 +32,7 @@ class SimpleTextComponent(
 		 * and the actual text rendered, especially (or exclusively) on the y-axis. This magic number has
 		 * been evaluated empirically.
 		 */
-		private const val JVM_OFFSET_Y = 16
+		const val JVM_OFFSET_Y = 16
 	}
 
 	/** ---- [TextComponent] interface */

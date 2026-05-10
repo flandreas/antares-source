@@ -6,7 +6,9 @@ import io.antarescircuit.jabbah.base.geom.Dimension2D
 import io.antarescircuit.jabbah.base.geom.Point2D
 import io.antarescircuit.jabbah.base.geom.Rectangle2D
 import io.antarescircuit.jabbah.base.logger
+import io.antarescircuit.jabbah.base.resettableLazy
 import io.antarescircuit.jabbah.draw.*
+import io.antarescircuit.jabbah.draw.drawable.RichTextDrawable
 import io.antarescircuit.jabbah.draw.drawable.Transparent
 import io.antarescircuit.jabbah.draw.graphics.Cursor
 import io.antarescircuit.jabbah.draw.graphics.Graphics2DJvm
@@ -23,7 +25,6 @@ import io.antarescircuit.jabbah.io.Storable
 import io.antarescircuit.jabbah.io.StoreReader
 import io.antarescircuit.jabbah.io.StoreWriter
 import java.awt.*
-import java.awt.event.FocusAdapter
 import java.awt.event.FocusEvent
 import java.awt.event.FocusListener
 import javax.swing.JTextPane
@@ -36,9 +37,12 @@ import javax.swing.text.StyleConstants
 /** Implements [TextComponentFactory] on the JVM platform. */
 class TextComponentFactoryJvm : TextComponentFactory {
 
-	override fun create(text: TranslatableText, location: Point2D, styleType: StyleType, styleProvider: StyleProvider): TextComponent {
-		return TextComponentJvm(text, location, styleType, styleProvider)
-	}
+	override fun create(
+		text: TranslatableText,
+		location: Point2D,
+		styleType: StyleType,
+		styleProvider: StyleProvider
+	): TextComponent = TextComponentJvm(text, location, styleType, styleProvider)
 }
 
 /**
@@ -95,25 +99,24 @@ open class TextComponentJvm(
 			// Explicitly set an arbitrary size to avoid that getPreferredSize()
 			// returns a minimum size. Otherwise, the empty text editor would be sized
 			// to a height of zero pixels. This is needed for JDK 1.3, but apparently not
-			// for JDK 1.4 any more. See BasicTextUI.getPreferredSize().
+			// for JDK 1.4 anymore. See BasicTextUI.getPreferredSize().
 			TEXT_MEASURER.setSize(Integer.MAX_VALUE, Integer.MAX_VALUE)
 		}
 
 		/**
 		 * Utility function that measures the size of a certain text as it would be rendered with the specified font and
 		 * zoom factor. In fact, the measured size is the preferred size of a [JTextPane] that has
-		 * been setup with the specified configuration.
+		 * been set up with the specified configuration.
 		 *
 		 * @param text the text whose size is to be measured
 		 * @param font the font for which the text is to be measured
-		 * @param zoomFactor the zoom factor that will be used when rendering the text
 		 * @return the preferred size of the [JTextPane] that would render the text using the specified configuration
 		 */
-		private fun measureText(text: String, font: java.awt.Font, zoomFactor: Double): Dimension2D {
+		private fun measureText(text: String, font: Font): Dimension2D {
 			val a = SimpleAttributeSet()
 
 			StyleConstants.setFontFamily(a, font.family)
-			StyleConstants.setFontSize(a, (font.size2D * zoomFactor).toInt())
+			StyleConstants.setFontSize(a, (font.size2D).toInt())
 			StyleConstants.setBold(a, font.isBold)
 			StyleConstants.setItalic(a, font.isItalic)
 
@@ -136,6 +139,7 @@ open class TextComponentJvm(
 				}
 				invalidate()
 				field = value
+				richTextDrawable.reset()
 				invalidate()
 				update()
 				validate()
@@ -143,6 +147,10 @@ open class TextComponentJvm(
 		}
 
 	private val eventHandler = EventHandler()
+
+	private val richTextDrawable = resettableLazy {
+		RichTextDrawable.multiline(this.text.getTranslation(), font, width)
+	}
 
 	init {
 		filled = false
@@ -185,10 +193,10 @@ open class TextComponentJvm(
 		val oldClip = context.g.getClipBounds()
 		context.g.clip(x.toInt(), y.toInt(), width.toInt(), height.toInt())
 
-		setupTextPainter(context, filled)
-
-		context.translated(TEXT_PAINTER.x.toDouble(), TEXT_PAINTER.y.toDouble()) {
-			TEXT_PAINTER.paint((it.g as Graphics2DJvm).g)
+		if (isRichText) {
+			drawRichText(context)
+		} else {
+			drawNonRichText(context)
 		}
 
 		context.g.setClipBounds(oldClip)
@@ -199,6 +207,22 @@ open class TextComponentJvm(
 
 		if (stroked) {
 			decorator.drawForeground(this, context)
+		}
+	}
+
+	private fun drawNonRichText(context: DrawContext) {
+		setupTextPainter(context, filled)
+		context.translated(TEXT_PAINTER.x.toDouble(), TEXT_PAINTER.y.toDouble()) {
+			TEXT_PAINTER.paint((it.g as Graphics2DJvm).g)
+		}
+	}
+
+	private fun drawRichText(context: DrawContext) {
+		// No background, so use foregroundColor and not textColor
+		context.g.color = context.chooseText(foregroundColor)
+		context.g.font = font
+		context.translated(location.x + INSET_X, location.y + SimpleTextComponent.JVM_OFFSET_Y + INSET_Y) {
+			richTextDrawable.value.draw(context)
 		}
 	}
 
@@ -225,7 +249,7 @@ open class TextComponentJvm(
 		// Note that TextEditTool uses its own adjustment strategy for inline editing,
 		// which does change the position depending on alignment
 		val b = shape
-		val dim = measureText(text.getTranslation(), Graphics2DJvm.toAwtFont(font), 1.0)
+		val dim = measureText(text.getTranslation(), Graphics2DJvm.toAwtFont(font))
 		setFrame(b.x, b.y, dim.width + 2 * INSET_X, dim.height + 2 * INSET_Y)
 	}
 
@@ -316,7 +340,7 @@ open class TextComponentJvm(
 	 * [TextFieldBorder] draws an orange, dashed lines around the text editor and provides a graphical feedback
 	 * that the editor is currently active.
 	 */
-	private class TextFieldBorder : LineBorder(java.awt.Color.ORANGE, 1) {
+	private class TextFieldBorder : LineBorder(Color.ORANGE, 1) {
 		companion object {
 			val STROKE = BasicStroke(0.1f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10.0f, floatArrayOf(5f, 5f), 0f)
 		}

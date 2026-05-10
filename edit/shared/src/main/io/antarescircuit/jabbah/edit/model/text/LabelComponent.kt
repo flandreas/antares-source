@@ -17,7 +17,7 @@ import io.antarescircuit.jabbah.io.StoreReader
 import io.antarescircuit.jabbah.io.StoreWriter
 
 /**
- * A [RectangularComponent] that contains a [Label] drawable.
+ * A [RectangularComponent] that contains a single-line [Label] drawable.
  */
 class LabelComponent(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
