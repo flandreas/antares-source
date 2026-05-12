@@ -219,7 +219,7 @@ open class TextComponentJvm(
 
 	private fun drawRichText(context: DrawContext) {
 		// No background, so use foregroundColor and not textColor
-		context.g.color = context.chooseText(foregroundColor)
+		context.g.color = context.chooseText(if (filled) textColor else foregroundColor)
 		context.g.font = font
 		context.translated(location.x + INSET_X, location.y + SimpleTextComponent.JVM_OFFSET_Y + INSET_Y) {
 			richTextDrawable.value.draw(context)
