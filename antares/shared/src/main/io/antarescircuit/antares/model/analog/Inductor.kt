@@ -3,6 +3,9 @@ package io.antarescircuit.antares.model.analog
 import io.antarescircuit.antares.view.analog.engine.AnalogCircuitAnalysis
 import io.antarescircuit.antares.view.analog.engine.AnalogElement
 import io.antarescircuit.antares.view.analog.engine.AnalogElementMixin
+import io.antarescircuit.jabbah.edit.properties.magnitude.Magnitude
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
+import io.antarescircuit.jabbah.edit.properties.magnitude.SIUnit
 import io.antarescircuit.jabbah.execution.SignalHandler
 import io.antarescircuit.jabbah.graph.model.vertice.EmptyVerticeCalculator
 import io.antarescircuit.jabbah.io.Storable
@@ -10,7 +13,7 @@ import io.antarescircuit.jabbah.io.StoreReader
 import io.antarescircuit.jabbah.io.StoreWriter
 
 class Inductor(
-    inductance: Double = InductorLogic.DEF_INDUCTANCE
+    inductance: MagnitudeValue = InductorLogic.DEF_INDUCTANCE
 ) : AbstractAnalogTwoPortVertice<Inductor>(
     EmptyVerticeCalculator,
     "library.element.Inductor",
@@ -21,30 +24,34 @@ class Inductor(
 
     private val voltDiff: Double get() = analogElem.getNodeVoltage(0) - analogElem.getNodeVoltage(1)
 
-    /** The inductance of this [Inductor] in microhenry.*/
-    var inductance: Double
-        get() = logic.inductance
+    var inductance: MagnitudeValue = inductance
         set(value) {
-            if (logic.inductance != value) {
-                logic.setup(value, getInternalCurrent(), InductorLogic.DEF_TRAPEZOIDAL)
+            if (field != value) {
+                field = value
+                logic.setup(value.baseValue, getInternalCurrent(), InductorLogic.DEF_TRAPEZOIDAL)
                 stateChanged(reason = MAIN_PROPERTY_STATE)
             }
         }
 
     init {
-        logic.setup(inductance, getInternalCurrent(), true)
+        logic.setup(this.inductance.baseValue, getInternalCurrent(), true)
     }
 
     /** ---- [Storable] interface */
 
     override fun read(reader: StoreReader) {
         super.read(reader)
-        inductance = reader.readString("inductance").toDouble()
+        if (reader.hasAttribute("inductance")) {
+            // Backward compatability before MagnitudeValue was introduced
+            inductance = MagnitudeValue(reader.readDouble("inductance"), Magnitude.One, SIUnit.Henry)
+        } else if (reader.hasAttribute("inductance${MagnitudeValue.MAGNITUDE_VALUE_EXT}")) {
+            inductance = MagnitudeValue.read("inductance", reader, SIUnit.Henry)
+        }
     }
 
     override fun write(writer: StoreWriter) {
         super.write(writer)
-        writer.writeString("inductance", inductance.toString())
+        inductance.write("inductance", writer)
     }
 
     /** ---- [AnalogElement] */

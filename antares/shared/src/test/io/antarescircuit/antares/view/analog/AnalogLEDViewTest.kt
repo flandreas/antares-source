@@ -4,6 +4,9 @@ import io.antarescircuit.antares.AntaresTestRule
 import io.antarescircuit.antares.model.analog.AnalogPort
 import io.antarescircuit.antares.model.analog.AnalogSignal
 import io.antarescircuit.antares.view.output.LightColor
+import io.antarescircuit.jabbah.edit.properties.magnitude.Magnitude
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
+import io.antarescircuit.jabbah.edit.properties.magnitude.SIUnit
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertSame
@@ -28,8 +31,8 @@ class AnalogLEDViewTest {
 
     private fun createLEDView(): AnalogLEDView {
         return AnalogLEDView().apply {
-            minCurrent = 0.005
-            maxCurrent = 0.02
+            minCurrent = MagnitudeValue(5, Magnitude.Milli, SIUnit.Ampere)
+            maxCurrent = MagnitudeValue(20, Magnitude.Milli, SIUnit.Ampere)
             lightColor = LightColor.YELLOW
             (model.getPort<AnalogSignal>() as AnalogPort).current = 0.024
         }

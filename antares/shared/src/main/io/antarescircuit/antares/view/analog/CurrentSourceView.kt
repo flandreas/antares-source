@@ -13,6 +13,7 @@ import io.antarescircuit.jabbah.draw.graphics.DropShadow
 import io.antarescircuit.jabbah.draw.style.DrawStyleModule
 import io.antarescircuit.jabbah.draw.style.StyleProvider
 import io.antarescircuit.jabbah.draw.style.StyleType
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
 import io.antarescircuit.jabbah.graph.view.vertice.AbstractVerticeView
 
 class CurrentSourceView(
@@ -31,9 +32,11 @@ class CurrentSourceView(
 	}
 
 	@Suppress("unused") // Reflective bean property
-	var current: Double
+	var current: MagnitudeValue
 		get() = model.current
-		set(value) { model.current = value }
+		set(value) {
+			model.current = value
+		}
 
 	override val relativeExternalLabelLocation: Point2D get() = Point2D(bounds.maxX + LABEL_DIST, bounds.centerY)
 
@@ -69,7 +72,7 @@ class CurrentSourceView(
 
 	/** ---- [AbstractAnalogVerticeView] */
 
-	override val mainPropertyValue: String get() = "${model.current} A"
+	override val mainPropertyValue: String get() = current.toString()
 
 	override val mainPropertylabelLocation: Point2D
 		get() = Point2D(bounds.minX - MAIN_PROPERTY_LABEL_DIST, bounds.centerY)

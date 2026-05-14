@@ -44,12 +44,12 @@ abstract class AbstractAnalogVerticeView<T: AbstractAnalogVertice<*>>(
 	init {
 		initExternalLabel(externalLabelDirection)
 		modelExchanged(null)
-		updateMainPropertyLabel()
 	}
 
 	override fun modelExchanged(oldModel: T?) {
 		super.modelExchanged(oldModel)
 		analogElement.bind(model)
+		updateMainPropertyLabel()
 	}
 
 	/** ---- [AbstractDrawable] */

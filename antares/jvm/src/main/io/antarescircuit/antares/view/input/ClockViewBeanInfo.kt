@@ -5,12 +5,13 @@ import io.antarescircuit.jabbah.edit.Editor
 import io.antarescircuit.jabbah.edit.componentBeanProvider
 import io.antarescircuit.jabbah.edit.properties.CommandPropertySwing
 import com.l2fprod.common.propertysheet.Property
+import io.antarescircuit.jabbah.edit.model.EditProperties
 
 @Suppress("unused")
 class ClockViewBeanInfo : DigitalComponentViewBeanInfo<ClockView>() {
 
     companion object {
-	    private val periodOrFrequency = CommandPropertySwing("periodOrFrequency", "element.property.ClockView.periodOrFrequency", String::class.java, componentBeanProvider)
+	    private val periodOrFrequency = EditProperties.periodOrFrequency("periodOrFrequency", "element.property.ClockView.periodOrFrequency", componentBeanProvider)
 	    private val enabled = CommandPropertySwing("enabled", "element.property.ClockView.enabled", Boolean::class.java, componentBeanProvider)
 	    private val knobEnabled = CommandPropertySwing("knobEnabled", "element.property.ClockView.knobEnabled", Boolean::class.java, componentBeanProvider)
 		private val offPercentage = CommandPropertySwing("offPercentage", "element.property.ClockView.offPercentage", Double::class.java, componentBeanProvider)

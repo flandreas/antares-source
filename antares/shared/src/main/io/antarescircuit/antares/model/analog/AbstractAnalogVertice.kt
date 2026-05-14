@@ -18,6 +18,7 @@ abstract class AbstractAnalogVertice<T: CalculatingVertice>(
 ) : CalculatingVertice(calculator), AnalogVertice, AnalogElement by analogElem {
 
 	companion object {
+
 		/** The 'reason' in [stateChanged] calls if the main property value has changed.*/
 		const val MAIN_PROPERTY_STATE = "mainPropertyState"
 

@@ -6,6 +6,9 @@ import io.antarescircuit.antares.view.analog.AnalogRelayView
 import io.antarescircuit.antares.view.analog.ResistorView
 import io.antarescircuit.jabbah.base.UUID
 import io.antarescircuit.jabbah.base.math.near
+import io.antarescircuit.jabbah.edit.properties.magnitude.Magnitude
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
+import io.antarescircuit.jabbah.edit.properties.magnitude.SIUnit
 import junit.framework.TestCase.assertTrue
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -40,7 +43,7 @@ class RelaySPSTTest : AbstractAnalogFileBasedTest() {
         startSimulation()
         processUntilQueueIsEmpty()
 
-        resistorView.model.setState(100.0, scheduler, openedCircuitView as AnalogGraphView)
+        resistorView.model.setState(MagnitudeValue(100.0, Magnitude.One, SIUnit.Ohm), scheduler, openedCircuitView as AnalogGraphView)
         processUntilQueueIsEmpty()
 
         assertTrue(relayView.model.isOn)

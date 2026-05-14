@@ -17,7 +17,7 @@ open class BoxGateViewBeanInfo<T : BoxGateView<*>> : DigitalComponentViewBeanInf
 class DelayGateViewBeanInfo : VerticeViewBeanInfo<DelayGateView>() {
 
 	companion object {
-		private val delay = CommandPropertySwing("delay", "element.property.DelayGate.delay", Long::class.java, componentBeanProvider)
+		private val delay = EditProperties.time("delay", "element.property.DelayGate.delay", componentBeanProvider)
 		private val bitWidth = AntaresProperties.bitWidth()
 		private val orientation = EditProperties.orientation()
 	}

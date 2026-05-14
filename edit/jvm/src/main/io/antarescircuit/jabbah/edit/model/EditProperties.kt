@@ -20,6 +20,8 @@ import io.antarescircuit.jabbah.edit.model.text.description.BASE_KEY_NAME
 import io.antarescircuit.jabbah.edit.model.text.description.Description
 import io.antarescircuit.jabbah.edit.model.text.description.Name
 import io.antarescircuit.jabbah.edit.properties.CommandPropertySwing
+import io.antarescircuit.jabbah.edit.properties.MagnitudeValueProperty
+import io.antarescircuit.jabbah.edit.properties.magnitude.SIUnit
 import io.antarescircuit.jabbah.edit.properties.ScriptPropertySwing
 
 object EditProperties {
@@ -188,4 +190,54 @@ object EditProperties {
 	): CommandPropertySwing<Boolean> {
 		return CommandPropertySwing(name, baseKey, Boolean::class.java, beanProvider)
 	}
+
+	private fun magnitudeValue(
+		name: String,
+		baseKey: String,
+		beanProvider: BeanProvider = componentBeanProvider,
+		vararg units: SIUnit
+	): MagnitudeValueProperty = MagnitudeValueProperty(name, baseKey, beanProvider, *units)
+
+	fun ohm(
+		name: String,
+		baseKey: String,
+		beanProvider: BeanProvider = componentBeanProvider
+	): MagnitudeValueProperty = magnitudeValue(name, baseKey, beanProvider, SIUnit.Ohm)
+
+	fun farad(
+		name: String,
+		baseKey: String,
+		beanProvider: BeanProvider = componentBeanProvider
+	): MagnitudeValueProperty = magnitudeValue(name, baseKey, beanProvider, SIUnit.Farad)
+
+	fun henry(
+		name: String,
+		baseKey: String,
+		beanProvider: BeanProvider = componentBeanProvider
+	): MagnitudeValueProperty = magnitudeValue(name, baseKey, beanProvider, SIUnit.Henry)
+
+	fun volt(
+		name: String,
+		baseKey: String,
+		beanProvider: BeanProvider = componentBeanProvider
+	): MagnitudeValueProperty = magnitudeValue(name, baseKey, beanProvider, SIUnit.Volt)
+
+	fun ampere(
+		name: String,
+		baseKey: String,
+		beanProvider: BeanProvider = componentBeanProvider
+	): MagnitudeValueProperty = magnitudeValue(name, baseKey, beanProvider, SIUnit.Ampere)
+
+	fun periodOrFrequency(
+		name: String,
+		baseKey: String,
+		beanProvider: BeanProvider = componentBeanProvider
+	): MagnitudeValueProperty = magnitudeValue(name, baseKey, beanProvider, SIUnit.Second, SIUnit.Hertz)
+
+	fun time(
+		name: String,
+		baseKey: String,
+		beanProvider: BeanProvider = componentBeanProvider
+	): MagnitudeValueProperty = magnitudeValue(name, baseKey, beanProvider, SIUnit.Second)
+
 }

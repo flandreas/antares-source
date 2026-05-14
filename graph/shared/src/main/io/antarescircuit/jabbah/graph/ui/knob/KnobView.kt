@@ -4,15 +4,20 @@ import io.antarescircuit.jabbah.base.*
 import io.antarescircuit.jabbah.base.event.Button
 import io.antarescircuit.jabbah.base.geom.Geometry
 import io.antarescircuit.jabbah.base.geom.Point2D
+import io.antarescircuit.jabbah.base.math.PI_2
 import io.antarescircuit.jabbah.draw.DrawContext
 import io.antarescircuit.jabbah.draw.InputEventContext
 import io.antarescircuit.jabbah.draw.InputEventHandler
 import io.antarescircuit.jabbah.draw.InputEventHandlerAdapter
 import io.antarescircuit.jabbah.draw.drawable.AbstractRectangle
 import io.antarescircuit.jabbah.draw.drawable.AbstractRectangularUnzoomable
+import io.antarescircuit.jabbah.draw.graphics.Graphics2D
 import io.antarescircuit.jabbah.draw.graphics.Color
 import io.antarescircuit.jabbah.draw.style.Themes
 import io.antarescircuit.jabbah.edit.model.text.Label
+import io.antarescircuit.jabbah.edit.properties.magnitude.Magnitude
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
+import io.antarescircuit.jabbah.edit.properties.magnitude.SIUnit
 import io.antarescircuit.jabbah.execution.SignalHandler
 import io.antarescircuit.jabbah.execution.actor.ActorInteractionContext
 import io.antarescircuit.jabbah.execution.actor.ActorInteractionHandler
@@ -24,18 +29,24 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 /**
- * A circular knob used for interactively changing a value while execution.
+ * A circular knob used for interactively changing a [MagnitudeValue] during execution.
+ *
+ * The user can press the mouse on the scale and turn it clockwise to increase the value,
+ * and counter-clockwise to decrease it. The current value is normalized to 3 magnitudes;
+ * if the value would leave the range of 1..999, the [Magnitude] gets adjusted accordingly.
+ * If the user presses ALT while dragging, the value is snapped to one of the nine scale markings.
+ *
+ * The user can also click on a scale position to change the value immediately.
+ * Double-clicking in the middle of the [KnobView] resets its value to the default value.
  *
  * @property model the [KnobModel] displayed by this [KnobModel]
- * @property unit the description of the unit to be displayed after the value
- * @property valueChangeHandler the logic to be executed when the value of the [KnobModel] has changed
  * @param location the location of the center of this [KnobView] in absolute view coordinates
+ * @property valueChangeHandler the logic to be executed when the value of the [KnobModel] has changed
  */
 class KnobView(
-    private val model: KnobModel = KnobModel(initialValue = 0),
-    var unit: String = "",
+    private val model: KnobModel = KnobModel(MagnitudeValue(0, Magnitude.One, SIUnit.Second)),
     location: Point2D = Point2D.ZERO,
-    var valueChangeHandler: (Long) -> Unit = {}
+    var valueChangeHandler: (MagnitudeValue) -> Unit = {}
 ): AbstractRectangularUnzoomable(OUTER_SIZE / 2, location), ActorView {
 
     companion object {
@@ -63,7 +74,7 @@ class KnobView(
         private const val ANGLE_PER_DIGIT = 2 * PI / 9
     }
 
-    var value: Long
+    var value: MagnitudeValue
         get() = model.value
         set(value) {
             model.value = value
@@ -73,12 +84,12 @@ class KnobView(
      * The value to be set in [value] when the user double-clicks this [KnobView].
      * Initialized with the [KnobModel]'s initial value upon construction.
      */
-    var defaultValue: Long = model.value
+    var defaultValue: MagnitudeValue = model.value
 
     private val handler = Handler()
 
     /**
-     * The angle at which the [TRIANGLE_PATH] has to be rotated in terms of [Graphics2D to point to the current value.
+     * The angle at which the [TRIANGLE_PATH] has to be rotated in terms of [Graphics2D] to point to the current value.
      */
     private val triangleAngle: Double get() = -(ONE_ANGLE - model.asAngle)
 
@@ -86,7 +97,7 @@ class KnobView(
     private val scaleLabel = Label(font = Themes.get<GraphTheme>().explanation.font, text = "")
 
     /** Used to draw the current value in the center of the knob.*/
-    private val valueLabel = Label(font = Themes.get<GraphTheme>().explanation.font, text = "", color = Color.WHITE)
+    private val valueLabel = Label(font = Themes.get<GraphTheme>().figure.font.scale(0.8), text = "", color = Color.WHITE)
 
     init {
         model.addPropertyChangeListener {
@@ -117,11 +128,7 @@ class KnobView(
             it.g.fill(TRIANGLE_PATH)
         }
 
-        var text = Thousands.convert(model.value)
-        if (StringUtils.isNotEmpty(unit)) {
-            text = "$text $unit"
-        }
-        valueLabel.text = text
+        valueLabel.text = model.value.toString()
         valueLabel.draw(context)
 
         context.g.translate(viewRectangle.center.negate)
@@ -186,15 +193,37 @@ class KnobView(
             val newAngle = Geometry.angle(boundingBox.center, context.location)
             if (newAngle != oldAngle) {
                 val oldValue = value
+                val isClockwise = Geometry.isClockwiseAngleChange(oldAngle, newAngle)
+                val isChangeMagnitude = isChangeMagnitude(isClockwise, newAngle)
+
                 val newValue = model.dragToAngle(
-                    newAngle = Geometry.wrapAngle(pressedModelAngle - (newAngle - pressedAngle)),
-                    increment = Geometry.isClockwiseAngleChange(oldAngle, newAngle))
+                    newAngle = Geometry.wrapAngle(PI_2 - newAngle),
+                    increment = isClockwise,
+                    isChangeMagnitude,
+                    context.mouseEvent?.isAltDown == true
+                )
                 if (newValue != oldValue) {
                     oldAngle = newAngle
                 }
             }
 
             return this
+        }
+
+        /**
+         * Checks whether a clockwise or counter-clockwise change from [oldAngle] to [newAngle]
+         * crosses the y-axis, which requires a change of magnitude in the resulting new [KnobModel] value.
+         */
+        private fun isChangeMagnitude(isClockwise: Boolean, newAngle: Double) : Boolean {
+            // Angles are in radians, zero East, counter-clockwise increasing
+            if (oldAngle == newAngle) {
+                return false
+            }
+            return if (isClockwise) {
+                oldAngle > PI_2 && newAngle < PI_2
+            } else {
+                oldAngle < PI_2 && newAngle > PI_2
+            }
         }
 
         override fun mouseReleased(context: ActorInteractionContext): ActorInteractionHandler? {
@@ -224,7 +253,7 @@ class KnobView(
                 // Origin north, clockwise (like the KnobView scale)
                 val wrappedNewAngle = Geometry.wrapAngle(-newAngle + PI / 2)
 
-                model.clickToAngle(wrappedNewAngle)
+                model.clickToAngle(wrappedNewAngle, context.mouseEvent?.isAltDown == true)
             }
 
             return null

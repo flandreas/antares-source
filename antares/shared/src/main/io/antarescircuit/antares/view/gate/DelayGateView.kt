@@ -3,14 +3,14 @@ package io.antarescircuit.antares.view.gate
 import io.antarescircuit.antares.model.gate.DelayGate
 import io.antarescircuit.antares.model.signal.BitWidth
 import io.antarescircuit.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
-import io.antarescircuit.jabbah.edit.Look
-import io.antarescircuit.jabbah.base.Thousands
 import io.antarescircuit.jabbah.base.geom.Direction
 import io.antarescircuit.jabbah.base.geom.Point2D
 import io.antarescircuit.jabbah.draw.DrawContext
 import io.antarescircuit.jabbah.draw.style.DrawStyleModule
 import io.antarescircuit.jabbah.draw.style.StyleProvider
 import io.antarescircuit.jabbah.draw.style.StyleType
+import io.antarescircuit.jabbah.edit.Look
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
 
 /**
  * A view of a [DelayGate].
@@ -28,15 +28,13 @@ class DelayGateView(
 
     override val relativeExternalLabelLocation: Point2D get() = Point2D(-LENGTH - width / 2, -height / 2 - LABEL_DIST)
 
-    var delay: Long
+    var delay: MagnitudeValue
         get() = model.delay
         set(value) {
-	        if (delay != value) {
-		        invalidate()
-		        model.delay = value
-		        updateText()
-		        validate()
-	        }
+            invalidate()
+            model.delay = value
+            updateText()
+            validate()
         }
 
 	var bitWidth: BitWidth
@@ -81,10 +79,6 @@ class DelayGateView(
     }
 
 	private fun updateText() {
-		var value = Thousands.convert(delay)
-		if (value.length < 5) {
-			value += " ns"
-		}
-		internalLabelText = value
+        internalLabelText = delay.toString()
 	}
 }

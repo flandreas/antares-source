@@ -2,14 +2,18 @@ package io.antarescircuit.antares.model.analog
 
 import io.antarescircuit.antares.view.analog.engine.AnalogElement
 import io.antarescircuit.antares.view.analog.engine.AnalogCircuitAnalysis
+import io.antarescircuit.jabbah.edit.properties.magnitude.Magnitude
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
+import io.antarescircuit.jabbah.edit.properties.magnitude.SIUnit
 import io.antarescircuit.jabbah.graph.model.OutputPort
 import io.antarescircuit.jabbah.graph.model.vertice.EmptyVerticeCalculator
+import io.antarescircuit.jabbah.graph.model.Port
 import io.antarescircuit.jabbah.io.Storable
 import io.antarescircuit.jabbah.io.StoreReader
 import io.antarescircuit.jabbah.io.StoreWriter
 
 /**
- * Produces [current] outgoing at [OutputPort] 1.
+ * A 2 [Port] source of electrical [current] outgoing at [OutputPort] 1.
  */
 class CurrentSource(
 	current: Double = DEF_CURRENT
@@ -19,8 +23,8 @@ class CurrentSource(
 		private const val DEF_CURRENT = 0.1
 	}
 
-	var current: Double = current
-		set(value) {
+	var current: MagnitudeValue = MagnitudeValue(current, Magnitude.One, SIUnit.Ampere)
+		set (value) {
 			if (field != value) {
 				field = value
 				stateChanged(reason = MAIN_PROPERTY_STATE)
@@ -31,17 +35,22 @@ class CurrentSource(
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
-		current = reader.readDouble("current")
+		if (reader.hasAttribute("current")) {
+			// Backward compatability before MagnitudeValue was introduced
+			current = MagnitudeValue(reader.readDouble("current"), Magnitude.One, SIUnit.Ampere)
+		} else if (reader.hasAttribute("current${MagnitudeValue.MAGNITUDE_VALUE_EXT}")) {
+			current = MagnitudeValue.read("current", reader, SIUnit.Ampere)
+		}
 	}
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
-		writer.writeDouble("current", current)
+		current.write("current", writer)
 	}
 
 	/** ---- [AnalogElement] */
 
 	override fun stamp(analysis: AnalogCircuitAnalysis) {
-		analysis.stampCurrentSource(analogElem.nodes[1], analogElem.nodes[0], current)
+		analysis.stampCurrentSource(analogElem.nodes[1], analogElem.nodes[0], current.baseValue)
 	}
 }

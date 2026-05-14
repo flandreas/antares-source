@@ -1,7 +1,6 @@
 package io.antarescircuit.antares.view.input
 
 import io.antarescircuit.antares.model.input.Clock
-import io.antarescircuit.antares.model.input.PeriodOrFrequencyParser
 import io.antarescircuit.antares.view.gate.BoxGateView
 import io.antarescircuit.antares.view.port.AbstractAntaresPortView
 import io.antarescircuit.jabbah.base.*
@@ -18,6 +17,7 @@ import io.antarescircuit.jabbah.draw.style.StyleProvider
 import io.antarescircuit.jabbah.draw.style.StyleType
 import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.edit.Look
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
 import io.antarescircuit.jabbah.execution.actor.ActorInteractionContext
 import io.antarescircuit.jabbah.execution.actor.ActorInteractionHandler
 import io.antarescircuit.jabbah.execution.actor.ActorView
@@ -74,10 +74,10 @@ class ClockView(
 	/** ---- UI Properties */
 
 	@Suppress("unused") // Reflection
-	var periodOrFrequency: String
-		get() = model.periodOrFrequency.toString()
+	var periodOrFrequency: MagnitudeValue
+		get() = model.periodOrFrequency
 		set(value) {
-			model.periodOrFrequency = PeriodOrFrequencyParser.parse(value)
+			model.periodOrFrequency = value
 		}
 
 	@Suppress("unused") // Reflection
@@ -189,15 +189,10 @@ class ClockView(
 			}
 
 			return KnobLauncherImpl.launchAfterDelay(
-				initialValue = model.propagationDelay.value / 1_000,
+				initialValue = model.periodOrFrequency,
 				location = boundingBox.center,
-				unit = "µs",
 				mouseMovedCondition = { contains(it.x, it.y) },
-				valueChangeHandler = {
-					if (it < Long.MAX_VALUE / 1_000) {
-						model.propagationDelay = LongValueImpl(it * 1_000)
-					}
-				},
+				valueChangeHandler = { model.periodOrFrequency = it },
 				signalHandler = context.signalHandler
 			)
 		}
@@ -215,15 +210,10 @@ class ClockView(
 
 			return KnobLauncherImpl.launchImmediately(
 				view = context.view as DrawingView<*,*>,
-				initialValue = model.propagationDelay.value / 1_000,
+				initialValue = periodOrFrequency,
 				location = boundingBox.center,
-				unit = "µs",
 				mouseMovedCondition = { contains(it.x, it.y) },
-				valueChangeHandler = {
-					if (it < Long.MAX_VALUE / 1_000) {
-						model.propagationDelay = LongValueImpl(it * 1_000)
-					}
-				},
+				valueChangeHandler = { model.periodOrFrequency = it },
 				signalHandler = context.signalHandler
 			)
 		}

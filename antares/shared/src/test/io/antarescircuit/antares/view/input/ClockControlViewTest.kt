@@ -51,7 +51,7 @@ class ClockControlViewTest {
 		val context = contextFor(ClockControlView.ICON_BUTTON_SIZE / 2.0, -ClockControlView.ICON_BUTTON_SIZE / 2.0)
 		vv.getActorInteractionHandler(context).mouseMoved(context)
 
-		verify { knobLauncher.launchAfterDelay(any(), any(), any(), any(), any(), any(), any()) }
+		verify { knobLauncher.launchAfterDelay(any(), any(), any(), any(), any(), any()) }
 	}
 
 	private fun contextFor(x: Double, y: Double, clickCount: Int = 0): ActorInteractionContext {

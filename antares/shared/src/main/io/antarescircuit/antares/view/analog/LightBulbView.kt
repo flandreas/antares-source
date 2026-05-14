@@ -19,15 +19,12 @@ import io.antarescircuit.jabbah.draw.graphics.Color
 import io.antarescircuit.jabbah.draw.graphics.DropShadow
 import io.antarescircuit.jabbah.draw.style.DrawStyleModule
 import io.antarescircuit.jabbah.draw.style.StyleProvider
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
 import io.antarescircuit.jabbah.graph.GraphApplicationContext
 import io.antarescircuit.jabbah.graph.model.Graph
 import io.antarescircuit.jabbah.graph.model.GraphElementEvent
 import io.antarescircuit.jabbah.graph.model.vertice.VerticeLink
-import io.antarescircuit.jabbah.graph.view.AbstractGraphElementView
-import io.antarescircuit.jabbah.graph.view.ControlView
-import io.antarescircuit.jabbah.graph.view.ControlViewSource
-import io.antarescircuit.jabbah.graph.view.ControlViewSourceProperty
-import io.antarescircuit.jabbah.graph.view.GraphView
+import io.antarescircuit.jabbah.graph.view.*
 import io.antarescircuit.jabbah.graph.view.vertice.AbstractVerticeView
 import io.antarescircuit.jabbah.graph.view.vertice.SubGraphVerticeView
 import io.antarescircuit.jabbah.io.Storable
@@ -94,7 +91,7 @@ class LightBulbView(
 	/** ---- UI properties */
 
 	@Suppress("unused") // Reflective bean property
-	var resistance: Double
+	var resistance: MagnitudeValue
 		get() = model.resistance
 		set(value) {
 			model.resistance = value

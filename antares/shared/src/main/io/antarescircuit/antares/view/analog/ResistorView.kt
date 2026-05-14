@@ -6,7 +6,6 @@ import io.antarescircuit.antares.view.port.AbstractAntaresPortView.Companion.LEN
 import io.antarescircuit.antares.view.symbolstyle.SymbolStyle
 import io.antarescircuit.antares.view.symbolstyle.SymbolStyle.Companion.RESISTER_HEIGHT_HALF
 import io.antarescircuit.antares.view.symbolstyle.SymbolStyle.Companion.RESISTOR_WIDTH
-import io.antarescircuit.jabbah.base.Thousands
 import io.antarescircuit.jabbah.base.geom.Direction
 import io.antarescircuit.jabbah.base.geom.Point2D
 import io.antarescircuit.jabbah.base.geom.Rectangle2D
@@ -15,6 +14,7 @@ import io.antarescircuit.jabbah.draw.InputEventHandler
 import io.antarescircuit.jabbah.draw.style.DrawStyleModule
 import io.antarescircuit.jabbah.draw.style.StyleProvider
 import io.antarescircuit.jabbah.edit.DrawingView
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
 import io.antarescircuit.jabbah.execution.actor.ActorInteractionContext
 import io.antarescircuit.jabbah.execution.actor.ActorInteractionHandler
 import io.antarescircuit.jabbah.graph.GraphApplicationContext
@@ -22,6 +22,7 @@ import io.antarescircuit.jabbah.graph.ui.knob.KnobLauncherImpl
 import io.antarescircuit.jabbah.graph.view.style.GraphStyleType
 import io.antarescircuit.jabbah.graph.view.vertice.AbstractRectangularVerticeView
 import io.antarescircuit.jabbah.graph.view.vertice.AbstractVerticeView
+import io.antarescircuit.jabbah.graph.view.vertice.AbstractVerticeView.Companion
 
 class ResistorView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
@@ -37,7 +38,7 @@ class ResistorView(
 ) {
 
 	@Suppress("unused") // Reflective bean property
-	var resistance: Double
+	var resistance: MagnitudeValue
 		get() = model.resistance
 		set(value) {
 			model.resistance = value
@@ -94,11 +95,11 @@ class ResistorView(
 
 	/** ---- [AbstractAnalogVerticeView] */
 
-	override val mainPropertyValue: String get() = "${Thousands.convert(model.resistance.toLong(), " ")}Ω"
+	override val mainPropertyValue: String get() = resistance.toString()
 
 	/** ---- [ResistorView] */
 
-	private inner class ResistorViewInteractionHandler : AbstractVerticeView.Companion.CannotOpenActorClickHandler() {
+	private inner class ResistorViewInteractionHandler : Companion.CannotOpenActorClickHandler() {
 
 		init {
 			component = this@ResistorView
@@ -106,22 +107,20 @@ class ResistorView(
 
 		override fun mouseMoved(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext> =
 			KnobLauncherImpl.launchAfterDelay(
-				initialValue = resistance.toLong(),
+				initialValue = model.resistance,
 				location = boundingBox.center,
-				unit = "Ω",
 				mouseMovedCondition = { contains(it.x, it.y) },
-				valueChangeHandler = { model.setState(it.toDouble(), context.signalHandler, (context.view as DrawingView<*,*>).drawing as AnalogGraphView) },
+				valueChangeHandler = { model.setState(it, context.signalHandler, (context.view as DrawingView<*,*>).drawing as AnalogGraphView) },
 				signalHandler = context.signalHandler
 			)
 
 		override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler =
 			KnobLauncherImpl.launchImmediately(
 				view = context.view as DrawingView<*,*>,
-				initialValue = resistance.toLong(),
+				initialValue = model.resistance,
 				location = boundingBox.center,
-				unit = "Ω",
 				mouseMovedCondition = { contains(it.x, it.y) },
-				valueChangeHandler = { model.setState(it.toDouble(), context.signalHandler, (context.view as DrawingView<*,*>).drawing as AnalogGraphView) },
+				valueChangeHandler = { model.setState(it, context.signalHandler, (context.view as DrawingView<*,*>).drawing as AnalogGraphView) },
 				signalHandler = context.signalHandler
 			)
 	}

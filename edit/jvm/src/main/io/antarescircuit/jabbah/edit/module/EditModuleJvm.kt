@@ -8,6 +8,7 @@ import io.antarescircuit.jabbah.base.preferences.EnumPreference
 import io.antarescircuit.jabbah.base.preferences.IntPreference
 import io.antarescircuit.jabbah.base.preferences.PreferenceGroup
 import io.antarescircuit.jabbah.base.swing.EnumRenderer
+import io.antarescircuit.jabbah.base.swing.ToStringRenderer
 import io.antarescircuit.jabbah.draw.graphics.*
 import io.antarescircuit.jabbah.draw.module.DrawModuleJvm
 import io.antarescircuit.jabbah.draw.style.StyleType
@@ -22,18 +23,16 @@ import io.antarescircuit.jabbah.edit.model.image.ImageIdentification
 import io.antarescircuit.jabbah.edit.model.rectangle.AbstractRectangularComponent
 import io.antarescircuit.jabbah.edit.model.rectangle.RectangularReplaceSelectionModel
 import io.antarescircuit.jabbah.edit.model.text.*
-import io.antarescircuit.jabbah.edit.model.text.HorizontalAlignment
-import io.antarescircuit.jabbah.edit.model.text.VerticalAlignment
 import io.antarescircuit.jabbah.edit.model.text.description.Description
 import io.antarescircuit.jabbah.edit.model.text.description.Name
 import io.antarescircuit.jabbah.edit.properties.*
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
 import io.antarescircuit.jabbah.edit.select.EditSelectModule
 import io.antarescircuit.jabbah.edit.select.RubberBandHandler
 import io.antarescircuit.jabbah.edit.view.*
 import io.antarescircuit.jabbah.io.IOModule
 import io.antarescircuit.jabbah.io.IOModuleJvm
 import io.antarescircuit.jabbah.io.TypeMap
-import javax.swing.table.DefaultTableCellRenderer
 
 /**
  * Setup of the [io.antarescircuit.jabbah.edit] module for the JVM target.
@@ -89,6 +88,7 @@ object EditModuleJvm : AbstractModule() {
 		registry.register(Name::class.java) { TranslatablePropertyRenderer() }
 		registry.register(Description::class.java) { TranslatablePropertyRenderer((it as CommandPropertySwing<Translatable>).filter) }
 		registry.registerRenderer(ImageIdentification::class.java, ImageIdentificationRenderer::class.java)
+		registry.registerRenderer(MagnitudeValue::class.java, ToStringRenderer::class.java)
 	}
 
 	@Suppress("UNCHECKED_CAST")
@@ -133,6 +133,13 @@ object EditModuleJvm : AbstractModule() {
 		}
 
 		registry.registerEditor(ImageIdentification::class.java, ImageIdentificationEditor::class.java)
+
+		registry.register(MagnitudeValue::class.java) { prop ->
+			MagnitudeValuePropertyEditor(
+				errorCallback = { prop.parseException = it },
+				*(prop as MagnitudeValueProperty).units
+			)
+		}
 	}
 
 	private fun registerTypes(typeMap: TypeMap) {

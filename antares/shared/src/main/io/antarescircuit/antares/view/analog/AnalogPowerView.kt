@@ -9,13 +9,14 @@ import io.antarescircuit.jabbah.base.geom.Rectangle2D
 import io.antarescircuit.jabbah.draw.DrawContext
 import io.antarescircuit.jabbah.draw.style.DrawStyleModule
 import io.antarescircuit.jabbah.draw.style.StyleProvider
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
 
 class AnalogPowerView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: AnalogPower = AnalogPower()
 ) : AbstractAnalogVerticeView<AnalogPower>(styleProvider, model, Direction.NORTH, Rectangle2D()) {
 
-	var voltage: Double
+	var voltage: MagnitudeValue
 		get() = model.voltage
 		set(value) {
 			invalidate()
@@ -32,9 +33,9 @@ class AnalogPowerView(
 		Point2D(-(PowerViewShape.WIDTH + LENGTH) / 2, -PowerViewShape.HEIGHT / 2 - LABEL_DIST)
 
 	override fun modelExchanged(oldModel: AnalogPower?) {
+		PowerViewShape.setBounds(this)
 		super.modelExchanged(oldModel)
 		addPortView(AnalogPortView(styleProvider, model.getOutput(), -LENGTH, 0, Direction.EAST))
-		PowerViewShape.setBounds(this)
 	}
 
 	override fun drawImpl(context: DrawContext) {
@@ -45,7 +46,7 @@ class AnalogPowerView(
 
 	/** ---- [AbstractAnalogVerticeView] */
 
-	override val mainPropertyValue: String get() = "$voltage V"
+	override val mainPropertyValue: String get() = voltage.toString()
 
 	override val mainPropertylabelOrientation: Direction get() = Direction.WEST
 

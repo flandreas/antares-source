@@ -11,6 +11,9 @@ import io.antarescircuit.jabbah.draw.graphics.KnobIcon
 import io.antarescircuit.jabbah.draw.style.StyleType
 import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.edit.EditInputEventContext
+import io.antarescircuit.jabbah.edit.properties.magnitude.Magnitude
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
+import io.antarescircuit.jabbah.edit.properties.magnitude.SIUnit
 import io.antarescircuit.jabbah.execution.actor.ActorDrawableButton
 import io.antarescircuit.jabbah.execution.actor.ActorInteractionContext
 import io.antarescircuit.jabbah.execution.actor.ActorInteractionHandler
@@ -116,14 +119,13 @@ class OscilloscopeScaleRowView(
 				}
 
 				return KnobLauncherImpl.launchAfterDelay(
-					initialValue = oscilloscopeView.timelineScale.toLong(),
+					initialValue = MagnitudeValue(oscilloscopeView.timelineScale, Magnitude.One, SIUnit.Factor),
 					location = boundingBox.center
 						.add(oscilloscopeView.location)
 						.add(this@OscilloscopeScaleRowView.location),
-					unit = "x",
 					mouseMovedCondition = { keepMouseMoved(it.location) },
 					displayHandler = { isHovering = false },
-					valueChangeHandler = { oscilloscopeView.timelineScale = it.toDouble() },
+					valueChangeHandler = { oscilloscopeView.timelineScale = it.baseValue },
 					signalHandler = context.signalHandler
 				)
 			}
@@ -131,14 +133,13 @@ class OscilloscopeScaleRowView(
 			override fun mouseClicked(context: ActorInteractionContext): ActorInteractionHandler {
 				return KnobLauncherImpl.launchImmediately(
 					view = context.view as DrawingView<*,*>,
-					initialValue = oscilloscopeView.timelineScale.toLong(),
+					initialValue = MagnitudeValue(oscilloscopeView.timelineScale, Magnitude.One, SIUnit.Factor),
 					location = boundingBox.center
 						.add(oscilloscopeView.location)
 						.add(this@OscilloscopeScaleRowView.location),
-					unit = "x",
 					mouseMovedCondition = { keepMouseMoved(it.location) },
 					displayHandler = { isHovering = false },
-					valueChangeHandler = { oscilloscopeView.timelineScale = it.toDouble() },
+					valueChangeHandler = { oscilloscopeView.timelineScale = it.baseValue },
 					signalHandler = context.signalHandler
 				)
 			}

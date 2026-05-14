@@ -8,6 +8,9 @@ import io.antarescircuit.antares.view.analog.engine.AnalogElementMixin
 import io.antarescircuit.jabbah.base.Translations
 import io.antarescircuit.jabbah.base.sound.SoundClipFactory
 import io.antarescircuit.jabbah.base.sound.SoundEffects
+import io.antarescircuit.jabbah.edit.properties.magnitude.Magnitude
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
+import io.antarescircuit.jabbah.edit.properties.magnitude.SIUnit
 import io.antarescircuit.jabbah.execution.SignalHandler
 import io.antarescircuit.jabbah.graph.model.vertice.EmptyVerticeCalculator
 import io.antarescircuit.jabbah.io.Storable
@@ -32,14 +35,14 @@ import kotlin.math.sqrt
  * - 5: End of coil resistor
  */
 class AnalogRelay(
-    inductance: Double = InductorLogic.DEF_INDUCTANCE
+    inductance: MagnitudeValue = InductorLogic.DEF_INDUCTANCE
 ) : AbstractAnalogVertice<AnalogRelay>(
     EmptyVerticeCalculator,
     "library.element.AnalogRelay",
     AnalogElementMixin(true, 5, internalNodeCount = 1)
 ) {
     companion object {
-        private const val DEF_ON_CURRENT = 0.02
+        private val DEF_ON_CURRENT = MagnitudeValue(20, Magnitude.Milli, SIUnit.Ampere)
         private const val ON_RESISTANCE = 0.05
         private const val OFF_RESISTANCE = 1E8
         private const val COIL_RESISTANCE = 20.0
@@ -70,20 +73,22 @@ class AnalogRelay(
 
     val coilPortIdBase: Int get() = switchConfiguration.portCount + 1
 
-    /** The inductance of this [AnalogRelay] in Henry.*/
-    var inductance: Double
-        get() = inductorLogic.inductance
+    var inductance: MagnitudeValue = inductance
         set(value) {
-            if (inductorLogic.inductance != value) {
-                inductorLogic.setup(value, 0.0, InductorLogic.DEF_TRAPEZOIDAL)
+            if (field != value) {
+                field = value
+                inductorLogic.setup(value.baseValue, 0.0, InductorLogic.DEF_TRAPEZOIDAL)
+                stateChanged()
             }
         }
 
     /** The current (in A) through the inductor at which the [AnalogRelay] is switched on. */
-    var onCurrent: Double = DEF_ON_CURRENT
+    var onCurrent: MagnitudeValue = DEF_ON_CURRENT
         set(value) {
-            require(value > 0) { Translations.getString("element.property.relay.onCurrentNotLargerThanZero.msg") }
-            field = value
+            if (field != value) {
+                require(value.baseValue > 0) { Translations.getString("element.property.relay.onCurrentNotLargerThanZero.msg") }
+                field = value
+            }
         }
 
     /** If set, the switch is in state 'on' if there is no current flowing through the inductor. */
@@ -105,7 +110,7 @@ class AnalogRelay(
     init {
         propagationDelay = Switch.DEF_PROP_DELAY
         updatePorts()
-        inductorLogic.setup(inductance, coilCurrent, InductorLogic.DEF_TRAPEZOIDAL)
+        inductorLogic.setup(inductance.baseValue, coilCurrent, InductorLogic.DEF_TRAPEZOIDAL)
     }
 
     private fun setupPoles() {
@@ -134,8 +139,21 @@ class AnalogRelay(
 
     override fun read(reader: StoreReader) {
         super.read(reader)
-        inductance = reader.readString("inductance").toDouble()
-        onCurrent = reader.readString("onCurrent").toDouble()
+
+        if (reader.hasAttribute("inductance")) {
+            // Backward compatability before MagnitudeValue was introduced
+            inductance = MagnitudeValue(reader.readDouble("inductance"), Magnitude.One, SIUnit.Henry)
+        } else if (reader.hasAttribute("inductance${MagnitudeValue.MAGNITUDE_VALUE_EXT}")) {
+            inductance = MagnitudeValue.read("inductance", reader, SIUnit.Henry)
+        }
+
+        if (reader.hasAttribute("onCurrent")) {
+            // Backward compatability before MagnitudeValue was introduced
+            onCurrent = MagnitudeValue(reader.readDouble("onCurrent"), Magnitude.One, SIUnit.Ampere)
+        } else if (reader.hasAttribute("onCurrent${MagnitudeValue.MAGNITUDE_VALUE_EXT}")) {
+            onCurrent = MagnitudeValue.read("onCurrent", reader, SIUnit.Ampere)
+        }
+
         if (reader.hasAttribute("switchConfig")) {
             switchConfiguration = SwitchConfiguration.withName(reader.readString("switchConfig"))
         }
@@ -146,8 +164,8 @@ class AnalogRelay(
 
     override fun write(writer: StoreWriter) {
         super.write(writer)
-        writer.writeString("inductance", inductance.toString())
-        writer.writeString("onCurrent", onCurrent.toString())
+        inductance.write("inductance", writer)
+        onCurrent.write("onCurrent", writer)
         writer.writeString("switchConfig", switchConfiguration.customName)
         if (normallyOn) {
             writer.writeBoolean("normallyOn", normallyOn)
@@ -200,7 +218,7 @@ class AnalogRelay(
         // currently not used
         val magic = 1.3
         val pmult = sqrt(magic + 1)
-        val p = coilCurrent * pmult / onCurrent
+        val p = coilCurrent * pmult / onCurrent.baseValue
         var dPos = abs(p * p) - 1.3
 
         if (dPos < 0) {

@@ -1,6 +1,5 @@
 package io.antarescircuit.antares.model.input
 
-import io.antarescircuit.antares.model.input.PeriodOrFrequencyUnit.Nanosecond
 import io.antarescircuit.antares.model.port.DigitalPortImpl
 import io.antarescircuit.antares.model.signal.DigitalSignal
 import io.antarescircuit.antares.model.signal.DigitalSignalFactory
@@ -8,10 +7,13 @@ import io.antarescircuit.jabbah.base.LongValue
 import io.antarescircuit.jabbah.base.LongValueImpl
 import io.antarescircuit.jabbah.base.System
 import io.antarescircuit.jabbah.base.Translations
+import io.antarescircuit.jabbah.edit.properties.magnitude.Magnitude
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
+import io.antarescircuit.jabbah.edit.properties.magnitude.SIUnit
 import io.antarescircuit.jabbah.execution.SignalHandler
 import io.antarescircuit.jabbah.execution.actor.Actor
-import io.antarescircuit.jabbah.graph.model.vertice.AbstractVertice
 import io.antarescircuit.jabbah.graph.model.GraphActorData
+import io.antarescircuit.jabbah.graph.model.vertice.AbstractVertice
 import io.antarescircuit.jabbah.graph.model.vertice.CalculatingVertice
 import io.antarescircuit.jabbah.graph.model.vertice.VerticeCalculator
 import io.antarescircuit.jabbah.io.Storable
@@ -29,6 +31,8 @@ class Clock(name: String? = null) : CalculatingVertice(CALCULATOR, name ?: DEF_N
 		private val TYPE get() = Translations.getString("$BASE_RESOURCE_KEY.name")
 		private val TYPE_DESC get() = Translations.getOptionalString("$BASE_RESOURCE_KEY.desc")
 		private const val DEF_NAME = "CLK"
+
+		private val DEF_PERIOD_OR_FREQUENCY = MagnitudeValue(1, Magnitude.One, SIUnit.Second)
 
 		private val CALCULATOR = Calculator()
 
@@ -69,11 +73,11 @@ class Clock(name: String? = null) : CalculatingVertice(CALCULATOR, name ?: DEF_N
 			}
 		}
 
-	var periodOrFrequency: PeriodOrFrequency = PeriodOrFrequency(1_000_000_000, Nanosecond)
+	var periodOrFrequency: MagnitudeValue = DEF_PERIOD_OR_FREQUENCY
 		set(value) {
 			// Set propagationDelay even if periodOrFrequency hasn't changed to restore
 			// propagationDelay that might have changed during simulation
-			propagationDelay = LongValueImpl(value.asNanoseconds.value)
+			propagationDelay = calculatePropagationDelay(value)
 			if (field != value) {
 				field = value
 				stateChanged()
@@ -91,7 +95,7 @@ class Clock(name: String? = null) : CalculatingVertice(CALCULATOR, name ?: DEF_N
 		}
 
 	/** Used for restoring [periodOrFrequency] after the simulation has ended. */
-	private lateinit var periodOrFrequencyBuffer: PeriodOrFrequency
+	private lateinit var periodOrFrequencyBuffer: MagnitudeValue
 
 	override var propagationDelay: LongValue
 		get() = super.propagationDelay
@@ -101,8 +105,16 @@ class Clock(name: String? = null) : CalculatingVertice(CALCULATOR, name ?: DEF_N
 		}
 
 	init {
-		propagationDelay = LongValueImpl(periodOrFrequency.asNanoseconds.value)
+		propagationDelay = calculatePropagationDelay(periodOrFrequency)
 		addPort(DigitalPortImpl.createOutput(super.name))
+	}
+
+	private fun calculatePropagationDelay(periodOrFrequency: MagnitudeValue): LongValue {
+		return when (periodOrFrequency.unit) {
+            SIUnit.Second -> LongValueImpl(periodOrFrequency.baseValueInMagnitude(Magnitude.Nano).toLong())
+            SIUnit.Hertz -> LongValueImpl((1 / periodOrFrequency.baseValue * Magnitude.Nano.factor).toLong())
+            else -> throw IllegalArgumentException("Unit '${periodOrFrequency.unit.customName}' not supported in clock")
+        }
 	}
 
 	/** ---- [Storable] interface */
@@ -112,9 +124,7 @@ class Clock(name: String? = null) : CalculatingVertice(CALCULATOR, name ?: DEF_N
 		if (!isEnabled) {
 			writer.writeBoolean("enabled", false)
 		}
-		if (periodOrFrequency.unit != Nanosecond) {
-			writer.writeString("unit", periodOrFrequency.unit.customName)
-		}
+		periodOrFrequency.write("periodOrFrequency", writer, true)
 		writer.writeDouble("offPercentage", offPercentage)
 	}
 
@@ -123,15 +133,28 @@ class Clock(name: String? = null) : CalculatingVertice(CALCULATOR, name ?: DEF_N
 		if (reader.hasAttribute("enabled")) {
 			isEnabled = reader.readBoolean("enabled")
 		}
-		periodOrFrequency = if (reader.hasAttribute("unit")) {
-			PeriodOrFrequency.fromNanoseconds(
-				propagationDelay.value,
-				PeriodOrFrequencyUnit.withName(reader.readString("unit")))
+
+		if (reader.hasAttribute("unit")) {
+			// Backward compatability before MagnitudeValue was introduced
+			periodOrFrequency = when (reader.readString("unit")) {
+				"s" -> MagnitudeValue(propagationDelay.value / Magnitude.Nano.factor, Magnitude.One, SIUnit.Second)
+				"ms" -> MagnitudeValue(propagationDelay.value * (Magnitude.Milli.factor.toDouble() / Magnitude.Nano.factor), Magnitude.Milli, SIUnit.Second)
+				"us" -> { MagnitudeValue(propagationDelay.value * (Magnitude.Micro.factor.toDouble() / Magnitude.Nano.factor), Magnitude.Micro, SIUnit.Second) }
+				"ns" -> MagnitudeValue(propagationDelay.value, Magnitude.Nano, SIUnit.Second)
+				"Hz"-> MagnitudeValue(Magnitude.Nano.factor / propagationDelay.value.toDouble(), Magnitude.One, SIUnit.Hertz)
+				"kHz" -> MagnitudeValue(Magnitude.Nano.factor / propagationDelay.value.toDouble() / Magnitude.Kilo.factor, Magnitude.Kilo, SIUnit.Hertz)
+				"MHz" -> MagnitudeValue(Magnitude.Nano.factor / propagationDelay.value.toDouble() / Magnitude.Mega.factor, Magnitude.Mega, SIUnit.Hertz)
+				"GHz" -> MagnitudeValue(Magnitude.Nano.factor / propagationDelay.value.toDouble() / Magnitude.Giga.factor, Magnitude.Giga, SIUnit.Hertz)
+				// else interpret as Nanoseconds
+				else -> MagnitudeValue(propagationDelay.value / Magnitude.Nano.factor * Magnitude.Nano.factor, Magnitude.Nano, SIUnit.Second)
+			}
+		} else if (reader.hasAttribute("periodOrFrequency${MagnitudeValue.MAGNITUDE_VALUE_EXT}")) {
+			periodOrFrequency = MagnitudeValue.readWithUnit("periodOrFrequency", reader)
 		} else {
-			PeriodOrFrequency.fromNanoseconds(
-				propagationDelay.value,
-				Nanosecond)
+			// Backward compatability: Interpret as Nanoseconds
+			periodOrFrequency = MagnitudeValue(propagationDelay.value, Magnitude.Nano, SIUnit.Second).normalize()
 		}
+
 		if (reader.hasAttribute("offPercentage")) {
 			offPercentage = reader.readDouble("offPercentage")
 		}

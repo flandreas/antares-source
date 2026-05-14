@@ -1,7 +1,6 @@
 package io.antarescircuit.antares.view.input
 
 import io.antarescircuit.antares.model.input.Clock
-import io.antarescircuit.jabbah.base.LongValueImpl
 import io.antarescircuit.jabbah.base.Translations
 import io.antarescircuit.jabbah.base.geom.Dimension2D
 import io.antarescircuit.jabbah.base.geom.Point2D
@@ -169,12 +168,13 @@ class ClockControlView(
 				}
 
 				return knobLauncher.launchAfterDelay(
-					initialValue = model.propagationDelay.value / 1_000,
+					initialValue = model.periodOrFrequency,
 					location = knobLocation,
-					unit = "µs",
 					mouseMovedCondition = { keepMouseMoved(it.location) },
 					displayHandler = { isHovering = false },
-					valueChangeHandler = { model.propagationDelay = LongValueImpl(it * 1_000) },
+					valueChangeHandler = {
+						model.periodOrFrequency = it
+					 },
 					signalHandler = context.signalHandler
 				)
 			}

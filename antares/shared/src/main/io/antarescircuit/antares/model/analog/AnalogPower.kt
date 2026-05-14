@@ -3,19 +3,29 @@ package io.antarescircuit.antares.model.analog
 import io.antarescircuit.antares.view.analog.engine.AnalogElement
 import io.antarescircuit.antares.view.analog.engine.AnalogElementMixin
 import io.antarescircuit.antares.view.analog.engine.AnalogCircuitAnalysis
+import io.antarescircuit.jabbah.edit.properties.magnitude.Magnitude
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
+import io.antarescircuit.jabbah.edit.properties.magnitude.SIUnit
 import io.antarescircuit.jabbah.graph.model.vertice.EmptyVerticeCalculator
+import io.antarescircuit.jabbah.graph.model.Port
 import io.antarescircuit.jabbah.io.Storable
 import io.antarescircuit.jabbah.io.StoreReader
 import io.antarescircuit.jabbah.io.StoreWriter
 
+/** A one [Port] component producing a constant voltage. */
 class AnalogPower : AbstractAnalogVertice<AnalogPower>(
 	EmptyVerticeCalculator,
 	"library.element.AnalogPower",
 	AnalogElementMixin(postCount = 1)
 ) {
-	var voltage: Double = 5.0
+	companion object {
+		private const val DEF_VOLTAGE = 5.0
+	}
+
+	/** The constant voltage (in V) this [AnalogPower] produces. */
+	var voltage: MagnitudeValue = MagnitudeValue(DEF_VOLTAGE, Magnitude.One, SIUnit.Volt)
 		set(value) {
-			if (value != field) {
+			if (field != value) {
 				field = value
 				stateChanged(reason = MAIN_PROPERTY_STATE)
 			}
@@ -27,14 +37,19 @@ class AnalogPower : AbstractAnalogVertice<AnalogPower>(
 
 	/** ---- [Storable] */
 
-	override fun write(writer: StoreWriter) {
-		super.write(writer)
-		writer.writeDouble("voltage", voltage)
-	}
-
 	override fun read(reader: StoreReader) {
 		super.read(reader)
-		voltage = reader.readDouble("voltage")
+		if (reader.hasAttribute("voltage")) {
+			// Backward compatability before MagnitudeValue was introduced
+			voltage = MagnitudeValue(reader.readDouble("voltage"), Magnitude.One, SIUnit.Volt)
+		} else if (reader.hasAttribute("voltage${MagnitudeValue.MAGNITUDE_VALUE_EXT}")) {
+			voltage = MagnitudeValue.read("voltage", reader, SIUnit.Volt)
+		}
+	}
+
+	override fun write(writer: StoreWriter) {
+		super.write(writer)
+		voltage.write("voltage", writer)
 	}
 
 	/** ---- [AnalogElement] */
@@ -42,6 +57,6 @@ class AnalogPower : AbstractAnalogVertice<AnalogPower>(
 	override val voltageSourceCount: Int get() = 1
 
 	override fun stamp(analysis: AnalogCircuitAnalysis) {
-		analysis.stampVoltageSource(0, analogElem.nodes[0], analogElem.voltageSource, voltage)
+		analysis.stampVoltageSource(0, analogElem.nodes[0], analogElem.voltageSource, voltage.baseValue)
 	}
 }

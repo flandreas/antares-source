@@ -6,13 +6,13 @@ import io.antarescircuit.antares.view.port.AbstractAntaresPortView.Companion.LEN
 import io.antarescircuit.antares.view.symbolstyle.SymbolStyle
 import io.antarescircuit.antares.view.symbolstyle.SymbolStyle.Companion.INDUCTOR_HEIGHT_HALF
 import io.antarescircuit.antares.view.symbolstyle.SymbolStyle.Companion.INDUCTOR_WIDTH
-import io.antarescircuit.jabbah.base.Thousands
 import io.antarescircuit.jabbah.base.geom.Direction
 import io.antarescircuit.jabbah.base.geom.Point2D
 import io.antarescircuit.jabbah.base.geom.Rectangle2D
 import io.antarescircuit.jabbah.draw.DrawContext
 import io.antarescircuit.jabbah.draw.style.DrawStyleModule
 import io.antarescircuit.jabbah.draw.style.StyleProvider
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
 import io.antarescircuit.jabbah.graph.GraphApplicationContext
 import io.antarescircuit.jabbah.graph.view.style.GraphStyleType
 import io.antarescircuit.jabbah.graph.view.vertice.AbstractVerticeView
@@ -31,7 +31,7 @@ class InductorView(
 ) {
 
     @Suppress("unused") // Reflection
-    var inductance: Double
+    var inductance: MagnitudeValue
         get() = model.inductance
         set(value) {
             model.inductance = value
@@ -67,6 +67,5 @@ class InductorView(
 
     /** ---- [AbstractAnalogVerticeView] */
 
-    override val mainPropertyValue: String get() = "${Thousands.convert(model.inductance, " ")}H"
-
+    override val mainPropertyValue: String get() = inductance.toString()
 }

@@ -22,6 +22,9 @@ import io.antarescircuit.jabbah.draw.graphics.Paint
 import io.antarescircuit.jabbah.draw.style.DrawStyleModule
 import io.antarescircuit.jabbah.draw.style.StyleProvider
 import io.antarescircuit.jabbah.edit.Look
+import io.antarescircuit.jabbah.edit.properties.magnitude.Magnitude
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
+import io.antarescircuit.jabbah.edit.properties.magnitude.SIUnit
 import io.antarescircuit.jabbah.graph.model.Graph
 import io.antarescircuit.jabbah.graph.model.GraphElementEvent
 import io.antarescircuit.jabbah.graph.view.*
@@ -51,11 +54,11 @@ class AnalogLEDView(
 
         private val DEFAULT_LIGHT_COLOR = LightColor.RED
 
-        /** The current (A) at which the [AnalogLEDView] starts glowing. */
-        const val DEF_MIN_GLOW_CURRENT = 0.005
+        /** The electrical current at which the [AnalogLEDView] starts glowing. */
+        val DEF_MIN_GLOW_CURRENT = MagnitudeValue(5.0, Magnitude.Milli, SIUnit.Ampere)
 
-        /** The current (A) at which the [AnalogLEDView] reaches its maximum brightness. */
-        const val DEF_MAX_GLOW_CURRENT = 0.02
+        /** The electrical current at which the [AnalogLEDView] reaches its maximum brightness. */
+        val DEF_MAX_GLOW_CURRENT = MagnitudeValue(20.0, Magnitude.Milli, SIUnit.Ampere)
 
         /** The radius of the color gradient drawn as halo during simulation.*/
         val GRADIENT_RADIUS = (3.0 * SIZE / 4.0).toInt()
@@ -65,27 +68,28 @@ class AnalogLEDView(
             GRADIENT_RADIUS)
     }
 
-    @Suppress("MemberVisibilityCanBePrivate") // Bean Reflection
-    var minCurrent: Double = DEF_MIN_GLOW_CURRENT
+    var minCurrent: MagnitudeValue = DEF_MIN_GLOW_CURRENT
         set(value) {
-            require(value in 0.0..maxCurrent) { Translations.getString("library.element.LightBulb.minCurrent.error") }
-            field = value
-            postControlViewSourceChangeEvent()
+            if (field != value) {
+                require(value.baseValue in 0.0..maxCurrent.baseValue) { Translations.getString("library.element.LightBulb.minCurrent.error") }
+                field = value
+                postControlViewSourceChangeEvent()
+            }
         }
 
-    @Suppress("MemberVisibilityCanBePrivate") // Bean Reflection
-    var maxCurrent: Double = DEF_MAX_GLOW_CURRENT
+    var maxCurrent: MagnitudeValue = DEF_MAX_GLOW_CURRENT
         set(value) {
-            require(value > minCurrent) { Translations.getString("library.element.LightBulb.maxCurrent.error") }
-            field = value
-            postControlViewSourceChangeEvent()
+            if (field != value) {
+                require(value.baseValue > minCurrent.baseValue) { Translations.getString("library.element.LightBulb.maxCurrent.error") }
+                field = value
+            }
         }
 
     val executionLEDColor: Color get() = lightColor.gradient.at(
         LightBulbView.getExecutionLightFactor(
             (model.getPort<AnalogSignal>() as AnalogPort).current,
-            minCurrent,
-            maxCurrent))
+            minCurrent.baseValue,
+            maxCurrent.baseValue))
 
     override val relativeExternalLabelLocation: Point2D get() =
         Point2D(LENGTH + SIZE / 2, -NEGATIVE_HEIGHT - LABEL_DIST)
@@ -99,8 +103,8 @@ class AnalogLEDView(
     val haloPaint: Paint get() {
         val factor = LightBulbView.getExecutionLightFactor(
             (model.getPort<AnalogSignal>() as AnalogPort).current,
-            minCurrent,
-            maxCurrent
+            minCurrent.baseValue,
+            maxCurrent.baseValue
         )
         return GRADIENT_CACHE.forLightColor(lightColor).forFactoredColorGradient(lightColor.gradient, factor)
     }
@@ -115,19 +119,27 @@ class AnalogLEDView(
     override fun read(reader: StoreReader) {
         super.read(reader)
         lightColor = LightColor.read("lightColor", reader)
+
         if (reader.hasAttribute("minCurrent")) {
-            minCurrent = reader.readDouble("minCurrent")
+            // Backward compatability before MagnitudeValue was introduced
+            minCurrent = MagnitudeValue(reader.readDouble("minCurrent"), Magnitude.One, SIUnit.Ampere)
+        } else if (reader.hasAttribute("minCurrent${MagnitudeValue.MAGNITUDE_VALUE_EXT}")) {
+            minCurrent = MagnitudeValue.read("minCurrent", reader, SIUnit.Ampere)
         }
+
         if (reader.hasAttribute("maxCurrent")) {
-            maxCurrent = reader.readDouble("maxCurrent")
+            // Backward compatability before MagnitudeValue was introduced
+            maxCurrent = MagnitudeValue(reader.readDouble("maxCurrent"), Magnitude.One, SIUnit.Ampere)
+        } else if (reader.hasAttribute("maxCurrent${MagnitudeValue.MAGNITUDE_VALUE_EXT}")) {
+            maxCurrent = MagnitudeValue.read("maxCurrent", reader, SIUnit.Ampere)
         }
     }
 
     override fun write(writer: StoreWriter) {
         super.write(writer)
         lightColor.write("lightColor", writer)
-        writer.writeDouble("minCurrent", minCurrent)
-        writer.writeDouble("maxCurrent", maxCurrent)
+        minCurrent.write("minCurrent", writer)
+        maxCurrent.write("maxCurrent", writer)
     }
 
     /** ---- [ControlViewSource] */

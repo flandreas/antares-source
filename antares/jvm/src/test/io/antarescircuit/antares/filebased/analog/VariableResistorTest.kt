@@ -5,6 +5,9 @@ import io.antarescircuit.antares.view.analog.AnalogGraphView
 import io.antarescircuit.antares.view.analog.ResistorView
 import io.antarescircuit.antares.view.analog.engine.AnalogCircuitAnalyzer
 import io.antarescircuit.jabbah.base.UUID
+import io.antarescircuit.jabbah.edit.properties.magnitude.Magnitude
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
+import io.antarescircuit.jabbah.edit.properties.magnitude.SIUnit
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -38,7 +41,7 @@ class VariableResistorTest : AbstractAnalogFileBasedTest() {
 		assertVoltage(5.0, posEdgeView.getNodeVoltage(0))
 		assertVoltage(0.0, negEdgeView.getNodeVoltage(0))
 
-		resistorView.model.setState(200.0, scheduler, openedCircuitView as AnalogGraphView)
+		resistorView.model.setState(MagnitudeValue(200.0, Magnitude.One, SIUnit.Ohm), scheduler, openedCircuitView as AnalogGraphView)
 		processUntilQueueIsEmpty()
 
 		assertCurrent(0.025, posEdgeView.current)

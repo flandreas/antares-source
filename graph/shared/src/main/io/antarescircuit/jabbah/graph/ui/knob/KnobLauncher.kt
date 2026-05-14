@@ -9,6 +9,7 @@ import io.antarescircuit.jabbah.draw.*
 import io.antarescircuit.jabbah.draw.graphics.Cursor
 import io.antarescircuit.jabbah.draw.view.TooltipManager
 import io.antarescircuit.jabbah.edit.DrawingView
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
 import io.antarescircuit.jabbah.execution.SignalHandler
 import io.antarescircuit.jabbah.execution.actor.ActorInteractionContext
 import io.antarescircuit.jabbah.execution.actor.ActorInteractionHandler
@@ -22,7 +23,6 @@ interface KnobLauncher {
 	 *
 	 * @param initialValue the initial value to be displayed by the [KnobView]
 	 * @param location the location in global model space where the center of the [KnobView] should be located
-	 * @param unit the [String] displayed after the value in [KnobView]. Example: µs
 	 * @param mouseMovedCondition the condition that must be `true` during the entire delay time. This is
 	 * typically implemented as [Drawable.contains] regarding the client that requests the [KnobView].
 	 * @param displayHandler the additional code to be executed when the [KnobView] is displayed.
@@ -32,23 +32,21 @@ interface KnobLauncher {
 	 * listens for deactivations of the [Scheduler], which result in hiding the [KnobView]
 	 */
 	fun launchAfterDelay(
-		initialValue: Long,
+		initialValue: MagnitudeValue,
 		location: Point2D,
-		unit: String,
 		mouseMovedCondition: (ActorInteractionContext) -> Boolean,
 		displayHandler: () -> Unit = {},
-		valueChangeHandler: (Long) -> Unit,
+		valueChangeHandler: (MagnitudeValue) -> Unit,
 		signalHandler: SignalHandler? = null
 	): ActorInteractionHandler
 
 	fun launchImmediately(
 		view: DrawingView<*,*>,
-		initialValue: Long,
+		initialValue: MagnitudeValue,
 		location: Point2D,
-		unit: String,
 		mouseMovedCondition: (ActorInteractionContext) -> Boolean,
 		displayHandler: () -> Unit = {},
-		valueChangeHandler: (Long) -> Unit,
+		valueChangeHandler: (MagnitudeValue) -> Unit,
 		signalHandler: SignalHandler? = null
 	): ActorInteractionHandler
 
@@ -72,13 +70,13 @@ object KnobLauncherImpl : KnobLauncher {
 	private val knobView: KnobView by lazy { KnobView() }
 
 	private var drawingView: DrawingView<*,*>? = null
-	private var initialValue: Long = 0
+	private lateinit var initialValue: MagnitudeValue
 	private var location: Point2D = Point2D.ZERO
-	private var unit: String = ""
 	private var mouseMovedCondition: ((ActorInteractionContext) -> Boolean)? = null
 	private var displayHandler: (() -> Unit)? = null
-	private var valueChangeHandler: ((Long) -> Unit)? = null
+	private var valueChangeHandler: ((MagnitudeValue) -> Unit)? = null
 	private var signalHandler: SignalHandler? = null
+	private var oldStatus: String? = null
 
 	private val activationStateHandler: EventHandler<SchedulerActivationStateEvent> = {
 		if (it.scheduler === signalHandler && !it.scheduler.isActive && drawingView	!= null) {
@@ -87,17 +85,15 @@ object KnobLauncherImpl : KnobLauncher {
 	}
 
 	override fun launchAfterDelay(
-		initialValue: Long,
+		initialValue: MagnitudeValue,
 		location: Point2D,
-		unit: String,
 		mouseMovedCondition: (ActorInteractionContext) -> Boolean,
 		displayHandler: () -> Unit,
-		valueChangeHandler: (Long) -> Unit,
+		valueChangeHandler: (MagnitudeValue) -> Unit,
 		signalHandler: SignalHandler?
 	): ActorInteractionHandler {
 		this.initialValue = initialValue
 		this.location = location
-		this.unit = unit
 		this.mouseMovedCondition = mouseMovedCondition
 		this.displayHandler = displayHandler
 		this.valueChangeHandler = valueChangeHandler
@@ -108,17 +104,15 @@ object KnobLauncherImpl : KnobLauncher {
 
 	override fun launchImmediately(
 		view: DrawingView<*,*>,
-		initialValue: Long,
+		initialValue: MagnitudeValue,
 		location: Point2D,
-		unit: String,
 		mouseMovedCondition: (ActorInteractionContext) -> Boolean,
 		displayHandler: () -> Unit,
-		valueChangeHandler: (Long) -> Unit,
+		valueChangeHandler: (MagnitudeValue) -> Unit,
 		signalHandler: SignalHandler?
 	): ActorInteractionHandler {
 		this.initialValue = initialValue
 		this.location = location
-		this.unit = unit
 		this.mouseMovedCondition = mouseMovedCondition
 		this.displayHandler = displayHandler
 		this.valueChangeHandler = valueChangeHandler
@@ -153,7 +147,6 @@ object KnobLauncherImpl : KnobLauncher {
 		knobView.location = location
 		knobView.value = initialValue
 		knobView.defaultValue = initialValue
-		knobView.unit = unit
 
 		signalHandler?.eventBus?.register(SchedulerActivationStateEvent::class, activationStateHandler)
 		drawingView = view
@@ -164,6 +157,8 @@ object KnobLauncherImpl : KnobLauncher {
 		view.content.ghostContainer.validate()
 		view.setCursor(Cursor.CLICK)
 
+		oldStatus = Status.replace(StatusType.Tool, Translations.getString("graph.knob.toolStatus"))
+
 		displayHandler?.invoke()
 	}
 
@@ -173,6 +168,8 @@ object KnobLauncherImpl : KnobLauncher {
 			content.ghostContainer.validate()
 		}
 		signalHandler?.eventBus?.unregister(activationStateHandler)
+
+		Status.set(StatusType.Tool, oldStatus)
 	}
 
 	private class Handler : InputEventHandlerAdapter<ActorInteractionContext>() {

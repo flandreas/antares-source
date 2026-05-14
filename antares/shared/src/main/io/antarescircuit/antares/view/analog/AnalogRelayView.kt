@@ -2,7 +2,6 @@ package io.antarescircuit.antares.view.analog
 
 import io.antarescircuit.antares.model.analog.AnalogRelay
 import io.antarescircuit.antares.model.input.SwitchConfiguration
-import io.antarescircuit.jabbah.edit.Look
 import io.antarescircuit.antares.view.input.AbstractSwitchView
 import io.antarescircuit.antares.view.input.AbstractSwitchView.Companion.DEF_CIRCLE_RADIUS
 import io.antarescircuit.antares.view.module.AntaresViewModule
@@ -16,6 +15,8 @@ import io.antarescircuit.jabbah.base.geom.Rectangle2D
 import io.antarescircuit.jabbah.draw.DrawContext
 import io.antarescircuit.jabbah.draw.style.DrawStyleModule
 import io.antarescircuit.jabbah.draw.style.StyleProvider
+import io.antarescircuit.jabbah.edit.Look
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
 import io.antarescircuit.jabbah.graph.GraphApplicationContext
 import io.antarescircuit.jabbah.graph.view.style.GraphStyleType
 import io.antarescircuit.jabbah.graph.view.vertice.AbstractVerticeView
@@ -39,14 +40,14 @@ class AnalogRelayView(
         }
 
     @Suppress("unused") // Reflection
-    var inductance: Double
+    var inductance: MagnitudeValue
         get() = model.inductance
         set(value) {
             model.inductance = value
         }
 
     @Suppress("unused") // Reflection
-    var onCurrent: Double
+    var onCurrent: MagnitudeValue
         get() = model.onCurrent
         set(value) {
             model.onCurrent = value

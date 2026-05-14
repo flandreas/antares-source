@@ -5,9 +5,11 @@ import io.antarescircuit.jabbah.base.event.PropertyChangeListener
 import io.antarescircuit.jabbah.base.event.PropertyOwner
 import io.antarescircuit.jabbah.base.event.PropertyOwnerImpl
 import io.antarescircuit.jabbah.base.math.TWO_PI
+import io.antarescircuit.jabbah.edit.properties.magnitude.Magnitude
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
+import io.antarescircuit.jabbah.edit.properties.magnitude.SIUnit
 import kotlin.math.PI
 import kotlin.math.log10
-import kotlin.math.max
 import kotlin.math.pow
 
 /**
@@ -17,12 +19,16 @@ import kotlin.math.pow
  * [KnobModel] divides the 2*PI angle range into 9 equally sized segments, where the start of segment 1
  * is in the north, and segment indices increase clock-wise.
  *
- * @param initialValue the initial value of this [KnobModel], defaults to zero.
+ * [KnobModel] normalizes its [value] to three significant digits. Besides rounding, this also includes
+ * changing [Magnitude], i.e. "4825 V" gets normalized to "4.82 KV", and "0.0015 F" gets normalized to "1.5 mF".
+ * Normalization respects [SIUnit.minimumMagnitude].
+ *
+ * @param initialValue the initial value of this [KnobModel]
  */
 class KnobModel(
-    initialValue: Long = 0,
-    private val propertyOwner: PropertyOwner<Long> = PropertyOwnerImpl()
-) : PropertyOwner<Long> by propertyOwner {
+    initialValue: MagnitudeValue,
+    private val propertyOwner: PropertyOwner<MagnitudeValue> = PropertyOwnerImpl()
+) : PropertyOwner<MagnitudeValue> by propertyOwner {
 
     companion object {
         const val PROP_VALUE = "value"
@@ -33,52 +39,77 @@ class KnobModel(
     }
 
     /** Returns the current value of this [KnobModel] as an angle (in radians, zero north, clockwise).*/
-    val asAngle: Double get() = asAngle(value)
+    val asAngle: Double get() = asAngle(value.baseValue)
 
     /**
      * Contains the current value of ths [KnobModel]. Changing this value results in sending a
      * [PropertyChangeEvent] to all registered [PropertyChangeListener]s.
      */
-    var value: Long = initialValue
+    private var _value: MagnitudeValue = initialValue
         set(value) {
-            val effectiveNewValue = max(1L, value)
-            if (field != effectiveNewValue) {
-                val oldValue = field
-                field = effectiveNewValue
-                propertyOwner.fire(PROP_VALUE, oldValue, field)
+            if (field != value) {
+                val oldValue = _value
+                field = value
+                propertyOwner.fire(PROP_VALUE, oldValue, value)
             }
         }
 
-    /**
-     * The current value with all digits except the most significant digits set to zero.
-     * Example: The base value of 12_345 is 10_000.
-     */
-    private val baseValue: Double get() = 10.0.pow(log10(value.toDouble()).toLong().toDouble())
-
-    fun incrementAngleTo(newAngle: Double): Long {
-        var currentBaseValue = baseValue
-        val factor = newAngle / TWO_PI
-        var newValue = (currentBaseValue + 9 * currentBaseValue * factor).toLong()
-        if (newValue != value) {
-            if (newValue < value) {
-                currentBaseValue *= 10
-                newValue = (currentBaseValue + 9 * currentBaseValue * factor).toLong()
+    var value: MagnitudeValue
+        get() = _value
+        set(value) {
+            if (_value != value) {
+                try {
+                    _value = value.normalize()
+                } catch (_: IllegalArgumentException) {
+                    // keep the old value
+                }
             }
-            value = newValue
+        }
+
+    private fun setValueNormalized(value: MagnitudeValue) {
+        if (_value != value) {
+            try {
+                _value = value.normalize()
+            } catch (_: IllegalArgumentException) {
+                // keep the old value
+            }
+        }
+    }
+
+    /**
+     * @param newAngle origin north, clockwise (like the KnobView scale)
+     */
+    fun incrementAngleTo(newAngle: Double, changeMagnitude: Boolean, snap: Boolean = false): MagnitudeValue {
+        var currentBaseValue = value.northBaseValue
+        val factor = newAngle / TWO_PI
+        var newValue = (currentBaseValue + 9 * currentBaseValue * factor)
+        if (newValue != value.baseValue) {
+            if (changeMagnitude) {
+                currentBaseValue *= 10
+                newValue = currentBaseValue + 9 * currentBaseValue * factor
+            }
+            value = value.withBaseValue(newValue, snap)
         }
         return value
     }
 
-    private fun decrementAngleTo(newAngle: Double): Long {
-        var currentBaseValue = baseValue
+    /**
+     * @param newAngle origin north, clockwise (like the KnobView scale)
+     */
+    private fun decrementAngleTo(newAngle: Double, changeMagnitude: Boolean, snap: Boolean = false): MagnitudeValue {
+        var currentBaseValue = value.northBaseValue
         val factor = newAngle / TWO_PI
-        var newValue = (currentBaseValue + 9 * currentBaseValue * factor).toLong()
-        if (newValue != value) {
-            if (newValue > value) {
+        var newValue = (currentBaseValue + 9 * currentBaseValue * factor)
+        if (newValue != value.baseValue) {
+            if (changeMagnitude) {
                 currentBaseValue /= 10
-                newValue = (currentBaseValue + 9 * currentBaseValue * factor).toLong()
+                newValue = currentBaseValue + 9 * currentBaseValue * factor
             }
-            value = newValue
+            try {
+                value = value.withBaseValue(newValue, snap)
+            } catch (_: IllegalArgumentException) {
+                // Keep old value
+            }
         }
         return value
     }
@@ -86,10 +117,12 @@ class KnobModel(
     /**
      * @return the new value of this [KnobModel] for convenience
      */
-    fun dragToAngle(newAngle: Double, increment: Boolean): Long =
+    fun dragToAngle(newAngle: Double, increment: Boolean, changeMagnitude: Boolean, snap: Boolean): MagnitudeValue =
         if (increment) {
-            incrementAngleTo(newAngle)
-        } else decrementAngleTo(newAngle)
+            incrementAngleTo(newAngle, changeMagnitude, snap)
+        } else {
+            decrementAngleTo(newAngle, changeMagnitude, snap)
+        }
 
     /**
      * Sets [value] by clicking on a scale point determined by [newAngle].
@@ -100,26 +133,30 @@ class KnobModel(
      *
      * @param newAngle origin north, clockwise (like the KnobView scale)
      */
-    fun clickToAngle(newAngle: Double) {
+    fun clickToAngle(newAngle: Double, snap: Boolean) {
         val oldAngle = asAngle
 
-        if (oldAngle < PI && newAngle > PI &&  TWO_PI - newAngle + oldAngle < PI) {
-            // Decrement base value
-            val newBaseValue = baseValue / 10
-            value = (newBaseValue + (9 * newBaseValue * (newAngle / TWO_PI))).toLong()
-        } else if (newAngle < PI && oldAngle > PI &&  TWO_PI - oldAngle + newAngle < PI) {
-            // Increment base value
-            val newBaseValue = baseValue * 10
-            value = (newBaseValue + (9 * newBaseValue * (newAngle / TWO_PI))).toLong()
-        } else {
-            // Keep base value
-            value = (baseValue + (9 * baseValue * (newAngle / TWO_PI))).toLong()
+        try {
+            if (oldAngle < PI && newAngle > PI && TWO_PI - newAngle + oldAngle < PI) {
+                // Decrement base value
+                val newBaseValue = value.northBaseValue / 10
+                setValueNormalized(value.withBaseValue(newBaseValue + (9 * newBaseValue * (newAngle / TWO_PI)), snap))
+            } else if (newAngle < PI && oldAngle > PI && TWO_PI - oldAngle + newAngle < PI) {
+                // Increment base value
+                val newBaseValue = value.northBaseValue * 10
+                setValueNormalized(value.withBaseValue(newBaseValue + (9 * newBaseValue * (newAngle / TWO_PI)), snap))
+            } else {
+                // Keep base value
+                setValueNormalized(value.withBaseValue(value.northBaseValue + (9 * value.northBaseValue * (newAngle / TWO_PI)), snap))
+            }
+        } catch (_: IllegalArgumentException) {
+            // Keep old value
         }
     }
 
-    /** Returns the specified value of this [KnobModel] as an angle (in radians, zero east, anti-clockwise).*/
-    private fun asAngle(a: Long): Double {
-        val diffValue = a - baseValue
-        return if (diffValue == 0.0) 0.0 else TWO_PI * diffValue / (9 * baseValue)
+    /** Returns the specified value as an angle (in radians, zero east, anti-clockwise).*/
+    private fun asAngle(a: Double): Double {
+        val diffValue = a - value.northBaseValue
+        return if (diffValue == 0.0) 0.0 else TWO_PI * diffValue / (9 * value.northBaseValue)
     }
 }

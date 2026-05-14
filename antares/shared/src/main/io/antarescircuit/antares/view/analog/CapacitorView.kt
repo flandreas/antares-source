@@ -3,13 +3,13 @@ package io.antarescircuit.antares.view.analog
 import io.antarescircuit.antares.model.analog.Capacitor
 import io.antarescircuit.antares.view.port.AbstractAntaresPortView
 import io.antarescircuit.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
-import io.antarescircuit.jabbah.base.Thousands
 import io.antarescircuit.jabbah.base.geom.Direction
 import io.antarescircuit.jabbah.base.geom.Point2D
 import io.antarescircuit.jabbah.base.geom.Rectangle2D
 import io.antarescircuit.jabbah.draw.DrawContext
 import io.antarescircuit.jabbah.draw.style.DrawStyleModule
 import io.antarescircuit.jabbah.draw.style.StyleProvider
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
 import io.antarescircuit.jabbah.graph.GraphApplicationContext
 import io.antarescircuit.jabbah.graph.view.style.GraphStyleType
 import io.antarescircuit.jabbah.graph.view.vertice.AbstractVerticeView
@@ -27,7 +27,7 @@ class CapacitorView(
     }
 
     @Suppress("unused") // Reflective bean property
-    var capacitance: Double
+    var capacitance: MagnitudeValue
         get() = model.capacitance
         set(value) {
             model.capacitance = value
@@ -69,5 +69,5 @@ class CapacitorView(
         }
     }
 
-    override val mainPropertyValue: String get() = "${Thousands.convert(model.capacitance / 1_000_000.0, " ")}F"
+    override val mainPropertyValue: String get() = capacitance.toString()
 }

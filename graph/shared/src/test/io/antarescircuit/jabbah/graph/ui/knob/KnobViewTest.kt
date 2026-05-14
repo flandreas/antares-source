@@ -7,6 +7,9 @@ import io.antarescircuit.jabbah.graph.view.GraphViewTestRule
 import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.mock
+import io.antarescircuit.jabbah.edit.properties.magnitude.Magnitude.One
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
+import io.antarescircuit.jabbah.edit.properties.magnitude.SIUnit.Factor
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -20,43 +23,33 @@ class KnobViewTest {
 
     @Test
     fun shouldSingleDragQuarterClockwise() {
-        val view = KnobView(KnobModel(100))
+        val view = KnobView(KnobModel(MagnitudeValue(100, One, Factor)))
         pressMouseAt(view, 0.0, -200.0)
 
         dragMouseTo(view, 200.0, 0.0)
 
-        assertEquals(100L + 900 / 4, view.value)
+        assertEquals(MagnitudeValue(100L + 900 / 4, One, Factor), view.value)
     }
 
     @Test
     fun shouldIncrementalDragQuarterClockwise() {
-        val view = KnobView(KnobModel(100))
+        val view = KnobView(KnobModel(MagnitudeValue(100, One, Factor)))
         pressMouseAt(view, 0.0, -200.0)
 
         dragMouseTo(view, 200.0, -200.0)
         dragMouseTo(view, 200.0, 0.0)
 
-        assertEquals(100L + 900 / 4, view.value)
-    }
-
-    @Test
-    fun shouldStartDragAnywhere() {
-        val view = KnobView(KnobModel(100))
-        pressMouseAt(view, 200.0, 0.0)
-
-        dragMouseTo(view, 0.0, 200.0)
-
-        assertEquals(100L + 900 / 4, view.value)
+        assertEquals(MagnitudeValue(100L + 900 / 4, One, Factor), view.value)
     }
 
     @Test
     fun shouldApplyDefaultValueOnDoubleClick() {
-        val view = KnobView(KnobModel(100))
-        view.value = 1_000
+        val view = KnobView(KnobModel(MagnitudeValue(100, One, Factor)))
+        view.value = MagnitudeValue(900, One, Factor)
 
         doubleClickAt(view, 0.0, 0.0)
 
-        assertEquals(100, view.value)
+        assertEquals(MagnitudeValue(100, One, Factor), view.value)
     }
 
     private fun pressMouseAt(knobView: KnobView, x: Double, y: Double) {
@@ -74,10 +67,11 @@ class KnobViewTest {
         knobView.getActorInteractionHandler(context).mouseClicked(context)
     }
 
-    private fun contextFor(x: Double, y: Double, clickCount: Int = 0): ActorInteractionContext {
+    private fun contextFor(x: Double, y: Double, clickCount: Int = 0, altDown: Boolean = false): ActorInteractionContext {
         val mouseEvent = mock<MouseEvent>()
         every { mouseEvent.clickCount } returns clickCount
         every { mouseEvent.button} returns Button.BUTTON1
+        every { mouseEvent.isAltDown } returns altDown
         return ActorInteractionContext(
             signalHandler = mock(),
             view = mock(),

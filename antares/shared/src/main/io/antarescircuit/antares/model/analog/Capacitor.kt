@@ -3,6 +3,9 @@ package io.antarescircuit.antares.model.analog
 import io.antarescircuit.antares.view.analog.engine.AnalogCircuitAnalysis
 import io.antarescircuit.antares.view.analog.engine.AnalogElement
 import io.antarescircuit.antares.view.analog.engine.AnalogElementMixin
+import io.antarescircuit.jabbah.edit.properties.magnitude.Magnitude
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
+import io.antarescircuit.jabbah.edit.properties.magnitude.SIUnit
 import io.antarescircuit.jabbah.execution.SignalHandler
 import io.antarescircuit.jabbah.graph.model.vertice.EmptyVerticeCalculator
 import io.antarescircuit.jabbah.io.Storable
@@ -30,9 +33,8 @@ class Capacitor(
 
     private val isTrapezoidal = true
 
-    /** The capacitance of this [Capacitor] in microfarad.*/
-    var capacitance: Double = capacitance
-        set(value) {
+    var capacitance: MagnitudeValue = MagnitudeValue(capacitance, Magnitude.Micro, SIUnit.Farad)
+        set (value) {
             if (field != value) {
                 field = value
                 stateChanged(reason = MAIN_PROPERTY_STATE)
@@ -43,12 +45,17 @@ class Capacitor(
 
     override fun read(reader: StoreReader) {
         super.read(reader)
-        capacitance = reader.readString("capacitance").toDouble()
+        if (reader.hasAttribute("capacitance")) {
+            // Backward compatability before MagnitudeValue was introduced
+            capacitance = MagnitudeValue(reader.readDouble("capacitance"), Magnitude.Micro, SIUnit.Farad)
+        } else if (reader.hasAttribute("capacitance${MagnitudeValue.MAGNITUDE_VALUE_EXT}")) {
+            capacitance = MagnitudeValue.read("capacitance", reader, SIUnit.Farad)
+        }
     }
 
     override fun write(writer: StoreWriter) {
         super.write(writer)
-        writer.writeString("capacitance", capacitance.toString())
+        capacitance.write("capacitance", writer)
     }
 
     /** ---- [AnalogElement] */
@@ -72,9 +79,9 @@ class Capacitor(
 
     override fun stamp(analysis: AnalogCircuitAnalysis) {
         resistance = if (isTrapezoidal) {
-            analysis.timeStep / (2 * capacitance * 1e-6)
+            analysis.timeStep / (2 * capacitance.baseValue)
         } else {
-            analysis.timeStep / (capacitance * 1e-6)
+            analysis.timeStep / (capacitance.baseValue)
         }
         analysis.stampResistor(analogElem.nodes[0], analogElem.nodes[1], resistance)
         analysis.stampRightSide(analogElem.nodes[0])

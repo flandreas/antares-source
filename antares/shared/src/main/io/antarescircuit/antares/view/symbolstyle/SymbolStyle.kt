@@ -654,7 +654,7 @@ enum class SymbolStyle(
 
 			if (context.castedAppContext<GraphApplicationContext>()!!.isExecute) {
 				// Halo
-				if (abs((led.model.getPort<AnalogSignal>() as AnalogPort).current) >= led.minCurrent
+				if (abs((led.model.getPort<AnalogSignal>() as AnalogPort).current) >= led.minCurrent.baseValue
 					&& BaseModule.properties.getBoolean(AnalogLEDView.PROP_DRAW_HALO)
 				) {
 					context.g.paint = led.haloPaint

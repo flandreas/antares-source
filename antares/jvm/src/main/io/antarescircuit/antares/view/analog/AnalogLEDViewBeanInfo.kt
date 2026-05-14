@@ -1,11 +1,10 @@
 package io.antarescircuit.antares.view.analog
 
+import com.l2fprod.common.propertysheet.Property
 import io.antarescircuit.antares.view.AntaresProperties
 import io.antarescircuit.jabbah.edit.Editor
 import io.antarescircuit.jabbah.edit.componentBeanProvider
 import io.antarescircuit.jabbah.edit.model.EditProperties
-import io.antarescircuit.jabbah.edit.properties.CommandPropertySwing
-import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused") // Reflection
 class AnalogLEDViewBeanInfo : AnalogComponentViewBeanInfo<AnalogLEDView>() {
@@ -13,8 +12,8 @@ class AnalogLEDViewBeanInfo : AnalogComponentViewBeanInfo<AnalogLEDView>() {
     companion object {
         private val name = EditProperties.untranslatableName()
         private val lightColor = AntaresProperties.lightColor(baseKey = "element.property.LightColor")
-        private val minCurrent = CommandPropertySwing("minCurrent", "library.element.LightBulb.minCurrent", Double::class.java, componentBeanProvider)
-        private val maxCurrent = CommandPropertySwing("maxCurrent", "library.element.LightBulb.maxCurrent", Double::class.java, componentBeanProvider)
+        private val minCurrent = EditProperties.ampere("minCurrent", "library.element.LightBulb.minCurrent", componentBeanProvider)
+        private val maxCurrent = EditProperties.ampere("maxCurrent", "library.element.LightBulb.maxCurrent", componentBeanProvider)
     }
 
     override fun addProperties(bean: AnalogLEDView, editor: Editor, properties: MutableList<Property>) {

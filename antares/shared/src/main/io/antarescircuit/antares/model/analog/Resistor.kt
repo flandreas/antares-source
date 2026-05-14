@@ -1,6 +1,7 @@
 package io.antarescircuit.antares.model.analog
 
 import io.antarescircuit.antares.view.analog.AnalogGraphView
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
 import io.antarescircuit.jabbah.execution.SignalHandler
 import io.antarescircuit.jabbah.execution.actor.Actor
 import io.antarescircuit.jabbah.graph.model.GraphActorData
@@ -36,19 +37,17 @@ class Resistor(
 		}
 
 	/** Used for restoring [resistance] after the simulation has ended. */
-	private var resistanceBuffer: Double = 0.0
+	private lateinit var resistanceBuffer: MagnitudeValue
 
 	/** ---- [Storable] interface */
 
 	override fun read(reader: StoreReader) {
 		super.read(reader)
-		resistance = reader.readDouble("resistance")
 		variable = reader.readBoolean("variable")
 	}
 
 	override fun write(writer: StoreWriter) {
 		super.write(writer)
-		writer.writeDouble("resistance", resistance)
 		writer.writeBoolean("variable", variable)
 	}
 
@@ -66,7 +65,7 @@ class Resistor(
 
 	/** ---- [Resistor] */
 
-	fun setState(resistance: Double, signalHandler: SignalHandler, graphView: AnalogGraphView) {
+	fun setState(resistance: MagnitudeValue, signalHandler: SignalHandler, graphView: AnalogGraphView) {
 		this.resistance = resistance
 		graphView.requireAnalysis()
 		requestActingAfter(signalHandler, propagationDelay.value, createActorData(null))

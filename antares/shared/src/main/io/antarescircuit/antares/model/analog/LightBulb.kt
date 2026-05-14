@@ -5,8 +5,6 @@ import io.antarescircuit.jabbah.execution.SignalHandler
 import io.antarescircuit.jabbah.graph.model.Graph
 import io.antarescircuit.jabbah.graph.model.element.AbstractGraphElement
 import io.antarescircuit.jabbah.graph.model.vertice.EmptyVerticeCalculator
-import io.antarescircuit.jabbah.io.StoreReader
-import io.antarescircuit.jabbah.io.StoreWriter
 
 /**
  * Treating [LightBulb] as an element with constant resistance, i.e. independent of changing
@@ -20,21 +18,6 @@ class LightBulb : AbstractResistingAnalogVertice<LightBulb>(
 
 	companion object {
 		private const val DEF_RESISTANCE = 20.0
-	}
-
-	/** ---- [Storable] */
-
-	override fun read(reader: StoreReader) {
-		super.read(reader)
-		if (reader.hasAttribute("resistance")) {
-			// Backward compatability due to bug #740
-			resistance = reader.readDouble("resistance")
-		}
-	}
-
-	override fun write(writer: StoreWriter) {
-		super.write(writer)
-		writer.writeDouble("resistance", resistance)
 	}
 
 	/** ---- [AbstractGraphElement] */

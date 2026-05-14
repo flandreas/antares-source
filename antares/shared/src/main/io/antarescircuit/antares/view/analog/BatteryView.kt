@@ -10,6 +10,7 @@ import io.antarescircuit.jabbah.draw.DrawContext
 import io.antarescircuit.jabbah.draw.graphics.Stroke
 import io.antarescircuit.jabbah.draw.style.DrawStyleModule
 import io.antarescircuit.jabbah.draw.style.StyleProvider
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
 import io.antarescircuit.jabbah.graph.GraphApplicationContext
 import io.antarescircuit.jabbah.graph.view.style.GraphStyleType
 import io.antarescircuit.jabbah.graph.view.vertice.AbstractVerticeView
@@ -32,8 +33,7 @@ class BatteryView(
 		private val MINUS_STROKE = Stroke(3f)
 	}
 
-	@Suppress("unused") // Reflective bean property
-	var voltage: Double
+	var voltage: MagnitudeValue
 		get() = model.voltage
 		set(value) {
 			model.voltage = value
@@ -86,5 +86,5 @@ class BatteryView(
 
 	/** ---- [AbstractAnalogVerticeView] */
 
-	override val mainPropertyValue: String get() = "${model.voltage} V"
+	override val mainPropertyValue: String get() = voltage.toString()
 }

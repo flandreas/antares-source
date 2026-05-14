@@ -1,9 +1,9 @@
 package io.antarescircuit.antares.view.analog
 
+import com.l2fprod.common.propertysheet.Property
 import io.antarescircuit.jabbah.edit.Editor
 import io.antarescircuit.jabbah.edit.componentBeanProvider
 import io.antarescircuit.jabbah.edit.properties.CommandPropertySwing
-import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused") // Reflection
 class ResistorViewBeanInfo : AnalogComponentViewBeanInfo<ResistorView>() {

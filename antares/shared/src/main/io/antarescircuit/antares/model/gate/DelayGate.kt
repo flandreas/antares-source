@@ -8,6 +8,9 @@ import io.antarescircuit.antares.model.signal.DigitalSignal
 import io.antarescircuit.antares.model.vertice.AdjustableBitWidth
 import io.antarescircuit.jabbah.base.LongValueImpl
 import io.antarescircuit.jabbah.base.Translations
+import io.antarescircuit.jabbah.edit.properties.magnitude.Magnitude
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
+import io.antarescircuit.jabbah.edit.properties.magnitude.SIUnit
 import io.antarescircuit.jabbah.execution.SignalHandler
 import io.antarescircuit.jabbah.graph.model.Graph
 import io.antarescircuit.jabbah.graph.model.GraphActorData
@@ -48,11 +51,13 @@ class DelayGate : CalculatingVertice(CALCULATOR), AdjustableBitWidth {
 	override val typeDesc: String? get() = TYPE_DESC
 
 	/** The delay in nanoseconds.*/
-    var delay: Long
-        get() = propagationDelay.value
-        set(value) {
-            propagationDelay = LongValueImpl(value)
-        }
+    var delay: MagnitudeValue = MagnitudeValue(AbstractLogicGate.DEFAULT_PROPAGATION_DELAY.value, Magnitude.Nano, SIUnit.Second)
+		set(value) {
+			if (field != value) {
+				field = value
+				propagationDelay = LongValueImpl(field.baseValueInMagnitude(Magnitude.Nano).toLong())
+			}
+		}
 
 	var bitWidth: BitWidth
 		get() = (getInput<DigitalSignal>() as DigitalPort).bitWidth
@@ -89,13 +94,20 @@ class DelayGate : CalculatingVertice(CALCULATOR), AdjustableBitWidth {
 
     override fun write(writer: StoreWriter) {
         super.write(writer)
-        writer.writeLong("delay", delay)
+		delay.write("delay", writer)
 	    bitWidth.write("bitWidth", writer)
     }
 
     override fun read(reader: StoreReader) {
         super.read(reader)
-        delay = reader.readLong("delay")
+
+		if (reader.hasAttribute("delay")) {
+			// Backward compatability before MagnitudeValue was introduced
+			delay = MagnitudeValue(reader.readLong("delay"), Magnitude.Nano, SIUnit.Second)
+		} else if (reader.hasAttribute("delay${MagnitudeValue.MAGNITUDE_VALUE_EXT}")) {
+			delay = MagnitudeValue.read("delay", reader, SIUnit.Second)
+		}
+
 	    if (reader.hasAttribute("bitWidth")) {
 		    // Backward compatibility: Older version didn't have a BitWidth property
 		    bitWidth = BitWidth.read("bitWidth", reader)

@@ -2,6 +2,9 @@ package io.antarescircuit.antares.model.analog
 
 import io.antarescircuit.antares.view.analog.engine.AnalogCircuitAnalysis
 import io.antarescircuit.jabbah.base.logger
+import io.antarescircuit.jabbah.edit.properties.magnitude.Magnitude
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
+import io.antarescircuit.jabbah.edit.properties.magnitude.SIUnit
 import kotlin.math.abs
 
 /**
@@ -12,7 +15,7 @@ class InductorLogic {
         private val LOG by logger(InductorLogic::class)
 
         /** The default inductance for new [Inductor]s (in Henry). */
-        const val DEF_INDUCTANCE = 0.2
+        val DEF_INDUCTANCE = MagnitudeValue(200.0, Magnitude.Milli, SIUnit.Henry)
 
         const val DEF_TRAPEZOIDAL = true
 

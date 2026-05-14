@@ -12,6 +12,9 @@ import io.antarescircuit.jabbah.base.module.BaseModule
 import io.antarescircuit.jabbah.draw.graphics.Color
 import io.antarescircuit.jabbah.draw.style.DrawStyleModule
 import io.antarescircuit.jabbah.draw.style.StyleProvider
+import io.antarescircuit.jabbah.edit.properties.magnitude.Magnitude
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
+import io.antarescircuit.jabbah.edit.properties.magnitude.SIUnit
 import io.antarescircuit.jabbah.graph.model.Graph
 import io.antarescircuit.jabbah.graph.model.GraphElementEvent
 import io.antarescircuit.jabbah.graph.view.vertice.AbstractVerticeView
@@ -31,8 +34,8 @@ class AnalogLEDControlView(
     styleProvider: StyleProvider =  DrawStyleModule.styleProvider,
     model: AnalogLED = AnalogLED(),
     private var lightColor: LightColor = LightColor.RED,
-    private var minCurrent: Double = AnalogLEDView.DEF_MIN_GLOW_CURRENT,
-    private var maxCurrent: Double = AnalogLEDView.DEF_MAX_GLOW_CURRENT
+    private var minCurrent: MagnitudeValue = AnalogLEDView.DEF_MIN_GLOW_CURRENT,
+    private var maxCurrent: MagnitudeValue = AnalogLEDView.DEF_MAX_GLOW_CURRENT
 ) : AbstractLEDView<AnalogLED>(styleProvider, model) {
 
     init {
@@ -44,15 +47,27 @@ class AnalogLEDControlView(
     override fun read(reader: StoreReader) {
         super.read(reader)
         lightColor = LightColor.read("lightColor", reader)
-        minCurrent = reader.readDouble("minCurrent")
-        maxCurrent = reader.readDouble("maxCurrent")
+
+        if (reader.hasAttribute("minCurrent")) {
+            // Backward compatability before MagnitudeValue was introduced
+            minCurrent = MagnitudeValue(reader.readDouble("minCurrent"), Magnitude.One, SIUnit.Ampere)
+        } else if (reader.hasAttribute("minCurrent${MagnitudeValue.MAGNITUDE_VALUE_EXT}")) {
+            minCurrent = MagnitudeValue.read("minCurrent", reader, SIUnit.Ampere)
+        }
+
+        if (reader.hasAttribute("maxCurrent")) {
+            // Backward compatability before MagnitudeValue was introduced
+            maxCurrent = MagnitudeValue(reader.readDouble("maxCurrent"), Magnitude.One, SIUnit.Ampere)
+        } else if (reader.hasAttribute("maxCurrent${MagnitudeValue.MAGNITUDE_VALUE_EXT}")) {
+            maxCurrent = MagnitudeValue.read("maxCurrent", reader, SIUnit.Ampere)
+        }
     }
 
     override fun write(writer: StoreWriter) {
         super.write(writer)
         lightColor.write("lightColor", writer)
-        writer.writeDouble("minCurrent", minCurrent)
-        writer.writeDouble("maxCurrent", maxCurrent)
+        minCurrent.write("minCurrent", writer)
+        maxCurrent.write("maxCurrent", writer)
     }
 
     /** ---- [ControlView] */
@@ -99,8 +114,8 @@ class AnalogLEDControlView(
         lightColor.gradient.at(
             LightBulbView.getExecutionLightFactor(
                 (model.getPort<AnalogSignal>() as AnalogPort).current,
-                minCurrent,
-                maxCurrent)
+                minCurrent.baseValue,
+                maxCurrent.baseValue)
         )
 
     override fun sourcePropertiesChanged(source: ControlViewSource<AnalogLED>) {

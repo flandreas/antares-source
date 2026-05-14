@@ -2,12 +2,13 @@ package io.antarescircuit.antares.view.input
 
 import io.antarescircuit.antares.AbstractCircuitTest
 import io.antarescircuit.antares.TestCircuitBuilder
-import io.antarescircuit.antares.model.input.PeriodOrFrequency
-import io.antarescircuit.antares.model.input.PeriodOrFrequencyUnit
 import io.antarescircuit.antares.model.signal.DigitalSignal
 import io.antarescircuit.antares.model.signal.DigitalSignalFactory
 import io.antarescircuit.antares.view.output.LEDView
 import io.antarescircuit.jabbah.base.LongValueImpl
+import io.antarescircuit.jabbah.edit.properties.magnitude.Magnitude
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
+import io.antarescircuit.jabbah.edit.properties.magnitude.SIUnit
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.io.StorableCloner
 import kotlin.test.*
@@ -26,7 +27,7 @@ class ClockViewSimulationTest : AbstractCircuitTest() {
 	fun setupCircuit() {
 		val builder = TestCircuitBuilder("test", styleProvider, eventBus)
 		clockView = builder.addVerticeView(ClockView(styleProvider))
-		clockView.model.periodOrFrequency = PeriodOrFrequency(100, PeriodOrFrequencyUnit.Millisecond)
+		clockView.model.periodOrFrequency = MagnitudeValue(100, Magnitude.Milli, SIUnit.Second)
 		ledView = builder.addVerticeView(LEDView(styleProvider))
 		builder.connect(clockView, ledView)
 		circuitView = builder.build()
@@ -55,11 +56,11 @@ class ClockViewSimulationTest : AbstractCircuitTest() {
 	@Test
 	fun shouldResetPropagationDelayAfterSimulation() {
 		startSimulation()
-		clockView.model.periodOrFrequency = PeriodOrFrequency(200, PeriodOrFrequencyUnit.Millisecond)
+		clockView.model.periodOrFrequency = MagnitudeValue(200, Magnitude.Milli, SIUnit.Second)
 
 		stopSimulation()
 
-		assertEquals(PeriodOrFrequency(100, PeriodOrFrequencyUnit.Millisecond), clockView.model.periodOrFrequency)
+		assertEquals(MagnitudeValue(100, Magnitude.Milli, SIUnit.Second), clockView.model.periodOrFrequency)
 	}
 
 	@Test

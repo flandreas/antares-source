@@ -1,15 +1,15 @@
 package io.antarescircuit.antares.view.analog
 
+import com.l2fprod.common.propertysheet.Property
 import io.antarescircuit.jabbah.edit.Editor
 import io.antarescircuit.jabbah.edit.componentBeanProvider
-import io.antarescircuit.jabbah.edit.properties.CommandPropertySwing
-import com.l2fprod.common.propertysheet.Property
+import io.antarescircuit.jabbah.edit.model.EditProperties
 
 @Suppress("unused") // Reflection
 class InductorViewBeanInfo : AnalogComponentViewBeanInfo<InductorView>() {
 
     companion object {
-        private val inductance = CommandPropertySwing("inductance", "element.property.inductance", Double::class.java, componentBeanProvider)
+        private val inductance = EditProperties.henry("inductance", "element.property.inductance", componentBeanProvider)
     }
 
     override fun addProperties(bean: InductorView, editor: Editor, properties: MutableList<Property>) {
