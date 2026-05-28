@@ -39,8 +39,15 @@ abstract class AbstractSignalHistoryYAxis<T: Any>(
 
 	private var factor: Double = 1.0
 
-	private val label = Label(
+	private val posScaleMarkLabel = Label(
 		"$defaultValue",
+		Themes.get<GraphTheme>().annotation.font,
+		Themes.get<GraphTheme>().figure.color.textColor,
+		HorizontalAlignment.LEFT,
+		VerticalAlignment.CENTER)
+
+	private val negScaleMarkLabel = Label(
+		"-$defaultValue",
 		Themes.get<GraphTheme>().annotation.font,
 		Themes.get<GraphTheme>().figure.color.textColor,
 		HorizontalAlignment.LEFT,
@@ -51,7 +58,8 @@ abstract class AbstractSignalHistoryYAxis<T: Any>(
 			if (field != value) {
 				invalidate()
 				field = value
-				label.text = field.toString()
+				posScaleMarkLabel.text = field.toString()
+				negScaleMarkLabel.text = "-$field"
 				updateScaling()
 				invalidate()
 				validate()
@@ -88,6 +96,14 @@ abstract class AbstractSignalHistoryYAxis<T: Any>(
 			factor * abs(toMetric(max!!) - toMetric(min!!))
 		}
 
+	/** The y-coordinate where the positive scale mark is drawn.*/
+	// Visible for testing
+	val posScaleMarkY: Double get() = baselineY + signalY(defaultValue)
+
+	/** The y-coordinate where the positive scale mark is drawn.*/
+	// Visible for testing
+	val negScaleMarkY: Double get() = baselineY - signalY(defaultValue)
+
 	override fun setMinMax(min: T?, max: T?) {
 		this.min = min
 		this.max = max
@@ -102,13 +118,22 @@ abstract class AbstractSignalHistoryYAxis<T: Any>(
 	}
 
 	private fun drawRuler(context: DrawContext) {
-		val defaultValueY = baselineY + signalY(defaultValue)
 		context.g.color = color.foregroundColor
 		context.g.stroke = Themes.get<GraphTheme>().annotation.stroke
-		context.g.drawLine(bounds.minX, defaultValueY, bounds.minX - SCALE_WIDTH, defaultValueY)
 
-		label.location = Point2D(bounds.minX + SCALE_WIDTH, defaultValueY)
-		label.draw(context)
+		val posScaleMarkY = this.posScaleMarkY
+		if (posScaleMarkY > bounds.minY + topInset) {
+			context.g.drawLine(bounds.minX, posScaleMarkY, bounds.minX - SCALE_WIDTH, posScaleMarkY)
+			posScaleMarkLabel.location = Point2D(bounds.minX + SCALE_WIDTH, posScaleMarkY)
+			posScaleMarkLabel.draw(context)
+		}
+
+		val negScaleMarkY = this.negScaleMarkY
+		if (negScaleMarkY < bounds.maxY - bottomInset) {
+			context.g.drawLine(bounds.minX, negScaleMarkY, bounds.minX - SCALE_WIDTH, negScaleMarkY)
+			negScaleMarkLabel.location = Point2D(bounds.minX + SCALE_WIDTH, negScaleMarkY)
+			negScaleMarkLabel.draw(context)
+		}
 	}
 
 	private fun updateScaling() {

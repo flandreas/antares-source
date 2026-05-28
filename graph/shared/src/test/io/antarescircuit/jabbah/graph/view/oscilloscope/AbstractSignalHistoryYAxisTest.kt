@@ -4,7 +4,6 @@ import io.antarescircuit.jabbah.draw.graphics.CompositeColor
 import io.antarescircuit.jabbah.draw.style.Themes
 import io.antarescircuit.jabbah.graph.view.GraphViewTestRule
 import io.antarescircuit.jabbah.graph.view.style.GraphTheme
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -17,11 +16,11 @@ class AbstractSignalHistoryYAxisTest {
 		private const val HEIGHT = 100
 	}
 
-	private val yAxis = LongSignalHistoryYAxis(INSET, INSET, DEFAULT_VALUE, DEFAULT_VALUE_INSET)
+	private var yAxis: LongSignalHistoryYAxis
 
-	@BeforeTest
-	fun setup() {
+	init {
 		GraphViewTestRule.configure()
+		yAxis = LongSignalHistoryYAxis(INSET, INSET, DEFAULT_VALUE, DEFAULT_VALUE_INSET)
 		yAxis.setBounds(0, 0, 100, HEIGHT)
 	}
 
@@ -36,11 +35,20 @@ class AbstractSignalHistoryYAxisTest {
 	}
 
 	@Test
-	fun shouldRenderNegativeValue() {
+	fun shouldRenderPositiveNegativeValue() {
 		yAxis.setMinMax(-10L, 10L)
 		assertEquals(60.0, yAxis.baselineY)
+		assertEquals(30.0, yAxis.posScaleMarkY)
 		assertEquals(-30.0, yAxis.signalY(10L))
 		assertEquals(30.0, yAxis.signalY(-10L))
+	}
+
+	@Test
+	fun shouldRenderAllNegativeValue() {
+		yAxis.setMinMax(-10L, 0L)
+		assertEquals(30.0, yAxis.baselineY)
+		assertEquals(-0.0, yAxis.signalY(0L))
+		assertEquals(60.0, yAxis.signalY(-10L))
 	}
 
 	@Test
