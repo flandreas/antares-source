@@ -81,7 +81,6 @@ class SignalHistory<T : Any>(private val bufferSize: Int) {
 	}
 
 	fun add(entry: SignalHistoryEntry<T>) {
-		require(entry.signal is Comparable<*>)
 		require(entries.isEmpty() || entries.last().time <= entry.time)
 
 		var requireAllUpdateMinMax = false
@@ -93,10 +92,12 @@ class SignalHistory<T : Any>(private val bufferSize: Int) {
 			}
 			entries.add(entry)
 
-			if (requireAllUpdateMinMax) {
-				updateAllMinMax()
-			} else {
-				updateMinMax(entry)
+			if (entry.signal is Comparable<*>) {
+				if (requireAllUpdateMinMax) {
+					updateAllMinMax()
+				} else {
+					updateMinMax(entry)
+				}
 			}
 		}
 	}
