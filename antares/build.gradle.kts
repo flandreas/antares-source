@@ -80,6 +80,9 @@ tasks {
 		configurations =
 			mutableListOf(kotlin.jvm().compilations.getByName("main").runtimeDependencyFiles as Configuration)
 		duplicatesStrategy = DuplicatesStrategy.INCLUDE
+
+		// Exclude antares/jvm/rsc/test containing file-based unit test circuits and their history
+		exclude("test")
 	}
 
 	val copySplash by register<Copy>("copySplash") {
