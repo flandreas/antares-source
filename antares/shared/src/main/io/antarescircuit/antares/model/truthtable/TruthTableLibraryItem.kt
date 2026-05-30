@@ -2,7 +2,9 @@ package io.antarescircuit.antares.model.truthtable
 
 import io.antarescircuit.jabbah.app.Savable
 import io.antarescircuit.jabbah.base.HierarchyVisitor
+import io.antarescircuit.jabbah.base.System
 import io.antarescircuit.jabbah.base.Translations
+import io.antarescircuit.jabbah.base.UUID
 import io.antarescircuit.jabbah.base.event.EventBus
 import io.antarescircuit.jabbah.edit.model.text.TranslatableText
 import io.antarescircuit.jabbah.edit.model.text.description.Name
@@ -26,6 +28,9 @@ class TruthTableLibraryItem(
 	TranslatableText(Translations.getString("library.element.truthTable.name")),
 	iconPath = "/img/truth-table.png"
 ), UndoableStateLibraryItem<TruthTable> {
+
+	var uuid: UUID = System.createUUID()
+		private set
 
 	override var storable: TruthTable = truthTable
 		private set
@@ -57,10 +62,15 @@ class TruthTableLibraryItem(
 	/** ---- [Storable] interface */
 
 	override fun write(writer: StoreWriter) {
+		writer.writeString("uuid", uuid.id)
 		writer.writeStorable("truthTable", storable)
 	}
 
 	override fun read(reader: StoreReader) {
+		if (reader.hasAttribute("uuid")) {
+			// Backward compatability: Former version didn't have a UUID
+			uuid = UUID(reader.readString("uuid"))
+		}
 		storable = reader.readStorable("truthTable")
 	}
 

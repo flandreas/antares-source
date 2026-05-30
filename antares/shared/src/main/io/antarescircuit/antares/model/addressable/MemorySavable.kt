@@ -18,6 +18,19 @@ class MemorySavable(
 
     override val typeName: String get() = Translations.getString("library.element.memory.name")
 
+    override val supportsMostRecent: Boolean get() = true
+
+    override val description: String get() = "$typeName \"${memoryLibraryItem.name}\""
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is MemorySavable) {
+            return false
+        }
+        return memoryLibraryItem.uuid == other.memoryLibraryItem.uuid
+    }
+
+    override fun hashCode(): Int = memoryLibraryItem.uuid.hashCode()
+
     override fun open(application: Application): Boolean {
         eventBus.post(OpenMemoryLibraryItemRequest(memoryLibraryItem))
         return true

@@ -4,6 +4,7 @@ import io.antarescircuit.jabbah.base.ActionWrapperSwing
 import io.antarescircuit.jabbah.base.Translations
 import io.antarescircuit.jabbah.base.event.EventBus
 import io.antarescircuit.jabbah.base.event.EventHandler
+import io.antarescircuit.jabbah.base.logger
 import io.antarescircuit.jabbah.base.module.BaseModule
 import javax.swing.JMenu
 import javax.swing.JMenuItem
@@ -13,8 +14,12 @@ open class OpenRecentMenu(
 	protected val eventBus: EventBus = BaseModule.eventBus
 ) : JMenu(Translations.getString("file.action.openRecent.name")) {
 
+	companion object {
+		private val LOG by logger(OpenRecentMenu::class)
+	}
+
 	private val savableHistoryHandler: EventHandler<SavableHistoryEvent> = { updateContent() }
-	private val currentSavableEvent: EventHandler<CurrentSavableEvent> = { it.savable?.let { updateContent() } }
+	private val currentSavableEvent: EventHandler<CurrentSavableEvent> = { updateContent() }
 
 	init {
 		eventBus.register(SavableHistoryEvent::class, savableHistoryHandler)
@@ -40,6 +45,7 @@ open class OpenRecentMenu(
 				add(JMenuItem(ActionWrapperSwing(OpenRecentFileAction(it, application))))
 			}
 		}
+		LOG.trace("Updating OpenRecentMenu: itemCount = $itemCount")
 		updateEnabledness()
 	}
 }

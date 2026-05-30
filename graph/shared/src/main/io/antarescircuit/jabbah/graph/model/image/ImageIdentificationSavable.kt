@@ -19,6 +19,17 @@ class ImageIdentificationSavable(
 
     override val typeName: String get() = Translations.getString("edit.component.image")
 
+    override fun equals(other: Any?): Boolean {
+        if (other !is ImageIdentificationSavable) {
+            return false
+        }
+        return imageLibraryElement.storable.uuid == other.imageLibraryElement.storable.uuid
+    }
+
+    override val description: String get() = "$typeName \"${imageLibraryElement.name}\""
+
+    override fun hashCode(): Int = imageLibraryElement.storable.uuid.hashCode()
+
     override fun open(application: Application): Boolean {
         eventBus.post(OpenImageLibraryElementRequest(imageLibraryElement))
         return true

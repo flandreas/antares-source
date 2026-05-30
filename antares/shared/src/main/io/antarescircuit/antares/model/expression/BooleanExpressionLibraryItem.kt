@@ -2,6 +2,8 @@ package io.antarescircuit.antares.model.expression
 
 import io.antarescircuit.jabbah.app.Savable
 import io.antarescircuit.jabbah.base.HierarchyVisitor
+import io.antarescircuit.jabbah.base.System
+import io.antarescircuit.jabbah.base.UUID
 import io.antarescircuit.jabbah.base.event.EventBus
 import io.antarescircuit.jabbah.base.module.BaseModule
 import io.antarescircuit.jabbah.edit.model.text.TranslatableText
@@ -21,6 +23,9 @@ class BooleanExpressionLibraryItem(
 	initialName,
 	iconPath = "/img/expression.png"
 ), UndoableStateLibraryItem<BooleanExpressionStorable> {
+
+	var uuid: UUID = System.createUUID()
+		private set
 
 	override var storable = BooleanExpressionStorable(initialName, expressions, singleCharIdentifier)
 		private set
@@ -46,10 +51,15 @@ class BooleanExpressionLibraryItem(
 	override fun resolve(reference: Reference, referenceResolver: ReferenceResolver) { }
 
 	override fun write(writer: StoreWriter) {
+		writer.writeString("uuid", uuid.id)
 		writer.writeStorable("expressions", storable)
 	}
 
 	override fun read(reader: StoreReader) {
+		if (reader.hasAttribute("uuid")) {
+			// Backward compatability: Former version didn't have a UUID
+			uuid = UUID(reader.readString("uuid"))
+		}
 		storable = reader.readStorable("expressions")
 		if (reader.hasElement("name")) {
 			// Backward compatibility: Name was stored here, but is now in BooleanExpressionStorable

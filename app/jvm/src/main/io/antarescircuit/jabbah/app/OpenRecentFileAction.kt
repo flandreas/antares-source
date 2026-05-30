@@ -3,6 +3,8 @@ package io.antarescircuit.jabbah.app
 import io.antarescircuit.jabbah.base.Action
 import io.antarescircuit.jabbah.app.action.AbstractApplicationAction
 import io.antarescircuit.jabbah.base.Translations
+import io.antarescircuit.jabbah.base.event.ActionEvent
+import io.antarescircuit.jabbah.base.logger
 import java.awt.Frame
 import javax.swing.JOptionPane
 
@@ -12,7 +14,13 @@ class OpenRecentFileAction(
 	application: Application
 ) : AbstractApplicationAction(name = savable.description, description = null, accelerator = null, application = application) {
 
-	override fun execute(event: io.antarescircuit.jabbah.base.event.ActionEvent) {
+	companion object {
+		private val LOG by logger(OpenRecentFileAction::class)
+	}
+
+	override fun execute(event: ActionEvent) {
+		LOG.userTrail("Open recent file '${savable.description}'")
+
 		if (!savable.open(application)) {
 			JOptionPane.showConfirmDialog(
 				Frame.getFrames()[0],

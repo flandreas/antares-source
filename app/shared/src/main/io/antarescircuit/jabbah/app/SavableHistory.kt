@@ -1,6 +1,7 @@
 package io.antarescircuit.jabbah.app
 
 import io.antarescircuit.jabbah.base.event.EventBus
+import io.antarescircuit.jabbah.base.logger
 import io.antarescircuit.jabbah.base.module.BaseModule
 
 /**
@@ -13,7 +14,8 @@ class SavableHistory(
 ) {
 
     companion object {
-        private const val MAX_SIZE = 4
+        private val LOG by logger(SavableHistory::class)
+        private const val MAX_SIZE = 10
     }
 
     /**
@@ -27,9 +29,15 @@ class SavableHistory(
     private val _savables = mutableListOf<Savable>()
 
     fun register(savable: Savable) {
+        LOG.trace("Registering SavableHistory: ${savable.description}")
         _savables.remove(savable)
         _savables.add(0, savable)
         limitToMaxSize()
+        eventBus.post(SavableHistoryEvent(this))
+    }
+
+    fun clear() {
+        _savables.clear()
         eventBus.post(SavableHistoryEvent(this))
     }
 

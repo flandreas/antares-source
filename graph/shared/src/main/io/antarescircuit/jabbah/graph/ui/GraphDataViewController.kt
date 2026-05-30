@@ -45,11 +45,7 @@ class GraphDataViewController(
 
 	private val openLibraryRequestHandler: EventHandler<OpenLibraryRequest> = { handle(it) }
 	private val closeLibraryRequestHandler: EventHandler<CloseLibraryRequest> = { handle(it) }
-	private val currentLibraryEventHandler: EventHandler<CurrentLibraryEvent> = {
-		if (it.library == null) {
-			closeData()
-		}
-	}
+	private val currentLibraryEventHandler: EventHandler<CurrentLibraryEvent> = { handle(it) }
 	private val libraryItemRemovedHandler: EventHandler<LibraryItemRemovedEvent> = { handle(it) }
 	private val closeQuestionHandler: EventHandler<GraphDesktopViewItemCloseQuestion> = { handle(it) }
 	private val closeRequestHandler: EventHandler<GraphDesktopViewItemCloseRequest> = { handle(it) }
@@ -175,6 +171,13 @@ class GraphDataViewController(
 			e.message!!)
 	}
 
+	private fun handle(event: CurrentLibraryEvent) {
+		if (event.library == null) {
+			closeData()
+		}
+		mostRecentSavables.clear()
+	}
+
 	/**
 	 * Opens the contents of the general [LibraryItem], which complements the earlier, more specialized version
 	 * for [ContainerLibraryElement]. This method creates a clone of [libraryItem]'s [Storable] and uses it in the
@@ -204,7 +207,7 @@ class GraphDataViewController(
 			}
 
 		} catch (e: Throwable) {
-			LOG.error("Error while loading $id: ${e.message}")
+			LOG.error("Error while loading $id: ${e.message}", e)
 			view.showModalMessage(
 				ModalMessageType.Error,
 				actionName,

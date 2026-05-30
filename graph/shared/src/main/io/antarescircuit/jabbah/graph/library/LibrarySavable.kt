@@ -20,7 +20,7 @@ class LibrarySavable(
 
 	/** ---- [Savable] */
 
-	override val description: String get() = "${Translations.getString("library.savable.prefix")} \"${element.name.value}\""
+	override val description: String get() = "${Translations.getString("graph.savable.prefix")} \"${element.name.value}\""
 
 	override fun open(application: Application): Boolean {
 		if (element.library == null) {

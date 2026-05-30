@@ -18,6 +18,19 @@ class FSMSavable(
 
     private val fsmLibraryItem: FSMLibraryItem get() = item as FSMLibraryItem
 
+    override val supportsMostRecent: Boolean get() = true
+
+    override val description: String get() = "$typeName \"${fsmLibraryItem.name}\""
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is FSMSavable) {
+            return false
+        }
+        return fsmLibraryItem.uuid == other.fsmLibraryItem.uuid
+    }
+
+    override fun hashCode(): Int = fsmLibraryItem.uuid.hashCode()
+
     override fun open(application: Application): Boolean {
         eventBus.post(OpenFSMLibraryItemRequest(fsmLibraryItem))
         return true

@@ -18,6 +18,19 @@ class TruthTableSavable(
 
 	private val truthTableLibraryItem: TruthTableLibraryItem get() = item as TruthTableLibraryItem
 
+	override val supportsMostRecent: Boolean get() = true
+
+	override val description: String get() = "$typeName \"${truthTableLibraryItem.name}\""
+
+	override fun equals(other: Any?): Boolean {
+		if (other !is TruthTableSavable) {
+			return false
+		}
+		return truthTableLibraryItem.uuid == other.truthTableLibraryItem.uuid
+	}
+
+	override fun hashCode(): Int = truthTableLibraryItem.uuid.hashCode()
+
 	override fun open(application: Application): Boolean {
 		eventBus.post(OpenTruthTableItemRequest(truthTableLibraryItem))
 		return true

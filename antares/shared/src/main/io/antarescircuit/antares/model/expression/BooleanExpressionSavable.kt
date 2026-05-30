@@ -16,7 +16,20 @@ class BooleanExpressionSavable(
 
 	override val typeName: String get() = Translations.getString("library.element.booleanExpression.name")
 
+	override val supportsMostRecent: Boolean get() = true
+
 	private val expressionLibraryItem: BooleanExpressionLibraryItem get() = item as BooleanExpressionLibraryItem
+
+	override val description: String get() = "$typeName \"${expressionLibraryItem.name}\""
+
+	override fun equals(other: Any?): Boolean {
+		if (other !is BooleanExpressionSavable) {
+			return false
+		}
+		return expressionLibraryItem.uuid == other.expressionLibraryItem.uuid
+	}
+
+	override fun hashCode(): Int = expressionLibraryItem.uuid.hashCode()
 
 	override fun open(application: Application): Boolean {
 		eventBus.post(OpenBooleanExpressionItemRequest(expressionLibraryItem))

@@ -10,7 +10,7 @@ interface Savable {
 
 	/**
 	 * The name of the type of this [Savable], which will be used for determining general messages like
-	 * "Savable has been saved. Unlike [description], this [typeName] doesn't contain a specific identification
+	 * "Savable" has been saved. Unlike [description], this [typeName] doesn't contain a specific identification
 	 * like a file name.
 	 */
 	val typeName: String
