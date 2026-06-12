@@ -13,6 +13,7 @@ data class AkrabApiError(
 		const val TYPE_QUOTA = "quota"
 		const val TYPE_ERROR = "error"
 
+		fun error(msg: String): AkrabApiError = AkrabApiError(TYPE_ERROR, msg)
 		fun quota(msg: String): AkrabApiError = AkrabApiError(TYPE_QUOTA, msg)
 	}
 }

@@ -93,7 +93,7 @@ class UploadProjectAction(
 				} catch (e: AkrabApiException) {
 					val message = when (e.error.type) {
 						AkrabApiError.TYPE_QUOTA -> e.error.msg!!
-						else -> Translations.getString("project.action.upload.error.msg")
+						else -> Translations.getString("project.action.upload.error.msg", e.error.msg ?: "")
 					}
 					JOptionPane.showConfirmDialog(
 						SwingUtilities.getWindowAncestor(controller.view as Component),

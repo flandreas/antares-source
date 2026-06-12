@@ -68,7 +68,14 @@ class ProjectAkrabClientServiceJvm(
 		}
 
 		val body = response.bodyAsText()
-		LOG.debug("Upload: Status = ${response.status}, body = '$body'")
-		throw AkrabApiException(AkrabApiError.quota(body))
+		LOG.error("Upload: Status = ${response.status}, body = '$body'")
+
+		when (response.status) {
+			HttpStatusCode.OK -> return
+			HttpStatusCode.Forbidden -> {
+				throw AkrabApiException(AkrabApiError.quota(body))
+			}
+			else -> throw AkrabApiException(AkrabApiError.error(response.status.toString()))
+		}
 	}
 }
