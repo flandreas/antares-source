@@ -26,8 +26,11 @@ internal class DockingGraphDesktopViewItems(
 
     fun getRowHeight(column: Int, row: Int) = columns[column][row].layoutHeight
 
-    fun getCurrentLocationOf(item: GraphDesktopViewItem): CurrentDockingLocation {
+    fun getCurrentLocationOf(item: GraphDesktopViewItem): CurrentDockingLocation? {
         val column = columns.indexOfFirst { it.contains(item) }
+        if (column < 0) {
+            return null
+        }
         val row = columns[column].indexOfFirst { it === item }
         return CurrentDockingLocation(column, row)
     }

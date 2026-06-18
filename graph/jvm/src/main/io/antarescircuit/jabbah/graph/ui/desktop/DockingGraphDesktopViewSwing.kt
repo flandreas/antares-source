@@ -104,15 +104,19 @@ class DockingGraphDesktopViewSwing(
         } else {
             event.graphDesktopViewItem
         }
-        val currentLocation = getCurrentLocationOf(target)
-        dockingController.startDragging(currentLocation)
 
-        with(dockingController.getBounds(currentLocation)) {
-            dockingSource.setBounds(xInt, yInt, widthInt, heightInt)
+        // If currentLocation is not found, the DockingStartedEvent is most probably from a "separate viewer"
+        // that doesn't support docking
+        getCurrentLocationOf(target)?.let { currentLocation ->
+            dockingController.startDragging(currentLocation)
+
+            with(dockingController.getBounds(currentLocation)) {
+                dockingSource.setBounds(xInt, yInt, widthInt, heightInt)
+            }
+            glassPane.add(dockingSource)
+
+            glassPane.isVisible = true
         }
-        glassPane.add(dockingSource)
-
-        glassPane.isVisible = true
     }
 
     private fun handle(@Suppress("unused") event: DockingFinishedEvent) {
@@ -165,7 +169,7 @@ class DockingGraphDesktopViewSwing(
 
     override fun getRowHeight(column: Int, row: Int): Int = items.getRowHeight(column, row)
 
-    fun getCurrentLocationOf(item: GraphDesktopViewItem): CurrentDockingLocation = items.getCurrentLocationOf(item)
+    fun getCurrentLocationOf(item: GraphDesktopViewItem): CurrentDockingLocation? = items.getCurrentLocationOf(item)
 
     /** ---- [GraphDesktopView] interface */
 
