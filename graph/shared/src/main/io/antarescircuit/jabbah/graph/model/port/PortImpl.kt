@@ -109,7 +109,7 @@ open class PortImpl<T : Any>(
 	}
 
 	override fun connectTo(net: Net<T>) {
-		check(this.net == null) { "Port already connected" }
+		check(this.net == null) { "Port $portId of Vertice ${owner?.id ?: "<notSet>" } already connected to other Net ${this.net!!.id}" }
 		this.net = net
 	}
 
