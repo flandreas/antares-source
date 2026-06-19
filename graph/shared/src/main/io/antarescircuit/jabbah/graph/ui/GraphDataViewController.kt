@@ -90,17 +90,6 @@ class GraphDataViewController(
 		eventBus.unregister(graphPortCanBeUndefinedHandler)
 	}
 
-	override fun setUndoableState(state: Storable) {
-		if (data?.savable is AbstractLibraryItemSavable) {
-			val savable = data!!.savable as AbstractLibraryItemSavable
-			if (savable.item is UndoableStateLibraryItem<*>) {
-				@Suppress("UNCHECKED_CAST")
-				(savable.item as UndoableStateLibraryItem<Storable>).updateStorable(state)
-			}
-		}
-		super.setUndoableState(state)
-	}
-
 	/**
 	 * Implements [ApplicationDataViewController.open] by interpreting the [Savable]'s identification as a [Project] [UUID],
 	 * whose opening results in opening the default [LibraryElement] of the [Project].
