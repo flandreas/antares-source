@@ -1,5 +1,12 @@
 package io.antarescircuit.antares.view.analog
 
+import dev.mokkery.MockMode
+import dev.mokkery.answering.calls
+import dev.mokkery.every
+import dev.mokkery.matcher.capture.Capture
+import dev.mokkery.matcher.capture.capture
+import dev.mokkery.matcher.capture.get
+import dev.mokkery.mock
 import io.antarescircuit.antares.AntaresTestRule
 import io.antarescircuit.antares.model.analog.AnalogSignal
 import io.antarescircuit.jabbah.base.geom.Point2D
@@ -8,17 +15,9 @@ import io.antarescircuit.jabbah.draw.graphics.DrawGraphicsModule
 import io.antarescircuit.jabbah.draw.graphics.Graphics2D
 import io.antarescircuit.jabbah.graph.model.oscilloscope.SignalHistory
 import io.antarescircuit.jabbah.graph.view.oscilloscope.OscilloscopeViewTimeline
-import dev.mokkery.MockMode
-import dev.mokkery.answering.calls
-import dev.mokkery.every
-import dev.mokkery.matcher.capture.Capture
-import dev.mokkery.matcher.capture.capture
-import dev.mokkery.matcher.capture.get
-import dev.mokkery.mock
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class AnalogSignalHistoryDrawerTest {
 
@@ -48,8 +47,8 @@ class AnalogSignalHistoryDrawerTest {
 
 		drawer.drawCurve(drawContext)
 
-		assertEquals(4, lines.size)
-		assertCurveChangeY(3, 98.0, 26.0)
+		assertEquals(2, lines.size)
+		assertCurveChangeY(0, 98.0, 26.0)
 		assertCurveChangeY(1, 26.0, 98.0)
 	}
 
@@ -57,11 +56,13 @@ class AnalogSignalHistoryDrawerTest {
 	fun shouldDrawNegativeVoltageCurve() {
 		signalHistory.add(AnalogSignal(5.0), 1)
 		signalHistory.add(AnalogSignal(-5.0), 2)
+		signalHistory.add(AnalogSignal(5.0), 3)
 
 		drawer.drawCurve(drawContext)
 
 		assertEquals(2, lines.size)
-		assertTrue(lines.all { it.first.y <= 100 && it.second.y <= 100 })
+		assertCurveChangeY(0, 26.0, 98.0)
+		assertCurveChangeY(1, 98.0, 26.0)
 	}
 
 	private fun createDrawContext(): DrawContext {
@@ -72,7 +73,7 @@ class AnalogSignalHistoryDrawerTest {
 		val y1 = Capture.slot<Double>()
 		val x2 = Capture.slot<Double>()
 		val y2 = Capture.slot<Double>()
-		every { g2.drawLine(capture<Double>(x1), capture(y1), capture(x2), capture(y2)) } calls {
+		every { g2.drawLine(capture(x1), capture(y1), capture(x2), capture(y2)) } calls {
 			lines.add(Pair(Point2D(x1.get(), y1.get()), Point2D(x2.get(), y2.get())))
 		}
 
@@ -81,7 +82,11 @@ class AnalogSignalHistoryDrawerTest {
 
 	private fun assertCurveChangeY(i: Int, y1: Double, y2: Double) {
 		assertEquals(y1, lines[i].first.y)
+		assertEquals(y2, lines[i].second.y)
+		/*
+		assertEquals(y1, lines[i].first.y)
 		assertEquals(y1, lines[i].second.y)
 		assertTrue(lines[i - 1].first.y == y2 || lines[i - 1].second.y == y2)
+		*/
 	}
 }
