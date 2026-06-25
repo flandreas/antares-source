@@ -8,16 +8,20 @@ import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.matcher.any
 import dev.mokkery.mock
+import io.antarescircuit.jabbah.base.geom.Direction
+import io.antarescircuit.jabbah.graph.view.EdgeView
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class EdgeViewSnapLocatorTest {
 
-	private val ev = GraphViewModule.getEdgeViewFactory().createEdgeView<Boolean>(mock())
+	private val ev: EdgeView<*>
 
 	init {
 		GraphViewTestRule.configure()
+		ev = GraphViewModule.getEdgeViewFactory().createEdgeView<Boolean>(mock())
 	}
 
 	@Test
@@ -25,11 +29,11 @@ class EdgeViewSnapLocatorTest {
 		ev.addSegmentPoint(Point2D(0, 0))
 		ev.addSegmentPoint(Point2D(100, 0))
 
-		val result = EdgeViewSnapLocator.snap(ev, 50.0, 0.0)!!
+		val result = EdgeViewSnapLocator.snap(ev, 50.0, 0.0, outgoing = true)!!
 
 		assertEquals(0, result.segmentIndex)
-		assertEquals(50.0, result.x)
-		assertEquals(0.0, result.y)
+		assertEquals(50.0, result.location.x)
+		assertEquals(0.0, result.location.y)
 	}
 
 	@Test
@@ -37,11 +41,11 @@ class EdgeViewSnapLocatorTest {
 		ev.addSegmentPoint(Point2D(0, 0))
 		ev.addSegmentPoint(Point2D(100, 0))
 
-		val result = EdgeViewSnapLocator.snap(ev, 50.0, 2.0)!!
+		val result = EdgeViewSnapLocator.snap(ev, 50.0, 2.0, outgoing = true)!!
 
 		assertEquals(0, result.segmentIndex)
-		assertEquals(50.0, result.x)
-		assertEquals(0.0, result.y)
+		assertEquals(50.0, result.location.x)
+		assertEquals(0.0, result.location.y)
 	}
 
 	@Test
@@ -49,7 +53,7 @@ class EdgeViewSnapLocatorTest {
 		ev.addSegmentPoint(Point2D(0, 0))
 		ev.addSegmentPoint(Point2D(100, 0))
 
-		val result = EdgeViewSnapLocator.snap(ev, 50.0, 10.0)
+		val result = EdgeViewSnapLocator.snap(ev, 50.0, 10.0, outgoing = true)
 
 		assertNull(result)
 	}
@@ -62,11 +66,11 @@ class EdgeViewSnapLocatorTest {
 		ev.addSegmentPoint(Point2D(0, 0))
 		ev.addSegmentPoint(Point2D(100, 0))
 
-		val locatorResult = EdgeViewSnapLocator.snap(ev, 50.0, 1.0, snapManager)!!
+		val locatorResult = EdgeViewSnapLocator.snap(ev, 50.0, 1.0, outgoing = true, snapManager)!!
 
 		assertEquals(0, locatorResult.segmentIndex)
-		assertEquals(55.0, locatorResult.x)
-		assertEquals(0.0, locatorResult.y)
+		assertEquals(55.0, locatorResult.location.x)
+		assertEquals(0.0, locatorResult.location.y)
 	}
 
 	@Test
@@ -74,7 +78,7 @@ class EdgeViewSnapLocatorTest {
 		ev.addSegmentPoint(Point2D(0, 0))
 		ev.addSegmentPoint(Point2D(100, 0))
 
-		val result = EdgeViewSnapLocator.snap(ev, EdgeViewSnapLocator.FORBIDDEN_END_AREA, 0.0)
+		val result = EdgeViewSnapLocator.snap(ev, EdgeViewSnapLocator.FORBIDDEN_END_AREA, 0.0, outgoing = true)
 
 		assertNull(result)
 	}
@@ -84,9 +88,22 @@ class EdgeViewSnapLocatorTest {
 		ev.addSegmentPoint(Point2D(0, 0))
 		ev.addSegmentPoint(Point2D(100, 0))
 
-		val result = EdgeViewSnapLocator.snap(ev, 100.0 - EdgeViewSnapLocator.FORBIDDEN_END_AREA, 0.0)
+		val result = EdgeViewSnapLocator.snap(ev, 100.0 - EdgeViewSnapLocator.FORBIDDEN_END_AREA, 0.0, outgoing = true)
 
 		assertNull(result)
+	}
+
+	@Test
+	fun shouldYieldFreeCornerDirectionsNW() {
+		ev
+			.addSegmentPoint(Point2D(0, 100))
+			.addSegmentPoint(Point2D(0, 0))
+			.addSegmentPoint(Point2D(100, 0))
+
+		val result = EdgeViewSnapLocator.snap(ev, 0.0, 0.0, outgoing = true)!!
+
+		assertTrue(result.directions.contains(Direction.NORTH))
+		assertTrue(result.directions.contains(Direction.WEST))
 	}
 
 }

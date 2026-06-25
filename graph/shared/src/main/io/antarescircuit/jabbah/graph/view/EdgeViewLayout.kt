@@ -19,7 +19,7 @@ interface EdgeViewLayout : DrawableListener {
 
 	/**
 	 * An [EdgeView] is adjusted if the user has moved one of its segments after layout.
-	 * Moving a [VerticeView] connected to one end of an adjusted [VerticeView] only updates the layout
+	 * Moving a [VerticeView] connected to one end of an adjusted [EdgeView] only updates the layout
 	 * of the connected segment, not the entire [EdgeView].
 	 */
 	var isAdjusted: Boolean

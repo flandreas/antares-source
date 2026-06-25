@@ -586,6 +586,24 @@ open class EdgeViewImpl<T : Any>(
 	override fun getSegmentDirection(segmentIndex: Int): Direction? =
 		layout.type.getSegmentDirection(this, segmentIndex)
 
+	override fun getFreeCornerDirections(pointIndex: Int, outgoing: Boolean): Set<Direction> {
+		if (pointIndex == 0 || pointIndex == segmentPointCount - 1) {
+			return emptySet()
+		}
+		val dir1 = getSegmentDirection(pointIndex - 1)
+		val dir2 = getSegmentDirection(pointIndex)
+		val result = mutableSetOf<Direction>()
+
+		if (dir1 != null) {
+			if (outgoing) result.add(dir1) else result.add(dir1.opposite())
+		}
+		if (dir2 != null) {
+			if (outgoing) result.add(dir2.opposite()) else result.add(dir2)
+		}
+
+		return result
+	}
+
 	override val isDegenerated: Boolean
 		get() = segmentPointCount < 2 || isOriginDegenerated() || isDestinationDegenerated()
 
@@ -617,8 +635,8 @@ open class EdgeViewImpl<T : Any>(
 	): EdgeView<*> =
 		EdgeViewSplitterJoiner.join(this, endpointType, other, otherEndpointType)
 
-	override fun snap(x: Double, y: Double, snapManager: SnapManager?): EdgeViewSnapLocatorResult? =
-		EdgeViewSnapLocator.snap(this, x, y, snapManager)
+	override fun snap(x: Double, y: Double, outgoing: Boolean, snapManager: SnapManager?): EdgeViewSnapLocatorResult? =
+		EdgeViewSnapLocator.snap(this, x, y, outgoing, snapManager)
 
 	/** ---- [Locatable] interface */
 

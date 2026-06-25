@@ -16,15 +16,18 @@ import io.antarescircuit.jabbah.draw.StateMachineInputEventHandler.Companion.mou
 import io.antarescircuit.jabbah.draw.StateMachineInputEventHandler.Companion.mouseLeftSingleClicked
 import io.antarescircuit.jabbah.draw.StateMachineInputEventHandler.Companion.mouseMoved
 import io.antarescircuit.jabbah.draw.graphics.Cursor
-import io.antarescircuit.jabbah.edit.*
+import io.antarescircuit.jabbah.edit.Command
+import io.antarescircuit.jabbah.edit.EditInputEventContext
+import io.antarescircuit.jabbah.edit.Editor
+import io.antarescircuit.jabbah.edit.SnapManager
 import io.antarescircuit.jabbah.graph.view.EdgeView
 import io.antarescircuit.jabbah.graph.view.EdgeViewSnapLocatorResult
-import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.NetView
 import io.antarescircuit.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter
 import io.antarescircuit.jabbah.graph.view.module.GraphViewModule
 import io.antarescircuit.jabbah.graph.view.net.edge.EdgeViewEndpointType
+import io.antarescircuit.jabbah.graph.view.net.edge.EdgeViewEndpointType.ORIGIN
 import io.antarescircuit.jabbah.graph.view.net.edge.EdgeViewFactory
 
 class EdgeToPortOrEdgeConnector(
@@ -470,7 +473,7 @@ class EdgeToPortOrEdgeConnector(
 		snap(context.x, context.y, context.editor.snapManager)
 
 	private fun snap(x: Double, y: Double, snapManager: SnapManager): EdgeViewSnapLocatorResult? {
-		val result = branchedEdgeView?.snap(x, y, snapManager)
+		val result = branchedEdgeView?.snap(x, y, draggedEndpointType == ORIGIN, snapManager)
 		branchedSegmentIndex = result?.segmentIndex
 		return result
 	}
@@ -516,7 +519,7 @@ class EdgeToPortOrEdgeConnector(
 	private fun logConnect() {
 		if (targetPortView != null) {
 			if (LOG.isDebugEnabled()) {
-				LOG.debug("Create junction from ${EdgeViewEndpointType.ORIGIN.getLocation(edgeView!!)} to ${targetPortView?.owner?.getUnconnectedPortConnectionPoint(targetPortView!!.port)}")
+				LOG.debug("Create junction from ${ORIGIN.getLocation(edgeView!!)} to ${targetPortView?.owner?.getUnconnectedPortConnectionPoint(targetPortView!!.port)}")
 			}
 			LOG.userTrail("Create junction from EdgeView ${branchedEdgeView?.id} to port ${targetPortView?.port?.portId} of ${targetPortView?.owner?.type} with ID ${targetPortView?.owner?.id}")
 		} else if (targetEdgeView != null) {
@@ -592,9 +595,9 @@ class EdgeToPortOrEdgeConnector(
 			connectService = connectService,
 			splitEdgeViewId = branchedEdgeView!!.id,
 			segmentIndex = branchedSegmentIndex!!,
-			splitLocation = EdgeViewEndpointType.ORIGIN.getLocation(edgeView!!),
+			splitLocation = ORIGIN.getLocation(edgeView!!),
 			newEdgeViewProvider = NewEdgeViewAtSplitCloneProvider(edgeView!!),
-			newEdgeViewEndpointType = EdgeViewEndpointType.ORIGIN,
+			newEdgeViewEndpointType = ORIGIN,
 			targetConnectableViewId = null,
 			targetPortId = null)
 	}

@@ -1,6 +1,9 @@
 package io.antarescircuit.jabbah.graph.view.net.edge
 
 import io.antarescircuit.jabbah.base.geom.Direction
+import io.antarescircuit.jabbah.base.geom.Direction.EAST
+import io.antarescircuit.jabbah.base.geom.Direction.NORTH
+import io.antarescircuit.jabbah.base.geom.Direction.WEST
 import io.antarescircuit.jabbah.base.geom.Point2D
 import io.antarescircuit.jabbah.base.geom.Rectangle2D
 import io.antarescircuit.jabbah.graph.view.Connection
@@ -145,10 +148,10 @@ class EdgeViewImplTest {
 		ev.addSegmentPoint(Point2D(0, 100))
 		ev.addSegmentPoint(Point2D(0, 0))
 
-		assertEquals(Direction.EAST, ev.getSegmentDirection(0)!!)
+		assertEquals(EAST, ev.getSegmentDirection(0)!!)
 		assertEquals(Direction.SOUTH, ev.getSegmentDirection(1)!!)
-		assertEquals(Direction.WEST, ev.getSegmentDirection(2)!!)
-		assertEquals(Direction.NORTH, ev.getSegmentDirection(3)!!)
+		assertEquals(WEST, ev.getSegmentDirection(2)!!)
+		assertEquals(NORTH, ev.getSegmentDirection(3)!!)
 	}
 
 	@Test
@@ -158,7 +161,7 @@ class EdgeViewImplTest {
 		ev.addSegmentPoint(Point2D(-364.0, -294.0))
 		ev.addSegmentPoint(Point2D(-364.5, -294.0))
 
-		assertEquals(Direction.WEST, ev.getSegmentDirection(1))
+		assertEquals(WEST, ev.getSegmentDirection(1))
 	}
 
 	@Test
@@ -173,8 +176,8 @@ class EdgeViewImplTest {
 
 	@Test
 	fun shouldNotMoveIndividually() {
-		val vv1 = TestVerticeView(loc = Point2D(0, 0), outputDirection = Direction.EAST)
-		val vv2 = TestVerticeView(loc = Point2D(100, 0), inputDirection = Direction.WEST)
+		val vv1 = TestVerticeView(loc = Point2D(0, 0), outputDirection = EAST)
+		val vv2 = TestVerticeView(loc = Point2D(100, 0), inputDirection = WEST)
 		graphView.add(vv1)
 		graphView.add(vv2)
 		val ev = edgeViewFactory.createEdgeView<Boolean>(graphView)
@@ -193,8 +196,8 @@ class EdgeViewImplTest {
 
 	@Test
 	fun shouldMoveWithConnectableViews() {
-		val vv1 = TestVerticeView(loc = Point2D(0, 0), outputDirection = Direction.EAST)
-		val vv2 = TestVerticeView(loc = Point2D(100, 0), inputDirection = Direction.WEST)
+		val vv1 = TestVerticeView(loc = Point2D(0, 0), outputDirection = EAST)
+		val vv2 = TestVerticeView(loc = Point2D(100, 0), inputDirection = WEST)
 		graphView.add(vv1)
 		graphView.add(vv2)
 		val ev = edgeViewFactory.createEdgeView<Boolean>(graphView)
@@ -213,7 +216,7 @@ class EdgeViewImplTest {
 
 	@Test
 	fun shouldMoveUnaryConnected() {
-		val vv1 = TestVerticeView(loc = Point2D(0, 0), outputDirection = Direction.EAST)
+		val vv1 = TestVerticeView(loc = Point2D(0, 0), outputDirection = EAST)
 		graphView.add(vv1)
 		val ev = edgeViewFactory.createEdgeView<Boolean>(graphView)
 		ev.addSegmentPoint(Point2D(0, 0))
@@ -226,5 +229,29 @@ class EdgeViewImplTest {
 
 		assertEquals(Point2D(0, 50), ev.getSegmentPoint(0))
 		assertEquals(Point2D(100, 50), ev.getSegmentPoint(1))
+	}
+
+	@Test
+	fun shouldNotYieldCornerDirectionsWithoutCorners() {
+		val ev = edgeViewFactory.createEdgeView<Boolean>(graphView)
+			.addSegmentPoint(Point2D(0, 100))
+			.addSegmentPoint(Point2D(0, 0))
+
+		val directions = ev.getFreeCornerDirections(1, outgoing = true)
+
+		assertEquals(0, directions.size)
+	}
+
+	@Test
+	fun shouldYieldCornerDirectionsNW() {
+		val ev = edgeViewFactory.createEdgeView<Boolean>(graphView)
+			.addSegmentPoint(Point2D(0, 100))
+			.addSegmentPoint(Point2D(0, 0))
+			.addSegmentPoint(Point2D(100, 0))
+
+		val directions = ev.getFreeCornerDirections(1, outgoing = true)
+
+		assertEquals(2, directions.size)
+		assertTrue(directions.containsAll(listOf(NORTH, WEST)))
 	}
 }

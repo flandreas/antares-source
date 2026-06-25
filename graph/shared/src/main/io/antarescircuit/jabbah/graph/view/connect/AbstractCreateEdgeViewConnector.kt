@@ -16,6 +16,7 @@ import io.antarescircuit.jabbah.graph.view.NetView
 import io.antarescircuit.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter
 import io.antarescircuit.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter.displayPortViewHighlight
 import io.antarescircuit.jabbah.graph.view.net.edge.EdgeViewEndpointType
+import io.antarescircuit.jabbah.graph.view.net.edge.EdgeViewEndpointType.ORIGIN
 import io.antarescircuit.jabbah.graph.view.net.edge.EdgeViewFactory
 import io.antarescircuit.jabbah.graph.view.port.PortView
 
@@ -83,7 +84,7 @@ abstract class AbstractCreateEdgeViewConnector(
 
 	protected fun moveAdjustedPoint(context: EditInputEventContext) {
 		when (draggedEndpointType) {
-            EdgeViewEndpointType.ORIGIN -> moveAdjustedOriginPoint(context)
+            ORIGIN -> moveAdjustedOriginPoint(context)
             EdgeViewEndpointType.DESTINATION -> moveAdjustedDestinationPoint(context)
         }
 	}
@@ -130,7 +131,7 @@ abstract class AbstractCreateEdgeViewConnector(
 
 		val ownLayoutIndex = adjustment!!.model.current
 		when (draggedEndpointType) {
-            EdgeViewEndpointType.ORIGIN -> adjustToTargetPortViewImpl(
+            ORIGIN -> adjustToTargetPortViewImpl(
 				connPointAbs,
 				setOf(draggedEndpointType.getDirectionForPortView(targetPortView!!)),
 				getMoveAdjustedPointDestDirs(ownLayoutIndex, allowContinuation = true)
@@ -155,12 +156,12 @@ abstract class AbstractCreateEdgeViewConnector(
 	}
 
 	protected fun adjustToTargetEdgeView(context: EditInputEventContext) {
-		targetEdgeView?.snap(context.x, context.y, context.editor.snapManager)?.let { snapResult ->
+		targetEdgeView?.snap(context.x, context.y, draggedEndpointType == ORIGIN, context.editor.snapManager)?.let { snapResult ->
 			targetEdgeViewSegmentIndex = snapResult.segmentIndex
 			val ownLayoutIndex = adjustment!!.model.current
 			val targetDirs = targetEdgeView!!.getSegmentDirection(targetEdgeViewSegmentIndex!!)?.orthogonalSet()
 			when (draggedEndpointType) {
-				EdgeViewEndpointType.ORIGIN -> adjustToTargetEdgeViewImpl(
+				ORIGIN -> adjustToTargetEdgeViewImpl(
 					context,
 					snapResult.location,
 					targetDirs,

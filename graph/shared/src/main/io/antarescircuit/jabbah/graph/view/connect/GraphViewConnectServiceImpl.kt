@@ -153,10 +153,6 @@ class GraphViewConnectServiceImpl(
 		val nodeView = nodeViewFactorySupplier.invoke().create(splitEdgeView.netView as NetView<Any>, graphView) as NodeView<T>
 		graphView.add(nodeView)
 
-		// Splitting an EdgeView should not change the layout of the EdgeView being split
-		splitEdgeView.layout.isAdjusted = true
-		val destinationDirection = splitEdgeView.getSegmentDirection(splitSegmentIndex)
-
 		// Create tail part of EdgeView that is being split
 		val tail = splitEdgeView.split(
 			splitSegmentIndex,
@@ -165,10 +161,12 @@ class GraphViewConnectServiceImpl(
 
 		nodeView.location = splitLocation
 
-		connectToDestination(splitEdgeView, Connection(nodeView), destinationDirection)
+		// Splitting an EdgeView should not change the layout of the EdgeView being split
+
+		connectToDestination(splitEdgeView, Connection(nodeView), null, false)
 
 		graphView.add(tail)
-		connectToOrigin(tail, Connection(nodeView), tail.getSegmentDirection(0))
+		connectToOrigin(tail, Connection(nodeView), null, false)
 
 		if (!graphView.contains(newEdgeView)) {
 			graphView.add(newEdgeView)

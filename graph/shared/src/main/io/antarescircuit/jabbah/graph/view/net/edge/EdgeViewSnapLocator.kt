@@ -13,7 +13,7 @@ object EdgeViewSnapLocator {
 
 	private val snappable = XYSnappable()
 
-	fun snap(edgeView: EdgeView<*>, x: Double, y: Double, snapManager: SnapManager? = null): EdgeViewSnapLocatorResult? {
+	fun snap(edgeView: EdgeView<*>, x: Double, y: Double, outgoing: Boolean, snapManager: SnapManager? = null): EdgeViewSnapLocatorResult? {
 		snappable.set(x, y)
 
 		val segmentIndex = edgeView.polyline.findSegment(x, y, EdgeView.CONTAINS_SIZE) ?: return null
@@ -26,21 +26,42 @@ object EdgeViewSnapLocator {
 			return null
 		}
 
-		// Try to snap to a nearby [EdgeView] corner, if any
+		// Try to snap to a nearby [EdgeView] corner at the start of the segment, if any
 		if (edgeView.getSegmentPoint(segmentIndex).distance(x, y) <= EdgeView.EDGE_CORNER_DISTANCE) {
-			return EdgeViewSnapLocatorResult(segmentIndex, edgeView.getSegmentPoint(segmentIndex).x, edgeView.getSegmentPoint(segmentIndex).y)
+			return EdgeViewSnapLocatorResult(
+				segmentIndex,
+				edgeView.getSegmentPoint(segmentIndex).x,
+				edgeView.getSegmentPoint(segmentIndex).y,
+				edgeView.getFreeCornerDirections(segmentIndex, outgoing)
+			)
 		}
+
+		// Try to snap to a nearby [EdgeView] corner at the end of the segment, if any
 		if (segmentIndex < edgeView.segmentPointCount - 2 && edgeView.getSegmentPoint(segmentIndex + 1).distance(x, y) <= EdgeView.EDGE_CORNER_DISTANCE) {
-			return EdgeViewSnapLocatorResult(segmentIndex, edgeView.getSegmentPoint(segmentIndex + 1).x, edgeView.getSegmentPoint(segmentIndex + 1).y)
+			return EdgeViewSnapLocatorResult(
+				segmentIndex,
+				edgeView.getSegmentPoint(segmentIndex + 1).x,
+				edgeView.getSegmentPoint(segmentIndex + 1).y,
+				edgeView.getFreeCornerDirections(segmentIndex + 1, outgoing)
+			)
 		}
 
 		val snap = snapManager?.snap(snappable, 0.0, 0.0) ?: Point2D.ZERO
 
 		if (edgeView.polyline.isSegmentHorizontal(segmentIndex)) {
-			return EdgeViewSnapLocatorResult(segmentIndex, x + snap.x, edgeView.getSegmentPoint(segmentIndex).y)
+			return EdgeViewSnapLocatorResult(
+				segmentIndex,
+				x + snap.x,
+				edgeView.getSegmentPoint(segmentIndex).y,
+				edgeView.getSegmentDirection(segmentIndex)?.orthogonalSet() ?: emptySet(),
+			)
 		}
 		if (edgeView.polyline.isSegmentVertical(segmentIndex)) {
-			return EdgeViewSnapLocatorResult(segmentIndex, edgeView.getSegmentPoint(segmentIndex).x, y + snap.y)
+			return EdgeViewSnapLocatorResult(
+				segmentIndex,
+				edgeView.getSegmentPoint(segmentIndex).x,
+				y + snap.y,
+				edgeView.getSegmentDirection(segmentIndex)?.orthogonalSet() ?: emptySet())
 		}
 
 		return null

@@ -14,6 +14,7 @@ import io.antarescircuit.jabbah.graph.view.VerticeView
 import io.antarescircuit.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter
 import io.antarescircuit.jabbah.graph.view.connect.highlight.ConnectionPointHighlighter.displayPortViewHighlight
 import io.antarescircuit.jabbah.graph.view.net.edge.EdgeViewEndpointType
+import io.antarescircuit.jabbah.graph.view.net.edge.EdgeViewEndpointType.ORIGIN
 import io.antarescircuit.jabbah.graph.view.port.PortView
 
 /**
@@ -163,12 +164,11 @@ abstract class AbstractConnector(
 	}
 
 	protected fun snapToTargetEdgeView(context: EditInputEventContext) {
-		targetEdgeView!!.snap(context.x, context.y, context.editor.snapManager)?.let { snapResult ->
+		targetEdgeView!!.snap(context.x, context.y, draggedEndpointType == ORIGIN, context.editor.snapManager)?.let { snapResult ->
 			targetEdgeViewSegmentIndex = snapResult.segmentIndex
 			displayPortViewHighlight(context.drawingView, snapResult.location)
-			val targetDirs = targetEdgeView!!.getSegmentDirection(targetEdgeViewSegmentIndex!!)?.orthogonalSet()
 			draggedEndpointType.moveTo(edgeView!!, snapResult.location)
-			draggedEndpointType.layout(edgeView!!, targetDirs)
+			draggedEndpointType.layout(edgeView!!, snapResult.directions)
 			edgeView!!.layout
 		}
 	}
@@ -198,11 +198,11 @@ abstract class AbstractConnector(
 	}
 
 	protected fun snapToDenyingEdgeView(context: EditInputEventContext) {
-		targetEdgeView!!.snap(context.x, context.y, context.editor.snapManager)?.let { snapResult ->
+		targetEdgeView!!.snap(context.x, context.y, draggedEndpointType == ORIGIN, context.editor.snapManager)?.let { snapResult ->
 			targetEdgeViewSegmentIndex = snapResult.segmentIndex
 			displayPortViewHighlight(context.drawingView, snapResult.location, highlight = DrawModule.properties.get(PortView.PROP_CONNECT_DENY))
 			draggedEndpointType.moveTo(edgeView!!, snapResult.location)
-			// Don't layout EdgeView
+			// Don't lay out EdgeView
 		}
 	}
 

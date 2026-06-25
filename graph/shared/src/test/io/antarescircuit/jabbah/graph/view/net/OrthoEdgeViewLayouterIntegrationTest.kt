@@ -53,7 +53,7 @@ class OrthoEdgeViewLayouterIntegrationTest {
 		val splitResult = builder.split(origEdgeView, 0, Point2D(150, 100), v2)
 
 		assertEquals(3, splitResult.tailEdgeView.segmentPointCount)
-		assertTrue(splitResult.tailEdgeView.layout.isAdjusted)
+		assertFalse(splitResult.tailEdgeView.layout.isAdjusted)
 
 		assertEquals(2, splitResult.newEdgeView.segmentPointCount)
 		assertFalse(splitResult.newEdgeView.layout.isAdjusted)

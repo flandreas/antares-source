@@ -251,6 +251,16 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
      */
     fun getSegmentDirection(segmentIndex: Int): Direction?
 
+	/**
+	 * Returns the possible [Direction]s of a new [EdgeView]'s segment to if it was
+	 * joined at this [EdgeView]'s corner.
+	 *
+	 * @param pointIndex the index in the points list designated the corner in question
+	 * @param outgoing `true` if the new [EdgeView] will be outgoing from the future [NodeView] at this corner,
+	 * `false` if it will be incoming
+	 */
+	fun getFreeCornerDirections(pointIndex: Int, outgoing: Boolean): Set<Direction>
+
 	fun isSegmentDegenerated(segmentIndex: Int): Boolean
 
     /**
@@ -288,14 +298,27 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
 	/**
 	 * Snaps the point given by [x] and [y] to the location on this [EdgeView] that is nearest to any of
 	 * the snapping coordinates defined by the specified [Snapper].
+	 *
+	 * @param x the x-coordinate to be snapped
+	 * @param y the y-coordinate to be snapped
+	 * @param outgoing `true` if the new [EdgeView] joins this [EdgeView] outgoing (e.g. if it leads
+	 * to a [VerticeView]'s input, `false` if it is incoming (e.g. from a [VerticeView]'s output)
 	 * @return a [EdgeViewSnapLocatorResult] or `null` if no suitable location was found, for example if too far
 	 * away from the [EdgeView], or not on a perpendicular segment.
 	 */
-	fun snap(x: Double, y: Double, snapManager: SnapManager? = null): EdgeViewSnapLocatorResult?
+	fun snap(x: Double, y: Double, outgoing: Boolean, snapManager: SnapManager? = null): EdgeViewSnapLocatorResult?
 }
 
-data class EdgeViewSnapLocatorResult(val segmentIndex: Int, val x: Double, val y: Double) {
-	val location: Point2D get() = Point2D(x, y)
+/**
+ * Describes how an [EdgeEndpointView] is snapped to a target [EdgeView] while interactively dragging an [EdgeEndpointView].
+ */
+data class EdgeViewSnapLocatorResult(
+	val segmentIndex: Int,
+	val location: Point2D,
+	val directions: Set<Direction>
+) {
+	constructor(segmentIndex: Int, x: Double, y: Double, directions: Set<Direction>)
+		: this(segmentIndex, Point2D(x, y), directions)
 }
 
 /**
