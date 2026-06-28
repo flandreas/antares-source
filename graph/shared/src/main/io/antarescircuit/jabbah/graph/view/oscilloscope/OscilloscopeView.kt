@@ -105,6 +105,12 @@ class OscilloscopeView(
 			validate()
 		}
 
+	var bufferSize: Int
+		get() = model.bufferSize
+		set(value) {
+			model.bufferSize = value
+		}
+
 	/** Changed by the user in edit mode. Persistently stored in the [GraphView].*/
 	@Suppress("MemberVisibilityCanBePrivate") // Reflection
 	var persistentTimelineScale: Double = INIT_SCALE

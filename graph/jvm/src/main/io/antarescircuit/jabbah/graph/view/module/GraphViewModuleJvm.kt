@@ -28,7 +28,7 @@ import io.antarescircuit.jabbah.graph.container.InternalLabelOrientation
 import io.antarescircuit.jabbah.graph.library.Library
 import io.antarescircuit.jabbah.graph.library.LibraryVisibility
 import io.antarescircuit.jabbah.graph.model.PortType
-import io.antarescircuit.jabbah.graph.model.oscilloscope.SignalHistories
+import io.antarescircuit.jabbah.graph.model.oscilloscope.Oscilloscope
 import io.antarescircuit.jabbah.graph.model.oscilloscope.SignalHistoriesType
 import io.antarescircuit.jabbah.graph.model.port.InconsistentNetError
 import io.antarescircuit.jabbah.graph.ui.GraphFrameController
@@ -154,7 +154,7 @@ object GraphViewModuleJvm : AbstractModule() {
 
 		root.add(PreferenceGroup(PREF_TREE_OSCILLOSCOPE))
 		root.getGroup(PREF_TREE_OSCILLOSCOPE).add(IntPreference(
-			id = SignalHistories.PROP_BUFFER_SIZE,
+			id = Oscilloscope.PROP_BUFFER_SIZE,
 			nameKey = "graph.preferences.Oscilloscope.bufferSize",
 			minValue = 10,
 			maxValue = 500

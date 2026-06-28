@@ -13,11 +13,13 @@ class OscilloscopeViewBeanInfo : AbstractComponentBeanInfo<OscilloscopeView>() {
     companion object {
 	    private val scale = CommandPropertySwing("persistentTimelineScale", "graph.property.oscilloscopeScale", Double::class.java, componentBeanProvider)
 	    private val mode = CommandPropertySwing("mode", "graph.property.oscilloscopeMode.type", SignalHistoriesType::class.java, componentBeanProvider)
+        private val bufferSize = CommandPropertySwing("bufferSize", "graph.property.oscilloscope.bufferSize", Int::class.java, componentBeanProvider)
     }
 
     override fun addProperties(bean: OscilloscopeView, editor: Editor, properties: MutableList<Property>) {
         super.addProperties(bean, editor, properties)
 	    properties.add(scale.bind(editor, beanIdProvider(bean.id)))
 	    properties.add(mode.bind(editor, beanIdProvider(bean.id)))
+        properties.add(bufferSize.bind(editor, beanIdProvider(bean.id)))
     }
 }

@@ -2,7 +2,7 @@ package io.antarescircuit.jabbah.graph.view.oscilloscope
 
 import io.antarescircuit.jabbah.base.module.BaseModule
 import io.antarescircuit.jabbah.execution.SignalHandlerMockBuilder
-import io.antarescircuit.jabbah.graph.model.oscilloscope.SignalHistories
+import io.antarescircuit.jabbah.graph.model.oscilloscope.Oscilloscope
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.GraphViewTestRule
 import io.antarescircuit.jabbah.graph.view.graph.GraphViewImpl
@@ -33,7 +33,7 @@ class OscilloscopeViewTest {
 
     @Test
     fun shouldTruncateEntries() {
-        BaseModule.properties.customize(SignalHistories.PROP_BUFFER_SIZE, 2)
+        BaseModule.properties.customize(Oscilloscope.PROP_BUFFER_SIZE, 2)
         val probeView = createRow()
         oscilloscopeView.model.executionInitialize(signalHandler.build())
         oscilloscopeView.model.executionStart(signalHandler.build())

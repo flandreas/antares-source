@@ -2,10 +2,8 @@ package io.antarescircuit.jabbah.graph.model.oscilloscope
 
 import io.antarescircuit.jabbah.base.Translations
 import io.antarescircuit.jabbah.base.logger
-import io.antarescircuit.jabbah.base.module.BaseModule
 import io.antarescircuit.jabbah.execution.SignalHandler
 import io.antarescircuit.jabbah.graph.model.InputPort
-import io.antarescircuit.jabbah.graph.model.oscilloscope.SignalHistories.Companion.PROP_BUFFER_SIZE
 import kotlin.math.max
 
 /**
@@ -42,10 +40,6 @@ enum class SignalHistoriesType(val customName: String) {
  */
 interface SignalHistories {
 
-	companion object {
-		const val PROP_BUFFER_SIZE = "Oscilloscope.bufferSize"
-	}
-
 	val maxTime: Long
 
 	fun clear()
@@ -63,7 +57,6 @@ abstract class AbstractSignalHistories(
 
 	companion object {
 		private val LOG by logger(AbstractSignalHistories::class)
-		private val bufferSize: Int get() = BaseModule.properties.getInt(PROP_BUFFER_SIZE)
 	}
 
 	/**
@@ -77,7 +70,7 @@ abstract class AbstractSignalHistories(
 	protected val signalHistories = mutableMapOf<String, SignalHistory<Any>>()
 
 	init {
-		oscilloscope.getPorts().forEach { signalHistories[it.name!!] = SignalHistory(bufferSize) }
+		oscilloscope.getPorts().forEach { signalHistories[it.name!!] = SignalHistory(oscilloscope.bufferSize) }
 	}
 
 	override fun clear() {

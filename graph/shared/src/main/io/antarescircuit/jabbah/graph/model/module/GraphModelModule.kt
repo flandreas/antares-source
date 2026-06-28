@@ -4,16 +4,18 @@ import io.antarescircuit.jabbah.base.AbstractModule
 import io.antarescircuit.jabbah.base.Properties
 import io.antarescircuit.jabbah.base.Translations
 import io.antarescircuit.jabbah.base.module.BaseModule
+import io.antarescircuit.jabbah.edit.model.image.ImageIdentification
 import io.antarescircuit.jabbah.edit.model.text.TranslatableText
+import io.antarescircuit.jabbah.edit.semantic.SemanticRegistry
 import io.antarescircuit.jabbah.execution.SignalHandler
 import io.antarescircuit.jabbah.execution.module.ExecutionModule
-import io.antarescircuit.jabbah.graph.*
+import io.antarescircuit.jabbah.graph.GraphStorable
+import io.antarescircuit.jabbah.graph.MetaGraph
+import io.antarescircuit.jabbah.graph.MetaGraphBundle
 import io.antarescircuit.jabbah.graph.dsl.GraphDslModule
+import io.antarescircuit.jabbah.graph.library.LibraryPreferences
 import io.antarescircuit.jabbah.graph.model.*
 import io.antarescircuit.jabbah.graph.model.graph.GraphImpl
-import io.antarescircuit.jabbah.edit.model.image.ImageIdentification
-import io.antarescircuit.jabbah.edit.semantic.SemanticRegistry
-import io.antarescircuit.jabbah.graph.library.LibraryPreferences
 import io.antarescircuit.jabbah.graph.model.graph.GraphPropagationDelayCalculator
 import io.antarescircuit.jabbah.graph.model.net.NetImpl
 import io.antarescircuit.jabbah.graph.model.net.SignalConflictBehaviour
@@ -23,7 +25,6 @@ import io.antarescircuit.jabbah.graph.model.nonvolatile.NonVolatileStorable
 import io.antarescircuit.jabbah.graph.model.nonvolatile.UnimplementedNonVolatileService
 import io.antarescircuit.jabbah.graph.model.oscilloscope.Oscilloscope
 import io.antarescircuit.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
-import io.antarescircuit.jabbah.graph.model.oscilloscope.SignalHistories
 import io.antarescircuit.jabbah.graph.model.param.*
 import io.antarescircuit.jabbah.graph.model.port.InconsistentNetError
 import io.antarescircuit.jabbah.graph.model.port.PortFactory
@@ -143,7 +144,7 @@ object GraphModelModule : AbstractModule() {
 	private fun fillProperties(properties: Properties) {
 		properties.set(SignalConflictBehaviour.PROP_SIGNAL_CONFLICT_BEHAVIOUR, SignalConflictBehaviour.IGNORE.customName)
 		properties.set(InconsistentNetError.PROP_ALLOWED_DURATION, InconsistentNetError.DEF_ALLOWED_DURATION)
-		properties.set(SignalHistories.PROP_BUFFER_SIZE, 50)
+		properties.set(Oscilloscope.PROP_BUFFER_SIZE, 50)
 		properties.set(GraphPropagationDelayCalculator.PROP_CALCULATE_ON_SAVE, true)
 	}
 }

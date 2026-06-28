@@ -4,6 +4,7 @@ import io.antarescircuit.jabbah.base.Properties
 import io.antarescircuit.jabbah.base.StringUtils
 import io.antarescircuit.jabbah.base.Translations
 import io.antarescircuit.jabbah.base.logger
+import io.antarescircuit.jabbah.base.module.BaseModule
 import io.antarescircuit.jabbah.execution.SignalHandler
 import io.antarescircuit.jabbah.execution.actor.Actor
 import io.antarescircuit.jabbah.graph.model.*
@@ -20,7 +21,7 @@ import io.antarescircuit.jabbah.io.StoreWriter
  * are not processed through the [SignalHandler], but directly communicated to registered [GraphElementListener]s.
  *
  * The maximum number of entries in every [SignalHistory] is confined by the [Properties] entry defined by
- * [SignalHistories.PROP_BUFFER_SIZE].
+ * [PROP_BUFFER_SIZE].
  */
 class Oscilloscope(
 	mode: SignalHistoriesType = SignalHistoriesType.Clocked,
@@ -35,6 +36,8 @@ class Oscilloscope(
 
 		/** The reason in [GraphElementEvent] sent to [GraphElementListener]s if a new signal has arrived. */
 		const val SIGNAL_RECEIVED = "signalReceived"
+
+		const val PROP_BUFFER_SIZE = "Oscilloscope.bufferSize"
 	}
 
 	private var signalHistories: SignalHistories = mode.createSignalHistories(this)
@@ -52,6 +55,13 @@ class Oscilloscope(
 	var graphType: GraphType = graphType
 		private set
 
+	var bufferSize: Int = BaseModule.properties.getInt(PROP_BUFFER_SIZE)
+		set(value) {
+			require(value >= 1) { "Must not be smaller than 1" }
+			require(value <= 100_000) { "Must not be larger than 100'000" }
+			field = value
+		}
+
 	/** ---- [AbstractVertice] */
 
 	override val type: String get() = TYPE
@@ -66,6 +76,7 @@ class Oscilloscope(
 			getPorts().map { it.name!! }
 		))
 		writer.writeString("mode", mode.customName)
+		writer.writeInt("bufferSize", bufferSize)
 	}
 
 	override fun read(reader: StoreReader) {
@@ -80,6 +91,9 @@ class Oscilloscope(
 		}
 		if (reader.hasAttribute("mode")) {
 			mode = SignalHistoriesType.withName(reader.readString("mode"))
+		}
+		if (reader.hasAttribute("bufferSize")) {
+			bufferSize = reader.readInt("bufferSize")
 		}
 	}
 
