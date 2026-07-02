@@ -42,6 +42,7 @@ import io.antarescircuit.jabbah.graph.view.vertice.AbstractVerticeView
 import io.antarescircuit.jabbah.io.Storable
 import io.antarescircuit.jabbah.io.StoreReader
 import io.antarescircuit.jabbah.io.StoreWriter
+import kotlin.math.max
 
 class OscilloscopeView(
 	graphType: GraphType = GenericGraphType,
@@ -150,6 +151,19 @@ class OscilloscopeView(
 		}
 	}
 
+	/** Handles input events during execution, e.g. scrolling [OscilloscopeSignalRowView]s horizontally. */
+	private val actorHandler = ActorHandler(container)
+
+	/**
+	 * The distance (in model coordinate space) in x direction the view has been scrolled by the user.
+	 * Clamped to positive values.
+	 */
+	private var scrollX = 0.0
+		set(value) {
+			field = value
+			propagateScrollX(value)
+		}
+
 	var applicationMode: ApplicationMode = ApplicationMode.EDIT
 		private set(value) {
 			if (field != value) {
@@ -174,7 +188,6 @@ class OscilloscopeView(
 	init {
 		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
 		eventBus.register(OscilloscopeProbeNameEvent::class, probeNameHandler)
-
 		preferredSelectionDrawingStrategy = SelectionDrawingStrategy.BELOW
 	}
 
@@ -311,13 +324,61 @@ class OscilloscopeView(
 		}
 	}
 
-	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler =
-		container.getActorInteractionHandler(context)
+	override fun getActorInteractionHandler(context: ActorInteractionContext): ActorInteractionHandler = actorHandler
+
+	/**
+	 * Allows the user to scroll all [OscilloscopeSignalRowView]s by dragging with the mouse.
+	 * Forwards all other mouse events to the [container] items.
+	 */
+	private inner class ActorHandler(private val c: ActorViewContainer<Drawable>):
+		InputEventHandlerAdapter<ActorInteractionContext>({c.getActorInteractionHandler(it)}) {
+
+		/** The x-coordinate where the mouse was pressed. */
+		private var pressX = 0.0
+
+		/** The distance in x direction accumulated in a single drag cycle.*/
+		private var offsetX = 0.0
+
+		override fun mousePressed(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
+			if (container.getDrawableAt(context.location) is OscilloscopeSignalRowView) {
+				offsetX = 0.0
+				pressX = context.location.x
+				return this
+			}
+			return super.mousePressed(context)
+		}
+
+		override fun mouseDragged(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
+			offsetX = context.location.x - pressX
+
+			// Only propagate new scroll value, intentionally don't update scrollX property
+			propagateScrollX(max(0.0, scrollX + offsetX))
+
+			invalidate()
+			validate()
+
+			return this
+		}
+
+		override fun mouseReleased(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
+			scrollX = max(0.0, scrollX + offsetX)
+			offsetX = 0.0
+			return null
+		}
+	}
+
+	private fun propagateScrollX(newScrollX: Double) {
+		container.drawables
+			.filterIsInstance<OscilloscopeSignalRowView>()
+			.forEach { it.scrollX = newScrollX }
+		scaleRowView.timelineView.scrollX = newScrollX
+	}
 
 	/** ---- [ActorView] */
 
 	override fun executionStarted(signalHandler: SignalHandler) {
 		super.executionStarted(signalHandler)
+		scrollX = 0.0
 		model.enabled = visible
 		if (visible) {
 			rows.forEach { it.bindDrawer() }

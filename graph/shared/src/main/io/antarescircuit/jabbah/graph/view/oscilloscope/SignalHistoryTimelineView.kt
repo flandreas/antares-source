@@ -16,6 +16,9 @@ import kotlin.math.max
 /** Draws a [SignalHistoryTimeline] as a single row of an [OscilloscopeView].*/
 interface SignalHistoryTimelineView : RectangularDrawable {
 
+	/** The distance (in model coordinate space) in x direction the view has been scrolled by the user.*/
+	var scrollX: Double
+
 	/**
 	 * Binds this [SignalHistoryTimelineView] at start of execution with relevant runtime
 	 * information.
@@ -78,6 +81,8 @@ class SignalHistoryTimelineViewImpl(
 
 	private var minDisplayableTime: Long = 0
 
+	override var scrollX: Double = 0.0
+
 	/** ---- [SignalHistoryTimelineView] */
 
 	override fun bind(gridSignalHistory: SignalHistory<Any>?, timeline: SignalHistoryTimeline?) {
@@ -117,7 +122,7 @@ class SignalHistoryTimelineViewImpl(
 	private fun drawLabel(context: DrawContext, time: Long, refTime: Long, lastLabelMinX: Double?): Double? {
 		var newLastLabelMinX = lastLabelMinX
 
-		val x = max(rightBorder - timeline!!.getX(time), bounds.minX)
+		val x = max(rightBorder - timeline!!.getX(time) + scrollX, bounds.minX)
 		if (x <= bounds.minX) {
 			//break
 			return null
@@ -128,8 +133,10 @@ class SignalHistoryTimelineViewImpl(
 
 		if (newLastLabelMinX == null || label.boundingBox.maxX + MIN_LABEL_GAP < newLastLabelMinX) {
 			newLastLabelMinX = label.boundingBox.minX
-			context.g.drawLine(x, 0.0, x, LINE_LENGTH)
-			label.draw(context)
+			if (label.boundingBox.maxX < rightBorder) {
+				context.g.drawLine(x, 0.0, x, LINE_LENGTH)
+				label.draw(context)
+			}
 		}
 
 		return newLastLabelMinX

@@ -69,6 +69,10 @@ image::user-manual/oscilloscope/oscilloscope-scale.png[Probes, 600, align="cente
 
 Note also the three gray dots in the first and second rows. These indicate that there are no more data values available for the given point in time. Antares only stores a certain number of captured signals; if this number is reached, older values are deleted. You can configure this number in the user preferences (see below).
 
+=== Scrolling the signal curve
+
+New signals always arrive at the right edge of each signal row, and then move towards the left edge when time passes, and eventually leave the visible area. The oscilloscope allows to scroll the visible area horizontally by clicking on a signal row and dragging horizontally.
+
 == Simulation in "Real-Time" Mode
 
 In "Real-Time" oscilloscope mode, the oscilloscope uses the real simulation time when capturing signal changes in the circuit. Therefore, real propagation delays of circuit components become transparent in signal curves.

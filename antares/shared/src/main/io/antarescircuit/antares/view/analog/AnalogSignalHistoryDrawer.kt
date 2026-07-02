@@ -37,14 +37,16 @@ class AnalogSignalHistoryDrawer(
 		yAxis!!.setMinMax(signalHistory?.minimum, signalHistory?.maximum)
 
 		for (entry in signalHistory!!.getReverseEntriesUntil(0)) {
-			val x = rightBorder - timeline!!.getX(entry.time)
+			val x = rightBorder - timeline!!.getX(entry.time) + scrollX
 			val y = signalY(entry)
 			if (lastEntry == null) {
 				// Right border
 				lastPoint = Point2D(x, y)
 				effNextX = max(x, bounds.minX)
 
-				drawRightBorder(context, effNextX, y)
+				if (effNextX <= rightBorder) {
+					drawRightBorder(context, effNextX, y)
+				}
 
 				if (x <= bounds.minX) {
 					break
@@ -54,9 +56,11 @@ class AnalogSignalHistoryDrawer(
 				val nextY = y
 				effNextX = max(nextX, bounds.minX)
 
-				drawNonHorizontalSegment(context, lastPoint.x, lastPoint.y, effNextX, nextY)
+				if (effNextX < rightBorder) {
+					drawNonHorizontalSegment(context, lastPoint.x, lastPoint.y, effNextX, nextY)
+				}
 
-				if (nextX <= bounds.minX) {
+				if (effNextX <= bounds.minX) {
 					break
 				}
 

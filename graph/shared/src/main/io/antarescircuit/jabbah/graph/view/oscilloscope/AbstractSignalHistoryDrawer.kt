@@ -1,12 +1,14 @@
 package io.antarescircuit.jabbah.graph.view.oscilloscope
 
 import io.antarescircuit.jabbah.base.Properties
+import io.antarescircuit.jabbah.base.geom.Point2D
 import io.antarescircuit.jabbah.base.geom.Rectangle2D
 import io.antarescircuit.jabbah.base.module.BaseModule
 import io.antarescircuit.jabbah.draw.DrawContext
 import io.antarescircuit.jabbah.draw.drawable.AbstractRectangle
 import io.antarescircuit.jabbah.draw.drawable.RectangularDrawable
 import io.antarescircuit.jabbah.draw.graphics.CompositeColor
+import io.antarescircuit.jabbah.draw.graphics.LinearColorGradient
 import io.antarescircuit.jabbah.draw.graphics.Stroke
 import io.antarescircuit.jabbah.graph.model.oscilloscope.SignalHistory
 import io.antarescircuit.jabbah.graph.model.oscilloscope.SignalHistoryEntry
@@ -15,7 +17,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 abstract class AbstractSignalHistoryDrawer<T: Any>(
-	private val rightInset: Int,
+	protected val rightInset: Int,
 	private val background: CompositeColor,
 	protected val yAxis: SignalHistoryYAxis<T>?
 ): AbstractRectangle(Rectangle2D()), SignalHistoryDrawer<T> {
@@ -36,6 +38,8 @@ abstract class AbstractSignalHistoryDrawer<T: Any>(
 		private const val BUFFER_END_CIRCLE_RADIUS = 2.0
 		private const val BUFFER_END_CIRCLE_DIST = 6.0
 		const val BUFFER_END_WIDTH = BUFFER_END_CIRCLE_COUNT * BUFFER_END_CIRCLE_DIST + 2 * BUFFER_END_CIRCLE_RADIUS
+
+		private const val OFFSET_INDICATOR_WIDTH = 20
 	}
 
 	/** The [SignalHistory] drawn by this [AbstractSignalHistoryDrawer].*/
@@ -55,7 +59,17 @@ abstract class AbstractSignalHistoryDrawer<T: Any>(
 
 	protected val fillSignal: Boolean get() = BaseModule.properties.getBoolean(PROP_FILL_SIGNAL)
 
+	/** Used for painting an indicator if the drawer is offset, i.e. [scrollX] is not zero. */
+	private val offsetIndicatorGradient = LinearColorGradient(
+		Point2D.ZERO,
+		background.backgroundColor.withAlpha(0),
+		Point2D(OFFSET_INDICATOR_WIDTH, 0),
+		background.backgroundColor.darker()
+	)
+
 	/** ---- [SignalHistoryDrawer] interface */
+
+	override var scrollX: Double = 0.0
 
 	override fun bind(
 		signalHistory: SignalHistory<T>?,
@@ -68,7 +82,6 @@ abstract class AbstractSignalHistoryDrawer<T: Any>(
 		this.timeline = timeline
 		this.color = color
 	}
-
 
 	/** ---- [RectangularDrawable] interface*/
 
@@ -87,6 +100,10 @@ abstract class AbstractSignalHistoryDrawer<T: Any>(
 				drawGrid(context)
 			}
 			drawCurve(context)
+		}
+
+		if (scrollX > 0) {
+			drawOffsetIndicator(context)
 		}
 	}
 
@@ -125,11 +142,13 @@ abstract class AbstractSignalHistoryDrawer<T: Any>(
 		if (gridSignalHistory != null) {
 			context.g.stroke = GRID_LINE_STROKE
 			for (entry in gridSignalHistory!!.getReverseEntriesUntil(0)) {
-				val x = max(rightBorder - timeline!!.getX(entry.time), bounds.minX)
+				val x = max(rightBorder - timeline!!.getX(entry.time) + scrollX, bounds.minX)
 				if (x <= bounds.minX) {
 					break
 				}
-				context.g.drawLine(x, bounds.minY, x, bounds.maxY)
+				if (x < rightBorder ) {
+					context.g.drawLine(x, bounds.minY, x, bounds.maxY)
+				}
 			}
 		}
 	}
@@ -185,6 +204,15 @@ abstract class AbstractSignalHistoryDrawer<T: Any>(
 		for (i in 1..BUFFER_END_CIRCLE_COUNT) {
 			context.g.fillCircle(x, y, BUFFER_END_CIRCLE_RADIUS)
 			x -= BUFFER_END_CIRCLE_DIST
+		}
+	}
+
+	private fun drawOffsetIndicator(context: DrawContext) {
+		context.g.paint = offsetIndicatorGradient
+
+		// Use translated context so that offsetIndicatorGradient can be express in relative coordinates
+		context.translated(bounds.maxX - rightInset - OFFSET_INDICATOR_WIDTH + START_SIZE, bounds.minY) {
+			it.g.fillRect(0, 0, OFFSET_INDICATOR_WIDTH, bounds.heightInt)
 		}
 	}
 }

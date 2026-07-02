@@ -74,6 +74,13 @@ class OscilloscopeSignalRowView(
 			probeView.name = value
 		}
 
+	/** The distance (in model coordinate space) in x direction the view has been scrolled by the user.*/
+	var scrollX: Double = 0.0
+		set(value) {
+			field = value
+			drawer.scrollX = value
+		}
+
 	fun updateGeometry() {
 		drawer.setBounds(DRAWER_X, 0.0, oscilloscopeView.drawerWidth, oscilloscopeView.rowHeight.toDouble())
 		yAxis?.setBounds(DRAWER_X + oscilloscopeView.drawerWidth, 0.0, yAxis.preferredWidth.toDouble(), oscilloscopeView.rowHeight.toDouble())

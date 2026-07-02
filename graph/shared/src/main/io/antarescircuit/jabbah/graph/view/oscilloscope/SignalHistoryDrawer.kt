@@ -7,6 +7,9 @@ import io.antarescircuit.jabbah.graph.model.oscilloscope.SignalHistory
 /** Draws a [SignalHistory] as a single row of an [OscilloscopeView]. */
 interface SignalHistoryDrawer<T: Any> : RectangularDrawable {
 
+	/** The distance (in model coordinate space) in x direction the view has been scrolled by the user.*/
+	var scrollX: Double
+
 	/** Binds this [SignalHistoryDrawer] with the data source it displays. */
 	fun bind(
 		signalHistory: SignalHistory<T>?,

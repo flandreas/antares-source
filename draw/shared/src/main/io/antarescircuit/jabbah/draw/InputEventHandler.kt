@@ -37,7 +37,7 @@ interface InputEventHandler<in T : InputEventContext> {
  * @param successor the optional successor to which events are forwarded
  */
 open class InputEventHandlerAdapter<in T : InputEventContext>(
-	private val successor: InputEventHandler<T>? = null
+	private val successor: (T) -> InputEventHandler<T>? = {null}
 ) : InputEventHandler<T> {
 
     companion object {
@@ -45,31 +45,31 @@ open class InputEventHandlerAdapter<in T : InputEventContext>(
     }
 
     override fun mouseClicked(context: T): InputEventHandler<T>? {
-        return successor?.mouseClicked(context)
+        return successor(context)?.mouseClicked(context)
     }
 
     override fun mouseMoved(context: T): InputEventHandler<T>? {
-        return successor?.mouseMoved(context)
+        return successor(context)?.mouseMoved(context)
     }
 
     override fun mousePressed(context: T): InputEventHandler<T>? {
-        return successor?.mousePressed(context)
+        return successor(context)?.mousePressed(context)
     }
 
     override fun mouseDragged(context: T): InputEventHandler<T>? {
-        return successor?.mouseDragged(context)
+        return successor(context)?.mouseDragged(context)
     }
 
     override fun mouseReleased(context: T): InputEventHandler<T>? {
-        return successor?.mouseReleased(context)
+        return successor(context)?.mouseReleased(context)
     }
 
     override fun keyPressed(context: T): InputEventHandler<T>? {
-        return successor?.keyPressed(context)
+        return successor(context)?.keyPressed(context)
     }
 
     override fun keyReleased(context: T): InputEventHandler<T>? {
-        return successor?.keyReleased(context)
+        return successor(context)?.keyReleased(context)
     }
 }
 

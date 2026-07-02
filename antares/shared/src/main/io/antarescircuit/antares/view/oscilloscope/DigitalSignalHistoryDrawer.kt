@@ -5,6 +5,7 @@ import io.antarescircuit.antares.view.style.AntaresTheme
 import io.antarescircuit.jabbah.base.System
 import io.antarescircuit.jabbah.base.geom.Path
 import io.antarescircuit.jabbah.base.geom.Point2D
+import io.antarescircuit.jabbah.base.geom.Rectangle2D
 import io.antarescircuit.jabbah.draw.DrawContext
 import io.antarescircuit.jabbah.draw.style.Themes
 import io.antarescircuit.jabbah.edit.model.text.HorizontalAlignment
@@ -42,6 +43,8 @@ class DigitalSignalHistoryDrawer(
 
 	override val gridEnabled: Boolean get() = true
 
+	private val clipBuffer = Rectangle2D()
+
 	override fun drawCurve(context: DrawContext) {
 		val singleBit = signalHistory!!.last().signal.bitWidth.width == 1
 		var lastPoint = Point2D.ZERO
@@ -49,21 +52,26 @@ class DigitalSignalHistoryDrawer(
 		var effNextX: Double = rightBorder
 		context.g.stroke = CURVE_STROKE
 
+		context.g.getClipBounds(clipBuffer)
+		context.g.setClipBounds(bounds.xInt, bounds.yInt, bounds.widthInt - rightInset + START_SIZE.toInt(), bounds.heightInt)
+
 		for (entry in signalHistory!!.getReverseEntriesUntil(0)) {
-			val x = rightBorder - timeline!!.getX(entry.time)
+			val x = rightBorder - timeline!!.getX(entry.time) + scrollX
 			val y = signalY(entry)
 			if (lastEntry == null) {
 				// Right border
 				lastPoint = Point2D(x, y)
 				effNextX = max(x, bounds.minX)
 
-				if (singleBit) {
-					drawRightBorder(context, effNextX, y)
-				} else {
-					multiBitLabel.text = entry.signal.hexString
-					multiBitLabel.horizontalAlignment = HorizontalAlignment.LEFT
-					multiBitLabel.location = Point2D(effNextX + MULTI_BIT_INSET, baseLineY - signalHeight / 2)
-					drawMultiBitRightBorder(context, effNextX)
+				if (effNextX <= rightBorder) {
+					if (singleBit) {
+						drawRightBorder(context, effNextX, y)
+					} else {
+						multiBitLabel.text = entry.signal.hexString
+						multiBitLabel.horizontalAlignment = HorizontalAlignment.LEFT
+						multiBitLabel.location = Point2D(effNextX + MULTI_BIT_INSET, baseLineY - signalHeight / 2)
+						drawMultiBitRightBorder(context, effNextX)
+					}
 				}
 
 				if (x <= bounds.minX) {
@@ -74,13 +82,16 @@ class DigitalSignalHistoryDrawer(
 				val nextY = y
 				effNextX = max(nextX, bounds.minX)
 
-				if (singleBit) {
-					drawHorizontalSegment(context, lastPoint.x, lastPoint.y, effNextX, nextY)
-				} else {
-					multiBitLabel.text = entry.signal.hexString
-					multiBitLabel.horizontalAlignment = HorizontalAlignment.CENTER
-					multiBitLabel.location = Point2D(effNextX + (lastPoint.x - effNextX) / 2, baseLineY - signalHeight / 2)
-					drawMultiBitSegment(context, xR = lastPoint.x, xL = effNextX, first = false)
+				if (effNextX < rightBorder) {
+					if (singleBit) {
+						drawHorizontalSegment(context, lastPoint.x, lastPoint.y, effNextX, nextY)
+					} else {
+						multiBitLabel.text = entry.signal.hexString
+						multiBitLabel.horizontalAlignment = HorizontalAlignment.CENTER
+						multiBitLabel.location =
+							Point2D(effNextX + (lastPoint.x - effNextX) / 2, baseLineY - signalHeight / 2)
+						drawMultiBitSegment(context, xR = lastPoint.x, xL = effNextX, first = false)
+					}
 				}
 
 				if (nextX <= bounds.minX) {
@@ -98,6 +109,8 @@ class DigitalSignalHistoryDrawer(
 				drawBufferEnd(context, effNextX)
 			}
 		}
+
+		context.g.setClipBounds(clipBuffer)
 	}
 
 	private fun drawMultiBitRightBorder(context: DrawContext, xL: Double) {
