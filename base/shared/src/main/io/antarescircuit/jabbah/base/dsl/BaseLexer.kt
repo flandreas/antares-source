@@ -140,12 +140,16 @@ open class BaseLexer(text: String) : AbstractLexer(text) {
 
 	protected open fun id(state: State): Token<String> {
 		val result = StringBuilder()
-		while (state.currentChar != null && state.currentChar!!.isLetterOrDigit()) {
+		while (state.currentChar != null && isIdChar(state.currentChar!!)) {
 			result.append(state.currentChar)
 			advance(state)
 		}
 		val name = result.toString()
 		return getReservedKeyword(name) ?: idToken(name)
+	}
+
+	private fun isIdChar(c: Char): Boolean {
+		return c.isLetterOrDigit() || c == '_'
 	}
 
 	private fun quotedId(state: State): Token<String> {

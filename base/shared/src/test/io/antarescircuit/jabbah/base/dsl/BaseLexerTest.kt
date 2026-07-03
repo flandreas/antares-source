@@ -6,11 +6,18 @@ class BaseLexerTest : AbstractLexerTest() {
 
 	@Test
 	fun shouldParseIdentifiers() {
-		val lexer = BaseLexer("These are identifiers")
+		val lexer = BaseLexer("These are identifiers99")
 
 		assertId("These", lexer)
 		assertId("are", lexer)
-		assertId("identifiers", lexer)
+		assertId("identifiers99", lexer)
+	}
+
+	@Test
+	fun shouldSupportSpecialCharactersInIdentifiers() {
+		val lexer = BaseLexer("A_B_")
+
+		assertId("A_B_", lexer)
 	}
 
 	@Test
