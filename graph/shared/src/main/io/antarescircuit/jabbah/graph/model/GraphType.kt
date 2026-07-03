@@ -15,6 +15,8 @@ interface GraphType: Bean {
 
 	val isCombiningNets: Boolean
 
+	val supportOscilloscopeSignalCurveStyleSelection: Boolean get() = true
+
 	/**
 	 * Checks whether a [Graph] of this [GraphType] can contain [Vertice]s
 	 * instantiated from the specified [LibraryElement].

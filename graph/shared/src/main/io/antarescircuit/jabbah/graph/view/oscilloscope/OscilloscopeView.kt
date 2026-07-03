@@ -185,6 +185,18 @@ class OscilloscopeView(
 	var editable = true
 		private set
 
+	var signalCurveStyle: OscilloscopeSignalCurveStyle = OscilloscopeSignalCurveStyle.RECTANGULAR
+		set(value) {
+			if (field != value) {
+				field = value
+				propagateSignalCurveStyle()
+				if (isNotReading) {
+					invalidate()
+					validate()
+				}
+			}
+		}
+
 	init {
 		eventBus.register(ApplicationModeEvent::class, applicationModeHandler)
 		eventBus.register(OscilloscopeProbeNameEvent::class, probeNameHandler)
@@ -388,6 +400,12 @@ class OscilloscopeView(
 		scaleRowView.timelineView.scrollX = newScrollX
 	}
 
+	private fun propagateSignalCurveStyle() {
+		container.drawables
+			.filterIsInstance<OscilloscopeSignalRowView>()
+			.forEach { it.signalCurveStyle = signalCurveStyle }
+	}
+
 	/** ---- [ActorView] */
 
 	override fun executionStarted(signalHandler: SignalHandler) {
@@ -397,6 +415,7 @@ class OscilloscopeView(
 		if (visible) {
 			rows.forEach { it.bindDrawer() }
 			scaleRowView.bindDrawer()
+			propagateSignalCurveStyle()
 		}
 	}
 
@@ -419,6 +438,7 @@ class OscilloscopeView(
 		super.write(writer)
 		writer.writeDouble("scale", persistentTimelineScale)
 		writer.writeBoolean("visible", visible)
+		writer.writeString("signalCurveStyle", signalCurveStyle.customName)
 	}
 
 	override fun read(reader: StoreReader) {
@@ -428,6 +448,9 @@ class OscilloscopeView(
 		}
 		if (reader.hasAttribute("visible")) {
 			visible = reader.readBoolean("visible")
+		}
+		if (reader.hasAttribute("signalCurveStyle")) {
+			signalCurveStyle = OscilloscopeSignalCurveStyle.withCustomName(reader.readString("signalCurveStyle"))
 		}
 	}
 

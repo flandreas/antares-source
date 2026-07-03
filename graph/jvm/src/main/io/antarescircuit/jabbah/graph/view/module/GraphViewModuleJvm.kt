@@ -41,6 +41,7 @@ import io.antarescircuit.jabbah.graph.view.*
 import io.antarescircuit.jabbah.graph.view.graph.GraphViewCopyPasteService
 import io.antarescircuit.jabbah.graph.view.net.edge.LayoutType
 import io.antarescircuit.jabbah.graph.view.net.netview.NetViewStyle
+import io.antarescircuit.jabbah.graph.view.oscilloscope.OscilloscopeSignalCurveStyle
 import io.antarescircuit.jabbah.graph.view.oscilloscope.OscilloscopeView
 import io.antarescircuit.jabbah.graph.view.port.PortLabelPosition
 import io.antarescircuit.jabbah.graph.view.vertice.ControlViewVisibility
@@ -107,6 +108,7 @@ object GraphViewModuleJvm : AbstractModule() {
 		registry.registerRenderer(ControlViewVisibility::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(LibraryVisibility::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(SignalHistoriesType::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(OscilloscopeSignalCurveStyle::class.java, EnumRenderer::class.java)
 	}
 
 	@Suppress("UNCHECKED_CAST")
@@ -120,6 +122,7 @@ object GraphViewModuleJvm : AbstractModule() {
 		registry.registerEditor(ControlViewVisibility::class.java, ControlViewVisibilityEditor::class.java)
 		registry.registerEditor(LibraryVisibility::class.java, LibraryVisibilityEditor::class.java)
 		registry.registerEditor(SignalHistoriesType::class.java, SignalHistoriesTypeEditor::class.java)
+		registry.registerEditor(OscilloscopeSignalCurveStyle::class.java, OscilloscopeSignalCurveStyleEditor::class.java)
 	}
 
 	private fun configureSelectionModels(factory: SelectionModelFactory) {

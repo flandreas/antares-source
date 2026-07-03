@@ -57,7 +57,7 @@ class AnalogSignalHistoryDrawer(
 				effNextX = max(nextX, bounds.minX)
 
 				if (effNextX < rightBorder) {
-					drawNonHorizontalSegment(context, lastPoint.x, lastPoint.y, effNextX, nextY)
+					drawSegment(context, lastPoint.x, lastPoint.y, effNextX, nextY)
 				}
 
 				if (effNextX <= bounds.minX) {

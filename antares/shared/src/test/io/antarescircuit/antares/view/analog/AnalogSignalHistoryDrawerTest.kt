@@ -14,6 +14,7 @@ import io.antarescircuit.jabbah.draw.DrawContext
 import io.antarescircuit.jabbah.draw.graphics.DrawGraphicsModule
 import io.antarescircuit.jabbah.draw.graphics.Graphics2D
 import io.antarescircuit.jabbah.graph.model.oscilloscope.SignalHistory
+import io.antarescircuit.jabbah.graph.view.oscilloscope.OscilloscopeSignalCurveStyle
 import io.antarescircuit.jabbah.graph.view.oscilloscope.OscilloscopeViewTimeline
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -45,6 +46,7 @@ class AnalogSignalHistoryDrawerTest {
 		signalHistory.add(AnalogSignal(5.0), 2)
 		signalHistory.add(AnalogSignal(0.0), 3)
 
+		drawer.signalCurveStyle = OscilloscopeSignalCurveStyle.DIAGONAL
 		drawer.drawCurve(drawContext)
 
 		assertEquals(2, lines.size)
@@ -58,6 +60,7 @@ class AnalogSignalHistoryDrawerTest {
 		signalHistory.add(AnalogSignal(-5.0), 2)
 		signalHistory.add(AnalogSignal(5.0), 3)
 
+		drawer.signalCurveStyle = OscilloscopeSignalCurveStyle.DIAGONAL
 		drawer.drawCurve(drawContext)
 
 		assertEquals(2, lines.size)

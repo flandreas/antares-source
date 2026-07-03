@@ -21,6 +21,8 @@ enum class AntaresGraphTypes(
 
 	Digital("digital", false, true) {
 
+		override val supportOscilloscopeSignalCurveStyleSelection: Boolean get() = false
+
 		@Suppress("UNCHECKED_CAST")
 		override fun <I: Any, O: Any> adaptTo(other: GraphType): GraphTypeSignalAdapter<I, O> =
 			when (other) {

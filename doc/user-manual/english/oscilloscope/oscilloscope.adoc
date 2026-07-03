@@ -100,3 +100,18 @@ image::user-manual/oscilloscope/oscilloscope-unicolor.png[Probes, 600, align="ce
 Fill signal curve::
 Determines whether signal curves are filled or not.
 
+== Properties
+
+Scaling:: Defines the amount by which the signal curve is scaled horizontally.
+
+Mode:: Choose between "Real-Time" and "Clocked". See description in previous sections.
+
+Nax. number of signal values:: Allows to overwrite the corresponding user preference setting for individual oscilloscopes.
+
+Signal curve style:: The signal history contains of a series of values for individual moments in time. Drawing the signal curve can be done in two different ways:
+
+- Rectangular: Two consecutive points are connected by two rectangular line segments.
+- Diagonal: Two consecutive points are connected by a diagonal line
+
+The default option is "Rectangular". For digital circuit, "Rectangular" is the only option, and the oscilloscope doesn't offer the "Signal curve style" property. Analog circuits with non-linear components (e.g. a LC oscillator), the "Diagonal" option leads to much smoother curves.
+

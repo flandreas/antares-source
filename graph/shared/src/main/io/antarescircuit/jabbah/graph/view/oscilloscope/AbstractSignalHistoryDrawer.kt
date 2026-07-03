@@ -12,6 +12,8 @@ import io.antarescircuit.jabbah.draw.graphics.LinearColorGradient
 import io.antarescircuit.jabbah.draw.graphics.Stroke
 import io.antarescircuit.jabbah.graph.model.oscilloscope.SignalHistory
 import io.antarescircuit.jabbah.graph.model.oscilloscope.SignalHistoryEntry
+import io.antarescircuit.jabbah.graph.view.oscilloscope.OscilloscopeSignalCurveStyle.DIAGONAL
+import io.antarescircuit.jabbah.graph.view.oscilloscope.OscilloscopeSignalCurveStyle.RECTANGULAR
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -70,6 +72,8 @@ abstract class AbstractSignalHistoryDrawer<T: Any>(
 	/** ---- [SignalHistoryDrawer] interface */
 
 	override var scrollX: Double = 0.0
+
+	override var signalCurveStyle: OscilloscopeSignalCurveStyle = RECTANGULAR
 
 	override fun bind(
 		signalHistory: SignalHistory<T>?,
@@ -163,6 +167,13 @@ abstract class AbstractSignalHistoryDrawer<T: Any>(
 			context.g.drawLine(rightBorder, y, xL, y)
 		}
 		context.g.fillOval(rightBorder - START_SIZE, y - START_SIZE, 2 * START_SIZE, 2 * START_SIZE)
+	}
+
+	protected fun drawSegment(context: DrawContext, xR: Double, yR: Double, xL: Double, yL: Double) {
+		when (signalCurveStyle) {
+            RECTANGULAR -> drawHorizontalSegment(context, xR, yR, xL, yL)
+            DIAGONAL -> drawNonHorizontalSegment(context, xR, yR, xL, yL)
+        }
 	}
 
 	protected fun drawHorizontalSegment(context: DrawContext, xR: Double, yR: Double, xL: Double, yL: Double) {

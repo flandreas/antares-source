@@ -23,6 +23,7 @@ import io.antarescircuit.jabbah.graph.view.port.PortLabelPosition
 import io.antarescircuit.jabbah.graph.view.vertice.ControlViewVisibility
 import io.antarescircuit.jabbah.graph.view.vertice.VerticeLabelPosition
 import com.l2fprod.common.beans.editor.ComboBoxPropertyEditor
+import io.antarescircuit.jabbah.graph.view.oscilloscope.OscilloscopeSignalCurveStyle
 import javax.swing.JComboBox
 
 object GraphProperties {
@@ -151,5 +152,12 @@ class SignalHistoriesTypeEditor : ComboBoxPropertyEditor() {
 	init {
 		setAvailableValues(SignalHistoriesType.entries.toTypedArray())
 		(editor as JComboBox<SignalHistoriesType>).renderer = EnumRenderer()
+	}
+}
+
+class OscilloscopeSignalCurveStyleEditor : ComboBoxPropertyEditor() {
+	init {
+		setAvailableValues(OscilloscopeSignalCurveStyle.entries.toTypedArray())
+		(editor as JComboBox<OscilloscopeSignalCurveStyle>).renderer = EnumRenderer()
 	}
 }

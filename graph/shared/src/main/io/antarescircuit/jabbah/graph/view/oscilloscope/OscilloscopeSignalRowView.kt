@@ -17,6 +17,7 @@ import io.antarescircuit.jabbah.draw.style.StyleType
 import io.antarescircuit.jabbah.edit.EditInputEventContext
 import io.antarescircuit.jabbah.execution.actor.ActorViewContainer
 import io.antarescircuit.jabbah.graph.view.app.oscilloscope.OscilloscopeViewService
+import io.antarescircuit.jabbah.graph.view.oscilloscope.OscilloscopeSignalCurveStyle.RECTANGULAR
 import io.antarescircuit.jabbah.graph.view.oscilloscope.OscilloscopeView.Companion.DRAWER_X
 
 /**
@@ -80,6 +81,13 @@ class OscilloscopeSignalRowView(
 			field = value
 			drawer.scrollX = value
 		}
+
+	var signalCurveStyle: OscilloscopeSignalCurveStyle = RECTANGULAR
+		set(value) {
+			field = value
+			drawer.signalCurveStyle = value
+		}
+
 
 	fun updateGeometry() {
 		drawer.setBounds(DRAWER_X, 0.0, oscilloscopeView.drawerWidth, oscilloscopeView.rowHeight.toDouble())

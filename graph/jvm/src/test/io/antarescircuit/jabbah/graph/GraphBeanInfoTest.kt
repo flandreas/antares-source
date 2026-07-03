@@ -37,8 +37,13 @@ class GraphBeanInfoTest {
 
 	init {
 		GraphUITestRule.configure()
-		view = DrawingViewMockBuilder().build()
+		view = DrawingViewMockBuilder()
+			.withDrawing(GraphViewImpl())
+			.build()
 		every { editor.active } returns true
+
+		@Suppress("UNCHECKED_CAST")
+		every { editor.drawing } returns view.drawing as Drawing<Component>
 
 		@Suppress("UNCHECKED_CAST")
 		every { editor.view } returns view as DrawingView<Component, Drawing<Component>>

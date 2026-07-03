@@ -10,6 +10,8 @@ interface SignalHistoryDrawer<T: Any> : RectangularDrawable {
 	/** The distance (in model coordinate space) in x direction the view has been scrolled by the user.*/
 	var scrollX: Double
 
+	var signalCurveStyle: OscilloscopeSignalCurveStyle
+
 	/** Binds this [SignalHistoryDrawer] with the data source it displays. */
 	fun bind(
 		signalHistory: SignalHistory<T>?,
