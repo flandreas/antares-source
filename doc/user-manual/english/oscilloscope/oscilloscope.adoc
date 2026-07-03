@@ -71,7 +71,7 @@ Note also the three gray dots in the first and second rows. These indicate that 
 
 === Scrolling the signal curve
 
-New signals always arrive at the right edge of each signal row, and then move towards the left edge when time passes, and eventually leave the visible area. The oscilloscope allows to scroll the visible area horizontally by clicking on a signal row and dragging horizontally.
+New signals always arrive at the right edge of each signal row, and then move towards the left edge when time passes, and eventually leave the visible area. The oscilloscope allows to scroll the visible area horizontally by clicking on a signal row and dragging horizontally. Double-clicking resets the scrolling offset.
 
 == Simulation in "Real-Time" Mode
 

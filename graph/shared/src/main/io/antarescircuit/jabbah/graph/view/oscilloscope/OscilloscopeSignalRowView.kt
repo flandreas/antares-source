@@ -125,7 +125,7 @@ class OscilloscopeSignalRowView(
 	private var tooltipLocation = Rectangle2D()
 
 	override fun <T: InputEventContext> getExecutionTooltip(context: T): Tooltip {
-		val time = oscilloscopeView.scaleRowView.timelineView.getTime(context.x)
+		val time = oscilloscopeView.scaleRowView.timelineView.getTime(context.x - scrollX)
 		val entry = oscilloscopeView.model.getSignalHistory(name)!!.getEntryAt(time.absoluteTime)
 
 		val absMouse = toAbsoluteLocation(context.location)

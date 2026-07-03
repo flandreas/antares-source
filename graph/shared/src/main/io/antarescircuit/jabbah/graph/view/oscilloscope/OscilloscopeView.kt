@@ -348,6 +348,15 @@ class OscilloscopeView(
 			return super.mousePressed(context)
 		}
 
+		override fun mouseClicked(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
+			if (context.mouseEvent?.clickCount == 2) {
+				if (container.getDrawableAt(context.location) is OscilloscopeSignalRowView) {
+					resetScrollX()
+				}
+			}
+			return super.mouseClicked(context)
+		}
+
 		override fun mouseDragged(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
 			offsetX = context.location.x - pressX
 
@@ -364,6 +373,11 @@ class OscilloscopeView(
 			scrollX = max(0.0, scrollX + offsetX)
 			offsetX = 0.0
 			return null
+		}
+
+		private fun resetScrollX() {
+			offsetX = 0.0
+			scrollX = 0.0
 		}
 	}
 
