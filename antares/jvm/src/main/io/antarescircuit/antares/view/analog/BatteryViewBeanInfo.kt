@@ -2,14 +2,12 @@ package io.antarescircuit.antares.view.analog
 
 import com.l2fprod.common.propertysheet.Property
 import io.antarescircuit.jabbah.edit.Editor
-import io.antarescircuit.jabbah.edit.componentBeanProvider
-import io.antarescircuit.jabbah.edit.model.EditProperties
 
 @Suppress("unused") // Reflection
 class BatteryViewBeanInfo : AnalogComponentViewBeanInfo<BatteryView>() {
 
 	companion object {
-		private val voltage = EditProperties.volt("voltage", "element.property.voltage", componentBeanProvider)
+		private val voltage = AnalogProperties.volt()
 	}
 
 	override fun addProperties(bean: BatteryView, editor: Editor, properties: MutableList<Property>) {

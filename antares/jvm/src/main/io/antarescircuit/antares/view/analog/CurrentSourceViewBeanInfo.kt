@@ -2,14 +2,12 @@ package io.antarescircuit.antares.view.analog
 
 import com.l2fprod.common.propertysheet.Property
 import io.antarescircuit.jabbah.edit.Editor
-import io.antarescircuit.jabbah.edit.componentBeanProvider
-import io.antarescircuit.jabbah.edit.model.EditProperties
 
 @Suppress("unused") // Reflection
 class CurrentSourceViewBeanInfo : AnalogComponentViewBeanInfo<CurrentSourceView>() {
 
 	companion object {
-		private val current = EditProperties.ampere("current", "element.property.current", componentBeanProvider)
+		private val current = AnalogProperties.ampere()
 	}
 
 	override fun addProperties(bean: CurrentSourceView, editor: Editor, properties: MutableList<Property>) {

@@ -12,8 +12,8 @@ class AnalogLEDViewBeanInfo : AnalogComponentViewBeanInfo<AnalogLEDView>() {
     companion object {
         private val name = EditProperties.untranslatableName()
         private val lightColor = AntaresProperties.lightColor(baseKey = "element.property.LightColor")
-        private val minCurrent = EditProperties.ampere("minCurrent", "library.element.LightBulb.minCurrent", componentBeanProvider)
-        private val maxCurrent = EditProperties.ampere("maxCurrent", "library.element.LightBulb.maxCurrent", componentBeanProvider)
+        private val minCurrent = AnalogProperties.ampere("minCurrent", "library.element.LightBulb.minCurrent", componentBeanProvider)
+        private val maxCurrent = AnalogProperties.ampere("maxCurrent", "library.element.LightBulb.maxCurrent", componentBeanProvider)
     }
 
     override fun addProperties(bean: AnalogLEDView, editor: Editor, properties: MutableList<Property>) {

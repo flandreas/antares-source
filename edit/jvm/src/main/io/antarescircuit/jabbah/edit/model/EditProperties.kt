@@ -191,7 +191,7 @@ object EditProperties {
 		return CommandPropertySwing(name, baseKey, Boolean::class.java, beanProvider)
 	}
 
-	private fun magnitudeValue(
+	fun magnitudeValue(
 		name: String,
 		baseKey: String,
 		beanProvider: BeanProvider = componentBeanProvider,
@@ -203,30 +203,6 @@ object EditProperties {
 		baseKey: String,
 		beanProvider: BeanProvider = componentBeanProvider
 	): MagnitudeValueProperty = magnitudeValue(name, baseKey, beanProvider, SIUnit.Ohm)
-
-	fun farad(
-		name: String,
-		baseKey: String,
-		beanProvider: BeanProvider = componentBeanProvider
-	): MagnitudeValueProperty = magnitudeValue(name, baseKey, beanProvider, SIUnit.Farad)
-
-	fun henry(
-		name: String,
-		baseKey: String,
-		beanProvider: BeanProvider = componentBeanProvider
-	): MagnitudeValueProperty = magnitudeValue(name, baseKey, beanProvider, SIUnit.Henry)
-
-	fun volt(
-		name: String,
-		baseKey: String,
-		beanProvider: BeanProvider = componentBeanProvider
-	): MagnitudeValueProperty = magnitudeValue(name, baseKey, beanProvider, SIUnit.Volt)
-
-	fun ampere(
-		name: String,
-		baseKey: String,
-		beanProvider: BeanProvider = componentBeanProvider
-	): MagnitudeValueProperty = magnitudeValue(name, baseKey, beanProvider, SIUnit.Ampere)
 
 	fun periodOrFrequency(
 		name: String,

@@ -1,5 +1,6 @@
 package io.antarescircuit.antares.model.analog
 
+import io.antarescircuit.antares.view.analog.AnalogGraphView
 import io.antarescircuit.antares.view.analog.engine.AnalogCircuitAnalysis
 import io.antarescircuit.antares.view.analog.engine.AnalogElement
 import io.antarescircuit.antares.view.analog.engine.AnalogElementMixin
@@ -33,6 +34,8 @@ class Inductor(
             }
         }
 
+    var variable: Boolean = false
+
     init {
         logic.setup(this.inductance.baseValue, getInternalCurrent(), true)
     }
@@ -47,11 +50,17 @@ class Inductor(
         } else if (reader.hasAttribute("inductance${MagnitudeValue.MAGNITUDE_VALUE_EXT}")) {
             inductance = MagnitudeValue.read("inductance", reader, SIUnit.Henry)
         }
+        if (reader.hasAttribute("variable")) {
+            variable = reader.readBoolean("variable")
+        }
     }
 
     override fun write(writer: StoreWriter) {
         super.write(writer)
         inductance.write("inductance", writer)
+        if (variable) {
+            writer.writeBoolean("variable", variable)
+        }
     }
 
     /** ---- [AnalogElement] */
@@ -78,5 +87,13 @@ class Inductor(
         if (logic.doStepRequiresRecalculation(voltDiff, analysis)) {
             requestAnalogReanalization(signalHandler)
         }
+    }
+
+    /** ---- [Inductor] */
+
+    fun setState(inductance: MagnitudeValue, signalHandler: SignalHandler, graphView: AnalogGraphView) {
+        this.inductance = inductance
+        graphView.requireAnalysis()
+        requestActingAfter(signalHandler, propagationDelay.value, createActorData(null))
     }
 }

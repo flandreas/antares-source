@@ -125,7 +125,7 @@ enum class SymbolStyle(
 			)
 
 			if (isVariable) {
-				drawVariableResistorArrow(context)
+				drawVariableArrow(context, -LENGTH - 3.0 * SCALE, 0.46)
 			}
 		}
 
@@ -158,11 +158,11 @@ enum class SymbolStyle(
 		}
 
 		override fun drawDiode(diode: OrientableRectangularVerticeView<*>, context: DrawContext) {
-			Companion.drawDiode(diode, context, false)
+            drawDiode(diode, context, false)
 		}
 
 		override fun drawAnalogLED(led: AnalogLEDView, context: DrawContext) {
-			Companion.drawAnalogLED(led, context, fill = false)
+            drawAnalogLED(led, context, fill = false)
 		}
 	},
 
@@ -230,7 +230,7 @@ enum class SymbolStyle(
 
 			if (isVariable) {
 				context.g.color = context.chooseForeground(resistor.foregroundColor)
-				drawVariableResistorArrow(context)
+				drawVariableArrow(context, -LENGTH - 3.0 * SCALE, 0.46)
 			}
 		}
 
@@ -248,11 +248,11 @@ enum class SymbolStyle(
 		}
 
 		override fun drawDiode(diode: OrientableRectangularVerticeView<*>, context: DrawContext) {
-			Companion.drawDiode(diode, context, true)
+			drawDiode(diode, context, true)
 		}
 
 		override fun drawAnalogLED(led: AnalogLEDView, context: DrawContext) {
-			Companion.drawAnalogLED(led, context, fill = true)
+			drawAnalogLED(led, context, fill = true)
 		}
 
 		override val orShapeConnectedPortViewLength: Int get() = (2 * SCALE * 0.35).toInt()
@@ -351,12 +351,12 @@ enum class SymbolStyle(
 		fun getSymbolFont(size: Size, font: Font): Font =
 			SYMBOL_FONT_CACHE.getOrPut(size) {
 				val font = AntaresViewModule.currentSymbolStyle.symbolStyle.getFont(font)
-				val f = if (size != Size.LARGE) 1.2f else 1.0f
+				val f = if (size != LARGE) 1.2f else 1.0f
 				return font.deriveFont((font.size * size.factor * f).toInt())
 			}
 
 		fun withName(customName: String): SymbolStyle {
-			for (symbolStyle in values()) {
+			for (symbolStyle in entries) {
 				if (symbolStyle.customName == customName) {
 					return symbolStyle
 				}
@@ -464,7 +464,8 @@ enum class SymbolStyle(
 			join = LineJoin.MITER
 		)
 
-		private val VARIABLE_RESISTOR_ARROW_PATH = System.createPath()
+		/** Origin is 3 scale unit below the tip of the arrow head. The arrow heads baseline is 2 scale units above the origin. */
+		private val VARIABLE_ARROW_HEAD_PATH = System.createPath()
 			.moveTo(0, -3 * SCALE)
 			.lineTo(0.5 * SCALE, -2.0 * SCALE)
 			.lineTo(-0.5 * SCALE, -2.0 * SCALE)
@@ -567,13 +568,13 @@ enum class SymbolStyle(
 			gate.drawBoxShape(context, foregroundColor, backgroundColor, stroke, text)
 		}
 
-		private fun drawVariableResistorArrow(context: DrawContext) {
-			context.g.translate(-LENGTH - 3.0 * SCALE, 0.0)
-			context.g.rotate(0.46)
-			context.g.fill(VARIABLE_RESISTOR_ARROW_PATH)
+		fun drawVariableArrow(context: DrawContext, dx: Double, angle: Double) {
+			context.g.translate(dx, 0.0)
+			context.g.rotate(angle)
+			context.g.fill(VARIABLE_ARROW_HEAD_PATH)
 			context.g.drawLine(0.0, -2.0 * SCALE, 0.0, 2.0 * SCALE)
-			context.g.rotate(-0.46)
-			context.g.translate(-(-LENGTH - 3.0 * SCALE), 0.0)
+			context.g.rotate(-angle)
+			context.g.translate(-dx, 0.0)
 		}
 
 		protected fun drawDiode(

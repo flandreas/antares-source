@@ -125,7 +125,7 @@ class AnalogRelayView(
 
         AntaresViewModule.currentSymbolStyle.symbolStyle.drawInductor(
             this,
-            false,
+            up = false,
             context,
             applicableForegroundColor,
             context.chooseBackground(backgroundColor),

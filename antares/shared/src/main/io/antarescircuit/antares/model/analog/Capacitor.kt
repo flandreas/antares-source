@@ -1,5 +1,6 @@
 package io.antarescircuit.antares.model.analog
 
+import io.antarescircuit.antares.view.analog.AnalogGraphView
 import io.antarescircuit.antares.view.analog.engine.AnalogCircuitAnalysis
 import io.antarescircuit.antares.view.analog.engine.AnalogElement
 import io.antarescircuit.antares.view.analog.engine.AnalogElementMixin
@@ -41,6 +42,8 @@ class Capacitor(
             }
         }
 
+    var variable: Boolean = false
+
     /** ---- [Storable] interface */
 
     override fun read(reader: StoreReader) {
@@ -51,11 +54,17 @@ class Capacitor(
         } else if (reader.hasAttribute("capacitance${MagnitudeValue.MAGNITUDE_VALUE_EXT}")) {
             capacitance = MagnitudeValue.read("capacitance", reader, SIUnit.Farad)
         }
+        if (reader.hasAttribute("variable")) {
+            variable = reader.readBoolean("variable")
+        }
     }
 
     override fun write(writer: StoreWriter) {
         super.write(writer)
         capacitance.write("capacitance", writer)
+        if (variable) {
+            writer.writeBoolean("variable", variable)
+        }
     }
 
     /** ---- [AnalogElement] */
@@ -96,6 +105,16 @@ class Capacitor(
         }
     }
 
+    override fun doStep(analysis: AnalogCircuitAnalysis, signalHandler: SignalHandler) {
+        analysis.stampCurrentSource(analogElem.nodes[0], analogElem.nodes[1], curSourceValue)
+
+        if (abs(getInternalCurrent()) >= CURRENT_LIMIT) {
+            requestAnalogGraphRecalculation(signalHandler)
+        }
+    }
+
+    /** ---- [AbstractAnalogVertice] */
+
     override fun calculateCurrent() {
         val voltDiff = getNodeVoltage(0) - getNodeVoltage(1)
         if (resistance > 0.0) {
@@ -103,11 +122,11 @@ class Capacitor(
         }
     }
 
-    override fun doStep(analysis: AnalogCircuitAnalysis, signalHandler: SignalHandler) {
-        analysis.stampCurrentSource(analogElem.nodes[0], analogElem.nodes[1], curSourceValue)
+    /** ---- [Capacitor] */
 
-        if (abs(getInternalCurrent()) >= CURRENT_LIMIT) {
-            requestAnalogGraphRecalculation(signalHandler)
-        }
+    fun setState(capacitance: MagnitudeValue, signalHandler: SignalHandler, graphView: AnalogGraphView) {
+        this.capacitance = capacitance
+        graphView.requireAnalysis()
+        requestActingAfter(signalHandler, propagationDelay.value, createActorData(null))
     }
 }
