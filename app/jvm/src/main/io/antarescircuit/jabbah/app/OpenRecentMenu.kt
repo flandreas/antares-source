@@ -41,9 +41,7 @@ open class OpenRecentMenu(
 	private fun updateContent() {
 		removeAll()
 		application.controller.mostRecentSavables.savables.forEach {
-			if (it != application.controller.data?.savable) {
-				add(JMenuItem(ActionWrapperSwing(OpenRecentFileAction(it, application))))
-			}
+			add(JMenuItem(ActionWrapperSwing(OpenRecentFileAction(it, application))))
 		}
 		LOG.trace("Updating OpenRecentMenu: itemCount = $itemCount")
 		updateEnabledness()

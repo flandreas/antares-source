@@ -11,7 +11,7 @@ import io.antarescircuit.jabbah.graph.MetaGraph
 /**
  * Saves the edited [MetaGraph] of a [ContainerLibraryElement] in the containing [LibraryDirectory].
  */
-class LibrarySavable(
+open class LibrarySavable(
 	element: ContainerLibraryElement,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractContainerLibraryElementSavable(element) {
