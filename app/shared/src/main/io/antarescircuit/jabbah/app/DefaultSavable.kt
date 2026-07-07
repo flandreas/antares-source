@@ -43,8 +43,7 @@ open class DefaultSavable(val identification: String?) : Savable {
 
 	override val editable: Boolean get() = true
 
-	override fun open(application: Application): Boolean {
-		// TODO
+	override fun open(): Boolean {
 		throw UnsupportedOperationException("not implemented")
 	}
 

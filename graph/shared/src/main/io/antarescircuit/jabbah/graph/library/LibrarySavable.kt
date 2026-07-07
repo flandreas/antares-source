@@ -1,6 +1,5 @@
 package io.antarescircuit.jabbah.graph.library
 
-import io.antarescircuit.jabbah.app.Application
 import io.antarescircuit.jabbah.app.ApplicationDataViewController
 import io.antarescircuit.jabbah.app.Savable
 import io.antarescircuit.jabbah.base.Translations
@@ -22,7 +21,7 @@ open class LibrarySavable(
 
 	override val description: String get() = "${Translations.getString("graph.savable.prefix")} \"${element.name.value}\""
 
-	override fun open(application: Application): Boolean {
+	override fun open(): Boolean {
 		if (element.library == null) {
 			// Library has been disposed in the meantime
 			if (LibraryModule.libraryHolder.l == null) {

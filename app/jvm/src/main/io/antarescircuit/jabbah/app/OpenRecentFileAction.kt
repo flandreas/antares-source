@@ -21,7 +21,7 @@ class OpenRecentFileAction(
 	override fun execute(event: ActionEvent) {
 		LOG.userTrail("Open recent file '${savable.description}'")
 
-		if (!savable.open(application)) {
+		if (!savable.open()) {
 			JOptionPane.showConfirmDialog(
 				Frame.getFrames()[0],
 				Translations.getString("file.action.openRecent.cannotOpen.text"),

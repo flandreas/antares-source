@@ -41,10 +41,9 @@ interface Savable {
 
     /**
      * Opens this [Savable] in the specified [Application].
-     * @param application the [Application] in which this [Savable] is opened.
      * @return `true` if this [Savable] has been opened, `false` if the open process has been aborted by the user
      */
-    fun open(application: Application): Boolean
+    fun open(): Boolean
 
 	/**
 	 * Saves this [Savable] using the specified [ApplicationDataViewController].

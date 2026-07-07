@@ -1,11 +1,10 @@
 package io.antarescircuit.antares.model.fsm
 
-import io.antarescircuit.jabbah.app.Application
 import io.antarescircuit.jabbah.app.ApplicationDataViewController
+import io.antarescircuit.jabbah.base.Bean
 import io.antarescircuit.jabbah.base.Translations
 import io.antarescircuit.jabbah.base.event.EventBus
 import io.antarescircuit.jabbah.base.module.BaseModule
-import io.antarescircuit.jabbah.base.Bean
 import io.antarescircuit.jabbah.graph.library.AbstractLibraryItemSavable
 import io.antarescircuit.jabbah.io.Storable
 
@@ -31,7 +30,7 @@ class FSMSavable(
 
     override fun hashCode(): Int = fsmLibraryItem.uuid.hashCode()
 
-    override fun open(application: Application): Boolean {
+    override fun open(): Boolean {
         eventBus.post(OpenFSMLibraryItemRequest(fsmLibraryItem))
         return true
     }
