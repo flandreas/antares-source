@@ -98,8 +98,6 @@ open class GraphFrameController<T: GraphFrame>(
 		/** The name of the tag set in [CommandManager] when [GraphFrameController.DisplayedView.Container] is displayed.*/
 		const val EDIT_CONTAINER_TAG = "editContainer"
 
-		const val GENERATE_CONTAINER_TAG = "generateContainer"
-
 		const val MAIN_EDITOR_NAME = "mainEditor"
 
 		const val CONTAINER_EDITOR_NAME = "containerEditor"
@@ -134,7 +132,11 @@ open class GraphFrameController<T: GraphFrame>(
 	override val viewContainerAction: Action = ViewContainerAction(eventBus)
 	override val viewDocumentationAction: Action = ViewDocumentationAction(eventBus)
 
-	val containerPanelController = ContainerPanelController(applicationContextHolder, displayGlobalMessages = true, drawingView)
+	val containerPanelController = ContainerPanelController(
+		applicationContextHolder,
+		displayGlobalMessages = true,
+		drawingView,
+		appDataViewController)
 
 	val graphPanelViewController = GraphPanelViewController(
 		drawingView,
@@ -366,16 +368,11 @@ open class GraphFrameController<T: GraphFrame>(
 
 	private inner class CustomSymbolHandler : LibraryServiceCallbackAdapter() {
 		override fun beforeStoreMetaGraph(metaGraph: MetaGraph) {
-			if (isManualContainer(metaGraph.isManualContainer, editor.commandManager)) {
-				if (!metaGraph.isManualContainer) {
-					LOG.userTrail("Container (Symbol) has been customized manually")
-					metaGraph.isManualContainer = true
-				}
-			}
+			metaGraph.isManualContainer = isManualContainer(metaGraph.isManualContainer, editor.commandManager)
 		}
 	}
 
-	private inner class PropagationDelayCalculator : LibraryServiceCallbackAdapter() {
+	private class PropagationDelayCalculator : LibraryServiceCallbackAdapter() {
 		override fun beforeStoreMetaGraph(metaGraph: MetaGraph) {
 			val model = metaGraph.graph.model ?: return
 			if (model.overallPropagationDelay == null) {

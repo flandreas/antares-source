@@ -145,11 +145,11 @@ class ContainerPanelSwing(
 		treeView.isManualContainer = isManualContainer
 	}
 
-	override fun conformGenerateContainerDrawing(): Boolean =
+	override fun confirmGenerateContainerDrawing(title: String): Boolean =
 		JOptionPane.showConfirmDialog(
 			Frame.getFrames()[0],
 			Translations.getString("graph.action.containerLayout.question"),
-			name,
+			title,
 			JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION
 
 	override fun generateContainerDrawing() {

@@ -1,5 +1,6 @@
 package io.antarescircuit.jabbah.graph.container.editsubgraph
 
+import io.antarescircuit.jabbah.app.ApplicationDataViewController
 import io.antarescircuit.jabbah.base.Action
 import io.antarescircuit.jabbah.base.event.ActionEvent
 import io.antarescircuit.jabbah.base.event.EventBus
@@ -29,10 +30,11 @@ import io.antarescircuit.jabbah.graph.view.vertice.SubGraphVerticeView
  */
 class EditSubGraphVerticeViewAction(
 	private val applicationContextHolder: GraphApplicationContextHolder,
+	private val applicationDataViewController: ApplicationDataViewController,
 	eventBus: EventBus = BaseModule.eventBus,
 	viewManager: ContentViewManager = DrawViewModule.viewManager,
 	private val commandManager: CommandManager = EditModule.commandManager,
-	private val metaGraphRepository: MetaGraphRepository = LibraryModule.libraryHolder
+	private val metaGraphRepository: MetaGraphRepository = LibraryModule.libraryHolder,
 ) : AbstractSelectionAwareAction("graph.action.editSubGraphVerticeView", eventBus, viewManager) {
 
 	companion object {
@@ -57,7 +59,8 @@ class EditSubGraphVerticeViewAction(
 		val containerPanelController = ContainerPanelController(
 			applicationContextHolder,
 			displayGlobalMessages = false,
-			viewManager.castedActiveView<DrawingView<GraphElementView<*>, GraphView>>()!!
+			viewManager.castedActiveView<DrawingView<GraphElementView<*>, GraphView>>()!!,
+			applicationDataViewController
 		)
 		containerPanelController.editor.preventDeletingPortViewComponents = true
 

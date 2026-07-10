@@ -17,7 +17,7 @@ import io.antarescircuit.jabbah.graph.view.vertice.SubGraphVerticeView
 import javax.swing.JPopupMenu
 
 open class GraphContextMenuProvider(
-	application: Application
+	private val application: Application
 ) : EditContextMenuProvider() {
 
 	companion object {
@@ -50,7 +50,7 @@ open class GraphContextMenuProvider(
 			popupMenu.add(openGraphActionWrapper)
 			getGraphApplicationContextHolder(view)?.let {
 				popupMenu.add(ActionWrapperSwing(OpenSubGraphViewerAction(applicationName, it)))
-				popupMenu.add(ActionWrapperSwing(EditSubGraphVerticeViewAction(it)))
+				popupMenu.add(ActionWrapperSwing(EditSubGraphVerticeViewAction(it, application.controller)))
 			}
 			popupMenu.add(resetSubGraphAction)
 			popupMenu.add(extractMetaGraphAction)

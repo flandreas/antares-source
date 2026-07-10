@@ -2,6 +2,7 @@ package io.antarescircuit.jabbah.graph.ui.container
 
 import io.antarescircuit.jabbah.app.ApplicationDataContentEvent
 import io.antarescircuit.jabbah.app.ApplicationDataEvent
+import io.antarescircuit.jabbah.app.ApplicationDataViewController
 import io.antarescircuit.jabbah.base.AbstractAction
 import io.antarescircuit.jabbah.base.Action
 import io.antarescircuit.jabbah.base.event.ActionEvent
@@ -12,7 +13,6 @@ import io.antarescircuit.jabbah.base.module.BaseModule
 import io.antarescircuit.jabbah.base.ui.AbstractUIController
 import io.antarescircuit.jabbah.base.ui.UIView
 import io.antarescircuit.jabbah.edit.*
-import io.antarescircuit.jabbah.edit.command.AbstractCommand
 import io.antarescircuit.jabbah.edit.module.EditModule
 import io.antarescircuit.jabbah.edit.properties.ComponentPropertyPanelController
 import io.antarescircuit.jabbah.graph.GraphApplicationContextHolder
@@ -36,7 +36,7 @@ interface ContainerPanelView : UIView {
 
 	fun updateIsManualContainer(isManualContainer: Boolean)
 
-	fun conformGenerateContainerDrawing(): Boolean
+	fun confirmGenerateContainerDrawing(title: String): Boolean
 
 	fun generateContainerDrawing()
 
@@ -47,6 +47,7 @@ class ContainerPanelController(
 	applicationContextHolder: GraphApplicationContextHolder,
 	displayGlobalMessages: Boolean = true,
 	val mainGraphDrawingView: DrawingView<GraphElementView<*>, GraphView>,
+	private val applicationDataViewController: ApplicationDataViewController,
 	private val eventBus: EventBus = BaseModule.eventBus
 ) : AbstractUIController<ContainerPanelView>() {
 
@@ -174,9 +175,17 @@ class ContainerPanelController(
 		editor.view.setDrawing(containerDrawing)
 	}
 
-	fun generateContainerDrawing() {
+	private fun generateContainerDrawing() {
 		view.generateContainerDrawing()
+
+		(applicationDataViewController.data?.content as? MetaGraph)?.let { metaGraph ->
+			metaGraph.isManualContainer = false
+		}
 		isManualContainerCurrent = false
+
+		applicationDataViewController.save()
+
+		editor.view.applyDefaultZoomStrategy()
 	}
 
 	fun handleRightSidebarOpen(open: Boolean) {
@@ -220,7 +229,7 @@ class ContainerPanelController(
 	}
 
 	private fun handle(event: CommandEvent) {
-		if (editor.commandManager === event.commandManager) {
+		if (editor.commandManager === event.commandManager && event.type == CommandEventType.COMMIT_TRANSACTION) {
 			isManualContainerCurrent = isManualContainer(isManualContainerOrig, editor.commandManager)
 		}
 	}
@@ -237,24 +246,9 @@ class ContainerPanelController(
 
 	private inner class GenerateContainerAction : AbstractAction("graph.action.containerLayout") {
 		override fun execute(event: ActionEvent) {
-			if (view.conformGenerateContainerDrawing()) {
-				try {
-					editor.commandManager.addTag(GraphFrameController.GENERATE_CONTAINER_TAG)
-					editor.commandManager.execute(GenerateContainerCommand(this@ContainerPanelController))
-					editor.view.applyDefaultZoomStrategy()
-				} finally {
-					editor.commandManager.removeTag(GraphFrameController.GENERATE_CONTAINER_TAG)
-				}
+			if (view.confirmGenerateContainerDrawing(name)) {
+				generateContainerDrawing()
 			}
-		}
-	}
-
-	private class GenerateContainerCommand(
-		private val controller: ContainerPanelController
-	) : AbstractCommand("graph.action.containerLayout.name") {
-
-		override fun execute() {
-			controller.generateContainerDrawing()
 		}
 	}
 }

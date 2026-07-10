@@ -169,9 +169,9 @@ class  ContainerTree(
 		CurrentContainerDrawingLayouter.value.doesLayout
 
 	fun generateContainerDrawing() {
-		containerDrawing.removeDrawableContainerListener(balancer)
+		// Keep the balancer active while layouting, so that PortViews are removed from the tree when the layouter
+		// adds them to the containerDrawing
 		CurrentContainerDrawingLayouter.value.layout(mainGraphView, containerDrawing, addLabel = true)
-		containerDrawing.addDrawableContainerListener(balancer)
 	}
 
 	/**
