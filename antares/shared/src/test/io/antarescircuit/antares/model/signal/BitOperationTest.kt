@@ -126,6 +126,7 @@ class BitOperationTest {
 		assertEquals("05", BitOperation.normalizeHex("05", BitWidth.BW_8))
 		assertEquals("AF", BitOperation.normalizeHex("AF", BitWidth.BW_8))
 		assertEquals("AF13", BitOperation.normalizeHex("AF13", BitWidth.BW_16))
+		assertNull(BitOperation.normalizeHex("", BitWidth.BW_2))
 	}
 
 	@Test

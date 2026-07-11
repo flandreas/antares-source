@@ -104,7 +104,7 @@ object BitOperation {
 	fun normalizeHex(hex: String, bitWidth: BitWidth): String? {
 		val value = hex.uppercase()
 		if (bitWidth.width < BitWidth.BW_4.width) {
-			if (value.length > 1) {
+			if (value.isEmpty() || value.length > 1) {
 				return null
 			}
 			if (value[0] !in '0'..('0'.code + bitWidth.maxValue.toInt()).toChar()) {
