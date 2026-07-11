@@ -526,6 +526,13 @@ class OscilloscopeView(
 		removeRow(rows.last().name)
 	}
 
+	fun clear() {
+		model.clear()
+		scrollX = 0.0
+		invalidate()
+		validate()
+	}
+
 	private fun adjustSize() {
 		scaleRowView.updateLocation()
 		invalidate()

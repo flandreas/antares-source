@@ -7,6 +7,7 @@ import io.antarescircuit.jabbah.draw.InputEventHandlerAdapter
 import io.antarescircuit.jabbah.draw.drawable.DrawableButton
 import io.antarescircuit.jabbah.draw.drawable.IconDrawableButtonRenderer
 import io.antarescircuit.jabbah.draw.graphics.AddIcon
+import io.antarescircuit.jabbah.draw.graphics.DeleteIcon
 import io.antarescircuit.jabbah.draw.graphics.KnobIcon
 import io.antarescircuit.jabbah.draw.style.StyleType
 import io.antarescircuit.jabbah.edit.DrawingView
@@ -56,17 +57,28 @@ class OscilloscopeScaleRowView(
 	private val scaleButton = ScaleButton(
 		location = Point2D(2 * ROW_INSET + ICON_BUTTON_SIZE, ROW_HEIGHT / 2 - ICON_BUTTON_SIZE / 2))
 
+	private val clearButton = ActorDrawableButton<EditInputEventContext>(
+		renderer = IconDrawableButtonRenderer(DeleteIcon()),
+		actorAction = { oscilloscopeView.clear() },
+		location = Point2D(oscilloscopeView.width - ICON_BUTTON_SIZE - ROW_INSET, ROW_HEIGHT / 2.0 - ICON_BUTTON_SIZE / 2),
+		styleType = StyleType.ANNOTATION,
+		tooltipKey = "graph.action.oscilloscope.clear.desc"
+	)
+
 	val timelineView = factory.createSignalHistoryTimelineView(rightInset)
 
 	init {
 		add(addButton)
 		add(scaleButton)
 		add(timelineView)
+		add(clearButton)
 		updateState()
 	}
 
 	fun updateState() {
 		scaleButton.enabled = oscilloscopeView.applicationMode.isExecute()
+		clearButton.enabled = oscilloscopeView.applicationMode.isExecute()
+
 		addButton.enabled = oscilloscopeView.applicationMode.isEdit()
 			&& oscilloscopeView.editable
 			&& oscilloscopeView.signalRowViews.size < MAX_ROW_NUMBER

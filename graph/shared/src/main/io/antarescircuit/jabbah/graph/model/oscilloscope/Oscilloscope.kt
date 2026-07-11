@@ -133,4 +133,9 @@ class Oscilloscope(
 			stateChanged(signalHandler, "$SIGNAL_RECEIVED:${probe.id}")
 		}
 	}
+
+	fun clear() {
+		signalHistories.clear()
+		stateChanged()
+	}
 }

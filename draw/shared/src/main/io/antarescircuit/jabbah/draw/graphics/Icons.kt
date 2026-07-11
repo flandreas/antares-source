@@ -40,3 +40,22 @@ class KnobIcon(override val dim: Dimension2D) : Icon {
 		}
 	}
 }
+
+class DeleteIcon : Icon {
+
+	override val dim: Dimension2D = Dimension2D(20, 20)
+
+	override fun draw(context: DrawContext, location: Point2D, color: CompositeColor) {
+		context.g.color = color.foregroundColor
+		context.translated(location) {
+			it.g.drawOval(0.0, 0.0, dim.width, dim.height)
+
+			it.g.drawLine(4, 6, 16, 6)
+			it.g.drawLine(6, 6, 8, 14)
+			it.g.drawLine(8, 14, 12, 14)
+			it.g.drawLine(12, 14, 14, 6)
+
+			it.g.fillRect(9, 4, 2, 2)
+		}
+	}
+}
