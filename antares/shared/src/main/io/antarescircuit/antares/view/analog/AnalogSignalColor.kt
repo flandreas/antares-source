@@ -17,6 +17,8 @@ object AnalogSignalColor {
 	private val MIN_NEG_COLOR = Color(112, 81, 42)
 	private val MAX_NEG_COLOR = Color(247, 76, 16)
 
+	private const val MIN_COLOR_VOLTAGE = 0.05
+
 	private val POS_GRADIENT = CompositeColorGradient(
 		Themes.get<AntaresTheme>().one.backgroundColor,
 		Themes.get<AntaresTheme>().zero.foregroundColor,
@@ -31,7 +33,7 @@ object AnalogSignalColor {
 	private const val MAX_VOLTAGE = 5.0
 
 	fun ofVoltage(voltage: Double): CompositeColor {
-		return if (voltage >= 0 || abs(voltage) < AnalogSignal.VOLTAGE_SIGMA) {
+		return if (voltage >= 0 || abs(voltage) < MIN_COLOR_VOLTAGE) {
 			POS_GRADIENT.at((voltage.coerceIn(MIN_VOLTAGE, MAX_VOLTAGE) / MAX_VOLTAGE).toFloat())
 		} else {
 			NEG_GRADIENT.at((voltage.absoluteValue.coerceAtMost(MAX_VOLTAGE) / MAX_VOLTAGE).toFloat())

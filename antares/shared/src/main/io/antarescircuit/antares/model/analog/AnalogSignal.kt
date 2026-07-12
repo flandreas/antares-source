@@ -36,7 +36,7 @@ data class AnalogSignal(
 		fun roundAbsCurrent(c: Double, f: Int = 1000): String = roundValue(abs(c), f)
 	}
 
-	val dominantValue: Double get() = if (current != null) current else voltage
+	val dominantValue: Double get() = current ?: voltage
 
 	val color: CompositeColor by lazy { AnalogSignalColor.ofSignal(this) }
 
