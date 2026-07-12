@@ -11,9 +11,11 @@ import io.antarescircuit.jabbah.edit.app.AbstractSelectionAwareAction
 import io.antarescircuit.jabbah.edit.module.EditModule
 import io.antarescircuit.jabbah.graph.MetaGraph
 import io.antarescircuit.jabbah.graph.library.*
+import io.antarescircuit.jabbah.graph.model.GraphType
 import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.app.GraphViewAppService
+import io.antarescircuit.jabbah.graph.view.vertice.SubGraphVerticeView
 import io.antarescircuit.jabbah.graph.view.module.GraphViewModule
 import java.awt.Frame
 import javax.swing.JComponent
@@ -32,6 +34,22 @@ class ExtractMetaGraphAction(
 	override val opensDialog: Boolean get() = true
 
 	override fun execute(event: ActionEvent) {
+
+		val sourceGraphType = (drawingView!!.drawing as GraphView).graph!!.type
+
+		/**
+		 * The selected [GraphElementViews][GraphElementView] would be replaced with a [SubGraphVerticeView]
+		 * of the same [GraphType]. First make sure this is even supported.
+		 */
+		sourceGraphType.checkImport(sourceGraphType)?.let {
+			JOptionPane.showMessageDialog(
+				Frame.getFrames()[0],
+				it,
+				name,
+				JOptionPane.INFORMATION_MESSAGE
+			)
+			return
+		}
 
 		if (EditModule.commandManager.canUndo()) {
 			JOptionPane.showMessageDialog(
@@ -57,7 +75,7 @@ class ExtractMetaGraphAction(
 		val info = NewGraphAction.requestNewGraphInfo(
 			drawingView!!.canvas as JComponent,
 			Translations.getString("graph.action.extractMetaGraph.name"),
-			(drawingView!!.drawing as GraphView).graph!!.type
+			sourceGraphType
 		) ?: return
 
 		val library = libraryHolder.library

@@ -18,16 +18,23 @@ interface GraphType: Bean {
 	val supportOscilloscopeSignalCurveStyleSelection: Boolean get() = true
 
 	/**
+	 * Checks whether a [Graph] of this [GraphType] can contain [Vertice]s of the `other` [GraphType].
+	 * @return a translated message explaining why import is not possible, `null` if import is possible
+	 */
+	fun checkImport(other: GraphType): String? =
+		if (other === this) {
+			null
+		} else {
+			Translations.getString("graph.graphTypeError.msg", other, this)
+		}
+
+	/**
 	 * Checks whether a [Graph] of this [GraphType] can contain [Vertice]s
 	 * instantiated from the specified [LibraryElement].
 	 * @return a translated message explaining why import is not possible, `null` if import is possible
 	 */
 	fun checkImport(libraryElement: LibraryElement): String? =
-		if (libraryElement.graphType === this) {
-			null
-		} else {
-			Translations.getString("graph.graphTypeError.msg", libraryElement.graphType, this)
-		}
+		checkImport(libraryElement.graphType)
 
 	/**
 	 * Yields an object that adapts signals from this [GraphType] to signals of [other] [GraphType],
