@@ -36,6 +36,7 @@ import io.antarescircuit.jabbah.io.ElectricXmlReader
 import io.antarescircuit.jabbah.io.StoreXmlReader
 import com.formdev.flatlaf.FlatDarkLaf
 import com.formdev.flatlaf.FlatLightLaf
+import com.formdev.flatlaf.util.SystemInfo
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Option
@@ -191,10 +192,16 @@ class AntaresSwing(
 				ErrorHandler.exception(e)
 			}
 
-			System.setProperty("apple.eawt.quitStrategy", "CLOSE_ALL_WINDOWS")
-			System.setProperty("apple.laf.useScreenMenuBar", "true")
-			System.setProperty("com.apple.mrj.application.apple.menu.about.name", AntaresApplication.SYSTEM_NAME)
-			System.setProperty("apple.awt.application.name", AntaresApplication.SYSTEM_NAME)
+			if (SystemInfo.isMacOS) {
+				System.setProperty("apple.eawt.quitStrategy", "CLOSE_ALL_WINDOWS")
+				System.setProperty("apple.laf.useScreenMenuBar", "true")
+				System.setProperty("com.apple.mrj.application.apple.menu.about.name", AntaresApplication.SYSTEM_NAME)
+				System.setProperty("apple.awt.application.name", AntaresApplication.SYSTEM_NAME)
+
+				// Note: -Dapple.awt.application.appearance=system must be set BEFORE any UI is initialized,
+				// and therefore also BEFORE the splash screen is shown. In DEV, add it to the run configuration.
+				// In PROD, it is added to the macOS packager
+			}
 
 			val commandLine = parseCommandLine(args, defineOptions(Options()), AntaresApplication.SYSTEM_NAME)
 			val appDataDirectoryPath = determineAppDataDirectoryPath(commandLine, AntaresApplication.SYSTEM_NAME)
