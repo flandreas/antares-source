@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<library _id='0' appVersion='1.34.0' uuid='6707f981-110d-4629-a0bf-c35a4688025c' author='5ecf330b-e395-4e17-88b0-0883834b384a' system='true' visibility='public'>
+<library _id='0' appVersion='2.0.1' uuid='6707f981-110d-4629-a0bf-c35a4688025c' author='5ecf330b-e395-4e17-88b0-0883834b384a' system='true' visibility='public'>
   <folder>
     <libraryFolder _id='1'>
       <name>
@@ -183,26 +183,26 @@
             </containerLibraryElement>
             <containerLibraryElement _id='75' uuid='2fa2c8a7-fc2d-4139-8f6b-bd4b07933916' type='digital'>
               <name>
-                <translation lang='en' text='Shift Register Parallel-Out 4 Bit'/>
-                <translation lang='de' text='Schieberegister Parallel-Out 4-Bit'/>
+                <translation lang='en' text='Shift (Left) Register Parallel-Out 4 Bit'/>
+                <translation lang='de' text='Schieberegister (Links) Parallel-Out 4-Bit'/>
               </name>
             </containerLibraryElement>
             <containerLibraryElement _id='76' uuid='38cc0a3a-c46c-4c1b-85ca-0fc6dab00289' type='digital'>
               <name>
-                <translation lang='en' text='Shift Register Parallel-Out 8 Bit'/>
-                <translation lang='de' text='Schieberegister Parallel-Out 8-Bit'/>
+                <translation lang='en' text='Shift (Left) Register Parallel-Out 8 Bit'/>
+                <translation lang='de' text='Schieberegister (Links) Parallel-Out 8-Bit'/>
               </name>
             </containerLibraryElement>
             <containerLibraryElement _id='77' uuid='2e062374-9367-4d33-af1d-4a512cdca4e6' type='digital'>
               <name>
-                <translation lang='de' text='Schieberegister Parallel-In 4-Bit'/>
-                <translation lang='en' text='Shift Register Parallel-In 4 Bit'/>
+                <translation lang='de' text='Schieberegister (Rechts) Parallel-In 4-Bit'/>
+                <translation lang='en' text='Shift (Right) Register Parallel-In 4 Bit'/>
               </name>
             </containerLibraryElement>
             <containerLibraryElement _id='78' uuid='ff9e0257-bbc2-4961-8d23-71565dac09b3' type='digital'>
               <name>
-                <translation lang='de' text='Schieberegister Parallel-In 8-Bit'/>
-                <translation lang='en' text='Shift Register Parallel-In 8 Bit'/>
+                <translation lang='de' text='Schieberegister (Rechts) Parallel-In 8-Bit'/>
+                <translation lang='en' text='Shift (Right) Register Parallel-In 8 Bit'/>
               </name>
             </containerLibraryElement>
             <containerLibraryElement _id='79' uuid='112591d4-c0dd-48b1-96d9-8b9a98fce1a1' type='digital'>

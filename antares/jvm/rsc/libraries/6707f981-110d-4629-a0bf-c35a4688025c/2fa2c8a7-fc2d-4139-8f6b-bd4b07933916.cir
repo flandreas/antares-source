@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<metaGraph _id='0' appVersion='1.17.1' manualContainer='true'>
+<metaGraph _id='0' appVersion='2.0.1' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
@@ -18,7 +18,7 @@ if (^T) {
 	Q = data@3
 }
 
-' startupTime='45'>
+' calculatedDelay='205' startupTime='45'>
           <elements>
             <circuitInOut _id='3' id='5' name='I' type='input' bitWidth='1'>
               <desc>
@@ -206,7 +206,7 @@ run {
             <netView _id='73' modelId='48' style='line'/>
           </netViews>
           <components>
-            <circuitInOutView _id='74' id='5' rot='0' filled='true' stroked='true' modelId='3' orientation='east' representation='binary'>
+            <circuitInOutView _id='74' id='5' filled='true' stroked='true' modelId='3' orientation='east' representation='binary'>
               <location>
                 <point x='-56.0' y='-182.0'/>
               </location>
@@ -237,7 +237,7 @@ run {
                 <polylineShape points='-42.0,-182.0 84.0,-182.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='82' id='12' rot='0' filled='true' stroked='true' modelId='13' orientation='east' representation='binary'>
+            <circuitInOutView _id='82' id='12' filled='true' stroked='true' modelId='13' orientation='east' representation='binary'>
               <location>
                 <point x='-56.0' y='-56.0'/>
               </location>
@@ -322,7 +322,7 @@ run {
                 <polylineShape points='428.0,-126.0 504.0,-126.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='105' id='29' rot='0' filled='true' stroked='true' modelId='47' orientation='east' representation='binary'>
+            <circuitInOutView _id='105' id='29' filled='true' stroked='true' modelId='47' orientation='east' representation='binary'>
               <location>
                 <point x='644.0' y='-182.0'/>
               </location>
@@ -332,7 +332,7 @@ run {
                 <polylineShape points='560.0,-182.0 602.0,-182.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='108' id='31' rot='0' filled='true' stroked='true' modelId='16' orientation='north' representation='binary'>
+            <circuitInOutView _id='108' id='31' filled='true' stroked='true' modelId='16' orientation='north' representation='binary'>
               <location>
                 <point x='182.0' y='-252.0'/>
               </location>
@@ -352,7 +352,7 @@ run {
                 <polylineShape points='182.0,-182.0 224.0,-182.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='111' id='35' rot='0' filled='true' stroked='true' modelId='22' orientation='north' representation='binary'>
+            <circuitInOutView _id='111' id='35' filled='true' stroked='true' modelId='22' orientation='north' representation='binary'>
               <location>
                 <point x='322.0' y='-252.0'/>
               </location>
@@ -372,7 +372,7 @@ run {
                 <polylineShape points='322.0,-182.0 364.0,-182.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='114' id='39' rot='0' filled='true' stroked='true' modelId='28' orientation='north' representation='binary'>
+            <circuitInOutView _id='114' id='39' filled='true' stroked='true' modelId='28' orientation='north' representation='binary'>
               <location>
                 <point x='462.0' y='-252.0'/>
               </location>
@@ -392,7 +392,7 @@ run {
                 <polylineShape points='462.0,-182.0 504.0,-182.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='117' id='43' rot='0' filled='true' stroked='true' modelId='51' orientation='north' representation='binary'>
+            <circuitInOutView _id='117' id='43' filled='true' stroked='true' modelId='51' orientation='north' representation='binary'>
               <location>
                 <point x='602.0' y='-252.0'/>
               </location>
@@ -478,11 +478,11 @@ run {
         <subGraphVertice _id='145' id='0' delay='0' uuid='2fa2c8a7-fc2d-4139-8f6b-bd4b07933916'>
           <desc>
             <translation lang='de' text='Schieberegister mit 4 Bit und Parallelausgabe. Schiebt die gespeicherten Daten bei ansteigender Taktflanke T eine Position weiter und speichert das Bit von Eingang I an der Position 0.'/>
-            <translation lang='en' text='Shift register with 4 bits and parallel output. Shifts the stored data with a rising edge of T and stored the bit from input I in position 0.'/>
+            <translation lang='en' text='Shift register with 4 bits and parallel output. Shifts the stored data with a rising edge of T and stores the bit from input I in position 0.'/>
           </desc>
           <name>
-            <translation lang='en' text='Shift Register Parallel-Out 4 Bit'/>
-            <translation lang='de' text='Schieberegister Parallel-Out 4-Bit'/>
+            <translation lang='en' text='Shift (Left) Register Parallel-Out 4 Bit'/>
+            <translation lang='de' text='Schieberegister (Links) Parallel-Out 4-Bit'/>
           </name>
           <ports>
             <subCircuitPort _id='125' portId='1' name='T' logic='positive' bitWidth='1' trigger='edge' type='input' representation='binary'/>

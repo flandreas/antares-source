@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<metaGraph _id='0' appVersion='1.17.1' manualContainer='true'>
+<metaGraph _id='0' appVersion='2.0.1' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
@@ -14,7 +14,7 @@ if (^T) {
 	O = data
 	Q = data@7
 }
-'>
+' calculatedDelay='300'>
           <elements>
             <subGraphVerticeRef _id='3' id='1' delay='PD/4*3' uuid='2fa2c8a7-fc2d-4139-8f6b-bd4b07933916' type='digital'>
               <desc>
@@ -206,7 +206,7 @@ run {
                 <translation lang='de' text='SR'/>
               </label>
             </subGraphVerticeViewRef>
-            <circuitInOutView _id='72' id='3' rot='0' filled='true' stroked='true' modelId='9' orientation='east' representation='binary'>
+            <circuitInOutView _id='72' id='3' filled='true' stroked='true' modelId='9' orientation='east' representation='binary'>
               <location>
                 <point x='-532.0' y='-182.0'/>
               </location>
@@ -216,7 +216,7 @@ run {
                 <polylineShape points='-392.0,-182.0 -294.0,-182.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='74' id='5' rot='0' filled='true' stroked='true' modelId='13' orientation='east' representation='binary'>
+            <circuitInOutView _id='74' id='5' filled='true' stroked='true' modelId='13' orientation='east' representation='binary'>
               <location>
                 <point x='-532.0' y='-28.0'/>
               </location>
@@ -246,13 +246,13 @@ run {
                 <polylineShape points='-546.0,-182.0 -462.0,-182.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='80' id='11' rot='0' filled='true' stroked='true' modelId='21' orientation='east' representation='hex'>
+            <circuitInOutView _id='80' id='11' filled='true' stroked='true' modelId='21' orientation='east' representation='hex'>
               <location>
                 <point x='-70.0' y='21.0'/>
               </location>
             </circuitInOutView>
             <concentratorView _id='81' id='12' rot='0' filled='true' stroked='true' modelId='22' x='-98.0' y='21.0' handedness='right'/>
-            <circuitInOutView _id='82' id='22' rot='0' filled='true' stroked='true' modelId='23' orientation='east' representation='binary'>
+            <circuitInOutView _id='82' id='22' filled='true' stroked='true' modelId='23' orientation='east' representation='binary'>
               <location>
                 <point x='-70.0' y='-182.0'/>
               </location>
@@ -354,11 +354,11 @@ run {
         <subGraphVertice _id='109' id='0' delay='0' uuid='38cc0a3a-c46c-4c1b-85ca-0fc6dab00289'>
           <desc>
             <translation lang='de' text='Schieberegister mit 8 Bit und Parallelausgabe. Schiebt die gespeicherten Daten bei ansteigender Taktflanke T eine Position weiter und speichert das Bit von Eingang I an der Position 0.'/>
-            <translation lang='en' text='Shift register with 8 bits and parallel output. Shifts the stored data with a rising edge of T and stored the bit from input I in position 0.'/>
+            <translation lang='en' text='Shift register with 8 bits and parallel output. Shifts the stored data with a rising edge of T and stores the bit from input I in position 0.'/>
           </desc>
           <name>
-            <translation lang='en' text='Shift Register Parallel-Out 8 Bit'/>
-            <translation lang='de' text='Schieberegister Parallel-Out 8-Bit'/>
+            <translation lang='en' text='Shift (Left) Register Parallel-Out 8 Bit'/>
+            <translation lang='de' text='Schieberegister (Links) Parallel-Out 8-Bit'/>
           </name>
           <ports>
             <subCircuitPort _id='98' portId='1' name='I' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>

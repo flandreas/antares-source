@@ -903,8 +903,8 @@
             <translation lang='en' text='Shift register with 4 Bit and parallel data input. Consumes the input data PI with LD=0 and shifts them with raising edge on clock input C.'/>
           </desc>
           <name>
-            <translation lang='de' text='Schieberegister Parallel-In 4-Bit'/>
-            <translation lang='en' text='Shift Register Parallel-In 4 Bit'/>
+            <translation lang='de' text='Schieberegister (Rechts) Parallel-In 4-Bit'/>
+            <translation lang='en' text='Shift (Right) Register Parallel-In 4 Bit'/>
           </name>
           <ports>
             <subCircuitPort _id='295' portId='1' name='PI' logic='positive' bitWidth='4' trigger='level' type='input' representation='binary'/>
