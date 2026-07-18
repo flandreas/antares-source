@@ -33,10 +33,9 @@ Tag the release and push it to the remote repository:
     info --apple-id xxx --team-id xxx --password xxx SUBMISSION_ID`)
     - In case of notarization fails: Fetch notary log using `xcrun notarytool log --apple-id xxx --team-id xxx 
     --password xxx SUBMISSION_ID`
-    - `gradlew stapleMacNotarization`
+    - Apply the notarization to the the macOS package by executing `gradlew stapleMacNotarization`
     - Collect the macOS package `build/antares/distributions/Antares-<version>.dmg`
-    - Collect the ProGuard mapping file in `build/antares/libs/antares-<version>-proguard.map` and
-      store it in a save place. You will need it for un-obfuscating stack traces from bug reports.
+    - Collect the Java .jar file `build/antares/libs/antares-<version>-all.jar`
 - On a Windows machine (after pulling changes from remote repository)
     - `gradlew clean :antares:distributeWindows`
     - `cd Desktop`
@@ -73,7 +72,7 @@ Deployment is done by pushing all artifacts to git@github.com:flandreas/antares.
 
 * Create a new release in the github project, e.g. "Release 0.3.0"
 * Upload the three installers as attachments to the release
-* Upload package/antares-x.y.z.jar as attachment to the release
+* Upload antares-<version>-all.jar as attachment to the release
 * Upload the example projects (zip) as attachments to the release
     * Make sure that download buttons in example pages reference the correctly versioned URL
 * Save as "draft"
