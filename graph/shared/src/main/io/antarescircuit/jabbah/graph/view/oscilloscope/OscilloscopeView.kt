@@ -5,6 +5,7 @@ import io.antarescircuit.jabbah.base.System
 import io.antarescircuit.jabbah.base.Tooltip
 import io.antarescircuit.jabbah.base.collection.ImmutableList
 import io.antarescircuit.jabbah.base.collection.toImmutableList
+import io.antarescircuit.jabbah.base.event.Button
 import io.antarescircuit.jabbah.base.event.EventBus
 import io.antarescircuit.jabbah.base.geom.Point2D
 import io.antarescircuit.jabbah.base.logger
@@ -352,21 +353,24 @@ class OscilloscopeView(
 		private var offsetX = 0.0
 
 		override fun mousePressed(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
-			if (container.getDrawableAt(context.location) is OscilloscopeSignalRowView) {
-				offsetX = 0.0
-				pressX = context.location.x
-				return this
+			if (context.mouseEvent?.button != Button.BUTTON1) {
+				return null
 			}
-			return super.mousePressed(context)
-		}
 
-		override fun mouseClicked(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
-			if (context.mouseEvent?.clickCount == 2) {
+			if (context.mouseEvent?.clickCount == 1) {
+				if (container.getDrawableAt(context.location) is OscilloscopeSignalRowView) {
+					offsetX = 0.0
+					pressX = context.location.x
+					return this
+				}
+			} else if (context.mouseEvent?.clickCount == 2) {
 				if (container.getDrawableAt(context.location) is OscilloscopeSignalRowView) {
 					resetScrollX()
+					return null
 				}
 			}
-			return super.mouseClicked(context)
+
+			return super.mousePressed(context)
 		}
 
 		override fun mouseDragged(context: ActorInteractionContext): InputEventHandler<ActorInteractionContext>? {
@@ -388,8 +392,10 @@ class OscilloscopeView(
 		}
 
 		private fun resetScrollX() {
+			invalidate()
 			offsetX = 0.0
 			scrollX = 0.0
+			validate()
 		}
 	}
 
