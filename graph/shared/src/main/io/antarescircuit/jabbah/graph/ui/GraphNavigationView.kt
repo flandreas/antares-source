@@ -216,7 +216,10 @@ class GraphNavigationViewController(
 		graphViewExecutionController.updateDetachedUI()
 
 		System.invokeLater {
-			drawingView.canvas.requestViewFocus()
+			// Canvas might not yet be initialized on JS platform
+			if (drawingView.canvasInitialized) {
+				drawingView.canvas.requestViewFocus()
+			}
 		}
 	}
 

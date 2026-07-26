@@ -75,7 +75,7 @@ class EventBusImpl : EventBus {
 
     override fun <T: Any> register(eventClass: KClass<out T>, handler: EventHandler<T>) {
         val eventName = getEventClassName(eventClass)
-        LOG.debug("EventBus ${hashCode()}: Register $eventClass")
+        LOG.trace("EventBus ${hashCode()}: Register $eventClass")
 
         val list = registrations.getOrPut(eventName) { mutableListOf() }
         if (!list.contains(handler)) {

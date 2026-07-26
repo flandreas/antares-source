@@ -2,6 +2,7 @@ package io.antarescircuit.jabbah.edit.auth
 
 import io.antarescircuit.jabbah.base.System
 import io.antarescircuit.jabbah.base.UUID
+import kotlinx.serialization.Serializable
 import kotlin.js.JsExport
 
 /**
@@ -11,6 +12,7 @@ import kotlin.js.JsExport
  * identity providers like Auth0.
  */
 @JsExport
+@Serializable
 data class UserIdentity(val id: String) {
 
 	companion object {

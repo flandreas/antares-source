@@ -48,6 +48,8 @@ open class ViewImpl<C : InputEventContext>(
 	// Backing property as alternative to 'lateinit' with custom setter.
 	protected var _canvas: Canvas? = null
 
+	override val canvasInitialized: Boolean get() = _canvas != null
+
 	/**
 	 * Used to wait drawing this [View] until [Canvas] has been laid out and therefore has a proper [Dimension2D].
 	 * Without this, this [View] would draw initial content before the [defaultZoomStrategy] has been applied,

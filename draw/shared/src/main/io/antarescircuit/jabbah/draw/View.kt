@@ -88,6 +88,9 @@ interface View<C : InputEventContext> : ContentView<C>, ViewToModelTransform, Di
 	 */
 	var canvas: Canvas
 
+	/** Returns `true` once [canvas] is initialized*/
+	val canvasInitialized: Boolean
+
 	val devicePixelRatio: Double get() = canvas.devicePixelRatio
 
 	/** Controls the rectangular area that is free to display content to the user. Can be reduced from outside.*/
