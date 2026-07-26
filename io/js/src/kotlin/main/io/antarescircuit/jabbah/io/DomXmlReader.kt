@@ -3,6 +3,7 @@ package io.antarescircuit.jabbah.io
 import io.antarescircuit.jabbah.base.collection.Stack
 import org.w3c.dom.Document
 import org.w3c.dom.Element
+import org.w3c.dom.asList
 import org.w3c.dom.get
 import org.w3c.dom.parsing.DOMParser
 
@@ -45,14 +46,12 @@ class DomXmlReader(document: Document) : XmlReader {
         return null
     }
 
-    override fun getElementNames(): Set<String> {
-        val names = mutableSetOf<String>()
-        val children = stack.peek().childNodes
-        for (i in 0 until children.length) {
-            names.add(children[i]!!.nodeName)
-        }
-        return names
-    }
+    override fun getElementNames(): Set<String> =
+        stack.peek()
+            .children
+            .asList()
+            .map { it.nodeName }
+            .toSet()
 
     override fun getElementsCount(): Int {
         return stack.peek().childElementCount

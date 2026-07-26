@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-class ElectricXmlTest {
+class ElectricXmlWriterTest {
 
     @Test
     fun shouldEscapeSpecialChar() {
