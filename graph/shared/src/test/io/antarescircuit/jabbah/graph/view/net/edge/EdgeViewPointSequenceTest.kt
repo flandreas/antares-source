@@ -1,6 +1,7 @@
 package io.antarescircuit.jabbah.graph.view.net.edge
 
 import io.antarescircuit.jabbah.base.geom.Point2D
+import io.antarescircuit.jabbah.graph.view.EdgeView
 import io.antarescircuit.jabbah.graph.view.GraphViewTestRule
 import io.antarescircuit.jabbah.graph.view.module.GraphViewModule
 import dev.mokkery.mock
@@ -120,6 +121,17 @@ class EdgeViewPointSequenceTest {
 		assertEquals(Point2D(126, 49), sequence.getNext(distance))
 		assertEquals(Point2D(147, 49), sequence.getNext(distance))
 		assertNull(sequence.getNext(distance))
+	}
+
+	/**
+	 * Regression test for bug #1228.
+	 * [EdgeViews][EdgeView] with only a single [Point2D] should not occur, as they are illegal.
+	 * [EdgeViewPointSequence] must nonetheless be robust in that regard.
+	 */
+	@Test
+	fun shouldBuildDummySequenceForDistortedEdgeView() {
+		val sequence = createSequence(listOf(Point2D(0, 0)))
+		assertEquals(0.0, sequence.size)
 	}
 
 	private fun createSequence(

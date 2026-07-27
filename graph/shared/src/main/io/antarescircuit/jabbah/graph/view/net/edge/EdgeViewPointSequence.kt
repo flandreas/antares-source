@@ -66,20 +66,32 @@ class EdgeViewPointSequence(
 
 	val remainder: Double get() = currPointRange.remainder
 
-	private fun createCurrentPointRange(returnEndPoint: Boolean, offset: Double): PointRange =
-		if (isReverse) {
+	private fun createCurrentPointRange(returnEndPoint: Boolean, offset: Double): PointRange {
+		if (edgeView.segmentPointCount == 1) {
+			// This should not occur, because EdgeViews with only one Point2D are illegal.
+			// Handle nonetheless as defensive behavior
+			return PointRange(
+				edgeView.getSegmentPoint(0),
+				edgeView.getSegmentPoint(0),
+				returnEndPoint,
+				offset)
+		}
+		return if (isReverse) {
 			PointRange(
 				edgeView.getSegmentPoint(currSegmentPointIndex),
 				edgeView.getSegmentPoint(currSegmentPointIndex - 1),
 				returnEndPoint,
-				offset)
+				offset
+			)
 		} else {
 			PointRange(
 				edgeView.getSegmentPoint(currSegmentPointIndex),
 				edgeView.getSegmentPoint(currSegmentPointIndex + 1),
 				returnEndPoint,
-				offset)
+				offset
+			)
 		}
+	}
 
 	private fun hasNextSegmentPoint(): Boolean =
 		if (isReverse) {
