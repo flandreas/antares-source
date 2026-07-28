@@ -1,7 +1,6 @@
 package io.antarescircuit.antares.view.net
 
-import io.antarescircuit.jabbah.edit.properties.AbstractBeanInfo
+import io.antarescircuit.jabbah.edit.model.AbstractComponentBeanInfo
 
-/** Has no properties by intention. */
 @Suppress("unused")
-class DigitalNodeViewBeanInfo : AbstractBeanInfo<DigitalNodeView>()
+class DigitalNodeViewBeanInfo : AbstractComponentBeanInfo<DigitalNodeView>()

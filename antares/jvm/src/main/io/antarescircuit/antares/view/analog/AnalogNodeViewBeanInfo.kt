@@ -1,6 +1,6 @@
 package io.antarescircuit.antares.view.analog
 
-import io.antarescircuit.jabbah.edit.properties.AbstractBeanInfo
+import io.antarescircuit.jabbah.edit.model.AbstractComponentBeanInfo
 
 @Suppress("unused") // Reflection
-class AnalogNodeViewBeanInfo : AbstractBeanInfo<AnalogNodeView>()
+class AnalogNodeViewBeanInfo : AbstractComponentBeanInfo<AnalogNodeView>()
