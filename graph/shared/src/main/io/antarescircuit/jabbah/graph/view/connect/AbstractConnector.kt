@@ -142,6 +142,15 @@ abstract class AbstractConnector(
 		return true
 	}
 
+	protected fun insideCurrentTargetEdgeView(context: EditInputEventContext): Boolean {
+		if (targetEdgeView == null) {
+			clearTargetEdgeView()
+			return false
+		}
+
+		return targetEdgeView!!.contains(context.location)
+	}
+
 	protected fun insideTargetEdgeView(context: EditInputEventContext): Boolean {
 		val destEdgeView = context.drawingView.drawing.getDrawable { it is EdgeView<*> && it.model !== edgeView?.model && it.contains(context.location) }
 		if (destEdgeView == null || !canConnectTo(destEdgeView as EdgeView<*>, context.drawingView.drawing as GraphView)) {

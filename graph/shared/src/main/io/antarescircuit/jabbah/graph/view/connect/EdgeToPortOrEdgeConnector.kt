@@ -205,7 +205,7 @@ class EdgeToPortOrEdgeConnector(
 					state(insideTargetEdgeView) {
 						onEntry { snapToTargetEdgeView(it) }
 						onExit { removePortViewHighlight(it) }
-						stayIf({ mouseDragged(it) && insideTargetEdgeView(draggedEndpointType, it) }) {
+						stayIf({ mouseDragged(it) && insideCurrentTargetEdgeView(it) }) {
 							onTransit { snapToTargetEdgeView(it) }
 						}
 						transitTo(drag) {

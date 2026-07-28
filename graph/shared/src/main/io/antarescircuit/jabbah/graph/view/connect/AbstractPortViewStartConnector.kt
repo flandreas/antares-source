@@ -236,6 +236,10 @@ abstract class AbstractPortViewStartConnector(
 							removePortViewHighlight(it)
 							Status.set(StatusType.Tool, oldStatus)
 						}
+						transitTo(insideTargetEdgeView) {
+							given { mouseDragged(it) && insideCurrentTargetEdgeView(it) }
+							onTransit { snapToTargetEdgeView(it) }
+						}
 						transitTo(drag) {
 							given { mouseDragged(it) && !insideTargetEdgeView(draggedEndpointType, it) }
 						}
