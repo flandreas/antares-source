@@ -71,6 +71,9 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 
 	private val actorInteractionHandler: ToggleInteractionHandler = createActorInteractionHandler()
 
+	/** Contains the rectangular area that responds to [contains] method calls. Always kept in sync with the geometry.*/
+	private val containsBox = Rectangle2D()
+
 	/** ---- [Orientable] */
 
 	override val useOrientation: Boolean get() = true
@@ -90,7 +93,7 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 		set(value) {
 			invalidate()
 			field = value
-			updateBoundingBox()
+			updateBoxes()
 			update()
 		}
 
@@ -163,7 +166,7 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 	override fun getBoundingBoxImpl(): RectangularShape = boundingBox
 
 	override fun contains(x: Double, y: Double): Boolean =
-		rotate(boundingBox).contains(x, y)
+		rotate(containsBox).contains(x, y)
 
 	/** ---- [Component] */
 
@@ -190,7 +193,7 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 		invalidate()
 		handleStateChangedImpl(event)
 		label.text = StringUtils.orEmpty(name)
-		updateBoundingBox()
+		updateBoxes()
 
 		super.handleStateChanged(event)
 	}
@@ -298,21 +301,20 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 		label.text = StringUtils.orEmpty(name)
 		label.location = Point2D(arrowPath!!.tailLocation).subtract(orientation.multiply(LABEL_DIST.toDouble()))
 		label.alignment = Alignment.forOrientation(orientation)
-		updateBoundingBox()
+		updateBoxes()
 	}
 
 	protected open fun updateOutputLabel() {
 		label.text = StringUtils.orEmpty(name)
 		label.location = orientation.multiply(LABEL_DIST.toDouble())
 		label.alignment = Alignment.forOrientation(orientation.opposite())
-		updateBoundingBox()
+		updateBoxes()
 	}
 
-	protected fun updateBoundingBox() {
+	protected fun updateBoxes() {
 		invalidate()
 
 		_boundingBox.setFrame(location.x, location.y, 0.0, 0.0)
-		addPortViewsTo(_boundingBox, null)
 
 		val pathBB = arrowPath!!.path.boundingBox
 		val pathTranslation = getArrowPathTranslation()
@@ -332,6 +334,8 @@ abstract class AbstractCircuitInOutView<T : CircuitInOut<*>>(
 			location.y + labelBB.y + pathTranslation.y - 1,
 			labelBB.width + 2,
 			labelBB.height + 2))
+
+		addPortViewsTo(_boundingBox, containsBox)
 
 		invalidate()
 	}

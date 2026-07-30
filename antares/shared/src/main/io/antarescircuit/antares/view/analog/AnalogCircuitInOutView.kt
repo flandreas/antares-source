@@ -118,7 +118,7 @@ class AnalogCircuitInOutView(
 		label.text = StringUtils.orEmpty(name)
 		label.location = orientation.multiply(LABEL_DIST.toDouble())
 		label.alignment = Alignment.forOrientation(orientation.opposite())
-		updateBoundingBox()
+		updateBoxes()
 	}
 
 	override fun drawSimulated(context: DrawContext) {

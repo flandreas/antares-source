@@ -472,8 +472,6 @@ abstract class AbstractVerticeView<T : Vertice>(
 			configureExecutionInfoLabel()
 			executionInfoLabel.draw(context)
 		}
-
-		DrawModule.drawLocatableDebugBoundingBox(this, context)
 	}
 
 	protected fun getApplicableForegroundColor(context: DrawContext): Color {

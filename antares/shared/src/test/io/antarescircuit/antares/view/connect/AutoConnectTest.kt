@@ -30,27 +30,39 @@ class AutoConnectTest : AbstractGraphViewEditingTest(10) {
         EditModule.drawingAppService = GraphViewAppServiceImpl(mock())
     }
 
+    private val and: LogicGateView get() = graphView.drawables.first { it is LogicGateView } as LogicGateView
+    private val input: DigitalCircuitInOutView get() = graphView.drawables.first { it is DigitalCircuitInOutView } as DigitalCircuitInOutView
+
     /** Regression test for bug #1231. */
     @Test
     fun shouldNotConnectPortMoreThanOnce() {
-        val input = EditModule.drawingAppService.add(
+        EditModule.drawingAppService.add(
             DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(portType = PortType.INPUT)).apply {
                 location = Point2D(0, 0)
             },
             editor.view
-        ) as DigitalCircuitInOutView
+        )
 
-        val and = EditModule.drawingAppService.add(
+        EditModule.drawingAppService.add(
             LogicGateView.andGateView().apply { location = Point2D(200, 0) },
             editor.view
-        ) as LogicGateView
+        )
 
-        // Connect port 1 of the AndGate open-ended
+        // Connect port 1 of the AndGate. This connects it to the InOut's port
         and.getPortView(and.model.getPort(1))!!.connectionPoint.let {
             driver.mouseMoveTo(and.location.xInt + it.xInt, and.location.yInt + it.yInt)
             driver.pressMouseAt(and.location.xInt + it.xInt, and.location.yInt + it.yInt)
             driver.dragMouseAndReleaseAt(input.location.xInt + 3, input.location.yInt)
         }
+        // Delete and re-add the InOut to make the EdgeView open-ended
+        EditModule.drawingAppService.delete(listOf(input), editor.view)
+        EditModule.drawingAppService.add(
+            DigitalCircuitInOutView(model = DigitalCircuitInOutImpl(portType = PortType.INPUT)).apply {
+                location = Point2D(0, 0)
+            },
+            editor.view
+        )
+
         assertEquals(1, graphView.getEdgeViews().size)
         // Make sure it is NOT connected to the nearby port of the InOutView
         assertFalse(input.model.getPort<DigitalPort>().isConnected)
