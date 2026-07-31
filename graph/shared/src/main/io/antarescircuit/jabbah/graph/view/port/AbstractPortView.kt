@@ -42,6 +42,12 @@ abstract class AbstractPortView<T : Any>(
 	override val connectable: Boolean = true
 ) : AbstractDrawable(), PortView<T>, Storable, Mirrorable {
 
+	companion object {
+		private val sensitiveArea by lazy {
+			BaseModule.properties.getInt(PROP_SENSITIVE_AREA)
+		}
+	}
+
 	override var location: Point2D = Point2D(x, y)
 		set(value) {
 			invalidate()
@@ -177,7 +183,7 @@ abstract class AbstractPortView<T : Any>(
 	}
 
 	override fun containsConnectionPoint(x: Double, y: Double): Boolean
-		= connectionPoint.isNear(x, y, BaseModule.properties.getInt(PROP_SENSITIVE_AREA))
+		= connectionPoint.isNear(x, y, sensitiveArea)
 
 	override fun handleConnect(edgeView: EdgeView<T>, geometry: EdgeViewConnectionGeometry) {
 		invalidate()
