@@ -1,5 +1,7 @@
 package io.antarescircuit.jabbah.graph.view.connect
 
+import io.antarescircuit.jabbah.base.Status
+import io.antarescircuit.jabbah.base.StatusType
 import io.antarescircuit.jabbah.base.collection.Stack
 import io.antarescircuit.jabbah.base.geom.Direction
 import io.antarescircuit.jabbah.base.geom.Point2D
@@ -32,6 +34,8 @@ abstract class AbstractCreateEdgeViewConnector(
 		private val LOG by logger(AbstractCreateEdgeViewConnector::class)
 	}
 
+	private var oldStatus: String? = null
+
 	protected val isValidEdgeView: Boolean get() = edgeView != null && edgeView!!.isSufficientlyLarge
 
 	/**
@@ -43,6 +47,14 @@ abstract class AbstractCreateEdgeViewConnector(
 		private set
 
 	protected abstract fun createAdjustment(): EdgeViewAdjustmentView
+
+	protected fun replaceStatusBar(text: String) {
+		oldStatus = Status.replace(StatusType.Tool, text)
+	}
+
+	protected fun resetStatusBar() {
+		Status.set(StatusType.Tool, oldStatus)
+	}
 
 	protected fun beginAdjustment(context: EditInputEventContext) {
 		adjustment = createAdjustment()

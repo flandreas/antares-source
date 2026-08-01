@@ -1,7 +1,5 @@
 package io.antarescircuit.jabbah.graph.view.connect
 
-import io.antarescircuit.jabbah.base.Status
-import io.antarescircuit.jabbah.base.StatusType
 import io.antarescircuit.jabbah.base.Translations
 import io.antarescircuit.jabbah.base.geom.Point2D
 import io.antarescircuit.jabbah.base.logger
@@ -66,8 +64,6 @@ abstract class AbstractPortViewStartConnector(
 	protected var startPortView: PortView<*>? = null
 		private set
 
-	private var oldStatus: String? = null
-
 	override val handler = StateMachineInputEventHandler(
 
 		stateMachine<EditInputEventContext>(Unhandled) {
@@ -87,11 +83,11 @@ abstract class AbstractPortViewStartConnector(
 			state(insideStartDrag) {
 				onEntry {
 					displayPortViewHighlight(it)
-					oldStatus = Status.replace(StatusType.Tool, Translations.getString("graph.tool.connector.insideStartDrag.stateTip"))
+					replaceStatusBar(Translations.getString("graph.tool.connector.insideStartDrag.stateTip"))
 				}
 				onExit {
 					removePortViewHighlight(it)
-					Status.set(StatusType.Tool, oldStatus)
+					resetStatusBar()
 				}
 				stayIf { mouseMoved(it) && insideCurrentPortView(it.location) }
 				transitTo(sense) {
@@ -114,11 +110,11 @@ abstract class AbstractPortViewStartConnector(
 			state(insideStartAdjust) {
 				onEntry {
 					displayAlternativePortViewHighlight(it)
-					oldStatus = Status.replace(StatusType.Tool, Translations.getString("graph.tool.connector.insideStartAdjust.stateTip"))
+					replaceStatusBar(Translations.getString("graph.tool.connector.insideStartAdjust.stateTip"))
 				}
 				onExit {
 					removePortViewHighlight(it)
-					Status.set(StatusType.Tool, oldStatus)
+					resetStatusBar()
 				}
 				stayIf { mouseMoved(it) && insideCurrentPortView(it.location) }
 				transitTo(sense) {
@@ -139,10 +135,10 @@ abstract class AbstractPortViewStartConnector(
 
 					state(drag) {
 						onEntry {
-							oldStatus = Status.replace(StatusType.Tool, Translations.getString("graph.tool.connector.drag.drag.stateTip"))
+							replaceStatusBar(Translations.getString("graph.tool.connector.drag.drag.stateTip"))
 						}
 						onExit {
-							Status.set(StatusType.Tool, oldStatus)
+							resetStatusBar()
 						}
 						transitTo(insideTargetPortView) {
 							given { mouseDragged(it) && insideTargetPortView(draggedEndpointType, it) }
@@ -178,11 +174,11 @@ abstract class AbstractPortViewStartConnector(
 					state(insideTargetPortView) {
 						onEntry {
 							snapToTargetPortView(it)
-							oldStatus = Status.replace(StatusType.Tool, Translations.getString("graph.tool.connector.drag.insideTargetPortView.stateTip"))
+							replaceStatusBar(Translations.getString("graph.tool.connector.drag.insideTargetPortView.stateTip"))
 						}
 						onExit {
 							removePortViewHighlight(it)
-							Status.set(StatusType.Tool, oldStatus)
+							resetStatusBar()
 						}
 						transitTo(insideTargetPortView) {
 							given { mouseDragged(it) && insideTargetPortView(draggedEndpointType, it) }
@@ -204,11 +200,11 @@ abstract class AbstractPortViewStartConnector(
 					state(insideDenyingPortView) {
 						onEntry {
 							snapToDenyingPortView(it)
-							oldStatus = Status.replace(StatusType.Tool, Translations.getString("graph.tool.connector.drag.insideDenyingPortView.stateTip"))
+							replaceStatusBar(Translations.getString("graph.tool.connector.drag.insideDenyingPortView.stateTip"))
 						}
 						onExit {
 							removePortViewHighlight(it)
-							Status.set(StatusType.Tool, oldStatus)
+							resetStatusBar()
 						}
 						transitTo(insideDenyingPortView) {
 							given { mouseDragged(it) && insideDenyingPortView(draggedEndpointType, it) }
@@ -230,11 +226,11 @@ abstract class AbstractPortViewStartConnector(
 					state(insideTargetEdgeView) {
 						onEntry {
 							snapToTargetEdgeView(it)
-							oldStatus = Status.replace(StatusType.Tool, Translations.getString("graph.tool.connector.drag.insideTargetEdgeView.stateTip"))
+							replaceStatusBar(Translations.getString("graph.tool.connector.drag.insideTargetEdgeView.stateTip"))
 						}
 						onExit {
 							removePortViewHighlight(it)
-							Status.set(StatusType.Tool, oldStatus)
+							resetStatusBar()
 						}
 						transitTo(insideTargetEdgeView) {
 							given { mouseDragged(it) && insideCurrentTargetEdgeView(it) }
@@ -261,11 +257,11 @@ abstract class AbstractPortViewStartConnector(
 					state(insideDenyingEdgeView) {
 						onEntry {
 							snapToDenyingEdgeView(it)
-							oldStatus = Status.replace(StatusType.Tool, Translations.getString("graph.tool.connector.drag.insideDenyingEdgeView.stateTip"))
+							replaceStatusBar(Translations.getString("graph.tool.connector.drag.insideDenyingEdgeView.stateTip"))
 						}
 						onExit {
 							removePortViewHighlight(it)
-							Status.set(StatusType.Tool, oldStatus)
+							resetStatusBar()
 						}
 						transitTo(drag) {
 							given { mouseDragged(it) && !insideDenyingEdgeView(draggedEndpointType, it) }
@@ -314,10 +310,10 @@ abstract class AbstractPortViewStartConnector(
 					state(move) {
 						onEntry {
 							it.view.setCursor(Cursor.CROSSHAIR)
-							oldStatus = Status.replace(StatusType.Tool, Translations.getString("graph.tool.connector.adjust.move.stateTip"))
+							replaceStatusBar(Translations.getString("graph.tool.connector.adjust.move.stateTip"))
 						}
 						onExit {
-							Status.set(StatusType.Tool, oldStatus)
+							resetStatusBar()
 						}
 						transitTo(insideTargetPortView) {
 							given { mouseMoved(it) && insideTargetPortView(draggedEndpointType, it) }
@@ -346,11 +342,11 @@ abstract class AbstractPortViewStartConnector(
 					state(insideTargetPortView) {
 						onEntry {
 							adjustToTargetPortView(it)
-							oldStatus = Status.replace(StatusType.Tool, Translations.getString("graph.tool.connector.adjust.insideTargetPortView.stateTip"))
+							replaceStatusBar(Translations.getString("graph.tool.connector.adjust.insideTargetPortView.stateTip"))
 						}
 						onExit {
 							removePortViewHighlight(it)
-							Status.set(StatusType.Tool, oldStatus)
+							resetStatusBar()
 						}
 						stayIf { mouseMoved(it) && insideTargetPortView(draggedEndpointType, it) }
 						transitTo(move) {
@@ -368,11 +364,11 @@ abstract class AbstractPortViewStartConnector(
 					state(insideDenyingPortView) {
 						onEntry {
 							adjustToDenyingPortView(it)
-							oldStatus = Status.replace(StatusType.Tool, Translations.getString("graph.tool.connector.drag.insideDenyingPortView.stateTip"))
+							replaceStatusBar(Translations.getString("graph.tool.connector.drag.insideDenyingPortView.stateTip"))
 						}
 						onExit {
 							removePortViewHighlight(it)
-							Status.set(StatusType.Tool, oldStatus)
+							resetStatusBar()
 						}
 						stayIf { mouseMoved(it) && insideDenyingPortView(draggedEndpointType, it) }
 						stayIf { mouseLeftClicked(it) }
@@ -387,11 +383,11 @@ abstract class AbstractPortViewStartConnector(
 					state(insideTargetEdgeView) {
 						onEntry {
 							adjustToTargetEdgeView(it)
-							oldStatus = Status.replace(StatusType.Tool, Translations.getString("graph.tool.connector.adjust.insideTargetEdgeView.stateTip"))
+							replaceStatusBar(Translations.getString("graph.tool.connector.adjust.insideTargetEdgeView.stateTip"))
 						}
 						onExit {
 							removePortViewHighlight(it)
-							Status.set(StatusType.Tool, oldStatus)
+							resetStatusBar()
 						}
 						stayIf({ mouseMoved(it) && insideTargetEdgeView(draggedEndpointType, it) }) {
 							onTransit { adjustToTargetEdgeView(it) }

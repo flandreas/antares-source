@@ -1,5 +1,6 @@
 package io.antarescircuit.jabbah.graph.view.connect
 
+import io.antarescircuit.jabbah.base.Translations
 import io.antarescircuit.jabbah.base.event.Modifier
 import io.antarescircuit.jabbah.base.geom.Direction
 import io.antarescircuit.jabbah.base.geom.Point2D
@@ -107,7 +108,13 @@ class EdgeToPortOrEdgeConnector(
 			}
 
 			state(insideStartDrag) {
-				onEntry { displayPortViewHighlight(it, snap(it)!!.location) }
+				onEntry {
+					displayPortViewHighlight(it, snap(it)!!.location)
+					replaceStatusBar(Translations.getString("graph.tool.edgeConnector.insideStartDrag.stateTip"))
+				}
+				onExit {
+					resetStatusBar()
+				}
 				transitTo(insideStartDrag) {
 					given { mouseMoved(it) && snap(it) != null }
 					onTransit { displayPortViewHighlight(it, snap(it)!!.location) }
@@ -128,6 +135,10 @@ class EdgeToPortOrEdgeConnector(
 			state(insideStartAdjust) {
 				onEntry {
 					displayPortViewHighlight(it, snap(it)!!.location, alternativeView = true)
+					replaceStatusBar(Translations.getString("graph.tool.edgeConnector.insideStartAdjust.stateTip"))
+				}
+				onExit {
+					resetStatusBar()
 				}
 				transitTo(insideStartAdjust) {
 					given { mouseMoved(it) && snap(it) != null }
@@ -151,6 +162,12 @@ class EdgeToPortOrEdgeConnector(
 				stateMachine(Unhandled) {
 
 					state(drag) {
+						onEntry {
+							replaceStatusBar(Translations.getString("graph.tool.connector.drag.drag.stateTip"))
+						}
+						onExit {
+							resetStatusBar()
+						}
 						transitTo(sense) {
 							// Connecting has been interrupted in beginConnecting() because snap was not valid
 							// Transaction has not yet been started, so we can't cancel(), which would rollback
@@ -186,8 +203,14 @@ class EdgeToPortOrEdgeConnector(
 					// This is exactly the same code as in AbstractPortViewStartConnector. However, if we used
 					// a common State builder for this State, we would lose the insight into the entire StateMachine here.
 					state(insideTargetPortView) {
-						onEntry { snapToTargetPortView(it) }
-						onExit { removePortViewHighlight(it) }
+						onEntry {
+							snapToTargetPortView(it)
+							replaceStatusBar(Translations.getString("graph.tool.connector.drag.insideTargetPortView.stateTip"))
+						}
+						onExit {
+							removePortViewHighlight(it)
+							resetStatusBar()
+						}
 						transitTo(insideTargetPortView) {
 							given { mouseDragged(it) && insideTargetPortView(draggedEndpointType, it) }
 						}
@@ -203,8 +226,14 @@ class EdgeToPortOrEdgeConnector(
 					}
 
 					state(insideTargetEdgeView) {
-						onEntry { snapToTargetEdgeView(it) }
-						onExit { removePortViewHighlight(it) }
+						onEntry {
+							snapToTargetEdgeView(it)
+							replaceStatusBar(Translations.getString("graph.tool.connector.drag.insideTargetEdgeView.stateTip"))
+						}
+						onExit {
+							removePortViewHighlight(it)
+							resetStatusBar()
+						}
 						stayIf({ mouseDragged(it) && insideCurrentTargetEdgeView(it) }) {
 							onTransit { snapToTargetEdgeView(it) }
 						}
@@ -223,9 +252,11 @@ class EdgeToPortOrEdgeConnector(
 					state(insideDenyingPortView) {
 						onEntry {
 							snapToDenyingPortView(it)
+							replaceStatusBar(Translations.getString("graph.tool.connector.drag.insideDenyingPortView.stateTip"))
 						}
 						onExit {
 							removePortViewHighlight(it)
+							resetStatusBar()
 						}
 						transitTo(insideDenyingPortView) {
 							given { mouseDragged(it) && insideDenyingPortView(draggedEndpointType, it) }
@@ -245,8 +276,14 @@ class EdgeToPortOrEdgeConnector(
 					}
 
 					state(insideDenyingEdgeView) {
-						onEntry { snapToDenyingEdgeView(it) }
-						onExit { removePortViewHighlight(it) }
+						onEntry {
+							snapToDenyingEdgeView(it)
+							replaceStatusBar(Translations.getString("graph.tool.connector.drag.insideDenyingEdgeView.stateTip"))
+						}
+						onExit {
+							removePortViewHighlight(it)
+							resetStatusBar()
+						}
 						transitTo(drag) {
 							given { mouseDragged(it) && !insideDenyingEdgeView(draggedEndpointType, it) }
 						}
@@ -290,6 +327,10 @@ class EdgeToPortOrEdgeConnector(
 					state(move) {
 						onEntry {
 							it.view.setCursor(Cursor.CROSSHAIR)
+							replaceStatusBar(Translations.getString("graph.tool.connector.adjust.move.stateTip"))
+						}
+						onExit {
+							resetStatusBar()
 						}
 						transitTo(sense) {
 							// Connecting has been interrupted in beginConnecting() because snap was not valid
@@ -326,9 +367,11 @@ class EdgeToPortOrEdgeConnector(
 					state(insideTargetPortView) {
 						onEntry {
 							adjustToTargetPortView(it)
+							replaceStatusBar(Translations.getString("graph.tool.connector.adjust.insideTargetPortView.stateTip"))
 						}
 						onExit {
 							removePortViewHighlight(it)
+							resetStatusBar()
 						}
 						stayIf { mouseMoved(it) && insideTargetPortView(draggedEndpointType, it) }
 						transitTo(move) {
@@ -346,9 +389,11 @@ class EdgeToPortOrEdgeConnector(
 					state(insideDenyingPortView) {
 						onEntry {
 							snapToDenyingPortView(it)
+							replaceStatusBar(Translations.getString("graph.tool.connector.drag.insideDenyingPortView.stateTip"))
 						}
 						onExit {
 							removePortViewHighlight(it)
+							resetStatusBar()
 						}
 						transitTo(insideDenyingPortView) {
 							given { mouseMoved(it) && insideDenyingPortView(draggedEndpointType, it) }
@@ -365,8 +410,14 @@ class EdgeToPortOrEdgeConnector(
 					}
 
 					state(insideTargetEdgeView) {
-						onEntry { adjustToTargetEdgeView(it) }
-						onExit { removePortViewHighlight(it) }
+						onEntry {
+							adjustToTargetEdgeView(it)
+							replaceStatusBar(Translations.getString("graph.tool.connector.adjust.insideTargetEdgeView.stateTip"))
+						}
+						onExit {
+							removePortViewHighlight(it)
+							resetStatusBar()
+						}
 						stayIf({ mouseMoved(it) && insideTargetEdgeView(it) }) {
 							onTransit { adjustToTargetEdgeView(it) }
 						}
@@ -383,8 +434,14 @@ class EdgeToPortOrEdgeConnector(
 					}
 
 					state(insideDenyingEdgeView) {
-						onEntry { snapToDenyingEdgeView(it) }
-						onExit { removePortViewHighlight(it) }
+						onEntry {
+							snapToDenyingEdgeView(it)
+							replaceStatusBar(Translations.getString("graph.tool.connector.drag.insideDenyingEdgeView.stateTip"))
+						}
+						onExit {
+							removePortViewHighlight(it)
+							resetStatusBar()
+						}
 						transitTo(move) {
 							given { mouseMoved(it) && !insideDenyingEdgeView(it) }
 						}
