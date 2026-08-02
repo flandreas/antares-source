@@ -1,6 +1,6 @@
 package io.antarescircuit.antares.model.inout
 
-import io.antarescircuit.antares.model.input.Switch
+import io.antarescircuit.antares.model.input.AbstractAntaresInteractableVertice
 import io.antarescircuit.antares.model.port.DigitalPort
 import io.antarescircuit.antares.model.port.DigitalPortImpl
 import io.antarescircuit.antares.model.signal.*
@@ -170,7 +170,7 @@ class DigitalCircuitInOutImpl(
 
 	/** ---- [InteractableVertice] interface */
 
-	override var interactivePropagationDelay: Long = Switch.DEF_PROP_DELAY.value
+	override var interactivePropagationDelay: Long = AbstractAntaresInteractableVertice.DEF_PROP_DELAY.value
 
 	/** ---- [Vertice] */
 
@@ -249,7 +249,7 @@ class DigitalCircuitInOutImpl(
 		if (startValue != null) {
 			writer.writeULong("startValue", startValue!!.getValue())
 		}
-		if (interactivePropagationDelay != Switch.DEF_PROP_DELAY.value) {
+		if (interactivePropagationDelay != AbstractAntaresInteractableVertice.DEF_PROP_DELAY.value) {
 			writer.writeLong("interactivePropagationDelay", interactivePropagationDelay)
 		}
 	}

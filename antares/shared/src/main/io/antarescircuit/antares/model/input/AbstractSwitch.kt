@@ -3,8 +3,6 @@ package io.antarescircuit.antares.model.input
 import io.antarescircuit.jabbah.execution.SignalHandler
 import io.antarescircuit.jabbah.execution.actor.Actor
 import io.antarescircuit.jabbah.graph.model.GraphActorData
-import io.antarescircuit.jabbah.graph.model.vertice.AbstractInteractableVertice
-import io.antarescircuit.jabbah.graph.model.vertice.InteractableVertice
 import io.antarescircuit.jabbah.graph.model.vertice.VerticeCalculator
 import io.antarescircuit.jabbah.io.Storable
 import io.antarescircuit.jabbah.io.StoreReader
@@ -12,7 +10,7 @@ import io.antarescircuit.jabbah.io.StoreWriter
 
 abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 	calculator: VerticeCalculator<T>
-) : AbstractInteractableVertice<Boolean>(calculator) {
+) : AbstractAntaresInteractableVertice<Boolean>(calculator) {
 
 	companion object {
 		open class AbstractSwitchCalculator<T : AbstractSwitch<T>> : VerticeCalculator<T> {
@@ -25,10 +23,6 @@ abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 	val isOn: Boolean get() = signal ?: false
 
 	var closedOnStart: Boolean = false
-
-	/** ---- [InteractableVertice] interface */
-
-	override var interactivePropagationDelay: Long = Switch.DEF_PROP_DELAY.value
 
 	/** ---- [Actor] interface */
 

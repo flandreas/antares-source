@@ -1,6 +1,6 @@
 package io.antarescircuit.antares.model.analog
 
-import io.antarescircuit.antares.model.input.Switch
+import io.antarescircuit.antares.model.input.AbstractAntaresInteractableVertice
 import io.antarescircuit.antares.model.input.SwitchConfiguration
 import io.antarescircuit.antares.view.analog.engine.AnalogCircuitAnalysis
 import io.antarescircuit.antares.view.analog.engine.AnalogElement
@@ -108,7 +108,7 @@ class AnalogRelay(
         private set
 
     init {
-        propagationDelay = Switch.DEF_PROP_DELAY
+        propagationDelay = AbstractAntaresInteractableVertice.DEF_PROP_DELAY
         updatePorts()
         inductorLogic.setup(inductance.baseValue, coilCurrent, InductorLogic.DEF_TRAPEZOIDAL)
     }

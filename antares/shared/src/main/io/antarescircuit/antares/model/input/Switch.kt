@@ -3,7 +3,6 @@ package io.antarescircuit.antares.model.input
 import io.antarescircuit.antares.model.port.DigitalPortImpl
 import io.antarescircuit.antares.model.signal.DigitalSignal
 import io.antarescircuit.antares.model.signal.DigitalSignalFactory
-import io.antarescircuit.jabbah.base.LongValueImpl
 import io.antarescircuit.jabbah.base.Translations
 import io.antarescircuit.jabbah.execution.SignalHandler
 import io.antarescircuit.jabbah.graph.model.GraphActorData
@@ -18,8 +17,6 @@ import io.antarescircuit.jabbah.io.StoreWriter
 class Switch : AbstractSwitch<Switch>(CALCULATOR) {
 
 	companion object {
-
-		val DEF_PROP_DELAY get() = CurrentSwitchPropagationDelay.value
 
 		private const val BASE_RESOURCE_KEY = "library.element.Toggle"
 		private val TYPE get() = Translations.getString("$BASE_RESOURCE_KEY.name")
@@ -63,13 +60,6 @@ class Switch : AbstractSwitch<Switch>(CALCULATOR) {
 			super.off(signalHandler)
 		}
 	}
-
-	/** ---- [InteractableVertice] interface */
-
-	override var interactivePropagationDelay: Long = propagationDelay.value
-		set(value) {
-			propagationDelay = LongValueImpl(value)
-		}
 
 	/** ---- [Storable] interface */
 

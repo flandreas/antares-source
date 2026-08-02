@@ -32,7 +32,11 @@ interface InteractableVertice<S: Any> : Vertice {
 
 	val disabled: Boolean get() = !enabled
 
-	/** The propagation delay to be applied with user interactions such as mouse clicks.*/
+	/**
+	 * The propagation delay to be applied with user interactions such as mouse clicks.
+	 * Represents the typically longer delay produced by the mechanical moving parts of such components.
+	 * The default value is configurable as a user preference.
+	 */
 	var interactivePropagationDelay: Long
 
 	/**
@@ -78,6 +82,13 @@ abstract class AbstractInteractableVertice<S: Any>(
 
 	override val enabled: Boolean get() = _enabled
 
+	/**
+	 * Returns the effective propagation delay to be used during simulation.
+	 * Depends on the current [enableInteractivePropagationDelay] user preference value.
+	 */
+	val effectivePropagationDelay: Long get() =
+		if (enableInteractivePropagationDelay) interactivePropagationDelay else 0
+
 	/** ---- [AbstractInteractableVertice] */
 
 	fun setInteractionEnabled(enabled: Boolean, signalHandler: SignalHandler) {
@@ -106,11 +117,7 @@ abstract class AbstractInteractableVertice<S: Any>(
 	}
 
 	protected open fun requestSetSignal(signal: S, signalHandler: SignalHandler) {
-		if (enableInteractivePropagationDelay) {
-			requestSetSignalAfter(signal, signalHandler, interactivePropagationDelay)
-		} else {
-			requestSetSignalAfter(signal, signalHandler, 0)
-		}
+		requestSetSignalAfter(signal, signalHandler, effectivePropagationDelay)
 	}
 
 	protected open fun requestSetSignalAfter(signal: S, signalHandler: SignalHandler, delay: Long) {

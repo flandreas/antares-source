@@ -12,7 +12,6 @@ import io.antarescircuit.jabbah.execution.actor.Actor
 import io.antarescircuit.jabbah.graph.model.Graph
 import io.antarescircuit.jabbah.graph.model.GraphActorData
 import io.antarescircuit.jabbah.graph.model.GraphElement
-import io.antarescircuit.jabbah.graph.model.vertice.AbstractInteractableVertice
 import io.antarescircuit.jabbah.graph.model.vertice.InteractableVertice
 import io.antarescircuit.jabbah.graph.model.vertice.VerticeCalculator
 import io.antarescircuit.jabbah.io.Storable
@@ -27,7 +26,7 @@ import io.antarescircuit.jabbah.io.StoreWriter
  */
 class DipSwitch(
 	bitWidth: BitWidth = BitWidth.BW_4
-) : AbstractInteractableVertice<DigitalSignal>(CALCULATOR), AdjustableBitWidth {
+) : AbstractAntaresInteractableVertice<DigitalSignal>(CALCULATOR), AdjustableBitWidth {
 
 	companion object {
 
@@ -84,7 +83,7 @@ class DipSwitch(
 
 	/** ---- [InteractableVertice] */
 
-	override var interactivePropagationDelay: Long = Switch.DEF_PROP_DELAY.value
+	override var interactivePropagationDelay: Long = DEF_PROP_DELAY.value
 
 	/** ---- [AdjustableBitWidth] */
 
@@ -116,7 +115,7 @@ class DipSwitch(
 	}
 
 	override fun executionStart(signalHandler: SignalHandler) {
-		requestActingAfter(signalHandler, propagationDelay.value, createActorData(null))
+		requestActingAfter(signalHandler, effectivePropagationDelay, createActorData(null))
 	}
 
 	override fun executionStopped(signalHandler: SignalHandler) {

@@ -1,6 +1,6 @@
 package io.antarescircuit.antares.view.input
 
-import io.antarescircuit.antares.view.DigitalComponentViewBeanInfo
+import com.l2fprod.common.propertysheet.Property
 import io.antarescircuit.jabbah.edit.Editor
 import io.antarescircuit.jabbah.edit.componentBeanProvider
 import io.antarescircuit.jabbah.edit.model.EditProperties
@@ -9,10 +9,9 @@ import io.antarescircuit.jabbah.graph.container.ControlViewComponent
 import io.antarescircuit.jabbah.graph.container.ControlViewComponentBeanInfo
 import io.antarescircuit.jabbah.graph.view.ControlViewBeanInfo
 import io.antarescircuit.jabbah.graph.view.GraphProperties
-import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
-class SwitchViewBeanInfo : DigitalComponentViewBeanInfo<SwitchView>(), ControlViewBeanInfo {
+class SwitchViewBeanInfo : AbstractAntaresInteractableVerticeBeanInfo<SwitchView>(), ControlViewBeanInfo {
 
     companion object {
 	    private val name = EditProperties.untranslatableName()

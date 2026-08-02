@@ -65,6 +65,12 @@ abstract class AbstractPushButtonSwitchView<T: AbstractSwitch<T>>(
 			validate()
 		}
 
+	var interactivePropagationDelay: Long
+		get() = model.interactivePropagationDelay
+		set(value) {
+			model.interactivePropagationDelay = value
+		}
+
 	init {
 		initExternalLabel(Direction.WEST)
 		isFocusable = true

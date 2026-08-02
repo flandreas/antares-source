@@ -118,6 +118,12 @@ class ImageSwitchView(
 
     /** ---- UI properties */
 
+    var interactivePropagationDelay: Long
+        get() = model.interactivePropagationDelay
+        set(value) {
+            model.interactivePropagationDelay = value
+        }
+
     override var toggle: Boolean
         get() = super.toggle
         set(value) {

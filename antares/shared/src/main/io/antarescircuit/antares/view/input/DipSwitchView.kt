@@ -105,6 +105,12 @@ class DipSwitchView(
 
 	/** ---- UI properties */
 
+	var interactivePropagationDelay: Long
+		get() = model.interactivePropagationDelay
+		set(value) {
+			model.interactivePropagationDelay = value
+		}
+
 	var bitWidth: BitWidth
 		get() = model.bitWidth
 		set(value) {

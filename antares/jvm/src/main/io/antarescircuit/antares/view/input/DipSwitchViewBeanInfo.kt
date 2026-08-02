@@ -1,15 +1,14 @@
 package io.antarescircuit.antares.view.input
 
+import com.l2fprod.common.propertysheet.Property
 import io.antarescircuit.antares.view.AntaresProperties
-import io.antarescircuit.antares.view.DigitalComponentViewBeanInfo
 import io.antarescircuit.jabbah.edit.Editor
 import io.antarescircuit.jabbah.edit.componentBeanProvider
 import io.antarescircuit.jabbah.edit.model.EditProperties
 import io.antarescircuit.jabbah.edit.properties.CommandPropertySwing
-import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused")
-class DipSwitchViewBeanInfo : DigitalComponentViewBeanInfo<DipSwitchView>() {
+class DipSwitchViewBeanInfo : AbstractAntaresInteractableVerticeBeanInfo<DipSwitchView>() {
 
 	companion object {
 		private val name = EditProperties.untranslatableName()

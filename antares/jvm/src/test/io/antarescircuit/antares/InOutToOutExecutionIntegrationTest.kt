@@ -1,7 +1,9 @@
 package io.antarescircuit.antares
 
+import dev.mokkery.MockMode
+import dev.mokkery.mock
 import io.antarescircuit.antares.model.inout.DigitalCircuitInOutImpl
-import io.antarescircuit.antares.model.input.Switch
+import io.antarescircuit.antares.model.input.AbstractAntaresInteractableVertice.Companion.DEF_PROP_DELAY
 import io.antarescircuit.antares.model.signal.Bit
 import io.antarescircuit.antares.model.signal.DigitalSignal
 import io.antarescircuit.antares.model.signal.DigitalSignalFactory
@@ -15,8 +17,6 @@ import io.antarescircuit.jabbah.graph.model.vertice.SubGraphVertice
 import io.antarescircuit.jabbah.graph.model.vertice.SubGraphVerticeRef
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.vertice.SubGraphVerticeView
-import dev.mokkery.MockMode
-import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -65,7 +65,7 @@ class InOutToOutExecutionIntegrationTest : AbstractJvmCircuitTest() {
 		val executionTime = scheduler.executionTime
 
 		switchView.model.on(scheduler)
-		proceedToNanos(executionTime + Switch.DEF_PROP_DELAY.value + 1)
+		proceedToNanos(executionTime + DEF_PROP_DELAY.value + 1)
 
 		assertEquals(DigitalSignalFactory.of(true), subGraphVV.model.getOutput<DigitalSignal>().getOutgoingSignal())
 	}

@@ -1,15 +1,14 @@
 package io.antarescircuit.antares.view.input
 
-import io.antarescircuit.antares.view.DigitalComponentViewBeanInfo
+import com.l2fprod.common.propertysheet.Property
 import io.antarescircuit.jabbah.base.geom.Direction
 import io.antarescircuit.jabbah.edit.Editor
 import io.antarescircuit.jabbah.edit.componentBeanProvider
 import io.antarescircuit.jabbah.edit.model.image.ImageIdentification
 import io.antarescircuit.jabbah.edit.properties.CommandPropertySwing
-import com.l2fprod.common.propertysheet.Property
 
 @Suppress("unused") // Reflection
-class ImageSwitchViewBeanInfo : DigitalComponentViewBeanInfo<ImageSwitchView>() {
+class ImageSwitchViewBeanInfo : AbstractAntaresInteractableVerticeBeanInfo<ImageSwitchView>() {
 
     companion object {
         private val toggle = CommandPropertySwing("toggle", SwitchView.BASE_KEY_TOGGLE, Boolean::class.java, componentBeanProvider)
