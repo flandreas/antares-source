@@ -3,6 +3,7 @@ package io.antarescircuit.antares.ai
 import io.antarescircuit.antares.AntaresTestRule
 import io.antarescircuit.antares.view.AbstractGraphViewEditingTest
 import io.antarescircuit.antares.view.gate.LogicGateView
+import io.antarescircuit.jabbah.edit.Look
 import io.antarescircuit.jabbah.edit.module.EditModule
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.app.GraphViewAppServiceImpl
@@ -100,12 +101,64 @@ class AiPlanExecutorTest : AbstractGraphViewEditingTest() {
 	@Test
 	fun shouldSnapCoordinatesToTheGrid() {
 		executor.apply(
-			AiValidatedPlan("", listOf(add("g", AiComponentType.And, inputCount = 2, x = 103, y = 45))),
+			AiValidatedPlan("", listOf(
+				add("a", AiComponentType.Input, x = 103, y = 45),
+				add("g", AiComponentType.And, inputCount = 2, x = -71, y = 98),
+				connect("a", "g"))),
 			editor)
 
-		val gate = graphView.getVerticeViews().single()
-		assertEquals(105, gate.location.xInt)
-		assertEquals(42, gate.location.yInt)
+		graphView.getVerticeViews().forEach {
+			assertEquals(0, it.location.xInt % Look.GRID)
+			assertEquals(0, it.location.yInt % Look.GRID)
+		}
+	}
+
+	@Test
+	fun shouldSpreadMultipleFanOutJunctionsAlongTheWire() {
+		val plan = AiValidatedPlan("", listOf(
+			add("source", AiComponentType.Input),
+			add("first", AiComponentType.Led),
+			add("second", AiComponentType.Led),
+			add("third", AiComponentType.Led),
+			add("fourth", AiComponentType.Led),
+			add("fifth", AiComponentType.Led),
+			add("sixth", AiComponentType.Led),
+			connect("source", "first"),
+			connect("source", "second"),
+			connect("source", "third"),
+			connect("source", "fourth"),
+			connect("source", "fifth"),
+			connect("source", "sixth")
+		))
+
+		executor.apply(plan, editor)
+
+		val junctions = graphView.getNodeViews()
+		assertEquals(5, junctions.size)
+		assertEquals(5, junctions.map { it.location }.toSet().size, "the junctions must not sit on the same spot")
+		junctions.forEach {
+			assertEquals(0, it.location.xInt % Look.GRID)
+			assertEquals(0, it.location.yInt % Look.GRID)
+		}
+		assertTrue(graphView.getEdgeViews().all { edge ->
+			(0 until edge.segmentPointCount - 1).all { edge.polyline.isSegmentOrthogonal(it) }
+		})
+	}
+
+	@Test
+	fun shouldPlaceFollowUpComponentsBesideTheExistingCircuit() {
+		executor.apply(AiValidatedPlan("", listOf(add("source", AiComponentType.Input))), editor)
+		val source = graphView.getVerticeViews().single()
+		val followUp = AiValidatedPlan("", listOf(
+			add("gate", AiComponentType.And, name = "A very wide gate name"),
+			AiOperation.Connect(AiRef.Existing(source.id), 1, AiRef.New("gate"), 1)
+		))
+
+		executor.apply(followUp, editor)
+
+		val gate = graphView.getVerticeViews().single { it.id != source.id }
+		assertTrue(gate.boundingBox.x > source.boundingBox.x + source.boundingBox.width)
+		assertFalse(gate.boundingBox.intersects(source.boundingBox))
 	}
 
 	@Test

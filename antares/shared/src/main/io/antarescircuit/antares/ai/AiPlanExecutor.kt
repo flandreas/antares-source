@@ -60,14 +60,8 @@ class AiPlanExecutor(
 		/** The translation key describing the transaction in the undo/redo menu.*/
 		const val COMMAND_KEY = "antares.ai.command.apply"
 
-		/** Horizontal distance between auto-placed columns.*/
-		private const val AUTO_COLUMN_WIDTH = Look.SCALE * 12
-
-		/** Vertical distance between auto-placed rows.*/
-		private const val AUTO_ROW_HEIGHT = Look.SCALE * 8
-
-		/** Number of auto-placed components per column.*/
-		private const val AUTO_ROWS_PER_COLUMN = 8
+		/** Distance kept between an existing circuit and newly created components.*/
+		private const val EXISTING_CIRCUIT_MARGIN = Look.SCALE * 12
 
 		private fun snapToGrid(value: Int): Int =
 			(value.toDouble() / Look.GRID).roundToInt() * Look.GRID
@@ -79,6 +73,8 @@ class AiPlanExecutor(
 		val deletedComponents: Int
 	)
 
+	private data class EdgeSplit(val segmentIndex: Int, val location: Point2D)
+
 	/**
 	 * Applies [plan] to the circuit currently shown by [editor].
 	 * @throws AiPlanExecutionException if an operation could not be applied. The circuit is unchanged in that case.
@@ -87,32 +83,42 @@ class AiPlanExecutor(
 		val drawingView = editor.view
 		val graphView = editor.drawing as? GraphView
 			?: throw AiPlanExecutionException("The active view does not show a circuit.")
+		val laidOutPlan = AiPlanLayouter.layout(plan)
 
 		val created = mutableMapOf<String, Int>()
+		val fanOutSplits = mutableMapOf<Pair<AiRef, Int>, ArrayDeque<EdgeSplit>>()
 		var added = 0
 		var connections = 0
 		var deleted = 0
-		var autoPlaced = 0
+		var placementOffset = placementOffset(laidOutPlan, graphView)
 
 		editor.commandManager.beginTransaction(COMMAND_KEY, drawingView)
 		try {
-			plan.operations.forEach { operation ->
+			laidOutPlan.operations.forEachIndexed { index, operation ->
 				when (operation) {
-					is AiOperation.ClearCircuit -> deleted += clear(graphView, drawingView)
+					is AiOperation.ClearCircuit -> {
+						deleted += clear(graphView, drawingView)
+						created.clear()
+						fanOutSplits.clear()
+						placementOffset = Point2D.ZERO
+					}
 
 					is AiOperation.DeleteComponent -> deleted += delete(operation, graphView, drawingView)
 
 					is AiOperation.AddComponent -> {
-						val location = locationOf(operation, autoPlaced)
-						if (operation.x == null || operation.y == null) {
-							autoPlaced++
-						}
+						val location = locationOf(operation, placementOffset)
 						created[operation.ref.id] = add(operation, location, editor, drawingView)
 						added++
 					}
 
 					is AiOperation.Connect -> {
-						connect(operation, created, editor, graphView)
+						connect(
+							operation,
+							created,
+							editor,
+							graphView,
+							fanOutSplits,
+							remainingConnections(laidOutPlan.operations, index, operation))
 						connections++
 					}
 				}
@@ -214,7 +220,9 @@ class AiPlanExecutor(
 		operation: AiOperation.Connect,
 		created: Map<String, Int>,
 		editor: Editor,
-		graphView: GraphView
+		graphView: GraphView,
+		fanOutSplits: MutableMap<Pair<AiRef, Int>, ArrayDeque<EdgeSplit>>,
+		remainingConnections: Int
 	) {
 		val origin = resolve(operation.from, created, graphView)
 		val destination = resolve(operation.to, created, graphView)
@@ -228,17 +236,19 @@ class AiPlanExecutor(
 		if (existingEdge != null) {
 			// Antares represents fan-out by branching from the existing wire, not by attaching a
 			// second net to the source port. SplitEdgeViewCommand inserts the required junction.
-			val splitLocation = existingEdge.polyline.getCenterOfSegment(0)
+			val split = fanOutSplits.getOrPut(operation.from to operation.fromPort) {
+				splitLocations(existingEdge, remainingConnections)
+			}.removeFirst()
 			val branch = GraphViewModule.getEdgeViewFactory()
 				.createEdgeView<DigitalSignal>(graphView)
-				.addSegmentPoint(splitLocation)
+				.addSegmentPoint(split.location)
 				.addSegmentPoint(destination.getPortConnectionPoint(destinationPort))
 			editor.commandManager.execute(SplitEdgeViewCommand(
 				editor = editor,
 				connectService = GraphViewModule.graphViewConnectService,
 				splitEdgeViewId = existingEdge.id,
-				segmentIndex = 0,
-				splitLocation = splitLocation,
+				segmentIndex = split.segmentIndex,
+				splitLocation = split.location,
 				newEdgeViewProvider = NewEdgeViewAtSplitCloneProvider(branch),
 				newEdgeViewEndpointType = EdgeViewEndpointType.ORIGIN,
 				targetConnectableViewId = destination.id,
@@ -278,13 +288,90 @@ class AiPlanExecutor(
 			?: throw AiPlanExecutionException("'$ref' is not a connectable component of the circuit.")
 	}
 
-	private fun locationOf(operation: AiOperation.AddComponent, autoPlaced: Int): Point2D {
-		if (operation.x != null && operation.y != null) {
-			return Point2D(snapToGrid(operation.x), snapToGrid(operation.y))
+	private fun locationOf(operation: AiOperation.AddComponent, offset: Point2D): Point2D =
+		Point2D(snapToGrid(operation.x ?: 0), snapToGrid(operation.y ?: 0)).add(offset)
+
+	private fun placementOffset(plan: AiValidatedPlan, graphView: GraphView): Point2D {
+		val segmentOperations = plan.operations.takeWhile { it !is AiOperation.ClearCircuit }
+		val additions = segmentOperations.filterIsInstance<AiOperation.AddComponent>()
+		val existing = graphView.getVerticeViews()
+		if (additions.isEmpty() || existing.isEmpty()) {
+			return Point2D.ZERO
 		}
-		return Point2D(
-			(autoPlaced / AUTO_ROWS_PER_COLUMN) * AUTO_COLUMN_WIDTH,
-			(autoPlaced % AUTO_ROWS_PER_COLUMN) * AUTO_ROW_HEIGHT)
+
+		val existingBounds = existing.map { it.boundingBox }
+		val newBounds = additions.map { operation ->
+			createVerticeView(operation).apply {
+				location = Point2D(operation.x ?: 0, operation.y ?: 0)
+			}.boundingBox
+		}
+		val connections = segmentOperations.filterIsInstance<AiOperation.Connect>()
+		val feedsExisting = connections.any { it.from is AiRef.New && it.to is AiRef.Existing }
+		val fedByExisting = connections.any { it.from is AiRef.Existing && it.to is AiRef.New }
+
+		// Circuits flow left to right: new components that only feed into the existing circuit
+		// belong on its input side, everything else continues to the right of its outputs.
+		val x = if (feedsExisting && !fedByExisting) {
+			existingBounds.minOf { it.x } - EXISTING_CIRCUIT_MARGIN - newBounds.maxOf { it.x + it.width }
+		} else {
+			existingBounds.maxOf { it.x + it.width } + EXISTING_CIRCUIT_MARGIN - newBounds.minOf { it.x }
+		}
+		val y = existingBounds.minOf { it.y } - newBounds.minOf { it.y }
+		return Point2D(snapToGrid(x.roundToInt()), snapToGrid(y.roundToInt()))
+	}
+
+	private fun remainingConnections(
+		operations: List<AiOperation>,
+		index: Int,
+		connection: AiOperation.Connect
+	): Int = operations.subList(index, operations.size)
+		.takeWhile { it !is AiOperation.ClearCircuit }
+		.filterIsInstance<AiOperation.Connect>()
+		.count { it.from == connection.from && it.fromPort == connection.fromPort }
+
+	/** Returns split points from the destination side towards the source side of the wire. */
+	private fun splitLocations(edgeView: EdgeView<*>, count: Int): ArrayDeque<EdgeSplit> {
+		val segmentLengths = (0 until edgeView.segmentPointCount - 1)
+			.map { edgeView.polyline.getSegmentLength(it) }
+		val totalLength = segmentLengths.sum()
+		return (count downTo 1).mapTo(ArrayDeque()) { splitIndex ->
+			val distance = totalLength * splitIndex / (count + 1)
+			splitLocationAt(edgeView, segmentLengths, distance)
+		}
+	}
+
+	private fun splitLocationAt(edgeView: EdgeView<*>, segmentLengths: List<Double>, distance: Double): EdgeSplit {
+		var remaining = distance
+		segmentLengths.forEachIndexed { segmentIndex, segmentLength ->
+			if (remaining <= segmentLength || segmentIndex == segmentLengths.lastIndex) {
+				val start = edgeView.getSegmentPoint(segmentIndex)
+				val end = edgeView.getSegmentPoint(segmentIndex + 1)
+				val ratio = if (segmentLength == 0.0) 0.5 else remaining / segmentLength
+				val location = Point2D(
+					start.x + (end.x - start.x) * ratio,
+					start.y + (end.y - start.y) * ratio)
+				return EdgeSplit(segmentIndex, snapSplitLocation(edgeView, segmentIndex, location, start, end))
+			}
+			remaining -= segmentLength
+		}
+		throw AiPlanExecutionException("Cannot split an empty wire.")
+	}
+
+	private fun snapSplitLocation(
+		edgeView: EdgeView<*>,
+		segmentIndex: Int,
+		location: Point2D,
+		start: Point2D,
+		end: Point2D
+	): Point2D {
+		val snapped = when {
+			edgeView.polyline.isSegmentHorizontal(segmentIndex) ->
+				Point2D(snapToGrid(location.x.roundToInt()).toDouble(), location.y)
+			edgeView.polyline.isSegmentVertical(segmentIndex) ->
+				Point2D(location.x, snapToGrid(location.y.roundToInt()).toDouble())
+			else -> location
+		}
+		return if (snapped == start || snapped == end) location else snapped
 	}
 
 	private fun selectCreated(componentIds: Collection<Int>, drawingView: DrawingView<Component, Drawing<Component>>) {

@@ -1,7 +1,5 @@
 package io.antarescircuit.antares.ai
 
-import io.antarescircuit.jabbah.edit.Look
-
 /**
  * Builds the instructions that teach the model the [AiOperation] contract.
  *
@@ -10,12 +8,6 @@ import io.antarescircuit.jabbah.edit.Look
  * before it can reach the circuit.
  */
 object AiPrompt {
-
-	/** Recommended horizontal distance between two columns of components.*/
-	private const val COLUMN_SPACING = Look.SCALE * 12
-
-	/** Recommended vertical distance between two components of the same column.*/
-	private const val ROW_SPACING = Look.SCALE * 8
 
 	fun systemPrompt(): String = """
 		You are the circuit assistant of Antares, a digital circuit editor and simulator.
@@ -34,7 +26,7 @@ object AiPrompt {
 
 		ADD A COMPONENT
 		{"op":"add_component","id":"<plan-local id>","type":"<type>","name":"<optional label>",
-		 "inputs":<gate input count>,"x":<int>,"y":<int>,"value":<constant value>}
+		 "inputs":<gate input count>,"y":<int>,"value":<constant value>}
 		  - "id" is how you refer to the component later in the same plan. It must be unique and
 		    must not start with '#'.
 		  - "type" is one of: ${AiComponentType.ids.joinToString(", ")}
@@ -45,9 +37,8 @@ object AiPrompt {
 		    ${AiComponentType.MIN_GATE_INPUTS}..${AiComponentType.MAX_GATE_INPUTS} (default 2).
 		    not and buffer always have exactly 1 input.
 		  - "name" is optional. Names of "input" and "output" components must be unique in the circuit.
-		  - "x"/"y" are optional circuit coordinates, x growing to the right and y growing downwards.
-		    Lay circuits out left to right: inputs in the left column, gates in the middle, outputs on
-		    the right. Use about $COLUMN_SPACING units between columns and $ROW_SPACING units between rows.
+		  - "y" is an optional ordering hint between otherwise equivalent components. Antares lays out
+		    new components automatically from their connections; do not calculate positions or spacing.
 
 		CONNECT TWO COMPONENTS (creates a wire)
 		{"op":"connect","from":"<ref>","fromPort":<1-based output index>,
