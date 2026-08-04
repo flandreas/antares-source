@@ -1,5 +1,6 @@
 package io.antarescircuit.antares
 
+import io.antarescircuit.antares.ai.ShowAiChatAction
 import io.antarescircuit.antares.hdl.vhdl.ExportVHDLAction
 import io.antarescircuit.antares.view.GraphViewAnimationAction
 import io.antarescircuit.antares.view.TestAction
@@ -90,6 +91,9 @@ class AntaresMenuBarBuilder(
 			menu.add(JMenuItem(ActionWrapperSwing(AnalyseCircuitAction(this))))
 			menu.add(JMenuItem(ActionWrapperSwing(NewFSMAction(this))))
 		}
+		menu.addSeparator()
+		menu.add(JMenuItem(ActionWrapperSwing(
+			ShowAiChatAction(panelProvider = { (graphFrame as? AntaresFrameSwing)?.aiChatPanel }))))
 		return menu
 	}
 }
