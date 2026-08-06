@@ -14,6 +14,7 @@ import io.antarescircuit.jabbah.base.time.SystemSpeedEvent
 import io.antarescircuit.jabbah.base.time.Timer
 import io.antarescircuit.jabbah.execution.speed.CurrentSystemSpeedCategory
 import io.antarescircuit.jabbah.execution.speed.SystemSpeedCategory.*
+import kotlin.random.Random
 
 /** A [SchedulerTask] that is driven by a [Timer]. */
 class TimedSchedulerTask(
@@ -143,11 +144,14 @@ class TimedSchedulerTask(
 	}
 
 	private fun executeNumberOfSteps(number: Int) {
+		// Deviate number randomly to avoid seemingly unchanged display in oscillating models (#1235)
+		val effNumber = number + Random.nextInt(0, 3)
+
 		var count = 0
 		lateinit var result: ExecutionStepResult
 		do {
 			result = scheduler.execute()
 			count++
-		} while (!result.breakpoint && count < number && !scheduler.isQueueEmpty && result.recalculated)
+		} while (!result.breakpoint && count < effNumber && !scheduler.isQueueEmpty && result.recalculated)
 	}
 }
