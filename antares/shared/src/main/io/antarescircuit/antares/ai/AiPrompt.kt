@@ -26,16 +26,39 @@ object AiPrompt {
 
 		ADD A COMPONENT
 		{"op":"add_component","id":"<plan-local id>","type":"<type>","name":"<optional label>",
-		 "inputs":<gate input count>,"y":<int>,"value":<constant value>}
+		 "inputs":<gate input count>,"bitWidth":<bit count>,"branchCount":<narrow bus count>,
+		 "enableLogic":"positive|negative",
+		 "periodOrFrequency":"<positive value with time or frequency unit>",
+		 "y":<int>,"value":<constant value>}
 		  - "id" is how you refer to the component later in the same plan. It must be unique and
 		    must not start with '#'.
 		  - "type" is one of: ${AiComponentType.ids.joinToString(", ")}
 		  - "input" is a circuit input port (1 output, no input), "output" is a circuit output port
 		    (1 input, no output). "switch" is an interactive toggle (1 output), "led" shows a signal
 		    (1 input), "constant" emits "value" (1 output).
+		  - "splitter" has one `bitWidth`-bit input and `branchCount` outputs. Each output has
+		    `bitWidth / branchCount` bits. `branchCount` must be at least 2 and divide `bitWidth`
+		    evenly. They default to 8 and 4 respectively.
+		  - "concentrator" is the opposite: it has `branchCount` inputs of
+		    `bitWidth / branchCount` bits and one `bitWidth`-bit output. It uses the same constraints
+		    and defaults as "splitter".
+		  - "tri_state_buffer" has data input 1, one-bit enable input 2, and one output. When enabled,
+		    it forwards input 1; when disabled, its output is high impedance/undefined. `enableLogic`
+		    is "positive" (enabled by 1, the default) or "negative" (enabled by 0). `bitWidth` applies
+		    to the data input and output, but the enable input remains one bit.
+		  - "clock" has no input and one one-bit output. `periodOrFrequency` optionally sets its timing
+		    using a positive time or frequency with an SI unit, for example "10 ns", "500 ms", "1 Hz",
+		    or "20 MHz". It defaults to "1 s".
+		  - "subcircuit" adds a reusable circuit listed in "availableSubcircuits" in the circuit
+		    context. Set "metaGraphUuid" to its exact UUID. Its ports and their 1-based indices are
+		    defined by that catalog entry; never invent a UUID or set "inputs" or "bitWidth" for it.
+		    Bidirectional ports are informational and cannot be connected by this assistant.
 		  - "inputs" applies to and/or/nand/nor/xor/xnor only and must be
 		    ${AiComponentType.MIN_GATE_INPUTS}..${AiComponentType.MAX_GATE_INPUTS} (default 2).
 		    not and buffer always have exactly 1 input.
+		  - "bitWidth" applies to input, output, constant, splitter, concentrator, tri-state buffer,
+		    and all logic gates. It must be 1..64 and
+		    defaults to 1. Use the same bit width on every component connected by a wire.
 		  - "name" is optional. Names of "input" and "output" components must be unique in the circuit.
 		  - "y" is an optional ordering hint between otherwise equivalent components. Antares lays out
 		    new components automatically from their connections; do not calculate positions or spacing.
@@ -48,6 +71,13 @@ object AiPrompt {
 		  - "fromPort" and "toPort" default to 1. Wires always run from an output to an input.
 		  - Every input accepts exactly one wire. To feed one signal into several inputs, emit one
 		    connect operation per input, all starting from the same output.
+
+		CHANGE A COMPONENT'S BIT WIDTH
+		{"op":"set_bit_width","target":"<ref>","bitWidth":<bit count>}
+		  - "target" may refer to an existing component or one created earlier in this plan.
+		  - The target must be a circuit input, circuit output, constant, or logic gate, and "bitWidth" must
+		    be 1..64. When changing a connected circuit, change every compatible component along
+		    the signal path to the same width.
 
 		DELETE AN EXISTING COMPONENT
 		{"op":"delete_component","target":"#<n>"}
@@ -77,6 +107,9 @@ object AiPrompt {
 		}
 		if (context.omittedComponents > 0) {
 			message.append("\n${context.omittedComponents} further component(s) were omitted from this snapshot.")
+		}
+		if (context.omittedSubcircuits > 0) {
+			message.append("\n${context.omittedSubcircuits} further available subcircuit(s) were omitted from this snapshot.")
 		}
 		return message.toString()
 	}

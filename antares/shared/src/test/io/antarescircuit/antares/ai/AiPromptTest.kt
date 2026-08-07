@@ -16,6 +16,10 @@ class AiPromptTest {
 		AiOperationDto.ops.forEach {
 			assertTrue(prompt.contains(it), "the system prompt does not mention the operation '$it'")
 		}
+		assertTrue(prompt.contains("bitWidth"))
+		assertTrue(prompt.contains("1..64"))
+		assertTrue(prompt.contains("metaGraphUuid"))
+		assertTrue(prompt.contains("availableSubcircuits"))
 	}
 
 	@Test

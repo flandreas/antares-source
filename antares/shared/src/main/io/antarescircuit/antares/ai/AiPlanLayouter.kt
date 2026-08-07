@@ -119,12 +119,34 @@ object AiPlanLayouter {
 			}
 		}
 
+		alignLayers(components, layers, ::isInputComponent, chooseLayer = { it.minOrNull() })
+		alignLayers(components, layers, ::isOutputComponent, chooseLayer = { it.maxOrNull() })
+
 		return layers
 	}
 
+	private fun alignLayers(
+		components: List<AiOperation.AddComponent>,
+		layers: MutableMap<String, Int>,
+		matches: (AiComponentType) -> Boolean,
+		chooseLayer: (List<Int>) -> Int?,
+	) {
+		val matching = components.filter { matches(it.type) }
+		val layer = chooseLayer(matching.map { layers.getValue(it.ref.id) }) ?: return
+		matching.forEach { layers[it.ref.id] = layer }
+	}
+
+	private fun isInputComponent(type: AiComponentType): Boolean =
+		type == AiComponentType.Input || type == AiComponentType.Switch
+
+	private fun isOutputComponent(type: AiComponentType): Boolean =
+		type == AiComponentType.Output || type == AiComponentType.Led
+
 	private fun defaultLayer(type: AiComponentType): Int = when (type) {
-		AiComponentType.Input, AiComponentType.Switch, AiComponentType.Constant -> 0
+		AiComponentType.Input, AiComponentType.Switch, AiComponentType.Constant, AiComponentType.Clock -> 0
 		AiComponentType.Output, AiComponentType.Led -> 2
+		AiComponentType.Subcircuit, AiComponentType.Splitter, AiComponentType.Concentrator,
+		AiComponentType.TriStateBuffer -> 1
 		else -> 1
 	}
 

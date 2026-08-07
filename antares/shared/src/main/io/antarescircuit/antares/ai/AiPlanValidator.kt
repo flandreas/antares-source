@@ -1,5 +1,10 @@
 package io.antarescircuit.antares.ai
 
+import io.antarescircuit.antares.model.Logic
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValueParser
+import io.antarescircuit.jabbah.edit.properties.magnitude.SIUnit
+import io.antarescircuit.antares.model.signal.BitWidth
+
 /**
  * Turns the untrusted [AiPlanDto] wire format into a typed [AiValidatedPlan].
  *
@@ -48,10 +53,13 @@ object AiPlanValidator {
 			val position = index + 1
 			when (op.op?.lowercase()?.trim()) {
 				AiOperationDto.OP_ADD_COMPONENT ->
-					validateAdd(op, position, declared, usedPortNames, errors)?.let { operations.add(it) }
+					validateAdd(op, position, declared, usedPortNames, context, errors)?.let { operations.add(it) }
 
 				AiOperationDto.OP_CONNECT ->
 					validateConnect(op, position, declared, context, occupiedInputs, errors)?.let { operations.add(it) }
+
+				AiOperationDto.OP_SET_BIT_WIDTH ->
+					validateSetBitWidth(op, position, declared, context, errors)?.let { operations.add(it) }
 
 				AiOperationDto.OP_DELETE_COMPONENT ->
 					validateDelete(op, position, context, errors)?.let { operations.add(it) }
@@ -83,6 +91,7 @@ object AiPlanValidator {
 		position: Int,
 		declared: MutableMap<String, AiOperation.AddComponent>,
 		usedPortNames: MutableSet<String>,
+		context: AiCircuitContext,
 		errors: MutableList<String>
 	): AiOperation.AddComponent? {
 		val id = op.id?.trim()
@@ -105,7 +114,32 @@ object AiPlanValidator {
 			return null
 		}
 
-		val inputCount = if (type.configurableInputCount) {
+		val subcircuit = if (type == AiComponentType.Subcircuit) {
+			val uuid = op.metaGraphUuid?.trim()
+			if (uuid.isNullOrEmpty()) {
+				errors.add("Operation $position ('add_component' subcircuit) has no 'metaGraphUuid'.")
+				return null
+			}
+			context.availableSubcircuits.find { it.uuid == uuid } ?: run {
+				errors.add("Operation $position references MetaGraph '$uuid', which is not an available subcircuit in the current project or its included libraries.")
+				return null
+			}
+		} else {
+			if (op.metaGraphUuid != null) {
+				errors.add("Operation $position sets 'metaGraphUuid' for '${type.id}', but only subcircuits use it.")
+				return null
+			}
+			null
+		}
+
+		if (type == AiComponentType.Subcircuit && op.inputs != null) {
+			errors.add("Operation $position sets 'inputs' for a subcircuit, whose ports are defined by its MetaGraph.")
+			return null
+		}
+
+		val inputCount = if (subcircuit != null) {
+			subcircuit.inputPorts.size
+		} else if (type.configurableInputCount) {
 			val requested = op.inputs ?: type.defaultInputCount
 			if (requested < AiComponentType.MIN_GATE_INPUTS || requested > AiComponentType.MAX_GATE_INPUTS) {
 				errors.add("Operation $position requests $requested inputs for '${type.id}', but only ${AiComponentType.MIN_GATE_INPUTS}..${AiComponentType.MAX_GATE_INPUTS} are supported.")
@@ -114,6 +148,62 @@ object AiPlanValidator {
 			requested
 		} else {
 			type.defaultInputCount
+		}
+
+		if (op.bitWidth != null && !supportsBitWidth(type)) {
+			errors.add("Operation $position sets 'bitWidth' for '${type.id}', but only circuit inputs, circuit outputs, constants, bus adapters, and logic gates support it.")
+			return null
+		}
+		val bitWidth = op.bitWidth ?: if (type.isBusAdapter()) 8 else 1
+		if (bitWidth !in 1..BitWidth.MAX) {
+			errors.add("Operation $position requests bit width $bitWidth for '${type.id}', but only 1..${BitWidth.MAX} are supported.")
+			return null
+		}
+		val branchCount = if (type.isBusAdapter()) {
+			val requested = op.branchCount ?: 4
+			if (requested !in 2..bitWidth || bitWidth % requested != 0) {
+				errors.add("Operation $position cannot divide a $bitWidth-bit bus into $requested equal branches. 'branchCount' must be at least 2 and divide 'bitWidth' evenly.")
+				return null
+			}
+			requested
+		} else {
+			if (op.branchCount != null) {
+				errors.add("Operation $position sets 'branchCount' for '${type.id}', but only splitters and concentrators support it.")
+				return null
+			}
+			null
+		}
+		val enableLogic = if (type == AiComponentType.TriStateBuffer) {
+			when (op.enableLogic?.trim()?.lowercase() ?: Logic.POSITIVE.customName) {
+				Logic.POSITIVE.customName -> Logic.POSITIVE
+				Logic.NEGATIVE.customName -> Logic.NEGATIVE
+				else -> {
+					errors.add("Operation $position uses enable logic '${op.enableLogic}', but only 'positive' and 'negative' are supported.")
+					return null
+				}
+			}
+		} else {
+			if (op.enableLogic != null) {
+				errors.add("Operation $position sets 'enableLogic' for '${type.id}', but only tri-state buffers support it.")
+				return null
+			}
+			null
+		}
+		val periodOrFrequency = if (type == AiComponentType.Clock) {
+			op.periodOrFrequency?.let { raw ->
+				try {
+					MagnitudeValueParser.parseWithUnits(raw, SIUnit.Second, SIUnit.Hertz)
+				} catch (_: IllegalArgumentException) {
+					errors.add("Operation $position uses period or frequency '$raw'. Expected a positive time or frequency such as '10 ns', '500 ms', or '1 MHz'.")
+					return null
+				}
+			}
+		} else {
+			if (op.periodOrFrequency != null) {
+				errors.add("Operation $position sets 'periodOrFrequency' for '${type.id}', but only clocks support it.")
+				return null
+			}
+			null
 		}
 
 		if (!isValidCoordinate(op.x) || !isValidCoordinate(op.y)) {
@@ -133,10 +223,17 @@ object AiPlanValidator {
 			ref = AiRef.New(id),
 			type = type,
 			name = name,
-			inputCount = inputCount,
+			inputCount = if (type == AiComponentType.Concentrator) branchCount!! else inputCount,
 			x = op.x,
 			y = op.y,
-			value = op.value ?: 0L
+			value = op.value ?: 0L,
+			bitWidth = bitWidth,
+			branchCount = branchCount,
+			enableLogic = enableLogic,
+			periodOrFrequency = periodOrFrequency,
+			metaGraphUuid = subcircuit?.uuid,
+			outputCount = subcircuit?.outputPorts?.size
+				?: if (type == AiComponentType.Splitter) branchCount!! else type.outputCount
 		).also { declared[id] = it }
 	}
 
@@ -195,6 +292,40 @@ object AiPlanValidator {
 		return AiOperation.DeleteComponent(existing)
 	}
 
+	private fun validateSetBitWidth(
+		op: AiOperationDto,
+		position: Int,
+		declared: Map<String, AiOperation.AddComponent>,
+		context: AiCircuitContext,
+		errors: MutableList<String>
+	): AiOperation.SetBitWidth? {
+		if (op.target.isNullOrBlank()) {
+			errors.add("Operation $position ('set_bit_width') has no 'target'.")
+			return null
+		}
+		val target = resolve(op.target, position, "target", declared, context, errors) ?: return null
+		val supportsBitWidth = when (val ref = target.ref) {
+			is AiRef.Existing -> context.component(ref.componentId)?.let {
+				it.bitWidth != null && it.type != AiComponentType.Splitter.id && it.type != AiComponentType.Concentrator.id
+			} == true
+			is AiRef.New -> declared[ref.id]?.let { supportsMutableBitWidth(it.type) } == true
+		}
+		if (!supportsBitWidth) {
+			errors.add("Operation $position cannot change the bit width of '${op.target}'. Only circuit inputs, circuit outputs, constants, and logic gates support it.")
+			return null
+		}
+		val bitWidth = op.bitWidth
+		if (bitWidth == null) {
+			errors.add("Operation $position ('set_bit_width') has no 'bitWidth'.")
+			return null
+		}
+		if (bitWidth !in 1..BitWidth.MAX) {
+			errors.add("Operation $position requests bit width $bitWidth, but only 1..${BitWidth.MAX} are supported.")
+			return null
+		}
+		return AiOperation.SetBitWidth(target.ref, bitWidth)
+	}
+
 	/** The resolved endpoint of a connection together with the port counts needed to check the port indices. */
 	private data class Endpoint(val ref: AiRef, val inputCount: Int, val outputCount: Int)
 
@@ -226,7 +357,7 @@ object AiPlanValidator {
 			errors.add("Operation $position references '$ref', which was neither created earlier in this plan nor exists in the circuit.")
 			return null
 		}
-		return Endpoint(declaration.ref, declaration.inputCount, declaration.type.outputCount)
+		return Endpoint(declaration.ref, declaration.inputCount, declaration.outputCount)
 	}
 
 	private fun parseExistingRef(raw: String?): AiRef.Existing? {
@@ -240,4 +371,21 @@ object AiPlanValidator {
 
 	private fun isValidCoordinate(value: Int?): Boolean =
 		value == null || (value >= -MAX_COORDINATE && value <= MAX_COORDINATE)
+
+	private fun supportsBitWidth(type: AiComponentType): Boolean =
+		type == AiComponentType.Input
+			|| type == AiComponentType.Output
+			|| type == AiComponentType.Constant
+			|| type == AiComponentType.Splitter
+			|| type == AiComponentType.Concentrator
+			|| type == AiComponentType.TriStateBuffer
+			|| type == AiComponentType.Not
+			|| type == AiComponentType.Buffer
+			|| type.configurableInputCount
+
+	private fun supportsMutableBitWidth(type: AiComponentType): Boolean =
+		!type.isBusAdapter() && supportsBitWidth(type)
+
+	private fun AiComponentType.isBusAdapter(): Boolean =
+		this == AiComponentType.Splitter || this == AiComponentType.Concentrator
 }

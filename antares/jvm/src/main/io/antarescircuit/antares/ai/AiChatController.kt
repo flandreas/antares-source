@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
  */
 class AiChatController(
 	/**
-	 * Resolves the editor that is active *now*. Deliberately a provider and not a captured value:
+	 * Resolves the [Editor] that is active *now*. Deliberately a provider and not a captured value:
 	 * the plan is bound to whichever circuit is open at the moment it gets applied.
 	 */
 	private val editorProvider: () -> Editor?,
@@ -206,7 +206,8 @@ class AiChatController(
 				"antares.ai.applied",
 				result.addedComponents,
 				result.connections,
-				result.deletedComponents))
+				result.deletedComponents,
+				result.changedBitWidths))
 		} catch (e: AiPlanExecutionException) {
 			listener?.onError(Translations.getString("antares.ai.error.notApplicable", e.message ?: ""))
 		}

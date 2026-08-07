@@ -42,10 +42,32 @@ object AiPlanParser {
 		// A JSON object without any plan field is an incidental object inside a prose answer,
 		// e.g. an operation quoted as an example. Treating it as a plan would show nothing at all.
 		if (dto.reply == null && dto.operations.isEmpty()) {
+			parseOperationsArray(stripCodeFences(text))?.let { return Result.Parsed(it) }
 			return Result.Conversation(text)
 		}
 
 		return Result.Parsed(dto)
+	}
+
+	/** Accepts the common model variation that returns the operation list without a plan wrapper. */
+	private fun parseOperationsArray(text: String): AiPlanDto? {
+		val candidate = extractJsonArray(text) ?: return null
+		val decoded = try {
+			json.decodeFromString<List<AiOperationDto>>(candidate)
+		} catch (_: Exception) {
+			return null
+		}
+		if (decoded.isEmpty()) {
+			return null
+		}
+		val operations = repairMisplacedComponentIds(AiPlanDto(operations = decoded)).operations
+		if (operations.none { operation ->
+			operation.op in AiOperationDto.ops
+				|| AiComponentType.withId(operation.type.orEmpty()) != null
+		}) {
+			return null
+		}
+		return AiPlanDto(reply = "", operations = operations)
 	}
 
 	/**
@@ -87,7 +109,13 @@ object AiPlanParser {
 	 * Returns the first balanced JSON object of [text], ignoring braces inside string literals.
 	 */
 	private fun extractJsonObject(text: String): String? {
-		val start = text.indexOf('{')
+		return extractBalancedJson(text, '{', '}')
+	}
+
+	private fun extractJsonArray(text: String): String? = extractBalancedJson(text, '[', ']')
+
+	private fun extractBalancedJson(text: String, opening: Char, closing: Char): String? {
+		val start = text.indexOf(opening)
 		if (start < 0) {
 			return null
 		}
@@ -101,8 +129,8 @@ object AiPlanParser {
 				c == '\\' && inString -> escaped = true
 				c == '"' -> inString = !inString
 				inString -> Unit
-				c == '{' -> depth++
-				c == '}' -> {
+				c == opening -> depth++
+				c == closing -> {
 					depth--
 					if (depth == 0) {
 						return text.substring(start, i + 1)

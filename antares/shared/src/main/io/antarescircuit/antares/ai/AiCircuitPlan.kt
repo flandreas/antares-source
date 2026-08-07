@@ -1,5 +1,7 @@
 package io.antarescircuit.antares.ai
 
+import io.antarescircuit.antares.model.Logic
+import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
 import kotlinx.serialization.Serializable
 
 /**
@@ -33,6 +35,21 @@ enum class AiComponentType(
 
 	/** A constant signal source.*/
 	Constant("constant", false, 0, 1),
+
+	/** Splits a wide bus into equally sized narrower buses. */
+	Splitter("splitter", false, 1, 0),
+
+	/** Combines equally sized narrow buses into one wider bus. */
+	Concentrator("concentrator", false, 0, 1),
+
+	/** A buffer with a separate enable input and a high-impedance disabled output. */
+	TriStateBuffer("tri_state_buffer", false, 2, 1),
+
+	/** A periodic one-bit signal source. */
+	Clock("clock", false, 0, 1),
+
+	/** A reusable circuit from the current project or one of its included libraries. */
+	Subcircuit("subcircuit", false, 0, 0),
 
 	Not("not", false, 1, 1),
 	Buffer("buffer", false, 1, 1),
@@ -86,7 +103,13 @@ sealed interface AiOperation {
 		val inputCount: Int,
 		val x: Int?,
 		val y: Int?,
-		val value: Long
+		val value: Long,
+		val bitWidth: Int = 1,
+		val branchCount: Int? = null,
+		val enableLogic: Logic? = null,
+		val periodOrFrequency: MagnitudeValue? = null,
+		val metaGraphUuid: String? = null,
+		val outputCount: Int = type.outputCount
 	) : AiOperation
 
 	data class Connect(
@@ -94,6 +117,12 @@ sealed interface AiOperation {
 		val fromPort: Int,
 		val to: AiRef,
 		val toPort: Int
+	) : AiOperation
+
+	/** Changes the signal width of a circuit input, circuit output, or logic gate. */
+	data class SetBitWidth(
+		val target: AiRef,
+		val bitWidth: Int
 	) : AiOperation
 
 	data class DeleteComponent(val target: AiRef.Existing) : AiOperation
@@ -138,6 +167,11 @@ data class AiOperationDto(
 	val x: Int? = null,
 	val y: Int? = null,
 	val value: Long? = null,
+	val bitWidth: Int? = null,
+	val branchCount: Int? = null,
+	val enableLogic: String? = null,
+	val periodOrFrequency: String? = null,
+	val metaGraphUuid: String? = null,
 	val from: String? = null,
 	val fromPort: Int? = null,
 	val to: String? = null,
@@ -147,9 +181,10 @@ data class AiOperationDto(
 	companion object {
 		const val OP_ADD_COMPONENT = "add_component"
 		const val OP_CONNECT = "connect"
+		const val OP_SET_BIT_WIDTH = "set_bit_width"
 		const val OP_DELETE_COMPONENT = "delete_component"
 		const val OP_CLEAR_CIRCUIT = "clear_circuit"
 
-		val ops = listOf(OP_ADD_COMPONENT, OP_CONNECT, OP_DELETE_COMPONENT, OP_CLEAR_CIRCUIT)
+		val ops = listOf(OP_ADD_COMPONENT, OP_CONNECT, OP_SET_BIT_WIDTH, OP_DELETE_COMPONENT, OP_CLEAR_CIRCUIT)
 	}
 }

@@ -46,6 +46,40 @@ class AiPlanLayouterTest {
 	}
 
 	@Test
+	fun shouldAlignCircuitInputsAndSwitchesInTheSameColumn() {
+		val plan = AiValidatedPlan("", listOf(
+			add("input", AiComponentType.Input),
+			add("switch", AiComponentType.Switch),
+			add("gate", AiComponentType.And),
+			connect("input", "gate", 1),
+			connect("switch", "gate", 2),
+		))
+
+		val components = AiPlanLayouter.layout(plan).componentsById()
+
+		assertEquals(components.getValue("input").x, components.getValue("switch").x)
+	}
+
+	@Test
+	fun shouldAlignCircuitOutputsAndLedsDespiteDifferentPathLengths() {
+		val plan = AiValidatedPlan("", listOf(
+			add("input", AiComponentType.Input),
+			add("switch", AiComponentType.Switch),
+			add("gate", AiComponentType.Buffer),
+			add("output", AiComponentType.Output),
+			add("led", AiComponentType.Led),
+			connect("input", "output"),
+			connect("switch", "gate"),
+			connect("gate", "led"),
+		))
+
+		val components = AiPlanLayouter.layout(plan).componentsById()
+
+		assertEquals(components.getValue("output").x, components.getValue("led").x)
+		assertTrue(components.getValue("gate").x!! < components.getValue("led").x!!)
+	}
+
+	@Test
 	fun shouldUseModelCoordinatesOnlyAsVerticalOrderingHints() {
 		val plan = AiValidatedPlan("", listOf(
 			add("lower", AiComponentType.And, y = 500),

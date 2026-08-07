@@ -5,6 +5,7 @@ import io.antarescircuit.jabbah.base.Action
 import io.antarescircuit.jabbah.base.ActionWrapperSwing
 import io.antarescircuit.jabbah.base.Translations
 import io.antarescircuit.jabbah.base.event.ActionEvent
+import io.antarescircuit.jabbah.base.invocation.InvocationHandler
 import io.antarescircuit.jabbah.base.preferences.PreferencesDialogPanel
 import io.antarescircuit.jabbah.base.swing.UiUtil
 import io.antarescircuit.jabbah.base.ui.UIBasics
@@ -33,7 +34,7 @@ class AiChatPanelSwing(
 
 	companion object {
 		private const val TRANSCRIPT_ROWS = 12
-		private const val INPUT_ROWS = 3
+		private const val INPUT_ROWS = 5
 	}
 
 	private val transcript = JTextPane()
@@ -192,7 +193,9 @@ class AiChatPanelSwing(
 			return
 		}
 		input.text = ""
-		controller.send(text)
+		InvocationHandler.invoke {
+			controller.send(text)
+		}
 	}
 
 	/**

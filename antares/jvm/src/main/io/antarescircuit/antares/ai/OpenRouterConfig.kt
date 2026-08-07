@@ -25,7 +25,7 @@ object OpenRouterConfig {
 
 	/** Sent by OpenRouter conventions to identify the calling application.*/
 	const val REFERER = "https://www.antarescircuit.io"
-	const val TITLE = "Antares Circuit Assistant"
+	const val TITLE = "Antares AI Assistant"
 
 	/** Where the currently used API key comes from. */
 	enum class KeySource { Environment, Preferences, None }
