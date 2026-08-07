@@ -12,6 +12,8 @@ import io.antarescircuit.jabbah.draw.view.DrawViewModule
 import io.antarescircuit.jabbah.edit.CommandManager
 import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.edit.app.AbstractSelectionAwareAction
+import io.antarescircuit.jabbah.edit.model.ComponentMessage
+import io.antarescircuit.jabbah.edit.model.ComponentMessageType
 import io.antarescircuit.jabbah.edit.module.EditModule
 import io.antarescircuit.jabbah.graph.GraphApplicationContextHolder
 import io.antarescircuit.jabbah.graph.MetaGraphRepository
@@ -19,6 +21,7 @@ import io.antarescircuit.jabbah.graph.container.ContainerDrawing
 import io.antarescircuit.jabbah.graph.container.ContainerEditor
 import io.antarescircuit.jabbah.graph.container.ContainerPanelSwing
 import io.antarescircuit.jabbah.graph.library.LibraryModule
+import io.antarescircuit.jabbah.graph.model.vertice.SubGraphVerticeRef
 import io.antarescircuit.jabbah.graph.ui.container.ContainerPanelController
 import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
@@ -48,8 +51,13 @@ class EditSubGraphVerticeViewAction(
 	}
 
 	override fun execute(event: ActionEvent) {
-		val editedVerticeView = singleSelection as SubGraphVerticeView<*>
+		val editedVerticeView = singleSelection as SubGraphVerticeView<SubGraphVerticeRef>
 		val editedDrawingView = drawingView
+
+		if (editedVerticeView.model.isBroken) {
+			eventBus.post(ComponentMessage(ComponentMessageType.Info, editedVerticeView, "graph.element.brokenRef.cannotEdit.msg"))
+			return
+		}
 
 		LOG.userTrail("Edit symbol of SubGraphVerticeView ${editedVerticeView.id} with MetaGraph '${editedVerticeView.subGraphVertice?.name}' ${editedVerticeView.model.graphUUID}")
 
