@@ -133,7 +133,7 @@ class SidebarPane(
 	 */
 	fun open(index: Int) {
 		SwingUtilities.invokeLater {
-			if (index < 0) {
+			if (index < 0 || index >= entries.size) {
 				activate(null)
 			} else {
 				activate(entries[index])
