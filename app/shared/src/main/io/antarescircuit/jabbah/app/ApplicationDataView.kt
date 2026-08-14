@@ -303,6 +303,7 @@ open class ApplicationDataViewController(
 			Cancel -> false
 			Yes -> {
 				data?.savable?.let {
+					LOG.info("Save application data")
 					notifyBeforeSave(it)
 					return it.save(this)
 				}

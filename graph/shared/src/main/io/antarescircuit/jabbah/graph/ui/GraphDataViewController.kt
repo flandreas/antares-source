@@ -123,10 +123,11 @@ class GraphDataViewController(
 
 	fun openAsSavable(element: ContainerLibraryElement, actionName: String, focusVerticeViewId: Int? = null) {
 		try {
-			LOG.info("Open '${element.name.value}' ${element.uuid.id}")
 			view.registerKeepAliveUsage()
 
 			open {
+				LOG.info("Open '${element.name.value}' ${element.uuid.id}")
+
 				val library = element.library!!
 				library.libraryService.loadMetaGraph(library, element, loadAlways = false)
 
