@@ -21,7 +21,7 @@ import io.antarescircuit.jabbah.graph.view.style.GraphStyleType
  */
 class EdgeEndpointView(
 	val edgeView: EdgeView<*>,
-	private val type: EdgeViewEndpointType,
+	val type: EdgeViewEndpointType,
 	styleProvider: StyleProvider
 ) : AbstractStyledDrawable(GraphStyleType.EDGE, styleProvider), Locatable {
 

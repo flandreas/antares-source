@@ -332,7 +332,8 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 
 		val splitLocation = draggedEndpointType.getLocation(edgeView!!)
 
-		LOG.userTrail("Move EdgeView ${edgeView!!.id} ${draggedEndpointType.name} endpoint to connect to EdgeView ${targetEdgeView!!.id} at $splitLocation")
+		LOG.userTrail("Move EdgeView ${edgeView!!.id} ${draggedEndpointType.name} endpoint " + "" +
+			"to connect to EdgeView ${targetEdgeView!!.id} at $splitLocation")
 
 		context.editor.commandManager.execute(SplitEdgeViewCommand(
 			editor = context.editor,
@@ -359,7 +360,9 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 			return
 		}
 
-		LOG.userTrail("Join EdgeView ${edgeView!!.id} ${draggedEndpointType.name} endpoint with EdgeView ${targetEndpointView!!.edgeView.id} endpoint at ${targetEndpointView!!.location}")
+		LOG.userTrail("Join EdgeView ${edgeView!!.id} ${draggedEndpointType.name} endpoint with " +
+			"EdgeView ${targetEndpointView!!.edgeView.id} ${targetEndpointView!!.type.name}" +
+			" endpoint at ${targetEndpointView!!.location}")
 
 		context.editor.commandManager.execute(JoinEdgeViewEndpointsCommand<Any>(
 			context.editor,
