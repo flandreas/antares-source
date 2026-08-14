@@ -258,10 +258,10 @@ class LibraryService(
 	 * without first cloning it.
 	 * Posts a [LibraryItemUpdatedEvent] on this [LibraryService]'s [EventBus].
 	 */
-	fun updateContainerLibraryElement(library: Library, metaGraph: MetaGraph, element: ContainerLibraryElement) {
+	fun updateContainerLibraryElement(library: Library, metaGraph: MetaGraph, element: ContainerLibraryElement, doClone: Boolean = true) {
 		LOG.trace("Updating ContainerLibraryElement")
 		val nameChanged = metaGraph.translatableName != element.name.translation
-		storeContainerLibraryElement(library, metaGraph, element, doClone = false)
+		storeContainerLibraryElement(library, metaGraph, element, doClone)
 		if (nameChanged) {
 			element.name = Name(metaGraph.translatableName)
 			storeLibrary(library)

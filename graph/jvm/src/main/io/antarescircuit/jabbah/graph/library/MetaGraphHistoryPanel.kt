@@ -137,8 +137,7 @@ class MetaGraphHistoryPanel(
 		val metaGraph = historyService.getMetaGraph(element.library!!, element.uuid, history)
 		LOG.userTrail("Restoring historized version of ${metaGraph.uuid.id}")
 
-		element.updateStorable(metaGraph)
-		element.library!!.libraryService.updateContainerLibraryElement(element.library!!, metaGraph, element)
+		element.library!!.libraryService.updateContainerLibraryElement(element.library!!, metaGraph, element, doClone = false)
 		graphDataViewController.openAsSavable(element, Translations.getString("graph.history.action.restore.name"))
 	}
 
