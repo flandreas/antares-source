@@ -243,6 +243,7 @@ abstract class AbstractDragEdgeViewEndpointConnector(
 			state(connectedToEndpoint) {
 				onEntry {
 					removePortViewHighlight(it)
+					edgeView?.underConstruction = false
 					completeConnectingToEndpoint(it)
 					reset()
 				}

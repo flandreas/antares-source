@@ -6,10 +6,11 @@ import io.antarescircuit.jabbah.graph.model.Net
 import io.antarescircuit.jabbah.graph.view.AbstractInputEventHandlerTest
 import io.antarescircuit.jabbah.graph.view.vertice.TestVerticeView
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
-abstract class AbstractJoinOpenEdgeViewTest() : AbstractInputEventHandlerTest() {
+abstract class AbstractJoinOpenEdgeViewTest : AbstractInputEventHandlerTest() {
 
     protected val v3: TestVerticeView
 
@@ -30,6 +31,7 @@ abstract class AbstractJoinOpenEdgeViewTest() : AbstractInputEventHandlerTest() 
         assertEquals(1, edgeViews.size)
 
         // Check model consistency
+        assertFalse(edgeViews[0].underConstruction)
         assertEquals(1, builder.graph.elements.count { it is Net<*> })
         assertSame(edgeViews[0].net, effV1.model.getOutput<Boolean>().net)
         assertSame(edgeViews[0].net, effV3.model.getInput<Boolean>().net)
