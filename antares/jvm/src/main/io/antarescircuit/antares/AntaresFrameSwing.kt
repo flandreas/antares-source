@@ -1,5 +1,7 @@
 package io.antarescircuit.antares
 
+import io.antarescircuit.antares.ai.AiChatIcon
+import io.antarescircuit.antares.ai.AiChatPanelSwing
 import io.antarescircuit.antares.model.NetSignalApplierFailure
 import io.antarescircuit.antares.model.addressable.MemoryLibraryItem
 import io.antarescircuit.antares.model.expression.BooleanExpressionLibraryItem
@@ -61,12 +63,19 @@ class AntaresFrameSwing(
 
 	private val testResultsPanel = TestRunResultsPanel()
 
+	/**
+	 * The circuit assistant. Resolves the editor lazily, so that its changes are always applied to
+	 * the circuit that is open when the assistant answers.
+	 */
+	val aiChatPanel = AiChatPanelSwing(editorProvider = { controller.graphPanelViewController.editor })
+
 	private val netSignalApplierFailureHandler: EventHandler<NetSignalApplierFailure> = { handle(it) }
 
 	init {
 		iconImage = Toolkit.getDefaultToolkit().createImage(ClassLoader.getSystemResource(AntaresSwing.ICON_PATH))
 		eventBus.register(NetSignalApplierFailure::class, netSignalApplierFailureHandler)
 		addTestcaseView()
+		addAiChatView()
 		addTestRunResultsView()
 	}
 
@@ -75,6 +84,7 @@ class AntaresFrameSwing(
 		eventBus.unregister(netSignalApplierFailureHandler)
 		testcasesView.dispose()
 		testResultsPanel.dispose()
+		aiChatPanel.dispose()
 	}
 
 	private fun addTestcaseView() {
@@ -85,6 +95,16 @@ class AntaresFrameSwing(
 				UiUtil.themedIcon("/img/testcase.png"),
 				testcasesView,
 				listOf(testcasesView.runAction, testcasesView.controller.metaAddAction, testcasesView.helpAction)))
+	}
+
+	private fun addAiChatView() {
+		graphPanel.graphEditView.add(
+			SidebarPaneContentImpl(
+				Translations.getString("antares.ai.title"),
+				Translations.getString("antares.ai.desc"),
+				AiChatIcon(),
+				aiChatPanel,
+				listOf(aiChatPanel.clearAction, aiChatPanel.settingsAction)))
 	}
 
 	private fun addTestRunResultsView() {

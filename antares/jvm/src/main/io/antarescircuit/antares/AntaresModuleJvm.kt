@@ -1,5 +1,7 @@
 package io.antarescircuit.antares
 
+import io.antarescircuit.antares.ai.ApiKeyPreference
+import io.antarescircuit.antares.ai.OpenRouterConfig
 import io.antarescircuit.antares.hdl.vhdl.ExportVHDLPanel
 import io.antarescircuit.antares.health.SubCircuitPortConsistencyCheck
 import io.antarescircuit.antares.model.*
@@ -116,6 +118,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		const val PREF_TREE_CIRCUIT_ANALOG = "antares.preferences.group.circuit.analog"
 		const val PREF_TREE_EXPRESSION = "antares.preferences.group.expression"
 		const val PREF_TREE_TEST_CASES = "antares.preferences.group.testcase"
+		const val PREF_TREE_AI = "antares.preferences.group.ai"
 
 		val createCircuitFromTruthTableService = CreateCircuitFromTruthTableService()
 
@@ -263,6 +266,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 	}
 
 	private fun customizeProperties(properties: Properties) {
+		OpenRouterConfig.fillProperties(properties)
 		properties.set(AbstractLibraryImportProcess.PROP_PROJECT_FILE_EXTENSION, "acp") // Antares Circuit Project
 		properties.set(AbstractLibraryImportProcess.PROP_LIBRARY_FILE_EXTENSION, "acl") // Antares Circuit Library
 		properties.set(PROP_PING_APPLICATION_ID, "498417e8-efd2-4c78-8a11-317037cc9afa")
@@ -444,6 +448,10 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		))
 
 		root.add(buildCircuitPreferenceTree())
+
+		root.add(PreferenceGroup(PREF_TREE_AI).apply {
+			add(ApiKeyPreference())
+		})
 
 		root.getGroup(GraphViewModuleJvm.PREF_TREE_OSCILLOSCOPE).add(BooleanPreference(
 			id = AbstractSignalHistoryDrawer.PROP_FILL_SIGNAL,
