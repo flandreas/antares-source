@@ -46,7 +46,7 @@ class Break(
 	}
 
 	init {
-		addPort(DigitalPortImpl.createInOut(Logic.POSITIVE, null, bitWidth))
+		addPort(DigitalPortImpl.createInput(Logic.POSITIVE, null, bitWidth))
 	}
 
 	var value: DigitalSignal = value
