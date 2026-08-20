@@ -50,11 +50,19 @@ data class AiCircuitContext(
 		private val json = Json { prettyPrint = false; encodeDefaults = true }
 
 		/** Builds a snapshot of [graphView]. Must be called on the UI thread. */
-		fun of(graphView: GraphView, library: Library? = LibraryModule.libraryHolder.l): AiCircuitContext {
+		fun of(
+			graphView: GraphView,
+			library: Library? = LibraryModule.libraryHolder.l,
+			includeSubcircuits: Boolean = true,
+		): AiCircuitContext {
 			val verticeViews = graphView.getVerticeViews()
 			val included = verticeViews.take(MAX_COMPONENTS)
 			val includedIds = included.map { it.id }.toSet()
-			val subcircuits = library?.let { availableSubcircuits(graphView, it) }.orEmpty()
+			val subcircuits = if (includeSubcircuits) {
+				library?.let { availableSubcircuits(graphView, it) }.orEmpty()
+			} else {
+				emptyList()
+			}
 
 			return AiCircuitContext(
 				circuitName = graphView.graph?.name?.value ?: graphView.name.value,
@@ -272,6 +280,19 @@ data class AiAvailableSubcircuit(
 	/** Listed for understanding only; the AI connection operation does not support bidirectional ports. */
 	val bidirectionalPorts: List<AiSubcircuitPort> = emptyList()
 )
+
+/** Stable portion of the AI context, sent separately so it can form part of a cacheable prefix. */
+@Serializable
+data class AiSubcircuitCatalog(
+	val availableSubcircuits: List<AiAvailableSubcircuit> = emptyList(),
+	val omittedSubcircuits: Int = 0,
+) {
+	companion object {
+		private val json = Json { prettyPrint = false; encodeDefaults = true }
+	}
+
+	fun toPromptJson(): String = json.encodeToString(this)
+}
 
 @Serializable
 data class AiSubcircuitPort(

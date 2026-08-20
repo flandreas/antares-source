@@ -98,6 +98,23 @@ object AiPrompt {
 		    the operations above, explain that in "reply" and return no operations.
 	""".trimIndent()
 
+	/**
+	 * Describes the reusable subcircuits separately from the changing circuit snapshot. Keeping this
+	 * message before conversation history gives providers a stable prefix for prompt caching.
+	 */
+	fun subcircuitCatalogMessage(context: AiCircuitContext): String {
+		val catalog = AiSubcircuitCatalog(
+			availableSubcircuits = context.availableSubcircuits,
+			omittedSubcircuits = context.omittedSubcircuits,
+		)
+		val message = StringBuilder("Available subcircuit catalog (reuse this for the current project):\n")
+		message.append(catalog.toPromptJson())
+		if (context.omittedSubcircuits > 0) {
+			message.append("\n${context.omittedSubcircuits} further available subcircuit(s) were omitted from this catalog.")
+		}
+		return message.toString()
+	}
+
 	/** The message describing the circuit that is currently open. Sent fresh with every request. */
 	fun contextMessage(context: AiCircuitContext): String {
 		val message = StringBuilder("Circuit context (read-only snapshot of the circuit currently open in the editor):\n")

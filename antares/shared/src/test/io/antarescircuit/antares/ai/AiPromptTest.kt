@@ -46,4 +46,19 @@ class AiPromptTest {
 			components = listOf(AiCircuitComponent(ref = "#1", type = "and")))
 		assertTrue(AiPrompt.contextMessage(truncated).contains("5 further component"))
 	}
+
+	@Test
+	fun shouldDescribeSubcircuitsInASeparateCatalogMessage() {
+		val context = AiCircuitContext(
+			circuitName = "Main",
+			availableSubcircuits = listOf(AiAvailableSubcircuit("uuid-1", "Adder", libraryName = "Standard")),
+			omittedSubcircuits = 3,
+		)
+
+		val message = AiPrompt.subcircuitCatalogMessage(context)
+
+		assertTrue(message.contains("uuid-1"), message)
+		assertTrue(message.contains("Adder"), message)
+		assertTrue(message.contains("3 further available subcircuit"), message)
+	}
 }

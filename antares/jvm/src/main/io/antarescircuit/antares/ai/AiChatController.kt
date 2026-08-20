@@ -1,8 +1,16 @@
 package io.antarescircuit.antares.ai
 
 import io.antarescircuit.jabbah.base.Translations
+import io.antarescircuit.jabbah.base.event.EventBus
+import io.antarescircuit.jabbah.base.event.EventHandler
 import io.antarescircuit.jabbah.base.logger
+import io.antarescircuit.jabbah.base.module.BaseModule
 import io.antarescircuit.jabbah.edit.Editor
+import io.antarescircuit.jabbah.graph.library.CurrentLibraryEvent
+import io.antarescircuit.jabbah.graph.library.LibraryImportsEvent
+import io.antarescircuit.jabbah.graph.library.LibraryItemAddedEvent
+import io.antarescircuit.jabbah.graph.library.LibraryItemRemovedEvent
+import io.antarescircuit.jabbah.graph.library.LibraryItemUpdatedEvent
 import io.antarescircuit.jabbah.graph.view.GraphView
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +33,8 @@ class AiChatController(
 	 */
 	private val editorProvider: () -> Editor?,
 	private val client: OpenRouterClient = OpenRouterClient(),
-	private val executor: AiPlanExecutor = AiPlanExecutor()
+	private val executor: AiPlanExecutor = AiPlanExecutor(),
+	private val eventBus: EventBus = BaseModule.eventBus,
 ) {
 
 	companion object {
@@ -56,6 +65,19 @@ class AiChatController(
 	private val scope = MainScope()
 
 	private val history = mutableListOf<OpenRouterMessage>()
+	private var subcircuitCatalogMessage: OpenRouterMessage? = null
+	private val invalidateCatalogHandler: EventHandler<Any> = { subcircuitCatalogMessage = null }
+	private val catalogEventClasses = listOf(
+		CurrentLibraryEvent::class,
+		LibraryImportsEvent::class,
+		LibraryItemAddedEvent::class,
+		LibraryItemRemovedEvent::class,
+		LibraryItemUpdatedEvent::class,
+	)
+
+	init {
+		catalogEventClasses.forEach { eventBus.register(it, invalidateCatalogHandler) }
+	}
 
 	private var job: Job? = null
 
@@ -72,6 +94,7 @@ class AiChatController(
 
 	fun dispose() {
 		scope.cancel()
+		eventBus.unregister(invalidateCatalogHandler)
 	}
 
 	/**
@@ -98,7 +121,12 @@ class AiChatController(
 			return
 		}
 
-		val context = AiCircuitContext.of(graphView)
+		val catalogContext = if (subcircuitCatalogMessage == null) AiCircuitContext.of(graphView) else null
+		if (catalogContext != null) {
+			subcircuitCatalogMessage = OpenRouterMessage.system(AiPrompt.subcircuitCatalogMessage(catalogContext))
+		}
+		val context = catalogContext?.copy(availableSubcircuits = emptyList(), omittedSubcircuits = 0)
+			?: AiCircuitContext.of(graphView, includeSubcircuits = false)
 		val messages = buildMessages(context, text)
 
 		listener?.onUserMessage(text)
@@ -126,6 +154,7 @@ class AiChatController(
 
 	private fun buildMessages(context: AiCircuitContext, prompt: String): List<OpenRouterMessage> {
 		val messages = mutableListOf(OpenRouterMessage.system(AiPrompt.systemPrompt()))
+		subcircuitCatalogMessage?.let { messages.add(it) }
 		messages.addAll(history)
 		messages.add(OpenRouterMessage.system(AiPrompt.contextMessage(context)))
 		messages.add(OpenRouterMessage.user(prompt))
