@@ -501,7 +501,7 @@ class AiPlanExecutor(
 
 	private fun equalizeSegmentColumnGaps(operations: List<AiOperation>): List<AiOperation> {
 		val components = operations.filterIsInstance<AiOperation.AddComponent>()
-		val columns = components.groupBy { it.x ?: 0 }.toSortedMap().map { (x, column) ->
+		val columns = components.groupBy { it.x ?: 0 }.entries.sortedBy { it.key }.map { (x, column) ->
 			val bounds = column.map { operation ->
 				createVerticeView(operation).apply {
 					location = Point2D(operation.x ?: 0, operation.y ?: 0)

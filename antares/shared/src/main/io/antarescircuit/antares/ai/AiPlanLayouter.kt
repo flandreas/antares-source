@@ -61,7 +61,7 @@ object AiPlanLayouter {
 		val located = mutableMapOf<String, AiOperation.AddComponent>()
 
 		components.groupBy { normalizedLayers.getValue(layers.getValue(it.ref.id)) }
-			.toSortedMap()
+			.entries.sortedBy { it.key }
 			.forEach { (layer, column) ->
 				val sorted = column.sortedWith(
 					compareBy<AiOperation.AddComponent>(
