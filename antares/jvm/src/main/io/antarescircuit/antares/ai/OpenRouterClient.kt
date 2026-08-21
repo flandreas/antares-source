@@ -41,7 +41,7 @@ class OpenRouterException(message: String, cause: Throwable? = null) : Exception
  */
 class OpenRouterClient(
 	private val url: String = OpenRouterConfig.CHAT_COMPLETIONS_URL,
-	private val model: String = OpenRouterConfig.MODEL
+	private val modelProvider: () -> String = OpenRouterConfig::model,
 ) {
 
 	companion object {
@@ -79,7 +79,7 @@ class OpenRouterClient(
 					header(HttpHeaders.Authorization, "Bearer $apiKey")
 					header("HTTP-Referer", OpenRouterConfig.REFERER)
 					header("X-Title", OpenRouterConfig.TITLE)
-					setBody(ChatRequest(model = model, messages = messages))
+					setBody(ChatRequest(model = modelProvider(), messages = messages))
 				}
 			} catch (e: Exception) {
 				LOG.error("OpenRouter request failed: ${e.message}")

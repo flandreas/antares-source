@@ -451,6 +451,11 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 		root.add(PreferenceGroup(PREF_TREE_AI).apply {
 			add(ApiKeyPreference())
+			add(StringPreference(
+				id = OpenRouterConfig.PROP_MODEL,
+				nameKey = "antares.ai.preferences.model",
+				columns = 24,
+			))
 		})
 
 		root.getGroup(GraphViewModuleJvm.PREF_TREE_OSCILLOSCOPE).add(BooleanPreference(

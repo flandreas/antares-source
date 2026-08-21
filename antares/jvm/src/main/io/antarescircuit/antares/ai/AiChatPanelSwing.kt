@@ -210,7 +210,7 @@ class AiChatPanelSwing(
 	}
 
 	private fun appendIntro() {
-		onInfo(Translations.getString("antares.ai.intro", OpenRouterConfig.MODEL))
+		onInfo(Translations.getString("antares.ai.intro", OpenRouterConfig.model()))
 		if (OpenRouterConfig.keySource() == OpenRouterConfig.KeySource.None) {
 			onInfo(Translations.getString("antares.ai.error.noApiKey", OpenRouterConfig.ENV_API_KEY))
 		}
