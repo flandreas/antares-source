@@ -261,7 +261,7 @@ class AntaresSwing(
 		iconPath = "/$ICON_PATH",
 		name = displayName,
 		claim = Translations.getString("antares.claim"),
-		version = version)
+		version = codeVersion)
 
 	/** ---- [AbstractDesktopApplication] */
 

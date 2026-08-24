@@ -31,7 +31,8 @@ abstract class AbstractFileBasedTest : AbstractCircuitTest() {
 	}
 
 	private fun configure() {
-		CurrentApplicationVersion.version = AbstractDesktopApplication.readVersion()
+		CurrentApplicationVersion.codeVersion = AbstractDesktopApplication.readCodeVersion()
+		CurrentApplicationVersion.dataVersion = AbstractDesktopApplication.readDataVersion()
 
 		val path = Paths.get("jvm/rsc/test").toAbsolutePath()
 		//AntaresTestRule.configure()

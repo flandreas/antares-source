@@ -2,6 +2,7 @@ package io.antarescircuit.antares.standardlibrary
 
 import io.antarescircuit.antares.AntaresTestRule
 import io.antarescircuit.antares.model.DigitalGraph
+import io.antarescircuit.antares.model.testcase.Testcase
 import io.antarescircuit.antares.model.testcase.TestcaseService
 import io.antarescircuit.jabbah.app.AbstractDesktopApplication
 import io.antarescircuit.jabbah.app.CurrentApplicationVersion
@@ -15,7 +16,8 @@ class StandardLibraryTest {
 
 	@BeforeTest
 	fun setup() {
-		CurrentApplicationVersion.version = AbstractDesktopApplication.readVersion()
+		CurrentApplicationVersion.codeVersion = AbstractDesktopApplication.readCodeVersion()
+		CurrentApplicationVersion.dataVersion = AbstractDesktopApplication.readDataVersion()
 		AntaresTestRule.configure()
 		AbstractStandardLibraryBasedCircuitTest.setupLibrary()
 	}

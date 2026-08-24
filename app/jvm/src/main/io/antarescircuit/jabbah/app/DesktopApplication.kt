@@ -29,7 +29,21 @@ interface DesktopApplication : Application {
 	/** The name of the [Application]'s log file. */
 	val logFileName: String
 
-	val version: ApplicationVersion
+	/** The code version of this [Application]. */
+	val codeVersion: ApplicationVersion
+
+	/**
+	 * The version of [Application]s to whose data this [Application] is compatible.
+	 *
+	 * This can be smaller than [codeVersion]. For example, an [Application] of version 2.2 is still
+	 * able to consume (read-only) data produced by a newer [Application] of version 2.3,
+	 * if the producing 2.3 [Application]'s [dataVersion] is not higher than 2.2.
+	 * Producing [Application]'s must therefore add [dataVersion] to the data they produce.
+	 *
+	 * This can avoid the need tp update applications containing the Jabbah library if the Jabbah version
+	 * that produced data was only increased e.g. due to bugfixes, but the data structures weren't changed.
+	 */
+	val dataVersion: ApplicationVersion
 
 	fun exportLogfile(destinationPath: String)
 

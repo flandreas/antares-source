@@ -12,19 +12,25 @@ import io.antarescircuit.jabbah.io.StoreWriter
 object CurrentApplicationVersion {
 
     /** The element name in persistent files holding the serialized representation of an [ApplicationVersion].*/
-    private const val PERSISTENT_NAME = "appVersion"
+    private const val OLD_PERSISTENT_NAME = "appVersion"
+
+    private const val NEW_PERSISTENT_NAME = "dataVersion"
 
     private val DUMMY_VERSION = ApplicationVersion(ApplicationVersion.DUMMY_VERSION_ID)
 
-    var version: ApplicationVersion = DUMMY_VERSION
+    var codeVersion: ApplicationVersion = DUMMY_VERSION
+
+    var dataVersion: ApplicationVersion = DUMMY_VERSION
 
     fun write(writer: StoreWriter) {
-        writer.writeString(PERSISTENT_NAME, version.toString())
+        writer.writeString(NEW_PERSISTENT_NAME, dataVersion.toString())
     }
 
     fun read(reader: StoreReader): ApplicationVersion =
-        if (reader.hasAttribute(PERSISTENT_NAME)) {
-            ApplicationVersion.parse(reader.readString(PERSISTENT_NAME))
+        if (reader.hasAttribute(NEW_PERSISTENT_NAME)) {
+            ApplicationVersion.parse(reader.readString(NEW_PERSISTENT_NAME))
+        } else if (reader.hasAttribute(OLD_PERSISTENT_NAME)) {
+            ApplicationVersion.parse(reader.readString(OLD_PERSISTENT_NAME))
         } else {
             DUMMY_VERSION
         }
@@ -35,11 +41,16 @@ object CurrentApplicationVersion {
      * @throws ApplicationTooOldException if the check fails
      */
     fun check(reader: StoreReader) {
-        if (reader.hasAttribute(PERSISTENT_NAME)) {
-            val dataVersion = ApplicationVersion.parse(reader.readString(PERSISTENT_NAME))
-            if (dataVersion > version) {
-                throw ApplicationTooOldException(dataVersion)
-            }
+        if (reader.hasAttribute(NEW_PERSISTENT_NAME)) {
+            check(ApplicationVersion.parse(reader.readString(NEW_PERSISTENT_NAME)))
+        } else if (reader.hasAttribute(OLD_PERSISTENT_NAME)) {
+            check(ApplicationVersion.parse(reader.readString(OLD_PERSISTENT_NAME)))
+        }
+    }
+
+    private fun check(dataVersion: ApplicationVersion) {
+        if (dataVersion > this.dataVersion) {
+            throw ApplicationTooOldException(dataVersion)
         }
     }
 }
@@ -47,5 +58,5 @@ object CurrentApplicationVersion {
 class ApplicationTooOldException(
     dataVersion: ApplicationVersion
 ) : RuntimeException(
-        Translations.getString("application.tooOld.text", CurrentApplicationVersion.version.toString(), dataVersion.toString())
+        Translations.getString("application.tooOld.text", CurrentApplicationVersion.codeVersion.toString(), dataVersion.toString())
 )

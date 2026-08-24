@@ -17,7 +17,8 @@ abstract class AbstractStandardLibraryBasedCircuitTest : AbstractCircuitTest() {
 
 	companion object {
 		fun setupLibrary() {
-			CurrentApplicationVersion.version = AbstractDesktopApplication.readVersion()
+			CurrentApplicationVersion.codeVersion = AbstractDesktopApplication.readCodeVersion()
+			CurrentApplicationVersion.dataVersion = AbstractDesktopApplication.readDataVersion()
 
 			LibraryModule.DEF_LIBRARY_UUID = AntaresApplication.DEF_LIBRARY_UUID
 			LibraryModule.systemLibraryPersistenceService = ResourceLibraryPersistenceService()

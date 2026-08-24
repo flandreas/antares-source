@@ -50,7 +50,8 @@ abstract class AbstractSystemLibraryTest : AbstractCircuitTest() {
     }
 
     protected fun configure() {
-        CurrentApplicationVersion.version = AbstractDesktopApplication.readVersion()
+        CurrentApplicationVersion.codeVersion = AbstractDesktopApplication.readCodeVersion()
+        CurrentApplicationVersion.dataVersion = AbstractDesktopApplication.readDataVersion()
 
         LibraryModule.DEF_LIBRARY_UUID = AntaresApplication.DEF_LIBRARY_UUID
 

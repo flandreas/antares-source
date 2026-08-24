@@ -38,7 +38,8 @@ abstract class AbstractAntaresAppJs(
         private val LOG by logger(AbstractAntaresAppJs::class)
 
         // TODO: Find a way to make this dynamic, i.e. read from version.txt also on JS platform
-        private val VERSION = ApplicationVersion("2.2.0")
+        private val CODE_VERSION = ApplicationVersion("2.2.0")
+        private val DATA_VERSION = ApplicationVersion("2.2.0")
     }
 
     private val isUserAuthenticated: Boolean get() =
@@ -70,7 +71,9 @@ abstract class AbstractAntaresAppJs(
         AntaresModuleJs.require()
         BaseModule.settings.set(SchedulerImpl.SETTING_ENABLE_SOFT_BREAKPOINTS, true)
 
-        CurrentApplicationVersion.version = VERSION
+        CurrentApplicationVersion.codeVersion = CODE_VERSION
+        CurrentApplicationVersion.dataVersion = DATA_VERSION
+
         LogSystem.level = LogLevel.Info
 
         AntaresThemes.install(themeName)

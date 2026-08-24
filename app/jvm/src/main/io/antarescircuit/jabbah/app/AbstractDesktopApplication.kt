@@ -148,8 +148,12 @@ abstract class AbstractDesktopApplication(
 
 		private fun calculateLogfileName(systemName: String): String = "$systemName.log"
 
-		fun readVersion(): ApplicationVersion = ApplicationVersion.parse(
-			IOUtils.toString(this::class.java.getResourceAsStream("/version.txt"), "UTF-8"))
+		fun readCodeVersion(): ApplicationVersion = ApplicationVersion.parse(
+			IOUtils.toString(this::class.java.getResourceAsStream("/codeVersion.txt"), "UTF-8"))
+
+		fun readDataVersion(): ApplicationVersion = ApplicationVersion.parse(
+			IOUtils.toString(this::class.java.getResourceAsStream("/dataVersion.txt"), "UTF-8"))
+
 	}
 
 	// Must not be in companion object due to Module and LogSystem bootstrapping order
@@ -160,15 +164,18 @@ abstract class AbstractDesktopApplication(
 
 	override val appDataDirectoryPath: Path = determineAppDataDirectoryPath(commandLine, systemName)
 
-	override val version: ApplicationVersion by lazy { readVersion() }
+	override val codeVersion: ApplicationVersion by lazy { readCodeVersion() }
+
+	override val dataVersion: ApplicationVersion by lazy { readDataVersion() }
 
 	init {
-		LOG.info("Starting $displayName version $version")
+		LOG.info("Starting $displayName version $codeVersion")
 		LOG.info("Running on ${SystemUtils.OS_NAME} ${SystemUtils.OS_VERSION}")
 		LOG.info("Using Java ${Runtime.version()}")
 		LOG.info(("Using app data directory $appDataDirectoryPath"))
 
-		CurrentApplicationVersion.version = version
+		CurrentApplicationVersion.codeVersion = codeVersion
+		CurrentApplicationVersion.dataVersion = dataVersion
 
 		val settingsEntries = consumeCommandLine(commandLine)
 		loadSettings(settingsEntries)

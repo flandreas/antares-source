@@ -14,7 +14,8 @@ locations:
 > **_TODO:_** The release number should exist at only one single place.
 
 * `gradle.properties`
-* `antares/shared/rsc/version.txt`
+* `antares/shared/rsc/codeVersion.txt`
+* `antares/shared/rsc/dataVersion.txt` (if persistent data structures have changed)
 * `Info.plist`
 * `io.antarescircuit.antares.AbstractAntaresAppJs.VERSION`
 
@@ -33,7 +34,7 @@ Tag the release and push it to the remote repository:
     info --apple-id xxx --team-id xxx --password xxx SUBMISSION_ID`)
     - In case of notarization fails: Fetch notary log using `xcrun notarytool log --apple-id xxx --team-id xxx 
     --password xxx SUBMISSION_ID`
-    - Apply the notarization to the the macOS package by executing `gradlew stapleMacNotarization`
+    - Apply the notarization to the macOS package by executing `gradlew stapleMacNotarization`
     - Collect the macOS package `build/antares/distributions/Antares-<version>.dmg`
     - Collect the Java .jar file `build/antares/libs/antares-<version>-all.jar`
 - On a Windows machine (after pulling changes from remote repository)
@@ -77,7 +78,7 @@ Deployment is done by pushing all artifacts to git@github.com:flandreas/antares.
     * Make sure that download buttons in example pages reference the correctly versioned URL
 * Save as "draft"
 
-### Web site
+### Website
 
 #### User Manual
 

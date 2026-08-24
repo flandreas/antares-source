@@ -1,5 +1,6 @@
 # Antares
 
+## Introduction
 Antares is a digital circuit learning platform entirely written in Kotlin.
 
 Checkout the [project's home page](https://www.antarescircuit.io) with installers, documentation and examples.
@@ -22,6 +23,8 @@ This project is set up as a Kotlin multi-platform project with the following tar
 
 The project uses Gradle subprojects to separate the individual top-level modules like "draw", "edit" or "graph".
 
+Most modules also have a `<module>_test-util` subproject. These contain test utilities and base test classes to be imported by higher-level modules. This is necessary because in Kotlin MPP, the `sharedTest` sources are not compiled to any binary form that could be reused by other subproject's `shared` source set (Kotlin issues KT-35073 and KT-63142).
+
 ## Issue tracking
 
 - Internal issues are tracked in the [developer GitHub project](https://github.com/flandreas/antares-source/issues)
@@ -33,15 +36,15 @@ When committing changes to the git repository, start your commit comment with "I
 
 See the [Design Manual](doc/design-manual/overview.md) for a quick overview of the application's code structures. This is not a comprehensive developer's manual, but rather a list of pointers to the most important packages and domain model classes and interfaces.
 
-## Build
+## Building
 
 `gradlew build` currently fails due to a [JS issue with mockk](https://github.com/flandreas/antares-source/issues/2). The DEV workaround is to use `gradlew jvmMainClasses` and `gradlew jvmTestClasses` during development.
 
-## Test
+## Testing
 
-`gradlew jvmTest` runs all tests on the JVM platform.
+`gradlew cleanAllTests jvmTest` runs all tests on the JVM platform.
  
-## Run
+## Running
 
 The Antares Desktop JVM application is run with `io.antarescircuit.antares.AntaresSwing`. 
 
@@ -56,7 +59,7 @@ Use the following JVM program arguments to set up your environment as developer:
 - `-d`: Path to a application data repository other than the one used by Antares installed with the downloaded installer. Replace `<dir>` with the path to your local directory, e.g. `/Users/andreas/Antares-dev`.
 - `-sl`: Path to the checked-in standard libraries. Needed when updating standard library circuits. Replace `<projectRoot>` with the absolute path to your cloned project, e.g. `/Users/andreas/Documents/scorpion2/jabbah`.
 
-## Maintain
+## Maintaining
 
 See the separate [Maintainer documentation](MAINTAINER.md).
  
