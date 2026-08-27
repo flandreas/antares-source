@@ -24,7 +24,8 @@ interface AntaresApplication : Application {
 		const val AKRAB_DEV_URL = "http://api.antares.local:9000/api"
 		const val AKRAB_PROD_URL = "https://api.antarescircuit.io/api"
 
-		const val ANTARES_VIEWER_JS_URL = "https://viewer.antarescircuit.io"
+		const val VIEWER_JS_DEV_URL = "http://viewer.antares.local:9001"
+		const val VIEWER_JS_PROD_URL = "https://viewer.antarescircuit.io"
 
 		val DIGITAL_LIBRARY_IDS = listOf(
 			"cb21300b-8f5d-4c64-8f37-5d9a49807e8c",
