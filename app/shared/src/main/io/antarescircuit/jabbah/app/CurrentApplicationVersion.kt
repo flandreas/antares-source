@@ -12,9 +12,9 @@ import io.antarescircuit.jabbah.io.StoreWriter
 object CurrentApplicationVersion {
 
     /** The element name in persistent files holding the serialized representation of an [ApplicationVersion].*/
-    private const val OLD_PERSISTENT_NAME = "appVersion"
+    const val OLD_PERSISTENT_NAME = "appVersion"
 
-    private const val NEW_PERSISTENT_NAME = "dataVersion"
+    const val NEW_PERSISTENT_NAME = "dataVersion"
 
     private val DUMMY_VERSION = ApplicationVersion(ApplicationVersion.DUMMY_VERSION_ID)
 
