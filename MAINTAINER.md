@@ -48,9 +48,9 @@ Tag the release and push it to the remote repository:
     - Collect the Windows package `build/antares/distributions/Antares-<version>.msi`
 - On a Linux machine (after pulling changes from remote repository)
     - `gradlew clean :antares:distributeLinux`
-    - Collect the Linux package `build/antares/distributions/Antares-<version>.rpm`
+    - Collect the Linux package `build/antares/distributions/antares-<version>.rpm`
     - Install with `sudo alien -i <name of the package>`
-    - The installed app is found in `/opt/antares/bin`
+    - The installed app is found in `/opt/antares/bin/Antares`
 
 Install the releases and do some smoke testing.
 
