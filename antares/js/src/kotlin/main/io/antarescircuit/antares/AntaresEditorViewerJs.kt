@@ -6,11 +6,15 @@ import io.antarescircuit.jabbah.base.logger
 import io.antarescircuit.jabbah.base.richtext.RichText
 import io.antarescircuit.jabbah.draw.view.CanvasJs
 import io.antarescircuit.jabbah.draw.view.DrawViewModule
+import io.antarescircuit.jabbah.edit.Component
+import io.antarescircuit.jabbah.edit.DrawingView
+import io.antarescircuit.jabbah.edit.module.EditModule
 import io.antarescircuit.jabbah.execution.ExecutionControlOutlet
 import io.antarescircuit.jabbah.execution.ExecutionDepthAction
 import io.antarescircuit.jabbah.execution.SchedulerActions
 import io.antarescircuit.jabbah.graph.MetaGraph
 import io.antarescircuit.jabbah.graph.app.ApplicationMode
+import io.antarescircuit.jabbah.graph.container.ContainerDrawing
 import io.antarescircuit.jabbah.graph.library.AbstractAkrab2RestLibraryPersistenceServiceJs
 import io.antarescircuit.jabbah.graph.library.Library
 import io.antarescircuit.jabbah.graph.library.LibraryModule
@@ -33,6 +37,10 @@ class AntaresEditorViewerJs(
 
     private val controller: GraphViewerController
 
+    private val previewDrawingView: DrawingView<Component, ContainerDrawing>
+
+    private var previewMetaGraph: MetaGraph? = null
+
     @Suppress("unused") // Used in JS applications
     var libraryTree: LibraryTreeNodeJS = content.libraryTree
         private set
@@ -40,6 +48,8 @@ class AntaresEditorViewerJs(
     val metaGraphId: String? get() = metaGraph?.uuid?.id
 
     val metaGraphName: String get() = metaGraph?.name?.let { RichText.stripToPlainText(it) } ?: ""
+
+    val previewDescription: String get() = previewMetaGraph?.graph?.model?.description?.value.orEmpty()
 
     val executionControlOutlet: ExecutionControlOutlet get() = controller
 
@@ -55,6 +65,14 @@ class AntaresEditorViewerJs(
             metaGraph?.graph?.graphView,
             true
         )
+        previewDrawingView = EditModule.drawingViewFactory.create(
+            ContainerDrawing(),
+            controller.applicationContextHolder,
+            false,
+            "preview"
+        )
+        previewDrawingView.editable = false
+        previewDrawingView.showGrid = false
         controller.graphNavigationViewController.enableOpenSubGraphRequests = false
         ViewMocks(controller)
 
@@ -80,6 +98,24 @@ class AntaresEditorViewerJs(
             e.printStackTrace()
             throw e
         }
+    }
+
+    fun bindPreviewCanvas(canvas: HTMLCanvasElement) {
+        try {
+            val canvasJs = CanvasJs(canvas, previewDrawingView)
+            canvasJs.repaint()
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            throw e
+        }
+    }
+
+    fun setPreviewMetaGraph(metaGraph: Any?) {
+        if (metaGraph != null && metaGraph !is MetaGraph) {
+            throw IllegalArgumentException("Expecting MetaGraph preview, got ${metaGraph::class.simpleName}")
+        }
+        previewMetaGraph = metaGraph
+        previewDrawingView.setDrawing(previewMetaGraph?.containerDrawing ?: ContainerDrawing())
     }
 
     /**
