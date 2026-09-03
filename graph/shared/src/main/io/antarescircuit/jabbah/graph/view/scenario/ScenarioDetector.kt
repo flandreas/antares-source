@@ -111,7 +111,7 @@ class ScenarioDetector(
 				highlightScenarioStep(newStep)
 				newStep.activate(view)
 				if (applicationContextHolder.scenarioBreakpoints.enabled) {
-					LOG.trace("Breaking at scenario step ${newStep.name.getTranslation()}")
+					LOG.trace("Breaking at scenario step '${newStep.name.getTranslation()}'")
 					eventBus.post(BreakEvent())
 				}
 			}
