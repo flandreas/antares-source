@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<metaGraph _id='0' manualContainer='true'>
+<metaGraph _id='0' dataVersion='2.3.0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
@@ -13,7 +13,7 @@ if (^T) {
 	qStore = not qStore
 	Q = qStore
 	&apos;!Q&apos; = not qStore
-}' startupTime='45'>
+}' calculatedDelay='122' startupTime='45'>
           <elements>
             <circuitInOut _id='3' id='3' name='T' type='input' bitWidth='1'/>
             <subGraphVerticeRef _id='4' id='4' delay='TD / 5 * 3' uuid='2d7bbd36-5dca-4c71-9a27-19a3bfa81bc5' type='digital'>
@@ -102,7 +102,7 @@ run {
             <netView _id='44' modelId='31' style='line'/>
           </netViews>
           <components>
-            <circuitInOutView _id='45' id='3' rot='0' filled='true' stroked='true' modelId='3' orientation='east' representation='binary'>
+            <circuitInOutView _id='45' id='3' filled='true' stroked='true' modelId='3' orientation='east' representation='binary'>
               <location>
                 <point x='-175.0' y='-119.0'/>
               </location>
@@ -147,12 +147,12 @@ run {
                 <polylineShape points='21.0,-35.0 133.0,-35.0'/>
               </shape>
             </digitalEdgeView>
-            <circuitInOutView _id='58' id='18' rot='0' filled='true' stroked='true' modelId='24' orientation='east' representation='binary'>
+            <circuitInOutView _id='58' id='18' filled='true' stroked='true' modelId='24' orientation='east' representation='binary'>
               <location>
                 <point x='343.0' y='-189.0'/>
               </location>
             </circuitInOutView>
-            <circuitInOutView _id='59' id='19' rot='0' filled='true' stroked='true' modelId='25' orientation='east' representation='binary'>
+            <circuitInOutView _id='59' id='19' filled='true' stroked='true' modelId='25' orientation='east' representation='binary'>
               <location>
                 <point x='343.0' y='-49.0'/>
               </location>
@@ -265,8 +265,8 @@ run {
       <model>
         <subGraphVertice _id='88' id='0' delay='0' uuid='e0786c72-2fa2-4ec4-a1de-0a84b7281bec'>
           <desc>
-            <translation lang='en' text='Changes its output value with every clock pulse'/>
-            <translation lang='de' text='Wechselt seinen Ausgangszustand mit jedem Taktimpuls'/>
+            <translation lang='en' text='Toggles its value with every rising clock edge'/>
+            <translation lang='de' text='Invertiert seinen Zustand mit jeder steigenden Taktflanke'/>
           </desc>
           <name>
             <translation lang='en' text='T Flip-Flop'/>

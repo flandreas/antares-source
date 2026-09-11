@@ -1,5 +1,7 @@
 package io.antarescircuit.antares
 
+import io.antarescircuit.jabbah.app.ApplicationVersion
+import io.antarescircuit.jabbah.app.CurrentApplicationVersion
 import io.antarescircuit.jabbah.io.StorableCloner
 import junit.framework.TestCase.assertEquals
 import kotlin.test.BeforeTest
@@ -39,6 +41,7 @@ class StorableClonerTest {
 
     @Test
     fun shouldSerialize() {
+        CurrentApplicationVersion.dataVersion = ApplicationVersion(0, 0, 0)
         val storable = StorableCloner.deserialize(DATA)
         val output = StorableCloner.serialize(storable)
         assertEquals(DATA.replace("\n", "\r\n"), output)
