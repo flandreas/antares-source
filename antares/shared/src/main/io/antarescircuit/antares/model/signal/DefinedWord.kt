@@ -103,13 +103,13 @@ class DefinedWord(
 		bits
 	}
 
-	override val hexString: String by lazy(LazyThreadSafetyMode.NONE) { BitOperation.longToHexPadded(longValue, bitWidth) }
+	override val hexString: String by lazy(LazyThreadSafetyMode.NONE) { BitOperation.longToHexPadded(this.longValue, bitWidth) }
 
-	override val binaryString: String by lazy(LazyThreadSafetyMode.NONE) { BitOperation.longToBinaryPadded(longValue, bitWidth) }
+	override val binaryString: String by lazy(LazyThreadSafetyMode.NONE) { BitOperation.longToBinaryPadded(this.longValue, bitWidth) }
 
-	override val octalString: String by lazy(LazyThreadSafetyMode.NONE) { longValue.toString(8) }
+	override val octalString: String by lazy(LazyThreadSafetyMode.NONE) { this.longValue.toString(8) }
 
-	override val decimalString: String by lazy(LazyThreadSafetyMode.NONE) { longValue.toString() }
+	override val decimalString: String by lazy(LazyThreadSafetyMode.NONE) { this.longValue.toString() }
 
 	override val color: CompositeColor by lazy(LazyThreadSafetyMode.NONE) { DigitalSignalColor.ofSignal(this) }
 
