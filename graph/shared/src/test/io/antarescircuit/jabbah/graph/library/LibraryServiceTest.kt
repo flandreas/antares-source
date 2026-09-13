@@ -1,6 +1,8 @@
 package io.antarescircuit.jabbah.graph.library
 
 import io.antarescircuit.jabbah.edit.model.text.TranslatableText
+import io.antarescircuit.jabbah.graph.MetaGraph
+import io.antarescircuit.jabbah.io.StorableCloner
 import io.antarescircuit.jabbah.graph.view.GraphViewTestRule
 import kotlin.test.*
 
@@ -94,5 +96,34 @@ class LibraryServiceTest {
 		val changed = library.get("NewName") as ContainerLibraryElement?
 
 		assertNotNull(changed)
+	}
+
+	@Test
+	fun shouldNotAlterLibraryMetaGraphWhenEditingItsClone() {
+		val original = MetaGraph()
+		original.isManualContainer = true
+		libraryBuilder.addContainerLibraryElement(original)
+		val element = library.getContainerLibraryElement(original.uuid)!!
+		val originalStored = element.storable!!
+
+		val edited = StorableCloner.clone(originalStored)
+		edited.isManualContainer = false
+
+		assertSame(originalStored, element.storable)
+		assertTrue(element.storable!!.isManualContainer)
+	}
+
+	@Test
+	fun shouldPreserveManualContainerStateWhenSavingEditedClone() {
+		val original = MetaGraph()
+		original.isManualContainer = true
+		libraryBuilder.addContainerLibraryElement(original)
+		val element = library.getContainerLibraryElement(original.uuid)!!
+		val edited = StorableCloner.clone(element.storable!!)
+
+		service.updateContainerLibraryElement(library, edited, element, doClone = true)
+
+		assertTrue(element.storable!!.isManualContainer)
+		assertTrue(LibraryModule.userLibraryPersistenceService.loadMetaGraph(library, element.uuid).isManualContainer)
 	}
 }

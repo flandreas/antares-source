@@ -86,4 +86,14 @@ class MetaGraphTest {
 
 		assertEquals("#Title", clone.documentation!!.text)
 	}
+
+	@Test
+	fun shouldCloneManualContainerState() {
+		val metaGraph = MetaGraph()
+		metaGraph.isManualContainer = true
+
+		val clone = StorableCloner.clone(metaGraph)
+
+		assertTrue(clone.isManualContainer)
+	}
 }

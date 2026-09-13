@@ -150,8 +150,6 @@ open class GraphFrameController<T: GraphFrame>(
 
 	private val zoomEventHandler = ZoomEventHandler()
 
-	private val customSymbolHandler = CustomSymbolHandler()
-
 	private val propagationDelayCalculator = PropagationDelayCalculator()
 
 	private val applicationModeHandler: EventHandler<ApplicationModeEvent> = { handle(it) }
@@ -170,7 +168,6 @@ open class GraphFrameController<T: GraphFrame>(
 		eventBus.register(BeforeSaveEvent::class, beforeSaveHandler)
 
 		registerZoomEventHandlers()
-		LibraryModule.libraryServiceCallbacks.add(customSymbolHandler)
 		if (BaseModule.properties.getBoolean(GraphPropagationDelayCalculator.PROP_CALCULATE_ON_SAVE)) {
 			LibraryModule.libraryServiceCallbacks.add(propagationDelayCalculator)
 		}
@@ -190,7 +187,6 @@ open class GraphFrameController<T: GraphFrame>(
 		documentationPanelController.dispose()
 		applicationContextHolder.dispose()
 		unregisterZoomEventHandlers()
-		LibraryModule.libraryServiceCallbacks.remove(customSymbolHandler)
 		LibraryModule.libraryServiceCallbacks.remove(propagationDelayCalculator)
 	}
 
@@ -246,6 +242,9 @@ open class GraphFrameController<T: GraphFrame>(
 
 	private fun handle(@Suppress("unused") event: BeforeSaveEvent) {
 		scheduler.isActive = false
+		(appDataViewController.data?.content as? MetaGraph)?.let { metaGraph ->
+			metaGraph.isManualContainer = isManualContainer(metaGraph.isManualContainer, editor.commandManager)
+		}
 	}
 
 	private inner class ZoomEventHandler: PropertyChangeListener<Any> {
@@ -363,12 +362,6 @@ open class GraphFrameController<T: GraphFrame>(
 		override fun update() {
 			selected = displayedView == DisplayedView.Documentation
 			enabled = view.applicationMode.isEdit() && appDataViewController.data?.savable is AbstractContainerLibraryElementSavable
-		}
-	}
-
-	private inner class CustomSymbolHandler : LibraryServiceCallbackAdapter() {
-		override fun beforeStoreMetaGraph(metaGraph: MetaGraph) {
-			metaGraph.isManualContainer = isManualContainer(metaGraph.isManualContainer, editor.commandManager)
 		}
 	}
 
