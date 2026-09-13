@@ -317,7 +317,7 @@ open class LibraryImpl(
 
 	override var defaultElementUUID: UUID? = null
 
-	override var visibility: LibraryVisibility = LibraryVisibility.Private
+	override var visibility: LibraryVisibility = LibraryVisibility.Public
 
 	override var isBrokenImport: Boolean = false
 
