@@ -96,7 +96,8 @@ class ExportVHDLPanel(
 	/** Used to select the directory where the export files are written.*/
 	private val directorySelectionField = FileSelectionField(
 		mode = FileSelectionField.Mode.Directory,
-		text = BaseModule.settings.getString(SETTING_EXPORT_DIRECTORY, SystemUtils.getUserHome().absolutePath)
+		text = BaseModule.settings.getString(SETTING_EXPORT_DIRECTORY, SystemUtils.getUserHome().absolutePath),
+		usage = "export"
 	)
 
 	private val fileNameTextExplanation = JLabel()
@@ -107,6 +108,7 @@ class ExportVHDLPanel(
 	}
 
 	fun dispose() {
+		directorySelectionField.rememberPath()
 		BaseModule.settings.apply {
 			set(SETTING_USE_DELAY_MODEL, delayModelCheckBox.isSelected)
 			set(SETTING_EXPORT_DIRECTORY, directorySelectionField.path)

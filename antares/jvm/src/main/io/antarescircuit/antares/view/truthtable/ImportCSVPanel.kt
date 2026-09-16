@@ -59,7 +59,8 @@ class ImportCSVPanel(
     private val fileSelectionField = FileSelectionField(
         FileSelectionField.Mode.File,
         BaseModule.settings.getString(PROP_DIRECTORY, ""),
-        filter = FileExtensionFilter(setOf("csv"), "CSV")
+        filter = FileExtensionFilter(setOf("csv"), "CSV"),
+        usage = "import"
     ) {
         importAction.enabled = StringUtils.isNotBlank(it)
     }

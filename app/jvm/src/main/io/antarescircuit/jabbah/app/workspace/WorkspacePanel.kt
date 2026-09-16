@@ -57,14 +57,14 @@ class WorkspacePanel(
 
 	private val directorySelectionField = FileSelectionField(
 		text = userDataDirectoryPath,
-		labelText = null
-	) {
-		setStatus(null)
-	}
+		labelText = null,
+		selectHandler = { setStatus(null) },
+		usage = "workspace"
+	)
 
 	private val defaultCheckBox = JCheckBox()
 
-	private val statusField = JLabel(" ", SwingConstants.LEADING)
+	private val errorField = JLabel(" ", SwingConstants.LEADING)
 
 	private var okPressed = false
 
@@ -103,9 +103,9 @@ class WorkspacePanel(
 
 		contentPanel.add(dataFormPanel, BorderLayout.CENTER)
 
-		statusField.border = BorderFactory.createEmptyBorder(10, dataFormPanel.leftInset, 0, 0)
-		statusField.foreground = UiUtil.errorTextColor
-		contentPanel.add(statusField, BorderLayout.SOUTH)
+		errorField.border = BorderFactory.createEmptyBorder(10, dataFormPanel.leftInset, 0, 0)
+		errorField.foreground = UiUtil.errorTextColor
+		contentPanel.add(errorField, BorderLayout.SOUTH)
 
 		return contentPanel
 	}
@@ -139,10 +139,10 @@ class WorkspacePanel(
 
 	private fun setStatus(status: String?) {
 		if (status != null) {
-			statusField.text = status
+			errorField.text = status
 			okAction.enabled = false
 		} else {
-			statusField.text = ""
+			errorField.text = ""
 			okAction.enabled = true
 		}
 	}
@@ -157,6 +157,7 @@ class WorkspacePanel(
 			} else {
 				service.setWorkspace(Paths.get(path))
 			}
+			directorySelectionField.rememberPath()
 			closeHandler()
 		} catch (e: java.lang.Exception) {
 			setStatus(e.message)

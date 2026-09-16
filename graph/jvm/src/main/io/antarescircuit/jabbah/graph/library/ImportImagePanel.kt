@@ -63,7 +63,8 @@ class ImportImagePanel(
         filter = FileExtensionFilter(
             ImageType.allFileExtensions,
             "${Translations.getString("draw.image.filterName")} (${ImageType.allFileExtensionsDesc})"
-        )
+        ),
+        usage = "import"
     ) { path ->
         nameTextField.text = FilenameUtils.removeExtension(Paths.get(path).fileName.toString())
     }

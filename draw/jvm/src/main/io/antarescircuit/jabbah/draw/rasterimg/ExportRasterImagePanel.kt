@@ -82,7 +82,8 @@ class ExportRasterImagePanel(
     private val directorySelectionField = FileSelectionField(
         text = BaseModule.settings.getString(SETTING_PATH, SystemUtils.getUserHome().absolutePath),
         labelText = null,
-        preferredWidth = TEXT_FIELD_WIDTH)
+        preferredWidth = TEXT_FIELD_WIDTH,
+        usage = "export")
 
     private val fileNameField = JTextField()
 
