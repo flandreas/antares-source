@@ -14,6 +14,7 @@ import io.antarescircuit.jabbah.edit.properties.AbstractBeanInfo
 import dev.mokkery.answering.returns
 import dev.mokkery.mock
 import dev.mokkery.every
+import kotlin.test.assertEquals
 import org.junit.Test
 
 class DrawBeanInfoTest {
@@ -47,12 +48,21 @@ class DrawBeanInfoTest {
 
 	@Test
 	fun shouldReadPolylineComponent() {
-		read(PolylineComponent(), PolylineComponentBeanInfo())
+		read(PolylineComponent().also { it.addPoint(0, 0) }, PolylineComponentBeanInfo())
 	}
 
 	@Test
 	fun shouldReadRectangleComponent() {
 		read(RectangleComponent(), RectangleComponentBeanInfo())
+	}
+
+	@Test
+	fun shouldPlaceLocationAfterId() {
+		val names = RectangleComponentBeanInfo()
+			.getProperties(RectangleComponent(), editor)
+			.map { it.name }
+
+		assertEquals(listOf("id", "location"), names.take(2))
 	}
 
 	@Test

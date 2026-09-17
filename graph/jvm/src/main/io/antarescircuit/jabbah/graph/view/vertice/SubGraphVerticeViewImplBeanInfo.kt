@@ -27,9 +27,10 @@ class SubGraphVerticeViewImplBeanInfo : AbstractComponentBeanInfo<SubGraphVertic
     }
 
     override fun addProperties(bean: SubGraphVerticeViewImpl, editor: Editor, properties: MutableList<Property>) {
-        super.addProperties(bean, editor, properties)
+	    super.addProperties(bean, editor, properties)
 
 	    properties.add(modelId.bind(editor, beanIdProvider(bean.id), editable = false))
+	    properties.add(properties.removeAt(properties.indexOfFirst { it.name == "location" }))
 
 	    if (bean.model.designError != null) {
 		    return

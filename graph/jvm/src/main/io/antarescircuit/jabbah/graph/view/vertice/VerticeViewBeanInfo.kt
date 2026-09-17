@@ -33,6 +33,10 @@ open class VerticeViewBeanInfo<T : AbstractVerticeView<*>> : AbstractComponentBe
 		super.addProperties(bean, editor, properties)
 
 		properties.add(modelId.bind(editor, beanIdProvider(bean.id), editable = false))
+
+		// Change position after the "ID" properties
+		properties.add(properties.removeAt(properties.indexOfFirst { it.name == "location" }))
+
 		if (isShowPropagationDelay) {
 			properties.add(propDelay.bind(editor, beanIdProvider(bean.id)))
 		}

@@ -21,10 +21,12 @@ import io.antarescircuit.jabbah.edit.model.text.description.Description
 import io.antarescircuit.jabbah.edit.model.text.description.Name
 import io.antarescircuit.jabbah.edit.properties.CommandPropertySwing
 import io.antarescircuit.jabbah.edit.properties.MagnitudeValueProperty
+import io.antarescircuit.jabbah.edit.properties.Point2DProperty
 import io.antarescircuit.jabbah.edit.properties.magnitude.SIUnit
 import io.antarescircuit.jabbah.edit.properties.ScriptPropertySwing
 
 object EditProperties {
+
 
 	fun id(
 		name: String = "id",
@@ -33,6 +35,12 @@ object EditProperties {
 	): CommandPropertySwing<Int> {
 		return CommandPropertySwing(name, baseKey, Int::class.java, beanProvider)
 	}
+
+	fun location(
+		name: String = "location",
+		baseKey: String = Component.BASE_KEY_LOCATION,
+		beanProvider: BeanProvider = componentBeanProvider
+	): Point2DProperty = Point2DProperty(name, baseKey, beanProvider)
 
 	fun filled(
 		name: String = "filled",

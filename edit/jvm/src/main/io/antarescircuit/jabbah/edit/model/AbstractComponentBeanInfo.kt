@@ -13,11 +13,17 @@ import java.beans.SimpleBeanInfo
 open class AbstractComponentBeanInfo<in T: Component> : AbstractBeanInfo<T>() {
 
 	companion object {
+		private val location = EditProperties.location()
 		private val id = EditProperties.id()
 	}
+
+	protected open val isShowLocation: Boolean get() = true
 
 	override fun addProperties(bean: T, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 		properties.add(id.bind(editor, beanIdProvider(bean.id), editable = false))
+		if (isShowLocation) {
+			properties.add(location.bind(editor, beanIdProvider(bean.id)))
+		}
 	}
 }

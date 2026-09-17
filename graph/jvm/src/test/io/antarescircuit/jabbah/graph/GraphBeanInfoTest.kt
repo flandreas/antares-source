@@ -1,6 +1,7 @@
 package io.antarescircuit.jabbah.graph
 
 import io.antarescircuit.jabbah.base.Bean
+import io.antarescircuit.jabbah.base.geom.Point2D
 import io.antarescircuit.jabbah.edit.Component
 import io.antarescircuit.jabbah.edit.Drawing
 import io.antarescircuit.jabbah.edit.DrawingView
@@ -28,6 +29,7 @@ import dev.mokkery.every
 import dev.mokkery.mock
 import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
+import kotlin.test.assertEquals
 import org.junit.Test
 
 class GraphBeanInfoTest {
@@ -69,9 +71,12 @@ class GraphBeanInfoTest {
 	fun shouldReadEdgeView() {
 		val graphView = GraphViewImpl()
 		val component = EdgeViewImpl<Any>()
+		component.polyline.setPoints(listOf(Point2D.ZERO, Point2D.ZERO))
 		graphView.add(component)
 
-		read(component, EdgeViewImplBeanInfo())
+		val beanInfo = EdgeViewImplBeanInfo()
+		read(component, beanInfo)
+		assertEquals(listOf("id", "modelId"), beanInfo.getProperties(component, editor).map { it.name }.take(2))
 	}
 
 	@Test
@@ -111,7 +116,14 @@ class GraphBeanInfoTest {
 
 	@Test
 	fun shouldReadSubGraphVerticeView() {
-		read(SubGraphVerticeViewImpl(), SubGraphVerticeViewImplBeanInfo())
+		val bean = SubGraphVerticeViewImpl()
+		val beanInfo = SubGraphVerticeViewImplBeanInfo()
+
+		read(bean, beanInfo)
+		assertEquals(
+			listOf("id", "modelId", "location"),
+			beanInfo.getProperties(bean, editor).map { it.name }.take(3)
+		)
 	}
 
 }

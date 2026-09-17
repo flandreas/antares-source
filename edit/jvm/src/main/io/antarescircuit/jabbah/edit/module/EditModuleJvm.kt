@@ -3,6 +3,7 @@ package io.antarescircuit.jabbah.edit.module
 import io.antarescircuit.jabbah.base.AbstractModule
 import io.antarescircuit.jabbah.base.geom.Direction
 import io.antarescircuit.jabbah.base.geom.DirectionEditor
+import io.antarescircuit.jabbah.base.geom.Point2D
 import io.antarescircuit.jabbah.base.module.BaseModuleJvm
 import io.antarescircuit.jabbah.base.preferences.EnumPreference
 import io.antarescircuit.jabbah.base.preferences.IntPreference
@@ -76,6 +77,7 @@ object EditModuleJvm : AbstractModule() {
 	@Suppress("UNCHECKED_CAST")
 	private fun configurePropertyRenderer(registry: DynamicPropertyRendererRegistry) {
 		registry.registerRenderer(Direction::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(Point2D::class.java, Point2DRenderer::class.java)
 		registry.registerRenderer(PredefinedColor::class.java, PredefinedColorRenderer::class.java)
 		registry.registerRenderer(PredefinedStroke::class.java, PredefinedStrokeRenderer::class.java)
 		registry.registerRenderer(Size::class.java, EnumRenderer::class.java)
@@ -99,6 +101,9 @@ object EditModuleJvm : AbstractModule() {
 			)
 		}
 		registry.registerEditor(Direction::class.java, DirectionEditor::class.java)
+		registry.register(Point2D::class.java) { property ->
+			Point2DEditor { (property as Point2DProperty).parseException = it }
+		}
 		registry.registerEditor(Size::class.java, SizeEditor::class.java)
 		registry.registerEditor(StyleType::class.java, StyleTypeEditor::class.java)
 		registry.registerEditor(VerticalAlignment::class.java, VerticalAlignmentEditor::class.java)

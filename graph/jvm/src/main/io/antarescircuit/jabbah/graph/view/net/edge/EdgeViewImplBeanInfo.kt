@@ -21,6 +21,8 @@ open class EdgeViewImplBeanInfo : AbstractComponentBeanInfo<EdgeViewImpl<*>>() {
 		private val description = EditProperties.description()
 	}
 
+	override val isShowLocation: Boolean get() = false
+
 	override fun addProperties(bean: EdgeViewImpl<*>, editor: Editor, properties: MutableList<Property>) {
 		super.addProperties(bean, editor, properties)
 

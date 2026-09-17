@@ -24,6 +24,7 @@ interface Component : Movable, Rotatable, Snappable, Storable, Stylable, Focusab
 
 	companion object {
 		const val BASE_KEY_ID = "edit.property.id"
+		const val BASE_KEY_LOCATION = "edit.property.location"
 		const val BASE_KEY_ORIENTATION = "edit.property.Component.orientation"
 	}
 
