@@ -42,4 +42,19 @@ class SwitchTest {
 		assertFalse(switch.isOn)
 		assertTrue(switch.enabled)
 	}
+
+	@Test
+	fun shouldBounceToRequestedState() {
+		switch.bounce = true
+		switch.on(signalHandler)
+
+		repeat(20) {
+			if (!switch.enabled) {
+				switch.act(signalHandler, switch.createActorData(null))
+			}
+		}
+
+		assertTrue(switch.isOn)
+		assertTrue(switch.enabled)
+	}
 }

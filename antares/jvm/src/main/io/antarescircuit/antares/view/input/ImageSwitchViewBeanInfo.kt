@@ -13,6 +13,8 @@ class ImageSwitchViewBeanInfo : AbstractAntaresInteractableVerticeBeanInfo<Image
     companion object {
         private val toggle = CommandPropertySwing("toggle", SwitchView.BASE_KEY_TOGGLE, Boolean::class.java, componentBeanProvider)
         private val minOnTime = CommandPropertySwing("minOnTime", SwitchView.MIN_ON_TIME, Long::class.java, componentBeanProvider)
+		private val bounce = CommandPropertySwing("bounce", SwitchView.BOUNCE, Boolean::class.java, componentBeanProvider)
+		private val bounceDuration = CommandPropertySwing("bounceDuration", SwitchView.BOUNCE_DURATION, Long::class.java, componentBeanProvider)
         private val portDirection = CommandPropertySwing("portDirection", "library.element.ImageSwitch.portDirection", Direction::class.java, componentBeanProvider)
         private val onImage = CommandPropertySwing("onImageId", "library.element.ImageSwitch.onImage", ImageIdentification::class.java, componentBeanProvider)
         private val offImage = CommandPropertySwing("offImageId", "library.element.ImageSwitch.offImage", ImageIdentification::class.java, componentBeanProvider)
@@ -26,6 +28,10 @@ class ImageSwitchViewBeanInfo : AbstractAntaresInteractableVerticeBeanInfo<Image
         properties.add(onImage.bind(editor, beanIdProvider(bean.id)))
         properties.add(offImage.bind(editor, beanIdProvider(bean.id)))
         properties.add(scale.bind(editor, beanIdProvider(bean.id)))
+		properties.add(bounce.bind(editor, beanIdProvider(bean.id)))
+		if (bean.bounce) {
+			properties.add(bounceDuration.bind(editor, beanIdProvider(bean.id)))
+		}
 
 		if (!bean.toggle) {
 			properties.add(minOnTime.bind(editor, beanIdProvider(bean.id)))

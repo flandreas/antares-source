@@ -30,6 +30,8 @@ class SwitchView(
 		const val BASE_KEY_TOGGLE = "element.property.Switch.toggle"
 		const val MIN_ON_TIME = "element.property.Switch.minOnTime"
 		const val CLOSED_ON_START = "element.property.Switch.closedOnStart"
+		const val BOUNCE = "element.property.Switch.bounce"
+		const val BOUNCE_DURATION = "element.property.Switch.bounceDuration"
 
 		private const val TOGGLE_BASE_RESOURCE_KEY = "library.element.Toggle"
 		private val TOGGLE_TYPE get() = Translations.getString("$TOGGLE_BASE_RESOURCE_KEY.name")
@@ -64,6 +66,18 @@ class SwitchView(
 		get() = model.minOnTime
 		set(value) {
 			model.minOnTime = value
+		}
+
+	var bounce: Boolean
+		get() = model.bounce
+		set(value) {
+			model.bounce = value
+		}
+
+	var bounceDuration: Long
+		get() = model.bounceDuration
+		set(value) {
+			model.bounceDuration = value
 		}
 
 	override fun modelExchanged(oldModel: Switch?) {

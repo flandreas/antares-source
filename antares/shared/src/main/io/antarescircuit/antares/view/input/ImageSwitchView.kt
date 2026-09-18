@@ -133,10 +133,24 @@ class ImageSwitchView(
             }
         }
 
+    @Suppress("unused") // Reflection
     var minOnTime: Long
 		get() = model.minOnTime
 		set(value) {
 			model.minOnTime = value
+		}
+
+	var bounce: Boolean
+		get() = model.bounce
+		set(value) {
+			model.bounce = value
+		}
+
+    @Suppress("unused") // Reflection
+	var bounceDuration: Long
+		get() = model.bounceDuration
+		set(value) {
+			model.bounceDuration = value
 		}
 
     @Suppress("unused") // Reflection
