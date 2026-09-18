@@ -1,5 +1,7 @@
 package io.antarescircuit.antares.model.input
 
+import io.antarescircuit.antares.model.Logic
+import io.antarescircuit.antares.model.signal.BitWidth
 import io.antarescircuit.antares.model.port.DigitalPortImpl
 import io.antarescircuit.antares.model.signal.DigitalSignal
 import io.antarescircuit.antares.model.signal.DigitalSignalFactory
@@ -28,9 +30,18 @@ class Switch : AbstractSwitch<Switch>(CALCULATOR) {
 		private class Calculator : AbstractSwitch.Companion.AbstractSwitchCalculator<Switch>() {
 			override fun calculate(vertice: Switch, data: GraphActorData, signalHandler: SignalHandler) {
 				super.calculate(vertice, data, signalHandler)
-				val output = vertice.getOutput<DigitalSignal>()
-				output.setOutgoingSignalBuffered(DigitalSignalFactory.of(vertice.isOn), signalHandler)
 				vertice.continueBounce(signalHandler)
+				val output = vertice.getOutput<DigitalSignal>()
+				val outputSignal = when {
+					vertice.bouncing && !vertice.bounceTarget && vertice.undefinedWhenOff -> if (vertice.isOn) {
+						DigitalSignalFactory.undefined(BitWidth.BW_1)
+					} else {
+						DigitalSignalFactory.of(false)
+					}
+					vertice.isOn || !vertice.undefinedWhenOff -> DigitalSignalFactory.of(vertice.isOn)
+					else -> DigitalSignalFactory.undefined(BitWidth.BW_1)
+				}
+				output.setOutgoingSignalBuffered(outputSignal, signalHandler)
 			}
 		}
 	}
@@ -41,11 +52,12 @@ class Switch : AbstractSwitch<Switch>(CALCULATOR) {
 	private var bounceDelay = 0L
 	private var bounceTarget = false
 	var minOnTime: Long = 0
+	var undefinedWhenOff: Boolean = false
 	var bounce: Boolean = false
 	var bounceDuration: Long = DEF_BOUNCE_DURATION
 
 	init {
-		addPort(DigitalPortImpl.createOutput())
+		addPort(DigitalPortImpl.createTriStateOutput(Logic.POSITIVE, null, BitWidth.BW_1))
 		propagationDelay = DEF_PROP_DELAY
 		minOnTime = 0
 	}
@@ -67,7 +79,11 @@ class Switch : AbstractSwitch<Switch>(CALCULATOR) {
 	override fun off(signalHandler: SignalHandler) {
 		val passedNs = signalHandler.executionTime - switchedOnAt
 		if (passedNs < minOnTime) {
-			super.delayedOff(signalHandler, minOnTime - passedNs)
+			if (bounce) {
+				startBounce(false, signalHandler, minOnTime - passedNs)
+			} else {
+				super.delayedOff(signalHandler, minOnTime - passedNs)
+			}
 		} else if (bounce) {
 			startBounce(false, signalHandler)
 		} else {
@@ -75,7 +91,7 @@ class Switch : AbstractSwitch<Switch>(CALCULATOR) {
 		}
 	}
 
-	private fun startBounce(target: Boolean, signalHandler: SignalHandler) {
+	private fun startBounce(target: Boolean, signalHandler: SignalHandler, initialDelay: Long? = null) {
 		if (enabled && isOn != target) {
 			bouncing = true
 			bounceTarget = target
@@ -83,13 +99,13 @@ class Switch : AbstractSwitch<Switch>(CALCULATOR) {
 			bounceTransitionsRemaining = Random.nextInt(1, 6) * 2
 			// Use a fixed duration for realistic, equally wide bounces. For very short
 			// propagation delays, shorten it enough to finish before the switch settles.
-			val availableDuration = propagationDelay.value - 1
+			val availableDuration = effectivePropagationDelay - 1
 			bounceDelay = if (availableDuration > 0) {
 				minOf(bounceDuration.coerceAtLeast(0L), availableDuration / bounceTransitionsRemaining)
 			} else {
 				0
 			}
-			requestSetSignal(target, signalHandler)
+			requestSetSignalAfter(target, signalHandler, initialDelay ?: effectivePropagationDelay)
 		}
 	}
 
@@ -99,7 +115,8 @@ class Switch : AbstractSwitch<Switch>(CALCULATOR) {
 		}
 		if (bounceTransitionsRemaining > 0) {
 			bounceTransitionsRemaining--
-			requestSetSignalAfter(!isOn, signalHandler, bounceDelay)
+			val nextState = if (bounceTransitionsRemaining == 0) bounceTarget else !isOn
+			requestSetSignalAfter(nextState, signalHandler, bounceDelay)
 		} else {
 			bouncing = false
 		}
@@ -115,6 +132,9 @@ class Switch : AbstractSwitch<Switch>(CALCULATOR) {
 		if (bounce) {
 			writer.writeBoolean("bounce", bounce)
 		}
+		if (undefinedWhenOff) {
+			writer.writeBoolean("undefinedWhenOff", undefinedWhenOff)
+		}
 		if (bounceDuration != DEF_BOUNCE_DURATION) {
 			writer.writeLong("bounceDuration", bounceDuration)
 		}
@@ -127,6 +147,9 @@ class Switch : AbstractSwitch<Switch>(CALCULATOR) {
 		}
 		if (reader.hasAttribute("bounce")) {
 			bounce = reader.readBoolean("bounce")
+		}
+		if (reader.hasAttribute("undefinedWhenOff")) {
+			undefinedWhenOff = reader.readBoolean("undefinedWhenOff")
 		}
 		if (reader.hasAttribute("bounceDuration")) {
 			bounceDuration = reader.readLong("bounceDuration")

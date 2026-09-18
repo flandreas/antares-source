@@ -32,6 +32,7 @@ class SwitchView(
 		const val CLOSED_ON_START = "element.property.Switch.closedOnStart"
 		const val BOUNCE = "element.property.Switch.bounce"
 		const val BOUNCE_DURATION = "element.property.Switch.bounceDuration"
+		const val UNDEFINED_WHEN_OFF = "element.property.Switch.undefinedWhenOff"
 
 		private const val TOGGLE_BASE_RESOURCE_KEY = "library.element.Toggle"
 		private val TOGGLE_TYPE get() = Translations.getString("$TOGGLE_BASE_RESOURCE_KEY.name")
@@ -78,6 +79,12 @@ class SwitchView(
 		get() = model.bounceDuration
 		set(value) {
 			model.bounceDuration = value
+		}
+
+	var undefinedWhenOff: Boolean
+		get() = model.undefinedWhenOff
+		set(value) {
+			model.undefinedWhenOff = value
 		}
 
 	override fun modelExchanged(oldModel: Switch?) {

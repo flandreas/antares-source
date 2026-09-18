@@ -20,6 +20,7 @@ class SwitchViewBeanInfo : AbstractAntaresInteractableVerticeBeanInfo<SwitchView
 		private val closedOnStart = CommandPropertySwing("closedOnStart", SwitchView.CLOSED_ON_START, Boolean::class.java, componentBeanProvider)
 		private val bounce = CommandPropertySwing("bounce", SwitchView.BOUNCE, Boolean::class.java, componentBeanProvider)
 		private val bounceDuration = CommandPropertySwing("bounceDuration", SwitchView.BOUNCE_DURATION, Long::class.java, componentBeanProvider)
+		private val undefinedWhenOff = CommandPropertySwing("undefinedWhenOff", SwitchView.UNDEFINED_WHEN_OFF, Boolean::class.java, componentBeanProvider)
 	    private val labelPosition = GraphProperties.verticalLabelPosition()
 		private val controlViewLabelPosition = GraphProperties.verticalLabelPosition(name = "${ControlViewComponentBeanInfo.aggregatePropertyName}.labelPosition")
     }
@@ -35,6 +36,7 @@ class SwitchViewBeanInfo : AbstractAntaresInteractableVerticeBeanInfo<SwitchView
 			properties.add(minOnTime.bind(editor, beanIdProvider(bean.id)))
 		}
 		properties.add(closedOnStart.bind(editor, beanIdProvider(bean.id)))
+		properties.add(undefinedWhenOff.bind(editor, beanIdProvider(bean.id)))
 		properties.add(bounce.bind(editor, beanIdProvider(bean.id)))
 		if (bean.bounce) {
 			properties.add(bounceDuration.bind(editor, beanIdProvider(bean.id)))

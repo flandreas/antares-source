@@ -154,6 +154,13 @@ class ImageSwitchView(
 		}
 
     @Suppress("unused") // Reflection
+	var undefinedWhenOff: Boolean
+		get() = model.undefinedWhenOff
+		set(value) {
+			model.undefinedWhenOff = value
+		}
+
+    @Suppress("unused") // Reflection
     var onImageId: ImageIdentification?
         get() = onImageData.value?.let { ImageIdentification(uuid = onImageUuid!!, name = it.name) }
         set(value) {
