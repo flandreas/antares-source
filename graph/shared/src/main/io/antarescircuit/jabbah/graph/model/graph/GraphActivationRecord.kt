@@ -13,7 +13,7 @@ import io.antarescircuit.jabbah.graph.model.param.GraphParamValues
  * An [ActivationRecord] implementation that allows a DSL script to read
  * a [Graph]'s [GraphPort] signals or [GraphParamValues] as global context variables.
  */
-class GraphActivationRecord(private val graph: Graph) : ActivationRecord {
+class GraphActivationRecord(val graph: Graph) : ActivationRecord {
 
 	override fun clear() { }
 

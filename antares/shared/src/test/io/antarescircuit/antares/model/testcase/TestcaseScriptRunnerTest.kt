@@ -69,6 +69,31 @@ class TestcaseScriptRunnerTest {
 		}
 	}
 
+	// Regression test for #1251
+	@Test
+	fun testSetUndefined() {
+		buildMultiBitNOPCircuit()
+
+		val execScript = """
+			O = I
+		""".trimIndent()
+
+		val testScript = """
+				I			O
+			run {
+				255			255
+				0bZZZZZZZZ	0bZZZZZZZZ
+			}
+		""".trimIndent()
+
+		val execScriptAST = BaseModule.parserFactory(execScript, null).parse()
+		val results = TestcaseScriptRunner("test", testScript, circuit, execScriptAST).run()
+
+		for (vector in results.collector) {
+			assertEquals(Value.State.PASSED, vector.getValue(1).state)
+		}
+	}
+
 	private fun buildDummyFlipFlopCircuit() {
 		// Scripted only, no circuitry needed
 		val builder = TestCircuitBuilder("test")
