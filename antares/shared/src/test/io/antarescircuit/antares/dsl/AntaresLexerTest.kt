@@ -7,11 +7,13 @@ import io.antarescircuit.antares.model.signal.DigitalSignalFactory
 import io.antarescircuit.antares.model.signal.Word
 import io.antarescircuit.jabbah.base.Translations
 import io.antarescircuit.jabbah.base.dsl.BaseTokenType
+import io.antarescircuit.jabbah.base.dsl.DslError
 import io.antarescircuit.jabbah.base.dsl.DslLexer
 import io.antarescircuit.jabbah.base.dsl.DslTokenType
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class AntaresLexerTest {
 
@@ -56,6 +58,14 @@ class AntaresLexerTest {
 		val token = lexer.nextToken()
 		assertEquals(BaseTokenType.LITERAL, token.type)
 		assertEquals(16L, token.value)
+	}
+
+	@Test
+	fun shouldRejectUndefinedHexDigit() {
+		// 'Undefined' must be specified wit ?, e.g., 0x?16
+		assertFailsWith<DslError> {
+			AntaresLexer("0xZ").nextToken()
+		}
 	}
 
 	private fun assertNumberLiteral(expected: Long, literal: String) {

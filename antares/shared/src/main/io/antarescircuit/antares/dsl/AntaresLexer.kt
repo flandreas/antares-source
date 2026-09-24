@@ -58,7 +58,11 @@ class AntaresLexer(text: String) : DslLexer(text) {
 			result.append(state.currentChar!!)
 			advance(state)
 		}
-		return BitOperation.hexToLong(result.toString()).toLong()
+		try {
+			return BitOperation.hexToLong(result.toString()).toLong()
+		} catch (_: NumberFormatException) {
+			throw SyntaxError(state.location, Translations.getString("base.dsl.expectedNumber.msg"))
+		}
 	}
 
 	private fun undefinedHexLiteral(state: State): DigitalSignal {
