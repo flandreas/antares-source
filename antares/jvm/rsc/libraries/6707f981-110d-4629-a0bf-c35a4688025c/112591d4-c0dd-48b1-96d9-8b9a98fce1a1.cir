@@ -3,7 +3,26 @@
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' type='digital' calculatedDelay='190'>
+        <graph _id='2' type='digital' script='init {
+	store signal
+	signal = 0
+}
+
+if (CLR) {
+	signal = 0
+}
+
+if (^CLR) {
+	signal = 0
+} else if (^C and not &apos;!(EN)&apos;) {
+	signal = D
+}
+
+if (OE) {
+	O = signal
+} else {
+	O = 0x?4
+}' calculatedDelay='190'>
           <elements>
             <orGate _id='3' id='2' delay='20' inputCount='2'/>
             <andGate _id='4' id='3' delay='20' inputCount='2'/>
@@ -343,7 +362,7 @@ run {
 	0	1		0	0	12	Z
 	^1	0		0	0	12	Z
 	0	1		0	1	0	12
-}'>
+}' skipPropDelayConsistenceCheck='true'>
                   <name>
                     <translation lang='en' text='Write/Read'/>
                   </name>
@@ -1012,7 +1031,7 @@ run {
             <subCircuitPort _id='346' portId='3' name='!(EN)' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
             <subCircuitPort _id='349' portId='4' name='D' logic='positive' bitWidth='4' trigger='level' type='input' representation='hex'/>
             <subCircuitPort _id='352' portId='5' name='OE' logic='positive' bitWidth='1' trigger='level' type='input' representation='binary'/>
-            <subCircuitPort _id='355' portId='6' name='O' logic='positive' bitWidth='4' trigger='level' type='output' representation='hex' canBeUndefined='true'/>
+            <subCircuitPort _id='355' portId='6' name='O' logic='positive' bitWidth='4' trigger='level' type='output' representation='hex' outputAnnotation='triState' canBeUndefined='true'/>
           </ports>
         </subGraphVertice>
       </model>
