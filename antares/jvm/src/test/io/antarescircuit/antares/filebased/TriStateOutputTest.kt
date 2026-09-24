@@ -33,18 +33,47 @@ class TriStateOutputTest : AbstractFileBasedTest() {
 		d2 = openedCircuitView.graph!!.withId(5) as Switch
 		s2 = openedCircuitView.graph!!.withId(4) as Switch
 		output = openedCircuitView.graph!!.withId(11) as DigitalCircuitInOut
-
-		startSimulation()
-		processUntilQueueIsEmpty()
 	}
 
 	@Test
-	fun shouldOutputBeUndefinedAfterStart() {
+	fun shouldOutputBeUndefinedAfterStartDeep() {
+		startSimulation()
+		processUntilQueueIsEmpty()
+
+		assertOutputBeUndefinedAfterStart()
+	}
+
+	@Test
+	fun shouldOutputBeUndefinedAfterStartScripted() {
+		scheduler.isDeepExecution = false
+		startSimulation()
+		processUntilQueueIsEmpty()
+
+		assertOutputBeUndefinedAfterStart()
+	}
+
+	private fun assertOutputBeUndefinedAfterStart() {
 		assertEquals(undefined(BW_1), output.signal)
 	}
 
 	@Test
-	fun shouldActivateFirstSubGraph() {
+	fun shouldActivateFirstSubGraphDeep() {
+		startSimulation()
+		processUntilQueueIsEmpty()
+
+		assertActivateFirstSubGraph()
+	}
+
+	@Test
+	fun shouldActivateFirstSubGraphScripted() {
+		scheduler.isDeepExecution = false
+		startSimulation()
+		processUntilQueueIsEmpty()
+
+		assertActivateFirstSubGraph()
+	}
+
+	private fun assertActivateFirstSubGraph() {
 		d1.toggle(scheduler)
 		s1.toggle(scheduler)
 		processUntilQueueIsEmpty()
@@ -53,7 +82,23 @@ class TriStateOutputTest : AbstractFileBasedTest() {
 	}
 
 	@Test
-	fun shouldOutputBeUndefinedAfterOneDeactivation() {
+	fun shouldOutputBeUndefinedAfterOneDeactivationDeep() {
+		startSimulation()
+		processUntilQueueIsEmpty()
+
+		assertOutputBeUndefinedAfterOneDeactivation()
+	}
+
+	@Test
+	fun shouldOutputBeUndefinedAfterOneDeactivationScripted() {
+		scheduler.isDeepExecution = false
+		startSimulation()
+		processUntilQueueIsEmpty()
+
+		assertOutputBeUndefinedAfterOneDeactivation()
+	}
+
+	private fun assertOutputBeUndefinedAfterOneDeactivation() {
 		d1.toggle(scheduler)
 		s1.toggle(scheduler)
 		processUntilQueueIsEmpty()
@@ -64,7 +109,23 @@ class TriStateOutputTest : AbstractFileBasedTest() {
 	}
 
 	@Test
-	fun shouldOutputBeUndefinedAfterTwoDeactivation() {
+	fun shouldOutputBeUndefinedAfterTwoDeactivationDeep() {
+		startSimulation()
+		processUntilQueueIsEmpty()
+
+		assertOutputBeUndefinedAfterTwoDeactivation()
+	}
+
+	@Test
+	fun shouldOutputBeUndefinedAfterTwoDeactivationScripted() {
+		scheduler.isDeepExecution = false
+		startSimulation()
+		processUntilQueueIsEmpty()
+
+		assertOutputBeUndefinedAfterTwoDeactivation()
+	}
+
+	private fun assertOutputBeUndefinedAfterTwoDeactivation() {
 		d1.toggle(scheduler)
 		s1.toggle(scheduler)
 		d2.toggle(scheduler)
@@ -80,7 +141,23 @@ class TriStateOutputTest : AbstractFileBasedTest() {
 	}
 
 	@Test
-	fun shouldOutputBeDefinedWithOnlyOneUndefinedSubcircuit() {
+	fun shouldOutputBeDefinedWithOnlyOneUndefinedSubcircuitDeep() {
+		startSimulation()
+		processUntilQueueIsEmpty()
+
+		assertOutputBeDefinedWithOnlyOneUndefinedSubcircuit()
+	}
+
+	@Test
+	fun shouldOutputBeDefinedWithOnlyOneUndefinedSubcircuitScripted() {
+		scheduler.isDeepExecution = false
+		startSimulation()
+		processUntilQueueIsEmpty()
+
+		assertOutputBeDefinedWithOnlyOneUndefinedSubcircuit()
+	}
+
+	private fun assertOutputBeDefinedWithOnlyOneUndefinedSubcircuit() {
 		d1.toggle(scheduler)
 		s1.toggle(scheduler)
 		d2.toggle(scheduler)
