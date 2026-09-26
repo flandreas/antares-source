@@ -14,6 +14,7 @@ import io.antarescircuit.jabbah.execution.actor.Actor
 import io.antarescircuit.jabbah.execution.actor.ActorData
 import io.antarescircuit.jabbah.execution.actor.ActorImpl
 import io.antarescircuit.jabbah.execution.actor.SimpleActorData
+import io.antarescircuit.jabbah.execution.scheduler.BreakEvent
 import io.antarescircuit.jabbah.execution.scheduler.Scheduler
 import io.antarescircuit.jabbah.graph.app.ApplicationMode
 import io.antarescircuit.jabbah.graph.app.ApplicationModeHolder
@@ -140,6 +141,10 @@ class UsecaseRunner(
 			try {
 				action.invoke()
 				super.act(signalHandler, data)
+
+				if (signalHandler.isSingleStepMode) {
+					signalHandler.eventBus.post(BreakEvent())
+				}
 			} catch (e: Exception) {
 				LOG.error("Error in use case execution", e)
 				BaseModule.eventBus.post(IssueImpl(
@@ -167,6 +172,10 @@ class UsecaseRunner(
 			input.setIncomingSignal(currentValue, signalHandler)
 			signalHandler.requestActingAfter(this, period / 2, SimpleActorData())
 			super.act(signalHandler, data)
+
+			if (signalHandler.isSingleStepMode) {
+				signalHandler.eventBus.post(BreakEvent())
+			}
 		}
 
 		private fun toggleCurrentValue() {
