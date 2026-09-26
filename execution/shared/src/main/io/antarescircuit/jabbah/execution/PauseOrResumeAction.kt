@@ -87,15 +87,18 @@ class PauseOrResumeActionImpl(
     }
 
     private fun updateDescription() {
-        description = if (selected) {
+        val baseName = if (selected) {
             if (inBreakpoint) {
-                Translations.getString("execution.action.resumeFromBreakpoint.desc")
+                "execution.action.resumeFromBreakpoint"
             } else {
-                Translations.getString("execution.action.resume.desc")
+                "execution.action.resume"
             }
         } else {
-            Translations.getString("execution.action.pause.desc")
+            "execution.action.pause"
         }
+
+        name = Translations.getString("$baseName.name")
+        description = Translations.getString("$baseName.desc")
     }
 
     private fun updateState() {

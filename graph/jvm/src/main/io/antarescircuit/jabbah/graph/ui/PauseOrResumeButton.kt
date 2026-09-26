@@ -35,6 +35,11 @@ class PauseOrResumeButton(
         action.addPropertyChangeListener(inBreakpointListener)
     }
 
+    override fun setText(text: String?) {
+        // This button should never display a text, even if the underlying Action publishes a name
+        super.setText(null)
+    }
+
     fun dispose() {
         action.removePropertyChangeListener(inBreakpointListener)
         (super.getAction() as ActionWrapperSwing).dispose()
