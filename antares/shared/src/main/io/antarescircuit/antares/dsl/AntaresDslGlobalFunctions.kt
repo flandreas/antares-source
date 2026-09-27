@@ -11,21 +11,36 @@ import io.antarescircuit.jabbah.execution.SignalHandler
 import io.antarescircuit.jabbah.execution.actor.Actor
 import io.antarescircuit.jabbah.graph.model.StoringGraphActorData
 import io.antarescircuit.jabbah.graph.model.vertice.SubGraphFunctionContext
+import io.antarescircuit.jabbah.graph.model.vertice.SubGraphVerticeRef
 
 class AntaresDslGlobalFunctions : DslGlobalFunctions() {
 
+	companion object {
+		private const val FUNC_BITS = "bits"
+		private const val FUNC_GATED = "gated"
+		private const val FUNC_TRIGGER_AFTER = "triggerAfter"
+		private const val FUNC_TIME = "time"
+		private const val FUNC_PROP_DELAY = "propDelay"
+	}
+
 	init {
 		with(_reservedFunctionNames) {
-			add("bits")
+			add(FUNC_BITS)
+			add(FUNC_GATED)
+			add(FUNC_TRIGGER_AFTER)
+			add(FUNC_TIME)
+			add(FUNC_PROP_DELAY)
 		}
 	}
 
 	override fun defineIn(symbolTable: SymbolTable) {
 		super.defineIn(symbolTable)
 		with(symbolTable) {
-			define(ExternalFunctionSymbol("bits", 3, ::bitsImpl))
-			define(ExternalFunctionSymbol("gated", 1, ::gatedImpl))
-			define(ExternalFunctionSymbol("triggerAfter", 1, ::triggerAfterImpl))
+			define(ExternalFunctionSymbol(FUNC_BITS, 3, ::bitsImpl))
+			define(ExternalFunctionSymbol(FUNC_GATED, 1, ::gatedImpl))
+			define(ExternalFunctionSymbol(FUNC_TRIGGER_AFTER, 1, ::triggerAfterImpl))
+			define(ExternalFunctionSymbol(FUNC_TIME, 0, ::timeImpl))
+			define(ExternalFunctionSymbol(FUNC_PROP_DELAY, 0, ::propDelayImpl))
 		}
 	}
 
@@ -101,6 +116,44 @@ class AntaresDslGlobalFunctions : DslGlobalFunctions() {
 	 */
 	private fun triggerAfter(delay: Long, actor: Actor, signalHandler: SignalHandler) {
 		signalHandler.requestActingAfter(actor, delay, StoringGraphActorData(null, null))
+	}
+
+	private fun timeImpl(@Suppress("unused") params: List<Any>, context: Any?): Long {
+		if (context !is SubGraphFunctionContext) {
+			throw RuntimeError(TextLocation.UNDEFINED, "Program error: Unsupported context")
+		}
+		if (context.actor == null || context.signalHandler == null) {
+			throw RuntimeError(TextLocation.UNDEFINED, "Program error: Incomplete context")
+		}
+		return time(context.signalHandler!!)
+	}
+
+	/**
+	 * Returns the current execution (i.e. simulation) time in ns.
+	 *
+	 * Example: time()
+	 */
+	private fun time(signalHandler: SignalHandler): Long {
+		return signalHandler.executionTime
+	}
+
+	/**
+	 * Returns the propagation delay (in ns) of the current vertice.
+	 *
+	 * Example: propDelay()
+	 */
+	private fun propDelay(subGraphVerticeRef: SubGraphVerticeRef): Long {
+		return subGraphVerticeRef.propagationDelay.value
+	}
+
+	private fun propDelayImpl(@Suppress("unused") params: List<Any>, context: Any?): Long {
+		if (context !is SubGraphFunctionContext) {
+			throw RuntimeError(TextLocation.UNDEFINED, "Program error: Unsupported context")
+		}
+		if (context.actor !is SubGraphVerticeRef) {
+			throw RuntimeError(TextLocation.UNDEFINED, "Program error: Incomplete context")
+		}
+		return propDelay(context.actor as SubGraphVerticeRef)
 	}
 }
 
