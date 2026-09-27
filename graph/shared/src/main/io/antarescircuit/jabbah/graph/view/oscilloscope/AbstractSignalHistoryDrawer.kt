@@ -33,7 +33,8 @@ abstract class AbstractSignalHistoryDrawer<T: Any>(
 		const val START_SIZE = 2.0
 
 		private val BASELINE_STROKE = Stroke(1f)
-		val CURVE_STROKE = Stroke(1f)
+		val CURVE_STROKE_DEFINED = Stroke(1f)
+		private val CURVE_STROKE_UNDEFINED = Stroke(1f, dash = floatArrayOf(2.0f, 4.0f))
 		private val GRID_LINE_STROKE = Stroke(0.5f)
 
 		private const val BUFFER_END_CIRCLE_COUNT = 3
@@ -171,18 +172,28 @@ abstract class AbstractSignalHistoryDrawer<T: Any>(
 
 	protected fun drawSegment(context: DrawContext, xR: Double, yR: Double, xL: Double, yL: Double) {
 		when (signalCurveStyle) {
-            RECTANGULAR -> drawHorizontalSegment(context, xR, yR, xL, yL)
+            RECTANGULAR -> drawHorizontalSegment(context, true, xR, yR, xL, yL)
             DIAGONAL -> drawNonHorizontalSegment(context, xR, yR, xL, yL)
         }
 	}
 
-	protected fun drawHorizontalSegment(context: DrawContext, xR: Double, yR: Double, xL: Double, yL: Double) {
-		if (fillSignal) {
+	protected fun drawHorizontalSegment(context: DrawContext, isDefined: Boolean, xR: Double, yR: Double, xL: Double, yL: Double) {
+		if (fillSignal && isDefined) {
 			context.g.color = color!!.backgroundColor
 			context.g.fillRect(xL, min(yL, baseLineY), xR - xL, abs(baseLineY - yL))
 		}
 		context.g.color = color!!.foregroundColor
+
+		// vertically up or down
+		context.g.stroke = CURVE_STROKE_DEFINED
 		context.g.drawLine(xR, yR, xR, yL)
+
+		// horizontally to the left
+		context.g.stroke = if (isDefined) {
+			CURVE_STROKE_DEFINED
+		} else {
+			CURVE_STROKE_UNDEFINED
+		}
 		context.g.drawLine(xR, yL, xL, yL)
 	}
 

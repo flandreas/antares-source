@@ -32,7 +32,7 @@ class AnalogSignalHistoryDrawer(
 		var lastPoint = Point2D.ZERO
 		var lastEntry: SignalHistoryEntry<AnalogSignal>? = null
 		var effNextX: Double = rightBorder
-		context.g.stroke = CURVE_STROKE
+		context.g.stroke = CURVE_STROKE_DEFINED
 
 		yAxis!!.setMinMax(signalHistory?.minimum, signalHistory?.maximum)
 

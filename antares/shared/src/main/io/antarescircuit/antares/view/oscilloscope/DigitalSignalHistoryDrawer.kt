@@ -50,11 +50,14 @@ class DigitalSignalHistoryDrawer(
 		var lastPoint = Point2D.ZERO
 		var lastEntry: SignalHistoryEntry<DigitalSignal>? = null
 		var effNextX: Double = rightBorder
-		context.g.stroke = CURVE_STROKE
+		context.g.stroke = CURVE_STROKE_DEFINED
 
 		context.g.getClipBounds(clipBuffer)
 		context.g.setClipBounds(bounds.xInt, bounds.yInt, bounds.widthInt - rightInset + START_SIZE.toInt(), bounds.heightInt)
 
+		// Draw entries from right to left, starting with the newest entry.
+		// Draw segments from lastEntry (keeping signal[n-1] level) to entry (signal[n] level),
+		// meaning first horizontal, then up or down
 		for (entry in signalHistory!!.getReverseEntriesUntil(0)) {
 			val x = rightBorder - timeline!!.getX(entry.time) + scrollX
 			val y = signalY(entry)
@@ -84,7 +87,7 @@ class DigitalSignalHistoryDrawer(
 
 				if (effNextX < rightBorder) {
 					if (singleBit) {
-						drawHorizontalSegment(context, lastPoint.x, lastPoint.y, effNextX, nextY)
+						drawHorizontalSegment(context, entry.signal.bitAt(0).isDefined, lastPoint.x, lastPoint.y, effNextX, nextY)
 					} else {
 						multiBitLabel.text = entry.signal.hexString
 						multiBitLabel.horizontalAlignment = HorizontalAlignment.CENTER
@@ -178,7 +181,9 @@ class DigitalSignalHistoryDrawer(
 	}
 
 	override fun signalY(entry: SignalHistoryEntry<DigitalSignal>): Double {
-		return if (entry.signal.bitAt(0).isSet) {
+		return if (!entry.signal.bitAt(0).isDefined) {
+			baseLineY - signalHeight / 2
+		} else if (entry.signal.bitAt(0).isSet) {
 			baseLineY - signalHeight
 		} else {
 			baseLineY
