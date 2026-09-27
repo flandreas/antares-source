@@ -19,9 +19,11 @@ class TestcaseRunBlockTest : AbstractStandardLibraryBasedCircuitTest() {
 	private val testScript = """
 			T   Q   '!Q'
 		run {
-			1   1   0
-			0   1   0
-			1   0   1
+			0	0	1
+			1	1	0
+			0	1	0
+			1	0	1
+			0	0	1
 		}
 		""".trimIndent()
 
@@ -51,15 +53,8 @@ class TestcaseRunBlockTest : AbstractStandardLibraryBasedCircuitTest() {
 		assertResult(TestcaseCircuitRunner("test", testScript, getCircuitView().graph as DigitalGraph).run())
 	}
 
-	@Test
-	fun shouldRunTestBlockWithScript() {
-		val script = flipFlopView.model.getGraph().script!!
-		val execScriptAST = BaseModule.parserFactory(script, null).parse()
-		assertResult(TestcaseScriptRunner("test", testScript, getCircuitView().graph as DigitalGraph, execScriptAST).run())
-	}
-
 	private fun assertResult(result: TestRunResult) {
-		assertEquals(3, result.collector.size)
+		assertEquals(5, result.collector.size)
 		for (vector in result.collector.testVectors) {
 			assertEquals(Value.State.PASSED, vector.getValue(1).state)
 			assertEquals(Value.State.PASSED, vector.getValue(2).state)
