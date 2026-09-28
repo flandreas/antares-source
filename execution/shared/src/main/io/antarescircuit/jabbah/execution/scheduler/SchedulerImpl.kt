@@ -263,7 +263,7 @@ class SchedulerImpl(
 			throw IllegalStateException("Cannot reset execution time on non-empty queue")
 		}
 		relativeTime = 0
-		postSchedulerStateEvent()
+		//postSchedulerStateEvent()
 	}
 
 	/** ---- [SignalHandler] interface */
@@ -329,7 +329,7 @@ class SchedulerImpl(
 
 				if (slot.empty) {
 					removeSlot(slot)
-					postSchedulerStateEvent()
+					//postSchedulerStateEvent()
 				}
 			} else {
 				actor.actingDone(this, data)
@@ -353,7 +353,7 @@ class SchedulerImpl(
 			slot.addActor(actor, data)
 		} else {
 			addSlot(Slot(schedulingTime, actor, data))
-			postSchedulerStateEvent()
+			//postSchedulerStateEvent()
 		}
 		startTaskIfNeeded()
 	}
@@ -409,11 +409,13 @@ class SchedulerImpl(
 		}
 	}
 
+	/*
 	private fun postSchedulerStateEvent() {
 		if (displaySimulationTime) {
 			publishSimulationTimeStatus()
 		}
 	}
+	*/
 
 	private fun publishSimulationTimeStatus() {
 		Status.set(StatusType.Small, "${StringUtils.formatLong(relativeTime)} ns")
@@ -499,6 +501,9 @@ class SchedulerImpl(
 			if (LOG.isTraceEnabled()) {
 				LOG.trace("${StringUtils.formatLong(executionTime)} ns Updated relative time")
 			}
+			if (displaySimulationTime) {
+				publishSimulationTimeStatus()
+			}
 			executionErrorHandler.reevaluateExecutionErrors(queue.isEmpty, this)
 		}
 	}
@@ -567,7 +572,7 @@ class SchedulerImpl(
 		} else {
 			updateRelativeTime(min(getRelativeRealTime(), slot.relativeTime))
 		}
-		postSchedulerStateEvent()
+		//postSchedulerStateEvent()
 
 		return if (recalculated) RECALCULATED_NO_BREAKPOINT else NOT_RECALCULATED_NO_BREAKPOINT
 	}
