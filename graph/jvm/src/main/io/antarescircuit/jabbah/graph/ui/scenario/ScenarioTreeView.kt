@@ -149,7 +149,7 @@ class ScenarioTreeView(
 		graphViewPopupMenu.add(ActionWrapperSwing(controller.addScenarioAction))
 		scenarioPopupMenu.add(ActionWrapperSwing(controller.addScenarioStepAction))
 		scenarioPopupMenu.add(ActionWrapperSwing(controller.deleteScenarioAction))
-		scenarioStepPopupMenu.add(ActionWrapperSwing(controller.addScenarioStepAction))
+		scenarioStepPopupMenu.add(ActionWrapperSwing(controller.deleteScenarioStepAction))
 	}
 
 	fun dispose() {
