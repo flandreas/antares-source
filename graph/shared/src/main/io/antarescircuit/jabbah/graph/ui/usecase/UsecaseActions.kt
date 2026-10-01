@@ -43,7 +43,12 @@ class AddUsecaseAction(
     controller: UsecaseViewController,
     service: UsecaseAppService = GraphViewModule.usecaseAppService,
     eventBus: EventBus = BaseModule.eventBus
-) : AbstractUsecaseAction(controller,"usecases.action.addUsecase", service, eventBus) {
+) : AbstractUsecaseAction(controller, "usecases.action.addUsecase", service, eventBus) {
+
+    init {
+        imagePath = "/img/plus-18.png"
+        description = name
+    }
 
     override val opensDialog: Boolean get() = true
 

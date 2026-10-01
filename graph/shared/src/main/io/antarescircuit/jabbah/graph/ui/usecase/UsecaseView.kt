@@ -65,13 +65,10 @@ class UsecaseViewController(
 				field = value
 				view.graphView = value
 				usecase = null
-				updateActions()
 			}
 		}
 
 	val addUsecaseAction = AddUsecaseAction(this)
-
-	val metaAddAction: Action = MetaAddAction()
 
 	init {
 		eventBus.register(UsecaseSelectionEvent::class, usecaseSelectionHandler)
@@ -89,23 +86,5 @@ class UsecaseViewController(
 
 	private fun handle(event: UsecaseSelectionEvent) {
 		usecase = event.usecase
-		updateActions()
-	}
-
-	private fun updateActions() {
-		updateMetaAddAction()
-	}
-
-	private fun updateMetaAddAction() {
-		metaAddAction.enabled = addUsecaseAction.enabled
-	}
-
-	private inner class MetaAddAction : AbstractAction("usecases.action.addUsecase", "/img/plus-18.png") {
-		init {
-		    description = addUsecaseAction.name
-		}
-		override fun execute(event: ActionEvent) {
-			addUsecaseAction.execute(ActionEvent(null, this, 0, "", 0))
-		}
 	}
 }
