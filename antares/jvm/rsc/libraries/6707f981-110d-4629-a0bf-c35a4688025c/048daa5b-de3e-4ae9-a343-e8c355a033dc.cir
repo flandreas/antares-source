@@ -1,15 +1,30 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<metaGraph _id='0' appVersion='1.34.0' manualContainer='true'>
+<metaGraph _id='0' dataVersion='2.3.0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
         <graph _id='2' type='digital' calculatedDelay='304' startupTime='45'>
           <elements>
             <nandGate _id='3' id='1' delay='PD / 8' inputCount='3'/>
-            <circuitInOut _id='4' id='2' name='J' type='input' bitWidth='1'/>
+            <circuitInOut _id='4' id='2' name='J' type='input' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Setz-Eingang'/>
+                <translation lang='en' text='Set input'/>
+              </desc>
+            </circuitInOut>
             <nandGate _id='5' id='3' delay='PD / 8' inputCount='3'/>
-            <circuitInOut _id='6' id='4' name='K' type='input' bitWidth='1'/>
-            <circuitInOut _id='7' id='5' name='C' type='input' bitWidth='1'/>
+            <circuitInOut _id='6' id='4' name='K' type='input' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Rücksetz-Eingang'/>
+                <translation lang='en' text='Reset input'/>
+              </desc>
+            </circuitInOut>
+            <circuitInOut _id='7' id='5' name='C' type='input' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Takteingang'/>
+                <translation lang='en' text='Clock input'/>
+              </desc>
+            </circuitInOut>
             <digitalNet _id='8' id='6' delay='0'>
               <ports>
                 <netPortRef _id='9' verticeId='4' portId='1'/>
@@ -99,8 +114,18 @@
             </digitalNet>
             <nandGate _id='56' id='25' delay='PD / 8 + 2' inputCount='2'/>
             <nandGate _id='57' id='26' delay='PD / 8' inputCount='2'/>
-            <circuitInOut _id='58' id='27' name='Q' type='output' bitWidth='1'/>
-            <circuitInOut _id='59' id='28' name='!Q' type='output' bitWidth='1'/>
+            <circuitInOut _id='58' id='27' name='Q' type='output' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Datenausgang'/>
+                <translation lang='en' text='Data output'/>
+              </desc>
+            </circuitInOut>
+            <circuitInOut _id='59' id='28' name='!Q' type='output' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Negierter Datenausgang'/>
+                <translation lang='en' text='Negated data output'/>
+              </desc>
+            </circuitInOut>
             <digitalNet _id='60' id='29' delay='0'>
               <ports>
                 <netPortRef _id='61' verticeId='56' portId='3'/>
@@ -129,14 +154,24 @@
                 <netPortRef _id='75' verticeId='57' portId='2'/>
               </ports>
             </digitalNet>
-            <circuitInOut _id='76' id='33' name='PRE' type='input' bitWidth='1'/>
+            <circuitInOut _id='76' id='33' name='PRE' type='input' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Asynchroner Setz-Eingang. 1 setzt das Flipflop.'/>
+                <translation lang='en' text='Asynchronous set input. 1 sets the flip-flop.'/>
+              </desc>
+            </circuitInOut>
             <digitalNet _id='77' id='34' delay='0'>
               <ports>
                 <netPortRef _id='78' verticeId='76' portId='1'/>
                 <netPortRef _id='79' verticeId='35' portId='1'/>
               </ports>
             </digitalNet>
-            <circuitInOut _id='80' id='35' name='CLR' type='input' bitWidth='1'/>
+            <circuitInOut _id='80' id='35' name='CLR' type='input' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Asynchroner Rücksetz-Eingang. 1 setzt das Flipflop zurück.'/>
+                <translation lang='en' text='Asynchronous reset input. 1 resets the flip-flop.'/>
+              </desc>
+            </circuitInOut>
             <digitalNet _id='81' id='36' delay='0'>
               <ports>
                 <netPortRef _id='82' verticeId='80' portId='1'/>
@@ -550,8 +585,8 @@ run {
       <model>
         <subGraphVertice _id='200' id='0' delay='0' uuid='048daa5b-de3e-4ae9-a343-e8c355a033dc'>
           <desc>
-            <translation lang='en' text='JK Master-Slave Flip-Flop with preset and clear input'/>
-            <translation lang='de' text='JK-Master-Slave-Flipflop mit asynchronem Set- und Rücksetzeingang'/>
+            <translation lang='en' text='JK Master-Slave flip-flop with asynchronous preset and clear input'/>
+            <translation lang='de' text='JK-Master-Slave-Flipflop mit asynchronem Set- und Rücksetz-Eingang'/>
           </desc>
           <name>
             <translation lang='en' text='JK MS-Flip-Flop PRE\/CLR'/>

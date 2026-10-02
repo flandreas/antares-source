@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<metaGraph _id='0' appVersion='1.34.0' manualContainer='true'>
+<metaGraph _id='0' dataVersion='2.3.0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
@@ -18,9 +18,24 @@ if (^C) {
 	}
 }' calculatedDelay='122' startupTime='40'>
           <elements>
-            <circuitInOut _id='3' id='1' name='S' type='input' bitWidth='1'/>
-            <circuitInOut _id='4' id='2' name='R' type='input' bitWidth='1'/>
-            <circuitInOut _id='5' id='3' name='C' type='input' bitWidth='1'/>
+            <circuitInOut _id='3' id='1' name='S' type='input' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Setz-Eingang'/>
+                <translation lang='en' text='Set input'/>
+              </desc>
+            </circuitInOut>
+            <circuitInOut _id='4' id='2' name='R' type='input' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Rücksetz-Eingang'/>
+                <translation lang='en' text='Reset input'/>
+              </desc>
+            </circuitInOut>
+            <circuitInOut _id='5' id='3' name='C' type='input' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Takt-Eingang'/>
+                <translation lang='en' text='Clock input'/>
+              </desc>
+            </circuitInOut>
             <andGate _id='6' id='5' delay='PD / 5' inputCount='2'/>
             <andGate _id='7' id='6' delay='PD / 5' inputCount='2'/>
             <digitalNet _id='8' id='7' delay='0'>
@@ -283,7 +298,7 @@ run {
       <model>
         <subGraphVertice _id='100' id='0' delay='0' uuid='54f46f36-85cf-41c9-a63a-b43fe4446742'>
           <desc>
-            <translation lang='de' text='Negativ-flankengesteuertes SR-Flipflop mit Setzeingang S und Rücksetzeingang R'/>
+            <translation lang='de' text='Negativ-flankengesteuertes SR-Flipflop mit Setz-Eingang S und Rücksetz-Eingang R'/>
             <translation lang='en' text='Negative-edge-triggered SR flip-flop with set input S and reset input R'/>
           </desc>
           <name>

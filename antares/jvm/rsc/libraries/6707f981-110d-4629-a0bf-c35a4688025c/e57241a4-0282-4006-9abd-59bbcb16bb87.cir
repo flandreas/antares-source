@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<metaGraph _id='0' appVersion='1.34.0' manualContainer='true'>
+<metaGraph _id='0' dataVersion='2.3.0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
@@ -26,10 +26,30 @@ Q = 0
           <elements>
             <norGate _id='3' id='1' delay='PD / 3 - 1' inputCount='2'/>
             <norGate _id='4' id='2' delay='PD / 3' inputCount='2'/>
-            <circuitInOut _id='5' id='3' name='S' type='input' bitWidth='1'/>
-            <circuitInOut _id='6' id='4' name='R' type='input' bitWidth='1'/>
-            <circuitInOut _id='7' id='5' name='Q' type='output' bitWidth='1'/>
-            <circuitInOut _id='8' id='6' name='!Q' type='output' bitWidth='1'/>
+            <circuitInOut _id='5' id='3' name='S' type='input' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Setz-Eingang'/>
+                <translation lang='en' text='Set input'/>
+              </desc>
+            </circuitInOut>
+            <circuitInOut _id='6' id='4' name='R' type='input' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Rücksetz-Eingang'/>
+                <translation lang='en' text='Reset input'/>
+              </desc>
+            </circuitInOut>
+            <circuitInOut _id='7' id='5' name='Q' type='output' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Daten-Ausgang'/>
+                <translation lang='en' text='Data output'/>
+              </desc>
+            </circuitInOut>
+            <circuitInOut _id='8' id='6' name='!Q' type='output' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Negierter Daten-Ausgang'/>
+                <translation lang='en' text='Negated data output'/>
+              </desc>
+            </circuitInOut>
             <digitalNet _id='9' id='7' delay='0'>
               <ports>
                 <netPortRef _id='10' verticeId='5' portId='1'/>
@@ -303,7 +323,7 @@ run {
         <subGraphVertice _id='73' id='0' delay='0' uuid='e57241a4-0282-4006-9abd-59bbcb16bb87'>
           <desc>
             <translation lang='en' text='Level-triggered NOR latch with set input S and reset input R'/>
-            <translation lang='de' text='Pegelgesteuertes NOR-Latch mit Setzeingang S und Rücksetzeingang R'/>
+            <translation lang='de' text='Pegelgesteuertes NOR-Latch mit Setz-Eingang S und Rücksetz-Eingang R'/>
           </desc>
           <name>
             <translation lang='en' text='SR Latch'/>

@@ -15,7 +15,12 @@ if (^T) {
 	&apos;!Q&apos; = not qStore
 }' calculatedDelay='122' startupTime='45'>
           <elements>
-            <circuitInOut _id='3' id='3' name='T' type='input' bitWidth='1'/>
+            <circuitInOut _id='3' id='3' name='T' type='input' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Takteingang. Eine fallende Flanke invertiert den gespeicherten Wert.'/>
+                <translation lang='en' text='Clock input. A falling edge inverts the stored value.'/>
+              </desc>
+            </circuitInOut>
             <andGate _id='4' id='5' delay='TD / 5' inputCount='2'/>
             <andGate _id='5' id='6' delay='TD / 5' inputCount='2'/>
             <norGate _id='6' id='11' delay='TD / 5' inputCount='2'/>
@@ -32,8 +37,18 @@ if (^T) {
                 <netPortRef _id='13' verticeId='5' portId='3'/>
               </ports>
             </digitalNet>
-            <circuitInOut _id='14' id='15' name='Q' type='output' bitWidth='1'/>
-            <circuitInOut _id='15' id='16' name='!Q' type='output' bitWidth='1'/>
+            <circuitInOut _id='14' id='15' name='Q' type='output' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Datenausgang'/>
+                <translation lang='en' text='Data output'/>
+              </desc>
+            </circuitInOut>
+            <circuitInOut _id='15' id='16' name='!Q' type='output' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Negierter Datenausgang'/>
+                <translation lang='en' text='Negated data output'/>
+              </desc>
+            </circuitInOut>
             <digitalNet _id='16' id='17' delay='0'>
               <ports>
                 <netPortRef _id='17' verticeId='6' portId='3'/>

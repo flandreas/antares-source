@@ -5,7 +5,12 @@
       <model>
         <graph _id='2' type='digital' script='' calculatedDelay='122' startupTime='45'>
           <elements>
-            <circuitInOut _id='3' id='3' name='T' type='input' bitWidth='1'/>
+            <circuitInOut _id='3' id='3' name='T' type='input' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Takteingang. Eine steigende Flanke invertiert den gespeicherten Zustand.'/>
+                <translation lang='en' text='Clock input. A rising edge inverts the stored state.'/>
+              </desc>
+            </circuitInOut>
             <subGraphVerticeRef _id='4' id='4' delay='TD / 5 * 3' uuid='2d7bbd36-5dca-4c71-9a27-19a3bfa81bc5' type='digital'>
               <params>
                 <graphParams _id='5'>
@@ -44,8 +49,18 @@
                 <netPortRef _id='23' verticeId='17' portId='2'/>
               </ports>
             </digitalNet>
-            <circuitInOut _id='24' id='15' name='Q' type='output' bitWidth='1'/>
-            <circuitInOut _id='25' id='16' name='!Q' type='output' bitWidth='1'/>
+            <circuitInOut _id='24' id='15' name='Q' type='output' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Datenausgang'/>
+                <translation lang='en' text='Data output'/>
+              </desc>
+            </circuitInOut>
+            <circuitInOut _id='25' id='16' name='!Q' type='output' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Negierter Datenausgang'/>
+                <translation lang='en' text='Negated data output'/>
+              </desc>
+            </circuitInOut>
             <digitalNet _id='26' id='17' delay='0'>
               <ports>
                 <netPortRef _id='27' verticeId='16' portId='3'/>

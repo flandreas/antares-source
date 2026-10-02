@@ -1,13 +1,28 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<metaGraph _id='0' appVersion='1.34.0' manualContainer='true'>
+<metaGraph _id='0' dataVersion='2.3.0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
         <graph _id='2' type='digital' calculatedDelay='122' startupTime='40'>
           <elements>
-            <circuitInOut _id='3' id='1' name='S' type='input' bitWidth='1'/>
-            <circuitInOut _id='4' id='2' name='C' type='input' bitWidth='1'/>
-            <circuitInOut _id='5' id='3' name='R' type='input' bitWidth='1'/>
+            <circuitInOut _id='3' id='1' name='S' type='input' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Synchroner Setz-Eingang'/>
+                <translation lang='en' text='Synchronous set input'/>
+              </desc>
+            </circuitInOut>
+            <circuitInOut _id='4' id='2' name='C' type='input' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Takteingang'/>
+                <translation lang='en' text='Clock input'/>
+              </desc>
+            </circuitInOut>
+            <circuitInOut _id='5' id='3' name='R' type='input' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Synchroner Rücksetz-Eingang'/>
+                <translation lang='en' text='Synchonous reset input'/>
+              </desc>
+            </circuitInOut>
             <digitalNet _id='6' id='5' delay='0'>
               <ports>
                 <netPortRef _id='7' verticeId='4' portId='1'/>
@@ -49,8 +64,18 @@
                 <netPortRef _id='29' verticeId='26' portId='2'/>
               </ports>
             </digitalNet>
-            <circuitInOut _id='30' id='15' name='Q' type='output' bitWidth='1'/>
-            <circuitInOut _id='31' id='16' name='!Q' type='output' bitWidth='1'/>
+            <circuitInOut _id='30' id='15' name='Q' type='output' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Datenausgang'/>
+                <translation lang='en' text='Data output'/>
+              </desc>
+            </circuitInOut>
+            <circuitInOut _id='31' id='16' name='!Q' type='output' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Negierter Datenausgang'/>
+                <translation lang='en' text='Negated data output'/>
+              </desc>
+            </circuitInOut>
             <digitalNet _id='32' id='17' delay='0'>
               <ports>
                 <netPortRef _id='33' verticeId='22' portId='4'/>
@@ -65,8 +90,18 @@
                 <netPortRef _id='39' verticeId='22' portId='3'/>
               </ports>
             </digitalNet>
-            <circuitInOut _id='40' id='19' name='!(PRE)' type='input' bitWidth='1' startValue='1'/>
-            <circuitInOut _id='41' id='20' name='!(CLR)' type='input' bitWidth='1' startValue='1'/>
+            <circuitInOut _id='40' id='19' name='!(PRE)' type='input' bitWidth='1' startValue='1'>
+              <desc>
+                <translation lang='de' text='Asynchroner Setz-Eingang. 0 setzt das Flipflop.'/>
+                <translation lang='en' text='Asynchronous set input. 0 sets the flip-flop.'/>
+              </desc>
+            </circuitInOut>
+            <circuitInOut _id='41' id='20' name='!(CLR)' type='input' bitWidth='1' startValue='1'>
+              <desc>
+                <translation lang='de' text='Asynchroner Rücksetz-Eingang. 0 setzt das Flipflop zurück.'/>
+                <translation lang='en' text='Asynchronous reset input. 0 resets the flip-flop.'/>
+              </desc>
+            </circuitInOut>
             <digitalNet _id='42' id='22' delay='0'>
               <ports>
                 <netPortRef _id='43' verticeId='22' portId='1'/>
@@ -327,8 +362,8 @@ run {
       <model>
         <subGraphVertice _id='121' id='0' delay='0' uuid='9dc3d0a1-b49e-41d1-b298-c043a2f01228'>
           <desc>
-            <translation lang='en' text='Negative-edge-triggered SR flip-flop with asynchronous negative set and reset input'/>
-            <translation lang='de' text='Negativ-flankengesteuertes SR-Flipflop mit asynchronem negativem Set- und Rücksetz-Eingang'/>
+            <translation lang='en' text='Negative-edge-triggered SR flip-flop with asynchronous negated set and reset input'/>
+            <translation lang='de' text='Negativ-flankengesteuertes SR-Flipflop mit asynchronem negiertem Setz- und Rücksetz-Eingang'/>
           </desc>
           <name>
             <translation lang='en' text='SR Flip-Flop !(PRE)\/!(CLR) (Neg)'/>

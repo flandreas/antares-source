@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<metaGraph _id='0' appVersion='1.34.0' manualContainer='true'>
+<metaGraph _id='0' dataVersion='2.3.0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
@@ -29,8 +29,18 @@ if (^C) {
 	&apos;!Q&apos; = not D
 }' propDelay='0' startupTime='30'>
           <elements>
-            <circuitInOut _id='3' id='1' name='D' type='input' bitWidth='1'/>
-            <circuitInOut _id='4' id='2' name='C' type='input' bitWidth='1'/>
+            <circuitInOut _id='3' id='1' name='D' type='input' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Dateneingang'/>
+                <translation lang='en' text='Data input'/>
+              </desc>
+            </circuitInOut>
+            <circuitInOut _id='4' id='2' name='C' type='input' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Takteingang. Eine fallende Flanke speichert den Wert an D.'/>
+                <translation lang='en' text='Clock input. A falling edge stores the value at D.'/>
+              </desc>
+            </circuitInOut>
             <nandGate _id='5' id='3' delay='PD / 7' inputCount='2'/>
             <nandGate _id='6' id='4' delay='PD / 7' inputCount='2'/>
             <digitalNet _id='7' id='5' delay='0'>
@@ -61,14 +71,24 @@ if (^C) {
                 <netPortRef _id='24' verticeId='18' portId='2'/>
               </ports>
             </digitalNet>
-            <circuitInOut _id='25' id='13' name='!(PRE)' type='input' bitWidth='1' startValue='1'/>
+            <circuitInOut _id='25' id='13' name='!(PRE)' type='input' bitWidth='1' startValue='1'>
+              <desc>
+                <translation lang='de' text='Asynchroner Setz-Eingang. 0 setzt das Flipflop.'/>
+                <translation lang='en' text='Asynchronous set input. 0 sets the flip-flop.'/>
+              </desc>
+            </circuitInOut>
             <digitalNet _id='26' id='14' delay='0'>
               <ports>
                 <netPortRef _id='27' verticeId='25' portId='1'/>
                 <netPortRef _id='28' verticeId='17' portId='1'/>
               </ports>
             </digitalNet>
-            <circuitInOut _id='29' id='17' name='!(CLR)' type='input' bitWidth='1' startValue='1'/>
+            <circuitInOut _id='29' id='17' name='!(CLR)' type='input' bitWidth='1' startValue='1'>
+              <desc>
+                <translation lang='de' text='Asynchroner Rücksetz-Eingang. 0 setzt das Flipflop zurück.'/>
+                <translation lang='en' text='Asynchronous reset input. 0 resets the flip-flop.'/>
+              </desc>
+            </circuitInOut>
             <digitalNet _id='30' id='18' delay='0'>
               <ports>
                 <netPortRef _id='31' verticeId='29' portId='1'/>
@@ -82,8 +102,18 @@ if (^C) {
                 <netPortRef _id='35' verticeId='6' portId='2'/>
               </ports>
             </digitalNet>
-            <circuitInOut _id='36' id='21' name='Q' type='output' bitWidth='1'/>
-            <circuitInOut _id='37' id='22' name='!Q' type='output' bitWidth='1'/>
+            <circuitInOut _id='36' id='21' name='Q' type='output' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Datenausgang'/>
+                <translation lang='en' text='Data output'/>
+              </desc>
+            </circuitInOut>
+            <circuitInOut _id='37' id='22' name='!Q' type='output' bitWidth='1'>
+              <desc>
+                <translation lang='de' text='Negierter Datenausgang'/>
+                <translation lang='en' text='Negated data output'/>
+              </desc>
+            </circuitInOut>
             <digitalNet _id='38' id='23' delay='0'>
               <ports>
                 <netPortRef _id='39' verticeId='17' portId='4'/>
@@ -359,8 +389,8 @@ run {
       <model>
         <subGraphVertice _id='121' id='0' delay='0' uuid='3f910ab2-d6e0-4fe2-9835-f98eea045c9f'>
           <desc>
-            <translation lang='de' text='Negativ-flankengesteuertes D-Flipflop mit asynchronen invertierten Setz- und Rücksetzeingängen'/>
-            <translation lang='en' text='Negative edge-triggered D flip-flop with asynchronous inverted set and reset inputs'/>
+            <translation lang='de' text='Negativ-flankengesteuertes D-Flipflop mit asynchronen negierten Setz- und Rücksetz-Eingängen'/>
+            <translation lang='en' text='Negative edge-triggered D flip-flop with asynchronous negated set and reset inputs'/>
           </desc>
           <name>
             <translation lang='de' text='D-Flipflop !(PRE)\/!(CRL) (Neg)'/>
