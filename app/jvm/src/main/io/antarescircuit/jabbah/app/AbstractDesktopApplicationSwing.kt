@@ -3,9 +3,11 @@ package io.antarescircuit.jabbah.app
 import io.antarescircuit.jabbah.app.dump.ErrorUploader
 import io.antarescircuit.jabbah.app.dump.SystemMalfunctionHandler
 import io.antarescircuit.jabbah.app.health.SystemHealthChecker
+import io.antarescircuit.jabbah.app.module.AppModule
 import io.antarescircuit.jabbah.app.module.AppModuleJvm
 import io.antarescircuit.jabbah.app.rating.RatingPanel
 import io.antarescircuit.jabbah.app.rating.RatingService
+import io.antarescircuit.jabbah.app.tip.TipOfTheDayAction
 import io.antarescircuit.jabbah.base.Translations
 import io.antarescircuit.jabbah.base.invocation.BusyHandler
 import io.antarescircuit.jabbah.base.invocation.InvocationHandler
@@ -89,6 +91,8 @@ abstract class AbstractDesktopApplicationSwing(
 			}
 			if (firstUsage) {
 				showWelcomeMessage()
+			} else {
+				showTipOfTheDay()
 			}
 		}
 	}
@@ -132,6 +136,12 @@ abstract class AbstractDesktopApplicationSwing(
 
 	private fun showWelcomeMessage() {
 		WelcomePanel.showAsDialog(this)
+	}
+
+	private fun showTipOfTheDay() {
+		if (AppModule.tipOfTheDayProvider.showOnStartup) {
+			TipOfTheDayAction.showWizard()
+		}
 	}
 
 	/** ---- [AbstractDesktopApplication] */

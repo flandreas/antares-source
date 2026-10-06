@@ -15,8 +15,10 @@ interface Theme {
 	/** Determines whether this [Theme] requires a dark UI look & feel.*/
 	val dark: Boolean
 
+	val light: Boolean get() = !dark
+
 	/**
-	 * Notifies this [Theme] that is has become the current one in [Themes].
+	 * Notifies this [Theme] that it has become the current one in [Themes].
 	 * Implementations should activateIn themselves by registering all their [Style]s
 	 * with the [StyleRepository].
 	 */

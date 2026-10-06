@@ -4,6 +4,7 @@ import io.antarescircuit.jabbah.app.*
 import io.antarescircuit.jabbah.app.dump.SystemDumpService
 import io.antarescircuit.jabbah.app.rating.RailwayRatingService
 import io.antarescircuit.jabbah.app.rating.RatingService
+import io.antarescircuit.jabbah.app.tip.ResourcesTipProvider
 import io.antarescircuit.jabbah.app.workspace.WorkspaceService
 import io.antarescircuit.jabbah.base.AbstractModule
 import io.antarescircuit.jabbah.base.Properties
@@ -26,6 +27,8 @@ object AppModuleJvm : AbstractModule() {
 		EditModuleJvm.require()
 		AppModule.require()
 
+		AppModule.tipOfTheDayProvider = ResourcesTipProvider()
+
 		fillProperties(BaseModule.properties)
 	}
 
@@ -36,5 +39,6 @@ object AppModuleJvm : AbstractModule() {
 
 	private fun fillProperties(properties: Properties) {
 		properties.set(RemoteControlService.PROP_IGNORED_VERSION, ApplicationVersion.DUMMY_VERSION_ID)
+		properties.set(ResourcesTipProvider.PROP_TIPS_ON_STARTUP, true)
 	}
 }

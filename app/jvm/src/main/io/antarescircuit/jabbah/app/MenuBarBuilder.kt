@@ -1,6 +1,7 @@
 package io.antarescircuit.jabbah.app
 
 import io.antarescircuit.jabbah.app.action.*
+import io.antarescircuit.jabbah.app.tip.TipOfTheDayAction
 import io.antarescircuit.jabbah.base.ActionWrapperSwing
 import io.antarescircuit.jabbah.base.Translations
 import io.antarescircuit.jabbah.base.event.EventBus
@@ -122,6 +123,7 @@ open class MenuBarBuilder(
 		menu.add(JMenuItem(ActionWrapperSwing(DocumentationAction(frame.application))))
 		menu.add(JMenuItem(ActionWrapperSwing(YouTubeChannelAction(frame.application))))
 		menu.add(JMenuItem(ActionWrapperSwing(IssuesAction(frame.application))))
+		menu.add(JMenuItem(ActionWrapperSwing(TipOfTheDayAction())))
 	}
 
 	protected open fun createOpenRecentMenu(): JMenu = OpenRecentMenu(frame.application, eventBus)

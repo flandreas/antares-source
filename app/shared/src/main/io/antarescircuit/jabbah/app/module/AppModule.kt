@@ -1,5 +1,7 @@
 package io.antarescircuit.jabbah.app.module
 
+import io.antarescircuit.jabbah.app.tip.NopTipOfTheDayProvider
+import io.antarescircuit.jabbah.app.tip.TipOfTheDayProvider
 import io.antarescircuit.jabbah.base.AbstractModule
 import io.antarescircuit.jabbah.base.Translations
 import io.antarescircuit.jabbah.edit.module.EditModule
@@ -8,6 +10,8 @@ import io.antarescircuit.jabbah.edit.module.EditModule
  * Module definitions for the [io.antarescircuit.jabbah.app] module.
  */
 object AppModule : AbstractModule() {
+
+    var tipOfTheDayProvider: TipOfTheDayProvider = NopTipOfTheDayProvider()
 
     override fun initialize() {
         Translations.addBundle("jabbah-app")
