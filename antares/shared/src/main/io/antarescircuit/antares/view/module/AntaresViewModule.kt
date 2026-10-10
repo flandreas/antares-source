@@ -187,6 +187,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val ANALOG_RELAY = "AnalogRelay"
 	private const val ANALOG_DIODE = "AnalogDiode"
 	private const val ANALOG_LED = "AnalogLED"
+	private const val AC_VOLTAGE_SOURCE = "ACVoltageSource"
 
 	val currentSymbolStyle: CurrentSymbolStyle by lazy {CurrentSymbolStyle() }
 
@@ -429,6 +430,8 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("analogLEDView", AnalogLEDView::class)
 		typeMap.register("analogLEDControlView", AnalogLEDControlView::class)
 		typeMap.register("analogPushButtonSwitchView", AnalogPushButtonSwitchView::class)
+		typeMap.register("acVoltageSourceView", ACVoltageSourceView::class)
+
 	}
 
 	private fun configureSelectionModels(factory: SelectionModelFactory) {
@@ -514,6 +517,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, DiodeView::class, selectedColorSelectionModelFactory)
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogLEDView::class, selectedColorSelectionModelFactory)
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogLEDControlView::class) { LEDViewSelectionModel(it as AnalogLEDControlView) }
+		factory.register(SelectionDrawingStrategy.REPLACE, ACVoltageSourceView::class, selectedColorSelectionModelFactory)
 
 		factory.register(SelectionDrawingStrategy.REPLACE, FSMState::class) { RectangularReplaceSelectionModel(it as AbstractRectangularComponent, RectangularReplaceSelectionModel.DrawStrategy.COMPONENT) }
 		factory.register(SelectionDrawingStrategy.REPLACE, FSMTransition::class, selectedColorSelectionModelFactory)
@@ -690,6 +694,8 @@ object AntaresViewModule : AbstractModule() {
 			))::evaluate,
 			InductorView::class)
 		repository.register(CURRENT_SOURCE, "library.element.CurrentSource", { "/img/current-source.png" }, CurrentSourceView::class)
+		// TODO Icon
+		repository.register(AC_VOLTAGE_SOURCE, "library.element.ACVoltageSource", { "/img/current-source.png" }, ACVoltageSourceView::class)
 		repository.register(RESISTOR,
 			"library.element.Resistor",
 			CurrentSymbolStyleToString(mapOf(
@@ -939,6 +945,7 @@ object AntaresViewModule : AbstractModule() {
 			register(HelpId(ResistorView::class.simpleName!!), HelpSource("$analogBase/resistor"))
 			register(HelpId(AnalogGroundView::class.simpleName!!), HelpSource("$analogBase/signal-ground"))
 			register(HelpId(AnalogSwitchView::class.simpleName!!), HelpSource("$analogBase/switch"))
+			register(HelpId(ACVoltageSourceView::class.simpleName!!), HelpSource("$analogBase/ac-voltage-source"))
 		}
 	}
 }

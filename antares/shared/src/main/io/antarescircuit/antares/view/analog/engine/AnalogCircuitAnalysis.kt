@@ -2,10 +2,11 @@ package io.antarescircuit.antares.view.analog.engine
 
 import io.antarescircuit.antares.model.analog.Capacitor
 import io.antarescircuit.antares.view.analog.AnalogGraphView
+import io.antarescircuit.antares.view.analog.engine.AnalogCircuitAnalysis.Companion.PROP_TIME_STEP
+import io.antarescircuit.antares.view.analog.engine.AnalogCircuitAnalysis.Companion.luFactor
 import io.antarescircuit.antares.view.analog.engine.RowInfo.Type.*
-import io.antarescircuit.jabbah.base.logger
 import io.antarescircuit.jabbah.base.Properties
-import io.antarescircuit.jabbah.base.module.BaseModule
+import io.antarescircuit.jabbah.base.logger
 import kotlin.math.abs
 
 class AnalogCircuitAnalysis(
@@ -232,6 +233,21 @@ class AnalogCircuitAnalysis(
 		stampRightSide(vn, v)
 		stampMatrix(n1, vn, 1.0)
 		stampMatrix(n2, vn, -1.0)
+	}
+
+	/** Amount of voltage is updated in [AnalogElement.doStep]. */
+	fun stampVoltageSource(n1: Int, n2: Int, vs: Int) {
+		val vn = nodeList.size + vs
+		stampMatrix(vn, n1, -1.0)
+		stampMatrix(vn, n2, 1.0)
+		stampRightSide(vn)
+		stampMatrix(n1, vn, 1.0)
+		stampMatrix(n2, vn, -1.0)
+	}
+
+	fun updateVoltageSource(vs: Int, v: Double) {
+		val vn = nodeList.size + vs
+		stampRightSide(vn, v)
 	}
 
 	fun stampCurrentSource(n1: Int, n2: Int, i: Double) {

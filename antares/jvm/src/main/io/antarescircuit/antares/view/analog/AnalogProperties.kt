@@ -31,11 +31,23 @@ object AnalogProperties {
 		beanProvider: BeanProvider = componentBeanProvider
 	): MagnitudeValueProperty = magnitudeValue(name, baseKey, beanProvider, SIUnit.Volt)
 
+	fun maxVoltage(
+		name: String = "maxVoltage",
+		baseKey: String = "element.property.maxVoltage",
+		beanProvider: BeanProvider = componentBeanProvider
+	): MagnitudeValueProperty = magnitudeValue(name, baseKey, beanProvider, SIUnit.Volt)
+
 	fun ampere(
 		name: String = "current",
 		baseKey: String = "element.property.current",
 		beanProvider: BeanProvider = componentBeanProvider
 	): MagnitudeValueProperty = magnitudeValue(name, baseKey, beanProvider, SIUnit.Ampere)
+
+	fun frequency(
+		name: String = "frequency",
+		baseKey: String = "element.property.frequency",
+		beanProvider: BeanProvider = componentBeanProvider
+	): MagnitudeValueProperty = magnitudeValue(name, baseKey, beanProvider, SIUnit.Hertz)
 
 	fun variable(name: String = "variable", baseKey: String = "element.property.variable", beanProvider: BeanProvider = componentBeanProvider): CommandPropertySwing<Boolean> =
 		CommandPropertySwing(name, baseKey, Boolean::class.java, beanProvider)
