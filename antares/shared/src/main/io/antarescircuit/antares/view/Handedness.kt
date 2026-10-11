@@ -4,7 +4,7 @@ import io.antarescircuit.jabbah.base.EnumProperty
 import io.antarescircuit.jabbah.base.Translations
 
 /**
- * Represents the right/left handedness.
+ * Represents the right/left-handedness.
  */
 enum class Handedness(override val customName: String) : EnumProperty<Handedness> {
 
@@ -13,10 +13,10 @@ enum class Handedness(override val customName: String) : EnumProperty<Handedness
 
     companion object {
 
-	    const val BASE_KEY = "element.property.TriStateBuffer.handedness"
+	    const val BASE_KEY = "element.property.handedness"
 
         fun withName(customName: String): Handedness {
-            for (handedness in values()) {
+            for (handedness in entries) {
                 if (handedness.customName == customName) {
                     return handedness
                 }

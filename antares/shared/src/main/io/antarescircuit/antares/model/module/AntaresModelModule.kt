@@ -202,6 +202,7 @@ object AntaresModelModule : AbstractModule() {
 		typeMap.register("diode", Diode::class)
 		typeMap.register("analogLED", AnalogLED::class)
 		typeMap.register("acVoltageSource", ACVoltageSource::class)
+		typeMap.register("opAmp", OpAmp::class)
 	}
 
 	private fun registerGraphParamTypes() {

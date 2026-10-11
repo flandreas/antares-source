@@ -188,6 +188,7 @@ object AntaresViewModule : AbstractModule() {
 	private const val ANALOG_DIODE = "AnalogDiode"
 	private const val ANALOG_LED = "AnalogLED"
 	private const val AC_VOLTAGE_SOURCE = "ACVoltageSource"
+	private const val OP_AMP = "OpAmp"
 
 	val currentSymbolStyle: CurrentSymbolStyle by lazy {CurrentSymbolStyle() }
 
@@ -431,6 +432,7 @@ object AntaresViewModule : AbstractModule() {
 		typeMap.register("analogLEDControlView", AnalogLEDControlView::class)
 		typeMap.register("analogPushButtonSwitchView", AnalogPushButtonSwitchView::class)
 		typeMap.register("acVoltageSourceView", ACVoltageSourceView::class)
+		typeMap.register("opAmpView", OpAmpView::class)
 
 	}
 
@@ -518,6 +520,7 @@ object AntaresViewModule : AbstractModule() {
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogLEDView::class, selectedColorSelectionModelFactory)
 		factory.register(SelectionDrawingStrategy.REPLACE, AnalogLEDControlView::class) { LEDViewSelectionModel(it as AnalogLEDControlView) }
 		factory.register(SelectionDrawingStrategy.REPLACE, ACVoltageSourceView::class, selectedColorSelectionModelFactory)
+		factory.register(SelectionDrawingStrategy.REPLACE, OpAmpView::class, selectedColorSelectionModelFactory)
 
 		factory.register(SelectionDrawingStrategy.REPLACE, FSMState::class) { RectangularReplaceSelectionModel(it as AbstractRectangularComponent, RectangularReplaceSelectionModel.DrawStrategy.COMPONENT) }
 		factory.register(SelectionDrawingStrategy.REPLACE, FSMTransition::class, selectedColorSelectionModelFactory)
@@ -755,6 +758,8 @@ object AntaresViewModule : AbstractModule() {
 				SymbolStyle.VERBOSE to "/img/analog-led-iec.png"
 			))::evaluate,
 			AnalogLEDView::class)
+		// TODO Icon
+		repository.register(OP_AMP, "library.element.OpAmp", { "/img/current-source.png" }, OpAmpView::class)
 	}
 
 	fun fillBaseElementLibrary(library: Library) {
@@ -946,6 +951,7 @@ object AntaresViewModule : AbstractModule() {
 			register(HelpId(AnalogGroundView::class.simpleName!!), HelpSource("$analogBase/signal-ground"))
 			register(HelpId(AnalogSwitchView::class.simpleName!!), HelpSource("$analogBase/switch"))
 			register(HelpId(ACVoltageSourceView::class.simpleName!!), HelpSource("$analogBase/ac-voltage-source"))
+			register(HelpId(OpAmpView::class.simpleName!!), HelpSource("$analogBase/op-amp"))
 		}
 	}
 }

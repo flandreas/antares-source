@@ -25,6 +25,7 @@
                 <baseLibraryElement _id='16' id='AnalogRelay' type='analog'/>
                 <baseLibraryElement _id='17' id='AnalogDiode' type='analog'/>
                 <baseLibraryElement _id='18' id='AnalogLED' type='analog'/>
+                <baseLibraryElement _id='20' id='OpAmp' type='analog'/>
             </items>
         </libraryFolder>
     </folder>

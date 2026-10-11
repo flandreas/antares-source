@@ -40,7 +40,7 @@ class TriStateBufferGateViewBeanInfo : DigitalComponentViewBeanInfo<TriStateBuff
 	companion object {
 		val enableLogic = CommandPropertySwing("enableLogic", Logic.BASE_KEY, Logic::class.java, componentBeanProvider)
 		private val bitWidth = AntaresProperties.bitWidth()
-		val handedness = AntaresProperties.handedness(baseKey = Handedness.BASE_KEY)
+		val handedness = AntaresProperties.handedness(baseKey = "element.property.TriStateBuffer.handedness")
 		private val inputPortName = AntaresProperties.inputPortName(portId = 1)
 		private val outputPortName = AntaresProperties.outputPortName()
 		private val size = EditProperties.size()
