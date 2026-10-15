@@ -97,8 +97,11 @@ class LightBulbView(
 			model.resistance = value
 		}
 
-	override val relativeExternalLabelLocation: Point2D get() =
-		Point2D(bounds.centerX, bounds.minY - LABEL_DIST)
+	override val relativeExternalLabelLocation: Point2D get() = Point2D(bounds.centerX, bounds.minY - LABEL_DIST)
+
+	init {
+		modelExchanged(null)
+	}
 
 	/** ---- [AbstractVerticeView] */
 

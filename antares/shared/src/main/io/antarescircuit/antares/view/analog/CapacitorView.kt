@@ -50,6 +50,10 @@ class CapacitorView(
 
     private val actorInteractionHandler by lazy { CapacitorViewInteractionHandler() }
 
+    init {
+        modelExchanged(null)
+    }
+
     /** ---- [AbstractVerticeView] */
 
     override fun modelExchanged(oldModel: Capacitor?) {

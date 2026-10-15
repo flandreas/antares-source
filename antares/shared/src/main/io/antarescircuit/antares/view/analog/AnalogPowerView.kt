@@ -27,6 +27,7 @@ class AnalogPowerView(
 
 	init {
 		orientation = Direction.SOUTH
+		modelExchanged(null)
 	}
 
 	override val relativeExternalLabelLocation: Point2D get() =

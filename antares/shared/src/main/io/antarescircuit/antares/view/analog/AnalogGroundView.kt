@@ -35,6 +35,10 @@ class AnalogGroundView(
 
 	override val relativeExternalLabelLocation: Point2D get() = Point2D(0.0, bounds.maxY + LABEL_DIST)
 
+	init {
+		modelExchanged(null)
+	}
+
 	/** ---- [AbstractVerticeView] */
 
 	override fun modelExchanged(oldModel: AnalogGround?) {

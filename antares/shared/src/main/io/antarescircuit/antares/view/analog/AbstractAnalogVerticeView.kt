@@ -43,7 +43,6 @@ abstract class AbstractAnalogVerticeView<T: AbstractAnalogVertice<*>>(
 
 	init {
 		initExternalLabel(externalLabelDirection)
-		modelExchanged(null)
 	}
 
 	override fun modelExchanged(oldModel: T?) {

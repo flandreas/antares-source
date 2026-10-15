@@ -1,15 +1,14 @@
 package io.antarescircuit.antares.view.gate
 
+import com.l2fprod.common.propertysheet.Property
 import io.antarescircuit.antares.model.Logic
 import io.antarescircuit.antares.view.AntaresProperties
 import io.antarescircuit.antares.view.DigitalComponentViewBeanInfo
-import io.antarescircuit.antares.view.Handedness
 import io.antarescircuit.jabbah.edit.Editor
 import io.antarescircuit.jabbah.edit.componentBeanProvider
 import io.antarescircuit.jabbah.edit.model.EditProperties
 import io.antarescircuit.jabbah.edit.properties.CommandPropertySwing
 import io.antarescircuit.jabbah.graph.view.vertice.VerticeViewBeanInfo
-import com.l2fprod.common.propertysheet.Property
 
 open class BoxGateViewBeanInfo<T : BoxGateView<*>> : DigitalComponentViewBeanInfo<T>()
 

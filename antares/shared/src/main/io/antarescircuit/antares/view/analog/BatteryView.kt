@@ -41,6 +41,7 @@ class BatteryView(
 
 	init {
 		orientation = Direction.SOUTH
+		modelExchanged(null)
 	}
 
 	override val relativeExternalLabelLocation: Point2D get() = Point2D(LENGTH + SIZE / 2, -SIZE / 2 - LABEL_DIST)

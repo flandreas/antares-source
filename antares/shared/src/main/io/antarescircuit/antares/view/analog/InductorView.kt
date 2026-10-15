@@ -55,6 +55,10 @@ class InductorView(
 
     private val actorInteractionHandler by lazy { InductorViewInteractionHandler() }
 
+    init {
+        modelExchanged(null)
+    }
+
     /** ---- [AbstractVerticeView] */
 
     override fun modelExchanged(oldModel: Inductor?) {

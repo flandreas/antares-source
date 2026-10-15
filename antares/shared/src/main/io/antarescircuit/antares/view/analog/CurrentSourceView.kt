@@ -40,6 +40,10 @@ class CurrentSourceView(
 
 	override val relativeExternalLabelLocation: Point2D get() = Point2D(bounds.maxX + LABEL_DIST, bounds.centerY)
 
+	init {
+		modelExchanged(null)
+	}
+
 	/** ---- [AbstractVerticeView] */
 
 	override fun modelExchanged(oldModel: CurrentSource?) {
