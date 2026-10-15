@@ -20,7 +20,7 @@ class InvalidatableViewPainter(val view: View<*>) : ViewPainter {
 
 	companion object {
 		/** The number of repaints per second.*/
-		private const val REPAINT_FREQUENCY = 40
+		private const val REPAINT_FREQUENCY = 50
 	}
 
 	/** Keeps track of the current accumulated invalid region in model coordinate space.*/

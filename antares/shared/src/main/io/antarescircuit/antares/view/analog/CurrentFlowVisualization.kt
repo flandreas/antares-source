@@ -6,16 +6,16 @@ import io.antarescircuit.jabbah.graph.view.net.edge.EdgeViewPointSequence
 /** Visualizes the flow of electrical current along a [AnalogEdgeView].*/
 object CurrentFlowVisualization {
 
-	private const val HALF_SIZE = 1.5
+	const val HALF_SIZE = 2.0
 	private const val SIZE = 2 * HALF_SIZE
-	const val DISTANCE = 10.0
+	const val DISTANCE = 15.0
 
 	fun draw(edgeView: AnalogEdgeView, context: DrawContext) {
 		context.g.color = edgeView.model.signal!!.color.foregroundColor
 
 		val sequence = EdgeViewPointSequence(
 			edgeView,
-			isReverse = edgeView.current < 0,
+			isReverse = false,
 			returnSequenceEndPoint = false,
 			offset = edgeView.animationOffset
 		)

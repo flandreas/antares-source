@@ -89,16 +89,24 @@ class AnalogEdgeView(
 	var animationOffset: Double = 0.0
 		private set
 
-	/** Repeatedly called by [AnalogGraphView] to drive the current flow animation. */
+	/**
+	 * Repeatedly called by [AnalogGraphView] to drive the current flow animation.
+	 *
+	 * @param systemSpeed only used to check whether simulation is paused. The flow animation speed is
+	 * instead influenced by [CurrentFlowAnimationSpeed]
+	 */
 	fun currentFlowAnimationTick(systemSpeed: SystemSpeed) {
 		val factor = if (systemSpeed.isPaused) 0.0F else animationSpeedFactor * CurrentFlowAnimationSpeed.speed
 
 		val delta = abs(current * factor).coerceAtMost(MAX_DELTA)
-		val newOffset = animationOffset + delta
-		animationOffset = if (newOffset >= CurrentFlowVisualization.DISTANCE) {
-			0.0
+		if (current >= 0) {
+			animationOffset = (animationOffset + delta) % CurrentFlowVisualization.DISTANCE
 		} else {
-			animationOffset + delta
+			if (animationOffset - delta >= 0) {
+				animationOffset -= delta
+			} else {
+				animationOffset = CurrentFlowVisualization.DISTANCE - delta
+			}
 		}
 	}
 

@@ -30,6 +30,19 @@ class EdgeViewPointSequenceTest {
         assertEquals(Point2D(10, 10), sequence.getNext(10.0))
     }
 
+	@Test
+	fun shouldBuildSequenceWithOffset() {
+		val sequence = createSequence(listOf(
+			Point2D(0, 0),
+			Point2D(10, 0),
+			Point2D(10, 10)),
+			offset = 2.0)
+
+		assertEquals(Point2D(2, 0), sequence.getNext(5.0))
+		assertEquals(Point2D(7, 0), sequence.getNext(5.0))
+		assertEquals(Point2D(10, 2), sequence.getNext(5.0))
+	}
+
     @Test
     fun shouldBuildReverseSequence() {
 	    val sequence = createReverseSequence(listOf(
@@ -43,6 +56,19 @@ class EdgeViewPointSequenceTest {
 	    // Don't return the same value twice
 		assertEquals(Point2D(0, 0), sequence.getNext(10.0))
     }
+
+	@Test
+	fun shouldBuildReverseSequenceWithOffset() {
+		val sequence = createReverseSequence(listOf(
+			Point2D(0, 0),
+			Point2D(10, 0),
+			Point2D(10, 10)),
+			offset = 2.0)
+
+		assertEquals(Point2D(10, 8), sequence.getNext(5.0))
+		assertEquals(Point2D(10, 3), sequence.getNext(5.0))
+		assertEquals(Point2D(8, 0), sequence.getNext(5.0))
+	}
 
 	@Test
 	fun shouldNotLooseMomentumAtSegmentPoints() {
@@ -148,8 +174,8 @@ class EdgeViewPointSequenceTest {
 		return EdgeViewPointSequence(edgeView, reverse, returnSequenceEndpoints, offset)
 	}
 
-	private fun createReverseSequence(points: List<Point2D>): EdgeViewPointSequence =
-		createSequence(points, true)
+	private fun createReverseSequence(points: List<Point2D>, offset: Double = 0.0): EdgeViewPointSequence =
+		createSequence(points, true, offset = offset)
 
 	private fun assertForEachWithDistance(
 		sequence: EdgeViewPointSequence,
