@@ -342,6 +342,7 @@ object AntaresViewModule : AbstractModule() {
 
 		properties.set(AnalogEdgeView.PREF_SPEED, AnalogEdgeView.DEF_SPEED)
 		properties.set(CurrentFlowAnimationSpeed.PROP_SPEED, CurrentFlowAnimationSpeed.DEF_SPEED)
+		properties.set(CurrentFlowAnimationSpeed.PROP_TURBO, CurrentFlowAnimationSpeed.DEF_TURBO)
 	}
 
 	private fun configureTypeMap(typeMap: TypeMap) {

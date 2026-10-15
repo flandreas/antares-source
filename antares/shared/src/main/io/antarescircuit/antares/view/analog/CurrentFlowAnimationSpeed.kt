@@ -11,10 +11,14 @@ data class CurrentFlowAnimationSpeedEvent(val newSpeed: Int)
 object CurrentFlowAnimationSpeed {
 
     const val PROP_SPEED = "antares.view.analog.currentSpeed"
-
     const val DEF_SPEED = 15
     const val MIN_SPEED = 1
     const val MAX_SPEED = 40
+
+    const val PROP_TURBO = "antares.view.analog.currentSpeed.turbo"
+    const val DEF_TURBO = false
+
+    private const val TURBO_FACTOR = 1_000
 
     var speed: Int = BaseModule.properties.getInt(PROP_SPEED)
         set(value) {
@@ -24,4 +28,14 @@ object CurrentFlowAnimationSpeed {
                 BaseModule.eventBus.post(CurrentFlowAnimationSpeedEvent(value))
             }
         }
+
+    var turbo: Boolean = BaseModule.properties.getBoolean(PROP_TURBO)
+        set(value) {
+            if (field != value) {
+                field = value
+                BaseModule.properties.customize(PROP_TURBO, value)
+            }
+        }
+
+    val effectiveSpeed: Int get() = if (turbo) speed * TURBO_FACTOR else speed
 }

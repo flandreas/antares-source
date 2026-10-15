@@ -96,7 +96,7 @@ class AnalogEdgeView(
 	 * instead influenced by [CurrentFlowAnimationSpeed]
 	 */
 	fun currentFlowAnimationTick(systemSpeed: SystemSpeed) {
-		val factor = if (systemSpeed.isPaused) 0.0F else animationSpeedFactor * CurrentFlowAnimationSpeed.speed
+		val factor = if (systemSpeed.isPaused) 0.0F else animationSpeedFactor * CurrentFlowAnimationSpeed.effectiveSpeed
 
 		val delta = abs(current * factor).coerceAtMost(MAX_DELTA)
 		if (current >= 0) {

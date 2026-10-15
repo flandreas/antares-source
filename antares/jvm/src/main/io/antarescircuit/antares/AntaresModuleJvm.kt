@@ -26,7 +26,7 @@ import io.antarescircuit.antares.view.addressable.MemoryStorableIdentificationEd
 import io.antarescircuit.antares.view.addressable.MemoryStorableIdentificationRenderer
 import io.antarescircuit.antares.view.analog.AnalogEdgeView
 import io.antarescircuit.antares.view.analog.AnalogLEDView
-import io.antarescircuit.antares.view.analog.CurrentFlowAnimationSpeedSlider
+import io.antarescircuit.antares.view.analog.CurrentFlowAnimationSpeedControl
 import io.antarescircuit.antares.view.analog.engine.AnalogCircuitAnalysis
 import io.antarescircuit.antares.view.container.DigitalContainerEditor
 import io.antarescircuit.antares.view.container.DigitalContainerToolBarBuilder
@@ -233,7 +233,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 					header.border = BorderFactory.createEmptyBorder(4, 4, 4, 4)
 					header.layout = BoxLayout(header, BoxLayout.X_AXIS)
 
-					header.add(CurrentFlowAnimationSpeedSlider())
+					header.add(CurrentFlowAnimationSpeedControl())
 					header.add(Box.createGlue())
 
 					return header
