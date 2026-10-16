@@ -30,13 +30,13 @@ class TestVerticeView(
 		const val DEF_SIZE = 20
 
 		fun createEastOutputVerticeView(name: String, x: Int, y: Int): TestVerticeView =
-			TestVerticeView(name = name, loc = Point2D(
-                x,
-                y
-            ), inputDirection = Direction.WEST, outputDirection = Direction.EAST, width = DEF_SIZE)
+			TestVerticeView(name = name, loc = Point2D(x, y), inputDirection = Direction.WEST, outputDirection = Direction.EAST, width = DEF_SIZE)
 
 		fun createSouthInputVerticeView(name: String, x: Int, y: Int): TestVerticeView =
 			TestVerticeView(name, loc = Point2D(x, y), inputDirection = Direction.SOUTH, outputDirection = Direction.NORTH, width = 0, height = DEF_SIZE)
+
+		fun createNorthInputVerticeView(name: String, x: Int, y: Int): TestVerticeView =
+			TestVerticeView(name, loc = Point2D(x, y), inputDirection = Direction.NORTH, outputDirection = Direction.SOUTH, width = 0, height = DEF_SIZE)
 	}
 
 	init {

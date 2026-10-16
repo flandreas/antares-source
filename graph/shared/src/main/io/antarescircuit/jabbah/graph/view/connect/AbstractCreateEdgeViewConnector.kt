@@ -171,18 +171,17 @@ abstract class AbstractCreateEdgeViewConnector(
 		targetEdgeView?.snap(context.x, context.y, draggedEndpointType == ORIGIN, context.editor.snapManager)?.let { snapResult ->
 			targetEdgeViewSegmentIndex = snapResult.segmentIndex
 			val ownLayoutIndex = adjustment!!.model.current
-			val targetDirs = targetEdgeView!!.getSegmentDirection(targetEdgeViewSegmentIndex!!)?.orthogonalSet()
 			when (draggedEndpointType) {
 				ORIGIN -> adjustToTargetEdgeViewImpl(
 					context,
 					snapResult.location,
-					targetDirs,
+					snapResult.directions,
 					getMoveAdjustedPointDestDirs(ownLayoutIndex, allowContinuation = true))
 				EdgeViewEndpointType.DESTINATION -> adjustToTargetEdgeViewImpl(
 					context,
 					snapResult.location,
 					getMoveAdjustedPointOrigDirs(ownLayoutIndex, allowContinuation = true),
-					targetDirs)
+					snapResult.directions)
 			}
 		}
 	}
