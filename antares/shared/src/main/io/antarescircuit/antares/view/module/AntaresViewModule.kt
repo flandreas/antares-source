@@ -698,8 +698,7 @@ object AntaresViewModule : AbstractModule() {
 			))::evaluate,
 			InductorView::class)
 		repository.register(CURRENT_SOURCE, "library.element.CurrentSource", { "/img/current-source.png" }, CurrentSourceView::class)
-		// TODO Icon
-		repository.register(AC_VOLTAGE_SOURCE, "library.element.ACVoltageSource", { "/img/current-source.png" }, ACVoltageSourceView::class)
+		repository.register(AC_VOLTAGE_SOURCE, "library.element.ACVoltageSource", { "/img/ac-voltage-source.png" }, ACVoltageSourceView::class)
 		repository.register(RESISTOR,
 			"library.element.Resistor",
 			CurrentSymbolStyleToString(mapOf(
@@ -759,8 +758,7 @@ object AntaresViewModule : AbstractModule() {
 				SymbolStyle.VERBOSE to "/img/analog-led-iec.png"
 			))::evaluate,
 			AnalogLEDView::class)
-		// TODO Icon
-		repository.register(OP_AMP, "library.element.OpAmp", { "/img/current-source.png" }, OpAmpView::class)
+		repository.register(OP_AMP, "library.element.OpAmp", { "/img/op-amp.png" }, OpAmpView::class)
 	}
 
 	fun fillBaseElementLibrary(library: Library) {

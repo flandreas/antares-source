@@ -2,6 +2,8 @@ package io.antarescircuit.antares.model.analog
 
 import io.antarescircuit.antares.view.analog.engine.AnalogCircuitAnalysis
 import io.antarescircuit.antares.view.analog.engine.AnalogElementMixin
+import io.antarescircuit.jabbah.edit.model.text.TranslatableText
+import io.antarescircuit.jabbah.edit.model.text.Translation
 import io.antarescircuit.jabbah.edit.properties.magnitude.Magnitude
 import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
 import io.antarescircuit.jabbah.edit.properties.magnitude.SIUnit
@@ -24,6 +26,13 @@ class OpAmp(
         private val DEF_MIN_OUTPUT = MagnitudeValue(-15.0, Magnitude.One, SIUnit.Volt)
 
         private const val GAIN = 1_000.0
+
+        private const val INVERTING_PORT_NAME = "-"
+        private val INVERTING_PORT_DESC = TranslatableText(Translation.ofStaticKey("library.element.OpAmp.invertingPort.desc"))
+
+        private const val NON_INVERTING_PORT_NAME = "+"
+        private val NON_INVERTING_PORT_DESC = TranslatableText(Translation.ofStaticKey("library.element.OpAmp.nonInvertingPort.desc"))
+
     }
 
     private var lastVd = 0.0
@@ -37,8 +46,8 @@ class OpAmp(
     val nonInvertingPort: AnalogPort get() = getPort<AnalogSignal>(2) as AnalogPort
 
     init {
-        addPort(AnalogPort(name = "-"))
-        addPort(AnalogPort(name = "+"))
+        addPort(AnalogPort(name = INVERTING_PORT_NAME, description = INVERTING_PORT_DESC))
+        addPort(AnalogPort(name = NON_INVERTING_PORT_NAME, description = NON_INVERTING_PORT_DESC))
         addPort(AnalogPort())
     }
 
