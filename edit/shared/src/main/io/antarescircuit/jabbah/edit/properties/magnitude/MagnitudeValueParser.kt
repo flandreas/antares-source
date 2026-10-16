@@ -10,7 +10,7 @@ object MagnitudeValueParser {
         // Try parsing as pure number, without magnitude and unit, thereby applying default magnitude
         try {
             val value = s.toDouble()
-            if (value <= 0) {
+            if (value <= 0 && !unit.allowNegative) {
                 throwInvalidValueException(text)
             }
             return MagnitudeValue(value, defaultMagnitude, unit)
@@ -19,7 +19,7 @@ object MagnitudeValueParser {
         }
 
         // Try parsing with magnitude
-        return MagnitudeValue(extractValue(s), extractMagnitude(s, unit), unit)
+        return MagnitudeValue(extractValue(s, unit), extractMagnitude(s, unit), unit)
     }
 
     fun parseWithUnits(text: String, vararg units: SIUnit): MagnitudeValue {
@@ -35,11 +35,11 @@ object MagnitudeValueParser {
         throw exception!!
     }
 
-    private fun extractValue(text: String): Double {
+    private fun extractValue(text: String, unit: SIUnit): Double {
         val valueText = text.dropLastWhile { !it.isDigit() }.trim()
         try {
             val value = valueText.toDouble()
-            if (value <= 0) {
+            if (value <= 0 && !unit.allowNegative) {
                 throwInvalidValueException(valueText)
             }
             return value
@@ -49,7 +49,7 @@ object MagnitudeValueParser {
     }
 
     private fun extractMagnitude(text: String, unit: SIUnit): Magnitude {
-        val magnitudeText = text.dropWhile { it.isDigit() || it == '.' || it == '.' }.trim()
+        val magnitudeText = text.dropWhile { it.isDigit() || it == '.' || unit.allowNegative && it == '-' }.trim()
 
         val magnitude = Magnitude.entries.firstOrNull { it.matchText(magnitudeText) }
         if (magnitude != null) {
