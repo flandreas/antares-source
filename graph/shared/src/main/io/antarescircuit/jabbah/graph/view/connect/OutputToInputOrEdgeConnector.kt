@@ -56,7 +56,7 @@ class OutputToInputOrEdgeConnector(
 	override fun completeConnectingToEndPortOrOpen(context: EditInputEventContext) {
 		logConnect()
 
-		connectService.unconnect(edgeView!!)
+		connectService.unconnect(edgeView!!, lockEndpoints = true)
 		context.drawingView.drawing.remove(edgeView!!)
 
 		try {

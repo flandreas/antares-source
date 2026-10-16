@@ -35,7 +35,7 @@ class GraphViewConnectServiceImpl(
 		}
 	}
 
-	override fun <T : Any> unconnectFromOrigin(edgeView: EdgeView<T>) {
+	override fun <T : Any> unconnectFromOrigin(edgeView: EdgeView<T>, lockEndpoint: Boolean) {
 		LOG.trace("unconnectFromOrigin EdgeView: ${edgeView.id}")
 		var origNodeView: NodeView<T>? = null
 		if (edgeView.origin?.connectableView is NodeView<*>) {
@@ -43,7 +43,7 @@ class GraphViewConnectServiceImpl(
 			origNodeView = edgeView.origin?.connectableView as NodeView<T>
 		}
 		unconnectPortFromNet(edgeView.origin?.port, edgeView.model)
-		edgeView.unconnectFromOrigin()
+		edgeView.unconnectFromOrigin(lockEndpoint)
 
 		if (origNodeView != null && origNodeView.getEdgeViews().size == 2) {
 			removeNodeView((origNodeView.parent as GraphView), origNodeView)
@@ -59,7 +59,7 @@ class GraphViewConnectServiceImpl(
 		}
 	}
 
-	override fun <T : Any> unconnectFromDestination(edgeView: EdgeView<T>) {
+	override fun <T : Any> unconnectFromDestination(edgeView: EdgeView<T>, lockEndpoint: Boolean) {
 		LOG.trace("unconnectFromDestination EdgeView: ${edgeView.id}")
 		var destNodeView: NodeView<T>? = null
 		if (edgeView.destination?.connectableView is NodeView<*>) {
@@ -67,7 +67,7 @@ class GraphViewConnectServiceImpl(
 			destNodeView = edgeView.destination!!.connectableView as NodeView<T>
 		}
 		unconnectPortFromNet(edgeView.destination?.port, edgeView.model)
-		edgeView.unconnectFromDestination()
+		edgeView.unconnectFromDestination(lockEndpoint)
 
 		if (destNodeView != null && destNodeView.getEdgeViews().size == 2) {
 			removeNodeView((destNodeView.parent as GraphView), destNodeView)
@@ -89,9 +89,9 @@ class GraphViewConnectServiceImpl(
 		}
 	}
 
-	override fun <T : Any> unconnect(edgeView: EdgeView<T>) {
-		unconnectFromOrigin(edgeView)
-		unconnectFromDestination(edgeView)
+	override fun <T : Any> unconnect(edgeView: EdgeView<T>, lockEndpoints: Boolean) {
+		unconnectFromOrigin(edgeView, lockEndpoints)
+		unconnectFromDestination(edgeView, lockEndpoints)
 	}
 
 	override fun unconnectEdgeViewOrigin(edgeView: EdgeView<*>) {

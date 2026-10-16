@@ -18,7 +18,7 @@ class TestVerticeView(
     name: String = "",
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
     vertice: TestVertice = TestVertice(name = name),
-    loc: Point2D = Point2D.Companion.ZERO,
+    loc: Point2D = Point2D.ZERO,
     private var inputDirection: Direction = Direction.WEST,
     private var outputDirection: Direction = Direction.EAST,
     private var portViewLength: Int? = null,
@@ -54,7 +54,7 @@ class TestVerticeView(
 				inputDirection,
 				PortLabelPosition.INTERNAL,
 				portViewLength,
-				Point2D.Companion.ZERO
+				Point2D.ZERO
 			)
 		)
 		addPortView(TestPortView(model.getOutput(), outputDirection, PortLabelPosition.INTERNAL, portViewLength,

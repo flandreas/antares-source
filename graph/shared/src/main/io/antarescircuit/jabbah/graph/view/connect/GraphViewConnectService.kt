@@ -32,7 +32,7 @@ interface GraphViewConnectService {
 	/**
 	 * Unconnects an [EdgeView] from its origin [ConnectableView].
 	 */
-	fun <T : Any> unconnectFromOrigin(edgeView: EdgeView<T>)
+	fun <T : Any> unconnectFromOrigin(edgeView: EdgeView<T>, lockEndpoint: Boolean = false)
 
 	/**
 	 * Connects the destination of an existing [EdgeView] with a particular [Port] of a
@@ -44,7 +44,7 @@ interface GraphViewConnectService {
 	/**
 	 * Unconnects an [EdgeView] from its destination [ConnectableView].
 	 */
-	fun <T : Any> unconnectFromDestination(edgeView: EdgeView<T>)
+	fun <T : Any> unconnectFromDestination(edgeView: EdgeView<T>, lockEndpoint: Boolean = false)
 
 	/**
 	 * Connects the specified [EdgeView] with the first [OutputPort] of the origin [VerticeView] and
@@ -86,7 +86,7 @@ interface GraphViewConnectService {
 	 * unconnecting, those [NodeView]s are removed as well, and the remaining [EdgeView]s get joined.
 	 * @param edgeView the [EdgeView] to unconnect
 	 */
-	fun <T : Any> unconnect(edgeView: EdgeView<T>)
+	fun <T : Any> unconnect(edgeView: EdgeView<T>, lockEndpoints: Boolean = false)
 
 	/**
 	 * Unconnects all [PortView]s of a [VerticeView] from the [EdgeView]s to which it is

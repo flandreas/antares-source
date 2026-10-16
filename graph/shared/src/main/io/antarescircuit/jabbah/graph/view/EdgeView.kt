@@ -194,7 +194,7 @@ interface EdgeView<T: Any> : NetViewElement<T>, Describable, ActorView {
 	 * Unconnects this [EdgeView] from the [Port] of the origin [ConnectableView].
 	 * Note that this method does **NOT** release the connection on the model layer.
 	 */
-	fun unconnectFromOrigin()
+	fun unconnectFromOrigin(lockEndpoint: Boolean = false)
 
     /**
      * Connects this [EdgeView] to the [Port] of the destination [ConnectableView].

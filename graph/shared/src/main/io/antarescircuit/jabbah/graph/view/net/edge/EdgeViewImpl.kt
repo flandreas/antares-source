@@ -373,10 +373,10 @@ open class EdgeViewImpl<T : Any>(
 		}
 	}
 
-	override fun unconnectFromOrigin() {
+	override fun unconnectFromOrigin(lockEndpoint: Boolean) {
 		origin?.let {
 			it.connectableView.removeDrawableListener(layout)
-			it.connectableView.handleUnconnect(this, it.port)
+			it.connectableView.handleUnconnect(this, it.port, lockEndpoint)
 		}
 		origin = null
 	}
