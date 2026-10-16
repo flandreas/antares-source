@@ -44,4 +44,19 @@ class InductorBehindSwitchTest : AbstractAnalogFileBasedTest() {
 
         assertTrue(scheduler.isQueueEmpty)
     }
+
+    @Test
+    fun shouldOpenAgainAfterBouncingClosed() {
+        startSimulation()
+        processUntilQueueIsEmpty()
+        switchView.model.bounce = true
+
+        switchView.model.on(scheduler)
+        processUntilQueueIsEmpty()
+        assertTrue(switchView.model.isOn)
+
+        switchView.model.off(scheduler)
+        processUntilQueueIsEmpty()
+        assertTrue(!switchView.model.isOn)
+    }
 }

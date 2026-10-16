@@ -20,7 +20,7 @@ import io.antarescircuit.jabbah.graph.model.vertice.InteractableVertice
  */
 class AnalogDoubleThrowSwitch(
     private val analogElement: AnalogElementMixin = AnalogElementMixin(postCount = 3)
-) : AbstractSwitch<AnalogDoubleThrowSwitch>(CALCULATOR),
+) : AbstractAnalogBouncingSwitch<AnalogDoubleThrowSwitch>(CALCULATOR),
     AnalogVertice,
     AnalogElement by analogElement
 {
@@ -29,9 +29,10 @@ class AnalogDoubleThrowSwitch(
 
         private val CALCULATOR = Calculator()
 
-        private class Calculator : AbstractSwitch.Companion.AbstractSwitchCalculator<AnalogDoubleThrowSwitch>() {
+		private class Calculator : AbstractSwitch.Companion.AbstractSwitchCalculator<AnalogDoubleThrowSwitch>() {
             override fun calculate(vertice: AnalogDoubleThrowSwitch, data: GraphActorData, signalHandler: SignalHandler) {
                 super.calculate(vertice, data, signalHandler)
+				vertice.continueBounce(signalHandler)
                 vertice.requestAnalogGraphReanalization(signalHandler)
             }
         }

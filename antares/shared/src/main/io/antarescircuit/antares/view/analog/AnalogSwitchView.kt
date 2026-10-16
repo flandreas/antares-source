@@ -4,13 +4,10 @@ import io.antarescircuit.antares.model.analog.AbstractAnalogVertice
 import io.antarescircuit.antares.model.analog.AnalogSwitch
 import io.antarescircuit.antares.view.analog.engine.AnalogElement
 import io.antarescircuit.antares.view.analog.engine.AnalogElementProxy
-import io.antarescircuit.antares.view.input.AbstractSwitchView
 import io.antarescircuit.antares.view.port.AbstractAntaresPortView.Companion.LENGTH
 import io.antarescircuit.jabbah.base.geom.Direction
-import io.antarescircuit.jabbah.base.geom.Point2D
 import io.antarescircuit.jabbah.base.module.BaseModule
 import io.antarescircuit.jabbah.draw.DrawContext
-import io.antarescircuit.jabbah.draw.graphics.CompositeColor
 import io.antarescircuit.jabbah.draw.style.DrawStyleModule
 import io.antarescircuit.jabbah.draw.style.StyleProvider
 import io.antarescircuit.jabbah.graph.model.GraphElementEvent
@@ -22,7 +19,7 @@ class AnalogSwitchView(
 	styleProvider: StyleProvider = DrawStyleModule.styleProvider,
 	model: AnalogSwitch = AnalogSwitch(),
 	private val analogElement: AnalogElementProxy = AnalogElementProxy()
-) : AbstractSwitchView<AnalogSwitch>(styleProvider, model),
+) : AbstractAnalogBouncingSwitchView<AnalogSwitch>(styleProvider, model),
 	AnalogElement by analogElement,
 	ControlViewSource<AnalogSwitch>
 {
@@ -38,8 +35,6 @@ class AnalogSwitchView(
 		setBounds(LENGTH, -REAL_SWITCH_HEIGHT_ABOVE, REAL_SWITCH_WIDTH, REAL_SWITCH_HEIGHT_ABOVE + REAL_SWITCH_HEIGHT_BELOW)
 	}
 
-	override val relativeExternalLabelLocation: Point2D get() =
-		Point2D(LENGTH + REAL_SWITCH_WIDTH / 2, -REAL_SWITCH_HEIGHT_ABOVE - LABEL_DIST)
 
 	override fun modelExchanged(oldModel: AnalogSwitch?) {
 		super.modelExchanged(oldModel)
@@ -65,8 +60,6 @@ class AnalogSwitchView(
 		}
 	}
 
-	override fun getEditPortViewColor(styleProvider: StyleProvider): CompositeColor =
-		customColor?.color ?: super<AbstractSwitchView>.getEditPortViewColor(styleProvider)
 
 	/** ---- [ControlViewSource] */
 

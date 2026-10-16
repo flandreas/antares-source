@@ -8,14 +8,13 @@ import io.antarescircuit.jabbah.base.LongValueImpl
 import io.antarescircuit.jabbah.base.Translations
 import io.antarescircuit.jabbah.execution.SignalHandler
 import io.antarescircuit.jabbah.graph.model.GraphActorData
-import io.antarescircuit.jabbah.graph.model.vertice.InteractableVertice
 
 /**
  * The electrical [resistance] of [AnalogSwitch] depends on the state of [isOn].
  */
 class AnalogSwitch(
 	private val analogElement: AnalogElementMixin = AnalogElementMixin()
-) : AbstractSwitch<AnalogSwitch>(CALCULATOR),
+) : AbstractAnalogBouncingSwitch<AnalogSwitch>(CALCULATOR),
 	AnalogVertice,
 	AnalogTwoPortVertice,
 	AnalogElement by analogElement
@@ -28,6 +27,7 @@ class AnalogSwitch(
 		private class Calculator : AbstractSwitch.Companion.AbstractSwitchCalculator<AnalogSwitch>() {
 			override fun calculate(vertice: AnalogSwitch, data: GraphActorData, signalHandler: SignalHandler) {
 				super.calculate(vertice, data, signalHandler)
+				vertice.continueBounce(signalHandler)
 				vertice.requestAnalogGraphReanalization(signalHandler)
 			}
 		}
@@ -49,8 +49,6 @@ class AnalogSwitch(
 	private fun requestAnalogGraphReanalization(signalHandler: SignalHandler) {
 		stateChanged(signalHandler, AbstractAnalogVertice.REQUEST_REANALYZE)
 	}
-
-	/** ---- [InteractableVertice] interface */
 
 	override var interactivePropagationDelay: Long = propagationDelay.value
 		set(value) {
