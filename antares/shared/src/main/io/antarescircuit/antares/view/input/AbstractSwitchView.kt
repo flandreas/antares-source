@@ -272,11 +272,11 @@ abstract class AbstractSwitchView<T : AbstractSwitch<T>>(
 	}
 
 	protected fun drawTwoPortRealSwitchShape(context: DrawContext) {
-		drawTwoPortRealSwitchShape(this, 1, model.isOn, context, bounds.minX, circleRadius)
+		drawTwoPortRealSwitchShape(this, 1, model.isOnForView, context, bounds.minX, circleRadius)
 	}
 
 	protected fun drawThreePortRealSwitchShape(context: DrawContext) {
-		drawThreePortRealSwitchShape(this, 1, model.isOn, context, bounds.minX, circleRadius)
+		drawThreePortRealSwitchShape(this, 1, model.isOnForView, context, bounds.minX, circleRadius)
 	}
 
 	private inner class InteractionHandler : ClickableActorInteractionHandlerAdapter() {

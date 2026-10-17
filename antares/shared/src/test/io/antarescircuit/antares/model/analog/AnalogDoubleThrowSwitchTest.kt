@@ -22,6 +22,8 @@ class AnalogDoubleThrowSwitchTest {
 	fun shouldBounceToRequestedState() {
 		val switch = AnalogDoubleThrowSwitch().apply { bounce = true }
 		switch.on(signalHandler)
+		assertTrue(switch.isOnForView)
+		assertFalse(switch.isOn)
 
 		repeat(20) {
 			if (!switch.enabled) {
@@ -33,6 +35,8 @@ class AnalogDoubleThrowSwitchTest {
 		assertTrue(switch.enabled)
 
 		switch.off(signalHandler)
+		assertFalse(switch.isOnForView)
+		assertTrue(switch.isOn)
 		repeat(20) {
 			if (!switch.enabled) {
 				switch.act(signalHandler, switch.createActorData(null))

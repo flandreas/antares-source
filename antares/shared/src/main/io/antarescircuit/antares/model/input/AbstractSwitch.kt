@@ -22,6 +22,9 @@ abstract class AbstractSwitch<T : AbstractSwitch<T>>(
 
 	val isOn: Boolean get() = signal ?: false
 
+	/** State used by switch views. Bouncing switches can keep this at their requested target. */
+	open val isOnForView: Boolean get() = isOn
+
 	var closedOnStart: Boolean = false
 
 	/** ---- [Actor] interface */

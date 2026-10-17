@@ -164,7 +164,7 @@ abstract class AbstractPushButtonSwitchView<T: AbstractSwitch<T>>(
 		if (labelPosition != VerticeLabelPosition.INTERNAL) {
 			context.g.color = styleProvider.getStyle(StyleType.BACKGROUND).color.textColor
 		} else {
-			context.g.color = if (model.isOn) Themes.get<AntaresTheme>().one.textColor else Themes.get<AntaresTheme>().zero.textColor
+			context.g.color = if (model.isOnForView) Themes.get<AntaresTheme>().one.textColor else Themes.get<AntaresTheme>().zero.textColor
 		}
 		if (labelPosition == VerticeLabelPosition.EXTERNAL) {
 			externalLabel.draw(context)
@@ -315,7 +315,7 @@ abstract class AbstractPushButtonSwitchView<T: AbstractSwitch<T>>(
 
 		fun drawExecuted(context: DrawContext) {
 			drawSignalBackground(context)
-			context.g.color = transparent.applyTo(if (model.isOn) Themes.get<AntaresTheme>().one.textColor else Themes.get<AntaresTheme>().zero.textColor)
+			context.g.color = transparent.applyTo(if (model.isOnForView) Themes.get<AntaresTheme>().one.textColor else Themes.get<AntaresTheme>().zero.textColor)
 			drawContent(context)
 		}
 
@@ -338,7 +338,7 @@ abstract class AbstractPushButtonSwitchView<T: AbstractSwitch<T>>(
 		private fun drawSignalBackground(context: DrawContext) {
 			context.g.color = transparent.applyTo(Themes.get<AntaresTheme>().background.color.backgroundColor)
 			context.g.fillRect(xInt, yInt, widthInt, heightInt)
-			context.g.color = transparent.applyTo(Bit.of(model.isOn).color.foregroundColor)
+			context.g.color = transparent.applyTo(Bit.of(model.isOnForView).color.foregroundColor)
 			context.g.fillRect(xInt + BORDER_WIDTH, yInt + BORDER_WIDTH,
 				widthInt - 2 * BORDER_WIDTH, heightInt - 2 * BORDER_WIDTH)
 		}
@@ -377,7 +377,7 @@ abstract class AbstractPushButtonSwitchView<T: AbstractSwitch<T>>(
 		}
 
 		private fun drawPushButtonSymbol(context: DrawContext) {
-			if (model.isOn) {
+			if (model.isOnForView) {
 				context.g.drawLine(
 					-AbstractAntaresPortView.LENGTH - 3.0 * SCALE, 0.5 * SCALE,
 					-AbstractAntaresPortView.LENGTH - 1.0 * SCALE, 0.5 * SCALE
@@ -399,7 +399,7 @@ abstract class AbstractPushButtonSwitchView<T: AbstractSwitch<T>>(
 		}
 
 		private fun drawToggleSymbol(context: DrawContext) {
-			if (model.isOn) {
+			if (model.isOnForView) {
 				context.g.drawLine(
 					-AbstractAntaresPortView.LENGTH - 1.0 * SCALE, 0.5 * SCALE,
 					-AbstractAntaresPortView.LENGTH - 3.0 * SCALE, 0.5 * SCALE

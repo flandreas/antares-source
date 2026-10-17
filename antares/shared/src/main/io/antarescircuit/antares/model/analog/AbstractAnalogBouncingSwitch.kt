@@ -18,12 +18,26 @@ abstract class AbstractAnalogBouncingSwitch<T : AbstractAnalogBouncingSwitch<T>>
 		private const val DEF_BOUNCE_DURATION = 100L
 	}
 
+	/** Set to `true` while the switch is bouncing.*/
 	private var bouncing = false
+
+	/** Controls how many individual state transitions happen during bouncing. */
 	private var bounceTransitionsRemaining = 0
+
+	/**
+	 * The state (on/off) in which the switch settles after bouncing. This is also the state requested by the user
+	 * when clicking on the switch.
+	 */
 	private var bounceTarget = false
 
+	/** Determines whether the switch bounces before settling in its requested state.*/
 	var bounce: Boolean = false
+
+	/** The duration of the bounce period in nanoseconds. */
 	var bounceDuration: Long = DEF_BOUNCE_DURATION
+
+	override val isOnForView: Boolean
+		get() = if (bouncing) bounceTarget else isOn
 
 	/** ---- [AbstractSwitch] */
 
