@@ -7,6 +7,12 @@ interface SignalHistoryTimeline {
 
     var scale: Double
 
+	/** Horizontal displacement of the triggered-sweep grid from its centered position. */
+	var triggerOffsetX: Double
+
+	/** Width of one visual time division in model coordinates. */
+	var divisionWidth: Double
+
 	val maxTime: Long
 
     /** Returns the distance on the x-axis for displaying a duration of [duration] ns.*/

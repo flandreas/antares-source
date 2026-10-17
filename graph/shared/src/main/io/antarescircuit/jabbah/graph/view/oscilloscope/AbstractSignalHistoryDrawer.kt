@@ -144,16 +144,14 @@ abstract class AbstractSignalHistoryDrawer<T: Any>(
 	}
 
 	private fun drawGrid(context: DrawContext) {
-		if (gridSignalHistory != null) {
-			context.g.stroke = GRID_LINE_STROKE
-			for (entry in gridSignalHistory!!.getReverseEntriesUntil(0)) {
-				val x = max(rightBorder - timeline!!.getX(entry.time) + scrollX, bounds.minX)
-				if (x <= bounds.minX) {
-					break
-				}
-				if (x < rightBorder ) {
-					context.g.drawLine(x, bounds.minY, x, bounds.maxY)
-				}
+		context.g.stroke = GRID_LINE_STROKE
+		val divisionWidth = timeline!!.divisionWidth.takeIf { it > 0.0 }
+			?: (rightBorder - bounds.minX) / SignalHistoryTimelineViewImpl.DIVISION_COUNT
+		val centerX = bounds.minX + (rightBorder - bounds.minX) / 2.0
+		for (division in -SignalHistoryTimelineViewImpl.DIVISION_COUNT / 2..SignalHistoryTimelineViewImpl.DIVISION_COUNT / 2) {
+			val x = centerX + division * divisionWidth + timeline!!.triggerOffsetX
+			if (x in bounds.minX..rightBorder) {
+				context.g.drawLine(x, bounds.minY, x, bounds.maxY)
 			}
 		}
 	}

@@ -14,6 +14,9 @@ class OscilloscopeViewTimeline(
 		private const val FACTOR = 10_000
 	}
 
+	override var triggerOffsetX: Double = 0.0
+	override var divisionWidth: Double = 0.0
+
 	override val maxTime: Long get() = maxTimeProvider()
 
 	override fun getDx(duration: Long): Double = scale * duration / FACTOR

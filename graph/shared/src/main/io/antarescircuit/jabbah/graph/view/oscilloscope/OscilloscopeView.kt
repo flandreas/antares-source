@@ -403,7 +403,6 @@ class OscilloscopeView(
 		container.drawables
 			.filterIsInstance<OscilloscopeSignalRowView>()
 			.forEach { it.scrollX = newScrollX }
-		scaleRowView.timelineView.scrollX = newScrollX
 	}
 
 	private fun propagateSignalCurveStyle() {
@@ -417,6 +416,7 @@ class OscilloscopeView(
 	override fun executionStarted(signalHandler: SignalHandler) {
 		super.executionStarted(signalHandler)
 		scrollX = 0.0
+		timeline.triggerOffsetX = 0.0
 		model.enabled = visible
 		if (visible) {
 			rows.forEach { it.bindDrawer() }
@@ -535,6 +535,7 @@ class OscilloscopeView(
 	fun clear() {
 		model.clear()
 		scrollX = 0.0
+		timeline.triggerOffsetX = 0.0
 		invalidate()
 		validate()
 	}
