@@ -32,7 +32,11 @@ open class DslLexer(text: String): BaseLexer(text) {
 		private val IF_TOKEN = Token<String>(IF)
 		private val ELSE_TOKEN = Token<String>(ELSE)
 		val AND_TOKEN = Token<String>(AND)
+		val NAND_TOKEN = Token<String>(NAND)
+		val XOR_TOKEN = Token<String>(XOR)
+		val XNOR_TOKEN = Token<String>(XNOR)
 		val OR_TOKEN = Token<String>(OR)
+		val NOR_TOKEN = Token<String>(NOR)
 		val NOT_TOKEN = Token<String>(NOT)
 		private val GREATER_TOKEN = Token<Unit>(GREATER)
 		private val GREATER_EQUAL_TOKEN = Token<Unit>(GREATER_EQUAL)
@@ -63,7 +67,11 @@ open class DslLexer(text: String): BaseLexer(text) {
 			"if" to IF_TOKEN,
 			"else" to ELSE_TOKEN,
 			"and" to AND_TOKEN,
+			"nand" to NAND_TOKEN,
+			"xor" to XOR_TOKEN,
+			"xnor" to XNOR_TOKEN,
 			"or" to OR_TOKEN,
+			"nor" to NOR_TOKEN,
 			"not" to NOT_TOKEN,
 			"when" to WHEN_TOKEN,
 			"for" to FOR_TOKEN,

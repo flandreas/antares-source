@@ -216,6 +216,35 @@ class AntaresInterpreterSignalTest {
 	}
 
 	@Test
+	fun shouldCalculateXor() {
+		assertEquals(of(BW_4, 1UL), operation("A xor B", of(BW_4, 3UL), of(BW_2, 2UL)))
+		assertEquals(of(BW_4, 1UL), operation("A xor B", of(BW_4, 3UL), 2L))
+		assertEquals(1L, operation("A xor B", 3L, of(BW_4, 2UL)))
+		assertEquals(1L, AntaresInterpreter("3 xor 2").interpret())
+	}
+
+	@Test
+	fun shouldCalculateNandUsingAntaresNotSemantics() {
+		assertEquals(of(BW_4, 13UL), operation("A nand B", of(BW_4, 3UL), of(BW_2, 2UL)))
+		assertEquals(1L, AntaresInterpreter("3 nand 2").interpret())
+		assertEquals(3L, AntaresInterpreter("4 nand 5").interpret())
+	}
+
+	@Test
+	fun shouldCalculateNorUsingAntaresNotSemantics() {
+		assertEquals(of(BW_4, 12UL), operation("A nor B", of(BW_4, 3UL), of(BW_2, 2UL)))
+		assertEquals(0L, AntaresInterpreter("3 nor 2").interpret())
+		assertEquals(2L, AntaresInterpreter("4 nor 5").interpret())
+	}
+
+	@Test
+	fun shouldCalculateXnorUsingAntaresNotSemantics() {
+		assertEquals(of(BW_4, 14UL), operation("A xnor B", of(BW_4, 3UL), of(BW_2, 2UL)))
+		assertEquals(0L, AntaresInterpreter("3 xnor 2").interpret())
+		assertEquals(0L, AntaresInterpreter("4 xnor 5").interpret())
+	}
+
+	@Test
 	fun shouldCalculateMod() {
 		assertEquals(of(BW_4, 1UL), operation("A % B", of(BW_4, 5UL), of(BW_2, 2UL)))
 		assertEquals(of(BW_4, 1UL), operation("A % B", of(BW_4, 5UL), 2L))
@@ -693,5 +722,18 @@ class AntaresInterpreterSignalTest {
 		val result = interpreter.interpret()
 
 		assertEquals(DigitalSignalFactory.of(BW_8, 225L), result)
+	}
+
+	@Test
+	fun shouldXnorWithLengthCast() {
+		val parser = AntaresParser(AntaresLexer("A$4 xnor B$4"))
+		val memory = Memory()
+		val interpreter = AntaresInterpreter(parser.parse(), memory)
+		memory.preset("A", DigitalSignalFactory.of(BW_4, 4L))
+		memory.preset("B", DigitalSignalFactory.of(BW_4, 5L))
+
+		val result = interpreter.interpret()
+
+		assertEquals(DigitalSignalFactory.of(BW_4, 14L), result)
 	}
 }

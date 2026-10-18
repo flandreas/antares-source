@@ -88,7 +88,11 @@ open class Interpreter(
 			GREATER -> greaterL(left, right, l)
 			GREATER_EQUAL -> if (greaterL(left, right, l) == 1L || equalL(left, right, l) == 1L) 1L else 0L
 			AND -> andL(left, right, l)
+			NAND -> nandL(left, right, l)
+			XOR -> xorL(left, right, l)
+			XNOR -> xnorL(left, right, l)
 			OR -> orL(left, right, l)
+			NOR -> norL(left, right, l)
 			SHIFT_LEFT -> shiftLeftL(left, right, l)
 			SHIFT_RIGHT -> shiftRightL(left, right, l)
 			MOD -> modL(left, right, l)
@@ -293,6 +297,18 @@ open class Interpreter(
 			is Long -> l.or(r)
 			else -> throwIncompatibleTypes(loc, OR)
 		}
+
+	protected open fun nandL(l: Any, r: Any, loc: TextLocation): Any =
+		not(andL(l, r, loc), loc)
+
+	protected open fun xorL(l: Any, r: Any, loc: TextLocation): Any =
+		andL(orL(l, r, loc), not(andL(l, r, loc), loc), loc)
+
+	protected open fun xnorL(l: Any, r: Any, loc: TextLocation): Any =
+		not(xorL(l, r, loc), loc)
+
+	protected open fun norL(l: Any, r: Any, loc: TextLocation): Any =
+		not(orL(l, r, loc), loc)
 
 	protected open fun shiftLeftL(l: Any, r: Any, loc: TextLocation): Any =
 		when (l) {

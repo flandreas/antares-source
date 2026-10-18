@@ -46,8 +46,9 @@ typealias ParserFactory = (program: String, semanticAnalyser: SemanticAnalyser?)
  *     forStatement : "for" "(" variable "in" expr "to" expr ")" statement
  *     returnStatement : "return" [ expr ]
  *     functionCall : identifier "(" { expr ("," expr)* } ")"
- *	   expr: expr1 ("or" expr1)*
- *	   expr1 : expr2 ("and" expr2)*
+	 *	   expr: expr1 (("or" | "nor") expr1)*
+	 *	   expr1 : expr1a (("xor" | "xnor") expr1a)*
+	 *	   expr1a : expr2 (("and" | "nand") expr2)*
  *	   expr2 : expr3 (comparisonOperator expr3 | "in" list)*
  *	   expr3 : term (("+" | "-" ) term)*
  *     term : factor (("*" | "/" | "%" | "^" | shiftOperator) factor)*
@@ -59,7 +60,7 @@ typealias ParserFactory = (program: String, semanticAnalyser: SemanticAnalyser?)
  *            | "(" expr ")"
  *            | variable
  *            | procedureCall
- *     binaryLogicOperator : "and" | "or"
+ *     binaryLogicOperator : "and" | "nand" | "xor" | "xnor" | "or" | "nor"
  *     shiftOperator : "<<" | ">>"
  *     literal : number | string
  *     number : LONG | FLOAT
@@ -82,7 +83,9 @@ open class DslParser(
 	constructor(program: String): this(DslLexer(program))
 
 	companion object {
-		//private val BINARY_LOGIC_OPERATORS = setOf(AND, OR)
+		private val OR_OPERATORS = setOf(OR, NOR)
+		private val XOR_OPERATORS = setOf(XOR, XNOR)
+		private val AND_OPERATORS = setOf(AND, NAND)
 		private val COMPARISON_OPERATORS = setOf(EQUAL, DIFF, SMALLER, GREATER, SMALLER_EQUAL, GREATER_EQUAL)
 		private val SHIFT_OPERATORS = setOf(SHIFT_LEFT, SHIFT_RIGHT)
 		private val FACTOR_OPERATORS = setOf(MULTIPLY, DIVIDE, MOD, CARET) + SHIFT_OPERATORS
@@ -293,10 +296,10 @@ open class DslParser(
 
 	private fun expr(): Node {
 		var node = expr1()
-		while (currentToken!!.type == OR) {
+		while (currentToken!!.type in OR_OPERATORS) {
 			lexer.location.let { location ->
 				val token = currentToken!!
-				if (token.type == OR) {
+				if (token.type in OR_OPERATORS) {
 					eat(token.type)
 				} else {
 					throw SyntaxError(location, Translations.getString("base.dsl.unexpectedToken.msg", token.type.id))
@@ -311,16 +314,28 @@ open class DslParser(
 	private fun isExpr(): Boolean = isTerm()
 
 	private fun expr1(): Node {
-		var node = expr2()
-		while (currentToken!!.type == AND) {
+		var node = expr1a()
+		while (currentToken!!.type in XOR_OPERATORS) {
 			lexer.location.let { location ->
 				val token = currentToken!!
-				if (token.type == AND) {
+				if (token.type in XOR_OPERATORS) {
 					eat(token.type)
 				} else {
 					throw SyntaxError(location, Translations.getString("base.dsl.unexpectedToken.msg", token.type.id))
 				}
 
+				node = BinaryOperation(location, left = node, op = token, right = expr1a())
+			}
+		}
+		return node
+	}
+
+	private fun expr1a(): Node {
+		var node = expr2()
+		while (currentToken!!.type in AND_OPERATORS) {
+			lexer.location.let { location ->
+				val token = currentToken!!
+				eat(token.type)
 				node = BinaryOperation(location, left = node, op = token, right = expr2())
 			}
 		}

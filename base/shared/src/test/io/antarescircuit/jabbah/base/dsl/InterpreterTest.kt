@@ -274,6 +274,14 @@ class InterpreterTest {
 	}
 
 	@Test
+	fun shouldInterpretAdditionalBitwiseOperations() {
+		assertEquals(1L, Interpreter("5 xor 4").interpret())
+		assertEquals(-5L, Interpreter("5 nand 4").interpret())
+		assertEquals(-6L, Interpreter("5 nor 4").interpret())
+		assertEquals(-2L, Interpreter("5 xnor 4").interpret())
+	}
+
+	@Test
 	fun shouldShiftLeft() {
 		assertEquals(2L, Interpreter("1 << 1").interpret())
 		assertFailsWith(RuntimeError::class) {
