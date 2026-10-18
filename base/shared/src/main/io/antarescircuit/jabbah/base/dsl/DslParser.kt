@@ -48,7 +48,7 @@ typealias ParserFactory = (program: String, semanticAnalyser: SemanticAnalyser?)
  *     functionCall : identifier "(" { expr ("," expr)* } ")"
  *	   expr: expr1 ("or" expr1)*
  *	   expr1 : expr2 ("and" expr2)*
- *	   expr2 : expr3 (comparisonOperator expr3)*
+ *	   expr2 : expr3 (comparisonOperator expr3 | "in" list)*
  *	   expr3 : term (("+" | "-" ) term)*
  *     term : factor (("*" | "/" | "%" | "^" | shiftOperator) factor)*
  *     comparisonOperator : "==" | "!=" | "<" | ">" | "<=" | ">="
@@ -66,6 +66,7 @@ typealias ParserFactory = (program: String, semanticAnalyser: SemanticAnalyser?)
  *     string : """ { CHAR }"""
  *     variable : identifier | assocArray
  *     assocArray : identifier "[" expr "]"
+ *     list : "(" [ expr { "," expr } ] ")"
  *     identifier : LETTER (LETTER | DIGIT)* | "'" CHAR (CHAR)* "'"
  * ```
  *
@@ -328,18 +329,37 @@ open class DslParser(
 
 	private fun expr2(): Node {
 		var node = expr3()
-		while (currentToken!!.type in COMPARISON_OPERATORS) {
+		while (currentToken!!.type in COMPARISON_OPERATORS || currentToken!!.type == IN) {
 			lexer.location.let { location ->
 				val token = currentToken!!
-				if (COMPARISON_OPERATORS.contains(token.type)) {
+				if (token.type == IN) {
+					eat(IN)
+					node = BinaryOperation(location, left = node, op = token, right = list())
+				} else if (COMPARISON_OPERATORS.contains(token.type)) {
 					eat(token.type)
+					node = BinaryOperation(location, left = node, op = token, right = expr3())
 				} else {
 					throw SyntaxError(location, Translations.getString("base.dsl.unexpectedToken.msg", token.type.id))
 				}
-				node = BinaryOperation(location, left = node, op = token, right = expr3())
 			}
 		}
 		return node
+	}
+
+	private fun list(): ListLiteral {
+		lexer.location.let { location ->
+			eat(LPAREN)
+			val items = mutableListOf<Node>()
+			if (currentToken!!.type != RPAREN) {
+				items.add(expr())
+				while (currentToken!!.type == COMMA) {
+					eat(COMMA)
+					items.add(expr())
+				}
+			}
+			eat(RPAREN)
+			return ListLiteral(location, items)
+		}
 	}
 
 	private fun expr3(): Node {

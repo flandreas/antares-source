@@ -86,6 +86,21 @@ class Literal(location: TextLocation, val token: Token<Any>) : AbstractNode(loca
 	override fun toString(): String = token.value!!.toString()
 }
 
+class ListLiteral(location: TextLocation, val items: List<Node>) : AbstractNode(location) {
+	override fun toString(): String = "list"
+
+	override fun accept(visitor: HierarchyVisitor): Boolean {
+		if (visitor.visitEnter(this)) {
+			for (item in items) {
+				if (!item.accept(visitor)) {
+					break
+				}
+			}
+		}
+		return visitor.visitLeave(this)
+	}
+}
+
 class NoOp(location: TextLocation) : AbstractNode(location) {
 	override fun toString(): String = "NoOp"
 }

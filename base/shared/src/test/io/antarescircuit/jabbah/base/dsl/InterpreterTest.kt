@@ -411,6 +411,27 @@ class InterpreterTest {
 	}
 
 	@Test
+	fun shouldEvaluateInExpression() {
+		assertEquals(1L, Interpreter("5 in (1, 5, 15)").interpret())
+		assertEquals(0L, Interpreter("5 in (1, 23, 15)").interpret())
+		assertEquals(1L, Interpreter("5.0 in (1, 5, 15)").interpret())
+	}
+
+	@Test
+	fun shouldUseInExpressionInIfStatement() {
+		val result = Interpreter("""
+			var a = 23
+			var b = 0
+			if (a in (1, 23, 15)) {
+				b = 42
+			}
+			b
+		""".trimIndent()).interpret()
+
+		assertEquals(42L, result)
+	}
+
+	@Test
 	fun shouldInterpretWhenStatement() {
 		val result = Interpreter("""
 			var a = 2

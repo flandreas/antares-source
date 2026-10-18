@@ -494,26 +494,7 @@
                   </desc>
                   <steps/>
                 </scenario>
-                <scenario _id='242' id='2' condition='#5:3 &lt;= 5
-or #5:3 == 11
-or #5:3 == 19
-or #5:3 == 20
-or #5:3 == 25
-or #5:3 == 28
-or #5:3 == 29
-or #5:3 == 30
-or #5:3 == 35
-or #5:3 == 40
-or #5:3 == 41
-or #5:3 == 46
-or #5:3 == 50
-or #5:3 == 51
-or #5:3 == 52
-or #5:3 == 59
-or #5:3 == 65
-or #5:3 == 66
-or #5:3 == 73
-or #5:3 == 76'>
+                <scenario _id='242' id='2' condition='#5:3 &lt;= 5 or #5:3 in (11,19,20,25,28,29,30,35,40,41,46,50,51,52,59,65,66,73,76)'>
                   <name>
                     <translation lang='en' text='Decode'/>
                   </name>
@@ -522,7 +503,7 @@ or #5:3 == 76'>
                   </desc>
                   <steps/>
                 </scenario>
-                <scenario _id='243' id='3' condition='#5:3 == 6 or #5:3 == 7 or #5:3 == 8'>
+                <scenario _id='243' id='3' condition='#5:3 in (6,7,8)'>
                   <name>
                     <translation lang='en' text='Execute LODD'/>
                   </name>
@@ -531,7 +512,7 @@ or #5:3 == 76'>
                   </desc>
                   <steps/>
                 </scenario>
-                <scenario _id='244' id='4' condition='#5:3 == 9 or #5:3 == 10'>
+                <scenario _id='244' id='4' condition='#5:3 in (9,10)'>
                   <name>
                     <translation lang='en' text='Execute STOD'/>
                   </name>
@@ -540,7 +521,7 @@ or #5:3 == 76'>
                   </desc>
                   <steps/>
                 </scenario>
-                <scenario _id='245' id='5' condition='#5:3 == 12 or #5:3 == 13 or #5:3 == 14'>
+                <scenario _id='245' id='5' condition='#5:3 in (12,13,14)'>
                   <name>
                     <translation lang='en' text='Execute ADDD'/>
                   </name>
@@ -549,7 +530,7 @@ or #5:3 == 76'>
                   </desc>
                   <steps/>
                 </scenario>
-                <scenario _id='246' id='6' condition='#5:3 == 15 or #5:3 == 16 or #5:3 == 17 or #5:3 == 18'>
+                <scenario _id='246' id='6' condition='#5:3 in (15,16,17,18)'>
                   <name>
                     <translation lang='en' text='Execute SUBD'/>
                   </name>
@@ -558,7 +539,7 @@ or #5:3 == 76'>
                   </desc>
                   <steps/>
                 </scenario>
-                <scenario _id='247' id='7' condition='#5:3 == 21 or #5:3 == 22'>
+                <scenario _id='247' id='7' condition='#5:3 in (21,22)'>
                   <name>
                     <translation lang='en' text='Execute JPOS'/>
                   </name>
@@ -567,7 +548,7 @@ or #5:3 == 76'>
                   </desc>
                   <steps/>
                 </scenario>
-                <scenario _id='248' id='8' condition='#5:3 == 23 or #5:3 == 24'>
+                <scenario _id='248' id='8' condition='#5:3 in (23,24)'>
                   <name>
                     <translation lang='en' text='Execute JZER'/>
                   </name>
@@ -594,7 +575,7 @@ or #5:3 == 76'>
                   </desc>
                   <steps/>
                 </scenario>
-                <scenario _id='251' id='11' condition='#5:3 == 31 or #5:3 == 32'>
+                <scenario _id='251' id='11' condition='#5:3 in (31,32)'>
                   <name>
                     <translation lang='en' text='Execute LODL'/>
                   </name>
@@ -603,7 +584,7 @@ or #5:3 == 76'>
                   </desc>
                   <steps/>
                 </scenario>
-                <scenario _id='252' id='12' condition='#5:3 == 33 or #5:3 == 34'>
+                <scenario _id='252' id='12' condition='#5:3 in (33,34)'>
                   <name>
                     <translation lang='en' text='Execute STOL'/>
                   </name>
@@ -612,7 +593,7 @@ or #5:3 == 76'>
                   </desc>
                   <steps/>
                 </scenario>
-                <scenario _id='253' id='13' condition='#5:3 == 36 or #5:3 == 37'>
+                <scenario _id='253' id='13' condition='#5:3 in (36,37)'>
                   <name>
                     <translation lang='en' text='Execute ADDL'/>
                   </name>
@@ -621,7 +602,7 @@ or #5:3 == 76'>
                   </desc>
                   <steps/>
                 </scenario>
-                <scenario _id='254' id='14' condition='#5:3 == 38 or #5:3 == 39'>
+                <scenario _id='254' id='14' condition='#5:3 in (38,39)'>
                   <name>
                     <translation lang='en' text='Execute SUBL'/>
                   </name>
@@ -630,7 +611,7 @@ or #5:3 == 76'>
                   </desc>
                   <steps/>
                 </scenario>
-                <scenario _id='255' id='15' condition='#5:3 == 42 or #5:3 == 43'>
+                <scenario _id='255' id='15' condition='#5:3 in (42,43)'>
                   <name>
                     <translation lang='en' text='Execute JNEG'/>
                   </name>
@@ -639,7 +620,7 @@ or #5:3 == 76'>
                   </desc>
                   <steps/>
                 </scenario>
-                <scenario _id='256' id='16' condition='#5:3 == 44 or #5:3 == 45'>
+                <scenario _id='256' id='16' condition='#5:3 in (44,45)'>
                   <name>
                     <translation lang='en' text='Execute JNZE'/>
                   </name>
@@ -648,7 +629,7 @@ or #5:3 == 76'>
                   </desc>
                   <steps/>
                 </scenario>
-                <scenario _id='257' id='17' condition='#5:3 == 47 or #5:3 == 48 or #5:3 == 49'>
+                <scenario _id='257' id='17' condition='#5:3 in (47,48,49)'>
                   <name>
                     <translation lang='en' text='Execute CALL'/>
                   </name>
@@ -657,7 +638,7 @@ or #5:3 == 76'>
                   </desc>
                   <steps/>
                 </scenario>
-                <scenario _id='258' id='18' condition='#5:3 == 53 or #5:3 == 54 or #5:3 == 55'>
+                <scenario _id='258' id='18' condition='#5:3 in (53,54,55)'>
                   <name>
                     <translation lang='en' text='Execute PSHI'/>
                   </name>
@@ -666,7 +647,7 @@ or #5:3 == 76'>
                   </desc>
                   <steps/>
                 </scenario>
-                <scenario _id='259' id='19' condition='#5:3 == 56 or #5:3 == 57 or #5:3 == 58'>
+                <scenario _id='259' id='19' condition='#5:3 in (56,57,58)'>
                   <name>
                     <translation lang='en' text='Execute POPI'/>
                   </name>
@@ -675,7 +656,7 @@ or #5:3 == 76'>
                   </desc>
                   <steps/>
                 </scenario>
-                <scenario _id='260' id='20' condition='#5:3 == 60 or #5:3 == 61'>
+                <scenario _id='260' id='20' condition='#5:3 in (60,61)'>
                   <name>
                     <translation lang='en' text='Execute PUSH'/>
                   </name>
@@ -684,7 +665,7 @@ or #5:3 == 76'>
                   </desc>
                   <steps/>
                 </scenario>
-                <scenario _id='261' id='21' condition='#5:3 == 62 or #5:3 == 63 or #5:3 == 64'>
+                <scenario _id='261' id='21' condition='#5:3 in (62,63,64)'>
                   <name>
                     <translation lang='en' text='Execute POP'/>
                   </name>
@@ -693,7 +674,7 @@ or #5:3 == 76'>
                   </desc>
                   <steps/>
                 </scenario>
-                <scenario _id='262' id='22' condition='#5:3 == 67 or #5:3 == 68 or #5:3 == 69'>
+                <scenario _id='262' id='22' condition='#5:3 in (67,68,69)'>
                   <name>
                     <translation lang='en' text='Execute RETN'/>
                   </name>
@@ -702,7 +683,7 @@ or #5:3 == 76'>
                   </desc>
                   <steps/>
                 </scenario>
-                <scenario _id='263' id='23' condition='#5:3 == 70 or #5:3 == 71 or #5:3 == 72'>
+                <scenario _id='263' id='23' condition='#5:3 in (70,71,72)'>
                   <name>
                     <translation lang='en' text='Execute SWAP'/>
                   </name>
@@ -711,7 +692,7 @@ or #5:3 == 76'>
                   </desc>
                   <steps/>
                 </scenario>
-                <scenario _id='264' id='24' condition='#5:3 == 74 or #5:3 == 75'>
+                <scenario _id='264' id='24' condition='#5:3 in (74,75)'>
                   <name>
                     <translation lang='en' text='Execute INSP'/>
                   </name>
@@ -720,7 +701,7 @@ or #5:3 == 76'>
                   </desc>
                   <steps/>
                 </scenario>
-                <scenario _id='265' id='25' condition='#5:3 == 77 or #5:3 == 78 or #5:3 == 79'>
+                <scenario _id='265' id='25' condition='#5:3 in (77,78,79)'>
                   <name>
                     <translation lang='en' text='Execute DESP'/>
                   </name>

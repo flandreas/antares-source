@@ -506,4 +506,19 @@ class DslParserTest {
 			---- 1
 		""".trimIndent())
 	}
+
+	@Test
+	fun shouldParseInExpression() {
+		val parser = DslParser(DslLexer("a in (1, 23, 15)"), null)
+
+		assertAST(parser.parse(), """
+			Compound
+			- in
+			-- a
+			-- list
+			--- 1
+			--- 23
+			--- 15
+		""".trimIndent())
+	}
 }

@@ -32,6 +32,7 @@ open class Interpreter(
 				is UnaryOperation -> unaryOperation(node)
 				is BinaryOperation -> binaryOperation(node)
 				is Literal -> literal(node)
+				is ListLiteral -> node.items.map { interpret(it) }
 				is Assignment -> assignment(node)
 				is Variable -> variable(node)
 				is Declaration -> declaration(node)
@@ -81,6 +82,7 @@ open class Interpreter(
 			CARET -> powerL(left, right, l)
 			EQUAL -> equalL(left, right, l)
 			DIFF -> if (equalL(left, right, l) == 1L) 0L else 1L
+			IN -> containsL(left, right, l)
 			SMALLER -> smallerL(left, right, l)
 			SMALLER_EQUAL -> if (smallerL(left, right, l) == 1L || equalL(left, right, l) == 1L) 1L else 0L
 			GREATER -> greaterL(left, right, l)
@@ -92,6 +94,13 @@ open class Interpreter(
 			MOD -> modL(left, right, l)
 			else -> throw SyntaxError(l, Translations.getString("base.dsl.unknownBinaryOperation.msg", type.id))
 		}
+
+	protected open fun containsL(value: Any, list: Any, loc: TextLocation): Any {
+		if (list !is List<*>) {
+			throwIncompatibleTypes(loc, IN)
+		}
+		return if (list.any { item -> item != null && equalL(value, item, loc) == 1L }) 1L else 0L
+	}
 
 	protected open fun addL(l: Any, r: Any, loc: TextLocation): Any =
 		when (l) {
