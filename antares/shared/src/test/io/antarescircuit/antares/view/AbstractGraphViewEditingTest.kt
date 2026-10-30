@@ -3,9 +3,10 @@ package io.antarescircuit.antares.view
 import io.antarescircuit.antares.AntaresTestRule
 import io.antarescircuit.jabbah.base.module.BaseModule
 import io.antarescircuit.jabbah.draw.CanvasMockBuilder
-import io.antarescircuit.jabbah.edit.*
+import io.antarescircuit.jabbah.edit.DrawingView
+import io.antarescircuit.jabbah.edit.Editor
+import io.antarescircuit.jabbah.edit.EditorToolDriver
 import io.antarescircuit.jabbah.edit.command.SourcingCommandManager
-import io.antarescircuit.jabbah.edit.editor.EditEditorModule
 import io.antarescircuit.jabbah.edit.module.EditModule
 import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
@@ -37,7 +38,7 @@ abstract class AbstractGraphViewEditingTest(
 		}
 		view = EditModule.drawingViewFactory.create(builder.graphView, null, false, "")
 		@Suppress("UNCHECKED_CAST")
-		editor = EditEditorModule.createEditor("", view as DrawingView<Component, Drawing<Component>>)
+		editor = GraphViewModule.graphEditorFactory.invoke("", view)
 		driver = EditorToolDriver(editor)
 		service = GraphViewModule.graphViewAppService
 

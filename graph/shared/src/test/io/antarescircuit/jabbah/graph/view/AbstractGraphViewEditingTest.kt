@@ -2,15 +2,12 @@ package io.antarescircuit.jabbah.graph.view
 
 import io.antarescircuit.jabbah.base.geom.Dimension2D
 import io.antarescircuit.jabbah.base.module.BaseModule
-import io.antarescircuit.jabbah.edit.Component
 import io.antarescircuit.jabbah.draw.CanvasMockBuilder
-import io.antarescircuit.jabbah.edit.Drawing
 import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.edit.Editor
-import io.antarescircuit.jabbah.edit.command.SourcingCommandManager
-import io.antarescircuit.jabbah.edit.editor.EditEditorModule
-import io.antarescircuit.jabbah.edit.module.EditModule
 import io.antarescircuit.jabbah.edit.EditorToolDriver
+import io.antarescircuit.jabbah.edit.command.SourcingCommandManager
+import io.antarescircuit.jabbah.edit.module.EditModule
 import io.antarescircuit.jabbah.graph.view.app.GraphViewAppService
 import io.antarescircuit.jabbah.graph.view.graph.GraphViewImpl
 import io.antarescircuit.jabbah.graph.view.module.GraphViewModule
@@ -35,7 +32,7 @@ abstract class AbstractGraphViewEditingTest(
 		builder = GraphViewBuilder { builder -> view.setDrawing(builder.graphView) }
 		view = EditModule.drawingViewFactory.create(builder.graphView, null, false, "")
 		@Suppress("UNCHECKED_CAST")
-		editor = EditEditorModule.createEditor("", view as DrawingView<Component, Drawing<Component>>)
+		editor = GraphViewModule.graphEditorFactory.invoke("", view)
 		driver = EditorToolDriver(editor)
 		service = GraphViewModule.graphViewAppService
 
