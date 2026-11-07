@@ -38,6 +38,12 @@ kotlin {
 
 		val jvmTest by getting {
 			dependencies {
+				implementation(project(":base-ui"))
+				implementation(project(":draw-ui"))
+				implementation(project(":edit-ui"))
+				implementation(project(":execution-ui"))
+				implementation(project(":app-ui"))
+				implementation(project(":graph-ui"))
 				implementation(project(":edit-test-util"))
 			}
 		}

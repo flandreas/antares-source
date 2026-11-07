@@ -164,9 +164,9 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
 
         fun drawImage(g: java.awt.Graphics2D, image: Image, x: Int, y: Int) {
             when (image) {
-                is ResourceImageJvm -> g.drawImage(image.imageIcon.image, x, y, null)
+                is ResourceImageJvm -> g.drawImage(image.jvmImage, x, y, null)
                 is RasterImageJvm -> g.drawImage(image.jvmImage, x, y, null)
-                is SvgImageJvm -> image.draw(g)
+                is DrawableImageJvm -> image.draw(g)
                 else -> throw IllegalArgumentException("unsupported image type ${image::class.simpleName}")
             }
         }

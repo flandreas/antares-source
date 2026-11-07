@@ -1,5 +1,11 @@
 # Maintainer documentation
 
+## Publishing Jabbah Core
+
+See [Publishing Jabbah Core](doc/publishing.md) for GitHub Packages token setup,
+local validation, and publishing release candidates. The `libraryVersion`
+property controls the Maven version independently of the desktop installer version.
+
 ## Releasing
 
 ### Preparation
@@ -29,7 +35,7 @@ Tag the release and push it to the remote repository:
 ### Build Installers
 
 - On a macOS machine
-    - `gradlew clean :antares:distributeMac`
+    - `gradlew clean :antares-ui:distributeMac`
     - Wait for notarization success mail from Apple (or check manually using `xcrun notarytool 
     info --apple-id xxx --team-id xxx --password xxx SUBMISSION_ID`)
     - In case of notarization fails: Fetch notary log using `xcrun notarytool log --apple-id xxx --team-id xxx 
@@ -38,7 +44,7 @@ Tag the release and push it to the remote repository:
     - Collect the macOS package `build/antares/distributions/Antares-<version>.dmg`
     - Collect the Java .jar file `build/antares/libs/antares-<version>-all.jar`
 - On a Windows machine (after pulling changes from remote repository)
-    - `gradlew clean :antares:distributeWindows`
+    - `gradlew clean :antares-ui:distributeWindows`
     - `cd Desktop`
     - Signing doesn't yet work from within gradle (permissions?), so call it manually:
         - `C:\"Program Files (x86)"\"Windows Kits"\10\bin\x64\signtool sign /fd SHA256 /f 
@@ -47,7 +53,7 @@ Tag the release and push it to the remote repository:
     - Verify signature: `C:\"Program Files (x86)"\"Windows Kits"\10\bin\x64\signtool verify /pa C:\Users\Andreas\Documents\antares\distributions\Antares-1.0.0.msi`
     - Collect the Windows package `build/antares/distributions/Antares-<version>.msi`
 - On a Linux machine (after pulling changes from remote repository)
-    - `gradlew clean :antares:distributeLinux`
+    - `gradlew clean :antares-ui:distributeLinux`
     - Collect the Linux package `build/antares/distributions/antares-<version>.rpm`
     - Install with `sudo alien -i <name of the package>`
     - The installed app is found in `/opt/antares/bin/Antares`

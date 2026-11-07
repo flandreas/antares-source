@@ -2,8 +2,6 @@ package io.antarescircuit.jabbah.app.module
 
 import io.antarescircuit.jabbah.app.*
 import io.antarescircuit.jabbah.app.dump.SystemDumpService
-import io.antarescircuit.jabbah.app.rating.RailwayRatingService
-import io.antarescircuit.jabbah.app.rating.RatingService
 import io.antarescircuit.jabbah.app.tip.ResourcesTipProvider
 import io.antarescircuit.jabbah.app.workspace.WorkspaceService
 import io.antarescircuit.jabbah.base.AbstractModule
@@ -17,7 +15,6 @@ object AppModuleJvm : AbstractModule() {
 	val remoteControlService = RemoteControlService()
 
 	var applicationUsageService: ApplicationUsageService = RailwayAppUsageServiceImpl()
-	val ratingService: RatingService = RailwayRatingService()
 	var systemDumpService: SystemDumpService = SystemDumpService()
 
 	val workspaceHolder = WorkspaceHolder()

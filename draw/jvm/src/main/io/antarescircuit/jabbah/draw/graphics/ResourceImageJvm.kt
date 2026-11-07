@@ -1,7 +1,7 @@
 package io.antarescircuit.jabbah.draw.graphics
 
 import io.antarescircuit.jabbah.base.logger
-import javax.swing.ImageIcon
+import javax.imageio.ImageIO
 
 /**
  * An [Image] implementation whose data is loaded from resources.
@@ -13,7 +13,7 @@ class ResourceImageJvm(val path: String) : Image {
         private val LOG by logger(ResourceImageJvm::class)
     }
 
-    val imageIcon: ImageIcon
+    val jvmImage: java.awt.image.BufferedImage
 
     init {
         val resource = ResourceImageJvm::class.java.getResource(path)
@@ -21,10 +21,10 @@ class ResourceImageJvm(val path: String) : Image {
             LOG.error("Image '$path' not found")
             throw IllegalArgumentException("Image '$path' not found")
         }
-        imageIcon = ImageIcon(resource)
+        jvmImage = ImageIO.read(resource) ?: throw IllegalArgumentException("Unsupported image '$path'")
     }
 
-    override val width: Int get() = imageIcon.iconWidth
+    override val width: Int get() = jvmImage.width
 
-    override val height: Int get() = imageIcon.iconHeight
+    override val height: Int get() = jvmImage.height
 }

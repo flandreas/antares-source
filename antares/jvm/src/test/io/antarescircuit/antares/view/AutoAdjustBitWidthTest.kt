@@ -22,7 +22,7 @@ import io.antarescircuit.jabbah.graph.library.ContainerLibraryElement
 import io.antarescircuit.jabbah.graph.library.LibraryModule
 import io.antarescircuit.jabbah.graph.library.LibraryTreeViewSwing
 import io.antarescircuit.jabbah.graph.library.OpenContainerLibraryElementRequest
-import io.antarescircuit.jabbah.graph.module.GraphModuleJvm
+import io.antarescircuit.jabbah.graph.module.GraphModuleUiJvm
 import io.antarescircuit.jabbah.graph.project.Project
 import io.antarescircuit.jabbah.graph.ui.GraphDataViewController
 import io.antarescircuit.jabbah.graph.ui.GraphFrameMockBuilder
@@ -52,7 +52,7 @@ class AutoAdjustBitWidthTest {
     @BeforeTest
     fun beforeTest() {
         AntaresJvmTestRule.configure()
-        GraphModuleJvm.projectAkrabClientService = { mock() }
+        GraphModuleUiJvm.projectAkrabClientService = { mock() }
 
         BaseModule.eventBus.clear()
 

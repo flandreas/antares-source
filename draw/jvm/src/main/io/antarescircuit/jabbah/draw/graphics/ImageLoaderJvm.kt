@@ -1,15 +1,13 @@
 package io.antarescircuit.jabbah.draw.graphics
 
-import com.github.weisj.jsvg.parser.SVGLoader
-import java.io.FileInputStream
 import java.nio.file.Paths
 import javax.imageio.ImageIO
 
 /**
- * An [ImageLoader] implementation for the JVM platform that loads system [Image]s
- * from a JAR resource, and used [Image] from the local file system.
+ * Loads raster images from JVM resources and the local file system.
+ * UI implementations can add vector image loading.
  */
-class ImageLoaderJvm : ImageLoader {
+open class ImageLoaderJvm : ImageLoader {
 
     override fun loadSystemImage(path: String, type: ImageType): Image {
         if (type.isRaster) {
@@ -23,14 +21,9 @@ class ImageLoaderJvm : ImageLoader {
         if (type.isRaster) {
             RasterImageJvm(ImageIO.read(Paths.get(path).toFile()))
         } else {
-            loadSVGImage(path)
+            loadVectorImage(path)
         }
 
-    private fun loadSVGImage(path: String): Image {
-        val loader = SVGLoader()
-        FileInputStream(path).use { fis ->
-            val document = loader.load(fis)
-            return SvgImageJvm(document!!)
-        }
-    }
+    protected open fun loadVectorImage(path: String): Image =
+        throw UnsupportedOperationException("Vector image loading requires draw-ui initialization")
 }

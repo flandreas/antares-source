@@ -14,6 +14,10 @@ The repository consists of a strictly layered stack of modules, implemented as s
 
 The package `io.antarescircuit.jabbah` is a general-purpose framework for building 2D graphics applications. Its `graph` package uses this framework to display and edit graphs consisting of edges and vertices. `io.antarescircuit.antares` applies these graph structures to implement a digital circuit editor and simulator application.
 
+UI companion projects (`base-ui`, `draw-ui`, `edit-ui`, `execution-ui`, `app-ui`, `graph-ui`, and `antares-ui`) extend the existing modules. Production dependencies point from each UI project to core and to lower UI projects. Each companion uses the same shared/JVM/JS directory structure.
+
+JVM desktop implementations now reside in the UI companions throughout the stack. UI-specific bootstraps (`BaseModuleUiJvm`, `DrawModuleUiJvm`, `EditModuleUiJvm`, `ExecutionModuleUiJvm`, `AppModuleUiJvm`, and `GraphModuleUiJvm`) initialize Swing adapters, factories, editors and preferences. Antares' desktop bootstrap configures them from `antares-ui`. Core JVM bootstraps retain persistence, platform services, offscreen rendering, nonvolatile storage, HDL generation and CSV handling. Swing-only library dependencies, SVG image loading/rendering with JSVG, Ktor HTTP client implementations and dependencies, and JVM `img/` resources belong to the UI projects. Desktop packaging, native installer tasks, and installer-only assets belong to `antares-ui`; installer assets are kept outside runtime resources. Portable view code and other resources outside `img/` still await migration. See [JVM artifacts](../jabbah-artifacts.md) for packaging and migration status.
+
 ## Modules
 
 [jabbah.base](module-base.md)

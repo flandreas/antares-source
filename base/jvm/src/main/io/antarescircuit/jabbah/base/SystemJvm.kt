@@ -4,18 +4,14 @@ import io.antarescircuit.jabbah.base.geom.AffineTransform
 import io.antarescircuit.jabbah.base.geom.AffineTransformJvm
 import io.antarescircuit.jabbah.base.geom.Path
 import io.antarescircuit.jabbah.base.geom.Path2DJvm
-import io.antarescircuit.jabbah.base.time.RealTimeTimerJvm
+import io.antarescircuit.jabbah.base.time.JvmTimer
 import io.antarescircuit.jabbah.base.time.Timer
 import org.apache.commons.lang3.SystemUtils
 import java.awt.Desktop
-import java.awt.Frame
 import java.awt.Toolkit
 import java.net.URI
 import java.nio.file.Files
 import java.nio.file.Paths
-import javax.swing.JFrame
-import javax.swing.JOptionPane
-import javax.swing.SwingUtilities
 import kotlin.reflect.KClass
 
 /** Implements the [System] interface on the Java virtual machine platform.*/
@@ -23,11 +19,25 @@ actual object System {
 
 	/** ---- [System] interface */
 
-	actual var invoker: (() -> Unit) -> Unit = { invocable -> SwingUtilities.invokeLater { invocable.invoke() } }
+	actual var invoker: (() -> Unit) -> Unit = { it.invoke() }
+
+	/** Desktop implementations are installed by BaseModuleUiJvm. */
+	var timerFactory: () -> Timer = { JvmTimer() }
+
+	var browser: (String, String) -> Unit = { url, _ ->
+		check(Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+			"Opening a browser is not supported"
+		}
+		Desktop.getDesktop().browse(URI(url))
+	}
+
+	var messageHandler: (String, String, Boolean) -> Unit = { _, _, _ ->
+		throw UnsupportedOperationException("Modal messages require the desktop UI")
+	}
 
 	actual fun beep() = Toolkit.getDefaultToolkit().beep()
 
-	actual fun createTimer(): Timer = RealTimeTimerJvm()
+	actual fun createTimer(): Timer = timerFactory()
 
 	actual fun currentTimeMillis(): Long = java.lang.System.currentTimeMillis()
 
@@ -72,16 +82,7 @@ actual object System {
 	}
 
 	actual fun browse(url: String, actionName: String) {
-		if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-			Desktop.getDesktop().browse(URI(url))
-		} else {
-			JOptionPane.showConfirmDialog(
-				Frame.getFrames()[0],
-				Translations.getString("application.cannotOpenUrl.name"),
-				actionName,
-				JOptionPane.DEFAULT_OPTION,
-				JOptionPane.ERROR_MESSAGE)
-		}
+		browser(url, actionName)
 	}
 
 	actual fun printStackTrace() {
@@ -99,11 +100,6 @@ actual object System {
 	}
 
 	actual fun showModalMessage(title: String, message: String, isError: Boolean) {
-		JOptionPane.showMessageDialog(
-			JFrame.getFrames()[0],
-			message,
-			title,
-			if (isError) JOptionPane.ERROR_MESSAGE else JOptionPane.INFORMATION_MESSAGE
-		)
+		messageHandler(title, message, isError)
 	}
 }
