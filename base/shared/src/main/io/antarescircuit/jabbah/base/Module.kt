@@ -19,7 +19,7 @@ abstract class AbstractModule : Module {
      * by settings in other [Module]s.
      */
     fun reset() {
-        if (!configured) {
+        if (configured) {
             configured = false
             resetDependencies()
         }

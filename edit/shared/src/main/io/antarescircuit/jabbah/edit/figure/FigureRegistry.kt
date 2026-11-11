@@ -18,6 +18,10 @@ object FigureRegistry {
 
 	val groups: Iterator<FigureGroup> get() = _groups.iterator()
 
+	fun clear() {
+		_groups.clear()
+	}
+
 	fun registerGroup(name: String): FigureGroup {
 		if (_groups.any { it.name == name }) {
 			throw IllegalArgumentException("FigureGroup $name already registered")

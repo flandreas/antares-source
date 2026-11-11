@@ -79,6 +79,8 @@ object GraphModelModule : AbstractModule() {
 	}
 
 	override fun resetDependencies() {
+		GraphParamTypeRegistry.clear()
+		SemanticRegistry.clear()
 		BaseModule.reset()
 		IOModule.reset()
 		ExecutionModule.reset()

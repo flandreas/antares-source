@@ -10,6 +10,10 @@ object SemanticRegistry {
     /** Returns all registered [Semantic]s. */
     val semantics: Set<Semantic> get() = registeredSemantics
 
+	fun clear() {
+		registeredSemantics.clear()
+	}
+
     fun register(semantic: Semantic) {
         if (registeredSemantics.contains(semantic)) {
             throw IllegalArgumentException("Semantic ${semantic.customName} already registered")

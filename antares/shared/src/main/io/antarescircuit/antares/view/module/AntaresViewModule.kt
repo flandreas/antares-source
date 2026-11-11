@@ -268,6 +268,7 @@ object AntaresViewModule : AbstractModule() {
 	}
 
 	override fun resetDependencies() {
+		FigureRegistry.clear()
 		GraphModule.reset()
 		AnimationModule.reset()
 		AntaresModelModule.reset()

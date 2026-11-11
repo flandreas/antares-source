@@ -9,7 +9,6 @@ import io.antarescircuit.jabbah.graph.library.MemoryLibraryPersistenceService
 import io.antarescircuit.jabbah.graph.model.GenericGraphType
 import io.antarescircuit.jabbah.graph.model.param.StringGraphParamType
 import io.antarescircuit.jabbah.graph.model.param.GraphParamDefinition
-import io.antarescircuit.jabbah.graph.model.param.GraphParamTypeRegistry
 import io.antarescircuit.jabbah.graph.view.GraphViewTestRule
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -22,7 +21,6 @@ class SubGraphVerticeRefParamTest {
 		GraphViewTestRule.configure()
 		LibraryModule.userLibraryPersistenceService = MemoryLibraryPersistenceService()
 		LibraryModule.libraryHolder.l = LibraryImpl(TranslatableText("test"))
-		GraphParamTypeRegistry.register(StringGraphParamType.name) { StringGraphParamType }
 	}
 
 	@Test
