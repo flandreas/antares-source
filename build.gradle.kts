@@ -195,7 +195,7 @@ subprojects {
 						implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:$kotlinCoroutinesVersion")
 						implementation("commons-beanutils:commons-beanutils:$commonsBeansVersion")
 						// Property sheet and Markdown viewer are patched for dark mode.
-						api(files("../lib/l2fprod-7.7.jar"))
+						api(files("../lib/l2fprod-7.8.jar"))
 						implementation(files("../lib/jmdviewer-1.1.jar"))
 						implementation("com.formdev:flatlaf:$flatLafVersion:no-natives")
 						implementation("org.drjekyll:fontchooser:2.4")
