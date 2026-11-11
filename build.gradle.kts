@@ -37,6 +37,7 @@ apply(plugin = "java-base")
 
 val version_project: String by project
 val group_project = rootProject.name
+val targetJvm = JvmTarget.JVM_25
 
 allprojects {
 
@@ -95,7 +96,7 @@ subprojects {
 		jvm {
 
 			compilerOptions {
-				jvmTarget.set(JvmTarget.JVM_25)
+				jvmTarget.set(targetJvm)
 				freeCompilerArgs.addAll(
 					// https://youtrack.jetbrains.com/issue/KT-37435
 					"-Xno-optimized-callable-references"
@@ -305,7 +306,7 @@ val corePublicationClasspath by configurations.creating {
 		attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
 		attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
 		attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling.EXTERNAL))
-		attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 25)
+		attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, targetJvm.target.toInt())
 		attribute(KotlinPlatformType.attribute, KotlinPlatformType.jvm)
 	}
 }

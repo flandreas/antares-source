@@ -280,6 +280,20 @@ class AntaresSwing(
 		}
 
 		DrawModuleUiJvm.contextMenuProvider.applicationName = displayName
+
+		warnIfUsingNewerJavaVersion()
+	}
+
+	private fun warnIfUsingNewerJavaVersion() {
+		val javaVersion = Runtime.version().feature()
+		if (javaVersion > RECOMMENDED_JAVA_VERSION) {
+			JOptionPane.showMessageDialog(
+				mainFrame,
+				Translations.getString("antares.javaVersionWarning.msg", RECOMMENDED_JAVA_VERSION, javaVersion),
+				Translations.getString("antares.javaVersionWarning.title"),
+				JOptionPane.WARNING_MESSAGE,
+			)
+		}
 	}
 
 	override fun shutdownUI() {
