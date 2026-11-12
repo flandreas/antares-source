@@ -4,8 +4,10 @@ import io.antarescircuit.antares.AntaresTestRule
 import io.antarescircuit.antares.model.expression.assertAST
 import io.antarescircuit.antares.model.signal.CurrentDigitalSignalNotation
 import io.antarescircuit.antares.model.signal.DigitalSignalNotation
+import io.antarescircuit.jabbah.base.dsl.SyntaxError
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.assertFailsWith
 
 class TestcaseParserTest {
 
@@ -242,5 +244,74 @@ class TestcaseParserTest {
 			TestScript
 			- X,X2,Z
 		""".trimIndent())
+	}
+
+	@Test
+	fun shouldParseNestedLoopsAndRunBlocks() {
+		val parser = TestcaseParser("""
+			I O
+			loop a 0..0x3 {
+				run {
+					loop b 3..0b1 {
+						(a) (b)
+					}
+				}
+			}
+		""".trimIndent())
+
+		assertAST(parser.parse(), """
+			TestScript
+			- I,O
+			- Loop a 0..3
+			-- Run
+			--- Loop b 3..1
+			---- TestVector
+			----- a
+			----- b
+		""".trimIndent())
+	}
+
+	@Test
+	fun shouldParseExpressionsWithOperatorPrecedence() {
+		val parser = TestcaseParser("""
+			I C O
+			(1 | 2 ^ 3 & 4 << 5 + 6 * -~i) ^(i - 1 - 2) ((i | 1) * 2)
+		""".trimIndent())
+
+		assertAST(parser.parse(), """
+			TestScript
+			- I,C,O
+			- TestVector
+			-- (1 | (2 ^ (3 & (4 << (5 + (6 * -~i))))))
+			-- ^((i - 1) - 2)
+			-- ((i | 1) * 2)
+		""".trimIndent())
+	}
+
+	@Test
+	fun shouldRejectRunBlockInsideRunBlock() {
+		val parser = TestcaseParser("""
+			I O
+			run {
+				loop i 0..1 {
+					run {
+						0 0
+					}
+				}
+			}
+		""".trimIndent())
+
+		assertFailsWith<SyntaxError> { parser.parse() }
+	}
+
+	@Test
+	fun shouldRejectUnclosedLoop() {
+		val parser = TestcaseParser("""
+			I O
+			loop i 0..1 {
+				(i) 0
+		""".trimIndent())
+
+		assertFailsWith<SyntaxError> { parser.parse() }
 	}
 }

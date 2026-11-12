@@ -22,7 +22,19 @@ enum class TestcaseTokenType(override val id: String) : TokenType {
 	BINARY_LITERAL("0b"),
 	HEX_LITERAL("0x"),
 	GREATER(">"),
-	SMALLER("<")
+	SMALLER("<"),
+	LOOP("loop"),
+	RANGE(".."),
+	LPAREN("("),
+	RPAREN(")"),
+	PLUS("+"),
+	MINUS("-"),
+	MULTIPLY("*"),
+	AMPERSAND("&"),
+	VERTICAL_BAR("|"),
+	TILDE("~"),
+	SHIFT_LEFT("<<"),
+	SHIFT_RIGHT(">>"),
 }
 
 class TestcaseLexer(text: String) : BaseLexer(text) {
@@ -36,9 +48,22 @@ class TestcaseLexer(text: String) : BaseLexer(text) {
 		private val RCURLEY_TOKEN = Token<Unit>(RCURLEY)
 		private val GREATER_TOKEN = Token<Unit>(GREATER)
 		private val SMALLER_TOKEN = Token<Unit>(SMALLER)
+		private val LOOP_TOKEN = Token<String>(LOOP)
+		private val RANGE_TOKEN = Token<Unit>(RANGE)
+		private val LPAREN_TOKEN = Token<Unit>(LPAREN)
+		private val RPAREN_TOKEN = Token<Unit>(RPAREN)
+		private val PLUS_TOKEN = Token<Unit>(PLUS)
+		private val MINUS_TOKEN = Token<Unit>(MINUS)
+		private val MULTIPLY_TOKEN = Token<Unit>(MULTIPLY)
+		private val AMPERSAND_TOKEN = Token<Unit>(AMPERSAND)
+		private val VERTICAL_BAR_TOKEN = Token<Unit>(VERTICAL_BAR)
+		private val TILDE_TOKEN = Token<Unit>(TILDE)
+		private val SHIFT_LEFT_TOKEN = Token<Unit>(SHIFT_LEFT)
+		private val SHIFT_RIGHT_TOKEN = Token<Unit>(SHIFT_RIGHT)
 
 		val RESERVED_KEYWORDS = mapOf(
-			"run" to RUN_TOKEN
+			"run" to RUN_TOKEN,
+			"loop" to LOOP_TOKEN,
 		)
 
 		fun decimalLiteralToken(value: DigitalSignal) = Token(DECIMAL_LITERAL, value)
@@ -67,15 +92,32 @@ class TestcaseLexer(text: String) : BaseLexer(text) {
 				return advanceWith(state, EOL_TOKEN)
 			}
 			'^' -> return advanceWith(state, CARET_TOKEN)
-			'X','x' -> return if (!statementMode) super.nextTokenImpl(state) else advanceWith(state, DONT_CARE_TOKEN)
-			'Z', 'z' -> return if (!statementMode) super.nextTokenImpl(state) else advanceWith(state, UNDEFINED_TOKEN)
+			// A standalone X/Z is a special value, otherwise it starts an identifier (e.g. a loop variable)
+			'X','x' -> return if (!statementMode || isIdChar(peek(state))) super.nextTokenImpl(state) else advanceWith(state, DONT_CARE_TOKEN)
+			'Z', 'z' -> return if (!statementMode || isIdChar(peek(state))) super.nextTokenImpl(state) else advanceWith(state, UNDEFINED_TOKEN)
 			'{' -> return advanceWith(state, LCURLEY_TOKEN)
 			'}' -> return advanceWith(state, RCURLEY_TOKEN)
-			'>' -> return advanceWith(state, GREATER_TOKEN)
-			'<' -> return advanceWith(state, SMALLER_TOKEN)
+			'>' -> return if (peek(state) == '>') advanceTwiceWith(state, SHIFT_RIGHT_TOKEN) else advanceWith(state, GREATER_TOKEN)
+			'<' -> return if (peek(state) == '<') advanceTwiceWith(state, SHIFT_LEFT_TOKEN) else advanceWith(state, SMALLER_TOKEN)
+			'.' -> if (peek(state) == '.') return advanceTwiceWith(state, RANGE_TOKEN)
+			'(' -> return advanceWith(state, LPAREN_TOKEN)
+			')' -> return advanceWith(state, RPAREN_TOKEN)
+			'+' -> return advanceWith(state, PLUS_TOKEN)
+			'-' -> return advanceWith(state, MINUS_TOKEN)
+			'*' -> return advanceWith(state, MULTIPLY_TOKEN)
+			'&' -> return advanceWith(state, AMPERSAND_TOKEN)
+			'|' -> return advanceWith(state, VERTICAL_BAR_TOKEN)
+			'~' -> return advanceWith(state, TILDE_TOKEN)
 		}
 
 		return super.nextTokenImpl(state)
+	}
+
+	private fun isIdChar(c: Char?): Boolean = c != null && (c.isLetterOrDigit() || c == '_')
+
+	private fun advanceTwiceWith(state: State, token: Token<Any>): Token<Any> {
+		advance(state)
+		return advanceWith(state, token)
 	}
 
 	/** Testcases are line-oriented, so newlines are not whitespace.*/

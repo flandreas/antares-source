@@ -58,12 +58,33 @@ class PortNames(
 	override fun toString(): String = names.joinToString(",") { it.toString() }
 }
 
+/** Contains [TestVectorNode]s and [LoopNode]s that are executed in a single simulation run.*/
 class RunNode(
 	location: TextLocation,
-	children: List<TestVectorNode>
-): Compound<TestVectorNode>(location, children) {
+	children: List<Node>
+): Compound<Node>(location, children) {
 
 	override fun toString(): String = "Run"
+}
+
+/**
+ * Repeats its [children] for every value of [variable] from [from] to [to] (both inclusive).
+ * Counts downwards if [from] is greater than [to].
+ */
+class LoopNode(
+	location: TextLocation,
+	val variable: String,
+	val from: ULong,
+	val to: ULong,
+	children: List<Node>
+): Compound<Node>(location, children) {
+
+	val range: ULongProgression get() = if (from <= to) from..to else from downTo to
+
+	/** The number of iterations, or `null` if it exceeds [ULong.MAX_VALUE].*/
+	val iterationCount: ULong? get() = (if (from <= to) to - from else from - to).let { if (it == ULong.MAX_VALUE) null else it + 1UL }
+
+	override fun toString(): String = "Loop $variable $from..$to"
 }
 
 class TestVectorNode(
@@ -85,10 +106,46 @@ class TestVectorNode(
 	}
 }
 
-class ValueNode(
+sealed class ValueNode(location: TextLocation) : AbstractNode(location) {
+	abstract val type: Value.Type
+}
+
+/** A constant value, such as a number, X or Z.*/
+class LiteralValueNode(
 	location: TextLocation,
 	val value: Value
-) : AbstractNode(location) {
+) : ValueNode(location) {
+
+	override val type: Value.Type get() = value.type
 
 	override fun toString(): String = value.toString()
+}
+
+/** A parenthesized [Expression], evaluated for every test vector. [type] is [Value.Type.NORMAL] or [Value.Type.CLOCKED].*/
+class ExpressionValueNode(
+	location: TextLocation,
+	val expression: Expression,
+	override val type: Value.Type
+) : ValueNode(location) {
+
+	override fun toString(): String = if (type == Value.Type.CLOCKED) "^$expression" else "$expression"
+}
+
+/** Integer expressions in test vectors, operating on unsigned 64 bit values.*/
+sealed interface Expression
+
+class NumberExpression(val value: ULong) : Expression {
+	override fun toString(): String = value.toString()
+}
+
+class VariableExpression(val location: TextLocation, val name: String) : Expression {
+	override fun toString(): String = name
+}
+
+class UnaryExpression(val operator: TestcaseTokenType, val operand: Expression) : Expression {
+	override fun toString(): String = "${operator.id}$operand"
+}
+
+class BinaryExpression(val left: Expression, val operator: TestcaseTokenType, val right: Expression) : Expression {
+	override fun toString(): String = "($left ${operator.id} $right)"
 }
