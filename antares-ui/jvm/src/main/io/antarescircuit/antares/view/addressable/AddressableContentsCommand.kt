@@ -52,7 +52,8 @@ class AddressableContentsCommand(
 	}
 
 	private fun readValidated(): Memory {
-		val contents = Files.readString(Paths.get(filePath))
+		// Decode leniently: hand-edited dumps may contain non-UTF-8 comments
+		val contents = String(Files.readAllBytes(Paths.get(filePath)), Charsets.UTF_8)
 		val parsed = Memory()
 		if (LogisimMemoryDump.recognizes(contents)) {
 			LogisimMemoryDump.read(parsed, contents, addressable.maxAddress, addressable.dataWidth.maxValue)

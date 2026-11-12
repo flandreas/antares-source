@@ -57,14 +57,17 @@ class MemoryPageTest {
 		assertEquals(8, MemoryPage.parseAddress("10", AddressableValueConverter.Octal, 255))
 		assertEquals(2, MemoryPage.parseAddress("10", AddressableValueConverter.Binary, 255))
 		assertEquals(255, MemoryPage.parseAddress("0xFF", AddressableValueConverter.Decimal, 255))
-		assertEquals(5, MemoryPage.parseAddress("0b101", AddressableValueConverter.Hexadecimal, 255))
-		assertEquals(100, MemoryPage.parseAddress("0d100", AddressableValueConverter.Hexadecimal, 255))
+		assertEquals(5, MemoryPage.parseAddress("0b101", AddressableValueConverter.Decimal, 255))
+		assertEquals(100, MemoryPage.parseAddress("0d100", AddressableValueConverter.Octal, 255))
+		// In hexadecimal mode, "0B" and "0D" are digits, as shown in padded row headers
+		assertEquals(0xB00, MemoryPage.parseAddress("0B00", AddressableValueConverter.Hexadecimal, 0xFFFF))
+		assertEquals(0xD10, MemoryPage.parseAddress("0d10", AddressableValueConverter.Hexadecimal, 0xFFFF))
 		assertEquals(Int.MAX_VALUE, MemoryPage.parseAddress("7fffffff", AddressableValueConverter.Hexadecimal, Int.MAX_VALUE))
 	}
 
 	@Test
 	fun shouldRejectInvalidOutOfRangeAndOverflowingAddresses() {
-		for (text in listOf("", " ", "-1", "100", "0x100", "0b2", "0d", "oops", "ffffffffffffffff")) {
+		for (text in listOf("", " ", "-1", "100", "0x100", "0x", "0b100", "oops", "ffffffffffffffff")) {
 			assertNull(MemoryPage.parseAddress(text, AddressableValueConverter.Hexadecimal, 255), text)
 		}
 	}
