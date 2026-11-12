@@ -47,8 +47,6 @@ class MemoryStorable(
 
     override val currentAddress: Int get() = 0
 
-    override val maxAddress: Int get() = addressWidth.maxValue.toInt()
-
     override val data: ULong get() = 0UL
 
     override val disassemblyWidth: Int get() = 0

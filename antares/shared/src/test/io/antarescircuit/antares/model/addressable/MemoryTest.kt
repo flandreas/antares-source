@@ -221,4 +221,54 @@ class MemoryTest {
 		memory.write(2055, 0UL)
 		assertEquals(0UL, memory.read(2055))
 	}
+	@Test
+	fun shouldKeepReadsSparseAndExportLaterSegments() {
+		val memory = Memory(8)
+		memory.write(24, 42UL)
+		assertEquals(0UL, memory.read(0))
+		assertNull(memory.readComment(1_000_000))
+		assertEquals(25, memory.nonZeroLength)
+		assertEquals(listOf(MemoryCell(24, 42UL)), memory.getNonZeroCells().asSequence().toList())
+	}
+
+	@Test
+	fun shouldReclaimClearedSegmentsWithoutHidingLaterCells() {
+		val memory = Memory(8)
+		memory.write(1, 5UL)
+		memory.write(24, 42UL)
+		memory.write(1, 0UL)
+		memory.writeCommentedValue(2, 0UL, null)
+		assertEquals(listOf(MemoryCell(24, 42UL)), memory.getNonZeroCells().asSequence().toList())
+		memory.write(24, 0UL)
+		assertEquals(0, memory.nonZeroLength)
+		assertFalse(memory.getNonZeroCells().hasNext())
+	}
+
+	@Test
+	fun shouldPreserveCommentedZerosAndSnapshotIndependence() {
+		val memory = Memory(8)
+		memory.writeComment(100_000_000, "entry point")
+		val snapshot = memory.copy()
+		memory.writeComment(100_000_000, null)
+		assertEquals(0, memory.nonZeroLength)
+		assertEquals("entry point", snapshot.readComment(100_000_000))
+		val restored = Memory(7)
+		restored.replaceWith(snapshot)
+		assertEquals(snapshot.getNonZeroCells().asSequence().toList(), restored.getNonZeroCells().asSequence().toList())
+		restored.replaceWith(restored)
+		assertEquals("entry point", restored.readComment(100_000_000))
+	}
+
+	@Test
+	fun shouldRejectInvalidAddressRangesBeforeWriting() {
+		assertFailsWith<IllegalArgumentException> { Memory(0) }
+		val memory = Memory()
+		assertFailsWith<IllegalArgumentException> { memory.read(-1) }
+		assertFailsWith<IllegalArgumentException> { memory.write(Int.MAX_VALUE, 1UL, 2UL) }
+		assertFalse(memory.getNonZeroCells().hasNext())
+		memory.write(Int.MAX_VALUE, 1UL)
+		assertEquals(1UL, memory.read(Int.MAX_VALUE))
+		assertFailsWith<IllegalStateException> { memory.nonZeroLength }
+	}
+
 }

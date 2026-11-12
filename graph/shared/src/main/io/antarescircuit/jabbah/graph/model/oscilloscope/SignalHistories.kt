@@ -75,6 +75,7 @@ abstract class AbstractSignalHistories(
 
 	override fun clear() {
 		signalHistories.values.forEach { it.clear() }
+		maxTime = 0
 	}
 
 	override fun getSignalHistory(name: String): SignalHistory<Any>? = signalHistories[name]
@@ -123,6 +124,11 @@ class ClockedSignalHistories(
 
 	/** The current artificial time. */
 	private var time: Long = 0
+
+	override fun clear() {
+		super.clear()
+		time = 0
+	}
 
 	override fun storeSignal(name: String, signal: Any, signalHandler: SignalHandler) {
 		val history = signalHistories[name]!!

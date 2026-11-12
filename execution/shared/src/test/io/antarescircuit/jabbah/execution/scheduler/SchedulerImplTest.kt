@@ -267,6 +267,91 @@ class SchedulerImplTest {
 		verify { actor.act(any(), any())}
 	}
 
+	@Test
+	fun shouldExecuteManyPendingTimesInOrderAndCoalesceLatestData() {
+		val manual = createManualScheduler()
+		val calls = mutableListOf<ActorData>()
+		val actor = object : ActorImpl() {
+			override fun act(signalHandler: SignalHandler, data: ActorData) {
+				calls.add(data)
+				signalHandler.actingDone(this, data)
+			}
+		}
+		manual.isActive = true
+		val expected = List(200) { createActorData() }
+		for (i in expected.indices.reversed()) {
+			manual.requestActingAfter(actor, (i + 1).toLong(), createActorData())
+			manual.requestActingAfter(actor, (i + 1).toLong(), expected[i])
+		}
+		assertEquals(expected.size, manual.numberOfRemainingSlots)
+		repeat(expected.size) { manual.execute() }
+		assertEquals(expected, calls)
+		assertTrue(manual.isQueueEmpty)
+		manual.dispose()
+	}
+
+	@Test
+	fun shouldKeepNewSlotScheduledAtSameTimeAfterSynchronousCompletion() {
+		val manual = createManualScheduler()
+		val calls = mutableListOf<String>()
+		val target = object : ActorImpl() {
+			override fun act(signalHandler: SignalHandler, data: ActorData) {
+				calls.add("target")
+				signalHandler.actingDone(this, data)
+			}
+		}
+		val source = object : ActorImpl() {
+			override fun act(signalHandler: SignalHandler, data: ActorData) {
+				calls.add("source")
+				signalHandler.actingDone(this, data)
+				signalHandler.requestActingAfter(target, 0, data)
+			}
+		}
+		manual.isActive = true
+		manual.requestActingAfter(source, 10, createActorData())
+		manual.execute()
+		assertEquals(1, manual.numberOfRemainingSlots)
+		manual.execute()
+		assertEquals(listOf("source", "target"), calls)
+		assertTrue(manual.isQueueEmpty)
+		manual.dispose()
+	}
+
+	@Test
+	fun shouldRemovePrematureSlotsAndForgetSlotsOnRestart() {
+		val manual = createManualScheduler()
+		var calls = 0
+		val actor = object : ActorImpl() {
+			override fun act(signalHandler: SignalHandler, data: ActorData) {
+				calls++
+				signalHandler.actingDone(this, data)
+			}
+		}
+		manual.isActive = true
+		manual.requestActingAfter(createActor(), 10, createActorData())
+		manual.requestActingAfter(actor, 20, createActorData())
+		manual.actPrematurely(actor, null)
+		assertEquals(1, manual.numberOfRemainingSlots)
+		manual.requestActingAfter(actor, 20, createActorData())
+		assertEquals(2, manual.numberOfRemainingSlots)
+		manual.isActive = false
+		manual.isActive = true
+		manual.requestActingAfter(actor, 20, createActorData())
+		assertEquals(1, manual.numberOfRemainingSlots)
+		manual.execute()
+		assertEquals(2, calls)
+		assertTrue(manual.isQueueEmpty)
+		manual.dispose()
+	}
+
+	private fun createManualScheduler(): SchedulerImpl = SchedulerImpl(
+		scheduler.systemSpeedCategory,
+		timeService,
+		eventBus,
+		NoiseGeneratorHolder(NoNoiseGenerator(), eventBus),
+		task = ManualSchedulerTask(),
+	).apply { isSingleStepMode = true }
+
 	/** ---- [SchedulerImplTest] */
 
 	private fun createActor(isBreakpoint: Boolean = true, propagationDelay: Long = 0): Actor {

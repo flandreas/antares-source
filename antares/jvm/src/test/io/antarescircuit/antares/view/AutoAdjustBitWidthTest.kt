@@ -31,6 +31,7 @@ import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.module.GraphViewModule
 import io.antarescircuit.jabbah.graph.view.vertice.SubGraphVerticeView
 import dev.mokkery.mock
+import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -80,6 +81,18 @@ class AutoAdjustBitWidthTest {
 
 
         application.start()
+    }
+
+    @AfterTest
+    fun afterTest() {
+        // These controllers listen on the shared event bus beyond this test unless disposed.
+        if (::application.isInitialized) {
+            application.graphFrameController.containerPanelController.dispose()
+            application.graphFrameController.dispose()
+        }
+        if (::graphDataViewController.isInitialized) {
+            graphDataViewController.dispose()
+        }
     }
 
     @Test
