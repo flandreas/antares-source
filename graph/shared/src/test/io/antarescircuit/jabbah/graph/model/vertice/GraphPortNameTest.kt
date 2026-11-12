@@ -25,6 +25,7 @@ class GraphPortNameTest {
 		assertStructure("Input", 4, GraphPortName.createStructure("Input4"))
 		assertStructure("Input ", 3, GraphPortName.createStructure("Input 3"))
 		assertStructure("Bla", -1, GraphPortName.createStructure("Bla"))
+		assertStructure("Line\nBreak ", 2, GraphPortName.createStructure("Line\nBreak 2"))
 	}
 
 	private fun assertStructure(text: String, number: Int, structure: GraphPortNameStructure?) {
