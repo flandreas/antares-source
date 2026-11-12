@@ -1,6 +1,9 @@
 package io.antarescircuit.antares.view.synthesis
 
 import io.antarescircuit.antares.model.AntaresGraphTypes
+import io.antarescircuit.antares.model.DigitalGraph
+import io.antarescircuit.antares.model.testcase.Testcase
+import io.antarescircuit.antares.model.testcase.TestcaseScriptGenerator
 import io.antarescircuit.antares.model.expression.DslBooleanExpressionWriter
 import io.antarescircuit.antares.model.module.AntaresModelModule
 import io.antarescircuit.antares.model.quinemccluskey.DNF
@@ -30,6 +33,7 @@ class CreateCircuitFromTruthTableService(
 	/**
 	 * Creates a new [MetaGraph] for the given [TruthTable] in the same directory.
 	 * @param twoInputGatesOnly restricts the circuit to gates with two inputs, if supported by [circuitType]
+	 * @param createTestcase if `true`, adds a [Testcase] generated from a combinational [truthTable] to the new circuit
 	 * @throws CircuitFromTruthTableBuilderError if the required gate input counts exceed the system limit
 	 */
 	fun create(
@@ -38,6 +42,7 @@ class CreateCircuitFromTruthTableService(
 		circuitName: String,
 		circuitType: CircuitSynthesisType,
 		twoInputGatesOnly: Boolean = false,
+		createTestcase: Boolean = false,
 	) {
 		LOG.userTrail("Create Circuit from TruthTable in directory ${item.name.value}")
 
@@ -49,6 +54,10 @@ class CreateCircuitFromTruthTableService(
 		}
 
 		val metaGraph = createMetaGraph(truthTable, circuitName, circuitType, twoInputGatesOnly, executionScript)
+		if (createTestcase && truthTable.stateColumnCount == 0) {
+			val testcaseName = truthTable.name.value.ifBlank { circuitName }
+			(metaGraph.graph.model as DigitalGraph).testcases.add(Testcase(testcaseName, TestcaseScriptGenerator.generate(truthTable)))
+		}
 		with (item.library!!) {
 			val dir = libraryService.getDirectoryOf(this, item)
 			val element = libraryService.addContainerLibraryElement(this, metaGraph, dir)

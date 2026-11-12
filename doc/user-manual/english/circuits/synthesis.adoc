@@ -90,6 +90,8 @@ Besides the name of the circuit to be created, Antares also lets you choose the 
 
 image::user-manual/circuits/synthesis-lut-sample.png[Truth Table,700,align="center"]
 
+For combinational circuits, the option "Create test case from truth table" (selected by default) adds a test case (see "Circuit Tests") to the new circuit. The test case is named after the truth table and contains one test vector for every row of the truth table, where "any value" outputs are written as `X`. This lets you re-check the circuit against the truth table after you have modified it.
+
 [[chapter-boolean-expressions]]
 == Boolean Expressions
 

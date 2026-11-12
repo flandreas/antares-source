@@ -56,6 +56,9 @@ class CreateCircuitFromTruthTablePanel(
 	)
 
 	private val twoInputGatesOnlyField = JCheckBox(Translations.getString("antares.synthesis.twoInputGatesOnly"))
+	/** Only combinational truth tables can be turned into test cases.*/
+	private val createTestcaseField = JCheckBox(Translations.getString("antares.synthesis.createCircuitFromTruthTable.createTestcase"), true)
+		.also { it.isVisible = truthTable.stateColumnCount == 0 }
 
 	init {
 		buildUI()
@@ -108,6 +111,8 @@ class CreateCircuitFromTruthTablePanel(
 
 		twoInputGatesOnlyField.alignmentX = Component.LEFT_ALIGNMENT
 		contentPanel.add(twoInputGatesOnlyField)
+		createTestcaseField.alignmentX = Component.LEFT_ALIGNMENT
+		contentPanel.add(createTestcaseField)
 		contentPanel.add(Box.createVerticalStrut(18))
 
 		val buttonPanel = JPanel()
@@ -129,6 +134,7 @@ class CreateCircuitFromTruthTablePanel(
 						nameField.text,
 						selectedSynthesisType,
 						twoInputGatesOnlyField.isEnabled && twoInputGatesOnlyField.isSelected,
+						createTestcaseField.isSelected,
 					)
 					closeHandler()
 				} catch (e: CircuitFromTruthTableBuilderError) {
