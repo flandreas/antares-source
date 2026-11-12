@@ -9,7 +9,6 @@ import io.antarescircuit.antares.model.gate.UnaryLogicGateType.Not
 import io.antarescircuit.antares.model.signal.Bit.*
 import io.antarescircuit.antares.model.signal.DigitalSignal
 import io.antarescircuit.antares.model.truthtable.TruthTable
-import io.antarescircuit.antares.model.truthtable.TruthTableService
 import io.antarescircuit.antares.view.gate.LogicGateView
 import io.antarescircuit.antares.view.inout.DigitalCircuitInOutView
 import io.antarescircuit.antares.view.net.ConstantView
@@ -21,9 +20,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
-class AndOrCircuitFromTruthTableBuilderTest {
-
-	private val truthTableService = TruthTableService()
+class GateCircuitFromTruthTableBuilderTest {
 
 	init {
 		AntaresTestRule.configure()
@@ -39,7 +36,7 @@ class AndOrCircuitFromTruthTableBuilderTest {
 		truthTable.setColumnValues(2, False, True, True, False)
 
 		val metaGraph = MetaGraph.create(TranslatableText("Test"), AntaresGraphTypes.Digital)
-		AndOrCircuitFromTruthTableBuilder(truthTable, truthTableService.generateDnfs(truthTable), metaGraph.graph).build()
+		CircuitSynthesisType.AndOrGate.build(truthTable, false, metaGraph.graph)
 
 		assertEquals(3, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<DigitalCircuitInOutView>().size)
 		assertEquals(2, getLogicGateViews(metaGraph, Not).size)
@@ -56,7 +53,7 @@ class AndOrCircuitFromTruthTableBuilderTest {
 		truthTable.setColumnValues(3, True, True, True, True)
 
 		val metaGraph = MetaGraph.create(TranslatableText("Test"), AntaresGraphTypes.Digital)
-		AndOrCircuitFromTruthTableBuilder(truthTable, truthTableService.generateDnfs(truthTable), metaGraph.graph).build()
+		CircuitSynthesisType.AndOrGate.build(truthTable, false, metaGraph.graph)
 
 		assertEquals(4, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<DigitalCircuitInOutView>().size)
 		assertEquals(1, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<ConstantView>().size)
@@ -74,7 +71,7 @@ class AndOrCircuitFromTruthTableBuilderTest {
 		truthTable.setColumnValues(3, False, False, False, False)
 
 		val metaGraph = MetaGraph.create(TranslatableText("Test"), AntaresGraphTypes.Digital)
-		AndOrCircuitFromTruthTableBuilder(truthTable, truthTableService.generateDnfs(truthTable), metaGraph.graph).build()
+		CircuitSynthesisType.AndOrGate.build(truthTable, false, metaGraph.graph)
 
 		assertEquals(4, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<DigitalCircuitInOutView>().size)
 		assertEquals(1, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<ConstantView>().size)
@@ -90,7 +87,7 @@ class AndOrCircuitFromTruthTableBuilderTest {
 		truthTable.setColumnValues(3, True, False, True, False, Error, False, True, True)
 
 		val metaGraph = MetaGraph.create(TranslatableText("Test"), AntaresGraphTypes.Digital)
-		AndOrCircuitFromTruthTableBuilder(truthTable, truthTableService.generateDnfs(truthTable), metaGraph.graph).build()
+		CircuitSynthesisType.AndOrGate.build(truthTable, false, metaGraph.graph)
 
 		assertEquals(4, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<DigitalCircuitInOutView>().size)
 		assertEquals(0, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<ConstantView>().size)
@@ -111,7 +108,7 @@ class AndOrCircuitFromTruthTableBuilderTest {
 		truthTable.setColumnValues(2, False, False, True, True)
 
 		val metaGraph = MetaGraph.create(TranslatableText("Test"), AntaresGraphTypes.Digital)
-		AndOrCircuitFromTruthTableBuilder(truthTable, truthTableService.generateDnfs(truthTable), metaGraph.graph).build()
+		CircuitSynthesisType.AndOrGate.build(truthTable, false, metaGraph.graph)
 
 		assertEquals(3, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<DigitalCircuitInOutView>().size)
 		assertEquals(0, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<ConstantView>().size)
@@ -133,7 +130,7 @@ class AndOrCircuitFromTruthTableBuilderTest {
 		truthTable.setColumnValues(2, True, True, False, True)
 
 		val metaGraph = MetaGraph.create(TranslatableText("Test"), AntaresGraphTypes.Digital)
-		AndOrCircuitFromTruthTableBuilder(truthTable, truthTableService.generateDnfs(truthTable), metaGraph.graph).build()
+		CircuitSynthesisType.AndOrGate.build(truthTable, false, metaGraph.graph)
 
 		assertEquals(3, metaGraph.graph.graphView.getVerticeViews().filterIsInstance<DigitalCircuitInOutView>().size)
 		assertEquals(2, getLogicGateViews(metaGraph, Not).size)
