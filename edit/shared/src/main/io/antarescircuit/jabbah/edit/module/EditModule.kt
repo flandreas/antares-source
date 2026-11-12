@@ -151,6 +151,7 @@ object EditModule : AbstractModule() {
 		properties.set(AttentionDrawerImpl.PROP_DURATION, 500.0f)
 		properties.set(AttentionDrawerImpl.PROP_MAX_RADIUS, 30.0f)
 		properties.set(SourcingCommandManager.PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT, 10)
+		properties.set(SourcingCommandManager.PROP_MAX_SNAPSHOT_COUNT, 50)
 		properties.set(ComponentPropertyPanelController.PROP_MAX_MULTI_SELECT_COUNT, 8)
 	}
 }

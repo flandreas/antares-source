@@ -102,7 +102,7 @@ interface Editor {
     val commandManager: CommandManager
 
 	/** Determines if the current [drawing] has changed in terms of undo/redo operations. */
-	val dataChanged: Boolean get() = commandManager.canUndo()
+	val dataChanged: Boolean get() = commandManager.hasChanges()
 
 	/** Called by the owner upon destruction. */
 	fun dispose()

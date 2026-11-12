@@ -51,7 +51,7 @@ class ExtractMetaGraphAction(
 			return
 		}
 
-		if (EditModule.commandManager.canUndo()) {
+		if (EditModule.commandManager.hasChanges()) {
 			JOptionPane.showMessageDialog(
 				Frame.getFrames()[0],
 				Translations.getString("library.action.newGraph.unsavedChanges.error"),
