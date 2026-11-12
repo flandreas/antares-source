@@ -8,10 +8,14 @@ import io.antarescircuit.jabbah.base.ActionWrapperSwing
 import io.antarescircuit.jabbah.base.StringUtils
 import io.antarescircuit.jabbah.base.Translations
 import io.antarescircuit.jabbah.base.event.ActionEvent
+import io.antarescircuit.jabbah.base.invocation.BusyHandler
+import io.antarescircuit.jabbah.base.invocation.ErrorHandler
 import io.antarescircuit.jabbah.base.invocation.InvocationHandler
 import io.antarescircuit.jabbah.base.swing.DialogBuilder
 import io.antarescircuit.jabbah.base.swing.UiUtil
 import io.antarescircuit.jabbah.base.ui.UIBasics
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.awt.BorderLayout
 import java.awt.Component
@@ -88,6 +92,9 @@ class RatingPanel(
 	}
 
 	private lateinit var aspects: List<RatingAspect>
+
+	/** Runs requests on the EDT; network I/O suspends instead of blocking it. */
+	private val scope = MainScope()
 
 	private val overallRatingPanel = OverallRatingPanel()
 
@@ -186,19 +193,22 @@ class RatingPanel(
 	}
 
 	private fun loadData(aspects: List<RatingAspect>?) {
-		InvocationHandler.invoke {
-			runBlocking {
-				try {
-					if (aspects == null) {
-						setAspects(service.retrieveAspects())
-					} else {
-						setAspects(aspects)
-					}
-				} catch (e: Throwable) {
+		if (aspects != null) {
+			setAspects(aspects)
+			return
+		}
+		BusyHandler.increment()
+		scope.launch {
+			try {
+				setAspects(service.retrieveAspects())
+			} catch (e: Exception) {
+				// The user may have closed the dialog in the meantime
+				if (isShowing) {
 					showLoadError()
 					closeHandler()
-					return@runBlocking
 				}
+			} finally {
+				BusyHandler.decrement()
 			}
 		}
 	}
@@ -247,19 +257,13 @@ class RatingPanel(
 		return true
 	}
 
-	private fun sendRating() {
-		val rating = Rating(
+	private fun createRating(): Rating =
+		Rating(
 			overallRating = overallRatingPanel.rating,
 			likeMost = likeMostComboBox.selectedItem as RatingAspect,
 			likeLeast = likeLeastComboBox.selectedItem as RatingAspect,
 			remark = StringUtils.orNull(remarkTextArea.text)
 		)
-		runBlocking {
-			if (!service.sendRating(rating)) {
-				showSendError()
-			}
-		}
-	}
 
 	private fun showSendError() {
 		JOptionPane.showConfirmDialog(
@@ -292,10 +296,20 @@ class RatingPanel(
 	private inner class SendAction : AbstractAction("application.rating.dialog.action.send") {
 		override fun execute(event: ActionEvent) {
 			if (validateRatings()) {
-				InvocationHandler.invoke {
-					sendRating()
-					closeHandler()
-					showThankYou()
+				val rating = createRating()
+				BusyHandler.increment()
+				scope.launch {
+					try {
+						if (!service.sendRating(rating)) {
+							showSendError()
+						}
+						closeHandler()
+						showThankYou()
+					} catch (e: Exception) {
+						ErrorHandler.exception(e)
+					} finally {
+						BusyHandler.decrement()
+					}
 				}
 			}
 		}
