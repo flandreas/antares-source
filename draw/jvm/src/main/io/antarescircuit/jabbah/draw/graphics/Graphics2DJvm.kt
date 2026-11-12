@@ -32,7 +32,8 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
 
         private val colorCache = mutableMapOf<Color, java.awt.Color>()
 
-        private val fontCache = mutableMapOf<Font, java.awt.Font>()
+        /** Concurrent, because it's also used for measuring text, which isn't restricted to the painting thread. */
+        private val fontCache = java.util.concurrent.ConcurrentHashMap<Font, java.awt.Font>()
 
         private val strokeCache = mutableMapOf<Stroke, java.awt.Stroke>()
 
