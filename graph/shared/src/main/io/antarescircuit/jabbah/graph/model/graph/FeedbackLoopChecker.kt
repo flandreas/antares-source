@@ -1,6 +1,5 @@
 package io.antarescircuit.jabbah.graph.model.graph
 
-import io.antarescircuit.jabbah.base.collection.Stack
 import io.antarescircuit.jabbah.graph.model.*
 import io.antarescircuit.jabbah.graph.model.vertice.SubGraphVerticeRef
 
@@ -20,27 +19,35 @@ object FeedbackLoopChecker {
     }
 
     private fun hasLocalFeedbackLoop(graph: Graph): Boolean {
+        val search = CycleSearch()
         return graph.graphPorts
-            .filter { it.portType.isInput && it.getPort<Any>().net != null}
-            .any { hasLocalFeedbackLoop(it, Stack()) }
+            .filter { it.portType.isInput && it.getPort<Any>().net != null }
+            .any { search.reachesCycle(it) }
     }
 
-    private fun hasLocalFeedbackLoop(vertice: Vertice, path: Stack<Vertice>): Boolean =
-        vertice.getOutputs().any { hasLocalFeedbackLoop(vertice, it, path) }
+    /**
+     * Depth-first search that visits each [Vertice] once (O(V+E)). Enumerating all paths instead is
+     * exponential when signal paths fan out and rejoin, which froze the UI for larger circuits.
+     */
+    private class CycleSearch {
+        /** Vertices on the current search path. */
+        private val onPath = HashSet<Vertice>()
 
-    private fun hasLocalFeedbackLoop(vertice: Vertice, outputPort: Port<*>, path: Stack<Vertice>): Boolean {
-        if (path.contains(vertice)) {
-            return true
-        }
-        return if (outputPort.net != null) {
-            path.push(vertice)
-            val b = outputPort.net!!.ports
-                .filter { it !== outputPort && it.portType.isInput && it.owner !is GraphPort<*>}
-                .any { hasLocalFeedbackLoop(it.owner!!, path) }
-            path.pop()
-            b
-        } else {
-            false
+        /** Vertices whose successors have been fully searched without finding a cycle. */
+        private val done = HashSet<Vertice>()
+
+        fun reachesCycle(vertice: Vertice): Boolean {
+            if (vertice in onPath) return true
+            if (vertice in done) return false
+            onPath.add(vertice)
+            val found = vertice.getOutputs().any { output ->
+                output.net?.ports
+                    ?.any { it !== output && it.portType.isInput && it.owner !is GraphPort<*> && reachesCycle(it.owner!!) }
+                    ?: false
+            }
+            onPath.remove(vertice)
+            done.add(vertice)
+            return found
         }
     }
 }
