@@ -33,7 +33,7 @@ class CanvasJs(
 
     private val ctx = canvas.getContext("2d")!! as CanvasRenderingContext2D
 
-    private val g = Graphics2DJs(ctx)
+    private val g = Graphics2DJs(ctx, ::repaint)
 
     private var initalizing: Boolean = true
 

@@ -7,7 +7,8 @@ import org.w3c.dom.*
  * Bridges [Graphics2D] methods to [CanvasRenderingContext2D] functionality.
  */
 class Graphics2DJs(
-	private val ctx: CanvasRenderingContext2D
+	private val ctx: CanvasRenderingContext2D,
+	private val requestRepaint: () -> Unit = {},
 ) : AbstractGraphics2D() {
 
 	val clip: Rectangle2D = Rectangle2D()
@@ -305,7 +306,13 @@ class Graphics2DJs(
 
 	override fun drawImage(image: Image, x: Int, y: Int) {
 		when (image) {
-			is EmbeddedImageJs -> ctx.drawImage(image.image, x.toDouble(), y.toDouble())
+			is EmbeddedImageJs -> {
+				if (image.isLoaded) {
+					ctx.drawImage(image.image, x.toDouble(), y.toDouble())
+				} else {
+					image.whenLoaded(requestRepaint)
+				}
+			}
 			else -> throw IllegalArgumentException("unsupported image type ${image::class.simpleName}")
 		}
 	}

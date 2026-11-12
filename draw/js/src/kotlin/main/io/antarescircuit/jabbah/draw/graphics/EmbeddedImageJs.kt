@@ -3,21 +3,47 @@ package io.antarescircuit.jabbah.draw.graphics
 import org.w3c.dom.Image
 
 /**
- * Contains a JS Image object using the "data: URL" pattern containing the image data.
- * @param data the base64-encoded image data.
+ * A browser image loaded directly from a binary image endpoint.
+ * [whenLoaded] lets canvases repaint once the asynchronous download and decoding finish.
  */
 class EmbeddedImageJs(
-    type: ImageType,
-    data: String
+	path: String,
+	onError: () -> Unit = {},
 ) : io.antarescircuit.jabbah.draw.graphics.Image {
 
-    val image: Image = Image()
+	val image: Image = Image()
 
-    init {
-        image.src = "data:${type.mimeType};base64,$data"
-    }
+	private val loadListeners = mutableSetOf<() -> Unit>()
+	private var failed = false
 
-    override val width: Int get() = image.width
+	val isLoaded: Boolean get() = image.complete && image.naturalWidth > 0
 
-    override val height: Int get() = image.height
+	init {
+		// Preserve CORS checks and allow drawing cross-origin images to an exportable canvas.
+		image.crossOrigin = "anonymous"
+		image.addEventListener("load", {
+			val listeners = loadListeners.toList()
+			loadListeners.clear()
+			listeners.forEach { it() }
+		})
+		image.addEventListener("error", {
+			failed = true
+			loadListeners.clear()
+			onError()
+		})
+		image.src = path
+	}
+
+	fun whenLoaded(listener: () -> Unit) {
+		if (isLoaded) {
+			listener()
+		} else if (!failed) {
+			loadListeners.add(listener)
+		}
+	}
+
+	// ImageComponent computes scale factors before drawing; keep them finite while loading.
+	override val width: Int get() = image.naturalWidth.coerceAtLeast(1)
+
+	override val height: Int get() = image.naturalHeight.coerceAtLeast(1)
 }
