@@ -320,9 +320,11 @@ open class GraphViewImpl(
 	 * as subsystem boundaries, which are always drawn above all other [GraphElementView]s.
 	 */
 	override fun drawablesInDrawingOrder(): List<GraphElementView<*>> {
-		val drawables = mutableListOf<GraphElementView<*>>()
-		drawables.addAll(super.drawablesInDrawingOrder().filter { it !is VerticeView<*> })
-		drawables.addAll(super.drawablesInDrawingOrder().filterIsInstance<VerticeView<*>>())
+		// Called on every paint: one presized list instead of four intermediate ones
+		val all = super.drawablesInDrawingOrder()
+		val drawables = ArrayList<GraphElementView<*>>(all.size)
+		for (drawable in all) if (drawable !is VerticeView<*>) drawables.add(drawable)
+		for (drawable in all) if (drawable is VerticeView<*>) drawables.add(drawable)
 		return drawables
 	}
 
