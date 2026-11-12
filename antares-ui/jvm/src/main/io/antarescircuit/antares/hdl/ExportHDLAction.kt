@@ -1,11 +1,12 @@
-package io.antarescircuit.antares.hdl.vhdl
+package io.antarescircuit.antares.hdl
 
 import io.antarescircuit.antares.model.DigitalGraph
 import io.antarescircuit.antares.view.DigitalGraphView
 import io.antarescircuit.jabbah.base.event.ActionEvent
 import io.antarescircuit.jabbah.draw.view.AbstractViewAction
 
-class ExportVHDLAction : AbstractViewAction("antares.vhdl.action") {
+/** Exports the circuit of the active view to the specified [language]. */
+class ExportHDLAction(private val language: HDLLanguage) : AbstractViewAction("${language.keyPrefix}.action") {
 
 	override val opensDialog: Boolean get() = true
 
@@ -18,6 +19,6 @@ class ExportVHDLAction : AbstractViewAction("antares.vhdl.action") {
 	}
 
 	override fun execute(event: ActionEvent) {
-		ExportVHDLPanel.showAsDialog(name, (view!!.mainContent.drawable as DigitalGraphView).graph as DigitalGraph)
+		ExportHDLPanel.showAsDialog(name, language, (view!!.mainContent.drawable as DigitalGraphView).graph as DigitalGraph)
 	}
 }
