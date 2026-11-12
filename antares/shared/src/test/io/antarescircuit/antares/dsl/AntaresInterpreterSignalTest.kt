@@ -224,6 +224,34 @@ class AntaresInterpreterSignalTest {
 	}
 
 	@Test
+	fun shouldCalculateXorWithoutTruncatingIntegerBits() {
+		val cases = listOf(
+			Triple(2L, 1L, 3L),
+			Triple(4L, 0L, 4L),
+			Triple(7L, 1L, 6L),
+			Triple(7L, 7L, 0L),
+		)
+		for ((left, right, expected) in cases) {
+			assertEquals(expected, AntaresInterpreter("$left xor $right").interpret())
+			assertEquals(expected, AntaresInterpreter("$right xor $left").interpret())
+			assertEquals(expected, operation("A xor B", left, of(BW_4, right.toULong())))
+			assertEquals(expected, operation("A xor B", right, of(BW_4, left.toULong())))
+			assertEquals(of(BW_4, expected.toULong()), operation("A xor B", of(BW_4, left.toULong()), right))
+			assertEquals(of(BW_4, expected.toULong()), operation("A xor B", of(BW_4, left.toULong()), of(BW_4, right.toULong())))
+			assertEquals(DigitalSignalFactory.of(BW_4, expected), operation("A xor B", DigitalSignalFactory.of(BW_4, left), right))
+		}
+	}
+
+	@Test
+	fun shouldRejectNonIntegerXorOperands() {
+		for (expression in listOf("1.0 xor 2", "2 xor 1.0", "1.0 xnor 2", "2 xnor 1.0")) {
+			assertFailsWith(RuntimeError::class) {
+				AntaresInterpreter(expression).interpret()
+			}
+		}
+	}
+
+	@Test
 	fun shouldCalculateNandUsingAntaresNotSemantics() {
 		assertEquals(of(BW_4, 13UL), operation("A nand B", of(BW_4, 3UL), of(BW_2, 2UL)))
 		assertEquals(1L, AntaresInterpreter("3 nand 2").interpret())
@@ -242,6 +270,12 @@ class AntaresInterpreterSignalTest {
 		assertEquals(of(BW_4, 14UL), operation("A xnor B", of(BW_4, 3UL), of(BW_2, 2UL)))
 		assertEquals(0L, AntaresInterpreter("3 xnor 2").interpret())
 		assertEquals(0L, AntaresInterpreter("4 xnor 5").interpret())
+		assertEquals(3L, AntaresInterpreter("4 xnor 0").interpret())
+		assertEquals(3L, AntaresInterpreter("0 xnor 4").interpret())
+		assertEquals(1L, AntaresInterpreter("7 xnor 1").interpret())
+		assertEquals(1L, AntaresInterpreter("7 xnor 7").interpret())
+		assertEquals(3L, operation("A xnor B", 4L, of(BW_4, 0UL)))
+		assertEquals(of(BW_4, 11UL), operation("A xnor B", of(BW_4, 4UL), 0L))
 	}
 
 	@Test

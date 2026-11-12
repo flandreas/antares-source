@@ -302,7 +302,16 @@ open class Interpreter(
 		not(andL(l, r, loc), loc)
 
 	protected open fun xorL(l: Any, r: Any, loc: TextLocation): Any =
-		andL(orL(l, r, loc), not(andL(l, r, loc), loc), loc)
+		when (l) {
+			is Long -> xorR(l, r, loc)
+			else -> throwIncompatibleTypes(loc, XOR)
+		}
+
+	protected open fun xorR(l: Long, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is Long -> l.xor(r)
+			else -> throwIncompatibleTypes(loc, XOR)
+		}
 
 	protected open fun xnorL(l: Any, r: Any, loc: TextLocation): Any =
 		not(xorL(l, r, loc), loc)

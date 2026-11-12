@@ -282,6 +282,26 @@ class InterpreterTest {
 	}
 
 	@Test
+	fun shouldInterpretXorAcrossIntegerBits() {
+		assertEquals(3L, Interpreter("2 xor 1").interpret())
+		assertEquals(4L, Interpreter("4 xor 0").interpret())
+		assertEquals(6L, Interpreter("7 xor 1").interpret())
+		assertEquals(0L, Interpreter("7 xor 7").interpret())
+		assertEquals(-2L, Interpreter("-1 xor 1").interpret())
+		assertEquals(1099511627777L, Interpreter("1099511627776 xor 1").interpret())
+		assertEquals(-5L, Interpreter("4 xnor 0").interpret())
+	}
+
+	@Test
+	fun shouldRejectNonIntegerXorOperands() {
+		for (expression in listOf("1.0 xor 2", "2 xor 1.0", "1.0 xnor 2", "2 xnor 1.0")) {
+			assertFailsWith(RuntimeError::class) {
+				Interpreter(expression).interpret()
+			}
+		}
+	}
+
+	@Test
 	fun shouldShiftLeft() {
 		assertEquals(2L, Interpreter("1 << 1").interpret())
 		assertFailsWith(RuntimeError::class) {

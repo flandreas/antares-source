@@ -394,6 +394,26 @@ class AntaresInterpreter(
 			else -> super.orR(l, r, loc)
 		}
 
+	override fun xorL(l: Any, r: Any, loc: TextLocation): Any =
+		when (l) {
+			is DigitalSignal -> xorR(l, r, loc)
+			else -> super.xorL(l, r, loc)
+		}
+
+	private fun xorR(l: DigitalSignal, r: Any, loc: TextLocation): Any =
+		when (r) {
+			// Signal operations retain l's width, so the inverted mask covers every result bit.
+			is DigitalSignal -> l.or(r).and(l.and(r).not())
+			is Long -> l.or(r.toULong()).and(l.and(r.toULong()).not())
+			else -> throwIncompatibleTypes(loc, XOR)
+		}
+
+	override fun xorR(l: Long, r: Any, loc: TextLocation): Any =
+		when (r) {
+			is DigitalSignal -> l.xor(signalToLong(r))
+			else -> super.xorR(l, r, loc)
+		}
+
 	override fun shiftLeftL(l: Any, r: Any, loc: TextLocation): Any =
 		when (l) {
 			is DigitalSignal -> shiftLeftR(l, r, loc)
