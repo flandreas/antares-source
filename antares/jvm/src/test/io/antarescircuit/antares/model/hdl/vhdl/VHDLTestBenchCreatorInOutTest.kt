@@ -6,6 +6,7 @@ import io.antarescircuit.antares.hdl.HDLModel
 import io.antarescircuit.antares.hdl.vhdl.VHDLRenaming
 import io.antarescircuit.antares.hdl.vhdl.VHDLTestBenchCreator
 import io.antarescircuit.antares.model.DigitalGraph
+import io.antarescircuit.antares.model.signal.BitWidth
 import io.antarescircuit.antares.model.testcase.Testcase
 import io.antarescircuit.antares.view.gate.TriStateBufferGateView
 import io.antarescircuit.jabbah.base.io.StringCodePrinter
@@ -36,6 +37,17 @@ class VHDLTestBenchCreatorInOutTest : AbstractVHDLTest() {
 
 		assertContains(result, "IO_drv <= test_data(i0).IO;\n")
 		assertFalse(result.contains("std_match(IO,"))
+	}
+
+	@Test
+	fun shouldCompareExpectedPartiallyHighImpedanceValuesExactly() {
+		val builder = TestCircuitBuilder("test")
+		builder.connect(builder.addInput("A", BitWidth.BW_4), builder.addOutput("B", BitWidth.BW_4))
+
+		val result = testBench(builder.graph as DigitalGraph, "A B\n0b1Z01 0b1Z01")
+
+		assertContains(result, "0 => (\"1Z01\", \"1Z01\")")
+		assertContains(result, "assert std_match(B, test_data(i).B) OR B = test_data(i).B\n")
 	}
 
 	private fun buildTriStateToInOut(): DigitalGraph {

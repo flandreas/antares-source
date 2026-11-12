@@ -159,10 +159,8 @@ class VHDLTestBenchCreator(
 		out.println("wait for ${params.waitTime} ns;")
 		for (p in (model.main.outputs + model.main.inOuts).filter { it in checkedPorts }) {
 			out.print("assert std_match(").print(p.name).print(", test_data(").print(loopVar).print(").").print(p.name).print(")")
-			out.print(" OR (")
-				.print(p.name).print(" = ").print(getSimpleValue(p.bitWidth, 'Z'))
-				.print(" AND test_data(").print(loopVar).print(").").print(p.name).print(" = ").print(getSimpleValue(p.bitWidth, 'Z'))
-				.println(")")
+			// std_match never matches 'Z', so expected (partially) high-impedance values are compared exactly
+			out.print(" OR ").print(p.name).print(" = test_data(").print(loopVar).print(").").print(p.name).println()
 
 			out.inc().print("report \"assertion failed for ").print(p.name).print(" on line \"")
 				.print(" & integer'image(").print(loopVar).print(")")
