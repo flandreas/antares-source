@@ -37,7 +37,7 @@ class FindUnconnectedPortsAction(
     }
 
     private fun unsavedChanges(): Boolean {
-        if (EditModule.commandManager.canUndo()) {
+        if (EditModule.commandManager.hasChanges()) {
             JOptionPane.showMessageDialog(
                 Frame.getFrames()[0],
                 Translations.getString("graph.action.findUnconnectedPorts.unsavedChanged"),

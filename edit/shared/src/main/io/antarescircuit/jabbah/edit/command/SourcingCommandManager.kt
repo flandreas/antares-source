@@ -29,6 +29,9 @@ import io.antarescircuit.jabbah.io.StorableCloner
  *
  * Note that it is not sufficient to create new [Snapshot]s in [execute], because clients can change the application
  * state during complex editing operations, and [register] a corresponding [Command] afterward.
+ *
+ * To bound memory usage, at most [PROP_MAX_SNAPSHOT_COUNT] [Snapshot]s are kept. When a new [Snapshot] exceeds
+ * this limit, the oldest [Snapshot] is discarded together with its [Command]s, which can then no longer be undone.
  */
 class SourcingCommandManager(
 	override val eventBus: EventBus = BaseModule.eventBus,
@@ -38,10 +41,13 @@ class SourcingCommandManager(
 	companion object {
 		private val LOG by logger(SourcingCommandManager::class)
 		const val PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT = "edit.commandManager.cmdPerSnapshot"
+		const val PROP_MAX_SNAPSHOT_COUNT = "edit.commandManager.maxSnapshots"
 		private const val DEFAULT_STATE_NAME = "default"
 	}
 
 	private val maxCommandCountPerSnapshot: Int get() = properties.getInt(PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT)
+
+	private val maxSnapshotCount: Int get() = properties.getInt(PROP_MAX_SNAPSHOT_COUNT).coerceAtLeast(1)
 
 	private val maxSnapshotSizeReached: Boolean get() =
 		!state.snapshots.empty && state.snapshots.peek().undoCommandCount >= maxCommandCountPerSnapshot
@@ -134,6 +140,8 @@ class SourcingCommandManager(
 	override fun canUndo(): Boolean {
 		return state.transactionLevel == 0 && !state.snapshots.empty && state.snapshots.peek().canUndo
 	}
+
+	override fun hasChanges(): Boolean = canUndo() || state.historyDiscarded
 
 	override fun canRedo(): Boolean {
 		return state.transactionLevel == 0 && !state.snapshots.empty && state.snapshots.peek().canRedo || !state.redoSnapshots.empty
@@ -341,6 +349,7 @@ class SourcingCommandManager(
 
 	private fun resetUndo() {
 		state.snapshots.clear()
+		state.historyDiscarded = false
 	}
 
 	private fun resetRedo() {
@@ -367,6 +376,16 @@ class SourcingCommandManager(
 	// Visible for testing
 	fun addSnapshot() {
 		state.snapshots.push(Snapshot(createSnapshotData(), state.dataHolder))
+		discardOldestSnapshotsIfNecessary()
+	}
+
+	/** Discards the oldest [Snapshot]s and their [Command]s if there are more than [maxSnapshotCount]. */
+	private fun discardOldestSnapshotsIfNecessary() {
+		while (state.snapshots.size > maxSnapshotCount) {
+			LOG.userTrail("Max snapshot count $maxSnapshotCount reached. Discard oldest snapshot.")
+			state.snapshots.items.removeAt(0).dispose()
+			state.historyDiscarded = true
+		}
 	}
 
 	private fun createSnapshotData(): Storable {

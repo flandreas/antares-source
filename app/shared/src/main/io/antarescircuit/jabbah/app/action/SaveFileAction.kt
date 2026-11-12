@@ -49,7 +49,7 @@ class SaveFileAction(
 
     private fun update() {
 	    controller.apply {
-		    enabled = data != null && controller.isSavable && data!!.savable.defined && commandManager.canUndo()
+		    enabled = data != null && controller.isSavable && data!!.savable.defined && commandManager.hasChanges()
 		    description = Translations.getString("file.action.save.desc", commandManager.commandCount)
 	    }
     }

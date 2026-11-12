@@ -11,6 +11,9 @@ internal class State(val name: String, val dataHolder: UndoableDataHolder) {
 	var transaction: Transaction? = null
 	var transactionLevel: Int = 0
 
+	/** `true` if [Snapshot]s have been discarded since the last reset, so the data differs from its initial state. */
+	var historyDiscarded: Boolean = false
+
 	val snapshotCount: Int get() = snapshots.size
 	val redoSnapshotCount: Int get() = redoSnapshots.size
 

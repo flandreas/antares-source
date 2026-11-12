@@ -154,6 +154,63 @@ class SourcingCommandManagerTest {
 		assertEquals(0, cmdManager.redoSnapshotCount)
 	}
 
+	/** ---- Snapshot limit tests */
+
+	/** Executes "a" to "e" with 2 commands per snapshot and at most 2 snapshots, which discards "a" and "b". */
+	private fun executeBeyondMaxSnapshotCount() {
+		BaseModule.properties.set(SourcingCommandManager.PROP_MAX_COMMAND_COUNT_PER_SNAPSHOT, 2)
+		BaseModule.properties.set(SourcingCommandManager.PROP_MAX_SNAPSHOT_COUNT, 2)
+		cmdManager = SourcingCommandManager()
+		cmdManager.bindDataHolder(app)
+
+		listOf("a", "b", "c", "d", "e").forEach { cmdManager.execute(AppendCommand(app, it)) }
+	}
+
+	@Test
+	fun shouldDiscardOldestSnapshotWhenMaxSnapshotCountIsExceeded() {
+		executeBeyondMaxSnapshotCount()
+
+		assertEquals(2, cmdManager.snapshotCount)
+		assertEquals(3, cmdManager.commandCount)
+		assertEquals(listOf("c", "d", "e"), cmdManager.map { (it as AppendCommand).s })
+	}
+
+	@Test
+	fun shouldUndoOnlyToOldestRetainedSnapshot() {
+		executeBeyondMaxSnapshotCount()
+
+		cmdManager.undo()
+		assertEquals("abcd", app.mandatoryData.value)
+		cmdManager.undo()
+		assertEquals("abc", app.mandatoryData.value)
+		cmdManager.undo()
+		assertEquals("ab", app.mandatoryData.value)
+
+		assertFalse(cmdManager.canUndo())
+		assertTrue(cmdManager.hasChanges())
+	}
+
+	@Test
+	fun shouldRedoAfterUndoingToOldestRetainedSnapshot() {
+		executeBeyondMaxSnapshotCount()
+		repeat(3) { cmdManager.undo() }
+
+		repeat(3) { cmdManager.redo() }
+
+		assertEquals("abcde", app.mandatoryData.value)
+		assertFalse(cmdManager.canRedo())
+		assertTrue(cmdManager.canUndo())
+	}
+
+	@Test
+	fun shouldHaveNoChangesAfterResetFollowingDiscardedSnapshots() {
+		executeBeyondMaxSnapshotCount()
+
+		cmdManager.reset()
+
+		assertFalse(cmdManager.hasChanges())
+	}
+
 	@Test
 	fun shouldNotExecuteRegister() {
 		app.mandatoryData.append("a")

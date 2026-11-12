@@ -106,7 +106,7 @@ abstract class AbstractLibraryAction(
 	} ?: false
 
 	private val noStateChangeInterference: Boolean get() =
-		operation != Change || !commandManager.canUndo()
+		operation != Change || !commandManager.hasChanges()
 
 	/**
 	 * Called by [AbstractLibraryAction] when the selection in [LibraryTreeView] has changed.
