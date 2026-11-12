@@ -156,4 +156,17 @@ class DrawableContainerImplNestingTest {
 		container.draw(context)
 		verify(exactly(1)) { rect.draw(context) }
 	}
+
+	@Test
+	fun shouldUpdateBoundingBoxWhenDrawableInLocatedContainerMoves() {
+		val rect = TestRectangle(Rectangle2D(20, 20, 10, 10))
+		val innerContainer = DrawableContainerImpl<Drawable>(location = Point2D(100, 100), useLocation = true)
+		innerContainer.add(rect)
+		container.add(innerContainer)
+
+		rect.location = Point2D(40, 40)
+
+		assertEquals(Rectangle2D(140, 140, 10, 10), innerContainer.boundingBox)
+		assertEquals(Rectangle2D(140, 140, 10, 10), container.boundingBox)
+	}
 }
