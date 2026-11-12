@@ -17,6 +17,7 @@ import io.antarescircuit.jabbah.graph.model.vertice.SubGraphVertice
 import io.antarescircuit.jabbah.graph.model.vertice.SubGraphVerticeRef
 import io.antarescircuit.jabbah.graph.view.vertice.SubGraphVerticeView
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
@@ -43,6 +44,22 @@ class VerilogIntegrationTest : AbstractVerilogTest() {
 			endmodule
 
 		""".trimIndent(), generate(TestCircuitBuilder("test").buildNOP().graph as DigitalGraph))
+	}
+
+	@Test
+	fun shouldConnectRenamedSubCircuitPorts() {
+		TestLibraryBuilder().addGraphView(TestCircuitBuilder("Inner").buildNOP(inputName = "!(EN)", outputName = "wire"), library)
+		val builder = TestCircuitBuilder("test")
+		val input = builder.addInput("A")
+		val output = builder.addOutput("B")
+		val inner = builder.addVerticeView((library.get("Inner") as LibraryElement).getNewInstance<SubGraphVerticeRef>() as SubGraphVerticeView<out SubGraphVertice>)
+		builder.connect(input, inner, inner.model.getInput())
+		builder.connect(inner, inner.model.getOutput(), output)
+
+		val result = generate(builder.graph as DigitalGraph)
+
+		assertContains(result, "  input not_EN,\n  output p_wire\n")
+		assertContains(result, "    .not_EN(A),\n    .p_wire(B)\n")
 	}
 
 	@Test

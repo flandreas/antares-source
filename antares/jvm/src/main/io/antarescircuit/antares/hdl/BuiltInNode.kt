@@ -29,7 +29,7 @@ open class BuiltInNode(
 	fun createExpressions(): BuiltInNode {
 		for (input in inputs) {
 			input.net?.let {
-				_inputAssignments.add(InputAssignment(input.name, NetExpression(it)))
+				_inputAssignments.add(InputAssignment(input, NetExpression(it)))
 			}
 		}
 		return this
@@ -39,5 +39,8 @@ open class BuiltInNode(
 		_attributes[name] = value
 	}
 
-	data class InputAssignment(val name: String, val expression: Expression)
+	class InputAssignment(private val port: HDLPort, val expression: Expression) {
+		/** The name of the assigned input port, reflecting renaming of the port. */
+		val name: String get() = port.name
+	}
 }
