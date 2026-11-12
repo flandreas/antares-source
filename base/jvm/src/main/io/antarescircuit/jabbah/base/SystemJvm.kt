@@ -49,6 +49,8 @@ actual object System {
 
 	actual fun getClass(obj: Any): KClass<*> = obj.javaClass.kotlin
 
+	actual fun identityHashCode(obj: Any): Int = java.lang.System.identityHashCode(obj)
+
 	actual fun <T : Any> instantiate(clazz: KClass<T>): T = clazz.java.getDeclaredConstructor().newInstance()
 
 	actual fun createAffineTransform(): AffineTransform = AffineTransformJvm()

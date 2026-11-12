@@ -2,6 +2,7 @@ package io.antarescircuit.jabbah.io
 
 import io.antarescircuit.jabbah.base.System
 import io.antarescircuit.jabbah.base.collection.DirectedGraph
+import io.antarescircuit.jabbah.base.collection.IdentityKey
 import io.antarescircuit.jabbah.base.collection.TopologicalSort
 import io.antarescircuit.jabbah.base.logger
 
@@ -20,44 +21,43 @@ class ReferenceResolverImpl(
 	/** Maps global persistent IDs to object references.*/
 	private val map = mutableMapOf<Int, Storable>()
 
-	/**
-	 * Maintains the order of [Storable]s in which they have requested a reference resolution. This is for
-	 * avoiding requests for resolving unestablished references with cross-layer references.
-	 */
-	private val resolutionRequestList = mutableListOf<Storable>()
+	/** Maps object references to the first global persistent ID they were added with, reversing [map]. */
+	private val globalIds = HashMap<IdentityKey<Storable>, Int>()
 
-	/** Maps [Storable]s to the [Reference]s they wish to resolve after all [Storable]s have been instantiated. */
-	private val resolutionRequestMap = mutableMapOf<Storable, MutableList<Reference>>()
+	/**
+	 * Maps [Storable]s to the [Reference]s they wish to resolve after all [Storable]s have been instantiated.
+	 * Its insertion order maintains the order of [Storable]s in which they have requested a reference resolution.
+	 * This is for avoiding requests for resolving unestablished references with cross-layer references.
+	 */
+	private val resolutionRequestMap = LinkedHashMap<Storable, MutableList<Reference>>()
 
 	/** ---- [ReferenceResolver] */
 
 	override fun addStorable(globalId: Int, storable: Storable) {
-		LOG.trace("add storable $globalId")
+		if (LOG.isTraceEnabled()) {
+			LOG.trace("add storable $globalId")
+		}
 		map[globalId] = storable
+		globalIds.getOrPut(IdentityKey(storable)) { globalId }
 	}
 
 	override fun <T: Storable> getStorable(globalId: Int): T? {
-		LOG.trace("getStorable for id $globalId")
+		if (LOG.isTraceEnabled()) {
+			LOG.trace("getStorable for id $globalId")
+		}
 
 		@Suppress("UNCHECKED_CAST")
 		return map[globalId] as T? ?: identityProvider?.getStorableWithIdentity(globalId) as T?
 	}
 
 	override fun getGlobalId(storable: Storable): Int {
-		return map.entries.firstOrNull { it.value === storable }?.key
+		return findGlobalId(storable)
 			?: identityProvider?.getIdentity(storable)
 			?: throw IllegalArgumentException("storable ${storable::class.simpleName} not available")
 	}
 
 	override fun requestResolution(requester: Storable, reference: Reference) {
-		var list = resolutionRequestMap[requester]
-		if (list == null) {
-			list = mutableListOf()
-			resolutionRequestMap[requester] = list
-		}
-		if (!resolutionRequestList.contains(requester)) {
-			resolutionRequestList.add(requester)
-		}
+		val list = resolutionRequestMap.getOrPut(requester) { mutableListOf() }
 		if (!list.contains(reference)) {
 			list.add(reference)
 		}
@@ -95,6 +95,16 @@ class ReferenceResolverImpl(
 
 	/** ---- [ReferenceResolverImpl] */
 
+	/** Returns the first global ID still mapped to [storable] in [map], or `null` if there is none. */
+	private fun findGlobalId(storable: Storable): Int? {
+		val globalId = globalIds[IdentityKey(storable)] ?: return null
+		if (map[globalId] === storable) {
+			return globalId
+		}
+		// The first ID has been reassigned to another Storable (duplicate IDs), so fall back to a full scan
+		return map.entries.firstOrNull { it.value === storable }?.key
+	}
+
 	/**
 	 * Add dummy [Reference]s for [Storable]s that occur as targets of "resolve after" to make sure that
 	 * they occur as a graph node even if they didn't request a resolution by themselves.
@@ -105,7 +115,7 @@ class ReferenceResolverImpl(
 			for (reference in references) {
 				reference.resolveAfter?.forEach {
 					val storable: Storable? = getStorable(it)
-					if (storable != null && !resolutionRequestList.contains(storable)) {
+					if (storable != null && storable !in resolutionRequestMap) {
 						set.add(storable)
 					}
 				}
@@ -127,7 +137,7 @@ class ReferenceResolverImpl(
 		addDummyReferences()
 
 		// Add nodes
-		resolutionRequestList.forEach { graph.addNode(it) }
+		resolutionRequestMap.keys.forEach { graph.addNode(it) }
 
 		// Add edges
 		for (storable in resolutionRequestMap.keys) {

@@ -164,18 +164,13 @@ class StoreXmlReader(
 	}
 
 	override fun readPoints(name: String): List<Point2D> {
-		val points = mutableListOf<Point2D>()
-		var list = readString(name)
+		val list = readString(name)
 		try {
-			while (list.isNotEmpty()) {
-				val i = list.indexOf(',')
-				val j = list.indexOf(' ')
-				val x = list.substring(0, i).toDouble()
-				val y = (if (j != -1) list.substring(i + 1, j) else list.substring(i + 1)).toDouble()
-				points.add(Point2D(x, y))
-				list = if (j != -1) list.substring(j).trim() else ""
+			// Points are separated by one or more spaces and formatted as "x,y"
+			return list.split(' ').filter { it.isNotEmpty() }.map {
+				val i = it.indexOf(',')
+				Point2D(it.substring(0, i).toDouble(), it.substring(i + 1).toDouble())
 			}
-			return points
 		} catch (e: Throwable) {
 			LOG.error("Parsing of point list '$name' failed with '${e.message}'")
 			throw e
