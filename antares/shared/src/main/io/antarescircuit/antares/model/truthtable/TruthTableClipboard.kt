@@ -2,7 +2,10 @@ package io.antarescircuit.antares.model.truthtable
 
 import io.antarescircuit.antares.model.signal.Bit
 
-/** Plain-text interchange for spreadsheet selections, accepting TSV, CSV, or space-separated bits. */
+/**
+ * Plain-text interchange for spreadsheet selections, accepting TSV, CSV, or space-separated bits.
+ * Accepts "Z" (undefined) as well, since copied undefined cells are exported that way.
+ */
 object TruthTableClipboard {
 
 	fun parse(text: String): List<List<Bit>> {
@@ -19,7 +22,8 @@ object TruthTableClipboard {
 					"0" -> Bit.False
 					"1" -> Bit.True
 					"X" -> Bit.Error
-					else -> throw IllegalArgumentException("Expected 0, 1, or X")
+					"Z" -> Bit.Undefined
+					else -> throw IllegalArgumentException("Expected 0, 1, X, or Z")
 				}
 			}
 		}

@@ -16,6 +16,11 @@ class TruthTableClipboardTest {
 	}
 
 	@Test
+	fun shouldRoundTripCopiedUndefinedCells() {
+		assertEquals(listOf(listOf(Bit.Undefined, Bit.True)), TruthTableClipboard.parse("${Bit.Undefined}\t${Bit.True}"))
+	}
+
+	@Test
 	fun shouldRejectInvalidOrIncompleteDataWithoutSilentlyShiftingCells() {
 		for (text in listOf("", "1,", "\t1", "1\t", "1,X\n0", "1\n\n0", "1,2", "1;0")) {
 			assertFailsWith<IllegalArgumentException>(text) { TruthTableClipboard.parse(text) }
