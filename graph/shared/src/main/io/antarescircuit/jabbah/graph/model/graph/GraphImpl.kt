@@ -52,6 +52,9 @@ open class GraphImpl(
 	/** Forwards signal changes of a [OscilloscopeProbeVertice] to the [Oscilloscope].*/
 	private val oscilloscopeProbeHandler = OscilloscopeProbeHandler()
 
+	/** The first [Oscilloscope] among [elements], cached because every probed signal change looks it up. */
+	private var oscilloscope: Oscilloscope? = null
+
 	init {
 	    propertyOwner.source = this
 	}
@@ -374,6 +377,9 @@ open class GraphImpl(
 
 	/** Called by this [GraphImpl] when a [GraphElement] has been added or read as [Storable].*/
 	protected open fun handleGraphElementAdded(graphElem: GraphElement) {
+		if (graphElem is Oscilloscope && oscilloscope == null) {
+			oscilloscope = graphElem
+		}
 		if (graphElem is OscilloscopeProbeVertice<*>) {
 			LOG.trace("added OscilloscopeProbeVertice ${graphElem.getInput<Any>().name} to GraphImpl")
 			graphElem.addGraphElementListener(oscilloscopeProbeHandler)
@@ -381,6 +387,9 @@ open class GraphImpl(
 	}
 
 	protected open fun handleGraphElementRemoved(graphElem: GraphElement) {
+		if (graphElem === oscilloscope) {
+			oscilloscope = _elements.firstOrNull { it is Oscilloscope } as Oscilloscope?
+		}
 		if (graphElem is OscilloscopeProbeVertice<*>) {
 			LOG.trace("removed OscilloscopeProbeVertice ${graphElem.getInput<Any>().name} from GraphImpl")
 			graphElem.removeGraphElementListener(oscilloscopeProbeHandler)
@@ -436,9 +445,7 @@ open class GraphImpl(
 			|| parameterDefinitions.contains(name)
 	}
 
-	private fun getOscilloscope(): Oscilloscope? {
-		return elements.firstOrNull { it is Oscilloscope } as Oscilloscope?
-	}
+	private fun getOscilloscope(): Oscilloscope? = oscilloscope
 
 	private inner class GraphElementListener : GraphElementAdapter() {
 		override fun checkStateChange(e: GraphElementEvent) {
