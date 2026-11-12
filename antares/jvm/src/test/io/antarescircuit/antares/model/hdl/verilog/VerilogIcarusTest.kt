@@ -3,6 +3,7 @@ package io.antarescircuit.antares.model.hdl.verilog
 import io.antarescircuit.antares.TestCircuitBuilder
 import io.antarescircuit.antares.TestLibraryBuilder
 import io.antarescircuit.antares.hdl.HDLExportParams
+import io.antarescircuit.antares.hdl.HDLExportTestBenchParams
 import io.antarescircuit.antares.hdl.verilog.VerilogGenerator
 import io.antarescircuit.antares.hdl.verilog.VerilogRenaming
 import io.antarescircuit.antares.model.DigitalGraph
@@ -13,6 +14,7 @@ import io.antarescircuit.antares.model.net.BranchCount
 import io.antarescircuit.antares.model.net.Concentrator
 import io.antarescircuit.antares.model.net.Splitter
 import io.antarescircuit.antares.model.signal.BitWidth
+import io.antarescircuit.antares.model.testcase.Testcase
 import io.antarescircuit.antares.view.addressable.LookupTableView
 import io.antarescircuit.antares.view.addressable.RAMView
 import io.antarescircuit.antares.view.addressable.ROMView
@@ -33,6 +35,7 @@ import kotlin.io.path.deleteRecursively
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
 /**
@@ -138,6 +141,22 @@ class VerilogIcarusTest : AbstractVerilogTest() {
 		builder.connect(tristate, tristate.model.getOutputPort(), builder.addOutput("TO", BitWidth.BW_4))
 
 		assertCompiles(builder.graph as DigitalGraph)
+	}
+
+	@Test
+	fun shouldPassGeneratedTestBench() {
+		val file = dir.resolve("nand.v")
+		val tbFile = dir.resolve("nand_tb.v")
+		val testcase = Testcase("test", "I1 I2 O1\n0 0 1\n0 1 1\n1 0 1\n1 1 0")
+		val tbParams = HDLExportTestBenchParams(VerilogRenaming(), "nand_tb", testcase, tbFile, 100)
+		VerilogGenerator(HDLExportParams(VerilogRenaming(), "nand", true, file, tbParams))
+			.generate(TestCircuitBuilder("nand").buildCustomNAND(null).graph as DigitalGraph)
+
+		val simulation = dir.resolve("nand.vvp").toString()
+		val (exitCode, output) = run("iverilog", "-g2005", "-o", simulation, file.toString(), tbFile.toString())
+		assertEquals(0, exitCode, "iverilog failed:\n$output")
+		val (_, simulationOutput) = run("vvp", "-n", simulation)
+		assertContains(simulationOutput, "All tests passed.")
 	}
 
 	private fun assertCompiles(graph: DigitalGraph) {
