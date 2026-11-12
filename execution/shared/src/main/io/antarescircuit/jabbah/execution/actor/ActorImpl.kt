@@ -59,7 +59,10 @@ open class ActorImpl(
     }
 
     override fun actingDone(signalHandler: SignalHandler, data: ActorData?) {
-        _state = ActorState.Idle
+        // Stay Waiting if acting was requested again meanwhile
+        if (_state == ActorState.Acting) {
+            _state = ActorState.Idle
+        }
     }
 
     override fun executionStopped(signalHandler: SignalHandler) {

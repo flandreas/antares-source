@@ -342,16 +342,25 @@ class SchedulerImpl(
 		if (slot != null) {
 			var request = slot.findRequest(actor)
 
-			// Needed for processing 'actPrematurely'
-			if (request == null) {
-				slot = getSlotWithRequestForActor(actor)
-				if (slot != null) {
-					request = slot.findRequest(actor)
+			// Needed for processing 'actPrematurely', and for a request already re-armed in the head slot
+			if (request == null || !request.isActing) {
+				val actingSlot = queue.find { it.findRequest(actor)?.isActing == true }
+				if (actingSlot != null) {
+					slot = actingSlot
+					request = actingSlot.findRequest(actor)
+				} else if (request == null) {
+					slot = getSlotWithRequestForActor(actor)
+					request = slot?.findRequest(actor)
 				}
 			}
 
 			if (slot != null) {
-				if (request != null && request.isActing) {
+				if (request != null && !request.isActing) {
+					// Stale notification, e.g. a second animation of the same net finishing after the
+					// request has been re-armed; removing the request would lose the new signal
+					return
+				}
+				if (request != null) {
 					actor.actingDone(this, request.actorData)
 				}
 				slot.actingDone(actor, request)

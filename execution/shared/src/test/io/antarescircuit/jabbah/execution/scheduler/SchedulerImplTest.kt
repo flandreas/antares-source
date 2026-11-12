@@ -369,6 +369,31 @@ class SchedulerImplTest {
 	}
 
 	@Test
+	fun shouldIgnoreStaleActingDoneAfterRequestWasRearmed() {
+		val manual = createManualScheduler()
+		val calls = mutableListOf<ActorData>()
+		// Acting completes asynchronously, like an animated net with two animations
+		val actor = object : ActorImpl() {
+			override fun act(signalHandler: SignalHandler, data: ActorData) {
+				calls.add(data)
+			}
+		}
+		manual.isActive = true
+		val first = createActorData()
+		val second = createActorData()
+		manual.requestActingAfter(actor, 10, first)
+		manual.execute()
+		manual.requestActingAfter(actor, 0, second)
+
+		manual.actingDone(actor, first)
+		manual.actingDone(actor, first)
+		manual.execute()
+
+		assertEquals(listOf(first, second), calls)
+		manual.dispose()
+	}
+
+	@Test
 	fun shouldReportFailingActorAndContinueWithLaterSlots() {
 		val manual = createManualScheduler()
 		val issues = mutableListOf<IssueImpl>()
