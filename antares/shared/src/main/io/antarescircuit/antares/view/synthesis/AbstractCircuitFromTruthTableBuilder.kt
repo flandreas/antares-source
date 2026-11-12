@@ -1,7 +1,7 @@
 package io.antarescircuit.antares.view.synthesis
 
-import io.antarescircuit.antares.model.expression.BooleanExpression
-import io.antarescircuit.antares.model.quinemccluskey.DNF
+import io.antarescircuit.antares.model.PortCount
+import io.antarescircuit.antares.model.gate.NonUnaryLogicGateType
 import io.antarescircuit.antares.model.signal.DigitalSignal
 import io.antarescircuit.antares.model.truthtable.TruthTable
 import io.antarescircuit.jabbah.edit.Look
@@ -12,21 +12,22 @@ import io.antarescircuit.jabbah.base.geom.Point2D
 import io.antarescircuit.jabbah.graph.GraphStorable
 import io.antarescircuit.jabbah.graph.view.EdgeView
 import io.antarescircuit.jabbah.graph.view.VerticeView
+import kotlin.math.abs
 
 class CircuitFromTruthTableBuilderError(msg: String) : Error(msg)
 
+/** Fills a [GraphStorable] with a circuit for a [TruthTable], using two-input gates only if requested. */
 typealias CircuitFromTruthTableBuilder = (
 	truthTable: TruthTable,
-	dnfs: List<DNF>,
-	graphStorable: GraphStorable
+	twoInputGatesOnly: Boolean,
+	graphStorable: GraphStorable,
 ) -> Unit
 
 /**
- * Fills a [GraphStorable] with logic representing the DNF [BooleanExpression]s defined by a [TruthTable].
+ * Fills a [GraphStorable] with logic representing the output columns of a [TruthTable].
  */
 abstract class AbstractCircuitFromTruthTableBuilder(
 	protected val truthTable: TruthTable,
-	protected val dnfs: List<DNF>,
 	graphStorable: GraphStorable
 ) {
 
@@ -55,7 +56,11 @@ abstract class AbstractCircuitFromTruthTableBuilder(
 	 */
 	abstract fun build()
 
-	protected fun buildInputs(addNotViews: Boolean) {
+	/**
+	 * Builds the inputs and, if [addNotViews], an inverter per input: a NOT gate, or a
+	 * [inverterType] gate with tied inputs.
+	 */
+	protected fun buildInputs(addNotViews: Boolean, inverterType: NonUnaryLogicGateType? = null) {
 		with (truthTable) {
 			for (col in 0 until inputColumnCount) {
 				if (truthTable.isStateColumn(col)) {
@@ -64,7 +69,14 @@ abstract class AbstractCircuitFromTruthTableBuilder(
 					inputViews.add(circuitBuilder.addInput(getColumnName(col), Point2D(x, INPUT_Y), Direction.SOUTH))
 				}
 				if (addNotViews) {
-					notViews.add(circuitBuilder.addNot(Point2D(x + INPUT_DIST_X / 2, NOT_Y), Direction.SOUTH))
+					val location = Point2D(x + INPUT_DIST_X / 2, NOT_Y)
+					notViews.add(
+						if (inverterType == null) {
+							circuitBuilder.addNot(location, Direction.SOUTH)
+						} else {
+							circuitBuilder.addGate(inverterType, PortCount.TWO, location, Direction.SOUTH)
+						}
+					)
 				}
 				x += INPUT_DIST_X
 			}
@@ -80,11 +92,17 @@ abstract class AbstractCircuitFromTruthTableBuilder(
 				inputEdgeViews.add(ev)
 			} else {
 				val notView = notViews[index]
-				inputEdgeViews.add(
-					circuitBuilder
-						.split(ev, 0, Point2D(inputCP.xInt, NOT_WIRE_Y), notView)
-						.tailEdgeView
-				)
+				// Tap the input port farther away first, so that the wires of tied inputs don't cross
+				var tailEv = ev
+				notView.model.getInputs()
+					.map { notView.model.getInput<DigitalSignal>(it.portId) }
+					.sortedByDescending { abs(notView.getPortConnectionPoint(it).x - inputCP.x) }
+					.forEachIndexed { i, port ->
+						tailEv = circuitBuilder
+							.split(tailEv, 0, Point2D(inputCP.xInt, NOT_WIRE_Y + i * Look.SCALE), notView.getPortView(port))
+							.tailEdgeView
+					}
+				inputEdgeViews.add(tailEv)
 
 				val notCP = notView.getPortConnectionPoint(notView.model.getOutput<DigitalSignal>())
 				notEdgeViews.add(circuitBuilder.connectOutputOpen(notView, Point2D(notCP.xInt, endY)))

@@ -1,7 +1,6 @@
 package io.antarescircuit.antares.view.synthesis
 
 import io.antarescircuit.antares.model.net.BranchCount
-import io.antarescircuit.antares.model.quinemccluskey.DNF
 import io.antarescircuit.antares.model.signal.BitWidth
 import io.antarescircuit.antares.model.truthtable.TruthTable
 import io.antarescircuit.antares.view.Handedness
@@ -16,9 +15,8 @@ import kotlin.math.max
 
 class LookupTableCircuitFromTruthTableBuilder(
 	truthTable: TruthTable,
-	dnfs: List<DNF>,
 	graphStorable: GraphStorable
-) : AbstractCircuitFromTruthTableBuilder(truthTable, dnfs, graphStorable) {
+) : AbstractCircuitFromTruthTableBuilder(truthTable, graphStorable) {
 
 	companion object {
 		private const val CONCENTRATOR_Y = INPUT_Y + Look.SCALE * 14
@@ -30,7 +28,6 @@ class LookupTableCircuitFromTruthTableBuilder(
 	private data class ExpressionView(
 		val outputColumn: Int,
 		val outputName: String,
-		val dnf: DNF,
 		var yPos: Int = 0,
 		var concentrator: ConcentratorView? = null,
 		var lut: LookupTableView? = null,
@@ -75,10 +72,8 @@ class LookupTableCircuitFromTruthTableBuilder(
 		}
 	}
 
-	private fun createExpressionView(outputColumn: Int): ExpressionView {
-		val dnf = dnfs[outputColumn - truthTable.inputColumnCount]
-		return ExpressionView(outputColumn, truthTable.getColumnName(outputColumn), dnf)
-	}
+	private fun createExpressionView(outputColumn: Int): ExpressionView =
+		ExpressionView(outputColumn, truthTable.getColumnName(outputColumn))
 
 	private fun buildConcentratorAndLut(expressionView: ExpressionView) {
 		val concentratorView = circuitBuilder.addConcentrator(

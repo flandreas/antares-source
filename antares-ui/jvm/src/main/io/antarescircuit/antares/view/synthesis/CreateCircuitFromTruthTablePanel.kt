@@ -55,6 +55,8 @@ class CreateCircuitFromTruthTablePanel(
 		.toTypedArray()
 	)
 
+	private val twoInputGatesOnlyField = JCheckBox(Translations.getString("antares.synthesis.twoInputGatesOnly"))
+
 	init {
 		buildUI()
 
@@ -67,6 +69,15 @@ class CreateCircuitFromTruthTablePanel(
 				okAction.enabled = nameField.text.isNotBlank()
 			}
 		})
+
+		synthesisTypeField.addActionListener { updateTwoInputGatesOnlyField() }
+		updateTwoInputGatesOnlyField()
+	}
+
+	private val selectedSynthesisType: CircuitSynthesisType get() = synthesisTypeField.selectedItem as CircuitSynthesisType
+
+	private fun updateTwoInputGatesOnlyField() {
+		twoInputGatesOnlyField.isEnabled = selectedSynthesisType.supportTwoInputGatesOnly
 	}
 
 	private fun buildUI() {
@@ -93,6 +104,10 @@ class CreateCircuitFromTruthTablePanel(
 		contentPanel.add(synthesisTypeLabel)
 		contentPanel.add(Box.createVerticalStrut(2))
 		contentPanel.add(synthesisTypeField)
+		contentPanel.add(Box.createVerticalStrut(6))
+
+		twoInputGatesOnlyField.alignmentX = Component.LEFT_ALIGNMENT
+		contentPanel.add(twoInputGatesOnlyField)
 		contentPanel.add(Box.createVerticalStrut(18))
 
 		val buttonPanel = JPanel()
@@ -108,7 +123,13 @@ class CreateCircuitFromTruthTablePanel(
 		override fun execute(event: ActionEvent) {
 			InvocationHandler.invoke {
 				try {
-					service.create(truthTable, item, nameField.text, synthesisTypeField.selectedItem as CircuitSynthesisType)
+					service.create(
+						truthTable,
+						item,
+						nameField.text,
+						selectedSynthesisType,
+						twoInputGatesOnlyField.isEnabled && twoInputGatesOnlyField.isSelected,
+					)
 					closeHandler()
 				} catch (e: CircuitFromTruthTableBuilderError) {
 					JOptionPane.showConfirmDialog(
