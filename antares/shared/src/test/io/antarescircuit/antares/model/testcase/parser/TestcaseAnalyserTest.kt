@@ -73,6 +73,82 @@ class TestcaseAnalyserTest {
 		""".trimIndent())
 	}
 
+	@Test
+	fun shouldAcceptLoopVariablesInScope() {
+		TestcaseParser("""
+			A B O1
+			loop a 0..1 {
+				loop b 0..1 {
+					(a) (b) (a & b)
+				}
+				(a) 0 0
+			}
+		""".trimIndent(), TestcaseAnalyser(circuit)).parse()
+	}
+
+	@Test
+	fun shouldRejectUnknownVariable() {
+		expectSemanticError("antares.testcase.error.unknownVariable", """
+			A B O1
+			(a) 0 0
+		""".trimIndent())
+	}
+
+	@Test
+	fun shouldRejectLoopVariableOutsideOfItsLoop() {
+		expectSemanticError("antares.testcase.error.unknownVariable", """
+			A B O1
+			loop a 0..1 {
+				(a) 0 0
+			}
+			(a) 0 0
+		""".trimIndent())
+	}
+
+	@Test
+	fun shouldAcceptMaximumNumberOfTestVectors() {
+		TestcaseParser("""
+			A B O1
+			loop a 1..1000 {
+				loop b 1..1000 {
+					(a) (b) 0
+				}
+			}
+		""".trimIndent(), TestcaseAnalyser(circuit)).parse()
+	}
+
+	@Test
+	fun shouldRejectTooManyTestVectorsFromNestedLoops() {
+		expectSemanticError("antares.testcase.error.tooManyTestVectors", """
+			A B O1
+			loop a 0..1000 {
+				loop b 1..1000 {
+					(a) (b) 0
+				}
+			}
+		""".trimIndent())
+	}
+
+	@Test
+	fun shouldRejectTooManyTestVectorsFromDontCareInputsInLoop() {
+		expectSemanticError("antares.testcase.error.tooManyTestVectors", """
+			A B O1
+			loop a 0..250000 {
+				X X 0
+			}
+		""".trimIndent())
+	}
+
+	@Test
+	fun shouldRejectHugeLoopRange() {
+		expectSemanticError("antares.testcase.error.tooManyTestVectors", """
+			A B O1
+			loop a 0..0xFFFFFFFFFFFFFFFF {
+				(a) 0 0
+			}
+		""".trimIndent())
+	}
+
 	private fun expectSemanticError(msgKey: String, script: String) {
 		assertFailsWith<SemanticError>(
 			message = msgKey,

@@ -4,6 +4,7 @@ import io.antarescircuit.antares.AntaresTestRule
 import io.antarescircuit.antares.model.signal.DigitalSignalFactory
 import io.antarescircuit.antares.model.testcase.TestVector
 import io.antarescircuit.antares.model.testcase.TestVectorCollector
+import io.antarescircuit.antares.model.testcase.Value
 import io.antarescircuit.jabbah.graph.model.GraphPort
 import io.antarescircuit.jabbah.graph.model.GraphPortOwner
 import io.antarescircuit.jabbah.graph.model.PortType
@@ -96,6 +97,74 @@ class TestcaseInterpreterTest {
 
 		assert(collector.get(2), 0UL, 1UL, 1UL)
 		assertEquals(TestVector.Type.RunLast, collector.get(2).type)
+	}
+
+	@Test
+	fun shouldExpandNestedLoops() {
+		val collector = interpret("""
+			A B O
+			loop a 0..1 {
+				loop b 0..1 {
+					(a) (b) (a ^ b)
+				}
+			}
+		""".trimIndent())
+
+		assertEquals(4, collector.size)
+		assert(collector.get(0), 0UL, 0UL, 0UL)
+		assert(collector.get(1), 0UL, 1UL, 1UL)
+		assert(collector.get(2), 1UL, 0UL, 1UL)
+		assert(collector.get(3), 1UL, 1UL, 0UL)
+	}
+
+	@Test
+	fun shouldCountLoopsDownwards() {
+		val collector = interpret("""
+			A B O
+			loop i 2..0 {
+				(i) 0 0
+			}
+		""".trimIndent())
+
+		assertEquals(listOf(2UL, 1UL, 0UL), collector.testVectors.map { it.getValue(0).value.toLong() })
+	}
+
+	@Test
+	fun shouldExpandLoopsInsideRunBlockIntoOneRun() {
+		val collector = interpret("""
+			A B O
+			run {
+				0 0 0
+				loop i 1..2 {
+					(i) 0 0
+				}
+			}
+		""".trimIndent())
+
+		assertEquals(
+			listOf(TestVector.Type.RunFirst, TestVector.Type.RunLine, TestVector.Type.RunLast),
+			collector.testVectors.map { it.type }
+		)
+		assert(collector.get(2), 2UL, 0UL, 0UL)
+	}
+
+	@Test
+	fun shouldEvaluateOperatorsWithUnsignedWrapAround() {
+		val collector = interpret("""
+			A B O
+			(0 - 1 >> 60) (1 << 64) (~0 & 0xF0 | 0b11)
+			(-1 * 2 + 3) (7 ^ 2) ^(2 + 3)
+		""".trimIndent())
+
+		assert(collector.get(0), 15UL, 0UL, 0xF3UL)
+		assert(collector.get(1), 1UL, 5UL, 5UL)
+		assertEquals(Value.Type.CLOCKED, collector.get(1).getValue(2).type)
+	}
+
+	private fun interpret(script: String): TestVectorCollector {
+		val collector = TestVectorCollector()
+		TestcaseInterpreter(TestcaseParser(script).parse() as TestScript, graphPortOwner, collector).interpret()
+		return collector
 	}
 
 	private fun assert(testVector: TestVector, vararg values: ULong) {

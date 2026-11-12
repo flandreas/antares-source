@@ -99,6 +99,29 @@ Note how the results table draws a parenthesis in the first column to denote tha
 
 image::user-manual/circuits/circuit-tests-run-block.png[Overview,600,align="center"]
 
+=== Loops and expressions
+
+Writing all test vectors by hand quickly becomes tedious for circuits with wide inputs. A `loop` statement repeats the test vectors in its block for every value of a loop variable, and parenthesized expressions calculate values from loop variables. This script tests all 256 input combinations of a 4 bit adder with inputs `A`, `B` and output `S`:
+
+[source]
+----
+A B S
+loop a 0..15 {
+   loop b 0..15 {
+      (a) (b) (a + b)
+   }
+}
+----
+
+* `loop <name> <from>..<to> { ... }` runs its block for every value from `<from>` to `<to>`, including both bounds. If `<from>` is greater than `<to>`, the loop counts downwards. The bounds are decimal, hexadecimal or binary numbers.
+* Loops can be nested. Loops can also be used inside `run` blocks, in which case all generated test vectors belong to the same simulation run. A loop can also contain `run` blocks, which results in one simulation run per iteration.
+* Expressions must be enclosed in parentheses and can be used wherever a value is expected. They can contain numbers, loop variables and the operators `+`, `-`, `*`, `&` (and), `|` (or), `^` (xor), `<<`, `>>` (shift), `~` (bitwise not) and unary `-`. Operators bind from strongest to weakest: unary operators, `*`, `+` and `-`, shifts, `&`, `^`, `|`. Use additional parentheses to change the evaluation order.
+* Within an expression, `^` always denotes "xor". A `^` before a value still marks a clock signal, so `^(c + 1)` is a clock signal whose value is calculated by an expression.
+* Calculations use unsigned 64 bit integers, and the result is truncated to the bit width of the corresponding input or output. For example, `(0 - 1)` sets all bits of the signal.
+* Loop variable names follow the same rules as input/output names, but a single `X` or `Z` cannot be used as loop variable name because these denote "Don't care" and undefined values.
+
+To prevent excessively long test runs, a test script must not produce more than 1'000'000 test vectors, including the test vectors generated for `X` input values.
+
 === Propagation delay consistency check
 
 If you use "Deep simulation" mode, Antares applies the propagation delay of every individual component of a circuit, which results in a certain time until new values appear at the outputs of the circuit. If you use "Shallow simulation" mode, Antares executes the circuit's execution script (if any) to calculate the output signals. The overall propagation delay of a subcircuit is then determined by the property "Propagation delay" of the circuit. This is configured by the author of the circuit.
