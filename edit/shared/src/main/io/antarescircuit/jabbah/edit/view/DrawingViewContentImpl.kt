@@ -26,6 +26,12 @@ class DrawingViewContentImpl<C : Component, T : Drawing<C>>(
 	private val unzoomableSelectionContainers =
 		mutableMapOf<SelectionDrawingStrategy, UnzoomableContainer<UnzoomableSelectionModel<Component>>>()
 
+	/**
+	 * Holds the [SelectionModel]s of the [SelectionDrawingStrategy.REPLACE] selection container by their
+	 * [SelectionModel.component], so that [getReplacingSelectionModel] doesn't need to search the container.
+	 */
+	private val replacingSelectionModels = mutableMapOf<Component, SelectionModel<Component>>()
+
 	/** Listens for [Component]s being removed from the current [Drawing] while being selected.*/
 	private val componentRemoveListener = ComponentRemoveListener()
 
@@ -74,11 +80,17 @@ class DrawingViewContentImpl<C : Component, T : Drawing<C>>(
 		} else {
 			selectionContainers[strategy]?.add(selectionModel)
 				?: throw IllegalArgumentException("no suitable selection container found")
+			if (strategy == SelectionDrawingStrategy.REPLACE) {
+				replacingSelectionModels[selectionModel.component] = selectionModel
+			}
 		}
 	}
 
 	override fun removeSelectionModel(selectionModel: SelectionModel<Component>) {
 		selectionContainers.values.forEach { it.remove(selectionModel) }
+		if (replacingSelectionModels[selectionModel.component] === selectionModel) {
+			replacingSelectionModels.remove(selectionModel.component)
+		}
 		if (selectionModel is UnzoomableSelectionModel) {
 			unzoomableSelectionContainers.values.forEach { it.remove(selectionModel) }
 		}
@@ -86,6 +98,7 @@ class DrawingViewContentImpl<C : Component, T : Drawing<C>>(
 
 	override fun removeAllSelectionModels() {
 		selectionContainers.values.forEach { it.clear() }
+		replacingSelectionModels.clear()
 	}
 
 	override fun hasSelectionModelFor(component: Component): Boolean {
@@ -103,7 +116,7 @@ class DrawingViewContentImpl<C : Component, T : Drawing<C>>(
 	}
 
 	override fun getReplacingSelectionModel(component: Component): SelectionModel<Component>? =
-		selectionContainers[SelectionDrawingStrategy.REPLACE]!!.drawables.firstOrNull { it.component === component.selectableComponent }
+		replacingSelectionModels[component.selectableComponent]
 
 	override fun zoomableSelectionContainerFor(strategy: SelectionDrawingStrategy): DrawableContainer<SelectionModel<Component>>? {
 		return selectionContainers[strategy]
@@ -132,9 +145,13 @@ class DrawingViewContentImpl<C : Component, T : Drawing<C>>(
 		override val boundingBox: RectangularShape get() = drawing.boundingBox
 
 		override fun draw(context: DrawContext) {
-			drawing
-				.getDrawables { it.styleType.isBackdrop }
-				.forEach { it.draw(context) }
+			// Skip components outside the clip, testing their (conservative) bounding box
+			val clip = context.modelClip
+			for (component in drawing.drawables) {
+				if (component.styleType.isBackdrop && (clip == null || component.boundingBox.intersects(clip))) {
+					component.draw(context)
+				}
+			}
 		}
 
 		override fun contains(x: Double, y: Double): Boolean = boundingBox.contains(x, y)
