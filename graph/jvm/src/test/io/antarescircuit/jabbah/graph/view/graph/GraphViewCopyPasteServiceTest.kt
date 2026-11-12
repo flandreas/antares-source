@@ -174,6 +174,26 @@ class GraphViewCopyPasteServiceTest {
 		assertEquals<Map<String?, String?>>(mapOf("D0" to "D4", "D1" to "D5"), pastedNames)
 	}
 
+	@Test
+	fun shouldShiftPastedGroupPastItsOwnOriginalNames() {
+		val builder = GraphViewBuilder<Boolean>()
+		val view = DrawingViewMockBuilder().withDrawing(builder.graphView)
+		val inputs = (0..2).map { i ->
+			builder.add(TestGraphPortView.input<Boolean>("D$i")).also { it.model.description = Description("D$i") }
+		}
+		val contents = service.copy(inputs.map { it.id }, builder.graphView)
+		// Only D1 remains taken, so D0, D1, D2 shift to D2, D3, D4, overlapping their own original names
+		inputs[0].model.name = "A"
+		inputs[2].model.name = "B"
+
+		val pasteInfo = service.paste(contents, view.build(), Point2D(10, 10))
+
+		val pastedNames = pasteInfo.componentIds
+			.map { (builder.graphView.getWithId(it) as TestGraphPortView<*>).model }
+			.associate { it.description.value to it.name }
+		assertEquals<Map<String?, String?>>(mapOf("D0" to "D2", "D1" to "D3", "D2" to "D4"), pastedNames)
+	}
+
 	private fun createMetaGraph(): ContainerLibraryElement {
 		val library = LibraryModule.libraryHolder.library
 		val metaGraph = TestLibraryBuilder().addInnerCustomComponent(library)

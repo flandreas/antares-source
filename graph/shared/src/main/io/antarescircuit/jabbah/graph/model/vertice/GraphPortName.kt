@@ -52,7 +52,6 @@ object GraphPortName {
 	 * containing D0..D3 yields D4, D5. Clashes that cannot be resolved this way are left to [createPastedName].
 	 */
 	fun renumberPasted(graphPorts: List<GraphPort<*>>, graph: Graph) {
-		val pastedNames = graphPorts.mapNotNull { it.name }.toSet()
 		val existingStructures = graph.graphPorts.mapNotNull { it.name }.map { createStructure(it) }
 
 		graphPorts
@@ -68,7 +67,8 @@ object GraphPortName {
 				val delta = maxExisting - group.minOf { (_, structure) -> structure.number } + 1
 				val newNames = group.map { (port, structure) -> port to "$stem${structure.number + delta}" }
 				val distinct = newNames.map { it.second }.toSet().size == newNames.size
-				if (distinct && newNames.none { (_, name) -> name in pastedNames || isTaken(name, graph) }) {
+				// All ports of the group are renamed, so their original names cannot clash
+				if (distinct && newNames.none { (_, name) -> isTaken(name, graph) }) {
 					newNames.forEach { (port, name) -> port.name = name }
 				}
 			}
