@@ -251,7 +251,7 @@ class VHDLTestBenchCreator(
 						if (isClock && roles[index] == TestBenchRole.CHECK) {
 							out.print(getSimpleValue(bitWidth, '-'))
 						} else {
-							out.print(value(value.value.toLong() ?: 0UL, bitWidth))
+							out.print(value(value.value.ofWidth(bitWidth)))
 						}
 					}
 					Value.Type.DONT_CARE -> out.print(getSimpleValue(bitWidth, '-'))
@@ -259,7 +259,7 @@ class VHDLTestBenchCreator(
 					Value.Type.CLOCKED -> if (clock != null) {
 						out.print(value(clock))
 					} else {
-						out.print(value(value.value.toLong() ?: 0UL, bitWidth))
+						out.print(value(value.value.ofWidth(bitWidth)))
 					}
 				}
 			}

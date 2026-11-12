@@ -91,6 +91,17 @@ class VerilogTestBenchCreatorTest : AbstractVerilogTest() {
 	}
 
 	@Test
+	fun shouldKeepPartiallyHighImpedanceValues() {
+		val builder = TestCircuitBuilder("test")
+		builder.connect(builder.addInput("I", BitWidth.BW_4), builder.addOutput("O", BitWidth.BW_4))
+
+		val result = testBench(builder.graph as DigitalGraph, "I O\n0b1Z01 0b1Z01")
+
+		assertContains(result, "I = 4'b1Z01;")
+		assertContains(result, "if (O !== 4'b1Z01) begin")
+	}
+
+	@Test
 	fun shouldCheckInOutPinMarkedAsOutput() {
 		val result = testBench(buildTriStateToInOut(), "I EN <IO\n1 1 1\n0 0 Z")
 

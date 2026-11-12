@@ -160,7 +160,8 @@ class VerilogTestBenchCreator(
 				Value.Type.UNDEFINED -> Verilog.fill(port.bitWidth, 'z')
 			}
 
+		/** Keeps partially high-impedance values such as 0b1Z01 instead of turning them into 0. */
 		private fun normalValue(port: HDLPort, value: Value): String =
-			Verilog.value(value.value.toLong() ?: 0UL, port.bitWidth)
+			Verilog.value(value.value.ofWidth(port.bitWidth))
 	}
 }
