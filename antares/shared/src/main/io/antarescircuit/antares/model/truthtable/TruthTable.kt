@@ -119,6 +119,14 @@ class TruthTable(
 
 	fun getDontCares(outputColumn: Int): List<MinTerm> = getMinTerms(outputColumn, Bit.Error)
 
+	/** Returns the rows that are neither 1 nor don't care, consistent with [getMinTerms] treating them as 0. */
+	fun getMaxTerms(outputColumn: Int): List<MinTerm> = buildList {
+		for (row in 0 until rowsCount) {
+			val bit = getValue(row, outputColumn)
+			if (bit != Bit.True && bit != Bit.Error) add(getMinTerm(row))
+		}
+	}
+
 	private fun getMinTerms(outputColumn: Int, bit: Bit): List<MinTerm> = buildList {
 		for (row in 0 until rowsCount) {
 			if (getValue(row, outputColumn) == bit) add(getMinTerm(row))

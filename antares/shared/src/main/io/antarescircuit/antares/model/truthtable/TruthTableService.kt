@@ -3,8 +3,10 @@ package io.antarescircuit.antares.model.truthtable
 import io.antarescircuit.antares.model.expression.BooleanExpression
 import io.antarescircuit.antares.model.expression.BooleanExpressionNotation
 import io.antarescircuit.antares.model.expression.StandardBooleanExpressionWriter
+import io.antarescircuit.antares.model.quinemccluskey.CNF
 import io.antarescircuit.antares.model.quinemccluskey.DNF
 import io.antarescircuit.antares.model.quinemccluskey.DnfToBooleanExpression
+import io.antarescircuit.antares.model.quinemccluskey.minimizeToCNF
 import io.antarescircuit.antares.model.quinemccluskey.minimizeToDNF
 import io.antarescircuit.jabbah.base.Properties
 import io.antarescircuit.jabbah.base.Translations
@@ -94,6 +96,14 @@ class TruthTableService(
 		with (truthTable) {
 			minimizeToDNF(getMinTerms(column), getDontCares(column), inputColumnCount)
 		}
+
+	/** Generates the minimized product of sums of each output column of [truthTable]. */
+	fun generateCnfs(truthTable: TruthTable): List<CNF> {
+		with (truthTable) {
+			return (inputColumnCount until inputColumnCount + outputColumnCount)
+				.map { minimizeToCNF(getMaxTerms(it), getDontCares(it), inputColumnCount) }
+		}
+	}
 
 	/**
 	 * Generates the minimized [BooleanExpression]s of a [TruthTable] using the specified
