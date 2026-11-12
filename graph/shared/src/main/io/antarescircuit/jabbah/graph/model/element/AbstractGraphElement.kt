@@ -29,6 +29,8 @@ abstract class AbstractGraphElement : ActorImpl(), GraphElement, Describable {
 
 	override var id: Int = 0
 
+	override val diagnosticName: String get() = "$type ($id)"
+
 	override val isError: Boolean get() = executionError != null || designError != null
 
 	override val designError: DesignError? = null
