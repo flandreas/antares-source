@@ -1,11 +1,9 @@
 package io.antarescircuit.antares.hdl.vhdl
 
-import io.antarescircuit.antares.hdl.HDLRenaming
-import io.antarescircuit.jabbah.base.StringUtils
-import io.antarescircuit.jabbah.base.Translations
-import io.antarescircuit.jabbah.base.richtext.RichTextTokenType
+import io.antarescircuit.antares.hdl.AbstractHDLRenaming
 
-class VHDLRenaming : HDLRenaming {
+/** Legalizes names as VHDL identifiers. VHDL identifiers and keywords are case-insensitive. */
+class VHDLRenaming : AbstractHDLRenaming(KEYWORDS, isCaseSensitive = false) {
 
 	companion object {
 		private val KEYWORDS = setOf("abs", "access", "after", "alias", "all", "and", "architecture", "array", "assert",
@@ -19,48 +17,5 @@ class VHDLRenaming : HDLRenaming {
 			"rol", "ror", "select", "severity", "signal", "shared", "sla", "sll", "sra",
 			"srl", "subtype", "then", "to", "transport", "type", "unaffected", "units", "until",
 			"use", "variable", "wait", "when", "while", "with", "xnor", "xor")
-	}
-
-	override fun checkName(name: String): String {
-		var effName = name
-		if (StringUtils.isBlank(effName)) {
-			throw HDLException(Translations.getString("antares.vhdl.emptyName.error.text"))
-		}
-		if (isKeyword(effName)) {
-			return "p_$effName"
-		}
-		if (effName[0].isDigit()) {
-			effName = "n$effName"
-		}
-		return cleanName(effName)
-	}
-
-	private fun isKeyword(name: String): Boolean = KEYWORDS.contains(name.lowercase())
-
-	private fun cleanName(name: String): String {
-		val sb = StringBuilder()
-		for (c in name) {
-			if (c in 'a'..'z' || c in 'A'..'Z' || c in '0'..'9') {
-				sb.append(c)
-			} else {
-				when (c) {
-					RichTextTokenType.OVERLINE.id[0], '~', '\u00AC' -> sb.append("not")
-					'=' -> sb.append("_eq_")
-					'<' -> sb.append("_lt_")
-					'>' -> sb.append("_gt_")
-					else -> {
-						if (sb.isNotEmpty() && sb.last() != '_') {
-							sb.append('_')
-						}
-					}
-				}
-			}
-		}
-
-		while (sb.isNotEmpty() && sb.last() == '_') {
-			sb.deleteCharAt(sb.length - 1)
-		}
-
-		return sb.toString()
 	}
 }
