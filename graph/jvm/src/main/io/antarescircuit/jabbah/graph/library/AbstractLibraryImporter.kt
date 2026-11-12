@@ -9,6 +9,7 @@ import io.antarescircuit.jabbah.draw.graphics.Image
 import io.antarescircuit.jabbah.graph.MetaGraph
 import io.antarescircuit.jabbah.graph.GraphQuota
 import io.antarescircuit.jabbah.graph.GraphQuotaException
+import org.apache.commons.io.FileUtils
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -46,7 +47,19 @@ abstract class AbstractLibraryImporter(
 	): Library {
 
 		val incubationDirPath = incubate(inputStream)
+		try {
+			return import(incubationDirPath, replaceExisting, currentLibraryCount, quota)
+		} finally {
+			FileUtils.deleteQuietly(incubationDirPath.toFile())
+		}
+	}
 
+	private suspend fun import(
+		incubationDirPath: Path,
+		replaceExisting: Boolean,
+		currentLibraryCount: Int,
+		quota: GraphQuota,
+	): Library {
 		val libraryDir = getLibraryDirectory(incubationDirPath)
 
 		val library = loadIncubatedLibrary(incubationDirPath, libraryDir.name)
@@ -84,10 +97,15 @@ abstract class AbstractLibraryImporter(
 	 */
 	protected fun incubate(inputStream: InputStream): Path {
 		val incubationDirPath = Files.createTempDirectory(null)
-		inputStream.use { input ->
-			ZipInputStream(input).use {
-				ZipUtil.unzipFile(incubationDirPath, it)
+		try {
+			inputStream.use { input ->
+				ZipInputStream(input).use {
+					ZipUtil.unzipFile(incubationDirPath, it)
+				}
 			}
+		} catch (e: Throwable) {
+			FileUtils.deleteQuietly(incubationDirPath.toFile())
+			throw e
 		}
 		return incubationDirPath
 	}
