@@ -31,6 +31,7 @@ import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.module.GraphViewModule
 import io.antarescircuit.jabbah.graph.view.vertice.SubGraphVerticeView
 import dev.mokkery.mock
+import javax.swing.SwingUtilities
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -120,7 +121,7 @@ class AutoAdjustBitWidthTest {
         save()
 
         // Change BitWidth in subcircuit to 16
-        BaseModule.eventBus.post(OpenContainerLibraryElementRequest(subCircuitElem))
+        open(subCircuitElem)
         val inOutView = graphView.drawables
             .filterIsInstance<DigitalCircuitInOutView>()
             .first()
@@ -130,7 +131,7 @@ class AutoAdjustBitWidthTest {
         save()
 
         // Open main circuit
-        BaseModule.eventBus.post(OpenContainerLibraryElementRequest(mainCircuitElem))
+        open(mainCircuitElem)
 
         // Ensure that BitWidth of CircuitInOut has NOT been adjusted
         assertEquals(
@@ -156,8 +157,18 @@ class AutoAdjustBitWidthTest {
         val project = LibraryModule.libraryHolder.library as Project
         val metaGraph = MetaGraph.create(TranslatableText(circuitName), Digital)
         val element = project.libraryService.addContainerLibraryElement(project, metaGraph, project)
-        BaseModule.eventBus.post(OpenContainerLibraryElementRequest(element))
+        open(element)
         return element
+    }
+
+    /**
+     * Opens the element and waits until the EDT has shown its GraphView in the main editor,
+     * which GraphPanelViewController defers via invokeLater. Without waiting, edits on the test thread
+     * may still hit the previously shown GraphView.
+     */
+    private fun open(element: ContainerLibraryElement) {
+        BaseModule.eventBus.post(OpenContainerLibraryElementRequest(element))
+        SwingUtilities.invokeAndWait {}
     }
 
     private fun save(): UUID {
