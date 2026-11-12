@@ -61,6 +61,8 @@ class TruthTableDesktopItemSwing(
 
 	private val tableView = TruthTableTableView(ref, commandManager)
 
+	private val karnaughMapView = KarnaughMapView(ref, commandManager, truthTableService)
+
 	private val generateExpressionsAction = GenerateExpressionsAction()
 
 	private val importCSVAction = ImportCSVAction()
@@ -101,6 +103,7 @@ class TruthTableDesktopItemSwing(
 			override fun focusLost(e: FocusEvent?) { }
 		}
 		tableView.table.addFocusListener(focusListener)
+		karnaughMapView.mapComponent?.addFocusListener(focusListener)
 		expressionsTextArea.addFocusListener(focusListener)
 		expressionsButton.addFocusListener(focusListener)
 		createCircuitButton.addFocusListener(focusListener)
@@ -125,7 +128,10 @@ class TruthTableDesktopItemSwing(
 		panel.add(tipLabel, BorderLayout.NORTH)
 		panel.add(tableView, BorderLayout.CENTER)
 
-		return panel
+		val tabs = JTabbedPane()
+		tabs.addTab(Translations.getString("antares.truthTable.tab.table"), panel)
+		tabs.addTab(Translations.getString("antares.truthTable.tab.karnaugh"), karnaughMapView)
+		return tabs
 	}
 
 	private fun createExpressionsPanel(): JComponent {
@@ -164,6 +170,7 @@ class TruthTableDesktopItemSwing(
 
 	override fun disposeItem() {
 		super.disposeItem()
+		karnaughMapView.dispose()
 		ref.dispose()
 	}
 
