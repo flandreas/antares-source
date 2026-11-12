@@ -86,30 +86,31 @@ class TruthTableService(
 
 	private fun checkOutputName(name: String): Boolean = OUTPUT_REGEX.matches(name)
 
-	fun generateDnfs(truthTable: TruthTable): List<DNF> {
+	fun generateDnfs(truthTable: TruthTable): List<DNF> =
+		(truthTable.inputColumnCount until truthTable.columnCount).map { generateDnf(truthTable, it) }
+
+	/** Minimizes the function of the output [column] of [truthTable]. */
+	fun generateDnf(truthTable: TruthTable, column: Int): DNF =
 		with (truthTable) {
-			return (inputColumnCount until inputColumnCount + outputColumnCount)
-				.map { minimizeToDNF(getMinTerms(it), getDontCares(it), inputColumnCount) }
+			minimizeToDNF(getMinTerms(column), getDontCares(column), inputColumnCount)
 		}
-	}
 
 	/**
 	 * Generates the minimized [BooleanExpression]s of a [TruthTable] using the specified
 	 * [BooleanExpressionNotation].
 	 */
-	fun generateExpressions(truthTable: TruthTable, notation: BooleanExpressionNotation): String {
-		val builder = StringBuilder()
-		with (truthTable) {
-			for (col in inputColumnCount until inputColumnCount + outputColumnCount) {
-				val dnf = minimizeToDNF(getMinTerms(col), getDontCares(col), inputColumnCount)
-				builder.append(
-					StandardBooleanExpressionWriter
-						.ofNotation(notation)
-						.write(this, DnfToBooleanExpression(truthTable, dnf).build(), col)
-				)
-				builder.append("\n")
-			}
-		}
-		return builder.toString()
-	}
+	fun generateExpressions(truthTable: TruthTable, notation: BooleanExpressionNotation): String =
+		(truthTable.inputColumnCount until truthTable.columnCount)
+			.joinToString("") { generateExpression(truthTable, it, notation) + "\n" }
+
+	/** Writes [dnf], the minimized function of the output [column], as an assignment in [notation]. */
+	fun generateExpression(
+		truthTable: TruthTable,
+		column: Int,
+		notation: BooleanExpressionNotation,
+		dnf: DNF = generateDnf(truthTable, column),
+	): String =
+		StandardBooleanExpressionWriter
+			.ofNotation(notation)
+			.write(truthTable, DnfToBooleanExpression(truthTable, dnf).build(), column)
 }
