@@ -36,6 +36,52 @@ Use JDK 25 and the repository's JVM tasks. The implementation includes focused t
 
 Validation completed with `JAVA_HOME=/opt/homebrew/opt/openjdk@25/libexec/openjdk.jdk/Contents/Home ./gradlew jvmTest`: **2,571 passed, 21 skipped, no failures or errors** across all JVM modules. `git diff --check` passes. A generated VCD was also parsed successfully with the independent PyVCD reader, including a numeric probe label and mixed defined, unknown, and high-impedance bus bits.
 
-Sol-loop review also added coverage for cancelling stale memory cell editors on snapshot restoration and preserving validation errors through command-manager rollback of rejected imports. GPT-6.1 Sol at xhigh effort approved both fixes in round 2, with no open findings. One reviewer ran in each round. No commits or pushes were made.
+Sol-loop review also added coverage for cancelling stale memory cell editors on snapshot restoration and preserving validation errors through command-manager rollback of rejected imports. GPT-6.1 Sol at xhigh effort approved both fixes in round 2, with no open findings. One reviewer ran in each round.
 
 An existing UI test fixture also receives proper teardown: its leaked controller could intercept later library-open requests when test discovery order changed. The explicit previously failing order passes after disposing those controllers.
+
+## Second pass
+
+A second round reviewed the first change set independently, fixed what it found, and added further improvements from the same three projects plus an audit of Antares itself. All changes are local commits; nothing was pushed.
+
+### Fixes to the first pass
+
+- RAM, ROM and lookup tables threw inside the simulation step for addresses at or above 2^31 (e.g. 0x80000000), because the new sparse memory rejects negative Int addresses. Out-of-range addresses now produce undefined (RAM) or error (ROM, LUT) outputs.
+- RAM writes passed data through `Int`, truncating words wider than 32 bits and sign-extending 32-bit values with the top bit set. They now keep the full value.
+- In hexadecimal mode the address field treated `0B…`/`0D…` as binary/decimal prefixes, although they are hex digits shown in the row headers. Only `0x` is a prefix in hex mode.
+- ROMs loaded from a memory library item through a dense text dump, which could exhaust memory for sparse high addresses. They now copy sparsely.
+- Memory import decodes leniently instead of rejecting non-UTF-8 comments; truth-table paste accepts `Z`, the text copy produces for undefined cells; VCD export validates before overwriting the target file.
+- `AutoAdjustBitWidthTest` failed intermittently: the test thread raced the deferred editor switch on the EDT. It now waits for the EDT. The same fix re-enables `ContainerUIIntegrationTest`, which had been ignored as brittle.
+
+### Simulation engine
+
+| Competitor evidence | Antares improvement |
+| --- | --- |
+| Digital's primitive `long` values ([ObservableValue](https://github.com/hneemann/Digital/blob/master/src/main/java/de/neemann/digital/core/ObservableValue.java)) and Logisim's interned values ([Value](https://github.com/logisim-evolution/logisim-evolution/blob/main/src/main/java/com/cburch/logisim/data/Value.java)) | Signal operations reuse cached values; per-value lazy delegates (synchronized in `Word`) are replaced by plain caches or one eager pass; multi-bit gates use long arithmetic when all inputs are defined; `BitWidth.of` is an index lookup. Fixed `Word.bitsAt` reading one bit too many, the `Word`/`DefinedWord` `hashCode` contract, and `DefinedWord.equals` throwing for other types. |
+| Logisim's simulator thread catching exceptions ([Simulator](https://github.com/logisim-evolution/logisim-evolution/blob/main/src/main/java/com/cburch/logisim/circuit/Simulator.java)) | A component that throws while acting is reported as an issue and dropped. Previously its request stayed "acting" forever and froze the whole simulation. |
+| Digital's oscillation detection ([Model](https://github.com/hneemann/Digital/blob/master/src/main/java/de/neemann/digital/core/Model.java)) and Logisim's oscillation points ([Propagator](https://github.com/logisim-evolution/logisim-evolution/blob/main/src/main/java/com/cburch/logisim/circuit/Propagator.java)) | Zero-delay feedback loops that never settle (more than 10,000 waves at one simulation time) are reported once, naming the components involved; with "Pause on Issue" the simulation pauses. Testcase runs and circuit analysis that exceed their iteration limit now list the components still being scheduled. |
+| — (scheduler review) | A request made while an actor was still acting (e.g. a zero-delay re-request during a signal animation) was silently dropped by the following `actingDone`. It is now kept and executed in the next wave. |
+| — | `FeedbackLoopChecker` enumerated all paths, which is exponential for rejoining paths and could freeze the UI before circuit analysis; it is now a linear depth-first search. Probed signal changes no longer scan all graph elements for the oscilloscope or format and parse probe IDs. |
+
+### Analysis, synthesis and testing
+
+| Competitor evidence | Antares improvement |
+| --- | --- |
+| Digital's and Logisim's [Karnaugh map views](https://github.com/logisim-evolution/logisim-evolution/blob/main/src/main/java/com/cburch/logisim/analyze/gui/KarnaughMapPanel.java) | A "Karnaugh Map" tab next to each truth table: 1–6 inputs (5–6 as side-by-side maps), Gray-code headers, colored implicant rectangles including wrap-around groups, the minimized expression, and click-to-cycle editing with undo. |
+| Digital's NAnd/NOr/two-input transformations and Logisim's [BuildCircuitButton](https://github.com/logisim-evolution/logisim-evolution/blob/main/src/main/java/com/cburch/logisim/analyze/gui/BuildCircuitButton.java) | Circuit synthesis offers AND/OR, OR/AND (product of sums), NAND-only and NOR-only circuits, plus a "Two-input gates only" option that builds balanced trees and lifts the 16-input limit. Constant-0 outputs were previously synthesized as constant 1. |
+| Digital's [test language](https://github.com/hneemann/Digital/tree/master/src/main/java/de/neemann/digital/testing/parser) (`loop`, expressions) | Test scripts support `loop i 0..15 { … }` (nestable, inside or around `run { }`) and parenthesized integer expressions such as `(i >> 1)` or `(i & 1)`, masked to the port width. Expansions are limited to 1,000,000 vectors. |
+| Digital's test-case export from truth tables | "Create Circuit" from a truth table can add a test case generated from that table to the new circuit. |
+
+### Editor
+
+- **Find unconnected ports** (type "All") also reports tunnels whose name occurs only once (per circuit for local tunnels, across the library for global ones), unnamed tunnels, and wires with an open end, inspired by Digital's unconnected-tunnel error. It no longer reports the hidden internal port of every tunnel.
+- Pasted or clashing circuit inputs/outputs keep their base name and count up (A3 → A4, Clk → Clk2) instead of becoming I7/O3; a pasted group keeps its order with one common offset (D0, D1 into a circuit with D0..D3 → D4, D5), like Digital's label renamer.
+
+### Editor, persistence and stability (audit)
+
+- Re-importing a library with "replace" could delete the existing library and then fail or purge the new copy. All checks now run before anything is deleted.
+- Saving, loading and cloning used equality-based lists for object identities and references (quadratic, and two equal but distinct objects could share an ID). They now use identity maps; saved output is byte-identical for all sample projects.
+- Library files are written atomically via a temporary file in the target directory; temporary files and import folders are cleaned up; dictionary save errors are no longer swallowed. ZIP extraction rejects entries outside the target directory before creating anything.
+- Large selections: drawing, dragging, deselecting and deleting 2,000 selected components went from 0.2–4.5 s to well under 0.1 s each (lazy container bounding boxes, O(1) selection-model lookup, clipped backdrop layer). Text measurement reuses cached fonts.
+- Undo history keeps at most 50 snapshots (`edit.commandManager.maxSnapshots`); unsaved-change detection stays correct after history is discarded.
+- Poster viewer and history dialog no longer leak drawing views and event handlers; the graphics save/restore stack is per instance and a throwing drawable no longer stops painting of other layers; login and rating requests no longer block the EDT; `EventBus` vetoable and two-phase posts copy their handler lists.
