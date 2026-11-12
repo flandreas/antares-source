@@ -56,7 +56,9 @@ class TestcaseAnalyser(
 				is RunNode -> statements(node.children, true, variables)
 				is LoopNode -> {
 					val iterations = node.iterationCount?.takeIf { it < TOO_MANY.toULong() }?.toLong() ?: TOO_MANY
-					iterations * statements(node.children, inRun, variables + node.variable)
+					// An empty body still costs one interpreter step per iteration
+					val bodyCount = statements(node.children, inRun, variables + node.variable)
+					if (bodyCount == 0L) iterations else iterations * bodyCount
 				}
 				is TestVectorNode -> testVector(node, inRun, variables)
 				else -> 0L

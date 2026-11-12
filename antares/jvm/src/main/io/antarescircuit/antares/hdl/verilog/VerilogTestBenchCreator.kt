@@ -1,5 +1,6 @@
 package io.antarescircuit.antares.hdl.verilog
 
+import io.antarescircuit.jabbah.graph.model.PortType
 import io.antarescircuit.antares.hdl.HDLExportTestBenchParams
 import io.antarescircuit.antares.hdl.HDLModel
 import io.antarescircuit.antares.hdl.HDLPort
@@ -112,7 +113,12 @@ class VerilogTestBenchCreator(
 					// Seen from inside the circuit, inputs define and outputs read their value
 					HDLPort.Direction.OUT -> Role.DRIVE
 					HDLPort.Direction.IN -> Role.CHECK
-					HDLPort.Direction.INOUT -> Role.IGNORE
+					// Like the simulator's test runner, use the pin's own type for in/out nets
+					HDLPort.Direction.INOUT -> when (main.circuit.graphPorts.firstOrNull { it.name == portName.name.value }?.portType) {
+						PortType.INPUT -> Role.DRIVE
+						PortType.OUTPUT -> Role.CHECK
+						else -> Role.IGNORE
+					}
 				}
 			}
 			Column(port, role)

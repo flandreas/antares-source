@@ -38,6 +38,7 @@ object TestcaseScriptGenerator {
 			Bit.False -> "0"
 			Bit.True -> "1"
 			Bit.Error -> "X"
-			Bit.Undefined -> "Z"
+			// Synthesized circuits drive 0 for undefined (Z) cells, so expecting Z would fail; don't test them
+			Bit.Undefined -> "X"
 		}
 }

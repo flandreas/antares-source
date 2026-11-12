@@ -89,6 +89,9 @@ class HDLCircuit(
 			inOut.net?.let { net ->
 				if (StringUtils.isBlank(net.name)) {
 					net.setIsInput(inOut.name)
+				} else {
+					// The net is already bound to another circuit pin; exporting would leave this pin floating
+					throw HDLException(Translations.getString("antares.hdl.inOutSharesNet.error.txt", inOut.name, net.name))
 				}
 			}
 		}
