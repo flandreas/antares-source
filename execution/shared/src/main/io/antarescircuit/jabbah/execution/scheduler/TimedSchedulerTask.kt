@@ -11,6 +11,7 @@ import io.antarescircuit.jabbah.base.math.interpolate
 import io.antarescircuit.jabbah.base.module.BaseModule
 import io.antarescircuit.jabbah.base.time.SystemSpeed
 import io.antarescircuit.jabbah.base.time.SystemSpeedEvent
+import io.antarescircuit.jabbah.base.time.TimeService
 import io.antarescircuit.jabbah.base.time.Timer
 import io.antarescircuit.jabbah.execution.speed.CurrentSystemSpeedCategory
 import io.antarescircuit.jabbah.execution.speed.SystemSpeedCategory.*
@@ -21,6 +22,7 @@ class TimedSchedulerTask(
 	private val currentSystemSpeedCategory: CurrentSystemSpeedCategory,
 	private val timer: Timer = System.createTimer(),
 	private val eventBus: EventBus = BaseModule.eventBus,
+	private val timeService: TimeService = BaseModule.timeService,
 ) : AbstractSchedulerTask("execution.task.timed"), ActionListener {
 
 	companion object {
@@ -28,6 +30,9 @@ class TimedSchedulerTask(
 		private val LOG by logger(TimedSchedulerTask::class)
 
 		const val MAX_SPEED_STEPS = 10_000
+
+		/** Yield between execution steps so expensive circuits leave time for UI input and repainting. */
+		const val MAX_TICK_NANOS = 8_000_000L
 
 		/**
 		 * The name of the [Float] value in [Properties] that determines how much the simulation is slowed dow
@@ -147,11 +152,13 @@ class TimedSchedulerTask(
 		// Deviate number randomly to avoid seemingly unchanged display in oscillating models (#1235)
 		val effNumber = number + Random.nextInt(0, 3)
 
+		val startTime = timeService.nowNanos()
 		var count = 0
 		lateinit var result: ExecutionStepResult
 		do {
 			result = scheduler.execute()
 			count++
-		} while (!result.breakpoint && count < effNumber && !scheduler.isQueueEmpty && result.recalculated)
+		} while (!result.breakpoint && count < effNumber && !scheduler.isQueueEmpty && result.recalculated &&
+			timeService.nowNanos() - startTime < MAX_TICK_NANOS)
 	}
 }

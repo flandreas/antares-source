@@ -1,14 +1,9 @@
 package io.antarescircuit.jabbah.base.time
 
-import java.util.*
-
-/**
- * A [TimeService] implementation on the JVM that provides the real time.
- */
+/** Provides wall-clock milliseconds and monotonic nanoseconds for measuring elapsed time. */
 class RealTimeServiceJvm : TimeService {
 
-    override fun nowMillis(): Long = Date().time
+	override fun nowMillis(): Long = java.lang.System.currentTimeMillis()
 
-    override fun nowNanos(): Long = 1_000_000 * nowMillis()
+	override fun nowNanos(): Long = java.lang.System.nanoTime()
 }
-

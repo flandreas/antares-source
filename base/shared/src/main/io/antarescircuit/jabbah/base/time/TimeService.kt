@@ -10,7 +10,7 @@ interface TimeService {
 	/** Returns the current time in milliseconds.*/
 	fun nowMillis(): Long
 
-	/** Returns the current time in nanoseconds.*/
+	/** Returns nanoseconds for measuring elapsed time; its origin may differ from [nowMillis]. */
 	fun nowNanos(): Long
 }
 

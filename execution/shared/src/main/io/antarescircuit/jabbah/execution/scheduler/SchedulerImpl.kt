@@ -52,6 +52,9 @@ class SchedulerImpl(
 	/** The queue of pending [Slot]s ordered by ascending execution time.*/
 	private val queue = PriorityQueue<Slot>()
 
+	/** Avoid scanning all pending slots for every propagated signal. */
+	private val slotsByTime = mutableMapOf<Long, Slot>()
+
 	/** Determines whether this [Scheduler] is active or not.*/
 	private var activationState: SchedulerActivationState = PASSIVE
 
@@ -430,35 +433,40 @@ class SchedulerImpl(
 			LOG.trace("Add slot ${StringUtils.formatLong(slot.relativeTime)}")
 		}
 		queue.add(slot)
+		slotsByTime[slot.relativeTime] = slot
 	}
 
-	/** Removes the [Slot] at the head of the queue.*/
+	/** Removes a pending [Slot], including one completed prematurely. */
 	private fun removeSlot(slot: Slot) {
-		if (!queue.isEmpty) {
-			if (LOG.isTraceEnabled()) {
-				LOG.trace("Remove slot ${StringUtils.formatLong(slot.relativeTime)}")
-			}
+		// A synchronous actor may already have removed this slot and scheduled another at the same time.
+		if (slotsByTime[slot.relativeTime] !== slot) return
+		if (LOG.isTraceEnabled()) {
+			LOG.trace("Remove slot ${StringUtils.formatLong(slot.relativeTime)}")
+		}
+		if (queue.peek() === slot) {
+			queue.remove()
+		} else {
 			queue.remove(slot)
-			if (queue.isEmpty) {
-				task.stop()
-			}
+		}
+		slotsByTime.remove(slot.relativeTime)
+		if (queue.isEmpty) {
+			task.stop()
 		}
 		executionErrorHandler.reevaluateExecutionErrors(queue.isEmpty, this)
 	}
 
-	/** Returns the [Slot] in the queue at the specified relative execution time, if any.*/
-	private fun getSlotAt(relativeTime: Long): Slot? {
-		return queue.elements().find { it.relativeTime == relativeTime }
-	}
+	/** Returns the pending [Slot] at the specified simulation time in O(1). */
+	private fun getSlotAt(relativeTime: Long): Slot? = slotsByTime[relativeTime]
 
 	private fun getSlotWithRequestForActor(actor: Actor): Slot? =
-		queue.elements().firstOrNull { it.findRequest(actor) != null }
+		queue.find { it.findRequest(actor) != null }
 
 	/** Resets the [Scheduler].*/
 	private fun reset() {
 		relativeTime = 0
 		softBreakpointsArmTime = 0
 		queue.clear()
+		slotsByTime.clear()
 		executionErrorHandler.reset()
 	}
 
