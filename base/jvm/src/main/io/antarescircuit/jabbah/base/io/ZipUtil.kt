@@ -7,7 +7,6 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.Paths
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
@@ -50,13 +49,14 @@ object ZipUtil {
 		val buffer = ByteArray(1024) { 0 }
 		var zipEntry = zipIn.nextEntry
 		while (zipEntry != null) {
+			val destPath = resolveEntry(destDir, zipEntry)
 			if (zipEntry.isDirectory) {
-				val dirPath = Paths.get(destDir.toAbsolutePath().toString(), zipEntry.name)
-				LOG.trace("creating directory $dirPath")
-				Files.createDirectory(dirPath).toFile()
+				LOG.trace("creating directory $destPath")
+				Files.createDirectories(destPath)
 			} else {
-				val newFile = newFile(destDir.toFile(), zipEntry)
-				FileOutputStream(newFile).use {
+				LOG.trace("unzipping to $destPath")
+				Files.createDirectories(destPath.parent)
+				FileOutputStream(Files.createFile(destPath).toFile()).use {
 					var length: Int
 					do {
 						length = zipIn.read(buffer)
@@ -72,20 +72,16 @@ object ZipUtil {
 	}
 
 	/**
-	 * Returns the destination [File] of the specified [ZipEntry] by checking that it is a
-	 * subdirectory of the overall directory, hereby guarding against the "Zip Slip" vulnerability.
-	 * See https://www.baeldung.com/java-compress-and-uncompress.
+	 * Returns the destination [Path] of the specified [ZipEntry] after checking that it is located
+	 * within [destDir], hereby guarding against the "Zip Slip" vulnerability.
+	 * @throws IOException if the entry would be located outside of [destDir]
 	 */
-	private fun newFile(destDir: File, zipEntry: ZipEntry): File {
-		val destFile = Files.createFile(Paths.get(destDir.absolutePath, zipEntry.name)).toFile()
-		LOG.trace("unzipping to ${destFile.absolutePath}")
-		val destDirPath = destDir.canonicalPath
-		val destFilePath = destFile.canonicalPath
-
-		if (!destFilePath.startsWith(destDirPath + File.separator)) {
+	private fun resolveEntry(destDir: Path, zipEntry: ZipEntry): Path {
+		val root = destDir.toAbsolutePath().normalize()
+		val destPath = root.resolve(zipEntry.name).normalize()
+		if (!destPath.startsWith(root)) {
 			throw IOException("Entry is outside of the target dir: ${zipEntry.name}")
 		}
-
-		return destFile
+		return destPath
 	}
 }
