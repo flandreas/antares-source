@@ -50,6 +50,17 @@ actual object System {
 		return obj::class
 	}
 
+	private var nextIdentityHashCode = 0
+
+	/** Stores a sequential hash code in a hidden property of [obj] on first access. */
+	actual fun identityHashCode(obj: Any): Int {
+		val d = obj.asDynamic()
+		if (d.__jabbahIdentityHashCode == undefined) {
+			d.__jabbahIdentityHashCode = nextIdentityHashCode++
+		}
+		return d.__jabbahIdentityHashCode as Int
+	}
+
 	/** Not yet implemented on the JS platform. */
 	actual fun commonSuperClass(classes: Collection<KClass<*>>): KClass<*>? = null
 

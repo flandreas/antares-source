@@ -1,5 +1,7 @@
 package io.antarescircuit.jabbah.io
 
+import io.antarescircuit.jabbah.base.collection.IdentityKey
+
 /**
  * Provides globally unique identities for [Storable]s when writing them to persistent store.
  */
@@ -24,26 +26,21 @@ interface GlobalIdentityProvider {
 
 class GlobalIdentityCreator : GlobalIdentityProvider {
 
+	/** Holds the registered [Storable]s, with their index being their identity. */
 	private val registry = mutableListOf<Storable>()
 
-	override fun provideIdentity(storable: Storable): Int {
-		if (!registry.contains(storable)) {
+	/** Maps registered [Storable]s by object identity to their index in [registry]. */
+	private val identities = HashMap<IdentityKey<Storable>, Int>()
+
+	override fun provideIdentity(storable: Storable): Int =
+		identities.getOrPut(IdentityKey(storable)) {
 			registry.add(storable)
+			registry.size - 1
 		}
-		return registry.indexOf(storable)
-	}
 
-	override fun getIdentity(storable: Storable): Int {
-		if (!registry.contains(storable)) {
-			throw IllegalArgumentException("storable ${storable::class.simpleName} not available")
-		}
-		return registry.indexOf(storable)
-	}
+	override fun getIdentity(storable: Storable): Int =
+		identities[IdentityKey(storable)]
+			?: throw IllegalArgumentException("storable ${storable::class.simpleName} not available")
 
-	override fun getStorableWithIdentity(globalId: Int): Storable? {
-		if (globalId in (0 until registry.size)) {
-			return registry[globalId]
-		}
-		return null
-	}
+	override fun getStorableWithIdentity(globalId: Int): Storable? = registry.getOrNull(globalId)
 }
