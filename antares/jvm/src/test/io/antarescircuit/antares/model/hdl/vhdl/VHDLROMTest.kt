@@ -8,6 +8,7 @@ import io.antarescircuit.antares.view.addressable.ROMView
 import io.antarescircuit.jabbah.edit.model.text.TranslatableText
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class VHDLROMTest : AbstractVHDLTest() {
 
@@ -80,5 +81,28 @@ class VHDLROMTest : AbstractVHDLTest() {
 			end Behavioral;
 
 		""".trimIndent(), printer.toString())
+	}
+
+	@Test
+	fun shouldDeclareDataAndAddressPortsWithTheirOwnWidths() {
+		val builder = TestCircuitBuilder("test")
+		val a = builder.addInput("A", BitWidth.BW_4)
+		val cs = builder.addInput("CS")
+		val d = builder.addOutput("D", BitWidth.BW_16)
+		val romView = builder.addVerticeView(ROMView())
+		romView.model.addressWidth = BitWidth.BW_4
+		romView.model.dataWidth = BitWidth.BW_16
+		romView.model.setDataAt(0, 11UL, null)
+		romView.text = TranslatableText("W")
+		builder.connect(a, romView, romView.model.getAddressInput())
+		builder.connect(cs, romView, romView.model.getChipSelectInput())
+		builder.connect(romView, romView.model.getDataPort(), d)
+
+		VHDLGenerator(testParams())
+			.generateHDL(printer, builder.graph as DigitalGraph)
+
+		val text = printer.toString()
+		assertTrue(text.contains("D: out std_logic_vector(15 downto 0);"), text)
+		assertTrue(text.contains("A: in std_logic_vector(3 downto 0);"), text)
 	}
 }

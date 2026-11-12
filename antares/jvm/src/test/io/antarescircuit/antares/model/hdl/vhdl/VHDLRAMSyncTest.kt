@@ -54,7 +54,7 @@ class VHDLRAMSyncTest : AbstractVHDLTest() {
 			  process (CLK, CLR)
 			  begin
 			    if rising_edge(CLR) then
-			      memory := (others => 0)
+			      memory <= (others => (others => '0'));
 			    elsif rising_edge(CLK) and (CS='1') and (WR='1') then
 			      memory(to_integer(unsigned(A))) <= D;
 			    end if;
