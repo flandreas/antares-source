@@ -3,7 +3,7 @@ package io.antarescircuit.jabbah.graph.login
 import io.antarescircuit.jabbah.base.*
 import io.antarescircuit.jabbah.base.AbstractAction
 import io.antarescircuit.jabbah.base.event.ActionEvent
-import io.antarescircuit.jabbah.base.invocation.InvocationHandler
+import io.antarescircuit.jabbah.base.invocation.BusyHandler
 import io.antarescircuit.jabbah.base.module.BaseModule
 import io.antarescircuit.jabbah.base.swing.DataFormPanel
 import io.antarescircuit.jabbah.base.swing.DialogBuilder
@@ -11,7 +11,8 @@ import io.antarescircuit.jabbah.base.swing.UiUtil
 import io.antarescircuit.jabbah.base.ui.UIBasics
 import io.antarescircuit.jabbah.graph.module.GraphModuleUiJvm
 import io.ktor.client.network.sockets.*
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.Frame
@@ -51,6 +52,9 @@ class LoginPanel(
     private val passwordField = JPasswordField()
     private val messageLabel = JLabel(" ")
     private val rememberUsernameCheckbox = JCheckBox(Translations.getString("graph.action.login.rememberUsername"))
+
+    /** Runs requests on the EDT; network I/O suspends instead of blocking it. */
+    private val scope = MainScope()
 
     private val loginAction = LoginAction()
     private val loginButton = JButton(ActionWrapperSwing(loginAction))
@@ -138,40 +142,42 @@ class LoginPanel(
 
     private inner class LoginAction : AbstractAction("graph.action.login") {
         override fun execute(event: ActionEvent) {
-            InvocationHandler.invoke {
-                runBlocking {
-                    try {
-                        if (!GraphModuleUiJvm.loginService.login(
-                                LoginRequest(
-                                    usernameField.text,
-                                    String(passwordField.password)
-                                )
-                            )
-                        ) {
-                            messageLabel.text = Translations.getString("graph.action.login.unsuccessful.text")
-                            usernameField.requestFocusInWindow()
-                        } else {
-                            closeDialogOnSuccess()
-                            JOptionPane.showMessageDialog(
-                                Frame.getFrames()[0],
-                                Translations.getString("graph.action.login.successful.text"),
-                                this@LoginAction.name,
-                                JOptionPane.INFORMATION_MESSAGE
-                            )
-                        }
-                    } catch (e: IllegalStateException) {
-                        showError(e.message ?: Translations.getString("base.unknownError.txt"))
-                    } catch (e: Exception) {
-                        val msg = when (e) {
-                            is SocketTimeoutException -> "Timeout"
-                            else -> {
-                                LOG.error("Error in login: ${e.message}", e)
-                                e.message
-                            }
-                        }
-                        showError(msg ?: Translations.getString("base.unknownError.txt"))
+            val request = LoginRequest(usernameField.text, String(passwordField.password))
+            BusyHandler.increment()
+            scope.launch {
+                try {
+                    login(request)
+                } finally {
+                    BusyHandler.decrement()
+                }
+            }
+        }
+
+        private suspend fun login(request: LoginRequest) {
+            try {
+                if (!GraphModuleUiJvm.loginService.login(request)) {
+                    messageLabel.text = Translations.getString("graph.action.login.unsuccessful.text")
+                    usernameField.requestFocusInWindow()
+                } else {
+                    closeDialogOnSuccess()
+                    JOptionPane.showMessageDialog(
+                        Frame.getFrames()[0],
+                        Translations.getString("graph.action.login.successful.text"),
+                        this@LoginAction.name,
+                        JOptionPane.INFORMATION_MESSAGE
+                    )
+                }
+            } catch (e: IllegalStateException) {
+                showError(e.message ?: Translations.getString("base.unknownError.txt"))
+            } catch (e: Exception) {
+                val msg = when (e) {
+                    is SocketTimeoutException -> "Timeout"
+                    else -> {
+                        LOG.error("Error in login: ${e.message}", e)
+                        e.message
                     }
                 }
+                showError(msg ?: Translations.getString("base.unknownError.txt"))
             }
         }
 
