@@ -23,10 +23,11 @@ class FindUnconnectedPortsAction(
 
         val type = FindUnconnectedPortsPanel.showAsDialog()
         if (type != null) {
-            val metaGraph = LibraryModule.libraryHolder.library.getMetaGraph((selectedItem as ContainerLibraryElement).uuid)
+            val library = LibraryModule.libraryHolder.library
+            val metaGraph = library.getMetaGraph((selectedItem as ContainerLibraryElement).uuid)
 
             InvocationHandler.invoke {
-                val results = FindUnconnectedPortsService.findInMetaGraph(metaGraph, type)
+                val results = FindUnconnectedPortsService.findInMetaGraph(metaGraph, type, library)
                 if (results.isNotEmpty()) {
                     FindUnconnectedPortsService.postAsIssues(results, eventBus, this::handleIssue)
                 } else {

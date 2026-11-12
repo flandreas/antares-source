@@ -16,9 +16,9 @@ abstract class AbstractFindUnconnectedPortsAction(
 ) : AbstractLibraryAction("graph.action.findUnconnectedPorts", Operation.View, controller) {
 
     protected fun handleIssue(issue: Issue) {
-        val up = issue.data as UnconnectedPort
-        LibraryModule.libraryHolder.library.getContainerLibraryElement(up.metaGraphId)?.let {
-            BaseModule.eventBus.post(OpenContainerLibraryElementRequest(it, up.verticeViewId))
+        val element = issue.data as UnconnectedElement
+        LibraryModule.libraryHolder.library.getContainerLibraryElement(element.metaGraphId)?.let {
+            BaseModule.eventBus.post(OpenContainerLibraryElementRequest(it, element.viewId))
         }
     }
 
