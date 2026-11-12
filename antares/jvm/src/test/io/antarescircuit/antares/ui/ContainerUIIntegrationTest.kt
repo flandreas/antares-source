@@ -34,12 +34,12 @@ import io.antarescircuit.jabbah.graph.ui.TestGraphApplication
 import io.antarescircuit.jabbah.graph.view.module.GraphViewModule
 import dev.mokkery.mock
 import kotlin.test.BeforeTest
+import javax.swing.SwingUtilities
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 // TODO Fix brittle test
-@Ignore("This test is brittle")
 class ContainerUIIntegrationTest {
 
     private lateinit var graphDataViewController: GraphDataViewController
@@ -138,7 +138,7 @@ class ContainerUIIntegrationTest {
         inOutView.bitWidth = BW_16
         save()
 
-        BaseModule.eventBus.post(OpenContainerLibraryElementRequest(circuit1))
+        open(circuit1)
 
         val port = getPortViewInContainerDrawing().port as DigitalPort
         assertEquals("addr1", port.name)
@@ -149,7 +149,7 @@ class ContainerUIIntegrationTest {
         val project = LibraryModule.libraryHolder.library as Project
         val metaGraph = MetaGraph.create(TranslatableText(circuitName), Digital)
         val element = project.libraryService.addContainerLibraryElement(project, metaGraph, project)
-        BaseModule.eventBus.post(OpenContainerLibraryElementRequest(element))
+        open(element)
         return element
     }
 
@@ -175,5 +175,11 @@ class ContainerUIIntegrationTest {
     private fun save(): UUID {
         application.controller.save()
         return (application.controller.data!!.content as MetaGraph).uuid
+    }
+
+    /** Opens [element] and waits until the deferred switch of the main editor has run on the EDT. */
+    private fun open(element: ContainerLibraryElement) {
+        BaseModule.eventBus.post(OpenContainerLibraryElementRequest(element))
+        SwingUtilities.invokeAndWait {}
     }
 }
