@@ -87,6 +87,7 @@ class PosterViewerController(
 
     override fun dispose() {
         super.dispose()
+        drawingView.dispose()
         BaseModule.settings.set(PROP_PAGE_SIZE, page.size.customName)
         BaseModule.settings.set(PROP_PAGE_ORIENTATION, page.orientation.customName)
         BaseModule.settings.set(PROP_RESOLUTION, resolution.name)

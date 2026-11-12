@@ -92,6 +92,7 @@ class PosterViewerSwing(
         super.dispose()
         eventBus.unregister(closeRequestHandler)
         menuBar.dispose()
+        canvas.dispose()
     }
 
     private fun buildUI() {

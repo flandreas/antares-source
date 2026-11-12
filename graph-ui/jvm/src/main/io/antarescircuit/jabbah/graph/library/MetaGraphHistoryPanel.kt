@@ -71,6 +71,7 @@ class MetaGraphHistoryPanel(
 				.title(Translations.getString("graph.history.dialog.title"))
 				.minimumSize(Dimension(500, 300))
 				.defaultButton { it.closeButton }
+				.onWindowClosed { it.dispose() }
 				.show()
 		}
 	}
@@ -103,6 +104,7 @@ class MetaGraphHistoryPanel(
 
 	fun dispose() {
 		preview.dispose()
+		drawingView.dispose()
 	}
 
 	private fun buildUI() {
