@@ -2,6 +2,7 @@ package io.antarescircuit.jabbah.draw.view
 
 import io.antarescircuit.jabbah.base.event.*
 import io.antarescircuit.jabbah.base.geom.*
+import io.antarescircuit.jabbah.base.logger
 import io.antarescircuit.jabbah.base.module.BaseModule
 import io.antarescircuit.jabbah.draw.*
 import io.antarescircuit.jabbah.draw.container.DrawableContainerImpl
@@ -13,6 +14,7 @@ import io.antarescircuit.jabbah.draw.module.DrawModule
 import io.antarescircuit.jabbah.draw.style.DrawTheme
 import io.antarescircuit.jabbah.draw.style.ThemeEvent
 import io.antarescircuit.jabbah.draw.style.Themes
+import kotlin.reflect.KClass
 
 
 /**
@@ -27,6 +29,10 @@ open class ViewImpl<C : InputEventContext>(
 	viewPainterFactory: ViewPainterFactory<C> = { InvalidatableViewPainter(it) }
 ) : View<C> {
 
+	companion object {
+		private val LOG by logger(ViewImpl::class)
+	}
+
 	private val controller: ZoomPanController = ZoomPanController(this)
 
 	// Contains the [Drawable]s drawn by this [View]. The topmost [Drawable] is stored at index 0.
@@ -40,6 +46,9 @@ open class ViewImpl<C : InputEventContext>(
 	}
 
 	private val propertyChangeHandler = PropertyChangeHandler()
+
+	/** Classes of [Drawable]s that failed to draw, used to log each failure only once. */
+	private val failedDrawableClasses: MutableSet<KClass<out Drawable>> = mutableSetOf()
 
 	override val space: ViewSpace = ViewSpace(Dimension2D(0, 0))
 
@@ -324,7 +333,14 @@ open class ViewImpl<C : InputEventContext>(
 		}
 
 		context.g.save()
+		try {
+			drawContent(context)
+		} finally {
+			context.g.restore()
+		}
+	}
 
+	private fun drawContent(context: DrawContext) {
 		// This creates a copy of the Transform with scaling set to 1.0
 		val oldTransform = context.g.transform
 
@@ -338,12 +354,12 @@ open class ViewImpl<C : InputEventContext>(
 				context.g.transform = oldTransform
 				canvas.devicePixelRatio.also { dpr ->
 					context.g.scale(dpr, dpr)
-					it.draw(context)
+					drawSafely(it, context)
 					context.g.scale(1 / dpr, 1 / dpr)
 				}
 			} else {
 				context.g.transform = zoomedTransform
-				it.draw(context)
+				drawSafely(it, context)
 			}
 		}
 
@@ -363,11 +379,23 @@ open class ViewImpl<C : InputEventContext>(
 		context.g.transform = oldTransform
 		canvas.devicePixelRatio.also { dpr ->
 			context.g.scale(dpr, dpr)
-			overlayContainer.draw(context)
+			drawSafely(overlayContainer, context)
 			context.g.scale(1 / dpr, 1 / dpr)
 		}
+	}
 
-		context.g.restore()
+	/**
+	 * Draws [drawable] so that a failing [Drawable] does not prevent the remaining ones from being drawn.
+	 * Failures are logged once per [Drawable] class, since drawing is repeated many times per second.
+	 */
+	private fun drawSafely(drawable: Drawable, context: DrawContext) {
+		try {
+			drawable.draw(context)
+		} catch (e: Exception) {
+			if (failedDrawableClasses.add(drawable::class)) {
+				LOG.error("Failed to draw ${drawable::class.simpleName} in view '$name'", e)
+			}
+		}
 	}
 
 	override fun repaint() {

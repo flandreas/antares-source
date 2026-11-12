@@ -17,6 +17,9 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
     /** Buffer used in [getClipBounds]. */
     private val clipBounds: Rectangle = Rectangle()
 
+    /** Graphics states pushed by [save] and popped by [restore]. */
+    private val stack: Stack<java.awt.Graphics2D> = Stack()
+
     companion object {
         private val LOG by logger(Graphics2DJvm::class)
 
@@ -24,8 +27,6 @@ class Graphics2DJvm(var g: java.awt.Graphics2D) : Graphics2D {
         private val RECT = java.awt.geom.Rectangle2D.Double()
         private val ELLIPSE = java.awt.geom.Ellipse2D.Double()
         private val ROUND_RECT = java.awt.geom.RoundRectangle2D.Double()
-
-        private val stack: Stack<java.awt.Graphics2D> by lazy { Stack() }
 
         private val radialGradientPaintCache = mutableMapOf<RadialColorGradient, RadialGradientPaint>()
 
