@@ -84,6 +84,14 @@ class HDLCircuit(
 				}
 			}
 		}
+		// Bind in/out pins to their nets, which are otherwise left as unconnected internal signals
+		for (inOut in inOuts) {
+			inOut.net?.let { net ->
+				if (StringUtils.isBlank(net.name)) {
+					net.setIsInput(inOut.name)
+				}
+			}
+		}
 
 		nameNets()
 	}

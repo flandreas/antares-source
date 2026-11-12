@@ -8,7 +8,9 @@ import io.antarescircuit.antares.model.gate.TriStateBufferGate
 import io.antarescircuit.antares.model.signal.BitWidth
 import io.antarescircuit.antares.view.gate.TriStateBufferGateView
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 class VHDLTriStateBufferGateTest : AbstractVHDLTest() {
 
@@ -260,5 +262,19 @@ class VHDLTriStateBufferGateTest : AbstractVHDLTest() {
 			end Behavioral;
 
 		""".trimIndent(), printer.toString())
+	}
+
+	@Test
+	fun shouldDriveInOutPin() {
+		val builder = TestCircuitBuilder("test")
+		val gate = builder.addVerticeView(TriStateBufferGateView())
+		builder.connect(builder.addInput("I"), gate, gate.model.getInputPort())
+		builder.connect(builder.addInput("EN"), gate, gate.model.getEnablePort())
+		builder.connect(gate, gate.model.getOutputPort(), builder.addInOut("IO"))
+
+		VHDLGenerator(testParams()).generateHDL(printer, builder.graph as DigitalGraph)
+
+		assertContains(printer.toString(), "      p3 => IO);")
+		assertFalse(printer.toString().contains("signal "))
 	}
 }

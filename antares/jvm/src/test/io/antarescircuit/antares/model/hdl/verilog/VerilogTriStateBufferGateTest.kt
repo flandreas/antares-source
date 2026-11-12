@@ -70,6 +70,20 @@ class VerilogTriStateBufferGateTest : AbstractVerilogTest() {
 		assertContains(result, "  Verilog_TriStateBufferGate_ActiveLow #(\n    .bitWidth(1)\n  ) node1 (")
 	}
 
+	@Test
+	fun shouldDriveInOutPin() {
+		val builder = TestCircuitBuilder("test")
+		val gate = builder.addVerticeView(TriStateBufferGateView())
+		builder.connect(builder.addInput("I"), gate, gate.model.getInputPort())
+		builder.connect(builder.addInput("EN"), gate, gate.model.getEnablePort())
+		builder.connect(gate, gate.model.getOutputPort(), builder.addInOut("IO"))
+
+		val result = generate(builder.graph as DigitalGraph)
+
+		assertContains(result, "  input EN,\n  inout IO\n);\n  Verilog_TriStateBufferGate #(")
+		assertContains(result, "    .p3(IO)\n")
+	}
+
 	private fun addGate(builder: TestCircuitBuilder, suffix: String, model: TriStateBufferGate) {
 		val input = builder.addInput("I$suffix", model.bitWidth)
 		val enable = builder.addInput("EN$suffix")
