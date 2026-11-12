@@ -13,7 +13,9 @@ import io.antarescircuit.jabbah.base.geom.RoundRectangle2D
 import io.antarescircuit.jabbah.base.module.BaseModule
 import io.antarescircuit.jabbah.draw.DrawContext
 import io.antarescircuit.jabbah.draw.graphics.DropShadow
+import io.antarescircuit.jabbah.draw.graphics.Font
 import io.antarescircuit.jabbah.draw.graphics.LogicalFontFamily
+import io.antarescircuit.jabbah.draw.graphics.TextRenderInfo
 import io.antarescircuit.jabbah.draw.graphics.TextRenderInfoFactory
 import io.antarescircuit.jabbah.draw.style.DrawStyleModule
 import io.antarescircuit.jabbah.draw.style.StyleProvider
@@ -95,7 +97,19 @@ class TerminalView(
 
 	private val textFont get() = font.deriveFont(LogicalFontFamily.MONOSPACED).deriveFont(round(font.size * sizeFactor).toInt())
 
-	private val textRenderInfo get() = TextRenderInfoFactory.measureSingleLineText("A", textFont)
+	/** The last measured [textFont] and its [TextRenderInfo], to avoid measuring it again for every text row. */
+	private var measuredTextFont: Pair<Font, TextRenderInfo>? = null
+
+	private val textRenderInfo: TextRenderInfo
+		get() {
+			val font = textFont
+			measuredTextFont?.let { (measuredFont, info) ->
+				if (measuredFont == font) {
+					return info
+				}
+			}
+			return TextRenderInfoFactory.measureSingleLineText("A", font).also { measuredTextFont = font to it }
+		}
 
 	private val cellHeight get() = textRenderInfo.textBounds.height
 
@@ -279,10 +293,11 @@ class TerminalView(
 			context.g.font = textFont
 			context.g.color = transparent.applyTo(lightColor?.onColor ?: Themes.get<AntaresTheme>().screen.textColor)
 
-			var y = rectangle.minY.toInt() + BORDER_WIDTH + textRenderInfo.ascent
+			val info = textRenderInfo
+			var y = rectangle.minY.toInt() + BORDER_WIDTH + info.ascent
 			for (row in 0 until model.displayedRowsCount) {
 				context.g.drawString(rowToString(model.getRow(row)), BORDER_WIDTH + rectangle.minX.toInt() + SCREEN_H_INSET, y.toInt())
-				y += cellHeight
+				y += info.textBounds.height
 			}
 		}
 	}
