@@ -12,6 +12,8 @@ import io.antarescircuit.jabbah.graph.model.Vertice
  */
 object XorCalculator : AbstractLogicGateCalculator() {
 
+	override fun calculateWord(values: List<ULong>): ULong = values.reduce { a, b -> a xor b }
+
 	override fun calculateBit(input: Collection<DigitalSignal>, bitIndex: Int): Bit {
 		var trueCount = 0
 		input.forEach {

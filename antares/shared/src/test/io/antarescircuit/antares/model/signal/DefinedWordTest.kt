@@ -6,6 +6,8 @@ import io.antarescircuit.antares.model.signal.BitWidth.Companion.BW_8
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertSame
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class DefinedWordTest {
@@ -175,5 +177,22 @@ class DefinedWordTest {
 	@Test
 	fun shouldRaiseToThePower() {
 		assertEquals(DefinedWord.of(BW_8, 27UL), DefinedWord.of(BW_8, 3UL).power(3))
+	}
+
+	@Test
+	fun shouldNotBeEqualToOtherTypes() {
+		assertFalse(DefinedWord.of(BW_8, 1UL).equals("1"))
+	}
+
+	@Test
+	fun shouldShareCachedInstancesForOperationResults() {
+		assertSame(DefinedWord.of(BW_8, 0xF0UL), DefinedWord.of(BW_8, 0x0FUL).not())
+		assertSame(DefinedWord.of(BW_4, 0UL), DefinedWord.of(BW_4, 0x1FUL).and(0x10UL))
+	}
+
+	@Test
+	fun shouldMaskValuesBeyondBitWidth() {
+		assertEquals(0x0FUL, DefinedWord.of(BW_4, 0xFFUL).longValue)
+		assertEquals(0x1UL, DefinedWord.of(BW_1, 3UL).longValue)
 	}
 }

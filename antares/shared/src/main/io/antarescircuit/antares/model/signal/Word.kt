@@ -115,14 +115,46 @@ internal data class Word(
 	override val bitWidth: BitWidth = BitWidth.of(bits.size)
 
 	/** Is ´true´ if all [Bit]s are [Bit.False]. */
-	override val isZero: Boolean by lazy { bits.all { it == Bit.False } }
+	override val isZero: Boolean
 
 	/** Is ´true´ if any [Bit]s is [Bit.Undefined]. */
-	private val undefined: Boolean by lazy { bits.any { it == Bit.Undefined } }
+	private val undefined: Boolean
 
-	private val error: Boolean by lazy { bits.any { it == Bit.Error } }
+	private val error: Boolean
 
-	private val allDefined: Boolean by lazy { bits.all { it.isDefined } }
+	private val allDefined: Boolean get() = !undefined && !error
+
+	/** The numeric value, or `null` if any [Bit] is undefined or in error state. */
+	private val longValue: ULong?
+
+	init {
+		// One pass instead of several lazy delegates: Words are created for every multi-bit operation
+		var zero = true
+		var anyUndefined = false
+		var anyError = false
+		var value = 0UL
+		for (i in bits.indices) {
+			when (bits[i]) {
+				Bit.False -> {}
+				Bit.True -> {
+					zero = false
+					value = value or (1UL shl i)
+				}
+				Bit.Undefined -> {
+					zero = false
+					anyUndefined = true
+				}
+				Bit.Error -> {
+					zero = false
+					anyError = true
+				}
+			}
+		}
+		isZero = zero
+		undefined = anyUndefined
+		error = anyError
+		longValue = if (anyUndefined || anyError) null else value
+	}
 
 	/** ---- [Any] */
 
@@ -152,15 +184,13 @@ internal data class Word(
 		return true
 	}
 
-	override fun hashCode(): Int {
-		var result = bits.hashCode()
-		result = 31 * result + bitWidth.hashCode()
-		return result
-	}
+	/** Consistent with [DefinedWord.hashCode], since fully defined [Word]s equal [DefinedWord]s. */
+	override fun hashCode(): Int =
+		longValue?.let { DefinedWord.hashOf(bitWidth.width, it) } ?: (31 * bits.hashCode() + bitWidth.width)
 
 	/** ---- [DigitalSignal] interface */
 
-	override val hexString: String by lazy {
+	override val hexString: String by lazy(LazyThreadSafetyMode.NONE) {
 		val sb = StringBuilder()
 		for (i in max(0, bits.size / 4 - 1) downTo 0) {
 			sb.append(nibbleToHexChar(i))
@@ -168,13 +198,13 @@ internal data class Word(
 		sb.toString().padStart(bitWidth.width / 4, '0')
 	}
 
-	override val isFullyUndefined: Boolean by lazy { isAllOf(Bit.Undefined) }
+	override val isFullyUndefined: Boolean by lazy(LazyThreadSafetyMode.NONE) { isAllOf(Bit.Undefined) }
 
 	override val isPartiallyUndefined: Boolean get() = undefined
 
 	override val hasError: Boolean get() = error
 
-	override val binaryString: String by lazy {
+	override val binaryString: String by lazy(LazyThreadSafetyMode.NONE) {
 		val sb = StringBuilder()
 		for (i in bits.size - 1 downTo 0) {
 			sb.append(bits[i].toBinaryString())
@@ -182,19 +212,19 @@ internal data class Word(
 		sb.toString()
 	}
 
-	override val octalString: String by lazy {
+	override val octalString: String by lazy(LazyThreadSafetyMode.NONE) {
 		toLong()?.toString(8) ?:
 			if (isPartiallyUndefined) Bit.ALL_UNDEFINED_CHAR.toString() else Bit.ERROR_CHAR.toString()
 	}
 
-	override val decimalString: String by lazy {
+	override val decimalString: String by lazy(LazyThreadSafetyMode.NONE) {
 		toLong()?.toString() ?:
 			if (isPartiallyUndefined) Bit.ALL_UNDEFINED_CHAR.toString() else Bit.ERROR_CHAR.toString()
 	}
 
-	override val color: CompositeColor by lazy { DigitalSignalColor.ofSignal(this) }
+	override val color: CompositeColor by lazy(LazyThreadSafetyMode.NONE) { DigitalSignalColor.ofSignal(this) }
 
-	private val notValue: DigitalSignal by lazy {
+	private val notValue: DigitalSignal by lazy(LazyThreadSafetyMode.NONE) {
 		Word((0 until bitWidth.width).map { bitAt(it).not() })
 	}
 
@@ -228,21 +258,6 @@ internal data class Word(
 	override fun or(value: ULong): DigitalSignal = or(of(bitWidth, value))
 
 	override fun bitAt(index: Int): Bit = bits[index]
-
-	private val longValue: ULong? by lazy calcLong@ {
-		var value = 0UL
-		var factor = 1UL
-		for (bit in bits) {
-			if (!bit.isDefined) {
-				return@calcLong null
-			}
-			if (bit.isSet) {
-				value += factor
-			}
-			factor *= 2UL
-		}
-		return@calcLong value
-	}
 
 	override fun toLong(): ULong? = longValue
 
@@ -307,7 +322,7 @@ internal data class Word(
 	override fun bitsAt(pos: Int, size: Int): ULong? {
 		var result = 0UL
 		var factor = 1UL
-		for (i in pos..min(pos + size, bits.size - 1)) {
+		for (i in pos until min(pos + size, bits.size)) {
 			val bit = when (bits[i]) {
 				Bit.Undefined -> CurrentUndefinedGateInputBehavior.value.definedBit
 				Bit.Error -> return null

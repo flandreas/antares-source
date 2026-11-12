@@ -10,6 +10,8 @@ import io.antarescircuit.jabbah.graph.model.Vertice
  */
 object XnorCalculator : AbstractLogicGateCalculator() {
 
+	override fun calculateWord(values: List<ULong>): ULong = XorCalculator.calculateWord(values).inv()
+
 	override fun calculateBit(input: Collection<DigitalSignal>, bitIndex: Int): Bit =
 		XorCalculator.calculateBit(input, bitIndex).not()
 

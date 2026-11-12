@@ -10,6 +10,8 @@ import io.antarescircuit.jabbah.graph.model.Vertice
  */
 object NotCalculator : AbstractLogicGateCalculator() {
 
+	override fun calculateWord(values: List<ULong>): ULong = values.first().inv()
+
 	override fun calculateBit(input: Collection<DigitalSignal>, bitIndex: Int): Bit =
 		calculateOutputBit(input.first().bitAt(bitIndex))
 
