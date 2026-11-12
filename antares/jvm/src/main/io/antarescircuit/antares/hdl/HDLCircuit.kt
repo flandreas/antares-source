@@ -119,7 +119,8 @@ class HDLCircuit(
 	fun getHDLNetOfPort(port: DigitalPort): HDLNet? =
 		port.net?.let { netMap.computeIfAbsent(it) { HDLNet(bitWidth = port.bitWidth) } }
 
-	fun getPort(name: String): HDLPort? = ports.firstOrNull { it.name.equals(name, true) }
+	/** Returns the [HDLPort] with the specified [name], compared case-insensitively unless [ignoreCase] is `false`. */
+	fun getPort(name: String, ignoreCase: Boolean = true): HDLPort? = ports.firstOrNull { it.name.equals(name, ignoreCase) }
 
 	private fun addPort(port: HDLPort) {
 		ports.add(port)
@@ -138,8 +139,8 @@ class HDLCircuit(
 		nodes.forEach { it.rename(renaming) }
 		entityName = renaming.checkName(entityName)
 
-		checkUniqueNames(ports.map { it::name })
-		checkUniqueNames(nets.toSet().map { it::name })
+		checkUniqueNames(ports.map { it::name }, renaming.isCaseSensitive)
+		checkUniqueNames(nets.toSet().map { it::name }, renaming.isCaseSensitive)
 	}
 
 	/**
@@ -187,14 +188,14 @@ class HDLCircuit(
 		}
 	}
 
-	private fun checkUniqueNames(nameProviders: Collection<() -> String>) {
+	/** Names differing only in case are considered equal for case-insensitive languages such as VHDL. */
+	private fun checkUniqueNames(nameProviders: Collection<() -> String>, caseSensitive: Boolean) {
 		val names = mutableSetOf<String>()
 		nameProviders.forEach {
 			val name = it()
-			if (names.contains(name)) {
+			if (!names.add(if (caseSensitive) name else name.lowercase())) {
 				throw HDLException(Translations.getString("antares.vhdl.nonUniqueName.error.txt", name))
 			}
-			names.add(name)
 		}
 	}
 
