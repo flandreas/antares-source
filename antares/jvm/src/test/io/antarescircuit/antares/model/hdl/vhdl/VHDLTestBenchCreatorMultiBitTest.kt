@@ -90,7 +90,7 @@ class VHDLTestBenchCreatorMultiBitTest : AbstractVHDLTest() {
 			    for i0 in test_data'range loop
 			      I <= test_data(i0).I;
 			      wait for 30 ns;
-			      assert std_match(O, test_data(i0).O) OR (O = "ZZZZZZZZ" AND test_data(i0).O = "ZZZZZZZZ")
+			      assert std_match(O, test_data(i0).O) OR O = test_data(i0).O
 			        report "assertion failed for O on line " & integer'image(i0) & ", expected " & to_string(test_data(i0).O) & ", actual is " & to_string(O)
 			        severity error;
 			    end loop;
