@@ -2,8 +2,6 @@ package io.antarescircuit.antares.model.truthtable
 
 import io.antarescircuit.antares.model.quinemccluskey.MinTerm
 import io.antarescircuit.antares.model.signal.Bit
-import io.antarescircuit.antares.model.signal.BitOperation
-import io.antarescircuit.antares.model.signal.DigitalSignalFactory
 import io.antarescircuit.jabbah.app.ApplicationDataContentEvent
 import io.antarescircuit.jabbah.base.collection.indexOfFirstOrNull
 import io.antarescircuit.jabbah.base.Bean
@@ -41,7 +39,7 @@ class TruthTable(
 
 	val outputColumnCount: Int get() = outputColumns.size
 
-	val rowsCount: Int get() = BitOperation.power(inputColumnCount.toByte()).toInt()
+	val rowsCount: Int get() = 1 shl inputColumnCount
 
 	val columnCount: Int get() = inputColumnCount + outputColumnCount
 
@@ -66,7 +64,6 @@ class TruthTable(
 
 	init {
 		updateRowsCounts()
-		fillInputCells()
 	}
 
 	override fun toString(): String = name.getTranslation()
@@ -122,18 +119,17 @@ class TruthTable(
 
 	fun getDontCares(outputColumn: Int): List<MinTerm> = getMinTerms(outputColumn, Bit.Error)
 
-	private fun getMinTerms(outputColumn: Int, bit: Bit): List<MinTerm> =
-		(0 until rowsCount)
-			.filter { getValue(it, outputColumn) == bit }
-			.map { getMinTerm(it) }
+	private fun getMinTerms(outputColumn: Int, bit: Bit): List<MinTerm> = buildList {
+		for (row in 0 until rowsCount) {
+			if (getValue(row, outputColumn) == bit) add(getMinTerm(row))
+		}
+	}
 
-	fun getMinTerm(row: Int): MinTerm =
-		(inputColumnCount - 1 downTo 0)
-			.mapIndexedNotNull { i, col ->
-				getValue(row, col)
-					.takeIf { bit -> bit == Bit.False }
-					?.let { BitOperation.power(i.toByte()) } }
-			.sum().toInt()
+	/** Input rows enumerate binary values, so their inverted minterm needs no cell traversal. */
+	fun getMinTerm(row: Int): MinTerm {
+		require(row in 0 until rowsCount) { "Invalid truth table row: $row" }
+		return (rowsCount - 1) xor row
+	}
 
 	fun removeListener(l: TruthTableListener) {
 		listeners.remove(l)
@@ -153,6 +149,7 @@ class TruthTable(
 	}
 
 	private fun notifyListeners(row: Int, column: Int, value: Bit) {
+		if (listeners.isEmpty()) return
 		val event = TruthTableEvent(this, row, column, value)
 		listeners.forEach { it.dataChanged(event) }
 	}
@@ -165,18 +162,12 @@ class TruthTable(
 		}
 
 	private fun updateRowsCounts() {
-		inputColumns.forEach { it.rowsCount = rowsCount }
-		outputColumns.forEach { it.rowsCount = rowsCount }
-	}
-
-	private fun fillInputCells() {
-		for (row in 0 until rowsCount) {
-			val value = DigitalSignalFactory.ofMinimalBitWidth(row.toULong())
-			for (bitIndex in 0 until inputColumnCount ) {
-				val bit = if (bitIndex > value.bitWidth.width - 1) Bit.False else value.bitAt(bitIndex)
-				inputColumns[inputColumnCount - 1 - bitIndex].setValue(row, bit)
-			}
+		require(inputColumnCount < 31) { "A truth table must have fewer than 31 inputs" }
+		inputColumns.forEachIndexed { column, input ->
+			input.rowsCount = rowsCount
+			input.bitIndex = inputColumnCount - column - 1
 		}
+		outputColumns.forEach { it.rowsCount = rowsCount }
 	}
 
 	/** ---- [Namable] interface */
@@ -217,7 +208,6 @@ class TruthTable(
 		}
 
 		updateRowsCounts()
-		fillInputCells()
 	}
 
 	/** ---- [Cloneable] */

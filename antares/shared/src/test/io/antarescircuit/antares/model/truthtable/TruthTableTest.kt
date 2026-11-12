@@ -82,6 +82,32 @@ class TruthTableTest {
 	}
 
 	@Test
+	fun shouldDeriveInputBitsAndMintermsFromEveryRow() {
+		val table = TruthTable(inputColumnNames = List(10) { "I$it" })
+		for (row in 0 until table.rowsCount) {
+			var reconstructed = 0
+			for (column in 0 until table.inputColumnCount) {
+				reconstructed = (reconstructed shl 1) or table.getValue(row, column).numericalValue
+			}
+			assertEquals(row, reconstructed)
+			assertEquals(1023 xor row, table.getMinTerm(row))
+		}
+		assertFailsWith<IllegalArgumentException> { table.getValue(-1, 0) }
+		assertFailsWith<IllegalArgumentException> { table.getValue(table.rowsCount, 0) }
+	}
+
+	@Test
+	fun shouldPreserveEveryBitStateWhenStoringCompactOutputs() {
+		val table = create2to1TruthTable()
+		val values = listOf(False, True, Error, Undefined)
+		values.forEachIndexed { row, value -> table.setValue(row, 2, value) }
+		val clone = StorableCloner.clone(table)
+		assertEquals(values, clone.getColumnValues(2))
+		assertEquals(True, clone.getValue(3, 0))
+		assertEquals(False, clone.getValue(2, 1))
+	}
+
+	@Test
 	fun shouldGetMinTerms() {
 		val truthTable = create2to1TruthTable()
 		truthTable.setValue(0, 2, True)
