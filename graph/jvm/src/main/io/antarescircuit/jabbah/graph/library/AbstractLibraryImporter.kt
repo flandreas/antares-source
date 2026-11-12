@@ -51,7 +51,12 @@ abstract class AbstractLibraryImporter(
 
 		val library = loadIncubatedLibrary(incubationDirPath, libraryDir.name)
 
-		val exists = checkIfUuidAlreadyExists(library.identification, replaceExisting)
+		val exists = try {
+			checkIfUuidAlreadyExists(library.identification, replaceExisting)
+		} catch (e: LibraryImportConflictException) {
+			// Attach the incubated library so that callers can validate it before replacing the existing one
+			throw LibraryImportConflictException(e.libraryId, library)
+		}
 
 		checkQuota(library, quota, currentLibraryCount, exists)
 
