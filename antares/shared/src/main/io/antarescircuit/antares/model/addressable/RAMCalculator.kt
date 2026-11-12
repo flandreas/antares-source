@@ -35,7 +35,7 @@ class RAMCalculator : VerticeCalculator<RAM> {
                 undefinedOutput(ram, signalHandler)
                 return
             }
-	        val addressInt: Int? = ram.getAddressInput().getIncomingSignal()?.toInt()
+	        val addressInt: Int? = ram.getAddressInput().getIncomingSignal()?.toMemoryAddress()
 	        if (addressInt == null) {
 		        undefinedOutput(ram, signalHandler)
 		        return
@@ -50,7 +50,7 @@ class RAMCalculator : VerticeCalculator<RAM> {
             return
         }
 
-	    val addressInt: Int? = ram.getAddressInput().getIncomingSignal()?.toInt()
+	    val addressInt: Int? = ram.getAddressInput().getIncomingSignal()?.toMemoryAddress()
 	    if (addressInt == null) {
 		    undefinedOutput(ram, signalHandler)
 		    return
@@ -90,7 +90,7 @@ class RAMCalculator : VerticeCalculator<RAM> {
             return
         }
 
-	    val addressInt: Int? = ram.getAddressInput().getIncomingSignal()?.toInt()
+	    val addressInt: Int? = ram.getAddressInput().getIncomingSignal()?.toMemoryAddress()
 	    if (addressInt == null) {
 		    undefinedOutput(ram, signalHandler)
 		    return
@@ -131,7 +131,7 @@ class RAMCalculator : VerticeCalculator<RAM> {
     }
 
     private fun read(ram: RAM, signalHandler: SignalHandler) {
-        val addressInt = ram.getAddressInput().getIncomingSignal()!!.toInt()
+        val addressInt = ram.getAddressInput().getIncomingSignal()!!.toMemoryAddress()
 	    val value = if (addressInt != null) {
 			DigitalSignalFactory.of(ram.dataWidth, ram.read(addressInt))
 		}  else {
@@ -144,12 +144,12 @@ class RAMCalculator : VerticeCalculator<RAM> {
         val address = ram.getAddressInput().getIncomingSignal()
         val data = ram.getEffectiveDataInput().getIncomingSignal()
 
-	    val addressInt = address!!.toInt()
-	    val dataInt = data!!.toInt()
+	    val addressInt = address!!.toMemoryAddress()
+	    val dataValue = data!!.toLong()
 
-	    if (addressInt != null && dataInt != null) {
-            LOG.trace("Writing into RAM: address=$addressInt, value=$dataInt")
-		    ram.write(addressInt, dataInt.toULong(), signalHandler)
+	    if (addressInt != null && dataValue != null) {
+            LOG.trace("Writing into RAM: address=$addressInt, value=$dataValue")
+		    ram.write(addressInt, dataValue, signalHandler)
             if (ram.separateDataPorts) {
                 ram.getDataPort().setOutgoingSignalBuffered(data, signalHandler)
             }

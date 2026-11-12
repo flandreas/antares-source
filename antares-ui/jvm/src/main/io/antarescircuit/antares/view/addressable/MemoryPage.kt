@@ -11,21 +11,27 @@ internal data class MemoryPage(val start: Int, val maxAddress: Int, val cellsPer
 			return MemoryPage(address / size * size, maxAddress, cellsPerRow)
 		}
 
+		/**
+		 * Parses [text] in the radix of [converter]. A `0x` prefix always selects hexadecimal; `0b` and `0d`
+		 * select binary/decimal except in hexadecimal mode, where they are ordinary digits (e.g. "0B00").
+		 */
 		fun parseAddress(text: String, converter: AddressableValueConverter, maxAddress: Int): Int? {
 			val value = text.trim()
-			val radix = when {
+			val defaultRadix = when (converter) {
+				AddressableValueConverter.Hexadecimal -> 16
+				AddressableValueConverter.Decimal -> 10
+				AddressableValueConverter.Octal -> 8
+				AddressableValueConverter.Binary -> 2
+			}
+			val prefixRadix = when {
 				value.startsWith("0x", true) -> 16
+				defaultRadix == 16 -> null
 				value.startsWith("0b", true) -> 2
 				value.startsWith("0d", true) -> 10
-				else -> when (converter) {
-					AddressableValueConverter.Hexadecimal -> 16
-					AddressableValueConverter.Decimal -> 10
-					AddressableValueConverter.Octal -> 8
-					AddressableValueConverter.Binary -> 2
-				}
+				else -> null
 			}
-			val digits = if (value.startsWith("0x", true) || value.startsWith("0b", true) || value.startsWith("0d", true)) value.drop(2) else value
-			return digits.toLongOrNull(radix)?.takeIf { it in 0..maxAddress.toLong() }?.toInt()
+			val digits = if (prefixRadix != null) value.drop(2) else value
+			return digits.toLongOrNull(prefixRadix ?: defaultRadix)?.takeIf { it in 0..maxAddress.toLong() }?.toInt()
 		}
 	}
 

@@ -52,7 +52,9 @@ class ExportVcdAction : AbstractViewAction("antares.action.exportVcd") {
 			Translations.getString("antares.action.exportVcd.overwrite", file.name), name,
 			JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) return
 		WriteFileWrapper.wrap(name) {
-			file.bufferedWriter(Charsets.UTF_8).use { VcdExport.write(traces, it, endTime, clocked) }
+			// Render first so that validation errors don't truncate an existing file
+			val text = buildString { VcdExport.write(traces, this, endTime, clocked) }
+			file.writeText(text, Charsets.UTF_8)
 		}
 	}
 }

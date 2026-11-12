@@ -31,6 +31,13 @@ data class AddressableBitWidthEvent(
 	val newValue: BitWidth
 )
 
+/**
+ * Converts an address signal to a [Memory] address. Returns `null` if the signal is undefined or the
+ * address exceeds the Int-sized address space supported by [Memory], so callers can output an
+ * undefined or error value instead of aliasing or failing.
+ */
+fun DigitalSignal.toMemoryAddress(): Int? = toLong()?.takeIf { it <= Int.MAX_VALUE.toULong() }?.toInt()
+
 /** Listens for cell values changes in [Addressable]. */
 interface AddressableListener {
 	fun dataChanged(event: AddressableDataEvent)

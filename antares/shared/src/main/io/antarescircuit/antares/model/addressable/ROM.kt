@@ -55,7 +55,7 @@ class ROM(
 					if (address!!.isPartiallyUndefined) {
 						address = CurrentUndefinedGateInputBehavior.value.definedValue(vertice.addressWidth)
 					}
-					val addressInt = address.toInt()
+					val addressInt = address.toMemoryAddress()
 					if (addressInt == null) {
 						vertice.getDataPort().setOutgoingSignalBuffered(DigitalSignalFactory.error(vertice.dataWidth), signalHandler)
 					} else {
@@ -200,11 +200,15 @@ class ROM(
 		}
 	}
 
+	/** Copies the library memory sparsely, masking values to [dataWidth] like a dump round trip would. */
 	private fun loadFromMemoryStorable() {
 		findMemoryLibraryItem()?.let {
-			val data = MemoryDump.write(it.storable.memory, dataWidth)
-			validateData(data)
-			MemoryDump.read(memory, data)
+			val mask = dataWidth.maxValue
+			val masked = Memory()
+			it.storable.memory.getNonZeroCells().forEach { cell ->
+				masked.writeCommentedValue(cell.address, cell.value and mask, cell.comment)
+			}
+			memory.replaceWith(masked)
 		}
 	}
 

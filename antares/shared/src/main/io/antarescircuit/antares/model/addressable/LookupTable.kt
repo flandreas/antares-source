@@ -43,7 +43,7 @@ class LookupTable(
 				if (address!!.isPartiallyUndefined) {
 					address = CurrentUndefinedGateInputBehavior.value.definedValue(vertice.addressWidth)
 				}
-				val addressInt = address.toInt()
+				val addressInt = address.toMemoryAddress()
 				if (addressInt == null) {
 					vertice.getDataPort().setOutgoingSignalBuffered(DigitalSignalFactory.error(vertice.dataWidth), signalHandler)
 				} else {
@@ -69,7 +69,7 @@ class LookupTable(
 
 	override val isSelected: Boolean get() = true
 
-	override val currentAddress: Int get() = getAddressInput().getIncomingSignal()?.toInt() ?: 0
+	override val currentAddress: Int get() = getAddressInput().getIncomingSignal()?.toMemoryAddress() ?: 0
 
 	override val disassemblyWidth: Int get() = 0
 

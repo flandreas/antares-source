@@ -1,5 +1,6 @@
 package io.antarescircuit.antares.model.oscilloscope
 
+import io.antarescircuit.antares.AntaresTestRule
 import io.antarescircuit.antares.model.signal.Bit
 import io.antarescircuit.antares.model.signal.BitWidth
 import io.antarescircuit.antares.model.signal.DigitalSignalFactory
@@ -7,6 +8,11 @@ import io.antarescircuit.jabbah.graph.model.oscilloscope.SignalHistoryEntry
 import kotlin.test.*
 
 class VcdExportTest {
+
+	@BeforeTest
+	fun beforeTest() {
+		AntaresTestRule.configure()
+	}
 
 	private fun sample(value: Boolean, time: Long) = SignalHistoryEntry(DigitalSignalFactory.of(value), time)
 
