@@ -80,6 +80,51 @@ class FindUnconnectedTunnelsTest : AbstractJvmCircuitTest() {
 	}
 
 	@Test
+	fun shouldAcceptGlobalTunnelInSubCircuitUsedTwice() {
+		val sub = addCircuit("Sub") {
+			addDrivenTunnel("G", isGlobal = true)
+		}
+		addCircuit("Main") {
+			reference(sub.uuid)
+			reference(sub.uuid)
+		}
+
+		assertTrue(globalTunnelIssues().isEmpty())
+	}
+
+	@Test
+	fun shouldAcceptGlobalTunnelInSubCircuitWhoseParentIsUsedTwice() {
+		val sub = addCircuit("Sub") {
+			addDrivenTunnel("G", isGlobal = true)
+		}
+		val middle = addCircuit("Middle") {
+			reference(sub.uuid)
+		}
+		addCircuit("Main") {
+			reference(middle.uuid)
+			reference(middle.uuid)
+		}
+
+		assertTrue(globalTunnelIssues().isEmpty())
+	}
+
+	@Test
+	fun shouldFindGlobalTunnelInSubCircuitUsedOnce() {
+		val sub = addCircuit("Sub") {
+			addDrivenTunnel("G", isGlobal = true)
+		}
+		addCircuit("Main") {
+			reference(sub.uuid)
+		}
+
+		assertEquals(1, globalTunnelIssues().size)
+	}
+
+	private fun globalTunnelIssues(): List<UnconnectedElement> =
+		FindUnconnectedPortsService.findInLibrary(library, FindUnconnectedPortsType.All)
+			.filter { it.kind == UnconnectedKind.LoneGlobalConnector }
+
+	@Test
 	fun shouldFindNothingInCorrectCircuit() {
 		val metaGraph = addCircuit("Main") {
 			addDrivenTunnel("A")

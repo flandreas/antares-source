@@ -1,5 +1,8 @@
 package io.antarescircuit.jabbah.graph.view.connect.unconnected
 
+import io.antarescircuit.jabbah.base.UUID
+import io.antarescircuit.jabbah.graph.model.vertice.SubGraphVerticeRef
+import kotlin.math.min
 import io.antarescircuit.jabbah.base.*
 import io.antarescircuit.jabbah.base.event.EventBus
 import io.antarescircuit.jabbah.graph.MetaGraph
@@ -148,16 +151,45 @@ object FindUnconnectedPortsService {
         return result
     }
 
-    /** Counts the names of global [NamedConnector]s in all graphs of [library] and its imports. */
-    private fun countGlobalConnectorNames(library: Library): Map<String, Int> =
-        library.expandedImports.libraries
-            .flatMap { lib -> lib.metaGraphIds.map { lib.getMetaGraph(it) } }
-            .flatMap { metaGraph -> metaGraph.graph.graphView.getVerticeViews().map { it.model } }
-            .filterIsInstance<NamedConnector>()
-            .filter { it.isGlobal }
-            .mapNotNull { it.name?.ifEmpty { null } }
-            .groupingBy { it }
-            .eachCount()
+    /**
+     * Counts the instances of global [NamedConnector]s per name in all graphs of [library] and its imports.
+     * Global connectors join across all instances during simulation, so a connector in a graph that is used
+     * as sub-circuit several times (directly or via its parents) is counted once per instance.
+     */
+    private fun countGlobalConnectorNames(library: Library): Map<String, Int> {
+        val metaGraphs = library.expandedImports.libraries.flatMap { lib -> lib.metaGraphIds.map { lib.getMetaGraph(it) } }
+        // For each graph, the graphs containing a reference to it, once per reference
+        val referencingGraphs = mutableMapOf<UUID, MutableList<UUID>>()
+        for (metaGraph in metaGraphs) {
+            metaGraph.graph.model?.elements?.filterIsInstance<SubGraphVerticeRef>()?.forEach { ref ->
+                ref.graphUUID?.let { referencingGraphs.getOrPut(it) { mutableListOf() }.add(metaGraph.uuid) }
+            }
+        }
+        val instanceCounts = mutableMapOf<UUID, Int>()
+        // Saturates at 2, since only "exactly one" matters; [visiting] guards against recursive references
+        fun instanceCount(uuid: UUID, visiting: Set<UUID>): Int = instanceCounts[uuid] ?: run {
+            val parents = referencingGraphs[uuid].orEmpty()
+            val count = if (parents.isEmpty()) {
+                1
+            } else {
+                min(2, parents.sumOf { if (it in visiting) 1 else instanceCount(it, visiting + uuid) })
+            }
+            count.also { instanceCounts[uuid] = it }
+        }
+
+        val result = mutableMapOf<String, Int>()
+        for (metaGraph in metaGraphs) {
+            val names = metaGraph.graph.graphView.getVerticeViews()
+                .map { it.model }
+                .filterIsInstance<NamedConnector>()
+                .filter { it.isGlobal }
+                .mapNotNull { it.name?.ifEmpty { null } }
+            if (names.isEmpty()) continue
+            val instances = instanceCount(metaGraph.uuid, emptySet())
+            names.forEach { result[it] = (result[it] ?: 0) + instances }
+        }
+        return result
+    }
 
     fun postAsIssues(elements: Set<UnconnectedElement>, eventBus: EventBus, handler: (Issue) -> Unit) {
         elements.forEach { e ->
