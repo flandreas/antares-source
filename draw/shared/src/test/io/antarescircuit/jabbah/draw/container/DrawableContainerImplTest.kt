@@ -1,5 +1,6 @@
 package io.antarescircuit.jabbah.draw.container
 
+import io.antarescircuit.jabbah.base.geom.Point2D
 import io.antarescircuit.jabbah.base.geom.Rectangle2D
 import io.antarescircuit.jabbah.base.module.BaseModule
 import io.antarescircuit.jabbah.draw.DrawContext
@@ -90,6 +91,47 @@ class DrawableContainerImplTest {
 		container.add(DrawableMockBuilder().withBoundingBox(Rectangle2D(0, 0, 10, 10)).invisible().build())
 		container.add(DrawableMockBuilder().withBoundingBox(Rectangle2D(10, 10, 10, 10)).build())
 		assertEquals(Rectangle2D(10, 10, 10, 10), container.boundingBox)
+	}
+
+	@Test
+	fun shouldShrinkBoundingBoxWhenRemovingDrawable() {
+		val rect = TestRectangle(Rectangle2D(90, 90, 10, 10))
+		container.add(TestRectangle(Rectangle2D(0, 0, 10, 10))).add(rect)
+
+		container.remove(rect)
+
+		assertEquals(Rectangle2D(0, 0, 10, 10), container.boundingBox)
+	}
+
+	@Test
+	fun shouldUpdateBoundingBoxWhenDrawableMoves() {
+		val rect = TestRectangle(Rectangle2D(0, 0, 10, 10))
+		container.add(rect).add(TestRectangle(Rectangle2D(20, 20, 10, 10)))
+
+		rect.location = Point2D(50, 50)
+
+		assertEquals(Rectangle2D(20, 20, 40, 40), container.boundingBox)
+	}
+
+	@Test
+	fun shouldAddDrawableToUpdatedBoundingBox() {
+		val rect = TestRectangle(Rectangle2D(0, 0, 10, 10))
+		container.add(rect).add(TestRectangle(Rectangle2D(20, 20, 10, 10)))
+		rect.location = Point2D(50, 50)
+
+		container.add(TestRectangle(Rectangle2D(70, 70, 10, 10)))
+
+		assertEquals(Rectangle2D(20, 20, 60, 60), container.boundingBox)
+	}
+
+	@Test
+	fun shouldResetBoundingBoxWhenCleared() {
+		container.add(TestRectangle(Rectangle2D(0, 0, 10, 10))).add(TestRectangle(Rectangle2D(20, 20, 10, 10)))
+
+		container.clear()
+		container.add(TestRectangle(Rectangle2D(50, 50, 10, 10)))
+
+		assertEquals(Rectangle2D(50, 50, 10, 10), container.boundingBox)
 	}
 
 	@Test

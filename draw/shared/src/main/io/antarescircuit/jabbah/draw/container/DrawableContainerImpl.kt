@@ -73,7 +73,8 @@ open class DrawableContainerImpl<T : Drawable>(
 			val drawableBBox = childBoundingBox(drawable)
 			if (drawables.size == 1) {
 				_boundingBox.setFrame(drawableBBox)
-			} else {
+				boundingBoxDirty = false
+			} else if (!boundingBoxDirty) {
 				_boundingBox.add(drawableBBox)
 			}
 
@@ -86,13 +87,13 @@ open class DrawableContainerImpl<T : Drawable>(
 	}
 
 	override fun remove(drawable: Drawable): DrawableContainer<T> {
-		removeDrawableImpl(drawable, true)
+		removeDrawableImpl(drawable)
 		return this
 	}
 
 	override fun clear(): DrawableContainer<T> {
 		while (children.size > 0) {
-			removeDrawableImpl(children[0], children.size == 1)
+			removeDrawableImpl(children[0])
 		}
 		return this
 	}
@@ -100,7 +101,20 @@ open class DrawableContainerImpl<T : Drawable>(
 	/** ---- [Drawable] interface */
 
 	private val _boundingBox = Rectangle2D()
-	override val boundingBox: RectangularShape get() = _boundingBox
+
+	/**
+	 * `true` if [_boundingBox] is outdated and must be recalculated before being accessed. Avoids recalculating
+	 * the bounding box for every single child update or removal, e.g. when moving or deleting many children.
+	 */
+	private var boundingBoxDirty = false
+
+	override val boundingBox: RectangularShape
+		get() {
+			if (boundingBoxDirty) {
+				updateBoundingBox()
+			}
+			return _boundingBox
+		}
 
 	override fun accept(visitor: HierarchyVisitor): Boolean {
 		if (visitor.visitEnter(this)) {
@@ -216,9 +230,14 @@ open class DrawableContainerImpl<T : Drawable>(
 	}
 
 	override fun handleDrawableUpdated(drawable: Drawable) {
-		updateBoundingBox()
-		if (!boundingBox.contains(drawable.boundingBox)) {
-			update()
+		boundingBoxDirty = true
+		val drawableBBox = drawable.boundingBox
+		// The update is propagated only if the recalculated bounding box doesn't contain the child's one. That's never
+		// the case for a visible child with a non-empty bounding box in unshifted coordinates, so skip recalculating then.
+		if (useLocation || !drawable.visible || drawableBBox.isEmpty) {
+			if (!boundingBox.contains(drawableBBox)) {
+				update()
+			}
 		}
 	}
 
@@ -240,10 +259,15 @@ open class DrawableContainerImpl<T : Drawable>(
 	 * all contained [Drawable]'s.
 	 */
 	protected fun updateBoundingBox() {
+		boundingBoxDirty = false
 		children.firstOrNull { it.visible }
 			?.let { _boundingBox.setFrame(childBoundingBox(it)) }
 			?: _boundingBox.setFrame(0.0, 0.0, 0.0, 0.0)
-		children.filter { it.visible }.forEach { _boundingBox.add(childBoundingBox(it)) }
+		for (child in children) {
+			if (child.visible) {
+				_boundingBox.add(childBoundingBox(child))
+			}
+		}
 	}
 
 	private fun notifyDrawableAdded(drawable: T) {
@@ -257,16 +281,15 @@ open class DrawableContainerImpl<T : Drawable>(
 	}
 
 	/**
-	 * Implementation of removing a [Drawable] from this [DrawableContainer] that recalculates the new
-	 * bounding box only after the last removal.
+	 * Implementation of removing a [Drawable] from this [DrawableContainer]. The bounding box is recalculated
+	 * lazily on its next access.
 	 */
-	private fun removeDrawableImpl(drawable: Drawable, last: Boolean) {
-		if (children.contains(drawable)) {
-			children.remove(drawable)
+	private fun removeDrawableImpl(drawable: Drawable) {
+		val index = children.indexOf(drawable)
+		if (index >= 0) {
+			children.removeAt(index)
 			drawable.handleRemoved(this)
-			if (last) {
-				updateBoundingBox()
-			}
+			boundingBoxDirty = true
 			invalidate(childBoundingBox(drawable))
 			notifyDrawableRemoved(drawable)
 		}
