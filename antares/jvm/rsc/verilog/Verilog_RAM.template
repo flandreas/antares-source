@@ -1,0 +1,39 @@
+{%- if vertice.hasClock == false -%}
+{{ verilog.error('antares.verilog.ramWithoutClock.error') }}
+{%- endif -%}
+{%- if vertice.separateDataPorts == true -%}
+{%- set moduleName = verilog.setModuleName('Verilog_RAM_SeparateDataPorts') -%}
+{%- else -%}
+{%- set moduleName = verilog.setModuleName('Verilog_RAM') -%}
+{%- endif -%}
+module {{ moduleName }} #(
+  parameter addrBitWidth = 8,{{ verilog.registerParameter('addrBitWidth', vertice.addressWidth.width) }}
+  parameter dataBitWidth = 8{{ verilog.registerParameter('dataBitWidth', vertice.dataWidth.width) }}
+) (
+  input [addrBitWidth-1:0] A,
+  input CLK,
+  input CS,
+  input WR,
+  input CLR,
+{%- if vertice.separateDataPorts == true %}
+  input [dataBitWidth-1:0] DI,
+  output [dataBitWidth-1:0] D);
+{%- else %}
+  inout [dataBitWidth-1:0] D);
+{%- endif %}
+  reg [dataBitWidth-1:0] memory [0:(1 << addrBitWidth) - 1];
+  integer i;
+  always @(posedge CLK or posedge CLR) begin
+    if (CLR) begin
+      for (i = 0; i < (1 << addrBitWidth); i = i + 1)
+        memory[i] <= {dataBitWidth{1'b0}};
+    end else if (CS && WR) begin
+      memory[A] <= {% if vertice.separateDataPorts == true %}DI{% else %}D{% endif %};
+    end
+  end
+{%- if vertice.separateDataPorts == true %}
+  assign D = CS ? memory[A] : {dataBitWidth{1'bz}};
+{%- else %}
+  assign D = (CS && !WR) ? memory[A] : {dataBitWidth{1'bz}};
+{%- endif %}
+endmodule

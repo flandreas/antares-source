@@ -1,0 +1,22 @@
+{%- if vertice.name == '' || vertice.name == null -%}
+{%- set moduleName = verilog.setModuleName('Verilog_ROM') -%}
+{%- else -%}
+{%- set moduleName = verilog.setModuleName('Verilog_ROM_' + verilog.identifier(vertice.name)) -%}
+{%- endif -%}
+module {{ moduleName }} (
+  input {{ verilog.range(vertice.addressWidth.width) }}A,
+  input CS,
+  output {{ verilog.range(vertice.dataWidth.width) }}D);
+  reg {{ verilog.range(vertice.dataWidth.width) }}data;
+  always @(*) begin
+    case (A)
+{%- if vertice.memory.nonZeroLength > 0 %}
+{%- for i in 0..vertice.memory.nonZeroLength - 1 %}
+      {{ vertice.addressWidth.width }}'d{{ i }}: data = {{ vertice.dataWidth.width }}'b{{ vertice.dataAsPaddedBinaryAt(i) }};
+{%- endfor %}
+{%- endif %}
+      default: data = {{ verilog.zero(vertice.dataWidth) }};
+    endcase
+  end
+  assign D = CS ? data : {{ verilog.highZ(vertice.dataWidth) }};
+endmodule
