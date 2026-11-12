@@ -140,6 +140,43 @@ class GraphImplTest {
 	}
 
 	@Test
+	fun shouldCountUpTrailingNumberOfClashingName() {
+		val graph = GraphImpl(eventBus = EventBusImpl())
+		graph.add(GraphInputImpl(PortImpl.createOutput(), "A3"))
+		graph.add(GraphInputImpl(PortImpl.createOutput(), "A4"))
+		graph.add(GraphOutputImpl(PortImpl.createInput(), "X"))
+
+		val input = GraphInputImpl(PortImpl.createOutput(), "A3")
+		graph.add(input)
+
+		assertEquals("A5", input.name)
+	}
+
+	@Test
+	fun shouldAppendNumberToClashingNameWithoutNumber() {
+		val graph = GraphImpl(eventBus = EventBusImpl())
+		graph.add(GraphInputImpl(PortImpl.createOutput(), "Clk"))
+
+		val input = GraphInputImpl(PortImpl.createOutput(), "Clk")
+		graph.add(input)
+
+		assertEquals("Clk2", input.name)
+	}
+
+	@Test
+	fun shouldAvoidParamNamesForClashingName() {
+		val graph = GraphImpl(eventBus = EventBusImpl())
+		graph.parameterDefinitions = GraphParamDefinitions().withDefinition(
+			GraphParamDefinition.create("N2", StringGraphParamType, "Default"))
+		graph.add(GraphInputImpl(PortImpl.createOutput(), "N1"))
+
+		val input = GraphInputImpl(PortImpl.createOutput(), "N1")
+		graph.add(input)
+
+		assertEquals("N3", input.name)
+	}
+
+	@Test
 	fun shouldNotChangeUniqueInputName() {
 		val testGraph = GraphImpl(eventBus = EventBusImpl())
 		val `in` = GraphInputImpl(PortImpl.createOutput(), "I99")

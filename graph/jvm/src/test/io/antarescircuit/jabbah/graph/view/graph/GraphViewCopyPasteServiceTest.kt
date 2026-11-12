@@ -6,6 +6,7 @@ import io.antarescircuit.jabbah.draw.graphics.PredefinedColorRepository
 import io.antarescircuit.jabbah.edit.model.rectangle.RectangleComponent
 import io.antarescircuit.jabbah.edit.model.text.LabelComponent
 import io.antarescircuit.jabbah.edit.model.text.TranslatableText
+import io.antarescircuit.jabbah.edit.model.text.description.Description
 import io.antarescircuit.jabbah.edit.DrawingViewMockBuilder
 import io.antarescircuit.jabbah.graph.TestLibraryBuilder
 import io.antarescircuit.jabbah.graph.container.ContainerDrawing
@@ -152,6 +153,25 @@ class GraphViewCopyPasteServiceTest {
 		service.paste(contents, view.build(), Point2D(10, 10))
 		newInput = builder.graphView.drawables.first() as TestGraphPortView<*>
 		assertEquals("Test3", newInput.model.name)
+	}
+
+	@Test
+	fun shouldRenumberPastedGraphPortsInOrder() {
+		val builder = GraphViewBuilder<Boolean>()
+		val view = DrawingViewMockBuilder().withDrawing(builder.graphView)
+		// Added out of order so that the drawing order differs from the name order.
+		// The description identifies the origin of each pasted copy.
+		val inputs = listOf(1, 0, 2, 3).associateWith { i ->
+			builder.add(TestGraphPortView.input<Boolean>("D$i")).also { it.model.description = Description("D$i") }
+		}
+
+		val contents = service.copy(listOf(inputs[0]!!.id, inputs[1]!!.id), builder.graphView)
+		val pasteInfo = service.paste(contents, view.build(), Point2D(10, 10))
+
+		val pastedNames = pasteInfo.componentIds
+			.map { (builder.graphView.getWithId(it) as TestGraphPortView<*>).model }
+			.associate { it.description.value to it.name }
+		assertEquals<Map<String?, String?>>(mapOf("D0" to "D4", "D1" to "D5"), pastedNames)
 	}
 
 	private fun createMetaGraph(): ContainerLibraryElement {

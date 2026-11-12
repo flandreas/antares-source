@@ -11,8 +11,10 @@ import io.antarescircuit.jabbah.edit.SnapResult
 import io.antarescircuit.jabbah.edit.model.CopyPasteService
 import io.antarescircuit.jabbah.edit.model.PasteInfo
 import io.antarescircuit.jabbah.graph.GraphStorable
+import io.antarescircuit.jabbah.graph.model.GraphPort
 import io.antarescircuit.jabbah.graph.model.Net
 import io.antarescircuit.jabbah.graph.model.Port
+import io.antarescircuit.jabbah.graph.model.vertice.GraphPortName
 import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.NetViewElement
@@ -184,6 +186,10 @@ class GraphViewCopyPasteService(
 					c.model.graphParamsChanged(it)
 				}
 			}
+		}
+		(drawing as? GraphView)?.graph?.let { graph ->
+			val graphPorts = copyDrawing.drawables.mapNotNull { (it as? GraphElementView<*>)?.model as? GraphPort<*> }
+			GraphPortName.renumberPasted(graphPorts, graph)
 		}
 		// Second pass: Alter Drawing by adding Components
 		copyDrawing.drawables.reversed().forEach { c ->
