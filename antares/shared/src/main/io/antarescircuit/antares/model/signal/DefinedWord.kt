@@ -14,18 +14,11 @@ class DefinedWord(
 
 	companion object {
 
-		// TODO How is this different from BitWidth.maxValue?
-		private val BIT_WIDTH_MASKS = mutableMapOf<Int, ULong>()
+		/** Masks indexed by width, avoiding boxed map lookups on every construction. */
+		private val BIT_WIDTH_MASKS = ULongArray(BitWidth.MAX + 1) { if (it == 64) ULong.MAX_VALUE else (1UL shl it) - 1UL }
 
-		init {
-			var mask = 0UL
-			var bit = 1UL
-			for (i in 1..BitWidth.MAX) {
-				mask += bit
-				BIT_WIDTH_MASKS[i] = mask
-				bit = bit.shl(1)
-			}
-		}
+		/** Hash shared with fully defined [Word]s, which compare equal to [DefinedWord]s. */
+		internal fun hashOf(width: Int, value: ULong): Int = 31 * width + value.hashCode()
 
 		private val ZERO = DefinedWord(BitWidth.BW_1, 0UL)
 		private val ONE = DefinedWord(BitWidth.BW_1, 1UL)
@@ -36,14 +29,15 @@ class DefinedWord(
 
 		private val WIDTH_8_VALUES = Array(256) { DefinedWord(BitWidth.BW_8, it.toULong()) }
 
+		/** Returns a [DefinedWord] with [value] masked to [bitWidth], shared for common small widths. */
 		fun of(bitWidth: BitWidth, value: ULong): DefinedWord {
-			if (value <= bitWidth.maxValue) {
-				return when (bitWidth) {
-					BitWidth.BW_1 -> if (value == 0UL) ZERO else ONE
-					BitWidth.BW_2 -> WIDTH_2_VALUES[value.toInt()]
-					BitWidth.BW_4 -> WIDTH_4_VALUES[value.toInt()]
-					BitWidth.BW_8 -> WIDTH_8_VALUES[value.toInt()]
-					else -> DefinedWord(bitWidth, value)
+			if (bitWidth is BitWidthImpl) {
+				val masked = value and BIT_WIDTH_MASKS[bitWidth.width]
+				when (bitWidth.width) {
+					1 -> return if (masked == 0UL) ZERO else ONE
+					2 -> return WIDTH_2_VALUES[masked.toInt()]
+					4 -> return WIDTH_4_VALUES[masked.toInt()]
+					8 -> return WIDTH_8_VALUES[masked.toInt()]
 				}
 			}
 			return DefinedWord(bitWidth, value)
@@ -54,7 +48,7 @@ class DefinedWord(
 		fun random(bitWidth: BitWidth): DefinedWord = DefinedWord(bitWidth, kotlin.random.Random.nextULong())
 	}
 
-	val longValue: ULong = longValue.and(BIT_WIDTH_MASKS[bitWidth.width]!!)
+	val longValue: ULong = longValue.and(BIT_WIDTH_MASKS[bitWidth.width])
 
 	/** ---- [Any] */
 
@@ -68,20 +62,12 @@ class DefinedWord(
 		if (other is Word) {
 			return other.bitWidth.width == bitWidth.width && other.toLong() == longValue
 		}
+		if (other !is DefinedWord) return false
 
-		other as DefinedWord
-
-		if (bitWidth.width != other.bitWidth.width) return false
-		if (longValue != other.longValue) return false
-
-		return true
+		return bitWidth.width == other.bitWidth.width && longValue == other.longValue
 	}
 
-	override fun hashCode(): Int {
-		var result = bitWidth.hashCode()
-		result = 31 * result + longValue.hashCode()
-		return result
-	}
+	override fun hashCode(): Int = hashOf(bitWidth.width, longValue)
 
 	/** ---- [DigitalSignal] */
 
@@ -93,48 +79,49 @@ class DefinedWord(
 
 	override val hasError: Boolean get() = false
 
-	override val bits: List<Bit> by lazy(LazyThreadSafetyMode.NONE) {
-		val bits = mutableListOf<Bit>()
-		var v = longValue
-		for (i in 0 until bitWidth.width) {
-			bits.add(Bit.of(v % 2UL == 1UL))
-			v = v.shr(1)
-		}
-		bits
-	}
+	// Caches computed on first use. Plain nullable fields instead of lazy delegates, since a
+	// DefinedWord is allocated for most simulation steps and the delegates cost several objects each.
+	private var cachedBits: List<Bit>? = null
+	private var cachedHex: String? = null
+	private var cachedBinary: String? = null
+	private var cachedColor: CompositeColor? = null
 
-	override val hexString: String by lazy(LazyThreadSafetyMode.NONE) { BitOperation.longToHexPadded(this.longValue, bitWidth) }
+	override val bits: List<Bit> get() = cachedBits ?: List(bitWidth.width) { Bit.of(BitOperation.getBitAt(longValue, it)) }
+		.also { cachedBits = it }
 
-	override val binaryString: String by lazy(LazyThreadSafetyMode.NONE) { BitOperation.longToBinaryPadded(this.longValue, bitWidth) }
+	override val hexString: String get() = cachedHex ?: BitOperation.longToHexPadded(longValue, bitWidth).also { cachedHex = it }
 
-	override val octalString: String by lazy(LazyThreadSafetyMode.NONE) { this.longValue.toString(8) }
+	override val binaryString: String get() =
+		cachedBinary ?: BitOperation.longToBinaryPadded(longValue, bitWidth).also { cachedBinary = it }
 
-	override val decimalString: String by lazy(LazyThreadSafetyMode.NONE) { this.longValue.toString() }
+	override val octalString: String get() = longValue.toString(8)
 
-	override val color: CompositeColor by lazy(LazyThreadSafetyMode.NONE) { DigitalSignalColor.ofSignal(this) }
+	override val decimalString: String get() = longValue.toString()
 
-	override fun not(): DigitalSignal = DefinedWord(bitWidth, longValue.inv())
+	override val color: CompositeColor get() = cachedColor ?: DigitalSignalColor.ofSignal(this).also { cachedColor = it }
+
+	override fun not(): DigitalSignal = of(bitWidth, longValue.inv())
 
 	override fun and(signal: DigitalSignal): DigitalSignal =
-		signal.toLong()?.let { DefinedWord(bitWidth, longValue.and(it)) } ?: Word.of(bitWidth, longValue).and(signal)
+		signal.toLong()?.let { of(bitWidth, longValue.and(it)) } ?: Word.of(bitWidth, longValue).and(signal)
 
 	override fun and(value: ULong): DigitalSignal =
-		DefinedWord(bitWidth, this.longValue.and(value))
+		of(bitWidth, this.longValue.and(value))
 
 	override fun or(signal: DigitalSignal): DigitalSignal =
-		signal.toLong()?.let { DefinedWord(bitWidth, longValue.or(it)) } ?: Word.of(bitWidth, longValue).or(signal)
+		signal.toLong()?.let { of(bitWidth, longValue.or(it)) } ?: Word.of(bitWidth, longValue).or(signal)
 
 	override fun or(value: ULong): DigitalSignal =
-		DefinedWord(bitWidth, this.longValue.or(value))
+		of(bitWidth, this.longValue.or(value))
 
 	override fun bitAt(index: Int): Bit = Bit.of(BitOperation.getBitAt(longValue, index))
 
 	override fun flip(index: Int): DigitalSignal {
 		val mask = 1UL.shl(index)
 		return if (mask.and(longValue) == 0UL) {
-			DefinedWord(bitWidth, longValue.or(mask))
+			of(bitWidth, longValue.or(mask))
 		} else {
-			DefinedWord(bitWidth, longValue.and(mask.inv()))
+			of(bitWidth, longValue.and(mask.inv()))
 		}
 	}
 
@@ -143,7 +130,7 @@ class DefinedWord(
 			return this
 		}
 		val mask = (BitOperation.power(subwordWidth.width.toByte()) - 1UL).shl(subwordWidth.width * index)
-		return DefinedWord(subwordWidth, longValue.and(mask).shr(subwordWidth.width * index))
+		return of(subwordWidth, longValue.and(mask).shr(subwordWidth.width * index))
 	}
 
 	override fun getSubwordValue(subwordWidth: BitWidth, index: Int): ULong =
@@ -185,7 +172,7 @@ class DefinedWord(
 		if (this.bitWidth == bitWidth) {
 			this
 		} else {
-			DefinedWord(bitWidth, longValue)
+			of(bitWidth, longValue)
 		}
 
 	override fun withBit(index: Int, bit: Bit): DigitalSignal =
@@ -205,10 +192,10 @@ class DefinedWord(
 		Word.of(bitWidth, longValue).withSubwordValue(subword, index)
 
 	override fun shiftLeft(bitCount: Int): DigitalSignal =
-		DefinedWord(bitWidth, longValue.shl(bitCount))
+		of(bitWidth, longValue.shl(bitCount))
 
 	override fun shiftRight(bitCount: Int): DigitalSignal =
-		DefinedWord(bitWidth, longValue.shr(bitCount))
+		of(bitWidth, longValue.shr(bitCount))
 
 	override fun isAllOf(bit: Bit): Boolean =
 		if (bit.isDefined) {
@@ -225,19 +212,19 @@ class DefinedWord(
 		BitOperation.hexDigit(getSubwordValue(BitWidth.BW_4, index).toLong())
 
 	override fun add(other: UInt): DigitalSignal =
-		DefinedWord(bitWidth, longValue + other)
+		of(bitWidth, longValue + other)
 
 	override fun subtract(other: UInt): DigitalSignal =
-		DefinedWord(bitWidth, longValue - other)
+		of(bitWidth, longValue - other)
 
 	override fun multiply(other: UInt): DigitalSignal =
-		DefinedWord(bitWidth, longValue * other)
+		of(bitWidth, longValue * other)
 
 	override fun divide(other: ULong): DigitalSignal =
-		if (other == 0UL) this else DefinedWord(bitWidth, longValue / other)
+		if (other == 0UL) this else of(bitWidth, longValue / other)
 
 	override fun mod(value: ULong): DigitalSignal =
-		if (value == 0UL) DefinedWord(bitWidth, 0UL) else DefinedWord(bitWidth, longValue.mod(value))
+		if (value == 0UL) of(bitWidth, 0UL) else of(bitWidth, longValue.mod(value))
 
 	override fun isGreaterThan(value: ULong): Boolean = longValue > value
 
@@ -248,5 +235,5 @@ class DefinedWord(
 	override fun isSmallerEqualThan(value: ULong): Boolean = longValue <= value
 
 	override fun power(exp: Byte): DigitalSignal =
-		DefinedWord(bitWidth, longValue.toDouble().pow(exp.toInt()).toULong())
+		of(bitWidth, longValue.toDouble().pow(exp.toInt()).toULong())
 }

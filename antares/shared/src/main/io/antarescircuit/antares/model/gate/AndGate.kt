@@ -10,6 +10,8 @@ import io.antarescircuit.jabbah.graph.model.Vertice
 /** Performs a logical "AND" function with the current input signals of a [Vertice].*/
 object AndCalculator : AbstractLogicGateCalculator() {
 
+	override fun calculateWord(values: List<ULong>): ULong = values.reduce { a, b -> a and b }
+
 	override fun calculateBit(input: Collection<DigitalSignal>, bitIndex: Int): Bit {
 		var trueCount = 0
 		input.forEach {

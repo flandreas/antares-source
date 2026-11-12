@@ -50,8 +50,7 @@ interface BitWidth {
 		)
 
 		fun of(width: Int): BitWidth =
-			PREDEFINED.firstOrNull { it.width == width }
-				?: throw IllegalArgumentException("Unsupported bit width $width")
+			PREDEFINED.getOrNull(width - 1) ?: throw IllegalArgumentException("Unsupported bit width $width")
 
 		fun withName(customName: String): BitWidth =
 			PREDEFINED.firstOrNull { it.customName == customName }
