@@ -268,4 +268,11 @@ class MemoryDumpTest {
 		assertIs<IllegalArgumentException>(e)
 		assertEquals("Illegal hex number 'XY' at address 1", e.message)
 	}
+	@Test
+	fun shouldPreserveMemoryWhenNativeImportFails() {
+		val memory = Memory().apply { writeCommentedValue(7, 42UL, "keep") }
+		assertFailsWith<IllegalArgumentException> { MemoryDump.read(memory, "01 02 not-hex") }
+		assertEquals(listOf(MemoryCell(7, 42UL, "keep")), memory.getNonZeroCells().asSequence().toList())
+	}
+
 }

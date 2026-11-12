@@ -29,7 +29,7 @@ class AddressableReference(
 	private val applicationDataContentHandler: EventHandler<ApplicationDataContentEvent> = { unregisterOldContent() }
 
 	private val applicationDataEstablishedHandler: EventHandler<ApplicationDataContentEstablishedEvent> = {
-		registerNewContent((it.data.content as MetaGraph).graph.model!!)
+		registerNewContent((it.data.content as? MetaGraph)?.graph?.model)
 	}
 
 	private val addressableListeners = mutableListOf<AddressableListener>()
@@ -63,7 +63,18 @@ class AddressableReference(
 	}
 
 	private fun registerNewContent(graph: Graph?) {
+		val oldAddressWidth = if (::addressable.isInitialized) addressable.addressWidth else null
+		val oldDataWidth = if (::addressable.isInitialized) addressable.dataWidth else null
 		this.addressable = link.getLinkedObject(graph)
 		addressableListeners.forEach { addressable.addListener(it) }
+		if (oldAddressWidth != null && oldAddressWidth != addressable.addressWidth) {
+			val event = AddressableBitWidthEvent(true, oldAddressWidth, addressable.addressWidth)
+			addressableListeners.forEach { it.bitWidthChanged(event) }
+		}
+		if (oldDataWidth != null && oldDataWidth != addressable.dataWidth) {
+			val event = AddressableBitWidthEvent(false, oldDataWidth, addressable.dataWidth)
+			addressableListeners.forEach { it.bitWidthChanged(event) }
+		}
+		addressableListeners.forEach { it.dataChanged(AddressableDataEvent(null, null, null)) }
 	}
 }

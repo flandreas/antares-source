@@ -2,7 +2,9 @@ package io.antarescircuit.antares.view.addressable
 
 import io.antarescircuit.antares.model.addressable.Addressable
 import io.antarescircuit.antares.model.addressable.MemoryDump
-import io.antarescircuit.antares.model.signal.BitWidth
+import io.antarescircuit.antares.model.addressable.Memory
+import io.antarescircuit.antares.model.addressable.LogisimMemoryDump
+import io.antarescircuit.antares.model.addressable.AbstractAddressable
 import io.antarescircuit.jabbah.base.logger
 import io.antarescircuit.jabbah.edit.Command
 import io.antarescircuit.jabbah.edit.DrawingView
@@ -20,7 +22,6 @@ import java.nio.file.Paths
 class AddressableContentsCommand(
 	private val drawingView: DrawingView<GraphElementView<*>, GraphView>?,
 	private val link: ObjectLink<Addressable>,
-	private val bitWidth: BitWidth,
 	private val filePath: String
 ) : AbstractCommand("antares.command.memoryContents"), Undoable {
 
@@ -30,15 +31,18 @@ class AddressableContentsCommand(
 
 	private val addressable: Addressable get() = link.getLinkedObject(drawingView?.drawing?.graph)
 
-	private var oldContents: String? = null
+	private var oldContents: Memory? = null
+
+	private var newContents: Memory? = null
 
 	private var oldDataSource: String? = addressable.dataSource
 
 	override fun execute() {
-		oldContents = MemoryDump.write(addressable.memory, bitWidth)
 		try {
-			MemoryDump.read(addressable.memory, String(Files.readAllBytes(Paths.get(filePath))))
-			addressable.validateDataBitWidth(addressable.dataWidth)
+			oldContents = addressable.memory.copy()
+			oldDataSource = addressable.dataSource
+			val parsed = newContents ?: readValidated().also { newContents = it }
+			addressable.memory.replaceWith(parsed)
 			addressable.dataSource = filePath
 			addressable.update()
 		} catch (e: Throwable) {
@@ -47,8 +51,24 @@ class AddressableContentsCommand(
 		}
 	}
 
+	private fun readValidated(): Memory {
+		val contents = Files.readString(Paths.get(filePath))
+		val parsed = Memory()
+		if (LogisimMemoryDump.recognizes(contents)) {
+			LogisimMemoryDump.read(parsed, contents, addressable.maxAddress, addressable.dataWidth.maxValue)
+		} else {
+			MemoryDump.read(parsed, contents)
+			AbstractAddressable.validateDataBitWidth(parsed, addressable.dataWidth)
+			val cells = parsed.getNonZeroCells()
+			while (cells.hasNext()) {
+				require(cells.next().address <= addressable.maxAddress) { "Memory image exceeds address capacity" }
+			}
+		}
+		return parsed
+	}
+
 	override fun undo() {
-		MemoryDump.read(addressable.memory, oldContents!!)
+		addressable.memory.replaceWith(oldContents!!)
 		addressable.dataSource = oldDataSource
 		addressable.update()
 	}

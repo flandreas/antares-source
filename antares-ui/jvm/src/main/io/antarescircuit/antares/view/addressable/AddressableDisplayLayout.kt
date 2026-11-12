@@ -7,8 +7,6 @@ import io.antarescircuit.jabbah.base.Translations
 import io.antarescircuit.jabbah.execution.SignalHandler
 import javax.swing.JLabel
 import javax.swing.table.TableModel
-import kotlin.math.ceil
-import kotlin.math.min
 
 /**
  * Specified how the individual cells of an [Addressable] are to be represented as a [TableModel],
@@ -17,6 +15,8 @@ import kotlin.math.min
 interface AddressableDisplayLayout {
 
 	val cellsPerRow: Int
+
+	var startAddress: Int
 
 	/** Creates a [TableModel] that displays the specified [Memory] contents according to this specific layout. */
 	fun createTableModel(): AbstractAddressableTableModel
@@ -35,27 +35,23 @@ class FixedWidthLayout(
 	private val signalHandler: SignalHandler? = null
 ) : AddressableDisplayLayout  {
 
-	companion object {
-		private const val MAX_ROWS = 1_024
-	}
+	override var startAddress: Int = 0
 
-	private val rowCount: Int get() = min(
-		MAX_ROWS,
-		ceil(((addressableRef.addressable.addressWidth.maxValue + 1UL) / cellsPerRow.toULong()).toDouble()).toInt())
+	private val maxAddress: Int get() = addressableRef.addressable.addressWidth.maxValue.coerceAtMost(Int.MAX_VALUE.toULong()).toInt()
+	private val page: MemoryPage get() = MemoryPage(startAddress, maxAddress, cellsPerRow)
+
+	private val rowCount: Int get() = page.rowCount
 
 	override fun toString(): String =
 		Translations.getString("antares.memory.layout.columns", cellsPerRow)
 
 	override fun getCellAddress(rowIndex: Int, columnIndex: Int): Int =
-		when (cellsPerRow) {
-			1 -> rowIndex
-			else -> rowIndex * cellsPerRow + columnIndex
-		}
+		page.addressAt(rowIndex, if (cellsPerRow == 1) 0 else columnIndex) ?: -1
 
 	override fun createTableModel(): AbstractAddressableTableModel =
 		when (cellsPerRow) {
-			1 -> SingleColumnTableModel(addressableRef, rowCount, editable, converterProvider, signalHandler)
-			else -> AddressableTableModel(cellsPerRow, addressableRef, rowCount, editable, converterProvider,  signalHandler)
+			1 -> SingleColumnTableModel(addressableRef, rowCount, editable, converterProvider, signalHandler, startAddress)
+			else -> AddressableTableModel(cellsPerRow, addressableRef, rowCount, editable, converterProvider, signalHandler, startAddress)
 		}
 
 	override fun columnAlignment(columnIndex: Int): Int =

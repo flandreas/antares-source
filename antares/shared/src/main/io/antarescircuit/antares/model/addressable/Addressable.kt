@@ -58,7 +58,7 @@ interface Addressable {
 	/**
 	 * Returns the maximum (i.e. the largest) address of this [Addressable]. Note that the minimum (i.e. the smallest)
 	 * address is always 0. */
-	val maxAddress: Int
+	val maxAddress: Int get() = addressWidth.maxValue.coerceAtMost(Int.MAX_VALUE.toULong()).toInt()
 
 	/** Returns the current data at [currentAddress].*/
 	val data: ULong
@@ -118,8 +118,6 @@ interface AddressableVertice : Addressable, Vertice {
 		const val CHIP_SELECT_PORT_NAME = "CS"
 		const val DATA_PORT_NAME = "D"
 	}
-
-	override val maxAddress: Int get() = getAddressInput().bitWidth.maxValue.toInt()
 
 	fun getAddressInput(): DigitalPort =
 		getPort<DigitalSignal>(ADDRESS_PORT_NAME) as DigitalPort

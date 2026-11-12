@@ -1,263 +1,106 @@
 package io.antarescircuit.antares.model.addressable
 
-import io.antarescircuit.jabbah.base.collection.EmptyIterator
+/** Sparse memory; reads never allocate storage and empty segments are reclaimed on writes. */
+class Memory(private val segmentSize: Int = 256) {
 
-/**
- * Represents a memory object consisting of [MemoryCell]s with an [Int] address and a [Long] value.
- * The memory space is lazy initialized. Segments are allocated on demand
- * @property segmentSize the size of a segment
- */
-class Memory(private val segmentSize: Int) {
-    constructor(): this(DEFAULT_SEGMENT_SIZE)
-
-    companion object {
-        private const val DEFAULT_SEGMENT_SIZE = 256
-    }
-
-	/** Maps the base address of a [Segment] to the [Segment]. */
-    private val segments: MutableMap<Int, Segment> = mutableMapOf()
-
-	/** Returns the number of cells needed to store all non-zero cells as an array.*/
-	val nonZeroLength: Int get() =
-		if (segments.isEmpty()) {
-			0
-		} else {
-			val segment = segments[segments.keys.max()]!!
-			segment.baseAddress + segment.maxNonZeroAddress + 1
-		}
-
-    fun read(address: Int): ULong {
-        return getSegment(address).readValue(address % segmentSize)
-    }
-
-	fun readComment(address: Int): String? {
-		return getSegment(address).readComment(address % segmentSize)
+	init {
+		require(segmentSize > 0) { "Segment size must be positive" }
 	}
 
-    fun write(address: Int, vararg values: ULong) {
-        var lAddress = address
-        for (value in values) {
-            writeSingleValue(lAddress++, value)
-        }
-    }
+	/** Only nonzero or commented cells are stored, grouped by segment index. */
+	private val segments = mutableMapOf<Int, MutableMap<Int, CellData>>()
+
+	/** Array length through the last stored cell. Throws if the length cannot be represented as an Int. */
+	val nonZeroLength: Int get() {
+		val index = segments.keys.maxOrNull() ?: return 0
+		val length = index.toLong() * segmentSize + segments.getValue(index).keys.max() + 1
+		check(length <= Int.MAX_VALUE) { "Memory length exceeds the Int-sized array limit" }
+		return length.toInt()
+	}
+
+	fun read(address: Int): ULong = cellAt(address)?.value ?: 0UL
+
+	fun readComment(address: Int): String? = cellAt(address)?.comment
+
+	fun write(address: Int, vararg values: ULong) {
+		require(address >= 0 && values.size.toLong() <= Int.MAX_VALUE.toLong() - address + 1) {
+			"Memory address out of range"
+		}
+		values.forEachIndexed { index, value ->
+			val cellAddress = address + index
+			store(cellAddress, value, readComment(cellAddress))
+		}
+	}
 
 	fun writeComment(address: Int, comment: String?) {
-		if (comment == null && !hasSegment(address)) {
-			return
-		}
-		getSegment(address).writeComment(address % segmentSize, comment)
+		store(address, read(address), comment)
 	}
 
 	fun writeCommentedValue(address: Int, value: ULong, comment: String?) {
-		if (value == 0UL && comment == null && !hasSegment(address)) {
-			return
-		}
-		getSegment(address).writeCommentedValue(address % segmentSize, value, comment)
+		store(address, value, comment)
 	}
 
-    fun getNonZeroCells(): Iterator<MemoryCell> {
-        return NonZeroCellIterator()
-    }
+	/** Iterates stored cells in address order without walking unallocated address ranges. */
+	fun getNonZeroCells(): Iterator<MemoryCell> = sequence {
+		for (index in segments.keys.sorted()) {
+			val segment = segments.getValue(index)
+			for (offset in segment.keys.sorted()) {
+				val cell = segment.getValue(offset)
+				yield(MemoryCell(index * segmentSize + offset, cell.value, cell.comment))
+			}
+		}
+	}.iterator()
 
-    fun clear() {
+	fun clear() {
 		segments.clear()
 	}
 
-	fun addressWithValueLargerThan(value: ULong): Int? {
-		val iter = getNonZeroCells()
-		while (iter.hasNext()) {
-			val cell = iter.next()
-			if (cell.value > value) {
-				return cell.address
+	/** Creates a sparse snapshot, including comments, for undo and validated imports. */
+	fun copy(): Memory = Memory(segmentSize).also { it.replaceWith(this) }
+
+	/** Replaces contents without expanding the implicit zeros between stored cells. */
+	fun replaceWith(source: Memory) {
+		if (source === this) return
+		clear()
+		if (source.segmentSize == segmentSize) {
+			for ((index, cells) in source.segments) {
+				segments[index] = cells.toMutableMap()
 			}
+		} else {
+			val cells = source.getNonZeroCells()
+			while (cells.hasNext()) {
+				val cell = cells.next()
+				store(cell.address, cell.value, cell.comment)
+			}
+		}
+	}
+
+	fun addressWithValueLargerThan(value: ULong): Int? {
+		val cells = getNonZeroCells()
+		while (cells.hasNext()) {
+			val cell = cells.next()
+			if (cell.value > value) return cell.address
 		}
 		return null
 	}
 
-	private fun writeSingleValue(address: Int, value: ULong) {
-		if (value == 0UL && !hasSegment(address)) {
-			return
+	private fun cellAt(address: Int): CellData? {
+		require(address >= 0) { "Memory address must be nonnegative" }
+		return segments[address / segmentSize]?.get(address % segmentSize)
+	}
+
+	private fun store(address: Int, value: ULong, comment: String?) {
+		require(address >= 0) { "Memory address must be nonnegative" }
+		val index = address / segmentSize
+		val offset = address % segmentSize
+		if (value == 0UL && comment == null) {
+			val segment = segments[index] ?: return
+			segment.remove(offset)
+			if (segment.isEmpty()) segments.remove(index)
+		} else {
+			segments.getOrPut(index) { mutableMapOf() }[offset] = CellData(value, comment)
 		}
-		getSegment(address).writeValue(address % segmentSize, value)
 	}
 
-	private fun getSegment(address: Int): Segment {
-		val segmentIdx = address / segmentSize
-		val baseAddress = segmentIdx * segmentSize
-		var segment = segments[segmentIdx]
-		if (segment == null) {
-			segment = Segment(baseAddress)
-			segments[segmentIdx] = segment
-		}
-		return segment
-	}
-
-    private fun hasSegment(address: Int): Boolean {
-		return segments[address / segmentSize] != null
-	}
-
-	/** Holds the internal data representation of an individual cell.*/
 	private data class CellData(val value: ULong, val comment: String?)
-
-    /**
-     * Represents the unit of space allocation of a [Memory] object. It has a base
-     * address and a fixed size. [Segment] stores only values that are different from 0 (zero).
-     * @property baseAddress the base address of this [Segment]
-     */
-    private class Segment(val baseAddress: Int) {
-
-        /** Maps the address relative to the base address to the stored [CellData] at that address. */
-        private val data: MutableMap<Int,CellData> = mutableMapOf()
-
-	    /** Returns the maximum relative address containing a non-zero value. */
-	    val maxNonZeroAddress: Int get() = if (data.isEmpty()) {
-		    0
-	    } else {
-		    data.keys.max()
-	    }
-
- 		/** Reads the value at a relative segment address. */
-		fun readValue(address: Int): ULong {
-            return data[address]?.value ?: 0UL
-		}
-
-	    /** Reads the comment at a relative segment address. */
-	    fun readComment(address: Int): String? {
-		    return data[address]?.comment
-	    }
-
-		/** Writes a value at a relative segment address. */
-		fun writeValue(address: Int, value: ULong) {
-			val cell = data[address]
-			if (value == 0UL) {
-				if (cell != null && cell.comment == null) {
-					data.remove(address)
-				} else {
-					data[address] = CellData(value, cell?.comment)
-				}
-			} else {
-				data[address] = CellData(value, cell?.comment)
-			}
-		}
-
-	    /** Writes a comment at a relative segment address. */
-	    fun writeComment(address: Int, comment: String?) {
-		    val cell = data[address]
-		    if (comment == null) {
-			    if (cell != null && cell.value == 0UL) {
-				    data.remove(address)
-			    } else if (cell != null) {
-				    data[address] = CellData(cell.value, comment)
-			    }
-		    } else {
-			    data[address] = CellData(cell?.value ?: 0UL, comment)
-		    }
-	    }
-
-	    fun writeCommentedValue(address: Int, value: ULong, comment: String?) {
-		    val cell = data[address]
-		    if (value == 0UL && comment == null) {
-			    if (cell != null) {
-				    data.remove(address)
-			    } else {
-				    data[address] = CellData(value, comment)
-			    }
-		    } else {
-			    data[address] = CellData(value, comment)
-		    }
-	    }
-
-        fun getNonZeroCellIterator(): Iterator<MemoryCell> {
-            return NonZeroCellIterator()
-        }
-
-        /**
-         * Returns only those [MemoryCell]s of this [Segment] that have a value different from 0
-         * or a non-empty comment (i.e. cells that exist).
-         */
-        private inner class NonZeroCellIterator : Iterator<MemoryCell> {
-
-            private val sortedAddresses: MutableList<Int> = mutableListOf()
-            private var addressIndex: Int? = null
-
-            init {
-                sortedAddresses.addAll(data.keys)
-                sortedAddresses.sort()
-	            addressIndex = if (sortedAddresses.isEmpty()) {
-		            null
-	            } else {
-		            0
-	            }
-            }
-
-            override fun hasNext(): Boolean {
-                return addressIndex != null
-            }
-
-            override fun next(): MemoryCell {
-                if (addressIndex == null) {
-                    throw NoSuchElementException()
-                }
-                val address = sortedAddresses[addressIndex!!]
-                val currentValue = currentValue()
-	            val currentComment = currentComment()
-	            addressIndex = if (addressIndex!! < sortedAddresses.size - 1) {
-		            addressIndex!! + 1
-	            } else {
-		            null
-	            }
-                return MemoryCell(baseAddress + address, currentValue, currentComment)
-            }
-
-            private fun currentValue(): ULong {
-                return readValue(sortedAddresses[addressIndex!!])
-            }
-
-	        private fun currentComment(): String? {
-		        return readComment(sortedAddresses[addressIndex!!])
-	        }
-        }
-    }
-
-    private inner class NonZeroCellIterator : Iterator<MemoryCell> {
-
-        private val segmentAddresses: MutableList<Int> = mutableListOf()
-        private var segmentIndex: Int? = null
-        private var segmentCellIterator: Iterator<MemoryCell>
-
-        init {
-            segmentAddresses.addAll(segments.keys)
-            segmentAddresses.sort()
-            if (segmentAddresses.isEmpty()) {
-                segmentIndex = null
-                segmentCellIterator = EmptyIterator()
-            } else {
-                segmentIndex = 0
-                segmentCellIterator = segments[segmentAddresses[segmentIndex!!]]!!.getNonZeroCellIterator()
-            }
-
-        }
-
-        override fun hasNext(): Boolean {
-            return segmentIndex != null && segmentCellIterator.hasNext()
-        }
-
-        override fun next(): MemoryCell {
-            if (segmentIndex == null) {
-				throw NoSuchElementException()
-			}
-
-			val value = segmentCellIterator.next()
-
-			if (!segmentCellIterator.hasNext()) {
-				if (segmentIndex!! < segmentAddresses.size - 1) {
-					segmentIndex = segmentIndex!! + 1
-                    segmentCellIterator = segments[segmentAddresses[segmentIndex!!]]!!.getNonZeroCellIterator()
-				} else {
-					segmentIndex = null
-				}
-			}
-			return value
-        }
-    }
 }
