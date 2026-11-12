@@ -75,7 +75,8 @@ class VHDLTemplate(name: String) {
 	}
 
 	fun writeGenericMap(out: CodePrinter, node: BuiltInNode) {
-		val entity = getEntity(node.attributes)
+		// Generic values are per instance, so they must not come from the cached entity of the first instance
+		val entity = getEntity(node.attributes).let { cached -> if (cached.generics.isEmpty()) cached else generate(node.attributes) }
 		if (entity.generics.isNotEmpty()) {
 			out.println("generic map (").inc()
 			val sep = Separator(out, ",\n")
@@ -91,17 +92,7 @@ class VHDLTemplate(name: String) {
 	}
 
 	private fun getEntity(attributes: Map<String, Any>): Entity {
-		val newGenerated: Entity = try {
-			Entity(entityName, template, attributes)
-		} catch (e: Throwable) {
-			if (e.cause is HDLException) {
-				// Exception thrown by the script calling error()
-				throw e.cause!!
-			}
-			LOG.error("Error while executing template", e)
-			throw HDLException(Translations.getString("antares.vhdl.script.error.text", e.message ?: "-"))
-		}
-
+		val newGenerated = generate(attributes)
 		val entity = entities[newGenerated.name]
 		return if (entity == null) {
 			entities[newGenerated.name] = newGenerated
@@ -116,6 +107,18 @@ class VHDLTemplate(name: String) {
 			}
 		}
 	}
+
+	private fun generate(attributes: Map<String, Any>): Entity =
+		try {
+			Entity(entityName, template, attributes)
+		} catch (e: Throwable) {
+			if (e.cause is HDLException) {
+				// Exception thrown by the script calling error()
+				throw e.cause!!
+			}
+			LOG.error("Error while executing template", e)
+			throw HDLException(Translations.getString("antares.vhdl.script.error.text", e.message ?: "-"))
+		}
 
 	@Suppress("MemberVisibilityCanBePrivate")
 	class Entity(
