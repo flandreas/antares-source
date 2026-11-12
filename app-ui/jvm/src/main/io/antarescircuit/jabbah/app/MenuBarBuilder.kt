@@ -1,6 +1,7 @@
 package io.antarescircuit.jabbah.app
 
 import io.antarescircuit.jabbah.app.action.*
+import io.antarescircuit.jabbah.app.find.FindMenuAction
 import io.antarescircuit.jabbah.app.tip.TipOfTheDayAction
 import io.antarescircuit.jabbah.base.ActionWrapperSwing
 import io.antarescircuit.jabbah.base.Translations
@@ -119,6 +120,8 @@ open class MenuBarBuilder(
     }
 
 	protected open fun fillHelpMenu(menu: JMenu) {
+		menu.add(JMenuItem(FindMenuAction(frame, menuBar)))
+		menu.addSeparator()
 		menu.add(JMenuItem(ActionWrapperSwing(HelpComponentAction("edit.action.helpSelected"))))
 		menu.add(JMenuItem(ActionWrapperSwing(DocumentationAction(frame.application))))
 		menu.add(JMenuItem(ActionWrapperSwing(YouTubeChannelAction(frame.application))))

@@ -13,6 +13,9 @@ import io.antarescircuit.jabbah.draw.view.ContentViewManager
 import io.antarescircuit.jabbah.draw.view.FocusDrawablePlayer
 import io.antarescircuit.jabbah.draw.view.FocusPanel
 import io.antarescircuit.jabbah.draw.view.find.SearchBarSwing
+import io.antarescircuit.jabbah.draw.view.find.SearchNavigation
+import io.antarescircuit.jabbah.draw.view.find.SearchResult
+import io.antarescircuit.jabbah.edit.Component
 import io.antarescircuit.jabbah.draw.view.find.SearchRequest
 import io.antarescircuit.jabbah.draw.view.find.Searchable
 import io.antarescircuit.jabbah.edit.DrawingView
@@ -64,6 +67,9 @@ class GraphNavigationViewSwing(
 	}
 
 	private var searchBarShown: Boolean = false
+	private val searchNavigation = SearchNavigation<Component>()
+
+	override val searchResult: SearchResult get() = searchNavigation.result
 
 	private val hideSearchBarAction = HideSearchBarAction()
 
@@ -116,9 +122,11 @@ class GraphNavigationViewSwing(
 
 		drawingView.addPropertyChangeListener { event ->
 			if (event.source === drawingView && event.name == DrawingView.PROP_DRAWING) {
+				searchNavigation.reset(emptyList())
 				io.antarescircuit.jabbah.base.System.invokeLater {
 					header = GraphModuleUiJvm.graphNavigationViewHeaderFactory.createHeader(drawingView.drawing)
 					updateMainPanel(contextBorderColor?.foregroundColor)
+					if (searchBarShown) searchBar.refreshSearch()
 					refresh()
 				}
 			}
@@ -165,6 +173,7 @@ class GraphNavigationViewSwing(
 
 	override fun showSearchBar() {
 		if (searchBarShown) {
+			searchBar.handleShown()
 			return
 		}
 		searchBarShown = true
@@ -180,6 +189,14 @@ class GraphNavigationViewSwing(
 
 	override fun execute(request: SearchRequest) {
 		EditModule.drawingViewSearchFactory.invoke().execute(drawingView, request)
+		searchNavigation.reset(drawingView.selectionManager.selection.sortedBy { it.id })
+	}
+
+	override fun navigateSearch(forward: Boolean) {
+		val match = searchNavigation.move(forward) { drawingView.drawing.getWithId(it.id) === it } ?: return
+		drawingView.selectionManager.deselectAll()
+		drawingView.selectionManager.select(match)
+		FocusDrawablePlayer.ensureVisible(listOf(match), drawingView)
 	}
 
 	override fun hideSearchBar() {
@@ -192,6 +209,7 @@ class GraphNavigationViewSwing(
 		repaint()
 
 		searchBar.handleHidden()
+		canvas.requestViewFocus()
 	}
 
 	/** ---- [GraphNavigationView] interface */
