@@ -9,6 +9,8 @@ import io.antarescircuit.jabbah.graph.model.Vertice
  * Performs a logical "NOR" function with the current input signals of a [Vertice].
  */
 object NorCalculator : AbstractLogicGateCalculator() {
+	override fun calculateWord(values: List<ULong>): ULong = OrCalculator.calculateWord(values).inv()
+
 	override fun calculateBit(input: Collection<DigitalSignal>, bitIndex: Int): Bit =
 		OrCalculator.calculateBit(input, bitIndex).not()
 

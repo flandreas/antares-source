@@ -9,6 +9,8 @@ import io.antarescircuit.jabbah.graph.model.MultiSignalSource
  */
 object NandCalculator : AbstractLogicGateCalculator() {
 
+	override fun calculateWord(values: List<ULong>): ULong = AndCalculator.calculateWord(values).inv()
+
 	override fun calculateBit(input: Collection<DigitalSignal>, bitIndex: Int): Bit =
 		AndCalculator.calculateBit(input, bitIndex).not()
 

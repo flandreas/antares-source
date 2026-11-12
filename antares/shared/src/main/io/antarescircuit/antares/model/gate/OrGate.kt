@@ -12,6 +12,8 @@ import io.antarescircuit.jabbah.graph.model.Vertice
  */
 object OrCalculator : AbstractLogicGateCalculator() {
 
+	override fun calculateWord(values: List<ULong>): ULong = values.reduce { a, b -> a or b }
+
 	override fun calculateBit(input: Collection<DigitalSignal>, bitIndex: Int): Bit {
 		var result = false
 		input.forEach {

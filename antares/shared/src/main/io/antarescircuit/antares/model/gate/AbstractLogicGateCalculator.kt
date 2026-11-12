@@ -16,6 +16,8 @@ abstract class AbstractLogicGateCalculator : VerticeCalculator<AbstractLogicGate
 			.filter(filter)
 			.map { effectiveGateInputValue(it, source) }
 
+		calculateDefinedWord(inputValues)?.let { return it }
+
 		val outputBits = mutableListOf<Bit>()
 		for (bitIndex in 0 until inputValues.first().bitWidth.width) {
 			outputBits.add(calculateBit(inputValues, bitIndex))
@@ -32,6 +34,21 @@ abstract class AbstractLogicGateCalculator : VerticeCalculator<AbstractLogicGate
 			0))
 
 	abstract fun calculateBit(input: Collection<DigitalSignal>, bitIndex: Int): Bit
+
+	/**
+	 * Calculates the output value bitwise from fully defined input values, or returns `null` if this
+	 * gate has no word-level implementation. Must be equivalent to [calculateBit] for defined bits.
+	 */
+	open fun calculateWord(values: List<ULong>): ULong? = null
+
+	/** The fast lane for multi-bit inputs without undefined or error bits: plain long arithmetic. */
+	private fun calculateDefinedWord(inputs: List<DigitalSignal>): DigitalSignal? {
+		val values = ArrayList<ULong>(inputs.size)
+		for (input in inputs) {
+			values.add(input.toLong() ?: return null)
+		}
+		return calculateWord(values)?.let { DigitalSignalFactory.of(inputs.first().bitWidth, it) }
+	}
 
 	/** The fast lane for BitWidth 1 inputs.*/
 	abstract fun calculateBit(input: MultiSignalSource<DigitalSignal>): Bit
@@ -53,7 +70,11 @@ fun effectiveGateInputBit(bit: Bit): Bit =
 	}
 
 fun effectiveGateInputWord(input: DigitalSignal): DigitalSignal =
-	DigitalSignalFactory.ofBits(input.bits.map { bit -> effectiveGateInputBit(bit) })
+	if (!input.isPartiallyUndefined) {
+		input
+	} else {
+		DigitalSignalFactory.ofBits(input.bits.map { bit -> effectiveGateInputBit(bit) })
+	}
 
 fun effectiveGateInputValue(portId: Int, source: MultiSignalSource<DigitalSignal>): DigitalSignal =
 	effectiveGateInputWord(source.getSignal(portId))

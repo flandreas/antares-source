@@ -1,5 +1,6 @@
 package io.antarescircuit.jabbah.execution.scheduler
 
+import io.antarescircuit.jabbah.base.IssueImpl
 import io.antarescircuit.jabbah.base.LongValue
 import io.antarescircuit.jabbah.base.LongValueImpl
 import io.antarescircuit.jabbah.base.math.MILLION
@@ -266,6 +267,242 @@ class SchedulerImplTest {
 		scheduler.actPrematurely(actor, actorData)
 		verify { actor.act(any(), any())}
 	}
+
+	@Test
+	fun shouldExecuteManyPendingTimesInOrderAndCoalesceLatestData() {
+		val manual = createManualScheduler()
+		val calls = mutableListOf<ActorData>()
+		val actor = object : ActorImpl() {
+			override fun act(signalHandler: SignalHandler, data: ActorData) {
+				calls.add(data)
+				signalHandler.actingDone(this, data)
+			}
+		}
+		manual.isActive = true
+		val expected = List(200) { createActorData() }
+		for (i in expected.indices.reversed()) {
+			manual.requestActingAfter(actor, (i + 1).toLong(), createActorData())
+			manual.requestActingAfter(actor, (i + 1).toLong(), expected[i])
+		}
+		assertEquals(expected.size, manual.numberOfRemainingSlots)
+		repeat(expected.size) { manual.execute() }
+		assertEquals(expected, calls)
+		assertTrue(manual.isQueueEmpty)
+		manual.dispose()
+	}
+
+	@Test
+	fun shouldKeepNewSlotScheduledAtSameTimeAfterSynchronousCompletion() {
+		val manual = createManualScheduler()
+		val calls = mutableListOf<String>()
+		val target = object : ActorImpl() {
+			override fun act(signalHandler: SignalHandler, data: ActorData) {
+				calls.add("target")
+				signalHandler.actingDone(this, data)
+			}
+		}
+		val source = object : ActorImpl() {
+			override fun act(signalHandler: SignalHandler, data: ActorData) {
+				calls.add("source")
+				signalHandler.actingDone(this, data)
+				signalHandler.requestActingAfter(target, 0, data)
+			}
+		}
+		manual.isActive = true
+		manual.requestActingAfter(source, 10, createActorData())
+		manual.execute()
+		assertEquals(1, manual.numberOfRemainingSlots)
+		manual.execute()
+		assertEquals(listOf("source", "target"), calls)
+		assertTrue(manual.isQueueEmpty)
+		manual.dispose()
+	}
+
+	@Test
+	fun shouldRemovePrematureSlotsAndForgetSlotsOnRestart() {
+		val manual = createManualScheduler()
+		var calls = 0
+		val actor = object : ActorImpl() {
+			override fun act(signalHandler: SignalHandler, data: ActorData) {
+				calls++
+				signalHandler.actingDone(this, data)
+			}
+		}
+		manual.isActive = true
+		manual.requestActingAfter(createActor(), 10, createActorData())
+		manual.requestActingAfter(actor, 20, createActorData())
+		manual.actPrematurely(actor, null)
+		assertEquals(1, manual.numberOfRemainingSlots)
+		manual.requestActingAfter(actor, 20, createActorData())
+		assertEquals(2, manual.numberOfRemainingSlots)
+		manual.isActive = false
+		manual.isActive = true
+		manual.requestActingAfter(actor, 20, createActorData())
+		assertEquals(1, manual.numberOfRemainingSlots)
+		manual.execute()
+		assertEquals(2, calls)
+		assertTrue(manual.isQueueEmpty)
+		manual.dispose()
+	}
+
+	@Test
+	fun shouldNotLoseRequestMadeWhileActorIsStillActing() {
+		val manual = createManualScheduler()
+		val calls = mutableListOf<ActorData>()
+		val second = createActorData()
+		val actor = object : ActorImpl() {
+			override fun act(signalHandler: SignalHandler, data: ActorData) {
+				calls.add(data)
+				// A zero-delay re-request while still acting, e.g. a changed input during a signal animation
+				if (calls.size == 1) signalHandler.requestActingAfter(this, 0, second)
+				signalHandler.actingDone(this, data)
+			}
+		}
+		manual.isActive = true
+		val first = createActorData()
+		manual.requestActingAfter(actor, 10, first)
+
+		while (!manual.isQueueEmpty) manual.execute()
+
+		assertEquals(listOf(first, second), calls)
+		manual.dispose()
+	}
+
+	@Test
+	fun shouldIgnoreStaleActingDoneAfterRequestWasRearmed() {
+		val manual = createManualScheduler()
+		val calls = mutableListOf<ActorData>()
+		// Acting completes asynchronously, like an animated net with two animations
+		val actor = object : ActorImpl() {
+			override fun act(signalHandler: SignalHandler, data: ActorData) {
+				calls.add(data)
+			}
+		}
+		manual.isActive = true
+		val first = createActorData()
+		val second = createActorData()
+		manual.requestActingAfter(actor, 10, first)
+		manual.execute()
+		manual.requestActingAfter(actor, 0, second)
+
+		manual.actingDone(actor, first)
+		manual.actingDone(actor, first)
+		manual.execute()
+
+		assertEquals(listOf(first, second), calls)
+		manual.dispose()
+	}
+
+	@Test
+	fun shouldReportFailingActorAndContinueWithLaterSlots() {
+		val manual = createManualScheduler()
+		val issues = mutableListOf<IssueImpl>()
+		eventBus.register(IssueImpl::class) { issues.add(it) }
+		var laterCalls = 0
+		val failing = object : ActorImpl() {
+			override fun act(signalHandler: SignalHandler, data: ActorData) = throw IllegalStateException("boom")
+		}
+		val later = object : ActorImpl() {
+			override fun act(signalHandler: SignalHandler, data: ActorData) {
+				laterCalls++
+				signalHandler.actingDone(this, data)
+			}
+		}
+		manual.isActive = true
+		manual.requestActingAfter(failing, 10, createActorData())
+		manual.requestActingAfter(later, 20, createActorData())
+
+		manual.execute()
+		manual.execute()
+
+		assertEquals(1, laterCalls)
+		assertTrue(manual.isQueueEmpty)
+		assertEquals(1, issues.size)
+		assertTrue(issues.single().description!!.contains("boom"))
+		manual.dispose()
+	}
+
+	@Test
+	fun shouldPropagateActorFailuresWhenNotContained() {
+		val manual = SchedulerImpl(
+			scheduler.systemSpeedCategory,
+			timeService,
+			eventBus,
+			NoiseGeneratorHolder(NoNoiseGenerator(), eventBus),
+			task = ManualSchedulerTask(),
+			containActorFailures = false,
+		).apply { isSingleStepMode = true }
+		val failing = object : ActorImpl() {
+			override fun act(signalHandler: SignalHandler, data: ActorData) = throw IllegalStateException("boom")
+		}
+		manual.isActive = true
+		manual.requestActingAfter(failing, 10, createActorData())
+
+		assertFailsWith<IllegalStateException> { manual.execute() }
+		manual.dispose()
+	}
+
+	@Test
+	fun shouldReportZeroDelayOscillationOnceWithInvolvedActors() {
+		val manual = createManualScheduler()
+		val issues = mutableListOf<IssueImpl>()
+		eventBus.register(IssueImpl::class) { issues.add(it) }
+		// Two actors re-triggering each other without delay, like cross-coupled zero-delay gates
+		lateinit var b: ActorImpl
+		val a = object : ActorImpl(id = 1) {
+			override fun act(signalHandler: SignalHandler, data: ActorData) {
+				signalHandler.actingDone(this, data)
+				signalHandler.requestActingAfter(b, 0, data)
+			}
+		}
+		b = object : ActorImpl(id = 2) {
+			override fun act(signalHandler: SignalHandler, data: ActorData) {
+				signalHandler.actingDone(this, data)
+				signalHandler.requestActingAfter(a, 0, data)
+			}
+		}
+		manual.isActive = true
+		manual.requestActingAfter(a, 10, createActorData())
+
+		repeat(SchedulerImpl.OSCILLATION_WAVE_LIMIT + 1_000) { manual.execute() }
+
+		assertEquals(1, issues.size)
+		val origin = issues.single().origin
+		assertTrue(origin.contains("(1)") && origin.contains("(2)"), origin)
+		assertEquals(10L, manual.executionTime)
+		manual.dispose()
+	}
+
+	@Test
+	fun shouldNotReportOscillationForDeepZeroDelayChain() {
+		val manual = createManualScheduler()
+		val issues = mutableListOf<IssueImpl>()
+		eventBus.register(IssueImpl::class) { issues.add(it) }
+		// A chain of 2000 zero-delay actors settles well below the oscillation limit
+		val chain = ArrayList<ActorImpl>()
+		repeat(2_000) { index ->
+			chain.add(object : ActorImpl(id = index) {
+				override fun act(signalHandler: SignalHandler, data: ActorData) {
+					signalHandler.actingDone(this, data)
+					chain.getOrNull(index + 1)?.let { signalHandler.requestActingAfter(it, 0, data) }
+				}
+			})
+		}
+		manual.isActive = true
+		manual.requestActingAfter(chain.first(), 10, createActorData())
+		while (!manual.isQueueEmpty) manual.execute()
+
+		assertTrue(issues.isEmpty())
+		manual.dispose()
+	}
+
+	private fun createManualScheduler(): SchedulerImpl = SchedulerImpl(
+		scheduler.systemSpeedCategory,
+		timeService,
+		eventBus,
+		NoiseGeneratorHolder(NoNoiseGenerator(), eventBus),
+		task = ManualSchedulerTask(),
+	).apply { isSingleStepMode = true }
 
 	/** ---- [SchedulerImplTest] */
 

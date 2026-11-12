@@ -267,10 +267,8 @@ class OscilloscopeView(
 		container.getExecutionTooltip(context) ?: super.getExecutionTooltip(context)
 
 	override fun handleStateChanged(event: GraphElementEvent) {
-		if (event.signalHandler != null && event.reason?.startsWith(Oscilloscope.SIGNAL_RECEIVED) == true) {
-			val probeId = event.reason.split(':')[1].toInt()
-
-			val probeView = probeVerticeViews.firstOrNull { it.model.id == probeId }
+		if (event.signalHandler != null && event.reason == Oscilloscope.SIGNAL_RECEIVED) {
+			val probeView = probeVerticeViews.firstOrNull { it.model === event.argument }
 			if (probeView != null) {
 				invalidate()
 				readProbeView(probeView, event.signalHandler)

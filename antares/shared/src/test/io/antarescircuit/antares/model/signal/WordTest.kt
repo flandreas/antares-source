@@ -404,6 +404,24 @@ class WordTest {
 	}
 
 	@Test
+	fun shouldRetrieveExactlySizeBitsAtLikeDefinedWord() {
+		// 63 = 0b111111: bits 3..4 are 0b11; bit 5 must not be included
+		assertEquals(3UL, Word.of(BW_8, 63UL).bitsAt(3, 2))
+		assertEquals(DefinedWord.of(BW_8, 63UL).bitsAt(3, 2), Word.of(BW_8, 63UL).bitsAt(3, 2))
+		assertEquals(1UL, Word.of(BW_8, 0x80UL).bitsAt(7, 4))
+	}
+
+	@Test
+	fun shouldHaveSameHashCodeAsEqualDefinedWord() {
+		val word = Word.of(BW_12, 0xABCUL)
+		val defined = DefinedWord.of(BW_12, 0xABCUL)
+		assertEquals<DigitalSignal>(defined, word)
+		assertEquals<DigitalSignal>(word, defined)
+		assertEquals(defined.hashCode(), word.hashCode())
+		assertEquals(1, setOf<DigitalSignal>(word, defined).size)
+	}
+
+	@Test
 	fun shouldNotRetrieveErrorBitsAt() {
 		assertNull(Word.allOf(BW_8, Error).bitsAt(0, 2))
 	}

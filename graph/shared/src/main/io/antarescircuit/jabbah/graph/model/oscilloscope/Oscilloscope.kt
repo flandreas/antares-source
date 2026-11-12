@@ -130,7 +130,8 @@ class Oscilloscope(
 
 	fun handleSignal(probe: OscilloscopeProbeVertice<*>, signalHandler: SignalHandler) {
 		if (enabled) {
-			stateChanged(signalHandler, "$SIGNAL_RECEIVED:${probe.id}")
+			// The probe is passed as argument to avoid formatting and parsing an ID per signal change
+			stateChanged(signalHandler, SIGNAL_RECEIVED, probe)
 		}
 	}
 

@@ -95,8 +95,8 @@ class TestcaseScriptRunner(
 			return TestRunResult.error(circuit, Script, testName, e.toString())
 		} catch (e: RuntimeError) {
 			return TestRunResult.error(circuit, Script, testName, e.toString())
-		} catch (_: ControlledCircuitRunner.TooManyIterations) {
-			return TestRunResult.error(circuit, Circuit, testName, Translations.getString("antares.testcase.results.tooManyIterations.txt"))
+		} catch (e: ControlledCircuitRunner.TooManyIterations) {
+			return TestRunResult.error(circuit, Circuit, testName, e.describe(Translations.getString("antares.testcase.results.tooManyIterations.txt")))
 		}	catch (e: Throwable) {
 			LOG.error("Error while running test '${testName}' for circuit '${circuit.name.value}'", e)
 			return TestRunResult.error(circuit, Script, testName, Translations.getString("antares.testcase.action.technical.error.txt"))

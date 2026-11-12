@@ -1,6 +1,7 @@
 package io.antarescircuit.jabbah.execution.scheduler
 
 import io.antarescircuit.jabbah.base.*
+import io.antarescircuit.jabbah.base.Issue
 import io.antarescircuit.jabbah.base.collection.PriorityQueue
 import io.antarescircuit.jabbah.base.event.EventBus
 import io.antarescircuit.jabbah.base.event.EventHandler
@@ -39,7 +40,12 @@ class SchedulerImpl(
 	private val noiseGeneratorHolder: NoiseGeneratorHolder = ExecutionModule.noiseGeneratorHolder,
 	private val task: SchedulerTask = ExecutionModule.schedulerTaskFactory.invoke(currentSystemSpeedCategory, eventBus),
 	private val executionErrorHandler: ExecutionErrorHandlerImpl = ExecutionErrorHandlerImpl(),
-	isDeepExecution: Boolean = true
+	isDeepExecution: Boolean = true,
+	/**
+	 * `true` to turn exceptions thrown by [Actor]s into [Issue]s so the simulation can continue,
+	 * `false` to propagate them, e.g. for controlled runs that report failures themselves.
+	 */
+	private val containActorFailures: Boolean = true,
 ) : Scheduler, ExecutionErrorHandler by executionErrorHandler {
 
 	companion object {
@@ -47,10 +53,24 @@ class SchedulerImpl(
 		private const val SETTING_STOP_ON_ISSUE = "execution.scheduler.stopOnIssue"
 		const val SETTING_ENABLE_SOFT_BREAKPOINTS = "execution.scheduler.enableSoftBreakpoints"
 		private const val SETTING_ENABLE_SIMULATION_TIME_STATUS_BAR = "execution.scheduler.enableSimulationTimeStatusBar"
+
+		/**
+		 * Number of execution waves at the same simulation time after which the circuit is considered
+		 * oscillating. Zero-delay feedback loops never advance time and would otherwise starve all later events.
+		 */
+		const val OSCILLATION_WAVE_LIMIT = 10_000
+
+		/** Number of additional waves used to collect the [Actor]s involved in an oscillation. */
+		private const val OSCILLATION_COLLECT_WAVES = 100
+
+		private const val MAX_REPORTED_OSCILLATION_ACTORS = 10
 	}
 
 	/** The queue of pending [Slot]s ordered by ascending execution time.*/
 	private val queue = PriorityQueue<Slot>()
+
+	/** Avoid scanning all pending slots for every propagated signal. */
+	private val slotsByTime = mutableMapOf<Long, Slot>()
 
 	/** Determines whether this [Scheduler] is active or not.*/
 	private var activationState: SchedulerActivationState = PASSIVE
@@ -111,6 +131,15 @@ class SchedulerImpl(
 		isSingleStepMode || isSimulationTimeStatusEnabled && currentSystemSpeedCategory.systemSpeedCategory >= SystemSpeedCategory.Observe
 
 	private val schedulerListeners = mutableListOf<SchedulerListener>()
+
+	/** The simulation time of the last executed wave, used for oscillation detection. */
+	private var lastWaveTime: Long = -1
+
+	/** The number of consecutive waves executed at [lastWaveTime]. */
+	private var sameTimeWaves: Int = 0
+
+	/** The [Actor]s collected while confirming an oscillation at [lastWaveTime]. */
+	private val oscillatingActors = LinkedHashSet<Actor>()
 
 	init {
 		task.bind(this)
@@ -234,6 +263,7 @@ class SchedulerImpl(
 	}
 
 	override fun notifyListeners(source: Any) {
+		if (schedulerListeners.isEmpty()) return
 		val event = SchedulerEvent(this, source)
 		schedulerListeners.forEach { it.handle(event) }
 	}
@@ -252,6 +282,9 @@ class SchedulerImpl(
 		// Repeat because time freezing slots update relative time at the end of executionStep
 		execute()
 	}
+
+	/** Returns the [Actor]s scheduled in the next pending slot, e.g. to diagnose a circuit that doesn't settle. */
+	fun nextScheduledActors(): List<Actor> = queue.peek()?.getRequests()?.map { it.actor }.orEmpty()
 
 	override fun printSchedule() {
 		LOG.info("Scheduling queue at $formattedRelativeTime ns")
@@ -298,7 +331,7 @@ class SchedulerImpl(
 			val request = slot.findRequest(actor)!!
 			if (request.isActable) {
 				logActorTrace(request.actor) { "Executing prematurely" }
-				request.act()
+				act(slot, request)
 			}
 		}
 	}
@@ -309,16 +342,25 @@ class SchedulerImpl(
 		if (slot != null) {
 			var request = slot.findRequest(actor)
 
-			// Needed for processing 'actPrematurely'
-			if (request == null) {
-				slot = getSlotWithRequestForActor(actor)
-				if (slot != null) {
-					request = slot.findRequest(actor)
+			// Needed for processing 'actPrematurely', and for a request already re-armed in the head slot
+			if (request == null || !request.isActing) {
+				val actingSlot = queue.find { it.findRequest(actor)?.isActing == true }
+				if (actingSlot != null) {
+					slot = actingSlot
+					request = actingSlot.findRequest(actor)
+				} else if (request == null) {
+					slot = getSlotWithRequestForActor(actor)
+					request = slot?.findRequest(actor)
 				}
 			}
 
 			if (slot != null) {
-				if (request != null && request.isActing) {
+				if (request != null && !request.isActing) {
+					// Stale notification, e.g. a second animation of the same net finishing after the
+					// request has been re-armed; removing the request would lose the new signal
+					return
+				}
+				if (request != null) {
 					actor.actingDone(this, request.actorData)
 				}
 				slot.actingDone(actor, request)
@@ -430,35 +472,43 @@ class SchedulerImpl(
 			LOG.trace("Add slot ${StringUtils.formatLong(slot.relativeTime)}")
 		}
 		queue.add(slot)
+		slotsByTime[slot.relativeTime] = slot
 	}
 
-	/** Removes the [Slot] at the head of the queue.*/
+	/** Removes a pending [Slot], including one completed prematurely. */
 	private fun removeSlot(slot: Slot) {
-		if (!queue.isEmpty) {
-			if (LOG.isTraceEnabled()) {
-				LOG.trace("Remove slot ${StringUtils.formatLong(slot.relativeTime)}")
-			}
+		// A synchronous actor may already have removed this slot and scheduled another at the same time.
+		if (slotsByTime[slot.relativeTime] !== slot) return
+		if (LOG.isTraceEnabled()) {
+			LOG.trace("Remove slot ${StringUtils.formatLong(slot.relativeTime)}")
+		}
+		if (queue.peek() === slot) {
+			queue.remove()
+		} else {
 			queue.remove(slot)
-			if (queue.isEmpty) {
-				task.stop()
-			}
+		}
+		slotsByTime.remove(slot.relativeTime)
+		if (queue.isEmpty) {
+			task.stop()
 		}
 		executionErrorHandler.reevaluateExecutionErrors(queue.isEmpty, this)
 	}
 
-	/** Returns the [Slot] in the queue at the specified relative execution time, if any.*/
-	private fun getSlotAt(relativeTime: Long): Slot? {
-		return queue.elements().find { it.relativeTime == relativeTime }
-	}
+	/** Returns the pending [Slot] at the specified simulation time in O(1). */
+	private fun getSlotAt(relativeTime: Long): Slot? = slotsByTime[relativeTime]
 
 	private fun getSlotWithRequestForActor(actor: Actor): Slot? =
-		queue.elements().firstOrNull { it.findRequest(actor) != null }
+		queue.find { it.findRequest(actor) != null }
 
 	/** Resets the [Scheduler].*/
 	private fun reset() {
 		relativeTime = 0
+		lastWaveTime = -1
+		sameTimeWaves = 0
+		oscillatingActors.clear()
 		softBreakpointsArmTime = 0
 		queue.clear()
+		slotsByTime.clear()
 		executionErrorHandler.reset()
 	}
 
@@ -561,9 +611,9 @@ class SchedulerImpl(
 
 			// Requires filtering with creating result collection in order to avoid
 			// ConcurrentModException from Request.act()
-			slot.getRequests().filter { it.isActable }.forEach {
-				it.act()
-			}
+			val actable = slot.getRequests().filter { it.isActable }
+			actable.forEach { act(slot, it) }
+			detectOscillation(slot.relativeTime, actable)
 
 			if (slot.empty) {
 				removeSlot(slot)
@@ -575,6 +625,62 @@ class SchedulerImpl(
 		//postSchedulerStateEvent()
 
 		return if (recalculated) RECALCULATED_NO_BREAKPOINT else NOT_RECALCULATED_NO_BREAKPOINT
+	}
+
+	/** Lets [request] act. A failing [Actor] is reported and dropped instead of blocking its [Slot] forever. */
+	private fun act(slot: Slot, request: Request) {
+		if (!containActorFailures) {
+			request.act()
+			return
+		}
+		try {
+			request.act()
+		} catch (e: Exception) {
+			val actor = request.actor
+			LOG.error("${StringUtils.formatLong(executionTime)} ns: ${actor.diagnosticName} failed while acting", e)
+			slot.removeRequest(request)
+			if (slot.empty) removeSlot(slot)
+			eventBus.post(IssueImpl(
+				severity = IssueSeverity.Error,
+				name = Translations.getString("execution.issue.actorFailed.name"),
+				description = Translations.getString("execution.issue.actorFailed.desc", e.message ?: System.getClass(e).simpleName ?: ""),
+				origin = actor.diagnosticName,
+				context = null,
+			))
+		}
+	}
+
+	/**
+	 * Counts consecutive waves at the same simulation time. Beyond [OSCILLATION_WAVE_LIMIT], collects the
+	 * [Actor]s acting in further waves and reports them once as an oscillation, which pauses the simulation
+	 * if "Pause on Issue" is enabled.
+	 */
+	private fun detectOscillation(time: Long, acted: List<Request>) {
+		if (time != lastWaveTime) {
+			lastWaveTime = time
+			sameTimeWaves = 0
+			oscillatingActors.clear()
+		}
+		sameTimeWaves++
+		if (sameTimeWaves <= OSCILLATION_WAVE_LIMIT) return
+		if (sameTimeWaves <= OSCILLATION_WAVE_LIMIT + OSCILLATION_COLLECT_WAVES) {
+			acted.forEach { oscillatingActors.add(it.actor) }
+			return
+		}
+		if (sameTimeWaves == OSCILLATION_WAVE_LIMIT + OSCILLATION_COLLECT_WAVES + 1) {
+			val names = oscillatingActors.map { it.diagnosticName }.sorted()
+			val shown = names.take(MAX_REPORTED_OSCILLATION_ACTORS).joinToString(", ") +
+				if (names.size > MAX_REPORTED_OSCILLATION_ACTORS) ", …" else ""
+			LOG.warn("Oscillation at $formattedRelativeTime ns involving $shown")
+			eventBus.post(IssueImpl(
+				severity = IssueSeverity.Error,
+				name = Translations.getString("execution.issue.oscillation.name"),
+				description = Translations.getString("execution.issue.oscillation.desc", formattedRelativeTime, shown),
+				origin = shown,
+				context = null,
+				data = oscillatingActors.toList(),
+			))
+		}
 	}
 
 	private fun checkForBreakpoint(slot: Slot): Boolean =
@@ -625,7 +731,10 @@ class SchedulerImpl(
 		 * */
 		fun addActor(actor: Actor, data: ActorData) {
 			val request = findRequest(actor)
-			if (request != null) {
+			if (request != null && request.isActing) {
+				// Re-arming now would make the pending actingDone() remove the new request
+				request.pendingData = data
+			} else if (request != null) {
 				request.reuse(data)
 			} else {
 				addRequest(Request(actor, data))
@@ -635,9 +744,20 @@ class SchedulerImpl(
 		fun actingDone(actor: Actor, request: Request?) {
 			request?.let {
 				logActorTrace(actor) { "Actor is done " }
-				requests.remove(it.actor)
+				val pending = it.pendingData
+				if (pending != null) {
+					// Requested again while acting: keep the request for the next wave
+					it.reuse(pending)
+				} else {
+					requests.remove(it.actor)
+				}
 				postSchedulerEvent(actor)
 			}
+		}
+
+		/** Drops [request] regardless of pending data, e.g. after its [Actor] failed. */
+		fun removeRequest(request: Request) {
+			requests.remove(request.actor)
 		}
 
 		fun findRequest(actor: Actor): Request? = requests[actor]
@@ -669,8 +789,12 @@ class SchedulerImpl(
 
 		val isActable: Boolean get() = !isActing
 
+		/** Data of a request made while [isActing], to be acted upon once acting is done. */
+		var pendingData: ActorData? = null
+
 		fun reuse(actorData: ActorData) {
 			this.actorData = actorData
+			pendingData = null
 			_isActing = false
 		}
 
