@@ -188,9 +188,12 @@ class CombinedNet<T : Any> {
 
 		val signal = accessOf(originOutputPort)!!.assertedSignal
 
-		return _accesses
-			.filterNot { it.port === originOutputPort }
-			.firstNotNullOfOrNull { checkForConflict(signal, it, signalHandler) }
+		for (access in _accesses) {
+			if (access.port !== originOutputPort) {
+				checkForConflict(signal, access, signalHandler)?.let { return it }
+			}
+		}
+		return null
 	}
 
 	private fun checkForConflict(signal: T?, access: CombinedNetAccess<T>, signalHandler: SignalHandler): SignalConflict<T>? =

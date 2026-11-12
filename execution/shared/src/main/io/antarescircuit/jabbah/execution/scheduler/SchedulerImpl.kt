@@ -283,6 +283,9 @@ class SchedulerImpl(
 		execute()
 	}
 
+	/** Returns the [Actor]s scheduled in the next pending slot, e.g. to diagnose a circuit that doesn't settle. */
+	fun nextScheduledActors(): List<Actor> = queue.peek()?.getRequests()?.map { it.actor }.orEmpty()
+
 	override fun printSchedule() {
 		LOG.info("Scheduling queue at $formattedRelativeTime ns")
 		queue.elements().forEach { it.print() }
