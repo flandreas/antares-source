@@ -1,10 +1,13 @@
 package io.antarescircuit.antares.model
 
+import io.antarescircuit.jabbah.base.Translations
 import io.antarescircuit.jabbah.base.event.EventBusImpl
 import io.antarescircuit.jabbah.base.logger
 import io.antarescircuit.jabbah.base.time.ControlledTimeService
 import io.antarescircuit.jabbah.base.time.SystemSpeed
+import io.antarescircuit.jabbah.execution.actor.Actor
 import io.antarescircuit.jabbah.execution.noise.NoNoiseGenerator
+import io.antarescircuit.jabbah.graph.model.Net
 import io.antarescircuit.jabbah.execution.noise.NoiseGeneratorHolder
 import io.antarescircuit.jabbah.execution.scheduler.ManualSchedulerTask
 import io.antarescircuit.jabbah.execution.scheduler.Scheduler
@@ -24,9 +27,24 @@ class ControlledCircuitRunner(
 		private val LOG by logger(ControlledCircuitRunner::class)
 		private const val DEF_MAX_ITERATIONS = 1_000
 		private const val DEF_ITERATION_STEP_NS = 100
+
+		/** Number of final iterations whose scheduled components are reported by [TooManyIterations]. */
+		private const val DIAGNOSTIC_ITERATIONS = 50
+
+		private const val MAX_REPORTED_COMPONENTS = 10
 	}
 
-	class TooManyIterations : Exception()
+	/** @property involved names of the components still being scheduled when the run was aborted */
+	class TooManyIterations(val involved: List<String> = emptyList()) : Exception() {
+
+		/** Appends the involved components to [message], if any are known. */
+		fun describe(message: String): String =
+			if (involved.isEmpty()) {
+				message
+			} else {
+				message + "\n" + Translations.getString("antares.simulation.involvedComponents", involved.joinToString(", "))
+			}
+	}
 
 	private val eventBus = EventBusImpl()
 	private val timeService = ControlledTimeService()
@@ -166,14 +184,25 @@ class ControlledCircuitRunner(
 
 	fun proceedUntilQueueEmpty() {
 		var iterationCont = 0
+		val involved = LinkedHashSet<Actor>()
 		while (!scheduler.isQueueEmpty) {
 			iterationCont++
 			if (iterationCont > maxIteration) {
-				throw TooManyIterations()
+				throw TooManyIterations(describeInvolved(involved))
+			}
+			if (iterationCont > maxIteration - DIAGNOSTIC_ITERATIONS) {
+				involved.addAll(scheduler.nextScheduledActors())
 			}
 			timeService.setTimeNanos(timeService.nowNanos() + iterationStepNs)
 			scheduler.execute()
 		}
+	}
+
+	/** Names components rather than nets, which are hard to locate, unless only nets were involved. */
+	private fun describeInvolved(actors: Collection<Actor>): List<String> {
+		val vertices = actors.filter { it !is Net<*> }.ifEmpty { actors }
+		val names = vertices.map { it.diagnosticName }.distinct().sorted()
+		return if (names.size > MAX_REPORTED_COMPONENTS) names.take(MAX_REPORTED_COMPONENTS) + "…" else names
 	}
 
 	private fun stopSimulation(circuit: DigitalGraph) {

@@ -35,8 +35,8 @@ class CircuitAnalysisService {
 			(0 until truthTable.rowsCount).forEach { row ->
 				circuitRunner.run(circuit, ::setInputs, ::readOutputs, Context(row, circuit, truthTable))
 			}
-		} catch (_: ControlledCircuitRunner.TooManyIterations) {
-			throw CircuitAnalysisError(Translations.getString("antares.circuitAnalysis.oscillation.msg", circuitRunner.maxIteration))
+		} catch (e: ControlledCircuitRunner.TooManyIterations) {
+			throw CircuitAnalysisError(e.describe(Translations.getString("antares.circuitAnalysis.oscillation.msg", circuitRunner.maxIteration)))
 		} catch (_: BrokenReferenceException) {
 			throw CircuitAnalysisError(Translations.getString("antares.circuitAnalysis.brokenSubGraphRef.msg"))
 		}

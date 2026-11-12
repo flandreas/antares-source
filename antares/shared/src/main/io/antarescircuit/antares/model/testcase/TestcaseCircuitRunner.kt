@@ -75,8 +75,8 @@ class TestcaseCircuitRunner(
 			return TestRunResult.error(circuit, TestRunResult.Type.Script, testName, e.message ?: "Error")
 		} catch (e: SemanticError) {
 			return TestRunResult.error(circuit, TestRunResult.Type.Script, testName, e.message ?: "Error")
-		} catch (_: ControlledCircuitRunner.TooManyIterations) {
-			return TestRunResult.error(circuit, Circuit, testName, Translations.getString("antares.testcase.results.tooManyIterations.txt"))
+		} catch (e: ControlledCircuitRunner.TooManyIterations) {
+			return TestRunResult.error(circuit, Circuit, testName, e.describe(Translations.getString("antares.testcase.results.tooManyIterations.txt")))
 		} catch (e: Throwable) {
 			LOG.error("Error while running test '${testName}' for circuit '${circuit.name.value}'", e)
 			return TestRunResult.error(circuit, Circuit, testName, Translations.getString("antares.testcase.action.technical.error.txt"))

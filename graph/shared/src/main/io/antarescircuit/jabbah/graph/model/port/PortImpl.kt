@@ -167,7 +167,8 @@ open class PortImpl<T : Any>(
 		if (force || differingInput(signal) || incomingSignalRevoked && portType == PortType.INOUT) {
 			storeIncomingSignal(signal)
 			owner?.inputChanged(this, signalHandler, force)
-		} else {
+		} else if (signalHandler.isLogTrace) {
+			// Guarded: the capturing lambda would otherwise be allocated for every unchanged signal
 			signalHandler.logActorTrace(owner!!) { "Ignoring incoming signal $signal, already present"}
 		}
 	}
