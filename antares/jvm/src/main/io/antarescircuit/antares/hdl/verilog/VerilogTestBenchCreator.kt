@@ -1,25 +1,24 @@
 package io.antarescircuit.antares.hdl.verilog
 
-import io.antarescircuit.jabbah.graph.model.PortType
 import io.antarescircuit.antares.hdl.HDLExportTestBenchParams
 import io.antarescircuit.antares.hdl.HDLModel
 import io.antarescircuit.antares.hdl.HDLPort
+import io.antarescircuit.antares.hdl.TestBenchColumn
+import io.antarescircuit.antares.hdl.TestBenchRole
+import io.antarescircuit.antares.hdl.resolveTestBenchColumns
 import io.antarescircuit.antares.model.port.DigitalPort
 import io.antarescircuit.antares.model.signal.DigitalSignal
 import io.antarescircuit.antares.model.testcase.TestVector
 import io.antarescircuit.antares.model.testcase.TestVectorConsumer
 import io.antarescircuit.antares.model.testcase.Testcase
 import io.antarescircuit.antares.model.testcase.Value
-import io.antarescircuit.antares.model.testcase.parser.PortNameType
 import io.antarescircuit.antares.model.testcase.parser.TestScript
 import io.antarescircuit.antares.model.testcase.parser.TestcaseAnalyser
 import io.antarescircuit.antares.model.testcase.parser.TestcaseInterpreter
 import io.antarescircuit.antares.model.testcase.parser.TestcaseParser
-import io.antarescircuit.jabbah.base.Translations
 import io.antarescircuit.jabbah.base.dsl.SemanticError
 import io.antarescircuit.jabbah.base.dsl.SyntaxError
 import io.antarescircuit.jabbah.base.io.CodePrinter
-import io.antarescircuit.jabbah.base.parser.TextLocation
 
 /**
  * Creates a Verilog test bench for the [Testcase] in [params] and prints it to [out].
@@ -90,7 +89,7 @@ class VerilogTestBenchCreator(
 		for ((p, driver) in drivers) {
 			out.print(driver).print(" = ").print(Verilog.fill(p.bitWidth, 'z')).println(";")
 		}
-		val consumer = VerilogTestVectorConsumer(resolveColumns())
+		val consumer = VerilogTestVectorConsumer(resolveTestBenchColumns(testScript, main, params.renaming))
 		TestcaseInterpreter(testScript, main.circuit, consumer).interpret()
 		out.print("if (").print(errorsVar).println(" == 0)")
 		out.inc().println("\$display(\"All tests passed.\");").dec()
@@ -99,30 +98,6 @@ class VerilogTestBenchCreator(
 		out.println("\$finish;")
 		out.dec().println("end")
 	}
-
-	/** Returns the [Column]s of the test script. */
-	private fun resolveColumns(): List<Column> =
-		testScript.portNames.names.map { portName ->
-			val saveName = params.renaming.checkName(portName.name.value!!)
-			val port = main.getPort(saveName, ignoreCase = !params.renaming.isCaseSensitive)
-				?: throw SemanticError(TextLocation.UNDEFINED, Translations.getString("antares.vhdl.portNameNotFound.error.text", saveName))
-			val role = when (portName.type) {
-				PortNameType.INPUT -> Role.DRIVE
-				PortNameType.OUTPUT -> Role.CHECK
-				PortNameType.DEFAULT -> when (port.direction) {
-					// Seen from inside the circuit, inputs define and outputs read their value
-					HDLPort.Direction.OUT -> Role.DRIVE
-					HDLPort.Direction.IN -> Role.CHECK
-					// Like the simulator's test runner, use the pin's own type for in/out nets
-					HDLPort.Direction.INOUT -> when (main.circuit.graphPorts.firstOrNull { it.name == portName.name.value }?.portType) {
-						PortType.INPUT -> Role.DRIVE
-						PortType.OUTPUT -> Role.CHECK
-						else -> Role.IGNORE
-					}
-				}
-			}
-			Column(port, role)
-		}
 
 	private fun uniqueName(base: String): String {
 		var name = base
@@ -133,11 +108,7 @@ class VerilogTestBenchCreator(
 		return name
 	}
 
-	private enum class Role { DRIVE, CHECK, IGNORE }
-
-	private class Column(val port: HDLPort, val role: Role)
-
-	private inner class VerilogTestVectorConsumer(private val columns: List<Column>) : TestVectorConsumer {
+	private inner class VerilogTestVectorConsumer(private val columns: List<TestBenchColumn>) : TestVectorConsumer {
 
 		/** Index of the test step, reported in failed assertions. */
 		private var line = 0
@@ -157,9 +128,9 @@ class VerilogTestBenchCreator(
 			values.forEachIndexed { index, value ->
 				val port = columns[index].port
 				when (columns[index].role) {
-					Role.DRIVE -> out.print(drivers[port] ?: port.name).print(" = ").print(inputValue(port, value, clock)).println(";")
-					Role.CHECK -> expectedValue(port, value, isClockPhase)?.let { checks.add(port to it) }
-					Role.IGNORE -> {}
+					TestBenchRole.DRIVE -> out.print(drivers[port] ?: port.name).print(" = ").print(inputValue(port, value, clock)).println(";")
+					TestBenchRole.CHECK -> expectedValue(port, value, isClockPhase)?.let { checks.add(port to it) }
+					TestBenchRole.IGNORE -> {}
 				}
 			}
 			out.print("#").print(params.waitTime).println(";")
