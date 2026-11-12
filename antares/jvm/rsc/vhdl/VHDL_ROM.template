@@ -10,8 +10,8 @@ use ieee.numeric_std.all;
 
 entity {{ entityName }} is
   port (
-    D: out {{ vhdl.type(vertice.addressWidth.width) }};
-    A: in {{ vhdl.type(vertice.dataWidth.width) }};
+    D: out {{ vhdl.type(vertice.dataWidth.width) }};
+    A: in {{ vhdl.type(vertice.addressWidth.width) }};
     CS: in std_logic);
 end {{ entityName }};
 

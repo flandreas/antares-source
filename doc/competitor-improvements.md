@@ -72,6 +72,11 @@ A second round reviewed the first change set independently, fixed what it found,
 | Digital's [test language](https://github.com/hneemann/Digital/tree/master/src/main/java/de/neemann/digital/testing/parser) (`loop`, expressions) | Test scripts support `loop i 0..15 { … }` (nestable, inside or around `run { }`) and parenthesized integer expressions such as `(i >> 1)` or `(i & 1)`, masked to the port width. Expansions are limited to 1,000,000 vectors. |
 | Digital's test-case export from truth tables | "Create Circuit" from a truth table can add a test case generated from that table to the new circuit. |
 
+### HDL export
+
+- **Verilog export** (File → Export → Export Verilog), as offered by Digital, Logisim-evolution and CircuitVerse. It reuses Antares' language-neutral HDL model and supports gates, constants, clocks, tunnels, sub-circuits, buses, splitters, RAM, ROM, lookup tables and tri-state buffers, plus testbenches generated from circuit tests. Generated code for 59 standard-library circuits and 58 testbenches parsed and elaborated cleanly with the slang Verilog front end; Icarus Verilog tests run when `iverilog` is installed.
+- Fixes shared with VHDL export: sub-circuit instances used names from before identifier renaming; in/out pins were never bound to their nets; the VHDL ROM swapped address and data widths; the VHDL RAM clear assignment was invalid VHDL.
+
 ### Editor
 
 - **Find unconnected ports** (type "All") also reports tunnels whose name occurs only once (per circuit for local tunnels, across the library for global ones), unnamed tunnels, and wires with an open end, inspired by Digital's unconnected-tunnel error. It no longer reports the hidden internal port of every tunnel.
