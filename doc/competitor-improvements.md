@@ -90,3 +90,13 @@ A second round reviewed the first change set independently, fixed what it found,
 - Large selections: drawing, dragging, deselecting and deleting 2,000 selected components went from 0.2–4.5 s to well under 0.1 s each (lazy container bounding boxes, O(1) selection-model lookup, clipped backdrop layer). Text measurement reuses cached fonts.
 - Undo history keeps at most 50 snapshots (`edit.commandManager.maxSnapshots`); unsaved-change detection stays correct after history is discarded.
 - Poster viewer and history dialog no longer leak drawing views and event handlers; the graphics save/restore stack is per instance and a throwing drawable no longer stops painting of other layers; login and rating requests no longer block the EDT; `EventBus` vetoable and two-phase posts copy their handler lists.
+
+### Compatibility notes
+
+- Test scripts: `loop` is now a keyword (a pin named `loop` must be quoted as `'loop'`); an unspaced `X`/`Z` followed by a letter or digit (e.g. `1X0`) now reads as a name; scripts that expand to more than 1,000,000 vectors (e.g. 20 or more `X` inputs in one row) are rejected. None of the 189 scripts in this repository are affected.
+- HDL export rejects an in/out pin that shares its net with another circuit pin instead of silently leaving it unconnected.
+- Undo history is capped at 50 snapshots (about 500 commands by default).
+
+### Verification
+
+`./gradlew jvmTest` with JDK 25 passes on the final state (see the commit log for the exact counts per run). An independent review of the second pass found no critical defects; its confirmed findings (a stale animation callback that could still drop a re-armed scheduler request, actor state shown as idle while re-armed, empty loop bodies bypassing the vector limit, port names with line breaks breaking paste, generated test cases for undefined outputs, and Verilog testbench roles on in/out nets) are fixed.
