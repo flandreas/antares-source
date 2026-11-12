@@ -40,7 +40,9 @@ class ControlledCircuitRunner(
 		eventBus,
 		noiseGeneratorHolder,
 		task,
-		isDeepExecution = true
+		isDeepExecution = true,
+		// Failures must reach the caller, e.g. to fail a testcase run
+		containActorFailures = false,
 	)
 
 	fun dispose() {

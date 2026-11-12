@@ -1,6 +1,7 @@
 package io.antarescircuit.jabbah.execution.actor
 
 import io.antarescircuit.jabbah.base.LongValue
+import io.antarescircuit.jabbah.base.System
 import io.antarescircuit.jabbah.execution.ExecutionError
 import io.antarescircuit.jabbah.execution.SignalHandler
 import io.antarescircuit.jabbah.execution.scheduler.Scheduler
@@ -12,6 +13,9 @@ interface Actor {
 
 	/** An identification of this [Actor] primarily used for debugging and tracing.*/
 	val id: Int
+
+	/** A short, user-readable identification used in diagnostics such as simulation issues. */
+	val diagnosticName: String get() = "${System.getClass(this).simpleName} ($id)"
 
 	/**
 	 * The execution state of this [Actor].
