@@ -7,6 +7,7 @@ import io.antarescircuit.antares.model.signal.BitWidth
 import io.antarescircuit.antares.view.addressable.RAMView
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class VHDLRAMSyncTest : AbstractVHDLTest() {
 
@@ -93,5 +94,28 @@ class VHDLRAMSyncTest : AbstractVHDLTest() {
 			end Behavioral;
 			
 		""".trimIndent(), printer.toString())
+	}
+
+	@Test
+	fun shouldMapGenericsPerInstance() {
+		val builder = TestCircuitBuilder("test")
+		for ((index, width) in listOf(BitWidth.BW_8, BitWidth.BW_4).withIndex()) {
+			val ramView = builder.addVerticeView(RAMView())
+			ramView.model.addressWidth = width
+			ramView.model.dataWidth = width
+			builder.connect(builder.addInput("A$index", width), ramView, ramView.model.getAddressInput())
+			builder.connect(builder.addInput("CLK$index"), ramView, ramView.model.getClockInput()!!)
+			builder.connect(builder.addInput("CS$index"), ramView, ramView.model.getChipSelectInput())
+			builder.connect(builder.addInput("WR$index"), ramView, ramView.model.getWriteInput())
+			builder.connect(builder.addInput("CLR$index"), ramView, ramView.model.getClearInput())
+			builder.connect(ramView, ramView.model.getDataPort(), builder.addOutput("D$index", width))
+		}
+
+		VHDLGenerator(testParams()).generateHDL(printer, builder.graph as DigitalGraph)
+
+		val text = printer.toString()
+		assertTrue(text.contains("addrBitWidth => 8"), text)
+		assertTrue(text.contains("addrBitWidth => 4"), text)
+		assertTrue(text.contains("dataBitWidth => 4"), text)
 	}
 }
