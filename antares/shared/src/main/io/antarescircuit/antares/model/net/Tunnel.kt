@@ -13,6 +13,7 @@ import io.antarescircuit.jabbah.graph.model.*
 import io.antarescircuit.jabbah.graph.model.net.CombinedNet
 import io.antarescircuit.jabbah.graph.model.net.NetCombiner
 import io.antarescircuit.jabbah.graph.model.vertice.CalculatingVertice
+import io.antarescircuit.jabbah.graph.model.vertice.NamedConnector
 import io.antarescircuit.jabbah.graph.model.vertice.VerticeCalculator
 import io.antarescircuit.jabbah.graph.library.Library
 import io.antarescircuit.jabbah.io.Storable
@@ -36,7 +37,7 @@ data class TunnelName(val name: String) {
  */
 class Tunnel(
 	name: String? = null
-) : CalculatingVertice(CALCULATOR), NetCombiner, AdjustableBitWidth {
+) : CalculatingVertice(CALCULATOR), NetCombiner, AdjustableBitWidth, NamedConnector {
 
 	companion object {
 
@@ -91,7 +92,7 @@ class Tunnel(
 	 * A global [Tunnel] can communicate not only with other [Tunnel]s of the same [Graph], but with all
 	 * [Tunnel]s of the same [Library].
 	 */
-	var isGlobal: Boolean = false
+	override var isGlobal: Boolean = false
 		set(value) {
 			if (field != value) {
 				field = value

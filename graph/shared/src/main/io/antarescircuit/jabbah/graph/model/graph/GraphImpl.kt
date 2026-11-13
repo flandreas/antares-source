@@ -25,6 +25,7 @@ import io.antarescircuit.jabbah.graph.model.oscilloscope.Oscilloscope
 import io.antarescircuit.jabbah.graph.model.oscilloscope.OscilloscopeProbeVertice
 import io.antarescircuit.jabbah.graph.model.param.GraphParamDefinitions
 import io.antarescircuit.jabbah.graph.model.param.GraphParamValues
+import io.antarescircuit.jabbah.graph.model.vertice.GraphPortName
 import io.antarescircuit.jabbah.graph.model.vertice.SubGraphVerticeRef
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.io.*
@@ -427,13 +428,10 @@ open class GraphImpl(
 		}
 	}
 
+	/** Keeps the stem of a clashing name and counts up its trailing number, e.g. "A3" becomes "A4". */
 	private fun ensureUniqueGraphPortName(prefix: String, graphPorts: ImmutableList<GraphPort<*>>, graphPort: GraphPort<*>) {
-		var name = graphPort.name
-		if (name == null || existsGraphPortNameExcluding(name, graphPort)) {
-			name = prefix + (graphPorts.size + 1)
-		}
-		while (existsGraphPortNameExcluding(name, graphPort)) {
-			name += "1"
+		val name = GraphPortName.createUniqueName(graphPort.name ?: (prefix + (graphPorts.size + 1))) {
+			existsGraphPortNameExcluding(it, graphPort)
 		}
 		if (graphPort.name != name) {
 			graphPort.name = name

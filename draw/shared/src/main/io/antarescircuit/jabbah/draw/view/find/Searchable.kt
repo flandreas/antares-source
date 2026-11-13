@@ -21,6 +21,11 @@ interface Searchable {
 
 	fun hideSearchBar() {}
 
+	/** Optional navigation through matches; null means this view only supports selecting all matches. */
+	val searchResult: SearchResult? get() = null
+
+	fun navigateSearch(forward: Boolean) {}
+
 	fun execute(request: SearchRequest) {
 		if (!canSearch) {
 			throw IllegalStateException("Searchable can't search")
@@ -28,3 +33,5 @@ interface Searchable {
 		throw UnsupportedOperationException("No implementation of Searchable.execute")
 	}
 }
+/** [current] is zero while all matches are selected, otherwise a one-based match index. */
+data class SearchResult(val count: Int, val current: Int = 0)
