@@ -1,10 +1,12 @@
 package io.antarescircuit.antares.model.hdl.vhdl
 
 import io.antarescircuit.antares.TestCircuitBuilder
+import io.antarescircuit.antares.hdl.vhdl.HDLException
 import io.antarescircuit.antares.hdl.vhdl.VHDLGenerator
 import io.antarescircuit.antares.model.DigitalGraph
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class VHDLGeneratorTest : AbstractVHDLTest() {
 
@@ -32,5 +34,15 @@ class VHDLGeneratorTest : AbstractVHDLTest() {
 			end Behavioral;
 			
 		""".trimIndent(), printer.toString())
+	}
+
+	@Test
+	fun shouldRejectNamesDifferingOnlyInCase() {
+		val builder = TestCircuitBuilder("test")
+		builder.connect(builder.addInput("a"), builder.addOutput("A"))
+
+		assertFailsWith(HDLException::class) {
+			VHDLGenerator(testParams()).generateHDL(printer, builder.graph as DigitalGraph)
+		}
 	}
 }

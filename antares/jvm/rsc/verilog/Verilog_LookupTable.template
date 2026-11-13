@@ -1,0 +1,19 @@
+{%- if vertice.name == '' || vertice.name == null -%}
+{%- set moduleName = verilog.setModuleName('Verilog_LookupTable') -%}
+{%- else -%}
+{%- set moduleName = verilog.setModuleName('Verilog_LookupTable_' + verilog.identifier(vertice.name)) -%}
+{%- endif -%}
+module {{ moduleName }} (
+  input {{ verilog.range(vertice.addressWidth.width) }}A,
+  output reg {{ verilog.range(vertice.dataWidth.width) }}D);
+  always @(*) begin
+    case (A)
+{%- if vertice.memory.nonZeroLength > 0 %}
+{%- for i in 0..vertice.memory.nonZeroLength - 1 %}
+      {{ vertice.addressWidth.width }}'d{{ i }}: D = {{ vertice.dataWidth.width }}'b{{ vertice.dataAsPaddedBinaryAt(i) }};
+{%- endfor %}
+{%- endif %}
+      default: D = {{ verilog.zero(vertice.dataWidth) }};
+    endcase
+  end
+endmodule

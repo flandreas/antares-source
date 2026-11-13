@@ -47,3 +47,14 @@ ghdl -r full_adder_test_tb --stop-time=100ns --fst=full_adder.fst
 * All components must be fully connected with wires.
 * Certain components like ROM or clock need to have a unique name in order to be exported VHDL, something not required when simulated within Antares.
 * Bidirectional circuit pins (input/output) are not yet properly supported, as it is not yet clear how this is supposed to work in VHDL.
+
+=== Verilog export
+
+Select menu menu:File[Export > Export Verilog] to export your circuit to Verilog (IEEE 1364-2005) instead. The dialog and its parameters are the same as for VHDL, except that the generated files end with ".v", and the delay model generates delays like `assign #30 O = ~I;`. The test bench prints a message for every failed assertion and a summary at the end, e.g. when executed with Icarus Verilog:
+
+```
+iverilog -o full_adder_test_tb.vvp full_adder.v full_adder_test_tb.v
+vvp full_adder_test_tb.vvp
+```
+
+In contrast to VHDL, ROMs and lookup tables don't need a name, and bidirectional circuit pins are supported in test benches: a pin is driven by the test bench if its column is marked as input (e.g. `>A`), and checked if marked as output (e.g. `<A`). RAMs must have a clock input.

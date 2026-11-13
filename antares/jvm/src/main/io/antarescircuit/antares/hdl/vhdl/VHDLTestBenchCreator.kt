@@ -3,6 +3,8 @@ package io.antarescircuit.antares.hdl.vhdl
 import io.antarescircuit.antares.hdl.HDLExportTestBenchParams
 import io.antarescircuit.antares.hdl.HDLModel
 import io.antarescircuit.antares.hdl.HDLPort
+import io.antarescircuit.antares.hdl.TestBenchRole
+import io.antarescircuit.antares.hdl.resolveTestBenchColumns
 import io.antarescircuit.antares.model.port.DigitalPort
 import io.antarescircuit.antares.model.signal.BitWidth
 import io.antarescircuit.antares.model.signal.DigitalSignal
@@ -14,15 +16,15 @@ import io.antarescircuit.antares.model.testcase.parser.TestScript
 import io.antarescircuit.antares.model.testcase.parser.TestcaseAnalyser
 import io.antarescircuit.antares.model.testcase.parser.TestcaseInterpreter
 import io.antarescircuit.antares.model.testcase.parser.TestcaseParser
-import io.antarescircuit.jabbah.base.Translations
 import io.antarescircuit.jabbah.base.dsl.SemanticError
 import io.antarescircuit.jabbah.base.dsl.SyntaxError
 import io.antarescircuit.jabbah.base.io.CodePrinter
 import io.antarescircuit.jabbah.base.io.Separator
-import io.antarescircuit.jabbah.base.parser.TextLocation
 
 /**
  * Creates a VHDL test bench for the [Testcase] in [params] and prints it to [out].
+ * In/out pins are driven by a signal that is released ("Z") until the test script drives
+ * the pin (column marked as input, e.g. ">A"); they are checked if marked as output (e.g. "<A").
  *
  * @throws SyntaxError if the [Testcase] script cannot be successfully parsed
  * @throws SemanticError if the [Testcase] script references non-existing [DigitalPort]s
@@ -40,6 +42,15 @@ class VHDLTestBenchCreator(
 		params.testCase.testVectors.scriptOrEmpty,
 		TestcaseAnalyser(model.main.circuit)
 	).parse() as TestScript
+
+	private val columns = resolveTestBenchColumns(testScript, model.main, params.renaming)
+
+	private val drivenPorts = columns.filter { it.role == TestBenchRole.DRIVE }.map { it.port }.toSet()
+
+	private val checkedPorts = columns.filter { it.role == TestBenchRole.CHECK }.map { it.port }.toSet()
+
+	/** Names of the signals driving the in/out pins. */
+	private val drivers: Map<HDLPort, String> = model.main.inOuts.associateWith { uniqueName("${it.name}_drv") }
 
 	fun print() {
 		out.print("-- Test bench for ").println(baseName)
@@ -76,20 +87,27 @@ class VHDLTestBenchCreator(
 		for (p in model.main.inputs) {
 			out.print("signal ").print(p.name).print(": ").print(getType(p.bitWidth)).println(";")
 		}
-		for (p in model.main.outputs) {
+		for (p in model.main.outputs + model.main.inOuts) {
 			out.print("signal ").print(p.name).print(": ").print(getType(p.bitWidth)).println(";")
+		}
+		for ((p, driver) in drivers) {
+			out.print("signal ").print(driver).print(": ").print(getType(p.bitWidth))
+				.print(" := ").print(getSimpleValue(p.bitWidth, 'Z')).println(";")
 		}
 		out.println()
 	}
 
 	private fun printPortMap() {
+		for ((p, driver) in drivers) {
+			out.print(p.name).print(" <= ").print(driver).println(";")
+		}
 		out.println("main_0 : $mainComponentName port map (").inc()
 		val sep = Separator(out, ",\n")
 		for (p in model.main.inputs) {
 			sep.check()
 			out.print(p.name + " => " + p.name)
 		}
-		for (p in model.main.outputs) {
+		for (p in model.main.outputs + model.main.inOuts) {
 			sep.check()
 			out.print(p.name + " => " + p.name)
 		}
@@ -108,12 +126,9 @@ class VHDLTestBenchCreator(
 	private fun printTypePattern(): List<HDLPort> {
 		val portOrder = mutableListOf<HDLPort>()
 		out.println("type test_data_type is record").inc()
-		testScript.portNames.names.map { it.name.value!! }.forEach { portName ->
-			val saveName = params.renaming.checkName(portName)
-			val port = model.main.getPort(saveName) ?:
-				throw SemanticError(TextLocation.UNDEFINED, Translations.getString("antares.vhdl.portNameNotFound.error.text", saveName))
-			portOrder.add(port)
-			out.print(saveName).print(": ").print(getType(port.bitWidth)).println(";")
+		for (column in columns) {
+			portOrder.add(column.port)
+			out.print(column.port.name).print(": ").print(getType(column.port.bitWidth)).println(";")
 		}
 		out.dec().println("end record;")
 		out.println("type test_data_array is array (natural range <>) of test_data_type;")
@@ -122,7 +137,7 @@ class VHDLTestBenchCreator(
 
 	private fun printTestData(portOrder: List<HDLPort>) {
 		out.println("constant test_data : test_data_array := (").inc()
-		val consumer = VHDLTestVectorConsumer(portOrder)
+		val consumer = VHDLTestVectorConsumer(portOrder, columns.map { it.role })
 		val interpreter = TestcaseInterpreter(testScript, model.main.circuit, consumer)
 		interpreter.interpret()
 		out.println(");").dec()
@@ -136,16 +151,16 @@ class VHDLTestBenchCreator(
 		}
 		out.print("for ").print(loopVar).println(" in test_data'range loop").inc()
 
-		for (p in model.main.inputs) {
-			out.print(p.name).print(" <= test_data(").print(loopVar).print(").").print(p.name).println(";")
+		for (p in model.main.inputs + model.main.inOuts) {
+			if (p in drivenPorts) {
+				out.print(drivers[p] ?: p.name).print(" <= test_data(").print(loopVar).print(").").print(p.name).println(";")
+			}
 		}
 		out.println("wait for ${params.waitTime} ns;")
-		for (p in model.main.outputs) {
+		for (p in (model.main.outputs + model.main.inOuts).filter { it in checkedPorts }) {
 			out.print("assert std_match(").print(p.name).print(", test_data(").print(loopVar).print(").").print(p.name).print(")")
-			out.print(" OR (")
-				.print(p.name).print(" = ").print(getSimpleValue(p.bitWidth, 'Z'))
-				.print(" AND test_data(").print(loopVar).print(").").print(p.name).print(" = ").print(getSimpleValue(p.bitWidth, 'Z'))
-				.println(")")
+			// std_match never matches 'Z', so expected (partially) high-impedance values are compared exactly
+			out.print(" OR ").print(p.name).print(" = test_data(").print(loopVar).print(").").print(p.name).println()
 
 			out.inc().print("report \"assertion failed for ").print(p.name).print(" on line \"")
 				.print(" & integer'image(").print(loopVar).print(")")
@@ -191,7 +206,20 @@ class VHDLTestBenchCreator(
 		return sb.append("\"").toString()
 	}
 
-	private inner class VHDLTestVectorConsumer(private val portOrder: List<HDLPort>) : TestVectorConsumer {
+	/** Returns [base], extended by a number if a port of the circuit already uses that name. */
+	private fun uniqueName(base: String): String {
+		var name = base
+		var index = 0
+		while (model.main.getPort(name) != null) {
+			name = "$base${index++}"
+		}
+		return name
+	}
+
+	private inner class VHDLTestVectorConsumer(
+		private val portOrder: List<HDLPort>,
+		private val roles: List<TestBenchRole>,
+	) : TestVectorConsumer {
 
 		private var line = 0
 		private val lineSep = Separator(out, ",\n")
@@ -217,10 +245,11 @@ class VHDLTestBenchCreator(
 				val bitWidth = portOrder[index].bitWidth
 				when (value.type) {
 					Value.Type.NORMAL -> {
-						if (isClock && portOrder[index].direction == HDLPort.Direction.IN) {
+						// Checked values are irrelevant while the clock is toggled
+						if (isClock && roles[index] == TestBenchRole.CHECK) {
 							out.print(getSimpleValue(bitWidth, '-'))
 						} else {
-							out.print(value(value.value.toLong() ?: 0UL, bitWidth))
+							out.print(value(value.value.ofWidth(bitWidth)))
 						}
 					}
 					Value.Type.DONT_CARE -> out.print(getSimpleValue(bitWidth, '-'))
@@ -228,7 +257,7 @@ class VHDLTestBenchCreator(
 					Value.Type.CLOCKED -> if (clock != null) {
 						out.print(value(clock))
 					} else {
-						out.print(value(value.value.toLong() ?: 0UL, bitWidth))
+						out.print(value(value.value.ofWidth(bitWidth)))
 					}
 				}
 			}

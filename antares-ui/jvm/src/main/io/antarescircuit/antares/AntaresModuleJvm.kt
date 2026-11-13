@@ -3,7 +3,7 @@ package io.antarescircuit.antares
 import io.antarescircuit.jabbah.base.module.BaseModuleUiJvm
 import io.antarescircuit.antares.ai.ApiKeyPreference
 import io.antarescircuit.antares.ai.OpenRouterConfig
-import io.antarescircuit.antares.hdl.vhdl.ExportVHDLPanel
+import io.antarescircuit.antares.hdl.ExportHDLPanel
 import io.antarescircuit.antares.health.SubCircuitPortConsistencyCheck
 import io.antarescircuit.antares.model.*
 import io.antarescircuit.antares.model.addressable.MemoryStorableIdentification
@@ -646,7 +646,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 
 	private fun registerHelpSources() {
 		HelpSourceRegistry.register(TestcaseViewSwing.HELP_ID, HelpSource("/circuits/circuit-tests"))
-		HelpSourceRegistry.register(ExportVHDLPanel.HELP_ID, HelpSource("/circuits/vhdl-export"))
+		HelpSourceRegistry.register(ExportHDLPanel.HELP_ID, HelpSource("/circuits/vhdl-export"))
 		HelpSourceRegistry.register(TruthTableDesktopItemSwing.HELP_ID, HelpSource("/circuits/synthesis#chapter-truth-tables"))
 		HelpSourceRegistry.register(BooleanExpressionDesktopItemSwing.HELP_ID, HelpSource("/circuits/synthesis#chapter-boolean-expressions"))
 		HelpSourceRegistry.register(FSMGraphDesktopItemSwing.HELP_ID, HelpSource("/fsm/fsm"))

@@ -98,10 +98,10 @@ class VHDLTestBenchCreatorIntegrationTest : AbstractStandardLibraryBasedCircuitT
 			      A <= test_data(i).A;
 			      B <= test_data(i).B;
 			      wait for 30 ns;
-			      assert std_match(S, test_data(i).S) OR (S = 'Z' AND test_data(i).S = 'Z')
+			      assert std_match(S, test_data(i).S) OR S = test_data(i).S
 			        report "assertion failed for S on line " & integer'image(i) & ", expected " & std_logic'image(test_data(i).S) & ", actual is " & std_logic'image(S)
 			        severity error;
-			      assert std_match(C, test_data(i).C) OR (C = 'Z' AND test_data(i).C = 'Z')
+			      assert std_match(C, test_data(i).C) OR C = test_data(i).C
 			        report "assertion failed for C on line " & integer'image(i) & ", expected " & std_logic'image(test_data(i).C) & ", actual is " & std_logic'image(C)
 			        severity error;
 			    end loop;

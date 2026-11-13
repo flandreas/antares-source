@@ -1,0 +1,13 @@
+{%- if vertice.isNegative == true -%}
+{%- set moduleName = verilog.setModuleName('Verilog_TriStateBufferGate_ActiveLow') -%}
+{%- else -%}
+{%- set moduleName = verilog.setModuleName('Verilog_TriStateBufferGate') -%}
+{%- endif -%}
+module {{ moduleName }} #(
+  parameter bitWidth = 1{{ verilog.registerParameter('bitWidth', vertice.bitWidth.width) }}
+) (
+  input [bitWidth-1:0] p1,
+  input EN,
+  output [bitWidth-1:0] p3);
+  assign p3 = (EN == 1'b{% if vertice.isNegative == true %}0{% else %}1{% endif %}) ? p1 : {bitWidth{1'bz}};
+endmodule
