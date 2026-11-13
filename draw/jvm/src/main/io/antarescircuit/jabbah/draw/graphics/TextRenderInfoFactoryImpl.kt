@@ -5,11 +5,13 @@ import java.awt.font.FontRenderContext
 
 actual object TextRenderInfoFactoryImpl {
 
+	/** Shared measuring context with identity transform, antialiasing and fractional metrics. Immutable. */
+	private val fontRenderContext = FontRenderContext(null, true, true)
+
 	actual fun measureSingleLineTextImpl(text: String, font: Font): TextRenderInfo {
-		val awtFont = java.awt.Font(font.family.fontName, Graphics2DJvm.fromFontStyle(font), font.size)
-		val context = FontRenderContext(awtFont.transform, true, true)
-		val rect = awtFont.getStringBounds(text, context)
-		val lm = awtFont.getLineMetrics(text, context)
+		val awtFont = Graphics2DJvm.toAwtFont(font)
+		val rect = awtFont.getStringBounds(text, fontRenderContext)
+		val lm = awtFont.getLineMetrics(text, fontRenderContext)
 		return TextRenderInfo(Rectangle2D(rect.x, rect.y, rect.width, rect.height), lm.ascent.toDouble())
 	}
 }

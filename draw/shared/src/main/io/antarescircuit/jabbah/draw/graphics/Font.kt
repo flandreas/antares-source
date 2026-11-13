@@ -10,7 +10,8 @@ interface FontFamily {
 	val fontName: String
 }
 
-class PhysicalFontFamily(override val fontName: String) : FontFamily
+/** A data class, so that equal [Font]s can share cached platform fonts. */
+data class PhysicalFontFamily(override val fontName: String) : FontFamily
 
 enum class LogicalFontFamily(val javaName: String, val jsName: String): FontFamily {
 	SERIF("Serif", "serif"),
