@@ -84,6 +84,7 @@ class SearchBarSwing(
 		add(searchField)
 		add(Box.createHorizontalStrut(LABEL_DIST))
 		add(previousButton)
+		add(Box.createHorizontalStrut(2))
 		add(nextButton)
 		add(Box.createHorizontalStrut(LABEL_DIST))
 		add(resultLabel)
