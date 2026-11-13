@@ -74,7 +74,14 @@ interface LibraryPersistenceService {
  * as the one to be imported already exists.
  * @property uuid the [UUID] of the [Library] to be imported
  */
-data class LibraryImportConflictException(val libraryId: LibraryIdentification) : Throwable()
+/**
+ * Thrown when an imported [Library] already exists.
+ * @property library the [Library] read from the import file, if available, for validation before replacing
+ */
+data class LibraryImportConflictException(
+	val libraryId: LibraryIdentification,
+	val library: Library? = null,
+) : Throwable()
 
 /** Null pattern.*/
 class UnimplementedLibraryPersistenceService : LibraryPersistenceService {

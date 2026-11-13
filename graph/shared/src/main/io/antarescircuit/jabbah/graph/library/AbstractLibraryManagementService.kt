@@ -65,17 +65,22 @@ abstract class AbstractLibraryManagementService(
 			userDictionaryService.ensureLibraryDirectory()
 			library = libraryService.importLibrary(inputPath, userDictionaryService.entriesCount, GraphQuota.UNLIMITED)
 		} catch (e: LibraryImportConflictException) {
-			if (replaceIfUuidExists) {
-				deleteImpl(e.libraryId)
-				try {
-					library =
-						libraryService.importLibrary(inputPath, userDictionaryService.entriesCount, GraphQuota.UNLIMITED)
-				} catch (_: Throwable) {
-					return Invalid.result()
-				}
-			} else {
+			if (!replaceIfUuidExists) {
 				return UuidAlreadyExists.result()
 			}
+			// Validate the replacement before the existing library gets deleted
+			val replacement = e.library ?: return Invalid.result()
+			validate(replacement, except = e.libraryId.uuid)?.let { return it }
+			deleteImpl(e.libraryId)
+			try {
+				library =
+					libraryService.importLibrary(inputPath, userDictionaryService.entriesCount, GraphQuota.UNLIMITED)
+			} catch (t: Throwable) {
+				LOG.error("Error while re-importing library ${e.libraryId.uuid} after deleting the existing one", t)
+				return Invalid.result()
+			}
+			userDictionaryService.add(library)
+			return Success.result(library = library)
 		} catch (e: GraphQuotaException) {
 			return QuotaExceeded.result(e.translatedMsg)
 		} catch (e: ApplicationTooOldException) {
@@ -85,21 +90,27 @@ abstract class AbstractLibraryManagementService(
 			return Invalid.result()
 		}
 
-		if (existsName(library.name.translation)) {
-			LOG.trace("Name of imported project already exists")
+		validate(library)?.let {
 			libraryService.purgeLibrary(library.identification)
-			return NameAlreadyExists.result()
-		}
-
-		if (hasStaleImportReferences(library)) {
-			LOG.trace("Library for imported project doesn't exist")
-			libraryService.purgeLibrary(library.identification)
-			return StaleLibraryReference.result()
+			return it
 		}
 
 		userDictionaryService.add(library)
 
 		return Success.result(library = library)
+	}
+
+	/** Returns the failure result if [library] must not be imported, or `null` if it is valid. */
+	private fun validate(library: Library, except: UUID? = null): LibraryImportResult? {
+		if (existsName(library.name.translation, except)) {
+			LOG.trace("Name of imported project already exists")
+			return NameAlreadyExists.result()
+		}
+		if (hasStaleImportReferences(library)) {
+			LOG.trace("Library for imported project doesn't exist")
+			return StaleLibraryReference.result()
+		}
+		return null
 	}
 
 	/**

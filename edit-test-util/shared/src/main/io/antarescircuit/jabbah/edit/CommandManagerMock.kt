@@ -15,11 +15,13 @@ class CommandManagerMock {
 
 	fun canUndo(): CommandManagerMock {
 		every { commandManager.canUndo() } returns true
+		every { commandManager.hasChanges() } returns true
 		return this
 	}
 
 	fun cannotUndo(): CommandManagerMock {
 		every { commandManager.canUndo() } returns false
+		every { commandManager.hasChanges() } returns false
 		return this
 	}
 

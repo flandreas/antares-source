@@ -28,6 +28,9 @@ expect object System {
 
     fun getClass(obj: Any): KClass<*>
 
+	/** Returns a hash code for [obj] based on its identity, ignoring any overridden [Any.hashCode]. */
+	fun identityHashCode(obj: Any): Int
+
 	/** Returns the nearest common superclass of all [classes] (excluding interfaces). */
 	fun commonSuperClass(classes: Collection<KClass<*>>): KClass<*>?
 

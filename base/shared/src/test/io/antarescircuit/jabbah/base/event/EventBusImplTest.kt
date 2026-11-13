@@ -50,4 +50,29 @@ class EventBusImplTest {
 		eventBus.post(TestEventB())
 		assertFalse(handled)
 	}
+
+	@Test
+	fun shouldCountRegisteredHandlers() {
+		val handler: (T: Any) -> Unit = {}
+		eventBus.register(TestEventA::class, handler)
+		eventBus.register(TestEventB::class, handler)
+		assertEquals(2, eventBus.size)
+
+		eventBus.unregister(handler)
+		assertEquals(0, eventBus.size)
+	}
+
+	@Test
+	fun shouldAllowHandlersToUnregisterDuringTwoPhasePost() {
+		var calls = 0
+		lateinit var selfRemoving: (Any) -> Unit
+		selfRemoving = { calls++; eventBus.unregister(TestEventA::class, selfRemoving) }
+		eventBus.register(TestEventA::class, selfRemoving)
+		eventBus.register(TestEventA::class) { calls++ }
+
+		eventBus.postTwoPhase(TestEventA(), thenHandler = {})
+		eventBus.postTwoPhase(TestEventA(), TestEventB())
+
+		assertEquals(3, calls)
+	}
 }

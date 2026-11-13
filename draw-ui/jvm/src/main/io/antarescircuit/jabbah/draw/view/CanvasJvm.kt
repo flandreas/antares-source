@@ -98,7 +98,7 @@ class CanvasJvm(
 	override val devicePixelRatio: Double = 1.0
 
 	override var backgroundColor: Color
-		get() = Color(background.red, background.green, backgroundColor.blue, backgroundColor.alpha)
+		get() = Color(background.red, background.green, background.blue, background.alpha)
 		set(value) {
 			background = java.awt.Color(value.red, value.green, value.blue, value.alpha)
 		}

@@ -20,6 +20,12 @@ class ElectricXmlReader(inputStream: InputStream) : XmlReader {
 
     private val stack = Stack<Element>()
 
+    /**
+     * Caches the child elements of elements on [stack] that have been descended into by index, since
+     * [Element.getElementAt] walks the linked child list on each call.
+     */
+    private val childElements = IdentityHashMap<Element, List<Element>>()
+
     init {
         stack.push(document.root)
     }
@@ -27,7 +33,9 @@ class ElectricXmlReader(inputStream: InputStream) : XmlReader {
     /** ---- [XmlReader] interface */
 
     override fun getName(): String {
-        LOG.trace("getName '${stack.peek().name}'")
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("getName '${stack.peek().name}'")
+        }
         return stack.peek().name
     }
 
@@ -48,30 +56,41 @@ class ElectricXmlReader(inputStream: InputStream) : XmlReader {
     }
 
     override fun descend(name: String) {
-        LOG.trace("descend to '$name'")
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("descend to '$name'")
+        }
         stack.push(stack.peek().getElement(name))
     }
 
     override fun descend(index: Int) {
-        LOG.trace("descend to index $index of '${stack.peek().name}'")
-        stack.push(stack.peek().getElementAt(index))
+        val parent = stack.peek()
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("descend to index $index of '${parent.name}'")
+        }
+        stack.push(childElements.getOrPut(parent) { collectElements(parent) }[index - 1])
     }
 
     override fun ascend() {
-        LOG.trace("ascend from '${stack.peek().name}'")
-        stack.pop()
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("ascend from '${stack.peek().name}'")
+        }
+        childElements.remove(stack.pop())
     }
 
-    override fun getElementNames(): Set<String> {
-        val e = stack.peek().elements
-        val names = mutableSetOf<String>()
-        while (e.hasMoreElements()) {
-            val elem = e.current()
-            names.add(elem.name)
-            e.next()
-        }
-        return names
-    }
+    override fun getElementNames(): Set<String> =
+        collectElements(stack.peek()).mapTo(mutableSetOf()) { it.name }
 
     override fun getText(name: String): String = stack.peek().getString(name)
+
+    /** ---- [ElectricXmlReader] */
+
+    private fun collectElements(parent: Element): List<Element> {
+        val e = parent.elements
+        val elements = mutableListOf<Element>()
+        while (e.hasMoreElements()) {
+            elements.add(e.current())
+            e.next()
+        }
+        return elements
+    }
 }

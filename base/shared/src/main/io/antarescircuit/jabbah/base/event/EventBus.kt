@@ -71,7 +71,7 @@ class EventBusImpl : EventBus {
 
     /** ---- [EventBus] interface */
 
-	override val size: Int get() = registrations.size
+	override val size: Int get() = registrations.values.sumOf { it.size }
 
     override fun <T: Any> register(eventClass: KClass<out T>, handler: EventHandler<T>) {
         val eventName = getEventClassName(eventClass)
@@ -102,7 +102,7 @@ class EventBusImpl : EventBus {
     override fun postVetoable(event: Any, undoEvent: Any, thenHandler: VetoHandler<Any>, elseHandler: VetoHandler<VetoException>) {
         val successHandlers = mutableListOf<EventHandler<Any>>()
         try {
-            registrations[getEventClassName(event)]?.forEach {
+            registrations[getEventClassName(event)]?.toList()?.forEach {
                 it.invoke(event)
                 successHandlers.add(it)
             }
@@ -115,10 +115,10 @@ class EventBusImpl : EventBus {
 
 	override fun postTwoPhase(prepareEvent: Any, execEvent: Any, thenHandler: (() -> Unit)?) {
 		try {
-			registrations[getEventClassName(prepareEvent)]?.forEach {
+			registrations[getEventClassName(prepareEvent)]?.toList()?.forEach {
 				it.invoke(prepareEvent)
 			}
-			registrations[getEventClassName(execEvent)]?.forEach {
+			registrations[getEventClassName(execEvent)]?.toList()?.forEach {
 				it.invoke(execEvent)
 			}
 			thenHandler?.invoke()
@@ -129,7 +129,7 @@ class EventBusImpl : EventBus {
 
 	override fun postTwoPhase(prepareEvent: Any, thenHandler: () -> Unit, elseHandler: VetoHandler<VetoException>?) {
 		try {
-			registrations[getEventClassName(prepareEvent)]?.forEach {
+			registrations[getEventClassName(prepareEvent)]?.toList()?.forEach {
 				it.invoke(prepareEvent)
 			}
 			thenHandler()

@@ -1,14 +1,12 @@
 package io.antarescircuit.jabbah.graph.library.dictionary
 
+import io.antarescircuit.jabbah.base.io.AtomicFileWriter
 import io.antarescircuit.jabbah.base.logger
 import io.antarescircuit.jabbah.io.ElectricXmlReader
 import io.antarescircuit.jabbah.io.ElectricXmlWriter
 import io.antarescircuit.jabbah.io.StoreXmlReader
 import io.antarescircuit.jabbah.io.StoreXmlWriter
-import org.apache.commons.io.FileUtils
-import java.io.File
 import java.io.FileInputStream
-import java.io.FileOutputStream
 import java.io.InputStream
 import java.nio.file.FileSystems
 import java.nio.file.Files
@@ -60,22 +58,13 @@ class FileLibraryDictionaryPersistenceService(
 	override fun store(dictionary: LibraryDictionary) {
 		try {
 			ensureLibraryDirectory()
-			val tempFile = File.createTempFile("dict", null)
-			// First write into a temp file so that in case of an exception, the original file doesn't get emptied
-			FileOutputStream(tempFile).use {
-				try {
-					LOG.trace("storing entries")
-					val storeWriter = StoreXmlWriter(ElectricXmlWriter(it))
-					storeWriter.writeStorable(dictionary)
-					it.flush()
-					FileUtils.copyFile(tempFile, File(filePath))
-				} catch (e: Throwable) {
-					LOG.error("error while storing dictionary file $filePath: ${e.message}")
-					throw e
-				}
+			LOG.trace("storing entries")
+			AtomicFileWriter.write(Paths.get(filePath)) {
+				StoreXmlWriter(ElectricXmlWriter(it)).writeStorable(dictionary)
 			}
 		} catch (e: Throwable) {
-			LOG.error("error while accessing dictionary file $filePath: ${e.message}")
+			LOG.error("error while storing dictionary file $filePath: ${e.message}")
+			throw e
 		}
 	}
 
@@ -92,7 +81,7 @@ class FileLibraryDictionaryPersistenceService(
 
 	override fun ensureLibraryDirectory() {
 		if (!directoryExists) {
-			Files.createDirectory(Paths.get(directoryPath))
+			Files.createDirectories(Paths.get(directoryPath))
 		}
 	}
 }

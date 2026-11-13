@@ -138,6 +138,12 @@ interface CommandManager : Iterable<Command> {
     /** Determines whether there is a transaction in the undo stack that can be undone. */
     fun canUndo(): Boolean
 
+    /**
+     * Determines whether the data has changed since the last [reset], i.e. whether there are unsaved changes.
+     * Unlike [canUndo], this is also `true` if changes exist whose undo history has been discarded.
+     */
+    fun hasChanges(): Boolean
+
     /** Determines whether there is a transaction in the redo stack that can be redone.*/
     fun canRedo(): Boolean
 

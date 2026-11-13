@@ -292,7 +292,7 @@ open class ApplicationDataViewController(
 	 *         if the current [Savable] cannot be replaced, which must abort the calling replacement process.
 	 */
 	fun canReplaceSavable(actionKey: String): Boolean {
-		if (!commandManager.canUndo()) {
+		if (!commandManager.hasChanges()) {
 			return true
 		}
 		return when(view.decideSaveChangedData(actionKey)) {

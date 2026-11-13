@@ -136,9 +136,9 @@ open class GraphFrameSwing(
 		statusBar.dispose()
 	}
 
-	/** The application data has changed if there are undoable [Command]s in the [CommandManager].*/
+	/** The application data has changed if the [CommandManager] has unsaved changes.*/
 	override val applicationDataChanged: Boolean
-		get() = editor.commandManager.canUndo()
+		get() = editor.commandManager.hasChanges()
 
 	/** ---- [GraphFrameSwing] */
 

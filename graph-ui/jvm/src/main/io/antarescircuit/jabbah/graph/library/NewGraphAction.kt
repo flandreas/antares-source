@@ -102,7 +102,7 @@ class NewGraphAction(
 		if (controller.applicationModeHolder.currentMode.isExecute()) {
 			return "library.action.newGraph.notEditMode.error"
 		}
-		if (EditModule.commandManager.canUndo()) {
+		if (EditModule.commandManager.hasChanges()) {
 			return "library.action.newGraph.unsavedChanges.error"
 		}
 		if (controller.selectedItem !is LibraryDirectory) {

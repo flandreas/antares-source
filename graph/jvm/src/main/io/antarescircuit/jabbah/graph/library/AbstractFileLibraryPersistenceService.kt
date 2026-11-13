@@ -2,6 +2,7 @@ package io.antarescircuit.jabbah.graph.library
 
 import io.antarescircuit.jabbah.app.ApplicationTooOldException
 import io.antarescircuit.jabbah.base.UUID
+import io.antarescircuit.jabbah.base.io.AtomicFileWriter
 import io.antarescircuit.jabbah.base.io.ZipUtil
 import io.antarescircuit.jabbah.base.logger
 import io.antarescircuit.jabbah.draw.graphics.ImageType
@@ -17,6 +18,7 @@ import java.io.*
 import java.nio.charset.Charset
 import java.nio.file.FileSystems
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
@@ -98,57 +100,49 @@ abstract class AbstractFileLibraryPersistenceService(
 			}
 		}
 
-		// Store
-		val tempFile = File.createTempFile("metaGraph", null)
-		// First write into a temp file so that in case of an exception, the original file doesn't get emptied
-		FileOutputStream(tempFile).use {
-			try {
-				val storeWriter = StoreXmlWriter(ElectricXmlWriter(it))
-				storeWriter.writeStorable(metaGraph)
-				it.flush()
-				FileUtils.copyFile(tempFile, File(buildMetaGraphFilePath(library.identification, metaGraph.uuid)))
-			} catch (e: Throwable) {
-				LOG.error("Error while storing MetaGraph ${metaGraph.uuid}: ${e.message}")
-				throw e
+		try {
+			AtomicFileWriter.write(Paths.get(buildMetaGraphFilePath(library.identification, metaGraph.uuid))) {
+				StoreXmlWriter(ElectricXmlWriter(it)).writeStorable(metaGraph)
 			}
+		} catch (e: Throwable) {
+			LOG.error("Error while storing MetaGraph ${metaGraph.uuid}: ${e.message}")
+			throw e
 		}
 	}
 
 	override fun storeLibrary(library: Library) {
 		ensureLibraryDirectory(library.identification)
-		val tempFile = File.createTempFile("lib", null)
-		// First write into a temp file so that in case of an exception, the original file doesn't get emptied
-		FileOutputStream(tempFile).use {
-			try {
-				val storeWriter = StoreXmlWriter(ElectricXmlWriter(it))
-				storeWriter.writeStorable(library)
-				it.flush()
-				FileUtils.copyFile(tempFile, File(buildLibraryFilePath(library.identification)))
-			} catch (e: Throwable) {
-				LOG.error("Error while storing Library ${library.uuid}: ${e.message}")
-				throw e
+		try {
+			AtomicFileWriter.write(Paths.get(buildLibraryFilePath(library.identification))) {
+				StoreXmlWriter(ElectricXmlWriter(it)).writeStorable(library)
 			}
+		} catch (e: Throwable) {
+			LOG.error("Error while storing Library ${library.uuid}: ${e.message}")
+			throw e
 		}
 	}
 
 	override fun exportMetaGraphBundle(bundle: MetaGraphBundle, outputPath: String) {
 		LOG.trace("Exporting bundle")
 		val tempFile = File.createTempFile("bundle", ".cir")
-
-		FileOutputStream(tempFile).use {
-			try {
-				val storeWriter = StoreXmlWriter(ElectricXmlWriter(it))
-				storeWriter.writeStorable(bundle)
-			} catch (e: Throwable) {
-				LOG.error("Error while saving '$tempFile': ${e.message}")
-				throw e
+		try {
+			FileOutputStream(tempFile).use {
+				try {
+					val storeWriter = StoreXmlWriter(ElectricXmlWriter(it))
+					storeWriter.writeStorable(bundle)
+				} catch (e: Throwable) {
+					LOG.error("Error while saving '$tempFile': ${e.message}")
+					throw e
+				}
 			}
-		}
 
-		FileOutputStream(outputPath).use { output ->
-			ZipOutputStream(output).use {
-				ZipUtil.zipFile(tempFile, tempFile.name, it)
+			FileOutputStream(outputPath).use { output ->
+				ZipOutputStream(output).use {
+					ZipUtil.zipFile(tempFile, tempFile.name, it)
+				}
 			}
+		} finally {
+			tempFile.delete()
 		}
 	}
 
@@ -157,6 +151,14 @@ abstract class AbstractFileLibraryPersistenceService(
 
 		// Import and unzip to incubation directory
 		val incubationDirPath = Files.createTempDirectory(null)
+		try {
+			return importMetaGraphBundle(inputPath, incubationDirPath)
+		} finally {
+			FileUtils.deleteQuietly(incubationDirPath.toFile())
+		}
+	}
+
+	private fun importMetaGraphBundle(inputPath: String, incubationDirPath: Path): MetaGraphBundle {
 		FileInputStream(inputPath).use { input ->
 			ZipInputStream(input).use {
 				ZipUtil.unzipFile(incubationDirPath, it)
