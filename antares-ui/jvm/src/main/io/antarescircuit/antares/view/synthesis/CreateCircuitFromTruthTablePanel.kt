@@ -99,7 +99,7 @@ class CreateCircuitFromTruthTablePanel(
 		contentPanel.add(nameLabel)
 		contentPanel.add(Box.createVerticalStrut(2))
 		contentPanel.add(nameField)
-		contentPanel.add(Box.createVerticalStrut(6))
+		contentPanel.add(Box.createVerticalStrut(12))
 
 		synthesisTypeLabel.alignmentX = Component.LEFT_ALIGNMENT
 		synthesisTypeField.alignmentX = Component.LEFT_ALIGNMENT
@@ -107,7 +107,7 @@ class CreateCircuitFromTruthTablePanel(
 		contentPanel.add(synthesisTypeLabel)
 		contentPanel.add(Box.createVerticalStrut(2))
 		contentPanel.add(synthesisTypeField)
-		contentPanel.add(Box.createVerticalStrut(6))
+		contentPanel.add(Box.createVerticalStrut(12))
 
 		twoInputGatesOnlyField.alignmentX = Component.LEFT_ALIGNMENT
 		contentPanel.add(twoInputGatesOnlyField)
