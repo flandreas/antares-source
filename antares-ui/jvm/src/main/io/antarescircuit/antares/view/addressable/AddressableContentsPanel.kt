@@ -23,8 +23,8 @@ import java.awt.Dimension
 import java.awt.Frame
 import java.awt.event.ActionEvent
 import java.awt.event.FocusListener
+import java.io.File
 import java.nio.file.Files
-import java.nio.file.Paths
 import javax.swing.*
 import javax.swing.filechooser.FileNameExtensionFilter
 
@@ -236,6 +236,13 @@ class AddressableContentsPanel(
 			}
 			if (fileChooser.showSaveDialog(this@AddressableContentsPanel) == JFileChooser.APPROVE_OPTION) {
 				WriteFileWrapper.wrap(getValue(NAME) as String) {
+					val selected = fileChooser.selectedFile
+					val extension = (fileChooser.fileFilter as? FileNameExtensionFilter)?.extensions?.firstOrNull()
+					val file = if (selected.extension.isEmpty() && extension != null) {
+						File(selected.path + ".$extension")
+					} else {
+						selected
+					}
 					val memory = addressableRef.addressable.memory
 					val width = addressableRef.addressable.dataWidth
 					val contents = when (fileChooser.fileFilter) {
@@ -243,9 +250,10 @@ class AddressableContentsPanel(
 						addressedFilter -> LogisimMemoryDump.writeAddressed(memory, width)
 						else -> MemoryDump.write(memory, width)
 					}
-					Files.writeString(Paths.get(fileChooser.selectedFile.absolutePath), contents)
+					Files.writeString(file.toPath(), contents)
 				}
 			}
 		}
 	}
+
 }
