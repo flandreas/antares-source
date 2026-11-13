@@ -22,10 +22,11 @@ import io.antarescircuit.jabbah.base.parser.Token
  *     portName : ID | inputPortName | outputPortName
  *     inputPortName : ">" ID
  *     outputPortName : "<" ID
- *     statement : testVector | block
- *     block : "run" "{“ { testVector } "}"
+ *     statement : testVector | block | loop
+ *     block : "run" "{“ { testVector | loop } "}"
+ *     loop : "loop" ID number ".." number "{" { statement } "}"
  *     testVector : value value { value } EOL
- *     value :  number | dontCare | undefined | clockedNumber
+ *     value :  number | dontCare | undefined | clockedValue | expression
  *     number : decimalValue | hexValue | binaryValue
  *     decimalValue : { decimalDigit }
  *     hexValue : '0x' { hexDigit }
@@ -34,9 +35,24 @@ import io.antarescircuit.jabbah.base.parser.Token
  *     binaryDigit : '0' | '1' | undefined
  *     dontCare : 'X' | 'x'
  *     undefined : 'Z' | 'z'
- *     clockedNumber : "^" number
+ *     clockedValue : "^" ( number | expression )
+ *     expression : "(" or ")"
+ *     or : xor { "|" xor }
+ *     xor : and { "^" and }
+ *     and : shift { "&" shift }
+ *     shift : sum { ( "<<" | ">>" ) sum }
+ *     sum : product { ( "+" | "-" ) product }
+ *     product : unary { "*" unary }
+ *     unary : ( "-" | "~" ) unary | primary
+ *     primary : number | ID | "(" or ")"
  *     EOL : "\n"
  * </pre>
+ *
+ * Loops are nestable, and a "loop" inside a "run" block may contain test vectors and loops only.
+ * The ID of a loop is a variable that can be used in the expressions of the loop's test vectors.
+ * Inside expressions, "^" denotes bitwise XOR. This is unambiguous because a clock marker "^"
+ * can only precede a whole value, i.e. it never occurs inside parentheses.
+ * Since a standalone "X" or "Z" denotes a don't care or undefined value, these are not valid loop variable names.
  */
 class TestcaseParser(
 	lexer: TestcaseLexer,
@@ -88,39 +104,57 @@ class TestcaseParser(
 			if (currentToken!!.type == EOL) {
 				eat(EOL)
 			} else {
-				list.add(statement())
+				list.add(statement(allowRun = true))
 			}
 		}
 		return list
 	}
 
-	private fun statement(): Node {
+	private fun statement(allowRun: Boolean): Node {
 		return when (currentToken!!.type) {
-			RUN -> run()
+			RUN -> if (allowRun) run() else throw unexpectedToken()
+			LOOP -> loop(allowRun)
 			else -> testVector()
 		}
 	}
 
 	private fun run(): Node {
 		lexer.location.let { location ->
-			val list = mutableListOf<TestVectorNode>()
 			eat(RUN)
-			eat(LCURLEY)
-			list.addAll(testVectors())
-			eat(RCURLEY)
-			return RunNode(location, list)
+			return RunNode(location, block(allowRun = false))
 		}
 	}
 
-	private fun testVectors(): List<TestVectorNode> {
-		val list = mutableListOf<TestVectorNode>()
-		while (currentToken!!.type != RCURLEY) {
+	private fun loop(allowRun: Boolean): Node {
+		lexer.location.let { location ->
+			eat(LOOP)
+			val variable = currentToken!!.value as? String
+			eat(ID)
+			val from = loopBound()
+			eat(RANGE)
+			val to = loopBound()
+			return LoopNode(location, variable!!, from, to, block(allowRun))
+		}
+	}
+
+	private fun loopBound(): ULong =
+		when (currentToken!!.type) {
+			DECIMAL_LITERAL, BINARY_LITERAL, HEX_LITERAL -> definedNumber().also { eat(currentToken!!.type) }
+			else -> throw unexpectedToken()
+		}
+
+	/** Parses "{" { statement } "}", where nested "run" blocks are only allowed if [allowRun] is `true`.*/
+	private fun block(allowRun: Boolean): List<Node> {
+		eat(LCURLEY)
+		val list = mutableListOf<Node>()
+		while (currentToken!!.type != RCURLEY && currentToken!!.type != EOF) {
 			if (currentToken!!.type == EOL) {
 				eat(EOL)
 			} else {
-				list.add(testVector())
+				list.add(statement(allowRun))
 			}
 		}
+		eat(RCURLEY)
 		return list
 	}
 
@@ -144,16 +178,20 @@ class TestcaseParser(
 			HEX_LITERAL -> hexLiteral(NORMAL)
 			DONT_CARE -> dontCare()
 			UNDEFINED -> undefined()
-			CARET -> clockedNumber()
-			else -> throw SyntaxError(lexer.location, Translations.getString("base.dsl.unexpectedToken.msg", currentToken!!.type.id))
+			CARET -> clockedValue()
+			LPAREN -> expressionValue(NORMAL)
+			else -> throw unexpectedToken()
 		}
 	}
+
+	private fun unexpectedToken(): SyntaxError =
+		SyntaxError(lexer.location, Translations.getString("base.dsl.unexpectedToken.msg", currentToken!!.type.id))
 
 	private fun decimalLiteral(type: Value.Type): ValueNode {
 		lexer.location.let { loc ->
 			val value = Value((currentToken!!.value as DigitalSignal), type, DECIMAL)
 			eat(DECIMAL_LITERAL)
-			return ValueNode(loc, value)
+			return LiteralValueNode(loc, value)
 		}
 	}
 
@@ -161,7 +199,7 @@ class TestcaseParser(
 		lexer.location.let { loc ->
 			val value = Value((currentToken!!.value as DigitalSignal), type, BINARY)
 			eat(BINARY_LITERAL)
-			return ValueNode(loc, value)
+			return LiteralValueNode(loc, value)
 		}
 	}
 
@@ -169,7 +207,7 @@ class TestcaseParser(
 		lexer.location.let { loc ->
 			val value = Value((currentToken!!.value as DigitalSignal), type, HEXADECIMAL)
 			eat(HEX_LITERAL)
-			return ValueNode(loc, value)
+			return LiteralValueNode(loc, value)
 		}
 	}
 
@@ -178,22 +216,80 @@ class TestcaseParser(
 			DECIMAL_LITERAL -> decimalLiteral(type)
 			BINARY_LITERAL -> binaryLiteral(type)
 			HEX_LITERAL -> hexLiteral(type)
-			else -> throw SyntaxError(lexer.location, Translations.getString("base.dsl.unexpectedToken.msg", currentToken!!.type.id))
+			LPAREN -> expressionValue(type)
+			else -> throw unexpectedToken()
 		}
 	}
 
 	private fun dontCare(): ValueNode {
 		eat(DONT_CARE)
-		return ValueNode(lexer.location, Value.X)
+		return LiteralValueNode(lexer.location, Value.X)
 	}
 
 	private fun undefined(): ValueNode {
 		eat(UNDEFINED)
-		return ValueNode(lexer.location, Value.Z)
+		return LiteralValueNode(lexer.location, Value.Z)
 	}
 
-	private fun clockedNumber(): ValueNode {
+	private fun clockedValue(): ValueNode {
 		eat(CARET)
 		return numericValue(Value.Type.CLOCKED)
 	}
+
+	private fun expressionValue(type: Value.Type): ValueNode {
+		lexer.location.let { loc ->
+			eat(LPAREN)
+			val expression = or()
+			eat(RPAREN)
+			return ExpressionValueNode(loc, expression, type)
+		}
+	}
+
+	/** Parses a left-associative sequence of binary [operators] with operands parsed by [operand].*/
+	private fun binary(operators: Set<TestcaseTokenType>, operand: () -> Expression): Expression {
+		var result = operand()
+		while (currentToken!!.type in operators) {
+			val operator = currentToken!!.type as TestcaseTokenType
+			eat(operator)
+			result = BinaryExpression(result, operator, operand())
+		}
+		return result
+	}
+
+	private fun or(): Expression = binary(setOf(VERTICAL_BAR)) { xor() }
+
+	private fun xor(): Expression = binary(setOf(CARET)) { and() }
+
+	private fun and(): Expression = binary(setOf(AMPERSAND)) { shift() }
+
+	private fun shift(): Expression = binary(setOf(SHIFT_LEFT, SHIFT_RIGHT)) { sum() }
+
+	private fun sum(): Expression = binary(setOf(PLUS, MINUS)) { product() }
+
+	private fun product(): Expression = binary(setOf(MULTIPLY)) { unary() }
+
+	private fun unary(): Expression =
+		when (val type = currentToken!!.type) {
+			MINUS, TILDE -> {
+				eat(type)
+				UnaryExpression(type as TestcaseTokenType, unary())
+			}
+			else -> primary()
+		}
+
+	private fun primary(): Expression =
+		when (currentToken!!.type) {
+			DECIMAL_LITERAL, BINARY_LITERAL, HEX_LITERAL -> NumberExpression(definedNumber()).also { eat(currentToken!!.type) }
+			ID -> VariableExpression(lexer.location, currentToken!!.value as String).also { eat(ID) }
+			LPAREN -> {
+				eat(LPAREN)
+				or().also { eat(RPAREN) }
+			}
+			else -> throw unexpectedToken()
+		}
+
+	/** Returns the value of the current number literal, which must not contain undefined bits.*/
+	private fun definedNumber(): ULong =
+		(currentToken!!.value as DigitalSignal).toLong()
+			?: throw SyntaxError(lexer.location, Translations.getString("antares.testcase.error.undefinedNumber"))
 }

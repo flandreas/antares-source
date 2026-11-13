@@ -79,6 +79,16 @@ class CircuitBuilder(
 			addVerticeView(it, location)
 		}
 
+	fun addGate(
+		type: NonUnaryLogicGateType,
+		inputCount: PortCount,
+		location: Point2D = Point2D.ZERO,
+		orientation: Direction = Direction.EAST
+	): LogicGateView = LogicGateView(styleProvider, gate = NonUnaryLogicGate(type, inputCount)).also {
+		it.orientation = orientation
+		addVerticeView(it, location)
+	}
+
 	fun addConstant(
 		value: DigitalSignal,
 		location: Point2D = Point2D.ZERO,

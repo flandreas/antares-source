@@ -3,8 +3,10 @@ package io.antarescircuit.antares.model.truthtable
 import io.antarescircuit.antares.model.expression.BooleanExpression
 import io.antarescircuit.antares.model.expression.BooleanExpressionNotation
 import io.antarescircuit.antares.model.expression.StandardBooleanExpressionWriter
+import io.antarescircuit.antares.model.quinemccluskey.CNF
 import io.antarescircuit.antares.model.quinemccluskey.DNF
 import io.antarescircuit.antares.model.quinemccluskey.DnfToBooleanExpression
+import io.antarescircuit.antares.model.quinemccluskey.minimizeToCNF
 import io.antarescircuit.antares.model.quinemccluskey.minimizeToDNF
 import io.antarescircuit.jabbah.base.Properties
 import io.antarescircuit.jabbah.base.Translations
@@ -86,10 +88,20 @@ class TruthTableService(
 
 	private fun checkOutputName(name: String): Boolean = OUTPUT_REGEX.matches(name)
 
-	fun generateDnfs(truthTable: TruthTable): List<DNF> {
+	fun generateDnfs(truthTable: TruthTable): List<DNF> =
+		(truthTable.inputColumnCount until truthTable.columnCount).map { generateDnf(truthTable, it) }
+
+	/** Minimizes the function of the output [column] of [truthTable]. */
+	fun generateDnf(truthTable: TruthTable, column: Int): DNF =
+		with (truthTable) {
+			minimizeToDNF(getMinTerms(column), getDontCares(column), inputColumnCount)
+		}
+
+	/** Generates the minimized product of sums of each output column of [truthTable]. */
+	fun generateCnfs(truthTable: TruthTable): List<CNF> {
 		with (truthTable) {
 			return (inputColumnCount until inputColumnCount + outputColumnCount)
-				.map { minimizeToDNF(getMinTerms(it), getDontCares(it), inputColumnCount) }
+				.map { minimizeToCNF(getMaxTerms(it), getDontCares(it), inputColumnCount) }
 		}
 	}
 
@@ -97,19 +109,18 @@ class TruthTableService(
 	 * Generates the minimized [BooleanExpression]s of a [TruthTable] using the specified
 	 * [BooleanExpressionNotation].
 	 */
-	fun generateExpressions(truthTable: TruthTable, notation: BooleanExpressionNotation): String {
-		val builder = StringBuilder()
-		with (truthTable) {
-			for (col in inputColumnCount until inputColumnCount + outputColumnCount) {
-				val dnf = minimizeToDNF(getMinTerms(col), getDontCares(col), inputColumnCount)
-				builder.append(
-					StandardBooleanExpressionWriter
-						.ofNotation(notation)
-						.write(this, DnfToBooleanExpression(truthTable, dnf).build(), col)
-				)
-				builder.append("\n")
-			}
-		}
-		return builder.toString()
-	}
+	fun generateExpressions(truthTable: TruthTable, notation: BooleanExpressionNotation): String =
+		(truthTable.inputColumnCount until truthTable.columnCount)
+			.joinToString("") { generateExpression(truthTable, it, notation) + "\n" }
+
+	/** Writes [dnf], the minimized function of the output [column], as an assignment in [notation]. */
+	fun generateExpression(
+		truthTable: TruthTable,
+		column: Int,
+		notation: BooleanExpressionNotation,
+		dnf: DNF = generateDnf(truthTable, column),
+	): String =
+		StandardBooleanExpressionWriter
+			.ofNotation(notation)
+			.write(truthTable, DnfToBooleanExpression(truthTable, dnf).build(), column)
 }

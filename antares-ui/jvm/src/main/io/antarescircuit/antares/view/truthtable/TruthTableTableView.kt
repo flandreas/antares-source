@@ -1,13 +1,20 @@
 package io.antarescircuit.antares.view.truthtable
 
 import io.antarescircuit.antares.model.signal.Bit
-import io.antarescircuit.antares.model.truthtable.TruthTableCommand
+import io.antarescircuit.antares.model.truthtable.TruthTableCellChange
+import io.antarescircuit.antares.model.truthtable.TruthTableCellsCommand
+import io.antarescircuit.antares.model.truthtable.TruthTableClipboard
 import io.antarescircuit.antares.model.truthtable.TruthTableReference
+import io.antarescircuit.jabbah.base.Translations
+import io.antarescircuit.jabbah.base.event.Modifier
 import io.antarescircuit.jabbah.base.swing.RowHeaderTable
+import io.antarescircuit.jabbah.base.ui.Clipboard
 import io.antarescircuit.jabbah.edit.CommandManager
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.event.ActionEvent
+import java.awt.event.KeyEvent
+import java.awt.datatransfer.UnsupportedFlavorException
 import java.util.*
 import javax.swing.*
 import javax.swing.table.DefaultTableCellRenderer
@@ -39,6 +46,7 @@ class TruthTableTableView(
 	init {
 		buildUI()
 		updateColumnModels()
+		defineClipboardActions()
 		if (editable) {
 			defineSetActions()
 		}
@@ -83,6 +91,7 @@ class TruthTableTableView(
 		table.inputMap.put(KeyStroke.getKeyStroke("1"), "Action1")
 		table.actionMap.put("Action1", SetAction(Bit.True))
 		table.inputMap.put(KeyStroke.getKeyStroke("X"), "ActionX")
+		table.inputMap.put(KeyStroke.getKeyStroke("shift X"), "ActionX")
 		table.actionMap.put("ActionX", SetAction(Bit.Error))
 	}
 
@@ -149,32 +158,113 @@ class TruthTableTableView(
 		}
 	}
 
-	private inner class SetAction(private val bit: Bit) : AbstractAction() {
+	private fun defineClipboardActions() {
+		val menu = JPopupMenu()
+		val copy = object : AbstractAction(Translations.getString("edit.action.copy.name")) {
+			override fun actionPerformed(e: ActionEvent?) {
+				selectedText()?.let { Clipboard.setStringContents(it) }
+			}
+		}
+		table.inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, Modifier.Meta.mask), "copyTruthTable")
+		table.actionMap.put("copyTruthTable", copy)
+		menu.add(copy)
+		if (editable) {
+			val paste = object : AbstractAction(Translations.getString("edit.action.paste.name")) {
+				override fun actionPerformed(e: ActionEvent?) {
+					try {
+						Clipboard.getStringContents()?.let { pasteText(it) }
+					} catch (_: IllegalArgumentException) {
+						showPasteError()
+					} catch (_: UnsupportedFlavorException) {
+						showPasteError()
+					}
+				}
+			}
+			table.inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, Modifier.Meta.mask), "pasteTruthTable")
+			table.actionMap.put("pasteTruthTable", paste)
+			menu.add(paste)
+			menu.addSeparator()
+			for (bit in listOf(Bit.False, Bit.True, Bit.Error)) {
+				menu.add(SetAction(bit))
+			}
+		}
+		table.componentPopupMenu = menu
+	}
 
+	private fun showPasteError() {
+		JOptionPane.showMessageDialog(this,
+			Translations.getString("antares.truthTable.paste.error"),
+			Translations.getString("edit.action.paste.name"), JOptionPane.ERROR_MESSAGE)
+	}
+
+	private fun selectedText(): String? {
+		if (table.selectedRow < 0 || table.selectedColumn < 0) return null
+		return table.selectedRows.joinToString("\n") { row ->
+			table.selectedColumns.joinToString("\t") { column -> table.getValueAt(row, column).toString() }
+		}
+	}
+
+	/** Validate the entire rectangle before creating a single undoable edit. */
+	private fun pasteText(text: String) {
+		if (!editable || table.selectedRow < 0 || table.selectedColumn < 0) return
+		val values = TruthTableClipboard.parse(text)
+		if (values.size == 1 && values[0].size == 1) {
+			fillSelection(values[0][0])
+			return
+		}
+		val firstRow = table.selectedRow
+		val firstColumn = table.selectedColumn
+		require(values.size <= table.rowCount - firstRow)
+		require(values[0].size <= table.columnCount - firstColumn)
+		val changes = values.flatMapIndexed { row, cells ->
+			cells.mapIndexed { column, bit ->
+				TruthTableCellChange(firstRow + row, table.convertColumnIndexToModel(firstColumn + column), bit)
+			}
+		}
+		applyChanges(changes)
+	}
+
+	private fun fillSelection(bit: Bit) {
+		val changes = table.selectedRows.flatMap { row ->
+			table.selectedColumns.map { viewColumn ->
+				val column = table.convertColumnIndexToModel(viewColumn)
+				if (column < ref.truthTable.inputColumnCount) null else TruthTableCellChange(row, column, bit)
+			}.filterNotNull()
+		}
+		applyChanges(changes)
+	}
+
+	private fun applyChanges(changes: List<TruthTableCellChange>) {
+		// The command validates every cell, including read-only inputs, before any mutation.
+		val command = TruthTableCellsCommand(ref, changes)
+		if (changes.any { ref.truthTable.getValue(it.row, it.column) != it.value }) {
+			commandManager.execute(command)
+		}
+	}
+
+	private inner class SetAction(private val bit: Bit) : AbstractAction(
+		Translations.getString("antares.truthTable.fill", bit.toString()),
+	) {
 		override fun actionPerformed(e: ActionEvent?) {
+			if (table.selectedRow < 0 || table.selectedColumn < 0) return
 			val row = table.selectedRow
 			val column = table.selectedColumn
-
-			if (column in ref.truthTable.inputColumnCount until table.columnCount) {
-				commandManager.execute(TruthTableCommand(ref, row, column, bit))
+			val singleCell = table.selectedRowCount == 1 && table.selectedColumnCount == 1
+			fillSelection(bit)
+			if (singleCell && table.convertColumnIndexToModel(column) >= ref.truthTable.inputColumnCount) {
+				forwardSelection(row, column)
 			}
-
-			forwardSelection(row, column)
 		}
 
 		private fun forwardSelection(row: Int, column: Int) {
-			var r = row
-			var c = column
-
-			c++
-			if (c >= table.columnCount) {
-				c = ref.truthTable.inputColumnCount
-				r++
-				if (r >= ref.truthTable.rowsCount) {
-					r = 0
-				}
+			val outputColumns = (0 until table.columnCount).filter {
+				table.convertColumnIndexToModel(it) >= ref.truthTable.inputColumnCount
 			}
-			table.changeSelection(r, c, false, false)
+			if (outputColumns.isEmpty()) return
+			val nextColumn = outputColumns.firstOrNull { it > column }
+			val nextRow = if (nextColumn == null) (row + 1) % table.rowCount else row
+			table.changeSelection(nextRow, nextColumn ?: outputColumns.first(), false, false)
+			table.scrollRectToVisible(table.getCellRect(table.selectedRow, table.selectedColumn, true))
 		}
 	}
 }

@@ -68,6 +68,43 @@ class TestcaseLexerTest {
 		assertId("Z", lexer)
 	}
 
+	@Test
+	fun shouldScanLoopWithExpressions() {
+		val lexer = TestcaseLexer("A O\nloop xi 0..3 { (~xi << 1 >> 2) ^(-1 + 2 * 3 & 4 | 5) x }")
+		assertId("A", lexer)
+		assertId("O", lexer)
+		assertToken(BaseTokenType.EOL, lexer)
+		assertToken(TestcaseTokenType.LOOP, lexer)
+		assertId("xi", lexer)
+		assertLong(0L, lexer)
+		assertToken(TestcaseTokenType.RANGE, lexer)
+		assertToken(TestcaseTokenType.DECIMAL_LITERAL, lexer)
+		assertToken(TestcaseTokenType.LCURLEY, lexer)
+		assertToken(TestcaseTokenType.LPAREN, lexer)
+		assertToken(TestcaseTokenType.TILDE, lexer)
+		assertId("xi", lexer)
+		assertToken(TestcaseTokenType.SHIFT_LEFT, lexer)
+		assertLong(1L, lexer)
+		assertToken(TestcaseTokenType.SHIFT_RIGHT, lexer)
+		assertToken(TestcaseTokenType.DECIMAL_LITERAL, lexer)
+		assertToken(TestcaseTokenType.RPAREN, lexer)
+		assertToken(TestcaseTokenType.CARET, lexer)
+		assertToken(TestcaseTokenType.LPAREN, lexer)
+		assertToken(TestcaseTokenType.MINUS, lexer)
+		assertLong(1L, lexer)
+		assertToken(TestcaseTokenType.PLUS, lexer)
+		assertToken(TestcaseTokenType.DECIMAL_LITERAL, lexer)
+		assertToken(TestcaseTokenType.MULTIPLY, lexer)
+		assertToken(TestcaseTokenType.DECIMAL_LITERAL, lexer)
+		assertToken(TestcaseTokenType.AMPERSAND, lexer)
+		assertToken(TestcaseTokenType.DECIMAL_LITERAL, lexer)
+		assertToken(TestcaseTokenType.VERTICAL_BAR, lexer)
+		assertToken(TestcaseTokenType.DECIMAL_LITERAL, lexer)
+		assertToken(TestcaseTokenType.RPAREN, lexer)
+		assertToken(TestcaseTokenType.DONT_CARE, lexer)
+		assertToken(TestcaseTokenType.RCURLEY, lexer)
+	}
+
 	private fun assertToken(type: TokenType, lexer: AbstractLexer) {
 		assertEquals(type, lexer.nextToken().type)
 	}
