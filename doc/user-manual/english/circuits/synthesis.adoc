@@ -75,6 +75,16 @@ Click button btn:[Create Expressions] to let Antares create the minimized boolea
 
 NOTE: These expressions are not stored in the project file. Every time you change a value in the truth table, or you open a stored truth table, the expressions are cleared and must be recalculated on demand.
 
+=== Karnaugh Maps
+
+The tab "Karnaugh Maps" displays the truth table.
+
+image::user-manual/circuits/karnaugh-map.png[Karnough Map,500,align="center"]
+
+You can click on individual cells to change its value. Use the "Output" drop-down to switch between the Karnaugh map for each output value.
+
+At the bottom of the map, the boolean expression representing the current map is displayed, and its individual terms with a color reference to the areas in the map.
+
 === Creating a Circuit
 
 After having created the minimized expressions, you can press button btn:[Create Circuit..] to let Antares create a circuit that implements these expression. They same can also be achieved using the menu:Context[Create Circuit..] menu on a truth table in the explorer tree.
