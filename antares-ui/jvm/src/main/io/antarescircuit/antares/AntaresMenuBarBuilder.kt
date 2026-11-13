@@ -4,6 +4,7 @@ import io.antarescircuit.antares.ai.ShowAiChatAction
 import io.antarescircuit.antares.hdl.vhdl.ExportVHDLAction
 import io.antarescircuit.antares.view.GraphViewAnimationAction
 import io.antarescircuit.antares.view.TestAction
+import io.antarescircuit.antares.view.oscilloscope.ExportVcdAction
 import io.antarescircuit.antares.view.analysis.AnalyseCircuitAction
 import io.antarescircuit.antares.view.expression.NewBooleanExpressionAction
 import io.antarescircuit.antares.view.fsm.NewFSMAction
@@ -58,6 +59,7 @@ class AntaresMenuBarBuilder(
 	override fun fillExportMenu(menu: JMenu) {
 		super.fillExportMenu(menu)
 		menu.add(JMenuItem(ActionWrapperSwing(ExportVHDLAction())))
+		menu.add(JMenuItem(ActionWrapperSwing(ExportVcdAction())))
 	}
 
     override fun fillViewMenu(menu: JMenu) {

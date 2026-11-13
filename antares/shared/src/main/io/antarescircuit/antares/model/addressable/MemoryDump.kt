@@ -72,13 +72,18 @@ object MemoryDump {
 	 * Reads the dump from the specified [String] into a [Memory].
 	 */
 	fun read(memory: Memory, dump: String) {
-		val version = MemoryDumpFileVersion.extractFrom(dump)
-
-		return if (version?.type == MemoryDumpVersionType.Newline) {
-			readNewLineFormat(memory, dump)
-		} else {
-			readStandardFormat(memory, dump)
+		if (LogisimMemoryDump.recognizes(dump)) {
+			LogisimMemoryDump.read(memory, dump)
+			return
 		}
+		val version = MemoryDumpFileVersion.extractFrom(dump)
+		val parsed = Memory()
+		if (version?.type == MemoryDumpVersionType.Newline) {
+			readNewLineFormat(parsed, dump)
+		} else {
+			readStandardFormat(parsed, dump)
+		}
+		memory.replaceWith(parsed)
 	}
 
 	private fun removeCommentLines(dump: String): String {

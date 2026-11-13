@@ -26,6 +26,7 @@ import java.awt.event.FocusListener
 import java.nio.file.Files
 import java.nio.file.Paths
 import javax.swing.*
+import javax.swing.filechooser.FileNameExtensionFilter
 
 /**
  * Displays the contents of an [Addressable] using a [AddressableDisplayPanel], along with [Action]s for importing,
@@ -79,11 +80,7 @@ class AddressableContentsPanel(
 		}
 
 		override fun bitWidthChanged(event: AddressableBitWidthEvent) {
-			if (event.isAddress) {
-				memoryDisplayPanel.updateAddressWidth()
-			} else {
-				handleContentChanged()
-			}
+			handleContentChanged()
 		}
 
 		private fun handleContentChanged() {
@@ -191,10 +188,12 @@ class AddressableContentsPanel(
 
 	private inner class ImportAction : AbstractAction(Translations.getString("antares.action.memory.import.name")) {
 		override fun actionPerformed(e: ActionEvent?) {
-			val fileChooser = JFileChooser()
+			val fileChooser = JFileChooser().apply {
+				addChoosableFileFilter(FileNameExtensionFilter(Translations.getString("antares.memory.format.import"), "hex", "raw", "amd", "txt"))
+			}
 			if (fileChooser.showOpenDialog(this@AddressableContentsPanel) == JFileChooser.APPROVE_OPTION) {
 				try {
-					executeCommand(AddressableContentsCommand(view, addressableRef.link, addressableRef.addressable.dataWidth, fileChooser.selectedFile!!.absolutePath))
+					executeCommand(AddressableContentsCommand(view, addressableRef.link, fileChooser.selectedFile!!.absolutePath))
 					memoryDisplayPanel.refresh()
 				} catch (e: IllegalArgumentException) {
 					val msg = Translations.getString("antares.memory.invalidData.text") + "\n${e.message}"
@@ -219,18 +218,32 @@ class AddressableContentsPanel(
 
 	private inner class ClearAction : AbstractAction(Translations.getString("antares.action.memory.clear.name")) {
 		override fun actionPerformed(e: ActionEvent?) {
-			executeCommand(AddressableClearCommand(view, addressableRef.link, addressableRef.addressable.dataWidth))
+			executeCommand(AddressableClearCommand(view, addressableRef.link))
 			memoryDisplayPanel.refresh()
 		}
 	}
 
 	private inner class ExportAction : AbstractAction(Translations.getString("antares.action.memory.export.name")) {
 		override fun actionPerformed(e: ActionEvent?) {
-			val fileChooser = JFileChooser()
+			val nativeFilter = FileNameExtensionFilter(Translations.getString("antares.memory.format.native"), "amd")
+			val rawFilter = FileNameExtensionFilter(Translations.getString("antares.memory.format.raw"), "raw")
+			val addressedFilter = FileNameExtensionFilter(Translations.getString("antares.memory.format.addressed"), "hex")
+			val fileChooser = JFileChooser().apply {
+				addChoosableFileFilter(nativeFilter)
+				addChoosableFileFilter(rawFilter)
+				addChoosableFileFilter(addressedFilter)
+				fileFilter = nativeFilter
+			}
 			if (fileChooser.showSaveDialog(this@AddressableContentsPanel) == JFileChooser.APPROVE_OPTION) {
 				WriteFileWrapper.wrap(getValue(NAME) as String) {
-				val contents = MemoryDump.write(addressableRef.addressable.memory, addressableRef.addressable.dataWidth)
-					Files.write(Paths.get(fileChooser.selectedFile.absolutePath), contents.toByteArray())
+					val memory = addressableRef.addressable.memory
+					val width = addressableRef.addressable.dataWidth
+					val contents = when (fileChooser.fileFilter) {
+						rawFilter -> LogisimMemoryDump.writeRaw(memory, width)
+						addressedFilter -> LogisimMemoryDump.writeAddressed(memory, width)
+						else -> MemoryDump.write(memory, width)
+					}
+					Files.writeString(Paths.get(fileChooser.selectedFile.absolutePath), contents)
 				}
 			}
 		}

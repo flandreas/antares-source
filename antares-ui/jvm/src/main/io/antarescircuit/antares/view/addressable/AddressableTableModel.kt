@@ -16,7 +16,8 @@ abstract class AbstractAddressableTableModel(
     private val cellsPerRow: Int,
     protected val addressableRef: AddressableReference,
     private val rowCount: Int,
-    protected val converterProvider: () -> AddressableValueConverter
+    protected val converterProvider: () -> AddressableValueConverter,
+	protected val startAddress: Int = 0,
 ) : AbstractTableModel() {
 
     private val format: String = "%${max(2, addressableRef.addressable.dataWidth.width / 4)}s"
@@ -33,7 +34,12 @@ abstract class AbstractAddressableTableModel(
     protected fun getMemoryValue(rowIndex: Int, columnIndex: Int): String =
         converterProvider().render(getCellValue(rowIndex, columnIndex), addressableRef.addressable.dataWidth)
 
-    protected open fun getCellAddress(rowIndex: Int, columnIndex: Int): Int = rowIndex * cellsPerRow + columnIndex
+    protected open fun getCellAddress(rowIndex: Int, columnIndex: Int): Int =
+		(startAddress.toLong() + rowIndex.toLong() * cellsPerRow + columnIndex).takeIf {
+			it <= addressableRef.addressable.addressWidth.maxValue.coerceAtMost(Int.MAX_VALUE.toULong()).toLong()
+		}?.toInt() ?: -1
+
+	fun addressAt(rowIndex: Int, columnIndex: Int): Int = getCellAddress(rowIndex, columnIndex)
 
     private fun getCellValue(rowIndex: Int, columnIndex: Int): ULong =
         addressableRef.addressable.dataAt(getCellAddress(rowIndex, columnIndex))
@@ -52,13 +58,16 @@ open class AddressableTableModel(
     rowCount: Int,
     private val editable: () -> Boolean,
     converterProvider: () -> AddressableValueConverter,
-    private val signalHandler: SignalHandler? = null
-) : AbstractAddressableTableModel(cellsPerRow, addressable, rowCount, converterProvider) {
+    private val signalHandler: SignalHandler? = null,
+	startAddress: Int = 0,
+) : AbstractAddressableTableModel(cellsPerRow, addressable, rowCount, converterProvider, startAddress) {
 
     /** ---- [AbstractTableModel] */
 
     override fun getValueAt(rowIndex: Int, columnIndex: Int): Any? {
-        return if (isCommentColumn(columnIndex)) {
+        return if (getCellAddress(rowIndex, columnIndex) < 0) {
+			""
+		} else if (isCommentColumn(columnIndex)) {
             getComment(rowIndex, columnIndex)
         } else {
             getMemoryValue(rowIndex, columnIndex)
@@ -66,7 +75,8 @@ open class AddressableTableModel(
     }
 
     override fun setValueAt(aValue: Any?, rowIndex: Int, columnIndex: Int) {
-        if (isCommentColumn(columnIndex)) {
+        if (!isCellEditable(rowIndex, columnIndex)) return
+		if (isCommentColumn(columnIndex)) {
             setComment(aValue as String?, rowIndex, columnIndex)
         } else {
             setMemoryValue(aValue as String, rowIndex, columnIndex)
@@ -75,7 +85,7 @@ open class AddressableTableModel(
 
     override fun isCommentColumn(column: Int): Boolean = false
 
-    override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean = editable()
+    override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean = editable() && getCellAddress(rowIndex, columnIndex) >= 0
 
     private fun setMemoryValue(value: String, rowIndex: Int, columnIndex: Int) {
         try {
@@ -97,32 +107,33 @@ class SingleColumnTableModel(
     rowCount: Int,
     editable: () -> Boolean,
     converterProvider: () -> AddressableValueConverter,
-    signalHandler: SignalHandler? = null
-) : AddressableTableModel(1, addressable, rowCount, editable, converterProvider, signalHandler) {
+    signalHandler: SignalHandler? = null,
+	startAddress: Int = 0,
+) : AddressableTableModel(1, addressable, rowCount, editable, converterProvider, signalHandler, startAddress) {
 
     private val showDisassembly: Boolean = addressableRef.addressable.disassemblyWidth > 0
     private val valueColumnName = Translations.getString("antares.memory.layout.value")
     private val commentsColumnName = Translations.getString("antares.memory.layout.comment")
     private val disassemblyColumnName = Translations.getString("antares.memory.layout.disassembly")
 
-    override fun getCellAddress(rowIndex: Int, columnIndex: Int): Int = rowIndex
+    override fun getCellAddress(rowIndex: Int, columnIndex: Int): Int = super.getCellAddress(rowIndex, 0)
 
     override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean =
-        super.isCellEditable(rowIndex, columnIndex) && (columnIndex == 0 || columnIndex == 1 && !showDisassembly)
+        super.isCellEditable(rowIndex, columnIndex) && (columnIndex == 0 || isCommentColumn(columnIndex))
 
     override fun getColumnCount(): Int = if (showDisassembly) 3 else 2
 
-    override fun isCommentColumn(column: Int): Boolean = column == 1 && !showDisassembly
+    override fun isCommentColumn(column: Int): Boolean = column == if (showDisassembly) 2 else 1
 
     override fun getValueAt(rowIndex: Int, columnIndex: Int): Any? =
-        when (columnIndex) {
+        if (getCellAddress(rowIndex, columnIndex) < 0) "" else when (columnIndex) {
             0 -> getMemoryValue(rowIndex, columnIndex)
             1 -> if (showDisassembly) {
-                addressableRef.addressable.disassemblyAt(rowIndex)
+                addressableRef.addressable.disassemblyAt(getCellAddress(rowIndex, 0))
             } else {
-                addressableRef.addressable.commentAt(rowIndex)
+                addressableRef.addressable.commentAt(getCellAddress(rowIndex, 0))
             }
-            else -> addressableRef.addressable.commentAt(rowIndex)
+            else -> addressableRef.addressable.commentAt(getCellAddress(rowIndex, 0))
         }
 
     override fun getColumnName(column: Int): String =

@@ -3,19 +3,12 @@ package io.antarescircuit.jabbah.graph.model.oscilloscope
 import io.antarescircuit.jabbah.base.logger
 import io.antarescircuit.jabbah.graph.model.Graph
 
-/**
- * A single entry in a [SignalHistory] that represents a signal value at a particular time.
- *
- * @param T the type of the signal
- * @property signal the value of the signal
- * @property time the simulation time (in ns) when the signal occurred
- */
+/** A signal value at a simulation time in nanoseconds. */
 data class SignalHistoryEntry<out T : Any>(val signal: T, val time: Long)
 
 /**
- * Stores changes of signal values while execution of a [Graph].
- * [SignalHistoryEntries][SignalHistoryEntry] must be added by clients of this class
- * in ascending time order.
+ * Bounded signal changes recorded while executing a [Graph], in ascending time order.
+ * A deque avoids shifting the entire recording when its oldest entry expires.
  */
 class SignalHistory<T : Any>(private val bufferSize: Int) {
 
@@ -23,46 +16,55 @@ class SignalHistory<T : Any>(private val bufferSize: Int) {
 		private val LOG by logger(SignalHistory::class)
 	}
 
-	/** Holds the entries of this [SignalHistory], having the newest entry as the last position.*/
-	private val entries = mutableListOf<SignalHistoryEntry<T>>()
+	init {
+		require(bufferSize >= 0) { "Buffer size must not be negative" }
+	}
 
-	private var minimumEntry: SignalHistoryEntry<T>? = null
-	private var maximumEntry: SignalHistoryEntry<T>? = null
+	private val entries = ArrayDeque<SignalHistoryEntry<T>>()
 
-	/** Returns the number of entries in this [SignalHistory].*/
+	/** Monotonic queues keep the retained minimum and maximum current in amortized O(1). */
+	private val minima = ArrayDeque<SignalHistoryEntry<T>>()
+	private val maxima = ArrayDeque<SignalHistoryEntry<T>>()
+
 	val size: Int get() = entries.size
 
-	val isEmpty: Boolean get() = size == 0
+	val isEmpty: Boolean get() = entries.isEmpty()
 
 	var overflow: Boolean = bufferSize == 0
 		private set
 
-	/** Returns the minimum signal value, or `null` if [T] isn't comparable.*/
-	val minimum: T? get() = minimumEntry?.signal
+	/** The smallest retained comparable signal, or null for non-comparable signals. */
+	val minimum: T? get() = minima.firstOrNull()?.signal
 
-	/** Returns the maximum signal value, or `null` if [T] isn't comparable.*/
-	val maximum: T? get() = maximumEntry?.signal
+	/** The largest retained comparable signal, or null for non-comparable signals. */
+	val maximum: T? get() = maxima.firstOrNull()?.signal
 
-	val maxTime: Long get() = entries.maxOfOrNull { it.time } ?: 0
+	val maxTime: Long get() = entries.lastOrNull()?.time ?: 0
 
-	/**
-	 * Returns the [SignalHistoryEntry] with the largest [SignalHistoryEntry.time] smaller than or equal to [time].
-	 * This corresponds with the way a curve is drawn using horizontal segments.
-	 */
-	fun getEntryAt(time: Long): SignalHistoryEntry<T>? =
-		entries.filter { it.time <= time }.maxByOrNull { it.time }
+	/** Returns the latest change at or before [time], including the last change at an equal timestamp. */
+	fun getEntryAt(time: Long): SignalHistoryEntry<T>? {
+		val index = upperBound(time) - 1
+		return if (index >= 0) entries[index] else null
+	}
 
-	/** Iterates the [SignalHistoryEntries][SignalHistoryEntry] since the specified execution time in ascending time order.*/
-	fun getEntriesSince(startTime: Long): Iterator<SignalHistoryEntry<T>> =
-		entries.filter { it.time >= startTime }.iterator()
+	/** Iterates retained changes at or after [startTime], without copying the recording. */
+	fun getEntriesSince(startTime: Long): Iterator<SignalHistoryEntry<T>> = entries.listIterator(lowerBound(startTime))
 
-	/** Iterates the [SignalHistoryEntries][SignalHistoryEntry] in reverse order, starting with the newest entry.*/
-	fun getReverseEntriesUntil(startTime: Long): Iterator<SignalHistoryEntry<T>> =
-		entries.asReversed().filter { it.time >= startTime }.iterator()
+	/** Iterates retained changes at or after [startTime], newest first, without copying the recording. */
+	fun getReverseEntriesUntil(startTime: Long): Iterator<SignalHistoryEntry<T>> {
+		val first = lowerBound(startTime)
+		val iterator = entries.listIterator(entries.size)
+		return object : Iterator<SignalHistoryEntry<T>> {
+			override fun hasNext(): Boolean = iterator.previousIndex() >= first
+			override fun next(): SignalHistoryEntry<T> {
+				if (!hasNext()) throw NoSuchElementException()
+				return iterator.previous()
+			}
+		}
+	}
 
 	fun last(): SignalHistoryEntry<T> = entries.last()
 
-	/** Returns the last [SignalHistoryEntry], i.e. the one with the most recent time.*/
 	fun lastOrNull(): SignalHistoryEntry<T>? = entries.lastOrNull()
 
 	fun dispose() {
@@ -71,9 +73,9 @@ class SignalHistory<T : Any>(private val bufferSize: Int) {
 
 	fun clear() {
 		entries.clear()
+		minima.clear()
+		maxima.clear()
 		overflow = bufferSize == 0
-		minimumEntry = null
-		maximumEntry = null
 	}
 
 	fun add(signal: T, time: Long) {
@@ -82,45 +84,54 @@ class SignalHistory<T : Any>(private val bufferSize: Int) {
 
 	fun add(entry: SignalHistoryEntry<T>) {
 		require(entries.isEmpty() || entries.last().time <= entry.time)
+		if (bufferSize == 0 || entries.lastOrNull()?.signal == entry.signal) return
 
-		var requireAllUpdateMinMax = false
-		if (entries.isEmpty() || entries.last().signal != entry.signal) {
-			if (size == bufferSize) {
-				requireAllUpdateMinMax = entries[0] === minimumEntry || entries[0] === maximumEntry
-				entries.removeAt(0)
-				overflow = true
-			}
-			entries.add(entry)
-
-			if (entry.signal is Comparable<*>) {
-				if (requireAllUpdateMinMax) {
-					updateAllMinMax()
-				} else {
-					updateMinMax(entry)
-				}
-			}
+		if (size == bufferSize) {
+			val expired = entries.removeFirst()
+			if (minima.firstOrNull() === expired) minima.removeFirst()
+			if (maxima.firstOrNull() === expired) maxima.removeFirst()
+			overflow = true
+		}
+		entries.addLast(entry)
+		if (entry.signal is Comparable<*>) {
+			updateMinMax(entry)
 		}
 	}
 
 	fun logContent() {
-		for (e in entries) {
-			LOG.trace("- ${e.time}: ${e.signal}")
+		for (entry in entries) {
+			LOG.trace("- ${entry.time}: ${entry.signal}")
 		}
 	}
 
-	private fun updateAllMinMax() {
-		minimumEntry = null
-		maximumEntry = null
-		entries.forEach { updateMinMax(it) }
+	/** First entry whose timestamp is at least [time]. */
+	private fun lowerBound(time: Long): Int {
+		var low = 0
+		var high = entries.size
+		while (low < high) {
+			val middle = low + (high - low) / 2
+			if (entries[middle].time < time) low = middle + 1 else high = middle
+		}
+		return low
 	}
 
-	@Suppress("UNCHECKED_CAST") // Checked in add()
+	/** First entry whose timestamp is greater than [time]. */
+	private fun upperBound(time: Long): Int {
+		var low = 0
+		var high = entries.size
+		while (low < high) {
+			val middle = low + (high - low) / 2
+			if (entries[middle].time <= time) low = middle + 1 else high = middle
+		}
+		return low
+	}
+
+	@Suppress("UNCHECKED_CAST") // Called only for comparable signals, as in the original history implementation.
 	private fun updateMinMax(entry: SignalHistoryEntry<T>) {
-		if (minimumEntry == null || (minimumEntry!!.signal as Comparable<Any>) > entry.signal as Comparable<Any>) {
-			minimumEntry = entry
-		}
-		if (maximumEntry == null || (maximumEntry!!.signal as Comparable<Any>) < entry.signal as Comparable<Any>) {
-			maximumEntry = entry
-		}
+		val signal = entry.signal as Comparable<Any>
+		while (minima.isNotEmpty() && signal < minima.last().signal) minima.removeLast()
+		while (maxima.isNotEmpty() && signal > maxima.last().signal) maxima.removeLast()
+		minima.addLast(entry)
+		maxima.addLast(entry)
 	}
 }

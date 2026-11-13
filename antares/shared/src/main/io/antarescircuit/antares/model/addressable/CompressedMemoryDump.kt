@@ -30,40 +30,36 @@ object CompressedMemoryDump {
 		val mask: ULong = bitWidth.maxValue
 		val length = max(2, bitWidth.width / 4)
 
-		val cellIter = ZeroFiller(memory.getNonZeroCells())
-		if (!cellIter.hasNext()) {
-			return ""
+		val cells = memory.getNonZeroCells()
+		var nextAddress = 0L
+		var runValue = 0UL
+		var runComment: String? = null
+		var runCount = 0L
+		fun flush() {
+			if (runCount == 0L) return
+			if (builder.isNotEmpty()) builder.append(CELL_DELIMITER)
+			write(runValue, runComment, runCount, mask, length, builder)
+			runCount = 0
 		}
-
-		var lastWrittenCell: MemoryCell? = null
-		var lastCell: MemoryCell? = null
-		while (cellIter.hasNext()) {
-			val cell = cellIter.next()
-			var lastAddress = lastWrittenCell?.address ?: -1
-			if (lastCell != null && (cell.value != lastCell.value || cell.comment != lastCell.comment)) {
-				if (lastWrittenCell != null) {
-					builder.append(CELL_DELIMITER)
-				}
-				write(lastCell.value, lastCell.comment, cell.address - lastAddress - 1, mask, length, builder)
-				lastWrittenCell = lastCell
-			}
-
-			lastAddress = lastWrittenCell?.address ?: -1
-			if (cellIter.hasNext()) {
-				lastCell = cell
-			} else {
-				if (lastWrittenCell != null) {
-					builder.append(CELL_DELIMITER)
-				}
-
-				write(cell.value, cell.comment, cell.address - lastAddress, mask, length, builder)
-			}
+		fun appendRun(value: ULong, comment: String?, count: Long) {
+			if (count == 0L) return
+			if (runCount > 0 && (runValue != value || runComment != comment)) flush()
+			runValue = value
+			runComment = comment
+			runCount += count
 		}
+		while (cells.hasNext()) {
+			val cell = cells.next()
+			appendRun(0UL, null, cell.address - nextAddress)
+			appendRun(cell.value, cell.comment, 1)
+			nextAddress = cell.address.toLong() + 1
+		}
+		flush()
 
 		return builder.toString()
 	}
 
-	private fun write(value: ULong, comment: String?, count: Int, mask: ULong, length: Int, builder: StringBuilder) {
+	private fun write(value: ULong, comment: String?, count: Long, mask: ULong, length: Int, builder: StringBuilder) {
 		if (count > 1) {
 			builder.append(count.toString())
 			builder.append(CARDINALITY_DELIMITER)
@@ -93,15 +89,14 @@ object CompressedMemoryDump {
 	fun read(memory: Memory, dump: String) {
 		memory.clear()
 		if (dump.isNotBlank()) {
-			var address = 0
+			var address = 0L
 			for (cell in dump.split(cellSeparationRegex)) {
 				address = read(cell, address, memory)
 			}
 		}
 	}
 
-	private fun read(cell: String, address: Int, memory: Memory): Int {
-		var lAddress = address
+	private fun read(cell: String, address: Long, memory: Memory): Long {
 
 		val cardinalityDelimiterIndex = cell.indexOf(CARDINALITY_DELIMITER)
 		val cellContent: String = if (cardinalityDelimiterIndex == -1) {
@@ -121,15 +116,14 @@ object CompressedMemoryDump {
 			comment = readEscapedComment(cellContent.substring(commentDelimiterIndex + 1))
 		}
 
-		if (cardinalityDelimiterIndex == -1) {
-			memory.writeCommentedValue(lAddress++, value, comment)
-		} else {
-			val count = cell.substring(0, cardinalityDelimiterIndex).toInt()
-			for (i in 0 until count) {
-				memory.writeCommentedValue(lAddress++, value, comment)
-			}
+		val count = if (cardinalityDelimiterIndex == -1) 1L else cell.substring(0, cardinalityDelimiterIndex).toLong()
+		require(count > 0 && count <= Int.MAX_VALUE.toLong() + 1 - address) { "Memory image exceeds address capacity" }
+		// Unallocated zeros are implicit; never expand a sparse gap while loading a circuit.
+		if (value != 0UL || comment != null) {
+			var offset = 0L
+			while (offset < count) memory.writeCommentedValue((address + offset++).toInt(), value, comment)
 		}
-		return lAddress
+		return address + count
 	}
 
 	private fun readEscapedComment(comment: String): String {

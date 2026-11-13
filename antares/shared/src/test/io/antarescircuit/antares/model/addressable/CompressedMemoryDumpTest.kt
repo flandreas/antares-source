@@ -11,6 +11,29 @@ class CompressedMemoryDumpTest {
         AntaresTestRule.configure()
     }
 
+	@Test
+	fun shouldRoundTripSparseMemoryWithoutExpandingZeroRuns() {
+		val memory = Memory().apply {
+			writeCommentedValue(100_000_000, 42UL, "entry point")
+			write(100_000_001, 42UL)
+		}
+		val dump = CompressedMemoryDump.write(memory, BitWidth.BW_8)
+		assertEquals("100000000*00 2A:entry\\ point 2A", dump)
+		val restored = Memory()
+		CompressedMemoryDump.read(restored, dump)
+		assertEquals(memory.getNonZeroCells().asSequence().toList(), restored.getNonZeroCells().asSequence().toList())
+	}
+
+	@Test
+	fun shouldRoundTripTheLastSupportedAddressWithoutOverflow() {
+		val memory = Memory().apply { write(Int.MAX_VALUE, 42UL) }
+		val dump = CompressedMemoryDump.write(memory, BitWidth.BW_8)
+		assertEquals("2147483647*00 2A", dump)
+		val restored = Memory()
+		CompressedMemoryDump.read(restored, dump)
+		assertEquals(42UL, restored.read(Int.MAX_VALUE))
+	}
+
     /** ---- Write 8-bit tests and common write functionality*/
 
     @Test

@@ -171,10 +171,38 @@ class RAMCalculatorTest {
 
 	/** ---- [RAMCalculatorTest] */
 
-	private fun createRam(clocked: Boolean): RAM {
+	@Test
+	fun shouldWriteDataWiderThanIntWithoutTruncation() {
+		val ram = createRam(true, dataWidth = BitWidth.of(40))
+		ram.getChipSelectInput().setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
+		ram.getWriteInput().setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
+		ram.getClearInput().setIncomingSignal(DigitalSignalFactory.of(false), signalHandler)
+		ram.getAddressInput().setIncomingSignal(DigitalSignalFactory.of(BitWidth.BW_8, 1L), signalHandler)
+		ram.getDataPort().setIncomingSignal(DigitalSignalFactory.of(BitWidth.of(40), 0xF0_8000_0000UL), signalHandler)
+		ram.getClockInput()!!.setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
+
+		calculator.calculate(ram, ram.createActorData(ram.getClockInput()!!), signalHandler)
+
+		assertEquals(0xF0_8000_0000UL, ram.read(1))
+	}
+
+	@Test
+	fun shouldUndefineDataForAddressBeyondMemoryRange() {
+		val ram = createRam(true, addressWidth = BitWidth.BW_32)
+		ram.getChipSelectInput().setIncomingSignal(DigitalSignalFactory.of(true), signalHandler)
+		ram.getWriteInput().setIncomingSignal(DigitalSignalFactory.of(false), signalHandler)
+		ram.getClearInput().setIncomingSignal(DigitalSignalFactory.of(false), signalHandler)
+		ram.getAddressInput().setIncomingSignal(DigitalSignalFactory.of(BitWidth.BW_32, 0x8000_0000UL), signalHandler)
+
+		calculator.calculate(ram, ram.createActorData(ram.getAddressInput()), signalHandler)
+
+		assertEquals(DigitalSignalFactory.undefined(BitWidth.BW_8), ram.getDataPort().getOutgoingSignal())
+	}
+
+	private fun createRam(clocked: Boolean, addressWidth: BitWidth = BitWidth.BW_8, dataWidth: BitWidth = BitWidth.BW_8): RAM {
 		val ram = RAM(clocked)
-		ram.addressWidth = BitWidth.BW_8
-		ram.dataWidth = BitWidth.BW_8
+		ram.addressWidth = addressWidth
+		ram.dataWidth = dataWidth
 		return ram
 	}
 }
