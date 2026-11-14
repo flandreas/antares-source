@@ -115,10 +115,7 @@ interface Drawable : Disposable {
 	 * Returns a short textual description of this [Drawable] represented as a [Tooltip].
 	 * The description can contain HTML text.
 	 *
-	 * @param x x-coordinate of the mouse position
-	 * @param y y-coordinate of the mouse position
-	 * @param editable `true` if the [DrawableContainer] is editable, which can influence the tooltip shown
-	 * @return the [Tooltip] of this [Drawable], or `null`if this [Drawable] doesn't want to display a
+	 * @return the [Tooltip] of this [Drawable], or `null` if this [Drawable] doesn't want to display a
 	 *      text at the specified location.
 	 */
 	fun <T : InputEventContext> getTooltip(context: T): Tooltip?

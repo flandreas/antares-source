@@ -256,11 +256,6 @@ object TooltipManager {
 
 	private const val WIDTH = 300
 
-	private const val MIN_WIDTH = 50
-
-	/** The vertical distance between the bottom edge of the origin's bounding box and the tip of the [ArrowBubble]. */
-	private const val Y_DIST = 10
-
 	private val tooltipEventHandler: EventHandler<TooltipEvent> = { handle(it) }
 
 	private val preferencesChangeHandler: EventHandler<PreferencesChangedEvent> = { initTimer() }

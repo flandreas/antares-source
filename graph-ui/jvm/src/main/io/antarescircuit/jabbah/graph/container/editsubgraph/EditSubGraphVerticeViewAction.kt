@@ -51,6 +51,7 @@ class EditSubGraphVerticeViewAction(
 	}
 
 	override fun execute(event: ActionEvent) {
+		@Suppress("UNCHECKED_CAST") // Enforced by calculateEnabled()
 		val editedVerticeView = singleSelection as SubGraphVerticeView<SubGraphVerticeRef>
 		val editedDrawingView = drawingView
 

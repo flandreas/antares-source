@@ -6,7 +6,7 @@ import io.antarescircuit.jabbah.base.geom.RectangularShape
 /**
  * [ViewPainter] is a strategy used by a [View] for painting and repainting this [View].
  *
- * A simple strategy for repainting [View]s is to redraw the entire drawing every time is has been requested. A
+ * A simple strategy for repainting [View]s is to redraw the entire drawing every time it has been requested. A
  * more efficient strategy is to redraw only the parts of the drawing that have been invalidated previously. This
  * strategy would require to keep track of every invalidated region. Even more efficient strategies could use buffers
  * for regions that didn't have changed, but need to be redrawn.
