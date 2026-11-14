@@ -10,8 +10,8 @@ import io.antarescircuit.jabbah.graph.model.PortType
  */
 object GraphPortName {
 
-	// DOT_MATCHES_ALL: names may contain line breaks, which would otherwise make matchEntire fail
-	private val STRUCTURE_REGEX = "^(.*?)(\\d*)$".toRegex(RegexOption.DOT_MATCHES_ALL)
+	// Match line breaks too, without DOT_MATCHES_ALL, which is unavailable on JavaScript.
+	private val STRUCTURE_REGEX = "^([\\s\\S]*?)(\\d*)$".toRegex()
 
 	fun defaultName(name: String?, portType: PortType): String {
 		if (StringUtils.isNotEmpty(name)) {

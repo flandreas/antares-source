@@ -28,6 +28,16 @@ class GraphPortNameTest {
 		assertStructure("Line\nBreak ", 2, GraphPortName.createStructure("Line\nBreak 2"))
 	}
 
+	@Test
+	fun shouldCreateStructureWithLineBreaks() {
+		for (lineBreak in listOf("\n", "\r", "\r\n", "\u0085", "\u2028", "\u2029")) {
+			val stem = "Line${lineBreak}Break "
+			assertStructure(stem, 2, GraphPortName.createStructure("${stem}2"))
+			assertStructure(stem, -1, GraphPortName.createStructure(stem))
+			assertStructure("Input2$lineBreak", -1, GraphPortName.createStructure("Input2$lineBreak"))
+		}
+	}
+
 	private fun assertStructure(text: String, number: Int, structure: GraphPortNameStructure?) {
 		assertEquals(text, structure?.text)
 		assertEquals(number, structure?.number)
