@@ -20,12 +20,12 @@ import kotlin.math.min
 
 /**
  * A [SelectionModel] consisting of [Handle]s to be used for selecting and manipulating a [RectangularComponent].
- * If the [AbstractRectangularComponent]'s aspect ratio is to be maintained, [RectangularHandleSelectionModel]
+ * If the [ResizableRectangularComponent]'s aspect ratio is to be maintained, [RectangularHandleSelectionModel]
  * only shows the 4 corner handles.
  */
-class RectangularHandleSelectionModel(
-	component: AbstractRectangularComponent
-) : AbstractHandleSelectionModel<AbstractRectangularComponent>(component) {
+class RectangularHandleSelectionModel<T : ResizableRectangularComponent>(
+	component: T
+) : AbstractHandleSelectionModel<T>(component) {
 
 	companion object {
 		private val LOG by logger(RectangularHandleSelectionModel::class)
@@ -81,6 +81,11 @@ class RectangularHandleSelectionModel(
 		eastHandle?.setLocation(r.x + r.width, r.y + r.height / 2)
 		southHandle?.setLocation(r.x + r.width / 2, r.y + r.height)
 		westHandle?.setLocation(r.x, r.y + r.height / 2)
+
+		for (i in 0 until getHandlesCount()) {
+			val handle = getHandle(i)
+			handle.location = component.handleToWorld(handle.location)
+		}
 	}
 
 	override fun createInputEventHandler(): InputEventHandler<EditInputEventContext> {
@@ -143,14 +148,15 @@ class RectangularHandleSelectionModel(
 
 		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 			val bounds = component.shape
-			val x = min(context.x, bounds.maxX)
-			val y = min(context.y, bounds.maxY)
+			val local = component.worldToHandle(context.location)
+			val x = min(local.x, bounds.maxX - component.minimumWidth)
+			val y = min(local.y, bounds.maxY - component.minimumHeight)
 			if (component.maintainAspectRation) {
 				val prefWidth = bounds.maxX - x
 				val height = prefWidth / aspectRatio
-				component.setFrame(bounds.maxX - prefWidth, bounds.maxY - height, prefWidth, height)
+				component.resizeFrame(bounds.maxX - prefWidth, bounds.maxY - height, prefWidth, height)
 			} else {
-				component.setFrame(x, y, bounds.width + (bounds.x - x), bounds.height + (bounds.y - y))
+				component.resizeFrame(x, y, bounds.width + (bounds.x - x), bounds.height + (bounds.y - y))
 			}
 			reportSize()
 			return this
@@ -166,8 +172,9 @@ class RectangularHandleSelectionModel(
 
 		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 			val bounds = component.shape
-			val y = min(context.y, bounds.maxY)
-			component.setFrame(bounds.x, y, bounds.width, bounds.height + (bounds.y - y))
+			val local = component.worldToHandle(context.location)
+			val y = min(local.y, bounds.maxY - component.minimumHeight)
+			component.resizeFrame(bounds.x, y, bounds.width, bounds.height + (bounds.y - y))
 			reportSize()
 			return this
 		}
@@ -182,14 +189,15 @@ class RectangularHandleSelectionModel(
 
 		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 			val bounds = component.shape
-			val x = max(context.x, bounds.x)
-			val y = min(context.y, bounds.maxY)
+			val local = component.worldToHandle(context.location)
+			val x = max(local.x, bounds.x + component.minimumWidth)
+			val y = min(local.y, bounds.maxY - component.minimumHeight)
 			if (component.maintainAspectRation) {
 				val prefWidth = x - bounds.x
 				val height = prefWidth / aspectRatio
-				component.setFrame(bounds.minX, bounds.maxY - height, prefWidth, height)
+				component.resizeFrame(bounds.minX, bounds.maxY - height, prefWidth, height)
 			} else {
-				component.setFrame(bounds.x, y, x - bounds.x, bounds.height + (bounds.y - y))
+				component.resizeFrame(bounds.x, y, x - bounds.x, bounds.height + (bounds.y - y))
 			}
 			reportSize()
 			return this
@@ -205,8 +213,9 @@ class RectangularHandleSelectionModel(
 
 		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 			val bounds = component.shape
-			val x = max(context.x, bounds.x)
-			component.setFrame(bounds.x, bounds.y, x - bounds.x, bounds.height)
+			val local = component.worldToHandle(context.location)
+			val x = max(local.x, bounds.x + component.minimumWidth)
+			component.resizeFrame(bounds.x, bounds.y, x - bounds.x, bounds.height)
 			reportSize()
 			return this
 		}
@@ -221,13 +230,14 @@ class RectangularHandleSelectionModel(
 
 		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 			val bounds = component.shape
-			val x = max(context.x, bounds.x)
-			val y = max(context.y, bounds.y)
+			val local = component.worldToHandle(context.location)
+			val x = max(local.x, bounds.x + component.minimumWidth)
+			val y = max(local.y, bounds.y + component.minimumHeight)
 			if (component.maintainAspectRation) {
 				val prefHeight = y - bounds.y
-				component.setFrame(bounds.x, bounds.y, aspectRatio * prefHeight, prefHeight)
+				component.resizeFrame(bounds.x, bounds.y, aspectRatio * prefHeight, prefHeight)
 			} else {
-				component.setFrame(bounds.x, bounds.y, x - bounds.x, y - bounds.y)
+				component.resizeFrame(bounds.x, bounds.y, x - bounds.x, y - bounds.y)
 			}
 			reportSize()
 			return this
@@ -243,8 +253,9 @@ class RectangularHandleSelectionModel(
 
 		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 			val bounds = component.shape
-			val y = max(context.y, bounds.y)
-			component.setFrame(bounds.x, bounds.y, bounds.width, y - bounds.y)
+			val local = component.worldToHandle(context.location)
+			val y = max(local.y, bounds.y + component.minimumHeight)
+			component.resizeFrame(bounds.x, bounds.y, bounds.width, y - bounds.y)
 			reportSize()
 			return this
 		}
@@ -259,14 +270,15 @@ class RectangularHandleSelectionModel(
 
 		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 			val bounds = component.shape
-			val x = min(context.x, bounds.maxX)
-			val y = max(context.y, bounds.y)
+			val local = component.worldToHandle(context.location)
+			val x = min(local.x, bounds.maxX - component.minimumWidth)
+			val y = max(local.y, bounds.y + component.minimumHeight)
 			if (component.maintainAspectRation) {
 				val prefHeight = y - bounds.y
 				val width = aspectRatio * prefHeight
-				component.setFrame(bounds.maxX - width, bounds.y, width, prefHeight)
+				component.resizeFrame(bounds.maxX - width, bounds.y, width, prefHeight)
 			} else {
-				component.setFrame(x, bounds.y, bounds.maxX - x, y - bounds.y)
+				component.resizeFrame(x, bounds.y, bounds.maxX - x, y - bounds.y)
 			}
 			reportSize()
 			return this
@@ -282,8 +294,9 @@ class RectangularHandleSelectionModel(
 
 		override fun mouseDragged(context: EditInputEventContext): InputEventHandler<EditInputEventContext> {
 			val bounds = component.shape
-			val x = min(context.x, bounds.maxX)
-			component.setFrame(x, bounds.y, bounds.width + (bounds.x - x), bounds.height)
+			val local = component.worldToHandle(context.location)
+			val x = min(local.x, bounds.maxX - component.minimumWidth)
+			component.resizeFrame(x, bounds.y, bounds.width + (bounds.x - x), bounds.height)
 			reportSize()
 			return this
 		}

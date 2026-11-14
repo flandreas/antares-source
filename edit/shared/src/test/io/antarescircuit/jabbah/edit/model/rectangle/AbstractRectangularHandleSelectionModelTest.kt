@@ -2,7 +2,9 @@ package io.antarescircuit.jabbah.edit.model.rectangle
 
 import io.antarescircuit.jabbah.base.geom.Rectangle2D
 import io.antarescircuit.jabbah.edit.AbstractEditIntegrationTest
+import io.antarescircuit.jabbah.edit.Component
 import io.antarescircuit.jabbah.edit.SelectionDrawingStrategy
+import io.antarescircuit.jabbah.edit.SelectionModel
 import io.antarescircuit.jabbah.edit.model.image.ImageComponent
 import io.antarescircuit.jabbah.edit.module.EditModule
 import io.antarescircuit.jabbah.edit.select.EditSelectModule
@@ -18,12 +20,14 @@ abstract class AbstractRectangularHandleSelectionModelTest : AbstractEditIntegra
         EditSelectModule.selectionModelFactory.register(
             SelectionDrawingStrategy.REPLACE,
             RectangleComponent::class
-        ) { RectangularReplaceSelectionModel(it as AbstractRectangularComponent) }
+        ) { createSelectionModel(it as AbstractRectangularComponent) }
 
-        EditSelectModule.selectionModelFactory.register(SelectionDrawingStrategy.REPLACE, ImageComponent::class) { RectangularReplaceSelectionModel(it as AbstractRectangularComponent) }
+        EditSelectModule.selectionModelFactory.register(SelectionDrawingStrategy.REPLACE, ImageComponent::class) { createSelectionModel(it as AbstractRectangularComponent) }
 
         super.createEnvironment()
     }
+
+    protected open fun createSelectionModel(component: AbstractRectangularComponent): SelectionModel<Component> = RectangularReplaceSelectionModel(component)
 
     protected fun addSelectedRect(x: Int, y: Int, width: Int, height: Int): RectangleComponent {
         val rect = EditModule.drawingAppService.add(

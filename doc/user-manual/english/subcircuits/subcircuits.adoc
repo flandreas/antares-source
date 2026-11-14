@@ -214,3 +214,19 @@ When in the symbol editor, open the sidebar "Symbol Comparison" to the right. Th
 Expand the tree to the circuit (or built-in component) whose symbol you want to use as a reference, and select it. The symbol is then displayed as a non-selectable "ghost" version in the symbol drawing area. You can now adjust your new symbol accordingly, e.g. by changing its size or by placing pins to match those of the "ghost" symbol.
 
 Use the "Position" drop-down to choose where the "ghost" symbol is to be placed in relation to your new symbol, e.g. "East" or "North".
+
+=== Subcircuit windows
+
+In some educational situations, it can be useful to display a subcircuit not as its symbol, but as its inner circuit.
+
+image::user-manual/subcircuits/subcircuit-window-edit.png[,800, align="center"]
+
+
+The subcircuit component's property "Display" allows you to switch between two different modes:
+
+- Symbol (standard): Displays the subcircuit's symbol
+- Circuit: Displays the inner circuit inside a "subsystem" border
+
+The "Circuit" option provides an in-place window into the actual subcircuit. The subcircuit is fully simulation-aware and displays the signal states during simulation. If it contains active elements like switches, you can press these switches during simulation,
+
+The outer pins of the window rectangle are aligned with the inner circuit inputs/outputs. You can select the window rectangle and change its size; the zoom factor for drawing the inner circuit adjust accordingly up to maximum of 100%.

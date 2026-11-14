@@ -21,6 +21,7 @@ import io.antarescircuit.jabbah.graph.view.net.edge.LayoutType
 import io.antarescircuit.jabbah.graph.view.net.netview.NetViewStyle
 import io.antarescircuit.jabbah.graph.view.port.PortLabelPosition
 import io.antarescircuit.jabbah.graph.view.vertice.ControlViewVisibility
+import io.antarescircuit.jabbah.graph.view.vertice.SubGraphDisplayMode
 import io.antarescircuit.jabbah.graph.view.vertice.VerticeLabelPosition
 import com.l2fprod.common.beans.editor.ComboBoxPropertyEditor
 import io.antarescircuit.jabbah.graph.view.oscilloscope.OscilloscopeSignalCurveStyle
@@ -131,6 +132,13 @@ class VerticeLabelPositionEditor : ComboBoxPropertyEditor() {
 	init {
 		setAvailableValues(VerticeLabelPosition.entries.toTypedArray())
 		(editor as JComboBox<VerticeLabelPosition>).renderer = EnumRenderer()
+	}
+}
+
+class SubGraphDisplayModeEditor : ComboBoxPropertyEditor() {
+	init {
+		setAvailableValues(SubGraphDisplayMode.entries.toTypedArray())
+		(editor as JComboBox<SubGraphDisplayMode>).renderer = EnumRenderer()
 	}
 }
 

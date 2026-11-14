@@ -23,6 +23,7 @@ class SubGraphVerticeViewImplBeanInfo : AbstractComponentBeanInfo<SubGraphVertic
 	    private val mirrorV = CommandPropertySwing("verticallyMirrored", "graph.property.mirrorVertically", Boolean::class.java, componentBeanProvider)
 	    private val label = GraphProperties.label()
 	    private val description = EditProperties.description()
+	    private val displayMode = CommandPropertySwing("displayMode", "graph.property.displayMode", SubGraphDisplayMode::class.java, componentBeanProvider)
 	    private val controlViewVisibility = GraphProperties.controlViewVisibility()
     }
 
@@ -48,6 +49,7 @@ class SubGraphVerticeViewImplBeanInfo : AbstractComponentBeanInfo<SubGraphVertic
 	    properties.add(mirrorH.bind(editor, beanIdProvider(bean.id)))
 	    properties.add(mirrorV.bind(editor, beanIdProvider(bean.id)))
 	    properties.add(color.bind(editor, beanIdProvider(bean.id)))
+	    properties.add(displayMode.bind(editor, beanIdProvider(bean.id)))
 	    properties.add(controlViewVisibility.bind(editor, beanIdProvider(bean.id)))
 	    bean.label?.let {
 	        properties.add(label.bind(editor, beanIdProvider(bean.id), filter = { false }))

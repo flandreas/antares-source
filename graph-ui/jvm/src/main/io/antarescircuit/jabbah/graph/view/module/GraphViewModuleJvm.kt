@@ -45,6 +45,7 @@ import io.antarescircuit.jabbah.graph.view.oscilloscope.OscilloscopeSignalCurveS
 import io.antarescircuit.jabbah.graph.view.oscilloscope.OscilloscopeView
 import io.antarescircuit.jabbah.graph.view.port.PortLabelPosition
 import io.antarescircuit.jabbah.graph.view.vertice.ControlViewVisibility
+import io.antarescircuit.jabbah.graph.view.vertice.SubGraphDisplayMode
 import io.antarescircuit.jabbah.graph.view.vertice.VerticeLabelPosition
 import io.antarescircuit.jabbah.io.IOModuleJvm
 
@@ -108,6 +109,7 @@ object GraphViewModuleJvm : AbstractModule() {
 		registry.registerRenderer(VerticeLabelPosition::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(NetViewStyle::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(ControlViewVisibility::class.java, EnumRenderer::class.java)
+		registry.registerRenderer(SubGraphDisplayMode::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(LibraryVisibility::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(SignalHistoriesType::class.java, EnumRenderer::class.java)
 		registry.registerRenderer(OscilloscopeSignalCurveStyle::class.java, EnumRenderer::class.java)
@@ -122,6 +124,7 @@ object GraphViewModuleJvm : AbstractModule() {
 		registry.registerEditor(VerticeLabelPosition::class.java, VerticeLabelPositionEditor::class.java)
 		registry.register(NetViewStyle::class.java) { NetViewStyleEditor((it as CommandPropertySwing<NetViewStyle>).filter) }
 		registry.registerEditor(ControlViewVisibility::class.java, ControlViewVisibilityEditor::class.java)
+		registry.registerEditor(SubGraphDisplayMode::class.java, SubGraphDisplayModeEditor::class.java)
 		registry.registerEditor(LibraryVisibility::class.java, LibraryVisibilityEditor::class.java)
 		registry.registerEditor(SignalHistoriesType::class.java, SignalHistoriesTypeEditor::class.java)
 		registry.registerEditor(OscilloscopeSignalCurveStyle::class.java, OscilloscopeSignalCurveStyleEditor::class.java)

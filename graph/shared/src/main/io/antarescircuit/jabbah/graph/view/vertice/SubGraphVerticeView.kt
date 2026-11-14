@@ -36,6 +36,8 @@ interface SubGraphVerticeView<T : SubGraphVertice> : VerticeView<T> {
 	/** Returns the model of this [SubGraphVerticeView].*/
 	val subGraphVertice: SubGraphVertice?
 
+	var displayMode: SubGraphDisplayMode
+
 	val hasCustomizedContainerDrawing: Boolean
 
 	/**

@@ -35,8 +35,8 @@ abstract class RectangularComponent(
 ) : AbstractRectangularComponent(styleType, styleProvider, shape), Transparent, Describable, Labeled, Figure {
 
 	companion object {
-		// The distance between the rectangle border and the text box (if at top or at bottom)
-		private const val TEXT_INSET: Int = 10
+		/** Distance between the rectangle border and its label at the top or bottom. */
+		const val TEXT_INSET: Int = 10
 	}
 
 	constructor(x: Double, y: Double, w: Double, h: Double) : this(shape = Rectangle2D(x, y, w, h))

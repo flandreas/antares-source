@@ -24,8 +24,11 @@ import io.antarescircuit.jabbah.io.StoreWriter
 abstract class AbstractRectangularComponent(
     styleType: StyleType = StyleType.FIGURE,
     styleProvider: StyleProvider = DrawStyleModule.styleProvider,
-    val shape: MutableRectangularShape = Rectangle2D()
-) : AbstractComponent(styleProvider, styleType), MutableRectangularShape by shape, Mirrorable {
+    override val shape: MutableRectangularShape = Rectangle2D()
+) : AbstractComponent(styleProvider, styleType), MutableRectangularShape by shape, Mirrorable, ResizableRectangularComponent {
+
+    override val width: Double get() = shape.width
+    override val height: Double get() = shape.height
 
     companion object {
         fun createBoundingBox(c: Component, shape: RectangularShape): RectangularShape {
@@ -50,7 +53,7 @@ abstract class AbstractRectangularComponent(
      * If `true`, the ratio between width and length is maintained during interactive changes of dimension.
      * Not yet enforced in [setFrame].
      */
-    open val maintainAspectRation: Boolean get() = false
+    override val maintainAspectRation: Boolean get() = false
 
     open fun drawText(context: DrawContext) {
         // empty
