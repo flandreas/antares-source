@@ -154,7 +154,7 @@ class NavigationStackViewSwing(
 	}
 
 	override fun dispose() {
-		// empty
+		NavigationStackViewNameEditor.cancelEditor(this)
 	}
 
 	/** ---- [NavigationStackView] */

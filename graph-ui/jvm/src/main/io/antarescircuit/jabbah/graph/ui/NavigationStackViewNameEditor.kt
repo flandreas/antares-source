@@ -7,10 +7,8 @@ import io.antarescircuit.jabbah.base.geom.Point2D
 import io.antarescircuit.jabbah.draw.graphics.Font
 import io.antarescircuit.jabbah.draw.graphics.Graphics2DJvm
 import io.antarescircuit.jabbah.graph.ui.NavigationStackViewSwing.Companion.HEIGHT
-import java.awt.Component
 import java.awt.Container
 import java.awt.event.*
-import javax.swing.JFrame
 import javax.swing.JTextField
 import javax.swing.SwingUtilities
 
@@ -19,104 +17,113 @@ import javax.swing.SwingUtilities
  */
 object NavigationStackViewNameEditor {
 
-    private val TEXT_EDITOR = JTextField(15)
+	private val TEXT_EDITOR = JTextField(15)
 
-    private lateinit var view: NavigationStackViewSwing
-    private lateinit var uuid: UUID
+	private var view: NavigationStackViewSwing? = null
+	private lateinit var uuid: UUID
 
-    /** Issue 'Save' when user clicks on glass pane.*/
-    private val clickListener = ClickListener()
+	/** Issue 'Save' when user clicks on glass pane.*/
+	private val clickListener = ClickListener()
 
-    init {
-        TEXT_EDITOR.addFocusListener(object : FocusAdapter() {
-            override fun focusLost(e: FocusEvent?) {
-                save()
-            }
-        })
+	init {
+		TEXT_EDITOR.addFocusListener(object : FocusAdapter() {
+			override fun focusLost(e: FocusEvent?) {
+				save()
+			}
+		})
 
-        TEXT_EDITOR.addKeyListener(object : KeyAdapter() {
-            override fun keyPressed(e: KeyEvent) {
-                when (e.keyCode) {
-                    KeyEvent.VK_ENTER -> save()
-                    KeyEvent.VK_ESCAPE -> cancel()
-                }
-            }
-        })
-    }
+		TEXT_EDITOR.addKeyListener(object : KeyAdapter() {
+			override fun keyPressed(e: KeyEvent) {
+				when (e.keyCode) {
+					KeyEvent.VK_ENTER -> save()
+					KeyEvent.VK_ESCAPE -> cancel()
+				}
+			}
+		})
+	}
 
-    fun startEditor(
-        view: NavigationStackViewSwing,
-        uuid: UUID,
-        name: String,
-        relLocation: Point2D,
-        font: Font
-    ) {
-        this.view = view
-        this.uuid = uuid
+	fun startEditor(
+		view: NavigationStackViewSwing,
+		uuid: UUID,
+		name: String,
+		relLocation: Point2D,
+		font: Font
+	) {
+		cancel()
+		val glassPane = SwingUtilities.getRootPane(view)?.glassPane as? Container ?: return
 
-        val glassPane = (SwingUtilities.getWindowAncestor(view) as JFrame).glassPane
+		this.view = view
+		this.uuid = uuid
 
-        if (glassPane is Container) {
-            glassPane.layout = null
+		glassPane.layout = null
 
-            val location = SwingUtilities.convertPoint(
-                view,
-                Graphics2DJvm.toAwtPoint(relLocation),
-                glassPane
-            )
+		val location = SwingUtilities.convertPoint(
+			view,
+			Graphics2DJvm.toAwtPoint(relLocation),
+			glassPane
+		)
 
-            TEXT_EDITOR.text = name
-            TEXT_EDITOR.setBounds(
-                location.x, location.y,
-                TEXT_EDITOR.preferredSize.width, HEIGHT
-            )
-            TEXT_EDITOR.font = Graphics2DJvm.toAwtFont(font)
-            TEXT_EDITOR.selectAll()
+		TEXT_EDITOR.text = name
+		TEXT_EDITOR.setBounds(
+			location.x, location.y,
+			TEXT_EDITOR.preferredSize.width, HEIGHT
+		)
+		TEXT_EDITOR.font = Graphics2DJvm.toAwtFont(font)
+		TEXT_EDITOR.selectAll()
 
 
-            clickListener.installOn(glassPane)
-            glassPane.add(TEXT_EDITOR)
-            glassPane.isVisible = true
-            glassPane.repaint()
+		clickListener.installOn(glassPane)
+		glassPane.add(TEXT_EDITOR)
+		glassPane.isVisible = true
+		glassPane.repaint()
 
-            SwingUtilities.invokeLater {
-                TEXT_EDITOR.requestFocusInWindow()
-            }
-        }
-    }
+		SwingUtilities.invokeLater {
+			if (this.view === view && TEXT_EDITOR.parent === glassPane) {
+				TEXT_EDITOR.requestFocusInWindow()
+			}
+		}
+	}
 
-    private fun save() {
-        val glassPane = (SwingUtilities.getWindowAncestor(TEXT_EDITOR) as JFrame?)?.glassPane
-            ?: return
+	private fun save() {
+		val view = this.view ?: return
 
-        val newName = TEXT_EDITOR.text
-        if (StringUtils.isBlank(newName)) {
-            cancel()
-            return
-        }
+		val newName = TEXT_EDITOR.text
+		if (StringUtils.isBlank(newName)) {
+			cancel()
+			return
+		}
 
-        stopEditing(glassPane)
-        val oldName = view.controller.navigationStack.rootEntry!!.content.drawing.name.value
-        if (newName != oldName) {
-            view.controller.changeName(newName)
-        }
-    }
+		stopEditing()
+		val oldName = view.controller.navigationStack.rootEntry!!.content.drawing.name.value
+		if (newName != oldName) {
+			view.controller.changeName(newName)
+		}
+	}
 
-    private fun cancel() {
-        stopEditing((SwingUtilities.getWindowAncestor(TEXT_EDITOR) as JFrame?)?.glassPane)
-    }
+	private fun cancel() {
+		stopEditing()
+	}
 
-    private fun stopEditing(glassPane: Component?) {
-        if (glassPane is Container) {
-            glassPane.remove(TEXT_EDITOR)
-            glassPane.isVisible = false
-            clickListener.uninstallFrom(glassPane)
-        }
-    }
+	fun cancelEditor(view: NavigationStackViewSwing) {
+		if (this.view === view) {
+			cancel()
+		}
+	}
 
-    private class ClickListener : ReleaseClickListenerSwing(dragThreshold = Double.POSITIVE_INFINITY) {
-        override fun clicked(e: MouseEvent) {
-            save()
-        }
-    }
+	private fun stopEditing() {
+		// Focus loss during removal must not save a cancelled or already completed edit.
+		view = null
+		val glassPane = TEXT_EDITOR.parent
+		if (glassPane != null) {
+			glassPane.remove(TEXT_EDITOR)
+			glassPane.isVisible = false
+			clickListener.uninstallFrom(glassPane)
+		}
+	}
+
+	private class ClickListener : ReleaseClickListenerSwing(dragThreshold = Double.POSITIVE_INFINITY) {
+		override fun clicked(e: MouseEvent) {
+			save()
+		}
+	}
 }
