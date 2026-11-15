@@ -124,7 +124,21 @@ abstract class AbstractDesktopApplication(
 		}
 
 		private fun determineDefaultUserDataDirectoryPath(systemName: String): Path =
-            FileSystems.getDefault().getPath(getDefaultAppDataDirectory(), systemName)
+			if (SystemUtils.IS_OS_LINUX) {
+				determineLinuxUserDataDirectoryPath(systemName, System.getProperty("user.home"), System.getenv("XDG_DATA_HOME"))
+			} else {
+				FileSystems.getDefault().getPath(getDefaultAppDataDirectory(), systemName)
+			}
+
+		/** Keeps existing Linux installations at their original location; new users get the XDG location. */
+		internal fun determineLinuxUserDataDirectoryPath(systemName: String, userHome: String, xdgDataHome: String?): Path {
+			val legacyPath = Paths.get(userHome, systemName)
+			return if (Files.isDirectory(legacyPath)) {
+				legacyPath
+			} else {
+				Paths.get(getLinuxAppDataDirectory(userHome, xdgDataHome), systemName)
+			}
+		}
 
 		private fun determineEnvironment(commandLine: CommandLine): Environment {
 			if (!commandLine.hasOption(ENVIRONMENT_OPTION)) {
@@ -142,9 +156,20 @@ abstract class AbstractDesktopApplication(
 			when {
 				SystemUtils.IS_OS_MAC -> System.getProperty("user.home") + "/Library/Application Support"
 				SystemUtils.IS_OS_WINDOWS -> System.getenv("APPDATA")
+				SystemUtils.IS_OS_LINUX -> getLinuxAppDataDirectory(System.getProperty("user.home"), System.getenv("XDG_DATA_HOME"))
 				SystemUtils.IS_OS_UNIX -> System.getProperty("user.home")
 				else -> System.getProperty("user.dir")
 			}
+
+		/** Resolves the Linux data directory according to the XDG Base Directory Specification. */
+		internal fun getLinuxAppDataDirectory(userHome: String, xdgDataHome: String?): String {
+			val dataHome = xdgDataHome?.takeIf { it.isNotEmpty() }?.let { Paths.get(it) }
+			return if (dataHome != null && dataHome.isAbsolute) {
+				dataHome.toString()
+			} else {
+				Paths.get(userHome, ".local", "share").toString()
+			}
+		}
 
 		private fun calculateLogfileName(systemName: String): String = "$systemName.log"
 

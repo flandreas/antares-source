@@ -40,6 +40,9 @@ The location of this working directory depends on the operating system. On macOS
 
  /Users/{userName}/Library/Application Support/Antares
 
+On Linux, Antares continues to use `~/Antares` if that directory already exists.
+For new users, the default directory is `$XDG_DATA_HOME/Antares`, or `~/.local/share/Antares` if `XDG_DATA_HOME` is unset, empty, or relative.
+
 If you edit a single circuit, you must explicitly save your changes, i.e. you should regularly execute the menu:File[Save] action. As long as such changes are not saved, they can be undone using the undo system.
 
 However, changes to the structure of projects and libraries are always saved automatically. For example, if you delete a directory in a project, this directory disappears from the workbench and the new project structure is immediately saved in the working directory of Antares. Since such actions cannot be undone, Antares will ask you for a confirmation before executing such actions.
