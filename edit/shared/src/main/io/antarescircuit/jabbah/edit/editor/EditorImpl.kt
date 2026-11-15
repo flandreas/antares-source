@@ -11,7 +11,6 @@ import io.antarescircuit.jabbah.edit.select.EditSelectModule
 import io.antarescircuit.jabbah.edit.SelectionToolFactory
 import io.antarescircuit.jabbah.edit.snap.ComponentSnapper
 import io.antarescircuit.jabbah.edit.snap.SnapManagerImpl
-import io.antarescircuit.jabbah.base.geom.Point2D
 import io.antarescircuit.jabbah.draw.View
 import io.antarescircuit.jabbah.edit.tool.ToolLockAction
 
@@ -54,6 +53,7 @@ open class EditorImpl(
 	            view.addKeyListener(keyEventDelegator)
 	            currentTool.activate()
             } else {
+	            mouseEventDelegator.resetMouseGesture()
 	            view.removeMouseListener(mouseEventDelegator)
 	            view.removeMouseMotionListener(mouseEventDelegator)
 	            view.removeKeyListener(keyEventDelegator)
@@ -87,6 +87,7 @@ open class EditorImpl(
     final override var currentTool: Tool = selectionTool
         set(value) {
             val oldValue = field
+            mouseEventDelegator.resetMouseGesture()
             field = value
 	        oldValue.deactivate()
             field.activate()
@@ -165,44 +166,37 @@ open class EditorImpl(
     /**
      * Listens for [MouseEvent]s from the [DrawingView], calculates the model coordinates by applying the
      * current zoom factor and pan origin, and delegates the events to the current [Tool].
-     * Ensures that drag events are only forwarded if [DRAG_THRESHOLD] is exceeded.
+     * Recognizes clicks on release and forwards drags once [Editor.DRAG_THRESHOLD] is reached.
      */
     // KT-14888 (fixed with Kotlin version 1.1-M04
     //private val mouseEventDelegator = object : MouseAdapter() {
-    private val mouseEventDelegator = MouseEventDelegator()
-    private inner class MouseEventDelegator : MouseAdapter() {
+	private val mouseEventDelegator = MouseEventDelegator()
+	private inner class MouseEventDelegator : ReleaseClickMouseAdapter(Editor.DRAG_THRESHOLD.toDouble()) {
 
-        private var isDragging = false
+		override fun mouseMoved(e: MouseEvent) {
+			currentTool.mouseMoved(e, view.viewToModel(e.location))
+		}
 
-        private var pressedLocation = Point2D.ZERO
+		override fun onMouseClicked(e: MouseEvent) {
+			// Refresh connector hover/snap state at the release location before committing a point.
+			val moved = object : MouseEvent by e { override val type = MouseEventType.MOVED }
+			val tool = currentTool
+			tool.mouseMoved(moved, view.viewToModel(e.location))
+			if (currentTool === tool) tool.mouseClicked(e, view.viewToModel(e.location))
+		}
 
-        override fun mouseMoved(e: MouseEvent) {
-        	currentTool.mouseMoved(e, view.viewToModel(e.location))
-        }
+		override fun onMousePressed(e: MouseEvent) {
+			currentTool.mousePressed(e, view.viewToModel(e.location))
+		}
 
-        override fun mouseClicked(e: MouseEvent) {
-        	currentTool.mouseClicked(e, view.viewToModel(e.location))
-        }
+		override fun onMouseDragged(e: MouseEvent) {
+			currentTool.mouseDragged(e, view.viewToModel(e.location))
+		}
 
-        override fun mousePressed(e: MouseEvent) {
-        	pressedLocation = e.location
-	        currentTool.mousePressed(e, view.viewToModel(e.location))
-        }
-
-        override fun mouseDragged(e: MouseEvent) {
-            if (!isDragging && pressedLocation.distance(e.x.toDouble(), e.y.toDouble()) > Editor.DRAG_THRESHOLD) {
-               isDragging = true
-            }
-            if (isDragging) {
-            	currentTool.mouseDragged(e, view.viewToModel(e.location))
-            }
-        }
-
-        override fun mouseReleased(e: MouseEvent) {
-	        currentTool.mouseReleased(e, view.viewToModel(e.location))
-            isDragging = false
-        }
-    }
+		override fun onMouseReleased(e: MouseEvent) {
+			currentTool.mouseReleased(e, view.viewToModel(e.location))
+		}
+	}
 
     /** Forwards [KeyEvent]s to the current [Tool]. */
     // KT-14888 (fixed with Kotlin version 1.1-M04

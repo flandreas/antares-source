@@ -1,5 +1,6 @@
 package io.antarescircuit.antares.view.net.tunnel
 
+import io.antarescircuit.jabbah.base.swing.ReleaseClickListenerSwing
 import io.antarescircuit.jabbah.base.AbstractAction
 import io.antarescircuit.jabbah.base.ActionWrapperSwing
 import io.antarescircuit.jabbah.base.Translations
@@ -17,7 +18,6 @@ import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dimension
 import java.awt.Frame
-import java.awt.event.MouseAdapter
 import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
@@ -121,13 +121,14 @@ class GlobalTunnelPanelSwing(
             controller.selectedUsage = (usagesTable.model as UsageTableModel).getUsage(usagesTable.selectedRow)
         }
 
-        usagesTable.addMouseListener(object : MouseAdapter() {
-            override fun mouseClicked(e: java.awt.event.MouseEvent?) {
-                if (e?.clickCount == 2) {
-                    controller.openSelectedUsage()
+        object : ReleaseClickListenerSwing(clickCount = 2) {
+            override fun targetAt(e: java.awt.event.MouseEvent): Any? =
+                usagesTable.rowAtPoint(e.point).takeIf { it >= 0 }?.let {
+                    (usagesTable.model as UsageTableModel).getUsage(it)
                 }
-            }
-        })
+
+            override fun clicked(e: java.awt.event.MouseEvent) = controller.openSelectedUsage()
+        }.installOn(usagesTable)
 
         tunnelNameSearchField.document.addDocumentListener(object : DocumentListener {
             override fun insertUpdate(e: DocumentEvent?) { search() }

@@ -124,6 +124,9 @@ class SidebarPane(
 		val entry = Entry(content)
 		entries.add(entry)
 		entry.label.addMouseListener(labelListener)
+		object : ReleaseClickListenerSwing(dragThreshold = Double.POSITIVE_INFINITY) {
+			override fun clicked(e: MouseEvent) = labelListener.activateLabel(entry.label)
+		}.installOn(entry.label)
 		labelPanel.add(entry.label)
 	}
 
@@ -305,16 +308,14 @@ class SidebarPane(
 			(e?.source as? JComponent)?.let { it.background = this@SidebarPane.background }
 		}
 
-		override fun mouseClicked(e: MouseEvent?) {
-			(e?.source as? JLabel)?.let {
-				val clickedEntry = getEntry(it)
-				if (isOpen && clickedEntry == current) {
-					activate(null)
-				} else {
-					activate(clickedEntry)
-				}
-				hover(it)
+		fun activateLabel(label: JLabel) {
+			val clickedEntry = getEntry(label)
+			if (isOpen && clickedEntry == current) {
+				activate(null)
+			} else {
+				activate(clickedEntry)
 			}
+			hover(label)
 		}
 
 		private fun hover(component: JComponent) {

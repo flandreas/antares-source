@@ -42,8 +42,17 @@ open class ActorInteractionContext(
 	mouseEvent: MouseEvent? = null,
 	keyEvent: KeyEvent? = null,
 	x: Double = 0.0,
-	y: Double = 0.0
+	y: Double = 0.0,
+	private val dragStartHandler: () -> Unit = {},
 ) : InputEventContext(view, mouseEvent, keyEvent, x, y) {
+
+	/**
+	 * Call after accepting a mouse press when the interaction is exclusively a drag, such as a slider.
+	 * Movement is delivered immediately, and release will not generate a logical click.
+	 */
+	fun startDragging() {
+		dragStartHandler()
+	}
 
 	/** Returns a copy of this [ActorInteractionContext] with other x and y coordinates*/
 	override fun withXY(x: Double, y: Double): ActorInteractionContext {
@@ -53,7 +62,8 @@ open class ActorInteractionContext(
 			mouseEvent = this.mouseEvent,
 			keyEvent = this.keyEvent,
 			x = x,
-			y = y
+			y = y,
+			dragStartHandler = dragStartHandler,
 		)
 	}
 }

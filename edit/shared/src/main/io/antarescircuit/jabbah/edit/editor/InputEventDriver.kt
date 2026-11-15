@@ -19,19 +19,22 @@ open class InputEventDriver(
 		return this
 	}
 
-	fun pressMouseAt(x: Int, y: Int, modifiers: Int = 0): InputEventDriver {
-		handler.mousePressed(context(MouseEventType.PRESSED, x, y, modifiers))
+	fun pressMouseAt(x: Int, y: Int, modifiers: Int = 0, clickCount: Int = 1): InputEventDriver {
+		handler.mousePressed(context(MouseEventType.PRESSED, x, y, modifiers, clickCount))
 		return this
 	}
 
 	fun clickMouseAt(x: Int, y: Int, modifiers: Int = 0): InputEventDriver {
 		pressMouseAt(x, y, modifiers)
-		releaseMouseAt(x, y)
+		releaseMouseAt(x, y, modifiers)
 		handler.mouseClicked(context(MouseEventType.CLICKED, x, y, modifiers))
 		return this
 	}
 
 	fun doubleClickMouseAt(x: Int, y: Int, modifiers: Int = 0): InputEventDriver {
+		clickMouseAt(x, y, modifiers)
+		pressMouseAt(x, y, modifiers, clickCount = 2)
+		releaseMouseAt(x, y, modifiers)
 		handler.mouseClicked(context(MouseEventType.CLICKED, x, y, modifiers, clickCount = 2))
 		return this
 	}
@@ -41,8 +44,8 @@ open class InputEventDriver(
 		return this
 	}
 
-	fun releaseMouseAt(x: Int, y: Int): InputEventDriver {
-		handler.mouseReleased(context(MouseEventType.RELEASED, x, y))
+	fun releaseMouseAt(x: Int, y: Int, modifiers: Int = 0): InputEventDriver {
+		handler.mouseReleased(context(MouseEventType.RELEASED, x, y, modifiers))
 		return this
 	}
 
@@ -70,7 +73,7 @@ open class InputEventDriver(
 		mouseMoveTo(x1, y1, modifiers)
 		pressMouseAt(x1, y1, modifiers)
 		dragMouseTo(x2, y2)
-		releaseMouseAt(x2, y2)
+		releaseMouseAt(x2, y2, modifiers)
 		return this
 	}
 

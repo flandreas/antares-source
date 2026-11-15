@@ -2,6 +2,7 @@ package io.antarescircuit.jabbah.draw.drawable
 
 import io.antarescircuit.jabbah.base.Tooltip
 import io.antarescircuit.jabbah.base.Translations
+import io.antarescircuit.jabbah.base.event.Button
 import io.antarescircuit.jabbah.base.geom.*
 import io.antarescircuit.jabbah.base.logger
 import io.antarescircuit.jabbah.draw.*
@@ -121,18 +122,27 @@ open class DrawableButton<C: InputEventContext>(
 
 	protected open inner class EditInteractionHandler : InputEventHandlerAdapter<C>() {
 
+		private var pressed = false
+
 		override fun mouseMoved(context: C): InputEventHandler<C>? {
 			return if (keepMouseMoved(context.location)) this else null
 		}
 
 		override fun mousePressed(context: C): InputEventHandler<C>? {
+			pressed = context.mouseEvent?.button == Button.BUTTON1 && contains(context.location)
 			// avoid involvement of surrounding SelectionTool
-			return this
+			return if (pressed) this else null
 		}
 
-		override fun mouseClicked(context: C): InputEventHandler<C>? {
-			if (enabled) {
-				context.mouseEvent?.consumeEvent()
+		override fun mouseDragged(context: C): InputEventHandler<C> = this
+
+		override fun mouseReleased(context: C): InputEventHandler<C>? {
+			if (context.mouseEvent?.button != Button.BUTTON1) return this
+			val activate = pressed && enabled && contains(context.location)
+			pressed = false
+			// Consume release even outside: this press belongs to the button, not its surroundings.
+			context.mouseEvent.consumeEvent()
+			if (activate) {
 				action.execute(context)
 			}
 			return null

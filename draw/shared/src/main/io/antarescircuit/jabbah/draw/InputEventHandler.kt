@@ -15,6 +15,7 @@ import io.antarescircuit.jabbah.base.state.UnhandledEventBehaviour.Strict
  */
 interface InputEventHandler<in T : InputEventContext> {
 
+	/** A logical click recognized on release by the input dispatcher, independent of native click events. */
     fun mouseClicked(context: T): InputEventHandler<T>?
 
     fun mouseMoved(context: T): InputEventHandler<T>?

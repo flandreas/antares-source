@@ -24,6 +24,7 @@ import java.awt.Graphics2D
 import java.awt.RenderingHints
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
+import io.antarescircuit.jabbah.base.swing.ReleaseClickListenerSwing
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.BorderFactory
@@ -149,7 +150,7 @@ class NavigationStackViewSwing(
 			}
 		})
 
-		addMouseListener(nameChanger)
+		nameChanger.installOn(this)
 	}
 
 	override fun dispose() {
@@ -167,11 +168,11 @@ class NavigationStackViewSwing(
 			if (value) {
 				addMouseListener(hoverListener)
 				addMouseMotionListener(hoverListener)
-				addMouseListener(nameChanger)
+				nameChanger.installOn(this)
 			} else {
 				removeMouseListener(hoverListener)
 				removeMouseMotionListener(hoverListener)
-				removeMouseListener(nameChanger)
+				nameChanger.uninstallFrom(this)
 			}
 		}
 
@@ -388,22 +389,21 @@ class NavigationStackViewSwing(
 			}
 	}
 
-	private inner class NameChanger: MouseAdapter() {
-		override fun mouseClicked(e: MouseEvent?) {
-			if (e?.clickCount == 2) {
-				elements.reversed().firstOrNull { it is Element && it.contains(e.x, e.y) }?.let {
-					if (!((it as Element).entry.content.drawingView.editable)) {
-						return
-					}
-					NavigationStackViewNameEditor.startEditor(
-						this@NavigationStackViewSwing,
-						it.entry.content.drawing.graph!!.uuid,
-						it.entry.name,
-						it.location,
-						it.font
-					)
-				}
+	private inner class NameChanger : ReleaseClickListenerSwing(clickCount = 2) {
+		override fun targetAt(e: MouseEvent): Element? =
+			elements.reversed().filterIsInstance<Element>().firstOrNull {
+				it.contains(e.x, e.y) && it.entry.content.drawingView.editable
 			}
+
+		override fun clicked(e: MouseEvent) {
+			val element = targetAt(e) ?: return
+			NavigationStackViewNameEditor.startEditor(
+				this@NavigationStackViewSwing,
+				element.entry.content.drawing.graph!!.uuid,
+				element.entry.name,
+				element.location,
+				element.font,
+			)
 		}
 	}
 

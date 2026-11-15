@@ -14,7 +14,7 @@ import io.antarescircuit.jabbah.execution.issue.IssuesViewController
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Frame
-import java.awt.event.MouseAdapter
+import io.antarescircuit.jabbah.base.swing.ReleaseClickListenerSwing
 import java.awt.event.MouseEvent
 import javax.swing.JOptionPane
 import javax.swing.JPanel
@@ -91,13 +91,12 @@ class IssuesViewSwing(
 
 		table.selectionModel.addListSelectionListener { updateSelectedIssue() }
 
-		table.addMouseListener(object : MouseAdapter() {
-			override fun mouseClicked(e: MouseEvent?) {
-				if (e?.button == MouseEvent.BUTTON1 && e.clickCount == 2) {
-					controller.openSelectedIssue()
-				}
-			}
-		})
+		object : ReleaseClickListenerSwing(clickCount = 2) {
+			override fun targetAt(e: MouseEvent): Any? =
+				table.rowAtPoint(e.point).takeIf { it >= 0 }?.let { issueCollector.getIssue(it) }
+
+			override fun clicked(e: MouseEvent) = controller.openSelectedIssue()
+		}.installOn(table)
 
 		layout = BorderLayout()
 		val scrollPane = JScrollPane(table)

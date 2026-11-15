@@ -65,11 +65,14 @@ class GraphViewExecutionHandler(
 		super.passivate()
 		FocusManager.resetFocus()
 		view.removeMouseListener(mouseHandler)
+		(mouseHandler as ReleaseClickMouseAdapter).resetMouseGesture()
 		target = null
 	}
 
 	// TODO Refactoring: Many commonalities with SelectionToolImpl. Unify!
-	private inner class MouseHandler : MouseAdapter() {
+	private inner class MouseHandler : ReleaseClickMouseAdapter(Editor.DRAG_THRESHOLD.toDouble()) {
+
+		private var pressedActor: ActorView? = null
 
 		override fun mouseMoved(e: MouseEvent) {
 			val p = view.viewToModel(e.location)
@@ -90,7 +93,9 @@ class GraphViewExecutionHandler(
 			tooltipHandler.handle(view, view.drawing, context)
 		}
 
-		override fun mousePressed(e: MouseEvent) {
+		override fun onMousePressed(e: MouseEvent) {
+			val pressLocation = view.viewToModel(e.location)
+			pressedActor = getActorViewAt(pressLocation.x, pressLocation.y)
 			tooltipHandler.clear(view)
 
 			if (e.button == Button.BUTTON2) {
@@ -115,7 +120,7 @@ class GraphViewExecutionHandler(
 			}
 		}
 
-		override fun mouseDragged(e: MouseEvent) {
+		override fun onMouseDragged(e: MouseEvent) {
 			if (!e.isLeftButtonDown) {
 				return
 			}
@@ -137,8 +142,8 @@ class GraphViewExecutionHandler(
 			}
 		}
 
-		override fun mouseReleased(e: MouseEvent) {
-			if (!e.isLeftButtonDown) {
+		override fun onMouseReleased(e: MouseEvent) {
+			if (e.button != Button.BUTTON1) {
 				return
 			}
 
@@ -157,7 +162,7 @@ class GraphViewExecutionHandler(
 			}
 		}
 
-		override fun mouseClicked(e: MouseEvent) {
+		override fun onMouseClicked(e: MouseEvent) {
 			if (e.button !== Button.BUTTON1) {
 				return
 			}
@@ -171,6 +176,7 @@ class GraphViewExecutionHandler(
 			}
 
 			val actorViewAt = getActorViewAt(p.x, p.y)
+			if (actorViewAt !== pressedActor) return
 			target = actorViewAt?.getActorInteractionHandler(context)?.mouseClicked(context)
 		}
 
@@ -180,7 +186,8 @@ class GraphViewExecutionHandler(
 				view = view,
 				mouseEvent = e,
 				x = p.x,
-				y = p.y
+				y = p.y,
+				dragStartHandler = ::startDragging,
 			)
 		}
 	}

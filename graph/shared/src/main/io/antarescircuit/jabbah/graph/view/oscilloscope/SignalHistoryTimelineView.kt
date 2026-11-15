@@ -230,6 +230,7 @@ class SignalHistoryTimelineViewImpl(
 
 			pressX = context.location.x
 			pressOffsetX = scrollX
+			context.startDragging()
 			return this
 		}
 

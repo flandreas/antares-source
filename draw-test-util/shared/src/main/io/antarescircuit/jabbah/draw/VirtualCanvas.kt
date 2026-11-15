@@ -42,7 +42,7 @@ class VirtualCanvas(
 
 	override val initialLayout: Boolean get() = true
 
-	override val hasFocus: Boolean get() = false
+	override var hasFocus: Boolean = false
 
 	override fun requestViewFocus() { }
 
@@ -81,21 +81,21 @@ class VirtualCanvas(
 
 	fun moveMouseTo(x: Int, y: Int, modifiers: Int = 0): VirtualCanvas {
 		moveEvent(x, y, modifiers).also { event ->
-			mouseMotionListeners.forEach { it.mouseMoved(event) }
+			mouseMotionListeners.toList().forEach { it.mouseMoved(event) }
 		}
 		return this
 	}
 
-	fun pressMouseAt(x: Int, y: Int, modifiers: Int = 0): VirtualCanvas {
-		pressEvent(x, y, modifiers).also { event ->
-			mouseListeners.forEach { it.mousePressed(event) }
+	fun pressMouseAt(x: Int, y: Int, modifiers: Int = 0, clickCount: Int = 1): VirtualCanvas {
+		pressEvent(x, y, modifiers, clickCount).also { event ->
+			mouseListeners.toList().forEach { it.mousePressed(event) }
 		}
 		return this
 	}
 
 	fun dragMouseTo(x: Int, y: Int, modifiers: Int = 0): VirtualCanvas {
 		dragEvent(x, y, modifiers).also { event ->
-			mouseMotionListeners.forEach { it.mouseDragged(event) }
+			mouseMotionListeners.toList().forEach { it.mouseDragged(event) }
 		}
 		return this
 	}
@@ -105,7 +105,7 @@ class VirtualCanvas(
 
 	fun releaseMouseAt(x: Int, y: Int, modifiers: Int = 0): VirtualCanvas {
 		releaseEvent(x, y, modifiers).also { event ->
-			mouseListeners.forEach { it.mouseReleased(event) }
+			mouseListeners.toList().forEach { it.mouseReleased(event) }
 		}
 		return this
 	}
@@ -113,8 +113,10 @@ class VirtualCanvas(
 	fun releaseMouse(modifiers: Int = 0): VirtualCanvas = releaseMouseAt(mouseLocation.xInt, mouseLocation.yInt, modifiers)
 
 	fun clickMouseAt(x: Int, y: Int, modifiers: Int = 0, clickCount: Int = 1): VirtualCanvas {
+		pressMouseAt(x, y, modifiers, clickCount)
+		releaseMouseAt(x, y, modifiers)
 		clickEvent(x, y, modifiers, clickCount).also { event ->
-			mouseListeners.forEach { it.mouseClicked(event) }
+			mouseListeners.toList().forEach { it.mouseClicked(event) }
 		}
 		return this
 	}
@@ -130,10 +132,11 @@ class VirtualCanvas(
         )
 	}
 
-	private fun pressEvent(x: Int, y: Int, modifiers: Int): MouseEventImpl {
+	private fun pressEvent(x: Int, y: Int, modifiers: Int, clickCount: Int): MouseEventImpl {
 		mouseLocation = toViewCoordinates(x, y)
 		return MouseEventImpl(
             type = MouseEventType.PRESSED,
+            clickCount = clickCount,
             button = Button.BUTTON1,
             x = mouseLocation.x.toInt(),
             y = mouseLocation.y.toInt(),

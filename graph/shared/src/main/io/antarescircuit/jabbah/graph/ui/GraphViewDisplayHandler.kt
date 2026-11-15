@@ -75,10 +75,17 @@ class GraphViewDisplayHandler(
 
 	private fun passivate() {
 		view.removeMouseListener(mouseHandler)
+		mouseHandler.resetMouseGesture()
 		view.removeMouseMotionListener(mouseHandler)
 	}
 
-	private inner class MouseHandler : MouseAdapter() {
+	private inner class MouseHandler : ReleaseClickMouseAdapter(Editor.DRAG_THRESHOLD.toDouble()) {
+
+		private var pressedDrawable: Any? = null
+
+		override fun onMousePressed(e: MouseEvent) {
+			pressedDrawable = view.drawing.getDrawableAt(view.viewToModel(e.location))
+		}
 
 		/** Displays the hand cursor if the mouse is over a [SubGraphVerticeView] */
 		override fun mouseMoved(e: MouseEvent) {
@@ -96,7 +103,7 @@ class GraphViewDisplayHandler(
 		}
 
 		/** Forwards a click with button 1 to a [SubGraphVerticeView] at the mouse location, if any. */
-		override fun mouseClicked(e: MouseEvent) {
+		override fun onMouseClicked(e: MouseEvent) {
 			tooltipHandler.clear(view)
 
 			if (e.button != Button.BUTTON1) {
@@ -106,7 +113,7 @@ class GraphViewDisplayHandler(
 			val p = view.viewToModel(e.location)
 
 			val drawable = view.drawing.getDrawableAt(p)
-			if (drawable != null) {
+			if (drawable != null && drawable === pressedDrawable) {
 				val context = mouseEventContext(e, p.x, p.y, true)
 				drawable.getInputEventHandler(context).mouseClicked(context)
 				view.drawing.validate()

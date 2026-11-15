@@ -1,6 +1,7 @@
 package io.antarescircuit.jabbah.graph.library
 
 import io.antarescircuit.jabbah.app.Application
+import io.antarescircuit.jabbah.base.swing.ReleaseClickListenerSwing
 import io.antarescircuit.jabbah.base.invocation.InvocationHandler
 import io.antarescircuit.jabbah.base.swing.JTreeUtil.getPath
 import io.antarescircuit.jabbah.draw.graphics.Graphics2DJvm
@@ -34,6 +35,15 @@ class LibraryTreeViewSwing(
 
 	init {
 		addMouseListener(MouseListener())
+		object : ReleaseClickListenerSwing(clickCount = 2) {
+			override fun targetAt(e: MouseEvent): Any? = getPathForLocation(e.x, e.y)
+
+			override fun clicked(e: MouseEvent) {
+				// Opening on release lets the newly opened view retain focus after the second press.
+				openSelectedItem()
+				e.consume()
+			}
+		}.installOn(this)
 		addKeyListener(EnterKeyListener())
 
 		transferHandler = LibraryTreeViewTransferHandler(controller)
@@ -140,21 +150,6 @@ class LibraryTreeViewSwing(
 			}
 		}
 
-		/**
-		 * Deliberately opening selected item in [mouseClicked] instead of [mousePressed],
-		 * because [mousePressed] leads to regaining focus after the second press. But we want
-		 * to let the view that displays the opened item to request the focus.
-		 */
-		override fun mouseClicked(e: MouseEvent?) {
-			when (e?.button) {
-				MouseEvent.BUTTON1 -> {
-					if (e.clickCount == 2) {
-						openSelectedItem()
-					}
-					e.consume()
-				}
-			}
-		}
 
 		private fun showPopupMenu(e: MouseEvent) {
 			getPathForLocation(e.x, e.y)?.let { path ->

@@ -1,6 +1,7 @@
 package io.antarescircuit.jabbah.app.find
 
 import io.antarescircuit.jabbah.base.Translations
+import io.antarescircuit.jabbah.base.swing.ReleaseClickListenerSwing
 import io.antarescircuit.jabbah.base.swing.PlaceholderTextField
 import java.awt.BorderLayout
 import java.awt.Component
@@ -9,7 +10,6 @@ import java.awt.KeyboardFocusManager
 import java.awt.event.ActionEvent
 import java.awt.event.InputEvent
 import java.awt.event.KeyEvent
-import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.*
 import javax.swing.event.DocumentEvent
@@ -83,14 +83,16 @@ class FindMenuAction(
 				override fun actionPerformed(e: ActionEvent?) = move(delta)
 			})
 		}
-		results.addMouseListener(object : MouseAdapter() {
-			override fun mouseClicked(e: MouseEvent) {
-				if (e.clickCount == 2 && SwingUtilities.isLeftMouseButton(e)) {
-					val index = results.locationToIndex(e.point)
-					if (index >= 0 && results.getCellBounds(index, index).contains(e.point)) execute()
-				}
+		object : ReleaseClickListenerSwing(clickCount = 2) {
+			override fun targetAt(e: MouseEvent): Any? {
+				val index = results.locationToIndex(e.point)
+				return if (index >= 0 && results.getCellBounds(index, index).contains(e.point)) {
+					model.getElementAt(index)
+				} else null
 			}
-		})
+
+			override fun clicked(e: MouseEvent) = execute()
+		}.installOn(results)
 		bind(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "close", ::close)
 		bind(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "execute", ::execute)
 		val panel = JPanel(BorderLayout(0, 8))

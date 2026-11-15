@@ -1,6 +1,7 @@
 package io.antarescircuit.jabbah.graph.ui
 
 import io.antarescircuit.jabbah.base.StringUtils
+import io.antarescircuit.jabbah.base.swing.ReleaseClickListenerSwing
 import io.antarescircuit.jabbah.base.UUID
 import io.antarescircuit.jabbah.base.geom.Point2D
 import io.antarescircuit.jabbah.draw.graphics.Font
@@ -73,7 +74,7 @@ object NavigationStackViewNameEditor {
             TEXT_EDITOR.selectAll()
 
 
-            glassPane.addMouseListener(clickListener)
+            clickListener.installOn(glassPane)
             glassPane.add(TEXT_EDITOR)
             glassPane.isVisible = true
             glassPane.repaint()
@@ -109,12 +110,12 @@ object NavigationStackViewNameEditor {
         if (glassPane is Container) {
             glassPane.remove(TEXT_EDITOR)
             glassPane.isVisible = false
-            glassPane.removeMouseListener(clickListener)
+            clickListener.uninstallFrom(glassPane)
         }
     }
 
-    private class ClickListener : MouseAdapter() {
-        override fun mouseClicked(e: MouseEvent) {
+    private class ClickListener : ReleaseClickListenerSwing(dragThreshold = Double.POSITIVE_INFINITY) {
+        override fun clicked(e: MouseEvent) {
             save()
         }
     }

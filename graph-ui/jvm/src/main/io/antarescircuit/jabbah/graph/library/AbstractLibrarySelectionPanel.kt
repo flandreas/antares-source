@@ -6,6 +6,7 @@ import io.antarescircuit.jabbah.base.Translations
 import io.antarescircuit.jabbah.base.UUID
 import io.antarescircuit.jabbah.base.event.ActionEvent
 import io.antarescircuit.jabbah.base.swing.PlaceholderTextField
+import io.antarescircuit.jabbah.base.swing.ReleaseClickListenerSwing
 import io.antarescircuit.jabbah.base.swing.UiUtil
 import io.antarescircuit.jabbah.edit.auth.EditAuthModule
 import io.antarescircuit.jabbah.edit.auth.User
@@ -13,7 +14,6 @@ import io.antarescircuit.jabbah.edit.auth.UserHolder
 import io.antarescircuit.jabbah.graph.library.dictionary.LibraryDictionaryEntry
 import java.awt.BorderLayout
 import java.awt.Dimension
-import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.*
 import javax.swing.event.DocumentEvent
@@ -46,13 +46,18 @@ abstract class AbstractLibrarySelectionPanel(
 			updateDescription()
 			handleSelectionChanged()
 		}
-		libraryDictionaryEntries.addMouseListener(object: MouseAdapter() {
-			override fun mouseClicked(e: MouseEvent?) {
-				if (e!!.clickCount == 2) {
-					handleListDoubleClick(ActionWrapperSwing.toJabbahActionEvent(e))
-				}
+		object : ReleaseClickListenerSwing(clickCount = 2) {
+			override fun targetAt(e: MouseEvent): Any? {
+				val index = libraryDictionaryEntries.locationToIndex(e.point)
+				return if (index >= 0 && libraryDictionaryEntries.getCellBounds(index, index).contains(e.point)) {
+					libraryDictionaryEntries.model.getElementAt(index)
+				} else null
 			}
-		})
+
+			override fun clicked(e: MouseEvent) {
+				handleListDoubleClick(ActionWrapperSwing.toJabbahActionEvent(e))
+			}
+		}.installOn(libraryDictionaryEntries)
 
 		searchField.document.addDocumentListener(object : DocumentListener {
 			override fun insertUpdate(e: DocumentEvent?) { search() }

@@ -20,7 +20,7 @@ internal class MouseEventJs(
 
     override val button: Button get() = convertButton()
 
-    override val clickCount: Int get() = if (event.type == "dblclick") 2 else 1
+    override val clickCount: Int get() = event.detail.coerceAtLeast(1)
 
     override val modifiers: Int get() = convertModifiers()
 

@@ -2,7 +2,6 @@ package io.antarescircuit.jabbah.base.swing
 
 import java.awt.*
 import javax.swing.JTextField
-import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 
 class PlaceholderTextField(
@@ -19,7 +18,7 @@ class PlaceholderTextField(
 
 	init {
 		if (showClearButton) {
-			addMouseListener(ClearClickListener())
+			ClearClickListener().installOn(this)
 		}
 	}
 
@@ -62,12 +61,13 @@ class PlaceholderTextField(
 		return Rectangle(width - insets.right - size, insets.top, size, size)
 	}
 
-	private inner class ClearClickListener : MouseAdapter() {
+	private inner class ClearClickListener : ReleaseClickListenerSwing(dragThreshold = Double.POSITIVE_INFINITY) {
 
-		override fun mouseClicked(e: MouseEvent?) {
-			if (getClearIconRectangle().contains(e!!.point)) {
-				text = ""
-			}
+		override fun targetAt(e: MouseEvent): Any? =
+			this@PlaceholderTextField.takeIf { isEnabled && getClearIconRectangle().contains(e.point) }
+
+		override fun clicked(e: MouseEvent) {
+			text = ""
 		}
 	}
 }
