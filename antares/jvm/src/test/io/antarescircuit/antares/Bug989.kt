@@ -9,7 +9,10 @@ import io.antarescircuit.jabbah.edit.module.EditModule
 import io.antarescircuit.jabbah.graph.health.GraphViewConsistencyCheck
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.app.GraphViewAppServiceImpl
+import io.antarescircuit.jabbah.graph.view.connect.ConnectMethod
+import io.antarescircuit.jabbah.graph.view.connect.CurrentConnectMethod
 import io.antarescircuit.jabbah.graph.view.graph.GraphViewCopyPasteService
+import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -19,10 +22,20 @@ class Bug989 : AbstractGraphViewEditingTest(100) {
 
     private val graphView: GraphView get() = editor.view.drawing as GraphView
 
+    private lateinit var previousConnectMethod: ConnectMethod
+
     @BeforeTest
     fun setUp() {
         AntaresTestRule.configure()
         EditModule.drawingAppService = GraphViewAppServiceImpl(GraphViewCopyPasteService())
+        previousConnectMethod = CurrentConnectMethod.defaultMethod
+        // The recorded drag gestures assume automatic routing.
+        CurrentConnectMethod.defaultMethod = ConnectMethod.AutoLayout
+    }
+
+    @AfterTest
+    fun tearDown() {
+        CurrentConnectMethod.defaultMethod = previousConnectMethod
     }
 
     override fun setupCircuit() {
