@@ -12,7 +12,11 @@ import io.antarescircuit.jabbah.edit.module.EditModule
 import io.antarescircuit.jabbah.graph.model.PortType
 import io.antarescircuit.jabbah.graph.view.GraphView
 import io.antarescircuit.jabbah.graph.view.app.GraphViewAppServiceImpl
+import io.antarescircuit.jabbah.graph.view.connect.ConnectMethod
+import io.antarescircuit.jabbah.graph.view.connect.CurrentConnectMethod
 import io.antarescircuit.jabbah.graph.view.editor.AutoConnector
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -21,6 +25,8 @@ class AutoConnectTest : AbstractGraphViewEditingTest(10) {
 
     private val graphView: GraphView get() = editor.view.drawing as GraphView
 
+    private lateinit var previousConnectMethod: ConnectMethod
+
     init {
         editor.dragManager.registerPlugin(AutoConnector)
     }
@@ -28,6 +34,18 @@ class AutoConnectTest : AbstractGraphViewEditingTest(10) {
     override fun setupCircuit() {
         AntaresTestRule.configure()
         EditModule.drawingAppService = GraphViewAppServiceImpl(mock())
+    }
+
+    @BeforeTest
+    fun setUp() {
+        previousConnectMethod = CurrentConnectMethod.defaultMethod
+        // The initial wire is created with an automatic-routing drag gesture.
+        CurrentConnectMethod.defaultMethod = ConnectMethod.AutoLayout
+    }
+
+    @AfterTest
+    fun tearDown() {
+        CurrentConnectMethod.defaultMethod = previousConnectMethod
     }
 
     private val and: LogicGateView get() = graphView.drawables.first { it is LogicGateView } as LogicGateView
