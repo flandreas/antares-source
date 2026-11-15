@@ -117,7 +117,7 @@
               <component>
                 <text _id='49' id='13' style='figure' filled='false' stroked='false' x='-154.0' y='392.0' w='413.0' h='84.0' hAlign='left'>
                   <text>
-                    <translation lang='en' text='Connect the switch and the LED by pressing/holding the mouse button on the switch&apos;s pin, then dragging  the mouse to the LED&apos;s pin, and releasing the mouse button.'/>
+                    <translation lang='en' text='Connect the switch and the LED by clicking on the switch&apos;s pin, then moving the mouse to the LED and clicking on it&apos;s pin.'/>
                   </text>
                 </text>
               </component>

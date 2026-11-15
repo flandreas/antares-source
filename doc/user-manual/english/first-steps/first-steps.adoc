@@ -10,8 +10,8 @@ If necessary, see link:{{site.basedir}}/user-manual/english/first-steps/orientat
 
 - When Antares is  started for the first time, a project "My first project" with an empty circuit "New Circuit" is created and opened.
 - To add an AND gate to your circuit, expand the folder "Library 'Standard'" and "Frequently used" in the explorer tree at the left side of the window, press the left mouse button on the "AND" icon, drag it into the blank area of the circuit, and release the mouse button.
-- To connect components with a wire, hover with the mouse over a pin until a green circle appears, press the left mouse button, and drag the mouse onto the destination pin. Release the mouse button after a green circle appears.
-- To create a wire junction, hover with the mouse over a wire, press btn:[ALT] to display the green circle, press the left mouse button, and drag the mouse onto a destination pin until the green circle appears. Release the mouse button to create the wire.
+- To connect components with a wire, hover with the mouse over a pin until a green rectangle appears, click with the left mouse button, and move the mouse onto the destination pin. Click the mouse button again after a green rectangle appears.
+- To create a wire junction, hover with the mouse over a wire, press btn:[ALT] to display the green rectangle, click with the left mouse button, and move the mouse onto a destination pin until the green rectangle appears.
 - To start simulation, press the third button in the toolbar (the one with the right-pointing triangle).
 - During simulation, you can click with the mouse on active components like switches to alter signals.
 - To stop simulation and to continue editing your circuit, press the right-pointing triangle again.
@@ -58,11 +58,11 @@ image::user-manual/first-steps/inout-en.png[Inputs and outputs, 700, align="cent
 
 NOTE: You may wonder why we don't use switches and an LED instead of inputs and output. We want to build an XOR gate that can be reused as a component in other circuits. In order to take signals from and return results to the surrounding circuit, input and output components must be used. You will see in the section "Simulating Circuits" that inputs can be used like switches, and that outputs can display the current signal during simulation just like LEDs do.
 
-After you have added all components to the circuit, you can connect them with wires. When you move the mouse over the output pin of a component, Antares will display a small green circle to indicate that a wire can be added at this point. Left-click and drag the mouse to the input of the next component to which the wire should lead and release the mouse button. At the input of the target component, Antares will again indicate with a small green circle that the wire can be terminated here.
+After you have added all components to the circuit, you can connect them with wires. When you move the mouse over the output pin of a component, Antares will display a small green rectangle to indicate that a wire can be added at this point. Left-click, move the mouse to the input of the next component to which the wire should lead and click the mouse button again. At the input of the target component, Antares will again indicate with a small rectangle circle that the wire can be terminated here.
 
-From the inputs A and B, two wires each lead to different components. To create a junction of a wire from an existing wire, move the mouse over the existing wire and press the kbd:[Alt] key. Antares will then again indicate with a small green circle that a new wire can be started here.
+From the inputs A and B, two wires each lead to different components. To create a junction of a wire from an existing wire, move the mouse over the existing wire and press the kbd:[Alt] key. Antares will then again indicate with a small green rectangle that a new wire can be started here.
 
-When you drag the mouse while creating a wire, Antares automatically creates a layout of the resulting wire. After creating the wire, you can adjust the layout by clicking on a wire segment and dragging it while holding down the mouse button.
+When you move the mouse while creating a wire, you can click on the circuit's background to create intermediate points. After creating the wire, you can adjust the layout by clicking on a wire segment and dragging it while holding down the mouse button.
 
 image::user-manual/first-steps/wires-en.png[wires, 700, align="center"]
 

@@ -95,6 +95,7 @@ import io.antarescircuit.jabbah.graph.project.ProjectModule
 import io.antarescircuit.jabbah.graph.ui.GraphNavigationViewHeaderFactory
 import io.antarescircuit.jabbah.graph.ui.MetaGraphIconProvider
 import io.antarescircuit.jabbah.graph.view.GraphView
+import io.antarescircuit.jabbah.graph.view.connect.ConnectMethod
 import io.antarescircuit.jabbah.graph.view.module.GraphViewModule
 import io.antarescircuit.jabbah.graph.view.module.GraphViewModuleJvm
 import io.antarescircuit.jabbah.graph.view.oscilloscope.AbstractSignalHistoryDrawer
@@ -285,6 +286,13 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 				properties.set(LibraryService.PROP_VIEWER_JS_URL, AntaresApplication.VIEWER_JS_PROD_URL)
 			}
         }
+
+		if (!app.isFirstUsage) {
+			// Re-establish the old property got existing users to the previous default
+			// (before it was changed to "Auto-connect". Existing users who have customized it will
+			// still get their customized value.
+			properties.set(ConnectMethod.PROP_CONNECT_METHOD, ConnectMethod.AutoLayout.customName)
+		}
 	}
 
 	private fun configureTypeMap(typeMap: TypeMap) {

@@ -11,17 +11,17 @@ To help you recognize unconnected wires at a glance, Antares displays unconnecte
 
 == Creating Wires
 
-To start creating a new wire, move the mouse over a pin of a component or an existing wire. Antares will then show a small green circle to indicate that you can start a new wire at this point.
+To start creating a new wire, move the mouse over a pin of a component or an existing wire. Antares will then show a small green rectangle to indicate that you can start a new wire at this point.
 
-Then press and hold the left mouse button while moving the mouse to the desired destination of the wire. Antares automatically creates a orthogonal layout of the resulting wire.
+Then click the left mouse button and move the mouse to the desired destination of the wire. You can also click on your way on the background to create intermediate points.
 
 Depending on the location where you start the wire, the following destinations of wires are possible:
 
-Output to input:: Move the mouse with the left mouse button pressed down to the input of a component.
+Output to input:: Move the mouse to the input of a component.
 
-Input to output or wire:: Move the mouse with pressed mouse button to the input of a component or to an already existing wire.
+Input to output or wire:: Move the mouse to the input of a component or to an already existing wire.
 
-Wire to input:: To start a new wire on an already existing wire (branch), move the mouse over the existing wire and press the kbd:[Alt] key. Hold down the kbd:[Alt] key while clicking to create the branched-off wire..
+Wire to input:: To start a new wire on an already existing wire (branch), move the mouse over the existing wire and press the kbd:[Alt] key. Hold down the kbd:[Alt] key while clicking to create the branched-off wire.
 
 TIP: Bidirectional pins are both input and output and can be connected in both ways.
 
