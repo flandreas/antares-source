@@ -56,6 +56,7 @@ open class ComponentContainerImpl<T: Component> : DrawableContainerImpl<T>(), Co
 
 		children.remove(component)
 		children.add(position, component)
+		invalidateDrawingOrder()
 
 		component.invalidate()
 	}

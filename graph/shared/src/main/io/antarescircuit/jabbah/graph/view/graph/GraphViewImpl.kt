@@ -56,6 +56,8 @@ open class GraphViewImpl(
 	/** Manages the [NetView]s for all [Net]s of the [Graph].*/
 	private val netViewMap: MutableMap<Net<Any>, NetView<Any>> = mutableMapOf()
 
+	private var cachedDrawingOrder: List<GraphElementView<*>>? = null
+
 	/** ---- [Any] */
 
 	override fun toString(): String {
@@ -313,19 +315,25 @@ open class GraphViewImpl(
 	// ---- [DrawableContainerImpl] */
 
 	/**
-	 * Returns first all [VerticeView]s and then all other [GraphElementView]s, so that [EdgeView]s don't
+	 * Returns first all non-vertex elements and then all [VerticeView]s, so that [EdgeView]s don't
 	 * overwrite [VerticeView] boundaries when being connected to them.
-	 * By doing so, we accept the negative side effect that simple [Component]s such as [RectangleComponent]s
-	 * can never be drawn above [VerticeView]s, but it's more important that [RectangleComponent]s can be used
-	 * as subsystem boundaries, which are always drawn above all other [GraphElementView]s.
+	 * Simple [Component]s such as [RectangleComponent]s also stay behind [VerticeView]s so they can serve
+	 * as subsystem boundaries. Stacking order is preserved within both groups.
 	 */
 	override fun drawablesInDrawingOrder(): List<GraphElementView<*>> {
-		// Called on every paint: one presized list instead of four intermediate ones
+		cachedDrawingOrder?.let { return it }
+		// Preserve stacking within both groups, rebuilding only after structural or stacking changes.
 		val all = super.drawablesInDrawingOrder()
 		val drawables = ArrayList<GraphElementView<*>>(all.size)
 		for (drawable in all) if (drawable !is VerticeView<*>) drawables.add(drawable)
 		for (drawable in all) if (drawable is VerticeView<*>) drawables.add(drawable)
+		cachedDrawingOrder = drawables
 		return drawables
+	}
+
+	override fun invalidateDrawingOrder() {
+		super.invalidateDrawingOrder()
+		cachedDrawingOrder = null
 	}
 
 	override fun provideInputEventHandler(): DrawableBagInputEventHandler<GraphElementView<*>, InputEventContext> {

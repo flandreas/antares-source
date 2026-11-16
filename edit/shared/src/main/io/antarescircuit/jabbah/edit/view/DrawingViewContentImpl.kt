@@ -147,8 +147,8 @@ class DrawingViewContentImpl<C : Component, T : Drawing<C>>(
 		override fun draw(context: DrawContext) {
 			// Skip components outside the clip, testing their (conservative) bounding box
 			val clip = context.modelClip
-			for (component in drawing.drawables) {
-				if (component.styleType.isBackdrop && (clip == null || component.boundingBox.intersects(clip))) {
+			for (component in drawing.getBackdropDrawables()) {
+				if (clip == null || component.boundingBox.intersects(clip)) {
 					component.draw(context)
 				}
 			}

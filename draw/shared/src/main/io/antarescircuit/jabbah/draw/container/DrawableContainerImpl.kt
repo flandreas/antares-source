@@ -37,6 +37,9 @@ open class DrawableContainerImpl<T : Drawable>(
 
 	private var drawableDrawer: DrawableDrawer<T> = DefaultDrawableDrawer()
 
+	private var cachedBackdropDrawables: List<T>? = null
+	private var backdropMembership: Set<Drawable>? = null
+
 	/**
 	 * Holds an [InputEventHandler] that dispatches input events to the [Drawable] whose
 	 * [contains] methods returns `true` for the events location.
@@ -67,6 +70,7 @@ open class DrawableContainerImpl<T : Drawable>(
 			return this
 		}
 		children.add(index, drawable)
+		invalidateDrawingOrder()
 		drawable.handleAdded(this)
 
 		if (drawable.visible) {
@@ -188,6 +192,12 @@ open class DrawableContainerImpl<T : Drawable>(
 	/** Returns the [Drawable]s in the order they should be drawn.*/
 	protected open fun drawablesInDrawingOrder(): List<T> = children.asReversed()
 
+	/** Called after adding, removing, or restacking children. Geometry and signal changes do not affect ordering. */
+	protected open fun invalidateDrawingOrder() {
+		cachedBackdropDrawables = null
+		backdropMembership = null
+	}
+
 	override fun <T : InputEventContext> getTooltip(context: T): Tooltip? {
 		if (useLocation) {
 			val localContext = context.withXY(context.location.subtract(this.location))
@@ -218,6 +228,14 @@ open class DrawableContainerImpl<T : Drawable>(
 	}
 
 	override fun handleDrawableInvalidated(drawable: Drawable, region: RectangularShape) {
+		// Stylable invalidates before and after changing its style. Only a change in backdrop membership
+		// invalidates this cache; ordinary simulation invalidations must keep it intact.
+		if (cachedBackdropDrawables != null && drawable is Stylable &&
+			(drawable in backdropMembership!!) != drawable.styleType.isBackdrop
+		) {
+			cachedBackdropDrawables = null
+			backdropMembership = null
+		}
 		if (useLocation) {
 			invalidate(Rectangle2D(region).moveBy(location))
 		} else {
@@ -239,6 +257,14 @@ open class DrawableContainerImpl<T : Drawable>(
 				update()
 			}
 		}
+	}
+
+	override fun getBackdropDrawables(): List<T> {
+		cachedBackdropDrawables?.let { return it }
+		val backdrops = super<DrawableContainer>.getBackdropDrawables()
+		backdropMembership = backdrops.toSet()
+		cachedBackdropDrawables = backdrops
+		return backdrops
 	}
 
 	/** ---- [DrawableContainerImpl] */
@@ -288,6 +314,7 @@ open class DrawableContainerImpl<T : Drawable>(
 		val index = children.indexOf(drawable)
 		if (index >= 0) {
 			children.removeAt(index)
+			invalidateDrawingOrder()
 			drawable.handleRemoved(this)
 			boundingBoxDirty = true
 			invalidate(childBoundingBox(drawable))
@@ -302,7 +329,7 @@ open class DrawableContainerImpl<T : Drawable>(
 	}
 
 	private fun drawBackdrop(context: DrawContext) {
-		getDrawables { it is Stylable && (it as Stylable).styleType.isBackdrop }
+		getBackdropDrawables()
 			.forEach { it.draw(context) }
 	}
 }

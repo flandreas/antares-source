@@ -60,6 +60,9 @@ interface DrawableContainer<T : Drawable> : Locatable, DrawableBag<T> {
     /** Notifies this [DrawableContainer] that one of its child [Drawable]s has updated its geometry.*/
     fun handleDrawableUpdated(drawable: Drawable)
 
+	/** Returns the backdrop children in front-to-back stacking order, without filtering visibility. */
+	fun getBackdropDrawables(): List<T> = drawables.filter { it is Stylable && it.styleType.isBackdrop }
+
     /**
      * Draws the contents of this [DrawableContainer] without any additional things that is typically added
      * when a [View] draws its content. In particular, this method ensures that all [Stylable]s whose
