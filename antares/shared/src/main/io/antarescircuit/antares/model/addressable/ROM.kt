@@ -182,6 +182,8 @@ class ROM(
 			} else if (loadDataSource && StringUtils.isNotBlank(dataSource)) {
 				loadFromDataSource()
 			}
+			// The disassembly must match the loaded contents
+			disassembleAll()
 		} catch (e: Exception) {
 			BaseModule.eventBus.post(IssueImpl(
 				IssueSeverity.Warning,

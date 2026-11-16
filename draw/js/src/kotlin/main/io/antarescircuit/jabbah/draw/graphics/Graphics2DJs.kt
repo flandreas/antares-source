@@ -308,7 +308,8 @@ class Graphics2DJs(
 		when (image) {
 			is EmbeddedImageJs -> {
 				if (image.isLoaded) {
-					ctx.drawImage(image.image, x.toDouble(), y.toDouble())
+					// Draw at the image's size, which may be derived from its data (e.g. SVGs without intrinsic size)
+					ctx.drawImage(image.image, x.toDouble(), y.toDouble(), image.width.toDouble(), image.height.toDouble())
 				} else {
 					image.whenLoaded(requestRepaint)
 				}

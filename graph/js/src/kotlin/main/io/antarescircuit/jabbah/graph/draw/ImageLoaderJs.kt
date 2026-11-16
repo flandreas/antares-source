@@ -4,8 +4,9 @@ import io.antarescircuit.jabbah.base.logger
 import io.antarescircuit.jabbah.draw.graphics.*
 
 /**
- * An [ImageLoader] implementation for the JS platform that loads binary images from
- * remote REST endpoints identified by the "path" parameter in the "load" methods.
+ * An [ImageLoader] implementation for the JS platform that loads images from the URL given as "path"
+ * parameter in the "load" methods: a remote REST endpoint or a `data:` URL (used by the web editor,
+ * which keeps project images in its file store).
  *
  * The browser downloads and decodes images asynchronously. [Graphics2DJs] requests
  * a canvas repaint when an [EmbeddedImageJs] becomes ready to draw.

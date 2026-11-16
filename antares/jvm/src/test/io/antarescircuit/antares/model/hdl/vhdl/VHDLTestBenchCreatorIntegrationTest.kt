@@ -10,7 +10,6 @@ import io.antarescircuit.jabbah.base.UUID
 import io.antarescircuit.jabbah.base.io.StringCodePrinter
 import io.antarescircuit.jabbah.graph.library.LibraryModule
 import io.antarescircuit.jabbah.graph.view.GraphView
-import java.nio.file.Paths
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -33,7 +32,6 @@ class VHDLTestBenchCreatorIntegrationTest : AbstractStandardLibraryBasedCircuitT
 			VHDLRenaming(),
 			"half_adder_tb",
 			(getCircuitView().graph as DigitalGraph).testcases.testcases.first(),
-			Paths.get("notUsed"),
 			30)
 
 		val out = StringCodePrinter()

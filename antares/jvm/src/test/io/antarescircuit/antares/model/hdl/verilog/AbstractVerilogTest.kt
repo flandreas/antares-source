@@ -8,7 +8,6 @@ import io.antarescircuit.antares.hdl.verilog.VerilogRenaming
 import io.antarescircuit.antares.model.DigitalGraph
 import io.antarescircuit.jabbah.base.io.StringCodePrinter
 import io.antarescircuit.jabbah.graph.library.LibraryModule
-import java.nio.file.Paths
 import kotlin.test.BeforeTest
 
 abstract class AbstractVerilogTest {
@@ -18,7 +17,7 @@ abstract class AbstractVerilogTest {
 		const val TIMESCALE = "`timescale 1ns / 1ps"
 
 		fun testParams(useDelayModel: Boolean = true): HDLExportParams =
-			HDLExportParams(VerilogRenaming(), "test", useDelayModel, Paths.get("/tmp/none"), null)
+			HDLExportParams(VerilogRenaming(), "test", useDelayModel, null)
 	}
 
 	protected val library get() = LibraryModule.libraryHolder.library

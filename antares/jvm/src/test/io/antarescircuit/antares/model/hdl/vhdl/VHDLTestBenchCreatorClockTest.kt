@@ -8,7 +8,6 @@ import io.antarescircuit.antares.hdl.vhdl.VHDLTestBenchCreator
 import io.antarescircuit.antares.model.DigitalGraph
 import io.antarescircuit.antares.model.testcase.Testcase
 import io.antarescircuit.jabbah.base.io.StringCodePrinter
-import java.nio.file.Paths
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -35,7 +34,6 @@ class VHDLTestBenchCreatorClockTest : AbstractVHDLTest() {
 			VHDLRenaming(),
 			"clocked_tb",
 			testcase,
-			Paths.get("notUsed"),
 			30)
 
 		val out = StringCodePrinter()

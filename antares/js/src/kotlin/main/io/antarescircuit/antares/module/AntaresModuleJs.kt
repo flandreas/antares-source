@@ -1,6 +1,9 @@
 package io.antarescircuit.antares.module
 
 import io.antarescircuit.antares.AntaresApplication
+import io.antarescircuit.antares.view.container.DigitalContainerEditor
+import io.antarescircuit.antares.web.WebPersistence
+import io.antarescircuit.jabbah.graph.view.module.GraphViewModule
 import io.antarescircuit.antares.view.AntaresLibraryFactory
 import io.antarescircuit.antares.view.module.AntaresViewModule
 import io.antarescircuit.jabbah.base.AbstractModule
@@ -23,6 +26,9 @@ import io.antarescircuit.jabbah.graph.project.ProjectModule
  */
 object AntaresModuleJs : AbstractModule() {
 
+    /** If set before initialization, libraries and projects are stored in the browser instead of an Akrab server. */
+    var persistence: WebPersistence? = null
+
     override fun initialize() {
         EditModuleJs.require()
 
@@ -40,16 +46,24 @@ object AntaresModuleJs : AbstractModule() {
 
         GraphModelModule.nonVolatileService = EmptyNonVolatileService()
 
-        LibraryModule.systemLibraryPersistenceService = Akrab2RestSystemLibraryPersistenceServiceJs(akrabUrl)
         LibraryModule.libraryFactory = AntaresLibraryFactory()
 
+        val web = persistence
+        if (web != null) {
+            LibraryModule.systemLibraryPersistenceService = web.systemLibraries
+            LibraryModule.systemLibraryDictionaryService = LibraryDictionaryService(web.systemDictionary)
+            LibraryModule.userLibraryPersistenceService = web.userLibraries
+            LibraryModule.userLibraryDictionaryService = LibraryDictionaryService(web.userDictionary)
+            ProjectModule.projectLibraryPersistenceService = web.projects
+            ProjectModule.projectDictionaryService = LibraryDictionaryService(web.projectDictionary)
+            GraphViewModule.containerEditorFactory = { dv1, dv2 -> DigitalContainerEditor(dv1, dv2) }
+        } else {
+            LibraryModule.systemLibraryPersistenceService = Akrab2RestSystemLibraryPersistenceServiceJs(akrabUrl)
+            LibraryModule.systemLibraryDictionaryService = LibraryDictionaryService(Akrab2RestLibraryDictionaryPersistenceService(akrabUrl))
+            ProjectModule.projectLibraryPersistenceService = Akrab2RestProjectPersistenceServiceJs(akrabUrl)
+        }
+
         LibraryModule.libraryManagementService = LibraryManagementService()
-
-        LibraryModule.systemLibraryDictionaryService = LibraryDictionaryService(Akrab2RestLibraryDictionaryPersistenceService(akrabUrl))
-
-        LibraryModule.libraryManagementService = LibraryManagementService()
-
-        ProjectModule.projectLibraryPersistenceService = Akrab2RestProjectPersistenceServiceJs(akrabUrl)
 
         ProjectModule.projectManagementService = ProjectManagementService(newMetaGraphNameTranslationKey = "graph.name.unknown")
 

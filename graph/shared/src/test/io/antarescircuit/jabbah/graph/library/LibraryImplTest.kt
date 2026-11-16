@@ -2,6 +2,8 @@ package io.antarescircuit.jabbah.graph.library
 
 import dev.mokkery.MockMode
 import dev.mokkery.mock
+import io.antarescircuit.jabbah.edit.model.text.description.Name
+import io.antarescircuit.jabbah.graph.model.image.ImageLibraryElement
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -50,5 +52,17 @@ class LibraryImplTest {
 			.addContainerLibraryElement("MetaGraph3")
 
 		assertEquals(3, library.metaGraphCount)
+	}
+
+	@Test
+	fun shouldFindLeafItemsInAllLocalItems() {
+		libraryBuilder
+			.addContainerLibraryElement("MetaGraph1")
+			.addDirectory("Folder1")
+		val image = ImageLibraryElement().apply { name = Name("Image") }
+		library.libraryService.addLibraryItem(library, image, libraryBuilder.peek())
+
+		assertEquals(listOf<LibraryItem>(image), library.allLocalItems { it is ImageLibraryElement })
+		assertEquals(1, library.allLocalItems { it is ContainerLibraryElement }.size)
 	}
 }
