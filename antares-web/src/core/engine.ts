@@ -59,7 +59,6 @@ export class Engine {
 	private messageId = 0
 	private cache: {
 		state?: EditorState
-		palette?: PaletteNode[]
 		items?: ProjectNode[] | null
 		properties?: PropertySheet | null
 		projects?: ProjectEntry[]
@@ -127,8 +126,17 @@ export class Engine {
 		return (this.cache.state ??= JSON.parse(this.kotlin.state()) as EditorState)
 	}
 
+	/** The palette rarely changes; keep the parsed one (and its identity for React) while its JSON is the same. */
+	private paletteJson = ''
+	private paletteNodes: PaletteNode[] = []
+
 	get palette(): PaletteNode[] {
-		return (this.cache.palette ??= JSON.parse(this.kotlin.palette()) as PaletteNode[])
+		const json = this.kotlin.palette()
+		if (json !== this.paletteJson) {
+			this.paletteJson = json
+			this.paletteNodes = JSON.parse(json) as PaletteNode[]
+		}
+		return this.paletteNodes
 	}
 
 	/** All items of the open project (circuits, truth tables, …), or null without project. */

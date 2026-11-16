@@ -54,7 +54,22 @@ internal class WebLibrary(
 
 	/** ---- Palette */
 
-	fun palette(): String {
+	/** The palette of the last [palette] call, kept until libraries change, because the UI re-reads it after every change. */
+	private var paletteJson: String? = null
+
+	/** Rebuilds the palette on the next [palette] call if [event] changes libraries, their items or the open project. */
+	fun handleEvent(event: Any) {
+		when (event) {
+			is LibraryItemAddedEvent, is LibraryItemRemovedEvent, is LibraryItemUpdatedEvent, is LibraryItemMovedEvent,
+			is LibraryStoredEvent, is LibraryDeletedEvent, is LibraryRenamedEvent, is LibraryCreatedEvent,
+			is LibraryPropertiesEvent, is LibraryImportsEvent, is LibraryImportRemovedEvent, is CurrentLibraryEvent,
+				-> paletteJson = null
+		}
+	}
+
+	fun palette(): String = paletteJson ?: buildPalette().also { paletteJson = it }
+
+	private fun buildPalette(): String {
 		val project = holder.l ?: return "[]"
 		val libraries = project.expandedImports.libraries.filter { it.uuid != project.uuid }
 		return toJson(libraries.mapNotNull { lib -> node(lib, lib) }.toJsArray())

@@ -11,7 +11,16 @@ class RealTimeTimerJs : Timer {
     /** The ID returned from `window.setInterval()`.*/
     private var id: Int? = null
 
+    /** Like the JVM timers, a changed interval takes effect immediately, also while running. */
     override var interval: Int = 0
+        set(value) {
+            if (value == field) return
+            field = value
+            if (id != null && value > 0) {
+                stop()
+                start()
+            }
+        }
 
     private var handler: ((ActionEvent) -> Unit)? = null
 

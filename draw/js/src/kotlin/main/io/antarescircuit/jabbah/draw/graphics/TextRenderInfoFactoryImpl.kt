@@ -9,9 +9,16 @@ actual object TextRenderInfoFactoryImpl {
 
 	private val canvas = document.createElement("canvas") as HTMLCanvasElement
 
+	private val context = canvas.getContext("2d") as CanvasRenderingContext2D
+
+	/** The font last applied to [context]; assigning a font parses it, so unchanged fonts aren't assigned again. */
+	private var appliedFont: Font? = null
+
 	actual fun measureSingleLineTextImpl(text: String, font: Font): TextRenderInfo {
-		val context = canvas.getContext("2d") as CanvasRenderingContext2D
-		context.font = Graphics2DJs.toJsFont(font)
+		if (font != appliedFont) {
+			appliedFont = font
+			context.font = Graphics2DJs.toJsFont(font)
+		}
 		var metrics = context.measureText(text)
 
 		// Note: The properties of TextMetrics other than 'width' are not yet supported

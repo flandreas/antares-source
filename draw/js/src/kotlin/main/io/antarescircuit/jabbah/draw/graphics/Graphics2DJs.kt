@@ -110,9 +110,28 @@ class Graphics2DJs(
 			forwardTransform()
 		}
 
+	/**
+	 * The fill/stroke style, stroke and font last applied to [ctx], or `null` if unknown. Assigning these canvas
+	 * properties parses CSS strings, so unchanged values are not assigned again. Saved and restored with [ctx].
+	 */
+	private class AppliedState(var color: Color? = null, var stroke: Stroke? = null, var font: Font? = null) {
+		fun copy() = AppliedState(color, stroke, font)
+	}
+
+	private var applied = AppliedState()
+	private val savedStates = mutableListOf<AppliedState>()
+
+	/** Forgets what has been applied to [ctx], e.g. after resizing the canvas, which resets the context. */
+	fun resetAppliedState() {
+		applied = AppliedState()
+		savedStates.clear()
+	}
+
 	override var color: Color = Color(0, 0, 0, 255)
 		set(value) {
 			field = value
+			if (applied.color == value) return
+			applied.color = value
 			toJsColor(value).also {
 				ctx.fillStyle = it
 				ctx.strokeStyle = it
@@ -143,6 +162,7 @@ class Graphics2DJs(
 
 	override var stroke: Stroke
 		get() {
+			applied.stroke?.let { return it }
 			return Stroke(
 				width = ctx.lineWidth.toFloat(),
 				cap = toLineCap(ctx.lineCap),
@@ -153,6 +173,8 @@ class Graphics2DJs(
 			)
 		}
 		set(value) {
+			if (applied.stroke == value) return
+			applied.stroke = value
 			ctx.lineWidth = value.width.toDouble()
 			ctx.lineCap = fromLineCap(value.cap)
 			ctx.lineJoin = fromLineJoin(value.join)
@@ -166,12 +188,20 @@ class Graphics2DJs(
 		get() = _font!!
 		set(value) {
 			_font = value
+			if (applied.font == value) return
+			applied.font = value
 			ctx.font = toJsFont(value)
 		}
 
-	override fun save() = ctx.save()
+	override fun save() {
+		savedStates.add(applied.copy())
+		ctx.save()
+	}
 
-	override fun restore() = ctx.restore()
+	override fun restore() {
+		applied = savedStates.removeLastOrNull() ?: AppliedState()
+		ctx.restore()
+	}
 
 	override fun scale(sx: Double, sy: Double) {
 		transform.scale(sx, sy)

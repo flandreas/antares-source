@@ -227,6 +227,7 @@ class CanvasJs(
 
         val dpr = devicePixelRatio
         ctx.scale(dpr, dpr)
+        g.resetAppliedState()
         paint()
         ctx.scale(1 / dpr, 1 / dpr)
     }

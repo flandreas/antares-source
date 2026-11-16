@@ -140,12 +140,15 @@ internal class WebPropertyBuilder<B : Any> {
 		nullLabel: String? = null, editable: Boolean = true, group: String = WebGroups.GENERAL,
 		type: WebPropertyType = WebPropertyType.Choice, baseKeyParams: Array<Any> = emptyArray(),
 	) {
-		val choices = buildList {
-			if (nullLabel != null) add(WebChoice<V?>(NULL_ID, nullLabel, null))
-			values.forEach { add(WebChoice<V?>(id(it), label(it), it, color(it))) }
+		// Built on first use: for multiple selected components, only the first one's choices are described
+		val choices = lazy {
+			buildList {
+				if (nullLabel != null) add(WebChoice<V?>(NULL_ID, nullLabel, null))
+				values.forEach { add(WebChoice<V?>(id(it), label(it), it, color(it))) }
+			}
 		}
 		add(WebProperty<B, V?>(
-			key, baseKey, type, get = get, set = if (editable) set else null, choices = { choices }, group = group,
+			key, baseKey, type, get = get, set = if (editable) set else null, choices = { choices.value }, group = group,
 			baseKeyParams = baseKeyParams,
 		))
 	}

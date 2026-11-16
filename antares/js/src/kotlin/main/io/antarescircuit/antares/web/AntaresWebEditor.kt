@@ -332,12 +332,20 @@ class AntaresWebEditor(
 
 		frame.view = WebAntaresFrame({ frame }, ::handleDisplayedViewChanged) { showChildItem(WebDocumentItem(WebItemKinds.MEMORY_CONTENTS, it)) }
 
-		// Zoom and pan don't post events, but the web UI displays the zoom factor
+		// Zoom doesn't post events, but the web UI displays the zoom factor. Panning alone needs no refresh.
+		val symbolView = frame.containerPanelController.drawingView
+		var lastZooms = editor.view.zoomFactor to symbolView.zoomFactor
 		val viewListener = io.antarescircuit.jabbah.base.event.PropertyChangeListener<Any> { e ->
-			if (e.name == io.antarescircuit.jabbah.draw.View.PROP_TRANSFORMATION) notifyChanged()
+			if (e.name == io.antarescircuit.jabbah.draw.View.PROP_TRANSFORMATION) {
+				val zooms = editor.view.zoomFactor to symbolView.zoomFactor
+				if (zooms != lastZooms) {
+					lastZooms = zooms
+					notifyChanged()
+				}
+			}
 		}
 		editor.view.addPropertyChangeListener(viewListener)
-		frame.containerPanelController.drawingView.addPropertyChangeListener(viewListener)
+		symbolView.addPropertyChangeListener(viewListener)
 	}
 
 	private fun createActions() {
@@ -376,6 +384,7 @@ class AntaresWebEditor(
 
 	private fun handleEvent(event: Any) {
 		if (event is CommandEvent) scheduleAutosave()
+		if (::library.isInitialized) library.handleEvent(event)
 		notifyChanged()
 	}
 
