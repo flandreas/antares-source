@@ -22,15 +22,25 @@ import kotlin.io.path.name
  */
 class SystemDumpService {
 
-	/** Creates a system dump and stores it in the local [destination].*/
-	fun createDump(application: DesktopApplication, destination: Path, includeWorkspace: Boolean = true) {
+	/**
+	 * Creates a system dump and stores it in the local [destination]. [currentStorable] must be captured on
+	 * the thread owning the model (see [serializeCurrentStorable]); the rest is plain file I/O.
+	 */
+	fun createDump(
+		application: DesktopApplication,
+		destination: Path,
+		includeWorkspace: Boolean = true,
+		currentStorable: String? = serializeCurrentStorable(application),
+	) {
 		val tempDir = Files.createTempDirectory(null)
 
 		if (includeWorkspace) {
 			copyWorkspace(tempDir)
 		}
 		copyLogfile(application, tempDir)
-		copyCurrentStorable(application, tempDir)
+		currentStorable?.let {
+			Files.writeString(Paths.get(tempDir.toAbsolutePath().toString(), "currentStorable.txt"), it)
+		}
 
 		zipDirectory(tempDir, destination)
 	}
@@ -48,14 +58,9 @@ class SystemDumpService {
 			dir.toFile())
 	}
 
-	private fun copyCurrentStorable(application: DesktopApplication, destination: Path) {
-		application.controller.getUndoableState()?.let {
-			Files.writeString(
-				Paths.get(destination.toAbsolutePath().toString(), "currentStorable.txt"),
-				StorableCloner.serialize(it)
-			)
-		}
-	}
+	/** Serializes the currently edited state. Call on the EDT, since the model is not thread-safe. */
+	fun serializeCurrentStorable(application: DesktopApplication): String? =
+		application.controller.getUndoableState()?.let { StorableCloner.serialize(it) }
 
 	private fun zipDirectory(dir: Path, destination: Path) {
 		FileOutputStream(destination.toAbsolutePath().toString()).use { output ->

@@ -55,7 +55,8 @@ class FocusPanel(
 
 		focusSource.addKeyListener(object : KeyAdapter() {
 			override fun keyPressed(e: KeyEvent) {
-				if (FocusManager.focusOwner?.canConsume(CanvasJvm.convertKeyEvent(e)) == true) {
+				// Function keys are never consumed, so that menu accelerators such as F5 keep working
+				if (e.keyCode !in KeyEvent.VK_F1..KeyEvent.VK_F12 && FocusManager.focusOwner?.canConsume(CanvasJvm.convertKeyEvent(e)) == true) {
 					e.consume()
 				}
 			}

@@ -40,12 +40,17 @@ object InteractiveErrorHandler : ErrorHandler() {
 
         if (parentFrame != null && !isHandling) {
 	        isHandling = true
-            if (isDeveloper) {
-	            showDeveloperDialog(stackTrace)
-            } else {
-                showUserDialog(x)
-            }
-	        isHandling = false
+	        try {
+		        if (isDeveloper) {
+			        showDeveloperDialog(stackTrace)
+		        } else {
+			        showUserDialog(x)
+		        }
+	        } catch (e: Throwable) {
+		        LOG.error("Error while showing the unexpected error dialog", e)
+	        } finally {
+		        isHandling = false
+	        }
         }
     }
 
@@ -55,7 +60,11 @@ object InteractiveErrorHandler : ErrorHandler() {
 
 	private fun involvePlugins(x: Throwable) {
 		plugins.forEach {
-			it.handleError(x)
+			try {
+				it.handleError(x)
+			} catch (e: Throwable) {
+				LOG.error("Error handler plugin ${it::class.simpleName} failed", e)
+			}
 		}
 	}
 

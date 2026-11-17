@@ -205,7 +205,7 @@ NOTE: The save history of a circuit gets also deleted if that circuit is deleted
 
 == Searching in circuits
 
-Antares allows you to search for components in a circuit that currently has the focus. If you press kbd:[ALT]+kbd:[CMD]+kbd:[F], Antares displays the search bar just above the circuit. Enter your search expression in the search field, and Antares will execute a search for every entered character. The components matching the search criteria get selected in the circuit.
+Antares allows you to search for components in a circuit that currently has the focus. If you press kbd:[CMD]+kbd:[F] (macOS) or kbd:[CTRL]+kbd:[F] (Windows/Linux), Antares displays the search bar just above the circuit. Enter your search expression in the search field, and Antares will execute a search for every entered character. The components matching the search criteria get selected in the circuit.
 
 image::user-manual/circuits/search-in-circuit.png[Alignment, 700, align="center"]
 

@@ -131,7 +131,7 @@ class SystemMalfunctionPanel(
 
 				JOptionPane.showConfirmDialog(
 					this@SystemMalfunctionPanel,
-					Translations.getString("application.systemMalfunction.export.success.error"),
+					Translations.getString("application.systemMalfunction.export.error.text"),
 					name,
 					JOptionPane.DEFAULT_OPTION,
 					JOptionPane.ERROR_MESSAGE)

@@ -15,7 +15,7 @@ image::user-manual/circuits/circuit-tests-overview.png[Overview,600,align="cente
 You can create circuit tests for the currently open circuit.
 
 1. Open the "Test Cases" side bar at the right edge of Antares' main window by clicking on "Test cases"
-2. In the tree at the top of the opened side bar, select the circuit node and press the left mouse button to display the context menu. Select "Add test case". Enter a name for your test case in the dialog and press btn:[OK].
+2. In the tree at the top of the opened side bar, right-click the circuit node to display the context menu. Select "Add test case". Enter a name for your test case in the dialog and press btn:[OK].
 
 3. Select the newly created node in the tree to display the test case's properties in the properties window below the tree.
 

@@ -27,7 +27,7 @@ import io.antarescircuit.jabbah.graph.view.vertice.SubGraphVerticeView
 class GraphViewDisplayHandler(
 	private val view: DrawingView<GraphElementView<*>, GraphView>,
 	private val applicationContextHolder: GraphApplicationContextHolder,
-	eventBus: EventBus
+	private val eventBus: EventBus
 ) {
 
 	companion object {
@@ -39,12 +39,14 @@ class GraphViewDisplayHandler(
 	/** Gateway to the tooltip system.*/
 	private val tooltipHandler: TooltipHandler = TooltipHandler(eventBus)
 
-	init {
-		eventBus.register(SchedulerActivationStateEvent::class) {
-			if (it.scheduler === applicationContextHolder.scheduler) {
-				updateActivationState()
-			}
+	private val schedulerActivationHandler: EventHandler<SchedulerActivationStateEvent> = {
+		if (it.scheduler === applicationContextHolder.scheduler) {
+			updateActivationState()
 		}
+	}
+
+	init {
+		eventBus.register(SchedulerActivationStateEvent::class, schedulerActivationHandler)
 
 		view.addPropertyChangeListener(object : PropertyChangeListener<Any> {
 			override fun propertyChanged(e: PropertyChangeEvent<Any>) {
@@ -56,6 +58,7 @@ class GraphViewDisplayHandler(
 	}
 
 	fun dispose() {
+		eventBus.unregister(SchedulerActivationStateEvent::class, schedulerActivationHandler)
 		tooltipHandler.dispose()
 		passivate()
 	}

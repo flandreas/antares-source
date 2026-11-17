@@ -78,11 +78,12 @@ class TimedSchedulerTask(
 		timer.initialize(timerInterval) { actionPerformed(it) }
 	}
 
-	fun dispose() {
+	/** ---- [SchedulerTask] interface */
+
+	override fun dispose() {
+		stop()
 		eventBus.unregister(systemSpeedHandler)
 	}
-
-	/** ---- [SchedulerTask] interface */
 
 	override fun bind(scheduler: Scheduler) {
 		this.scheduler = scheduler

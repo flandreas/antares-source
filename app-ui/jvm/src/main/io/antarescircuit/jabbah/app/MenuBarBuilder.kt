@@ -11,11 +11,16 @@ import io.antarescircuit.jabbah.draw.view.*
 import io.antarescircuit.jabbah.edit.app.*
 import io.antarescircuit.jabbah.draw.view.find.FindAction
 import org.apache.commons.lang3.SystemUtils
+import java.awt.Toolkit
+import java.awt.event.InputEvent
+import java.awt.event.KeyEvent
 import javax.swing.JCheckBoxMenuItem
+import javax.swing.JComponent
 import javax.swing.JFrame
 import javax.swing.JMenu
 import javax.swing.JMenuBar
 import javax.swing.JMenuItem
+import javax.swing.KeyStroke
 
 /**
  * Builds and fills a [JMenuBar] for the main [JFrame] of a [DesktopApplication].
@@ -31,8 +36,26 @@ open class MenuBarBuilder(
 		fun createViewMenu(): JMenu = JMenu(Translations.getString("application.menu.view"))
 		fun createHelpMenu(): JMenu = JMenu(Translations.getString("application.menu.help"))
 
+		/** Additional Zoom In key strokes, as the "+" key differs between keyboard layouts. */
+		private val zoomInAlternativeKeyStrokes = listOf(
+			KeyEvent.VK_PLUS to 0,
+			KeyEvent.VK_EQUALS to InputEvent.SHIFT_DOWN_MASK,
+			KeyEvent.VK_ADD to 0,
+			KeyEvent.VK_1 to InputEvent.SHIFT_DOWN_MASK,
+		)
+
+		/** Creates the Zoom In [JMenuItem], which reacts to its accelerator and [zoomInAlternativeKeyStrokes]. */
+		fun createZoomInMenuItem(action: javax.swing.Action): JMenuItem {
+			val item = JMenuItem(action)
+			val menuMask = Toolkit.getDefaultToolkit().menuShortcutKeyMaskEx
+			zoomInAlternativeKeyStrokes.forEach { (key, modifiers) ->
+				item.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(key, menuMask or modifiers), "doClick")
+			}
+			return item
+		}
+
 		fun addZoomActions(menu:JMenu) {
-			menu.add(JMenuItem(ActionWrapperSwing(ZoomPanActions.zoomInAction)))
+			menu.add(createZoomInMenuItem(ActionWrapperSwing(ZoomPanActions.zoomInAction)))
 			menu.add(JMenuItem(ActionWrapperSwing(ZoomPanActions.zoomNormalAction)))
 			menu.add(JMenuItem(ActionWrapperSwing(ZoomPanActions.zoomOutAction)))
 			menu.add(JCheckBoxMenuItem(ActionWrapperSwing(ZoomPanActions.zoomCenterAction)))

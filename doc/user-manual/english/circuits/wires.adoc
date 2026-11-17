@@ -27,7 +27,9 @@ TIP: Bidirectional pins are both input and output and can be connected in both w
 
 In addition to these options, you can create an unconnected wire in all cases by releasing the mouse button over the background of the circuit.
 
-By default, Antares automatically applies an orthogonal layout when creating the wire. To influence the layout of the resulting wire, press the kbd:[Alt]-key while defining the start location. Antares will then display a green square instead of the green circle. Then you can define the intermediate points of the resulting wire by clicking with the left mouse button. You do not have to keep the mouse button pressed while moving the mouse. Use the kbd:[ESC]-key to remove the last intermediate point. With a single click on an input or with a double click on the background the creation of the wire is completed.
+By default (connect method "Set points manually"), you define the intermediate points of the resulting wire by clicking with the left mouse button. You do not have to keep the mouse button pressed while moving the mouse. Use the kbd:[ESC]-key to remove the last intermediate point. With a single click on an input or with a double click on the background the creation of the wire is completed.
+
+If you select the connect method "Auto-layout" in the preferences instead, Antares automatically applies an orthogonal layout when creating the wire. Pressing the kbd:[Alt]-key while defining the start location switches to the other connect method for that wire.
 
 == Wire Bundle
 

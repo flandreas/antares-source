@@ -30,6 +30,8 @@ import io.antarescircuit.jabbah.graph.view.app.GraphViewAppService
 import io.antarescircuit.jabbah.graph.view.module.GraphViewModule
 import java.awt.BorderLayout
 import java.awt.Dimension
+import java.awt.event.ComponentAdapter
+import java.awt.event.ComponentEvent
 import javax.swing.*
 
 
@@ -50,6 +52,12 @@ class GraphPanelViewSwing(
 
 		/** The name in [Settings] (extending `propertyBaseName`) of the bottom [JSplitPane] divider position.*/
 		private const val BOTTOM_SPLIT_POS = "graphPanel.bottomSidebarSplitPos"
+
+		/** The name in [Settings] of the divider position between [libraryPanel] and [propertyPanel].*/
+		private const val LIBRARY_SPLIT_POS = "graphPanel.librarySplitPos"
+
+		/** Share of the explorer's height given to the [libraryPanel] when no divider position has been stored yet. */
+		private const val DEF_LIBRARY_HEIGHT_RATIO = 0.6
 	}
 
 	/** Allows editing and execute the currently open GraphView.*/
@@ -172,7 +180,7 @@ class GraphPanelViewSwing(
 		graphEditView.dispose()
 		bottomSidebarPane.dispose()
 
-		BaseModule.settings.set("graphPanel.librarySplitPos", explorerSplitPane.dividerLocation)
+		BaseModule.settings.set(LIBRARY_SPLIT_POS, explorerSplitPane.dividerLocation)
 	}
 
 	override fun updateDynamicToolbar() {
@@ -226,7 +234,12 @@ class GraphPanelViewSwing(
 		libraryPanel.preferredSize = Dimension(libraryPanel.preferredSize.width, 700)
 		explorerSplitPane.add(libraryPanel)
 		explorerSplitPane.add(propertyPanel)
-		explorerSplitPane.dividerLocation = BaseModule.settings.getInt("graphPanel.librarySplitPos", 700)
+		val librarySplitPos = BaseModule.settings.getInt(LIBRARY_SPLIT_POS, 0)
+		if (librarySplitPos > 0) {
+			explorerSplitPane.dividerLocation = librarySplitPos
+		} else {
+			applyDefaultLibrarySplitOnceSized()
+		}
 
 		bottomSidebarSplitPane.border = null
 		bottomSidebarSplitPane.resizeWeight = 1.0
@@ -237,6 +250,21 @@ class GraphPanelViewSwing(
 		add(titleBar, BorderLayout.NORTH)
 		add(leftSidebarPane, BorderLayout.CENTER)
 		add(bottomSidebarPane, BorderLayout.SOUTH)
+	}
+
+	/**
+	 * A fixed default location would leave the [propertyPanel] too small to show any property on typical screens.
+	 * Hence, split proportionally as soon as the [explorerSplitPane] has its real height.
+	 */
+	private fun applyDefaultLibrarySplitOnceSized() {
+		explorerSplitPane.addComponentListener(object : ComponentAdapter() {
+			override fun componentResized(e: ComponentEvent) {
+				if (explorerSplitPane.height > 0) {
+					explorerSplitPane.removeComponentListener(this)
+					explorerSplitPane.dividerLocation = (explorerSplitPane.height * DEF_LIBRARY_HEIGHT_RATIO).toInt()
+				}
+			}
+		})
 	}
 
 	/** Handles changes of the `isOpen` property of the [bottomSidebarPane]. */

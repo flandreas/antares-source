@@ -4,6 +4,7 @@ import io.antarescircuit.jabbah.base.event.EventBusImpl
 import io.antarescircuit.jabbah.base.time.SystemSpeed
 import io.antarescircuit.jabbah.draw.CanvasMockBuilder
 import io.antarescircuit.jabbah.draw.drawable.Colorable
+import io.antarescircuit.jabbah.draw.view.DrawViewModule
 import io.antarescircuit.jabbah.edit.DrawingView
 import io.antarescircuit.jabbah.edit.model.text.TranslatableText
 import io.antarescircuit.jabbah.edit.view.DrawingViewImpl
@@ -28,6 +29,7 @@ import io.antarescircuit.jabbah.graph.view.vertice.SubGraphVerticeView
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
+import kotlin.test.assertSame
 
 class GraphDesktopControllerViewTest {
 
@@ -102,6 +104,16 @@ class GraphDesktopControllerViewTest {
 
 		assertNull(controller.mainDesktopViewItem)
 		assertEquals(0, controller.additionalDesktopItems.size)
+	}
+
+	@Test
+	fun shouldActivateMainItemWhenClosingActiveSubGraph() {
+		openSubGraph()
+		DrawViewModule.viewManager.activeView = controller.additionalDesktopItems.first()
+
+		closeSubGraph()
+
+		assertSame(controller.mainDesktopViewItem, DrawViewModule.viewManager.activeView)
 	}
 
 	private fun openSubGraph() {

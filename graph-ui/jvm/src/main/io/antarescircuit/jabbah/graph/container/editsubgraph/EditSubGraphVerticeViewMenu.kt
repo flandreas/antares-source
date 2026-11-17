@@ -1,5 +1,6 @@
 package io.antarescircuit.jabbah.graph.container.editsubgraph
 
+import io.antarescircuit.jabbah.app.MenuBarBuilder
 import io.antarescircuit.jabbah.base.Action
 import io.antarescircuit.jabbah.base.ActionWrapperSwing
 import io.antarescircuit.jabbah.base.Translations
@@ -49,7 +50,7 @@ class EditSubGraphVerticeViewMenu : JMenuBar() {
 		add(editMenu)
 
 		val viewMenu = JMenu(Translations.getString("application.menu.view"))
-		viewMenu.add(JMenuItem(ActionWrapperSwing(register(ZoomPanActions.zoomInAction))))
+		viewMenu.add(MenuBarBuilder.createZoomInMenuItem(ActionWrapperSwing(register(ZoomPanActions.zoomInAction))))
 		viewMenu.add(JMenuItem(ActionWrapperSwing(register(ZoomPanActions.zoomNormalAction))))
 		viewMenu.add(JMenuItem(ActionWrapperSwing(register(ZoomPanActions.zoomOutAction))))
 		viewMenu.add(JCheckBoxMenuItem(ActionWrapperSwing(register(ZoomPanActions.zoomCenterAction))))

@@ -78,7 +78,10 @@ class ScriptPropertyEditor(
 			variables = null,
 			parserFactory = parserFactory
 		) ?.let {
-			script = ScriptProperty(it)
+			val oldScript = script
+			setValue(ScriptProperty(it))
+			// Commits the edit right away; otherwise it stays pending until the table loses focus.
+			firePropertyChange(oldScript, script)
 		}
 	}
 }
