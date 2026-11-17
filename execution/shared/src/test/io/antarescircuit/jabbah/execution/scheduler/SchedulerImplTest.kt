@@ -64,6 +64,22 @@ class SchedulerImplTest {
 	}
 
 	@Test
+	fun shouldIgnoreLateRequestsWhenDisposed() {
+		val bus = EventBusImpl()
+		val speed = CurrentSystemSpeedCategory(SystemSpeed(eventBus = bus), bus)
+		val timer = ControlledTimer(timeService)
+		val disposable = SchedulerImpl(speed, timeService, bus, NoiseGeneratorHolder(NoNoiseGenerator(), bus), task = TimedSchedulerTask(speed, timer, bus))
+		disposable.isActive = true
+		disposable.dispose()
+
+		// E.g. a signal animation finishing after its viewer has been closed
+		disposable.requestActingAfter(createActor(), 100 * MILLION, createActorData())
+
+		assertFalse(disposable.isActive)
+		assertFalse(timer.isRunning())
+	}
+
+	@Test
 	fun shouldActAfterDelay() {
 		val actor = createActor()
 		scheduler.isActive = true

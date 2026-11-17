@@ -151,6 +151,9 @@ class SchedulerImpl(
 	}
 
 	override fun dispose() {
+		// Deactivate first, so that listeners (e.g. running signal animations) are told to stop and late
+		// requests are ignored instead of restarting the task.
+		isActive = false
 		eventBus.unregister(issueCollectorListener)
 		eventBus.unregister(breakListener)
 		eventBus.unregister(pauseEventListener)
