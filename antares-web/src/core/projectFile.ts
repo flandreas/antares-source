@@ -22,9 +22,32 @@ export function projectToAcp(json: string): Uint8Array {
 	return zipSync(entries, { level: 6 })
 }
 
+/**
+ * Limits for unpacking `.acp` files, so that a malicious archive (a "zip bomb") can't exhaust memory.
+ * fflate allocates each file's output with its declared size and doesn't grow it, so checking the declared sizes is
+ * enough. The largest sample project is about 1 MB unpacked.
+ */
+const MAX_ARCHIVE_SIZE = 50 * 1024 * 1024
+const MAX_UNPACKED_SIZE = 200 * 1024 * 1024
+const MAX_FILES = 10_000
+
+/** Unpacks [data], failing if it exceeds the limits above. */
+function unzipBounded(data: Uint8Array): Record<string, Uint8Array> {
+	if (data.length > MAX_ARCHIVE_SIZE) throw new Error('The project file is too large')
+	let files = 0
+	let size = 0
+	return unzipSync(data, {
+		filter: (file) => {
+			size += file.originalSize
+			if (++files > MAX_FILES || size > MAX_UNPACKED_SIZE) throw new Error('The project file is too large when unpacked')
+			return true
+		},
+	})
+}
+
 /** Reads a `.acp` file and returns the project in the editor's import JSON format plus its name. */
 export function acpToProject(data: Uint8Array): { json: string; name: string; uuid: string } {
-	const entries = unzipSync(data)
+	const entries = unzipBounded(data)
 	const libraryPath = Object.keys(entries).find((p) => p === 'library.xml' || p.endsWith('/library.xml'))
 	if (!libraryPath) throw new Error('No library.xml in project file')
 	const dir = libraryPath.slice(0, libraryPath.length - 'library.xml'.length)
