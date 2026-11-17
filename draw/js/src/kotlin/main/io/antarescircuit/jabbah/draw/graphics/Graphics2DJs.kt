@@ -144,6 +144,8 @@ class Graphics2DJs(
 				is Color -> color = value
 				is LinearColorGradient -> {
 					field = value
+					// The gradient replaces the applied color, so setting that color again must assign it
+					applied.color = null
 					toLinearJsGradient(value).also {
 						ctx.fillStyle = it
 						ctx.strokeStyle = it
@@ -151,6 +153,7 @@ class Graphics2DJs(
 				}
 				is RadialColorGradient -> {
 					field = value
+					applied.color = null
 					toRadialJsGradient(value).also {
 						ctx.fillStyle = it
 						ctx.strokeStyle = it
