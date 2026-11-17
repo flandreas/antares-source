@@ -58,7 +58,7 @@ include::../../page-variables.txt[]
 | Orthogonal mouse drag | kbd:[SHIFT] | kbd:[SHIFT]
 | Omit Snap during mouse drag | kbd:[ALT] | kbd:[ALT]
 3+|*Wires*
-| Start wire with intermediate points | kbd:[ALT] | kbd:[ALT]
+| Start wire with the non-default connect method (Auto-layout by default) | kbd:[ALT] | kbd:[ALT]
 | Reconnect wire | kbd:[ALT] | kbd:[ALT]
 | Select all wire parts | kbd:[CMD] + click | kbd:[CTRL] + click
 |===
