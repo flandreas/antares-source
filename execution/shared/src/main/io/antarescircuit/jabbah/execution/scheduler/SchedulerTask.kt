@@ -15,6 +15,9 @@ interface SchedulerTask {
 	fun startIfNeeded()
 
 	fun stop()
+
+	/** Stops this [SchedulerTask] and releases its resources. Must be idempotent. */
+	fun dispose() = stop()
 }
 
 abstract class AbstractSchedulerTask(override val nameKey: String) : SchedulerTask {

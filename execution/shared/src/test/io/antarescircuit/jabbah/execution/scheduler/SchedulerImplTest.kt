@@ -45,6 +45,25 @@ class SchedulerImplTest {
 	/** ---- Basics tests */
 
 	@Test
+	fun shouldStopTaskAndUnregisterAllHandlersWhenDisposed() {
+		val bus = EventBusImpl()
+		val speed = CurrentSystemSpeedCategory(SystemSpeed(eventBus = bus), bus)
+		val noise = NoiseGeneratorHolder(NoNoiseGenerator(), bus)
+		val registeredBefore = bus.size
+		val timer = ControlledTimer(timeService)
+		val disposable = SchedulerImpl(speed, timeService, bus, noise, task = TimedSchedulerTask(speed, timer, bus))
+		disposable.isActive = true
+		disposable.requestActingAfter(createActor(), 100 * MILLION, createActorData())
+		assertTrue(timer.isRunning())
+
+		disposable.dispose()
+		disposable.dispose()
+
+		assertFalse(timer.isRunning())
+		assertEquals(registeredBefore, bus.size)
+	}
+
+	@Test
 	fun shouldActAfterDelay() {
 		val actor = createActor()
 		scheduler.isActive = true

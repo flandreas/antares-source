@@ -155,6 +155,7 @@ class SchedulerImpl(
 		eventBus.unregister(breakListener)
 		eventBus.unregister(pauseEventListener)
 		eventBus.unregister(systemSpeedCategoryHandler)
+		task.dispose()
 	}
 
 	/** ---- [Scheduler] interface */
