@@ -54,4 +54,4 @@ class Stack<T> {
 	fun contains(item: T): Boolean = items.contains(item)
 }
 
-class EmptyStackException : Throwable("empty stack")
+class EmptyStackException : Exception("empty stack")

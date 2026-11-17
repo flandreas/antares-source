@@ -77,4 +77,4 @@ interface AffineTransform {
 
 }
 
-class NonInvertibleTransformException(msg: String) : Throwable(msg)
+class NonInvertibleTransformException(msg: String) : Exception(msg)

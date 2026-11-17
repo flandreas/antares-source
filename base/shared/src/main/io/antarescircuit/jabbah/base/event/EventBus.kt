@@ -15,7 +15,7 @@ typealias VetoHandler<T> = (T) -> Unit
 class VetoException(
     msg: String,
     val source: Any? = null
-): Throwable(msg)
+): Exception(msg)
 
 /**
  * A central event dispatcher according to the whiteboard pattern.

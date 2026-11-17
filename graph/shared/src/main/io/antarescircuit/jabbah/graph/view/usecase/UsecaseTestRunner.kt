@@ -135,4 +135,5 @@ class UsecaseTestRunner(
 	}
 }
 
+/** Deliberately a [Throwable], not an [Exception], so it aborts the run past the scheduler's actor-failure guard. */
 data class UsecaseTestFailureException(val usecase: Usecase) : Throwable()

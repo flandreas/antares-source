@@ -3,7 +3,7 @@ package io.antarescircuit.jabbah.base.dsl
 import io.antarescircuit.jabbah.base.Translations
 import io.antarescircuit.jabbah.base.parser.TextLocation
 
-open class DslError(val location: TextLocation, msg: String) : Throwable(msg) {
+open class DslError(val location: TextLocation, msg: String) : Exception(msg) {
 	override fun toString(): String =
 		Translations.getString("base.dsl.error.msg", message!!, location)
 }

@@ -27,7 +27,7 @@ interface RepositoryService {
 }
 
 /** Indicates that an operation would result in a [Library] containing elements that depend on a [Project].*/
-class LibraryDependencyException(val subGraphVertice: SubGraphVertice) : Throwable()
+class LibraryDependencyException(val subGraphVertice: SubGraphVertice) : Exception()
 
 /** Standard implementation of the [RepositoryService] interface.*/
 class RepositoryServiceImpl(
