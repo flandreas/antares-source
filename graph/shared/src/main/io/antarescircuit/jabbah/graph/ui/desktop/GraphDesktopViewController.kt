@@ -270,10 +270,24 @@ class GraphDesktopViewController(
         if (item === mainDesktopViewItem) {
             closeAll()
         } else {
+            val sourceItem = associationOf(item)?.sourceItem
             deassociate(item)
             freeItem(item)
             view.closeChildItem(item)
+            if (viewManager.activeView === item) {
+                activateSurvivingItem(sourceItem)
+            }
         }
+    }
+
+    /**
+     * Activates [preferred] if still open, otherwise the main item, so that commands such as
+     * Select All keep targeting a visible drawing after the active item has been closed.
+     */
+    private fun activateSurvivingItem(preferred: GraphDesktopViewItem?) {
+        val target = preferred?.takeIf { it === mainDesktopViewItem || it in additionalDesktopItems } ?: mainDesktopViewItem
+        viewManager.activeView = target
+        target?.view?.view?.requestFocus()
     }
 
     private fun freeItem(item: GraphDesktopViewItem) {
