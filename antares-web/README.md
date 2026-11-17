@@ -41,3 +41,17 @@ moving, simulation input) are handled by the shared Kotlin code, exactly as on t
 System libraries, sample projects and translations are copied from the Kotlin modules by `scripts/prepare-data.mjs`.
 User projects live in the browser's IndexedDB; export them as `.acp` files to back them up or to open them in
 Antares Desktop.
+
+## Kotlin/JS workaround
+
+Kotlin/JS (2.3.20) creates a property reference on every read of a delegated property and discards it, even when the inline `getValue` (e.g. of `lazy`) ignores it:
+
+```js
+var tmp0 = $this.q2h_1;
+var tmp = KProperty1;
+// Inline function 'kotlin.getValue' call
+getPropertyCallableRef('LOG', 1, tmp, AnimationJob$Companion$_get_LOG_$ref_gumibr(), null);
+return tmp0.r1();
+```
+
+Each reference copies the `KProperty` prototype, which cost about 20 % of simulation time. `vite.config.ts` strips these statements and fails the build if none are found, which means the compiler output changed. Remove the workaround once the compiler no longer emits them.

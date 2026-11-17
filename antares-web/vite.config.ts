@@ -17,7 +17,7 @@ const KOTLIN_JS = /dist[\\/]js[\\/].*\.js$/
 // drawing time, so these dead statements are removed. Property references that are actually used are kept.
 const DEAD_PROPERTY_REF = /^[ \t]*getPropertyCallableRef\((['"])[\w$]*\1, \d, tmp(?:_\d+)?, [\w$]+\([\w$]*\), null\);$/gm
 
-// The pattern depends on the code the Kotlin compiler generates (reported upstream, see README). If a Kotlin update
+// The pattern depends on the code the Kotlin compiler generates (see "Kotlin/JS workaround" in the README). If a Kotlin update
 // changes it, nothing is stripped any more and simulation silently gets slower, so the build fails instead.
 let strippedRefs = 0
 
