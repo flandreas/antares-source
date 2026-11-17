@@ -8,6 +8,8 @@ import io.antarescircuit.antares.view.output.LightColorExpression
 import io.antarescircuit.jabbah.base.LongValue
 import io.antarescircuit.jabbah.base.System
 import io.antarescircuit.jabbah.base.Translations
+import io.antarescircuit.jabbah.base.UUID
+import io.antarescircuit.jabbah.base.richtext.RichText
 import io.antarescircuit.jabbah.base.geom.Point2D
 import io.antarescircuit.jabbah.draw.graphics.Color
 import io.antarescircuit.jabbah.draw.graphics.PredefinedColor
@@ -16,6 +18,7 @@ import io.antarescircuit.jabbah.draw.graphics.PredefinedStroke
 import io.antarescircuit.jabbah.draw.graphics.PredefinedStrokeRepository
 import io.antarescircuit.jabbah.edit.Editor
 import io.antarescircuit.jabbah.edit.model.text.ScriptProperty
+import io.antarescircuit.jabbah.edit.module.EditModule
 import io.antarescircuit.jabbah.edit.model.text.Translatable
 import io.antarescircuit.jabbah.edit.model.text.TranslatableText
 import io.antarescircuit.jabbah.edit.model.text.description.Description
@@ -266,6 +269,19 @@ internal class WebPropertyBuilder<B : Any> {
 	)
 }
 
+/**
+ * An image chosen among the images of the open project, e.g. the on/off images of an image switch
+ * (desktop: `ImageIdentificationPropertyJvm`).
+ */
+internal fun <B : Any> WebPropertyBuilder<B>.image(key: String, baseKey: String, get: (B) -> UUID?, set: (B, UUID?) -> Unit) {
+	val ids = EditModule.imageRepository.getAllImageIds()
+	val labels = ids.associate { it.uuid to RichText.stripToPlainText(it.name.value) }
+	choice(
+		key, baseKey, ids.map { it.uuid }, get, set,
+		id = { it.id }, label = { labels[it] ?: it.id }, nullLabel = "None", group = WebGroups.APPEARANCE,
+	)
+}
+
 private const val NULL_ID = ""
 
 private fun invalidValue(value: Any?): String = Translations.getString("edit.magnitude.invalidValue.text", "$value")
@@ -281,18 +297,18 @@ private fun checkRange(value: Double, min: Double?, max: Double?): Double {
 }
 
 /** Returns the string of a JSON primitive, or `null` for `null`/`undefined`. */
-internal fun jsString(value: dynamic): String? = if (value == null) null else value.toString()
+internal fun jsString(value: Any?): String? = value?.toString()
 
-internal fun jsBoolean(value: dynamic): Boolean? = when (jsTypeOf(value)) {
-	"boolean" -> value.unsafeCast<Boolean>()
-	"string" -> value == "true"
+internal fun jsBoolean(value: Any?): Boolean? = when (value) {
+	is Boolean -> value
+	is String -> value == "true"
 	else -> null
 }
 
 /** Returns a number from a JSON number or numeric string, `null` for empty input. */
-internal fun jsNumber(value: dynamic): Double? = when (jsTypeOf(value)) {
-	"number" -> value.unsafeCast<Double>().also { require(!it.isNaN()) { invalidValue(it) } }
-	"string" -> value.unsafeCast<String>().trim().takeIf { it.isNotEmpty() }?.let {
+internal fun jsNumber(value: Any?): Double? = when (value) {
+	is Number -> value.toDouble().also { require(!it.isNaN()) { invalidValue(it) } }
+	is String -> value.trim().takeIf { it.isNotEmpty() }?.let {
 		it.toDoubleOrNull() ?: throw IllegalArgumentException(invalidValue(it))
 	}
 	else -> null

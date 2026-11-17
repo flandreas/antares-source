@@ -111,8 +111,9 @@ private fun <B : Any> WebPropertyBuilder<B>.signalRepresentation(
 )
 
 /** `EditProperties.size()` */
-private fun <B : Any> WebPropertyBuilder<B>.size(get: (B) -> Size, set: (B, Size) -> Unit, baseKey: String = "edit.property.size", editable: Boolean = true) =
-	enum("size", baseKey, Size.entries, get, set, editable = editable, group = WebGroups.APPEARANCE)
+private fun <B : Any> WebPropertyBuilder<B>.size(
+	get: (B) -> Size, set: (B, Size) -> Unit, baseKey: String = "edit.property.size", editable: Boolean = true, key: String = "size",
+) = enum(key, baseKey, Size.entries, get, set, editable = editable, group = WebGroups.APPEARANCE)
 
 /** `EditProperties.border()` */
 private fun <B : Any> WebPropertyBuilder<B>.hasBorder(get: (B) -> Boolean, set: (B, Boolean) -> Unit) =
@@ -179,7 +180,7 @@ private fun WebPropertyRegistry.registerDigitalBase() {
 			nullLabel = Translations.getString("$SIGNAL_REPRESENTATION.none"),
 		)
 		enum("netSignalApplierStrategy", "element.property.netSignalApplierStrategy", NetSignalApplierStrategy.entries, { it.netSignalApplierStrategy }, { b, v -> b.netSignalApplierStrategy = v }, group = WebGroups.SIMULATION)
-		size({ it.defaultLogicGateSize }, { b, v -> b.defaultLogicGateSize = v }, baseKey = "element.property.defaultLogicGateSize")
+		size({ it.defaultLogicGateSize }, { b, v -> b.defaultLogicGateSize = v }, baseKey = "element.property.defaultLogicGateSize", key = "defaultLogicGateSize")
 	}
 
 	// DigitalPortViewComponentBeanInfo (symbol editor)

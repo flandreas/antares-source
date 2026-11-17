@@ -15,6 +15,7 @@ import io.antarescircuit.jabbah.draw.drawable.Orientable
 import io.antarescircuit.jabbah.edit.Component
 import io.antarescircuit.jabbah.graph.container.ContainerDrawing
 import io.antarescircuit.jabbah.graph.container.ControlViewComponent
+import io.antarescircuit.jabbah.graph.container.OriginIndicator
 import io.antarescircuit.jabbah.graph.library.LibraryModule
 import io.antarescircuit.jabbah.graph.model.oscilloscope.SignalHistoriesType
 import io.antarescircuit.jabbah.graph.model.semantic.GraphSemantic
@@ -202,6 +203,11 @@ internal fun WebPropertyRegistry.registerGraphProperties() {
 				group = WebGroups.APPEARANCE,
 			)
 		}
+	}
+
+	// OriginIndicatorBeanInfo has no properties
+	define<OriginIndicator> {
+		remove("id", "location")
 	}
 
 	// DigitalSignalSourceControlViewBeanInfo, AnalogLEDControlViewBeanInfo (AbstractBeanInfo: no ID/location)

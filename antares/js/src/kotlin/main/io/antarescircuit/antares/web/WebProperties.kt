@@ -2,157 +2,38 @@ package io.antarescircuit.antares.web
 
 import io.antarescircuit.jabbah.base.Translations
 import io.antarescircuit.jabbah.base.logger
-import io.antarescircuit.jabbah.edit.AbstractPropertyCommand
-import io.antarescircuit.jabbah.base.Bean
 import io.antarescircuit.jabbah.edit.Component
 import io.antarescircuit.jabbah.edit.Editor
-import io.antarescircuit.jabbah.edit.componentBeanProvider
-import io.antarescircuit.jabbah.edit.drawingBeanProvider
 
-/** The kind of editor the web application shows for a [WebProperty]. */
-internal enum class WebPropertyType(val id: String) {
-	Text("text"),
-	MultilineText("multiline"),
-	Boolean("boolean"),
-	Integer("integer"),
-	Number("number"),
-	Choice("choice"),
-	Color("color"),
-	ReadOnly("readonly"),
-}
-
-/**
- * A selectable value of a [WebPropertyType.Choice] or [WebPropertyType.Color] property.
- * @param color optional CSS color shown as swatch by the web application
- */
-internal class WebChoice<V>(val id: String, val label: String, val value: V, val color: String? = null)
-
-/**
- * A portable property descriptor, replacing the JVM-only BeanInfo classes for the web editor.
- *
- * @param key unique key within a bean, used by the web application to set values
- * @param baseKey translation base key; `<baseKey>.name` is the label and also names the undoable command
- * @param get reads the current value from the bean
- * @param set writes a value to the bean; `null` for read-only properties
- * @param choices the selectable values of [WebPropertyType.Choice] properties
- * @param evaluate optionally evaluates a parsed value in the context of the edited circuit (e.g. expressions)
- * @param apply optional custom application instead of an undoable property command, see [runPropertyCommand]
- */
-internal class WebProperty<B : Any, V>(
-	val key: String,
-	val baseKey: String,
-	val type: WebPropertyType,
-	val get: (B) -> V?,
-	val set: ((B, V?) -> Unit)? = null,
-	val choices: ((B) -> List<WebChoice<V>>)? = null,
-	val group: String = "general",
-	val baseKeyParams: Array<Any> = emptyArray(),
-	val min: Double? = null,
-	val max: Double? = null,
-	val toJs: (V?) -> dynamic = { it },
-	val fromJs: (dynamic) -> V? = { it.unsafeCast<V?>() },
-	val evaluate: ((V, Editor) -> V)? = null,
-	val apply: ((B, V?, Editor) -> Unit)? = null,
-) {
-	val label: String get() = Translations.getOptionalString("$baseKey.name")?.let { formatParams(it) } ?: key
-
-	val isReadOnly: Boolean get() = type == WebPropertyType.ReadOnly || (set == null && apply == null)
-
-	private fun formatParams(s: String): String {
-		var result = s
-		baseKeyParams.forEachIndexed { i, p -> result = result.replace("{$i}", "$p") }
-		return result
+/** Describes this property of [bean] as JSON object for the web application. */
+internal fun <B : Any, V> WebProperty<B, V>.describe(bean: B): dynamic {
+	val property = this
+	val value = get(bean)
+	val choices = choices?.invoke(bean)
+	val choice = choices?.firstOrNull { it.value == value }
+	val readOnly = isReadOnly
+	val typeId = (if (readOnly) WebPropertyType.ReadOnly else type).id
+	val jsValue = when {
+		choices == null -> property.toJs(value)
+		readOnly -> choice?.label
+		else -> choice?.id
 	}
-
-	fun describe(bean: B): dynamic {
-		val value = get(bean)
-		val choices = choices?.invoke(bean)
-		val choice = choices?.firstOrNull { it.value == value }
-		val readOnly = isReadOnly
-		val typeId = (if (readOnly) WebPropertyType.ReadOnly else type).id
-		return obj {
-			this.key = this@WebProperty.key
-			this.label = this@WebProperty.label
-			this.type = typeId
-			this.group = this@WebProperty.group
-			this.value = when {
-				choices == null -> toJs(value)
-				readOnly -> choice?.label
-				else -> choice?.id
+	return obj {
+		this.key = property.key
+		this.label = property.label
+		this.type = typeId
+		this.group = property.group
+		this.value = jsValue
+		this.choices = if (readOnly) null else choices?.map { c ->
+			obj {
+				this.id = c.id
+				this.label = c.label
+				this.color = c.color
 			}
-			this.choices = if (readOnly) null else choices?.map { c ->
-				obj {
-					this.id = c.id
-					this.label = c.label
-					this.color = c.color
-				}
-			}?.toJsArray()
-			this.min = this@WebProperty.min
-			this.max = this@WebProperty.max
-		}
+		}?.toJsArray()
+		this.min = property.min
+		this.max = property.max
 	}
-
-	fun parse(bean: B, value: dynamic, editor: Editor): V? {
-		val choices = choices?.invoke(bean)
-		val parsed = if (choices != null) choices.firstOrNull { it.id == value }?.value else fromJs(value)
-		val evaluate = evaluate
-		return if (parsed != null && evaluate != null) evaluate(parsed, editor) else parsed
-	}
-}
-
-/** Lambda-based property change command, applied to all [beanIds]. */
-internal class WebPropertyCommand<V>(
-	editor: Editor,
-	baseKey: String,
-	baseKeyParams: Array<Any>,
-	beanIds: Collection<String>,
-	isDrawing: Boolean,
-	newValue: V?,
-	private val undoable: Boolean,
-	private val getter: (Any) -> V?,
-	private val setter: (Any, V?) -> Unit,
-) : AbstractPropertyCommand<V>(
-	editor,
-	baseKey,
-	baseKeyParams,
-	if (isDrawing) drawingBeanProvider else componentBeanProvider,
-	beanIds,
-	newValue
-) {
-	override val canUndo: Boolean get() = undoable
-	override fun getValue(bean: Bean): V? = getter(bean)
-	override fun setValue(bean: Bean, value: V?) = setter(bean, value)
-}
-
-/**
- * Executes a property change of [beans] (components or the drawing) as [WebPropertyCommand], like
- * the desktop's `CommandPropertySwing`. Used by [WebProperties] and by custom [WebProperty.apply] implementations
- * that need a non-undoable command (`undoable = false`) or a special [setter].
- */
-internal fun <V> runPropertyCommand(
-	editor: Editor,
-	baseKey: String,
-	baseKeyParams: Array<Any>,
-	beans: List<Any>,
-	newValue: V?,
-	getter: (Any) -> V?,
-	undoable: Boolean = true,
-	setter: (Any, V?) -> Unit,
-) {
-	val isDrawing = beans.firstOrNull() !is Component
-	val ids = if (isDrawing) listOf("0") else beans.map { (it as Component).id.toString() }
-	val command = WebPropertyCommand(editor, baseKey, baseKeyParams, ids, isDrawing, newValue, undoable, getter, setter)
-	command.establishOldValues()
-	if (!command.valueChanged) return
-	val commandManager = editor.commandManager
-	try {
-		commandManager.beginTransaction(command)
-		commandManager.commitTransaction()
-	} catch (t: Throwable) {
-		if (commandManager.isInTransaction) commandManager.rollbackTransaction()
-		throw t
-	}
-	editor.view.repaint()
 }
 
 /**
@@ -175,14 +56,24 @@ internal class WebProperties(
 		return if (selection.isEmpty()) listOf(e.drawing) else selection.map { it.propertyOwner }
 	}
 
-	/** Properties shared by all [beans] (same key), described for the first bean. */
+	/**
+	 * Properties shared by all [beans], described for the first bean. A property is shared if every bean has an
+	 * editable property with the same key and type. Choices are limited to those all beans offer.
+	 */
 	private fun commonProperties(beans: List<Any>): List<WebProperty<Any, Any?>> {
 		val first = beans.firstOrNull() ?: return emptyList()
 		val firstProps = WebPropertyRegistry.propertiesOf(first)
 		if (beans.size == 1) return firstProps
-		val others = beans.drop(1).map { b -> WebPropertyRegistry.propertiesOf(b).filter { !it.isReadOnly }.map { it.key }.toSet() }
-		return firstProps.filter { p -> !p.isReadOnly && others.all { it.contains(p.key) } }
+		val others = beans.drop(1).map { b -> WebPropertyRegistry.propertiesOf(b).filter { !it.isReadOnly }.associateBy { it.key } }
+		return firstProps.filter { p -> !p.isReadOnly && others.all { it[p.key]?.type == p.type } }
 	}
+
+	/** The choice ids offered by [property] of every one of [beans], or `null` if it has no choices. */
+	private fun commonChoiceIds(beans: List<Any>, key: String): Set<String>? =
+		beans.map { bean -> propertyOf(bean, key)?.choices?.invoke(bean)?.map { it.id }?.toSet() ?: return null }
+			.reduce { a, b -> a intersect b }
+
+	private fun propertyOf(bean: Any, key: String) = WebPropertyRegistry.propertiesOf(bean).firstOrNull { it.key == key }
 
 	fun describe(): String {
 		val e = activeEditor
@@ -196,7 +87,13 @@ internal class WebProperties(
 			editable = e.view.editable
 			properties = props.mapNotNull {
 				try {
-					it.describe(first)
+					val description = it.describe(first)
+					if (beans.size > 1 && description.choices != null) {
+						val ids = commonChoiceIds(beans, it.key) ?: emptySet()
+						description.choices = description.choices.unsafeCast<Array<dynamic>>()
+							.filter { c -> c.id.unsafeCast<String>() in ids }.toTypedArray()
+					}
+					description
 				} catch (t: Throwable) {
 					LOG.debug("Cannot describe property ${it.key}: ${t.message}")
 					null
@@ -209,16 +106,27 @@ internal class WebProperties(
 		val e = activeEditor
 		if (!e.view.editable) return
 		val beans = beans(e)
-		val first = beans.firstOrNull() ?: return
-		val property = commonProperties(beans).firstOrNull { it.key == key } ?: return
-		val newValue = property.parse(first, value, e)
+		if (commonProperties(beans).none { it.key == key }) return
+		// Beans of different types have their own descriptors for the same key, e.g. a `size` choice of other values
+		val targets = beans.mapNotNull { bean ->
+			val property = propertyOf(bean, key) ?: return@mapNotNull null
+			Target(bean, property, property.parse(bean, value, e))
+		}
+		if (targets.size != beans.size) return
 
-		property.apply?.let { apply ->
-			beans.forEach { apply(it, newValue, e) }
+		if (targets.any { it.property.apply != null }) {
+			targets.forEach { t -> t.property.apply?.invoke(t.bean, t.value, e) }
 			e.view.repaint()
 			return
 		}
-		val setter = property.set ?: return
-		runPropertyCommand(e, property.baseKey, property.baseKeyParams, beans, newValue, property.get, setter = setter)
+		if (targets.any { it.property.set == null }) return
+		// One command per bean type and value, all in one undoable transaction
+		val commands = targets.groupBy { it.bean::class to it.value }.values.map { group ->
+			val property = group.first().property
+			propertyCommand(e, property.baseKey, property.baseKeyParams, group.map { it.bean }, group.first().value, property.get, setter = property.set!!)
+		}.filter { it.valueChanged }
+		runCommands(e, commands)
 	}
+
+	private class Target(val bean: Any, val property: WebProperty<Any, Any?>, val value: Any?)
 }

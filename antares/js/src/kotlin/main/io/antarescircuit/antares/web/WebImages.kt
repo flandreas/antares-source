@@ -1,12 +1,10 @@
 package io.antarescircuit.antares.web
 
 import io.antarescircuit.jabbah.base.Translations
-import io.antarescircuit.jabbah.base.UUID
 import io.antarescircuit.jabbah.base.richtext.RichText
 import io.antarescircuit.jabbah.draw.graphics.EmbeddedImageJs
 import io.antarescircuit.jabbah.draw.graphics.ImageType
 import io.antarescircuit.jabbah.edit.model.image.ImageIdentification
-import io.antarescircuit.jabbah.edit.module.EditModule
 import io.antarescircuit.jabbah.graph.library.Library
 import io.antarescircuit.jabbah.graph.library.LibraryModule
 import io.antarescircuit.jabbah.graph.model.image.ImageLibraryElement
@@ -80,17 +78,4 @@ class WebImages internal constructor(private val ctx: WebEditorContext) {
 		return ImageType.withMimeType(mime)
 			?: throw IllegalArgumentException(Translations.getString("library.action.importImage.typeNotSupported.msg", mime))
 	}
-}
-
-/**
- * An image chosen among the images of the open project, e.g. the on/off images of an image switch
- * (desktop: `ImageIdentificationPropertyJvm`).
- */
-internal fun <B : Any> WebPropertyBuilder<B>.image(key: String, baseKey: String, get: (B) -> UUID?, set: (B, UUID?) -> Unit) {
-	val ids = EditModule.imageRepository.getAllImageIds()
-	val labels = ids.associate { it.uuid to RichText.stripToPlainText(it.name.value) }
-	choice(
-		key, baseKey, ids.map { it.uuid }, get, set,
-		id = { it.id }, label = { labels[it] ?: it.id }, nullLabel = "None", group = WebGroups.APPEARANCE,
-	)
 }
