@@ -28,6 +28,7 @@ import java.awt.Frame
 import java.io.IOException
 import java.nio.file.Path
 import java.text.DecimalFormat
+import java.text.ParseException
 import javax.swing.*
 import javax.swing.text.NumberFormatter
 import kotlin.io.path.absolutePathString
@@ -260,11 +261,26 @@ class ExportRasterImagePanel(
             return false
         }
 
-        widthField.commitEdit()
-        heightField.commitEdit()
+        if (!commit(widthField)) {
+            errorLabel.text = Translations.getString("draw.image.invalidWidth.msg")
+            return false
+        }
+        if (!commit(heightField)) {
+            errorLabel.text = Translations.getString("draw.image.invalidHeight.msg")
+            return false
+        }
 
         return true
     }
+
+    /** Commits the text of [field], returning `false` if it is not a valid value, e.g. below the minimum. */
+    private fun commit(field: JFormattedTextField): Boolean =
+        try {
+            field.commitEdit()
+            true
+        } catch (_: ParseException) {
+            false
+        }
 
     private fun export(path: Path): Boolean {
         try {
