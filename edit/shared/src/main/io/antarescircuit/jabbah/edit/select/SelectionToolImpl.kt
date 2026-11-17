@@ -3,6 +3,7 @@ package io.antarescircuit.jabbah.edit.select
 import io.antarescircuit.jabbah.base.*
 import io.antarescircuit.jabbah.base.event.Button
 import io.antarescircuit.jabbah.base.event.EventBus
+import io.antarescircuit.jabbah.base.event.EventHandler
 import io.antarescircuit.jabbah.base.event.KeyEvent
 import io.antarescircuit.jabbah.base.event.MouseEvent
 import io.antarescircuit.jabbah.draw.InputEventHandler
@@ -19,7 +20,7 @@ import io.antarescircuit.jabbah.edit.tool.ToolAdapter
 class SelectionToolImpl(
 	editor: Editor,
 	override val rubberBandHandler: RubberBandHandler,
-	eventBus: EventBus
+	private val eventBus: EventBus
 ) : ToolAdapter(editor), SelectionTool {
 
 	companion object {
@@ -35,12 +36,14 @@ class SelectionToolImpl(
 	/** Used to re-establish [CommandManager.active] after being disabled during drag operations.*/
 	private var commandManagerWasActive = false
 
-	init {
-		eventBus.register(PreferencesChangedEvent::class) {
-			System.invokeLater {
-				updateStatus()
-			}
+	private val preferencesChangedHandler: EventHandler<PreferencesChangedEvent> = {
+		System.invokeLater {
+			updateStatus()
 		}
+	}
+
+	init {
+		eventBus.register(PreferencesChangedEvent::class, preferencesChangedHandler)
 	}
 
 	/** ---- [Tool] interface */
@@ -253,6 +256,7 @@ class SelectionToolImpl(
 	/** ---- [SelectionToolImpl] */
 
 	override fun dispose() {
+		eventBus.unregister(PreferencesChangedEvent::class, preferencesChangedHandler)
 		tooltipHandler.dispose()
 	}
 }

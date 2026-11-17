@@ -202,4 +202,11 @@ class GraphViewReleaseClickTest {
 		assertTrue(recorder.clicks.isEmpty())
 		handler.dispose()
 	}
+
+	@Test
+	fun shouldUnregisterEventHandlersWhenDisplayHandlerIsDisposed() {
+		val registeredBefore = eventBus.size
+		GraphViewDisplayHandler(view, holder, eventBus).dispose()
+		assertEquals(registeredBefore, eventBus.size)
+	}
 }
