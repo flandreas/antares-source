@@ -28,7 +28,8 @@ export interface EditorState {
 	canRedo: boolean
 	undoLabel: string | null
 	redoLabel: string | null
-	saving: boolean
+	/** Whether all changes are stored in the browser; see `FileStore.status` */
+	saveStatus: 'saved' | 'saving' | 'failed'
 	/** The open project, or the user library being edited (kind 'library') */
 	project: { uuid: string; name: string; kind: 'project' | 'library' } | null
 	circuit: { uuid: string; name: string; type: string; editable: boolean } | null

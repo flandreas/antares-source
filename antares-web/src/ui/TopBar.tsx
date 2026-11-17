@@ -44,6 +44,8 @@ interface TopBarProps {
 	menuActions: MenuBarActions
 }
 
+const SAVE_LABELS = { saved: 'Saved', saving: 'Saving…', failed: 'Not saved' } as const
+
 export function TopBar({ state, dark, onToggleTheme, onShowShortcuts, onShowProjects, onShowPreferences, menuActions }: TopBarProps) {
 	const simulating = state.mode === 'simulate'
 	const project = state.project
@@ -151,9 +153,15 @@ export function TopBar({ state, dark, onToggleTheme, onShowShortcuts, onShowProj
 			</div>
 
 			<div className="topbar-right">
-				<span className={`save-status${state.saving ? ' saving' : ''}`}>
-					{state.project ? (state.saving ? 'Saving…' : 'Saved') : ''}
-				</span>
+				{state.project && (
+					<span
+						className={`save-status ${state.saveStatus}`}
+						role="status"
+						title={state.saveStatus === 'failed' ? 'The browser refused to store your changes. Export the project to keep a copy.' : undefined}
+					>
+						{SAVE_LABELS[state.saveStatus]}
+					</span>
+				)}
 				<button
 					type="button"
 					className="icon-btn"

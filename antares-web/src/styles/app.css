@@ -296,6 +296,11 @@ kbd {
 	color: var(--text-muted);
 }
 
+.save-status.failed {
+	color: var(--danger);
+	font-weight: 600;
+}
+
 /* ---- Menu bar */
 
 .menubar {

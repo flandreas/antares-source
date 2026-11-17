@@ -24,14 +24,15 @@ const prefersDark = () => window.matchMedia('(prefers-color-scheme: dark)').matc
 
 export function App() {
 	const [dark, setDark] = useStoredState('antares.dark', prefersDark())
-	const [status, setStatus] = useState<'loading' | 'ready' | 'failed'>('loading')
+	// 'busy': another tab edits the projects, 'moved': another tab took over from this one
+	const [status, setStatus] = useState<'loading' | 'ready' | 'failed' | 'busy' | 'moved'>('loading')
 	const [error, setError] = useState('')
 
 	useEffect(() => {
 		document.documentElement.dataset.theme = dark ? 'dark' : 'light'
 	}, [dark])
 
-	useEffect(() => {
+	const start = () =>
 		engine.start(dark).then(
 			() => {
 				engine.setConnectMethod(storedConnectMethod())
@@ -43,11 +44,25 @@ export function App() {
 				setStatus('failed')
 			},
 		)
+
+	useEffect(() => {
+		engine.tabLock.onLost = () => setStatus('moved')
+		void engine.tabLock.tryAcquire().then((acquired) => (acquired ? start() : setStatus('busy')))
 		// Theme changes after start are applied through setDark
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
+	const takeOver = async () => {
+		const wasStarted = status === 'moved'
+		setStatus('loading')
+		await engine.tabLock.takeOver()
+		// This tab's copy of the projects is outdated, so load them again
+		if (wasStarted) location.reload()
+		else void start()
+	}
+
 	if (status === 'loading') return <Splash />
+	if (status === 'busy' || status === 'moved') return <OtherTab moved={status === 'moved'} onUseHere={() => void takeOver()} />
 	if (status === 'failed') return <Failure message={error} />
 	return (
 		<Editor
@@ -70,6 +85,20 @@ function Splash() {
 			<div className="splash-bar">
 				<span />
 			</div>
+		</div>
+	)
+}
+
+/** Shown while another tab edits the projects stored in this browser. */
+function OtherTab({ moved, onUseHere }: { moved: boolean; onUseHere: () => void }) {
+	return (
+		<div className="splash">
+			<AntaresMark size={40} />
+			<div className="splash-title">{moved ? 'Antares was opened in another tab' : 'Antares is open in another tab'}</div>
+			<p className="subtle">Only one tab can edit your projects at a time, so that they don't overwrite each other.</p>
+			<button type="button" className="btn btn-primary" onClick={onUseHere}>
+				Use here
+			</button>
 		</div>
 	)
 }
@@ -163,14 +192,22 @@ function Editor({ dark, onToggleTheme }: { dark: boolean; onToggleTheme: () => v
 		}
 	}, [sidebar, setSidebar])
 
-	// Warn before leaving while changes are still being written
+	// Write changes when the tab is hidden (it may be discarded without unload on mobile),
+	// and warn before leaving while they are still being written
 	useEffect(() => {
-		const onUnload = (e: BeforeUnloadEvent) => {
-			engine.save()
-			if (engine.state.saving) e.preventDefault()
+		const onHide = () => {
+			if (document.visibilityState === 'hidden') void engine.flush()
 		}
+		const onUnload = (e: BeforeUnloadEvent) => {
+			void engine.flush()
+			if (engine.files.hasPendingChanges) e.preventDefault()
+		}
+		document.addEventListener('visibilitychange', onHide)
 		window.addEventListener('beforeunload', onUnload)
-		return () => window.removeEventListener('beforeunload', onUnload)
+		return () => {
+			document.removeEventListener('visibilitychange', onHide)
+			window.removeEventListener('beforeunload', onUnload)
+		}
 	}, [])
 
 	const noProject = !state.project && !restoring

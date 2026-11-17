@@ -28,6 +28,7 @@ import io.antarescircuit.jabbah.draw.view.CanvasJs
 import io.antarescircuit.jabbah.draw.view.DrawViewModule
 import io.antarescircuit.jabbah.edit.Command
 import io.antarescircuit.jabbah.edit.CommandEvent
+import io.antarescircuit.jabbah.edit.CommandEventType
 import io.antarescircuit.jabbah.edit.Component
 import io.antarescircuit.jabbah.edit.SnapResult
 import io.antarescircuit.jabbah.edit.model.text.TranslatableText
@@ -97,6 +98,9 @@ class AntaresWebEditor(
 
 		private val CODE_VERSION = ApplicationVersion("2.5.0")
 		private val DATA_VERSION = ApplicationVersion("2.4.0")
+
+		/** Command events that change the open document. */
+		private val DOCUMENT_CHANGES = setOf(CommandEventType.COMMIT_TRANSACTION, CommandEventType.UNDO, CommandEventType.REDO)
 
 		/** The local user owning all projects created in the browser. */
 		private val LOCAL_USER = UserIdentity.ANYBODY
@@ -192,6 +196,12 @@ class AntaresWebEditor(
 	private var notifyScheduled = false
 	private var autosaveTimer: Int? = null
 	private var saving = false
+
+	/**
+	 * Whether a command changed the open document since it was last saved. The command history alone can't tell:
+	 * undoing back to the opened state leaves nothing to undo, but differs from what autosave stored.
+	 */
+	private var unsaved = false
 
 	private val editor get() = frame.editor
 	private val modeHolder get() = frame.applicationModeHolder
@@ -383,7 +393,10 @@ class AntaresWebEditor(
 	/** ---- Events */
 
 	private fun handleEvent(event: Any) {
-		if (event is CommandEvent) scheduleAutosave()
+		if (event is CommandEvent && event.type in DOCUMENT_CHANGES) {
+			unsaved = true
+			scheduleAutosave()
+		}
 		if (::library.isInitialized) library.handleEvent(event)
 		notifyChanged()
 	}
@@ -686,7 +699,7 @@ class AntaresWebEditor(
 		autosaveTimer?.let { window.clearTimeout(it); autosaveTimer = null }
 		val data = dataController.data ?: return@guarded
 		val savable = data.savable as? AbstractLibraryItemSavable ?: return@guarded
-		if (!savable.editable || modeHolder.currentMode.isExecute() || !editor.commandManager.hasChanges()) return@guarded
+		if (!savable.editable || modeHolder.currentMode.isExecute() || !(unsaved || editor.commandManager.hasChanges())) return@guarded
 		val lib = savable.item.library ?: return@guarded
 		saving = true
 		try {
@@ -701,6 +714,7 @@ class AntaresWebEditor(
 					lib.libraryService.updateLibraryItem(lib, savable.item)
 				}
 			}
+			unsaved = false
 		} finally {
 			saving = false
 			notifyChanged()

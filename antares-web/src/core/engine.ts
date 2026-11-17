@@ -1,6 +1,7 @@
 // Typed wrapper around the Kotlin `AntaresWebEditor`, plus a tiny observable store for React.
 import * as lib from 'jabbah-antares'
-import { FileStore } from './fileStore'
+import { FileStore, type SaveStatus } from './fileStore'
+import { TabLock } from './tabLock'
 import type {
 	ActionName,
 	EditorState,
@@ -52,6 +53,7 @@ type Listener = () => void
 
 export class Engine {
 	readonly files = new FileStore()
+	readonly tabLock = new TabLock()
 	private kotlin!: KotlinEditor
 	private index!: DataIndex
 	private listeners = new Set<Listener>()
@@ -96,7 +98,25 @@ export class Engine {
 			(question, answer) => void this.confirmHandler(question).then(answer),
 		)
 		await this.kotlin.start(dark)
-		this.files.onSavingChange(() => this.changed())
+		let lastStatus: SaveStatus = this.files.status
+		this.files.onStatusChange(() => {
+			const status = this.files.status
+			if (status === 'failed' && lastStatus !== 'failed') {
+				this.message(
+					'error',
+					'Changes are not saved',
+					`The browser refused to store them (${this.files.errorMessage ?? 'unknown error'}). Antares keeps trying; export the project to keep a copy.`,
+				)
+			}
+			lastStatus = status
+			this.changed()
+		})
+		// Another tab takes over: save, then leave the stored files to it
+		this.tabLock.onTakeover = async () => {
+			this.save()
+			await this.files.flush()
+			this.files.suspend()
+		}
 	}
 
 	private changed() {
@@ -123,7 +143,14 @@ export class Engine {
 	/** ---- Reads (cached until the next change) */
 
 	get state(): EditorState {
-		return (this.cache.state ??= JSON.parse(this.kotlin.state()) as EditorState)
+		return (this.cache.state ??= this.readState())
+	}
+
+	private readState(): EditorState {
+		const state = JSON.parse(this.kotlin.state()) as Omit<EditorState, 'saveStatus'> & { saving: boolean }
+		const files = this.files.status
+		const saveStatus: SaveStatus = files === 'failed' ? 'failed' : state.saving ? 'saving' : files
+		return { ...state, saveStatus }
 	}
 
 	/** The palette rarely changes; keep the parsed one (and its identity for React) while its JSON is the same. */
@@ -230,8 +257,15 @@ export class Engine {
 		this.kotlin.setProperty(key, JSON.stringify(value))
 	}
 
+	/** Saves the open document; the files are written to IndexedDB shortly after, see [flush]. */
 	save() {
 		this.kotlin.saveNow()
+	}
+
+	/** Saves the open document and writes all changes to IndexedDB now. */
+	flush(): Promise<void> {
+		this.save()
+		return this.files.flush()
 	}
 
 	/** ---- Simulation */
