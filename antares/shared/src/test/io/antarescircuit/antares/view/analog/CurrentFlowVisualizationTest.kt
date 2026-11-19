@@ -100,6 +100,32 @@ class CurrentFlowVisualizationTest {
         tickAndExpectX(13.0)
     }
 
+	@Test
+	fun shouldDrawAcrossBendsWithOffset() {
+		edgeView.clear()
+		edgeView.addSegmentPoint(Point2D.ZERO)
+		edgeView.addSegmentPoint(Point2D(10, 0))
+		edgeView.addSegmentPoint(Point2D(10, 30))
+		edgeView.current = 0.05
+		CurrentFlowAnimationSpeed.speed = CurrentFlowAnimationSpeed.MAX_SPEED
+		edgeView.currentFlowAnimationTick(systemSpeed)
+
+		CurrentFlowVisualization.draw(edgeView, drawContext)
+
+		assertEquals(listOf(Point2D(2, 0), Point2D(10, 7), Point2D(10, 22)), points)
+	}
+
+	@Test
+	fun shouldDrawTheSamePositionsWhenRepaintedWithoutTicking() {
+		CurrentFlowVisualization.draw(edgeView, drawContext)
+		val expected = points.toList()
+		points.clear()
+
+		CurrentFlowVisualization.draw(edgeView, drawContext)
+
+		assertEquals(expected, points)
+	}
+
     private fun tickAndExpectX(x: Double) {
         points.clear()
         edgeView.currentFlowAnimationTick(systemSpeed)

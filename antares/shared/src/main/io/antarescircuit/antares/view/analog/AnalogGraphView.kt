@@ -147,10 +147,13 @@ class AnalogGraphView(
 	}
 
 	fun currentFlowAnimationTick(systemSpeedCategory: CurrentSystemSpeedCategory) {
-		getEdgeViews()
-			.map { it as AnalogEdgeView }
-			.forEach { it.currentFlowAnimationTick(systemSpeedCategory.systemSpeed) }
+		for (drawable in drawables) {
+			if (drawable is AnalogEdgeView) {
+				drawable.currentFlowAnimationTick(systemSpeedCategory.systemSpeed)
+			}
+		}
 
+		// Also refresh voltage-dependent colors, even when none of the dots move.
 		invalidate()
 		validate()
 	}
