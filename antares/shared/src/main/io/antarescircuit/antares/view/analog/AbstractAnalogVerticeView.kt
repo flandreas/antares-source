@@ -7,6 +7,7 @@ import io.antarescircuit.antares.view.analog.engine.AnalogElementProxy
 import io.antarescircuit.jabbah.base.geom.*
 import io.antarescircuit.jabbah.draw.DrawContext
 import io.antarescircuit.jabbah.draw.drawable.AbstractDrawable
+import io.antarescircuit.jabbah.draw.graphics.Color
 import io.antarescircuit.jabbah.draw.graphics.CompositeColor
 import io.antarescircuit.jabbah.draw.graphics.LinearColorGradient
 import io.antarescircuit.jabbah.draw.style.DrawStyleModule
@@ -38,6 +39,20 @@ abstract class AbstractAnalogVerticeView<T: AbstractAnalogVertice<*>>(
 	}
 
 	private val mainPropertyLabel = createMainPropertyLabel()
+
+	private class CachedColorGradient(
+		val color1: Color,
+		val color2: Color,
+		val transparency: Int,
+		val gradient: LinearColorGradient,
+	)
+
+	/**
+	 * Gradient endpoints use local bounds; the drawing transform applies the view's location and rotation.
+	 * Moving or rotating the view therefore needs no cache reset, including between simulation runs.
+	 * Each lookup checks the local endpoint coordinates, resolved colors, and transparency before reuse.
+	 */
+	private var cachedColorGradient: CachedColorGradient? = null
 
 	protected open val mainPropertyValue: String? = null
 
@@ -125,12 +140,22 @@ abstract class AbstractAnalogVerticeView<T: AbstractAnalogVertice<*>>(
 		if (context.castedAppContext<GraphApplicationContext>()!!.showNetState) {
 			val color1 = model.getPort<AnalogSignal>(portId1).net?.signal?.color?.foregroundColor ?: foregroundColor
 			val color2 = model.getPort<AnalogSignal>(portId2).net?.signal?.color?.foregroundColor ?: foregroundColor
-			// TODO Optimize: Can this be cached?
-			return LinearColorGradient(
+			val transparency = transparent.transparency
+			val cached = cachedColorGradient
+			// Compare coordinates directly to avoid allocating endpoints on cache hits.
+			if (cached != null && cached.color1 == color1 && cached.color2 == color2 &&
+				cached.transparency == transparency &&
+				cached.gradient.p1.x == bounds.minX && cached.gradient.p1.y == bounds.centerY &&
+				cached.gradient.p2.x == bounds.maxX && cached.gradient.p2.y == bounds.centerY) {
+				return cached.gradient
+			}
+			val gradient = LinearColorGradient(
 				bounds.centerLeft,
 				transparent.applyTo(color2),
 				bounds.centerRight,
 				transparent.applyTo(color1))
+			cachedColorGradient = CachedColorGradient(color1, color2, transparency, gradient)
+			return gradient
 		}
 		return null
 	}
