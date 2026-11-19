@@ -21,7 +21,12 @@ class CompactablePolyline(points: List<Point2D>) {
 
 	val size: Int get() = _points.size
 
-	val boundingBox: RectangularShape get() = Rectangle2D(_boundingBox)
+	val boundingBox: RectangularShape get() {
+		if (boundingBoxDirty) {
+			updateBoundingBox()
+		}
+		return Rectangle2D(_boundingBox)
+	}
 
 	val isDegenerated: Boolean get() = size < 2 || _points[0] == _points[1]
 
@@ -30,6 +35,10 @@ class CompactablePolyline(points: List<Point2D>) {
 	private val _points = mutableListOf<Point2D>()
 
 	private val _boundingBox = Rectangle2D()
+	private var boundingBoxDirty = false
+
+	/** Earlier triples are unchanged by an append and were already checked. */
+	private var nextCompactionIndex = 1
 
 	init {
 		add(points)
@@ -46,15 +55,21 @@ class CompactablePolyline(points: List<Point2D>) {
 	/** ---- [CompactablePolyline] */
 
 	fun add(point: Point2D): CompactablePolyline {
-		add(listOf(point))
+		if (_points.isEmpty()) {
+			_boundingBox.setFrame(point.x, point.y, 1.0, 1.0)
+		} else if (!boundingBoxDirty) {
+			_boundingBox.add(point)
+		}
+		_points.add(point)
+		compactFrom(nextCompactionIndex)
 		return this
 	}
 
 	fun add(points: List<Point2D>): CompactablePolyline {
 		if (points.isNotEmpty()) {
 			_points.addAll(points)
+			boundingBoxDirty = true
 			compact()
-			updateBoundingBox()
 		}
 		return this
 	}
@@ -70,16 +85,41 @@ class CompactablePolyline(points: List<Point2D>) {
 
 	/** Removes all intermediate points that lie between two collinear segments */
 	fun compact() {
+		compactFrom(1)
+	}
+
+	private fun compactFrom(startIndex: Int) {
 		if (_points.size <= 2) {
+			nextCompactionIndex = 1
 			return
 		}
-		var i = 1
+		var i = startIndex
+		var recheckFrom = Int.MAX_VALUE
 		while (i < _points.size) {
 			if (canCompactPoint(i)) {
+				if (!boundingBoxDirty) {
+					checkRemovedExtremum(i)
+				}
 				_points.removeAt(i)
+				// The preceding triple may change after removal. Like a full forward scan,
+				// defer checking it until the next append or explicit compact().
+				recheckFrom = minOf(recheckFrom, (i - 1).coerceAtLeast(1))
 			} else {
 				i++
 			}
+		}
+		nextCompactionIndex = minOf(recheckFrom, _points.lastIndex.coerceAtLeast(1))
+	}
+
+	private fun checkRemovedExtremum(index: Int) {
+		val point = _points[index]
+		val previous = _points[index - 1]
+		val next = _points.getOrNull(index + 1) ?: previous
+		if ((Geometry.equal(point.x, _boundingBox.x) && previous.x > point.x && next.x > point.x)
+			|| (Geometry.equal(point.x, _boundingBox.maxX) && previous.x < point.x && next.x < point.x)
+			|| (Geometry.equal(point.y, _boundingBox.y) && previous.y > point.y && next.y > point.y)
+			|| (Geometry.equal(point.y, _boundingBox.maxY) && previous.y < point.y && next.y < point.y)) {
+			boundingBoxDirty = true
 		}
 	}
 
@@ -93,6 +133,7 @@ class CompactablePolyline(points: List<Point2D>) {
 		_boundingBox.setFrame(
 			_boundingBox.x, _boundingBox.y,
 			_boundingBox.width, _boundingBox.height)
+		boundingBoxDirty = false
 	}
 
 	/**
@@ -109,17 +150,11 @@ class CompactablePolyline(points: List<Point2D>) {
 			return false
 		}
 
-		val angle1 = Geometry.angle(
-			Point2D.ZERO,
-			Geometry.normal(
-				_points[i - 1].x, _points[i - 1].y,
-				_points[i].x, _points[i].y))
-
-		val angle2 = Geometry.angle(
-			Point2D.ZERO,
-			Geometry.normal(
-				_points[i].x, points[i].y,
-				_points[i + 1].x, _points[i + 1].y))
+		val previous = _points[i - 1]
+		val point = _points[i]
+		val next = _points[i + 1]
+		val angle1 = Geometry.angle(0.0, 0.0, previous.y - point.y, point.x - previous.x)
+		val angle2 = Geometry.angle(0.0, 0.0, point.y - next.y, next.x - point.x)
 
 		return abs(angle1 - angle2) <= COMPACT_ANGLE || abs(abs(angle1 - angle2) - PI) < COMPACT_ANGLE
 	}

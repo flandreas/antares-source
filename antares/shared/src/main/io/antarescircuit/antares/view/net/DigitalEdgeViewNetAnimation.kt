@@ -14,6 +14,7 @@ import io.antarescircuit.jabbah.execution.actor.ActorListener
 import io.antarescircuit.jabbah.execution.scheduler.Scheduler
 import io.antarescircuit.jabbah.execution.speed.SystemSpeedCategory
 import io.antarescircuit.jabbah.graph.view.ConnectableView
+import io.antarescircuit.jabbah.graph.view.EdgeView
 import io.antarescircuit.jabbah.graph.view.EdgeViewNetAnimation
 import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
@@ -76,6 +77,12 @@ class DigitalEdgeViewNetAnimation(
 
 	private val terminatedAnimationViews = mutableListOf<DigitalEdgeAnimationView>()
 
+	private data class DirectedEdge(val edgeView: EdgeView<*>, val isReverse: Boolean)
+	private data class EdgeLengths(val length: Double, val maximumNetLength: Double)
+
+	/** Geometry and direction are fixed for the lifetime of this net animation. */
+	private val edgeLengths = mutableMapOf<DirectedEdge, EdgeLengths>()
+
 	private val animationSplitter = AnimationSplitter()
 
 	init {
@@ -101,11 +108,28 @@ class DigitalEdgeViewNetAnimation(
 	 * them in [predecessorMap].
 	 */
 	private fun processNode(predecessor: DigitalEdgeView, nodeView: NodeView<*>) {
-		nodeView.getEdgeViews()
-			.filter { it != predecessor }
-			.map { it as DigitalEdgeView }
-			.forEach { setupEdgeAnimation(predecessor, it, nodeView) }
+		for (edgeView in nodeView.getEdgeViews()) {
+			if (edgeView !== predecessor) {
+				setupEdgeAnimation(predecessor, edgeView as DigitalEdgeView, nodeView)
+			}
+		}
 	}
+
+	private fun getEdgeLengths(edgeView: EdgeView<*>, isReverse: Boolean): EdgeLengths =
+		edgeLengths.getOrPut(DirectedEdge(edgeView, isReverse)) {
+			val length = edgeView.polyline.length
+			val endpoint = if (isReverse) edgeView.origin?.connectableView else edgeView.destination?.connectableView
+			var maximumSubnetLength = 0.0
+			if (endpoint is NodeView<*>) {
+				for (nextEdge in endpoint.getEdgeViews()) {
+					if (nextEdge !== edgeView) {
+						val nextLengths = getEdgeLengths(nextEdge, endpoint === nextEdge.destination?.connectableView)
+						maximumSubnetLength = maxOf(maximumSubnetLength, nextLengths.maximumNetLength)
+					}
+				}
+			}
+			EdgeLengths(length, length + maximumSubnetLength)
+		}
 
 	private fun setupEdgeAnimation(
 		predecessor: DigitalEdgeView?,
@@ -125,7 +149,8 @@ class DigitalEdgeViewNetAnimation(
 		val predecessorInfo: AnimationInfo? = if (predecessor != null) predecessorMap[predecessor] else null
 
 		val offset: Double = predecessorInfo?.edgeViewPointSequence?.remainder ?: 0.0
-		val sequence = EdgeViewPointSequence(edgeView, isReverse, true, offset)
+		val lengths = getEdgeLengths(edgeView, isReverse)
+		val sequence = EdgeViewPointSequence(edgeView, isReverse, true, offset, size = lengths.maximumNetLength)
 
 		val overallLength: Double = predecessorInfo?.overallLength ?: sequence.size
 		val oldVisitedLength = predecessorInfo?.visitedLength ?: 0.0
@@ -138,7 +163,7 @@ class DigitalEdgeViewNetAnimation(
 			edgeViewPointSequence = sequence,
 			animationTask = bitAnimationTask,
 			overallLength = overallLength,
-			visitedLength = oldVisitedLength + edgeView.polyline.length
+			visitedLength = oldVisitedLength + lengths.length
 		)
 
 		drawingView.animationContainer.add(animationView)

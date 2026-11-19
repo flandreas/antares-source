@@ -8,6 +8,7 @@ import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
+import kotlin.test.assertSame
 
 class EdgeViewPointSequenceTest {
 
@@ -158,6 +159,82 @@ class EdgeViewPointSequenceTest {
 	fun shouldBuildDummySequenceForDistortedEdgeView() {
 		val sequence = createSequence(listOf(Point2D(0, 0)))
 		assertEquals(0.0, sequence.size)
+	}
+
+	@Test
+	fun shouldKeepCornerVisitsAndRemainderWhenStepSizeChanges() {
+		val sequence = createSequence(listOf(Point2D(0, 0), Point2D(10, 0)), returnSequenceEndpoints = true)
+		assertEquals(Point2D(0, 0), sequence.getCurrent())
+		assertEquals(Point2D(0, 0), sequence.getNext(2.0))
+		assertEquals(Point2D(2, 0), sequence.getCurrent())
+		assertEquals(Point2D(2, 0), sequence.getNext(5.0))
+		assertEquals(Point2D(7, 0), sequence.getNext(4.0))
+		assertEquals(1.0, sequence.remainder)
+		assertEquals(Point2D(10, 0), sequence.getNext(3.0))
+		assertNull(sequence.getNext(3.0))
+		assertNull(sequence.getCurrent())
+		// An explicitly visited endpoint consumes a tick. Preserve its outgoing step as remainder.
+		assertEquals(3.0, sequence.remainder)
+
+		val successor = createSequence(listOf(Point2D(10, 0), Point2D(20, 0)), offset = sequence.remainder)
+		assertEquals(Point2D(13, 0), successor.getNext(3.0))
+	}
+
+	@Test
+	fun shouldVisitReverseCornersWithLargeStepsAndOffset() {
+		val sequence = createSequence(
+			listOf(Point2D(0, 0), Point2D(2, 0), Point2D(2, 2), Point2D(5, 2)),
+			reverse = true,
+			returnSequenceEndpoints = true,
+			offset = 1.0,
+		)
+		assertEquals(Point2D(4, 2), sequence.getNext(8.0))
+		assertEquals(Point2D(2, 2), sequence.getNext(8.0))
+		assertEquals(Point2D(2, 0), sequence.getNext(8.0))
+		assertEquals(Point2D(0, 0), sequence.getNext(8.0))
+		assertNull(sequence.getNext(8.0))
+	}
+
+	@Test
+	fun shouldCarrySpacingAcrossSeveralShortSegments() {
+		val sequence = createSequence(
+			listOf(Point2D(0, 0), Point2D(2, 0), Point2D(2, 2), Point2D(20, 2)),
+			returnSequenceEndpoints = false,
+			offset = 5.0,
+		)
+		assertForEachWithDistance(sequence, 8.0, listOf(Point2D(3, 2), Point2D(11, 2), Point2D(19, 2)))
+	}
+
+	@Test
+	fun shouldTraverseDiagonalSegmentsInEitherDirection() {
+		for (reverse in listOf(false, true)) {
+			val sequence = createSequence(
+				listOf(Point2D(0, 0), Point2D(6, 8), Point2D(6, 18)),
+				reverse = reverse,
+				returnSequenceEndpoints = true,
+			)
+			val expected = listOf(Point2D(0, 0), Point2D(3, 4), Point2D(6, 8), Point2D(6, 13), Point2D(6, 18))
+			assertForEachWithDistance(sequence, 5.0, if (reverse) expected.reversed() else expected)
+		}
+	}
+
+	@Test
+	fun shouldHandleEmptyAndZeroLengthGeometry() {
+		assertNull(createSequence(emptyList()).getNext(5.0))
+		val sequence = createSequence(listOf(Point2D(3, 4), Point2D(3, 4)))
+		assertEquals(Point2D(3, 4), sequence.getNext(5.0))
+		assertNull(sequence.getNext(5.0))
+	}
+
+	@Test
+	fun shouldReuseImmutableVerticesAtEndpoints() {
+		val edge = GraphViewModule.getEdgeViewFactory().createEdgeView<Boolean>(mock())
+		edge.addSegmentPoint(Point2D(0, 0))
+		edge.addSegmentPoint(Point2D(10, 0))
+		val sequence = EdgeViewPointSequence(edge, isReverse = false, returnSequenceEndPoint = true, offset = 0.0, size = 25.0)
+		assertEquals(25.0, sequence.size)
+		assertSame(edge.polyline.getPointAt(0), sequence.getNext(10.0))
+		assertSame(edge.polyline.getPointAt(1), sequence.getNext(10.0))
 	}
 
 	private fun createSequence(
