@@ -104,6 +104,7 @@ class DialogBuilder<T: JComponent>(
 		BusyHandler.register(dialog, null)
 		setupWindowListener()
 		if (!preventWindowClose) {
+			dialog.defaultCloseOperation = WindowConstants.DISPOSE_ON_CLOSE
 			setupEscapeListener()
 		} else {
 			dialog.defaultCloseOperation = WindowConstants.DO_NOTHING_ON_CLOSE
