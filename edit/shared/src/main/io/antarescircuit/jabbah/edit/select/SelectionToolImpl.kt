@@ -53,6 +53,11 @@ class SelectionToolImpl(
 		updateStatus()
 	}
 
+	override fun deactivate() {
+		tooltipHandler.clear(editor.view)
+		super.deactivate()
+	}
+
 	private fun updateStatus() {
 		if (editor.currentTool === this) {
 			Status.set(
@@ -90,6 +95,7 @@ class SelectionToolImpl(
 	}
 
 	override fun mouseClicked(e: MouseEvent, x: Double, y: Double) {
+		tooltipHandler.clear(editor.view)
 		if (!editor.view.editable) {
 			return
 		}
@@ -107,6 +113,7 @@ class SelectionToolImpl(
 	override fun mouseMoved(e: MouseEvent, x: Double, y: Double) {
 		super<ToolAdapter>.mouseMoved(e, x, y)
 		if (!editor.view.editable) {
+			tooltipHandler.clear(editor.view)
 			return
 		}
 
@@ -114,6 +121,7 @@ class SelectionToolImpl(
 		if (target != null) {
 			target = target?.mouseMoved(context)
 			if (target != null) {
+				tooltipHandler.clear(editor.view)
 				return
 			}
 		}
@@ -125,12 +133,11 @@ class SelectionToolImpl(
 	}
 
 	override fun mousePressed(e: MouseEvent, x: Double, y: Double) {
+		tooltipHandler.clear(editor.view)
 		if (!editor.view.editable) {
 			selectionLogic(e, x, y, allowRubberband = false)
 			return
 		}
-
-		tooltipHandler.clear(editor.view)
 
 		if (e.button != Button.BUTTON1) {
 			return
@@ -204,6 +211,7 @@ class SelectionToolImpl(
 	}
 
 	override fun mouseDragged(e: MouseEvent, x: Double, y: Double) {
+		tooltipHandler.clear(editor.view)
 		if (!editor.view.editable) {
 			return
 		}

@@ -81,6 +81,7 @@ class GraphViewExecutionHandler(
 			if (target != null) {
 				target = target!!.mouseMoved(context)
 				if (target != null) {
+					tooltipHandler.clear(view)
 					return
 				}
 			}

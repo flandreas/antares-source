@@ -1,11 +1,7 @@
 package io.antarescircuit.jabbah.draw.view
 
 import io.antarescircuit.jabbah.base.*
-import io.antarescircuit.jabbah.base.event.EventBus
-import io.antarescircuit.jabbah.base.event.EventHandler
-import io.antarescircuit.jabbah.base.event.MouseEvent
-import io.antarescircuit.jabbah.base.event.PropertyChangeListener
-import io.antarescircuit.jabbah.base.geom.RectangularShape
+import io.antarescircuit.jabbah.base.event.*
 import io.antarescircuit.jabbah.base.module.BaseModule
 import io.antarescircuit.jabbah.base.richtext.RichTextParser
 import io.antarescircuit.jabbah.base.time.Timer
@@ -24,13 +20,10 @@ import io.antarescircuit.jabbah.draw.style.StyleType
  * Client objects such a selection tool instantiate a [TooltipHandler] and delegate handling of mouse move
  * event to that [TooltipHandler].
  *
- * The [TooltipHandler] searches for a [Drawable] at the mouse location and, if one is found, asks that
- * [Drawable] for its [Tooltip], typically using [Drawable.getTooltip]. A [Tooltip] consists of
- * a [RichTextDrawable] and a location where to display it (only data, no graphical representation).
- *
- * If there is a [Tooltip] to be displayed, [TooltipHandler] posts a [TooltipEvent] on the [EventBus],
- * which is handled by [TooltipManager] in order to display it. [TooltipManager] uses a [Timer] for
- * delaying [Tooltip] displaying, and creates the appropriate visual representation of a [Tooltip].
+ * The [TooltipHandler] posts a deferred content lookup on the [EventBus]. [TooltipManager] waits
+ * until the mouse has rested before invoking that lookup, which finds the current [Drawable] and
+ * asks it for its [Tooltip] and graphical explanation. A [Tooltip] contains text and a source rectangle;
+ * the manager creates its graphical representation only when it is ready to display it.
  *
  * Dismissing [Tooltip]s is initiated by client objects either explicitly using [TooltipHandler.clear],
  * or implicitly using [TooltipHandler.handle] for a location where no [Tooltip] is needed.
@@ -84,65 +77,37 @@ fun buildToolTipText(
 	return if (builder.isEmpty()) null else builder.toString()
 }
 
-/**
- * Represents a request to display or hide the tooltip of a [Drawable] in a particular [View].
- *
- * @property origin the [Drawable] for which the tooltip is to be displayed, or `null`if the tooltip
- * should be hidden
- * @property view the [View] in which [origin] is displayed
- * @property tooltip the [Tooltip] to be displayed in [view], or `null` if the tooltip should be hidden
- */
+/** A hover request, or an owner-scoped cancellation when [resolve] is null. */
 private data class TooltipEvent(
-	val origin: Drawable?,
-	val view: View<*>,
+	val owner: TooltipHandler,
+	val view: View<*>? = null,
+	val resolve: (() -> TooltipContent?)? = null,
+)
+
+/** Content resolved once the pointer has rested. Either part can be absent. */
+private data class TooltipContent(
 	val tooltip: Tooltip?,
-	val explanation: DrawableExplanation<RectangularDrawable>?
+	val explanation: DrawableExplanation<RectangularDrawable>?,
 )
 
 /**
- * A utility class that handles [MouseEvent], captures certain state information,
- * and fires [TooltipEvent] if necessary. Used for building clients of the tooltip system.
- *
- * @property eventBus the [EventBus] to use for posting [TooltipEvent]s
- * @property drawableRetriever retrieves the source of tooltip texts as the [Drawable] in the specified [DrawableContainer]
- *  at location (x,y)
- * @property tooltipAccessor accesses the tooltip text of the [Drawable] returned by [drawableRetriever]
- *  at location (x,y)
- *  @property explanationAccessor accesses the [DrawableExplanation] of the [Drawable] returned by [drawableRetriever]
- *  at location (x,y)
+ * Submits deferred tooltip lookups for mouse moves. Neither hit testing nor content creation happens
+ * until [TooltipManager]'s delay expires. Custom accessors also support execution-specific tooltips.
  */
 class TooltipHandler(
 	private val eventBus: EventBus,
-	private val drawableRetriever: (DrawableContainer<*>, Double, Double) -> Drawable? = { c, x, y -> c.getDrawableAt(x, y)},
+	private val drawableRetriever: (DrawableContainer<*>, Double, Double) -> Drawable? = { c, x, y -> c.getDrawableAt(x, y) },
 	private val tooltipAccessor: (Drawable, InputEventContext) -> Tooltip? = { d, context -> d.getTooltip(context) },
-	private val explanationAccessor: (Drawable, Double, Double) -> DrawableExplanation<RectangularDrawable>? = { d, x, y -> d.getExplanation(x, y) }
+	private val explanationAccessor: (Drawable, Double, Double) -> DrawableExplanation<RectangularDrawable>? = { d, x, y -> d.getExplanation(x, y) },
 ) {
 
 	companion object {
 
-		/** The name of the [Boolean] property in [Properties] that decides if textual HTML tooltips are to be displayed.*/
+		/** The name of the [Boolean] property in [Properties] that enables tooltips. */
 		const val PROP_TOOLTIPS_ENABLED = "draw.view.tooltipsEnabled"
 	}
 
-	/**
-	 * The [Drawable] for which a [TooltipEvent] has been posted by this [TooltipHandler] recently.
-	 * This reference is kept in order to avoid duplicate consecutive event posts.
-	 */
-	private var lastTooltipDrawable: Drawable? = null
-
-	/**
-	 * The text for which a [TooltipEvent] has been posted by this [TooltipHandler] recently.
-	 * This reference is kept in order to avoid duplicate consecutive event posts.
-	 */
-	private var lastTooltipText: String? = null
-
-	private var lastExplanation: DrawableExplanation<RectangularDrawable>? = null
-
-	private var lastTooltipSourceRect: RectangularShape? = null
-
-	private val tooltipsEnabled = BaseModule.properties.getBoolean(PROP_TOOLTIPS_ENABLED)
-
-	private val beginnerHelpEnabled = BaseModule.properties.getBoolean(PROP_BEGINNER_HELP_TOOLTIP)
+	private var disposed = false
 
 	private val popupMenuHandler: EventHandler<PopupMenuEvent> = { clear(it.canvas.view) }
 
@@ -151,91 +116,36 @@ class TooltipHandler(
 	}
 
 	fun dispose() {
+		disposed = true
+		eventBus.post(TooltipEvent(this))
 		eventBus.unregister(popupMenuHandler)
 	}
 
-	/**
-	 * Handles mouse move events in the client of the tooltip system and requests tooltip displaying
-	 * or hiding as appropriate. Called by the client of the tooltip system in its event handling methods
-	 * if none of its [Drawable]s is interested in handling a mouse moved event.
-	 */
+	/** Replaces the pending hover lookup and starts a full delay from this mouse move. */
 	fun handle(view: View<*>, container: DrawableContainer<*>, context: InputEventContext) {
-		val drawable = drawableRetriever.invoke(container, context.x, context.y)
-
-		if (drawable == null) {
-			if (lastTooltipDrawable != null) {
-				eventBus.post(TooltipEvent(null, view, null, null))
-				clearLastTargets()
-			}
+		if (disposed) return
+		if (!BaseModule.properties.getBoolean(PROP_TOOLTIPS_ENABLED)) {
+			clear(view)
 			return
 		}
-
-		val tooltip = getTooltip(drawable, context)
-		val explanation = getExplanation(drawable, context.x, context.y)
-
-		if (StringUtils.isBlank(tooltip?.text) && explanation == null) {
-			if (lastTooltipDrawable != null || lastExplanation != null) {
-				clearLastTargets()
-				eventBus.post(TooltipEvent(null, view, null, null))
-			}
-			return
-		}
-
-		if (drawable !== lastTooltipDrawable
-			|| tooltip?.text != lastTooltipText
-			|| explanation?.explanation !== lastExplanation?.explanation
-			|| lastTooltipSourceRect != tooltip?.sourceRect
-		) {
-			setLastTargets(drawable, tooltip?.text, explanation, tooltip?.sourceRect)
-			eventBus.post(TooltipEvent(drawable, view, tooltip, explanation))
-		}
+		eventBus.post(TooltipEvent(this, view) { resolve(container, context) })
 	}
 
-	private fun getTooltip(drawable: Drawable, context: InputEventContext): Tooltip? =
-		if (tooltipsEnabled) {
-			tooltipAccessor(drawable, context)
+	private fun resolve(container: DrawableContainer<*>, context: InputEventContext): TooltipContent? {
+		if (disposed || !BaseModule.properties.getBoolean(PROP_TOOLTIPS_ENABLED)) return null
+		val drawable = drawableRetriever(container, context.x, context.y) ?: return null
+		val tooltip = tooltipAccessor(drawable, context)?.takeUnless { StringUtils.isBlank(it.text) }
+		val explanation = if (BaseModule.properties.getBoolean(PROP_BEGINNER_HELP_TOOLTIP)) {
+			explanationAccessor(drawable, context.x, context.y)
 		} else null
+		return if (tooltip == null && explanation == null) null else TooltipContent(tooltip, explanation)
+	}
 
-	private fun getExplanation(drawable: Drawable, x: Double, y: Double): DrawableExplanation<RectangularDrawable>? =
-		if (tooltipsEnabled && beginnerHelpEnabled) {
-			explanationAccessor(drawable, x, y)
-		} else null
-
+	/** Cancels this handler's pending or displayed tooltip in [view]. */
 	fun clear(view: View<*>) {
-		eventBus.post(TooltipEvent(null, view, null, null))
-	}
-
-	/** Clears [lastTooltipText] and [lastExplanation], if available.*/
-	private fun clearLastTargets() {
-		lastTooltipDrawable = null
-		lastTooltipText = null
-		lastExplanation = null
-		lastTooltipSourceRect = null
-	}
-
-	private fun setLastTargets(
-		drawable: Drawable,
-		tooltipText: String?,
-	    explanation: DrawableExplanation<RectangularDrawable>?,
-		sourceRect: RectangularShape?
-	) {
-		lastTooltipDrawable = drawable
-		lastTooltipText = tooltipText
-		lastExplanation = explanation
-		lastTooltipSourceRect = sourceRect
+		eventBus.post(TooltipEvent(this, view))
 	}
 }
-
-/**
- * Captures the request for displaying a tooltip until it is scheduled by the [Timer] for display.
- * At least one of [tooltip] and [explanation] must be set.
- */
-private data class TooltipRequest(
-	val origin: Drawable,
-	val view: View<*>,
-	val tooltip: Tooltip?,
-	val explanation: DrawableExplanation<RectangularDrawable>?
-)
 
 /** Holds the view data of a currently displayed [Tooltip] or [DrawableExplanation]. */
 private data class TooltipView(
@@ -248,8 +158,6 @@ private data class TooltipView(
  * nearby the origin [Drawable] in the corresponding [View].
  */
 object TooltipManager {
-
-	private val LOG by logger(TooltipManager::class)
 
 	/** The name of the [Int] property in [Properties] designating the time (in ms) of delaying the displaying of the tooltip.*/
 	const val PROP_DELAY = "draw.view.TooltipManager.delay"
@@ -267,7 +175,7 @@ object TooltipManager {
 	private var explanationTooltip: TooltipView? = null
 
 	/** Stores the last request to display a textTooltip until scheduled by the [timer] for displaying. */
-	private var request: TooltipRequest? = null
+	private var request: TooltipEvent? = null
 
 	/** Used to delay the displaying of a requested textTooltip. */
 	private var _timer: Timer? = null
@@ -280,12 +188,29 @@ object TooltipManager {
 			return _timer!!
 		}
 
-	/** Listens for [ZoomPan] changes in [View] for which a [TooltipView] is displayed in order to dispose it.*/
-	private var zoomPanListener: PropertyChangeListener<Any>? = null
+	/** The owner and view remain observed while content is pending or displayed. */
+	private var owner: TooltipHandler? = null
+	private var observedView: View<*>? = null
+	private var observedCanvas: Canvas? = null
+
+	private val viewChangeListener = PropertyChangeListener<Any> { tooltipDismissed() }
+
+	private val inputListener = object : MouseAdapter(), KeyListener {
+		override fun mouseExited(e: MouseEvent) = tooltipDismissed()
+		override fun mousePressed(e: MouseEvent) = tooltipDismissed()
+		override fun mouseClicked(e: MouseEvent) = tooltipDismissed()
+		override fun mouseDragged(e: MouseEvent) = tooltipDismissed()
+		override fun mouseWheelRotated(e: MouseEvent) = tooltipDismissed()
+		override fun keyTyped(e: KeyEvent) = tooltipDismissed()
+		override fun keyPressed(e: KeyEvent) = tooltipDismissed()
+		override fun keyReleased(e: KeyEvent) = tooltipDismissed()
+	}
 
 	var eventBus: EventBus = BaseModule.eventBus
 		set(value) {
 			if (field != value) {
+				tooltipDismissed()
+				_timer = null
 				eventBus.unregister(TooltipEvent::class, tooltipEventHandler)
 				eventBus.unregister(PreferencesChangedEvent::class, preferencesChangeHandler)
 				field = value
@@ -302,78 +227,106 @@ object TooltipManager {
 	}
 
 	private fun initTimer() {
-		_timer = System.createTimer()
-		timer.initialize(BaseModule.properties.getInt(PROP_DELAY), repeats = false) { displayImpl() }
+		tooltipDismissed()
+		val newTimer = System.createTimer()
+		_timer = newTimer
+		newTimer.initialize(BaseModule.properties.getInt(PROP_DELAY), repeats = false) {
+			if (_timer === newTimer) displayImpl()
+		}
 	}
 
 	private fun handle(event: TooltipEvent) {
-		if (event.origin == null || event.tooltip == null) {
-			tooltipDismissed()
-		} else {
-			tooltipRequested(event)
+		if (event.resolve == null) {
+			if (event.owner === owner && (event.view == null || event.view === observedView)) {
+				tooltipDismissed()
+			}
+			return
 		}
-	}
 
-	private fun tooltipRequested(event: TooltipEvent) {
-		if (textTooltip != null || explanationTooltip != null) {
-			disposeTooltip()
+		// Timer.start() does not restart an already running timer.
+		val hoverTimer = timer
+		hoverTimer.stop()
+		disposeTooltip()
+		owner = event.owner
+		request = event
+		val view = event.view!!
+		if (observedView !== view) {
+			stopObservingView()
+			observedView = view
+			view.addPropertyChangeListener(viewChangeListener)
+			if (view.canvasInitialized) {
+				observedCanvas = view.canvas.also {
+					it.addMouseListener(inputListener)
+					it.addMouseMotionListener(inputListener)
+					it.addMouseWheelListener(inputListener)
+					it.addKeyListener(inputListener)
+				}
+			}
 		}
-		request = TooltipRequest(event.origin!!, event.view, event.tooltip, event.explanation)
-		timer.start()
+		hoverTimer.start()
 	}
 
 	private fun tooltipDismissed() {
-		if (textTooltip != null || explanationTooltip != null) {
-			LOG.trace("tooltipDismissed()")
-			disposeTooltip()
-		}
-		if (timer.isRunning()) {
-			timer.stop()
-		}
+		_timer?.stop()
+		request = null
+		owner = null
+		stopObservingView()
+		disposeTooltip()
 	}
 
-	/** Called by the [timer] in order to effectively display the textTooltip, if still needed. */
-	private fun displayImpl() {
-		timer.stop()
-		request?.let {
-			disposeTooltip()
-			if (it.tooltip != null) {
-				textTooltip = TooltipView(createTextArrowBubble(it.tooltip, it.view), it.view)
-				it.view.overlayContainer.add(textTooltip!!.arrowBubble)
-			}
-			if (it.explanation != null) {
-				explanationTooltip = TooltipView(createExplanationArrowBubble(it.explanation, it.view), it.view)
-
-				// Don't show both TooltipViews above each other
-				if (textTooltip == null || textTooltip!!.arrowBubble.position.belowLocation != explanationTooltip!!.arrowBubble.position.belowLocation) {
-					it.view.overlayContainer.add(explanationTooltip!!.arrowBubble)
-				}
-			}
-			it.view.overlayContainer.validate()
-			zoomPanListener = it.view.addPropertyChangeListener { event->
-				if (event.source == textTooltip?.view) {
-					disposeTooltip()
-				}
-			}
-			request = null
+	private fun stopObservingView() {
+		observedView?.removePropertyChangeListener(viewChangeListener)
+		observedView = null
+		observedCanvas?.let {
+			it.removeMouseListener(inputListener)
+			it.removeMouseMotionListener(inputListener)
+			it.removeMouseWheelListener(inputListener)
+			it.removeKeyListener(inputListener)
 		}
+		observedCanvas = null
+	}
+
+	/** Resolves current content only after the mouse has rested for the full delay. */
+	private fun displayImpl() {
+		_timer?.stop()
+		val pending = request ?: return
+		val content = pending.resolve!!.invoke()
+		// Resolution may itself have triggered cancellation or another hover request.
+		if (request !== pending) return
+		request = null
+		if (content == null) {
+			tooltipDismissed()
+			return
+		}
+		val view = pending.view!!
+		content.tooltip?.let {
+			textTooltip = TooltipView(createTextArrowBubble(it, view), view)
+			view.overlayContainer.add(textTooltip!!.arrowBubble)
+		}
+		content.explanation?.let {
+			val bubble = createExplanationArrowBubble(it, view)
+			// Don't show both TooltipViews above each other.
+			if (textTooltip == null || textTooltip!!.arrowBubble.position.belowLocation != bubble.position.belowLocation) {
+				explanationTooltip = TooltipView(bubble, view)
+				view.overlayContainer.add(bubble)
+			}
+		}
+		view.overlayContainer.validate()
 	}
 
 	private fun disposeTooltip() {
-		textTooltip?.let {
-			it.view.overlayContainer.remove(it.arrowBubble)
-			it.view.overlayContainer.validate()
-			zoomPanListener?.let { listener -> it.view.removePropertyChangeListener(listener) }
-			textTooltip = null
-		}
-		explanationTooltip?.let {
-			it.view.overlayContainer.remove(it.arrowBubble)
-			it.view.overlayContainer.validate()
-			zoomPanListener?.let { listener -> it.view.removePropertyChangeListener(listener) }
-			explanationTooltip = null
-		}
+		val text = textTooltip
+		val explanation = explanationTooltip
 		textTooltip = null
 		explanationTooltip = null
+		text?.let {
+			it.view.overlayContainer.remove(it.arrowBubble)
+			it.view.overlayContainer.validate()
+		}
+		explanation?.let {
+			it.view.overlayContainer.remove(it.arrowBubble)
+			it.view.overlayContainer.validate()
+		}
 	}
 
 	private fun createTextArrowBubble(tooltip: Tooltip, view: View<*>): ArrowBubble {

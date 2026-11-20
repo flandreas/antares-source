@@ -77,6 +77,7 @@ class GraphViewDisplayHandler(
 	}
 
 	private fun passivate() {
+		tooltipHandler.clear(view)
 		view.removeMouseListener(mouseHandler)
 		mouseHandler.resetMouseGesture()
 		view.removeMouseMotionListener(mouseHandler)

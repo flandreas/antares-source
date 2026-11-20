@@ -66,6 +66,7 @@ abstract class AbstractGraphViewExecutionHandler(
 	}
 
 	protected open fun passivate() {
+		tooltipHandler.clear(view)
 		view.removeMouseMotionListener(mouseHandler)
 		view.removeKeyListener(keyHandler)
 	}
