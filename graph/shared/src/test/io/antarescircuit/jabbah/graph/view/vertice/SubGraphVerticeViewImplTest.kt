@@ -3,10 +3,11 @@ package io.antarescircuit.jabbah.graph.view.vertice
 import io.antarescircuit.jabbah.base.event.Button
 import io.antarescircuit.jabbah.base.event.MouseEvent
 import io.antarescircuit.jabbah.base.geom.Rectangle2D
+import io.antarescircuit.jabbah.draw.InputEventContext
 import io.antarescircuit.jabbah.draw.drawable.RotationDirection
-import io.antarescircuit.jabbah.edit.Component
 import io.antarescircuit.jabbah.edit.model.text.LabelComponent
 import io.antarescircuit.jabbah.edit.model.text.TranslatableText
+import io.antarescircuit.jabbah.edit.model.text.description.Description
 import io.antarescircuit.jabbah.edit.DrawingViewMockBuilder
 import io.antarescircuit.jabbah.execution.actor.ActorInteractionContext
 import io.antarescircuit.jabbah.execution.actor.ActorInteractionHandler
@@ -26,7 +27,6 @@ import dev.mokkery.every
 import dev.mokkery.matcher.any
 import dev.mokkery.mock
 import dev.mokkery.verify
-import io.antarescircuit.jabbah.graph.model.Graph
 import io.antarescircuit.jabbah.graph.view.GraphElementView
 import io.antarescircuit.jabbah.graph.view.GraphView
 import kotlin.test.BeforeTest
@@ -86,6 +86,26 @@ class SubGraphVerticeViewImplTest {
 		val vvClone = clone.graphView.getVerticeViews().filterIsInstance<SubGraphVerticeView<*>>().first()
 
 		assertEquals("Test", vvClone.label!!.getTranslation())
+	}
+
+	@Test
+	fun shouldDisplayMatchingDescriptionOnlyOnce() {
+		val libraryElement = createMetaGraph("L")
+		libraryElement.storable!!.containerDrawing.model.description = Description("Shared description")
+		val vv = libraryElement.getNewInstance<Vertice>() as SubGraphVerticeViewImpl
+		vv.description = Description("Shared description")
+
+		assertEquals("*(InnerCustomComp:) Shared description.", vv.getTooltip(InputEventContext(mock(), x = 1000.0))?.text)
+	}
+
+	@Test
+	fun shouldKeepDistinctInstanceAndTypeDescriptions() {
+		val libraryElement = createMetaGraph("L")
+		libraryElement.storable!!.containerDrawing.model.description = Description("Type description")
+		val vv = libraryElement.getNewInstance<Vertice>() as SubGraphVerticeViewImpl
+		vv.description = Description("Instance description")
+
+		assertEquals("*(InnerCustomComp:) Instance description.\n\nType description.", vv.getTooltip(InputEventContext(mock(), x = 1000.0))?.text)
 	}
 
 	private fun contextFor(x: Double, y: Double, clickCount: Int = 0): ActorInteractionContext {

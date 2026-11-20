@@ -12,7 +12,6 @@ import io.antarescircuit.jabbah.draw.drawable.Transparent
 import io.antarescircuit.jabbah.draw.drawable.TransparentImpl
 import io.antarescircuit.jabbah.draw.graphics.Color
 import io.antarescircuit.jabbah.draw.graphics.Graphics2D
-import io.antarescircuit.jabbah.draw.module.DrawModule
 import io.antarescircuit.jabbah.draw.style.StyleProvider
 import io.antarescircuit.jabbah.draw.style.Themes
 import io.antarescircuit.jabbah.edit.*

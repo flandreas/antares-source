@@ -140,6 +140,13 @@ class SubGraphVerticeViewImpl(
 
 	/** ---- [AbstractVerticeView] */
 
+	override fun buildVerticeViewTooltipText(): String? =
+		if (description.isNotEmpty && description.value == typeDesc) {
+			buildToolTipText(type, description.value, null)
+		} else {
+			super.buildVerticeViewTooltipText()
+		}
+
 	override fun <T : InputEventContext> getExecutionTooltip(context: T): Tooltip? =
 		ensurePresentation()?.tooltip(context) ?: super.getExecutionTooltip(context)
 
