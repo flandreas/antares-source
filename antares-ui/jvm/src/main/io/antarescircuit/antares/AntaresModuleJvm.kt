@@ -266,7 +266,7 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 		AntaresViewModule.reset()
 	}
 
-	private fun customizeProperties(properties: Properties) {
+	internal fun customizeProperties(properties: Properties) {
 		OpenRouterConfig.fillProperties(properties)
 		properties.set(AbstractLibraryImportProcess.PROP_PROJECT_FILE_EXTENSION, "acp") // Antares Circuit Project
 		properties.set(AbstractLibraryImportProcess.PROP_LIBRARY_FILE_EXTENSION, "acl") // Antares Circuit Library
@@ -287,10 +287,12 @@ class AntaresModuleJvm(private val app: AntaresDesktop) : AbstractModule() {
 			}
         }
 
-		if (!app.isFirstUsage) {
-			// Re-establish the old property got existing users to the previous default
-			// (before it was changed to "Auto-connect". Existing users who have customized it will
-			// still get their customized value.
+		if (app.isFirstUsage) {
+			// Persist the new default so subsequent starts don't fall back to the legacy default.
+			properties.load(ConnectMethod.PROP_CONNECT_METHOD, ConnectMethod.SetPoints.customName)
+		} else {
+			// Preserve the previous default for existing users. Saved preferences are loaded afterwards
+			// and override this value, including the SetPoints preference established on first usage.
 			properties.set(ConnectMethod.PROP_CONNECT_METHOD, ConnectMethod.AutoLayout.customName)
 		}
 	}
