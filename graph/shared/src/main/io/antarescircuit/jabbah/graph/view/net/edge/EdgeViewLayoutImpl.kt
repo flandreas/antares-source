@@ -39,10 +39,10 @@ class EdgeViewLayoutImpl(
 			return
 		}
 		LOG.trace("VerticeView updated")
-		if (event.source == edgeView.origin?.connectableView && !suspendOriginLayout) {
+		if (event.source == edgeView.origin?.connectableView && !suspendOriginLayout && !isOriginInPlace()) {
 			layoutOrigin()
 		}
-		if (event.source == edgeView.destination?.connectableView && !suspendDestinationLayout) {
+		if (event.source == edgeView.destination?.connectableView && !suspendDestinationLayout && !isDestinationInPlace()) {
 			layoutDestination()
 		}
 
@@ -200,6 +200,31 @@ class EdgeViewLayoutImpl(
 					directions = effDestDirs,
 					isPort = edgeView.destination != null || destDirs != null))
 		}
+	}
+
+	/**
+	 * `true` if the origin already lies at its port and leaves it in an allowed direction, so that a layout
+	 * wouldn't move it. Updates of unchanged [ConnectableView]s, e.g. sub-circuits resolved after loading,
+	 * then don't re-route the [EdgeView], which is expensive in large circuits.
+	 */
+	private fun isOriginInPlace(): Boolean {
+		val polyline = edgeView.polyline
+		if (edgeView.origin == null || polyline.pointsCount < 2) return false
+		val start = polyline.getPointAt(0)
+		if (start != getLayoutOriginPoint()) return false
+		val direction = type.getSegmentDirection(edgeView, 0) ?: return false
+		return direction in getOriginDirections(polyline.getPointAt(1))
+	}
+
+	/** Like [isOriginInPlace] for the destination. */
+	private fun isDestinationInPlace(): Boolean {
+		val polyline = edgeView.polyline
+		val count = polyline.pointsCount
+		if (edgeView.destination == null || count < 2) return false
+		val end = polyline.getPointAt(count - 1)
+		if (end != getLayoutDestinationPoint()) return false
+		val direction = type.getSegmentDirection(edgeView, count - 2) ?: return false
+		return direction in getDestinationDirections(polyline.getPointAt(count - 2))
 	}
 
 	private fun getLayoutOriginPoint(): Point2D? {

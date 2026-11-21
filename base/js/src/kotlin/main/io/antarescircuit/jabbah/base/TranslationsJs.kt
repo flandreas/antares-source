@@ -57,7 +57,8 @@ actual object Translations {
 		params.forEachIndexed { index, param ->
 			value = value.replace("{$index}", "$param")
 		}
-		return value
+		// Like MessageFormat on the JVM, which unescapes doubled single quotes (e.g. "doesn''t")
+		return value.replace("''", "'")
 	}
 
 	actual fun getOptionalString(key: String): String? = map[key]

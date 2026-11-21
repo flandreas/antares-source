@@ -10,4 +10,6 @@ open class DragTargetHandler {
     open fun onDragOver(event: DragEvent, viewLocation: Point2D) { }
 
     open fun onDrop(event: DragEvent, viewLocation: Point2D) { }
+
+    open fun onDragLeave(event: DragEvent) { }
 }

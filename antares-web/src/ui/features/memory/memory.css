@@ -1,0 +1,280 @@
+/* ---- Memory contents editor */
+
+.memory-view {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-height: 0;
+	background: var(--bg-panel);
+}
+
+.mem-toolbar {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: var(--space-2);
+	padding: var(--space-2) var(--space-3);
+	border-bottom: 1px solid var(--border);
+	background: var(--bg-panel);
+}
+
+.mem-toolbar .btn-sm svg {
+	margin-right: 2px;
+}
+
+.mem-goto .input {
+	width: 132px;
+	height: 26px;
+	font-family: var(--font-mono);
+	font-size: var(--text-sm);
+}
+
+.mem-spacer {
+	flex: 1;
+}
+
+.mem-notice {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2);
+	min-height: 34px;
+	padding: 4px var(--space-3);
+	border-bottom: 1px solid var(--border);
+	background: var(--bg-raised);
+	color: var(--text-muted);
+	font-size: var(--text-sm);
+}
+
+.mem-notice strong {
+	color: var(--text);
+	font-weight: 600;
+}
+
+.mem-scroller {
+	position: relative;
+	flex: 1;
+	min-height: 0;
+	overflow: auto;
+	background: var(--bg-raised);
+}
+
+.mem-grid {
+	position: relative;
+	min-width: max-content;
+	font-family: var(--font-mono);
+	font-size: var(--text-sm);
+	font-variant-numeric: tabular-nums;
+	outline: none;
+	user-select: none;
+	cursor: default;
+}
+
+.mem-grid.single {
+	min-width: 100%;
+}
+
+.mem-head,
+.mem-row {
+	display: grid;
+	align-items: center;
+}
+
+.mem-head {
+	position: sticky;
+	top: 0;
+	z-index: 2;
+	height: 28px;
+	border-bottom: 1px solid var(--border);
+	background: var(--bg-panel);
+	color: var(--text-faint);
+}
+
+.mem-head-cell {
+	padding: 0 1ch;
+	text-align: right;
+}
+
+.mem-head-cell.left {
+	text-align: left;
+}
+
+.mem-body {
+	position: relative;
+}
+
+.mem-row {
+	position: absolute;
+	left: 0;
+	right: 0;
+	height: 24px;
+}
+
+.mem-row:hover {
+	background: var(--bg-hover);
+}
+
+.mem-address {
+	position: sticky;
+	left: 0;
+	z-index: 1;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	padding: 0 1.5ch 0 1ch;
+	border-right: 1px solid var(--border);
+	background: inherit;
+	color: var(--text-faint);
+}
+
+.mem-row .mem-address {
+	background: var(--bg-panel);
+}
+
+.mem-cell {
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	padding: 0 1ch;
+	overflow: hidden;
+	white-space: pre;
+	color: var(--text);
+}
+
+.mem-cell.zero {
+	color: var(--text-faint);
+}
+
+.mem-cell.mem-comment,
+.mem-cell.mem-dis {
+	justify-content: flex-start;
+	font-family: var(--font-ui);
+	text-overflow: ellipsis;
+}
+
+.mem-cell.mem-dis {
+	color: var(--text-muted);
+	font-family: var(--font-mono);
+}
+
+.mem-grid.single .mem-cell.mem-value {
+	border-right: 1px solid var(--border);
+}
+
+.mem-cell.current {
+	background: var(--run-soft);
+	color: var(--run);
+	font-weight: 600;
+	box-shadow: inset 0 0 0 1px var(--run);
+}
+
+.mem-cell.selected {
+	background: var(--accent-soft);
+}
+
+.mem-cell.selected.zero {
+	color: var(--text-muted);
+}
+
+.mem-grid:focus .mem-cell.focus,
+.mem-cell.focus:has(.mem-input) {
+	box-shadow: inset 0 0 0 2px var(--focus);
+}
+
+.mem-cell.focus {
+	box-shadow: inset 0 0 0 1px var(--border-strong);
+}
+
+.mem-input {
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	border: 0;
+	outline: none;
+	background: transparent;
+	color: var(--text);
+	font: inherit;
+	text-align: inherit;
+}
+
+.mem-value .mem-input {
+	text-align: right;
+}
+
+.mem-status {
+	display: flex;
+	align-items: center;
+	gap: var(--space-3);
+	height: 28px;
+	padding: 0 var(--space-3);
+	border-top: 1px solid var(--border);
+	background: var(--bg-panel);
+	color: var(--text-muted);
+	font-size: var(--text-sm);
+	font-variant-numeric: tabular-nums;
+}
+
+.mem-status-text {
+	white-space: nowrap;
+}
+
+.mem-pager {
+	display: inline-flex;
+	align-items: center;
+	gap: 2px;
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+}
+
+/* ---- Memory contents dialog */
+
+.dialog.memory-dialog {
+	width: min(960px, 100%);
+	height: min(680px, calc(100vh - 48px));
+}
+
+.memory-dialog .dialog-header {
+	border-bottom: 1px solid var(--border);
+	padding-bottom: var(--space-3);
+}
+
+.memory-dialog .memory-view {
+	background: var(--bg-raised);
+}
+
+.mem-dialog-kind {
+	margin-right: var(--space-2);
+	color: var(--text-faint);
+	font-weight: 500;
+}
+
+/* ---- Small dialogs */
+
+.mem-new,
+.mem-fill {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-3);
+}
+
+.mem-new-widths {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--space-3);
+}
+
+.mem-new .select,
+.mem-new-widths .select {
+	height: 34px;
+	color: var(--text);
+}
+
+.input.mono {
+	font-family: var(--font-mono);
+}
+
+.mem-capacity {
+	color: var(--text-faint);
+	font-size: var(--text-sm);
+	font-variant-numeric: tabular-nums;
+}

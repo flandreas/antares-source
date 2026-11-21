@@ -1,0 +1,61 @@
+/* Simulation time and current flow speed, bottom left of the canvas while simulating */
+.sim-status-overlay {
+	left: var(--space-3);
+	bottom: var(--space-3);
+}
+
+.sim-status {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2);
+	height: 30px;
+	padding: 0 10px;
+	background: var(--bg-raised);
+	border: 1px solid var(--border);
+	border-radius: var(--radius-md);
+	box-shadow: var(--shadow-sm);
+	color: var(--text-muted);
+	font-size: var(--text-sm);
+	white-space: nowrap;
+}
+
+.sim-time {
+	min-width: 72px;
+	color: var(--text);
+	font-family: var(--font-mono);
+	font-variant-numeric: tabular-nums;
+}
+
+.sim-flow {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2);
+}
+
+.sim-flow input {
+	width: 120px;
+	accent-color: var(--run);
+}
+
+.sim-turbo {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	padding-left: var(--space-2);
+	border-left: 1px solid var(--border);
+	cursor: pointer;
+}
+
+.sim-turbo input {
+	margin: 0;
+	accent-color: var(--run);
+}
+
+.sim-ids {
+	width: 100%;
+	height: auto;
+	padding: var(--space-2);
+	font-family: var(--font-mono);
+	font-size: var(--text-sm);
+	resize: vertical;
+}

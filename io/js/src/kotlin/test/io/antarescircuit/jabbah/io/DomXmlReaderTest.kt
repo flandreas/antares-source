@@ -45,4 +45,12 @@ class DomXmlReaderTest {
 
         assertTrue(names.contains("antares.model.gate.defaultPropagationDelay"))
     }
+
+    @Test
+    fun shouldKeepLineBreaksAndTabsInAttributeValues() {
+        val reader = DomXmlReader("<testcase testVectors='A\tB\n0\t1' name=\"x\ny\"><!-- a\n'b --></testcase>")
+
+        assertEquals("A\tB\n0\t1", reader.getAttributeValue("testVectors"))
+        assertEquals("x\ny", reader.getAttributeValue("name"))
+    }
 }

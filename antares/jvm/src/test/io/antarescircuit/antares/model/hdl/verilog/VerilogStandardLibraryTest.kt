@@ -11,7 +11,6 @@ import io.antarescircuit.jabbah.base.UUID
 import io.antarescircuit.jabbah.base.io.StringCodePrinter
 import io.antarescircuit.jabbah.graph.library.LibraryModule
 import io.antarescircuit.jabbah.graph.view.GraphView
-import java.nio.file.Paths
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
@@ -97,7 +96,7 @@ class VerilogStandardLibraryTest : AbstractStandardLibraryBasedCircuitTest() {
 		val model = HDLModel(graph, VerilogRenaming())
 			.create()
 			.apply { renameLabels() }
-		val params = HDLExportTestBenchParams(VerilogRenaming(), "tb", graph.testcases.testcases.first(), Paths.get("notUsed"), 30)
+		val params = HDLExportTestBenchParams(VerilogRenaming(), "tb", graph.testcases.testcases.first(), 30)
 		val out = StringCodePrinter()
 		VerilogTestBenchCreator(out, model, "tb", params).print()
 		return out.toString()

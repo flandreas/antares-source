@@ -23,11 +23,13 @@ import java.awt.Component
 import java.awt.Dimension
 import java.awt.Frame
 import java.awt.event.ActionEvent
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.text.DecimalFormat
 import javax.swing.*
 import javax.swing.text.NumberFormatter
 import kotlin.io.path.exists
+import kotlin.io.path.writeText
 
 /**
  * A panel for specifying parameters when exporting a [DigitalGraph] to a [HDLLanguage],
@@ -42,9 +44,6 @@ class ExportHDLPanel(
 	companion object {
 
 		private const val DEF_WAIT_TIME = 30
-
-		/** Suffix used for naming the generated test bench file.*/
-		private const val TEST_SUFFIX = "_tb"
 
 		val HELP_ID = HelpId("exportVHDL")
 
@@ -128,7 +127,7 @@ class ExportHDLPanel(
 
 		var text = language.fileExtension
 		if (testcaseComboBox.selectedItem != null) {
-			text = "$text / $TEST_SUFFIX${language.fileExtension}"
+			text = "$text / $HDL_TEST_BENCH_SUFFIX${language.fileExtension}"
 		}
 		fileNameTextExplanation.text = text
 	}
@@ -312,8 +311,10 @@ class ExportHDLPanel(
 		override fun actionPerformed(e: ActionEvent?) {
 			try {
 				val params = validatedParameters()
+				val hdlFile = exportPath(params.baseName)
+				val tbFile = params.testBenchParams?.let { exportPath(it.testBenchName) }
 
-				if (params.hdlFile.exists() || params.testBenchParams?.tbFile?.exists() == true) {
+				if (hdlFile.exists() || tbFile?.exists() == true) {
 					when (JOptionPane.showConfirmDialog(
 						this@ExportHDLPanel,
 						Translations.getString("antares.vhdl.fileExists.msg"),
@@ -330,7 +331,7 @@ class ExportHDLPanel(
 					}
 				}
 
-				export(params)
+				export(params, hdlFile, tbFile)
 
 				closeHandler(this@ExportHDLPanel)
 			} catch (e: IllegalArgumentException) {
@@ -361,17 +362,13 @@ class ExportHDLPanel(
 			throw IllegalArgumentException(Translations.getString("antares.vhdl.fileNameInvalid.error.txt", normalizedBaseName))
 		}
 
-		val hdlFile = Paths.get(directorySelectionField.path, "$baseName${language.fileExtension}")
-
 		var testBenchParams: HDLExportTestBenchParams? = null
 		if (testcaseComboBox.selectedItem != null) {
-			val testBenchName = createTestName(baseName, renaming)
-			val tbFile = Paths.get(directorySelectionField.path, "$testBenchName${language.fileExtension}")
+			val testcase = testcaseComboBox.selectedItem as Testcase
 			testBenchParams = HDLExportTestBenchParams(
 				renaming,
-				testBenchName,
-				testcaseComboBox.selectedItem as Testcase,
-				tbFile,
+				createHDLTestBenchName(baseName, testcase, renaming),
+				testcase,
 				waitTimeTextField.text.toInt())
 		}
 
@@ -379,29 +376,24 @@ class ExportHDLPanel(
 			renaming,
 			baseName,
 			delayModelCheckBox.isSelected,
-			hdlFile,
 			testBenchParams
 		)
 	}
 
-	private fun createTestName(baseName: String, renaming: HDLRenaming): String {
-		val testcase = testcaseComboBox.selectedItem as Testcase
-		val testName = StringUtils.simplify(RichText.stripToPlainText(testcase.name.value))
-		return if (StringUtils.isNotBlank(testName)) {
-			"${baseName}_${renaming.checkName(testName)}$TEST_SUFFIX"
-		} else {
-			"$baseName$TEST_SUFFIX"
-		}
-	}
+	/** Returns the path of the exported file with the given base name. */
+	private fun exportPath(baseName: String): Path =
+		Paths.get(directorySelectionField.path, "$baseName${language.fileExtension}")
 
-	private fun export(params: HDLExportParams) {
+	private fun export(params: HDLExportParams, hdlFile: Path, tbFile: Path?) {
 		InvocationHandler.invoke {
 			try {
-				language.generate(params, circuit)
+				val result = language.generate(params, circuit)
+				hdlFile.writeText(result.hdl, Charsets.ISO_8859_1)
+				result.testBench?.let { tbFile?.writeText(it, Charsets.ISO_8859_1) }
 
 				JOptionPane.showMessageDialog(
 					Frame.getFrames()[0],
-					Translations.getString("antares.vhdl.success.msg", params.hdlFile.toAbsolutePath()),
+					Translations.getString("antares.vhdl.success.msg", hdlFile.toAbsolutePath()),
 					Translations.getString("base.action.export.name"),
 					JOptionPane.INFORMATION_MESSAGE
 				)

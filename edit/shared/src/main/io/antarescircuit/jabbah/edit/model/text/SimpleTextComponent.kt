@@ -56,20 +56,20 @@ class SimpleTextComponent(
 			decorator.drawBackground(this, context)
 		}
 
-		context.g.font = font
 		context.g.color = textColor
-
-		// TODO: Implement clipping in JavaScript platform
-		// val b = shape
-		// val oldClip = context.g.getClipBounds()
-		//(context.g as Graphics2DJvm).g.setClip(b.x.toInt(), b.y.toInt(), b.width.toInt(), b.height.toInt())
-		context.translated(x + INSET_X, y + INSET_Y + JVM_OFFSET_Y) {
-			multilineText.draw(it)
-		}
-		//(context.g as Graphics2DJvm).g.setClip(oldClip.x.toInt(), oldClip.y.toInt(), oldClip.width.toInt(), oldClip.height.toInt())
+		drawText(context)
 
 		if (stroked) {
 			decorator.drawForeground(this, context)
+		}
+	}
+
+	/** Draws the text in the current color, also used by selection models that replace the component's drawing. */
+	override fun drawText(context: DrawContext) {
+		context.g.font = font
+		// TODO: Implement clipping in JavaScript platform
+		context.translated(x + INSET_X, y + INSET_Y + JVM_OFFSET_Y) {
+			multilineText.draw(it)
 		}
 	}
 

@@ -13,6 +13,7 @@ Within each module, portable code and tests live in `shared/src/main` and `share
 - `./gradlew jvmTest` runs the complete JVM test suite.
 - `./gradlew :animation:jvmTest` runs tests for one module; replace `animation` as needed.
 - `./gradlew :antares:run` builds and starts the Swing application.
+- `cd antares-web && pnpm kotlin && pnpm dev` builds the Kotlin/JS library and starts the browser editor (see `antares-web/README.md`); `pnpm typecheck` checks the TypeScript UI.
 
 The root `build` task is currently affected by a known JS/mock issue, so use the JVM tasks for routine validation. The project targets JVM 25; use a compatible JDK.
 

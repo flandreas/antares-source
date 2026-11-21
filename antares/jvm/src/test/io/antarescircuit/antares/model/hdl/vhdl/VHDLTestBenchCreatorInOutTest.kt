@@ -10,7 +10,6 @@ import io.antarescircuit.antares.model.signal.BitWidth
 import io.antarescircuit.antares.model.testcase.Testcase
 import io.antarescircuit.antares.view.gate.TriStateBufferGateView
 import io.antarescircuit.jabbah.base.io.StringCodePrinter
-import java.nio.file.Paths
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertFalse
@@ -63,7 +62,7 @@ class VHDLTestBenchCreatorInOutTest : AbstractVHDLTest() {
 		val model = HDLModel(graph, VHDLRenaming())
 			.create()
 			.apply { renameLabels() }
-		val params = HDLExportTestBenchParams(VHDLRenaming(), "test_tb", Testcase("test", script), Paths.get("notUsed"), 30)
+		val params = HDLExportTestBenchParams(VHDLRenaming(), "test_tb", Testcase("test", script), 30)
 		val out = StringCodePrinter()
 		VHDLTestBenchCreator(out, model, "test", params).print()
 		return out.toString()

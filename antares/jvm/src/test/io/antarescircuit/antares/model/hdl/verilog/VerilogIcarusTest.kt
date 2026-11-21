@@ -148,9 +148,11 @@ class VerilogIcarusTest : AbstractVerilogTest() {
 		val file = dir.resolve("nand.v")
 		val tbFile = dir.resolve("nand_tb.v")
 		val testcase = Testcase("test", "I1 I2 O1\n0 0 1\n0 1 1\n1 0 1\n1 1 0")
-		val tbParams = HDLExportTestBenchParams(VerilogRenaming(), "nand_tb", testcase, tbFile, 100)
-		VerilogGenerator(HDLExportParams(VerilogRenaming(), "nand", true, file, tbParams))
+		val tbParams = HDLExportTestBenchParams(VerilogRenaming(), "nand_tb", testcase, 100)
+		val result = VerilogGenerator(HDLExportParams(VerilogRenaming(), "nand", true, tbParams))
 			.generate(TestCircuitBuilder("nand").buildCustomNAND(null).graph as DigitalGraph)
+		Files.writeString(file, result.hdl)
+		Files.writeString(tbFile, result.testBench!!)
 
 		val simulation = dir.resolve("nand.vvp").toString()
 		val (exitCode, output) = run("iverilog", "-g2005", "-o", simulation, file.toString(), tbFile.toString())
@@ -161,7 +163,7 @@ class VerilogIcarusTest : AbstractVerilogTest() {
 
 	private fun assertCompiles(graph: DigitalGraph) {
 		val file = dir.resolve("circuit.v")
-		VerilogGenerator(HDLExportParams(VerilogRenaming(), "circuit", true, file, null)).generate(graph)
+		Files.writeString(file, VerilogGenerator(HDLExportParams(VerilogRenaming(), "circuit", true, null)).generate(graph).hdl)
 		val (exitCode, output) = run("iverilog", "-g2005", "-Wall", "-o", dir.resolve("circuit.vvp").toString(), file.toString())
 		assertEquals(0, exitCode, "iverilog failed:\n$output\n${Files.readString(file)}")
 	}

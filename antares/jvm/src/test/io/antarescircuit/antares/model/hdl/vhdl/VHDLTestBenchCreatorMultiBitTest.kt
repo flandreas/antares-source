@@ -9,7 +9,6 @@ import io.antarescircuit.antares.model.DigitalGraph
 import io.antarescircuit.antares.model.signal.BitWidth
 import io.antarescircuit.antares.model.testcase.Testcase
 import io.antarescircuit.jabbah.base.io.StringCodePrinter
-import java.nio.file.Paths
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -36,7 +35,6 @@ class VHDLTestBenchCreatorMultiBitTest : AbstractVHDLTest() {
 			VHDLRenaming(),
 			"multi_bit_tb",
 			testcase,
-			Paths.get("notUsed"),
 			30)
 
 		val out = StringCodePrinter()
