@@ -298,10 +298,12 @@ abstract class AbstractDesktopApplication(
 			FileSystems.getDefault().getPath(commandLine.getOptionValue(USER_DATA_DIR_OPTION))
 		} else {
 			loadSettings(emptyMap())
-			if (BaseModule.settings.containsKey(WorkspaceHolder.PROP_WORKSPACE)) {
-				Paths.get(BaseModule.settings.get(WorkspaceHolder.PROP_WORKSPACE))
+			val configuredWorkspace = BaseModule.settings.getString(WorkspaceHolder.PROP_WORKSPACE, "")
+			if (configuredWorkspace.isNotBlank()) {
+				Paths.get(configuredWorkspace)
 			} else {
-				determineAppDataDirectoryPath(commandLine, systemName)
+				ensureAppDataDirectory()
+				appDataDirectoryPath
 			}
 		}
 
