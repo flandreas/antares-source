@@ -1,0 +1,51 @@
+/* HDL export dialog */
+
+.hdl-form {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-3);
+}
+
+.hdl-form .select,
+.hdl-form .input {
+	height: 34px;
+	color: var(--text);
+	font-size: var(--text-md);
+}
+
+.hdl-name {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2);
+}
+
+.hdl-ext {
+	flex: none;
+	color: var(--text-faint);
+	font-family: var(--font-mono);
+	font-size: var(--text-sm);
+}
+
+.hdl-form .hdl-number {
+	width: 120px;
+}
+
+.hdl-switch-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-3);
+	color: var(--text-muted);
+	font-size: var(--text-sm);
+	cursor: pointer;
+}
+
+.hdl-files {
+	color: var(--text-faint);
+	font-size: var(--text-sm);
+}
+
+.hdl-error {
+	margin-top: 0;
+	white-space: pre-line;
+}

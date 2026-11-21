@@ -21,14 +21,14 @@ object OpenRouterConfig {
 	/** The name of the [String] preference holding the OpenRouter model identifier.*/
 	const val PROP_MODEL = "antares.ai.model"
 
-	const val CHAT_COMPLETIONS_URL = "https://openrouter.ai/api/v1/chat/completions"
+	const val CHAT_COMPLETIONS_URL = OpenRouterDefaults.CHAT_COMPLETIONS_URL
 
 	/** The model used by the circuit assistant unless the user configures another one.*/
-	const val MODEL = "openai/gpt-5.6-luna"
+	const val MODEL = OpenRouterDefaults.MODEL
 
 	/** Sent by OpenRouter conventions to identify the calling application.*/
-	const val REFERER = "https://www.antarescircuit.io"
-	const val TITLE = "Antares AI Assistant"
+	const val REFERER = OpenRouterDefaults.REFERER
+	const val TITLE = OpenRouterDefaults.TITLE
 
 	/** Where the currently used API key comes from. */
 	enum class KeySource { Environment, Preferences, None }

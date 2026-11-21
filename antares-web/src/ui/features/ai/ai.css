@@ -1,0 +1,288 @@
+/* ---- AI assistant panel, docked at the right of the canvas (left of side views), which gets narrower */
+
+.canvas-area {
+	--ai-w: min(340px, 45%);
+	--ai-offset: 0px;
+}
+
+.canvas-area.has-side {
+	--ai-offset: var(--side-w);
+}
+
+.canvas-area.canvas-area:has(> .ai-panel) .editor-canvas {
+	right: calc(var(--ai-offset) + var(--ai-w));
+	width: auto;
+}
+
+.canvas-area.canvas-area:has(> .ai-panel) .canvas-overlay.bottom-right {
+	right: calc(var(--ai-offset) + var(--ai-w) + var(--space-3));
+}
+
+.canvas-area.canvas-area:has(> .ai-panel) .canvas-overlay.top-center {
+	left: calc((100% - var(--ai-offset) - var(--ai-w)) / 2);
+}
+
+.ai-panel {
+	position: absolute;
+	z-index: 3;
+	top: 0;
+	right: var(--ai-offset);
+	bottom: 0;
+	width: var(--ai-w);
+	display: flex;
+	flex-direction: column;
+	background: var(--bg-raised);
+	border-left: 1px solid var(--border);
+}
+
+.ai-header {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2);
+	height: 40px;
+	padding: 0 var(--space-2) 0 var(--space-3);
+	border-bottom: 1px solid var(--border);
+	flex: none;
+}
+
+.ai-header-icon {
+	color: var(--text-muted);
+	flex: none;
+}
+
+.ai-title {
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.ai-model {
+	min-width: 0;
+	color: var(--text-faint);
+	font-size: var(--text-xs);
+	font-family: var(--font-mono);
+}
+
+.ai-spacer {
+	flex: 1;
+}
+
+/* ---- Settings */
+
+.ai-settings {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-3);
+	padding: var(--space-3);
+	border-bottom: 1px solid var(--border);
+	background: var(--bg-panel);
+	flex: none;
+}
+
+.ai-field {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-1);
+	font-size: var(--text-sm);
+	color: var(--text-muted);
+}
+
+.ai-field .input {
+	width: 100%;
+	font-family: var(--font-mono);
+	font-size: var(--text-sm);
+}
+
+.ai-key {
+	display: flex;
+	align-items: center;
+	gap: var(--space-1);
+}
+
+.ai-privacy {
+	margin: 0;
+	color: var(--text-muted);
+	font-size: var(--text-sm);
+	line-height: 1.5;
+}
+
+.ai-privacy a {
+	color: var(--focus);
+	text-decoration: none;
+}
+
+.ai-privacy a:hover {
+	text-decoration: underline;
+}
+
+.ai-settings-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: var(--space-2);
+}
+
+/* ---- Transcript */
+
+.ai-transcript {
+	flex: 1;
+	min-height: 0;
+	overflow-y: auto;
+	padding: var(--space-3);
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-3);
+}
+
+.ai-intro {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-3);
+	color: var(--text-muted);
+	line-height: 1.55;
+}
+
+.ai-intro p {
+	margin: 0;
+}
+
+.ai-examples {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: var(--space-2);
+}
+
+.ai-example {
+	max-width: 100%;
+	padding: 5px 10px;
+	border: 1px solid var(--border);
+	border-radius: var(--radius-md);
+	background: var(--bg-raised);
+	color: var(--text);
+	font-size: var(--text-sm);
+	text-align: left;
+	transition: background 120ms var(--ease), border-color 120ms var(--ease);
+}
+
+.ai-example:hover {
+	background: var(--bg-hover);
+	border-color: var(--border-strong);
+}
+
+.ai-msg {
+	line-height: 1.55;
+	overflow-wrap: anywhere;
+}
+
+.ai-msg.user {
+	display: flex;
+	justify-content: flex-end;
+}
+
+.ai-bubble {
+	max-width: 85%;
+	padding: 6px 10px;
+	border-radius: var(--radius-lg);
+	background: var(--bg-active);
+	white-space: pre-wrap;
+}
+
+.ai-msg.assistant {
+	font-size: var(--text-md);
+}
+
+.ai-msg.error {
+	display: flex;
+	gap: var(--space-2);
+	padding: var(--space-2) var(--space-3);
+	border-left: 2px solid var(--danger);
+	border-radius: var(--radius-sm);
+	background: var(--bg-panel);
+	color: var(--danger);
+	white-space: pre-wrap;
+}
+
+.ai-msg-icon {
+	flex: none;
+	margin-top: 3px;
+}
+
+.ai-msg.info {
+	color: var(--text-muted);
+	font-size: var(--text-sm);
+	white-space: pre-wrap;
+}
+
+.ai-thinking {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2);
+	color: var(--text-muted);
+	font-size: var(--text-sm);
+}
+
+.ai-spin {
+	animation: ai-spin 0.9s linear infinite;
+}
+
+@keyframes ai-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+/* ---- Composer */
+
+.ai-composer {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2);
+	padding: var(--space-2) var(--space-3) var(--space-3);
+	border-top: 1px solid var(--border);
+	flex: none;
+}
+
+.ai-input {
+	width: 100%;
+	min-height: 52px;
+	resize: none;
+	padding: 7px 9px;
+	border: 1px solid var(--border);
+	border-radius: var(--radius-md);
+	background: var(--bg-input);
+	color: var(--text);
+	font: inherit;
+	line-height: 1.45;
+	outline: none;
+}
+
+.ai-input:focus {
+	border-color: var(--focus);
+}
+
+.ai-input:disabled {
+	opacity: 0.6;
+}
+
+.ai-input::placeholder {
+	color: var(--text-faint);
+}
+
+.ai-composer-bar {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2);
+}
+
+.ai-composer-hint {
+	flex: 1;
+	min-width: 0;
+	color: var(--text-faint);
+	font-size: var(--text-xs);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.ai-confirm {
+	white-space: pre-line;
+}

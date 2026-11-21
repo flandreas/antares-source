@@ -77,9 +77,7 @@ actual object System {
 	}
 
 	actual fun createUUID(uuid: String?): UUID {
-		// TODO Create an UUID with the same format as the one created by the JVM platform.
-		// We don't need this before editing functionality in the browser is required.
-		return uuid?.let { UUID(uuid) } ?: UUID(Random.nextInt(10_000, 99_000).toString() + "-TEMP-UUID")
+		return uuid?.let { UUID(uuid) } ?: UUID(randomUuidString())
 	}
 
 	actual fun invokeLater(invocable: () -> Unit) {
@@ -107,4 +105,17 @@ actual object System {
 	actual fun showModalMessage(title: String, message: String, isError: Boolean) {
 		// Not yet implemented
 	}
+}
+
+/** Creates a random (version 4) UUID string, formatted like `java.util.UUID.randomUUID()`. */
+private fun randomUuidString(): String {
+	val crypto = js("globalThis.crypto")
+	if (crypto != null && crypto.randomUUID != null) {
+		return crypto.randomUUID() as String
+	}
+	val bytes = IntArray(16) { Random.nextInt(256) }
+	bytes[6] = (bytes[6] and 0x0f) or 0x40
+	bytes[8] = (bytes[8] and 0x3f) or 0x80
+	val hex = bytes.joinToString("") { it.toString(16).padStart(2, '0') }
+	return "${hex.substring(0, 8)}-${hex.substring(8, 12)}-${hex.substring(12, 16)}-${hex.substring(16, 20)}-${hex.substring(20)}"
 }
