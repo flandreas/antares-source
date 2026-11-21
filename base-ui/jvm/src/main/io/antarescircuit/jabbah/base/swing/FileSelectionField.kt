@@ -64,6 +64,7 @@ class FileSelectionField(
 				field = value
 				selectAction.isEnabled = value
 				pathComboBox.isEnabled = value
+				updatePathToolTip()
 			}
 		}
 
@@ -74,7 +75,14 @@ class FileSelectionField(
 		pathComboBox.isEditable = false
 		pathComboBox.alignmentX = LEFT_ALIGNMENT
 		pathComboBox.preferredSize = Dimension(preferredWidth, pathComboBox.preferredSize.height)
-		pathComboBox.addActionListener { selectHandler(path) }
+		pathComboBox.addActionListener {
+			updatePathToolTip()
+			selectHandler(path)
+		}
+	}
+
+	private fun updatePathToolTip() {
+		pathComboBox.toolTipText = path.takeUnless { selectionEnabled }
 	}
 
 	private fun buildUI() {
