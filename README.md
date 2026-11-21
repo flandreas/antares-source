@@ -46,6 +46,8 @@ See the [Design Manual](doc/design-manual/overview.md) for a quick overview of t
  
 ## Running
 
+The browser editor lives in [`antares-web`](antares-web/README.md): `cd antares-web && pnpm install && pnpm kotlin && pnpm dev`.
+
 The Antares Desktop JVM application is run with `io.antarescircuit.antares.AntaresSwing`. 
 
 Use the following JVM program arguments to set up your environment as developer:

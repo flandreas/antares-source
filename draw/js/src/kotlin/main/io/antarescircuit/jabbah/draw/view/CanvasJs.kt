@@ -14,6 +14,7 @@ import io.antarescircuit.jabbah.draw.graphics.Graphics2DJs
 import io.antarescircuit.jabbah.draw.style.DrawStyleModule
 import io.antarescircuit.jabbah.draw.style.StyleProvider
 import io.antarescircuit.jabbah.draw.style.StyleType
+import kotlinx.browser.document
 import kotlinx.browser.window
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
@@ -50,14 +51,14 @@ class CanvasJs(
 
     override var backgroundColor: Color = styleProvider.getStyle(StyleType.BACKGROUND).color.backgroundColor
 
-    override val mouseLocation: Point2D
-        get() = throw UnsupportedOperationException("getting mouseLocation not yet implemented")
+    /** The last known mouse location in canvas (device pixel) coordinates. */
+    override var mouseLocation: Point2D = Point2D(-1, -1)
+        private set
 
     override val initialLayout: Boolean get() = true
 
     override val hasFocus: Boolean
-        // TODO Not yet implemented
-        get() = false
+        get() = document.activeElement === canvas
 
     var dragTargetHandler: DragTargetHandler? = null
         set(value) {
@@ -66,11 +67,13 @@ class CanvasJs(
                 canvas.ondragenter = null
                 canvas.ondragover = null
                 canvas.ondrop = null
+                canvas.ondragleave = null
             }
             value?.let { handler ->
                 canvas.ondragenter = { event -> handler.onDragEnter(event, windowToCanvas(event)) }
                 canvas.ondragover = { event -> handler.onDragOver(event, windowToCanvas(event)) }
                 canvas.ondrop = { event -> handler.onDrop(event, windowToCanvas(event)) }
+                canvas.ondragleave = { event -> handler.onDragLeave(event) }
             }
             field = value
         }
@@ -87,6 +90,8 @@ class CanvasJs(
 
     private val resizeThrottle = Throttle(::resize, 100)
 
+    private val resizeListener: (Event) -> Unit = { throttledResize(it) }
+
     init {
         propertyOwner.source = this
         view.canvas = this
@@ -100,7 +105,32 @@ class CanvasJs(
 
         // Would have wanted to use ResizeObserver on the canvas itself, but that seems
         // not to be available in Kotlin JS
-        window.addEventListener("resize", ::throttledResize)
+        window.addEventListener("resize", resizeListener)
+
+        if (canvas.tabIndex < 0) {
+            canvas.tabIndex = 0
+        }
+        canvas.addEventListener("mousemove", { e ->
+            mouseLocation = windowToCanvas(e as org.w3c.dom.events.MouseEvent)
+            focusUnlessTyping()
+        })
+        canvas.addEventListener("mouseleave", { mouseLocation = Point2D(-1, -1) })
+        // Focus on press, so that keyboard input and focus-dependent interactions work
+        canvas.addEventListener("mousedown", { canvas.focus() })
+
+        // Keep receiving mouse events while dragging outside the canvas, so drags always end cleanly
+        canvas.addEventListener("pointerdown", { e ->
+            canvas.asDynamic().setPointerCapture(e.asDynamic().pointerId)
+        })
+
+        TouchInput(canvas, view)
+    }
+
+    /** Stops listening to window and screen changes. Call when the canvas element is discarded. */
+    fun dispose() {
+        window.removeEventListener("resize", resizeListener)
+        removeDevicePixelRatioHandler?.invoke(null)
+        removeDevicePixelRatioHandler = null
     }
 
     private fun throttledResize(event: Event? = null) {
@@ -163,7 +193,20 @@ class CanvasJs(
         repaint(0, 0, canvas.width, canvas.height)
     }
 
+    private var repaintRequested = false
+
+    /** Coalesces all repaint requests within one animation frame into a single full repaint. */
     override fun repaint(x: Int, y: Int, width: Int, height: Int) {
+        if (!repaintRequested) {
+            repaintRequested = true
+            window.requestAnimationFrame {
+                repaintRequested = false
+                repaintNow()
+            }
+        }
+    }
+
+    private fun repaintNow() {
         // TODO Trying to redraw minimal areas leads to strange alpha channel artefacts
         // As a workaround, redraw entire canvas
         val xx = (0).toDouble()
@@ -255,6 +298,7 @@ class CanvasJs(
             bridge = KeyEventBridge(l, canvas)
             canvas.addEventListener("keydown", bridge)
             canvas.addEventListener("keyup", bridge)
+            keyListeners.add(bridge)
         }
     }
 
@@ -278,6 +322,20 @@ class CanvasJs(
     private fun paint() {
         if (!initalizing) {
             view.paint(g)
+        }
+    }
+
+    /**
+     * Hovering focuses the canvas like on the desktop, where interactions such as connecting ports
+     * depend on [hasFocus]. Focus is not taken away from text fields the user is typing in.
+     */
+    private fun focusUnlessTyping() {
+        val active = document.activeElement
+        if (active === canvas) return
+        val typing = active != null && (active.tagName in setOf("INPUT", "TEXTAREA", "SELECT") ||
+            active.asDynamic().isContentEditable == true)
+        if (!typing) {
+            canvas.asDynamic().focus(js("({ preventScroll: true })"))
         }
     }
 

@@ -1,0 +1,58 @@
+/* ---- State machine editor */
+
+.fsm-editor {
+	position: relative;
+	flex: 1;
+	min-height: 0;
+}
+
+.fsm-toolbar {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+	padding: 2px;
+	border: 1px solid var(--border);
+	border-radius: var(--radius-md);
+	background: var(--bg-raised);
+	box-shadow: var(--shadow-sm);
+}
+
+.fsm-toolbar .icon-btn {
+	width: 28px;
+	height: 28px;
+}
+
+.fsm-toolbar .icon-btn.pressed {
+	background: var(--bg-active);
+	color: var(--text);
+}
+
+.fsm-action {
+	height: 34px;
+	background: var(--bg-raised);
+	box-shadow: var(--shadow-sm);
+}
+
+.canvas-overlay.bottom-left {
+	left: var(--space-3);
+	bottom: var(--space-3);
+}
+
+.fsm-status {
+	padding: 5px 10px;
+	border: 1px solid var(--border);
+	border-radius: var(--radius-md);
+	background: var(--bg-raised);
+	box-shadow: var(--shadow-sm);
+	color: var(--text-muted);
+	font-size: var(--text-sm);
+	pointer-events: none;
+}
+
+.fsm-inspector-title {
+	display: flex;
+	align-items: baseline;
+	gap: var(--space-2);
+	padding: var(--space-3) var(--space-4) 0;
+	font-weight: 600;
+}

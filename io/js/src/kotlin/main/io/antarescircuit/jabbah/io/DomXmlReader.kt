@@ -12,7 +12,53 @@ import org.w3c.dom.parsing.DOMParser
  */
 class DomXmlReader(document: Document) : XmlReader {
 
-    constructor(str: String): this(DOMParser().parseFromString(str, "application/xml"))
+    constructor(str: String): this(DOMParser().parseFromString(preserveAttributeWhitespace(str), "application/xml"))
+
+    companion object {
+        /**
+         * XML parsers normalize tabs and line breaks in attribute values to spaces, but multi-line values such as
+         * scripts are stored as plain attributes (the JVM's Electric XML keeps them). Hence these characters are
+         * replaced by character references inside attribute values before parsing.
+         */
+        internal fun preserveAttributeWhitespace(xml: String): String {
+            if (xml.none { it == '\n' || it == '\t' || it == '\r' }) return xml
+            val sb = StringBuilder(xml.length + 64)
+            var i = 0
+            var inTag = false
+            var quote: Char? = null
+            while (i < xml.length) {
+                val c = xml[i]
+                if (quote != null) {
+                    when (c) {
+                        quote -> quote = null
+                        '\n' -> { sb.append("&#10;"); i++; continue }
+                        '\r' -> { sb.append("&#13;"); i++; continue }
+                        '\t' -> { sb.append("&#9;"); i++; continue }
+                    }
+                } else if (inTag) {
+                    if (c == '"' || c == '\'') quote = c else if (c == '>') inTag = false
+                } else if (c == '<') {
+                    // Copy comments, CDATA sections and processing instructions unchanged
+                    val end = when {
+                        xml.startsWith("<!--", i) -> xml.indexOf("-->", i).let { if (it < 0) -1 else it + 3 }
+                        xml.startsWith("<![CDATA[", i) -> xml.indexOf("]]>", i).let { if (it < 0) -1 else it + 3 }
+                        xml.startsWith("<?", i) -> xml.indexOf("?>", i).let { if (it < 0) -1 else it + 2 }
+                        else -> null
+                    }
+                    if (end != null) {
+                        val stop = if (end < 0) xml.length else end
+                        sb.append(xml, i, stop)
+                        i = stop
+                        continue
+                    }
+                    inTag = true
+                }
+                sb.append(c)
+                i++
+            }
+            return sb.toString()
+        }
+    }
 
     private val stack = Stack<Element>()
 

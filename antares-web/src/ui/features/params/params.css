@@ -1,0 +1,119 @@
+/* Parameter definitions panel */
+
+.params-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-2);
+}
+
+.params-head h3 {
+	margin: 0;
+}
+
+.params-head .btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.params-hint {
+	margin: var(--space-2) 0 0;
+}
+
+.params-empty {
+	display: flex;
+	gap: var(--space-2);
+	padding: var(--space-3) 0 var(--space-1);
+	color: var(--text-faint);
+	font-size: var(--text-sm);
+}
+
+.params-empty svg {
+	flex: none;
+	margin-top: 1px;
+}
+
+.params-empty p {
+	margin: 0;
+	line-height: 1.5;
+}
+
+.params-empty code,
+.params-mono {
+	font-family: var(--font-mono);
+}
+
+.params-list {
+	margin: var(--space-2) 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.params-item {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 2px;
+	width: 100%;
+	padding: 6px var(--space-2);
+	border: 0;
+	border-radius: var(--radius-sm);
+	background: none;
+	color: var(--text);
+	text-align: left;
+	cursor: pointer;
+}
+
+.params-item:hover {
+	background: var(--bg-hover);
+}
+
+.params-item.selected {
+	background: var(--bg-active);
+}
+
+.params-new {
+	color: var(--text-muted);
+	font-style: italic;
+	cursor: default;
+}
+
+.params-name {
+	font-family: var(--font-mono);
+	font-size: var(--text-md);
+}
+
+.params-meta {
+	color: var(--text-faint);
+	font-size: var(--text-xs);
+}
+
+.params-form .prop-control {
+	min-width: 0;
+}
+
+.params-desc {
+	resize: vertical;
+	padding: 6px 8px;
+	font: inherit;
+}
+
+.params-form .field-error {
+	margin: var(--space-1) 0 0;
+}
+
+.params-actions {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2);
+	margin-top: var(--space-3);
+}
+
+.params-spacer {
+	flex: 1;
+}
+
+.params-remove:hover:not(:disabled) {
+	color: var(--danger);
+}

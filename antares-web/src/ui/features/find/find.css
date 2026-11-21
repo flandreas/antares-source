@@ -1,0 +1,281 @@
+/* ---- Find bar over the canvas */
+
+.canvas-overlay.top-right {
+	top: var(--space-3);
+	right: var(--space-3);
+}
+
+.canvas-area.has-side .canvas-overlay.find-overlay {
+	right: calc(var(--side-w) + var(--space-3));
+}
+
+.find-bar {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+	height: 34px;
+	padding: 0 3px 0 10px;
+	border: 1px solid var(--border);
+	border-radius: var(--radius-md);
+	background: var(--bg-raised);
+	box-shadow: var(--shadow-pop);
+	animation: find-in 140ms var(--ease);
+}
+
+@keyframes find-in {
+	from {
+		opacity: 0;
+		transform: translateY(-4px);
+	}
+}
+
+.find-bar:focus-within {
+	border-color: var(--focus);
+}
+
+.find-icon {
+	flex: none;
+	color: var(--text-faint);
+}
+
+.find-input {
+	width: 210px;
+	height: 28px;
+	padding: 0 6px;
+	border: 0;
+	background: none;
+	color: var(--text);
+	outline: none;
+	font-size: var(--text-md);
+}
+
+.find-input:focus-visible,
+.cmd-search input:focus-visible {
+	outline: none;
+}
+
+.find-input::placeholder {
+	color: var(--text-faint);
+}
+
+.find-status {
+	min-width: 64px;
+	padding-right: 4px;
+	color: var(--text-muted);
+	font-size: var(--text-sm);
+	font-variant-numeric: tabular-nums;
+	text-align: right;
+	white-space: nowrap;
+}
+
+.find-status.none {
+	color: var(--danger);
+}
+
+.find-divider {
+	width: 1px;
+	height: 18px;
+	margin: 0 4px;
+	background: var(--border);
+	flex: none;
+}
+
+.find-toggle {
+	height: 24px;
+	min-width: 26px;
+	padding: 0 5px;
+	border: 1px solid transparent;
+	border-radius: var(--radius-sm);
+	background: none;
+	color: var(--text-muted);
+	font-size: var(--text-sm);
+	font-weight: 600;
+}
+
+.find-toggle:hover {
+	background: var(--bg-hover);
+	color: var(--text);
+}
+
+.find-toggle.on {
+	border-color: var(--focus);
+	background: color-mix(in srgb, var(--focus) 14%, transparent);
+	color: var(--text);
+}
+
+.find-match {
+	height: 24px;
+	padding: 0 22px 0 6px;
+	border: 1px solid transparent;
+	border-radius: var(--radius-sm);
+	background-color: transparent;
+	color: var(--text-muted);
+	font-size: var(--text-sm);
+	appearance: none;
+	background-image: linear-gradient(45deg, transparent 50%, var(--text-faint) 50%),
+		linear-gradient(135deg, var(--text-faint) 50%, transparent 50%);
+	background-position:
+		calc(100% - 11px) 10px,
+		calc(100% - 7px) 10px;
+	background-size: 4px 4px;
+	background-repeat: no-repeat;
+}
+
+.find-match:hover {
+	background-color: var(--bg-hover);
+	color: var(--text);
+}
+
+.find-match:focus-visible {
+	border-color: var(--focus);
+	outline: none;
+}
+
+@media (max-width: 900px) {
+	.find-match,
+	.find-toggle,
+	.find-divider:first-of-type {
+		display: none;
+	}
+
+	.find-input {
+		width: 140px;
+	}
+}
+
+/* ---- Command search */
+
+.dialog-backdrop.cmd-backdrop {
+	place-items: start center;
+	padding-top: 12vh;
+}
+
+.cmd-palette {
+	width: min(600px, 100%);
+	max-height: min(520px, 76vh);
+	display: flex;
+	flex-direction: column;
+	border: 1px solid var(--border);
+	border-radius: var(--radius-lg);
+	background: var(--bg-raised);
+	box-shadow: var(--shadow-pop);
+	overflow: hidden;
+	animation: dialog-in 140ms var(--ease);
+}
+
+.cmd-search {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 0 var(--space-4);
+	border-bottom: 1px solid var(--border);
+	color: var(--text-faint);
+	flex: none;
+}
+
+.cmd-search input {
+	flex: 1;
+	min-width: 0;
+	height: 48px;
+	border: 0;
+	background: none;
+	color: var(--text);
+	font-size: var(--text-lg);
+	outline: none;
+}
+
+.cmd-search input::placeholder {
+	color: var(--text-faint);
+}
+
+.cmd-results {
+	flex: 1;
+	min-height: 0;
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	padding: 6px;
+}
+
+.cmd-item {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	min-height: 40px;
+	padding: 4px 10px;
+	border-radius: var(--radius-md);
+	cursor: default;
+}
+
+.cmd-item.active {
+	background: var(--bg-active);
+}
+
+.cmd-item.disabled {
+	opacity: 0.45;
+}
+
+.cmd-icon {
+	display: inline-grid;
+	place-items: center;
+	width: 18px;
+	color: var(--text-muted);
+	flex: none;
+}
+
+.cmd-text {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	flex: 1;
+}
+
+.cmd-label {
+	color: var(--text);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.cmd-path {
+	color: var(--text-faint);
+	font-size: var(--text-xs);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.cmd-shortcut,
+.cmd-footer kbd {
+	display: inline-flex;
+	align-items: center;
+	height: 18px;
+	padding: 0 5px;
+	border: 1px solid var(--border);
+	border-radius: var(--radius-sm);
+	background: var(--bg-panel);
+	color: var(--text-muted);
+	font-family: var(--font-ui);
+	font-size: var(--text-xs);
+	flex: none;
+}
+
+.cmd-footer {
+	display: flex;
+	align-items: center;
+	gap: var(--space-4);
+	padding: 8px var(--space-4);
+	border-top: 1px solid var(--border);
+	background: var(--bg-panel);
+	color: var(--text-faint);
+	font-size: var(--text-xs);
+	flex: none;
+}
+
+.cmd-footer kbd + kbd {
+	margin-left: 2px;
+}
+
+.cmd-count {
+	margin-left: auto;
+	font-variant-numeric: tabular-nums;
+}

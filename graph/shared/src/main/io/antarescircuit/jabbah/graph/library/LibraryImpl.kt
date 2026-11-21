@@ -500,7 +500,11 @@ open class LibraryImpl(
 			return node is LibraryDirectory
 		}
 
+		/** Leaf items such as memory contents are visited without entering them. */
 		override fun visit(node: Any): Boolean {
+			if (node is LibraryItem && exp(node)) {
+				items.add(node)
+			}
 			return true
 		}
 	}
