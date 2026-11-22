@@ -304,19 +304,19 @@ abstract class AbstractPushButtonSwitchView<T: AbstractSwitch<T>>(
 
 		fun drawSelected(context: DrawContext) {
 			drawOuterRectangle(context)
-			drawContent(context)
+			drawContent(context, false)
 		}
 
 		fun drawEdited(context: DrawContext) {
 			drawBackground(context)
 			context.g.color = context.chooseForeground(transparent.applyTo(foregroundColor))
-			drawContent(context)
+			drawContent(context, false)
 		}
 
 		fun drawExecuted(context: DrawContext) {
 			drawSignalBackground(context)
 			context.g.color = transparent.applyTo(if (model.isOn) Themes.get<AntaresTheme>().one.textColor else Themes.get<AntaresTheme>().zero.textColor)
-			drawContent(context)
+			drawContent(context, true)
 		}
 
 		private fun drawInnerRectangle(context: DrawContext) {
@@ -344,16 +344,16 @@ abstract class AbstractPushButtonSwitchView<T: AbstractSwitch<T>>(
 		}
 
 
-		private fun drawContent(context: DrawContext) {
+		private fun drawContent(context: DrawContext, isExecution: Boolean) {
 			if (labelPosition == VerticeLabelPosition.INTERNAL) {
 				drawInternalLabel(context)
 				drawInnerRectangle(context)
 			} else {
-				drawSymbol(context)
+				drawSymbol(context, isExecution)
 			}
 		}
 
-		private fun drawSymbol(context: DrawContext) {
+		private fun drawSymbol(context: DrawContext, isExecution: Boolean) {
 			context.g.translate(-AbstractAntaresPortView.LENGTH - SIZE / 2.0, 0.0)
 			context.g.rotate(rotation.inverse().angle)
 			context.g.translate(AbstractAntaresPortView.LENGTH + SIZE / 2.0, 0.0)
@@ -361,7 +361,7 @@ abstract class AbstractPushButtonSwitchView<T: AbstractSwitch<T>>(
 			drawCircles(context)
 			context.g.stroke = styleProvider.getStyle(StyleType.ANNOTATION).stroke
 			if (toggle) {
-				drawToggleSymbol(context)
+				drawToggleSymbol(context, isExecution)
 			} else {
 				drawPushButtonSymbol(context)
 			}
@@ -398,8 +398,8 @@ abstract class AbstractPushButtonSwitchView<T: AbstractSwitch<T>>(
 			}
 		}
 
-		private fun drawToggleSymbol(context: DrawContext) {
-			if (model.isOn) {
+		private fun drawToggleSymbol(context: DrawContext, isExecution: Boolean) {
+			if (model.isOn || closedOnStart && !isExecution) {
 				context.g.drawLine(
 					-AbstractAntaresPortView.LENGTH - 1.0 * SCALE, 0.5 * SCALE,
 					-AbstractAntaresPortView.LENGTH - 3.0 * SCALE, 0.5 * SCALE
