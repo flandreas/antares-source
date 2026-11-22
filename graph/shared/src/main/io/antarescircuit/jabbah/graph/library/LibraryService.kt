@@ -61,6 +61,7 @@ enum class MetaGraphBundleImportResultType {
 	Invalid,
 	StaleLibraryReference,
 	UuidAlreadyExists,
+	SystemUuidAlreadyExists,
 	ApplicationTooOld;
 
 	fun result(param: String? = null) = MetaGraphBundleImportResult(this, param)
@@ -399,12 +400,18 @@ class LibraryService(
 		userLibraryPersister.exportMetaGraphBundle(bundle, outputPath)
 	}
 
+	/**
+	 * Imports a bundle after separately confirming custom replacements and copies of system graphs.
+	 * [replaceIfUuidExists] only permits replacing custom graphs. System identity conflicts require
+	 * [copyIfSystemUuidExists], which assigns new identities and redirects references within the bundle.
+	 */
 	fun importMetaGraphBundle(
 		inputPath: String,
 		bundleName: String,
 		destination: LibraryDirectory,
 		replaceIfUuidExists: Boolean,
-		metaGraphRepository: MetaGraphRepository
+		metaGraphRepository: MetaGraphRepository,
+		copyIfSystemUuidExists: Boolean = false,
 	): MetaGraphBundleImportResult {
 		lateinit var bundle: MetaGraphBundle
 
@@ -419,6 +426,16 @@ class LibraryService(
 
 		if (!checkBundleLibrary(bundle, destination.library!!)) {
 			return MetaGraphBundleImportResultType.StaleLibraryReference.result()
+		}
+
+		val systemConflicts = bundle.metaGraphs.filter {
+			metaGraphRepository.getContainingLibrary(it.uuid)?.isSystem == true
+		}
+		if (systemConflicts.isNotEmpty()) {
+			if (!copyIfSystemUuidExists) {
+				return MetaGraphBundleImportResultType.SystemUuidAlreadyExists.result()
+			}
+			copySystemMetaGraphs(bundle, systemConflicts)
 		}
 
 		val conflict = anyBundleUuidExists(bundle, metaGraphRepository)
@@ -489,6 +506,20 @@ class LibraryService(
 				}
 			}
 		}
+
+	/** Assigns new identities to imported system graphs and redirects references within the bundle. */
+	private fun copySystemMetaGraphs(bundle: MetaGraphBundle, systemGraphs: List<MetaGraph>) {
+		val newIds = systemGraphs.associate { it.uuid to System.createUUID() }
+		bundle.metaGraphs.forEach { metaGraph ->
+			newIds[metaGraph.uuid]?.let { newId ->
+				metaGraph.graph.model!!.uuid = newId
+				metaGraph.containerDrawing.model.graphUUID = newId
+			}
+			metaGraph.graph.model!!.elements.filterIsInstance<SubGraphVerticeRef>().forEach { ref ->
+				newIds[ref.graphUUID]?.let { ref.graphUUID = it }
+			}
+		}
+	}
 
 	/**
 	 * Checks whether the destination [Library] into which [MetaGraphBundle] is to be imported

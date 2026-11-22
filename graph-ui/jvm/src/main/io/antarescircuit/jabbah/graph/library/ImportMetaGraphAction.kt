@@ -43,22 +43,31 @@ class ImportMetaGraphAction(
 		val service = destination.library!!.libraryService
 		val bundleName = FilenameUtils.getBaseName(path)
 		var replaceIfUuidExists = false
+		var copyIfSystemUuidExists = false
 		do {
 			var repeat = false
-			LOG.userTrail("Import bundle '$bundleName', replace if UUID exists = $replaceIfUuidExists")
+			LOG.userTrail("Import bundle '$bundleName', replace if UUID exists = $replaceIfUuidExists, copy system graphs = $copyIfSystemUuidExists")
 
-			val result = service.importMetaGraphBundle(path, bundleName, destination, replaceIfUuidExists, LibraryModule.libraryHolder)
+			val result = service.importMetaGraphBundle(
+				path, bundleName, destination, replaceIfUuidExists, LibraryModule.libraryHolder, copyIfSystemUuidExists,
+			)
 			when (result.type) {
 				MetaGraphBundleImportResultType.Success -> handleSuccessfulImport()
 				MetaGraphBundleImportResultType.Invalid -> handleInvalidImportFile(bundleName)
 				MetaGraphBundleImportResultType.StaleLibraryReference -> handleStaleLibraryReference(bundleName)
 				MetaGraphBundleImportResultType.UuidAlreadyExists -> {
-					replaceIfUuidExists = when (handleReplaceMetaGraphsByImport()) {
-						true -> true
-						false -> false
-						null -> return
+					if (handleImportConflict("library.action.importMetaGraph.uuidAlreadyExists.msg") != true) {
+						return
 					}
-					repeat = replaceIfUuidExists
+					replaceIfUuidExists = true
+					repeat = true
+				}
+				MetaGraphBundleImportResultType.SystemUuidAlreadyExists -> {
+					if (handleImportConflict("library.action.importMetaGraph.systemUuidAlreadyExists.msg") != true) {
+						return
+					}
+					copyIfSystemUuidExists = true
+					repeat = true
 				}
 				MetaGraphBundleImportResultType.ApplicationTooOld -> handleApplicationTooOld(result.param!!)
 			}
@@ -96,10 +105,10 @@ class ImportMetaGraphAction(
 			JOptionPane.ERROR_MESSAGE)
 	}
 
-	private fun handleReplaceMetaGraphsByImport(): Boolean? {
+	private fun handleImportConflict(messageKey: String): Boolean? {
 		val result = JOptionPane.showConfirmDialog(
 			Frame.getFrames()[0],
-			Translations.getString("library.action.importMetaGraph.uuidAlreadyExists.msg"),
+			Translations.getString(messageKey),
 			name,
 			JOptionPane.YES_NO_CANCEL_OPTION,
 			JOptionPane.QUESTION_MESSAGE)

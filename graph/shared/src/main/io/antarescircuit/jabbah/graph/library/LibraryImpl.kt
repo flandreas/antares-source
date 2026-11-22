@@ -212,6 +212,7 @@ open class LibraryImpl(
 					// Make sure that referenced MetaGraph are added first, so they get read first as well
 					// when importing bundles.
 					.reversed()
+					.filterNot { it == metaGraph.uuid }
 					.forEach { metaGraphId ->
 						val sourceSystemLib = getOptionalSystemLibraryId(metaGraphId)
 						if (sourceSystemLib != null) {
@@ -224,6 +225,8 @@ open class LibraryImpl(
 							}
 						}
 					}
+				// Always export the selected MetaGraph, even when it belongs to a system library.
+				bundle.add(metaGraph)
 				bundle.referencedSystemLibraryIds.addAll(systemLibReferences)
 			}
 	}

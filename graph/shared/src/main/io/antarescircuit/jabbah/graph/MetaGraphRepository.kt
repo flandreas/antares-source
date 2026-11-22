@@ -40,8 +40,9 @@ interface MetaGraphRepository {
 	fun graphContainsRecursively(graphUUID: UUID, graphElementUUID: UUID): Boolean
 
 	/**
-	 * Creates a [MetaGraphBundle] for [metaGraph] containing [metaGraph] and all [MetaGraph]s directly
-	 * or indirectly referenced by [metaGraph].
+	 * Creates a [MetaGraphBundle] containing [metaGraph] and all non-system [MetaGraph]s directly
+	 * or indirectly referenced by [metaGraph]. Referenced system graphs are represented by their
+	 * library IDs; [metaGraph] itself is always included, even if it belongs to a system library.
 	 */
 	fun createBundle(metaGraph: MetaGraph): MetaGraphBundle
 
