@@ -89,6 +89,7 @@ class WorkspacePanel(
 		val textArea = JTextArea(text)
 		textArea.border = BorderFactory.createEmptyBorder(5, DataFormPanel.DEF_INSET, 0, 0)
 		textArea.isEditable = false
+		textArea.isFocusable = false
 		textArea.lineWrap = true
 		textArea.wrapStyleWord = true
 		return textArea
