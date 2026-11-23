@@ -197,6 +197,10 @@ abstract class AbstractDesktopApplication(
 		LOG.info("Starting $displayName version $codeVersion")
 		LOG.info("Running on ${SystemUtils.OS_NAME} ${SystemUtils.OS_VERSION}")
 		LOG.info("Using Java ${Runtime.version()}")
+		val runtime = Runtime.getRuntime()
+		val committedHeap = runtime.totalMemory()
+		LOG.info("JVM heap bytes: max=${runtime.maxMemory()}, committed=$committedHeap, " +
+			"used=${committedHeap - runtime.freeMemory()}")
 		LOG.info(("Using app data directory $appDataDirectoryPath"))
 
 		CurrentApplicationVersion.codeVersion = codeVersion

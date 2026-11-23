@@ -88,8 +88,16 @@ class ExportRasterImagePanel(
 
     private val fileNameField = JTextField()
 
-    private val widthField = JFormattedTextField(NumberFormatter(DecimalFormat.getIntegerInstance()).apply { minimum = 1 })
-    private val heightField = JFormattedTextField(NumberFormatter(DecimalFormat.getIntegerInstance()).apply { minimum = 1 })
+	private val widthField = JFormattedTextField(NumberFormatter(DecimalFormat.getIntegerInstance()).apply {
+		valueClass = Long::class.javaObjectType
+		minimum = 1L
+		maximum = Int.MAX_VALUE.toLong()
+	})
+	private val heightField = JFormattedTextField(NumberFormatter(DecimalFormat.getIntegerInstance()).apply {
+		valueClass = Long::class.javaObjectType
+		minimum = 1L
+		maximum = Int.MAX_VALUE.toLong()
+	})
 
     private val errorLabel = JLabel(" ")
 
@@ -98,8 +106,8 @@ class ExportRasterImagePanel(
         imageTypeComboBox.addActionListener {
             fileNameField.text = buildFileName()
         }
-        val width = if (page != null && resolution != null) {
-            resolution.millimeterToPixel(page.width).toString()
+		val width = if (page != null) {
+			(resolution?.millimeterToPixel(page.width) ?: page.width).toString()
         } else {
             DEF_IMAGE_WIDTH.toString()
         }
@@ -107,8 +115,8 @@ class ExportRasterImagePanel(
         widthField.isEditable = page == null
         widthField.isEnabled = page == null
 
-        val height = if (page != null && resolution != null) {
-            resolution.millimeterToPixel(page.height).toString()
+		val height = if (page != null) {
+			(resolution?.millimeterToPixel(page.height) ?: page.height).toString()
         } else {
             DEF_IMAGE_HEIGHT.toString()
         }
@@ -248,6 +256,7 @@ class ExportRasterImagePanel(
     }
 
     private fun validateInput(): Boolean {
+		errorLabel.text = " "
         if (StringUtils.isBlank(fileNameField.text)) {
             errorLabel.text = Translations.getString("draw.image.emptyName.msg")
             return false
@@ -294,13 +303,13 @@ class ExportRasterImagePanel(
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE
                 )) {
-                    JOptionPane.NO_OPTION -> return false
                     JOptionPane.YES_OPTION -> {}
+					else -> return false
                 }
             }
 
             val effPage = page ?: Page(
-                PageSize("any", Dimension2D(widthField.value as Int, heightField.value as Int)),
+				PageSize("any", Dimension2D((widthField.value as Number).toInt(), (heightField.value as Number).toInt())),
                 PageOrientation.PORTRAIT,
                 Margin.allOf(IMAGE_INSET)
             )
@@ -312,13 +321,19 @@ class ExportRasterImagePanel(
                 effPage,
                 resolution
             )
-        } catch (e: IOException) {
+		} catch (e: RasterImageTooLargeException) {
+			errorLabel.text = "<html>" + Translations.getString("draw.image.tooLarge.msg", e.width, e.height)
+				.replace("\n", "<br>") + "</html>"
+			SwingUtilities.getWindowAncestor(this)?.pack()
+			return false
+		} catch (e: IOException) {
             JOptionPane.showMessageDialog(
                 this,
                 "Error: ${e.message}",
                 title,
                 JOptionPane.ERROR_MESSAGE
             )
+			return false
         }
         return true
     }
