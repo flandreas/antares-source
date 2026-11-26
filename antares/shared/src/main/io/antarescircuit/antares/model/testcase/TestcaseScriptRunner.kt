@@ -67,11 +67,9 @@ class TestcaseScriptRunner(
 
 	private val memory = Memory(GraphActivationRecord(circuit))
 
-	/** Dummy input port used to support feature "raised input" of [AntaresInterpreter].*/
-	private val inputPort = DigitalPortImpl(PortType.INPUT)
-
-	/** Dummy [GraphActorData] that returns [inputPort] after it has received a new value.*/
-	private var graphActorData: GraphActorData = StoringGraphActorData(inputPort, null)
+	private val inputSignals = mutableMapOf<String, DigitalSignal>()
+	private val inputChanges = mutableListOf<GraphActorData>()
+	private var startupPending = false
 
 	override fun run(): TestRunResult {
 		try {
@@ -79,12 +77,16 @@ class TestcaseScriptRunner(
 			portNames = testScript.portNames.names
 			TestcaseInterpreter(testScript, circuit, collector).interpret()
 
-			val execScriptInterpreter = BaseModule.interpreterFactory(execScriptAST, memory) as AntaresInterpreter
+			lateinit var execScriptInterpreter: AntaresInterpreter
 
 			for (testVector in collector) {
 				currentTestVector = testVector
 
 				val doStart = testVector.type == Top || testVector.type == RunFirst
+				if (doStart) {
+					// Each simulation needs fresh interpreter state, including any previous return statement.
+					execScriptInterpreter = BaseModule.interpreterFactory(execScriptAST, memory) as AntaresInterpreter
+				}
 				runImpl(execScriptInterpreter, doStart)
 			}
 
@@ -107,6 +109,7 @@ class TestcaseScriptRunner(
 		if (doStart) {
 			defineMemory()
 			interpreter.executionStarted()
+			startupPending = true
 		}
 		setInputs(interpreter)
 		readOutputs(null)
@@ -114,16 +117,29 @@ class TestcaseScriptRunner(
 
 	private fun defineMemory() {
 		memory.reset()
+		inputSignals.clear()
+		inputChanges.clear()
 		for (portName in portNames) {
-			memory.preset(portName.name.value!!, 0L)
+			val name = portName.name.value!!
+			val port = circuit.getGraphPort<DigitalSignal>(name)
+			val value = if (port is DigitalCircuitInOut && port.portType == PortType.INPUT) {
+				DigitalSignalFactory.of(port.bitWidth, 0L)
+			} else {
+				0L
+			}
+			memory.preset(name, value)
 		}
 	}
 
 	override fun setInput(input: DigitalCircuitInOut, signal: DigitalSignal) {
-		inputPort.name = input.name
-		inputPort.logic = inputLogicProvider(input.name!!)
-		memory.preset(input.name!!, signal)
-		graphActorData = StoringGraphActorData(inputPort, signal)
+		val name = input.name!!
+		val previous = inputSignals[name] ?: DigitalSignalFactory.of(input.bitWidth, 0L)
+		inputSignals[name] = signal
+		memory.preset(name, signal)
+		if (signal != previous) {
+			val inputPort = DigitalPortImpl(PortType.INPUT, name, inputLogicProvider(name), bitWidth = input.bitWidth)
+			inputChanges.add(StoringGraphActorData(inputPort, signal))
+		}
 	}
 
 	override fun readOutput(output: DigitalCircuitInOut): DigitalSignal =
@@ -141,13 +157,27 @@ class TestcaseScriptRunner(
 		}
 
 	override fun processInputChanged(context: Any?): Long {
+		val interpreter = context as AntaresInterpreter
+		if (startupPending) {
+			// Evaluate startup only after the first input batch is assigned, without an input edge.
+			// Otherwise, default zeroes could spuriously assert active-low asynchronous inputs.
+			interpret(interpreter, StoringGraphActorData(null, null))
+			startupPending = false
+		}
+		for (change in inputChanges) {
+			interpret(interpreter, change)
+		}
+		inputChanges.clear()
+		return 0
+	}
+
+	private fun interpret(interpreter: AntaresInterpreter, data: GraphActorData) {
 		// In this environment, SignalHandler is not used and therefore not provided in context.
 		// This means that test scripts using external functions based on SignalHandler won't work
-		(context as AntaresInterpreter).interpret(
-			SubGraphFunctionContext(graphActorData, null, null),
+		interpreter.interpret(
+			SubGraphFunctionContext(data, null, null),
 			keepMemory = true
 		)
-		return 0
 	}
 
 	override fun dispose() { }
