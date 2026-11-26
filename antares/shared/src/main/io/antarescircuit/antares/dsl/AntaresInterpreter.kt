@@ -499,7 +499,8 @@ class AntaresInterpreter(
 	private fun raisedInput(node: RaisedInput): Any {
 		val portName = node.variable.token.value as String
 		return context?.let {
-			if (it.data.changedPort?.name == portName
+			if (it.signalHandler?.isInitializing != true
+				&& it.data.changedPort?.name == portName
 				&& (it.data.changedPort as DigitalPort).logic.evaluate(it.data.getSignal<DigitalSignal>(it.data.changedPort!!.portId)!!.bitAt(0)).isSet
 			) 1L else 0L
 		} ?: 0L

@@ -54,15 +54,30 @@ abstract class AbstractFrequencyDividerTest(
         shouldCount()
     }
 
+    @Test
+    fun shouldInitializeAgainAfterRestartingScriptedSimulation() {
+        scheduler.isDeepExecution = false
+        startSimulation()
+        proceedUntilQueueIsEmpty()
+        clockUpDown()
+        assertEquals(DigitalSignalFactory.of(BitWidth.BW_3, 1UL), output.model.signal)
+        stopSimulation()
+
+        startSimulation()
+        proceedUntilQueueIsEmpty()
+        assertEquals(DigitalSignalFactory.of(BitWidth.BW_3, 0UL), output.model.signal)
+        clockUpDown()
+        assertEquals(DigitalSignalFactory.of(BitWidth.BW_3, 1UL), output.model.signal)
+    }
+
     private fun shouldCount() {
         startSimulation()
         proceedUntilQueueIsEmpty()
 
-        clockUpDown()
-        assertEquals(DigitalSignalFactory.of(BitWidth.BW_3, 1UL), output.model.signal)
-
-        clockUpDown()
-        assertEquals(DigitalSignalFactory.of(BitWidth.BW_3, 2UL), output.model.signal)
+        for (count in 1..16) {
+            clockUpDown()
+            assertEquals(DigitalSignalFactory.of(BitWidth.BW_3, (count % 8).toULong()), output.model.signal)
+        }
     }
 
     private fun clockUpDown() {

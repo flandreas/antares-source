@@ -115,7 +115,9 @@ class AntaresDslGlobalFunctions : DslGlobalFunctions() {
 	 * Example: triggerAfter(200)
 	 */
 	private fun triggerAfter(delay: Long, actor: Actor, signalHandler: SignalHandler) {
-		signalHandler.requestActingAfter(actor, delay, StoringGraphActorData(null, null))
+		signalHandler.afterInitialization {
+			signalHandler.requestActingAfter(actor, delay, StoringGraphActorData(null, null))
+		}
 	}
 
 	private fun timeImpl(@Suppress("unused") params: List<Any>, context: Any?): Long {

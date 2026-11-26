@@ -45,6 +45,111 @@ class SchedulerImplTest {
 	/** ---- Basics tests */
 
 	@Test
+	fun shouldSettleInitialPropagationBeforeStartingSources() {
+		val manual = createManualScheduler()
+		val phases = mutableListOf<Boolean>()
+		val source = object : ActorImpl() {
+			override fun act(signalHandler: SignalHandler, data: ActorData) {
+				phases.add(signalHandler.isInitializing)
+				signalHandler.actingDone(this, data)
+			}
+		}
+		val last = object : ActorImpl() {
+			override fun act(signalHandler: SignalHandler, data: ActorData) {
+				phases.add(signalHandler.isInitializing)
+				signalHandler.actingDone(this, data)
+			}
+		}
+		val first = object : ActorImpl() {
+			override fun act(signalHandler: SignalHandler, data: ActorData) {
+				phases.add(signalHandler.isInitializing)
+				signalHandler.actingDone(this, data)
+				// The queue is briefly empty inside this act(), before the next wave is requested.
+				signalHandler.requestActingAfter(last, 10, data)
+			}
+		}
+		manual.isActive = true
+		manual.afterInitialization { manual.requestActingAfter(source, 7, createActorData()) }
+		manual.requestActingAfter(first, 5, createActorData())
+
+		manual.execute()
+		assertTrue(manual.isInitializing)
+		manual.execute()
+		assertFalse(manual.isInitializing)
+		assertEquals(15L, manual.executionTime)
+		manual.execute()
+		assertEquals(22L, manual.executionTime)
+		assertEquals(listOf(true, true, false), phases)
+		assertTrue(manual.isQueueEmpty)
+		manual.dispose()
+	}
+
+	@Test
+	fun shouldWaitForVisualizationBeforeCompletingInitialization() {
+		val manual = createManualScheduler()
+		val actor = object : ActorImpl() {
+			override fun act(signalHandler: SignalHandler, data: ActorData) { }
+		}
+		var started = false
+		manual.isActive = true
+		manual.afterInitialization { started = true }
+		manual.requestActingAfter(actor, 0, createActorData())
+
+		manual.execute()
+		assertTrue(manual.isInitializing)
+		assertFalse(started)
+		manual.actingDone(actor, null)
+		assertFalse(manual.isInitializing)
+		assertTrue(started)
+		manual.dispose()
+	}
+
+	@Test
+	fun shouldDiscardDeferredSourcesWhenStoppedAndInitializeAgainOnRestart() {
+		val manual = createManualScheduler()
+		var oldSourceStarted = false
+		var newSourceStarted = false
+		manual.isActive = true
+		manual.afterInitialization { oldSourceStarted = true }
+		manual.isActive = false
+		assertFalse(manual.isInitializing)
+		manual.isActive = true
+		manual.afterInitialization { newSourceStarted = true }
+		manual.execute()
+
+		assertFalse(oldSourceStarted)
+		assertTrue(newSourceStarted)
+		assertFalse(manual.isInitializing)
+		manual.dispose()
+	}
+
+	@Test
+	fun shouldReportInitializationThatNeverSettlesWithoutStartingSources() {
+		val manual = createManualScheduler()
+		val issues = mutableListOf<IssueImpl>()
+		eventBus.register(IssueImpl::class) { issues.add(it) }
+		var sourceStarted = false
+		val feedback = object : ActorImpl(id = 42) {
+			override fun act(signalHandler: SignalHandler, data: ActorData) {
+				signalHandler.actingDone(this, data)
+				signalHandler.requestActingAfter(this, 1, data)
+			}
+		}
+		manual.isActive = true
+		manual.isStopOnIssue = false
+		manual.afterInitialization { sourceStarted = true }
+		manual.requestActingAfter(feedback, 1, createActorData())
+
+		repeat(SchedulerImpl.INITIALIZATION_WAVE_LIMIT + 200) { manual.execute() }
+
+		assertEquals(1, issues.size)
+		assertTrue(issues.single().origin.contains("(42)"))
+		assertTrue(manual.isInitializing)
+		assertFalse(sourceStarted)
+		manual.dispose()
+	}
+
+	@Test
 	fun shouldStopTaskAndUnregisterAllHandlersWhenDisposed() {
 		val bus = EventBusImpl()
 		val speed = CurrentSystemSpeedCategory(SystemSpeed(eventBus = bus), bus)

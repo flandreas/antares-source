@@ -32,6 +32,9 @@ interface SignalHandler : ExecutionErrorHandler {
 	 */
 	val isSingleStepMode: Boolean
 
+	/** Initial signals are still propagating. Clock-sensitive actors must not consume edges yet. */
+	val isInitializing: Boolean get() = false
+
     /** Returns the relative execution time, i.e. the relative time in nanoseconds since execution has been started.*/
     val executionTime: Long
 
@@ -51,7 +54,10 @@ interface SignalHandler : ExecutionErrorHandler {
 	/** Creates a trace log entry for tracing signal propagation. This allows central trace enabling/disabling.*/
 	fun logActorTrace(actor: Actor, msg: () -> String)
 
-    /**
+	/** Starts a periodic source after initial propagation has settled, or immediately if already running. */
+	fun afterInitialization(action: () -> Unit) = action()
+
+	/**
      * Asks this [SignalHandler] to recalculate the specified [Actor] after a given delay.
      *
      * @param actor the [Actor] to be recalculated after `delay` ns

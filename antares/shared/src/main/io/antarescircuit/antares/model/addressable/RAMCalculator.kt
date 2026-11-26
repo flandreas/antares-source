@@ -72,7 +72,7 @@ class RAMCalculator : VerticeCalculator<RAM> {
             }
         }
 
-        if (data.changedPort === ram.getClockInput()!!) {
+        if (!signalHandler.isInitializing && data.changedPort === ram.getClockInput()!!) {
             if (ram.getClockInput()!!.getIncomingSignal() == DigitalSignalFactory.of(true) && ram.isWrite) {
                 write(ram, signalHandler)
             }

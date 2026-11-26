@@ -173,8 +173,11 @@ class Clock(name: String? = null) : CalculatingVertice(CALCULATOR, name ?: DEF_N
 
 	override fun executionStart(signalHandler: SignalHandler) {
 		super.executionStart(signalHandler)
+		getOutput<DigitalSignal>().flush(signalHandler, false)
 		if (offPercentage < 100) {
-			requestActingAfter(signalHandler, offTime, createActorData(null))
+			signalHandler.afterInitialization {
+				requestActingAfter(signalHandler, offTime, createActorData(null))
+			}
 		}
 		cycleCountSpeed = signalHandler.systemSpeedCategory.systemSpeed.speed
 		resetCycleCount()

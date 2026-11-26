@@ -15,6 +15,16 @@ The `Scheduler` concept is actually split into two abstractions:
 - **Scheduler**: This interface provides methods for controlling execution at runtime, such as starting, stopping or enforcing breakpoints. It is typically used by the application UI to allow the user to interact with the execution.
 - **SignalHandler**: This interface is used by `Actors` (or `Actor`-related classes) during execution to request being asked to act at a later point in time.
 
+## Initialization and periodic sources
+
+`SchedulerImpl` starts each execution with `SignalHandler.isInitializing = true`. Initial requests run with their normal propagation delays and animation completion callbacks. Clock-sensitive actors must propagate their outputs but ignore clock edges during this phase; combinational calculations and asynchronous controls remain active.
+
+Initialization ends when the scheduling queue is empty after a complete execution wave, including pending visualizations. The queue becoming temporarily empty inside an actor's `act()` is insufficient: that actor may still schedule a continuation. This boundary does not use a fixed elapsed startup time and is independent of the soft-breakpoint arm time.
+
+Periodic sources publish their initial output and use `SignalHandler.afterInitialization` to schedule their first transition after this boundary. Antares applies this to `Clock` and execution-script `triggerAfter()`. Deferred actions are discarded on stop. Subsequent signals follow the normal change-detection and propagation rules, with the settled input levels as the clock baseline.
+
+Zero-delay oscillations retain their existing diagnostic. Startup that continues changing with nonzero delays is reported after a bounded number of waves as well; clocks remain unarmed until the simulation is stopped and restarted. In particular, a free-running oscillator built from gates has no settled initial state under this policy. A source that should begin oscillating after startup must defer its first transition explicitly.
+
 ## Actor structure
 
 `ActorImpl` as primary implementation of `Actor` handles the `Actor`'s execution state. It delegates supporting the various execution phases to its companion `ActorSupport`, which allows to register `ActorListeners` (typically object representing the execution context, such as an Antares circuit view) that want to be informed on `Actor` execution phase changes.

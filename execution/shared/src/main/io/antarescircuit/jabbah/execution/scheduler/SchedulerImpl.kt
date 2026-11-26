@@ -60,6 +60,9 @@ class SchedulerImpl(
 		 */
 		const val OSCILLATION_WAVE_LIMIT = 10_000
 
+		/** Also bound startup feedback with nonzero delays, which is not a zero-time oscillation. */
+		const val INITIALIZATION_WAVE_LIMIT = 100_000
+
 		/** Number of additional waves used to collect the [Actor]s involved in an oscillation. */
 		private const val OSCILLATION_COLLECT_WAVES = 100
 
@@ -71,6 +74,15 @@ class SchedulerImpl(
 
 	/** Avoid scanning all pending slots for every propagated signal. */
 	private val slotsByTime = mutableMapOf<Long, Slot>()
+
+	private val initializationActions = mutableListOf<() -> Unit>()
+	private var executionDepth = 0
+	private var initializationWaves = 0
+	private var initializationFailed = false
+	private val initializingActors = LinkedHashSet<Actor>()
+
+	override var isInitializing: Boolean = false
+		private set
 
 	/** Determines whether this [Scheduler] is active or not.*/
 	private var activationState: SchedulerActivationState = PASSIVE
@@ -329,14 +341,29 @@ class SchedulerImpl(
 		requestActingImpl(actor, delay, data)
 	}
 
+	override fun afterInitialization(action: () -> Unit) {
+		if (!isActive) return
+		if (isInitializing) {
+			initializationActions.add(action)
+		} else {
+			action()
+		}
+	}
+
 	override fun actPrematurely(actor: Actor, data: ActorData?) {
-		val slot = getSlotWithRequestForActor(actor)
-		if (slot != null) {
-			val request = slot.findRequest(actor)!!
-			if (request.isActable) {
-				logActorTrace(request.actor) { "Executing prematurely" }
-				act(slot, request)
+		executionDepth++
+		try {
+			val slot = getSlotWithRequestForActor(actor)
+			if (slot != null) {
+				val request = slot.findRequest(actor)!!
+				if (request.isActable) {
+					logActorTrace(request.actor) { "Executing prematurely" }
+					act(slot, request)
+				}
 			}
+		} finally {
+			executionDepth--
+			completeInitializationIfIdle()
 		}
 	}
 
@@ -382,6 +409,18 @@ class SchedulerImpl(
 			}
 		} else {
 			actor.actingDone(this, data)
+		}
+		completeInitializationIfIdle()
+	}
+
+	private fun completeInitializationIfIdle() {
+		if (!isActive || !isInitializing || initializationFailed || executionDepth != 0 || !queue.isEmpty) return
+		isInitializing = false
+		val actions = initializationActions.toList()
+		initializationActions.clear()
+		for (action in actions) {
+			if (!isActive) break
+			action()
 		}
 	}
 
@@ -506,6 +545,11 @@ class SchedulerImpl(
 
 	/** Resets the [Scheduler].*/
 	private fun reset() {
+		isInitializing = false
+		initializationActions.clear()
+		initializationWaves = 0
+		initializationFailed = false
+		initializingActors.clear()
 		relativeTime = 0
 		lastWaveTime = -1
 		sameTimeWaves = 0
@@ -528,6 +572,7 @@ class SchedulerImpl(
 		isInBreakpointPending = false
 		hardBreakpointReceived = false
 		activationState = ACTIVE
+		isInitializing = true
 		startTaskIfNeeded()
 		eventBus.post(SchedulerActivationStateEvent(this))
 	}
@@ -569,6 +614,16 @@ class SchedulerImpl(
 	 * @param resume `true` if the current breakpoint has already been handled, and the execution is to be resumed
 	 */
 	private fun executeImpl(resume: Boolean): ExecutionStepResult {
+		executionDepth++
+		try {
+			return executeStep(resume)
+		} finally {
+			executionDepth--
+			completeInitializationIfIdle()
+		}
+	}
+
+	private fun executeStep(resume: Boolean): ExecutionStepResult {
 		val optionalSlot = queue.peek()
 		if (optionalSlot == null) {
 			updateRelativeTime(getRelativeRealTime())
@@ -618,6 +673,7 @@ class SchedulerImpl(
 			val actable = slot.getRequests().filter { it.isActable }
 			actable.forEach { act(slot, it) }
 			detectOscillation(slot.relativeTime, actable)
+			detectUnsettledInitialization(actable)
 
 			if (slot.empty) {
 				removeSlot(slot)
@@ -672,6 +728,7 @@ class SchedulerImpl(
 			return
 		}
 		if (sameTimeWaves == OSCILLATION_WAVE_LIMIT + OSCILLATION_COLLECT_WAVES + 1) {
+			if (isInitializing) initializationFailed = true
 			val names = oscillatingActors.map { it.diagnosticName }.sorted()
 			val shown = names.take(MAX_REPORTED_OSCILLATION_ACTORS).joinToString(", ") +
 				if (names.size > MAX_REPORTED_OSCILLATION_ACTORS) ", …" else ""
@@ -685,6 +742,25 @@ class SchedulerImpl(
 				data = oscillatingActors.toList(),
 			))
 		}
+	}
+
+	private fun detectUnsettledInitialization(acted: List<Request>) {
+		if (!isInitializing || initializationFailed) return
+		initializationWaves++
+		if (initializationWaves <= INITIALIZATION_WAVE_LIMIT) return
+		acted.forEach { initializingActors.add(it.actor) }
+		if (initializationWaves <= INITIALIZATION_WAVE_LIMIT + OSCILLATION_COLLECT_WAVES) return
+		initializationFailed = true
+		val actors = initializingActors.toList()
+		val shown = actors.map { it.diagnosticName }.sorted().take(MAX_REPORTED_OSCILLATION_ACTORS).joinToString(", ")
+		eventBus.post(IssueImpl(
+			severity = IssueSeverity.Error,
+			name = Translations.getString("execution.issue.initialization.name"),
+			description = Translations.getString("execution.issue.initialization.desc", shown),
+			origin = shown,
+			context = null,
+			data = actors,
+		))
 	}
 
 	private fun checkForBreakpoint(slot: Slot): Boolean =

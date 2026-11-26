@@ -43,6 +43,16 @@ The following table shows which support information is used in which area.
 |===
 (icon:check[]) Only in single step mode
 
+== Starting a simulation
+
+Antares starts components in their configured initial states and lets their initial signals propagate before enabling clock edges. For example, a frequency divider built from initially cleared flip-flops remains at zero while its wires acquire their initial values. It starts counting with the first clock edge after initialization.
+
+Combinational logic and asynchronous preset and clear inputs remain active during initialization. Automatic clock generators begin their first clock period after initial signal propagation has settled. This also applies when exploring startup in single-step mode.
+
+This is an idealized, deterministic startup model. Physical flip-flops may require a power-on reset circuit to establish a known initial state. Gate-level circuits in Antares still need suitable circuitry to establish the intended state of feedback loops.
+
+If initial propagation never settles, Antares reports the involved components and leaves clock inputs unarmed. A free-running feedback oscillator built from gates does not settle; use a clock generator when a source should start oscillating after initialization.
+
 == Signal colors
 
 Antares uses different colors during simulation to represent the different values of signals or the states of wires and pins. The following circuit illustrates the colors used, where the wires on the left have the wire style "Line" and the wires on the right have the wire style "Block".

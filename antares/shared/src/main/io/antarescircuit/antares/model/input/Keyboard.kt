@@ -169,7 +169,7 @@ class Keyboard(
 			when (data.changedPort) {
 				null -> vertice.updateState(signalHandler)
 				vertice.clockInput -> {
-					if (vertice.clockInput.getIncomingSignal() == DigitalSignalFactory.of(true)) {
+					if (!signalHandler.isInitializing && vertice.clockInput.getIncomingSignal() == DigitalSignalFactory.of(true)) {
 						vertice.consume(signalHandler)
 					}
 				}
