@@ -69,6 +69,12 @@ interface Scheduler : SignalHandler {
 	 * */
 	var softBreakpointsArmTime: Long
 
+	/**
+	 * Optional startup deadline in simulation nanoseconds. Initialization may finish earlier if the queue settles.
+	 * The root circuit sets this after activation; stopping or restarting clears it. Null or zero means automatic settling.
+	 */
+	var initializationDeadline: Long?
+
 	fun dispose()
 
 	fun addListener(listener: SchedulerListener)

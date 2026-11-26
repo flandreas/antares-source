@@ -183,7 +183,7 @@ class Terminal(
 		override fun calculate(vertice: Terminal, data: GraphActorData, signalHandler: SignalHandler) {
 			when (data.changedPort) {
 				vertice.clockInput -> {
-					if (!signalHandler.isInitializing && vertice.clockInput.getIncomingSignal() == DigitalSignalFactory.of(true)) {
+					if (!signalHandler.isInitializationEvent && vertice.clockInput.getIncomingSignal() == DigitalSignalFactory.of(true)) {
 						vertice.consumeDataInput(signalHandler)
 					}
 				}

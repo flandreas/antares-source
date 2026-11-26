@@ -142,6 +142,7 @@ class GraphNavigationViewControllerTest {
 		every { scheduler.isActive } returns true
 		every { scheduler.isDeepExecution } returns true
 		every { applicationModeHolder.currentMode } returns ApplicationMode.EXECUTE
+		graphViewBuilder.graph.startupTime = 150L
 
 		graphViewBuilder.addVerticeView(testVerticeView)
 		controller.setRootGraphView(graphViewBuilder.build(), editable = true)
@@ -151,6 +152,8 @@ class GraphNavigationViewControllerTest {
 		verify { testVerticeView.bind(graphViewBuilder.graphView, true) }
 		verify { testVertice.executionInitializeNonVolatile(any(), any()) }
 		verify { testVertice.executionStart(any()) }
+		verify { scheduler.initializationDeadline = 150L }
+		verify { scheduler.softBreakpointsArmTime = 150L }
 	}
 
 	@Test

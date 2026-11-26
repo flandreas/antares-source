@@ -35,6 +35,9 @@ interface SignalHandler : ExecutionErrorHandler {
 	/** Initial signals are still propagating. Clock-sensitive actors must not consume edges yet. */
 	val isInitializing: Boolean get() = false
 
+	/** The current request belongs to startup, including requests whose delay ends after clock arming. */
+	val isInitializationEvent: Boolean get() = isInitializing
+
     /** Returns the relative execution time, i.e. the relative time in nanoseconds since execution has been started.*/
     val executionTime: Long
 

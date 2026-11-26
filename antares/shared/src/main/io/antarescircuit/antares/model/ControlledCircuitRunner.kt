@@ -176,6 +176,7 @@ class ControlledCircuitRunner(
 
 	private fun startSimulation(circuit: DigitalGraph) {
 		scheduler.isActive = true
+		scheduler.initializationDeadline = circuit.startupTime
 		circuit.formNet(scheduler)
 		circuit.executionInitialize(scheduler)
 		circuit.executionStart(scheduler, null)

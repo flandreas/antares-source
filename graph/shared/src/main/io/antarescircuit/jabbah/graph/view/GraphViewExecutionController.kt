@@ -123,6 +123,7 @@ class GraphViewExecutionController(
 				if (event.scheduler.isActive) {
 					if (isRoot) {
 						bind(event.scheduler.isDeepExecution, repository)
+						event.scheduler.initializationDeadline = startupTime
 						startupTime?.let {
 							event.scheduler.softBreakpointsArmTime = it
 						}

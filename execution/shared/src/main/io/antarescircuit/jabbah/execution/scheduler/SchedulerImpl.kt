@@ -77,12 +77,21 @@ class SchedulerImpl(
 
 	private val initializationActions = mutableListOf<() -> Unit>()
 	private var executionDepth = 0
+	private var actingInitializationRequest = false
 	private var initializationWaves = 0
 	private var initializationFailed = false
 	private val initializingActors = LinkedHashSet<Actor>()
 
 	override var isInitializing: Boolean = false
 		private set
+
+	override val isInitializationEvent: Boolean get() = isInitializing || actingInitializationRequest
+
+	override var initializationDeadline: Long? = null
+		set(value) {
+			require(value == null || value >= 0) { "Initialization deadline must not be negative" }
+			field = value?.takeIf { it > 0 }
+		}
 
 	/** Determines whether this [Scheduler] is active or not.*/
 	private var activationState: SchedulerActivationState = PASSIVE
@@ -414,7 +423,12 @@ class SchedulerImpl(
 	}
 
 	private fun completeInitializationIfIdle() {
-		if (!isActive || !isInitializing || initializationFailed || executionDepth != 0 || !queue.isEmpty) return
+		if (executionDepth != 0 || !queue.isEmpty) return
+		completeInitialization()
+	}
+
+	private fun completeInitialization() {
+		if (!isActive || !isInitializing || initializationFailed) return
 		isInitializing = false
 		val actions = initializationActions.toList()
 		initializationActions.clear()
@@ -546,6 +560,7 @@ class SchedulerImpl(
 	/** Resets the [Scheduler].*/
 	private fun reset() {
 		isInitializing = false
+		initializationDeadline = null
 		initializationActions.clear()
 		initializationWaves = 0
 		initializationFailed = false
@@ -626,11 +641,25 @@ class SchedulerImpl(
 	private fun executeStep(resume: Boolean): ExecutionStepResult {
 		val optionalSlot = queue.peek()
 		if (optionalSlot == null) {
-			updateRelativeTime(getRelativeRealTime())
+			if (!isInitializing) {
+				updateRelativeTime(getRelativeRealTime())
+			}
 			return NOT_RECALCULATED_NO_BREAKPOINT
 		}
 
 		val slot: Slot = optionalSlot
+		val deadline = initializationDeadline
+		if (isInitializing && !initializationFailed && deadline != null && slot.relativeTime >= deadline) {
+			// Treat the deadline as its own scheduling boundary, before any actor at that time.
+			// Do not wait for a later clock event, or manufacture a signal transition when arming.
+			if (isSingleStepMode || getRelativeRealTime() >= deadline) {
+				updateRelativeTime(deadline)
+				completeInitialization()
+			} else {
+				updateRelativeTime(min(getRelativeRealTime(), deadline))
+			}
+			return NOT_RECALCULATED_NO_BREAKPOINT
+		}
 
 		if (!slot.isExecutable) {
 			updateRelativeTime(slot.relativeTime)
@@ -745,11 +774,19 @@ class SchedulerImpl(
 	}
 
 	private fun detectUnsettledInitialization(acted: List<Request>) {
-		if (!isInitializing || initializationFailed) return
+		// With an explicit deadline, advancing-time feedback is expected and need not become quiescent.
+		// Zero-time feedback is still diagnosed by detectOscillation(), because it cannot reach the deadline.
+		if (!isInitializing || initializationFailed || initializationDeadline != null) {
+			return
+		}
 		initializationWaves++
-		if (initializationWaves <= INITIALIZATION_WAVE_LIMIT) return
+		if (initializationWaves <= INITIALIZATION_WAVE_LIMIT) {
+			return
+		}
 		acted.forEach { initializingActors.add(it.actor) }
-		if (initializationWaves <= INITIALIZATION_WAVE_LIMIT + OSCILLATION_COLLECT_WAVES) return
+		if (initializationWaves <= INITIALIZATION_WAVE_LIMIT + OSCILLATION_COLLECT_WAVES) {
+			return
+		}
 		initializationFailed = true
 		val actors = initializingActors.toList()
 		val shown = actors.map { it.diagnosticName }.sorted().take(MAX_REPORTED_OSCILLATION_ACTORS).joinToString(", ")
@@ -814,6 +851,7 @@ class SchedulerImpl(
 			if (request != null && request.isActing) {
 				// Re-arming now would make the pending actingDone() remove the new request
 				request.pendingData = data
+				request.pendingInitialization = isInitializing
 			} else if (request != null) {
 				request.reuse(data)
 			} else {
@@ -827,7 +865,7 @@ class SchedulerImpl(
 				val pending = it.pendingData
 				if (pending != null) {
 					// Requested again while acting: keep the request for the next wave
-					it.reuse(pending)
+					it.reuse(pending, it.pendingInitialization)
 				} else {
 					requests.remove(it.actor)
 				}
@@ -872,9 +910,15 @@ class SchedulerImpl(
 		/** Data of a request made while [isActing], to be acted upon once acting is done. */
 		var pendingData: ActorData? = null
 
-		fun reuse(actorData: ActorData) {
+		var pendingInitialization: Boolean = false
+
+		private var initializationRequest = isInitializing
+
+		fun reuse(actorData: ActorData, initializationRequest: Boolean = isInitializing) {
 			this.actorData = actorData
+			this.initializationRequest = initializationRequest
 			pendingData = null
+			pendingInitialization = false
 			_isActing = false
 		}
 
@@ -882,7 +926,13 @@ class SchedulerImpl(
 			if (!_isActing) {
 				logActorTrace(actor) { "Actor starts acting" }
 				_isActing = true
-				actor.act(this@SchedulerImpl, actorData)
+				val previous = actingInitializationRequest
+				actingInitializationRequest = initializationRequest
+				try {
+					actor.act(this@SchedulerImpl, actorData)
+				} finally {
+					actingInitializationRequest = previous
+				}
 			}
 		}
 

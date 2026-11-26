@@ -80,8 +80,9 @@ interface Graph : GraphPortOwner, Namable, Describable, Storable, Bean, Property
 	var effectivePropagationDelay: Long
 
 	/**
-	 * The optional time (in nanoseconds) until this [Graph] has reached a stable state after starting execution.
-	 * Used to skip signal flow animations during the start-up phase.
+	 * The optional start-up duration in nanoseconds. Suppresses initial signal flow animations and,
+	 * when this is the root circuit, provides a deadline for arming clock inputs even if propagation continues.
+	 * Initialization may finish earlier if signals settle. An absent duration means automatic settling.
 	 */
 	var startupTime: Long?
 

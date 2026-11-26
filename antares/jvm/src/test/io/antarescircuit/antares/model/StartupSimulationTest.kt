@@ -65,6 +65,30 @@ class StartupSimulationTest {
 	}
 
 	@Test
+	fun shouldNotReplayInitialClockDeliveryAfterTheDeadline() {
+		val builder = TestCircuitBuilder("delayed initial clock")
+		(builder.graph as DigitalGraph).startupTime = 50L
+		val input = builder.addInput("T", inputStartValue = DigitalSignalFactory.of(false))
+		val flipFlop = builder.add(LibraryModule.libraryHolder.getContainerLibraryElement(
+			UUID("ce3245e3-3b2c-405f-9d1b-9650823acfe7"))!!.getNewInstance()) as SubGraphVerticeView<*>
+		flipFlop.model.propagationDelay = LongValueImpl(100)
+		val output = builder.addOutput("Q")
+		builder.connect(input, flipFlop, flipFlop.model.getInput("T"))
+		builder.connect(flipFlop, flipFlop.model.getOutput("Q"), output)
+
+		withInitializedCircuit(builder) { _, runner ->
+			assertEquals(50L, runner.scheduler.executionTime)
+			runner.proceedUntilQueueEmpty()
+			assertEquals(DigitalSignalFactory.of(false), output.model.signal)
+			input.model.setIncomingSignal(DigitalSignalFactory.of(true), runner.scheduler)
+			runner.proceedUntilQueueEmpty()
+			input.model.setIncomingSignal(DigitalSignalFactory.of(false), runner.scheduler)
+			runner.proceedUntilQueueEmpty()
+			assertEquals(DigitalSignalFactory.of(true), output.model.signal)
+		}
+	}
+
+	@Test
 	fun shouldHonorAsynchronousClearDuringInitialization() {
 		assertPresetClearStartup(true, false, false)
 	}
@@ -151,6 +175,7 @@ class StartupSimulationTest {
 		try {
 			graph.bind(false, LibraryModule.libraryHolder)
 			scheduler.isActive = true
+			scheduler.initializationDeadline = graph.startupTime
 			graph.formNet(scheduler)
 			graph.executionInitialize(scheduler)
 			graph.executionStart(scheduler, null)

@@ -47,11 +47,20 @@ The following table shows which support information is used in which area.
 
 Antares starts components in their configured initial states and lets their initial signals propagate before enabling clock edges. For example, a frequency divider built from initially cleared flip-flops remains at zero while its wires acquire their initial values. It starts counting with the first clock edge after initialization.
 
-Combinational logic and asynchronous preset and clear inputs remain active during initialization. Automatic clock generators begin their first clock period after initial signal propagation has settled. This also applies when exploring startup in single-step mode.
+Combinational logic and asynchronous preset and clear inputs remain active during initialization. Automatic clock generators begin their first clock period after initialization finishes. This also applies when exploring startup in single-step mode.
+
+The root circuit's *Start-up Duration (ns)* property has two effects:
+
+* It suppresses initial signal-flow animations and soft breakpoints for the configured duration.
+* It provides a deadline for initialization. Antares enables clock edges when initial propagation settles, or at the configured simulation time if propagation is still running, whichever happens first.
+
+Leave the duration unset (or zero) to use automatic settling only. A positive duration lets circuits with intentional feedback oscillators finish initialization even though their event queue never becomes empty. For example, the "But How Do It Know?" example project contains a gate-built clock that continues oscillating during startup. Only the root circuit's duration determines this deadline; subcircuits keep their own animation settings.
+
+At the deadline, Antares enables clock edges before processing component events at that time. Enabling clocks does not itself generate a clock edge. Input changes received during initialization remain excluded from clock triggering even if their component's propagation delay ends after the deadline. A configured duration is a chosen cutoff, not a guarantee that all signals have settled: choose enough time for the circuit's initial signals to propagate. Existing values chosen only for animation suppression may need adjustment.
 
 This is an idealized, deterministic startup model. Physical flip-flops may require a power-on reset circuit to establish a known initial state. Gate-level circuits in Antares still need suitable circuitry to establish the intended state of feedback loops.
 
-If initial propagation never settles, Antares reports the involved components and leaves clock inputs unarmed. A free-running feedback oscillator built from gates does not settle; use a clock generator when a source should start oscillating after initialization.
+Without a configured duration, Antares reports components involved in initialization that never settles and leaves clock inputs unarmed. Feedback with no propagation delay is still reported even when a duration is configured, because simulation time cannot reach the deadline.
 
 == Signal colors
 

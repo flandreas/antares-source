@@ -45,6 +45,123 @@ class SchedulerImplTest {
 	/** ---- Basics tests */
 
 	@Test
+	fun shouldArmAtDeadlineBeforeAnyActorAtTheSameTime() {
+		val manual = createManualScheduler()
+		val phases = mutableListOf<Boolean>()
+		val actor = object : ActorImpl() {
+			override fun act(signalHandler: SignalHandler, data: ActorData) {
+				phases.add(signalHandler.isInitializing)
+				signalHandler.actingDone(this, data)
+			}
+		}
+		var releasedAt: Long? = null
+		manual.isActive = true
+		manual.requestActingAfter(actor, 150, createActorData())
+		manual.initializationDeadline = 150
+		manual.afterInitialization { releasedAt = manual.executionTime }
+
+		manual.execute()
+		assertEquals(150L, manual.executionTime)
+		assertEquals(150L, releasedAt)
+		assertFalse(manual.isInitializing)
+		assertTrue(phases.isEmpty())
+		manual.execute()
+		assertEquals(listOf(false), phases)
+		manual.dispose()
+	}
+
+	@Test
+	fun shouldProcessDeadlineWithoutWaitingForTheNextActor() {
+		val manual = createManualScheduler()
+		var acted = false
+		val actor = object : ActorImpl() {
+			override fun act(signalHandler: SignalHandler, data: ActorData) {
+				acted = true
+				signalHandler.actingDone(this, data)
+			}
+		}
+		manual.isActive = true
+		manual.initializationDeadline = 150
+		manual.requestActingAfter(actor, 2_000, createActorData())
+
+		manual.execute()
+		assertEquals(150L, manual.executionTime)
+		assertFalse(manual.isInitializing)
+		assertFalse(acted)
+		manual.execute()
+		assertEquals(2_000L, manual.executionTime)
+		assertTrue(acted)
+		manual.dispose()
+	}
+
+	@Test
+	fun shouldRespectDeadlineInTimedExecution() {
+		val manual = createManualScheduler().apply { isSingleStepMode = false }
+		manual.isActive = true
+		manual.initializationDeadline = 150
+		manual.requestActingAfter(createActor(isBreakpoint = false), 2_000, createActorData())
+		timeService.setTimeNanos(149)
+		manual.execute()
+		assertTrue(manual.isInitializing)
+		assertEquals(149L, manual.executionTime)
+		timeService.setTimeNanos(500)
+		manual.execute()
+		assertFalse(manual.isInitializing)
+		assertEquals(150L, manual.executionTime)
+		manual.dispose()
+	}
+
+	@Test
+	fun shouldFinishBeforeDeadlineWhenPropagationSettles() {
+		val manual = createManualScheduler()
+		manual.isActive = true
+		manual.initializationDeadline = 150
+		var releasedAt: Long? = null
+		manual.afterInitialization { releasedAt = manual.executionTime }
+		val actor = object : ActorImpl() {
+			override fun act(signalHandler: SignalHandler, data: ActorData) {
+				signalHandler.actingDone(this, data)
+			}
+		}
+		manual.requestActingAfter(actor, 5, createActorData())
+
+		manual.execute()
+		assertEquals(5L, releasedAt)
+		assertFalse(manual.isInitializing)
+		assertTrue(manual.isQueueEmpty)
+		manual.isActive = false
+		assertNull(manual.initializationDeadline)
+		manual.isActive = true
+		assertNull(manual.initializationDeadline)
+		manual.dispose()
+	}
+
+	@Test
+	fun shouldAllowAdvancingTimeFeedbackUntilAnExplicitDeadline() {
+		val manual = createManualScheduler()
+		val issues = mutableListOf<IssueImpl>()
+		eventBus.register(IssueImpl::class) { issues.add(it) }
+		val feedback = object : ActorImpl() {
+			override fun act(signalHandler: SignalHandler, data: ActorData) {
+				signalHandler.actingDone(this, data)
+				signalHandler.requestActingAfter(this, 1, data)
+			}
+		}
+		val deadline = SchedulerImpl.INITIALIZATION_WAVE_LIMIT + 250L
+		manual.isActive = true
+		manual.initializationDeadline = deadline
+		manual.requestActingAfter(feedback, 1, createActorData())
+		repeat(SchedulerImpl.INITIALIZATION_WAVE_LIMIT + 200) { manual.execute() }
+		assertTrue(manual.isInitializing)
+		assertTrue(issues.isEmpty())
+		repeat(50) { manual.execute() }
+		assertEquals(deadline, manual.executionTime)
+		assertFalse(manual.isInitializing)
+		assertTrue(issues.isEmpty())
+		manual.dispose()
+	}
+
+	@Test
 	fun shouldSettleInitialPropagationBeforeStartingSources() {
 		val manual = createManualScheduler()
 		val phases = mutableListOf<Boolean>()
@@ -602,6 +719,7 @@ class SchedulerImplTest {
 			}
 		}
 		manual.isActive = true
+		manual.initializationDeadline = 100
 		manual.requestActingAfter(a, 10, createActorData())
 
 		repeat(SchedulerImpl.OSCILLATION_WAVE_LIMIT + 1_000) { manual.execute() }
