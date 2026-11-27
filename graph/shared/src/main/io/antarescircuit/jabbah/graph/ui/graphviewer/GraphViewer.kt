@@ -9,6 +9,7 @@ import io.antarescircuit.jabbah.base.ui.AbstractUIController
 import io.antarescircuit.jabbah.base.ui.UIView
 import io.antarescircuit.jabbah.edit.module.EditModule
 import io.antarescircuit.jabbah.execution.ExecutionControlOutlet
+import io.antarescircuit.jabbah.execution.ExecutionDepthAction
 import io.antarescircuit.jabbah.execution.PauseOrResumeActionImpl
 import io.antarescircuit.jabbah.execution.SingleStepModeAction
 import io.antarescircuit.jabbah.execution.scheduler.Scheduler
@@ -74,6 +75,7 @@ class GraphViewerController(
 		toggleApplicationModeAction.dispose()
 		singleStepModeAction.dispose()
 		pauseOrResumeAction.dispose()
+		executionDepthAction.dispose()
 		systemSpeedCategory.dispose()
 	}
 
@@ -84,6 +86,8 @@ class GraphViewerController(
 	override val singleStepModeAction = SingleStepModeAction(applicationContextHolder.scheduler, eventBus)
 
 	override val pauseOrResumeAction = PauseOrResumeActionImpl(applicationContextHolder.scheduler, eventBus)
+
+	val executionDepthAction = ExecutionDepthAction(applicationContextHolder.scheduler, eventBus)
 
 	override val systemSpeedCategoryName: String
 		get() = applicationContextHolder.currentSystemSpeedCategory.systemSpeedCategory.toString()

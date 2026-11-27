@@ -80,7 +80,9 @@ class GraphViewerFrameSwing(
 			controller,
 			controller.toggleApplicationModeAction,
 			controller.singleStepModeAction,
-			controller.pauseOrResumeAction)
+			controller.pauseOrResumeAction,
+			controller.executionDepthAction,
+		)
 
 	private fun handle(event: CloseViewRequest) {
 		if (event.view === controller.drawingView) {

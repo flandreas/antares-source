@@ -299,7 +299,9 @@ class GraphPanelViewSwing(
 			controller.applicationModeHolder,
 			controller.toggleApplicationModeAction,
 			controller.singleStepModeAction,
-			controller.pauseOrResumeAction)
+			controller.pauseOrResumeAction,
+			controller.executionDepthAction,
+		)
 
 	private fun createDrawingToolBar(application: Application, controller: GraphPanelViewController): ToolBar {
 		val toolbar = ToolBar(controller.editor)

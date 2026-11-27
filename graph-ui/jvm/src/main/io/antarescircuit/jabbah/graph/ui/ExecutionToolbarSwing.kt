@@ -20,12 +20,14 @@ class ExecutionToolbarSwing(
 	applicationModeHolder: ApplicationModeHolder,
 	toggleApplicationModeAction: Action,
 	singleStepModeAction: Action,
-	pauseOrResumeAction: PauseOrResumeAction
+	pauseOrResumeAction: PauseOrResumeAction,
+	executionDepthAction: Action,
 ) : ToolBar() {
 
 	private val toggleApplicationModeWrapper = ActionWrapperSwing(toggleApplicationModeAction)
 	private val singleStepModeWrapper = ActionWrapperSwing(singleStepModeAction)
 	private val pauseOrResumeButton = PauseOrResumeButton(pauseOrResumeAction)
+	private val executionDepthWrapper = ActionWrapperSwing(executionDepthAction)
 
 	private val speedSlider = SystemSpeedSliderSwing(systemSpeed)
 	private val usecaseSelector = UsecaseSelector(scheduler, applicationModeHolder)
@@ -45,6 +47,17 @@ class ExecutionToolbarSwing(
 		speedSlider.preferredSize = Dimension(150, speedSlider.preferredSize.height)
 		speedSlider.maximumSize = Dimension(150, speedSlider.maximumSize.height)
 
+		val executionDepthButton = JToggleButton(executionDepthWrapper)
+		executionDepthButton.hideActionText = true
+		executionDepthButton.icon = UiUtil.themedIcon("/img/execution-shallow24.png")
+		executionDepthButton.selectedIcon = UiUtil.themedIcon("/img/execution-deep24.png")
+		fun updateExecutionDepthTooltip() {
+			val depth = if (executionDepthButton.isSelected) "deepSimulation" else "shallowSimulation"
+			executionDepthButton.toolTipText = Translations.getString("execution.action.$depth.name")
+		}
+		executionDepthButton.addItemListener { updateExecutionDepthTooltip() }
+		updateExecutionDepthTooltip()
+
 		isFloatable = false
 		isRollover = true
 		addSeparator()
@@ -52,6 +65,7 @@ class ExecutionToolbarSwing(
 		add(pauseOrResumeButton)
 		add(singleStepModeButton)
 		add(speedSlider)
+		add(executionDepthButton)
 		addGap()
 		add(usecaseSelector)
 	}
@@ -60,6 +74,7 @@ class ExecutionToolbarSwing(
 		toggleApplicationModeWrapper.dispose()
 		singleStepModeWrapper.dispose()
 		pauseOrResumeButton.dispose()
+		executionDepthWrapper.dispose()
 		speedSlider.dispose()
 		usecaseSelector.dispose()
 	}
