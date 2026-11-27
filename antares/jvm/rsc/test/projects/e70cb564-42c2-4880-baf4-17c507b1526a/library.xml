@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<project _id='0' dataVersion='2.3.0' defaultElement='5a9cd188-59fd-4c63-90d2-c1678c1c7cbe' uuid='e70cb564-42c2-4880-baf4-17c507b1526a' author='5ecf330b-e395-4e17-88b0-0883834b384a' imports='6707f981-110d-4629-a0bf-c35a4688025c,b3a5e306-f0c8-11ed-a05b-0242ac120003' visibility='public'>
+<project _id='0' dataVersion='2.4.0' defaultElement='5a9cd188-59fd-4c63-90d2-c1678c1c7cbe' uuid='e70cb564-42c2-4880-baf4-17c507b1526a' author='5ecf330b-e395-4e17-88b0-0883834b384a' imports='6707f981-110d-4629-a0bf-c35a4688025c,b3a5e306-f0c8-11ed-a05b-0242ac120003' visibility='public'>
   <folder>
     <libraryFolder _id='1'>
       <name>
@@ -288,6 +288,11 @@
         <containerLibraryElement _id='57' uuid='6e78bf9a-8f3a-4eed-9912-967fd42e9d08' type='digital'>
           <name>
             <translation lang='en' text='Freq. Divider T-FF'/>
+          </name>
+        </containerLibraryElement>
+        <containerLibraryElement _id='58' uuid='f32ec46c-c2b1-4c19-8049-b45b9edd09e4' type='digital'>
+          <name>
+            <translation lang='en' text='Modulo-5 Counter JK (Neg)'/>
           </name>
         </containerLibraryElement>
       </items>
