@@ -1,9 +1,29 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<metaGraph _id='0' dataVersion='2.3.0' manualContainer='true'>
+<metaGraph _id='0' dataVersion='2.4.0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' type='digital' calculatedDelay='122' startupTime='28'>
+        <graph _id='2' type='digital' script='init {
+	store qStore = 0
+	Q = qStore
+	&apos;!Q&apos; = not qStore
+}
+
+if (^C) {
+	if (J == 1 and K == 1) {
+		// Toggle
+		qStore = not qStore
+	} else if (J == 1) {
+		// Set
+		qStore = 1
+	} else if (K == 1) {
+		// Reset
+		qStore = 0
+	}
+	
+	Q = qStore
+	&apos;!Q&apos; = not qStore
+}' calculatedDelay='122' startupTime='28'>
           <elements>
             <circuitInOut _id='3' id='1' name='J' type='input' bitWidth='1'>
               <desc>
@@ -276,7 +296,7 @@ run {
                 <polylineShape points='140.0,-28.0 196.0,-28.0 266.0,-196.0 308.0,-196.0'/>
               </shape>
             </digitalEdgeView>
-            <subGraphVerticeViewRef _id='66' id='34' rot='0' filled='true' stroked='true' modelId='16' x='-224.0' y='-112.0' controlViewVisibility='simulation'/>
+            <subGraphVerticeViewRef _id='66' id='34' rot='0' filled='true' stroked='true' modelId='16' x='-224.0' y='-112.0' controlViewVisibility='simulation' displayMode='symbol' graphWidth='0.0' graphHeight='0.0'/>
             <digitalEdgeView _id='87' id='35' filled='true' stroked='true' modelId='40' layout='ortho' orig='66' origPort='2' origPortOutput='true' dest='88' adjusted='false'>
               <shape>
                 <polylineShape points='-146.0,-112.0 -119.0,-112.0'/>

@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<library _id='0' dataVersion='2.3.0' uuid='6707f981-110d-4629-a0bf-c35a4688025c' author='5ecf330b-e395-4e17-88b0-0883834b384a' system='true' visibility='public'>
+<library _id='0' dataVersion='2.4.0' uuid='6707f981-110d-4629-a0bf-c35a4688025c' author='5ecf330b-e395-4e17-88b0-0883834b384a' system='true' visibility='public'>
   <folder>
     <libraryFolder _id='1'>
       <name>
@@ -508,7 +508,7 @@
             <containerLibraryElement _id='130' uuid='43cf44c4-cded-450f-b103-1e8bf631546b' type='digital'>
               <name>
                 <translation lang='de' text='JK-Flipflop !(PRE)\/!(CLR) (Neg)'/>
-                <translation lang='en' text='JK-Flip-Flop !(PRE)\/!(CLR) (Neg)'/>
+                <translation lang='en' text='JK Flip-Flop !(PRE)\/!(CLR) (Neg)'/>
               </name>
             </containerLibraryElement>
             <containerLibraryElement _id='131' uuid='5485c628-408c-45ea-9d1e-8d930c8760e7' type='digital'>

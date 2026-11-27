@@ -1,9 +1,18 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<metaGraph _id='0' dataVersion='2.3.0' manualContainer='true'>
+<metaGraph _id='0' dataVersion='2.4.0' manualContainer='true'>
   <graph>
     <graphStorable _id='1'>
       <model>
-        <graph _id='2' type='digital' script='' calculatedDelay='122' startupTime='45'>
+        <graph _id='2' type='digital' script='init {
+	store qStore = 0
+	Q = 0
+	&apos;!Q&apos; = 1
+}
+if (^T) {
+	qStore = not qStore
+	Q = qStore
+	&apos;!Q&apos; = not qStore
+}' calculatedDelay='122' startupTime='45'>
           <elements>
             <circuitInOut _id='3' id='3' name='T' type='input' bitWidth='1'>
               <desc>
@@ -114,7 +123,7 @@ run {
                 <point x='-175.0' y='-119.0'/>
               </location>
             </circuitInOutView>
-            <subGraphVerticeViewRef _id='46' id='4' rot='0' filled='true' stroked='true' modelId='4' x='-161.0' y='-119.0' controlViewVisibility='simulation'/>
+            <subGraphVerticeViewRef _id='46' id='4' rot='0' filled='true' stroked='true' modelId='4' x='-161.0' y='-119.0' controlViewVisibility='simulation' displayMode='symbol' graphWidth='0.0' graphHeight='0.0'/>
             <andGateView _id='47' id='5' rot='0' filled='true' stroked='true' modelId='7' x='35.0' y='-203.0'/>
             <andGateView _id='48' id='6' rot='0' filled='true' stroked='true' modelId='8' x='35.0' y='-35.0'/>
             <digitalEdgeView _id='49' id='9' filled='true' stroked='true' modelId='9' layout='ortho' orig='45' origPort='1' origPortOutput='true' dest='46' destPort='1' adjusted='false'>

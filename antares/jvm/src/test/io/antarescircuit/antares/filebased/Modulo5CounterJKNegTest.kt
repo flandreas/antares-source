@@ -35,11 +35,13 @@ class Modulo5CounterJKNegTest : AbstractFileBasedTest() {
 		proceedUntilQueueIsEmpty()
 
 		assertOutput(0UL)
-		assertClockUpDownTo(1UL)
-		assertClockUpDownTo(2UL)
-		assertClockUpDownTo(3UL)
-		assertClockUpDownTo(4UL)
-		assertClockUpDownTo(0UL)
+		repeat(3) {
+			assertClockUpDownTo(1UL)
+			assertClockUpDownTo(2UL)
+			assertClockUpDownTo(3UL)
+			assertClockUpDownTo(4UL)
+			assertClockUpDownTo(0UL)
+		}
 	}
 
 	private fun assertClockUpDownTo(value: ULong) {

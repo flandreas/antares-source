@@ -395,8 +395,9 @@ class SubGraphVerticeRef(
 				graphType.adaptTo<Any, Any>(ensureGraph().type).convertIncomingSignal(input.getIncomingSignal()),
 				signalHandler,
 				force)
-		} else if (input.samplesInputsOnArrival) {
+		} else if (input.samplesInputsOnArrival && !signalHandler.isInitializationEvent) {
 			// Preserve the inputs from this event even if they change before scheduled execution.
+			// Startup events must read settled inputs, not capture transient initialization values.
 			requestActingAfter(signalHandler, propagationDelay.value, SampledGraphActorData(input, getInputs(), force))
 			stateChanged(signalHandler, Vertice.STATE_CHANGE_INPUT)
 			return
