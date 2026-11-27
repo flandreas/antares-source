@@ -98,6 +98,12 @@ interface Port<T : Any> : Describable, Bean {
 interface InputPort<T : Any> : Port<T> {
 
 	/**
+	 * Whether an incoming signal event samples all inputs of the owning [Vertice] for delayed
+	 * scripted execution, rather than reading their values when execution occurs.
+	 */
+	val samplesInputsOnArrival: Boolean get() = false
+
+	/**
 	 * The value this [InputPort] sends into its [Vertice] at execution start if it is unconnected.
 	 * If connected, the [InputPort] receives its initial value from the connected [Net].
 	 */

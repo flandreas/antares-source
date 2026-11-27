@@ -14,6 +14,8 @@ import io.antarescircuit.jabbah.graph.model.GenericGraphType
 import io.antarescircuit.jabbah.graph.model.Graph
 import io.antarescircuit.jabbah.graph.model.InputPort
 import io.antarescircuit.jabbah.graph.model.OutputPort
+import io.antarescircuit.jabbah.graph.model.SampledGraphActorData
+import io.antarescircuit.jabbah.graph.model.StoringGraphActorData
 import io.antarescircuit.jabbah.graph.model.param.GraphParamValue
 import io.antarescircuit.jabbah.graph.model.param.GraphParamValues
 import io.antarescircuit.jabbah.graph.model.param.LongValueGraphParamType
@@ -28,6 +30,7 @@ import dev.mokkery.mock
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class SubGraphVerticeRefActivationRecordTest {
 
@@ -75,8 +78,47 @@ class SubGraphVerticeRefActivationRecordTest {
 		assertEquals(99L, result)
 	}
 
+	@Test
+	fun shouldUseSampledInputsOnlyForTheirScriptInvocation() {
+		val vv = createSubGraphVerticeRefMock()
+		val input = vv.getInput<Long>("I")
+		val snapshot = SampledGraphActorData(input, listOf(input))
+		every { input.getIncomingSignal() } returns 99L
+		val record = SubGraphVerticeRefActivationRecord(vv, signalHandler)
+		val interpreter = Interpreter(DslParser(DslLexer("I"), null).parse(), Memory(record))
+
+		record.withInputSnapshot(snapshot) {
+			assertEquals(42L, interpreter.interpret())
+			// A nested callback without a sample must see current values, then restore the outer sample.
+			record.withInputSnapshot(StoringGraphActorData(null, null)) {
+				assertEquals(99L, interpreter.interpret())
+			}
+			assertEquals(42L, interpreter.interpret())
+		}
+		assertEquals(99L, interpreter.interpret())
+	}
+
+	@Test
+	fun shouldRestoreLiveInputReadsAfterSampledInvocationFails() {
+		val vv = createSubGraphVerticeRefMock()
+		val input = vv.getInput<Long>("I")
+		val snapshot = SampledGraphActorData(input, listOf(input))
+		every { input.getIncomingSignal() } returns 99L
+		val record = SubGraphVerticeRefActivationRecord(vv, signalHandler)
+		val interpreter = Interpreter(DslParser(DslLexer("I"), null).parse(), Memory(record))
+
+		assertFailsWith<IllegalStateException> {
+			record.withInputSnapshot(snapshot) {
+				assertEquals(42L, interpreter.interpret())
+				throw IllegalStateException("Failed invocation")
+			}
+		}
+		assertEquals(99L, interpreter.interpret())
+	}
+
 	private fun createSubGraphVerticeRefMock(paramValue: GraphParamValue<Long>? = null): SubGraphVerticeRefIF {
 		val input = mock<InputPort<Long>>()
+		every { input.portId } returns 1
 		every { input.getIncomingSignal() } returns 42L
 
 		val output = mock<OutputPort<Long>>()

@@ -133,6 +133,7 @@ class SubGraphVerticeRef(
 
 	/** Interprets the script in [Graph.script] during execution (if required by system parameters). */
 	private var interpreter: Interpreter? = null
+	private var activationRecord: SubGraphVerticeRefActivationRecord? = null
 
 	override var paramValues = GraphParamValues()
 		private set(value) {
@@ -328,9 +329,11 @@ class SubGraphVerticeRef(
 	private fun createInterpreter(signalHandler: SignalHandler): Interpreter? {
 		return repository.getContainerLibraryElement(graphUUID!!).let { cle ->
 			cle?.executionScriptAST?.let { ast ->
+				val record = GraphModelModule.subGraphVerticeRefActivationRecordFactory(this, signalHandler)
+				activationRecord = record
 				BaseModule.interpreterFactory(
 					ast,
-					Memory(GraphModelModule.subGraphVerticeRefActivationRecordFactory(this, signalHandler)))
+					Memory(record))
 			}
 		}
 	}
@@ -373,7 +376,9 @@ class SubGraphVerticeRef(
 	}
 
 	private fun runExecutionScript(data: GraphActorData, actor: Actor, signalHandler: SignalHandler) {
-		interpreter?.interpretCatching(executionMetaData, params = SubGraphFunctionContext(data, actor, signalHandler))
+		activationRecord?.withInputSnapshot(data) {
+			interpreter?.interpretCatching(executionMetaData, params = SubGraphFunctionContext(data, actor, signalHandler))
+		}
 	}
 
 	/** ---- [AbstractVertice] */
@@ -390,6 +395,11 @@ class SubGraphVerticeRef(
 				graphType.adaptTo<Any, Any>(ensureGraph().type).convertIncomingSignal(input.getIncomingSignal()),
 				signalHandler,
 				force)
+		} else if (input.samplesInputsOnArrival) {
+			// Preserve the inputs from this event even if they change before scheduled execution.
+			requestActingAfter(signalHandler, propagationDelay.value, SampledGraphActorData(input, getInputs(), force))
+			stateChanged(signalHandler, Vertice.STATE_CHANGE_INPUT)
+			return
 		}
 		// This will eventually call the VerticeCalculator which will execute the script (if not deeply executing).
 		// Even if deeply executing, we need to request acting, because only that will initiate

@@ -42,6 +42,8 @@ interface DigitalPort : BidirectionalPort<DigitalSignal>, DigitalSignalRepresent
 
 	var trigger: Trigger
 
+	override val samplesInputsOnArrival: Boolean get() = trigger == Trigger.EDGE
+
 	var outputAnnotation: OutputAnnotation
 
 	val defaultDigitalSignal: DigitalSignal

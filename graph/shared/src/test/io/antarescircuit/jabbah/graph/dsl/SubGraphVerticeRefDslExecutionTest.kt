@@ -13,6 +13,7 @@ import dev.mokkery.mock
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
@@ -59,6 +60,19 @@ class SubGraphVerticeRefDslExecutionTest {
 		vv.model.act(signalHandler, vv.model.createActorData(vv.model.getInput<Boolean>()))
 
 		assertTrue(vv.model.getOutput<Boolean>().getOutgoingSignal()!!)
+	}
+
+	@Test
+	fun shouldReadLiveInputsForLevelTriggeredScriptExecution() {
+		val vv = createAndStart(createScriptedMetaGraph("I", "O", "O = I"))
+		val input = vv.model.getInput<Boolean>()
+		input.setIncomingSignal(true, signalHandler)
+		val data = vv.model.createActorData(input)
+		input.setIncomingSignal(false, signalHandler)
+
+		vv.model.act(signalHandler, data)
+
+		assertFalse(vv.model.getOutput<Boolean>().getOutgoingSignal()!!)
 	}
 
 	@Test

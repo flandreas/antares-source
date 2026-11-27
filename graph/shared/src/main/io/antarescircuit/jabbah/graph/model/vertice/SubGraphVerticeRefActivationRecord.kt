@@ -8,6 +8,8 @@ import io.antarescircuit.jabbah.graph.model.GraphTypeSignalAdapter
 import io.antarescircuit.jabbah.graph.model.Port
 import io.antarescircuit.jabbah.graph.model.InputPort
 import io.antarescircuit.jabbah.graph.model.OutputPort
+import io.antarescircuit.jabbah.graph.model.GraphActorData
+import io.antarescircuit.jabbah.graph.model.SampledGraphActorData
 
 typealias SubGraphVerticeRefActivationRecordFactory =
 	(verticeRef: SubGraphVerticeRef, signalHandler: SignalHandler) -> SubGraphVerticeRefActivationRecord
@@ -21,6 +23,19 @@ open class SubGraphVerticeRefActivationRecord(
 	protected val verticeRef: SubGraphVerticeRefIF,
 	protected val signalHandler: SignalHandler
 ) : ActivationRecord {
+
+	private var inputSnapshot: SampledGraphActorData? = null
+
+	/** Scope sampled input reads to this invocation; outputs and stored script state remain live. */
+	fun <T> withInputSnapshot(data: GraphActorData, action: () -> T): T {
+		val previous = inputSnapshot
+		inputSnapshot = data as? SampledGraphActorData
+		try {
+			return action()
+		} finally {
+			inputSnapshot = previous
+		}
+	}
 
 	private val adapter: GraphTypeSignalAdapter<Any, Any> get() =
 		// Accesses singletons, no objects being created
@@ -55,7 +70,9 @@ open class SubGraphVerticeRefActivationRecord(
 	override fun getValue(name: String, location: TextLocation): Any {
 		if (verticeRef.hasInput(name)) {
 			// Convert between GraphTypes
-			val outerTypeValue = verticeRef.getInput<Any>(name).getIncomingSignal()!!
+			val port = verticeRef.getInput<Any>(name)
+			val snapshot = inputSnapshot
+			val outerTypeValue = if (snapshot != null) snapshot.getSignal<Any>(port.portId)!! else port.getIncomingSignal()!!
 			return adapter.convertIncomingSignal(outerTypeValue)!!
 		} else if (verticeRef.hasOutput(name)) {
 			val innerTypeValue = verticeRef.getOutput<Any>(name).getOutgoingSignal()!!
