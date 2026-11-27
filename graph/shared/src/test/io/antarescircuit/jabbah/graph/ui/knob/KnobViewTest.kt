@@ -8,8 +8,10 @@ import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.mock
 import io.antarescircuit.jabbah.edit.properties.magnitude.Magnitude.One
+import io.antarescircuit.jabbah.edit.properties.magnitude.Magnitude.Milli
 import io.antarescircuit.jabbah.edit.properties.magnitude.MagnitudeValue
 import io.antarescircuit.jabbah.edit.properties.magnitude.SIUnit.Factor
+import io.antarescircuit.jabbah.edit.properties.magnitude.SIUnit.Second
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -41,6 +43,40 @@ class KnobViewTest {
 
         assertEquals(MagnitudeValue(100L + 900 / 4, One, Factor), view.value)
     }
+
+	@Test
+	fun shouldDecreaseMagnitudeWhenDraggingCounterClockwiseFromNorth() {
+		val view = KnobView(KnobModel(MagnitudeValue(1, One, Second)))
+		pressMouseAt(view, 0.0, -200.0)
+
+		dragMouseTo(view, -200.0, 0.0)
+
+		assertEquals(MagnitudeValue(775, Milli, Second), view.value)
+	}
+
+	@Test
+	fun shouldDecreaseMagnitudeOnceWhenDraggingCounterClockwiseThroughNorth() {
+		val view = KnobView(KnobModel(MagnitudeValue(3.25, One, Second)))
+		pressMouseAt(view, 200.0, 0.0)
+
+		dragMouseTo(view, 0.0, -200.0)
+		assertEquals(MagnitudeValue(1, One, Second), view.value)
+
+		dragMouseTo(view, -200.0, 0.0)
+		assertEquals(MagnitudeValue(775, Milli, Second), view.value)
+	}
+
+	@Test
+	fun shouldIncreaseMagnitudeOnceWhenDraggingClockwiseThroughNorth() {
+		val view = KnobView(KnobModel(MagnitudeValue(775, Milli, Second)))
+		pressMouseAt(view, -200.0, 0.0)
+
+		dragMouseTo(view, 0.0, -200.0)
+		assertEquals(MagnitudeValue(1, One, Second), view.value)
+
+		dragMouseTo(view, 200.0, 0.0)
+		assertEquals(MagnitudeValue(3.25, One, Second), view.value)
+	}
 
     @Test
     fun shouldApplyDefaultValueOnDoubleClick() {

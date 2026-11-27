@@ -222,7 +222,8 @@ class KnobView(
             return if (isClockwise) {
                 oldAngle > PI_2 && newAngle <= PI_2
             } else {
-                oldAngle < PI_2 && newAngle >= PI_2
+				// North belongs to the higher decade; decrease only when leaving it.
+				oldAngle <= PI_2 && newAngle > PI_2
             }
         }
 
