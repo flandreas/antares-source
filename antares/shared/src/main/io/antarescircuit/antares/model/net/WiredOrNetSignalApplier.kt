@@ -44,6 +44,12 @@ object WiredOrNetSignalApplier : DefaultNetSignalApplier<DigitalSignal>() {
 			}
 		}
 
+		if (outputPort.portType == PortType.INOUT) {
+			// The originating port will not receive its own resolved net event. Its previous input
+			// may therefore be stale, even when another driver later produces that same value.
+			(outputPort as InputPort<DigitalSignal>).revokeSignal()
+		}
+
 		return SignalReplacement(s, outputPort)
 	}
 }
