@@ -7,7 +7,7 @@
           <elements>
             <subGraphVerticeRef _id='3' id='1' delay='12820' uuid='6d95ca5e-6be3-4dc4-a175-aff70fb8c3bc' type='digital'/>
             <ram _id='4' id='4' delay='1' addressBitWidth='8' dataBitWidth='16' clock='false'/>
-            <rom _id='5' id='5' delay='1' addressBitWidth='8' dataBitWidth='16' content='7000:Initialize\ I\ at\ 0800 1800 7004:Initialize\ L\ at\ 0801 1801 7000:Initialize\ S\ at\ 0802 1802 7001:Initialize\ ONE\ at\ 0803 1803 0801:IF\ (I\ ==\ L)\ THEN\ GOTO\ END 3800 5013 0802:S\ =\ S\ +\ I 2800 1802 1FFE:Output\ S 0800:I\ =\ I\ +\ 1 2803 1800 6008:GOTO\ LOOP FF00:Stop\ program' disassembler='0([A-F0-9]{3})=LODD $1
+            <rom _id='5' id='5' delay='1' addressBitWidth='8' dataBitWidth='16' content='7000:Initialize\ I\ at\ 0800 1800 7065:Initialize\ L\ at\ 0801 1801 7000:Initialize\ S\ at\ 0802 1802 7001:Initialize\ ONE\ at\ 0803 1803 0801:IF\ (I\ ==\ L)\ THEN\ GOTO\ END 3800 5013 0802:S\ =\ S\ +\ I 2800 1802 1FFE:Output\ S 0800:I\ =\ I\ +\ 1 2803 1800 6008:GOTO\ LOOP FF00:Stop\ program' disassembler='0([A-F0-9]{3})=LODD $1
 1([A-F0-9]{3})=STOD $1
 2([A-F0-9]{3})=ADDD $1
 3([A-F0-9]{3})=SUBD $1
