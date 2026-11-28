@@ -294,7 +294,12 @@ open class PortImpl<T : Any>(
 	}
 
 	private fun resetExecutionError() {
-		combinedNets.forEach { it.setExecutionError(null) }
+		combinedNets.forEach {
+			it.setExecutionError(null)
+			// The nets may have retained different values during the conflict. Let bidirectional
+			// boundaries forward the recovered signal even if it matches their previous input.
+			it.revokeSignal()
+		}
 		net!!.executionError = null
 	}
 
