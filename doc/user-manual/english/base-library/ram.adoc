@@ -42,4 +42,6 @@ Separate data pins:: If set, the RAM has two separate pins for data input "DI" a
 
 Clock Input:: If this property is set, the RAM contains the "CLK" pin.  This property is only enabled if the RAM is not yet connected to wires.
 
-Non-volatile:: If set, the RAM content is preserved across multiple simulation runs. When the simulation is stopped, Antares stores the currentRAM data in the directory "nonVolatile" in the workspace where the circuit is located. Each RAM instance in different circuits has its own storage location. When restarting the simulation, the data is loaded again into the RAM. Note that since the data isn't stored in the circuit file, the user doesn't have to perform "Save".
+Non-volatile:: If set, the RAM content is preserved across multiple simulation runs. When the simulation is stopped, Antares stores the current RAM data in the directory "nonVolatile" in the workspace where the circuit is located. Each RAM instance in different circuits has its own storage location. When restarting the simulation, the data is loaded again into the RAM. Note that since the data isn't stored in the circuit file, the user doesn't have to perform "Save".
++
+This also applies to changes made by the `setMemory(time, id, address, value)` function in link:{{site.basedir}}/user-manual/english/usecases/usecase-scripting[use case action scripts]. These changes are saved when simulation stops and loaded again on the next simulation run.

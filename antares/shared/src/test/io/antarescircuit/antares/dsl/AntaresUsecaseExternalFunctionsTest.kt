@@ -2,9 +2,13 @@ package io.antarescircuit.antares.dsl
 
 import io.antarescircuit.antares.AbstractCircuitTest
 import io.antarescircuit.antares.TestCircuitBuilder
+import io.antarescircuit.antares.model.addressable.ROM
 import io.antarescircuit.antares.model.inout.DigitalCircuitInOutImpl
+import io.antarescircuit.antares.model.signal.BitWidth
 import io.antarescircuit.antares.model.signal.DigitalSignal
 import io.antarescircuit.antares.model.signal.DigitalSignalFactory
+import io.antarescircuit.antares.view.addressable.RAMView
+import io.antarescircuit.antares.view.addressable.ROMView
 import io.antarescircuit.antares.view.gate.LogicGateView
 import io.antarescircuit.antares.view.inout.DigitalCircuitInOutView
 import io.antarescircuit.antares.view.input.SwitchView
@@ -30,6 +34,7 @@ import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.mock
 import io.antarescircuit.jabbah.graph.view.GraphElementView
+import io.antarescircuit.jabbah.io.StorableCloner
 import kotlin.test.*
 
 class AntaresUsecaseExternalFunctionsTest : AbstractCircuitTest() {
@@ -95,6 +100,105 @@ class AntaresUsecaseExternalFunctionsTest : AbstractCircuitTest() {
 
 		assertNoIssues()
 		assertTrue(switch.model.isOn)
+	}
+
+	@Test
+	fun shouldSetMemoryCellAtSpecifiedTimeUsingModelId() {
+		val ram = RAMView()
+		ram.model.dataWidth = BitWidth.of(64)
+		circuitView.add(ram)
+		ram.id = ram.model.id + 1000
+		assertNotEquals(ram.id, ram.model.id)
+		val usecase = UsecaseImpl("SetMemory", """
+			setMemory(10000, ${ram.model.id}, 3, 42)
+			setMemory(10000, ${ram.model.id}, 4, 0xFFFFFFFFFFFFFFFF)
+			setMemory(10000, ${ram.model.id}, 5, 7)
+			setMemory(20000, ${ram.model.id}, 5, 0)
+		""".trimIndent())
+		circuitView.usecases.add(usecase)
+		val runner = UsecaseRunner(usecase, circuitView, scheduler, applicationModeHolder)
+
+		runner.run()
+		assertEquals(0UL, ram.model.dataAt(3))
+		assertEquals(0UL, ram.model.dataAt(4))
+		assertEquals(0UL, ram.model.dataAt(5))
+
+		proceedToNanos(9_999)
+		assertEquals(0UL, ram.model.dataAt(3))
+		assertEquals(0UL, ram.model.dataAt(4))
+		assertEquals(0UL, ram.model.dataAt(5))
+
+		proceedToNanos(10_000)
+		assertNoIssues()
+		assertEquals(42UL, ram.model.dataAt(3))
+		assertEquals(ULong.MAX_VALUE, ram.model.dataAt(4))
+		assertEquals(7UL, ram.model.dataAt(5))
+
+		proceedToNanos(19_999)
+		assertEquals(7UL, ram.model.dataAt(5))
+
+		proceedToNanos(20_000)
+		assertNoIssues()
+		assertEquals(0UL, ram.model.dataAt(5))
+		assertEquals(42UL, ram.model.dataAt(3))
+		assertEquals(ULong.MAX_VALUE, ram.model.dataAt(4))
+		assertEquals(0UL, ram.model.dataAt(2))
+	}
+
+	@Test
+	fun shouldSetMemoryCellFromHexadecimalValue() {
+		val ram = RAMView()
+		ram.model.dataWidth = BitWidth.BW_16
+		circuitView.add(ram)
+		val usecase = UsecaseImpl("SetHexadecimalMemory", """
+			setMemory(10000, ${ram.model.id}, 3, 0xAB05)
+			setMemory(10000, ${ram.model.id}, 4, 0xab05)
+		""".trimIndent())
+		circuitView.usecases.add(usecase)
+		val runner = UsecaseRunner(usecase, circuitView, scheduler, applicationModeHolder)
+
+		runner.run()
+		proceedToNanos(9_999)
+		assertEquals(0UL, ram.model.dataAt(3))
+		assertEquals(0UL, ram.model.dataAt(4))
+
+		proceedToNanos(10_000)
+		assertNoIssues()
+		assertEquals(43781UL, ram.model.dataAt(3))
+		assertEquals(43781UL, ram.model.dataAt(4))
+	}
+
+	@Test
+	fun shouldRestoreRomAfterUsecaseWithoutLosingEarlierEdits() {
+		val savedRom = ROM().apply { write(3, 17UL) }
+		val rom = ROMView(model = StorableCloner.clone(savedRom))
+		circuitView.add(rom)
+		rom.model.setDataAt(3, 23UL, null)
+		rom.model.setDataAt(4, 18UL, null)
+		orGate.model.name = "Edited before simulation"
+		val usecase = UsecaseImpl("ChangeRom", """
+			setMemory(10000, ${rom.model.id}, 3, 42)
+			setMemory(10000, ${rom.model.id}, 4, 0)
+			setMemory(10000, ${rom.model.id}, 5, 0x7F)
+		""".trimIndent())
+		circuitView.usecases.add(usecase)
+		val runner = UsecaseRunner(usecase, circuitView, scheduler, applicationModeHolder)
+
+		runner.run()
+		proceedToNanos(10_000)
+		assertNoIssues()
+		assertEquals(42UL, rom.model.read(3))
+		assertEquals(0UL, rom.model.read(4))
+		assertEquals(0x7FUL, rom.model.read(5))
+
+		stopSimulation()
+
+		assertSame(rom, circuitView.getWithModelId(rom.model.id))
+		assertEquals("Edited before simulation", orGate.model.name)
+		val savedAfterSimulation = StorableCloner.clone(rom.model)
+		assertEquals(23UL, savedAfterSimulation.read(3))
+		assertEquals(18UL, savedAfterSimulation.read(4))
+		assertEquals(0UL, savedAfterSimulation.read(5))
 	}
 
 	@Test

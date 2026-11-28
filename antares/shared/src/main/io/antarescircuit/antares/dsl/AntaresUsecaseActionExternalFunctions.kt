@@ -1,5 +1,6 @@
 package io.antarescircuit.antares.dsl
 
+import io.antarescircuit.antares.model.addressable.Addressable
 import io.antarescircuit.antares.model.signal.DigitalSignalFactory
 import io.antarescircuit.antares.view.inout.DigitalCircuitInOutView
 import io.antarescircuit.jabbah.base.Translations
@@ -35,6 +36,7 @@ object AntaresUsecaseActionExternalFunctions : UsecaseActionExternalFunctions() 
 		with(symbolTable) {
 			define(ExternalFunctionSymbol("pressButtonAt", 2, ::pressButtonAtImpl))
 			define(ExternalFunctionSymbol("applyClock", 2, ::applyClockImpl))
+			define(ExternalFunctionSymbol("setMemory", 4, ::setMemoryImpl))
 		}
 	}
 
@@ -98,4 +100,41 @@ object AntaresUsecaseActionExternalFunctions : UsecaseActionExternalFunctions() 
 		Translations.getString("antares.usecaseDSL.multipleClocks.name"),
 		Translations.getString("antares.usecaseDSL.multipleClocks.text", name)
 	)
+
+	private fun setMemoryImpl(params: List<Any>, @Suppress("UNUSED_PARAMETER") context: Any? = null): Any {
+		setMemory(
+			longParam(0, params),
+			longParam(1, params).toInt(),
+			longParam(2, params).toInt(),
+			longParam(3, params).toULong(),
+		)
+		return 0L
+	}
+
+	/**
+	 * Sets the value in a memory cell at a particular simulation time.
+	 *
+	 * @param time the simulation time (ns) at which the memory cell is to be set
+	 * @param id the model ID of the memory component in the circuit
+	 * @param address the address of the memory cell
+	 * @param value the value to write in this memory cell
+	 */
+	private fun setMemory(time: Long, id: Int, address: Int, value: ULong) {
+		val component = runner.graphView.getWithModelId(id)
+		if (component == null) {
+			cvDelegate.postIssue(
+				Translations.getString("antares.usecaseDSL.compNotFound.name"),
+				Translations.getString("antares.usecaseDSL.compNotFound.text", id),
+			)
+			return
+		}
+		val memory = component.model as? Addressable
+		if (memory == null) {
+			cvDelegate.postTypeIssue(id.toString(), Translations.getString("library.element.memory.name"), component.type)
+			return
+		}
+		runner.executeAt("setMemory", time) {
+			memory.setDataAt(address, value, runner.scheduler)
+		}
+	}
 }

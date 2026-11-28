@@ -12,6 +12,7 @@ import dev.mokkery.MockMode
 import dev.mokkery.mock
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 class ROMTest {
 
@@ -88,4 +89,46 @@ class ROMTest {
 	    calculator.calculate(rom, rom.createActorData(rom.getChipSelectInput()), signalHandler)
         assertEquals(255UL, rom.data)
     }
+
+	@Test
+	fun shouldRestoreSparseContentsCommentsAndDisassemblyAfterSimulation() {
+		rom.addressWidth = BitWidth.BW_32
+		rom.disassemblerConfig = "11=Original\n22=Changed"
+		rom.setDataAt(3, 0x11UL, null)
+		rom.setCommentAt(3, "Original comment", null)
+		rom.setCommentAt(Int.MAX_VALUE, "Comment without data", null)
+		val initialContents = rom.memory.getNonZeroCells().asSequence().toList()
+
+		rom.executionInitialize(signalHandler)
+		rom.setDataAt(3, 0x22UL, signalHandler)
+		rom.setCommentAt(3, "Changed comment", signalHandler)
+		rom.setDataAt(Int.MAX_VALUE, 99UL, signalHandler)
+		rom.setDataAt(4, 42UL, signalHandler)
+		assertEquals("Changed", rom.disassemblyAt(3))
+
+		rom.executionStopped(signalHandler)
+
+		assertEquals(initialContents, rom.memory.getNonZeroCells().asSequence().toList())
+		assertEquals("Original", rom.disassemblyAt(3))
+		assertEquals("", rom.disassemblyAt(4))
+		assertNull(rom.commentAt(4))
+	}
+
+	@Test
+	fun shouldTakeFreshSnapshotForEachSimulationAndIgnoreRepeatedStop() {
+		rom.write(3, 17UL)
+		rom.executionInitialize(signalHandler)
+		rom.setDataAt(3, 42UL, signalHandler)
+		rom.executionStopped(signalHandler)
+		assertEquals(17UL, rom.read(3))
+
+		rom.write(3, 23UL)
+		rom.executionStopped(signalHandler)
+		assertEquals(23UL, rom.read(3))
+
+		rom.executionInitialize(signalHandler)
+		rom.clear()
+		rom.executionStopped(signalHandler)
+		assertEquals(23UL, rom.read(3))
+	}
 }

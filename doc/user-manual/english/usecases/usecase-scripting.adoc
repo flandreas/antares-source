@@ -71,7 +71,26 @@ private fun pressButtonAt(time: Long, buttonId: Long)
  * @param period the period (ns) of the clock signal to apply
  */
 private fun applyClock(inputName: String, period: Long)
+
+/**
+ * Sets the value in a memory cell at a particular simulation time.
+ *
+ * @param time the simulation time (ns) at which the memory cell is to be set
+ * @param id the model ID of the memory component in the circuit
+ * @param address the address of the memory cell
+ * @param value the value to write in this memory cell
+ */
+private fun setMemory(time: Long, id: Int, address: Int, value: ULong)
 ----
+
+The value can be written as a decimal number or a hexadecimal number with the `0x` prefix, such as `0xAB05`.
+Hexadecimal digits can be uppercase or lowercase.
+For example, `setMemory(10000, 12, 3, 0xAB05)` writes the value 43781 to address 3 of the memory component with model ID 12 at simulation time 10000 ns.
+
+Changes to ROM contents during simulation are temporary. When simulation stops, Antares restores each ROM's contents from before simulation started, including any unsaved edits made beforehand.
+The circuit stays open with its other edits intact.
+
+For RAM with the "Non-volatile" property enabled, changes made by `setMemory` are preserved across simulation runs. When simulation stops, Antares saves the current RAM contents to its separate nonvolatile storage and loads them again when the next simulation starts. These changes are not stored in the circuit file and do not require "Save".
 
 == Test Cases
 

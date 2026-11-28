@@ -110,6 +110,9 @@ class ROM(
 	/** Contains the number of characters of the longest disassembly entry.*/
 	private var _disassemblyWidth: Int = 0
 
+	/** Preserves edit-mode contents, including unsaved edits, across a simulation run. */
+	private var memoryBeforeSimulation: Memory? = null
+
 	init {
 		propagationDelay = AbstractLogicGate.DEFAULT_PROPAGATION_DELAY
 		addPort(DigitalPortImpl(portType = PortType.INPUT, name = ADDRESS_PORT_NAME, bitWidth = BitWidth.BW_8, description = ADDRESS_PORT_DESC))
@@ -176,6 +179,9 @@ class ROM(
 
 	override fun executionInitialize(signalHandler: SignalHandler) {
 		super.executionInitialize(signalHandler)
+		if (memoryBeforeSimulation == null) {
+			memoryBeforeSimulation = memory.copy()
+		}
 		try {
 			if (memoryStorableUuid != null) {
 				loadFromMemoryStorable()
@@ -191,6 +197,14 @@ class ROM(
 				null)
 			)
 		}
+	}
+
+	override fun executionStopped(signalHandler: SignalHandler) {
+		super.executionStopped(signalHandler)
+		val snapshot = memoryBeforeSimulation ?: return
+		memoryBeforeSimulation = null
+		memory.replaceWith(snapshot)
+		update()
 	}
 
 	private fun loadFromDataSource() {
